@@ -19,7 +19,8 @@ This is a preview version that has missing features and capabilities that are go
 ## Author
 
 Mobile Applications Team, Nordic Semiconductor ASA.
-Contact: mostafaberg<mostafa.berg@nordicsemi.no>
+
+Contact: mostafaberg <mostafa.berg@nordicsemi.no>
 
 ## License
 
