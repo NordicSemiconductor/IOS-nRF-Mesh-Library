@@ -1,0 +1,6 @@
+framework module nRFMeshProvision {
+  umbrella header "nRFMeshProvision-umbrella.h"
+
+  export *
+  module * { export * }
+}

@@ -1,0 +1,19 @@
+PODS:
+  - nRFMeshProvision (0.1.0):
+    - OpenSSL
+  - OpenSSL (1.0.210)
+
+DEPENDENCIES:
+  - nRFMeshProvision (from `../`)
+
+EXTERNAL SOURCES:
+  nRFMeshProvision:
+    :path: ../
+
+SPEC CHECKSUMS:
+  nRFMeshProvision: fbfa7d164d1aae7becdfd2a63a072ae82366769f
+  OpenSSL: 246ffb948e9d56466727fd318134af35f5aa764e
+
+PODFILE CHECKSUM: de85a89ac749497891047199d13c9ccda33bd1a4
+
+COCOAPODS: 1.4.0
