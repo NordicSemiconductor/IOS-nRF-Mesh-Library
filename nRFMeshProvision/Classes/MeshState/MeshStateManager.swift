@@ -5,7 +5,7 @@
 //  Created by Mostafa Berg on 06/03/2018.
 //
 
-import UIKit
+import Foundation
 
 public class MeshStateManager: NSObject {
     

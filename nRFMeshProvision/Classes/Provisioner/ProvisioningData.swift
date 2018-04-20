@@ -5,6 +5,8 @@
 //  Created by Mostafa Berg on 17/01/2018.
 //
 
+import Foundation
+
 public struct ProvisioningData {
     
     public init(netKey aNetKey: Data, keyIndex aKeyIndex: Data, flags someFlags: Data, ivIndex anIVIndex: Data, unicastAddress anAddress: Data) {

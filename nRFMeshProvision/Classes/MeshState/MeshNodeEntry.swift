@@ -5,6 +5,8 @@
 //  Created by Mostafa Berg on 06/03/2018.
 //
 
+import Foundation
+
 public class MeshNodeEntry: NSObject, Codable {
 
     // MARK: - Properties

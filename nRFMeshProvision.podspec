@@ -20,9 +20,10 @@ This is a preview version that has missing features and capabilities that are go
   s.source           = { :git => 'https://github.com/NordicPlayground/IOS-nRF-Mesh-Library.git', :tag => s.version.to_s }
   s.social_media_url = 'https://twitter.com/nordictweets'
   s.platform         = :ios
+  s.static_framework = true
+  s.swift_version    = '4'
   s.ios.deployment_target = '10.0'
   s.source_files = 'nRFMeshProvision/Classes/**/*'
-  # s.public_header_files = 'Pod/Classes/**/*.h'
   s.dependency 'OpenSSL'
   s.frameworks = 'CoreBluetooth'
 end

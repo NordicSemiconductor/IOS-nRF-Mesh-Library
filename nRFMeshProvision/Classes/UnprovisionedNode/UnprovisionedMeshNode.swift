@@ -5,7 +5,7 @@
 //  Created by Mostafa Berg on 19/12/2017.
 //
 
-import UIKit
+import Foundation
 import CoreBluetooth
 
 public class UnprovisionedMeshNode: NSObject, UnprovisionedMeshNodeProtocol {

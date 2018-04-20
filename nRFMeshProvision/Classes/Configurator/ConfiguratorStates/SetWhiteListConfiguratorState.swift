@@ -6,6 +6,7 @@
 //
 
 import CoreBluetooth
+import Foundation
 
 class SetWhiteListConfiguratorState: NSObject, ConfiguratorStateProtocol {
 

@@ -5,6 +5,8 @@
 //  Created by Mostafa Berg on 13/04/2018.
 //
 
+import Foundation
+
 public enum MessageStatusCodes: UInt8 {
     case success                        = 0x00
     case invalidAdderss                 = 0x01
