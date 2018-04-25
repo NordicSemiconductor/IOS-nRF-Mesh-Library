@@ -115,17 +115,17 @@ class CompositionGetConfiguratorState: NSObject, ConfiguratorStateProtocol {
                     let appKeySetState = AppKeyAddConfiguratorState(withTargetProxyNode: target,
                                                                     destinationAddress: destinationAddress,
                                                                     andStateManager: stateManager)
-                       self.target.switchToState(appKeySetState)
+                    target.switchToState(appKeySetState)
                 } else {
                     print("Ignoring non composition status message")
                 }
             }
         }
     }
-    
+
     private func acknowlegeSegment(withAckData someData: Data, withDelay aDelay: DispatchTime) {
         DispatchQueue.main.asyncAfter(deadline: aDelay) {
-            print("Ack segment: \(someData.hexString())")
+            print("Sending acknowledgement: \(someData.hexString())")
             self.target.basePeripheral().writeValue(someData, for: self.dataInCharacteristic, type: .withoutResponse)
         }
     }
@@ -139,18 +139,27 @@ class CompositionGetConfiguratorState: NSObject, ConfiguratorStateProtocol {
         //NOOP
     }
 
+    var lastMessageType = 0xC0
+
     func peripheral(_ peripheral: CBPeripheral, didUpdateValueFor characteristic: CBCharacteristic, error: Error?) {
         print("Cahrcateristic value updated: \(characteristic.value!.hexString())")
         //SAR handling
         if characteristic.value![0] & 0xC0 == 0x40 {
-            print("Segmented data start")
+            if lastMessageType == 0x40 {
+                //Drop repeated 0x40's
+                print("CMP:Reduntand SAR start, dropping")
+                segmentedData = Data()
+            }
+            lastMessageType = 0x40
             //Add message type header
             segmentedData.append(characteristic.value![0] & 0x3F)
             segmentedData.append(characteristic.value!.dropFirst())
         } else if characteristic.value![0] & 0xC0 == 0x80 {
+            lastMessageType = 0x80
             print("Segmented data cont")
             segmentedData.append(characteristic.value!.dropFirst())
         } else if characteristic.value![0] & 0xC0 == 0xC0 {
+            lastMessageType = 0xC0
             print("Segmented data end")
             segmentedData.append(characteristic.value!.dropFirst())
             print("Reassembled data!: \(segmentedData.hexString())")

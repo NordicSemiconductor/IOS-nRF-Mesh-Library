@@ -22,8 +22,6 @@ public struct NetworkLayer {
         sslHelper = OpenSSLHelper()
         lowerTransport = LowerTransportLayer(withStateManager: aStateManager,
                                              andSegmentedAcknowlegdeMent: aSegmentAckBlock)
-        
-        
     }
 
     public mutating func incomingPDU(_ aPDU : Data) -> Any? {
@@ -93,7 +91,7 @@ public struct NetworkLayer {
         for aPDU in lowerPDU {
             var nonce: TransportNonce
 //            if lowerTransport.params.ctl == Data([0x01]) && lowerTransport.params.opcode == Data([0x00]) {
-////            if lowerTransport.params.ctl == Data([0x00]) {
+//            if lowerTransport.params.ctl == Data([0x00]) {
 //                nonce = TransportNonce(proxyNonceWithIVIndex: lowerTransport.params.ivIndex, seq: sequence.sequenceData(), src: lowerTransport.params.sourceAddress)
 //            } else {
                 nonce = TransportNonce(networkNonceWithIVIndex: lowerTransport.params.ivIndex, ctl: lowerTransport.params.ctl, ttl: lowerTransport.params.ttl, seq: sequence.sequenceData(), src: lowerTransport.params.sourceAddress)
