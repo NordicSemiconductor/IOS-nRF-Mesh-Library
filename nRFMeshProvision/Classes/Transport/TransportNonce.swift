@@ -23,40 +23,40 @@ public struct TransportNonce {
         let typeData = Data([self.type.rawValue])
         let ctlTTL = Data([(aCTL[0] << 7) | (aTTL[0] & 0x7F)])
         var nonceData = Data()
-        nonceData.append(typeData)
-        nonceData.append(ctlTTL)
-        nonceData.append(aSeq)
-        nonceData.append(aSRC)
+        nonceData.append(Data(typeData))
+        nonceData.append(Data(ctlTTL))
+        nonceData.append(Data(aSeq))
+        nonceData.append(Data(aSRC))
         nonceData.append(Data([0x00, 0x00]))
-        nonceData.append(anIVIndex)
-        data = nonceData
+        nonceData.append(Data(anIVIndex))
+        data = Data(nonceData)
     }
 
     public init(appNonceWithIVIndex anIVIndex: Data, isSegmented isASegmentedMessage: Bool, seq aSeq: Data, src aSRC: Data, dst aDST: Data){
         type = .Application
         let typeData = Data([self.type.rawValue])
         var nonceData = Data()
-        nonceData.append(typeData)
+        nonceData.append(Data(typeData))
         if isASegmentedMessage {
             //ASZMIC is assumed to be 0 for this app
             //TODO: Support both 0 and 1 ASZMIC
             nonceData.append(Data([0x00]))
-            nonceData.append(aSeq)
+            nonceData.append(Data(aSeq))
         } else {
             nonceData.append(Data([0x00]))
-            nonceData.append(aSeq)
+            nonceData.append(Data(aSeq))
         }
-   nonceData.append(aSRC)
-        nonceData.append(aDST)
-        nonceData.append(anIVIndex)
-        data = nonceData
+        nonceData.append(Data(aSRC))
+        nonceData.append(Data(aDST))
+        nonceData.append(Data(anIVIndex))
+        data = Data(nonceData)
     }
    
     public init(deviceNonceWithIVIndex anIVIndex: Data, isSegmented isASegmentedMessage: Bool, szMIC aMICSize: UInt8, seq aSeq: Data, src aSRC: Data, dst aDST: Data) {
         type = .Device
         let typeData = Data([self.type.rawValue])
         var nonceData = Data()
-        nonceData.append(typeData)
+        nonceData.append(Data(typeData))
         if isASegmentedMessage {
             if aMICSize == 1 {
                 //64bit MIC
@@ -65,27 +65,27 @@ public struct TransportNonce {
                 //32bit MIC
                 nonceData.append(Data([0x00]))
             }
-            nonceData.append(aSeq)
+            nonceData.append(Data(aSeq))
         } else {
             nonceData.append(Data([0x00]))
-            nonceData.append(aSeq)
+            nonceData.append(Data(aSeq))
         }
-        nonceData.append(aSRC)
-        nonceData.append(aDST)
-        nonceData.append(anIVIndex)
-        data = nonceData
+        nonceData.append(Data(aSRC))
+        nonceData.append(Data(aDST))
+        nonceData.append(Data(anIVIndex))
+        data = Data(nonceData)
     }
    
     public init(proxyNonceWithIVIndex anIVIndex: Data, seq aSeq: Data, src aSRC: Data) {
         type = .Proxy
         let typeData = Data([self.type.rawValue])
         var nonceData = Data()
-        nonceData.append(typeData)
+        nonceData.append(Data(typeData))
         nonceData.append(Data([0x00])) //PAD 1
-        nonceData.append(aSeq)
-        nonceData.append(aSRC)
+        nonceData.append(Data(aSeq))
+        nonceData.append(Data(aSRC))
         nonceData.append(Data([0x00, 0x00])) //PAD 2
-        nonceData.append(anIVIndex)
+        nonceData.append(Data(anIVIndex))
         data = nonceData
     }
 }

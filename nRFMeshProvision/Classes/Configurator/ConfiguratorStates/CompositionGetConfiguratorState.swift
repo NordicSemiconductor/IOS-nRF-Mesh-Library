@@ -107,15 +107,15 @@ class CompositionGetConfiguratorState: NSObject, ConfiguratorStateProtocol {
         if incomingData[0] == 0x01 {
             print("Secure beacon: \(incomingData.hexString())")
         } else {
-            let strippedOpcode: Data = incomingData.dropFirst()
+            let strippedOpcode: Data = Data(incomingData.dropFirst())
             if let result = networkLayer.incomingPDU(strippedOpcode) {
                 if result is CompositionStatusMessage {
                     let compositionStatus = result as! CompositionStatusMessage
                     target.delegate?.receivedCompositionData(compositionStatus)
-                    let appKeySetState = AppKeyAddConfiguratorState(withTargetProxyNode: target,
-                                                                    destinationAddress: destinationAddress,
-                                                                    andStateManager: stateManager)
-                    target.switchToState(appKeySetState)
+                    //let appKeySetState = AppKeyAddConfiguratorState(withTargetProxyNode: target,
+                    //                                                destinationAddress: destinationAddress,
+                    //                                                andStateManager: stateManager)
+                    //target.switchToState(appKeySetState)
                 } else {
                     print("Ignoring non composition status message")
                 }
@@ -124,7 +124,7 @@ class CompositionGetConfiguratorState: NSObject, ConfiguratorStateProtocol {
     }
 
     private func acknowlegeSegment(withAckData someData: Data, withDelay aDelay: DispatchTime) {
-        DispatchQueue.main.asyncAfter(deadline: aDelay) {
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() - DispatchTimeInterval.nanoseconds(Int(aDelay.uptimeNanoseconds))) {
             print("Sending acknowledgement: \(someData.hexString())")
             self.target.basePeripheral().writeValue(someData, for: self.dataInCharacteristic, type: .withoutResponse)
         }
@@ -152,8 +152,8 @@ class CompositionGetConfiguratorState: NSObject, ConfiguratorStateProtocol {
             }
             lastMessageType = 0x40
             //Add message type header
-            segmentedData.append(characteristic.value![0] & 0x3F)
-            segmentedData.append(characteristic.value!.dropFirst())
+            segmentedData.append(Data([characteristic.value![0] & 0x3F]))
+            segmentedData.append(Data(characteristic.value!.dropFirst()))
         } else if characteristic.value![0] & 0xC0 == 0x80 {
             lastMessageType = 0x80
             print("Segmented data cont")
@@ -161,7 +161,7 @@ class CompositionGetConfiguratorState: NSObject, ConfiguratorStateProtocol {
         } else if characteristic.value![0] & 0xC0 == 0xC0 {
             lastMessageType = 0xC0
             print("Segmented data end")
-            segmentedData.append(characteristic.value!.dropFirst())
+            segmentedData.append(Data(characteristic.value!.dropFirst()))
             print("Reassembled data!: \(segmentedData.hexString())")
             //Copy data and send it to NetworkLayer
             receivedData(incomingData: Data(segmentedData))
