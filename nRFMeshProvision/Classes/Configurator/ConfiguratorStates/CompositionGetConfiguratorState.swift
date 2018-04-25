@@ -112,10 +112,10 @@ class CompositionGetConfiguratorState: NSObject, ConfiguratorStateProtocol {
                 if result is CompositionStatusMessage {
                     let compositionStatus = result as! CompositionStatusMessage
                     target.delegate?.receivedCompositionData(compositionStatus)
-                    //let appKeySetState = AppKeyAddConfiguratorState(withTargetProxyNode: target,
-                    //                                                destinationAddress: destinationAddress,
-                    //                                                andStateManager: stateManager)
-                    //target.switchToState(appKeySetState)
+                    let appKeySetState = AppKeyAddConfiguratorState(withTargetProxyNode: target,
+                                                                    destinationAddress: destinationAddress,
+                                                                    andStateManager: stateManager)
+                    target.switchToState(appKeySetState)
                 } else {
                     print("Ignoring non composition status message")
                 }
