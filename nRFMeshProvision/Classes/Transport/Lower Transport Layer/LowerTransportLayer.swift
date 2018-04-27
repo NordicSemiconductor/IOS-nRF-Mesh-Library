@@ -29,7 +29,6 @@ public struct LowerTransportLayer {
             print("Ignoring message not directed towards us!")
             return nil
         }
-        
         let segmented = Data([aPDU[2] >> 7])
         let akf = Data([aPDU[2] >> 6 & 0x01])
         let aid = Data([aPDU[2] & 0x3F])
@@ -49,13 +48,22 @@ public struct LowerTransportLayer {
             let segN = Data([aPDU[5] & 0x1F])
             let segment = Data(aPDU[6..<aPDU.count])
             let sequenceNumber = Data([aSEQ.first!, seqZero[0], seqZero[1]])
-
+            if segN == Data([0x00]) {
+                print("Breaking at no SegN")
+                print("")
+            }
+//            if segN == Data([0x07]) && segO == Data([0x07]) {
+//                print("Breaking at last SegN")
+//                print("")
+//            }
+            print("szMIC = \(szMIC.hexString()), seqZero = \(seqZero.hexString()), segO = \(segO.hexString()), segN = \(segN.hexString()), segment = \(segment.hexString()), sequence: \(sequenceNumber.hexString())")
+            print("Partial incomind PDU count = \(partialIncomingPDU!.count)")
             if !partialIncomingPDU!.contains(segment) {
                 partialIncomingPDU!.append(segment)
             } else {
                 print("Append seg: DUPE")
             }
-            if segO == Data([0x00]) {
+            if segO == Data([0x00]) && segN != Data([0x00]) {
                 if segmentedMessageAcknowledge != nil {
                     segAcknowledgeStartTime = DispatchTime.now()
                     print("Segmetned timer start at \(segAcknowledgeStartTime!)")
@@ -63,6 +71,12 @@ public struct LowerTransportLayer {
             } else if segO != segN {
                 print("received part \(segO.hexString()) of \(segN.hexString()), SeqZero = \(seqZero.hexString()).")
             } else {
+                if segmentedMessageAcknowledge != nil {
+                    if segN == Data([0x00]) {
+                        segAcknowledgeStartTime = DispatchTime.now()
+                        print("Segmetned timer start at \(segAcknowledgeStartTime!)")
+                    }
+                }
                 print("received last part \(segO.hexString()) of \(segN.hexString()), SeqZero = \(seqZero.hexString()), reassembling")
                 let (ackData, delay) = self.acknowlegde(withSeqZero: seqZero, segN: segN, segO: segO, dst: aSRC, ttl: aTTL, startTime: segAcknowledgeStartTime!)
                 segmentedMessageAcknowledge?(ackData, delay)

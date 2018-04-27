@@ -41,10 +41,10 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
                                              onElementAddress: elementAddress,
                                              appKeyIndex: Data([0x00,0x00]),
                                              credentialFlag: false,
-                                             ttl: Data([0x04]),
-                                             period: Data([0x01]),
-                                             retransmitCount: Data([0x02]),
-                                             retransmitInterval: Data([0x05]),
+                                             ttl: Data([0xFF]),
+                                             period: Data([0x00]),
+                                             retransmitCount: Data([0x00]),
+                                             retransmitInterval: Data([0x00]),
                                              modelIdentifier: aModel,
                                              onDestinationAddress: nodeEntry.nodeUnicast!)
     }

@@ -57,7 +57,7 @@ public struct NetworkLayer {
         print("netMic: \(netMic.hexString())")
         print("Sequence: \(seq.hexString()), SRC: \(src.hexString()), ttl: \(ttl.hexString()), MICSize: \(micSize), encpduSz: \(encryptedNetworkPDU.count)")
         print("decrypted network PDU = \(decryptedNetworkPDU!.hexString())")
-        return self.lowerTransport.append(withIncomingPDU: decryptedNetworkPDU!, ctl: ctlData, ttl: ttl, src: src, dst: dst, IVIndex: ivIndex, andSEQ: seq)
+        return self.lowerTransport.append(withIncomingPDU: Data(decryptedNetworkPDU!), ctl: ctlData, ttl: ttl, src: src, dst: dst, IVIndex: ivIndex, andSEQ: seq)
     }
 
     public init(withLowerTransportLayer aLowerTransport: LowerTransportLayer, andNetworkKey aNetKey: Data) {

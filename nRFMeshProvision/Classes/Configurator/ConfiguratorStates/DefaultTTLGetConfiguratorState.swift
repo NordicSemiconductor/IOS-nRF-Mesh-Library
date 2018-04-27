@@ -1,21 +1,19 @@
 //
-//  AppKeySetConfiguratorState.swift
+//  DefaultTTLGetConfiguratorState.swift
 //  nRFMeshProvision
 //
-//  Created by Mostafa Berg on 06/04/2018.
+//  Created by Mostafa Berg on 27/04/2018.
 //
 
+import Foundation
 import CoreBluetooth
 
-class AppKeyAddConfiguratorState: NSObject, ConfiguratorStateProtocol {
+class DefaultTTLGetConfiguratorState: NSObject, ConfiguratorStateProtocol {
 
     // MARK: - Properties
     private var proxyService            : CBService!
     private var dataInCharacteristic    : CBCharacteristic!
     private var dataOutCharacteristic   : CBCharacteristic!
-    private var appKey                  : Data!
-    private var appKeyIndex             : Data!
-    private var netKeyIndex             : Data!
     private var networkLayer            : NetworkLayer!
     private var segmentedData: Data
 
@@ -23,10 +21,10 @@ class AppKeyAddConfiguratorState: NSObject, ConfiguratorStateProtocol {
     var destinationAddress  : Data
     var target              : ProvisionedMeshNodeProtocol
     var stateManager        : MeshStateManager
-    
+
     required init(withTargetProxyNode aNode: ProvisionedMeshNodeProtocol,
-                  destinationAddress aDestinationAddress: Data,
-                  andStateManager aStateManager: MeshStateManager) {
+             destinationAddress aDestinationAddress: Data,
+             andStateManager aStateManager: MeshStateManager) {
         target = aNode
         segmentedData = Data()
         stateManager = aStateManager
@@ -38,35 +36,29 @@ class AppKeyAddConfiguratorState: NSObject, ConfiguratorStateProtocol {
         proxyService            = discovery.proxyService
         dataInCharacteristic    = discovery.dataInCharacteristic
         dataOutCharacteristic   = discovery.dataOutCharacteristic
-
+        
         networkLayer = NetworkLayer(withStateManager: stateManager, andSegmentAcknowlegdement: { (ackData, delay) -> (Void) in
             self.acknowlegeSegment(withAckData: ackData, withDelay: delay)
         })
     }
 
-    public func setAppKey(withData someKeyData: Data, appKeyIndex anAppKeyIndex: Data,
-         netKeyIndex aNetKeyIndex: Data) {
-        appKey = someKeyData
-        appKeyIndex = anAppKeyIndex
-        netKeyIndex = aNetKeyIndex
-    }
-
     func humanReadableName() -> String {
-        return "AppKey Add"
+        return "Default TTL Get"
     }
 
     func execute() {
-        let message = AppKeyAddMessage(withAppKeyData: appKey,
-                                       appKeyIndex: appKeyIndex,
-                                       netkeyIndex: netKeyIndex)
+    //    let message = AppKeyAddMessage(withAppKeyData: appKey,
+    //                                   appKeyIndex: appKeyIndex,
+    //                                   netkeyIndex: netKeyIndex)
+        let message = DefaultTTLGetMessage()
         //Send to destination (unicast)
         let payloads = message.assemblePayload(withMeshState: stateManager.state(), toAddress: destinationAddress)
         for aPayload in payloads! {
             var data = Data([0x00]) //Type => Network
             data.append(aPayload)
-            print("Full app key PDU: \(data.hexString())")
+            print("Full PDU: \(data.hexString())")
             if data.count <= target.basePeripheral().maximumWriteValueLength(for: .withoutResponse) {
-                print("Sending app key data: \(data.hexString())")
+                print("Sending  data: \(data.hexString())")
                 target.basePeripheral().writeValue(data, for: dataInCharacteristic, type: .withoutResponse)
             } else {
                 print("maximum write length is shorter than PDU, will Segment")
@@ -88,7 +80,7 @@ class AppKeyAddConfiguratorState: NSObject, ConfiguratorStateProtocol {
                     segmentedProvisioningData.append(Data(chunkData))
                 }
                 for aSegment in segmentedProvisioningData {
-                    print("Sending appkey segment: \(aSegment.hexString())")
+                    print("Sending segment: \(aSegment.hexString())")
                     target.basePeripheral().writeValue(aSegment, for: dataInCharacteristic, type: .withoutResponse)
                 }
             }
@@ -101,20 +93,19 @@ class AppKeyAddConfiguratorState: NSObject, ConfiguratorStateProtocol {
         } else {
             let strippedOpcode = Data(incomingData.dropFirst())
             if let result = networkLayer.incomingPDU(strippedOpcode) {
-                if result is AppKeyStatusMessage {
-                    let appKeyStatus = result as! AppKeyStatusMessage
-                    target.delegate?.receivedAppKeyStatusData(appKeyStatus)
-                    if appKeyStatus.statusCode != .success {
-                        print("App key add error : \(appKeyStatus.statusCode)")
-                        target.shouldDisconnect()
-                    } else {
-                        target.delegate?.configurationSucceeded()
-                    }
-//                    let nextState = SleepConfiguratorState(withTargetProxyNode: target, destinationAddress: destinationAddress, andStateManager: stateManager)
-//                    target.switchToState(nextState)
-                } else {
-                    print("Ignoring non app key status message")
-                }
+    //            if result is AppKeyStatusMessage {
+    //                let appKeyStatus = result as! AppKeyStatusMessage
+    //                target.delegate?.receivedAppKeyStatusData(appKeyStatus)
+    //                if appKeyStatus.statusCode != .success {
+    //                    print("App key add error : \(appKeyStatus.statusCode)")
+    //                    target.shouldDisconnect()
+    //                } else {
+    //                    target.delegate?.configurationSucceeded()
+    //                }
+                    //                    let nextState = SleepConfiguratorState(withTargetProxyNode: target, destinationAddress: destinationAddress, andStateManager: stateManager)
+                    //                    target.switchToState(nextState)
+            } else {
+                print("Ignoring non app key status message")
             }
         }
     }
@@ -174,7 +165,7 @@ class AppKeyAddConfiguratorState: NSObject, ConfiguratorStateProtocol {
     func peripheral(_ peripheral: CBPeripheral, didDiscoverServices error: Error?) {
         //NOOP
     }
-    
+
     func peripheral(_ peripheral: CBPeripheral, didDiscoverCharacteristicsFor service: CBService, error: Error?) {
         //NOOP
     }

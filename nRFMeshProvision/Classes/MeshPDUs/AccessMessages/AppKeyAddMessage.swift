@@ -24,12 +24,12 @@ public struct AppKeyAddMessage {
 //        payload.append(appKeyIndex[1])
         //First 3 octets are netkey and appkey indices
         //Next is the 16 octets of actual key data
-        payload.append(anAppKeyData)
+        payload.append(Data(anAppKeyData))
     }
    
     public func assemblePayload(withMeshState aState: MeshState, toAddress aDestinationAddress: Data) -> [Data]? {
         let deviceKey = aState.deviceKeyForUnicast(aDestinationAddress)
-        let accessMessage = AccessMessagePDU(withPayload: payload, opcode: opcode, deviceKey: deviceKey!, netKey: aState.netKey, seq: SequenceNumber(), ivIndex: aState.IVIndex, source: aState.unicastAddress, andDst: aDestinationAddress)
+        let accessMessage = AccessMessagePDU(withPayload: Data(payload), opcode: opcode, deviceKey: deviceKey!, netKey: aState.netKey, seq: SequenceNumber(), ivIndex: aState.IVIndex, source: aState.unicastAddress, andDst: aDestinationAddress)
         let networkPDU = accessMessage.assembleNetworkPDU()
         return networkPDU
     }
