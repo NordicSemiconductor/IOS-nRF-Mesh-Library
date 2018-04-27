@@ -24,14 +24,11 @@ public struct LowerTransportLayer {
     }
 
     public mutating func append(withIncomingPDU aPDU: Data, ctl aCTL: Data, ttl aTTL: Data, src aSRC: Data, dst aDST: Data, IVIndex anIVIndex: Data, andSEQ aSEQ: Data) -> Any? {
-
         let dst = Data(aPDU[0...1])
-        
         guard dst == meshStateManager?.state().unicastAddress else {
             print("Ignoring message not directed towards us!")
             return nil
         }
-        
         let segmented = Data([aPDU[2] >> 7])
         let akf = Data([aPDU[2] >> 6 & 0x01])
         let aid = Data([aPDU[2] & 0x3F])
@@ -50,18 +47,38 @@ public struct LowerTransportLayer {
             let segO = Data([0x00 & UInt8((aPDU[4] & 0x03) << 3) | UInt8((aPDU[5] & 0xE0) >> 5)])
             let segN = Data([aPDU[5] & 0x1F])
             let segment = Data(aPDU[6..<aPDU.count])
-            //TODO: Store the full SEQZero and not just two bytes to avoid bugs when overflow occurs.
             let sequenceNumber = Data([aSEQ.first!, seqZero[0], seqZero[1]])
-            partialIncomingPDU!.append(segment)
-            if segO == Data([0x00]) && segmentedMessageAcknowledge != nil {
-                segAcknowledgeStartTime = DispatchTime.now()
-                print("Segmetned timer start at \(segAcknowledgeStartTime!)")
+            if segN == Data([0x00]) {
+                print("Breaking at no SegN")
+                print("")
             }
-            if segO != segN {
+//            if segN == Data([0x07]) && segO == Data([0x07]) {
+//                print("Breaking at last SegN")
+//                print("")
+//            }
+            print("szMIC = \(szMIC.hexString()), seqZero = \(seqZero.hexString()), segO = \(segO.hexString()), segN = \(segN.hexString()), segment = \(segment.hexString()), sequence: \(sequenceNumber.hexString())")
+            print("Partial incomind PDU count = \(partialIncomingPDU!.count)")
+            if !partialIncomingPDU!.contains(segment) {
+                partialIncomingPDU!.append(segment)
+            } else {
+                print("Append seg: DUPE")
+            }
+            if segO == Data([0x00]) && segN != Data([0x00]) {
+                if segmentedMessageAcknowledge != nil {
+                    segAcknowledgeStartTime = DispatchTime.now()
+                    print("Segmetned timer start at \(segAcknowledgeStartTime!)")
+                }
+            } else if segO != segN {
                 print("received part \(segO.hexString()) of \(segN.hexString()), SeqZero = \(seqZero.hexString()).")
             } else {
-                print("Received last part of segmented message with SeqZero = \(seqZero.hexString()), reassembling.")
-                let (ackData, delay) = self.acknowlegde(withSeqZero: seqZero, segN: segN, segO: segO, dst: aSRC, startTime: segAcknowledgeStartTime!)
+                if segmentedMessageAcknowledge != nil {
+                    if segN == Data([0x00]) {
+                        segAcknowledgeStartTime = DispatchTime.now()
+                        print("Segmetned timer start at \(segAcknowledgeStartTime!)")
+                    }
+                }
+                print("received last part \(segO.hexString()) of \(segN.hexString()), SeqZero = \(seqZero.hexString()), reassembling")
+                let (ackData, delay) = self.acknowlegde(withSeqZero: seqZero, segN: segN, segO: segO, dst: aSRC, ttl: aTTL, startTime: segAcknowledgeStartTime!)
                 segmentedMessageAcknowledge?(ackData, delay)
                 segAcknowledgeStartTime = nil //Reset timer
                 var fullData = Data()
@@ -69,7 +86,6 @@ public struct LowerTransportLayer {
                     fullData.append(aPart)
                 }
                 partialIncomingPDU!.removeAll()
-
                 let upperLayer = UpperTransportLayer(withIncomingPDU: fullData, ctl: ctl, akf: isAppKey, aid: aid, seq: sequenceNumber, src: aSRC, dst: aDST, szMIC: Int(szMIC[0]), ivIndex: anIVIndex, andMeshState: meshStateManager!)
 
                 //Return a parsed message
@@ -78,9 +94,10 @@ public struct LowerTransportLayer {
         }
         return nil
     }
-    public func acknowlegde(withSeqZero seqZero: Data, segN: Data, segO: Data, dst: Data, startTime: DispatchTime) -> (Data, DispatchTime) {
+
+    public func acknowlegde(withSeqZero seqZero: Data, segN: Data, segO: Data, dst: Data, ttl aTTL: Data, startTime: DispatchTime) -> (Data, DispatchTime) {
         let aState = meshStateManager!.state()
-        let delay = startTime - DispatchTimeInterval.milliseconds(150 + (50 * 7))
+        let delay = startTime + DispatchTimeInterval.milliseconds(150 + (50 * 7))
         var block : UInt32 = 0x00000000
         for _ in 0...segN[0] {
             block = (block << 1) + 0x01
@@ -94,14 +111,15 @@ public struct LowerTransportLayer {
         //First bit of octet 1 is 0 OBO is not implenented yet.
         var payload = Data([UInt8((seqZero[0] & 0x1F) << 2) | UInt8((seqZero[1] & 0xC0) >> 6),
                             UInt8(seqZero[1] << 2)])
-        payload.append(blockData)
+        payload.append(Data(blockData))
         let opcode  = Data([0x00]) //Segment ACK Opcode
         let ackMessage = ControlMessagePDU(withPayload: payload, opcode: opcode, netKey: aState.netKey, seq: SequenceNumber(), ivIndex: aState.IVIndex, source: aState.unicastAddress, andDst: dst)
         var ackData = Data([0x00]) //Network PDU
         let networkPDU = ackMessage.assembleNetworkPDU()!.first!
-        ackData.append(networkPDU)
-        return (ackData, delay)
+        ackData.append(Data(networkPDU))
+        return (Data(ackData), delay)
     }
+
     public init(withParams someParams: LowerTransportPDUParams) {
         params = someParams
     }
@@ -113,13 +131,13 @@ public struct LowerTransportLayer {
             } else {
                 return [createUnsegmentedControlMessage()]
             }
-   } else {
+        } else {
             if isSegmented() {
                 return createSegmentedAccessMessage()
             } else {
                 return [createUnsegmentedAccessMessasge()]
             }
-    }
+        }
    }
 
     // MARK: - Segmentation
@@ -131,20 +149,18 @@ public struct LowerTransportLayer {
             //APP Key Flag is set, use AFK and AID from upper transport
             let aid : UInt8 = params.aid[0]
             let header = 0x40 | aid //0x40 == 0100 0000
-            headerByte.append(header)
+            headerByte.append(Data([header]))
         } else {
             //No APP key used, first octet will be 0x00
-            headerByte.append(0x00)
+            headerByte.append(Data([0x00]))
         }
-   lowerData.append(headerByte)
-        lowerData.append(params.upperTransportData)
+        lowerData.append(Data(headerByte))
+        lowerData.append(Data(params.upperTransportData))
         return lowerData
     }
 
     private func createSegmentedAccessMessage() -> [Data] {
-        
         var chunkedData = [Data]()
-        
         let chunkSize   = 12 //12 bytes is the max
         let chunkRanges = calculateDataRanges(params.upperTransportData, withSize: chunkSize)
 
@@ -154,46 +170,43 @@ public struct LowerTransportLayer {
                 //APP Key flag is set, use AFK and AID from upper transport
                 //Octet 0 is 11xx xxx == where xx xxx is AID
                 let header = 0xC0 | params.aid[0]
-                headerByte.append(header)
+                headerByte.append(Data([header]))
             } else {
                 //No Appkey used, Octet 0 is 1000 0000 == 0x80
-                headerByte.append(0x80)
+                headerByte.append(Data([0x80]))
             }
-       var currentChunk = Data()
+            var currentChunk = Data()
             let segO = UInt8(chunkRanges.index(of: aChunkRange)!)
             let segN = UInt8(chunkRanges.count - 1) //0 index
-            var bytes: UInt8 =  (params.szMIC[0] << 7 ) | ((params.sequenceNumber.sequenceData()[1] << 2) & 0x7F) | (params.sequenceNumber.sequenceData()[2] >> 6)
-            headerByte.append(bytes)
+            var bytes: UInt8 = (params.szMIC[0] << 7 ) | ((params.sequenceNumber.sequenceData()[1] << 2) & 0x7F) | (params.sequenceNumber.sequenceData()[2] >> 6)
+            headerByte.append(Data([bytes]))
             bytes = (params.sequenceNumber.sequenceData()[2] << 2) | (segO >> 6)
-            headerByte.append(bytes)
+            headerByte.append(Data([bytes]))
             bytes = (segO << 5) | (segN & 0x1F)
-            headerByte.append(bytes)
+            headerByte.append(Data([bytes]))
             //Append header
-            currentChunk.append(headerByte)
+            currentChunk.append(Data(headerByte))
             //Then append current chunk
-            currentChunk.append(params.upperTransportData.subdata(in: aChunkRange))
-            chunkedData.append(currentChunk)
+            currentChunk.append(Data(params.upperTransportData.subdata(in: aChunkRange)))
+            chunkedData.append(Data(currentChunk))
         }
-   return chunkedData
+        return chunkedData
     }
 
     private func createUnsegmentedControlMessage() -> Data {
         var pdu = Data()
         pdu.append(Data([0x7F & params.opcode[0]]))
-        pdu.append(params.upperTransportData)
+        pdu.append(Data(params.upperTransportData))
         return pdu
     }
 
     private func createSegmentedControlMessage() -> [Data] {
         var chunkedData = [Data]()
-        
         let chunkSize   = 8 //8 bytes is the max for control messages
         let chunkRanges = calculateDataRanges(params.upperTransportData, withSize: chunkSize)
-        
         for aChunkRange in chunkRanges {
             var headerByte  = Data()
             headerByte.append(0x80 | (params.opcode[0] & 0x7F))
-            
             var currentChunk = Data()
             let segO = UInt8(chunkRanges.index(of: aChunkRange)!)
             let segN = UInt8(chunkRanges.count - 1) //0 index
@@ -222,7 +235,6 @@ public struct LowerTransportLayer {
     private func calculateDataRanges(_ someData: Data, withSize aChunkSize: Int) -> [Range<Int>] {
         var totalLength = someData.count
         var ranges = [Range<Int>]()
-        
         var partIdx = 0
         while (totalLength > 0) {
             var range : Range<Int>
@@ -236,7 +248,6 @@ public struct LowerTransportLayer {
             ranges.append(range)
             partIdx += 1
         }
-   
         return ranges
     }
 }

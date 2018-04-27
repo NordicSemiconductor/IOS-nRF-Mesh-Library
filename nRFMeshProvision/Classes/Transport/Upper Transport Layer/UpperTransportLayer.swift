@@ -35,7 +35,7 @@ public struct UpperTransportLayer {
             let mic = aPDU[aPDU.count - micLen..<aPDU.count]
             if deviceKey != nil { //TODO: This check should not be needed
                 if let decryptedData = sslHelper.calculateDecryptedCCM(pduData, withKey: deviceKey!, nonce: deviceNonce.data, dataSize: dataSize, andMIC: mic) {
-                    decryptedPayload = decryptedData
+                    decryptedPayload = Data(decryptedData)
                 } else {
                     print("Decryption failed")
                 }
