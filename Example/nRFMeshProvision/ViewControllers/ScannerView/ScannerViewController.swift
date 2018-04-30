@@ -96,7 +96,7 @@ class ScannerViewController: UITableViewController, CBCentralManagerDelegate {
         guard discoveredNodes.contains(newNode) == false else {
             return
         }
-   discoveredNodes.append(newNode)
+        discoveredNodes.append(newNode)
         tableView.reloadData()
     }
 
