@@ -74,7 +74,7 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
         let appKey = meshstateManager.state().appKeys[Int(anAppKeyIndex)]
         let selectedAppKeyName = appKey.keys.first!
         if !keyFound {
-            showAppKeyAlert(withTitle: "AppKey is not available",
+            showstatusCodeAlert(withTitle: "AppKey is not available",
                             andMessage: "\"\(selectedAppKeyName)\" has not been added to this node's AppKey list and cannot be bound to this model.")
         } else {
             let elementIdx = selectedModelIndexPath.section
@@ -91,7 +91,40 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
         navigationController?.popViewController(animated: true)
     }
 
-    public func showAppKeyAlert(withTitle aTitle: String, andMessage aMessage: String) {
+    public func handleAlertForStatusCode(_ aStatusCode: MessageStatusCodes) {
+        switch aStatusCode {
+        case .invalidPublishParameters:
+            showstatusCodeAlert(withTitle: "Invalid Publish Parameters", andMessage: "The node has reported the publish parameters are invalid")
+        case .cannotBind:
+            showstatusCodeAlert(withTitle: "Cannot Bind", andMessage: "This model cannot be bound to an AppKey")
+        case .featureNotSupported:
+            showstatusCodeAlert(withTitle: "Not supported", andMessage: "This feature not supported")
+        case .invalidAdderss:
+            showstatusCodeAlert(withTitle: "Invalid Address", andMessage: "Node reported invalid address.")
+        case .invalidAppKeyIndex:
+            showstatusCodeAlert(withTitle: "Invalid AppKey Index", andMessage: "Node reported this AppKey index as invalid")
+        case .invalidBinding:
+            showstatusCodeAlert(withTitle: "Invalid binding", andMessage: "Node reported this Binding as invalid")
+        case .invalidModel:
+            showstatusCodeAlert(withTitle: "Invalid model", andMessage: "Node reported this model as invalid")
+        case .invalidNetKeyIndex:
+            showstatusCodeAlert(withTitle: "Invalid NetKey Index", andMessage: "Node reported NetKey as invalid")
+        case .unspecifiedError:
+            showstatusCodeAlert(withTitle: "Unspecified Error", andMessage: "Node has reported an unspecified error")
+        case .insufficientResources:
+            showstatusCodeAlert(withTitle: "Insufficient resources", andMessage: "Node has reported insufficient resources")
+        case .cannotRemove:
+            showstatusCodeAlert(withTitle: "Cannot remove", andMessage: "Node has reported it cannot remove this item")
+        case .cannotSet:
+            showstatusCodeAlert(withTitle: "Cannot set", andMessage: "Node has reported it cannot set this item")
+        case .cannotUpdate:
+            showstatusCodeAlert(withTitle: "Cannot update", andMessage: "Node has reported it cannot update this item")
+        default:
+            showstatusCodeAlert(withTitle: "Error", andMessage: "An error has occured, error code: \(aStatusCode.rawValue)")
+        }
+    }
+
+    public func showstatusCodeAlert(withTitle aTitle: String, andMessage aMessage: String) {
         let alert = UIAlertController(title: aTitle,
                           message: aMessage,
                           preferredStyle: .alert)
@@ -184,26 +217,7 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
             }
             tableView.reloadData()
         } else {
-            switch modelAppStatusData.statusCode {
-            case .cannotBind:
-                showAppKeyAlert(withTitle: "Cannot Bind", andMessage: "This model cannot be bound to an AppKey")
-            case .featureNotSupported:
-                showAppKeyAlert(withTitle: "Not supported", andMessage: "This feature not supported")
-            case .invalidAdderss:
-                showAppKeyAlert(withTitle: "Invalid Address", andMessage: "Node reported invalid address.")
-            case .invalidAppKeyIndex:
-                showAppKeyAlert(withTitle: "Invalid AppKey Index", andMessage: "Node reported this AppKey index as invalid")
-            case .invalidBinding:
-                showAppKeyAlert(withTitle: "Invalid binding", andMessage: "Node reported this Binding as invalid")
-            case .invalidModel:
-                showAppKeyAlert(withTitle: "Invalid model", andMessage: "Node reported this model as invalid")
-            case .invalidNetKeyIndex:
-                showAppKeyAlert(withTitle: "Invalid NetKey Index", andMessage: "Node reported NetKey as invalid")
-            case .unspecifiedError:
-                showAppKeyAlert(withTitle: "Unspecified Error", andMessage: "Node has reported an unspecified error")
-            default:
-                showAppKeyAlert(withTitle: "Error", andMessage: "An error has occured, error code: \(modelAppStatusData.statusCode.rawValue)")
-            }
+            handleAlertForStatusCode(modelAppStatusData.statusCode)
             print("Failed. Status code: \(modelAppStatusData.statusCode)")
         }
 
@@ -237,36 +251,7 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
             }
             tableView.reloadData()
         } else {
-            switch modelPublicationStatusData.statusCode {
-            case .invalidPublishParameters:
-                showAppKeyAlert(withTitle: "Invalid Publish Parameters", andMessage: "The node has reported the publish parameters are invalid")
-            case .cannotBind:
-                showAppKeyAlert(withTitle: "Cannot Bind", andMessage: "This model cannot be bound to an AppKey")
-            case .featureNotSupported:
-                showAppKeyAlert(withTitle: "Not supported", andMessage: "This feature not supported")
-            case .invalidAdderss:
-                showAppKeyAlert(withTitle: "Invalid Address", andMessage: "Node reported invalid address.")
-            case .invalidAppKeyIndex:
-                showAppKeyAlert(withTitle: "Invalid AppKey Index", andMessage: "Node reported this AppKey index as invalid")
-            case .invalidBinding:
-                showAppKeyAlert(withTitle: "Invalid binding", andMessage: "Node reported this Binding as invalid")
-            case .invalidModel:
-                showAppKeyAlert(withTitle: "Invalid model", andMessage: "Node reported this model as invalid")
-            case .invalidNetKeyIndex:
-                showAppKeyAlert(withTitle: "Invalid NetKey Index", andMessage: "Node reported NetKey as invalid")
-            case .unspecifiedError:
-                showAppKeyAlert(withTitle: "Unspecified Error", andMessage: "Node has reported an unspecified error")
-            case .insufficientResources:
-                showAppKeyAlert(withTitle: "Insufficient resources", andMessage: "Node has reported insufficient resources")
-            case .cannotRemove:
-                showAppKeyAlert(withTitle: "Cannot remove", andMessage: "Node has reported it cannot remove this item")
-            case .cannotSet:
-                showAppKeyAlert(withTitle: "Cannot set", andMessage: "Node has reported it cannot set this item")
-            case .cannotUpdate:
-                showAppKeyAlert(withTitle: "Cannot update", andMessage: "Node has reported it cannot update this item")
-            default:
-                showAppKeyAlert(withTitle: "Error", andMessage: "An error has occured, error code: \(modelPublicationStatusData.statusCode.rawValue)")
-            }
+            handleAlertForStatusCode(modelPublicationStatusData.statusCode)
             print("Failed. Status code: \(modelPublicationStatusData.statusCode)")
         }
     }
@@ -302,36 +287,7 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
             }
             tableView.reloadData()
         } else {
-            switch modelSubscriptionStatusData.statusCode {
-            case .invalidPublishParameters:
-                showAppKeyAlert(withTitle: "Invalid Publish Parameters", andMessage: "The node has reported the publish parameters are invalid")
-            case .cannotBind:
-                showAppKeyAlert(withTitle: "Cannot Bind", andMessage: "This model cannot be bound to an AppKey")
-            case .featureNotSupported:
-                showAppKeyAlert(withTitle: "Not supported", andMessage: "This feature not supported")
-            case .invalidAdderss:
-                showAppKeyAlert(withTitle: "Invalid Address", andMessage: "Node reported invalid address.")
-            case .invalidAppKeyIndex:
-                showAppKeyAlert(withTitle: "Invalid AppKey Index", andMessage: "Node reported this AppKey index as invalid")
-            case .invalidBinding:
-                showAppKeyAlert(withTitle: "Invalid binding", andMessage: "Node reported this Binding as invalid")
-            case .invalidModel:
-                showAppKeyAlert(withTitle: "Invalid model", andMessage: "Node reported this model as invalid")
-            case .invalidNetKeyIndex:
-                showAppKeyAlert(withTitle: "Invalid NetKey Index", andMessage: "Node reported NetKey as invalid")
-            case .unspecifiedError:
-                showAppKeyAlert(withTitle: "Unspecified Error", andMessage: "Node has reported an unspecified error")
-            case .insufficientResources:
-                showAppKeyAlert(withTitle: "Insufficient resources", andMessage: "Node has reported insufficient resources")
-            case .cannotRemove:
-                showAppKeyAlert(withTitle: "Cannot remove", andMessage: "Node has reported it cannot remove this item")
-            case .cannotSet:
-                showAppKeyAlert(withTitle: "Cannot set", andMessage: "Node has reported it cannot set this item")
-            case .cannotUpdate:
-                showAppKeyAlert(withTitle: "Cannot update", andMessage: "Node has reported it cannot update this item")
-            default:
-                showAppKeyAlert(withTitle: "Error", andMessage: "An error has occured, error code: \(modelSubscriptionStatusData.statusCode.rawValue)")
-            }
+            handleAlertForStatusCode(modelSubscriptionStatusData.statusCode)
             print("Failed. Status code: \(modelSubscriptionStatusData.statusCode)")
         }
     }
@@ -447,20 +403,22 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
         case 0:
             self.performSegue(withIdentifier: "ShowAppKeyBindingView", sender: indexPath.row)
         case 1:
-            //self.performSegue(withIdentifier: "ShowPublishGroupsView", sender: indexPath.row)
             self.presentInputAlert { (anAddressString) in
                 guard  anAddressString != nil else {
                     return
                 }
-                self.didSelectPublishAddress(Data(hexString: anAddressString!)!)
+                if let addressData = Data(hexString: anAddressString!) {
+                    self.didSelectPublishAddress(addressData)
+                }
             }
         case 2:
-//            self.performSegue(withIdentifier: "ShowSubscribeGroupsView", sender: indexPath.row)
             self.presentInputAlert { (anAddressString) in
                 guard  anAddressString != nil else {
                     return
                 }
-                self.didSelectSubscriptionAddress(Data(hexString: anAddressString!)!)
+                if let addressData = Data(hexString: anAddressString!) {
+                    self.didSelectSubscriptionAddress(addressData)
+                }
             }
         default:
             break
