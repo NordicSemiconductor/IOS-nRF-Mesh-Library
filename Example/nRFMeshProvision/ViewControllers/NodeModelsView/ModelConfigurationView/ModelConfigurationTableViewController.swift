@@ -30,6 +30,19 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
         targetNode.delegate = self
     }
 
+    public func didSelectSubscriptionAddress(_ anAddress: Data) {
+        let elementIdx = selectedModelIndexPath.section
+        let modelIdx = selectedModelIndexPath.row
+        let aModel = nodeEntry.elements![elementIdx].allSigAndVendorModels()[modelIdx]
+        let unicast = nodeEntry.nodeUnicast!
+        let elementAddress = Data([unicast[0], unicast[1] + UInt8(elementIdx)])
+
+        targetNode.nodeSubscriptionAddressAdd(anAddress,
+                                              onElementAddress: elementAddress,
+                                              modelIdentifier: aModel,
+                                              onDestinationAddress: nodeEntry.nodeUnicast!)
+    }
+
     public func didSelectPublishAddress(_ anAddress: Data) {
         let elementIdx = selectedModelIndexPath.section
         let modelIdx = selectedModelIndexPath.row
@@ -202,6 +215,7 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
     func receivedModelPublicationStatus(_ modelPublicationStatusData: ModelPublicationStatusMessage) {
         if modelPublicationStatusData.statusCode == .success {
             print("Publication address set!")
+            print("Publication address: \(modelPublicationStatusData.publishAddress.hexString())")
             print("AppKeyIndex: \(modelPublicationStatusData.appKeyIndex.hexString())")
             print("Element Addr: \(modelPublicationStatusData.elementAddress.hexString())")
             print("ModelIdentifier: \(modelPublicationStatusData.modelIdentifier.hexString())")
@@ -250,6 +264,7 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
     func receivedModelSubsrciptionStatus(_ modelSubscriptionStatusData: ModelSubscriptionStatusMessage) {
         if modelSubscriptionStatusData.statusCode == .success {
             print("Subscription address set!")
+            print("Subscription Address: \(modelSubscriptionStatusData.subscriptionAddress.hexString())")
             print("Element Addr: \(modelSubscriptionStatusData.elementAddress.hexString())")
             print("ModelIdentifier: \(modelSubscriptionStatusData.modelIdentifier.hexString())")
             print("Source addr: \(modelSubscriptionStatusData.sourceAddress.hexString())")
@@ -263,8 +278,13 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
             if let anIndex = state.provisionedNodes.index(where: { $0.nodeId == nodeEntry.nodeId}) {
                 let aNodeEntry = state.provisionedNodes[anIndex]
                 state.provisionedNodes.remove(at: anIndex)
-                if aNodeEntry.modelSubscriptionAddresses[aModel]?.contains(modelSubscriptionStatusData.subscriptionAddress) == false {
+                if aNodeEntry.modelSubscriptionAddresses[aModel] == nil {
+                   aNodeEntry.modelSubscriptionAddresses[aModel] = [Data]()
                    aNodeEntry.modelSubscriptionAddresses[aModel]?.append(modelSubscriptionStatusData.subscriptionAddress)
+                } else {
+                    if aNodeEntry.modelSubscriptionAddresses[aModel]?.contains(modelSubscriptionStatusData.subscriptionAddress) == false {
+                        aNodeEntry.modelSubscriptionAddresses[aModel]?.append(modelSubscriptionStatusData.subscriptionAddress)
+                    }
                 }
                 //and update
                 state.provisionedNodes.append(aNodeEntry)
@@ -273,6 +293,8 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
             tableView.reloadData()
         } else {
             switch modelSubscriptionStatusData.statusCode {
+            case .invalidPublishParameters:
+                showAppKeyAlert(withTitle: "Invalid Publish Parameters", andMessage: "The node has reported the publish parameters are invalid")
             case .cannotBind:
                 showAppKeyAlert(withTitle: "Cannot Bind", andMessage: "This model cannot be bound to an AppKey")
             case .featureNotSupported:
@@ -289,6 +311,14 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
                 showAppKeyAlert(withTitle: "Invalid NetKey Index", andMessage: "Node reported NetKey as invalid")
             case .unspecifiedError:
                 showAppKeyAlert(withTitle: "Unspecified Error", andMessage: "Node has reported an unspecified error")
+            case .insufficientResources:
+                showAppKeyAlert(withTitle: "Insufficient resources", andMessage: "Node has reported insufficient resources")
+            case .cannotRemove:
+                showAppKeyAlert(withTitle: "Cannot remove", andMessage: "Node has reported it cannot remove this item")
+            case .cannotSet:
+                showAppKeyAlert(withTitle: "Cannot set", andMessage: "Node has reported it cannot set this item")
+            case .cannotUpdate:
+                showAppKeyAlert(withTitle: "Cannot update", andMessage: "Node has reported it cannot update this item")
             default:
                 showAppKeyAlert(withTitle: "Error", andMessage: "An error has occured, error code: \(modelSubscriptionStatusData.statusCode.rawValue)")
             }
@@ -323,7 +353,17 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
         case 1:
             return 1
         case 2:
-            return 1
+            //Get number of subscription addresses to render
+            if let element = nodeEntry.elements?[selectedModelIndexPath.section] {
+                let targetModel = element.allSigAndVendorModels()[selectedModelIndexPath.row]
+                if let addressses = nodeEntry.modelSubscriptionAddresses[targetModel] {
+                    return addressses.count
+                } else {
+                    return 1
+                }
+            } else {
+                return 1
+            }
         default:
             return 0
         }
@@ -369,16 +409,23 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
         }
         
         if indexPath.section == 2 {
-            aCell.textLabel?.text = "Not implemented yet"
+            if let element = nodeEntry.elements?[selectedModelIndexPath.section] {
+                let targetModel = element.allSigAndVendorModels()[selectedModelIndexPath.row]
+                if let addressses = nodeEntry.modelSubscriptionAddresses[targetModel] {
+                    if addressses.count > 0 {
+                        aCell.textLabel?.text = addressses[indexPath.row].hexString()
+                    } else {
+                        //We Show one informative row
+                        aCell.textLabel?.text = "No Subscription Address set"
+                    }
+                } else {
+                    aCell.textLabel?.text = "No Subscription Address set"
+                }
+            }
             return aCell
         }
 
         return aCell
-    }
-
-    override func tableView(_ tableView: UITableView, shouldHighlightRowAt indexPath: IndexPath) -> Bool {
-        //Only last section (Subscription groups) is not implemented yet
-        return indexPath.section != 2
     }
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -395,8 +442,13 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
                 self.didSelectPublishAddress(Data(hexString: anAddressString!)!)
             }
         case 2:
-            break
-            //self.performSegue(withIdentifier: "ShowSubscribeGroupsView", sender: indexPath.row)
+//            self.performSegue(withIdentifier: "ShowSubscribeGroupsView", sender: indexPath.row)
+            self.presentInputAlert { (anAddressString) in
+                guard  anAddressString != nil else {
+                    return
+                }
+                self.didSelectSubscriptionAddress(Data(hexString: anAddressString!)!)
+            }
         default:
             break
         }
