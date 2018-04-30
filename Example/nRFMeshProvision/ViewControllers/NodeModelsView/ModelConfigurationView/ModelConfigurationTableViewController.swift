@@ -247,6 +247,55 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
         }
     }
 
+    func receivedModelSubsrciptionStatus(_ modelSubscriptionStatusData: ModelSubscriptionStatusMessage) {
+        if modelSubscriptionStatusData.statusCode == .success {
+            print("Subscription address set!")
+            print("Element Addr: \(modelSubscriptionStatusData.elementAddress.hexString())")
+            print("ModelIdentifier: \(modelSubscriptionStatusData.modelIdentifier.hexString())")
+            print("Source addr: \(modelSubscriptionStatusData.sourceAddress.hexString())")
+            print("Status code: \(modelSubscriptionStatusData.statusCode)")
+            
+            // Update state with configured key
+            let elementIdx = selectedModelIndexPath.section
+            let modelIdx = selectedModelIndexPath.row
+            let aModel = nodeEntry.elements![elementIdx].allSigAndVendorModels()[modelIdx]
+            let state = meshstateManager.state()
+            if let anIndex = state.provisionedNodes.index(where: { $0.nodeId == nodeEntry.nodeId}) {
+                let aNodeEntry = state.provisionedNodes[anIndex]
+                state.provisionedNodes.remove(at: anIndex)
+                if aNodeEntry.modelSubscriptionAddresses[aModel]?.contains(modelSubscriptionStatusData.subscriptionAddress) == false {
+                   aNodeEntry.modelSubscriptionAddresses[aModel]?.append(modelSubscriptionStatusData.subscriptionAddress)
+                }
+                //and update
+                state.provisionedNodes.append(aNodeEntry)
+                meshstateManager.saveState()
+            }
+            tableView.reloadData()
+        } else {
+            switch modelSubscriptionStatusData.statusCode {
+            case .cannotBind:
+                showAppKeyAlert(withTitle: "Cannot Bind", andMessage: "This model cannot be bound to an AppKey")
+            case .featureNotSupported:
+                showAppKeyAlert(withTitle: "Not supported", andMessage: "This feature not supported")
+            case .invalidAdderss:
+                showAppKeyAlert(withTitle: "Invalid Address", andMessage: "Node reported invalid address.")
+            case .invalidAppKeyIndex:
+                showAppKeyAlert(withTitle: "Invalid AppKey Index", andMessage: "Node reported this AppKey index as invalid")
+            case .invalidBinding:
+                showAppKeyAlert(withTitle: "Invalid binding", andMessage: "Node reported this Binding as invalid")
+            case .invalidModel:
+                showAppKeyAlert(withTitle: "Invalid model", andMessage: "Node reported this model as invalid")
+            case .invalidNetKeyIndex:
+                showAppKeyAlert(withTitle: "Invalid NetKey Index", andMessage: "Node reported NetKey as invalid")
+            case .unspecifiedError:
+                showAppKeyAlert(withTitle: "Unspecified Error", andMessage: "Node has reported an unspecified error")
+            default:
+                showAppKeyAlert(withTitle: "Error", andMessage: "An error has occured, error code: \(modelSubscriptionStatusData.statusCode.rawValue)")
+            }
+            print("Failed. Status code: \(modelSubscriptionStatusData.statusCode)")
+        }
+    }
+
     func configurationSucceeded() {
         //noop
     }

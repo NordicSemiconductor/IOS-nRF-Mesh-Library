@@ -210,6 +210,10 @@ ProvisionedMeshNodeDelegate, ProvisionedMeshNodeLoggingDelegate {
         //NOOP
     }
 
+    func receivedModelSubsrciptionStatus(_ modelSubscriptionStatusData: ModelSubscriptionStatusMessage) {
+        //NOOP
+    }
+
     func configurationSucceeded() {
         logEventWithMessage("Configuration completed!")
         (self.navigationController!.viewControllers[0] as? MainTabBarViewController)?.targetProxyNode = targetProvisionedNode
