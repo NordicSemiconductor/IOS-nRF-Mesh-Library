@@ -14,5 +14,6 @@ public protocol ProvisionedMeshNodeDelegate {
     func receivedAppKeyStatusData(_ appKeyStatusData: AppKeyStatusMessage)
     func receivedModelAppBindStatus(_ modelAppStatusData: ModelAppBindStatusMessage)
     func receivedModelPublicationStatus(_ modelPublicationStatusData: ModelPublicationStatusMessage)
+    func receivedModelSubsrciptionStatus(_ modelSubscriptionStatusData: ModelSubscriptionStatusMessage)
     func configurationSucceeded()
 }

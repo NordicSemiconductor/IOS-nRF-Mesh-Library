@@ -33,6 +33,9 @@
 		30D40F9920849C4A00DC126F /* CompanyIdentifiers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30D40F9820849C4A00DC126F /* CompanyIdentifiers.swift */; };
 		30FF5ED8209314DA002D7C77 /* DefaultTTLGetMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30FF5ED7209314DA002D7C77 /* DefaultTTLGetMessage.swift */; };
 		30FF5EDA20931587002D7C77 /* DefaultTTLGetConfiguratorState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30FF5ED920931587002D7C77 /* DefaultTTLGetConfiguratorState.swift */; };
+		30FF5EE22096F4E7002D7C77 /* ModelSubscriptionAddConfiguratorState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30FF5EE12096F4E6002D7C77 /* ModelSubscriptionAddConfiguratorState.swift */; };
+		30FF5EE42096F52D002D7C77 /* ModelSubscriptionAddMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30FF5EE32096F52D002D7C77 /* ModelSubscriptionAddMessage.swift */; };
+		30FF5EE62096F7A6002D7C77 /* ModelSubscriptionStatusMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30FF5EE52096F7A6002D7C77 /* ModelSubscriptionStatusMessage.swift */; };
 		32F4A650C11D581F50F1C04437EBA6A7 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 93972F6957789C9E8A0EFA25275C82D1 /* Foundation.framework */; };
 		35304939BAC356B98D33C2FD8FF3033B /* LowerTransportPDUParams.swift in Sources */ = {isa = PBXBuildFile; fileRef = 717AE9407031C7B2A506444276B65C58 /* LowerTransportPDUParams.swift */; };
 		3AE15C3450EEAE497500156AF4B1C428 /* CompositionElement.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BE8FB861139283C753A8A8C3E6E3F73 /* CompositionElement.swift */; };
@@ -147,6 +150,9 @@
 		30D40F9820849C4A00DC126F /* CompanyIdentifiers.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CompanyIdentifiers.swift; sourceTree = "<group>"; };
 		30FF5ED7209314DA002D7C77 /* DefaultTTLGetMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultTTLGetMessage.swift; sourceTree = "<group>"; };
 		30FF5ED920931587002D7C77 /* DefaultTTLGetConfiguratorState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultTTLGetConfiguratorState.swift; sourceTree = "<group>"; };
+		30FF5EE12096F4E6002D7C77 /* ModelSubscriptionAddConfiguratorState.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ModelSubscriptionAddConfiguratorState.swift; sourceTree = "<group>"; };
+		30FF5EE32096F52D002D7C77 /* ModelSubscriptionAddMessage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ModelSubscriptionAddMessage.swift; sourceTree = "<group>"; };
+		30FF5EE52096F7A6002D7C77 /* ModelSubscriptionStatusMessage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ModelSubscriptionStatusMessage.swift; sourceTree = "<group>"; };
 		318B21D3C09027B98FF8F0C00493237E /* dtls1.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = dtls1.h; path = opensslIncludes/openssl/dtls1.h; sourceTree = "<group>"; };
 		33A14F6D5A6F0C6E186D4171A085D0AC /* Pods-nRFMeshProvision_Tests-acknowledgements.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-nRFMeshProvision_Tests-acknowledgements.plist"; sourceTree = "<group>"; };
 		35838742BE205531ABE0B5522DEA4F54 /* AccessMessageParser.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AccessMessageParser.swift; sourceTree = "<group>"; };
@@ -333,6 +339,7 @@
 				99596FCB06E843CC0AA79B4D70FB7E8E /* SleepConfiguratorState.swift */,
 				30D40F832080D83100DC126F /* ModelAppBindConfiguratorState.swift */,
 				30686AF120876EB200DBEEA2 /* ModelPublicationSetConfiguratorState.swift */,
+				30FF5EE12096F4E6002D7C77 /* ModelSubscriptionAddConfiguratorState.swift */,
 				30FF5ED920931587002D7C77 /* DefaultTTLGetConfiguratorState.swift */,
 			);
 			path = ConfiguratorStates;
@@ -510,6 +517,8 @@
 				22BFE153E0F8B9CAADFDC2DE05491336 /* CompositionStatusMessage.swift */,
 				30D40F812080CBDB00DC126F /* ModelAppBindMessage.swift */,
 				30D40F8C2080DEE600DC126F /* ModelAppBindStatusMessage.swift */,
+				30FF5EE32096F52D002D7C77 /* ModelSubscriptionAddMessage.swift */,
+				30FF5EE52096F7A6002D7C77 /* ModelSubscriptionStatusMessage.swift */,
 				30686AEF2087635400DBEEA2 /* ModelPublicationSetMessage.swift */,
 				30686AF3208771A600DBEEA2 /* ModelPublicationStatusMessage.swift */,
 				30FF5ED7209314DA002D7C77 /* DefaultTTLGetMessage.swift */,
@@ -886,8 +895,10 @@
 			files = (
 				E4A6D950ABFD7153CAD5C74878F966F1 /* AccessMessageParser.swift in Sources */,
 				9F221F9B88A4364E341B8FA54465AAE1 /* AccessMessagePDU.swift in Sources */,
+				30FF5EE22096F4E7002D7C77 /* ModelSubscriptionAddConfiguratorState.swift in Sources */,
 				BA9B1BC0D4091AA2F7A9276B27431503 /* AppKeyAddConfiguratorState.swift in Sources */,
 				30D40F822080CBDB00DC126F /* ModelAppBindMessage.swift in Sources */,
+				30FF5EE62096F7A6002D7C77 /* ModelSubscriptionStatusMessage.swift in Sources */,
 				30FF5EDA20931587002D7C77 /* DefaultTTLGetConfiguratorState.swift in Sources */,
 				81971491D4A3F1B9708BA4181710CB07 /* AppKeyAddMessage.swift in Sources */,
 				F04EABF143487B7694AAC802789EFDCA /* AppKeyStatusMessage.swift in Sources */,
@@ -903,6 +914,7 @@
 				EF70232229D6D05D7F8B6821D8F9DBDB /* CompositionStatusMessage.swift in Sources */,
 				01BEE8B0206D8EC264C627E031B3408D /* ConfiguratorStateProtocol.swift in Sources */,
 				19B7337BA54445F77E2DB29F49F3BF69 /* ConfirmationProvisioningState.swift in Sources */,
+				30FF5EE42096F52D002D7C77 /* ModelSubscriptionAddMessage.swift in Sources */,
 				30D40F922084876100DC126F /* MeshModelIdentifiers.swift in Sources */,
 				B4A59EB76419E07DFB365B0ACB7AAC1B /* ControlMessagePDU.swift in Sources */,
 				8E9B7087A3E60A98F98A66EEAD6CD7AC /* Data+utils.swift in Sources */,

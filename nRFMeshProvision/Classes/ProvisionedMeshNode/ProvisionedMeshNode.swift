@@ -68,6 +68,21 @@ public class ProvisionedMeshNode: NSObject, ProvisionedMeshNodeProtocol {
         delegate?.nodeDidCompleteDiscovery(self)
     }
 
+    public func nodeSubscriptionAddressAdd(_ aSubcriptionAddress: Data,
+                                           onElementAddress anElementAddress: Data,
+                                           modelIdentifier anIdentifier: Data,
+                                           onDestinationAddress anAddress: Data) {
+        let nodeSubscriptionState = ModelSubscriptionAddConfiguratorState(withTargetProxyNode: self,
+                                                                          destinationAddress: anAddress,
+                                                                          andStateManager: stateManager)
+        nodeSubscriptionState.setSubscription(elementAddress: anElementAddress,
+                                              subscriptionAddress: aSubcriptionAddress,
+                                              andModelIdentifier: anIdentifier)
+        
+        configurationState = nodeSubscriptionState
+        configurationState.execute()
+    }
+
     public func nodePublicationAddressSet(_ aPublicationAddress: Data,
                                   onElementAddress anElementAddress: Data,
                                   appKeyIndex anAppKeyIndex: Data,
