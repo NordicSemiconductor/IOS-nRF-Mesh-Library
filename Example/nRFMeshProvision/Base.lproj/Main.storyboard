@@ -13,34 +13,58 @@
         <scene sceneID="DKv-XJ-X0v">
             <objects>
                 <tableViewController storyboardIdentifier="ScannerView" title="Scanner" extendedLayoutIncludesOpaqueBars="YES" useStoryboardIdentifierAsRestorationIdentifier="YES" id="olZ-Yw-uFz" customClass="ScannerViewController" customModule="nRFMeshProvision_Example" customModuleProvider="target" sceneMemberID="viewController">
-                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="18" sectionFooterHeight="18" id="Jhb-Xw-mHf">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="default" rowHeight="79" estimatedRowHeight="-1" sectionHeaderHeight="18" sectionFooterHeight="18" id="Jhb-Xw-mHf">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
                         <prototypes>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" accessoryType="disclosureIndicator" indentationWidth="10" reuseIdentifier="peripheralCell" textLabel="oTj-rt-fh3" detailTextLabel="6JL-ke-7WK" style="IBUITableViewCellStyleValue1" id="YAc-Z1-MAZ">
-                                <rect key="frame" x="0.0" y="55.333333333333343" width="375" height="44"/>
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" accessoryType="disclosureIndicator" indentationWidth="10" reuseIdentifier="peripheralCell" rowHeight="79" id="YAc-Z1-MAZ" customClass="ScannerCell" customModule="nRFMeshProvision_Example" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="55.333333333333343" width="375" height="79"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="YAc-Z1-MAZ" id="4UX-cA-Qih">
-                                    <rect key="frame" x="0.0" y="0.0" width="341" height="43.666666666666664"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="341" height="78.666666666666671"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
-                                        <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Title" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="oTj-rt-fh3">
-                                            <rect key="frame" x="16.000000000000004" y="11.999999999999998" width="33.333333333333336" height="20.333333333333332"/>
-                                            <autoresizingMask key="autoresizingMask"/>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Node BLE Name" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="4ms-dY-18F">
+                                            <rect key="frame" x="47" y="16" width="125" height="21"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                             <nil key="textColor"/>
                                             <nil key="highlightedColor"/>
                                         </label>
-                                        <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Detail" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="6JL-ke-7WK">
-                                            <rect key="frame" x="298.33333333333331" y="12.999999999999998" width="41.666666666666664" height="19.333333333333332"/>
-                                            <autoresizingMask key="autoresizingMask"/>
-                                            <fontDescription key="fontDescription" type="system" pointSize="16"/>
-                                            <color key="textColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="RSSI" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="1td-Bz-qmw">
+                                            <rect key="frame" x="301" y="16" width="32" height="18"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                                            <nil key="textColor"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                        <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="ic_lan_36pt" translatesAutoresizingMaskIntoConstraints="NO" id="Dwa-YJ-IWR">
+                                            <rect key="frame" x="16" y="16" width="23" height="23"/>
+                                        </imageView>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Advertisement Data" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="pZ9-YT-bkU">
+                                            <rect key="frame" x="47" y="45" width="136" height="18"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                                            <color key="textColor" red="0.38034743069999999" green="0.38041785360000002" blue="0.38034299020000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                             <nil key="highlightedColor"/>
                                         </label>
                                     </subviews>
+                                    <constraints>
+                                        <constraint firstItem="4ms-dY-18F" firstAttribute="top" secondItem="4UX-cA-Qih" secondAttribute="top" constant="16" id="DHg-3h-YJH"/>
+                                        <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="pZ9-YT-bkU" secondAttribute="trailing" constant="16" id="MBZ-Fx-rt4"/>
+                                        <constraint firstItem="pZ9-YT-bkU" firstAttribute="leading" secondItem="4ms-dY-18F" secondAttribute="leading" id="Yf1-Af-Ixf"/>
+                                        <constraint firstItem="1td-Bz-qmw" firstAttribute="top" secondItem="4UX-cA-Qih" secondAttribute="top" constant="16" id="c1b-X3-bkv"/>
+                                        <constraint firstItem="Dwa-YJ-IWR" firstAttribute="top" secondItem="4UX-cA-Qih" secondAttribute="top" constant="16" id="h84-9m-Ofw"/>
+                                        <constraint firstItem="4ms-dY-18F" firstAttribute="leading" secondItem="Dwa-YJ-IWR" secondAttribute="trailing" constant="8" id="j7W-9Z-gSy"/>
+                                        <constraint firstItem="pZ9-YT-bkU" firstAttribute="top" secondItem="4ms-dY-18F" secondAttribute="bottom" constant="8" id="qJ4-sQ-X6x"/>
+                                        <constraint firstItem="1td-Bz-qmw" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="4ms-dY-18F" secondAttribute="trailing" constant="6" id="v8K-SS-JzG"/>
+                                        <constraint firstAttribute="trailing" secondItem="1td-Bz-qmw" secondAttribute="trailing" constant="8" id="wCB-FF-Xub"/>
+                                        <constraint firstItem="Dwa-YJ-IWR" firstAttribute="leading" secondItem="4UX-cA-Qih" secondAttribute="leading" constant="16" id="xnC-RX-mpE"/>
+                                    </constraints>
                                 </tableViewCellContentView>
+                                <connections>
+                                    <outlet property="advertisementDataLabel" destination="pZ9-YT-bkU" id="TE9-iJ-1I4"/>
+                                    <outlet property="nameLabel" destination="4ms-dY-18F" id="sB2-gQ-ILE"/>
+                                    <outlet property="rssiLabel" destination="1td-Bz-qmw" id="d0n-LB-go0"/>
+                                </connections>
                             </tableViewCell>
                         </prototypes>
                         <connections>
@@ -77,7 +101,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="4lj-gG-yI1" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-198" y="-1978"/>
+            <point key="canvasLocation" x="-199.19999999999999" y="-1978.0788177339903"/>
         </scene>
         <!--Settings-->
         <scene sceneID="sXh-6n-uHS">

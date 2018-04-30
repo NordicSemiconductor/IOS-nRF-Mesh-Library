@@ -29,6 +29,7 @@
 		30D40F902084808A00DC126F /* NodeModelsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30D40F8F2084808A00DC126F /* NodeModelsTableViewController.swift */; };
 		30D40F9720848DFC00DC126F /* ModelConfigurationTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30D40F9620848DFC00DC126F /* ModelConfigurationTableViewController.swift */; };
 		30EF9C32205FB3AA00253F1E /* NetworkDecryptionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30EF9C31205FB3AA00253F1E /* NetworkDecryptionTests.swift */; };
+		30FF5EEA20972672002D7C77 /* ScannerCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30FF5EE920972672002D7C77 /* ScannerCell.swift */; };
 		607FACD61AFB9204008FA782 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACD51AFB9204008FA782 /* AppDelegate.swift */; };
 		607FACDB1AFB9204008FA782 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 607FACD91AFB9204008FA782 /* Main.storyboard */; };
 		607FACDD1AFB9204008FA782 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 607FACDC1AFB9204008FA782 /* Images.xcassets */; };
@@ -72,6 +73,7 @@
 		30D40F8F2084808A00DC126F /* NodeModelsTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NodeModelsTableViewController.swift; sourceTree = "<group>"; };
 		30D40F9620848DFC00DC126F /* ModelConfigurationTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelConfigurationTableViewController.swift; sourceTree = "<group>"; };
 		30EF9C31205FB3AA00253F1E /* NetworkDecryptionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkDecryptionTests.swift; sourceTree = "<group>"; };
+		30FF5EE920972672002D7C77 /* ScannerCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScannerCell.swift; sourceTree = "<group>"; };
 		328E66A87C5B0A499473BBE3 /* Pods_nRFMeshProvision_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_nRFMeshProvision_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		4973E9CDA09CE2398E5C269A /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
 		5A51F9AF82598D8D5D40BD77 /* Pods_nRFMeshProvision_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_nRFMeshProvision_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -170,6 +172,7 @@
 			isa = PBXGroup;
 			children = (
 				304DAEAF208091EF006CFEA6 /* ScannerViewController.swift */,
+				30FF5EE920972672002D7C77 /* ScannerCell.swift */,
 			);
 			path = ScannerView;
 			sourceTree = "<group>";
@@ -554,6 +557,7 @@
 				304DAEBB208091EF006CFEA6 /* MeshNodeViewController.swift in Sources */,
 				30D40F7A208099BF00DC126F /* LogEntry.swift in Sources */,
 				607FACD61AFB9204008FA782 /* AppDelegate.swift in Sources */,
+				30FF5EEA20972672002D7C77 /* ScannerCell.swift in Sources */,
 				304DAEBF208091EF006CFEA6 /* SettingsViewController.swift in Sources */,
 				304DAEBC208091EF006CFEA6 /* MeshProvisioningDataTableViewController.swift in Sources */,
 				304DAEBD208091EF006CFEA6 /* ScannerViewController.swift in Sources */,
