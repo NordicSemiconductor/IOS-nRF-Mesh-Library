@@ -598,29 +598,29 @@
         <scene sceneID="dfX-Ac-h6A">
             <objects>
                 <tableViewController title="Model Configuration" extendedLayoutIncludesOpaqueBars="YES" id="1by-8F-oJo" customClass="NodeModelsTableViewController" customModule="nRFMeshProvision_Example" customModuleProvider="target" sceneMemberID="viewController">
-                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="18" sectionFooterHeight="18" id="GzM-ni-2zE">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="default" rowHeight="56" estimatedRowHeight="-1" sectionHeaderHeight="18" sectionFooterHeight="18" id="GzM-ni-2zE">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
                         <prototypes>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" accessoryType="disclosureIndicator" indentationWidth="10" reuseIdentifier="MeshModelEntryCell" textLabel="RmD-cx-RzP" detailTextLabel="lIR-fK-eyu" style="IBUITableViewCellStyleValue1" id="0xZ-R6-cXc">
-                                <rect key="frame" x="0.0" y="55.333333333333343" width="375" height="44"/>
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" accessoryType="disclosureIndicator" indentationWidth="10" reuseIdentifier="MeshModelEntryCell" textLabel="RmD-cx-RzP" detailTextLabel="lIR-fK-eyu" rowHeight="56" style="IBUITableViewCellStyleSubtitle" id="0xZ-R6-cXc">
+                                <rect key="frame" x="0.0" y="55.333333333333343" width="375" height="56"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="0xZ-R6-cXc" id="oWL-7C-Dvb">
-                                    <rect key="frame" x="0.0" y="0.0" width="341" height="43.666666666666664"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="341" height="55.666666666666664"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Title" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="RmD-cx-RzP">
-                                            <rect key="frame" x="16.000000000000004" y="12" width="35.333333333333336" height="20"/>
+                                            <rect key="frame" x="16.000000000000004" y="8.9999999999999982" width="33.333333333333336" height="20.333333333333332"/>
                                             <autoresizingMask key="autoresizingMask"/>
-                                            <fontDescription key="fontDescription" name="TrebuchetMS" family="Trebuchet MS" pointSize="17"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                             <nil key="textColor"/>
                                             <nil key="highlightedColor"/>
                                         </label>
-                                        <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Subtitle" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="lIR-fK-eyu">
-                                            <rect key="frame" x="280.33333333333331" y="12" width="59.666666666666664" height="20"/>
+                                        <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Subtitle" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="lIR-fK-eyu">
+                                            <rect key="frame" x="15.999999999999996" y="31.333333333333332" width="43.666666666666664" height="14.333333333333334"/>
                                             <autoresizingMask key="autoresizingMask"/>
-                                            <fontDescription key="fontDescription" name="TrebuchetMS" family="Trebuchet MS" pointSize="17"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="12"/>
                                             <nil key="textColor"/>
                                             <nil key="highlightedColor"/>
                                         </label>
@@ -639,7 +639,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="ki3-8r-a16" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="596" y="-1306"/>
+            <point key="canvasLocation" x="596" y="-1306.4039408866995"/>
         </scene>
         <!--Model Name-->
         <scene sceneID="J2E-q8-fxs">

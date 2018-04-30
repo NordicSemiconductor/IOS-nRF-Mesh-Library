@@ -385,10 +385,10 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
                         aCell.textLabel?.text = addressses[indexPath.row].hexString()
                     } else {
                         //We Show one informative row
-                        aCell.textLabel?.text = "No Subscription Address set"
+                        aCell.textLabel?.text = "No Subscriptions added"
                     }
                 } else {
-                    aCell.textLabel?.text = "No Subscription Address set"
+                    aCell.textLabel?.text = "No Subscriptions added"
                 }
             }
             return aCell
