@@ -214,6 +214,10 @@ ProvisionedMeshNodeDelegate, ProvisionedMeshNodeLoggingDelegate {
         //NOOP
     }
 
+    func receivedDefaultTTLStatus(_ defaultTTLStatusData: DefaultTTLStatusMessage) {
+        //NOOP
+    }
+
     func configurationSucceeded() {
         logEventWithMessage("Configuration completed!")
         (self.navigationController!.viewControllers[0] as? MainTabBarViewController)?.targetProxyNode = targetProvisionedNode
