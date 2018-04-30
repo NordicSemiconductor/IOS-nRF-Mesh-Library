@@ -30,6 +30,8 @@
 		30D40F9720848DFC00DC126F /* ModelConfigurationTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30D40F9620848DFC00DC126F /* ModelConfigurationTableViewController.swift */; };
 		30EF9C32205FB3AA00253F1E /* NetworkDecryptionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30EF9C31205FB3AA00253F1E /* NetworkDecryptionTests.swift */; };
 		30FF5EEA20972672002D7C77 /* ScannerCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30FF5EE920972672002D7C77 /* ScannerCell.swift */; };
+		30FF5EED20973E69002D7C77 /* ReconnectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30FF5EEC20973E69002D7C77 /* ReconnectionViewController.swift */; };
+		30FF5EEF20973F50002D7C77 /* ProxyScannerCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30FF5EEE20973F50002D7C77 /* ProxyScannerCell.swift */; };
 		607FACD61AFB9204008FA782 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACD51AFB9204008FA782 /* AppDelegate.swift */; };
 		607FACDB1AFB9204008FA782 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 607FACD91AFB9204008FA782 /* Main.storyboard */; };
 		607FACDD1AFB9204008FA782 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 607FACDC1AFB9204008FA782 /* Images.xcassets */; };
@@ -74,6 +76,8 @@
 		30D40F9620848DFC00DC126F /* ModelConfigurationTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelConfigurationTableViewController.swift; sourceTree = "<group>"; };
 		30EF9C31205FB3AA00253F1E /* NetworkDecryptionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkDecryptionTests.swift; sourceTree = "<group>"; };
 		30FF5EE920972672002D7C77 /* ScannerCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScannerCell.swift; sourceTree = "<group>"; };
+		30FF5EEC20973E69002D7C77 /* ReconnectionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReconnectionViewController.swift; sourceTree = "<group>"; };
+		30FF5EEE20973F50002D7C77 /* ProxyScannerCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProxyScannerCell.swift; sourceTree = "<group>"; };
 		328E66A87C5B0A499473BBE3 /* Pods_nRFMeshProvision_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_nRFMeshProvision_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		4973E9CDA09CE2398E5C269A /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
 		5A51F9AF82598D8D5D40BD77 /* Pods_nRFMeshProvision_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_nRFMeshProvision_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -128,6 +132,7 @@
 		304DAEA0208091EF006CFEA6 /* ViewControllers */ = {
 			isa = PBXGroup;
 			children = (
+				30FF5EEB20973B7D002D7C77 /* ReconnectionView */,
 				30D40F8E2084807A00DC126F /* NodeModelsView */,
 				304DAEA1208091EF006CFEA6 /* MainView */,
 				304DAEA7208091EF006CFEA6 /* NodeInfoView */,
@@ -226,6 +231,15 @@
 				30D40F9620848DFC00DC126F /* ModelConfigurationTableViewController.swift */,
 			);
 			path = ModelConfigurationView;
+			sourceTree = "<group>";
+		};
+		30FF5EEB20973B7D002D7C77 /* ReconnectionView */ = {
+			isa = PBXGroup;
+			children = (
+				30FF5EEC20973E69002D7C77 /* ReconnectionViewController.swift */,
+				30FF5EEE20973F50002D7C77 /* ProxyScannerCell.swift */,
+			);
+			path = ReconnectionView;
 			sourceTree = "<group>";
 		};
 		607FACC71AFB9204008FA782 = {
@@ -544,6 +558,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				304DAEB7208091EF006CFEA6 /* RootViewController.swift in Sources */,
+				30FF5EED20973E69002D7C77 /* ReconnectionViewController.swift in Sources */,
 				304DAEBA208091EF006CFEA6 /* MeshNodeLogTableViewCell.swift in Sources */,
 				304DAEB5208091EF006CFEA6 /* MainTabBarViewController.swift in Sources */,
 				304DAEB9208091EF006CFEA6 /* AppKeySelectorTableViewController.swift in Sources */,
@@ -561,6 +576,7 @@
 				304DAEBF208091EF006CFEA6 /* SettingsViewController.swift in Sources */,
 				304DAEBC208091EF006CFEA6 /* MeshProvisioningDataTableViewController.swift in Sources */,
 				304DAEBD208091EF006CFEA6 /* ScannerViewController.swift in Sources */,
+				30FF5EEF20973F50002D7C77 /* ProxyScannerCell.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

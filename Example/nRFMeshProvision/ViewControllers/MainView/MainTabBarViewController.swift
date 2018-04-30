@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import CoreBluetooth
 import nRFMeshProvision
 
 class MainTabBarViewController: UITabBarController {
@@ -15,13 +16,32 @@ class MainTabBarViewController: UITabBarController {
     //TODO: This will be added to the library to avoid having the app to decide
     //What node is the proxy.
     public var targetProxyNode: ProvisionedMeshNode?
+    public var centralManager: CBCentralManager!
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        if centralManager == nil {
+            centralManager = CBCentralManager()
+        }
+    }
+
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        if let viewIndex = tabBar.items?.index(of: tabBar.selectedItem!) {
+            setupItemsForItemAt(index: viewIndex)
+        }
+    }
 
     override func tabBar(_ tabBar: UITabBar, didSelect item: UITabBarItem) {
         if let index = tabBar.items?.index(of: item) {
-            let targetView = self.viewControllers?[index]
-            title = targetView?.title
-            navigationItem.leftBarButtonItems = targetView?.navigationItem.leftBarButtonItems
-            navigationItem.rightBarButtonItems = targetView?.navigationItem.rightBarButtonItems
+            setupItemsForItemAt(index: index)
         }
+    }
+    
+    private func setupItemsForItemAt(index anIndex: Int) {
+        let targetView = self.viewControllers?[anIndex]
+        title = targetView?.title
+        navigationItem.leftBarButtonItems = targetView?.navigationItem.leftBarButtonItems
+        navigationItem.rightBarButtonItems = targetView?.navigationItem.rightBarButtonItems
     }
 }

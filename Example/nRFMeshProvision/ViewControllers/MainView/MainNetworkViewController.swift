@@ -13,11 +13,19 @@ class MainNetworkViewController: UIViewController, UICollectionViewDataSource, U
 
     // MARK: - Outlets and actions
     @IBOutlet weak var collectionView: UICollectionView!
-
+    @IBOutlet weak var connectionButton: UIBarButtonItem!
+    @IBAction func connectionButtonTapped(_ sender: Any) {
+        handleConnectionButtonTapped()
+    }
+    
     // MARK: - Properties
     var meshStateManager: MeshStateManager!
 
     // MARK: - Implementation
+    func handleConnectionButtonTapped() {
+        self.performSegue(withIdentifier: "ShowReconnectionView", sender: self)
+    }
+
     public func presentInformationForNodeAtIndex(_ anIndex: Int) {
         let aNodeEntry = meshStateManager.state().provisionedNodes[anIndex]
         self.performSegue(withIdentifier: "ShowNodeDetails", sender: aNodeEntry)
@@ -45,6 +53,32 @@ class MainNetworkViewController: UIViewController, UICollectionViewDataSource, U
         layout.minimumInteritemSpacing = 8.0
         collectionView.setCollectionViewLayout(layout, animated: true)
         collectionView.reloadData()
+    }
+
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+
+        //When we have no network configured, the connection button is
+        //not necessary
+        guard meshStateManager.state().provisionedNodes.count != 0 else {
+            connectionButton.title = nil
+            connectionButton.isEnabled = false
+            return
+        }
+
+        let proxyNode = (self.tabBarController as? MainTabBarViewController)!.targetProxyNode
+        if proxyNode == nil {
+            connectionButton.title = "Reconnect"
+            connectionButton.isEnabled = true
+        } else {
+            if proxyNode?.blePeripheral().state == .connected {
+                connectionButton.isEnabled = true
+                connectionButton.title = "Disconnect"
+            } else {
+                connectionButton.title = "Reconnect"
+                connectionButton.isEnabled = true
+            }
+        }
     }
 
     public func collectionView(_ collectionView: UICollectionView,
@@ -98,6 +132,12 @@ class MainNetworkViewController: UIViewController, UICollectionViewDataSource, U
                     configView.setProxyNode((self.tabBarController as? MainTabBarViewController)!.targetProxyNode!)
                     configView.setMeshStateManager(meshStateManager)
                     configView.setNodeEntry(nodeEntry)
+                }
+            }
+        } else if segue.identifier == "ShowReconnectionView" {
+            if let reconnectionView = segue.destination as? ReconnectionViewController {
+                if let centralManager = (self.tabBarController as? MainTabBarViewController)!.centralManager {
+                    reconnectionView.setCentralManager(centralManager)
                 }
             }
         }
