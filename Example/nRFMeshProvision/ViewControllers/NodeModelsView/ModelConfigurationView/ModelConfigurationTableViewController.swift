@@ -238,6 +238,8 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
             tableView.reloadData()
         } else {
             switch modelPublicationStatusData.statusCode {
+            case .invalidPublishParameters:
+                showAppKeyAlert(withTitle: "Invalid Publish Parameters", andMessage: "The node has reported the publish parameters are invalid")
             case .cannotBind:
                 showAppKeyAlert(withTitle: "Cannot Bind", andMessage: "This model cannot be bound to an AppKey")
             case .featureNotSupported:
@@ -254,6 +256,14 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
                 showAppKeyAlert(withTitle: "Invalid NetKey Index", andMessage: "Node reported NetKey as invalid")
             case .unspecifiedError:
                 showAppKeyAlert(withTitle: "Unspecified Error", andMessage: "Node has reported an unspecified error")
+            case .insufficientResources:
+                showAppKeyAlert(withTitle: "Insufficient resources", andMessage: "Node has reported insufficient resources")
+            case .cannotRemove:
+                showAppKeyAlert(withTitle: "Cannot remove", andMessage: "Node has reported it cannot remove this item")
+            case .cannotSet:
+                showAppKeyAlert(withTitle: "Cannot set", andMessage: "Node has reported it cannot set this item")
+            case .cannotUpdate:
+                showAppKeyAlert(withTitle: "Cannot update", andMessage: "Node has reported it cannot update this item")
             default:
                 showAppKeyAlert(withTitle: "Error", andMessage: "An error has occured, error code: \(modelPublicationStatusData.statusCode.rawValue)")
             }
@@ -326,8 +336,12 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
         }
     }
 
+    func receivedDefaultTTLStatus(_ defaultTTLStatusData: DefaultTTLStatusMessage) {
+        //NOOP
+    }
+
     func configurationSucceeded() {
-        //noop
+        //NOOP
     }
 
     // MARK: - UIViewController
@@ -339,9 +353,8 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
             vendorLabel.text = "SIG Model"
         }
     }
-//
-    // MARK: - Table view data source
 
+    // MARK: - Table view data source
     override func numberOfSections(in tableView: UITableView) -> Int {
         return 3
     }

@@ -93,19 +93,14 @@ class DefaultTTLGetConfiguratorState: NSObject, ConfiguratorStateProtocol {
         } else {
             let strippedOpcode = Data(incomingData.dropFirst())
             if let result = networkLayer.incomingPDU(strippedOpcode) {
-    //            if result is AppKeyStatusMessage {
-    //                let appKeyStatus = result as! AppKeyStatusMessage
-    //                target.delegate?.receivedAppKeyStatusData(appKeyStatus)
-    //                if appKeyStatus.statusCode != .success {
-    //                    print("App key add error : \(appKeyStatus.statusCode)")
-    //                    target.shouldDisconnect()
-    //                } else {
-    //                    target.delegate?.configurationSucceeded()
-    //                }
-                    //                    let nextState = SleepConfiguratorState(withTargetProxyNode: target, destinationAddress: destinationAddress, andStateManager: stateManager)
-                    //                    target.switchToState(nextState)
+                if result is DefaultTTLStatusMessage {
+                    let ttlStatus = result as! DefaultTTLStatusMessage
+                    target.delegate?.receivedDefaultTTLStatus(ttlStatus)
+                    let nextState = SleepConfiguratorState(withTargetProxyNode: target, destinationAddress: destinationAddress, andStateManager: stateManager)
+                    target.switchToState(nextState)
+                }
             } else {
-                print("Ignoring non app key status message")
+                print("ignoring non default TTL status message")
             }
         }
     }
