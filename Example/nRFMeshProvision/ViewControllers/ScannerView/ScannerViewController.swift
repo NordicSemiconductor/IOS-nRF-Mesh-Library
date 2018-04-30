@@ -30,12 +30,13 @@ class ScannerViewController: UITableViewController, CBCentralManagerDelegate {
             centralManager.scanForPeripherals(withServices: [MeshServiceProvisioningUUID],
                                               options: [CBCentralManagerScanOptionAllowDuplicatesKey: true])
         }
-   }
+    }
+
     private func stopNodeScan() {
         if centralManager.isScanning {
             centralManager.stopScan()
         }
-   scanActivityIndictaor.stopAnimating()
+        scanActivityIndictaor.stopAnimating()
     }
 
     // MARK: - UIViewController Implementation
@@ -53,8 +54,8 @@ class ScannerViewController: UITableViewController, CBCentralManagerDelegate {
             if !centralManager.isScanning {
                 startNodeScan()
             }
+        }
     }
-   }
 
     // MARK: - UITableViewDataSource
     override func numberOfSections(in tableView: UITableView) -> Int {
@@ -66,13 +67,11 @@ class ScannerViewController: UITableViewController, CBCentralManagerDelegate {
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "peripheralCell", for: indexPath)
+        let cell = tableView.dequeueReusableCell(withIdentifier: "peripheralCell", for: indexPath) as? ScannerCell
         //Node name
         let node = discoveredNodes[indexPath.row]
-        cell.textLabel?.text = node.nodeBLEName()
-        //Node identifier
-        cell.detailTextLabel?.text = "0x\(node.humanReadableNodeIdentifier())"
-        return cell
+        cell?.showNode(node)
+        return cell!
     }
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -92,11 +91,18 @@ class ScannerViewController: UITableViewController, CBCentralManagerDelegate {
                         didDiscover peripheral: CBPeripheral,
                         advertisementData: [String: Any],
                         rssi RSSI: NSNumber) {
-        let newNode = UnprovisionedMeshNode(withPeripheral: peripheral, andAdvertisementDictionary: advertisementData)
-        guard discoveredNodes.contains(newNode) == false else {
-            return
+        let newNode = UnprovisionedMeshNode(withPeripheral: peripheral, andAdvertisementDictionary: advertisementData, RSSI: RSSI)
+        if discoveredNodes.contains(newNode) == false {
+            discoveredNodes.append(newNode)
+        } else {
+            if let index = discoveredNodes.index(of: newNode) {
+                let oldNode = discoveredNodes[index]
+                oldNode.updateRSSI(RSSI)
+            } else {
+                //NOOP
+                return
+            }
         }
-        discoveredNodes.append(newNode)
         tableView.reloadData()
     }
 

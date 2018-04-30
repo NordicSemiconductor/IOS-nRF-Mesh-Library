@@ -15,6 +15,7 @@ public class UnprovisionedMeshNode: NSObject, UnprovisionedMeshNodeProtocol {
     public  var delegate            : UnprovisionedMeshNodeDelegate?
     private let peripheral          : CBPeripheral
     private let advertisementData   : [AnyHashable : Any]
+    private var rssi                : NSNumber
     private var meshNodeIdentifier  : Data = Data()
     private var provisioningDataIn  : CBCharacteristic!
     private var provisioningDataOut : CBCharacteristic!
@@ -38,7 +39,7 @@ public class UnprovisionedMeshNode: NSObject, UnprovisionedMeshNodeProtocol {
     private var calculatedDeviceKey         : Data?
 
     // MARK: - MeshNode implementation
-    public init(withPeripheral aPeripheral: CBPeripheral, advertisementDictionary aDictionary: [AnyHashable : Any], andDelegate aDelegate: UnprovisionedMeshNodeDelegate?) {
+    public init(withPeripheral aPeripheral: CBPeripheral, advertisementDictionary aDictionary: [AnyHashable : Any], RSSI anRSSI: NSNumber, andDelegate aDelegate: UnprovisionedMeshNodeDelegate?) {
         peripheral          = aPeripheral
         advertisementData   = aDictionary
         delegate            = aDelegate
@@ -50,11 +51,20 @@ public class UnprovisionedMeshNode: NSObject, UnprovisionedMeshNodeProtocol {
                 }
             }
         }
+        rssi = anRSSI
         super.init()
     }
    
-    convenience public init(withPeripheral aPeripheral: CBPeripheral, andAdvertisementDictionary aDictionary: [AnyHashable : Any]) {
-        self.init(withPeripheral: aPeripheral, advertisementDictionary: aDictionary, andDelegate: nil)
+    convenience public init(withPeripheral aPeripheral: CBPeripheral, andAdvertisementDictionary aDictionary: [AnyHashable : Any], RSSI anRSSI: NSNumber) {
+        self.init(withPeripheral: aPeripheral, advertisementDictionary: aDictionary, RSSI: anRSSI, andDelegate: nil)
+    }
+
+    public func updateRSSI(_ anRSSI: NSNumber) {
+        rssi = anRSSI
+    }
+
+    public func RSSI() -> NSNumber {
+        return rssi
     }
 
     public func discover() {
