@@ -23,7 +23,23 @@ class MainNetworkViewController: UIViewController, UICollectionViewDataSource, U
 
     // MARK: - Implementation
     func handleConnectionButtonTapped() {
-        self.performSegue(withIdentifier: "ShowReconnectionView", sender: self)
+        if connectionButton.title == "Disconnect" {
+            connectionButton.isEnabled = false
+            if let proxyNode = (self.tabBarController as? MainTabBarViewController)!.targetProxyNode {
+                if proxyNode.blePeripheral().state == .connected {
+                    proxyNode.shouldDisconnect()
+                    DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + .seconds(2)) {
+                        self.updateConnectionButton()
+                    }
+                } else {
+                    self.updateConnectionButton()
+                }
+            } else {
+                updateConnectionButton()
+            }
+        } else {
+            self.performSegue(withIdentifier: "ShowReconnectionView", sender: self)
+        }
     }
 
     public func presentInformationForNodeAtIndex(_ anIndex: Int) {
@@ -57,7 +73,10 @@ class MainNetworkViewController: UIViewController, UICollectionViewDataSource, U
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+        updateConnectionButton()
+    }
 
+    private func updateConnectionButton() {
         //When we have no network configured, the connection button is
         //not necessary
         guard meshStateManager.state().provisionedNodes.count != 0 else {
@@ -65,7 +84,7 @@ class MainNetworkViewController: UIViewController, UICollectionViewDataSource, U
             connectionButton.isEnabled = false
             return
         }
-
+        
         let proxyNode = (self.tabBarController as? MainTabBarViewController)!.targetProxyNode
         if proxyNode == nil {
             connectionButton.title = "Reconnect"
