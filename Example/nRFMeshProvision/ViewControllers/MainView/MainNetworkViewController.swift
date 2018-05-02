@@ -12,10 +12,14 @@ import nRFMeshProvision
 class MainNetworkViewController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate {
 
     // MARK: - Outlets and actions
+    @IBOutlet weak var emptyNetworkView: UIView!
     @IBOutlet weak var collectionView: UICollectionView!
     @IBOutlet weak var connectionButton: UIBarButtonItem!
     @IBAction func connectionButtonTapped(_ sender: Any) {
         handleConnectionButtonTapped()
+    }
+    @IBAction func addNodeButtonTapped(_ sender: Any) {
+        handleAddNodeButtonTapped()
     }
     
     // MARK: - Properties
@@ -28,6 +32,11 @@ class MainNetworkViewController: UIViewController, UICollectionViewDataSource, U
         self.updateConnectionButton()
     }
 
+    func handleAddNodeButtonTapped() {
+        if let mainTabBarController = self.tabBarController as? MainTabBarViewController {
+            mainTabBarController.switchToAddNodesView()
+        }
+    }
     func handleConnectionButtonTapped() {
         if connectionButton.title == "Disconnect" {
             connectionButton.isEnabled = false
@@ -75,6 +84,16 @@ class MainNetworkViewController: UIViewController, UICollectionViewDataSource, U
         layout.minimumInteritemSpacing = 8.0
         collectionView.setCollectionViewLayout(layout, animated: true)
         collectionView.reloadData()
+        
+        self.updateEmptyNetworkView()
+    }
+
+    private func updateEmptyNetworkView() {
+        if meshStateManager.state().provisionedNodes.count > 0 {
+            emptyNetworkView.isHidden = true
+        } else {
+            emptyNetworkView.isHidden = false
+        }
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -83,6 +102,7 @@ class MainNetworkViewController: UIViewController, UICollectionViewDataSource, U
     }
 
     private func updateConnectionButton() {
+        updateEmptyNetworkView()
         //When we have no network configured, the connection button is
         //not necessary
         guard meshStateManager.state().provisionedNodes.count != 0 else {

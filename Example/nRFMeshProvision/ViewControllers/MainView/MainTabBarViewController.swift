@@ -25,6 +25,22 @@ class MainTabBarViewController: UITabBarController {
         }
     }
 
+    public func switchToNetworkView() {
+        switchToViewAtIndex(0)
+    }
+
+    public func switchToAddNodesView() {
+        switchToViewAtIndex(1)
+    }
+    
+    public func switchToSettingsView() {
+        switchToViewAtIndex(2)
+    }
+
+    private func switchToViewAtIndex(_ anIndex: Int) {
+        selectedViewController = viewControllers?[anIndex]
+    }
+
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         if let viewIndex = tabBar.items?.index(of: tabBar.selectedItem!) {
@@ -39,7 +55,7 @@ class MainTabBarViewController: UITabBarController {
     }
     
     private func setupItemsForItemAt(index anIndex: Int) {
-        let targetView = self.viewControllers?[anIndex]
+        let targetView = viewControllers?[anIndex]
         title = targetView?.title
         navigationItem.leftBarButtonItems = targetView?.navigationItem.leftBarButtonItems
         navigationItem.rightBarButtonItems = targetView?.navigationItem.rightBarButtonItems
