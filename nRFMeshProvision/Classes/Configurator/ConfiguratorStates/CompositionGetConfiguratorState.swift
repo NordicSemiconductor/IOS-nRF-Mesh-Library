@@ -53,7 +53,9 @@ class CompositionGetConfiguratorState: NSObject, ConfiguratorStateProtocol {
             data.append(Data(aPayload))
             if data.count <= target.basePeripheral().maximumWriteValueLength(for: .withoutResponse) {
                 print("Composition get message to set:\(data.hexString())")
-                target.basePeripheral().writeValue(data, for: dataInCharacteristic, type: .withoutResponse)
+                target.basePeripheral().writeValue(data,
+                                                   for: dataInCharacteristic,
+                                                   type: .withoutResponse)
             } else {
                 print("maximum write length is shorter than PDU, will Segment")
                 var segmentedData = [Data]()
@@ -75,7 +77,9 @@ class CompositionGetConfiguratorState: NSObject, ConfiguratorStateProtocol {
                 }
                 for aSegment in segmentedData {
                     print("Sending segmented data : \(aSegment.hexString())")
-                    target.basePeripheral().writeValue(aSegment, for: dataInCharacteristic, type: .withoutResponse)
+                    target.basePeripheral().writeValue(aSegment,
+                                                            for: dataInCharacteristic,
+                                                            type: .withoutResponse)
                 }
             }
         }

@@ -25,7 +25,7 @@ class MeshProvisioningDataTableViewController: UITableViewController, UITextFiel
     var targetNode: UnprovisionedMeshNode!
     var centralManager: CBCentralManager!
     var nodeName: String! = "Mesh Node"
-    var nodeAddress: Data! = Data([0x00, 0x01])
+    var nodeAddress: Data!
     var appKeyName: String!
     var appKeyData: Data!
     var appKeyIndex: Data!
@@ -40,6 +40,8 @@ class MeshProvisioningDataTableViewController: UITableViewController, UITextFiel
 
     // MARK: - Implementaiton
     private func updateProvisioningDataUI() {
+        //Set the unicast according to the state
+        nodeAddress = meshStateManager.state().nextUnicast
         //Update provisioning Data UI with default values
         unicastAddressCell.detailTextLabel?.text = "0x\(nodeAddress.hexString())"
         nodeNameCell.detailTextLabel?.text = nodeName
