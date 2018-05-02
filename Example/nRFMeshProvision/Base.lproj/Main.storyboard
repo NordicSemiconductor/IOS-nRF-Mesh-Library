@@ -312,6 +312,7 @@
                                             </subviews>
                                         </view>
                                         <color key="backgroundColor" red="0.0" green="0.61176470589999998" blue="0.87058823529999996" alpha="1" colorSpace="custom" customColorSpace="adobeRGB1998"/>
+                                        <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
                                             <constraint firstItem="95M-uX-BAQ" firstAttribute="top" relation="greaterThanOrEqual" secondItem="m4I-LC-MpR" secondAttribute="bottom" constant="2" id="7J1-rL-CbI"/>
                                             <constraint firstItem="m4I-LC-MpR" firstAttribute="top" secondItem="GRy-9G-XVV" secondAttribute="bottom" constant="2" id="GjY-SF-UOa"/>
