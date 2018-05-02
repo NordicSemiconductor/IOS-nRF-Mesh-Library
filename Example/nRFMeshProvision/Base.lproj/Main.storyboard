@@ -158,7 +158,7 @@
                             <constraint firstItem="yq9-qK-DSQ" firstAttribute="leading" secondItem="jUd-ug-FiR" secondAttribute="leading" id="xEw-bt-8Vv"/>
                         </constraints>
                     </view>
-                    <tabBarItem key="tabBarItem" title="Settings" image="ic_list_36pt" id="M9B-kW-Hxj"/>
+                    <tabBarItem key="tabBarItem" title="Settings" image="ic_settings" id="M9B-kW-Hxj"/>
                     <navigationItem key="navigationItem" title="Settings" id="igT-Ey-rH4"/>
                     <connections>
                         <outlet property="settingsTable" destination="yq9-qK-DSQ" id="g3s-lP-sWj"/>
@@ -1093,6 +1093,7 @@ provisioning and then configuring a device.</string>
         <image name="ic_add_circle_outline" width="24" height="24"/>
         <image name="ic_lan_36pt" width="23" height="23"/>
         <image name="ic_list_36pt" width="23" height="23"/>
+        <image name="ic_settings" width="24" height="24"/>
         <image name="ic_vpn_key_36pt" width="23" height="23"/>
     </resources>
 </document>
