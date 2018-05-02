@@ -72,7 +72,7 @@
                             <outlet property="delegate" destination="olZ-Yw-uFz" id="nNM-kL-SjO"/>
                         </connections>
                     </tableView>
-                    <tabBarItem key="tabBarItem" title="Add" image="ic_flag_36pt" id="ING-Ye-G5c"/>
+                    <tabBarItem key="tabBarItem" title="Add" image="ic_add_circle_outline" id="ING-Ye-G5c"/>
                     <navigationItem key="navigationItem" title="Discovering Nodes" id="bVH-mR-mgf">
                         <barButtonItem key="backBarButtonItem" title="Back" id="PNv-B3-5GH"/>
                         <barButtonItem key="rightBarButtonItem" width="30" id="8yP-Q8-c5J">
@@ -337,13 +337,63 @@
                                     <outlet property="delegate" destination="NhV-E0-Nbc" id="guj-Cd-gYy"/>
                                 </connections>
                             </collectionView>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="CXS-zK-F4T" userLabel="EmptyNetworkView">
+                                <rect key="frame" x="0.0" y="236" width="375" height="200"/>
+                                <subviews>
+                                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="ic_lan_36pt" translatesAutoresizingMaskIntoConstraints="NO" id="g2p-02-TcJ">
+                                        <rect key="frame" x="175" y="20" width="24" height="24"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="24" id="EDE-oI-gAC"/>
+                                            <constraint firstAttribute="width" constant="24" id="EJK-vq-qzj"/>
+                                        </constraints>
+                                    </imageView>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="No Network Configured" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="8" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="H5Y-CS-A7i">
+                                        <rect key="frame" x="21" y="60" width="332" height="20"/>
+                                        <fontDescription key="fontDescription" name="TrebuchetMS" family="Trebuchet MS" pointSize="17"/>
+                                        <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="6" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="UvU-dL-pBO">
+                                        <rect key="frame" x="21" y="92" width="332" height="42"/>
+                                        <string key="text">In order to configure a network: Start by scanning,
+provisioning and then configuring a device.</string>
+                                        <fontDescription key="fontDescription" name="TrebuchetMS" family="Trebuchet MS" pointSize="12"/>
+                                        <color key="textColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="OE5-Ec-Wy6">
+                                        <rect key="frame" x="133" y="162" width="109" height="30"/>
+                                        <state key="normal" title="Add new device"/>
+                                        <connections>
+                                            <action selector="addNodeButtonTapped:" destination="NhV-E0-Nbc" eventType="touchUpInside" id="jcX-0Y-Ol0"/>
+                                        </connections>
+                                    </button>
+                                </subviews>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <constraints>
+                                    <constraint firstAttribute="trailing" secondItem="UvU-dL-pBO" secondAttribute="trailing" constant="22" id="2W9-h1-OF8"/>
+                                    <constraint firstItem="UvU-dL-pBO" firstAttribute="leading" secondItem="CXS-zK-F4T" secondAttribute="leading" constant="21" id="6WW-eN-RV6"/>
+                                    <constraint firstItem="OE5-Ec-Wy6" firstAttribute="centerX" secondItem="CXS-zK-F4T" secondAttribute="centerX" id="7fF-js-K4i"/>
+                                    <constraint firstItem="g2p-02-TcJ" firstAttribute="top" secondItem="CXS-zK-F4T" secondAttribute="top" constant="20" id="ATf-ox-goX"/>
+                                    <constraint firstAttribute="trailing" secondItem="H5Y-CS-A7i" secondAttribute="trailing" constant="22" id="AnM-mg-l6f"/>
+                                    <constraint firstItem="H5Y-CS-A7i" firstAttribute="top" secondItem="g2p-02-TcJ" secondAttribute="bottom" constant="16" id="EEB-02-Ghp"/>
+                                    <constraint firstItem="H5Y-CS-A7i" firstAttribute="leading" secondItem="CXS-zK-F4T" secondAttribute="leading" constant="21" id="N4I-UZ-Mm4"/>
+                                    <constraint firstAttribute="height" constant="200" id="Pv0-u8-gBR"/>
+                                    <constraint firstAttribute="bottom" secondItem="OE5-Ec-Wy6" secondAttribute="bottom" constant="8" id="a0W-vc-PtH"/>
+                                    <constraint firstItem="UvU-dL-pBO" firstAttribute="top" secondItem="H5Y-CS-A7i" secondAttribute="bottom" constant="12" id="bVr-hR-uq6"/>
+                                    <constraint firstItem="g2p-02-TcJ" firstAttribute="centerX" secondItem="CXS-zK-F4T" secondAttribute="centerX" id="mLJ-g6-OKt"/>
+                                </constraints>
+                            </view>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
                             <constraint firstItem="Jzq-cZ-RlF" firstAttribute="leading" secondItem="JWc-fm-h4c" secondAttribute="leading" id="4Ra-1W-FUB"/>
                             <constraint firstAttribute="trailing" secondItem="Jzq-cZ-RlF" secondAttribute="trailing" id="T4T-GZ-kqA"/>
+                            <constraint firstItem="CXS-zK-F4T" firstAttribute="leading" secondItem="JWc-fm-h4c" secondAttribute="leading" id="VQN-FC-7lq"/>
                             <constraint firstItem="Jzq-cZ-RlF" firstAttribute="top" secondItem="md4-S3-Vfx" secondAttribute="bottom" id="gbB-Ar-taQ"/>
+                            <constraint firstItem="CXS-zK-F4T" firstAttribute="centerY" secondItem="JWc-fm-h4c" secondAttribute="centerY" id="hAt-YZ-yJk"/>
                             <constraint firstItem="A6u-He-dtL" firstAttribute="top" secondItem="Jzq-cZ-RlF" secondAttribute="bottom" id="kbW-Yb-aeL"/>
+                            <constraint firstAttribute="trailing" secondItem="CXS-zK-F4T" secondAttribute="trailing" id="m3q-gn-OM8"/>
                         </constraints>
                     </view>
                     <tabBarItem key="tabBarItem" title="Network" image="ic_lan_36pt" id="SsO-oM-MAC"/>
@@ -358,6 +408,7 @@
                     <connections>
                         <outlet property="collectionView" destination="Jzq-cZ-RlF" id="iEx-Ua-aND"/>
                         <outlet property="connectionButton" destination="Gdg-wk-QGn" id="pek-nD-TRr"/>
+                        <outlet property="emptyNetworkView" destination="CXS-zK-F4T" id="jvc-AA-V45"/>
                         <segue destination="avg-9z-Gpg" kind="show" identifier="ShowNodeDetails" id="hpn-b8-lCu"/>
                         <segue destination="1by-8F-oJo" kind="show" identifier="ShowNodeConfiguration" id="c9Z-Wb-HT7"/>
                         <segue destination="7BC-wy-MT8" kind="show" identifier="ShowReconnectionView" id="Vcq-2x-H6h"/>
@@ -365,7 +416,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="3ke-9f-e3c" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-199" y="-903"/>
+            <point key="canvasLocation" x="-199.19999999999999" y="-903.69458128078827"/>
         </scene>
         <!--Network-->
         <scene sceneID="jGH-FW-fMM">
@@ -1039,7 +1090,7 @@
         </scene>
     </scenes>
     <resources>
-        <image name="ic_flag_36pt" width="23" height="23"/>
+        <image name="ic_add_circle_outline" width="24" height="24"/>
         <image name="ic_lan_36pt" width="23" height="23"/>
         <image name="ic_list_36pt" width="23" height="23"/>
         <image name="ic_vpn_key_36pt" width="23" height="23"/>
