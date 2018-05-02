@@ -159,7 +159,6 @@ ProvisionedMeshNodeDelegate, ProvisionedMeshNodeLoggingDelegate {
             aNodeEntry.elements = compositionData.elements
             //and update
             state.provisionedNodes.append(aNodeEntry)
-            meshState.saveState()
             logEventWithMessage("Received composition data")
             logEventWithMessage("Company identifier:\(compositionData.companyIdentifier.hexString())")
             logEventWithMessage("Product identifier:\(compositionData.productIdentifier.hexString())")
@@ -169,6 +168,10 @@ ProvisionedMeshNodeDelegate, ProvisionedMeshNodeLoggingDelegate {
             for anElement in aNodeEntry.elements! {
                 logEventWithMessage("Element models:\(anElement.totalModelCount())")
             }
+            
+            //Increment next available address
+            state.incrementUnicastBy(compositionData.elements.count)
+            meshState.saveState()
         } else {
             logEventWithMessage("Received composition data but node isn't stored, please provision again")
         }

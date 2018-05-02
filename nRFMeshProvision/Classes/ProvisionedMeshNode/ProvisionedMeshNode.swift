@@ -137,7 +137,9 @@ public class ProvisionedMeshNode: NSObject, ProvisionedMeshNodeProtocol {
         print("Switching state to \(nextState.humanReadableName())")
         if nextState is AppKeyAddConfiguratorState {
             let appKeyState = nextState as! AppKeyAddConfiguratorState
-            appKeyState.setAppKey(withData: appKeyData, appKeyIndex: appKeyIndex, netKeyIndex: netKeyIndex)
+            appKeyState.setAppKey(withData: appKeyData,
+                                  appKeyIndex: appKeyIndex,
+                                  netKeyIndex: netKeyIndex)
             configurationState = appKeyState
         } else {
             configurationState = nextState
