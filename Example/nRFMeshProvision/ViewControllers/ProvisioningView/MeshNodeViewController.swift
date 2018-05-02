@@ -220,8 +220,11 @@ ProvisionedMeshNodeDelegate, ProvisionedMeshNodeLoggingDelegate {
 
     func configurationSucceeded() {
         logEventWithMessage("Configuration completed!")
-        (self.navigationController!.viewControllers[0] as? MainTabBarViewController)?.targetProxyNode = targetProvisionedNode
-        self.navigationController?.popToRootViewController(animated: true)
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + .seconds(1)) {
+            (self.navigationController!.viewControllers[0] as? MainTabBarViewController)?.targetProxyNode = self.targetProvisionedNode
+            (self.navigationController!.viewControllers[0] as? MainTabBarViewController)?.switchToNetworkView()
+            self.navigationController?.popToRootViewController(animated: true)
+        }
     }
 
     // MARK: - UnprovisionedMeshNodeDelegate
