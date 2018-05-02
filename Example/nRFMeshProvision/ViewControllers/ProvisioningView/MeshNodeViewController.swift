@@ -152,7 +152,7 @@ ProvisionedMeshNodeDelegate, ProvisionedMeshNodeLoggingDelegate {
             let aNodeEntry = state.provisionedNodes[anIndex]
             state.provisionedNodes.remove(at: anIndex)
             aNodeEntry.companyIdentifier = compositionData.companyIdentifier
-            aNodeEntry.vendorIdentifier = compositionData.vendorIdentifier
+            aNodeEntry.productVersion = compositionData.productVersion
             aNodeEntry.productIdentifier = compositionData.productIdentifier
             aNodeEntry.featureFlags = compositionData.features
             aNodeEntry.replayProtectionCount = compositionData.replayProtectionCount
@@ -162,8 +162,8 @@ ProvisionedMeshNodeDelegate, ProvisionedMeshNodeLoggingDelegate {
             meshState.saveState()
             logEventWithMessage("Received composition data")
             logEventWithMessage("Company identifier:\(compositionData.companyIdentifier.hexString())")
-            logEventWithMessage("Vendor identifier:\(compositionData.vendorIdentifier.hexString())")
             logEventWithMessage("Product identifier:\(compositionData.productIdentifier.hexString())")
+            logEventWithMessage("Product version:\(compositionData.productVersion.hexString())")
             logEventWithMessage("Feature flags:\(compositionData.features.hexString())")
             logEventWithMessage("Element count:\(compositionData.elements.count)")
             for anElement in aNodeEntry.elements! {

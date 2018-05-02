@@ -538,7 +538,7 @@ provisioning and then configuring a device.</string>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <imageView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" image="ic_list_36pt" id="4ci-df-4Nr">
+                                                <imageView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" image="ic_flag_36pt" id="4ci-df-4Nr">
                                                     <rect key="frame" x="16" y="10" width="23" height="23"/>
                                                     <autoresizingMask key="autoresizingMask"/>
                                                 </imageView>
@@ -1091,8 +1091,8 @@ provisioning and then configuring a device.</string>
     </scenes>
     <resources>
         <image name="ic_add_circle_outline" width="24" height="24"/>
+        <image name="ic_flag_36pt" width="23" height="23"/>
         <image name="ic_lan_36pt" width="23" height="23"/>
-        <image name="ic_list_36pt" width="23" height="23"/>
         <image name="ic_settings" width="24" height="24"/>
         <image name="ic_vpn_key_36pt" width="23" height="23"/>
     </resources>

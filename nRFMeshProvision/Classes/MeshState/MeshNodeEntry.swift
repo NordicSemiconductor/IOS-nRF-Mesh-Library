@@ -17,7 +17,7 @@ public class MeshNodeEntry: NSObject, Codable {
     // MARK: -  Node composition
     public var companyIdentifier       : Data?
     public var productIdentifier       : Data?
-    public var vendorIdentifier        : Data?
+    public var productVersion          : Data?
     public var replayProtectionCount   : Data?
     public var featureFlags            : Data?
     public var elements                : [CompositionElement]?

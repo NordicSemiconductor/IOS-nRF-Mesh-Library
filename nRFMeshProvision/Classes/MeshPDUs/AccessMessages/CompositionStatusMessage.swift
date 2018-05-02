@@ -12,7 +12,7 @@ public struct CompositionStatusMessage {
     public var page: Data
     public var companyIdentifier: Data
     public var productIdentifier: Data
-    public var vendorIdentifier: Data
+    public var productVersion: Data
     public var replayProtectionCount: Data
     public var features: Data
     public var elements: [CompositionElement]
@@ -22,7 +22,7 @@ public struct CompositionStatusMessage {
         page = Data([aPayload[0]])
         companyIdentifier = Data([aPayload[2], aPayload[1]])
         productIdentifier = Data([aPayload[4], aPayload[3]])
-        vendorIdentifier  = Data([aPayload[6], aPayload[5]])
+        productVersion  = Data([aPayload[6], aPayload[5]])
         replayProtectionCount = Data([aPayload[8], aPayload[7]])
         features = Data([aPayload[10], aPayload[9]])
         elements = [CompositionElement]()
