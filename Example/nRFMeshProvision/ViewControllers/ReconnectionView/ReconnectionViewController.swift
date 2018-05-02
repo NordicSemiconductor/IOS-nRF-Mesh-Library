@@ -10,20 +10,29 @@ import UIKit
 import CoreBluetooth
 import nRFMeshProvision
 
-class ReconnectionViewController: UITableViewController, CBCentralManagerDelegate {
+class ReconnectionViewController: UITableViewController, CBCentralManagerDelegate, ProvisionedMeshNodeDelegate {
 
     // MARK: - Scanner Properties
     private var discoveredNodes = [UnprovisionedMeshNode]()
     private var centralManager: CBCentralManager!
+    private var targetNode: ProvisionedMeshNode!
+    private var mainView: MainNetworkViewController!
+    private var originalCentraldelegate: CBCentralManagerDelegate?
+
+    public func setMainViewController(_ aController: MainNetworkViewController) {
+        mainView = aController
+    }
 
     public func setCentralManager(_ aCentral: CBCentralManager) {
         centralManager = aCentral
+        originalCentraldelegate = centralManager.delegate
         centralManager.delegate = self
     }
 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         centralManager.stopScan()
+        centralManager.delegate = originalCentraldelegate
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -60,7 +69,55 @@ class ReconnectionViewController: UITableViewController, CBCentralManagerDelegat
         cell?.showNode(discoveredNodes[indexPath.row])
         return cell!
     }
+
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
+        let aNode = discoveredNodes[indexPath.row]
+        targetNode = ProvisionedMeshNode(withUnprovisionedNode: aNode, andDelegate: self)
+        centralManager.connect(targetNode.blePeripheral(), options: nil)
+    }
     
+    // MARK: - ProvisionedMeshNodeDelegate
+    func nodeDidCompleteDiscovery(_ aNode: ProvisionedMeshNode) {
+        centralManager.stopScan()
+        centralManager.delegate = originalCentraldelegate
+        aNode.delegate = nil
+        mainView.reconnectionViewDidSelectNode(aNode)
+        
+    }
+    
+    func nodeShouldDisconnect(_ aNode: ProvisionedMeshNode) {
+        //NOOP
+    }
+    
+    func receivedCompositionData(_ compositionData: CompositionStatusMessage) {
+        //NOOP
+    }
+    
+    func receivedAppKeyStatusData(_ appKeyStatusData: AppKeyStatusMessage) {
+        //NOOP
+    }
+    
+    func receivedModelAppBindStatus(_ modelAppStatusData: ModelAppBindStatusMessage) {
+        //NOOP
+    }
+    
+    func receivedModelPublicationStatus(_ modelPublicationStatusData: ModelPublicationStatusMessage) {
+        //NOOP
+    }
+    
+    func receivedModelSubsrciptionStatus(_ modelSubscriptionStatusData: ModelSubscriptionStatusMessage) {
+        //NOOP
+    }
+    
+    func receivedDefaultTTLStatus(_ defaultTTLStatusData: DefaultTTLStatusMessage) {
+        //NOOP
+    }
+    
+    func configurationSucceeded() {
+        //NOOP
+    }
+
     // MARK: - CBCentralManagerDelegate
     func centralManagerDidUpdateState(_ central: CBCentralManager) {
         if central.state == .poweredOn {
@@ -88,14 +145,20 @@ class ReconnectionViewController: UITableViewController, CBCentralManagerDelegat
     }
 
     func centralManager(_ central: CBCentralManager, didConnect peripheral: CBPeripheral) {
-
+        if targetNode.blePeripheral() == peripheral {
+            targetNode.discover()
+        }
     }
 
     func centralManager(_ central: CBCentralManager, didFailToConnect peripheral: CBPeripheral, error: Error?) {
-
+        if targetNode.blePeripheral() == peripheral {
+            print("Failed to connect!")
+        }
     }
 
     func centralManager(_ central: CBCentralManager, didDisconnectPeripheral peripheral: CBPeripheral, error: Error?) {
-
+        if targetNode.blePeripheral() == peripheral {
+            print("Disconnected node!")
+        }
     }
 }

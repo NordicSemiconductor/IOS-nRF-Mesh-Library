@@ -22,6 +22,12 @@ class MainNetworkViewController: UIViewController, UICollectionViewDataSource, U
     var meshStateManager: MeshStateManager!
 
     // MARK: - Implementation
+    public func reconnectionViewDidSelectNode(_ aNode: ProvisionedMeshNode) {
+        (self.tabBarController as? MainTabBarViewController)!.targetProxyNode = aNode
+        self.navigationController?.popToRootViewController(animated: true)
+        self.updateConnectionButton()
+    }
+
     func handleConnectionButtonTapped() {
         if connectionButton.title == "Disconnect" {
             connectionButton.isEnabled = false
@@ -156,6 +162,7 @@ class MainNetworkViewController: UIViewController, UICollectionViewDataSource, U
         } else if segue.identifier == "ShowReconnectionView" {
             if let reconnectionView = segue.destination as? ReconnectionViewController {
                 if let centralManager = (self.tabBarController as? MainTabBarViewController)!.centralManager {
+                    reconnectionView.setMainViewController(self)
                     reconnectionView.setCentralManager(centralManager)
                 }
             }
