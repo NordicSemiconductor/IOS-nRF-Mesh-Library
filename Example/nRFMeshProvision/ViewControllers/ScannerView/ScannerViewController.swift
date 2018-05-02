@@ -42,21 +42,25 @@ class ScannerViewController: UITableViewController, CBCentralManagerDelegate {
     // MARK: - UIViewController Implementation
     override func viewDidLoad() {
         super.viewDidLoad()
-        centralManager = CBCentralManager(delegate: self, queue: nil)
+        centralManager = (self.tabBarController as? MainTabBarViewController)!.centralManager
+        centralManager.delegate = self
         stateManager = MeshStateManager.restoreState()
     }
 
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
         discoveredNodes.removeAll()
         tableView.reloadData()
         if centralManager.state == .poweredOn {
-            if !centralManager.isScanning {
-                startNodeScan()
-            }
+            centralManager.stopScan()
+            startNodeScan()
         }
     }
 
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        centralManager.stopScan()
+    }
     // MARK: - UITableViewDataSource
     override func numberOfSections(in tableView: UITableView) -> Int {
         return 1

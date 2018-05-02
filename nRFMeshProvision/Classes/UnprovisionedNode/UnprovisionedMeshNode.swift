@@ -49,6 +49,10 @@ public class UnprovisionedMeshNode: NSObject, UnprovisionedMeshNodeProtocol {
                 if let someData = serviceDictionary[MeshServiceProvisioningUUID] {
                     meshNodeIdentifier = someData
                 }
+            } else if serviceDictionary.keys.first == MeshServiceProxyUUID {
+                if let someData = serviceDictionary[MeshServiceProxyUUID] {
+                    meshNodeIdentifier = someData
+                }
             }
         }
         rssi = anRSSI
