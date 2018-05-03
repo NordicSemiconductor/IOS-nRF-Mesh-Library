@@ -168,7 +168,9 @@ ProvisionedMeshNodeDelegate, ProvisionedMeshNodeLoggingDelegate {
             for anElement in aNodeEntry.elements! {
                 logEventWithMessage("Element models:\(anElement.totalModelCount())")
             }
-            
+
+            //Set unicast to current set value, to allow the user to force override addresses
+            state.nextUnicast = self.provisioningData.unicastAddr
             //Increment next available address
             state.incrementUnicastBy(compositionData.elements.count)
             meshState.saveState()
