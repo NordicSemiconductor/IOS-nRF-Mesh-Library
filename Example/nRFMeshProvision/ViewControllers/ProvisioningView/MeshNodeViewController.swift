@@ -370,10 +370,12 @@ ProvisionedMeshNodeDelegate, ProvisionedMeshNodeLoggingDelegate {
             if let data = serviceDataDictionary[MeshServiceProxyUUID] {
                 if data.count == 17 {
                     if data[0] == 0x01 {
-                        self.logEventWithMessage("Found Proxy node with NodeID: \(data.hexString())")
+                        self.logEventWithMessage("found proxy node with node id: \(data.hexString())")
+                        self.logEventWithMessage("verifying NodeID: \(data.hexString())")
                         if targetNodeUnicast != nil {
                             if verifyNodeIdentity(data, withUnicast: targetNodeUnicast!) {
-                                logEventWithMessage("Proxy Node with Unicast \(targetNodeUnicast!)")
+                                logEventWithMessage("node identity verified!")
+                                logEventWithMessage("unicast found: \(targetNodeUnicast!)")
                                 central.stopScan()
                                 targetProvisionedNode = ProvisionedMeshNode(withUnprovisionedNode: targetNode,
                                                                             andDelegate: self)
@@ -383,6 +385,8 @@ ProvisionedMeshNodeDelegate, ProvisionedMeshNodeLoggingDelegate {
                                 targetProvisionedNode.overrideBLEPeripheral(peripheral)
                                 connectNode(targetProvisionedNode)
                                 targetNodeUnicast = nil
+                            } else {
+                                self.logEventWithMessage("different unicast, skipping node.")
                             }
                         }
                     }
