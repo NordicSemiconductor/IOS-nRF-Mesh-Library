@@ -28,6 +28,9 @@ ProvisionedMeshNodeDelegate, ProvisionedMeshNodeLoggingDelegate {
     private var appKeyIndex: Data!
     private var appKeyData: Data!
 
+    // Private temprorary Unicast storage between prov/config state
+    private var targetNodeUnicast: Data?
+
     // Provisioned node properties
     var destinationAddress: Data!
     var targetProvisionedNode: ProvisionedMeshNode!
@@ -285,16 +288,18 @@ ProvisionedMeshNodeDelegate, ProvisionedMeshNodeLoggingDelegate {
             state.provisionedNodes.remove(at: anIndex)
         }
         nodeEntry?.nodeUnicast = provisioningData.unicastAddr
+        //Store target node unicast to verify node identity on upcoming reconnect
+        targetNodeUnicast = provisioningData.unicastAddr
         state.provisionedNodes.append(nodeEntry!)
         meshState.saveState()
-        logEventWithMessage("Starting discovery to scan Provisioned Proxy node")
         targetNode.shouldDisconnect()
+        logEventWithMessage("Starting discovery to scan Provisioned Proxy node")
         //Now let's switch to a provisioned node object and start configuration
         targetProvisionedNode = ProvisionedMeshNode(withUnprovisionedNode: aNode, andDelegate: self)
 //        targetNode = nil
         destinationAddress = provisioningData.unicastAddr
         centralManager.scanForPeripherals(withServices: [MeshServiceProxyUUID], options: nil)
-        logEventWithMessage("Scan started")
+        logEventWithMessage("Started scanning for Proxy...")
     }
 
     func nodeProvisioningFailed(_ aNode: UnprovisionedMeshNode, withErrorCode anErrorCode: ProvisioningErrorCodes) {
@@ -333,23 +338,59 @@ ProvisionedMeshNodeDelegate, ProvisionedMeshNodeLoggingDelegate {
         self.showFullLogMessageForItemAtIndexPath(indexPath)
     }
 
+    private func verifyNodeIdentity(_ identityData: Data, withUnicast aUnicast: Data) -> Bool{
+        let dataToVerify = Data(identityData.dropFirst())
+        let netKey = meshState.state().netKey
+        let hash = Data(dataToVerify.dropLast(8))
+        let random = Data(dataToVerify.dropFirst(8))
+        let helper = OpenSSLHelper()
+        let salt = helper.calculateSalt(Data([0x6E, 0x6B, 0x69, 0x6B])) //"nkik" ASCII
+        let p =  Data([0x69, 0x64, 0x31, 0x32, 0x38, 0x01]) // id128 || 0x01
+        if let identityKey = helper.calculateK1(withN: netKey, salt: salt, andP: p) {
+            let padding = Data([0x00, 0x00, 0x00, 0x00, 0x00, 0x00])
+            let hashInputs = padding + random + aUnicast
+            if let fullHash = helper.calculateEvalue(with: hashInputs, andKey: identityKey) {
+            let calculatedHash = fullHash.dropFirst(fullHash.count - 8) //Keep only last 64 bits
+                if calculatedHash == hash {
+                    return true
+                } else {
+                    return false
+                }
+            } else {
+                return false
+            }
+        }
+        return false
+    }
+
     // MARK: - CBCentralManagerDelegate
     func centralManager(_ central: CBCentralManager,
                         didDiscover peripheral: CBPeripheral,
                         advertisementData: [String: Any], rssi RSSI: NSNumber) {
-        logEventWithMessage("Proxy Node discovered")
-        if peripheral.name == targetNode.blePeripheral().name {
-            logEventWithMessage("Proxy Node is the target node, will connect.")
-            central.stopScan()
-            targetProvisionedNode = ProvisionedMeshNode(withUnprovisionedNode: targetNode,
-                                                        andDelegate: self)
-            let currentDelegate = targetNode.blePeripheral().delegate
-            peripheral.delegate = currentDelegate
-            targetNode = nil
-            targetProvisionedNode.overrideBLEPeripheral(peripheral)
-            connectNode(targetProvisionedNode)
-        } else {
-            logEventWithMessage("Proxy Node is not the target node, NOOP.")
+        //Looking for advertisement data of service 0x1828 with 17 octet length
+        //0x01 (Node ID), 8 Octets Hash + 8 Octets Random number
+        if let serviceDataDictionary = advertisementData[CBAdvertisementDataServiceDataKey] as? [CBUUID: Data]{
+            if let data = serviceDataDictionary[MeshServiceProxyUUID] {
+                if data.count == 17 {
+                    if data[0] == 0x01 {
+                        self.logEventWithMessage("Found Proxy node with NodeID: \(data.hexString())")
+                        if targetNodeUnicast != nil {
+                            if verifyNodeIdentity(data, withUnicast: targetNodeUnicast!) {
+                                logEventWithMessage("Proxy Node with Unicast \(targetNodeUnicast!)")
+                                central.stopScan()
+                                targetProvisionedNode = ProvisionedMeshNode(withUnprovisionedNode: targetNode,
+                                                                            andDelegate: self)
+                                let currentDelegate = targetNode.blePeripheral().delegate
+                                peripheral.delegate = currentDelegate
+                                targetNode = nil
+                                targetProvisionedNode.overrideBLEPeripheral(peripheral)
+                                connectNode(targetProvisionedNode)
+                                targetNodeUnicast = nil
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 
