@@ -139,7 +139,6 @@ ProvisionedMeshNodeDelegate, ProvisionedMeshNodeLoggingDelegate {
 
     func nodeShouldDisconnect(_ aNode: ProvisionedMeshNode) {
         if aNode == targetProvisionedNode {
-//            targetProvisionedNode.logDelegate?.logDisconnect()
             centralManager.cancelPeripheralConnection(aNode.blePeripheral())
         }
     }
@@ -238,7 +237,6 @@ ProvisionedMeshNodeDelegate, ProvisionedMeshNodeLoggingDelegate {
     // MARK: - UnprovisionedMeshNodeDelegate
     func nodeShouldDisconnect(_ aNode: UnprovisionedMeshNode) {
         if aNode == targetNode {
-            targetNode.logDelegate?.logDisconnect()
             centralManager.cancelPeripheralConnection(aNode.blePeripheral())
         }
    }
@@ -396,11 +394,11 @@ ProvisionedMeshNodeDelegate, ProvisionedMeshNodeLoggingDelegate {
     func centralManager(_ central: CBCentralManager, didDisconnectPeripheral peripheral: CBPeripheral, error: Error?) {
         if targetNode != nil {
             if peripheral == targetNode.blePeripheral() {
-                logEventWithMessage("Node disconnected")
+                logDisconnect()
             }
         } else if targetProvisionedNode != nil {
             if peripheral == targetProvisionedNode.blePeripheral() {
-                logEventWithMessage("Provisioned node disconnected")
+                logDisconnect()
             }
         }
    }

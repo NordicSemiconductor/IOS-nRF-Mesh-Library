@@ -43,18 +43,7 @@ public class UnprovisionedMeshNode: NSObject, UnprovisionedMeshNodeProtocol {
         peripheral          = aPeripheral
         advertisementData   = aDictionary
         delegate            = aDelegate
-        //If periphreal has a node ID set in the service data key, use this as a reference for the node ID
-        if let serviceDictionary = advertisementData[CBAdvertisementDataServiceDataKey] as? [CBUUID : Data] {
-            if serviceDictionary.keys.first == MeshServiceProvisioningUUID {
-                if let someData = serviceDictionary[MeshServiceProvisioningUUID] {
-                    meshNodeIdentifier = someData
-                }
-            } else if serviceDictionary.keys.first == MeshServiceProxyUUID {
-                if let someData = serviceDictionary[MeshServiceProxyUUID] {
-                    meshNodeIdentifier = someData
-                }
-            }
-        }
+        meshNodeIdentifier  = Data(hexString: aPeripheral.identifier.uuidString.replacingOccurrences(of: "-", with: ""))!
         rssi = anRSSI
         super.init()
     }
@@ -232,7 +221,6 @@ public class UnprovisionedMeshNode: NSObject, UnprovisionedMeshNodeProtocol {
             delegate?.nodeProvisioningCompleted(self)
         } else {
             print("No services chagned, a reconnect is needed")
-//            shouldDisconnect()
             delegate?.nodeProvisioningCompleted(self)
         }
     }
@@ -250,7 +238,8 @@ public class UnprovisionedMeshNode: NSObject, UnprovisionedMeshNodeProtocol {
     }
    
     public func humanReadableNodeIdentifier() -> String {
-        return self.nodeIdentifier().hexString()
+        let nodeIdData = Data([meshNodeIdentifier[0], meshNodeIdentifier[1]])
+        return nodeIdData.hexString()
     }
    
     public func nodeIdentifier() -> Data {
