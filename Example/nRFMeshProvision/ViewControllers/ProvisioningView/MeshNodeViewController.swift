@@ -296,7 +296,6 @@ ProvisionedMeshNodeDelegate, ProvisionedMeshNodeLoggingDelegate {
         logEventWithMessage("Starting discovery to scan Provisioned Proxy node")
         //Now let's switch to a provisioned node object and start configuration
         targetProvisionedNode = ProvisionedMeshNode(withUnprovisionedNode: aNode, andDelegate: self)
-//        targetNode = nil
         destinationAddress = provisioningData.unicastAddr
         centralManager.scanForPeripherals(withServices: [MeshServiceProxyUUID], options: nil)
         logEventWithMessage("Started scanning for Proxy...")
