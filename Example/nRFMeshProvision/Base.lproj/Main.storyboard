@@ -471,6 +471,7 @@ provisioning and then configuring a device.</string>
                         <rect key="frame" x="0.0" y="0.0" width="375" height="49"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <color key="selectedImageTintColor" red="0.0" green="0.61176470589999998" blue="0.87058823529999996" alpha="1" colorSpace="custom" customColorSpace="adobeRGB1998"/>
                     </tabBar>
                     <connections>
                         <segue destination="NhV-E0-Nbc" kind="relationship" relationship="viewControllers" id="5wt-si-Lgf"/>
