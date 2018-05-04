@@ -16,7 +16,7 @@ class SettingsViewController: UIViewController, UITextFieldDelegate, UITableView
     let reuseIdentifier = "SettingsTableViewCell"
     let sectionTitles = ["Global Settings", "Network Settings", "App keys", "Mesh State"]
     let rowTitles   = [["Network Name", "Global TTL", "Provisioner Unicast"],
-                       ["NetKey", "Key index", "Flags", "IVIndex"],
+                       ["Network Key", "Key Index", "Flags", "IV Index"],
                        ["Manage App Keys"],
                        ["Reset Mesh State"]]
 
@@ -389,6 +389,7 @@ class SettingsViewController: UIViewController, UITextFieldDelegate, UITableView
         } else if section == 3 {
             didSelectMeshResetCell()
         } else {
+            deselectSelectedRow()
             return
         }
     }
