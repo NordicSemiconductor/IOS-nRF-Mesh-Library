@@ -442,7 +442,7 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
             aTextField.delegate = self
             aTextField.clearButtonMode = UITextFieldViewMode.whileEditing
             //Give a placeholder that shows this upcoming key index
-            aTextField.placeholder = "0xBEEF"
+            aTextField.placeholder = "0001"
         }
         
         let createAction = UIAlertAction(title: "Add", style: .default) { (_) in
