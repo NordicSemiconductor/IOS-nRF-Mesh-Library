@@ -309,8 +309,8 @@ ProvisionedMeshNodeDelegate, ProvisionedMeshNodeLoggingDelegate {
     // MARK: - UIView implementation
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        logEventWithMessage("target node id: 0x\(targetNode.humanReadableNodeIdentifier())")
-        title = targetNode.nodeBLEName()
+        logEventWithMessage("BLE CBUUID: 0x\(targetNode.nodeIdentifier())")
+        title = provisioningData.friendlyName
     }
 
     override func viewDidAppear(_ animated: Bool) {
