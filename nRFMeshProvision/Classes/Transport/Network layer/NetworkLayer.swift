@@ -22,8 +22,6 @@ public struct NetworkLayer {
         sslHelper = OpenSSLHelper()
         lowerTransport = LowerTransportLayer(withStateManager: aStateManager,
                                              andSegmentedAcknowlegdeMent: aSegmentAckBlock)
-        
-        
     }
 
     public mutating func incomingPDU(_ aPDU : Data) -> Any? {
@@ -46,8 +44,8 @@ public struct NetworkLayer {
         let micSize: Int = ctl ? 8 : 4
         
         //Decrypt network PDU
-        let encryptedNetworkPDU = aPDU[8...(aPDU.count - micSize)] //7 first bytes are not a part of the ENCPDU
-        let netMic = aPDU[(8 + encryptedNetworkPDU.count)..<(8 + encryptedNetworkPDU.count + micSize)]
+        let encryptedNetworkPDU = Data(aPDU[7...(aPDU.count - micSize - 1)]) //7 first bytes are not a part of the ENCPDU
+        let netMic = Data(aPDU[(7 + encryptedNetworkPDU.count)..<(7 + encryptedNetworkPDU.count + micSize)])
         let nonceData = TransportNonce(networkNonceWithIVIndex: ivIndex, ctl: ctlData, ttl: ttl, seq: seq, src: src).data
         let decryptedNetworkPDU = sslHelper.calculateDecryptedCCM(encryptedNetworkPDU,
                                                                   withKey: encryptionKey,
@@ -59,7 +57,7 @@ public struct NetworkLayer {
         print("netMic: \(netMic.hexString())")
         print("Sequence: \(seq.hexString()), SRC: \(src.hexString()), ttl: \(ttl.hexString()), MICSize: \(micSize), encpduSz: \(encryptedNetworkPDU.count)")
         print("decrypted network PDU = \(decryptedNetworkPDU!.hexString())")
-        return self.lowerTransport.append(withIncomingPDU: decryptedNetworkPDU!, ctl: ctlData, ttl: ttl, src: src, dst: dst, IVIndex: ivIndex, andSEQ: seq)
+        return self.lowerTransport.append(withIncomingPDU: Data(decryptedNetworkPDU!), ctl: ctlData, ttl: ttl, src: src, dst: dst, IVIndex: ivIndex, andSEQ: seq)
     }
 
     public init(withLowerTransportLayer aLowerTransport: LowerTransportLayer, andNetworkKey aNetKey: Data) {
@@ -73,8 +71,8 @@ public struct NetworkLayer {
     //  IVI NID CTL TTL SEQ  SRC  DST  TRANS_PDU   NETMIC
     //  [1] [7] [1] [7] [24] [16] [16] [1-16]      [32-64] (CTL:0 32, CTL:1 64)
     
-    //Maxlen = 148 when CTL is set.
-    //MAxLen = 120 when CTL is reset.
+    //Maxlen = 148 when for control messages.
+    //MaxLen = 120 when for access messages.
     public func createPDU() -> [Data] {
         let ivi = lowerTransport.params.ivIndex.last! & 0x01 //LSB of IVIndex
         let k2 = sslHelper.calculateK2(withN: netKey, andP: Data(bytes: [0x00]))
@@ -93,7 +91,7 @@ public struct NetworkLayer {
         for aPDU in lowerPDU {
             var nonce: TransportNonce
 //            if lowerTransport.params.ctl == Data([0x01]) && lowerTransport.params.opcode == Data([0x00]) {
-////            if lowerTransport.params.ctl == Data([0x00]) {
+//            if lowerTransport.params.ctl == Data([0x00]) {
 //                nonce = TransportNonce(proxyNonceWithIVIndex: lowerTransport.params.ivIndex, seq: sequence.sequenceData(), src: lowerTransport.params.sourceAddress)
 //            } else {
                 nonce = TransportNonce(networkNonceWithIVIndex: lowerTransport.params.ivIndex, ctl: lowerTransport.params.ctl, ttl: lowerTransport.params.ttl, seq: sequence.sequenceData(), src: lowerTransport.params.sourceAddress)

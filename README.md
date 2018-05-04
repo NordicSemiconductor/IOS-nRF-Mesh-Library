@@ -10,11 +10,16 @@ This is a preview version that has missing features and capabilities that are go
 * Xcode
 * An iOS device with BLE capabilities
 
+## Optional
+
+* nrf52832 based Development Kit(s) to test the sample firmwares on.
+
 ## Installation
 
 * Open `Example/nRFMeshProvision.xcworkspace`
 * Connect an iOS Device.
 * Build and run project.
+* To be able to quickly start testing, use the bundled firmwares directory named `ExampleFirmwares` that includes a light server (Light source) and a light client (Switch) firmwares. those firmwares will work on a `nrf52832` DevKit.
 
 ## Author
 

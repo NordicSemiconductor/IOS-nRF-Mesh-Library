@@ -33,7 +33,7 @@ public class MeshStateManager: NSObject {
             } catch {
                 print(error)
             }
-    }
+        }
    }
     
     public func restoreState() {

@@ -61,11 +61,25 @@ public class ProvisionedMeshNode: NSObject, ProvisionedMeshNodeProtocol {
     }
 
     func completedDiscovery(withProxyService aProxyService: CBService, dataInCharacteristic aDataInCharacteristic: CBCharacteristic, andDataOutCharacteristic aDataOutCharacteristic: CBCharacteristic) {
-//        logDelegate?.logDiscoveryCompleted()
         proxyService = aProxyService
         proxyDataOut = aDataOutCharacteristic
         proxyDataIn  = aDataInCharacteristic
         delegate?.nodeDidCompleteDiscovery(self)
+    }
+
+    public func nodeSubscriptionAddressAdd(_ aSubcriptionAddress: Data,
+                                           onElementAddress anElementAddress: Data,
+                                           modelIdentifier anIdentifier: Data,
+                                           onDestinationAddress anAddress: Data) {
+        let nodeSubscriptionState = ModelSubscriptionAddConfiguratorState(withTargetProxyNode: self,
+                                                                          destinationAddress: anAddress,
+                                                                          andStateManager: stateManager)
+        nodeSubscriptionState.setSubscription(elementAddress: anElementAddress,
+                                              subscriptionAddress: aSubcriptionAddress,
+                                              andModelIdentifier: anIdentifier)
+        
+        configurationState = nodeSubscriptionState
+        configurationState.execute()
     }
 
     public func nodePublicationAddressSet(_ aPublicationAddress: Data,
@@ -122,7 +136,9 @@ public class ProvisionedMeshNode: NSObject, ProvisionedMeshNodeProtocol {
         print("Switching state to \(nextState.humanReadableName())")
         if nextState is AppKeyAddConfiguratorState {
             let appKeyState = nextState as! AppKeyAddConfiguratorState
-            appKeyState.setAppKey(withData: appKeyData, appKeyIndex: appKeyIndex, netKeyIndex: netKeyIndex)
+            appKeyState.setAppKey(withData: appKeyData,
+                                  appKeyIndex: appKeyIndex,
+                                  netKeyIndex: netKeyIndex)
             configurationState = appKeyState
         } else {
             configurationState = nextState

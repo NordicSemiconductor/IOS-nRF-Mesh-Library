@@ -14,8 +14,8 @@ class MeshNodeViewController: UIViewController, UITableViewDataSource, UITableVi
 CBCentralManagerDelegate, UnprovisionedMeshNodeDelegate, UnprovisionedMeshNodeLoggingDelegate,
 ProvisionedMeshNodeDelegate, ProvisionedMeshNodeLoggingDelegate {
 
-    @IBOutlet weak var nodeIdentifierLabel: UILabel!
     @IBOutlet weak var provisioningLogTableView: UITableView!
+    @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
 
     // MARK: - Class properties
     private var meshState: MeshStateManager!
@@ -27,6 +27,9 @@ ProvisionedMeshNodeDelegate, ProvisionedMeshNodeLoggingDelegate {
     private var netKeyIndex: Data!
     private var appKeyIndex: Data!
     private var appKeyData: Data!
+
+    // Private temprorary Unicast storage between prov/config state
+    private var targetNodeUnicast: Data?
 
     // Provisioned node properties
     var destinationAddress: Data!
@@ -101,6 +104,7 @@ ProvisionedMeshNodeDelegate, ProvisionedMeshNodeLoggingDelegate {
                                                         keyIndex: packedNetKey,
                                                         flags: meshStateObject.flags,
                                                         ivIndex: meshStateObject.IVIndex,
+                                                        friendlyName: provisioningData.friendlyName,
                                                         unicastAddress: provisioningData.unicastAddr)
             targetNode.provision(withProvisioningData: nodeProvisioningdata)
         } else {
@@ -136,7 +140,6 @@ ProvisionedMeshNodeDelegate, ProvisionedMeshNodeLoggingDelegate {
 
     func nodeShouldDisconnect(_ aNode: ProvisionedMeshNode) {
         if aNode == targetProvisionedNode {
-//            targetProvisionedNode.logDelegate?.logDisconnect()
             centralManager.cancelPeripheralConnection(aNode.blePeripheral())
         }
     }
@@ -146,29 +149,33 @@ ProvisionedMeshNodeDelegate, ProvisionedMeshNodeLoggingDelegate {
             logEventWithMessage("Received composition data from unknown node, NOOP")
             return
         }
-        let nodeIdentifier = targetProvisionedNode.nodeIdentifier()
         let state = meshState.state()
-        if let anIndex = state.provisionedNodes.index(where: { $0.nodeId == nodeIdentifier}) {
+        if let anIndex = state.provisionedNodes.index(where: { $0.nodeUnicast == provisioningData.unicastAddr}) {
             let aNodeEntry = state.provisionedNodes[anIndex]
             state.provisionedNodes.remove(at: anIndex)
             aNodeEntry.companyIdentifier = compositionData.companyIdentifier
-            aNodeEntry.vendorIdentifier = compositionData.vendorIdentifier
+            aNodeEntry.productVersion = compositionData.productVersion
             aNodeEntry.productIdentifier = compositionData.productIdentifier
             aNodeEntry.featureFlags = compositionData.features
             aNodeEntry.replayProtectionCount = compositionData.replayProtectionCount
             aNodeEntry.elements = compositionData.elements
             //and update
             state.provisionedNodes.append(aNodeEntry)
-            meshState.saveState()
             logEventWithMessage("Received composition data")
             logEventWithMessage("Company identifier:\(compositionData.companyIdentifier.hexString())")
-            logEventWithMessage("Vendor identifier:\(compositionData.vendorIdentifier.hexString())")
             logEventWithMessage("Product identifier:\(compositionData.productIdentifier.hexString())")
+            logEventWithMessage("Product version:\(compositionData.productVersion.hexString())")
             logEventWithMessage("Feature flags:\(compositionData.features.hexString())")
             logEventWithMessage("Element count:\(compositionData.elements.count)")
             for anElement in aNodeEntry.elements! {
                 logEventWithMessage("Element models:\(anElement.totalModelCount())")
             }
+
+            //Set unicast to current set value, to allow the user to force override addresses
+            state.nextUnicast = self.provisioningData.unicastAddr
+            //Increment next available address
+            state.incrementUnicastBy(compositionData.elements.count)
+            meshState.saveState()
         } else {
             logEventWithMessage("Received composition data but node isn't stored, please provision again")
         }
@@ -182,9 +189,8 @@ ProvisionedMeshNodeDelegate, ProvisionedMeshNodeLoggingDelegate {
             logEventWithMessage("netKey index: \(appKeyStatusData.netKeyIndex.hexString())")
 
             // Update state with configured key
-            let nodeIdentifier = targetProvisionedNode.nodeIdentifier()
             let state = meshState.state()
-            if let anIndex = state.provisionedNodes.index(where: { $0.nodeId == nodeIdentifier}) {
+            if let anIndex = state.provisionedNodes.index(where: { $0.nodeUnicast == provisioningData.unicastAddr}) {
                 let aNodeEntry = state.provisionedNodes[anIndex]
                 state.provisionedNodes.remove(at: anIndex)
                 if aNodeEntry.appKeys.contains(appKeyStatusData.appKeyIndex) == false {
@@ -199,6 +205,7 @@ ProvisionedMeshNodeDelegate, ProvisionedMeshNodeLoggingDelegate {
             }
         } else {
             logEventWithMessage("Status: Failed, code: \(appKeyStatusData.statusCode)")
+            activityIndicator.stopAnimating()
         }
     }
 
@@ -210,16 +217,27 @@ ProvisionedMeshNodeDelegate, ProvisionedMeshNodeLoggingDelegate {
         //NOOP
     }
 
+    func receivedModelSubsrciptionStatus(_ modelSubscriptionStatusData: ModelSubscriptionStatusMessage) {
+        //NOOP
+    }
+
+    func receivedDefaultTTLStatus(_ defaultTTLStatusData: DefaultTTLStatusMessage) {
+        //NOOP
+    }
+
     func configurationSucceeded() {
         logEventWithMessage("Configuration completed!")
-        (self.navigationController!.viewControllers[0] as? MainTabBarViewController)?.targetProxyNode = targetProvisionedNode
-        self.navigationController?.popToRootViewController(animated: true)
+        activityIndicator.stopAnimating()
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + .seconds(1)) {
+            (self.navigationController!.viewControllers[0] as? MainTabBarViewController)?.targetProxyNode = self.targetProvisionedNode
+            (self.navigationController!.viewControllers[0] as? MainTabBarViewController)?.switchToNetworkView()
+            self.navigationController?.popToRootViewController(animated: true)
+        }
     }
 
     // MARK: - UnprovisionedMeshNodeDelegate
     func nodeShouldDisconnect(_ aNode: UnprovisionedMeshNode) {
         if aNode == targetNode {
-            targetNode.logDelegate?.logDisconnect()
             centralManager.cancelPeripheralConnection(aNode.blePeripheral())
         }
    }
@@ -262,35 +280,37 @@ ProvisionedMeshNodeDelegate, ProvisionedMeshNodeLoggingDelegate {
         let nodeEntry = aNode.getNodeEntryData()
         guard nodeEntry != nil else {
             print("Failed to get node entry data")
+            activityIndicator.stopAnimating()
             return
         }
         let state = meshState.state()
-        if let anIndex = state.provisionedNodes.index(where: { $0.nodeId == aNode.nodeIdentifier()}) {
+        if let anIndex = state.provisionedNodes.index(where: { $0.nodeUnicast == nodeEntry?.nodeUnicast}) {
             state.provisionedNodes.remove(at: anIndex)
         }
         nodeEntry?.nodeUnicast = provisioningData.unicastAddr
+        //Store target node unicast to verify node identity on upcoming reconnect
+        targetNodeUnicast = provisioningData.unicastAddr
         state.provisionedNodes.append(nodeEntry!)
         meshState.saveState()
-        logEventWithMessage("Starting discovery to scan Provisioned Proxy node")
         targetNode.shouldDisconnect()
+        logEventWithMessage("Starting discovery to scan Provisioned Proxy node")
         //Now let's switch to a provisioned node object and start configuration
         targetProvisionedNode = ProvisionedMeshNode(withUnprovisionedNode: aNode, andDelegate: self)
-//        targetNode = nil
         destinationAddress = provisioningData.unicastAddr
         centralManager.scanForPeripherals(withServices: [MeshServiceProxyUUID], options: nil)
-        logEventWithMessage("Scan started")
+        logEventWithMessage("Started scanning for Proxy...")
     }
 
     func nodeProvisioningFailed(_ aNode: UnprovisionedMeshNode, withErrorCode anErrorCode: ProvisioningErrorCodes) {
         logProvisioningFailed(withMessage: "provisioning failed, error: \(anErrorCode)")
+        activityIndicator.stopAnimating()
     }
 
     // MARK: - UIView implementation
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        logEventWithMessage("target node id: 0x\(targetNode.humanReadableNodeIdentifier())")
-        title = targetNode.nodeBLEName()
-        nodeIdentifierLabel.text = "0x\(targetNode.humanReadableNodeIdentifier())"
+        logEventWithMessage("BLE CBUUID: 0x\(targetNode.nodeIdentifier().hexString())")
+        title = provisioningData.friendlyName
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -317,34 +337,74 @@ ProvisionedMeshNodeDelegate, ProvisionedMeshNodeLoggingDelegate {
         self.showFullLogMessageForItemAtIndexPath(indexPath)
     }
 
+    private func verifyNodeIdentity(_ identityData: Data, withUnicast aUnicast: Data) -> Bool{
+        let dataToVerify = Data(identityData.dropFirst())
+        let netKey = meshState.state().netKey
+        let hash = Data(dataToVerify.dropLast(8))
+        let random = Data(dataToVerify.dropFirst(8))
+        let helper = OpenSSLHelper()
+        let salt = helper.calculateSalt(Data([0x6E, 0x6B, 0x69, 0x6B])) //"nkik" ASCII
+        let p =  Data([0x69, 0x64, 0x31, 0x32, 0x38, 0x01]) // id128 || 0x01
+        if let identityKey = helper.calculateK1(withN: netKey, salt: salt, andP: p) {
+            let padding = Data([0x00, 0x00, 0x00, 0x00, 0x00, 0x00])
+            let hashInputs = padding + random + aUnicast
+            if let fullHash = helper.calculateEvalue(with: hashInputs, andKey: identityKey) {
+            let calculatedHash = fullHash.dropFirst(fullHash.count - 8) //Keep only last 64 bits
+                if calculatedHash == hash {
+                    return true
+                } else {
+                    return false
+                }
+            } else {
+                return false
+            }
+        }
+        return false
+    }
+
     // MARK: - CBCentralManagerDelegate
     func centralManager(_ central: CBCentralManager,
                         didDiscover peripheral: CBPeripheral,
                         advertisementData: [String: Any], rssi RSSI: NSNumber) {
-        logEventWithMessage("Proxy Node discovered")
-        if peripheral.name == targetNode.blePeripheral().name {
-            logEventWithMessage("Proxy Node is the target node, will connect.")
-            central.stopScan()
-            targetProvisionedNode = ProvisionedMeshNode(withUnprovisionedNode: targetNode,
-                                                        andDelegate: self)
-            let currentDelegate = targetNode.blePeripheral().delegate
-            peripheral.delegate = currentDelegate
-            targetNode = nil
-            targetProvisionedNode.overrideBLEPeripheral(peripheral)
-            connectNode(targetProvisionedNode)
-        } else {
-            logEventWithMessage("Proxy Node is not the target node, NOOP.")
+        //Looking for advertisement data of service 0x1828 with 17 octet length
+        //0x01 (Node ID), 8 Octets Hash + 8 Octets Random number
+        if let serviceDataDictionary = advertisementData[CBAdvertisementDataServiceDataKey] as? [CBUUID: Data]{
+            if let data = serviceDataDictionary[MeshServiceProxyUUID] {
+                if data.count == 17 {
+                    if data[0] == 0x01 {
+                        self.logEventWithMessage("found proxy node with node id: \(data.hexString())")
+                        self.logEventWithMessage("verifying NodeID: \(data.hexString())")
+                        if targetNodeUnicast != nil {
+                            if verifyNodeIdentity(data, withUnicast: targetNodeUnicast!) {
+                                logEventWithMessage("node identity verified!")
+                                logEventWithMessage("unicast found: \(targetNodeUnicast!.hexString())")
+                                central.stopScan()
+                                targetProvisionedNode = ProvisionedMeshNode(withUnprovisionedNode: targetNode,
+                                                                            andDelegate: self)
+                                let currentDelegate = targetNode.blePeripheral().delegate
+                                peripheral.delegate = currentDelegate
+                                targetNode = nil
+                                targetProvisionedNode.overrideBLEPeripheral(peripheral)
+                                connectNode(targetProvisionedNode)
+                                targetNodeUnicast = nil
+                            } else {
+                                self.logEventWithMessage("different unicast, skipping node.")
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 
     func centralManager(_ central: CBCentralManager, didDisconnectPeripheral peripheral: CBPeripheral, error: Error?) {
         if targetNode != nil {
             if peripheral == targetNode.blePeripheral() {
-                logEventWithMessage("Node disconnected")
+                logDisconnect()
             }
         } else if targetProvisionedNode != nil {
             if peripheral == targetProvisionedNode.blePeripheral() {
-                logEventWithMessage("Provisioned node disconnected")
+                logDisconnect()
             }
         }
    }

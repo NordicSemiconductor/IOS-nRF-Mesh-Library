@@ -51,7 +51,7 @@ class NodeModelsTableViewController: UITableViewController {
         // Configure the cell...
         let aModel = nodeEntry.elements![indexPath.section].allSigAndVendorModels()[indexPath.row]
         if aModel.count == 2 {
-            cell.detailTextLabel?.text = "SIG Model"
+            cell.detailTextLabel?.text = "SIG Model ID: 0x\(aModel.hexString())"
             let upperInt = UInt16(aModel[0]) << 8
             let lowerInt = UInt16(aModel[1])
             if let modelIdentifier = MeshModelIdentifiers(rawValue: upperInt | lowerInt) {

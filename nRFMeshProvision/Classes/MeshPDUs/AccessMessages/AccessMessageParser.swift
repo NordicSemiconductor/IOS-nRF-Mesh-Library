@@ -19,6 +19,10 @@ public struct AccessMessageParser {
             return ModelAppBindStatusMessage(withPayload: someData, andSoruceAddress: aSourceAddress)
         case Data([0x80, 0x19]):
             return ModelPublicationStatusMessage(withPayload: someData, andSoruceAddress: aSourceAddress)
+        case Data([0x80, 0x1F]):
+            return ModelSubscriptionStatusMessage(withPayload: someData, andSoruceAddress: aSourceAddress)
+        case Data([0x80, 0x0E]):
+            return DefaultTTLStatusMessage(withPayload: someData, andSoruceAddress: aSourceAddress)
         default:
             return nil
         }

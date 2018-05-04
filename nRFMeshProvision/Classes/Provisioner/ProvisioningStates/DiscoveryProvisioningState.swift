@@ -55,7 +55,7 @@ class DiscoveryProvisioningState: NSObject, ProvisioningStateProtocol {
                     dataInCharacteristic = aCharacteristic
                 } else if aCharacteristic.uuid == MeshCharacteristicProvisionDataOutUUID {
                     print("Discovered data out characteristic")
-                    dataOutCharacteristic = aCharacteristic
+                    dataOutCharacteristic  = aCharacteristic
                     peripheral.setNotifyValue(true, for: dataOutCharacteristic)
                 }
 

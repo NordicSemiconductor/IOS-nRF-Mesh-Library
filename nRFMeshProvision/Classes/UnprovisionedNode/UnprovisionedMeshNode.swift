@@ -15,6 +15,7 @@ public class UnprovisionedMeshNode: NSObject, UnprovisionedMeshNodeProtocol {
     public  var delegate            : UnprovisionedMeshNodeDelegate?
     private let peripheral          : CBPeripheral
     private let advertisementData   : [AnyHashable : Any]
+    private var rssi                : NSNumber
     private var meshNodeIdentifier  : Data = Data()
     private var provisioningDataIn  : CBCharacteristic!
     private var provisioningDataOut : CBCharacteristic!
@@ -38,23 +39,25 @@ public class UnprovisionedMeshNode: NSObject, UnprovisionedMeshNodeProtocol {
     private var calculatedDeviceKey         : Data?
 
     // MARK: - MeshNode implementation
-    public init(withPeripheral aPeripheral: CBPeripheral, advertisementDictionary aDictionary: [AnyHashable : Any], andDelegate aDelegate: UnprovisionedMeshNodeDelegate?) {
+    public init(withPeripheral aPeripheral: CBPeripheral, advertisementDictionary aDictionary: [AnyHashable : Any], RSSI anRSSI: NSNumber, andDelegate aDelegate: UnprovisionedMeshNodeDelegate?) {
         peripheral          = aPeripheral
         advertisementData   = aDictionary
         delegate            = aDelegate
-        //If periphreal has a node ID set in the service data key, use this as a reference for the node ID
-        if let serviceDictionary = advertisementData[CBAdvertisementDataServiceDataKey] as? [CBUUID : Data] {
-            if serviceDictionary.keys.first == MeshServiceProvisioningUUID {
-                if let someData = serviceDictionary[MeshServiceProvisioningUUID] {
-                    meshNodeIdentifier = someData
-                }
-            }
-        }
+        meshNodeIdentifier  = Data(hexString: aPeripheral.identifier.uuidString.replacingOccurrences(of: "-", with: ""))!
+        rssi = anRSSI
         super.init()
     }
    
-    convenience public init(withPeripheral aPeripheral: CBPeripheral, andAdvertisementDictionary aDictionary: [AnyHashable : Any]) {
-        self.init(withPeripheral: aPeripheral, advertisementDictionary: aDictionary, andDelegate: nil)
+    convenience public init(withPeripheral aPeripheral: CBPeripheral, andAdvertisementDictionary aDictionary: [AnyHashable : Any], RSSI anRSSI: NSNumber) {
+        self.init(withPeripheral: aPeripheral, advertisementDictionary: aDictionary, RSSI: anRSSI, andDelegate: nil)
+    }
+
+    public func updateRSSI(_ anRSSI: NSNumber) {
+        rssi = anRSSI
+    }
+
+    public func RSSI() -> NSNumber {
+        return rssi
     }
 
     public func discover() {
@@ -218,7 +221,6 @@ public class UnprovisionedMeshNode: NSObject, UnprovisionedMeshNodeProtocol {
             delegate?.nodeProvisioningCompleted(self)
         } else {
             print("No services chagned, a reconnect is needed")
-//            shouldDisconnect()
             delegate?.nodeProvisioningCompleted(self)
         }
     }
@@ -236,7 +238,8 @@ public class UnprovisionedMeshNode: NSObject, UnprovisionedMeshNodeProtocol {
     }
    
     public func humanReadableNodeIdentifier() -> String {
-        return self.nodeIdentifier().hexString()
+        let nodeIdData = Data([meshNodeIdentifier[0], meshNodeIdentifier[1]])
+        return nodeIdData.hexString()
     }
    
     public func nodeIdentifier() -> Data {
@@ -247,7 +250,7 @@ public class UnprovisionedMeshNode: NSObject, UnprovisionedMeshNodeProtocol {
         var anEntry: MeshNodeEntry?
         let timestamp = Date()
         if let deviceKey = deviceKey() {
-            anEntry = MeshNodeEntry(withName: nodeBLEName(), provisionDate: timestamp, nodeId: nodeIdentifier(), andDeviceKey: deviceKey)
+            anEntry = MeshNodeEntry(withName: provisioningData.friendlyName, provisionDate: timestamp, nodeId: nodeIdentifier(), andDeviceKey: deviceKey)
         }
         return anEntry
     }
