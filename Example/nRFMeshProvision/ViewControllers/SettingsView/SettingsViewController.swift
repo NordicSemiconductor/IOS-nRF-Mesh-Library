@@ -360,6 +360,11 @@ class SettingsViewController: UIViewController, UITextFieldDelegate, UITableView
         let aCell = tableView.dequeueReusableCell(withIdentifier: reuseIdentifier, for: indexPath)
         aCell.textLabel?.text = rowTitles[indexPath.section][indexPath.row]
         aCell.detailTextLabel?.text = self.contentForRowAtIndexPath(indexPath)
+        if indexPath.section == 3 && indexPath.row == 0 {
+            aCell.detailTextLabel?.textColor = UIColor.red
+        } else {
+            aCell.detailTextLabel?.textColor = UIColor.gray
+        }
         return aCell
     }
 
