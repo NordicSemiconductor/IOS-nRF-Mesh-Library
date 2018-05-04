@@ -8,6 +8,7 @@
 
 import UIKit
 import nRFMeshProvision
+import CoreBluetooth
 
 class ModelConfigurationTableViewController: UITableViewController, ProvisionedMeshNodeDelegate, UITextFieldDelegate {
 
@@ -22,9 +23,11 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
     private var companyIdentifier: Data?
     private var targetNode: ProvisionedMeshNode!
     private var originalDelegate: ProvisionedMeshNodeDelegate?
-
+    private var centralManager: CBCentralManager?
+    
     // MARK: - Implementation
     public func setProxyNode(_ aNode: ProvisionedMeshNode) {
+        centralManager = (self.tabBarController as? MainTabBarViewController)?.centralManager
         targetNode = aNode
         originalDelegate = targetNode.delegate
         targetNode.delegate = self
@@ -182,7 +185,9 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
     }
 
     func nodeShouldDisconnect(_ aNode: ProvisionedMeshNode) {
-        targetNode.shouldDisconnect()
+        if centralManager != nil {
+            centralManager!.cancelPeripheralConnection(aNode.blePeripheral())
+        }
     }
 
     func receivedCompositionData(_ compositionData: CompositionStatusMessage) {
@@ -207,12 +212,16 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
             let modelIdx = selectedModelIndexPath.row
             let aModel = nodeEntry.elements![elementIdx].allSigAndVendorModels()[modelIdx]
             let state = meshstateManager.state()
-            if let anIndex = state.provisionedNodes.index(where: { $0.nodeId == nodeEntry.nodeId}) {
+            if let anIndex = state.provisionedNodes.index(where: { $0.nodeUnicast == nodeEntry.nodeUnicast}) {
                 let aNodeEntry = state.provisionedNodes[anIndex]
-                state.provisionedNodes.remove(at: anIndex)
-                aNodeEntry.modelKeyBindings[aModel] = modelAppStatusData.appkeyIndex
+                if var anElement = aNodeEntry.elements?[elementIdx] {
+                    anElement.setKeyBinding(modelAppStatusData.appkeyIndex, forModelId: aModel)
+                    aNodeEntry.elements?.remove(at: elementIdx)
+                    aNodeEntry.elements?.insert(anElement, at: elementIdx)
+                }
                 //and update
-                state.provisionedNodes.append(aNodeEntry)
+                state.provisionedNodes.remove(at: anIndex)
+                state.provisionedNodes.insert(aNodeEntry, at: anIndex)
                 meshstateManager.saveState()
             }
             tableView.reloadData()
@@ -220,10 +229,6 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
             handleAlertForStatusCode(modelAppStatusData.statusCode)
             print("Failed. Status code: \(modelAppStatusData.statusCode)")
         }
-
-//        print("Model AppKey binding completed, restoring proxy node delegate")
-//        targetNode.delegate = originalDelegate
-//        originalDelegate = nil
     }
 
     func receivedModelPublicationStatus(_ modelPublicationStatusData: ModelPublicationStatusMessage) {
@@ -236,17 +241,22 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
             print("Source addr: \(modelPublicationStatusData.sourceAddress.hexString())")
             print("Status code: \(modelPublicationStatusData.statusCode)")
             
-            // Update state with configured key
+            // Update state with configured Publication address
             let elementIdx = selectedModelIndexPath.section
             let modelIdx = selectedModelIndexPath.row
             let aModel = nodeEntry.elements![elementIdx].allSigAndVendorModels()[modelIdx]
             let state = meshstateManager.state()
-            if let anIndex = state.provisionedNodes.index(where: { $0.nodeId == nodeEntry.nodeId}) {
+            
+            if let anIndex = state.provisionedNodes.index(where: { $0.nodeUnicast == nodeEntry.nodeUnicast}) {
                 let aNodeEntry = state.provisionedNodes[anIndex]
-                state.provisionedNodes.remove(at: anIndex)
-                aNodeEntry.modelPublishAddresses[aModel] = modelPublicationStatusData.publishAddress
+                if var anElement = aNodeEntry.elements?[elementIdx] {
+                    anElement.setPublishAddress(modelPublicationStatusData.publishAddress, forModelId: aModel)
+                    aNodeEntry.elements?.remove(at: elementIdx)
+                    aNodeEntry.elements?.insert(anElement, at: elementIdx)
+                }
                 //and update
-                state.provisionedNodes.append(aNodeEntry)
+                state.provisionedNodes.remove(at: anIndex)
+                state.provisionedNodes.insert(aNodeEntry, at: anIndex)
                 meshstateManager.saveState()
             }
             tableView.reloadData()
@@ -265,24 +275,21 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
             print("Source addr: \(modelSubscriptionStatusData.sourceAddress.hexString())")
             print("Status code: \(modelSubscriptionStatusData.statusCode)")
             
-            // Update state with configured key
+            // Update state with configured subscription addr
             let elementIdx = selectedModelIndexPath.section
             let modelIdx = selectedModelIndexPath.row
             let aModel = nodeEntry.elements![elementIdx].allSigAndVendorModels()[modelIdx]
             let state = meshstateManager.state()
-            if let anIndex = state.provisionedNodes.index(where: { $0.nodeId == nodeEntry.nodeId}) {
+
+            if let anIndex = state.provisionedNodes.index(where: { $0.nodeUnicast == nodeEntry.nodeUnicast}) {
                 let aNodeEntry = state.provisionedNodes[anIndex]
-                state.provisionedNodes.remove(at: anIndex)
-                if aNodeEntry.modelSubscriptionAddresses[aModel] == nil {
-                   aNodeEntry.modelSubscriptionAddresses[aModel] = [Data]()
-                   aNodeEntry.modelSubscriptionAddresses[aModel]?.append(modelSubscriptionStatusData.subscriptionAddress)
-                } else {
-                    if aNodeEntry.modelSubscriptionAddresses[aModel]?.contains(modelSubscriptionStatusData.subscriptionAddress) == false {
-                        aNodeEntry.modelSubscriptionAddresses[aModel]?.append(modelSubscriptionStatusData.subscriptionAddress)
-                    }
+                if var anElement = aNodeEntry.elements?[elementIdx] {
+                    anElement.addSubscriptionAddress(modelSubscriptionStatusData.subscriptionAddress, forModelId: aModel)
+                    aNodeEntry.elements?.remove(at: elementIdx)
+                    aNodeEntry.elements?.insert(anElement, at: elementIdx)
                 }
-                //and update
-                state.provisionedNodes.append(aNodeEntry)
+                state.provisionedNodes.remove(at: anIndex)
+                state.provisionedNodes.insert(aNodeEntry, at: anIndex)
                 meshstateManager.saveState()
             }
             tableView.reloadData()
@@ -325,8 +332,8 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
             //Get number of subscription addresses to render
             if let element = nodeEntry.elements?[selectedModelIndexPath.section] {
                 let targetModel = element.allSigAndVendorModels()[selectedModelIndexPath.row]
-                if let addressses = nodeEntry.modelSubscriptionAddresses[targetModel] {
-                    return addressses.count
+                if let subscriptions = element.subscriptionAddressesForModelId(targetModel) {
+                    return subscriptions.count
                 } else {
                     return 1
                 }
@@ -356,7 +363,7 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
         if indexPath.section == 0 {
             if let element = nodeEntry.elements?[selectedModelIndexPath.section] {
                 let targetModel = element.allSigAndVendorModels()[selectedModelIndexPath.row]
-                if let key = nodeEntry.modelKeyBindings[targetModel] {
+                if let key = element.boundAppKeyIndexForModelId(targetModel) {
                     aCell.textLabel?.text = key.hexString()
                 } else {
                     aCell.textLabel?.text = "No AppKey Bound"
@@ -368,7 +375,7 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
         if indexPath.section == 1 {
             if let element = nodeEntry.elements?[selectedModelIndexPath.section] {
                 let targetModel = element.allSigAndVendorModels()[selectedModelIndexPath.row]
-                if let address = nodeEntry.modelPublishAddresses[targetModel] {
+                if let address = element.publishAddressForModelId(targetModel) {
                     aCell.textLabel?.text = address.hexString()
                 } else {
                     aCell.textLabel?.text = "No Publication Address set"
@@ -380,11 +387,10 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
         if indexPath.section == 2 {
             if let element = nodeEntry.elements?[selectedModelIndexPath.section] {
                 let targetModel = element.allSigAndVendorModels()[selectedModelIndexPath.row]
-                if let addressses = nodeEntry.modelSubscriptionAddresses[targetModel] {
-                    if addressses.count > 0 {
-                        aCell.textLabel?.text = addressses[indexPath.row].hexString()
+                if let addresses = element.subscriptionAddressesForModelId(targetModel) {
+                    if addresses.count > 0 {
+                        aCell.textLabel?.text = addresses[indexPath.row].hexString()
                     } else {
-                        //We Show one informative row
                         aCell.textLabel?.text = "No Subscriptions added"
                     }
                 } else {

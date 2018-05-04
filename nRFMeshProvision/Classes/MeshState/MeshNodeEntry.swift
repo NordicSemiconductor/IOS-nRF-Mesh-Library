@@ -21,9 +21,6 @@ public class MeshNodeEntry: NSObject, Codable {
     public var replayProtectionCount   : Data?
     public var featureFlags            : Data?
     public var elements                : [CompositionElement]?
-    public var modelKeyBindings        : [Data: Data]
-    public var modelPublishAddresses   : [Data: Data]
-    public var modelSubscriptionAddresses: [Data: [Data]]
 
     // MARK: - Initialization
     public init(withName aName: String, provisionDate aProvisioningTimestamp: Date, nodeId anId: Data, andDeviceKey aDeviceKey: Data) {
@@ -31,9 +28,6 @@ public class MeshNodeEntry: NSObject, Codable {
         provisionedTimeStamp        = aProvisioningTimestamp
         nodeId                      = anId
         deviceKey                   = aDeviceKey
-        modelKeyBindings            = [Data: Data]()
-        modelPublishAddresses       = [Data: Data]()
-        modelSubscriptionAddresses  = [Data: [Data]]()
         appKeys                     = [Data]()
     }
 }

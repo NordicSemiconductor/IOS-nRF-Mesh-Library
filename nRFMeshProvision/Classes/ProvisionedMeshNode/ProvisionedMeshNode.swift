@@ -61,7 +61,6 @@ public class ProvisionedMeshNode: NSObject, ProvisionedMeshNodeProtocol {
     }
 
     func completedDiscovery(withProxyService aProxyService: CBService, dataInCharacteristic aDataInCharacteristic: CBCharacteristic, andDataOutCharacteristic aDataOutCharacteristic: CBCharacteristic) {
-//        logDelegate?.logDiscoveryCompleted()
         proxyService = aProxyService
         proxyDataOut = aDataOutCharacteristic
         proxyDataIn  = aDataInCharacteristic

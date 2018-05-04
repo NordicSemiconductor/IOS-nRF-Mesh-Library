@@ -14,8 +14,8 @@ class MeshNodeViewController: UIViewController, UITableViewDataSource, UITableVi
 CBCentralManagerDelegate, UnprovisionedMeshNodeDelegate, UnprovisionedMeshNodeLoggingDelegate,
 ProvisionedMeshNodeDelegate, ProvisionedMeshNodeLoggingDelegate {
 
-    @IBOutlet weak var nodeIdentifierLabel: UILabel!
     @IBOutlet weak var provisioningLogTableView: UITableView!
+    @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
 
     // MARK: - Class properties
     private var meshState: MeshStateManager!
@@ -148,9 +148,8 @@ ProvisionedMeshNodeDelegate, ProvisionedMeshNodeLoggingDelegate {
             logEventWithMessage("Received composition data from unknown node, NOOP")
             return
         }
-        let nodeIdentifier = targetProvisionedNode.nodeIdentifier()
         let state = meshState.state()
-        if let anIndex = state.provisionedNodes.index(where: { $0.nodeId == nodeIdentifier}) {
+        if let anIndex = state.provisionedNodes.index(where: { $0.nodeUnicast == provisioningData.unicastAddr}) {
             let aNodeEntry = state.provisionedNodes[anIndex]
             state.provisionedNodes.remove(at: anIndex)
             aNodeEntry.companyIdentifier = compositionData.companyIdentifier
@@ -189,9 +188,8 @@ ProvisionedMeshNodeDelegate, ProvisionedMeshNodeLoggingDelegate {
             logEventWithMessage("netKey index: \(appKeyStatusData.netKeyIndex.hexString())")
 
             // Update state with configured key
-            let nodeIdentifier = targetProvisionedNode.nodeIdentifier()
             let state = meshState.state()
-            if let anIndex = state.provisionedNodes.index(where: { $0.nodeId == nodeIdentifier}) {
+            if let anIndex = state.provisionedNodes.index(where: { $0.nodeUnicast == provisioningData.unicastAddr}) {
                 let aNodeEntry = state.provisionedNodes[anIndex]
                 state.provisionedNodes.remove(at: anIndex)
                 if aNodeEntry.appKeys.contains(appKeyStatusData.appKeyIndex) == false {
@@ -206,6 +204,7 @@ ProvisionedMeshNodeDelegate, ProvisionedMeshNodeLoggingDelegate {
             }
         } else {
             logEventWithMessage("Status: Failed, code: \(appKeyStatusData.statusCode)")
+            activityIndicator.stopAnimating()
         }
     }
 
@@ -227,6 +226,7 @@ ProvisionedMeshNodeDelegate, ProvisionedMeshNodeLoggingDelegate {
 
     func configurationSucceeded() {
         logEventWithMessage("Configuration completed!")
+        activityIndicator.stopAnimating()
         DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + .seconds(1)) {
             (self.navigationController!.viewControllers[0] as? MainTabBarViewController)?.targetProxyNode = self.targetProvisionedNode
             (self.navigationController!.viewControllers[0] as? MainTabBarViewController)?.switchToNetworkView()
@@ -279,10 +279,11 @@ ProvisionedMeshNodeDelegate, ProvisionedMeshNodeLoggingDelegate {
         let nodeEntry = aNode.getNodeEntryData()
         guard nodeEntry != nil else {
             print("Failed to get node entry data")
+            activityIndicator.stopAnimating()
             return
         }
         let state = meshState.state()
-        if let anIndex = state.provisionedNodes.index(where: { $0.nodeId == aNode.nodeIdentifier()}) {
+        if let anIndex = state.provisionedNodes.index(where: { $0.nodeUnicast == nodeEntry?.nodeUnicast}) {
             state.provisionedNodes.remove(at: anIndex)
         }
         nodeEntry?.nodeUnicast = provisioningData.unicastAddr
@@ -301,6 +302,7 @@ ProvisionedMeshNodeDelegate, ProvisionedMeshNodeLoggingDelegate {
 
     func nodeProvisioningFailed(_ aNode: UnprovisionedMeshNode, withErrorCode anErrorCode: ProvisioningErrorCodes) {
         logProvisioningFailed(withMessage: "provisioning failed, error: \(anErrorCode)")
+        activityIndicator.stopAnimating()
     }
 
     // MARK: - UIView implementation
@@ -308,7 +310,6 @@ ProvisionedMeshNodeDelegate, ProvisionedMeshNodeLoggingDelegate {
         super.viewWillAppear(animated)
         logEventWithMessage("target node id: 0x\(targetNode.humanReadableNodeIdentifier())")
         title = targetNode.nodeBLEName()
-        nodeIdentifierLabel.text = "0x\(targetNode.humanReadableNodeIdentifier())"
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -375,7 +376,7 @@ ProvisionedMeshNodeDelegate, ProvisionedMeshNodeLoggingDelegate {
                         if targetNodeUnicast != nil {
                             if verifyNodeIdentity(data, withUnicast: targetNodeUnicast!) {
                                 logEventWithMessage("node identity verified!")
-                                logEventWithMessage("unicast found: \(targetNodeUnicast!)")
+                                logEventWithMessage("unicast found: \(targetNodeUnicast!.hexString())")
                                 central.stopScan()
                                 targetProvisionedNode = ProvisionedMeshNode(withUnprovisionedNode: targetNode,
                                                                             andDelegate: self)

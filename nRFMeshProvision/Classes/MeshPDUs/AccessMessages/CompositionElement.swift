@@ -10,15 +10,21 @@ import Foundation
 public struct CompositionElement: Codable {
     
     // MARK: - Properties
-    var location: Data
-    var sigModelCount: Int
-    var vendorModelCount: Int
-    var sigModels: [Data]
-    var vendorModels: [Data]
-    var allModels: [Data]
+    var location                    : Data
+    var sigModelCount               : Int
+    var vendorModelCount            : Int
+    var sigModels                   : [Data]
+    var vendorModels                : [Data]
+    var allModels                   : [Data]
+    var modelKeyBindings            : [Data: Data]
+    var modelPublishAddress         : [Data: Data]
+    var modelSubscriptionAddresses  : [Data: [Data]]
 
     // MARK: - Initialization
     init(withData data: Data) {
+        modelKeyBindings            = [Data: Data]()
+        modelPublishAddress         = [Data: Data]()
+        modelSubscriptionAddresses  = [Data: [Data]]()
         location = Data([data[1], data[0]])
         sigModelCount = Int(data[2])
         vendorModelCount = Int(data[3])
@@ -43,6 +49,37 @@ public struct CompositionElement: Codable {
     }
     
     // MARK: - Accessors
+    public func publishAddressForModelId(_ aModelId: Data) -> Data? {
+        return modelPublishAddress[aModelId]
+    }
+    
+    public func subscriptionAddressesForModelId(_ aModelId: Data) -> [Data]? {
+        return modelSubscriptionAddresses[aModelId]
+    }
+    
+    public func boundAppKeyIndexForModelId(_ aModelId: Data) -> Data? {
+        return modelKeyBindings[aModelId]
+    }
+
+    public mutating func setPublishAddress(_ anAddress: Data, forModelId aModelId: Data) {
+        modelPublishAddress[aModelId] = anAddress
+    }
+
+    public mutating func addSubscriptionAddress(_ anAddress: Data, forModelId aModelId: Data) {
+        if modelSubscriptionAddresses[aModelId] == nil {
+            modelSubscriptionAddresses[aModelId] = [Data]()
+        }
+        if !modelSubscriptionAddresses[aModelId]!.contains(anAddress) {
+            modelSubscriptionAddresses[aModelId]!.append(anAddress)
+        }
+    }
+
+    public mutating func setKeyBinding(_ aKey: Data, forModelId aModelId: Data) {
+        if modelKeyBindings[aModelId] == nil {
+            modelKeyBindings[aModelId] = aKey
+        }
+    }
+
     public func allSigAndVendorModels() -> [Data] {
         return allModels
     }

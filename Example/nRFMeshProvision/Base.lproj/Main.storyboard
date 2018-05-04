@@ -1036,31 +1036,26 @@ provisioning and then configuring a device.</string>
                     <toolbarItems/>
                     <navigationItem key="navigationItem" title="&lt;Node Name&gt;" id="syG-cg-tX1">
                         <barButtonItem key="backBarButtonItem" title="Provisioning" id="cwU-Ae-h3Q"/>
-                        <barButtonItem key="rightBarButtonItem" id="2Jx-ki-ItH">
-                            <view key="customView" contentMode="scaleAspectFill" id="2lM-pf-11b">
+                        <barButtonItem key="rightBarButtonItem" style="plain" id="TOb-hd-NeV">
+                            <view key="customView" contentMode="scaleToFill" id="b0T-sh-Ahr">
                                 <rect key="frame" x="276" y="0.0" width="83" height="44"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <subviews>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="0xFFFF" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="DaY-6N-3b4">
-                                        <rect key="frame" x="0.0" y="0.0" width="83" height="44"/>
-                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                        <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                        <nil key="highlightedColor"/>
-                                    </label>
+                                    <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" animating="YES" style="white" translatesAutoresizingMaskIntoConstraints="NO" id="ehv-01-bs2">
+                                        <rect key="frame" x="63" y="12" width="20" height="20"/>
+                                        <color key="color" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                    </activityIndicatorView>
                                 </subviews>
-                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
-                                    <constraint firstAttribute="trailing" secondItem="DaY-6N-3b4" secondAttribute="trailing" id="7g8-s5-4hd"/>
-                                    <constraint firstItem="DaY-6N-3b4" firstAttribute="top" secondItem="2lM-pf-11b" secondAttribute="top" id="QeT-Bq-7TK"/>
-                                    <constraint firstAttribute="bottom" secondItem="DaY-6N-3b4" secondAttribute="bottom" id="Ymw-Eh-y0V"/>
-                                    <constraint firstItem="DaY-6N-3b4" firstAttribute="leading" secondItem="2lM-pf-11b" secondAttribute="leading" id="lFU-Eg-8I0"/>
+                                    <constraint firstAttribute="trailing" secondItem="ehv-01-bs2" secondAttribute="trailing" id="CsO-QE-vCr"/>
+                                    <constraint firstItem="ehv-01-bs2" firstAttribute="centerY" secondItem="b0T-sh-Ahr" secondAttribute="centerY" id="vNn-Eb-TGq"/>
                                 </constraints>
                             </view>
                         </barButtonItem>
                     </navigationItem>
                     <nil key="simulatedBottomBarMetrics"/>
                     <connections>
-                        <outlet property="nodeIdentifierLabel" destination="DaY-6N-3b4" id="d5w-U6-O9D"/>
+                        <outlet property="activityIndicator" destination="ehv-01-bs2" id="WBa-Sh-cBJ"/>
                         <outlet property="provisioningLogTableView" destination="bHV-cF-HGY" id="vli-Wf-bfb"/>
                     </connections>
                 </viewController>

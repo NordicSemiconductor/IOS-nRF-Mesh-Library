@@ -17,7 +17,7 @@ class ScannerCell: UITableViewCell {
     
     public func showNode(_ aNode: UnprovisionedMeshNode) {
         nameLabel.text = aNode.nodeBLEName()
-        advertisementDataLabel.text = aNode.humanReadableNodeIdentifier()
+        advertisementDataLabel.text = nil //Nothing to show
         if aNode.RSSI() != 127 {
             rssiLabel.textColor = UIColor.black
             rssiLabel.text = "\(aNode.RSSI()) dB"
