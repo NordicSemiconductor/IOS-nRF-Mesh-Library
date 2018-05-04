@@ -1,7 +1,8 @@
 ## Changelog
 
 - **0.2**:
-	- TestFligt Release.
+    - TestFligt Release.
+    - Bundled sample firmwares for Light Server and Light client to ease the testing process
     - Minor fixes for copy in the model configuration view, Detail labels where left blank, now they show more information on what happens on selection.
     - Added empty scanner view (Not yet implemented in UI).
     - Added mesh save when mesh state is reset to fix the crash caused by mesh state not being present on main network view.
