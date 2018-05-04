@@ -42,6 +42,7 @@ class SettingsViewController: UIViewController, UITextFieldDelegate, UITableView
                                   IVIndex: ivIndex, globalTTL: globalTTL, unicastAddress: unicastAddress,
                                   flags: flags, appKeys: appKeys, andName: networkName)
             meshStateManager = MeshStateManager(withState: state)
+            meshStateManager.saveState()
         }
    }
 
