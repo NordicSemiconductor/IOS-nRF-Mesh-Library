@@ -95,11 +95,49 @@
                     </navigationItem>
                     <simulatedTabBarMetrics key="simulatedBottomBarMetrics"/>
                     <connections>
+                        <outlet property="emptyScannerView" destination="hyJ-rT-08i" id="bWe-J9-XTc"/>
                         <outlet property="scanActivityIndictaor" destination="2kI-0g-C9I" id="C2q-Vg-eKY"/>
                         <segue destination="pe2-tv-diC" kind="show" identifier="showConfigurationView" id="Cxu-wD-Gda"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="4lj-gG-yI1" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="hyJ-rT-08i" userLabel="EmptyScannerView">
+                    <rect key="frame" x="0.0" y="0.0" width="375" height="200"/>
+                    <subviews>
+                        <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="ic_lan_36pt" translatesAutoresizingMaskIntoConstraints="NO" id="OeI-uM-EFe">
+                            <rect key="frame" x="175" y="20" width="24" height="24"/>
+                            <constraints>
+                                <constraint firstAttribute="height" constant="24" id="N28-M0-WAo"/>
+                                <constraint firstAttribute="width" constant="24" id="rzO-L6-ZJZ"/>
+                            </constraints>
+                        </imageView>
+                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="No Nodes Found" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="8" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="eyc-Xf-yO2">
+                            <rect key="frame" x="21" y="60" width="332" height="20"/>
+                            <fontDescription key="fontDescription" name="TrebuchetMS" family="Trebuchet MS" pointSize="17"/>
+                            <color key="textColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            <nil key="highlightedColor"/>
+                        </label>
+                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" lineBreakMode="tailTruncation" numberOfLines="6" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="vs8-VX-zFU">
+                            <rect key="frame" x="21" y="92" width="332" height="70"/>
+                            <string key="text">If you cannot discovery any mesh nodes, try the following  • Ensure nodes are advertising Mesh Provisioning Service. • Ensure nodes are not already provisioned. • Turn Bluetooth Off for 10 seconds to clear the BLE cache.</string>
+                            <fontDescription key="fontDescription" name="TrebuchetMS" family="Trebuchet MS" pointSize="12"/>
+                            <color key="textColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            <nil key="highlightedColor"/>
+                        </label>
+                    </subviews>
+                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                    <constraints>
+                        <constraint firstItem="vs8-VX-zFU" firstAttribute="top" secondItem="eyc-Xf-yO2" secondAttribute="bottom" constant="12" id="DeG-aK-3Gx"/>
+                        <constraint firstItem="vs8-VX-zFU" firstAttribute="leading" secondItem="hyJ-rT-08i" secondAttribute="leading" constant="21" id="ONg-YO-hkd"/>
+                        <constraint firstAttribute="trailing" secondItem="eyc-Xf-yO2" secondAttribute="trailing" constant="22" id="R7Z-i2-gKf"/>
+                        <constraint firstAttribute="trailing" secondItem="vs8-VX-zFU" secondAttribute="trailing" constant="22" id="ZgN-wG-X5G"/>
+                        <constraint firstItem="OeI-uM-EFe" firstAttribute="top" secondItem="hyJ-rT-08i" secondAttribute="top" constant="20" id="buM-Xa-vXf"/>
+                        <constraint firstItem="eyc-Xf-yO2" firstAttribute="leading" secondItem="hyJ-rT-08i" secondAttribute="leading" constant="21" id="cIT-DX-KQ5"/>
+                        <constraint firstItem="eyc-Xf-yO2" firstAttribute="top" secondItem="OeI-uM-EFe" secondAttribute="bottom" constant="16" id="pTA-NJ-fO2"/>
+                        <constraint firstAttribute="height" constant="200" id="uUx-pH-Sns"/>
+                        <constraint firstItem="OeI-uM-EFe" firstAttribute="centerX" secondItem="hyJ-rT-08i" secondAttribute="centerX" id="ywd-1B-w6v"/>
+                    </constraints>
+                </view>
             </objects>
             <point key="canvasLocation" x="-199.19999999999999" y="-1978.0788177339903"/>
         </scene>
@@ -433,6 +471,7 @@ provisioning and then configuring a device.</string>
                         <rect key="frame" x="0.0" y="0.0" width="375" height="49"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <color key="selectedImageTintColor" red="0.0" green="0.61176470589999998" blue="0.87058823529999996" alpha="1" colorSpace="custom" customColorSpace="adobeRGB1998"/>
                     </tabBar>
                     <connections>
                         <segue destination="NhV-E0-Nbc" kind="relationship" relationship="viewControllers" id="5wt-si-Lgf"/>
@@ -807,10 +846,10 @@ provisioning and then configuring a device.</string>
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Detail" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="eBI-t4-r0j">
-                                            <rect key="frame" x="294.66666666666669" y="12" width="45.333333333333336" height="20"/>
+                                            <rect key="frame" x="300" y="14.000000000000002" width="40" height="17.666666666666668"/>
                                             <autoresizingMask key="autoresizingMask"/>
-                                            <fontDescription key="fontDescription" name="TrebuchetMS" family="Trebuchet MS" pointSize="17"/>
-                                            <nil key="textColor"/>
+                                            <fontDescription key="fontDescription" name="TrebuchetMS" family="Trebuchet MS" pointSize="15"/>
+                                            <color key="textColor" red="0.38034743069999999" green="0.38041785360000002" blue="0.38034299020000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                             <nil key="highlightedColor"/>
                                         </label>
                                     </subviews>

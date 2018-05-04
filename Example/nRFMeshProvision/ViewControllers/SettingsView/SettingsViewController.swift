@@ -16,7 +16,7 @@ class SettingsViewController: UIViewController, UITextFieldDelegate, UITableView
     let reuseIdentifier = "SettingsTableViewCell"
     let sectionTitles = ["Global Settings", "Network Settings", "App keys", "Mesh State"]
     let rowTitles   = [["Network Name", "Global TTL", "Provisioner Unicast"],
-                       ["NetKey", "Key index", "Flags", "IVIndex"],
+                       ["Network Key", "Key Index", "Flags", "IV Index"],
                        ["Manage App Keys"],
                        ["Reset Mesh State"]]
 
@@ -42,6 +42,7 @@ class SettingsViewController: UIViewController, UITextFieldDelegate, UITableView
                                   IVIndex: ivIndex, globalTTL: globalTTL, unicastAddress: unicastAddress,
                                   flags: flags, appKeys: appKeys, andName: networkName)
             meshStateManager = MeshStateManager(withState: state)
+            meshStateManager.saveState()
         }
    }
 
@@ -360,6 +361,11 @@ class SettingsViewController: UIViewController, UITextFieldDelegate, UITableView
         let aCell = tableView.dequeueReusableCell(withIdentifier: reuseIdentifier, for: indexPath)
         aCell.textLabel?.text = rowTitles[indexPath.section][indexPath.row]
         aCell.detailTextLabel?.text = self.contentForRowAtIndexPath(indexPath)
+        if indexPath.section == 3 && indexPath.row == 0 {
+            aCell.detailTextLabel?.textColor = UIColor.red
+        } else {
+            aCell.detailTextLabel?.textColor = UIColor.gray
+        }
         return aCell
     }
 
@@ -389,6 +395,7 @@ class SettingsViewController: UIViewController, UITextFieldDelegate, UITableView
         } else if section == 3 {
             didSelectMeshResetCell()
         } else {
+            deselectSelectedRow()
             return
         }
     }

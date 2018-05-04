@@ -20,7 +20,8 @@ class ScannerViewController: UITableViewController, CBCentralManagerDelegate {
 
     // MARK: - Outlets & Actions
     @IBOutlet weak var scanActivityIndictaor: UIActivityIndicatorView!
-
+    @IBOutlet var emptyScannerView: UIView!
+    
     // MARK: - Scanner Class Implementation
     private func startNodeScan() {
         scanActivityIndictaor.startAnimating()
@@ -58,8 +59,8 @@ class ScannerViewController: UITableViewController, CBCentralManagerDelegate {
     }
 
     override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
         centralManager.stopScan()
+        super.viewWillDisappear(animated)
     }
     // MARK: - UITableViewDataSource
     override func numberOfSections(in tableView: UITableView) -> Int {

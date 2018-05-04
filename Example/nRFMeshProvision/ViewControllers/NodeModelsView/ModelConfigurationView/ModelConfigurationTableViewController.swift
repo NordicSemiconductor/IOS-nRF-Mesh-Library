@@ -89,7 +89,7 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
                                   toModelId: aModel,
                                   onElementAddress: elementAddress,
                                   onDestinationAddress: nodeEntry.nodeUnicast!)
-            print("Will now bind appkey \(selectedAppKeyName) onto model \(aModel.hexString())")
+            print("Binding appkey \(selectedAppKeyName) to Model \(aModel.hexString())")
         }
         navigationController?.popViewController(animated: true)
     }
@@ -363,10 +363,12 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
         if indexPath.section == 0 {
             if let element = nodeEntry.elements?[selectedModelIndexPath.section] {
                 let targetModel = element.allSigAndVendorModels()[selectedModelIndexPath.row]
-                if let key = element.boundAppKeyIndexForModelId(targetModel) {
-                    aCell.textLabel?.text = key.hexString()
+                if let keyIndex = element.boundAppKeyIndexForModelId(targetModel) {
+                    aCell.textLabel?.text = "Key Binded"
+                    aCell.detailTextLabel?.text = "Key index \(keyIndex.hexString())"
                 } else {
-                    aCell.textLabel?.text = "No AppKey Bound"
+                    aCell.textLabel?.text = "None"
+                    aCell.detailTextLabel?.text = "Tap to add"
                 }
             }
             return aCell
@@ -377,8 +379,10 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
                 let targetModel = element.allSigAndVendorModels()[selectedModelIndexPath.row]
                 if let address = element.publishAddressForModelId(targetModel) {
                     aCell.textLabel?.text = address.hexString()
+                    aCell.detailTextLabel?.text = "Tap to change"
                 } else {
-                    aCell.textLabel?.text = "No Publication Address set"
+                    aCell.textLabel?.text = "None"
+                    aCell.detailTextLabel?.text = "Tap to add"
                 }
             }
             return aCell
@@ -390,11 +394,14 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
                 if let addresses = element.subscriptionAddressesForModelId(targetModel) {
                     if addresses.count > 0 {
                         aCell.textLabel?.text = addresses[indexPath.row].hexString()
+                        aCell.detailTextLabel?.text = "Tap to add"
                     } else {
-                        aCell.textLabel?.text = "No Subscriptions added"
+                        aCell.textLabel?.text = "None"
+                        aCell.detailTextLabel?.text = "Tap to add"
                     }
                 } else {
-                    aCell.textLabel?.text = "No Subscriptions added"
+                    aCell.textLabel?.text = "None"
+                    aCell.detailTextLabel?.text = "Tap to add"
                 }
             }
             return aCell
