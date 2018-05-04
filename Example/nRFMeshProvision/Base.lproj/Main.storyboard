@@ -1075,7 +1075,7 @@ provisioning and then configuring a device.</string>
                     <toolbarItems/>
                     <navigationItem key="navigationItem" title="&lt;Node Name&gt;" id="syG-cg-tX1">
                         <barButtonItem key="backBarButtonItem" title="Provisioning" id="cwU-Ae-h3Q"/>
-                        <barButtonItem key="rightBarButtonItem" style="plain" id="TOb-hd-NeV">
+                        <barButtonItem key="rightBarButtonItem" id="TOb-hd-NeV">
                             <view key="customView" contentMode="scaleToFill" id="b0T-sh-Ahr">
                                 <rect key="frame" x="276" y="0.0" width="83" height="44"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>

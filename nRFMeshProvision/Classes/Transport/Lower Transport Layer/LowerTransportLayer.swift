@@ -78,6 +78,9 @@ public struct LowerTransportLayer {
                     }
                 }
                 print("received last part \(segO.hexString()) of \(segN.hexString()), SeqZero = \(seqZero.hexString()), reassembling")
+                if segAcknowledgeStartTime == nil {
+                    segAcknowledgeStartTime = DispatchTime.now()
+                }
                 let (ackData, delay) = self.acknowlegde(withSeqZero: seqZero, segN: segN, segO: segO, dst: aSRC, ttl: aTTL, startTime: segAcknowledgeStartTime!)
                 segmentedMessageAcknowledge?(ackData, delay)
                 segAcknowledgeStartTime = nil //Reset timer

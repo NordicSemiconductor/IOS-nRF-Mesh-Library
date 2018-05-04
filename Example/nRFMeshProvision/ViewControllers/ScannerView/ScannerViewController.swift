@@ -82,7 +82,7 @@ class ScannerViewController: UITableViewController, CBCentralManagerDelegate {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         stopNodeScan()
         if let targetProxy = (self.tabBarController as? MainTabBarViewController)!.targetProxyNode {
-            targetProxy.shouldDisconnect()
+            centralManager.cancelPeripheralConnection(targetProxy.blePeripheral())
         }
         targetNode    = discoveredNodes[indexPath.row]
         performSegue(withIdentifier: "showConfigurationView", sender: nil)
