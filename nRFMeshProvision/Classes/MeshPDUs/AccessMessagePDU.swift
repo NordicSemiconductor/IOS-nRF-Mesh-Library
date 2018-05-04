@@ -64,16 +64,16 @@ public struct AccessMessagePDU {
         var upperTransportParams: UpperTransportPDUParams!
 
         if nonce.type == .Device {
-            upperTransportParams = UpperTransportPDUParams(withPayload: opcode + payload, opcode: opcode, IVIndex: ivIndex, key: key!, ttl: ttl, seq: seq, src: src, dst: dst, nonce: nonce, ctl: false, afk: isAppKey, aid: Data([0x00]))
+            upperTransportParams = UpperTransportPDUParams(withPayload: Data(opcode + payload), opcode: opcode, IVIndex: ivIndex, key: key!, ttl: ttl, seq: seq, src: src, dst: dst, nonce: nonce, ctl: false, afk: isAppKey, aid: Data([0x00]))
         } else {
-            upperTransportParams = UpperTransportPDUParams(withPayload: opcode + payload, opcode: opcode, IVIndex: ivIndex, key: netKey, ttl: ttl, seq: seq, src: src, dst: dst, nonce: nonce, ctl: false, afk: isAppKey, aid: Data([0x00]))
+            upperTransportParams = UpperTransportPDUParams(withPayload: Data(opcode + payload), opcode: opcode, IVIndex: ivIndex, key: netKey, ttl: ttl, seq: seq, src: src, dst: dst, nonce: nonce, ctl: false, afk: isAppKey, aid: Data([0x00]))
         }
 
         let upperTransport = UpperTransportLayer(withParams: upperTransportParams)
 
         if let encryptedPDU = upperTransport.encrypt() {
             let isAppKeyData = isAppKey ? Data([0x01]) : Data([0x00])
-            let lowerTransportParams = LowerTransportPDUParams(withUpperTransportData: encryptedPDU, ttl: ttl, ctl: Data([0x00]), ivIndex: ivIndex, sequenceNumber: seq, sourceAddress: src, destinationAddress: dst, micSize: Data([0x00]), afk: isAppKeyData, aid: Data([0x00]), andOpcode: opcode)
+            let lowerTransportParams = LowerTransportPDUParams(withUpperTransportData: Data(encryptedPDU), ttl: ttl, ctl: Data([0x00]), ivIndex: ivIndex, sequenceNumber: seq, sourceAddress: src, destinationAddress: dst, micSize: Data([0x00]), afk: isAppKeyData, aid: Data([0x00]), andOpcode: opcode)
             let lowerTransport = LowerTransportLayer(withParams: lowerTransportParams)
             let networkLayer = NetworkLayer(withLowerTransportLayer: lowerTransport, andNetworkKey: netKey)
             return networkLayer.createPDU()

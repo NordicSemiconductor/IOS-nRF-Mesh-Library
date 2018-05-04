@@ -32,7 +32,6 @@ class ModelAppBindConfiguratorState: NSObject, ConfiguratorStateProtocol {
         segmentedData = Data()
         stateManager = aStateManager
         destinationAddress = aDestinationAddress
-        networkLayer = NetworkLayer(withStateManager: stateManager)
         super.init()
         target.basePeripheral().delegate = self
         //If services and characteristics are already discovered, set them now
@@ -40,6 +39,10 @@ class ModelAppBindConfiguratorState: NSObject, ConfiguratorStateProtocol {
         proxyService            = discovery.proxyService
         dataInCharacteristic    = discovery.dataInCharacteristic
         dataOutCharacteristic   = discovery.dataOutCharacteristic
+
+        networkLayer = NetworkLayer(withStateManager: stateManager, andSegmentAcknowlegdement: { (ackData, delay) -> (Void) in
+            self.acknowlegeSegment(withAckData: ackData, withDelay: delay)
+        })
     }
     
     public func setBinding(elementAddress anElementAddress: Data,
@@ -82,8 +85,8 @@ class ModelAppBindConfiguratorState: NSObject, ConfiguratorStateProtocol {
                         header.append(Data([0x80])) //SAR cont.
                     }
                     var chunkData = Data(header)
-                    chunkData.append(data[aRange])
-                    segmentedProvisioningData.append(chunkData)
+                    chunkData.append(Data(data[aRange]))
+                    segmentedProvisioningData.append(Data(chunkData))
                 }
                 for aSegment in segmentedProvisioningData {
                     print("Sending model app bind segment: \(aSegment.hexString())")
@@ -98,7 +101,7 @@ class ModelAppBindConfiguratorState: NSObject, ConfiguratorStateProtocol {
             print("Secure beacon: \(incomingData.hexString())")
         } else {
             print("Incoming DPU: \(incomingData.hexString())")
-            let strippedOpcode = incomingData.dropFirst()
+            let strippedOpcode = Data(incomingData.dropFirst())
             if let result = networkLayer.incomingPDU(strippedOpcode) {
                 if result is ModelAppBindStatusMessage {
                     let modelKeyStatus = result as! ModelAppBindStatusMessage
@@ -131,6 +134,38 @@ class ModelAppBindConfiguratorState: NSObject, ConfiguratorStateProtocol {
         return ranges
     }
     
+    private func acknowlegeSegment(withAckData someData: Data, withDelay aDelay: DispatchTime) {
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() - DispatchTimeInterval.nanoseconds(Int(aDelay.uptimeNanoseconds))) {
+            print("Sending acknowledgement: \(someData.hexString())")
+            if someData.count <= self.target.basePeripheral().maximumWriteValueLength(for: .withoutResponse) {
+                self.target.basePeripheral().writeValue(someData, for: self.dataInCharacteristic, type: .withoutResponse)
+            } else {
+                print("Maximum write length is shorter than ACK PDU, will Segment")
+                var segmentedData = [Data]()
+                let dataToSegment = Data(someData.dropFirst()) //Remove old header as it's going to be added in SAR
+                let chunkRanges = self.calculateDataRanges(dataToSegment, withSize: 19)
+                for aRange in chunkRanges {
+                    var header = Data()
+                    let chunkIndex = chunkRanges.index(of: aRange)!
+                    if chunkIndex == 0 {
+                        header.append(Data([0x40])) //SAR start
+                    } else if chunkIndex == chunkRanges.count - 1 {
+                        header.append(Data([0xC0])) //SAR end
+                    } else {
+                        header.append(Data([0x80])) //SAR cont.
+                    }
+                    var chunkData = Data(header)
+                    chunkData.append(Data(dataToSegment[aRange]))
+                    segmentedData.append(Data(chunkData))
+                }
+                for aSegment in segmentedData {
+                    print("Sending Ack segment: \(aSegment.hexString())")
+                    self.target.basePeripheral().writeValue(aSegment, for: self.dataInCharacteristic, type: .withoutResponse)
+                }
+            }
+        }
+    }
+
     // MARK: - CBPeripheralDelegate
     func peripheral(_ peripheral: CBPeripheral, didDiscoverServices error: Error?) {
         //NOOP
@@ -140,24 +175,35 @@ class ModelAppBindConfiguratorState: NSObject, ConfiguratorStateProtocol {
         //NOOP
     }
     
+    var lastMessageType = 0xC0
+    
     func peripheral(_ peripheral: CBPeripheral, didUpdateValueFor characteristic: CBCharacteristic, error: Error?) {
+        print("Cahrcateristic value updated: \(characteristic.value!.hexString())")
         //SAR handling
         if characteristic.value![0] & 0xC0 == 0x40 {
+            if lastMessageType == 0x40 {
+                //Drop repeated 0x40's
+                print("CMP:Reduntand SAR start, dropping")
+                segmentedData = Data()
+            }
+            lastMessageType = 0x40
             //Add message type header
-            segmentedData.append(characteristic.value![0] & 0x3F)
-            segmentedData.append(characteristic.value!.dropFirst())
+            segmentedData.append(Data([characteristic.value![0] & 0x3F]))
+            segmentedData.append(Data(characteristic.value!.dropFirst()))
         } else if characteristic.value![0] & 0xC0 == 0x80 {
+            lastMessageType = 0x80
             print("Segmented data cont")
-            segmentedData.append(characteristic.value!.dropFirst())
+            segmentedData.append(Data(characteristic.value!.dropFirst()))
         } else if characteristic.value![0] & 0xC0 == 0xC0 {
+            lastMessageType = 0xC0
             print("Segmented data end")
-            segmentedData.append(characteristic.value!.dropFirst())
+            segmentedData.append(Data(characteristic.value!.dropFirst()))
             print("Reassembled data!: \(segmentedData.hexString())")
             //Copy data and send it to NetworkLayer
             receivedData(incomingData: Data(segmentedData))
             segmentedData = Data()
         } else {
-            receivedData(incomingData: characteristic.value!)
+            receivedData(incomingData: Data(characteristic.value!))
         }
     }
     

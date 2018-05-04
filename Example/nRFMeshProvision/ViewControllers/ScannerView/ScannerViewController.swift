@@ -20,7 +20,8 @@ class ScannerViewController: UITableViewController, CBCentralManagerDelegate {
 
     // MARK: - Outlets & Actions
     @IBOutlet weak var scanActivityIndictaor: UIActivityIndicatorView!
-
+    @IBOutlet var emptyScannerView: UIView!
+    
     // MARK: - Scanner Class Implementation
     private func startNodeScan() {
         scanActivityIndictaor.startAnimating()
@@ -30,32 +31,37 @@ class ScannerViewController: UITableViewController, CBCentralManagerDelegate {
             centralManager.scanForPeripherals(withServices: [MeshServiceProvisioningUUID],
                                               options: [CBCentralManagerScanOptionAllowDuplicatesKey: true])
         }
-   }
+    }
+
     private func stopNodeScan() {
         if centralManager.isScanning {
             centralManager.stopScan()
         }
-   scanActivityIndictaor.stopAnimating()
+        scanActivityIndictaor.stopAnimating()
     }
 
     // MARK: - UIViewController Implementation
     override func viewDidLoad() {
         super.viewDidLoad()
-        centralManager = CBCentralManager(delegate: self, queue: nil)
+        centralManager = (self.tabBarController as? MainTabBarViewController)!.centralManager
+        centralManager.delegate = self
         stateManager = MeshStateManager.restoreState()
     }
 
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
         discoveredNodes.removeAll()
         tableView.reloadData()
         if centralManager.state == .poweredOn {
-            if !centralManager.isScanning {
-                startNodeScan()
-            }
+            centralManager.stopScan()
+            startNodeScan()
+        }
     }
-   }
 
+    override func viewWillDisappear(_ animated: Bool) {
+        centralManager.stopScan()
+        super.viewWillDisappear(animated)
+    }
     // MARK: - UITableViewDataSource
     override func numberOfSections(in tableView: UITableView) -> Int {
         return 1
@@ -66,17 +72,18 @@ class ScannerViewController: UITableViewController, CBCentralManagerDelegate {
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "peripheralCell", for: indexPath)
+        let cell = tableView.dequeueReusableCell(withIdentifier: "peripheralCell", for: indexPath) as? ScannerCell
         //Node name
         let node = discoveredNodes[indexPath.row]
-        cell.textLabel?.text = node.nodeBLEName()
-        //Node identifier
-        cell.detailTextLabel?.text = "0x\(node.humanReadableNodeIdentifier())"
-        return cell
+        cell?.showNode(node)
+        return cell!
     }
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         stopNodeScan()
+        if let targetProxy = (self.tabBarController as? MainTabBarViewController)!.targetProxyNode {
+            centralManager.cancelPeripheralConnection(targetProxy.blePeripheral())
+        }
         targetNode    = discoveredNodes[indexPath.row]
         performSegue(withIdentifier: "showConfigurationView", sender: nil)
     }
@@ -92,11 +99,18 @@ class ScannerViewController: UITableViewController, CBCentralManagerDelegate {
                         didDiscover peripheral: CBPeripheral,
                         advertisementData: [String: Any],
                         rssi RSSI: NSNumber) {
-        let newNode = UnprovisionedMeshNode(withPeripheral: peripheral, andAdvertisementDictionary: advertisementData)
-        guard discoveredNodes.contains(newNode) == false else {
-            return
+        let newNode = UnprovisionedMeshNode(withPeripheral: peripheral, andAdvertisementDictionary: advertisementData, RSSI: RSSI)
+        if discoveredNodes.contains(newNode) == false {
+            discoveredNodes.append(newNode)
+        } else {
+            if let index = discoveredNodes.index(of: newNode) {
+                let oldNode = discoveredNodes[index]
+                oldNode.updateRSSI(RSSI)
+            } else {
+                //NOOP
+                return
+            }
         }
-   discoveredNodes.append(newNode)
         tableView.reloadData()
     }
 

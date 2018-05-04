@@ -14,10 +14,11 @@ class SettingsViewController: UIViewController, UITextFieldDelegate, UITableView
     // MARK: - Properties
     var meshStateManager: MeshStateManager!
     let reuseIdentifier = "SettingsTableViewCell"
-    let sectionTitles = ["Global Settings", "Network Settings", "App keys"]
-    let rowTitles   = [["Network Name", "Global TTL"],
-                       ["NetKey", "Key index", "Flags", "IVIndex", "Unicast Address"],
-                       ["Manage App Keys"]]
+    let sectionTitles = ["Global Settings", "Network Settings", "App keys", "Mesh State"]
+    let rowTitles   = [["Network Name", "Global TTL", "Provisioner Unicast"],
+                       ["Network Key", "Key Index", "Flags", "IV Index"],
+                       ["Manage App Keys"],
+                       ["Reset Mesh State"]]
 
     // MARK: - Outlets and actions
     @IBOutlet weak var settingsTable: UITableView!
@@ -41,6 +42,7 @@ class SettingsViewController: UIViewController, UITextFieldDelegate, UITableView
                                   IVIndex: ivIndex, globalTTL: globalTTL, unicastAddress: unicastAddress,
                                   flags: flags, appKeys: appKeys, andName: networkName)
             meshStateManager = MeshStateManager(withState: state)
+            meshStateManager.saveState()
         }
    }
 
@@ -82,6 +84,18 @@ class SettingsViewController: UIViewController, UITextFieldDelegate, UITableView
         performSegue(withIdentifier: "showKeyManagerView", sender: nil)
     }
 
+    func didSelectMeshResetCell() {
+        self.presentConfirmationViewWithTitle("Resetting Mesh", message: "Warning: This action is not reversible and will remove all configuration on this provisioner, continue?") { (confirm) in
+            if confirm == true {
+                if self.meshStateManager.deleteState() {
+                    self.setupProvisioningData()
+                    self.settingsTable.reloadData()
+                } else {
+                    print("failed to delete mesh")
+                }
+            }
+        }
+    }
     func didSelectKeyCell() {
         presentInputViewWithTitle("Please enter a Key",
                                   message: "16 Bytes",
@@ -173,7 +187,8 @@ class SettingsViewController: UIViewController, UITextFieldDelegate, UITableView
     }
    }
 
-    // MARK: - Input Alert
+    // MARK: - Alert helpers
+    // Input Alert
     func presentInputViewWithTitle(_ aTitle: String,
                                    message aMessage: String, placeholder aPlaceholder: String?,
                                    generationEnabled generationFlag: Bool,
@@ -236,11 +251,34 @@ class SettingsViewController: UIViewController, UITextFieldDelegate, UITableView
         present(inputAlertView, animated: true, completion: nil)
     }
 
+    // Confirmation Alert
+    func presentConfirmationViewWithTitle(_ aTitle: String,
+                                   message aMessage: String,
+                                   andCompletionHandler aHandler : @escaping (Bool) -> Void) {
+        let confirmationAlertView = UIAlertController(title: aTitle, message: aMessage, preferredStyle: .alert)
+        let confirmAction = UIAlertAction(title: "Confirm", style: .destructive) { (_) in
+            DispatchQueue.main.async {
+                self.deselectSelectedRow()
+                aHandler(true)
+            }
+        }
+        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel) { (_) in
+            DispatchQueue.main.async {
+                self.deselectSelectedRow()
+                aHandler(false)
+            }
+        }
+
+        confirmationAlertView.addAction(confirmAction)
+        confirmationAlertView.addAction(cancelAction)
+        present(confirmationAlertView, animated: true, completion: nil)
+    }
+
     private func deselectSelectedRow() {
         if let indexPath = self.settingsTable.indexPathForSelectedRow {
             self.settingsTable.deselectRow(at: indexPath, animated: true)
         }
-   }
+    }
     // MARK: - UITextFieldDelegate
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         return true
@@ -307,9 +345,10 @@ class SettingsViewController: UIViewController, UITextFieldDelegate, UITableView
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch section {
-        case 0: return 2
-        case 1: return 5
+        case 0: return 3
+        case 1: return 4
         case 2: return 1
+        case 3: return 1
         default: return 0
         }
    }
@@ -322,6 +361,11 @@ class SettingsViewController: UIViewController, UITextFieldDelegate, UITableView
         let aCell = tableView.dequeueReusableCell(withIdentifier: reuseIdentifier, for: indexPath)
         aCell.textLabel?.text = rowTitles[indexPath.section][indexPath.row]
         aCell.detailTextLabel?.text = self.contentForRowAtIndexPath(indexPath)
+        if indexPath.section == 3 && indexPath.row == 0 {
+            aCell.detailTextLabel?.textColor = UIColor.red
+        } else {
+            aCell.detailTextLabel?.textColor = UIColor.gray
+        }
         return aCell
     }
 
@@ -331,8 +375,10 @@ class SettingsViewController: UIViewController, UITextFieldDelegate, UITableView
         if section == 0 {
             if row == 0 {
                 didSelectNetworkNameCell()
-            } else {
+            } else if row == 1 {
                 didSelectGlobalTTLCell()
+            } else {
+                didSelectUnicastAddressCell()
             }
         } else if section == 1 {
             if row == 0 {
@@ -343,11 +389,14 @@ class SettingsViewController: UIViewController, UITextFieldDelegate, UITableView
                 didSelectFlagsCell()
             } else if row == 3 {
                 didSelectIVIndexCell()
-            } else {
-                didSelectUnicastAddressCell()
             }
-        } else {
+        } else if section == 2 {
             didSelectAppKeysCell()
+        } else if section == 3 {
+            didSelectMeshResetCell()
+        } else {
+            deselectSelectedRow()
+            return
         }
     }
 
@@ -359,6 +408,8 @@ class SettingsViewController: UIViewController, UITextFieldDelegate, UITableView
                 return meshStateManager.state().name
             } else if row == 1 {
                 return "0x\(meshStateManager.state().globalTTL.hexString())"
+            } else if row == 2 {
+                return "0x\(meshStateManager.state().unicastAddress.hexString())"
             } else {
                 return "N/A"
             }
@@ -371,16 +422,23 @@ class SettingsViewController: UIViewController, UITextFieldDelegate, UITableView
                 return "0x\(meshStateManager.state().flags.hexString())"
             } else if row == 3 {
                 return "0x\(meshStateManager.state().IVIndex.hexString())"
-            } else if row == 4 {
-                return "0x\(meshStateManager.state().unicastAddress.hexString())"
+            } else {
+                return "N/A"
+            }
+        } else if section == 2 {
+            if row == 0 {
+                let keyCount = meshStateManager.state().appKeys.count
+                return "\(keyCount) \(keyCount != 1 ? "keys" : "key")"
+            } else {
+                return "N/A"
+            }
+        } else if section == 3 {
+            if row == 0 {
+                return "Forget Network"
             } else {
                 return "N/A"
             }
         } else {
-            if row == 0 {
-                let keyCount = meshStateManager.state().appKeys.count
-                return "\(keyCount) \(keyCount != 1 ? "keys" : "key")"
-            }
             return "N/A"
         }
     }

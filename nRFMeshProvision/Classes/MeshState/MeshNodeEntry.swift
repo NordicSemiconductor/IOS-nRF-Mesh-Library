@@ -19,20 +19,17 @@ public class MeshNodeEntry: NSObject, Codable {
     // MARK: -  Node composition
     public var companyIdentifier       : Data?
     public var productIdentifier       : Data?
-    public var vendorIdentifier        : Data?
+    public var productVersion          : Data?
     public var replayProtectionCount   : Data?
     public var featureFlags            : Data?
     public var elements                : [CompositionElement]?
-    public var modelKeyBindings        : [Data: Data]
-    public var modelPublishAddresses   : [Data: Data]
+
     // MARK: - Initialization
     public init(withName aName: String, provisionDate aProvisioningTimestamp: Date, nodeId anId: Data, andDeviceKey aDeviceKey: Data) {
-        nodeName                = aName
-        provisionedTimeStamp    = aProvisioningTimestamp
-        nodeId                  = anId
-        deviceKey               = aDeviceKey
-        modelKeyBindings        = [Data: Data]()
-        modelPublishAddresses   = [Data: Data]()
-        appKeys                 = [Data]()
+        nodeName                    = aName
+        provisionedTimeStamp        = aProvisioningTimestamp
+        nodeId                      = anId
+        deviceKey                   = aDeviceKey
+        appKeys                     = [Data]()
     }
 }

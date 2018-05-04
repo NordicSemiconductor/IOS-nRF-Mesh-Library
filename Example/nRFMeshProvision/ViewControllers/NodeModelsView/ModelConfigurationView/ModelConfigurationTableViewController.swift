@@ -8,6 +8,7 @@
 
 import UIKit
 import nRFMeshProvision
+import CoreBluetooth
 
 class ModelConfigurationTableViewController: UITableViewController, ProvisionedMeshNodeDelegate, UITextFieldDelegate {
 
@@ -22,12 +23,27 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
     private var companyIdentifier: Data?
     private var targetNode: ProvisionedMeshNode!
     private var originalDelegate: ProvisionedMeshNodeDelegate?
-
+    private var centralManager: CBCentralManager?
+    
     // MARK: - Implementation
     public func setProxyNode(_ aNode: ProvisionedMeshNode) {
+        centralManager = (self.tabBarController as? MainTabBarViewController)?.centralManager
         targetNode = aNode
         originalDelegate = targetNode.delegate
         targetNode.delegate = self
+    }
+
+    public func didSelectSubscriptionAddress(_ anAddress: Data) {
+        let elementIdx = selectedModelIndexPath.section
+        let modelIdx = selectedModelIndexPath.row
+        let aModel = nodeEntry.elements![elementIdx].allSigAndVendorModels()[modelIdx]
+        let unicast = nodeEntry.nodeUnicast!
+        let elementAddress = Data([unicast[0], unicast[1] + UInt8(elementIdx)])
+
+        targetNode.nodeSubscriptionAddressAdd(anAddress,
+                                              onElementAddress: elementAddress,
+                                              modelIdentifier: aModel,
+                                              onDestinationAddress: nodeEntry.nodeUnicast!)
     }
 
     public func didSelectPublishAddress(_ anAddress: Data) {
@@ -41,10 +57,10 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
                                              onElementAddress: elementAddress,
                                              appKeyIndex: Data([0x00,0x00]),
                                              credentialFlag: false,
-                                             ttl: Data([0x04]),
-                                             period: Data([0x01]),
-                                             retransmitCount: Data([0x02]),
-                                             retransmitInterval: Data([0x05]),
+                                             ttl: Data([0xFF]),
+                                             period: Data([0x00]),
+                                             retransmitCount: Data([0x00]),
+                                             retransmitInterval: Data([0x00]),
                                              modelIdentifier: aModel,
                                              onDestinationAddress: nodeEntry.nodeUnicast!)
     }
@@ -61,7 +77,7 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
         let appKey = meshstateManager.state().appKeys[Int(anAppKeyIndex)]
         let selectedAppKeyName = appKey.keys.first!
         if !keyFound {
-            showAppKeyAlert(withTitle: "AppKey is not available",
+            showstatusCodeAlert(withTitle: "AppKey is not available",
                             andMessage: "\"\(selectedAppKeyName)\" has not been added to this node's AppKey list and cannot be bound to this model.")
         } else {
             let elementIdx = selectedModelIndexPath.section
@@ -73,12 +89,45 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
                                   toModelId: aModel,
                                   onElementAddress: elementAddress,
                                   onDestinationAddress: nodeEntry.nodeUnicast!)
-            print("Will now bind appkey \(selectedAppKeyName) onto model \(aModel.hexString())")
+            print("Binding appkey \(selectedAppKeyName) to Model \(aModel.hexString())")
         }
         navigationController?.popViewController(animated: true)
     }
 
-    public func showAppKeyAlert(withTitle aTitle: String, andMessage aMessage: String) {
+    public func handleAlertForStatusCode(_ aStatusCode: MessageStatusCodes) {
+        switch aStatusCode {
+        case .invalidPublishParameters:
+            showstatusCodeAlert(withTitle: "Invalid Publish Parameters", andMessage: "The node has reported the publish parameters are invalid")
+        case .cannotBind:
+            showstatusCodeAlert(withTitle: "Cannot Bind", andMessage: "This model cannot be bound to an AppKey")
+        case .featureNotSupported:
+            showstatusCodeAlert(withTitle: "Not supported", andMessage: "This feature not supported")
+        case .invalidAdderss:
+            showstatusCodeAlert(withTitle: "Invalid Address", andMessage: "Node reported invalid address.")
+        case .invalidAppKeyIndex:
+            showstatusCodeAlert(withTitle: "Invalid AppKey Index", andMessage: "Node reported this AppKey index as invalid")
+        case .invalidBinding:
+            showstatusCodeAlert(withTitle: "Invalid binding", andMessage: "Node reported this Binding as invalid")
+        case .invalidModel:
+            showstatusCodeAlert(withTitle: "Invalid model", andMessage: "Node reported this model as invalid")
+        case .invalidNetKeyIndex:
+            showstatusCodeAlert(withTitle: "Invalid NetKey Index", andMessage: "Node reported NetKey as invalid")
+        case .unspecifiedError:
+            showstatusCodeAlert(withTitle: "Unspecified Error", andMessage: "Node has reported an unspecified error")
+        case .insufficientResources:
+            showstatusCodeAlert(withTitle: "Insufficient resources", andMessage: "Node has reported insufficient resources")
+        case .cannotRemove:
+            showstatusCodeAlert(withTitle: "Cannot remove", andMessage: "Node has reported it cannot remove this item")
+        case .cannotSet:
+            showstatusCodeAlert(withTitle: "Cannot set", andMessage: "Node has reported it cannot set this item")
+        case .cannotUpdate:
+            showstatusCodeAlert(withTitle: "Cannot update", andMessage: "Node has reported it cannot update this item")
+        default:
+            showstatusCodeAlert(withTitle: "Error", andMessage: "An error has occured, error code: \(aStatusCode.rawValue)")
+        }
+    }
+
+    public func showstatusCodeAlert(withTitle aTitle: String, andMessage aMessage: String) {
         let alert = UIAlertController(title: aTitle,
                           message: aMessage,
                           preferredStyle: .alert)
@@ -136,7 +185,9 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
     }
 
     func nodeShouldDisconnect(_ aNode: ProvisionedMeshNode) {
-        targetNode.shouldDisconnect()
+        if centralManager != nil {
+            centralManager!.cancelPeripheralConnection(aNode.blePeripheral())
+        }
     }
 
     func receivedCompositionData(_ compositionData: CompositionStatusMessage) {
@@ -161,94 +212,99 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
             let modelIdx = selectedModelIndexPath.row
             let aModel = nodeEntry.elements![elementIdx].allSigAndVendorModels()[modelIdx]
             let state = meshstateManager.state()
-            if let anIndex = state.provisionedNodes.index(where: { $0.nodeId == nodeEntry.nodeId}) {
+            if let anIndex = state.provisionedNodes.index(where: { $0.nodeUnicast == nodeEntry.nodeUnicast}) {
                 let aNodeEntry = state.provisionedNodes[anIndex]
-                state.provisionedNodes.remove(at: anIndex)
-                aNodeEntry.modelKeyBindings[aModel] = modelAppStatusData.appkeyIndex
+                if var anElement = aNodeEntry.elements?[elementIdx] {
+                    anElement.setKeyBinding(modelAppStatusData.appkeyIndex, forModelId: aModel)
+                    aNodeEntry.elements?.remove(at: elementIdx)
+                    aNodeEntry.elements?.insert(anElement, at: elementIdx)
+                }
                 //and update
-                state.provisionedNodes.append(aNodeEntry)
+                state.provisionedNodes.remove(at: anIndex)
+                state.provisionedNodes.insert(aNodeEntry, at: anIndex)
                 meshstateManager.saveState()
             }
             tableView.reloadData()
         } else {
-            switch modelAppStatusData.statusCode {
-            case .cannotBind:
-                showAppKeyAlert(withTitle: "Cannot Bind", andMessage: "This model cannot be bound to an AppKey")
-            case .featureNotSupported:
-                showAppKeyAlert(withTitle: "Not supported", andMessage: "This feature not supported")
-            case .invalidAdderss:
-                showAppKeyAlert(withTitle: "Invalid Address", andMessage: "Node reported invalid address.")
-            case .invalidAppKeyIndex:
-                showAppKeyAlert(withTitle: "Invalid AppKey Index", andMessage: "Node reported this AppKey index as invalid")
-            case .invalidBinding:
-                showAppKeyAlert(withTitle: "Invalid binding", andMessage: "Node reported this Binding as invalid")
-            case .invalidModel:
-                showAppKeyAlert(withTitle: "Invalid model", andMessage: "Node reported this model as invalid")
-            case .invalidNetKeyIndex:
-                showAppKeyAlert(withTitle: "Invalid NetKey Index", andMessage: "Node reported NetKey as invalid")
-            case .unspecifiedError:
-                showAppKeyAlert(withTitle: "Unspecified Error", andMessage: "Node has reported an unspecified error")
-            default:
-                showAppKeyAlert(withTitle: "Error", andMessage: "An error has occured, error code: \(modelAppStatusData.statusCode.rawValue)")
-            }
+            handleAlertForStatusCode(modelAppStatusData.statusCode)
             print("Failed. Status code: \(modelAppStatusData.statusCode)")
         }
-
-//        print("Model AppKey binding completed, restoring proxy node delegate")
-//        targetNode.delegate = originalDelegate
-//        originalDelegate = nil
     }
 
     func receivedModelPublicationStatus(_ modelPublicationStatusData: ModelPublicationStatusMessage) {
         if modelPublicationStatusData.statusCode == .success {
             print("Publication address set!")
+            print("Publication address: \(modelPublicationStatusData.publishAddress.hexString())")
             print("AppKeyIndex: \(modelPublicationStatusData.appKeyIndex.hexString())")
             print("Element Addr: \(modelPublicationStatusData.elementAddress.hexString())")
             print("ModelIdentifier: \(modelPublicationStatusData.modelIdentifier.hexString())")
             print("Source addr: \(modelPublicationStatusData.sourceAddress.hexString())")
             print("Status code: \(modelPublicationStatusData.statusCode)")
             
-            // Update state with configured key
+            // Update state with configured Publication address
             let elementIdx = selectedModelIndexPath.section
             let modelIdx = selectedModelIndexPath.row
             let aModel = nodeEntry.elements![elementIdx].allSigAndVendorModels()[modelIdx]
             let state = meshstateManager.state()
-            if let anIndex = state.provisionedNodes.index(where: { $0.nodeId == nodeEntry.nodeId}) {
+            
+            if let anIndex = state.provisionedNodes.index(where: { $0.nodeUnicast == nodeEntry.nodeUnicast}) {
                 let aNodeEntry = state.provisionedNodes[anIndex]
-                state.provisionedNodes.remove(at: anIndex)
-                aNodeEntry.modelPublishAddresses[aModel] = modelPublicationStatusData.publishAddress
+                if var anElement = aNodeEntry.elements?[elementIdx] {
+                    anElement.setPublishAddress(modelPublicationStatusData.publishAddress, forModelId: aModel)
+                    aNodeEntry.elements?.remove(at: elementIdx)
+                    aNodeEntry.elements?.insert(anElement, at: elementIdx)
+                }
                 //and update
-                state.provisionedNodes.append(aNodeEntry)
+                state.provisionedNodes.remove(at: anIndex)
+                state.provisionedNodes.insert(aNodeEntry, at: anIndex)
                 meshstateManager.saveState()
             }
             tableView.reloadData()
         } else {
-            switch modelPublicationStatusData.statusCode {
-            case .cannotBind:
-                showAppKeyAlert(withTitle: "Cannot Bind", andMessage: "This model cannot be bound to an AppKey")
-            case .featureNotSupported:
-                showAppKeyAlert(withTitle: "Not supported", andMessage: "This feature not supported")
-            case .invalidAdderss:
-                showAppKeyAlert(withTitle: "Invalid Address", andMessage: "Node reported invalid address.")
-            case .invalidAppKeyIndex:
-                showAppKeyAlert(withTitle: "Invalid AppKey Index", andMessage: "Node reported this AppKey index as invalid")
-            case .invalidBinding:
-                showAppKeyAlert(withTitle: "Invalid binding", andMessage: "Node reported this Binding as invalid")
-            case .invalidModel:
-                showAppKeyAlert(withTitle: "Invalid model", andMessage: "Node reported this model as invalid")
-            case .invalidNetKeyIndex:
-                showAppKeyAlert(withTitle: "Invalid NetKey Index", andMessage: "Node reported NetKey as invalid")
-            case .unspecifiedError:
-                showAppKeyAlert(withTitle: "Unspecified Error", andMessage: "Node has reported an unspecified error")
-            default:
-                showAppKeyAlert(withTitle: "Error", andMessage: "An error has occured, error code: \(modelPublicationStatusData.statusCode.rawValue)")
-            }
+            handleAlertForStatusCode(modelPublicationStatusData.statusCode)
             print("Failed. Status code: \(modelPublicationStatusData.statusCode)")
         }
     }
 
+    func receivedModelSubsrciptionStatus(_ modelSubscriptionStatusData: ModelSubscriptionStatusMessage) {
+        if modelSubscriptionStatusData.statusCode == .success {
+            print("Subscription address set!")
+            print("Subscription Address: \(modelSubscriptionStatusData.subscriptionAddress.hexString())")
+            print("Element Addr: \(modelSubscriptionStatusData.elementAddress.hexString())")
+            print("ModelIdentifier: \(modelSubscriptionStatusData.modelIdentifier.hexString())")
+            print("Source addr: \(modelSubscriptionStatusData.sourceAddress.hexString())")
+            print("Status code: \(modelSubscriptionStatusData.statusCode)")
+            
+            // Update state with configured subscription addr
+            let elementIdx = selectedModelIndexPath.section
+            let modelIdx = selectedModelIndexPath.row
+            let aModel = nodeEntry.elements![elementIdx].allSigAndVendorModels()[modelIdx]
+            let state = meshstateManager.state()
+
+            if let anIndex = state.provisionedNodes.index(where: { $0.nodeUnicast == nodeEntry.nodeUnicast}) {
+                let aNodeEntry = state.provisionedNodes[anIndex]
+                if var anElement = aNodeEntry.elements?[elementIdx] {
+                    anElement.addSubscriptionAddress(modelSubscriptionStatusData.subscriptionAddress, forModelId: aModel)
+                    aNodeEntry.elements?.remove(at: elementIdx)
+                    aNodeEntry.elements?.insert(anElement, at: elementIdx)
+                }
+                state.provisionedNodes.remove(at: anIndex)
+                state.provisionedNodes.insert(aNodeEntry, at: anIndex)
+                meshstateManager.saveState()
+            }
+            tableView.reloadData()
+        } else {
+            handleAlertForStatusCode(modelSubscriptionStatusData.statusCode)
+            print("Failed. Status code: \(modelSubscriptionStatusData.statusCode)")
+        }
+    }
+
+    func receivedDefaultTTLStatus(_ defaultTTLStatusData: DefaultTTLStatusMessage) {
+        //NOOP
+    }
+
     func configurationSucceeded() {
-        //noop
+        //NOOP
     }
 
     // MARK: - UIViewController
@@ -260,9 +316,8 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
             vendorLabel.text = "SIG Model"
         }
     }
-//
-    // MARK: - Table view data source
 
+    // MARK: - Table view data source
     override func numberOfSections(in tableView: UITableView) -> Int {
         return 3
     }
@@ -274,7 +329,17 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
         case 1:
             return 1
         case 2:
-            return 1
+            //Get number of subscription addresses to render
+            if let element = nodeEntry.elements?[selectedModelIndexPath.section] {
+                let targetModel = element.allSigAndVendorModels()[selectedModelIndexPath.row]
+                if let subscriptions = element.subscriptionAddressesForModelId(targetModel) {
+                    return subscriptions.count
+                } else {
+                    return 1
+                }
+            } else {
+                return 1
+            }
         default:
             return 0
         }
@@ -298,10 +363,12 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
         if indexPath.section == 0 {
             if let element = nodeEntry.elements?[selectedModelIndexPath.section] {
                 let targetModel = element.allSigAndVendorModels()[selectedModelIndexPath.row]
-                if let key = nodeEntry.modelKeyBindings[targetModel] {
-                    aCell.textLabel?.text = key.hexString()
+                if let keyIndex = element.boundAppKeyIndexForModelId(targetModel) {
+                    aCell.textLabel?.text = "Key Binded"
+                    aCell.detailTextLabel?.text = "Key index \(keyIndex.hexString())"
                 } else {
-                    aCell.textLabel?.text = "No AppKey Bound"
+                    aCell.textLabel?.text = "None"
+                    aCell.detailTextLabel?.text = "Tap to add"
                 }
             }
             return aCell
@@ -310,26 +377,37 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
         if indexPath.section == 1 {
             if let element = nodeEntry.elements?[selectedModelIndexPath.section] {
                 let targetModel = element.allSigAndVendorModels()[selectedModelIndexPath.row]
-                if let address = nodeEntry.modelPublishAddresses[targetModel] {
+                if let address = element.publishAddressForModelId(targetModel) {
                     aCell.textLabel?.text = address.hexString()
+                    aCell.detailTextLabel?.text = "Tap to change"
                 } else {
-                    aCell.textLabel?.text = "No Publication Address set"
+                    aCell.textLabel?.text = "None"
+                    aCell.detailTextLabel?.text = "Tap to add"
                 }
             }
             return aCell
         }
         
         if indexPath.section == 2 {
-            aCell.textLabel?.text = "Not implemented yet"
+            if let element = nodeEntry.elements?[selectedModelIndexPath.section] {
+                let targetModel = element.allSigAndVendorModels()[selectedModelIndexPath.row]
+                if let addresses = element.subscriptionAddressesForModelId(targetModel) {
+                    if addresses.count > 0 {
+                        aCell.textLabel?.text = addresses[indexPath.row].hexString()
+                        aCell.detailTextLabel?.text = "Tap to add"
+                    } else {
+                        aCell.textLabel?.text = "None"
+                        aCell.detailTextLabel?.text = "Tap to add"
+                    }
+                } else {
+                    aCell.textLabel?.text = "None"
+                    aCell.detailTextLabel?.text = "Tap to add"
+                }
+            }
             return aCell
         }
 
         return aCell
-    }
-
-    override func tableView(_ tableView: UITableView, shouldHighlightRowAt indexPath: IndexPath) -> Bool {
-        //Only last section (Subscription groups) is not implemented yet
-        return indexPath.section != 2
     }
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -338,16 +416,23 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
         case 0:
             self.performSegue(withIdentifier: "ShowAppKeyBindingView", sender: indexPath.row)
         case 1:
-            //self.performSegue(withIdentifier: "ShowPublishGroupsView", sender: indexPath.row)
             self.presentInputAlert { (anAddressString) in
                 guard  anAddressString != nil else {
                     return
                 }
-                self.didSelectPublishAddress(Data(hexString: anAddressString!)!)
+                if let addressData = Data(hexString: anAddressString!) {
+                    self.didSelectPublishAddress(addressData)
+                }
             }
         case 2:
-            break
-            //self.performSegue(withIdentifier: "ShowSubscribeGroupsView", sender: indexPath.row)
+            self.presentInputAlert { (anAddressString) in
+                guard  anAddressString != nil else {
+                    return
+                }
+                if let addressData = Data(hexString: anAddressString!) {
+                    self.didSelectSubscriptionAddress(addressData)
+                }
+            }
         default:
             break
         }
@@ -364,7 +449,7 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
             aTextField.delegate = self
             aTextField.clearButtonMode = UITextFieldViewMode.whileEditing
             //Give a placeholder that shows this upcoming key index
-            aTextField.placeholder = "0xBEEF"
+            aTextField.placeholder = "0001"
         }
         
         let createAction = UIAlertAction(title: "Add", style: .default) { (_) in

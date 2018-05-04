@@ -105,9 +105,9 @@ class MeshNodeInfoTableViewController: UITableViewController {
                     cell.textLabel?.text = "N/A"
                 }
             case 6:
-                cell.detailTextLabel?.text = "Vendor Identifier"
-                if let anIdentifier = nodeEntry.vendorIdentifier {
-                    cell.textLabel?.text = anIdentifier.hexString()
+                cell.detailTextLabel?.text = "Product Version"
+                if let aVersion = nodeEntry.productVersion {
+                    cell.textLabel?.text = aVersion.hexString()
                 } else {
                     cell.textLabel?.text = "N/A"
                 }

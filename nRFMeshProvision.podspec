@@ -8,13 +8,13 @@
 
 Pod::Spec.new do |s|
   s.name             = 'nRFMeshProvision'
-  s.version          = '0.1'
+  s.version          = '0.2'
   s.summary          = 'A Bluetooth Mesh compliant provisioner and configurator'
   s.description      = <<-DESC
 An early alpha version of the Bluetooth Mesh specification, this library will allow you to provision and configure bluetooth Mesh compliant nodes.
-This is a preview version that has missing features and capabilities that are going to be added in the near future.
+This is a preview version that will have missing features and capabilities that are going to be added in the near future.
                        DESC
-  s.homepage         = 'https://github.com/mostafaberg/nRFMeshProvision'
+  s.homepage         = 'https://github.com/NordicPlayground/IOS-nRF-Mesh-Library'
   s.license          = { :type => 'BSD-3-Clause', :file => 'LICENSE' }
   s.author           = { 'mostafaberg' => 'mostafa.berg@nordicsemi.no' }
   s.source           = { :git => 'https://github.com/NordicPlayground/IOS-nRF-Mesh-Library.git', :tag => s.version.to_s }
