@@ -26,7 +26,7 @@ class MeshNodeCollectionViewCell: UICollectionViewCell {
     // MARK: - Initialization
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
-        layer.cornerRadius  = 5
+        layer.cornerRadius  = 10
         layer.masksToBounds = true
     }
 
@@ -44,12 +44,12 @@ class MeshNodeCollectionViewCell: UICollectionViewCell {
         var companyFieldString: String
         if companyIdentifier != nil {
             if let companyName = CompanyIdentifiers().humanReadableNameFromIdentifier(aNodeEntry.companyIdentifier!) {
-                companyFieldString = "Company Identifier: \(companyIdentifier!.hexString()) (\(companyName))"
+                companyFieldString = "Company: \(companyName)"
             } else {
-                companyFieldString = "Company Identifier: \(companyIdentifier!.hexString())"
+                companyFieldString = "Company Id: \(companyIdentifier!.hexString())"
             }
         } else {
-            companyFieldString = "Company Identifier: N/A"
+            companyFieldString = "Company Id: N/A"
         }
         manufacturerLabel.text = companyFieldString
         if aNodeEntry.elements != nil {

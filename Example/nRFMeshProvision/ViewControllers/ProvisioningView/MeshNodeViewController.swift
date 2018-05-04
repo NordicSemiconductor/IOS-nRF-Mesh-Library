@@ -104,6 +104,7 @@ ProvisionedMeshNodeDelegate, ProvisionedMeshNodeLoggingDelegate {
                                                         keyIndex: packedNetKey,
                                                         flags: meshStateObject.flags,
                                                         ivIndex: meshStateObject.IVIndex,
+                                                        friendlyName: provisioningData.friendlyName,
                                                         unicastAddress: provisioningData.unicastAddr)
             targetNode.provision(withProvisioningData: nodeProvisioningdata)
         } else {

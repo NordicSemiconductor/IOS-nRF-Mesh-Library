@@ -19,7 +19,7 @@ class MeshProvisioningDataTableViewController: UITableViewController, UITextFiel
     @IBOutlet weak var nodeNameCell: UITableViewCell!
     @IBOutlet weak var unicastAddressCell: UITableViewCell!
     @IBOutlet weak var appKeyCell: UITableViewCell!
-
+    
     // MARK: - Properties
     var meshStateManager: MeshStateManager!
     var targetNode: UnprovisionedMeshNode!
@@ -29,6 +29,8 @@ class MeshProvisioningDataTableViewController: UITableViewController, UITextFiel
     var appKeyName: String!
     var appKeyData: Data!
     var appKeyIndex: Data!
+    let freetextTag = 1 //Text fields tagged with this value will allow any input type
+    let hexTextTag  = 2 //Text fields tagget with this value will only allow Hex input
 
     // MARK: - UIViewController implementation
     override func viewWillAppear(_ animated: Bool) {
@@ -40,6 +42,9 @@ class MeshProvisioningDataTableViewController: UITableViewController, UITextFiel
 
     // MARK: - Implementaiton
     private func updateProvisioningDataUI() {
+        if nodeName == "Mesh Node" {
+            nodeName = targetNode.nodeBLEName()
+        }
         //Set the unicast according to the state
         nodeAddress = meshStateManager.state().nextUnicast
         //Update provisioning Data UI with default values
@@ -65,6 +70,7 @@ class MeshProvisioningDataTableViewController: UITableViewController, UITextFiel
     func didSelectUnicastAddressCell() {
         presentInputViewWithTitle("Please enter Unicast Address",
                                   message: "2 Bytes, > 0x0000",
+                                  inputType: hexTextTag,
                                   placeholder: self.nodeAddress.hexString()) { (anAddress) -> Void in
                                     if let anAddress = anAddress {
                                         if anAddress.count == 4 {
@@ -86,8 +92,9 @@ class MeshProvisioningDataTableViewController: UITableViewController, UITextFiel
 
     func didSelectNodeNameCell() {
         presentInputViewWithTitle("Please enter a name",
-                                  message: "max 20 characters",
-                                  placeholder: "New Node") { (aName) -> Void in
+                                  message: "20 Characters Max",
+                                  inputType: freetextTag,
+                                  placeholder: "\(self.targetNode.nodeBLEName())") { (aName) -> Void in
                                     if let aName = aName {
                                         if aName.count <= 20 {
                                             self.nodeName = aName
@@ -116,6 +123,7 @@ class MeshProvisioningDataTableViewController: UITableViewController, UITextFiel
     // MARK: - Input Alert
     func presentInputViewWithTitle(_ aTitle: String,
                                    message aMessage: String,
+                                   inputType: Int,
                                    placeholder aPlaceholder: String?,
                                    andCompletionHandler aHandler : @escaping (String?) -> Void) {
         let inputAlertView = UIAlertController(title: aTitle, message: aMessage, preferredStyle: .alert)
@@ -123,6 +131,7 @@ class MeshProvisioningDataTableViewController: UITableViewController, UITextFiel
             aTextField.keyboardType = UIKeyboardType.asciiCapable
             aTextField.returnKeyType = .done
             aTextField.delegate = self
+            aTextField.tag = inputType
             //Show clear button button when user is not editing
             aTextField.clearButtonMode = UITextFieldViewMode.whileEditing
             if let aPlaceholder = aPlaceholder {
@@ -134,7 +143,11 @@ class MeshProvisioningDataTableViewController: UITableViewController, UITextFiel
             DispatchQueue.main.async {
                 if let text = inputAlertView.textFields![0].text {
                     if text.count > 0 {
-                        aHandler(text.uppercased())
+                        if inputType == self.hexTextTag {
+                            aHandler(text.uppercased())
+                        } else {
+                            aHandler(text)
+                        }
                     }
                 }
             }
@@ -159,13 +172,19 @@ class MeshProvisioningDataTableViewController: UITableViewController, UITextFiel
     func textField(_ textField: UITextField,
                    shouldChangeCharactersIn range: NSRange,
                    replacementString string: String) -> Bool {
-        if range.length > 0 {
-            //Going backwards, always allow deletion
+        if textField.tag == freetextTag {
             return true
+        } else if textField.tag == hexTextTag {
+            if range.length > 0 {
+                //Going backwards, always allow deletion
+                return true
+            } else {
+                let value = string.data(using: .utf8)![0]
+                //Only allow HexaDecimal values 0->9, a->f and A->F
+                return (value >= 48 && value <= 57) || (value >= 65 && value <= 70) || (value >= 97 && value <= 102)
+            }
         } else {
-            let value = string.data(using: .utf8)![0]
-            //Only allow HexaDecimal values 0->9, a->f and A->F
-            return (value >= 48 && value <= 57) || (value >= 65 && value <= 70) || (value >= 97 && value <= 102)
+            return true
         }
    }
 
@@ -212,6 +231,7 @@ class MeshProvisioningDataTableViewController: UITableViewController, UITextFiel
                                                         keyIndex: Data(),
                                                         flags: Data(),
                                                         ivIndex: Data(),
+                                                        friendlyName: nodeName,
                                                         unicastAddress: nodeAddress)
                 destinationView.setMeshStateManager(meshStateManager)
                 destinationView.setProvisioningData(provisioningData)
