@@ -11,7 +11,7 @@ import nRFMeshProvision
 
 class MeshNodeCollectionViewCell: UICollectionViewCell {
     // MARK: - Outlets and actions
-    @IBOutlet weak var nameLabel: UILabel!
+    @IBOutlet weak var nodeTitle: UILabel!
     @IBOutlet weak var manufacturerLabel: UILabel!
     @IBOutlet weak var elementCountLabel: UILabel!
     @IBOutlet weak var modelCountLabel: UILabel!
@@ -39,7 +39,11 @@ class MeshNodeCollectionViewCell: UICollectionViewCell {
                                        andNetworkView aNetworkView: MainNetworkViewController) {
         indexPath = anIndexPath
         networkView = aNetworkView
-        nameLabel.text = aNodeEntry.nodeName
+        if let unicast = aNodeEntry.nodeUnicast {
+            nodeTitle.text = "\(aNodeEntry.nodeName) : \(unicast.hexString())"
+        } else {
+            nodeTitle.text = aNodeEntry.nodeName
+        }
         let companyIdentifier = aNodeEntry.companyIdentifier
         var companyFieldString: String
         if companyIdentifier != nil {
