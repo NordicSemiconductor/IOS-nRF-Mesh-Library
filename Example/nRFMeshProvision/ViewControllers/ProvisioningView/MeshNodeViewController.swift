@@ -309,7 +309,7 @@ ProvisionedMeshNodeDelegate, ProvisionedMeshNodeLoggingDelegate {
     // MARK: - UIView implementation
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        logEventWithMessage("BLE CBUUID: 0x\(targetNode.nodeIdentifier())")
+        logEventWithMessage("BLE CBUUID: 0x\(targetNode.nodeIdentifier().hexString())")
         title = provisioningData.friendlyName
     }
 
