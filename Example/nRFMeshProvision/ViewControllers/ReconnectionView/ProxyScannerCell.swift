@@ -16,7 +16,8 @@ class ProxyScannerCell: UITableViewCell {
     
     public func showNode(_ aNode: UnprovisionedMeshNode) {
         nodeName.text = aNode.nodeBLEName()
-        advertisementData.text = aNode.humanReadableNodeIdentifier()
+        advertisementData.text = nil //This is no longer needed
+        //advertisementData.text = aNode.humanReadableNodeIdentifier()
         if aNode.RSSI() != 127 {
             nodeRSSI.textColor = UIColor.black
             nodeRSSI.text = "\(aNode.RSSI()) dB"
