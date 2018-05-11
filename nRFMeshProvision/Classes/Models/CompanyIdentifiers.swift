@@ -10,7 +10,7 @@ import Foundation
 // swiftlint:disable type_body_length file_length
 public struct CompanyIdentifiers {
     public var identifiersMap: [UInt16: String]
-    
+
     public init() {
         identifiersMap = [
         0x0000: "Ericsson Technology Licensing",
