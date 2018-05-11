@@ -14,7 +14,8 @@ class ReconnectionViewController: UITableViewController {
 
     // MARK: - Outlets and actions
     @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
-
+    @IBOutlet var emptyScannerView: UIView!
+    
     // MARK: - Scanner Properties
     private var discoveredNodes = [UnprovisionedMeshNode]()
     private var centralManager: CBCentralManager!
@@ -29,13 +30,42 @@ class ReconnectionViewController: UITableViewController {
         mainView = aController
     }
 
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        tableView.backgroundView = UIView(frame: self.view.frame)
+    }
+
     override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
         centralManager.stopScan()
         activityIndicator.stopAnimating()
         centralManager.delegate = originalCentraldelegate
+        super.viewWillDisappear(animated)
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        self.hideEmptyView()
+        super.viewDidDisappear(animated)
     }
 
+    private func showEmptyView() {
+        if !tableView.backgroundView!.subviews.contains(emptyScannerView) {
+            tableView.isScrollEnabled = false
+            tableView.backgroundView?.addSubview(emptyScannerView)
+            let tableFrame          = tableView.frame
+            let horizontalSpacing   = CGFloat(15) //15 points
+            let width               = tableFrame.width - CGFloat(horizontalSpacing * 2)
+            let height              = CGFloat(250)
+            let verticalSpacing     = (tableFrame.size.height / 2) - height / 2.0
+            emptyScannerView.frame = CGRect(x: horizontalSpacing, y: verticalSpacing, width: width, height: height)
+        }
+    }
+    
+    private func hideEmptyView() {
+        if tableView.backgroundView == emptyScannerView {
+            tableView.isScrollEnabled = true
+            emptyScannerView.removeFromSuperview()
+        }
+    }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
@@ -112,6 +142,11 @@ class ReconnectionViewController: UITableViewController {
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        if discoveredNodes.count == 0 {
+            showEmptyView()
+        } else {
+            hideEmptyView()
+        }
         return discoveredNodes.count
     }
 
