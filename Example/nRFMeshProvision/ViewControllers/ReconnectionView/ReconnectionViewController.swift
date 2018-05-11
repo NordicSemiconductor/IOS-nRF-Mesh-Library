@@ -61,7 +61,7 @@ class ReconnectionViewController: UITableViewController {
     }
     
     private func hideEmptyView() {
-        if tableView.backgroundView == emptyScannerView {
+        if tableView.backgroundView!.subviews.contains(emptyScannerView) {
             tableView.isScrollEnabled = true
             emptyScannerView.removeFromSuperview()
         }
