@@ -16,6 +16,7 @@ class MainNetworkViewController: UIViewController, UICollectionViewDataSource, U
     @IBOutlet weak var emptyNetworkView: UIView!
     @IBOutlet weak var collectionView: UICollectionView!
     @IBOutlet weak var connectionButton: UIBarButtonItem!
+
     @IBAction func connectionButtonTapped(_ sender: Any) {
         handleConnectionButtonTapped()
     }
@@ -77,18 +78,7 @@ class MainNetworkViewController: UIViewController, UICollectionViewDataSource, U
     override public func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         meshManager = (UIApplication.shared.delegate as? AppDelegate)?.meshManager
-        collectionView.allowsSelection = true
-        collectionView.allowsMultipleSelection = false
-        let contentSize = UIScreen.main.bounds.width - 16.0
-        let layout = UICollectionViewFlowLayout()
-        layout.scrollDirection = .vertical //.horizontal
-        layout.itemSize = CGSize(width: contentSize, height: 100)
-        layout.sectionInset = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
-        layout.minimumLineSpacing = 8.0
-        layout.minimumInteritemSpacing = 8.0
-        collectionView.setCollectionViewLayout(layout, animated: true)
         collectionView.reloadData()
-        
         let nodes = meshManager.stateManager().state().provisionedNodes
         self.updateEmptyNetworkView(withNodeCount: nodes.count)
     }
@@ -101,9 +91,24 @@ class MainNetworkViewController: UIViewController, UICollectionViewDataSource, U
         }
     }
 
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        collectionView.allowsSelection = true
+        collectionView.allowsMultipleSelection = false
+        let contentSize = UIScreen.main.bounds.width - 16.0
+        let layout = UICollectionViewFlowLayout()
+        layout.scrollDirection = .vertical //.horizontal
+        layout.itemSize = CGSize(width: contentSize, height: 100)
+        layout.sectionInset = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
+        layout.minimumLineSpacing = 8.0
+        layout.minimumInteritemSpacing = 8.0
+        collectionView.setCollectionViewLayout(layout, animated: false)
+    }
+
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         updateConnectionButton()
+        meshManager.centralManager().delegate = self
     }
 
     private func updateConnectionButton() {
@@ -204,13 +209,17 @@ extension MainNetworkViewController: CBCentralManagerDelegate {
     }
 
     func centralManager(_ central: CBCentralManager, didDisconnectPeripheral peripheral: CBPeripheral, error: Error?) {
-        updateConnectionButton()
         if peripheral == currentNode?.blePeripheral() {
             print("target node has disconnected successfully.")
             currentNode = nil
         } else {
-            print("a peripheral has disconnected.")
+            if peripheral == meshManager.proxyNode()?.blePeripheral() {
+                print("Proxy disconnected!")
+            } else {
+                print("an unknown peripheral has disconnected.")
+            }
         }
+        updateConnectionButton()
     }
 
 }

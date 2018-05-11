@@ -50,12 +50,12 @@ public class MeshStateManager: NSObject {
         }
     }
 
-    public func generateState() -> MeshState? {
+    public func generateState() -> Bool {
         let networkKey = generateRandomKey()
         
         guard networkKey != nil else {
             print("Failed to generate network key")
-            return nil
+            return false
         }
         let keyIndex = Data([0x00, 0x00])
         let flags = Data([0x00])
@@ -69,7 +69,7 @@ public class MeshStateManager: NSObject {
 
         guard appkey1 != nil, appkey2 != nil, appkey3 != nil else {
             print("Failed to generate appkeys")
-            return nil
+            return false
         }
         
         let appKeys = [["AppKey 1": appkey1!],
@@ -78,7 +78,9 @@ public class MeshStateManager: NSObject {
         let newState = MeshState(withNodeList: [], netKey: networkKey!, keyIndex: keyIndex,
                               IVIndex: ivIndex, globalTTL: globalTTL, unicastAddress: unicastAddress,
                               flags: flags, appKeys: appKeys, andName: networkName)
-        return newState
+        self.meshState = newState
+
+        return true
     }
 
     public func deleteState() -> Bool {
@@ -120,8 +122,7 @@ public class MeshStateManager: NSObject {
     
     public static func generateState() -> MeshStateManager? {
         let aStateManager = MeshStateManager()
-        if let newState = aStateManager.generateState() {
-            aStateManager.meshState = newState
+        if aStateManager.generateState() {
             aStateManager.saveState()
         } else {
             print("Failed to create MeshStateManager object")
