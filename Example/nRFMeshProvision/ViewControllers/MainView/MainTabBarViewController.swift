@@ -11,19 +11,6 @@ import CoreBluetooth
 import nRFMeshProvision
 
 class MainTabBarViewController: UITabBarController {
-    //For a quick demo, this is a quick way to pass around the
-    //Target proxy node.
-    //TODO: This will be added to the library to avoid having the app to decide
-    //What node is the proxy.
-    public var targetProxyNode: ProvisionedMeshNode?
-    public var centralManager: CBCentralManager!
-
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        if centralManager == nil {
-            centralManager = CBCentralManager()
-        }
-    }
 
     public func switchToNetworkView() {
         switchToViewAtIndex(0)

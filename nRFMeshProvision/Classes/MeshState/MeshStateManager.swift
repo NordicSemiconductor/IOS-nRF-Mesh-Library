@@ -34,8 +34,8 @@ public class MeshStateManager: NSObject {
                 print(error)
             }
         }
-   }
-    
+    }
+
     public func restoreState() {
         if let documentsPath = MeshStateManager.getDocumentDirectory() {
             let filePath = documentsPath.appending("/meshState.bin")
@@ -47,8 +47,39 @@ public class MeshStateManager: NSObject {
             } catch {
                 print("Error reading state from file")
             }
+        }
     }
-   }
+
+    public func generateState() -> MeshState? {
+        let networkKey = generateRandomKey()
+        
+        guard networkKey != nil else {
+            print("Failed to generate network key")
+            return nil
+        }
+        let keyIndex = Data([0x00, 0x00])
+        let flags = Data([0x00])
+        let ivIndex = Data([0x00, 0x00, 0x00, 0x00])
+        let unicastAddress = Data([0x01, 0x23])
+        let globalTTL: UInt8 = 5
+        let networkName = "My Network"
+        let appkey1 = generateRandomKey()
+        let appkey2 = generateRandomKey()
+        let appkey3 = generateRandomKey()
+
+        guard appkey1 != nil, appkey2 != nil, appkey3 != nil else {
+            print("Failed to generate appkeys")
+            return nil
+        }
+        
+        let appKeys = [["AppKey 1": appkey1!],
+                       ["AppKey 2": appkey2!],
+                       ["AppKey 3": appkey3!]]
+        let newState = MeshState(withNodeList: [], netKey: networkKey!, keyIndex: keyIndex,
+                              IVIndex: ivIndex, globalTTL: globalTTL, unicastAddress: unicastAddress,
+                              flags: flags, appKeys: appKeys, andName: networkName)
+        return newState
+    }
 
     public func deleteState() -> Bool {
         if let documentsPath = MeshStateManager.getDocumentDirectory() {
@@ -62,9 +93,9 @@ public class MeshStateManager: NSObject {
                     print(error.localizedDescription)
                     return false
                 }
-       }
+            }
         }
-   return false;
+        return false;
     }
 
     // MARK: - Static accessors
@@ -76,7 +107,8 @@ public class MeshStateManager: NSObject {
         } else {
             return nil
         }
-   }
+    }
+
     public static func stateExists() -> Bool {
         if let documentsPath = MeshStateManager.getDocumentDirectory() {
             let filePath = documentsPath.appending("/meshState.bin")
@@ -84,9 +116,25 @@ public class MeshStateManager: NSObject {
         } else {
             return false
         }
-   }
+    }
     
+    public static func generateState() -> MeshStateManager? {
+        let aStateManager = MeshStateManager()
+        if let newState = aStateManager.generateState() {
+            aStateManager.meshState = newState
+            aStateManager.saveState()
+        } else {
+            print("Failed to create MeshStateManager object")
+            return nil
+        }
+        return aStateManager
+    }
     private static func getDocumentDirectory() -> String? {
         return NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true).first
+    }
+    
+    // MARK: - Generation helper
+    private func generateRandomKey() -> Data? {
+        return OpenSSLHelper().generateRandom()
     }
 }

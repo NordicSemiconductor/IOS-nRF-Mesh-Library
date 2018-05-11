@@ -21,9 +21,8 @@ class MeshProvisioningDataTableViewController: UITableViewController, UITextFiel
     @IBOutlet weak var appKeyCell: UITableViewCell!
     
     // MARK: - Properties
-    var meshStateManager: MeshStateManager!
+    var meshManager: NRFMeshManager!
     var targetNode: UnprovisionedMeshNode!
-    var centralManager: CBCentralManager!
     var nodeName: String! = "Mesh Node"
     var nodeAddress: Data!
     var appKeyName: String!
@@ -45,8 +44,9 @@ class MeshProvisioningDataTableViewController: UITableViewController, UITextFiel
         if nodeName == "Mesh Node" {
             nodeName = targetNode.nodeBLEName()
         }
+        let nextUnicast = meshManager.stateManager().state().nextUnicast
         //Set the unicast according to the state
-        nodeAddress = meshStateManager.state().nextUnicast
+        nodeAddress = nextUnicast
         //Update provisioning Data UI with default values
         unicastAddressCell.detailTextLabel?.text = "0x\(nodeAddress.hexString())"
         nodeNameCell.detailTextLabel?.text = nodeName
@@ -54,13 +54,11 @@ class MeshProvisioningDataTableViewController: UITableViewController, UITextFiel
         didSelectAppKeyWithIndex(0)
     }
 
-    public func setMeshState(_ aStateManager: MeshStateManager) {
-        meshStateManager = aStateManager
-    }
-
-    public func setTargetNode(_ aNode: UnprovisionedMeshNode, andCentralManager aCentralManager: CBCentralManager) {
-        targetNode      = aNode
-        centralManager  = aCentralManager
+    public func setTargetNode(_ aNode: UnprovisionedMeshNode) {
+        if let aManager = (UIApplication.shared.delegate as? AppDelegate)?.meshManager {
+            meshManager     = aManager
+            targetNode      = aNode
+        }
     }
 
     func handleProvisioningButtonTapped() {
@@ -68,6 +66,7 @@ class MeshProvisioningDataTableViewController: UITableViewController, UITextFiel
     }
 
     func didSelectUnicastAddressCell() {
+        let unicast = meshManager.stateManager().state().unicastAddress
         presentInputViewWithTitle("Please enter Unicast Address",
                                   message: "2 Bytes, > 0x0000",
                                   inputType: hexTextTag,
@@ -75,7 +74,7 @@ class MeshProvisioningDataTableViewController: UITableViewController, UITextFiel
                                     if let anAddress = anAddress {
                                         if anAddress.count == 4 {
                                             if anAddress == "0000" ||
-                                                anAddress == String(data: self.meshStateManager.state().unicastAddress,
+                                                anAddress == String(data: unicast,
                                                                     encoding: .utf8) {
                                                 print("Adderss cannot be 0x0000, minimum possible address is 0x0001")
                                             } else {
@@ -111,7 +110,8 @@ class MeshProvisioningDataTableViewController: UITableViewController, UITextFiel
     }
 
     func didSelectAppKeyWithIndex(_ anIndex: Int) {
-        let appKey = self.meshStateManager.state().appKeys[anIndex]
+        let meshState = meshManager.stateManager().state()
+        let appKey = meshState.appKeys[anIndex]
         appKeyName = appKey.keys.first
         appKeyData = appKey.values.first
         let anAppKeyIndex = UInt16(anIndex)
@@ -205,7 +205,7 @@ class MeshProvisioningDataTableViewController: UITableViewController, UITextFiel
 
     // MARK: - Segue and flow
     override func shouldPerformSegue(withIdentifier identifier: String, sender: Any?) -> Bool {
-        guard  nodeAddress != nil && nodeName != nil && meshStateManager != nil else {
+        guard  nodeAddress != nil, nodeName != nil else {
             print("Provisioning data not ready.")
             return false
         }
@@ -223,7 +223,7 @@ class MeshProvisioningDataTableViewController: UITableViewController, UITextFiel
             if let destinationView = segue.destination as? AppKeySelectorTableViewController {
                 destinationView.setSelectionCallback({ (appKeyIndex) in
                     self.didSelectAppKeyWithIndex(appKeyIndex)
-                }, andMeshStateManager: meshStateManager)
+                }, andMeshStateManager: meshManager.stateManager())
             }
         } else if segue.identifier == "showProvisioningView" {
             if let destinationView = segue.destination as? MeshNodeViewController {
@@ -233,12 +233,12 @@ class MeshProvisioningDataTableViewController: UITableViewController, UITextFiel
                                                         ivIndex: Data(),
                                                         friendlyName: nodeName,
                                                         unicastAddress: nodeAddress)
-                destinationView.setMeshStateManager(meshStateManager)
                 destinationView.setProvisioningData(provisioningData)
+                let netKeyIndex = meshManager.stateManager().state().keyIndex
                 destinationView.setConfigurationData(withAppKeyData: appKeyData,
                                                      appKeyIndex: appKeyIndex,
-                                                     andNetKeyIndex: meshStateManager.state().keyIndex)
-                destinationView.setTargetNode(targetNode, andCentralManager: centralManager)
+                                                     andNetKeyIndex: netKeyIndex)
+                destinationView.setTargetNode(targetNode)
             }
         }
     }
