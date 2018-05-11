@@ -13,20 +13,19 @@ class NodeModelsTableViewController: UITableViewController {
     // MARK: - Properties
     private var nodeEntry: MeshNodeEntry!
     private var selectedModel: Data!
-    private var meshStateManager: MeshStateManager!
+    private var meshManager: NRFMeshManager!
     private var proxyNode: ProvisionedMeshNode!
     
     // MARK: - Implementation
-    public func setProxyNode(_ aNode: ProvisionedMeshNode) {
-        proxyNode = aNode
-    }
-
-    public func setMeshStateManager(_ aManager: MeshStateManager) {
-        meshStateManager = aManager
-    }
-
     public func setNodeEntry(_ aNodeEntry: MeshNodeEntry) {
         nodeEntry = aNodeEntry
+    }
+
+    // MARK: - UIViewController
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        meshManager = (UIApplication.shared.delegate as? AppDelegate)?.meshManager
+        proxyNode = meshManager.proxyNode()
     }
 
     // MARK: - TableViewController DataSource & Delegate
@@ -91,6 +90,7 @@ class NodeModelsTableViewController: UITableViewController {
     }
 
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        let meshStateManager = meshManager.stateManager()
         if segue.identifier == "ShowModelConfiguration" {
             if let indexPath = sender as? IndexPath {
                 if let configurationView = segue.destination as? ModelConfigurationTableViewController {

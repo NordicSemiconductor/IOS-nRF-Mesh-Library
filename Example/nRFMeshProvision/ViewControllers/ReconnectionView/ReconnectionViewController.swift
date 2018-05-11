@@ -15,6 +15,7 @@ class ReconnectionViewController: UITableViewController, CBCentralManagerDelegat
     // MARK: - Scanner Properties
     private var discoveredNodes = [UnprovisionedMeshNode]()
     private var centralManager: CBCentralManager!
+    private var meshManager: NRFMeshManager!
     private var targetNode: ProvisionedMeshNode!
     private var mainView: MainNetworkViewController!
     private var originalCentraldelegate: CBCentralManagerDelegate?
@@ -23,18 +24,24 @@ class ReconnectionViewController: UITableViewController, CBCentralManagerDelegat
         mainView = aController
     }
 
-    public func setCentralManager(_ aCentral: CBCentralManager) {
-        centralManager = aCentral
-        originalCentraldelegate = centralManager.delegate
-        centralManager.delegate = self
-    }
-
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         centralManager.stopScan()
         centralManager.delegate = originalCentraldelegate
     }
 
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        if let aMeshManager = (UIApplication.shared.delegate as? AppDelegate)?.meshManager {
+            meshManager = aMeshManager
+            centralManager = meshManager.centralManager()
+            originalCentraldelegate = centralManager.delegate
+            centralManager.delegate = self
+        } else {
+            print("Mesh Manager not present!")
+            mainView.dismiss(animated: true, completion: nil)
+        }
+    }
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         guard centralManager != nil else {

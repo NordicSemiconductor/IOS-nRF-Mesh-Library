@@ -11,17 +11,18 @@ import CoreBluetooth
 import nRFMeshProvision
 
 class ScannerViewController: UITableViewController, CBCentralManagerDelegate {
+
     // MARK: - Class properties
     private var centralManager: CBCentralManager! = nil
     private var targetNode: UnprovisionedMeshNode!
     private var targetNodeId: Data!
     private var discoveredNodes: [UnprovisionedMeshNode] = []
-    private var stateManager: MeshStateManager!
+    private var meshManager: NRFMeshManager!
 
     // MARK: - Outlets & Actions
     @IBOutlet weak var scanActivityIndictaor: UIActivityIndicatorView!
     @IBOutlet var emptyScannerView: UIView!
-    
+
     // MARK: - Scanner Class Implementation
     private func startNodeScan() {
         scanActivityIndictaor.startAnimating()
@@ -43,9 +44,11 @@ class ScannerViewController: UITableViewController, CBCentralManagerDelegate {
     // MARK: - UIViewController Implementation
     override func viewDidLoad() {
         super.viewDidLoad()
-        centralManager = (self.tabBarController as? MainTabBarViewController)!.centralManager
-        centralManager.delegate = self
-        stateManager = MeshStateManager.restoreState()
+        if let aManager = (UIApplication.shared.delegate as? AppDelegate)?.meshManager {
+            meshManager = aManager
+            centralManager = meshManager.centralManager()
+            centralManager.delegate = self
+        }
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -81,7 +84,7 @@ class ScannerViewController: UITableViewController, CBCentralManagerDelegate {
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         stopNodeScan()
-        if let targetProxy = (self.tabBarController as? MainTabBarViewController)!.targetProxyNode {
+        if let targetProxy = (UIApplication.shared.delegate as? AppDelegate)?.meshManager.proxyNode() {
             centralManager.cancelPeripheralConnection(targetProxy.blePeripheral())
         }
         targetNode    = discoveredNodes[indexPath.row]
@@ -118,8 +121,7 @@ class ScannerViewController: UITableViewController, CBCentralManagerDelegate {
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "showConfigurationView" {
             if let configurationView = segue.destination as? MeshProvisioningDataTableViewController {
-                configurationView.setMeshState(stateManager)
-                configurationView.setTargetNode(targetNode, andCentralManager: centralManager)
+                configurationView.setTargetNode(targetNode)
             }
     }
    }

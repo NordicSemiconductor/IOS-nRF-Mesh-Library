@@ -27,7 +27,7 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
     
     // MARK: - Implementation
     public func setProxyNode(_ aNode: ProvisionedMeshNode) {
-        centralManager = (self.tabBarController as? MainTabBarViewController)?.centralManager
+        centralManager = (UIApplication.shared.delegate as? AppDelegate)?.meshManager.centralManager()
         targetNode = aNode
         originalDelegate = targetNode.delegate
         targetNode.delegate = self

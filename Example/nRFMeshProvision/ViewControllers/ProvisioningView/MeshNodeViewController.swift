@@ -18,11 +18,13 @@ ProvisionedMeshNodeDelegate, ProvisionedMeshNodeLoggingDelegate {
     @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
 
     // MARK: - Class properties
-    private var meshState: MeshStateManager!
     private var provisioningData: ProvisioningData!
     private var targetNode: UnprovisionedMeshNode!
-    private var centralManager: CBCentralManager!
     private var logEntries: [LogEntry] = [LogEntry]()
+    private var meshManager: NRFMeshManager!
+    private var stateManager: MeshStateManager!
+    private var centralManager: CBCentralManager!
+
     // AppKey Configuration
     private var netKeyIndex: Data!
     private var appKeyIndex: Data!
@@ -71,10 +73,6 @@ ProvisionedMeshNodeDelegate, ProvisionedMeshNodeLoggingDelegate {
         self.present(alertView, animated: true, completion: nil)
     }
 
-    public func setMeshStateManager(_ aManager: MeshStateManager) {
-        meshState = aManager
-    }
-
     public func setProvisioningData(_ someProvisioningData: ProvisioningData) {
         provisioningData = someProvisioningData
     }
@@ -87,17 +85,19 @@ ProvisionedMeshNodeDelegate, ProvisionedMeshNodeLoggingDelegate {
         netKeyIndex = aNetKeyIndex
     }
 
-    public func setTargetNode(_ aNode: UnprovisionedMeshNode, andCentralManager aCentralManager: CBCentralManager) {
+    public func setTargetNode(_ aNode: UnprovisionedMeshNode) {
+        meshManager             = (UIApplication.shared.delegate as? AppDelegate)?.meshManager
+        stateManager            = meshManager.stateManager()
         targetNode              = aNode
         targetNode.delegate     = self
         targetNode.logDelegate  = self
-        centralManager          = aCentralManager
+        centralManager          = meshManager.centralManager()
     }
 
     private func discoveryCompleted() {
-        if let provisioningData = provisioningData, meshState != nil {
+        if let provisioningData = provisioningData {
             logEventWithMessage("provisioning started")
-            let meshStateObject = meshState.state()
+            let meshStateObject = stateManager.state()
             let netKeyIndex = meshStateObject.keyIndex
             let packedNetKey = Data([netKeyIndex[0] << 4 | ((netKeyIndex[1] & 0xF0) >> 4), netKeyIndex[1] << 4])
             let nodeProvisioningdata = ProvisioningData(netKey: meshStateObject.netKey,
@@ -149,7 +149,7 @@ ProvisionedMeshNodeDelegate, ProvisionedMeshNodeLoggingDelegate {
             logEventWithMessage("Received composition data from unknown node, NOOP")
             return
         }
-        let state = meshState.state()
+        let state = stateManager.state()
         if let anIndex = state.provisionedNodes.index(where: { $0.nodeUnicast == provisioningData.unicastAddr}) {
             let aNodeEntry = state.provisionedNodes[anIndex]
             state.provisionedNodes.remove(at: anIndex)
@@ -175,7 +175,7 @@ ProvisionedMeshNodeDelegate, ProvisionedMeshNodeLoggingDelegate {
             state.nextUnicast = self.provisioningData.unicastAddr
             //Increment next available address
             state.incrementUnicastBy(compositionData.elements.count)
-            meshState.saveState()
+            stateManager.saveState()
         } else {
             logEventWithMessage("Received composition data but node isn't stored, please provision again")
         }
@@ -189,7 +189,7 @@ ProvisionedMeshNodeDelegate, ProvisionedMeshNodeLoggingDelegate {
             logEventWithMessage("netKey index: \(appKeyStatusData.netKeyIndex.hexString())")
 
             // Update state with configured key
-            let state = meshState.state()
+            let state = stateManager.state()
             if let anIndex = state.provisionedNodes.index(where: { $0.nodeUnicast == provisioningData.unicastAddr}) {
                 let aNodeEntry = state.provisionedNodes[anIndex]
                 state.provisionedNodes.remove(at: anIndex)
@@ -198,7 +198,7 @@ ProvisionedMeshNodeDelegate, ProvisionedMeshNodeLoggingDelegate {
                 }
                 //and update
                 state.provisionedNodes.append(aNodeEntry)
-                meshState.saveState()
+                stateManager.saveState()
                 for aKey in aNodeEntry.appKeys {
                     logEventWithMessage("AppKeyData:\(aKey.hexString())")
                 }
@@ -229,7 +229,7 @@ ProvisionedMeshNodeDelegate, ProvisionedMeshNodeLoggingDelegate {
         logEventWithMessage("Configuration completed!")
         activityIndicator.stopAnimating()
         DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + .seconds(1)) {
-            (self.navigationController!.viewControllers[0] as? MainTabBarViewController)?.targetProxyNode = self.targetProvisionedNode
+            (UIApplication.shared.delegate as? AppDelegate)?.meshManager.updateProxyNode(self.targetProvisionedNode)
             (self.navigationController!.viewControllers[0] as? MainTabBarViewController)?.switchToNetworkView()
             self.navigationController?.popToRootViewController(animated: true)
         }
@@ -283,7 +283,7 @@ ProvisionedMeshNodeDelegate, ProvisionedMeshNodeLoggingDelegate {
             activityIndicator.stopAnimating()
             return
         }
-        let state = meshState.state()
+        let state = stateManager.state()
         if let anIndex = state.provisionedNodes.index(where: { $0.nodeUnicast == nodeEntry?.nodeUnicast}) {
             state.provisionedNodes.remove(at: anIndex)
         }
@@ -291,7 +291,7 @@ ProvisionedMeshNodeDelegate, ProvisionedMeshNodeLoggingDelegate {
         //Store target node unicast to verify node identity on upcoming reconnect
         targetNodeUnicast = provisioningData.unicastAddr
         state.provisionedNodes.append(nodeEntry!)
-        meshState.saveState()
+        stateManager.saveState()
         targetNode.shouldDisconnect()
         logEventWithMessage("Starting discovery to scan Provisioned Proxy node")
         //Now let's switch to a provisioned node object and start configuration
@@ -339,7 +339,7 @@ ProvisionedMeshNodeDelegate, ProvisionedMeshNodeLoggingDelegate {
 
     private func verifyNodeIdentity(_ identityData: Data, withUnicast aUnicast: Data) -> Bool{
         let dataToVerify = Data(identityData.dropFirst())
-        let netKey = meshState.state().netKey
+        let netKey = stateManager.state().netKey
         let hash = Data(dataToVerify.dropLast(8))
         let random = Data(dataToVerify.dropFirst(8))
         let helper = OpenSSLHelper()
