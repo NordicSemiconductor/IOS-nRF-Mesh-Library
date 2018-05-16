@@ -52,10 +52,13 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
         let aModel = nodeEntry.elements![elementIdx].allSigAndVendorModels()[modelIdx]
         let unicast = nodeEntry.nodeUnicast!
         let elementAddress = Data([unicast[0], unicast[1] + UInt8(elementIdx)])
-        
+        guard let appKey = nodeEntry.appKeys.first else {
+            showstatusCodeAlert(withTitle: "AppKey was not found", andMessage: "This node did not have an appkey set in it's database entry.")
+            return
+        }
         targetNode.nodePublicationAddressSet(anAddress,
                                              onElementAddress: elementAddress,
-                                             appKeyIndex: Data([0x00,0x00]),
+                                             appKeyIndex: appKey,
                                              credentialFlag: false,
                                              ttl: Data([0xFF]),
                                              period: Data([0x00]),
