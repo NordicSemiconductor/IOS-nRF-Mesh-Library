@@ -547,7 +547,7 @@ provisioning and then configuring a device.</string>
                         </connections>
                     </tableView>
                     <navigationItem key="navigationItem" title="Scanner" id="dXy-7Q-f8T">
-                        <barButtonItem key="rightBarButtonItem" style="plain" id="V3b-aS-AXg">
+                        <barButtonItem key="rightBarButtonItem" id="V3b-aS-AXg">
                             <view key="customView" contentMode="scaleToFill" id="eGZ-2F-Xkm">
                                 <rect key="frame" x="276" y="0.0" width="83" height="44"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -928,7 +928,7 @@ provisioning and then configuring a device.</string>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="lBk-SV-6iN" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2196" y="-1306"/>
+            <point key="canvasLocation" x="1393" y="-1306"/>
         </scene>
         <!--Publish Groups-->
         <scene sceneID="6FV-9N-Y1h">
@@ -972,7 +972,7 @@ provisioning and then configuring a device.</string>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="8eD-0B-gCv" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="3180" y="-1306"/>
+            <point key="canvasLocation" x="2329" y="-1306"/>
         </scene>
         <!--Subscribe Groups-->
         <scene sceneID="PCR-J6-H7b">
@@ -1016,7 +1016,7 @@ provisioning and then configuring a device.</string>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="uci-Qf-6dg" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="3180" y="-361"/>
+            <point key="canvasLocation" x="2329" y="-633"/>
         </scene>
         <!--Bind AppKey-->
         <scene sceneID="rdL-xW-s1H">
@@ -1060,7 +1060,7 @@ provisioning and then configuring a device.</string>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="MK8-Gd-H4j" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="3180" y="-2243"/>
+            <point key="canvasLocation" x="2330" y="-1978"/>
         </scene>
         <!--<Node Name>-->
         <scene sceneID="pPD-Oo-w7K">
