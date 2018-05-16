@@ -99,7 +99,15 @@ ProvisionedMeshNodeDelegate, ProvisionedMeshNodeLoggingDelegate {
             logEventWithMessage("provisioning started")
             let meshStateObject = stateManager.state()
             let netKeyIndex = meshStateObject.keyIndex
-            let packedNetKey = Data([netKeyIndex[0] << 4 | ((netKeyIndex[1] & 0xF0) >> 4), netKeyIndex[1] << 4])
+
+            //Pack the Network Key
+            let netKeyOctet1 = netKeyIndex[0] << 4
+            var netKeyOctet2 =  netKeyIndex[1] & 0xF0
+            netKeyOctet2 = netKeyOctet2 >> 4
+            let firstOctet = netKeyOctet1 | netKeyOctet2
+            let secondOctet = netKeyIndex[1] << 4
+            let packedNetKey = Data([firstOctet, secondOctet])
+
             let nodeProvisioningdata = ProvisioningData(netKey: meshStateObject.netKey,
                                                         keyIndex: packedNetKey,
                                                         flags: meshStateObject.flags,
