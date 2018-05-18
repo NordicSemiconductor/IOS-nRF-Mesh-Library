@@ -581,11 +581,8 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
             return true
         } else {
             let value = string.data(using: .utf8)![0]
-            if value == "x".data(using: .utf8)![0] {
-                return true
-            }
-            //Only allow HexaDecimal values 0->9, a->f and A->F
-            return (value >= 48 && value <= 57) || (value >= 65 && value <= 70) || (value >= 97 && value <= 102)
+            //Only allow HexaDecimal values 0->9, a->f and A->F or x
+            return (value == 120 || value >= 48 && value <= 57) || (value >= 65 && value <= 70) || (value >= 97 && value <= 102)
         }
     }
 
