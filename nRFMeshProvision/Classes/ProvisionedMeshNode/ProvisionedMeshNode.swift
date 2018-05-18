@@ -71,14 +71,29 @@ public class ProvisionedMeshNode: NSObject, ProvisionedMeshNodeProtocol {
                                            onElementAddress anElementAddress: Data,
                                            modelIdentifier anIdentifier: Data,
                                            onDestinationAddress anAddress: Data) {
-        let nodeSubscriptionState = ModelSubscriptionAddConfiguratorState(withTargetProxyNode: self,
+        let nodeSubscriptionAddState = ModelSubscriptionAddConfiguratorState(withTargetProxyNode: self,
                                                                           destinationAddress: anAddress,
                                                                           andStateManager: stateManager)
-        nodeSubscriptionState.setSubscription(elementAddress: anElementAddress,
+        nodeSubscriptionAddState.setSubscription(elementAddress: anElementAddress,
                                               subscriptionAddress: aSubcriptionAddress,
                                               andModelIdentifier: anIdentifier)
         
-        configurationState = nodeSubscriptionState
+        configurationState = nodeSubscriptionAddState
+        configurationState.execute()
+    }
+
+    public func nodeSubscriptionAddressDelete(_ aSubcriptionAddress: Data,
+                                           onElementAddress anElementAddress: Data,
+                                           modelIdentifier anIdentifier: Data,
+                                           onDestinationAddress anAddress: Data) {
+        let nodeSubscriptionDeleteState = ModelSubscriptionDeleteConfiguratorState(withTargetProxyNode: self,
+                                                                          destinationAddress: anAddress,
+                                                                          andStateManager: stateManager)
+        nodeSubscriptionDeleteState.setSubscription(elementAddress: anElementAddress,
+                                              subscriptionAddress: aSubcriptionAddress,
+                                              andModelIdentifier: anIdentifier)
+        
+        configurationState = nodeSubscriptionDeleteState
         configurationState.execute()
     }
 
