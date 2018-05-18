@@ -300,6 +300,10 @@ extension ReconnectionViewController: ProvisionedMeshNodeDelegate {
         //NOOP
     }
     
+    func receivedNodeResetStatus(_ resetStatusData: NodeResetStatusMessage) {
+        //NOOP
+    }
+
     func configurationSucceeded() {
         //NOOP
     }

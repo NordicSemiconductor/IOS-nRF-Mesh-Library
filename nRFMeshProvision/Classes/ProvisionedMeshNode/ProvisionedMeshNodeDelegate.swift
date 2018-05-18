@@ -16,5 +16,6 @@ public protocol ProvisionedMeshNodeDelegate {
     func receivedModelPublicationStatus(_ modelPublicationStatusData: ModelPublicationStatusMessage)
     func receivedModelSubsrciptionStatus(_ modelSubscriptionStatusData: ModelSubscriptionStatusMessage)
     func receivedDefaultTTLStatus(_ defaultTTLStatusData: DefaultTTLStatusMessage)
+    func receivedNodeResetStatus(_ resetStatusData: NodeResetStatusMessage)
     func configurationSucceeded()
 }

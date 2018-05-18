@@ -134,6 +134,11 @@ public class ProvisionedMeshNode: NSObject, ProvisionedMeshNodeProtocol {
         configurationState.execute()
     }
 
+    public func resetNode(destinationAddress: Data) {
+        configurationState = NodeResetConfiguratorState(withTargetProxyNode: self, destinationAddress: destinationAddress, andStateManager: stateManager)
+        configurationState.execute()
+    }
+
     public func configure(destinationAddress: Data,
                           appKeyIndex aKeyIndex: Data,
                           appKeyData aKeyData: Data,

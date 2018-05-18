@@ -152,6 +152,7 @@ class MainNetworkViewController: UIViewController, UICollectionViewDataSource, U
     public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let allNodes = meshManager.stateManager().state().provisionedNodes
         let aNodeEntry = allNodes[indexPath.row]
+
         if shouldPerformSegue(withIdentifier: "ShowNodeConfiguration", sender: nil) {
             self.performSegue(withIdentifier: "ShowNodeConfiguration", sender: aNodeEntry)
         }
@@ -226,7 +227,7 @@ extension MainNetworkViewController: CBCentralManagerDelegate {
 
 // MARK: - ProvisionedMeshNodeDelegate Extension
 extension MainNetworkViewController: ProvisionedMeshNodeDelegate {
-    
+ 
     func nodeDidCompleteDiscovery(_ aNode: ProvisionedMeshNode) {
         //NOOP
     }
@@ -263,7 +264,11 @@ extension MainNetworkViewController: ProvisionedMeshNodeDelegate {
     func receivedDefaultTTLStatus(_ defaultTTLStatusData: DefaultTTLStatusMessage) {
         //NOOP
     }
-    
+
+    func receivedNodeResetStatus(_ resetStatusData: NodeResetStatusMessage) {
+        //NOOP
+    }
+
     func configurationSucceeded() {
         //NOOP
     }

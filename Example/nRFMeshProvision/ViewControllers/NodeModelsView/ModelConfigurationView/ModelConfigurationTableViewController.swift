@@ -45,7 +45,7 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
         let aModel = nodeEntry.elements![elementIdx].allSigAndVendorModels()[modelIdx]
         let unicast = nodeEntry.nodeUnicast!
         let elementAddress = Data([unicast[0], unicast[1] + UInt8(elementIdx)])
-        
+
         lastSubscriptionAction = .subscriptionAdd
         targetNode.nodeSubscriptionAddressAdd(anAddress,
                                               onElementAddress: elementAddress,
@@ -214,6 +214,10 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
         }
     }
 
+    func receivedNodeResetStatus(_ resetStatusData: NodeResetStatusMessage) {
+        //noop
+    }
+
     func receivedCompositionData(_ compositionData: CompositionStatusMessage) {
         //noop
     }
@@ -374,7 +378,7 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
         }
     }
     override func numberOfSections(in tableView: UITableView) -> Int {
-        return 3
+        return 4
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -481,7 +485,6 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
             }
             return aCell
         }
-
         return aCell
     }
 
@@ -517,7 +520,7 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
         }
     }
 
-    // MARK: - Input Alert
+    // MARK: - Input Alerts
     func presentInputAlert(withCompletion aCompletionHandler : @escaping (String?) -> Void) {
         let inputAlertView = UIAlertController(title: "Enter an address",
                                                message: nil,
