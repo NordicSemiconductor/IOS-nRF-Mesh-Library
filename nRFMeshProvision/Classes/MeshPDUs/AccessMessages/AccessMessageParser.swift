@@ -23,6 +23,8 @@ public struct AccessMessageParser {
             return ModelSubscriptionStatusMessage(withPayload: someData, andSoruceAddress: aSourceAddress)
         case Data([0x80, 0x0E]):
             return DefaultTTLStatusMessage(withPayload: someData, andSoruceAddress: aSourceAddress)
+        case Data([0x80, 0x4A]):
+            return NodeResetStatusMessage(withPayload: someData, andSoruceAddress: aSourceAddress)
         default:
             return nil
         }

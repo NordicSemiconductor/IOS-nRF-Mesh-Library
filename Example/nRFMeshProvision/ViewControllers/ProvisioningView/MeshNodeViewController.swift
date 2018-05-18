@@ -232,7 +232,11 @@ ProvisionedMeshNodeDelegate, ProvisionedMeshNodeLoggingDelegate {
     func receivedDefaultTTLStatus(_ defaultTTLStatusData: DefaultTTLStatusMessage) {
         //NOOP
     }
-
+    
+    func receivedNodeResetStatus(_ resetStatusData: NodeResetStatusMessage) {
+        //NOOP
+    }
+    
     func configurationSucceeded() {
         logEventWithMessage("Configuration completed!")
         activityIndicator.stopAnimating()
