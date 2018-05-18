@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum MeshAddressTypes {
+public enum MeshAddressTypes {
     case Unassigned
     case Unicast
     case Virtual
@@ -16,7 +16,7 @@ enum MeshAddressTypes {
     
     typealias RawValue = Data
     
-    init?(rawValue: Data?) {
+    public init?(rawValue: Data?) {
         guard let rawValue = rawValue else { return nil }
 
         //Fast checks first against Unassigned and Broadcast

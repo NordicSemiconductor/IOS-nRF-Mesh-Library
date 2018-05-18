@@ -911,6 +911,23 @@ provisioning and then configuring a device.</string>
                                     </subviews>
                                 </tableViewCellContentView>
                             </tableViewCell>
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="ModelConfigurationCenteredCell" textLabel="1Z3-ZY-vUt" style="IBUITableViewCellStyleDefault" id="OaP-kB-dqp">
+                                <rect key="frame" x="0.0" y="143.33333333333334" width="375" height="44"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="OaP-kB-dqp" id="mYi-Va-c8g">
+                                    <rect key="frame" x="0.0" y="0.0" width="375" height="43.666666666666664"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                    <subviews>
+                                        <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Action Button Cell" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="1Z3-ZY-vUt">
+                                            <rect key="frame" x="16" y="0.0" width="343" height="43.666666666666664"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <fontDescription key="fontDescription" name="TrebuchetMS" family="Trebuchet MS" pointSize="17"/>
+                                            <color key="textColor" red="0.0" green="0.61176470589999998" blue="0.87058823529999996" alpha="1" colorSpace="custom" customColorSpace="adobeRGB1998"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                    </subviews>
+                                </tableViewCellContentView>
+                            </tableViewCell>
                         </prototypes>
                         <sections/>
                         <connections>

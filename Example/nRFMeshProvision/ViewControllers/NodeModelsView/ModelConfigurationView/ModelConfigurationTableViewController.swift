@@ -368,11 +368,7 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
 
     override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
         if indexPath.section == 2 {
-            if indexPath.row == 0 && self.getSubscriptionAddressforNodeAtIndexPath(indexPath) == nil{
-                return false
-            } else {
-                return true
-            }
+            return indexPath.row != 0 //First row is the add button
         } else {
             return false
         }
@@ -393,16 +389,11 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
                 let targetModel = element.allSigAndVendorModels()[selectedModelIndexPath.row]
                 if let subscriptions = element.subscriptionAddressesForModelId(targetModel) {
                     if subscriptions.count > 0 {
-                        return subscriptions.count
-                    } else {
-                        return 1
+                        return subscriptions.count + 1
                     }
-                } else {
-                    return 1
                 }
-            } else {
-                return 1
             }
+            return 1
         default:
             return 0
         }
@@ -412,7 +403,7 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
         if section == 0 {
             return "AppKey Binding"
         } else if section == 1 {
-            return "Publish Address"
+            return "Publication Address"
         } else if section == 2 {
             return "Subscription Addresses"
         } else {
@@ -421,7 +412,12 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let aCell = tableView.dequeueReusableCell(withIdentifier: "ModelConfigurationCell", for: indexPath)
+        var aCell: UITableViewCell!
+        if indexPath.section == 2 && indexPath.row == 0 {
+            aCell = tableView.dequeueReusableCell(withIdentifier: "ModelConfigurationCenteredCell", for: indexPath)
+        } else {
+            aCell = tableView.dequeueReusableCell(withIdentifier: "ModelConfigurationCell", for: indexPath)
+        }
 
         if indexPath.section == 0 {
             if let element = nodeEntry.elements?[selectedModelIndexPath.section] {
@@ -452,19 +448,35 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
         }
         
         if indexPath.section == 2 {
-            if let element = nodeEntry.elements?[selectedModelIndexPath.section] {
-                let targetModel = element.allSigAndVendorModels()[selectedModelIndexPath.row]
-                if let addresses = element.subscriptionAddressesForModelId(targetModel) {
-                    if addresses.count > 0 {
-                        aCell.textLabel?.text = addresses[indexPath.row].hexString()
-                        aCell.detailTextLabel?.text = "Tap to add"
-                    } else {
-                        aCell.textLabel?.text = "None"
-                        aCell.detailTextLabel?.text = "Tap to add"
+            if indexPath.row == 0 {
+                aCell.textLabel?.text = "Add Subscription Address"
+            } else {
+                if let element = nodeEntry.elements?[selectedModelIndexPath.section] {
+                    let targetModel = element.allSigAndVendorModels()[selectedModelIndexPath.row]
+                    if let addresses = element.subscriptionAddressesForModelId(targetModel) {
+                        if addresses.count > 0 {
+                            aCell.textLabel?.text = addresses[indexPath.row - 1].hexString()
+                            if let addressType = MeshAddressTypes(rawValue: addresses[indexPath.row - 1]) {
+                                var addressText: String?
+                                switch addressType {
+                                case .Unassigned:
+                                    addressText = "Unassigned address"
+                                case .Group:
+                                    addressText = "Group address"
+                                case .Broadcast:
+                                    addressText = "Broadcast address"
+                                case .Unicast:
+                                    addressText = "Unicast address"
+                                case .Virtual:
+                                    addressText = "Virtual address"
+                                }
+                                aCell.detailTextLabel?.text = addressText
+                            } else {
+                                aCell.detailTextLabel?.text = nil
+                            }
+                            aCell.accessoryType = .none
+                        }
                     }
-                } else {
-                    aCell.textLabel?.text = "None"
-                    aCell.detailTextLabel?.text = "Tap to add"
                 }
             }
             return aCell
@@ -488,13 +500,17 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
                 }
             }
         case 2:
-            self.presentInputAlert { (anAddressString) in
-                guard  anAddressString != nil else {
-                    return
+            if indexPath.row == 0 {
+                self.presentInputAlert { (anAddressString) in
+                    guard  anAddressString != nil else {
+                        return
+                    }
+                    if let addressData = Data(hexString: anAddressString!) {
+                        self.didSelectSubscriptionAddressAdd(addressData)
+                    }
                 }
-                if let addressData = Data(hexString: anAddressString!) {
-                    self.didSelectSubscriptionAddressAdd(addressData)
-                }
+            } else {
+                print("NOOP")
             }
         default:
             break
@@ -560,8 +576,8 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
         if let element = nodeEntry.elements?[selectedModelIndexPath.section] {
             let targetModel = element.allSigAndVendorModels()[selectedModelIndexPath.row]
             if let addresses = element.subscriptionAddressesForModelId(targetModel) {
-                if addresses.count > anIndexPath.row {
-                    return addresses[anIndexPath.row]
+                if addresses.count > anIndexPath.row - 1 {
+                    return addresses[anIndexPath.row - 1]
                 } else {
                     return nil
                 }
