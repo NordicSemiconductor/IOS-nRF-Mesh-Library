@@ -24,29 +24,6 @@ class SettingsViewController: UIViewController, UITextFieldDelegate, UITableView
     @IBOutlet weak var settingsTable: UITableView!
 
     // MARK: - Implementaiton
-//    private func setupProvisioningData() {
-//        if meshManager.stateManager()
-//        if MeshStateManager.stateExists() {
-//            let meshStateManager = MeshStateManager.restoreState()
-//        } else {
-//            let networkKey = generateNewKey()
-//            let keyIndex = Data([0x00, 0x00])
-//            let flags = Data([0x00])
-//            let ivIndex = Data([0x00, 0x00, 0x00, 0x00])
-//            let unicastAddress = Data([0x01, 0x23])
-//            let globalTTL: UInt8 = 5
-//            let networkName = "My Network"
-//            let appKeys = [["AppKey 1": generateNewKey()],
-//                           ["AppKey 2": generateNewKey()],
-//                           ["AppKey 3": generateNewKey()]]
-//            let state = MeshState(withNodeList: [], netKey: networkKey, keyIndex: keyIndex,
-//                                  IVIndex: ivIndex, globalTTL: globalTTL, unicastAddress: unicastAddress,
-//                                  flags: flags, appKeys: appKeys, andName: networkName)
-//            meshStateManager = MeshStateManager(withState: state)
-//            meshStateManager.saveState()
-//        }
-//   }
-
     private func updateProvisioningDataUI() {
         //Update provisioning Data UI with default values
         settingsTable.reloadData()
@@ -73,7 +50,8 @@ class SettingsViewController: UIViewController, UITextFieldDelegate, UITableView
         presentInputViewWithTitle("Enter a TTL value", message: "1 Byte",
                                   placeholder: meshState.globalTTL.hexString(),
                                   generationEnabled: false) { (aTTL) -> Void in
-                                    if let aTTL = aTTL {
+                                    if var aTTL = aTTL {
+                                        aTTL = aTTL.lowercased().replacingOccurrences(of: "0x", with: "")
                                         if aTTL.count == 2 {
                                             meshState.globalTTL = Data(hexString: aTTL)!
                                             self.updateProvisioningDataUI()
@@ -109,7 +87,8 @@ class SettingsViewController: UIViewController, UITextFieldDelegate, UITableView
                                   message: "16 Bytes",
                                   placeholder: meshState.netKey.hexString(),
                                   generationEnabled: true) { (aKey) -> Void in
-                                    if let aKey = aKey {
+                                    if var aKey = aKey {
+                                        aKey = aKey.lowercased().replacingOccurrences(of: "0x", with: "")
                                         if aKey.count == 32 {
                                             meshState.netKey = Data(hexString: aKey)!
                                             self.updateProvisioningDataUI()
@@ -126,7 +105,8 @@ class SettingsViewController: UIViewController, UITextFieldDelegate, UITableView
                                   message: "2 Bytes",
                                   placeholder: meshState.keyIndex.hexString(),
                                   generationEnabled: false) { (aKeyIndex) -> Void in
-            if let aKeyIndex = aKeyIndex {
+            if var aKeyIndex = aKeyIndex {
+                aKeyIndex = aKeyIndex.lowercased().replacingOccurrences(of: "0x", with: "")
                 if aKeyIndex.count == 4 {
                     meshState.keyIndex = Data(hexString: aKeyIndex)!
                     print("New Key index = \(meshState.keyIndex.hexString())")
@@ -150,7 +130,8 @@ class SettingsViewController: UIViewController, UITextFieldDelegate, UITableView
                                   message: "1 Byte",
                                   placeholder: meshState.flags.hexString(),
                                   generationEnabled: false) { (someFlags) -> Void in
-                                    if let someFlags = someFlags {
+                                    if var someFlags = someFlags {
+                                        someFlags = someFlags.lowercased().replacingOccurrences(of: "0x", with: "")
                                         if someFlags.count == 2 {
                                             meshState.flags = Data(hexString: someFlags)!
                                             self.updateProvisioningDataUI()
@@ -167,7 +148,8 @@ class SettingsViewController: UIViewController, UITextFieldDelegate, UITableView
                                   message: "4 Bytes",
                                   placeholder: meshState.IVIndex.hexString(),
                                   generationEnabled: false) { (anIVIndex) -> Void in
-            if let anIVIndex = anIVIndex {
+            if var anIVIndex = anIVIndex {
+                anIVIndex = anIVIndex.lowercased().replacingOccurrences(of: "0x", with: "")
                 if anIVIndex.count == 8 {
                     meshState.IVIndex = Data(hexString: anIVIndex)!
                     self.updateProvisioningDataUI()
@@ -181,13 +163,14 @@ class SettingsViewController: UIViewController, UITextFieldDelegate, UITableView
     func didSelectUnicastAddressCell() {
         let meshState = meshManager.stateManager().state()
         presentInputViewWithTitle("Please enter Unicast Address",
-                                  message: "2 Bytes, > 0x0000",
+                                  message: "2 Bytes, >= 0x0001",
                                   placeholder: meshState.unicastAddress.hexString(),
                                   generationEnabled: false) { (anAddress) -> Void in
-                                    if let anAddress = anAddress {
+                                    if var anAddress = anAddress {
+                                        anAddress = anAddress.lowercased().replacingOccurrences(of: "0x", with: "")
                                         if anAddress.count == 4 {
                                             if anAddress == "0000" {
-                                                print("Adderss cannot be 0x0000, minimum possible address is 0x0001")
+                                                print("Adderss cannot be 0x0000 `unassigned`, next possible address is 0x0001")
                                             } else {
                                                 meshState.unicastAddress = Data(hexString: anAddress)!
                                                 self.updateProvisioningDataUI()
@@ -293,7 +276,20 @@ class SettingsViewController: UIViewController, UITextFieldDelegate, UITableView
     }
     // MARK: - UITextFieldDelegate
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        return true
+        if let text = textField.text {
+            if let selectedPath = settingsTable.indexPathForSelectedRow {
+                if selectedPath.row == 0 && selectedPath.section == 0 {
+                    //Name field can be of any value longer than 0
+                    return text.count > 0
+                } else {
+                    return validateStringIsHexaDecimal(text)
+                }
+            } else {
+                return validateStringIsHexaDecimal(text)
+            }
+        } else {
+            return false
+        }
     }
 
     func textField(_ textField: UITextField,
@@ -310,16 +306,16 @@ class SettingsViewController: UIViewController, UITextFieldDelegate, UITableView
                 } else {
                     return validateStringIsHexaDecimal(string)
                 }
-       } else {
+            } else {
                 return validateStringIsHexaDecimal(string)
             }
-    }
+        }
    }
 
     private func validateStringIsHexaDecimal(_ someText: String ) -> Bool {
         let value = someText.data(using: .utf8)![0]
-        //Only allow HexaDecimal values 0->9, a->f and A->F
-        return (value >= 48 && value <= 57) || (value >= 65 && value <= 70) || (value >= 97 && value <= 102)
+        //Only allow HexaDecimal values 0->9, a->f and A->F or "x"
+        return (value == 120 || value >= 48 && value <= 57) || (value >= 65 && value <= 70) || (value >= 97 && value <= 102)
     }
 
     // MARK: - Motion callbacks

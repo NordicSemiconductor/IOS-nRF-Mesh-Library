@@ -71,7 +71,8 @@ class MeshProvisioningDataTableViewController: UITableViewController, UITextFiel
                                   message: "2 Bytes, > 0x0000",
                                   inputType: hexTextTag,
                                   placeholder: self.nodeAddress.hexString()) { (anAddress) -> Void in
-                                    if let anAddress = anAddress {
+                                    if var anAddress = anAddress {
+                                        anAddress = anAddress.lowercased().replacingOccurrences(of: "0x", with: "")
                                         if anAddress.count == 4 {
                                             if anAddress == "0000" ||
                                                 anAddress == String(data: unicast,
@@ -180,8 +181,8 @@ class MeshProvisioningDataTableViewController: UITableViewController, UITextFiel
                 return true
             } else {
                 let value = string.data(using: .utf8)![0]
-                //Only allow HexaDecimal values 0->9, a->f and A->F
-                return (value >= 48 && value <= 57) || (value >= 65 && value <= 70) || (value >= 97 && value <= 102)
+                //Only allow HexaDecimal values 0->9, a->f and A->F or x
+                return (value == 120 || value >= 48 && value <= 57) || (value >= 65 && value <= 70) || (value >= 97 && value <= 102)
             }
         } else {
             return true

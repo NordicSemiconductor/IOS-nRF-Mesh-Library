@@ -533,8 +533,11 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
         
         let createAction = UIAlertAction(title: "Add", style: .default) { (_) in
             DispatchQueue.main.async {
-                if let text = inputAlertView.textFields![0].text {
-                    if text.count > 0 {
+                if var text = inputAlertView.textFields![0].text {
+                    if text.lowercased().contains("0x") {
+                        text = text.lowercased().replacingOccurrences(of: "0x", with: "")
+                    }
+                    if text.count == 4 {
                         aCompletionHandler(text)
                     } else {
                         aCompletionHandler(nil)
@@ -554,6 +557,33 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
         inputAlertView.addAction(createAction)
         inputAlertView.addAction(cancelAction)
         present(inputAlertView, animated: true, completion: nil)
+    }
+
+    // MARK: - UITextFieldDelegate
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        if var text = textField.text {
+            if text.lowercased().contains("0x") {
+                text = text.lowercased().replacingOccurrences(of: "0x", with: "")
+            }
+            //Valid address in textfield
+            return text.count == 4
+        } else {
+            //No address in textfield
+            return false
+        }
+    }
+
+    func textField(_ textField: UITextField,
+                   shouldChangeCharactersIn range: NSRange,
+                   replacementString string: String) -> Bool {
+        if range.length > 0 {
+            //Going backwards, always allow deletion
+            return true
+        } else {
+            let value = string.data(using: .utf8)![0]
+            //Only allow HexaDecimal values 0->9, a->f and A->F or x
+            return (value == 120 || value >= 48 && value <= 57) || (value >= 65 && value <= 70) || (value >= 97 && value <= 102)
+        }
     }
 
     // MARK: - Navigation
