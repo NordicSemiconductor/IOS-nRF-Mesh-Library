@@ -111,8 +111,6 @@ class AppKeyAddConfiguratorState: NSObject, ConfiguratorStateProtocol {
                     } else {
                         target.delegate?.configurationSucceeded()
                     }
-//                    let nextState = SleepConfiguratorState(withTargetProxyNode: target, destinationAddress: destinationAddress, andStateManager: stateManager)
-//                    target.switchToState(nextState)
                 } else {
                     print("Ignoring non app key status message")
                 }

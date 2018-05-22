@@ -116,10 +116,6 @@ class CompositionGetConfiguratorState: NSObject, ConfiguratorStateProtocol {
                 if result is CompositionStatusMessage {
                     let compositionStatus = result as! CompositionStatusMessage
                     target.delegate?.receivedCompositionData(compositionStatus)
-//                    let appKeySetState = AppKeyAddConfiguratorState(withTargetProxyNode: target,
-//                                                                    destinationAddress: destinationAddress,
-//                                                                    andStateManager: stateManager)
-//                    target.switchToState(appKeySetState)
                 } else {
                     print("Ignoring non composition status message")
                 }
@@ -128,7 +124,6 @@ class CompositionGetConfiguratorState: NSObject, ConfiguratorStateProtocol {
     }
 
     private func acknowlegeSegment(withAckData someData: Data, withDelay aDelay: DispatchTime) {
-//        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() - DispatchTimeInterval.nanoseconds(Int(aDelay.uptimeNanoseconds))) {
             print("Sending acknowledgement: \(someData.hexString())")
             if someData.count <= self.target.basePeripheral().maximumWriteValueLength(for: .withoutResponse) {
                 self.target.basePeripheral().writeValue(someData, for: self.dataInCharacteristic, type: .withoutResponse)
@@ -157,14 +152,13 @@ class CompositionGetConfiguratorState: NSObject, ConfiguratorStateProtocol {
                 }
             }
 
-            DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + .seconds(5),
+            DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + .seconds(2),
                                           execute: {
                                             let appKeySetState = AppKeyAddConfiguratorState(withTargetProxyNode: self.target,
                                                                                             destinationAddress: self.destinationAddress,
                                                                                             andStateManager: self.stateManager)
                                             self.target.switchToState(appKeySetState)
             })
-//        }
     }
 
     // MARK: - CBPeripheralDelegate

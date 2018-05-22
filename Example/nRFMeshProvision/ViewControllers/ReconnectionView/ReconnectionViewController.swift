@@ -235,6 +235,9 @@ extension ReconnectionViewController: CBCentralManagerDelegate {
     }
     
     func centralManager(_ central: CBCentralManager, didDisconnectPeripheral peripheral: CBPeripheral, error: Error?) {
+        guard targetNode != nil else {
+            return
+        }
         if targetNode.blePeripheral() == peripheral {
             activityIndicator.stopAnimating()
             alertController?.title = "Disconnected"

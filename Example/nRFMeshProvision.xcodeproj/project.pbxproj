@@ -16,7 +16,6 @@
 		304DAEB8208091EF006CFEA6 /* MeshNodeInfoTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 304DAEA8208091EF006CFEA6 /* MeshNodeInfoTableViewController.swift */; };
 		304DAEB9208091EF006CFEA6 /* AppKeySelectorTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 304DAEAA208091EF006CFEA6 /* AppKeySelectorTableViewController.swift */; };
 		304DAEBA208091EF006CFEA6 /* MeshNodeLogTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 304DAEAB208091EF006CFEA6 /* MeshNodeLogTableViewCell.swift */; };
-		304DAEBB208091EF006CFEA6 /* MeshNodeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 304DAEAC208091EF006CFEA6 /* MeshNodeViewController.swift */; };
 		304DAEBC208091EF006CFEA6 /* MeshProvisioningDataTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 304DAEAD208091EF006CFEA6 /* MeshProvisioningDataTableViewController.swift */; };
 		304DAEBD208091EF006CFEA6 /* ScannerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 304DAEAF208091EF006CFEA6 /* ScannerViewController.swift */; };
 		304DAEBE208091EF006CFEA6 /* AppKeyManagerTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 304DAEB2208091EF006CFEA6 /* AppKeyManagerTableViewController.swift */; };
@@ -62,7 +61,6 @@
 		304DAEA8208091EF006CFEA6 /* MeshNodeInfoTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MeshNodeInfoTableViewController.swift; sourceTree = "<group>"; };
 		304DAEAA208091EF006CFEA6 /* AppKeySelectorTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppKeySelectorTableViewController.swift; sourceTree = "<group>"; };
 		304DAEAB208091EF006CFEA6 /* MeshNodeLogTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MeshNodeLogTableViewCell.swift; sourceTree = "<group>"; };
-		304DAEAC208091EF006CFEA6 /* MeshNodeViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MeshNodeViewController.swift; sourceTree = "<group>"; };
 		304DAEAD208091EF006CFEA6 /* MeshProvisioningDataTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MeshProvisioningDataTableViewController.swift; sourceTree = "<group>"; };
 		304DAEAF208091EF006CFEA6 /* ScannerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScannerViewController.swift; sourceTree = "<group>"; };
 		304DAEB2208091EF006CFEA6 /* AppKeyManagerTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppKeyManagerTableViewController.swift; sourceTree = "<group>"; };
@@ -167,7 +165,6 @@
 			children = (
 				304DAEAA208091EF006CFEA6 /* AppKeySelectorTableViewController.swift */,
 				304DAEAB208091EF006CFEA6 /* MeshNodeLogTableViewCell.swift */,
-				304DAEAC208091EF006CFEA6 /* MeshNodeViewController.swift */,
 				304DAEAD208091EF006CFEA6 /* MeshProvisioningDataTableViewController.swift */,
 			);
 			path = ProvisioningView;
@@ -574,7 +571,6 @@
 				30D40F902084808A00DC126F /* NodeModelsTableViewController.swift in Sources */,
 				30D40F9720848DFC00DC126F /* ModelConfigurationTableViewController.swift in Sources */,
 				304DAEB8208091EF006CFEA6 /* MeshNodeInfoTableViewController.swift in Sources */,
-				304DAEBB208091EF006CFEA6 /* MeshNodeViewController.swift in Sources */,
 				30D40F7A208099BF00DC126F /* LogEntry.swift in Sources */,
 				607FACD61AFB9204008FA782 /* AppDelegate.swift in Sources */,
 				30FF5EEA20972672002D7C77 /* ScannerCell.swift in Sources */,
