@@ -10,11 +10,11 @@ import UIKit
 
 class MeshNodeLogTableViewCell: UITableViewCell {
 
-    @IBOutlet weak var titleLabel: UILabel!
-    @IBOutlet weak var detailLabel: UILabel!
+    @IBOutlet weak var timestampLabel: UILabel!
+    @IBOutlet weak var messageLabel: UILabel!
 
     public func setLogMessage(_ aMessage: String, withTimestamp aTimestamp: Date) {
-        titleLabel.text = aMessage
-        detailLabel.text = DateFormatter.localizedString(from: aTimestamp, dateStyle: .none, timeStyle: .medium)
+        messageLabel.text = aMessage
+        timestampLabel.text = DateFormatter.localizedString(from: aTimestamp, dateStyle: .none, timeStyle: .medium)
     }
 }
