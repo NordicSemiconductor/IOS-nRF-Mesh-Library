@@ -61,7 +61,7 @@ class InviteProvisioningState: NSObject, ProvisioningStateProtocol {
                 print("Received: \(provisioningMessage)\(messageType)")
                 return
             }
-       print("Received capabilities provisioning message")
+            print("Received capabilities provisioning message")
             let elementCount        = Int(data[2])
             let algorithm           = ProvisioningAlgorithm(rawValue: UInt16(data[3] << 0xFF) + UInt16(data[4] & 0x00FF))!
             let pubKeyType          = PublicKeyInformationAvailability(rawValue: data[5])!

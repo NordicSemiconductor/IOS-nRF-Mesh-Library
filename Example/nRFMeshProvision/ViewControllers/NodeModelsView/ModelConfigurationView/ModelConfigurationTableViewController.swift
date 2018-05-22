@@ -146,8 +146,16 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
             showstatusCodeAlert(withTitle: "Cannot set", andMessage: "Node has reported it cannot set this item")
         case .cannotUpdate:
             showstatusCodeAlert(withTitle: "Cannot update", andMessage: "Node has reported it cannot update this item")
-        default:
-            showstatusCodeAlert(withTitle: "Error", andMessage: "An error has occured, error code: \(aStatusCode.rawValue)")
+        case .notASubscribedModel:
+            showstatusCodeAlert(withTitle: "Cannot subscribe", andMessage: "Node has reported this is not a subscribe model")
+        case .keyIndexAlreadyStored:
+            showstatusCodeAlert(withTitle: "Already stored", andMessage: "Node has reported this key index is already stored")
+        case .storageFailure:
+            showstatusCodeAlert(withTitle: "Storage failure", andMessage: "Node has reported a storage failure")
+        case .temporarilyUnableToChangeState:
+            showstatusCodeAlert(withTitle: "State failure", andMessage: "Node has reported that the state cannot be changed temporarily")
+        case .success:
+            break
         }
     }
 

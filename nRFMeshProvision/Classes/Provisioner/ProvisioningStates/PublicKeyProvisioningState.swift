@@ -104,7 +104,6 @@ class PublicKeyProvisioningState: NSObject, ProvisioningStateProtocol {
                 target.basePeripheral().writeValue(aSegment, for: dataInCharacteristic, type: .withoutResponse)
             }
         }
-        print("PubKey Data: \(publicKeyData.hexString())")
     }
    
     private func generateKeyPair() -> (privateKey: SecKey?, publicKey: SecKey?) {
@@ -127,25 +126,27 @@ class PublicKeyProvisioningState: NSObject, ProvisioningStateProtocol {
             print("An error occured")
             return (pubKey!, privKey!)
         }
-   return (privKey!, pubKey!)
+        return (privKey!, pubKey!)
     }
 
     private func receivedSegmentedPublicKeyStart(data segmentedData: Data) {
         //First Segment, drop SAR/PDU byte
         segmentedPublicKeyData = Data(capacity: 64)
         segmentedPublicKeyData = segmentedPublicKeyData! + segmentedData.dropFirst()
-        
+
     }
-   private func receivedSegmentedPublicKeyContinuation(data segmentedData: Data) {
+
+    private func receivedSegmentedPublicKeyContinuation(data segmentedData: Data) {
         //Continuation segment(s), drop SAR/PDU byte
         segmentedPublicKeyData = segmentedPublicKeyData! + segmentedData.dropFirst()
     }
-   private func receivedSegmentedPublicKeyEnd(data segmentedData: Data) {
+
+    private func receivedSegmentedPublicKeyEnd(data segmentedData: Data) {
         //Final Segment, drop SAR/PDU byte
         segmentedPublicKeyData = segmentedPublicKeyData! + segmentedData.dropFirst()
         receivedPublicKeyValue(segmentedPublicKeyData!, isSegmented: true)
     }
-   
+
     private func receivedPublicKeyValue(_ aValue: Data, isSegmented: Bool) {
         var strippedDevicepublicKey: Data!
         if isSegmented {
@@ -186,8 +187,8 @@ class PublicKeyProvisioningState: NSObject, ProvisioningStateProtocol {
                                                         print((error!.takeRetainedValue() as Error).localizedDescription)
                                                         return
         }
-   let ecdh = shared as Data
-        print("ECDH=\(ecdh.hexString())")
+
+        let ecdh = shared as Data
         target.calculatedECDH(ecdh)
         let nextState = ConfirmationProvisioningState(withTargetNode: target)
         target.switchToState(nextState)

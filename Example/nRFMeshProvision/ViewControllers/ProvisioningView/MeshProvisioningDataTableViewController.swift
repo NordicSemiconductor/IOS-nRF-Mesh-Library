@@ -13,21 +13,41 @@ import CoreBluetooth
 class MeshProvisioningDataTableViewController: UITableViewController, UITextFieldDelegate {
 
     // MARK: - Outlets and Actions
-    @IBAction func provisioningButtonTapped(_ sender: Any) {
-        handleProvisioningButtonTapped()
-    }
+    @IBOutlet weak var provisioningProgressIndicator: UIProgressView!
+    @IBOutlet weak var provisioningProgressLabel: UILabel!
+    @IBOutlet weak var provisioningProgressTitleLabel: UILabel!
+    @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
+    @IBOutlet weak var provisioningActionCell: UITableViewCell!
+    @IBOutlet weak var provisioningProgressCell: UITableViewCell!
     @IBOutlet weak var nodeNameCell: UITableViewCell!
     @IBOutlet weak var unicastAddressCell: UITableViewCell!
     @IBOutlet weak var appKeyCell: UITableViewCell!
     
     // MARK: - Properties
-    var meshManager: NRFMeshManager!
-    var targetNode: UnprovisionedMeshNode!
+    private var isProvisioning: Bool = false
+    private var totalSteps: Float = 24
+    private var completedSteps: Float = 0
+    private var targetNode: UnprovisionedMeshNode!
+    private var logEntries: [LogEntry] = [LogEntry]()
+    private var meshManager: NRFMeshManager!
+    private var stateManager: MeshStateManager!
+    private var centralManager: CBCentralManager!
+    
+    // AppKey Configuration
+    private var netKeyIndex: Data!
+    private var appKeyIndex: Data!
+    private var appKeyData: Data!
+    
+    // Private temprorary Unicast storage between prov/config state
+    private var targetNodeUnicast: Data?
+    
+    // Provisioned node properties
+    var destinationAddress: Data!
+    var targetProvisionedNode: ProvisionedMeshNode!
+
     var nodeName: String! = "Mesh Node"
     var nodeAddress: Data!
     var appKeyName: String!
-    var appKeyData: Data!
-    var appKeyIndex: Data!
     let freetextTag = 1 //Text fields tagged with this value will allow any input type
     let hexTextTag  = 2 //Text fields tagget with this value will only allow Hex input
 
@@ -58,11 +78,19 @@ class MeshProvisioningDataTableViewController: UITableViewController, UITextFiel
         if let aManager = (UIApplication.shared.delegate as? AppDelegate)?.meshManager {
             meshManager     = aManager
             targetNode      = aNode
+            targetNode.delegate     = self
+            targetNode.logDelegate  = self as UnprovisionedMeshNodeLoggingDelegate
+            stateManager            = meshManager.stateManager()
+            centralManager          = meshManager.centralManager()
         }
     }
 
     func handleProvisioningButtonTapped() {
-        self.performSegue(withIdentifier: "showProvisioningView", sender: nil)
+        if isProvisioning == false {
+            navigationItem.hidesBackButton = true
+            isProvisioning = true
+            connectNode(targetNode)
+        }
     }
 
     func didSelectUnicastAddressCell() {
@@ -112,6 +140,7 @@ class MeshProvisioningDataTableViewController: UITableViewController, UITextFiel
 
     func didSelectAppKeyWithIndex(_ anIndex: Int) {
         let meshState = meshManager.stateManager().state()
+        netKeyIndex = meshState.keyIndex
         let appKey = meshState.appKeys[anIndex]
         appKeyName = appKey.keys.first
         appKeyData = appKey.values.first
@@ -190,15 +219,26 @@ class MeshProvisioningDataTableViewController: UITableViewController, UITextFiel
    }
 
     // MARK: - Table view delegate
+    override func tableView(_ tableView: UITableView, shouldHighlightRowAt indexPath: IndexPath) -> Bool {
+        return !isProvisioning
+    }
+
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        switch indexPath.row {
+        switch indexPath.section {
         case 0:
-            didSelectNodeNameCell()
+            switch indexPath.row {
+            case 0:
+                didSelectNodeNameCell()
+            case 1:
+                didSelectUnicastAddressCell()
+            case 2:
+                didSelectAppkeyCell()
+            default:
+                break
+            }
         case 1:
-            didSelectUnicastAddressCell()
-        case 2:
-            didSelectAppkeyCell()
+            handleProvisioningButtonTapped()
         default:
             break
         }
@@ -206,17 +246,7 @@ class MeshProvisioningDataTableViewController: UITableViewController, UITextFiel
 
     // MARK: - Segue and flow
     override func shouldPerformSegue(withIdentifier identifier: String, sender: Any?) -> Bool {
-        guard  nodeAddress != nil, nodeName != nil else {
-            print("Provisioning data not ready.")
-            return false
-        }
-        if identifier == "showProvisioningView" {
-            return true
-        } else if identifier == "showAppKeySelector" {
-            return true
-        } else {
-            return false
-        }
+        return identifier == "showAppKeySelector"
     }
 
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -226,21 +256,470 @@ class MeshProvisioningDataTableViewController: UITableViewController, UITextFiel
                     self.didSelectAppKeyWithIndex(appKeyIndex)
                 }, andMeshStateManager: meshManager.stateManager())
             }
-        } else if segue.identifier == "showProvisioningView" {
-            if let destinationView = segue.destination as? MeshNodeViewController {
-                let provisioningData = ProvisioningData(netKey: Data(),
-                                                        keyIndex: Data(),
-                                                        flags: Data(),
-                                                        ivIndex: Data(),
-                                                        friendlyName: nodeName,
-                                                        unicastAddress: nodeAddress)
-                destinationView.setProvisioningData(provisioningData)
-                let netKeyIndex = meshManager.stateManager().state().keyIndex
-                destinationView.setConfigurationData(withAppKeyData: appKeyData,
-                                                     appKeyIndex: appKeyIndex,
-                                                     andNetKeyIndex: netKeyIndex)
-                destinationView.setTargetNode(targetNode)
+        }
+    }
+}
+
+extension MeshProvisioningDataTableViewController {
+    
+    // MARK: - Progress handling
+    func stepCompleted(withIndicatorState activityEnabled: Bool) {
+        DispatchQueue.main.async {
+            activityEnabled ? self.activityIndicator.stopAnimating() : self.activityIndicator.startAnimating()
+            self.completedSteps += 1.0
+            if self.completedSteps >= self.totalSteps {
+                self.provisioningProgressLabel.text = "100 %"
+                self.provisioningProgressTitleLabel.text = "Progress"
+                self.provisioningProgressIndicator.setProgress(1, animated: true)
+            } else {
+                let completion = self.completedSteps / self.totalSteps * 100.0
+                self.provisioningProgressLabel.text = "\(Int(completion)) %"
+                self.provisioningProgressIndicator.setProgress(completion / 100.0, animated: true)
             }
         }
+    }
+    
+    // MARK: - Logging
+    public func logEventWithMessage(_ aMessage: String) {
+        print("LOG: \(aMessage)")
+//        logEntries.append(LogEntry(withMessage: aMessage, andTimestamp: Date()))
+//        provisioningLogTableView?.reloadData()
+//        if logEntries.count > 0 {
+//            //Scroll to bottom of table view when we start getting data
+//            //(.bottom places the last row to the bottom of tableview)
+//            provisioningLogTableView?.scrollToRow(at: IndexPath(row: logEntries.count - 1, section: 0),
+//                                                  at: .bottom, animated: true)
+//        }
+    }
+
+    // MARK: - Provisioning and Configuration
+    private func verifyNodeIdentity(_ identityData: Data, withUnicast aUnicast: Data) -> Bool{
+        let dataToVerify = Data(identityData.dropFirst())
+        let netKey = stateManager.state().netKey
+        let hash = Data(dataToVerify.dropLast(8))
+        let random = Data(dataToVerify.dropFirst(8))
+        let helper = OpenSSLHelper()
+        let salt = helper.calculateSalt(Data([0x6E, 0x6B, 0x69, 0x6B])) //"nkik" ASCII
+        let p =  Data([0x69, 0x64, 0x31, 0x32, 0x38, 0x01]) // id128 || 0x01
+        if let identityKey = helper.calculateK1(withN: netKey, salt: salt, andP: p) {
+            let padding = Data([0x00, 0x00, 0x00, 0x00, 0x00, 0x00])
+            let hashInputs = padding + random + aUnicast
+            if let fullHash = helper.calculateEvalue(with: hashInputs, andKey: identityKey) {
+                let calculatedHash = fullHash.dropFirst(fullHash.count - 8) //Keep only last 64 bits
+                if calculatedHash == hash {
+                    return true
+                } else {
+                    return false
+                }
+            } else {
+                return false
+            }
+        }
+        return false
+    }
+
+    private func discoveryCompleted() {
+        logEventWithMessage("discovery completed")
+        let meshStateObject = stateManager.state()
+        let netKeyIndex = meshStateObject.keyIndex
+        
+        //Pack the Network Key
+        let netKeyOctet1 = netKeyIndex[0] << 4
+        var netKeyOctet2 =  netKeyIndex[1] & 0xF0
+        netKeyOctet2 = netKeyOctet2 >> 4
+        let firstOctet = netKeyOctet1 | netKeyOctet2
+        let secondOctet = netKeyIndex[1] << 4
+        let packedNetKey = Data([firstOctet, secondOctet])
+        
+        let nodeProvisioningdata = ProvisioningData(netKey: meshStateObject.netKey,
+                                                    keyIndex: packedNetKey,
+                                                    flags: meshStateObject.flags,
+                                                    ivIndex: meshStateObject.IVIndex,
+                                                    friendlyName: nodeName,
+                                                    unicastAddress: self.nodeAddress)
+        targetNode.provision(withProvisioningData: nodeProvisioningdata)
+        stepCompleted(withIndicatorState: false)
+    }
+
+    private func connectNode(_ aNode: ProvisionedMeshNode) {
+        targetProvisionedNode = aNode
+        centralManager.delegate = self
+        centralManager.connect(targetProvisionedNode.blePeripheral(), options: nil)
+    }
+    
+    private func connectNode(_ aNode: UnprovisionedMeshNode) {
+        targetNode = aNode
+        centralManager.delegate = self
+        centralManager.connect(targetNode.blePeripheral(), options: nil)
+        targetNode.logDelegate?.logConnect()
+    }
+}
+
+extension MeshProvisioningDataTableViewController: CBCentralManagerDelegate {
+    func centralManager(_ central: CBCentralManager,
+                        didDiscover peripheral: CBPeripheral,
+                        advertisementData: [String: Any], rssi RSSI: NSNumber) {
+        //Looking for advertisement data of service 0x1828 with 17 octet length
+        //0x01 (Node ID), 8 Octets Hash + 8 Octets Random number
+        if let serviceDataDictionary = advertisementData[CBAdvertisementDataServiceDataKey] as? [CBUUID: Data]{
+            if let data = serviceDataDictionary[MeshServiceProxyUUID] {
+                if data.count == 17 {
+                    if data[0] == 0x01 {
+                        self.logEventWithMessage("found proxy node with node id: \(data.hexString())")
+                        self.logEventWithMessage("verifying NodeID: \(data.hexString())")
+                        if targetNodeUnicast != nil {
+                            if verifyNodeIdentity(data, withUnicast: targetNodeUnicast!) {
+                                stepCompleted(withIndicatorState: true)
+                                logEventWithMessage("node identity verified!")
+                                logEventWithMessage("unicast found: \(targetNodeUnicast!.hexString())")
+                                central.stopScan()
+                                targetProvisionedNode = ProvisionedMeshNode(withUnprovisionedNode: targetNode,
+                                                                            andDelegate: self)
+                                let currentDelegate = targetNode.blePeripheral().delegate
+                                peripheral.delegate = currentDelegate
+                                targetNode = nil
+                                targetProvisionedNode.overrideBLEPeripheral(peripheral)
+                                connectNode(targetProvisionedNode)
+                                targetNodeUnicast = nil
+                            } else {
+                                self.logEventWithMessage("unexpected unicast, skipping node.")
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    func centralManager(_ central: CBCentralManager, didDisconnectPeripheral peripheral: CBPeripheral, error: Error?) {
+        if targetNode != nil {
+            if peripheral == targetNode.blePeripheral() {
+                logDisconnect()
+            }
+        } else if targetProvisionedNode != nil {
+            if peripheral == targetProvisionedNode.blePeripheral() {
+                logDisconnect()
+            }
+        }
+    }
+    
+    func centralManager(_ central: CBCentralManager, didConnect peripheral: CBPeripheral) {
+        if targetNode != nil {
+            logEventWithMessage("unprovisioned node connected")
+            logEventWithMessage("starting service discovery")
+            targetNode.discover()
+        } else if targetProvisionedNode != nil {
+            logEventWithMessage("provisioned proxy node connected")
+            logEventWithMessage("starting service discovery")
+            stepCompleted(withIndicatorState: true)
+            targetProvisionedNode.discover()
+        }
+    }
+    
+    func centralManagerDidUpdateState(_ central: CBCentralManager) {
+        if central.state == .poweredOn {
+            if targetNode != nil {
+                connectNode(targetNode)
+            }
+            if targetProvisionedNode != nil {
+                stepCompleted(withIndicatorState: true)
+                connectNode(targetProvisionedNode)
+            }
+        } else {
+            logEventWithMessage("central manager not available")
+        }
+    }
+}
+
+extension MeshProvisioningDataTableViewController: UnprovisionedMeshNodeDelegate {
+    func nodeShouldDisconnect(_ aNode: UnprovisionedMeshNode) {
+        if aNode == targetNode {
+            centralManager.cancelPeripheralConnection(aNode.blePeripheral())
+        }
+    }
+    
+    func nodeRequiresUserInput(_ aNode: UnprovisionedMeshNode,
+                               completionHandler aHandler: @escaping (String) -> Void) {
+        let alertView = UIAlertController(title: "Device request",
+                                          message: "please enter confirmation code",
+                                          preferredStyle: UIAlertControllerStyle.alert)
+        var textField: UITextField?
+        alertView.addTextField { (aTextField) in
+            aTextField.placeholder = "1234"
+            aTextField.keyboardType = .decimalPad
+            textField = aTextField
+        }
+        let okAction = UIAlertAction(title: "Ok", style: .default) { (_) in
+            aHandler((textField?.text)!)
+            self.dismiss(animated: true, completion: nil)
+        }
+        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel) { (_) in
+            self.logEventWithMessage("user input cancelled")
+            self.dismiss(animated: true, completion: nil)
+        }
+        alertView.addAction(okAction)
+        alertView.addAction(cancelAction)
+        self.present(alertView, animated: true, completion: nil)
+    }
+    
+    func nodeDidCompleteDiscovery(_ aNode: UnprovisionedMeshNode) {
+        if aNode == targetNode {
+            discoveryCompleted()
+        } else {
+            logEventWithMessage("unknown node completed discovery")
+        }
+    }
+    
+    func nodeProvisioningCompleted(_ aNode: UnprovisionedMeshNode) {
+        stepCompleted(withIndicatorState: true)
+        logEventWithMessage("Provisioning succeeded")
+        //Store provisioning node data now
+        let nodeEntry = aNode.getNodeEntryData()
+        guard nodeEntry != nil else {
+            logEventWithMessage("failed to get node entry data")
+            activityIndicator.stopAnimating()
+            isProvisioning = false
+            navigationItem.hidesBackButton = false
+            return
+        }
+        let state = stateManager.state()
+        if let anIndex = state.provisionedNodes.index(where: { $0.nodeUnicast == nodeEntry?.nodeUnicast}) {
+            state.provisionedNodes.remove(at: anIndex)
+        }
+        nodeEntry?.nodeUnicast = self.nodeAddress
+        //Store target node unicast to verify node identity on upcoming reconnect
+        targetNodeUnicast = self.nodeAddress
+        state.provisionedNodes.append(nodeEntry!)
+        stateManager.saveState()
+        targetNode.shouldDisconnect()
+        stepCompleted(withIndicatorState: true)
+        //Now let's switch to a provisioned node object and start configuration
+        targetProvisionedNode = ProvisionedMeshNode(withUnprovisionedNode: aNode, andDelegate: self)
+        destinationAddress = self.nodeAddress
+        centralManager.scanForPeripherals(withServices: [MeshServiceProxyUUID], options: nil)
+        logEventWithMessage("scanning for provisioned proxy nodes")
+    }
+    
+    func nodeProvisioningFailed(_ aNode: UnprovisionedMeshNode, withErrorCode anErrorCode: ProvisioningErrorCodes) {
+        stepCompleted(withIndicatorState: false)
+        logEventWithMessage("provisioning failed, error: \(anErrorCode)")
+        isProvisioning = false
+        navigationItem.hidesBackButton = false
+    }
+}
+
+extension MeshProvisioningDataTableViewController: ProvisionedMeshNodeDelegate {
+
+    func configurationSucceeded() {
+        stepCompleted(withIndicatorState: false)
+        logEventWithMessage("configuration completed!")
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + .seconds(1)) {
+            self.meshManager.updateProxyNode(self.targetProvisionedNode)
+            self.navigationController?.popToRootViewController(animated: true)
+        }
+    }
+
+    func nodeDidCompleteDiscovery(_ aNode: ProvisionedMeshNode) {
+        if aNode == targetProvisionedNode {
+            stepCompleted(withIndicatorState: false)
+            targetProvisionedNode.configure(destinationAddress: destinationAddress,
+                                            appKeyIndex: appKeyIndex,
+                                            appKeyData: appKeyData,
+                                            andNetKeyIndex: netKeyIndex)
+        }
+    }
+    
+    func nodeShouldDisconnect(_ aNode: ProvisionedMeshNode) {
+        if aNode == targetProvisionedNode {
+            centralManager.cancelPeripheralConnection(aNode.blePeripheral())
+        }
+    }
+    
+    func receivedCompositionData(_ compositionData: CompositionStatusMessage) {
+        guard targetProvisionedNode != nil else {
+            logEventWithMessage("received composition data from unknown node, ignoring")
+            return
+        }
+        stepCompleted(withIndicatorState: false)
+        let state = stateManager.state()
+        if let anIndex = state.provisionedNodes.index(where: { $0.nodeUnicast == self.nodeAddress}) {
+            let aNodeEntry = state.provisionedNodes[anIndex]
+            state.provisionedNodes.remove(at: anIndex)
+            aNodeEntry.companyIdentifier = compositionData.companyIdentifier
+            aNodeEntry.productVersion = compositionData.productVersion
+            aNodeEntry.productIdentifier = compositionData.productIdentifier
+            aNodeEntry.featureFlags = compositionData.features
+            aNodeEntry.replayProtectionCount = compositionData.replayProtectionCount
+            aNodeEntry.elements = compositionData.elements
+            state.provisionedNodes.append(aNodeEntry)
+            logEventWithMessage("received composition data")
+            logEventWithMessage("company identifier:\(compositionData.companyIdentifier.hexString())")
+            logEventWithMessage("product identifier:\(compositionData.productIdentifier.hexString())")
+            logEventWithMessage("product version:\(compositionData.productVersion.hexString())")
+            logEventWithMessage("feature flags:\(compositionData.features.hexString())")
+            logEventWithMessage("element count:\(compositionData.elements.count)")
+            for anElement in aNodeEntry.elements! {
+                logEventWithMessage("Element models:\(anElement.totalModelCount())")
+            }
+            //Set unicast to current set value, to allow the user to force override addresses
+            state.nextUnicast = self.nodeAddress
+            //Increment next available address
+            state.incrementUnicastBy(compositionData.elements.count)
+            logEventWithMessage("next unicast address available: \(state.nextUnicast.hexString())")
+            stateManager.saveState()
+        } else {
+            logEventWithMessage("Received composition data but node isn't stored, please provision again")
+        }
+    }
+    
+    func receivedAppKeyStatusData(_ appKeyStatusData: AppKeyStatusMessage) {
+        stepCompleted(withIndicatorState: false)
+        logEventWithMessage("received app key status messasge")
+        if appKeyStatusData.statusCode == .success {
+            logEventWithMessage("status code: Success")
+            logEventWithMessage("appkey index: \(appKeyStatusData.appKeyIndex.hexString())")
+            logEventWithMessage("netKey index: \(appKeyStatusData.netKeyIndex.hexString())")
+            
+            // Update state with configured key
+            let state = stateManager.state()
+            if let anIndex = state.provisionedNodes.index(where: { $0.nodeUnicast == self.nodeAddress}) {
+                let aNodeEntry = state.provisionedNodes[anIndex]
+                state.provisionedNodes.remove(at: anIndex)
+                if aNodeEntry.appKeys.contains(appKeyStatusData.appKeyIndex) == false {
+                    aNodeEntry.appKeys.append(appKeyStatusData.appKeyIndex)
+                }
+                //and update
+                state.provisionedNodes.append(aNodeEntry)
+                stateManager.saveState()
+                for aKey in aNodeEntry.appKeys {
+                    logEventWithMessage("appKeyData:\(aKey.hexString())")
+                }
+            }
+        } else {
+            logEventWithMessage("received error code: \(appKeyStatusData.statusCode)")
+            activityIndicator.stopAnimating()
+        }
+    }
+    
+    func receivedModelAppBindStatus(_ modelAppStatusData: ModelAppBindStatusMessage) {
+        //NOOP
+    }
+    
+    func receivedModelPublicationStatus(_ modelPublicationStatusData: ModelPublicationStatusMessage) {
+        //NOOP
+    }
+    
+    func receivedModelSubsrciptionStatus(_ modelSubscriptionStatusData: ModelSubscriptionStatusMessage) {
+        //NOOP
+    }
+    
+    func receivedDefaultTTLStatus(_ defaultTTLStatusData: DefaultTTLStatusMessage) {
+        //NOOP
+    }
+    
+    func receivedNodeResetStatus(_ resetStatusData: NodeResetStatusMessage) {
+        //NOOP
+    }
+}
+
+extension MeshProvisioningDataTableViewController: ProvisionedMeshNodeLoggingDelegate {
+
+}
+
+extension MeshProvisioningDataTableViewController: UnprovisionedMeshNodeLoggingDelegate {
+    func logDisconnect() {
+        stepCompleted(withIndicatorState: false)
+        logEventWithMessage("disconnected")
+    }
+    
+    func logConnect() {
+        stepCompleted(withIndicatorState: true)
+        logEventWithMessage("connected")
+    }
+    
+    func logDiscoveryStarted() {
+        stepCompleted(withIndicatorState: true)
+        logEventWithMessage("started discovery")
+    }
+    
+    func logDiscoveryCompleted() {
+        stepCompleted(withIndicatorState: false)
+        logEventWithMessage("discovery completed")
+    }
+    
+    func logSwitchedToProvisioningState(withMessage aMessage: String) {
+        logEventWithMessage("switched provisioning state: \(aMessage)")
+    }
+    
+    func logUserInputRequired() {
+        stepCompleted(withIndicatorState: true)
+        logEventWithMessage("user input required")
+    }
+    
+    func logUserInputCompleted(withMessage aMessage: String) {
+        stepCompleted(withIndicatorState: false)
+        logEventWithMessage("input complete: \(aMessage)")
+    }
+    
+    func logGenerateKeypair(withMessage aMessage: String) {
+        stepCompleted(withIndicatorState: false)
+        logEventWithMessage("keypare generated, pubkey: \(aMessage)")
+    }
+    
+    func logCalculatedECDH(withMessage aMessage: String) {
+        stepCompleted(withIndicatorState: false)
+        logEventWithMessage("calculated DHKey: \(aMessage)")
+    }
+    
+    func logGeneratedProvisionerRandom(withMessage aMessage: String) {
+        stepCompleted(withIndicatorState: false)
+        logEventWithMessage("provisioner random: \(aMessage)")
+    }
+    
+    func logReceivedDeviceRandom(withMessage aMessage: String) {
+        stepCompleted(withIndicatorState: false)
+        logEventWithMessage("device random: \(aMessage)")
+    }
+    
+    func logGeneratedProvisionerConfirmationValue(withMessage aMessage: String) {
+        stepCompleted(withIndicatorState: false)
+        logEventWithMessage("provisioner confirmation: \(aMessage)")
+    }
+    
+    func logReceivedDeviceConfirmationValue(withMessage aMessage: String) {
+        stepCompleted(withIndicatorState: false)
+        logEventWithMessage("device confirmation: \(aMessage)")
+    }
+    
+    func logGenratedProvisionInviteData(withMessage aMessage: String) {
+        stepCompleted(withIndicatorState: true)
+        logEventWithMessage("provision invite data: \(aMessage)")
+    }
+    
+    func logGeneratedProvisioningStartData(withMessage aMessage: String) {
+        stepCompleted(withIndicatorState: false)
+        logEventWithMessage("provision start data: \(aMessage)")
+    }
+    
+    func logReceivedCapabilitiesData(withMessage aMessage: String) {
+        stepCompleted(withIndicatorState: false)
+        logEventWithMessage("capabilities : \(aMessage)")
+    }
+    
+    func logReceivedDevicePublicKey(withMessage aMessage: String) {
+        stepCompleted(withIndicatorState: false)
+        logEventWithMessage("device public key: \(aMessage)")
+    }
+    
+    func logProvisioningSucceeded() {
+        stepCompleted(withIndicatorState: true)
+        logEventWithMessage("provisioning succeeded")
+    }
+    
+    func logProvisioningFailed(withMessage aMessage: String) {
+        stepCompleted(withIndicatorState: false)
+        isProvisioning = false
+        navigationItem.hidesBackButton = false
+        logEventWithMessage("provisioning failed: \(aMessage)")
     }
 }
