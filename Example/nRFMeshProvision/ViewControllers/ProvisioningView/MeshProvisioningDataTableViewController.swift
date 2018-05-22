@@ -119,16 +119,16 @@ class MeshProvisioningDataTableViewController: UITableViewController, UITextFiel
     }
 
     func didSelectNodeNameCell() {
-        presentInputViewWithTitle("Please enter a name",
-                                  message: "20 Characters Max",
+        presentInputViewWithTitle("Name this node",
+                                  message: "Name must be one or more characters",
                                   inputType: freetextTag,
                                   placeholder: "\(self.targetNode.nodeBLEName())") { (aName) -> Void in
                                     if let aName = aName {
-                                        if aName.count <= 20 {
+                                        if aName.count > 0 {
                                             self.nodeName = aName
                                             self.nodeNameCell.detailTextLabel?.text = aName
                                         } else {
-                                            print("Name cannot be longer than 20 characters")
+                                            print("Name must be longer 1 or more characters")
                                         }
                                     }
         }
@@ -512,9 +512,13 @@ extension MeshProvisioningDataTableViewController: ProvisionedMeshNodeDelegate {
 
     func configurationSucceeded() {
         stepCompleted(withIndicatorState: false)
-        logEventWithMessage("configuration completed!")
+        isProvisioning = false
+        navigationItem.hidesBackButton = false
+        logEventWithMessage("Configuration completed!")
+        meshManager.updateProxyNode(self.targetProvisionedNode)
+        (UIApplication.shared.delegate as? AppDelegate)?.meshManager = meshManager
         DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + .seconds(1)) {
-            self.meshManager.updateProxyNode(self.targetProvisionedNode)
+            (self.navigationController!.viewControllers[0] as? MainTabBarViewController)?.switchToNetworkView()
             self.navigationController?.popToRootViewController(animated: true)
         }
     }
