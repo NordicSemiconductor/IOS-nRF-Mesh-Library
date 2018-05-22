@@ -24,6 +24,7 @@ class MeshProvisioningDataTableViewController: UITableViewController, UITextFiel
     @IBOutlet weak var appKeyCell: UITableViewCell!
     
     // MARK: - Properties
+    private var logViewController: ProvisioningLogTableViewController?
     private var isProvisioning: Bool = false
     private var totalSteps: Float = 24
     private var completedSteps: Float = 0
@@ -54,6 +55,7 @@ class MeshProvisioningDataTableViewController: UITableViewController, UITextFiel
     // MARK: - UIViewController implementation
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        logViewController = nil
         if appKeyName == nil {
             updateProvisioningDataUI()
         }
@@ -246,10 +248,16 @@ class MeshProvisioningDataTableViewController: UITableViewController, UITextFiel
 
     // MARK: - Segue and flow
     override func shouldPerformSegue(withIdentifier identifier: String, sender: Any?) -> Bool {
-        return identifier == "showAppKeySelector"
+        return ["showAppKeySelector", "showLogView"].contains(identifier)
     }
 
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "showLogView" {
+            if let destinationView = segue.destination as? ProvisioningLogTableViewController {
+                self.logViewController = destinationView
+                destinationView.initialLogEntries(entries: logEntries)
+            }
+        }
         if segue.identifier == "showAppKeySelector" {
             if let destinationView = segue.destination as? AppKeySelectorTableViewController {
                 destinationView.setSelectionCallback({ (appKeyIndex) in
@@ -281,15 +289,8 @@ extension MeshProvisioningDataTableViewController {
     
     // MARK: - Logging
     public func logEventWithMessage(_ aMessage: String) {
-        print("LOG: \(aMessage)")
-//        logEntries.append(LogEntry(withMessage: aMessage, andTimestamp: Date()))
-//        provisioningLogTableView?.reloadData()
-//        if logEntries.count > 0 {
-//            //Scroll to bottom of table view when we start getting data
-//            //(.bottom places the last row to the bottom of tableview)
-//            provisioningLogTableView?.scrollToRow(at: IndexPath(row: logEntries.count - 1, section: 0),
-//                                                  at: .bottom, animated: true)
-//        }
+        logEntries.append(LogEntry(withMessage: aMessage, andTimestamp: Date()))
+        logViewController?.logEntriesDidUpdate(newEntries: logEntries)
     }
 
     // MARK: - Provisioning and Configuration
@@ -517,9 +518,11 @@ extension MeshProvisioningDataTableViewController: ProvisionedMeshNodeDelegate {
         logEventWithMessage("Configuration completed!")
         meshManager.updateProxyNode(self.targetProvisionedNode)
         (UIApplication.shared.delegate as? AppDelegate)?.meshManager = meshManager
-        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + .seconds(1)) {
-            (self.navigationController!.viewControllers[0] as? MainTabBarViewController)?.switchToNetworkView()
-            self.navigationController?.popToRootViewController(animated: true)
+        (self.navigationController!.viewControllers[0] as? MainTabBarViewController)?.switchToNetworkView()
+        if self.logViewController == nil {
+            DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + .seconds(1)) {
+                self.navigationController?.popToRootViewController(animated: true)
+            }
         }
     }
 

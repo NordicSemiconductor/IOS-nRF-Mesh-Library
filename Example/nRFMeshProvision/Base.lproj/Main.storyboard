@@ -204,7 +204,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="qB7-ud-fo9" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-200" y="900"/>
+            <point key="canvasLocation" x="-199" y="723"/>
         </scene>
         <!--App Keys-->
         <scene sceneID="aCw-tM-vxw">
@@ -605,12 +605,12 @@ provisioning and then configuring a device.</string>
                 </view>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="1ux-tI-jQ9" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-199" y="-51"/>
+            <point key="canvasLocation" x="-199" y="-183"/>
         </scene>
-        <!--Configure-->
+        <!--Provisioning-->
         <scene sceneID="1U7-Ze-AMA">
             <objects>
-                <tableViewController title="Configure" extendedLayoutIncludesOpaqueBars="YES" id="pe2-tv-diC" customClass="MeshProvisioningDataTableViewController" customModule="nRFMeshProvision_Example" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController title="Provisioning" extendedLayoutIncludesOpaqueBars="YES" id="pe2-tv-diC" customClass="MeshProvisioningDataTableViewController" customModule="nRFMeshProvision_Example" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="grouped" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="18" sectionFooterHeight="18" id="UsS-NT-UuV">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -732,12 +732,8 @@ provisioning and then configuring a device.</string>
                                             <rect key="frame" x="0.0" y="0.0" width="375" height="42.666666666666664"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <progressView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="ssp-em-nW3">
-                                                    <rect key="frame" x="0.0" y="0.0" width="375" height="2"/>
-                                                    <color key="progressTintColor" red="0.0" green="0.61176470589999998" blue="0.87058823529999996" alpha="1" colorSpace="custom" customColorSpace="adobeRGB1998"/>
-                                                </progressView>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="0 %" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="t9Q-tI-0A9">
-                                                    <rect key="frame" x="334.66666666666669" y="11" width="24.333333333333314" height="20"/>
+                                                    <rect key="frame" x="257" y="12" width="24.333333333333314" height="20"/>
                                                     <fontDescription key="fontDescription" name="TrebuchetMS" family="Trebuchet MS" pointSize="17"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
@@ -748,18 +744,32 @@ provisioning and then configuring a device.</string>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
+                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="415-6a-fzK">
+                                                    <rect key="frame" x="298" y="5" width="61" height="31"/>
+                                                    <fontDescription key="fontDescription" name="TrebuchetMS" family="Trebuchet MS" pointSize="16"/>
+                                                    <state key="normal" title="View log"/>
+                                                    <connections>
+                                                        <segue destination="ANh-7k-8vY" kind="show" identifier="showLogView" id="2nf-0a-v21"/>
+                                                    </connections>
+                                                </button>
+                                                <progressView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="ssp-em-nW3">
+                                                    <rect key="frame" x="257" y="34" width="24" height="2"/>
+                                                    <color key="progressTintColor" red="0.0" green="0.61176470589999998" blue="0.87058823529999996" alpha="1" colorSpace="custom" customColorSpace="adobeRGB1998"/>
+                                                </progressView>
                                             </subviews>
                                             <constraints>
-                                                <constraint firstAttribute="trailing" secondItem="ssp-em-nW3" secondAttribute="trailing" id="2SG-Gy-DJI"/>
+                                                <constraint firstItem="ssp-em-nW3" firstAttribute="width" secondItem="t9Q-tI-0A9" secondAttribute="width" id="4on-EV-XqP"/>
                                                 <constraint firstItem="t9Q-tI-0A9" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="1hf-v3-PJO" secondAttribute="trailing" constant="16" id="5vZ-kW-pQU"/>
+                                                <constraint firstItem="415-6a-fzK" firstAttribute="centerY" secondItem="YaR-3k-24b" secondAttribute="centerY" id="Epr-UN-o3l"/>
                                                 <constraint firstItem="1hf-v3-PJO" firstAttribute="top" secondItem="YaR-3k-24b" secondAttribute="top" constant="11" id="GJb-ZU-c71"/>
-                                                <constraint firstAttribute="trailing" secondItem="t9Q-tI-0A9" secondAttribute="trailing" constant="16" id="HuH-6H-JPA"/>
+                                                <constraint firstItem="ssp-em-nW3" firstAttribute="centerX" secondItem="t9Q-tI-0A9" secondAttribute="centerX" id="HTz-TY-84P"/>
                                                 <constraint firstAttribute="bottom" secondItem="1hf-v3-PJO" secondAttribute="bottom" constant="10.666666666666664" id="SXa-3y-sgD"/>
-                                                <constraint firstAttribute="bottom" secondItem="t9Q-tI-0A9" secondAttribute="bottom" constant="11.666666666666664" id="ScO-uI-Poi"/>
-                                                <constraint firstItem="ssp-em-nW3" firstAttribute="leading" secondItem="YaR-3k-24b" secondAttribute="leading" id="aeE-BU-PVf"/>
-                                                <constraint firstItem="t9Q-tI-0A9" firstAttribute="top" secondItem="YaR-3k-24b" secondAttribute="top" constant="11" id="ccz-d4-FZ3"/>
-                                                <constraint firstItem="ssp-em-nW3" firstAttribute="top" secondItem="YaR-3k-24b" secondAttribute="top" id="jSV-vP-Mv0"/>
+                                                <constraint firstAttribute="bottom" secondItem="t9Q-tI-0A9" secondAttribute="bottom" constant="11" id="ScO-uI-Poi"/>
+                                                <constraint firstItem="t9Q-tI-0A9" firstAttribute="top" secondItem="YaR-3k-24b" secondAttribute="top" constant="12" id="ccz-d4-FZ3"/>
+                                                <constraint firstItem="415-6a-fzK" firstAttribute="leading" secondItem="t9Q-tI-0A9" secondAttribute="trailing" constant="16" id="qCb-FX-hhx"/>
                                                 <constraint firstItem="1hf-v3-PJO" firstAttribute="leading" secondItem="YaR-3k-24b" secondAttribute="leading" constant="16" id="rbe-C7-HsX"/>
+                                                <constraint firstItem="ssp-em-nW3" firstAttribute="top" secondItem="t9Q-tI-0A9" secondAttribute="bottom" constant="2" id="sEq-o0-PyE"/>
+                                                <constraint firstAttribute="trailing" secondItem="415-6a-fzK" secondAttribute="trailing" constant="16" id="vTS-OU-c1B"/>
                                             </constraints>
                                         </tableViewCellContentView>
                                         <color key="backgroundColor" cocoaTouchSystemColor="tableCellGroupedBackgroundColor"/>
@@ -1127,6 +1137,62 @@ provisioning and then configuring a device.</string>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="uci-Qf-6dg" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="2329" y="-564"/>
+        </scene>
+        <!--Provisioning Log-->
+        <scene sceneID="Eee-ff-ax8">
+            <objects>
+                <tableViewController title="Provisioning Log" id="ANh-7k-8vY" customClass="ProvisioningLogTableViewController" customModule="nRFMeshProvision_Example" customModuleProvider="target" sceneMemberID="viewController">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="18" sectionFooterHeight="18" id="XOa-b3-Vxn">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="672"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
+                        <prototypes>
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="LogCell" id="OM4-c9-len" customClass="MeshNodeLogTableViewCell" customModule="nRFMeshProvision_Example" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="55.333333333333343" width="375" height="44"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="OM4-c9-len" id="5tP-QR-SEU">
+                                    <rect key="frame" x="0.0" y="0.0" width="375" height="43.666666666666664"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                    <subviews>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="00:00:01" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="PfV-fj-ge6">
+                                            <rect key="frame" x="16" y="14" width="55" height="17"/>
+                                            <constraints>
+                                                <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="55" id="3zO-Il-okr"/>
+                                            </constraints>
+                                            <fontDescription key="fontDescription" name="TrebuchetMS" family="Trebuchet MS" pointSize="14"/>
+                                            <color key="textColor" red="0.38034743069999999" green="0.38041785360000002" blue="0.38034299020000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Log entry message" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="NX3-xI-3HP">
+                                            <rect key="frame" x="79" y="11" width="141" height="20"/>
+                                            <fontDescription key="fontDescription" name="TrebuchetMS" family="Trebuchet MS" pointSize="17"/>
+                                            <nil key="textColor"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                    </subviews>
+                                    <constraints>
+                                        <constraint firstItem="NX3-xI-3HP" firstAttribute="leading" secondItem="PfV-fj-ge6" secondAttribute="trailing" constant="8" id="ErF-hb-0eM"/>
+                                        <constraint firstItem="NX3-xI-3HP" firstAttribute="centerY" secondItem="5tP-QR-SEU" secondAttribute="centerY" id="NJn-Df-CCW"/>
+                                        <constraint firstItem="PfV-fj-ge6" firstAttribute="centerY" secondItem="5tP-QR-SEU" secondAttribute="centerY" id="aFQ-Dv-BFd"/>
+                                        <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="NX3-xI-3HP" secondAttribute="trailing" constant="8" id="jnz-FC-y3p"/>
+                                        <constraint firstItem="PfV-fj-ge6" firstAttribute="leading" secondItem="5tP-QR-SEU" secondAttribute="leading" constant="16" id="oBF-Pa-Icv"/>
+                                    </constraints>
+                                </tableViewCellContentView>
+                                <connections>
+                                    <outlet property="messageLabel" destination="NX3-xI-3HP" id="tCg-7E-zAs"/>
+                                    <outlet property="timestampLabel" destination="PfV-fj-ge6" id="Eet-o7-fRG"/>
+                                </connections>
+                            </tableViewCell>
+                        </prototypes>
+                        <connections>
+                            <outlet property="dataSource" destination="ANh-7k-8vY" id="xJe-89-pjB"/>
+                            <outlet property="delegate" destination="ANh-7k-8vY" id="cps-mR-UeD"/>
+                        </connections>
+                    </tableView>
+                </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Cae-xZ-ahB" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1436" y="-1978"/>
         </scene>
         <!--Bind AppKey-->
         <scene sceneID="rdL-xW-s1H">
