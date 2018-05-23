@@ -200,17 +200,22 @@ extension ReconnectionViewController: CBCentralManagerDelegate {
             if let serviceData = serviceDictionary[MeshServiceProxyUUID] as? Data {
                 if verifyNetworkIdentity(serviceData) {
                     //Only update if the network identity matches
+                    //
                     if discoveredNodes.contains(tempNode) == false {
                         discoveredNodes.append(tempNode)
+                        let addCellPath = IndexPath(item: Int(discoveredNodes.count - 1), section: 0)
+                        tableView.insertRows(at: [addCellPath], with: .automatic)
                     } else {
-                        if let anIndex = discoveredNodes.index(of: tempNode) {
-                            discoveredNodes[anIndex].updateRSSI(RSSI)
-                        } else {
-                            //NOOP
-                            return
+                        if let index = discoveredNodes.index(of: tempNode) {
+                            let oldNode = discoveredNodes[index]
+                            oldNode.updateRSSI(RSSI)
+                            let reloadCellPath = IndexPath(item: Int(index), section: 0)
+                            let aCell = tableView.cellForRow(at: reloadCellPath) as? ProxyScannerCell
+                            DispatchQueue.main.async {
+                                aCell?.showNode(oldNode)
+                            }
                         }
                     }
-                    tableView.reloadData()
                 }
             }
         }
