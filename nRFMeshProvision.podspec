@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'nRFMeshProvision'
-  s.version          = '0.2'
+  s.version          = '0.3'
   s.summary          = 'A Bluetooth Mesh compliant provisioner and configurator'
   s.description      = <<-DESC
 An early alpha version of the Bluetooth Mesh specification, this library will allow you to provision and configure bluetooth Mesh compliant nodes.
