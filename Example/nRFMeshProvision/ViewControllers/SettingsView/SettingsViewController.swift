@@ -12,7 +12,7 @@ import nRFMeshProvision
 class SettingsViewController: UIViewController, UITextFieldDelegate, UITableViewDelegate, UITableViewDataSource {
 
     // MARK: - Properties
-    var meshStateManager: MeshStateManager!
+    var meshManager: NRFMeshManager!
     let reuseIdentifier = "SettingsTableViewCell"
     let sectionTitles = ["Global Settings", "Network Settings", "App keys", "Mesh State"]
     let rowTitles   = [["Network Name", "Global TTL", "Provisioner Unicast"],
@@ -24,40 +24,19 @@ class SettingsViewController: UIViewController, UITextFieldDelegate, UITableView
     @IBOutlet weak var settingsTable: UITableView!
 
     // MARK: - Implementaiton
-    private func setupProvisioningData() {
-        if MeshStateManager.stateExists() {
-            meshStateManager = MeshStateManager.restoreState()
-        } else {
-            let networkKey = generateNewKey()
-            let keyIndex = Data([0x00, 0x00])
-            let flags = Data([0x00])
-            let ivIndex = Data([0x00, 0x00, 0x00, 0x00])
-            let unicastAddress = Data([0x01, 0x23])
-            let globalTTL: UInt8 = 5
-            let networkName = "My Network"
-            let appKeys = [["AppKey 1": generateNewKey()],
-                           ["AppKey 2": generateNewKey()],
-                           ["AppKey 3": generateNewKey()]]
-            let state = MeshState(withNodeList: [], netKey: networkKey, keyIndex: keyIndex,
-                                  IVIndex: ivIndex, globalTTL: globalTTL, unicastAddress: unicastAddress,
-                                  flags: flags, appKeys: appKeys, andName: networkName)
-            meshStateManager = MeshStateManager(withState: state)
-            meshStateManager.saveState()
-        }
-   }
-
     private func updateProvisioningDataUI() {
         //Update provisioning Data UI with default values
         settingsTable.reloadData()
     }
 
     func didSelectNetworkNameCell() {
+        let meshState = meshManager.stateManager().state()
         presentInputViewWithTitle("Enter a network name", message: "20 charcters",
-                                  placeholder: meshStateManager.state().name,
+                                  placeholder: meshState.name,
                                   generationEnabled: false) { (aName) -> Void in
                                     if let aName = aName {
                                         if aName.count <= 20 {
-                                            self.meshStateManager.state().name = aName
+                                            meshState.name = aName
                                             self.updateProvisioningDataUI()
                                         } else {
                                             print("Name must shorter than 20 characters")
@@ -65,13 +44,16 @@ class SettingsViewController: UIViewController, UITextFieldDelegate, UITableView
                                     }
         }
     }
+
     func didSelectGlobalTTLCell() {
+        let meshState = meshManager.stateManager().state()
         presentInputViewWithTitle("Enter a TTL value", message: "1 Byte",
-                                  placeholder: meshStateManager.state().globalTTL.hexString(),
+                                  placeholder: meshState.globalTTL.hexString(),
                                   generationEnabled: false) { (aTTL) -> Void in
-                                    if let aTTL = aTTL {
+                                    if var aTTL = aTTL {
+                                        aTTL = aTTL.lowercased().replacingOccurrences(of: "0x", with: "")
                                         if aTTL.count == 2 {
-                                            self.meshStateManager.state().globalTTL = Data(hexString: aTTL)!
+                                            meshState.globalTTL = Data(hexString: aTTL)!
                                             self.updateProvisioningDataUI()
                                         } else {
                                             print("TTL must 1 byte")
@@ -87,23 +69,28 @@ class SettingsViewController: UIViewController, UITextFieldDelegate, UITableView
     func didSelectMeshResetCell() {
         self.presentConfirmationViewWithTitle("Resetting Mesh", message: "Warning: This action is not reversible and will remove all configuration on this provisioner, continue?") { (confirm) in
             if confirm == true {
-                if self.meshStateManager.deleteState() {
-                    self.setupProvisioningData()
-                    self.settingsTable.reloadData()
+                if self.meshManager.stateManager().deleteState() {
+                    if self.meshManager.stateManager().generateState() {
+                        self.settingsTable.reloadData()
+                    } else {
+                        print("Failed to generate state")
+                    }
                 } else {
-                    print("failed to delete mesh")
+                    print("failed to delete mesh information")
                 }
             }
         }
     }
     func didSelectKeyCell() {
+        let meshState = meshManager.stateManager().state()
         presentInputViewWithTitle("Please enter a Key",
                                   message: "16 Bytes",
-                                  placeholder: meshStateManager.state().netKey.hexString(),
+                                  placeholder: meshState.netKey.hexString(),
                                   generationEnabled: true) { (aKey) -> Void in
-                                    if let aKey = aKey {
+                                    if var aKey = aKey {
+                                        aKey = aKey.lowercased().replacingOccurrences(of: "0x", with: "")
                                         if aKey.count == 32 {
-                                            self.meshStateManager.state().netKey = Data(hexString: aKey)!
+                                            meshState.netKey = Data(hexString: aKey)!
                                             self.updateProvisioningDataUI()
                                         } else {
                                             print("Key must be exactly 16 bytes")
@@ -113,14 +100,16 @@ class SettingsViewController: UIViewController, UITextFieldDelegate, UITableView
    }
 
     func didSelectKeyIndexCell() {
+        let meshState = meshManager.stateManager().state()
         presentInputViewWithTitle("Please enter a Key Index",
                                   message: "2 Bytes",
-                                  placeholder: meshStateManager.state().keyIndex.hexString(),
+                                  placeholder: meshState.keyIndex.hexString(),
                                   generationEnabled: false) { (aKeyIndex) -> Void in
-            if let aKeyIndex = aKeyIndex {
+            if var aKeyIndex = aKeyIndex {
+                aKeyIndex = aKeyIndex.lowercased().replacingOccurrences(of: "0x", with: "")
                 if aKeyIndex.count == 4 {
-                    self.meshStateManager.state().keyIndex = Data(hexString: aKeyIndex)!
-                    print("New Key index = \(self.meshStateManager.state().keyIndex.hexString())")
+                    meshState.keyIndex = Data(hexString: aKeyIndex)!
+                    print("New Key index = \(meshState.keyIndex.hexString())")
                     self.updateProvisioningDataUI()
                 } else {
                     print("Key index must be exactly 2 bytes")
@@ -136,13 +125,15 @@ class SettingsViewController: UIViewController, UITextFieldDelegate, UITableView
     }
 
     func didSelectFlagsCell() {
+        let meshState = meshManager.stateManager().state()
         presentInputViewWithTitle("Please enter flags",
                                   message: "1 Byte",
-                                  placeholder: meshStateManager.state().flags.hexString(),
+                                  placeholder: meshState.flags.hexString(),
                                   generationEnabled: false) { (someFlags) -> Void in
-                                    if let someFlags = someFlags {
+                                    if var someFlags = someFlags {
+                                        someFlags = someFlags.lowercased().replacingOccurrences(of: "0x", with: "")
                                         if someFlags.count == 2 {
-                                            self.meshStateManager.state().flags = Data(hexString: someFlags)!
+                                            meshState.flags = Data(hexString: someFlags)!
                                             self.updateProvisioningDataUI()
                                         } else {
                                             print("Flags must be exactly 1 byte")
@@ -152,13 +143,15 @@ class SettingsViewController: UIViewController, UITextFieldDelegate, UITableView
    }
 
     func didSelectIVIndexCell() {
+        let meshState = meshManager.stateManager().state()
         presentInputViewWithTitle("Please enter IV Index",
                                   message: "4 Bytes",
-                                  placeholder: meshStateManager.state().IVIndex.hexString(),
+                                  placeholder: meshState.IVIndex.hexString(),
                                   generationEnabled: false) { (anIVIndex) -> Void in
-            if let anIVIndex = anIVIndex {
+            if var anIVIndex = anIVIndex {
+                anIVIndex = anIVIndex.lowercased().replacingOccurrences(of: "0x", with: "")
                 if anIVIndex.count == 8 {
-                    self.meshStateManager.state().IVIndex = Data(hexString: anIVIndex)!
+                    meshState.IVIndex = Data(hexString: anIVIndex)!
                     self.updateProvisioningDataUI()
                 } else {
                     print("IV Index must be exactly 4 bytes")
@@ -168,23 +161,25 @@ class SettingsViewController: UIViewController, UITextFieldDelegate, UITableView
    }
 
     func didSelectUnicastAddressCell() {
+        let meshState = meshManager.stateManager().state()
         presentInputViewWithTitle("Please enter Unicast Address",
-                                  message: "2 Bytes, > 0x0000",
-                                  placeholder: meshStateManager.state().unicastAddress.hexString(),
+                                  message: "2 Bytes, >= 0x0001",
+                                  placeholder: meshState.unicastAddress.hexString(),
                                   generationEnabled: false) { (anAddress) -> Void in
-            if let anAddress = anAddress {
-                if anAddress.count == 4 {
-                    if anAddress == "0000" {
-                        print("Adderss cannot be 0x0000, minimum possible address is 0x0001")
-                    } else {
-                        self.meshStateManager.state().unicastAddress = Data(hexString: anAddress)!
-                        self.updateProvisioningDataUI()
-                    }
-           } else {
-                    print("Unicast address must be exactly 2 bytes")
-                }
-       }
-    }
+                                    if var anAddress = anAddress {
+                                        anAddress = anAddress.lowercased().replacingOccurrences(of: "0x", with: "")
+                                        if anAddress.count == 4 {
+                                            if anAddress == "0000" {
+                                                print("Adderss cannot be 0x0000 `unassigned`, next possible address is 0x0001")
+                                            } else {
+                                                meshState.unicastAddress = Data(hexString: anAddress)!
+                                                self.updateProvisioningDataUI()
+                                            }
+                                        } else {
+                                            print("Unicast address must be exactly 2 bytes")
+                                        }
+                                    }
+        }
    }
 
     // MARK: - Alert helpers
@@ -281,7 +276,20 @@ class SettingsViewController: UIViewController, UITextFieldDelegate, UITableView
     }
     // MARK: - UITextFieldDelegate
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        return true
+        if let text = textField.text {
+            if let selectedPath = settingsTable.indexPathForSelectedRow {
+                if selectedPath.row == 0 && selectedPath.section == 0 {
+                    //Name field can be of any value longer than 0
+                    return text.count > 0
+                } else {
+                    return validateStringIsHexaDecimal(text)
+                }
+            } else {
+                return validateStringIsHexaDecimal(text)
+            }
+        } else {
+            return false
+        }
     }
 
     func textField(_ textField: UITextField,
@@ -298,43 +306,42 @@ class SettingsViewController: UIViewController, UITextFieldDelegate, UITableView
                 } else {
                     return validateStringIsHexaDecimal(string)
                 }
-       } else {
+            } else {
                 return validateStringIsHexaDecimal(string)
             }
-    }
+        }
    }
 
     private func validateStringIsHexaDecimal(_ someText: String ) -> Bool {
         let value = someText.data(using: .utf8)![0]
-        //Only allow HexaDecimal values 0->9, a->f and A->F
-        return (value >= 48 && value <= 57) || (value >= 65 && value <= 70) || (value >= 97 && value <= 102)
+        //Only allow HexaDecimal values 0->9, a->f and A->F or "x"
+        return (value == 120 || value >= 48 && value <= 57) || (value >= 65 && value <= 70) || (value >= 97 && value <= 102)
     }
 
     // MARK: - Motion callbacks
     override func motionEnded(_ motion: UIEventSubtype, with event: UIEvent?) {
+        let meshState = meshManager.stateManager().state()
         //Shaking the iOS device will generate a new Key
         if motion == .motionShake {
             let newKey = generateNewKey()
-            meshStateManager.state().netKey = newKey
+            meshState.netKey = newKey
             self.updateProvisioningDataUI()
         }
     }
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        setupProvisioningData()
+        meshManager = (UIApplication.shared.delegate as? AppDelegate)?.meshManager
+//        setupProvisioningData()
     }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        if meshStateManager == nil {
-            setupProvisioningData()
-        }
         updateProvisioningDataUI()
     }
 
     override func viewWillDisappear(_ animated: Bool) {
-        meshStateManager.saveState()
+        meshManager.stateManager().saveState()
         super.viewWillDisappear(animated)
     }
 
@@ -401,33 +408,34 @@ class SettingsViewController: UIViewController, UITextFieldDelegate, UITableView
     }
 
     func contentForRowAtIndexPath(_ indexPath: IndexPath) -> String {
+        let meshState = meshManager.stateManager().state()
         let section = indexPath.section
         let row = indexPath.row
         if section == 0 {
             if row == 0 {
-                return meshStateManager.state().name
+                return meshState.name
             } else if row == 1 {
-                return "0x\(meshStateManager.state().globalTTL.hexString())"
+                return "0x\(meshState.globalTTL.hexString())"
             } else if row == 2 {
-                return "0x\(meshStateManager.state().unicastAddress.hexString())"
+                return "0x\(meshState.unicastAddress.hexString())"
             } else {
                 return "N/A"
             }
         } else if section == 1 {
             if row == 0 {
-                return "0x\(meshStateManager.state().netKey.hexString())"
+                return "0x\(meshState.netKey.hexString())"
             } else if row == 1 {
-                return "0x\(meshStateManager.state().keyIndex.hexString())"
+                return "0x\(meshState.keyIndex.hexString())"
             } else if row == 2 {
-                return "0x\(meshStateManager.state().flags.hexString())"
+                return "0x\(meshState.flags.hexString())"
             } else if row == 3 {
-                return "0x\(meshStateManager.state().IVIndex.hexString())"
+                return "0x\(meshState.IVIndex.hexString())"
             } else {
                 return "N/A"
             }
         } else if section == 2 {
             if row == 0 {
-                let keyCount = meshStateManager.state().appKeys.count
+                let keyCount = meshState.appKeys.count
                 return "\(keyCount) \(keyCount != 1 ? "keys" : "key")"
             } else {
                 return "N/A"
@@ -447,7 +455,7 @@ class SettingsViewController: UIViewController, UITextFieldDelegate, UITableView
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "showKeyManagerView" {
             if let destination = segue.destination as? AppKeyManagerTableViewController {
-                destination.setMeshState(meshStateManager)
+                destination.setMeshState(meshManager.stateManager())
             }
         }
     }

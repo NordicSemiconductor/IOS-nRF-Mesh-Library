@@ -65,6 +65,15 @@ public struct CompositionElement: Codable {
         modelPublishAddress[aModelId] = anAddress
     }
 
+    public mutating func removeSubscriptionAddress(_ anAddress: Data, forModelId aModelId: Data) {
+        if modelSubscriptionAddresses[aModelId] == nil {
+            return
+        }
+        if let foundIndex = modelSubscriptionAddresses[aModelId]!.index(of: anAddress) {
+            modelSubscriptionAddresses[aModelId]?.remove(at: foundIndex)
+        }
+    }
+
     public mutating func addSubscriptionAddress(_ anAddress: Data, forModelId aModelId: Data) {
         if modelSubscriptionAddresses[aModelId] == nil {
             modelSubscriptionAddresses[aModelId] = [Data]()

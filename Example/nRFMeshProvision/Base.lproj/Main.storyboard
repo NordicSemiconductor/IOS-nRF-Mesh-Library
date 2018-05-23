@@ -6,6 +6,7 @@
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14088"/>
+        <capability name="Navigation items with more than one left or right bar item" minToolsVersion="7.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -13,55 +14,45 @@
         <scene sceneID="DKv-XJ-X0v">
             <objects>
                 <tableViewController storyboardIdentifier="ScannerView" title="Scanner" extendedLayoutIncludesOpaqueBars="YES" useStoryboardIdentifierAsRestorationIdentifier="YES" id="olZ-Yw-uFz" customClass="ScannerViewController" customModule="nRFMeshProvision_Example" customModuleProvider="target" sceneMemberID="viewController">
-                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="default" rowHeight="79" estimatedRowHeight="-1" sectionHeaderHeight="18" sectionFooterHeight="18" id="Jhb-Xw-mHf">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="18" sectionFooterHeight="18" id="Jhb-Xw-mHf">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
                         <prototypes>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" accessoryType="disclosureIndicator" indentationWidth="10" reuseIdentifier="peripheralCell" rowHeight="79" id="YAc-Z1-MAZ" customClass="ScannerCell" customModule="nRFMeshProvision_Example" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="55.333333333333343" width="375" height="79"/>
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" accessoryType="disclosureIndicator" indentationWidth="10" reuseIdentifier="peripheralCell" id="YAc-Z1-MAZ" customClass="ScannerCell" customModule="nRFMeshProvision_Example" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="55.333333333333343" width="375" height="44"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="YAc-Z1-MAZ" id="4UX-cA-Qih">
-                                    <rect key="frame" x="0.0" y="0.0" width="341" height="78.666666666666671"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="341" height="43.666666666666664"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Node BLE Name" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="4ms-dY-18F">
-                                            <rect key="frame" x="47" y="16" width="125" height="21"/>
+                                            <rect key="frame" x="47" y="12" width="125" height="21"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                             <nil key="textColor"/>
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="RSSI" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="1td-Bz-qmw">
-                                            <rect key="frame" x="301" y="16" width="32" height="18"/>
+                                            <rect key="frame" x="301" y="13.666666666666664" width="32" height="18"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="15"/>
                                             <nil key="textColor"/>
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="ic_lan_36pt" translatesAutoresizingMaskIntoConstraints="NO" id="Dwa-YJ-IWR">
-                                            <rect key="frame" x="16" y="16" width="23" height="23"/>
+                                            <rect key="frame" x="16" y="10.333333333333336" width="23" height="23"/>
                                         </imageView>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Advertisement Data" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="pZ9-YT-bkU">
-                                            <rect key="frame" x="47" y="45" width="136" height="18"/>
-                                            <fontDescription key="fontDescription" type="system" pointSize="15"/>
-                                            <color key="textColor" red="0.38034743069999999" green="0.38041785360000002" blue="0.38034299020000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                            <nil key="highlightedColor"/>
-                                        </label>
                                     </subviews>
                                     <constraints>
-                                        <constraint firstItem="4ms-dY-18F" firstAttribute="top" secondItem="4UX-cA-Qih" secondAttribute="top" constant="16" id="DHg-3h-YJH"/>
-                                        <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="pZ9-YT-bkU" secondAttribute="trailing" constant="16" id="MBZ-Fx-rt4"/>
-                                        <constraint firstItem="pZ9-YT-bkU" firstAttribute="leading" secondItem="4ms-dY-18F" secondAttribute="leading" id="Yf1-Af-Ixf"/>
-                                        <constraint firstItem="1td-Bz-qmw" firstAttribute="top" secondItem="4UX-cA-Qih" secondAttribute="top" constant="16" id="c1b-X3-bkv"/>
-                                        <constraint firstItem="Dwa-YJ-IWR" firstAttribute="top" secondItem="4UX-cA-Qih" secondAttribute="top" constant="16" id="h84-9m-Ofw"/>
+                                        <constraint firstItem="Dwa-YJ-IWR" firstAttribute="centerY" secondItem="4UX-cA-Qih" secondAttribute="centerY" id="UzE-IB-W5e"/>
+                                        <constraint firstItem="4ms-dY-18F" firstAttribute="centerY" secondItem="Dwa-YJ-IWR" secondAttribute="centerY" id="Zoh-Xi-uID"/>
+                                        <constraint firstItem="1td-Bz-qmw" firstAttribute="centerY" secondItem="4ms-dY-18F" secondAttribute="centerY" id="ijv-uh-Jdl"/>
                                         <constraint firstItem="4ms-dY-18F" firstAttribute="leading" secondItem="Dwa-YJ-IWR" secondAttribute="trailing" constant="8" id="j7W-9Z-gSy"/>
-                                        <constraint firstItem="pZ9-YT-bkU" firstAttribute="top" secondItem="4ms-dY-18F" secondAttribute="bottom" constant="8" id="qJ4-sQ-X6x"/>
                                         <constraint firstItem="1td-Bz-qmw" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="4ms-dY-18F" secondAttribute="trailing" constant="6" id="v8K-SS-JzG"/>
                                         <constraint firstAttribute="trailing" secondItem="1td-Bz-qmw" secondAttribute="trailing" constant="8" id="wCB-FF-Xub"/>
                                         <constraint firstItem="Dwa-YJ-IWR" firstAttribute="leading" secondItem="4UX-cA-Qih" secondAttribute="leading" constant="16" id="xnC-RX-mpE"/>
                                     </constraints>
                                 </tableViewCellContentView>
                                 <connections>
-                                    <outlet property="advertisementDataLabel" destination="pZ9-YT-bkU" id="TE9-iJ-1I4"/>
                                     <outlet property="nameLabel" destination="4ms-dY-18F" id="sB2-gQ-ILE"/>
                                     <outlet property="rssiLabel" destination="1td-Bz-qmw" id="d0n-LB-go0"/>
                                 </connections>
@@ -72,7 +63,7 @@
                             <outlet property="delegate" destination="olZ-Yw-uFz" id="nNM-kL-SjO"/>
                         </connections>
                     </tableView>
-                    <tabBarItem key="tabBarItem" title="Add" image="ic_add_circle_outline" id="ING-Ye-G5c"/>
+                    <tabBarItem key="tabBarItem" title="Scanner" image="ic_add_circle_outline" id="ING-Ye-G5c"/>
                     <navigationItem key="navigationItem" title="Discovering Nodes" id="bVH-mR-mgf">
                         <barButtonItem key="backBarButtonItem" title="Back" id="PNv-B3-5GH"/>
                         <barButtonItem key="rightBarButtonItem" width="30" id="8yP-Q8-c5J">
@@ -102,23 +93,23 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="4lj-gG-yI1" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="hyJ-rT-08i" userLabel="EmptyScannerView">
-                    <rect key="frame" x="0.0" y="0.0" width="375" height="200"/>
+                    <rect key="frame" x="0.0" y="0.0" width="300" height="200"/>
                     <subviews>
                         <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="ic_lan_36pt" translatesAutoresizingMaskIntoConstraints="NO" id="OeI-uM-EFe">
-                            <rect key="frame" x="175" y="20" width="24" height="24"/>
+                            <rect key="frame" x="138" y="20" width="24" height="24"/>
                             <constraints>
                                 <constraint firstAttribute="height" constant="24" id="N28-M0-WAo"/>
                                 <constraint firstAttribute="width" constant="24" id="rzO-L6-ZJZ"/>
                             </constraints>
                         </imageView>
                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="No Nodes Found" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="8" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="eyc-Xf-yO2">
-                            <rect key="frame" x="21" y="60" width="332" height="20"/>
+                            <rect key="frame" x="21" y="60" width="257" height="20"/>
                             <fontDescription key="fontDescription" name="TrebuchetMS" family="Trebuchet MS" pointSize="17"/>
                             <color key="textColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             <nil key="highlightedColor"/>
                         </label>
                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" lineBreakMode="tailTruncation" numberOfLines="6" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="vs8-VX-zFU">
-                            <rect key="frame" x="21" y="92" width="332" height="70"/>
+                            <rect key="frame" x="21" y="92" width="257" height="83.666666666666686"/>
                             <string key="text">If you cannot discovery any mesh nodes, try the following  • Ensure nodes are advertising Mesh Provisioning Service. • Ensure nodes are not already provisioned. • Turn Bluetooth Off for 10 seconds to clear the BLE cache.</string>
                             <fontDescription key="fontDescription" name="TrebuchetMS" family="Trebuchet MS" pointSize="12"/>
                             <color key="textColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -127,6 +118,7 @@
                     </subviews>
                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                     <constraints>
+                        <constraint firstAttribute="bottom" secondItem="vs8-VX-zFU" secondAttribute="bottom" constant="24.333333333333314" id="2dG-PT-6pu"/>
                         <constraint firstItem="vs8-VX-zFU" firstAttribute="top" secondItem="eyc-Xf-yO2" secondAttribute="bottom" constant="12" id="DeG-aK-3Gx"/>
                         <constraint firstItem="vs8-VX-zFU" firstAttribute="leading" secondItem="hyJ-rT-08i" secondAttribute="leading" constant="21" id="ONg-YO-hkd"/>
                         <constraint firstAttribute="trailing" secondItem="eyc-Xf-yO2" secondAttribute="trailing" constant="22" id="R7Z-i2-gKf"/>
@@ -134,7 +126,6 @@
                         <constraint firstItem="OeI-uM-EFe" firstAttribute="top" secondItem="hyJ-rT-08i" secondAttribute="top" constant="20" id="buM-Xa-vXf"/>
                         <constraint firstItem="eyc-Xf-yO2" firstAttribute="leading" secondItem="hyJ-rT-08i" secondAttribute="leading" constant="21" id="cIT-DX-KQ5"/>
                         <constraint firstItem="eyc-Xf-yO2" firstAttribute="top" secondItem="OeI-uM-EFe" secondAttribute="bottom" constant="16" id="pTA-NJ-fO2"/>
-                        <constraint firstAttribute="height" constant="200" id="uUx-pH-Sns"/>
                         <constraint firstItem="OeI-uM-EFe" firstAttribute="centerX" secondItem="hyJ-rT-08i" secondAttribute="centerX" id="ywd-1B-w6v"/>
                     </constraints>
                 </view>
@@ -197,7 +188,6 @@
                         </constraints>
                     </view>
                     <tabBarItem key="tabBarItem" title="Settings" image="ic_settings" id="M9B-kW-Hxj"/>
-                    <navigationItem key="navigationItem" title="Settings" id="igT-Ey-rH4"/>
                     <connections>
                         <outlet property="settingsTable" destination="yq9-qK-DSQ" id="g3s-lP-sWj"/>
                         <segue destination="xXy-es-bZy" kind="show" identifier="showKeyManagerView" id="4Js-Wb-3y4"/>
@@ -205,7 +195,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="qB7-ud-fo9" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-241" y="588"/>
+            <point key="canvasLocation" x="-199" y="723"/>
         </scene>
         <!--App Keys-->
         <scene sceneID="aCw-tM-vxw">
@@ -285,7 +275,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="VPt-Te-jxw" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="478" y="587"/>
+            <point key="canvasLocation" x="521" y="723"/>
         </scene>
         <!--Network-->
         <scene sceneID="0oA-fM-gjl">
@@ -486,56 +476,46 @@ provisioning and then configuring a device.</string>
         <!--Discovering Proxies-->
         <scene sceneID="z0m-Ed-dxe">
             <objects>
-                <tableViewController title="Discovering Proxies" id="7BC-wy-MT8" customClass="ReconnectionViewController" customModule="nRFMeshProvision_Example" customModuleProvider="target" sceneMemberID="viewController">
-                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="default" rowHeight="79" estimatedRowHeight="-1" sectionHeaderHeight="18" sectionFooterHeight="18" id="YPC-jQ-vfL">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="672"/>
+                <tableViewController title="Discovering Proxies" extendedLayoutIncludesOpaqueBars="YES" id="7BC-wy-MT8" customClass="ReconnectionViewController" customModule="nRFMeshProvision_Example" customModuleProvider="target" sceneMemberID="viewController">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="18" sectionFooterHeight="18" id="YPC-jQ-vfL">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
                         <prototypes>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" accessoryType="disclosureIndicator" indentationWidth="10" reuseIdentifier="proxyScannerCell" rowHeight="79" id="tyf-jG-MRF" customClass="ProxyScannerCell" customModule="nRFMeshProvision_Example" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="55.333333333333343" width="375" height="79"/>
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" accessoryType="disclosureIndicator" indentationWidth="10" reuseIdentifier="proxyScannerCell" id="tyf-jG-MRF" customClass="ProxyScannerCell" customModule="nRFMeshProvision_Example" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="55.333333333333343" width="375" height="44"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="tyf-jG-MRF" id="kct-Ec-r8l">
-                                    <rect key="frame" x="0.0" y="0.0" width="341" height="78.666666666666671"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="341" height="43.666666666666664"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Node BLE Name" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="nK0-2y-GIY">
-                                            <rect key="frame" x="47" y="16" width="125" height="21"/>
+                                            <rect key="frame" x="47" y="11.333333333333336" width="125" height="21"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                             <nil key="textColor"/>
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="RSSI" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Y7f-pa-3Qv">
-                                            <rect key="frame" x="301" y="16" width="32" height="18"/>
+                                            <rect key="frame" x="301" y="13" width="32" height="18"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="15"/>
                                             <nil key="textColor"/>
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="ic_lan_36pt" translatesAutoresizingMaskIntoConstraints="NO" id="afz-Mi-Dr5">
-                                            <rect key="frame" x="16" y="16" width="23" height="23"/>
+                                            <rect key="frame" x="16" y="10.333333333333336" width="23" height="23"/>
                                         </imageView>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Advertisement Data" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="bCB-5o-GMx">
-                                            <rect key="frame" x="47" y="45" width="136" height="18"/>
-                                            <fontDescription key="fontDescription" type="system" pointSize="15"/>
-                                            <color key="textColor" red="0.38034743069999999" green="0.38041785360000002" blue="0.38034299020000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                            <nil key="highlightedColor"/>
-                                        </label>
                                     </subviews>
                                     <constraints>
                                         <constraint firstItem="afz-Mi-Dr5" firstAttribute="leading" secondItem="kct-Ec-r8l" secondAttribute="leading" constant="16" id="BeQ-Wr-jpZ"/>
-                                        <constraint firstItem="Y7f-pa-3Qv" firstAttribute="top" secondItem="kct-Ec-r8l" secondAttribute="top" constant="16" id="E1j-FY-ZZ7"/>
                                         <constraint firstAttribute="trailing" secondItem="Y7f-pa-3Qv" secondAttribute="trailing" constant="8" id="JZH-a4-NMf"/>
                                         <constraint firstItem="Y7f-pa-3Qv" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="nK0-2y-GIY" secondAttribute="trailing" constant="6" id="Pt2-Kh-vFv"/>
-                                        <constraint firstItem="bCB-5o-GMx" firstAttribute="leading" secondItem="nK0-2y-GIY" secondAttribute="leading" id="RH5-Da-OlI"/>
-                                        <constraint firstItem="afz-Mi-Dr5" firstAttribute="top" secondItem="kct-Ec-r8l" secondAttribute="top" constant="16" id="SGL-aV-mI7"/>
-                                        <constraint firstItem="nK0-2y-GIY" firstAttribute="top" secondItem="kct-Ec-r8l" secondAttribute="top" constant="16" id="YBu-4G-g3A"/>
-                                        <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="bCB-5o-GMx" secondAttribute="trailing" constant="16" id="apj-DJ-gfS"/>
                                         <constraint firstItem="nK0-2y-GIY" firstAttribute="leading" secondItem="afz-Mi-Dr5" secondAttribute="trailing" constant="8" id="oyF-vn-LFu"/>
-                                        <constraint firstItem="bCB-5o-GMx" firstAttribute="top" secondItem="nK0-2y-GIY" secondAttribute="bottom" constant="8" id="vDB-1R-VmI"/>
+                                        <constraint firstItem="nK0-2y-GIY" firstAttribute="centerY" secondItem="afz-Mi-Dr5" secondAttribute="centerY" id="pIH-GL-wGo"/>
+                                        <constraint firstItem="Y7f-pa-3Qv" firstAttribute="centerY" secondItem="nK0-2y-GIY" secondAttribute="centerY" id="yFj-t5-HLT"/>
+                                        <constraint firstItem="afz-Mi-Dr5" firstAttribute="centerY" secondItem="kct-Ec-r8l" secondAttribute="centerY" id="zLF-3P-cuN"/>
                                     </constraints>
                                 </tableViewCellContentView>
                                 <connections>
-                                    <outlet property="advertisementData" destination="bCB-5o-GMx" id="6mf-IH-3eb"/>
                                     <outlet property="nodeName" destination="nK0-2y-GIY" id="rhW-Ms-lfw"/>
                                     <outlet property="nodeRSSI" destination="Y7f-pa-3Qv" id="0by-Y3-MSg"/>
                                 </connections>
@@ -546,15 +526,72 @@ provisioning and then configuring a device.</string>
                             <outlet property="delegate" destination="7BC-wy-MT8" id="aHs-OH-gfO"/>
                         </connections>
                     </tableView>
+                    <navigationItem key="navigationItem" title="Scanner" id="dXy-7Q-f8T">
+                        <barButtonItem key="rightBarButtonItem" id="V3b-aS-AXg">
+                            <view key="customView" contentMode="scaleToFill" id="eGZ-2F-Xkm">
+                                <rect key="frame" x="276" y="0.0" width="83" height="44"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <subviews>
+                                    <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" animating="YES" style="white" translatesAutoresizingMaskIntoConstraints="NO" id="73W-Hm-dgN">
+                                        <rect key="frame" x="63" y="12" width="20" height="20"/>
+                                    </activityIndicatorView>
+                                </subviews>
+                                <constraints>
+                                    <constraint firstItem="73W-Hm-dgN" firstAttribute="centerY" secondItem="eGZ-2F-Xkm" secondAttribute="centerY" id="4Nq-3t-c9G"/>
+                                    <constraint firstAttribute="trailing" secondItem="73W-Hm-dgN" secondAttribute="trailing" id="cfa-GC-Jwo"/>
+                                </constraints>
+                            </view>
+                        </barButtonItem>
+                    </navigationItem>
+                    <connections>
+                        <outlet property="activityIndicator" destination="73W-Hm-dgN" id="aI3-Lw-8p1"/>
+                        <outlet property="emptyScannerView" destination="wdq-dq-M7C" id="DPc-xK-nOu"/>
+                    </connections>
                 </tableViewController>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="wdq-dq-M7C" userLabel="EmpryScannerView">
+                    <rect key="frame" x="0.0" y="0.0" width="300" height="200"/>
+                    <subviews>
+                        <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="ic_lan_36pt" translatesAutoresizingMaskIntoConstraints="NO" id="QNs-S2-5p6">
+                            <rect key="frame" x="138" y="20" width="24" height="24"/>
+                            <constraints>
+                                <constraint firstAttribute="height" constant="24" id="9pp-cI-lUh"/>
+                                <constraint firstAttribute="width" constant="24" id="qcU-xX-jck"/>
+                            </constraints>
+                        </imageView>
+                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="No Proxy nodes found" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="8" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="BNU-Cj-ODJ">
+                            <rect key="frame" x="21" y="60" width="257" height="20"/>
+                            <fontDescription key="fontDescription" name="TrebuchetMS" family="Trebuchet MS" pointSize="17"/>
+                            <color key="textColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            <nil key="highlightedColor"/>
+                        </label>
+                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="6" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="YTg-SQ-uFK">
+                            <rect key="frame" x="21" y="92" width="257" height="83.666666666666686"/>
+                            <string key="text">If you can't find your proxy node, please ensure that  It's powered on, provisioned, and is a part of the current network  (must match network key)</string>
+                            <fontDescription key="fontDescription" name="TrebuchetMS" family="Trebuchet MS" pointSize="12"/>
+                            <color key="textColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            <nil key="highlightedColor"/>
+                        </label>
+                    </subviews>
+                    <constraints>
+                        <constraint firstItem="YTg-SQ-uFK" firstAttribute="leading" secondItem="wdq-dq-M7C" secondAttribute="leading" constant="21" id="0BJ-Kh-Zbv"/>
+                        <constraint firstItem="YTg-SQ-uFK" firstAttribute="top" secondItem="BNU-Cj-ODJ" secondAttribute="bottom" constant="12" id="8gz-CK-OqU"/>
+                        <constraint firstAttribute="trailing" secondItem="YTg-SQ-uFK" secondAttribute="trailing" constant="22" id="Fz9-e7-2jr"/>
+                        <constraint firstAttribute="trailing" secondItem="BNU-Cj-ODJ" secondAttribute="trailing" constant="22" id="HOi-h2-JZ3"/>
+                        <constraint firstItem="QNs-S2-5p6" firstAttribute="top" secondItem="wdq-dq-M7C" secondAttribute="top" constant="20" id="jEc-Hh-a2D"/>
+                        <constraint firstItem="BNU-Cj-ODJ" firstAttribute="leading" secondItem="wdq-dq-M7C" secondAttribute="leading" constant="21" id="jyc-0M-iMr"/>
+                        <constraint firstItem="QNs-S2-5p6" firstAttribute="centerX" secondItem="wdq-dq-M7C" secondAttribute="centerX" id="rHl-fV-9eA"/>
+                        <constraint firstItem="BNU-Cj-ODJ" firstAttribute="top" secondItem="QNs-S2-5p6" secondAttribute="bottom" constant="16" id="tVi-k4-6xs"/>
+                        <constraint firstAttribute="bottom" secondItem="YTg-SQ-uFK" secondAttribute="bottom" constant="24.333333333333314" id="x19-Q0-oew"/>
+                    </constraints>
+                </view>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="1ux-tI-jQ9" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-199" y="-188"/>
+            <point key="canvasLocation" x="-199" y="-70"/>
         </scene>
-        <!--Configure-->
+        <!--Provisioning-->
         <scene sceneID="1U7-Ze-AMA">
             <objects>
-                <tableViewController title="Configure" extendedLayoutIncludesOpaqueBars="YES" id="pe2-tv-diC" customClass="MeshProvisioningDataTableViewController" customModule="nRFMeshProvision_Example" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController title="Provisioning" extendedLayoutIncludesOpaqueBars="YES" id="pe2-tv-diC" customClass="MeshProvisioningDataTableViewController" customModule="nRFMeshProvision_Example" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="grouped" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="18" sectionFooterHeight="18" id="UsS-NT-UuV">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -648,6 +685,59 @@ provisioning and then configuring a device.</string>
                                     </tableViewCell>
                                 </cells>
                             </tableViewSection>
+                            <tableViewSection headerTitle="Status" id="w4B-zX-sK9">
+                                <cells>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="ProvProgressCell" rowHeight="43" id="NJI-kL-fsn">
+                                        <rect key="frame" x="0.0" y="243.33333333333337" width="375" height="43"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="NJI-kL-fsn" id="YaR-3k-24b">
+                                            <rect key="frame" x="0.0" y="0.0" width="375" height="42.666666666666664"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="0 %" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="t9Q-tI-0A9">
+                                                    <rect key="frame" x="257" y="12" width="24.333333333333314" height="20"/>
+                                                    <fontDescription key="fontDescription" name="TrebuchetMS" family="Trebuchet MS" pointSize="17"/>
+                                                    <nil key="textColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Progress" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="1hf-v3-PJO">
+                                                    <rect key="frame" x="15.999999999999996" y="11" width="62.666666666666657" height="21"/>
+                                                    <fontDescription key="fontDescription" name="TrebuchetMS" family="Trebuchet MS" pointSize="17"/>
+                                                    <nil key="textColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="415-6a-fzK">
+                                                    <rect key="frame" x="298" y="5" width="61" height="31"/>
+                                                    <fontDescription key="fontDescription" name="TrebuchetMS" family="Trebuchet MS" pointSize="16"/>
+                                                    <state key="normal" title="View log"/>
+                                                    <connections>
+                                                        <segue destination="ANh-7k-8vY" kind="show" identifier="showLogView" id="2nf-0a-v21"/>
+                                                    </connections>
+                                                </button>
+                                                <progressView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="ssp-em-nW3">
+                                                    <rect key="frame" x="257" y="34" width="24" height="2"/>
+                                                    <color key="progressTintColor" red="0.0" green="0.61176470589999998" blue="0.87058823529999996" alpha="1" colorSpace="custom" customColorSpace="adobeRGB1998"/>
+                                                </progressView>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstItem="ssp-em-nW3" firstAttribute="width" secondItem="t9Q-tI-0A9" secondAttribute="width" id="4on-EV-XqP"/>
+                                                <constraint firstItem="t9Q-tI-0A9" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="1hf-v3-PJO" secondAttribute="trailing" constant="16" id="5vZ-kW-pQU"/>
+                                                <constraint firstItem="415-6a-fzK" firstAttribute="centerY" secondItem="YaR-3k-24b" secondAttribute="centerY" id="Epr-UN-o3l"/>
+                                                <constraint firstItem="1hf-v3-PJO" firstAttribute="top" secondItem="YaR-3k-24b" secondAttribute="top" constant="11" id="GJb-ZU-c71"/>
+                                                <constraint firstItem="ssp-em-nW3" firstAttribute="centerX" secondItem="t9Q-tI-0A9" secondAttribute="centerX" id="HTz-TY-84P"/>
+                                                <constraint firstAttribute="bottom" secondItem="1hf-v3-PJO" secondAttribute="bottom" constant="10.666666666666664" id="SXa-3y-sgD"/>
+                                                <constraint firstAttribute="bottom" secondItem="t9Q-tI-0A9" secondAttribute="bottom" constant="11" id="ScO-uI-Poi"/>
+                                                <constraint firstItem="t9Q-tI-0A9" firstAttribute="top" secondItem="YaR-3k-24b" secondAttribute="top" constant="12" id="ccz-d4-FZ3"/>
+                                                <constraint firstItem="415-6a-fzK" firstAttribute="leading" secondItem="t9Q-tI-0A9" secondAttribute="trailing" constant="16" id="qCb-FX-hhx"/>
+                                                <constraint firstItem="1hf-v3-PJO" firstAttribute="leading" secondItem="YaR-3k-24b" secondAttribute="leading" constant="16" id="rbe-C7-HsX"/>
+                                                <constraint firstItem="ssp-em-nW3" firstAttribute="top" secondItem="t9Q-tI-0A9" secondAttribute="bottom" constant="2" id="sEq-o0-PyE"/>
+                                                <constraint firstAttribute="trailing" secondItem="415-6a-fzK" secondAttribute="trailing" constant="16" id="vTS-OU-c1B"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
+                                        <color key="backgroundColor" cocoaTouchSystemColor="tableCellGroupedBackgroundColor"/>
+                                    </tableViewCell>
+                                </cells>
+                            </tableViewSection>
                         </sections>
                         <connections>
                             <outlet property="dataSource" destination="pe2-tv-diC" id="hnn-Yk-qQo"/>
@@ -655,26 +745,56 @@ provisioning and then configuring a device.</string>
                         </connections>
                     </tableView>
                     <toolbarItems/>
-                    <navigationItem key="navigationItem" title="Provisioning Data" id="ivA-Gf-F5x">
+                    <navigationItem key="navigationItem" title="Node provision" id="ivA-Gf-F5x">
                         <barButtonItem key="backBarButtonItem" title="Back" id="w0e-01-moe"/>
-                        <barButtonItem key="rightBarButtonItem" title="Provision" id="zPU-3N-ZnD">
-                            <connections>
-                                <action selector="provisioningButtonTapped:" destination="pe2-tv-diC" id="71u-o6-nH9"/>
-                            </connections>
-                        </barButtonItem>
+                        <rightBarButtonItems>
+                            <barButtonItem title="Abort" style="done" id="U6Z-xL-eID">
+                                <color key="tintColor" red="1" green="0.28499322364395407" blue="0.2098225026702969" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <connections>
+                                    <action selector="abortButtonTapped:" destination="pe2-tv-diC" id="1hq-xv-fme"/>
+                                </connections>
+                            </barButtonItem>
+                            <barButtonItem title="Provision" id="OR4-BP-ruH">
+                                <connections>
+                                    <action selector="provisionButtonTapped:" destination="pe2-tv-diC" id="XYI-Ff-JQd"/>
+                                </connections>
+                            </barButtonItem>
+                            <barButtonItem id="pDl-WH-3gr">
+                                <view key="customView" contentMode="scaleToFill" id="ac3-AR-N2x">
+                                    <rect key="frame" x="141.33333333333337" y="0.0" width="83" height="44"/>
+                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                    <subviews>
+                                        <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="white" translatesAutoresizingMaskIntoConstraints="NO" id="koR-ir-4ny">
+                                            <rect key="frame" x="63" y="12" width="20" height="20"/>
+                                        </activityIndicatorView>
+                                    </subviews>
+                                    <constraints>
+                                        <constraint firstItem="koR-ir-4ny" firstAttribute="centerY" secondItem="ac3-AR-N2x" secondAttribute="centerY" id="5Qp-AS-ox6"/>
+                                        <constraint firstAttribute="trailing" secondItem="koR-ir-4ny" secondAttribute="trailing" id="S9e-eQ-MPo"/>
+                                    </constraints>
+                                </view>
+                            </barButtonItem>
+                        </rightBarButtonItems>
                     </navigationItem>
                     <nil key="simulatedBottomBarMetrics"/>
                     <connections>
+                        <outlet property="abortButton" destination="U6Z-xL-eID" id="suf-7z-0gj"/>
+                        <outlet property="activityIndicator" destination="koR-ir-4ny" id="4MV-Nu-7GE"/>
                         <outlet property="appKeyCell" destination="5vn-CE-NBV" id="6gX-eG-C6T"/>
                         <outlet property="nodeNameCell" destination="S8L-R7-OPa" id="Bre-Ys-e1Q"/>
+                        <outlet property="provisionButton" destination="OR4-BP-ruH" id="25n-Ni-H4A"/>
+                        <outlet property="provisioningProgressCell" destination="NJI-kL-fsn" id="r9n-KY-g0E"/>
+                        <outlet property="provisioningProgressIndicator" destination="ssp-em-nW3" id="MFw-Ij-Dtf"/>
+                        <outlet property="provisioningProgressLabel" destination="t9Q-tI-0A9" id="aG5-5d-b1l"/>
+                        <outlet property="provisioningProgressTitleLabel" destination="1hf-v3-PJO" id="qxh-yb-Koo"/>
                         <outlet property="unicastAddressCell" destination="QV9-NV-50p" id="hne-0K-dn4"/>
-                        <segue destination="YPm-ps-JKd" kind="show" identifier="showProvisioningView" id="dsc-fd-4Je"/>
+                        <outlet property="viewLogButton" destination="415-6a-fzK" id="ZNH-5Y-MZW"/>
                         <segue destination="JCc-w9-Xls" kind="show" identifier="showAppKeySelector" id="Qig-Me-EEV"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="qUq-s2-KB8" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="596" y="-1978"/>
+            <point key="canvasLocation" x="596" y="-1978.0788177339903"/>
         </scene>
         <!--Select AppKey-->
         <scene sceneID="B0O-2C-MYI">
@@ -727,9 +847,9 @@ provisioning and then configuring a device.</string>
         <!--Node Info-->
         <scene sceneID="b0E-Xt-pDz">
             <objects>
-                <tableViewController title="Node Info" id="avg-9z-Gpg" customClass="MeshNodeInfoTableViewController" customModule="nRFMeshProvision_Example" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController title="Node Info" extendedLayoutIncludesOpaqueBars="YES" id="avg-9z-Gpg" customClass="MeshNodeInfoTableViewController" customModule="nRFMeshProvision_Example" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="18" sectionFooterHeight="18" id="vZS-a2-x2Z">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="672"/>
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
                         <prototypes>
@@ -801,6 +921,23 @@ provisioning and then configuring a device.</string>
                                     </subviews>
                                 </tableViewCellContentView>
                             </tableViewCell>
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="MeshNodeDestructiveCell" textLabel="DyA-Pc-hnv" style="IBUITableViewCellStyleDefault" id="nra-Q6-oen">
+                                <rect key="frame" x="0.0" y="111.33333333333334" width="375" height="56"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="nra-Q6-oen" id="3WZ-oW-ZJx">
+                                    <rect key="frame" x="0.0" y="0.0" width="375" height="55.666666666666664"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                    <subviews>
+                                        <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Destructive Action" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="DyA-Pc-hnv">
+                                            <rect key="frame" x="16" y="0.0" width="343" height="55.666666666666664"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <fontDescription key="fontDescription" name="TrebuchetMS" family="Trebuchet MS" pointSize="17"/>
+                                            <color key="textColor" red="0.88294780250000005" green="0.29483556659999999" blue="0.2113302748" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                    </subviews>
+                                </tableViewCellContentView>
+                            </tableViewCell>
                         </prototypes>
                         <connections>
                             <outlet property="dataSource" destination="1by-8F-oJo" id="4zY-6P-I56"/>
@@ -819,7 +956,7 @@ provisioning and then configuring a device.</string>
         <scene sceneID="J2E-q8-fxs">
             <objects>
                 <tableViewController title="Model Name" extendedLayoutIncludesOpaqueBars="YES" id="5o5-rc-Cqd" customClass="ModelConfigurationTableViewController" customModule="nRFMeshProvision_Example" customModuleProvider="target" sceneMemberID="viewController">
-                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="18" sectionFooterHeight="18" id="rEO-Dq-D0R">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="default" allowsSelectionDuringEditing="YES" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="18" sectionFooterHeight="18" id="rEO-Dq-D0R">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
@@ -855,6 +992,23 @@ provisioning and then configuring a device.</string>
                                     </subviews>
                                 </tableViewCellContentView>
                             </tableViewCell>
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="ModelConfigurationCenteredCell" textLabel="1Z3-ZY-vUt" style="IBUITableViewCellStyleDefault" id="OaP-kB-dqp">
+                                <rect key="frame" x="0.0" y="143.33333333333334" width="375" height="44"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="OaP-kB-dqp" id="mYi-Va-c8g">
+                                    <rect key="frame" x="0.0" y="0.0" width="375" height="43.666666666666664"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                    <subviews>
+                                        <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Action Button Cell" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="1Z3-ZY-vUt">
+                                            <rect key="frame" x="16" y="0.0" width="343" height="43.666666666666664"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <fontDescription key="fontDescription" name="TrebuchetMS" family="Trebuchet MS" pointSize="17"/>
+                                            <color key="textColor" red="0.0" green="0.61176470589999998" blue="0.87058823529999996" alpha="1" colorSpace="custom" customColorSpace="adobeRGB1998"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                    </subviews>
+                                </tableViewCellContentView>
+                            </tableViewCell>
                         </prototypes>
                         <sections/>
                         <connections>
@@ -871,7 +1025,7 @@ provisioning and then configuring a device.</string>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="lBk-SV-6iN" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2196" y="-1306"/>
+            <point key="canvasLocation" x="1393" y="-1306"/>
         </scene>
         <!--Publish Groups-->
         <scene sceneID="6FV-9N-Y1h">
@@ -915,7 +1069,7 @@ provisioning and then configuring a device.</string>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="8eD-0B-gCv" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="3180" y="-1306"/>
+            <point key="canvasLocation" x="2329" y="-1306"/>
         </scene>
         <!--Subscribe Groups-->
         <scene sceneID="PCR-J6-H7b">
@@ -959,7 +1113,63 @@ provisioning and then configuring a device.</string>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="uci-Qf-6dg" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="3180" y="-361"/>
+            <point key="canvasLocation" x="2329" y="-564"/>
+        </scene>
+        <!--Provisioning Log-->
+        <scene sceneID="Eee-ff-ax8">
+            <objects>
+                <tableViewController title="Provisioning Log" extendedLayoutIncludesOpaqueBars="YES" id="ANh-7k-8vY" customClass="ProvisioningLogTableViewController" customModule="nRFMeshProvision_Example" customModuleProvider="target" sceneMemberID="viewController">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="18" sectionFooterHeight="18" id="XOa-b3-Vxn">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
+                        <prototypes>
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="LogCell" id="OM4-c9-len" customClass="MeshNodeLogTableViewCell" customModule="nRFMeshProvision_Example" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="55.333333333333343" width="375" height="44"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="OM4-c9-len" id="5tP-QR-SEU">
+                                    <rect key="frame" x="0.0" y="0.0" width="375" height="43.666666666666664"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                    <subviews>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="00:00:01" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="PfV-fj-ge6">
+                                            <rect key="frame" x="16" y="14" width="55" height="17"/>
+                                            <constraints>
+                                                <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="55" id="3zO-Il-okr"/>
+                                            </constraints>
+                                            <fontDescription key="fontDescription" name="TrebuchetMS" family="Trebuchet MS" pointSize="14"/>
+                                            <color key="textColor" red="0.38034743069999999" green="0.38041785360000002" blue="0.38034299020000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Log entry message" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="NX3-xI-3HP">
+                                            <rect key="frame" x="79" y="11" width="141" height="20"/>
+                                            <fontDescription key="fontDescription" name="TrebuchetMS" family="Trebuchet MS" pointSize="17"/>
+                                            <nil key="textColor"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                    </subviews>
+                                    <constraints>
+                                        <constraint firstItem="NX3-xI-3HP" firstAttribute="leading" secondItem="PfV-fj-ge6" secondAttribute="trailing" constant="8" id="ErF-hb-0eM"/>
+                                        <constraint firstItem="NX3-xI-3HP" firstAttribute="centerY" secondItem="5tP-QR-SEU" secondAttribute="centerY" id="NJn-Df-CCW"/>
+                                        <constraint firstItem="PfV-fj-ge6" firstAttribute="centerY" secondItem="5tP-QR-SEU" secondAttribute="centerY" id="aFQ-Dv-BFd"/>
+                                        <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="NX3-xI-3HP" secondAttribute="trailing" constant="8" id="jnz-FC-y3p"/>
+                                        <constraint firstItem="PfV-fj-ge6" firstAttribute="leading" secondItem="5tP-QR-SEU" secondAttribute="leading" constant="16" id="oBF-Pa-Icv"/>
+                                    </constraints>
+                                </tableViewCellContentView>
+                                <connections>
+                                    <outlet property="messageLabel" destination="NX3-xI-3HP" id="tCg-7E-zAs"/>
+                                    <outlet property="timestampLabel" destination="PfV-fj-ge6" id="Eet-o7-fRG"/>
+                                </connections>
+                            </tableViewCell>
+                        </prototypes>
+                        <connections>
+                            <outlet property="dataSource" destination="ANh-7k-8vY" id="xJe-89-pjB"/>
+                            <outlet property="delegate" destination="ANh-7k-8vY" id="cps-mR-UeD"/>
+                        </connections>
+                    </tableView>
+                </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Cae-xZ-ahB" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1433" y="-1978"/>
         </scene>
         <!--Bind AppKey-->
         <scene sceneID="rdL-xW-s1H">
@@ -1003,104 +1213,7 @@ provisioning and then configuring a device.</string>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="MK8-Gd-H4j" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="3180" y="-2243"/>
-        </scene>
-        <!--<Node Name>-->
-        <scene sceneID="pPD-Oo-w7K">
-            <objects>
-                <viewController title="&lt;Node Name&gt;" extendedLayoutIncludesOpaqueBars="YES" id="YPm-ps-JKd" customClass="MeshNodeViewController" customModule="nRFMeshProvision_Example" customModuleProvider="target" sceneMemberID="viewController">
-                    <layoutGuides>
-                        <viewControllerLayoutGuide type="top" id="BTY-6Z-Qzo"/>
-                        <viewControllerLayoutGuide type="bottom" id="dy1-VR-MvZ"/>
-                    </layoutGuides>
-                    <view key="view" contentMode="scaleToFill" id="MOV-mV-tlO">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <subviews>
-                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="bHV-cF-HGY">
-                                <rect key="frame" x="0.0" y="140" width="375" height="638"/>
-                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                <prototypes>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" accessoryType="disclosureIndicator" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="LogEntryCell" id="pFZ-L9-oiO" customClass="MeshNodeLogTableViewCell" customModule="nRFMeshProvision_Example" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="28" width="375" height="44"/>
-                                        <autoresizingMask key="autoresizingMask"/>
-                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="pFZ-L9-oiO" id="Iau-Ug-ERV">
-                                            <rect key="frame" x="0.0" y="0.0" width="342" height="43.666666666666664"/>
-                                            <autoresizingMask key="autoresizingMask"/>
-                                            <subviews>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Log message" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="TjZ-aW-9x1">
-                                                    <rect key="frame" x="15" y="12" width="102" height="21"/>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                                    <nil key="textColor"/>
-                                                    <nil key="highlightedColor"/>
-                                                </label>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="right" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="00:00:00" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="WdQ-kg-UaV">
-                                                    <rect key="frame" x="272" y="14" width="70" height="15.666666666666664"/>
-                                                    <constraints>
-                                                        <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="70" id="Xpu-zq-BOv"/>
-                                                    </constraints>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="13"/>
-                                                    <color key="textColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                                    <nil key="highlightedColor"/>
-                                                </label>
-                                            </subviews>
-                                            <constraints>
-                                                <constraint firstItem="WdQ-kg-UaV" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="TjZ-aW-9x1" secondAttribute="trailing" constant="8" symbolic="YES" id="6bd-kZ-eHf"/>
-                                                <constraint firstItem="WdQ-kg-UaV" firstAttribute="centerY" secondItem="Iau-Ug-ERV" secondAttribute="centerY" id="BNw-Gd-zf5"/>
-                                                <constraint firstItem="TjZ-aW-9x1" firstAttribute="leading" secondItem="Iau-Ug-ERV" secondAttribute="leading" constant="15" id="ei1-Er-gAD"/>
-                                                <constraint firstItem="TjZ-aW-9x1" firstAttribute="centerY" secondItem="Iau-Ug-ERV" secondAttribute="centerY" id="tPl-ip-XZ3"/>
-                                                <constraint firstAttribute="trailing" secondItem="WdQ-kg-UaV" secondAttribute="trailing" id="xdH-1e-8pS"/>
-                                            </constraints>
-                                        </tableViewCellContentView>
-                                        <connections>
-                                            <outlet property="detailLabel" destination="WdQ-kg-UaV" id="Jda-fR-wwA"/>
-                                            <outlet property="titleLabel" destination="TjZ-aW-9x1" id="qnS-mQ-gqZ"/>
-                                        </connections>
-                                    </tableViewCell>
-                                </prototypes>
-                                <connections>
-                                    <outlet property="dataSource" destination="YPm-ps-JKd" id="J6I-BZ-9A1"/>
-                                    <outlet property="delegate" destination="YPm-ps-JKd" id="U6V-ux-faG"/>
-                                </connections>
-                            </tableView>
-                        </subviews>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                        <constraints>
-                            <constraint firstItem="bHV-cF-HGY" firstAttribute="leading" secondItem="MOV-mV-tlO" secondAttribute="leading" id="20Q-99-5Y1"/>
-                            <constraint firstItem="bHV-cF-HGY" firstAttribute="top" secondItem="BTY-6Z-Qzo" secondAttribute="bottom" id="CYn-K7-kaZ"/>
-                            <constraint firstItem="dy1-VR-MvZ" firstAttribute="top" secondItem="bHV-cF-HGY" secondAttribute="bottom" id="odm-OJ-4KB"/>
-                            <constraint firstAttribute="trailing" secondItem="bHV-cF-HGY" secondAttribute="trailing" id="oxU-Hh-TUG"/>
-                        </constraints>
-                    </view>
-                    <toolbarItems/>
-                    <navigationItem key="navigationItem" title="&lt;Node Name&gt;" id="syG-cg-tX1">
-                        <barButtonItem key="backBarButtonItem" title="Provisioning" id="cwU-Ae-h3Q"/>
-                        <barButtonItem key="rightBarButtonItem" id="TOb-hd-NeV">
-                            <view key="customView" contentMode="scaleToFill" id="b0T-sh-Ahr">
-                                <rect key="frame" x="276" y="0.0" width="83" height="44"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <subviews>
-                                    <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" animating="YES" style="white" translatesAutoresizingMaskIntoConstraints="NO" id="ehv-01-bs2">
-                                        <rect key="frame" x="63" y="12" width="20" height="20"/>
-                                        <color key="color" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                    </activityIndicatorView>
-                                </subviews>
-                                <constraints>
-                                    <constraint firstAttribute="trailing" secondItem="ehv-01-bs2" secondAttribute="trailing" id="CsO-QE-vCr"/>
-                                    <constraint firstItem="ehv-01-bs2" firstAttribute="centerY" secondItem="b0T-sh-Ahr" secondAttribute="centerY" id="vNn-Eb-TGq"/>
-                                </constraints>
-                            </view>
-                        </barButtonItem>
-                    </navigationItem>
-                    <nil key="simulatedBottomBarMetrics"/>
-                    <connections>
-                        <outlet property="activityIndicator" destination="ehv-01-bs2" id="WBa-Sh-cBJ"/>
-                        <outlet property="provisioningLogTableView" destination="bHV-cF-HGY" id="vli-Wf-bfb"/>
-                    </connections>
-                </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="v04-8m-KkH" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="1394" y="-1978"/>
+            <point key="canvasLocation" x="2330" y="-1978"/>
         </scene>
         <!--Root View Controller-->
         <scene sceneID="B3j-TN-IE6">

@@ -17,6 +17,12 @@
 		19B7337BA54445F77E2DB29F49F3BF69 /* ConfirmationProvisioningState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91871F95B88B3866A2CEB7E715FFC521 /* ConfirmationProvisioningState.swift */; };
 		2BD0DACAC0C2552F70E23243D9252BD4 /* CoreBluetooth.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1EA00AEA27063E54337CB3252DEA73FF /* CoreBluetooth.framework */; };
 		2E440DECC74BA46A17F1E8ADC9610B56 /* Pods-nRFMeshProvision_Tests-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 9269AB7B9850CFF72E3815ED546AC4CD /* Pods-nRFMeshProvision_Tests-dummy.m */; };
+		301DB1D420A31F350023BCAF /* NRFMeshManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 301DB1D320A31F350023BCAF /* NRFMeshManager.swift */; };
+		302D1F3920AC44AB0022AEB1 /* ModelSubscriptionDeleteMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 302D1F3820AC44AB0022AEB1 /* ModelSubscriptionDeleteMessage.swift */; };
+		302D1F3D20AC49510022AEB1 /* ModelSubscriptionDeleteConfiguratorState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 302D1F3C20AC49510022AEB1 /* ModelSubscriptionDeleteConfiguratorState.swift */; };
+		302D1F4020AEBD0B0022AEB1 /* NodeResetMesage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 302D1F3E20AEBD0B0022AEB1 /* NodeResetMesage.swift */; };
+		302D1F4120AEBD0B0022AEB1 /* NodeResetStatusMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 302D1F3F20AEBD0B0022AEB1 /* NodeResetStatusMessage.swift */; };
+		302D1F4320AEBDFD0022AEB1 /* NodeResetConfiguratorState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 302D1F4220AEBDFD0022AEB1 /* NodeResetConfiguratorState.swift */; };
 		30686AF02087635400DBEEA2 /* ModelPublicationSetMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30686AEF2087635400DBEEA2 /* ModelPublicationSetMessage.swift */; };
 		30686AF220876EB200DBEEA2 /* ModelPublicationSetConfiguratorState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30686AF120876EB200DBEEA2 /* ModelPublicationSetConfiguratorState.swift */; };
 		30686AF4208771A600DBEEA2 /* ModelPublicationStatusMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30686AF3208771A600DBEEA2 /* ModelPublicationStatusMessage.swift */; };
@@ -137,6 +143,12 @@
 		2BE5725B8A14CA9DB124E871A8C7E0A9 /* Pods-nRFMeshProvision_Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-nRFMeshProvision_Example.release.xcconfig"; sourceTree = "<group>"; };
 		2E256CA92CFD8585616355BB08F5F3F0 /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
 		2FC1C3A4C27E1C86DA9418A50DC0195B /* ripemd.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = ripemd.h; path = opensslIncludes/openssl/ripemd.h; sourceTree = "<group>"; };
+		301DB1D320A31F350023BCAF /* NRFMeshManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NRFMeshManager.swift; sourceTree = "<group>"; };
+		302D1F3820AC44AB0022AEB1 /* ModelSubscriptionDeleteMessage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ModelSubscriptionDeleteMessage.swift; sourceTree = "<group>"; };
+		302D1F3C20AC49510022AEB1 /* ModelSubscriptionDeleteConfiguratorState.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ModelSubscriptionDeleteConfiguratorState.swift; sourceTree = "<group>"; };
+		302D1F3E20AEBD0B0022AEB1 /* NodeResetMesage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NodeResetMesage.swift; sourceTree = "<group>"; };
+		302D1F3F20AEBD0B0022AEB1 /* NodeResetStatusMessage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NodeResetStatusMessage.swift; sourceTree = "<group>"; };
+		302D1F4220AEBDFD0022AEB1 /* NodeResetConfiguratorState.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NodeResetConfiguratorState.swift; sourceTree = "<group>"; };
 		30686AEF2087635400DBEEA2 /* ModelPublicationSetMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelPublicationSetMessage.swift; sourceTree = "<group>"; };
 		30686AF120876EB200DBEEA2 /* ModelPublicationSetConfiguratorState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelPublicationSetConfiguratorState.swift; sourceTree = "<group>"; };
 		30686AF3208771A600DBEEA2 /* ModelPublicationStatusMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelPublicationStatusMessage.swift; sourceTree = "<group>"; };
@@ -334,6 +346,7 @@
 		0A2EE6B09D006E34C79DF16D8D345ABA /* ConfiguratorStates */ = {
 			isa = PBXGroup;
 			children = (
+				302D1F4220AEBDFD0022AEB1 /* NodeResetConfiguratorState.swift */,
 				C761F8FE7EC65F854471F8A78DBA01E0 /* AppKeyAddConfiguratorState.swift */,
 				71D8D288E48091385425C6691F411009 /* CompositionGetConfiguratorState.swift */,
 				F5C2C241337F23E88845F770128CDEA1 /* DiscoveryConfiguratorState.swift */,
@@ -342,6 +355,7 @@
 				30D40F832080D83100DC126F /* ModelAppBindConfiguratorState.swift */,
 				30686AF120876EB200DBEEA2 /* ModelPublicationSetConfiguratorState.swift */,
 				30FF5EE12096F4E6002D7C77 /* ModelSubscriptionAddConfiguratorState.swift */,
+				302D1F3C20AC49510022AEB1 /* ModelSubscriptionDeleteConfiguratorState.swift */,
 				30FF5ED920931587002D7C77 /* DefaultTTLGetConfiguratorState.swift */,
 			);
 			path = ConfiguratorStates;
@@ -511,6 +525,9 @@
 		7E7D64254CF300962BA34DE968C27B97 /* AccessMessages */ = {
 			isa = PBXGroup;
 			children = (
+				302D1F3E20AEBD0B0022AEB1 /* NodeResetMesage.swift */,
+				302D1F3F20AEBD0B0022AEB1 /* NodeResetStatusMessage.swift */,
+				302D1F3820AC44AB0022AEB1 /* ModelSubscriptionDeleteMessage.swift */,
 				35838742BE205531ABE0B5522DEA4F54 /* AccessMessageParser.swift */,
 				54393BFA868812A9FE391ACA9B3D9540 /* AppKeyAddMessage.swift */,
 				F77F1718D9BA7E0CF700684BFF3AADDC /* AppKeyStatusMessage.swift */,
@@ -701,6 +718,7 @@
 		E1CDCF359F82C4BF1F7B5AA64D0A18C1 /* nRFMeshProvision */ = {
 			isa = PBXGroup;
 			children = (
+				301DB1D320A31F350023BCAF /* NRFMeshManager.swift */,
 				30D40F872080DDBB00DC126F /* Models */,
 				13F2C2793A32677D545215AD5FB00C4D /* Configurator */,
 				674382F507ED4F7CB35AADA29B1D6207 /* MeshPDUs */,
@@ -915,10 +933,12 @@
 				30686AF02087635400DBEEA2 /* ModelPublicationSetMessage.swift in Sources */,
 				30D40F842080D83100DC126F /* ModelAppBindConfiguratorState.swift in Sources */,
 				EF70232229D6D05D7F8B6821D8F9DBDB /* CompositionStatusMessage.swift in Sources */,
+				301DB1D420A31F350023BCAF /* NRFMeshManager.swift in Sources */,
 				01BEE8B0206D8EC264C627E031B3408D /* ConfiguratorStateProtocol.swift in Sources */,
 				19B7337BA54445F77E2DB29F49F3BF69 /* ConfirmationProvisioningState.swift in Sources */,
 				30FF5EE42096F52D002D7C77 /* ModelSubscriptionAddMessage.swift in Sources */,
 				30D40F922084876100DC126F /* MeshModelIdentifiers.swift in Sources */,
+				302D1F3920AC44AB0022AEB1 /* ModelSubscriptionDeleteMessage.swift in Sources */,
 				B4A59EB76419E07DFB365B0ACB7AAC1B /* ControlMessagePDU.swift in Sources */,
 				8E9B7087A3E60A98F98A66EEAD6CD7AC /* Data+utils.swift in Sources */,
 				96B5C82098F2F44E90EBF65079989E44 /* DataDistributionProvisioningState.swift in Sources */,
@@ -945,18 +965,22 @@
 				FDA91357495DEAE35436EB24931D627B /* ProvisionegMeshNodeLoggingDelegate.swift in Sources */,
 				8126969BC47320CBDA7DE5C2C4E949F6 /* ProvisioningAlgorithm.swift in Sources */,
 				A1C4AEA3D1282D7E20B1C4428C428715 /* ProvisioningData.swift in Sources */,
+				302D1F4120AEBD0B0022AEB1 /* NodeResetStatusMessage.swift in Sources */,
 				6DF3DB60C076AE5CDE9A7A05B3EAF002 /* ProvisioningErrorCodes.swift in Sources */,
 				AA61E415AED0587B01970BF528DAEBD7 /* ProvisioningPDU.swift in Sources */,
+				302D1F3D20AC49510022AEB1 /* ModelSubscriptionDeleteConfiguratorState.swift in Sources */,
 				417DC87F757EDC1180F9860B80F17032 /* ProvisioningStateProtocol.swift in Sources */,
 				F5B38A65A455F97CF90C421760825109 /* PublicKeyInformationAvailability.swift in Sources */,
 				86A6B3491CAA9FE98E5514107E9AF4E3 /* PublicKeyProvisioningState.swift in Sources */,
 				0F8CC9195A481916EFB3721AFECEEDDC /* RandomConfirmationProvisioningState.swift in Sources */,
 				30D40F8D2080DEE600DC126F /* ModelAppBindStatusMessage.swift in Sources */,
+				302D1F4020AEBD0B0022AEB1 /* NodeResetMesage.swift in Sources */,
 				16EFBB4955F38A539D94F282F4F54A15 /* SequenceNumber.swift in Sources */,
 				5A11D07C4EBC9BE25F8D3D3F45DE041A /* SetFilterTypeMessage.swift in Sources */,
 				BE888B35900EFE900CE184FAEB574397 /* SetWhiteListConfiguratorState.swift in Sources */,
 				30D40F9920849C4A00DC126F /* CompanyIdentifiers.swift in Sources */,
 				30D40F8B2080DDBB00DC126F /* MeshModelIdentifierStringConverter.swift in Sources */,
+				302D1F4320AEBDFD0022AEB1 /* NodeResetConfiguratorState.swift in Sources */,
 				D050F0B0DE891762C9AB163A35711883 /* SleepConfiguratorState.swift in Sources */,
 				8DA8A9DF721A479A8A6273BE2E1DDD53 /* StartProvisionProvisioningState.swift in Sources */,
 				9A480C70756E917F38E812CDD89E6186 /* StaticOutOfBoundInformationAvailability.swift in Sources */,

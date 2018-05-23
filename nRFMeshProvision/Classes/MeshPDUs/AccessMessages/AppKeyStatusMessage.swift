@@ -24,9 +24,9 @@ public struct AppKeyStatusMessage {
         appKeyIndex = Data()
 
         //Unpack netKey and appkey indices
-        netKeyIndex.append(aPayload[1] >> 4)
-        netKeyIndex.append(aPayload[1] << 4 | aPayload[2] >> 4)
-        appKeyIndex.append(aPayload[2] & 0x0F)
-        appKeyIndex.append(aPayload[3])
+        appKeyIndex.append(aPayload[1] >> 4)
+        appKeyIndex.append(aPayload[1] << 4 | aPayload[2] >> 4)
+        netKeyIndex.append(aPayload[2] & 0x0F)
+        netKeyIndex.append(aPayload[3])
     }
 }

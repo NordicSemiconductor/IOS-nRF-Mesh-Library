@@ -10,6 +10,11 @@ import UIKit
 import nRFMeshProvision
 import CoreBluetooth
 
+private enum SubscriptionActions {
+    case subscriptionAdd
+    case subscriptionDelete
+}
+
 class ModelConfigurationTableViewController: UITableViewController, ProvisionedMeshNodeDelegate, UITextFieldDelegate {
 
     // MARK: - Outlets & Actions
@@ -24,23 +29,39 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
     private var targetNode: ProvisionedMeshNode!
     private var originalDelegate: ProvisionedMeshNodeDelegate?
     private var centralManager: CBCentralManager?
-    
+    private var lastSubscriptionAction: SubscriptionActions?
+
     // MARK: - Implementation
     public func setProxyNode(_ aNode: ProvisionedMeshNode) {
-        centralManager = (self.tabBarController as? MainTabBarViewController)?.centralManager
+        centralManager = (UIApplication.shared.delegate as? AppDelegate)?.meshManager.centralManager()
         targetNode = aNode
         originalDelegate = targetNode.delegate
         targetNode.delegate = self
     }
 
-    public func didSelectSubscriptionAddress(_ anAddress: Data) {
+    public func didSelectSubscriptionAddressAdd(_ anAddress: Data) {
         let elementIdx = selectedModelIndexPath.section
         let modelIdx = selectedModelIndexPath.row
         let aModel = nodeEntry.elements![elementIdx].allSigAndVendorModels()[modelIdx]
         let unicast = nodeEntry.nodeUnicast!
         let elementAddress = Data([unicast[0], unicast[1] + UInt8(elementIdx)])
 
+        lastSubscriptionAction = .subscriptionAdd
         targetNode.nodeSubscriptionAddressAdd(anAddress,
+                                              onElementAddress: elementAddress,
+                                              modelIdentifier: aModel,
+                                              onDestinationAddress: nodeEntry.nodeUnicast!)
+    }
+    
+    public func didSelectSubscriptionAddressDelete(_ anAddress: Data) {
+        let elementIdx = selectedModelIndexPath.section
+        let modelIdx = selectedModelIndexPath.row
+        let aModel = nodeEntry.elements![elementIdx].allSigAndVendorModels()[modelIdx]
+        let unicast = nodeEntry.nodeUnicast!
+        let elementAddress = Data([unicast[0], unicast[1] + UInt8(elementIdx)])
+        
+        lastSubscriptionAction = .subscriptionDelete
+        targetNode.nodeSubscriptionAddressDelete(anAddress,
                                               onElementAddress: elementAddress,
                                               modelIdentifier: aModel,
                                               onDestinationAddress: nodeEntry.nodeUnicast!)
@@ -52,10 +73,13 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
         let aModel = nodeEntry.elements![elementIdx].allSigAndVendorModels()[modelIdx]
         let unicast = nodeEntry.nodeUnicast!
         let elementAddress = Data([unicast[0], unicast[1] + UInt8(elementIdx)])
-        
+        guard let appKey = nodeEntry.appKeys.first else {
+            showstatusCodeAlert(withTitle: "AppKey was not found", andMessage: "This node did not have an appkey set in it's database entry.")
+            return
+        }
         targetNode.nodePublicationAddressSet(anAddress,
                                              onElementAddress: elementAddress,
-                                             appKeyIndex: Data([0x00,0x00]),
+                                             appKeyIndex: appKey,
                                              credentialFlag: false,
                                              ttl: Data([0xFF]),
                                              period: Data([0x00]),
@@ -122,8 +146,16 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
             showstatusCodeAlert(withTitle: "Cannot set", andMessage: "Node has reported it cannot set this item")
         case .cannotUpdate:
             showstatusCodeAlert(withTitle: "Cannot update", andMessage: "Node has reported it cannot update this item")
-        default:
-            showstatusCodeAlert(withTitle: "Error", andMessage: "An error has occured, error code: \(aStatusCode.rawValue)")
+        case .notASubscribedModel:
+            showstatusCodeAlert(withTitle: "Cannot subscribe", andMessage: "Node has reported this is not a subscribe model")
+        case .keyIndexAlreadyStored:
+            showstatusCodeAlert(withTitle: "Already stored", andMessage: "Node has reported this key index is already stored")
+        case .storageFailure:
+            showstatusCodeAlert(withTitle: "Storage failure", andMessage: "Node has reported a storage failure")
+        case .temporarilyUnableToChangeState:
+            showstatusCodeAlert(withTitle: "State failure", andMessage: "Node has reported that the state cannot be changed temporarily")
+        case .success:
+            break
         }
     }
 
@@ -188,6 +220,10 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
         if centralManager != nil {
             centralManager!.cancelPeripheralConnection(aNode.blePeripheral())
         }
+    }
+
+    func receivedNodeResetStatus(_ resetStatusData: NodeResetStatusMessage) {
+        //noop
     }
 
     func receivedCompositionData(_ compositionData: CompositionStatusMessage) {
@@ -267,8 +303,12 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
     }
 
     func receivedModelSubsrciptionStatus(_ modelSubscriptionStatusData: ModelSubscriptionStatusMessage) {
+        guard lastSubscriptionAction != nil else {
+            print("Unknown type of subscription action...")
+            return
+        }
         if modelSubscriptionStatusData.statusCode == .success {
-            print("Subscription address set!")
+            print("Subscription address changed!")
             print("Subscription Address: \(modelSubscriptionStatusData.subscriptionAddress.hexString())")
             print("Element Addr: \(modelSubscriptionStatusData.elementAddress.hexString())")
             print("ModelIdentifier: \(modelSubscriptionStatusData.modelIdentifier.hexString())")
@@ -284,7 +324,11 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
             if let anIndex = state.provisionedNodes.index(where: { $0.nodeUnicast == nodeEntry.nodeUnicast}) {
                 let aNodeEntry = state.provisionedNodes[anIndex]
                 if var anElement = aNodeEntry.elements?[elementIdx] {
-                    anElement.addSubscriptionAddress(modelSubscriptionStatusData.subscriptionAddress, forModelId: aModel)
+                    if lastSubscriptionAction! == .subscriptionAdd {
+                        anElement.addSubscriptionAddress(modelSubscriptionStatusData.subscriptionAddress, forModelId: aModel)
+                    } else {
+                        anElement.removeSubscriptionAddress(modelSubscriptionStatusData.subscriptionAddress, forModelId: aModel)
+                    }
                     aNodeEntry.elements?.remove(at: elementIdx)
                     aNodeEntry.elements?.insert(anElement, at: elementIdx)
                 }
@@ -297,6 +341,7 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
             handleAlertForStatusCode(modelSubscriptionStatusData.statusCode)
             print("Failed. Status code: \(modelSubscriptionStatusData.statusCode)")
         }
+        lastSubscriptionAction = nil
     }
 
     func receivedDefaultTTLStatus(_ defaultTTLStatusData: DefaultTTLStatusMessage) {
@@ -318,8 +363,30 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
     }
 
     // MARK: - Table view data source
+    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
+        switch editingStyle {
+        case .delete:
+            if let nodeAddress = self.getSubscriptionAddressforNodeAtIndexPath(indexPath) {
+                print("deleting subscription address: \(nodeAddress.hexString())")
+                self.didSelectSubscriptionAddressDelete(nodeAddress)
+            } else {
+                print("nothing to delete!")
+            }
+        case .none, .insert:
+            //NOOP
+            break
+        }
+    }
+
+    override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
+        if indexPath.section == 2 {
+            return indexPath.row != 0 //First row is the add button
+        } else {
+            return false
+        }
+    }
     override func numberOfSections(in tableView: UITableView) -> Int {
-        return 3
+        return 4
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -333,13 +400,12 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
             if let element = nodeEntry.elements?[selectedModelIndexPath.section] {
                 let targetModel = element.allSigAndVendorModels()[selectedModelIndexPath.row]
                 if let subscriptions = element.subscriptionAddressesForModelId(targetModel) {
-                    return subscriptions.count
-                } else {
-                    return 1
+                    if subscriptions.count > 0 {
+                        return subscriptions.count + 1
+                    }
                 }
-            } else {
-                return 1
             }
+            return 1
         default:
             return 0
         }
@@ -349,7 +415,7 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
         if section == 0 {
             return "AppKey Binding"
         } else if section == 1 {
-            return "Publish Address"
+            return "Publication Address"
         } else if section == 2 {
             return "Subscription Addresses"
         } else {
@@ -358,7 +424,12 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let aCell = tableView.dequeueReusableCell(withIdentifier: "ModelConfigurationCell", for: indexPath)
+        var aCell: UITableViewCell!
+        if indexPath.section == 2 && indexPath.row == 0 {
+            aCell = tableView.dequeueReusableCell(withIdentifier: "ModelConfigurationCenteredCell", for: indexPath)
+        } else {
+            aCell = tableView.dequeueReusableCell(withIdentifier: "ModelConfigurationCell", for: indexPath)
+        }
 
         if indexPath.section == 0 {
             if let element = nodeEntry.elements?[selectedModelIndexPath.section] {
@@ -389,24 +460,39 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
         }
         
         if indexPath.section == 2 {
-            if let element = nodeEntry.elements?[selectedModelIndexPath.section] {
-                let targetModel = element.allSigAndVendorModels()[selectedModelIndexPath.row]
-                if let addresses = element.subscriptionAddressesForModelId(targetModel) {
-                    if addresses.count > 0 {
-                        aCell.textLabel?.text = addresses[indexPath.row].hexString()
-                        aCell.detailTextLabel?.text = "Tap to add"
-                    } else {
-                        aCell.textLabel?.text = "None"
-                        aCell.detailTextLabel?.text = "Tap to add"
+            if indexPath.row == 0 {
+                aCell.textLabel?.text = "Add Subscription Address"
+            } else {
+                if let element = nodeEntry.elements?[selectedModelIndexPath.section] {
+                    let targetModel = element.allSigAndVendorModels()[selectedModelIndexPath.row]
+                    if let addresses = element.subscriptionAddressesForModelId(targetModel) {
+                        if addresses.count > 0 {
+                            aCell.textLabel?.text = addresses[indexPath.row - 1].hexString()
+                            if let addressType = MeshAddressTypes(rawValue: addresses[indexPath.row - 1]) {
+                                var addressText: String?
+                                switch addressType {
+                                case .Unassigned:
+                                    addressText = "Unassigned address"
+                                case .Group:
+                                    addressText = "Group address"
+                                case .Broadcast:
+                                    addressText = "Broadcast address"
+                                case .Unicast:
+                                    addressText = "Unicast address"
+                                case .Virtual:
+                                    addressText = "Virtual address"
+                                }
+                                aCell.detailTextLabel?.text = addressText
+                            } else {
+                                aCell.detailTextLabel?.text = nil
+                            }
+                            aCell.accessoryType = .none
+                        }
                     }
-                } else {
-                    aCell.textLabel?.text = "None"
-                    aCell.detailTextLabel?.text = "Tap to add"
                 }
             }
             return aCell
         }
-
         return aCell
     }
 
@@ -425,20 +511,24 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
                 }
             }
         case 2:
-            self.presentInputAlert { (anAddressString) in
-                guard  anAddressString != nil else {
-                    return
+            if indexPath.row == 0 {
+                self.presentInputAlert { (anAddressString) in
+                    guard  anAddressString != nil else {
+                        return
+                    }
+                    if let addressData = Data(hexString: anAddressString!) {
+                        self.didSelectSubscriptionAddressAdd(addressData)
+                    }
                 }
-                if let addressData = Data(hexString: anAddressString!) {
-                    self.didSelectSubscriptionAddress(addressData)
-                }
+            } else {
+                print("NOOP")
             }
         default:
             break
         }
     }
 
-    // MARK: - Input Alert
+    // MARK: - Input Alerts
     func presentInputAlert(withCompletion aCompletionHandler : @escaping (String?) -> Void) {
         let inputAlertView = UIAlertController(title: "Enter an address",
                                                message: nil,
@@ -454,8 +544,11 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
         
         let createAction = UIAlertAction(title: "Add", style: .default) { (_) in
             DispatchQueue.main.async {
-                if let text = inputAlertView.textFields![0].text {
-                    if text.count > 0 {
+                if var text = inputAlertView.textFields![0].text {
+                    if text.lowercased().contains("0x") {
+                        text = text.lowercased().replacingOccurrences(of: "0x", with: "")
+                    }
+                    if text.count == 4 {
                         aCompletionHandler(text)
                     } else {
                         aCompletionHandler(nil)
@@ -477,6 +570,33 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
         present(inputAlertView, animated: true, completion: nil)
     }
 
+    // MARK: - UITextFieldDelegate
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        if var text = textField.text {
+            if text.lowercased().contains("0x") {
+                text = text.lowercased().replacingOccurrences(of: "0x", with: "")
+            }
+            //Valid address in textfield
+            return text.count == 4
+        } else {
+            //No address in textfield
+            return false
+        }
+    }
+
+    func textField(_ textField: UITextField,
+                   shouldChangeCharactersIn range: NSRange,
+                   replacementString string: String) -> Bool {
+        if range.length > 0 {
+            //Going backwards, always allow deletion
+            return true
+        } else {
+            let value = string.data(using: .utf8)![0]
+            //Only allow HexaDecimal values 0->9, a->f and A->F or x
+            return (value == 120 || value >= 48 && value <= 57) || (value >= 65 && value <= 70) || (value >= 97 && value <= 102)
+        }
+    }
+
     // MARK: - Navigation
     override func shouldPerformSegue(withIdentifier identifier: String, sender: Any?) -> Bool {
         return ["ShowAppKeyBindingView",
@@ -490,5 +610,22 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
                 destination.setStateManager(meshstateManager)
             }
         }
+    }
+    
+    // MARK: - Helpers
+    private func getSubscriptionAddressforNodeAtIndexPath(_ anIndexPath: IndexPath) -> Data? {
+        if let element = nodeEntry.elements?[selectedModelIndexPath.section] {
+            let targetModel = element.allSigAndVendorModels()[selectedModelIndexPath.row]
+            if let addresses = element.subscriptionAddressesForModelId(targetModel) {
+                if addresses.count > anIndexPath.row - 1 {
+                    return addresses[anIndexPath.row - 1]
+                } else {
+                    return nil
+                }
+            } else {
+                return nil
+            }
+        }
+        return nil
     }
 }

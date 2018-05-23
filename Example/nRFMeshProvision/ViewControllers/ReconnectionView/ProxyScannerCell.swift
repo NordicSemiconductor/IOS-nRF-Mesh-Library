@@ -12,11 +12,9 @@ import nRFMeshProvision
 class ProxyScannerCell: UITableViewCell {
     @IBOutlet weak var nodeName: UILabel!
     @IBOutlet weak var nodeRSSI: UILabel!
-    @IBOutlet weak var advertisementData: UILabel!
     
     public func showNode(_ aNode: UnprovisionedMeshNode) {
         nodeName.text = aNode.nodeBLEName()
-        advertisementData.text = aNode.humanReadableNodeIdentifier()
         if aNode.RSSI() != 127 {
             nodeRSSI.textColor = UIColor.black
             nodeRSSI.text = "\(aNode.RSSI()) dB"
