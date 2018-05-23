@@ -103,23 +103,23 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="4lj-gG-yI1" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="hyJ-rT-08i" userLabel="EmptyScannerView">
-                    <rect key="frame" x="0.0" y="0.0" width="375" height="200"/>
+                    <rect key="frame" x="0.0" y="0.0" width="300" height="200"/>
                     <subviews>
                         <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="ic_lan_36pt" translatesAutoresizingMaskIntoConstraints="NO" id="OeI-uM-EFe">
-                            <rect key="frame" x="175" y="20" width="24" height="24"/>
+                            <rect key="frame" x="138" y="20" width="24" height="24"/>
                             <constraints>
                                 <constraint firstAttribute="height" constant="24" id="N28-M0-WAo"/>
                                 <constraint firstAttribute="width" constant="24" id="rzO-L6-ZJZ"/>
                             </constraints>
                         </imageView>
                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="No Nodes Found" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="8" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="eyc-Xf-yO2">
-                            <rect key="frame" x="21" y="60" width="332" height="20"/>
+                            <rect key="frame" x="21" y="60" width="257" height="20"/>
                             <fontDescription key="fontDescription" name="TrebuchetMS" family="Trebuchet MS" pointSize="17"/>
                             <color key="textColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             <nil key="highlightedColor"/>
                         </label>
                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" lineBreakMode="tailTruncation" numberOfLines="6" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="vs8-VX-zFU">
-                            <rect key="frame" x="21" y="92" width="332" height="70"/>
+                            <rect key="frame" x="21" y="92" width="257" height="83.666666666666686"/>
                             <string key="text">If you cannot discovery any mesh nodes, try the following  • Ensure nodes are advertising Mesh Provisioning Service. • Ensure nodes are not already provisioned. • Turn Bluetooth Off for 10 seconds to clear the BLE cache.</string>
                             <fontDescription key="fontDescription" name="TrebuchetMS" family="Trebuchet MS" pointSize="12"/>
                             <color key="textColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -128,6 +128,7 @@
                     </subviews>
                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                     <constraints>
+                        <constraint firstAttribute="bottom" secondItem="vs8-VX-zFU" secondAttribute="bottom" constant="24.333333333333314" id="2dG-PT-6pu"/>
                         <constraint firstItem="vs8-VX-zFU" firstAttribute="top" secondItem="eyc-Xf-yO2" secondAttribute="bottom" constant="12" id="DeG-aK-3Gx"/>
                         <constraint firstItem="vs8-VX-zFU" firstAttribute="leading" secondItem="hyJ-rT-08i" secondAttribute="leading" constant="21" id="ONg-YO-hkd"/>
                         <constraint firstAttribute="trailing" secondItem="eyc-Xf-yO2" secondAttribute="trailing" constant="22" id="R7Z-i2-gKf"/>
@@ -135,7 +136,6 @@
                         <constraint firstItem="OeI-uM-EFe" firstAttribute="top" secondItem="hyJ-rT-08i" secondAttribute="top" constant="20" id="buM-Xa-vXf"/>
                         <constraint firstItem="eyc-Xf-yO2" firstAttribute="leading" secondItem="hyJ-rT-08i" secondAttribute="leading" constant="21" id="cIT-DX-KQ5"/>
                         <constraint firstItem="eyc-Xf-yO2" firstAttribute="top" secondItem="OeI-uM-EFe" secondAttribute="bottom" constant="16" id="pTA-NJ-fO2"/>
-                        <constraint firstAttribute="height" constant="200" id="uUx-pH-Sns"/>
                         <constraint firstItem="OeI-uM-EFe" firstAttribute="centerX" secondItem="hyJ-rT-08i" secondAttribute="centerX" id="ywd-1B-w6v"/>
                     </constraints>
                 </view>
@@ -486,9 +486,9 @@ provisioning and then configuring a device.</string>
         <!--Discovering Proxies-->
         <scene sceneID="z0m-Ed-dxe">
             <objects>
-                <tableViewController title="Discovering Proxies" id="7BC-wy-MT8" customClass="ReconnectionViewController" customModule="nRFMeshProvision_Example" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController title="Discovering Proxies" extendedLayoutIncludesOpaqueBars="YES" id="7BC-wy-MT8" customClass="ReconnectionViewController" customModule="nRFMeshProvision_Example" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="default" rowHeight="79" estimatedRowHeight="-1" sectionHeaderHeight="18" sectionFooterHeight="18" id="YPC-jQ-vfL">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="672"/>
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
                         <prototypes>
@@ -606,7 +606,7 @@ provisioning and then configuring a device.</string>
                 </view>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="1ux-tI-jQ9" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-199" y="-183"/>
+            <point key="canvasLocation" x="-199" y="-70"/>
         </scene>
         <!--Provisioning-->
         <scene sceneID="1U7-Ze-AMA">
@@ -867,9 +867,9 @@ provisioning and then configuring a device.</string>
         <!--Node Info-->
         <scene sceneID="b0E-Xt-pDz">
             <objects>
-                <tableViewController title="Node Info" id="avg-9z-Gpg" customClass="MeshNodeInfoTableViewController" customModule="nRFMeshProvision_Example" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController title="Node Info" extendedLayoutIncludesOpaqueBars="YES" id="avg-9z-Gpg" customClass="MeshNodeInfoTableViewController" customModule="nRFMeshProvision_Example" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="18" sectionFooterHeight="18" id="vZS-a2-x2Z">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="672"/>
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
                         <prototypes>
@@ -1138,9 +1138,9 @@ provisioning and then configuring a device.</string>
         <!--Provisioning Log-->
         <scene sceneID="Eee-ff-ax8">
             <objects>
-                <tableViewController title="Provisioning Log" id="ANh-7k-8vY" customClass="ProvisioningLogTableViewController" customModule="nRFMeshProvision_Example" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController title="Provisioning Log" extendedLayoutIncludesOpaqueBars="YES" id="ANh-7k-8vY" customClass="ProvisioningLogTableViewController" customModule="nRFMeshProvision_Example" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="18" sectionFooterHeight="18" id="XOa-b3-Vxn">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="672"/>
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
                         <prototypes>

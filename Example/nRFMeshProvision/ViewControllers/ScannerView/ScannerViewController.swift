@@ -24,6 +24,26 @@ class ScannerViewController: UITableViewController, CBCentralManagerDelegate {
     @IBOutlet var emptyScannerView: UIView!
 
     // MARK: - Scanner Class Implementation
+    private func showEmptyView() {
+        if !tableView.backgroundView!.subviews.contains(emptyScannerView) {
+            tableView.isScrollEnabled = false
+            tableView.backgroundView?.addSubview(emptyScannerView)
+            let tableFrame          = tableView.frame
+            let height              = CGFloat(300)
+            let width               = CGFloat(350)
+            let horizontalSpacing   = tableFrame.midX - (width / 2.0)
+            let verticalSpacing     = tableFrame.midY - (height / 2.0)
+            emptyScannerView.frame = CGRect(x: horizontalSpacing, y: verticalSpacing, width: width, height: height)
+        }
+    }
+    
+    private func hideEmptyView() {
+        if tableView.backgroundView!.subviews.contains(emptyScannerView) {
+            tableView.isScrollEnabled = true
+            emptyScannerView.removeFromSuperview()
+        }
+    }
+
     private func startNodeScan() {
         scanActivityIndictaor.startAnimating()
         //Take back the delegate in case of return from other views that were the central's delegate.
@@ -44,6 +64,7 @@ class ScannerViewController: UITableViewController, CBCentralManagerDelegate {
     // MARK: - UIViewController Implementation
     override func viewDidLoad() {
         super.viewDidLoad()
+        tableView.backgroundView = UIView(frame: self.view.frame)
         if let aManager = (UIApplication.shared.delegate as? AppDelegate)?.meshManager {
             meshManager = aManager
             centralManager = meshManager.centralManager()
@@ -65,12 +86,37 @@ class ScannerViewController: UITableViewController, CBCentralManagerDelegate {
         centralManager.stopScan()
         super.viewWillDisappear(animated)
     }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        hideEmptyView()
+        super.viewDidDisappear(animated)
+    }
+
+    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+        super.viewWillTransition(to: size, with: coordinator)
+        if tableView.backgroundView!.subviews.contains(emptyScannerView) {
+            coordinator.animate(alongsideTransition: { (context) in
+                let tableFrame          = self.tableView.frame
+                let height              = CGFloat(300)
+                let width               = CGFloat(350)
+                let horizontalSpacing   = tableFrame.midX - (width / 2.0)
+                let verticalSpacing     = tableFrame.midY - (height / 2.0)
+                self.emptyScannerView.frame = CGRect(x: horizontalSpacing, y: verticalSpacing, width: width, height: height)
+            })
+        }
+    }
+
     // MARK: - UITableViewDataSource
     override func numberOfSections(in tableView: UITableView) -> Int {
         return 1
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        if discoveredNodes.count == 0 {
+            showEmptyView()
+        } else {
+            hideEmptyView()
+        }
         return discoveredNodes.count
     }
 

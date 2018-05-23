@@ -47,15 +47,29 @@ class ReconnectionViewController: UITableViewController {
         super.viewDidDisappear(animated)
     }
 
+    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+        super.viewWillTransition(to: size, with: coordinator)
+        if tableView.backgroundView!.subviews.contains(emptyScannerView) {
+            coordinator.animate(alongsideTransition: { (context) in
+                let tableFrame          = self.tableView.frame
+                let height              = CGFloat(300)
+                let width               = CGFloat(350)
+                let horizontalSpacing   = tableFrame.midX - (width / 2.0)
+                let verticalSpacing     = tableFrame.midY - (height / 2.0)
+                self.emptyScannerView.frame = CGRect(x: horizontalSpacing, y: verticalSpacing, width: width, height: height)
+            })
+        }
+    }
+
     private func showEmptyView() {
         if !tableView.backgroundView!.subviews.contains(emptyScannerView) {
             tableView.isScrollEnabled = false
             tableView.backgroundView?.addSubview(emptyScannerView)
             let tableFrame          = tableView.frame
-            let horizontalSpacing   = CGFloat(15) //15 points
-            let width               = tableFrame.width - CGFloat(horizontalSpacing * 2)
-            let height              = CGFloat(250)
-            let verticalSpacing     = (tableFrame.size.height / 2) - height / 2.0
+            let height              = CGFloat(300)
+            let width               = CGFloat(350)
+            let horizontalSpacing   = tableFrame.midX - (width / 2.0)
+            let verticalSpacing     = tableFrame.midY - (height / 2.0)
             emptyScannerView.frame = CGRect(x: horizontalSpacing, y: verticalSpacing, width: width, height: height)
         }
     }
@@ -66,6 +80,7 @@ class ReconnectionViewController: UITableViewController {
             emptyScannerView.removeFromSuperview()
         }
     }
+
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
