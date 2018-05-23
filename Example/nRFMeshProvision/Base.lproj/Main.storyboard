@@ -768,6 +768,12 @@ provisioning and then configuring a device.</string>
                     <navigationItem key="navigationItem" title="Node provision" id="ivA-Gf-F5x">
                         <barButtonItem key="backBarButtonItem" title="Back" id="w0e-01-moe"/>
                         <rightBarButtonItems>
+                            <barButtonItem title="Abort" style="done" id="U6Z-xL-eID">
+                                <color key="tintColor" red="1" green="0.28499322364395407" blue="0.2098225026702969" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <connections>
+                                    <action selector="abortButtonTapped:" destination="pe2-tv-diC" id="1hq-xv-fme"/>
+                                </connections>
+                            </barButtonItem>
                             <barButtonItem title="Provision" id="OR4-BP-ruH">
                                 <connections>
                                     <action selector="provisionButtonTapped:" destination="pe2-tv-diC" id="XYI-Ff-JQd"/>
@@ -775,7 +781,7 @@ provisioning and then configuring a device.</string>
                             </barButtonItem>
                             <barButtonItem id="pDl-WH-3gr">
                                 <view key="customView" contentMode="scaleToFill" id="ac3-AR-N2x">
-                                    <rect key="frame" x="198" y="0.0" width="83" height="44"/>
+                                    <rect key="frame" x="141.33333333333337" y="0.0" width="83" height="44"/>
                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                     <subviews>
                                         <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="white" translatesAutoresizingMaskIntoConstraints="NO" id="koR-ir-4ny">
@@ -792,6 +798,7 @@ provisioning and then configuring a device.</string>
                     </navigationItem>
                     <nil key="simulatedBottomBarMetrics"/>
                     <connections>
+                        <outlet property="abortButton" destination="U6Z-xL-eID" id="suf-7z-0gj"/>
                         <outlet property="activityIndicator" destination="koR-ir-4ny" id="4MV-Nu-7GE"/>
                         <outlet property="appKeyCell" destination="5vn-CE-NBV" id="6gX-eG-C6T"/>
                         <outlet property="nodeNameCell" destination="S8L-R7-OPa" id="Bre-Ys-e1Q"/>

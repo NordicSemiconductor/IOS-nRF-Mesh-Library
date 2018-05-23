@@ -14,6 +14,7 @@ class MeshProvisioningDataTableViewController: UITableViewController, UITextFiel
     
     // MARK: - Outlets and Actions
     @IBOutlet weak var provisionButton: UIBarButtonItem!
+    @IBOutlet weak var abortButton: UIBarButtonItem!
     @IBOutlet weak var viewLogButton: UIButton!
     @IBOutlet weak var provisioningProgressIndicator: UIProgressView!
     @IBOutlet weak var provisioningProgressLabel: UILabel!
@@ -25,6 +26,9 @@ class MeshProvisioningDataTableViewController: UITableViewController, UITextFiel
     @IBOutlet weak var appKeyCell: UITableViewCell!
     @IBAction func provisionButtonTapped(_ sender: Any) {
         handleProvisioningButtonTapped()
+    }
+    @IBAction func abortButtonTapped(_ sender: Any) {
+        handleAbortButtonTapped()
     }
     
     // MARK: - Properties
@@ -64,6 +68,8 @@ class MeshProvisioningDataTableViewController: UITableViewController, UITextFiel
             updateProvisioningDataUI()
         }
         viewLogButton.isEnabled = logEntries.count > 0
+        abortButton.isEnabled   = false
+        abortButton.title       = nil
     }
 
     // MARK: - Implementaiton
@@ -92,6 +98,26 @@ class MeshProvisioningDataTableViewController: UITableViewController, UITextFiel
         }
     }
 
+    func handleAbortButtonTapped() {
+        if isProvisioning == true {
+            isProvisioning = false
+            provisionButton.isEnabled = true
+            provisionButton.title = "Provision"
+            navigationItem.hidesBackButton = false
+            abortButton.isEnabled = false
+            abortButton.title = nil
+
+            if targetNode != nil {
+                targetNode.shouldDisconnect()
+            }
+            if targetProvisionedNode != nil {
+                targetProvisionedNode.shouldDisconnect()
+            }
+            if centralManager.isScanning {
+                centralManager.stopScan()
+            }
+        }
+    }
     func handleProvisioningButtonTapped() {
         if isProvisioning == false {
             provisionButton.isEnabled = false
@@ -99,8 +125,12 @@ class MeshProvisioningDataTableViewController: UITableViewController, UITextFiel
             navigationItem.hidesBackButton = true
             isProvisioning = true
             connectNode(targetNode)
+            abortButton.isEnabled = true
+            abortButton.title = "Abort"
         }
-        tableView.insertSections([1], with: .fade)
+        if tableView.numberOfSections == 1 {
+            tableView.insertSections([1], with: .fade)
+        }
     }
 
     func didSelectUnicastAddressCell() {
@@ -501,6 +531,8 @@ extension MeshProvisioningDataTableViewController: UnprovisionedMeshNodeDelegate
             navigationItem.hidesBackButton = false
             provisionButton.isEnabled = true
             provisionButton.title = "Provision"
+            abortButton.isEnabled = false
+            abortButton.title = nil
             return
         }
         let state = stateManager.state()
@@ -528,6 +560,8 @@ extension MeshProvisioningDataTableViewController: UnprovisionedMeshNodeDelegate
         navigationItem.hidesBackButton = false
         provisionButton.isEnabled = true
         provisionButton.title = "Provision"
+        abortButton.isEnabled = false
+        abortButton.title = nil
     }
 }
 
@@ -539,6 +573,8 @@ extension MeshProvisioningDataTableViewController: ProvisionedMeshNodeDelegate {
         navigationItem.hidesBackButton = false
         provisionButton.isEnabled = false
         provisionButton.title = nil
+        abortButton.isEnabled = false
+        abortButton.title = nil
         logEventWithMessage("Configuration completed!")
         meshManager.updateProxyNode(self.targetProvisionedNode)
         (UIApplication.shared.delegate as? AppDelegate)?.meshManager = meshManager
@@ -753,6 +789,8 @@ extension MeshProvisioningDataTableViewController: UnprovisionedMeshNodeLoggingD
         navigationItem.hidesBackButton = false
         provisionButton.isEnabled = true
         provisionButton.title = "Provision"
+        abortButton.isEnabled = false
+        abortButton.title = nil
         logEventWithMessage("provisioning failed: \(aMessage)")
     }
 }
