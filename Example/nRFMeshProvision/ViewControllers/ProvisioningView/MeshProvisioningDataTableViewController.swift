@@ -11,17 +11,21 @@ import nRFMeshProvision
 import CoreBluetooth
 
 class MeshProvisioningDataTableViewController: UITableViewController, UITextFieldDelegate {
-
+    
     // MARK: - Outlets and Actions
+    @IBOutlet weak var provisionButton: UIBarButtonItem!
+    @IBOutlet weak var viewLogButton: UIButton!
     @IBOutlet weak var provisioningProgressIndicator: UIProgressView!
     @IBOutlet weak var provisioningProgressLabel: UILabel!
     @IBOutlet weak var provisioningProgressTitleLabel: UILabel!
     @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
-    @IBOutlet weak var provisioningActionCell: UITableViewCell!
     @IBOutlet weak var provisioningProgressCell: UITableViewCell!
     @IBOutlet weak var nodeNameCell: UITableViewCell!
     @IBOutlet weak var unicastAddressCell: UITableViewCell!
     @IBOutlet weak var appKeyCell: UITableViewCell!
+    @IBAction func provisionButtonTapped(_ sender: Any) {
+        handleProvisioningButtonTapped()
+    }
     
     // MARK: - Properties
     private var logViewController: ProvisioningLogTableViewController?
@@ -59,6 +63,7 @@ class MeshProvisioningDataTableViewController: UITableViewController, UITextFiel
         if appKeyName == nil {
             updateProvisioningDataUI()
         }
+        viewLogButton.isEnabled = logEntries.count > 0
     }
 
     // MARK: - Implementaiton
@@ -89,6 +94,7 @@ class MeshProvisioningDataTableViewController: UITableViewController, UITextFiel
 
     func handleProvisioningButtonTapped() {
         if isProvisioning == false {
+            provisionButton.isEnabled = false
             navigationItem.hidesBackButton = true
             isProvisioning = true
             connectNode(targetNode)
@@ -222,25 +228,24 @@ class MeshProvisioningDataTableViewController: UITableViewController, UITextFiel
 
     // MARK: - Table view delegate
     override func tableView(_ tableView: UITableView, shouldHighlightRowAt indexPath: IndexPath) -> Bool {
-        return !isProvisioning
+        //Only first section is selectable when not provisioning
+        return !isProvisioning && indexPath.section == 0
     }
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        switch indexPath.section {
+        
+        guard indexPath.section == 0 else {
+            return
+        }
+
+        switch indexPath.row {
         case 0:
-            switch indexPath.row {
-            case 0:
-                didSelectNodeNameCell()
-            case 1:
-                didSelectUnicastAddressCell()
-            case 2:
-                didSelectAppkeyCell()
-            default:
-                break
-            }
+            didSelectNodeNameCell()
         case 1:
-            handleProvisioningButtonTapped()
+            didSelectUnicastAddressCell()
+        case 2:
+            didSelectAppkeyCell()
         default:
             break
         }
@@ -273,7 +278,7 @@ extension MeshProvisioningDataTableViewController {
     // MARK: - Progress handling
     func stepCompleted(withIndicatorState activityEnabled: Bool) {
         DispatchQueue.main.async {
-            activityEnabled ? self.activityIndicator.stopAnimating() : self.activityIndicator.startAnimating()
+            activityEnabled ? self.activityIndicator.startAnimating() : self.activityIndicator.stopAnimating()
             self.completedSteps += 1.0
             if self.completedSteps >= self.totalSteps {
                 self.provisioningProgressLabel.text = "100 %"
@@ -290,6 +295,9 @@ extension MeshProvisioningDataTableViewController {
     // MARK: - Logging
     public func logEventWithMessage(_ aMessage: String) {
         logEntries.append(LogEntry(withMessage: aMessage, andTimestamp: Date()))
+        if logEntries.count > 0 {
+            viewLogButton.isEnabled = true
+        }
         logViewController?.logEntriesDidUpdate(newEntries: logEntries)
     }
 
@@ -481,6 +489,7 @@ extension MeshProvisioningDataTableViewController: UnprovisionedMeshNodeDelegate
             activityIndicator.stopAnimating()
             isProvisioning = false
             navigationItem.hidesBackButton = false
+            provisionButton.isEnabled = true
             return
         }
         let state = stateManager.state()
@@ -506,6 +515,7 @@ extension MeshProvisioningDataTableViewController: UnprovisionedMeshNodeDelegate
         logEventWithMessage("provisioning failed, error: \(anErrorCode)")
         isProvisioning = false
         navigationItem.hidesBackButton = false
+        provisionButton.isEnabled = true
     }
 }
 
@@ -515,6 +525,8 @@ extension MeshProvisioningDataTableViewController: ProvisionedMeshNodeDelegate {
         stepCompleted(withIndicatorState: false)
         isProvisioning = false
         navigationItem.hidesBackButton = false
+        provisionButton.isEnabled = false
+        provisionButton.title = nil
         logEventWithMessage("Configuration completed!")
         meshManager.updateProxyNode(self.targetProvisionedNode)
         (UIApplication.shared.delegate as? AppDelegate)?.meshManager = meshManager
@@ -727,6 +739,7 @@ extension MeshProvisioningDataTableViewController: UnprovisionedMeshNodeLoggingD
         stepCompleted(withIndicatorState: false)
         isProvisioning = false
         navigationItem.hidesBackButton = false
+        provisionButton.isEnabled = true
         logEventWithMessage("provisioning failed: \(aMessage)")
     }
 }
