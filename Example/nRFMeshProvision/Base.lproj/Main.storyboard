@@ -14,55 +14,45 @@
         <scene sceneID="DKv-XJ-X0v">
             <objects>
                 <tableViewController storyboardIdentifier="ScannerView" title="Scanner" extendedLayoutIncludesOpaqueBars="YES" useStoryboardIdentifierAsRestorationIdentifier="YES" id="olZ-Yw-uFz" customClass="ScannerViewController" customModule="nRFMeshProvision_Example" customModuleProvider="target" sceneMemberID="viewController">
-                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="default" rowHeight="79" estimatedRowHeight="-1" sectionHeaderHeight="18" sectionFooterHeight="18" id="Jhb-Xw-mHf">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="18" sectionFooterHeight="18" id="Jhb-Xw-mHf">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
                         <prototypes>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" accessoryType="disclosureIndicator" indentationWidth="10" reuseIdentifier="peripheralCell" rowHeight="79" id="YAc-Z1-MAZ" customClass="ScannerCell" customModule="nRFMeshProvision_Example" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="55.333333333333343" width="375" height="79"/>
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" accessoryType="disclosureIndicator" indentationWidth="10" reuseIdentifier="peripheralCell" id="YAc-Z1-MAZ" customClass="ScannerCell" customModule="nRFMeshProvision_Example" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="55.333333333333343" width="375" height="44"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="YAc-Z1-MAZ" id="4UX-cA-Qih">
-                                    <rect key="frame" x="0.0" y="0.0" width="341" height="78.666666666666671"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="341" height="43.666666666666664"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Node BLE Name" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="4ms-dY-18F">
-                                            <rect key="frame" x="47" y="16" width="125" height="21"/>
+                                            <rect key="frame" x="47" y="12" width="125" height="21"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                             <nil key="textColor"/>
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="RSSI" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="1td-Bz-qmw">
-                                            <rect key="frame" x="301" y="16" width="32" height="18"/>
+                                            <rect key="frame" x="301" y="13.666666666666664" width="32" height="18"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="15"/>
                                             <nil key="textColor"/>
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="ic_lan_36pt" translatesAutoresizingMaskIntoConstraints="NO" id="Dwa-YJ-IWR">
-                                            <rect key="frame" x="16" y="16" width="23" height="23"/>
+                                            <rect key="frame" x="16" y="10.333333333333336" width="23" height="23"/>
                                         </imageView>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Advertisement Data" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="pZ9-YT-bkU">
-                                            <rect key="frame" x="47" y="45" width="136" height="18"/>
-                                            <fontDescription key="fontDescription" type="system" pointSize="15"/>
-                                            <color key="textColor" red="0.38034743069999999" green="0.38041785360000002" blue="0.38034299020000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                            <nil key="highlightedColor"/>
-                                        </label>
                                     </subviews>
                                     <constraints>
-                                        <constraint firstItem="4ms-dY-18F" firstAttribute="top" secondItem="4UX-cA-Qih" secondAttribute="top" constant="16" id="DHg-3h-YJH"/>
-                                        <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="pZ9-YT-bkU" secondAttribute="trailing" constant="16" id="MBZ-Fx-rt4"/>
-                                        <constraint firstItem="pZ9-YT-bkU" firstAttribute="leading" secondItem="4ms-dY-18F" secondAttribute="leading" id="Yf1-Af-Ixf"/>
-                                        <constraint firstItem="1td-Bz-qmw" firstAttribute="top" secondItem="4UX-cA-Qih" secondAttribute="top" constant="16" id="c1b-X3-bkv"/>
-                                        <constraint firstItem="Dwa-YJ-IWR" firstAttribute="top" secondItem="4UX-cA-Qih" secondAttribute="top" constant="16" id="h84-9m-Ofw"/>
+                                        <constraint firstItem="Dwa-YJ-IWR" firstAttribute="centerY" secondItem="4UX-cA-Qih" secondAttribute="centerY" id="UzE-IB-W5e"/>
+                                        <constraint firstItem="4ms-dY-18F" firstAttribute="centerY" secondItem="Dwa-YJ-IWR" secondAttribute="centerY" id="Zoh-Xi-uID"/>
+                                        <constraint firstItem="1td-Bz-qmw" firstAttribute="centerY" secondItem="4ms-dY-18F" secondAttribute="centerY" id="ijv-uh-Jdl"/>
                                         <constraint firstItem="4ms-dY-18F" firstAttribute="leading" secondItem="Dwa-YJ-IWR" secondAttribute="trailing" constant="8" id="j7W-9Z-gSy"/>
-                                        <constraint firstItem="pZ9-YT-bkU" firstAttribute="top" secondItem="4ms-dY-18F" secondAttribute="bottom" constant="8" id="qJ4-sQ-X6x"/>
                                         <constraint firstItem="1td-Bz-qmw" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="4ms-dY-18F" secondAttribute="trailing" constant="6" id="v8K-SS-JzG"/>
                                         <constraint firstAttribute="trailing" secondItem="1td-Bz-qmw" secondAttribute="trailing" constant="8" id="wCB-FF-Xub"/>
                                         <constraint firstItem="Dwa-YJ-IWR" firstAttribute="leading" secondItem="4UX-cA-Qih" secondAttribute="leading" constant="16" id="xnC-RX-mpE"/>
                                     </constraints>
                                 </tableViewCellContentView>
                                 <connections>
-                                    <outlet property="advertisementDataLabel" destination="pZ9-YT-bkU" id="TE9-iJ-1I4"/>
                                     <outlet property="nameLabel" destination="4ms-dY-18F" id="sB2-gQ-ILE"/>
                                     <outlet property="rssiLabel" destination="1td-Bz-qmw" id="d0n-LB-go0"/>
                                 </connections>
@@ -487,55 +477,45 @@ provisioning and then configuring a device.</string>
         <scene sceneID="z0m-Ed-dxe">
             <objects>
                 <tableViewController title="Discovering Proxies" extendedLayoutIncludesOpaqueBars="YES" id="7BC-wy-MT8" customClass="ReconnectionViewController" customModule="nRFMeshProvision_Example" customModuleProvider="target" sceneMemberID="viewController">
-                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="default" rowHeight="79" estimatedRowHeight="-1" sectionHeaderHeight="18" sectionFooterHeight="18" id="YPC-jQ-vfL">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="18" sectionFooterHeight="18" id="YPC-jQ-vfL">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
                         <prototypes>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" accessoryType="disclosureIndicator" indentationWidth="10" reuseIdentifier="proxyScannerCell" rowHeight="79" id="tyf-jG-MRF" customClass="ProxyScannerCell" customModule="nRFMeshProvision_Example" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="55.333333333333343" width="375" height="79"/>
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" accessoryType="disclosureIndicator" indentationWidth="10" reuseIdentifier="proxyScannerCell" id="tyf-jG-MRF" customClass="ProxyScannerCell" customModule="nRFMeshProvision_Example" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="55.333333333333343" width="375" height="44"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="tyf-jG-MRF" id="kct-Ec-r8l">
-                                    <rect key="frame" x="0.0" y="0.0" width="341" height="78.666666666666671"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="341" height="43.666666666666664"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Node BLE Name" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="nK0-2y-GIY">
-                                            <rect key="frame" x="47" y="16" width="125" height="21"/>
+                                            <rect key="frame" x="47" y="11.333333333333336" width="125" height="21"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                             <nil key="textColor"/>
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="RSSI" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Y7f-pa-3Qv">
-                                            <rect key="frame" x="301" y="16" width="32" height="18"/>
+                                            <rect key="frame" x="301" y="13" width="32" height="18"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="15"/>
                                             <nil key="textColor"/>
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="ic_lan_36pt" translatesAutoresizingMaskIntoConstraints="NO" id="afz-Mi-Dr5">
-                                            <rect key="frame" x="16" y="16" width="23" height="23"/>
+                                            <rect key="frame" x="16" y="10.333333333333336" width="23" height="23"/>
                                         </imageView>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Advertisement Data" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="bCB-5o-GMx">
-                                            <rect key="frame" x="47" y="45" width="136" height="18"/>
-                                            <fontDescription key="fontDescription" type="system" pointSize="15"/>
-                                            <color key="textColor" red="0.38034743069999999" green="0.38041785360000002" blue="0.38034299020000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                            <nil key="highlightedColor"/>
-                                        </label>
                                     </subviews>
                                     <constraints>
                                         <constraint firstItem="afz-Mi-Dr5" firstAttribute="leading" secondItem="kct-Ec-r8l" secondAttribute="leading" constant="16" id="BeQ-Wr-jpZ"/>
-                                        <constraint firstItem="Y7f-pa-3Qv" firstAttribute="top" secondItem="kct-Ec-r8l" secondAttribute="top" constant="16" id="E1j-FY-ZZ7"/>
                                         <constraint firstAttribute="trailing" secondItem="Y7f-pa-3Qv" secondAttribute="trailing" constant="8" id="JZH-a4-NMf"/>
                                         <constraint firstItem="Y7f-pa-3Qv" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="nK0-2y-GIY" secondAttribute="trailing" constant="6" id="Pt2-Kh-vFv"/>
-                                        <constraint firstItem="bCB-5o-GMx" firstAttribute="leading" secondItem="nK0-2y-GIY" secondAttribute="leading" id="RH5-Da-OlI"/>
-                                        <constraint firstItem="afz-Mi-Dr5" firstAttribute="top" secondItem="kct-Ec-r8l" secondAttribute="top" constant="16" id="SGL-aV-mI7"/>
-                                        <constraint firstItem="nK0-2y-GIY" firstAttribute="top" secondItem="kct-Ec-r8l" secondAttribute="top" constant="16" id="YBu-4G-g3A"/>
-                                        <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="bCB-5o-GMx" secondAttribute="trailing" constant="16" id="apj-DJ-gfS"/>
                                         <constraint firstItem="nK0-2y-GIY" firstAttribute="leading" secondItem="afz-Mi-Dr5" secondAttribute="trailing" constant="8" id="oyF-vn-LFu"/>
-                                        <constraint firstItem="bCB-5o-GMx" firstAttribute="top" secondItem="nK0-2y-GIY" secondAttribute="bottom" constant="8" id="vDB-1R-VmI"/>
+                                        <constraint firstItem="nK0-2y-GIY" firstAttribute="centerY" secondItem="afz-Mi-Dr5" secondAttribute="centerY" id="pIH-GL-wGo"/>
+                                        <constraint firstItem="Y7f-pa-3Qv" firstAttribute="centerY" secondItem="nK0-2y-GIY" secondAttribute="centerY" id="yFj-t5-HLT"/>
+                                        <constraint firstItem="afz-Mi-Dr5" firstAttribute="centerY" secondItem="kct-Ec-r8l" secondAttribute="centerY" id="zLF-3P-cuN"/>
                                     </constraints>
                                 </tableViewCellContentView>
                                 <connections>
-                                    <outlet property="advertisementData" destination="bCB-5o-GMx" id="6mf-IH-3eb"/>
                                     <outlet property="nodeName" destination="nK0-2y-GIY" id="rhW-Ms-lfw"/>
                                     <outlet property="nodeRSSI" destination="Y7f-pa-3Qv" id="0by-Y3-MSg"/>
                                 </connections>

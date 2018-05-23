@@ -151,16 +151,19 @@ class ScannerViewController: UITableViewController, CBCentralManagerDelegate {
         let newNode = UnprovisionedMeshNode(withPeripheral: peripheral, andAdvertisementDictionary: advertisementData, RSSI: RSSI)
         if discoveredNodes.contains(newNode) == false {
             discoveredNodes.append(newNode)
+            let addCellPath = IndexPath(item: Int(discoveredNodes.count - 1), section: 0)
+            tableView.insertRows(at: [addCellPath], with: .automatic)
         } else {
             if let index = discoveredNodes.index(of: newNode) {
                 let oldNode = discoveredNodes[index]
                 oldNode.updateRSSI(RSSI)
-            } else {
-                //NOOP
-                return
+                let reloadCellPath = IndexPath(item: Int(index), section: 0)
+                let aCell = tableView.cellForRow(at: reloadCellPath) as? ScannerCell
+                DispatchQueue.main.async {
+                    aCell?.showNode(oldNode)
+                }
             }
         }
-        tableView.reloadData()
     }
 
     // MARK: - Navigation
