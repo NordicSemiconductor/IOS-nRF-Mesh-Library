@@ -705,10 +705,10 @@ provisioning and then configuring a device.</string>
                                     </tableViewCell>
                                 </cells>
                             </tableViewSection>
-                            <tableViewSection id="w4B-zX-sK9">
+                            <tableViewSection headerTitle="Status" id="w4B-zX-sK9">
                                 <cells>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="ProvProgressCell" rowHeight="43" id="NJI-kL-fsn">
-                                        <rect key="frame" x="0.0" y="223.33333333333334" width="375" height="43.000000000000028"/>
+                                        <rect key="frame" x="0.0" y="243.33333333333337" width="375" height="43"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="NJI-kL-fsn" id="YaR-3k-24b">
                                             <rect key="frame" x="0.0" y="0.0" width="375" height="42.666666666666664"/>
@@ -765,7 +765,7 @@ provisioning and then configuring a device.</string>
                         </connections>
                     </tableView>
                     <toolbarItems/>
-                    <navigationItem key="navigationItem" title="Provisioning" id="ivA-Gf-F5x">
+                    <navigationItem key="navigationItem" title="Node provision" id="ivA-Gf-F5x">
                         <barButtonItem key="backBarButtonItem" title="Back" id="w0e-01-moe"/>
                         <rightBarButtonItems>
                             <barButtonItem title="Provision" id="OR4-BP-ruH">

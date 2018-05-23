@@ -95,10 +95,12 @@ class MeshProvisioningDataTableViewController: UITableViewController, UITextFiel
     func handleProvisioningButtonTapped() {
         if isProvisioning == false {
             provisionButton.isEnabled = false
+            provisionButton.title = nil
             navigationItem.hidesBackButton = true
             isProvisioning = true
             connectNode(targetNode)
         }
+        tableView.insertSections([1], with: .fade)
     }
 
     func didSelectUnicastAddressCell() {
@@ -227,6 +229,14 @@ class MeshProvisioningDataTableViewController: UITableViewController, UITextFiel
    }
 
     // MARK: - Table view delegate
+    override func numberOfSections(in tableView: UITableView) -> Int {
+        if isProvisioning {
+            return 2
+        } else {
+            return 1
+        }
+    }
+
     override func tableView(_ tableView: UITableView, shouldHighlightRowAt indexPath: IndexPath) -> Bool {
         //Only first section is selectable when not provisioning
         return !isProvisioning && indexPath.section == 0
@@ -490,6 +500,7 @@ extension MeshProvisioningDataTableViewController: UnprovisionedMeshNodeDelegate
             isProvisioning = false
             navigationItem.hidesBackButton = false
             provisionButton.isEnabled = true
+            provisionButton.title = "Provision"
             return
         }
         let state = stateManager.state()
@@ -516,6 +527,7 @@ extension MeshProvisioningDataTableViewController: UnprovisionedMeshNodeDelegate
         isProvisioning = false
         navigationItem.hidesBackButton = false
         provisionButton.isEnabled = true
+        provisionButton.title = "Provision"
     }
 }
 
@@ -740,6 +752,7 @@ extension MeshProvisioningDataTableViewController: UnprovisionedMeshNodeLoggingD
         isProvisioning = false
         navigationItem.hidesBackButton = false
         provisionButton.isEnabled = true
+        provisionButton.title = "Provision"
         logEventWithMessage("provisioning failed: \(aMessage)")
     }
 }
