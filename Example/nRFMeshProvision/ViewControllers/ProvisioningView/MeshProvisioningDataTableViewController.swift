@@ -566,6 +566,10 @@ extension MeshProvisioningDataTableViewController: UnprovisionedMeshNodeDelegate
 }
 
 extension MeshProvisioningDataTableViewController: ProvisionedMeshNodeDelegate {
+    func receivedGenericOnOffStatusMessage(_ status: GenericOnOffStatusMessage) {
+        print("OnOff status = \(status.onOffStatus)")
+    }
+    
 
     func configurationSucceeded() {
         stepCompleted(withIndicatorState: false)

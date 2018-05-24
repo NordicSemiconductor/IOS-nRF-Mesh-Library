@@ -227,6 +227,10 @@ extension MainNetworkViewController: CBCentralManagerDelegate {
 
 // MARK: - ProvisionedMeshNodeDelegate Extension
 extension MainNetworkViewController: ProvisionedMeshNodeDelegate {
+    func receivedGenericOnOffStatusMessage(_ status: GenericOnOffStatusMessage) {
+        print("OnOff status = \(status.onOffStatus)")
+    }
+    
  
     func nodeDidCompleteDiscovery(_ aNode: ProvisionedMeshNode) {
         //NOOP

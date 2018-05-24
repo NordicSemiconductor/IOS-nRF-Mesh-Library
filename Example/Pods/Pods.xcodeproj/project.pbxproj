@@ -23,6 +23,12 @@
 		302D1F4020AEBD0B0022AEB1 /* NodeResetMesage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 302D1F3E20AEBD0B0022AEB1 /* NodeResetMesage.swift */; };
 		302D1F4120AEBD0B0022AEB1 /* NodeResetStatusMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 302D1F3F20AEBD0B0022AEB1 /* NodeResetStatusMessage.swift */; };
 		302D1F4320AEBDFD0022AEB1 /* NodeResetConfiguratorState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 302D1F4220AEBDFD0022AEB1 /* NodeResetConfiguratorState.swift */; };
+		302D1F4A20B6B3DF0022AEB1 /* GenericModelControllerStateProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 302D1F4920B6B3DF0022AEB1 /* GenericModelControllerStateProtocol.swift */; };
+		302D1F4E20B6B4860022AEB1 /* GenericOnOffGetMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 302D1F4D20B6B4860022AEB1 /* GenericOnOffGetMessage.swift */; };
+		302D1F5020B6B49E0022AEB1 /* GenericOnOffSetMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 302D1F4F20B6B49E0022AEB1 /* GenericOnOffSetMessage.swift */; };
+		302D1F5220B6B4B20022AEB1 /* GenericOnOffSetUnacknowledgedMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 302D1F5120B6B4B20022AEB1 /* GenericOnOffSetUnacknowledgedMessage.swift */; };
+		302D1F5420B6B4BC0022AEB1 /* GenericOnOffStatusMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 302D1F5320B6B4BC0022AEB1 /* GenericOnOffStatusMessage.swift */; };
+		302D1F5620B6C06F0022AEB1 /* GenericOnOffGetControllerState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 302D1F5520B6C06F0022AEB1 /* GenericOnOffGetControllerState.swift */; };
 		30686AF02087635400DBEEA2 /* ModelPublicationSetMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30686AEF2087635400DBEEA2 /* ModelPublicationSetMessage.swift */; };
 		30686AF220876EB200DBEEA2 /* ModelPublicationSetConfiguratorState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30686AF120876EB200DBEEA2 /* ModelPublicationSetConfiguratorState.swift */; };
 		30686AF4208771A600DBEEA2 /* ModelPublicationStatusMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30686AF3208771A600DBEEA2 /* ModelPublicationStatusMessage.swift */; };
@@ -149,6 +155,12 @@
 		302D1F3E20AEBD0B0022AEB1 /* NodeResetMesage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NodeResetMesage.swift; sourceTree = "<group>"; };
 		302D1F3F20AEBD0B0022AEB1 /* NodeResetStatusMessage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NodeResetStatusMessage.swift; sourceTree = "<group>"; };
 		302D1F4220AEBDFD0022AEB1 /* NodeResetConfiguratorState.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NodeResetConfiguratorState.swift; sourceTree = "<group>"; };
+		302D1F4920B6B3DF0022AEB1 /* GenericModelControllerStateProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericModelControllerStateProtocol.swift; sourceTree = "<group>"; };
+		302D1F4D20B6B4860022AEB1 /* GenericOnOffGetMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericOnOffGetMessage.swift; sourceTree = "<group>"; };
+		302D1F4F20B6B49E0022AEB1 /* GenericOnOffSetMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericOnOffSetMessage.swift; sourceTree = "<group>"; };
+		302D1F5120B6B4B20022AEB1 /* GenericOnOffSetUnacknowledgedMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericOnOffSetUnacknowledgedMessage.swift; sourceTree = "<group>"; };
+		302D1F5320B6B4BC0022AEB1 /* GenericOnOffStatusMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericOnOffStatusMessage.swift; sourceTree = "<group>"; };
+		302D1F5520B6C06F0022AEB1 /* GenericOnOffGetControllerState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericOnOffGetControllerState.swift; sourceTree = "<group>"; };
 		30686AEF2087635400DBEEA2 /* ModelPublicationSetMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelPublicationSetMessage.swift; sourceTree = "<group>"; };
 		30686AF120876EB200DBEEA2 /* ModelPublicationSetConfiguratorState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelPublicationSetConfiguratorState.swift; sourceTree = "<group>"; };
 		30686AF3208771A600DBEEA2 /* ModelPublicationStatusMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelPublicationStatusMessage.swift; sourceTree = "<group>"; };
@@ -371,6 +383,35 @@
 			path = nRFMeshProvision/Classes/Configurator;
 			sourceTree = "<group>";
 		};
+		302D1F4820B6B3C10022AEB1 /* GenericModelController */ = {
+			isa = PBXGroup;
+			children = (
+				302D1F4B20B6B4310022AEB1 /* GenericModelControllerStates */,
+				302D1F4920B6B3DF0022AEB1 /* GenericModelControllerStateProtocol.swift */,
+			);
+			name = GenericModelController;
+			path = nRFMeshProvision/Classes/GenericModelController;
+			sourceTree = "<group>";
+		};
+		302D1F4B20B6B4310022AEB1 /* GenericModelControllerStates */ = {
+			isa = PBXGroup;
+			children = (
+				302D1F5520B6C06F0022AEB1 /* GenericOnOffGetControllerState.swift */,
+			);
+			path = GenericModelControllerStates;
+			sourceTree = "<group>";
+		};
+		302D1F4C20B6B4650022AEB1 /* ModelMessages */ = {
+			isa = PBXGroup;
+			children = (
+				302D1F4D20B6B4860022AEB1 /* GenericOnOffGetMessage.swift */,
+				302D1F4F20B6B49E0022AEB1 /* GenericOnOffSetMessage.swift */,
+				302D1F5120B6B4B20022AEB1 /* GenericOnOffSetUnacknowledgedMessage.swift */,
+				302D1F5320B6B4BC0022AEB1 /* GenericOnOffStatusMessage.swift */,
+			);
+			path = ModelMessages;
+			sourceTree = "<group>";
+		};
 		30D40F872080DDBB00DC126F /* Models */ = {
 			isa = PBXGroup;
 			children = (
@@ -464,6 +505,7 @@
 		674382F507ED4F7CB35AADA29B1D6207 /* MeshPDUs */ = {
 			isa = PBXGroup;
 			children = (
+				302D1F4C20B6B4650022AEB1 /* ModelMessages */,
 				D45B2B257005BD7E21D82A8D5777EFB9 /* AccessMessagePDU.swift */,
 				DD632F545C137010F5998E2EF224E29F /* ControlMessagePDU.swift */,
 				7E7D64254CF300962BA34DE968C27B97 /* AccessMessages */,
@@ -718,6 +760,7 @@
 		E1CDCF359F82C4BF1F7B5AA64D0A18C1 /* nRFMeshProvision */ = {
 			isa = PBXGroup;
 			children = (
+				302D1F4820B6B3C10022AEB1 /* GenericModelController */,
 				301DB1D320A31F350023BCAF /* NRFMeshManager.swift */,
 				30D40F872080DDBB00DC126F /* Models */,
 				13F2C2793A32677D545215AD5FB00C4D /* Configurator */,
@@ -915,11 +958,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				E4A6D950ABFD7153CAD5C74878F966F1 /* AccessMessageParser.swift in Sources */,
+				302D1F4E20B6B4860022AEB1 /* GenericOnOffGetMessage.swift in Sources */,
 				9F221F9B88A4364E341B8FA54465AAE1 /* AccessMessagePDU.swift in Sources */,
 				30FF5EE22096F4E7002D7C77 /* ModelSubscriptionAddConfiguratorState.swift in Sources */,
 				BA9B1BC0D4091AA2F7A9276B27431503 /* AppKeyAddConfiguratorState.swift in Sources */,
 				30D40F822080CBDB00DC126F /* ModelAppBindMessage.swift in Sources */,
 				30FF5EE62096F7A6002D7C77 /* ModelSubscriptionStatusMessage.swift in Sources */,
+				302D1F5020B6B49E0022AEB1 /* GenericOnOffSetMessage.swift in Sources */,
 				30FF5EDA20931587002D7C77 /* DefaultTTLGetConfiguratorState.swift in Sources */,
 				81971491D4A3F1B9708BA4181710CB07 /* AppKeyAddMessage.swift in Sources */,
 				F04EABF143487B7694AAC802789EFDCA /* AppKeyStatusMessage.swift in Sources */,
@@ -937,11 +982,13 @@
 				01BEE8B0206D8EC264C627E031B3408D /* ConfiguratorStateProtocol.swift in Sources */,
 				19B7337BA54445F77E2DB29F49F3BF69 /* ConfirmationProvisioningState.swift in Sources */,
 				30FF5EE42096F52D002D7C77 /* ModelSubscriptionAddMessage.swift in Sources */,
+				302D1F5620B6C06F0022AEB1 /* GenericOnOffGetControllerState.swift in Sources */,
 				30D40F922084876100DC126F /* MeshModelIdentifiers.swift in Sources */,
 				302D1F3920AC44AB0022AEB1 /* ModelSubscriptionDeleteMessage.swift in Sources */,
 				B4A59EB76419E07DFB365B0ACB7AAC1B /* ControlMessagePDU.swift in Sources */,
 				8E9B7087A3E60A98F98A66EEAD6CD7AC /* Data+utils.swift in Sources */,
 				96B5C82098F2F44E90EBF65079989E44 /* DataDistributionProvisioningState.swift in Sources */,
+				302D1F5420B6B4BC0022AEB1 /* GenericOnOffStatusMessage.swift in Sources */,
 				30FF5EE8209712B1002D7C77 /* DefaultTTLStatusMessage.swift in Sources */,
 				CB430BA5A7D1F8C583AF7684D703CA74 /* DiscoveryConfiguratorState.swift in Sources */,
 				CBD8148EB05A095AC11425E6B8C2B74F /* DiscoveryProvisioningState.swift in Sources */,
@@ -978,6 +1025,7 @@
 				16EFBB4955F38A539D94F282F4F54A15 /* SequenceNumber.swift in Sources */,
 				5A11D07C4EBC9BE25F8D3D3F45DE041A /* SetFilterTypeMessage.swift in Sources */,
 				BE888B35900EFE900CE184FAEB574397 /* SetWhiteListConfiguratorState.swift in Sources */,
+				302D1F5220B6B4B20022AEB1 /* GenericOnOffSetUnacknowledgedMessage.swift in Sources */,
 				30D40F9920849C4A00DC126F /* CompanyIdentifiers.swift in Sources */,
 				30D40F8B2080DDBB00DC126F /* MeshModelIdentifierStringConverter.swift in Sources */,
 				302D1F4320AEBDFD0022AEB1 /* NodeResetConfiguratorState.swift in Sources */,
@@ -986,6 +1034,7 @@
 				9A480C70756E917F38E812CDD89E6186 /* StaticOutOfBoundInformationAvailability.swift in Sources */,
 				735C7A2CCD01CA231AA339C5A4B43D49 /* TransportNonce.swift in Sources */,
 				30D40F94208487D600DC126F /* MeshVendorModelIdentifierStringConverter.swift in Sources */,
+				302D1F4A20B6B3DF0022AEB1 /* GenericModelControllerStateProtocol.swift in Sources */,
 				56F0CD6F2A34C40C5002EB3E1313EF04 /* UnprovisionedMeshNode.swift in Sources */,
 				473095789EF6A159BBC34EBF07A1C721 /* UnprovisionedMeshNodeDelegate.swift in Sources */,
 				BF169DABE214AEEFE444EDC5ECE49532 /* UnprovisionedMeshNodeLoggingDelegate.swift in Sources */,

@@ -10,7 +10,7 @@ import UIKit
 import nRFMeshProvision
 
 class NodeModelsTableViewController: UITableViewController, ProvisionedMeshNodeDelegate {
-    
+ 
     // MARK: - Properties
     private var nodeEntry: MeshNodeEntry!
     private var selectedModel: Data!
@@ -127,6 +127,10 @@ class NodeModelsTableViewController: UITableViewController, ProvisionedMeshNodeD
     }
 
     // MARK: - ProvisionedMeshNodeDelegate
+    func receivedGenericOnOffStatusMessage(_ status: GenericOnOffStatusMessage) {
+        print("OnOff status = \(status.onOffStatus)")
+    }
+
     func nodeDidCompleteDiscovery(_ aNode: ProvisionedMeshNode) {
         //NOOP
     }

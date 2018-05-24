@@ -49,7 +49,13 @@ public struct AccessMessagePDU {
         var nonce : TransportNonce
         let segmented = payload.count > 12
         if isAppKey {
-            nonce = TransportNonce(appNonceWithIVIndex: ivIndex, isSegmented: segmented, seq: seq.sequenceData(), src: src, dst: dst)
+            let addressType = MeshAddressTypes(rawValue: Data(dst))!
+            if addressType != .Unassigned {
+                nonce = TransportNonce(appNonceWithIVIndex: ivIndex, isSegmented: segmented, seq: seq.sequenceData(), src: src, dst: dst)
+            } else {
+                print("Unassigned cannot be used for Application messages")
+                return nil
+            }
         } else {
             let addressType = MeshAddressTypes(rawValue: Data(dst))!
             if addressType == .Unassigned { //This is a proxy nonce message since destination is an unassigned address
@@ -66,14 +72,16 @@ public struct AccessMessagePDU {
         if nonce.type == .Device {
             upperTransportParams = UpperTransportPDUParams(withPayload: Data(opcode + payload), opcode: opcode, IVIndex: ivIndex, key: key!, ttl: ttl, seq: seq, src: src, dst: dst, nonce: nonce, ctl: false, afk: isAppKey, aid: Data([0x00]))
         } else {
-            upperTransportParams = UpperTransportPDUParams(withPayload: Data(opcode + payload), opcode: opcode, IVIndex: ivIndex, key: netKey, ttl: ttl, seq: seq, src: src, dst: dst, nonce: nonce, ctl: false, afk: isAppKey, aid: Data([0x00]))
+            let sslHelper = OpenSSLHelper()
+            let aid = sslHelper.calculateK4(withN: key!)
+            upperTransportParams = UpperTransportPDUParams(withPayload: Data(opcode + payload), opcode: opcode, IVIndex: ivIndex, key: key!, ttl: ttl, seq: seq, src: src, dst: dst, nonce: nonce, ctl: false, afk: isAppKey, aid: aid!)
         }
 
         let upperTransport = UpperTransportLayer(withParams: upperTransportParams)
 
         if let encryptedPDU = upperTransport.encrypt() {
             let isAppKeyData = isAppKey ? Data([0x01]) : Data([0x00])
-            let lowerTransportParams = LowerTransportPDUParams(withUpperTransportData: Data(encryptedPDU), ttl: ttl, ctl: Data([0x00]), ivIndex: ivIndex, sequenceNumber: seq, sourceAddress: src, destinationAddress: dst, micSize: Data([0x00]), afk: isAppKeyData, aid: Data([0x00]), andOpcode: opcode)
+            let lowerTransportParams = LowerTransportPDUParams(withUpperTransportData: Data(encryptedPDU), ttl: ttl, ctl: Data([0x00]), ivIndex: ivIndex, sequenceNumber: seq, sourceAddress: src, destinationAddress: dst, micSize: Data([0x00]), afk: isAppKeyData, aid: upperTransport.params.aid, andOpcode: opcode)
             let lowerTransport = LowerTransportLayer(withParams: lowerTransportParams)
             let networkLayer = NetworkLayer(withLowerTransportLayer: lowerTransport, andNetworkKey: netKey)
             return networkLayer.createPDU()

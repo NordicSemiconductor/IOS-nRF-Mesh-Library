@@ -212,6 +212,10 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
     }
 
     // MARK: - ProvisionedMeshNodeDelegate
+    func receivedGenericOnOffStatusMessage(_ status: GenericOnOffStatusMessage) {
+        print("OnOff status = \(status.onOffStatus.hexString())")
+    }
+
     func nodeDidCompleteDiscovery(_ aNode: ProvisionedMeshNode) {
         //noop
     }
@@ -386,7 +390,14 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
         }
     }
     override func numberOfSections(in tableView: UITableView) -> Int {
-        return 4
+        if let element = nodeEntry.elements?[selectedModelIndexPath.section] {
+            let targetModel = element.allSigAndVendorModels()[selectedModelIndexPath.row]
+            if targetModel == Data([0x10, 0x00]) {
+                //Generic OnOff has an extra row
+                return 4
+            }
+        }
+        return 3
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -406,6 +417,9 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
                 }
             }
             return 1
+        case 3:
+            // if GenericOnOff is present, return 1 row for it
+            return 1
         default:
             return 0
         }
@@ -418,6 +432,8 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
             return "Publication Address"
         } else if section == 2 {
             return "Subscription Addresses"
+        } else if section == 3 {
+            return "Node Control"
         } else {
             return nil
         }
@@ -425,7 +441,7 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         var aCell: UITableViewCell!
-        if indexPath.section == 2 && indexPath.row == 0 {
+        if indexPath.section == 3 || (indexPath.section == 2 && indexPath.row == 0) {
             aCell = tableView.dequeueReusableCell(withIdentifier: "ModelConfigurationCenteredCell", for: indexPath)
         } else {
             aCell = tableView.dequeueReusableCell(withIdentifier: "ModelConfigurationCell", for: indexPath)
@@ -493,6 +509,10 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
             }
             return aCell
         }
+        if indexPath.section == 3 {
+            aCell.textLabel?.text = "Get GenericOnOff Status"
+            return aCell
+        }
         return aCell
     }
 
@@ -523,6 +543,16 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
             } else {
                 print("NOOP")
             }
+        case 3:
+            if indexPath.row == 0 {
+                print("Get genericOnOff Status")
+                let elementIdx = selectedModelIndexPath.section
+                let modelIdx = selectedModelIndexPath.row
+//                let aModel = nodeEntry.elements![elementIdx].allSigAndVendorModels()[modelIdx]
+                let unicast = nodeEntry.nodeUnicast!
+                let elementAddress = Data([unicast[0], unicast[1] + UInt8(elementIdx)])
+                targetNode.nodeGenericOnOffGet(elementAddress, onDestinationAddress: nodeEntry.nodeUnicast!)
+            }
         default:
             break
         }
@@ -541,7 +571,7 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
             //Give a placeholder that shows this upcoming key index
             aTextField.placeholder = "0001"
         }
-        
+
         let createAction = UIAlertAction(title: "Add", style: .default) { (_) in
             DispatchQueue.main.async {
                 if var text = inputAlertView.textFields![0].text {
@@ -558,13 +588,13 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
                 }
             }
         }
-        
+
         let cancelAction = UIAlertAction(title: "Cancel", style: .cancel) { (_) in
             DispatchQueue.main.async {
                 aCompletionHandler(nil)
             }
         }
-        
+
         inputAlertView.addAction(createAction)
         inputAlertView.addAction(cancelAction)
         present(inputAlertView, animated: true, completion: nil)
@@ -603,6 +633,7 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
                 "ShowPublishGroupsView",
                 "ShowSubscribeGroupsView"].contains(identifier)
     }
+
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "ShowAppKeyBindingView" {
             if let destination = segue.destination as? ModelAppKeyBindingConfigurationTableViewController {
@@ -611,7 +642,7 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
             }
         }
     }
-    
+
     // MARK: - Helpers
     private func getSubscriptionAddressforNodeAtIndexPath(_ anIndexPath: IndexPath) -> Data? {
         if let element = nodeEntry.elements?[selectedModelIndexPath.section] {
