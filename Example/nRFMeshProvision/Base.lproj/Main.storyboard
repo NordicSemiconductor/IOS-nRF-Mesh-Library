@@ -110,7 +110,7 @@
                         </label>
                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" lineBreakMode="tailTruncation" numberOfLines="6" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="vs8-VX-zFU">
                             <rect key="frame" x="21" y="92" width="257" height="83.666666666666686"/>
-                            <string key="text">If you cannot discovery any mesh nodes, try the following  • Ensure nodes are advertising Mesh Provisioning Service. • Ensure nodes are not already provisioned. • Turn Bluetooth Off for 10 seconds to clear the BLE cache.</string>
+                            <string key="text">If you cannot discover any mesh nodes, try the following:  • Ensure nodes are advertising Mesh Provisioning Service. • Ensure nodes are not already provisioned. • Turn Bluetooth Off for 10 seconds to clear the BLE cache.</string>
                             <fontDescription key="fontDescription" name="TrebuchetMS" family="Trebuchet MS" pointSize="12"/>
                             <color key="textColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             <nil key="highlightedColor"/>
