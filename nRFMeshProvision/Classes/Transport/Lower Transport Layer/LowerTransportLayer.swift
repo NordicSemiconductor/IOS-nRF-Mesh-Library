@@ -47,7 +47,7 @@ public struct LowerTransportLayer {
             let segO = Data([0x00 & UInt8((aPDU[4] & 0x03) << 3) | UInt8((aPDU[5] & 0xE0) >> 5)])
             let segN = Data([aPDU[5] & 0x1F])
             let segment = Data(aPDU[6..<aPDU.count])
-            let sequenceNumber = Data([aSEQ.first!, seqZero[0], seqZero[1]])
+            let sequenceNumber = Data([aSEQ.first!, aSEQ[2] | seqZero[0], seqZero[1]])
             print("szMIC = \(szMIC.hexString()), seqZero = \(seqZero.hexString()), segO = \(segO.hexString()), segN = \(segN.hexString()), segment = \(segment.hexString()), sequence: \(sequenceNumber.hexString())")
             print("Partial incomind PDU count = \(partialIncomingPDU!.count)")
             if !partialIncomingPDU!.contains(segment) {
