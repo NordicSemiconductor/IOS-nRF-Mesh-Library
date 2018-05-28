@@ -126,20 +126,17 @@
 }
 
 - (NSData*) calculateDecryptedCCM:(NSData *)someData withKey:(NSData *)aKey nonce:(NSData *)aNonce dataSize:(UInt8)aSize andMIC:(NSData*)aMIC {
-//- (NSData*) calculateDecryptedCCM:(NSData *)someData withKey:(NSData *)aKey nonce:(NSData *)aNonce dataSize:(UInt8)aSize aaddata:(NSData*) anAAD andMIC:(NSData*)aMIC {
     int outlen;
     unsigned char outbuf[1024];
     
     int micLength = (int)[aMIC length] / sizeof(unsigned char);
     int messageLength = (int)[someData length] / sizeof(unsigned char);
     int nonceLength = (int) [aNonce length] / sizeof(unsigned char);
-//    int aadLenghth = (int) [anAAD length] / sizeof(unsigned char);
     
     unsigned char* keyBytes     = (unsigned char*)[aKey bytes];
     unsigned char* nonceBytes   = (unsigned char*)[aNonce bytes];
     unsigned char* messageBytes = (unsigned char*)[someData bytes];
     unsigned char* micBytes     = (unsigned char*)[aMIC bytes];
-//    unsigned char* aadBytes     = (unsigned char*)[anAAD bytes];
     
     EVP_CIPHER_CTX *ctx = EVP_CIPHER_CTX_new();
     EVP_DecryptInit_ex(ctx, EVP_aes_128_ccm(), NULL, NULL, NULL);
@@ -147,7 +144,6 @@
     EVP_CIPHER_CTX_ctrl(ctx, EVP_CTRL_CCM_SET_TAG, micLength, micBytes);
     EVP_DecryptInit_ex(ctx, NULL, NULL, keyBytes, nonceBytes);
     EVP_DecryptUpdate(ctx, NULL, &outlen, NULL, messageLength);
-//    EVP_DecryptUpdate(ctx, NULL, &outlen, aadBytes, aadLenghth);
     int ret = EVP_DecryptUpdate(ctx, outbuf, &outlen, messageBytes, messageLength);
     EVP_CIPHER_CTX_free(ctx);
     if (ret > 0) {

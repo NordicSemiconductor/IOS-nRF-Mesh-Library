@@ -19,6 +19,7 @@ public class ProvisionedMeshNode: NSObject, ProvisionedMeshNodeProtocol {
     private var proxyDataOut        : CBCharacteristic!
     private var proxyService        : CBService!
     private var configurationState  : ConfiguratorStateProtocol!
+    private var genericControllerState: GenericModelControllerStateProtocol!
     private var stateManager        : MeshStateManager
 
     // MARK: - Configuration properties
@@ -95,6 +96,22 @@ public class ProvisionedMeshNode: NSObject, ProvisionedMeshNodeProtocol {
         
         configurationState = nodeSubscriptionDeleteState
         configurationState.execute()
+    }
+
+    public func nodeGenericOnOffSet(_ anElementAddress: Data, onDestinationAddress anAddress: Data, withtargetState aState: Data) {
+        let setState = GenericOnOffSetControllerState(withTargetProxyNode: self,
+                                                      destinationAddress: anAddress,
+                                                      andStateManager: stateManager)
+        setState.setTargetState(aTargetState: aState)
+        genericControllerState = setState
+        genericControllerState.execute()
+    }
+
+    public func nodeGenericOnOffGet(_ anElementAddress: Data, onDestinationAddress anAddress: Data) {
+        let getState = GenericOnOffGetControllerState(withTargetProxyNode: self,
+                                                      destinationAddress: anAddress, andStateManager: stateManager)
+        genericControllerState = getState
+        genericControllerState.execute()
     }
 
     public func nodePublicationAddressSet(_ aPublicationAddress: Data,

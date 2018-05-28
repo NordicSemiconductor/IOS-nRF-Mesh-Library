@@ -283,6 +283,10 @@ extension ReconnectionViewController: CBCentralManagerDelegate {
 }
 
 extension ReconnectionViewController: ProvisionedMeshNodeDelegate {
+    func receivedGenericOnOffStatusMessage(_ status: GenericOnOffStatusMessage) {
+        print("OnOff status = \(status.onOffStatus)")
+    }
+    
     // MARK: - ProvisionedMeshNodeDelegate
     func nodeDidCompleteDiscovery(_ aNode: ProvisionedMeshNode) {
         centralManager.delegate = originalCentraldelegate

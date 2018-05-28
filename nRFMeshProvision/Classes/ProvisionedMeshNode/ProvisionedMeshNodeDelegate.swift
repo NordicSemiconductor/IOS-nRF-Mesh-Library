@@ -18,4 +18,6 @@ public protocol ProvisionedMeshNodeDelegate {
     func receivedDefaultTTLStatus(_ defaultTTLStatusData: DefaultTTLStatusMessage)
     func receivedNodeResetStatus(_ resetStatusData: NodeResetStatusMessage)
     func configurationSucceeded()
+    //Generic Model Messages
+    func receivedGenericOnOffStatusMessage(_ status: GenericOnOffStatusMessage)
 }

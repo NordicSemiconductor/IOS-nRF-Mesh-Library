@@ -19,45 +19,51 @@ public struct UpperTransportLayer {
                 szMIC: Int, ivIndex anIVIndex: Data, andMeshState aStateManager: MeshStateManager) {
         stateManager = aStateManager
         sslHelper = OpenSSLHelper()
-        let deviceKey = stateManager!.state().deviceKeyForUnicast(aSRC)
-        let deviceNonce = TransportNonce(deviceNonceWithIVIndex: anIVIndex, isSegmented: true, szMIC: UInt8(szMIC), seq: aSEQ, src: aSRC, dst: aDST)
+        var key: Data!
+        var nonce: TransportNonce!
+        
+        if isApplicationKey {
+            key = stateManager!.state().appKeys[0].values.first!
+            nonce = TransportNonce(appNonceWithIVIndex: anIVIndex, isSegmented: true, seq: aSEQ, src: aSRC, dst: aDST)
+        } else {
+            key = stateManager!.state().deviceKeyForUnicast(aSRC)
+            nonce = TransportNonce(deviceNonceWithIVIndex: anIVIndex, isSegmented: true, szMIC: UInt8(szMIC), seq: aSEQ, src: aSRC, dst: aDST)
+        }
 
         if isControl {
             // Control messages aren't encrypted here, forward as is
             print("Control message, TBD")
             let strippedDSTPDU = Data(aPDU[2..<aPDU.count])
             let opcode = Data([aPDU[2]])
-            params = UpperTransportPDUParams(withPayload: strippedDSTPDU, opcode: opcode, IVIndex: anIVIndex, key: deviceKey!, ttl: Data(), seq: SequenceNumber(), src: aSRC, dst: aDST, nonce: deviceNonce, ctl: isControl, afk: isApplicationKey, aid: applicationId)
+            params = UpperTransportPDUParams(withPayload: strippedDSTPDU, opcode: opcode, IVIndex: anIVIndex, key: key, ttl: Data([0x04]), seq: SequenceNumber(), src: aSRC, dst: aDST, nonce: nonce, ctl: isControl, afk: isApplicationKey, aid: applicationId)
         } else {
             let micLen = szMIC == 1 ? 8 : 4
             let dataSize = UInt8(aPDU.count - micLen)
             let pduData = aPDU[0..<dataSize]
             let mic = aPDU[aPDU.count - micLen..<aPDU.count]
-            if deviceKey != nil { //TODO: This check should not be needed
-                if let decryptedData = sslHelper.calculateDecryptedCCM(pduData, withKey: deviceKey!, nonce: deviceNonce.data, dataSize: dataSize, andMIC: mic) {
-                    decryptedPayload = Data(decryptedData)
-                } else {
-                    print("Decryption failed")
-                }
+            if let decryptedData = sslHelper.calculateDecryptedCCM(pduData, withKey: key, nonce: nonce.data, dataSize: dataSize, andMIC: mic) {
+                decryptedPayload = Data(decryptedData)
+            } else {
+                print("Decryption failed")
             }
             var opcode = Data()
             if let payload = decryptedPayload {
                 if payload.count > 0 {
-                    if payload[0] == 0x80 {
+                    if payload[0] >= 0x80 {
                         opcode.append(payload[0...1])
                     } else {
                         opcode.append(payload[0])
                     }
-                    params = UpperTransportPDUParams(withPayload: payload, opcode: opcode, IVIndex: anIVIndex, key: Data(), ttl: Data(), seq: SequenceNumber(), src: aSRC, dst: aDST, nonce: deviceNonce, ctl: isControl, afk: isApplicationKey, aid: applicationId)
+                    params = UpperTransportPDUParams(withPayload: payload, opcode: opcode, IVIndex: anIVIndex, key: key, ttl: Data([0x04]), seq: SequenceNumber(), src: aSRC, dst: aDST, nonce: nonce, ctl: isControl, afk: isApplicationKey, aid: applicationId)
                 } else {
-                    //no payload, failed to decrypt
-                    print("decryption failuer, or no payload")
-                    params = UpperTransportPDUParams(withPayload: Data(), opcode: Data(), IVIndex: anIVIndex, key: Data(), ttl: Data(), seq: SequenceNumber(), src: aSRC, dst: aDST, nonce: deviceNonce, ctl: isControl, afk: isApplicationKey, aid: applicationId)
+                    //No payload, failed to decrypt
+                    print("decryption failure, or no payload")
+                    params = UpperTransportPDUParams(withPayload: Data(), opcode: Data(), IVIndex: anIVIndex, key: key, ttl: Data([0x04]), seq: SequenceNumber(), src: aSRC, dst: aDST, nonce: nonce, ctl: isControl, afk: isApplicationKey, aid: applicationId)
                 }
             } else {
                 //no payload, failed to decrypt
                 print("decryption failure, or no payload")
-                params = UpperTransportPDUParams(withPayload: Data(), opcode: Data(), IVIndex: anIVIndex, key: Data(), ttl: Data(), seq: SequenceNumber(), src: aSRC, dst: aDST, nonce: deviceNonce, ctl: isControl, afk: isApplicationKey, aid: applicationId)
+                params = UpperTransportPDUParams(withPayload: Data(), opcode: Data(), IVIndex: anIVIndex, key: key, ttl: Data([0x04]), seq: SequenceNumber(), src: aSRC, dst: aDST, nonce: nonce, ctl: isControl, afk: isApplicationKey, aid: applicationId)
             }
         }
     }

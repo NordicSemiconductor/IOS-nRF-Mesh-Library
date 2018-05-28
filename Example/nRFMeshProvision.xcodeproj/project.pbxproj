@@ -10,6 +10,8 @@
 		21FEE9259EAB95D2E75B7C71 /* Pods_nRFMeshProvision_Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 328E66A87C5B0A499473BBE3 /* Pods_nRFMeshProvision_Tests.framework */; };
 		301D5BBF2044096A00639A04 /* UpperLayerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 301D5BBE2044096A00639A04 /* UpperLayerTests.swift */; };
 		302D1F4720B44E000022AEB1 /* ProvisioningLogTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 302D1F4620B44E000022AEB1 /* ProvisioningLogTableViewController.swift */; };
+		302D1F5A20BBEB4F0022AEB1 /* ToggleControlTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 302D1F5920BBEB4F0022AEB1 /* ToggleControlTableViewCell.swift */; };
+		302D1F5C20BBF2700022AEB1 /* ToggleCellDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 302D1F5B20BBF2700022AEB1 /* ToggleCellDelegate.swift */; };
 		304DAEB4208091EF006CFEA6 /* MainNetworkViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 304DAEA2208091EF006CFEA6 /* MainNetworkViewController.swift */; };
 		304DAEB5208091EF006CFEA6 /* MainTabBarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 304DAEA3208091EF006CFEA6 /* MainTabBarViewController.swift */; };
 		304DAEB6208091EF006CFEA6 /* MeshNodeCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 304DAEA4208091EF006CFEA6 /* MeshNodeCollectionViewCell.swift */; };
@@ -54,6 +56,8 @@
 		301D5BBE2044096A00639A04 /* UpperLayerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpperLayerTests.swift; sourceTree = "<group>"; };
 		301D5C042045933800639A04 /* LowerLayerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LowerLayerTests.swift; sourceTree = "<group>"; };
 		302D1F4620B44E000022AEB1 /* ProvisioningLogTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProvisioningLogTableViewController.swift; sourceTree = "<group>"; };
+		302D1F5920BBEB4F0022AEB1 /* ToggleControlTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToggleControlTableViewCell.swift; sourceTree = "<group>"; };
+		302D1F5B20BBF2700022AEB1 /* ToggleCellDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToggleCellDelegate.swift; sourceTree = "<group>"; };
 		3043D9231FF38CF500A9A999 /* libcrypto.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libcrypto.a; path = Pods/OpenSSL/lib/libcrypto.a; sourceTree = "<group>"; };
 		3043D9241FF38CF500A9A999 /* libssl.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libssl.a; path = Pods/OpenSSL/lib/libssl.a; sourceTree = "<group>"; };
 		304DAEA2208091EF006CFEA6 /* MainNetworkViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainNetworkViewController.swift; sourceTree = "<group>"; };
@@ -229,6 +233,8 @@
 			children = (
 				305F08AB20861CF7006A15F3 /* ConfigurationViews */,
 				30D40F9620848DFC00DC126F /* ModelConfigurationTableViewController.swift */,
+				302D1F5920BBEB4F0022AEB1 /* ToggleControlTableViewCell.swift */,
+				302D1F5B20BBF2700022AEB1 /* ToggleCellDelegate.swift */,
 			);
 			path = ModelConfigurationView;
 			sourceTree = "<group>";
@@ -562,6 +568,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				302D1F5A20BBEB4F0022AEB1 /* ToggleControlTableViewCell.swift in Sources */,
 				304DAEB7208091EF006CFEA6 /* RootViewController.swift in Sources */,
 				30FF5EED20973E69002D7C77 /* ReconnectionViewController.swift in Sources */,
 				304DAEBA208091EF006CFEA6 /* MeshNodeLogTableViewCell.swift in Sources */,
@@ -573,6 +580,7 @@
 				304DAEBE208091EF006CFEA6 /* AppKeyManagerTableViewController.swift in Sources */,
 				304DAEB6208091EF006CFEA6 /* MeshNodeCollectionViewCell.swift in Sources */,
 				30D40F902084808A00DC126F /* NodeModelsTableViewController.swift in Sources */,
+				302D1F5C20BBF2700022AEB1 /* ToggleCellDelegate.swift in Sources */,
 				30D40F9720848DFC00DC126F /* ModelConfigurationTableViewController.swift in Sources */,
 				304DAEB8208091EF006CFEA6 /* MeshNodeInfoTableViewController.swift in Sources */,
 				30D40F7A208099BF00DC126F /* LogEntry.swift in Sources */,
