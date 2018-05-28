@@ -29,6 +29,7 @@
 		302D1F5220B6B4B20022AEB1 /* GenericOnOffSetUnacknowledgedMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 302D1F5120B6B4B20022AEB1 /* GenericOnOffSetUnacknowledgedMessage.swift */; };
 		302D1F5420B6B4BC0022AEB1 /* GenericOnOffStatusMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 302D1F5320B6B4BC0022AEB1 /* GenericOnOffStatusMessage.swift */; };
 		302D1F5620B6C06F0022AEB1 /* GenericOnOffGetControllerState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 302D1F5520B6C06F0022AEB1 /* GenericOnOffGetControllerState.swift */; };
+		302D1F5820BBE6000022AEB1 /* GenericOnOffSetControllerState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 302D1F5720BBE5FF0022AEB1 /* GenericOnOffSetControllerState.swift */; };
 		30686AF02087635400DBEEA2 /* ModelPublicationSetMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30686AEF2087635400DBEEA2 /* ModelPublicationSetMessage.swift */; };
 		30686AF220876EB200DBEEA2 /* ModelPublicationSetConfiguratorState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30686AF120876EB200DBEEA2 /* ModelPublicationSetConfiguratorState.swift */; };
 		30686AF4208771A600DBEEA2 /* ModelPublicationStatusMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30686AF3208771A600DBEEA2 /* ModelPublicationStatusMessage.swift */; };
@@ -161,6 +162,7 @@
 		302D1F5120B6B4B20022AEB1 /* GenericOnOffSetUnacknowledgedMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericOnOffSetUnacknowledgedMessage.swift; sourceTree = "<group>"; };
 		302D1F5320B6B4BC0022AEB1 /* GenericOnOffStatusMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericOnOffStatusMessage.swift; sourceTree = "<group>"; };
 		302D1F5520B6C06F0022AEB1 /* GenericOnOffGetControllerState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericOnOffGetControllerState.swift; sourceTree = "<group>"; };
+		302D1F5720BBE5FF0022AEB1 /* GenericOnOffSetControllerState.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GenericOnOffSetControllerState.swift; sourceTree = "<group>"; };
 		30686AEF2087635400DBEEA2 /* ModelPublicationSetMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelPublicationSetMessage.swift; sourceTree = "<group>"; };
 		30686AF120876EB200DBEEA2 /* ModelPublicationSetConfiguratorState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelPublicationSetConfiguratorState.swift; sourceTree = "<group>"; };
 		30686AF3208771A600DBEEA2 /* ModelPublicationStatusMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelPublicationStatusMessage.swift; sourceTree = "<group>"; };
@@ -396,6 +398,7 @@
 		302D1F4B20B6B4310022AEB1 /* GenericModelControllerStates */ = {
 			isa = PBXGroup;
 			children = (
+				302D1F5720BBE5FF0022AEB1 /* GenericOnOffSetControllerState.swift */,
 				302D1F5520B6C06F0022AEB1 /* GenericOnOffGetControllerState.swift */,
 			);
 			path = GenericModelControllerStates;
@@ -1002,6 +1005,7 @@
 				6EB5F9D28F6F715396A1385A046439F4 /* MeshNodeEntry.swift in Sources */,
 				C4B67F4FBACD90E8689C0D561E3600FB /* MeshState.swift in Sources */,
 				D7790354C19754EA0934A9298D1825C7 /* MeshStateManager.swift in Sources */,
+				302D1F5820BBE6000022AEB1 /* GenericOnOffSetControllerState.swift in Sources */,
 				10E09790DD07049E8F149DB2A27F46E4 /* NetworkLayer.swift in Sources */,
 				EADB6976846F2FEB0E4B013955B2FE72 /* nRFMeshProvision-dummy.m in Sources */,
 				9B396C06FEDF226ACE73AF18F7AA570F /* OpenSSLHelper.m in Sources */,

@@ -1009,6 +1009,40 @@ provisioning and then configuring a device.</string>
                                     </subviews>
                                 </tableViewCellContentView>
                             </tableViewCell>
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="ModelConfigurationToggleCell" id="Txa-CR-jkS" customClass="ToggleControlTableViewCell" customModule="nRFMeshProvision_Example" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="187.33333333333334" width="375" height="44"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="Txa-CR-jkS" id="psN-KF-lRz">
+                                    <rect key="frame" x="0.0" y="0.0" width="375" height="43.666666666666664"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                    <subviews>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Toggle State control" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="yx4-wO-CNd">
+                                            <rect key="frame" x="16" y="12" width="152.66666666666666" height="20"/>
+                                            <fontDescription key="fontDescription" name="TrebuchetMS" family="Trebuchet MS" pointSize="17"/>
+                                            <nil key="textColor"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                        <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="CoF-zM-jU8">
+                                            <rect key="frame" x="308" y="7" width="51" height="31"/>
+                                            <color key="onTintColor" red="0.0" green="0.61176470589999998" blue="0.87058823529999996" alpha="1" colorSpace="calibratedRGB"/>
+                                            <connections>
+                                                <action selector="didSwitchToggleState:" destination="Txa-CR-jkS" eventType="valueChanged" id="baD-iY-njH"/>
+                                            </connections>
+                                        </switch>
+                                    </subviews>
+                                    <constraints>
+                                        <constraint firstAttribute="trailing" secondItem="CoF-zM-jU8" secondAttribute="trailing" constant="18" id="95B-rs-bYk"/>
+                                        <constraint firstItem="yx4-wO-CNd" firstAttribute="leading" secondItem="psN-KF-lRz" secondAttribute="leading" constant="16" id="MqM-Na-IUh"/>
+                                        <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="yx4-wO-CNd" secondAttribute="trailing" constant="20" id="Yja-6J-S2K"/>
+                                        <constraint firstItem="CoF-zM-jU8" firstAttribute="centerY" secondItem="psN-KF-lRz" secondAttribute="centerY" id="cwE-NA-WMg"/>
+                                        <constraint firstItem="yx4-wO-CNd" firstAttribute="centerY" secondItem="psN-KF-lRz" secondAttribute="centerY" id="oh2-c0-0qb"/>
+                                    </constraints>
+                                </tableViewCellContentView>
+                                <connections>
+                                    <outlet property="stateLabel" destination="yx4-wO-CNd" id="fL9-ze-3m3"/>
+                                    <outlet property="toggleSwitch" destination="CoF-zM-jU8" id="fYE-Sm-UFf"/>
+                                </connections>
+                            </tableViewCell>
                         </prototypes>
                         <sections/>
                         <connections>

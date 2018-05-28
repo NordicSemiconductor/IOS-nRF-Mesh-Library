@@ -6,11 +6,11 @@
 //
 
 import Foundation
-//0x82 0x01
 
 public struct GenericOnOffGetMessage {
-    var opcode: Data
-    var payload: Data
+    var opcode  : Data
+    var payload : Data
+
     public init() {
         opcode = Data([0x82, 0x01])
         payload = Data()

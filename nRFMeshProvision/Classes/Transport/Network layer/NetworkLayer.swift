@@ -89,15 +89,10 @@ public struct NetworkLayer {
         
         //Encrypt all PDUs
         for aPDU in lowerPDU {
-            var nonce: TransportNonce
-//            if lowerTransport.params.ctl == Data([0x01]) && lowerTransport.params.opcode == Data([0x00]) {
-//            if lowerTransport.params.ctl == Data([0x00]) {
-//                nonce = TransportNonce(proxyNonceWithIVIndex: lowerTransport.params.ivIndex, seq: sequence.sequenceData(), src: lowerTransport.params.sourceAddress)
-//            } else {
-                nonce = TransportNonce(networkNonceWithIVIndex: lowerTransport.params.ivIndex, ctl: lowerTransport.params.ctl, ttl: lowerTransport.params.ttl, seq: sequence.sequenceData(), src: lowerTransport.params.sourceAddress)
-//            }
+            let nonce = TransportNonce(networkNonceWithIVIndex: lowerTransport.params.ivIndex, ctl: lowerTransport.params.ctl, ttl: lowerTransport.params.ttl, seq: sequence.sequenceData(), src: lowerTransport.params.sourceAddress)
             var dataToEncrypt = Data(lowerTransport.params.destinationAddress)
             dataToEncrypt.append(aPDU)
+            
             if lowerTransport.params.ctl == Data([0x01]) {
                 micSize = 8
             } else {

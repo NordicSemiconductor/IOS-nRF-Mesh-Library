@@ -15,7 +15,7 @@ private enum SubscriptionActions {
     case subscriptionDelete
 }
 
-class ModelConfigurationTableViewController: UITableViewController, ProvisionedMeshNodeDelegate, UITextFieldDelegate {
+class ModelConfigurationTableViewController: UITableViewController, ProvisionedMeshNodeDelegate, UITextFieldDelegate, ToggleCellDelegate {
 
     // MARK: - Outlets & Actions
     @IBOutlet weak var vendorLabel: UILabel!
@@ -37,6 +37,11 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
         targetNode = aNode
         originalDelegate = targetNode.delegate
         targetNode.delegate = self
+    }
+
+    override func tableView(_ tableView: UITableView, shouldHighlightRowAt indexPath: IndexPath) -> Bool {
+        //Node control cell is not selectable
+        return indexPath.section != 3
     }
 
     public func didSelectSubscriptionAddressAdd(_ anAddress: Data) {
@@ -209,6 +214,15 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
                 title = formattedModel
             }
         }
+    }
+    
+    // MARK: - ToggleCell delegate
+    func didToggleCell(aCell: ToggleControlTableViewCell, didSetOnStateTo newOnState: Bool) {
+        let targetstate: Data = newOnState ? Data([0x01]) : Data([0x00])
+        let elementIdx = selectedModelIndexPath.section
+        let unicast = nodeEntry.nodeUnicast!
+        let elementAddress = Data([unicast[0], unicast[1] + UInt8(elementIdx)])
+        targetNode.nodeGenericOnOffSet(elementAddress, onDestinationAddress: nodeEntry.nodeUnicast!, withtargetState: targetstate)
     }
 
     // MARK: - ProvisionedMeshNodeDelegate
@@ -393,7 +407,7 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
         if let element = nodeEntry.elements?[selectedModelIndexPath.section] {
             let targetModel = element.allSigAndVendorModels()[selectedModelIndexPath.row]
             if targetModel == Data([0x10, 0x00]) {
-                //Generic OnOff has an extra row
+                //Generic OnOff has section for status and control
                 return 4
             }
         }
@@ -418,7 +432,7 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
             }
             return 1
         case 3:
-            // if GenericOnOff is present, return 1 row for it
+            // if GenericOnOff is present, return 1 row for the control section
             return 1
         default:
             return 0
@@ -441,7 +455,24 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         var aCell: UITableViewCell!
-        if indexPath.section == 3 || (indexPath.section == 2 && indexPath.row == 0) {
+        if indexPath.section == 3 && indexPath.row == 0 {
+            aCell = tableView.dequeueReusableCell(withIdentifier: "ModelConfigurationToggleCell", for: indexPath)
+            if let aCell = aCell as? ToggleControlTableViewCell {
+                //Receive toggle switch events
+                aCell.delegate = self
+                
+                //Enable/disable cell depending on bound appkey state
+                if let element = nodeEntry.elements?[selectedModelIndexPath.section] {
+                    let targetModel = element.allSigAndVendorModels()[selectedModelIndexPath.row]
+                    aCell.toggleSwitch.isEnabled = element.boundAppKeyIndexForModelId(targetModel) != nil
+                    if aCell.toggleSwitch.isEnabled == false {
+                        aCell.setTitle(aTitle: "Appkey not bound")
+                    } else {
+                        aCell.setTitle(aTitle: "GenericOnOff state")
+                    }
+                }
+            }
+        } else if indexPath.section == 2 && indexPath.row == 0 {
             aCell = tableView.dequeueReusableCell(withIdentifier: "ModelConfigurationCenteredCell", for: indexPath)
         } else {
             aCell = tableView.dequeueReusableCell(withIdentifier: "ModelConfigurationCell", for: indexPath)
@@ -509,10 +540,6 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
             }
             return aCell
         }
-        if indexPath.section == 3 {
-            aCell.textLabel?.text = "Get GenericOnOff Status"
-            return aCell
-        }
         return aCell
     }
 
@@ -540,18 +567,6 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
                         self.didSelectSubscriptionAddressAdd(addressData)
                     }
                 }
-            } else {
-                print("NOOP")
-            }
-        case 3:
-            if indexPath.row == 0 {
-                print("Get genericOnOff Status")
-                let elementIdx = selectedModelIndexPath.section
-                let modelIdx = selectedModelIndexPath.row
-//                let aModel = nodeEntry.elements![elementIdx].allSigAndVendorModels()[modelIdx]
-                let unicast = nodeEntry.nodeUnicast!
-                let elementAddress = Data([unicast[0], unicast[1] + UInt8(elementIdx)])
-                targetNode.nodeGenericOnOffGet(elementAddress, onDestinationAddress: nodeEntry.nodeUnicast!)
             }
         default:
             break

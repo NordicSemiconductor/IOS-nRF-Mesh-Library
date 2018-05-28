@@ -1,21 +1,22 @@
 //
-//  GenericOnOffGetControllerState.swift
+//  GenericOnOffSetControllerState.swift
 //  nRFMeshProvision
 //
-//  Created by Mostafa Berg on 24/05/2018.
+//  Created by Mostafa Berg on 28/05/2018.
 //
 
 import Foundation
 import CoreBluetooth
 
-class GenericOnOffGetControllerState: NSObject, GenericModelControllerStateProtocol {
+class GenericOnOffSetControllerState: NSObject, GenericModelControllerStateProtocol {
     
     // MARK: - Properties
     private var proxyService            : CBService!
     private var dataInCharacteristic    : CBCharacteristic!
     private var dataOutCharacteristic   : CBCharacteristic!
     private var networkLayer            : NetworkLayer!
-    private var segmentedData: Data
+    private var segmentedData           : Data
+    private var targetState             : Data?
     
     // MARK: - ConfiguratorStateProtocol
     var destinationAddress  : Data
@@ -43,11 +44,21 @@ class GenericOnOffGetControllerState: NSObject, GenericModelControllerStateProto
     }
     
     func humanReadableName() -> String {
-        return "Generic OnOff Get"
+        return "Generic OnOff Set"
+    }
+    
+    public func setTargetState(aTargetState: Data) {
+        targetState = aTargetState
     }
     
     func execute() {
-        let message = GenericOnOffGetMessage()
+        var message: GenericOnOffSetMessage
+        if let targetState = targetState {
+            message = GenericOnOffSetMessage(withTargetState: targetState)
+        } else {
+            print("No target state set, nothing to execute")
+            return
+        }
         //Send to destination
         let payloads = message.assemblePayload(withMeshState: stateManager.state(), toAddress: destinationAddress)
         for aPayload in payloads! {
