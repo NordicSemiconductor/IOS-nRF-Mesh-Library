@@ -187,13 +187,10 @@ class CompositionGetConfiguratorState: NSObject, ConfiguratorStateProtocol {
             segmentedData.append(Data(characteristic.value!.dropFirst()))
         } else if characteristic.value![0] & 0xC0 == 0x80 {
             lastMessageType = 0x80
-            print("Segmented data cont")
             segmentedData.append(characteristic.value!.dropFirst())
         } else if characteristic.value![0] & 0xC0 == 0xC0 {
             lastMessageType = 0xC0
-            print("Segmented data end")
             segmentedData.append(Data(characteristic.value!.dropFirst()))
-            print("Reassembled data!: \(segmentedData.hexString())")
             //Copy data and send it to NetworkLayer
             receivedData(incomingData: Data(segmentedData))
             segmentedData = Data()
