@@ -25,6 +25,7 @@
 		304DAEBF208091EF006CFEA6 /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 304DAEB3208091EF006CFEA6 /* SettingsViewController.swift */; };
 		305F08AD20861D0A006A15F3 /* ModelAppKeyBindingConfigurationTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 305F08AC20861D0A006A15F3 /* ModelAppKeyBindingConfigurationTableViewController.swift */; };
 		30648B0220459B7000177CB4 /* LowerLayerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 301D5C042045933800639A04 /* LowerLayerTests.swift */; };
+		306F4D1F20BED7B200572A8F /* NodeModelCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 306F4D1E20BED7B200572A8F /* NodeModelCell.swift */; };
 		307BA359204ED39E00944B89 /* StateRestoration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 307BA358204ED39E00944B89 /* StateRestoration.swift */; };
 		308711D6204D5A47001ED9C3 /* NetworkLayerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 308711D5204D5A47001ED9C3 /* NetworkLayerTests.swift */; };
 		3089BCA02099CA4900E30192 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3089BC9E2099CA4900E30192 /* LaunchScreen.storyboard */; };
@@ -72,6 +73,7 @@
 		304DAEB2208091EF006CFEA6 /* AppKeyManagerTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppKeyManagerTableViewController.swift; sourceTree = "<group>"; };
 		304DAEB3208091EF006CFEA6 /* SettingsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
 		305F08AC20861D0A006A15F3 /* ModelAppKeyBindingConfigurationTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelAppKeyBindingConfigurationTableViewController.swift; sourceTree = "<group>"; };
+		306F4D1E20BED7B200572A8F /* NodeModelCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NodeModelCell.swift; sourceTree = "<group>"; };
 		307BA358204ED39E00944B89 /* StateRestoration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StateRestoration.swift; sourceTree = "<group>"; };
 		308711D5204D5A47001ED9C3 /* NetworkLayerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkLayerTests.swift; sourceTree = "<group>"; };
 		3089BC9F2099CA4900E30192 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -224,6 +226,7 @@
 			children = (
 				30D40F9520848DEC00DC126F /* ModelConfigurationView */,
 				30D40F8F2084808A00DC126F /* NodeModelsTableViewController.swift */,
+				306F4D1E20BED7B200572A8F /* NodeModelCell.swift */,
 			);
 			path = NodeModelsView;
 			sourceTree = "<group>";
@@ -577,6 +580,7 @@
 				304DAEB9208091EF006CFEA6 /* AppKeySelectorTableViewController.swift in Sources */,
 				305F08AD20861D0A006A15F3 /* ModelAppKeyBindingConfigurationTableViewController.swift in Sources */,
 				304DAEB4208091EF006CFEA6 /* MainNetworkViewController.swift in Sources */,
+				306F4D1F20BED7B200572A8F /* NodeModelCell.swift in Sources */,
 				304DAEBE208091EF006CFEA6 /* AppKeyManagerTableViewController.swift in Sources */,
 				304DAEB6208091EF006CFEA6 /* MeshNodeCollectionViewCell.swift in Sources */,
 				30D40F902084808A00DC126F /* NodeModelsTableViewController.swift in Sources */,
