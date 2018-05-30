@@ -10,17 +10,15 @@ import Foundation
 public typealias SegmentedMessageAcknowledgeBlock = (_ ackData: Data, _ delay: DispatchTime) -> (Void)
 public struct LowerTransportLayer {
     var params : LowerTransportPDUParams!
-    var partialIncomingPDU: [Data]?
+    var partialIncomingPDU: [Data : Data]?
     var meshStateManager: MeshStateManager?
-    var lastSegO: UInt8 = 0
     var segmentedMessageAcknowledge: SegmentedMessageAcknowledgeBlock?
     var segAcknowledgeStartTime: DispatchTime?
 
     public init(withStateManager aStateManager: MeshStateManager, andSegmentedAcknowlegdeMent anAcknowledgementBlock: SegmentedMessageAcknowledgeBlock?) {
         segmentedMessageAcknowledge = anAcknowledgementBlock
         meshStateManager = aStateManager
-        partialIncomingPDU = [Data]()
-        lastSegO = 0x00
+        partialIncomingPDU = [Data : Data]()
     }
 
     public mutating func append(withIncomingPDU aPDU: Data, ctl aCTL: Data, ttl aTTL: Data, src aSRC: Data, dst aDST: Data, IVIndex anIVIndex: Data, andSEQ aSEQ: Data) -> Any? {
@@ -47,37 +45,26 @@ public struct LowerTransportLayer {
             let segO = Data([0x00 & UInt8((aPDU[4] & 0x03) << 3) | UInt8((aPDU[5] & 0xE0) >> 5)])
             let segN = Data([aPDU[5] & 0x1F])
             let segment = Data(aPDU[6..<aPDU.count])
-            let sequenceNumber = Data([aSEQ.first!, seqZero[0], seqZero[1]])
-            if segN == Data([0x00]) {
-                print("Breaking at no SegN")
-                print("")
-            }
-//            if segN == Data([0x07]) && segO == Data([0x07]) {
-//                print("Breaking at last SegN")
-//                print("")
-//            }
-            print("szMIC = \(szMIC.hexString()), seqZero = \(seqZero.hexString()), segO = \(segO.hexString()), segN = \(segN.hexString()), segment = \(segment.hexString()), sequence: \(sequenceNumber.hexString())")
-            print("Partial incomind PDU count = \(partialIncomingPDU!.count)")
-            if !partialIncomingPDU!.contains(segment) {
-                partialIncomingPDU!.append(segment)
+            let sequenceNumber = Data([aSEQ.first!, aSEQ[2] | seqZero[0], seqZero[1]])
+            print("szMIC = \(szMIC.hexString()), seqZero = \(seqZero.hexString()), segO = \(segO.hexString()), segN = \(segN.hexString()), segment = \(segment.hexString()), sequence: \(aSEQ.hexString())")
+            if partialIncomingPDU![segO] == nil {
+                partialIncomingPDU![segO] = segment
             } else {
-                print("Append seg: DUPE")
+                print("segment \(segO.hexString()) already received.")
             }
-            if segO == Data([0x00]) && segN != Data([0x00]) {
+            if partialIncomingPDU?.count == 1 && segN != Data([0x00]) {
                 if segmentedMessageAcknowledge != nil {
                     segAcknowledgeStartTime = DispatchTime.now()
-                    print("Segmetned timer start at \(segAcknowledgeStartTime!)")
+                    print("segment timer start at \(segAcknowledgeStartTime!)")
                 }
-            } else if segO != segN {
-                print("received part \(segO.hexString()) of \(segN.hexString()), SeqZero = \(seqZero.hexString()).")
-            } else {
+            } else if partialIncomingPDU!.count == Int(segN[0]) + 1 {
                 if segmentedMessageAcknowledge != nil {
                     if segN == Data([0x00]) {
                         segAcknowledgeStartTime = DispatchTime.now()
-                        print("Segmetned timer start at \(segAcknowledgeStartTime!)")
+                        print("segment timer start at \(segAcknowledgeStartTime!)")
                     }
                 }
-                print("received last part \(segO.hexString()) of \(segN.hexString()), SeqZero = \(seqZero.hexString()), reassembling")
+                print("received segment \(segO.hexString()) of \(segN.hexString()), SeqZero = \(seqZero.hexString()), reassembling")
                 if segAcknowledgeStartTime == nil {
                     segAcknowledgeStartTime = DispatchTime.now()
                 }
@@ -85,14 +72,19 @@ public struct LowerTransportLayer {
                 segmentedMessageAcknowledge?(ackData, delay)
                 segAcknowledgeStartTime = nil //Reset timer
                 var fullData = Data()
-                for aPart in partialIncomingPDU! {
-                    fullData.append(aPart)
+                let sortedSegmentKeys = Array(partialIncomingPDU!.keys).sorted { (a, b) -> Bool in
+                    return a[0] < b[0]
+                }
+                for aKey in sortedSegmentKeys {
+                    fullData.append(partialIncomingPDU![aKey]!)
                 }
                 partialIncomingPDU!.removeAll()
                 let upperLayer = UpperTransportLayer(withIncomingPDU: fullData, ctl: ctl, akf: isAppKey, aid: aid, seq: sequenceNumber, src: aSRC, dst: aDST, szMIC: Int(szMIC[0]), ivIndex: anIVIndex, andMeshState: meshStateManager!)
 
                 //Return a parsed message
                 return upperLayer.assembleMessage()
+            } else {
+                print("Received unordered message, waiting for rest of messages")
             }
         }
         return nil

@@ -110,7 +110,7 @@
                         </label>
                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" lineBreakMode="tailTruncation" numberOfLines="6" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="vs8-VX-zFU">
                             <rect key="frame" x="21" y="92" width="257" height="83.666666666666686"/>
-                            <string key="text">If you cannot discovery any mesh nodes, try the following  • Ensure nodes are advertising Mesh Provisioning Service. • Ensure nodes are not already provisioned. • Turn Bluetooth Off for 10 seconds to clear the BLE cache.</string>
+                            <string key="text">If you cannot discover any mesh nodes, try the following:  • Ensure nodes are advertising Mesh Provisioning Service. • Ensure nodes are not already provisioned. • Turn Bluetooth Off for 10 seconds to clear the BLE cache.</string>
                             <fontDescription key="fontDescription" name="TrebuchetMS" family="Trebuchet MS" pointSize="12"/>
                             <color key="textColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             <nil key="highlightedColor"/>
@@ -897,29 +897,45 @@ provisioning and then configuring a device.</string>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
                         <prototypes>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" accessoryType="disclosureIndicator" indentationWidth="10" reuseIdentifier="MeshModelEntryCell" textLabel="RmD-cx-RzP" detailTextLabel="lIR-fK-eyu" rowHeight="56" style="IBUITableViewCellStyleSubtitle" id="0xZ-R6-cXc">
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" accessoryType="disclosureIndicator" indentationWidth="10" reuseIdentifier="MeshModelEntryCell" id="0xZ-R6-cXc" customClass="NodeModelCell" customModule="nRFMeshProvision_Example" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="55.333333333333343" width="375" height="56"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="0xZ-R6-cXc" id="oWL-7C-Dvb">
                                     <rect key="frame" x="0.0" y="0.0" width="341" height="55.666666666666664"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
-                                        <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Title" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="RmD-cx-RzP">
-                                            <rect key="frame" x="16.000000000000004" y="8.9999999999999982" width="33.333333333333336" height="20.333333333333332"/>
-                                            <autoresizingMask key="autoresizingMask"/>
-                                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                        <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Title" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="V8n-oR-b0Y">
+                                            <rect key="frame" x="16" y="10.666666666666664" width="36" height="20"/>
+                                            <fontDescription key="fontDescription" name="TrebuchetMS" family="Trebuchet MS" pointSize="17"/>
                                             <nil key="textColor"/>
                                             <nil key="highlightedColor"/>
                                         </label>
-                                        <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Subtitle" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="lIR-fK-eyu">
-                                            <rect key="frame" x="15.999999999999996" y="31.333333333333332" width="43.666666666666664" height="14.333333333333334"/>
-                                            <autoresizingMask key="autoresizingMask"/>
-                                            <fontDescription key="fontDescription" type="system" pointSize="12"/>
-                                            <nil key="textColor"/>
+                                        <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Subtitle" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="FNh-bU-8BX">
+                                            <rect key="frame" x="16" y="30" width="43" height="14"/>
+                                            <fontDescription key="fontDescription" name="TrebuchetMS" family="Trebuchet MS" pointSize="12"/>
+                                            <color key="textColor" red="0.38034743069999999" green="0.38041785360000002" blue="0.38034299020000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                             <nil key="highlightedColor"/>
                                         </label>
+                                        <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="ic_pub_sub_24pt" translatesAutoresizingMaskIntoConstraints="NO" id="9k0-AR-oXW" userLabel="statusIcon">
+                                            <rect key="frame" x="309" y="16" width="24" height="24"/>
+                                        </imageView>
                                     </subviews>
+                                    <constraints>
+                                        <constraint firstItem="9k0-AR-oXW" firstAttribute="centerY" secondItem="oWL-7C-Dvb" secondAttribute="centerY" id="0AT-WX-9YR"/>
+                                        <constraint firstItem="V8n-oR-b0Y" firstAttribute="top" secondItem="oWL-7C-Dvb" secondAttribute="top" constant="11.000000000000142" id="5U3-yU-W0t"/>
+                                        <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="V8n-oR-b0Y" secondAttribute="trailing" constant="20" symbolic="YES" id="9bd-MW-GXd"/>
+                                        <constraint firstItem="V8n-oR-b0Y" firstAttribute="leading" secondItem="oWL-7C-Dvb" secondAttribute="leading" constant="16" id="C7t-mU-q0J"/>
+                                        <constraint firstItem="FNh-bU-8BX" firstAttribute="leading" secondItem="oWL-7C-Dvb" secondAttribute="leading" constant="16" id="S0s-VJ-12H"/>
+                                        <constraint firstAttribute="bottom" secondItem="FNh-bU-8BX" secondAttribute="bottom" constant="11.666666666666522" id="g8c-8N-XbC"/>
+                                        <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="FNh-bU-8BX" secondAttribute="trailing" constant="20" symbolic="YES" id="wse-NG-iWO"/>
+                                        <constraint firstAttribute="trailing" secondItem="9k0-AR-oXW" secondAttribute="trailing" constant="8" id="zm1-b5-xcH"/>
+                                    </constraints>
                                 </tableViewCellContentView>
+                                <connections>
+                                    <outlet property="statusIcon" destination="9k0-AR-oXW" id="g7y-9n-8AG"/>
+                                    <outlet property="subtitleLabel" destination="FNh-bU-8BX" id="szp-S6-oYK"/>
+                                    <outlet property="titleLabel" destination="V8n-oR-b0Y" id="DEe-Xd-Ivy"/>
+                                </connections>
                             </tableViewCell>
                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="MeshNodeDestructiveCell" textLabel="DyA-Pc-hnv" style="IBUITableViewCellStyleDefault" id="nra-Q6-oen">
                                 <rect key="frame" x="0.0" y="111.33333333333334" width="375" height="56"/>
@@ -976,16 +992,16 @@ provisioning and then configuring a device.</string>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Title" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="ZbZ-Ig-UgQ">
-                                            <rect key="frame" x="16.000000000000004" y="12" width="35.333333333333336" height="20"/>
+                                            <rect key="frame" x="16.000000000000004" y="11.999999999999998" width="33.333333333333336" height="20.333333333333332"/>
                                             <autoresizingMask key="autoresizingMask"/>
-                                            <fontDescription key="fontDescription" name="TrebuchetMS" family="Trebuchet MS" pointSize="17"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                             <nil key="textColor"/>
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Detail" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="eBI-t4-r0j">
-                                            <rect key="frame" x="300" y="14.000000000000002" width="40" height="17.666666666666668"/>
+                                            <rect key="frame" x="296" y="11.999999999999998" width="44" height="20.333333333333332"/>
                                             <autoresizingMask key="autoresizingMask"/>
-                                            <fontDescription key="fontDescription" name="TrebuchetMS" family="Trebuchet MS" pointSize="15"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                             <color key="textColor" red="0.38034743069999999" green="0.38041785360000002" blue="0.38034299020000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                             <nil key="highlightedColor"/>
                                         </label>
@@ -1008,6 +1024,40 @@ provisioning and then configuring a device.</string>
                                         </label>
                                     </subviews>
                                 </tableViewCellContentView>
+                            </tableViewCell>
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="ModelConfigurationToggleCell" id="Txa-CR-jkS" customClass="ToggleControlTableViewCell" customModule="nRFMeshProvision_Example" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="187.33333333333334" width="375" height="44"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="Txa-CR-jkS" id="psN-KF-lRz">
+                                    <rect key="frame" x="0.0" y="0.0" width="375" height="43.666666666666664"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                    <subviews>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Toggle State control" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="yx4-wO-CNd">
+                                            <rect key="frame" x="16" y="12" width="152.66666666666666" height="20"/>
+                                            <fontDescription key="fontDescription" name="TrebuchetMS" family="Trebuchet MS" pointSize="17"/>
+                                            <nil key="textColor"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                        <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="CoF-zM-jU8">
+                                            <rect key="frame" x="308" y="7" width="51" height="31"/>
+                                            <color key="onTintColor" red="0.0" green="0.61176470589999998" blue="0.87058823529999996" alpha="1" colorSpace="calibratedRGB"/>
+                                            <connections>
+                                                <action selector="didSwitchToggleState:" destination="Txa-CR-jkS" eventType="valueChanged" id="baD-iY-njH"/>
+                                            </connections>
+                                        </switch>
+                                    </subviews>
+                                    <constraints>
+                                        <constraint firstAttribute="trailing" secondItem="CoF-zM-jU8" secondAttribute="trailing" constant="18" id="95B-rs-bYk"/>
+                                        <constraint firstItem="yx4-wO-CNd" firstAttribute="leading" secondItem="psN-KF-lRz" secondAttribute="leading" constant="16" id="MqM-Na-IUh"/>
+                                        <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="yx4-wO-CNd" secondAttribute="trailing" constant="20" id="Yja-6J-S2K"/>
+                                        <constraint firstItem="CoF-zM-jU8" firstAttribute="centerY" secondItem="psN-KF-lRz" secondAttribute="centerY" id="cwE-NA-WMg"/>
+                                        <constraint firstItem="yx4-wO-CNd" firstAttribute="centerY" secondItem="psN-KF-lRz" secondAttribute="centerY" id="oh2-c0-0qb"/>
+                                    </constraints>
+                                </tableViewCellContentView>
+                                <connections>
+                                    <outlet property="stateLabel" destination="yx4-wO-CNd" id="fL9-ze-3m3"/>
+                                    <outlet property="toggleSwitch" destination="CoF-zM-jU8" id="fYE-Sm-UFf"/>
+                                </connections>
                             </tableViewCell>
                         </prototypes>
                         <sections/>
@@ -1246,6 +1296,7 @@ provisioning and then configuring a device.</string>
         <image name="ic_add_circle_outline" width="24" height="24"/>
         <image name="ic_flag_36pt" width="23" height="23"/>
         <image name="ic_lan_36pt" width="23" height="23"/>
+        <image name="ic_pub_sub_24pt" width="24" height="24"/>
         <image name="ic_settings" width="24" height="24"/>
         <image name="ic_vpn_key_36pt" width="23" height="23"/>
     </resources>

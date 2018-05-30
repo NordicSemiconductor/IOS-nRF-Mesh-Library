@@ -10,7 +10,7 @@ import UIKit
 import nRFMeshProvision
 
 class NodeModelsTableViewController: UITableViewController, ProvisionedMeshNodeDelegate {
-    
+ 
     // MARK: - Properties
     private var nodeEntry: MeshNodeEntry!
     private var selectedModel: Data!
@@ -27,6 +27,7 @@ class NodeModelsTableViewController: UITableViewController, ProvisionedMeshNodeD
         super.viewWillAppear(animated)
         meshManager = (UIApplication.shared.delegate as? AppDelegate)?.meshManager
         proxyNode = meshManager.proxyNode()
+        tableView.reloadData()
     }
 
     // MARK: - TableViewController DataSource & Delegate
@@ -64,34 +65,9 @@ class NodeModelsTableViewController: UITableViewController, ProvisionedMeshNodeD
         } else {
             cell = tableView.dequeueReusableCell(withIdentifier: "MeshModelEntryCell", for: indexPath)
             // Configure the cell...
-            let aModel = nodeEntry.elements![indexPath.section].allSigAndVendorModels()[indexPath.row]
-            if aModel.count == 2 {
-                cell.detailTextLabel?.text = "SIG Model ID: 0x\(aModel.hexString())"
-                let upperInt = UInt16(aModel[0]) << 8
-                let lowerInt = UInt16(aModel[1])
-                if let modelIdentifier = MeshModelIdentifiers(rawValue: upperInt | lowerInt) {
-                    let modelString = MeshModelIdentifierStringConverter().stringValueForIdentifier(modelIdentifier)
-                    cell.textLabel?.text = modelString
-                } else {
-                    cell.textLabel?.text = aModel.hexString()
-                }
-            } else {
-                let vendorCompanyData = Data(aModel[0...1])
-                let vendorModelId     = Data(aModel[2...3])
-                var vendorModelInt    =  UInt32(0)
-                vendorModelInt |= UInt32(aModel[0]) << 24
-                vendorModelInt |= UInt32(aModel[1]) << 16
-                vendorModelInt |= UInt32(aModel[2]) << 8
-                vendorModelInt |= UInt32(aModel[3])
-                cell.detailTextLabel?.text = "Vendor Model"
-                if let vendorModelIdentifier = MeshVendorModelIdentifiers(rawValue: vendorModelInt) {
-                    let vendorModelString = MeshVendorModelIdentifierStringConverter().stringValueForIdentifier(vendorModelIdentifier)
-                    cell.textLabel?.text = vendorModelString
-                } else {
-                    let formattedModel = "\(vendorCompanyData.hexString()):\(vendorModelId.hexString())"
-                    cell.textLabel?.text  = formattedModel
-                }
-            }
+            let element = nodeEntry.elements![indexPath.section]
+            let aModel = element.allSigAndVendorModels()[indexPath.row]
+            (cell as! NodeModelCell).configureWithModel(aModel, inElement: element)
         }
         return cell
     }
@@ -127,6 +103,10 @@ class NodeModelsTableViewController: UITableViewController, ProvisionedMeshNodeD
     }
 
     // MARK: - ProvisionedMeshNodeDelegate
+    func receivedGenericOnOffStatusMessage(_ status: GenericOnOffStatusMessage) {
+        print("OnOff status = \(status.onOffStatus)")
+    }
+
     func nodeDidCompleteDiscovery(_ aNode: ProvisionedMeshNode) {
         //NOOP
     }

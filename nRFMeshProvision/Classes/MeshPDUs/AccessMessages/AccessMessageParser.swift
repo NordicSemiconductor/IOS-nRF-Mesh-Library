@@ -11,6 +11,7 @@ public struct AccessMessageParser {
     
     public func parseData(_ someData: Data, withOpcode anOpcode: Data, sourceAddress aSourceAddress: Data) -> Any? {
         switch anOpcode {
+            //Configuration Messages
         case Data([0x02]):
             return CompositionStatusMessage(withPayload: someData, andSoruceAddress: aSourceAddress)
         case Data([0x80, 0x03]):
@@ -25,6 +26,9 @@ public struct AccessMessageParser {
             return DefaultTTLStatusMessage(withPayload: someData, andSoruceAddress: aSourceAddress)
         case Data([0x80, 0x4A]):
             return NodeResetStatusMessage(withPayload: someData, andSoruceAddress: aSourceAddress)
+            //Generic Model Messages
+        case Data([0x82, 0x04]):
+            return GenericOnOffStatusMessage(withPayload: someData, andSoruceAddress: aSourceAddress)
         default:
             return nil
         }

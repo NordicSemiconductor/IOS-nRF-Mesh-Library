@@ -3,6 +3,7 @@
 ## About
 
 An early alpha version of the Bluetooth Mesh specification, this library will allow you to provision and configure bluetooth Mesh compliant nodes.
+Addtionally, GenericOnOff Server models can be controlled from within the Example Application.
 This is a preview version that has missing features and capabilities that are going to be added in the near future. 
 
 ## Requirements

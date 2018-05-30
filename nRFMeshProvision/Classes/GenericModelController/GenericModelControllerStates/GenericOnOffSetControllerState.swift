@@ -1,31 +1,35 @@
 //
-//  CompositionGetConfiguratorState.swift
+//  GenericOnOffSetControllerState.swift
 //  nRFMeshProvision
 //
-//  Created by Mostafa Berg on 06/02/2018.
+//  Created by Mostafa Berg on 28/05/2018.
 //
 
-import CoreBluetooth
 import Foundation
+import CoreBluetooth
 
-class CompositionGetConfiguratorState: NSObject, ConfiguratorStateProtocol {
+class GenericOnOffSetControllerState: NSObject, GenericModelControllerStateProtocol {
+    
     // MARK: - Properties
     private var proxyService            : CBService!
     private var dataInCharacteristic    : CBCharacteristic!
     private var dataOutCharacteristic   : CBCharacteristic!
-
+    private var networkLayer            : NetworkLayer!
+    private var segmentedData           : Data
+    private var targetState             : Data?
+    
     // MARK: - ConfiguratorStateProtocol
-    var target          : ProvisionedMeshNodeProtocol
-    var stateManager    : MeshStateManager
-    var destinationAddress: Data
-    private var segmentedData: Data
-    // MARK: - Properties
-    var networkLayer            : NetworkLayer!
-    required init(withTargetProxyNode aNode: ProvisionedMeshNodeProtocol, destinationAddress aDestinationAddress: Data, andStateManager aStateManager: MeshStateManager) {
-        segmentedData = Data()
+    var destinationAddress  : Data
+    var target              : ProvisionedMeshNodeProtocol
+    var stateManager        : MeshStateManager
+    
+    required init(withTargetProxyNode aNode: ProvisionedMeshNodeProtocol,
+                  destinationAddress aDestinationAddress: Data,
+                  andStateManager aStateManager: MeshStateManager) {
         target = aNode
-        destinationAddress = aDestinationAddress
+        segmentedData = Data()
         stateManager = aStateManager
+        destinationAddress = aDestinationAddress
         super.init()
         target.basePeripheral().delegate = self
         //If services and characteristics are already discovered, set them now
@@ -34,33 +38,40 @@ class CompositionGetConfiguratorState: NSObject, ConfiguratorStateProtocol {
         dataInCharacteristic    = discovery.dataInCharacteristic
         dataOutCharacteristic   = discovery.dataOutCharacteristic
         
-        networkLayer = NetworkLayer(withStateManager: aStateManager, andSegmentAcknowlegdement: { (ackData, delay) -> (Void) in
+        networkLayer = NetworkLayer(withStateManager: stateManager, andSegmentAcknowlegdement: { (ackData, delay) -> (Void) in
             self.acknowlegeSegment(withAckData: ackData, withDelay: delay)
         })
     }
-
     
     func humanReadableName() -> String {
-        return "Composition Get"
+        return "Generic OnOff Set"
     }
-
+    
+    public func setTargetState(aTargetState: Data) {
+        targetState = aTargetState
+    }
+    
     func execute() {
-        let message = CompositionGetMessage()
-        //Send to destination (unicast)
+        var message: GenericOnOffSetMessage
+        if let targetState = targetState {
+            message = GenericOnOffSetMessage(withTargetState: targetState)
+        } else {
+            print("No target state set, nothing to execute")
+            return
+        }
+        //Send to destination
         let payloads = message.assemblePayload(withMeshState: stateManager.state(), toAddress: destinationAddress)
-        print("Ready to send \(payloads!.count) payloads")
         for aPayload in payloads! {
-            var data = Data([0x00])
-            data.append(Data(aPayload))
+            var data = Data([0x00]) //Type => Network
+            data.append(aPayload)
+            print("Full PDU: \(data.hexString())")
             if data.count <= target.basePeripheral().maximumWriteValueLength(for: .withoutResponse) {
-                print("Composition get message to set:\(data.hexString())")
-                target.basePeripheral().writeValue(data,
-                                                   for: dataInCharacteristic,
-                                                   type: .withoutResponse)
+                print("Sending  data: \(data.hexString())")
+                target.basePeripheral().writeValue(data, for: dataInCharacteristic, type: .withoutResponse)
             } else {
                 print("maximum write length is shorter than PDU, will Segment")
-                var segmentedData = [Data]()
-                data = Data(data.dropFirst()) //Remove old header as it's going to be added in SAR
+                var segmentedProvisioningData = [Data]()
+                data = Data(data.dropFirst()) //Drop old network haeder, SAR will now set that instead.
                 let chunkRanges = self.calculateDataRanges(data, withSize: 19)
                 for aRange in chunkRanges {
                     var header = Data()
@@ -74,14 +85,30 @@ class CompositionGetConfiguratorState: NSObject, ConfiguratorStateProtocol {
                     }
                     var chunkData = Data(header)
                     chunkData.append(Data(data[aRange]))
-                    segmentedData.append(Data(chunkData))
+                    segmentedProvisioningData.append(Data(chunkData))
                 }
-                for aSegment in segmentedData {
-                    print("Sending segmented data : \(aSegment.hexString())")
-                    target.basePeripheral().writeValue(aSegment,
-                                                            for: dataInCharacteristic,
-                                                            type: .withoutResponse)
+                for aSegment in segmentedProvisioningData {
+                    print("Sending segment: \(aSegment.hexString())")
+                    target.basePeripheral().writeValue(aSegment, for: dataInCharacteristic, type: .withoutResponse)
                 }
+            }
+        }
+    }
+    
+    func receivedData(incomingData : Data) {
+        if incomingData[0] == 0x01 {
+            print("Secure beacon: \(incomingData.hexString())")
+        } else {
+            let strippedOpcode = Data(incomingData.dropFirst())
+            if let result = networkLayer.incomingPDU(strippedOpcode) {
+                if result is GenericOnOffStatusMessage {
+                    let genericOnOffStatus = result as! GenericOnOffStatusMessage
+                    target.delegate?.receivedGenericOnOffStatusMessage(genericOnOffStatus)
+                    let nextState = SleepConfiguratorState(withTargetProxyNode: target, destinationAddress: destinationAddress, andStateManager: stateManager)
+                    target.switchToState(nextState)
+                }
+            } else {
+                print("ignoring non GenericOnOffStatus message")
             }
         }
     }
@@ -89,7 +116,6 @@ class CompositionGetConfiguratorState: NSObject, ConfiguratorStateProtocol {
     private func calculateDataRanges(_ someData: Data, withSize aChunkSize: Int) -> [Range<Int>] {
         var totalLength = someData.count
         var ranges = [Range<Int>]()
-        
         var partIdx = 0
         while (totalLength > 0) {
             var range : Range<Int>
@@ -103,27 +129,11 @@ class CompositionGetConfiguratorState: NSObject, ConfiguratorStateProtocol {
             ranges.append(range)
             partIdx += 1
         }
-        
         return ranges
     }
-
-    func receivedData(incomingData : Data) {
-        if incomingData[0] == 0x01 {
-            print("Secure beacon: \(incomingData.hexString())")
-        } else {
-            let strippedOpcode: Data = Data(incomingData.dropFirst())
-            if let result = networkLayer.incomingPDU(strippedOpcode) {
-                if result is CompositionStatusMessage {
-                    let compositionStatus = result as! CompositionStatusMessage
-                    target.delegate?.receivedCompositionData(compositionStatus)
-                } else {
-                    print("Ignoring non composition status message")
-                }
-            }
-        }
-    }
-
+    
     private func acknowlegeSegment(withAckData someData: Data, withDelay aDelay: DispatchTime) {
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() - DispatchTimeInterval.nanoseconds(Int(aDelay.uptimeNanoseconds))) {
             print("Sending acknowledgement: \(someData.hexString())")
             if someData.count <= self.target.basePeripheral().maximumWriteValueLength(for: .withoutResponse) {
                 self.target.basePeripheral().writeValue(someData, for: self.dataInCharacteristic, type: .withoutResponse)
@@ -151,27 +161,20 @@ class CompositionGetConfiguratorState: NSObject, ConfiguratorStateProtocol {
                     self.target.basePeripheral().writeValue(aSegment, for: self.dataInCharacteristic, type: .withoutResponse)
                 }
             }
-
-            DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + .seconds(2),
-                                          execute: {
-                                            let appKeySetState = AppKeyAddConfiguratorState(withTargetProxyNode: self.target,
-                                                                                            destinationAddress: self.destinationAddress,
-                                                                                            andStateManager: self.stateManager)
-                                            self.target.switchToState(appKeySetState)
-            })
+        }
     }
-
+    
     // MARK: - CBPeripheralDelegate
     func peripheral(_ peripheral: CBPeripheral, didDiscoverServices error: Error?) {
         //NOOP
     }
-
+    
     func peripheral(_ peripheral: CBPeripheral, didDiscoverCharacteristicsFor service: CBService, error: Error?) {
         //NOOP
     }
-
+    
     var lastMessageType = 0xC0
-
+    
     func peripheral(_ peripheral: CBPeripheral, didUpdateValueFor characteristic: CBCharacteristic, error: Error?) {
         print("Cahrcateristic value updated: \(characteristic.value!.hexString())")
         //SAR handling
@@ -187,10 +190,13 @@ class CompositionGetConfiguratorState: NSObject, ConfiguratorStateProtocol {
             segmentedData.append(Data(characteristic.value!.dropFirst()))
         } else if characteristic.value![0] & 0xC0 == 0x80 {
             lastMessageType = 0x80
+            print("Segmented data cont")
             segmentedData.append(characteristic.value!.dropFirst())
         } else if characteristic.value![0] & 0xC0 == 0xC0 {
             lastMessageType = 0xC0
+            print("Segmented data end")
             segmentedData.append(Data(characteristic.value!.dropFirst()))
+            print("Reassembled data!: \(segmentedData.hexString())")
             //Copy data and send it to NetworkLayer
             receivedData(incomingData: Data(segmentedData))
             segmentedData = Data()
@@ -198,7 +204,7 @@ class CompositionGetConfiguratorState: NSObject, ConfiguratorStateProtocol {
             receivedData(incomingData: Data(characteristic.value!))
         }
     }
-
+    
     func peripheral(_ peripheral: CBPeripheral, didUpdateNotificationStateFor characteristic: CBCharacteristic, error: Error?) {
         print("Characteristic notification state changed")
     }
