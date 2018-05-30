@@ -1,4 +1,12 @@
 ## Changelog
+- **0.4**:
+    - Adds GenericOnOffServer control.
+    - Adds UI improvement in Element view, now subscription,publication and both states are shown on the cell.
+    - Adds UI improvement for GenericOnOff control to disable the feature if an AppKey is not bound to the model.
+    - Bugfix: Access messages no longer use DeviceKey and DeviceNonce in cases where Appkey should be used.
+    - Bugfix: Sequence number's first octet was not calculated properly, causing it to always be 0x00.
+    - Bugfix: Fixed Typo in scanner view "Discovery" -> "Discover".
+
 - **0.3**:
     - TestFlight Release.
     - First App Store Release.
