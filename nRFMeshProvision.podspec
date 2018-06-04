@@ -8,16 +8,16 @@
 
 Pod::Spec.new do |s|
   s.name             = 'nRFMeshProvision'
-  s.version          = '0.4'
-  s.summary          = 'A Bluetooth Mesh compliant provisioner and configurator'
+  s.version          = '1.0'
+  s.summary          = 'A Bluetooth Mesh library'
   s.description      = <<-DESC
-An early alpha version of the Bluetooth Mesh specification, this library will allow you to provision and configure bluetooth Mesh compliant nodes.
-This is a preview version that will have missing features and capabilities that are going to be added in the near future.
+  nRF Mesh is a Bluetooth Mesh compliant library that has many features such as provisioning, configuration and control of Bluetooth Mesh compliant nodes.
+This Library is under extensive development and will have missing features and capabilities that are going to be added in the near future.
                        DESC
-  s.homepage         = 'https://github.com/NordicPlayground/IOS-nRF-Mesh-Library'
+  s.homepage         = 'https://github.com/NordicSemiconductor/IOS-nRF-Mesh-Library'
   s.license          = { :type => 'BSD-3-Clause', :file => 'LICENSE' }
   s.author           = { 'mostafaberg' => 'mostafa.berg@nordicsemi.no' }
-  s.source           = { :git => 'https://github.com/NordicPlayground/IOS-nRF-Mesh-Library.git', :tag => s.version.to_s }
+  s.source           = { :git => 'https://github.com/NordicSemiconductor/IOS-nRF-Mesh-Library.git', :tag => s.version.to_s }
   s.social_media_url = 'https://twitter.com/nordictweets'
   s.platform         = :ios
   s.static_framework = true
