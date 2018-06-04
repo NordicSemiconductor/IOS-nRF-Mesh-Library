@@ -53,7 +53,6 @@ class ConfirmationProvisioningState: NSObject, ProvisioningStateProtocol {
                     target.requireUserInput(outputActionType: targetAction, outputLength: actionLength) { (anInput) -> (Void) in
                         DispatchQueue.main.async {
                             self.didreceiveUserInput(anInput)
-
                         }
                     }
                 }
