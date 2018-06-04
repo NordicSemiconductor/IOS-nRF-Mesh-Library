@@ -378,6 +378,10 @@ class SettingsViewController: UIViewController, UITextFieldDelegate, UITableView
         return aCell
     }
 
+    func tableView(_ tableView: UITableView, shouldHighlightRowAt indexPath: IndexPath) -> Bool {
+        return indexPath.section != 4
+    }
+
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let section = indexPath.section
         let row = indexPath.row
@@ -452,7 +456,7 @@ class SettingsViewController: UIViewController, UITextFieldDelegate, UITableView
             if row == 0 {
                 var versionNumber: String = "N/A"
                 if let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String {
-                    versionNumber = "v\(version)"
+                    versionNumber = "V \(version)"
                 }
                 return versionNumber
             } else if row == 1 {
