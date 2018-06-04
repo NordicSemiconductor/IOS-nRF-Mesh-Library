@@ -66,11 +66,10 @@ class StartProvisionProvisioningState: NSObject, ProvisioningStateProtocol {
         if outputOutOfBoundAction! == .noOutput {
             startPDU.append(contentsOf: [0x00, 0x00, 0x00 ]) //No OOB = 0, Action = 0 & size = 0
         } else {
-            if outputOutOfBoundAction! == .outputNumeric {
-                startPDU.append(contentsOf: [0x02, //Output OOB opcode, better implementation TBD when we support all methods
-                                             outputOutOfBoundAction.toByteValue()!,
-                                             outputOutOfBoundSize])
-            }
+            //Output OOB only is supported, InputOOB will be implemented in the near future.
+            startPDU.append(contentsOf: [0x02,
+                                         outputOutOfBoundAction.toByteValue()!,
+                                         outputOutOfBoundSize])
         }
 
         print("Provision Start PDU Sent: \(startPDU.hexString())")
