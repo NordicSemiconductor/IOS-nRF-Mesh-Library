@@ -14,6 +14,9 @@ public struct GenericOnOffSetMessage {
     public init(withTargetState aTargetState: Data) {
         opcode = Data([0x82, 0x02])
         payload = aTargetState
+        //Sequence number used as TID
+        let tid = Data([SequenceNumber().sequenceData().last!])
+        payload.append(tid)
     }
 
     public func assemblePayload(withMeshState aState: MeshState, toAddress aDestinationAddress: Data) -> [Data]? {
