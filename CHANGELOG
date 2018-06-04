@@ -1,4 +1,14 @@
 ## Changelog
+- **1.0**:
+    - Adds a better approach for GenericOnOffSet messages to be sent to all subscribed addresses on the target element. If no subscriptions are present, messages will be sent to the element's unicast.
+    - Adds element unicast address within the node view to allow easier configuration.
+    - Adds Application Version and build numbers in the settings view.
+    - Adds a more descriptive title depending on OOB type in the user input view.
+    - Fixes some typos and misplaced text in the bundled application.
+    - Bugfix: Fixed a crash when the input OOB length won't fit within an UIn16 value.
+    - Bugfix: Input and Output OOB actions where wrongly parsed as Octets instead of bit fields, causing a crash when a node supports more than one action type.
+    - Bugfix: Fixed a bug causing Output OOB action types that are not Numeric OOB to never trigger due to a legacy check that's no longer required.
+
 - **0.4**:
     - Adds GenericOnOffServer control.
     - Adds UI improvement in Element view, now subscription,publication and both states are shown on the cell.

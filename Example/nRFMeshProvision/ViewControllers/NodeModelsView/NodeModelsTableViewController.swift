@@ -52,7 +52,9 @@ class NodeModelsTableViewController: UITableViewController, ProvisionedMeshNodeD
         if section == nodeEntry.elements?.count {
             return "Node Reset"
         } else {
-            return "Element \(section)"
+            let unicast = nodeEntry.nodeUnicast!
+            let elementAddress = Data([unicast[0], unicast[1] + UInt8(section)])
+            return "Element \(section). Unicast: \(elementAddress.hexString())"
         }
     }
 

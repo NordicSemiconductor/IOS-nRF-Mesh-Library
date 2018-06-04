@@ -38,24 +38,27 @@ class ConfirmationProvisioningState: NSObject, ProvisioningStateProtocol {
     }
    
     func execute() {
-        //TODO: Use OOB Length info to set text field maxlength.
-        //TODO: Implement different states for every Input OOB and Output OOB type to avoid
-        //overloading this state.
         let capabilities = target.provisioningExchangeData().capabilitiesData
-        let outputOOBAction = OutputOutOfBoundActions(rawValue: UInt16(capabilities[8] << 0xFF) + UInt16(capabilities[9] & 0x00FF))!
-        if outputOOBAction == .noOutput {
+        let supportedOutputActions = OutputOutOfBoundActions.calculateOutputActionsFromBitMask(aBitMask: UInt16(capabilities[8] << 0xFF) + UInt16(capabilities[9] & 0x00FF))
+        if supportedOutputActions.count == 0 || supportedOutputActions.contains(.noOutput) {
             print("No OutputOOB capabilities")
             let simulatedEmptyInputStringForNoAction = "0000000000000000"
             self.didreceiveUserInput(simulatedEmptyInputStringForNoAction)
         } else {
             print("Requires user input...")
-            target.requireUserInput { (anInput) -> (Void) in
-                DispatchQueue.main.async {
-                    self.didreceiveUserInput(anInput)
+            if supportedOutputActions.count > 0 {
+                if supportedOutputActions.first != nil {
+                    let targetAction = supportedOutputActions.first!
+                    let actionLength = capabilities[7]
+                    target.requireUserInput(outputActionType: targetAction, outputLength: actionLength) { (anInput) -> (Void) in
+                        DispatchQueue.main.async {
+                            self.didreceiveUserInput(anInput)
+                        }
+                    }
                 }
-       }
+            }
+        }
     }
-   }
 
     func didreceiveUserInput(_ anInput: String) {
         //Generate ConfirmationInputs
@@ -80,9 +83,8 @@ class ConfirmationProvisioningState: NSObject, ProvisioningStateProtocol {
         print("confirmationKey: \(confirmationKey!.hexString())")
         //Next step is to calculate the confirmation provisioner value
         //This is done by calculating AES-CMAC of (Random value || AuthVAlue) with salt (confirmationKey)
-        let intValue                    = CFSwapInt16BigToHost(UInt16(anInput)!)
+        let intValue                    = CFSwapInt32BigToHost(UInt32(anInput)!)
         let authBytes                   = Data(bytes: self.toByteArray(intValue)).leftPad(length: 16)
-        print("authBytes: \(authBytes)")
         target.receivedProvisionerUserInput(authBytes)
         if let randomProvisioner        = helper.generateRandom() {
             var confirmationData        = randomProvisioner

@@ -481,21 +481,40 @@ extension MeshProvisioningDataTableViewController: CBCentralManagerDelegate {
 }
 
 extension MeshProvisioningDataTableViewController: UnprovisionedMeshNodeDelegate {
+
     func nodeShouldDisconnect(_ aNode: UnprovisionedMeshNode) {
         if aNode == targetNode {
             centralManager.cancelPeripheralConnection(aNode.blePeripheral())
         }
     }
-    
-    func nodeRequiresUserInput(_ aNode: UnprovisionedMeshNode,
-                               completionHandler aHandler: @escaping (String) -> Void) {
+
+    func nodeRequiresUserInput(_ aNode: UnprovisionedMeshNode, outputAction: OutputOutOfBoundActions, length: UInt8, completionHandler aHandler: @escaping (String) -> (Void)) {
+        var titleString: String?
+        switch outputAction {
+            case .beep:
+                titleString = "Please enter number of beeps"
+            case .blink:
+                titleString = "Please enter number of blinks"
+            case .outputNumeric:
+                titleString = "please enter the numeric code"
+            case .outputAlphaNumeric:
+                titleString = "Please enter the alphanumeric code"
+            default:
+                titleString = "Please enter the confirmation code"
+        }
+
         let alertView = UIAlertController(title: "Device request",
-                                          message: "please enter confirmation code",
+                                          message: titleString!,
                                           preferredStyle: UIAlertControllerStyle.alert)
         var textField: UITextField?
         alertView.addTextField { (aTextField) in
-            aTextField.placeholder = "1234"
-            aTextField.keyboardType = .decimalPad
+            if outputAction == .outputAlphaNumeric {
+                aTextField.placeholder = "ABC123"
+                aTextField.keyboardType = .asciiCapable
+            } else {
+                aTextField.placeholder = "1234"
+                aTextField.keyboardType = .decimalPad
+            }
             textField = aTextField
         }
         let okAction = UIAlertAction(title: "Ok", style: .default) { (_) in
@@ -510,7 +529,7 @@ extension MeshProvisioningDataTableViewController: UnprovisionedMeshNodeDelegate
         alertView.addAction(cancelAction)
         self.present(alertView, animated: true, completion: nil)
     }
-    
+
     func nodeDidCompleteDiscovery(_ aNode: UnprovisionedMeshNode) {
         if aNode == targetNode {
             discoveryCompleted()

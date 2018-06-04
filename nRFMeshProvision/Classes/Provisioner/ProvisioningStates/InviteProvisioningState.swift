@@ -62,22 +62,34 @@ class InviteProvisioningState: NSObject, ProvisioningStateProtocol {
                 return
             }
             print("Received capabilities provisioning message")
-            let elementCount        = Int(data[2])
-            let algorithm           = ProvisioningAlgorithm(rawValue: UInt16(data[3] << 0xFF) + UInt16(data[4] & 0x00FF))!
-            let pubKeyType          = PublicKeyInformationAvailability(rawValue: data[5])!
-            let staticOOBType       = StaticOutOfBoundInformationAvailability(rawValue: data[6])!
-            let outputOOBSize       = data[7]
-            let outputOOBAction     = OutputOutOfBoundActions(rawValue: UInt16(data[8] << 0xFF) + UInt16(data[9] & 0x00FF))!
-            let inputOOBSize        = data[10]
-            let inputOOBAction      = InputOutOfBoundActions(rawValue: UInt16(data[11] << 0xFF) + UInt16(data[12] & 0x00FF))!
-            print("Element count: \(elementCount),Algorithm: \(algorithm), PublicKeyAvailable: \(pubKeyType), StaticOOBAvailable: \(staticOOBType), OutputOOBSize: \(outputOOBSize), OutputOOBAction: \(outputOOBAction), InputOOBSize: \(inputOOBSize), inputOOBACtion: \(inputOOBAction)")
-
-            //First two bytes are provisioning PDU related and are not used
+            let elementCount            = Int(data[2])
+            let algorithm               = ProvisioningAlgorithm(rawValue: UInt16(data[3] << 0xFF) + UInt16(data[4] & 0x00FF))!
+            let pubKeyType              = PublicKeyInformationAvailability(rawValue: data[5])!
+            let staticOOBType           = StaticOutOfBoundInformationAvailability(rawValue: data[6])!
+            let outputOOBSize           = data[7]
+            let supportedOutputActions  = OutputOutOfBoundActions.calculateOutputActionsFromBitMask(aBitMask: UInt16(data[8] << 0xFF) + UInt16(data[9] & 0x00FF))
+            let supportedInputActions   = InputOutOfBoundActions.calculateInputActionsFromBitmask(aBitMask: UInt16(data[11] << 0xFF) + UInt16(data[12] & 0x00FF))
+            let inputOOBSize            = data[10]
+            print("Element count: \(elementCount),Algorithm: \(algorithm), PublicKeyAvailable: \(pubKeyType), StaticOOBAvailable: \(staticOOBType), OutputOOBSize: \(outputOOBSize), InputOOBSize: \(inputOOBSize)")
+            if supportedOutputActions.count == 0 {
+                print("No output actions supported")
+            } else {
+                for anAction in supportedOutputActions {
+                    print("Supported Output Action: \(anAction.description())")
+                }
+            }
+            if supportedInputActions.count == 0 {
+                print("No input actions supported")
+            } else {
+                for anAction in supportedInputActions {
+                    print("Supported Input Action: \(anAction.description())")
+                }
+            }
             target.receivedCapabilitiesData(data.dropFirst().dropFirst())
 
             let nextState = StartProvisionProvisioningState(withTargetNode: target)
             
-            let capabilities = (elementCount, algorithm, pubKeyType, staticOOBType, outputOOBSize, outputOOBAction, inputOOBSize, inputOOBAction)
+            let capabilities = (elementCount, algorithm, pubKeyType, staticOOBType, outputOOBSize, supportedOutputActions, inputOOBSize, supportedInputActions)
             nextState.setCapabilities(capabilities)
 
             target.switchToState(nextState)

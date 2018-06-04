@@ -222,7 +222,19 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
         let elementIdx = selectedModelIndexPath.section
         let unicast = nodeEntry.nodeUnicast!
         let elementAddress = Data([unicast[0], unicast[1] + UInt8(elementIdx)])
-        targetNode.nodeGenericOnOffSet(elementAddress, onDestinationAddress: nodeEntry.nodeUnicast!, withtargetState: targetstate)
+
+        if let element = nodeEntry.elements?[selectedModelIndexPath.section] {
+            let targetModel = element.allSigAndVendorModels()[selectedModelIndexPath.row]
+            if let addresses = element.subscriptionAddressesForModelId(targetModel) {
+                for anAddress in addresses {
+                    targetNode.nodeGenericOnOffSet(elementAddress, onDestinationAddress: anAddress, withtargetState: targetstate)
+                }
+            } else {
+                 targetNode.nodeGenericOnOffSet(elementAddress, onDestinationAddress: nodeEntry.nodeUnicast!, withtargetState: targetstate)
+            }
+        } else {
+            targetNode.nodeGenericOnOffSet(elementAddress, onDestinationAddress: nodeEntry.nodeUnicast!, withtargetState: targetstate)
+        }
     }
 
     // MARK: - ProvisionedMeshNodeDelegate
@@ -482,7 +494,7 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
             if let element = nodeEntry.elements?[selectedModelIndexPath.section] {
                 let targetModel = element.allSigAndVendorModels()[selectedModelIndexPath.row]
                 if let keyIndex = element.boundAppKeyIndexForModelId(targetModel) {
-                    aCell.textLabel?.text = "Key Binded"
+                    aCell.textLabel?.text = "Key Bound"
                     aCell.detailTextLabel?.text = "Key index \(keyIndex.hexString())"
                 } else {
                     aCell.textLabel?.text = "None"

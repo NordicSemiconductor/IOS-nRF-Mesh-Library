@@ -20,9 +20,9 @@ class StartProvisionProvisioningState: NSObject, ProvisioningStateProtocol {
     private var publicKeyAvailability           : PublicKeyInformationAvailability!
     private var staticOutOfBoundAvailability    : StaticOutOfBoundInformationAvailability!
     private var outputOutOfBoundSize            : UInt8!
-    private var outputOutOfBoundAction          : OutputOutOfBoundActions!
+    private var outputOutOfBoundActions         : [OutputOutOfBoundActions]!
     private var inputOutOfBoundSize             : UInt8!
-    private var inputOutOfBoundAction           : InputOutOfBoundActions!
+    private var inputOutOfBoundActions          : [InputOutOfBoundActions]!
     
     func humanReadableName() -> String {
         return "ProvisioningStart"
@@ -41,15 +41,15 @@ class StartProvisionProvisioningState: NSObject, ProvisioningStateProtocol {
         dataOutCharacteristic   = discovery.dataOutCharacteristic
     }
    
-    public func setCapabilities(_ someCapabilities: (elementcount: Int, algorithm: ProvisioningAlgorithm, publicKeyAvailability: PublicKeyInformationAvailability, staticOutOfBoundAvailability: StaticOutOfBoundInformationAvailability, outOfBoundSize: UInt8, outOfBoundAction: OutputOutOfBoundActions, inputOutOfBoundsize: UInt8, inputOutOfBoundAction: InputOutOfBoundActions)) {
+    public func setCapabilities(_ someCapabilities: (elementcount: Int, algorithm: ProvisioningAlgorithm, publicKeyAvailability: PublicKeyInformationAvailability, staticOutOfBoundAvailability: StaticOutOfBoundInformationAvailability, outOfBoundSize: UInt8, outOfBoundAction: [OutputOutOfBoundActions], inputOutOfBoundsize: UInt8, inputOutOfBoundAction: [InputOutOfBoundActions])) {
         elementCount                    = someCapabilities.elementcount
         algorithm                       = someCapabilities.algorithm
         publicKeyAvailability           = someCapabilities.publicKeyAvailability
         staticOutOfBoundAvailability    = someCapabilities.staticOutOfBoundAvailability
         outputOutOfBoundSize            = someCapabilities.outOfBoundSize
-        outputOutOfBoundAction          = someCapabilities.outOfBoundAction
+        outputOutOfBoundActions         = someCapabilities.outOfBoundAction
         inputOutOfBoundSize             = someCapabilities.inputOutOfBoundsize
-        inputOutOfBoundAction           = someCapabilities.inputOutOfBoundAction
+        inputOutOfBoundActions          = someCapabilities.inputOutOfBoundAction
     }
 
     func execute() {
@@ -63,14 +63,14 @@ class StartProvisionProvisioningState: NSObject, ProvisioningStateProtocol {
         let fipsEllipticAlgorithm   : UInt8 = 0x00 //FIPS P-256
         let oobpubkeyAvailability   : UInt8 = 0x00 //No OOB public key has been used
         var startPDU = Data([0x03, provisionStartCommand, fipsEllipticAlgorithm, oobpubkeyAvailability])
-        if outputOutOfBoundAction! == .noOutput {
+        if outputOutOfBoundActions.count == 0 || outputOutOfBoundActions.contains(.noOutput) {
+            //Prefer no OOB
             startPDU.append(contentsOf: [0x00, 0x00, 0x00 ]) //No OOB = 0, Action = 0 & size = 0
         } else {
-            if outputOutOfBoundAction! == .outputNumeric {
-                startPDU.append(contentsOf: [0x02, //Output OOB opcode, better implementation TBD when we support all methods
-                                             outputOutOfBoundAction.toByteValue()!,
-                                             outputOutOfBoundSize])
-            }
+            //If there is no noOutput OOB action, use the first possible action
+            startPDU.append(contentsOf: [0x02,
+                                         outputOutOfBoundActions.first!.toByteValue()!,
+                                         outputOutOfBoundSize])
         }
 
         print("Provision Start PDU Sent: \(startPDU.hexString())")

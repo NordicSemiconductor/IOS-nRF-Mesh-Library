@@ -67,7 +67,7 @@ protocol UnprovisionedMeshNodeProtocol {
     func calculatedDeviceKey(_ aDeviceKey: Data)
 
     // MARK: - Data input
-    func requireUserInput(anInput: (@escaping (String) -> (Void)))
+    func requireUserInput(outputActionType: OutputOutOfBoundActions, outputLength: UInt8, anInput: (@escaping (_ value: String) -> (Void)))
 
     // MARK: - State related
     func switchToState(_ nextState : ProvisioningStateProtocol)
