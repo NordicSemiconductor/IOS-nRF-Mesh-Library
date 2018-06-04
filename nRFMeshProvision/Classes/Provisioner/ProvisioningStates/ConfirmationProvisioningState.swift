@@ -80,7 +80,7 @@ class ConfirmationProvisioningState: NSObject, ProvisioningStateProtocol {
         print("confirmationKey: \(confirmationKey!.hexString())")
         //Next step is to calculate the confirmation provisioner value
         //This is done by calculating AES-CMAC of (Random value || AuthVAlue) with salt (confirmationKey)
-        let intValue                    = CFSwapInt16BigToHost(UInt16(anInput)!)
+        let intValue                    = CFSwapInt32BigToHost(UInt32(anInput)!)
         let authBytes                   = Data(bytes: self.toByteArray(intValue)).leftPad(length: 16)
         print("authBytes: \(authBytes)")
         target.receivedProvisionerUserInput(authBytes)
