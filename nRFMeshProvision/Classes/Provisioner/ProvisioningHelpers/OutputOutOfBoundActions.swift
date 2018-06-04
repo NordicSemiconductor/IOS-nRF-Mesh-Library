@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum OutputOutOfBoundActions: UInt16 {
+public enum OutputOutOfBoundActions: UInt16 {
     case noOutput           = 0x0000
     case blink              = 0x0001
     case beep               = 0x0002
@@ -17,6 +17,8 @@ enum OutputOutOfBoundActions: UInt16 {
     
     public func toByteValue() -> UInt8? {
         switch self {
+        case .noOutput:
+            return nil
         case .blink:
             return 0
         case .beep:
@@ -27,11 +29,27 @@ enum OutputOutOfBoundActions: UInt16 {
             return 3
         case .outputAlphaNumeric:
             return 4
-        default:
-            return nil
         }
-   }
+    }
     
+    public static func allValues() -> [OutputOutOfBoundActions] {
+        return [.blink,
+                .beep,
+                .vibrate,
+                .outputNumeric,
+                .outputAlphaNumeric]
+    }
+
+    public static func calculateOutputActionsFromBitMask(aBitMask: UInt16) -> [OutputOutOfBoundActions] {
+        var supportedActions = [OutputOutOfBoundActions]()
+        for anAction in OutputOutOfBoundActions.allValues() {
+            if  aBitMask & anAction.rawValue == anAction.rawValue {
+                supportedActions.append(anAction)
+            }
+        }
+        return supportedActions
+    }
+
     public func description() -> String {
         switch self {
         case .noOutput:

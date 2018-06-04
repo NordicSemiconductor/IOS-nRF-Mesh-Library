@@ -77,9 +77,9 @@ public class UnprovisionedMeshNode: NSObject, UnprovisionedMeshNodeProtocol {
     }
    
     // MARK: UnprovisionedMeshNodeDelegate
-    func requireUserInput(anInput: @escaping ((String) -> (Void))) {
+    func requireUserInput(outputActionType: OutputOutOfBoundActions, outputLength: UInt8, anInput: @escaping ((String) -> (Void))) {
         logDelegate?.logUserInputRequired()
-        delegate?.nodeRequiresUserInput(self, completionHandler: { (aString) -> (Void) in
+        delegate?.nodeRequiresUserInput(self, outputAction: outputActionType, length: outputLength, completionHandler: { (aString) -> (Void) in
             anInput(aString)
         })
     }

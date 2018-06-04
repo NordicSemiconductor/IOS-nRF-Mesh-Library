@@ -9,7 +9,11 @@ import Foundation
 
 public protocol UnprovisionedMeshNodeDelegate {
     func nodeDidCompleteDiscovery(_ aNode: UnprovisionedMeshNode)
-    func nodeRequiresUserInput(_ aNode: UnprovisionedMeshNode, completionHandler aHandler: @escaping (String) -> (Void))
+    func nodeRequiresUserInput(_ aNode: UnprovisionedMeshNode,
+                               outputAction: OutputOutOfBoundActions,
+                               length: UInt8,
+                               completionHandler aHandler: @escaping (String) -> (Void)
+    )
     func nodeShouldDisconnect(_ aNode: UnprovisionedMeshNode)
     func nodeProvisioningCompleted(_ aNode: UnprovisionedMeshNode)
     func nodeProvisioningFailed(_ aNode: UnprovisionedMeshNode, withErrorCode anErrorCode: ProvisioningErrorCodes)
