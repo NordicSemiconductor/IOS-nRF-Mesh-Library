@@ -14,11 +14,12 @@ class SettingsViewController: UIViewController, UITextFieldDelegate, UITableView
     // MARK: - Properties
     var meshManager: NRFMeshManager!
     let reuseIdentifier = "SettingsTableViewCell"
-    let sectionTitles = ["Global Settings", "Network Settings", "App keys", "Mesh State"]
+    let sectionTitles = ["Global Settings", "Network Settings", "App keys", "Mesh State", "About"]
     let rowTitles   = [["Network Name", "Global TTL", "Provisioner Unicast"],
                        ["Network Key", "Key Index", "Flags", "IV Index"],
                        ["Manage App Keys"],
-                       ["Reset Mesh State"]]
+                       ["Reset Mesh State"],
+                       ["Application Version", "Build Number"]]
 
     // MARK: - Outlets and actions
     @IBOutlet weak var settingsTable: UITableView!
@@ -356,6 +357,7 @@ class SettingsViewController: UIViewController, UITextFieldDelegate, UITableView
         case 1: return 4
         case 2: return 1
         case 3: return 1
+        case 4: return 2
         default: return 0
         }
    }
@@ -443,6 +445,22 @@ class SettingsViewController: UIViewController, UITextFieldDelegate, UITableView
         } else if section == 3 {
             if row == 0 {
                 return "Forget Network"
+            } else {
+                return "N/A"
+            }
+        } else if section == 4 {
+            if row == 0 {
+                var versionNumber: String = "N/A"
+                if let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String {
+                    versionNumber = "v\(version)"
+                }
+                return versionNumber
+            } else if row == 1 {
+                var buildNumber: String = "N/A"
+                if let build = Bundle.main.infoDictionary?["CFBundleVersion"] as? String {
+                    buildNumber = build
+                }
+                return buildNumber
             } else {
                 return "N/A"
             }

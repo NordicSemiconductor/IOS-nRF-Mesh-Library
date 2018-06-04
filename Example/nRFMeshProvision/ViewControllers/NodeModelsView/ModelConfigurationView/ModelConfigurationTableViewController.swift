@@ -494,7 +494,7 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
             if let element = nodeEntry.elements?[selectedModelIndexPath.section] {
                 let targetModel = element.allSigAndVendorModels()[selectedModelIndexPath.row]
                 if let keyIndex = element.boundAppKeyIndexForModelId(targetModel) {
-                    aCell.textLabel?.text = "Key Binded"
+                    aCell.textLabel?.text = "Key Bound"
                     aCell.detailTextLabel?.text = "Key index \(keyIndex.hexString())"
                 } else {
                     aCell.textLabel?.text = "None"
