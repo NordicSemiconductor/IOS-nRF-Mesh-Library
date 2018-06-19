@@ -226,15 +226,15 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
         if let element = nodeEntry.elements?[selectedModelIndexPath.section] {
             let targetModel = element.allSigAndVendorModels()[selectedModelIndexPath.row]
             if let addresses = element.subscriptionAddressesForModelId(targetModel) {
-                for anAddress in addresses {
-                    targetNode.nodeGenericOnOffSet(elementAddress, onDestinationAddress: anAddress, withtargetState: targetstate)
+                if addresses.count > 0 {
+                    for anAddress in addresses {
+                        targetNode.nodeGenericOnOffSet(elementAddress, onDestinationAddress: anAddress, withtargetState: targetstate)
+                    }
+                    return
                 }
-            } else {
-                 targetNode.nodeGenericOnOffSet(elementAddress, onDestinationAddress: nodeEntry.nodeUnicast!, withtargetState: targetstate)
             }
-        } else {
-            targetNode.nodeGenericOnOffSet(elementAddress, onDestinationAddress: nodeEntry.nodeUnicast!, withtargetState: targetstate)
         }
+        targetNode.nodeGenericOnOffSet(elementAddress, onDestinationAddress: nodeEntry.nodeUnicast!, withtargetState: targetstate)
     }
 
     // MARK: - ProvisionedMeshNodeDelegate
