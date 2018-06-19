@@ -26,6 +26,7 @@ class MainTabBarViewController: UITabBarController {
 
     private func switchToViewAtIndex(_ anIndex: Int) {
         selectedViewController = viewControllers?[anIndex]
+        tabBar(tabBar, didSelect: tabBar.items![anIndex])
     }
 
     override func viewDidAppear(_ animated: Bool) {
