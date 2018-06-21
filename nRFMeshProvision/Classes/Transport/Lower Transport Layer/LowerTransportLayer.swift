@@ -7,21 +7,21 @@
 
 import Foundation
 
-public typealias SegmentedMessageAcknowledgeBlock = (_ ackData: Data, _ delay: DispatchTime) -> (Void)
-public struct LowerTransportLayer {
+public typealias SegmentedMessageAcknowledgeBlock = (_ ackData: Data) -> (Void)
+public class LowerTransportLayer {
     var params : LowerTransportPDUParams!
     var partialIncomingPDU: [Data : Data]?
     var meshStateManager: MeshStateManager?
     var segmentedMessageAcknowledge: SegmentedMessageAcknowledgeBlock?
-    var segAcknowledgeStartTime: DispatchTime?
-
+    var segAcknowledgeTimeout: DispatchTime?
+    
     public init(withStateManager aStateManager: MeshStateManager, andSegmentedAcknowlegdeMent anAcknowledgementBlock: SegmentedMessageAcknowledgeBlock?) {
         segmentedMessageAcknowledge = anAcknowledgementBlock
         meshStateManager = aStateManager
         partialIncomingPDU = [Data : Data]()
     }
 
-    public mutating func append(withIncomingPDU aPDU: Data, ctl aCTL: Data, ttl aTTL: Data, src aSRC: Data, dst aDST: Data, IVIndex anIVIndex: Data, andSEQ aSEQ: Data) -> Any? {
+    public func append(withIncomingPDU aPDU: Data, ctl aCTL: Data, ttl aTTL: Data, src aSRC: Data, dst aDST: Data, IVIndex anIVIndex: Data, andSEQ aSEQ: Data) -> Any? {
         let dst = Data(aPDU[0...1])
         guard dst == meshStateManager?.state().unicastAddress else {
             print("Ignoring message not directed towards us!")
@@ -42,60 +42,55 @@ public struct LowerTransportLayer {
         } else {
             let szMIC = Data([aPDU[3] >> 7])
             let seqZero = Data([(aPDU[3] & 0x7F) >> 2, ((aPDU[3] << 6) | (aPDU[4] >> 2))])
-            let segO = Data([0x00 & UInt8((aPDU[4] & 0x03) << 3) | UInt8((aPDU[5] & 0xE0) >> 5)])
+            let segO = Data([UInt8((aPDU[4] & 0x03) << 3) | UInt8((aPDU[5] & 0xE0) >> 5)])
             let segN = Data([aPDU[5] & 0x1F])
             let segment = Data(aPDU[6..<aPDU.count])
             let sequenceNumber = Data([aSEQ.first!, aSEQ[2] | seqZero[0], seqZero[1]])
+
+            print("PDU:\(aPDU.hexString())")
+            print("sequence num:\(sequenceNumber.hexString())")
             print("szMIC = \(szMIC.hexString()), seqZero = \(seqZero.hexString()), segO = \(segO.hexString()), segN = \(segN.hexString()), segment = \(segment.hexString()), sequence: \(aSEQ.hexString())")
             if partialIncomingPDU![segO] == nil {
                 partialIncomingPDU![segO] = segment
             } else {
-                print("segment \(segO.hexString()) already received.")
+                print("segment \(segO.hexString()) already received, dropping.")
             }
-            if partialIncomingPDU?.count == 1 && segN != Data([0x00]) {
-                if segmentedMessageAcknowledge != nil {
-                    segAcknowledgeStartTime = DispatchTime.now()
-                    print("segment timer start at \(segAcknowledgeStartTime!)")
-                }
-            } else if partialIncomingPDU!.count == Int(segN[0]) + 1 {
-                if segmentedMessageAcknowledge != nil {
-                    if segN == Data([0x00]) {
-                        segAcknowledgeStartTime = DispatchTime.now()
-                        print("segment timer start at \(segAcknowledgeStartTime!)")
+
+            if segmentedMessageAcknowledge != nil {
+                if segAcknowledgeTimeout == nil {
+                    //Send ack block after this timeout
+                    segAcknowledgeTimeout = DispatchTime.now() + .milliseconds(150 + (50 * Int(aTTL[0])))
+                    DispatchQueue.main.asyncAfter(deadline: segAcknowledgeTimeout!) {
+                        let ackData = self.acknowlegde(withSeqZero: seqZero, receivedSegments: self.partialIncomingPDU!, segN: segN, dst: aSRC)
+                        self.segmentedMessageAcknowledge?(ackData)
+                        self.segAcknowledgeTimeout = nil //Reset timer
                     }
                 }
-                print("received segment \(segO.hexString()) of \(segN.hexString()), SeqZero = \(seqZero.hexString()), reassembling")
-                if segAcknowledgeStartTime == nil {
-                    segAcknowledgeStartTime = DispatchTime.now()
+                
+                //We have all messages!
+                if Int((partialIncomingPDU?.count)! - 1) == Int(segN[0]) {
+                    let sortedSegmentKeys = Array(partialIncomingPDU!.keys).sorted { (a, b) -> Bool in
+                        return a[0] < b[0]
+                    }
+                    var fullData = Data()
+                    for aKey in sortedSegmentKeys {
+                        fullData.append(partialIncomingPDU![aKey]!)
+                    }
+                    let upperLayer = UpperTransportLayer(withIncomingPDU: fullData, ctl: ctl, akf: isAppKey, aid: aid, seq: sequenceNumber, src: aSRC, dst: aDST, szMIC: Int(szMIC[0]), ivIndex: anIVIndex, andMeshState: meshStateManager!)
+                    return upperLayer.assembleMessage()
                 }
-                let (ackData, delay) = self.acknowlegde(withSeqZero: seqZero, segN: segN, segO: segO, dst: aSRC, ttl: aTTL, startTime: segAcknowledgeStartTime!)
-                segmentedMessageAcknowledge?(ackData, delay)
-                segAcknowledgeStartTime = nil //Reset timer
-                var fullData = Data()
-                let sortedSegmentKeys = Array(partialIncomingPDU!.keys).sorted { (a, b) -> Bool in
-                    return a[0] < b[0]
-                }
-                for aKey in sortedSegmentKeys {
-                    fullData.append(partialIncomingPDU![aKey]!)
-                }
-                partialIncomingPDU!.removeAll()
-                let upperLayer = UpperTransportLayer(withIncomingPDU: fullData, ctl: ctl, akf: isAppKey, aid: aid, seq: sequenceNumber, src: aSRC, dst: aDST, szMIC: Int(szMIC[0]), ivIndex: anIVIndex, andMeshState: meshStateManager!)
-
-                //Return a parsed message
-                return upperLayer.assembleMessage()
-            } else {
-                print("Received unordered message, waiting for rest of messages")
             }
         }
         return nil
     }
 
-    public func acknowlegde(withSeqZero seqZero: Data, segN: Data, segO: Data, dst: Data, ttl aTTL: Data, startTime: DispatchTime) -> (Data, DispatchTime) {
+    public func acknowlegde(withSeqZero seqZero: Data, receivedSegments: [Data : Data], segN: Data, dst: Data) -> Data {
         let aState = meshStateManager!.state()
-        let delay = startTime + DispatchTimeInterval.milliseconds(150 + (50 * 7))
         var block : UInt32 = 0x00000000
-        for _ in 0...segN[0] {
-            block = (block << 1) + 0x01
+        for aSegmentIndex in 0...segN[0] {
+            if receivedSegments[Data([aSegmentIndex])] != nil {
+                block = block + UInt32((1 << aSegmentIndex))
+            }
         }
         let blockData = Data([
             UInt8((block & 0xFF000000) >> 24),
@@ -112,7 +107,7 @@ public struct LowerTransportLayer {
         var ackData = Data([0x00]) //Network PDU
         let networkPDU = ackMessage.assembleNetworkPDU()!.first!
         ackData.append(Data(networkPDU))
-        return (Data(ackData), delay)
+        return Data(ackData)
     }
 
     public init(withParams someParams: LowerTransportPDUParams) {

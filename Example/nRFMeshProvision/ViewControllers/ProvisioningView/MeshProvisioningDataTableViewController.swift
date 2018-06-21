@@ -618,7 +618,7 @@ extension MeshProvisioningDataTableViewController: ProvisionedMeshNodeDelegate {
                                             andNetKeyIndex: netKeyIndex)
         }
     }
-    
+
     func nodeShouldDisconnect(_ aNode: ProvisionedMeshNode) {
         if aNode == targetProvisionedNode {
             centralManager.cancelPeripheralConnection(aNode.blePeripheral())

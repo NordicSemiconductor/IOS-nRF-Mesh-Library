@@ -40,8 +40,8 @@ class ModelAppBindConfiguratorState: NSObject, ConfiguratorStateProtocol {
         dataInCharacteristic    = discovery.dataInCharacteristic
         dataOutCharacteristic   = discovery.dataOutCharacteristic
 
-        networkLayer = NetworkLayer(withStateManager: stateManager, andSegmentAcknowlegdement: { (ackData, delay) -> (Void) in
-            self.acknowlegeSegment(withAckData: ackData, withDelay: delay)
+        networkLayer = NetworkLayer(withStateManager: stateManager, andSegmentAcknowlegdement: { (ackData) -> (Void) in
+            self.acknowlegeSegment(withAckData: ackData)
         })
     }
     
@@ -134,34 +134,32 @@ class ModelAppBindConfiguratorState: NSObject, ConfiguratorStateProtocol {
         return ranges
     }
     
-    private func acknowlegeSegment(withAckData someData: Data, withDelay aDelay: DispatchTime) {
-        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() - DispatchTimeInterval.nanoseconds(Int(aDelay.uptimeNanoseconds))) {
-            print("Sending acknowledgement: \(someData.hexString())")
-            if someData.count <= self.target.basePeripheral().maximumWriteValueLength(for: .withoutResponse) {
-                self.target.basePeripheral().writeValue(someData, for: self.dataInCharacteristic, type: .withoutResponse)
-            } else {
-                print("Maximum write length is shorter than ACK PDU, will Segment")
-                var segmentedData = [Data]()
-                let dataToSegment = Data(someData.dropFirst()) //Remove old header as it's going to be added in SAR
-                let chunkRanges = self.calculateDataRanges(dataToSegment, withSize: 19)
-                for aRange in chunkRanges {
-                    var header = Data()
-                    let chunkIndex = chunkRanges.index(of: aRange)!
-                    if chunkIndex == 0 {
-                        header.append(Data([0x40])) //SAR start
-                    } else if chunkIndex == chunkRanges.count - 1 {
-                        header.append(Data([0xC0])) //SAR end
-                    } else {
-                        header.append(Data([0x80])) //SAR cont.
-                    }
-                    var chunkData = Data(header)
-                    chunkData.append(Data(dataToSegment[aRange]))
-                    segmentedData.append(Data(chunkData))
+    private func acknowlegeSegment(withAckData someData: Data) {
+        print("Sending acknowledgement: \(someData.hexString())")
+        if someData.count <= self.target.basePeripheral().maximumWriteValueLength(for: .withoutResponse) {
+            self.target.basePeripheral().writeValue(someData, for: self.dataInCharacteristic, type: .withoutResponse)
+        } else {
+            print("Maximum write length is shorter than ACK PDU, will Segment")
+            var segmentedData = [Data]()
+            let dataToSegment = Data(someData.dropFirst()) //Remove old header as it's going to be added in SAR
+            let chunkRanges = self.calculateDataRanges(dataToSegment, withSize: 19)
+            for aRange in chunkRanges {
+                var header = Data()
+                let chunkIndex = chunkRanges.index(of: aRange)!
+                if chunkIndex == 0 {
+                    header.append(Data([0x40])) //SAR start
+                } else if chunkIndex == chunkRanges.count - 1 {
+                    header.append(Data([0xC0])) //SAR end
+                } else {
+                    header.append(Data([0x80])) //SAR cont.
                 }
-                for aSegment in segmentedData {
-                    print("Sending Ack segment: \(aSegment.hexString())")
-                    self.target.basePeripheral().writeValue(aSegment, for: self.dataInCharacteristic, type: .withoutResponse)
-                }
+                var chunkData = Data(header)
+                chunkData.append(Data(dataToSegment[aRange]))
+                segmentedData.append(Data(chunkData))
+            }
+            for aSegment in segmentedData {
+                print("Sending Ack segment: \(aSegment.hexString())")
+                self.target.basePeripheral().writeValue(aSegment, for: self.dataInCharacteristic, type: .withoutResponse)
             }
         }
     }
