@@ -34,8 +34,8 @@ class CompositionGetConfiguratorState: NSObject, ConfiguratorStateProtocol {
         dataInCharacteristic    = discovery.dataInCharacteristic
         dataOutCharacteristic   = discovery.dataOutCharacteristic
         
-        networkLayer = NetworkLayer(withStateManager: aStateManager, andSegmentAcknowlegdement: { (ackData, delay) -> (Void) in
-            self.acknowlegeSegment(withAckData: ackData, withDelay: delay)
+        networkLayer = NetworkLayer(withStateManager: aStateManager, andSegmentAcknowlegdement: { (ackData) -> (Void) in
+            self.acknowlegeSegment(withAckData: ackData)
         })
     }
 
@@ -116,6 +116,10 @@ class CompositionGetConfiguratorState: NSObject, ConfiguratorStateProtocol {
                 if result is CompositionStatusMessage {
                     let compositionStatus = result as! CompositionStatusMessage
                     target.delegate?.receivedCompositionData(compositionStatus)
+                    let appKeySetState = AppKeyAddConfiguratorState(withTargetProxyNode: self.target,
+                                                                    destinationAddress: self.destinationAddress,
+                                                                    andStateManager: self.stateManager)
+                    self.target.switchToState(appKeySetState)
                 } else {
                     print("Ignoring non composition status message")
                 }
@@ -123,7 +127,7 @@ class CompositionGetConfiguratorState: NSObject, ConfiguratorStateProtocol {
         }
     }
 
-    private func acknowlegeSegment(withAckData someData: Data, withDelay aDelay: DispatchTime) {
+    private func acknowlegeSegment(withAckData someData: Data) {
             print("Sending acknowledgement: \(someData.hexString())")
             if someData.count <= self.target.basePeripheral().maximumWriteValueLength(for: .withoutResponse) {
                 self.target.basePeripheral().writeValue(someData, for: self.dataInCharacteristic, type: .withoutResponse)
@@ -151,14 +155,6 @@ class CompositionGetConfiguratorState: NSObject, ConfiguratorStateProtocol {
                     self.target.basePeripheral().writeValue(aSegment, for: self.dataInCharacteristic, type: .withoutResponse)
                 }
             }
-
-            DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + .seconds(2),
-                                          execute: {
-                                            let appKeySetState = AppKeyAddConfiguratorState(withTargetProxyNode: self.target,
-                                                                                            destinationAddress: self.destinationAddress,
-                                                                                            andStateManager: self.stateManager)
-                                            self.target.switchToState(appKeySetState)
-            })
     }
 
     // MARK: - CBPeripheralDelegate

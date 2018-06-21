@@ -12,7 +12,7 @@ public struct GenericOnOffSetMessage {
     var payload : Data
 
     public init(withTargetState aTargetState: Data) {
-        opcode = Data([0x82, 0x02])
+            opcode = Data([0x82, 0x02])
         payload = aTargetState
         //Sequence number used as TID
         let tid = Data([SequenceNumber().sequenceData().last!])
