@@ -38,10 +38,10 @@ public struct UpperTransportLayer {
             params = UpperTransportPDUParams(withPayload: strippedDSTPDU, opcode: opcode, IVIndex: anIVIndex, key: key, ttl: Data([0x04]), seq: SequenceNumber(), src: aSRC, dst: aDST, nonce: nonce, ctl: isControl, afk: isApplicationKey, aid: applicationId)
         } else {
             let micLen = szMIC == 1 ? 8 : 4
-            let dataSize = UInt8(aPDU.count - micLen)
+            let dataSize = aPDU.count - micLen
             let pduData = aPDU[0..<dataSize]
             let mic = aPDU[aPDU.count - micLen..<aPDU.count]
-            if let decryptedData = sslHelper.calculateDecryptedCCM(pduData, withKey: key, nonce: nonce.data, dataSize: dataSize, andMIC: mic) {
+            if let decryptedData = sslHelper.calculateDecryptedCCM(pduData, withKey: key, nonce: nonce.data, dataSize: 0, andMIC: mic) {
                 decryptedPayload = Data(decryptedData)
             } else {
                 print("Decryption failed")
@@ -104,12 +104,12 @@ public struct UpperTransportLayer {
                     } else {
                         return encryptForUnicastOrGroupAddress()
                     }
-           case .Virtual:
-                    return encryptForVirtualAddress()
-                default:
-                    return nil
+            case .Virtual:
+                return encryptForVirtualAddress()
+            default:
+                return nil
             }
-   } else {
+        } else {
             return nil
         }
    }

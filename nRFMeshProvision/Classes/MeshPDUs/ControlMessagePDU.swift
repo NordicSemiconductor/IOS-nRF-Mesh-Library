@@ -29,7 +29,7 @@ public struct ControlMessagePDU {
         dst         = aDST
         ivIndex     = anIVIndex
         seq         = aSeq
-        ttl         = Data([0x07])
+        ttl         = Data([0x04])
     }
    
     public init(withPayload aPayload: Data, opcode anOpcode: Data, deviceKey aDeviceKey: Data, netKey aNetKey: Data, seq aSeq: SequenceNumber, ivIndex anIVIndex: Data, source aSrc: Data, andDst aDST: Data) {
@@ -42,7 +42,7 @@ public struct ControlMessagePDU {
         dst         = aDST
         ivIndex     = anIVIndex
         seq         = aSeq
-        ttl         = Data([0x07])
+        ttl         = Data([0x04])
     }
    
     public func assembleNetworkPDU() -> [Data]? {
@@ -65,7 +65,7 @@ public struct ControlMessagePDU {
 
         if let rawPDU = upperTransport.rawData() {
             let isAppKeyData = isAppKey ? Data([0x01]) : Data([0x00])
-            let lowerTransportParams = LowerTransportPDUParams(withUpperTransportData: rawPDU, ttl: ttl, ctl: Data([0x01]), ivIndex: ivIndex, sequenceNumber: seq, sourceAddress: src, destinationAddress: dst, micSize: Data([0x01]), afk: isAppKeyData, aid: Data([0x00]), andOpcode: opcode)
+            let lowerTransportParams = LowerTransportPDUParams(withUpperTransportData: rawPDU, ttl: ttl, ctl: Data([0x01]), ivIndex: ivIndex, sequenceNumber: seq, sourceAddress: src, destinationAddress: dst, micSize: Data([0x00]), afk: isAppKeyData, aid: Data([0x00]), andOpcode: opcode)
             let lowerTransport = LowerTransportLayer(withParams: lowerTransportParams)
             let networkLayer = NetworkLayer(withLowerTransportLayer: lowerTransport, andNetworkKey: key)
             return networkLayer.createPDU()

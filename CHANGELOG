@@ -1,4 +1,12 @@
 ## Changelog
+
+- **1.0.1**:
+    - Adds minor improvements to the copy on some UI components within the application.
+    - Bugfix: Performance improvement due to removing an intended 2 second delay when switching between Composition Data Get state and AppKeyAdd state due to an earlier bug.
+    - Bugfix: fixed an issue with block acknowledgements that caused longer messages that needs multiple acknowledgment to fail
+    - Bugfix: fixed an issue in the GenericOnOff control view, this bug caused loss of control over the node when it's added then removed from a subscription group.
+    - Bugfix: fixed an issue that caused the navigation bar not to reflect the scanner state when directly tapping the `Add Node` button instead of using the tab bar button.
+
 - **1.0**:
     - Adds a better approach for GenericOnOffSet messages to be sent to all subscribed addresses on the target element. If no subscriptions are present, messages will be sent to the element's unicast.
     - Adds element unicast address within the node view to allow easier configuration.

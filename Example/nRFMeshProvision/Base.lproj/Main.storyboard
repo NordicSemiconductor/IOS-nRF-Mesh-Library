@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14109" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="Efz-r4-tkv">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14113" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="Efz-r4-tkv">
     <device id="retina5_9" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
@@ -526,7 +526,7 @@ provisioning and then configuring a device.</string>
                             <outlet property="delegate" destination="7BC-wy-MT8" id="aHs-OH-gfO"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" title="Scanner" id="dXy-7Q-f8T">
+                    <navigationItem key="navigationItem" title="Select Proxy" id="dXy-7Q-f8T">
                         <barButtonItem key="rightBarButtonItem" id="V3b-aS-AXg">
                             <view key="customView" contentMode="scaleToFill" id="eGZ-2F-Xkm">
                                 <rect key="frame" x="276" y="0.0" width="83" height="44"/>
