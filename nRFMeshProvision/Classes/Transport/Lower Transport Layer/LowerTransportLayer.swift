@@ -55,20 +55,28 @@ public class LowerTransportLayer {
             } else {
                 print("segment \(segO.hexString()) already received, dropping.")
             }
-
             if segmentedMessageAcknowledge != nil {
                 if segAcknowledgeTimeout == nil {
                     //Send ack block after this timeout
                     segAcknowledgeTimeout = DispatchTime.now() + .milliseconds(150 + (50 * Int(aTTL[0])))
                     DispatchQueue.main.asyncAfter(deadline: segAcknowledgeTimeout!) {
+                        if self.segAcknowledgeTimeout != nil {
+                            let ackData = self.acknowlegde(withSeqZero: seqZero, receivedSegments: self.partialIncomingPDU!, segN: segN, dst: aSRC)
+                            self.segmentedMessageAcknowledge?(ackData)
+                            self.segAcknowledgeTimeout = nil //Reset timer
+                        }
+                    }
+                }
+                
+                //All segments have arrived
+                if Int((partialIncomingPDU?.count)! - 1) == Int(segN[0]) {
+                    if segAcknowledgeTimeout != nil {
+                        //There is a pending block acknowledgement, cancel timer and perform now.
+                        segAcknowledgeTimeout = nil
                         let ackData = self.acknowlegde(withSeqZero: seqZero, receivedSegments: self.partialIncomingPDU!, segN: segN, dst: aSRC)
                         self.segmentedMessageAcknowledge?(ackData)
                         self.segAcknowledgeTimeout = nil //Reset timer
                     }
-                }
-                
-                //We have all messages!
-                if Int((partialIncomingPDU?.count)! - 1) == Int(segN[0]) {
                     let sortedSegmentKeys = Array(partialIncomingPDU!.keys).sorted { (a, b) -> Bool in
                         return a[0] < b[0]
                     }
