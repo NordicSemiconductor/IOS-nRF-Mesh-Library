@@ -60,23 +60,15 @@ public class LowerTransportLayer {
                     //Send ack block after this timeout
                     segAcknowledgeTimeout = DispatchTime.now() + .milliseconds(150 + (50 * Int(aTTL[0])))
                     DispatchQueue.main.asyncAfter(deadline: segAcknowledgeTimeout!) {
-                        if self.segAcknowledgeTimeout != nil {
-                            let ackData = self.acknowlegde(withSeqZero: seqZero, receivedSegments: self.partialIncomingPDU!, segN: segN, dst: aSRC)
-                            self.segmentedMessageAcknowledge?(ackData)
-                            self.segAcknowledgeTimeout = nil //Reset timer
-                        }
+                        //Send the pending acknowledgment after the deadline
+                        self.sendPendingAcknowledgement(forSeqZero: seqZero, segmentNumber: segN, andSourceAddrsess: aSRC)
                     }
                 }
                 
                 //All segments have arrived
                 if Int((partialIncomingPDU?.count)! - 1) == Int(segN[0]) {
-                    if segAcknowledgeTimeout != nil {
-                        //There is a pending block acknowledgement, cancel timer and perform now.
-                        segAcknowledgeTimeout = nil
-                        let ackData = self.acknowlegde(withSeqZero: seqZero, receivedSegments: self.partialIncomingPDU!, segN: segN, dst: aSRC)
-                        self.segmentedMessageAcknowledge?(ackData)
-                        self.segAcknowledgeTimeout = nil //Reset timer
-                    }
+                    //If there is a pending block acknowledgement, cancel timer and perform now.
+                    sendPendingAcknowledgement(forSeqZero: seqZero, segmentNumber: segN, andSourceAddrsess: aSRC)
                     let sortedSegmentKeys = Array(partialIncomingPDU!.keys).sorted { (a, b) -> Bool in
                         return a[0] < b[0]
                     }
@@ -90,6 +82,14 @@ public class LowerTransportLayer {
             }
         }
         return nil
+    }
+
+    public func sendPendingAcknowledgement(forSeqZero seqZero: Data, segmentNumber segN: Data, andSourceAddrsess aSRC: Data) {
+        if segAcknowledgeTimeout != nil {
+            segAcknowledgeTimeout = nil //Reset timer
+            let ackData = acknowlegde(withSeqZero: seqZero, receivedSegments: partialIncomingPDU!, segN: segN, dst: aSRC)
+            segmentedMessageAcknowledge?(ackData)
+        }
     }
 
     public func acknowlegde(withSeqZero seqZero: Data, receivedSegments: [Data : Data], segN: Data, dst: Data) -> Data {
