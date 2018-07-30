@@ -41,6 +41,7 @@ class MainNetworkViewController: UIViewController, UICollectionViewDataSource, U
             mainTabBarController.switchToAddNodesView()
         }
     }
+    
     func handleConnectionButtonTapped() {
         if connectionButton.title == "Disconnect" {
             connectionButton.isEnabled = false
@@ -48,6 +49,7 @@ class MainNetworkViewController: UIViewController, UICollectionViewDataSource, U
                 if proxyNode.blePeripheral().state == .connected {
                     proxyNode.delegate = self
                     proxyNode.shouldDisconnect()
+                    
                 } else {
                     self.updateConnectionButton()
                 }
@@ -144,17 +146,36 @@ class MainNetworkViewController: UIViewController, UICollectionViewDataSource, U
         return aCell!
     }
 
+    func showDisconnectedAlertView() {
+        let alertcontroller = UIAlertController(title: "Disconnected",
+                                                message: "You are not currently connected to a mesh network.\nWould you like to reconnect?",
+                                                preferredStyle: .alert)
+        
+        let reconnectAction = UIAlertAction(title: "Reconnect", style: .default) { (_) in
+            self.performSegue(withIdentifier: "ShowReconnectionView", sender: self)
+        }
+        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel) { (_) in
+            self.dismiss(animated: true, completion: nil)
+        }
+        alertcontroller.addAction(reconnectAction)
+        alertcontroller.addAction(cancelAction)
+        self.present(alertcontroller, animated: true)
+    }
+    
+    // MARK: - UICollectionViewDelegate
     public func numberOfSections(in collectionView: UICollectionView) -> Int {
         return 1
     }
 
-    // MARK: - UICollectionViewDelegate
     public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let allNodes = meshManager.stateManager().state().provisionedNodes
         let aNodeEntry = allNodes[indexPath.row]
 
         if shouldPerformSegue(withIdentifier: "ShowNodeConfiguration", sender: nil) {
             self.performSegue(withIdentifier: "ShowNodeConfiguration", sender: aNodeEntry)
+        } else {
+            print("Not connected")
+            showDisconnectedAlertView()
         }
     }
     
@@ -167,7 +188,9 @@ class MainNetworkViewController: UIViewController, UICollectionViewDataSource, U
             if (UIApplication.shared.delegate as? AppDelegate)?.meshManager.proxyNode() == nil {
                 return false
             } else {
-                return true
+                if (UIApplication.shared.delegate as? AppDelegate)?.meshManager.proxyNode()?.blePeripheral().state == .connected {
+                    return true
+                }
             }
         }
         return false
