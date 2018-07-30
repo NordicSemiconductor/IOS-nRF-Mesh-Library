@@ -13,6 +13,8 @@ class AppKeyManagerTableViewController: UITableViewController, UITextFieldDelega
 
     // MARK: - Properties
     private var meshState: MeshStateManager!
+    private var appKeyNameInputTextField: UITextField?
+    private var appKeyValueInputTextField: UITextField?
 
     // MARK: - Outlets and actions
     @IBAction func addKeyTapped(_ sender: Any) {
@@ -46,10 +48,9 @@ class AppKeyManagerTableViewController: UITableViewController, UITextFieldDelega
     }
 
     func handleGenerateNewAppKeyButtonTapped() {
-        let newKey = generateNewAppKey()
-        presentAppKeyNameAlert(withCompletion: { (aKeyName) in
+        presentAppKeyAddAlert(withCompletion: { (aKeyName, aKeyData) in
             if let keyName = aKeyName {
-                self.storeKeyWithName(keyName, withData: newKey)
+                self.storeKeyWithName(keyName, withData: aKeyData)
             } else {
                 print("Cancelled")
             }
@@ -83,7 +84,7 @@ class AppKeyManagerTableViewController: UITableViewController, UITextFieldDelega
         tableView.deselectRow(at: indexPath, animated: true)
         let keyTitle = tableView.cellForRow(at: indexPath)?.textLabel?.text
         let keyData = tableView.cellForRow(at: indexPath)?.detailTextLabel?.text
-        presentAppKeyAlert(keyTitle!, body: keyData!)
+        presentAppKeyAddAlert(keyTitle!, body: keyData!)
     }
 
     override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
@@ -103,48 +104,115 @@ class AppKeyManagerTableViewController: UITableViewController, UITextFieldDelega
 
     // MARK: - UITextFieldDelegate
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        return true
+        if textField == appKeyNameInputTextField {
+            appKeyValueInputTextField?.becomeFirstResponder()
+            return false
+        }else{
+            textField.resignFirstResponder()
+            return true
+        }
     }
 
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        if textField == appKeyValueInputTextField {
+            if string == "" {
+                return true
+            } else {
+                if let values = string.data(using: .utf8) {
+                    var shouldReturn = true
+                    for aValue in values {
+                        //Only allow HexaDecimal values 0->9, a->f and A->F or x
+                        shouldReturn = shouldReturn && (aValue == 120 || aValue >= 48 && aValue <= 57) || (aValue >= 65 && aValue <= 70) || (aValue >= 97 && aValue <= 102)
+                    }
+                    return shouldReturn
+                } else {
+                    return false
+                }
+            }
+        } else {
+            return true
+        }
+    }
     // MARK: - Alert helpers
-    func presentAppKeyNameAlert(withCompletion aCompletionHandler : @escaping (String?) -> Void) {
-        let inputAlertView = UIAlertController(title: "Please give the new key a name",
-                                               message: nil,
+    func presentAppKeyAddAlert(withCompletion aCompletionHandler : @escaping (String?, Data) -> Void) {
+        let inputAlertView = UIAlertController(title: "New key",
+                                               message: "Enter a friendly name and value, additionally, the key can be generated automatically.",
                                                preferredStyle: .alert)
         inputAlertView.addTextField { (aTextField) in
+            self.appKeyNameInputTextField = aTextField
+            aTextField.keyboardType = UIKeyboardType.alphabet
+            aTextField.returnKeyType = .next
+            aTextField.delegate = self
+            aTextField.clearButtonMode = .whileEditing
+            //Give a placeholder that shows this upcoming key index
+            aTextField.placeholder = "Enter a key name"
+        }
+        inputAlertView.addTextField { (aTextField) in
+            self.appKeyValueInputTextField = aTextField
             aTextField.keyboardType = UIKeyboardType.alphabet
             aTextField.returnKeyType = .done
             aTextField.delegate = self
-            aTextField.clearButtonMode = UITextFieldViewMode.whileEditing
-            //Give a placeholder that shows this upcoming key index
-            aTextField.placeholder = "AppKey \(self.meshState.state().appKeys.count + 1)"
+            aTextField.clearButtonMode = .whileEditing
+            aTextField.placeholder = "Paste value or tap \"Generate\""
         }
 
-        let createAction = UIAlertAction(title: "Create", style: .default) { (_) in
-            DispatchQueue.main.async {
-                if let text = inputAlertView.textFields![0].text {
+        let generateAction = UIAlertAction(title: "Generate & Save", style: .default) { (_) in
+            if let newKey = OpenSSLHelper().generateRandom() {
+                self.appKeyValueInputTextField?.text = "0x\(newKey.hexString())"
+                if let text = self.appKeyNameInputTextField!.text {
                     if text.count > 0 {
-                        aCompletionHandler(text)
+                        aCompletionHandler(text, newKey)
                     } else {
                         let keyName = "AppKey \(self.meshState.state().appKeys.count + 1)"
-                        aCompletionHandler(keyName)
+                        aCompletionHandler(keyName, newKey)
                     }
+                }
+            }
+        }
+
+        let createAction = UIAlertAction(title: "Save", style: .default) { (_) in
+            DispatchQueue.main.async {
+                //Convert AppKey hex string to Data object
+                var keyBytes: Data? = nil
+                if var appKeyValue = self.appKeyValueInputTextField!.text {
+                    if appKeyValue.contains("0x") {
+                        appKeyValue = appKeyValue.replacingOccurrences(of: "0x", with: "")
+                    }
+                    if let keyValueBytes = Data.init(hexString: appKeyValue) {
+                        if keyValueBytes.count == 16 {
+                            keyBytes = keyValueBytes
+                        }
+                    }
+                }
+                
+                if keyBytes != nil {
+                    if let text = self.appKeyNameInputTextField!.text {
+                        if text.count > 0 {
+                            aCompletionHandler(text, keyBytes!)
+                        } else {
+                            let keyName = "AppKey \(self.meshState.state().appKeys.count + 1)"
+                            aCompletionHandler(keyName, keyBytes!)
+                        }
+                    }
+                } else {
+                    aCompletionHandler(nil, Data())
                 }
             }
         }
 
         let cancelACtion = UIAlertAction(title: "Cancel", style: .cancel) { (_) in
             DispatchQueue.main.async {
-                aCompletionHandler(nil)
+                aCompletionHandler(nil, Data())
             }
         }
 
         inputAlertView.addAction(createAction)
+        inputAlertView.addAction(generateAction)
         inputAlertView.addAction(cancelACtion)
         present(inputAlertView, animated: true, completion: nil)
     }
 
-    func presentAppKeyAlert(_ aTitle: String,
+    func presentAppKeyAddAlert(_ aTitle: String,
                             body aBody: String) {
         let inputAlertView = UIAlertController(title: aTitle, message: aBody, preferredStyle: .alert)
         let copyAction = UIAlertAction(title: "Copy to clipboard", style: .default) { (_) in
