@@ -9,7 +9,7 @@
 import UIKit
 import nRFMeshProvision
 
-class SettingsViewController: UIViewController, UITextFieldDelegate, UITableViewDelegate, UITableViewDataSource {
+class SettingsViewController: UIViewController, UITextFieldDelegate, UITableViewDelegate, UITableViewDataSource, UIPopoverPresentationControllerDelegate {
 
     // MARK: - Properties
     var meshManager: NRFMeshManager!
@@ -82,6 +82,7 @@ class SettingsViewController: UIViewController, UITextFieldDelegate, UITableView
             }
         }
     }
+    
     func didSelectKeyCell() {
         let meshState = meshManager.stateManager().state()
         presentInputViewWithTitle("Please enter a Key",
@@ -126,21 +127,23 @@ class SettingsViewController: UIViewController, UITextFieldDelegate, UITableView
     }
 
     func didSelectFlagsCell() {
+        let flagsCell = settingsTable.cellForRow(at: IndexPath(item: 2, section: 1))
+        let flagSettingsView = storyboard?.instantiateViewController(withIdentifier: "flagsSettingsPopoverView") as? FlagSettingsPopoverViewController
+        flagSettingsView?.modalPresentationStyle = .popover
+        flagSettingsView?.preferredContentSize = CGSize(width: 300, height: 300)
+        let flagPresentationController = flagSettingsView?.popoverPresentationController
+        flagPresentationController?.permittedArrowDirections = .any
+        flagPresentationController?.sourceView = flagsCell?.textLabel
+        flagPresentationController?.delegate = self
+        present(flagSettingsView!, animated: true, completion: nil)
         let meshState = meshManager.stateManager().state()
-        presentInputViewWithTitle("Please enter flags",
-                                  message: "1 Byte",
-                                  placeholder: meshState.flags.hexString(),
-                                  generationEnabled: false) { (someFlags) -> Void in
-                                    if var someFlags = someFlags {
-                                        someFlags = someFlags.lowercased().replacingOccurrences(of: "0x", with: "")
-                                        if someFlags.count == 2 {
-                                            meshState.flags = Data(hexString: someFlags)!
-                                            self.updateProvisioningDataUI()
-                                        } else {
-                                            print("Flags must be exactly 1 byte")
-                                        }
-                                    }
-        }
+        flagSettingsView?.setFlagData(meshState.flags, andCompletionHandler: { (newFlags) -> (Void) in
+            self.deselectSelectedRow()
+            if let newFlags = newFlags {
+                meshState.flags = newFlags
+                self.updateProvisioningDataUI()
+            }
+        })
    }
 
     func didSelectIVIndexCell() {
@@ -149,16 +152,16 @@ class SettingsViewController: UIViewController, UITextFieldDelegate, UITableView
                                   message: "4 Bytes",
                                   placeholder: meshState.IVIndex.hexString(),
                                   generationEnabled: false) { (anIVIndex) -> Void in
-            if var anIVIndex = anIVIndex {
-                anIVIndex = anIVIndex.lowercased().replacingOccurrences(of: "0x", with: "")
-                if anIVIndex.count == 8 {
-                    meshState.IVIndex = Data(hexString: anIVIndex)!
-                    self.updateProvisioningDataUI()
-                } else {
-                    print("IV Index must be exactly 4 bytes")
-                }
-       }
-    }
+                                    if var anIVIndex = anIVIndex {
+                                        anIVIndex = anIVIndex.lowercased().replacingOccurrences(of: "0x", with: "")
+                                        if anIVIndex.count == 8 {
+                                            meshState.IVIndex = Data(hexString: anIVIndex)!
+                                            self.updateProvisioningDataUI()
+                                        } else {
+                                            print("IV Index must be exactly 4 bytes")
+                                        }
+                                    }
+        }
    }
 
     func didSelectUnicastAddressCell() {
@@ -433,7 +436,19 @@ class SettingsViewController: UIViewController, UITextFieldDelegate, UITableView
             } else if row == 1 {
                 return "0x\(meshState.keyIndex.hexString())"
             } else if row == 2 {
-                return "0x\(meshState.flags.hexString())"
+                let flags = meshState.flags
+                var readableFlags = [String]()
+                if flags[0] & 0x80 == 0x80 {
+                    readableFlags.append("Key refresh phase: 2")
+                } else {
+                    readableFlags.append("Key refresh phase: 0")
+                }
+                if flags[0] & 0x40 == 0x40 {
+                    readableFlags.append("IV Update: Active")
+                } else {
+                    readableFlags.append("IV Update: Normal")
+                }
+                return readableFlags.joined(separator: ", ")
             } else if row == 3 {
                 return "0x\(meshState.IVIndex.hexString())"
             } else {
@@ -471,6 +486,11 @@ class SettingsViewController: UIViewController, UITextFieldDelegate, UITableView
         } else {
             return "N/A"
         }
+    }
+
+    // MARK: - UIPopoverPresentationDelegate
+    func adaptivePresentationStyle(for controller: UIPresentationController) -> UIModalPresentationStyle {
+        return .none
     }
 
     // MARK: - Navigation

@@ -12,6 +12,7 @@
 		302D1F4720B44E000022AEB1 /* ProvisioningLogTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 302D1F4620B44E000022AEB1 /* ProvisioningLogTableViewController.swift */; };
 		302D1F5A20BBEB4F0022AEB1 /* ToggleControlTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 302D1F5920BBEB4F0022AEB1 /* ToggleControlTableViewCell.swift */; };
 		302D1F5C20BBF2700022AEB1 /* ToggleCellDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 302D1F5B20BBF2700022AEB1 /* ToggleCellDelegate.swift */; };
+		303C6C02210F279000EA872D /* FlagSettingsPopoverViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 303C6C01210F279000EA872D /* FlagSettingsPopoverViewController.swift */; };
 		304DAEB4208091EF006CFEA6 /* MainNetworkViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 304DAEA2208091EF006CFEA6 /* MainNetworkViewController.swift */; };
 		304DAEB5208091EF006CFEA6 /* MainTabBarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 304DAEA3208091EF006CFEA6 /* MainTabBarViewController.swift */; };
 		304DAEB6208091EF006CFEA6 /* MeshNodeCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 304DAEA4208091EF006CFEA6 /* MeshNodeCollectionViewCell.swift */; };
@@ -59,6 +60,7 @@
 		302D1F4620B44E000022AEB1 /* ProvisioningLogTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProvisioningLogTableViewController.swift; sourceTree = "<group>"; };
 		302D1F5920BBEB4F0022AEB1 /* ToggleControlTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToggleControlTableViewCell.swift; sourceTree = "<group>"; };
 		302D1F5B20BBF2700022AEB1 /* ToggleCellDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToggleCellDelegate.swift; sourceTree = "<group>"; };
+		303C6C01210F279000EA872D /* FlagSettingsPopoverViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = FlagSettingsPopoverViewController.swift; path = nRFMeshProvision/ViewControllers/SettingsView/FlagSettingsPopoverViewController.swift; sourceTree = SOURCE_ROOT; };
 		3043D9231FF38CF500A9A999 /* libcrypto.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libcrypto.a; path = Pods/OpenSSL/lib/libcrypto.a; sourceTree = "<group>"; };
 		3043D9241FF38CF500A9A999 /* libssl.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libssl.a; path = Pods/OpenSSL/lib/libssl.a; sourceTree = "<group>"; };
 		304DAEA2208091EF006CFEA6 /* MainNetworkViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainNetworkViewController.swift; sourceTree = "<group>"; };
@@ -192,6 +194,7 @@
 			isa = PBXGroup;
 			children = (
 				304DAEB1208091EF006CFEA6 /* AppKeySettingsView */,
+				303C6C01210F279000EA872D /* FlagSettingsPopoverViewController.swift */,
 				304DAEB3208091EF006CFEA6 /* SettingsViewController.swift */,
 			);
 			path = SettingsView;
@@ -511,6 +514,7 @@
 				302D1F4720B44E000022AEB1 /* ProvisioningLogTableViewController.swift in Sources */,
 				304DAEB5208091EF006CFEA6 /* MainTabBarViewController.swift in Sources */,
 				304DAEB9208091EF006CFEA6 /* AppKeySelectorTableViewController.swift in Sources */,
+				303C6C02210F279000EA872D /* FlagSettingsPopoverViewController.swift in Sources */,
 				305F08AD20861D0A006A15F3 /* ModelAppKeyBindingConfigurationTableViewController.swift in Sources */,
 				304DAEB4208091EF006CFEA6 /* MainNetworkViewController.swift in Sources */,
 				306F4D1F20BED7B200572A8F /* NodeModelCell.swift in Sources */,
