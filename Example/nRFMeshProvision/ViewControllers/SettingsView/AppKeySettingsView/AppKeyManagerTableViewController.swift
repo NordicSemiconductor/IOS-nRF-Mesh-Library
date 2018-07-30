@@ -15,6 +15,7 @@ class AppKeyManagerTableViewController: UITableViewController, UITextFieldDelega
     private var meshState: MeshStateManager!
     private var appKeyNameInputTextField: UITextField?
     private var appKeyValueInputTextField: UITextField?
+    private var createAction: UIAlertAction?
 
     // MARK: - Outlets and actions
     @IBAction func addKeyTapped(_ sender: Any) {
@@ -102,6 +103,26 @@ class AppKeyManagerTableViewController: UITableViewController, UITextFieldDelega
         }
     }
 
+    private func updateSaveButtonState() {
+        if let valueText = appKeyValueInputTextField?.text {
+            if valueText.contains("0x") {
+                if valueText.count == 34 {
+                    createAction?.isEnabled = true
+                } else {
+                    createAction?.isEnabled = false
+                }
+            } else {
+                if valueText.count == 32 {
+                    createAction?.isEnabled = true
+                } else {
+                    createAction?.isEnabled = false
+                }
+            }
+        } else {
+            createAction?.isEnabled = false
+        }
+    }
+
     // MARK: - UITextFieldDelegate
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         if textField == appKeyNameInputTextField {
@@ -119,12 +140,12 @@ class AppKeyManagerTableViewController: UITableViewController, UITextFieldDelega
                 return true
             } else {
                 if let values = string.data(using: .utf8) {
-                    var shouldReturn = true
+                    var shouldReplace = true
                     for aValue in values {
                         //Only allow HexaDecimal values 0->9, a->f and A->F or x
-                        shouldReturn = shouldReturn && (aValue == 120 || aValue >= 48 && aValue <= 57) || (aValue >= 65 && aValue <= 70) || (aValue >= 97 && aValue <= 102)
+                        shouldReplace = shouldReplace && (aValue == 120 || aValue >= 48 && aValue <= 57) || (aValue >= 65 && aValue <= 70) || (aValue >= 97 && aValue <= 102)
                     }
-                    return shouldReturn
+                    return shouldReplace
                 } else {
                     return false
                 }
@@ -132,6 +153,11 @@ class AppKeyManagerTableViewController: UITableViewController, UITextFieldDelega
         } else {
             return true
         }
+    }
+    
+    // This is not a delegate method, but it fits with the textfield logic
+    @objc func textFielddidChangeValue() {
+        updateSaveButtonState()
     }
     // MARK: - Alert helpers
     func presentAppKeyAddAlert(withCompletion aCompletionHandler : @escaping (String?, Data) -> Void) {
@@ -149,6 +175,7 @@ class AppKeyManagerTableViewController: UITableViewController, UITextFieldDelega
         }
         inputAlertView.addTextField { (aTextField) in
             self.appKeyValueInputTextField = aTextField
+            aTextField.addTarget(self, action: #selector(self.textFielddidChangeValue), for: .allEvents)
             aTextField.keyboardType = UIKeyboardType.alphabet
             aTextField.returnKeyType = .done
             aTextField.delegate = self
@@ -170,7 +197,7 @@ class AppKeyManagerTableViewController: UITableViewController, UITextFieldDelega
             }
         }
 
-        let createAction = UIAlertAction(title: "Save", style: .default) { (_) in
+        createAction = UIAlertAction(title: "Save", style: .default) { (_) in
             DispatchQueue.main.async {
                 //Convert AppKey hex string to Data object
                 var keyBytes: Data? = nil
@@ -200,15 +227,15 @@ class AppKeyManagerTableViewController: UITableViewController, UITextFieldDelega
             }
         }
 
-        let cancelACtion = UIAlertAction(title: "Cancel", style: .cancel) { (_) in
+        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel) { (_) in
             DispatchQueue.main.async {
                 aCompletionHandler(nil, Data())
             }
         }
 
-        inputAlertView.addAction(createAction)
+        inputAlertView.addAction(createAction!)
         inputAlertView.addAction(generateAction)
-        inputAlertView.addAction(cancelACtion)
+        inputAlertView.addAction(cancelAction)
         present(inputAlertView, animated: true, completion: nil)
     }
 
