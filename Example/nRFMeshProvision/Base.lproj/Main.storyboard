@@ -661,24 +661,33 @@ provisioning and then configuring a device.</string>
                         </connections>
                     </tableView>
                     <navigationItem key="navigationItem" title="Select Proxy" id="dXy-7Q-f8T">
-                        <barButtonItem key="rightBarButtonItem" id="V3b-aS-AXg">
-                            <view key="customView" contentMode="scaleToFill" id="eGZ-2F-Xkm">
-                                <rect key="frame" x="276" y="0.0" width="83" height="44"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <subviews>
-                                    <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" animating="YES" style="white" translatesAutoresizingMaskIntoConstraints="NO" id="73W-Hm-dgN">
-                                        <rect key="frame" x="63" y="12" width="20" height="20"/>
-                                    </activityIndicatorView>
-                                </subviews>
-                                <constraints>
-                                    <constraint firstItem="73W-Hm-dgN" firstAttribute="centerY" secondItem="eGZ-2F-Xkm" secondAttribute="centerY" id="4Nq-3t-c9G"/>
-                                    <constraint firstAttribute="trailing" secondItem="73W-Hm-dgN" secondAttribute="trailing" id="cfa-GC-Jwo"/>
-                                </constraints>
-                            </view>
-                        </barButtonItem>
+                        <rightBarButtonItems>
+                            <barButtonItem title="Disable auto rejoin" id="hzd-rj-WSR">
+                                <color key="tintColor" red="1" green="0.28499322360000001" blue="0.2098225027" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <connections>
+                                    <action selector="disableAutoRejoinButtonTapped:" destination="7BC-wy-MT8" id="U6I-lR-qa7"/>
+                                </connections>
+                            </barButtonItem>
+                            <barButtonItem id="V3b-aS-AXg">
+                                <view key="customView" contentMode="scaleToFill" id="eGZ-2F-Xkm">
+                                    <rect key="frame" x="126.66666666666667" y="0.0" width="83.000000000000014" height="44"/>
+                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                    <subviews>
+                                        <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" animating="YES" style="white" translatesAutoresizingMaskIntoConstraints="NO" id="73W-Hm-dgN">
+                                            <rect key="frame" x="63" y="12" width="20" height="20"/>
+                                        </activityIndicatorView>
+                                    </subviews>
+                                    <constraints>
+                                        <constraint firstItem="73W-Hm-dgN" firstAttribute="centerY" secondItem="eGZ-2F-Xkm" secondAttribute="centerY" id="4Nq-3t-c9G"/>
+                                        <constraint firstAttribute="trailing" secondItem="73W-Hm-dgN" secondAttribute="trailing" id="cfa-GC-Jwo"/>
+                                    </constraints>
+                                </view>
+                            </barButtonItem>
+                        </rightBarButtonItems>
                     </navigationItem>
                     <connections>
                         <outlet property="activityIndicator" destination="73W-Hm-dgN" id="aI3-Lw-8p1"/>
+                        <outlet property="disableAutoRejoinButton" destination="hzd-rj-WSR" id="eyJ-SQ-V3U"/>
                         <outlet property="emptyScannerView" destination="wdq-dq-M7C" id="DPc-xK-nOu"/>
                     </connections>
                 </tableViewController>
@@ -1082,7 +1091,7 @@ provisioning and then configuring a device.</string>
                                             <rect key="frame" x="16" y="0.0" width="343" height="55.666666666666664"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <fontDescription key="fontDescription" name="TrebuchetMS" family="Trebuchet MS" pointSize="17"/>
-                                            <color key="textColor" red="0.88294780250000005" green="0.29483556659999999" blue="0.2113302748" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                            <color key="textColor" red="1" green="0.28499322360000001" blue="0.2098225027" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                             <nil key="highlightedColor"/>
                                         </label>
                                     </subviews>

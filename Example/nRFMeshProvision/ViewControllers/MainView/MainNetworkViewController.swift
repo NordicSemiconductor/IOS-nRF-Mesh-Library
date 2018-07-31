@@ -111,6 +111,13 @@ class MainNetworkViewController: UIViewController, UICollectionViewDataSource, U
         super.viewDidAppear(animated)
         updateConnectionButton()
         meshManager.centralManager().delegate = self
+        
+        //Auto-rejoin
+        if true ==  UserDefaults.standard.value(forKey: UserDefaultsKeys.autoRejoinKey) as? Bool ?? false {
+            if meshManager.stateManager().state().provisionedNodes.count > 0 && !isProxyConnected() {
+                self.performSegue(withIdentifier: "ShowReconnectionView", sender: self)
+            }
+        }
     }
 
     private func updateConnectionButton() {
@@ -154,14 +161,28 @@ class MainNetworkViewController: UIViewController, UICollectionViewDataSource, U
         let reconnectAction = UIAlertAction(title: "Reconnect", style: .default) { (_) in
             self.performSegue(withIdentifier: "ShowReconnectionView", sender: self)
         }
+        let alwaysReconnectAction = UIAlertAction(title: "Always reconnect", style: .default) { (_) in
+            UserDefaults.standard.setValue(true, forKey: UserDefaultsKeys.autoRejoinKey)
+            UserDefaults.standard.synchronize()
+            self.performSegue(withIdentifier: "ShowReconnectionView", sender: self)
+        }
         let cancelAction = UIAlertAction(title: "Cancel", style: .cancel) { (_) in
             self.dismiss(animated: true, completion: nil)
         }
         alertcontroller.addAction(reconnectAction)
+        alertcontroller.addAction(alwaysReconnectAction)
         alertcontroller.addAction(cancelAction)
         self.present(alertcontroller, animated: true)
     }
-    
+
+    func isProxyConnected() -> Bool {
+        if (UIApplication.shared.delegate as? AppDelegate)?.meshManager.proxyNode() == nil {
+            return false
+        } else {
+            return (UIApplication.shared.delegate as? AppDelegate)?.meshManager.proxyNode()?.blePeripheral().state == .connected
+        }
+    }
+
     // MARK: - UICollectionViewDelegate
     public func numberOfSections(in collectionView: UICollectionView) -> Int {
         return 1
@@ -178,20 +199,14 @@ class MainNetworkViewController: UIViewController, UICollectionViewDataSource, U
             showDisconnectedAlertView()
         }
     }
-    
+
     // MARK: - Navigation & Segues
     override func shouldPerformSegue(withIdentifier identifier: String, sender: Any?) -> Bool {
         if identifier == "ShowNodeDetails" {
             return true
         }
         if identifier == "ShowNodeConfiguration" {
-            if (UIApplication.shared.delegate as? AppDelegate)?.meshManager.proxyNode() == nil {
-                return false
-            } else {
-                if (UIApplication.shared.delegate as? AppDelegate)?.meshManager.proxyNode()?.blePeripheral().state == .connected {
-                    return true
-                }
-            }
+            return isProxyConnected()
         }
         return false
     }

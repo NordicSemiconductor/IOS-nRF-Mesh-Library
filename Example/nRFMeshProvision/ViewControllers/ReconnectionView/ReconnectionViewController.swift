@@ -16,6 +16,10 @@ class ReconnectionViewController: UITableViewController {
     @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
     @IBOutlet var emptyScannerView: UIView!
     
+    @IBAction func disableAutoRejoinButtonTapped(_ sender: Any) {
+        handleDisableAutoRejoinButtonTapped()
+    }
+    @IBOutlet weak var disableAutoRejoinButton: UIBarButtonItem!
     // MARK: - Scanner Properties
     private var discoveredNodes = [UnprovisionedMeshNode]()
     private var centralManager: CBCentralManager!
@@ -81,9 +85,26 @@ class ReconnectionViewController: UITableViewController {
         }
     }
 
+    private func handleDisableAutoRejoinButtonTapped() {
+        UserDefaults.standard.setValue(false, forKey: UserDefaultsKeys.autoRejoinKey)
+        UserDefaults.standard.synchronize()
+        //And then hide the button
+        disableAutoRejoinButton.isEnabled = false
+        disableAutoRejoinButton.title = nil
+    }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
+        if true == UserDefaults.standard.value(forKey: UserDefaultsKeys.autoRejoinKey) as? Bool ?? false {
+            //Show button if auto rejoin is enabled
+            disableAutoRejoinButton.isEnabled = true
+            disableAutoRejoinButton.title = "Disable auto rejoin"
+        } else {
+            //Hide button if auto rejoin is not enabled
+            disableAutoRejoinButton.isEnabled = false
+            disableAutoRejoinButton.title = nil
+        }
+
         if let aMeshManager = (UIApplication.shared.delegate as? AppDelegate)?.meshManager {
             meshManager = aMeshManager
             centralManager = meshManager.centralManager()
@@ -151,6 +172,14 @@ class ReconnectionViewController: UITableViewController {
         }
     }
 
+    private func connectNode(_ aNode: UnprovisionedMeshNode) {
+        targetNode = ProvisionedMeshNode(withUnprovisionedNode: aNode, andDelegate: self)
+        centralManager.stopScan()
+        activityIndicator.stopAnimating()
+        showAlertController()
+        centralManager.connect(targetNode.blePeripheral(), options: nil)
+    }
+
     // MARK: - Table view data source
     override func numberOfSections(in tableView: UITableView) -> Int {
         return 1
@@ -173,12 +202,8 @@ class ReconnectionViewController: UITableViewController {
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        centralManager.stopScan()
-        activityIndicator.stopAnimating()
-        showAlertController()
         let aNode = discoveredNodes[indexPath.row]
-        targetNode = ProvisionedMeshNode(withUnprovisionedNode: aNode, andDelegate: self)
-        centralManager.connect(targetNode.blePeripheral(), options: nil)
+        connectNode(aNode)
     }
 }
 
@@ -215,6 +240,11 @@ extension ReconnectionViewController: CBCentralManagerDelegate {
                                 aCell?.showNode(oldNode)
                             }
                         }
+                    }
+
+                    if true == (UserDefaults.standard.value(forKey: UserDefaultsKeys.autoRejoinKey) as? Bool) ?? false{
+                        //Auto rejoin enabled, reconnect immediately!
+                        self.connectNode(tempNode)
                     }
                 }
             }
