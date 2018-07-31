@@ -392,7 +392,15 @@ class SettingsViewController: UIViewController, UITextFieldDelegate, UITableView
     }
 
     func tableView(_ tableView: UITableView, shouldHighlightRowAt indexPath: IndexPath) -> Bool {
-        return indexPath.section != 4
+        if indexPath.section == 4 {
+            //App version rows are readonly, no actions can be taken there
+            return false
+        }
+        if (indexPath.section == 0 && indexPath.row == 3) {
+            //Togglable settings cell is not selectable, only the switch can be tapped
+            return false
+        }
+        return true
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -403,7 +411,7 @@ class SettingsViewController: UIViewController, UITextFieldDelegate, UITableView
                 didSelectNetworkNameCell()
             } else if row == 1 {
                 didSelectGlobalTTLCell()
-            } else {
+            } else if row == 2 {
                 didSelectUnicastAddressCell()
             }
         } else if section == 1 {
