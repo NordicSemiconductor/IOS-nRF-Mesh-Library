@@ -172,6 +172,39 @@
                                             </subviews>
                                         </tableViewCellContentView>
                                     </tableViewCell>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="SettingsTableViewToggleCell" id="hQn-aS-nX3" customClass="ToggleSettingsTableViewCell" customModule="nRFMeshProvision_Example" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="99.333333333333343" width="375" height="44"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="hQn-aS-nX3" id="VFn-Us-5AT">
+                                            <rect key="frame" x="0.0" y="0.0" width="375" height="43.666666666666664"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Option" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="FL0-er-coU">
+                                                    <rect key="frame" x="15" y="11.666666666666664" width="51" height="20"/>
+                                                    <fontDescription key="fontDescription" name="TrebuchetMS" family="Trebuchet MS" pointSize="17"/>
+                                                    <nil key="textColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="jj6-an-mra">
+                                                    <rect key="frame" x="311" y="7" width="51" height="31"/>
+                                                    <connections>
+                                                        <action selector="toggleSwitchDidChangeValue:" destination="hQn-aS-nX3" eventType="valueChanged" id="QJL-o2-RZ4"/>
+                                                    </connections>
+                                                </switch>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstItem="jj6-an-mra" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="FL0-er-coU" secondAttribute="trailing" constant="16" id="4Ln-iN-iyG"/>
+                                                <constraint firstItem="FL0-er-coU" firstAttribute="centerY" secondItem="VFn-Us-5AT" secondAttribute="centerY" id="Bm9-LA-tfz"/>
+                                                <constraint firstItem="jj6-an-mra" firstAttribute="centerY" secondItem="VFn-Us-5AT" secondAttribute="centerY" id="W17-Lx-AJ1"/>
+                                                <constraint firstItem="FL0-er-coU" firstAttribute="leading" secondItem="VFn-Us-5AT" secondAttribute="leading" constant="15" id="beN-NV-nK2"/>
+                                                <constraint firstAttribute="trailing" secondItem="jj6-an-mra" secondAttribute="trailing" constant="15" id="mPZ-vB-oGb"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
+                                        <connections>
+                                            <outlet property="titleLabel" destination="FL0-er-coU" id="MOs-Kl-YWx"/>
+                                            <outlet property="toggleSwitch" destination="jj6-an-mra" id="7Dm-GQ-hta"/>
+                                        </connections>
+                                    </tableViewCell>
                                 </prototypes>
                                 <connections>
                                     <outlet property="dataSource" destination="Kzi-VP-pad" id="AtI-RB-HIT"/>
@@ -275,7 +308,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="VPt-Te-jxw" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="521" y="723"/>
+            <point key="canvasLocation" x="596" y="828"/>
         </scene>
         <!--Flags-->
         <scene sceneID="dXr-wY-uTM">
@@ -628,24 +661,33 @@ provisioning and then configuring a device.</string>
                         </connections>
                     </tableView>
                     <navigationItem key="navigationItem" title="Select Proxy" id="dXy-7Q-f8T">
-                        <barButtonItem key="rightBarButtonItem" id="V3b-aS-AXg">
-                            <view key="customView" contentMode="scaleToFill" id="eGZ-2F-Xkm">
-                                <rect key="frame" x="276" y="0.0" width="83" height="44"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <subviews>
-                                    <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" animating="YES" style="white" translatesAutoresizingMaskIntoConstraints="NO" id="73W-Hm-dgN">
-                                        <rect key="frame" x="63" y="12" width="20" height="20"/>
-                                    </activityIndicatorView>
-                                </subviews>
-                                <constraints>
-                                    <constraint firstItem="73W-Hm-dgN" firstAttribute="centerY" secondItem="eGZ-2F-Xkm" secondAttribute="centerY" id="4Nq-3t-c9G"/>
-                                    <constraint firstAttribute="trailing" secondItem="73W-Hm-dgN" secondAttribute="trailing" id="cfa-GC-Jwo"/>
-                                </constraints>
-                            </view>
-                        </barButtonItem>
+                        <rightBarButtonItems>
+                            <barButtonItem title="Disable auto rejoin" id="hzd-rj-WSR">
+                                <color key="tintColor" red="1" green="0.28499322360000001" blue="0.2098225027" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <connections>
+                                    <action selector="disableAutoRejoinButtonTapped:" destination="7BC-wy-MT8" id="U6I-lR-qa7"/>
+                                </connections>
+                            </barButtonItem>
+                            <barButtonItem id="V3b-aS-AXg">
+                                <view key="customView" contentMode="scaleToFill" id="eGZ-2F-Xkm">
+                                    <rect key="frame" x="126.66666666666667" y="0.0" width="83.000000000000014" height="44"/>
+                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                    <subviews>
+                                        <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" animating="YES" style="white" translatesAutoresizingMaskIntoConstraints="NO" id="73W-Hm-dgN">
+                                            <rect key="frame" x="63" y="12" width="20" height="20"/>
+                                        </activityIndicatorView>
+                                    </subviews>
+                                    <constraints>
+                                        <constraint firstItem="73W-Hm-dgN" firstAttribute="centerY" secondItem="eGZ-2F-Xkm" secondAttribute="centerY" id="4Nq-3t-c9G"/>
+                                        <constraint firstAttribute="trailing" secondItem="73W-Hm-dgN" secondAttribute="trailing" id="cfa-GC-Jwo"/>
+                                    </constraints>
+                                </view>
+                            </barButtonItem>
+                        </rightBarButtonItems>
                     </navigationItem>
                     <connections>
                         <outlet property="activityIndicator" destination="73W-Hm-dgN" id="aI3-Lw-8p1"/>
+                        <outlet property="disableAutoRejoinButton" destination="hzd-rj-WSR" id="eyJ-SQ-V3U"/>
                         <outlet property="emptyScannerView" destination="wdq-dq-M7C" id="DPc-xK-nOu"/>
                     </connections>
                 </tableViewController>
@@ -1049,7 +1091,7 @@ provisioning and then configuring a device.</string>
                                             <rect key="frame" x="16" y="0.0" width="343" height="55.666666666666664"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <fontDescription key="fontDescription" name="TrebuchetMS" family="Trebuchet MS" pointSize="17"/>
-                                            <color key="textColor" red="0.88294780250000005" green="0.29483556659999999" blue="0.2113302748" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                            <color key="textColor" red="1" green="0.28499322360000001" blue="0.2098225027" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                             <nil key="highlightedColor"/>
                                         </label>
                                     </subviews>

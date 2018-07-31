@@ -13,6 +13,7 @@
 		302D1F5A20BBEB4F0022AEB1 /* ToggleControlTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 302D1F5920BBEB4F0022AEB1 /* ToggleControlTableViewCell.swift */; };
 		302D1F5C20BBF2700022AEB1 /* ToggleCellDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 302D1F5B20BBF2700022AEB1 /* ToggleCellDelegate.swift */; };
 		303C6C02210F279000EA872D /* FlagSettingsPopoverViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 303C6C01210F279000EA872D /* FlagSettingsPopoverViewController.swift */; };
+		303C6C07210F405D00EA872D /* ToggleSettingsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 303C6C06210F405D00EA872D /* ToggleSettingsTableViewCell.swift */; };
 		304DAEB4208091EF006CFEA6 /* MainNetworkViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 304DAEA2208091EF006CFEA6 /* MainNetworkViewController.swift */; };
 		304DAEB5208091EF006CFEA6 /* MainTabBarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 304DAEA3208091EF006CFEA6 /* MainTabBarViewController.swift */; };
 		304DAEB6208091EF006CFEA6 /* MeshNodeCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 304DAEA4208091EF006CFEA6 /* MeshNodeCollectionViewCell.swift */; };
@@ -24,6 +25,8 @@
 		304DAEBD208091EF006CFEA6 /* ScannerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 304DAEAF208091EF006CFEA6 /* ScannerViewController.swift */; };
 		304DAEBE208091EF006CFEA6 /* AppKeyManagerTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 304DAEB2208091EF006CFEA6 /* AppKeyManagerTableViewController.swift */; };
 		304DAEBF208091EF006CFEA6 /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 304DAEB3208091EF006CFEA6 /* SettingsViewController.swift */; };
+		3056597D210F44B400CF2A5B /* ToggleSettingsCellDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3056597C210F44B400CF2A5B /* ToggleSettingsCellDelegate.swift */; };
+		305659802110402600CF2A5B /* UserDefaultsKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3056597F2110402600CF2A5B /* UserDefaultsKeys.swift */; };
 		305F08AD20861D0A006A15F3 /* ModelAppKeyBindingConfigurationTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 305F08AC20861D0A006A15F3 /* ModelAppKeyBindingConfigurationTableViewController.swift */; };
 		30648B0220459B7000177CB4 /* LowerLayerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 301D5C042045933800639A04 /* LowerLayerTests.swift */; };
 		306F4D1F20BED7B200572A8F /* NodeModelCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 306F4D1E20BED7B200572A8F /* NodeModelCell.swift */; };
@@ -61,6 +64,7 @@
 		302D1F5920BBEB4F0022AEB1 /* ToggleControlTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToggleControlTableViewCell.swift; sourceTree = "<group>"; };
 		302D1F5B20BBF2700022AEB1 /* ToggleCellDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToggleCellDelegate.swift; sourceTree = "<group>"; };
 		303C6C01210F279000EA872D /* FlagSettingsPopoverViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = FlagSettingsPopoverViewController.swift; path = nRFMeshProvision/ViewControllers/SettingsView/FlagSettingsPopoverViewController.swift; sourceTree = SOURCE_ROOT; };
+		303C6C06210F405D00EA872D /* ToggleSettingsTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToggleSettingsTableViewCell.swift; sourceTree = "<group>"; };
 		3043D9231FF38CF500A9A999 /* libcrypto.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libcrypto.a; path = Pods/OpenSSL/lib/libcrypto.a; sourceTree = "<group>"; };
 		3043D9241FF38CF500A9A999 /* libssl.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libssl.a; path = Pods/OpenSSL/lib/libssl.a; sourceTree = "<group>"; };
 		304DAEA2208091EF006CFEA6 /* MainNetworkViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainNetworkViewController.swift; sourceTree = "<group>"; };
@@ -74,6 +78,8 @@
 		304DAEAF208091EF006CFEA6 /* ScannerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScannerViewController.swift; sourceTree = "<group>"; };
 		304DAEB2208091EF006CFEA6 /* AppKeyManagerTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppKeyManagerTableViewController.swift; sourceTree = "<group>"; };
 		304DAEB3208091EF006CFEA6 /* SettingsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
+		3056597C210F44B400CF2A5B /* ToggleSettingsCellDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToggleSettingsCellDelegate.swift; sourceTree = "<group>"; };
+		3056597F2110402600CF2A5B /* UserDefaultsKeys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDefaultsKeys.swift; sourceTree = "<group>"; };
 		305F08AC20861D0A006A15F3 /* ModelAppKeyBindingConfigurationTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelAppKeyBindingConfigurationTableViewController.swift; sourceTree = "<group>"; };
 		306F4D1E20BED7B200572A8F /* NodeModelCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NodeModelCell.swift; sourceTree = "<group>"; };
 		307BA358204ED39E00944B89 /* StateRestoration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StateRestoration.swift; sourceTree = "<group>"; };
@@ -137,6 +143,15 @@
 			name = Pods;
 			sourceTree = "<group>";
 		};
+		303C6C05210F404900EA872D /* Cells */ = {
+			isa = PBXGroup;
+			children = (
+				303C6C06210F405D00EA872D /* ToggleSettingsTableViewCell.swift */,
+				3056597C210F44B400CF2A5B /* ToggleSettingsCellDelegate.swift */,
+			);
+			path = Cells;
+			sourceTree = "<group>";
+		};
 		304DAEA0208091EF006CFEA6 /* ViewControllers */ = {
 			isa = PBXGroup;
 			children = (
@@ -193,6 +208,7 @@
 		304DAEB0208091EF006CFEA6 /* SettingsView */ = {
 			isa = PBXGroup;
 			children = (
+				303C6C05210F404900EA872D /* Cells */,
 				304DAEB1208091EF006CFEA6 /* AppKeySettingsView */,
 				303C6C01210F279000EA872D /* FlagSettingsPopoverViewController.swift */,
 				304DAEB3208091EF006CFEA6 /* SettingsViewController.swift */,
@@ -207,6 +223,14 @@
 			);
 			path = AppKeySettingsView;
 			sourceTree = "<group>";
+		};
+		3056597E2110401100CF2A5B /* Utils */ = {
+			isa = PBXGroup;
+			children = (
+				3056597F2110402600CF2A5B /* UserDefaultsKeys.swift */,
+			);
+			path = Utils;
+			sourceTree = SOURCE_ROOT;
 		};
 		305F08AB20861CF7006A15F3 /* ConfigurationViews */ = {
 			isa = PBXGroup;
@@ -278,6 +302,7 @@
 		607FACD21AFB9204008FA782 /* Example for nRFMeshProvision */ = {
 			isa = PBXGroup;
 			children = (
+				3056597E2110401100CF2A5B /* Utils */,
 				30D40F78208099BF00DC126F /* Models */,
 				304DAEA0208091EF006CFEA6 /* ViewControllers */,
 				607FACD51AFB9204008FA782 /* AppDelegate.swift */,
@@ -511,6 +536,7 @@
 				304DAEB7208091EF006CFEA6 /* RootViewController.swift in Sources */,
 				30FF5EED20973E69002D7C77 /* ReconnectionViewController.swift in Sources */,
 				304DAEBA208091EF006CFEA6 /* MeshNodeLogTableViewCell.swift in Sources */,
+				305659802110402600CF2A5B /* UserDefaultsKeys.swift in Sources */,
 				302D1F4720B44E000022AEB1 /* ProvisioningLogTableViewController.swift in Sources */,
 				304DAEB5208091EF006CFEA6 /* MainTabBarViewController.swift in Sources */,
 				304DAEB9208091EF006CFEA6 /* AppKeySelectorTableViewController.swift in Sources */,
@@ -524,12 +550,14 @@
 				302D1F5C20BBF2700022AEB1 /* ToggleCellDelegate.swift in Sources */,
 				30D40F9720848DFC00DC126F /* ModelConfigurationTableViewController.swift in Sources */,
 				304DAEB8208091EF006CFEA6 /* MeshNodeInfoTableViewController.swift in Sources */,
+				303C6C07210F405D00EA872D /* ToggleSettingsTableViewCell.swift in Sources */,
 				30D40F7A208099BF00DC126F /* LogEntry.swift in Sources */,
 				607FACD61AFB9204008FA782 /* AppDelegate.swift in Sources */,
 				30FF5EEA20972672002D7C77 /* ScannerCell.swift in Sources */,
 				304DAEBF208091EF006CFEA6 /* SettingsViewController.swift in Sources */,
 				304DAEBC208091EF006CFEA6 /* MeshProvisioningDataTableViewController.swift in Sources */,
 				304DAEBD208091EF006CFEA6 /* ScannerViewController.swift in Sources */,
+				3056597D210F44B400CF2A5B /* ToggleSettingsCellDelegate.swift in Sources */,
 				30FF5EEF20973F50002D7C77 /* ProxyScannerCell.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

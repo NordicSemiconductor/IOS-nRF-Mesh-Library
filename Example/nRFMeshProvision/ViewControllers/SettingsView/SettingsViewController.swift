@@ -9,13 +9,14 @@
 import UIKit
 import nRFMeshProvision
 
-class SettingsViewController: UIViewController, UITextFieldDelegate, UITableViewDelegate, UITableViewDataSource, UIPopoverPresentationControllerDelegate {
+class SettingsViewController: UIViewController, UITextFieldDelegate, UITableViewDelegate, UITableViewDataSource, UIPopoverPresentationControllerDelegate, ToggleSettingsCellDelegate {
 
     // MARK: - Properties
     var meshManager: NRFMeshManager!
     let reuseIdentifier = "SettingsTableViewCell"
+    let toggleReuseIdentifier = "SettingsTableViewToggleCell"
     let sectionTitles = ["Global Settings", "Network Settings", "App keys", "Mesh State", "About"]
-    let rowTitles   = [["Network Name", "Global TTL", "Provisioner Unicast"],
+    let rowTitles   = [["Network Name", "Global TTL", "Provisioner Unicast", "Auto rejoin"],
                        ["Network Key", "Key Index", "Flags", "IV Index"],
                        ["Manage App Keys"],
                        ["Reset Mesh State"],
@@ -356,7 +357,7 @@ class SettingsViewController: UIViewController, UITextFieldDelegate, UITableView
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch section {
-        case 0: return 3
+        case 0: return 4
         case 1: return 4
         case 2: return 1
         case 3: return 1
@@ -370,19 +371,36 @@ class SettingsViewController: UIViewController, UITextFieldDelegate, UITableView
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let aCell = tableView.dequeueReusableCell(withIdentifier: reuseIdentifier, for: indexPath)
-        aCell.textLabel?.text = rowTitles[indexPath.section][indexPath.row]
-        aCell.detailTextLabel?.text = self.contentForRowAtIndexPath(indexPath)
-        if indexPath.section == 3 && indexPath.row == 0 {
-            aCell.detailTextLabel?.textColor = UIColor.red
+        var aCell: UITableViewCell?
+        if indexPath.section == 0 && indexPath.row == 3 {
+            let toggleCell = tableView.dequeueReusableCell(withIdentifier: toggleReuseIdentifier, for: indexPath) as? ToggleSettingsTableViewCell
+            toggleCell?.titleLabel.text = rowTitles[indexPath.section][indexPath.row]
+            toggleCell?.toggleSwitch.isOn = (UserDefaults.standard.value(forKey: UserDefaultsKeys.autoRejoinKey) as? Bool) ?? false
+            toggleCell?.setDelegate(self)
+            aCell = toggleCell
         } else {
-            aCell.detailTextLabel?.textColor = UIColor.gray
+            aCell = tableView.dequeueReusableCell(withIdentifier: reuseIdentifier, for: indexPath)
+            aCell!.textLabel?.text = rowTitles[indexPath.section][indexPath.row]
+            aCell!.detailTextLabel?.text = self.contentForRowAtIndexPath(indexPath)
+            if indexPath.section == 3 && indexPath.row == 0 {
+                aCell!.detailTextLabel?.textColor = UIColor.red
+            } else {
+                aCell!.detailTextLabel?.textColor = UIColor.gray
+            }
         }
-        return aCell
+        return aCell!
     }
 
     func tableView(_ tableView: UITableView, shouldHighlightRowAt indexPath: IndexPath) -> Bool {
-        return indexPath.section != 4
+        if indexPath.section == 4 {
+            //App version rows are readonly, no actions can be taken there
+            return false
+        }
+        if (indexPath.section == 0 && indexPath.row == 3) {
+            //Togglable settings cell is not selectable, only the switch can be tapped
+            return false
+        }
+        return true
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -393,7 +411,7 @@ class SettingsViewController: UIViewController, UITextFieldDelegate, UITableView
                 didSelectNetworkNameCell()
             } else if row == 1 {
                 didSelectGlobalTTLCell()
-            } else {
+            } else if row == 2 {
                 didSelectUnicastAddressCell()
             }
         } else if section == 1 {
@@ -486,6 +504,12 @@ class SettingsViewController: UIViewController, UITextFieldDelegate, UITableView
         } else {
             return "N/A"
         }
+    }
+
+    // MARK: - ToggleCellSettingsDelegate
+    func didToggle(_ newState: Bool) {
+        UserDefaults.standard.setValue(newState, forKey: UserDefaultsKeys.autoRejoinKey)
+        UserDefaults.standard.synchronize()
     }
 
     // MARK: - UIPopoverPresentationDelegate
