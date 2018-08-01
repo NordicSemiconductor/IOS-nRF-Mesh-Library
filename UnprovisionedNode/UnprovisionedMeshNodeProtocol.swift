@@ -55,6 +55,7 @@ protocol UnprovisionedMeshNodeProtocol {
     func generatedProvisionerPublicKeyData(_ someData: Data)
     func generatedProvisionerPrivateKey(_ someKey: SecKey)
     func receivedCapabilitiesData(_ someData: Data)
+    func parsedCapabilities(_ someCapabilities: InviteCapabilities)
     func receivedDevicePublicKeyData(_ someData: Data)
     func calculatedECDH(_ anECDH: Data)
     func generatedProvisionerRandom(_ aRandomValue: Data)

@@ -19,6 +19,7 @@
 		25AF23D54CC9310D01D2FC36824450DB /* TransportNonce.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D6C86FD599D701EDA8809E5536968D2 /* TransportNonce.swift */; };
 		296D4B7E710C482FFF3843C5B8978D28 /* UnprovisionedMeshNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE55DDED2AA5E287D2840BD5EFFF169F /* UnprovisionedMeshNode.swift */; };
 		2A610089E426B0317B6A128A7A7DF1A8 /* nRFMeshProvision-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 2B779FC86606FD8CA520FFB414A83185 /* nRFMeshProvision-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		305659A42111CFFD00CF2A5B /* InviteCapabilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 305659A32111CFFD00CF2A5B /* InviteCapabilities.swift */; };
 		30E5B61120FCBE7500446460 /* NRFMeshManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30E5B61020FCBE7500446460 /* NRFMeshManager.swift */; };
 		3387BAC259D90699D6FAEE4C094066B5 /* DefaultTTLGetMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2827399ACB6DCBABEA4CA1D6A0B019D7 /* DefaultTTLGetMessage.swift */; };
 		35947D501181547D00063E1F1AD2E254 /* SleepConfiguratorState.swift in Sources */ = {isa = PBXBuildFile; fileRef = F27D4AF3BE967E2A405AD94F31CFB0A6 /* SleepConfiguratorState.swift */; };
@@ -162,6 +163,7 @@
 		2CC16124CE895CCD9AA277A13C96A3E8 /* AccessMessagePDU.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AccessMessagePDU.swift; sourceTree = "<group>"; };
 		2F62C1FAD09CC3BB699EEA80F6BB39E5 /* MeshConstants.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MeshConstants.swift; sourceTree = "<group>"; };
 		2FC1C3A4C27E1C86DA9418A50DC0195B /* ripemd.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = ripemd.h; path = opensslIncludes/openssl/ripemd.h; sourceTree = "<group>"; };
+		305659A32111CFFD00CF2A5B /* InviteCapabilities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InviteCapabilities.swift; sourceTree = "<group>"; };
 		30E5B61020FCBE7500446460 /* NRFMeshManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NRFMeshManager.swift; sourceTree = "<group>"; };
 		318B21D3C09027B98FF8F0C00493237E /* dtls1.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = dtls1.h; path = opensslIncludes/openssl/dtls1.h; sourceTree = "<group>"; };
 		3301518DE48BF7E5F4870BFF4DB498E7 /* MeshAddressTypes.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MeshAddressTypes.swift; sourceTree = "<group>"; };
@@ -474,8 +476,7 @@
 				D56C148E54992A94819C1545DA21715D /* UnprovisionedMeshNodeLoggingDelegate.swift */,
 				49296B046CA244173505E501A23ACFA8 /* UnprovisionedMeshNodeProtocol.swift */,
 			);
-			name = UnprovisionedNode;
-			path = nRFMeshProvision/Classes/UnprovisionedNode;
+			path = UnprovisionedNode;
 			sourceTree = "<group>";
 		};
 		75A5FB02FF8921C359275FE763DC9906 /* ProvisionedMeshNode */ = {
@@ -529,6 +530,7 @@
 				1F381ED4B4F697FC53E77B48664F1D77 /* ProvisioningErrorCodes.swift */,
 				1B728F843F9300A2E418A5715FB1E2EA /* PublicKeyInformationAvailability.swift */,
 				4DA2A6FA9AEC0339021E0558E67A1C92 /* StaticOutOfBoundInformationAvailability.swift */,
+				305659A32111CFFD00CF2A5B /* InviteCapabilities.swift */,
 			);
 			path = ProvisioningHelpers;
 			sourceTree = "<group>";
@@ -606,11 +608,11 @@
 				50B061730149C18D263F0BEAA1DEAE3F /* MeshState */,
 				BF2D7C51AD8755AB46B808B06B66BCB8 /* Models */,
 				FE922A68FF364C10A0FB5BA7B590CBDD /* Pod */,
+				6FC8B4D1B068F4E5D24D126EAAB5FE87 /* UnprovisionedNode */,
 				75A5FB02FF8921C359275FE763DC9906 /* ProvisionedMeshNode */,
 				ABAE9DCC809600E72CA9DD5067485F23 /* Provisioner */,
 				58B4553EBBA20F8A4457C46963649A07 /* Support Files */,
 				9E131A7234842920ADB372A64DBE9337 /* Transport */,
-				6FC8B4D1B068F4E5D24D126EAAB5FE87 /* UnprovisionedNode */,
 				B3F06959AF826C5FE1247DBE3F493538 /* Utils */,
 			);
 			name = nRFMeshProvision;
@@ -1012,6 +1014,7 @@
 				2228469023DB50836A3C51663FBE877B /* ModelSubscriptionAddConfiguratorState.swift in Sources */,
 				D6475EA6433EBC5780E681CB73EFFA3C /* ModelSubscriptionAddMessage.swift in Sources */,
 				BF74E5230C73AE5EBDB45FA9F10E65BA /* ModelSubscriptionDeleteConfiguratorState.swift in Sources */,
+				305659A42111CFFD00CF2A5B /* InviteCapabilities.swift in Sources */,
 				30E5B61120FCBE7500446460 /* NRFMeshManager.swift in Sources */,
 				A607C15DED4F0B805E95973DD56768C2 /* ModelSubscriptionDeleteMessage.swift in Sources */,
 				BD0717629EA749CD494506A75C3B1E32 /* ModelSubscriptionStatusMessage.swift in Sources */,

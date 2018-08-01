@@ -15,6 +15,7 @@ class InviteProvisioningState: NSObject, ProvisioningStateProtocol {
     private var dataInCharacteristic: CBCharacteristic!
     private var dataOutCharacteristic: CBCharacteristic!
 
+    private var duration: UInt8
     // MARK: - ProvisioningStateProtocol
     var target: UnprovisionedMeshNodeProtocol
 
@@ -24,6 +25,7 @@ class InviteProvisioningState: NSObject, ProvisioningStateProtocol {
 
     required init(withTargetNode aNode: UnprovisionedMeshNodeProtocol) {
         target                              = aNode
+        duration                            = 0x05 //Default attention timer is 5 seconds
         super.init()
         target.basePeripheral().delegate    = self
         //If services and characteristics are already discovered, set them now
@@ -32,9 +34,13 @@ class InviteProvisioningState: NSObject, ProvisioningStateProtocol {
         dataInCharacteristic                = discovery.dataInCharacteristic
         dataOutCharacteristic               = discovery.dataOutCharacteristic
     }
-   
+    
+    public func setDuration(_ aDuration: UInt8) {
+        duration = aDuration
+    }
+
     func execute() {
-        let invitePDU = Data(bytes: [0x03, 0x00, 0x00])
+        let invitePDU = Data(bytes: [0x03, 0x00, duration])
         print(invitePDU.hexString())
 
         // Store generated invite PDU Data, first two bytes are PDU related and are not used further.
@@ -86,13 +92,15 @@ class InviteProvisioningState: NSObject, ProvisioningStateProtocol {
                 }
             }
             target.receivedCapabilitiesData(data.dropFirst().dropFirst())
-
-            let nextState = StartProvisionProvisioningState(withTargetNode: target)
-            
-            let capabilities = (elementCount, algorithm, pubKeyType, staticOOBType, outputOOBSize, supportedOutputActions, inputOOBSize, supportedInputActions)
-            nextState.setCapabilities(capabilities)
-
-            target.switchToState(nextState)
+//            let inviteCapabilties = InviteCapa
+//            target.parsedCapabilities(elementCount: elementCount,
+//                                      algorithm: algorithm,
+//                                      pubKeyType: pubKeyType,
+//                                      staticOOBType: staticOOBType,
+//                                      outputOOBSize: outputOOBSize,
+//                                      supportedOutputActions: supportedOutputActions,
+//                                      inputOOBSize: inputOOBSize,
+//                                      supportedInputActions: supportedInputActions)
         }
    }
     

@@ -8,6 +8,7 @@
 import Foundation
 
 public protocol UnprovisionedMeshNodeDelegate {
+    func nodeCompletedProvisioningInvitation(_ aNode: UnprovisionedMeshNode, withCapabilities capabilities: InviteCapabilities)
     func nodeDidCompleteDiscovery(_ aNode: UnprovisionedMeshNode)
     func nodeRequiresUserInput(_ aNode: UnprovisionedMeshNode,
                                outputAction: OutputOutOfBoundActions,

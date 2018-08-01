@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum PublicKeyInformationAvailability: UInt8 {
+public enum PublicKeyInformationAvailability: UInt8 {
     case publicKeyInformationUnavailable = 0x00
     case publicKeyInformationAvailable   = 0x01
 }

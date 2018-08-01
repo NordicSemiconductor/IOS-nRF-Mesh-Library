@@ -15,14 +15,7 @@ class StartProvisionProvisioningState: NSObject, ProvisioningStateProtocol {
     private var dataOutCharacteristic: CBCharacteristic!
 
     // MARK: - State properties
-    private var elementCount                    : Int!
-    private var algorithm                       : ProvisioningAlgorithm!
-    private var publicKeyAvailability           : PublicKeyInformationAvailability!
-    private var staticOutOfBoundAvailability    : StaticOutOfBoundInformationAvailability!
-    private var outputOutOfBoundSize            : UInt8!
-    private var outputOutOfBoundActions         : [OutputOutOfBoundActions]!
-    private var inputOutOfBoundSize             : UInt8!
-    private var inputOutOfBoundActions          : [InputOutOfBoundActions]!
+    private var inviteCapabilities : InviteCapabilities?
     
     func humanReadableName() -> String {
         return "ProvisioningStart"
@@ -41,46 +34,43 @@ class StartProvisionProvisioningState: NSObject, ProvisioningStateProtocol {
         dataOutCharacteristic   = discovery.dataOutCharacteristic
     }
    
-    public func setCapabilities(_ someCapabilities: (elementcount: Int, algorithm: ProvisioningAlgorithm, publicKeyAvailability: PublicKeyInformationAvailability, staticOutOfBoundAvailability: StaticOutOfBoundInformationAvailability, outOfBoundSize: UInt8, outOfBoundAction: [OutputOutOfBoundActions], inputOutOfBoundsize: UInt8, inputOutOfBoundAction: [InputOutOfBoundActions])) {
-        elementCount                    = someCapabilities.elementcount
-        algorithm                       = someCapabilities.algorithm
-        publicKeyAvailability           = someCapabilities.publicKeyAvailability
-        staticOutOfBoundAvailability    = someCapabilities.staticOutOfBoundAvailability
-        outputOutOfBoundSize            = someCapabilities.outOfBoundSize
-        outputOutOfBoundActions         = someCapabilities.outOfBoundAction
-        inputOutOfBoundSize             = someCapabilities.inputOutOfBoundsize
-        inputOutOfBoundActions          = someCapabilities.inputOutOfBoundAction
+    public func setCapabilities(_ someCapabilities: InviteCapabilities) {
+        inviteCapabilities = someCapabilities
     }
 
     func execute() {
-        guard algorithm! == .fipsp256EllipticCurve else {
-            print("Error: Unsupported algorithm, only supported algorithm is FIPS P-256 Elliptic curve")
-            return
-        }
+        if let inviteCapabilities = inviteCapabilities {
+            guard inviteCapabilities.algorithm == .fipsp256EllipticCurve else {
+                print("Error: Unsupported algorithm, only supported algorithm is FIPS P-256 Elliptic curve")
+                return
+            }
 
-        print("Executing Start provision PDU")
-        let provisionStartCommand   : UInt8 = 0x02
-        let fipsEllipticAlgorithm   : UInt8 = 0x00 //FIPS P-256
-        let oobpubkeyAvailability   : UInt8 = 0x00 //No OOB public key has been used
-        var startPDU = Data([0x03, provisionStartCommand, fipsEllipticAlgorithm, oobpubkeyAvailability])
-        if outputOutOfBoundActions.count == 0 || outputOutOfBoundActions.contains(.noOutput) {
-            //Prefer no OOB
-            startPDU.append(contentsOf: [0x00, 0x00, 0x00 ]) //No OOB = 0, Action = 0 & size = 0
+            print("Executing Start provision PDU")
+            let provisionStartCommand   : UInt8 = 0x02
+            let fipsEllipticAlgorithm   : UInt8 = 0x00 //FIPS P-256
+            let oobpubkeyAvailability   : UInt8 = 0x00 //No OOB public key has been used
+            var startPDU = Data([0x03, provisionStartCommand, fipsEllipticAlgorithm, oobpubkeyAvailability])
+            if inviteCapabilities.supportedOutputOOBActions.count == 0 || inviteCapabilities.supportedOutputOOBActions.contains(.noOutput) {
+                //Prefer no OOB
+                startPDU.append(contentsOf: [0x00, 0x00, 0x00 ]) //No OOB = 0, Action = 0 & size = 0
+            } else {
+                //If there is no noOutput OOB action, use the first possible action
+                startPDU.append(contentsOf: [0x02,
+                                             inviteCapabilities.supportedOutputOOBActions.first!.toByteValue()!,
+                                             inviteCapabilities.outputOOBSize])
+            }
+
+            print("Provision Start PDU Sent: \(startPDU.hexString())")
+            
+            //Store invitation data, first two bytes are PDU related and are not used further.
+            target.generatedProvisioningStartData(startPDU.dropFirst().dropFirst())
+            target.basePeripheral().writeValue(startPDU, for: dataInCharacteristic, type: .withoutResponse)
+
+            let nextState = PublicKeyProvisioningState(withTargetNode: target)
+            target.switchToState(nextState)
         } else {
-            //If there is no noOutput OOB action, use the first possible action
-            startPDU.append(contentsOf: [0x02,
-                                         outputOutOfBoundActions.first!.toByteValue()!,
-                                         outputOutOfBoundSize])
+            print("Node capabilities not present, please run the invite command before provisioning")
         }
-
-        print("Provision Start PDU Sent: \(startPDU.hexString())")
-        
-        //Store invitation data, first two bytes are PDU related and are not used further.
-        target.generatedProvisioningStartData(startPDU.dropFirst().dropFirst())
-        target.basePeripheral().writeValue(startPDU, for: dataInCharacteristic, type: .withoutResponse)
-
-        let nextState = PublicKeyProvisioningState(withTargetNode: target)
-        target.switchToState(nextState)
         
     }
 

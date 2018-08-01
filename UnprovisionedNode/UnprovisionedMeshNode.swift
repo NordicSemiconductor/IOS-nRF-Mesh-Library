@@ -36,8 +36,8 @@ public class UnprovisionedMeshNode: NSObject, UnprovisionedMeshNodeProtocol {
     private var inviteProvisioningData      : Data!
     private var startProvisioningData       : Data!
     private var userProvisionerInput        : Data!
-    private var calculatedDeviceKey         : Data?
-
+    private var calculatedDeviceKey         : Data!
+    private var inviteCapabilities          : InviteCapabilities!
     // MARK: - MeshNode implementation
     public init(withPeripheral aPeripheral: CBPeripheral, advertisementDictionary aDictionary: [AnyHashable : Any], RSSI anRSSI: NSNumber, andDelegate aDelegate: UnprovisionedMeshNodeDelegate?) {
         peripheral          = aPeripheral
@@ -66,9 +66,16 @@ public class UnprovisionedMeshNode: NSObject, UnprovisionedMeshNodeProtocol {
         provisioningState.execute()
     }
    
+    public func identifyWithDuration(_ aDuration: UInt8) {
+        provisioningState = InviteProvisioningState(withTargetNode: self)
+        (provisioningState as? InviteProvisioningState)?.setDuration(aDuration)
+        provisioningState.execute()
+    }
+    
     public func provision(withProvisioningData someProvisioningData: ProvisioningData) {
         provisioningData    = someProvisioningData
-        provisioningState   = InviteProvisioningState(withTargetNode: self)
+        provisioningState = StartProvisionProvisioningState(withTargetNode: self)
+        (provisioningState as? StartProvisionProvisioningState)?.setCapabilities(self.inviteCapabilities)
         provisioningState.execute()
     }
 
@@ -144,6 +151,11 @@ public class UnprovisionedMeshNode: NSObject, UnprovisionedMeshNodeProtocol {
    
     func provisionerAuthData() -> Data {
         return userProvisionerInput
+    }
+
+    func parsedCapabilities(_ someCapabilities: InviteCapabilities) {
+        self.inviteCapabilities = someCapabilities
+        self.delegate?.nodeCompletedProvisioningInvitation(self, withCapabilities: someCapabilities)
     }
 
     func receivedCapabilitiesData(_ someData: Data) {
@@ -224,11 +236,12 @@ public class UnprovisionedMeshNode: NSObject, UnprovisionedMeshNodeProtocol {
             delegate?.nodeProvisioningCompleted(self)
         }
     }
-   
+
     func provisioningFailed(withErrorCode anErrorCode: ProvisioningErrorCodes) {
         delegate?.nodeProvisioningFailed(self, withErrorCode: anErrorCode)
     }
-   // MARK: - Accessors
+
+    // MARK: - Accessors
     public func blePeripheral() -> CBPeripheral {
         return peripheral
     }
