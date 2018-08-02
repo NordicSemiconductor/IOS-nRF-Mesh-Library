@@ -40,7 +40,6 @@ public struct ModelPublicationSetMessage {
             payload.append(Data([aModelIdentifier[1], aModelIdentifier[0],
                                  aModelIdentifier[3], aModelIdentifier[2]]))
         }
-        print("DBG: publication address payload: \(payload.hexString())")
     }
     
     public func assemblePayload(withMeshState aState: MeshState, toAddress aDestinationAddress: Data) -> [Data]? {

@@ -299,7 +299,11 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
 
     func receivedModelPublicationStatus(_ modelPublicationStatusData: ModelPublicationStatusMessage) {
         if modelPublicationStatusData.statusCode == .success {
-            print("Publication address set!")
+            if modelPublicationStatusData.publishAddress == Data([0x00, 0x00]) {
+                print("Publication address cleared!")
+            } else {
+                print("Publication address set!")
+            }
             print("Publication address: \(modelPublicationStatusData.publishAddress.hexString())")
             print("AppKeyIndex: \(modelPublicationStatusData.appKeyIndex.hexString())")
             print("Element Addr: \(modelPublicationStatusData.elementAddress.hexString())")
@@ -508,8 +512,14 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
             if let element = nodeEntry.elements?[selectedModelIndexPath.section] {
                 let targetModel = element.allSigAndVendorModels()[selectedModelIndexPath.row]
                 if let address = element.publishAddressForModelId(targetModel) {
-                    aCell.textLabel?.text = address.hexString()
-                    aCell.detailTextLabel?.text = "Tap to change"
+                    let addressType = MeshAddressTypes(rawValue: address)
+                    if addressType! == .Unassigned {
+                        aCell.textLabel?.text = "None"
+                        aCell.detailTextLabel?.text = "Tap to add"
+                    } else {
+                        aCell.textLabel?.text = address.hexString()
+                        aCell.detailTextLabel?.text = "Tap to change or remove"
+                    }
                 } else {
                     aCell.textLabel?.text = "None"
                     aCell.detailTextLabel?.text = "Tap to add"
@@ -561,17 +571,21 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
         case 0:
             self.performSegue(withIdentifier: "ShowAppKeyBindingView", sender: indexPath.row)
         case 1:
-            self.presentInputAlert { (anAddressString) in
+            self.presentInputAlert(withResetCapability: true) { (anAddressString) in
                 guard  anAddressString != nil else {
                     return
                 }
-                if let addressData = Data(hexString: anAddressString!) {
-                    self.didSelectPublishAddress(addressData)
+                if anAddressString == "reset" {
+                    self.didSelectPublishAddress(Data([0x00,0x00]))
+                } else {
+                    if let addressData = Data(hexString: anAddressString!) {
+                        self.didSelectPublishAddress(addressData)
+                    }
                 }
             }
         case 2:
             if indexPath.row == 0 {
-                self.presentInputAlert { (anAddressString) in
+                self.presentInputAlert(withResetCapability: false) { (anAddressString) in
                     guard  anAddressString != nil else {
                         return
                     }
@@ -586,7 +600,7 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
     }
 
     // MARK: - Input Alerts
-    func presentInputAlert(withCompletion aCompletionHandler : @escaping (String?) -> Void) {
+    func presentInputAlert(withResetCapability canReset: Bool, andCompletion aCompletionHandler : @escaping (String?) -> Void) {
         let inputAlertView = UIAlertController(title: "Enter an address",
                                                message: nil,
                                                preferredStyle: .alert)
@@ -599,7 +613,7 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
             aTextField.placeholder = "0001"
         }
 
-        let createAction = UIAlertAction(title: "Add", style: .default) { (_) in
+        let addAction = UIAlertAction(title: "Add", style: .default) { (_) in
             DispatchQueue.main.async {
                 if var text = inputAlertView.textFields![0].text {
                     if text.lowercased().contains("0x") {
@@ -622,7 +636,18 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
             }
         }
 
-        inputAlertView.addAction(createAction)
+        inputAlertView.addAction(addAction)
+        
+        if canReset {
+            //Some fields can be resettable, this adds a reset button
+            let clearAction = UIAlertAction(title: "Clear", style: .destructive) { (_) in
+                DispatchQueue.main.async {
+                    aCompletionHandler("reset")
+                }
+            }
+            inputAlertView.addAction(clearAction)
+        }
+
         inputAlertView.addAction(cancelAction)
         present(inputAlertView, animated: true, completion: nil)
     }

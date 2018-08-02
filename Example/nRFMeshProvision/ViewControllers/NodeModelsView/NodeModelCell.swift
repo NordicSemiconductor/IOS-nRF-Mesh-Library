@@ -16,8 +16,23 @@ class NodeModelCell: UITableViewCell {
     @IBOutlet weak var statusIcon: UIImageView!
     
     public func configureWithModel(_ aModel: Data, inElement anElement: CompositionElement) {
-        let hasPublication = anElement.publishAddressForModelId(aModel) != nil
-        var hasSubscription: Bool
+        var hasPublication  : Bool
+        var hasSubscription : Bool
+        
+        if let publishAddress = anElement.publishAddressForModelId(aModel) {
+            if let publicationType = MeshAddressTypes(rawValue: publishAddress) {
+                if publicationType == .Unassigned {
+                    hasPublication = false
+                }else {
+                    hasPublication = true
+                }
+            } else {
+                hasPublication = true
+            }
+        } else {
+            hasPublication = false
+        }
+
         if anElement.subscriptionAddressesForModelId(aModel) != nil {
             if anElement.subscriptionAddressesForModelId(aModel)!.count > 0 {
                 hasSubscription = true
