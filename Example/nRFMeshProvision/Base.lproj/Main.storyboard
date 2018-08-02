@@ -1090,7 +1090,7 @@ provisioning and then configuring a device.</string>
                                                     <fontDescription key="fontDescription" name="TrebuchetMS" family="Trebuchet MS" pointSize="16"/>
                                                     <state key="normal" title="View log"/>
                                                     <connections>
-                                                        <segue destination="ANh-7k-8vY" kind="show" id="vGL-ED-FGc"/>
+                                                        <segue destination="ANh-7k-8vY" kind="show" identifier="showLogView" id="vGL-ED-FGc"/>
                                                     </connections>
                                                 </button>
                                                 <progressView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="24h-tb-ted">
@@ -1516,7 +1516,7 @@ provisioning and then configuring a device.</string>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Cae-xZ-ahB" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1393" y="-1780"/>
+            <point key="canvasLocation" x="596" y="-1718"/>
         </scene>
         <!--Bind AppKey-->
         <scene sceneID="rdL-xW-s1H">
