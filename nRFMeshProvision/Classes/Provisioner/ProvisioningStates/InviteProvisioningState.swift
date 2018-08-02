@@ -92,15 +92,15 @@ class InviteProvisioningState: NSObject, ProvisioningStateProtocol {
                 }
             }
             target.receivedCapabilitiesData(data.dropFirst().dropFirst())
-//            let inviteCapabilties = InviteCapa
-//            target.parsedCapabilities(elementCount: elementCount,
-//                                      algorithm: algorithm,
-//                                      pubKeyType: pubKeyType,
-//                                      staticOOBType: staticOOBType,
-//                                      outputOOBSize: outputOOBSize,
-//                                      supportedOutputActions: supportedOutputActions,
-//                                      inputOOBSize: inputOOBSize,
-//                                      supportedInputActions: supportedInputActions)
+            let capabilities = InviteCapabilities(withElementCount: elementCount,
+                                                  algorithm: algorithm,
+                                                  publicKeyAvailability: pubKeyType,
+                                                  staticOOBAvailability: staticOOBType,
+                                                  outputOOBSize: outputOOBSize,
+                                                  inputOOBSize: inputOOBSize,
+                                                  supportedInputOOB: supportedInputActions,
+                                                  supportedOutputOOB: supportedOutputActions)
+            target.parsedCapabilities(capabilities)
         }
    }
     

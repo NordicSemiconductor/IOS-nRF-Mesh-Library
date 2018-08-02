@@ -37,7 +37,8 @@ public class UnprovisionedMeshNode: NSObject, UnprovisionedMeshNodeProtocol {
     private var startProvisioningData       : Data!
     private var userProvisionerInput        : Data!
     private var calculatedDeviceKey         : Data!
-    private var inviteCapabilities          : InviteCapabilities!
+    private var currentInviteCapabilities   : InviteCapabilities!
+    
     // MARK: - MeshNode implementation
     public init(withPeripheral aPeripheral: CBPeripheral, advertisementDictionary aDictionary: [AnyHashable : Any], RSSI anRSSI: NSNumber, andDelegate aDelegate: UnprovisionedMeshNodeDelegate?) {
         peripheral          = aPeripheral
@@ -75,7 +76,7 @@ public class UnprovisionedMeshNode: NSObject, UnprovisionedMeshNodeProtocol {
     public func provision(withProvisioningData someProvisioningData: ProvisioningData) {
         provisioningData    = someProvisioningData
         provisioningState = StartProvisionProvisioningState(withTargetNode: self)
-        (provisioningState as? StartProvisionProvisioningState)?.setCapabilities(self.inviteCapabilities)
+        (provisioningState as? StartProvisionProvisioningState)?.setCapabilities(self.currentInviteCapabilities)
         provisioningState.execute()
     }
 
@@ -154,7 +155,7 @@ public class UnprovisionedMeshNode: NSObject, UnprovisionedMeshNodeProtocol {
     }
 
     func parsedCapabilities(_ someCapabilities: InviteCapabilities) {
-        self.inviteCapabilities = someCapabilities
+        self.currentInviteCapabilities = someCapabilities
         self.delegate?.nodeCompletedProvisioningInvitation(self, withCapabilities: someCapabilities)
     }
 

@@ -151,6 +151,8 @@ class MeshProvisioningDataTableViewController: UITableViewController, UITextFiel
             navigationItem.hidesBackButton = true
             if targetNode.blePeripheral().state != .connected {
                 connectNode(targetNode)
+            } else {
+                provisionNode(targetNode)
             }
             abortButton.isEnabled = true
             abortButton.title = "Abort"
@@ -159,6 +161,7 @@ class MeshProvisioningDataTableViewController: UITableViewController, UITextFiel
         if tableView.numberOfSections == 1 {
             tableView.insertSections([1], with: .fade)
             tableView.scrollToRow(at: IndexPath(row: 7, section: 1), at: UITableViewScrollPosition.bottom, animated: true)
+            resetSubtitleLabels()
         } else if tableView.numberOfSections == 2 {
             tableView.insertSections([2], with: .fade)
             tableView.scrollToRow(at: IndexPath(row: 0, section: 2), at: UITableViewScrollPosition.bottom, animated: true)
@@ -404,6 +407,32 @@ extension MeshProvisioningDataTableViewController {
 
     private func discoveryCompleted() {
         logEventWithMessage("discovery completed")
+        switch provisioningState {
+        case .none:
+            break
+        case .invite:
+            identifyNode(targetNode)
+        case .provisioning:
+            self.provisionNode(targetNode)
+        }
+    }
+
+    private func identifyNode(_ aNode: UnprovisionedMeshNode) {
+        aNode.identifyWithDuration(5)
+    }
+
+    private func resetSubtitleLabels() {
+        supportedOutputActionsSubtitle.text = "Loading..."
+        supportedInputActionsSubtitle.text = "Loading..."
+        algorithmSubtitle.text = "Loading..."
+        inputOOBSizeSubtitle.text = "Loading..."
+        elementCountSubtitle.text = "Loading..."
+        publicKeyTypeSubtitle.text = "Loading..."
+        staticOOBTypeSubtitle.text = "Loading..."
+        outputOOBSizeSubtitle.text = "Loading..."
+    }
+
+    private func provisionNode(_ aNode: UnprovisionedMeshNode) {
         let meshStateObject = stateManager.state()
         let netKeyIndex = meshStateObject.keyIndex
         
@@ -518,6 +547,7 @@ extension MeshProvisioningDataTableViewController: CBCentralManagerDelegate {
 extension MeshProvisioningDataTableViewController: UnprovisionedMeshNodeDelegate {
     func nodeCompletedProvisioningInvitation(_ aNode: UnprovisionedMeshNode, withCapabilities capabilities: InviteCapabilities) {
         print("Received intitation capabilities")
+        navigationItem.hidesBackButton = false
         elementCountSubtitle.text = "\(capabilities.elementCount)"
         outputOOBSizeSubtitle.text = "\(capabilities.outputOOBSize)"
         inputOOBSizeSubtitle.text = "\(capabilities.inputOOBSize)"
@@ -551,9 +581,17 @@ extension MeshProvisioningDataTableViewController: UnprovisionedMeshNodeDelegate
             return action.description()
             }.joined(separator: ", ")
         
-        supportedInputActionsSubtitle.text  = inputActions
-        supportedOutputActionsSubtitle.text = outputActions
-        
+        if outputActions.count == 0 {
+            supportedOutputActionsSubtitle.text = "Not supported"
+        } else {
+            supportedInputActionsSubtitle.text  = inputActions
+        }
+        if inputActions.count == 0 {
+            supportedInputActionsSubtitle.text = "Not supported"
+        } else {
+            supportedInputActionsSubtitle.text = outputActions
+        }
+
         provisionButton.isEnabled = true
         provisionButton.title = "Provision"
     }

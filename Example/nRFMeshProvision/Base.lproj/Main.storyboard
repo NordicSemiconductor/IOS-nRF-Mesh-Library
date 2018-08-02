@@ -1089,6 +1089,9 @@ provisioning and then configuring a device.</string>
                                                     <rect key="frame" x="298" y="5" width="61" height="31"/>
                                                     <fontDescription key="fontDescription" name="TrebuchetMS" family="Trebuchet MS" pointSize="16"/>
                                                     <state key="normal" title="View log"/>
+                                                    <connections>
+                                                        <segue destination="ANh-7k-8vY" kind="show" id="vGL-ED-FGc"/>
+                                                    </connections>
                                                 </button>
                                                 <progressView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="24h-tb-ted">
                                                     <rect key="frame" x="257" y="34" width="24" height="2"/>
@@ -1178,7 +1181,7 @@ provisioning and then configuring a device.</string>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="qUq-s2-KB8" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="596" y="-1978.0788177339903"/>
+            <point key="canvasLocation" x="596" y="-2476"/>
         </scene>
         <!--Select AppKey-->
         <scene sceneID="B0O-2C-MYI">
@@ -1270,7 +1273,7 @@ provisioning and then configuring a device.</string>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="5GM-bq-LJ8" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="596" y="-632"/>
+            <point key="canvasLocation" x="596" y="-387"/>
         </scene>
         <!--Model Configuration-->
         <scene sceneID="dfX-Ac-h6A">
@@ -1459,7 +1462,7 @@ provisioning and then configuring a device.</string>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="lBk-SV-6iN" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1393" y="-1306"/>
+            <point key="canvasLocation" x="1393" y="-843"/>
         </scene>
         <!--Publish Groups-->
         <scene sceneID="6FV-9N-Y1h">
@@ -1603,7 +1606,7 @@ provisioning and then configuring a device.</string>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Cae-xZ-ahB" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1433" y="-1978"/>
+            <point key="canvasLocation" x="1393" y="-1780"/>
         </scene>
         <!--Bind AppKey-->
         <scene sceneID="rdL-xW-s1H">
