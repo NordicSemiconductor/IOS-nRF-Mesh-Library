@@ -571,18 +571,19 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
         case 0:
             self.performSegue(withIdentifier: "ShowAppKeyBindingView", sender: indexPath.row)
         case 1:
-            self.presentInputAlert(withResetCapability: true) { (anAddressString) in
-                guard  anAddressString != nil else {
-                    return
-                }
-                if anAddressString == "reset" {
-                    self.didSelectPublishAddress(Data([0x00,0x00]))
-                } else {
-                    if let addressData = Data(hexString: anAddressString!) {
-                        self.didSelectPublishAddress(addressData)
-                    }
-                }
-            }
+            self.performSegue(withIdentifier: "ShowPublicationSettings", sender: nil)
+//            self.presentInputAlert(withResetCapability: true) { (anAddressString) in
+//                guard  anAddressString != nil else {
+//                    return
+//                }
+//                if anAddressString == "reset" {
+//                    self.didSelectPublishAddress(Data([0x00,0x00]))
+//                } else {
+//                    if let addressData = Data(hexString: anAddressString!) {
+//                        self.didSelectPublishAddress(addressData)
+//                    }
+//                }
+//            }
         case 2:
             if indexPath.row == 0 {
                 self.presentInputAlert(withResetCapability: false) { (anAddressString) in
@@ -682,8 +683,7 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
     // MARK: - Navigation
     override func shouldPerformSegue(withIdentifier identifier: String, sender: Any?) -> Bool {
         return ["ShowAppKeyBindingView",
-                "ShowPublishGroupsView",
-                "ShowSubscribeGroupsView"].contains(identifier)
+                "ShowPublicationSettings"].contains(identifier)
     }
 
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -692,6 +692,9 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
                 destination.setSelectionDelegate(self)
                 destination.setStateManager(meshstateManager)
             }
+        }
+        if segue.identifier == "ShowPublicationSettings" {
+            print("Show publication segue's configuration")
         }
     }
 

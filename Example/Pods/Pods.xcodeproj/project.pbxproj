@@ -7,319 +7,342 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		02256D6E55876FB1D0A6EB82196D480B /* DiscoveryProvisioningState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C1CF3D1198008ACFA04EB10C92253BC /* DiscoveryProvisioningState.swift */; };
-		04C6180AD512D7D0E35D25F10A210CD5 /* ProvisioningStateProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3C8E0952FBEBE7EE099BC2A5A6971A2 /* ProvisioningStateProtocol.swift */; };
-		0A849CF87B26DAE596751420C7C11420 /* ProvisionedMeshNodeProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = A335101E022199FD737F6848033A4B55 /* ProvisionedMeshNodeProtocol.swift */; };
-		0D127FB2AA4D2A90FAE84A631CFB5BC9 /* ModelPublicationStatusMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0AD4FB896238151CB61469E7455A935 /* ModelPublicationStatusMessage.swift */; };
-		0E444D27FB84E4657DF1B4F27EE108A2 /* NRFMeshManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C250810F28A75C6CBA2396300E8DD2C /* NRFMeshManager.swift */; };
-		0E537332BC036C64F431481794403C8B /* ProvisioningErrorCodes.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD44619AFDB4627F45F36841A5888256 /* ProvisioningErrorCodes.swift */; };
-		10255F2FC31E7882BA7579676EB82124 /* GenericModelControllerStateProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DFB1B322B2839E9548A6143D08A3133 /* GenericModelControllerStateProtocol.swift */; };
-		104A6E65CC47F760682A82B8630578D7 /* ModelSubscriptionDeleteMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3728146B43D544F4BC27F8A6BC37531C /* ModelSubscriptionDeleteMessage.swift */; };
-		152ACCF78AA19384DC3521E2098427B7 /* GenericOnOffGetControllerState.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2C16B6A09CBEE57F94FED95C0C8F86A /* GenericOnOffGetControllerState.swift */; };
-		1615BD594129A502B0A1DC8EFDE7BF4C /* ModelSubscriptionDeleteConfiguratorState.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8B6B03C3F69C9F4EF35F847A544D623 /* ModelSubscriptionDeleteConfiguratorState.swift */; };
-		1CFC96E9B8139D8713E8641E54F9BF7F /* UpperTransportParams.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9A6F3D5A6A22998A95DD9967E319470 /* UpperTransportParams.swift */; };
-		1FBEF097F71AB830236E060521800078 /* CompositionElement.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7DA01EEB0742202AE5AAE63F953740E /* CompositionElement.swift */; };
-		21B5F3F1DE8B6CD34899ED85EBF43389 /* StartProvisionProvisioningState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34A30F207019B3A66097D000E6B432B4 /* StartProvisionProvisioningState.swift */; };
-		23EBA023392170D9953AE24361E5A06E /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 58E6F44D8FA7DD9CC299E348C1C4E5B4 /* Foundation.framework */; };
-		25875251ECCD3E006483DF651E325E9E /* SetWhiteListConfiguratorState.swift in Sources */ = {isa = PBXBuildFile; fileRef = C66A9693533C69165AAADA97DBDA80EE /* SetWhiteListConfiguratorState.swift */; };
-		2862EF66AF495B150D0FF8F5326C2E65 /* ModelPublicationSetConfiguratorState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13491A21C77349F3C7E24C7A02FB8854 /* ModelPublicationSetConfiguratorState.swift */; };
-		29EFD059A0C99399FA33908C23FAE98C /* ProvisioningAlgorithm.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF7676896D36BEE076F20D27D89610C6 /* ProvisioningAlgorithm.swift */; };
-		2A48F83E19C7DD307538CD44EEC9AA32 /* ProvisionedMeshNodeDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C3AC58E06B31DE38D1A80B3DDDF7ED4 /* ProvisionedMeshNodeDelegate.swift */; };
-		2AA6340D5497DFA9DCFD9FFD8D172866 /* MessageStatusCodes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6909B97BD5B8CD29FA19D1037CE98832 /* MessageStatusCodes.swift */; };
-		2EEB0F8D664A4B720560C84559446B4D /* ModelSubscriptionStatusMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08E58809D192CB242BD78EAB40BB6F2E /* ModelSubscriptionStatusMessage.swift */; };
-		2F20C26527EC97DA5D75DC7BCD8DEB03 /* TransportNonce.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A2578B08903057A4B3F44861AC2267E /* TransportNonce.swift */; };
-		2F89B83129057F70D49085C74D748709 /* ModelSubscriptionAddMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 519263F739637CF35C4B7E295D80B58B /* ModelSubscriptionAddMessage.swift */; };
-		302276C23B2C94A89E430E208A9B72E7 /* UnprovisionedMeshNodeProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9129E8C567E5130DD32895E2C09546C /* UnprovisionedMeshNodeProtocol.swift */; };
-		305659A62111DF4C00CF2A5B /* ProvisioningData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 305659A52111DF4C00CF2A5B /* ProvisioningData.swift */; };
-		34D10118F1F89E04018F05A092B5262C /* ConfiguratorStateProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B2FE9F7AE714E3950068B4E2E5D5A0E /* ConfiguratorStateProtocol.swift */; };
-		3687DAE22D9B872A4EE507641E155604 /* ModelAppBindMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE3171EF4C8934ADFF75AAC69C9247B5 /* ModelAppBindMessage.swift */; };
-		3904D673E084FEBAFDF0228454FFD420 /* OutputOutOfBoundActions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01C4CFC485BD1E9E2057D24DEB587DA0 /* OutputOutOfBoundActions.swift */; };
-		3E649407692E6C8D5F4F7ACA87A209E0 /* GenericOnOffSetControllerState.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFF9B3C3879B2E58228EAA8F5A32BEFF /* GenericOnOffSetControllerState.swift */; };
-		3F544442734007569A02ADB775FC7FB8 /* ModelPublicationSetMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3A563AA5043488C353FB0863B154689 /* ModelPublicationSetMessage.swift */; };
-		400683251528838C702B3C5AF69B088F /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 58E6F44D8FA7DD9CC299E348C1C4E5B4 /* Foundation.framework */; };
-		411630FABF10B45198E411F91A8822FC /* InviteProvisioningState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26C446F21B89B0A2A9C8E6B64C3BF31D /* InviteProvisioningState.swift */; };
-		44F4ED285E2A56560F3EBD8D13A9BF6D /* MeshVendorModelIdentifierStringConverter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21E243EA45214D19BF24E3E047AB9645 /* MeshVendorModelIdentifierStringConverter.swift */; };
-		45D79A4D71946720FE61ADCAE79F6ABD /* StaticOutOfBoundInformationAvailability.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47188735575D0AA2353F290C703D19E6 /* StaticOutOfBoundInformationAvailability.swift */; };
-		48300F4186C1C410AAB3AFE51F843A67 /* MeshAddressTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44AE4CED0391652D2D83ADCDF4724850 /* MeshAddressTypes.swift */; };
-		4A7FEA6A635B2B963A4D0C19F803DF93 /* NodeResetConfiguratorState.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC25F1B7678FA425EDE0795857A5BED4 /* NodeResetConfiguratorState.swift */; };
-		4BCD2D7CDBB4263947152436E74DF0EA /* ProvisionedMeshNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = D23DCABFE013BD4D931606DB2E1C87FD /* ProvisionedMeshNode.swift */; };
-		4C76A997B03A10330597E6C8241D2B3D /* MeshVendorModelIdentifiers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6CE95B5D710999E0114E4D76A31CB00D /* MeshVendorModelIdentifiers.swift */; };
-		4D6B04BEAB6AEC318546B104C09B9508 /* ModelAppBindConfiguratorState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C697579C4A66A12406872D4B0866E14 /* ModelAppBindConfiguratorState.swift */; };
-		51C53B4209D0F81A1050D9EA300C02A4 /* PublicKeyInformationAvailability.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B539371C493911C0139924525D6AD51 /* PublicKeyInformationAvailability.swift */; };
-		554618AA1883867197F63BF26D69E8EA /* AccessMessageParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87C157FF9595C498A370CB35438E3915 /* AccessMessageParser.swift */; };
-		56DF3BA0456BE1BDDDDE3C89CA2D8A10 /* UnprovisionedMeshNodeLoggingDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5ED4CE9226BC45CF54840A7C9675AB8 /* UnprovisionedMeshNodeLoggingDelegate.swift */; };
-		573C615586E85DF0ABEA408EBD1627EA /* nRFMeshProvision-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 89B6F85E36A2CB6E7FE2F136758EB304 /* nRFMeshProvision-dummy.m */; };
-		5916EEC026F2947897453A1E9D593A0B /* CompositionGetMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EDF690A83241B8207643E0E22A1285A /* CompositionGetMessage.swift */; };
-		5CF780AD177E4F4DC92778264F512453 /* ModelSubscriptionAddConfiguratorState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 830B8C2896B2FA285D0AD8CAC1E1D083 /* ModelSubscriptionAddConfiguratorState.swift */; };
-		606BE4E4A57DB6FE4DA83ABD9AA1D18D /* MeshConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F80139DCC940E0E82E06636A7963296 /* MeshConstants.swift */; };
-		6186BF1E99B505F4A13B45893F8BCEB8 /* UnprovisionedMeshNodeDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6696456B5AB3770167FDB11381ADD357 /* UnprovisionedMeshNodeDelegate.swift */; };
-		6D4F5D6DE21F8DF890ED009CB91AD714 /* SequenceNumber.swift in Sources */ = {isa = PBXBuildFile; fileRef = B46137C7FA799F63F53DB8619FA73144 /* SequenceNumber.swift */; };
-		6D6ED8EAF77BFA1E920B093E70C59C2D /* GenericOnOffSetMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = A30876EB616413704012BABC3DFBCCAB /* GenericOnOffSetMessage.swift */; };
-		6E7CF3A2A0FE7CD71984727ED8BD3F9F /* ConfirmationProvisioningState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5468AA231987FBA58016056103D21271 /* ConfirmationProvisioningState.swift */; };
-		6F1461AFED9EA09CCBA91C4084680A34 /* MeshModelIdentifierStringConverter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04866FFB40116167FDED5D453CA02AEA /* MeshModelIdentifierStringConverter.swift */; };
-		74C0727605667F8766144D20D3350901 /* CompositionStatusMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5EB1CCB0F75F7071DCA3B03DCBAE118 /* CompositionStatusMessage.swift */; };
+		02256D6E55876FB1D0A6EB82196D480B /* DiscoveryProvisioningState.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD6F54E9837A84925A14132149A2FA05 /* DiscoveryProvisioningState.swift */; };
+		04C6180AD512D7D0E35D25F10A210CD5 /* ProvisioningStateProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3371F83D4A54894B02C581DFD6A3A32E /* ProvisioningStateProtocol.swift */; };
+		0A849CF87B26DAE596751420C7C11420 /* ProvisionedMeshNodeProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E5868FC535620FE77DE8747A7C74D85 /* ProvisionedMeshNodeProtocol.swift */; };
+		0D127FB2AA4D2A90FAE84A631CFB5BC9 /* ModelPublicationStatusMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B0AF1085859F0B6783F5CC39D68D5DB /* ModelPublicationStatusMessage.swift */; };
+		0E444D27FB84E4657DF1B4F27EE108A2 /* NRFMeshManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B59AF19B38EED9B3C3BA09C867E6997 /* NRFMeshManager.swift */; };
+		0E537332BC036C64F431481794403C8B /* ProvisioningErrorCodes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 330C510433EA5F1C20D3EA2C9A389F4D /* ProvisioningErrorCodes.swift */; };
+		10255F2FC31E7882BA7579676EB82124 /* GenericModelControllerStateProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A39B9136B8A1911C2F93D65D80B942C /* GenericModelControllerStateProtocol.swift */; };
+		104A6E65CC47F760682A82B8630578D7 /* ModelSubscriptionDeleteMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47DCCD71DFD22B00D9104F0DD2F47874 /* ModelSubscriptionDeleteMessage.swift */; };
+		152ACCF78AA19384DC3521E2098427B7 /* GenericOnOffGetControllerState.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4415D60CB4A6FAD9653B77216DA162B /* GenericOnOffGetControllerState.swift */; };
+		1615BD594129A502B0A1DC8EFDE7BF4C /* ModelSubscriptionDeleteConfiguratorState.swift in Sources */ = {isa = PBXBuildFile; fileRef = B64DB1FA1435C5101D3DCDAB00DA0DFA /* ModelSubscriptionDeleteConfiguratorState.swift */; };
+		1CFC96E9B8139D8713E8641E54F9BF7F /* UpperTransportParams.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0F0B08BA7DEAA822627EFE10DD326D3 /* UpperTransportParams.swift */; };
+		1FBEF097F71AB830236E060521800078 /* CompositionElement.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F0140604ACC1A94C73946D528C295CE /* CompositionElement.swift */; };
+		21B5F3F1DE8B6CD34899ED85EBF43389 /* StartProvisionProvisioningState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 129E8319B368F968E05028FBB5D06705 /* StartProvisionProvisioningState.swift */; };
+		23EBA023392170D9953AE24361E5A06E /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E06D45054CEDA47E5508320F3B4CF552 /* Foundation.framework */; };
+		25875251ECCD3E006483DF651E325E9E /* SetWhiteListConfiguratorState.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6CF1084480D7965AB947322ECC666BC /* SetWhiteListConfiguratorState.swift */; };
+		2862EF66AF495B150D0FF8F5326C2E65 /* ModelPublicationSetConfiguratorState.swift in Sources */ = {isa = PBXBuildFile; fileRef = C95C0E63C634B591716EBD6775080E46 /* ModelPublicationSetConfiguratorState.swift */; };
+		29EFD059A0C99399FA33908C23FAE98C /* ProvisioningAlgorithm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CA48E23C8866DD73A974DC7B46F8824 /* ProvisioningAlgorithm.swift */; };
+		2A48F83E19C7DD307538CD44EEC9AA32 /* ProvisionedMeshNodeDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7B740334098E41760AC5BFAA4809892 /* ProvisionedMeshNodeDelegate.swift */; };
+		2AA6340D5497DFA9DCFD9FFD8D172866 /* MessageStatusCodes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89E34C7DABCAF545C17E19FDE82CC47B /* MessageStatusCodes.swift */; };
+		2EEB0F8D664A4B720560C84559446B4D /* ModelSubscriptionStatusMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8071FF083304B9754E208037374D11AF /* ModelSubscriptionStatusMessage.swift */; };
+		2F20C26527EC97DA5D75DC7BCD8DEB03 /* TransportNonce.swift in Sources */ = {isa = PBXBuildFile; fileRef = 694EEC17CDBF9156C874CD2A91F470E6 /* TransportNonce.swift */; };
+		2F89B83129057F70D49085C74D748709 /* ModelSubscriptionAddMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E7A5EF7E03D5234689F2E7BF0000AE2 /* ModelSubscriptionAddMessage.swift */; };
+		302276C23B2C94A89E430E208A9B72E7 /* UnprovisionedMeshNodeProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E4128F5E173429E76CDBBD46F6045AE /* UnprovisionedMeshNodeProtocol.swift */; };
+		34D10118F1F89E04018F05A092B5262C /* ConfiguratorStateProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = A148C7979AEDCF1C9083930EB59D673A /* ConfiguratorStateProtocol.swift */; };
+		3687DAE22D9B872A4EE507641E155604 /* ModelAppBindMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCCF559BE273F85E31E235212B8BC215 /* ModelAppBindMessage.swift */; };
+		3904D673E084FEBAFDF0228454FFD420 /* OutputOutOfBoundActions.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDA8451C09A59ED856C224BBC0F3CE7E /* OutputOutOfBoundActions.swift */; };
+		3E649407692E6C8D5F4F7ACA87A209E0 /* GenericOnOffSetControllerState.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5E041B50BA4E8EDEB6F606FB4B666B8 /* GenericOnOffSetControllerState.swift */; };
+		3F544442734007569A02ADB775FC7FB8 /* ModelPublicationSetMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC3DDE18D65702489FA16D67008139D6 /* ModelPublicationSetMessage.swift */; };
+		400683251528838C702B3C5AF69B088F /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E06D45054CEDA47E5508320F3B4CF552 /* Foundation.framework */; };
+		411630FABF10B45198E411F91A8822FC /* InviteProvisioningState.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA66D011D82061CA11FDB15FC7823444 /* InviteProvisioningState.swift */; };
+		44F4ED285E2A56560F3EBD8D13A9BF6D /* MeshVendorModelIdentifierStringConverter.swift in Sources */ = {isa = PBXBuildFile; fileRef = C306D92A8045DC97C6605EFF2802DFDA /* MeshVendorModelIdentifierStringConverter.swift */; };
+		45182C1CD163B6256EE92C8B86F55EA6 /* Pods-nRFMeshProvision_Example-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 9CBBD266178804BB0F054E56F57C2AF2 /* Pods-nRFMeshProvision_Example-dummy.m */; };
+		45D79A4D71946720FE61ADCAE79F6ABD /* StaticOutOfBoundInformationAvailability.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D7496940C64B225CEB59480C6B0473 /* StaticOutOfBoundInformationAvailability.swift */; };
+		48300F4186C1C410AAB3AFE51F843A67 /* MeshAddressTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = B33C445BF106259541A5112BA18896A3 /* MeshAddressTypes.swift */; };
+		4A7FEA6A635B2B963A4D0C19F803DF93 /* NodeResetConfiguratorState.swift in Sources */ = {isa = PBXBuildFile; fileRef = B882E66295A5D6C5C34F14B9B9E180CC /* NodeResetConfiguratorState.swift */; };
+		4BCD2D7CDBB4263947152436E74DF0EA /* ProvisionedMeshNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8DF64E7E97EAF8724E9CA655087D217 /* ProvisionedMeshNode.swift */; };
+		4C76A997B03A10330597E6C8241D2B3D /* MeshVendorModelIdentifiers.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1F5F582EC937C8999098DC47EF054A0 /* MeshVendorModelIdentifiers.swift */; };
+		4D6B04BEAB6AEC318546B104C09B9508 /* ModelAppBindConfiguratorState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 420F534436C73C615BDA408422EBD8E2 /* ModelAppBindConfiguratorState.swift */; };
+		51C53B4209D0F81A1050D9EA300C02A4 /* PublicKeyInformationAvailability.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7054AA6B263EA1B7FDEBFE7E858268C0 /* PublicKeyInformationAvailability.swift */; };
+		554618AA1883867197F63BF26D69E8EA /* AccessMessageParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91EE3F9514E59B495DB8B3C5C153E125 /* AccessMessageParser.swift */; };
+		56DF3BA0456BE1BDDDDE3C89CA2D8A10 /* UnprovisionedMeshNodeLoggingDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 649D9693A0B297B52613D863833330E6 /* UnprovisionedMeshNodeLoggingDelegate.swift */; };
+		573C615586E85DF0ABEA408EBD1627EA /* nRFMeshProvision-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 9323D93012F297B111B60B9E95ECC493 /* nRFMeshProvision-dummy.m */; };
+		5916EEC026F2947897453A1E9D593A0B /* CompositionGetMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 885BC6E801561ED373601F9E9DD0AA6D /* CompositionGetMessage.swift */; };
+		5CF780AD177E4F4DC92778264F512453 /* ModelSubscriptionAddConfiguratorState.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE463569B3AA875826FD6A9A9FE86DCB /* ModelSubscriptionAddConfiguratorState.swift */; };
+		606BE4E4A57DB6FE4DA83ABD9AA1D18D /* MeshConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2BBC80B443595E0D36875DEDD11EE57 /* MeshConstants.swift */; };
+		6186BF1E99B505F4A13B45893F8BCEB8 /* UnprovisionedMeshNodeDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B669A86DE361433CF60C310D9C43DFF /* UnprovisionedMeshNodeDelegate.swift */; };
+		6C586A79CD1A5F359CBB9F6AA198B50C /* ProvisioningData.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB6B15BBAF859193E8C08A1E83E2026B /* ProvisioningData.swift */; };
+		6D4F5D6DE21F8DF890ED009CB91AD714 /* SequenceNumber.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0BB1556B78084087980F27740B1A341 /* SequenceNumber.swift */; };
+		6D6ED8EAF77BFA1E920B093E70C59C2D /* GenericOnOffSetMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AB80A9CB5741F9BDA630C86C79E704A /* GenericOnOffSetMessage.swift */; };
+		6E7CF3A2A0FE7CD71984727ED8BD3F9F /* ConfirmationProvisioningState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87F6397BE9B740B98B8555BDF258A8CB /* ConfirmationProvisioningState.swift */; };
+		6F1461AFED9EA09CCBA91C4084680A34 /* MeshModelIdentifierStringConverter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 807F1268359800B2233EDB648AC1643F /* MeshModelIdentifierStringConverter.swift */; };
+		74C0727605667F8766144D20D3350901 /* CompositionStatusMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = F424D6AE348D2C4FC2FDA5DD7EA45001 /* CompositionStatusMessage.swift */; };
+		784CAFEE2CD2E6EFEDB8CDDFCE9153D8 /* Bottomsheet-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = EF2457AC6239A646D941CAAC90F53EDD /* Bottomsheet-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		7F48E9EE0656DF028F14E52ED23A892A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E06D45054CEDA47E5508320F3B4CF552 /* Foundation.framework */; };
 		801EEED1B937AFB39CDFAA43E71A1764 /* Pods-nRFMeshProvision_Tests-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 750AD95965031E15552370B040DB17AE /* Pods-nRFMeshProvision_Tests-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		83BF88293157E41E71F2D8577D4075BD /* AppKeyAddConfiguratorState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BE1D3F6EE2C2D314BE0C70C99F55B8D /* AppKeyAddConfiguratorState.swift */; };
-		8B5481049B4613E7E6D53A5410B184B3 /* AppKeyStatusMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = FCBB86825AEDF5563713AFF35900F301 /* AppKeyStatusMessage.swift */; };
-		90E817F3C9FA1B3BF4ECD6249098CB38 /* LowerTransportPDUParams.swift in Sources */ = {isa = PBXBuildFile; fileRef = D122CBA20D49FFCB573ABF5F48FB0392 /* LowerTransportPDUParams.swift */; };
-		93AC23C9383A1976D08276CEF2F59788 /* InputOutOfBoundActions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23B9AAEF34759B53C29CC712642BF4B8 /* InputOutOfBoundActions.swift */; };
-		9754B17ADA491D4B9B716046A0BD7953 /* OpenSSLHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = C791DC884B3E819E29C64849B212819A /* OpenSSLHelper.m */; };
-		9A972E992B43E175E7D3838481F8EA57 /* Pods-nRFMeshProvision_Example-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 9CBBD266178804BB0F054E56F57C2AF2 /* Pods-nRFMeshProvision_Example-dummy.m */; };
-		9DA871DB66ED8337319D56BF8A844887 /* OpenSSLHelper.h in Headers */ = {isa = PBXBuildFile; fileRef = 35817319C64C9F70DCDD1B6DF4E7BA2D /* OpenSSLHelper.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		811E1153FD13EE68A462F2DA480FDFDB /* Bottomsheet.h in Headers */ = {isa = PBXBuildFile; fileRef = 05363D2DA82B0D93F3A5913884F508C3 /* Bottomsheet.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		81B240B8931C6B853A04D910050A7AE4 /* Bottomsheet-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B91F2CF662237C45DBD3D111B633808 /* Bottomsheet-dummy.m */; };
+		81C73A04C63C0299F163179A59FC2A40 /* Bottomsheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 224FDE8476AA13755483A391D0FEDF53 /* Bottomsheet.swift */; };
+		83BF88293157E41E71F2D8577D4075BD /* AppKeyAddConfiguratorState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25D959F79530F2AE619E4AA884CB1DF9 /* AppKeyAddConfiguratorState.swift */; };
+		8B5481049B4613E7E6D53A5410B184B3 /* AppKeyStatusMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5455A26EE440AA103A8E3A922789090 /* AppKeyStatusMessage.swift */; };
+		90E817F3C9FA1B3BF4ECD6249098CB38 /* LowerTransportPDUParams.swift in Sources */ = {isa = PBXBuildFile; fileRef = 571DBF97EA204CDEDD2D3B910E82BB16 /* LowerTransportPDUParams.swift */; };
+		93AC23C9383A1976D08276CEF2F59788 /* InputOutOfBoundActions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B5E50A175710E7B9FF64981CD484FE5 /* InputOutOfBoundActions.swift */; };
+		9754B17ADA491D4B9B716046A0BD7953 /* OpenSSLHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 4CD31662393174EE1983941360A339BE /* OpenSSLHelper.m */; };
+		9DA871DB66ED8337319D56BF8A844887 /* OpenSSLHelper.h in Headers */ = {isa = PBXBuildFile; fileRef = 60DF78B62E89EA491E46B2E8D74127E5 /* OpenSSLHelper.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		9ED00366AF1E41CE0CA887B7CAA198A7 /* Pods-nRFMeshProvision_Example-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 9631D701D7240E226AA9F07FAC464937 /* Pods-nRFMeshProvision_Example-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A0FAD5D8D1FFA086D5DCA1F97D5124A9 /* Pods-nRFMeshProvision_Tests-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = DD36EAC8B7456284E3FFF424BC67BABC /* Pods-nRFMeshProvision_Tests-dummy.m */; };
-		A3F0DDF7F819E82847DEFAADCCD0B79A /* SleepConfiguratorState.swift in Sources */ = {isa = PBXBuildFile; fileRef = E5E99B393E1CD5AC8140CD28E5B0183A /* SleepConfiguratorState.swift */; };
-		A4366B4BD1930A709876EDCE05BE9A28 /* Data+utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 944D29444AEF57BAFB4426E71143D2D7 /* Data+utils.swift */; };
-		A571CAD4C8DD8046FFB36D53CD040E9A /* MeshStateManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 703F5C5BDB022780A687B78A1FC1C3F6 /* MeshStateManager.swift */; };
-		AACBB998A6BCEFE0132DBB9BEBBC3D2D /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 58E6F44D8FA7DD9CC299E348C1C4E5B4 /* Foundation.framework */; };
-		AB1F08BD1CB11DD2E1899787090C25FD /* nRFMeshProvision-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FA47B67B15330A0016F64DC279AE5C7 /* nRFMeshProvision-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B29C96931D92E8916CDFD80BAE5225FB /* ProvisionegMeshNodeLoggingDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C2585C3B40095D21F3C869142991F72 /* ProvisionegMeshNodeLoggingDelegate.swift */; };
-		B809198C0276BB2DAA7A20B1FD96375A /* UnprovisionedMeshNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C7066360F852217060551915B432EDF /* UnprovisionedMeshNode.swift */; };
-		B85D06C8EAD8446B43727BD95CB34A3E /* DiscoveryConfiguratorState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0EFF5B1DF6D19E761DFD64D965189205 /* DiscoveryConfiguratorState.swift */; };
-		BD23C7AA719A669A1F7779BF06878EE3 /* NetworkLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F82542104B192E488487393081504BB /* NetworkLayer.swift */; };
-		BF527C55D9F40F3AD9B708DE223D7FF5 /* DefaultTTLStatusMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3F7C9B6A57DCCFC66626C1A6E7A7B15 /* DefaultTTLStatusMessage.swift */; };
-		BF9809A6804493CE714761C27B65B01B /* CompanyIdentifiers.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8599616405EF95D4E234F458A148D9E /* CompanyIdentifiers.swift */; };
-		C0994FA29C3F06DBF0A4918F6252B591 /* RandomConfirmationProvisioningState.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6DF30123CC4BB2CF7BAFBD42477605E /* RandomConfirmationProvisioningState.swift */; };
-		C1584242C812692ABC374F7988B8761A /* Pods-nRFMeshProvision_Example-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 9631D701D7240E226AA9F07FAC464937 /* Pods-nRFMeshProvision_Example-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		C8294D7CD2690583F364B2C8819AE096 /* ControlMessagePDU.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2BE7AAD09A758BECDFE6CCD55AF34E9 /* ControlMessagePDU.swift */; };
-		C83D789506C4B59FBD28705F83C2C0B6 /* DefaultTTLGetMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EE24702580F4E23C1D488B00F2F0432 /* DefaultTTLGetMessage.swift */; };
-		CDA39F59C0FE4E772641FBADC340BFC4 /* ModelAppBindStatusMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = D006F3EE68ECD006E808CC9AFEFD65EB /* ModelAppBindStatusMessage.swift */; };
-		D17B8D82142502371EA2B053D02D207C /* AppKeyAddMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9D94F97D33D02BEFD538EE3E00D8D7F /* AppKeyAddMessage.swift */; };
-		D2B0F59A98F938087B702B441A0915B8 /* DataDistributionProvisioningState.swift in Sources */ = {isa = PBXBuildFile; fileRef = B37D999B23D19D308091F390F29FFBA7 /* DataDistributionProvisioningState.swift */; };
-		D57D4328BF6CE50D607070220240B965 /* SetFilterTypeMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = A531A6EEB450C4A98A600B94200B713B /* SetFilterTypeMessage.swift */; };
-		D92C80E1346C306C59C445A79E3B07BA /* AccessMessagePDU.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AE8D210D5834A5B3DBE0DB13EB1E83F /* AccessMessagePDU.swift */; };
-		D99341DE696540027EE6974ADD262BB9 /* InviteCapabilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63EB672B857D18756D4BB0D671D149C7 /* InviteCapabilities.swift */; };
-		DA54FF10880FE1CD4D2E2E34ABD348D0 /* GenericOnOffSetUnacknowledgedMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5AF733D838CC11183CE0A086F84F99DF /* GenericOnOffSetUnacknowledgedMessage.swift */; };
-		E056DCE4D646A68F1DBF6D32FE00CEFB /* GenericOnOffStatusMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = B716F3F45354F86AFF656AF89B5C3A8A /* GenericOnOffStatusMessage.swift */; };
-		E25532F3620E03AB21D47DB1FCFE3396 /* ProvisioningPDU.swift in Sources */ = {isa = PBXBuildFile; fileRef = 206DB6BFAAD946B3D1B56AEF6BEA8FE7 /* ProvisioningPDU.swift */; };
-		E28EA4B09EB37B44B7DCC8E4A2E2C511 /* LowerTransportLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70AB45234B6CED04336A1E0FC01BE58A /* LowerTransportLayer.swift */; };
-		E4C0AA0282CD2ECE2DEB4AD2780E7536 /* NodeResetMesage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B889D0DDC94FF1E755131CAE743B4CA /* NodeResetMesage.swift */; };
-		E611D56C21537729D5D5D14F99799C3C /* MeshState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 386AE05B18BC80370D9FDBE0AF77E07C /* MeshState.swift */; };
-		E65EBB19827CDD84F2AFF5B910712CDF /* GenericOnOffGetMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1F63B2394441C631DA9D41CFDF40425 /* GenericOnOffGetMessage.swift */; };
-		F72F1DF4BB39C391968FFA67C99CC20B /* CompositionGetConfiguratorState.swift in Sources */ = {isa = PBXBuildFile; fileRef = A50F283BACE4D71DA87BA7CE74D7EA57 /* CompositionGetConfiguratorState.swift */; };
-		F8D2D79AF6B4126CBA7FEB508F2CB287 /* DefaultTTLGetConfiguratorState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1150F1ED0A3530D31A0AC582BC30EC81 /* DefaultTTLGetConfiguratorState.swift */; };
-		F9B64F1A925D0332CEDBCC6DA3FAFA9B /* MeshNodeEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D47C97D636A3F1FFE9C48E55ACE8E7B /* MeshNodeEntry.swift */; };
-		FA03796FFC9A05334326AA448AF846CC /* NodeResetStatusMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 110B63334BA085148B9CB5D9C890FE1A /* NodeResetStatusMessage.swift */; };
-		FA691386062F41187F9CC77089DEDF19 /* UpperTransportLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC371DCCCC4A8DBD97BF5A55799C9622 /* UpperTransportLayer.swift */; };
-		FBEAB7267281030613133F31BB1DFC89 /* CoreBluetooth.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 631DF0040F78759D1751322011D015DC /* CoreBluetooth.framework */; };
-		FC64735410F7FBDB859640FEF87E5712 /* MeshModelIdentifiers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BF574387DD2B01AD0589F9125644CB9 /* MeshModelIdentifiers.swift */; };
-		FCF8D682E4FF14D2F6A2CE0047D1FCEC /* PublicKeyProvisioningState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36938A08B3D2A65F4ABADADF0F27CFB6 /* PublicKeyProvisioningState.swift */; };
+		A2B68DF2BC4C6D408242D98D2DF14A52 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E06D45054CEDA47E5508320F3B4CF552 /* Foundation.framework */; };
+		A3F0DDF7F819E82847DEFAADCCD0B79A /* SleepConfiguratorState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96335E2A2E7365816C9F5C1C53091CDE /* SleepConfiguratorState.swift */; };
+		A4366B4BD1930A709876EDCE05BE9A28 /* Data+utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 010774DFAEF658CD7A4778E3C0445ED6 /* Data+utils.swift */; };
+		A571CAD4C8DD8046FFB36D53CD040E9A /* MeshStateManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BE800C5B2D04ADE2A292A64B48C4455 /* MeshStateManager.swift */; };
+		AB1F08BD1CB11DD2E1899787090C25FD /* nRFMeshProvision-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = AAE441C2455F18572FDD49F233D86935 /* nRFMeshProvision-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B29C96931D92E8916CDFD80BAE5225FB /* ProvisionegMeshNodeLoggingDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = DADD72E95444CBA853AE18729193B111 /* ProvisionegMeshNodeLoggingDelegate.swift */; };
+		B809198C0276BB2DAA7A20B1FD96375A /* UnprovisionedMeshNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3A74C3C8BA7FEBF3508D8E1F42DB141 /* UnprovisionedMeshNode.swift */; };
+		B85D06C8EAD8446B43727BD95CB34A3E /* DiscoveryConfiguratorState.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEDEBC5523CDB1F4A73A02594A0EAFAE /* DiscoveryConfiguratorState.swift */; };
+		BD23C7AA719A669A1F7779BF06878EE3 /* NetworkLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CD3BA4EA5B5C291256336D4AD5B2F70 /* NetworkLayer.swift */; };
+		BF527C55D9F40F3AD9B708DE223D7FF5 /* DefaultTTLStatusMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12FCF2FE05B2AA482B3A85ECF368EF80 /* DefaultTTLStatusMessage.swift */; };
+		BF9809A6804493CE714761C27B65B01B /* CompanyIdentifiers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E4D2421577E44A6CE0D456C828D8582 /* CompanyIdentifiers.swift */; };
+		C0994FA29C3F06DBF0A4918F6252B591 /* RandomConfirmationProvisioningState.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2C4E7AAE33160B448D32222DCB61855 /* RandomConfirmationProvisioningState.swift */; };
+		C8294D7CD2690583F364B2C8819AE096 /* ControlMessagePDU.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3988B57C37ED563529879EC43BEB2BE4 /* ControlMessagePDU.swift */; };
+		C83D789506C4B59FBD28705F83C2C0B6 /* DefaultTTLGetMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82F9776AD2B75001B91830B288F0884E /* DefaultTTLGetMessage.swift */; };
+		C93D5A94EBFC9930E0A1D3AA1F736D18 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BD674493AC9BB841A1F96B896E3F64D4 /* UIKit.framework */; };
+		CDA39F59C0FE4E772641FBADC340BFC4 /* ModelAppBindStatusMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1B14CCE1A544E9CB5A74BE83DFA4A3D /* ModelAppBindStatusMessage.swift */; };
+		D17B8D82142502371EA2B053D02D207C /* AppKeyAddMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32DF4C88064D6EA8320C42B0E5554E06 /* AppKeyAddMessage.swift */; };
+		D2B0F59A98F938087B702B441A0915B8 /* DataDistributionProvisioningState.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF445358702FF2275F5782DC31343653 /* DataDistributionProvisioningState.swift */; };
+		D57D4328BF6CE50D607070220240B965 /* SetFilterTypeMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = B76BEF23ED623C073ADE82BDF9DD7D32 /* SetFilterTypeMessage.swift */; };
+		D92C80E1346C306C59C445A79E3B07BA /* AccessMessagePDU.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A8D203739DDD0B2960DCAB75F17F448 /* AccessMessagePDU.swift */; };
+		D99341DE696540027EE6974ADD262BB9 /* InviteCapabilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08307A91405F5869BC1CCB8E97E9F7D3 /* InviteCapabilities.swift */; };
+		DA54FF10880FE1CD4D2E2E34ABD348D0 /* GenericOnOffSetUnacknowledgedMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B3AF1AAB1893B229EC3A83712D008A9 /* GenericOnOffSetUnacknowledgedMessage.swift */; };
+		E056DCE4D646A68F1DBF6D32FE00CEFB /* GenericOnOffStatusMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 436887E4D51377EF1CFF5054F3DCE525 /* GenericOnOffStatusMessage.swift */; };
+		E25532F3620E03AB21D47DB1FCFE3396 /* ProvisioningPDU.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C3721CDC26B4E5AFE0C5DE071A21E03 /* ProvisioningPDU.swift */; };
+		E28EA4B09EB37B44B7DCC8E4A2E2C511 /* LowerTransportLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7546FB78C6CBC9C28DD4D7DF180CE05 /* LowerTransportLayer.swift */; };
+		E4C0AA0282CD2ECE2DEB4AD2780E7536 /* NodeResetMesage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 71867A9D662E74BD3F8F01E875D7FB88 /* NodeResetMesage.swift */; };
+		E611D56C21537729D5D5D14F99799C3C /* MeshState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FFA8368AAEC73BA73A83076500545DB /* MeshState.swift */; };
+		E65EBB19827CDD84F2AFF5B910712CDF /* GenericOnOffGetMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FA37B55379EA03D866422807D261919 /* GenericOnOffGetMessage.swift */; };
+		F72F1DF4BB39C391968FFA67C99CC20B /* CompositionGetConfiguratorState.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7F4A1F452F3B19AA8A3C8C3474705DE /* CompositionGetConfiguratorState.swift */; };
+		F8D2D79AF6B4126CBA7FEB508F2CB287 /* DefaultTTLGetConfiguratorState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27337C11484E576DB99139F1575A73C3 /* DefaultTTLGetConfiguratorState.swift */; };
+		F9B64F1A925D0332CEDBCC6DA3FAFA9B /* MeshNodeEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44150057FE18BC54B1913140F5C9C3AF /* MeshNodeEntry.swift */; };
+		FA03796FFC9A05334326AA448AF846CC /* NodeResetStatusMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 853058F47955C5B83FF03402EEF10E8B /* NodeResetStatusMessage.swift */; };
+		FA691386062F41187F9CC77089DEDF19 /* UpperTransportLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2D287F94A960F27A3FA0EE03DBBABA9 /* UpperTransportLayer.swift */; };
+		FBEAB7267281030613133F31BB1DFC89 /* CoreBluetooth.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C58131A89065FC0D9E269086CFE8314F /* CoreBluetooth.framework */; };
+		FC64735410F7FBDB859640FEF87E5712 /* MeshModelIdentifiers.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4279E0831BC2CD967C4C17CF4445BA5 /* MeshModelIdentifiers.swift */; };
+		FCF8D682E4FF14D2F6A2CE0047D1FCEC /* PublicKeyProvisioningState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 140640C1C23ACF3A81121F6706B0DA7F /* PublicKeyProvisioningState.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		128B7E114EC2AC0D5768D6F8233CA20E /* PBXContainerItemProxy */ = {
+		02F1B7DEBD440B2B38EC124E704CBB42 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = D41D8CD98F00B204E9800998ECF8427E /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 0F02369097C0D7990F1C5BB83ED4C0F7;
-			remoteInfo = "Pods-nRFMeshProvision_Example";
+			remoteGlobalIDString = EA718CD760B25AE6B68550393C7EE725;
+			remoteInfo = Bottomsheet;
 		};
-		E3A89954C47F1BBDF626B867660A0F59 /* PBXContainerItemProxy */ = {
+		0848AA5783144146901BE46FBF8C3526 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = D41D8CD98F00B204E9800998ECF8427E /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = B074AA5F6983A53E049FEF7320BAF736;
 			remoteInfo = nRFMeshProvision;
 		};
+		128B7E114EC2AC0D5768D6F8233CA20E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D41D8CD98F00B204E9800998ECF8427E /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = ED9D84CC9FA846625B4863C40EEA60D7;
+			remoteInfo = "Pods-nRFMeshProvision_Example";
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		008B98766CB8CA3BAC514625A7A88F07 /* opensslv.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = opensslv.h; path = opensslIncludes/openssl/opensslv.h; sourceTree = "<group>"; };
-		01C4CFC485BD1E9E2057D24DEB587DA0 /* OutputOutOfBoundActions.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = OutputOutOfBoundActions.swift; sourceTree = "<group>"; };
-		029E0FB8DB32966A3BDE8D3EAA1DA3DB /* ui.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = ui.h; path = opensslIncludes/openssl/ui.h; sourceTree = "<group>"; };
-		02C475F6DA5A1EED30659395ACC06B61 /* dh.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = dh.h; path = opensslIncludes/openssl/dh.h; sourceTree = "<group>"; };
-		0464A5491D8ED0B3338CF803C32895A6 /* libcrypto.a */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = archive.ar; name = libcrypto.a; path = lib/libcrypto.a; sourceTree = "<group>"; };
-		04866FFB40116167FDED5D453CA02AEA /* MeshModelIdentifierStringConverter.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MeshModelIdentifierStringConverter.swift; sourceTree = "<group>"; };
-		06F79E778992F44099D45E5817300EDB /* libssl.a */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = archive.ar; name = libssl.a; path = lib/libssl.a; sourceTree = "<group>"; };
-		0884AA14D917B65B3A0541826166B367 /* safestack.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = safestack.h; path = opensslIncludes/openssl/safestack.h; sourceTree = "<group>"; };
-		08AFF46A4F4C5BCD1852D4A9BB10BC2B /* ssl.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = ssl.h; path = opensslIncludes/openssl/ssl.h; sourceTree = "<group>"; };
-		08E58809D192CB242BD78EAB40BB6F2E /* ModelSubscriptionStatusMessage.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ModelSubscriptionStatusMessage.swift; sourceTree = "<group>"; };
-		0B16A7AF77F109542EAAF6009C99B5F6 /* cast.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = cast.h; path = opensslIncludes/openssl/cast.h; sourceTree = "<group>"; };
-		0C3AC58E06B31DE38D1A80B3DDDF7ED4 /* ProvisionedMeshNodeDelegate.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ProvisionedMeshNodeDelegate.swift; sourceTree = "<group>"; };
-		0EFF5B1DF6D19E761DFD64D965189205 /* DiscoveryConfiguratorState.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DiscoveryConfiguratorState.swift; sourceTree = "<group>"; };
-		0F3FA23A52ADE1039D96A4B2BB1BB0B0 /* ocsp.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = ocsp.h; path = opensslIncludes/openssl/ocsp.h; sourceTree = "<group>"; };
-		0FA47B67B15330A0016F64DC279AE5C7 /* nRFMeshProvision-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "nRFMeshProvision-umbrella.h"; sourceTree = "<group>"; };
-		10005392A82954A6D9C77A3A29657A73 /* aes.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = aes.h; path = opensslIncludes/openssl/aes.h; sourceTree = "<group>"; };
-		110B63334BA085148B9CB5D9C890FE1A /* NodeResetStatusMessage.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = NodeResetStatusMessage.swift; sourceTree = "<group>"; };
-		1150F1ED0A3530D31A0AC582BC30EC81 /* DefaultTTLGetConfiguratorState.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DefaultTTLGetConfiguratorState.swift; sourceTree = "<group>"; };
-		13491A21C77349F3C7E24C7A02FB8854 /* ModelPublicationSetConfiguratorState.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ModelPublicationSetConfiguratorState.swift; sourceTree = "<group>"; };
-		13CB3732A7C93C1825BBBC0AE4E97040 /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
-		143F7044E2446F55FB59B0C092BFCE7F /* comp.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = comp.h; path = opensslIncludes/openssl/comp.h; sourceTree = "<group>"; };
-		15109897F5E35A1BFC31BA1B332F4B0E /* rand.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = rand.h; path = opensslIncludes/openssl/rand.h; sourceTree = "<group>"; };
-		1510FBC86CC27874912F9AAA4D1BF1EC /* nRFMeshProvision-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "nRFMeshProvision-prefix.pch"; sourceTree = "<group>"; };
-		1B889D0DDC94FF1E755131CAE743B4CA /* NodeResetMesage.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = NodeResetMesage.swift; sourceTree = "<group>"; };
-		1C7066360F852217060551915B432EDF /* UnprovisionedMeshNode.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = UnprovisionedMeshNode.swift; sourceTree = "<group>"; };
+		010774DFAEF658CD7A4778E3C0445ED6 /* Data+utils.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "Data+utils.swift"; sourceTree = "<group>"; };
+		05363D2DA82B0D93F3A5913884F508C3 /* Bottomsheet.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = Bottomsheet.h; path = Sources/Bottomsheet.h; sourceTree = "<group>"; };
+		08307A91405F5869BC1CCB8E97E9F7D3 /* InviteCapabilities.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = InviteCapabilities.swift; sourceTree = "<group>"; };
+		0A91CED8E435C6A7BFEA39951D7F8A4F /* hmac.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = hmac.h; path = opensslIncludes/openssl/hmac.h; sourceTree = "<group>"; };
+		0B7FB3D6C688D074ACA5A42D30D6CB0F /* aes.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = aes.h; path = opensslIncludes/openssl/aes.h; sourceTree = "<group>"; };
+		0E4D2421577E44A6CE0D456C828D8582 /* CompanyIdentifiers.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CompanyIdentifiers.swift; sourceTree = "<group>"; };
+		108D4FA261DAB4BB60EB1CBD3120229E /* asn1t.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = asn1t.h; path = opensslIncludes/openssl/asn1t.h; sourceTree = "<group>"; };
+		129E8319B368F968E05028FBB5D06705 /* StartProvisionProvisioningState.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = StartProvisionProvisioningState.swift; sourceTree = "<group>"; };
+		12C4FE4E50E2FDD57D53EE1D61144291 /* ripemd.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = ripemd.h; path = opensslIncludes/openssl/ripemd.h; sourceTree = "<group>"; };
+		12FCF2FE05B2AA482B3A85ECF368EF80 /* DefaultTTLStatusMessage.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DefaultTTLStatusMessage.swift; sourceTree = "<group>"; };
+		140640C1C23ACF3A81121F6706B0DA7F /* PublicKeyProvisioningState.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = PublicKeyProvisioningState.swift; sourceTree = "<group>"; };
+		1410A3EE59EF2185C1F27AD5A6176202 /* krb5_asn.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = krb5_asn.h; path = opensslIncludes/openssl/krb5_asn.h; sourceTree = "<group>"; };
+		14F2DCD38B5C8726E7B9B3DFBB5DA73C /* sha.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = sha.h; path = opensslIncludes/openssl/sha.h; sourceTree = "<group>"; };
+		198A93CE6C97F3764E7C1FC7E78D34E2 /* dso.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = dso.h; path = opensslIncludes/openssl/dso.h; sourceTree = "<group>"; };
+		1AE28E496DF872D0442832AEC3AB6CC1 /* ssl3.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = ssl3.h; path = opensslIncludes/openssl/ssl3.h; sourceTree = "<group>"; };
+		1B3AF1AAB1893B229EC3A83712D008A9 /* GenericOnOffSetUnacknowledgedMessage.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = GenericOnOffSetUnacknowledgedMessage.swift; sourceTree = "<group>"; };
+		1CD3BA4EA5B5C291256336D4AD5B2F70 /* NetworkLayer.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = NetworkLayer.swift; sourceTree = "<group>"; };
 		1CE351CE8C613ABFC4463B80EAEA0CD6 /* Pods-nRFMeshProvision_Tests-acknowledgements.markdown */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; path = "Pods-nRFMeshProvision_Tests-acknowledgements.markdown"; sourceTree = "<group>"; };
+		1D0679725F665A2592FA4F957BE46E52 /* ssl23.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = ssl23.h; path = opensslIncludes/openssl/ssl23.h; sourceTree = "<group>"; };
 		1D43BE71FD24E445F00B2134A40D57D5 /* Pods-nRFMeshProvision_Tests-resources.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "Pods-nRFMeshProvision_Tests-resources.sh"; sourceTree = "<group>"; };
 		1E2A5136EFF969A5838940918ECB40B7 /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		1FAFFA60421BA931BF46F0C4BD886E6A /* asn1.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = asn1.h; path = opensslIncludes/openssl/asn1.h; sourceTree = "<group>"; };
-		206DB6BFAAD946B3D1B56AEF6BEA8FE7 /* ProvisioningPDU.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ProvisioningPDU.swift; sourceTree = "<group>"; };
-		21E243EA45214D19BF24E3E047AB9645 /* MeshVendorModelIdentifierStringConverter.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MeshVendorModelIdentifierStringConverter.swift; sourceTree = "<group>"; };
-		23B9AAEF34759B53C29CC712642BF4B8 /* InputOutOfBoundActions.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = InputOutOfBoundActions.swift; sourceTree = "<group>"; };
-		26110F81A2D7295F517D452E5177B261 /* blowfish.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = blowfish.h; path = opensslIncludes/openssl/blowfish.h; sourceTree = "<group>"; };
-		26C446F21B89B0A2A9C8E6B64C3BF31D /* InviteProvisioningState.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = InviteProvisioningState.swift; sourceTree = "<group>"; };
+		1E4961B5A7CFEA57CB311F0FB04919D0 /* md4.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = md4.h; path = opensslIncludes/openssl/md4.h; sourceTree = "<group>"; };
+		1E7A5EF7E03D5234689F2E7BF0000AE2 /* ModelSubscriptionAddMessage.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ModelSubscriptionAddMessage.swift; sourceTree = "<group>"; };
+		1E8C123A8966AC7F019C01809AFAE1AC /* md5.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = md5.h; path = opensslIncludes/openssl/md5.h; sourceTree = "<group>"; };
+		224FDE8476AA13755483A391D0FEDF53 /* Bottomsheet.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Bottomsheet.swift; path = Sources/Bottomsheet.swift; sourceTree = "<group>"; };
+		259D9785B232C2F1307425DD991FBC62 /* txt_db.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = txt_db.h; path = opensslIncludes/openssl/txt_db.h; sourceTree = "<group>"; };
+		25D959F79530F2AE619E4AA884CB1DF9 /* AppKeyAddConfiguratorState.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AppKeyAddConfiguratorState.swift; sourceTree = "<group>"; };
+		27337C11484E576DB99139F1575A73C3 /* DefaultTTLGetConfiguratorState.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DefaultTTLGetConfiguratorState.swift; sourceTree = "<group>"; };
+		276922EE4A86FE6232510322B7114386 /* modes.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = modes.h; path = opensslIncludes/openssl/modes.h; sourceTree = "<group>"; };
 		27CCAE50640695F01C1B0C692204CF9F /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		289F86D8C967D7FFB45940D8CCD29924 /* nRFMeshProvision.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; path = nRFMeshProvision.modulemap; sourceTree = "<group>"; };
-		29704AFCA0DC9D3E5A4B1ADC9CAE79F3 /* camellia.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = camellia.h; path = opensslIncludes/openssl/camellia.h; sourceTree = "<group>"; };
-		2B68FB305EB45C1312AEA6F2A16E12E4 /* bn.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = bn.h; path = opensslIncludes/openssl/bn.h; sourceTree = "<group>"; };
-		2C2585C3B40095D21F3C869142991F72 /* ProvisionegMeshNodeLoggingDelegate.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ProvisionegMeshNodeLoggingDelegate.swift; sourceTree = "<group>"; };
-		2FC1C3A4C27E1C86DA9418A50DC0195B /* ripemd.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = ripemd.h; path = opensslIncludes/openssl/ripemd.h; sourceTree = "<group>"; };
-		305659A52111DF4C00CF2A5B /* ProvisioningData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProvisioningData.swift; sourceTree = "<group>"; };
-		318B21D3C09027B98FF8F0C00493237E /* dtls1.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = dtls1.h; path = opensslIncludes/openssl/dtls1.h; sourceTree = "<group>"; };
-		34A30F207019B3A66097D000E6B432B4 /* StartProvisionProvisioningState.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = StartProvisionProvisioningState.swift; sourceTree = "<group>"; };
-		35817319C64C9F70DCDD1B6DF4E7BA2D /* OpenSSLHelper.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = OpenSSLHelper.h; sourceTree = "<group>"; };
-		36938A08B3D2A65F4ABADADF0F27CFB6 /* PublicKeyProvisioningState.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = PublicKeyProvisioningState.swift; sourceTree = "<group>"; };
-		36A3783FEC88D85E0EB54E7C1079B98F /* Pods_nRFMeshProvision_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_nRFMeshProvision_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		3728146B43D544F4BC27F8A6BC37531C /* ModelSubscriptionDeleteMessage.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ModelSubscriptionDeleteMessage.swift; sourceTree = "<group>"; };
-		386AE05B18BC80370D9FDBE0AF77E07C /* MeshState.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MeshState.swift; sourceTree = "<group>"; };
-		3CE0F89804BEB58BEBC00488E06327F2 /* tls1.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = tls1.h; path = opensslIncludes/openssl/tls1.h; sourceTree = "<group>"; };
-		3EDF690A83241B8207643E0E22A1285A /* CompositionGetMessage.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CompositionGetMessage.swift; sourceTree = "<group>"; };
-		3EE24702580F4E23C1D488B00F2F0432 /* DefaultTTLGetMessage.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DefaultTTLGetMessage.swift; sourceTree = "<group>"; };
-		3FD20F81130ED6AC2CE8252ECA66E8CF /* mdc2.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = mdc2.h; path = opensslIncludes/openssl/mdc2.h; sourceTree = "<group>"; };
+		29030C8684AE2AB61230B0804A05439B /* err.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = err.h; path = opensslIncludes/openssl/err.h; sourceTree = "<group>"; };
+		2A8A421FA5EBA304A50E932900E118CB /* Bottomsheet-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Bottomsheet-prefix.pch"; sourceTree = "<group>"; };
+		2AB80A9CB5741F9BDA630C86C79E704A /* GenericOnOffSetMessage.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = GenericOnOffSetMessage.swift; sourceTree = "<group>"; };
+		2B59AF19B38EED9B3C3BA09C867E6997 /* NRFMeshManager.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = NRFMeshManager.swift; sourceTree = "<group>"; };
+		2E6B527204A3600EFC015979F48B9273 /* nRFMeshProvision.podspec */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; lastKnownFileType = text; path = nRFMeshProvision.podspec; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
+		2F2D6413A302A513239984F66FE24376 /* Bottomsheet.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = Bottomsheet.framework; path = Bottomsheet.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		2F4E8D4996DF69AC76420A1E08D3A258 /* libcrypto.a */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = archive.ar; name = libcrypto.a; path = lib/libcrypto.a; sourceTree = "<group>"; };
+		2FFA8368AAEC73BA73A83076500545DB /* MeshState.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MeshState.swift; sourceTree = "<group>"; };
+		31E9ABD8D03B535AD29AB003ACEFF0BE /* obj_mac.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = obj_mac.h; path = opensslIncludes/openssl/obj_mac.h; sourceTree = "<group>"; };
+		32DF4C88064D6EA8320C42B0E5554E06 /* AppKeyAddMessage.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AppKeyAddMessage.swift; sourceTree = "<group>"; };
+		330C510433EA5F1C20D3EA2C9A389F4D /* ProvisioningErrorCodes.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ProvisioningErrorCodes.swift; sourceTree = "<group>"; };
+		3311FD08AA3D5245867CACFBC529E7CB /* srp.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = srp.h; path = opensslIncludes/openssl/srp.h; sourceTree = "<group>"; };
+		3371F83D4A54894B02C581DFD6A3A32E /* ProvisioningStateProtocol.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ProvisioningStateProtocol.swift; sourceTree = "<group>"; };
+		384BD74CDA33A4E60BA1F95A80E980D0 /* comp.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = comp.h; path = opensslIncludes/openssl/comp.h; sourceTree = "<group>"; };
+		3854E35B08018D27AACFA19D6A4FD3EF /* crypto.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = crypto.h; path = opensslIncludes/openssl/crypto.h; sourceTree = "<group>"; };
+		3988B57C37ED563529879EC43BEB2BE4 /* ControlMessagePDU.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ControlMessagePDU.swift; sourceTree = "<group>"; };
+		3B2CBAC9D38770FCB4DF008DC43E1AFF /* engine.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = engine.h; path = opensslIncludes/openssl/engine.h; sourceTree = "<group>"; };
+		3B883A3F17B28B566DFC4CCB5D8B1319 /* rc4.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = rc4.h; path = opensslIncludes/openssl/rc4.h; sourceTree = "<group>"; };
+		3BB1B6EF2A11FE65BD834F89E84AAFA1 /* dtls1.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = dtls1.h; path = opensslIncludes/openssl/dtls1.h; sourceTree = "<group>"; };
+		3E5868FC535620FE77DE8747A7C74D85 /* ProvisionedMeshNodeProtocol.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ProvisionedMeshNodeProtocol.swift; sourceTree = "<group>"; };
+		3F0140604ACC1A94C73946D528C295CE /* CompositionElement.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CompositionElement.swift; sourceTree = "<group>"; };
+		3F175EB318A4D1F2BF47136D12518B1C /* nRFMeshProvision-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "nRFMeshProvision-prefix.pch"; sourceTree = "<group>"; };
+		3FA37B55379EA03D866422807D261919 /* GenericOnOffGetMessage.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = GenericOnOffGetMessage.swift; sourceTree = "<group>"; };
 		4074581B469A6F41230BFD4F828DA392 /* Pods-nRFMeshProvision_Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-nRFMeshProvision_Tests.debug.xcconfig"; sourceTree = "<group>"; };
-		44AE4CED0391652D2D83ADCDF4724850 /* MeshAddressTypes.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MeshAddressTypes.swift; sourceTree = "<group>"; };
-		47188735575D0AA2353F290C703D19E6 /* StaticOutOfBoundInformationAvailability.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = StaticOutOfBoundInformationAvailability.swift; sourceTree = "<group>"; };
-		47A6B49302B9FFEEF4A87305D60ECC14 /* ts.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = ts.h; path = opensslIncludes/openssl/ts.h; sourceTree = "<group>"; };
-		4A2578B08903057A4B3F44861AC2267E /* TransportNonce.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = TransportNonce.swift; sourceTree = "<group>"; };
-		4A82B78200A50A5DE275141D478D278A /* pkcs12.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = pkcs12.h; path = opensslIncludes/openssl/pkcs12.h; sourceTree = "<group>"; };
-		4B4CD9C74DCE12B915A1A2C966570E4E /* rsa.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = rsa.h; path = opensslIncludes/openssl/rsa.h; sourceTree = "<group>"; };
-		4BC1E4B9E034D25179AABE1F88DF50C9 /* kssl.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = kssl.h; path = opensslIncludes/openssl/kssl.h; sourceTree = "<group>"; };
-		4BE1D3F6EE2C2D314BE0C70C99F55B8D /* AppKeyAddConfiguratorState.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AppKeyAddConfiguratorState.swift; sourceTree = "<group>"; };
-		4BED8D10FAD68FD971529BBD644DB1C0 /* rc2.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = rc2.h; path = opensslIncludes/openssl/rc2.h; sourceTree = "<group>"; };
-		4C1CF3D1198008ACFA04EB10C92253BC /* DiscoveryProvisioningState.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DiscoveryProvisioningState.swift; sourceTree = "<group>"; };
-		4D1ACEE47D3ED8484A16118E53166070 /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
+		420F534436C73C615BDA408422EBD8E2 /* ModelAppBindConfiguratorState.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ModelAppBindConfiguratorState.swift; sourceTree = "<group>"; };
+		436887E4D51377EF1CFF5054F3DCE525 /* GenericOnOffStatusMessage.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = GenericOnOffStatusMessage.swift; sourceTree = "<group>"; };
+		44150057FE18BC54B1913140F5C9C3AF /* MeshNodeEntry.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MeshNodeEntry.swift; sourceTree = "<group>"; };
+		47DCCD71DFD22B00D9104F0DD2F47874 /* ModelSubscriptionDeleteMessage.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ModelSubscriptionDeleteMessage.swift; sourceTree = "<group>"; };
+		47F47BB73A4EE61D1F1E9EECEA4A2C0A /* evp.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = evp.h; path = opensslIncludes/openssl/evp.h; sourceTree = "<group>"; };
+		4AF7CF8B90B51331A8FD5B2B2E32004D /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		4B5E50A175710E7B9FF64981CD484FE5 /* InputOutOfBoundActions.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = InputOutOfBoundActions.swift; sourceTree = "<group>"; };
+		4CD31662393174EE1983941360A339BE /* OpenSSLHelper.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = OpenSSLHelper.m; sourceTree = "<group>"; };
 		4E62A9851B9A734D16CB01B4272A2639 /* Pods-nRFMeshProvision_Example.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-nRFMeshProvision_Example.debug.xcconfig"; sourceTree = "<group>"; };
-		4FE0B6B5ED95205D30117ABBC914ED0C /* nRFMeshProvision.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = nRFMeshProvision.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		519263F739637CF35C4B7E295D80B58B /* ModelSubscriptionAddMessage.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ModelSubscriptionAddMessage.swift; sourceTree = "<group>"; };
-		5468AA231987FBA58016056103D21271 /* ConfirmationProvisioningState.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ConfirmationProvisioningState.swift; sourceTree = "<group>"; };
-		54B6E829D4D885665E50C350E625BCE2 /* des_old.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = des_old.h; path = opensslIncludes/openssl/des_old.h; sourceTree = "<group>"; };
-		559170B1D2D38CD67CC37C6A10FB77CD /* rc4.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = rc4.h; path = opensslIncludes/openssl/rc4.h; sourceTree = "<group>"; };
-		57EA17CBB9613DADF27B05E1524B0D3D /* cms.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = cms.h; path = opensslIncludes/openssl/cms.h; sourceTree = "<group>"; };
-		58376E7BACC3F601921135BF7FD56EE7 /* e_os2.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = e_os2.h; path = opensslIncludes/openssl/e_os2.h; sourceTree = "<group>"; };
-		58E6F44D8FA7DD9CC299E348C1C4E5B4 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS11.3.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
-		59CAD9A10733F2584A06A9FE4AA7AB91 /* ebcdic.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = ebcdic.h; path = opensslIncludes/openssl/ebcdic.h; sourceTree = "<group>"; };
-		5AF733D838CC11183CE0A086F84F99DF /* GenericOnOffSetUnacknowledgedMessage.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = GenericOnOffSetUnacknowledgedMessage.swift; sourceTree = "<group>"; };
-		5B2FE9F7AE714E3950068B4E2E5D5A0E /* ConfiguratorStateProtocol.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ConfiguratorStateProtocol.swift; sourceTree = "<group>"; };
-		5B58B093ED0C7BCB91C6E233D5AB3459 /* idea.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = idea.h; path = opensslIncludes/openssl/idea.h; sourceTree = "<group>"; };
-		5C697579C4A66A12406872D4B0866E14 /* ModelAppBindConfiguratorState.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ModelAppBindConfiguratorState.swift; sourceTree = "<group>"; };
-		5D30D9CD4494A582834868DA9BCD41C4 /* bio.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = bio.h; path = opensslIncludes/openssl/bio.h; sourceTree = "<group>"; };
-		5EBA2BF6E9FD43917F0FC4552BDE79F3 /* x509_vfy.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = x509_vfy.h; path = opensslIncludes/openssl/x509_vfy.h; sourceTree = "<group>"; };
-		5EDFDFB109074921E86599CD073935AA /* sha.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = sha.h; path = opensslIncludes/openssl/sha.h; sourceTree = "<group>"; };
-		631DF0040F78759D1751322011D015DC /* CoreBluetooth.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreBluetooth.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS11.3.sdk/System/Library/Frameworks/CoreBluetooth.framework; sourceTree = DEVELOPER_DIR; };
-		63CD6653B800D26457FE0017176C4F38 /* Pods_nRFMeshProvision_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_nRFMeshProvision_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		63EA4646195076D76D9718A4572811AB /* nRFMeshProvision.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = nRFMeshProvision.xcconfig; sourceTree = "<group>"; };
-		63EB672B857D18756D4BB0D671D149C7 /* InviteCapabilities.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = InviteCapabilities.swift; sourceTree = "<group>"; };
-		660F04F63785FC104A7B94FFC561D5C0 /* seed.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = seed.h; path = opensslIncludes/openssl/seed.h; sourceTree = "<group>"; };
-		6696456B5AB3770167FDB11381ADD357 /* UnprovisionedMeshNodeDelegate.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = UnprovisionedMeshNodeDelegate.swift; sourceTree = "<group>"; };
-		6823A35D5DD2211EF09CC2FC0EE94BC5 /* x509v3.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = x509v3.h; path = opensslIncludes/openssl/x509v3.h; sourceTree = "<group>"; };
-		6909B97BD5B8CD29FA19D1037CE98832 /* MessageStatusCodes.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MessageStatusCodes.swift; sourceTree = "<group>"; };
-		6CDA3661F6B832697AD5E475628E7ED0 /* srp.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = srp.h; path = opensslIncludes/openssl/srp.h; sourceTree = "<group>"; };
-		6CE95B5D710999E0114E4D76A31CB00D /* MeshVendorModelIdentifiers.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MeshVendorModelIdentifiers.swift; sourceTree = "<group>"; };
-		6DFB1B322B2839E9548A6143D08A3133 /* GenericModelControllerStateProtocol.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = GenericModelControllerStateProtocol.swift; sourceTree = "<group>"; };
-		6E29F8AB41D1E53BE17973FE6239CC5C /* conf.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = conf.h; path = opensslIncludes/openssl/conf.h; sourceTree = "<group>"; };
-		6F6FD7EA1D7BEF8991E495E40A688EB6 /* dso.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = dso.h; path = opensslIncludes/openssl/dso.h; sourceTree = "<group>"; };
-		703F5C5BDB022780A687B78A1FC1C3F6 /* MeshStateManager.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MeshStateManager.swift; sourceTree = "<group>"; };
-		70AB45234B6CED04336A1E0FC01BE58A /* LowerTransportLayer.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LowerTransportLayer.swift; sourceTree = "<group>"; };
-		718B086BBBBD8B727C907650CB7F662A /* ui_compat.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = ui_compat.h; path = opensslIncludes/openssl/ui_compat.h; sourceTree = "<group>"; };
-		7452B332E8D2579004DA9A66185A16FF /* lhash.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = lhash.h; path = opensslIncludes/openssl/lhash.h; sourceTree = "<group>"; };
+		50B9BE971AD77B3E214EF3E2870D453A /* ssl.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = ssl.h; path = opensslIncludes/openssl/ssl.h; sourceTree = "<group>"; };
+		51019CA4226872735BBD75A3FFEDAC63 /* opensslv.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = opensslv.h; path = opensslIncludes/openssl/opensslv.h; sourceTree = "<group>"; };
+		53E6AED21C813F6198BB4717AE0813C8 /* ecdh.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = ecdh.h; path = opensslIncludes/openssl/ecdh.h; sourceTree = "<group>"; };
+		571DBF97EA204CDEDD2D3B910E82BB16 /* LowerTransportPDUParams.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LowerTransportPDUParams.swift; sourceTree = "<group>"; };
+		5B0AF1085859F0B6783F5CC39D68D5DB /* ModelPublicationStatusMessage.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ModelPublicationStatusMessage.swift; sourceTree = "<group>"; };
+		5CA48E23C8866DD73A974DC7B46F8824 /* ProvisioningAlgorithm.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ProvisioningAlgorithm.swift; sourceTree = "<group>"; };
+		5E4128F5E173429E76CDBBD46F6045AE /* UnprovisionedMeshNodeProtocol.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = UnprovisionedMeshNodeProtocol.swift; sourceTree = "<group>"; };
+		5E46C50F72754679B1F08C5D7A9EAC44 /* opensslconf.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = opensslconf.h; path = opensslIncludes/openssl/opensslconf.h; sourceTree = "<group>"; };
+		5EF2D5A28D06528103139420D510068A /* Pods_nRFMeshProvision_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = Pods_nRFMeshProvision_Example.framework; path = "Pods-nRFMeshProvision_Example.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
+		5F5565493FCC955BA0F11E7751462ECB /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; path = LICENSE; sourceTree = "<group>"; };
+		600CFE4879B1A6AADFA8CE038247E281 /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; path = README.md; sourceTree = "<group>"; };
+		60DF78B62E89EA491E46B2E8D74127E5 /* OpenSSLHelper.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = OpenSSLHelper.h; sourceTree = "<group>"; };
+		62C841EE2549A3A9654DF88553001BCE /* conf_api.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = conf_api.h; path = opensslIncludes/openssl/conf_api.h; sourceTree = "<group>"; };
+		649D9693A0B297B52613D863833330E6 /* UnprovisionedMeshNodeLoggingDelegate.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = UnprovisionedMeshNodeLoggingDelegate.swift; sourceTree = "<group>"; };
+		6839486FB5B84958E28FD425912C76DE /* ocsp.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = ocsp.h; path = opensslIncludes/openssl/ocsp.h; sourceTree = "<group>"; };
+		68F0F0E6E8F614FA5EB2A6E472846690 /* pqueue.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = pqueue.h; path = opensslIncludes/openssl/pqueue.h; sourceTree = "<group>"; };
+		694EEC17CDBF9156C874CD2A91F470E6 /* TransportNonce.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = TransportNonce.swift; sourceTree = "<group>"; };
+		6A2A9DF2AEBCA77CF4439C89CCCD7409 /* Bottomsheet.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; path = Bottomsheet.modulemap; sourceTree = "<group>"; };
+		6A8D203739DDD0B2960DCAB75F17F448 /* AccessMessagePDU.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AccessMessagePDU.swift; sourceTree = "<group>"; };
+		6B669A86DE361433CF60C310D9C43DFF /* UnprovisionedMeshNodeDelegate.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = UnprovisionedMeshNodeDelegate.swift; sourceTree = "<group>"; };
+		6C5C089DD67A1A24A13470B4CC9600C8 /* srtp.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = srtp.h; path = opensslIncludes/openssl/srtp.h; sourceTree = "<group>"; };
+		7054AA6B263EA1B7FDEBFE7E858268C0 /* PublicKeyInformationAvailability.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = PublicKeyInformationAvailability.swift; sourceTree = "<group>"; };
+		705E2B111C6C3E5807FB13612BCE3718 /* Bottomsheet.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = Bottomsheet.xcconfig; sourceTree = "<group>"; };
+		70F6382DE93F743120DAF699BAF87F0A /* pem2.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = pem2.h; path = opensslIncludes/openssl/pem2.h; sourceTree = "<group>"; };
+		71867A9D662E74BD3F8F01E875D7FB88 /* NodeResetMesage.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = NodeResetMesage.swift; sourceTree = "<group>"; };
+		744E8AA9E68524CD220FBCDEEA25B5F9 /* lhash.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = lhash.h; path = opensslIncludes/openssl/lhash.h; sourceTree = "<group>"; };
 		750AD95965031E15552370B040DB17AE /* Pods-nRFMeshProvision_Tests-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Pods-nRFMeshProvision_Tests-umbrella.h"; sourceTree = "<group>"; };
-		779CFAF7C726406DE77C043B17D3F1E6 /* opensslconf.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = opensslconf.h; path = opensslIncludes/openssl/opensslconf.h; sourceTree = "<group>"; };
-		7AB370682BAF354F65A882E60D2F003D /* ecdh.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = ecdh.h; path = opensslIncludes/openssl/ecdh.h; sourceTree = "<group>"; };
-		7B539371C493911C0139924525D6AD51 /* PublicKeyInformationAvailability.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = PublicKeyInformationAvailability.swift; sourceTree = "<group>"; };
-		7C250810F28A75C6CBA2396300E8DD2C /* NRFMeshManager.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = NRFMeshManager.swift; sourceTree = "<group>"; };
-		7D47C97D636A3F1FFE9C48E55ACE8E7B /* MeshNodeEntry.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MeshNodeEntry.swift; sourceTree = "<group>"; };
-		7FEFDA70ECA49DB2A6A626D00465099C /* ec.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = ec.h; path = opensslIncludes/openssl/ec.h; sourceTree = "<group>"; };
-		80C3AA12D94DFCF4B2B20D80D6A02B74 /* modes.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = modes.h; path = opensslIncludes/openssl/modes.h; sourceTree = "<group>"; };
-		8244FF9C37998C59946204F1C5126E40 /* objects.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = objects.h; path = opensslIncludes/openssl/objects.h; sourceTree = "<group>"; };
-		830B8C2896B2FA285D0AD8CAC1E1D083 /* ModelSubscriptionAddConfiguratorState.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ModelSubscriptionAddConfiguratorState.swift; sourceTree = "<group>"; };
-		846EC8E577E3F1F952D56A09B9514466 /* pkcs7.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = pkcs7.h; path = opensslIncludes/openssl/pkcs7.h; sourceTree = "<group>"; };
-		855FCA1A6C574F1BAFDE31458440D76F /* ossl_typ.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = ossl_typ.h; path = opensslIncludes/openssl/ossl_typ.h; sourceTree = "<group>"; };
-		87C157FF9595C498A370CB35438E3915 /* AccessMessageParser.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AccessMessageParser.swift; sourceTree = "<group>"; };
-		89B6F85E36A2CB6E7FE2F136758EB304 /* nRFMeshProvision-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "nRFMeshProvision-dummy.m"; sourceTree = "<group>"; };
-		8E745D69798B67B053BC82F9BB3744BA /* whrlpool.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = whrlpool.h; path = opensslIncludes/openssl/whrlpool.h; sourceTree = "<group>"; };
-		8E8B94ED487A9503728F2039BC1A8E0E /* md4.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = md4.h; path = opensslIncludes/openssl/md4.h; sourceTree = "<group>"; };
-		8FAC205048D8EECBEE7C23BF6124D8E9 /* crypto.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = crypto.h; path = opensslIncludes/openssl/crypto.h; sourceTree = "<group>"; };
-		93A4A3777CF96A4AAC1D13BA6DCCEA73 /* Podfile */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; name = Podfile; path = ../Podfile; sourceTree = SOURCE_ROOT; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
-		944D29444AEF57BAFB4426E71143D2D7 /* Data+utils.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "Data+utils.swift"; sourceTree = "<group>"; };
+		77B08D9FF4675BDCB998991BB350892C /* ui_compat.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = ui_compat.h; path = opensslIncludes/openssl/ui_compat.h; sourceTree = "<group>"; };
+		78A64D80D67A7818FDBA3A480B174A7C /* nRFMeshProvision.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = nRFMeshProvision.xcconfig; sourceTree = "<group>"; };
+		7B473EF595D3DFC7EF6FCEF42EA7A603 /* x509v3.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = x509v3.h; path = opensslIncludes/openssl/x509v3.h; sourceTree = "<group>"; };
+		8071FF083304B9754E208037374D11AF /* ModelSubscriptionStatusMessage.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ModelSubscriptionStatusMessage.swift; sourceTree = "<group>"; };
+		807F1268359800B2233EDB648AC1643F /* MeshModelIdentifierStringConverter.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MeshModelIdentifierStringConverter.swift; sourceTree = "<group>"; };
+		82F9776AD2B75001B91830B288F0884E /* DefaultTTLGetMessage.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DefaultTTLGetMessage.swift; sourceTree = "<group>"; };
+		853058F47955C5B83FF03402EEF10E8B /* NodeResetStatusMessage.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = NodeResetStatusMessage.swift; sourceTree = "<group>"; };
+		86008311420411762A616857F2A7583B /* rsa.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = rsa.h; path = opensslIncludes/openssl/rsa.h; sourceTree = "<group>"; };
+		87F6397BE9B740B98B8555BDF258A8CB /* ConfirmationProvisioningState.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ConfirmationProvisioningState.swift; sourceTree = "<group>"; };
+		8846A54C315E918987B36524EE96EA0E /* buffer.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = buffer.h; path = opensslIncludes/openssl/buffer.h; sourceTree = "<group>"; };
+		885BC6E801561ED373601F9E9DD0AA6D /* CompositionGetMessage.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CompositionGetMessage.swift; sourceTree = "<group>"; };
+		8955EA421AB7C684797766302AD30BD3 /* ecdsa.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = ecdsa.h; path = opensslIncludes/openssl/ecdsa.h; sourceTree = "<group>"; };
+		89E34C7DABCAF545C17E19FDE82CC47B /* MessageStatusCodes.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MessageStatusCodes.swift; sourceTree = "<group>"; };
+		8B91F2CF662237C45DBD3D111B633808 /* Bottomsheet-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "Bottomsheet-dummy.m"; sourceTree = "<group>"; };
+		8E59EED57252B3DF56C54480D6BADD29 /* conf.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = conf.h; path = opensslIncludes/openssl/conf.h; sourceTree = "<group>"; };
+		910CFD3149061D98FFC7E797DA713324 /* rc2.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = rc2.h; path = opensslIncludes/openssl/rc2.h; sourceTree = "<group>"; };
+		91EE3F9514E59B495DB8B3C5C153E125 /* AccessMessageParser.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AccessMessageParser.swift; sourceTree = "<group>"; };
+		9323D93012F297B111B60B9E95ECC493 /* nRFMeshProvision-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "nRFMeshProvision-dummy.m"; sourceTree = "<group>"; };
+		93A4A3777CF96A4AAC1D13BA6DCCEA73 /* Podfile */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; lastKnownFileType = text; name = Podfile; path = ../Podfile; sourceTree = SOURCE_ROOT; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		9631D701D7240E226AA9F07FAC464937 /* Pods-nRFMeshProvision_Example-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Pods-nRFMeshProvision_Example-umbrella.h"; sourceTree = "<group>"; };
-		9AE8D210D5834A5B3DBE0DB13EB1E83F /* AccessMessagePDU.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AccessMessagePDU.swift; sourceTree = "<group>"; };
-		9BF574387DD2B01AD0589F9125644CB9 /* MeshModelIdentifiers.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MeshModelIdentifiers.swift; sourceTree = "<group>"; };
+		96335E2A2E7365816C9F5C1C53091CDE /* SleepConfiguratorState.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SleepConfiguratorState.swift; sourceTree = "<group>"; };
+		96C955500DDE6DCA993FE69493119068 /* libssl.a */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = archive.ar; name = libssl.a; path = lib/libssl.a; sourceTree = "<group>"; };
+		96F6BAFD8CD36399F5C429CAF5477955 /* bio.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = bio.h; path = opensslIncludes/openssl/bio.h; sourceTree = "<group>"; };
+		9A1BADC0F91BAF1ABF10864CDBE210FB /* camellia.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = camellia.h; path = opensslIncludes/openssl/camellia.h; sourceTree = "<group>"; };
+		9A39B9136B8A1911C2F93D65D80B942C /* GenericModelControllerStateProtocol.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = GenericModelControllerStateProtocol.swift; sourceTree = "<group>"; };
+		9AD8AC399285A3D89A2783001763D94F /* cmac.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = cmac.h; path = opensslIncludes/openssl/cmac.h; sourceTree = "<group>"; };
+		9BE800C5B2D04ADE2A292A64B48C4455 /* MeshStateManager.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MeshStateManager.swift; sourceTree = "<group>"; };
+		9C3721CDC26B4E5AFE0C5DE071A21E03 /* ProvisioningPDU.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ProvisioningPDU.swift; sourceTree = "<group>"; };
+		9C9536486A3CFD67579F89275D102EFF /* ssl2.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = ssl2.h; path = opensslIncludes/openssl/ssl2.h; sourceTree = "<group>"; };
 		9CBBD266178804BB0F054E56F57C2AF2 /* Pods-nRFMeshProvision_Example-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "Pods-nRFMeshProvision_Example-dummy.m"; sourceTree = "<group>"; };
-		9F80139DCC940E0E82E06636A7963296 /* MeshConstants.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MeshConstants.swift; sourceTree = "<group>"; };
-		9F82542104B192E488487393081504BB /* NetworkLayer.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = NetworkLayer.swift; sourceTree = "<group>"; };
-		A2BE7AAD09A758BECDFE6CCD55AF34E9 /* ControlMessagePDU.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ControlMessagePDU.swift; sourceTree = "<group>"; };
-		A30876EB616413704012BABC3DFBCCAB /* GenericOnOffSetMessage.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = GenericOnOffSetMessage.swift; sourceTree = "<group>"; };
-		A3198300DBC78318973448E87AB34DF9 /* evp.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = evp.h; path = opensslIncludes/openssl/evp.h; sourceTree = "<group>"; };
-		A335101E022199FD737F6848033A4B55 /* ProvisionedMeshNodeProtocol.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ProvisionedMeshNodeProtocol.swift; sourceTree = "<group>"; };
-		A3F7C9B6A57DCCFC66626C1A6E7A7B15 /* DefaultTTLStatusMessage.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DefaultTTLStatusMessage.swift; sourceTree = "<group>"; };
-		A50F283BACE4D71DA87BA7CE74D7EA57 /* CompositionGetConfiguratorState.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CompositionGetConfiguratorState.swift; sourceTree = "<group>"; };
-		A531A6EEB450C4A98A600B94200B713B /* SetFilterTypeMessage.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SetFilterTypeMessage.swift; sourceTree = "<group>"; };
+		9F3634EBEC0C39E8788C507CD58A8F25 /* Pods_nRFMeshProvision_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = Pods_nRFMeshProvision_Tests.framework; path = "Pods-nRFMeshProvision_Tests.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
+		A0DEE6AE5BFD1CA7B6AD9C2F17D37110 /* e_os2.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = e_os2.h; path = opensslIncludes/openssl/e_os2.h; sourceTree = "<group>"; };
+		A148C7979AEDCF1C9083930EB59D673A /* ConfiguratorStateProtocol.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ConfiguratorStateProtocol.swift; sourceTree = "<group>"; };
+		A2364EB7AB724C2C083E18B08D958C30 /* des_old.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = des_old.h; path = opensslIncludes/openssl/des_old.h; sourceTree = "<group>"; };
+		A2FBEFC1971E592A1B0945CCCB43EEC2 /* ui.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = ui.h; path = opensslIncludes/openssl/ui.h; sourceTree = "<group>"; };
+		A4415D60CB4A6FAD9653B77216DA162B /* GenericOnOffGetControllerState.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = GenericOnOffGetControllerState.swift; sourceTree = "<group>"; };
+		A5455A26EE440AA103A8E3A922789090 /* AppKeyStatusMessage.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AppKeyStatusMessage.swift; sourceTree = "<group>"; };
+		A7546FB78C6CBC9C28DD4D7DF180CE05 /* LowerTransportLayer.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LowerTransportLayer.swift; sourceTree = "<group>"; };
+		AAE441C2455F18572FDD49F233D86935 /* nRFMeshProvision-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "nRFMeshProvision-umbrella.h"; sourceTree = "<group>"; };
 		AB08368C68BB61C2FC6A80D0489DD256 /* Pods-nRFMeshProvision_Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-nRFMeshProvision_Tests.release.xcconfig"; sourceTree = "<group>"; };
-		AE3171EF4C8934ADFF75AAC69C9247B5 /* ModelAppBindMessage.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ModelAppBindMessage.swift; sourceTree = "<group>"; };
+		AE3020F3283225711D8A8259C3AC7771 /* tls1.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = tls1.h; path = opensslIncludes/openssl/tls1.h; sourceTree = "<group>"; };
+		AE80B653056F682703511C44C153CE95 /* ts.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = ts.h; path = opensslIncludes/openssl/ts.h; sourceTree = "<group>"; };
+		B0F3A2A61651E460B5DC6B7620A0C741 /* mdc2.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = mdc2.h; path = opensslIncludes/openssl/mdc2.h; sourceTree = "<group>"; };
+		B157E3EAE10594E7FA3D7BD73B7C6C62 /* x509.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = x509.h; path = opensslIncludes/openssl/x509.h; sourceTree = "<group>"; };
 		B19646055A67D98EBE2B32E7CD513CF6 /* Pods-nRFMeshProvision_Example-resources.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "Pods-nRFMeshProvision_Example-resources.sh"; sourceTree = "<group>"; };
-		B37D999B23D19D308091F390F29FFBA7 /* DataDistributionProvisioningState.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DataDistributionProvisioningState.swift; sourceTree = "<group>"; };
+		B2D287F94A960F27A3FA0EE03DBBABA9 /* UpperTransportLayer.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = UpperTransportLayer.swift; sourceTree = "<group>"; };
+		B33C445BF106259541A5112BA18896A3 /* MeshAddressTypes.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MeshAddressTypes.swift; sourceTree = "<group>"; };
 		B3C95A54C48404021D03DD3C4D881265 /* Pods-nRFMeshProvision_Example-acknowledgements.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-nRFMeshProvision_Example-acknowledgements.plist"; sourceTree = "<group>"; };
-		B46137C7FA799F63F53DB8619FA73144 /* SequenceNumber.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SequenceNumber.swift; sourceTree = "<group>"; };
-		B716F3F45354F86AFF656AF89B5C3A8A /* GenericOnOffStatusMessage.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = GenericOnOffStatusMessage.swift; sourceTree = "<group>"; };
+		B3D7496940C64B225CEB59480C6B0473 /* StaticOutOfBoundInformationAvailability.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = StaticOutOfBoundInformationAvailability.swift; sourceTree = "<group>"; };
+		B64DB1FA1435C5101D3DCDAB00DA0DFA /* ModelSubscriptionDeleteConfiguratorState.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ModelSubscriptionDeleteConfiguratorState.swift; sourceTree = "<group>"; };
+		B76BEF23ED623C073ADE82BDF9DD7D32 /* SetFilterTypeMessage.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SetFilterTypeMessage.swift; sourceTree = "<group>"; };
+		B7F4A1F452F3B19AA8A3C8C3474705DE /* CompositionGetConfiguratorState.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CompositionGetConfiguratorState.swift; sourceTree = "<group>"; };
 		B8350FC698AB5A66DBA2D8D2E119479A /* Pods-nRFMeshProvision_Tests.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; path = "Pods-nRFMeshProvision_Tests.modulemap"; sourceTree = "<group>"; };
-		B84A9CDC3DB362E165A7679BFBE19AFC /* hmac.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = hmac.h; path = opensslIncludes/openssl/hmac.h; sourceTree = "<group>"; };
+		B84F1130903ECF43D5852AD765ABC3D2 /* ossl_typ.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = ossl_typ.h; path = opensslIncludes/openssl/ossl_typ.h; sourceTree = "<group>"; };
+		B882E66295A5D6C5C34F14B9B9E180CC /* NodeResetConfiguratorState.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = NodeResetConfiguratorState.swift; sourceTree = "<group>"; };
+		B896001B2A828BE3B9FCE4057E144E72 /* bn.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = bn.h; path = opensslIncludes/openssl/bn.h; sourceTree = "<group>"; };
+		B8DF64E7E97EAF8724E9CA655087D217 /* ProvisionedMeshNode.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ProvisionedMeshNode.swift; sourceTree = "<group>"; };
+		BAD28649D771A4511F7F71169D670A96 /* kssl.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = kssl.h; path = opensslIncludes/openssl/kssl.h; sourceTree = "<group>"; };
 		BB19B5C523B3060B067D132BDFF0E694 /* Pods-nRFMeshProvision_Tests-frameworks.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "Pods-nRFMeshProvision_Tests-frameworks.sh"; sourceTree = "<group>"; };
-		BCDB5110A30D96F3CD2BB49628F14F07 /* stack.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = stack.h; path = opensslIncludes/openssl/stack.h; sourceTree = "<group>"; };
-		BCF09CBBE91709771F413E73024A5233 /* conf_api.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = conf_api.h; path = opensslIncludes/openssl/conf_api.h; sourceTree = "<group>"; };
-		BD44619AFDB4627F45F36841A5888256 /* ProvisioningErrorCodes.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ProvisioningErrorCodes.swift; sourceTree = "<group>"; };
-		BECC8BB61C5D54EF89F5ECA9850F133A /* pqueue.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = pqueue.h; path = opensslIncludes/openssl/pqueue.h; sourceTree = "<group>"; };
-		BFF9B3C3879B2E58228EAA8F5A32BEFF /* GenericOnOffSetControllerState.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = GenericOnOffSetControllerState.swift; sourceTree = "<group>"; };
-		C33EB730E4F2C09FAA816B03A23BD733 /* asn1_mac.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = asn1_mac.h; path = opensslIncludes/openssl/asn1_mac.h; sourceTree = "<group>"; };
-		C3A563AA5043488C353FB0863B154689 /* ModelPublicationSetMessage.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ModelPublicationSetMessage.swift; sourceTree = "<group>"; };
-		C66A9693533C69165AAADA97DBDA80EE /* SetWhiteListConfiguratorState.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SetWhiteListConfiguratorState.swift; sourceTree = "<group>"; };
-		C791DC884B3E819E29C64849B212819A /* OpenSSLHelper.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = OpenSSLHelper.m; sourceTree = "<group>"; };
-		C8599616405EF95D4E234F458A148D9E /* CompanyIdentifiers.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CompanyIdentifiers.swift; sourceTree = "<group>"; };
-		C9129E8C567E5130DD32895E2C09546C /* UnprovisionedMeshNodeProtocol.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = UnprovisionedMeshNodeProtocol.swift; sourceTree = "<group>"; };
-		C9A6F3D5A6A22998A95DD9967E319470 /* UpperTransportParams.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = UpperTransportParams.swift; sourceTree = "<group>"; };
-		CD19AF66A13997F30098BD9AD9FFB505 /* dsa.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = dsa.h; path = opensslIncludes/openssl/dsa.h; sourceTree = "<group>"; };
-		CF6DB88C4343BF19ACBBDE72B70A82BB /* md5.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = md5.h; path = opensslIncludes/openssl/md5.h; sourceTree = "<group>"; };
-		D006F3EE68ECD006E808CC9AFEFD65EB /* ModelAppBindStatusMessage.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ModelAppBindStatusMessage.swift; sourceTree = "<group>"; };
-		D0B35A850494CC2194C5B35D697B44B6 /* buffer.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = buffer.h; path = opensslIncludes/openssl/buffer.h; sourceTree = "<group>"; };
-		D122CBA20D49FFCB573ABF5F48FB0392 /* LowerTransportPDUParams.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LowerTransportPDUParams.swift; sourceTree = "<group>"; };
-		D13D2EEE7387D67AF50E3F69D02A221E /* cmac.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = cmac.h; path = opensslIncludes/openssl/cmac.h; sourceTree = "<group>"; };
-		D23DCABFE013BD4D931606DB2E1C87FD /* ProvisionedMeshNode.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ProvisionedMeshNode.swift; sourceTree = "<group>"; };
-		D2C16B6A09CBEE57F94FED95C0C8F86A /* GenericOnOffGetControllerState.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = GenericOnOffGetControllerState.swift; sourceTree = "<group>"; };
-		D3C8E0952FBEBE7EE099BC2A5A6971A2 /* ProvisioningStateProtocol.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ProvisioningStateProtocol.swift; sourceTree = "<group>"; };
-		D5EB1CCB0F75F7071DCA3B03DCBAE118 /* CompositionStatusMessage.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CompositionStatusMessage.swift; sourceTree = "<group>"; };
-		D9D94F97D33D02BEFD538EE3E00D8D7F /* AppKeyAddMessage.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AppKeyAddMessage.swift; sourceTree = "<group>"; };
-		DC002475E0559EA07C9C881EDC132826 /* engine.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = engine.h; path = opensslIncludes/openssl/engine.h; sourceTree = "<group>"; };
-		DC371DCCCC4A8DBD97BF5A55799C9622 /* UpperTransportLayer.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = UpperTransportLayer.swift; sourceTree = "<group>"; };
+		BC8A386011177A9FAB9CFCA1F5D647E4 /* symhacks.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = symhacks.h; path = opensslIncludes/openssl/symhacks.h; sourceTree = "<group>"; };
+		BCECF8EC09E73B8B3651F5AA2BA27E82 /* nRFMeshProvision.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = nRFMeshProvision.framework; path = nRFMeshProvision.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		BD540D50150E75583E4471FF4A412AAB /* des.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = des.h; path = opensslIncludes/openssl/des.h; sourceTree = "<group>"; };
+		BD674493AC9BB841A1F96B896E3F64D4 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS11.3.sdk/System/Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
+		BE050578DEC327020E44A7404CD4CF6E /* asn1_mac.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = asn1_mac.h; path = opensslIncludes/openssl/asn1_mac.h; sourceTree = "<group>"; };
+		BE0DA62D10A21A90EDC38DCB972CE387 /* ebcdic.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = ebcdic.h; path = opensslIncludes/openssl/ebcdic.h; sourceTree = "<group>"; };
+		BF445358702FF2275F5782DC31343653 /* DataDistributionProvisioningState.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DataDistributionProvisioningState.swift; sourceTree = "<group>"; };
+		C0BB1556B78084087980F27740B1A341 /* SequenceNumber.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SequenceNumber.swift; sourceTree = "<group>"; };
+		C2C4E7AAE33160B448D32222DCB61855 /* RandomConfirmationProvisioningState.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = RandomConfirmationProvisioningState.swift; sourceTree = "<group>"; };
+		C306D92A8045DC97C6605EFF2802DFDA /* MeshVendorModelIdentifierStringConverter.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MeshVendorModelIdentifierStringConverter.swift; sourceTree = "<group>"; };
+		C3D3045814B2E4000312FAAB652132D1 /* seed.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = seed.h; path = opensslIncludes/openssl/seed.h; sourceTree = "<group>"; };
+		C43E91CF81D2496F26ABC5561E2618C9 /* dsa.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = dsa.h; path = opensslIncludes/openssl/dsa.h; sourceTree = "<group>"; };
+		C4AE6A57F2D3030D2DB92D53BF09780D /* cast.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = cast.h; path = opensslIncludes/openssl/cast.h; sourceTree = "<group>"; };
+		C4FD3512582D953EBF28D4892872A8BE /* idea.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = idea.h; path = opensslIncludes/openssl/idea.h; sourceTree = "<group>"; };
+		C58131A89065FC0D9E269086CFE8314F /* CoreBluetooth.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreBluetooth.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS11.3.sdk/System/Library/Frameworks/CoreBluetooth.framework; sourceTree = DEVELOPER_DIR; };
+		C5E041B50BA4E8EDEB6F606FB4B666B8 /* GenericOnOffSetControllerState.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = GenericOnOffSetControllerState.swift; sourceTree = "<group>"; };
+		C6EB4821416782CCE0212A5D1096FCFA /* asn1.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = asn1.h; path = opensslIncludes/openssl/asn1.h; sourceTree = "<group>"; };
+		C95C0E63C634B591716EBD6775080E46 /* ModelPublicationSetConfiguratorState.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ModelPublicationSetConfiguratorState.swift; sourceTree = "<group>"; };
+		CC3DDE18D65702489FA16D67008139D6 /* ModelPublicationSetMessage.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ModelPublicationSetMessage.swift; sourceTree = "<group>"; };
+		CCCF559BE273F85E31E235212B8BC215 /* ModelAppBindMessage.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ModelAppBindMessage.swift; sourceTree = "<group>"; };
+		D120B1CF832A211EBED54A14B74EB235 /* pkcs12.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = pkcs12.h; path = opensslIncludes/openssl/pkcs12.h; sourceTree = "<group>"; };
+		D1B14CCE1A544E9CB5A74BE83DFA4A3D /* ModelAppBindStatusMessage.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ModelAppBindStatusMessage.swift; sourceTree = "<group>"; };
+		D21AF7ABF6F026A6F46A9253B353B9E9 /* rand.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = rand.h; path = opensslIncludes/openssl/rand.h; sourceTree = "<group>"; };
+		D702F8FAD20AEDC0F8A936BD346CE6F9 /* cms.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = cms.h; path = opensslIncludes/openssl/cms.h; sourceTree = "<group>"; };
+		DADD72E95444CBA853AE18729193B111 /* ProvisionegMeshNodeLoggingDelegate.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ProvisionegMeshNodeLoggingDelegate.swift; sourceTree = "<group>"; };
 		DD36EAC8B7456284E3FFF424BC67BABC /* Pods-nRFMeshProvision_Tests-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "Pods-nRFMeshProvision_Tests-dummy.m"; sourceTree = "<group>"; };
-		E0AD4FB896238151CB61469E7455A935 /* ModelPublicationStatusMessage.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ModelPublicationStatusMessage.swift; sourceTree = "<group>"; };
-		E124957E1C2AB23D6C9A1F2B248B7022 /* txt_db.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = txt_db.h; path = opensslIncludes/openssl/txt_db.h; sourceTree = "<group>"; };
-		E1C88E58E6DC084E87A553C88347D410 /* ssl23.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = ssl23.h; path = opensslIncludes/openssl/ssl23.h; sourceTree = "<group>"; };
-		E1F63B2394441C631DA9D41CFDF40425 /* GenericOnOffGetMessage.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = GenericOnOffGetMessage.swift; sourceTree = "<group>"; };
-		E41D8D951B3D58E53C7A8A833E1F76FD /* srtp.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = srtp.h; path = opensslIncludes/openssl/srtp.h; sourceTree = "<group>"; };
+		DD6F54E9837A84925A14132149A2FA05 /* DiscoveryProvisioningState.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DiscoveryProvisioningState.swift; sourceTree = "<group>"; };
+		DDA8451C09A59ED856C224BBC0F3CE7E /* OutputOutOfBoundActions.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = OutputOutOfBoundActions.swift; sourceTree = "<group>"; };
+		DDF66E7013D5A8EAB8205DF92387CB82 /* whrlpool.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = whrlpool.h; path = opensslIncludes/openssl/whrlpool.h; sourceTree = "<group>"; };
+		DE31753F218C2A6E869765560D38F436 /* safestack.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = safestack.h; path = opensslIncludes/openssl/safestack.h; sourceTree = "<group>"; };
+		E06D45054CEDA47E5508320F3B4CF552 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS11.3.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
+		E0F0B08BA7DEAA822627EFE10DD326D3 /* UpperTransportParams.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = UpperTransportParams.swift; sourceTree = "<group>"; };
+		E1F5F582EC937C8999098DC47EF054A0 /* MeshVendorModelIdentifiers.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MeshVendorModelIdentifiers.swift; sourceTree = "<group>"; };
+		E2EA727085D20A2C046252F9D317BD63 /* stack.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = stack.h; path = opensslIncludes/openssl/stack.h; sourceTree = "<group>"; };
+		E3A74C3C8BA7FEBF3508D8E1F42DB141 /* UnprovisionedMeshNode.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = UnprovisionedMeshNode.swift; sourceTree = "<group>"; };
+		E4279E0831BC2CD967C4C17CF4445BA5 /* MeshModelIdentifiers.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MeshModelIdentifiers.swift; sourceTree = "<group>"; };
 		E4CC6765F4592ED779FC9456DBC25056 /* Pods-nRFMeshProvision_Example-acknowledgements.markdown */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; path = "Pods-nRFMeshProvision_Example-acknowledgements.markdown"; sourceTree = "<group>"; };
-		E5E99B393E1CD5AC8140CD28E5B0183A /* SleepConfiguratorState.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SleepConfiguratorState.swift; sourceTree = "<group>"; };
-		E915B0704CB95D144E11223A84A73D11 /* pem.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = pem.h; path = opensslIncludes/openssl/pem.h; sourceTree = "<group>"; };
-		EC25F1B7678FA425EDE0795857A5BED4 /* NodeResetConfiguratorState.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = NodeResetConfiguratorState.swift; sourceTree = "<group>"; };
-		ED64322C59DBAD42B8EC045E2C22264B /* asn1t.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = asn1t.h; path = opensslIncludes/openssl/asn1t.h; sourceTree = "<group>"; };
-		EF7676896D36BEE076F20D27D89610C6 /* ProvisioningAlgorithm.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ProvisioningAlgorithm.swift; sourceTree = "<group>"; };
+		E859AF8D623325994819F1CA245D0F3F /* pem.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = pem.h; path = opensslIncludes/openssl/pem.h; sourceTree = "<group>"; };
+		EB6B15BBAF859193E8C08A1E83E2026B /* ProvisioningData.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ProvisioningData.swift; sourceTree = "<group>"; };
+		ED621E05D550086282682F57B59D0A9C /* objects.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = objects.h; path = opensslIncludes/openssl/objects.h; sourceTree = "<group>"; };
+		EE463569B3AA875826FD6A9A9FE86DCB /* ModelSubscriptionAddConfiguratorState.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ModelSubscriptionAddConfiguratorState.swift; sourceTree = "<group>"; };
+		EEDEBC5523CDB1F4A73A02594A0EAFAE /* DiscoveryConfiguratorState.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DiscoveryConfiguratorState.swift; sourceTree = "<group>"; };
+		EF2457AC6239A646D941CAAC90F53EDD /* Bottomsheet-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Bottomsheet-umbrella.h"; sourceTree = "<group>"; };
+		EFECFC08CEE05B17DFFB45DD7D5CA2A4 /* ec.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = ec.h; path = opensslIncludes/openssl/ec.h; sourceTree = "<group>"; };
+		F0084615CA5A43E3AA7D707800104B69 /* dh.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = dh.h; path = opensslIncludes/openssl/dh.h; sourceTree = "<group>"; };
+		F12067C1686F2999A2DDE95850945962 /* x509_vfy.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = x509_vfy.h; path = opensslIncludes/openssl/x509_vfy.h; sourceTree = "<group>"; };
 		F1FA3E8749188A722E2CB7858C2B60CA /* Pods-nRFMeshProvision_Example-frameworks.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "Pods-nRFMeshProvision_Example-frameworks.sh"; sourceTree = "<group>"; };
-		F3C6E5BD07436619BD8F6F9ACD17E629 /* err.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = err.h; path = opensslIncludes/openssl/err.h; sourceTree = "<group>"; };
-		F4994C7336B29A5C4140882D954484B8 /* x509.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = x509.h; path = opensslIncludes/openssl/x509.h; sourceTree = "<group>"; };
+		F2BBC80B443595E0D36875DEDD11EE57 /* MeshConstants.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MeshConstants.swift; sourceTree = "<group>"; };
+		F424D6AE348D2C4FC2FDA5DD7EA45001 /* CompositionStatusMessage.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CompositionStatusMessage.swift; sourceTree = "<group>"; };
 		F4D680DDF81BF5CA28385FD4BB8BA8FE /* Pods-nRFMeshProvision_Tests-acknowledgements.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-nRFMeshProvision_Tests-acknowledgements.plist"; sourceTree = "<group>"; };
-		F4F79DD11C4CE41D2FF6E1C04DBA49BC /* pem2.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = pem2.h; path = opensslIncludes/openssl/pem2.h; sourceTree = "<group>"; };
-		F5965A43B02D71669BB25214DDEB85C1 /* des.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = des.h; path = opensslIncludes/openssl/des.h; sourceTree = "<group>"; };
-		F5ED4CE9226BC45CF54840A7C9675AB8 /* UnprovisionedMeshNodeLoggingDelegate.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = UnprovisionedMeshNodeLoggingDelegate.swift; sourceTree = "<group>"; };
 		F62117F4A8DF697511768C062ABB9E50 /* Pods-nRFMeshProvision_Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-nRFMeshProvision_Example.release.xcconfig"; sourceTree = "<group>"; };
-		F6DF30123CC4BB2CF7BAFBD42477605E /* RandomConfirmationProvisioningState.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = RandomConfirmationProvisioningState.swift; sourceTree = "<group>"; };
-		F75F5952B46762BFC4CC133757A17B53 /* nRFMeshProvision.podspec */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; path = nRFMeshProvision.podspec; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
-		F7DA01EEB0742202AE5AAE63F953740E /* CompositionElement.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CompositionElement.swift; sourceTree = "<group>"; };
-		F8B6B03C3F69C9F4EF35F847A544D623 /* ModelSubscriptionDeleteConfiguratorState.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ModelSubscriptionDeleteConfiguratorState.swift; sourceTree = "<group>"; };
-		FA6C50FD67AEFED406DA2F4E8F4D6FA2 /* krb5_asn.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = krb5_asn.h; path = opensslIncludes/openssl/krb5_asn.h; sourceTree = "<group>"; };
-		FC140C3E674337617E6590563B6AE5D6 /* ecdsa.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = ecdsa.h; path = opensslIncludes/openssl/ecdsa.h; sourceTree = "<group>"; };
-		FC959E684123BB35C86AB13D9F31602A /* ssl3.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = ssl3.h; path = opensslIncludes/openssl/ssl3.h; sourceTree = "<group>"; };
-		FCBB86825AEDF5563713AFF35900F301 /* AppKeyStatusMessage.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AppKeyStatusMessage.swift; sourceTree = "<group>"; };
-		FD1C05CD7DDA16CB002B2B5A187F7553 /* ssl2.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = ssl2.h; path = opensslIncludes/openssl/ssl2.h; sourceTree = "<group>"; };
+		F6CF1084480D7965AB947322ECC666BC /* SetWhiteListConfiguratorState.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SetWhiteListConfiguratorState.swift; sourceTree = "<group>"; };
+		F7B740334098E41760AC5BFAA4809892 /* ProvisionedMeshNodeDelegate.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ProvisionedMeshNodeDelegate.swift; sourceTree = "<group>"; };
+		F9C43CF9E0BB5E41B6222A10C0D47BE3 /* nRFMeshProvision.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; path = nRFMeshProvision.modulemap; sourceTree = "<group>"; };
+		FA66D011D82061CA11FDB15FC7823444 /* InviteProvisioningState.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = InviteProvisioningState.swift; sourceTree = "<group>"; };
+		FB300E4FA24DE2BA0E325F67ACD792E2 /* pkcs7.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = pkcs7.h; path = opensslIncludes/openssl/pkcs7.h; sourceTree = "<group>"; };
 		FD55068AA6BA99C90EE3BCED1FE3BE54 /* Pods-nRFMeshProvision_Example.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; path = "Pods-nRFMeshProvision_Example.modulemap"; sourceTree = "<group>"; };
-		FDB1AD6FBA1ED4BB98E0DD08D7EB65C9 /* symhacks.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = symhacks.h; path = opensslIncludes/openssl/symhacks.h; sourceTree = "<group>"; };
-		FF3B805EAFF23DFC5FB067C1E0D46454 /* obj_mac.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = obj_mac.h; path = opensslIncludes/openssl/obj_mac.h; sourceTree = "<group>"; };
+		FE16046B7BEDF9E3C90023EC6EB3EC71 /* blowfish.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = blowfish.h; path = opensslIncludes/openssl/blowfish.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -340,133 +363,251 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		80C2C0901DABB1677CDFEAE22DB1CC11 /* Frameworks */ = {
+		A45B81FBE9E23FCB0501F3A82557F803 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				AACBB998A6BCEFE0132DBB9BEBBC3D2D /* Foundation.framework in Frameworks */,
+				A2B68DF2BC4C6D408242D98D2DF14A52 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D1A031E30E8286D2ABF05038FD525F14 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7F48E9EE0656DF028F14E52ED23A892A /* Foundation.framework in Frameworks */,
+				C93D5A94EBFC9930E0A1D3AA1F736D18 /* UIKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		028472B1E74A66EA4967E4EDDB7C23A5 /* Products */ = {
+		027CCE89E2F9053DF72C6A0E6B6C1AF8 /* ProvisionedMeshNode */ = {
 			isa = PBXGroup;
 			children = (
-				4FE0B6B5ED95205D30117ABBC914ED0C /* nRFMeshProvision.framework */,
-				36A3783FEC88D85E0EB54E7C1079B98F /* Pods_nRFMeshProvision_Example.framework */,
-				63CD6653B800D26457FE0017176C4F38 /* Pods_nRFMeshProvision_Tests.framework */,
+				B8DF64E7E97EAF8724E9CA655087D217 /* ProvisionedMeshNode.swift */,
+				F7B740334098E41760AC5BFAA4809892 /* ProvisionedMeshNodeDelegate.swift */,
+				3E5868FC535620FE77DE8747A7C74D85 /* ProvisionedMeshNodeProtocol.swift */,
+				DADD72E95444CBA853AE18729193B111 /* ProvisionegMeshNodeLoggingDelegate.swift */,
 			);
-			name = Products;
+			name = ProvisionedMeshNode;
+			path = nRFMeshProvision/Classes/ProvisionedMeshNode;
 			sourceTree = "<group>";
 		};
-		0383175FDC88F3D6E153D9899E790E91 /* UnprovisionedMeshNode */ = {
+		08A5504A2534734BA15A7895BCBDE8D4 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				1C7066360F852217060551915B432EDF /* UnprovisionedMeshNode.swift */,
-				6696456B5AB3770167FDB11381ADD357 /* UnprovisionedMeshNodeDelegate.swift */,
-				F5ED4CE9226BC45CF54840A7C9675AB8 /* UnprovisionedMeshNodeLoggingDelegate.swift */,
-				C9129E8C567E5130DD32895E2C09546C /* UnprovisionedMeshNodeProtocol.swift */,
+				0A320EC2187C18DA9B0B4E0831DCE707 /* Bottomsheet */,
+				2505ABAEA0DEE1515E30562DEF7C447B /* OpenSSL */,
 			);
-			name = UnprovisionedMeshNode;
-			path = nRFMeshProvision/Classes/UnprovisionedMeshNode;
+			name = Pods;
 			sourceTree = "<group>";
 		};
-		088B0C6F46676CAF986C3FA6C61C7B8A /* iOS */ = {
+		0A320EC2187C18DA9B0B4E0831DCE707 /* Bottomsheet */ = {
 			isa = PBXGroup;
 			children = (
-				631DF0040F78759D1751322011D015DC /* CoreBluetooth.framework */,
-				58E6F44D8FA7DD9CC299E348C1C4E5B4 /* Foundation.framework */,
+				05363D2DA82B0D93F3A5913884F508C3 /* Bottomsheet.h */,
+				224FDE8476AA13755483A391D0FEDF53 /* Bottomsheet.swift */,
+				3421C59A62E3926BCB951CFFA1E50669 /* Support Files */,
 			);
-			name = iOS;
+			name = Bottomsheet;
+			path = Bottomsheet;
+			sourceTree = "<group>";
+		};
+		101F5FBA13CC788FC6F8696C290C6901 /* Pod */ = {
+			isa = PBXGroup;
+			children = (
+				5F5565493FCC955BA0F11E7751462ECB /* LICENSE */,
+				2E6B527204A3600EFC015979F48B9273 /* nRFMeshProvision.podspec */,
+				600CFE4879B1A6AADFA8CE038247E281 /* README.md */,
+			);
+			name = Pod;
+			sourceTree = "<group>";
+		};
+		122DA2E5084A4393C29BE363C764795C /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				C4276A806F5EFC0770B2EDEFFCB424C9 /* iOS */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 		17D0A14284309026351D6317660F030C /* Development Pods */ = {
 			isa = PBXGroup;
 			children = (
-				EFC3FE73AD528CE41AFB9E2E0CB16C25 /* nRFMeshProvision */,
+				DD099EDC3C02A18C821F4A9F56792C85 /* nRFMeshProvision */,
 			);
 			name = "Development Pods";
 			sourceTree = "<group>";
 		};
-		20BDC97A8F89D4B97784BABD172AB63D /* Pod */ = {
+		23DC369623850237902E2DA2B523D665 /* Configurator */ = {
 			isa = PBXGroup;
 			children = (
-				4D1ACEE47D3ED8484A16118E53166070 /* LICENSE */,
-				F75F5952B46762BFC4CC133757A17B53 /* nRFMeshProvision.podspec */,
-				13CB3732A7C93C1825BBBC0AE4E97040 /* README.md */,
-			);
-			name = Pod;
-			sourceTree = "<group>";
-		};
-		3EEE92E14A77E32181076EF46D420B19 /* MeshState */ = {
-			isa = PBXGroup;
-			children = (
-				7D47C97D636A3F1FFE9C48E55ACE8E7B /* MeshNodeEntry.swift */,
-				386AE05B18BC80370D9FDBE0AF77E07C /* MeshState.swift */,
-				703F5C5BDB022780A687B78A1FC1C3F6 /* MeshStateManager.swift */,
-				7C250810F28A75C6CBA2396300E8DD2C /* NRFMeshManager.swift */,
-				B46137C7FA799F63F53DB8619FA73144 /* SequenceNumber.swift */,
-			);
-			name = MeshState;
-			path = nRFMeshProvision/Classes/MeshState;
-			sourceTree = "<group>";
-		};
-		433CD3331B6C3787F473C941B61FC68F /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-				088B0C6F46676CAF986C3FA6C61C7B8A /* iOS */,
-			);
-			name = Frameworks;
-			sourceTree = "<group>";
-		};
-		43F95576B46772C2E60F91233656BB0A /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-				0464A5491D8ED0B3338CF803C32895A6 /* libcrypto.a */,
-				06F79E778992F44099D45E5817300EDB /* libssl.a */,
-			);
-			name = Frameworks;
-			sourceTree = "<group>";
-		};
-		4B7959D65D677905BC64ACF1CED86232 /* ConfiguratorStates */ = {
-			isa = PBXGroup;
-			children = (
-				4BE1D3F6EE2C2D314BE0C70C99F55B8D /* AppKeyAddConfiguratorState.swift */,
-				A50F283BACE4D71DA87BA7CE74D7EA57 /* CompositionGetConfiguratorState.swift */,
-				1150F1ED0A3530D31A0AC582BC30EC81 /* DefaultTTLGetConfiguratorState.swift */,
-				0EFF5B1DF6D19E761DFD64D965189205 /* DiscoveryConfiguratorState.swift */,
-				5C697579C4A66A12406872D4B0866E14 /* ModelAppBindConfiguratorState.swift */,
-				13491A21C77349F3C7E24C7A02FB8854 /* ModelPublicationSetConfiguratorState.swift */,
-				830B8C2896B2FA285D0AD8CAC1E1D083 /* ModelSubscriptionAddConfiguratorState.swift */,
-				F8B6B03C3F69C9F4EF35F847A544D623 /* ModelSubscriptionDeleteConfiguratorState.swift */,
-				EC25F1B7678FA425EDE0795857A5BED4 /* NodeResetConfiguratorState.swift */,
-				C66A9693533C69165AAADA97DBDA80EE /* SetWhiteListConfiguratorState.swift */,
-				E5E99B393E1CD5AC8140CD28E5B0183A /* SleepConfiguratorState.swift */,
-			);
-			path = ConfiguratorStates;
-			sourceTree = "<group>";
-		};
-		5BEEC4A2F4B0E09A6275AAD40B827329 /* Configurator */ = {
-			isa = PBXGroup;
-			children = (
-				5B2FE9F7AE714E3950068B4E2E5D5A0E /* ConfiguratorStateProtocol.swift */,
-				4B7959D65D677905BC64ACF1CED86232 /* ConfiguratorStates */,
+				A148C7979AEDCF1C9083930EB59D673A /* ConfiguratorStateProtocol.swift */,
+				E7DA5314ED4020387652964C348F64A9 /* ConfiguratorStates */,
 			);
 			name = Configurator;
 			path = nRFMeshProvision/Classes/Configurator;
 			sourceTree = "<group>";
 		};
-		5D2715184126A74FDEDF7B889517E780 /* Provisioner */ = {
+		2505ABAEA0DEE1515E30562DEF7C447B /* OpenSSL */ = {
 			isa = PBXGroup;
 			children = (
-				D3C8E0952FBEBE7EE099BC2A5A6971A2 /* ProvisioningStateProtocol.swift */,
-				7527F900F4B902D5F3B97361FC50B04D /* ProvisioningHelpers */,
-				71F0ED524B31154C95CDC1510B3B2EA0 /* ProvisioningStates */,
+				0B7FB3D6C688D074ACA5A42D30D6CB0F /* aes.h */,
+				C6EB4821416782CCE0212A5D1096FCFA /* asn1.h */,
+				BE050578DEC327020E44A7404CD4CF6E /* asn1_mac.h */,
+				108D4FA261DAB4BB60EB1CBD3120229E /* asn1t.h */,
+				96F6BAFD8CD36399F5C429CAF5477955 /* bio.h */,
+				FE16046B7BEDF9E3C90023EC6EB3EC71 /* blowfish.h */,
+				B896001B2A828BE3B9FCE4057E144E72 /* bn.h */,
+				8846A54C315E918987B36524EE96EA0E /* buffer.h */,
+				9A1BADC0F91BAF1ABF10864CDBE210FB /* camellia.h */,
+				C4AE6A57F2D3030D2DB92D53BF09780D /* cast.h */,
+				9AD8AC399285A3D89A2783001763D94F /* cmac.h */,
+				D702F8FAD20AEDC0F8A936BD346CE6F9 /* cms.h */,
+				384BD74CDA33A4E60BA1F95A80E980D0 /* comp.h */,
+				8E59EED57252B3DF56C54480D6BADD29 /* conf.h */,
+				62C841EE2549A3A9654DF88553001BCE /* conf_api.h */,
+				3854E35B08018D27AACFA19D6A4FD3EF /* crypto.h */,
+				BD540D50150E75583E4471FF4A412AAB /* des.h */,
+				A2364EB7AB724C2C083E18B08D958C30 /* des_old.h */,
+				F0084615CA5A43E3AA7D707800104B69 /* dh.h */,
+				C43E91CF81D2496F26ABC5561E2618C9 /* dsa.h */,
+				198A93CE6C97F3764E7C1FC7E78D34E2 /* dso.h */,
+				3BB1B6EF2A11FE65BD834F89E84AAFA1 /* dtls1.h */,
+				A0DEE6AE5BFD1CA7B6AD9C2F17D37110 /* e_os2.h */,
+				BE0DA62D10A21A90EDC38DCB972CE387 /* ebcdic.h */,
+				EFECFC08CEE05B17DFFB45DD7D5CA2A4 /* ec.h */,
+				53E6AED21C813F6198BB4717AE0813C8 /* ecdh.h */,
+				8955EA421AB7C684797766302AD30BD3 /* ecdsa.h */,
+				3B2CBAC9D38770FCB4DF008DC43E1AFF /* engine.h */,
+				29030C8684AE2AB61230B0804A05439B /* err.h */,
+				47F47BB73A4EE61D1F1E9EECEA4A2C0A /* evp.h */,
+				0A91CED8E435C6A7BFEA39951D7F8A4F /* hmac.h */,
+				C4FD3512582D953EBF28D4892872A8BE /* idea.h */,
+				1410A3EE59EF2185C1F27AD5A6176202 /* krb5_asn.h */,
+				BAD28649D771A4511F7F71169D670A96 /* kssl.h */,
+				744E8AA9E68524CD220FBCDEEA25B5F9 /* lhash.h */,
+				1E4961B5A7CFEA57CB311F0FB04919D0 /* md4.h */,
+				1E8C123A8966AC7F019C01809AFAE1AC /* md5.h */,
+				B0F3A2A61651E460B5DC6B7620A0C741 /* mdc2.h */,
+				276922EE4A86FE6232510322B7114386 /* modes.h */,
+				31E9ABD8D03B535AD29AB003ACEFF0BE /* obj_mac.h */,
+				ED621E05D550086282682F57B59D0A9C /* objects.h */,
+				6839486FB5B84958E28FD425912C76DE /* ocsp.h */,
+				5E46C50F72754679B1F08C5D7A9EAC44 /* opensslconf.h */,
+				51019CA4226872735BBD75A3FFEDAC63 /* opensslv.h */,
+				B84F1130903ECF43D5852AD765ABC3D2 /* ossl_typ.h */,
+				E859AF8D623325994819F1CA245D0F3F /* pem.h */,
+				70F6382DE93F743120DAF699BAF87F0A /* pem2.h */,
+				D120B1CF832A211EBED54A14B74EB235 /* pkcs12.h */,
+				FB300E4FA24DE2BA0E325F67ACD792E2 /* pkcs7.h */,
+				68F0F0E6E8F614FA5EB2A6E472846690 /* pqueue.h */,
+				D21AF7ABF6F026A6F46A9253B353B9E9 /* rand.h */,
+				910CFD3149061D98FFC7E797DA713324 /* rc2.h */,
+				3B883A3F17B28B566DFC4CCB5D8B1319 /* rc4.h */,
+				12C4FE4E50E2FDD57D53EE1D61144291 /* ripemd.h */,
+				86008311420411762A616857F2A7583B /* rsa.h */,
+				DE31753F218C2A6E869765560D38F436 /* safestack.h */,
+				C3D3045814B2E4000312FAAB652132D1 /* seed.h */,
+				14F2DCD38B5C8726E7B9B3DFBB5DA73C /* sha.h */,
+				3311FD08AA3D5245867CACFBC529E7CB /* srp.h */,
+				6C5C089DD67A1A24A13470B4CC9600C8 /* srtp.h */,
+				50B9BE971AD77B3E214EF3E2870D453A /* ssl.h */,
+				9C9536486A3CFD67579F89275D102EFF /* ssl2.h */,
+				1D0679725F665A2592FA4F957BE46E52 /* ssl23.h */,
+				1AE28E496DF872D0442832AEC3AB6CC1 /* ssl3.h */,
+				E2EA727085D20A2C046252F9D317BD63 /* stack.h */,
+				BC8A386011177A9FAB9CFCA1F5D647E4 /* symhacks.h */,
+				AE3020F3283225711D8A8259C3AC7771 /* tls1.h */,
+				AE80B653056F682703511C44C153CE95 /* ts.h */,
+				259D9785B232C2F1307425DD991FBC62 /* txt_db.h */,
+				A2FBEFC1971E592A1B0945CCCB43EEC2 /* ui.h */,
+				77B08D9FF4675BDCB998991BB350892C /* ui_compat.h */,
+				DDF66E7013D5A8EAB8205DF92387CB82 /* whrlpool.h */,
+				B157E3EAE10594E7FA3D7BD73B7C6C62 /* x509.h */,
+				F12067C1686F2999A2DDE95850945962 /* x509_vfy.h */,
+				7B473EF595D3DFC7EF6FCEF42EA7A603 /* x509v3.h */,
+				AE082CEB68D7C78D26D41A0208F3DF79 /* Frameworks */,
+			);
+			name = OpenSSL;
+			path = OpenSSL;
+			sourceTree = "<group>";
+		};
+		255A4C01D4BFFE1ED942FD520B45C610 /* UnprovisionedMeshNode */ = {
+			isa = PBXGroup;
+			children = (
+				E3A74C3C8BA7FEBF3508D8E1F42DB141 /* UnprovisionedMeshNode.swift */,
+				6B669A86DE361433CF60C310D9C43DFF /* UnprovisionedMeshNodeDelegate.swift */,
+				649D9693A0B297B52613D863833330E6 /* UnprovisionedMeshNodeLoggingDelegate.swift */,
+				5E4128F5E173429E76CDBBD46F6045AE /* UnprovisionedMeshNodeProtocol.swift */,
+			);
+			name = UnprovisionedMeshNode;
+			path = nRFMeshProvision/Classes/UnprovisionedMeshNode;
+			sourceTree = "<group>";
+		};
+		256171B68FF9AFBCB194B54FFBE22CCB /* ModelMessages */ = {
+			isa = PBXGroup;
+			children = (
+				3FA37B55379EA03D866422807D261919 /* GenericOnOffGetMessage.swift */,
+				2AB80A9CB5741F9BDA630C86C79E704A /* GenericOnOffSetMessage.swift */,
+				1B3AF1AAB1893B229EC3A83712D008A9 /* GenericOnOffSetUnacknowledgedMessage.swift */,
+				436887E4D51377EF1CFF5054F3DCE525 /* GenericOnOffStatusMessage.swift */,
+			);
+			name = ModelMessages;
+			path = ModelMessages;
+			sourceTree = "<group>";
+		};
+		2BB03247569F591B06E313B8923F6333 /* Utils */ = {
+			isa = PBXGroup;
+			children = (
+				010774DFAEF658CD7A4778E3C0445ED6 /* Data+utils.swift */,
+				F2BBC80B443595E0D36875DEDD11EE57 /* MeshConstants.swift */,
+				60DF78B62E89EA491E46B2E8D74127E5 /* OpenSSLHelper.h */,
+				4CD31662393174EE1983941360A339BE /* OpenSSLHelper.m */,
+				9C3721CDC26B4E5AFE0C5DE071A21E03 /* ProvisioningPDU.swift */,
+			);
+			name = Utils;
+			path = nRFMeshProvision/Classes/Utils;
+			sourceTree = "<group>";
+		};
+		3421C59A62E3926BCB951CFFA1E50669 /* Support Files */ = {
+			isa = PBXGroup;
+			children = (
+				6A2A9DF2AEBCA77CF4439C89CCCD7409 /* Bottomsheet.modulemap */,
+				705E2B111C6C3E5807FB13612BCE3718 /* Bottomsheet.xcconfig */,
+				8B91F2CF662237C45DBD3D111B633808 /* Bottomsheet-dummy.m */,
+				2A8A421FA5EBA304A50E932900E118CB /* Bottomsheet-prefix.pch */,
+				EF2457AC6239A646D941CAAC90F53EDD /* Bottomsheet-umbrella.h */,
+				4AF7CF8B90B51331A8FD5B2B2E32004D /* Info.plist */,
+			);
+			name = "Support Files";
+			path = "../Target Support Files/Bottomsheet";
+			sourceTree = "<group>";
+		};
+		38C1291D76F45D5E8B58C226D65E545F /* Provisioner */ = {
+			isa = PBXGroup;
+			children = (
+				3371F83D4A54894B02C581DFD6A3A32E /* ProvisioningStateProtocol.swift */,
+				C4C2E0481AAF01867DF4772A3C4EBD62 /* ProvisioningHelpers */,
+				B7281C8B62B16C0D6CB3B8C2DEC9AC58 /* ProvisioningStates */,
 			);
 			name = Provisioner;
 			path = nRFMeshProvision/Classes/Provisioner;
+			sourceTree = "<group>";
+		};
+		44341D3297F034A3FE443853B8C012D2 /* Support Files */ = {
+			isa = PBXGroup;
+			children = (
+				F9C43CF9E0BB5E41B6222A10C0D47BE3 /* nRFMeshProvision.modulemap */,
+				78A64D80D67A7818FDBA3A480B174A7C /* nRFMeshProvision.xcconfig */,
+				9323D93012F297B111B60B9E95ECC493 /* nRFMeshProvision-dummy.m */,
+				3F175EB318A4D1F2BF47136D12518B1C /* nRFMeshProvision-prefix.pch */,
+				AAE441C2455F18572FDD49F233D86935 /* nRFMeshProvision-umbrella.h */,
+			);
+			name = "Support Files";
+			path = "Example/Pods/Target Support Files/nRFMeshProvision";
 			sourceTree = "<group>";
 		};
 		5D3D09FB9BE5323D5CF8B6A9BFCC72E8 /* Pods-nRFMeshProvision_Tests */ = {
@@ -487,79 +628,44 @@
 			path = "Target Support Files/Pods-nRFMeshProvision_Tests";
 			sourceTree = "<group>";
 		};
-		5E0ED6EDC07E1784E593F12EEE39CA4E /* MeshPDUs */ = {
+		5EAD637689ED2F1711AA75B88B90AFDC /* Lower Transport Layer */ = {
 			isa = PBXGroup;
 			children = (
-				9AE8D210D5834A5B3DBE0DB13EB1E83F /* AccessMessagePDU.swift */,
-				A2BE7AAD09A758BECDFE6CCD55AF34E9 /* ControlMessagePDU.swift */,
-				A5B636EE86BE218C3DA8B2D5070534DE /* AccessMessages */,
-				A393413B92922CA8BF0A0D2A0DAF3F05 /* ControlMessages */,
-				84E504E8DF7BD534B03189A1DC205385 /* ModelMessages */,
+				A7546FB78C6CBC9C28DD4D7DF180CE05 /* LowerTransportLayer.swift */,
+				571DBF97EA204CDEDD2D3B910E82BB16 /* LowerTransportPDUParams.swift */,
 			);
-			name = MeshPDUs;
-			path = nRFMeshProvision/Classes/MeshPDUs;
+			name = "Lower Transport Layer";
+			path = "Lower Transport Layer";
 			sourceTree = "<group>";
 		};
-		675E624AE8D9FD04B4ADA556D0304229 /* Models */ = {
+		60EEB6A79E726821DCE91803CA4DF905 /* ControlMessages */ = {
 			isa = PBXGroup;
 			children = (
-				C8599616405EF95D4E234F458A148D9E /* CompanyIdentifiers.swift */,
-				9BF574387DD2B01AD0589F9125644CB9 /* MeshModelIdentifiers.swift */,
-				04866FFB40116167FDED5D453CA02AEA /* MeshModelIdentifierStringConverter.swift */,
-				6CE95B5D710999E0114E4D76A31CB00D /* MeshVendorModelIdentifiers.swift */,
-				21E243EA45214D19BF24E3E047AB9645 /* MeshVendorModelIdentifierStringConverter.swift */,
-				6909B97BD5B8CD29FA19D1037CE98832 /* MessageStatusCodes.swift */,
+				B76BEF23ED623C073ADE82BDF9DD7D32 /* SetFilterTypeMessage.swift */,
 			);
-			name = Models;
-			path = nRFMeshProvision/Classes/Models;
+			name = ControlMessages;
+			path = ControlMessages;
 			sourceTree = "<group>";
 		};
-		69F0868E71ED17442D7803CF246609A5 /* GenericModelController */ = {
+		6C34FF3A8323CF153AC675E86183D325 /* GenericModelController */ = {
 			isa = PBXGroup;
 			children = (
-				6DFB1B322B2839E9548A6143D08A3133 /* GenericModelControllerStateProtocol.swift */,
-				7D2E43486060DD4B8349D83E432EE01D /* GenericModelControllerStates */,
+				9A39B9136B8A1911C2F93D65D80B942C /* GenericModelControllerStateProtocol.swift */,
+				F467AC8F77C3B5E37949DB9CCD645BFB /* GenericModelControllerStates */,
 			);
 			name = GenericModelController;
 			path = nRFMeshProvision/Classes/GenericModelController;
 			sourceTree = "<group>";
 		};
-		71F0ED524B31154C95CDC1510B3B2EA0 /* ProvisioningStates */ = {
+		76707AD62C35F6BB06315182230BB3DC /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				5468AA231987FBA58016056103D21271 /* ConfirmationProvisioningState.swift */,
-				B37D999B23D19D308091F390F29FFBA7 /* DataDistributionProvisioningState.swift */,
-				4C1CF3D1198008ACFA04EB10C92253BC /* DiscoveryProvisioningState.swift */,
-				26C446F21B89B0A2A9C8E6B64C3BF31D /* InviteProvisioningState.swift */,
-				36938A08B3D2A65F4ABADADF0F27CFB6 /* PublicKeyProvisioningState.swift */,
-				F6DF30123CC4BB2CF7BAFBD42477605E /* RandomConfirmationProvisioningState.swift */,
-				34A30F207019B3A66097D000E6B432B4 /* StartProvisionProvisioningState.swift */,
+				2F2D6413A302A513239984F66FE24376 /* Bottomsheet.framework */,
+				BCECF8EC09E73B8B3651F5AA2BA27E82 /* nRFMeshProvision.framework */,
+				5EF2D5A28D06528103139420D510068A /* Pods_nRFMeshProvision_Example.framework */,
+				9F3634EBEC0C39E8788C507CD58A8F25 /* Pods_nRFMeshProvision_Tests.framework */,
 			);
-			path = ProvisioningStates;
-			sourceTree = "<group>";
-		};
-		7527F900F4B902D5F3B97361FC50B04D /* ProvisioningHelpers */ = {
-			isa = PBXGroup;
-			children = (
-				305659A52111DF4C00CF2A5B /* ProvisioningData.swift */,
-				23B9AAEF34759B53C29CC712642BF4B8 /* InputOutOfBoundActions.swift */,
-				63EB672B857D18756D4BB0D671D149C7 /* InviteCapabilities.swift */,
-				01C4CFC485BD1E9E2057D24DEB587DA0 /* OutputOutOfBoundActions.swift */,
-				EF7676896D36BEE076F20D27D89610C6 /* ProvisioningAlgorithm.swift */,
-				BD44619AFDB4627F45F36841A5888256 /* ProvisioningErrorCodes.swift */,
-				7B539371C493911C0139924525D6AD51 /* PublicKeyInformationAvailability.swift */,
-				47188735575D0AA2353F290C703D19E6 /* StaticOutOfBoundInformationAvailability.swift */,
-			);
-			path = ProvisioningHelpers;
-			sourceTree = "<group>";
-		};
-		7D2E43486060DD4B8349D83E432EE01D /* GenericModelControllerStates */ = {
-			isa = PBXGroup;
-			children = (
-				D2C16B6A09CBEE57F94FED95C0C8F86A /* GenericOnOffGetControllerState.swift */,
-				BFF9B3C3879B2E58228EAA8F5A32BEFF /* GenericOnOffSetControllerState.swift */,
-			);
-			path = GenericModelControllerStates;
+			name = Products;
 			sourceTree = "<group>";
 		};
 		7DB346D0F39D3F0E887471402A8071AB = {
@@ -567,43 +673,25 @@
 			children = (
 				93A4A3777CF96A4AAC1D13BA6DCCEA73 /* Podfile */,
 				17D0A14284309026351D6317660F030C /* Development Pods */,
-				433CD3331B6C3787F473C941B61FC68F /* Frameworks */,
-				E471F9241500A3A33676DAFC962A38DC /* Pods */,
-				028472B1E74A66EA4967E4EDDB7C23A5 /* Products */,
+				122DA2E5084A4393C29BE363C764795C /* Frameworks */,
+				08A5504A2534734BA15A7895BCBDE8D4 /* Pods */,
+				76707AD62C35F6BB06315182230BB3DC /* Products */,
 				8C8BC1255FA4582BF002E73E3E3FB4FA /* Targets Support Files */,
 			);
 			sourceTree = "<group>";
 		};
-		82267CDB3A003012408DE7FE1EDA5A9F /* Transport */ = {
+		81D30E834CAAD6903598F9994E361FD6 /* Models */ = {
 			isa = PBXGroup;
 			children = (
-				4A2578B08903057A4B3F44861AC2267E /* TransportNonce.swift */,
-				8AFE770313B76262FDB6F383466AA2F5 /* Lower Transport Layer */,
-				C6AE5ADE3A6F3270BA9536FB7832D7AA /* Network layer */,
-				B39F645C64460F65C8D96BC34D70EC81 /* Upper Transport Layer */,
+				0E4D2421577E44A6CE0D456C828D8582 /* CompanyIdentifiers.swift */,
+				E4279E0831BC2CD967C4C17CF4445BA5 /* MeshModelIdentifiers.swift */,
+				807F1268359800B2233EDB648AC1643F /* MeshModelIdentifierStringConverter.swift */,
+				E1F5F582EC937C8999098DC47EF054A0 /* MeshVendorModelIdentifiers.swift */,
+				C306D92A8045DC97C6605EFF2802DFDA /* MeshVendorModelIdentifierStringConverter.swift */,
+				89E34C7DABCAF545C17E19FDE82CC47B /* MessageStatusCodes.swift */,
 			);
-			name = Transport;
-			path = nRFMeshProvision/Classes/Transport;
-			sourceTree = "<group>";
-		};
-		84E504E8DF7BD534B03189A1DC205385 /* ModelMessages */ = {
-			isa = PBXGroup;
-			children = (
-				E1F63B2394441C631DA9D41CFDF40425 /* GenericOnOffGetMessage.swift */,
-				A30876EB616413704012BABC3DFBCCAB /* GenericOnOffSetMessage.swift */,
-				5AF733D838CC11183CE0A086F84F99DF /* GenericOnOffSetUnacknowledgedMessage.swift */,
-				B716F3F45354F86AFF656AF89B5C3A8A /* GenericOnOffStatusMessage.swift */,
-			);
-			path = ModelMessages;
-			sourceTree = "<group>";
-		};
-		8AFE770313B76262FDB6F383466AA2F5 /* Lower Transport Layer */ = {
-			isa = PBXGroup;
-			children = (
-				70AB45234B6CED04336A1E0FC01BE58A /* LowerTransportLayer.swift */,
-				D122CBA20D49FFCB573ABF5F48FB0392 /* LowerTransportPDUParams.swift */,
-			);
-			path = "Lower Transport Layer";
+			name = Models;
+			path = nRFMeshProvision/Classes/Models;
 			sourceTree = "<group>";
 		};
 		8C8BC1255FA4582BF002E73E3E3FB4FA /* Targets Support Files */ = {
@@ -615,45 +703,85 @@
 			name = "Targets Support Files";
 			sourceTree = "<group>";
 		};
-		A393413B92922CA8BF0A0D2A0DAF3F05 /* ControlMessages */ = {
+		9900728D9A8CC63D8FD42619C20A296D /* Upper Transport Layer */ = {
 			isa = PBXGroup;
 			children = (
-				A531A6EEB450C4A98A600B94200B713B /* SetFilterTypeMessage.swift */,
+				B2D287F94A960F27A3FA0EE03DBBABA9 /* UpperTransportLayer.swift */,
+				E0F0B08BA7DEAA822627EFE10DD326D3 /* UpperTransportParams.swift */,
 			);
-			path = ControlMessages;
+			name = "Upper Transport Layer";
+			path = "Upper Transport Layer";
 			sourceTree = "<group>";
 		};
-		A5B636EE86BE218C3DA8B2D5070534DE /* AccessMessages */ = {
+		A2BCC2FD91EEBEF0D1F77D006C5150E9 /* Transport */ = {
 			isa = PBXGroup;
 			children = (
-				87C157FF9595C498A370CB35438E3915 /* AccessMessageParser.swift */,
-				D9D94F97D33D02BEFD538EE3E00D8D7F /* AppKeyAddMessage.swift */,
-				FCBB86825AEDF5563713AFF35900F301 /* AppKeyStatusMessage.swift */,
-				F7DA01EEB0742202AE5AAE63F953740E /* CompositionElement.swift */,
-				3EDF690A83241B8207643E0E22A1285A /* CompositionGetMessage.swift */,
-				D5EB1CCB0F75F7071DCA3B03DCBAE118 /* CompositionStatusMessage.swift */,
-				3EE24702580F4E23C1D488B00F2F0432 /* DefaultTTLGetMessage.swift */,
-				A3F7C9B6A57DCCFC66626C1A6E7A7B15 /* DefaultTTLStatusMessage.swift */,
-				AE3171EF4C8934ADFF75AAC69C9247B5 /* ModelAppBindMessage.swift */,
-				D006F3EE68ECD006E808CC9AFEFD65EB /* ModelAppBindStatusMessage.swift */,
-				C3A563AA5043488C353FB0863B154689 /* ModelPublicationSetMessage.swift */,
-				E0AD4FB896238151CB61469E7455A935 /* ModelPublicationStatusMessage.swift */,
-				519263F739637CF35C4B7E295D80B58B /* ModelSubscriptionAddMessage.swift */,
-				3728146B43D544F4BC27F8A6BC37531C /* ModelSubscriptionDeleteMessage.swift */,
-				08E58809D192CB242BD78EAB40BB6F2E /* ModelSubscriptionStatusMessage.swift */,
-				1B889D0DDC94FF1E755131CAE743B4CA /* NodeResetMesage.swift */,
-				110B63334BA085148B9CB5D9C890FE1A /* NodeResetStatusMessage.swift */,
+				694EEC17CDBF9156C874CD2A91F470E6 /* TransportNonce.swift */,
+				5EAD637689ED2F1711AA75B88B90AFDC /* Lower Transport Layer */,
+				AD114A9E325AAC3414BBB92B6EA5D435 /* Network layer */,
+				9900728D9A8CC63D8FD42619C20A296D /* Upper Transport Layer */,
 			);
+			name = Transport;
+			path = nRFMeshProvision/Classes/Transport;
+			sourceTree = "<group>";
+		};
+		AD114A9E325AAC3414BBB92B6EA5D435 /* Network layer */ = {
+			isa = PBXGroup;
+			children = (
+				B33C445BF106259541A5112BA18896A3 /* MeshAddressTypes.swift */,
+				1CD3BA4EA5B5C291256336D4AD5B2F70 /* NetworkLayer.swift */,
+			);
+			name = "Network layer";
+			path = "Network layer";
+			sourceTree = "<group>";
+		};
+		AE082CEB68D7C78D26D41A0208F3DF79 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				2F4E8D4996DF69AC76420A1E08D3A258 /* libcrypto.a */,
+				96C955500DDE6DCA993FE69493119068 /* libssl.a */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		AE6718C48D4A1C2AF133C8AFD3881F15 /* AccessMessages */ = {
+			isa = PBXGroup;
+			children = (
+				91EE3F9514E59B495DB8B3C5C153E125 /* AccessMessageParser.swift */,
+				32DF4C88064D6EA8320C42B0E5554E06 /* AppKeyAddMessage.swift */,
+				A5455A26EE440AA103A8E3A922789090 /* AppKeyStatusMessage.swift */,
+				3F0140604ACC1A94C73946D528C295CE /* CompositionElement.swift */,
+				885BC6E801561ED373601F9E9DD0AA6D /* CompositionGetMessage.swift */,
+				F424D6AE348D2C4FC2FDA5DD7EA45001 /* CompositionStatusMessage.swift */,
+				82F9776AD2B75001B91830B288F0884E /* DefaultTTLGetMessage.swift */,
+				12FCF2FE05B2AA482B3A85ECF368EF80 /* DefaultTTLStatusMessage.swift */,
+				CCCF559BE273F85E31E235212B8BC215 /* ModelAppBindMessage.swift */,
+				D1B14CCE1A544E9CB5A74BE83DFA4A3D /* ModelAppBindStatusMessage.swift */,
+				CC3DDE18D65702489FA16D67008139D6 /* ModelPublicationSetMessage.swift */,
+				5B0AF1085859F0B6783F5CC39D68D5DB /* ModelPublicationStatusMessage.swift */,
+				1E7A5EF7E03D5234689F2E7BF0000AE2 /* ModelSubscriptionAddMessage.swift */,
+				47DCCD71DFD22B00D9104F0DD2F47874 /* ModelSubscriptionDeleteMessage.swift */,
+				8071FF083304B9754E208037374D11AF /* ModelSubscriptionStatusMessage.swift */,
+				71867A9D662E74BD3F8F01E875D7FB88 /* NodeResetMesage.swift */,
+				853058F47955C5B83FF03402EEF10E8B /* NodeResetStatusMessage.swift */,
+			);
+			name = AccessMessages;
 			path = AccessMessages;
 			sourceTree = "<group>";
 		};
-		B39F645C64460F65C8D96BC34D70EC81 /* Upper Transport Layer */ = {
+		B7281C8B62B16C0D6CB3B8C2DEC9AC58 /* ProvisioningStates */ = {
 			isa = PBXGroup;
 			children = (
-				DC371DCCCC4A8DBD97BF5A55799C9622 /* UpperTransportLayer.swift */,
-				C9A6F3D5A6A22998A95DD9967E319470 /* UpperTransportParams.swift */,
+				87F6397BE9B740B98B8555BDF258A8CB /* ConfirmationProvisioningState.swift */,
+				BF445358702FF2275F5782DC31343653 /* DataDistributionProvisioningState.swift */,
+				DD6F54E9837A84925A14132149A2FA05 /* DiscoveryProvisioningState.swift */,
+				FA66D011D82061CA11FDB15FC7823444 /* InviteProvisioningState.swift */,
+				140640C1C23ACF3A81121F6706B0DA7F /* PublicKeyProvisioningState.swift */,
+				C2C4E7AAE33160B448D32222DCB61855 /* RandomConfirmationProvisioningState.swift */,
+				129E8319B368F968E05028FBB5D06705 /* StartProvisionProvisioningState.swift */,
 			);
-			path = "Upper Transport Layer";
+			name = ProvisioningStates;
+			path = ProvisioningStates;
 			sourceTree = "<group>";
 		};
 		BC8B4FD067AC63CC24F890544995E42C /* Pods-nRFMeshProvision_Example */ = {
@@ -674,175 +802,110 @@
 			path = "Target Support Files/Pods-nRFMeshProvision_Example";
 			sourceTree = "<group>";
 		};
-		C6AE5ADE3A6F3270BA9536FB7832D7AA /* Network layer */ = {
+		C4276A806F5EFC0770B2EDEFFCB424C9 /* iOS */ = {
 			isa = PBXGroup;
 			children = (
-				44AE4CED0391652D2D83ADCDF4724850 /* MeshAddressTypes.swift */,
-				9F82542104B192E488487393081504BB /* NetworkLayer.swift */,
+				C58131A89065FC0D9E269086CFE8314F /* CoreBluetooth.framework */,
+				E06D45054CEDA47E5508320F3B4CF552 /* Foundation.framework */,
+				BD674493AC9BB841A1F96B896E3F64D4 /* UIKit.framework */,
 			);
-			path = "Network layer";
+			name = iOS;
 			sourceTree = "<group>";
 		};
-		CD98F7DB090FB12C3023FDA056BF443F /* OpenSSL */ = {
+		C4C2E0481AAF01867DF4772A3C4EBD62 /* ProvisioningHelpers */ = {
 			isa = PBXGroup;
 			children = (
-				10005392A82954A6D9C77A3A29657A73 /* aes.h */,
-				1FAFFA60421BA931BF46F0C4BD886E6A /* asn1.h */,
-				C33EB730E4F2C09FAA816B03A23BD733 /* asn1_mac.h */,
-				ED64322C59DBAD42B8EC045E2C22264B /* asn1t.h */,
-				5D30D9CD4494A582834868DA9BCD41C4 /* bio.h */,
-				26110F81A2D7295F517D452E5177B261 /* blowfish.h */,
-				2B68FB305EB45C1312AEA6F2A16E12E4 /* bn.h */,
-				D0B35A850494CC2194C5B35D697B44B6 /* buffer.h */,
-				29704AFCA0DC9D3E5A4B1ADC9CAE79F3 /* camellia.h */,
-				0B16A7AF77F109542EAAF6009C99B5F6 /* cast.h */,
-				D13D2EEE7387D67AF50E3F69D02A221E /* cmac.h */,
-				57EA17CBB9613DADF27B05E1524B0D3D /* cms.h */,
-				143F7044E2446F55FB59B0C092BFCE7F /* comp.h */,
-				6E29F8AB41D1E53BE17973FE6239CC5C /* conf.h */,
-				BCF09CBBE91709771F413E73024A5233 /* conf_api.h */,
-				8FAC205048D8EECBEE7C23BF6124D8E9 /* crypto.h */,
-				F5965A43B02D71669BB25214DDEB85C1 /* des.h */,
-				54B6E829D4D885665E50C350E625BCE2 /* des_old.h */,
-				02C475F6DA5A1EED30659395ACC06B61 /* dh.h */,
-				CD19AF66A13997F30098BD9AD9FFB505 /* dsa.h */,
-				6F6FD7EA1D7BEF8991E495E40A688EB6 /* dso.h */,
-				318B21D3C09027B98FF8F0C00493237E /* dtls1.h */,
-				58376E7BACC3F601921135BF7FD56EE7 /* e_os2.h */,
-				59CAD9A10733F2584A06A9FE4AA7AB91 /* ebcdic.h */,
-				7FEFDA70ECA49DB2A6A626D00465099C /* ec.h */,
-				7AB370682BAF354F65A882E60D2F003D /* ecdh.h */,
-				FC140C3E674337617E6590563B6AE5D6 /* ecdsa.h */,
-				DC002475E0559EA07C9C881EDC132826 /* engine.h */,
-				F3C6E5BD07436619BD8F6F9ACD17E629 /* err.h */,
-				A3198300DBC78318973448E87AB34DF9 /* evp.h */,
-				B84A9CDC3DB362E165A7679BFBE19AFC /* hmac.h */,
-				5B58B093ED0C7BCB91C6E233D5AB3459 /* idea.h */,
-				FA6C50FD67AEFED406DA2F4E8F4D6FA2 /* krb5_asn.h */,
-				4BC1E4B9E034D25179AABE1F88DF50C9 /* kssl.h */,
-				7452B332E8D2579004DA9A66185A16FF /* lhash.h */,
-				8E8B94ED487A9503728F2039BC1A8E0E /* md4.h */,
-				CF6DB88C4343BF19ACBBDE72B70A82BB /* md5.h */,
-				3FD20F81130ED6AC2CE8252ECA66E8CF /* mdc2.h */,
-				80C3AA12D94DFCF4B2B20D80D6A02B74 /* modes.h */,
-				FF3B805EAFF23DFC5FB067C1E0D46454 /* obj_mac.h */,
-				8244FF9C37998C59946204F1C5126E40 /* objects.h */,
-				0F3FA23A52ADE1039D96A4B2BB1BB0B0 /* ocsp.h */,
-				779CFAF7C726406DE77C043B17D3F1E6 /* opensslconf.h */,
-				008B98766CB8CA3BAC514625A7A88F07 /* opensslv.h */,
-				855FCA1A6C574F1BAFDE31458440D76F /* ossl_typ.h */,
-				E915B0704CB95D144E11223A84A73D11 /* pem.h */,
-				F4F79DD11C4CE41D2FF6E1C04DBA49BC /* pem2.h */,
-				4A82B78200A50A5DE275141D478D278A /* pkcs12.h */,
-				846EC8E577E3F1F952D56A09B9514466 /* pkcs7.h */,
-				BECC8BB61C5D54EF89F5ECA9850F133A /* pqueue.h */,
-				15109897F5E35A1BFC31BA1B332F4B0E /* rand.h */,
-				4BED8D10FAD68FD971529BBD644DB1C0 /* rc2.h */,
-				559170B1D2D38CD67CC37C6A10FB77CD /* rc4.h */,
-				2FC1C3A4C27E1C86DA9418A50DC0195B /* ripemd.h */,
-				4B4CD9C74DCE12B915A1A2C966570E4E /* rsa.h */,
-				0884AA14D917B65B3A0541826166B367 /* safestack.h */,
-				660F04F63785FC104A7B94FFC561D5C0 /* seed.h */,
-				5EDFDFB109074921E86599CD073935AA /* sha.h */,
-				6CDA3661F6B832697AD5E475628E7ED0 /* srp.h */,
-				E41D8D951B3D58E53C7A8A833E1F76FD /* srtp.h */,
-				08AFF46A4F4C5BCD1852D4A9BB10BC2B /* ssl.h */,
-				FD1C05CD7DDA16CB002B2B5A187F7553 /* ssl2.h */,
-				E1C88E58E6DC084E87A553C88347D410 /* ssl23.h */,
-				FC959E684123BB35C86AB13D9F31602A /* ssl3.h */,
-				BCDB5110A30D96F3CD2BB49628F14F07 /* stack.h */,
-				FDB1AD6FBA1ED4BB98E0DD08D7EB65C9 /* symhacks.h */,
-				3CE0F89804BEB58BEBC00488E06327F2 /* tls1.h */,
-				47A6B49302B9FFEEF4A87305D60ECC14 /* ts.h */,
-				E124957E1C2AB23D6C9A1F2B248B7022 /* txt_db.h */,
-				029E0FB8DB32966A3BDE8D3EAA1DA3DB /* ui.h */,
-				718B086BBBBD8B727C907650CB7F662A /* ui_compat.h */,
-				8E745D69798B67B053BC82F9BB3744BA /* whrlpool.h */,
-				F4994C7336B29A5C4140882D954484B8 /* x509.h */,
-				5EBA2BF6E9FD43917F0FC4552BDE79F3 /* x509_vfy.h */,
-				6823A35D5DD2211EF09CC2FC0EE94BC5 /* x509v3.h */,
-				43F95576B46772C2E60F91233656BB0A /* Frameworks */,
+				4B5E50A175710E7B9FF64981CD484FE5 /* InputOutOfBoundActions.swift */,
+				08307A91405F5869BC1CCB8E97E9F7D3 /* InviteCapabilities.swift */,
+				DDA8451C09A59ED856C224BBC0F3CE7E /* OutputOutOfBoundActions.swift */,
+				5CA48E23C8866DD73A974DC7B46F8824 /* ProvisioningAlgorithm.swift */,
+				EB6B15BBAF859193E8C08A1E83E2026B /* ProvisioningData.swift */,
+				330C510433EA5F1C20D3EA2C9A389F4D /* ProvisioningErrorCodes.swift */,
+				7054AA6B263EA1B7FDEBFE7E858268C0 /* PublicKeyInformationAvailability.swift */,
+				B3D7496940C64B225CEB59480C6B0473 /* StaticOutOfBoundInformationAvailability.swift */,
 			);
-			path = OpenSSL;
+			name = ProvisioningHelpers;
+			path = ProvisioningHelpers;
 			sourceTree = "<group>";
 		};
-		E471F9241500A3A33676DAFC962A38DC /* Pods */ = {
+		CAD0BFF30BF67EF77DCAE606208DAE70 /* MeshPDUs */ = {
 			isa = PBXGroup;
 			children = (
-				CD98F7DB090FB12C3023FDA056BF443F /* OpenSSL */,
+				6A8D203739DDD0B2960DCAB75F17F448 /* AccessMessagePDU.swift */,
+				3988B57C37ED563529879EC43BEB2BE4 /* ControlMessagePDU.swift */,
+				AE6718C48D4A1C2AF133C8AFD3881F15 /* AccessMessages */,
+				60EEB6A79E726821DCE91803CA4DF905 /* ControlMessages */,
+				256171B68FF9AFBCB194B54FFBE22CCB /* ModelMessages */,
 			);
-			name = Pods;
+			name = MeshPDUs;
+			path = nRFMeshProvision/Classes/MeshPDUs;
 			sourceTree = "<group>";
 		};
-		E6105DF31D863D65486664484256E23E /* Support Files */ = {
+		DD099EDC3C02A18C821F4A9F56792C85 /* nRFMeshProvision */ = {
 			isa = PBXGroup;
 			children = (
-				289F86D8C967D7FFB45940D8CCD29924 /* nRFMeshProvision.modulemap */,
-				63EA4646195076D76D9718A4572811AB /* nRFMeshProvision.xcconfig */,
-				89B6F85E36A2CB6E7FE2F136758EB304 /* nRFMeshProvision-dummy.m */,
-				1510FBC86CC27874912F9AAA4D1BF1EC /* nRFMeshProvision-prefix.pch */,
-				0FA47B67B15330A0016F64DC279AE5C7 /* nRFMeshProvision-umbrella.h */,
-			);
-			name = "Support Files";
-			path = "Example/Pods/Target Support Files/nRFMeshProvision";
-			sourceTree = "<group>";
-		};
-		EFC3FE73AD528CE41AFB9E2E0CB16C25 /* nRFMeshProvision */ = {
-			isa = PBXGroup;
-			children = (
-				5BEEC4A2F4B0E09A6275AAD40B827329 /* Configurator */,
-				69F0868E71ED17442D7803CF246609A5 /* GenericModelController */,
-				5E0ED6EDC07E1784E593F12EEE39CA4E /* MeshPDUs */,
-				3EEE92E14A77E32181076EF46D420B19 /* MeshState */,
-				675E624AE8D9FD04B4ADA556D0304229 /* Models */,
-				20BDC97A8F89D4B97784BABD172AB63D /* Pod */,
-				F52F117B4DBA03825AC8FE3415348C5F /* ProvisionedMeshNode */,
-				5D2715184126A74FDEDF7B889517E780 /* Provisioner */,
-				E6105DF31D863D65486664484256E23E /* Support Files */,
-				82267CDB3A003012408DE7FE1EDA5A9F /* Transport */,
-				0383175FDC88F3D6E153D9899E790E91 /* UnprovisionedMeshNode */,
-				F0851AAFBFF16BCC6859F6F4215561D4 /* Utils */,
+				23DC369623850237902E2DA2B523D665 /* Configurator */,
+				6C34FF3A8323CF153AC675E86183D325 /* GenericModelController */,
+				CAD0BFF30BF67EF77DCAE606208DAE70 /* MeshPDUs */,
+				EC51DF69B13A6E7F390D3D444DDDC16E /* MeshState */,
+				81D30E834CAAD6903598F9994E361FD6 /* Models */,
+				101F5FBA13CC788FC6F8696C290C6901 /* Pod */,
+				027CCE89E2F9053DF72C6A0E6B6C1AF8 /* ProvisionedMeshNode */,
+				38C1291D76F45D5E8B58C226D65E545F /* Provisioner */,
+				44341D3297F034A3FE443853B8C012D2 /* Support Files */,
+				A2BCC2FD91EEBEF0D1F77D006C5150E9 /* Transport */,
+				255A4C01D4BFFE1ED942FD520B45C610 /* UnprovisionedMeshNode */,
+				2BB03247569F591B06E313B8923F6333 /* Utils */,
 			);
 			name = nRFMeshProvision;
 			path = ../..;
 			sourceTree = "<group>";
 		};
-		F0851AAFBFF16BCC6859F6F4215561D4 /* Utils */ = {
+		E7DA5314ED4020387652964C348F64A9 /* ConfiguratorStates */ = {
 			isa = PBXGroup;
 			children = (
-				944D29444AEF57BAFB4426E71143D2D7 /* Data+utils.swift */,
-				9F80139DCC940E0E82E06636A7963296 /* MeshConstants.swift */,
-				35817319C64C9F70DCDD1B6DF4E7BA2D /* OpenSSLHelper.h */,
-				C791DC884B3E819E29C64849B212819A /* OpenSSLHelper.m */,
-				206DB6BFAAD946B3D1B56AEF6BEA8FE7 /* ProvisioningPDU.swift */,
+				25D959F79530F2AE619E4AA884CB1DF9 /* AppKeyAddConfiguratorState.swift */,
+				B7F4A1F452F3B19AA8A3C8C3474705DE /* CompositionGetConfiguratorState.swift */,
+				27337C11484E576DB99139F1575A73C3 /* DefaultTTLGetConfiguratorState.swift */,
+				EEDEBC5523CDB1F4A73A02594A0EAFAE /* DiscoveryConfiguratorState.swift */,
+				420F534436C73C615BDA408422EBD8E2 /* ModelAppBindConfiguratorState.swift */,
+				C95C0E63C634B591716EBD6775080E46 /* ModelPublicationSetConfiguratorState.swift */,
+				EE463569B3AA875826FD6A9A9FE86DCB /* ModelSubscriptionAddConfiguratorState.swift */,
+				B64DB1FA1435C5101D3DCDAB00DA0DFA /* ModelSubscriptionDeleteConfiguratorState.swift */,
+				B882E66295A5D6C5C34F14B9B9E180CC /* NodeResetConfiguratorState.swift */,
+				F6CF1084480D7965AB947322ECC666BC /* SetWhiteListConfiguratorState.swift */,
+				96335E2A2E7365816C9F5C1C53091CDE /* SleepConfiguratorState.swift */,
 			);
-			name = Utils;
-			path = nRFMeshProvision/Classes/Utils;
+			name = ConfiguratorStates;
+			path = ConfiguratorStates;
 			sourceTree = "<group>";
 		};
-		F52F117B4DBA03825AC8FE3415348C5F /* ProvisionedMeshNode */ = {
+		EC51DF69B13A6E7F390D3D444DDDC16E /* MeshState */ = {
 			isa = PBXGroup;
 			children = (
-				D23DCABFE013BD4D931606DB2E1C87FD /* ProvisionedMeshNode.swift */,
-				0C3AC58E06B31DE38D1A80B3DDDF7ED4 /* ProvisionedMeshNodeDelegate.swift */,
-				A335101E022199FD737F6848033A4B55 /* ProvisionedMeshNodeProtocol.swift */,
-				2C2585C3B40095D21F3C869142991F72 /* ProvisionegMeshNodeLoggingDelegate.swift */,
+				44150057FE18BC54B1913140F5C9C3AF /* MeshNodeEntry.swift */,
+				2FFA8368AAEC73BA73A83076500545DB /* MeshState.swift */,
+				9BE800C5B2D04ADE2A292A64B48C4455 /* MeshStateManager.swift */,
+				2B59AF19B38EED9B3C3BA09C867E6997 /* NRFMeshManager.swift */,
+				C0BB1556B78084087980F27740B1A341 /* SequenceNumber.swift */,
 			);
-			name = ProvisionedMeshNode;
-			path = nRFMeshProvision/Classes/ProvisionedMeshNode;
+			name = MeshState;
+			path = nRFMeshProvision/Classes/MeshState;
+			sourceTree = "<group>";
+		};
+		F467AC8F77C3B5E37949DB9CCD645BFB /* GenericModelControllerStates */ = {
+			isa = PBXGroup;
+			children = (
+				A4415D60CB4A6FAD9653B77216DA162B /* GenericOnOffGetControllerState.swift */,
+				C5E041B50BA4E8EDEB6F606FB4B666B8 /* GenericOnOffSetControllerState.swift */,
+			);
+			name = GenericModelControllerStates;
+			path = GenericModelControllerStates;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
-		1E9E6E21AAC27EAE7355530DC45DC1A3 /* Headers */ = {
-			isa = PBXHeadersBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				C1584242C812692ABC374F7988B8761A /* Pods-nRFMeshProvision_Example-umbrella.h in Headers */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		3510C57994F39FE94815E7C5C2571AEC /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
@@ -860,27 +923,26 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		E0F4B72233088F72EA114EF8237D6A69 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				784CAFEE2CD2E6EFEDB8CDDFCE9153D8 /* Bottomsheet-umbrella.h in Headers */,
+				811E1153FD13EE68A462F2DA480FDFDB /* Bottomsheet.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F63FCE1F0583E6F5F3B7D17093F5F6D6 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9ED00366AF1E41CE0CA887B7CAA198A7 /* Pods-nRFMeshProvision_Example-umbrella.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		0F02369097C0D7990F1C5BB83ED4C0F7 /* Pods-nRFMeshProvision_Example */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = D06974079793A6433304991B0BF2AAE4 /* Build configuration list for PBXNativeTarget "Pods-nRFMeshProvision_Example" */;
-			buildPhases = (
-				2717E988A35AAA0600105955E3768DEF /* Sources */,
-				80C2C0901DABB1677CDFEAE22DB1CC11 /* Frameworks */,
-				1E9E6E21AAC27EAE7355530DC45DC1A3 /* Headers */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				BDDAD9B99ACE2888BFEDD7058EB250C7 /* PBXTargetDependency */,
-			);
-			name = "Pods-nRFMeshProvision_Example";
-			productName = "Pods-nRFMeshProvision_Example";
-			productReference = 36A3783FEC88D85E0EB54E7C1079B98F /* Pods_nRFMeshProvision_Example.framework */;
-			productType = "com.apple.product-type.framework";
-		};
 		2017BC9AB3BBDFC8FF94D07D946B4F9A /* Pods-nRFMeshProvision_Tests */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 7DBF398B1B7C2EB0D821FA9A73A97854 /* Build configuration list for PBXNativeTarget "Pods-nRFMeshProvision_Tests" */;
@@ -896,7 +958,7 @@
 			);
 			name = "Pods-nRFMeshProvision_Tests";
 			productName = "Pods-nRFMeshProvision_Tests";
-			productReference = 63CD6653B800D26457FE0017176C4F38 /* Pods_nRFMeshProvision_Tests.framework */;
+			productReference = 9F3634EBEC0C39E8788C507CD58A8F25 /* Pods_nRFMeshProvision_Tests.framework */;
 			productType = "com.apple.product-type.framework";
 		};
 		B074AA5F6983A53E049FEF7320BAF736 /* nRFMeshProvision */ = {
@@ -913,7 +975,43 @@
 			);
 			name = nRFMeshProvision;
 			productName = nRFMeshProvision;
-			productReference = 4FE0B6B5ED95205D30117ABBC914ED0C /* nRFMeshProvision.framework */;
+			productReference = BCECF8EC09E73B8B3651F5AA2BA27E82 /* nRFMeshProvision.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+		EA718CD760B25AE6B68550393C7EE725 /* Bottomsheet */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 082FD7AAA2F25740D3993A15C366FDC4 /* Build configuration list for PBXNativeTarget "Bottomsheet" */;
+			buildPhases = (
+				871EC0A7FA16B53E8860A71C80BCB366 /* Sources */,
+				D1A031E30E8286D2ABF05038FD525F14 /* Frameworks */,
+				E0F4B72233088F72EA114EF8237D6A69 /* Headers */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Bottomsheet;
+			productName = Bottomsheet;
+			productReference = 2F2D6413A302A513239984F66FE24376 /* Bottomsheet.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+		ED9D84CC9FA846625B4863C40EEA60D7 /* Pods-nRFMeshProvision_Example */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = E141DA6B1E164E6D11EFD17A238457AE /* Build configuration list for PBXNativeTarget "Pods-nRFMeshProvision_Example" */;
+			buildPhases = (
+				3B82292658331D1E5D84D5C0EF271AA3 /* Sources */,
+				A45B81FBE9E23FCB0501F3A82557F803 /* Frameworks */,
+				F63FCE1F0583E6F5F3B7D17093F5F6D6 /* Headers */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				9603A6CC14A3ECF5AC05F08B08C36C8B /* PBXTargetDependency */,
+				C0109A98F2DD8C3E92312529647BF0C0 /* PBXTargetDependency */,
+			);
+			name = "Pods-nRFMeshProvision_Example";
+			productName = "Pods-nRFMeshProvision_Example";
+			productReference = 5EF2D5A28D06528103139420D510068A /* Pods_nRFMeshProvision_Example.framework */;
 			productType = "com.apple.product-type.framework";
 		};
 /* End PBXNativeTarget section */
@@ -933,12 +1031,13 @@
 				en,
 			);
 			mainGroup = 7DB346D0F39D3F0E887471402A8071AB;
-			productRefGroup = 028472B1E74A66EA4967E4EDDB7C23A5 /* Products */;
+			productRefGroup = 76707AD62C35F6BB06315182230BB3DC /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
+				EA718CD760B25AE6B68550393C7EE725 /* Bottomsheet */,
 				B074AA5F6983A53E049FEF7320BAF736 /* nRFMeshProvision */,
-				0F02369097C0D7990F1C5BB83ED4C0F7 /* Pods-nRFMeshProvision_Example */,
+				ED9D84CC9FA846625B4863C40EEA60D7 /* Pods-nRFMeshProvision_Example */,
 				2017BC9AB3BBDFC8FF94D07D946B4F9A /* Pods-nRFMeshProvision_Tests */,
 			);
 		};
@@ -1015,7 +1114,7 @@
 				0A849CF87B26DAE596751420C7C11420 /* ProvisionedMeshNodeProtocol.swift in Sources */,
 				B29C96931D92E8916CDFD80BAE5225FB /* ProvisionegMeshNodeLoggingDelegate.swift in Sources */,
 				29EFD059A0C99399FA33908C23FAE98C /* ProvisioningAlgorithm.swift in Sources */,
-				305659A62111DF4C00CF2A5B /* ProvisioningData.swift in Sources */,
+				6C586A79CD1A5F359CBB9F6AA198B50C /* ProvisioningData.swift in Sources */,
 				0E537332BC036C64F431481794403C8B /* ProvisioningErrorCodes.swift in Sources */,
 				E25532F3620E03AB21D47DB1FCFE3396 /* ProvisioningPDU.swift in Sources */,
 				04C6180AD512D7D0E35D25F10A210CD5 /* ProvisioningStateProtocol.swift in Sources */,
@@ -1038,11 +1137,20 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		2717E988A35AAA0600105955E3768DEF /* Sources */ = {
+		3B82292658331D1E5D84D5C0EF271AA3 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9A972E992B43E175E7D3838481F8EA57 /* Pods-nRFMeshProvision_Example-dummy.m in Sources */,
+				45182C1CD163B6256EE92C8B86F55EA6 /* Pods-nRFMeshProvision_Example-dummy.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		871EC0A7FA16B53E8860A71C80BCB366 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				81B240B8931C6B853A04D910050A7AE4 /* Bottomsheet-dummy.m in Sources */,
+				81C73A04C63C0299F163179A59FC2A40 /* Bottomsheet.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1060,18 +1168,60 @@
 		6D002BE8AEF79057F67CCF2294042A9E /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = "Pods-nRFMeshProvision_Example";
-			target = 0F02369097C0D7990F1C5BB83ED4C0F7 /* Pods-nRFMeshProvision_Example */;
+			target = ED9D84CC9FA846625B4863C40EEA60D7 /* Pods-nRFMeshProvision_Example */;
 			targetProxy = 128B7E114EC2AC0D5768D6F8233CA20E /* PBXContainerItemProxy */;
 		};
-		BDDAD9B99ACE2888BFEDD7058EB250C7 /* PBXTargetDependency */ = {
+		9603A6CC14A3ECF5AC05F08B08C36C8B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = Bottomsheet;
+			target = EA718CD760B25AE6B68550393C7EE725 /* Bottomsheet */;
+			targetProxy = 02F1B7DEBD440B2B38EC124E704CBB42 /* PBXContainerItemProxy */;
+		};
+		C0109A98F2DD8C3E92312529647BF0C0 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = nRFMeshProvision;
 			target = B074AA5F6983A53E049FEF7320BAF736 /* nRFMeshProvision */;
-			targetProxy = E3A89954C47F1BBDF626B867660A0F59 /* PBXContainerItemProxy */;
+			targetProxy = 0848AA5783144146901BE46FBF8C3526 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
+		21B9E5AC1EE89544BF4BCA453756B06E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 4E62A9851B9A734D16CB01B4272A2639 /* Pods-nRFMeshProvision_Example.debug.xcconfig */;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				INFOPLIST_FILE = "Target Support Files/Pods-nRFMeshProvision_Example/Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MACH_O_TYPE = staticlib;
+				MODULEMAP_FILE = "Target Support Files/Pods-nRFMeshProvision_Example/Pods-nRFMeshProvision_Example.modulemap";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOLFLAGS = "";
+				PODS_ROOT = "$(SRCROOT)";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.${PRODUCT_NAME:rfc1034identifier}";
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
 		553022A828EE1991F07D2D73F565AEF8 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -1193,12 +1343,10 @@
 			};
 			name = Release;
 		};
-		9143E8FC479EEC6374BB398FDF9DF8BC /* Release */ = {
+		85429654A0D6FA123C306033783F5426 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = F62117F4A8DF697511768C062ABB9E50 /* Pods-nRFMeshProvision_Example.release.xcconfig */;
+			baseConfigurationReference = 705E2B111C6C3E5807FB13612BCE3718 /* Bottomsheet.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
-				CLANG_ENABLE_OBJC_WEAK = NO;
 				CODE_SIGN_IDENTITY = "";
 				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
@@ -1208,20 +1356,19 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				INFOPLIST_FILE = "Target Support Files/Pods-nRFMeshProvision_Example/Info.plist";
+				GCC_PREFIX_HEADER = "Target Support Files/Bottomsheet/Bottomsheet-prefix.pch";
+				INFOPLIST_FILE = "Target Support Files/Bottomsheet/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				MACH_O_TYPE = staticlib;
-				MODULEMAP_FILE = "Target Support Files/Pods-nRFMeshProvision_Example/Pods-nRFMeshProvision_Example.modulemap";
-				OTHER_LDFLAGS = "";
-				OTHER_LIBTOOLFLAGS = "";
-				PODS_ROOT = "$(SRCROOT)";
-				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.${PRODUCT_NAME:rfc1034identifier}";
-				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				MODULEMAP_FILE = "Target Support Files/Bottomsheet/Bottomsheet.modulemap";
+				PRODUCT_MODULE_NAME = Bottomsheet;
+				PRODUCT_NAME = Bottomsheet;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
+				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -1266,7 +1413,7 @@
 		};
 		9B17EEFD147BF922E1BFFFE25D32DC11 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 63EA4646195076D76D9718A4572811AB /* nRFMeshProvision.xcconfig */;
+			baseConfigurationReference = 78A64D80D67A7818FDBA3A480B174A7C /* nRFMeshProvision.xcconfig */;
 			buildSettings = {
 				CLANG_ENABLE_OBJC_WEAK = NO;
 				CODE_SIGN_IDENTITY = "";
@@ -1291,42 +1438,6 @@
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 4;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
-			};
-			name = Debug;
-		};
-		9C2B9C8EF37E069C5B1AD20D274C316F /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 4E62A9851B9A734D16CB01B4272A2639 /* Pods-nRFMeshProvision_Example.debug.xcconfig */;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
-				CLANG_ENABLE_OBJC_WEAK = NO;
-				CODE_SIGN_IDENTITY = "";
-				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
-				CURRENT_PROJECT_VERSION = 1;
-				DEFINES_MODULE = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				INFOPLIST_FILE = "Target Support Files/Pods-nRFMeshProvision_Example/Info.plist";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				MACH_O_TYPE = staticlib;
-				MODULEMAP_FILE = "Target Support Files/Pods-nRFMeshProvision_Example/Pods-nRFMeshProvision_Example.modulemap";
-				OTHER_LDFLAGS = "";
-				OTHER_LIBTOOLFLAGS = "";
-				PODS_ROOT = "$(SRCROOT)";
-				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.${PRODUCT_NAME:rfc1034identifier}";
-				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
-				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
@@ -1367,9 +1478,41 @@
 			};
 			name = Debug;
 		};
+		CEEF9531AC4B22808A9D068AB165903A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 705E2B111C6C3E5807FB13612BCE3718 /* Bottomsheet.xcconfig */;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GCC_PREFIX_HEADER = "Target Support Files/Bottomsheet/Bottomsheet-prefix.pch";
+				INFOPLIST_FILE = "Target Support Files/Bottomsheet/Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MODULEMAP_FILE = "Target Support Files/Bottomsheet/Bottomsheet.modulemap";
+				PRODUCT_MODULE_NAME = Bottomsheet;
+				PRODUCT_NAME = Bottomsheet;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 4.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
 		DBE7195D7258F276CF071A67B086FBC4 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 63EA4646195076D76D9718A4572811AB /* nRFMeshProvision.xcconfig */;
+			baseConfigurationReference = 78A64D80D67A7818FDBA3A480B174A7C /* nRFMeshProvision.xcconfig */;
 			buildSettings = {
 				CLANG_ENABLE_OBJC_WEAK = NO;
 				CODE_SIGN_IDENTITY = "";
@@ -1401,9 +1544,54 @@
 			};
 			name = Release;
 		};
+		E7CAD104C34D5330955D1F9ED725C44F /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = F62117F4A8DF697511768C062ABB9E50 /* Pods-nRFMeshProvision_Example.release.xcconfig */;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				INFOPLIST_FILE = "Target Support Files/Pods-nRFMeshProvision_Example/Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MACH_O_TYPE = staticlib;
+				MODULEMAP_FILE = "Target Support Files/Pods-nRFMeshProvision_Example/Pods-nRFMeshProvision_Example.modulemap";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOLFLAGS = "";
+				PODS_ROOT = "$(SRCROOT)";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.${PRODUCT_NAME:rfc1034identifier}";
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		082FD7AAA2F25740D3993A15C366FDC4 /* Build configuration list for PBXNativeTarget "Bottomsheet" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CEEF9531AC4B22808A9D068AB165903A /* Debug */,
+				85429654A0D6FA123C306033783F5426 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		2D8E8EC45A3A1A1D94AE762CB5028504 /* Build configuration list for PBXProject "Pods" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -1431,11 +1619,11 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		D06974079793A6433304991B0BF2AAE4 /* Build configuration list for PBXNativeTarget "Pods-nRFMeshProvision_Example" */ = {
+		E141DA6B1E164E6D11EFD17A238457AE /* Build configuration list for PBXNativeTarget "Pods-nRFMeshProvision_Example" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				9C2B9C8EF37E069C5B1AD20D274C316F /* Debug */,
-				9143E8FC479EEC6374BB398FDF9DF8BC /* Release */,
+				21B9E5AC1EE89544BF4BCA453756B06E /* Debug */,
+				E7CAD104C34D5330955D1F9ED725C44F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
