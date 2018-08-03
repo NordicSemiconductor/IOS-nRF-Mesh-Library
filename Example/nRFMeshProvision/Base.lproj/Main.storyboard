@@ -1455,8 +1455,8 @@ provisioning and then configuring a device.</string>
                     </tableView>
                     <connections>
                         <outlet property="vendorLabel" destination="axy-nC-oAG" id="eEY-yY-Lka"/>
-                        <segue destination="kr3-eb-Xse" kind="show" identifier="ShowAppKeyBindingView" id="6Ui-zA-WPx"/>
                         <segue destination="N78-VU-wIN" kind="show" identifier="ShowPublicationSettings" id="cGK-BH-e4L"/>
+                        <segue destination="kr3-eb-Xse" kind="show" identifier="ShowAppKeyBindingView" id="k8W-wx-I6W"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="lBk-SV-6iN" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -1799,7 +1799,7 @@ provisioning and then configuring a device.</string>
         <!--Bind AppKey-->
         <scene sceneID="rdL-xW-s1H">
             <objects>
-                <tableViewController title="Bind AppKey" extendedLayoutIncludesOpaqueBars="YES" id="kr3-eb-Xse" customClass="ModelAppKeyBindingConfigurationTableViewController" customModule="nRFMeshProvision_Example" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController storyboardIdentifier="AppKeySelectorView" title="Bind AppKey" extendedLayoutIncludesOpaqueBars="YES" id="kr3-eb-Xse" customClass="ModelAppKeyBindingConfigurationTableViewController" customModule="nRFMeshProvision_Example" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="default" rowHeight="60" estimatedRowHeight="-1" sectionHeaderHeight="18" sectionFooterHeight="18" id="hPI-xf-ICn">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>

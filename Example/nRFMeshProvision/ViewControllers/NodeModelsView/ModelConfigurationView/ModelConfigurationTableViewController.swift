@@ -569,7 +569,7 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
         tableView.deselectRow(at: indexPath, animated: true)
         switch indexPath.section {
         case 0:
-            self.performSegue(withIdentifier: "ShowAppKeyBindingView", sender: indexPath.row)
+            self.performSegue(withIdentifier: "ShowAppKeyBindingView", sender: nil)
         case 1:
             self.performSegue(withIdentifier: "ShowPublicationSettings", sender: nil)
 //            self.presentInputAlert(withResetCapability: true) { (anAddressString) in

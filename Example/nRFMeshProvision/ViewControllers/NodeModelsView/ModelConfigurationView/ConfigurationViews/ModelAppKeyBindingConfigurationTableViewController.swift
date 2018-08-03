@@ -29,6 +29,14 @@ class ModelAppKeyBindingConfigurationTableViewController: UITableViewController 
         return 1
     }
 
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        print("Selector view will appear")
+    }
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        print("Selector appeared")
+    }
     override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         return "Available AppKeys"
     }
