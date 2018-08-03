@@ -1,16 +1,13 @@
 PODS:
-  - Bottomsheet (1.4.0)
   - nRFMeshProvision (1.0.1):
     - OpenSSL
   - OpenSSL (1.0.210)
 
 DEPENDENCIES:
-  - Bottomsheet (~> 1.4)
   - nRFMeshProvision (from `../`)
 
 SPEC REPOS:
   https://github.com/cocoapods/specs.git:
-    - Bottomsheet
     - OpenSSL
 
 EXTERNAL SOURCES:
@@ -18,10 +15,9 @@ EXTERNAL SOURCES:
     :path: "../"
 
 SPEC CHECKSUMS:
-  Bottomsheet: e1b1f2251694457eaab4599fab1ec5eede5a537e
   nRFMeshProvision: f0c9c4c2b40dd08e34cba8d3961bf4cc323c1602
   OpenSSL: 246ffb948e9d56466727fd318134af35f5aa764e
 
-PODFILE CHECKSUM: 452bea05ed197960ea5ae12cbeb5feba29881502
+PODFILE CHECKSUM: de85a89ac749497891047199d13c9ccda33bd1a4
 
 COCOAPODS: 1.5.3
