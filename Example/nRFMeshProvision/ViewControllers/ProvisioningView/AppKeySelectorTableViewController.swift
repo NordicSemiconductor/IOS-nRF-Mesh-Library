@@ -13,10 +13,10 @@ class AppKeySelectorTableViewController: UITableViewController {
 
     // MARK: - Properties
     private var meshStateManager: MeshStateManager!
-    private var selectionCallback: ((Int) -> Void)!
-
+    private var selectionCallback: ((Int?) -> Void)!
+    private var didSelectKey: Bool = false
     // MARK: - Implementation
-    public func setSelectionCallback(_ aCallback: @escaping (Int) -> Void,
+    public func setSelectionCallback(_ aCallback: @escaping (Int?) -> Void,
                                      andMeshStateManager aStateManager: MeshStateManager) {
         meshStateManager = aStateManager
         selectionCallback = aCallback
@@ -24,11 +24,17 @@ class AppKeySelectorTableViewController: UITableViewController {
 
     // MARK: - Table view data source & delegate
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        didSelectKey = true
         selectionCallback(indexPath.row)
         tableView.deselectRow(at: indexPath, animated: true)
         self.navigationController?.popViewController(animated: true)
     }
-
+    override func viewWillDisappear(_ animated: Bool) {
+        if !didSelectKey {
+            selectionCallback(nil)
+        }
+        super.viewWillDisappear(animated)
+    }
     override func numberOfSections(in tableView: UITableView) -> Int {
         return 1
     }

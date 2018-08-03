@@ -344,7 +344,10 @@ class MeshProvisioningDataTableViewController: UITableViewController, UITextFiel
         if segue.identifier == "showAppKeySelector" {
             if let destinationView = segue.destination as? AppKeySelectorTableViewController {
                 destinationView.setSelectionCallback({ (appKeyIndex) in
-                    self.didSelectAppKeyWithIndex(appKeyIndex)
+                    guard appKeyIndex != nil else {
+                        return
+                    }
+                    self.didSelectAppKeyWithIndex(appKeyIndex!)
                 }, andMeshStateManager: meshManager.stateManager())
             }
         }

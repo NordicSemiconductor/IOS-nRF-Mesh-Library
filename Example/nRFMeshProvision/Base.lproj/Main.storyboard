@@ -6,6 +6,7 @@
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14088"/>
+        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
         <capability name="Navigation items with more than one left or right bar item" minToolsVersion="7.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -68,11 +69,11 @@
                         <barButtonItem key="backBarButtonItem" title="Back" id="PNv-B3-5GH"/>
                         <barButtonItem key="rightBarButtonItem" width="30" id="8yP-Q8-c5J">
                             <view key="customView" contentMode="scaleToFill" id="UUa-3L-tjU">
-                                <rect key="frame" x="276" y="0.0" width="83" height="44"/>
+                                <rect key="frame" x="276" y="6" width="83" height="32"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <subviews>
                                     <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="white" translatesAutoresizingMaskIntoConstraints="NO" id="2kI-0g-C9I">
-                                        <rect key="frame" x="63" y="12" width="20" height="20"/>
+                                        <rect key="frame" x="63" y="6" width="20" height="20"/>
                                     </activityIndicatorView>
                                 </subviews>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -244,7 +245,7 @@
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             <subviews>
                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="No AppKeys stored, use the + button to add new keys." textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="3" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="8xc-Tf-DDR">
-                                    <rect key="frame" x="0.0" y="1.6666666666666679" width="375" height="56.333333333333329"/>
+                                    <rect key="frame" x="0.0" y="1" width="375" height="57"/>
                                     <fontDescription key="fontDescription" name="TrebuchetMS" family="Trebuchet MS" pointSize="17"/>
                                     <nil key="textColor"/>
                                     <nil key="highlightedColor"/>
@@ -253,7 +254,6 @@
                             <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             <constraints>
                                 <constraint firstItem="8xc-Tf-DDR" firstAttribute="leading" secondItem="ajQ-S1-snO" secondAttribute="leading" id="5y4-be-HSh"/>
-                                <constraint firstItem="8xc-Tf-DDR" firstAttribute="top" relation="greaterThanOrEqual" secondItem="ajQ-S1-snO" secondAttribute="top" constant="1" id="8B7-ex-u5Y"/>
                                 <constraint firstItem="8xc-Tf-DDR" firstAttribute="centerY" secondItem="ajQ-S1-snO" secondAttribute="centerY" id="nB3-wm-lev"/>
                                 <constraint firstAttribute="trailing" secondItem="8xc-Tf-DDR" secondAttribute="trailing" id="x2e-oT-Zit"/>
                                 <constraint firstAttribute="bottom" relation="lessThanOrEqual" secondItem="8xc-Tf-DDR" secondAttribute="bottom" constant="1" id="znI-nv-16X"/>
@@ -378,6 +378,8 @@
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
+                            <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="Fsb-pT-TgJ" secondAttribute="trailing" constant="20" symbolic="YES" id="6F5-lf-Q2q"/>
+                            <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="I3X-c9-0VJ" secondAttribute="trailing" constant="20" symbolic="YES" id="7Zn-6b-LC1"/>
                             <constraint firstItem="I3X-c9-0VJ" firstAttribute="top" secondItem="5Hg-ZU-Lo5" secondAttribute="bottom" constant="8" id="7kX-Dz-52y"/>
                             <constraint firstItem="3t2-he-G4d" firstAttribute="leading" secondItem="g7t-mr-98g" secondAttribute="trailing" constant="8" id="9pF-sd-bbb"/>
                             <constraint firstItem="I3X-c9-0VJ" firstAttribute="leading" secondItem="8fQ-aE-ule" secondAttribute="leading" constant="16" id="CpG-2I-bKG"/>
@@ -390,6 +392,8 @@
                             <constraint firstItem="d8h-CJ-9O6" firstAttribute="centerX" secondItem="8fQ-aE-ule" secondAttribute="centerX" id="K90-a8-xmy"/>
                             <constraint firstItem="Fsb-pT-TgJ" firstAttribute="top" secondItem="I3X-c9-0VJ" secondAttribute="bottom" constant="8" id="MnE-eu-R3x"/>
                             <constraint firstItem="8vp-Rx-nJV" firstAttribute="top" secondItem="3bm-Su-i8a" secondAttribute="bottom" constant="8" id="Thd-iE-qLW"/>
+                            <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="Upq-kN-oEo" secondAttribute="trailing" constant="20" symbolic="YES" id="WTV-Yz-8rU"/>
+                            <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="5Hg-ZU-Lo5" secondAttribute="trailing" constant="20" symbolic="YES" id="Zej-t1-dtH"/>
                             <constraint firstItem="Upq-kN-oEo" firstAttribute="leading" secondItem="8fQ-aE-ule" secondAttribute="leading" constant="16" id="bE3-B8-mPR"/>
                             <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="3t2-he-G4d" secondAttribute="trailing" constant="16" id="eNL-2f-NFt"/>
                             <constraint firstItem="Fsb-pT-TgJ" firstAttribute="leading" secondItem="8fQ-aE-ule" secondAttribute="leading" constant="16" id="f1w-ci-V68"/>
@@ -509,7 +513,7 @@
                                 <rect key="frame" x="0.0" y="236" width="375" height="200"/>
                                 <subviews>
                                     <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="ic_lan_36pt" translatesAutoresizingMaskIntoConstraints="NO" id="g2p-02-TcJ">
-                                        <rect key="frame" x="175" y="20" width="24" height="24"/>
+                                        <rect key="frame" x="175.66666666666666" y="20" width="24" height="24"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="24" id="EDE-oI-gAC"/>
                                             <constraint firstAttribute="width" constant="24" id="EJK-vq-qzj"/>
@@ -530,7 +534,7 @@ provisioning and then configuring a device.</string>
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="OE5-Ec-Wy6">
-                                        <rect key="frame" x="133" y="162" width="109" height="30"/>
+                                        <rect key="frame" x="133.66666666666666" y="162" width="109" height="30"/>
                                         <state key="normal" title="Add new device"/>
                                         <connections>
                                             <action selector="addNodeButtonTapped:" destination="NhV-E0-Nbc" eventType="touchUpInside" id="jcX-0Y-Ol0"/>
@@ -670,11 +674,11 @@ provisioning and then configuring a device.</string>
                             </barButtonItem>
                             <barButtonItem id="V3b-aS-AXg">
                                 <view key="customView" contentMode="scaleToFill" id="eGZ-2F-Xkm">
-                                    <rect key="frame" x="126.66666666666667" y="0.0" width="83.000000000000014" height="44"/>
+                                    <rect key="frame" x="126.66666666666667" y="6" width="83.000000000000014" height="32"/>
                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                     <subviews>
                                         <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" animating="YES" style="white" translatesAutoresizingMaskIntoConstraints="NO" id="73W-Hm-dgN">
-                                            <rect key="frame" x="63" y="12" width="20" height="20"/>
+                                            <rect key="frame" x="63" y="6" width="20" height="20"/>
                                         </activityIndicatorView>
                                     </subviews>
                                     <constraints>
@@ -1140,11 +1144,11 @@ provisioning and then configuring a device.</string>
                             </barButtonItem>
                             <barButtonItem id="pDl-WH-3gr">
                                 <view key="customView" contentMode="scaleToFill" id="ac3-AR-N2x">
-                                    <rect key="frame" x="141.33333333333337" y="0.0" width="83" height="44"/>
+                                    <rect key="frame" x="141.33333333333337" y="6" width="83" height="32"/>
                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                     <subviews>
                                         <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="white" translatesAutoresizingMaskIntoConstraints="NO" id="koR-ir-4ny">
-                                            <rect key="frame" x="63" y="12" width="20" height="20"/>
+                                            <rect key="frame" x="63" y="6" width="20" height="20"/>
                                         </activityIndicatorView>
                                     </subviews>
                                     <constraints>
@@ -1229,7 +1233,7 @@ provisioning and then configuring a device.</string>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="w48-yU-gai" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1494" y="-2818"/>
+            <point key="canvasLocation" x="2982" y="-2202"/>
         </scene>
         <!--Node Info-->
         <scene sceneID="b0E-Xt-pDz">
@@ -1491,6 +1495,7 @@ provisioning and then configuring a device.</string>
                                                 <imageView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" image="ic_lan_36pt" id="yNd-o6-tqE">
                                                     <rect key="frame" x="16" y="10" width="23" height="23"/>
                                                     <autoresizingMask key="autoresizingMask"/>
+                                                    <color key="tintColor" red="0.20000000000000001" green="0.2470588235" blue="0.28235294119999998" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                 </imageView>
                                                 <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="0xCEEF" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="kxb-Dg-Uzt">
                                                     <rect key="frame" x="280.66666666666663" y="11.999999999999998" width="59.333333333333336" height="20.333333333333332"/>
@@ -1521,8 +1526,8 @@ provisioning and then configuring a device.</string>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="3" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="Qo4-g0-fdf">
-                                                    <rect key="frame" x="329.66666666666669" y="11.999999999999998" width="10.333333333333334" height="20.333333333333332"/>
+                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="3 Times" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="Qo4-g0-fdf">
+                                                    <rect key="frame" x="279" y="11.999999999999998" width="61" height="20.333333333333332"/>
                                                     <autoresizingMask key="autoresizingMask"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <color key="textColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -1531,6 +1536,7 @@ provisioning and then configuring a device.</string>
                                                 <imageView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" image="baseline_repeat_black_24pt" id="PLf-sl-Gk5">
                                                     <rect key="frame" x="16" y="9" width="24" height="24"/>
                                                     <autoresizingMask key="autoresizingMask"/>
+                                                    <color key="tintColor" red="0.20000000000000001" green="0.2470588235" blue="0.28235294119999998" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                 </imageView>
                                             </subviews>
                                         </tableViewCellContentView>
@@ -1559,6 +1565,7 @@ provisioning and then configuring a device.</string>
                                                 <imageView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" image="baseline_format_list_numbered_black_24pt" id="nla-P7-cgA">
                                                     <rect key="frame" x="16" y="9" width="24" height="24"/>
                                                     <autoresizingMask key="autoresizingMask"/>
+                                                    <color key="tintColor" red="0.20000000000000001" green="0.2470588235" blue="0.28235294119999998" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                 </imageView>
                                             </subviews>
                                         </tableViewCellContentView>
@@ -1591,6 +1598,7 @@ provisioning and then configuring a device.</string>
                                                 <imageView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" image="baseline_format_list_numbered_black_24pt" id="9ge-b4-0QU">
                                                     <rect key="frame" x="16" y="9" width="24" height="24"/>
                                                     <autoresizingMask key="autoresizingMask"/>
+                                                    <color key="tintColor" red="0.20000000000000001" green="0.2470588235" blue="0.28235294119999998" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                 </imageView>
                                             </subviews>
                                         </tableViewCellContentView>
@@ -1619,13 +1627,14 @@ provisioning and then configuring a device.</string>
                                                 <imageView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" image="baseline_linear_scale_black_24pt" id="Wuq-2w-Jrp">
                                                     <rect key="frame" x="16" y="9" width="24" height="24"/>
                                                     <autoresizingMask key="autoresizingMask"/>
+                                                    <color key="tintColor" red="0.20000000000000001" green="0.2470588235" blue="0.28235294119999998" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                 </imageView>
                                             </subviews>
                                         </tableViewCellContentView>
                                     </tableViewCell>
                                 </cells>
                             </tableViewSection>
-                            <tableViewSection headerTitle="AppKey Index" id="m18-wu-4zP">
+                            <tableViewSection headerTitle="Security Credentials" id="m18-wu-4zP">
                                 <cells>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" accessoryType="disclosureIndicator" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" textLabel="MZR-Xr-NqV" detailTextLabel="vHP-LT-6Od" imageView="Qn1-o1-xgr" style="IBUITableViewCellStyleValue1" id="Sb4-uz-nHm">
                                         <rect key="frame" x="0.0" y="443.33333333333337" width="375" height="44"/>
@@ -1644,6 +1653,7 @@ provisioning and then configuring a device.</string>
                                                 <imageView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" image="ic_vpn_key_36pt" id="Qn1-o1-xgr">
                                                     <rect key="frame" x="16" y="10" width="23" height="23"/>
                                                     <autoresizingMask key="autoresizingMask"/>
+                                                    <color key="tintColor" red="0.20000000000000001" green="0.2470588235" blue="0.28235294119999998" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                 </imageView>
                                                 <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Key 0" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="vHP-LT-6Od">
                                                     <rect key="frame" x="297" y="11.999999999999998" width="43" height="20.333333333333332"/>
@@ -1655,12 +1665,51 @@ provisioning and then configuring a device.</string>
                                             </subviews>
                                         </tableViewCellContentView>
                                     </tableViewCell>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" id="RYH-gN-WgT">
+                                        <rect key="frame" x="0.0" y="487.33333333333337" width="375" height="44"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="RYH-gN-WgT" id="pkg-4q-frD">
+                                            <rect key="frame" x="0.0" y="0.0" width="375" height="43.666666666666664"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="joe-76-12Q">
+                                                    <rect key="frame" x="308" y="7" width="51" height="31"/>
+                                                    <connections>
+                                                        <action selector="didTapfriendCredentialFlagSwitch:" destination="N78-VU-wIN" eventType="valueChanged" id="KGX-cI-lFg"/>
+                                                    </connections>
+                                                </switch>
+                                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="baseline_security_black_24pt" translatesAutoresizingMaskIntoConstraints="NO" id="Adr-Eb-AGA">
+                                                    <rect key="frame" x="16" y="9" width="24" height="24"/>
+                                                    <color key="tintColor" red="0.20000000000000001" green="0.2470588235" blue="0.28235294119999998" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="height" constant="24" id="KCg-ul-3Sa"/>
+                                                        <constraint firstAttribute="width" constant="24" id="Wte-bz-4Yg"/>
+                                                    </constraints>
+                                                </imageView>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Friendship Credential Flag" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ICO-s4-Rg2">
+                                                    <rect key="frame" x="54.999999999999986" y="11" width="199.66666666666663" height="21"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                    <nil key="textColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstItem="joe-76-12Q" firstAttribute="centerY" secondItem="pkg-4q-frD" secondAttribute="centerY" id="HrI-BG-HHt"/>
+                                                <constraint firstItem="Adr-Eb-AGA" firstAttribute="centerY" secondItem="pkg-4q-frD" secondAttribute="centerY" id="SlZ-fo-CHQ"/>
+                                                <constraint firstItem="Adr-Eb-AGA" firstAttribute="leading" secondItem="pkg-4q-frD" secondAttribute="leadingMargin" id="a7h-g5-A1F"/>
+                                                <constraint firstItem="ICO-s4-Rg2" firstAttribute="centerY" secondItem="pkg-4q-frD" secondAttribute="centerY" id="c43-NW-ula"/>
+                                                <constraint firstItem="ICO-s4-Rg2" firstAttribute="leading" secondItem="Adr-Eb-AGA" secondAttribute="trailing" constant="15" id="dkQ-hT-wUb"/>
+                                                <constraint firstItem="joe-76-12Q" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="ICO-s4-Rg2" secondAttribute="trailing" constant="8" id="qiR-oa-9W3"/>
+                                                <constraint firstAttribute="trailing" secondItem="joe-76-12Q" secondAttribute="trailing" constant="18" id="yZa-iW-s3f"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
                                 </cells>
                             </tableViewSection>
                             <tableViewSection headerTitle="TTL" id="ibj-SR-mVe">
                                 <cells>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" textLabel="t87-d5-Pk5" detailTextLabel="3J0-Xq-hrt" imageView="4ld-bD-IdP" style="IBUITableViewCellStyleValue1" id="gVv-tK-KB9">
-                                        <rect key="frame" x="0.0" y="543.33333333333337" width="375" height="44"/>
+                                        <rect key="frame" x="0.0" y="587.33333333333337" width="375" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="gVv-tK-KB9" id="4qH-IK-m7m">
                                             <rect key="frame" x="0.0" y="0.0" width="375" height="43.666666666666664"/>
@@ -1683,6 +1732,7 @@ provisioning and then configuring a device.</string>
                                                 <imageView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" image="baseline_update_black_24pt" id="4ld-bD-IdP">
                                                     <rect key="frame" x="16" y="9" width="24" height="24"/>
                                                     <autoresizingMask key="autoresizingMask"/>
+                                                    <color key="tintColor" red="0.20000000000000001" green="0.2470588235" blue="0.28235294119999998" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                 </imageView>
                                             </subviews>
                                         </tableViewCellContentView>
@@ -1692,14 +1742,14 @@ provisioning and then configuring a device.</string>
                             <tableViewSection headerTitle="Save" id="aVM-IZ-T0x">
                                 <cells>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" textLabel="C7W-eS-rID" style="IBUITableViewCellStyleDefault" id="X97-X8-uWi">
-                                        <rect key="frame" x="0.0" y="643.33333333333337" width="375" height="44"/>
+                                        <rect key="frame" x="0.0" y="687.33333333333337" width="375" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="X97-X8-uWi" id="Ihd-lj-WDY">
                                             <rect key="frame" x="0.0" y="0.0" width="375" height="43.666666666666664"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Clear Publication Data" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="C7W-eS-rID">
-                                                    <rect key="frame" x="16" y="0.0" width="343" height="43.666666666666664"/>
+                                                    <rect key="frame" x="15" y="0.0" width="345" height="43.666666666666664"/>
                                                     <autoresizingMask key="autoresizingMask"/>
                                                     <fontDescription key="fontDescription" type="system" weight="medium" pointSize="17"/>
                                                     <color key="textColor" red="1" green="0.28499322360000001" blue="0.2098225027" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
@@ -1728,17 +1778,19 @@ provisioning and then configuring a device.</string>
                         <outlet property="appKeyIndexLabel" destination="vHP-LT-6Od" id="wmf-O4-OQO"/>
                         <outlet property="applyButton" destination="GOO-Cd-kgu" id="xHB-tA-17K"/>
                         <outlet property="clearPublicationButtonLabel" destination="C7W-eS-rID" id="GqS-G0-HHP"/>
+                        <outlet property="friendshipCredentialFlagSwitch" destination="joe-76-12Q" id="WjQ-7J-lcb"/>
                         <outlet property="periodResolutionLabel" destination="35g-5Z-7qx" id="M5e-iY-JkK"/>
                         <outlet property="periodStepsLabel" destination="5Th-WW-Tq0" id="gtl-Q1-okp"/>
                         <outlet property="publicationAddressLabel" destination="kxb-Dg-Uzt" id="acc-CF-yxG"/>
                         <outlet property="publishTTLLabel" destination="3J0-Xq-hrt" id="GXF-Ib-nvA"/>
                         <outlet property="retransmitCountLabel" destination="Qo4-g0-fdf" id="vqf-5c-beI"/>
                         <outlet property="retransmitIntervalStepsLabel" destination="nFV-Ve-SwJ" id="VU6-eO-TC7"/>
+                        <segue destination="JCc-w9-Xls" kind="show" identifier="showAppKeySelector" id="q2d-3z-Xle"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="CD0-rf-Pr2" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2222" y="-1528"/>
+            <point key="canvasLocation" x="2338" y="-1196"/>
         </scene>
         <!--Provisioning Log-->
         <scene sceneID="Eee-ff-ax8">
@@ -1794,7 +1846,7 @@ provisioning and then configuring a device.</string>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Cae-xZ-ahB" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1494" y="-2138"/>
+            <point key="canvasLocation" x="1401" y="-1948"/>
         </scene>
         <!--Bind AppKey-->
         <scene sceneID="rdL-xW-s1H">
@@ -1838,7 +1890,7 @@ provisioning and then configuring a device.</string>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="MK8-Gd-H4j" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2222" y="-857"/>
+            <point key="canvasLocation" x="1937" y="-307"/>
         </scene>
         <!--Root View Controller-->
         <scene sceneID="B3j-TN-IE6">
@@ -1884,4 +1936,7 @@ provisioning and then configuring a device.</string>
         <image name="ic_settings" width="24" height="24"/>
         <image name="ic_vpn_key_36pt" width="23" height="23"/>
     </resources>
+    <inferredMetricsTieBreakers>
+        <segue reference="q2d-3z-Xle"/>
+    </inferredMetricsTieBreakers>
 </document>
