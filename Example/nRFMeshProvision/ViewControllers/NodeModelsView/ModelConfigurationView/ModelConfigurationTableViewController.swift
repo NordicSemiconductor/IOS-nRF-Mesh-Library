@@ -72,7 +72,7 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
                                               onDestinationAddress: nodeEntry.nodeUnicast!)
     }
 
-    public func didSelectAppKeyAtIndex(_ anAppKeyIndex: UInt16) {
+    func didSelectAppKeyAtIndex(_ anAppKeyIndex: UInt16) {
         var anIndex = anAppKeyIndex.bigEndian
         let appKeyIndexData = Data(bytes: &anIndex, count: MemoryLayout<UInt16>.size)
         var keyFound = false
@@ -98,7 +98,6 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
                                   onDestinationAddress: nodeEntry.nodeUnicast!)
             print("Binding appkey \(selectedAppKeyName) to Model \(aModel.hexString())")
         }
-        navigationController?.popViewController(animated: true)
     }
 
     public func handleAlertForStatusCode(_ aStatusCode: MessageStatusCodes) {
@@ -547,7 +546,7 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
         tableView.deselectRow(at: indexPath, animated: true)
         switch indexPath.section {
         case 0:
-            self.performSegue(withIdentifier: "ShowAppKeyBindingView", sender: nil)
+            self.performSegue(withIdentifier: "showAppKeySelector", sender: nil)
         case 1:
             self.performSegue(withIdentifier: "ShowPublicationSettings", sender: nil)
         case 2:
@@ -692,15 +691,18 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
 
     // MARK: - Navigation
     override func shouldPerformSegue(withIdentifier identifier: String, sender: Any?) -> Bool {
-        return ["ShowAppKeyBindingView",
+        return ["showAppKeySelector",
                 "ShowPublicationSettings"].contains(identifier)
     }
 
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.identifier == "ShowAppKeyBindingView" {
-            if let destination = segue.destination as? ModelAppKeyBindingConfigurationTableViewController {
-                destination.setSelectionDelegate(self)
-                destination.setStateManager(meshstateManager)
+        if segue.identifier == "showAppKeySelector" {
+            if let destination = segue.destination as? AppKeySelectorTableViewController {
+                destination.setSelectionCallback({ (selectedIndex) in
+                    if selectedIndex != nil  {
+                        self.didSelectAppKeyAtIndex(UInt16(selectedIndex!))
+                    }
+                }, andMeshStateManager: meshstateManager)
             }
         }
         if segue.identifier == "ShowPublicationSettings" {

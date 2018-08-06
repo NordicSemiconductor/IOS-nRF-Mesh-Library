@@ -1196,7 +1196,7 @@ provisioning and then configuring a device.</string>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="qUq-s2-KB8" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="596" y="-2476"/>
+            <point key="canvasLocation" x="556" y="-1978"/>
         </scene>
         <!--Select AppKey-->
         <scene sceneID="B0O-2C-MYI">
@@ -1244,7 +1244,7 @@ provisioning and then configuring a device.</string>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="w48-yU-gai" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2982" y="-2202"/>
+            <point key="canvasLocation" x="3135" y="-1920"/>
         </scene>
         <!--Node Info-->
         <scene sceneID="b0E-Xt-pDz">
@@ -1471,7 +1471,7 @@ provisioning and then configuring a device.</string>
                     <connections>
                         <outlet property="vendorLabel" destination="axy-nC-oAG" id="eEY-yY-Lka"/>
                         <segue destination="N78-VU-wIN" kind="show" identifier="ShowPublicationSettings" id="cGK-BH-e4L"/>
-                        <segue destination="kr3-eb-Xse" kind="show" identifier="ShowAppKeyBindingView" id="k8W-wx-I6W"/>
+                        <segue destination="JCc-w9-Xls" kind="show" identifier="showAppKeySelector" id="G3c-Z4-KEq"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="lBk-SV-6iN" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -1801,7 +1801,7 @@ provisioning and then configuring a device.</string>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="CD0-rf-Pr2" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2338" y="-1196"/>
+            <point key="canvasLocation" x="2334" y="-998"/>
         </scene>
         <!--Provisioning Log-->
         <scene sceneID="Eee-ff-ax8">
@@ -1857,51 +1857,7 @@ provisioning and then configuring a device.</string>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Cae-xZ-ahB" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1401" y="-1948"/>
-        </scene>
-        <!--Bind AppKey-->
-        <scene sceneID="rdL-xW-s1H">
-            <objects>
-                <tableViewController storyboardIdentifier="AppKeySelectorView" title="Bind AppKey" extendedLayoutIncludesOpaqueBars="YES" id="kr3-eb-Xse" customClass="ModelAppKeyBindingConfigurationTableViewController" customModule="nRFMeshProvision_Example" customModuleProvider="target" sceneMemberID="viewController">
-                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="default" rowHeight="60" estimatedRowHeight="-1" sectionHeaderHeight="18" sectionFooterHeight="18" id="hPI-xf-ICn">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
-                        <prototypes>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="AppKeyBindCell" textLabel="E3A-wD-mCz" detailTextLabel="Ozl-rh-gQo" style="IBUITableViewCellStyleSubtitle" id="g3f-7a-Z0r">
-                                <rect key="frame" x="0.0" y="55.333333333333343" width="375" height="60"/>
-                                <autoresizingMask key="autoresizingMask"/>
-                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="g3f-7a-Z0r" id="liI-wF-mh5">
-                                    <rect key="frame" x="0.0" y="0.0" width="375" height="59.666666666666664"/>
-                                    <autoresizingMask key="autoresizingMask"/>
-                                    <subviews>
-                                        <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Title" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="E3A-wD-mCz">
-                                            <rect key="frame" x="15.999999999999996" y="10" width="36.666666666666664" height="23"/>
-                                            <autoresizingMask key="autoresizingMask"/>
-                                            <fontDescription key="fontDescription" type="system" pointSize="19"/>
-                                            <nil key="textColor"/>
-                                            <nil key="highlightedColor"/>
-                                        </label>
-                                        <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Detail" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="Ozl-rh-gQo">
-                                            <rect key="frame" x="16.000000000000004" y="33" width="37.333333333333336" height="17"/>
-                                            <autoresizingMask key="autoresizingMask"/>
-                                            <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                            <color key="textColor" red="0.30935120579999997" green="0.60394281149999995" blue="0.85002428289999998" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                            <nil key="highlightedColor"/>
-                                        </label>
-                                    </subviews>
-                                </tableViewCellContentView>
-                            </tableViewCell>
-                        </prototypes>
-                        <connections>
-                            <outlet property="dataSource" destination="kr3-eb-Xse" id="9xz-Rx-0X4"/>
-                            <outlet property="delegate" destination="kr3-eb-Xse" id="hkp-PJ-Rsy"/>
-                        </connections>
-                    </tableView>
-                </tableViewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="MK8-Gd-H4j" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="1937" y="-307"/>
+            <point key="canvasLocation" x="1401" y="-2301"/>
         </scene>
         <!--Root View Controller-->
         <scene sceneID="B3j-TN-IE6">
@@ -1948,6 +1904,6 @@ provisioning and then configuring a device.</string>
         <image name="ic_vpn_key_36pt" width="23" height="23"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="Qig-Me-EEV"/>
+        <segue reference="G3c-Z4-KEq"/>
     </inferredMetricsTieBreakers>
 </document>
