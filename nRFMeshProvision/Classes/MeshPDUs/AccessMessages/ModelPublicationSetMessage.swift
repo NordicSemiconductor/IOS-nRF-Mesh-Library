@@ -22,10 +22,7 @@ public struct ModelPublicationSetMessage {
                 andModelIdentifier aModelIdentifier: Data) {
         
         opcode = Data([0x03])
-        var credentialFlag: UInt8 = 0x00
-        if aCredentialFlag {
-            credentialFlag = 0x08
-        }
+        let credentialFlag: UInt8 = aCredentialFlag ? 0x08 : 0x00
         payload = Data()
         payload.append(Data([anElementAddress[1], anElementAddress[0]]))
         payload.append(Data([aPublishAddress[1], aPublishAddress[0]]))

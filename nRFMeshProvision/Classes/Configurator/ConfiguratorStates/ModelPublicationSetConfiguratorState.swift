@@ -11,19 +11,20 @@ import Foundation
 class ModelPublicationSetConfiguratorState: NSObject, ConfiguratorStateProtocol {
     
     // MARK: - Properties
-    private var proxyService            : CBService!
-    private var dataInCharacteristic    : CBCharacteristic!
-    private var dataOutCharacteristic   : CBCharacteristic!
-    private var networkLayer            : NetworkLayer!
-    private var elementAddress          : Data!
-    private var appKeyIndex             : Data!
-    private var modelIdentifier         : Data!
-    private var publishAddress          : Data!
-    private var publishTTL              : Data!
-    private var publishPeriod           : Data!
-    private var publishRetransmitCount  : Data!
-    private var publishRetransmitInterval: Data!
-    private var segmentedData: Data
+    private var proxyService                : CBService!
+    private var dataInCharacteristic        : CBCharacteristic!
+    private var dataOutCharacteristic       : CBCharacteristic!
+    private var networkLayer                : NetworkLayer!
+    private var elementAddress              : Data!
+    private var appKeyIndex                 : Data!
+    private var modelIdentifier             : Data!
+    private var publishAddress              : Data!
+    private var publishTTL                  : Data!
+    private var publishPeriod               : Data!
+    private var publishRetransmitCount      : Data!
+    private var publishRetransmitInterval   : Data!
+    private var friendCredenitalsFlad       : Bool!
+    private var segmentedData               : Data
     
     // MARK: - ConfiguratorStateProtocol
     var destinationAddress  : Data
@@ -52,6 +53,7 @@ class ModelPublicationSetConfiguratorState: NSObject, ConfiguratorStateProtocol 
     
     public func setPublish(elementAddress anElementAddress: Data,
                            appKeyIndex anAppKeyIndex: Data,
+                           credentialFlag aCredentialFlag: Bool,
                            publishAddress aPublishAddress: Data,
                            publishTTL aPublishTTL: Data,
                            publishPeriod aPeriod: Data,
@@ -60,6 +62,7 @@ class ModelPublicationSetConfiguratorState: NSObject, ConfiguratorStateProtocol 
                            andModelIdentifier aModelIdentifier: Data) {
         elementAddress              = anElementAddress
         appKeyIndex                 = anAppKeyIndex
+        friendCredenitalsFlad       = aCredentialFlag
         modelIdentifier             = aModelIdentifier
         publishAddress              = aPublishAddress
         publishTTL                  = aPublishTTL
@@ -76,7 +79,7 @@ class ModelPublicationSetConfiguratorState: NSObject, ConfiguratorStateProtocol 
         let message = ModelPublicationSetMessage(withElementAddress: elementAddress,
                                                  publishAddress: publishAddress,
                                                  appKeyIndex: appKeyIndex,
-                                                 credentialFlag: false,
+                                                 credentialFlag: friendCredenitalsFlad,
                                                  publishTTL: publishTTL,
                                                  publishPeriod: publishPeriod,
                                                  retransmitCount: publishRetransmitCount,

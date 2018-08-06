@@ -15,7 +15,7 @@ private enum SubscriptionActions {
     case subscriptionDelete
 }
 
-class ModelConfigurationTableViewController: UITableViewController, ProvisionedMeshNodeDelegate, UITextFieldDelegate, ToggleCellDelegate {
+class ModelConfigurationTableViewController: UITableViewController, ProvisionedMeshNodeDelegate, UITextFieldDelegate, ToggleCellDelegate, PublicationSettingsDelegate {
 
     // MARK: - Outlets & Actions
     @IBOutlet weak var vendorLabel: UILabel!
@@ -70,28 +70,6 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
                                               onElementAddress: elementAddress,
                                               modelIdentifier: aModel,
                                               onDestinationAddress: nodeEntry.nodeUnicast!)
-    }
-
-    public func didSelectPublishAddress(_ anAddress: Data) {
-        let elementIdx = selectedModelIndexPath.section
-        let modelIdx = selectedModelIndexPath.row
-        let aModel = nodeEntry.elements![elementIdx].allSigAndVendorModels()[modelIdx]
-        let unicast = nodeEntry.nodeUnicast!
-        let elementAddress = Data([unicast[0], unicast[1] + UInt8(elementIdx)])
-        guard let appKey = nodeEntry.appKeys.first else {
-            showstatusCodeAlert(withTitle: "AppKey was not found", andMessage: "This node did not have an appkey set in it's database entry.")
-            return
-        }
-        targetNode.nodePublicationAddressSet(anAddress,
-                                             onElementAddress: elementAddress,
-                                             appKeyIndex: appKey,
-                                             credentialFlag: false,
-                                             ttl: Data([0xFF]),
-                                             period: Data([0x00]),
-                                             retransmitCount: Data([0x00]),
-                                             retransmitInterval: Data([0x00]),
-                                             modelIdentifier: aModel,
-                                             onDestinationAddress: nodeEntry.nodeUnicast!)
     }
 
     public func didSelectAppKeyAtIndex(_ anAppKeyIndex: UInt16) {
@@ -569,20 +547,9 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
         tableView.deselectRow(at: indexPath, animated: true)
         switch indexPath.section {
         case 0:
-            self.performSegue(withIdentifier: "ShowAppKeyBindingView", sender: indexPath.row)
+            self.performSegue(withIdentifier: "ShowAppKeyBindingView", sender: nil)
         case 1:
-            self.presentInputAlert(withResetCapability: true) { (anAddressString) in
-                guard  anAddressString != nil else {
-                    return
-                }
-                if anAddressString == "reset" {
-                    self.didSelectPublishAddress(Data([0x00,0x00]))
-                } else {
-                    if let addressData = Data(hexString: anAddressString!) {
-                        self.didSelectPublishAddress(addressData)
-                    }
-                }
-            }
+            self.performSegue(withIdentifier: "ShowPublicationSettings", sender: nil)
         case 2:
             if indexPath.row == 0 {
                 self.presentInputAlert(withResetCapability: false) { (anAddressString) in
@@ -679,17 +646,66 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
         }
     }
 
+    // MARK: - PublicationSettingsDelegate
+    func didDisablePublication() {
+        let elementIdx = selectedModelIndexPath.section
+        let modelIdx = selectedModelIndexPath.row
+        let aModel = nodeEntry.elements![elementIdx].allSigAndVendorModels()[modelIdx]
+        let unicast = nodeEntry.nodeUnicast!
+        let elementAddress = Data([unicast[0], unicast[1] + UInt8(elementIdx)])
+        targetNode.nodePublicationAddressSet(Data([0x00,0x00]),
+                                             onElementAddress: elementAddress,
+                                             appKeyIndex: Data([0x00, 0x00]),
+                                             credentialFlag: false,
+                                             ttl: Data([0x00]),
+                                             period: Data([0x00]),
+                                             retransmitCount: Data([0x00]),
+                                             retransmitInterval: Data([0x00]),
+                                             modelIdentifier: aModel,
+                                             onDestinationAddress: nodeEntry.nodeUnicast!)
+
+        self.navigationController?.popViewController(animated: true)
+    }
+
+    func didSavePublicatoinConfiguration(withAddress anAddress: Data, appKeyIndex anAppKeyIndex: UInt16, credentialFlag aCredentialFlag: Bool, ttl aTTL: UInt8, publishPeriod aPublishPeriod: UInt8, retransmitCount aRetransmitCoutn: UInt8, retransmitIntervalSteps aRetransmitIntervalStep: UInt8) {
+        
+        let elementIdx = selectedModelIndexPath.section
+        let modelIdx = selectedModelIndexPath.row
+        let aModel = nodeEntry.elements![elementIdx].allSigAndVendorModels()[modelIdx]
+        let unicast = nodeEntry.nodeUnicast!
+        let elementAddress = Data([unicast[0], unicast[1] + UInt8(elementIdx)])
+        var anIndex = anAppKeyIndex.bigEndian
+        let appKeyIndexData = Data(bytes: &anIndex, count: MemoryLayout<UInt16>.size)
+        targetNode.nodePublicationAddressSet(anAddress,
+                                             onElementAddress: elementAddress,
+                                             appKeyIndex: appKeyIndexData,
+                                             credentialFlag: aCredentialFlag,
+                                             ttl: Data([aTTL]),
+                                             period: Data([aPublishPeriod]),
+                                             retransmitCount: Data([aRetransmitCoutn]),
+                                             retransmitInterval: Data([aRetransmitIntervalStep]),
+                                             modelIdentifier: aModel,
+                                             onDestinationAddress: nodeEntry.nodeUnicast!)
+
+        self.navigationController?.popViewController(animated: true)
+    }
+
     // MARK: - Navigation
     override func shouldPerformSegue(withIdentifier identifier: String, sender: Any?) -> Bool {
         return ["ShowAppKeyBindingView",
-                "ShowPublishGroupsView",
-                "ShowSubscribeGroupsView"].contains(identifier)
+                "ShowPublicationSettings"].contains(identifier)
     }
 
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "ShowAppKeyBindingView" {
             if let destination = segue.destination as? ModelAppKeyBindingConfigurationTableViewController {
                 destination.setSelectionDelegate(self)
+                destination.setStateManager(meshstateManager)
+            }
+        }
+        if segue.identifier == "ShowPublicationSettings" {
+            if let destination = segue.destination as? ModelPublicationConfigurationTableViewController {
+                destination.setDelegate(self)
                 destination.setStateManager(meshstateManager)
             }
         }
