@@ -11,7 +11,7 @@ import Foundation
 protocol PublicationSettingsDelegate {
     func didDisablePublication()
     func didSavePublicatoinConfiguration(withAddress anAddress: Data,
-                                         appKeyIndex anAppKeyIndex: UInt8,
+                                         appKeyIndex anAppKeyIndex: UInt16,
                                          credentialFlag aCredentialFlag: Bool,
                                          ttl aTTL: UInt8,
                                          publishPeriod aPublishPeriod: UInt8,

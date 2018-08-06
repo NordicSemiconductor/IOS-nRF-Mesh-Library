@@ -12,8 +12,9 @@ import nRFMeshProvision
 class ModelPublicationConfigurationTableViewController: UITableViewController, UITextFieldDelegate {
 
     // MARK: - Properties
-    var meshManager: NRFMeshManager?
-    
+    var meshStateManager: MeshStateManager?
+    var delegate: PublicationSettingsDelegate?
+
     var publicationAddress: Data  = Data([0x00, 0x00]) {
         didSet {
             self.publicationAddressLabel.text = "0x\(publicationAddress.hexString())"
@@ -36,14 +37,15 @@ class ModelPublicationConfigurationTableViewController: UITableViewController, U
     }
     var publishPeriodResolution: PublishPeriodResolution = .hundredsOfMilliseconds {
         didSet {
-            self.periodResolutionLabel.text = "\(publishPeriodResolution)"
+            self.periodResolutionLabel.text =  publishPeriodResolution.description
         }
     }
-    var appKeyIndex: UInt8 = 0x00 {
+    var appKeyIndex: UInt16 = 0x0000 {
         didSet {
             self.appKeyIndexLabel.text = "Key index \(appKeyIndex)"
         }
     }
+
     var ttl:  UInt8 = 0xFF {
         didSet {
             if ttl == 0xFF {
@@ -53,6 +55,7 @@ class ModelPublicationConfigurationTableViewController: UITableViewController, U
             }
         }
     }
+    
     var credentialFlag: Bool = false {
         didSet {
             if friendshipCredentialFlagSwitch.isOn !=  credentialFlag {
@@ -93,16 +96,40 @@ class ModelPublicationConfigurationTableViewController: UITableViewController, U
     @IBOutlet weak var clearPublicationButtonLabel: UILabel!
 
     //MARK: - Implemetnation
+    func setStateManager(_ aManager: MeshStateManager) {
+        self.meshStateManager = aManager
+    }
+    func setDelegate(_ aDelegate: PublicationSettingsDelegate) {
+        delegate = aDelegate
+    }
+
     func handleApplyButtonTapped() {
-        
+        if publicationAddress == Data([0x00, 0x00]) {
+            self.presentConfirmationAlert(withTitle: "Disabling model", andBody: "Setting the publication address to the unassigned address `0x00, 0x00` will effectively disable this model, do you want to proceed ?", andPositiveActionString: "Disable model")
+        } else {
+            delegate?.didSavePublicatoinConfiguration(withAddress: publicationAddress, appKeyIndex: appKeyIndex, credentialFlag: credentialFlag, ttl: ttl, publishPeriod: (publishPeriodSteps << 2 & publishPeriodResolution.rawValue), retransmitCount: publishRetransmission, retransmitIntervalSteps: publishRetransmissionSteps)
+        }
     }
     
     func handleRemovePublicationRowTapped() {
-        
+        presentConfirmationAlert(withTitle: "Remove publication", andBody: "Removing publication will disable the model, are you sure you want to proceed?", andPositiveActionString: "Remove publication")
     }
     
+    func presentConfirmationAlert(withTitle aTitle: String, andBody aBody: String, andPositiveActionString aPositiveString: String) {
+        let confirmationAlert = UIAlertController(title: aTitle, message: aBody, preferredStyle: .actionSheet)
+        let okAction = UIAlertAction(title: aPositiveString, style: .destructive) { (_) in
+            self.delegate?.didDisablePublication()
+        }
+        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel) { (_) in
+            self.dismiss(animated: true, completion: nil)
+        }
+        confirmationAlert.addAction(okAction)
+        confirmationAlert.addAction(cancelAction)
+        self.present(confirmationAlert, animated: true, completion: nil)
+    }
+
     func userDidSelectAppKeyAtWithIndex(_ anIndex: Int) {
-        self.appKeyIndex = UInt8(anIndex)
+        self.appKeyIndex = UInt16(anIndex)
         print("Selected KeyIndex: \(anIndex)")
     }
     
@@ -117,14 +144,7 @@ class ModelPublicationConfigurationTableViewController: UITableViewController, U
             } else {
                 print("Addres not selected, NOOP")
             }
-        }
-        /*Stopped working on setting up the row handlers:
-         2 Pre-populate publication settings view with defaults or currently stored data.
-         3 Setup the delegate to receive callback from the node configuration view
-         4 Update the node configuration view to show the publication settings with the address in a specialized row.
-         5 Add a delete button beside the publication settings display view to easily disable publication.
-         */
-        
+        }        
     }
     func handleRowTappedInRetransmissionSection(_ aRow: Int) {
         if aRow == 0 {
@@ -168,19 +188,15 @@ class ModelPublicationConfigurationTableViewController: UITableViewController, U
         }
         if aRow == 1 {
             self.presentSelectionInput(withTitle: "Resolution", message: "Select desired resolution for publish period", andSelectionContent: [
-                "100s of Milliseconds",
-                "Seconds",
-                "10s of Seconds",
-                "10s of Minutes"]) { (aResolution) in
+                PublishPeriodResolution.hundredsOfMilliseconds.description,
+                PublishPeriodResolution.seconds.description,
+                PublishPeriodResolution.tensOfSeconds.description,
+                PublishPeriodResolution.tensOfMinutes.description]) { (aResolution) in
                     guard aResolution != nil else {
-                        print("No value set")
                         return
                     }
-                    
                     if let resolution = PublishPeriodResolution(rawValue: UInt8(aResolution!)) {
                         self.publishPeriodResolution = resolution
-                    } else {
-                        print("Unknown resolution or none selected")
                     }
             }
         }
@@ -191,7 +207,7 @@ class ModelPublicationConfigurationTableViewController: UITableViewController, U
         }
     }
     func handleRowTappedInTTLSection(_ aRow: Int) {
-        self.presentInputAlert(withTitle: "TTL", message: "Enter desidred TTL", placeHolder: "0xFF", minLength: 2, maxLength: 2) { (aTTL) in
+        self.presentInputAlert(withTitle: "TTL", message: "Enter desidred TTL\nValid values: 0x00 to 0x7F and  0xFF, others are prohibited", placeHolder: "0xFF", minLength: 2, maxLength: 2) { (aTTL) in
             if let aTTL = aTTL {
                 if let ttlData = Data.init(hexString: aTTL) {
                     self.ttl = ttlData[0]
@@ -213,8 +229,15 @@ class ModelPublicationConfigurationTableViewController: UITableViewController, U
     //MARK: - UIViewController
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        let appDelegate = UIApplication.shared.delegate as? AppDelegate
-        meshManager = appDelegate?.meshManager
+        //Set defaults
+        publicationAddress = Data([0xCE, 0xEF])
+        publishRetransmission = 0x01
+        publishRetransmissionSteps = 0x01
+        publishPeriodSteps = 0x00
+        publishPeriodResolution = .hundredsOfMilliseconds
+        appKeyIndex = 0x0000
+        ttl = 0xFF
+        credentialFlag = false
     }
 
     override func viewWillDisappear(_ animated: Bool) {
@@ -362,19 +385,16 @@ class ModelPublicationConfigurationTableViewController: UITableViewController, U
     
     //MARK: - Navigation
     override func shouldPerformSegue(withIdentifier identifier: String, sender: Any?) -> Bool {
-        return identifier == "ShowAppKeySelector" && meshManager != nil
+        return identifier == "ShowAppKeySelector" && meshStateManager != nil
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        guard meshManager != nil else {
-            return
-        }
         let appKeySelector = segue.destination as? AppKeySelectorTableViewController
         appKeySelector?.setSelectionCallback({ (selectedIndex) in
             guard selectedIndex != nil else {
                 return
             }
             self.userDidSelectAppKeyAtWithIndex(selectedIndex!)
-        }, andMeshStateManager: meshManager!.stateManager())
+        }, andMeshStateManager: meshStateManager!)
     }
 }

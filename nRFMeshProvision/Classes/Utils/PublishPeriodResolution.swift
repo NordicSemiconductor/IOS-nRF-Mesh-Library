@@ -18,7 +18,7 @@ public enum PublishPeriodResolution: UInt8 {
         case .hundredsOfMilliseconds:
             return "100s of Milliseconds"
         case .seconds:
-            return "seconds"
+            return "Seconds"
         case .tensOfSeconds:
             return "10s of Seconds"
         case .tensOfMinutes:
