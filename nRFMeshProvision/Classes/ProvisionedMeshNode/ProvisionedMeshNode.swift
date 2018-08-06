@@ -129,6 +129,7 @@ public class ProvisionedMeshNode: NSObject, ProvisionedMeshNodeProtocol {
                                                                            andStateManager: stateManager)
         nodePublishAddressState.setPublish(elementAddress: anElementAddress,
                                            appKeyIndex: anAppKeyIndex,
+                                           credentialFlag: aCredentialFlag,
                                            publishAddress: aPublicationAddress,
                                            publishTTL: aTTL,
                                            publishPeriod: aPeriod,
