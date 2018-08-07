@@ -1,5 +1,5 @@
 //
-//  NodeModelsTableViewController.swift
+//  NodeConfigurationTableViewController.swift
 //  nRFMeshProvision_Example
 //
 //  Created by Mostafa Berg on 16/04/2018.
@@ -9,7 +9,7 @@
 import UIKit
 import nRFMeshProvision
 
-class NodeModelsTableViewController: UITableViewController, ProvisionedMeshNodeDelegate {
+class NodeConfigurationTableViewController: UITableViewController, ProvisionedMeshNodeDelegate {
  
     // MARK: - Properties
     private var nodeEntry: MeshNodeEntry!

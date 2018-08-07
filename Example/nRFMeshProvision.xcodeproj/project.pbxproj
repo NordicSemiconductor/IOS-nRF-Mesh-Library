@@ -36,7 +36,7 @@
 		309CDA39211326B7007D1A6F /* ModelPublicationConfigurationTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 309CDA38211326B7007D1A6F /* ModelPublicationConfigurationTableViewController.swift */; };
 		309CDA3B21142D71007D1A6F /* PublicationSettingsDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 309CDA3A21142D71007D1A6F /* PublicationSettingsDelegate.swift */; };
 		30D40F7A208099BF00DC126F /* LogEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30D40F79208099BF00DC126F /* LogEntry.swift */; };
-		30D40F902084808A00DC126F /* NodeModelsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30D40F8F2084808A00DC126F /* NodeModelsTableViewController.swift */; };
+		30D40F902084808A00DC126F /* NodeConfigurationTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30D40F8F2084808A00DC126F /* NodeConfigurationTableViewController.swift */; };
 		30D40F9720848DFC00DC126F /* ModelConfigurationTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30D40F9620848DFC00DC126F /* ModelConfigurationTableViewController.swift */; };
 		30EF9C32205FB3AA00253F1E /* NetworkDecryptionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30EF9C31205FB3AA00253F1E /* NetworkDecryptionTests.swift */; };
 		30FF5EEA20972672002D7C77 /* ScannerCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30FF5EE920972672002D7C77 /* ScannerCell.swift */; };
@@ -91,7 +91,7 @@
 		309CDA3A21142D71007D1A6F /* PublicationSettingsDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PublicationSettingsDelegate.swift; sourceTree = "<group>"; };
 		30C8D386203C1BD400779325 /* nRFMeshProvision.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = nRFMeshProvision.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		30D40F79208099BF00DC126F /* LogEntry.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LogEntry.swift; sourceTree = "<group>"; };
-		30D40F8F2084808A00DC126F /* NodeModelsTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NodeModelsTableViewController.swift; sourceTree = "<group>"; };
+		30D40F8F2084808A00DC126F /* NodeConfigurationTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NodeConfigurationTableViewController.swift; sourceTree = "<group>"; };
 		30D40F9620848DFC00DC126F /* ModelConfigurationTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelConfigurationTableViewController.swift; sourceTree = "<group>"; };
 		30EF9C31205FB3AA00253F1E /* NetworkDecryptionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkDecryptionTests.swift; sourceTree = "<group>"; };
 		30FF5EE920972672002D7C77 /* ScannerCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScannerCell.swift; sourceTree = "<group>"; };
@@ -160,7 +160,7 @@
 			isa = PBXGroup;
 			children = (
 				30FF5EEB20973B7D002D7C77 /* ReconnectionView */,
-				30D40F8E2084807A00DC126F /* NodeModelsView */,
+				30D40F8E2084807A00DC126F /* NodeConfigurationView */,
 				304DAEA1208091EF006CFEA6 /* MainView */,
 				304DAEA7208091EF006CFEA6 /* NodeInfoView */,
 				304DAEA9208091EF006CFEA6 /* ProvisioningView */,
@@ -254,14 +254,14 @@
 			path = Models;
 			sourceTree = "<group>";
 		};
-		30D40F8E2084807A00DC126F /* NodeModelsView */ = {
+		30D40F8E2084807A00DC126F /* NodeConfigurationView */ = {
 			isa = PBXGroup;
 			children = (
 				30D40F9520848DEC00DC126F /* ModelConfigurationView */,
-				30D40F8F2084808A00DC126F /* NodeModelsTableViewController.swift */,
+				30D40F8F2084808A00DC126F /* NodeConfigurationTableViewController.swift */,
 				306F4D1E20BED7B200572A8F /* NodeModelCell.swift */,
 			);
-			path = NodeModelsView;
+			path = NodeConfigurationView;
 			sourceTree = "<group>";
 		};
 		30D40F9520848DEC00DC126F /* ModelConfigurationView */ = {
@@ -554,7 +554,7 @@
 				306F4D1F20BED7B200572A8F /* NodeModelCell.swift in Sources */,
 				304DAEBE208091EF006CFEA6 /* AppKeyManagerTableViewController.swift in Sources */,
 				304DAEB6208091EF006CFEA6 /* MeshNodeCollectionViewCell.swift in Sources */,
-				30D40F902084808A00DC126F /* NodeModelsTableViewController.swift in Sources */,
+				30D40F902084808A00DC126F /* NodeConfigurationTableViewController.swift in Sources */,
 				302D1F5C20BBF2700022AEB1 /* ToggleCellDelegate.swift in Sources */,
 				30D40F9720848DFC00DC126F /* ModelConfigurationTableViewController.swift in Sources */,
 				304DAEB8208091EF006CFEA6 /* MeshNodeInfoTableViewController.swift in Sources */,
