@@ -91,14 +91,8 @@ class GlobalAppKeyListManagerController: UITableViewController, ProvisionedMeshN
                         //This key doesn't exist, let's add it
                         if let keyData = self.stateManager?.state().appKeys[keyIndex].values.first {
                             self.proxyNode?.appKeyAdd(keyData, atIndex: Data([0x00, UInt8(keyIndex)]), forNetKeyAtIndex: Data([0x00,0x00]), onDestinationAddress: self.nodeEntry!.nodeUnicast!)
-                        } else {
-                            print("AppKey out of bounds")
                         }
-                    } else {
-                        print("AppKey already added")
                     }
-                } else {
-                    print("No key selected")
                 }
             }, andMeshStateManager: self.stateManager!)
         }
