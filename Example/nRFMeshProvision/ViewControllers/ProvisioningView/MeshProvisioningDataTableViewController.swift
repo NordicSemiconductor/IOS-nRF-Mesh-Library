@@ -771,7 +771,7 @@ extension MeshProvisioningDataTableViewController: ProvisionedMeshNodeDelegate {
         }
     }
     
-    func receivedModelAppBindStatus(_ modelAppStatusData: ModelAppBindStatusMessage) {}
+    func receivedModelAppStatus(_ modelAppStatusData: ModelAppStatusMessage) {}
     func receivedModelPublicationStatus(_ modelPublicationStatusData: ModelPublicationStatusMessage) {}
     func receivedModelSubsrciptionStatus(_ modelSubscriptionStatusData: ModelSubscriptionStatusMessage) {}
     func receivedDefaultTTLStatus(_ defaultTTLStatusData: DefaultTTLStatusMessage) {}

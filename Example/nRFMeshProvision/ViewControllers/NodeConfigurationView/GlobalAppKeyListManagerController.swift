@@ -111,7 +111,7 @@ class GlobalAppKeyListManagerController: UITableViewController, ProvisionedMeshN
     func nodeDidCompleteDiscovery(_ aNode: ProvisionedMeshNode) {}
     func nodeShouldDisconnect(_ aNode: ProvisionedMeshNode) {}
     func receivedCompositionData(_ compositionData: CompositionStatusMessage) {}
-    func receivedModelAppBindStatus(_ modelAppStatusData: ModelAppBindStatusMessage) {}
+    func receivedModelAppStatus(_ modelAppStatusData: ModelAppStatusMessage) {}
     func receivedModelPublicationStatus(_ modelPublicationStatusData: ModelPublicationStatusMessage) {}
     func receivedModelSubsrciptionStatus(_ modelSubscriptionStatusData: ModelSubscriptionStatusMessage) {}
     func receivedDefaultTTLStatus(_ defaultTTLStatusData: DefaultTTLStatusMessage) {}

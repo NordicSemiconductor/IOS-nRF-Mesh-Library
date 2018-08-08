@@ -241,7 +241,7 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
         //noop
     }
 
-    func receivedModelAppBindStatus(_ modelAppStatusData: ModelAppBindStatusMessage) {
+    func receivedModelAppStatus(_ modelAppStatusData: ModelAppStatusMessage) {
         if modelAppStatusData.statusCode == .success {
             print("Model bounded!")
             print("AppKeyIndex: \(modelAppStatusData.appkeyIndex.hexString())")

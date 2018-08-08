@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct ModelAppBindStatusMessage {
+public struct ModelAppStatusMessage {
     public var sourceAddress: Data
     public var statusCode: MessageStatusCodes
     public var elementAddress: Data

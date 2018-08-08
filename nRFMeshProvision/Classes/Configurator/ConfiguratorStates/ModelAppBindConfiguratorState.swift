@@ -103,9 +103,9 @@ class ModelAppBindConfiguratorState: NSObject, ConfiguratorStateProtocol {
             print("Incoming DPU: \(incomingData.hexString())")
             let strippedOpcode = Data(incomingData.dropFirst())
             if let result = networkLayer.incomingPDU(strippedOpcode) {
-                if result is ModelAppBindStatusMessage {
-                    let modelKeyStatus = result as! ModelAppBindStatusMessage
-                    target.delegate?.receivedModelAppBindStatus(modelKeyStatus)
+                if result is ModelAppStatusMessage {
+                    let modelKeyStatus = result as! ModelAppStatusMessage
+                    target.delegate?.receivedModelAppStatus(modelKeyStatus)
                 } else {
                     print("Ignoring non model app status message")
                 }

@@ -291,7 +291,7 @@ extension MainNetworkViewController: ProvisionedMeshNodeDelegate {
         //NOOP
     }
     
-    func receivedModelAppBindStatus(_ modelAppStatusData: ModelAppBindStatusMessage) {
+    func receivedModelAppStatus(_ modelAppStatusData: ModelAppStatusMessage) {
         //NOOP
     }
     
