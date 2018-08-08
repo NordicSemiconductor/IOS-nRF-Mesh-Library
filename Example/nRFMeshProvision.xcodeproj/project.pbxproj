@@ -35,6 +35,7 @@
 		3089BCA02099CA4900E30192 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3089BC9E2099CA4900E30192 /* LaunchScreen.storyboard */; };
 		309CDA39211326B7007D1A6F /* ModelPublicationConfigurationTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 309CDA38211326B7007D1A6F /* ModelPublicationConfigurationTableViewController.swift */; };
 		309CDA3B21142D71007D1A6F /* PublicationSettingsDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 309CDA3A21142D71007D1A6F /* PublicationSettingsDelegate.swift */; };
+		309CDA4021197E23007D1A6F /* GlobalAppKeyListManagerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 309CDA3F21197E23007D1A6F /* GlobalAppKeyListManagerController.swift */; };
 		30D40F7A208099BF00DC126F /* LogEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30D40F79208099BF00DC126F /* LogEntry.swift */; };
 		30D40F902084808A00DC126F /* NodeConfigurationTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30D40F8F2084808A00DC126F /* NodeConfigurationTableViewController.swift */; };
 		30D40F9720848DFC00DC126F /* ModelConfigurationTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30D40F9620848DFC00DC126F /* ModelConfigurationTableViewController.swift */; };
@@ -89,6 +90,7 @@
 		3089BC9F2099CA4900E30192 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		309CDA38211326B7007D1A6F /* ModelPublicationConfigurationTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelPublicationConfigurationTableViewController.swift; sourceTree = "<group>"; };
 		309CDA3A21142D71007D1A6F /* PublicationSettingsDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PublicationSettingsDelegate.swift; sourceTree = "<group>"; };
+		309CDA3F21197E23007D1A6F /* GlobalAppKeyListManagerController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlobalAppKeyListManagerController.swift; sourceTree = "<group>"; };
 		30C8D386203C1BD400779325 /* nRFMeshProvision.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = nRFMeshProvision.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		30D40F79208099BF00DC126F /* LogEntry.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LogEntry.swift; sourceTree = "<group>"; };
 		30D40F8F2084808A00DC126F /* NodeConfigurationTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NodeConfigurationTableViewController.swift; sourceTree = "<group>"; };
@@ -159,6 +161,7 @@
 		304DAEA0208091EF006CFEA6 /* ViewControllers */ = {
 			isa = PBXGroup;
 			children = (
+				304DAEAA208091EF006CFEA6 /* AppKeySelectorTableViewController.swift */,
 				30FF5EEB20973B7D002D7C77 /* ReconnectionView */,
 				30D40F8E2084807A00DC126F /* NodeConfigurationView */,
 				304DAEA1208091EF006CFEA6 /* MainView */,
@@ -192,7 +195,6 @@
 		304DAEA9208091EF006CFEA6 /* ProvisioningView */ = {
 			isa = PBXGroup;
 			children = (
-				304DAEAA208091EF006CFEA6 /* AppKeySelectorTableViewController.swift */,
 				304DAEAB208091EF006CFEA6 /* MeshNodeLogTableViewCell.swift */,
 				304DAEAD208091EF006CFEA6 /* MeshProvisioningDataTableViewController.swift */,
 				302D1F4620B44E000022AEB1 /* ProvisioningLogTableViewController.swift */,
@@ -260,6 +262,7 @@
 				30D40F9520848DEC00DC126F /* ModelConfigurationView */,
 				30D40F8F2084808A00DC126F /* NodeConfigurationTableViewController.swift */,
 				306F4D1E20BED7B200572A8F /* NodeModelCell.swift */,
+				309CDA3F21197E23007D1A6F /* GlobalAppKeyListManagerController.swift */,
 			);
 			path = NodeConfigurationView;
 			sourceTree = "<group>";
@@ -538,6 +541,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				309CDA4021197E23007D1A6F /* GlobalAppKeyListManagerController.swift in Sources */,
 				302D1F5A20BBEB4F0022AEB1 /* ToggleControlTableViewCell.swift in Sources */,
 				304DAEB7208091EF006CFEA6 /* RootViewController.swift in Sources */,
 				30FF5EED20973E69002D7C77 /* ReconnectionViewController.swift in Sources */,

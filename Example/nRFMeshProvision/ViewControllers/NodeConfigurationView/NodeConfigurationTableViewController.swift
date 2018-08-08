@@ -33,13 +33,20 @@ class NodeConfigurationTableViewController: UITableViewController, ProvisionedMe
     // MARK: - TableViewController DataSource & Delegate
     override func numberOfSections(in tableView: UITableView) -> Int {
         if let elementCount = nodeEntry.elements?.count {
-            return elementCount + 1 //1 extra row for the node reset cell
+            return elementCount + 2 //extra rows for the node reset cell and the AppKey management cell
         }
-        return 1 //node reset cell
+        return 2 //node reset cell + AppKey Management Cell
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if section == nodeEntry.elements?.count {
+        guard nodeEntry.elements != nil else {
+            print("No entries")
+            return 0
+        }
+        if section == nodeEntry.elements!.count {
+            //AppKeys management
+            return 1
+        } else if section == nodeEntry.elements!.count + 1 {
             //Node reset cell
             return 1
         } else {
@@ -49,7 +56,13 @@ class NodeConfigurationTableViewController: UITableViewController, ProvisionedMe
     }
 
     override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        if section == nodeEntry.elements?.count {
+        guard nodeEntry.elements != nil else {
+            print("No entries")
+            return "N/A"
+        }
+        if section == nodeEntry.elements!.count {
+            return "Application Keys"
+        } else  if section == nodeEntry.elements!.count + 1 {
             return "Node Reset"
         } else {
             let unicast = nodeEntry.nodeUnicast!
@@ -60,7 +73,19 @@ class NodeConfigurationTableViewController: UITableViewController, ProvisionedMe
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         var cell: UITableViewCell
-        if indexPath.section == nodeEntry.elements?.count {
+        guard nodeEntry.elements != nil else {
+            print("No elements")
+            return UITableViewCell()
+        }
+        if indexPath.section == nodeEntry.elements!.count {
+            cell = tableView.dequeueReusableCell(withIdentifier: "MeshAppKeysCell", for: indexPath)
+            cell.textLabel?.text = "Global AppKey List"
+            if nodeEntry.appKeys.count == 0 {
+                cell.detailTextLabel?.text = "List is empty, tap to add keys"
+            } else {
+                cell.detailTextLabel?.text = "\(nodeEntry.appKeys.count) Keys added"
+            }
+        } else if indexPath.section == nodeEntry.elements!.count + 1 {
             cell = tableView.dequeueReusableCell(withIdentifier: "MeshNodeDestructiveCell", for: indexPath)
             cell.textLabel?.text = "Reset Node"
             cell.detailTextLabel?.text = nil
@@ -76,7 +101,13 @@ class NodeConfigurationTableViewController: UITableViewController, ProvisionedMe
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        if indexPath.section == nodeEntry.elements?.count {
+        guard nodeEntry.elements != nil else {
+            print("No Elements")
+            return
+        }
+        if indexPath.section == nodeEntry.elements!.count {
+            self.performSegue(withIdentifier: "ShowAppKeyListManager", sender: indexPath)
+        } else if indexPath.section == nodeEntry.elements!.count + 1 {
             self.presentConfirmationAlert(withBody: "This will remove the node from the network.\nThis is a non-reversible action, are you sure you want to reset this node?")
         } else {
             self.performSegue(withIdentifier: "ShowModelConfiguration", sender: indexPath)
@@ -157,7 +188,7 @@ class NodeConfigurationTableViewController: UITableViewController, ProvisionedMe
 
     // MARK: - Navigation
     override func shouldPerformSegue(withIdentifier identifier: String, sender: Any?) -> Bool {
-        return identifier == "ShowModelConfiguration"
+        return ["ShowModelConfiguration", "ShowAppKeyListManager"].contains(identifier)
     }
 
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -169,6 +200,13 @@ class NodeConfigurationTableViewController: UITableViewController, ProvisionedMe
                     configurationView.setNodeEntry(nodeEntry, withModelPath: indexPath)
                     configurationView.setProxyNode(proxyNode)
                 }
+            }
+        } else if segue.identifier == "ShowAppKeyListManager" {
+            print("Showing appkey list manager")
+            if let appKeyListView = segue.destination as? GlobalAppKeyListManagerController {
+                appKeyListView.setMeshStateManager(meshStateManager)
+                appKeyListView.setNodeEntry(nodeEntry)
+                appKeyListView.setProxyNode(proxyNode)
             }
         }
     }

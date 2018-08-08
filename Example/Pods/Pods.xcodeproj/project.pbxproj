@@ -18,6 +18,8 @@
 		22DC3A3EF0FA54D768F8056AC64207C1 /* CompositionGetMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 189A64EA83AB9BD03B5DD62C84571458 /* CompositionGetMessage.swift */; };
 		249A77A7D8F05753AFD82E08F3E3DF53 /* GenericOnOffSetControllerState.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDE522F0A338261A1279F229A663B72C /* GenericOnOffSetControllerState.swift */; };
 		2B0BA4AB629E8F32074A86F339BB850E /* MeshAddressTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 211F4150E97C24A8D6654D1B60060392 /* MeshAddressTypes.swift */; };
+		309CDA42211AF966007D1A6F /* AppKeyDeleteMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 309CDA41211AF966007D1A6F /* AppKeyDeleteMessage.swift */; };
+		309CDA44211AFA46007D1A6F /* AppKeyDeleteConfiguratorState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 309CDA43211AFA46007D1A6F /* AppKeyDeleteConfiguratorState.swift */; };
 		33ED35DAD6852ACD484131FA93DC476C /* NetworkLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 698C615BDA76FB6167818C88D3359EC6 /* NetworkLayer.swift */; };
 		384C202AF7FAC062C9D8C412D43551D5 /* LowerTransportPDUParams.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43BFDC6166921D3ECCBD5420B0991D14 /* LowerTransportPDUParams.swift */; };
 		3970E5E9DF2B76F2AA8131C9980EDEC4 /* CompositionStatusMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D4E8A7935CE62BBAD5495B25AE888BD /* CompositionStatusMessage.swift */; };
@@ -162,6 +164,8 @@
 		2B68FB305EB45C1312AEA6F2A16E12E4 /* bn.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = bn.h; path = opensslIncludes/openssl/bn.h; sourceTree = "<group>"; };
 		2F51E7CAC7A909CB5C0216F38FBF04AE /* nRFMeshProvision.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = nRFMeshProvision.xcconfig; sourceTree = "<group>"; };
 		2FC1C3A4C27E1C86DA9418A50DC0195B /* ripemd.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = ripemd.h; path = opensslIncludes/openssl/ripemd.h; sourceTree = "<group>"; };
+		309CDA41211AF966007D1A6F /* AppKeyDeleteMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppKeyDeleteMessage.swift; sourceTree = "<group>"; };
+		309CDA43211AFA46007D1A6F /* AppKeyDeleteConfiguratorState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppKeyDeleteConfiguratorState.swift; sourceTree = "<group>"; };
 		318B21D3C09027B98FF8F0C00493237E /* dtls1.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = dtls1.h; path = opensslIncludes/openssl/dtls1.h; sourceTree = "<group>"; };
 		3528FB34E556D45C5D5EC849E81AC93A /* AccessMessagePDU.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AccessMessagePDU.swift; sourceTree = "<group>"; };
 		3627AE1FE0A3F706B859C42917B0B484 /* ModelSubscriptionAddConfiguratorState.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ModelSubscriptionAddConfiguratorState.swift; sourceTree = "<group>"; };
@@ -616,6 +620,7 @@
 				D6F8719374912B38308D222B3F753737 /* ModelSubscriptionStatusMessage.swift */,
 				406F801DF2E5E59254B0BF3AF8AF7779 /* NodeResetMesage.swift */,
 				B8DE0DC0A2866EC798776AB1D102F11D /* NodeResetStatusMessage.swift */,
+				309CDA41211AF966007D1A6F /* AppKeyDeleteMessage.swift */,
 			);
 			path = AccessMessages;
 			sourceTree = "<group>";
@@ -766,6 +771,7 @@
 			isa = PBXGroup;
 			children = (
 				6920857D5791E321D9A1F6242CBF2ADA /* AppKeyAddConfiguratorState.swift */,
+				309CDA43211AFA46007D1A6F /* AppKeyDeleteConfiguratorState.swift */,
 				46727B010AEFB6909AF591856E4204E4 /* CompositionGetConfiguratorState.swift */,
 				D52BD0A54FB2005370541615474564A9 /* DefaultTTLGetConfiguratorState.swift */,
 				9FD82D6B14A9C45742E6147C811BCB11 /* DiscoveryConfiguratorState.swift */,
@@ -995,9 +1001,11 @@
 				2B0BA4AB629E8F32074A86F339BB850E /* MeshAddressTypes.swift in Sources */,
 				BD97FAF1AD6199F770CE31FF464909A5 /* MeshConstants.swift in Sources */,
 				8361A7E5D81122C6E6E1BF198DBB8937 /* MeshModelIdentifiers.swift in Sources */,
+				309CDA44211AFA46007D1A6F /* AppKeyDeleteConfiguratorState.swift in Sources */,
 				9508A2714FB046D867194BE476D0263E /* MeshModelIdentifierStringConverter.swift in Sources */,
 				7C700E66C738B36EC434053F49DDC956 /* MeshNodeEntry.swift in Sources */,
 				EDA102CB2CD187A8245E5FDA0C7FC764 /* MeshState.swift in Sources */,
+				309CDA42211AF966007D1A6F /* AppKeyDeleteMessage.swift in Sources */,
 				61F981BFD761E465E295A99FB36F5F94 /* MeshStateManager.swift in Sources */,
 				54F58B3C8CEB564ABCECB429247E8E7A /* MeshVendorModelIdentifiers.swift in Sources */,
 				ABE0D3BCFB606533BDFCF73C44C6863D /* MeshVendorModelIdentifierStringConverter.swift in Sources */,
