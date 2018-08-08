@@ -110,11 +110,6 @@ class GlobalAppKeyListManagerController: UITableViewController, ProvisionedMeshN
         let unicast = appKeyStatusData.sourceAddress
         if let anIndex = stateManager?.state().provisionedNodes.index(where: { $0.nodeUnicast == unicast}) {
             self.nodeEntry = stateManager?.state().provisionedNodes[anIndex]
-            print("Node keys {")
-            for aKey in self.nodeEntry!.appKeys {
-                print("\t\tKey: \(aKey.hexString())")
-            }
-            print("}")
             self.tableView.reloadData()
         }
     }
