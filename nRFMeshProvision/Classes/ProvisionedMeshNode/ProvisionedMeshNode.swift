@@ -159,14 +159,26 @@ public class ProvisionedMeshNode: NSObject, ProvisionedMeshNodeProtocol {
     }
 
     public func bindAppKey(withIndex anAppKeyIndex: Data,
-                           toModelId aModelId: Data,
-                           onElementAddress anElementAddress: Data,
+                           modelId aModelId: Data,
+                           elementAddress anElementAddress: Data,
                            onDestinationAddress anAddress: Data) {
         let bindState = ModelAppBindConfiguratorState(withTargetProxyNode: self,
                                                       destinationAddress: anAddress,
                                                       andStateManager: stateManager)
         bindState.setBinding(elementAddress: anElementAddress, appKeyIndex: anAppKeyIndex, andModelIdentifier: aModelId)
         configurationState = bindState
+        configurationState.execute()
+    }
+    
+    public func unbindAppKey(withIndex anAppKeyIndex: Data,
+                             modelId aModelId: Data,
+                             elementAddress anElementAddress: Data,
+                             onDestinationAddress anAddress: Data) {
+        let unbindState = ModelAppUnbindConfiguratorState(withTargetProxyNode: self,
+                                                        destinationAddress: anAddress,
+                                                        andStateManager: stateManager)
+        unbindState.setUnbinding(elementAddress: anElementAddress, appKeyIndex: anAppKeyIndex, andModelIdentifier: aModelId)
+        configurationState = unbindState
         configurationState.execute()
     }
 

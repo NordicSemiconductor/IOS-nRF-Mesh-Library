@@ -21,14 +21,15 @@ public struct ModelAppStatusMessage {
         } else {
             statusCode = .success
         }
-        elementAddress = aPayload[1...2]
-        appkeyIndex = aPayload[3...4]
+        
+        elementAddress = Data([aPayload[2], aPayload[1]])
+        appkeyIndex = Data([aPayload[4], aPayload[3]])
         if aPayload.count == 9 {
             //Vendor model
-            modelIdentifier = aPayload[5...8]
+            modelIdentifier = Data([aPayload[6], aPayload[5], aPayload[8], aPayload[7]])
         } else {
             //Sig model
-            modelIdentifier = aPayload[5...6]
+            modelIdentifier = Data([aPayload[6], aPayload[5]])
         }
     }
 }

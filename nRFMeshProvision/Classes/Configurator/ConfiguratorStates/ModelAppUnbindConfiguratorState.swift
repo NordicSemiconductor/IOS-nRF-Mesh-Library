@@ -1,30 +1,35 @@
 //
-//  DefaultTTLGetConfiguratorState.swift
+//  ModelAppUnbindConfiguratorState.swift
 //  nRFMeshProvision
 //
-//  Created by Mostafa Berg on 27/04/2018.
+//  Created by Mostafa Berg on 08/08/2018.
 //
 
 import Foundation
+
 import CoreBluetooth
+import Foundation
 
-class DefaultTTLGetConfiguratorState: NSObject, ConfiguratorStateProtocol {
-
+class ModelAppUnbindConfiguratorState: NSObject, ConfiguratorStateProtocol {
+    
     // MARK: - Properties
     private var proxyService            : CBService!
     private var dataInCharacteristic    : CBCharacteristic!
     private var dataOutCharacteristic   : CBCharacteristic!
+    private var elementAddress          : Data!
+    private var appKeyIndex             : Data!
+    private var modelIdentifier         : Data!
     private var networkLayer            : NetworkLayer!
     private var segmentedData: Data
-
+    
     // MARK: - ConfiguratorStateProtocol
     var destinationAddress  : Data
     var target              : ProvisionedMeshNodeProtocol
     var stateManager        : MeshStateManager
-
+    
     required init(withTargetProxyNode aNode: ProvisionedMeshNodeProtocol,
-             destinationAddress aDestinationAddress: Data,
-             andStateManager aStateManager: MeshStateManager) {
+                  destinationAddress aDestinationAddress: Data,
+                  andStateManager aStateManager: MeshStateManager) {
         target = aNode
         segmentedData = Data()
         stateManager = aStateManager
@@ -41,24 +46,30 @@ class DefaultTTLGetConfiguratorState: NSObject, ConfiguratorStateProtocol {
             self.acknowlegeSegment(withAckData: ackData)
         })
     }
-
-    func humanReadableName() -> String {
-        return "Default TTL Get"
+    
+    public func setUnbinding(elementAddress anElementAddress: Data,
+                           appKeyIndex anAppKeyIndex: Data,
+                           andModelIdentifier aModelIdentifier: Data) {
+        elementAddress  = anElementAddress
+        appKeyIndex     = anAppKeyIndex
+        modelIdentifier = aModelIdentifier
     }
-
+    
+    func humanReadableName() -> String {
+        return "Model AppKey Unbind"
+    }
+    
     func execute() {
-    //    let message = AppKeyAddMessage(withAppKeyData: appKey,
-    //                                   appKeyIndex: appKeyIndex,
-    //                                   netkeyIndex: netKeyIndex)
-        let message = DefaultTTLGetMessage()
+        let message = ModelAppUnbindMessage(withElementAddress: elementAddress,
+                                          appKeyIndex: appKeyIndex,
+                                          andModelIdentifier: modelIdentifier)
         //Send to destination (unicast)
         let payloads = message.assemblePayload(withMeshState: stateManager.state(), toAddress: destinationAddress)
         for aPayload in payloads! {
             var data = Data([0x00]) //Type => Network
             data.append(aPayload)
-            print("Full PDU: \(data.hexString())")
             if data.count <= target.basePeripheral().maximumWriteValueLength(for: .withoutResponse) {
-                print("Sending  data: \(data.hexString())")
+                print("Sending model app unbind data: \(data.hexString())")
                 target.basePeripheral().writeValue(data, for: dataInCharacteristic, type: .withoutResponse)
             } else {
                 print("maximum write length is shorter than PDU, will Segment")
@@ -80,34 +91,34 @@ class DefaultTTLGetConfiguratorState: NSObject, ConfiguratorStateProtocol {
                     segmentedProvisioningData.append(Data(chunkData))
                 }
                 for aSegment in segmentedProvisioningData {
-                    print("Sending segment: \(aSegment.hexString())")
+                    print("Sending model app unbind segment: \(aSegment.hexString())")
                     target.basePeripheral().writeValue(aSegment, for: dataInCharacteristic, type: .withoutResponse)
                 }
             }
         }
     }
-
+    
     func receivedData(incomingData : Data) {
         if incomingData[0] == 0x01 {
             print("Secure beacon: \(incomingData.hexString())")
         } else {
+            print("Incoming DPU: \(incomingData.hexString())")
             let strippedOpcode = Data(incomingData.dropFirst())
             if let result = networkLayer.incomingPDU(strippedOpcode) {
-                if result is DefaultTTLStatusMessage {
-                    let ttlStatus = result as! DefaultTTLStatusMessage
-                    target.delegate?.receivedDefaultTTLStatus(ttlStatus)
-                    let nextState = SleepConfiguratorState(withTargetProxyNode: target, destinationAddress: destinationAddress, andStateManager: stateManager)
-                    target.switchToState(nextState)
+                if result is ModelAppStatusMessage {
+                    let modelKeyStatus = result as! ModelAppStatusMessage
+                    target.delegate?.receivedModelAppStatus(modelKeyStatus)
+                } else {
+                    print("Ignoring non model app status message")
                 }
-            } else {
-                print("ignoring non default TTL status message")
             }
         }
     }
-
+    
     private func calculateDataRanges(_ someData: Data, withSize aChunkSize: Int) -> [Range<Int>] {
         var totalLength = someData.count
         var ranges = [Range<Int>]()
+        
         var partIdx = 0
         while (totalLength > 0) {
             var range : Range<Int>
@@ -121,9 +132,10 @@ class DefaultTTLGetConfiguratorState: NSObject, ConfiguratorStateProtocol {
             ranges.append(range)
             partIdx += 1
         }
+        
         return ranges
     }
-
+    
     private func acknowlegeSegment(withAckData someData: Data) {
         print("Sending acknowledgement: \(someData.hexString())")
         if someData.count <= self.target.basePeripheral().maximumWriteValueLength(for: .withoutResponse) {
@@ -153,18 +165,18 @@ class DefaultTTLGetConfiguratorState: NSObject, ConfiguratorStateProtocol {
             }
         }
     }
-
+    
     // MARK: - CBPeripheralDelegate
     func peripheral(_ peripheral: CBPeripheral, didDiscoverServices error: Error?) {
         //NOOP
     }
-
+    
     func peripheral(_ peripheral: CBPeripheral, didDiscoverCharacteristicsFor service: CBService, error: Error?) {
         //NOOP
     }
-
+    
     var lastMessageType = 0xC0
-
+    
     func peripheral(_ peripheral: CBPeripheral, didUpdateValueFor characteristic: CBCharacteristic, error: Error?) {
         print("Cahrcateristic value updated: \(characteristic.value!.hexString())")
         //SAR handling
@@ -181,7 +193,7 @@ class DefaultTTLGetConfiguratorState: NSObject, ConfiguratorStateProtocol {
         } else if characteristic.value![0] & 0xC0 == 0x80 {
             lastMessageType = 0x80
             print("Segmented data cont")
-            segmentedData.append(characteristic.value!.dropFirst())
+            segmentedData.append(Data(characteristic.value!.dropFirst()))
         } else if characteristic.value![0] & 0xC0 == 0xC0 {
             lastMessageType = 0xC0
             print("Segmented data end")
@@ -194,7 +206,7 @@ class DefaultTTLGetConfiguratorState: NSObject, ConfiguratorStateProtocol {
             receivedData(incomingData: Data(characteristic.value!))
         }
     }
-
+    
     func peripheral(_ peripheral: CBPeripheral, didUpdateNotificationStateFor characteristic: CBCharacteristic, error: Error?) {
         print("Characteristic notification state changed")
     }

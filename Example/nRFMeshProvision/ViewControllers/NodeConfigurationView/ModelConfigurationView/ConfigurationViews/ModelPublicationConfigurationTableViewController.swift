@@ -117,6 +117,11 @@ class ModelPublicationConfigurationTableViewController: UITableViewController, U
     
     func presentConfirmationAlert(withTitle aTitle: String, andBody aBody: String, andPositiveActionString aPositiveString: String) {
         let confirmationAlert = UIAlertController(title: aTitle, message: aBody, preferredStyle: .actionSheet)
+        if let sourceView = tableView.cellForRow(at: IndexPath(item: 0, section: 5)) {
+            confirmationAlert.popoverPresentationController?.sourceView = sourceView.contentView
+            let sourceFrame = sourceView.contentView.frame
+            confirmationAlert.popoverPresentationController?.sourceRect = sourceFrame
+        }
         let okAction = UIAlertAction(title: aPositiveString, style: .destructive) { (_) in
             self.delegate?.didDisablePublication()
         }

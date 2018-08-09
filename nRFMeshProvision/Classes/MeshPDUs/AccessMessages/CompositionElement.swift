@@ -83,6 +83,11 @@ public struct CompositionElement: Codable {
         }
     }
 
+    public mutating func removeKeyBinding(_ aKey: Data, forModelId aModelId: Data) {
+        if let modelIndex = modelKeyBindings.index(forKey: aModelId) {
+            modelKeyBindings.remove(at: modelIndex)
+        }
+    }
     public mutating func setKeyBinding(_ aKey: Data, forModelId aModelId: Data) {
         if modelKeyBindings[aModelId] == nil {
             modelKeyBindings[aModelId] = aKey

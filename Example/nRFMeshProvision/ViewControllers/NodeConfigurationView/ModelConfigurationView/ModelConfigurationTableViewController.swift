@@ -14,6 +14,10 @@ private enum SubscriptionActions {
     case subscriptionAdd
     case subscriptionDelete
 }
+private enum ModelAppActions {
+    case modelAppBind
+    case modelAppUnbind
+}
 
 class ModelConfigurationTableViewController: UITableViewController, ProvisionedMeshNodeDelegate, UITextFieldDelegate, ToggleCellDelegate, PublicationSettingsDelegate {
 
@@ -30,6 +34,7 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
     private var originalDelegate: ProvisionedMeshNodeDelegate?
     private var centralManager: CBCentralManager?
     private var lastSubscriptionAction: SubscriptionActions?
+    private var lastModelAppAction: ModelAppActions?
 
     // MARK: - Implementation
     public func setProxyNode(_ aNode: ProvisionedMeshNode) {
@@ -72,7 +77,37 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
                                               onDestinationAddress: nodeEntry.nodeUnicast!)
     }
 
+    func didSelectUnbindAppKeyAtIndex(_ anAppKeyIndex: UInt16) {
+        lastModelAppAction = .modelAppUnbind
+        var anIndex = anAppKeyIndex.bigEndian
+        let appKeyIndexData = Data(bytes: &anIndex, count: MemoryLayout<UInt16>.size)
+        var keyFound = false
+        for aBoundAppKeyIndex in nodeEntry.appKeys {
+            if aBoundAppKeyIndex == appKeyIndexData {
+                keyFound = true
+            }
+        }
+        let appKey = meshstateManager.state().appKeys[Int(anAppKeyIndex)]
+        let selectedAppKeyName = appKey.keys.first!
+        if !keyFound {
+            showstatusCodeAlert(withTitle: "AppKey is not on the node's list",
+                                andMessage: "\"\(selectedAppKeyName)\" has not been added to this node's AppKey list and unbinding cannot be performed on this model.")
+        } else {
+            let elementIdx = selectedModelIndexPath.section
+            let modelIdx = selectedModelIndexPath.row
+            let aModel = nodeEntry.elements![elementIdx].allSigAndVendorModels()[modelIdx]
+            let unicast = nodeEntry.nodeUnicast!
+            let elementAddress = Data([unicast[0], unicast[1] + UInt8(elementIdx)])
+            targetNode.unbindAppKey(withIndex: appKeyIndexData,
+                                  modelId: aModel,
+                                  elementAddress: elementAddress,
+                                  onDestinationAddress: nodeEntry.nodeUnicast!)
+            print("Unbinding appkey \(selectedAppKeyName) on Model \(aModel.hexString())")
+        }
+    }
+
     func didSelectAppKeyAtIndex(_ anAppKeyIndex: UInt16) {
+        lastModelAppAction = .modelAppBind
         var anIndex = anAppKeyIndex.bigEndian
         let appKeyIndexData = Data(bytes: &anIndex, count: MemoryLayout<UInt16>.size)
         var keyFound = false
@@ -93,8 +128,8 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
             let unicast = nodeEntry.nodeUnicast!
             let elementAddress = Data([unicast[0], unicast[1] + UInt8(elementIdx)])
             targetNode.bindAppKey(withIndex: appKeyIndexData,
-                                  toModelId: aModel,
-                                  onElementAddress: elementAddress,
+                                  modelId: aModel,
+                                  elementAddress: elementAddress,
                                   onDestinationAddress: nodeEntry.nodeUnicast!)
             print("Binding appkey \(selectedAppKeyName) to Model \(aModel.hexString())")
         }
@@ -243,7 +278,13 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
 
     func receivedModelAppStatus(_ modelAppStatusData: ModelAppStatusMessage) {
         if modelAppStatusData.statusCode == .success {
-            print("Model bounded!")
+            if lastModelAppAction == .modelAppBind {
+                print("AppKey Bound!")
+            } else if lastModelAppAction == .modelAppUnbind {
+                print("AppKey Unbound!")
+            } else {
+                print("Other ModelApp action performed")
+            }
             print("AppKeyIndex: \(modelAppStatusData.appkeyIndex.hexString())")
             print("Element Addr: \(modelAppStatusData.elementAddress.hexString())")
             print("ModelIdentifier: \(modelAppStatusData.modelIdentifier.hexString())")
@@ -258,20 +299,32 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
             if let anIndex = state.provisionedNodes.index(where: { $0.nodeUnicast == nodeEntry.nodeUnicast}) {
                 let aNodeEntry = state.provisionedNodes[anIndex]
                 if var anElement = aNodeEntry.elements?[elementIdx] {
-                    anElement.setKeyBinding(modelAppStatusData.appkeyIndex, forModelId: aModel)
-                    aNodeEntry.elements?.remove(at: elementIdx)
-                    aNodeEntry.elements?.insert(anElement, at: elementIdx)
+                    if lastModelAppAction == .modelAppBind {
+                        anElement.setKeyBinding(modelAppStatusData.appkeyIndex, forModelId: aModel)
+                        aNodeEntry.elements?.remove(at: elementIdx)
+                        aNodeEntry.elements?.insert(anElement, at: elementIdx)
+                    } else if lastModelAppAction == .modelAppUnbind {
+                        anElement.removeKeyBinding(modelAppStatusData.appkeyIndex, forModelId: aModel)
+                        aNodeEntry.elements?.remove(at: elementIdx)
+                        aNodeEntry.elements?.insert(anElement, at: elementIdx)
+                    }
                 }
                 //and update
                 state.provisionedNodes.remove(at: anIndex)
                 state.provisionedNodes.insert(aNodeEntry, at: anIndex)
                 meshstateManager.saveState()
+                meshstateManager.restoreState()
+                let targetNodeToUpdate = nodeEntry.nodeUnicast!
+                nodeEntry = meshstateManager.state().provisionedNodes.first { (aNode) -> Bool in
+                    aNode.nodeUnicast == targetNodeToUpdate
+                }
             }
             tableView.reloadData()
         } else {
             handleAlertForStatusCode(modelAppStatusData.statusCode)
             print("Failed. Status code: \(modelAppStatusData.statusCode)")
         }
+        lastModelAppAction = nil
     }
 
     func receivedModelPublicationStatus(_ modelPublicationStatusData: ModelPublicationStatusMessage) {
