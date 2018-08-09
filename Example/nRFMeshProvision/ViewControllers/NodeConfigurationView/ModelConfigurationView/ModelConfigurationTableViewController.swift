@@ -316,7 +316,7 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
                 meshstateManager.restoreState()
                 let targetNodeToUpdate = nodeEntry.nodeUnicast!
                 nodeEntry = meshstateManager.state().provisionedNodes.first { (aNode) -> Bool in
-                    aNode.nodeUnicast == targetNodeToUpdate
+                    return aNode.nodeUnicast == targetNodeToUpdate
                 }
             }
             tableView.reloadData()
@@ -358,6 +358,11 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
                 state.provisionedNodes.remove(at: anIndex)
                 state.provisionedNodes.insert(aNodeEntry, at: anIndex)
                 meshstateManager.saveState()
+                meshstateManager.restoreState()
+                let targetNodeToUpdate = nodeEntry.nodeUnicast!
+                nodeEntry = meshstateManager.state().provisionedNodes.first { (aNode) -> Bool in
+                    return aNode.nodeUnicast == targetNodeToUpdate
+                }
             }
             tableView.reloadData()
         } else {
@@ -399,6 +404,11 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
                 state.provisionedNodes.remove(at: anIndex)
                 state.provisionedNodes.insert(aNodeEntry, at: anIndex)
                 meshstateManager.saveState()
+                meshstateManager.restoreState()
+                let targetNodeToUpdate = nodeEntry.nodeUnicast!
+                nodeEntry = meshstateManager.state().provisionedNodes.first { (aNode) -> Bool in
+                    return aNode.nodeUnicast == targetNodeToUpdate
+                }
             }
             tableView.reloadData()
         } else {

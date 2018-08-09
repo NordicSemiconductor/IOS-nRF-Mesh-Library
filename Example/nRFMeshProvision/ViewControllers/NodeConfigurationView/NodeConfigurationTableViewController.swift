@@ -26,7 +26,13 @@ class NodeConfigurationTableViewController: UITableViewController, ProvisionedMe
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         meshManager = (UIApplication.shared.delegate as? AppDelegate)?.meshManager
+        meshManager.stateManager().restoreState()
         proxyNode = meshManager.proxyNode()
+        if let targetUnicast = nodeEntry.nodeUnicast {
+            nodeEntry = meshManager.stateManager().state().provisionedNodes.first { (anEntry) -> Bool in
+                return anEntry.nodeUnicast == targetUnicast
+            }
+        }
         tableView.reloadData()
     }
 
