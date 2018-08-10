@@ -41,6 +41,7 @@ class MainNetworkViewController: UIViewController, UICollectionViewDataSource, U
             mainTabBarController.switchToAddNodesView()
         }
     }
+    
     func handleConnectionButtonTapped() {
         if connectionButton.title == "Disconnect" {
             connectionButton.isEnabled = false
@@ -48,6 +49,7 @@ class MainNetworkViewController: UIViewController, UICollectionViewDataSource, U
                 if proxyNode.blePeripheral().state == .connected {
                     proxyNode.delegate = self
                     proxyNode.shouldDisconnect()
+                    
                 } else {
                     self.updateConnectionButton()
                 }
@@ -109,6 +111,13 @@ class MainNetworkViewController: UIViewController, UICollectionViewDataSource, U
         super.viewDidAppear(animated)
         updateConnectionButton()
         meshManager.centralManager().delegate = self
+        
+        //Auto-rejoin
+        if true ==  UserDefaults.standard.value(forKey: UserDefaultsKeys.autoRejoinKey) as? Bool ?? false {
+            if meshManager.stateManager().state().provisionedNodes.count > 0 && !isProxyConnected() {
+                self.performSegue(withIdentifier: "ShowReconnectionView", sender: self)
+            }
+        }
     }
 
     private func updateConnectionButton() {
@@ -144,31 +153,60 @@ class MainNetworkViewController: UIViewController, UICollectionViewDataSource, U
         return aCell!
     }
 
+    func showDisconnectedAlertView() {
+        let alertcontroller = UIAlertController(title: "Disconnected",
+                                                message: "You are not currently connected to a mesh network.\nWould you like to reconnect?",
+                                                preferredStyle: .alert)
+        
+        let reconnectAction = UIAlertAction(title: "Reconnect", style: .default) { (_) in
+            self.performSegue(withIdentifier: "ShowReconnectionView", sender: self)
+        }
+        let alwaysReconnectAction = UIAlertAction(title: "Always reconnect", style: .default) { (_) in
+            UserDefaults.standard.setValue(true, forKey: UserDefaultsKeys.autoRejoinKey)
+            UserDefaults.standard.synchronize()
+            self.performSegue(withIdentifier: "ShowReconnectionView", sender: self)
+        }
+        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel) { (_) in
+            self.dismiss(animated: true, completion: nil)
+        }
+        alertcontroller.addAction(reconnectAction)
+        alertcontroller.addAction(alwaysReconnectAction)
+        alertcontroller.addAction(cancelAction)
+        self.present(alertcontroller, animated: true)
+    }
+
+    func isProxyConnected() -> Bool {
+        if (UIApplication.shared.delegate as? AppDelegate)?.meshManager.proxyNode() == nil {
+            return false
+        } else {
+            return (UIApplication.shared.delegate as? AppDelegate)?.meshManager.proxyNode()?.blePeripheral().state == .connected
+        }
+    }
+
+    // MARK: - UICollectionViewDelegate
     public func numberOfSections(in collectionView: UICollectionView) -> Int {
         return 1
     }
 
-    // MARK: - UICollectionViewDelegate
     public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let allNodes = meshManager.stateManager().state().provisionedNodes
         let aNodeEntry = allNodes[indexPath.row]
 
         if shouldPerformSegue(withIdentifier: "ShowNodeConfiguration", sender: nil) {
             self.performSegue(withIdentifier: "ShowNodeConfiguration", sender: aNodeEntry)
+        } else {
+            print("Not connected")
+            showDisconnectedAlertView()
         }
     }
-    
+
     // MARK: - Navigation & Segues
     override func shouldPerformSegue(withIdentifier identifier: String, sender: Any?) -> Bool {
         if identifier == "ShowNodeDetails" {
             return true
         }
         if identifier == "ShowNodeConfiguration" {
-            if (UIApplication.shared.delegate as? AppDelegate)?.meshManager.proxyNode() == nil {
-                return false
-            } else {
-                return true
-            }
+            return isProxyConnected()
         }
         return false
     }
@@ -182,7 +220,7 @@ class MainNetworkViewController: UIViewController, UICollectionViewDataSource, U
             }
         } else if segue.identifier == "ShowNodeConfiguration" {
             if let nodeEntry = sender as? MeshNodeEntry {
-                if let configView = segue.destination as? NodeModelsTableViewController {
+                if let configView = segue.destination as? NodeConfigurationTableViewController {
                     if (UIApplication.shared.delegate as? AppDelegate)?.meshManager.proxyNode() != nil {
                         configView.setNodeEntry(nodeEntry)
                     } else {
@@ -253,7 +291,7 @@ extension MainNetworkViewController: ProvisionedMeshNodeDelegate {
         //NOOP
     }
     
-    func receivedModelAppBindStatus(_ modelAppStatusData: ModelAppBindStatusMessage) {
+    func receivedModelAppStatus(_ modelAppStatusData: ModelAppStatusMessage) {
         //NOOP
     }
     

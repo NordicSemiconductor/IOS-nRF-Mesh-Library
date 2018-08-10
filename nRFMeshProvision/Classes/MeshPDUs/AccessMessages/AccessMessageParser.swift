@@ -17,7 +17,7 @@ public struct AccessMessageParser {
         case Data([0x80, 0x03]):
             return AppKeyStatusMessage(withPayload: someData, andSoruceAddress: aSourceAddress)
         case Data([0x80, 0x3E]):
-            return ModelAppBindStatusMessage(withPayload: someData, andSoruceAddress: aSourceAddress)
+            return ModelAppStatusMessage(withPayload: someData, andSoruceAddress: aSourceAddress)
         case Data([0x80, 0x19]):
             return ModelPublicationStatusMessage(withPayload: someData, andSoruceAddress: aSourceAddress)
         case Data([0x80, 0x1F]):

@@ -72,7 +72,7 @@ class ModelAppBindConfiguratorState: NSObject, ConfiguratorStateProtocol {
             } else {
                 print("maximum write length is shorter than PDU, will Segment")
                 var segmentedProvisioningData = [Data]()
-                data = Data(data.dropFirst()) //Drop old network haeder, SAR will now set that instead.
+                data = Data(data.dropFirst()) //Drop old network header, SAR will now set that instead.
                 let chunkRanges = self.calculateDataRanges(data, withSize: 19)
                 for aRange in chunkRanges {
                     var header = Data()
@@ -103,9 +103,9 @@ class ModelAppBindConfiguratorState: NSObject, ConfiguratorStateProtocol {
             print("Incoming DPU: \(incomingData.hexString())")
             let strippedOpcode = Data(incomingData.dropFirst())
             if let result = networkLayer.incomingPDU(strippedOpcode) {
-                if result is ModelAppBindStatusMessage {
-                    let modelKeyStatus = result as! ModelAppBindStatusMessage
-                    target.delegate?.receivedModelAppBindStatus(modelKeyStatus)
+                if result is ModelAppStatusMessage {
+                    let modelKeyStatus = result as! ModelAppStatusMessage    
+                    target.delegate?.receivedModelAppStatus(modelKeyStatus)
                 } else {
                     print("Ignoring non model app status message")
                 }
@@ -209,4 +209,3 @@ class ModelAppBindConfiguratorState: NSObject, ConfiguratorStateProtocol {
         print("Characteristic notification state changed")
     }
 }
-

@@ -9,13 +9,14 @@
 import UIKit
 import nRFMeshProvision
 
-class SettingsViewController: UIViewController, UITextFieldDelegate, UITableViewDelegate, UITableViewDataSource {
+class SettingsViewController: UIViewController, UITextFieldDelegate, UITableViewDelegate, UITableViewDataSource, UIPopoverPresentationControllerDelegate, ToggleSettingsCellDelegate {
 
     // MARK: - Properties
     var meshManager: NRFMeshManager!
     let reuseIdentifier = "SettingsTableViewCell"
+    let toggleReuseIdentifier = "SettingsTableViewToggleCell"
     let sectionTitles = ["Global Settings", "Network Settings", "App keys", "Mesh State", "About"]
-    let rowTitles   = [["Network Name", "Global TTL", "Provisioner Unicast"],
+    let rowTitles   = [["Network Name", "Global TTL", "Provisioner Unicast", "Auto rejoin"],
                        ["Network Key", "Key Index", "Flags", "IV Index"],
                        ["Manage App Keys"],
                        ["Reset Mesh State"],
@@ -26,7 +27,10 @@ class SettingsViewController: UIViewController, UITextFieldDelegate, UITableView
 
     // MARK: - Implementaiton
     private func updateProvisioningDataUI() {
-        //Update provisioning Data UI with default values
+        //Update provisioning Data UI with default values, this is called after modifications are done
+        //so we need to save it, and then load it again
+        meshManager.stateManager().saveState()
+        meshManager.stateManager().restoreState()
         settingsTable.reloadData()
     }
 
@@ -82,6 +86,7 @@ class SettingsViewController: UIViewController, UITextFieldDelegate, UITableView
             }
         }
     }
+    
     func didSelectKeyCell() {
         let meshState = meshManager.stateManager().state()
         presentInputViewWithTitle("Please enter a Key",
@@ -127,20 +132,22 @@ class SettingsViewController: UIViewController, UITextFieldDelegate, UITableView
 
     func didSelectFlagsCell() {
         let meshState = meshManager.stateManager().state()
-        presentInputViewWithTitle("Please enter flags",
-                                  message: "1 Byte",
-                                  placeholder: meshState.flags.hexString(),
-                                  generationEnabled: false) { (someFlags) -> Void in
-                                    if var someFlags = someFlags {
-                                        someFlags = someFlags.lowercased().replacingOccurrences(of: "0x", with: "")
-                                        if someFlags.count == 2 {
-                                            meshState.flags = Data(hexString: someFlags)!
-                                            self.updateProvisioningDataUI()
-                                        } else {
-                                            print("Flags must be exactly 1 byte")
-                                        }
-                                    }
-        }
+        let flagsCell = settingsTable.cellForRow(at: IndexPath(item: 2, section: 1))
+        let flagSettingsView = storyboard?.instantiateViewController(withIdentifier: "flagsSettingsPopoverView") as? FlagSettingsPopoverViewController
+        flagSettingsView?.modalPresentationStyle = .popover
+        flagSettingsView?.preferredContentSize = CGSize(width: 300, height: 300)
+        let flagPresentationController = flagSettingsView?.popoverPresentationController
+        flagPresentationController?.sourceView = flagsCell!.contentView
+        flagPresentationController?.sourceRect = flagsCell!.contentView.frame
+        flagPresentationController?.delegate = self
+        present(flagSettingsView!, animated: true, completion: nil)
+        flagSettingsView?.setFlagData(meshState.flags, andCompletionHandler: { (newFlags) -> (Void) in
+            self.deselectSelectedRow()
+            if let newFlags = newFlags {
+                meshState.flags = newFlags
+                self.updateProvisioningDataUI()
+            }
+        })
    }
 
     func didSelectIVIndexCell() {
@@ -149,16 +156,16 @@ class SettingsViewController: UIViewController, UITextFieldDelegate, UITableView
                                   message: "4 Bytes",
                                   placeholder: meshState.IVIndex.hexString(),
                                   generationEnabled: false) { (anIVIndex) -> Void in
-            if var anIVIndex = anIVIndex {
-                anIVIndex = anIVIndex.lowercased().replacingOccurrences(of: "0x", with: "")
-                if anIVIndex.count == 8 {
-                    meshState.IVIndex = Data(hexString: anIVIndex)!
-                    self.updateProvisioningDataUI()
-                } else {
-                    print("IV Index must be exactly 4 bytes")
-                }
-       }
-    }
+                                    if var anIVIndex = anIVIndex {
+                                        anIVIndex = anIVIndex.lowercased().replacingOccurrences(of: "0x", with: "")
+                                        if anIVIndex.count == 8 {
+                                            meshState.IVIndex = Data(hexString: anIVIndex)!
+                                            self.updateProvisioningDataUI()
+                                        } else {
+                                            print("IV Index must be exactly 4 bytes")
+                                        }
+                                    }
+        }
    }
 
     func didSelectUnicastAddressCell() {
@@ -333,7 +340,6 @@ class SettingsViewController: UIViewController, UITextFieldDelegate, UITableView
     override func viewDidLoad() {
         super.viewDidLoad()
         meshManager = (UIApplication.shared.delegate as? AppDelegate)?.meshManager
-//        setupProvisioningData()
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -353,7 +359,7 @@ class SettingsViewController: UIViewController, UITextFieldDelegate, UITableView
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch section {
-        case 0: return 3
+        case 0: return 4
         case 1: return 4
         case 2: return 1
         case 3: return 1
@@ -367,19 +373,36 @@ class SettingsViewController: UIViewController, UITextFieldDelegate, UITableView
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let aCell = tableView.dequeueReusableCell(withIdentifier: reuseIdentifier, for: indexPath)
-        aCell.textLabel?.text = rowTitles[indexPath.section][indexPath.row]
-        aCell.detailTextLabel?.text = self.contentForRowAtIndexPath(indexPath)
-        if indexPath.section == 3 && indexPath.row == 0 {
-            aCell.detailTextLabel?.textColor = UIColor.red
+        var aCell: UITableViewCell?
+        if indexPath.section == 0 && indexPath.row == 3 {
+            let toggleCell = tableView.dequeueReusableCell(withIdentifier: toggleReuseIdentifier, for: indexPath) as? ToggleSettingsTableViewCell
+            toggleCell?.titleLabel.text = rowTitles[indexPath.section][indexPath.row]
+            toggleCell?.toggleSwitch.isOn = (UserDefaults.standard.value(forKey: UserDefaultsKeys.autoRejoinKey) as? Bool) ?? false
+            toggleCell?.setDelegate(self)
+            aCell = toggleCell
         } else {
-            aCell.detailTextLabel?.textColor = UIColor.gray
+            aCell = tableView.dequeueReusableCell(withIdentifier: reuseIdentifier, for: indexPath)
+            aCell!.textLabel?.text = rowTitles[indexPath.section][indexPath.row]
+            aCell!.detailTextLabel?.text = self.contentForRowAtIndexPath(indexPath)
+            if indexPath.section == 3 && indexPath.row == 0 {
+                aCell!.detailTextLabel?.textColor = UIColor.red
+            } else {
+                aCell!.detailTextLabel?.textColor = UIColor.gray
+            }
         }
-        return aCell
+        return aCell!
     }
 
     func tableView(_ tableView: UITableView, shouldHighlightRowAt indexPath: IndexPath) -> Bool {
-        return indexPath.section != 4
+        if indexPath.section == 4 {
+            //App version rows are readonly, no actions can be taken there
+            return false
+        }
+        if (indexPath.section == 0 && indexPath.row == 3) {
+            //Togglable settings cell is not selectable, only the switch can be tapped
+            return false
+        }
+        return true
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -390,7 +413,7 @@ class SettingsViewController: UIViewController, UITextFieldDelegate, UITableView
                 didSelectNetworkNameCell()
             } else if row == 1 {
                 didSelectGlobalTTLCell()
-            } else {
+            } else if row == 2 {
                 didSelectUnicastAddressCell()
             }
         } else if section == 1 {
@@ -433,7 +456,19 @@ class SettingsViewController: UIViewController, UITextFieldDelegate, UITableView
             } else if row == 1 {
                 return "0x\(meshState.keyIndex.hexString())"
             } else if row == 2 {
-                return "0x\(meshState.flags.hexString())"
+                let flags = meshState.flags
+                var readableFlags = [String]()
+                if flags[0] & 0x80 == 0x80 {
+                    readableFlags.append("Key refresh phase: 2")
+                } else {
+                    readableFlags.append("Key refresh phase: 0")
+                }
+                if flags[0] & 0x40 == 0x40 {
+                    readableFlags.append("IV Update: Active")
+                } else {
+                    readableFlags.append("IV Update: Normal")
+                }
+                return readableFlags.joined(separator: ", ")
             } else if row == 3 {
                 return "0x\(meshState.IVIndex.hexString())"
             } else {
@@ -471,6 +506,17 @@ class SettingsViewController: UIViewController, UITextFieldDelegate, UITableView
         } else {
             return "N/A"
         }
+    }
+
+    // MARK: - ToggleCellSettingsDelegate
+    func didToggle(_ newState: Bool) {
+        UserDefaults.standard.setValue(newState, forKey: UserDefaultsKeys.autoRejoinKey)
+        UserDefaults.standard.synchronize()
+    }
+
+    // MARK: - UIPopoverPresentationDelegate
+    func adaptivePresentationStyle(for controller: UIPresentationController) -> UIModalPresentationStyle {
+        return .none
     }
 
     // MARK: - Navigation

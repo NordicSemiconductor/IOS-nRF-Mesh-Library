@@ -43,7 +43,11 @@ public extension Data {
         let bytes = self.withUnsafeBytes { (aByte) -> UnsafeRawPointer in
             return UnsafeRawPointer(aByte)
         }
-   paddedData.replaceBytes(in: NSRange(location: dataOffset, length: self.count), withBytes: bytes)
+        paddedData.replaceBytes(in: NSRange(location: dataOffset, length: self.count), withBytes: bytes)
         return paddedData as Data
+    }
+    
+    var uint16: UInt16 {
+        return withUnsafeBytes { $0.pointee }
     }
 }

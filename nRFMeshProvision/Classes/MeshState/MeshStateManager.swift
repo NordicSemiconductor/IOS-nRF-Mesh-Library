@@ -20,6 +20,7 @@ public class MeshStateManager: NSObject {
     }
    
     public func state() -> MeshState {
+        restoreState()
         return meshState
     }
 
