@@ -10,8 +10,14 @@ import UIKit
 import nRFMeshProvision
 import CoreBluetooth
 
+enum provisioningViewSteps {
+    case none
+    case invite
+    case provisioning
+}
+
 class MeshProvisioningDataTableViewController: UITableViewController, UITextFieldDelegate {
-    
+
     // MARK: - Outlets and Actions
     @IBOutlet weak var provisionButton: UIBarButtonItem!
     @IBOutlet weak var abortButton: UIBarButtonItem!
@@ -24,6 +30,17 @@ class MeshProvisioningDataTableViewController: UITableViewController, UITextFiel
     @IBOutlet weak var nodeNameCell: UITableViewCell!
     @IBOutlet weak var unicastAddressCell: UITableViewCell!
     @IBOutlet weak var appKeyCell: UITableViewCell!
+    
+    // Identification outlets
+    @IBOutlet weak var elementCountSubtitle: UILabel!
+    @IBOutlet weak var algorithmSubtitle: UILabel!
+    @IBOutlet weak var publicKeyTypeSubtitle: UILabel!
+    @IBOutlet weak var staticOOBTypeSubtitle: UILabel!
+    @IBOutlet weak var supportedOutputActionsSubtitle: UILabel!
+    @IBOutlet weak var outputOOBSizeSubtitle: UILabel!
+    @IBOutlet weak var supportedInputActionsSubtitle: UILabel!
+    @IBOutlet weak var inputOOBSizeSubtitle: UILabel!
+    
     @IBAction func provisionButtonTapped(_ sender: Any) {
         handleProvisioningButtonTapped()
     }
@@ -33,7 +50,7 @@ class MeshProvisioningDataTableViewController: UITableViewController, UITextFiel
     
     // MARK: - Properties
     private var logViewController: ProvisioningLogTableViewController?
-    private var isProvisioning: Bool = false
+    private var provisioningState: provisioningViewSteps = .none
     private var totalSteps: Float = 24
     private var completedSteps: Float = 0
     private var targetNode: UnprovisionedMeshNode!
@@ -70,6 +87,7 @@ class MeshProvisioningDataTableViewController: UITableViewController, UITextFiel
         viewLogButton.isEnabled = logEntries.count > 0
         abortButton.isEnabled   = false
         abortButton.title       = nil
+        provisionButton.title   = "Identify"
     }
 
     // MARK: - Implementaiton
@@ -99,10 +117,10 @@ class MeshProvisioningDataTableViewController: UITableViewController, UITextFiel
     }
 
     func handleAbortButtonTapped() {
-        if isProvisioning == true {
-            isProvisioning = false
+        if provisioningState != .none {
+            provisioningState = .none
             provisionButton.isEnabled = true
-            provisionButton.title = "Provision"
+            provisionButton.title = "Identify"
             navigationItem.hidesBackButton = false
             abortButton.isEnabled = false
             abortButton.title = nil
@@ -119,17 +137,34 @@ class MeshProvisioningDataTableViewController: UITableViewController, UITextFiel
         }
     }
     func handleProvisioningButtonTapped() {
-        if isProvisioning == false {
+        if provisioningState == .none {
             provisionButton.isEnabled = false
+            provisionButton.title = "Identifying"
+            navigationItem.hidesBackButton = true
+            provisioningState = .invite
+            connectNode(targetNode)
+            abortButton.isEnabled = false
+            abortButton.title = nil
+        } else if provisioningState == .invite {
+            provisioningState = .provisioning
             provisionButton.title = nil
             navigationItem.hidesBackButton = true
-            isProvisioning = true
-            connectNode(targetNode)
+            if targetNode.blePeripheral().state != .connected {
+                connectNode(targetNode)
+            } else {
+                provisionNode(targetNode)
+            }
             abortButton.isEnabled = true
             abortButton.title = "Abort"
         }
+        
         if tableView.numberOfSections == 1 {
             tableView.insertSections([1], with: .fade)
+            tableView.scrollToRow(at: IndexPath(row: 7, section: 1), at: UITableViewScrollPosition.bottom, animated: true)
+            resetSubtitleLabels()
+        } else if tableView.numberOfSections == 2 {
+            tableView.insertSections([2], with: .fade)
+            tableView.scrollToRow(at: IndexPath(row: 0, section: 2), at: UITableViewScrollPosition.bottom, animated: true)
         }
     }
 
@@ -260,16 +295,19 @@ class MeshProvisioningDataTableViewController: UITableViewController, UITextFiel
 
     // MARK: - Table view delegate
     override func numberOfSections(in tableView: UITableView) -> Int {
-        if isProvisioning {
-            return 2
-        } else {
-            return 1
+        switch provisioningState {
+            case .none:
+                return 1
+            case .invite:
+                return 2
+            case .provisioning:
+                return 3
         }
     }
 
     override func tableView(_ tableView: UITableView, shouldHighlightRowAt indexPath: IndexPath) -> Bool {
         //Only first section is selectable when not provisioning
-        return !isProvisioning && indexPath.section == 0
+        return provisioningState == .none && indexPath.section == 0
     }
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -306,7 +344,10 @@ class MeshProvisioningDataTableViewController: UITableViewController, UITextFiel
         if segue.identifier == "showAppKeySelector" {
             if let destinationView = segue.destination as? AppKeySelectorTableViewController {
                 destinationView.setSelectionCallback({ (appKeyIndex) in
-                    self.didSelectAppKeyWithIndex(appKeyIndex)
+                    guard appKeyIndex != nil else {
+                        return
+                    }
+                    self.didSelectAppKeyWithIndex(appKeyIndex!)
                 }, andMeshStateManager: meshManager.stateManager())
             }
         }
@@ -369,6 +410,32 @@ extension MeshProvisioningDataTableViewController {
 
     private func discoveryCompleted() {
         logEventWithMessage("discovery completed")
+        switch provisioningState {
+        case .none:
+            break
+        case .invite:
+            identifyNode(targetNode)
+        case .provisioning:
+            self.provisionNode(targetNode)
+        }
+    }
+
+    private func identifyNode(_ aNode: UnprovisionedMeshNode) {
+        aNode.identifyWithDuration(5)
+    }
+
+    private func resetSubtitleLabels() {
+        supportedOutputActionsSubtitle.text = "Loading..."
+        supportedInputActionsSubtitle.text = "Loading..."
+        algorithmSubtitle.text = "Loading..."
+        inputOOBSizeSubtitle.text = "Loading..."
+        elementCountSubtitle.text = "Loading..."
+        publicKeyTypeSubtitle.text = "Loading..."
+        staticOOBTypeSubtitle.text = "Loading..."
+        outputOOBSizeSubtitle.text = "Loading..."
+    }
+
+    private func provisionNode(_ aNode: UnprovisionedMeshNode) {
         let meshStateObject = stateManager.state()
         let netKeyIndex = meshStateObject.keyIndex
         
@@ -481,6 +548,56 @@ extension MeshProvisioningDataTableViewController: CBCentralManagerDelegate {
 }
 
 extension MeshProvisioningDataTableViewController: UnprovisionedMeshNodeDelegate {
+    func nodeCompletedProvisioningInvitation(_ aNode: UnprovisionedMeshNode, withCapabilities capabilities: InviteCapabilities) {
+        print("Received intitation capabilities")
+        navigationItem.hidesBackButton = false
+        elementCountSubtitle.text = "\(capabilities.elementCount)"
+        outputOOBSizeSubtitle.text = "\(capabilities.outputOOBSize)"
+        inputOOBSizeSubtitle.text = "\(capabilities.inputOOBSize)"
+        
+        switch capabilities.algorithm {
+            case .fipsp256EllipticCurve:
+                algorithmSubtitle.text = "FIPS-256 Elliptic curve"
+            case .none:
+                algorithmSubtitle.text = "None"
+        }
+        
+        switch capabilities.publicKeyAvailability {
+            case .publicKeyInformationAvailable:
+                publicKeyTypeSubtitle.text = "Public Key information available"
+            case .publicKeyInformationUnavailable:
+                publicKeyTypeSubtitle.text = "Public Key information unavailable"
+        }
+        
+        switch capabilities.staticOOBAvailability {
+            case .staticOutOfBoundInformationAvailable:
+                staticOOBTypeSubtitle.text = "Static OOB information available"
+            case .staticOutOfBoundInformationUnavailable:
+                staticOOBTypeSubtitle.text = "Static OOB information unavailable"
+        }
+        
+        let outputActions = capabilities.supportedOutputOOBActions.compactMap { (action) -> String? in
+            return action.description()
+            }.joined(separator: ", ")
+        
+        let inputActions = capabilities.supportedInputOOBActions.compactMap { (action) -> String? in
+            return action.description()
+            }.joined(separator: ", ")
+        
+        if outputActions.count == 0 {
+            supportedOutputActionsSubtitle.text = "Not supported"
+        } else {
+            supportedOutputActionsSubtitle.text  = outputActions
+        }
+        if inputActions.count == 0 {
+            supportedInputActionsSubtitle.text = "Not supported"
+        } else {
+            supportedInputActionsSubtitle.text = outputActions
+        }
+
+        provisionButton.isEnabled = true
+        provisionButton.title = "Provision"
+    }
 
     func nodeShouldDisconnect(_ aNode: UnprovisionedMeshNode) {
         if aNode == targetNode {
@@ -546,10 +663,10 @@ extension MeshProvisioningDataTableViewController: UnprovisionedMeshNodeDelegate
         guard nodeEntry != nil else {
             logEventWithMessage("failed to get node entry data")
             activityIndicator.stopAnimating()
-            isProvisioning = false
+            provisioningState = .none
             navigationItem.hidesBackButton = false
             provisionButton.isEnabled = true
-            provisionButton.title = "Provision"
+            provisionButton.title = "Identify"
             abortButton.isEnabled = false
             abortButton.title = nil
             return
@@ -575,10 +692,10 @@ extension MeshProvisioningDataTableViewController: UnprovisionedMeshNodeDelegate
     func nodeProvisioningFailed(_ aNode: UnprovisionedMeshNode, withErrorCode anErrorCode: ProvisioningErrorCodes) {
         stepCompleted(withIndicatorState: false)
         logEventWithMessage("provisioning failed, error: \(anErrorCode)")
-        isProvisioning = false
+        provisioningState = .none
         navigationItem.hidesBackButton = false
         provisionButton.isEnabled = true
-        provisionButton.title = "Provision"
+        provisionButton.title = "Identify"
         abortButton.isEnabled = false
         abortButton.title = nil
     }
@@ -592,7 +709,7 @@ extension MeshProvisioningDataTableViewController: ProvisionedMeshNodeDelegate {
 
     func configurationSucceeded() {
         stepCompleted(withIndicatorState: false)
-        isProvisioning = false
+        provisioningState = .none
         navigationItem.hidesBackButton = false
         provisionButton.isEnabled = false
         provisionButton.title = nil
@@ -612,10 +729,7 @@ extension MeshProvisioningDataTableViewController: ProvisionedMeshNodeDelegate {
     func nodeDidCompleteDiscovery(_ aNode: ProvisionedMeshNode) {
         if aNode == targetProvisionedNode {
             stepCompleted(withIndicatorState: false)
-            targetProvisionedNode.configure(destinationAddress: destinationAddress,
-                                            appKeyIndex: appKeyIndex,
-                                            appKeyData: appKeyData,
-                                            andNetKeyIndex: netKeyIndex)
+            targetProvisionedNode.configure(destinationAddress: destinationAddress)
         }
     }
 
@@ -631,35 +745,14 @@ extension MeshProvisioningDataTableViewController: ProvisionedMeshNodeDelegate {
             return
         }
         stepCompleted(withIndicatorState: false)
-        let state = stateManager.state()
-        if let anIndex = state.provisionedNodes.index(where: { $0.nodeUnicast == self.nodeAddress}) {
-            let aNodeEntry = state.provisionedNodes[anIndex]
-            state.provisionedNodes.remove(at: anIndex)
-            aNodeEntry.companyIdentifier = compositionData.companyIdentifier
-            aNodeEntry.productVersion = compositionData.productVersion
-            aNodeEntry.productIdentifier = compositionData.productIdentifier
-            aNodeEntry.featureFlags = compositionData.features
-            aNodeEntry.replayProtectionCount = compositionData.replayProtectionCount
-            aNodeEntry.elements = compositionData.elements
-            state.provisionedNodes.append(aNodeEntry)
-            logEventWithMessage("received composition data")
-            logEventWithMessage("company identifier:\(compositionData.companyIdentifier.hexString())")
-            logEventWithMessage("product identifier:\(compositionData.productIdentifier.hexString())")
-            logEventWithMessage("product version:\(compositionData.productVersion.hexString())")
-            logEventWithMessage("feature flags:\(compositionData.features.hexString())")
-            logEventWithMessage("element count:\(compositionData.elements.count)")
-            for anElement in aNodeEntry.elements! {
-                logEventWithMessage("Element models:\(anElement.totalModelCount())")
-            }
-            //Set unicast to current set value, to allow the user to force override addresses
-            state.nextUnicast = self.nodeAddress
-            //Increment next available address
-            state.incrementUnicastBy(compositionData.elements.count)
-            logEventWithMessage("next unicast address available: \(state.nextUnicast.hexString())")
-            stateManager.saveState()
-        } else {
-            logEventWithMessage("Received composition data but node isn't stored, please provision again")
-        }
+        logEventWithMessage("received composition data")
+        logEventWithMessage("company identifier:\(compositionData.companyIdentifier.hexString())")
+        logEventWithMessage("product identifier:\(compositionData.productIdentifier.hexString())")
+        logEventWithMessage("product version:\(compositionData.productVersion.hexString())")
+        logEventWithMessage("feature flags:\(compositionData.features.hexString())")
+        logEventWithMessage("element count:\(compositionData.elements.count)")
+        //Jump to app Key add state
+        targetProvisionedNode.appKeyAdd(appKeyData, atIndex: appKeyIndex, forNetKeyAtIndex: netKeyIndex, onDestinationAddress: nodeAddress)
     }
     
     func receivedAppKeyStatusData(_ appKeyStatusData: AppKeyStatusMessage) {
@@ -671,45 +764,18 @@ extension MeshProvisioningDataTableViewController: ProvisionedMeshNodeDelegate {
             logEventWithMessage("netKey index: \(appKeyStatusData.netKeyIndex.hexString())")
             
             // Update state with configured key
-            let state = stateManager.state()
-            if let anIndex = state.provisionedNodes.index(where: { $0.nodeUnicast == self.nodeAddress}) {
-                let aNodeEntry = state.provisionedNodes[anIndex]
-                state.provisionedNodes.remove(at: anIndex)
-                if aNodeEntry.appKeys.contains(appKeyStatusData.appKeyIndex) == false {
-                    aNodeEntry.appKeys.append(appKeyStatusData.appKeyIndex)
-                }
-                //and update
-                state.provisionedNodes.append(aNodeEntry)
-                stateManager.saveState()
-                for aKey in aNodeEntry.appKeys {
-                    logEventWithMessage("appKeyData:\(aKey.hexString())")
-                }
-            }
+            configurationSucceeded()
         } else {
-            logEventWithMessage("received error code: \(appKeyStatusData.statusCode)")
+            logEventWithMessage("Received error code: \(appKeyStatusData.statusCode)")
             activityIndicator.stopAnimating()
         }
     }
     
-    func receivedModelAppBindStatus(_ modelAppStatusData: ModelAppBindStatusMessage) {
-        //NOOP
-    }
-    
-    func receivedModelPublicationStatus(_ modelPublicationStatusData: ModelPublicationStatusMessage) {
-        //NOOP
-    }
-    
-    func receivedModelSubsrciptionStatus(_ modelSubscriptionStatusData: ModelSubscriptionStatusMessage) {
-        //NOOP
-    }
-    
-    func receivedDefaultTTLStatus(_ defaultTTLStatusData: DefaultTTLStatusMessage) {
-        //NOOP
-    }
-    
-    func receivedNodeResetStatus(_ resetStatusData: NodeResetStatusMessage) {
-        //NOOP
-    }
+    func receivedModelAppStatus(_ modelAppStatusData: ModelAppStatusMessage) {}
+    func receivedModelPublicationStatus(_ modelPublicationStatusData: ModelPublicationStatusMessage) {}
+    func receivedModelSubsrciptionStatus(_ modelSubscriptionStatusData: ModelSubscriptionStatusMessage) {}
+    func receivedDefaultTTLStatus(_ defaultTTLStatusData: DefaultTTLStatusMessage) {}
+    func receivedNodeResetStatus(_ resetStatusData: NodeResetStatusMessage) {}
 }
 
 extension MeshProvisioningDataTableViewController: ProvisionedMeshNodeLoggingDelegate {
@@ -808,10 +874,10 @@ extension MeshProvisioningDataTableViewController: UnprovisionedMeshNodeLoggingD
     
     func logProvisioningFailed(withMessage aMessage: String) {
         stepCompleted(withIndicatorState: false)
-        isProvisioning = false
+        provisioningState = .none
         navigationItem.hidesBackButton = false
         provisionButton.isEnabled = true
-        provisionButton.title = "Provision"
+        provisionButton.title = "Identify"
         abortButton.isEnabled = false
         abortButton.title = nil
         logEventWithMessage("provisioning failed: \(aMessage)")

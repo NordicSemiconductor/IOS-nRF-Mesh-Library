@@ -77,6 +77,10 @@ class ScannerViewController: UITableViewController, CBCentralManagerDelegate {
         discoveredNodes.removeAll()
         tableView.reloadData()
         if centralManager.state == .poweredOn {
+            if targetNode != nil {
+                targetNode.shouldDisconnect()
+                targetNode = nil
+            }
             centralManager.stopScan()
             startNodeScan()
         }

@@ -12,6 +12,8 @@
 		302D1F4720B44E000022AEB1 /* ProvisioningLogTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 302D1F4620B44E000022AEB1 /* ProvisioningLogTableViewController.swift */; };
 		302D1F5A20BBEB4F0022AEB1 /* ToggleControlTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 302D1F5920BBEB4F0022AEB1 /* ToggleControlTableViewCell.swift */; };
 		302D1F5C20BBF2700022AEB1 /* ToggleCellDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 302D1F5B20BBF2700022AEB1 /* ToggleCellDelegate.swift */; };
+		303C6C02210F279000EA872D /* FlagSettingsPopoverViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 303C6C01210F279000EA872D /* FlagSettingsPopoverViewController.swift */; };
+		303C6C07210F405D00EA872D /* ToggleSettingsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 303C6C06210F405D00EA872D /* ToggleSettingsTableViewCell.swift */; };
 		304DAEB4208091EF006CFEA6 /* MainNetworkViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 304DAEA2208091EF006CFEA6 /* MainNetworkViewController.swift */; };
 		304DAEB5208091EF006CFEA6 /* MainTabBarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 304DAEA3208091EF006CFEA6 /* MainTabBarViewController.swift */; };
 		304DAEB6208091EF006CFEA6 /* MeshNodeCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 304DAEA4208091EF006CFEA6 /* MeshNodeCollectionViewCell.swift */; };
@@ -23,14 +25,19 @@
 		304DAEBD208091EF006CFEA6 /* ScannerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 304DAEAF208091EF006CFEA6 /* ScannerViewController.swift */; };
 		304DAEBE208091EF006CFEA6 /* AppKeyManagerTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 304DAEB2208091EF006CFEA6 /* AppKeyManagerTableViewController.swift */; };
 		304DAEBF208091EF006CFEA6 /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 304DAEB3208091EF006CFEA6 /* SettingsViewController.swift */; };
+		3056597D210F44B400CF2A5B /* ToggleSettingsCellDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3056597C210F44B400CF2A5B /* ToggleSettingsCellDelegate.swift */; };
+		305659802110402600CF2A5B /* UserDefaultsKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3056597F2110402600CF2A5B /* UserDefaultsKeys.swift */; };
 		305F08AD20861D0A006A15F3 /* ModelAppKeyBindingConfigurationTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 305F08AC20861D0A006A15F3 /* ModelAppKeyBindingConfigurationTableViewController.swift */; };
 		30648B0220459B7000177CB4 /* LowerLayerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 301D5C042045933800639A04 /* LowerLayerTests.swift */; };
 		306F4D1F20BED7B200572A8F /* NodeModelCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 306F4D1E20BED7B200572A8F /* NodeModelCell.swift */; };
 		307BA359204ED39E00944B89 /* StateRestoration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 307BA358204ED39E00944B89 /* StateRestoration.swift */; };
 		308711D6204D5A47001ED9C3 /* NetworkLayerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 308711D5204D5A47001ED9C3 /* NetworkLayerTests.swift */; };
 		3089BCA02099CA4900E30192 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3089BC9E2099CA4900E30192 /* LaunchScreen.storyboard */; };
+		309CDA39211326B7007D1A6F /* ModelPublicationConfigurationTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 309CDA38211326B7007D1A6F /* ModelPublicationConfigurationTableViewController.swift */; };
+		309CDA3B21142D71007D1A6F /* PublicationSettingsDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 309CDA3A21142D71007D1A6F /* PublicationSettingsDelegate.swift */; };
+		309CDA4021197E23007D1A6F /* GlobalAppKeyListManagerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 309CDA3F21197E23007D1A6F /* GlobalAppKeyListManagerController.swift */; };
 		30D40F7A208099BF00DC126F /* LogEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30D40F79208099BF00DC126F /* LogEntry.swift */; };
-		30D40F902084808A00DC126F /* NodeModelsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30D40F8F2084808A00DC126F /* NodeModelsTableViewController.swift */; };
+		30D40F902084808A00DC126F /* NodeConfigurationTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30D40F8F2084808A00DC126F /* NodeConfigurationTableViewController.swift */; };
 		30D40F9720848DFC00DC126F /* ModelConfigurationTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30D40F9620848DFC00DC126F /* ModelConfigurationTableViewController.swift */; };
 		30EF9C32205FB3AA00253F1E /* NetworkDecryptionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30EF9C31205FB3AA00253F1E /* NetworkDecryptionTests.swift */; };
 		30FF5EEA20972672002D7C77 /* ScannerCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30FF5EE920972672002D7C77 /* ScannerCell.swift */; };
@@ -59,6 +66,8 @@
 		302D1F4620B44E000022AEB1 /* ProvisioningLogTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProvisioningLogTableViewController.swift; sourceTree = "<group>"; };
 		302D1F5920BBEB4F0022AEB1 /* ToggleControlTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToggleControlTableViewCell.swift; sourceTree = "<group>"; };
 		302D1F5B20BBF2700022AEB1 /* ToggleCellDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToggleCellDelegate.swift; sourceTree = "<group>"; };
+		303C6C01210F279000EA872D /* FlagSettingsPopoverViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = FlagSettingsPopoverViewController.swift; path = nRFMeshProvision/ViewControllers/SettingsView/FlagSettingsPopoverViewController.swift; sourceTree = SOURCE_ROOT; };
+		303C6C06210F405D00EA872D /* ToggleSettingsTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToggleSettingsTableViewCell.swift; sourceTree = "<group>"; };
 		3043D9231FF38CF500A9A999 /* libcrypto.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libcrypto.a; path = Pods/OpenSSL/lib/libcrypto.a; sourceTree = "<group>"; };
 		3043D9241FF38CF500A9A999 /* libssl.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libssl.a; path = Pods/OpenSSL/lib/libssl.a; sourceTree = "<group>"; };
 		304DAEA2208091EF006CFEA6 /* MainNetworkViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainNetworkViewController.swift; sourceTree = "<group>"; };
@@ -72,14 +81,19 @@
 		304DAEAF208091EF006CFEA6 /* ScannerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScannerViewController.swift; sourceTree = "<group>"; };
 		304DAEB2208091EF006CFEA6 /* AppKeyManagerTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppKeyManagerTableViewController.swift; sourceTree = "<group>"; };
 		304DAEB3208091EF006CFEA6 /* SettingsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
+		3056597C210F44B400CF2A5B /* ToggleSettingsCellDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToggleSettingsCellDelegate.swift; sourceTree = "<group>"; };
+		3056597F2110402600CF2A5B /* UserDefaultsKeys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDefaultsKeys.swift; sourceTree = "<group>"; };
 		305F08AC20861D0A006A15F3 /* ModelAppKeyBindingConfigurationTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelAppKeyBindingConfigurationTableViewController.swift; sourceTree = "<group>"; };
 		306F4D1E20BED7B200572A8F /* NodeModelCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NodeModelCell.swift; sourceTree = "<group>"; };
 		307BA358204ED39E00944B89 /* StateRestoration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StateRestoration.swift; sourceTree = "<group>"; };
 		308711D5204D5A47001ED9C3 /* NetworkLayerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkLayerTests.swift; sourceTree = "<group>"; };
 		3089BC9F2099CA4900E30192 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		309CDA38211326B7007D1A6F /* ModelPublicationConfigurationTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelPublicationConfigurationTableViewController.swift; sourceTree = "<group>"; };
+		309CDA3A21142D71007D1A6F /* PublicationSettingsDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PublicationSettingsDelegate.swift; sourceTree = "<group>"; };
+		309CDA3F21197E23007D1A6F /* GlobalAppKeyListManagerController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlobalAppKeyListManagerController.swift; sourceTree = "<group>"; };
 		30C8D386203C1BD400779325 /* nRFMeshProvision.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = nRFMeshProvision.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		30D40F79208099BF00DC126F /* LogEntry.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LogEntry.swift; sourceTree = "<group>"; };
-		30D40F8F2084808A00DC126F /* NodeModelsTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NodeModelsTableViewController.swift; sourceTree = "<group>"; };
+		30D40F8F2084808A00DC126F /* NodeConfigurationTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NodeConfigurationTableViewController.swift; sourceTree = "<group>"; };
 		30D40F9620848DFC00DC126F /* ModelConfigurationTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelConfigurationTableViewController.swift; sourceTree = "<group>"; };
 		30EF9C31205FB3AA00253F1E /* NetworkDecryptionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkDecryptionTests.swift; sourceTree = "<group>"; };
 		30FF5EE920972672002D7C77 /* ScannerCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScannerCell.swift; sourceTree = "<group>"; };
@@ -135,11 +149,21 @@
 			name = Pods;
 			sourceTree = "<group>";
 		};
+		303C6C05210F404900EA872D /* Cells */ = {
+			isa = PBXGroup;
+			children = (
+				303C6C06210F405D00EA872D /* ToggleSettingsTableViewCell.swift */,
+				3056597C210F44B400CF2A5B /* ToggleSettingsCellDelegate.swift */,
+			);
+			path = Cells;
+			sourceTree = "<group>";
+		};
 		304DAEA0208091EF006CFEA6 /* ViewControllers */ = {
 			isa = PBXGroup;
 			children = (
+				304DAEAA208091EF006CFEA6 /* AppKeySelectorTableViewController.swift */,
 				30FF5EEB20973B7D002D7C77 /* ReconnectionView */,
-				30D40F8E2084807A00DC126F /* NodeModelsView */,
+				30D40F8E2084807A00DC126F /* NodeConfigurationView */,
 				304DAEA1208091EF006CFEA6 /* MainView */,
 				304DAEA7208091EF006CFEA6 /* NodeInfoView */,
 				304DAEA9208091EF006CFEA6 /* ProvisioningView */,
@@ -171,7 +195,6 @@
 		304DAEA9208091EF006CFEA6 /* ProvisioningView */ = {
 			isa = PBXGroup;
 			children = (
-				304DAEAA208091EF006CFEA6 /* AppKeySelectorTableViewController.swift */,
 				304DAEAB208091EF006CFEA6 /* MeshNodeLogTableViewCell.swift */,
 				304DAEAD208091EF006CFEA6 /* MeshProvisioningDataTableViewController.swift */,
 				302D1F4620B44E000022AEB1 /* ProvisioningLogTableViewController.swift */,
@@ -191,7 +214,9 @@
 		304DAEB0208091EF006CFEA6 /* SettingsView */ = {
 			isa = PBXGroup;
 			children = (
+				303C6C05210F404900EA872D /* Cells */,
 				304DAEB1208091EF006CFEA6 /* AppKeySettingsView */,
+				303C6C01210F279000EA872D /* FlagSettingsPopoverViewController.swift */,
 				304DAEB3208091EF006CFEA6 /* SettingsViewController.swift */,
 			);
 			path = SettingsView;
@@ -205,10 +230,20 @@
 			path = AppKeySettingsView;
 			sourceTree = "<group>";
 		};
+		3056597E2110401100CF2A5B /* Utils */ = {
+			isa = PBXGroup;
+			children = (
+				3056597F2110402600CF2A5B /* UserDefaultsKeys.swift */,
+			);
+			path = Utils;
+			sourceTree = SOURCE_ROOT;
+		};
 		305F08AB20861CF7006A15F3 /* ConfigurationViews */ = {
 			isa = PBXGroup;
 			children = (
 				305F08AC20861D0A006A15F3 /* ModelAppKeyBindingConfigurationTableViewController.swift */,
+				309CDA38211326B7007D1A6F /* ModelPublicationConfigurationTableViewController.swift */,
+				309CDA3A21142D71007D1A6F /* PublicationSettingsDelegate.swift */,
 			);
 			path = ConfigurationViews;
 			sourceTree = "<group>";
@@ -221,14 +256,15 @@
 			path = Models;
 			sourceTree = "<group>";
 		};
-		30D40F8E2084807A00DC126F /* NodeModelsView */ = {
+		30D40F8E2084807A00DC126F /* NodeConfigurationView */ = {
 			isa = PBXGroup;
 			children = (
 				30D40F9520848DEC00DC126F /* ModelConfigurationView */,
-				30D40F8F2084808A00DC126F /* NodeModelsTableViewController.swift */,
+				30D40F8F2084808A00DC126F /* NodeConfigurationTableViewController.swift */,
 				306F4D1E20BED7B200572A8F /* NodeModelCell.swift */,
+				309CDA3F21197E23007D1A6F /* GlobalAppKeyListManagerController.swift */,
 			);
-			path = NodeModelsView;
+			path = NodeConfigurationView;
 			sourceTree = "<group>";
 		};
 		30D40F9520848DEC00DC126F /* ModelConfigurationView */ = {
@@ -275,6 +311,7 @@
 		607FACD21AFB9204008FA782 /* Example for nRFMeshProvision */ = {
 			isa = PBXGroup;
 			children = (
+				3056597E2110401100CF2A5B /* Utils */,
 				30D40F78208099BF00DC126F /* Models */,
 				304DAEA0208091EF006CFEA6 /* ViewControllers */,
 				607FACD51AFB9204008FA782 /* AppDelegate.swift */,
@@ -351,8 +388,6 @@
 				607FACCD1AFB9204008FA782 /* Frameworks */,
 				607FACCE1AFB9204008FA782 /* Resources */,
 				30AE40252064EFA800570136 /* ShellScript */,
-				B71834980C5909FC89C53F63 /* [CP] Embed Pods Frameworks */,
-				01CAA6CF599E5BDA4F52F53B /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -371,8 +406,6 @@
 				607FACE11AFB9204008FA782 /* Sources */,
 				607FACE21AFB9204008FA782 /* Frameworks */,
 				607FACE31AFB9204008FA782 /* Resources */,
-				9EB36DFE38412B709DE720D1 /* [CP] Embed Pods Frameworks */,
-				4133F39412E9C89FF821BCFD /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -391,7 +424,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0830;
-				LastUpgradeCheck = 0930;
+				LastUpgradeCheck = 0940;
 				ORGANIZATIONNAME = CocoaPods;
 				TargetAttributes = {
 					607FACCF1AFB9204008FA782 = {
@@ -452,21 +485,6 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		01CAA6CF599E5BDA4F52F53B /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Copy Pods Resources";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-nRFMeshProvision_Example/Pods-nRFMeshProvision_Example-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
 		30AE40252064EFA800570136 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 8;
@@ -479,21 +497,6 @@
 			runOnlyForDeploymentPostprocessing = 1;
 			shellPath = /bin/sh;
 			shellScript = "if which swiftlint >/dev/null; then\n    echo \"Run swiftlint\"\nelse\n    echo \"warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint\"\nfi";
-		};
-		4133F39412E9C89FF821BCFD /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Copy Pods Resources";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-nRFMeshProvision_Tests/Pods-nRFMeshProvision_Tests-resources.sh\"\n";
-			showEnvVarsInLog = 0;
 		};
 		431CF1A01D8E8D3EC3B5D946 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -531,39 +534,6 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		9EB36DFE38412B709DE720D1 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-nRFMeshProvision_Tests/Pods-nRFMeshProvision_Tests-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		B71834980C5909FC89C53F63 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"${SRCROOT}/Pods/Target Support Files/Pods-nRFMeshProvision_Example/Pods-nRFMeshProvision_Example-frameworks.sh",
-				"${BUILT_PRODUCTS_DIR}/nRFMeshProvision/nRFMeshProvision.framework",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputPaths = (
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/nRFMeshProvision.framework",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-nRFMeshProvision_Example/Pods-nRFMeshProvision_Example-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -571,28 +541,35 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				309CDA4021197E23007D1A6F /* GlobalAppKeyListManagerController.swift in Sources */,
 				302D1F5A20BBEB4F0022AEB1 /* ToggleControlTableViewCell.swift in Sources */,
 				304DAEB7208091EF006CFEA6 /* RootViewController.swift in Sources */,
 				30FF5EED20973E69002D7C77 /* ReconnectionViewController.swift in Sources */,
 				304DAEBA208091EF006CFEA6 /* MeshNodeLogTableViewCell.swift in Sources */,
+				305659802110402600CF2A5B /* UserDefaultsKeys.swift in Sources */,
 				302D1F4720B44E000022AEB1 /* ProvisioningLogTableViewController.swift in Sources */,
+				309CDA3B21142D71007D1A6F /* PublicationSettingsDelegate.swift in Sources */,
 				304DAEB5208091EF006CFEA6 /* MainTabBarViewController.swift in Sources */,
+				309CDA39211326B7007D1A6F /* ModelPublicationConfigurationTableViewController.swift in Sources */,
 				304DAEB9208091EF006CFEA6 /* AppKeySelectorTableViewController.swift in Sources */,
+				303C6C02210F279000EA872D /* FlagSettingsPopoverViewController.swift in Sources */,
 				305F08AD20861D0A006A15F3 /* ModelAppKeyBindingConfigurationTableViewController.swift in Sources */,
 				304DAEB4208091EF006CFEA6 /* MainNetworkViewController.swift in Sources */,
 				306F4D1F20BED7B200572A8F /* NodeModelCell.swift in Sources */,
 				304DAEBE208091EF006CFEA6 /* AppKeyManagerTableViewController.swift in Sources */,
 				304DAEB6208091EF006CFEA6 /* MeshNodeCollectionViewCell.swift in Sources */,
-				30D40F902084808A00DC126F /* NodeModelsTableViewController.swift in Sources */,
+				30D40F902084808A00DC126F /* NodeConfigurationTableViewController.swift in Sources */,
 				302D1F5C20BBF2700022AEB1 /* ToggleCellDelegate.swift in Sources */,
 				30D40F9720848DFC00DC126F /* ModelConfigurationTableViewController.swift in Sources */,
 				304DAEB8208091EF006CFEA6 /* MeshNodeInfoTableViewController.swift in Sources */,
+				303C6C07210F405D00EA872D /* ToggleSettingsTableViewCell.swift in Sources */,
 				30D40F7A208099BF00DC126F /* LogEntry.swift in Sources */,
 				607FACD61AFB9204008FA782 /* AppDelegate.swift in Sources */,
 				30FF5EEA20972672002D7C77 /* ScannerCell.swift in Sources */,
 				304DAEBF208091EF006CFEA6 /* SettingsViewController.swift in Sources */,
 				304DAEBC208091EF006CFEA6 /* MeshProvisioningDataTableViewController.swift in Sources */,
 				304DAEBD208091EF006CFEA6 /* ScannerViewController.swift in Sources */,
+				3056597D210F44B400CF2A5B /* ToggleSettingsCellDelegate.swift in Sources */,
 				30FF5EEF20973F50002D7C77 /* ProxyScannerCell.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -776,7 +753,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.nordicsemi.nRFProvisioner;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = iphoneos11.3;
+				SDKROOT = iphoneos;
 				SWIFT_PRECOMPILE_BRIDGING_HEADER = NO;
 				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
 				SWIFT_VERSION = 4.0;
@@ -811,7 +788,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.nordicsemi.nRFProvisioner;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = iphoneos11.3;
+				SDKROOT = iphoneos;
 				SWIFT_PRECOMPILE_BRIDGING_HEADER = NO;
 				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
 				SWIFT_VERSION = 4.0;
@@ -836,7 +813,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = iphoneos11.3;
+				SDKROOT = iphoneos;
 				SWIFT_PRECOMPILE_BRIDGING_HEADER = NO;
 				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
 				SWIFT_VERSION = 4.0;
@@ -857,7 +834,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = iphoneos11.3;
+				SDKROOT = iphoneos;
 				SWIFT_PRECOMPILE_BRIDGING_HEADER = NO;
 				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
 				SWIFT_VERSION = 4.0;

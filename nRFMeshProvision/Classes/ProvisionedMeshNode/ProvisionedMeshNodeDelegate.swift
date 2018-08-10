@@ -12,7 +12,7 @@ public protocol ProvisionedMeshNodeDelegate {
     func nodeShouldDisconnect(_ aNode: ProvisionedMeshNode)
     func receivedCompositionData(_ compositionData: CompositionStatusMessage)
     func receivedAppKeyStatusData(_ appKeyStatusData: AppKeyStatusMessage)
-    func receivedModelAppBindStatus(_ modelAppStatusData: ModelAppBindStatusMessage)
+    func receivedModelAppStatus(_ modelAppStatusData: ModelAppStatusMessage)
     func receivedModelPublicationStatus(_ modelPublicationStatusData: ModelPublicationStatusMessage)
     func receivedModelSubsrciptionStatus(_ modelSubscriptionStatusData: ModelSubscriptionStatusMessage)
     func receivedDefaultTTLStatus(_ defaultTTLStatusData: DefaultTTLStatusMessage)

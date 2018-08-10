@@ -115,11 +115,28 @@ class CompositionGetConfiguratorState: NSObject, ConfiguratorStateProtocol {
             if let result = networkLayer.incomingPDU(strippedOpcode) {
                 if result is CompositionStatusMessage {
                     let compositionStatus = result as! CompositionStatusMessage
-                    target.delegate?.receivedCompositionData(compositionStatus)
-                    let appKeySetState = AppKeyAddConfiguratorState(withTargetProxyNode: self.target,
-                                                                    destinationAddress: self.destinationAddress,
-                                                                    andStateManager: self.stateManager)
-                    self.target.switchToState(appKeySetState)
+                    
+                    //Save new state.
+                    let state = stateManager.state()
+                    if let anIndex = state.provisionedNodes.index(where: { $0.nodeUnicast == self.destinationAddress}) {
+                        let aNodeEntry = state.provisionedNodes[anIndex]
+                        state.provisionedNodes.remove(at: anIndex)
+                        aNodeEntry.companyIdentifier = compositionStatus.companyIdentifier
+                        aNodeEntry.productVersion = compositionStatus.productVersion
+                        aNodeEntry.productIdentifier = compositionStatus.productIdentifier
+                        aNodeEntry.featureFlags = compositionStatus.features
+                        aNodeEntry.replayProtectionCount = compositionStatus.replayProtectionCount
+                        aNodeEntry.elements = compositionStatus.elements
+                        state.provisionedNodes.append(aNodeEntry)
+                        //Set unicast to current set value, to allow the user to force override addresses
+                        state.nextUnicast = destinationAddress
+                        //Increment next available address
+                        state.incrementUnicastBy(compositionStatus.elements.count)
+                        stateManager.saveState()
+                        target.delegate?.receivedCompositionData(compositionStatus)
+                    } else {
+                        print("Ignoring composition data from an unknown mesh node")
+                    }
                 } else {
                     print("Ignoring non composition status message")
                 }

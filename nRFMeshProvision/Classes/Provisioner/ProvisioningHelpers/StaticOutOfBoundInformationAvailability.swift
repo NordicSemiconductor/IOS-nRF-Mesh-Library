@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum StaticOutOfBoundInformationAvailability: UInt8 {
+public enum StaticOutOfBoundInformationAvailability: UInt8 {
     case staticOutOfBoundInformationUnavailable = 0x00
     case staticOutOfBoundInformationAvailable   = 0x01
 }

@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum ProvisioningAlgorithm: UInt16 {
+public enum ProvisioningAlgorithm: UInt16 {
     case none                  = 0x0000
     case fipsp256EllipticCurve = 0x0001
 }

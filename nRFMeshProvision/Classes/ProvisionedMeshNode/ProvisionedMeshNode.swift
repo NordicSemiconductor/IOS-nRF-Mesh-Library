@@ -21,11 +21,6 @@ public class ProvisionedMeshNode: NSObject, ProvisionedMeshNodeProtocol {
     private var configurationState  : ConfiguratorStateProtocol!
     private var genericControllerState: GenericModelControllerStateProtocol!
     private var stateManager        : MeshStateManager
-
-    // MARK: - Configuration properties
-    private var appKeyIndex: Data!
-    private var netKeyIndex: Data!
-    private var appKeyData:  Data!
     
     // MARK: - MeshNode implementation
     public init(withUnprovisionedNode aNode: UnprovisionedMeshNode, andDelegate aDelegate: ProvisionedMeshNodeDelegate?) {
@@ -129,6 +124,7 @@ public class ProvisionedMeshNode: NSObject, ProvisionedMeshNodeProtocol {
                                                                            andStateManager: stateManager)
         nodePublishAddressState.setPublish(elementAddress: anElementAddress,
                                            appKeyIndex: anAppKeyIndex,
+                                           credentialFlag: aCredentialFlag,
                                            publishAddress: aPublicationAddress,
                                            publishTTL: aTTL,
                                            publishPeriod: aPeriod,
@@ -139,9 +135,32 @@ public class ProvisionedMeshNode: NSObject, ProvisionedMeshNodeProtocol {
         configurationState.execute()
     }
 
+    public func appKeyDelete(atIndex anAppKeyIndex: Data,
+                             forNetKeyAtIndex aNetKeyIndex: Data,
+                             onDestinationAddress anAddress: Data) {
+        let deleteKeyState = AppKeyDeleteConfiguratorState(withTargetProxyNode: self,
+                                                     destinationAddress: anAddress,
+                                                     andStateManager: stateManager)
+        deleteKeyState.setAppKeyIndex(anAppKeyIndex, andNetKeyIndex: aNetKeyIndex)
+        configurationState = deleteKeyState
+        configurationState.execute()
+    }
+
+    public func appKeyAdd(_ anAppKey: Data,
+                          atIndex anIndex: Data,
+                          forNetKeyAtIndex aNetKeyIndex: Data,
+                          onDestinationAddress anAddress: Data) {
+        let addKeyState = AppKeyAddConfiguratorState(withTargetProxyNode: self,
+                                                     destinationAddress: anAddress,
+                                                     andStateManager: stateManager)
+        addKeyState.setAppKey(withData: anAppKey, appKeyIndex: anIndex, netKeyIndex: aNetKeyIndex)
+        configurationState = addKeyState
+        configurationState.execute()
+    }
+
     public func bindAppKey(withIndex anAppKeyIndex: Data,
-                           toModelId aModelId: Data,
-                           onElementAddress anElementAddress: Data,
+                           modelId aModelId: Data,
+                           elementAddress anElementAddress: Data,
                            onDestinationAddress anAddress: Data) {
         let bindState = ModelAppBindConfiguratorState(withTargetProxyNode: self,
                                                       destinationAddress: anAddress,
@@ -150,20 +169,26 @@ public class ProvisionedMeshNode: NSObject, ProvisionedMeshNodeProtocol {
         configurationState = bindState
         configurationState.execute()
     }
+    
+    public func unbindAppKey(withIndex anAppKeyIndex: Data,
+                             modelId aModelId: Data,
+                             elementAddress anElementAddress: Data,
+                             onDestinationAddress anAddress: Data) {
+        let unbindState = ModelAppUnbindConfiguratorState(withTargetProxyNode: self,
+                                                        destinationAddress: anAddress,
+                                                        andStateManager: stateManager)
+        unbindState.setUnbinding(elementAddress: anElementAddress, appKeyIndex: anAppKeyIndex, andModelIdentifier: aModelId)
+        configurationState = unbindState
+        configurationState.execute()
+    }
 
     public func resetNode(destinationAddress: Data) {
         configurationState = NodeResetConfiguratorState(withTargetProxyNode: self, destinationAddress: destinationAddress, andStateManager: stateManager)
         configurationState.execute()
     }
 
-    public func configure(destinationAddress: Data,
-                          appKeyIndex aKeyIndex: Data,
-                          appKeyData aKeyData: Data,
-                          andNetKeyIndex aNetIndex: Data) {
+    public func configure(destinationAddress: Data) {
         //First step of configuration is to get composition
-        appKeyData  = aKeyData
-        appKeyIndex = aKeyIndex
-        netKeyIndex = aNetIndex
         configurationState = CompositionGetConfiguratorState(withTargetProxyNode: self, destinationAddress: destinationAddress, andStateManager: stateManager)
         configurationState.execute()
         
@@ -171,15 +196,7 @@ public class ProvisionedMeshNode: NSObject, ProvisionedMeshNodeProtocol {
 
     func switchToState(_ nextState: ConfiguratorStateProtocol) {
         print("Switching state to \(nextState.humanReadableName())")
-        if nextState is AppKeyAddConfiguratorState {
-            let appKeyState = nextState as! AppKeyAddConfiguratorState
-            appKeyState.setAppKey(withData: appKeyData,
-                                  appKeyIndex: appKeyIndex,
-                                  netKeyIndex: netKeyIndex)
-            configurationState = appKeyState
-        } else {
-            configurationState = nextState
-        }
+        configurationState = nextState
         configurationState.execute()
     }
 
