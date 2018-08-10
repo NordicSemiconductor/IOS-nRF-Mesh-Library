@@ -28,6 +28,11 @@ class FlagSettingsPopoverViewController: UIViewController {
     var cancelled: Bool = true
 
     //MARK: - UIViewController
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        self.view.backgroundColor = UIColor.clear
+    }
+
     override func viewWillDisappear(_ animated: Bool) {
         guard cancelled == false else {
             completionHandler?(nil)

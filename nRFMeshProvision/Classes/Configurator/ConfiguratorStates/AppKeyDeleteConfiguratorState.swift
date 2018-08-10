@@ -1,30 +1,32 @@
 //
-//  DefaultTTLGetConfiguratorState.swift
+//  AppKeyDeleteConfiguratorState.swift
 //  nRFMeshProvision
 //
-//  Created by Mostafa Berg on 27/04/2018.
+//  Created by Mostafa Berg on 08/08/2018.
 //
 
-import Foundation
 import CoreBluetooth
+import Foundation
 
-class DefaultTTLGetConfiguratorState: NSObject, ConfiguratorStateProtocol {
-
+class AppKeyDeleteConfiguratorState: NSObject, ConfiguratorStateProtocol {
+    
     // MARK: - Properties
     private var proxyService            : CBService!
     private var dataInCharacteristic    : CBCharacteristic!
     private var dataOutCharacteristic   : CBCharacteristic!
+    private var appKeyIndex             : Data!
+    private var netKeyIndex             : Data!
     private var networkLayer            : NetworkLayer!
     private var segmentedData: Data
-
+    
     // MARK: - ConfiguratorStateProtocol
     var destinationAddress  : Data
     var target              : ProvisionedMeshNodeProtocol
     var stateManager        : MeshStateManager
-
+    
     required init(withTargetProxyNode aNode: ProvisionedMeshNodeProtocol,
-             destinationAddress aDestinationAddress: Data,
-             andStateManager aStateManager: MeshStateManager) {
+                  destinationAddress aDestinationAddress: Data,
+                  andStateManager aStateManager: MeshStateManager) {
         target = aNode
         segmentedData = Data()
         stateManager = aStateManager
@@ -41,24 +43,26 @@ class DefaultTTLGetConfiguratorState: NSObject, ConfiguratorStateProtocol {
             self.acknowlegeSegment(withAckData: ackData)
         })
     }
-
-    func humanReadableName() -> String {
-        return "Default TTL Get"
+    
+    public func setAppKeyIndex(_ anAppKeyIndex: Data, andNetKeyIndex aNetKeyIndex: Data) {
+        appKeyIndex = anAppKeyIndex
+        netKeyIndex = aNetKeyIndex
     }
-
+    
+    func humanReadableName() -> String {
+        return "AppKey Delete"
+    }
+    
     func execute() {
-    //    let message = AppKeyAddMessage(withAppKeyData: appKey,
-    //                                   appKeyIndex: appKeyIndex,
-    //                                   netkeyIndex: netKeyIndex)
-        let message = DefaultTTLGetMessage()
+        let message = AppKeyDeleteMessage(withAppKeyIndex: appKeyIndex, andNetkeyIndex: netKeyIndex)
         //Send to destination (unicast)
         let payloads = message.assemblePayload(withMeshState: stateManager.state(), toAddress: destinationAddress)
         for aPayload in payloads! {
             var data = Data([0x00]) //Type => Network
             data.append(aPayload)
-            print("Full PDU: \(data.hexString())")
+            print("Full app key delte PDU: \(data.hexString())")
             if data.count <= target.basePeripheral().maximumWriteValueLength(for: .withoutResponse) {
-                print("Sending  data: \(data.hexString())")
+                print("Sending app key delte data: \(data.hexString())")
                 target.basePeripheral().writeValue(data, for: dataInCharacteristic, type: .withoutResponse)
             } else {
                 print("maximum write length is shorter than PDU, will Segment")
@@ -80,31 +84,47 @@ class DefaultTTLGetConfiguratorState: NSObject, ConfiguratorStateProtocol {
                     segmentedProvisioningData.append(Data(chunkData))
                 }
                 for aSegment in segmentedProvisioningData {
-                    print("Sending segment: \(aSegment.hexString())")
+                    print("Sending appkey delte segment: \(aSegment.hexString())")
                     target.basePeripheral().writeValue(aSegment, for: dataInCharacteristic, type: .withoutResponse)
                 }
             }
         }
     }
-
+    
     func receivedData(incomingData : Data) {
         if incomingData[0] == 0x01 {
             print("Secure beacon: \(incomingData.hexString())")
         } else {
             let strippedOpcode = Data(incomingData.dropFirst())
             if let result = networkLayer.incomingPDU(strippedOpcode) {
-                if result is DefaultTTLStatusMessage {
-                    let ttlStatus = result as! DefaultTTLStatusMessage
-                    target.delegate?.receivedDefaultTTLStatus(ttlStatus)
-                    let nextState = SleepConfiguratorState(withTargetProxyNode: target, destinationAddress: destinationAddress, andStateManager: stateManager)
-                    target.switchToState(nextState)
+                if result is AppKeyStatusMessage {
+                    let appKeyStatus = result as! AppKeyStatusMessage
+                    if appKeyStatus.statusCode == .success {
+                        //Store newly added AppKey to the node's global list
+                        let state = self.stateManager.state()
+                        if let anIndex = state.provisionedNodes.index(where: { $0.nodeUnicast == destinationAddress}) {
+                            let aNodeEntry = state.provisionedNodes[anIndex]
+                            state.provisionedNodes.remove(at: anIndex)
+                            if let appKeyIndex = aNodeEntry.appKeys.index(of: appKeyStatus.appKeyIndex) {
+                                aNodeEntry.appKeys.remove(at: appKeyIndex)
+                            } else {
+                                print("App key index wasn't stored")
+                            }
+                            state.provisionedNodes.append(aNodeEntry)
+                            stateManager.saveState()
+                        }
+                    } else {
+                        print("App key delte error : \(appKeyStatus.statusCode)")
+                        target.shouldDisconnect()
+                    }
+                    target.delegate?.receivedAppKeyStatusData(appKeyStatus)
+                } else {
+                    print("Ignoring non app key delte status message")
                 }
-            } else {
-                print("ignoring non default TTL status message")
             }
         }
     }
-
+    
     private func calculateDataRanges(_ someData: Data, withSize aChunkSize: Int) -> [Range<Int>] {
         var totalLength = someData.count
         var ranges = [Range<Int>]()
@@ -123,7 +143,7 @@ class DefaultTTLGetConfiguratorState: NSObject, ConfiguratorStateProtocol {
         }
         return ranges
     }
-
+    
     private func acknowlegeSegment(withAckData someData: Data) {
         print("Sending acknowledgement: \(someData.hexString())")
         if someData.count <= self.target.basePeripheral().maximumWriteValueLength(for: .withoutResponse) {
@@ -153,18 +173,18 @@ class DefaultTTLGetConfiguratorState: NSObject, ConfiguratorStateProtocol {
             }
         }
     }
-
+    
     // MARK: - CBPeripheralDelegate
     func peripheral(_ peripheral: CBPeripheral, didDiscoverServices error: Error?) {
         //NOOP
     }
-
+    
     func peripheral(_ peripheral: CBPeripheral, didDiscoverCharacteristicsFor service: CBService, error: Error?) {
         //NOOP
     }
-
+    
     var lastMessageType = 0xC0
-
+    
     func peripheral(_ peripheral: CBPeripheral, didUpdateValueFor characteristic: CBCharacteristic, error: Error?) {
         print("Cahrcateristic value updated: \(characteristic.value!.hexString())")
         //SAR handling
@@ -194,7 +214,7 @@ class DefaultTTLGetConfiguratorState: NSObject, ConfiguratorStateProtocol {
             receivedData(incomingData: Data(characteristic.value!))
         }
     }
-
+    
     func peripheral(_ peripheral: CBPeripheral, didUpdateNotificationStateFor characteristic: CBCharacteristic, error: Error?) {
         print("Characteristic notification state changed")
     }

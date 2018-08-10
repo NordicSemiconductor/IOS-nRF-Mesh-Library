@@ -27,7 +27,10 @@ class SettingsViewController: UIViewController, UITextFieldDelegate, UITableView
 
     // MARK: - Implementaiton
     private func updateProvisioningDataUI() {
-        //Update provisioning Data UI with default values
+        //Update provisioning Data UI with default values, this is called after modifications are done
+        //so we need to save it, and then load it again
+        meshManager.stateManager().saveState()
+        meshManager.stateManager().restoreState()
         settingsTable.reloadData()
     }
 
@@ -128,16 +131,16 @@ class SettingsViewController: UIViewController, UITextFieldDelegate, UITableView
     }
 
     func didSelectFlagsCell() {
+        let meshState = meshManager.stateManager().state()
         let flagsCell = settingsTable.cellForRow(at: IndexPath(item: 2, section: 1))
         let flagSettingsView = storyboard?.instantiateViewController(withIdentifier: "flagsSettingsPopoverView") as? FlagSettingsPopoverViewController
         flagSettingsView?.modalPresentationStyle = .popover
         flagSettingsView?.preferredContentSize = CGSize(width: 300, height: 300)
         let flagPresentationController = flagSettingsView?.popoverPresentationController
-        flagPresentationController?.permittedArrowDirections = .any
-        flagPresentationController?.sourceView = flagsCell?.textLabel
+        flagPresentationController?.sourceView = flagsCell!.contentView
+        flagPresentationController?.sourceRect = flagsCell!.contentView.frame
         flagPresentationController?.delegate = self
         present(flagSettingsView!, animated: true, completion: nil)
-        let meshState = meshManager.stateManager().state()
         flagSettingsView?.setFlagData(meshState.flags, andCompletionHandler: { (newFlags) -> (Void) in
             self.deselectSelectedRow()
             if let newFlags = newFlags {
@@ -337,7 +340,6 @@ class SettingsViewController: UIViewController, UITextFieldDelegate, UITableView
     override func viewDidLoad() {
         super.viewDidLoad()
         meshManager = (UIApplication.shared.delegate as? AppDelegate)?.meshManager
-//        setupProvisioningData()
     }
 
     override func viewWillAppear(_ animated: Bool) {

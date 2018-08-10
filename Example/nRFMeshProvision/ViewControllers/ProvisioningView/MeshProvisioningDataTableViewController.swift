@@ -729,10 +729,7 @@ extension MeshProvisioningDataTableViewController: ProvisionedMeshNodeDelegate {
     func nodeDidCompleteDiscovery(_ aNode: ProvisionedMeshNode) {
         if aNode == targetProvisionedNode {
             stepCompleted(withIndicatorState: false)
-            targetProvisionedNode.configure(destinationAddress: destinationAddress,
-                                            appKeyIndex: appKeyIndex,
-                                            appKeyData: appKeyData,
-                                            andNetKeyIndex: netKeyIndex)
+            targetProvisionedNode.configure(destinationAddress: destinationAddress)
         }
     }
 
@@ -748,35 +745,14 @@ extension MeshProvisioningDataTableViewController: ProvisionedMeshNodeDelegate {
             return
         }
         stepCompleted(withIndicatorState: false)
-        let state = stateManager.state()
-        if let anIndex = state.provisionedNodes.index(where: { $0.nodeUnicast == self.nodeAddress}) {
-            let aNodeEntry = state.provisionedNodes[anIndex]
-            state.provisionedNodes.remove(at: anIndex)
-            aNodeEntry.companyIdentifier = compositionData.companyIdentifier
-            aNodeEntry.productVersion = compositionData.productVersion
-            aNodeEntry.productIdentifier = compositionData.productIdentifier
-            aNodeEntry.featureFlags = compositionData.features
-            aNodeEntry.replayProtectionCount = compositionData.replayProtectionCount
-            aNodeEntry.elements = compositionData.elements
-            state.provisionedNodes.append(aNodeEntry)
-            logEventWithMessage("received composition data")
-            logEventWithMessage("company identifier:\(compositionData.companyIdentifier.hexString())")
-            logEventWithMessage("product identifier:\(compositionData.productIdentifier.hexString())")
-            logEventWithMessage("product version:\(compositionData.productVersion.hexString())")
-            logEventWithMessage("feature flags:\(compositionData.features.hexString())")
-            logEventWithMessage("element count:\(compositionData.elements.count)")
-            for anElement in aNodeEntry.elements! {
-                logEventWithMessage("Element models:\(anElement.totalModelCount())")
-            }
-            //Set unicast to current set value, to allow the user to force override addresses
-            state.nextUnicast = self.nodeAddress
-            //Increment next available address
-            state.incrementUnicastBy(compositionData.elements.count)
-            logEventWithMessage("next unicast address available: \(state.nextUnicast.hexString())")
-            stateManager.saveState()
-        } else {
-            logEventWithMessage("Received composition data but node isn't stored, please provision again")
-        }
+        logEventWithMessage("received composition data")
+        logEventWithMessage("company identifier:\(compositionData.companyIdentifier.hexString())")
+        logEventWithMessage("product identifier:\(compositionData.productIdentifier.hexString())")
+        logEventWithMessage("product version:\(compositionData.productVersion.hexString())")
+        logEventWithMessage("feature flags:\(compositionData.features.hexString())")
+        logEventWithMessage("element count:\(compositionData.elements.count)")
+        //Jump to app Key add state
+        targetProvisionedNode.appKeyAdd(appKeyData, atIndex: appKeyIndex, forNetKeyAtIndex: netKeyIndex, onDestinationAddress: nodeAddress)
     }
     
     func receivedAppKeyStatusData(_ appKeyStatusData: AppKeyStatusMessage) {
@@ -788,45 +764,18 @@ extension MeshProvisioningDataTableViewController: ProvisionedMeshNodeDelegate {
             logEventWithMessage("netKey index: \(appKeyStatusData.netKeyIndex.hexString())")
             
             // Update state with configured key
-            let state = stateManager.state()
-            if let anIndex = state.provisionedNodes.index(where: { $0.nodeUnicast == self.nodeAddress}) {
-                let aNodeEntry = state.provisionedNodes[anIndex]
-                state.provisionedNodes.remove(at: anIndex)
-                if aNodeEntry.appKeys.contains(appKeyStatusData.appKeyIndex) == false {
-                    aNodeEntry.appKeys.append(appKeyStatusData.appKeyIndex)
-                }
-                //and update
-                state.provisionedNodes.append(aNodeEntry)
-                stateManager.saveState()
-                for aKey in aNodeEntry.appKeys {
-                    logEventWithMessage("appKeyData:\(aKey.hexString())")
-                }
-            }
+            configurationSucceeded()
         } else {
-            logEventWithMessage("received error code: \(appKeyStatusData.statusCode)")
+            logEventWithMessage("Received error code: \(appKeyStatusData.statusCode)")
             activityIndicator.stopAnimating()
         }
     }
     
-    func receivedModelAppBindStatus(_ modelAppStatusData: ModelAppBindStatusMessage) {
-        //NOOP
-    }
-    
-    func receivedModelPublicationStatus(_ modelPublicationStatusData: ModelPublicationStatusMessage) {
-        //NOOP
-    }
-    
-    func receivedModelSubsrciptionStatus(_ modelSubscriptionStatusData: ModelSubscriptionStatusMessage) {
-        //NOOP
-    }
-    
-    func receivedDefaultTTLStatus(_ defaultTTLStatusData: DefaultTTLStatusMessage) {
-        //NOOP
-    }
-    
-    func receivedNodeResetStatus(_ resetStatusData: NodeResetStatusMessage) {
-        //NOOP
-    }
+    func receivedModelAppStatus(_ modelAppStatusData: ModelAppStatusMessage) {}
+    func receivedModelPublicationStatus(_ modelPublicationStatusData: ModelPublicationStatusMessage) {}
+    func receivedModelSubsrciptionStatus(_ modelSubscriptionStatusData: ModelSubscriptionStatusMessage) {}
+    func receivedDefaultTTLStatus(_ defaultTTLStatusData: DefaultTTLStatusMessage) {}
+    func receivedNodeResetStatus(_ resetStatusData: NodeResetStatusMessage) {}
 }
 
 extension MeshProvisioningDataTableViewController: ProvisionedMeshNodeLoggingDelegate {

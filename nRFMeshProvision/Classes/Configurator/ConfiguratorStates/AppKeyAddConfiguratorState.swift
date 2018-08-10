@@ -72,7 +72,7 @@ class AppKeyAddConfiguratorState: NSObject, ConfiguratorStateProtocol {
             } else {
                 print("maximum write length is shorter than PDU, will Segment")
                 var segmentedProvisioningData = [Data]()
-                data = Data(data.dropFirst()) //Drop old network haeder, SAR will now set that instead.
+                data = Data(data.dropFirst()) //Drop old network header, SAR will now set that instead.
                 let chunkRanges = self.calculateDataRanges(data, withSize: 19)
                 for aRange in chunkRanges {
                     var header = Data()
@@ -104,13 +104,23 @@ class AppKeyAddConfiguratorState: NSObject, ConfiguratorStateProtocol {
             if let result = networkLayer.incomingPDU(strippedOpcode) {
                 if result is AppKeyStatusMessage {
                     let appKeyStatus = result as! AppKeyStatusMessage
-                    target.delegate?.receivedAppKeyStatusData(appKeyStatus)
-                    if appKeyStatus.statusCode != .success {
+                    if appKeyStatus.statusCode == .success {
+                        //Store newly added AppKey to global list
+                        let state = self.stateManager.state()
+                        if let anIndex = state.provisionedNodes.index(where: { $0.nodeUnicast == destinationAddress}) {
+                            let aNodeEntry = state.provisionedNodes[anIndex]
+                            state.provisionedNodes.remove(at: anIndex)
+                            if aNodeEntry.appKeys.contains(appKeyStatus.appKeyIndex) == false {
+                                aNodeEntry.appKeys.append(appKeyStatus.appKeyIndex)
+                            }
+                            state.provisionedNodes.append(aNodeEntry)
+                            stateManager.saveState()
+                        }
+                    } else {
                         print("App key add error : \(appKeyStatus.statusCode)")
                         target.shouldDisconnect()
-                    } else {
-                        target.delegate?.configurationSucceeded()
                     }
+                    target.delegate?.receivedAppKeyStatusData(appKeyStatus)
                 } else {
                     print("Ignoring non app key status message")
                 }

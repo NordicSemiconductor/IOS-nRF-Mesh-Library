@@ -1196,7 +1196,7 @@ provisioning and then configuring a device.</string>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="qUq-s2-KB8" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="596" y="-2476"/>
+            <point key="canvasLocation" x="556" y="-1978"/>
         </scene>
         <!--Select AppKey-->
         <scene sceneID="B0O-2C-MYI">
@@ -1214,18 +1214,18 @@ provisioning and then configuring a device.</string>
                                     <rect key="frame" x="0.0" y="0.0" width="375" height="43.666666666666664"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
-                                        <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="key name" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="64W-r5-7CI">
-                                            <rect key="frame" x="53.999999999999993" y="5" width="73.333333333333329" height="20.333333333333332"/>
+                                        <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Key Name" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="64W-r5-7CI">
+                                            <rect key="frame" x="53.999999999999993" y="4" width="75.333333333333329" height="20"/>
                                             <autoresizingMask key="autoresizingMask"/>
-                                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                            <fontDescription key="fontDescription" name="TrebuchetMS" family="Trebuchet MS" pointSize="17"/>
                                             <nil key="textColor"/>
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="&lt;key bytes&gt;" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="zmb-gd-zSe">
-                                            <rect key="frame" x="54.000000000000007" y="25.333333333333332" width="69.666666666666671" height="14.333333333333334"/>
+                                            <rect key="frame" x="53.999999999999993" y="24" width="74.333333333333329" height="16.333333333333332"/>
                                             <autoresizingMask key="autoresizingMask"/>
-                                            <fontDescription key="fontDescription" type="system" pointSize="12"/>
-                                            <nil key="textColor"/>
+                                            <fontDescription key="fontDescription" name="TrebuchetMS" family="Trebuchet MS" pointSize="14"/>
+                                            <color key="textColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <imageView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" image="ic_vpn_key_36pt" id="HTd-pJ-Edn">
@@ -1244,7 +1244,7 @@ provisioning and then configuring a device.</string>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="w48-yU-gai" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2982" y="-2202"/>
+            <point key="canvasLocation" x="3135" y="-1920"/>
         </scene>
         <!--Node Info-->
         <scene sceneID="b0E-Xt-pDz">
@@ -1290,10 +1290,78 @@ provisioning and then configuring a device.</string>
             </objects>
             <point key="canvasLocation" x="596" y="-514"/>
         </scene>
-        <!--Model Configuration-->
+        <!--Global AppKey List-->
+        <scene sceneID="c2d-b8-JYP">
+            <objects>
+                <tableViewController title="Global AppKey List" id="OqY-Tk-Tkn" customClass="GlobalAppKeyListManagerController" customModule="nRFMeshProvision_Example" customModuleProvider="target" sceneMemberID="viewController">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="default" allowsSelectionDuringEditing="YES" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="18" sectionFooterHeight="18" id="VlQ-ap-ig6">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="672"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
+                        <prototypes>
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" showsReorderControl="YES" indentationWidth="10" reuseIdentifier="GlobalAppKeyEntryCell" textLabel="lsR-bs-p3G" detailTextLabel="lpj-Rj-DU4" imageView="FWU-5u-cgn" style="IBUITableViewCellStyleSubtitle" id="NnO-RE-p3d">
+                                <rect key="frame" x="0.0" y="55.333333333333343" width="375" height="44"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="NnO-RE-p3d" id="tPT-sb-mwh">
+                                    <rect key="frame" x="0.0" y="0.0" width="375" height="43.666666666666664"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                    <subviews>
+                                        <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Key Name" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="lsR-bs-p3G">
+                                            <rect key="frame" x="53.999999999999993" y="4" width="75.333333333333329" height="20"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <fontDescription key="fontDescription" name="TrebuchetMS" family="Trebuchet MS" pointSize="17"/>
+                                            <nil key="textColor"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                        <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="&lt;key bytes&gt;" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="lpj-Rj-DU4">
+                                            <rect key="frame" x="53.999999999999993" y="24" width="74.333333333333329" height="16.333333333333332"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <fontDescription key="fontDescription" name="TrebuchetMS" family="Trebuchet MS" pointSize="14"/>
+                                            <color key="textColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                        <imageView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" image="ic_vpn_key_36pt" id="FWU-5u-cgn">
+                                            <rect key="frame" x="16" y="10" width="23" height="23"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                        </imageView>
+                                    </subviews>
+                                </tableViewCellContentView>
+                                <color key="tintColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            </tableViewCell>
+                        </prototypes>
+                        <connections>
+                            <outlet property="dataSource" destination="OqY-Tk-Tkn" id="UPh-Ie-Vu1"/>
+                            <outlet property="delegate" destination="OqY-Tk-Tkn" id="tZC-XK-qdI"/>
+                        </connections>
+                    </tableView>
+                    <navigationItem key="navigationItem" title="Global AppKey List" id="aSY-9M-jIT">
+                        <rightBarButtonItems>
+                            <barButtonItem systemItem="add" id="zQb-q2-Em6">
+                                <connections>
+                                    <action selector="addButtonTapped:" destination="OqY-Tk-Tkn" id="bin-LB-JZt"/>
+                                </connections>
+                            </barButtonItem>
+                            <barButtonItem title="Edit" id="6fv-bM-TZy">
+                                <connections>
+                                    <action selector="editButtonTapped:" destination="OqY-Tk-Tkn" id="GV4-7L-bUk"/>
+                                </connections>
+                            </barButtonItem>
+                        </rightBarButtonItems>
+                    </navigationItem>
+                    <connections>
+                        <outlet property="addButton" destination="zQb-q2-Em6" id="iF7-e2-hZb"/>
+                        <outlet property="editButton" destination="6fv-bM-TZy" id="FMe-Gi-pRu"/>
+                        <segue destination="JCc-w9-Xls" kind="show" identifier="showAppKeySelector" id="fZZ-Il-eHX"/>
+                    </connections>
+                </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="IbJ-Ye-Mpe" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1401" y="-924"/>
+        </scene>
+        <!--Node Configuration-->
         <scene sceneID="dfX-Ac-h6A">
             <objects>
-                <tableViewController title="Model Configuration" extendedLayoutIncludesOpaqueBars="YES" id="1by-8F-oJo" customClass="NodeModelsTableViewController" customModule="nRFMeshProvision_Example" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController title="Node Configuration" extendedLayoutIncludesOpaqueBars="YES" id="1by-8F-oJo" customClass="NodeConfigurationTableViewController" customModule="nRFMeshProvision_Example" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="default" rowHeight="56" estimatedRowHeight="-1" sectionHeaderHeight="18" sectionFooterHeight="18" id="GzM-ni-2zE">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -1306,14 +1374,21 @@ provisioning and then configuring a device.</string>
                                     <rect key="frame" x="0.0" y="0.0" width="341" height="55.666666666666664"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
+                                        <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="ic_lan_36pt" translatesAutoresizingMaskIntoConstraints="NO" id="zT2-hF-loE">
+                                            <rect key="frame" x="16" y="16" width="24" height="24"/>
+                                            <constraints>
+                                                <constraint firstAttribute="width" constant="24" id="qDB-dP-8rs"/>
+                                                <constraint firstAttribute="height" constant="24" id="wKA-w9-SnT"/>
+                                            </constraints>
+                                        </imageView>
                                         <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Title" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="V8n-oR-b0Y">
-                                            <rect key="frame" x="16" y="11" width="36" height="20"/>
+                                            <rect key="frame" x="53" y="11" width="36" height="20"/>
                                             <fontDescription key="fontDescription" name="TrebuchetMS" family="Trebuchet MS" pointSize="17"/>
                                             <nil key="textColor"/>
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Subtitle" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="FNh-bU-8BX">
-                                            <rect key="frame" x="16" y="30" width="43" height="14"/>
+                                            <rect key="frame" x="53" y="30" width="43" height="14"/>
                                             <fontDescription key="fontDescription" name="TrebuchetMS" family="Trebuchet MS" pointSize="12"/>
                                             <color key="textColor" red="0.38034743069999999" green="0.38041785360000002" blue="0.38034299020000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                             <nil key="highlightedColor"/>
@@ -1322,13 +1397,16 @@ provisioning and then configuring a device.</string>
                                             <rect key="frame" x="309" y="16" width="24" height="24"/>
                                         </imageView>
                                     </subviews>
+                                    <color key="tintColor" red="0.20000000000000001" green="0.2470588235" blue="0.28235294119999998" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                     <constraints>
                                         <constraint firstItem="9k0-AR-oXW" firstAttribute="centerY" secondItem="oWL-7C-Dvb" secondAttribute="centerY" id="0AT-WX-9YR"/>
                                         <constraint firstItem="V8n-oR-b0Y" firstAttribute="top" secondItem="oWL-7C-Dvb" secondAttribute="top" constant="11.000000000000142" id="5U3-yU-W0t"/>
+                                        <constraint firstItem="FNh-bU-8BX" firstAttribute="leading" secondItem="zT2-hF-loE" secondAttribute="trailing" constant="13" id="78x-Au-Up0"/>
                                         <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="V8n-oR-b0Y" secondAttribute="trailing" constant="20" symbolic="YES" id="9bd-MW-GXd"/>
-                                        <constraint firstItem="V8n-oR-b0Y" firstAttribute="leading" secondItem="oWL-7C-Dvb" secondAttribute="leading" constant="16" id="C7t-mU-q0J"/>
-                                        <constraint firstItem="FNh-bU-8BX" firstAttribute="leading" secondItem="oWL-7C-Dvb" secondAttribute="leading" constant="16" id="S0s-VJ-12H"/>
+                                        <constraint firstItem="zT2-hF-loE" firstAttribute="centerY" secondItem="oWL-7C-Dvb" secondAttribute="centerY" id="BWa-Rb-msr"/>
                                         <constraint firstAttribute="bottom" secondItem="FNh-bU-8BX" secondAttribute="bottom" constant="11.666666666666522" id="g8c-8N-XbC"/>
+                                        <constraint firstItem="V8n-oR-b0Y" firstAttribute="leading" secondItem="zT2-hF-loE" secondAttribute="trailing" constant="13" id="lxE-VU-YyP"/>
+                                        <constraint firstItem="zT2-hF-loE" firstAttribute="leading" secondItem="oWL-7C-Dvb" secondAttribute="leadingMargin" id="poC-A6-FXY"/>
                                         <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="FNh-bU-8BX" secondAttribute="trailing" constant="20" symbolic="YES" id="wse-NG-iWO"/>
                                         <constraint firstAttribute="trailing" secondItem="9k0-AR-oXW" secondAttribute="trailing" constant="8" id="zm1-b5-xcH"/>
                                     </constraints>
@@ -1339,8 +1417,37 @@ provisioning and then configuring a device.</string>
                                     <outlet property="titleLabel" destination="V8n-oR-b0Y" id="DEe-Xd-Ivy"/>
                                 </connections>
                             </tableViewCell>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="MeshNodeDestructiveCell" textLabel="DyA-Pc-hnv" style="IBUITableViewCellStyleDefault" id="nra-Q6-oen">
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" accessoryType="disclosureIndicator" indentationWidth="10" reuseIdentifier="MeshAppKeysCell" textLabel="5H6-8V-sX2" detailTextLabel="7ZM-l0-YxN" imageView="slj-Ff-RAw" style="IBUITableViewCellStyleValue1" id="Zbz-gs-uAs">
                                 <rect key="frame" x="0.0" y="111.33333333333334" width="375" height="56"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="Zbz-gs-uAs" id="sgw-za-qFE">
+                                    <rect key="frame" x="0.0" y="0.0" width="341" height="55.666666666666664"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                    <subviews>
+                                        <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Application Keys" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="5H6-8V-sX2">
+                                            <rect key="frame" x="53.999999999999993" y="18" width="125.33333333333333" height="20"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <fontDescription key="fontDescription" name="TrebuchetMS" family="Trebuchet MS" pointSize="17"/>
+                                            <nil key="textColor"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                        <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="2 Keys" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="7ZM-l0-YxN">
+                                            <rect key="frame" x="300.33333333333337" y="21" width="39.666666666666664" height="16.333333333333332"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <fontDescription key="fontDescription" name="TrebuchetMS" family="Trebuchet MS" pointSize="14"/>
+                                            <color key="textColor" red="0.20000000000000001" green="0.2470588235" blue="0.28235294119999998" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                        <imageView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" image="ic_vpn_key_36pt" id="slj-Ff-RAw">
+                                            <rect key="frame" x="16" y="16" width="23" height="23"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                        </imageView>
+                                    </subviews>
+                                </tableViewCellContentView>
+                                <color key="tintColor" red="0.20000000000000001" green="0.2470588235" blue="0.28235294119999998" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                            </tableViewCell>
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="MeshNodeDestructiveCell" textLabel="DyA-Pc-hnv" style="IBUITableViewCellStyleDefault" id="nra-Q6-oen">
+                                <rect key="frame" x="0.0" y="167.33333333333334" width="375" height="56"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="nra-Q6-oen" id="3WZ-oW-ZJx">
                                     <rect key="frame" x="0.0" y="0.0" width="375" height="55.666666666666664"/>
@@ -1364,6 +1471,7 @@ provisioning and then configuring a device.</string>
                     </tableView>
                     <connections>
                         <segue destination="5o5-rc-Cqd" kind="show" identifier="ShowModelConfiguration" id="dp5-jc-VjF"/>
+                        <segue destination="OqY-Tk-Tkn" kind="show" identifier="ShowAppKeyListManager" id="uww-jR-Kfn"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="ki3-8r-a16" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -1468,15 +1576,23 @@ provisioning and then configuring a device.</string>
                             <outlet property="delegate" destination="5o5-rc-Cqd" id="dsu-Uy-dmZ"/>
                         </connections>
                     </tableView>
+                    <navigationItem key="navigationItem" title="Model Name" id="fAy-AG-cfR">
+                        <barButtonItem key="rightBarButtonItem" title="Edit" id="C0b-v3-OeZ">
+                            <connections>
+                                <action selector="editButtonTapped:" destination="5o5-rc-Cqd" id="Uo1-om-lPn"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
                     <connections>
+                        <outlet property="editButton" destination="C0b-v3-OeZ" id="LhJ-DA-XpD"/>
                         <outlet property="vendorLabel" destination="axy-nC-oAG" id="eEY-yY-Lka"/>
                         <segue destination="N78-VU-wIN" kind="show" identifier="ShowPublicationSettings" id="cGK-BH-e4L"/>
-                        <segue destination="kr3-eb-Xse" kind="show" identifier="ShowAppKeyBindingView" id="k8W-wx-I6W"/>
+                        <segue destination="JCc-w9-Xls" kind="show" identifier="showAppKeySelector" id="G3c-Z4-KEq"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="lBk-SV-6iN" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1402" y="-1196"/>
+            <point key="canvasLocation" x="1401" y="-1599"/>
         </scene>
         <!--Publication Settings-->
         <scene sceneID="OE1-gc-ypy">
@@ -1801,7 +1917,7 @@ provisioning and then configuring a device.</string>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="CD0-rf-Pr2" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2338" y="-1196"/>
+            <point key="canvasLocation" x="2202" y="-1290"/>
         </scene>
         <!--Provisioning Log-->
         <scene sceneID="Eee-ff-ax8">
@@ -1857,51 +1973,7 @@ provisioning and then configuring a device.</string>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Cae-xZ-ahB" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1401" y="-1948"/>
-        </scene>
-        <!--Bind AppKey-->
-        <scene sceneID="rdL-xW-s1H">
-            <objects>
-                <tableViewController storyboardIdentifier="AppKeySelectorView" title="Bind AppKey" extendedLayoutIncludesOpaqueBars="YES" id="kr3-eb-Xse" customClass="ModelAppKeyBindingConfigurationTableViewController" customModule="nRFMeshProvision_Example" customModuleProvider="target" sceneMemberID="viewController">
-                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="default" rowHeight="60" estimatedRowHeight="-1" sectionHeaderHeight="18" sectionFooterHeight="18" id="hPI-xf-ICn">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
-                        <prototypes>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="AppKeyBindCell" textLabel="E3A-wD-mCz" detailTextLabel="Ozl-rh-gQo" style="IBUITableViewCellStyleSubtitle" id="g3f-7a-Z0r">
-                                <rect key="frame" x="0.0" y="55.333333333333343" width="375" height="60"/>
-                                <autoresizingMask key="autoresizingMask"/>
-                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="g3f-7a-Z0r" id="liI-wF-mh5">
-                                    <rect key="frame" x="0.0" y="0.0" width="375" height="59.666666666666664"/>
-                                    <autoresizingMask key="autoresizingMask"/>
-                                    <subviews>
-                                        <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Title" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="E3A-wD-mCz">
-                                            <rect key="frame" x="15.999999999999996" y="10" width="36.666666666666664" height="23"/>
-                                            <autoresizingMask key="autoresizingMask"/>
-                                            <fontDescription key="fontDescription" type="system" pointSize="19"/>
-                                            <nil key="textColor"/>
-                                            <nil key="highlightedColor"/>
-                                        </label>
-                                        <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Detail" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="Ozl-rh-gQo">
-                                            <rect key="frame" x="16.000000000000004" y="33" width="37.333333333333336" height="17"/>
-                                            <autoresizingMask key="autoresizingMask"/>
-                                            <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                            <color key="textColor" red="0.30935120579999997" green="0.60394281149999995" blue="0.85002428289999998" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                            <nil key="highlightedColor"/>
-                                        </label>
-                                    </subviews>
-                                </tableViewCellContentView>
-                            </tableViewCell>
-                        </prototypes>
-                        <connections>
-                            <outlet property="dataSource" destination="kr3-eb-Xse" id="9xz-Rx-0X4"/>
-                            <outlet property="delegate" destination="kr3-eb-Xse" id="hkp-PJ-Rsy"/>
-                        </connections>
-                    </tableView>
-                </tableViewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="MK8-Gd-H4j" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="1937" y="-307"/>
+            <point key="canvasLocation" x="1401" y="-2301"/>
         </scene>
         <!--Root View Controller-->
         <scene sceneID="B3j-TN-IE6">
@@ -1948,6 +2020,6 @@ provisioning and then configuring a device.</string>
         <image name="ic_vpn_key_36pt" width="23" height="23"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="Qig-Me-EEV"/>
+        <segue reference="q2d-3z-Xle"/>
     </inferredMetricsTieBreakers>
 </document>

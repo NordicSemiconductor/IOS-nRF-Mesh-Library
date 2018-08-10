@@ -220,7 +220,7 @@ class MainNetworkViewController: UIViewController, UICollectionViewDataSource, U
             }
         } else if segue.identifier == "ShowNodeConfiguration" {
             if let nodeEntry = sender as? MeshNodeEntry {
-                if let configView = segue.destination as? NodeModelsTableViewController {
+                if let configView = segue.destination as? NodeConfigurationTableViewController {
                     if (UIApplication.shared.delegate as? AppDelegate)?.meshManager.proxyNode() != nil {
                         configView.setNodeEntry(nodeEntry)
                     } else {
@@ -291,7 +291,7 @@ extension MainNetworkViewController: ProvisionedMeshNodeDelegate {
         //NOOP
     }
     
-    func receivedModelAppBindStatus(_ modelAppStatusData: ModelAppBindStatusMessage) {
+    func receivedModelAppStatus(_ modelAppStatusData: ModelAppStatusMessage) {
         //NOOP
     }
     

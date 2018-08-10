@@ -14,12 +14,25 @@ private enum SubscriptionActions {
     case subscriptionAdd
     case subscriptionDelete
 }
+private enum ModelAppActions {
+    case modelAppBind
+    case modelAppUnbind
+}
 
 class ModelConfigurationTableViewController: UITableViewController, ProvisionedMeshNodeDelegate, UITextFieldDelegate, ToggleCellDelegate, PublicationSettingsDelegate {
 
     // MARK: - Outlets & Actions
     @IBOutlet weak var vendorLabel: UILabel!
-
+    @IBOutlet weak var editButton: UIBarButtonItem!
+    @IBAction func editButtonTapped(_ sender: Any) {
+        tableView.isEditing = !tableView.isEditing
+        if tableView.isEditing {
+            editButton.title = "Done"
+        } else {
+            editButton.title = "Edit"
+        }
+    }
+    
     // MARK: - Properties
     private var nodeEntry: MeshNodeEntry!
     private var meshstateManager: MeshStateManager!
@@ -30,6 +43,7 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
     private var originalDelegate: ProvisionedMeshNodeDelegate?
     private var centralManager: CBCentralManager?
     private var lastSubscriptionAction: SubscriptionActions?
+    private var lastModelAppAction: ModelAppActions?
 
     // MARK: - Implementation
     public func setProxyNode(_ aNode: ProvisionedMeshNode) {
@@ -72,7 +86,37 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
                                               onDestinationAddress: nodeEntry.nodeUnicast!)
     }
 
-    public func didSelectAppKeyAtIndex(_ anAppKeyIndex: UInt16) {
+    func didSelectUnbindAppKeyAtIndex(_ anAppKeyIndex: UInt16) {
+        lastModelAppAction = .modelAppUnbind
+        var anIndex = anAppKeyIndex.bigEndian
+        let appKeyIndexData = Data(bytes: &anIndex, count: MemoryLayout<UInt16>.size)
+        var keyFound = false
+        for aBoundAppKeyIndex in nodeEntry.appKeys {
+            if aBoundAppKeyIndex == appKeyIndexData {
+                keyFound = true
+            }
+        }
+        let appKey = meshstateManager.state().appKeys[Int(anAppKeyIndex)]
+        let selectedAppKeyName = appKey.keys.first!
+        if !keyFound {
+            showstatusCodeAlert(withTitle: "AppKey is not on the node's list",
+                                andMessage: "\"\(selectedAppKeyName)\" has not been added to this node's AppKey list and unbinding cannot be performed on this model.")
+        } else {
+            let elementIdx = selectedModelIndexPath.section
+            let modelIdx = selectedModelIndexPath.row
+            let aModel = nodeEntry.elements![elementIdx].allSigAndVendorModels()[modelIdx]
+            let unicast = nodeEntry.nodeUnicast!
+            let elementAddress = Data([unicast[0], unicast[1] + UInt8(elementIdx)])
+            targetNode.unbindAppKey(withIndex: appKeyIndexData,
+                                  modelId: aModel,
+                                  elementAddress: elementAddress,
+                                  onDestinationAddress: nodeEntry.nodeUnicast!)
+            print("Unbinding appkey \(selectedAppKeyName) on Model \(aModel.hexString())")
+        }
+    }
+
+    func didSelectAppKeyAtIndex(_ anAppKeyIndex: UInt16) {
+        lastModelAppAction = .modelAppBind
         var anIndex = anAppKeyIndex.bigEndian
         let appKeyIndexData = Data(bytes: &anIndex, count: MemoryLayout<UInt16>.size)
         var keyFound = false
@@ -93,12 +137,11 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
             let unicast = nodeEntry.nodeUnicast!
             let elementAddress = Data([unicast[0], unicast[1] + UInt8(elementIdx)])
             targetNode.bindAppKey(withIndex: appKeyIndexData,
-                                  toModelId: aModel,
-                                  onElementAddress: elementAddress,
+                                  modelId: aModel,
+                                  elementAddress: elementAddress,
                                   onDestinationAddress: nodeEntry.nodeUnicast!)
             print("Binding appkey \(selectedAppKeyName) to Model \(aModel.hexString())")
         }
-        navigationController?.popViewController(animated: true)
     }
 
     public func handleAlertForStatusCode(_ aStatusCode: MessageStatusCodes) {
@@ -242,9 +285,15 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
         //noop
     }
 
-    func receivedModelAppBindStatus(_ modelAppStatusData: ModelAppBindStatusMessage) {
+    func receivedModelAppStatus(_ modelAppStatusData: ModelAppStatusMessage) {
         if modelAppStatusData.statusCode == .success {
-            print("Model bounded!")
+            if lastModelAppAction == .modelAppBind {
+                print("AppKey Bound!")
+            } else if lastModelAppAction == .modelAppUnbind {
+                print("AppKey Unbound!")
+            } else {
+                print("Other ModelApp action performed")
+            }
             print("AppKeyIndex: \(modelAppStatusData.appkeyIndex.hexString())")
             print("Element Addr: \(modelAppStatusData.elementAddress.hexString())")
             print("ModelIdentifier: \(modelAppStatusData.modelIdentifier.hexString())")
@@ -259,20 +308,32 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
             if let anIndex = state.provisionedNodes.index(where: { $0.nodeUnicast == nodeEntry.nodeUnicast}) {
                 let aNodeEntry = state.provisionedNodes[anIndex]
                 if var anElement = aNodeEntry.elements?[elementIdx] {
-                    anElement.setKeyBinding(modelAppStatusData.appkeyIndex, forModelId: aModel)
-                    aNodeEntry.elements?.remove(at: elementIdx)
-                    aNodeEntry.elements?.insert(anElement, at: elementIdx)
+                    if lastModelAppAction == .modelAppBind {
+                        anElement.setKeyBinding(modelAppStatusData.appkeyIndex, forModelId: aModel)
+                        aNodeEntry.elements?.remove(at: elementIdx)
+                        aNodeEntry.elements?.insert(anElement, at: elementIdx)
+                    } else if lastModelAppAction == .modelAppUnbind {
+                        anElement.removeKeyBinding(modelAppStatusData.appkeyIndex, forModelId: aModel)
+                        aNodeEntry.elements?.remove(at: elementIdx)
+                        aNodeEntry.elements?.insert(anElement, at: elementIdx)
+                    }
                 }
                 //and update
                 state.provisionedNodes.remove(at: anIndex)
                 state.provisionedNodes.insert(aNodeEntry, at: anIndex)
                 meshstateManager.saveState()
+                meshstateManager.restoreState()
+                let targetNodeToUpdate = nodeEntry.nodeUnicast!
+                nodeEntry = meshstateManager.state().provisionedNodes.first { (aNode) -> Bool in
+                    return aNode.nodeUnicast == targetNodeToUpdate
+                }
             }
             tableView.reloadData()
         } else {
             handleAlertForStatusCode(modelAppStatusData.statusCode)
             print("Failed. Status code: \(modelAppStatusData.statusCode)")
         }
+        lastModelAppAction = nil
     }
 
     func receivedModelPublicationStatus(_ modelPublicationStatusData: ModelPublicationStatusMessage) {
@@ -306,6 +367,11 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
                 state.provisionedNodes.remove(at: anIndex)
                 state.provisionedNodes.insert(aNodeEntry, at: anIndex)
                 meshstateManager.saveState()
+                meshstateManager.restoreState()
+                let targetNodeToUpdate = nodeEntry.nodeUnicast!
+                nodeEntry = meshstateManager.state().provisionedNodes.first { (aNode) -> Bool in
+                    return aNode.nodeUnicast == targetNodeToUpdate
+                }
             }
             tableView.reloadData()
         } else {
@@ -347,6 +413,11 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
                 state.provisionedNodes.remove(at: anIndex)
                 state.provisionedNodes.insert(aNodeEntry, at: anIndex)
                 meshstateManager.saveState()
+                meshstateManager.restoreState()
+                let targetNodeToUpdate = nodeEntry.nodeUnicast!
+                nodeEntry = meshstateManager.state().provisionedNodes.first { (aNode) -> Bool in
+                    return aNode.nodeUnicast == targetNodeToUpdate
+                }
             }
             tableView.reloadData()
         } else {
@@ -378,11 +449,15 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
         switch editingStyle {
         case .delete:
-            if let nodeAddress = self.getSubscriptionAddressforNodeAtIndexPath(indexPath) {
-                print("deleting subscription address: \(nodeAddress.hexString())")
-                self.didSelectSubscriptionAddressDelete(nodeAddress)
-            } else {
-                print("nothing to delete!")
+            if indexPath.section == 0 {
+                //App key unbinding
+                self.didSelectUnbindAppKeyAtIndex(UInt16(indexPath.row))
+            } else  if indexPath.section == 2 {
+                //Subscription addresses
+                if let nodeAddress = self.getSubscriptionAddressforNodeAtIndexPath(indexPath) {
+                    print("Deleting subscription address: \(nodeAddress.hexString())")
+                    self.didSelectSubscriptionAddressDelete(nodeAddress)
+                }
             }
         case .none, .insert:
             //NOOP
@@ -391,12 +466,23 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
     }
 
     override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-        if indexPath.section == 2 {
-            return indexPath.row != 0 //First row is the add button
+        if indexPath.section == 0 {
+            //App Key binding is editable, all rows can be tapped or swiped to remove
+            //only if it has an appkey set to that row, we mark that using the tags for now
+            if tableView.cellForRow(at: indexPath)?.tag == 1 {
+                return true
+            } else {
+                return false
+            }
+        } else if indexPath.section == 2 {
+            //First row is the subscription add button, it cannot be edited
+            return indexPath.row != 0
         } else {
+            //No other known rows are editable, disable by default
             return false
         }
     }
+
     override func numberOfSections(in tableView: UITableView) -> Int {
         if let element = nodeEntry.elements?[selectedModelIndexPath.section] {
             let targetModel = element.allSigAndVendorModels()[selectedModelIndexPath.row]
@@ -476,9 +562,11 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
             if let element = nodeEntry.elements?[selectedModelIndexPath.section] {
                 let targetModel = element.allSigAndVendorModels()[selectedModelIndexPath.row]
                 if let keyIndex = element.boundAppKeyIndexForModelId(targetModel) {
+                    aCell.tag = 1
                     aCell.textLabel?.text = "Key Bound"
                     aCell.detailTextLabel?.text = "Key index \(keyIndex.hexString())"
                 } else {
+                    aCell.tag = 0
                     aCell.textLabel?.text = "None"
                     aCell.detailTextLabel?.text = "Tap to add"
                 }
@@ -547,7 +635,7 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
         tableView.deselectRow(at: indexPath, animated: true)
         switch indexPath.section {
         case 0:
-            self.performSegue(withIdentifier: "ShowAppKeyBindingView", sender: nil)
+            self.performSegue(withIdentifier: "showAppKeySelector", sender: nil)
         case 1:
             self.performSegue(withIdentifier: "ShowPublicationSettings", sender: nil)
         case 2:
@@ -692,15 +780,18 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
 
     // MARK: - Navigation
     override func shouldPerformSegue(withIdentifier identifier: String, sender: Any?) -> Bool {
-        return ["ShowAppKeyBindingView",
+        return ["showAppKeySelector",
                 "ShowPublicationSettings"].contains(identifier)
     }
 
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.identifier == "ShowAppKeyBindingView" {
-            if let destination = segue.destination as? ModelAppKeyBindingConfigurationTableViewController {
-                destination.setSelectionDelegate(self)
-                destination.setStateManager(meshstateManager)
+        if segue.identifier == "showAppKeySelector" {
+            if let destination = segue.destination as? AppKeySelectorTableViewController {
+                destination.setSelectionCallback({ (selectedIndex) in
+                    if selectedIndex != nil  {
+                        self.didSelectAppKeyAtIndex(UInt16(selectedIndex!))
+                    }
+                }, andMeshStateManager: meshstateManager)
             }
         }
         if segue.identifier == "ShowPublicationSettings" {
