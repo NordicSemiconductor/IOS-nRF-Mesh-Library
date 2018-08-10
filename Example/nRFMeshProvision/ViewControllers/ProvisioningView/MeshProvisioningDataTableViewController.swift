@@ -587,7 +587,7 @@ extension MeshProvisioningDataTableViewController: UnprovisionedMeshNodeDelegate
         if outputActions.count == 0 {
             supportedOutputActionsSubtitle.text = "Not supported"
         } else {
-            supportedInputActionsSubtitle.text  = inputActions
+            supportedOutputActionsSubtitle.text  = outputActions
         }
         if inputActions.count == 0 {
             supportedInputActionsSubtitle.text = "Not supported"
