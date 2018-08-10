@@ -1576,7 +1576,15 @@ provisioning and then configuring a device.</string>
                             <outlet property="delegate" destination="5o5-rc-Cqd" id="dsu-Uy-dmZ"/>
                         </connections>
                     </tableView>
+                    <navigationItem key="navigationItem" title="Model Name" id="fAy-AG-cfR">
+                        <barButtonItem key="rightBarButtonItem" title="Edit" id="C0b-v3-OeZ">
+                            <connections>
+                                <action selector="editButtonTapped:" destination="5o5-rc-Cqd" id="Uo1-om-lPn"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
                     <connections>
+                        <outlet property="editButton" destination="C0b-v3-OeZ" id="LhJ-DA-XpD"/>
                         <outlet property="vendorLabel" destination="axy-nC-oAG" id="eEY-yY-Lka"/>
                         <segue destination="N78-VU-wIN" kind="show" identifier="ShowPublicationSettings" id="cGK-BH-e4L"/>
                         <segue destination="JCc-w9-Xls" kind="show" identifier="showAppKeySelector" id="G3c-Z4-KEq"/>
@@ -1909,7 +1917,7 @@ provisioning and then configuring a device.</string>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="CD0-rf-Pr2" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2321" y="-1196"/>
+            <point key="canvasLocation" x="2202" y="-1290"/>
         </scene>
         <!--Provisioning Log-->
         <scene sceneID="Eee-ff-ax8">
@@ -2012,6 +2020,6 @@ provisioning and then configuring a device.</string>
         <image name="ic_vpn_key_36pt" width="23" height="23"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="fZZ-Il-eHX"/>
+        <segue reference="q2d-3z-Xle"/>
     </inferredMetricsTieBreakers>
 </document>

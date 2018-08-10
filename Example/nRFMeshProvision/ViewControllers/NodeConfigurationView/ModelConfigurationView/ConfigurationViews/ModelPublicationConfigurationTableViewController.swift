@@ -134,8 +134,9 @@ class ModelPublicationConfigurationTableViewController: UITableViewController, U
     }
 
     func userDidSelectAppKeyAtWithIndex(_ anIndex: Int) {
-        self.appKeyIndex = UInt16(anIndex)
-        print("Selected KeyIndex: \(anIndex)")
+        DispatchQueue.main.async {
+            self.appKeyIndex = UInt16(anIndex)
+        }
     }
     
     //MARK: - Row handlers, to aviod complexity in didSelectRow method

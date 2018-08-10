@@ -23,7 +23,16 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
 
     // MARK: - Outlets & Actions
     @IBOutlet weak var vendorLabel: UILabel!
-
+    @IBOutlet weak var editButton: UIBarButtonItem!
+    @IBAction func editButtonTapped(_ sender: Any) {
+        tableView.isEditing = !tableView.isEditing
+        if tableView.isEditing {
+            editButton.title = "Done"
+        } else {
+            editButton.title = "Edit"
+        }
+    }
+    
     // MARK: - Properties
     private var nodeEntry: MeshNodeEntry!
     private var meshstateManager: MeshStateManager!
@@ -440,11 +449,15 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
         switch editingStyle {
         case .delete:
-            if let nodeAddress = self.getSubscriptionAddressforNodeAtIndexPath(indexPath) {
-                print("deleting subscription address: \(nodeAddress.hexString())")
-                self.didSelectSubscriptionAddressDelete(nodeAddress)
-            } else {
-                print("nothing to delete!")
+            if indexPath.section == 0 {
+                //App key unbinding
+                self.didSelectUnbindAppKeyAtIndex(UInt16(indexPath.row))
+            } else  if indexPath.section == 2 {
+                //Subscription addresses
+                if let nodeAddress = self.getSubscriptionAddressforNodeAtIndexPath(indexPath) {
+                    print("Deleting subscription address: \(nodeAddress.hexString())")
+                    self.didSelectSubscriptionAddressDelete(nodeAddress)
+                }
             }
         case .none, .insert:
             //NOOP
@@ -453,12 +466,23 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
     }
 
     override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-        if indexPath.section == 2 {
-            return indexPath.row != 0 //First row is the add button
+        if indexPath.section == 0 {
+            //App Key binding is editable, all rows can be tapped or swiped to remove
+            //only if it has an appkey set to that row, we mark that using the tags for now
+            if tableView.cellForRow(at: indexPath)?.tag == 1 {
+                return true
+            } else {
+                return false
+            }
+        } else if indexPath.section == 2 {
+            //First row is the subscription add button, it cannot be edited
+            return indexPath.row != 0
         } else {
+            //No other known rows are editable, disable by default
             return false
         }
     }
+
     override func numberOfSections(in tableView: UITableView) -> Int {
         if let element = nodeEntry.elements?[selectedModelIndexPath.section] {
             let targetModel = element.allSigAndVendorModels()[selectedModelIndexPath.row]
@@ -538,9 +562,11 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
             if let element = nodeEntry.elements?[selectedModelIndexPath.section] {
                 let targetModel = element.allSigAndVendorModels()[selectedModelIndexPath.row]
                 if let keyIndex = element.boundAppKeyIndexForModelId(targetModel) {
+                    aCell.tag = 1
                     aCell.textLabel?.text = "Key Bound"
                     aCell.detailTextLabel?.text = "Key index \(keyIndex.hexString())"
                 } else {
+                    aCell.tag = 0
                     aCell.textLabel?.text = "None"
                     aCell.detailTextLabel?.text = "Tap to add"
                 }

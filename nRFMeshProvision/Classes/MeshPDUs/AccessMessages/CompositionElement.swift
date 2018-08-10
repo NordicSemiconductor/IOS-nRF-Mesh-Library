@@ -91,6 +91,12 @@ public struct CompositionElement: Codable {
     public mutating func setKeyBinding(_ aKey: Data, forModelId aModelId: Data) {
         if modelKeyBindings[aModelId] == nil {
             modelKeyBindings[aModelId] = aKey
+        } else {
+            if let modelIndex = modelKeyBindings.index(forKey: aModelId) {
+                //Replace old value with newer one
+                modelKeyBindings.remove(at: modelIndex)
+                modelKeyBindings[aModelId] = aKey
+            }
         }
     }
 
