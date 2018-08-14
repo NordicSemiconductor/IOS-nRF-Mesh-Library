@@ -93,8 +93,10 @@ class GenericOnOffGetControllerState: NSObject, GenericModelControllerStateProto
                 if result is GenericOnOffStatusMessage {
                     let genericOnOffStatus = result as! GenericOnOffStatusMessage
                     target.delegate?.receivedGenericOnOffStatusMessage(genericOnOffStatus)
+                    /*
                     let nextState = SleepConfiguratorState(withTargetProxyNode: target, destinationAddress: destinationAddress, andStateManager: stateManager)
                     target.switchToState(nextState)
+                    */
                 }
             } else {
                 print("ignoring non GenericOnOffStatus message")
