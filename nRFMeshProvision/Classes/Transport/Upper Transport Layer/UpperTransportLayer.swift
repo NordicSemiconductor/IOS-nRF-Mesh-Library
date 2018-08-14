@@ -98,7 +98,7 @@ public struct UpperTransportLayer {
     public func encrypt() -> Data? {
         if let addressType = MeshAddressTypes(rawValue: params.destinationAddress) {
             switch addressType {
-                case .Unicast, .Group:
+                case .Unicast, .Group, .Broadcast:
                     if params.nonce.type == .Device {
                         return encryptForDevice()
                     } else {
