@@ -17,6 +17,7 @@ class GenericOnOffSetControllerState: NSObject, GenericModelControllerStateProto
     private var networkLayer            : NetworkLayer!
     private var segmentedData           : Data
     private var targetState             : Data?
+    private var targetStateTransitionParameters: (transitionTime: Data, transitionDelay: Data)?
     
     // MARK: - ConfiguratorStateProtocol
     var destinationAddress  : Data
@@ -47,6 +48,10 @@ class GenericOnOffSetControllerState: NSObject, GenericModelControllerStateProto
         return "Generic OnOff Set"
     }
     
+    public func setParametrizedTargetState(aTargetState: Data, withTransitionTime aTransitionTime: Data, andTransitionDelay aTransitionDelay: Data) {
+        targetState = aTargetState
+        targetStateTransitionParameters = (aTransitionTime, aTransitionDelay)
+    }
     public func setTargetState(aTargetState: Data) {
         targetState = aTargetState
     }
@@ -54,11 +59,18 @@ class GenericOnOffSetControllerState: NSObject, GenericModelControllerStateProto
     func execute() {
         var message: GenericOnOffSetMessage
         if let targetState = targetState {
-            message = GenericOnOffSetMessage(withTargetState: targetState)
+            if let targetTransitionParams = targetStateTransitionParameters {
+                message = GenericOnOffSetMessage(withTargetState: targetState,
+                                                 transitionTime: targetTransitionParams.transitionTime,
+                                                 andTransitionDelay: targetTransitionParams.transitionDelay)
+            } else {
+                message = GenericOnOffSetMessage(withTargetState: targetState)
+            }
         } else {
             print("No target state set, nothing to execute")
             return
         }
+
         //Send to destination
         let payloads = message.assemblePayload(withMeshState: stateManager.state(), toAddress: destinationAddress)
         for aPayload in payloads! {
