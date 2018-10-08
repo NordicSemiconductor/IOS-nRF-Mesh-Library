@@ -592,7 +592,7 @@ extension MeshProvisioningDataTableViewController: UnprovisionedMeshNodeDelegate
         if inputActions.count == 0 {
             supportedInputActionsSubtitle.text = "Not supported"
         } else {
-            supportedInputActionsSubtitle.text = outputActions
+            supportedInputActionsSubtitle.text = inputActions
         }
 
         provisionButton.isEnabled = true
