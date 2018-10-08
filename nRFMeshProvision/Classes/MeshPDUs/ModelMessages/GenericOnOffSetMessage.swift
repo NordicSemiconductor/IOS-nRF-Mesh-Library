@@ -11,8 +11,18 @@ public struct GenericOnOffSetMessage {
     var opcode  : Data
     var payload : Data
 
+    public init(withTargetState aTargetState: Data, transitionTime aTransitionTime: Data, andTransitionDelay aTransitionDelay: Data) {
+        opcode = Data([0x82, 0x02])
+        payload = aTargetState
+        //Sequence number used as TID
+        let tid = Data([SequenceNumber().sequenceData().last!])
+        payload.append(tid)
+        payload.append(aTransitionTime)
+        payload.append(aTransitionDelay)
+    }
+
     public init(withTargetState aTargetState: Data) {
-            opcode = Data([0x82, 0x02])
+        opcode = Data([0x82, 0x02])
         payload = aTargetState
         //Sequence number used as TID
         let tid = Data([SequenceNumber().sequenceData().last!])

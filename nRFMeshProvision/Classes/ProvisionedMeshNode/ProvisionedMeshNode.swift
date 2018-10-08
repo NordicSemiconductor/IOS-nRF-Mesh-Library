@@ -93,6 +93,15 @@ public class ProvisionedMeshNode: NSObject, ProvisionedMeshNodeProtocol {
         configurationState.execute()
     }
 
+    public func nodeGenericOnOffSet(_ anElementAddress: Data, onDestinationAddress anAddress: Data, withtargetState aState: Data, transitionTime aTransitionTime: Data, andTransitionDelay aTransitionDelay: Data) {
+        let setState = GenericOnOffSetControllerState(withTargetProxyNode: self,
+                                                      destinationAddress: anAddress,
+                                                      andStateManager: stateManager)
+        setState.setParametrizedTargetState(aTargetState: aState, withTransitionTime: aTransitionTime, andTransitionDelay: aTransitionDelay)
+        genericControllerState = setState
+        genericControllerState.execute()
+    }
+
     public func nodeGenericOnOffSet(_ anElementAddress: Data, onDestinationAddress anAddress: Data, withtargetState aState: Data) {
         let setState = GenericOnOffSetControllerState(withTargetProxyNode: self,
                                                       destinationAddress: anAddress,

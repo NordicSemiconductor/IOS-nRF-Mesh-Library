@@ -14,12 +14,13 @@ private enum SubscriptionActions {
     case subscriptionAdd
     case subscriptionDelete
 }
+
 private enum ModelAppActions {
     case modelAppBind
     case modelAppUnbind
 }
 
-class ModelConfigurationTableViewController: UITableViewController, ProvisionedMeshNodeDelegate, UITextFieldDelegate, ToggleCellDelegate, PublicationSettingsDelegate {
+class ModelConfigurationTableViewController: UITableViewController, ProvisionedMeshNodeDelegate, UITextFieldDelegate {
 
     // MARK: - Outlets & Actions
     @IBOutlet weak var vendorLabel: UILabel!
@@ -44,6 +45,12 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
     private var centralManager: CBCentralManager?
     private var lastSubscriptionAction: SubscriptionActions?
     private var lastModelAppAction: ModelAppActions?
+    
+    // MARK: - GenericOnOff Properties
+    // This would ideally be implemented in the place where the GenericOnOff actinos would be taken, they
+    // are only here to showcase how the action is used. Defaults are 0 and 0 for immediate transition.
+    private var transitionTime: UInt8   = 0x00
+    private var transitionDelay: UInt8  = 0x00
 
     // MARK: - Implementation
     public func setProxyNode(_ aNode: ProvisionedMeshNode) {
@@ -235,27 +242,6 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
                 title = formattedModel
             }
         }
-    }
-    
-    // MARK: - ToggleCell delegate
-    func didToggleCell(aCell: ToggleControlTableViewCell, didSetOnStateTo newOnState: Bool) {
-        let targetstate: Data = newOnState ? Data([0x01]) : Data([0x00])
-        let elementIdx = selectedModelIndexPath.section
-        let unicast = nodeEntry.nodeUnicast!
-        let elementAddress = Data([unicast[0], unicast[1] + UInt8(elementIdx)])
-
-        if let element = nodeEntry.elements?[selectedModelIndexPath.section] {
-            let targetModel = element.allSigAndVendorModels()[selectedModelIndexPath.row]
-            if let addresses = element.subscriptionAddressesForModelId(targetModel) {
-                if addresses.count > 0 {
-                    for anAddress in addresses {
-                        targetNode.nodeGenericOnOffSet(elementAddress, onDestinationAddress: anAddress, withtargetState: targetstate)
-                    }
-                    return
-                }
-            }
-        }
-        targetNode.nodeGenericOnOffSet(elementAddress, onDestinationAddress: nodeEntry.nodeUnicast!, withtargetState: targetstate)
     }
 
     // MARK: - ProvisionedMeshNodeDelegate
@@ -512,8 +498,11 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
             }
             return 1
         case 3:
-            // if GenericOnOff is present, return 1 row for the control section
-            return 1
+            // if GenericOnOff is present, return 3 rows for the control section
+            // row 0 = OnOff Switch
+            // row 1 = Transition time slider
+            // row 2 = Transition delay slider
+            return 3
         default:
             return 0
         }
@@ -535,22 +524,71 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         var aCell: UITableViewCell!
-        if indexPath.section == 3 && indexPath.row == 0 {
-            aCell = tableView.dequeueReusableCell(withIdentifier: "ModelConfigurationToggleCell", for: indexPath)
-            if let aCell = aCell as? ToggleControlTableViewCell {
-                //Receive toggle switch events
-                aCell.delegate = self
-                
-                //Enable/disable cell depending on bound appkey state
-                if let element = nodeEntry.elements?[selectedModelIndexPath.section] {
-                    let targetModel = element.allSigAndVendorModels()[selectedModelIndexPath.row]
-                    aCell.toggleSwitch.isEnabled = element.boundAppKeyIndexForModelId(targetModel) != nil
-                    if aCell.toggleSwitch.isEnabled == false {
-                        aCell.setTitle(aTitle: "Appkey not bound")
-                    } else {
-                        aCell.setTitle(aTitle: "GenericOnOff state")
+        if indexPath.section == 3 {
+            switch indexPath.row {
+                case 0:
+                    aCell = tableView.dequeueReusableCell(withIdentifier: "ModelConfigurationToggleCell", for: indexPath)
+                    if let aCell = aCell as? ToggleControlTableViewCell {
+                        //Receive toggle switch events
+                        aCell.delegate = self
+                        
+                        //Enable/disable cell depending on bound appkey state
+                        if let element = nodeEntry.elements?[selectedModelIndexPath.section] {
+                            let targetModel = element.allSigAndVendorModels()[selectedModelIndexPath.row]
+                            aCell.toggleSwitch.isEnabled = element.boundAppKeyIndexForModelId(targetModel) != nil
+                            if aCell.toggleSwitch.isEnabled == false {
+                                aCell.setTitle(aTitle: "Appkey not bound")
+                            } else {
+                                aCell.setTitle(aTitle: "GenericOnOff state")
+                            }
+                        }
                     }
-                }
+                case 1:
+                    aCell = tableView.dequeueReusableCell(withIdentifier: "ModelConfigurationSliderCell", for: indexPath)
+                    if let aCell = aCell as? SliderControlTableViewCell {
+                        //Receive slider events
+                        aCell.delegate = self
+                        //Enable/disable cell depending on bound appkey state
+                        if let element = nodeEntry.elements?[selectedModelIndexPath.section] {
+                            aCell.sliderControl.minimumValue = 0x00
+                            aCell.sliderControl.maximumValue = 0x3E //Actual limit is 0x3F, but we'll use only millisecond resoltuion
+                                                                    //which has an upper limit of 6200 ms
+                            let targetModel = element.allSigAndVendorModels()[selectedModelIndexPath.row]
+                            aCell.sliderControl.isEnabled = element.boundAppKeyIndexForModelId(targetModel) != nil
+                            aCell.sliderReadableValue.text = "\(transitionTime) ms"
+                            aCell.sliderControl.value = Float(transitionTime)
+                            if aCell.sliderControl.isEnabled == false {
+                                aCell.setTitle(aTitle: "Appkey not bound")
+                            } else {
+                                aCell.setTitle(aTitle: "Transition time")
+                                aCell.tag = 1
+                            }
+                        }
+                    }
+                case 2:
+                    aCell = tableView.dequeueReusableCell(withIdentifier: "ModelConfigurationSliderCell", for: indexPath)
+                    if let aCell = aCell as? SliderControlTableViewCell {
+                        //Receive slider events
+                        aCell.delegate = self
+                        //Enable/disable cell depending on bound appkey state
+                        if let element = nodeEntry.elements?[selectedModelIndexPath.section] {
+                            //Transition delay is between 0 and 255, each step is 5ms
+                            aCell.sliderControl.minimumValue = 0x00
+                            aCell.sliderControl.maximumValue = 0xFF
+                            let targetModel = element.allSigAndVendorModels()[selectedModelIndexPath.row]
+                            aCell.sliderControl.isEnabled = element.boundAppKeyIndexForModelId(targetModel) != nil
+                            aCell.sliderReadableValue.text = "\(transitionDelay) ms"
+                            aCell.sliderControl.value = Float(transitionDelay)
+                            if aCell.sliderControl.isEnabled == false {
+                                aCell.setTitle(aTitle: "Appkey not bound")
+                            } else {
+                                aCell.setTitle(aTitle: "Transition delay")
+                                aCell.tag = 2
+                            }
+                        }
+                    }
+                default:
+                    aCell = UITableViewCell()
             }
         } else if indexPath.section == 2 && indexPath.row == 0 {
             aCell = tableView.dequeueReusableCell(withIdentifier: "ModelConfigurationCenteredCell", for: indexPath)
@@ -734,50 +772,6 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
         }
     }
 
-    // MARK: - PublicationSettingsDelegate
-    func didDisablePublication() {
-        let elementIdx = selectedModelIndexPath.section
-        let modelIdx = selectedModelIndexPath.row
-        let aModel = nodeEntry.elements![elementIdx].allSigAndVendorModels()[modelIdx]
-        let unicast = nodeEntry.nodeUnicast!
-        let elementAddress = Data([unicast[0], unicast[1] + UInt8(elementIdx)])
-        targetNode.nodePublicationAddressSet(Data([0x00,0x00]),
-                                             onElementAddress: elementAddress,
-                                             appKeyIndex: Data([0x00, 0x00]),
-                                             credentialFlag: false,
-                                             ttl: Data([0x00]),
-                                             period: Data([0x00]),
-                                             retransmitCount: Data([0x00]),
-                                             retransmitInterval: Data([0x00]),
-                                             modelIdentifier: aModel,
-                                             onDestinationAddress: nodeEntry.nodeUnicast!)
-
-        self.navigationController?.popViewController(animated: true)
-    }
-
-    func didSavePublicatoinConfiguration(withAddress anAddress: Data, appKeyIndex anAppKeyIndex: UInt16, credentialFlag aCredentialFlag: Bool, ttl aTTL: UInt8, publishPeriod aPublishPeriod: UInt8, retransmitCount aRetransmitCoutn: UInt8, retransmitIntervalSteps aRetransmitIntervalStep: UInt8) {
-        
-        let elementIdx = selectedModelIndexPath.section
-        let modelIdx = selectedModelIndexPath.row
-        let aModel = nodeEntry.elements![elementIdx].allSigAndVendorModels()[modelIdx]
-        let unicast = nodeEntry.nodeUnicast!
-        let elementAddress = Data([unicast[0], unicast[1] + UInt8(elementIdx)])
-        var anIndex = anAppKeyIndex.bigEndian
-        let appKeyIndexData = Data(bytes: &anIndex, count: MemoryLayout<UInt16>.size)
-        targetNode.nodePublicationAddressSet(anAddress,
-                                             onElementAddress: elementAddress,
-                                             appKeyIndex: appKeyIndexData,
-                                             credentialFlag: aCredentialFlag,
-                                             ttl: Data([aTTL]),
-                                             period: Data([aPublishPeriod]),
-                                             retransmitCount: Data([aRetransmitCoutn]),
-                                             retransmitInterval: Data([aRetransmitIntervalStep]),
-                                             modelIdentifier: aModel,
-                                             onDestinationAddress: nodeEntry.nodeUnicast!)
-
-        self.navigationController?.popViewController(animated: true)
-    }
-
     // MARK: - Navigation
     override func shouldPerformSegue(withIdentifier identifier: String, sender: Any?) -> Bool {
         return ["showAppKeySelector",
@@ -817,5 +811,104 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
             }
         }
         return nil
+    }
+}
+
+extension ModelConfigurationTableViewController: ToggleCellDelegate {
+    // MARK: - ToggleCellDelegate
+    func didToggleCell(aCell: ToggleControlTableViewCell, didSetOnStateTo newOnState: Bool) {
+        let targetstate: Data = newOnState ? Data([0x01]) : Data([0x00])
+        let elementIdx = selectedModelIndexPath.section
+        let unicast = nodeEntry.nodeUnicast!
+        let elementAddress = Data([unicast[0], unicast[1] + UInt8(elementIdx)])
+        
+        if let element = nodeEntry.elements?[selectedModelIndexPath.section] {
+            let targetModel = element.allSigAndVendorModels()[selectedModelIndexPath.row]
+            if let addresses = element.subscriptionAddressesForModelId(targetModel) {
+                if addresses.count > 0 {
+                    for anAddress in addresses {
+                        targetNode.nodeGenericOnOffSet(elementAddress,
+                                                       onDestinationAddress: anAddress,
+                                                       withtargetState: targetstate,
+                                                       transitionTime: Data([transitionTime]),
+                                                       andTransitionDelay: Data([transitionDelay]))
+                    }
+                    return
+                }
+            }
+        }
+        targetNode.nodeGenericOnOffSet(elementAddress,
+                                       onDestinationAddress: unicast,
+                                       withtargetState: targetstate,
+                                       transitionTime: Data([transitionTime]),
+                                       andTransitionDelay: Data([transitionDelay]))
+    }
+}
+
+// MARK: - SliderCellDelegate
+extension ModelConfigurationTableViewController: SliderCellDelegate {
+    func didChangeSliderOnCell(aCell: SliderControlTableViewCell, didSetSliderValueTo newSliderValue: Float, asLastValue isLast: Bool) {
+        switch aCell.tag {
+        case 1:
+            aCell.sliderReadableValue.text = "\(Int(newSliderValue) * 100) ms"
+            if isLast {
+                transitionTime = UInt8(newSliderValue) << 2 //Shift left twice to set last two bits to 0, I.E: millisecond resolution
+                print("New transition time: \(transitionTime)")
+            }
+        case 2:
+            aCell.sliderReadableValue.text = "\(Int(newSliderValue) * 5) ms"
+            if isLast {
+                transitionDelay = UInt8(newSliderValue)
+                print("New transition delay: \(transitionDelay)")
+            }
+        default:
+            break
+        }
+    }
+}
+
+// MARK: - PublicationSettingsDelegate
+extension ModelConfigurationTableViewController: PublicationSettingsDelegate {
+    func didDisablePublication() {
+        let elementIdx = selectedModelIndexPath.section
+        let modelIdx = selectedModelIndexPath.row
+        let aModel = nodeEntry.elements![elementIdx].allSigAndVendorModels()[modelIdx]
+        let unicast = nodeEntry.nodeUnicast!
+        let elementAddress = Data([unicast[0], unicast[1] + UInt8(elementIdx)])
+        targetNode.nodePublicationAddressSet(Data([0x00,0x00]),
+                                             onElementAddress: elementAddress,
+                                             appKeyIndex: Data([0x00, 0x00]),
+                                             credentialFlag: false,
+                                             ttl: Data([0x00]),
+                                             period: Data([0x00]),
+                                             retransmitCount: Data([0x00]),
+                                             retransmitInterval: Data([0x00]),
+                                             modelIdentifier: aModel,
+                                             onDestinationAddress: nodeEntry.nodeUnicast!)
+        
+        self.navigationController?.popViewController(animated: true)
+    }
+    
+    func didSavePublicatoinConfiguration(withAddress anAddress: Data, appKeyIndex anAppKeyIndex: UInt16, credentialFlag aCredentialFlag: Bool, ttl aTTL: UInt8, publishPeriod aPublishPeriod: UInt8, retransmitCount aRetransmitCoutn: UInt8, retransmitIntervalSteps aRetransmitIntervalStep: UInt8) {
+        
+        let elementIdx = selectedModelIndexPath.section
+        let modelIdx = selectedModelIndexPath.row
+        let aModel = nodeEntry.elements![elementIdx].allSigAndVendorModels()[modelIdx]
+        let unicast = nodeEntry.nodeUnicast!
+        let elementAddress = Data([unicast[0], unicast[1] + UInt8(elementIdx)])
+        var anIndex = anAppKeyIndex.bigEndian
+        let appKeyIndexData = Data(bytes: &anIndex, count: MemoryLayout<UInt16>.size)
+        targetNode.nodePublicationAddressSet(anAddress,
+                                             onElementAddress: elementAddress,
+                                             appKeyIndex: appKeyIndexData,
+                                             credentialFlag: aCredentialFlag,
+                                             ttl: Data([aTTL]),
+                                             period: Data([aPublishPeriod]),
+                                             retransmitCount: Data([aRetransmitCoutn]),
+                                             retransmitInterval: Data([aRetransmitIntervalStep]),
+                                             modelIdentifier: aModel,
+                                             onDestinationAddress: nodeEntry.nodeUnicast!)
+        
+        self.navigationController?.popViewController(animated: true)
     }
 }
