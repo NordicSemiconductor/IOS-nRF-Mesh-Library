@@ -555,7 +555,7 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
                                                                     //which has an upper limit of 6200 ms
                             let targetModel = element.allSigAndVendorModels()[selectedModelIndexPath.row]
                             aCell.sliderControl.isEnabled = element.boundAppKeyIndexForModelId(targetModel) != nil
-                            aCell.detailTextLabel?.text = "\(transitionTime) ms"
+                            aCell.sliderReadableValue.text = "\(transitionTime) ms"
                             aCell.sliderControl.value = Float(transitionTime)
                             if aCell.sliderControl.isEnabled == false {
                                 aCell.setTitle(aTitle: "Appkey not bound")
@@ -577,7 +577,7 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
                             aCell.sliderControl.maximumValue = 0xFF
                             let targetModel = element.allSigAndVendorModels()[selectedModelIndexPath.row]
                             aCell.sliderControl.isEnabled = element.boundAppKeyIndexForModelId(targetModel) != nil
-                            aCell.detailTextLabel?.text = "\(transitionDelay) ms"
+                            aCell.sliderReadableValue.text = "\(transitionDelay) ms"
                             aCell.sliderControl.value = Float(transitionDelay)
                             if aCell.sliderControl.isEnabled == false {
                                 aCell.setTitle(aTitle: "Appkey not bound")
