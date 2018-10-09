@@ -45,7 +45,8 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
     private var centralManager: CBCentralManager?
     private var lastSubscriptionAction: SubscriptionActions?
     private var lastModelAppAction: ModelAppActions?
-    
+    private var modelIdentifier: Data?
+
     // MARK: - GenericOnOff Properties
     // This would ideally be implemented in the place where the GenericOnOff actinos would be taken, they
     // are only here to showcase how the action is used. Defaults are 0 and 0 for immediate transition.
@@ -213,6 +214,7 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
         let elementIdx = selectedModelIndexPath.section
         let modelIdx = selectedModelIndexPath.row
         let aModel = nodeEntry.elements![elementIdx].allSigAndVendorModels()[modelIdx]
+        modelIdentifier = aModel
         if aModel.count == 2 {
             let upperInt = UInt16(aModel[0]) << 8
             let lowerInt = UInt16(aModel[1])
@@ -245,6 +247,10 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
     }
 
     // MARK: - ProvisionedMeshNodeDelegate
+    func receivedGenericLevelStatusMessage(_ status: GenericLevelStatusMessage) {
+        print("Level status = \(status.levelStatus)")
+    }
+
     func receivedGenericOnOffStatusMessage(_ status: GenericOnOffStatusMessage) {
         print("OnOff status = \(status.onOffStatus.hexString())")
     }
@@ -470,14 +476,15 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
     }
 
     override func numberOfSections(in tableView: UITableView) -> Int {
-        if let element = nodeEntry.elements?[selectedModelIndexPath.section] {
-            let targetModel = element.allSigAndVendorModels()[selectedModelIndexPath.row]
-            if targetModel == Data([0x10, 0x00]) {
-                //Generic OnOff has section for status and control
-                return 4
-            }
+        if modelIdentifier == Data([0x10, 0x00]) {
+            //Generic OnOff has section for status and control
+            return 4
+        } else if modelIdentifier == Data([0x10, 0x02]) {
+            //Generic Level has section for status and control
+            return 4
+        } else {
+            return 3
         }
-        return 3
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -525,70 +532,10 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         var aCell: UITableViewCell!
         if indexPath.section == 3 {
-            switch indexPath.row {
-                case 0:
-                    aCell = tableView.dequeueReusableCell(withIdentifier: "ModelConfigurationToggleCell", for: indexPath)
-                    if let aCell = aCell as? ToggleControlTableViewCell {
-                        //Receive toggle switch events
-                        aCell.delegate = self
-                        
-                        //Enable/disable cell depending on bound appkey state
-                        if let element = nodeEntry.elements?[selectedModelIndexPath.section] {
-                            let targetModel = element.allSigAndVendorModels()[selectedModelIndexPath.row]
-                            aCell.toggleSwitch.isEnabled = element.boundAppKeyIndexForModelId(targetModel) != nil
-                            if aCell.toggleSwitch.isEnabled == false {
-                                aCell.setTitle(aTitle: "Appkey not bound")
-                            } else {
-                                aCell.setTitle(aTitle: "GenericOnOff state")
-                            }
-                        }
-                    }
-                case 1:
-                    aCell = tableView.dequeueReusableCell(withIdentifier: "ModelConfigurationSliderCell", for: indexPath)
-                    if let aCell = aCell as? SliderControlTableViewCell {
-                        //Receive slider events
-                        aCell.delegate = self
-                        //Enable/disable cell depending on bound appkey state
-                        if let element = nodeEntry.elements?[selectedModelIndexPath.section] {
-                            aCell.sliderControl.minimumValue = 0x00
-                            aCell.sliderControl.maximumValue = 0x3E //Actual limit is 0x3F, but we'll use only millisecond resoltuion
-                                                                    //which has an upper limit of 6200 ms
-                            let targetModel = element.allSigAndVendorModels()[selectedModelIndexPath.row]
-                            aCell.sliderControl.isEnabled = element.boundAppKeyIndexForModelId(targetModel) != nil
-                            aCell.sliderReadableValue.text = "\(transitionTime) ms"
-                            aCell.sliderControl.value = Float(transitionTime)
-                            if aCell.sliderControl.isEnabled == false {
-                                aCell.setTitle(aTitle: "Appkey not bound")
-                            } else {
-                                aCell.setTitle(aTitle: "Transition time")
-                                aCell.tag = 1
-                            }
-                        }
-                    }
-                case 2:
-                    aCell = tableView.dequeueReusableCell(withIdentifier: "ModelConfigurationSliderCell", for: indexPath)
-                    if let aCell = aCell as? SliderControlTableViewCell {
-                        //Receive slider events
-                        aCell.delegate = self
-                        //Enable/disable cell depending on bound appkey state
-                        if let element = nodeEntry.elements?[selectedModelIndexPath.section] {
-                            //Transition delay is between 0 and 255, each step is 5ms
-                            aCell.sliderControl.minimumValue = 0x00
-                            aCell.sliderControl.maximumValue = 0xFF
-                            let targetModel = element.allSigAndVendorModels()[selectedModelIndexPath.row]
-                            aCell.sliderControl.isEnabled = element.boundAppKeyIndexForModelId(targetModel) != nil
-                            aCell.sliderReadableValue.text = "\(transitionDelay) ms"
-                            aCell.sliderControl.value = Float(transitionDelay)
-                            if aCell.sliderControl.isEnabled == false {
-                                aCell.setTitle(aTitle: "Appkey not bound")
-                            } else {
-                                aCell.setTitle(aTitle: "Transition delay")
-                                aCell.tag = 2
-                            }
-                        }
-                    }
-                default:
-                    aCell = UITableViewCell()
+            if modelIdentifier == Data([0x10,0x00]) {
+                aCell = genericOnOffTableView(tableView, cellForRowAt: indexPath)
+            } else if modelIdentifier == Data([0x10,0x02]) {
+                aCell = genericLevelTableView(tableView, cellForRowAt: indexPath)
             }
         } else if indexPath.section == 2 && indexPath.row == 0 {
             aCell = tableView.dequeueReusableCell(withIdentifier: "ModelConfigurationCenteredCell", for: indexPath)
@@ -690,6 +637,151 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
         default:
             break
         }
+    }
+
+    // MARK: - Model Specific table view rows
+    func genericLevelTableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        var aCell: UITableViewCell?
+        switch indexPath.row {
+            case 0:
+                aCell = tableView.dequeueReusableCell(withIdentifier: "ModelConfigurationSliderCell", for: indexPath)
+                if let aCell = aCell as? SliderControlTableViewCell {
+                    //Receive slider events
+                    aCell.delegate = self
+                    //Enable/disable cell depending on bound appkey state
+                    if let element = nodeEntry.elements?[selectedModelIndexPath.section] {
+                        aCell.sliderControl.minimumValue = 0x0000
+                        aCell.sliderControl.maximumValue = 0xFFFF
+                        let targetModel = element.allSigAndVendorModels()[selectedModelIndexPath.row]
+                        aCell.sliderControl.isEnabled = element.boundAppKeyIndexForModelId(targetModel) != nil
+                        aCell.sliderReadableValue.text = "Level: 50%"
+                        aCell.sliderControl.value = Float(0x7FFF)
+                        if aCell.sliderControl.isEnabled == false {
+                            aCell.setTitle(aTitle: "Appkey not bound")
+                        } else {
+                            aCell.setTitle(aTitle: "Level")
+                            aCell.tag = 0
+                        }
+                    }
+                }
+            case 1:
+                aCell = tableView.dequeueReusableCell(withIdentifier: "ModelConfigurationSliderCell", for: indexPath)
+                if let aCell = aCell as? SliderControlTableViewCell {
+                    //Receive slider events
+                    aCell.delegate = self
+                    //Enable/disable cell depending on bound appkey state
+                    if let element = nodeEntry.elements?[selectedModelIndexPath.section] {
+                        aCell.sliderControl.minimumValue = 0x00
+                        aCell.sliderControl.maximumValue = 0x3E //Actual limit is 0x3F, but we'll use only millisecond resoltuion
+                        //which has an upper limit of 6200 ms
+                        let targetModel = element.allSigAndVendorModels()[selectedModelIndexPath.row]
+                        aCell.sliderControl.isEnabled = element.boundAppKeyIndexForModelId(targetModel) != nil
+                        aCell.sliderReadableValue.text = "\(transitionTime) ms"
+                        aCell.sliderControl.value = Float(transitionTime)
+                        if aCell.sliderControl.isEnabled == false {
+                            aCell.setTitle(aTitle: "Appkey not bound")
+                        } else {
+                            aCell.setTitle(aTitle: "Transition time")
+                            aCell.tag = 1
+                        }
+                    }
+                }
+            case 2:
+                aCell = tableView.dequeueReusableCell(withIdentifier: "ModelConfigurationSliderCell", for: indexPath)
+                if let aCell = aCell as? SliderControlTableViewCell {
+                    //Receive slider events
+                    aCell.delegate = self
+                    //Enable/disable cell depending on bound appkey state
+                    if let element = nodeEntry.elements?[selectedModelIndexPath.section] {
+                        //Transition delay is between 0 and 255, each step is 5ms
+                        aCell.sliderControl.minimumValue = 0x00
+                        aCell.sliderControl.maximumValue = 0xFF
+                        let targetModel = element.allSigAndVendorModels()[selectedModelIndexPath.row]
+                        aCell.sliderControl.isEnabled = element.boundAppKeyIndexForModelId(targetModel) != nil
+                        aCell.sliderReadableValue.text = "\(transitionDelay) ms"
+                        aCell.sliderControl.value = Float(transitionDelay)
+                        if aCell.sliderControl.isEnabled == false {
+                            aCell.setTitle(aTitle: "Appkey not bound")
+                        } else {
+                            aCell.setTitle(aTitle: "Transition delay")
+                            aCell.tag = 2
+                        }
+                    }
+                }
+            default:
+                aCell = UITableViewCell()
+            }
+        return aCell!
+    }
+
+    func genericOnOffTableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        var aCell: UITableViewCell?
+        switch indexPath.row {
+            case 0:
+                aCell = tableView.dequeueReusableCell(withIdentifier: "ModelConfigurationToggleCell", for: indexPath)
+                if let aCell = aCell as? ToggleControlTableViewCell {
+                    //Receive toggle switch events
+                    aCell.delegate = self
+                    
+                    //Enable/disable cell depending on bound appkey state
+                    if let element = nodeEntry.elements?[selectedModelIndexPath.section] {
+                        let targetModel = element.allSigAndVendorModels()[selectedModelIndexPath.row]
+                        aCell.toggleSwitch.isEnabled = element.boundAppKeyIndexForModelId(targetModel) != nil
+                        if aCell.toggleSwitch.isEnabled == false {
+                            aCell.setTitle(aTitle: "Appkey not bound")
+                        } else {
+                            aCell.setTitle(aTitle: "GenericOnOff state")
+                        }
+                    }
+                }
+            case 1:
+                aCell = tableView.dequeueReusableCell(withIdentifier: "ModelConfigurationSliderCell", for: indexPath)
+                if let aCell = aCell as? SliderControlTableViewCell {
+                    //Receive slider events
+                    aCell.delegate = self
+                    //Enable/disable cell depending on bound appkey state
+                    if let element = nodeEntry.elements?[selectedModelIndexPath.section] {
+                        aCell.sliderControl.minimumValue = 0x00
+                        aCell.sliderControl.maximumValue = 0x3E //Actual limit is 0x3F, but we'll use only millisecond resoltuion
+                        //which has an upper limit of 6200 ms
+                        let targetModel = element.allSigAndVendorModels()[selectedModelIndexPath.row]
+                        aCell.sliderControl.isEnabled = element.boundAppKeyIndexForModelId(targetModel) != nil
+                        aCell.sliderReadableValue.text = "\(transitionTime) ms"
+                        aCell.sliderControl.value = Float(transitionTime)
+                        if aCell.sliderControl.isEnabled == false {
+                            aCell.setTitle(aTitle: "Appkey not bound")
+                        } else {
+                            aCell.setTitle(aTitle: "Transition time")
+                            aCell.tag = 1
+                        }
+                    }
+                }
+            case 2:
+                aCell = tableView.dequeueReusableCell(withIdentifier: "ModelConfigurationSliderCell", for: indexPath)
+                if let aCell = aCell as? SliderControlTableViewCell {
+                    //Receive slider events
+                    aCell.delegate = self
+                    //Enable/disable cell depending on bound appkey state
+                    if let element = nodeEntry.elements?[selectedModelIndexPath.section] {
+                        //Transition delay is between 0 and 255, each step is 5ms
+                        aCell.sliderControl.minimumValue = 0x00
+                        aCell.sliderControl.maximumValue = 0xFF
+                        let targetModel = element.allSigAndVendorModels()[selectedModelIndexPath.row]
+                        aCell.sliderControl.isEnabled = element.boundAppKeyIndexForModelId(targetModel) != nil
+                        aCell.sliderReadableValue.text = "\(transitionDelay) ms"
+                        aCell.sliderControl.value = Float(transitionDelay)
+                        if aCell.sliderControl.isEnabled == false {
+                            aCell.setTitle(aTitle: "Appkey not bound")
+                        } else {
+                            aCell.setTitle(aTitle: "Transition delay")
+                            aCell.tag = 2
+                        }
+                    }
+                }
+            default:
+                aCell = UITableViewCell()
+            }
+        return aCell!
     }
 
     // MARK: - Input Alerts
@@ -849,21 +941,52 @@ extension ModelConfigurationTableViewController: ToggleCellDelegate {
 extension ModelConfigurationTableViewController: SliderCellDelegate {
     func didChangeSliderOnCell(aCell: SliderControlTableViewCell, didSetSliderValueTo newSliderValue: Float, asLastValue isLast: Bool) {
         switch aCell.tag {
-        case 1:
-            aCell.sliderReadableValue.text = "\(Int(newSliderValue) * 100) ms"
-            if isLast {
-                transitionTime = UInt8(newSliderValue) << 2 //Shift left twice to set last two bits to 0, I.E: millisecond resolution
-                print("New transition time: \(transitionTime)")
+            case 0:
+                aCell.sliderReadableValue.text = "\((newSliderValue / 0xFFFF) * 100) %"
+                if isLast {
+                    let level = UInt16(newSliderValue)
+                    let targetstate: Data = Data([UInt8(level >> 8), UInt8(level & 0x00FF)])
+                    print("New Level: \(level)")
+                    print("New State: \(targetstate.hexString())")
+                    let elementIdx = selectedModelIndexPath.section
+                    let unicast = nodeEntry.nodeUnicast!
+                    let elementAddress = Data([unicast[0], unicast[1] + UInt8(elementIdx)])
+                    if let element = nodeEntry.elements?[selectedModelIndexPath.section] {
+                        let targetModel = element.allSigAndVendorModels()[selectedModelIndexPath.row]
+                        if let addresses = element.subscriptionAddressesForModelId(targetModel) {
+                            if addresses.count > 0 {
+                                for anAddress in addresses {
+                                    targetNode.nodeGenericLevelSet(elementAddress,
+                                                                   onDestinationAddress: anAddress,
+                                                                   withtargetLevelState: targetstate,
+                                                                   transitionTime: Data([transitionTime]),
+                                                                   andTransitionDelay: Data([transitionDelay]))
+                                }
+                                return
+                            }
+                        }
+                    }
+                    targetNode.nodeGenericLevelSet(elementAddress,
+                                                   onDestinationAddress: unicast,
+                                                   withtargetLevelState: targetstate,
+                                                   transitionTime: Data([transitionTime]),
+                                                   andTransitionDelay: Data([transitionDelay]))
+                }
+            case 1:
+                aCell.sliderReadableValue.text = "\(Int(newSliderValue) * 100) ms"
+                if isLast {
+                    transitionTime = UInt8(newSliderValue) << 2 //Shift left twice to set last two bits to 0, I.E: millisecond resolution
+                    print("New transition time: \(transitionTime)")
+                }
+            case 2:
+                aCell.sliderReadableValue.text = "\(Int(newSliderValue) * 5) ms"
+                if isLast {
+                    transitionDelay = UInt8(newSliderValue)
+                    print("New transition delay: \(transitionDelay)")
+                }
+            default:
+                break
             }
-        case 2:
-            aCell.sliderReadableValue.text = "\(Int(newSliderValue) * 5) ms"
-            if isLast {
-                transitionDelay = UInt8(newSliderValue)
-                print("New transition delay: \(transitionDelay)")
-            }
-        default:
-            break
-        }
     }
 }
 

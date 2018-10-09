@@ -29,7 +29,7 @@ public struct AccessMessageParser {
             //Generic Model Messages
         case Data([0x82, 0x04]):
             return GenericOnOffStatusMessage(withPayload: someData, andSoruceAddress: aSourceAddress)
-        case Data([0x80, 0x08]):
+        case Data([0x82, 0x08]):
             return GenericLevelStatusMessage(withPayload: someData, andSoruceAddress: aSourceAddress)
         default:
             return nil

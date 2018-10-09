@@ -10,7 +10,7 @@ import UIKit
 import nRFMeshProvision
 
 class NodeConfigurationTableViewController: UITableViewController, ProvisionedMeshNodeDelegate {
- 
+
     // MARK: - Properties
     private var nodeEntry: MeshNodeEntry!
     private var selectedModel: Data!
@@ -142,6 +142,9 @@ class NodeConfigurationTableViewController: UITableViewController, ProvisionedMe
     }
 
     // MARK: - ProvisionedMeshNodeDelegate
+    func receivedGenericLevelStatusMessage(_ status: GenericLevelStatusMessage) {
+        print("Level status = \(status.levelStatus)")
+    }
     func receivedGenericOnOffStatusMessage(_ status: GenericOnOffStatusMessage) {
         print("OnOff status = \(status.onOffStatus)")
     }

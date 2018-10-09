@@ -21,6 +21,7 @@
 		308F876E216B546500420D2A /* GenericLevelGetMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 308F876D216B546500420D2A /* GenericLevelGetMessage.swift */; };
 		308F8770216B556A00420D2A /* GenericLevelSetMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 308F876F216B556A00420D2A /* GenericLevelSetMessage.swift */; };
 		308F8772216B55C100420D2A /* GenericLevelStatusMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 308F8771216B55C100420D2A /* GenericLevelStatusMessage.swift */; };
+		308F8774216B586800420D2A /* GenericLevelSetControllerState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 308F8773216B586800420D2A /* GenericLevelSetControllerState.swift */; };
 		309CDA42211AF966007D1A6F /* AppKeyDeleteMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 309CDA41211AF966007D1A6F /* AppKeyDeleteMessage.swift */; };
 		309CDA44211AFA46007D1A6F /* AppKeyDeleteConfiguratorState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 309CDA43211AFA46007D1A6F /* AppKeyDeleteConfiguratorState.swift */; };
 		309CDA46211B0E36007D1A6F /* ModelAppUnbindMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 309CDA45211B0E36007D1A6F /* ModelAppUnbindMessage.swift */; };
@@ -172,6 +173,7 @@
 		308F876D216B546500420D2A /* GenericLevelGetMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericLevelGetMessage.swift; sourceTree = "<group>"; };
 		308F876F216B556A00420D2A /* GenericLevelSetMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericLevelSetMessage.swift; sourceTree = "<group>"; };
 		308F8771216B55C100420D2A /* GenericLevelStatusMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericLevelStatusMessage.swift; sourceTree = "<group>"; };
+		308F8773216B586800420D2A /* GenericLevelSetControllerState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericLevelSetControllerState.swift; sourceTree = "<group>"; };
 		309CDA41211AF966007D1A6F /* AppKeyDeleteMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppKeyDeleteMessage.swift; sourceTree = "<group>"; };
 		309CDA43211AFA46007D1A6F /* AppKeyDeleteConfiguratorState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppKeyDeleteConfiguratorState.swift; sourceTree = "<group>"; };
 		309CDA45211B0E36007D1A6F /* ModelAppUnbindMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelAppUnbindMessage.swift; sourceTree = "<group>"; };
@@ -593,6 +595,7 @@
 			children = (
 				21ADE322B4213BA71AD91B960D0448C1 /* GenericOnOffGetControllerState.swift */,
 				FDE522F0A338261A1279F229A663B72C /* GenericOnOffSetControllerState.swift */,
+				308F8773216B586800420D2A /* GenericLevelSetControllerState.swift */,
 			);
 			path = GenericModelControllerStates;
 			sourceTree = "<group>";
@@ -1019,6 +1022,7 @@
 				BD97FAF1AD6199F770CE31FF464909A5 /* MeshConstants.swift in Sources */,
 				8361A7E5D81122C6E6E1BF198DBB8937 /* MeshModelIdentifiers.swift in Sources */,
 				309CDA44211AFA46007D1A6F /* AppKeyDeleteConfiguratorState.swift in Sources */,
+				308F8774216B586800420D2A /* GenericLevelSetControllerState.swift in Sources */,
 				9508A2714FB046D867194BE476D0263E /* MeshModelIdentifierStringConverter.swift in Sources */,
 				309CDA46211B0E36007D1A6F /* ModelAppUnbindMessage.swift in Sources */,
 				7C700E66C738B36EC434053F49DDC956 /* MeshNodeEntry.swift in Sources */,
