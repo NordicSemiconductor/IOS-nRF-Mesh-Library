@@ -1,5 +1,5 @@
 ## Changelog
-- **1.0.3**:
+- **1.0.4**:
     - Adds ability to control GenericOnOff parameters, `TransitionDelay` and `TransitionTime` (some testing needed)
     - Adds ability to control GenericLevel models, additionally `TransitionDelay` and `TransitionTime` (some testing needed)
     - Bugfix: Fixed an issue causign the provisioning to halt at 91% intermittently due to block acknowledgements not working as it should, a 2 second delay is restored to workaround this.
