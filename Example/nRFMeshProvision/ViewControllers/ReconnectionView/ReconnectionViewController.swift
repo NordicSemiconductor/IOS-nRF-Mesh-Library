@@ -313,6 +313,10 @@ extension ReconnectionViewController: CBCentralManagerDelegate {
 }
 
 extension ReconnectionViewController: ProvisionedMeshNodeDelegate {
+    func receivedGenericLevelStatusMessage(_ status: GenericLevelStatusMessage) {
+        print("Level status = \(status.levelStatus)")
+    }
+    
     func receivedGenericOnOffStatusMessage(_ status: GenericOnOffStatusMessage) {
         print("OnOff status = \(status.onOffStatus)")
     }

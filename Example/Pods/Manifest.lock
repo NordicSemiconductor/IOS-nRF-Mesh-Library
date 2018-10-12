@@ -1,5 +1,5 @@
 PODS:
-  - nRFMeshProvision (1.0.1):
+  - nRFMeshProvision (1.0.3):
     - OpenSSL
   - OpenSSL (1.0.210)
 
@@ -15,9 +15,9 @@ EXTERNAL SOURCES:
     :path: "../"
 
 SPEC CHECKSUMS:
-  nRFMeshProvision: f0c9c4c2b40dd08e34cba8d3961bf4cc323c1602
+  nRFMeshProvision: 299fb21bc2268e9d5fa220612468b8bd353daa8c
   OpenSSL: 246ffb948e9d56466727fd318134af35f5aa764e
 
 PODFILE CHECKSUM: de85a89ac749497891047199d13c9ccda33bd1a4
 
-COCOAPODS: 1.5.3
+COCOAPODS: 1.6.0.beta.1

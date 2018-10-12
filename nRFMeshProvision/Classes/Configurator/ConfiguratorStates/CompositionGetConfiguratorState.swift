@@ -13,7 +13,7 @@ class CompositionGetConfiguratorState: NSObject, ConfiguratorStateProtocol {
     private var proxyService            : CBService!
     private var dataInCharacteristic    : CBCharacteristic!
     private var dataOutCharacteristic   : CBCharacteristic!
-
+    private var dispatchOnceToken       : Bool = false
     // MARK: - ConfiguratorStateProtocol
     var target          : ProvisionedMeshNodeProtocol
     var stateManager    : MeshStateManager
@@ -133,7 +133,14 @@ class CompositionGetConfiguratorState: NSObject, ConfiguratorStateProtocol {
                         //Increment next available address
                         state.incrementUnicastBy(compositionStatus.elements.count)
                         stateManager.saveState()
-                        target.delegate?.receivedCompositionData(compositionStatus)
+
+                        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + .seconds(3)) {
+                            if self.dispatchOnceToken == false {
+                                self.dispatchOnceToken = true
+                                //Notify once after a dealy, to avoid overlapping acknowledgements.
+                                self.target.delegate?.receivedCompositionData(compositionStatus)
+                            }
+                        }
                     } else {
                         print("Ignoring composition data from an unknown mesh node")
                     }

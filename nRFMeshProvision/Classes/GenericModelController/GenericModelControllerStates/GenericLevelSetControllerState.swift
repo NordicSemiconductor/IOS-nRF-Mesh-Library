@@ -1,14 +1,14 @@
 //
-//  GenericOnOffSetControllerState.swift
+//  GenericLevelSetControllerState.swift
 //  nRFMeshProvision
 //
-//  Created by Mostafa Berg on 28/05/2018.
+//  Created by Mostafa Berg on 08/10/2018.
 //
 
 import Foundation
 import CoreBluetooth
 
-class GenericOnOffSetControllerState: NSObject, GenericModelControllerStateProtocol {
+class GenericLevelSetControllerState: NSObject, GenericModelControllerStateProtocol {
     
     // MARK: - Properties
     private var proxyService            : CBService!
@@ -45,7 +45,7 @@ class GenericOnOffSetControllerState: NSObject, GenericModelControllerStateProto
     }
     
     func humanReadableName() -> String {
-        return "Generic OnOff Set"
+        return "Generic Level Set"
     }
     
     public func setParametrizedTargetState(aTargetState: Data, withTransitionTime aTransitionTime: Data, andTransitionDelay aTransitionDelay: Data) {
@@ -57,20 +57,20 @@ class GenericOnOffSetControllerState: NSObject, GenericModelControllerStateProto
     }
     
     func execute() {
-        var message: GenericOnOffSetMessage
+        var message: GenericLevelSetMessage
         if let targetState = targetState {
             if let targetTransitionParams = targetStateTransitionParameters {
-                message = GenericOnOffSetMessage(withTargetState: targetState,
+                message = GenericLevelSetMessage(withTargetState: targetState,
                                                  transitionTime: targetTransitionParams.transitionTime,
                                                  andTransitionDelay: targetTransitionParams.transitionDelay)
             } else {
-                message = GenericOnOffSetMessage(withTargetState: targetState)
+                message = GenericLevelSetMessage(withTargetState: targetState)
             }
         } else {
             print("No target state set, nothing to execute")
             return
         }
-
+        
         //Send to destination
         let payloads = message.assemblePayload(withMeshState: stateManager.state(), toAddress: destinationAddress)
         for aPayload in payloads! {
@@ -113,14 +113,14 @@ class GenericOnOffSetControllerState: NSObject, GenericModelControllerStateProto
         } else {
             let strippedOpcode = Data(incomingData.dropFirst())
             if let result = networkLayer.incomingPDU(strippedOpcode) {
-                if result is GenericOnOffStatusMessage {
-                    let genericOnOffStatus = result as! GenericOnOffStatusMessage
-                    target.delegate?.receivedGenericOnOffStatusMessage(genericOnOffStatus)
+                if result is GenericLevelStatusMessage {
+                    let genericLevelStatus = result as! GenericLevelStatusMessage
+                    target.delegate?.receivedGenericLevelStatusMessage(genericLevelStatus)
                     let nextState = SleepConfiguratorState(withTargetProxyNode: target, destinationAddress: destinationAddress, andStateManager: stateManager)
                     target.switchToState(nextState)
                 }
             } else {
-                print("ignoring non GenericOnOffStatus message")
+                print("ignoring non GenericLevelStatus message")
             }
         }
     }

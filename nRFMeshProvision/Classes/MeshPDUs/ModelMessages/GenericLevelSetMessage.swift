@@ -1,18 +1,18 @@
 //
-//  GenericOnOffSetMessage.swift
+//  GenericLevelSetMessage.swift
 //  nRFMeshProvision
 //
-//  Created by Mostafa Berg on 24/05/2018.
+//  Created by Mostafa Berg on 08/10/2018.
 //
 
 import Foundation
 
-public struct GenericOnOffSetMessage {
+public struct GenericLevelSetMessage {
     var opcode  : Data
     var payload : Data
-
+    
     public init(withTargetState aTargetState: Data, transitionTime aTransitionTime: Data, andTransitionDelay aTransitionDelay: Data) {
-        opcode = Data([0x82, 0x02])
+        opcode = Data([0x82, 0x06])
         payload = aTargetState
         //Sequence number used as TID
         let tid = Data([SequenceNumber().sequenceData().last!])
@@ -20,15 +20,15 @@ public struct GenericOnOffSetMessage {
         payload.append(aTransitionTime)
         payload.append(aTransitionDelay)
     }
-
+    
     public init(withTargetState aTargetState: Data) {
-        opcode = Data([0x82, 0x02])
+        opcode = Data([0x82, 0x06])
         payload = aTargetState
         //Sequence number used as TID
         let tid = Data([SequenceNumber().sequenceData().last!])
         payload.append(tid)
     }
-
+    
     public func assemblePayload(withMeshState aState: MeshState, toAddress aDestinationAddress: Data) -> [Data]? {
         let appKey = aState.appKeys[0].values.first!
         let accessMessage = AccessMessagePDU(withPayload: payload, opcode: opcode, appKey: appKey, netKey: aState.netKey, seq: SequenceNumber(), ivIndex: aState.IVIndex, source: aState.unicastAddress, andDst: aDestinationAddress)

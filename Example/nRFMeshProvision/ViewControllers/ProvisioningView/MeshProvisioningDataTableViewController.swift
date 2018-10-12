@@ -592,7 +592,7 @@ extension MeshProvisioningDataTableViewController: UnprovisionedMeshNodeDelegate
         if inputActions.count == 0 {
             supportedInputActionsSubtitle.text = "Not supported"
         } else {
-            supportedInputActionsSubtitle.text = outputActions
+            supportedInputActionsSubtitle.text = inputActions
         }
 
         provisionButton.isEnabled = true
@@ -702,10 +702,13 @@ extension MeshProvisioningDataTableViewController: UnprovisionedMeshNodeDelegate
 }
 
 extension MeshProvisioningDataTableViewController: ProvisionedMeshNodeDelegate {
+    func receivedGenericLevelStatusMessage(_ status: GenericLevelStatusMessage) {
+        print("Level status = \(status.levelStatus)")
+    }
+    
     func receivedGenericOnOffStatusMessage(_ status: GenericOnOffStatusMessage) {
         print("OnOff status = \(status.onOffStatus)")
     }
-    
 
     func configurationSucceeded() {
         stepCompleted(withIndicatorState: false)
