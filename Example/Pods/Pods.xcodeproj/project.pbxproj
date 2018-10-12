@@ -18,6 +18,10 @@
 		22DC3A3EF0FA54D768F8056AC64207C1 /* CompositionGetMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 189A64EA83AB9BD03B5DD62C84571458 /* CompositionGetMessage.swift */; };
 		249A77A7D8F05753AFD82E08F3E3DF53 /* GenericOnOffSetControllerState.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDE522F0A338261A1279F229A663B72C /* GenericOnOffSetControllerState.swift */; };
 		2B0BA4AB629E8F32074A86F339BB850E /* MeshAddressTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 211F4150E97C24A8D6654D1B60060392 /* MeshAddressTypes.swift */; };
+		308F876E216B546500420D2A /* GenericLevelGetMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 308F876D216B546500420D2A /* GenericLevelGetMessage.swift */; };
+		308F8770216B556A00420D2A /* GenericLevelSetMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 308F876F216B556A00420D2A /* GenericLevelSetMessage.swift */; };
+		308F8772216B55C100420D2A /* GenericLevelStatusMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 308F8771216B55C100420D2A /* GenericLevelStatusMessage.swift */; };
+		308F8774216B586800420D2A /* GenericLevelSetControllerState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 308F8773216B586800420D2A /* GenericLevelSetControllerState.swift */; };
 		309CDA42211AF966007D1A6F /* AppKeyDeleteMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 309CDA41211AF966007D1A6F /* AppKeyDeleteMessage.swift */; };
 		309CDA44211AFA46007D1A6F /* AppKeyDeleteConfiguratorState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 309CDA43211AFA46007D1A6F /* AppKeyDeleteConfiguratorState.swift */; };
 		309CDA46211B0E36007D1A6F /* ModelAppUnbindMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 309CDA45211B0E36007D1A6F /* ModelAppUnbindMessage.swift */; };
@@ -166,6 +170,10 @@
 		2B68FB305EB45C1312AEA6F2A16E12E4 /* bn.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = bn.h; path = opensslIncludes/openssl/bn.h; sourceTree = "<group>"; };
 		2F51E7CAC7A909CB5C0216F38FBF04AE /* nRFMeshProvision.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = nRFMeshProvision.xcconfig; sourceTree = "<group>"; };
 		2FC1C3A4C27E1C86DA9418A50DC0195B /* ripemd.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = ripemd.h; path = opensslIncludes/openssl/ripemd.h; sourceTree = "<group>"; };
+		308F876D216B546500420D2A /* GenericLevelGetMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericLevelGetMessage.swift; sourceTree = "<group>"; };
+		308F876F216B556A00420D2A /* GenericLevelSetMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericLevelSetMessage.swift; sourceTree = "<group>"; };
+		308F8771216B55C100420D2A /* GenericLevelStatusMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericLevelStatusMessage.swift; sourceTree = "<group>"; };
+		308F8773216B586800420D2A /* GenericLevelSetControllerState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericLevelSetControllerState.swift; sourceTree = "<group>"; };
 		309CDA41211AF966007D1A6F /* AppKeyDeleteMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppKeyDeleteMessage.swift; sourceTree = "<group>"; };
 		309CDA43211AFA46007D1A6F /* AppKeyDeleteConfiguratorState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppKeyDeleteConfiguratorState.swift; sourceTree = "<group>"; };
 		309CDA45211B0E36007D1A6F /* ModelAppUnbindMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelAppUnbindMessage.swift; sourceTree = "<group>"; };
@@ -587,6 +595,7 @@
 			children = (
 				21ADE322B4213BA71AD91B960D0448C1 /* GenericOnOffGetControllerState.swift */,
 				FDE522F0A338261A1279F229A663B72C /* GenericOnOffSetControllerState.swift */,
+				308F8773216B586800420D2A /* GenericLevelSetControllerState.swift */,
 			);
 			path = GenericModelControllerStates;
 			sourceTree = "<group>";
@@ -760,6 +769,9 @@
 				62874C43241BBB55C4450D4EA199DFC1 /* GenericOnOffSetMessage.swift */,
 				AF038F4554BB01F45F3A816AE0AB68AA /* GenericOnOffSetUnacknowledgedMessage.swift */,
 				3C31E3B0B1595EDFB8BF3AC4F6E08CBD /* GenericOnOffStatusMessage.swift */,
+				308F876D216B546500420D2A /* GenericLevelGetMessage.swift */,
+				308F876F216B556A00420D2A /* GenericLevelSetMessage.swift */,
+				308F8771216B55C100420D2A /* GenericLevelStatusMessage.swift */,
 			);
 			path = ModelMessages;
 			sourceTree = "<group>";
@@ -977,12 +989,14 @@
 				F48332F9C954EA016EC2822817ED347E /* AppKeyAddConfiguratorState.swift in Sources */,
 				E7BCB840883B2778E48B764CB19F6027 /* AppKeyAddMessage.swift in Sources */,
 				183D0A542D20AC450234B73CFB2328D1 /* AppKeyStatusMessage.swift in Sources */,
+				308F876E216B546500420D2A /* GenericLevelGetMessage.swift in Sources */,
 				6120883B1633D7E8D73B014B5434ABA9 /* CompanyIdentifiers.swift in Sources */,
 				8DB804DF07C0ED428A8CFD8BB35EDB90 /* CompositionElement.swift in Sources */,
 				5D61A3C8711893627C6A1733DD7A1B74 /* CompositionGetConfiguratorState.swift in Sources */,
 				22DC3A3EF0FA54D768F8056AC64207C1 /* CompositionGetMessage.swift in Sources */,
 				3970E5E9DF2B76F2AA8131C9980EDEC4 /* CompositionStatusMessage.swift in Sources */,
 				B3080F56074E29E3F8F1E37A099F3B42 /* ConfiguratorStateProtocol.swift in Sources */,
+				308F8770216B556A00420D2A /* GenericLevelSetMessage.swift in Sources */,
 				5A5760586F85FA25E033E49FAFBBC154 /* ConfirmationProvisioningState.swift in Sources */,
 				F71C1F21188E0FCE4C0E5978B012FA76 /* ControlMessagePDU.swift in Sources */,
 				FAF03453CE171F8C4834913E7EB6009C /* Data+utils.swift in Sources */,
@@ -1008,12 +1022,14 @@
 				BD97FAF1AD6199F770CE31FF464909A5 /* MeshConstants.swift in Sources */,
 				8361A7E5D81122C6E6E1BF198DBB8937 /* MeshModelIdentifiers.swift in Sources */,
 				309CDA44211AFA46007D1A6F /* AppKeyDeleteConfiguratorState.swift in Sources */,
+				308F8774216B586800420D2A /* GenericLevelSetControllerState.swift in Sources */,
 				9508A2714FB046D867194BE476D0263E /* MeshModelIdentifierStringConverter.swift in Sources */,
 				309CDA46211B0E36007D1A6F /* ModelAppUnbindMessage.swift in Sources */,
 				7C700E66C738B36EC434053F49DDC956 /* MeshNodeEntry.swift in Sources */,
 				EDA102CB2CD187A8245E5FDA0C7FC764 /* MeshState.swift in Sources */,
 				309CDA42211AF966007D1A6F /* AppKeyDeleteMessage.swift in Sources */,
 				61F981BFD761E465E295A99FB36F5F94 /* MeshStateManager.swift in Sources */,
+				308F8772216B55C100420D2A /* GenericLevelStatusMessage.swift in Sources */,
 				54F58B3C8CEB564ABCECB429247E8E7A /* MeshVendorModelIdentifiers.swift in Sources */,
 				ABE0D3BCFB606533BDFCF73C44C6863D /* MeshVendorModelIdentifierStringConverter.swift in Sources */,
 				0C465D5FB0D42090BF49F91D2DB564B4 /* MessageStatusCodes.swift in Sources */,

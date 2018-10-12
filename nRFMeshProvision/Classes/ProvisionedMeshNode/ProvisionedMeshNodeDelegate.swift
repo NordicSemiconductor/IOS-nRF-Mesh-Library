@@ -20,4 +20,5 @@ public protocol ProvisionedMeshNodeDelegate {
     func configurationSucceeded()
     //Generic Model Messages
     func receivedGenericOnOffStatusMessage(_ status: GenericOnOffStatusMessage)
+    func receivedGenericLevelStatusMessage(_ status: GenericLevelStatusMessage)
 }
