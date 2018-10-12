@@ -650,12 +650,12 @@ class ModelConfigurationTableViewController: UITableViewController, ProvisionedM
                     aCell.delegate = self
                     //Enable/disable cell depending on bound appkey state
                     if let element = nodeEntry.elements?[selectedModelIndexPath.section] {
-                        aCell.sliderControl.minimumValue = 0x0000
-                        aCell.sliderControl.maximumValue = 0xFFFF
+                        aCell.sliderControl.minimumValue = 0
+                        aCell.sliderControl.maximumValue = 1
                         let targetModel = element.allSigAndVendorModels()[selectedModelIndexPath.row]
                         aCell.sliderControl.isEnabled = element.boundAppKeyIndexForModelId(targetModel) != nil
                         aCell.sliderReadableValue.text = "Level: 50%"
-                        aCell.sliderControl.value = Float(0x7FFF)
+                        aCell.sliderControl.value = 0.5
                         if aCell.sliderControl.isEnabled == false {
                             aCell.setTitle(aTitle: "Appkey not bound")
                         } else {
@@ -942,10 +942,11 @@ extension ModelConfigurationTableViewController: SliderCellDelegate {
     func didChangeSliderOnCell(aCell: SliderControlTableViewCell, didSetSliderValueTo newSliderValue: Float, asLastValue isLast: Bool) {
         switch aCell.tag {
             case 0:
-                aCell.sliderReadableValue.text = "\((newSliderValue / 0xFFFF) * 100) %"
+                aCell.sliderReadableValue.text = "\(Int((newSliderValue) * 100)) %"
                 if isLast {
-                    let level = UInt16(newSliderValue)
-                    let targetstate: Data = Data([UInt8(level >> 8), UInt8(level & 0x00FF)])
+                    //Scale slider value from 0.0 -> 1.0 to a 0x0000 -> 0xFFFF range, then apply two's complement
+                    var level = Int(((newSliderValue * 65535) / 100) - 32768)
+                    let targetstate = Data(bytes: &level, count: 2)
                     print("New Level: \(level)")
                     print("New State: \(targetstate.hexString())")
                     let elementIdx = selectedModelIndexPath.section
