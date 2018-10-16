@@ -24,6 +24,6 @@ This Library is under extensive development and will have missing features and c
   s.swift_version    = '4'
   s.ios.deployment_target = '10.0'
   s.source_files = 'nRFMeshProvision/Classes/**/*'
-  s.dependency 'OpenSSL'
+  s.dependency 'OpenSSL-Universal'
   s.frameworks = 'CoreBluetooth'
 end
