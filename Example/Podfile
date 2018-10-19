@@ -2,11 +2,8 @@ use_frameworks!
 
 platform :ios, '10.0'
 
-pre_install do |installer|
-    Pod::Installer::Xcode::TargetValidator.send(:define_method, :verify_no_static_framework_transitive_dependencies) {}
-end
-
 target 'nRFMeshProvision_Example' do
+  pod 'SwiftLint'
   pod 'nRFMeshProvision', :path => '../'
   target 'nRFMeshProvision_Tests' do
     inherit! :search_paths
