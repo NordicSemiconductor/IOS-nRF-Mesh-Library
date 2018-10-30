@@ -9,6 +9,10 @@
 /* Begin PBXBuildFile section */
 		21FEE9259EAB95D2E75B7C71 /* Pods_nRFMeshProvision_Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 328E66A87C5B0A499473BBE3 /* Pods_nRFMeshProvision_Tests.framework */; };
 		301D5BBF2044096A00639A04 /* UpperLayerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 301D5BBE2044096A00639A04 /* UpperLayerTests.swift */; };
+		30208A1A2175DBD900BC3789 /* libcrypto.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 30208A182175DBD900BC3789 /* libcrypto.a */; };
+		30208A1B2175DBD900BC3789 /* libssl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 30208A192175DBD900BC3789 /* libssl.a */; };
+		30208A1C2175DBE900BC3789 /* libssl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 30208A192175DBD900BC3789 /* libssl.a */; };
+		30208A1D2175DBE900BC3789 /* libcrypto.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 30208A182175DBD900BC3789 /* libcrypto.a */; };
 		302D1F4720B44E000022AEB1 /* ProvisioningLogTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 302D1F4620B44E000022AEB1 /* ProvisioningLogTableViewController.swift */; };
 		302D1F5A20BBEB4F0022AEB1 /* ToggleControlTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 302D1F5920BBEB4F0022AEB1 /* ToggleControlTableViewCell.swift */; };
 		302D1F5C20BBF2700022AEB1 /* ToggleCellDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 302D1F5B20BBF2700022AEB1 /* ToggleCellDelegate.swift */; };
@@ -65,6 +69,8 @@
 /* Begin PBXFileReference section */
 		301D5BBE2044096A00639A04 /* UpperLayerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpperLayerTests.swift; sourceTree = "<group>"; };
 		301D5C042045933800639A04 /* LowerLayerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LowerLayerTests.swift; sourceTree = "<group>"; };
+		30208A182175DBD900BC3789 /* libcrypto.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libcrypto.a; path = "Pods/OpenSSL-Universal/lib-ios/libcrypto.a"; sourceTree = "<group>"; };
+		30208A192175DBD900BC3789 /* libssl.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libssl.a; path = "Pods/OpenSSL-Universal/lib-ios/libssl.a"; sourceTree = "<group>"; };
 		302D1F4620B44E000022AEB1 /* ProvisioningLogTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProvisioningLogTableViewController.swift; sourceTree = "<group>"; };
 		302D1F5920BBEB4F0022AEB1 /* ToggleControlTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToggleControlTableViewCell.swift; sourceTree = "<group>"; };
 		302D1F5B20BBF2700022AEB1 /* ToggleCellDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToggleCellDelegate.swift; sourceTree = "<group>"; };
@@ -127,6 +133,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				30208A1A2175DBD900BC3789 /* libcrypto.a in Frameworks */,
+				30208A1B2175DBD900BC3789 /* libssl.a in Frameworks */,
 				7F9FD220FCA92765E14E2C17 /* Pods_nRFMeshProvision_Example.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -135,6 +143,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				30208A1C2175DBE900BC3789 /* libssl.a in Frameworks */,
+				30208A1D2175DBE900BC3789 /* libcrypto.a in Frameworks */,
 				21FEE9259EAB95D2E75B7C71 /* Pods_nRFMeshProvision_Tests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -373,6 +383,8 @@
 		B8E18C3887B68E7ACF06688E /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				30208A182175DBD900BC3789 /* libcrypto.a */,
+				30208A192175DBD900BC3789 /* libssl.a */,
 				30C8D386203C1BD400779325 /* nRFMeshProvision.framework */,
 				3043D9231FF38CF500A9A999 /* libcrypto.a */,
 				3043D9241FF38CF500A9A999 /* libssl.a */,
@@ -748,6 +760,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Pods/OpenSSL/lib",
+					"$(PROJECT_DIR)/Pods/OpenSSL-Universal/lib-ios",
 				);
 				LINK_WITH_STANDARD_LIBRARIES = YES;
 				MODULE_NAME = ExampleApp;
@@ -783,6 +796,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Pods/OpenSSL/lib",
+					"$(PROJECT_DIR)/Pods/OpenSSL-Universal/lib-ios",
 				);
 				LINK_WITH_STANDARD_LIBRARIES = YES;
 				MODULE_NAME = ExampleApp;
@@ -819,6 +833,10 @@
 				);
 				INFOPLIST_FILE = Tests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Pods/OpenSSL-Universal/lib-ios",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
@@ -840,6 +858,10 @@
 				);
 				INFOPLIST_FILE = Tests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Pods/OpenSSL-Universal/lib-ios",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;

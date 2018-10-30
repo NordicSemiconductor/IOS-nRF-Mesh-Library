@@ -22,12 +22,6 @@ This is a preview version that has missing features and capabilities that are go
 * Build and run project.
 * To be able to quickly start testing, use the bundled firmwares directory named `ExampleFirmwares` that includes a light server (Light source) and a light client (Switch) firmwares. those firmwares will work on a `nrf52832` DevKit.
 
-## Author
-
-Mobile Applications Team, Nordic Semiconductor ASA.
-
-Contact: mostafaberg <mostafa.berg@nordicsemi.no>
-
 ## License
 
 BSD 3-Clause License 
