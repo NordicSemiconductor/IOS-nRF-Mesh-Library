@@ -178,7 +178,7 @@ class ModelAppUnbindConfiguratorState: NSObject, ConfiguratorStateProtocol {
     var lastMessageType = 0xC0
     
     func peripheral(_ peripheral: CBPeripheral, didUpdateValueFor characteristic: CBCharacteristic, error: Error?) {
-        print("Cahrcateristic value updated: \(characteristic.value!.hexString())")
+        print("Characteristic value updated: \(characteristic.value!.hexString())")
         //SAR handling
         if characteristic.value![0] & 0xC0 == 0x40 {
             if lastMessageType == 0x40 {

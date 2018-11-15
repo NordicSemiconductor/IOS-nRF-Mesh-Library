@@ -23,8 +23,8 @@ public class ProvisionedMeshNode: NSObject, ProvisionedMeshNodeProtocol {
     private var stateManager        : MeshStateManager
     
     // MARK: - MeshNode implementation
-    public init(withUnprovisionedNode aNode: UnprovisionedMeshNode, andDelegate aDelegate: ProvisionedMeshNodeDelegate?) {
-        stateManager = MeshStateManager.restoreState()!
+    public init(withStateManager aStateManager: MeshStateManager, withUnprovisionedNode aNode: UnprovisionedMeshNode, andDelegate aDelegate: ProvisionedMeshNodeDelegate?) {
+        stateManager        = aStateManager
         peripheral          = aNode.basePeripheral()
         delegate            = aDelegate
         meshNodeIdentifier = aNode.nodeIdentifier()
@@ -33,7 +33,7 @@ public class ProvisionedMeshNode: NSObject, ProvisionedMeshNodeProtocol {
     }
 
     convenience public init(withUnprovisionedNode aNode: UnprovisionedMeshNode) {
-        self.init(withUnprovisionedNode: aNode, andDelegate: nil)
+        self.init(withStateManager: MeshStateManager.restoreState()!, withUnprovisionedNode: aNode, andDelegate: nil)
     }
 
     public func overrideBLEPeripheral(_ aPeripheral: CBPeripheral) {
@@ -92,6 +92,32 @@ public class ProvisionedMeshNode: NSObject, ProvisionedMeshNodeProtocol {
         configurationState = nodeSubscriptionDeleteState
         configurationState.execute()
     }
+    
+    public func nodeGenericLevelGet(_ anElementAddress: Data, onDestinationAddress anAddress: Data) {
+        let getState = GenericLevelGetControllerState(withTargetProxyNode: self,
+                                                      destinationAddress: anAddress,
+                                                      andStateManager: stateManager)
+        genericControllerState = getState
+        genericControllerState.execute()
+    }
+    
+    public func nodeGenericLevelSet(_ anElementAddress: Data, onDestinationAddress anAddress: Data, withtargetLevelState aState: Data) {
+        let setState = GenericLevelSetControllerState(withTargetProxyNode: self,
+                                                      destinationAddress: anAddress,
+                                                      andStateManager: stateManager)
+        setState.setTargetState(aTargetState: aState)
+        genericControllerState = setState
+        genericControllerState.execute()
+    }
+    
+    public func nodeGenericLevelSetUnacknowledged(_ anElementAddress: Data, onDestinationAddress anAddress: Data, withtargetLevelState aState: Data) {
+        let setState = GenericLevelSetUnacknowledgedControllerState(withTargetProxyNode: self,
+                                                      destinationAddress: anAddress,
+                                                      andStateManager: stateManager)
+        setState.setTargetState(aTargetState: aState)
+        genericControllerState = setState
+        genericControllerState.execute()
+    }
 
     public func nodeGenericLevelSet(_ anElementAddress: Data, onDestinationAddress anAddress: Data, withtargetLevelState aState: Data, transitionTime aTransitionTime: Data, andTransitionDelay aTransitionDelay: Data) {
         let setState = GenericLevelSetControllerState(withTargetProxyNode: self,
@@ -119,11 +145,190 @@ public class ProvisionedMeshNode: NSObject, ProvisionedMeshNodeProtocol {
         genericControllerState = setState
         genericControllerState.execute()
     }
+    
+    public func nodeGenericOnOffSetUnacknowledged(_ anElementAddress: Data, onDestinationAddress anAddress: Data, withtargetState aState: Data) {
+        let setState = GenericOnOffSetUnacknowledgedControllerState(withTargetProxyNode: self,
+                                                      destinationAddress: anAddress,
+                                                      andStateManager: stateManager)
+        setState.setTargetState(aTargetState: aState)
+        genericControllerState = setState
+        genericControllerState.execute()
+    }
 
     public func nodeGenericOnOffGet(_ anElementAddress: Data, onDestinationAddress anAddress: Data) {
         let getState = GenericOnOffGetControllerState(withTargetProxyNode: self,
-                                                      destinationAddress: anAddress, andStateManager: stateManager)
+                                                      destinationAddress: anAddress,
+                                                      andStateManager: stateManager)
         genericControllerState = getState
+        genericControllerState.execute()
+    }
+    
+    public func nodeLightLightnessGet(_ anElementAddress: Data, onDestinationAddress anAddress: Data) {
+        let getLightLightnessState = LightLightnessGetControllerState(withTargetProxyNode: self,
+                                                      destinationAddress: anAddress,
+                                                      andStateManager: stateManager)
+        genericControllerState = getLightLightnessState
+        genericControllerState.execute()
+    }
+    
+    public func nodeLightLightnessSet(_ anElementAddress: Data, onDestinationAddress anAddress: Data, withtargetState aState: Data) {
+        let setLightLightnessState = LightLightnessSetControllerState(withTargetProxyNode: self,
+                                                      destinationAddress: anAddress,
+                                                      andStateManager: stateManager)
+        setLightLightnessState.setTargetState(aTargetState: aState);
+        genericControllerState = setLightLightnessState
+        genericControllerState.execute()
+    }
+    
+    public func nodeLightLightnessSetUnacknowledged(_ anElementAddress: Data, onDestinationAddress anAddress: Data, withtargetState aState: Data) {
+        let setLightLightnessState = LightLightnessSetUnacknowledgedControllerState(withTargetProxyNode: self,
+                                                                      destinationAddress: anAddress,
+                                                                      andStateManager: stateManager)
+        setLightLightnessState.setTargetState(aTargetState: aState);
+        genericControllerState = setLightLightnessState
+        genericControllerState.execute()
+    }
+    
+    public func nodeLightCtlGet(_ anElementAddress: Data, onDestinationAddress anAddress: Data) {
+        let getState = LightCtlGetControllerState(withTargetProxyNode: self,
+                                                      destinationAddress: anAddress,
+                                                      andStateManager: stateManager)
+        genericControllerState = getState
+        genericControllerState.execute()
+    }
+    
+    public func nodeLightCtlSet(_ anElementAddress: Data, onDestinationAddress anAddress: Data, withtargetState aState: Data) {
+        let setLightLightnessState = LightCtlSetControllerState(withTargetProxyNode: self,
+                                                                      destinationAddress: anAddress,
+                                                                      andStateManager: stateManager)
+        setLightLightnessState.setTargetState(aTargetState: aState);
+        genericControllerState = setLightLightnessState
+        genericControllerState.execute()
+    }
+    
+    public func nodeLightCtlSetUnacknowledged(_ anElementAddress: Data, onDestinationAddress anAddress: Data, withtargetState aState: Data) {
+        let setLightCtlUnacknowledgedState = LightCtlSetUnacknowledgedControllerState(withTargetProxyNode: self,
+                                                                destinationAddress: anAddress,
+                                                                andStateManager: stateManager)
+        setLightCtlUnacknowledgedState.setTargetState(aTargetState: aState);
+        genericControllerState = setLightCtlUnacknowledgedState
+        genericControllerState.execute()
+    }
+    
+    public func nodeLightHslGet(_ anElementAddress: Data, onDestinationAddress anAddress: Data) {
+        let state = LightHslGetControllerState(withTargetProxyNode: self,
+                                                      destinationAddress: anAddress,
+                                                      andStateManager: stateManager)
+        genericControllerState = state
+        genericControllerState.execute()
+    }
+    
+    public func nodeLightHslSet(_ anElementAddress: Data, onDestinationAddress anAddress: Data, withtargetState aState: Data) {
+        let state = LightHslSetControllerState(withTargetProxyNode: self,
+                                                                              destinationAddress: anAddress,
+                                                                              andStateManager: stateManager)
+        state.setTargetState(aTargetState: aState);
+        genericControllerState = state
+        genericControllerState.execute()
+    }
+    
+    public func nodeLightHslSetUnacknowledged(_ anElementAddress: Data, onDestinationAddress anAddress: Data, withtargetState aState: Data) {
+        let state = LightHslSetUnacknowledgedControllerState(withTargetProxyNode: self,
+                                                                              destinationAddress: anAddress,
+                                                                              andStateManager: stateManager)
+        state.setTargetState(aTargetState: aState);
+        genericControllerState = state
+        genericControllerState.execute()
+    }
+    
+    public func nodeSceneGet(_ anElementAddress: Data, onDestinationAddress anAddress: Data) {
+        let state = SceneGetControllerState(withTargetProxyNode: self,
+                                               destinationAddress: anAddress,
+                                               andStateManager: stateManager)
+        genericControllerState = state
+        genericControllerState.execute()
+    }
+    
+    public func nodeSceneStore(_ anOpcode: Data,
+                                   withSceneNumber sceneNumber: Data,
+                                   onDestinationAddress anAddress: Data) {
+        let state = SceneStoreControllerState(withTargetProxyNode: self,
+                                                            destinationAddress: anAddress,
+                                                            andStateManager: stateManager)
+        state.setSceneNumber(withSceneNumber: sceneNumber);
+        genericControllerState = state
+        genericControllerState.execute()
+    }
+    
+    public func nodeSceneStoreUnacknowledged(_ anOpcode: Data,
+                               withSceneNumber sceneNumber: Data,
+                               onDestinationAddress anAddress: Data) {
+        let state = SceneStoreUnacknowledgedControllerState(withTargetProxyNode: self,
+                                              destinationAddress: anAddress,
+                                              andStateManager: stateManager)
+        state.setSceneNumber(withSceneNumber: sceneNumber);
+        genericControllerState = state
+        genericControllerState.execute()
+    }
+    
+    public func nodeSceneDelete(_ anOpcode: Data,
+                               withSceneNumber sceneNumber: Data,
+                               onDestinationAddress anAddress: Data) {
+        let state = SceneDeleteControllerState(withTargetProxyNode: self,
+                                              destinationAddress: anAddress,
+                                              andStateManager: stateManager)
+        state.setSceneNumber(withSceneNumber: sceneNumber);
+        genericControllerState = state
+        genericControllerState.execute()
+    }
+    
+    public func nodeSceneDeleteUnacknowledged(_ anOpcode: Data,
+                                withSceneNumber sceneNumber: Data,
+                                onDestinationAddress anAddress: Data) {
+        let state = SceneDeleteUnacknowledgedControllerState(withTargetProxyNode: self,
+                                               destinationAddress: anAddress,
+                                               andStateManager: stateManager)
+        state.setSceneNumber(withSceneNumber: sceneNumber);
+        genericControllerState = state
+        genericControllerState.execute()
+    }
+    
+    public func nodeSceneRegisterGet(_ anElementAddress: Data, onDestinationAddress anAddress: Data) {
+        let state = SceneRegisterGetControllerState(withTargetProxyNode: self,
+                                               destinationAddress: anAddress,
+                                               andStateManager: stateManager)
+        genericControllerState = state
+        genericControllerState.execute()
+    }
+    
+    public func nodeSceneRecall(_ anElementAddress: Data, withSceneNumber sceneNumber: Data, onDestinationAddress anAddress: Data) {
+        let state = SceneRecallControllerState(withTargetProxyNode: self,
+                                                      destinationAddress: anAddress,
+                                                      andStateManager: stateManager)
+        state.setSceneNumber(withSceneNumber: sceneNumber)
+        genericControllerState = state
+        genericControllerState.execute()
+    }
+    
+    public func nodeSceneRecallUnacknowledged(_ anElementAddress: Data, withSceneNumber sceneNumber: Data, onDestinationAddress anAddress: Data) {
+        let state = SceneRecallUnacknowledgedControllerState(withTargetProxyNode: self,
+                                               destinationAddress: anAddress,
+                                               andStateManager: stateManager)
+        state.setSceneNumber(withSceneNumber: sceneNumber)
+        genericControllerState = state
+        genericControllerState.execute()
+    }
+    
+    public func vendorModelMessage(_ anOpcode: Data,
+                                   withPayload aParams: Data,
+                                   onDestinationAddress anAddress: Data) {
+        let vendorState = VendorModelMessageControllerState(withTargetProxyNode: self,
+                                                            destinationAddress: anAddress,
+                                                            andStateManager: stateManager)
+        //vendorState.setBinding(elementAddress: anElementAddress, appKeyIndex: anAppKeyIndex, andModelIdentifier: aModelId)
+        vendorState.setOpcode(aOpcode: anOpcode)
+        vendorState.setParams(aParams: aParams)
+        genericControllerState = vendorState
         genericControllerState.execute()
     }
 

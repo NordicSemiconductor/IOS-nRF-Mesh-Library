@@ -54,6 +54,7 @@ class CompositionGetConfiguratorState: NSObject, ConfiguratorStateProtocol {
             data.append(Data(aPayload))
             if data.count <= target.basePeripheral().maximumWriteValueLength(for: .withoutResponse) {
                 print("Composition get message to set:\(data.hexString())")
+                print("delegate is ", target.basePeripheral().delegate.debugDescription, " and should be ", self.debugDescription);
                 target.basePeripheral().writeValue(data,
                                                    for: dataInCharacteristic,
                                                    type: .withoutResponse)
@@ -128,10 +129,11 @@ class CompositionGetConfiguratorState: NSObject, ConfiguratorStateProtocol {
                         aNodeEntry.replayProtectionCount = compositionStatus.replayProtectionCount
                         aNodeEntry.elements = compositionStatus.elements
                         state.provisionedNodes.append(aNodeEntry)
+                        // FIXME: we do this manually and do not depend on getting the composition data while provisioning
                         //Set unicast to current set value, to allow the user to force override addresses
-                        state.nextUnicast = destinationAddress
+                        //state.nextUnicast = destinationAddress
                         //Increment next available address
-                        state.incrementUnicastBy(compositionStatus.elements.count)
+                        //state.incrementUnicastBy(compositionStatus.elements.count)
                         stateManager.saveState()
 
                         DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + .seconds(3)) {
@@ -193,7 +195,7 @@ class CompositionGetConfiguratorState: NSObject, ConfiguratorStateProtocol {
     var lastMessageType = 0xC0
 
     func peripheral(_ peripheral: CBPeripheral, didUpdateValueFor characteristic: CBCharacteristic, error: Error?) {
-        print("Cahrcateristic value updated: \(characteristic.value!.hexString())")
+        print("Characteristic value updated: \(characteristic.value!.hexString())")
         //SAR handling
         if characteristic.value![0] & 0xC0 == 0x40 {
             if lastMessageType == 0x40 {
@@ -217,6 +219,10 @@ class CompositionGetConfiguratorState: NSObject, ConfiguratorStateProtocol {
         } else {
             receivedData(incomingData: Data(characteristic.value!))
         }
+    }
+    
+    func peripheral(_ peripheral: CBPeripheral, didWriteValueFor characteristic: CBCharacteristic, error: Error?) {
+        print("Characteristic value was written")
     }
 
     func peripheral(_ peripheral: CBPeripheral, didUpdateNotificationStateFor characteristic: CBCharacteristic, error: Error?) {

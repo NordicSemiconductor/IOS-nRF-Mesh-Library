@@ -17,6 +17,7 @@ public struct CompositionGetMessage {
 
     public func assemblePayload(withMeshState aState: MeshState, toAddress aDestinationAddress: Data) -> [Data]? {
         let deviceKey = aState.deviceKeyForUnicast(aDestinationAddress)
+        print("assemble composition get for: \(aDestinationAddress.hexString()) with deviceKey: \(deviceKey?.hexString() ?? "none") and netKey: \(aState.netKey.hexString())")
         let accessMessage = AccessMessagePDU(withPayload: payload, opcode: opcode, deviceKey: deviceKey!, netKey: aState.netKey, seq: SequenceNumber(), ivIndex: aState.IVIndex, source: aState.unicastAddress, andDst: aDestinationAddress)
         let networkPDU = accessMessage.assembleNetworkPDU()
         return networkPDU
