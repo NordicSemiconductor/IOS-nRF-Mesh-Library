@@ -115,4 +115,8 @@ public struct CompositionElement: Codable {
     public func totalModelCount() -> Int {
         return allModels.count
     }
+    
+    public func elementLocation() -> Data {
+        return location;
+    }
 }

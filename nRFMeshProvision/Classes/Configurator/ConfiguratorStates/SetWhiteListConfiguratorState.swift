@@ -61,7 +61,7 @@ class SetWhiteListConfiguratorState: NSObject, ConfiguratorStateProtocol {
     }
 
     func peripheral(_ peripheral: CBPeripheral, didUpdateValueFor characteristic: CBCharacteristic, error: Error?) {
-        print("Cahrcateristic value updated: \(characteristic.value!.hexString())")
+        print("Characteristic value updated: \(characteristic.value!.hexString())")
         let value = characteristic.value!
         if value[0] == 0x01 {
             print("Ignoring secure beacon")

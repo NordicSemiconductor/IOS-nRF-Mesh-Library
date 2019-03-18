@@ -26,6 +26,7 @@ public struct AppKeyAddMessage {
    
     public func assemblePayload(withMeshState aState: MeshState, toAddress aDestinationAddress: Data) -> [Data]? {
         let deviceKey = aState.deviceKeyForUnicast(aDestinationAddress)
+        print("Assemble AppKeyAddMessage: deviceKey: \(deviceKey?.hexString() ?? "none") networkKey: \(aState.netKey.hexString())");
         let accessMessage = AccessMessagePDU(withPayload: Data(payload), opcode: opcode, deviceKey: deviceKey!, netKey: aState.netKey, seq: SequenceNumber(), ivIndex: aState.IVIndex, source: aState.unicastAddress, andDst: aDestinationAddress)
         let networkPDU = accessMessage.assembleNetworkPDU()
         return networkPDU

@@ -23,7 +23,15 @@ public extension Data {
                 return nil
             }
         }
-   self = data
+        self = data
+    }
+    
+    public init(fromInteger anInteger: UInt16) {
+        self = Data([UInt8((anInteger & 0xFF00) >> 8), UInt8(anInteger & 0x00FF)])
+    }
+    
+    public init(fromInt32 anInteger: UInt32) {
+        self = Data([UInt8((anInteger & 0xFF000000) >> 24), UInt8((anInteger & 0x00FF0000) >> 16), UInt8((anInteger & 0x0000FF00) >> 8), UInt8(anInteger & 0x000000FF)])
     }
 
     public func hexString() -> String {
@@ -49,5 +57,25 @@ public extension Data {
     
     var uint16: UInt16 {
         return withUnsafeBytes { $0.pointee }
+    }
+    
+    var uint16BigEndian: UInt16 {
+        return UInt16(bigEndian: withUnsafeBytes { $0.pointee })
+    }
+    
+    var int16: Int16 {
+        return withUnsafeBytes { $0.pointee }
+    }
+    
+    var int16BigEndian: Int16 {
+        return Int16(bigEndian: withUnsafeBytes { $0.pointee })
+    }
+    
+    var int32: Int32 {
+        return withUnsafeBytes { $0.pointee }
+    }
+    
+    var int32BigEndian: Int32 {
+        return Int32(bigEndian: withUnsafeBytes { $0.pointee })
     }
 }

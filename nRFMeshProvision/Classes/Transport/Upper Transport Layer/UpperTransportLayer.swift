@@ -49,11 +49,8 @@ public struct UpperTransportLayer {
             var opcode = Data()
             if let payload = decryptedPayload {
                 if payload.count > 0 {
-                    if payload[0] >= 0x80 {
-                        opcode.append(payload[0...1])
-                    } else {
-                        opcode.append(payload[0])
-                    }
+                    let opcodeLength = Int((payload[0] & 0xF0) >> 6);
+                    opcode.append(payload[0...max(0, opcodeLength - 1)])
                     params = UpperTransportPDUParams(withPayload: payload, opcode: opcode, IVIndex: anIVIndex, key: key, ttl: Data([0x04]), seq: SequenceNumber(), src: aSRC, dst: aDST, nonce: nonce, ctl: isControl, afk: isApplicationKey, aid: applicationId)
                 } else {
                     //No payload, failed to decrypt
@@ -80,11 +77,10 @@ public struct UpperTransportLayer {
             return nil
         } else {
             //Assemble access message
-            print("Assembling access message")
-            print("opcode: 0x\(params.opcode.hexString())")
-            let messageParser = AccessMessageParser()
+            print("Assemble access message 0x\(params.opcode.hexString()) , 0x\(params.payload.hexString())")
+            //let messageParser = AccessMessageParser()
             let payload = Data(decryptedPayload!.dropFirst(params.opcode.count))
-            return messageParser.parseData(payload, withOpcode: params.opcode, sourceAddress: params.sourceAddress)
+            return AccessMessageParser.parseData(payload, withOpcode: params.opcode, sourceAddress: params.sourceAddress)
         }
     }
 
