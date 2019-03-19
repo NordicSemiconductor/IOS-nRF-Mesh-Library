@@ -8,51 +8,17 @@
 
 /* Begin PBXBuildFile section */
 		21FEE9259EAB95D2E75B7C71 /* Pods_nRFMeshProvision_Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 328E66A87C5B0A499473BBE3 /* Pods_nRFMeshProvision_Tests.framework */; };
-		301D5BBF2044096A00639A04 /* UpperLayerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 301D5BBE2044096A00639A04 /* UpperLayerTests.swift */; };
 		30208A1A2175DBD900BC3789 /* libcrypto.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 30208A182175DBD900BC3789 /* libcrypto.a */; };
 		30208A1B2175DBD900BC3789 /* libssl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 30208A192175DBD900BC3789 /* libssl.a */; };
 		30208A1C2175DBE900BC3789 /* libssl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 30208A192175DBD900BC3789 /* libssl.a */; };
 		30208A1D2175DBE900BC3789 /* libcrypto.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 30208A182175DBD900BC3789 /* libcrypto.a */; };
-		302D1F4720B44E000022AEB1 /* ProvisioningLogTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 302D1F4620B44E000022AEB1 /* ProvisioningLogTableViewController.swift */; };
-		302D1F5A20BBEB4F0022AEB1 /* ToggleControlTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 302D1F5920BBEB4F0022AEB1 /* ToggleControlTableViewCell.swift */; };
-		302D1F5C20BBF2700022AEB1 /* ToggleCellDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 302D1F5B20BBF2700022AEB1 /* ToggleCellDelegate.swift */; };
-		3033A67C216215EB00A17753 /* SliderCellDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3033A67B216215EB00A17753 /* SliderCellDelegate.swift */; };
-		3033A67E2162164800A17753 /* SliderControlTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3033A67D2162164800A17753 /* SliderControlTableViewCell.swift */; };
-		303C6C02210F279000EA872D /* FlagSettingsPopoverViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 303C6C01210F279000EA872D /* FlagSettingsPopoverViewController.swift */; };
-		303C6C07210F405D00EA872D /* ToggleSettingsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 303C6C06210F405D00EA872D /* ToggleSettingsTableViewCell.swift */; };
-		304DAEB4208091EF006CFEA6 /* MainNetworkViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 304DAEA2208091EF006CFEA6 /* MainNetworkViewController.swift */; };
-		304DAEB5208091EF006CFEA6 /* MainTabBarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 304DAEA3208091EF006CFEA6 /* MainTabBarViewController.swift */; };
-		304DAEB6208091EF006CFEA6 /* MeshNodeCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 304DAEA4208091EF006CFEA6 /* MeshNodeCollectionViewCell.swift */; };
-		304DAEB7208091EF006CFEA6 /* RootViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 304DAEA5208091EF006CFEA6 /* RootViewController.swift */; };
-		304DAEB8208091EF006CFEA6 /* MeshNodeInfoTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 304DAEA8208091EF006CFEA6 /* MeshNodeInfoTableViewController.swift */; };
-		304DAEB9208091EF006CFEA6 /* AppKeySelectorTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 304DAEAA208091EF006CFEA6 /* AppKeySelectorTableViewController.swift */; };
-		304DAEBA208091EF006CFEA6 /* MeshNodeLogTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 304DAEAB208091EF006CFEA6 /* MeshNodeLogTableViewCell.swift */; };
-		304DAEBC208091EF006CFEA6 /* MeshProvisioningDataTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 304DAEAD208091EF006CFEA6 /* MeshProvisioningDataTableViewController.swift */; };
-		304DAEBD208091EF006CFEA6 /* ScannerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 304DAEAF208091EF006CFEA6 /* ScannerViewController.swift */; };
-		304DAEBE208091EF006CFEA6 /* AppKeyManagerTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 304DAEB2208091EF006CFEA6 /* AppKeyManagerTableViewController.swift */; };
-		304DAEBF208091EF006CFEA6 /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 304DAEB3208091EF006CFEA6 /* SettingsViewController.swift */; };
-		3056597D210F44B400CF2A5B /* ToggleSettingsCellDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3056597C210F44B400CF2A5B /* ToggleSettingsCellDelegate.swift */; };
-		305659802110402600CF2A5B /* UserDefaultsKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3056597F2110402600CF2A5B /* UserDefaultsKeys.swift */; };
-		305F08AD20861D0A006A15F3 /* ModelAppKeyBindingConfigurationTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 305F08AC20861D0A006A15F3 /* ModelAppKeyBindingConfigurationTableViewController.swift */; };
-		30648B0220459B7000177CB4 /* LowerLayerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 301D5C042045933800639A04 /* LowerLayerTests.swift */; };
-		306F4D1F20BED7B200572A8F /* NodeModelCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 306F4D1E20BED7B200572A8F /* NodeModelCell.swift */; };
-		307BA359204ED39E00944B89 /* StateRestoration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 307BA358204ED39E00944B89 /* StateRestoration.swift */; };
-		308711D6204D5A47001ED9C3 /* NetworkLayerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 308711D5204D5A47001ED9C3 /* NetworkLayerTests.swift */; };
 		3089BCA02099CA4900E30192 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3089BC9E2099CA4900E30192 /* LaunchScreen.storyboard */; };
-		309CDA39211326B7007D1A6F /* ModelPublicationConfigurationTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 309CDA38211326B7007D1A6F /* ModelPublicationConfigurationTableViewController.swift */; };
-		309CDA3B21142D71007D1A6F /* PublicationSettingsDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 309CDA3A21142D71007D1A6F /* PublicationSettingsDelegate.swift */; };
-		309CDA4021197E23007D1A6F /* GlobalAppKeyListManagerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 309CDA3F21197E23007D1A6F /* GlobalAppKeyListManagerController.swift */; };
-		30D40F7A208099BF00DC126F /* LogEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30D40F79208099BF00DC126F /* LogEntry.swift */; };
-		30D40F902084808A00DC126F /* NodeConfigurationTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30D40F8F2084808A00DC126F /* NodeConfigurationTableViewController.swift */; };
-		30D40F9720848DFC00DC126F /* ModelConfigurationTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30D40F9620848DFC00DC126F /* ModelConfigurationTableViewController.swift */; };
-		30EF9C32205FB3AA00253F1E /* NetworkDecryptionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30EF9C31205FB3AA00253F1E /* NetworkDecryptionTests.swift */; };
-		30FF5EEA20972672002D7C77 /* ScannerCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30FF5EE920972672002D7C77 /* ScannerCell.swift */; };
-		30FF5EED20973E69002D7C77 /* ReconnectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30FF5EEC20973E69002D7C77 /* ReconnectionViewController.swift */; };
-		30FF5EEF20973F50002D7C77 /* ProxyScannerCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30FF5EEE20973F50002D7C77 /* ProxyScannerCell.swift */; };
+		529B756D223FE7F1008F1CE7 /* RootViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529B756C223FE7F1008F1CE7 /* RootViewController.swift */; };
+		529B7570223FF1AE008F1CE7 /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529B756F223FF1AE008F1CE7 /* SettingsViewController.swift */; };
+		529B7572223FFC39008F1CE7 /* AppKeysViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529B7571223FFC39008F1CE7 /* AppKeysViewController.swift */; };
 		607FACD61AFB9204008FA782 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACD51AFB9204008FA782 /* AppDelegate.swift */; };
 		607FACDB1AFB9204008FA782 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 607FACD91AFB9204008FA782 /* Main.storyboard */; };
 		607FACDD1AFB9204008FA782 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 607FACDC1AFB9204008FA782 /* Images.xcassets */; };
-		607FACEC1AFB9204008FA782 /* EncryptionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACEB1AFB9204008FA782 /* EncryptionTests.swift */; };
 		7F9FD220FCA92765E14E2C17 /* Pods_nRFMeshProvision_Example.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5A51F9AF82598D8D5D40BD77 /* Pods_nRFMeshProvision_Example.framework */; };
 /* End PBXBuildFile section */
 
@@ -67,50 +33,15 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		301D5BBE2044096A00639A04 /* UpperLayerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpperLayerTests.swift; sourceTree = "<group>"; };
-		301D5C042045933800639A04 /* LowerLayerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LowerLayerTests.swift; sourceTree = "<group>"; };
 		30208A182175DBD900BC3789 /* libcrypto.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libcrypto.a; path = "Pods/OpenSSL-Universal/lib-ios/libcrypto.a"; sourceTree = "<group>"; };
 		30208A192175DBD900BC3789 /* libssl.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libssl.a; path = "Pods/OpenSSL-Universal/lib-ios/libssl.a"; sourceTree = "<group>"; };
-		302D1F4620B44E000022AEB1 /* ProvisioningLogTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProvisioningLogTableViewController.swift; sourceTree = "<group>"; };
-		302D1F5920BBEB4F0022AEB1 /* ToggleControlTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToggleControlTableViewCell.swift; sourceTree = "<group>"; };
-		302D1F5B20BBF2700022AEB1 /* ToggleCellDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToggleCellDelegate.swift; sourceTree = "<group>"; };
-		3033A67B216215EB00A17753 /* SliderCellDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SliderCellDelegate.swift; sourceTree = "<group>"; };
-		3033A67D2162164800A17753 /* SliderControlTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SliderControlTableViewCell.swift; sourceTree = "<group>"; };
-		303C6C01210F279000EA872D /* FlagSettingsPopoverViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = FlagSettingsPopoverViewController.swift; path = nRFMeshProvision/ViewControllers/SettingsView/FlagSettingsPopoverViewController.swift; sourceTree = SOURCE_ROOT; };
-		303C6C06210F405D00EA872D /* ToggleSettingsTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToggleSettingsTableViewCell.swift; sourceTree = "<group>"; };
-		3043D9231FF38CF500A9A999 /* libcrypto.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libcrypto.a; path = Pods/OpenSSL/lib/libcrypto.a; sourceTree = "<group>"; };
-		3043D9241FF38CF500A9A999 /* libssl.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libssl.a; path = Pods/OpenSSL/lib/libssl.a; sourceTree = "<group>"; };
-		304DAEA2208091EF006CFEA6 /* MainNetworkViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainNetworkViewController.swift; sourceTree = "<group>"; };
-		304DAEA3208091EF006CFEA6 /* MainTabBarViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainTabBarViewController.swift; sourceTree = "<group>"; };
-		304DAEA4208091EF006CFEA6 /* MeshNodeCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MeshNodeCollectionViewCell.swift; sourceTree = "<group>"; };
-		304DAEA5208091EF006CFEA6 /* RootViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RootViewController.swift; sourceTree = "<group>"; };
-		304DAEA8208091EF006CFEA6 /* MeshNodeInfoTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MeshNodeInfoTableViewController.swift; sourceTree = "<group>"; };
-		304DAEAA208091EF006CFEA6 /* AppKeySelectorTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppKeySelectorTableViewController.swift; sourceTree = "<group>"; };
-		304DAEAB208091EF006CFEA6 /* MeshNodeLogTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MeshNodeLogTableViewCell.swift; sourceTree = "<group>"; };
-		304DAEAD208091EF006CFEA6 /* MeshProvisioningDataTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MeshProvisioningDataTableViewController.swift; sourceTree = "<group>"; };
-		304DAEAF208091EF006CFEA6 /* ScannerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScannerViewController.swift; sourceTree = "<group>"; };
-		304DAEB2208091EF006CFEA6 /* AppKeyManagerTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppKeyManagerTableViewController.swift; sourceTree = "<group>"; };
-		304DAEB3208091EF006CFEA6 /* SettingsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
-		3056597C210F44B400CF2A5B /* ToggleSettingsCellDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToggleSettingsCellDelegate.swift; sourceTree = "<group>"; };
-		3056597F2110402600CF2A5B /* UserDefaultsKeys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDefaultsKeys.swift; sourceTree = "<group>"; };
-		305F08AC20861D0A006A15F3 /* ModelAppKeyBindingConfigurationTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelAppKeyBindingConfigurationTableViewController.swift; sourceTree = "<group>"; };
-		306F4D1E20BED7B200572A8F /* NodeModelCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NodeModelCell.swift; sourceTree = "<group>"; };
-		307BA358204ED39E00944B89 /* StateRestoration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StateRestoration.swift; sourceTree = "<group>"; };
-		308711D5204D5A47001ED9C3 /* NetworkLayerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkLayerTests.swift; sourceTree = "<group>"; };
 		3089BC9F2099CA4900E30192 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
-		309CDA38211326B7007D1A6F /* ModelPublicationConfigurationTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelPublicationConfigurationTableViewController.swift; sourceTree = "<group>"; };
-		309CDA3A21142D71007D1A6F /* PublicationSettingsDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PublicationSettingsDelegate.swift; sourceTree = "<group>"; };
-		309CDA3F21197E23007D1A6F /* GlobalAppKeyListManagerController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlobalAppKeyListManagerController.swift; sourceTree = "<group>"; };
 		30C8D386203C1BD400779325 /* nRFMeshProvision.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = nRFMeshProvision.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		30D40F79208099BF00DC126F /* LogEntry.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LogEntry.swift; sourceTree = "<group>"; };
-		30D40F8F2084808A00DC126F /* NodeConfigurationTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NodeConfigurationTableViewController.swift; sourceTree = "<group>"; };
-		30D40F9620848DFC00DC126F /* ModelConfigurationTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelConfigurationTableViewController.swift; sourceTree = "<group>"; };
-		30EF9C31205FB3AA00253F1E /* NetworkDecryptionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkDecryptionTests.swift; sourceTree = "<group>"; };
-		30FF5EE920972672002D7C77 /* ScannerCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScannerCell.swift; sourceTree = "<group>"; };
-		30FF5EEC20973E69002D7C77 /* ReconnectionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReconnectionViewController.swift; sourceTree = "<group>"; };
-		30FF5EEE20973F50002D7C77 /* ProxyScannerCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProxyScannerCell.swift; sourceTree = "<group>"; };
 		328E66A87C5B0A499473BBE3 /* Pods_nRFMeshProvision_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_nRFMeshProvision_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		4973E9CDA09CE2398E5C269A /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
+		529B756C223FE7F1008F1CE7 /* RootViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = RootViewController.swift; path = "View Controllers/RootViewController.swift"; sourceTree = "<group>"; };
+		529B756F223FF1AE008F1CE7 /* SettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SettingsViewController.swift; path = "View Controllers/Settings/SettingsViewController.swift"; sourceTree = "<group>"; };
+		529B7571223FFC39008F1CE7 /* AppKeysViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppKeysViewController.swift; path = "View Controllers/Settings/AppKeysViewController.swift"; sourceTree = "<group>"; };
 		5A51F9AF82598D8D5D40BD77 /* Pods_nRFMeshProvision_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_nRFMeshProvision_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		607FACD01AFB9204008FA782 /* nRFMeshProvision_Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = nRFMeshProvision_Example.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		607FACD41AFB9204008FA782 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -119,7 +50,6 @@
 		607FACDC1AFB9204008FA782 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		607FACE51AFB9204008FA782 /* nRFMeshProvision_Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = nRFMeshProvision_Tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		607FACEA1AFB9204008FA782 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		607FACEB1AFB9204008FA782 /* EncryptionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EncryptionTests.swift; sourceTree = "<group>"; };
 		6F738D8AED8E08F840E0D44B /* Pods-nRFMeshProvision_Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-nRFMeshProvision_Tests.release.xcconfig"; path = "Pods/Target Support Files/Pods-nRFMeshProvision_Tests/Pods-nRFMeshProvision_Tests.release.xcconfig"; sourceTree = "<group>"; };
 		9020B99520CC4F3B27519D12 /* Pods-nRFMeshProvision_Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-nRFMeshProvision_Tests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-nRFMeshProvision_Tests/Pods-nRFMeshProvision_Tests.debug.xcconfig"; sourceTree = "<group>"; };
 		C775BBAAAC42952ED786BABF /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
@@ -163,144 +93,22 @@
 			name = Pods;
 			sourceTree = "<group>";
 		};
-		303C6C05210F404900EA872D /* Cells */ = {
+		529B756B223FE7B5008F1CE7 /* View Controllers */ = {
 			isa = PBXGroup;
 			children = (
-				303C6C06210F405D00EA872D /* ToggleSettingsTableViewCell.swift */,
-				3056597C210F44B400CF2A5B /* ToggleSettingsCellDelegate.swift */,
+				529B756C223FE7F1008F1CE7 /* RootViewController.swift */,
+				529B756E223FF12F008F1CE7 /* Settings */,
 			);
-			path = Cells;
+			name = "View Controllers";
 			sourceTree = "<group>";
 		};
-		304DAEA0208091EF006CFEA6 /* ViewControllers */ = {
+		529B756E223FF12F008F1CE7 /* Settings */ = {
 			isa = PBXGroup;
 			children = (
-				304DAEAA208091EF006CFEA6 /* AppKeySelectorTableViewController.swift */,
-				30FF5EEB20973B7D002D7C77 /* ReconnectionView */,
-				30D40F8E2084807A00DC126F /* NodeConfigurationView */,
-				304DAEA1208091EF006CFEA6 /* MainView */,
-				304DAEA7208091EF006CFEA6 /* NodeInfoView */,
-				304DAEA9208091EF006CFEA6 /* ProvisioningView */,
-				304DAEAE208091EF006CFEA6 /* ScannerView */,
-				304DAEB0208091EF006CFEA6 /* SettingsView */,
+				529B756F223FF1AE008F1CE7 /* SettingsViewController.swift */,
+				529B7571223FFC39008F1CE7 /* AppKeysViewController.swift */,
 			);
-			path = ViewControllers;
-			sourceTree = "<group>";
-		};
-		304DAEA1208091EF006CFEA6 /* MainView */ = {
-			isa = PBXGroup;
-			children = (
-				304DAEA2208091EF006CFEA6 /* MainNetworkViewController.swift */,
-				304DAEA3208091EF006CFEA6 /* MainTabBarViewController.swift */,
-				304DAEA4208091EF006CFEA6 /* MeshNodeCollectionViewCell.swift */,
-				304DAEA5208091EF006CFEA6 /* RootViewController.swift */,
-			);
-			path = MainView;
-			sourceTree = "<group>";
-		};
-		304DAEA7208091EF006CFEA6 /* NodeInfoView */ = {
-			isa = PBXGroup;
-			children = (
-				304DAEA8208091EF006CFEA6 /* MeshNodeInfoTableViewController.swift */,
-			);
-			path = NodeInfoView;
-			sourceTree = "<group>";
-		};
-		304DAEA9208091EF006CFEA6 /* ProvisioningView */ = {
-			isa = PBXGroup;
-			children = (
-				304DAEAB208091EF006CFEA6 /* MeshNodeLogTableViewCell.swift */,
-				304DAEAD208091EF006CFEA6 /* MeshProvisioningDataTableViewController.swift */,
-				302D1F4620B44E000022AEB1 /* ProvisioningLogTableViewController.swift */,
-			);
-			path = ProvisioningView;
-			sourceTree = "<group>";
-		};
-		304DAEAE208091EF006CFEA6 /* ScannerView */ = {
-			isa = PBXGroup;
-			children = (
-				304DAEAF208091EF006CFEA6 /* ScannerViewController.swift */,
-				30FF5EE920972672002D7C77 /* ScannerCell.swift */,
-			);
-			path = ScannerView;
-			sourceTree = "<group>";
-		};
-		304DAEB0208091EF006CFEA6 /* SettingsView */ = {
-			isa = PBXGroup;
-			children = (
-				303C6C05210F404900EA872D /* Cells */,
-				304DAEB1208091EF006CFEA6 /* AppKeySettingsView */,
-				303C6C01210F279000EA872D /* FlagSettingsPopoverViewController.swift */,
-				304DAEB3208091EF006CFEA6 /* SettingsViewController.swift */,
-			);
-			path = SettingsView;
-			sourceTree = "<group>";
-		};
-		304DAEB1208091EF006CFEA6 /* AppKeySettingsView */ = {
-			isa = PBXGroup;
-			children = (
-				304DAEB2208091EF006CFEA6 /* AppKeyManagerTableViewController.swift */,
-			);
-			path = AppKeySettingsView;
-			sourceTree = "<group>";
-		};
-		3056597E2110401100CF2A5B /* Utils */ = {
-			isa = PBXGroup;
-			children = (
-				3056597F2110402600CF2A5B /* UserDefaultsKeys.swift */,
-			);
-			path = Utils;
-			sourceTree = SOURCE_ROOT;
-		};
-		305F08AB20861CF7006A15F3 /* ConfigurationViews */ = {
-			isa = PBXGroup;
-			children = (
-				305F08AC20861D0A006A15F3 /* ModelAppKeyBindingConfigurationTableViewController.swift */,
-				309CDA38211326B7007D1A6F /* ModelPublicationConfigurationTableViewController.swift */,
-				309CDA3A21142D71007D1A6F /* PublicationSettingsDelegate.swift */,
-			);
-			path = ConfigurationViews;
-			sourceTree = "<group>";
-		};
-		30D40F78208099BF00DC126F /* Models */ = {
-			isa = PBXGroup;
-			children = (
-				30D40F79208099BF00DC126F /* LogEntry.swift */,
-			);
-			path = Models;
-			sourceTree = "<group>";
-		};
-		30D40F8E2084807A00DC126F /* NodeConfigurationView */ = {
-			isa = PBXGroup;
-			children = (
-				30D40F9520848DEC00DC126F /* ModelConfigurationView */,
-				30D40F8F2084808A00DC126F /* NodeConfigurationTableViewController.swift */,
-				306F4D1E20BED7B200572A8F /* NodeModelCell.swift */,
-				309CDA3F21197E23007D1A6F /* GlobalAppKeyListManagerController.swift */,
-			);
-			path = NodeConfigurationView;
-			sourceTree = "<group>";
-		};
-		30D40F9520848DEC00DC126F /* ModelConfigurationView */ = {
-			isa = PBXGroup;
-			children = (
-				305F08AB20861CF7006A15F3 /* ConfigurationViews */,
-				30D40F9620848DFC00DC126F /* ModelConfigurationTableViewController.swift */,
-				302D1F5920BBEB4F0022AEB1 /* ToggleControlTableViewCell.swift */,
-				302D1F5B20BBF2700022AEB1 /* ToggleCellDelegate.swift */,
-				3033A67B216215EB00A17753 /* SliderCellDelegate.swift */,
-				3033A67D2162164800A17753 /* SliderControlTableViewCell.swift */,
-			);
-			path = ModelConfigurationView;
-			sourceTree = "<group>";
-		};
-		30FF5EEB20973B7D002D7C77 /* ReconnectionView */ = {
-			isa = PBXGroup;
-			children = (
-				30FF5EEC20973E69002D7C77 /* ReconnectionViewController.swift */,
-				30FF5EEE20973F50002D7C77 /* ProxyScannerCell.swift */,
-			);
-			path = ReconnectionView;
+			name = Settings;
 			sourceTree = "<group>";
 		};
 		607FACC71AFB9204008FA782 = {
@@ -327,9 +135,7 @@
 		607FACD21AFB9204008FA782 /* Example for nRFMeshProvision */ = {
 			isa = PBXGroup;
 			children = (
-				3056597E2110401100CF2A5B /* Utils */,
-				30D40F78208099BF00DC126F /* Models */,
-				304DAEA0208091EF006CFEA6 /* ViewControllers */,
+				529B756B223FE7B5008F1CE7 /* View Controllers */,
 				607FACD51AFB9204008FA782 /* AppDelegate.swift */,
 				607FACD91AFB9204008FA782 /* Main.storyboard */,
 				3089BC9E2099CA4900E30192 /* LaunchScreen.storyboard */,
@@ -351,12 +157,6 @@
 		607FACE81AFB9204008FA782 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
-				301D5C042045933800639A04 /* LowerLayerTests.swift */,
-				301D5BBE2044096A00639A04 /* UpperLayerTests.swift */,
-				607FACEB1AFB9204008FA782 /* EncryptionTests.swift */,
-				308711D5204D5A47001ED9C3 /* NetworkLayerTests.swift */,
-				307BA358204ED39E00944B89 /* StateRestoration.swift */,
-				30EF9C31205FB3AA00253F1E /* NetworkDecryptionTests.swift */,
 				607FACE91AFB9204008FA782 /* Supporting Files */,
 			);
 			path = Tests;
@@ -386,8 +186,6 @@
 				30208A182175DBD900BC3789 /* libcrypto.a */,
 				30208A192175DBD900BC3789 /* libssl.a */,
 				30C8D386203C1BD400779325 /* nRFMeshProvision.framework */,
-				3043D9231FF38CF500A9A999 /* libcrypto.a */,
-				3043D9241FF38CF500A9A999 /* libssl.a */,
 				5A51F9AF82598D8D5D40BD77 /* Pods_nRFMeshProvision_Example.framework */,
 				328E66A87C5B0A499473BBE3 /* Pods_nRFMeshProvision_Tests.framework */,
 			);
@@ -448,7 +246,7 @@
 					607FACCF1AFB9204008FA782 = {
 						CreatedOnToolsVersion = 6.3.1;
 						DevelopmentTeam = P3R8YQEV4L;
-						LastSwiftMigration = 0900;
+						LastSwiftMigration = 1010;
 						SystemCapabilities = {
 							com.apple.BackgroundModes = {
 								enabled = 1;
@@ -559,38 +357,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				309CDA4021197E23007D1A6F /* GlobalAppKeyListManagerController.swift in Sources */,
-				302D1F5A20BBEB4F0022AEB1 /* ToggleControlTableViewCell.swift in Sources */,
-				304DAEB7208091EF006CFEA6 /* RootViewController.swift in Sources */,
-				30FF5EED20973E69002D7C77 /* ReconnectionViewController.swift in Sources */,
-				3033A67E2162164800A17753 /* SliderControlTableViewCell.swift in Sources */,
-				304DAEBA208091EF006CFEA6 /* MeshNodeLogTableViewCell.swift in Sources */,
-				305659802110402600CF2A5B /* UserDefaultsKeys.swift in Sources */,
-				302D1F4720B44E000022AEB1 /* ProvisioningLogTableViewController.swift in Sources */,
-				309CDA3B21142D71007D1A6F /* PublicationSettingsDelegate.swift in Sources */,
-				304DAEB5208091EF006CFEA6 /* MainTabBarViewController.swift in Sources */,
-				309CDA39211326B7007D1A6F /* ModelPublicationConfigurationTableViewController.swift in Sources */,
-				304DAEB9208091EF006CFEA6 /* AppKeySelectorTableViewController.swift in Sources */,
-				303C6C02210F279000EA872D /* FlagSettingsPopoverViewController.swift in Sources */,
-				305F08AD20861D0A006A15F3 /* ModelAppKeyBindingConfigurationTableViewController.swift in Sources */,
-				304DAEB4208091EF006CFEA6 /* MainNetworkViewController.swift in Sources */,
-				3033A67C216215EB00A17753 /* SliderCellDelegate.swift in Sources */,
-				306F4D1F20BED7B200572A8F /* NodeModelCell.swift in Sources */,
-				304DAEBE208091EF006CFEA6 /* AppKeyManagerTableViewController.swift in Sources */,
-				304DAEB6208091EF006CFEA6 /* MeshNodeCollectionViewCell.swift in Sources */,
-				30D40F902084808A00DC126F /* NodeConfigurationTableViewController.swift in Sources */,
-				302D1F5C20BBF2700022AEB1 /* ToggleCellDelegate.swift in Sources */,
-				30D40F9720848DFC00DC126F /* ModelConfigurationTableViewController.swift in Sources */,
-				304DAEB8208091EF006CFEA6 /* MeshNodeInfoTableViewController.swift in Sources */,
-				303C6C07210F405D00EA872D /* ToggleSettingsTableViewCell.swift in Sources */,
-				30D40F7A208099BF00DC126F /* LogEntry.swift in Sources */,
 				607FACD61AFB9204008FA782 /* AppDelegate.swift in Sources */,
-				30FF5EEA20972672002D7C77 /* ScannerCell.swift in Sources */,
-				304DAEBF208091EF006CFEA6 /* SettingsViewController.swift in Sources */,
-				304DAEBC208091EF006CFEA6 /* MeshProvisioningDataTableViewController.swift in Sources */,
-				304DAEBD208091EF006CFEA6 /* ScannerViewController.swift in Sources */,
-				3056597D210F44B400CF2A5B /* ToggleSettingsCellDelegate.swift in Sources */,
-				30FF5EEF20973F50002D7C77 /* ProxyScannerCell.swift in Sources */,
+				529B756D223FE7F1008F1CE7 /* RootViewController.swift in Sources */,
+				529B7572223FFC39008F1CE7 /* AppKeysViewController.swift in Sources */,
+				529B7570223FF1AE008F1CE7 /* SettingsViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -598,12 +368,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				308711D6204D5A47001ED9C3 /* NetworkLayerTests.swift in Sources */,
-				307BA359204ED39E00944B89 /* StateRestoration.swift in Sources */,
-				30648B0220459B7000177CB4 /* LowerLayerTests.swift in Sources */,
-				301D5BBF2044096A00639A04 /* UpperLayerTests.swift in Sources */,
-				607FACEC1AFB9204008FA782 /* EncryptionTests.swift in Sources */,
-				30EF9C32205FB3AA00253F1E /* NetworkDecryptionTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -776,8 +540,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				SWIFT_PRECOMPILE_BRIDGING_HEADER = NO;
-				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -812,8 +575,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				SWIFT_PRECOMPILE_BRIDGING_HEADER = NO;
-				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
