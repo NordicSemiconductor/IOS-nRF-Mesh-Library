@@ -7,35 +7,50 @@
 
 import Foundation
 
-public typealias AddressRange = ClosedRange<Address>
-
-// MARK: - Codable
-
-extension ClosedRange: Codable where Bound == Address {
+public struct AddressRange: Codable {
+    public let lowAddress:  Address
+    public let highAddress: Address
+    
+    public init(from lowAddress: Scene, to highAddress: Scene) {
+        self.lowAddress = min(lowAddress, highAddress)
+        self.highAddress  = max(lowAddress, highAddress)
+    }
+    
+    public init(_ range: ClosedRange<Scene>) {
+        self.init(from: range.lowerBound, to: range.upperBound)
+    }
     
     private enum CodingKeys: String, CodingKey {
-        case lowerBound = "lowAddress"
-        case upperBound = "highAddress"
+        case lowAddress
+        case highAddress
     }
     
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        let lowerBound = try container.decode(Address.self, forKey: .lowerBound)
-        let upperBound = try container.decode(Address.self, forKey: .upperBound)
-        self = lowerBound...upperBound
+        let lowAddressAsString  = try container.decode(String.self, forKey: .lowAddress)
+        let highAddressAsString = try container.decode(String.self, forKey: .highAddress)
+        
+        guard let lowAddress = Scene(hex: lowAddressAsString) else {
+            throw DecodingError.dataCorruptedError(forKey: .lowAddress, in: container,
+                                                   debugDescription: "Address must be 4-character hexadecimal string")
+        }
+        guard let highAddress = Scene(hex: highAddressAsString) else {
+            throw DecodingError.dataCorruptedError(forKey: .highAddress, in: container,
+                                                   debugDescription: "Address must be 4-character hexadecimal string")
+        }
+        self.init(from: lowAddress, to: highAddress)
     }
     
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(lowerBound, forKey: .lowerBound)
-        try container.encode(upperBound, forKey: .upperBound)
+        try container.encode(lowAddress.hex,  forKey: .lowAddress)
+        try container.encode(highAddress.hex, forKey: .highAddress)
     }
-
 }
 
 // MARK: - Helper methods
 
-public extension ClosedRange where Bound == Address {
+public extension AddressRange {
     
     /// Returns true if the address range is valid. Valid address ranges
     /// are in Unicast or Group ranges.
@@ -49,14 +64,14 @@ public extension ClosedRange where Bound == Address {
     ///
     /// - returns: True if the address range is in Unicast address range.
     public func isUnicastRange() -> Bool {
-        return lowerBound.isUnicast() && upperBound.isUnicast()
+        return lowAddress.isUnicast() && highAddress.isUnicast()
     }
     
     /// Returns true if the address range is in Group address  range.
     ///
     /// - returns: True if the address range is in Group address  range.
     public func isGroupRange() -> Bool {
-        return lowerBound.isGroup() && upperBound.isGroup()
+        return lowAddress.isGroup() && highAddress.isGroup()
     }
 }
 
@@ -79,7 +94,7 @@ public extension Array where Element == AddressRange {
 
 // MARK: - Overlapping
 
-public extension ClosedRange where Bound == Address {
+public extension AddressRange {
     
     /// Returns true if this and the given Address Range overlapps.
     ///
@@ -94,18 +109,18 @@ public extension ClosedRange where Bound == Address {
     /// - parameter range: The range to check overlapping.
     /// - returns: True if ranges do not overlap.
     public func doesNotOverlap(with other: AddressRange) -> Bool {
-        return (lowerBound < other.lowerBound && upperBound < other.lowerBound)
-            || (other.lowerBound < lowerBound && other.upperBound < lowerBound)
+        return (lowAddress < other.lowAddress && highAddress < other.lowAddress)
+            || (other.lowAddress < lowAddress && other.highAddress < lowAddress)
     }
     
 }
 
 // MARK: - Defaults
 
-public extension ClosedRange where Bound == Address {
+public extension AddressRange {
     
-    public static let allUnicastAddresses = Address.minUnicastAddress...Address.maxUnicastAddress
+    public static let allUnicastAddresses = AddressRange(Address.minUnicastAddress...Address.maxUnicastAddress)
     
-    public static let allGroups = Address.minGroupAddress...Address.maxGroupAddress
+    public static let allGroupAddresses = AddressRange(Address.minGroupAddress...Address.maxGroupAddress)
     
 }

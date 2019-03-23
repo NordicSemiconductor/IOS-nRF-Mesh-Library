@@ -7,7 +7,9 @@
 
 import Foundation
 
-public class Scene: Codable {
+public typealias Scene = UInt16
+
+/*public class Scene: Codable {
     
     public let scene: UInt16
     
@@ -30,13 +32,13 @@ public class Scene: Codable {
         var container = encoder.singleValueContainer()
         try container.encode(scene.hex)
     }
-}
+}*/
 
 extension Scene {
     
-    public static let invalid:  Scene = Scene(0x0000)
-    public static let minScene: Scene = Scene(0x0001)
-    public static let maxScene: Scene = Scene(0xFFFF)
+    public static let invalid:  Scene = 0x0000
+    public static let minScene: Scene = 0x0001
+    public static let maxScene: Scene = 0xFFFF
     
 }
 
@@ -45,68 +47,7 @@ extension Scene {
 extension Scene {
     
     public func isValidScene() -> Bool {
-        return self.scene != Scene.invalid
+        return self != Scene.invalid
     }
     
-}
-
-// MARK: - Operators
-
-extension Scene: Comparable {
-    
-    public static func ==(left: UInt16, right: Scene) -> Bool {
-        return left == right.scene
-    }
-    
-    public static func ==(left: Scene, right: UInt16) -> Bool {
-        return left.scene == right
-    }
-    
-    public static func ==(left: Scene, right: Scene) -> Bool {
-        return left.scene == right.scene
-    }
-    
-    public static func !=(left: UInt16, right: Scene) -> Bool {
-        return left != right.scene
-    }
-    
-    public static func !=(left: Scene, right: UInt16) -> Bool {
-        return left.scene != right
-    }
-    
-    public static func !=(left: Scene, right: Scene) -> Bool {
-        return left.scene != right.scene
-    }
-    
-    public static func <(left: UInt16, right: Scene) -> Bool {
-        return left < right.scene
-    }
-    
-    public static func <(left: Scene, right: UInt16) -> Bool {
-        return left.scene < right
-    }
-    
-    public static func <(left: Scene, right: Scene) -> Bool {
-        return left.scene < right.scene
-    }
-    
-    public static func >(left: UInt16, right: Scene) -> Bool {
-        return left > right.scene
-    }
-    
-    public static func >(left: Scene, right: UInt16) -> Bool {
-        return left.scene > right
-    }
-    
-    public static func >(left: Scene, right: Scene) -> Bool {
-        return left.scene > right.scene
-    }
-    
-    public static func &(left: Scene, right: UInt16) -> Scene {
-        return Scene(left.scene & right)
-    }
-    
-    public static func |(left: Scene, right: UInt16) -> Scene {
-        return Scene(left.scene | right)
-    }
 }

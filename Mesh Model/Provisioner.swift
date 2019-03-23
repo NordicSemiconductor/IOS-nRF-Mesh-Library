@@ -47,7 +47,7 @@ public class Provisioner: Codable {
         self.init(name: name,
                   uuid: UUID(),
                   allocatedUnicastRange: [AddressRange.allUnicastAddresses],
-                  allocatedGroupRange:   [AddressRange.allGroups],
+                  allocatedGroupRange:   [AddressRange.allGroupAddresses],
                   allocatedSceneRange:   [SceneRange.allScenes]
         )
     }
@@ -56,13 +56,13 @@ public class Provisioner: Codable {
     /// automatically merge ranges if they ovelap, and assign the range
     /// to unicast or group ranges.
     public func allocateRange(_ range: AddressRange) {
-        
+        // TODO
     }
     
     /// Allocats Scene range for the Provisioned. This method will
     /// automatically merge ranges if they overlap.
     public func allocateRange(_ range: SceneRange) {
-        
+        // TODO
     }
 }
 

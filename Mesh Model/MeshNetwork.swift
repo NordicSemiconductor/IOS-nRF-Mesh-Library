@@ -64,12 +64,12 @@ public class MeshNetwork: Codable {
     public func add(provisioner: Provisioner) throws {
         // Validation
         if !provisioner.isValid() {
-            
+            throw MeshModelError.provisionerRangesNotAllocated
         }
         
         for other in provisioners {
             if provisioner.hasOverlappingRanges(with: other) {
-                throw MeshModelError.overlappingRanges
+                throw MeshModelError.overlappingProvisionerRanges
             }
         }
     }
