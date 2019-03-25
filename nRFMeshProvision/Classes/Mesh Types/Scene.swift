@@ -46,7 +46,9 @@ extension Scene {
 
 extension Scene {
     
-    public func isValidScene() -> Bool {
+    /// Returns true if the scene number is valid.
+    /// Valid scenes have numbers from minScene to maxScene.
+    public var isValidScene: Bool {
         return self != Scene.invalid
     }
     

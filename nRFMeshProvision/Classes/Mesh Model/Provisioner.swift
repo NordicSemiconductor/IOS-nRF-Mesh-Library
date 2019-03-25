@@ -70,9 +70,9 @@ public extension Provisioner {
     
     /// Returns true if all ranges have been defined.
     public func isValid() -> Bool {
-        return !allocatedUnicastRange.isEmpty && allocatedUnicastRange.isValid()
-            && !allocatedGroupRange.isEmpty   && allocatedGroupRange.isValid()
-            && !allocatedSceneRange.isEmpty   && allocatedSceneRange.isValid()
+        return !allocatedUnicastRange.isEmpty && allocatedUnicastRange.isValid
+            && !allocatedGroupRange.isEmpty   && allocatedGroupRange.isValid
+            && !allocatedSceneRange.isEmpty   && allocatedSceneRange.isValid
     }
     
     /// Returns true if at least one range overlaps with the given Provisioner.
@@ -88,7 +88,7 @@ public extension Provisioner {
         // Verify Unicast ranges
         for range in allocatedUnicastRange {
             for other in provisioner.allocatedUnicastRange {
-                if range.overlaps(with: other) {
+                if range.overlaps(other) {
                     return true
                 }
             }
@@ -102,7 +102,7 @@ public extension Provisioner {
         // Verify Group ranges
         for range in allocatedGroupRange {
             for other in provisioner.allocatedGroupRange {
-                if range.overlaps(with: other) {
+                if range.overlaps(other) {
                     return true
                 }
             }
@@ -116,7 +116,7 @@ public extension Provisioner {
         // Verify Scene ranges
         for range in allocatedSceneRange {
             for other in provisioner.allocatedSceneRange {
-                if range.overlaps(with: other) {
+                if range.overlaps(other) {
                     return true
                 }
             }

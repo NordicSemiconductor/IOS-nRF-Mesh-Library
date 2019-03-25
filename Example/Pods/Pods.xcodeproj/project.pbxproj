@@ -35,22 +35,22 @@
 		2545014E9EC8A64DE403DC5863089112 /* OpenSSLHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 9DA238DDA2D45895883214B988C1C10E /* OpenSSLHelper.m */; };
 		35A52D4DECCD815F8B14722C2D96207D /* nRFMeshProvision-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = CF3DBEF363592B052464E2E3D93CB290 /* nRFMeshProvision-dummy.m */; };
 		3F050E2ED9231EC203697587364B553C /* Pods-nRFMeshProvision_Tests-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 21CDD8648681CE8D31824BB49C8D17A6 /* Pods-nRFMeshProvision_Tests-dummy.m */; };
-		529B757722410987008F1CE7 /* MeshNetwork.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529B757622410987008F1CE7 /* MeshNetwork.swift */; };
 		529B757922411970008F1CE7 /* MeshNetworkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529B757822411970008F1CE7 /* MeshNetworkManager.swift */; };
 		529B757D22423DEE008F1CE7 /* Storage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529B757C22423DEE008F1CE7 /* Storage.swift */; };
-		529B758922428EE0008F1CE7 /* Address.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529B758822428EE0008F1CE7 /* Address.swift */; };
-		529B758C22438FE5008F1CE7 /* MeshData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529B758B22438FE5008F1CE7 /* MeshData.swift */; };
-		529B758E22439289008F1CE7 /* Scene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529B758D22439289008F1CE7 /* Scene.swift */; };
-		529B759022439D8F008F1CE7 /* UInt16+Hex.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529B758F22439D8F008F1CE7 /* UInt16+Hex.swift */; };
-		529B759222439E1E008F1CE7 /* SceneRange.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529B759122439E1E008F1CE7 /* SceneRange.swift */; };
-		529B759422439E3C008F1CE7 /* AddressRange.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529B759322439E3C008F1CE7 /* AddressRange.swift */; };
-		529B759622439E5A008F1CE7 /* Provisioner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529B759522439E5A008F1CE7 /* Provisioner.swift */; };
-		529B759E2243BF56008F1CE7 /* NetworkKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529B759D2243BF56008F1CE7 /* NetworkKey.swift */; };
-		529B75A02243BFC1008F1CE7 /* KeyIndex.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529B759F2243BFC1008F1CE7 /* KeyIndex.swift */; };
-		529B75A22243C0C7008F1CE7 /* MeshUUID.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529B75A12243C0C7008F1CE7 /* MeshUUID.swift */; };
-		529B75A42243D284008F1CE7 /* ApplicationKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529B75A32243D284008F1CE7 /* ApplicationKey.swift */; };
-		529B75A62244E67D008F1CE7 /* Node.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529B75A52244E67D008F1CE7 /* Node.swift */; };
-		529B75A82244E92F008F1CE7 /* MeshModelError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529B75A72244E92F008F1CE7 /* MeshModelError.swift */; };
+		529B75B6224917CA008F1CE7 /* MeshData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529B75AE224917C9008F1CE7 /* MeshData.swift */; };
+		529B75B7224917CA008F1CE7 /* Provisioner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529B75AF224917C9008F1CE7 /* Provisioner.swift */; };
+		529B75B8224917CA008F1CE7 /* Node.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529B75B0224917C9008F1CE7 /* Node.swift */; };
+		529B75B9224917CA008F1CE7 /* ApplicationKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529B75B1224917C9008F1CE7 /* ApplicationKey.swift */; };
+		529B75BA224917CA008F1CE7 /* MeshNetwork.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529B75B2224917C9008F1CE7 /* MeshNetwork.swift */; };
+		529B75BB224917CA008F1CE7 /* AddressRange.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529B75B3224917CA008F1CE7 /* AddressRange.swift */; };
+		529B75BC224917CA008F1CE7 /* SceneRange.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529B75B4224917CA008F1CE7 /* SceneRange.swift */; };
+		529B75BD224917CA008F1CE7 /* NetworkKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529B75B5224917CA008F1CE7 /* NetworkKey.swift */; };
+		529B75C4224917E4008F1CE7 /* Scene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529B75BE224917E3008F1CE7 /* Scene.swift */; };
+		529B75C5224917E4008F1CE7 /* UInt16+Hex.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529B75BF224917E3008F1CE7 /* UInt16+Hex.swift */; };
+		529B75C6224917E4008F1CE7 /* Address.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529B75C0224917E3008F1CE7 /* Address.swift */; };
+		529B75C7224917E4008F1CE7 /* MeshModelError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529B75C1224917E3008F1CE7 /* MeshModelError.swift */; };
+		529B75C8224917E4008F1CE7 /* MeshUUID.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529B75C2224917E4008F1CE7 /* MeshUUID.swift */; };
+		529B75C9224917E4008F1CE7 /* KeyIndex.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529B75C3224917E4008F1CE7 /* KeyIndex.swift */; };
 		76AD7DBB6F78223071CAB41C3AE42393 /* MeshConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 045D235D97EFC49E1F2183DAE067E868 /* MeshConstants.swift */; };
 		83D1334FBA9AF1F33381417D7E45643F /* ProvisioningPDU.swift in Sources */ = {isa = PBXBuildFile; fileRef = 198E85CCE41703E3275FE59E75828C57 /* ProvisioningPDU.swift */; };
 		931A62151708A6FCE40E1EE898EEB7A5 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CB4607EFCA7C5F75397649E792E2AFCB /* Foundation.framework */; };
@@ -132,22 +132,22 @@
 		4E62377ECAEC0BF75050F28362542BBB /* bio.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = bio.h; path = "include-ios/openssl/bio.h"; sourceTree = "<group>"; };
 		4FA42764DC74387E52B6C47F7AC9D3B2 /* nRFMeshProvision.podspec */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; indentWidth = 2; path = nRFMeshProvision.podspec; sourceTree = "<group>"; tabWidth = 2; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		51BBAA3978BFB1C9BAA0B3563DB01A48 /* Pods-nRFMeshProvision_Example-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-nRFMeshProvision_Example-Info.plist"; sourceTree = "<group>"; };
-		529B757622410987008F1CE7 /* MeshNetwork.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeshNetwork.swift; sourceTree = "<group>"; };
 		529B757822411970008F1CE7 /* MeshNetworkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MeshNetworkManager.swift; path = nRFMeshProvision/Classes/MeshNetworkManager.swift; sourceTree = "<group>"; };
 		529B757C22423DEE008F1CE7 /* Storage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Storage.swift; path = nRFMeshProvision/Classes/Storage.swift; sourceTree = "<group>"; };
-		529B758822428EE0008F1CE7 /* Address.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Address.swift; sourceTree = "<group>"; };
-		529B758B22438FE5008F1CE7 /* MeshData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeshData.swift; sourceTree = "<group>"; };
-		529B758D22439289008F1CE7 /* Scene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Scene.swift; sourceTree = "<group>"; };
-		529B758F22439D8F008F1CE7 /* UInt16+Hex.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UInt16+Hex.swift"; sourceTree = "<group>"; };
-		529B759122439E1E008F1CE7 /* SceneRange.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneRange.swift; sourceTree = "<group>"; };
-		529B759322439E3C008F1CE7 /* AddressRange.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddressRange.swift; sourceTree = "<group>"; };
-		529B759522439E5A008F1CE7 /* Provisioner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Provisioner.swift; sourceTree = "<group>"; };
-		529B759D2243BF56008F1CE7 /* NetworkKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkKey.swift; sourceTree = "<group>"; };
-		529B759F2243BFC1008F1CE7 /* KeyIndex.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyIndex.swift; sourceTree = "<group>"; };
-		529B75A12243C0C7008F1CE7 /* MeshUUID.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeshUUID.swift; sourceTree = "<group>"; };
-		529B75A32243D284008F1CE7 /* ApplicationKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplicationKey.swift; sourceTree = "<group>"; };
-		529B75A52244E67D008F1CE7 /* Node.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Node.swift; sourceTree = "<group>"; };
-		529B75A72244E92F008F1CE7 /* MeshModelError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeshModelError.swift; sourceTree = "<group>"; };
+		529B75AE224917C9008F1CE7 /* MeshData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MeshData.swift; path = "../nRFMeshProvision/Classes/Mesh Model/MeshData.swift"; sourceTree = "<group>"; };
+		529B75AF224917C9008F1CE7 /* Provisioner.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Provisioner.swift; path = "../nRFMeshProvision/Classes/Mesh Model/Provisioner.swift"; sourceTree = "<group>"; };
+		529B75B0224917C9008F1CE7 /* Node.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Node.swift; path = "../nRFMeshProvision/Classes/Mesh Model/Node.swift"; sourceTree = "<group>"; };
+		529B75B1224917C9008F1CE7 /* ApplicationKey.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ApplicationKey.swift; path = "../nRFMeshProvision/Classes/Mesh Model/ApplicationKey.swift"; sourceTree = "<group>"; };
+		529B75B2224917C9008F1CE7 /* MeshNetwork.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MeshNetwork.swift; path = "../nRFMeshProvision/Classes/Mesh Model/MeshNetwork.swift"; sourceTree = "<group>"; };
+		529B75B3224917CA008F1CE7 /* AddressRange.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = AddressRange.swift; path = "../nRFMeshProvision/Classes/Mesh Model/AddressRange.swift"; sourceTree = "<group>"; };
+		529B75B4224917CA008F1CE7 /* SceneRange.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SceneRange.swift; path = "../nRFMeshProvision/Classes/Mesh Model/SceneRange.swift"; sourceTree = "<group>"; };
+		529B75B5224917CA008F1CE7 /* NetworkKey.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = NetworkKey.swift; path = "../nRFMeshProvision/Classes/Mesh Model/NetworkKey.swift"; sourceTree = "<group>"; };
+		529B75BE224917E3008F1CE7 /* Scene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Scene.swift; path = "../nRFMeshProvision/Classes/Mesh Types/Scene.swift"; sourceTree = "<group>"; };
+		529B75BF224917E3008F1CE7 /* UInt16+Hex.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "UInt16+Hex.swift"; path = "../nRFMeshProvision/Classes/Mesh Types/UInt16+Hex.swift"; sourceTree = "<group>"; };
+		529B75C0224917E3008F1CE7 /* Address.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Address.swift; path = "../nRFMeshProvision/Classes/Mesh Types/Address.swift"; sourceTree = "<group>"; };
+		529B75C1224917E3008F1CE7 /* MeshModelError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MeshModelError.swift; path = "../nRFMeshProvision/Classes/Mesh Types/MeshModelError.swift"; sourceTree = "<group>"; };
+		529B75C2224917E4008F1CE7 /* MeshUUID.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MeshUUID.swift; path = "../nRFMeshProvision/Classes/Mesh Types/MeshUUID.swift"; sourceTree = "<group>"; };
+		529B75C3224917E4008F1CE7 /* KeyIndex.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = KeyIndex.swift; path = "../nRFMeshProvision/Classes/Mesh Types/KeyIndex.swift"; sourceTree = "<group>"; };
 		573AFBF1BDAB242832B4146C926392C7 /* blowfish.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = blowfish.h; path = "include-ios/openssl/blowfish.h"; sourceTree = "<group>"; };
 		575A90FFDDE767E0A52A6ABDC699E9B5 /* dsa.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = dsa.h; path = "include-ios/openssl/dsa.h"; sourceTree = "<group>"; };
 		57E13D43B8F7A9E973DAAF745860C9AA /* Pods-nRFMeshProvision_Tests-acknowledgements.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-nRFMeshProvision_Tests-acknowledgements.plist"; sourceTree = "<group>"; };
@@ -322,12 +322,12 @@
 		529B758722428EA4008F1CE7 /* Mesh Types */ = {
 			isa = PBXGroup;
 			children = (
-				529B75A12243C0C7008F1CE7 /* MeshUUID.swift */,
-				529B758822428EE0008F1CE7 /* Address.swift */,
-				529B758D22439289008F1CE7 /* Scene.swift */,
-				529B759F2243BFC1008F1CE7 /* KeyIndex.swift */,
-				529B758F22439D8F008F1CE7 /* UInt16+Hex.swift */,
-				529B75A72244E92F008F1CE7 /* MeshModelError.swift */,
+				529B75C0224917E3008F1CE7 /* Address.swift */,
+				529B75BE224917E3008F1CE7 /* Scene.swift */,
+				529B75C3224917E4008F1CE7 /* KeyIndex.swift */,
+				529B75C2224917E4008F1CE7 /* MeshUUID.swift */,
+				529B75BF224917E3008F1CE7 /* UInt16+Hex.swift */,
+				529B75C1224917E3008F1CE7 /* MeshModelError.swift */,
 			);
 			path = "Mesh Types";
 			sourceTree = "<group>";
@@ -335,14 +335,14 @@
 		529B758A22438F9A008F1CE7 /* Mesh Model */ = {
 			isa = PBXGroup;
 			children = (
-				529B758B22438FE5008F1CE7 /* MeshData.swift */,
-				529B757622410987008F1CE7 /* MeshNetwork.swift */,
-				529B759522439E5A008F1CE7 /* Provisioner.swift */,
-				529B759322439E3C008F1CE7 /* AddressRange.swift */,
-				529B759122439E1E008F1CE7 /* SceneRange.swift */,
-				529B759D2243BF56008F1CE7 /* NetworkKey.swift */,
-				529B75A32243D284008F1CE7 /* ApplicationKey.swift */,
-				529B75A52244E67D008F1CE7 /* Node.swift */,
+				529B75AE224917C9008F1CE7 /* MeshData.swift */,
+				529B75B2224917C9008F1CE7 /* MeshNetwork.swift */,
+				529B75AF224917C9008F1CE7 /* Provisioner.swift */,
+				529B75B3224917CA008F1CE7 /* AddressRange.swift */,
+				529B75B4224917CA008F1CE7 /* SceneRange.swift */,
+				529B75B1224917C9008F1CE7 /* ApplicationKey.swift */,
+				529B75B5224917CA008F1CE7 /* NetworkKey.swift */,
+				529B75B0224917C9008F1CE7 /* Node.swift */,
 			);
 			path = "Mesh Model";
 			sourceTree = "<group>";
@@ -718,27 +718,27 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				529B75C6224917E4008F1CE7 /* Address.swift in Sources */,
+				529B75B6224917CA008F1CE7 /* MeshData.swift in Sources */,
+				529B75B8224917CA008F1CE7 /* Node.swift in Sources */,
 				76AD7DBB6F78223071CAB41C3AE42393 /* MeshConstants.swift in Sources */,
+				529B75C7224917E4008F1CE7 /* MeshModelError.swift in Sources */,
+				529B75C9224917E4008F1CE7 /* KeyIndex.swift in Sources */,
+				529B75BD224917CA008F1CE7 /* NetworkKey.swift in Sources */,
+				529B75C4224917E4008F1CE7 /* Scene.swift in Sources */,
 				35A52D4DECCD815F8B14722C2D96207D /* nRFMeshProvision-dummy.m in Sources */,
 				2545014E9EC8A64DE403DC5863089112 /* OpenSSLHelper.m in Sources */,
-				529B75A82244E92F008F1CE7 /* MeshModelError.swift in Sources */,
-				529B75A22243C0C7008F1CE7 /* MeshUUID.swift in Sources */,
-				529B758922428EE0008F1CE7 /* Address.swift in Sources */,
-				529B75A42243D284008F1CE7 /* ApplicationKey.swift in Sources */,
-				529B75A02243BFC1008F1CE7 /* KeyIndex.swift in Sources */,
-				529B759622439E5A008F1CE7 /* Provisioner.swift in Sources */,
-				529B759222439E1E008F1CE7 /* SceneRange.swift in Sources */,
+				529B75C5224917E4008F1CE7 /* UInt16+Hex.swift in Sources */,
 				83D1334FBA9AF1F33381417D7E45643F /* ProvisioningPDU.swift in Sources */,
+				529B75B9224917CA008F1CE7 /* ApplicationKey.swift in Sources */,
 				529B757922411970008F1CE7 /* MeshNetworkManager.swift in Sources */,
-				529B75A62244E67D008F1CE7 /* Node.swift in Sources */,
-				529B759022439D8F008F1CE7 /* UInt16+Hex.swift in Sources */,
+				529B75C8224917E4008F1CE7 /* MeshUUID.swift in Sources */,
 				D159EC79D610DF8F7CA2F21321FD6D7E /* PublishPeriodResolution.swift in Sources */,
-				529B758E22439289008F1CE7 /* Scene.swift in Sources */,
-				529B757722410987008F1CE7 /* MeshNetwork.swift in Sources */,
+				529B75B7224917CA008F1CE7 /* Provisioner.swift in Sources */,
 				529B757D22423DEE008F1CE7 /* Storage.swift in Sources */,
-				529B759422439E3C008F1CE7 /* AddressRange.swift in Sources */,
-				529B759E2243BF56008F1CE7 /* NetworkKey.swift in Sources */,
-				529B758C22438FE5008F1CE7 /* MeshData.swift in Sources */,
+				529B75BB224917CA008F1CE7 /* AddressRange.swift in Sources */,
+				529B75BC224917CA008F1CE7 /* SceneRange.swift in Sources */,
+				529B75BA224917CA008F1CE7 /* MeshNetwork.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

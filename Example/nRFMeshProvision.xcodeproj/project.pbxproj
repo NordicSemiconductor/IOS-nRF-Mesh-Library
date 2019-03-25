@@ -19,6 +19,8 @@
 		529B758622428A45008F1CE7 /* UIViewController+Alert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529B758522428A45008F1CE7 /* UIViewController+Alert.swift */; };
 		529B759A2243BA0A008F1CE7 /* ProvisionersViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529B75992243BA0A008F1CE7 /* ProvisionersViewController.swift */; };
 		529B759C2243BA10008F1CE7 /* NetworkKeysViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529B759B2243BA10008F1CE7 /* NetworkKeysViewController.swift */; };
+		529B75AB2248E276008F1CE7 /* SceneRanges.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529B75AA2248E276008F1CE7 /* SceneRanges.swift */; };
+		529B75AD22491770008F1CE7 /* AddressRanges.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529B75AC22491770008F1CE7 /* AddressRanges.swift */; };
 		607FACD61AFB9204008FA782 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACD51AFB9204008FA782 /* AppDelegate.swift */; };
 		607FACDB1AFB9204008FA782 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 607FACD91AFB9204008FA782 /* Main.storyboard */; };
 		607FACDD1AFB9204008FA782 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 607FACDC1AFB9204008FA782 /* Images.xcassets */; };
@@ -48,6 +50,9 @@
 		529B758522428A45008F1CE7 /* UIViewController+Alert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "UIViewController+Alert.swift"; path = "Utils/UIViewController+Alert.swift"; sourceTree = "<group>"; };
 		529B75992243BA0A008F1CE7 /* ProvisionersViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ProvisionersViewController.swift; path = "View Controllers/Settings/ProvisionersViewController.swift"; sourceTree = "<group>"; };
 		529B759B2243BA10008F1CE7 /* NetworkKeysViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = NetworkKeysViewController.swift; path = "View Controllers/Settings/NetworkKeysViewController.swift"; sourceTree = "<group>"; };
+		529B75A92248E275008F1CE7 /* nRFMeshProvision_Tests-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "nRFMeshProvision_Tests-Bridging-Header.h"; sourceTree = "<group>"; };
+		529B75AA2248E276008F1CE7 /* SceneRanges.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneRanges.swift; sourceTree = "<group>"; };
+		529B75AC22491770008F1CE7 /* AddressRanges.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddressRanges.swift; sourceTree = "<group>"; };
 		5A51F9AF82598D8D5D40BD77 /* Pods_nRFMeshProvision_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_nRFMeshProvision_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		607FACD01AFB9204008FA782 /* nRFMeshProvision_Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = nRFMeshProvision_Example.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		607FACD41AFB9204008FA782 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -176,6 +181,9 @@
 			isa = PBXGroup;
 			children = (
 				607FACE91AFB9204008FA782 /* Supporting Files */,
+				529B75AA2248E276008F1CE7 /* SceneRanges.swift */,
+				529B75AC22491770008F1CE7 /* AddressRanges.swift */,
+				529B75A92248E275008F1CE7 /* nRFMeshProvision_Tests-Bridging-Header.h */,
 			);
 			path = Tests;
 			sourceTree = "<group>";
@@ -278,7 +286,7 @@
 					607FACE41AFB9204008FA782 = {
 						CreatedOnToolsVersion = 6.3.1;
 						DevelopmentTeam = P3R8YQEV4L;
-						LastSwiftMigration = 0900;
+						LastSwiftMigration = 1010;
 						TestTargetID = 607FACCF1AFB9204008FA782;
 					};
 				};
@@ -394,6 +402,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				529B75AD22491770008F1CE7 /* AddressRanges.swift in Sources */,
+				529B75AB2248E276008F1CE7 /* SceneRanges.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -612,6 +622,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 9020B99520CC4F3B27519D12 /* Pods-nRFMeshProvision_Tests.debug.xcconfig */;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				DEVELOPMENT_TEAM = P3R8YQEV4L;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -630,6 +641,8 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
+				SWIFT_OBJC_BRIDGING_HEADER = "Tests/nRFMeshProvision_Tests-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_PRECOMPILE_BRIDGING_HEADER = NO;
 				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
 				SWIFT_VERSION = 4.0;
@@ -641,6 +654,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 6F738D8AED8E08F840E0D44B /* Pods-nRFMeshProvision_Tests.release.xcconfig */;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				DEVELOPMENT_TEAM = P3R8YQEV4L;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -655,6 +669,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
+				SWIFT_OBJC_BRIDGING_HEADER = "Tests/nRFMeshProvision_Tests-Bridging-Header.h";
 				SWIFT_PRECOMPILE_BRIDGING_HEADER = NO;
 				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
 				SWIFT_VERSION = 4.0;
