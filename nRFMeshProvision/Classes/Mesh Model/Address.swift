@@ -10,31 +10,6 @@ import Foundation
 /// Bluetooth Mesh address type. Type alias for UInt16.
 public typealias Address = UInt16
 
-/*public class Address: Codable {
-    
-    public let address: UInt16
-    
-    public init(_ address: UInt16) {
-        self.address = address
-    }
-    
-    required public init(from decoder: Decoder) throws {
-        let container = try decoder.singleValueContainer()
-        let string = try container.decode(String.self)
-        
-        guard let address = UInt16(hex: string) else {
-            throw DecodingError.dataCorruptedError(in: container,
-                                                   debugDescription: "Address must be 4-character hexadecimal string")
-        }
-        self.address = address
-    }
-    
-    public func encode(to encoder: Encoder) throws {
-        var container = encoder.singleValueContainer()
-        try container.encode(address.hex)
-    }
-}*/
-
 public extension Address {
     
     public static let unassignedAddress: Address = 0x0000

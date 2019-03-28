@@ -21,6 +21,7 @@
 		529B759C2243BA10008F1CE7 /* NetworkKeysViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529B759B2243BA10008F1CE7 /* NetworkKeysViewController.swift */; };
 		529B75AB2248E276008F1CE7 /* SceneRanges.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529B75AA2248E276008F1CE7 /* SceneRanges.swift */; };
 		529B75AD22491770008F1CE7 /* AddressRanges.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529B75AC22491770008F1CE7 /* AddressRanges.swift */; };
+		529B7629224CE481008F1CE7 /* AssigningUnicastAddress.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529B7628224CE481008F1CE7 /* AssigningUnicastAddress.swift */; };
 		607FACD61AFB9204008FA782 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACD51AFB9204008FA782 /* AppDelegate.swift */; };
 		607FACDB1AFB9204008FA782 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 607FACD91AFB9204008FA782 /* Main.storyboard */; };
 		607FACDD1AFB9204008FA782 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 607FACDC1AFB9204008FA782 /* Images.xcassets */; };
@@ -53,6 +54,7 @@
 		529B75A92248E275008F1CE7 /* nRFMeshProvision_Tests-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "nRFMeshProvision_Tests-Bridging-Header.h"; sourceTree = "<group>"; };
 		529B75AA2248E276008F1CE7 /* SceneRanges.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneRanges.swift; sourceTree = "<group>"; };
 		529B75AC22491770008F1CE7 /* AddressRanges.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddressRanges.swift; sourceTree = "<group>"; };
+		529B7628224CE481008F1CE7 /* AssigningUnicastAddress.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssigningUnicastAddress.swift; sourceTree = "<group>"; };
 		5A51F9AF82598D8D5D40BD77 /* Pods_nRFMeshProvision_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_nRFMeshProvision_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		607FACD01AFB9204008FA782 /* nRFMeshProvision_Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = nRFMeshProvision_Example.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		607FACD41AFB9204008FA782 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -183,6 +185,7 @@
 				607FACE91AFB9204008FA782 /* Supporting Files */,
 				529B75AA2248E276008F1CE7 /* SceneRanges.swift */,
 				529B75AC22491770008F1CE7 /* AddressRanges.swift */,
+				529B7628224CE481008F1CE7 /* AssigningUnicastAddress.swift */,
 				529B75A92248E275008F1CE7 /* nRFMeshProvision_Tests-Bridging-Header.h */,
 			);
 			path = Tests;
@@ -402,6 +405,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				529B7629224CE481008F1CE7 /* AssigningUnicastAddress.swift in Sources */,
 				529B75AD22491770008F1CE7 /* AddressRanges.swift in Sources */,
 				529B75AB2248E276008F1CE7 /* SceneRanges.swift in Sources */,
 			);

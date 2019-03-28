@@ -20,6 +20,8 @@ public struct AddressRange: Codable {
         self.init(from: range.lowerBound, to: range.upperBound)
     }
     
+    // MARK: - Codable
+    
     private enum CodingKeys: String, CodingKey {
         case lowAddress
         case highAddress
@@ -50,7 +52,7 @@ public struct AddressRange: Codable {
 
 // MARK: - Operators
 
-public extension AddressRange {
+extension AddressRange: Equatable {
     
     public static func ==(left: AddressRange, right: AddressRange) -> Bool {
         return left.lowAddress == right.lowAddress && left.highAddress == right.highAddress
@@ -69,7 +71,7 @@ public extension AddressRange {
     }
 }
 
-// MARK: - Helper methods
+// MARK: - Public API
 
 public extension AddressRange {
     
@@ -111,6 +113,14 @@ public extension AddressRange {
         return (lowAddress < other.lowAddress && highAddress < other.lowAddress)
             || (other.lowAddress < lowAddress && other.highAddress < lowAddress)
     }
+    
+    /// Returns whether the given address is in the address range.
+    ///
+    /// - parameter address: The address to be checked.
+    /// - returns: `True` if the address is inside the range.
+    public func contains(_ address: Address) -> Bool {
+        return address >= lowAddress && address <= highAddress
+    }
 }
 
 public extension Array where Element == AddressRange {
@@ -145,7 +155,7 @@ public extension Array where Element == AddressRange {
             }
                 
             else if accumulator.highAddress >= range.lowAddress {
-                accumulator = AddressRange(from: accumulator.lowAddress, to: range.highAddress)
+                accumulator = AddressRange(accumulator.lowAddress...range.highAddress)
             }
                 
             else /* if accumulator.highAddress < range.lowAddress */ {

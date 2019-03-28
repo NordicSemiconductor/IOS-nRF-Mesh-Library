@@ -9,28 +9,28 @@ import Foundation
 
 /// The wrapper for Unified Unique Identifier (UUID).
 /// The reason for the wrapper is to ensure that it is encoded without dashes.
-public class MeshUUID: Codable {
+internal class MeshUUID: Codable, Equatable {
     /// The underlying UUID.
-    private let uuid: UUID
+    let uuid: UUID
     
     /// Returns UUID as String, with dashes.
-    public var uuidString: String {
+    var uuidString: String {
         return uuid.uuidString
     }
     
     /// Generates new random Mesh UUID.
-    public init() {
+    init() {
         self.uuid = UUID()
     }
     
     /// Initializes Mesh UUID with given UUID.
-    public init(_ uuid: UUID) {
+    init(_ uuid: UUID) {
         self.uuid = uuid
     }
     
     // MARK: - Codable
     
-    required public init(from decoder: Decoder) throws {
+    required init(from decoder: Decoder) throws {
         let container = try decoder.singleValueContainer()
         let value = try container.decode(String.self)
         
@@ -39,7 +39,7 @@ public class MeshUUID: Codable {
             return
         }
         
-        if let result = UUID(uuidString: MeshUUID.addDashes(value)) {
+        if let result = UUID(hex: value) {
             uuid = result
             return
         }
@@ -49,26 +49,28 @@ public class MeshUUID: Codable {
     
     public func encode(to encoder: Encoder) throws {
         var container = encoder.singleValueContainer()
-        try container.encode(MeshUUID.removeDashes(uuidString))
+        try container.encode(uuid.hex)
+    }
+}
+
+// MARK: - Operators
+
+extension MeshUUID {
+    
+    public static func == (lhs: MeshUUID, rhs: MeshUUID) -> Bool {
+        return lhs.uuid == rhs.uuid
     }
     
-    // MARK: - Helper methods
-    
-    /// Removes dashes to match 32-character UUID representation.
-    private static func removeDashes(_ uuidString: String) -> String {
-        return uuidString.replacingOccurrences(of: "-", with: "")
+    public static func == (lhs: MeshUUID, rhs: UUID) -> Bool {
+        return lhs.uuid == rhs
     }
     
-    /// Adds dashes to 32-character UUID string representation.
-    private static func addDashes(_ uuidString: String) -> String {
-        var result = ""
-        
-        for (offset, character) in uuidString.enumerated() {
-            if offset == 8 || offset == 12 || offset == 16 || offset == 20 {
-                result.append("-")
-            }
-            result.append(character)
-        }
-        return result
+    public static func != (lhs: MeshUUID, rhs: MeshUUID) -> Bool {
+        return lhs.uuid != rhs.uuid
     }
+    
+    public static func != (lhs: MeshUUID, rhs: UUID) -> Bool {
+        return lhs.uuid != rhs
+    }
+    
 }

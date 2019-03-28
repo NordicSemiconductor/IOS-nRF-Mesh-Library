@@ -52,7 +52,7 @@ public struct SceneRange: Codable, Hashable {
 
 // MARK: - Operators
 
-public extension SceneRange {
+extension SceneRange: Equatable {
     
     public static func ==(left: SceneRange, right: SceneRange) -> Bool {
         return left.firstScene == right.firstScene && left.lastScene == right.lastScene
@@ -71,7 +71,7 @@ public extension SceneRange {
     }
 }
 
-// MARK: - Helper methods
+// MARK: - Public API
 
 public extension SceneRange {
     
@@ -97,6 +97,14 @@ public extension SceneRange {
     public func doesNotOverlap(_ other: SceneRange) -> Bool {
         return (firstScene < other.firstScene && lastScene < other.firstScene)
             || (other.firstScene < firstScene && other.lastScene < firstScene)
+    }
+    
+    /// Returns whether the given address is in the address range.
+    ///
+    /// - parameter scene: The scene to be checked.
+    /// - returns: `True` if the scene is inside the range.
+    public func contains(_ scene: Scene) -> Bool {
+        return scene >= firstScene && scene <= lastScene
     }
     
 }
@@ -132,7 +140,7 @@ public extension Array where Element == SceneRange {
             }
             
             else if accumulator.lastScene >= range.firstScene {
-                accumulator = SceneRange(from: accumulator.firstScene, to: range.lastScene)
+                accumulator = SceneRange(accumulator.firstScene...range.lastScene)
             }
             
             else /* if accumulator.lastScene < range.firstScene */ {

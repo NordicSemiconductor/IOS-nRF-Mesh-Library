@@ -10,7 +10,7 @@ import Foundation
 internal extension UInt16 {
     
     init?(hex: String) {
-        guard let value = UInt16(hex, radix: 16) else {
+        guard hex.count == 4, let value = UInt16(hex, radix: 16) else {
             return nil
         }
         self = value
@@ -18,6 +18,10 @@ internal extension UInt16 {
     
     var hex: String {
         return String(format: "%04X", self)
+    }
+    
+    init(data: Data) {
+        self = data.withUnsafeBytes { $0.pointee }
     }
     
 }

@@ -12,26 +12,13 @@ public class ApplicationKey: Codable {
     /// functionality associated with this application key, e.g. "Home Automation".
     public var name: String
     /// Index of this Application Key, in range from 0 through to 4095.
-    public var index: KeyIndex {
-        didSet {
-            if !index.isValidKeyIndex() {
-                index = oldValue
-            }
-        }
-    }
+    public internal(set) var index: KeyIndex
     /// Corresponding Network Key index from the Network Keys array.
-    public internal(set) var boundNetKey: KeyIndex {
-        didSet {
-            if !index.isValidKeyIndex() {
-                index = oldValue
-            }
-        }
-    }
+    public internal(set) var boundNetKey: KeyIndex
     /// 128-bit application key.
-    public var key: Data
+    public internal(set) var key: Data
     /// Previous 128-bit application key, if Key Update procedure is in progress.
-    // TODO: - Should the Old Key be here? Does Key Refresh procedure also updates App Keys? -
-    public var oldKey: Data?
+    public internal(set) var oldKey: Data?
     
     public init(name: String, index: KeyIndex, key: Data) {
         self.name        = name
