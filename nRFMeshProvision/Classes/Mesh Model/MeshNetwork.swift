@@ -113,7 +113,12 @@ public extension MeshNetwork {
     ///                    `index` must be a valid index of the array.
     /// - returns: The removed provisioner.
     public func remove(provisionerAt index: Int) -> Provisioner {
-        return provisioners.remove(at: index)
+        let provisioner = provisioners.remove(at: index)
+        
+        if let index = nodes.firstIndex(where: { $0.uuid == provisioner.uuid }) {
+            nodes.remove(at: index)
+        }
+        return provisioner
     }
     
     /// Removes the given provisioner. This method does nothing if the
@@ -122,7 +127,7 @@ public extension MeshNetwork {
     /// - parameter provisioner: Provisioner to be removed.
     public func remove(provisioner: Provisioner) {
         if let index = provisioners.firstIndex(where: { $0 === provisioner }) {
-            provisioners.remove(at: index)
+            _ = remove(provisionerAt: index)
         }
     }
     
@@ -182,6 +187,17 @@ extension MeshNetwork {
         }
         // No address was found :(
         return nil
+    }
+    
+    /// Returns the next available unicast address from the provisioner's range
+    /// that can be assigned to a new provisioner's node.
+    ///
+    /// - parameter provisioner: The provisioner that is creating the node for itself.
+    ///                          The address will be taken from it's allocated range.
+    /// - returns: The next available unicast address that can be assigned to a node,
+    ///            or nil, if there are no more available addresses in the allocated range.
+    func allocateNextAvailableUnicastAddress(for provisioner: Provisioner) -> Address? {
+        return allocateNextAvailableUnicastAddress(for: 1, elementsUsing: provisioner)
     }
     
     

@@ -165,7 +165,7 @@ public class Node: Codable {
     /// - throws: An error if no more addresses are available in the Provisioner's
     ///           unicast ranges.
     internal init(for provisioner: Provisioner, in network: MeshNetwork) throws {
-        guard let address = network.allocateNextAvailableUnicastAddress(for: 1, elementsUsing: provisioner) else {
+        guard let address = network.allocateNextAvailableUnicastAddress(for: provisioner) else {
             throw MeshModelError.noAddressAvailable
         }
         
