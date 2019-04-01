@@ -179,10 +179,23 @@ public class Node: Codable {
     }
 }
 
+// MARK: - Public API
+
 public extension Node {
     
     /// Number of mode's elements.
     public var elementsCount: UInt16 {
         return UInt16(elements.count)
     }
+    
+    /// The last unicast address allocated to this node. Each node's element
+    /// uses its own subsequent unicast address. The first (0th) element is identified
+    /// by the node's unicast address. If there are no elements, the last unicast address
+    /// is equal to the node's unicast address.
+    public var lastUnicastAddress: UInt16 {
+        // Provisioner may not have any elements
+        let allocatedAddresses = elementsCount > 0 ? elementsCount : 1
+        return unicastAddress + allocatedAddresses - 1
+    }
+
 }
