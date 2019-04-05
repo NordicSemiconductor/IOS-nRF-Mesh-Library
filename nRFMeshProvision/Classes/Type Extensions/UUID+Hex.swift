@@ -29,7 +29,7 @@ internal extension UUID {
         self.init(uuid: uuid.uuid)
     }
     
-    /// Returns the uuisString withour dashes.
+    /// Returns the uuisString without dashes.
     var hex: String {
         return uuidString.replacingOccurrences(of: "-", with: "")
     }

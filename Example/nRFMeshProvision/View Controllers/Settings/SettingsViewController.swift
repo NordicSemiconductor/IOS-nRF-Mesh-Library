@@ -32,8 +32,7 @@ class SettingsViewController: UITableViewController {
     
     override func viewDidLoad() {
         let manager = MeshNetworkManager.instance
-        let meshData = manager.data!
-        globalTTL.detailTextLabel?.text = "\(meshData.globalTTL)"
+        globalTTL.detailTextLabel?.text = "\(manager.globalTTL)"
         
         let meshNetwork = manager.meshNetwork!
         networkName.detailTextLabel?.text  = meshNetwork.meshName

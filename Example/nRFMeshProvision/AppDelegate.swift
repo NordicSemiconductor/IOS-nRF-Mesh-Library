@@ -32,7 +32,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // If load failed, create a new MeshNetwork.
         if !loaded {
             // TODO creator
-            _ = meshNetworkManager.createNewMeshNetwork(named: "nRF Mesh Network")
+            _ = meshNetworkManager.createNewMeshNetwork(named: "nRF Mesh Network", by: "This Device")
         }
         return true
     }

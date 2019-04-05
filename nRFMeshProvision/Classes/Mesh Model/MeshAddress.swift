@@ -36,7 +36,7 @@ public extension MeshAddress {
     
     /// Returns true if the Subscriber is an Virtual Address
     /// identified by a virtual label.
-    public var isVirtual: Bool {
+    var isVirtual: Bool {
         return virtualLabel != nil
     }
 }

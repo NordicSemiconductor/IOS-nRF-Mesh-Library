@@ -20,4 +20,9 @@ public enum MeshModelError: Error {
     /// Thrown when a node cannot be added due to lack of available
     /// addresses in Provisioner's range.
     case noAddressAvailable
+    /// Thrown when a node cannot be added due to its address not being
+    /// inside Provisioner's unicast address range.
+    case addressNotInAllocatedRange
+    /// Thrown when the requested Provisioner is not in the Mesh Network.
+    case provisionerNotInNetwork
 }

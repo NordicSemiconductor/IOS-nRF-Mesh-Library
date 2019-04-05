@@ -82,12 +82,12 @@ public class Publish: Codable {
 public extension Publish {
     
     /// Returns whether master security materials are used.
-    public var isUsingMasterSecurityMaterial: Bool {
+    var isUsingMasterSecurityMaterial: Bool {
         return credentials == 0
     }
     
     /// Returns whether friendship security materials are used.
-    public var isUsingFriendshipSecurityMaterial: Bool {
+    var isUsingFriendshipSecurityMaterial: Bool {
         return credentials == 1
     }
     

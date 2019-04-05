@@ -80,7 +80,7 @@ public class Provisioner: Codable {
 public extension Provisioner {
     
     /// Returns true if all ranges have been defined.
-    public var isValid: Bool {
+    var isValid: Bool {
         return !allocatedUnicastRange.isEmpty && allocatedUnicastRange.isValid
             && !allocatedGroupRange.isEmpty   && allocatedGroupRange.isValid
             && !allocatedSceneRange.isEmpty   && allocatedSceneRange.isValid
@@ -89,7 +89,9 @@ public extension Provisioner {
     /// Allocates Address range for the Provisioner. This method will
     /// automatically merge ranges if they ovelap, and assign the range
     /// to unicast or group ranges.
-    public func allocateRange(_ range: AddressRange) {
+    ///
+    /// - parameter range: The new unicast or group range to allocate.
+    func allocateRange(_ range: AddressRange) {
         if range.isUnicastRange {
             allocatedUnicastRange.append(range)
             allocatedUnicastRange.merge()
@@ -102,9 +104,11 @@ public extension Provisioner {
         //     to a Provisioner.
     }
     
-    /// Allocats Scene range for the Provisioned. This method will
+    /// Allocates Scene range for the Provisioned. This method will
     /// automatically merge ranges if they overlap.
-    public func allocateRange(_ range: SceneRange) {
+    ///
+    /// - parameter range: The new range to allocate.
+    func allocateRange(_ range: SceneRange) {
         if range.isValid {
             allocatedSceneRange.append(range)
             allocatedSceneRange.merge()
@@ -120,7 +124,7 @@ public extension Provisioner {
     /// - parameter address: The first address to be checked.
     /// - parameter count:   Number of subsequent addresses to be checked.
     /// - returns: `True` if the address is in allocated ranges, `false` otherwise.
-    public func hasAllocated(_ address: Address, count: UInt16 = 1) -> Bool {
+    func isInAllocatedRange(_ address: Address, count: UInt16 = 1) -> Bool {
         guard address.isUnicast || address.isGroup else {
             return false
         }
@@ -135,7 +139,11 @@ public extension Provisioner {
     }
     
     /// Returns true if at least one range overlaps with the given Provisioner.
-    public func hasOverlappingRanges(with provisioner: Provisioner) -> Bool {
+    ///
+    /// - parameter provisioner: The Provisioner to check ranges with.
+    /// - returns: `True` if this and the given Provisioner have overlaping ranges,
+    ///            `false` otherwise.
+    func hasOverlappingRanges(with provisioner: Provisioner) -> Bool {
         return hasOverlappingUnicastRanges(with: provisioner)
             || hasOverlappingGroupRanges(with:provisioner)
             || hasOverlappingSceneRanges(with: provisioner)
@@ -143,7 +151,11 @@ public extension Provisioner {
     
     /// Returns true if at least one Unicast Address range overlaps with address
     /// ranges of the given Provisioner.
-    public func hasOverlappingUnicastRanges(with provisioner: Provisioner) -> Bool {
+    ///
+    /// - parameter provisioner: The Provisioner to check ranges with.
+    /// - returns: `True` if this and the given Provisioner have overlaping unicast
+    ///            ranges, `false` otherwise.
+    func hasOverlappingUnicastRanges(with provisioner: Provisioner) -> Bool {
         // Verify Unicast ranges
         for range in allocatedUnicastRange {
             for other in provisioner.allocatedUnicastRange {
@@ -157,7 +169,11 @@ public extension Provisioner {
     
     /// Returns true if at least one Group Address range overlaps with address
     /// ranges of the given Provisioner.
-    public func hasOverlappingGroupRanges(with provisioner: Provisioner) -> Bool {
+    ///
+    /// - parameter provisioner: The Provisioner to check ranges with.
+    /// - returns: `True` if this and the given Provisioner have overlaping group
+    ///            ranges, `false` otherwise.
+    func hasOverlappingGroupRanges(with provisioner: Provisioner) -> Bool {
         // Verify Group ranges
         for range in allocatedGroupRange {
             for other in provisioner.allocatedGroupRange {
@@ -171,7 +187,11 @@ public extension Provisioner {
     
     /// Returns true if at least one Scene range overlaps with scene ranges of
     /// the given Provisioner.
-    public func hasOverlappingSceneRanges(with provisioner: Provisioner) -> Bool {
+    ///
+    /// - parameter provisioner: The Provisioner to check ranges with.
+    /// - returns: `True` if this and the given Provisioner have overlaping scene
+    ///            ranges, `false` otherwise.
+    func hasOverlappingSceneRanges(with provisioner: Provisioner) -> Bool {
         // Verify Scene ranges
         for range in allocatedSceneRange {
             for other in provisioner.allocatedSceneRange {

@@ -25,14 +25,3 @@ internal extension UInt16 {
     }
     
 }
-
-public extension UInt16 {
-    
-    /// Returns the UInt16 as String in HEX format (with 0x).
-    ///
-    /// Example: "0x0001"
-    public func asString() -> String {
-        return String(format: "0x%04X", self)
-    }
-    
-}

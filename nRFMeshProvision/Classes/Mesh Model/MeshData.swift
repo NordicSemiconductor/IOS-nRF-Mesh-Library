@@ -7,7 +7,7 @@
 
 import Foundation
 
-/// The Mesh Network configuration saved by internally.
+/// The Mesh Network configuration saved internally.
 /// It contains the Mesh Network and additional data that
 /// are not in the JSON schema, but are used for provisioning.
 public class MeshData: Codable {

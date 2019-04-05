@@ -23,6 +23,13 @@
 		529B75AD22491770008F1CE7 /* AddressRanges.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529B75AC22491770008F1CE7 /* AddressRanges.swift */; };
 		529B7629224CE481008F1CE7 /* AssigningUnicastAddress.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529B7628224CE481008F1CE7 /* AssigningUnicastAddress.swift */; };
 		529B764122521075008F1CE7 /* ManagingProvisioners.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529B764022521075008F1CE7 /* ManagingProvisioners.swift */; };
+		529B7643225222E8008F1CE7 /* UInt16+String.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529B7642225222E8008F1CE7 /* UInt16+String.swift */; };
+		529B764522522613008F1CE7 /* Data+Hex.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529B764422522613008F1CE7 /* Data+Hex.swift */; };
+		529B764722522D37008F1CE7 /* UITableView+EmptyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529B764622522D37008F1CE7 /* UITableView+EmptyView.swift */; };
+		529B76492252499E008F1CE7 /* UIColor+Nordic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529B76482252499E008F1CE7 /* UIColor+Nordic.swift */; };
+		52DAA5DB22560EEE0041C43A /* EditProvisionerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52DAA5DA22560EEE0041C43A /* EditProvisionerViewController.swift */; };
+		52DAA5DE2256156B0041C43A /* AddressRange+String.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52DAA5DD2256156B0041C43A /* AddressRange+String.swift */; };
+		52DAA5E0225615D60041C43A /* SceneRange+String.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52DAA5DF225615D60041C43A /* SceneRange+String.swift */; };
 		607FACD61AFB9204008FA782 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACD51AFB9204008FA782 /* AppDelegate.swift */; };
 		607FACDB1AFB9204008FA782 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 607FACD91AFB9204008FA782 /* Main.storyboard */; };
 		607FACDD1AFB9204008FA782 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 607FACDC1AFB9204008FA782 /* Images.xcassets */; };
@@ -57,6 +64,13 @@
 		529B75AC22491770008F1CE7 /* AddressRanges.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddressRanges.swift; sourceTree = "<group>"; };
 		529B7628224CE481008F1CE7 /* AssigningUnicastAddress.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssigningUnicastAddress.swift; sourceTree = "<group>"; };
 		529B764022521075008F1CE7 /* ManagingProvisioners.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManagingProvisioners.swift; sourceTree = "<group>"; };
+		529B7642225222E8008F1CE7 /* UInt16+String.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "UInt16+String.swift"; path = "Utils/UInt16+String.swift"; sourceTree = "<group>"; };
+		529B764422522613008F1CE7 /* Data+Hex.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "Data+Hex.swift"; path = "Utils/Data+Hex.swift"; sourceTree = "<group>"; };
+		529B764622522D37008F1CE7 /* UITableView+EmptyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "UITableView+EmptyView.swift"; path = "Utils/UITableView+EmptyView.swift"; sourceTree = "<group>"; };
+		529B76482252499E008F1CE7 /* UIColor+Nordic.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "UIColor+Nordic.swift"; path = "Utils/UIColor+Nordic.swift"; sourceTree = "<group>"; };
+		52DAA5DA22560EEE0041C43A /* EditProvisionerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = EditProvisionerViewController.swift; path = "View Controllers/Settings/EditProvisionerViewController.swift"; sourceTree = "<group>"; };
+		52DAA5DD2256156B0041C43A /* AddressRange+String.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "AddressRange+String.swift"; path = "Utils/AddressRange+String.swift"; sourceTree = "<group>"; };
+		52DAA5DF225615D60041C43A /* SceneRange+String.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "SceneRange+String.swift"; path = "Utils/SceneRange+String.swift"; sourceTree = "<group>"; };
 		5A51F9AF82598D8D5D40BD77 /* Pods_nRFMeshProvision_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_nRFMeshProvision_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		607FACD01AFB9204008FA782 /* nRFMeshProvision_Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = nRFMeshProvision_Example.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		607FACD41AFB9204008FA782 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -119,8 +133,8 @@
 		529B756E223FF12F008F1CE7 /* Settings */ = {
 			isa = PBXGroup;
 			children = (
+				52DAA5DC22560F110041C43A /* Provisioners */,
 				529B756F223FF1AE008F1CE7 /* SettingsViewController.swift */,
-				529B75992243BA0A008F1CE7 /* ProvisionersViewController.swift */,
 				529B759B2243BA10008F1CE7 /* NetworkKeysViewController.swift */,
 				529B7571223FFC39008F1CE7 /* AppKeysViewController.swift */,
 			);
@@ -132,8 +146,23 @@
 			children = (
 				529B7574224107A5008F1CE7 /* AppInfo.swift */,
 				529B758522428A45008F1CE7 /* UIViewController+Alert.swift */,
+				529B7642225222E8008F1CE7 /* UInt16+String.swift */,
+				529B764422522613008F1CE7 /* Data+Hex.swift */,
+				529B764622522D37008F1CE7 /* UITableView+EmptyView.swift */,
+				529B76482252499E008F1CE7 /* UIColor+Nordic.swift */,
+				52DAA5DD2256156B0041C43A /* AddressRange+String.swift */,
+				52DAA5DF225615D60041C43A /* SceneRange+String.swift */,
 			);
 			name = Utils;
+			sourceTree = "<group>";
+		};
+		52DAA5DC22560F110041C43A /* Provisioners */ = {
+			isa = PBXGroup;
+			children = (
+				529B75992243BA0A008F1CE7 /* ProvisionersViewController.swift */,
+				52DAA5DA22560EEE0041C43A /* EditProvisionerViewController.swift */,
+			);
+			name = Provisioners;
 			sourceTree = "<group>";
 		};
 		607FACC71AFB9204008FA782 = {
@@ -270,7 +299,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0830;
-				LastUpgradeCheck = 0940;
+				LastUpgradeCheck = 1020;
 				ORGANIZATIONNAME = CocoaPods;
 				TargetAttributes = {
 					607FACCF1AFB9204008FA782 = {
@@ -299,7 +328,7 @@
 			};
 			buildConfigurationList = 607FACCB1AFB9204008FA782 /* Build configuration list for PBXProject "nRFMeshProvision" */;
 			compatibilityVersion = "Xcode 3.2";
-			developmentRegion = English;
+			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
@@ -393,14 +422,21 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				529B764722522D37008F1CE7 /* UITableView+EmptyView.swift in Sources */,
+				52DAA5E0225615D60041C43A /* SceneRange+String.swift in Sources */,
+				52DAA5DB22560EEE0041C43A /* EditProvisionerViewController.swift in Sources */,
 				529B759A2243BA0A008F1CE7 /* ProvisionersViewController.swift in Sources */,
+				529B76492252499E008F1CE7 /* UIColor+Nordic.swift in Sources */,
 				529B7575224107A5008F1CE7 /* AppInfo.swift in Sources */,
 				607FACD61AFB9204008FA782 /* AppDelegate.swift in Sources */,
 				529B756D223FE7F1008F1CE7 /* RootViewController.swift in Sources */,
 				529B758622428A45008F1CE7 /* UIViewController+Alert.swift in Sources */,
+				529B764522522613008F1CE7 /* Data+Hex.swift in Sources */,
+				52DAA5DE2256156B0041C43A /* AddressRange+String.swift in Sources */,
 				529B7572223FFC39008F1CE7 /* AppKeysViewController.swift in Sources */,
 				529B7570223FF1AE008F1CE7 /* SettingsViewController.swift in Sources */,
 				529B759C2243BA10008F1CE7 /* NetworkKeysViewController.swift in Sources */,
+				529B7643225222E8008F1CE7 /* UInt16+String.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -449,6 +485,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
@@ -507,6 +544,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;

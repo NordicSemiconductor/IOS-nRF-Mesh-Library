@@ -9,20 +9,30 @@ import Foundation
 
 public class MeshNetworkManager {
     /// Mesh Network data.
-    public private(set) var data: MeshData!
+    private var meshData: MeshData!
     /// Storage to keep the app data.
     private let storage: Storage
     
     // MARK: - Computed properties
     
-    /// Convinient getter to get MeshNetwork object.
+    /// Returns the Global TTL property.
+    public var globalTTL: UInt8 {
+        set {
+            meshData.globalTTL = newValue
+        }
+        get {
+            return meshData.globalTTL
+        }
+    }
+    
+    /// Returns the MeshNetwork object.
     public var meshNetwork: MeshNetwork? {
-        return data.meshNetwork
+        return meshData.meshNetwork
     }
     
     /// Returns true if Mesh Network has been created.
     public var isNetworkCreated: Bool {
-        return data.meshNetwork != nil
+        return meshData.meshNetwork != nil
     }
     
     // MARK: - Constructors
@@ -34,7 +44,7 @@ public class MeshNetworkManager {
     /// - seeAlso: `LocalStorage`
     public init(using storage: Storage = LocalStorage()) {
         self.storage = storage
-        self.data = MeshData()
+        self.meshData = MeshData()
     }
     
     /// Initializes the MeshNetworkManager. It will use the `LocalStorage`
@@ -46,31 +56,61 @@ public class MeshNetworkManager {
         self.init(using: LocalStorage(fileName: fileName))
     }
     
-    // MARK: - Mesh Network API
+}
+
+// MARK: - Mesh Network API
+
+public extension MeshNetworkManager {
     
     /// Generates a new Mesh Network configuration with random or default values.
     /// This will override the existing one, if such exists.
+    /// The mesh network will contain one provisioner with given name.
     ///
-    /// - parameter name: The user given network name.
-    public func createNewMeshNetwork(named name: String) -> MeshNetwork {
+    /// - parameter name:          The user given network name.
+    /// - parameter provionerName: The user given local provisioner name.
+    func createNewMeshNetwork(named name: String, by provionerName: String) -> MeshNetwork {
         let network = MeshNetwork(name: name)
-        data.meshNetwork = network
+        
+        // Add a new default provisioner.
+        try! network.add(provisioner: Provisioner(name: provionerName))
+        
+        meshData.meshNetwork = network
         return network
     }
     
-    // MARK: - Save / Load
+    /// Generates a new Mesh Network configuration with random or default values.
+    /// This will override the existing one, if such exists.
+    /// The mesh network will contain the given Provisioner.
+    ///
+    /// - parameter name:      The user given network name.
+    /// - parameter provioner: The default Provisioner.
+    func createNewMeshNetwork(named name: String, by provioner: Provisioner) -> MeshNetwork {
+        let network = MeshNetwork(name: name)
+        
+        // Add a new default provisioner.
+        try! network.add(provisioner: provioner)
+        
+        meshData.meshNetwork = network
+        return network
+    }
+    
+}
+
+// MARK: - Save / Load
+
+public extension MeshNetworkManager {
     
     /// Loads the Mesh Network configuration from the storage.
     /// If storage is not given, a local file will be used.
     ///
     /// - returns: True if the network settings were loaded, false otherwise.
     /// - throws: If loading configuration failed.
-    public func load() throws -> Bool {
+    func load() throws -> Bool {
         if let data = storage.load() {
             let decoder = JSONDecoder()
             decoder.dateDecodingStrategy = .iso8601
             
-            self.data = try decoder.decode(MeshData.self, from: data)
+            meshData = try decoder.decode(MeshData.self, from: data)
             return true
         }
         return false
@@ -80,35 +120,64 @@ public class MeshNetworkManager {
     /// If storage is not given, a local file will be used.
     ///
     /// - returns: True if the network settings was saved, false otherwise.
-    public func save() -> Bool {
+    func save() -> Bool {
         let encoder = JSONEncoder()
         encoder.dateEncodingStrategy = .iso8601
         
-        let data = try! encoder.encode(self.data)
+        let data = try! encoder.encode(meshData)
         return storage.save(data)
     }
     
-    // MARK: - Export / Import
+}
+
+// MARK: - Export / Import
+    
+public extension MeshNetworkManager {
     
     /// Returns the exported Mesh Network configuration as JSON Data.
     /// The returned Data can be transferred to another application and
     /// imported. The JSON is compatible with Bluetooth Mesh scheme.
-    public func export() -> Data {
+    func export() -> Data {
         let encoder = JSONEncoder()
         encoder.dateEncodingStrategy = .iso8601
         
-        return try! encoder.encode(data.meshNetwork)
+        return try! encoder.encode(meshData.meshNetwork)
     }
     
     /// Imports the Mesh Network configuration from the given Data.
     /// The data must contain valid JSON with Bluetooth Mesh scheme.
     ///
     /// - parameter data: JSON as Data.
-    public func `import`(from data: Data) throws {
+    /// - throws: An error if import or adding local Provisioner failed.
+    func `import`(from data: Data) throws {
         let decoder = JSONDecoder()
         decoder.dateDecodingStrategy = .iso8601
         
         let meshNetwork = try decoder.decode(MeshNetwork.self, from: data)
-        self.data.meshNetwork = meshNetwork
+        
+        self.meshData.meshNetwork = meshNetwork
     }
+    
+    /// Sets the given Provisioner as the one that will be used for
+    /// provisioning new nodes, sending commands, etc. It will be moved
+    /// to index 0 in the list of provisioners in the mesh network.
+    ///
+    /// The Provisioner will be added to the mesh network if it's not
+    /// there already. Adding the Provisioner may throw an error,
+    /// for example when the ranges overlap with ranges of another
+    /// Provisioner or there are no free unicast addresses to be assigned.
+    ///
+    /// - parameter provisioner: The Provisioner to be used for provisioning.
+    /// - throws: An error if adding the Provisioner failed.
+    func setLocalProvisioner(_ provisioner: Provisioner) throws {
+        if let meshNetwork = meshData.meshNetwork {
+            
+            if !meshNetwork.hasProvisioner(with: provisioner.uuid) {
+                try meshNetwork.add(provisioner: provisioner)
+            }
+            
+            meshNetwork.setMainProvisioner(provisioner)
+        }
+    }
+    
 }

@@ -68,7 +68,7 @@ public class Node: Codable {
         return nodeUuid.uuid
     }
     /// Primary unicast address of the node.
-    public let unicastAddress: Address
+    public internal(set) var unicastAddress: Address
     /// 128-bit device key for this node.
     public internal(set) var deviceKey: Data?
     /// The level of security for the subnet on which the node has been
@@ -161,14 +161,8 @@ public class Node: Codable {
     /// The Provisioner's node has the same name and node UUID as the Provisioner.
     ///
     /// - parameter provisioner: The Provisioner for which the node is added.
-    /// - parameter network:     The network in which the node is to be added.
-    /// - throws: An error if no more addresses are available in the Provisioner's
-    ///           unicast ranges.
-    internal init(for provisioner: Provisioner, in network: MeshNetwork) throws {
-        guard let address = network.allocateNextAvailableUnicastAddress(for: provisioner) else {
-            throw MeshModelError.noAddressAvailable
-        }
-        
+    /// - parameter address:     The unicast address to be assigned to the Node.
+    internal init(for provisioner: Provisioner, withAddress address: Address) {
         self.nodeUuid = provisioner.provisionerUuid
         self.name     = provisioner.provisionerName
         self.unicastAddress = address
@@ -184,7 +178,7 @@ public class Node: Codable {
 public extension Node {
     
     /// Number of mode's elements.
-    public var elementsCount: UInt16 {
+    var elementsCount: UInt16 {
         return UInt16(elements.count)
     }
     
@@ -192,10 +186,19 @@ public extension Node {
     /// uses its own subsequent unicast address. The first (0th) element is identified
     /// by the node's unicast address. If there are no elements, the last unicast address
     /// is equal to the node's unicast address.
-    public var lastUnicastAddress: UInt16 {
+    var lastUnicastAddress: UInt16 {
         // Provisioner may not have any elements
         let allocatedAddresses = elementsCount > 0 ? elementsCount : 1
         return unicastAddress + allocatedAddresses - 1
     }
 
+    /// Returns whether the address uses the given unicast address for one
+    /// of its elements.
+    ///
+    /// - parameter address: Address to check.
+    /// - returns: `True` if any of node's elements (or the node itself) was assigned
+    ///            the given address, `false` otherwise.
+    func hasAllocatedAddress(_ address: Address) -> Bool {
+        return address >= unicastAddress && address <= lastUnicastAddress
+    }
 }

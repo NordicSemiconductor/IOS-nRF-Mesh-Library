@@ -7,11 +7,11 @@
 
 import Foundation
 
-extension Data {
+internal extension Data {
     
     /// Hex string to Data representation
     /// Inspired by https://stackoverflow.com/questions/26501276/converting-hex-string-to-nsdata-in-swift
-    public init?(hex: String) {
+    init?(hex: String) {
         let len = hex.count / 2
         var data = Data(capacity: len)
         
@@ -27,4 +27,5 @@ extension Data {
         }
         self = data
     }
+    
 }

@@ -79,21 +79,21 @@ public extension AddressRange {
     /// are in Unicast or Group ranges.
     ///
     /// - returns: True if the address range is in Unicast or Group range.
-    public var isValid: Bool {
+    var isValid: Bool {
         return isUnicastRange || isGroupRange
     }
     
     /// Returns true if the address range is in Unicast address range
     ///
     /// - returns: True if the address range is in Unicast address range.
-    public var isUnicastRange: Bool {
+    var isUnicastRange: Bool {
         return lowAddress.isUnicast && highAddress.isUnicast
     }
     
     /// Returns true if the address range is in Group address  range.
     ///
     /// - returns: True if the address range is in Group address  range.
-    public var isGroupRange: Bool {
+    var isGroupRange: Bool {
         return lowAddress.isGroup && highAddress.isGroup
     }
     
@@ -101,7 +101,7 @@ public extension AddressRange {
     ///
     /// - parameter range: The range to check overlapping.
     /// - returns: True if ranges overlap.
-    public func overlaps(_ other: AddressRange) -> Bool {
+    func overlaps(_ other: AddressRange) -> Bool {
         return !doesNotOverlap(other)
     }
     
@@ -109,7 +109,7 @@ public extension AddressRange {
     ///
     /// - parameter range: The range to check overlapping.
     /// - returns: True if ranges do not overlap.
-    public func doesNotOverlap(_ other: AddressRange) -> Bool {
+    func doesNotOverlap(_ other: AddressRange) -> Bool {
         return (lowAddress < other.lowAddress && highAddress < other.lowAddress)
             || (other.lowAddress < lowAddress && other.highAddress < lowAddress)
     }
@@ -118,7 +118,7 @@ public extension AddressRange {
     ///
     /// - parameter address: The address to be checked.
     /// - returns: `True` if the address is inside the range.
-    public func contains(_ address: Address) -> Bool {
+    func contains(_ address: Address) -> Bool {
         return address >= lowAddress && address <= highAddress
     }
 }
@@ -129,7 +129,7 @@ public extension Array where Element == AddressRange {
     /// are in Unicast or Group ranges.
     ///
     /// - returns: True if the all address ranges are in Unicast or Group range.
-    public var isValid: Bool {
+    var isValid: Bool {
         for range in self {
             if !range.isValid{
                 return false
@@ -140,7 +140,7 @@ public extension Array where Element == AddressRange {
     
     /// Returns a sorted array of ranges. If any ranges were overlapping, they
     /// will be merged.
-    public func merged() -> [AddressRange] {
+    func merged() -> [AddressRange] {
         var result: [AddressRange] = []
         
         var accumulator = AddressRange(0...0)
@@ -172,18 +172,25 @@ public extension Array where Element == AddressRange {
     }
     
     /// Merges all overlapping ranges from the array and sorts them.
-    public mutating func merge() {
+    mutating func merge() {
         self = merged()
     }
     
+    /// Returns whether the given address is in the address range array.
+    ///
+    /// - parameter address: The address to be checked.
+    /// - returns: `True` if the address is inside the range array.
+    func contains(_ address: Address) -> Bool {
+        return contains { $0.contains(address) }
+    }
 }
 
 // MARK: - Defaults
 
 public extension AddressRange {
     
-    public static let allUnicastAddresses = AddressRange(Address.minUnicastAddress...Address.maxUnicastAddress)
+    static let allUnicastAddresses = AddressRange(Address.minUnicastAddress...Address.maxUnicastAddress)
     
-    public static let allGroupAddresses = AddressRange(Address.minGroupAddress...Address.maxGroupAddress)
+    static let allGroupAddresses = AddressRange(Address.minGroupAddress...Address.maxGroupAddress)
     
 }

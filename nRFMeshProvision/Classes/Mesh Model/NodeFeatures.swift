@@ -36,67 +36,67 @@ public class NodeFeatures: Codable {
 
 public extension NodeFeatures {
     
-    public var isRelayFeatureStateKnown: Bool {
+    var isRelayFeatureStateKnown: Bool {
         return relay != nil
     }
     
-    public var isRelayFeatureEnabled: Bool {
+    var isRelayFeatureEnabled: Bool {
         return relay == 1
     }
     
-    public var isRelayFeatureDisabled: Bool {
+    var isRelayFeatureDisabled: Bool {
         return relay == 0
     }
     
-    public var isRelayFeatureFeatureSupported: Bool {
+    var isRelayFeatureFeatureSupported: Bool {
         return relay != 2
     }
     
-    public var isProxyFeatureStateKnown: Bool {
+    var isProxyFeatureStateKnown: Bool {
         return proxy != nil
     }
     
-    public var isProxyFeatureEnabled: Bool {
+    var isProxyFeatureEnabled: Bool {
         return proxy == 1
     }
     
-    public var isProxyFeatureDisabled: Bool {
+    var isProxyFeatureDisabled: Bool {
         return proxy == 0
     }
     
-    public var isProxyFeatureSupported: Bool {
+    var isProxyFeatureSupported: Bool {
         return proxy != 2
     }
     
-    public var isLowPowerFeatureStateKnown: Bool {
+    var isLowPowerFeatureStateKnown: Bool {
         return lowPower != nil
     }
     
-    public var isLowPowerFeatureEnabled: Bool {
+    var isLowPowerFeatureEnabled: Bool {
         return lowPower == 1
     }
     
-    public var isLowPowerFeatureDisabled: Bool {
+    var isLowPowerFeatureDisabled: Bool {
         return lowPower == 0
     }
     
-    public var isLowPowerFeatureSupported: Bool {
+    var isLowPowerFeatureSupported: Bool {
         return lowPower != 2
     }
     
-    public var isFriendFeatureStateKnown: Bool {
+    var isFriendFeatureStateKnown: Bool {
         return friend != nil
     }
     
-    public var isFriendFeatureEnabled: Bool {
+    var isFriendFeatureEnabled: Bool {
         return friend == 1
     }
     
-    public var isFriendFeatureDisabled: Bool {
+    var isFriendFeatureDisabled: Bool {
         return friend == 0
     }
     
-    public var isFriendFeatureSupported: Bool {
+    var isFriendFeatureSupported: Bool {
         return friend != 2
     }
 }

@@ -13,32 +13,63 @@ class ProvisionersViewController: UITableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        if !self.navigationItem.rightBarButtonItems!.contains(self.editButtonItem) {
-            self.navigationItem.rightBarButtonItems!.append(self.editButtonItem)
+        tableView.setEmptyView(title: "No provisioners", message: "Click + to add a new one.", messageImage: #imageLiteral(resourceName: "baseline-security"))
+        
+        let hasProvisioners = MeshNetworkManager.instance.meshNetwork?.hasProvisioners() ?? false
+        if !hasProvisioners {
+            showEmptyView()
         }
     }
     
     // MARK: - Table view data source
     
     override func numberOfSections(in tableView: UITableView) -> Int {
-        return 1
-    }
-    
-    override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        return "Provisioners"
+        let showMore = MeshNetworkManager.instance.meshNetwork?.hasOtherProvisioners() ?? false
+        return showMore ? 2 : 1
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return MeshNetworkManager.instance.meshNetwork?.provisioners.count ?? 0
+        let count = MeshNetworkManager.instance.meshNetwork?.provisioners.count ?? 0
+        
+        switch section {
+        case 0:
+            // The first section contains the local Provisioner.
+            return count > 0 ? 1 : 0
+        case 1:
+            // The second section contains other Provisioners.
+            return count - 1
+        default:
+            // No other sections.
+            return 0
+        }
+    }
+    
+    override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        switch section {
+        case 0:
+            // The first section contains the local Provisioner.
+            return "This Provisioner"
+        case 1:
+            // The second section contains other Provisioners.
+            return "Provisioners"
+        default:
+            // No other sections.
+            return nil
+        }
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "provisionerCell", for: indexPath)
 
-        let provisioner = MeshNetworkManager.instance.meshNetwork!.provisioners[indexPath.count]
+        let network = MeshNetworkManager.instance.meshNetwork!
+        let provisioner = network.provisioners[indexPath.row]
+        let node = network.node(for: provisioner)
         cell.textLabel?.text = provisioner.provisionerName
-        cell.detailTextLabel?.text = provisioner.uuid.uuidString
-
+        if let node = node {
+            cell.detailTextLabel?.text = "Unicast Address: \(node.unicastAddress.asString())"
+        } else {
+            cell.detailTextLabel?.text = "No node."
+        }
         return cell
     }
     
@@ -47,18 +78,99 @@ class ProvisionersViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-        return MeshNetworkManager.instance.meshNetwork?.provisioners.count ?? 0 > 1
+        return indexPath.section == 1
     }
-
-    /*
-    // Override to support editing the table view.
-    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
+    
+    override func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
+        let network = MeshNetworkManager.instance.meshNetwork!
+        let count = network.provisioners.count
+        return indexPath.section == 1 && count > 2
+    }
+    
+    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
-            // Delete the row from the data source
-            tableView.deleteRows(at: [indexPath], with: .fade)
+            removeProvisioner(at: indexPath)
         } else if editingStyle == .insert {
             // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
         }    
     }
-    */
+    
+    // MARK: - View Controller
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        let target = segue.destination as? UINavigationController
+        let viewController = target?.topViewController as? EditProvisionerViewController
+        viewController?.delegate = self
+        
+        if segue.identifier == "show" {
+            let cell = sender! as! UITableViewCell
+            let indexPath = tableView.indexPath(for: cell)!
+            
+            let network = MeshNetworkManager.instance.meshNetwork!
+            let provisioner = network.provisioners[indexPath.row]
+            
+            viewController?.provisioner = provisioner
+        }
+    }
+    
+}
+
+// MARK: - EditProvisionerDelegate
+
+extension ProvisionersViewController: EditProvisionerDelegate {
+    
+    func addProvisioner(_ provisioner: Provisioner) throws {
+        let meshNetwork = MeshNetworkManager.instance.meshNetwork!
+        let hasOtherProvisioners = meshNetwork.hasOtherProvisioners()
+        try meshNetwork.add(provisioner: provisioner)
+        
+        tableView.beginUpdates()
+        if !hasOtherProvisioners {
+            tableView.insertSections(IndexSet(integer: 1), with: .automatic)
+        }
+        tableView.insertRows(at: [IndexPath(row: meshNetwork.provisioners.count - 1, section: 0)], with: .automatic)
+        tableView.endUpdates()
+        hideEmptyView()
+    }
+    
+    func provisionerWasModified(_ provisioner: Provisioner) {
+        // TODO: Write
+    }
+    
+    private func removeProvisioner(at indexPath: IndexPath) {
+        let meshNetwork = MeshNetworkManager.instance.meshNetwork!
+        _ = meshNetwork.remove(provisionerAt: indexPath.row)
+        
+        tableView.beginUpdates()
+        tableView.deleteRows(at: [indexPath], with: .automatic)
+        if !meshNetwork.hasOtherProvisioners() {
+            tableView.deleteSections(IndexSet(integer: 1), with: .automatic)
+            showEmptyView()
+        }
+        tableView.endUpdates()
+    }
+    
+}
+
+// MARK: - Private API
+
+private extension ProvisionersViewController {
+    
+    /// Shows the 'Empty View'.
+    private func showEmptyView() {
+        if navigationItem.rightBarButtonItems!.contains(editButtonItem) {
+            navigationItem.rightBarButtonItems!.removeAll {
+                $0 == self.editButtonItem
+            }
+        }
+        tableView.showEmptyView()
+    }
+    
+    /// Hides the 'Empty View'.
+    private func hideEmptyView() {
+        if !navigationItem.rightBarButtonItems!.contains(editButtonItem) {
+            navigationItem.rightBarButtonItems!.append(editButtonItem)
+        }
+        tableView.hideEmptyView()
+    }
 }

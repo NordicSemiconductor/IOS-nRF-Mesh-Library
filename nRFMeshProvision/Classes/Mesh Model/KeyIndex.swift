@@ -11,7 +11,7 @@ public typealias KeyIndex = Int
 
 public extension KeyIndex {
     
-    public func isValidKeyIndex() -> Bool {
+    func isValidKeyIndex() -> Bool {
         return self >= 0 && self <= 4095
     }
 }

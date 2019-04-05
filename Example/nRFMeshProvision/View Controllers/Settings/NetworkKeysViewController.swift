@@ -19,24 +19,25 @@ class NetworkKeysViewController: UITableViewController {
     }
 
     // MARK: - Table view data source
-
-    override func numberOfSections(in tableView: UITableView) -> Int {
-        return 1
-    }
     
     override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         return "Configured Keys"
     }
 
+    override func numberOfSections(in tableView: UITableView) -> Int {
+        return MeshNetworkManager.instance.meshNetwork?.networkKeys.isEmpty ?? false ? 0 : 1
+    }
+
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 1 // TODO
+        return MeshNetworkManager.instance.meshNetwork?.networkKeys.count ?? 0
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "netKeyCell", for: indexPath)
 
-        cell.textLabel?.text = "App Key 1"
-        cell.detailTextLabel?.text = "2xAABBCC..."
+        let key = MeshNetworkManager.instance.meshNetwork!.networkKeys[indexPath.row]
+        cell.textLabel?.text = key.name
+        cell.detailTextLabel?.text = key.key.asString()
 
         return cell
     }

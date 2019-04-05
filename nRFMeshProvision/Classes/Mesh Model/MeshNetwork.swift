@@ -69,12 +69,50 @@ public class MeshNetwork: Codable {
 
 public extension MeshNetwork {
     
-    /// Adds the provisioner.
+    /// Returns whether there are Provisioners in the mesh network.
+    ///
+    /// - returns: `True` if at least one Provisoner has been added to the
+    ///            mesh network, `false` otherwise.
+    func hasProvisioners() -> Bool {
+        return provisioners.isEmpty == false
+    }
+    
+    /// Returns whether there are other Provisioners in the mesh network
+    /// except the local one.
+    ///
+    /// - returns: `True` if at least two Provisoner have been added to the
+    ///            mesh network, `false` otherwise.
+    func hasOtherProvisioners() -> Bool {
+        return provisioners.count > 1
+    }
+    
+    /// Adds the provisioner and assignes a unicast address to it.
+    /// This method does nothing if the Provisioner is already added to the
+    /// mesh network.
     ///
     /// - parameter provisioner: The provisioner to be added.
     /// - throws: MeshModelError - if provisioner has allocated invalid ranges
     ///           or ranges overlapping with an existing Provisioner.
-    public func add(provisioner: Provisioner) throws {
+    func add(provisioner: Provisioner) throws {
+        // Find the unicast address to be assigned.
+        guard let address = allocateNextAvailableUnicastAddress(for: provisioner) else {
+            throw MeshModelError.noAddressAvailable
+        }
+        
+        try add(provisioner: provisioner, withAddress: address)
+    }
+    
+    /// Adds the Provisioner and assign the given unicast address to it.
+    /// This method does nothing if the Provisioner is already added to the
+    /// mesh network.
+    ///
+    /// - parameter provisioner:    The provisioner to be added.
+    /// - parameter unicastAddress: The unicast address to be used by the Provisioner.
+    ///                             A `nil` address means that the Provisioner is not able
+    ///                             to perform configuration operations.
+    /// - throws: MeshModelError - if provisioner has allocated invalid ranges
+    ///           or ranges overlapping with an existing Provisioner.
+    func add(provisioner: Provisioner, withAddress unicastAddress: Address?) throws {
         // Is it valid?
         guard provisioner.isValid else {
             throw MeshModelError.provisionerRangesNotAllocated
@@ -84,6 +122,13 @@ public extension MeshNetwork {
         for other in provisioners {
             guard !provisioner.hasOverlappingRanges(with: other) else {
                 throw MeshModelError.overlappingProvisionerRanges
+            }
+        }
+        
+        // Is the given address inside Provisioner's address range?
+        if let address = unicastAddress {
+            if !provisioner.allocatedUnicastRange.contains(address) {
+                throw MeshModelError.addressNotInAllocatedRange
             }
         }
         
@@ -100,8 +145,10 @@ public extension MeshNetwork {
         }
         
         // Add the provisioner's node.
-        let node = try Node(for: provisioner, in: self)
-        nodes.append(node)
+        if let address = unicastAddress {
+            let node = Node(for: provisioner, withAddress: address)
+            nodes.append(node)
+        }
         
         // And finally, add the provisioner.
         provisioners.append(provisioner)
@@ -112,7 +159,7 @@ public extension MeshNetwork {
     /// - parameter index: The position of the element to remove.
     ///                    `index` must be a valid index of the array.
     /// - returns: The removed provisioner.
-    public func remove(provisionerAt index: Int) -> Provisioner {
+    func remove(provisionerAt index: Int) -> Provisioner {
         let provisioner = provisioners.remove(at: index)
         
         if let index = nodes.firstIndex(where: { $0.uuid == provisioner.uuid }) {
@@ -125,17 +172,98 @@ public extension MeshNetwork {
     /// provisioner was not added to the Mesh Network before.
     ///
     /// - parameter provisioner: Provisioner to be removed.
-    public func remove(provisioner: Provisioner) {
-        if let index = provisioners.firstIndex(where: { $0 === provisioner }) {
+    func remove(provisioner: Provisioner) {
+        if let index = provisioners.firstIndex(of: provisioner) {
             _ = remove(provisionerAt: index)
         }
     }
     
+    /// Returns Provisioner's node object, if such exist and the Provisioner
+    /// is in the mesh network.
+    ///
+    /// - parameter provisioner: The provisioner which node is to be returned.
+    ///                          The provisioner must be added to the network
+    ///                          before calling this method, otherwise nil will
+    ///                          be returned. Provisioners without node assigned
+    ///                          do not support configuration operations.
+    /// - returns: The Provisioner's node object.
+    func node(for provisioner: Provisioner) -> Node? {
+        if let index = nodes.firstIndex(where: { $0.uuid == provisioner.uuid }) {
+            return nodes[index]
+        }
+        return nil
+    }
+    
+    /// Changes the unicast address used by the given Provisioner.
+    /// If the Provisioner didn't have a unicast address specified, the method
+    /// will create a node with given the unicast address. This will
+    /// enable configuration capabilities for the Provisioner.
+    ///
+    /// - parameter address:     The new unicast address of the Provisioner.
+    /// - parameter provisioner: The provisioner to be modified.
+    /// - throws: An error if the address is not in Provisioner's range,
+    ///           or is already used by some other node in the mesh network.
+    func assign(unicastAddress address: Address, for provisioner: Provisioner) throws {
+        // Is it in Provisioner's range?
+        guard provisioner.isInAllocatedRange(address) else {
+            throw MeshModelError.addressNotInAllocatedRange
+        }
+        
+        // No other node uses the same address?
+        guard nodes.contains(where: { $0.hasAllocatedAddress(address) }) == false else {
+            throw MeshModelError.noAddressAvailable
+        }
+        
+        // Search for Provisioner's node.
+        if let provisionerNode = node(for: provisioner) {
+            provisionerNode.unicastAddress = address
+        } else {
+            // Not found? The Provisioner without a node may not perform
+            // configuration operations. Seems like it will support it from now on.
+            let provisionerNode = Node(for: provisioner, withAddress: address)
+            nodes.append(provisionerNode)
+        }
+    }
+    
+    /// Removes the Provisioner's node. Provisioners without a node
+    /// may not perform configuration operations. This method does nothing
+    /// if the Provisoner already didn't have a node.
+    ///
+    /// Use `assign(address:for provisioner)` to enable configuration capabilities.
+    ///
+    /// - parameter provisioner: The provisioner to be modified.
+    func disableConfigurationCapabilities(for provisioner: Provisioner) {
+        // Search for Provisioner's node and remove it.
+        if let index = nodes.firstIndex(where: { $0.uuid == provisioner.uuid }) {
+            nodes.remove(at: index)
+        }
+    }
 }
 
 // MARK: - Internal MeshNetwork API
 
 extension MeshNetwork {
+    
+    /// Returns whether the provisioner with given UUID is in the
+    /// mesh network.
+    ///
+    /// - parameter uuid: The Provisioner's UUID to look for.
+    /// - returns: `True` if the Provisioner was found, `false` otherwise.
+    func hasProvisioner(with uuid: UUID) -> Bool {
+        return provisioners.contains { $0.uuid == uuid }
+    }
+    
+    /// Sets the given Provisoner as the local one.
+    /// The local one will be placed in the provisioners list at index 0.
+    ///
+    /// - parameter provisioner: The Provisioner to be brought to the
+    ///                          from of the provisioners array.
+    func setMainProvisioner(_ provisioner: Provisioner) {
+        if let index = provisioners.firstIndex(of: provisioner), index > 0 {
+            provisioners.remove(at: index)
+            provisioners.insert(provisioner, at: 0)
+        }
+    }
 
     /// Returns the next available unicast address from the provisioner's range
     /// that can be assigned to a new node with given number of elements.
@@ -198,7 +326,6 @@ extension MeshNetwork {
     ///            or nil, if there are no more available addresses in the allocated range.
     func allocateNextAvailableUnicastAddress(for provisioner: Provisioner) -> Address? {
         return allocateNextAvailableUnicastAddress(for: 1, elementsUsing: provisioner)
-    }
-    
+    }    
     
 }

@@ -78,7 +78,7 @@ public extension SceneRange {
     /// Returns true if the scene range is valid.
     ///
     /// - returns: True if the scene range is valid.
-    public var isValid: Bool {
+    var isValid: Bool {
         return firstScene.isValidScene && lastScene.isValidScene
     }
     
@@ -86,7 +86,7 @@ public extension SceneRange {
     ///
     /// - parameter range: The range to check overlapping.
     /// - returns: True if ranges overlap.
-    public func overlaps(_ other: SceneRange) -> Bool {
+    func overlaps(_ other: SceneRange) -> Bool {
         return !doesNotOverlap(other)
     }
     
@@ -94,7 +94,7 @@ public extension SceneRange {
     ///
     /// - parameter range: The range to check overlapping.
     /// - returns: True if ranges do not overlap.
-    public func doesNotOverlap(_ other: SceneRange) -> Bool {
+    func doesNotOverlap(_ other: SceneRange) -> Bool {
         return (firstScene < other.firstScene && lastScene < other.firstScene)
             || (other.firstScene < firstScene && other.lastScene < firstScene)
     }
@@ -103,7 +103,7 @@ public extension SceneRange {
     ///
     /// - parameter scene: The scene to be checked.
     /// - returns: `True` if the scene is inside the range.
-    public func contains(_ scene: Scene) -> Bool {
+    func contains(_ scene: Scene) -> Bool {
         return scene >= firstScene && scene <= lastScene
     }
     
@@ -114,7 +114,7 @@ public extension Array where Element == SceneRange {
     /// Returns true if all the scene ranges are valid.
     ///
     /// - returns: True if the all scene ranges are valid.
-    public var isValid: Bool {
+    var isValid: Bool {
         for range in self {
             if !range.isValid {
                 return false
@@ -125,7 +125,7 @@ public extension Array where Element == SceneRange {
     
     /// Returns a sorted array of ranges. If any ranges were overlapping, they
     /// will be merged.
-    public func merged() -> [SceneRange] {
+    func merged() -> [SceneRange] {
         var result: [SceneRange] = []
         
         var accumulator = SceneRange(0...0)
@@ -157,8 +157,16 @@ public extension Array where Element == SceneRange {
     }
     
     /// Merges all overlapping ranges from the array and sorts them.
-    public mutating func merge() {
+    mutating func merge() {
         self = merged()
+    }
+    
+    /// Returns whether the given scene is in the scene range array.
+    ///
+    /// - parameter address: The scene to be checked.
+    /// - returns: `True` if the scene is inside the range array.
+    func contains(_ scene: Scene) -> Bool {
+        return contains { $0.contains(scene) }
     }
     
 }
@@ -167,6 +175,6 @@ public extension Array where Element == SceneRange {
 
 public extension SceneRange {
     
-    public static let allScenes: SceneRange = SceneRange(Scene.minScene...Scene.maxScene)
+    static let allScenes: SceneRange = SceneRange(Scene.minScene...Scene.maxScene)
     
 }
