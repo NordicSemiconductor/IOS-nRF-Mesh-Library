@@ -24,9 +24,9 @@ class EditProvisionerViewController: UITableViewController {
 
     @IBOutlet weak var name: UITableViewCell!
     @IBOutlet weak var unicastAddress: UITableViewCell!
-    @IBOutlet weak var unicastAddressRange: UITableViewCell!
-    @IBOutlet weak var groupAddressRange: UITableViewCell!
-    @IBOutlet weak var sceneRange: UITableViewCell!
+    @IBOutlet weak var unicastAddressRange: RangeView!
+    @IBOutlet weak var groupAddressRange: RangeView!
+    @IBOutlet weak var sceneRange: RangeView!
     
     @IBOutlet weak var disableConfigCell: UITableViewCell!
     @IBOutlet weak var useThisProvisionerCell: UITableViewCell!
@@ -70,9 +70,18 @@ class EditProvisionerViewController: UITableViewController {
             unicastAddress.detailTextLabel?.text = node.unicastAddress.asString()
         }
         
-        unicastAddressRange.detailTextLabel?.text = provisioner.allocatedUnicastRange.asString()
-        groupAddressRange.detailTextLabel?.text = provisioner.allocatedGroupRange.asString()
-        sceneRange.detailTextLabel?.text = provisioner.allocatedSceneRange.asString()
+        // Draw ranges for the Provisioner.
+        unicastAddressRange.addRange(provisioner.allocatedUnicastRange)
+        groupAddressRange.addRange(provisioner.allocatedGroupRange)
+        sceneRange.addRange(provisioner.allocatedSceneRange)
+        // Also, draw ranges of other Provisioners.
+        meshNetwork.provisioners.filter({ other -> Bool in
+            other != provisioner
+        }).forEach { provisioner in
+            unicastAddressRange.addOtherRange(provisioner.allocatedUnicastRange)
+            groupAddressRange.addOtherRange(provisioner.allocatedGroupRange)
+            sceneRange.addOtherRange(provisioner.allocatedSceneRange)
+        }
     }
     
     // MARK: - Table view data source

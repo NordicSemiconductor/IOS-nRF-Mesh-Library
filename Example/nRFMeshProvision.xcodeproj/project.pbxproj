@@ -30,6 +30,7 @@
 		52DAA5DB22560EEE0041C43A /* EditProvisionerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52DAA5DA22560EEE0041C43A /* EditProvisionerViewController.swift */; };
 		52DAA5DE2256156B0041C43A /* AddressRange+String.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52DAA5DD2256156B0041C43A /* AddressRange+String.swift */; };
 		52DAA5E0225615D60041C43A /* SceneRange+String.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52DAA5DF225615D60041C43A /* SceneRange+String.swift */; };
+		52DAA5E2225B633B0041C43A /* RangeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52DAA5E1225B633B0041C43A /* RangeView.swift */; };
 		607FACD61AFB9204008FA782 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACD51AFB9204008FA782 /* AppDelegate.swift */; };
 		607FACDB1AFB9204008FA782 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 607FACD91AFB9204008FA782 /* Main.storyboard */; };
 		607FACDD1AFB9204008FA782 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 607FACDC1AFB9204008FA782 /* Images.xcassets */; };
@@ -71,6 +72,7 @@
 		52DAA5DA22560EEE0041C43A /* EditProvisionerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = EditProvisionerViewController.swift; path = "View Controllers/Settings/EditProvisionerViewController.swift"; sourceTree = "<group>"; };
 		52DAA5DD2256156B0041C43A /* AddressRange+String.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "AddressRange+String.swift"; path = "Utils/AddressRange+String.swift"; sourceTree = "<group>"; };
 		52DAA5DF225615D60041C43A /* SceneRange+String.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "SceneRange+String.swift"; path = "Utils/SceneRange+String.swift"; sourceTree = "<group>"; };
+		52DAA5E1225B633B0041C43A /* RangeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = RangeView.swift; path = "View Controllers/Settings/RangeView.swift"; sourceTree = "<group>"; };
 		5A51F9AF82598D8D5D40BD77 /* Pods_nRFMeshProvision_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_nRFMeshProvision_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		607FACD01AFB9204008FA782 /* nRFMeshProvision_Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = nRFMeshProvision_Example.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		607FACD41AFB9204008FA782 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -161,6 +163,7 @@
 			children = (
 				529B75992243BA0A008F1CE7 /* ProvisionersViewController.swift */,
 				52DAA5DA22560EEE0041C43A /* EditProvisionerViewController.swift */,
+				52DAA5E1225B633B0041C43A /* RangeView.swift */,
 			);
 			name = Provisioners;
 			sourceTree = "<group>";
@@ -424,6 +427,7 @@
 			files = (
 				529B764722522D37008F1CE7 /* UITableView+EmptyView.swift in Sources */,
 				52DAA5E0225615D60041C43A /* SceneRange+String.swift in Sources */,
+				52DAA5E2225B633B0041C43A /* RangeView.swift in Sources */,
 				52DAA5DB22560EEE0041C43A /* EditProvisionerViewController.swift in Sources */,
 				529B759A2243BA0A008F1CE7 /* ProvisionersViewController.swift in Sources */,
 				529B76492252499E008F1CE7 /* UIColor+Nordic.swift in Sources */,

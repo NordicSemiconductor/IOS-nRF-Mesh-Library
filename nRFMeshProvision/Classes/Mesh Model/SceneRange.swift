@@ -20,6 +20,10 @@ public struct SceneRange: Codable, Hashable {
         self.init(from: range.lowerBound, to: range.upperBound)
     }
     
+    public var range: ClosedRange<Scene> {
+        return firstScene...lastScene
+    }
+    
     // MARK: - Codable
     
     private enum CodingKeys: String, CodingKey {

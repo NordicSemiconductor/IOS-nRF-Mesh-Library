@@ -20,6 +20,10 @@ public struct AddressRange: Codable {
         self.init(from: range.lowerBound, to: range.upperBound)
     }
     
+    public var range: ClosedRange<Address> {
+        return lowAddress...highAddress
+    }
+    
     // MARK: - Codable
     
     private enum CodingKeys: String, CodingKey {
