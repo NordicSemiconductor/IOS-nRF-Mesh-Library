@@ -698,50 +698,6 @@
                                     </tableViewCell>
                                 </cells>
                             </tableViewSection>
-                            <tableViewSection id="sAN-Qn-w9c">
-                                <cells>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" id="Bq0-ls-jZk">
-                                        <rect key="frame" x="0.0" y="395.33333333333337" width="414" height="44"/>
-                                        <autoresizingMask key="autoresizingMask"/>
-                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="Bq0-ls-jZk" id="NdD-pW-qbP">
-                                            <rect key="frame" x="0.0" y="0.0" width="414" height="43.666666666666664"/>
-                                            <autoresizingMask key="autoresizingMask"/>
-                                            <subviews>
-                                                <button opaque="NO" contentMode="scaleToFill" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="gKB-w6-xVk">
-                                                    <rect key="frame" x="93.666666666666686" y="7" width="227" height="30"/>
-                                                    <state key="normal" title="Disable configuration capabilities">
-                                                        <color key="titleColor" red="0.93333333330000001" green="0.1843137255" blue="0.30588235289999999" alpha="1" colorSpace="calibratedRGB"/>
-                                                    </state>
-                                                </button>
-                                            </subviews>
-                                            <constraints>
-                                                <constraint firstItem="gKB-w6-xVk" firstAttribute="centerX" secondItem="NdD-pW-qbP" secondAttribute="centerX" id="5kZ-x7-EoH"/>
-                                                <constraint firstItem="gKB-w6-xVk" firstAttribute="centerY" secondItem="NdD-pW-qbP" secondAttribute="centerY" id="AM3-0s-Lms"/>
-                                            </constraints>
-                                        </tableViewCellContentView>
-                                    </tableViewCell>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" id="AeV-dC-Mvg">
-                                        <rect key="frame" x="0.0" y="439.33333333333337" width="414" height="44"/>
-                                        <autoresizingMask key="autoresizingMask"/>
-                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="AeV-dC-Mvg" id="Kqo-eP-nUS">
-                                            <rect key="frame" x="0.0" y="0.0" width="414" height="43.666666666666664"/>
-                                            <autoresizingMask key="autoresizingMask"/>
-                                            <subviews>
-                                                <button opaque="NO" contentMode="scaleToFill" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="6y0-My-eTx">
-                                                    <rect key="frame" x="138.66666666666666" y="7" width="136.99999999999997" height="30"/>
-                                                    <state key="normal" title="Use this Provisioner">
-                                                        <color key="titleColor" red="0.0" green="0.46666666670000001" blue="0.7843137255" alpha="1" colorSpace="calibratedRGB"/>
-                                                    </state>
-                                                </button>
-                                            </subviews>
-                                            <constraints>
-                                                <constraint firstItem="6y0-My-eTx" firstAttribute="centerY" secondItem="Kqo-eP-nUS" secondAttribute="centerY" id="NRB-dr-zsh"/>
-                                                <constraint firstItem="6y0-My-eTx" firstAttribute="centerX" secondItem="Kqo-eP-nUS" secondAttribute="centerX" id="vMt-iN-EMb"/>
-                                            </constraints>
-                                        </tableViewCellContentView>
-                                    </tableViewCell>
-                                </cells>
-                            </tableViewSection>
                         </sections>
                         <connections>
                             <outlet property="dataSource" destination="EYc-nY-Nbe" id="hEt-s7-mkT"/>
@@ -754,7 +710,7 @@
                                 <action selector="cancelTapped:" destination="EYc-nY-Nbe" id="87i-CX-NKs"/>
                             </connections>
                         </barButtonItem>
-                        <barButtonItem key="rightBarButtonItem" systemItem="save" id="ocQ-ca-ba9">
+                        <barButtonItem key="rightBarButtonItem" systemItem="done" id="ocQ-ca-ba9">
                             <connections>
                                 <action selector="doneTapped:" destination="EYc-nY-Nbe" id="Uoy-1K-6za"/>
                             </connections>

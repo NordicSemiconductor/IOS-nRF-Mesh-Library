@@ -198,12 +198,18 @@ public extension MeshNetwork {
     /// If the Provisioner didn't have a unicast address specified, the method
     /// will create a node with given the unicast address. This will
     /// enable configuration capabilities for the Provisioner.
+    /// The Provisioner must be in the mesh network.
     ///
     /// - parameter address:     The new unicast address of the Provisioner.
     /// - parameter provisioner: The provisioner to be modified.
     /// - throws: An error if the address is not in Provisioner's range,
     ///           or is already used by some other node in the mesh network.
     func assign(unicastAddress address: Address, for provisioner: Provisioner) throws {
+        // Is the Provisioner in the network?
+        guard hasProvisioner(provisioner) else {
+            throw MeshModelError.provisionerNotInNetwork
+        }
+        
         // Is it in Provisioner's range?
         guard provisioner.isInAllocatedRange(address) else {
             throw MeshModelError.addressNotInAllocatedRange
@@ -244,7 +250,15 @@ public extension MeshNetwork {
 
 extension MeshNetwork {
     
-    /// Returns whether the provisioner with given UUID is in the
+    /// Returns whether the Provisioner is in the mesh network.
+    ///
+    /// - parameter provisioner: The Provisioner to look for.
+    /// - returns: `True` if the Provisioner was found, `false` otherwise.
+    func hasProvisioner(_ provisioner: Provisioner) -> Bool {
+        return provisioners.contains { $0.uuid == provisioner.uuid }
+    }
+    
+    /// Returns whether the Provisioner with given UUID is in the
     /// mesh network.
     ///
     /// - parameter uuid: The Provisioner's UUID to look for.
@@ -265,14 +279,14 @@ extension MeshNetwork {
         }
     }
 
-    /// Returns the next available unicast address from the provisioner's range
+    /// Returns the next available unicast address from the Provisioner's range
     /// that can be assigned to a new node with given number of elements.
     /// The 0'th element is identified by the node's unicast address.
     /// Each following element is identified by a subsequent unicast address.
     ///
     /// - parameter elementsCount: The number of node's elements. Each element will be
     ///                            identified by a subsequent unicast address.
-    /// - parameter provisioner:   The provisioner that is creating the node.
+    /// - parameter provisioner:   The Provisioner that is creating the node.
     ///                            The address will be taken from it's allocated range.
     /// - returns: The next available unicast address that can be assigned to a node,
     ///            or nil, if there are no more available addresses in the allocated range.

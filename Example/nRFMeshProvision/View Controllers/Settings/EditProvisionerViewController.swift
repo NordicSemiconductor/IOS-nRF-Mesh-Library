@@ -10,9 +10,13 @@ import UIKit
 import nRFMeshProvision
 
 protocol EditProvisionerDelegate {
-    /// Adds the Provisioner to mesh network.
-    func addProvisioner(_ provisioner: Provisioner) throws
+    /// Notifies the delegate that the Provisioner was added to the mesh network.
+    ///
+    /// - parameter provisioner: The new Provisioner.
+    func provisionerWasAdded(_ provisioner: Provisioner)
     /// Notifies the delegate that the given provisioner was modified.
+    ///
+    /// - parameter provisioner: The Provisioner that has been modified.
     func provisionerWasModified(_ provisioner: Provisioner)
 }
 
@@ -23,6 +27,9 @@ class EditProvisionerViewController: UITableViewController {
     @IBOutlet weak var unicastAddressRange: UITableViewCell!
     @IBOutlet weak var groupAddressRange: UITableViewCell!
     @IBOutlet weak var sceneRange: UITableViewCell!
+    
+    @IBOutlet weak var disableConfigCell: UITableViewCell!
+    @IBOutlet weak var useThisProvisionerCell: UITableViewCell!
     
     @IBAction func doneTapped(_ sender: UIBarButtonItem) {
         saveProvisioner()
@@ -37,15 +44,21 @@ class EditProvisionerViewController: UITableViewController {
     var delegate: EditProvisionerDelegate?
     /// A flag indicating whether the user edits or adds a new Provisioner.
     var adding = false
+    
+    var newName: String? = nil
+    var newAddress: Address? = nil
+    var disableConfigCapabilities: Bool = false
 
     override func viewDidLoad() {
         if provisioner == nil {
-            provisioner = Provisioner(name: "New Provisioner")
+            provisioner = Provisioner(name: UIDevice.current.name)
             adding = true
+            title = "New Provisioner"
+        } else {
+            title = "Edit Provisioner"
         }
         
         // Show Provisioner's parameters.
-        title = provisioner.provisionerName
         name.detailTextLabel?.text = provisioner.provisionerName
         
         let meshNetwork = MeshNetworkManager.instance.meshNetwork!
@@ -70,69 +83,87 @@ class EditProvisionerViewController: UITableViewController {
         let meshNetwork = MeshNetworkManager.instance.meshNetwork!
         
         switch indexPath.section {
-        case 0:
+        case 0: // Provisioner data
             switch indexPath.row {
-            case 0:
+            case 0: // Provisioner name
                 presentTextAlert(title: "Provisioner name", message: nil,
-                                 text: title, placeHolder: "Name", type: .nameRequired) { newName in
-                                    self.provisioner.provisionerName = newName
+                                 text: provisioner.provisionerName, placeHolder: "Name",
+                                 type: .nameRequired) { newName in
+                                    self.newName = newName
                                     self.name.detailTextLabel?.text = newName
                                     self.title = newName
                 }
-            case 1:
+            case 1: // Unicast Address
                 let node = meshNetwork.node(for: provisioner)
                 let address = node?.unicastAddress.hex ?? ""
+                
+                // If node has been assigned, add the option to unbind the node.
+                let action = node == nil ? nil : UIAlertAction(title: "Unbind", style: .destructive) { action in
+                    self.confirm(title: "Disable configuration capabilities",
+                            message: "A Provisioner without the unicast address assigned is not able to perform configuration operations.") { _ in
+                                self.disableConfigCapabilities = true
+                                self.newAddress = nil
+                                self.unicastAddress.detailTextLabel?.text = "Not assigned"
+                    }
+                }
                 presentTextAlert(title: "Unicast address", message: "Hexadecimal value in range\n0001 - 7FFF.",
-                                 text: address, placeHolder: "Address", type: .unicastAddressRequired) { text in
+                                 text: address, placeHolder: "Address", type: .unicastAddressRequired,
+                                 option: action) { text in
                                     let address = Address(text, radix: 16)
                                     self.unicastAddress.detailTextLabel?.text = address!.asString()
+                                    self.disableConfigCapabilities = false
+                                    self.newAddress = address
                 }
             default:
                 // Not possible.
                 break;
             }
-        case 1:
+        case 1: // Allocated ranges
             // A segue will be performed.
             break
-        case 2:
-            switch indexPath.row {
-            case 0:
-                confirm(title: "Removing configuration capabilities", message: "The Provisioner will not be able to perform configuration operations. This can be reverted by assigning a unicast address.") { _ in
-                    self.unicastAddress.detailTextLabel?.text = "Not assigned"
-                }
-            case 1:
-                break
-            default:
-                // No more options.
-                break
-            }
         default:
-            // No more sections.
-            break
+            // Not possible.
+            break;
         }
     }
     
     /// Saves the edited or new Provisioner and pops the view contoller if saving
     /// succeeded.
     private func saveProvisioner() {
-        if adding {
-            do {
-                try delegate?.addProvisioner(provisioner)
-            } catch {
-                print(error)
-                
-                switch error as! MeshModelError {
-                case .nodeAlreadyExist:
-                    presentAlert(title: "Error", message: "A node with given unicast address already exists.")
-                case .overlappingProvisionerRanges:
-                    presentAlert(title: "Error", message: "Provisioner's ranges overlap with another Provisioner.")
-                default:
-                    presentAlert(title: "Error", message: "An error occurred.")
+        do {
+            let meshNetwork = MeshNetworkManager.instance.meshNetwork!
+            if adding {
+                try meshNetwork.add(provisioner: provisioner, withAddress: newAddress)
+            } else { // modifying
+                if let newAddress = newAddress {
+                    try meshNetwork.assign(unicastAddress: newAddress, for: provisioner)
                 }
-                return
+                if disableConfigCapabilities {
+                    meshNetwork.disableConfigurationCapabilities(for: provisioner)
+                }
             }
-        } else {
-            delegate?.provisionerWasModified(provisioner)
+            if let newName = newName {
+                provisioner.provisionerName = newName
+            }
+            // TODO ranges
+            
+            if adding {
+                delegate?.provisionerWasAdded(provisioner)
+            } else {
+                delegate?.provisionerWasModified(provisioner)
+            }
+        } catch {
+            print(error)
+            
+            switch error as! MeshModelError {
+            case .nodeAlreadyExist:
+                presentAlert(title: "Error", message: "A node with given unicast address already exists.")
+            case .overlappingProvisionerRanges:
+                presentAlert(title: "Error", message: "Provisioner's ranges overlap with another Provisioner.")
+            default:
+                presentAlert(title: "Error", message: "An error occurred.")
+            }
+            return
         }
         
         if MeshNetworkManager.instance.save() {

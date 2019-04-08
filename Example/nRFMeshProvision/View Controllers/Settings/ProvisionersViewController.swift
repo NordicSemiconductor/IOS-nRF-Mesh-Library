@@ -68,7 +68,7 @@ class ProvisionersViewController: UITableViewController {
         if let node = node {
             cell.detailTextLabel?.text = "Unicast Address: \(node.unicastAddress.asString())"
         } else {
-            cell.detailTextLabel?.text = "No node."
+            cell.detailTextLabel?.text = "Configuration capabilities disabled"
         }
         return cell
     }
@@ -119,13 +119,11 @@ class ProvisionersViewController: UITableViewController {
 
 extension ProvisionersViewController: EditProvisionerDelegate {
     
-    func addProvisioner(_ provisioner: Provisioner) throws {
+    func provisionerWasAdded(_ provisioner: Provisioner) {
         let meshNetwork = MeshNetworkManager.instance.meshNetwork!
-        let hasOtherProvisioners = meshNetwork.hasOtherProvisioners()
-        try meshNetwork.add(provisioner: provisioner)
         
         tableView.beginUpdates()
-        if !hasOtherProvisioners {
+        if !meshNetwork.hasOtherProvisioners() {
             tableView.insertSections(IndexSet(integer: 1), with: .automatic)
         }
         tableView.insertRows(at: [IndexPath(row: meshNetwork.provisioners.count - 1, section: 0)], with: .automatic)
@@ -134,7 +132,18 @@ extension ProvisionersViewController: EditProvisionerDelegate {
     }
     
     func provisionerWasModified(_ provisioner: Provisioner) {
-        // TODO: Write
+        let meshNetwork = MeshNetworkManager.instance.meshNetwork!
+        let provisioners = meshNetwork.provisioners
+        let index = provisioners.firstIndex(of: provisioner)
+        
+        if let index = index {
+            let indexPath = index == 0 ?
+                IndexPath(row: 0, section: 0) :
+                IndexPath(row: index - 1, section: 1)
+            tableView.beginUpdates()
+            tableView.reloadRows(at: [indexPath], with: .automatic)
+            tableView.endUpdates()
+        }
     }
     
     private func removeProvisioner(at indexPath: IndexPath) {

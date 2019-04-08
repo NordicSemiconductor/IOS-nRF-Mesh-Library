@@ -53,9 +53,11 @@ extension UIViewController {
     ///   - text:        Initial value of the text field.
     ///   - placeholder: The placeholder if text is empty.
     ///   - type:        The selector to be used for value validation.
+    ///   - action:      An optional additional action.
     ///   - handler:     The OK button handler.
     func presentTextAlert(title: String?, message: String?, text: String? = "", placeHolder: String? = "",
-                          type selector: Selector? = nil, handler: ((String) -> Void)? = nil) {
+                          type selector: Selector? = nil, option action: UIAlertAction? = nil,
+                          handler: ((String) -> Void)? = nil) {
         DispatchQueue.main.async {
             let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
             alert.addTextField { (textField) in
@@ -83,6 +85,9 @@ extension UIViewController {
             alert.addAction(UIAlertAction(title: "OK", style: .default) { _ in
                 handler?(alert.textFields![0].text!)
             })
+            if let action = action {
+                alert.addAction(action)
+            }
             alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
             
             self.present(alert, animated: true)
