@@ -71,16 +71,14 @@ class EditProvisionerViewController: UITableViewController {
         }
         
         // Draw ranges for the Provisioner.
-        unicastAddressRange.addRange(provisioner.allocatedUnicastRange)
-        groupAddressRange.addRange(provisioner.allocatedGroupRange)
-        sceneRange.addRange(provisioner.allocatedSceneRange)
+        unicastAddressRange.addRanges(provisioner.allocatedUnicastRange)
+        groupAddressRange.addRanges(provisioner.allocatedGroupRange)
+        sceneRange.addRanges(provisioner.allocatedSceneRange)
         // Also, draw ranges of other Provisioners.
-        meshNetwork.provisioners.filter({ other -> Bool in
-            other != provisioner
-        }).forEach { provisioner in
-            unicastAddressRange.addOtherRange(provisioner.allocatedUnicastRange)
-            groupAddressRange.addOtherRange(provisioner.allocatedGroupRange)
-            sceneRange.addOtherRange(provisioner.allocatedSceneRange)
+        meshNetwork.provisioners.filter({ $0 != provisioner }).forEach {
+            unicastAddressRange.addOtherRanges($0.allocatedUnicastRange)
+            groupAddressRange.addOtherRanges($0.allocatedGroupRange)
+            sceneRange.addOtherRanges($0.allocatedSceneRange)
         }
     }
     
@@ -136,6 +134,47 @@ class EditProvisionerViewController: UITableViewController {
         }
     }
     
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        let meshNetwork = MeshNetworkManager.instance.meshNetwork!
+        
+        let cell = sender! as! UITableViewCell
+        let indexPath = tableView.indexPath(for: cell)!
+        
+        switch indexPath.section {
+        case 1: // Allocated ranges
+            let destination = segue.destination as! EditRangesViewController
+            switch indexPath.row {
+            case 0: // Unicast Address
+                destination.bounds = Address.minUnicastAddress...Address.maxUnicastAddress
+                destination.addressRanges = provisioner.allocatedUnicastRange
+                
+                meshNetwork.provisioners.filter({ $0 != provisioner }).forEach { other in
+                    other.allocatedUnicastRange.forEach { destination.otherProvisionerRanges.append($0.range) }
+                }
+            case 1: // GRoup Address
+                destination.bounds = Address.minGroupAddress...Address.maxGroupAddress
+                destination.addressRanges = provisioner.allocatedGroupRange
+                
+                meshNetwork.provisioners.filter({ $0 != provisioner }).forEach { other in
+                    other.allocatedGroupRange.forEach { destination.otherProvisionerRanges.append($0.range) }
+                }
+            case 2: // Scenes
+                destination.bounds = Scene.minScene...Scene.maxScene
+                destination.sceneRanges = provisioner.allocatedSceneRange
+                
+                meshNetwork.provisioners.filter({ $0 != provisioner }).forEach { other in
+                    other.allocatedSceneRange.forEach { destination.otherProvisionerRanges.append($0.range) }
+                }
+            default:
+                // Not possible
+                break
+            }
+        default:
+            // Not possible
+            break
+        }
+    }
+    
     /// Saves the edited or new Provisioner and pops the view contoller if saving
     /// succeeded.
     private func saveProvisioner() {
@@ -181,4 +220,5 @@ class EditProvisionerViewController: UITableViewController {
             presentAlert(title: "Error", message: "Mesh configuration could not be saved.")
         }
     }
+    
 }

@@ -11,14 +11,21 @@ import nRFMeshProvision
 
 extension Selector {
     
-    /// Enables OK button only if there is text.
     static let nameRequired = #selector(UIViewController.nameRequired(_:))
     static let unicastAddress = #selector(UIViewController.unicastAddressOptional(_:))
     static let unicastAddressRequired = #selector(UIViewController.unicastAddressRequired(_:))
+    
 }
 
 extension UIViewController {
     
+    /// Shows a confirmation action sheet with given title and message.
+    /// The handler will be executed when user selects Confirm action.
+    ///
+    /// - parameters:
+    ///   - title:   The alert title.
+    ///   - message: The message below the title.
+    ///   - handler: The Confirm button handler.
     func confirm(title: String?, message: String?, handler: ((UIAlertAction) -> Void)? = nil) {
         DispatchQueue.main.async {
             let alert = UIAlertController(title: title, message: message, preferredStyle: .actionSheet)
@@ -43,6 +50,43 @@ extension UIViewController {
         }
     }
     
+    func presentRangeAlert(title: String?, message: String?, range: ClosedRange<UInt16>? = nil,
+                           handler: ((ClosedRange<UInt16>) -> Void)? = nil) {
+        DispatchQueue.main.async {
+            let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+            alert.addTextField { textField in
+                textField.text                   = range?.lowerBound.hex
+                textField.placeholder            = "Lower bound"
+                textField.clearButtonMode        = .whileEditing
+                textField.returnKeyType          = .next
+                textField.keyboardType           = .alphabet
+                textField.autocapitalizationType = .allCharacters
+                textField.addTarget(self, action: .unicastAddressRequired, for: .editingChanged)
+                textField.addTarget(self, action: .unicastAddressRequired, for: .editingDidBegin)
+            }
+            alert.addTextField { textField in
+                textField.text                   = range?.upperBound.hex
+                textField.placeholder            = "Upper bound"
+                textField.clearButtonMode        = .whileEditing
+                textField.returnKeyType          = .next
+                textField.keyboardType           = .alphabet
+                textField.autocapitalizationType = .allCharacters
+                textField.addTarget(self, action: .unicastAddressRequired, for: .editingChanged)
+                textField.addTarget(self, action: .unicastAddressRequired, for: .editingDidBegin)
+            }
+            alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { _ in
+                let lowerBound = UInt16(alert.textFields![0].text!, radix: 16)
+                let upperBound = UInt16(alert.textFields![1].text!, radix: 16)
+                
+                if let lowerBound = lowerBound, let upperBound = upperBound {
+                    handler?(lowerBound...upperBound)
+                }
+            }))
+            alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+            self.present(alert, animated: true)
+        }
+    }
+    
     /// Displays an alert dialog with given title and message and
     /// a text field with initial text and placeholder.
     /// Use type parameter to set the value validator.
@@ -60,7 +104,7 @@ extension UIViewController {
                           handler: ((String) -> Void)? = nil) {
         DispatchQueue.main.async {
             let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
-            alert.addTextField { (textField) in
+            alert.addTextField { textField in
                 textField.text                   = text
                 textField.placeholder            = placeHolder
                 textField.clearButtonMode        = .whileEditing
@@ -104,7 +148,7 @@ extension UIViewController {
     @objc func unicastAddressOptional(_ textField: UITextField) {
         let alert = getAlert(from: textField)
         
-        if let text = textField.text, text.isEmpty {
+        if let text = textField.text, !text.isEmpty {
             if let address = UInt16(text, radix: 16) {
                 alert.setValid(address.isUnicast)
             } else {

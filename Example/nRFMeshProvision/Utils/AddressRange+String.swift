@@ -12,7 +12,7 @@ import nRFMeshProvision
 extension AddressRange {
     
     func asString() -> String {
-        return "\(lowAddress.asString()) - \(highAddress.asString())"
+        return range.asString()
     }
     
 }

@@ -12,7 +12,7 @@ import nRFMeshProvision
 extension SceneRange {
     
     func asString() -> String {
-        return "\(firstScene.asString()) - \(lastScene.asString())"
+        return range.asString()
     }
     
 }

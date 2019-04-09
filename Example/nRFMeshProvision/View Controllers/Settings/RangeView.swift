@@ -29,25 +29,56 @@ class RangeView: UIView {
         super.init(coder: decoder)
     }
     
+    func setBounds(_ range: ClosedRange<UInt16>) {
+        lowerBound = range.lowerBound
+        upperBound = range.upperBound
+        setNeedsDisplay()
+    }
+    
+    func clearRanges() {
+        ranges.removeAll()
+        setNeedsDisplay()
+    }
+    
+    func clearOtherRanges() {
+        otherRanges.removeAll()
+        setNeedsDisplay()
+    }
+    
     func addRange(_ range: ClosedRange<UInt16>) {
         if range.lowerBound >= lowerBound && range.upperBound <= upperBound {
             ranges.append(range)
+            setNeedsDisplay()
+        }
+    }
+    
+    func addRanges(_ newRanges: [ClosedRange<UInt16>]) {
+        newRanges.forEach { range in
+            addRange(range)
         }
     }
     
     func addOtherRange(_ range: ClosedRange<UInt16>) {
         if range.lowerBound >= lowerBound && range.upperBound <= upperBound {
             otherRanges.append(range)
+            setNeedsDisplay()
+        }
+    }
+    
+    func addOtherRanges(_ newRanges: [ClosedRange<UInt16>]) {
+        newRanges.forEach { range in
+            addOtherRange(range)
         }
     }
 
     func addRange(_ range: AddressRange) {
         if range.lowAddress >= lowerBound && range.highAddress <= upperBound {
             ranges.append(range.range)
+            setNeedsDisplay()
         }
     }
     
-    func addRange(_ newRanges: [AddressRange]) {
+    func addRanges(_ newRanges: [AddressRange]) {
         newRanges.forEach { range in
             addRange(range)
         }
@@ -56,10 +87,11 @@ class RangeView: UIView {
     func addRange(_ range: SceneRange) {
         if range.firstScene >= lowerBound && range.lastScene <= upperBound {
             ranges.append(range.range)
+            setNeedsDisplay()
         }
     }
     
-    func addRange(_ newRanges: [SceneRange]) {
+    func addRanges(_ newRanges: [SceneRange]) {
         newRanges.forEach { range in
             addRange(range)
         }
@@ -68,10 +100,11 @@ class RangeView: UIView {
     func addOtherRange(_ range: AddressRange) {
         if range.lowAddress >= lowerBound && range.highAddress <= upperBound {
             otherRanges.append(range.range)
+            setNeedsDisplay()
         }
     }
     
-    func addOtherRange(_ newRanges: [AddressRange]) {
+    func addOtherRanges(_ newRanges: [AddressRange]) {
         newRanges.forEach { range in
             addOtherRange(range)
         }
@@ -80,10 +113,11 @@ class RangeView: UIView {
     func addOtherRange(_ range: SceneRange) {
         if range.firstScene >= lowerBound && range.lastScene <= upperBound {
             otherRanges.append(range.range)
+            setNeedsDisplay()
         }
     }
     
-    func addOtherRange(_ newRanges: [SceneRange]) {
+    func addOtherRanges(_ newRanges: [SceneRange]) {
         newRanges.forEach { range in
             addOtherRange(range)
         }
