@@ -82,6 +82,21 @@ class SceneRanges: XCTestCase {
         XCTAssertEqual(scenes[0].lastScene, 30)
     }
     
+    func testMergingTouchingRanges() {
+        var scenes = [
+            SceneRange(1...10),
+            SceneRange(11...30)
+        ]
+        scenes.merge()
+        
+        // The array should contain 1 element.
+        XCTAssertEqual(scenes.count, 1)
+        
+        // The ranges should be merged.
+        XCTAssertEqual(scenes[0].firstScene, 1)
+        XCTAssertEqual(scenes[0].lastScene, 30)
+    }
+    
     func testWithSorting() {
         var scenes = [
             SceneRange(20...30),
