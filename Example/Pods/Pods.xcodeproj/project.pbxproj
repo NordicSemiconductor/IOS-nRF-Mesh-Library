@@ -36,6 +36,7 @@
 		35A52D4DECCD815F8B14722C2D96207D /* nRFMeshProvision-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = CF3DBEF363592B052464E2E3D93CB290 /* nRFMeshProvision-dummy.m */; };
 		3F050E2ED9231EC203697587364B553C /* Pods-nRFMeshProvision_Tests-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 21CDD8648681CE8D31824BB49C8D17A6 /* Pods-nRFMeshProvision_Tests-dummy.m */; };
 		525242E2225CC6D30044CECB /* ClosedRange.swift in Sources */ = {isa = PBXBuildFile; fileRef = 525242E1225CC6D30044CECB /* ClosedRange.swift */; };
+		525242E4225DE1EF0044CECB /* RangeObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 525242E3225DE1EF0044CECB /* RangeObject.swift */; };
 		529B757922411970008F1CE7 /* MeshNetworkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529B757822411970008F1CE7 /* MeshNetworkManager.swift */; };
 		529B757D22423DEE008F1CE7 /* Storage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529B757C22423DEE008F1CE7 /* Storage.swift */; };
 		529B75EA224A6CE4008F1CE7 /* Element.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529B75E1224A6CE2008F1CE7 /* Element.swift */; };
@@ -144,6 +145,7 @@
 		4FA42764DC74387E52B6C47F7AC9D3B2 /* nRFMeshProvision.podspec */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; indentWidth = 2; path = nRFMeshProvision.podspec; sourceTree = "<group>"; tabWidth = 2; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		51BBAA3978BFB1C9BAA0B3563DB01A48 /* Pods-nRFMeshProvision_Example-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-nRFMeshProvision_Example-Info.plist"; sourceTree = "<group>"; };
 		525242E1225CC6D30044CECB /* ClosedRange.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClosedRange.swift; sourceTree = "<group>"; };
+		525242E3225DE1EF0044CECB /* RangeObject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RangeObject.swift; sourceTree = "<group>"; };
 		529B757822411970008F1CE7 /* MeshNetworkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MeshNetworkManager.swift; path = nRFMeshProvision/Classes/MeshNetworkManager.swift; sourceTree = "<group>"; };
 		529B757C22423DEE008F1CE7 /* Storage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Storage.swift; path = nRFMeshProvision/Classes/Storage.swift; sourceTree = "<group>"; };
 		529B75E1224A6CE2008F1CE7 /* Element.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Element.swift; sourceTree = "<group>"; };
@@ -350,6 +352,7 @@
 				529B75E8224A6CE2008F1CE7 /* Provisioner.swift */,
 				529B75E2224A6CE2008F1CE7 /* NetworkKey.swift */,
 				529B75E5224A6CE2008F1CE7 /* ApplicationKey.swift */,
+				525242E3225DE1EF0044CECB /* RangeObject.swift */,
 				529B75E4224A6CE2008F1CE7 /* AddressRange.swift */,
 				529B75E3224A6CE2008F1CE7 /* SceneRange.swift */,
 				529B75E9224A6CE2008F1CE7 /* Node.swift */,
@@ -797,6 +800,7 @@
 				529B761F224B7D2D008F1CE7 /* UUID+Hex.swift in Sources */,
 				529B757D22423DEE008F1CE7 /* Storage.swift in Sources */,
 				529B7615224A6D47008F1CE7 /* NodeFeatures.swift in Sources */,
+				525242E4225DE1EF0044CECB /* RangeObject.swift in Sources */,
 				529B75F0224A6CE4008F1CE7 /* MeshNetwork.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

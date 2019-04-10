@@ -18,7 +18,7 @@ class RangeView: UIView {
     @IBInspectable var otherRangesColor: UIColor = UIColor.lightGray
     @IBInspectable var collisionColor:   UIColor = UIColor.nordicRed
     
-    private var ranges: [ClosedRange<UInt16>] = []
+    private var ranges:      [ClosedRange<UInt16>] = []
     private var otherRanges: [ClosedRange<UInt16>] = []
     
     override init(frame: CGRect) {
@@ -71,53 +71,27 @@ class RangeView: UIView {
         }
     }
 
-    func addRange(_ range: AddressRange) {
-        if range.lowAddress >= lowerBound && range.highAddress <= upperBound {
+    func addRange(_ range: RangeObject) {
+        if range.lowerBound >= lowerBound && range.upperBound <= upperBound {
             ranges.append(range.range)
             setNeedsDisplay()
         }
     }
     
-    func addRanges(_ newRanges: [AddressRange]) {
+    func addRanges(_ newRanges: [RangeObject]) {
         newRanges.forEach { range in
             addRange(range)
         }
     }
     
-    func addRange(_ range: SceneRange) {
-        if range.firstScene >= lowerBound && range.lastScene <= upperBound {
-            ranges.append(range.range)
-            setNeedsDisplay()
-        }
-    }
-    
-    func addRanges(_ newRanges: [SceneRange]) {
-        newRanges.forEach { range in
-            addRange(range)
-        }
-    }
-    
-    func addOtherRange(_ range: AddressRange) {
-        if range.lowAddress >= lowerBound && range.highAddress <= upperBound {
+    func addOtherRange(_ range: RangeObject) {
+        if range.lowerBound >= lowerBound && range.upperBound <= upperBound {
             otherRanges.append(range.range)
             setNeedsDisplay()
         }
     }
     
-    func addOtherRanges(_ newRanges: [AddressRange]) {
-        newRanges.forEach { range in
-            addOtherRange(range)
-        }
-    }
-    
-    func addOtherRange(_ range: SceneRange) {
-        if range.firstScene >= lowerBound && range.lastScene <= upperBound {
-            otherRanges.append(range.range)
-            setNeedsDisplay()
-        }
-    }
-    
-    func addOtherRanges(_ newRanges: [SceneRange]) {
+    func addOtherRanges(_ newRanges: [RangeObject]) {
         newRanges.forEach { range in
             addOtherRange(range)
         }

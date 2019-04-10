@@ -146,24 +146,24 @@ class EditProvisionerViewController: UITableViewController {
             switch indexPath.row {
             case 0: // Unicast Address
                 destination.bounds = Address.minUnicastAddress...Address.maxUnicastAddress
-                destination.addressRanges = provisioner.allocatedUnicastRange
+                destination.ranges = provisioner.allocatedUnicastRange
                 
                 meshNetwork.provisioners.filter({ $0 != provisioner }).forEach { other in
-                    other.allocatedUnicastRange.forEach { destination.otherProvisionerRanges.append($0.range) }
+                    destination.otherProvisionerRanges.append(contentsOf: other.allocatedUnicastRange)
                 }
             case 1: // GRoup Address
                 destination.bounds = Address.minGroupAddress...Address.maxGroupAddress
-                destination.addressRanges = provisioner.allocatedGroupRange
+                destination.ranges = provisioner.allocatedGroupRange
                 
                 meshNetwork.provisioners.filter({ $0 != provisioner }).forEach { other in
-                    other.allocatedGroupRange.forEach { destination.otherProvisionerRanges.append($0.range) }
+                    destination.otherProvisionerRanges.append(contentsOf: other.allocatedGroupRange)
                 }
             case 2: // Scenes
                 destination.bounds = Scene.minScene...Scene.maxScene
-                destination.sceneRanges = provisioner.allocatedSceneRange
+                destination.ranges = provisioner.allocatedSceneRange
                 
                 meshNetwork.provisioners.filter({ $0 != provisioner }).forEach { other in
-                    other.allocatedSceneRange.forEach { destination.otherProvisionerRanges.append($0.range) }
+                    destination.otherProvisionerRanges.append(contentsOf: other.allocatedSceneRange)
                 }
             default:
                 // Not possible

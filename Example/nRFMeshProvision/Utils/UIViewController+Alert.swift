@@ -50,7 +50,7 @@ extension UIViewController {
         }
     }
     
-    func presentRangeAlert(title: String?, message: String?, range: ClosedRange<UInt16>? = nil,
+    func presentRangeAlert(title: String?, message: String?, range: RangeObject? = nil,
                            handler: ((ClosedRange<UInt16>) -> Void)? = nil) {
         DispatchQueue.main.async {
             let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)

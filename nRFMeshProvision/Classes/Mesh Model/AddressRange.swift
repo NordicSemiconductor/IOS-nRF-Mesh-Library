@@ -7,21 +7,14 @@
 
 import Foundation
 
-public struct AddressRange: Codable {
-    public let lowAddress:  Address
-    public let highAddress: Address
+public class AddressRange: RangeObject, Codable {
     
-    public init(from lowAddress: Scene, to highAddress: Scene) {
-        self.lowAddress = min(lowAddress, highAddress)
-        self.highAddress  = max(lowAddress, highAddress)
+    public var lowAddress: Address {
+        return range.lowerBound
     }
     
-    public init(_ range: ClosedRange<Scene>) {
-        self.init(from: range.lowerBound, to: range.upperBound)
-    }
-    
-    public var range: ClosedRange<Address> {
-        return lowAddress...highAddress
+    public var highAddress: Address {
+        return range.upperBound
     }
     
     // MARK: - Codable
@@ -31,7 +24,7 @@ public struct AddressRange: Codable {
         case highAddress
     }
     
-    public init(from decoder: Decoder) throws {
+    public required convenience init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         let lowAddressAsString  = try container.decode(String.self, forKey: .lowAddress)
         let highAddressAsString = try container.decode(String.self, forKey: .highAddress)
@@ -49,29 +42,8 @@ public struct AddressRange: Codable {
     
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(lowAddress.hex,  forKey: .lowAddress)
-        try container.encode(highAddress.hex, forKey: .highAddress)
-    }
-}
-
-// MARK: - Operators
-
-extension AddressRange: Equatable {
-    
-    public static func ==(left: AddressRange, right: AddressRange) -> Bool {
-        return left.lowAddress == right.lowAddress && left.highAddress == right.highAddress
-    }
-    
-    public static func ==(left: AddressRange, right: ClosedRange<Address>) -> Bool {
-        return left.lowAddress == right.lowerBound && left.highAddress == right.upperBound
-    }
-    
-    public static func !=(left: AddressRange, right: AddressRange) -> Bool {
-        return left.lowAddress != right.lowAddress || left.highAddress != right.highAddress
-    }
-    
-    public static func !=(left: AddressRange, right: ClosedRange<Address>) -> Bool {
-        return left.lowAddress != right.lowerBound || left.highAddress != right.upperBound
+        try container.encode(range.lowerBound.hex, forKey: .lowAddress)
+        try container.encode(range.upperBound.hex, forKey: .highAddress)
     }
 }
 
@@ -118,13 +90,6 @@ public extension AddressRange {
             || (other.lowAddress < lowAddress && other.highAddress < lowAddress)
     }
     
-    /// Returns whether the given address is in the address range.
-    ///
-    /// - parameter address: The address to be checked.
-    /// - returns: `True` if the address is inside the range.
-    func contains(_ address: Address) -> Bool {
-        return address >= lowAddress && address <= highAddress
-    }
 }
 
 public extension Array where Element == AddressRange {
@@ -142,51 +107,6 @@ public extension Array where Element == AddressRange {
         return true
     }
     
-    /// Returns a sorted array of ranges. If any ranges were overlapping, they
-    /// will be merged.
-    func merged() -> [AddressRange] {
-        var result: [AddressRange] = []
-        
-        var accumulator = AddressRange(0...0)
-        
-        for range in sorted(by: { $0.lowAddress < $1.lowAddress }) {
-            if accumulator == 0...0 {
-                accumulator = range
-            }
-            
-            if accumulator.highAddress >= range.highAddress {
-                // Range is already in accumulator's range.
-            }
-                
-            else if accumulator.highAddress >= range.lowAddress {
-                accumulator = AddressRange(accumulator.lowAddress...range.highAddress)
-            }
-                
-            else /* if accumulator.highAddress < range.lowAddress */ {
-                result.append(accumulator)
-                accumulator = range
-            }
-        }
-        
-        if accumulator != 0...0 {
-            result.append(accumulator)
-        }
-        
-        return result
-    }
-    
-    /// Merges all overlapping ranges from the array and sorts them.
-    mutating func merge() {
-        self = merged()
-    }
-    
-    /// Returns whether the given address is in the address range array.
-    ///
-    /// - parameter address: The address to be checked.
-    /// - returns: `True` if the address is inside the range array.
-    func contains(_ address: Address) -> Bool {
-        return contains { $0.contains(address) }
-    }
 }
 
 // MARK: - Defaults

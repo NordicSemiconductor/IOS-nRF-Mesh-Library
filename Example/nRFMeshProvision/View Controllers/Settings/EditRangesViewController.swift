@@ -27,21 +27,15 @@ class EditRangesViewController: UIViewController {
     // MARK: - View Controller parameters
     
     var bounds: ClosedRange<UInt16>!
-    var addressRanges: [AddressRange]?
-    var sceneRanges: [SceneRange]?
-    var otherProvisionerRanges: [ClosedRange<UInt16>]! = []
+    var ranges: [RangeObject]!
+    var otherProvisionerRanges: [RangeObject]! = []
     
     override func viewDidLoad() {
         tableView.delegate = self
         tableView.dataSource = self
         
         rangeSummary.setBounds(bounds)
-        if let addressRanges = addressRanges {
-            rangeSummary.addRanges(addressRanges)
-        }
-        if let sceneRanges = sceneRanges {
-            rangeSummary.addRanges(sceneRanges)
-        }
+        rangeSummary.addRanges(ranges)
         rangeSummary.addOtherRanges(otherProvisionerRanges)
         lowerBoundLabel.text = bounds.lowerBound.asString()
         upperBoundLabel.text = bounds.upperBound.asString()
@@ -58,21 +52,15 @@ extension EditRangesViewController: UITableViewDelegate, UITableViewDataSource {
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return addressRanges?.count ?? sceneRanges?.count ?? 0
+        return ranges.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "rangeCell", for: indexPath) as! RangeCell
         cell.rangeView.setBounds(bounds)
-        if let addressRanges = addressRanges {
-            let range = addressRanges[indexPath.row]
-            cell.range = range.range
-            cell.otherRanges = addressRanges.filter({ $0 != range }).map({ $0.range }) + otherProvisionerRanges
-        } else {
-            let range = sceneRanges![indexPath.row]
-            cell.range = range.range
-            cell.otherRanges = sceneRanges!.filter({ $0 != range }).map({ $0.range }) + otherProvisionerRanges
-        }
+        let range = ranges[indexPath.row]
+        cell.range = range
+        cell.otherRanges = ranges.filter({ $0 != range }) + otherProvisionerRanges
         return cell
     }
     
@@ -92,13 +80,9 @@ extension EditRangesViewController {
         let title = edit ? "Edit Range" : "New Range"
         let message = "Enter lower and upper bounds as 4-character hexadecimal strings.\nValid range: \(bounds.asString())."
         
-        var range: ClosedRange<UInt16>? = nil
+        var range: RangeObject? = nil
         if let indexPath = indexPath {
-            if let addressRanges = addressRanges {
-                range = addressRanges[indexPath.row].range
-            } else if let sceneRanges = sceneRanges {
-                range = sceneRanges[indexPath.row].range
-            }
+            range = ranges[indexPath.row]
         }
         presentRangeAlert(title: title, message: message, range: range) { newRange in
             guard newRange.isInside(self.bounds) else {
@@ -107,23 +91,15 @@ extension EditRangesViewController {
             }
             
             if let indexPath = indexPath {
-                self.addressRanges?.remove(at: indexPath.row)
-                self.sceneRanges?.remove(at: indexPath.row)
+                self.ranges.remove(at: indexPath.row)
             }
-            self.addressRanges?.append(AddressRange(newRange))
-            self.addressRanges?.merge()
-            self.sceneRanges?.append(SceneRange(newRange))
-            self.sceneRanges?.merge()
+            self.ranges.append(AddressRange(newRange))
+            self.ranges.merge()
             
             self.tableView.reloadData()
             
             self.rangeSummary.clearRanges()
-            if let addressRanges = self.addressRanges {
-                self.rangeSummary.addRanges(addressRanges)
-            }
-            if let sceneRanges = self.sceneRanges {
-                self.rangeSummary.addRanges(sceneRanges)
-            }
+            self.rangeSummary.addRanges(self.ranges)
         }
     }
 }

@@ -14,7 +14,7 @@ class RangeCell: UITableViewCell {
     @IBOutlet weak var label: UILabel!
     @IBOutlet weak var rangeView: RangeView!
     
-    var range: ClosedRange<UInt16>! {
+    var range: RangeObject! {
         didSet {
             label.text = range.asString()
             rangeView.clearRanges()
@@ -22,8 +22,9 @@ class RangeCell: UITableViewCell {
         }
     }
     
-    var otherRanges: [ClosedRange<UInt16>]! {
+    var otherRanges: [RangeObject]! {
         didSet {
+            rangeView.clearOtherRanges()
             rangeView.addOtherRanges(otherRanges)
         }
     }

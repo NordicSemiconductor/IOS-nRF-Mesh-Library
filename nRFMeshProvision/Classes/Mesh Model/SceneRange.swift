@@ -7,21 +7,14 @@
 
 import Foundation
 
-public struct SceneRange: Codable, Hashable {
-    public let firstScene: Scene
-    public let lastScene:  Scene
+public class SceneRange: RangeObject, Codable {
     
-    public init(from firstScene: Scene, to lastScene: Scene) {
-        self.firstScene = min(firstScene, lastScene)
-        self.lastScene  = max(firstScene, lastScene)
+    public var firstScene: Address {
+        return range.lowerBound
     }
     
-    public init(_ range: ClosedRange<Scene>) {
-        self.init(from: range.lowerBound, to: range.upperBound)
-    }
-    
-    public var range: ClosedRange<Scene> {
-        return firstScene...lastScene
+    public var lastScene: Address {
+        return range.upperBound
     }
     
     // MARK: - Codable
@@ -31,7 +24,7 @@ public struct SceneRange: Codable, Hashable {
         case lastScene
     }
     
-    public init(from decoder: Decoder) throws {
+    public required convenience init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         let firstSceneAsString = try container.decode(String.self, forKey: .firstScene)
         let lastSceneAsString  = try container.decode(String.self, forKey: .lastScene)
@@ -49,29 +42,8 @@ public struct SceneRange: Codable, Hashable {
     
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(firstScene.hex, forKey: .firstScene)
-        try container.encode(lastScene.hex,  forKey: .lastScene)
-    }
-}
-
-// MARK: - Operators
-
-extension SceneRange: Equatable {
-    
-    public static func ==(left: SceneRange, right: SceneRange) -> Bool {
-        return left.firstScene == right.firstScene && left.lastScene == right.lastScene
-    }
-    
-    public static func ==(left: SceneRange, right: ClosedRange<Scene>) -> Bool {
-        return left.firstScene == right.lowerBound && left.lastScene == right.upperBound
-    }
-    
-    public static func !=(left: SceneRange, right: SceneRange) -> Bool {
-        return left.firstScene != right.firstScene || left.lastScene != right.lastScene
-    }
-    
-    public static func !=(left: SceneRange, right: ClosedRange<Scene>) -> Bool {
-        return left.firstScene != right.lowerBound || left.lastScene != right.upperBound
+        try container.encode(range.lowerBound.hex, forKey: .firstScene)
+        try container.encode(range.upperBound.hex, forKey: .lastScene)
     }
 }
 
@@ -103,14 +75,6 @@ public extension SceneRange {
             || (other.firstScene < firstScene && other.lastScene < firstScene)
     }
     
-    /// Returns whether the given address is in the address range.
-    ///
-    /// - parameter scene: The scene to be checked.
-    /// - returns: `True` if the scene is inside the range.
-    func contains(_ scene: Scene) -> Bool {
-        return scene >= firstScene && scene <= lastScene
-    }
-    
 }
 
 public extension Array where Element == SceneRange {
@@ -125,52 +89,6 @@ public extension Array where Element == SceneRange {
             }
         }
         return true
-    }
-    
-    /// Returns a sorted array of ranges. If any ranges were overlapping, they
-    /// will be merged.
-    func merged() -> [SceneRange] {
-        var result: [SceneRange] = []
-        
-        var accumulator = SceneRange(0...0)
-        
-        for range in sorted(by: { $0.firstScene < $1.firstScene }) {
-            if accumulator == 0...0 {
-                accumulator = range
-            }
-            
-            if accumulator.lastScene >= range.lastScene {
-                // Range is already in accumulator's range.
-            }
-            
-            else if accumulator.lastScene >= range.firstScene {
-                accumulator = SceneRange(accumulator.firstScene...range.lastScene)
-            }
-            
-            else /* if accumulator.lastScene < range.firstScene */ {
-                result.append(accumulator)
-                accumulator = range
-            }
-        }
-        
-        if accumulator != 0...0 {
-            result.append(accumulator)
-        }
-        
-        return result
-    }
-    
-    /// Merges all overlapping ranges from the array and sorts them.
-    mutating func merge() {
-        self = merged()
-    }
-    
-    /// Returns whether the given scene is in the scene range array.
-    ///
-    /// - parameter address: The scene to be checked.
-    /// - returns: `True` if the scene is inside the range array.
-    func contains(_ scene: Scene) -> Bool {
-        return contains { $0.contains(scene) }
     }
     
 }
