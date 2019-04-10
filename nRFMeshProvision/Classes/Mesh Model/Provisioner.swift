@@ -86,22 +86,30 @@ public extension Provisioner {
             && !allocatedSceneRange.isEmpty   && allocatedSceneRange.isValid
     }
     
-    /// Allocates Address range for the Provisioner. This method will
-    /// automatically merge ranges if they ovelap, and assign the range
-    /// to unicast or group ranges.
+    /// Allocates Unicast Address range for the Provisioner. This method
+    /// will automatically merge ranges if they ovelap.
     ///
-    /// - parameter range: The new unicast or group range to allocate.
-    func allocateRange(_ range: AddressRange) {
+    /// - parameter range: The new unicast range to allocate.
+    func allocateUnicastRange(_ range: AddressRange) {
         if range.isUnicastRange {
             allocatedUnicastRange.append(range)
             allocatedUnicastRange.merge()
-        } else if range.isGroupRange {
+        }
+        // else,
+        //     ignore invalid range.
+    }
+    
+    /// Allocates Group Address range for the Provisioner. This method
+    /// will automatically merge ranges if they ovelap.
+    ///
+    /// - parameter range: The new group range to allocate.
+    func allocateGroupRange(_ range: AddressRange) {
+        if range.isGroupRange {
             allocatedGroupRange.append(range)
             allocatedGroupRange.merge()
         }
         // else,
-        //     ignore, as the only unicast and group ranges can be added
-        //     to a Provisioner.
+        //     ignore invalid range.
     }
     
     /// Allocates Scene range for the Provisioned. This method will
@@ -115,6 +123,54 @@ public extension Provisioner {
         }
         // else
         //    ignore invalid range.
+    }
+    
+    /// Reallocates Unicast Address ranges for the Provisioned. This method
+    /// will automatically merge ranges if they overlap.
+    ///
+    /// - parameter ranges: The new array of ranges to allocate.
+    func reallocateUnicastAddressRanges(_ ranges: [AddressRange]) {
+        allocatedUnicastRange.removeAll()
+        ranges.forEach { range in
+            if range.isUnicastRange {
+                allocatedUnicastRange.append(range)
+            }
+            // else
+            //    ignore invalid range.
+        }
+        allocatedUnicastRange.merge()
+    }
+    
+    /// Reallocates Group Address ranges for the Provisioned. This method
+    /// will automatically merge ranges if they overlap.
+    ///
+    /// - parameter ranges: The new array of ranges to allocate.
+    func reallocateGroupAddressRanges(_ ranges: [AddressRange]) {
+        allocatedGroupRange.removeAll()
+        ranges.forEach { range in
+            if range.isGroupRange {
+                allocatedGroupRange.append(range)
+            }
+            // else
+            //    ignore invalid range.
+        }
+        allocatedGroupRange.merge()
+    }
+    
+    /// Reallocates Scene ranges for the Provisioned. This method will
+    /// automatically merge ranges if they overlap.
+    ///
+    /// - parameter ranges: The new array of ranges to allocate.
+    func reallocateSceneRanges(_ ranges: [SceneRange]) {
+        allocatedSceneRange.removeAll()
+        ranges.forEach { range in
+            if range.isValid {
+                allocatedSceneRange.append(range)
+            }
+            // else
+            //    ignore invalid range.
+        }
+        allocatedSceneRange.merge()
     }
     
     /// Returns true if the count addresses starting from the given one are in

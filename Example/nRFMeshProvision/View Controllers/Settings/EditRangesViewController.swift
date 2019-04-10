@@ -9,6 +9,28 @@
 import UIKit
 import nRFMeshProvision
 
+enum RangeType {
+    case unicastAddress
+    case groupAddress
+    case scene
+    
+    var validator: Selector {
+        switch self {
+        case .unicastAddress: return .unicastAddressRequired
+        case .groupAddress:   return .groupAddressRequired
+        case .scene:          return .scene
+        }
+    }
+}
+
+protocol EditRangesDelegate {
+    /// Method called when user has added, deleted or modified any range.
+    ///
+    /// - parameter type:   The range type.
+    /// - parameter ranges: The new ranges.
+    func ranges(ofType type: RangeType, haveChangeTo ranges: [RangeObject])
+}
+
 class EditRangesViewController: UIViewController {
     
     // MARK: - Outlets
@@ -21,10 +43,14 @@ class EditRangesViewController: UIViewController {
     // MARK: - Actions
     
     @IBAction func addTapped(_ sender: UIBarButtonItem) {
-        showRangeAlert()
+        presentRangeDialog()
     }
     
     // MARK: - View Controller parameters
+    
+    var delegate: EditRangesDelegate?
+    var type: RangeType!
+    var modified = false
     
     var bounds: ClosedRange<UInt16>!
     var ranges: [RangeObject]!
@@ -39,8 +65,22 @@ class EditRangesViewController: UIViewController {
         rangeSummary.addOtherRanges(otherProvisionerRanges)
         lowerBoundLabel.text = bounds.lowerBound.asString()
         upperBoundLabel.text = bounds.upperBound.asString()
+        
+        showEditing(ranges.count > 1)
     }
     
+    override func viewWillDisappear(_ animated: Bool) {
+        if modified {
+            delegate?.ranges(ofType: type, haveChangeTo: ranges)
+        }
+    }
+    
+    override func setEditing(_ editing: Bool, animated: Bool) {
+        super.setEditing(editing, animated: animated)
+        
+        // This enables the editing mode in the table view.
+        tableView.setEditing(editing, animated: animated)
+    }
 }
 
 // MARK: - Table View Delegate
@@ -67,15 +107,39 @@ extension EditRangesViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         
-        showRangeAlert(for: indexPath)
+        presentRangeDialog(for: indexPath)
     }
+    
+    func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
+        return ranges.count > 1
+    }
+    
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+        if editingStyle == .delete {
+            ranges.remove(at: indexPath.row)
+            modified = true
+            
+            tableView.beginUpdates()
+            tableView.deleteRows(at: [indexPath], with: .automatic)
+            tableView.endUpdates()
+            
+            rangeSummary.clearRanges()
+            rangeSummary.addRanges(self.ranges)
+            
+            if ranges.count == 1 {
+                setEditing(false, animated: true)
+                showEditing(false)
+            }
+        }
+    }
+    
 }
 
 // MARK: - Private API
 
 extension EditRangesViewController {
     
-    func showRangeAlert(for indexPath: IndexPath? = nil) {
+    private func presentRangeDialog(for indexPath: IndexPath? = nil) {
         let edit = indexPath != nil
         let title = edit ? "Edit Range" : "New Range"
         let message = "Enter lower and upper bounds as 4-character hexadecimal strings.\nValid range: \(bounds.asString())."
@@ -84,22 +148,48 @@ extension EditRangesViewController {
         if let indexPath = indexPath {
             range = ranges[indexPath.row]
         }
-        presentRangeAlert(title: title, message: message, range: range) { newRange in
+        presentRangeAlert(title: title, message: message, range: range, type: type.validator) { newRange in
             guard newRange.isInside(self.bounds) else {
                 self.presentAlert(title: "Invalid range", message: "Given range is outside of valid range.")
                 return
             }
+            self.modified = true
             
+            // When a range was modified, remove the old one.
             if let indexPath = indexPath {
                 self.ranges.remove(at: indexPath.row)
             }
-            self.ranges.append(AddressRange(newRange))
+            // Add the new range. It will be added to the end, but the `merge()` will sort them again.
+            switch self.type! {
+            case .unicastAddress, .groupAddress:
+                self.ranges.append(AddressRange(newRange))
+            case .scene:
+                self.ranges.append(SceneRange(newRange))
+            }
+            // Sort ranges.
             self.ranges.merge()
             
+            // And refresh the table view.
             self.tableView.reloadData()
             
+            // Update the range summary at the bottom.
             self.rangeSummary.clearRanges()
             self.rangeSummary.addRanges(self.ranges)
+            
+            // We should quit Edit mode when only 1 range is left.
+            self.showEditing(self.ranges.count > 1)
         }
     }
+    
+    func showEditing(_ editing: Bool) {
+        if editing && !navigationItem.rightBarButtonItems!.contains(editButtonItem) {
+            navigationItem.rightBarButtonItems!.append(editButtonItem)
+        }
+        if !editing && navigationItem.rightBarButtonItems!.contains(editButtonItem) {
+            navigationItem.rightBarButtonItems!.removeAll {
+                $0 == self.editButtonItem
+            }
+        }
+    }
+    
 }

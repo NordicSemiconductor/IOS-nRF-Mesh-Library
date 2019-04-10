@@ -14,6 +14,10 @@ extension Selector {
     static let nameRequired = #selector(UIViewController.nameRequired(_:))
     static let unicastAddress = #selector(UIViewController.unicastAddressOptional(_:))
     static let unicastAddressRequired = #selector(UIViewController.unicastAddressRequired(_:))
+    static let groupAddress = #selector(UIViewController.groupAddressOptional(_:))
+    static let groupAddressRequired = #selector(UIViewController.groupAddressRequired(_:))
+    static let scene = #selector(UIViewController.sceneOptional(_:))
+    static let sceneRequired = #selector(UIViewController.sceneRequired(_:))
     
 }
 
@@ -51,6 +55,7 @@ extension UIViewController {
     }
     
     func presentRangeAlert(title: String?, message: String?, range: RangeObject? = nil,
+                           type selector: Selector? = nil,
                            handler: ((ClosedRange<UInt16>) -> Void)? = nil) {
         DispatchQueue.main.async {
             let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
@@ -61,8 +66,10 @@ extension UIViewController {
                 textField.returnKeyType          = .next
                 textField.keyboardType           = .alphabet
                 textField.autocapitalizationType = .allCharacters
-                textField.addTarget(self, action: .unicastAddressRequired, for: .editingChanged)
-                textField.addTarget(self, action: .unicastAddressRequired, for: .editingDidBegin)
+                if let selector = selector {
+                    textField.addTarget(self, action: selector, for: .editingChanged)
+                    textField.addTarget(self, action: selector, for: .editingDidBegin)
+                }
             }
             alert.addTextField { textField in
                 textField.text                   = range?.upperBound.hex
@@ -71,8 +78,10 @@ extension UIViewController {
                 textField.returnKeyType          = .next
                 textField.keyboardType           = .alphabet
                 textField.autocapitalizationType = .allCharacters
-                textField.addTarget(self, action: .unicastAddressRequired, for: .editingChanged)
-                textField.addTarget(self, action: .unicastAddressRequired, for: .editingDidBegin)
+                if let selector = selector {
+                    textField.addTarget(self, action: selector, for: .editingChanged)
+                    textField.addTarget(self, action: selector, for: .editingDidBegin)
+                }
             }
             alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { _ in
                 let lowerBound = UInt16(alert.textFields![0].text!, radix: 16)
@@ -119,7 +128,8 @@ extension UIViewController {
                     case .nameRequired:
                         textField.autocapitalizationType = .words
                         break
-                    case .unicastAddress, .unicastAddressRequired:
+                    case .unicastAddress, .groupAddress,
+                         .unicastAddressRequired, .groupAddressRequired:
                         textField.autocapitalizationType = .allCharacters
                     default:
                         break
@@ -159,11 +169,59 @@ extension UIViewController {
         }
     }
     
+    @objc func groupAddressOptional(_ textField: UITextField) {
+        let alert = getAlert(from: textField)
+        
+        if let text = textField.text, !text.isEmpty {
+            if let address = UInt16(text, radix: 16) {
+                alert.setValid(address.isGroup)
+            } else {
+                alert.setValid(false)
+            }
+        } else {
+            alert.setValid(true)
+        }
+    }
+    
+    @objc func sceneOptional(_ textField: UITextField) {
+        let alert = getAlert(from: textField)
+        
+        if let text = textField.text, !text.isEmpty {
+            if let scene = UInt16(text, radix: 16) {
+                alert.setValid(scene.isValidScene)
+            } else {
+                alert.setValid(false)
+            }
+        } else {
+            alert.setValid(true)
+        }
+    }
+    
     @objc func unicastAddressRequired(_ textField: UITextField) {
         let alert = getAlert(from: textField)
         
         if let text = textField.text, let address = UInt16(text, radix: 16) {
             alert.setValid(address.isUnicast)
+        } else {
+            alert.setValid(false)
+        }
+    }
+    
+    @objc func groupAddressRequired(_ textField: UITextField) {
+        let alert = getAlert(from: textField)
+        
+        if let text = textField.text, let address = UInt16(text, radix: 16) {
+            alert.setValid(address.isGroup)
+        } else {
+            alert.setValid(false)
+        }
+    }
+    
+    @objc func sceneRequired(_ textField: UITextField) {
+        let alert = getAlert(from: textField)
+        
+        if let text = textField.text, let scene = UInt16(text, radix: 16) {
+            alert.setValid(scene.isValidScene)
         } else {
             alert.setValid(false)
         }

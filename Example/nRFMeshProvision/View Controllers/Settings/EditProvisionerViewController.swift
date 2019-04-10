@@ -22,6 +22,8 @@ protocol EditProvisionerDelegate {
 
 class EditProvisionerViewController: UITableViewController {
 
+    // MARK: - Outlets
+    
     @IBOutlet weak var name: UITableViewCell!
     @IBOutlet weak var unicastAddress: UITableViewCell!
     @IBOutlet weak var unicastAddressRange: RangeView!
@@ -31,12 +33,16 @@ class EditProvisionerViewController: UITableViewController {
     @IBOutlet weak var disableConfigCell: UITableViewCell!
     @IBOutlet weak var useThisProvisionerCell: UITableViewCell!
     
+    // MARK: - Actions
+    
     @IBAction func doneTapped(_ sender: UIBarButtonItem) {
         saveProvisioner()
     }
     @IBAction func cancelTapped(_ sender: UIBarButtonItem) {
         dismiss(animated: true)
     }
+    
+    // MARK: - Fields
     
     /// The Provisioner to edit or `nil` if a new one is created.
     var provisioner: Provisioner!
@@ -45,9 +51,14 @@ class EditProvisionerViewController: UITableViewController {
     /// A flag indicating whether the user edits or adds a new Provisioner.
     var adding = false
     
-    var newName: String? = nil
-    var newAddress: Address? = nil
-    var disableConfigCapabilities: Bool = false
+    private var newName: String? = nil
+    private var newAddress: Address? = nil
+    private var disableConfigCapabilities: Bool = false
+    private var newUnicastAddressRange: [AddressRange]? = nil
+    private var newGroupAddressRange: [AddressRange]? = nil
+    private var newSceneRange: [SceneRange]? = nil
+    
+    // MARK: - Implementation
 
     override func viewDidLoad() {
         if provisioner == nil {
@@ -82,8 +93,6 @@ class EditProvisionerViewController: UITableViewController {
         }
     }
     
-    // MARK: - Table view data source
-    
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         
@@ -98,7 +107,6 @@ class EditProvisionerViewController: UITableViewController {
                                  type: .nameRequired) { newName in
                                     self.newName = newName
                                     self.name.detailTextLabel?.text = newName
-                                    self.title = newName
                 }
             case 1: // Unicast Address
                 let node = meshNetwork.node(for: provisioner)
@@ -143,24 +151,32 @@ class EditProvisionerViewController: UITableViewController {
         switch indexPath.section {
         case 1: // Allocated ranges
             let destination = segue.destination as! EditRangesViewController
+            destination.delegate = self
+            
             switch indexPath.row {
             case 0: // Unicast Address
+                destination.title  = "Unicast Addresses"
+                destination.type   = .unicastAddress
                 destination.bounds = Address.minUnicastAddress...Address.maxUnicastAddress
-                destination.ranges = provisioner.allocatedUnicastRange
-                
+                destination.ranges = newUnicastAddressRange ?? provisioner.allocatedUnicastRange
+                                
                 meshNetwork.provisioners.filter({ $0 != provisioner }).forEach { other in
                     destination.otherProvisionerRanges.append(contentsOf: other.allocatedUnicastRange)
                 }
-            case 1: // GRoup Address
+            case 1: // Group Address
+                destination.title  = "Group Addresses"
+                destination.type   = .groupAddress
                 destination.bounds = Address.minGroupAddress...Address.maxGroupAddress
-                destination.ranges = provisioner.allocatedGroupRange
+                destination.ranges = newGroupAddressRange ?? provisioner.allocatedGroupRange
                 
                 meshNetwork.provisioners.filter({ $0 != provisioner }).forEach { other in
                     destination.otherProvisionerRanges.append(contentsOf: other.allocatedGroupRange)
                 }
             case 2: // Scenes
+                destination.title  = "Scenes"
+                destination.type   = .scene
                 destination.bounds = Scene.minScene...Scene.maxScene
-                destination.ranges = provisioner.allocatedSceneRange
+                destination.ranges = newSceneRange ?? provisioner.allocatedSceneRange
                 
                 meshNetwork.provisioners.filter({ $0 != provisioner }).forEach { other in
                     destination.otherProvisionerRanges.append(contentsOf: other.allocatedSceneRange)
@@ -193,7 +209,15 @@ class EditProvisionerViewController: UITableViewController {
             if let newName = newName {
                 provisioner.provisionerName = newName
             }
-            // TODO ranges
+            if let newUnicastAddressRange = newUnicastAddressRange {
+                provisioner.reallocateUnicastAddressRanges(newUnicastAddressRange)
+            }
+            if let newGroupAddressRange = newGroupAddressRange {
+                provisioner.reallocateGroupAddressRanges(newGroupAddressRange)
+            }
+            if let newSceneRange = newSceneRange {
+                provisioner.reallocateSceneRanges(newSceneRange)
+            }
             
             if adding {
                 delegate?.provisionerWasAdded(provisioner)
@@ -218,6 +242,27 @@ class EditProvisionerViewController: UITableViewController {
             dismiss(animated: true)
         } else {
             presentAlert(title: "Error", message: "Mesh configuration could not be saved.")
+        }
+    }
+    
+}
+
+extension EditProvisionerViewController: EditRangesDelegate {
+    
+    func ranges(ofType type: RangeType, haveChangeTo ranges: [RangeObject]) {
+        switch type {
+        case .unicastAddress:
+            unicastAddressRange.clearRanges()
+            unicastAddressRange.addRanges(ranges)
+            newUnicastAddressRange = ranges as? [AddressRange]
+        case .groupAddress:
+            groupAddressRange.clearRanges()
+            groupAddressRange.addRanges(ranges)
+            newGroupAddressRange = ranges as? [AddressRange]
+        case .scene:
+            sceneRange.clearRanges()
+            sceneRange.addRanges(ranges)
+            newSceneRange = ranges as? [SceneRange]
         }
     }
     
