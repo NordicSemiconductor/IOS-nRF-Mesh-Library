@@ -199,7 +199,7 @@ extension EditRangesViewController {
                 addressRanges -= $0 as! AddressRange
             }
             ranges = addressRanges
-        }
+        } else
         // Try removing other Provisioner's ranges form ranges
         // if they are Scene Ranges.
         if var sceneRanges = ranges as? [SceneRange] {
@@ -208,6 +208,7 @@ extension EditRangesViewController {
             }
             ranges = sceneRanges
         }
+        
         modified = true
         
         // Reload views.

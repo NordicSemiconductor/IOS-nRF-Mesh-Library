@@ -186,6 +186,8 @@ private extension ProvisionersViewController {
             }
         }
         tableView.showEmptyView()
+        setEditing(false, animated: false)
+        tableView.setEditing(false, animated: false)
     }
     
     /// Hides the 'Empty View'.
