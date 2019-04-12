@@ -37,6 +37,18 @@ public class AddressRange: RangeObject, Codable {
             throw DecodingError.dataCorruptedError(forKey: .highAddress, in: container,
                                                    debugDescription: "Address must be 4-character hexadecimal string")
         }
+        guard lowAddress.isUnicast || lowAddress.isGroup else {
+            throw DecodingError.dataCorruptedError(forKey: .lowAddress, in: container,
+                                                   debugDescription: "Low address must be a Unicast or Group address")
+        }
+        guard highAddress.isUnicast || highAddress.isGroup else {
+            throw DecodingError.dataCorruptedError(forKey: .highAddress, in: container,
+                                                   debugDescription: "High address must be a Unicast or Group address")
+        }
+        guard (lowAddress.isUnicast && highAddress.isUnicast) || (lowAddress.isGroup && highAddress.isGroup) else {
+            throw DecodingError.dataCorruptedError(forKey: .highAddress, in: container,
+                                                   debugDescription: "High address of different type than low address")
+        }
         self.init(from: lowAddress, to: highAddress)
     }
     
@@ -47,64 +59,124 @@ public class AddressRange: RangeObject, Codable {
     }
 }
 
-// MARK: - Public API
+// MARK: - Operators
 
 public extension AddressRange {
     
-    /// Returns true if the address range is valid. Valid address ranges
-    /// are in Unicast or Group ranges.
-    ///
-    /// - returns: True if the address range is in Unicast or Group range.
-    var isValid: Bool {
-        return isUnicastRange || isGroupRange
+    static func +(left: AddressRange, right: AddressRange) -> [AddressRange] {
+        if left.distance(to: right) == 0 {
+            return [AddressRange(min(left.lowerBound, right.lowerBound)...max(left.upperBound, right.upperBound))]
+        }
+        return [left, right]
     }
     
-    /// Returns true if the address range is in Unicast address range
-    ///
-    /// - returns: True if the address range is in Unicast address range.
-    var isUnicastRange: Bool {
-        return lowAddress.isUnicast && highAddress.isUnicast
-    }
-    
-    /// Returns true if the address range is in Group address  range.
-    ///
-    /// - returns: True if the address range is in Group address  range.
-    var isGroupRange: Bool {
-        return lowAddress.isGroup && highAddress.isGroup
-    }
-    
-    /// Returns true if this and the given Address Range overlapps.
-    ///
-    /// - parameter range: The range to check overlapping.
-    /// - returns: True if ranges overlap.
-    func overlaps(_ other: AddressRange) -> Bool {
-        return !doesNotOverlap(other)
-    }
-    
-    /// Returns true if this and the given Address Range do not overlap.
-    ///
-    /// - parameter range: The range to check overlapping.
-    /// - returns: True if ranges do not overlap.
-    func doesNotOverlap(_ other: AddressRange) -> Bool {
-        return (lowAddress < other.lowAddress && highAddress < other.lowAddress)
-            || (other.lowAddress < lowAddress && other.highAddress < lowAddress)
+    static func -(left: AddressRange, right: AddressRange) -> [AddressRange] {
+        var result: [AddressRange] = []
+        
+        // Left:   |------------|                    |-----------|                 |---------|
+        //                  -                              -                            -
+        // Right:      |-----------------|   or                     |---|   or        |----|
+        //                  =                              =                            =
+        // Result: |---|                             |-----------|                 |--|
+        if right.lowerBound > left.lowerBound {
+            let leftSlice = AddressRange(left.lowerBound...(min(left.upperBound, right.lowerBound - 1)))
+            result.append(leftSlice)
+        }
+        
+        // Left:                |----------|             |-----------|
+        //                         -                          -
+        // Right:      |----------------|           or       |----|
+        //                         =                          =
+        // Result:                      |--|                      |--|
+        if right.upperBound < left.upperBound && right.upperBound >= left.lowerBound {
+            let rightSlice = AddressRange(right.upperBound + 1...left.upperBound)
+            result.append(rightSlice)
+        }
+        return result
     }
     
 }
 
 public extension Array where Element == AddressRange {
     
-    /// Returns true if all the address ranges are valid. Valid address ranges
+    static func +=(array: inout [AddressRange], other: AddressRange) {
+        array.append(other)
+        array.merge()
+    }
+    
+    static func +=(array: inout [AddressRange], otherArray: [AddressRange]) {
+        array.append(contentsOf: otherArray)
+        array.merge()
+    }
+    
+    static func -=(array: inout [AddressRange], other: AddressRange)  {
+        var result: [AddressRange] = []
+        
+        for this in array {
+            result += this - other
+        }
+        array.removeAll()
+        array.append(contentsOf: result)
+    }
+    
+}
+
+// MARK: - Public API
+
+public extension AddressRange {
+    
+    /// Returns `true` if the address range is valid. Valid address ranges
     /// are in Unicast or Group ranges.
     ///
-    /// - returns: True if the all address ranges are in Unicast or Group range.
+    /// - returns: `True` if the address range is in Unicast or Group range,
+    ///            `false` otherwise.
     var isValid: Bool {
-        for range in self {
-            if !range.isValid{
-                return false
-            }
-        }
-        return true
+        return isUnicastRange || isGroupRange
+    }
+    
+    /// Returns `true` if the address range is in Unicast address range
+    ///
+    /// - returns: `True` if the address range is in Unicast address range,
+    ///            `false` otherwise.
+    var isUnicastRange: Bool {
+        return lowAddress.isUnicast && highAddress.isUnicast
+    }
+    
+    /// Returns `true` if the address range is in Group address range.
+    ///
+    /// - returns: `True` if the address range is in Group address range,
+    ///            `false` otherwise.
+    var isGroupRange: Bool {
+        return lowAddress.isGroup && highAddress.isGroup
+    }
+    
+}
+
+public extension Array where Element == AddressRange {
+    
+    /// Returns `true` if all the address ranges are valid. Valid address ranges
+    /// are in Unicast or Group ranges.
+    ///
+    /// - returns: `True` if the all address ranges are in Unicast or Group range,
+    ///            `false` otherwise.
+    var isValid: Bool {
+        return !contains{ !$0.isValid }
+    }
+    
+    /// Returns `true` if all the address ranges are of unicast type.
+    ///
+    /// - returns: `True` if the all address ranges are of unicast type,
+    ///            `false` otherwise.
+    var isUnicastRange: Bool {
+        return !contains{ !$0.isUnicastRange }
+    }
+    
+    /// Returns `true` if all the address ranges are of group type.
+    ///
+    /// - returns: `True` if the all address ranges are of group type,
+    ///            `false` otherwise.
+    var isGroupRange: Bool {
+        return !contains{ !$0.isGroupRange }
     }
     
 }

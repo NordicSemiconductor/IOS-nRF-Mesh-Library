@@ -1097,12 +1097,21 @@
                                     </mask>
                                 </variation>
                             </view>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="rL9-4q-WDo" customClass="FabView" customModule="nRFMeshProvision_Example" customModuleProvider="target">
+                                <rect key="frame" x="128" y="590" width="119" height="30"/>
+                                <state key="normal" title="Resolve Conflicts"/>
+                                <connections>
+                                    <action selector="resolveConflitsTapped:" destination="3Kg-8S-AEi" eventType="touchUpInside" id="efR-rL-RiR"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
                             <constraint firstItem="uRg-oT-DXw" firstAttribute="bottom" secondItem="sjo-16-HcB" secondAttribute="bottom" id="4XX-rI-ITn"/>
+                            <constraint firstItem="rL9-4q-WDo" firstAttribute="centerX" secondItem="L5K-Kr-PdN" secondAttribute="centerX" id="5rW-GH-kci"/>
                             <constraint firstItem="uRg-oT-DXw" firstAttribute="trailing" secondItem="L5K-Kr-PdN" secondAttribute="trailing" id="BJe-Jl-hl5"/>
                             <constraint firstItem="tOh-ew-Yim" firstAttribute="top" secondItem="sjo-16-HcB" secondAttribute="top" id="CDh-Dp-flh"/>
+                            <constraint firstItem="uRg-oT-DXw" firstAttribute="top" secondItem="rL9-4q-WDo" secondAttribute="bottom" constant="8" id="PYh-rC-hr6"/>
                             <constraint firstItem="uRg-oT-DXw" firstAttribute="leading" secondItem="L5K-Kr-PdN" secondAttribute="leading" id="Q8O-pE-duR"/>
                             <constraint firstItem="tOh-ew-Yim" firstAttribute="leading" secondItem="L5K-Kr-PdN" secondAttribute="leading" id="Tfj-oN-rxh"/>
                             <constraint firstItem="uRg-oT-DXw" firstAttribute="top" secondItem="tOh-ew-Yim" secondAttribute="bottom" id="hQp-05-QlC"/>
@@ -1120,6 +1129,7 @@
                     <connections>
                         <outlet property="lowerBoundLabel" destination="mow-Yj-HYq" id="NEc-Bg-Q3V"/>
                         <outlet property="rangeSummary" destination="yT5-h3-5fs" id="PCf-RC-L5G"/>
+                        <outlet property="resolveConflictsFab" destination="rL9-4q-WDo" id="gvf-eL-Q3d"/>
                         <outlet property="tableView" destination="tOh-ew-Yim" id="MPs-wP-jP1"/>
                         <outlet property="upperBoundLabel" destination="vhd-HY-M1w" id="OU9-A5-B9T"/>
                     </connections>

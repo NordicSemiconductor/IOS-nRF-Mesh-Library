@@ -197,28 +197,67 @@ class EditProvisionerViewController: UITableViewController {
         do {
             let meshNetwork = MeshNetworkManager.instance.meshNetwork!
             if adding {
+                // Allocate new ranges, had they changed.
+                if let newUnicastAddressRange = newUnicastAddressRange {
+                    provisioner.deallocateUnicastAddressRange(AddressRange.allUnicastAddresses)
+                    try provisioner.allocateUnicastAddressRanges(newUnicastAddressRange)
+                }
+                if let newGroupAddressRange = newGroupAddressRange {
+                    provisioner.deallocateGroupAddressRange(AddressRange.allGroupAddresses)
+                    try provisioner.allocateGroupAddressRanges(newGroupAddressRange)
+                }
+                if let newSceneRange = newSceneRange {
+                    provisioner.deallocateSceneRange(SceneRange.allScenes)
+                    try provisioner.allocateSceneRanges(newSceneRange)
+                }
+                // And try adding the new Provisioner. This may throw number of errors.
                 try meshNetwork.add(provisioner: provisioner, withAddress: newAddress)
-            } else { // modifying
+            } else {
+                // First, check if the new ranges are not overlapping other Provisioners' ranges.
+                // The initial check is necessary so that we do not commit any changes before
+                // we are sure everything is OK.
+                if let newUnicastAddressRange = newUnicastAddressRange {
+                    guard meshNetwork.areRanges(newUnicastAddressRange, availableForAllocationTo: provisioner) else {
+                        throw MeshModelError.overlappingProvisionerRanges
+                    }
+                }
+                if let newGroupAddressRange = newGroupAddressRange {
+                    guard meshNetwork.areRanges(newGroupAddressRange, availableForAllocationTo: provisioner) else {
+                        throw MeshModelError.overlappingProvisionerRanges
+                    }
+                }
+                if let newSceneRange = newSceneRange {
+                    guard meshNetwork.areRanges(newSceneRange, availableForAllocationTo: provisioner) else {
+                        throw MeshModelError.overlappingProvisionerRanges
+                    }
+                }
+                // Try assigning the new Unicast Address. This may throw.
                 if let newAddress = newAddress {
                     try meshNetwork.assign(unicastAddress: newAddress, for: provisioner)
                 }
                 if disableConfigCapabilities {
                     meshNetwork.disableConfigurationCapabilities(for: provisioner)
                 }
+                // Now it's safe to allocate ranges. They must be valid, so will not throw here.
+                if let newUnicastAddressRange = newUnicastAddressRange {
+                    provisioner.deallocateUnicastAddressRange(AddressRange.allUnicastAddresses)
+                    try provisioner.allocateUnicastAddressRanges(newUnicastAddressRange)
+                }
+                if let newGroupAddressRange = newGroupAddressRange {
+                    provisioner.deallocateUnicastAddressRange(AddressRange.allGroupAddresses)
+                    try provisioner.allocateGroupAddressRanges(newGroupAddressRange)
+                }
+                if let newSceneRange = newSceneRange {
+                    provisioner.deallocateSceneRange(SceneRange.allScenes)
+                    try provisioner.allocateSceneRanges(newSceneRange)
+                }
             }
+            // When we reached that far, changing the name is just the formality.
             if let newName = newName {
                 provisioner.provisionerName = newName
             }
-            if let newUnicastAddressRange = newUnicastAddressRange {
-                provisioner.reallocateUnicastAddressRanges(newUnicastAddressRange)
-            }
-            if let newGroupAddressRange = newGroupAddressRange {
-                provisioner.reallocateGroupAddressRanges(newGroupAddressRange)
-            }
-            if let newSceneRange = newSceneRange {
-                provisioner.reallocateSceneRanges(newSceneRange)
-            }
             
+            // Finally, notify the parent view controller.
             if adding {
                 delegate?.provisionerWasAdded(provisioner)
             } else {
@@ -229,9 +268,19 @@ class EditProvisionerViewController: UITableViewController {
             
             switch error as! MeshModelError {
             case .nodeAlreadyExist:
-                presentAlert(title: "Error", message: "A node with given unicast address already exists.")
+                // A node with the same UUID as the Provisioner has been found.
+                // This is very unlikely to happen, as UUIDs are randomly generated.
+                // The solution is to go cancel and add another Provisioner, which
+                // will have another randomly generated UUID.
+                presentAlert(title: "Error", message: "A node for this Provisioner already exists.")
             case .overlappingProvisionerRanges:
                 presentAlert(title: "Error", message: "Provisioner's ranges overlap with another Provisioner.")
+            case .invalidRange:
+                presentAlert(title: "Error", message: "At least one of specified ranges is invalid.")
+            case .addressNotInAllocatedRange:
+                presentAlert(title: "Error", message: "The Provisioner's unicast address is outside of its allocated range.")
+            case .addressNotAvailable:
+                presentAlert(title: "Error", message: "The address is already in use.")
             default:
                 presentAlert(title: "Error", message: "An error occurred.")
             }

@@ -111,6 +111,9 @@ public extension MeshNetworkManager {
             decoder.dateDecodingStrategy = .iso8601
             
             meshData = try decoder.decode(MeshData.self, from: data)
+            meshNetwork!.provisioners.forEach {
+                $0.meshNetwork = meshNetwork
+            }
             return true
         }
         return false
@@ -154,6 +157,9 @@ public extension MeshNetworkManager {
         decoder.dateDecodingStrategy = .iso8601
         
         let meshNetwork = try decoder.decode(MeshNetwork.self, from: data)
+        meshNetwork.provisioners.forEach {
+            $0.meshNetwork = meshNetwork
+        }
         
         self.meshData.meshNetwork = meshNetwork
     }

@@ -123,5 +123,41 @@ class SceneRanges: XCTestCase {
         
         XCTAssertEqual(sum.count, 2)
     }
+    
+    func testOverlapping() {
+        let array1 = [SceneRange(1...10), SceneRange(20...30)]
+        let array2 = [SceneRange(8...15), SceneRange(19...25)]
+        
+        let overlap = array1.overlaps(array2)
+        
+        XCTAssert(overlap)
+    }
+    
+    func testOverlapping2() {
+        let array1 = [SceneRange(1...10)]
+        let array2 = [SceneRange(10...10)]
+        
+        let overlap = array1.overlaps(array2)
+        
+        XCTAssert(overlap)
+    }
+    
+    func testOverlapping3() {
+        let array1 = [SceneRange(1...10)]
+        let array2 = [SceneRange(11...20)]
+        
+        let overlap = array1.overlaps(array2)
+        
+        XCTAssertFalse(overlap)
+    }
+    
+    func testOverlapping4() {
+        let array1 = [SceneRange(5...10)]
+        let array2 = [SceneRange(1...20)]
+        
+        let overlap = array1.overlaps(array2)
+        
+        XCTAssert(overlap)
+    }
 
 }

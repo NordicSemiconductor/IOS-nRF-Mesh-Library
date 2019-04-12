@@ -39,11 +39,19 @@ class EditRangesViewController: UIViewController {
     @IBOutlet weak var rangeSummary: RangeView!
     @IBOutlet weak var lowerBoundLabel: UILabel!
     @IBOutlet weak var upperBoundLabel: UILabel!
+    @IBOutlet weak var resolveConflictsFab: UIButton!
     
     // MARK: - Actions
     
     @IBAction func addTapped(_ sender: UIBarButtonItem) {
         presentRangeDialog()
+    }
+    @IBAction func resolveConflitsTapped(_ sender: UIButton) {
+        removeConflictingRanges()
+        
+        UIView.animate(withDuration: 0.5) {
+            self.resolveConflictsFab.alpha = 0
+        }
     }
     
     // MARK: - View Controller parameters
@@ -66,7 +74,13 @@ class EditRangesViewController: UIViewController {
         lowerBoundLabel.text = bounds.lowerBound.asString()
         upperBoundLabel.text = bounds.upperBound.asString()
         
-        showEditing(ranges.count > 1)
+        // Add Edit/Done button.
+        if !navigationItem.rightBarButtonItems!.contains(editButtonItem) {
+            navigationItem.rightBarButtonItems!.append(editButtonItem)
+        }
+        
+        // Show Resolve Conflicts button when some conflicts were found.
+        resolveConflictsFab.isHidden = !ranges.overlaps(otherProvisionerRanges)
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -128,7 +142,6 @@ extension EditRangesViewController: UITableViewDelegate, UITableViewDataSource {
             
             if ranges.count == 1 {
                 setEditing(false, animated: true)
-                showEditing(false)
             }
         }
     }
@@ -175,21 +188,33 @@ extension EditRangesViewController {
             // Update the range summary at the bottom.
             self.rangeSummary.clearRanges()
             self.rangeSummary.addRanges(self.ranges)
-            
-            // We should quit Edit mode when only 1 range is left.
-            self.showEditing(self.ranges.count > 1)
         }
     }
     
-    func showEditing(_ editing: Bool) {
-        if editing && !navigationItem.rightBarButtonItems!.contains(editButtonItem) {
-            navigationItem.rightBarButtonItems!.append(editButtonItem)
-        }
-        if !editing && navigationItem.rightBarButtonItems!.contains(editButtonItem) {
-            navigationItem.rightBarButtonItems!.removeAll {
-                $0 == self.editButtonItem
+    private func removeConflictingRanges() {
+        // Try removing other Provisioner's ranges form ranges
+        // if they are Address Ranges.
+        if var addressRanges = ranges as? [AddressRange] {
+            otherProvisionerRanges.forEach {
+                addressRanges -= $0 as! AddressRange
             }
+            ranges = addressRanges
         }
+        // Try removing other Provisioner's ranges form ranges
+        // if they are Scene Ranges.
+        if var sceneRanges = ranges as? [SceneRange] {
+            otherProvisionerRanges.forEach {
+                sceneRanges -= $0 as! SceneRange
+            }
+            ranges = sceneRanges
+        }
+        modified = true
+        
+        // Reload views.
+        tableView.reloadData()
+        
+        rangeSummary.clearRanges()
+        rangeSummary.addRanges(ranges)
     }
     
 }

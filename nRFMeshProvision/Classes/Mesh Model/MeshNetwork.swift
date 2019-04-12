@@ -69,23 +69,6 @@ public class MeshNetwork: Codable {
 
 public extension MeshNetwork {
     
-    /// Returns whether there are Provisioners in the mesh network.
-    ///
-    /// - returns: `True` if at least one Provisoner has been added to the
-    ///            mesh network, `false` otherwise.
-    func hasProvisioners() -> Bool {
-        return provisioners.isEmpty == false
-    }
-    
-    /// Returns whether there are other Provisioners in the mesh network
-    /// except the local one.
-    ///
-    /// - returns: `True` if at least two Provisoner have been added to the
-    ///            mesh network, `false` otherwise.
-    func hasOtherProvisioners() -> Bool {
-        return provisioners.count > 1
-    }
-    
     /// Adds the provisioner and assignes a unicast address to it.
     /// This method does nothing if the Provisioner is already added to the
     /// mesh network.
@@ -110,9 +93,14 @@ public extension MeshNetwork {
     /// - parameter unicastAddress: The unicast address to be used by the Provisioner.
     ///                             A `nil` address means that the Provisioner is not able
     ///                             to perform configuration operations.
-    /// - throws: MeshModelError - if provisioner has allocated invalid ranges
-    ///           or ranges overlapping with an existing Provisioner.
+    /// - throws: MeshModelError - if Provisioner may not be added beacose it has
+    ///           failed the validation. See possible errors for details.
     func add(provisioner: Provisioner, withAddress unicastAddress: Address?) throws {
+        // Already added to another network?
+        guard provisioner.meshNetwork == nil else {
+            throw MeshModelError.provisionerUsedInAnotherNetwork
+        }
+        
         // Is it valid?
         guard provisioner.isValid else {
             throw MeshModelError.provisionerRangesNotAllocated
@@ -125,23 +113,27 @@ public extension MeshNetwork {
             }
         }
         
-        // Is the given address inside Provisioner's address range?
         if let address = unicastAddress {
+            // Is the given address inside Provisioner's address range?
             if !provisioner.allocatedUnicastRange.contains(address) {
                 throw MeshModelError.addressNotInAllocatedRange
+            }
+            
+            // No other node uses the same address?
+            guard !nodes.contains(where: { $0.hasAllocatedAddress(address) }) else {
+                throw MeshModelError.addressNotAvailable
             }
         }
         
         // Is it already added?
-        guard !provisioners.contains(provisioner) else {
+        guard !hasProvisioner(provisioner) else {
             return
         }
         
         // Is there a node with the provisioner's UUID?
-        for node in nodes {
-            if node.uuid == provisioner.uuid {
-                throw MeshModelError.nodeAlreadyExist
-            }
+        guard !nodes.contains(where: { $0.uuid == provisioner.uuid }) else {
+            // The UUID conflict is super unlikely to happen. All UUIDs are randomly generated.
+            throw MeshModelError.nodeAlreadyExist
         }
         
         // Add the provisioner's node.
@@ -151,6 +143,7 @@ public extension MeshNetwork {
         }
         
         // And finally, add the provisioner.
+        provisioner.meshNetwork = self
         provisioners.append(provisioner)
     }
     
@@ -165,6 +158,7 @@ public extension MeshNetwork {
         if let index = nodes.firstIndex(where: { $0.uuid == provisioner.uuid }) {
             nodes.remove(at: index)
         }
+        provisioner.meshNetwork = nil
         return provisioner
     }
     
@@ -175,6 +169,7 @@ public extension MeshNetwork {
     func remove(provisioner: Provisioner) {
         if let index = provisioners.firstIndex(of: provisioner) {
             _ = remove(provisionerAt: index)
+            provisioner.meshNetwork = nil
         }
     }
     
@@ -216,8 +211,14 @@ public extension MeshNetwork {
         }
         
         // No other node uses the same address?
-        guard nodes.contains(where: { $0.hasAllocatedAddress(address) }) == false else {
-            throw MeshModelError.noAddressAvailable
+        guard !nodes.contains(where: { $0.hasAllocatedAddress(address) }) else {
+            throw MeshModelError.addressNotAvailable
+        }
+        
+        // Is there a node with the provisioner's UUID?
+        guard !nodes.contains(where: { $0.uuid == provisioner.uuid }) else {
+            // The UUID conflict is super unlikely to happen. All UUIDs are randomly generated.
+            throw MeshModelError.nodeAlreadyExist
         }
         
         // Search for Provisioner's node.
@@ -244,6 +245,101 @@ public extension MeshNetwork {
             nodes.remove(at: index)
         }
     }
+    
+}
+
+// MARK: - Ranges validation
+
+public extension MeshNetwork {
+    
+    /// Checks whether the given range is available for allocation to a new
+    /// provisioner.
+    ///
+    /// - parameter range: The range to be checked.
+    /// - returns: `True`, if the range does not overlap with any address
+    ///            range already allocated by any Provisioner added to the mesh
+    ///            network; `false` otherwise.
+    func isRangeAvailableForAllocation(_ range: AddressRange) -> Bool {
+        if range.isUnicastRange {
+            return !provisioners.contains { $0.allocatedUnicastRange.overlaps(range) }
+        }
+        if range.isGroupRange {
+            return !provisioners.contains { $0.allocatedGroupRange.overlaps(range) }
+        }
+        return false
+    }
+    
+    /// Checks whether the given range is available for allocation to a new
+    /// provisioner.
+    ///
+    /// - parameter range: The range to be checked.
+    /// - returns: `True`, if the range does not overlap with any scene
+    ///            range already allocated by any Provisioner added to the mesh
+    ///            network; `false` otherwise.
+    func isRangeAvailableForAllocation(_ range: SceneRange) -> Bool {
+        return range.isValid && !provisioners.contains { $0.allocatedSceneRange.overlaps(range) }
+    }
+    
+    /// Checks whether the given range is available for allocation to the given
+    /// provisioner.
+    ///
+    /// - parameter range: The range to be checked.
+    /// - returns: `True`, if the range does not overlap with any address
+    ///            range already allocated by any other Provisioner added to the mesh
+    ///            network; `false` otherwise.
+    func isRange(_ range: AddressRange, availableForAllocationTo provisioner: Provisioner) -> Bool {
+        if hasProvisioner(provisioner) {
+            if range.isUnicastRange {
+                return !provisioners.filter({ $0 != provisioner }).contains { $0.allocatedUnicastRange.overlaps(range) }
+            }
+            if range.isGroupRange {
+                return !provisioners.filter({ $0 != provisioner }).contains { $0.allocatedGroupRange.overlaps(range) }
+            }
+        }
+        return range.isValid
+    }
+    
+    /// Checks whether the given ranges are available for allocation to the given
+    /// provisioner.
+    ///
+    /// - parameter ranges: The array of ranges to be checked.
+    /// - returns: `True`, if none of the ranges overlap with any address
+    ///            range already allocated by any other Provisioner added to the mesh
+    ///            network; `false` otherwise.
+    func areRanges(_ ranges: [AddressRange], availableForAllocationTo provisioner: Provisioner) -> Bool {
+        if hasProvisioner(provisioner) {
+            if ranges.isUnicastRange {
+                return !provisioners.filter({ $0 != provisioner }).contains { $0.allocatedUnicastRange.overlaps(ranges) }
+            }
+            if ranges.isGroupRange {
+                return !provisioners.filter({ $0 != provisioner }).contains { $0.allocatedGroupRange.overlaps(ranges) }
+            }
+        }
+        return ranges.isValid
+    }
+    
+    /// Checks whether the given range is available for allocation to a new
+    /// provisioner.
+    ///
+    /// - parameter range: The range to be checked.
+    /// - returns: `True`, if the range does not overlap with any scene
+    ///            range already allocated by any other Provisioner added to the mesh
+    ///            network; `false` otherwise.
+    func isRange(_ range: SceneRange, availableForAllocationTo provisioner: Provisioner) -> Bool {
+        return range.isValid && !provisioners.contains { $0.allocatedSceneRange.overlaps(range) }
+    }
+    
+    /// Checks whether the given ranges are available for allocation to a new
+    /// provisioner.
+    ///
+    /// - parameter range: The array of ranges to be checked.
+    /// - returns: `True`, if the none of the ranges overlap with any scene
+    ///            range already allocated by any other Provisioner added to the mesh
+    ///            network; `false` otherwise.
+    func areRanges(_ ranges: [SceneRange], availableForAllocationTo provisioner: Provisioner) -> Bool {
+        return ranges.isValid && !provisioners.contains { $0.allocatedSceneRange.overlaps(ranges) }
+    }
+    
 }
 
 // MARK: - Internal MeshNetwork API
@@ -255,7 +351,7 @@ extension MeshNetwork {
     /// - parameter provisioner: The Provisioner to look for.
     /// - returns: `True` if the Provisioner was found, `false` otherwise.
     func hasProvisioner(_ provisioner: Provisioner) -> Bool {
-        return provisioners.contains { $0.uuid == provisioner.uuid }
+        return provisioners.contains(provisioner)
     }
     
     /// Returns whether the Provisioner with given UUID is in the

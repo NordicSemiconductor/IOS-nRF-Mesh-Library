@@ -15,17 +15,19 @@ class ProvisionersViewController: UITableViewController {
         super.viewDidLoad()
         tableView.setEmptyView(title: "No provisioners", message: "Click + to add a new one.", messageImage: #imageLiteral(resourceName: "baseline-security"))
         
-        let hasProvisioners = MeshNetworkManager.instance.meshNetwork?.hasProvisioners() ?? false
+        let hasProvisioners = MeshNetworkManager.instance.meshNetwork?.provisioners.count ?? 0 > 0
         if !hasProvisioners {
             showEmptyView()
+        } else {
+            hideEmptyView()
         }
     }
     
     // MARK: - Table view data source
     
     override func numberOfSections(in tableView: UITableView) -> Int {
-        let showMore = MeshNetworkManager.instance.meshNetwork?.hasOtherProvisioners() ?? false
-        return showMore ? 2 : 1
+        let count = MeshNetworkManager.instance.meshNetwork?.provisioners.count ?? 0
+        return min(count, 2)
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -62,9 +64,9 @@ class ProvisionersViewController: UITableViewController {
         let cell = tableView.dequeueReusableCell(withIdentifier: "provisionerCell", for: indexPath)
 
         let network = MeshNetworkManager.instance.meshNetwork!
-        let provisioner = network.provisioners[indexPath.row]
-        let node = network.node(for: provisioner)
-        cell.textLabel?.text = provisioner.provisionerName
+        let p = provisioner(at: indexPath)!
+        let node = network.node(for: p)
+        cell.textLabel?.text = p.provisionerName
         if let node = node {
             cell.detailTextLabel?.text = "Unicast Address: \(node.unicastAddress.asString())"
         } else {
@@ -78,7 +80,7 @@ class ProvisionersViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-        return indexPath.section == 1
+        return true
     }
     
     override func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
@@ -106,13 +108,15 @@ class ProvisionersViewController: UITableViewController {
             let cell = sender! as! UITableViewCell
             let indexPath = tableView.indexPath(for: cell)!
             
-            let network = MeshNetworkManager.instance.meshNetwork!
-            let provisioner = network.provisioners[indexPath.row]
-            
-            viewController?.provisioner = provisioner
+            viewController?.provisioner = provisioner(at: indexPath)
         }
     }
     
+    private func provisioner(at indexPath: IndexPath) -> Provisioner? {
+        let meshNetwork = MeshNetworkManager.instance.meshNetwork
+        // There is one Provisioner in section 0. The rest are in section 1.
+        return meshNetwork?.provisioners[indexPath.section + indexPath.row]
+    }
 }
 
 // MARK: - EditProvisionerDelegate
@@ -121,12 +125,17 @@ extension ProvisionersViewController: EditProvisionerDelegate {
     
     func provisionerWasAdded(_ provisioner: Provisioner) {
         let meshNetwork = MeshNetworkManager.instance.meshNetwork!
+        let count = meshNetwork.provisioners.count
         
         tableView.beginUpdates()
-        if !meshNetwork.hasOtherProvisioners() {
-            tableView.insertSections(IndexSet(integer: 1), with: .automatic)
+        if count <= 2 {
+            tableView.insertSections(IndexSet(integer: count - 1), with: .automatic)
         }
-        tableView.insertRows(at: [IndexPath(row: meshNetwork.provisioners.count - 1, section: 0)], with: .automatic)
+        if count == 1 {
+            tableView.insertRows(at: [IndexPath(row: 0, section: 0)], with: .automatic)
+        } else {
+            tableView.insertRows(at: [IndexPath(row: count - 2, section: 1)], with: .automatic)
+        }
         tableView.endUpdates()
         hideEmptyView()
     }
@@ -148,12 +157,16 @@ extension ProvisionersViewController: EditProvisionerDelegate {
     
     private func removeProvisioner(at indexPath: IndexPath) {
         let meshNetwork = MeshNetworkManager.instance.meshNetwork!
-        _ = meshNetwork.remove(provisionerAt: indexPath.row)
+        _ = meshNetwork.remove(provisioner: provisioner(at: indexPath)!)
+        let provisionerCount = meshNetwork.provisioners.count
         
         tableView.beginUpdates()
         tableView.deleteRows(at: [indexPath], with: .automatic)
-        if !meshNetwork.hasOtherProvisioners() {
+        if provisionerCount == 1 {
             tableView.deleteSections(IndexSet(integer: 1), with: .automatic)
+        }
+        if provisionerCount == 0 {
+            tableView.deleteSections(IndexSet(integer: 0), with: .automatic)
             showEmptyView()
         }
         tableView.endUpdates()
@@ -182,4 +195,5 @@ private extension ProvisionersViewController {
         }
         tableView.hideEmptyView()
     }
+    
 }

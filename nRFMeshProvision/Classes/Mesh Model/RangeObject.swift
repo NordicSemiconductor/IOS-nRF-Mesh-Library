@@ -1,5 +1,5 @@
 //
-//  File.swift
+//  RangeObject.swift
 //  nRFMeshProvision
 //
 //  Created by Aleksander Nowakowski on 10/04/2019.
@@ -61,6 +61,34 @@ public extension RangeObject {
         return range.contains(value)
     }
     
+    /// Returns a Boolean value indicating whether this range and the given
+    /// range contain an element in common.
+    ///
+    /// - parameter other: A range to check for elements in common.
+    /// - returns: `True` if this range and other have at least one element in
+    ///            common; otherwise, `false`.
+    func overlaps(_ other: RangeObject) -> Bool {
+        return range.overlaps(other.range)
+    }
+    
+    /// Returns the closest distance between this and the given range.
+    ///
+    /// When range 1 ends at 0x1000 and range 2 starts at 0x1002, the
+    /// distance between them is 1. If the range 2 starts at 0x0001,
+    /// the distance is 0 and they can be merged.
+    /// If ranges overlap each other, the distance is 0.
+    ///
+    /// - parameter range: The range to check distance to.
+    /// - returns: The distance between ranges in units.
+    func distance(to other: RangeObject) -> UInt16 {
+        if upperBound < other.lowerBound {
+            return other.lowerBound - upperBound - 1
+        }
+        if lowerBound > other.upperBound {
+            return lowerBound - other.upperBound - 1
+        }
+        return 0
+    }
 }
 
 public extension Array where Element : RangeObject {
@@ -118,5 +146,40 @@ public extension Array where Element : RangeObject {
     /// - returns: `True` if the value is inside the range array, `false` otherwise.
     func contains(_ value: UInt16) -> Bool {
         return contains { $0.contains(value) }
+    }
+    
+    /// Returns a Boolean value indicating whether any of the ranges in the array
+    /// and the given raneg contain an element in common.
+    ///
+    /// - parameter other: A range to check for elements in common.
+    /// - returns: `True` if this range and other have at least one element in
+    ///            common; otherwise, `false`.
+    func overlaps(_ other: RangeObject) -> Bool {
+        for range in self {
+            if range.overlaps(other) {
+                return true
+            }
+        }
+        return false
+    }
+    
+    /// Returns a Boolean value indicating whether any of the ranges in the array
+    /// and the given array contain an element in common.
+    ///
+    /// The method does not look for common elements among ranges in the array,
+    /// or in the given array, only the cross sections.
+    ///
+    /// - parameter otherRanges: Ranges to check for elements in common.
+    /// - returns: `True` if any of the ranges has at least one element in common;
+    ///            with any of ranges from the given array; otherwise, `false`.
+    func overlaps(_ otherRanges: [RangeObject]) -> Bool {
+        for range in self {
+            for other in otherRanges {
+                if range.overlaps(other) {
+                    return true
+                }
+            }
+        }
+        return false
     }
 }

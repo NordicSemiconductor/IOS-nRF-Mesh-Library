@@ -24,6 +24,8 @@ public class Provisioner: Codable {
     /// An array of scene range objects.
     public internal(set) var allocatedSceneRange:   [SceneRange]
     
+    internal var meshNetwork: MeshNetwork?
+    
     private enum CodingKeys: String, CodingKey {
         case provisionerUuid = "uuid"
         case provisionerName
@@ -90,87 +92,177 @@ public extension Provisioner {
     /// will automatically merge ranges if they ovelap.
     ///
     /// - parameter range: The new unicast range to allocate.
-    func allocateUnicastRange(_ range: AddressRange) {
-        if range.isUnicastRange {
-            allocatedUnicastRange.append(range)
-            allocatedUnicastRange.merge()
+    /// - throws: The method throws an error when the Provisioner is added
+    ///           to the mesh network and the new range overlapps any of
+    ///           other Provisioners' ranges, or the range is of invalid type.
+    func allocateUnicastAddressRange(_ range: AddressRange) throws {
+        // Validate range type.
+        guard range.isUnicastRange else {
+            throw MeshModelError.invalidRange
         }
-        // else,
-        //     ignore invalid range.
+        // If the Provisioner is added to the mesh network, check if
+        // the new range does not overlap with other Provisioner's ranges.
+        if let meshNetwork = meshNetwork {
+            for otherProvisioner in meshNetwork.provisioners.filter({ $0 != self }) {
+                guard !otherProvisioner.allocatedUnicastRange.overlaps(range) else {
+                    throw MeshModelError.overlappingProvisionerRanges
+                }
+            }
+        }
+        allocatedUnicastRange += range
+    }
+    
+    /// Allocates the given Unicast Address ranges for the Provisioner.
+    /// This method will automatically merge ranges if they ovelap.
+    ///
+    /// - parameter range: The new unicast ranges to allocate.
+    /// - throws: The method throws an error when the Provisioner is added
+    ///           to the mesh network and at least one new range overlapps any of
+    ///           other Provisioners' ranges, or the range is of invalid type.
+    func allocateUnicastAddressRanges(_ ranges: [AddressRange]) throws {
+        // Validate ranges type.
+        guard ranges.isUnicastRange else {
+            throw MeshModelError.invalidRange
+        }
+        // Check if the ranges don't overlap with other Prvisioners' ranges.
+        if let meshNetwork = meshNetwork {
+            for otherProvisioner in meshNetwork.provisioners.filter({ $0 != self }) {
+                guard !otherProvisioner.allocatedUnicastRange.overlaps(ranges) else {
+                    throw MeshModelError.overlappingProvisionerRanges
+                }
+            }
+        }
+        allocatedUnicastRange += ranges
     }
     
     /// Allocates Group Address range for the Provisioner. This method
     /// will automatically merge ranges if they ovelap.
     ///
     /// - parameter range: The new group range to allocate.
-    func allocateGroupRange(_ range: AddressRange) {
-        if range.isGroupRange {
-            allocatedGroupRange.append(range)
-            allocatedGroupRange.merge()
+    /// - throws: The method throws an error when the Provisioner is added
+    ///           to the mesh network and the new range overlapps any of
+    ///           other Provisioners' ranges, or the range is of invalid type.
+    func allocateGroupAddressRange(_ range: AddressRange) throws {
+        // Validate range type.
+        guard range.isGroupRange else {
+            throw MeshModelError.invalidRange
         }
-        // else,
-        //     ignore invalid range.
+        // If the Provisioner is added to the mesh network, check if
+        // the new range does not overlap with other Provisioner's ranges.
+        if let meshNetwork = meshNetwork {
+            for otherProvisioner in meshNetwork.provisioners.filter({ $0 != self }) {
+                guard !otherProvisioner.allocatedGroupRange.overlaps(range) else {
+                    throw MeshModelError.overlappingProvisionerRanges
+                }
+            }
+        }
+        allocatedGroupRange += range
+    }
+    
+    /// Allocates the given Group Address ranges for the Provisioner.
+    /// This method will automatically merge ranges if they ovelap.
+    ///
+    /// - parameter range: The new group ranges to allocate.
+    /// - throws: The method throws an error when the Provisioner is added
+    ///           to the mesh network and at least one new range overlapps any of
+    ///           other Provisioners' ranges, or the range is of invalid type.
+    func allocateGroupAddressRanges(_ ranges: [AddressRange]) throws {
+        // Validate ranges type.
+        guard ranges.isGroupRange else {
+            throw MeshModelError.invalidRange
+        }
+        // Check if the ranges don't overlap with other Prvisioners' ranges.
+        if let meshNetwork = meshNetwork {
+            for otherProvisioner in meshNetwork.provisioners.filter({ $0 != self }) {
+                guard !otherProvisioner.allocatedGroupRange.overlaps(ranges) else {
+                    throw MeshModelError.overlappingProvisionerRanges
+                }
+            }
+        }
+        allocatedGroupRange += ranges
     }
     
     /// Allocates Scene range for the Provisioned. This method will
     /// automatically merge ranges if they overlap.
     ///
-    /// - parameter range: The new range to allocate.
-    func allocateRange(_ range: SceneRange) {
-        if range.isValid {
-            allocatedSceneRange.append(range)
-            allocatedSceneRange.merge()
+    /// - parameter range: The new scene range to allocate.
+    /// - throws: The method throws an error when the Provisioner is added
+    ///           to the mesh network and the new range overlapps any of
+    ///           other Provisioners' ranges, or the range is of invalid type.
+    func allocateSceneRange(_ range: SceneRange) throws {
+        // Validate range type.
+        guard range.isValid else {
+            throw MeshModelError.invalidRange
         }
-        // else
-        //    ignore invalid range.
+        // If the Provisioner is added to the mesh network, check if
+        // the new range does not overlap with other Provisioner's ranges.
+        if let meshNetwork = meshNetwork {
+            for otherProvisioner in meshNetwork.provisioners.filter({ $0 != self }) {
+                guard !otherProvisioner.allocatedSceneRange.overlaps(range) else {
+                    throw MeshModelError.overlappingProvisionerRanges
+                }
+            }
+        }
+        allocatedSceneRange += range
     }
     
-    /// Reallocates Unicast Address ranges for the Provisioned. This method
-    /// will automatically merge ranges if they overlap.
+    /// Allocates the given Scene ranges for the Provisioner.
+    /// This method will automatically merge ranges if they ovelap.
     ///
-    /// - parameter ranges: The new array of ranges to allocate.
-    func reallocateUnicastAddressRanges(_ ranges: [AddressRange]) {
-        allocatedUnicastRange.removeAll()
-        ranges.forEach { range in
-            if range.isUnicastRange {
-                allocatedUnicastRange.append(range)
-            }
-            // else
-            //    ignore invalid range.
+    /// - parameter range: The new scene ranges to allocate.
+    /// - throws: The method throws an error when the Provisioner is added
+    ///           to the mesh network and at least one new range overlapps any of
+    ///           other Provisioners' ranges, or the range is of invalid type.
+    func allocateSceneRanges(_ ranges: [SceneRange]) throws {
+        // Validate ranges type.
+        guard ranges.isValid else {
+            throw MeshModelError.invalidRange
         }
-        allocatedUnicastRange.merge()
+        // Check if the ranges don't overlap with other Prvisioners' ranges.
+        if let meshNetwork = meshNetwork {
+            for otherProvisioner in meshNetwork.provisioners.filter({ $0 != self }) {
+                guard !otherProvisioner.allocatedSceneRange.overlaps(ranges) else {
+                    throw MeshModelError.overlappingProvisionerRanges
+                }
+            }
+        }
+        allocatedSceneRange += ranges
     }
     
-    /// Reallocates Group Address ranges for the Provisioned. This method
-    /// will automatically merge ranges if they overlap.
+    /// Deallocates the given range from Unicast Address ranges of the
+    /// Provisioner. This method does not remove the range instance,
+    /// but is able to cut the given range from the allocated ranges.
     ///
-    /// - parameter ranges: The new array of ranges to allocate.
-    func reallocateGroupAddressRanges(_ ranges: [AddressRange]) {
-        allocatedGroupRange.removeAll()
-        ranges.forEach { range in
-            if range.isGroupRange {
-                allocatedGroupRange.append(range)
-            }
-            // else
-            //    ignore invalid range.
-        }
-        allocatedGroupRange.merge()
+    /// To remove all ranges, call this method with
+    /// parameter set to `AddressRange.allUnicastAddresses`.
+    ///
+    /// - parameter range: The range to be deallocated.
+    func deallocateUnicastAddressRange(_ range: AddressRange) {
+        allocatedUnicastRange -= range
     }
     
-    /// Reallocates Scene ranges for the Provisioned. This method will
-    /// automatically merge ranges if they overlap.
+    /// Deallocates the given range from Group Address ranges of the
+    /// Provisioner. This method does not remove the range instance,
+    /// but is able to cut the given range from the allocated ranges.
     ///
-    /// - parameter ranges: The new array of ranges to allocate.
-    func reallocateSceneRanges(_ ranges: [SceneRange]) {
-        allocatedSceneRange.removeAll()
-        ranges.forEach { range in
-            if range.isValid {
-                allocatedSceneRange.append(range)
-            }
-            // else
-            //    ignore invalid range.
-        }
-        allocatedSceneRange.merge()
+    /// To remove all ranges, call this method with
+    /// parameter set to `AddressRange.allGroupAddresses`.
+    ///
+    /// - parameter range: The range to be deallocated.
+    func deallocateGroupAddressRange(_ range: AddressRange) {
+        allocatedGroupRange -= range
+    }
+    
+    /// Deallocates the given range from Unicast Address ranges of the
+    /// Provisioner. This method does not remove the range instance,
+    /// but is able to cut the given range from the allocated ranges.
+    ///
+    /// To remove all ranges, call this method with
+    /// parameter set to `SceneRange.allScenes`.
+    ///
+    /// - parameter range: The range to be deallocated.
+    func deallocateSceneRange(_ range: SceneRange) {
+        allocatedSceneRange -= range
     }
     
     /// Returns true if the count addresses starting from the given one are in

@@ -66,7 +66,7 @@ class ManagingProvisioners: XCTestCase {
                                       ],
                                       allocatedGroupRange: [],
                                       allocatedSceneRange: [])
-        provisioner.allocateRange(SceneRange.allScenes)
+        XCTAssertNoThrow(try provisioner.allocateSceneRange(SceneRange.allScenes))
         // Group ranges not allocated.
         XCTAssertThrowsError(try meshNetwork.add(provisioner: provisioner))
     }

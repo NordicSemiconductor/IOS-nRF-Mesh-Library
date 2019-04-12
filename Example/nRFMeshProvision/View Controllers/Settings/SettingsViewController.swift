@@ -45,6 +45,10 @@ class SettingsViewController: UITableViewController {
         appBuildNumber.detailTextLabel?.text = AppInfo.buildNumber
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        tableView.reloadData()
+    }
+    
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
     }

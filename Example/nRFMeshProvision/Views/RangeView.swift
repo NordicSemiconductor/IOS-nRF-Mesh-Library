@@ -21,14 +21,6 @@ class RangeView: UIView {
     private var ranges:      [ClosedRange<UInt16>] = []
     private var otherRanges: [ClosedRange<UInt16>] = []
     
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-    }
-    
-    required init?(coder decoder: NSCoder) {
-        super.init(coder: decoder)
-    }
-    
     func setBounds(_ range: ClosedRange<UInt16>) {
         lowerBound = range.lowerBound
         upperBound = range.upperBound

@@ -47,48 +47,88 @@ public class SceneRange: RangeObject, Codable {
     }
 }
 
-// MARK: - Public API
+// MARK: - Operators
 
 public extension SceneRange {
     
-    /// Returns true if the scene range is valid.
-    ///
-    /// - returns: True if the scene range is valid.
-    var isValid: Bool {
-        return firstScene.isValidScene && lastScene.isValidScene
+    static func +(left: SceneRange, right: SceneRange) -> [SceneRange] {
+        if left.overlaps(right) {
+            return [SceneRange(min(left.lowerBound, right.lowerBound)...max(left.upperBound, right.upperBound))]
+        }
+        return [left, right]
     }
     
-    /// Returns true if this and the given Scene Range overlapps.
-    ///
-    /// - parameter range: The range to check overlapping.
-    /// - returns: True if ranges overlap.
-    func overlaps(_ other: SceneRange) -> Bool {
-        return !doesNotOverlap(other)
-    }
-    
-    /// Returns true if this and the given Scene Range do not overlap.
-    ///
-    /// - parameter range: The range to check overlapping.
-    /// - returns: True if ranges do not overlap.
-    func doesNotOverlap(_ other: SceneRange) -> Bool {
-        return (firstScene < other.firstScene && lastScene < other.firstScene)
-            || (other.firstScene < firstScene && other.lastScene < firstScene)
+    static func -(left: SceneRange, right: SceneRange) -> [SceneRange] {
+        var result: [SceneRange] = []
+        
+        // Left:   |------------|                    |-----------|                 |---------|
+        //                  -                              -                            -
+        // Right:      |-----------------|   or                     |---|   or        |----|
+        //                  =                              =                            =
+        // Result: |---|                             |-----------|                 |--|
+        if right.lowerBound > left.lowerBound {
+            let leftSlice = SceneRange(left.lowerBound...(min(left.upperBound, right.lowerBound - 1)))
+            result.append(leftSlice)
+        }
+        
+        // Left:                |----------|             |-----------|
+        //                         -                          -
+        // Right:      |----------------|           or       |----|
+        //                         =                          =
+        // Result:                      |--|                      |--|
+        if right.upperBound < left.upperBound && right.upperBound >= left.lowerBound {
+            let rightSlice = SceneRange(right.upperBound + 1...left.upperBound)
+            result.append(rightSlice)
+        }
+        return result
     }
     
 }
 
 public extension Array where Element == SceneRange {
     
-    /// Returns true if all the scene ranges are valid.
-    ///
-    /// - returns: True if the all scene ranges are valid.
-    var isValid: Bool {
-        for range in self {
-            if !range.isValid {
-                return false
-            }
+    static func +=(array: inout [SceneRange], other: SceneRange) {
+        array.append(other)
+        array.merge()
+    }
+    
+    static func +=(array: inout [SceneRange], otherArray: [SceneRange]) {
+        array.append(contentsOf: otherArray)
+        array.merge()
+    }
+    
+    static func -=(array: inout [SceneRange], other: SceneRange) {
+        var result: [SceneRange] = []
+        
+        for scene in array {
+            result += scene - other
         }
-        return true
+        array.removeAll()
+        array.append(contentsOf: result)
+    }
+    
+}
+
+// MARK: - Public API
+
+public extension SceneRange {
+    
+    /// Returns `true` if the scene range is valid.
+    ///
+    /// - returns: `True` if the scene range is valid, `false` otherwise.
+    var isValid: Bool {
+        return firstScene.isValidScene && lastScene.isValidScene
+    }
+    
+}
+
+public extension Array where Element == SceneRange {
+    
+    /// Returns `true` if all the scene ranges are valid.
+    ///
+    /// - returns: `True` if the all scene ranges are valid, `false` otherwise.
+    var isValid: Bool {
+        return !contains{ !$0.isValid }
     }
     
 }
