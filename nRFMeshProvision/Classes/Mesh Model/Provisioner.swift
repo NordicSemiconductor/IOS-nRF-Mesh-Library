@@ -81,11 +81,11 @@ public class Provisioner: Codable {
 
 public extension Provisioner {
     
-    /// Returns true if all ranges have been defined.
+    /// Returns true if all defined ranges are valid or empty.
     var isValid: Bool {
-        return !allocatedUnicastRange.isEmpty && allocatedUnicastRange.isValid
-            && !allocatedGroupRange.isEmpty   && allocatedGroupRange.isValid
-            && !allocatedSceneRange.isEmpty   && allocatedSceneRange.isValid
+        return allocatedUnicastRange.isUnicastRange
+            && allocatedGroupRange.isGroupRange
+            && allocatedSceneRange.isValid
     }
     
     /// Allocates Unicast Address range for the Provisioner. This method

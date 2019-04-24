@@ -11,9 +11,6 @@ public enum MeshModelError: Error {
     /// Thrown when any allocated range of the new Provisioner overlaps
     /// with existing one.
     case overlappingProvisionerRanges
-    /// Thrown when a Provisioner does not have all required ranges
-    /// allocated.
-    case provisionerRangesNotAllocated
     /// Thrown when trying to add a Provisioner that is already a part
     /// of another mesh network.
     case provisionerUsedInAnotherNetwork

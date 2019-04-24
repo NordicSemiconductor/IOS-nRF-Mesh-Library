@@ -9,7 +9,7 @@
 import UIKit
 import nRFMeshProvision
 	
-class ProvisionersViewController: UITableViewController {
+class ProvisionersViewController: UITableViewController, Editable {
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -53,7 +53,7 @@ class ProvisionersViewController: UITableViewController {
             return "This Provisioner"
         case 1:
             // The second section contains other Provisioners.
-            return "Provisioners"
+            return "Other Provisioners"
         default:
             // No other sections.
             return nil
@@ -170,32 +170,6 @@ extension ProvisionersViewController: EditProvisionerDelegate {
             showEmptyView()
         }
         tableView.endUpdates()
-    }
-    
-}
-
-// MARK: - Private API
-
-private extension ProvisionersViewController {
-    
-    /// Shows the 'Empty View'.
-    private func showEmptyView() {
-        if navigationItem.rightBarButtonItems!.contains(editButtonItem) {
-            navigationItem.rightBarButtonItems!.removeAll {
-                $0 == self.editButtonItem
-            }
-        }
-        tableView.showEmptyView()
-        setEditing(false, animated: false)
-        tableView.setEditing(false, animated: false)
-    }
-    
-    /// Hides the 'Empty View'.
-    private func hideEmptyView() {
-        if !navigationItem.rightBarButtonItems!.contains(editButtonItem) {
-            navigationItem.rightBarButtonItems!.append(editButtonItem)
-        }
-        tableView.hideEmptyView()
     }
     
 }

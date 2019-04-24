@@ -26,6 +26,7 @@ extension UITableView {
             
             messageImageView.backgroundColor = .clear
             messageImageView.alpha = 0.6
+            messageImageView.tag   = 99
             
             titleLabel.translatesAutoresizingMaskIntoConstraints = false
             messageImageView.translatesAutoresizingMaskIntoConstraints = false
@@ -62,45 +63,6 @@ extension UITableView {
             messageLabel.numberOfLines = 0
             messageLabel.textAlignment = .center
             
-            UIView.animate(withDuration: 1.0, delay: 0.4, animations: {
-                messageImageView.transform = CGAffineTransform(rotationAngle: .pi / 10)
-            }, completion: { _ in
-                UIView.animate(withDuration: 1.0, animations: {
-                    messageImageView.transform = CGAffineTransform(rotationAngle: -1 * (.pi / 10))
-                }, completion: { _ in
-                    UIView.animate(withDuration: 1.0, animations: {
-                        messageImageView.transform = CGAffineTransform.identity
-                    })
-                })
-            })
-            /*
-            let r: CGFloat = 10.0
-            let t = 0.05
-            UIView.animate(withDuration: t, delay: 0.6, animations: {
-                messageImageView.transform = CGAffineTransform(translationX: -r, y: 0.0)
-            }, completion: { _ in
-                UIView.animate(withDuration: 2 * t, animations: {
-                    messageImageView.transform = CGAffineTransform(translationX: r, y: 0.0)
-                }, completion: { _ in
-                    UIView.animate(withDuration: 2 * t, animations: {
-                        messageImageView.transform = CGAffineTransform(translationX: -r , y: 0.0)
-                    }, completion: { _ in
-                        UIView.animate(withDuration: 2 * t, animations: {
-                            messageImageView.transform = CGAffineTransform(translationX: r , y: 0.0)
-                        }, completion: { _ in
-                            UIView.animate(withDuration: 2 * t, animations: {
-                                messageImageView.transform = CGAffineTransform(translationX: -r, y: 0.0)
-                            }, completion: { _ in
-                                UIView.animate(withDuration: 2 * t, animations: {
-                                    messageImageView.transform = CGAffineTransform.identity
-                                })
-                            })
-                        })
-                    })
-                })
-            })
-            */
-            
             emptyView.translatesAutoresizingMaskIntoConstraints = false
             addSubview(emptyView)
             
@@ -116,9 +78,23 @@ extension UITableView {
     
     func showEmptyView() {
         if let emptyView = subviews.first(where: { $0.tag == 100 }) {
-            UIView.animate(withDuration: 0.5) {
+            UIView.animate(withDuration: 0.5, animations: {
                 emptyView.alpha = 1.0
-            }
+            }, completion: { _ in
+                if let messageImageView = emptyView.subviews.first(where: { $0.tag == 99 }) {
+                    UIView.animate(withDuration: 1.0, delay: 0.4, animations: {
+                        messageImageView.transform = CGAffineTransform(rotationAngle: .pi / 10)
+                    }, completion: { _ in
+                        UIView.animate(withDuration: 1.0, animations: {
+                            messageImageView.transform = CGAffineTransform(rotationAngle: -1 * (.pi / 10))
+                        }, completion: { _ in
+                            UIView.animate(withDuration: 1.0, animations: {
+                                messageImageView.transform = CGAffineTransform.identity
+                            })
+                        })
+                    })
+                }
+            })
         }
     }
     
@@ -128,6 +104,37 @@ extension UITableView {
                 emptyView.alpha = 0.0
             }
         }
+    }
+    
+}
+
+protocol Editable {
+    var tableView: UITableView! { get set }
+    
+    /// Shows the 'Empty View'.
+    func showEmptyView()
+    /// Hides the 'Empty View'.
+    func hideEmptyView()
+}
+
+extension Editable where Self: UIViewController {
+    
+    func showEmptyView() {
+        if navigationItem.rightBarButtonItems!.contains(editButtonItem) {
+            navigationItem.rightBarButtonItems!.removeAll {
+                $0 == self.editButtonItem
+            }
+        }
+        tableView.showEmptyView()
+        setEditing(false, animated: false)
+        tableView.setEditing(false, animated: false)
+    }
+    
+    func hideEmptyView() {
+        if !navigationItem.rightBarButtonItems!.contains(editButtonItem) {
+            navigationItem.rightBarButtonItems!.append(editButtonItem)
+        }
+        tableView.hideEmptyView()
     }
     
 }

@@ -31,7 +31,7 @@ protocol EditRangesDelegate {
     func ranges(ofType type: RangeType, haveChangeTo ranges: [RangeObject])
 }
 
-class EditRangesViewController: UIViewController {
+class EditRangesViewController: UIViewController, Editable {
     
     // MARK: - Outlets
     
@@ -65,6 +65,9 @@ class EditRangesViewController: UIViewController {
     var otherProvisionerRanges: [RangeObject]! = []
     
     override func viewDidLoad() {
+        super.viewDidLoad()
+        tableView.setEmptyView(title: "No ranges allocated", message: "Click + to allocate a range.", messageImage: #imageLiteral(resourceName: "baseline-range"))
+        
         tableView.delegate = self
         tableView.dataSource = self
         
@@ -74,9 +77,10 @@ class EditRangesViewController: UIViewController {
         lowerBoundLabel.text = bounds.lowerBound.asString()
         upperBoundLabel.text = bounds.upperBound.asString()
         
-        // Add Edit/Done button.
-        if !navigationItem.rightBarButtonItems!.contains(editButtonItem) {
-            navigationItem.rightBarButtonItems!.append(editButtonItem)
+        if ranges.isEmpty {
+            showEmptyView()
+        } else {
+            hideEmptyView()
         }
         
         // Show Resolve Conflicts button when some conflicts were found.
@@ -125,7 +129,7 @@ extension EditRangesViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-        return ranges.count > 1
+        return true
     }
     
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
@@ -140,8 +144,8 @@ extension EditRangesViewController: UITableViewDelegate, UITableViewDataSource {
             rangeSummary.clearRanges()
             rangeSummary.addRanges(self.ranges)
             
-            if ranges.count == 1 {
-                setEditing(false, animated: true)
+            if ranges.isEmpty {
+                showEmptyView()
             }
         }
     }
@@ -184,6 +188,7 @@ extension EditRangesViewController {
             
             // And refresh the table view.
             self.tableView.reloadData()
+            self.hideEmptyView()
             
             // Update the range summary at the bottom.
             self.rangeSummary.clearRanges()
@@ -208,11 +213,13 @@ extension EditRangesViewController {
             }
             ranges = sceneRanges
         }
-        
         modified = true
         
         // Reload views.
         tableView.reloadData()
+        if ranges.isEmpty {
+            showEmptyView()
+        }
         
         rangeSummary.clearRanges()
         rangeSummary.addRanges(ranges)

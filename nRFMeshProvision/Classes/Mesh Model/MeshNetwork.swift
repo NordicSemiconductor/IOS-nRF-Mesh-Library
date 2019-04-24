@@ -103,7 +103,7 @@ public extension MeshNetwork {
         
         // Is it valid?
         guard provisioner.isValid else {
-            throw MeshModelError.provisionerRangesNotAllocated
+            throw MeshModelError.invalidRange
         }
         
         // Does it have non-overlapping ranges?
@@ -326,7 +326,7 @@ public extension MeshNetwork {
     ///            range already allocated by any other Provisioner added to the mesh
     ///            network; `false` otherwise.
     func isRange(_ range: SceneRange, availableForAllocationTo provisioner: Provisioner) -> Bool {
-        return range.isValid && !provisioners.contains { $0.allocatedSceneRange.overlaps(range) }
+        return range.isValid && !provisioners.filter({ $0 != provisioner }).contains { $0.allocatedSceneRange.overlaps(range) }
     }
     
     /// Checks whether the given ranges are available for allocation to a new
@@ -337,7 +337,7 @@ public extension MeshNetwork {
     ///            range already allocated by any other Provisioner added to the mesh
     ///            network; `false` otherwise.
     func areRanges(_ ranges: [SceneRange], availableForAllocationTo provisioner: Provisioner) -> Bool {
-        return ranges.isValid && !provisioners.contains { $0.allocatedSceneRange.overlaps(ranges) }
+        return ranges.isValid && !provisioners.filter({ $0 != provisioner }).contains { $0.allocatedSceneRange.overlaps(ranges) }
     }
     
 }

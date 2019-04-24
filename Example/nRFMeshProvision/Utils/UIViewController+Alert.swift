@@ -61,7 +61,7 @@ extension UIViewController {
             let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
             alert.addTextField { textField in
                 textField.text                   = range?.lowerBound.hex
-                textField.placeholder            = "Lower bound"
+                textField.placeholder            = "Lower bound, eg. 0001"
                 textField.clearButtonMode        = .whileEditing
                 textField.returnKeyType          = .next
                 textField.keyboardType           = .alphabet
@@ -73,7 +73,7 @@ extension UIViewController {
             }
             alert.addTextField { textField in
                 textField.text                   = range?.upperBound.hex
-                textField.placeholder            = "Upper bound"
+                textField.placeholder            = "Upper bound, eg. AFFF"
                 textField.clearButtonMode        = .whileEditing
                 textField.returnKeyType          = .next
                 textField.keyboardType           = .alphabet
