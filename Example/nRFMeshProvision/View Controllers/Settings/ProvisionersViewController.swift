@@ -85,7 +85,7 @@ class ProvisionersViewController: UITableViewController, Editable {
     
     override func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
         let count = MeshNetworkManager.instance.meshNetwork?.provisioners.count ?? 0
-        return count > 2
+        return count > 1
     }
     
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
