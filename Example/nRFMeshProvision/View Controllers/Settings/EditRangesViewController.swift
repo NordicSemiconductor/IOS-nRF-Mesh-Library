@@ -193,6 +193,8 @@ extension EditRangesViewController {
             // Update the range summary at the bottom.
             self.rangeSummary.clearRanges()
             self.rangeSummary.addRanges(self.ranges)
+            
+            self.resolveConflictsFab.isHidden = !self.ranges.overlaps(self.otherProvisionerRanges)
         }
     }
     

@@ -84,18 +84,42 @@ class ProvisionersViewController: UITableViewController, Editable {
     }
     
     override func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
-        let network = MeshNetworkManager.instance.meshNetwork!
-        let count = network.provisioners.count
-        return indexPath.section == 1 && count > 2
+        let count = MeshNetworkManager.instance.meshNetwork?.provisioners.count ?? 0
+        return count > 2
     }
     
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
             removeProvisioner(at: indexPath)
-        } else if editingStyle == .insert {
-            // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-        }    
+        }
     }
+    
+    override func tableView(_ tableView: UITableView, moveRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
+        let fromIndex = sourceIndexPath.section + sourceIndexPath.row
+        let toIndex = destinationIndexPath.section + destinationIndexPath.row
+        
+        let network = MeshNetworkManager.instance.meshNetwork!
+        network.moveProvisioner(fromIndex: fromIndex, toIndex: toIndex)
+        
+        if sourceIndexPath.section == 1 && destinationIndexPath.section == 0 {
+            DispatchQueue.main.async {
+                tableView.moveRow(at: IndexPath(row: 1, section: 0), to: IndexPath(row: 0, section: 1))
+            }
+        } else if sourceIndexPath.section == 0 && destinationIndexPath.section == 1 {
+            DispatchQueue.main.async {
+                tableView.moveRow(at: IndexPath(row: 0, section: 1), to: IndexPath(row: 0, section: 0))
+            }
+        }
+    }
+    
+    override func tableView(_ tableView: UITableView, targetIndexPathForMoveFromRowAt sourceIndexPath: IndexPath, toProposedIndexPath proposedDestinationIndexPath: IndexPath) -> IndexPath {
+        if proposedDestinationIndexPath.section == 0 ||
+            (sourceIndexPath.section == 0 && proposedDestinationIndexPath.row == 0) {
+            return IndexPath(row: 0, section: 0)
+        }
+        return proposedDestinationIndexPath
+    }
+    
     
     // MARK: - View Controller
     

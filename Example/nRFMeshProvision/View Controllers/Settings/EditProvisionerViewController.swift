@@ -198,61 +198,28 @@ class EditProvisionerViewController: UITableViewController {
             let meshNetwork = MeshNetworkManager.instance.meshNetwork!
             if adding {
                 // Allocate new ranges, had they changed.
-                if let newUnicastAddressRange = newUnicastAddressRange {
-                    provisioner.deallocateUnicastAddressRange(AddressRange.allUnicastAddresses)
-                    try provisioner.allocateUnicastAddressRanges(newUnicastAddressRange)
-                }
-                if let newGroupAddressRange = newGroupAddressRange {
-                    provisioner.deallocateGroupAddressRange(AddressRange.allGroupAddresses)
-                    try provisioner.allocateGroupAddressRanges(newGroupAddressRange)
-                }
-                if let newSceneRange = newSceneRange {
-                    provisioner.deallocateSceneRange(SceneRange.allScenes)
-                    try provisioner.allocateSceneRanges(newSceneRange)
-                }
+                try allocateNewRanges(to: provisioner)
                 // And try adding the new Provisioner. This may throw number of errors.
                 try meshNetwork.add(provisioner: provisioner, withAddress: newAddress)
             } else {
                 // First, check if the new ranges are not overlapping other Provisioners' ranges.
                 // The initial check is necessary so that we do not commit any changes before
                 // we are sure everything is OK.
-                if let newUnicastAddressRange = newUnicastAddressRange {
-                    guard meshNetwork.areRanges(newUnicastAddressRange, availableForAllocationTo: provisioner) else {
-                        throw MeshModelError.overlappingProvisionerRanges
-                    }
-                }
-                if let newGroupAddressRange = newGroupAddressRange {
-                    guard meshNetwork.areRanges(newGroupAddressRange, availableForAllocationTo: provisioner) else {
-                        throw MeshModelError.overlappingProvisionerRanges
-                    }
-                }
-                if let newSceneRange = newSceneRange {
-                    guard meshNetwork.areRanges(newSceneRange, availableForAllocationTo: provisioner) else {
-                        throw MeshModelError.overlappingProvisionerRanges
-                    }
-                }
-                // Try assigning the new Unicast Address. This may throw.
+                try ensureNewRangesAreValid(for: provisioner)
+                // Check whether the new address is within Provisioner's range.
+                try ensureAddressIsValid(for: provisioner)
+                // Now it's safe to allocate ranges. They must be valid, so will not throw here.
+                try allocateNewRanges(to: provisioner)
+                // Try assigning the new Unicast Address. Hopefully this will not throw,
+                // as ranges were already allocated.
                 if let newAddress = newAddress {
                     try meshNetwork.assign(unicastAddress: newAddress, for: provisioner)
                 }
                 if disableConfigCapabilities {
                     meshNetwork.disableConfigurationCapabilities(for: provisioner)
                 }
-                // Now it's safe to allocate ranges. They must be valid, so will not throw here.
-                if let newUnicastAddressRange = newUnicastAddressRange {
-                    provisioner.deallocateUnicastAddressRange(AddressRange.allUnicastAddresses)
-                    try provisioner.allocateUnicastAddressRanges(newUnicastAddressRange)
-                }
-                if let newGroupAddressRange = newGroupAddressRange {
-                    provisioner.deallocateUnicastAddressRange(AddressRange.allGroupAddresses)
-                    try provisioner.allocateGroupAddressRanges(newGroupAddressRange)
-                }
-                if let newSceneRange = newSceneRange {
-                    provisioner.deallocateSceneRange(SceneRange.allScenes)
-                    try provisioner.allocateSceneRanges(newSceneRange)
-                }
             }
-            // When we reached that far, changing the name is just the formality.
+            // When we reached that far, changing the name is just a formality.
             if let newName = newName {
                 provisioner.provisionerName = newName
             }
@@ -264,8 +231,6 @@ class EditProvisionerViewController: UITableViewController {
                 delegate?.provisionerWasModified(provisioner)
             }
         } catch {
-            print(error)
-            
             switch error as! MeshModelError {
             case .nodeAlreadyExist:
                 // A node with the same UUID as the Provisioner has been found.
@@ -291,6 +256,80 @@ class EditProvisionerViewController: UITableViewController {
             dismiss(animated: true)
         } else {
             presentAlert(title: "Error", message: "Mesh configuration could not be saved.")
+        }
+    }
+    
+    /// Allocates new ranges, had they changed.
+    ///
+    /// - parameter provisioner: The Provisioner for which the ranges
+    ///                          will be allocated.
+    /// - throws: This method may throw if the ranges overlap with
+    ///           another Provisioner's range.
+    private func allocateNewRanges(to provisioner: Provisioner) throws {
+        if let newUnicastAddressRange = newUnicastAddressRange {
+            provisioner.deallocateUnicastAddressRange(AddressRange.allUnicastAddresses)
+            try provisioner.allocateUnicastAddressRanges(newUnicastAddressRange)
+        }
+        if let newGroupAddressRange = newGroupAddressRange {
+            provisioner.deallocateUnicastAddressRange(AddressRange.allGroupAddresses)
+            try provisioner.allocateGroupAddressRanges(newGroupAddressRange)
+        }
+        if let newSceneRange = newSceneRange {
+            provisioner.deallocateSceneRange(SceneRange.allScenes)
+            try provisioner.allocateSceneRanges(newSceneRange)
+        }
+    }
+    
+    /// Checks whether the new ranges may be allocated to the given
+    /// Provisioner.
+    ///
+    /// - parameter provisioner: The Provisioner for which the ranges
+    ///                          are to be allocated.
+    /// - throws: This method may throw if the new ranges are overlapping
+    ///           with another Provisioner's ranges.
+    private func ensureNewRangesAreValid(for provisioner: Provisioner) throws {
+        let meshNetwork = MeshNetworkManager.instance.meshNetwork!
+        
+        if let newUnicastAddressRange = newUnicastAddressRange {
+            guard meshNetwork.areRanges(newUnicastAddressRange, availableForAllocationTo: provisioner) else {
+                throw MeshModelError.overlappingProvisionerRanges
+            }
+        }
+        if let newGroupAddressRange = newGroupAddressRange {
+            guard meshNetwork.areRanges(newGroupAddressRange, availableForAllocationTo: provisioner) else {
+                throw MeshModelError.overlappingProvisionerRanges
+            }
+        }
+        if let newSceneRange = newSceneRange {
+            guard meshNetwork.areRanges(newSceneRange, availableForAllocationTo: provisioner) else {
+                throw MeshModelError.overlappingProvisionerRanges
+            }
+        }
+    }
+    
+    /// Checks whether the new address is within Provisioner's range
+    /// and is not already taken by any node.
+    ///
+    /// - parameter provisioner: The Provisioner for which the address
+    ///                          will be checked.
+    /// - throws: This method may throw if the address is outside of
+    ///           Provisioner's range or not available.
+    private func ensureAddressIsValid(for provisioner: Provisioner) throws {
+        let meshNetwork = MeshNetworkManager.instance.meshNetwork!
+        
+        if let newAddress = newAddress {
+            // Check whether the address is in Provisioner's unicast range.
+            let range = newUnicastAddressRange ?? provisioner.allocatedUnicastRange
+            guard range.contains(newAddress) else {
+                throw MeshModelError.addressNotInAllocatedRange
+            }
+            
+            // Check whether the new address is available.
+            guard !meshNetwork.nodes
+                .filter({ $0.uuid != provisioner.uuid })
+                .contains(where: { $0.unicastAddress == newAddress }) else {
+                throw MeshModelError.addressNotAvailable
+            }
         }
     }
     

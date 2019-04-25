@@ -93,4 +93,17 @@ class AddressRanges: XCTestCase {
         XCTAssertEqual(ranges[1].lowAddress, 30)
         XCTAssertEqual(ranges[1].highAddress, 39)
     }
+    
+    func testOperatorRemove3() {
+        var ranges = [
+            AddressRange(1...32767)
+        ]
+        ranges -= AddressRange(12289...28671)
+        ranges -= AddressRange(1...12288)
+        
+        XCTAssertEqual(ranges.count, 1)
+        
+        XCTAssertEqual(ranges[0].lowAddress, 28672)
+        XCTAssertEqual(ranges[0].highAddress, 32767)
+    }
 }

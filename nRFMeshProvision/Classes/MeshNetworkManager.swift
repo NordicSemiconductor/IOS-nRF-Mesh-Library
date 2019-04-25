@@ -164,44 +164,4 @@ public extension MeshNetworkManager {
         self.meshData.meshNetwork = meshNetwork
     }
     
-    /// Sets the given Provisioner as the one that will be used for
-    /// provisioning new nodes, sending commands, etc. It will be moved
-    /// to index 0 in the list of provisioners in the mesh network.
-    ///
-    /// The Provisioner will be added to the mesh network if it's not
-    /// there already. Adding the Provisioner may throw an error,
-    /// for example when the ranges overlap with ranges of another
-    /// Provisioner or there are no free unicast addresses to be assigned.
-    ///
-    /// - parameter provisioner: The Provisioner to be used for provisioning.
-    /// - throws: An error if adding the Provisioner failed.
-    func setLocalProvisioner(_ provisioner: Provisioner) throws {
-        guard let meshNetwork = meshData.meshNetwork else {
-            return
-        }
-        
-        if !meshNetwork.hasProvisioner(with: provisioner.uuid) {
-            try meshNetwork.add(provisioner: provisioner)
-        }
-        
-        meshNetwork.setMainProvisioner(provisioner)
-    }
-    
-    /// Returns whether the given Provisioner is set as the main
-    /// Provisioner. The main Provisioner will be used to perform all
-    /// provisioning and communication by the library. Every iDevice
-    /// should use a different Provisioner to set up devices in the
-    /// same mesh network to avoid conflicts in addressing nodes.
-    ///
-    /// - parameter provisioner: The provisoner to be checked.
-    /// - returns: `True` if the given Provisioner is set up to be the
-    ///            main one, `false` otherwise.
-    func isLocalProvisioner(_ provisioner: Provisioner) -> Bool {
-        guard let meshNetwork = meshData.meshNetwork else {
-            return false
-        }
-        return !meshNetwork.provisioners.isEmpty
-            && meshNetwork.provisioners[0].uuid == provisioner.uuid
-    }
-    
 }

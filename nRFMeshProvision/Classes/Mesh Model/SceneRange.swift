@@ -71,15 +71,16 @@ public extension SceneRange {
             result.append(leftSlice)
         }
         
-        // Left:                |----------|             |-----------|
-        //                         -                          -
-        // Right:      |----------------|           or       |----|
-        //                         =                          =
-        // Result:                      |--|                      |--|
-        if right.upperBound < left.upperBound && right.upperBound >= left.lowerBound {
-            let rightSlice = SceneRange(right.upperBound + 1...left.upperBound)
+        // Left:                |----------|             |-----------|                     |--------|
+        //                         -                          -                             -
+        // Right:      |----------------|           or       |----|          or     |---|
+        //                         =                          =                             =
+        // Result:                      |--|                      |--|                     |--------|
+        if right.upperBound < left.upperBound {
+            let rightSlice = SceneRange(max(right.upperBound + 1, left.lowerBound)...left.upperBound)
             result.append(rightSlice)
         }
+        
         return result
     }
     

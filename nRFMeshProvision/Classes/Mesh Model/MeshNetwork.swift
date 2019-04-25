@@ -69,6 +69,39 @@ public class MeshNetwork: Codable {
 
 public extension MeshNetwork {
     
+    /// Sets the given Provisioner as the one that will be used for
+    /// provisioning new nodes, sending commands, etc. It will be moved
+    /// to index 0 in the list of provisioners in the mesh network.
+    ///
+    /// The Provisioner will be added to the mesh network if it's not
+    /// there already. Adding the Provisioner may throw an error,
+    /// for example when the ranges overlap with ranges of another
+    /// Provisioner or there are no free unicast addresses to be assigned.
+    ///
+    /// - parameter provisioner: The Provisioner to be used for provisioning.
+    /// - throws: An error if adding the Provisioner failed.
+    func setLocalProvisioner(_ provisioner: Provisioner) throws {
+        if !hasProvisioner(provisioner) {
+            try add(provisioner: provisioner)
+        }
+        
+        moveProvisioner(provisioner, toIndex: 0)
+    }
+    
+    /// Returns whether the given Provisioner is set as the main
+    /// Provisioner. The main Provisioner will be used to perform all
+    /// provisioning and communication on this device. Every device
+    /// should use a different Provisioner to set up devices in the
+    /// same mesh network to avoid conflicts with addressing nodes.
+    ///
+    /// - parameter provisioner: The provisoner to be checked.
+    /// - returns: `True` if the given Provisioner is set up to be the
+    ///            main one, `false` otherwise.
+    func isLocalProvisioner(_ provisioner: Provisioner) -> Bool {
+        return !provisioners.isEmpty
+             && provisioners[0].uuid == provisioner.uuid
+    }
+    
     /// Adds the provisioner and assignes a unicast address to it.
     /// This method does nothing if the Provisioner is already added to the
     /// mesh network.
@@ -170,6 +203,41 @@ public extension MeshNetwork {
         if let index = provisioners.firstIndex(of: provisioner) {
             _ = remove(provisionerAt: index)
             provisioner.meshNetwork = nil
+        }
+    }
+    
+    /// Moves the Provisioner at given index to the new index.
+    /// Both parameters must be valid indices of the collection that are
+    /// not equal to `endIndex`. Calling `moveProvisioner(fromIndex:toIndex:)`
+    /// with the same index as both `fromIndex` and `toIndex` has no effect.
+    ///
+    /// The Provisioner at index 0 will be used as local Provisioner.
+    ///
+    /// - parameter fromIndex: The index of the Provisioner to move.
+    /// - parameter toIndex: The destination index of the Provisioner.
+    func moveProvisioner(fromIndex: Int, toIndex: Int) {
+        if fromIndex >= 0 && fromIndex < provisioners.count &&
+            toIndex >= 0 && toIndex <= provisioners.count &&
+            fromIndex != toIndex {
+            let provisioner = provisioners.remove(at: fromIndex)
+            let newToIndex = toIndex > fromIndex ? toIndex - 1 : toIndex
+            if newToIndex <= provisioners.count {
+                provisioners.insert(provisioner, at: newToIndex)
+            } else {
+                provisioners.append(provisioner)
+            }
+        }
+    }
+    
+    /// Moves the given Provisioner to the new index.
+    ///
+    /// The Provisioner at index 0 will be used as local Provisioner.
+    ///
+    /// - parameter provisioner: The Provisioner to be moved.
+    /// - parameter toIndex: The destination index of the Provisioner.
+    func moveProvisioner(_ provisioner: Provisioner, toIndex: Int) {
+        if let fromIndex = provisioners.firstIndex(of: provisioner) {
+            moveProvisioner(fromIndex: fromIndex, toIndex: toIndex)
         }
     }
     
@@ -361,18 +429,6 @@ extension MeshNetwork {
     /// - returns: `True` if the Provisioner was found, `false` otherwise.
     func hasProvisioner(with uuid: UUID) -> Bool {
         return provisioners.contains { $0.uuid == uuid }
-    }
-    
-    /// Sets the given Provisoner as the local one.
-    /// The local one will be placed in the provisioners list at index 0.
-    ///
-    /// - parameter provisioner: The Provisioner to be brought to the
-    ///                          from of the provisioners array.
-    func setMainProvisioner(_ provisioner: Provisioner) {
-        if let index = provisioners.firstIndex(of: provisioner), index > 0 {
-            provisioners.remove(at: index)
-            provisioners.insert(provisioner, at: 0)
-        }
     }
 
     /// Returns the next available unicast address from the Provisioner's range
