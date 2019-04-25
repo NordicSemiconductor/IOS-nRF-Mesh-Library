@@ -271,7 +271,7 @@ class EditProvisionerViewController: UITableViewController {
             try provisioner.allocateUnicastAddressRanges(newUnicastAddressRange)
         }
         if let newGroupAddressRange = newGroupAddressRange {
-            provisioner.deallocateUnicastAddressRange(AddressRange.allGroupAddresses)
+            provisioner.deallocateGroupAddressRange(AddressRange.allGroupAddresses)
             try provisioner.allocateGroupAddressRanges(newGroupAddressRange)
         }
         if let newSceneRange = newSceneRange {
