@@ -95,26 +95,35 @@ class ProvisionersViewController: UITableViewController, Editable {
     }
     
     override func tableView(_ tableView: UITableView, moveRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
-        let fromIndex = sourceIndexPath.section + sourceIndexPath.row
-        let toIndex = destinationIndexPath.section + destinationIndexPath.row
+        let fromIndex = sourceIndexPath.provisionerIndex
+        let toIndex = destinationIndexPath.provisionerIndex
         
+        // Make the required change in the data source.
         let network = MeshNetworkManager.instance.meshNetwork!
         network.moveProvisioner(fromIndex: fromIndex, toIndex: toIndex)
         
-        if sourceIndexPath.section == 1 && destinationIndexPath.section == 0 {
+        // In here we have to ensure that there is only one Provisioner
+        // in the first section.
+        if sourceIndexPath.isOtherProvisioner && destinationIndexPath.isThisProvisioner {
+            // If another Provisioner was dragged to the top, move the
+            // previous one to the top of the second section.
             DispatchQueue.main.async {
+                // Moving has to be enqueued, otherwise it doesn't work.
                 tableView.moveRow(at: IndexPath(row: 1, section: 0), to: IndexPath(row: 0, section: 1))
             }
-        } else if sourceIndexPath.section == 0 && destinationIndexPath.section == 1 {
+        } else if sourceIndexPath.isThisProvisioner && destinationIndexPath.isOtherProvisioner {
+            // If the main Provisioner was moved to hte second section,
+            // bring the next one on its place.
             DispatchQueue.main.async {
+                // Moving has to be enqueued, otherwise it doesn't work.
                 tableView.moveRow(at: IndexPath(row: 0, section: 1), to: IndexPath(row: 0, section: 0))
             }
         }
     }
     
     override func tableView(_ tableView: UITableView, targetIndexPathForMoveFromRowAt sourceIndexPath: IndexPath, toProposedIndexPath proposedDestinationIndexPath: IndexPath) -> IndexPath {
-        if proposedDestinationIndexPath.section == 0 ||
-            (sourceIndexPath.section == 0 && proposedDestinationIndexPath.row == 0) {
+        if proposedDestinationIndexPath.isThisProvisioner ||
+            (sourceIndexPath.isThisProvisioner && proposedDestinationIndexPath.row == 0) {
             return IndexPath(row: 0, section: 0)
         }
         return proposedDestinationIndexPath
@@ -139,8 +148,9 @@ class ProvisionersViewController: UITableViewController, Editable {
     private func provisioner(at indexPath: IndexPath) -> Provisioner? {
         let meshNetwork = MeshNetworkManager.instance.meshNetwork
         // There is one Provisioner in section 0. The rest are in section 1.
-        return meshNetwork?.provisioners[indexPath.section + indexPath.row]
+        return meshNetwork?.provisioners[indexPath.provisionerIndex]
     }
+    
 }
 
 // MARK: - EditProvisionerDelegate
@@ -181,19 +191,57 @@ extension ProvisionersViewController: EditProvisionerDelegate {
     
     private func removeProvisioner(at indexPath: IndexPath) {
         let meshNetwork = MeshNetworkManager.instance.meshNetwork!
-        _ = meshNetwork.remove(provisioner: provisioner(at: indexPath)!)
+        let index = indexPath.provisionerIndex
+        _ = meshNetwork.remove(provisionerAt: index)
         let provisionerCount = meshNetwork.provisioners.count
         
         tableView.beginUpdates()
+        // Remove the deleted row.
         tableView.deleteRows(at: [indexPath], with: .automatic)
+        if indexPath.isThisProvisioner && provisionerCount > 0 {
+            // Bring another one as local Provisioner.
+            tableView.moveRow(at: IndexPath(row: 0, section: 1), to: IndexPath(row: 0, section: 0))
+        }
         if provisionerCount == 1 {
-            tableView.deleteSections(IndexSet(integer: 1), with: .automatic)
+            // Remove Other Provisioners section.
+            tableView.deleteSections(.otherProvisionersSection, with: .automatic)
         }
         if provisionerCount == 0 {
-            tableView.deleteSections(IndexSet(integer: 0), with: .automatic)
+            // Remove This Provisioner section.
+            tableView.deleteSections(.thisProvisionerSection, with: .automatic)
             showEmptyView()
         }
         tableView.endUpdates()
+        
+        if !MeshNetworkManager.instance.save() {
+            presentAlert(title: "Error", message: "Mesh configuration could not be saved.")
+        }
     }
+    
+}
+
+private extension IndexPath {
+    
+    /// Returns the Provisioner index in mesh network based on the
+    /// IndexPath.
+    var provisionerIndex: Int {
+        return section + row
+    }
+    
+    /// Returns whether the IndexPath points the local Provisioner.
+    var isThisProvisioner: Bool {
+        return section == 0
+    }
+    
+    /// Returns whether the IndexPath point some other Provisioner.
+    var isOtherProvisioner: Bool {
+        return section == 1
+    }
+}
+
+private extension IndexSet {
+    
+    static let thisProvisionerSection   = IndexSet(integer: 0)
+    static let otherProvisionersSection = IndexSet(integer: 1)
     
 }

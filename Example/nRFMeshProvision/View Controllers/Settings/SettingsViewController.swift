@@ -31,6 +31,16 @@ class SettingsViewController: UITableViewController {
     // MARK: - Implementation -
     
     override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        // Load versions.
+        appVersion.detailTextLabel?.text = AppInfo.version
+        appBuildNumber.detailTextLabel?.text = AppInfo.buildNumber
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
         let manager = MeshNetworkManager.instance
         globalTTL.detailTextLabel?.text = "\(manager.globalTTL)"
         
@@ -39,14 +49,6 @@ class SettingsViewController: UITableViewController {
         provisioners.detailTextLabel?.text = "\(meshNetwork.provisioners.count)"
         networkKeys.detailTextLabel?.text  = "\(meshNetwork.networkKeys.count)"
         appKeys.detailTextLabel?.text      = "\(meshNetwork.applicationKeys.count)"
-        
-        // Versions
-        appVersion.detailTextLabel?.text = AppInfo.version
-        appBuildNumber.detailTextLabel?.text = AppInfo.buildNumber
-    }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        tableView.reloadData()
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {

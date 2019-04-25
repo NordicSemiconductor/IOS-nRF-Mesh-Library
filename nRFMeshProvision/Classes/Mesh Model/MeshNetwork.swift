@@ -202,7 +202,6 @@ public extension MeshNetwork {
     func remove(provisioner: Provisioner) {
         if let index = provisioners.firstIndex(of: provisioner) {
             _ = remove(provisionerAt: index)
-            provisioner.meshNetwork = nil
         }
     }
     
