@@ -14,7 +14,15 @@ class AppKeysViewController: UITableViewController, Editable {
     // MARK: - Actions
     
     @IBAction func addTapped(_ sender: UIBarButtonItem) {
-        presentKeyDialog()
+        if networkKeyExists {
+            presentKeyDialog()
+        } else {
+            presentAlert(title: "Error",
+                         message: "No Network Key found.\n\nCreate a Network Key prior to creating an Application Key.",
+                         option: UIAlertAction(title: "Create", style: .default, handler: { action in
+                            self.performSegue(withIdentifier: "networkKeys", sender: nil)
+                         }))
+        }
     }
     
     // MARK: - View Controller
@@ -28,6 +36,13 @@ class AppKeysViewController: UITableViewController, Editable {
             showEmptyView()
         } else {
             hideEmptyView()
+        }
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "networkKeys" {
+            let target = segue.destination as! NetworkKeysViewController
+            target.automaticallyOpenKeyDialog = true
         }
     }
 
@@ -91,6 +106,11 @@ class AppKeysViewController: UITableViewController, Editable {
 }
 
 extension AppKeysViewController {
+    
+    private var networkKeyExists: Bool {
+        let network = MeshNetworkManager.instance.meshNetwork!
+        return !network.networkKeys.isEmpty
+    }
     
     private func presentKeyDialog() {
         let network = MeshNetworkManager.instance.meshNetwork!

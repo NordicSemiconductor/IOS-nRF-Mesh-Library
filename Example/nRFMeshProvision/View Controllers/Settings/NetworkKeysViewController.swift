@@ -10,6 +10,7 @@ import UIKit
 import nRFMeshProvision
 
 class NetworkKeysViewController: UITableViewController, Editable {
+    var automaticallyOpenKeyDialog: Bool = false
     
     @IBAction func addTapped(_ sender: UIBarButtonItem) {
         presentKeyDialog()
@@ -24,6 +25,10 @@ class NetworkKeysViewController: UITableViewController, Editable {
             showEmptyView()
         } else {
             hideEmptyView()
+        }
+        
+        if automaticallyOpenKeyDialog {
+            presentKeyDialog()
         }
     }
 
@@ -63,6 +68,7 @@ class NetworkKeysViewController: UITableViewController, Editable {
         let network = MeshNetworkManager.instance.meshNetwork!
         let networkKey = network.networkKeys[indexPath.row]
         return !network.nodes.knows(networkKey: networkKey)
+            && !network.applicationKeys.contains(keyBoundTo: networkKey)
     }
 
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
@@ -88,7 +94,7 @@ class NetworkKeysViewController: UITableViewController, Editable {
 
 extension NetworkKeysViewController {
     
-    private func presentKeyDialog(for indexPath: IndexPath? = nil) {
+    private func presentKeyDialog() {
         let network = MeshNetworkManager.instance.meshNetwork!
         let name: String? = "Network Key \(network.nextAvailableNetworkKeyIndex + 1)"
         let title = "New Network Key"

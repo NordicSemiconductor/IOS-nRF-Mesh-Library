@@ -46,15 +46,31 @@ extension UIViewController {
     /// - parameters:
     ///   - title:   The alert title.
     ///   - message: The message below the title.
+    ///   - action:  An optional second action.
     ///   - handler: The OK button handler.
-    func presentAlert(title: String?, message: String?, handler: ((UIAlertAction) -> Void)? = nil) {
+    func presentAlert(title: String?, message: String?,
+                      option action: UIAlertAction? = nil,
+                      handler: ((UIAlertAction) -> Void)? = nil) {
         DispatchQueue.main.async {
             let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
             alert.addAction(UIAlertAction(title: "OK", style: .cancel, handler: handler))
+            if let action = action {
+                alert.addAction(action)
+            }
             self.present(alert, animated: true)
         }
     }
     
+    /// Displays an alert dialog with given title and message.
+    /// The alert dialog will contain two Text Fields allowing to
+    /// specify a Range.
+    ///
+    /// - parameters:
+    ///   - title:    The alert title.
+    ///   - message:  The message below the title.
+    ///   - range:    The initial value for the text fields.
+    ///   - selector: An optional validator for the text fields.
+    ///   - handler:  The OK button handler.
     func presentRangeAlert(title: String?, message: String?, range: RangeObject? = nil,
                            type selector: Selector? = nil,
                            handler: ((ClosedRange<UInt16>) -> Void)? = nil) {
@@ -196,9 +212,6 @@ extension UIViewController {
             
             self.present(alert, animated: true)
         }
-    }
-    
-    @objc func generateTapped(sender: UILongPressGestureRecognizer) {
     }
     
     // MARK: - Validators
