@@ -68,7 +68,7 @@ extension UITableView {
             
             NSLayoutConstraint.activate([
                 emptyView.centerXAnchor.constraint(equalTo: centerXAnchor),
-                NSLayoutConstraint(item: emptyView, attribute: .centerY, relatedBy: .equal, toItem: self, attribute: .centerY, multiplier: 0.8, constant: 0),
+                NSLayoutConstraint(item: emptyView!, attribute: .centerY, relatedBy: .equal, toItem: self, attribute: .centerY, multiplier: 0.8, constant: 0),
                 emptyView.leadingAnchor.constraint(equalTo: leadingAnchor),
                 emptyView.trailingAnchor.constraint(equalTo: trailingAnchor),
                 emptyView.heightAnchor.constraint(equalToConstant: 240)

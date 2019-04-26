@@ -21,7 +21,7 @@ internal extension UInt16 {
     }
     
     init(data: Data) {
-        self = data.withUnsafeBytes { $0.pointee }
+        self = data.withUnsafeBytes { $0.load(as: UInt16.self) }
     }
     
 }
