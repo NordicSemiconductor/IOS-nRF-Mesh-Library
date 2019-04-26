@@ -64,11 +64,23 @@ class NetworkKeysViewController: UITableViewController, Editable {
     }
     
     override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
+        // The keys in use should not be editable.
+        // This will be handled by displaying a "Key in use" action (see method below).
+        return true
+    }
+    
+    override func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
         // It should not be possible to delete a key that is in use.
         let network = MeshNetworkManager.instance.meshNetwork!
         let networkKey = network.networkKeys[indexPath.row]
-        return !network.nodes.knows(networkKey: networkKey)
-            && !network.applicationKeys.contains(keyBoundTo: networkKey)
+        let canBeRemoved = !network.nodes.knows(networkKey: networkKey)
+                        && !network.applicationKeys.contains(keyBoundTo: networkKey)
+        
+        if !canBeRemoved {
+            return [UITableViewRowAction(style: .normal, title: "Key in use", handler: {_,_ in })]
+        }
+        // By default Delete action will be shown.
+        return nil
     }
 
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
