@@ -98,7 +98,12 @@ extension NetworkKeysViewController {
         let network = MeshNetworkManager.instance.meshNetwork!
         let name: String? = "Network Key \(network.nextAvailableNetworkKeyIndex + 1)"
         let title = "New Network Key"
-        let message = "Key Index: \(network.nextAvailableNetworkKeyIndex)\n\nThe key must be a 32-character hexadecimal string. A random one has been generated below."
+        let message = """
+        Key Index: \(network.nextAvailableNetworkKeyIndex)
+        
+        Provide a key and human readable name.
+        The key must be a 32-character hexadecimal string. A random one has been generated below.
+        """
         
         presentKeyDialog(title: title, message: message, name: name) { name, key in
             _ = try! network.add(networkKey: key, name: name)

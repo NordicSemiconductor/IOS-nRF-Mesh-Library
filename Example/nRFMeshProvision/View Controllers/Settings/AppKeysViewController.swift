@@ -116,7 +116,12 @@ extension AppKeysViewController {
         let network = MeshNetworkManager.instance.meshNetwork!
         let name: String? = "App Key \(network.nextAvailableApplicationKeyIndex + 1)"
         let title = "New App Key"
-        let message = "Key Index: \(network.nextAvailableApplicationKeyIndex)\n\nThe key must be a 32-character hexadecimal string. A random one has been generated below."
+        let message = """
+        Key Index: \(network.nextAvailableApplicationKeyIndex)
+        
+        Provide a key and human readable name.
+        The key must be a 32-character hexadecimal string. A random one has been generated below.
+        """
         
         presentKeyDialog(title: title, message: message, name: name) { name, key in
             _ = try! network.add(applicationKey: key, name: name)
