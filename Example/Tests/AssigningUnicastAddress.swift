@@ -28,7 +28,7 @@ class AssigningUnicastAddress: XCTestCase {
                                       ],
                                       allocatedGroupRange: [], allocatedSceneRange: [])
         
-        let address = meshNetwork.allocateNextAvailableUnicastAddress(for: 6, elementsUsing: provisioner)
+        let address = meshNetwork.nextAvailableUnicastAddress(for: 6, elementsUsing: provisioner)
         
         XCTAssertNotNil(address)
         XCTAssertEqual(address!, 1)
@@ -47,7 +47,7 @@ class AssigningUnicastAddress: XCTestCase {
                                       ],
                                       allocatedGroupRange: [], allocatedSceneRange: [])
         
-        let address = meshNetwork.allocateNextAvailableUnicastAddress(for: 6, elementsUsing: provisioner)
+        let address = meshNetwork.nextAvailableUnicastAddress(for: 6, elementsUsing: provisioner)
         
         XCTAssertNotNil(address)
         XCTAssertEqual(address!, 100)
@@ -67,7 +67,7 @@ class AssigningUnicastAddress: XCTestCase {
                                       ],
                                       allocatedGroupRange: [], allocatedSceneRange: [])
         
-        let address = meshNetwork.allocateNextAvailableUnicastAddress(for: 6, elementsUsing: provisioner)
+        let address = meshNetwork.nextAvailableUnicastAddress(for: 6, elementsUsing: provisioner)
         
         XCTAssertNotNil(address)
         XCTAssertEqual(address!, 108)
@@ -90,7 +90,7 @@ class AssigningUnicastAddress: XCTestCase {
                                       ],
                                       allocatedGroupRange: [], allocatedSceneRange: [])
         
-        let address = meshNetwork.allocateNextAvailableUnicastAddress(for: 6, elementsUsing: provisioner)
+        let address = meshNetwork.nextAvailableUnicastAddress(for: 6, elementsUsing: provisioner)
         
         XCTAssertNotNil(address)
         XCTAssertEqual(address!, 78)
@@ -112,7 +112,7 @@ class AssigningUnicastAddress: XCTestCase {
                                       ],
                                       allocatedGroupRange: [], allocatedSceneRange: [])
         
-        let address = meshNetwork.allocateNextAvailableUnicastAddress(for: 6, elementsUsing: provisioner)
+        let address = meshNetwork.nextAvailableUnicastAddress(for: 6, elementsUsing: provisioner)
         
         XCTAssertNil(address)
     }
