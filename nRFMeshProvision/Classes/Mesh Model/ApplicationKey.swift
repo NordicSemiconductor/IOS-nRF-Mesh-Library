@@ -20,7 +20,7 @@ public class ApplicationKey: Codable {
     /// Previous 128-bit application key, if Key Update procedure is in progress.
     public internal(set) var oldKey: Data?
     
-    public init(name: String, index: KeyIndex, key: Data) {
+    internal init(name: String, index: KeyIndex, key: Data) {
         self.name        = name
         self.index       = index
         self.key         = key
@@ -33,4 +33,18 @@ public class ApplicationKey: Codable {
     public func bind(to networkKey: NetworkKey) {
         self.boundNetKey = networkKey.index
     }
+}
+
+// MARK: - Operators
+
+extension ApplicationKey: Equatable {
+    
+    public static func == (lhs: ApplicationKey, rhs: ApplicationKey) -> Bool {
+        return lhs.index == rhs.index && lhs.key == rhs.key
+    }
+    
+    public static func != (lhs: ApplicationKey, rhs: ApplicationKey) -> Bool {
+        return lhs.index != rhs.index || lhs.key != rhs.key
+    }
+    
 }

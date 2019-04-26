@@ -37,6 +37,11 @@
 		3F050E2ED9231EC203697587364B553C /* Pods-nRFMeshProvision_Tests-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 21CDD8648681CE8D31824BB49C8D17A6 /* Pods-nRFMeshProvision_Tests-dummy.m */; };
 		525242E2225CC6D30044CECB /* ClosedRange.swift in Sources */ = {isa = PBXBuildFile; fileRef = 525242E1225CC6D30044CECB /* ClosedRange.swift */; };
 		525242E4225DE1EF0044CECB /* RangeObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 525242E3225DE1EF0044CECB /* RangeObject.swift */; };
+		5283523E2271EF1D0097B949 /* MeshNetwork+Provisioner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5283523D2271EF1D0097B949 /* MeshNetwork+Provisioner.swift */; };
+		528352402271EF770097B949 /* MeshNetwork+Ranges.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5283523F2271EF770097B949 /* MeshNetwork+Ranges.swift */; };
+		528352422271EFC20097B949 /* MeshNetwork+Address.swift in Sources */ = {isa = PBXBuildFile; fileRef = 528352412271EFC20097B949 /* MeshNetwork+Address.swift */; };
+		528352442271F0650097B949 /* MeshNetwork+Nodes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 528352432271F0650097B949 /* MeshNetwork+Nodes.swift */; };
+		528352462271F0C60097B949 /* MeshNetwork+Keys.swift in Sources */ = {isa = PBXBuildFile; fileRef = 528352452271F0C60097B949 /* MeshNetwork+Keys.swift */; };
 		529B757922411970008F1CE7 /* MeshNetworkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529B757822411970008F1CE7 /* MeshNetworkManager.swift */; };
 		529B757D22423DEE008F1CE7 /* Storage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529B757C22423DEE008F1CE7 /* Storage.swift */; };
 		529B75EA224A6CE4008F1CE7 /* Element.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529B75E1224A6CE2008F1CE7 /* Element.swift */; };
@@ -146,6 +151,11 @@
 		51BBAA3978BFB1C9BAA0B3563DB01A48 /* Pods-nRFMeshProvision_Example-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-nRFMeshProvision_Example-Info.plist"; sourceTree = "<group>"; };
 		525242E1225CC6D30044CECB /* ClosedRange.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClosedRange.swift; sourceTree = "<group>"; };
 		525242E3225DE1EF0044CECB /* RangeObject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RangeObject.swift; sourceTree = "<group>"; };
+		5283523D2271EF1D0097B949 /* MeshNetwork+Provisioner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MeshNetwork+Provisioner.swift"; sourceTree = "<group>"; };
+		5283523F2271EF770097B949 /* MeshNetwork+Ranges.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MeshNetwork+Ranges.swift"; sourceTree = "<group>"; };
+		528352412271EFC20097B949 /* MeshNetwork+Address.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MeshNetwork+Address.swift"; sourceTree = "<group>"; };
+		528352432271F0650097B949 /* MeshNetwork+Nodes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MeshNetwork+Nodes.swift"; sourceTree = "<group>"; };
+		528352452271F0C60097B949 /* MeshNetwork+Keys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MeshNetwork+Keys.swift"; sourceTree = "<group>"; };
 		529B757822411970008F1CE7 /* MeshNetworkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MeshNetworkManager.swift; path = nRFMeshProvision/Classes/MeshNetworkManager.swift; sourceTree = "<group>"; };
 		529B757C22423DEE008F1CE7 /* Storage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Storage.swift; path = nRFMeshProvision/Classes/Storage.swift; sourceTree = "<group>"; };
 		529B75E1224A6CE2008F1CE7 /* Element.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Element.swift; sourceTree = "<group>"; };
@@ -349,6 +359,11 @@
 			children = (
 				529B75E6224A6CE2008F1CE7 /* MeshData.swift */,
 				529B75E7224A6CE2008F1CE7 /* MeshNetwork.swift */,
+				5283523D2271EF1D0097B949 /* MeshNetwork+Provisioner.swift */,
+				5283523F2271EF770097B949 /* MeshNetwork+Ranges.swift */,
+				528352452271F0C60097B949 /* MeshNetwork+Keys.swift */,
+				528352432271F0650097B949 /* MeshNetwork+Nodes.swift */,
+				528352412271EFC20097B949 /* MeshNetwork+Address.swift */,
 				529B75E8224A6CE2008F1CE7 /* Provisioner.swift */,
 				529B75E2224A6CE2008F1CE7 /* NetworkKey.swift */,
 				529B75E5224A6CE2008F1CE7 /* ApplicationKey.swift */,
@@ -771,17 +786,20 @@
 			files = (
 				529B761D224A6E20008F1CE7 /* Model.swift in Sources */,
 				529B75EF224A6CE4008F1CE7 /* MeshData.swift in Sources */,
+				528352442271F0650097B949 /* MeshNetwork+Nodes.swift in Sources */,
 				529B75EE224A6CE4008F1CE7 /* ApplicationKey.swift in Sources */,
 				76AD7DBB6F78223071CAB41C3AE42393 /* MeshConstants.swift in Sources */,
 				35A52D4DECCD815F8B14722C2D96207D /* nRFMeshProvision-dummy.m in Sources */,
 				529B75F1224A6CE4008F1CE7 /* Provisioner.swift in Sources */,
 				529B7610224A6D47008F1CE7 /* KeyRefreshPhase.swift in Sources */,
 				529B7614224A6D47008F1CE7 /* Address.swift in Sources */,
+				528352402271EF770097B949 /* MeshNetwork+Ranges.swift in Sources */,
 				529B75EC224A6CE4008F1CE7 /* SceneRange.swift in Sources */,
 				529B75EA224A6CE4008F1CE7 /* Element.swift in Sources */,
 				529B7611224A6D47008F1CE7 /* Scene.swift in Sources */,
 				529B7621224B8213008F1CE7 /* MeshAddress.swift in Sources */,
 				529B75EB224A6CE4008F1CE7 /* NetworkKey.swift in Sources */,
+				528352462271F0C60097B949 /* MeshNetwork+Keys.swift in Sources */,
 				529B7616224A6D47008F1CE7 /* MeshUUID.swift in Sources */,
 				529B7618224A6D47008F1CE7 /* KeyIndex.swift in Sources */,
 				529B7623224BAB26008F1CE7 /* Publish.swift in Sources */,
@@ -796,11 +814,13 @@
 				529B75F2224A6CE4008F1CE7 /* Node.swift in Sources */,
 				529B7612224A6D47008F1CE7 /* Location.swift in Sources */,
 				529B757922411970008F1CE7 /* MeshNetworkManager.swift in Sources */,
+				528352422271EFC20097B949 /* MeshNetwork+Address.swift in Sources */,
 				D159EC79D610DF8F7CA2F21321FD6D7E /* PublishPeriodResolution.swift in Sources */,
 				529B761F224B7D2D008F1CE7 /* UUID+Hex.swift in Sources */,
 				529B757D22423DEE008F1CE7 /* Storage.swift in Sources */,
 				529B7615224A6D47008F1CE7 /* NodeFeatures.swift in Sources */,
 				525242E4225DE1EF0044CECB /* RangeObject.swift in Sources */,
+				5283523E2271EF1D0097B949 /* MeshNetwork+Provisioner.swift in Sources */,
 				529B75F0224A6CE4008F1CE7 /* MeshNetwork.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

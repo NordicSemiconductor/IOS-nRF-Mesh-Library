@@ -30,4 +30,8 @@ public enum MeshModelError: Error {
     case provisionerNotInNetwork
     /// Thrown when the range to be allocated is of invalid type.
     case invalidRange
+    /// Thrown when the provided key is not 128-bit long.
+    case invalidKey
+    /// Thrown when trying to remove a key that is being used by some node.
+    case keyInUse
 }

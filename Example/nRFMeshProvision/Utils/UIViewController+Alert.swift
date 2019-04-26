@@ -18,6 +18,7 @@ extension Selector {
     static let groupAddressRequired = #selector(UIViewController.groupAddressRequired(_:))
     static let scene = #selector(UIViewController.sceneOptional(_:))
     static let sceneRequired = #selector(UIViewController.sceneRequired(_:))
+    static let keyRequired = #selector(UIViewController.keyRequired(_:))
     
 }
 
@@ -61,7 +62,7 @@ extension UIViewController {
             let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
             alert.addTextField { textField in
                 textField.text                   = range?.lowerBound.hex
-                textField.placeholder            = "Lower bound, eg. 0001"
+                textField.placeholder            = "Lower bound, e.g. 0001"
                 textField.clearButtonMode        = .whileEditing
                 textField.returnKeyType          = .next
                 textField.keyboardType           = .alphabet
@@ -73,7 +74,7 @@ extension UIViewController {
             }
             alert.addTextField { textField in
                 textField.text                   = range?.upperBound.hex
-                textField.placeholder            = "Upper bound, eg. AFFF"
+                textField.placeholder            = "Upper bound, e.g. AFFF"
                 textField.clearButtonMode        = .whileEditing
                 textField.returnKeyType          = .next
                 textField.keyboardType           = .alphabet
@@ -146,6 +147,58 @@ extension UIViewController {
             
             self.present(alert, animated: true)
         }
+    }
+    
+    /// Displays an alert dialog with given title and message and
+    /// a text field with initial text and placeholder.
+    ///
+    /// - parameters:
+    ///   - title:       The alert title.
+    ///   - message:     The message below the title.
+    ///   - name:        The initial name of the key.
+    ///   - key:         Initial value of the text field.
+    ///   - handler:     The OK or Generate button handler.
+    func presentKeyDialog(title: String?, message: String?,
+                          name: String? = "", key: Data? = nil,
+                          handler: ((String, Data) -> Void)? = nil) {
+        DispatchQueue.main.async {
+            let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+            alert.addTextField { textField in
+                textField.text                   = name
+                textField.placeholder            = "E.g. Lights and Switches"
+                textField.clearButtonMode        = .whileEditing
+                textField.returnKeyType          = .next
+                textField.keyboardType           = .alphabet
+                textField.autocapitalizationType = .words
+                
+                textField.addTarget(self, action: .nameRequired, for: .editingChanged)
+                textField.addTarget(self, action: .nameRequired, for: .editingDidBegin)
+            }
+            alert.addTextField { textField in
+                textField.text                   = key?.hex ?? OpenSSLHelper().generateRandom().hex
+                textField.placeholder            = "E.g. 001122334455667788990AABBCCDDEEFF"
+                textField.clearButtonMode        = .whileEditing
+                textField.returnKeyType          = .done
+                textField.keyboardType           = .alphabet
+                textField.autocapitalizationType = .allCharacters
+                
+                textField.addTarget(self, action: .keyRequired, for: .editingChanged)
+                textField.addTarget(self, action: .keyRequired, for: .editingDidBegin)
+            }
+            alert.addAction(UIAlertAction(title: "OK", style: .default) { _ in
+                if let name = alert.textFields![0].text,
+                   let hex = alert.textFields![1].text,
+                   let key = Data(hex: hex) {
+                    handler?(name, key)
+                }
+            })
+            alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+            
+            self.present(alert, animated: true)
+        }
+    }
+    
+    @objc func generateTapped(sender: UILongPressGestureRecognizer) {
     }
     
     // MARK: - Validators
@@ -222,6 +275,17 @@ extension UIViewController {
         
         if let text = textField.text, let scene = UInt16(text, radix: 16) {
             alert.setValid(scene.isValidScene)
+        } else {
+            alert.setValid(false)
+        }
+    }
+    
+    @objc func keyRequired(_ textField: UITextField) {
+        let alert = getAlert(from: textField)
+        
+        if let text = textField.text, let data = Data(hex: text) {
+            // A valid key is 16 bytes long (128-bit).
+            alert.setValid(data.count == 16)
         } else {
             alert.setValid(false)
         }

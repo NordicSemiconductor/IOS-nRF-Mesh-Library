@@ -311,7 +311,11 @@
                         </connections>
                     </tableView>
                     <navigationItem key="navigationItem" title="App Keys" id="0Lh-2f-TX3">
-                        <barButtonItem key="rightBarButtonItem" systemItem="add" id="Idv-mb-BiW"/>
+                        <barButtonItem key="rightBarButtonItem" systemItem="add" id="Idv-mb-BiW">
+                            <connections>
+                                <action selector="addTapped:" destination="bs4-xQ-JR5" id="clK-ey-gTA"/>
+                            </connections>
+                        </barButtonItem>
                     </navigationItem>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="PYb-4U-VQU" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -496,7 +500,11 @@
                         </connections>
                     </tableView>
                     <navigationItem key="navigationItem" title="Network Keys" id="ZaM-mu-kAD">
-                        <barButtonItem key="rightBarButtonItem" systemItem="add" id="EpN-Pe-YWV"/>
+                        <barButtonItem key="rightBarButtonItem" systemItem="add" id="EpN-Pe-YWV">
+                            <connections>
+                                <action selector="addTapped:" destination="6zD-fu-xO1" id="AjF-q9-mlY"/>
+                            </connections>
+                        </barButtonItem>
                     </navigationItem>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="4iX-gG-Dsh" userLabel="First Responder" sceneMemberID="firstResponder"/>

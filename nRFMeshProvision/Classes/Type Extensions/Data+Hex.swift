@@ -7,11 +7,14 @@
 
 import Foundation
 
-internal extension Data {
+public extension Data {
     
     /// Hex string to Data representation
     /// Inspired by https://stackoverflow.com/questions/26501276/converting-hex-string-to-nsdata-in-swift
     init?(hex: String) {
+        guard hex.count % 2 == 0 else {
+            return nil
+        }
         let len = hex.count / 2
         var data = Data(capacity: len)
         
@@ -28,4 +31,8 @@ internal extension Data {
         self = data
     }
     
+    /// Hexadecimal string representation of `Data` object.
+    var hex: String {
+        return map { String(format: "%02X", $0) }.joined()
+    }
 }

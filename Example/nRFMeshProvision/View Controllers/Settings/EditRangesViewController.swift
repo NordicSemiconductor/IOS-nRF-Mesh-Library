@@ -99,6 +99,7 @@ class EditRangesViewController: UIViewController, Editable {
         // This enables the editing mode in the table view.
         tableView.setEditing(editing, animated: animated)
     }
+    
 }
 
 // MARK: - Table View Delegate
@@ -124,7 +125,6 @@ extension EditRangesViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        
         presentRangeDialog(for: indexPath)
     }
     
@@ -137,9 +137,7 @@ extension EditRangesViewController: UITableViewDelegate, UITableViewDataSource {
             ranges.remove(at: indexPath.row)
             modified = true
             
-            tableView.beginUpdates()
             tableView.deleteRows(at: [indexPath], with: .automatic)
-            tableView.endUpdates()
             
             rangeSummary.clearRanges()
             rangeSummary.addRanges(self.ranges)

@@ -17,19 +17,19 @@ public class Model: Codable {
     public var modelIdentifier: UInt16 {
         return UInt16(modelId & 0x0000FFFF)
     }
-    /// The Company Identifier or nil, if the model is Bluetooth SIG-assigned.
+    /// The Company Identifier or `nil`, if the model is Bluetooth SIG-assigned.
     public var companyIdentifier: UInt16? {
         if modelId > 0xFFFF {
             return UInt16(modelId >> 16)
         }
         return nil
     }
-    /// Rerturns `true` for model with identifiers assigned by Bluetooth SIG,
+    /// Returns `true` for model with identifiers assigned by Bluetooth SIG,
     /// `false` otherwise.
     public var isBluetoothSIGAssigned: Bool {
         return modelId <= 0xFFFF
     }
-    /// The array of unicast or group addresses (4-character hexadecimal value),
+    /// The array of Unicast or Group Addresses (4-character hexadecimal value),
     /// or virtual label UUIDs (32-character hexadecimal string).
     internal var subscribe: [String]
     /// Returns the list of addresses subscribed to this model.

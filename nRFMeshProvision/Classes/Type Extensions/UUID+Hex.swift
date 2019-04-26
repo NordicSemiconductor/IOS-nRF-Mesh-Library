@@ -9,7 +9,7 @@ import Foundation
 
 internal extension UUID {
     
-    /// Creates teh UUID from a 32-character hexadecimal string.
+    /// Creates the UUID from a 32-character hexadecimal string.
     init?(hex: String) {
         guard hex.count == 32 else {
             return nil
@@ -29,7 +29,7 @@ internal extension UUID {
         self.init(uuid: uuid.uuid)
     }
     
-    /// Returns the uuisString without dashes.
+    /// Returns the uuidString without dashes.
     var hex: String {
         return uuidString.replacingOccurrences(of: "-", with: "")
     }

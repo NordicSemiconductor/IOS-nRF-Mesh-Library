@@ -38,11 +38,26 @@ public class NetworkKey: Codable {
     /// value, such as when a Key Refresh procedure is in progress.
     public internal(set) var oldKey: Data? = nil
     
-    public init(name: String, index: KeyIndex, key: Data) {
+    internal init(name: String, index: KeyIndex, key: Data) {
         self.name        = name
         self.index       = index
         self.key         = key
         self.minSecurity = .high
         self.timestamp   = Date()
     }
+    
+}
+
+// MARK: - Operators
+
+extension NetworkKey: Equatable {
+    
+    public static func == (lhs: NetworkKey, rhs: NetworkKey) -> Bool {
+        return lhs.index == rhs.index
+    }
+    
+    public static func != (lhs: NetworkKey, rhs: NetworkKey) -> Bool {
+        return lhs.index != rhs.index
+    }
+    
 }
