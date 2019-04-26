@@ -114,7 +114,9 @@ protocol Editable {
     /// Shows the 'Empty View'.
     func showEmptyView()
     /// Hides the 'Empty View'.
-    func hideEmptyView()
+    ///
+    /// - parameter allowMoving: If `true`, the Edit/Done button will appear.
+    func hideEmptyView(allowMoving: Bool)
 }
 
 extension Editable where Self: UIViewController {
@@ -130,8 +132,8 @@ extension Editable where Self: UIViewController {
         tableView.setEditing(false, animated: false)
     }
     
-    func hideEmptyView() {
-        if !navigationItem.rightBarButtonItems!.contains(editButtonItem) {
+    func hideEmptyView(allowMoving: Bool = false) {
+        if allowMoving && !navigationItem.rightBarButtonItems!.contains(editButtonItem) {
             navigationItem.rightBarButtonItems!.append(editButtonItem)
         }
         tableView.hideEmptyView()

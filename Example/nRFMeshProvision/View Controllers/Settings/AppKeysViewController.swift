@@ -44,6 +44,13 @@ class AppKeysViewController: UITableViewController, Editable {
             let target = segue.destination as! NetworkKeysViewController
             target.automaticallyOpenKeyDialog = true
         }
+        if segue.identifier == "bindNetworkKey" {
+            let target = segue.destination as! BindAppKeyViewController
+            let cell = sender as! UITableViewCell
+            let indexPath = tableView.indexPath(for: cell)!
+            let network = MeshNetworkManager.instance.meshNetwork!
+            target.applicationKey = network.applicationKeys[indexPath.row]
+        }
     }
 
     // MARK: - Table view data source
@@ -72,15 +79,20 @@ class AppKeysViewController: UITableViewController, Editable {
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        // Do not allow to modify the keys after they were created.
-        // Only the human readable name can be modified.
-        presentNameDialog(for: indexPath)
     }
     
     override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
         // The keys in use should not be editable.
-        // This will be handled by displaying a "Key in use" action (see method below).
+        // This will be handled by displaying a "Key in use" action (see methods below).
         return true
+    }
+    
+    override func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
+        return .none
+    }
+    
+    override func tableView(_ tableView: UITableView, shouldIndentWhileEditingRowAt indexPath: IndexPath) -> Bool {
+        return false
     }
     
     override func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
@@ -89,30 +101,23 @@ class AppKeysViewController: UITableViewController, Editable {
         let applicationKey = network.applicationKeys[indexPath.row]
         let canBeRemoved = !network.nodes.knows(applicationKey: applicationKey)
         
+        let renameRowAction = UITableViewRowAction(style: .default, title: "Rename", handler: { _, indexPath in
+            self.presentNameDialog(for: indexPath)
+        })
+        renameRowAction.backgroundColor = UIColor.nordicLake
+        
         if !canBeRemoved {
-            return [UITableViewRowAction(style: .normal, title: "Key in use", handler: {_,_ in })]
+            return [
+                UITableViewRowAction(style: .normal, title: "Key in use", handler: {_,_ in }),
+                renameRowAction
+            ]
         }
-        // By default Delete action will be shown.
-        return nil
-    }
-
-    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-        if editingStyle == .delete {
-            let network = MeshNetworkManager.instance.meshNetwork!
-            _ = try! network.remove(applicationKeyAt: indexPath.row)
-            
-            tableView.beginUpdates()
-            tableView.deleteRows(at: [indexPath], with: .top)
-            if network.applicationKeys.isEmpty {
-                tableView.deleteSections(IndexSet(integer: 0), with: .fade)
-                showEmptyView()
-            }
-            tableView.endUpdates()
-            
-            if !MeshNetworkManager.instance.save() {
-                self.presentAlert(title: "Error", message: "Mesh configuration could not be saved.")
-            }
-        }
+        return [
+            UITableViewRowAction(style: .destructive, title: "Delete", handler: { _, indexPath in
+                self.deleteKey(at: indexPath)
+            }),
+            renameRowAction
+        ]
     }
 
 }
@@ -122,6 +127,23 @@ extension AppKeysViewController {
     private var networkKeyExists: Bool {
         let network = MeshNetworkManager.instance.meshNetwork!
         return !network.networkKeys.isEmpty
+    }
+    
+    private func deleteKey(at indexPath: IndexPath) {
+        let network = MeshNetworkManager.instance.meshNetwork!
+        _ = try! network.remove(applicationKeyAt: indexPath.row)
+        
+        tableView.beginUpdates()
+        tableView.deleteRows(at: [indexPath], with: .top)
+        if network.applicationKeys.isEmpty {
+            tableView.deleteSections(IndexSet(integer: 0), with: .fade)
+            showEmptyView()
+        }
+        tableView.endUpdates()
+        
+        if !MeshNetworkManager.instance.save() {
+            self.presentAlert(title: "Error", message: "Mesh configuration could not be saved.")
+        }
     }
     
     private func presentKeyDialog() {

@@ -19,7 +19,7 @@ class ProvisionersViewController: UITableViewController, Editable {
         if !hasProvisioners {
             showEmptyView()
         } else {
-            hideEmptyView()
+            hideEmptyView(allowMoving: true)
         }
     }
     
@@ -60,6 +60,14 @@ class ProvisionersViewController: UITableViewController, Editable {
         }
     }
     
+    override func tableView(_ tableView: UITableView, titleForFooterInSection section: Int) -> String? {
+        let sectionWithFooter = tableView.numberOfSections - 1
+        if section == sectionWithFooter {
+            return "Swipe left to Delete a Provisioner."
+        }
+        return nil
+    }
+    
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "provisionerCell", for: indexPath)
 
@@ -83,15 +91,24 @@ class ProvisionersViewController: UITableViewController, Editable {
         return true
     }
     
+    override func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
+        return .none
+    }
+    
+    override func tableView(_ tableView: UITableView, shouldIndentWhileEditingRowAt indexPath: IndexPath) -> Bool {
+        return false
+    }
+    
+    override func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
+        let removeRowAction = UITableViewRowAction(style: .destructive, title: "Delete", handler: { _, indexPath in
+            self.removeProvisioner(at: indexPath)
+        })
+        return [removeRowAction]
+    }
+    
     override func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
         let count = MeshNetworkManager.instance.meshNetwork?.provisioners.count ?? 0
         return count > 1
-    }
-    
-    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-        if editingStyle == .delete {
-            removeProvisioner(at: indexPath)
-        }
     }
     
     override func tableView(_ tableView: UITableView, moveRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
@@ -162,16 +179,22 @@ extension ProvisionersViewController: EditProvisionerDelegate {
         let count = meshNetwork.provisioners.count
         
         tableView.beginUpdates()
+        if count == 2 {
+            // The next line is needed to remove the footer from the first section,
+            // as it will now appear below the second section.
+            tableView.reloadSections(.thisProvisionerSection, with: .fade)
+        }
         if count <= 2 {
-            tableView.insertSections(IndexSet(integer: count - 1), with: .automatic)
+            // Insert the second section for other Provisioners.
+            tableView.insertSections(IndexSet(integer: count - 1), with: .fade)
         }
         if count == 1 {
-            tableView.insertRows(at: [IndexPath(row: 0, section: 0)], with: .automatic)
+            tableView.insertRows(at: [IndexPath(row: 0, section: 0)], with: .top)
         } else {
-            tableView.insertRows(at: [IndexPath(row: count - 2, section: 1)], with: .automatic)
+            tableView.insertRows(at: [IndexPath(row: count - 2, section: 1)], with: .top)
         }
         tableView.endUpdates()
-        hideEmptyView()
+        hideEmptyView(allowMoving: true)
     }
     
     func provisionerWasModified(_ provisioner: Provisioner) {
@@ -184,7 +207,7 @@ extension ProvisionersViewController: EditProvisionerDelegate {
                 IndexPath(row: 0, section: 0) :
                 IndexPath(row: index - 1, section: 1)
             tableView.beginUpdates()
-            tableView.reloadRows(at: [indexPath], with: .automatic)
+            tableView.reloadRows(at: [indexPath], with: .fade)
             tableView.endUpdates()
         }
     }
@@ -197,18 +220,18 @@ extension ProvisionersViewController: EditProvisionerDelegate {
         
         tableView.beginUpdates()
         // Remove the deleted row.
-        tableView.deleteRows(at: [indexPath], with: .automatic)
+        tableView.deleteRows(at: [indexPath], with: .top)
         if indexPath.isThisProvisioner && provisionerCount > 0 {
             // Bring another one as local Provisioner.
             tableView.moveRow(at: IndexPath(row: 0, section: 1), to: IndexPath(row: 0, section: 0))
         }
         if provisionerCount == 1 {
             // Remove Other Provisioners section.
-            tableView.deleteSections(.otherProvisionersSection, with: .automatic)
+            tableView.deleteSections(.otherProvisionersSection, with: .fade)
         }
         if provisionerCount == 0 {
             // Remove This Provisioner section.
-            tableView.deleteSections(.thisProvisionerSection, with: .automatic)
+            tableView.deleteSections(.thisProvisionerSection, with: .fade)
             showEmptyView()
         }
         tableView.endUpdates()

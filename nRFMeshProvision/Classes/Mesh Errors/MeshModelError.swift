@@ -34,4 +34,10 @@ public enum MeshModelError: Error {
     case invalidKey
     /// Thrown when trying to remove a key that is being used by some node.
     case keyInUse
+    /// Thrown when the given Key Index is not valid.
+    case keyIndexOutOfRange
+    /// Thrown when Network Key is required to continue with the operation.
+    case noNetworkKey
+    /// Thrown when Application Key is required to continue with the operation.
+    case noApplicationKey
 }

@@ -21,16 +21,23 @@ public extension MeshNetwork {
         return (networkKeys.last?.index ?? -1) + 1 as KeyIndex
     }
     
-    /// Adds a new Application Key.
+    /// Adds a new Application Key and binds it to the first Network Key.
     ///
     /// - parameter applicationKey: The 128-bit Application Key.
     /// - parameter name:           The human readable name.
-    /// - throws: This method throws an error if the key is not 128-bit long.
+    /// - throws: This method throws an error if the key is not 128-bit long,
+    ///           there isn't any Network Key to bind the new key to
+    ///           or the assigned Key Index is out of range.
+    /// - seeAlso: `nextAvailableApplicationKeyIndex`
     func add(applicationKey: Data, name: String) throws -> ApplicationKey {
         guard applicationKey.count == 16 else {
             throw MeshModelError.invalidKey
         }
-        let key = ApplicationKey(name: name, index: nextAvailableApplicationKeyIndex, key: applicationKey)
+        guard let defaultNetworkKey = networkKeys.first else {
+            throw MeshModelError.noNetworkKey
+        }
+        let key = try ApplicationKey(name: name, index: nextAvailableApplicationKeyIndex,
+                                 key: applicationKey, bindTo: defaultNetworkKey)
         applicationKeys.append(key)
         return key
     }
@@ -78,12 +85,14 @@ public extension MeshNetwork {
     ///
     /// - parameter networkKey: The 128-bit Application Key.
     /// - parameter name:       The human readable name.
-    /// - throws: This method throws an error if the key is not 128-bit long.
+    /// - throws: This method throws an error if the key is not 128-bit long
+    ///           or the assigned Key Index is out of range.
+    /// - seeAlso: `nextAvailableNetworkKeyIndex`
     func add(networkKey: Data, name: String) throws -> NetworkKey {
         guard networkKey.count == 16 else {
             throw MeshModelError.invalidKey
         }
-        let key = NetworkKey(name: name, index: nextAvailableNetworkKeyIndex, key: networkKey)
+        let key = try NetworkKey(name: name, index: nextAvailableNetworkKeyIndex, key: networkKey)
         networkKeys.append(key)
         return key
     }

@@ -191,7 +191,7 @@ extension UIViewController {
                 textField.addTarget(self, action: .nameRequired, for: .editingDidBegin)
             }
             alert.addTextField { textField in
-                textField.text                   = key?.hex ?? OpenSSLHelper().generateRandom().hex
+                textField.text                   = key?.hex ?? Data.random128BitKey().hex
                 textField.placeholder            = "E.g. 001122334455667788990AABBCCDDEEFF"
                 textField.clearButtonMode        = .whileEditing
                 textField.returnKeyType          = .done

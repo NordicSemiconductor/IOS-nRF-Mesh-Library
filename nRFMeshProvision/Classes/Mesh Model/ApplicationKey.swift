@@ -20,11 +20,14 @@ public class ApplicationKey: Codable {
     /// Previous 128-bit application key, if Key Update procedure is in progress.
     public internal(set) var oldKey: Data?
     
-    internal init(name: String, index: KeyIndex, key: Data) {
+    internal init(name: String, index: KeyIndex, key: Data, bindTo networkKey: NetworkKey) throws {
+        guard index.isValidKeyIndex else {
+            throw MeshModelError.keyIndexOutOfRange
+        }
         self.name        = name
         self.index       = index
         self.key         = key
-        self.boundNetKey = 0
+        self.boundNetKey = networkKey.index
     }
     
 }

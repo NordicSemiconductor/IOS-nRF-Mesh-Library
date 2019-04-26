@@ -38,7 +38,10 @@ public class NetworkKey: Codable {
     /// value, such as when a Key Refresh procedure is in progress.
     public internal(set) var oldKey: Data? = nil
     
-    internal init(name: String, index: KeyIndex, key: Data) {
+    internal init(name: String, index: KeyIndex, key: Data) throws {
+        guard index.isValidKeyIndex else {
+            throw MeshModelError.keyIndexOutOfRange
+        }
         self.name        = name
         self.index       = index
         self.key         = key

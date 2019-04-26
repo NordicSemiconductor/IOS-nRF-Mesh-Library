@@ -114,6 +114,10 @@ extension EditRangesViewController: UITableViewDelegate, UITableViewDataSource {
         return ranges.count
     }
     
+    func tableView(_ tableView: UITableView, titleForFooterInSection section: Int) -> String? {
+        return "Swipe left to Delete a range. After modification, ranges will merge automatically if possible."
+    }
+    
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "rangeCell", for: indexPath) as! RangeCell
         cell.rangeView.setBounds(bounds)

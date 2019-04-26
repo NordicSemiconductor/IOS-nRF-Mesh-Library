@@ -14,6 +14,7 @@
 		3089BCA02099CA4900E30192 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3089BC9E2099CA4900E30192 /* LaunchScreen.storyboard */; };
 		525242E0225CBFEC0044CECB /* RangeObject+String.swift in Sources */ = {isa = PBXBuildFile; fileRef = 525242DF225CBFEC0044CECB /* RangeObject+String.swift */; };
 		525242E8225F2D6A0044CECB /* FabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 525242E7225F2D6A0044CECB /* FabView.swift */; };
+		5283524822733BCF0097B949 /* BindAppKeyViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5283524722733BCF0097B949 /* BindAppKeyViewController.swift */; };
 		529B756D223FE7F1008F1CE7 /* RootViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529B756C223FE7F1008F1CE7 /* RootViewController.swift */; };
 		529B7570223FF1AE008F1CE7 /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529B756F223FF1AE008F1CE7 /* SettingsViewController.swift */; };
 		529B7572223FFC39008F1CE7 /* AppKeysViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529B7571223FFC39008F1CE7 /* AppKeysViewController.swift */; };
@@ -56,6 +57,7 @@
 		4973E9CDA09CE2398E5C269A /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
 		525242DF225CBFEC0044CECB /* RangeObject+String.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "RangeObject+String.swift"; path = "Utils/RangeObject+String.swift"; sourceTree = "<group>"; };
 		525242E7225F2D6A0044CECB /* FabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FabView.swift; sourceTree = "<group>"; };
+		5283524722733BCF0097B949 /* BindAppKeyViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = BindAppKeyViewController.swift; path = "View Controllers/Settings/BindAppKeyViewController.swift"; sourceTree = "<group>"; };
 		529B756C223FE7F1008F1CE7 /* RootViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = RootViewController.swift; path = "View Controllers/RootViewController.swift"; sourceTree = "<group>"; };
 		529B756F223FF1AE008F1CE7 /* SettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SettingsViewController.swift; path = "View Controllers/Settings/SettingsViewController.swift"; sourceTree = "<group>"; };
 		529B7571223FFC39008F1CE7 /* AppKeysViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppKeysViewController.swift; path = "View Controllers/Settings/AppKeysViewController.swift"; sourceTree = "<group>"; };
@@ -152,6 +154,7 @@
 				529B756F223FF1AE008F1CE7 /* SettingsViewController.swift */,
 				529B759B2243BA10008F1CE7 /* NetworkKeysViewController.swift */,
 				529B7571223FFC39008F1CE7 /* AppKeysViewController.swift */,
+				5283524722733BCF0097B949 /* BindAppKeyViewController.swift */,
 			);
 			name = Settings;
 			sourceTree = "<group>";
@@ -442,6 +445,7 @@
 				529B764722522D37008F1CE7 /* UITableView+EmptyView.swift in Sources */,
 				52DAA5E2225B633B0041C43A /* RangeView.swift in Sources */,
 				52DAA5DB22560EEE0041C43A /* EditProvisionerViewController.swift in Sources */,
+				5283524822733BCF0097B949 /* BindAppKeyViewController.swift in Sources */,
 				529B759A2243BA0A008F1CE7 /* ProvisionersViewController.swift in Sources */,
 				529B76492252499E008F1CE7 /* UIColor+Nordic.swift in Sources */,
 				525242E0225CBFEC0044CECB /* RangeObject+String.swift in Sources */,
