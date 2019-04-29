@@ -138,7 +138,7 @@ extension AppKeysViewController {
 
 private extension IndexPath {
     
-    /// Returns the Network Key index in mesh network based on the
+    /// Returns the Application Key index in mesh network based on the
     /// IndexPath.
     var keyIndex: Int {
         return section + row
