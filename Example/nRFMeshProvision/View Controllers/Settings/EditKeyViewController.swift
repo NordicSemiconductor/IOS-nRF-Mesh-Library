@@ -9,6 +9,16 @@
 import UIKit
 import nRFMeshProvision
 
+protocol EditKeyDelegate {
+    /// Notifies the delegate that the Key was added to the mesh network.
+    ///
+    /// - parameter key: The new Key.
+    func keyWasAdded(_ key: Key)
+    /// Notifies the delegate that the given Key was modified.
+    ///
+    /// - parameter key: The Key that has been modified.
+    func keyWasModified(_ key: Key)
+}
 
 class EditKeyViewController: UITableViewController {
     
@@ -22,6 +32,8 @@ class EditKeyViewController: UITableViewController {
     }
     
     // MARK: - Public members
+    
+    /// The Key to be modified.
     var key: Key? {
         didSet {
             if let key = key {
@@ -30,6 +42,8 @@ class EditKeyViewController: UITableViewController {
             isApplicationKey = key is ApplicationKey
         }
     }
+    /// A flag containing `true` if the key is an Application Key, or `false`
+    /// otherwise.
     var isApplicationKey: Bool! {
         didSet {
             let network = MeshNetworkManager.instance.meshNetwork!
@@ -45,6 +59,8 @@ class EditKeyViewController: UITableViewController {
             }
         }
     }
+    /// The delegate will be informed when the Done button is clicked.
+    var delegate: EditKeyDelegate?
     
     // MARK: - Private members
     
@@ -207,6 +223,7 @@ private extension EditKeyViewController {
     private func saveKey() {
         let network = MeshNetworkManager.instance.meshNetwork!
         
+        let adding = isNewKey
         if key == nil {
             if isApplicationKey {
                 key = try! network.add(applicationKey: newKey, name: newName)
@@ -214,9 +231,7 @@ private extension EditKeyViewController {
                 key = try! network.add(networkKey: newKey, name: newName)
             }
         }
-        if var key = key {
-            key.name = newName
-        }
+        key!.name = newName
         if let applicationKey = key as? ApplicationKey {
             let networkKey = network.networkKeys.first { $0.index == newBoundNetKey }
             applicationKey.bind(to: networkKey!)
@@ -224,6 +239,13 @@ private extension EditKeyViewController {
         
         if MeshNetworkManager.instance.save() {
             dismiss(animated: true)
+            
+            // Finally, notify the parent view controller.
+            if adding {
+                delegate?.keyWasAdded(key!)
+            } else {
+                delegate?.keyWasModified(key!)
+            }
         } else {
             presentAlert(title: "Error", message: "Mesh configuration could not be saved.")
         }

@@ -19,7 +19,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
                         <sections>
-                            <tableViewSection headerTitle="Global Settings" id="wzJ-Rr-nfV">
+                            <tableViewSection headerTitle="Default Settings" id="wzJ-Rr-nfV">
                                 <cells>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" textLabel="Gkh-pl-fyG" detailTextLabel="FfN-18-FAz" style="IBUITableViewCellStyleValue1" id="KC4-RC-hxi">
                                         <rect key="frame" x="0.0" y="55.333333333333343" width="375" height="44"/>
@@ -1322,7 +1322,7 @@
         <segue reference="bNE-yM-CyO"/>
         <segue reference="4Ai-9J-pRo"/>
         <segue reference="fbZ-vy-Nf5"/>
-        <segue reference="ZYN-EB-pgW"/>
+        <segue reference="UIV-8t-JZp"/>
     </inferredMetricsTieBreakers>
     <color key="tintColor" red="0.0" green="0.46666666670000001" blue="0.7843137255" alpha="1" colorSpace="calibratedRGB"/>
 </document>

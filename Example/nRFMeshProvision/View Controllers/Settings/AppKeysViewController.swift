@@ -48,6 +48,7 @@ class AppKeysViewController: UITableViewController, Editable {
         
         let target = segue.destination as! UINavigationController
         let viewController = target.topViewController! as! EditKeyViewController
+        viewController.delegate = self
         viewController.isApplicationKey = true
         
         if let cell = sender as? UITableViewCell {
@@ -110,7 +111,35 @@ class AppKeysViewController: UITableViewController, Editable {
 
 }
 
-extension AppKeysViewController {
+extension AppKeysViewController: EditKeyDelegate {
+    
+    func keyWasAdded(_ key: Key) {
+        let meshNetwork = MeshNetworkManager.instance.meshNetwork!
+        let count = meshNetwork.networkKeys.count
+        
+        tableView.beginUpdates()
+        if count == 1 {
+            tableView.insertSections(IndexSet(integer: 0), with: .fade)
+            tableView.insertRows(at: [IndexPath(row: 0, section: 0)], with: .top)
+        } else {
+            tableView.insertRows(at: [IndexPath(row: count - 2, section: 1)], with: .top)
+        }
+        tableView.endUpdates()
+        hideEmptyView()
+    }
+    
+    func keyWasModified(_ key: Key) {
+        let meshNetwork = MeshNetworkManager.instance.meshNetwork!
+        let networkKeys = meshNetwork.networkKeys
+        let index = networkKeys.firstIndex(of: key as! NetworkKey)
+        
+        if let index = index {
+            let indexPath = index == 0 ?
+                IndexPath(row: 0, section: 0) :
+                IndexPath(row: index - 1, section: 1)
+            tableView.reloadRows(at: [indexPath], with: .fade)
+        }
+    }
     
     private var networkKeyExists: Bool {
         let network = MeshNetworkManager.instance.meshNetwork!

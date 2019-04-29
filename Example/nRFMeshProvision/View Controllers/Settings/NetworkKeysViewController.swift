@@ -26,13 +26,14 @@ class NetworkKeysViewController: UITableViewController, Editable {
         }
         
         if automaticallyOpenKeyDialog {
-            performSegue(withIdentifier: "addNetKey", sender: nil)
+            performSegue(withIdentifier: "add", sender: nil)
         }
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         let target = segue.destination as! UINavigationController
         let viewController = target.topViewController! as! EditKeyViewController
+        viewController.delegate = self
         viewController.isApplicationKey = false
         
         if let cell = sender as? UITableViewCell {
@@ -101,9 +102,7 @@ class NetworkKeysViewController: UITableViewController, Editable {
         // It should not be possible to delete a key that is in use.
         if networkKey.isUsed(in: network) {
             let title = networkKey.isPrimary ? "Primary Key" : "Key in use"
-            return [
-                UITableViewRowAction(style: .normal, title: title, handler: {_,_ in })
-            ]
+            return [UITableViewRowAction(style: .normal, title: title, handler: {_,_ in })]
         }
         return nil
     }
@@ -116,7 +115,38 @@ class NetworkKeysViewController: UITableViewController, Editable {
 
 }
 
-extension NetworkKeysViewController {
+extension NetworkKeysViewController: EditKeyDelegate {
+    
+    func keyWasAdded(_ key: Key) {
+        let meshNetwork = MeshNetworkManager.instance.meshNetwork!
+        let count = meshNetwork.networkKeys.count
+        
+        tableView.beginUpdates()
+        if count <= 2 {
+            // Insert the first or second section.
+            tableView.insertSections(IndexSet(integer: count - 1), with: .fade)
+        }
+        if count == 1 {
+            tableView.insertRows(at: [IndexPath(row: 0, section: 0)], with: .top)
+        } else {
+            tableView.insertRows(at: [IndexPath(row: count - 2, section: 1)], with: .top)
+        }
+        tableView.endUpdates()
+        hideEmptyView()
+    }
+    
+    func keyWasModified(_ key: Key) {
+        let meshNetwork = MeshNetworkManager.instance.meshNetwork!
+        let networkKeys = meshNetwork.networkKeys
+        let index = networkKeys.firstIndex(of: key as! NetworkKey)
+        
+        if let index = index {
+            let indexPath = index == 0 ?
+                IndexPath(row: 0, section: 0) :
+                IndexPath(row: index - 1, section: 1)
+            tableView.reloadRows(at: [indexPath], with: .fade)
+        }
+    }
     
     private func deleteKey(at indexPath: IndexPath) {
         let network = MeshNetworkManager.instance.meshNetwork!

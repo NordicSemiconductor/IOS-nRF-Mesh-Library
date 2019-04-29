@@ -14,7 +14,7 @@ protocol EditProvisionerDelegate {
     ///
     /// - parameter provisioner: The new Provisioner.
     func provisionerWasAdded(_ provisioner: Provisioner)
-    /// Notifies the delegate that the given provisioner was modified.
+    /// Notifies the delegate that the given Provisioner was modified.
     ///
     /// - parameter provisioner: The Provisioner that has been modified.
     func provisionerWasModified(_ provisioner: Provisioner)
@@ -221,11 +221,17 @@ class EditProvisionerViewController: UITableViewController {
                 provisioner.provisionerName = newName
             }
             
-            // Finally, notify the parent view controller.
-            if adding {
-                delegate?.provisionerWasAdded(provisioner)
+            if MeshNetworkManager.instance.save() {
+                dismiss(animated: true)
+                
+                // Finally, notify the parent view controller.
+                if adding {
+                    delegate?.provisionerWasAdded(provisioner)
+                } else {
+                    delegate?.provisionerWasModified(provisioner)
+                }
             } else {
-                delegate?.provisionerWasModified(provisioner)
+                presentAlert(title: "Error", message: "Mesh configuration could not be saved.")
             }
         } catch {
             switch error as! MeshModelError {
@@ -247,12 +253,6 @@ class EditProvisionerViewController: UITableViewController {
                 presentAlert(title: "Error", message: "An error occurred.")
             }
             return
-        }
-        
-        if MeshNetworkManager.instance.save() {
-            dismiss(animated: true)
-        } else {
-            presentAlert(title: "Error", message: "Mesh configuration could not be saved.")
         }
     }
     

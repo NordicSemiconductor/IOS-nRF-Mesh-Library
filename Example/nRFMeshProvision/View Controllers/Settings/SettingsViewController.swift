@@ -53,9 +53,45 @@ class SettingsViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
+        
+        if indexPath.isNetworkName {
+            presentNameDialog()
+        }
+        if indexPath.isResetNetwork {
+            presentResetConfirmation()
+        }
     }
     
-    // MARK: - Export / Import -
+}
+
+extension SettingsViewController {
+    
+    /// Presents a dialog to edit the network name.
+    private func presentNameDialog() {
+        let network = MeshNetworkManager.instance.meshNetwork!
+        
+        presentTextAlert(title: "Network Name", message: nil, text: network.meshName,
+                         placeHolder: "E.g. My House", type: .nameRequired) { name in
+                            network.meshName = name
+                            self.tableView.reloadRows(at: [.name], with: .fade)
+                            
+                            if !MeshNetworkManager.instance.save() {
+                                self.presentAlert(title: "Error", message: "Mesh configuration could not be saved.")
+                            }
+        }
+    }
+    
+    /// Presents a dialog with resetting confirmation.
+    private func presentResetConfirmation() {
+        let alert = UIAlertController(title: "Reset Network",
+                                      message: "Resetting the network will erase all network data.\nMake sure you exported it first.",
+                                      preferredStyle: .actionSheet)
+        let resetAction = UIAlertAction(title: "Reset", style: .destructive) { _ in self.resetNetwork() }
+        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel)
+        alert.addAction(resetAction)
+        alert.addAction(cancelAction)
+        present(alert, animated: true)
+    }
     
     /// Displays the Import / Export action sheet.
     private func displayImportExportOptions() {
@@ -69,6 +105,24 @@ class SettingsViewController: UITableViewController {
         alert.addAction(importAction)
         alert.addAction(cancelAction)
         present(alert, animated: true)
+    }
+    
+    /// Resets all network settings to default values.
+    private func resetNetwork() {
+        let manager = MeshNetworkManager.instance
+        // TODO: Implement creator
+        _ = manager.createNewMeshNetwork(named: "nRF Mesh Network", by: UIDevice.current.name)
+        
+        // Reload network data.
+        let meshNetwork = manager.meshNetwork!
+        networkName.detailTextLabel?.text  = meshNetwork.meshName
+        provisioners.detailTextLabel?.text = "\(meshNetwork.provisioners.count)"
+        networkKeys.detailTextLabel?.text  = "\(meshNetwork.networkKeys.count)"
+        appKeys.detailTextLabel?.text      = "\(meshNetwork.applicationKeys.count)"
+        
+        if !MeshNetworkManager.instance.save() {
+            self.presentAlert(title: "Error", message: "Mesh configuration could not be saved.")
+        }
     }
     
     /// Exports Mesh Network configuration and opens UIActivityViewController
@@ -121,5 +175,27 @@ extension SettingsViewController: UIDocumentPickerDelegate {
             }
         }
     }
+    
+}
+
+
+private extension IndexPath {
+    
+    /// Returns whether the IndexPath point to the mesh network name row.
+    var isNetworkName: Bool {
+        return section == 1 && row == 0
+    }
+    
+    /// Returns whether the IndexPath point to the mesh network name row.
+    var isResetNetwork: Bool {
+        return section == 2 && row == 0
+    }
+    
+    static let name = IndexPath(row: 0, section: 1)
+}
+
+private extension IndexSet {
+    
+    static let networkSection = IndexSet(integer: 1)
     
 }

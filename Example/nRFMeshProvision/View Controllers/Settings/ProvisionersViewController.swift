@@ -11,6 +11,8 @@ import nRFMeshProvision
 	
 class ProvisionersViewController: UITableViewController, Editable {
     
+    // MARK: - Implementation
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.setEmptyView(title: "No provisioners", message: "Click + to add a new one.", messageImage: #imageLiteral(resourceName: "baseline-security"))
@@ -20,6 +22,19 @@ class ProvisionersViewController: UITableViewController, Editable {
             showEmptyView()
         } else {
             hideEmptyView()
+        }
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        let target = segue.destination as! UINavigationController
+        let viewController = target.topViewController as! EditProvisionerViewController
+        viewController.delegate = self
+        
+        if segue.identifier == "show" {
+            let cell = sender! as! UITableViewCell
+            let indexPath = tableView.indexPath(for: cell)!
+            
+            viewController.provisioner = provisioner(at: indexPath)
         }
     }
     
@@ -122,7 +137,12 @@ class ProvisionersViewController: UITableViewController, Editable {
         }
     }
     
-    override func tableView(_ tableView: UITableView, targetIndexPathForMoveFromRowAt sourceIndexPath: IndexPath, toProposedIndexPath proposedDestinationIndexPath: IndexPath) -> IndexPath {
+    override func tableView(_ tableView: UITableView, targetIndexPathForMoveFromRowAt sourceIndexPath: IndexPath, toProposedIndexPath
+        // This method ensures that 1 only 1 device can be put to
+        // the first section. It allows placing the Provisioner as a
+        // first item in section 0, or after the fisrt one in the
+        // second section.
+        proposedDestinationIndexPath: IndexPath) -> IndexPath {
         if proposedDestinationIndexPath.isThisProvisioner ||
             (sourceIndexPath.isThisProvisioner && proposedDestinationIndexPath.row == 0) {
             return IndexPath(row: 0, section: 0)
@@ -131,20 +151,7 @@ class ProvisionersViewController: UITableViewController, Editable {
     }
     
     
-    // MARK: - View Controller
-    
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        let target = segue.destination as! UINavigationController
-        let viewController = target.topViewController as! EditProvisionerViewController
-        viewController.delegate = self
-        
-        if segue.identifier == "show" {
-            let cell = sender! as! UITableViewCell
-            let indexPath = tableView.indexPath(for: cell)!
-            
-            viewController.provisioner = provisioner(at: indexPath)
-        }
-    }
+    // MARK: - Private API
     
     private func provisioner(at indexPath: IndexPath) -> Provisioner? {
         let meshNetwork = MeshNetworkManager.instance.meshNetwork
@@ -185,9 +192,7 @@ extension ProvisionersViewController: EditProvisionerDelegate {
             let indexPath = index == 0 ?
                 IndexPath(row: 0, section: 0) :
                 IndexPath(row: index - 1, section: 1)
-            tableView.beginUpdates()
             tableView.reloadRows(at: [indexPath], with: .fade)
-            tableView.endUpdates()
         }
     }
     
