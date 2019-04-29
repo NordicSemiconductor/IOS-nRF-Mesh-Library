@@ -63,7 +63,7 @@ public extension MeshNetwork {
     func remove(applicationKeyAt index: Int) throws -> ApplicationKey {
         let applicationKey = applicationKeys[index]
         // Ensure no node is using this Application Key.
-        guard !nodes.contains(where: { $0.appKeys.contains(where: { $0.index == applicationKey.index }) }) else {
+        guard !applicationKey.isUsed(in: self) else {
             throw MeshModelError.keyInUse
         }
         return applicationKeys.remove(at: index)
@@ -118,7 +118,7 @@ public extension MeshNetwork {
     func remove(networkKeyAt index: Int) throws -> NetworkKey {
         let networkKey = networkKeys[index]
         // Ensure no node is using this Application Key.
-        guard !nodes.contains(where: { $0.netKeys.contains(where: { $0.index == networkKey.index }) }) else {
+        guard !networkKey.isUsed(in: self) else {
             throw MeshModelError.keyInUse
         }
         return networkKeys.remove(at: index)

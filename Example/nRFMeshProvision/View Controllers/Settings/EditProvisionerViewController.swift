@@ -30,9 +30,6 @@ class EditProvisionerViewController: UITableViewController {
     @IBOutlet weak var groupAddressRange: RangeView!
     @IBOutlet weak var sceneRange: RangeView!
     
-    @IBOutlet weak var disableConfigCell: UITableViewCell!
-    @IBOutlet weak var useThisProvisionerCell: UITableViewCell!
-    
     // MARK: - Actions
     
     @IBAction func doneTapped(_ sender: UIBarButtonItem) {

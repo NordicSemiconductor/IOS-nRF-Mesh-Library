@@ -19,7 +19,7 @@ class ProvisionersViewController: UITableViewController, Editable {
         if !hasProvisioners {
             showEmptyView()
         } else {
-            hideEmptyView(allowMoving: true)
+            hideEmptyView()
         }
     }
     
@@ -60,14 +60,6 @@ class ProvisionersViewController: UITableViewController, Editable {
         }
     }
     
-    override func tableView(_ tableView: UITableView, titleForFooterInSection section: Int) -> String? {
-        let sectionWithFooter = tableView.numberOfSections - 1
-        if section == sectionWithFooter {
-            return "Swipe left to Delete a Provisioner."
-        }
-        return nil
-    }
-    
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "provisionerCell", for: indexPath)
 
@@ -89,14 +81,6 @@ class ProvisionersViewController: UITableViewController, Editable {
     
     override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
         return true
-    }
-    
-    override func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
-        return .none
-    }
-    
-    override func tableView(_ tableView: UITableView, shouldIndentWhileEditingRowAt indexPath: IndexPath) -> Bool {
-        return false
     }
     
     override func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
@@ -150,15 +134,15 @@ class ProvisionersViewController: UITableViewController, Editable {
     // MARK: - View Controller
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        let target = segue.destination as? UINavigationController
-        let viewController = target?.topViewController as? EditProvisionerViewController
-        viewController?.delegate = self
+        let target = segue.destination as! UINavigationController
+        let viewController = target.topViewController as! EditProvisionerViewController
+        viewController.delegate = self
         
         if segue.identifier == "show" {
             let cell = sender! as! UITableViewCell
             let indexPath = tableView.indexPath(for: cell)!
             
-            viewController?.provisioner = provisioner(at: indexPath)
+            viewController.provisioner = provisioner(at: indexPath)
         }
     }
     
@@ -179,13 +163,8 @@ extension ProvisionersViewController: EditProvisionerDelegate {
         let count = meshNetwork.provisioners.count
         
         tableView.beginUpdates()
-        if count == 2 {
-            // The next line is needed to remove the footer from the first section,
-            // as it will now appear below the second section.
-            tableView.reloadSections(.thisProvisionerSection, with: .fade)
-        }
         if count <= 2 {
-            // Insert the second section for other Provisioners.
+            // Insert the first or second section.
             tableView.insertSections(IndexSet(integer: count - 1), with: .fade)
         }
         if count == 1 {
@@ -194,7 +173,7 @@ extension ProvisionersViewController: EditProvisionerDelegate {
             tableView.insertRows(at: [IndexPath(row: count - 2, section: 1)], with: .top)
         }
         tableView.endUpdates()
-        hideEmptyView(allowMoving: true)
+        hideEmptyView()
     }
     
     func provisionerWasModified(_ provisioner: Provisioner) {

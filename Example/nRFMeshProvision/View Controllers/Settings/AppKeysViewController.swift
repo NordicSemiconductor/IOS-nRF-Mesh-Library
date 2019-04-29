@@ -15,7 +15,7 @@ class AppKeysViewController: UITableViewController, Editable {
     
     @IBAction func addTapped(_ sender: UIBarButtonItem) {
         if networkKeyExists {
-            presentKeyDialog()
+            performSegue(withIdentifier: "add", sender: nil)
         } else {
             presentAlert(title: "Error",
                          message: "No Network Key found.\n\nCreate a Network Key prior to creating an Application Key.",
@@ -43,13 +43,17 @@ class AppKeysViewController: UITableViewController, Editable {
         if segue.identifier == "networkKeys" {
             let target = segue.destination as! NetworkKeysViewController
             target.automaticallyOpenKeyDialog = true
+            return
         }
-        if segue.identifier == "bindNetworkKey" {
-            let target = segue.destination as! BindAppKeyViewController
-            let cell = sender as! UITableViewCell
+        
+        let target = segue.destination as! UINavigationController
+        let viewController = target.topViewController! as! EditKeyViewController
+        viewController.isApplicationKey = true
+        
+        if let cell = sender as? UITableViewCell {
             let indexPath = tableView.indexPath(for: cell)!
             let network = MeshNetworkManager.instance.meshNetwork!
-            target.applicationKey = network.applicationKeys[indexPath.row]
+            viewController.key = network.applicationKeys[indexPath.keyIndex]
         }
     }
 
@@ -70,7 +74,7 @@ class AppKeysViewController: UITableViewController, Editable {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "appKeyCell", for: indexPath)
 
-        let key = MeshNetworkManager.instance.meshNetwork!.applicationKeys[indexPath.row]
+        let key = MeshNetworkManager.instance.meshNetwork!.applicationKeys[indexPath.keyIndex]
         cell.textLabel?.text = key.name
         cell.detailTextLabel?.text = key.key.asString()
 
@@ -88,36 +92,20 @@ class AppKeysViewController: UITableViewController, Editable {
     }
     
     override func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
-        return .none
-    }
-    
-    override func tableView(_ tableView: UITableView, shouldIndentWhileEditingRowAt indexPath: IndexPath) -> Bool {
-        return false
+        let network = MeshNetworkManager.instance.meshNetwork!
+        let applicationKey = network.applicationKeys[indexPath.keyIndex]
+        return applicationKey.isUsed(in: network) ? .none : .delete
     }
     
     override func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
-        // It should not be possible to delete a key that is in use.
         let network = MeshNetworkManager.instance.meshNetwork!
-        let applicationKey = network.applicationKeys[indexPath.row]
-        let canBeRemoved = !network.nodes.knows(applicationKey: applicationKey)
+        let applicationKey = network.applicationKeys[indexPath.keyIndex]
         
-        let renameRowAction = UITableViewRowAction(style: .default, title: "Rename", handler: { _, indexPath in
-            self.presentNameDialog(for: indexPath)
-        })
-        renameRowAction.backgroundColor = UIColor.nordicLake
-        
-        if !canBeRemoved {
-            return [
-                UITableViewRowAction(style: .normal, title: "Key in use", handler: {_,_ in }),
-                renameRowAction
-            ]
+        // It should not be possible to delete a key that is in use.
+        if applicationKey.isUsed(in: network) {
+            return [UITableViewRowAction(style: .normal, title: "Key in use", handler: {_,_ in })]
         }
-        return [
-            UITableViewRowAction(style: .destructive, title: "Delete", handler: { _, indexPath in
-                self.deleteKey(at: indexPath)
-            }),
-            renameRowAction
-        ]
+        return nil
     }
 
 }
@@ -131,7 +119,7 @@ extension AppKeysViewController {
     
     private func deleteKey(at indexPath: IndexPath) {
         let network = MeshNetworkManager.instance.meshNetwork!
-        _ = try! network.remove(applicationKeyAt: indexPath.row)
+        _ = try! network.remove(applicationKeyAt: indexPath.keyIndex)
         
         tableView.beginUpdates()
         tableView.deleteRows(at: [indexPath], with: .top)
@@ -146,53 +134,14 @@ extension AppKeysViewController {
         }
     }
     
-    private func presentKeyDialog() {
-        let network = MeshNetworkManager.instance.meshNetwork!
-        let name: String? = "App Key \(network.nextAvailableApplicationKeyIndex + 1)"
-        let title = "New App Key"
-        let message = """
-        Key Index: \(network.nextAvailableApplicationKeyIndex)
-        
-        Provide a key and human readable name.
-        The key must be a 32-character hexadecimal string. A random one has been generated below.
-        """
-        
-        presentKeyDialog(title: title, message: message, name: name) { name, key in
-            _ = try! network.add(applicationKey: key, name: name)
-            let count = network.applicationKeys.count
-            
-            self.tableView.beginUpdates()
-            if count == 1 {
-                self.tableView.insertSections(IndexSet(integer: 0), with: .fade)
-            }
-            self.tableView.insertRows(at: [IndexPath(row: count - 1, section: 0)], with: .top)
-            self.tableView.endUpdates()
-            self.hideEmptyView()
-            
-            if !MeshNetworkManager.instance.save() {
-                self.presentAlert(title: "Error", message: "Mesh configuration could not be saved.")
-            }
-        }
-    }
+}
+
+private extension IndexPath {
     
-    private func presentNameDialog(for indexPath: IndexPath) {
-        let network = MeshNetworkManager.instance.meshNetwork!
-        let appKey = network.applicationKeys[indexPath.row]
-        let name = appKey.name
-        let title = "Edit Key Name"
-        let message = "Key Index: \(appKey.index)"
-        
-        presentTextAlert(title: title, message: message, text: name,
-                         placeHolder: "E.g. Lights and Switches",
-                         type: .nameRequired) { name in
-                            appKey.name = name
-                            
-                            self.tableView.reloadRows(at: [indexPath], with: .fade)
-                            
-                            if !MeshNetworkManager.instance.save() {
-                                self.presentAlert(title: "Error", message: "Mesh configuration could not be saved.")
-                            }
-        }
+    /// Returns the Network Key index in mesh network based on the
+    /// IndexPath.
+    var keyIndex: Int {
+        return section + row
     }
     
 }

@@ -171,25 +171,12 @@ extension UIViewController {
     /// - parameters:
     ///   - title:       The alert title.
     ///   - message:     The message below the title.
-    ///   - name:        The initial name of the key.
     ///   - key:         Initial value of the text field.
     ///   - handler:     The OK or Generate button handler.
-    func presentKeyDialog(title: String?, message: String?,
-                          name: String? = "", key: Data? = nil,
-                          handler: ((String, Data) -> Void)? = nil) {
+    func presentKeyDialog(title: String?, message: String?, key: Data? = nil,
+                          handler: ((Data) -> Void)? = nil) {
         DispatchQueue.main.async {
             let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
-            alert.addTextField { textField in
-                textField.text                   = name
-                textField.placeholder            = "E.g. Lights and Switches"
-                textField.clearButtonMode        = .whileEditing
-                textField.returnKeyType          = .next
-                textField.keyboardType           = .alphabet
-                textField.autocapitalizationType = .words
-                
-                textField.addTarget(self, action: .nameRequired, for: .editingChanged)
-                textField.addTarget(self, action: .nameRequired, for: .editingDidBegin)
-            }
             alert.addTextField { textField in
                 textField.text                   = key?.hex ?? Data.random128BitKey().hex
                 textField.placeholder            = "E.g. 001122334455667788990AABBCCDDEEFF"
@@ -202,11 +189,10 @@ extension UIViewController {
                 textField.addTarget(self, action: .keyRequired, for: .editingDidBegin)
             }
             alert.addAction(UIAlertAction(title: "OK", style: .default) { _ in
-                if let name = alert.textFields![0].text,
-                   let hex = alert.textFields![1].text,
-                   let key = Data(hex: hex) {
-                    handler?(name, key)
-                }
+                   if let hex = alert.textFields![0].text,
+                      let key = Data(hex: hex) {
+                        handler?(key)
+                    }
             })
             alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
             

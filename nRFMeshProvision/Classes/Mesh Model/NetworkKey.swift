@@ -7,7 +7,7 @@
 
 import Foundation
 
-public class NetworkKey: Codable {
+public class NetworkKey: Key, Codable {
     /// The timestamp represents the last time the phase property has been
     /// updated.
     public internal(set) var timestamp: Date
@@ -47,6 +47,43 @@ public class NetworkKey: Codable {
         self.key         = key
         self.minSecurity = .high
         self.timestamp   = Date()
+    }
+    
+}
+
+// MARK: - Public API
+
+public extension NetworkKey {
+    
+    /// Returns whether the Network Key is the Primary Network Key.
+    /// The Primary key is the one which Key Index is equal to 0.
+    ///
+    /// A Primary Network Key may not be removed from the mesh network.
+    var isPrimary: Bool {
+        return index == 0
+    }
+    
+    /// Return whether the Network Key is used in the given mesh network.
+    ///
+    /// A Network Key must be added to Network Keys array of the network
+    /// and be either a Primary Key, a key known to at least one node,
+    /// or bound to an existing Application Key to be used by it.
+    ///
+    /// An used Network Key may not be removed from the network.
+    ///
+    /// - parameter meshNetwork: The mesh network to look the key in.
+    /// - returns: `True` if the key is used in the given network,
+    ///            `false` otherwise.
+    func isUsed(in meshNetwork: MeshNetwork) -> Bool {
+        return meshNetwork.networkKeys.contains(self) &&
+            (
+                // Primary Network Key.
+                isPrimary ||
+                // Network Key known by at least one node.
+                meshNetwork.nodes.knows(networkKey: self) ||
+                // Network Key bound to an Application Key.
+                meshNetwork.applicationKeys.contains(keyBoundTo: self)
+            )
     }
     
 }

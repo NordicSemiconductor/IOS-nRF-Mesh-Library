@@ -7,7 +7,7 @@
 
 import Foundation
 
-public class ApplicationKey: Codable {
+public class ApplicationKey: Key, Codable {
     /// UTF-8 string, which should be a human readable name for the application
     /// functionality associated with this application key, e.g. "Home Automation".
     public var name: String
@@ -49,6 +49,22 @@ public extension ApplicationKey {
     /// - parameter networkKey: The Network Key to check.
     func isBound(to networkKey: NetworkKey) -> Bool {
         return self.boundNetKey == networkKey.index
+    }
+    
+    /// Return whether the Application Key is used in the given mesh network.
+    ///
+    /// A Application Key must be added to Application Keys array of the network
+    /// and be known to at least one node to be used by it.
+    ///
+    /// An used Application Key may not be removed from the network.
+    ///
+    /// - parameter meshNetwork: The mesh network to look the key in.
+    /// - returns: `True` if the key is used in the given network,
+    ///            `false` otherwise.
+    func isUsed(in meshNetwork: MeshNetwork) -> Bool {
+        return meshNetwork.applicationKeys.contains(self) &&
+               // Application Key known by at least one node.
+               meshNetwork.nodes.knows(applicationKey: self)
     }
     
 }
