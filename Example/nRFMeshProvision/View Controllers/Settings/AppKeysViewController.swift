@@ -108,6 +108,12 @@ class AppKeysViewController: UITableViewController, Editable {
         }
         return nil
     }
+    
+    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+        if editingStyle == .delete {
+            deleteKey(at: indexPath)
+        }
+    }
 
 }
 
@@ -115,14 +121,14 @@ extension AppKeysViewController: EditKeyDelegate {
     
     func keyWasAdded(_ key: Key) {
         let meshNetwork = MeshNetworkManager.instance.meshNetwork!
-        let count = meshNetwork.networkKeys.count
+        let count = meshNetwork.applicationKeys.count
         
         tableView.beginUpdates()
         if count == 1 {
             tableView.insertSections(IndexSet(integer: 0), with: .fade)
             tableView.insertRows(at: [IndexPath(row: 0, section: 0)], with: .top)
         } else {
-            tableView.insertRows(at: [IndexPath(row: count - 2, section: 1)], with: .top)
+            tableView.insertRows(at: [IndexPath(row: count - 1, section: 0)], with: .top)
         }
         tableView.endUpdates()
         hideEmptyView()
@@ -130,13 +136,11 @@ extension AppKeysViewController: EditKeyDelegate {
     
     func keyWasModified(_ key: Key) {
         let meshNetwork = MeshNetworkManager.instance.meshNetwork!
-        let networkKeys = meshNetwork.networkKeys
-        let index = networkKeys.firstIndex(of: key as! NetworkKey)
+        let applicationKeys = meshNetwork.applicationKeys
+        let index = applicationKeys.firstIndex(of: key as! ApplicationKey)
         
         if let index = index {
-            let indexPath = index == 0 ?
-                IndexPath(row: 0, section: 0) :
-                IndexPath(row: index - 1, section: 1)
+            let indexPath = IndexPath(row: index, section: 0)
             tableView.reloadRows(at: [indexPath], with: .fade)
         }
     }

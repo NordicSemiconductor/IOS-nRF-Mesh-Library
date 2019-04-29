@@ -224,6 +224,7 @@ private extension EditKeyViewController {
         let network = MeshNetworkManager.instance.meshNetwork!
         
         let adding = isNewKey
+        let index  = newBoundNetKey
         if key == nil {
             if isApplicationKey {
                 key = try! network.add(applicationKey: newKey, name: newName)
@@ -233,7 +234,7 @@ private extension EditKeyViewController {
         }
         key!.name = newName
         if let applicationKey = key as? ApplicationKey {
-            let networkKey = network.networkKeys.first { $0.index == newBoundNetKey }
+            let networkKey = network.networkKeys.first { $0.index == index }
             applicationKey.bind(to: networkKey!)
         }
         

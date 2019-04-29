@@ -19,6 +19,7 @@ extension Selector {
     static let scene = #selector(UIViewController.sceneOptional(_:))
     static let sceneRequired = #selector(UIViewController.sceneRequired(_:))
     static let keyRequired = #selector(UIViewController.keyRequired(_:))
+    static let ttlRequired = #selector(UIViewController.ttlRequired(_:))
     
 }
 
@@ -148,6 +149,8 @@ extension UIViewController {
                     case .unicastAddress, .groupAddress,
                          .unicastAddressRequired, .groupAddressRequired:
                         textField.autocapitalizationType = .allCharacters
+                    case .ttlRequired:
+                        textField.keyboardType = .numberPad
                     default:
                         break
                     }
@@ -201,6 +204,12 @@ extension UIViewController {
     }
     
     // MARK: - Validators
+    
+    @objc func ttlRequired(_ textField: UITextField) {
+        let alert = getAlert(from: textField)
+        let ttl = UInt8(textField.text!)
+        alert.setValid(ttl != nil && ttl! <= 127)
+    }
     
     @objc func nameRequired(_ textField: UITextField) {
         let alert = getAlert(from: textField)

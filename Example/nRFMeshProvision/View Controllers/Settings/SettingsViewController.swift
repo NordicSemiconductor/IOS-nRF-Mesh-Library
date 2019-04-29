@@ -54,6 +54,9 @@ class SettingsViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         
+        if indexPath.isDefaultTTL {
+            presentTTLDialog()
+        }
         if indexPath.isNetworkName {
             presentNameDialog()
         }
@@ -66,6 +69,24 @@ class SettingsViewController: UITableViewController {
 
 extension SettingsViewController {
     
+    private func presentTTLDialog() {
+        let manager = MeshNetworkManager.instance
+        
+        presentTextAlert(title: "Default TTL",
+                         message: "TTL = Time To Leave\n\nTTL limits the number of times a message can be relayed.\nMax value is 127.",
+                         text: "\(manager.globalTTL)", placeHolder: "Default is 5",
+                         type: .ttlRequired) { value in
+                            let ttl = UInt8(value)!
+                            manager.globalTTL = ttl
+                            
+                            if MeshNetworkManager.instance.save() {
+                                self.globalTTL.detailTextLabel?.text = "\(ttl)"
+                            } else {
+                                self.presentAlert(title: "Error", message: "Mesh configuration could not be saved.")
+                            }
+        }
+    }
+    
     /// Presents a dialog to edit the network name.
     private func presentNameDialog() {
         let network = MeshNetworkManager.instance.meshNetwork!
@@ -73,9 +94,10 @@ extension SettingsViewController {
         presentTextAlert(title: "Network Name", message: nil, text: network.meshName,
                          placeHolder: "E.g. My House", type: .nameRequired) { name in
                             network.meshName = name
-                            self.tableView.reloadRows(at: [.name], with: .fade)
                             
-                            if !MeshNetworkManager.instance.save() {
+                            if MeshNetworkManager.instance.save() {
+                                self.networkName.detailTextLabel?.text = name
+                            } else {
                                 self.presentAlert(title: "Error", message: "Mesh configuration could not be saved.")
                             }
         }
@@ -113,14 +135,14 @@ extension SettingsViewController {
         // TODO: Implement creator
         _ = manager.createNewMeshNetwork(named: "nRF Mesh Network", by: UIDevice.current.name)
         
-        // Reload network data.
-        let meshNetwork = manager.meshNetwork!
-        networkName.detailTextLabel?.text  = meshNetwork.meshName
-        provisioners.detailTextLabel?.text = "\(meshNetwork.provisioners.count)"
-        networkKeys.detailTextLabel?.text  = "\(meshNetwork.networkKeys.count)"
-        appKeys.detailTextLabel?.text      = "\(meshNetwork.applicationKeys.count)"
-        
-        if !MeshNetworkManager.instance.save() {
+        if manager.save() {
+            // Reload network data.
+            let meshNetwork = manager.meshNetwork!
+            networkName.detailTextLabel?.text  = meshNetwork.meshName
+            provisioners.detailTextLabel?.text = "\(meshNetwork.provisioners.count)"
+            networkKeys.detailTextLabel?.text  = "\(meshNetwork.networkKeys.count)"
+            appKeys.detailTextLabel?.text      = "\(meshNetwork.applicationKeys.count)"
+        } else {
             self.presentAlert(title: "Error", message: "Mesh configuration could not be saved.")
         }
     }
@@ -181,12 +203,17 @@ extension SettingsViewController: UIDocumentPickerDelegate {
 
 private extension IndexPath {
     
+    /// Returns whether the IndexPath point to the default TTL.
+    var isDefaultTTL: Bool {
+        return section == 0 && row == 0
+    }
+    
     /// Returns whether the IndexPath point to the mesh network name row.
     var isNetworkName: Bool {
         return section == 1 && row == 0
     }
     
-    /// Returns whether the IndexPath point to the mesh network name row.
+    /// Returns whether the IndexPath point to the network resetting option.
     var isResetNetwork: Bool {
         return section == 2 && row == 0
     }

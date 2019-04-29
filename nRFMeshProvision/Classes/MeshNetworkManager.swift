@@ -64,7 +64,10 @@ public extension MeshNetworkManager {
     
     /// Generates a new Mesh Network configuration with random or default values.
     /// This will override the existing one, if such exists.
-    /// The mesh network will contain one provisioner with given name.
+    /// The mesh network will contain one Provisioner with given name.
+    ///
+    /// Network Keys and Application Keys must be added manually
+    /// using `add(networkKey:name)` and `add(applicationKey:name)`.
     ///
     /// - parameter name:          The user given network name.
     /// - parameter provionerName: The user given local provisioner name.
@@ -81,6 +84,9 @@ public extension MeshNetworkManager {
     /// Generates a new Mesh Network configuration with random or default values.
     /// This will override the existing one, if such exists.
     /// The mesh network will contain the given Provisioner.
+    ///
+    /// Network Keys and Application Keys must be added manually
+    /// using `add(networkKey:name)` and `add(applicationKey:name)`.
     ///
     /// - parameter name:      The user given network name.
     /// - parameter provioner: The default Provisioner.
