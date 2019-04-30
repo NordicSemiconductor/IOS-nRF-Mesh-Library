@@ -49,6 +49,59 @@ public class NetworkKey: Key, Codable {
         self.timestamp   = Date()
     }
     
+    // MARK: - Codable
+    
+    /// Coding keys used to export / import Network Keys.
+    enum CodingKeys: String, CodingKey {
+        case name
+        case index
+        case key
+        case oldKey
+        case phase
+        case minSecurity
+        case timestamp
+    }
+    
+    public required init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        name = try container.decode(String.self, forKey: .name)
+        index = try container.decode(KeyIndex.self, forKey: .index)
+        let keyHex = try container.decode(String.self, forKey: .key)
+        guard let keyData = Data(hex: keyHex) else {
+            throw DecodingError.dataCorruptedError(forKey: .key, in: container,
+                                                   debugDescription: "Key must be 32-character hexadecimal string")
+        }
+        key = keyData
+        if let oldKeyHex = try container.decodeIfPresent(String.self, forKey: .oldKey) {
+            guard let oldKeyData = Data(hex: oldKeyHex) else {
+                throw DecodingError.dataCorruptedError(forKey: .oldKey, in: container,
+                                                       debugDescription: "Old key must be 32-character hexadecimal string")
+            }
+            oldKey = oldKeyData
+        }
+        let phaseRawValue = try container.decode(Int.self, forKey: .phase)
+        guard let keyRefreshPhase = KeyRefreshPhase.from(phaseRawValue) else {
+            throw DecodingError.dataCorruptedError(forKey: .phase, in: container,
+                                                   debugDescription: "Phase must be 0, 1 or 2")
+        }
+        phase = keyRefreshPhase
+        minSecurity = try container.decode(Security.self, forKey: .minSecurity)
+        timestamp = try container.decode(Date.self, forKey: .timestamp)
+    }
+    
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(name, forKey: .name)
+        try container.encode(index, forKey: .index)
+        try container.encode(key.hex, forKey: .key)
+        if let oldKey = oldKey {
+            try container.encode(oldKey.hex, forKey: .oldKey)
+        }
+        try container.encode(phase, forKey: .phase)
+        try container.encode(minSecurity, forKey: .minSecurity)
+        try container.encode(timestamp, forKey: .timestamp)
+    }
+    
 }
 
 // MARK: - Public API

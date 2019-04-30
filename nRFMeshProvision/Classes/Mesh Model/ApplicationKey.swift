@@ -30,6 +30,48 @@ public class ApplicationKey: Key, Codable {
         self.boundNetKey = networkKey.index
     }
     
+    // MARK: - Codable
+    
+    /// Coding keys used to export / import Application Keys.
+    enum CodingKeys: String, CodingKey {
+        case name
+        case index
+        case key
+        case oldKey
+        case boundNetKey
+    }
+    
+    public required init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        name = try container.decode(String.self, forKey: .name)
+        index = try container.decode(KeyIndex.self, forKey: .index)
+        let keyHex = try container.decode(String.self, forKey: .key)
+        guard let keyData = Data(hex: keyHex) else {
+            throw DecodingError.dataCorruptedError(forKey: .key, in: container,
+                                                   debugDescription: "Key must be 32-character hexadecimal string")
+        }
+        key = keyData
+        if let oldKeyHex = try container.decodeIfPresent(String.self, forKey: .oldKey) {
+            guard let oldKeyData = Data(hex: oldKeyHex) else {
+                throw DecodingError.dataCorruptedError(forKey: .oldKey, in: container,
+                                                       debugDescription: "Old key must be 32-character hexadecimal string")
+            }
+            oldKey = oldKeyData
+        }
+        boundNetKey = try container.decode(KeyIndex.self, forKey: .boundNetKey)
+    }
+    
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(name, forKey: .name)
+        try container.encode(index, forKey: .index)
+        try container.encode(key.hex, forKey: .key)
+        if let oldKey = oldKey {
+            try container.encode(oldKey.hex, forKey: .oldKey)
+        }
+        try container.encode(boundNetKey, forKey: .boundNetKey)
+    }
+    
 }
 
 // MARK: - Public API

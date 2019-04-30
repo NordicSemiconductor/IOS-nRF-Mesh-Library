@@ -16,7 +16,13 @@ public class Provisioner: Codable {
         return provisionerUuid.uuid
     }
     /// UTF-8 string, which should be a human readable name of the Provisioner.
-    public var provisionerName: String
+    public var provisionerName: String {
+        didSet {
+            if let network = meshNetwork, let node = network.node(for: self) {
+                node.name = provisionerName
+            }
+        }
+    }
     /// An array of unicast range objects.
     public internal(set) var allocatedUnicastRange: [AddressRange]
     /// An array of group range objects.

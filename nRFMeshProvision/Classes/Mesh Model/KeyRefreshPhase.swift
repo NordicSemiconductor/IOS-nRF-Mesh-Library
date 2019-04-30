@@ -18,4 +18,17 @@ public enum KeyRefreshPhase: Int, Codable {
     /// that all nodes have the new keys. The nodes will then transmit using
     /// the new keys but can receive using the old or new keys.
     case finalizing       = 2
+    
+    internal static func from(_ value: Int) -> KeyRefreshPhase? {
+        switch value {
+        case 0:
+            return .normalOperation
+        case 1:
+            return .distributingKeys
+        case 2:
+            return .finalizing
+        default:
+            return nil
+        }
+    }
 }
