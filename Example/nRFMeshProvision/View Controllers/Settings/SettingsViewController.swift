@@ -63,6 +63,16 @@ class SettingsViewController: UITableViewController {
         if indexPath.isResetNetwork {
             presentResetConfirmation()
         }
+        if indexPath.isLinkToGitHub {
+            if let url = URL(string: "https://github.com/NordicSemiconductor/IOS-nRF-Mesh-Library") {
+                UIApplication.shared.open(url)
+            }
+        }
+        if indexPath.isLinkToIssues {
+            if let url = URL(string: "https://github.com/NordicSemiconductor/IOS-nRF-Mesh-Library/issues") {
+                UIApplication.shared.open(url)
+            }
+        }
     }
     
 }
@@ -216,6 +226,16 @@ private extension IndexPath {
     /// Returns whether the IndexPath point to the network resetting option.
     var isResetNetwork: Bool {
         return section == 2 && row == 0
+    }
+    
+    /// Returns whether the IndexPath point to the Source Code link.
+    var isLinkToGitHub: Bool {
+        return section == 3 && row == 2
+    }
+    
+    /// Returns whether the IndexPath point to the Issues on GitHub.
+    var isLinkToIssues: Bool {
+        return section == 3 && row == 3
     }
     
     static let name = IndexPath(row: 0, section: 1)

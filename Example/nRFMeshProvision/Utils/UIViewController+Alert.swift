@@ -76,8 +76,8 @@ extension UIViewController {
                            type selector: Selector? = nil,
                            handler: ((ClosedRange<UInt16>) -> Void)? = nil) {
         DispatchQueue.main.async {
-            let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
-            alert.addTextField { textField in
+            var alert: UIAlertController? = UIAlertController(title: title, message: message, preferredStyle: .alert)
+            alert!.addTextField { textField in
                 textField.text                   = range?.lowerBound.hex
                 textField.placeholder            = "Lower bound, e.g. 0001"
                 textField.clearButtonMode        = .whileEditing
@@ -89,7 +89,7 @@ extension UIViewController {
                     textField.addTarget(self, action: selector, for: .editingDidBegin)
                 }
             }
-            alert.addTextField { textField in
+            alert!.addTextField { textField in
                 textField.text                   = range?.upperBound.hex
                 textField.placeholder            = "Upper bound, e.g. AFFF"
                 textField.clearButtonMode        = .whileEditing
@@ -101,16 +101,19 @@ extension UIViewController {
                     textField.addTarget(self, action: selector, for: .editingDidBegin)
                 }
             }
-            alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { _ in
-                let lowerBound = UInt16(alert.textFields![0].text!, radix: 16)
-                let upperBound = UInt16(alert.textFields![1].text!, radix: 16)
-                
-                if let lowerBound = lowerBound, let upperBound = upperBound {
-                    handler?(lowerBound...upperBound)
+            alert!.addAction(UIAlertAction(title: "OK", style: .default, handler: { _ in
+                if let alert = alert {
+                    let lowerBound = UInt16(alert.textFields![0].text!, radix: 16)
+                    let upperBound = UInt16(alert.textFields![1].text!, radix: 16)
+                    
+                    if let lowerBound = lowerBound, let upperBound = upperBound {
+                        handler?(lowerBound...upperBound)
+                    }
                 }
+                alert = nil
             }))
-            alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
-            self.present(alert, animated: true)
+            alert!.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+            self.present(alert!, animated: true)
         }
     }
     
@@ -130,8 +133,8 @@ extension UIViewController {
                           type selector: Selector? = nil, option action: UIAlertAction? = nil,
                           handler: ((String) -> Void)? = nil) {
         DispatchQueue.main.async {
-            let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
-            alert.addTextField { textField in
+            var alert: UIAlertController? = UIAlertController(title: title, message: message, preferredStyle: .alert)
+            alert!.addTextField { textField in
                 textField.text                   = text
                 textField.placeholder            = placeHolder
                 textField.clearButtonMode        = .whileEditing
@@ -156,15 +159,17 @@ extension UIViewController {
                     }
                 }
             }
-            alert.addAction(UIAlertAction(title: "OK", style: .default) { _ in
-                handler?(alert.textFields![0].text!)
+            alert!.addAction(UIAlertAction(title: "OK", style: .default) { _ in
+                if let text = alert?.textFields![0].text {
+                    handler?(text)
+                }
+                alert = nil
             })
             if let action = action {
-                alert.addAction(action)
+                alert!.addAction(action)
             }
-            alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
-            
-            self.present(alert, animated: true)
+            alert!.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+            self.present(alert!, animated: true)
         }
     }
     
@@ -179,8 +184,8 @@ extension UIViewController {
     func presentKeyDialog(title: String?, message: String?, key: Data? = nil,
                           handler: ((Data) -> Void)? = nil) {
         DispatchQueue.main.async {
-            let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
-            alert.addTextField { textField in
+            var alert: UIAlertController? = UIAlertController(title: title, message: message, preferredStyle: .alert)
+            alert!.addTextField { textField in
                 textField.text                   = key?.hex ?? Data.random128BitKey().hex
                 textField.placeholder            = "E.g. 001122334455667788990AABBCCDDEEFF"
                 textField.clearButtonMode        = .whileEditing
@@ -191,15 +196,15 @@ extension UIViewController {
                 textField.addTarget(self, action: .keyRequired, for: .editingChanged)
                 textField.addTarget(self, action: .keyRequired, for: .editingDidBegin)
             }
-            alert.addAction(UIAlertAction(title: "OK", style: .default) { _ in
-                   if let hex = alert.textFields![0].text,
-                      let key = Data(hex: hex) {
-                        handler?(key)
-                    }
+            alert!.addAction(UIAlertAction(title: "OK", style: .default) { _ in
+               if let hex = alert?.textFields![0].text,
+                  let key = Data(hex: hex) {
+                    handler?(key)
+                }
+                alert = nil
             })
-            alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
-            
-            self.present(alert, animated: true)
+            alert!.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+            self.present(alert!, animated: true)
         }
     }
     
