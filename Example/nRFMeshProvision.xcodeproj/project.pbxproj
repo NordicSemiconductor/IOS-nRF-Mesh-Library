@@ -15,6 +15,7 @@
 		525242E0225CBFEC0044CECB /* RangeObject+String.swift in Sources */ = {isa = PBXBuildFile; fileRef = 525242DF225CBFEC0044CECB /* RangeObject+String.swift */; };
 		525242E8225F2D6A0044CECB /* FabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 525242E7225F2D6A0044CECB /* FabView.swift */; };
 		5283524822733BCF0097B949 /* EditKeyViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5283524722733BCF0097B949 /* EditKeyViewController.swift */; };
+		52835250227887970097B949 /* Settings.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5283524E227887970097B949 /* Settings.storyboard */; };
 		529B756D223FE7F1008F1CE7 /* RootViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529B756C223FE7F1008F1CE7 /* RootViewController.swift */; };
 		529B7570223FF1AE008F1CE7 /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529B756F223FF1AE008F1CE7 /* SettingsViewController.swift */; };
 		529B7572223FFC39008F1CE7 /* AppKeysViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529B7571223FFC39008F1CE7 /* AppKeysViewController.swift */; };
@@ -58,6 +59,7 @@
 		525242DF225CBFEC0044CECB /* RangeObject+String.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "RangeObject+String.swift"; path = "Utils/RangeObject+String.swift"; sourceTree = "<group>"; };
 		525242E7225F2D6A0044CECB /* FabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FabView.swift; sourceTree = "<group>"; };
 		5283524722733BCF0097B949 /* EditKeyViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = EditKeyViewController.swift; path = "View Controllers/Settings/EditKeyViewController.swift"; sourceTree = "<group>"; };
+		5283524F227887970097B949 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Settings.storyboard; sourceTree = "<group>"; };
 		529B756C223FE7F1008F1CE7 /* RootViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = RootViewController.swift; path = "View Controllers/RootViewController.swift"; sourceTree = "<group>"; };
 		529B756F223FF1AE008F1CE7 /* SettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SettingsViewController.swift; path = "View Controllers/Settings/SettingsViewController.swift"; sourceTree = "<group>"; };
 		529B7571223FFC39008F1CE7 /* AppKeysViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppKeysViewController.swift; path = "View Controllers/Settings/AppKeysViewController.swift"; sourceTree = "<group>"; };
@@ -209,11 +211,12 @@
 		607FACD21AFB9204008FA782 /* Example for nRFMeshProvision */ = {
 			isa = PBXGroup;
 			children = (
+				607FACD51AFB9204008FA782 /* AppDelegate.swift */,
 				525242E6225F2D2E0044CECB /* Views */,
 				529B756B223FE7B5008F1CE7 /* View Controllers */,
 				529B757322410784008F1CE7 /* Utils */,
-				607FACD51AFB9204008FA782 /* AppDelegate.swift */,
 				607FACD91AFB9204008FA782 /* Main.storyboard */,
+				5283524E227887970097B949 /* Settings.storyboard */,
 				3089BC9E2099CA4900E30192 /* LaunchScreen.storyboard */,
 				607FACDC1AFB9204008FA782 /* Images.xcassets */,
 				607FACD31AFB9204008FA782 /* Supporting Files */,
@@ -373,6 +376,7 @@
 				3089BCA02099CA4900E30192 /* LaunchScreen.storyboard in Resources */,
 				607FACDB1AFB9204008FA782 /* Main.storyboard in Resources */,
 				607FACDD1AFB9204008FA782 /* Images.xcassets in Resources */,
+				52835250227887970097B949 /* Settings.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -492,6 +496,14 @@
 				3089BC9F2099CA4900E30192 /* Base */,
 			);
 			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+		5283524E227887970097B949 /* Settings.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				5283524F227887970097B949 /* Base */,
+			);
+			name = Settings.storyboard;
 			sourceTree = "<group>";
 		};
 		607FACD91AFB9204008FA782 /* Main.storyboard */ = {
