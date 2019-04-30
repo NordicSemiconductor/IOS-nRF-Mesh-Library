@@ -123,12 +123,14 @@ class EditKeyViewController: UITableViewController {
             cell = tableView.dequeueReusableCell(withIdentifier: "detailCell", for: indexPath)
             cell.textLabel?.text = "Name"
             cell.detailTextLabel?.text = newName
+            cell.accessoryType = .disclosureIndicator
             cell.selectionStyle = .default
         } else if indexPath.isKey {
             cell = tableView.dequeueReusableCell(withIdentifier: "keyCell", for: indexPath)
             cell.textLabel?.text = newKey.hex
             // The key may only be editable for new keys.
             cell.selectionStyle = isNewKey ? .default : .none
+            cell.accessoryType = isNewKey ? .disclosureIndicator : .none
         } else if indexPath.isKeyIndex {
             cell = tableView.dequeueReusableCell(withIdentifier: "detailCell", for: indexPath)
             cell.textLabel?.text = "Key Index"
