@@ -208,12 +208,6 @@ public extension MeshNetwork {
             throw MeshModelError.addressNotAvailable
         }
         
-        // Is there a node with the provisioner's UUID?
-        guard !nodes.contains(where: { $0.uuid == provisioner.uuid }) else {
-            // The UUID conflict is super unlikely to happen. All UUIDs are randomly generated.
-            throw MeshModelError.nodeAlreadyExist
-        }
-        
         // Search for Provisioner's node.
         if let provisionerNode = node(for: provisioner) {
             provisionerNode.unicastAddress = address
