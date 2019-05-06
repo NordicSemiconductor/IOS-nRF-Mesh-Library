@@ -107,7 +107,7 @@ class EditRangesViewController: UIViewController, Editable {
 extension EditRangesViewController: UITableViewDelegate, UITableViewDataSource {
     
     func numberOfSections(in tableView: UITableView) -> Int {
-        return 1
+        return ranges.isEmpty ? 0 : 1
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -141,7 +141,12 @@ extension EditRangesViewController: UITableViewDelegate, UITableViewDataSource {
             ranges.remove(at: indexPath.row)
             modified = true
             
+            tableView.beginUpdates()
             tableView.deleteRows(at: [indexPath], with: .automatic)
+            if ranges.isEmpty {
+                tableView.deleteSections(IndexSet(integer: 0), with: .fade)
+            }
+            tableView.endUpdates()
             
             rangeSummary.clearRanges()
             rangeSummary.addRanges(self.ranges)
