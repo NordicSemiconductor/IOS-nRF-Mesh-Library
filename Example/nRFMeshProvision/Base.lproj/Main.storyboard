@@ -36,11 +36,101 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <viewLayoutGuide key="safeArea" id="kRA-Be-hkG"/>
                     </view>
-                    <navigationItem key="navigationItem" title="Network" id="hHp-Op-kRX"/>
+                    <navigationItem key="navigationItem" title="Network" id="hHp-Op-kRX">
+                        <barButtonItem key="rightBarButtonItem" systemItem="add" id="nuH-1t-7gP">
+                            <connections>
+                                <segue destination="9xq-E9-AJj" kind="show" id="ZGV-VH-jCR"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="ytf-Jd-tUN" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="1131.8840579710145" y="-1319.021739130435"/>
+        </scene>
+        <!--Provision Device-->
+        <scene sceneID="yKm-Cw-E5m">
+            <objects>
+                <tableViewController id="9xq-E9-AJj" customClass="ScannerTableViewController" customModule="nRFMeshProvision_Example" customModuleProvider="target" sceneMemberID="viewController">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="default" rowHeight="56" estimatedRowHeight="56" sectionHeaderHeight="18" sectionFooterHeight="18" id="gG4-Ob-e5u">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
+                        <prototypes>
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" accessoryType="disclosureIndicator" indentationWidth="10" reuseIdentifier="peripheralCell" id="9GQ-tl-ciy" customClass="DeviceTableViewCell" customModule="nRFMeshProvision_Example" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="55.333333333333343" width="375" height="56"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="9GQ-tl-ciy" id="5b8-E0-tR7">
+                                    <rect key="frame" x="0.0" y="0.0" width="341" height="55.666666666666664"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                    <subviews>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Title" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ZMJ-H6-Pq4">
+                                            <rect key="frame" x="16" y="8" width="271" height="21"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                            <nil key="textColor"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Subtitle" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="7P7-iB-CcF">
+                                            <rect key="frame" x="16" y="31" width="271" height="15"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="12"/>
+                                            <nil key="textColor"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                        <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="rssi_4" translatesAutoresizingMaskIntoConstraints="NO" id="agq-KS-7m0">
+                                            <rect key="frame" x="295" y="11" width="38" height="33.666666666666664"/>
+                                            <constraints>
+                                                <constraint firstAttribute="width" constant="38" id="brG-JP-Fhu"/>
+                                                <constraint firstAttribute="height" constant="33.670000000000002" id="nKf-9w-d1z"/>
+                                            </constraints>
+                                        </imageView>
+                                    </subviews>
+                                    <constraints>
+                                        <constraint firstItem="agq-KS-7m0" firstAttribute="centerY" secondItem="5b8-E0-tR7" secondAttribute="centerY" id="0j2-cm-2VD"/>
+                                        <constraint firstItem="7P7-iB-CcF" firstAttribute="top" secondItem="ZMJ-H6-Pq4" secondAttribute="bottom" constant="2" id="6m5-zO-wRN"/>
+                                        <constraint firstItem="agq-KS-7m0" firstAttribute="leading" secondItem="ZMJ-H6-Pq4" secondAttribute="trailing" constant="8" id="AVn-qN-3yY"/>
+                                        <constraint firstItem="7P7-iB-CcF" firstAttribute="leading" secondItem="5b8-E0-tR7" secondAttribute="leadingMargin" id="OH2-hp-h1L"/>
+                                        <constraint firstItem="agq-KS-7m0" firstAttribute="leading" secondItem="7P7-iB-CcF" secondAttribute="trailing" constant="8" id="Tic-Y5-Nyn"/>
+                                        <constraint firstItem="ZMJ-H6-Pq4" firstAttribute="top" secondItem="5b8-E0-tR7" secondAttribute="top" constant="8" id="Uzx-Un-iot"/>
+                                        <constraint firstAttribute="trailingMargin" secondItem="agq-KS-7m0" secondAttribute="trailing" id="d3e-LC-G2T"/>
+                                        <constraint firstItem="ZMJ-H6-Pq4" firstAttribute="leading" secondItem="5b8-E0-tR7" secondAttribute="leadingMargin" id="leE-V8-39a"/>
+                                    </constraints>
+                                </tableViewCellContentView>
+                                <connections>
+                                    <outlet property="name" destination="ZMJ-H6-Pq4" id="cmh-Ya-C4R"/>
+                                    <outlet property="rssiIcon" destination="agq-KS-7m0" id="epI-iG-GwH"/>
+                                    <outlet property="uuid" destination="7P7-iB-CcF" id="Jct-7n-NpN"/>
+                                </connections>
+                            </tableViewCell>
+                        </prototypes>
+                        <connections>
+                            <outlet property="dataSource" destination="9xq-E9-AJj" id="ffT-v4-HNg"/>
+                            <outlet property="delegate" destination="9xq-E9-AJj" id="SxW-bA-J4y"/>
+                        </connections>
+                    </tableView>
+                    <navigationItem key="navigationItem" title="Provision Device" id="Eab-Ju-Vek">
+                        <barButtonItem key="rightBarButtonItem" style="plain" id="Rbv-7s-uYB">
+                            <view key="customView" contentMode="scaleToFill" id="5wa-H8-1JI">
+                                <rect key="frame" x="276" y="0.0" width="83" height="44"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <subviews>
+                                    <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="white" translatesAutoresizingMaskIntoConstraints="NO" id="Dfy-at-5mR">
+                                        <rect key="frame" x="47" y="12" width="20" height="20"/>
+                                    </activityIndicatorView>
+                                </subviews>
+                                <constraints>
+                                    <constraint firstAttribute="trailingMargin" secondItem="Dfy-at-5mR" secondAttribute="trailing" id="Gz6-Yf-ogw"/>
+                                    <constraint firstItem="Dfy-at-5mR" firstAttribute="centerY" secondItem="5wa-H8-1JI" secondAttribute="centerY" id="MRg-kb-uxN"/>
+                                </constraints>
+                            </view>
+                        </barButtonItem>
+                    </navigationItem>
+                    <connections>
+                        <outlet property="activityIndicator" destination="Dfy-at-5mR" id="cC5-aT-Fxy"/>
+                    </connections>
+                </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="dCa-BQ-45o" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="2013.5999999999999" y="-1320.4433497536947"/>
         </scene>
         <!--asdas-->
         <scene sceneID="zJB-dB-C0K">
@@ -132,6 +222,7 @@
         <image name="ic_lan_24pt" width="24" height="24"/>
         <image name="outline_group_work_black_24pt" width="24" height="24"/>
         <image name="outline_settings_black_24pt" width="24" height="24"/>
+        <image name="rssi_4" width="170.66667175292969" height="170.66667175292969"/>
     </resources>
     <color key="tintColor" red="0.0" green="0.46666666670000001" blue="0.7843137255" alpha="1" colorSpace="calibratedRGB"/>
 </document>

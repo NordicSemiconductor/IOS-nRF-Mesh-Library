@@ -16,6 +16,8 @@
 		525242E8225F2D6A0044CECB /* FabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 525242E7225F2D6A0044CECB /* FabView.swift */; };
 		5283524822733BCF0097B949 /* EditKeyViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5283524722733BCF0097B949 /* EditKeyViewController.swift */; };
 		52835250227887970097B949 /* Settings.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5283524E227887970097B949 /* Settings.storyboard */; };
+		52835258227AEDA30097B949 /* DeviceTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52835257227AEDA30097B949 /* DeviceTableViewCell.swift */; };
+		52835269227B2BAE0097B949 /* ScannerTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52835268227B2BAE0097B949 /* ScannerTableViewController.swift */; };
 		529B756D223FE7F1008F1CE7 /* RootViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529B756C223FE7F1008F1CE7 /* RootViewController.swift */; };
 		529B7570223FF1AE008F1CE7 /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529B756F223FF1AE008F1CE7 /* SettingsViewController.swift */; };
 		529B7572223FFC39008F1CE7 /* AppKeysViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529B7571223FFC39008F1CE7 /* AppKeysViewController.swift */; };
@@ -28,7 +30,6 @@
 		529B7629224CE481008F1CE7 /* AssigningUnicastAddress.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529B7628224CE481008F1CE7 /* AssigningUnicastAddress.swift */; };
 		529B764122521075008F1CE7 /* ManagingProvisioners.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529B764022521075008F1CE7 /* ManagingProvisioners.swift */; };
 		529B7643225222E8008F1CE7 /* UInt16+String.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529B7642225222E8008F1CE7 /* UInt16+String.swift */; };
-		529B764522522613008F1CE7 /* Data+Hex.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529B764422522613008F1CE7 /* Data+Hex.swift */; };
 		529B764722522D37008F1CE7 /* UITableView+EmptyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529B764622522D37008F1CE7 /* UITableView+EmptyView.swift */; };
 		529B76492252499E008F1CE7 /* UIColor+Nordic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529B76482252499E008F1CE7 /* UIColor+Nordic.swift */; };
 		52DAA5DB22560EEE0041C43A /* EditProvisionerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52DAA5DA22560EEE0041C43A /* EditProvisionerViewController.swift */; };
@@ -58,23 +59,24 @@
 		4973E9CDA09CE2398E5C269A /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
 		525242DF225CBFEC0044CECB /* RangeObject+String.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "RangeObject+String.swift"; path = "Utils/RangeObject+String.swift"; sourceTree = "<group>"; };
 		525242E7225F2D6A0044CECB /* FabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FabView.swift; sourceTree = "<group>"; };
-		5283524722733BCF0097B949 /* EditKeyViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = EditKeyViewController.swift; path = "View Controllers/Settings/EditKeyViewController.swift"; sourceTree = "<group>"; };
+		5283524722733BCF0097B949 /* EditKeyViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditKeyViewController.swift; sourceTree = "<group>"; };
 		5283524F227887970097B949 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Settings.storyboard; sourceTree = "<group>"; };
-		529B756C223FE7F1008F1CE7 /* RootViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = RootViewController.swift; path = "View Controllers/RootViewController.swift"; sourceTree = "<group>"; };
-		529B756F223FF1AE008F1CE7 /* SettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SettingsViewController.swift; path = "View Controllers/Settings/SettingsViewController.swift"; sourceTree = "<group>"; };
-		529B7571223FFC39008F1CE7 /* AppKeysViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppKeysViewController.swift; path = "View Controllers/Settings/AppKeysViewController.swift"; sourceTree = "<group>"; };
+		52835257227AEDA30097B949 /* DeviceTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceTableViewCell.swift; sourceTree = "<group>"; };
+		52835268227B2BAE0097B949 /* ScannerTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScannerTableViewController.swift; sourceTree = "<group>"; };
+		529B756C223FE7F1008F1CE7 /* RootViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootViewController.swift; sourceTree = "<group>"; };
+		529B756F223FF1AE008F1CE7 /* SettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
+		529B7571223FFC39008F1CE7 /* AppKeysViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppKeysViewController.swift; sourceTree = "<group>"; };
 		529B7574224107A5008F1CE7 /* AppInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppInfo.swift; path = Utils/AppInfo.swift; sourceTree = "<group>"; };
 		529B757E22426D70008F1CE7 /* nRFMeshProvision_Example.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = nRFMeshProvision_Example.entitlements; sourceTree = "<group>"; };
 		529B758522428A45008F1CE7 /* UIViewController+Alert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "UIViewController+Alert.swift"; path = "Utils/UIViewController+Alert.swift"; sourceTree = "<group>"; };
 		529B75992243BA0A008F1CE7 /* ProvisionersViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ProvisionersViewController.swift; path = "View Controllers/Settings/ProvisionersViewController.swift"; sourceTree = "<group>"; };
-		529B759B2243BA10008F1CE7 /* NetworkKeysViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = NetworkKeysViewController.swift; path = "View Controllers/Settings/NetworkKeysViewController.swift"; sourceTree = "<group>"; };
+		529B759B2243BA10008F1CE7 /* NetworkKeysViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NetworkKeysViewController.swift; sourceTree = "<group>"; };
 		529B75A92248E275008F1CE7 /* nRFMeshProvision_Tests-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "nRFMeshProvision_Tests-Bridging-Header.h"; sourceTree = "<group>"; };
 		529B75AA2248E276008F1CE7 /* SceneRanges.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneRanges.swift; sourceTree = "<group>"; };
 		529B75AC22491770008F1CE7 /* AddressRanges.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddressRanges.swift; sourceTree = "<group>"; };
 		529B7628224CE481008F1CE7 /* AssigningUnicastAddress.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssigningUnicastAddress.swift; sourceTree = "<group>"; };
 		529B764022521075008F1CE7 /* ManagingProvisioners.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManagingProvisioners.swift; sourceTree = "<group>"; };
 		529B7642225222E8008F1CE7 /* UInt16+String.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "UInt16+String.swift"; path = "Utils/UInt16+String.swift"; sourceTree = "<group>"; };
-		529B764422522613008F1CE7 /* Data+Hex.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "Data+Hex.swift"; path = "Utils/Data+Hex.swift"; sourceTree = "<group>"; };
 		529B764622522D37008F1CE7 /* UITableView+EmptyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "UITableView+EmptyView.swift"; path = "Utils/UITableView+EmptyView.swift"; sourceTree = "<group>"; };
 		529B76482252499E008F1CE7 /* UIColor+Nordic.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "UIColor+Nordic.swift"; path = "Utils/UIColor+Nordic.swift"; sourceTree = "<group>"; };
 		52DAA5DA22560EEE0041C43A /* EditProvisionerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = EditProvisionerViewController.swift; path = "View Controllers/Settings/EditProvisionerViewController.swift"; sourceTree = "<group>"; };
@@ -140,16 +142,17 @@
 			path = Views;
 			sourceTree = "<group>";
 		};
-		529B756B223FE7B5008F1CE7 /* View Controllers */ = {
+		52835253227AEC8C0097B949 /* View Controllers */ = {
 			isa = PBXGroup;
 			children = (
 				529B756C223FE7F1008F1CE7 /* RootViewController.swift */,
-				529B756E223FF12F008F1CE7 /* Settings */,
+				52835256227AED670097B949 /* Network */,
+				52835255227AED0A0097B949 /* Settings */,
 			);
-			name = "View Controllers";
+			path = "View Controllers";
 			sourceTree = "<group>";
 		};
-		529B756E223FF12F008F1CE7 /* Settings */ = {
+		52835255227AED0A0097B949 /* Settings */ = {
 			isa = PBXGroup;
 			children = (
 				52DAA5DC22560F110041C43A /* Provisioners */,
@@ -158,7 +161,16 @@
 				529B7571223FFC39008F1CE7 /* AppKeysViewController.swift */,
 				5283524722733BCF0097B949 /* EditKeyViewController.swift */,
 			);
-			name = Settings;
+			path = Settings;
+			sourceTree = "<group>";
+		};
+		52835256227AED670097B949 /* Network */ = {
+			isa = PBXGroup;
+			children = (
+				52835257227AEDA30097B949 /* DeviceTableViewCell.swift */,
+				52835268227B2BAE0097B949 /* ScannerTableViewController.swift */,
+			);
+			path = Network;
 			sourceTree = "<group>";
 		};
 		529B757322410784008F1CE7 /* Utils */ = {
@@ -167,7 +179,6 @@
 				529B7574224107A5008F1CE7 /* AppInfo.swift */,
 				529B758522428A45008F1CE7 /* UIViewController+Alert.swift */,
 				529B7642225222E8008F1CE7 /* UInt16+String.swift */,
-				529B764422522613008F1CE7 /* Data+Hex.swift */,
 				529B764622522D37008F1CE7 /* UITableView+EmptyView.swift */,
 				529B76482252499E008F1CE7 /* UIColor+Nordic.swift */,
 				525242DF225CBFEC0044CECB /* RangeObject+String.swift */,
@@ -184,6 +195,7 @@
 				52DAA5E5225B957B0041C43A /* RangeCell.swift */,
 			);
 			name = Provisioners;
+			path = ../..;
 			sourceTree = "<group>";
 		};
 		607FACC71AFB9204008FA782 = {
@@ -213,7 +225,7 @@
 			children = (
 				607FACD51AFB9204008FA782 /* AppDelegate.swift */,
 				525242E6225F2D2E0044CECB /* Views */,
-				529B756B223FE7B5008F1CE7 /* View Controllers */,
+				52835253227AEC8C0097B949 /* View Controllers */,
 				529B757322410784008F1CE7 /* Utils */,
 				607FACD91AFB9204008FA782 /* Main.storyboard */,
 				5283524E227887970097B949 /* Settings.storyboard */,
@@ -447,6 +459,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				529B764722522D37008F1CE7 /* UITableView+EmptyView.swift in Sources */,
+				52835269227B2BAE0097B949 /* ScannerTableViewController.swift in Sources */,
 				52DAA5E2225B633B0041C43A /* RangeView.swift in Sources */,
 				52DAA5DB22560EEE0041C43A /* EditProvisionerViewController.swift in Sources */,
 				5283524822733BCF0097B949 /* EditKeyViewController.swift in Sources */,
@@ -459,8 +472,8 @@
 				52DAA5E6225B957B0041C43A /* RangeCell.swift in Sources */,
 				529B756D223FE7F1008F1CE7 /* RootViewController.swift in Sources */,
 				529B758622428A45008F1CE7 /* UIViewController+Alert.swift in Sources */,
-				529B764522522613008F1CE7 /* Data+Hex.swift in Sources */,
 				529B7572223FFC39008F1CE7 /* AppKeysViewController.swift in Sources */,
+				52835258227AEDA30097B949 /* DeviceTableViewCell.swift in Sources */,
 				525242E8225F2D6A0044CECB /* FabView.swift in Sources */,
 				529B7570223FF1AE008F1CE7 /* SettingsViewController.swift in Sources */,
 				529B759C2243BA10008F1CE7 /* NetworkKeysViewController.swift in Sources */,

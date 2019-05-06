@@ -77,7 +77,7 @@ class AppKeysViewController: UITableViewController, Editable {
 
         let key = MeshNetworkManager.instance.meshNetwork!.applicationKeys[indexPath.keyIndex]
         cell.textLabel?.text = key.name
-        cell.detailTextLabel?.text = key.key.asString()
+        cell.detailTextLabel?.text = key.key.hex
 
         return cell
     }
