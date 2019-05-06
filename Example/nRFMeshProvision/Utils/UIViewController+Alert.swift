@@ -266,6 +266,9 @@ extension UIViewController {
     @objc func unicastAddressRequired(_ textField: UITextField) {
         let alert = getAlert(from: textField)
         
+        if validateRange(in: alert, validator: { $0.isUnicast }) {
+            return
+        }
         if let text = textField.text, let address = UInt16(text, radix: 16) {
             alert.setValid(address.isUnicast)
         } else {
@@ -276,6 +279,9 @@ extension UIViewController {
     @objc func groupAddressRequired(_ textField: UITextField) {
         let alert = getAlert(from: textField)
         
+        if validateRange(in: alert, validator: { $0.isGroup }) {
+            return
+        }
         if let text = textField.text, let address = UInt16(text, radix: 16) {
             alert.setValid(address.isGroup)
         } else {
@@ -286,11 +292,32 @@ extension UIViewController {
     @objc func sceneRequired(_ textField: UITextField) {
         let alert = getAlert(from: textField)
         
+        if validateRange(in: alert, validator: { $0.isValidScene }) {
+            return
+        }
         if let text = textField.text, let scene = UInt16(text, radix: 16) {
             alert.setValid(scene.isValidScene)
         } else {
             alert.setValid(false)
         }
+    }
+    
+    private func validateRange(in alert: UIAlertController, validator: (UInt16) -> Bool) -> Bool {
+        if alert.textFields!.count == 2 {
+            let lowerBoundField = alert.textFields![0]
+            let upperBoundField = alert.textFields![1]
+            
+            if let lower = lowerBoundField.text, let lowerBound = UInt16(lower, radix: 16),
+               let upper = upperBoundField.text, let upperBound = UInt16(upper, radix: 16) {
+                alert.setValid(validator(lowerBound) && validator(upperBound) && upperBound >= lowerBound)
+            } else {
+                alert.setValid(false)
+            }
+            // Ranges were validated.
+            return true
+        }
+        // Alert does not contained a range.
+        return false
     }
     
     @objc func keyRequired(_ textField: UITextField) {

@@ -18,7 +18,7 @@ enum RangeType {
         switch self {
         case .unicastAddress: return .unicastAddressRequired
         case .groupAddress:   return .groupAddressRequired
-        case .scene:          return .scene
+        case .scene:          return .sceneRequired
         }
     }
 }
@@ -115,7 +115,7 @@ extension EditRangesViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, titleForFooterInSection section: Int) -> String? {
-        return "Swipe left to Delete a range. After modification, ranges will merge automatically if possible."
+        return "Ovelapping ranges merge automatically."
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
