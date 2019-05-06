@@ -68,7 +68,7 @@
 		529B7616224A6D47008F1CE7 /* MeshUUID.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529B760D224A6D47008F1CE7 /* MeshUUID.swift */; };
 		529B7617224A6D47008F1CE7 /* MeshModelError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529B760E224A6D47008F1CE7 /* MeshModelError.swift */; };
 		529B7618224A6D47008F1CE7 /* KeyIndex.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529B760F224A6D47008F1CE7 /* KeyIndex.swift */; };
-		529B761B224A6D5B008F1CE7 /* UInt16+Hex.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529B761A224A6D59008F1CE7 /* UInt16+Hex.swift */; };
+		529B761B224A6D5B008F1CE7 /* Int+Hex.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529B761A224A6D59008F1CE7 /* Int+Hex.swift */; };
 		529B761D224A6E20008F1CE7 /* Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529B761C224A6E20008F1CE7 /* Model.swift */; };
 		529B761F224B7D2D008F1CE7 /* UUID+Hex.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529B761E224B7D2D008F1CE7 /* UUID+Hex.swift */; };
 		529B7621224B8213008F1CE7 /* MeshAddress.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529B7620224B8213008F1CE7 /* MeshAddress.swift */; };
@@ -188,7 +188,7 @@
 		529B760D224A6D47008F1CE7 /* MeshUUID.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MeshUUID.swift; sourceTree = "<group>"; };
 		529B760E224A6D47008F1CE7 /* MeshModelError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MeshModelError.swift; sourceTree = "<group>"; };
 		529B760F224A6D47008F1CE7 /* KeyIndex.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeyIndex.swift; sourceTree = "<group>"; };
-		529B761A224A6D59008F1CE7 /* UInt16+Hex.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UInt16+Hex.swift"; sourceTree = "<group>"; };
+		529B761A224A6D59008F1CE7 /* Int+Hex.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Int+Hex.swift"; sourceTree = "<group>"; };
 		529B761C224A6E20008F1CE7 /* Model.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Model.swift; sourceTree = "<group>"; };
 		529B761E224B7D2D008F1CE7 /* UUID+Hex.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UUID+Hex.swift"; sourceTree = "<group>"; };
 		529B7620224B8213008F1CE7 /* MeshAddress.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeshAddress.swift; sourceTree = "<group>"; };
@@ -434,7 +434,7 @@
 		529B7619224A6D59008F1CE7 /* Type Extensions */ = {
 			isa = PBXGroup;
 			children = (
-				529B761A224A6D59008F1CE7 /* UInt16+Hex.swift */,
+				529B761A224A6D59008F1CE7 /* Int+Hex.swift */,
 				529B761E224B7D2D008F1CE7 /* UUID+Hex.swift */,
 				529B7624224BB02E008F1CE7 /* Data+Hex.swift */,
 				525242E1225CC6D30044CECB /* ClosedRange.swift */,
@@ -850,7 +850,7 @@
 				83D1334FBA9AF1F33381417D7E45643F /* ProvisioningPDU.swift in Sources */,
 				529B7617224A6D47008F1CE7 /* MeshModelError.swift in Sources */,
 				529B7613224A6D47008F1CE7 /* Security.swift in Sources */,
-				529B761B224A6D5B008F1CE7 /* UInt16+Hex.swift in Sources */,
+				529B761B224A6D5B008F1CE7 /* Int+Hex.swift in Sources */,
 				529B75F2224A6CE4008F1CE7 /* Node.swift in Sources */,
 				529B7612224A6D47008F1CE7 /* Location.swift in Sources */,
 				529B757922411970008F1CE7 /* MeshNetworkManager.swift in Sources */,

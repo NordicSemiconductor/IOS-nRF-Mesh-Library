@@ -114,6 +114,15 @@ public extension MeshNetwork {
         // Add the provisioner's node.
         if let address = unicastAddress {
             let node = Node(for: provisioner, withAddress: address)
+            
+            // The new Provisioner will be aware of all currently existing
+            // Network and Application Keys.
+            networkKeys.forEach { key in
+                node.netKeys.append(Node.NodeKey(of: key))
+            }
+            applicationKeys.forEach { key in
+                node.appKeys.append(Node.NodeKey(of: key))
+            }
             nodes.append(node)
         }
         
@@ -161,11 +170,26 @@ public extension MeshNetwork {
             toIndex >= 0 && toIndex <= provisioners.count &&
             fromIndex != toIndex {
             let provisioner = provisioners.remove(at: fromIndex)
+            
+            // The target index must be modifed if the Provisioner is
+            // being moved below, as it was removed and other Provisioners
+            // were already moved to fill the space.
             let newToIndex = toIndex > fromIndex ? toIndex - 1 : toIndex
             if newToIndex <= provisioners.count {
                 provisioners.insert(provisioner, at: newToIndex)
             } else {
                 provisioners.append(provisioner)
+            }
+            // If the Provisioner was moved to index 0 it becomes the new local Provisioner.
+            // The local Provisioner is, by definition, aware of all Network and Application
+            // Keys currently existing in the network.
+            if newToIndex == 0, let n = node(for: provisioner) {
+                networkKeys.forEach { key in
+                    n.netKeys.append(Node.NodeKey(of: key))
+                }
+                applicationKeys.forEach { key in
+                    n.appKeys.append(Node.NodeKey(of: key))
+                }
             }
         }
     }

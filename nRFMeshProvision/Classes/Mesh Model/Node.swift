@@ -23,6 +23,11 @@ public class Node: Codable {
             self.index   = index
             self.updated = updated
         }
+        
+        internal init(of key: Key) {
+            self.index   = key.index
+            self.updated = false
+        }
     }
     
     /// The object represents parameters of the transmissions of network
@@ -70,10 +75,10 @@ public class Node: Codable {
     /// Primary unicast address of the node.
     public internal(set) var unicastAddress: Address
     /// 128-bit device key for this node.
-    public internal(set) var deviceKey: Data?
+    public internal(set) var deviceKey: Data
     /// The level of security for the subnet on which the node has been
     /// originally provisioner.
-    public internal(set) var security: Security?
+    public internal(set) var security: Security
     /// An array of node network key objects that include information
     /// about the network keys known to this node.
     public internal(set) var netKeys: [NodeKey]
@@ -120,6 +125,60 @@ public class Node: Codable {
     /// during the key refresh procedure; otherwise is set to `false`.
     public internal(set) var blacklisted: Bool = false
     
+    /// A constructor needed only for testing.
+    internal init(name: String?, unicastAddress: Address, elements: UInt8) {
+        self.nodeUuid = MeshUUID()
+        self.name = name
+        self.unicastAddress = unicastAddress
+        self.deviceKey = Data.random128BitKey()
+        self.security = .high
+        // Default values
+        self.appKeys  = []
+        self.netKeys  = []
+        self.elements = []
+        
+        for i in 0..<elements {
+            self.elements.append(Element(index: i, location: .unknown))
+        }
+    }
+    
+    /// Initializes the Provisioner's node.
+    /// The Provisioner's node has the same name and node UUID as the Provisioner.
+    ///
+    /// - parameter provisioner: The Provisioner for which the node is added.
+    /// - parameter address:     The unicast address to be assigned to the Node.
+    internal init(for provisioner: Provisioner, withAddress address: Address) {
+        self.nodeUuid = provisioner.provisionerUuid
+        self.name     = provisioner.provisionerName
+        self.unicastAddress = address
+        self.deviceKey = Data.random128BitKey()
+        self.security = .high
+        // A flag that there is no need to perform configuration of
+        // a Provisioner's node.
+        self.configComplete = true
+        // This Provisioner does not support any of those features.
+        self.features = NodeFeatures(relay: .notSupported,
+                                     proxy: .notSupported,
+                                     lowPower: .notSupported,
+                                     friend: .notSupported)
+        
+        // Keys will ba added later.
+        self.appKeys  = []
+        self.netKeys  = []
+        
+        // Add the primary Element.
+        let element = Element(index: 0, location: .unknown)
+        element.name = "Primary Element"
+        // Those 2 models are required for all nodes.
+        element.models.append(.configurationServer)
+        element.models.append(.healthServer)
+        // Configuration Client model is added, as this is a Provisioner's node.
+        element.models.append(.configurationClient)
+        self.elements = [element]
+    }
+    
+    // MARK: - Codable
+    
     private enum CodingKeys: String, CodingKey {
         case nodeUuid = "uuid"
         case unicastAddress
@@ -142,34 +201,60 @@ public class Node: Codable {
         case blacklisted
     }
     
-    /// A constructor needed only for testing.
-    internal init(name: String?, unicastAddress: Address, elements: UInt8) {
-        self.nodeUuid = MeshUUID()
-        self.name = name
-        self.unicastAddress = unicastAddress
-        // Default values
-        self.appKeys  = []
-        self.netKeys  = []
-        self.elements = []
-        
-        for i in 0..<elements {
-            self.elements.append(Element(index: i, location: .unknown))
+    public required init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        let unicastAddressAsString = try container.decode(String.self, forKey: .unicastAddress)
+        guard let unicastAddress = Address(hex: unicastAddressAsString) else {
+            throw DecodingError.dataCorruptedError(forKey: .unicastAddress, in: container,
+                                                   debugDescription: "Address must be 4-character hexadecimal string")
         }
+        let keyHex = try container.decode(String.self, forKey: .deviceKey)
+        guard let keyData = Data(hex: keyHex) else {
+            throw DecodingError.dataCorruptedError(forKey: .deviceKey, in: container,
+                                                   debugDescription: "Device Key must be 32-character hexadecimal string")
+        }
+        self.nodeUuid = try container.decode(MeshUUID.self, forKey: .nodeUuid)
+        self.unicastAddress = unicastAddress
+        self.deviceKey = keyData
+        self.security = try container.decode(Security.self, forKey: .security)
+        self.netKeys = try container.decode([NodeKey].self, forKey: .netKeys)
+        self.appKeys = try container.decode([NodeKey].self, forKey: .appKeys)
+        self.configComplete = try container.decode(Bool.self, forKey: .configComplete)
+        self.name = try container.decodeIfPresent(String.self, forKey: .name)
+        self.companyIdentifier = try container.decodeIfPresent(UInt16.self, forKey: .companyIdentifier)
+        self.productIdentifier = try container.decodeIfPresent(UInt16.self, forKey: .productIdentifier)
+        self.versionIdentifier = try container.decodeIfPresent(UInt16.self, forKey: .versionIdentifier)
+        self.minimumNumberOfReplayProtectionList = try container.decodeIfPresent(UInt16.self, forKey: .minimumNumberOfReplayProtectionList)
+        self.features = try container.decodeIfPresent(NodeFeatures.self, forKey: .features)
+        self.secureNetworkBeacon = try container.decodeIfPresent(Bool.self, forKey: .secureNetworkBeacon)
+        self.defaultTTL = try container.decodeIfPresent(UInt8.self, forKey: .defaultTTL)
+        self.networkTransmit = try container.decodeIfPresent(NetworkTransmit.self, forKey: .networkTransmit)
+        self.relayRetransmit = try container.decodeIfPresent(RelayRetransmit.self, forKey: .relayRetransmit)
+        self.elements = try container.decode([Element].self, forKey: .elements)
+        self.blacklisted = try container.decode(Bool.self, forKey: .blacklisted)
     }
     
-    /// Initializes the Provisioner's node.
-    /// The Provisioner's node has the same name and node UUID as the Provisioner.
-    ///
-    /// - parameter provisioner: The Provisioner for which the node is added.
-    /// - parameter address:     The unicast address to be assigned to the Node.
-    internal init(for provisioner: Provisioner, withAddress address: Address) {
-        self.nodeUuid = provisioner.provisionerUuid
-        self.name     = provisioner.provisionerName
-        self.unicastAddress = address
-        
-        self.appKeys  = []
-        self.netKeys  = []
-        self.elements = []
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(nodeUuid, forKey: .nodeUuid)
+        try container.encode(unicastAddress.hex, forKey: .unicastAddress) // <- HEX value encoded
+        try container.encode(deviceKey.hex, forKey: .deviceKey) // <- HEX value encoded
+        try container.encode(security, forKey: .security)
+        try container.encode(netKeys, forKey: .netKeys)
+        try container.encode(appKeys, forKey: .appKeys)
+        try container.encode(configComplete, forKey: .configComplete)
+        try container.encodeIfPresent(name, forKey: .name)
+        try container.encodeIfPresent(companyIdentifier, forKey: .companyIdentifier)
+        try container.encodeIfPresent(productIdentifier, forKey: .productIdentifier)
+        try container.encodeIfPresent(versionIdentifier, forKey: .versionIdentifier)
+        try container.encodeIfPresent(minimumNumberOfReplayProtectionList, forKey: .minimumNumberOfReplayProtectionList)
+        try container.encodeIfPresent(features, forKey: .features)
+        try container.encodeIfPresent(secureNetworkBeacon, forKey: .secureNetworkBeacon)
+        try container.encodeIfPresent(defaultTTL, forKey: .defaultTTL)
+        try container.encodeIfPresent(networkTransmit, forKey: .networkTransmit)
+        try container.encodeIfPresent(relayRetransmit, forKey: .relayRetransmit)
+        try container.encode(elements, forKey: .elements)
+        try container.encode(blacklisted, forKey: .blacklisted)
     }
 }
 

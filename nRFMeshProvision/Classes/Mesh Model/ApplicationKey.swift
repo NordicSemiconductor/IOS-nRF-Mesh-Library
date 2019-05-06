@@ -66,9 +66,7 @@ public class ApplicationKey: Key, Codable {
         try container.encode(name, forKey: .name)
         try container.encode(index, forKey: .index)
         try container.encode(key.hex, forKey: .key)
-        if let oldKey = oldKey {
-            try container.encode(oldKey.hex, forKey: .oldKey)
-        }
+        try container.encodeIfPresent(oldKey?.hex, forKey: .oldKey)
         try container.encode(boundNetKey, forKey: .boundNetKey)
     }
     

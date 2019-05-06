@@ -7,96 +7,30 @@
 
 import Foundation
 
+/// The features object represents the functionality of a mesh node
+/// that is determined by the set features that the node supports.
 public class NodeFeatures: Codable {
-    /// Supported values:
-    /// 0 - the Relay feature is not enabled,
-    /// 1 - the Relay feature is enabled,
-    /// 2 - the Relay feature is not supported
-    /// nil - unknown state of the Relay feature.
-    var relay: UInt8?
-    /// Supported values:
-    /// 0 - the Proxy feature is not enabled,
-    /// 1 - the Proxy feature is enabled,
-    /// 2 - the Proxy feature is not supported
-    /// nil - unknown state of the Proxy feature.
-    var proxy: UInt8?
-    /// Supported values:
-    /// 0 - the Low Power feature is not enabled,
-    /// 1 - the Low Power feature is enabled,
-    /// 2 - the Low Power feature is not supported
-    /// nil - unknown state of the Low Power feature.
-    var lowPower: UInt8?
-    /// Supported values:
-    /// 0 - the Friend feature is not enabled,
-    /// 1 - the Friend feature is enabled,
-    /// 2 - the Friend feature is not supported
-    /// nil - unknown state of the Friend feature.
-    var friend: UInt8?
+    
+    /// The state of a feature.
+    public enum State: UInt8, Codable {
+        case notEnabled   = 0
+        case enabled      = 1
+        case notSupported = 2
+    }
+    /// The state of Relay feature. `nil` if unknown.
+    public internal(set) var relay: State?
+    /// The state of Proxy feature. `nil` if unknown.
+    public internal(set) var proxy: State?
+    /// The state of Low Power feature. `nil` if unknown.
+    public internal(set) var lowPower: State?
+    /// The state of Friend feature. `nil` if unknown.
+    public internal(set) var friend: State?
+    
+    internal init(relay: State?, proxy: State?, lowPower: State?, friend: State?) {
+        self.relay = relay
+        self.proxy = proxy
+        self.lowPower = lowPower
+        self.friend = friend
+    }
 }
 
-public extension NodeFeatures {
-    
-    var isRelayFeatureStateKnown: Bool {
-        return relay != nil
-    }
-    
-    var isRelayFeatureEnabled: Bool {
-        return relay == 1
-    }
-    
-    var isRelayFeatureDisabled: Bool {
-        return relay == 0
-    }
-    
-    var isRelayFeatureFeatureSupported: Bool {
-        return relay != 2
-    }
-    
-    var isProxyFeatureStateKnown: Bool {
-        return proxy != nil
-    }
-    
-    var isProxyFeatureEnabled: Bool {
-        return proxy == 1
-    }
-    
-    var isProxyFeatureDisabled: Bool {
-        return proxy == 0
-    }
-    
-    var isProxyFeatureSupported: Bool {
-        return proxy != 2
-    }
-    
-    var isLowPowerFeatureStateKnown: Bool {
-        return lowPower != nil
-    }
-    
-    var isLowPowerFeatureEnabled: Bool {
-        return lowPower == 1
-    }
-    
-    var isLowPowerFeatureDisabled: Bool {
-        return lowPower == 0
-    }
-    
-    var isLowPowerFeatureSupported: Bool {
-        return lowPower != 2
-    }
-    
-    var isFriendFeatureStateKnown: Bool {
-        return friend != nil
-    }
-    
-    var isFriendFeatureEnabled: Bool {
-        return friend == 1
-    }
-    
-    var isFriendFeatureDisabled: Bool {
-        return friend == 0
-    }
-    
-    var isFriendFeatureSupported: Bool {
-        return friend != 2
-    }
-}

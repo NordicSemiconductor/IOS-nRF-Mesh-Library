@@ -39,6 +39,12 @@ public extension MeshNetwork {
         let key = try ApplicationKey(name: name, index: nextAvailableApplicationKeyIndex,
                                  key: applicationKey, bindTo: defaultNetworkKey)
         applicationKeys.append(key)
+        
+        // Make the local Provisioner aware of the new key.
+        if let localProvisioner = provisioners.first,
+           let n = node(for: localProvisioner) {
+            n.appKeys.append(Node.NodeKey(of: key))
+        }
         return key
     }
     
@@ -94,6 +100,12 @@ public extension MeshNetwork {
         }
         let key = try NetworkKey(name: name, index: nextAvailableNetworkKeyIndex, key: networkKey)
         networkKeys.append(key)
+        
+        // Make the local Provisioner aware of the new key.
+        if let localProvisioner = provisioners.first,
+           let n = node(for: localProvisioner) {
+            n.netKeys.append(Node.NodeKey(of: key))
+        }
         return key
     }
     

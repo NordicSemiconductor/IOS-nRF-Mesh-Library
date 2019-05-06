@@ -43,4 +43,51 @@ public class Model: Codable {
     public internal(set) var publish: Publish?
     /// An array of appliaction key indexes to which this model is bound.
     public internal(set) var bind: [KeyIndex]
+    
+    internal init(modelId: UInt32) {
+        self.modelId   = modelId
+        self.subscribe = []
+        self.bind      = []
+    }
+    
+    // MARK: - Codable
+    
+    private enum CodingKeys: CodingKey {
+        case modelId
+        case subscribe
+        case publish
+        case bind
+    }
+    
+    public required init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        let modelIdString  = try container.decode(String.self, forKey: .modelId)
+        guard let modelId = UInt32(hex: modelIdString) else {
+            throw DecodingError.dataCorruptedError(forKey: .modelId, in: container,
+                                                   debugDescription: "Model ID must be 4-character hexadecimal string")
+        }
+        self.modelId = modelId
+        self.subscribe = try container.decode([String].self, forKey: .subscribe)
+        if let publish = try container.decodeIfPresent(Publish.self, forKey: .publish) {
+            self.publish = publish
+        }
+        self.bind = try container.decode([KeyIndex].self, forKey: .bind)
+    }
+    
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(modelId.hex, forKey: .modelId)
+        try container.encode(subscribe, forKey: .subscribe)
+        try container.encodeIfPresent(publish, forKey: .publish)
+        try container.encode(bind, forKey: .bind)
+    }
+}
+
+extension Model {
+    
+    static let configurationServer = Model(modelId: 0x0000)
+    static let configurationClient = Model(modelId: 0x0001)
+    static let healthServer = Model(modelId: 0x0002)
+    static let healthClient = Model(modelId: 0x0003)
+    
 }

@@ -32,14 +32,6 @@ public class Provisioner: Codable {
     
     internal var meshNetwork: MeshNetwork?
     
-    private enum CodingKeys: String, CodingKey {
-        case provisionerUuid = "uuid"
-        case provisionerName
-        case allocatedUnicastRange
-        case allocatedGroupRange
-        case allocatedSceneRange
-    }
-    
     public init(name: String,
                 uuid: UUID,
                 allocatedUnicastRange: [AddressRange],
@@ -71,6 +63,16 @@ public class Provisioner: Codable {
                   allocatedGroupRange:   [AddressRange.allGroupAddresses],
                   allocatedSceneRange:   [SceneRange.allScenes]
         )
+    }
+    
+    // MARK: - Codable
+    
+    private enum CodingKeys: String, CodingKey {
+        case provisionerUuid = "uuid"
+        case provisionerName
+        case allocatedUnicastRange
+        case allocatedGroupRange
+        case allocatedSceneRange
     }
     
     public required init(from decoder: Decoder) throws {

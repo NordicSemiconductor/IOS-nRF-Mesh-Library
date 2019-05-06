@@ -79,12 +79,7 @@ public class NetworkKey: Key, Codable {
             }
             oldKey = oldKeyData
         }
-        let phaseRawValue = try container.decode(Int.self, forKey: .phase)
-        guard let keyRefreshPhase = KeyRefreshPhase.from(phaseRawValue) else {
-            throw DecodingError.dataCorruptedError(forKey: .phase, in: container,
-                                                   debugDescription: "Phase must be 0, 1 or 2")
-        }
-        phase = keyRefreshPhase
+        phase = try container.decode(KeyRefreshPhase.self, forKey: .phase)
         minSecurity = try container.decode(Security.self, forKey: .minSecurity)
         timestamp = try container.decode(Date.self, forKey: .timestamp)
     }
@@ -94,9 +89,7 @@ public class NetworkKey: Key, Codable {
         try container.encode(name, forKey: .name)
         try container.encode(index, forKey: .index)
         try container.encode(key.hex, forKey: .key)
-        if let oldKey = oldKey {
-            try container.encode(oldKey.hex, forKey: .oldKey)
-        }
+        try container.encodeIfPresent(oldKey?.hex, forKey: .oldKey)
         try container.encode(phase, forKey: .phase)
         try container.encode(minSecurity, forKey: .minSecurity)
         try container.encode(timestamp, forKey: .timestamp)
