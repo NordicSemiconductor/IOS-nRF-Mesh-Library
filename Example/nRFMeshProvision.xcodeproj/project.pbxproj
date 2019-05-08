@@ -18,6 +18,8 @@
 		52835250227887970097B949 /* Settings.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5283524E227887970097B949 /* Settings.storyboard */; };
 		52835258227AEDA30097B949 /* DeviceTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52835257227AEDA30097B949 /* DeviceTableViewCell.swift */; };
 		52835269227B2BAE0097B949 /* ScannerTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52835268227B2BAE0097B949 /* ScannerTableViewController.swift */; };
+		5283528022806C280097B949 /* ProvisioningViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5283527F22806C280097B949 /* ProvisioningViewController.swift */; };
+		5283528222806D7C0097B949 /* NetworkKeySelectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5283528122806D7C0097B949 /* NetworkKeySelectionViewController.swift */; };
 		529B756D223FE7F1008F1CE7 /* RootViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529B756C223FE7F1008F1CE7 /* RootViewController.swift */; };
 		529B7570223FF1AE008F1CE7 /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529B756F223FF1AE008F1CE7 /* SettingsViewController.swift */; };
 		529B7572223FFC39008F1CE7 /* AppKeysViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529B7571223FFC39008F1CE7 /* AppKeysViewController.swift */; };
@@ -63,6 +65,8 @@
 		5283524F227887970097B949 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Settings.storyboard; sourceTree = "<group>"; };
 		52835257227AEDA30097B949 /* DeviceTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceTableViewCell.swift; sourceTree = "<group>"; };
 		52835268227B2BAE0097B949 /* ScannerTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScannerTableViewController.swift; sourceTree = "<group>"; };
+		5283527F22806C280097B949 /* ProvisioningViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProvisioningViewController.swift; sourceTree = "<group>"; };
+		5283528122806D7C0097B949 /* NetworkKeySelectionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkKeySelectionViewController.swift; sourceTree = "<group>"; };
 		529B756C223FE7F1008F1CE7 /* RootViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootViewController.swift; sourceTree = "<group>"; };
 		529B756F223FF1AE008F1CE7 /* SettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
 		529B7571223FFC39008F1CE7 /* AppKeysViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppKeysViewController.swift; sourceTree = "<group>"; };
@@ -167,10 +171,20 @@
 		52835256227AED670097B949 /* Network */ = {
 			isa = PBXGroup;
 			children = (
-				52835257227AEDA30097B949 /* DeviceTableViewCell.swift */,
-				52835268227B2BAE0097B949 /* ScannerTableViewController.swift */,
+				5283527E22806BA60097B949 /* Provisioning */,
 			);
 			path = Network;
+			sourceTree = "<group>";
+		};
+		5283527E22806BA60097B949 /* Provisioning */ = {
+			isa = PBXGroup;
+			children = (
+				52835257227AEDA30097B949 /* DeviceTableViewCell.swift */,
+				52835268227B2BAE0097B949 /* ScannerTableViewController.swift */,
+				5283527F22806C280097B949 /* ProvisioningViewController.swift */,
+				5283528122806D7C0097B949 /* NetworkKeySelectionViewController.swift */,
+			);
+			path = Provisioning;
 			sourceTree = "<group>";
 		};
 		529B757322410784008F1CE7 /* Utils */ = {
@@ -459,6 +473,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				529B764722522D37008F1CE7 /* UITableView+EmptyView.swift in Sources */,
+				5283528022806C280097B949 /* ProvisioningViewController.swift in Sources */,
 				52835269227B2BAE0097B949 /* ScannerTableViewController.swift in Sources */,
 				52DAA5E2225B633B0041C43A /* RangeView.swift in Sources */,
 				52DAA5DB22560EEE0041C43A /* EditProvisionerViewController.swift in Sources */,
@@ -477,6 +492,7 @@
 				525242E8225F2D6A0044CECB /* FabView.swift in Sources */,
 				529B7570223FF1AE008F1CE7 /* SettingsViewController.swift in Sources */,
 				529B759C2243BA10008F1CE7 /* NetworkKeysViewController.swift in Sources */,
+				5283528222806D7C0097B949 /* NetworkKeySelectionViewController.swift in Sources */,
 				529B7643225222E8008F1CE7 /* UInt16+String.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

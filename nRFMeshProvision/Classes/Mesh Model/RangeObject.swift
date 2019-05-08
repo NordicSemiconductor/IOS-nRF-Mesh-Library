@@ -89,6 +89,7 @@ public extension RangeObject {
         }
         return 0
     }
+    
 }
 
 public extension Array where Element : RangeObject {
@@ -182,4 +183,5 @@ public extension Array where Element : RangeObject {
         }
         return false
     }
+    
 }

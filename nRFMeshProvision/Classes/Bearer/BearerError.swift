@@ -1,5 +1,5 @@
 //
-//  GattError.swift
+//  BearerError.swift
 //  nRFMeshProvision_Example
 //
 //  Created by Aleksander Nowakowski on 02/05/2019.
@@ -8,7 +8,10 @@
 
 import Foundation
 
-enum GattError: Error {
+public enum BearerError: Error {
     case centralManagerNotPoweredOn
+}
+
+public enum GattBearerError: Error {
     case deviceNotSupported
 }

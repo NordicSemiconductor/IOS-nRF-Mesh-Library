@@ -72,43 +72,6 @@ public class ApplicationKey: Key, Codable {
     
 }
 
-// MARK: - Public API
-
-public extension ApplicationKey {
-    
-    /// Bounds the Application Key to the given Network Key.
-    ///
-    /// - parameter networkKey: The Network Key to bound the Application Key to.
-    func bind(to networkKey: NetworkKey) {
-        self.boundNetKey = networkKey.index
-    }
-    
-    /// Returns whether the Application Key is bound to the given
-    /// Network Key. The Key comparison bases on Key Index property.
-    ///
-    /// - parameter networkKey: The Network Key to check.
-    func isBound(to networkKey: NetworkKey) -> Bool {
-        return self.boundNetKey == networkKey.index
-    }
-    
-    /// Return whether the Application Key is used in the given mesh network.
-    ///
-    /// A Application Key must be added to Application Keys array of the network
-    /// and be known to at least one node to be used by it.
-    ///
-    /// An used Application Key may not be removed from the network.
-    ///
-    /// - parameter meshNetwork: The mesh network to look the key in.
-    /// - returns: `True` if the key is used in the given network,
-    ///            `false` otherwise.
-    func isUsed(in meshNetwork: MeshNetwork) -> Bool {
-        return meshNetwork.applicationKeys.contains(self) &&
-               // Application Key known by at least one node.
-               meshNetwork.nodes.knows(applicationKey: self)
-    }
-    
-}
-
 // MARK: - Operators
 
 extension ApplicationKey: Equatable {
@@ -119,20 +82,6 @@ extension ApplicationKey: Equatable {
     
     public static func != (lhs: ApplicationKey, rhs: ApplicationKey) -> Bool {
         return lhs.index != rhs.index || lhs.key != rhs.key
-    }
-    
-}
-
-// MARK: - Array methods
-
-public extension Array where Element == ApplicationKey {
-    
-    /// Returns whether any of the Application Keys in the array is bound to
-    /// the given Network Key. The Key comparison bases on Key Index property.
-    ///
-    /// - parameter networkKey: The Network Key to check.
-    func contains(keyBoundTo networkKey: NetworkKey) -> Bool {
-        return contains(where: { $0.isBound(to: networkKey) })
     }
     
 }

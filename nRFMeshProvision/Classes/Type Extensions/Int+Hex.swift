@@ -24,6 +24,11 @@ internal extension UInt16 {
         self = data.withUnsafeBytes { $0.load(as: UInt16.self) }
     }
     
+    var data: Data {
+        var int = self
+        return Data(bytes: &int, count: MemoryLayout<UInt8>.size)
+    }
+    
 }
 
 internal extension UInt32 {

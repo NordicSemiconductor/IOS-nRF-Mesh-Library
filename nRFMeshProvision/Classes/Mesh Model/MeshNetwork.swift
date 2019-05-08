@@ -40,6 +40,18 @@ public class MeshNetwork: Codable {
     // An array of nodes in the network.
     public internal(set) var nodes: [Node]
     
+    internal init(name: String, uuid: UUID = UUID()) {
+        meshUUID        = MeshUUID(uuid)
+        meshName        = name
+        timestamp       = Date()
+        provisioners    = []
+        networkKeys     = []
+        applicationKeys = []
+        nodes           = []
+    }
+    
+    // MARK: - Codable
+    
     /// Coding keys used to export / import Mesh Network.
     enum CodingKeys: String, CodingKey {
         case schema          = "$schema"
@@ -52,16 +64,6 @@ public class MeshNetwork: Codable {
         case networkKeys     = "netKeys"
         case applicationKeys = "appKeys"
         case nodes
-    }
-    
-    internal init(name: String, uuid: UUID = UUID()) {
-        meshUUID        = MeshUUID(uuid)
-        meshName        = name
-        timestamp       = Date()
-        provisioners    = []
-        networkKeys     = []
-        applicationKeys = []
-        nodes           = []
     }
     
 }

@@ -1,5 +1,5 @@
 //
-//  UnprovisionedDevice.swift
+//  GattBearer.swift
 //  nRFMeshProvision_Example
 //
 //  Created by Aleksander Nowakowski on 02/05/2019.
@@ -9,28 +9,14 @@
 import Foundation
 import CoreBluetooth
 
-open class UnprovisionedProxyDevice: NSObject, UnprovisionedDevice {
+open class GattBearer: NSObject, MeshBearer {
     
     // MARK: - Properties
     
     private let centralManager   : CBCentralManager
     private let basePeripheral   : CBPeripheral
     
-    /// The device name, parsed from the advertising data.
-    /// This may be different then the name in CBPeripheral
-    /// as it is not cached.
-    public private(set) var name : String?
-    /// The Unprovisioned Device mesh UUID, obtained from the
-    /// advertising packet.
-    public private(set) var uuid : UUID
-    /// The out-of-band (OOB) information from the advertising
-    /// packet.
-    public private(set) var oobInformation: OobInformation
-    
-    /// The delegate will receive callback whenever the link to the
-    /// Unprovisioned Device will change or when any data will be
-    /// received from this device.
-    public var delegate: UnprovisionedDeviceDelegate?
+    public weak var delegate: BearerDelegate?
     
     // MARK: - Computed properties
     
@@ -46,32 +32,22 @@ open class UnprovisionedProxyDevice: NSObject, UnprovisionedDevice {
     
     // MARK: - Public API
     
-    public init?(withPeripheral peripheral: CBPeripheral,
-         advertisementData dictionary: [String : Any],
-         using manager: CBCentralManager) {
-        // Some validation. UUID and OOB Informatino are required in the advertising packet.
-        guard let cbuuid = dictionary.unprovisionedDeviceUUID,
-            let oob = dictionary.oobInformation else {
-                return nil
-        }
+    public init?(to peripheral: CBPeripheral, using manager: CBCentralManager) {
         centralManager = manager
         basePeripheral = peripheral
-        name = dictionary.localName
-        uuid = cbuuid.uuid
-        oobInformation = oob
         super.init()
         basePeripheral.delegate = self
     }
     
-    open func openLink() {
+    open func open() {
         if basePeripheral.state == .disconnected {
             centralManager.delegate = self
-            print("Connecting to Unprovisioned Device...")
+            print("Connecting to Proxy...")
             centralManager.connect(basePeripheral, options: nil)
         }
     }
     
-    open func closeLink() {
+    open func close() {
         if basePeripheral.state == .connected || basePeripheral.state == .connecting {
             print("Cancelling connection...")
             centralManager.cancelPeripheralConnection(basePeripheral)
@@ -80,17 +56,18 @@ open class UnprovisionedProxyDevice: NSObject, UnprovisionedDevice {
     
     open func send(_ data: Data) {
         if let dataInCharacteristic = dataInCharacteristic {
+            print("-> 0x\(data.hex)")
             basePeripheral.writeValue(data, for: dataInCharacteristic, type: .withoutResponse)
         }
     }
     
     // MARK: - Implementation
     
-    /// Starts service discovery, only for Mesh Provisioning Service.
+    /// Starts service discovery, only for Mesh Proxy Service.
     private func discoverServices() {
-        print("Discovering Provisioning Service service...")
+        print("Discovering Mesh Proxy Service service...")
         basePeripheral.delegate = self
-        basePeripheral.discoverServices([MeshProvisioningService.serviceUUID])
+        basePeripheral.discoverServices([MeshProxyService.uuid])
     }
     
     /// Starts characteristic discovery for Data In and Data Out Characteristics.
@@ -98,9 +75,10 @@ open class UnprovisionedProxyDevice: NSObject, UnprovisionedDevice {
     /// - parameter service: The service to look for the characteristics in.
     private func discoverCharacteristics(for service: CBService) {
         print("Discovering characteristrics...")
-        basePeripheral.discoverCharacteristics(
-            [MeshProvisioningService.dataInUUID, MeshProvisioningService.dataOutUUID],
-            for: service)
+        basePeripheral.discoverCharacteristics([
+            MeshProxyService.DataInCharacteristic.uuid,
+            MeshProxyService.DataOutCharacteristic.uuid
+            ], for: service)
     }
     
     /// Enables notification for the given characteristic.
@@ -111,49 +89,37 @@ open class UnprovisionedProxyDevice: NSObject, UnprovisionedDevice {
         basePeripheral.setNotifyValue(true, for: characteristic)
     }
     
-    // MARK: - NSObject protocols
-    
-    override open func isEqual(_ object: Any?) -> Bool {
-        switch object {
-        case let device as UnprovisionedProxyDevice:
-            return device.basePeripheral.identifier == basePeripheral.identifier
-        case let device as UnprovisionedDevice:
-            return device.uuid == uuid
-        case let peripheral as CBPeripheral:
-            return peripheral.identifier == basePeripheral.identifier
-        default:
-            return false
-        }
-    }
-    
 }
 // MARK: - CBCentralManagerDelegate
 
-extension UnprovisionedProxyDevice: CBCentralManagerDelegate {
+extension GattBearer: CBCentralManagerDelegate {
     
     open func centralManagerDidUpdateState(_ central: CBCentralManager) {
         if central.state != .poweredOn {
             print("Central Manager state changed to \(central.state)")
-            delegate?.link(to: self, didClose: GattError.centralManagerNotPoweredOn)
+            delegate?.bearer(self, didClose: BearerError.centralManagerNotPoweredOn)
         }
     }
     
     open func centralManager(_ central: CBCentralManager, didConnect peripheral: CBPeripheral) {
         if peripheral == basePeripheral {
-            print("Connected to UnprovisionedDevice")
+            print("Connected to Proxy")
+            if let delegate = delegate as? GattBearerDelegate {
+                delegate.bearerDidConnect(self)
+            }
             discoverServices()
         }
     }
     
     open func centralManager(_ central: CBCentralManager, didDisconnectPeripheral peripheral: CBPeripheral, error: Error?) {
         if peripheral == basePeripheral {
-            print("UnprovisionedDevice disconnected")
+            print("Proxy disconnected\(": " + (error?.localizedDescription ?? ""))")
             guard let dataOutCharacteristic = dataOutCharacteristic, let _ = dataInCharacteristic,
                 dataOutCharacteristic.properties.contains(.notify) else {
-                    delegate?.link(to: self, didClose: GattError.deviceNotSupported)
+                    delegate?.bearer(self, didClose: GattBearerError.deviceNotSupported)
                     return
             }
-            delegate?.link(to: self, didClose: nil)
+            delegate?.bearer(self, didClose: nil)
         }
     }
     
@@ -161,17 +127,17 @@ extension UnprovisionedProxyDevice: CBCentralManagerDelegate {
     
 // MARK: - CBPeripheralDelegate
 
-extension UnprovisionedProxyDevice: CBPeripheralDelegate {
+extension GattBearer: CBPeripheralDelegate {
     
     open func peripheral(_ peripheral: CBPeripheral, didDiscoverServices error: Error?) {
         guard let services = peripheral.services else {
-            closeLink()
+            close()
             return
         }
         
         for service in services {
-            if service.isMeshProvisioningService {
-                print("Mesh Provisioning service found")
+            if service.isMeshProxyService {
+                print("Mesh Proxy service found")
                 discoverCharacteristics(for: service)
                 return
             }
@@ -182,10 +148,10 @@ extension UnprovisionedProxyDevice: CBPeripheralDelegate {
         // Look for required characteristics.
         if let characteristics = service.characteristics {
             for characteristic in characteristics {
-                if characteristic.isMeshProvisioningDataInCharacteristic {
+                if characteristic.isMeshProxyDataInCharacteristic {
                     print("Data In characteristic found")
                     dataInCharacteristic = characteristic
-                } else if characteristic.isMeshProvisioningDataOutCharacteristic {
+                } else if characteristic.isMeshProxyDataOutCharacteristic {
                     print("Data Out characteristic found")
                     dataOutCharacteristic = characteristic
                 }
@@ -195,23 +161,38 @@ extension UnprovisionedProxyDevice: CBPeripheralDelegate {
         // Ensure all required characteristics were found.
         guard let dataOutCharacteristic = dataOutCharacteristic, let _ = dataInCharacteristic,
             dataOutCharacteristic.properties.contains(.notify) else {
-                closeLink()
+                print("Device not supported")
+                close()
                 return
         }
         
+        if let delegate = delegate as? GattBearerDelegate {
+            delegate.bearerDidDiscoverServices(self)
+        }
         enableNotifications(for: dataOutCharacteristic)
     }
     
-    open func peripheral(_ peripheral: CBPeripheral, didUpdateValueFor characteristic: CBCharacteristic, error: Error?) {
+    open func peripheral(_ peripheral: CBPeripheral, didUpdateNotificationStateFor characteristic: CBCharacteristic, error: Error?) {
+        guard characteristic == dataOutCharacteristic, characteristic.isNotifying else {
+            return
+        }
         
+        print("Data Out notifications enabled")
+        print("Bearer open and ready")
+        delegate?.bearerDidOpen(self)
     }
     
-    open func peripheral(_ peripheral: CBPeripheral, didUpdateNotificationStateFor characteristic: CBCharacteristic, error: Error?) {
-        
+    open func peripheral(_ peripheral: CBPeripheral, didUpdateValueFor characteristic: CBCharacteristic, error: Error?) {
+        guard characteristic == dataOutCharacteristic, let data = characteristic.value else {
+            return
+        }
+        print("<- 0x\(data.hex)")
+        delegate?.bearer(self, didDeliverData: data)
     }
     
     open func peripheral(_ peripheral: CBPeripheral, didWriteValueFor characteristic: CBCharacteristic, error: Error?) {
-        
+        // Data is sent without response.
+        // This method will not be called.
     }
     
 }

@@ -47,6 +47,8 @@ class DeviceTableViewCell: UITableViewCell {
             lastUpdateTimestamp = Date()
             setupView(withDevice: device, andRSSI: rssi)
             
+            // Hide the RSSI icon when teh device is no loger advertising.
+            // Timeout is around 5 seconds.
             DispatchQueue.main.asyncAfter(deadline: .now() + 5.0) { [weak self] in
                 guard let self = self else { return }
                 if Date().timeIntervalSince(self.lastUpdateTimestamp) > 4.5 {

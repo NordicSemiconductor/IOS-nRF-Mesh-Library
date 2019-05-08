@@ -46,8 +46,25 @@
 		5283524C2276F53A0097B949 /* Key.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5283524B2276F53A0097B949 /* Key.swift */; };
 		52835277228029720097B949 /* Bearer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52835275228029720097B949 /* Bearer.swift */; };
 		52835278228029720097B949 /* UnprovisionedDevice.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52835276228029720097B949 /* UnprovisionedDevice.swift */; };
-		5283527C22802A370097B949 /* UnprovisionedProxyDevice.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5283527A22802A370097B949 /* UnprovisionedProxyDevice.swift */; };
-		5283527D22802A370097B949 /* GattError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5283527B22802A370097B949 /* GattError.swift */; };
+		5283527C22802A370097B949 /* GattBearer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5283527A22802A370097B949 /* GattBearer.swift */; };
+		5283527D22802A370097B949 /* BearerError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5283527B22802A370097B949 /* BearerError.swift */; };
+		528352862281B2B30097B949 /* Algorithm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 528352852281B2B30097B949 /* Algorithm.swift */; };
+		528352882281B2DC0097B949 /* PublicKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 528352872281B2DC0097B949 /* PublicKey.swift */; };
+		5283528A2281B30D0097B949 /* Oob.swift in Sources */ = {isa = PBXBuildFile; fileRef = 528352892281B30D0097B949 /* Oob.swift */; };
+		5283528C2281B3310097B949 /* ProvisioningCapabilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5283528B2281B3310097B949 /* ProvisioningCapabilities.swift */; };
+		5283528E2281B3510097B949 /* ProvisioningState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5283528D2281B3510097B949 /* ProvisioningState.swift */; };
+		528352902281B57A0097B949 /* Beacon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5283528F2281B57A0097B949 /* Beacon.swift */; };
+		528352922281B68E0097B949 /* ProvisioningPdu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 528352912281B68E0097B949 /* ProvisioningPdu.swift */; };
+		528352942281B8A10097B949 /* Data.swift in Sources */ = {isa = PBXBuildFile; fileRef = 528352932281B8A00097B949 /* Data.swift */; };
+		528352962281C0FE0097B949 /* OptionSet+Data.swift in Sources */ = {isa = PBXBuildFile; fileRef = 528352952281C0FE0097B949 /* OptionSet+Data.swift */; };
+		5283529A2282C55B0097B949 /* PBGattBearer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 528352992282C55B0097B949 /* PBGattBearer.swift */; };
+		5283529E2282CCE60097B949 /* Provisioner+Ranges.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5283529D2282CCE60097B949 /* Provisioner+Ranges.swift */; };
+		528352A02282CE830097B949 /* NetworkKey+MeshNetwork.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5283529F2282CE830097B949 /* NetworkKey+MeshNetwork.swift */; };
+		528352A22282CF0B0097B949 /* ApplicationKey+MeshNetwork.swift in Sources */ = {isa = PBXBuildFile; fileRef = 528352A12282CF0B0097B949 /* ApplicationKey+MeshNetwork.swift */; };
+		528352A42282CF9A0097B949 /* ApplicationKey+NetworkKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 528352A32282CF9A0097B949 /* ApplicationKey+NetworkKey.swift */; };
+		528352A62282D0350097B949 /* MeshNetwork+Provisioning.swift in Sources */ = {isa = PBXBuildFile; fileRef = 528352A52282D0350097B949 /* MeshNetwork+Provisioning.swift */; };
+		528352A82282D9FF0097B949 /* BearerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 528352A72282D9FF0097B949 /* BearerDelegate.swift */; };
+		528352AA2282DA1E0097B949 /* GattBearerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 528352A92282DA1E0097B949 /* GattBearerDelegate.swift */; };
 		529B757922411970008F1CE7 /* MeshNetworkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529B757822411970008F1CE7 /* MeshNetworkManager.swift */; };
 		529B757D22423DEE008F1CE7 /* Storage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529B757C22423DEE008F1CE7 /* Storage.swift */; };
 		529B75EA224A6CE4008F1CE7 /* Element.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529B75E1224A6CE2008F1CE7 /* Element.swift */; };
@@ -75,7 +92,6 @@
 		529B7623224BAB26008F1CE7 /* Publish.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529B7622224BAB26008F1CE7 /* Publish.swift */; };
 		529B7625224BB02E008F1CE7 /* Data+Hex.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529B7624224BB02E008F1CE7 /* Data+Hex.swift */; };
 		76AD7DBB6F78223071CAB41C3AE42393 /* MeshConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 045D235D97EFC49E1F2183DAE067E868 /* MeshConstants.swift */; };
-		83D1334FBA9AF1F33381417D7E45643F /* ProvisioningPDU.swift in Sources */ = {isa = PBXBuildFile; fileRef = 198E85CCE41703E3275FE59E75828C57 /* ProvisioningPDU.swift */; };
 		931A62151708A6FCE40E1EE898EEB7A5 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CB4607EFCA7C5F75397649E792E2AFCB /* Foundation.framework */; };
 		960FB84461FE8AC810DBA945C761C9ED /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CB4607EFCA7C5F75397649E792E2AFCB /* Foundation.framework */; };
 		B2BDDB2B032C5E6B01584508BF3752D1 /* Pods-nRFMeshProvision_Example-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = A43359B7BDF9C665A7737B649DD79C1E /* Pods-nRFMeshProvision_Example-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -132,7 +148,6 @@
 		15981D2630D21DADD208589D6BB8D59F /* Pods_nRFMeshProvision_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_nRFMeshProvision_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		163787E373F1965F1227AF8F1B666EBF /* txt_db.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = txt_db.h; path = "include-ios/openssl/txt_db.h"; sourceTree = "<group>"; };
 		1720DB8ED5B08DB09E270B08D0167AB8 /* nRFMeshProvision.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = nRFMeshProvision.xcconfig; sourceTree = "<group>"; };
-		198E85CCE41703E3275FE59E75828C57 /* ProvisioningPDU.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ProvisioningPDU.swift; sourceTree = "<group>"; };
 		1ADCDF13B8211FD26B302A21F8538F73 /* obj_mac.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = obj_mac.h; path = "include-ios/openssl/obj_mac.h"; sourceTree = "<group>"; };
 		1E484090F9E340B82C59DBCD08970795 /* md5.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = md5.h; path = "include-ios/openssl/md5.h"; sourceTree = "<group>"; };
 		1E778A3A654F0A0EEC457E7D319A61A9 /* evp.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = evp.h; path = "include-ios/openssl/evp.h"; sourceTree = "<group>"; };
@@ -166,8 +181,25 @@
 		5283524B2276F53A0097B949 /* Key.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Key.swift; sourceTree = "<group>"; };
 		52835275228029720097B949 /* Bearer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Bearer.swift; sourceTree = "<group>"; };
 		52835276228029720097B949 /* UnprovisionedDevice.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UnprovisionedDevice.swift; sourceTree = "<group>"; };
-		5283527A22802A370097B949 /* UnprovisionedProxyDevice.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UnprovisionedProxyDevice.swift; sourceTree = "<group>"; };
-		5283527B22802A370097B949 /* GattError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GattError.swift; sourceTree = "<group>"; };
+		5283527A22802A370097B949 /* GattBearer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GattBearer.swift; sourceTree = "<group>"; };
+		5283527B22802A370097B949 /* BearerError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BearerError.swift; sourceTree = "<group>"; };
+		528352852281B2B30097B949 /* Algorithm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Algorithm.swift; sourceTree = "<group>"; };
+		528352872281B2DC0097B949 /* PublicKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PublicKey.swift; sourceTree = "<group>"; };
+		528352892281B30D0097B949 /* Oob.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Oob.swift; sourceTree = "<group>"; };
+		5283528B2281B3310097B949 /* ProvisioningCapabilities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProvisioningCapabilities.swift; sourceTree = "<group>"; };
+		5283528D2281B3510097B949 /* ProvisioningState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProvisioningState.swift; sourceTree = "<group>"; };
+		5283528F2281B57A0097B949 /* Beacon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Beacon.swift; sourceTree = "<group>"; };
+		528352912281B68E0097B949 /* ProvisioningPdu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProvisioningPdu.swift; sourceTree = "<group>"; };
+		528352932281B8A00097B949 /* Data.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Data.swift; sourceTree = "<group>"; };
+		528352952281C0FE0097B949 /* OptionSet+Data.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "OptionSet+Data.swift"; sourceTree = "<group>"; };
+		528352992282C55B0097B949 /* PBGattBearer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PBGattBearer.swift; sourceTree = "<group>"; };
+		5283529D2282CCE60097B949 /* Provisioner+Ranges.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Provisioner+Ranges.swift"; sourceTree = "<group>"; };
+		5283529F2282CE830097B949 /* NetworkKey+MeshNetwork.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NetworkKey+MeshNetwork.swift"; sourceTree = "<group>"; };
+		528352A12282CF0B0097B949 /* ApplicationKey+MeshNetwork.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ApplicationKey+MeshNetwork.swift"; sourceTree = "<group>"; };
+		528352A32282CF9A0097B949 /* ApplicationKey+NetworkKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ApplicationKey+NetworkKey.swift"; sourceTree = "<group>"; };
+		528352A52282D0350097B949 /* MeshNetwork+Provisioning.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MeshNetwork+Provisioning.swift"; sourceTree = "<group>"; };
+		528352A72282D9FF0097B949 /* BearerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BearerDelegate.swift; sourceTree = "<group>"; };
+		528352A92282DA1E0097B949 /* GattBearerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GattBearerDelegate.swift; sourceTree = "<group>"; };
 		529B757822411970008F1CE7 /* MeshNetworkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MeshNetworkManager.swift; path = nRFMeshProvision/Classes/MeshNetworkManager.swift; sourceTree = "<group>"; };
 		529B757C22423DEE008F1CE7 /* Storage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Storage.swift; path = nRFMeshProvision/Classes/Storage.swift; sourceTree = "<group>"; };
 		529B75E1224A6CE2008F1CE7 /* Element.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Element.swift; sourceTree = "<group>"; };
@@ -346,7 +378,9 @@
 			children = (
 				529B757822411970008F1CE7 /* MeshNetworkManager.swift */,
 				529B757C22423DEE008F1CE7 /* Storage.swift */,
+				5283529C2282CC720097B949 /* Mesh API */,
 				529B75E0224A6CE2008F1CE7 /* Mesh Model */,
+				528352842281A3B50097B949 /* Provisioning */,
 				52835274228029720097B949 /* Bearer */,
 				529B7606224A6D47008F1CE7 /* Mesh Errors */,
 				529B7619224A6D59008F1CE7 /* Type Extensions */,
@@ -370,21 +404,57 @@
 		52835274228029720097B949 /* Bearer */ = {
 			isa = PBXGroup;
 			children = (
-				5283527922802A130097B949 /* PB GATT */,
 				52835275228029720097B949 /* Bearer.swift */,
-				52835276228029720097B949 /* UnprovisionedDevice.swift */,
+				528352A72282D9FF0097B949 /* BearerDelegate.swift */,
+				5283527B22802A370097B949 /* BearerError.swift */,
+				5283527922802A130097B949 /* GATT */,
 			);
 			name = Bearer;
 			path = nRFMeshProvision/Classes/Bearer;
 			sourceTree = "<group>";
 		};
-		5283527922802A130097B949 /* PB GATT */ = {
+		5283527922802A130097B949 /* GATT */ = {
 			isa = PBXGroup;
 			children = (
-				5283527A22802A370097B949 /* UnprovisionedProxyDevice.swift */,
-				5283527B22802A370097B949 /* GattError.swift */,
+				5283527A22802A370097B949 /* GattBearer.swift */,
+				528352992282C55B0097B949 /* PBGattBearer.swift */,
+				528352A92282DA1E0097B949 /* GattBearerDelegate.swift */,
 			);
-			path = "PB GATT";
+			path = GATT;
+			sourceTree = "<group>";
+		};
+		528352842281A3B50097B949 /* Provisioning */ = {
+			isa = PBXGroup;
+			children = (
+				52835276228029720097B949 /* UnprovisionedDevice.swift */,
+				528352852281B2B30097B949 /* Algorithm.swift */,
+				528352872281B2DC0097B949 /* PublicKey.swift */,
+				528352892281B30D0097B949 /* Oob.swift */,
+				5283528B2281B3310097B949 /* ProvisioningCapabilities.swift */,
+				5283528D2281B3510097B949 /* ProvisioningState.swift */,
+				5283528F2281B57A0097B949 /* Beacon.swift */,
+				528352912281B68E0097B949 /* ProvisioningPdu.swift */,
+			);
+			name = Provisioning;
+			path = nRFMeshProvision/Classes/Provisioning;
+			sourceTree = "<group>";
+		};
+		5283529C2282CC720097B949 /* Mesh API */ = {
+			isa = PBXGroup;
+			children = (
+				528352A52282D0350097B949 /* MeshNetwork+Provisioning.swift */,
+				5283523D2271EF1D0097B949 /* MeshNetwork+Provisioner.swift */,
+				5283523F2271EF770097B949 /* MeshNetwork+Ranges.swift */,
+				528352452271F0C60097B949 /* MeshNetwork+Keys.swift */,
+				528352432271F0650097B949 /* MeshNetwork+Nodes.swift */,
+				528352412271EFC20097B949 /* MeshNetwork+Address.swift */,
+				5283529D2282CCE60097B949 /* Provisioner+Ranges.swift */,
+				5283529F2282CE830097B949 /* NetworkKey+MeshNetwork.swift */,
+				528352A12282CF0B0097B949 /* ApplicationKey+MeshNetwork.swift */,
+				528352A32282CF9A0097B949 /* ApplicationKey+NetworkKey.swift */,
+			);
+			name = "Mesh API";
+			path = "nRFMeshProvision/Classes/Mesh API";
 			sourceTree = "<group>";
 		};
 		529B75E0224A6CE2008F1CE7 /* Mesh Model */ = {
@@ -392,11 +462,6 @@
 			children = (
 				529B75E6224A6CE2008F1CE7 /* MeshData.swift */,
 				529B75E7224A6CE2008F1CE7 /* MeshNetwork.swift */,
-				5283523D2271EF1D0097B949 /* MeshNetwork+Provisioner.swift */,
-				5283523F2271EF770097B949 /* MeshNetwork+Ranges.swift */,
-				528352452271F0C60097B949 /* MeshNetwork+Keys.swift */,
-				528352432271F0650097B949 /* MeshNetwork+Nodes.swift */,
-				528352412271EFC20097B949 /* MeshNetwork+Address.swift */,
 				529B75E8224A6CE2008F1CE7 /* Provisioner.swift */,
 				5283524B2276F53A0097B949 /* Key.swift */,
 				529B75E2224A6CE2008F1CE7 /* NetworkKey.swift */,
@@ -439,6 +504,8 @@
 				529B7624224BB02E008F1CE7 /* Data+Hex.swift */,
 				525242E1225CC6D30044CECB /* ClosedRange.swift */,
 				52835249227358DE0097B949 /* Data+Keys.swift */,
+				528352932281B8A00097B949 /* Data.swift */,
+				528352952281C0FE0097B949 /* OptionSet+Data.swift */,
 			);
 			name = "Type Extensions";
 			path = "nRFMeshProvision/Classes/Type Extensions";
@@ -495,7 +562,6 @@
 				045D235D97EFC49E1F2183DAE067E868 /* MeshConstants.swift */,
 				BEC1ACD529AAFA4B1CA0FCB54D4024FD /* OpenSSLHelper.h */,
 				9DA238DDA2D45895883214B988C1C10E /* OpenSSLHelper.m */,
-				198E85CCE41703E3275FE59E75828C57 /* ProvisioningPDU.swift */,
 				F73194CD0D299B3FA7F9FF8B560D9B51 /* PublishPeriodResolution.swift */,
 			);
 			name = Utils;
@@ -820,34 +886,48 @@
 			buildActionMask = 2147483647;
 			files = (
 				529B761D224A6E20008F1CE7 /* Model.swift in Sources */,
-				5283527C22802A370097B949 /* UnprovisionedProxyDevice.swift in Sources */,
+				5283527C22802A370097B949 /* GattBearer.swift in Sources */,
+				528352882281B2DC0097B949 /* PublicKey.swift in Sources */,
 				529B75EF224A6CE4008F1CE7 /* MeshData.swift in Sources */,
 				528352442271F0650097B949 /* MeshNetwork+Nodes.swift in Sources */,
 				529B75EE224A6CE4008F1CE7 /* ApplicationKey.swift in Sources */,
+				5283528A2281B30D0097B949 /* Oob.swift in Sources */,
+				528352A82282D9FF0097B949 /* BearerDelegate.swift in Sources */,
 				52835277228029720097B949 /* Bearer.swift in Sources */,
 				76AD7DBB6F78223071CAB41C3AE42393 /* MeshConstants.swift in Sources */,
+				528352962281C0FE0097B949 /* OptionSet+Data.swift in Sources */,
 				35A52D4DECCD815F8B14722C2D96207D /* nRFMeshProvision-dummy.m in Sources */,
 				529B75F1224A6CE4008F1CE7 /* Provisioner.swift in Sources */,
 				529B7610224A6D47008F1CE7 /* KeyRefreshPhase.swift in Sources */,
 				529B7614224A6D47008F1CE7 /* Address.swift in Sources */,
+				5283529E2282CCE60097B949 /* Provisioner+Ranges.swift in Sources */,
 				528352402271EF770097B949 /* MeshNetwork+Ranges.swift in Sources */,
 				529B75EC224A6CE4008F1CE7 /* SceneRange.swift in Sources */,
+				528352922281B68E0097B949 /* ProvisioningPdu.swift in Sources */,
 				529B75EA224A6CE4008F1CE7 /* Element.swift in Sources */,
 				529B7611224A6D47008F1CE7 /* Scene.swift in Sources */,
+				528352A22282CF0B0097B949 /* ApplicationKey+MeshNetwork.swift in Sources */,
 				5283524A227358DE0097B949 /* Data+Keys.swift in Sources */,
 				529B7621224B8213008F1CE7 /* MeshAddress.swift in Sources */,
+				5283528E2281B3510097B949 /* ProvisioningState.swift in Sources */,
 				529B75EB224A6CE4008F1CE7 /* NetworkKey.swift in Sources */,
 				528352462271F0C60097B949 /* MeshNetwork+Keys.swift in Sources */,
+				528352862281B2B30097B949 /* Algorithm.swift in Sources */,
+				528352A42282CF9A0097B949 /* ApplicationKey+NetworkKey.swift in Sources */,
 				529B7616224A6D47008F1CE7 /* MeshUUID.swift in Sources */,
-				5283527D22802A370097B949 /* GattError.swift in Sources */,
+				5283527D22802A370097B949 /* BearerError.swift in Sources */,
 				529B7618224A6D47008F1CE7 /* KeyIndex.swift in Sources */,
 				529B7623224BAB26008F1CE7 /* Publish.swift in Sources */,
+				528352A62282D0350097B949 /* MeshNetwork+Provisioning.swift in Sources */,
+				528352A02282CE830097B949 /* NetworkKey+MeshNetwork.swift in Sources */,
+				528352902281B57A0097B949 /* Beacon.swift in Sources */,
+				5283528C2281B3310097B949 /* ProvisioningCapabilities.swift in Sources */,
+				5283529A2282C55B0097B949 /* PBGattBearer.swift in Sources */,
 				2545014E9EC8A64DE403DC5863089112 /* OpenSSLHelper.m in Sources */,
 				5283524C2276F53A0097B949 /* Key.swift in Sources */,
 				529B7625224BB02E008F1CE7 /* Data+Hex.swift in Sources */,
 				529B75ED224A6CE4008F1CE7 /* AddressRange.swift in Sources */,
 				525242E2225CC6D30044CECB /* ClosedRange.swift in Sources */,
-				83D1334FBA9AF1F33381417D7E45643F /* ProvisioningPDU.swift in Sources */,
 				529B7617224A6D47008F1CE7 /* MeshModelError.swift in Sources */,
 				529B7613224A6D47008F1CE7 /* Security.swift in Sources */,
 				529B761B224A6D5B008F1CE7 /* Int+Hex.swift in Sources */,
@@ -859,10 +939,12 @@
 				529B761F224B7D2D008F1CE7 /* UUID+Hex.swift in Sources */,
 				529B757D22423DEE008F1CE7 /* Storage.swift in Sources */,
 				52835278228029720097B949 /* UnprovisionedDevice.swift in Sources */,
+				528352942281B8A10097B949 /* Data.swift in Sources */,
 				529B7615224A6D47008F1CE7 /* NodeFeatures.swift in Sources */,
 				525242E4225DE1EF0044CECB /* RangeObject.swift in Sources */,
 				5283523E2271EF1D0097B949 /* MeshNetwork+Provisioner.swift in Sources */,
 				529B75F0224A6CE4008F1CE7 /* MeshNetwork.swift in Sources */,
+				528352AA2282DA1E0097B949 /* GattBearerDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

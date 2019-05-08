@@ -42,19 +42,21 @@ extension UIViewController {
     }
     
     /// Displays an alert dialog with given title and message.
-    /// The alert dialog will contain an OK button.
+    /// The alert dialog will contain an OK or Cancel button, depending
+    /// on the `cancelable` parameter.
     ///
     /// - parameters:
-    ///   - title:   The alert title.
-    ///   - message: The message below the title.
-    ///   - action:  An optional second action.
-    ///   - handler: The OK button handler.
-    func presentAlert(title: String?, message: String?,
+    ///   - title:      The alert title.
+    ///   - message:    The message below the title.
+    ///   - cancelable: Should the alert be cancelable with Cancel button (`true`), or not (then "OK" button).
+    ///   - action:     An optional second action.
+    ///   - handler:    The OK button handler.
+    func presentAlert(title: String?, message: String?, cancelable: Bool = false,
                       option action: UIAlertAction? = nil,
                       handler: ((UIAlertAction) -> Void)? = nil) {
         DispatchQueue.main.async {
             let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "OK", style: .cancel, handler: handler))
+            alert.addAction(UIAlertAction(title: cancelable ? "Cancel" : "OK", style: .cancel, handler: handler))
             if let action = action {
                 alert.addAction(action)
             }
