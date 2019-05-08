@@ -22,6 +22,8 @@ public protocol BearerDelegate: class {
     func bearer(_ bearer: Bearer, didClose error: Error?)
     
     /// Callback called when a packet has been received using the Bearer.
+    /// Data longer than MTU will automatically be reassembled
+    /// using the bearer protocol if bearer implements segmentation.
     ///
     /// - parameter bearer: The Bearer on which the data were received.
     /// - parameter data:   The data received.

@@ -10,31 +10,33 @@ import CoreBluetooth
 
 // MARK: - Mesh service identifires
 
-public struct MeshProvisioningService {
-    public static let uuid = CBUUID(string: "1827")
+public protocol MeshService {
+    static var uuid: CBUUID { get }
+    static var dataInUuid:  CBUUID { get }
+    static var dataOutUuid: CBUUID { get }
     
-    public struct DataInCharacteristic {
-        public static let uuid  = CBUUID(string: "2ADB")
-        private init() {}
-    }
-    public struct DataOutCharacteristic {
-        public static let uuid  = CBUUID(string: "2ADC")
-        private init() {}
+    static func matches(_ service: CBService) -> Bool
+}
+
+public struct MeshProvisioningService: MeshService {
+    public static let uuid        = CBUUID(string: "1827")
+    public static var dataInUuid  = CBUUID(string: "2ADB")
+    public static var dataOutUuid = CBUUID(string: "2ADC")
+    
+    public static func matches(_ service: CBService) -> Bool {
+        return service.isMeshProvisioningService
     }
     
     private init() {}
 }
 
-public struct MeshProxyService {
-    public static let uuid = CBUUID(string: "1828")
+public struct MeshProxyService: MeshService {
+    public static let uuid        = CBUUID(string: "1828")
+    public static var dataInUuid  = CBUUID(string: "2ADD")
+    public static var dataOutUuid = CBUUID(string: "2ADE")
     
-    public struct DataInCharacteristic {
-        public static let uuid  = CBUUID(string: "2ADD")
-        private init() {}
-    }
-    public struct DataOutCharacteristic {
-        public static let uuid  = CBUUID(string: "2ADE")
-        private init() {}
+    public static func matches(_ service: CBService) -> Bool {
+        return service.isMeshProxyService
     }
     
     private init() {}
@@ -55,19 +57,19 @@ public extension CBService {
 public extension CBCharacteristic {
     
     var isMeshProvisioningDataInCharacteristic: Bool {
-        return uuid == MeshProvisioningService.DataInCharacteristic.uuid
+        return uuid == MeshProvisioningService.dataInUuid
     }
     
     var isMeshProvisioningDataOutCharacteristic: Bool {
-        return uuid == MeshProvisioningService.DataOutCharacteristic.uuid
+        return uuid == MeshProvisioningService.dataOutUuid
     }
     
     var isMeshProxyDataInCharacteristic: Bool {
-        return uuid == MeshProxyService.DataInCharacteristic.uuid
+        return uuid == MeshProxyService.dataInUuid
     }
     
     var isMeshProxyDataOutCharacteristic: Bool {
-        return uuid == MeshProxyService.DataInCharacteristic.uuid
+        return uuid == MeshProxyService.dataOutUuid
     }
     
 }
