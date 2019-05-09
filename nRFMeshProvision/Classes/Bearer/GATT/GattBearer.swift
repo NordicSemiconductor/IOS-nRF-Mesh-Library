@@ -9,6 +9,10 @@
 import Foundation
 import CoreBluetooth
 
-open class GattBearer: BaseGattBearer<MeshProxyService>, MeshBearer {
+open class GattBearer: BaseGattProxyBearer<MeshProxyService>, MeshBearer {
+    
+    public var supportedMesasgeTypes: MessageTypes {
+        return [.networkPdu, .meshBeacon, .proxyConfiguration]
+    }
     
 }

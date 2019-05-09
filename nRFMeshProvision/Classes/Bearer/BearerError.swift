@@ -9,9 +9,11 @@
 import Foundation
 
 public enum BearerError: Error {
+    /// Thrown when the Central Manager is not in ON state.
     case centralManagerNotPoweredOn
-}
-
-public enum GattBearerError: Error {
-    case deviceNotSupported
+    /// Thrown when the given message type is not supported
+    /// by the Bearer.
+    case messageTypeNotSupported
+    /// Thrown when the Bearer is not ready to send data.
+    case bearerClosed
 }

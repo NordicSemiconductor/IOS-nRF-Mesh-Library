@@ -50,7 +50,7 @@ class ManagingProvisioners: XCTestCase {
         XCTAssertEqual(meshNetwork.nodes.count, 6)
     }
     
-    func testAddProvisioner_fail() {
+    func testAddProvisioner_missingRanges() {
         let meshNetwork = MeshNetwork(name: "Test network")
         meshNetwork.nodes.append(Node(name: "Node 0", unicastAddress: 1, elements: 10))
         meshNetwork.nodes.append(Node(name: "Node 1", unicastAddress: 12, elements: 18))
@@ -67,8 +67,8 @@ class ManagingProvisioners: XCTestCase {
                                       allocatedGroupRange: [],
                                       allocatedSceneRange: [])
         XCTAssertNoThrow(try provisioner.allocateSceneRange(SceneRange.allScenes))
-        // Group ranges not allocated.
-        XCTAssertThrowsError(try meshNetwork.add(provisioner: provisioner))
+        // Group ranges not allocated, but that's OK. They are not required.
+        XCTAssertNoThrow(try meshNetwork.add(provisioner: provisioner))
     }
     
     func testAddProvisioner_noAddress() {

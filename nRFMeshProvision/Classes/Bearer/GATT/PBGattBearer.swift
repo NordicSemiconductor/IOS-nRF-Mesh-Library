@@ -9,6 +9,6 @@
 import Foundation
 import CoreBluetooth
 
-open class PBGattBearer: BaseGattBearer<MeshProvisioningService>, ProvisioningBearer {
+open class PBGattBearer: BaseGattProxyBearer<MeshProvisioningService>, ProvisioningBearer {
     
 }

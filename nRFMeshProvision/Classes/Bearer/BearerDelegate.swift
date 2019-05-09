@@ -27,12 +27,13 @@ public protocol BearerDelegate: class {
     ///
     /// - parameter bearer: The Bearer on which the data were received.
     /// - parameter data:   The data received.
-    func bearer(_ bearer: Bearer, didDeliverData data: Data)
+    /// - parameter type:   The type of the received data.
+    func bearer(_ bearer: Bearer, didDeliverData data: Data, ofType type: MessageType)
 }
 
 public extension BearerDelegate {
     
-    func bearer(_ bearer: Bearer, didDeliverData data: Data) {
+    func bearer(_ bearer: Bearer, didDeliverData data: Data, ofType type: MessageType) {
         // This method is optional.
     }
     

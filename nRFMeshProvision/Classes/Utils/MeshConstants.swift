@@ -20,8 +20,8 @@ public protocol MeshService {
 
 public struct MeshProvisioningService: MeshService {
     public static let uuid        = CBUUID(string: "1827")
-    public static var dataInUuid  = CBUUID(string: "2ADB")
-    public static var dataOutUuid = CBUUID(string: "2ADC")
+    public static let dataInUuid  = CBUUID(string: "2ADB")
+    public static let dataOutUuid = CBUUID(string: "2ADC")
     
     public static func matches(_ service: CBService) -> Bool {
         return service.isMeshProvisioningService
@@ -32,8 +32,8 @@ public struct MeshProvisioningService: MeshService {
 
 public struct MeshProxyService: MeshService {
     public static let uuid        = CBUUID(string: "1828")
-    public static var dataInUuid  = CBUUID(string: "2ADD")
-    public static var dataOutUuid = CBUUID(string: "2ADE")
+    public static let dataInUuid  = CBUUID(string: "2ADD")
+    public static let dataOutUuid = CBUUID(string: "2ADE")
     
     public static func matches(_ service: CBService) -> Bool {
         return service.isMeshProxyService

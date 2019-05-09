@@ -12,18 +12,18 @@ import Foundation
 public struct OobInformation: OptionSet {
     public let rawValue: UInt16
     
-    static let other          = OobInformation(rawValue: 1 << 0)
-    static let electornicURI  = OobInformation(rawValue: 1 << 1)
-    static let qrCode         = OobInformation(rawValue: 1 << 2)
-    static let barCode        = OobInformation(rawValue: 1 << 3)
-    static let nfc            = OobInformation(rawValue: 1 << 4)
-    static let number         = OobInformation(rawValue: 1 << 5)
-    static let string         = OobInformation(rawValue: 1 << 6)
-    static let onBox          = OobInformation(rawValue: 1 << 11)
-    static let insideBox      = OobInformation(rawValue: 1 << 12)
-    static let onPieceOfPaper = OobInformation(rawValue: 1 << 13)
-    static let insideManual   = OobInformation(rawValue: 1 << 14)
-    static let onDevice       = OobInformation(rawValue: 1 << 15)
+    public static let other          = OobInformation(rawValue: 1 << 0)
+    public static let electornicURI  = OobInformation(rawValue: 1 << 1)
+    public static let qrCode         = OobInformation(rawValue: 1 << 2)
+    public static let barCode        = OobInformation(rawValue: 1 << 3)
+    public static let nfc            = OobInformation(rawValue: 1 << 4)
+    public static let number         = OobInformation(rawValue: 1 << 5)
+    public static let string         = OobInformation(rawValue: 1 << 6)
+    public static let onBox          = OobInformation(rawValue: 1 << 11)
+    public static let insideBox      = OobInformation(rawValue: 1 << 12)
+    public static let onPieceOfPaper = OobInformation(rawValue: 1 << 13)
+    public static let insideManual   = OobInformation(rawValue: 1 << 14)
+    public static let onDevice       = OobInformation(rawValue: 1 << 15)
     
     public init(rawValue: UInt16) {
         self.rawValue = rawValue
@@ -65,7 +65,7 @@ public struct StaticOobType: OptionSet {
     public let rawValue: UInt8
     
     /// Static OOB Information is available.
-    static let staticOobInformationAvailable = StaticOobType(rawValue: 1 << 0)
+    public static let staticOobInformationAvailable = StaticOobType(rawValue: 1 << 0)
     
     public init(rawValue: UInt8) {
         self.rawValue = rawValue
@@ -76,11 +76,11 @@ public struct StaticOobType: OptionSet {
 public struct OutputOobActions: OptionSet {
     public let rawValue: UInt16
     
-    static let blink              = OutputOobActions(rawValue: 1 << 0)
-    static let beep               = OutputOobActions(rawValue: 1 << 1)
-    static let vibrate            = OutputOobActions(rawValue: 1 << 2)
-    static let outputNumeric      = OutputOobActions(rawValue: 1 << 3)
-    static let outputAlphanumeric = OutputOobActions(rawValue: 1 << 4)
+    public static let blink              = OutputOobActions(rawValue: 1 << 0)
+    public static let beep               = OutputOobActions(rawValue: 1 << 1)
+    public static let vibrate            = OutputOobActions(rawValue: 1 << 2)
+    public static let outputNumeric      = OutputOobActions(rawValue: 1 << 3)
+    public static let outputAlphanumeric = OutputOobActions(rawValue: 1 << 4)
     
     public init(rawValue: UInt16) {
         self.rawValue = rawValue
@@ -91,10 +91,10 @@ public struct OutputOobActions: OptionSet {
 public struct InputOobActions: OptionSet {
     public let rawValue: UInt16
     
-    static let push              = InputOobActions(rawValue: 1 << 0)
-    static let twist             = InputOobActions(rawValue: 1 << 1)
-    static let inputNumeric      = InputOobActions(rawValue: 1 << 2)
-    static let inputAlphanumeric = InputOobActions(rawValue: 1 << 3)
+    public static let push              = InputOobActions(rawValue: 1 << 0)
+    public static let twist             = InputOobActions(rawValue: 1 << 1)
+    public static let inputNumeric      = InputOobActions(rawValue: 1 << 2)
+    public static let inputAlphanumeric = InputOobActions(rawValue: 1 << 3)
     
     public init(rawValue: UInt16) {
         self.rawValue = rawValue

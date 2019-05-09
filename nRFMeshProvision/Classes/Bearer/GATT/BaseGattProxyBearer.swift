@@ -1,5 +1,5 @@
 //
-//  BaseGattBearer.swift
+//  BaseGattProxyBearer.swift
 //  nRFMeshProvision_Example
 //
 //  Created by Aleksander Nowakowski on 02/05/2019.
@@ -9,19 +9,22 @@
 import Foundation
 import CoreBluetooth
 
-open class BaseGattBearer<Service: MeshService>: NSObject, Bearer, CBCentralManagerDelegate, CBPeripheralDelegate {
+open class BaseGattProxyBearer<Service: MeshService>: NSObject, Bearer, CBCentralManagerDelegate, CBPeripheralDelegate {
     
     // MARK: - Properties
+    
+    public weak var delegate: BearerDelegate?
     
     private let centralManager   : CBCentralManager
     private let basePeripheral   : CBPeripheral
     
-    public weak var delegate: BearerDelegate?
+    /// The protocol used for segmentation and reassembly.
+    private let protocolHandler: ProxyProtocolHandler
+    private var queue: [Data] = []
     
     // MARK: - Computed properties
     
-    /// Returns `true` if the peripheral state is `.connected`.
-    public var isConnected: Bool {
+    public var isOpen: Bool {
         return basePeripheral.state == .connected
     }
     
@@ -30,16 +33,12 @@ open class BaseGattBearer<Service: MeshService>: NSObject, Bearer, CBCentralMana
     private var dataInCharacteristic:  CBCharacteristic?
     private var dataOutCharacteristic: CBCharacteristic?
     
-    /// Data buffer used for segmentation.
-    private var outgoingBuffer: Data?
-    /// Data buffer used for reassembly.
-    private var incomingBuffer: Data?
-    
     // MARK: - Public API
     
     public init(to peripheral: CBPeripheral, using manager: CBCentralManager) {
-        centralManager = manager
-        basePeripheral = peripheral
+        centralManager  = manager
+        basePeripheral  = peripheral
+        protocolHandler = ProxyProtocolHandler()
         super.init()
         basePeripheral.delegate = self
     }
@@ -59,10 +58,45 @@ open class BaseGattBearer<Service: MeshService>: NSObject, Bearer, CBCentralMana
         }
     }
     
-    open func send(_ data: Data) {
-        if let dataInCharacteristic = dataInCharacteristic {
-            print("-> 0x\(data.hex)")
-            basePeripheral.writeValue(data, for: dataInCharacteristic, type: .withoutResponse)
+    open func send(_ data: Data, ofType type: MessageType) throws {
+        guard supports(type) else {
+            throw BearerError.messageTypeNotSupported
+        }
+        guard isOpen else {
+            throw BearerError.bearerClosed
+        }
+        guard let dataInCharacteristic = dataInCharacteristic else {
+            throw GattBearerError.deviceNotSupported
+        }
+        
+        let mtu = basePeripheral.maximumWriteValueLength(for: .withoutResponse)
+        let packets = protocolHandler.segment(data, ofType: type, toMtu: mtu)
+        
+        // On iOS 11+ only the first packet is sent here. When the peripheral is ready
+        // to send more data, a `peripheralIsReady(toSendWriteWithoutResponse:)` callback
+        // will be called, which will send the next packet.
+        if #available(iOS 11.0, *) {
+            let queueWasEmpty = queue.isEmpty
+            queue.append(contentsOf: packets)
+            
+            // Don't look at `basePeripheral.canSendWriteWithoutResponse`. If often returns
+            // `false` even when nothing was sent before and no callback is called afterwards.
+            // Just assume, that the first packet can always be sent.
+            if queueWasEmpty {
+                let packet = queue.remove(at: 0)
+                print("-> 0x\(packet.hex)")
+                basePeripheral.writeValue(packet, for: dataInCharacteristic, type: .withoutResponse)
+            }
+        } else {
+            // For iOS versions before 11, the data must just be sent in a loop.
+            // This may not work if there is more than ~20 packets to be sent, as a
+            // buffer may overflow. The solution would be to add some delays, but
+            // let's hope it will work as is. For now.
+            // TODO: Handle very long packets on iOS 9 and 10.
+            for packet in packets {
+                print("-> 0x\(packet.hex)")
+                basePeripheral.writeValue(packet, for: dataInCharacteristic, type: .withoutResponse)
+            }
         }
     }
     
@@ -118,7 +152,7 @@ open class BaseGattBearer<Service: MeshService>: NSObject, Bearer, CBCentralMana
             } else {
                 guard let dataOutCharacteristic = dataOutCharacteristic, let _ = dataInCharacteristic,
                     dataOutCharacteristic.properties.contains(.notify) else {
-                        print("Disconnected. Provisioning service not found")
+                        print("Disconnected with error: Device not supported")
                         delegate?.bearer(self, didClose: GattBearerError.deviceNotSupported)
                         return
                 }
@@ -188,12 +222,25 @@ open class BaseGattBearer<Service: MeshService>: NSObject, Bearer, CBCentralMana
             return
         }
         print("<- 0x\(data.hex)")
-        delegate?.bearer(self, didDeliverData: data)
+        if let message = protocolHandler.reassemble(data) {
+            delegate?.bearer(self, didDeliverData: message.data, ofType: message.messageType)
+        }
     }
     
     open func peripheral(_ peripheral: CBPeripheral, didWriteValueFor characteristic: CBCharacteristic, error: Error?) {
         // Data is sent without response.
         // This method will not be called.
+    }
+    
+    // This method is available only on iOS 11+.
+    public func peripheralIsReady(toSendWriteWithoutResponse peripheral: CBPeripheral) {
+        guard !queue.isEmpty else {
+            return
+        }
+        
+        let packet = queue.remove(at: 0)
+        print("-> 0x\(packet.hex)")
+        peripheral.writeValue(packet, for: dataInCharacteristic!, type: .withoutResponse)
     }
     
 }
