@@ -150,13 +150,45 @@ class ProvisionersViewController: UITableViewController, Editable {
         return proposedDestinationIndexPath
     }
     
-    
     // MARK: - Private API
     
     private func provisioner(at indexPath: IndexPath) -> Provisioner? {
         let meshNetwork = MeshNetworkManager.instance.meshNetwork
         // There is one Provisioner in section 0. The rest are in section 1.
         return meshNetwork?.provisioners[indexPath.provisionerIndex]
+    }
+    
+}
+
+private extension ProvisionersViewController {
+    
+    func removeProvisioner(at indexPath: IndexPath) {
+        let meshNetwork = MeshNetworkManager.instance.meshNetwork!
+        let index = indexPath.provisionerIndex
+        _ = meshNetwork.remove(provisionerAt: index)
+        let provisionerCount = meshNetwork.provisioners.count
+        
+        tableView.beginUpdates()
+        // Remove the deleted row.
+        tableView.deleteRows(at: [indexPath], with: .top)
+        if indexPath.isThisProvisioner && provisionerCount > 0 {
+            // Bring another one as local Provisioner.
+            tableView.moveRow(at: IndexPath(row: 0, section: 1), to: IndexPath(row: 0, section: 0))
+        }
+        if provisionerCount == 1 {
+            // Remove Other Provisioners section.
+            tableView.deleteSections(.otherProvisionersSection, with: .fade)
+        }
+        if provisionerCount == 0 {
+            // Remove This Provisioner section.
+            tableView.deleteSections(.thisProvisionerSection, with: .fade)
+            showEmptyView()
+        }
+        tableView.endUpdates()
+        
+        if !MeshNetworkManager.instance.save() {
+            presentAlert(title: "Error", message: "Mesh configuration could not be saved.")
+        }
     }
     
 }
@@ -196,35 +228,6 @@ extension ProvisionersViewController: EditProvisionerDelegate {
         }
     }
     
-    private func removeProvisioner(at indexPath: IndexPath) {
-        let meshNetwork = MeshNetworkManager.instance.meshNetwork!
-        let index = indexPath.provisionerIndex
-        _ = meshNetwork.remove(provisionerAt: index)
-        let provisionerCount = meshNetwork.provisioners.count
-        
-        tableView.beginUpdates()
-        // Remove the deleted row.
-        tableView.deleteRows(at: [indexPath], with: .top)
-        if indexPath.isThisProvisioner && provisionerCount > 0 {
-            // Bring another one as local Provisioner.
-            tableView.moveRow(at: IndexPath(row: 0, section: 1), to: IndexPath(row: 0, section: 0))
-        }
-        if provisionerCount == 1 {
-            // Remove Other Provisioners section.
-            tableView.deleteSections(.otherProvisionersSection, with: .fade)
-        }
-        if provisionerCount == 0 {
-            // Remove This Provisioner section.
-            tableView.deleteSections(.thisProvisionerSection, with: .fade)
-            showEmptyView()
-        }
-        tableView.endUpdates()
-        
-        if !MeshNetworkManager.instance.save() {
-            presentAlert(title: "Error", message: "Mesh configuration could not be saved.")
-        }
-    }
-    
 }
 
 private extension IndexPath {
@@ -244,6 +247,7 @@ private extension IndexPath {
     var isOtherProvisioner: Bool {
         return section == 1
     }
+    
 }
 
 private extension IndexSet {

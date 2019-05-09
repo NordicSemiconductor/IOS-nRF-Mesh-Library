@@ -8,6 +8,8 @@
 import Foundation
 
 public enum ProvisionigState {
+    /// Provisioning has not been started.
+    case ready
     /// Provisioning Invite has been sent.
     case invitationSent
     /// Provisioning Capabilities were received.
@@ -18,12 +20,26 @@ public enum ProvisionigState {
     case publicKeySent
     
     // TODO: finish
+    
+    /// The provisioning process is complete.
+    case complete
+    /// Set when the device is in invalid state or sent invalida data.
+    /// For example, when the Provisioning Invite has been send and
+    /// is sent for the second time.
+    case invalidState
 }
 
-extension ProvisionigState: CustomStringConvertible {
+public enum ProvisioningError: Error {
+    /// Thrown when the ProvisioningManager is in invalid state.
+    case invalidState
+}
+
+extension ProvisionigState: CustomDebugStringConvertible {
     
-    public var description: String {
+    public var debugDescription: String {
         switch self {
+        case .ready:
+            return "Provisioner is ready"
         case .invitationSent:
             return "Invitation sent"
         case .capabilitiesReceived(let capabilities):
@@ -32,6 +48,10 @@ extension ProvisionigState: CustomStringConvertible {
             return "Provisioning started"
         case .publicKeySent:
             return "Provisioner's Public Key sent"
+        case .complete:
+            return "Provisioning complete"
+        case .invalidState:
+            return "Invalid state"
         }
     }
     

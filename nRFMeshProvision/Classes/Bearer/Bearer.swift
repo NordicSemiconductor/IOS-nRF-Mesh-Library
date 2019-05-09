@@ -31,6 +31,10 @@ public enum MessageType: UInt8 {
     /// This message type may be used only in Provisioning Bearers (PB).
     /// See: Section 5.4.1 of Bluetooth Mesh Specification 1.0.1.
     case provisioningPdu    = 3
+    
+    var mask: UInt8 {
+        return 1 << rawValue
+    }
 }
 
 public struct MessageTypes: OptionSet {    
@@ -78,13 +82,9 @@ public protocol Bearer: class {
 
 public extension Bearer {
     
-    var supportedMesasgeTypes: MessageTypes {
-        return []
-    }
-    
     /// Returns whether the Bearer supports the given message type.
     func supports(_ messageType: MessageType) -> Bool {
-        return supportedMesasgeTypes.contains(MessageTypes(rawValue: messageType.rawValue))
+        return supportedMesasgeTypes.contains(MessageTypes(rawValue: messageType.mask))
     }
     
 }
@@ -95,27 +95,6 @@ public protocol MeshBearer: Bearer {
 
 public protocol ProvisioningBearer: Bearer {
     // Empty.
-}
-
-public extension MeshBearer {
-    
-    var supportedMesasgeTypes: MessageTypes {
-        // By default, a Mesh Bearer should support the following
-        // message types. An implementation may limit or extend
-        // this list.
-        return [.networkPdu, .meshBeacon]
-    }
-    
-}
-
-public extension ProvisioningBearer {
-    
-    var supportedMesasgeTypes: MessageTypes {
-        // The Provisioning Bearer should support only the
-        // Provisionin PDU message type.
-        return .provisioningPdu
-    }
-    
 }
 
 extension ProvisioningBearer {
@@ -130,6 +109,7 @@ extension ProvisioningBearer {
     ///           is not supported, or data could not be sent for
     ///           some other reason.
     func send(_ request: ProvisioningRequest) throws {
+        print("Sending \(request)")
         try send(request.pdu, ofType: .provisioningPdu)
     }
     

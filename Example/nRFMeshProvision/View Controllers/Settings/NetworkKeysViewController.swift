@@ -115,6 +115,31 @@ class NetworkKeysViewController: UITableViewController, Editable {
 
 }
 
+private extension NetworkKeysViewController {
+    
+    func deleteKey(at indexPath: IndexPath) {
+        let network = MeshNetworkManager.instance.meshNetwork!
+        _ = try! network.remove(networkKeyAt: indexPath.keyIndex)
+        let count = network.networkKeys.count
+        
+        tableView.beginUpdates()
+        tableView.deleteRows(at: [indexPath], with: .top)
+        if count == 1 {
+            tableView.deleteSections(.subnetworkSection, with: .fade)
+        }
+        if count == 0 {
+            tableView.deleteSections(.primaryNetworkSection, with: .fade)
+            showEmptyView()
+        }
+        tableView.endUpdates()
+        
+        if !MeshNetworkManager.instance.save() {
+            self.presentAlert(title: "Error", message: "Mesh configuration could not be saved.")
+        }
+    }
+    
+}
+
 extension NetworkKeysViewController: EditKeyDelegate {
     
     func keyWasAdded(_ key: Key) {
@@ -145,27 +170,6 @@ extension NetworkKeysViewController: EditKeyDelegate {
                 IndexPath(row: 0, section: 0) :
                 IndexPath(row: index - 1, section: 1)
             tableView.reloadRows(at: [indexPath], with: .fade)
-        }
-    }
-    
-    private func deleteKey(at indexPath: IndexPath) {
-        let network = MeshNetworkManager.instance.meshNetwork!
-        _ = try! network.remove(networkKeyAt: indexPath.keyIndex)
-        let count = network.networkKeys.count
-        
-        tableView.beginUpdates()
-        tableView.deleteRows(at: [indexPath], with: .top)
-        if count == 1 {
-            tableView.deleteSections(.subnetworkSection, with: .fade)
-        }
-        if count == 0 {
-            tableView.deleteSections(.primaryNetworkSection, with: .fade)
-            showEmptyView()
-        }
-        tableView.endUpdates()
-        
-        if !MeshNetworkManager.instance.save() {
-            self.presentAlert(title: "Error", message: "Mesh configuration could not be saved.")
         }
     }
     

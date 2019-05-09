@@ -22,13 +22,13 @@ class SettingsViewController: UITableViewController {
     @IBOutlet weak var appVersion: UITableViewCell!
     @IBOutlet weak var appBuildNumber: UITableViewCell!
     
-    // MARK: - IBActions -
+    // MARK: - IBActions
     
     @IBAction func organizeTapped(_ sender: UIBarButtonItem) {
         displayImportExportOptions()
     }
     
-    // MARK: - Implementation -
+    // MARK: - View Controller
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -50,6 +50,8 @@ class SettingsViewController: UITableViewController {
         networkKeys.detailTextLabel?.text  = "\(meshNetwork.networkKeys.count)"
         appKeys.detailTextLabel?.text      = "\(meshNetwork.applicationKeys.count)"
     }
+    
+    // MARK: - Table view delegate
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
@@ -77,9 +79,10 @@ class SettingsViewController: UITableViewController {
     
 }
 
-extension SettingsViewController {
+private extension SettingsViewController {
     
-    private func presentTTLDialog() {
+    /// Presents a dialog to edit the default TTL.
+    func presentTTLDialog() {
         let manager = MeshNetworkManager.instance
         
         presentTextAlert(title: "Default TTL",
@@ -98,7 +101,7 @@ extension SettingsViewController {
     }
     
     /// Presents a dialog to edit the network name.
-    private func presentNameDialog() {
+    func presentNameDialog() {
         let network = MeshNetworkManager.instance.meshNetwork!
         
         presentTextAlert(title: "Network Name", message: nil, text: network.meshName,
@@ -114,7 +117,7 @@ extension SettingsViewController {
     }
     
     /// Presents a dialog with resetting confirmation.
-    private func presentResetConfirmation() {
+    func presentResetConfirmation() {
         let alert = UIAlertController(title: "Reset Network",
                                       message: "Resetting the network will erase all network data.\nMake sure you exported it first.",
                                       preferredStyle: .actionSheet)
@@ -126,7 +129,7 @@ extension SettingsViewController {
     }
     
     /// Displays the Import / Export action sheet.
-    private func displayImportExportOptions() {
+    func displayImportExportOptions() {
         let alert = UIAlertController(title: "Organize",
                                       message: "Importing network will override your existing settings.\nMake sure you exported it first.",
                                       preferredStyle: .actionSheet)
@@ -140,7 +143,7 @@ extension SettingsViewController {
     }
     
     /// Resets all network settings to default values.
-    private func resetNetwork() {
+    func resetNetwork() {
         let manager = MeshNetworkManager.instance
         // TODO: Implement creator
         _ = manager.createNewMeshNetwork(named: "nRF Mesh Network", by: UIDevice.current.name)
@@ -159,7 +162,7 @@ extension SettingsViewController {
     
     /// Exports Mesh Network configuration and opens UIActivityViewController
     /// which allows user to share it.
-    private func exportNetwork() {
+    func exportNetwork() {
         let manager = MeshNetworkManager.instance
         
         DispatchQueue.global(qos: .userInitiated).async {
@@ -181,7 +184,7 @@ extension SettingsViewController {
     }
     
     /// Opens the Cocument Picker to select the Mesh Network configuration to import.
-    private func importNetwork() {
+    func importNetwork() {
         let picker = UIDocumentPickerViewController(documentTypes: ["public.data", "public.content"], in: .import)
         picker.delegate = self
         present(picker, animated: true, completion: nil)
@@ -209,7 +212,6 @@ extension SettingsViewController: UIDocumentPickerDelegate {
     }
     
 }
-
 
 private extension IndexPath {
     

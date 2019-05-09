@@ -36,6 +36,7 @@ class ProvisioningViewController: UITableViewController {
     
     private var unicastAddress: Address?
     private var networkKey: NetworkKey?
+    private var provisioningManager: ProvisioningManager?
     
     private var alert: UIAlertController?
     
@@ -54,14 +55,14 @@ class ProvisioningViewController: UITableViewController {
         // automatically.
         networkKey = network.networkKeys.first
         networkKeyLabel.text = networkKey?.name ?? "New Network Key"
-    }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(true)
         
+        // Obtainn the Provisioning Manager instance for the
+        // Unprovisioned Device.
+        provisioningManager = network.provision(unprovisionedDevice: self.unprovisionedDevice, over: self.bearer!)
+        provisioningManager!.delegate = self
         bearer.delegate = self
-        unprovisionedDevice.provisioningDelegate = self
         
+        // We are now connected. Proceed by sending Provisioning Invite request.
         alert = UIAlertController(title: "Status", message: "Identifying...", preferredStyle: .alert)
         alert!.addAction(UIAlertAction(title: "Cancel", style: .cancel) { action in
             action.isEnabled = false
@@ -70,8 +71,14 @@ class ProvisioningViewController: UITableViewController {
             self.bearer.close()
         })
         present(alert!, animated: false) {
-            let network = MeshNetworkManager.instance.meshNetwork!
-            network.identify(unprovisionedDevice: self.unprovisionedDevice, andAttractFor: 5)
+            do {
+                try self.provisioningManager!.identify(andAttractFor: 5)
+            } catch {
+                print(error)
+                self.alert!.title   = "Aborting"
+                self.alert!.message = "Cancelling connection..."
+                self.bearer.close()
+            }
         }
     }
     
@@ -85,6 +92,10 @@ class ProvisioningViewController: UITableViewController {
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
+        
+        if indexPath.isDeviceName {
+            
+        }
     }
     
 }
@@ -114,16 +125,29 @@ extension ProvisioningViewController: GattBearerDelegate {
         }
     }
     
-    func bearer(_ bearer: Bearer, didDeliverData data: Data) {
-        // TODO
-    }
-    
 }
 
 extension ProvisioningViewController: ProvisioningDelegate {
     
     func provisioningState(of unprovisionedDevice: UnprovisionedDevice, didChangeTo state: ProvisionigState) {
-        print("New state: \(state)")
+        DispatchQueue.main.async {
+            switch state {
+            case .invitationSent:
+                self.alert?.message = "Receiving capabilities"
+            case .capabilitiesReceived(let capabilities):
+                self.elementsCountLabel.text = "\(capabilities.numberOfElements)"
+                self.supportedAlgorithmsLabel.text = "\(capabilities.algorithms)"
+                self.publicKeyTypeLabel.text = "\(capabilities.publicKeyType)"
+                self.staticOobTypeLabel.text = "\(capabilities.staticOobType)"
+                self.outputOobSizeLabel.text = "\(capabilities.outputOobSize)"
+                self.supportedOutputOobActionsLabel.text = "\(capabilities.outputOobActions)"
+                self.inputOobSizeLabel.text = "\(capabilities.inputOobSize)"
+                self.supportedInputOobActionsLabel.text = "\(capabilities.inputOobActions)"
+                self.alert?.dismiss(animated: true)
+            default:
+                break
+            }
+        }
     }
     
 }
@@ -133,6 +157,20 @@ extension ProvisioningViewController: SelectionDelegate {
     func networkKeySelected(_ networkKey: NetworkKey) {
         self.networkKey = networkKey
         self.networkKeyLabel.text = networkKey.name
+    }
+    
+}
+
+private extension IndexPath {
+    
+    /// Returns whether the IndexPath points the Device Name.
+    var isDeviceName: Bool {
+        return section == 0 && row == 0
+    }
+    
+    /// Returns whether the IndexPath point to the Unicast Address settings.
+    var isUnicastAddress: Bool {
+        return section == 2 && row == 0
     }
     
 }

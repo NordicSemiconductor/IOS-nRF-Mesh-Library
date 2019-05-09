@@ -54,7 +54,7 @@ class EditRangesViewController: UIViewController, Editable {
         }
     }
     
-    // MARK: - View Controller parameters
+    // MARK: - Public parameters
     
     var delegate: EditRangesDelegate?
     var type: RangeType!
@@ -63,6 +63,8 @@ class EditRangesViewController: UIViewController, Editable {
     var bounds: ClosedRange<UInt16>!
     var ranges: [RangeObject]!
     var otherProvisionerRanges: [RangeObject]! = []
+    
+    // MARK: - View Controller
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -161,9 +163,9 @@ extension EditRangesViewController: UITableViewDelegate, UITableViewDataSource {
 
 // MARK: - Private API
 
-extension EditRangesViewController {
+private extension EditRangesViewController {
     
-    private func presentRangeDialog(for indexPath: IndexPath? = nil) {
+    func presentRangeDialog(for indexPath: IndexPath? = nil) {
         let edit = indexPath != nil
         let title = edit ? "Edit Range" : "New Range"
         let message = "Enter lower and upper bounds as 4-character hexadecimal strings.\nValid range: \(bounds.asString())."
@@ -205,7 +207,7 @@ extension EditRangesViewController {
         }
     }
     
-    private func removeConflictingRanges() {
+    func removeConflictingRanges() {
         // Try removing other Provisioner's ranges form ranges
         // if they are Address Ranges.
         if var addressRanges = ranges as? [AddressRange] {

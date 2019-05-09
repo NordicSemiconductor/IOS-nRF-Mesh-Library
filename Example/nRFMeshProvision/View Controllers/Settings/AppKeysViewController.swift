@@ -117,6 +117,32 @@ class AppKeysViewController: UITableViewController, Editable {
 
 }
 
+private extension AppKeysViewController {
+    
+    var networkKeyExists: Bool {
+        let network = MeshNetworkManager.instance.meshNetwork!
+        return !network.networkKeys.isEmpty
+    }
+    
+    func deleteKey(at indexPath: IndexPath) {
+        let network = MeshNetworkManager.instance.meshNetwork!
+        _ = try! network.remove(applicationKeyAt: indexPath.keyIndex)
+        
+        tableView.beginUpdates()
+        tableView.deleteRows(at: [indexPath], with: .top)
+        if network.applicationKeys.isEmpty {
+            tableView.deleteSections(IndexSet(integer: 0), with: .fade)
+            showEmptyView()
+        }
+        tableView.endUpdates()
+        
+        if !MeshNetworkManager.instance.save() {
+            self.presentAlert(title: "Error", message: "Mesh configuration could not be saved.")
+        }
+    }
+    
+}
+
 extension AppKeysViewController: EditKeyDelegate {
     
     func keyWasAdded(_ key: Key) {
@@ -142,28 +168,6 @@ extension AppKeysViewController: EditKeyDelegate {
         if let index = index {
             let indexPath = IndexPath(row: index, section: 0)
             tableView.reloadRows(at: [indexPath], with: .fade)
-        }
-    }
-    
-    private var networkKeyExists: Bool {
-        let network = MeshNetworkManager.instance.meshNetwork!
-        return !network.networkKeys.isEmpty
-    }
-    
-    private func deleteKey(at indexPath: IndexPath) {
-        let network = MeshNetworkManager.instance.meshNetwork!
-        _ = try! network.remove(applicationKeyAt: indexPath.keyIndex)
-        
-        tableView.beginUpdates()
-        tableView.deleteRows(at: [indexPath], with: .top)
-        if network.applicationKeys.isEmpty {
-            tableView.deleteSections(IndexSet(integer: 0), with: .fade)
-            showEmptyView()
-        }
-        tableView.endUpdates()
-        
-        if !MeshNetworkManager.instance.save() {
-            self.presentAlert(title: "Error", message: "Mesh configuration could not be saved.")
         }
     }
     

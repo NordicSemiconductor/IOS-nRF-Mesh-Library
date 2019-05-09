@@ -25,9 +25,12 @@ public struct Algorithms: OptionSet {
     
 }
 
-extension Algorithms: CustomStringConvertible {
+extension Algorithms: CustomDebugStringConvertible {
     
-    public var description: String {
+    public var debugDescription: String {
+        if rawValue == 0 {
+            return "None"
+        }
         return [(.fipsP256EllipticCurve, "FIPS P-256 Elliptic Curve")]
             .compactMap { (option, name) in contains(option) ? name : nil }
             .joined(separator: ", ")

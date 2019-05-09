@@ -39,7 +39,7 @@ class EditProvisionerViewController: UITableViewController {
         dismiss(animated: true)
     }
     
-    // MARK: - Fields
+    // MARK: - Public parameters
     
     /// The Provisioner to edit or `nil` if a new one is created.
     var provisioner: Provisioner!
@@ -48,6 +48,8 @@ class EditProvisionerViewController: UITableViewController {
     /// A flag indicating whether the user edits or adds a new Provisioner.
     var adding = false
     
+    // MARK: - Private fields
+    
     private var newName: String? = nil
     private var newAddress: Address? = nil
     private var disableConfigCapabilities: Bool = false
@@ -55,7 +57,7 @@ class EditProvisionerViewController: UITableViewController {
     private var newGroupAddressRange: [AddressRange]? = nil
     private var newSceneRange: [SceneRange]? = nil
     
-    // MARK: - Implementation
+    // MARK: - View Controller
 
     override func viewDidLoad() {
         if provisioner == nil {
@@ -90,55 +92,6 @@ class EditProvisionerViewController: UITableViewController {
         }
     }
     
-    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        tableView.deselectRow(at: indexPath, animated: true)
-        
-        let meshNetwork = MeshNetworkManager.instance.meshNetwork!
-        
-        switch indexPath.section {
-        case 0: // Provisioner data
-            switch indexPath.row {
-            case 0: // Provisioner name
-                presentTextAlert(title: "Provisioner name", message: nil,
-                                 text: provisioner.provisionerName, placeHolder: "Name",
-                                 type: .nameRequired) { newName in
-                                    self.newName = newName
-                                    self.name.detailTextLabel?.text = newName
-                }
-            case 1: // Unicast Address
-                let node = meshNetwork.node(for: provisioner)
-                let address = node?.unicastAddress.hex ?? ""
-                
-                // If node has been assigned, add the option to unbind the node.
-                let action = node == nil ? nil : UIAlertAction(title: "Unbind", style: .destructive) { action in
-                    self.confirm(title: "Disable configuration capabilities",
-                            message: "A Provisioner without the unicast address assigned is not able to perform configuration operations.") { _ in
-                                self.disableConfigCapabilities = true
-                                self.newAddress = nil
-                                self.unicastAddress.detailTextLabel?.text = "Not assigned"
-                    }
-                }
-                presentTextAlert(title: "Unicast address", message: "Hexadecimal value in range\n0001 - 7FFF.",
-                                 text: address, placeHolder: "Address", type: .unicastAddressRequired,
-                                 option: action) { text in
-                                    let address = Address(text, radix: 16)
-                                    self.unicastAddress.detailTextLabel?.text = address!.asString()
-                                    self.disableConfigCapabilities = false
-                                    self.newAddress = address
-                }
-            default:
-                // Not possible.
-                break;
-            }
-        case 1: // Allocated ranges
-            // A segue will be performed.
-            break
-        default:
-            // Not possible.
-            break;
-        }
-    }
-    
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         let meshNetwork = MeshNetworkManager.instance.meshNetwork!
         
@@ -156,7 +109,7 @@ class EditProvisionerViewController: UITableViewController {
                 destination.type   = .unicastAddress
                 destination.bounds = Address.minUnicastAddress...Address.maxUnicastAddress
                 destination.ranges = newUnicastAddressRange ?? provisioner.allocatedUnicastRange
-                                
+                
                 meshNetwork.provisioners.filter({ $0 != provisioner }).forEach { other in
                     destination.otherProvisionerRanges.append(contentsOf: other.allocatedUnicastRange)
                 }
@@ -188,9 +141,61 @@ class EditProvisionerViewController: UITableViewController {
         }
     }
     
+    // MARK: - Table View Delegate
+    
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
+        
+        if indexPath.isProvisionerName {
+            presentNameDialog()
+        }
+        if indexPath.isUnicastAddress {
+            presentUnicastAddressDialog()
+        }
+    }
+    
+}
+
+private extension EditProvisionerViewController {
+    
+    /// Presents a dialog to edit the Provisioner name.
+    func presentNameDialog() {
+        presentTextAlert(title: "Provisioner name", message: nil,
+                         text: provisioner.provisionerName, placeHolder: "Name",
+                         type: .nameRequired) { newName in
+                            self.newName = newName
+                            self.name.detailTextLabel?.text = newName
+        }
+    }
+    
+    /// Presents a dialog to edit or unbind the Provisioner Unicast Address.
+    func presentUnicastAddressDialog() {
+        let meshNetwork = MeshNetworkManager.instance.meshNetwork!
+        let node = meshNetwork.node(for: provisioner)
+        let address = node?.unicastAddress.hex ?? ""
+        
+        // If node has been assigned, add the option to unbind the node.
+        let action = node == nil ? nil : UIAlertAction(title: "Unbind", style: .destructive) { action in
+            self.confirm(title: "Disable configuration capabilities",
+                         message: "A Provisioner without the unicast address assigned is not able to perform configuration operations.") { _ in
+                            self.disableConfigCapabilities = true
+                            self.newAddress = nil
+                            self.unicastAddress.detailTextLabel?.text = "Not assigned"
+            }
+        }
+        presentTextAlert(title: "Unicast address", message: "Hexadecimal value in range\n0001 - 7FFF.",
+                         text: address, placeHolder: "Address", type: .unicastAddressRequired,
+                         option: action) { text in
+                            let address = Address(text, radix: 16)
+                            self.unicastAddress.detailTextLabel?.text = address!.asString()
+                            self.disableConfigCapabilities = false
+                            self.newAddress = address
+        }
+    }
+    
     /// Saves the edited or new Provisioner and pops the view contoller if saving
     /// succeeded.
-    private func saveProvisioner() {
+    func saveProvisioner() {
         do {
             let meshNetwork = MeshNetworkManager.instance.meshNetwork!
             if adding {
@@ -262,7 +267,7 @@ class EditProvisionerViewController: UITableViewController {
     ///                          will be allocated.
     /// - throws: This method may throw if the ranges overlap with
     ///           another Provisioner's range.
-    private func allocateNewRanges(to provisioner: Provisioner) throws {
+    func allocateNewRanges(to provisioner: Provisioner) throws {
         if let newUnicastAddressRange = newUnicastAddressRange {
             provisioner.deallocateUnicastAddressRange(AddressRange.allUnicastAddresses)
             try provisioner.allocateUnicastAddressRanges(newUnicastAddressRange)
@@ -284,7 +289,7 @@ class EditProvisionerViewController: UITableViewController {
     ///                          are to be allocated.
     /// - throws: This method may throw if the new ranges are overlapping
     ///           with another Provisioner's ranges.
-    private func ensureNewRangesAreValid(for provisioner: Provisioner) throws {
+    func ensureNewRangesAreValid(for provisioner: Provisioner) throws {
         let meshNetwork = MeshNetworkManager.instance.meshNetwork!
         
         if let newUnicastAddressRange = newUnicastAddressRange {
@@ -311,7 +316,7 @@ class EditProvisionerViewController: UITableViewController {
     ///                          will be checked.
     /// - throws: This method may throw if the address is outside of
     ///           Provisioner's range or not available.
-    private func ensureAddressIsValid(for provisioner: Provisioner) throws {
+    func ensureAddressIsValid(for provisioner: Provisioner) throws {
         let meshNetwork = MeshNetworkManager.instance.meshNetwork!
         
         if let newAddress = newAddress {
@@ -349,6 +354,20 @@ extension EditProvisionerViewController: EditRangesDelegate {
             sceneRange.addRanges(ranges)
             newSceneRange = ranges as? [SceneRange]
         }
+    }
+    
+}
+
+private extension IndexPath {
+    
+    /// Returns whether the IndexPath points the Provisioner name.
+    var isProvisionerName: Bool {
+        return section == 0 && row == 0
+    }
+    
+    /// Returns whether the IndexPath point to the Unicast Address.
+    var isUnicastAddress: Bool {
+        return section == 1
     }
     
 }

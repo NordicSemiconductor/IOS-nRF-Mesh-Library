@@ -26,7 +26,7 @@ internal enum ProvisioningPduType: UInt8 {
     }
 }
 
-internal enum ProvisioningRequest: CustomStringConvertible {
+internal enum ProvisioningRequest {
     case invite(attentionTimer: UInt8)
     
     var pdu: ProvisioningPdu {
@@ -37,7 +37,11 @@ internal enum ProvisioningRequest: CustomStringConvertible {
         }
     }
     
-    var description: String {
+}
+
+extension ProvisioningRequest: CustomDebugStringConvertible {
+    
+    var debugDescription: String {
         switch self {
         case .invite(attentionTimer: let timer):
             return "Provisioning Invite (attention timer: \(timer) sec)"

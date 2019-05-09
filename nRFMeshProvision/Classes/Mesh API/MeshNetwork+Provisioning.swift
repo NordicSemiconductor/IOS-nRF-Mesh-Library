@@ -9,25 +9,17 @@ import Foundation
 
 public extension MeshNetwork {
     
-    /// This method initializes the provisioning of the device.
+    /// This method returns the Provisioning Manager that can be used
+    /// to provision the given device.
     ///
-    /// - parameter attentionTimer: This value determines for how long (in seconds) the
-    ///                             device shall remain attracting human's attention by
-    ///                             blinking, flashing, buzzing, etc.
-    ///                             The value 0 disables Attention Timer.
-    func identify(unprovisionedDevice: UnprovisionedDevice, andAttractFor attentionTimer: UInt8) {
-        
-    }
-    
-    /// This method starts the provisioning of the device.
-    /// `identify(andAttractFor:)` has to be called prior to this to receive
-    /// the device capabilities.
+    /// - parameter unprovisionedDevice: The device to be added to mes network.
+    /// - parameter bearer: The Provisioning Bearer to be used for sending
+    ///                     provisioning PDUs.
+    /// - returns: The Provisioning manager that should be used to continue
+    ///            provisioning process after identification.
     func provision(unprovisionedDevice: UnprovisionedDevice,
-                   usingAlgorithm algorithm: Algorithm,
-                   publicKey: PublicKey,
-                   authenticationMethod: AuthenticationMethod,
-                   action: OobAction, size: UInt8) {
-        
+                   over bearer: ProvisioningBearer) -> ProvisioningManager {
+        return ProvisioningManager(for: unprovisionedDevice, over: bearer, in: self)
     }
     
 }

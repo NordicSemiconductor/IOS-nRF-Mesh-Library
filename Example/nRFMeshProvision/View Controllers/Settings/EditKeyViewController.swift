@@ -69,6 +69,8 @@ class EditKeyViewController: UITableViewController {
     private var keyIndex: KeyIndex!
     private var newBoundNetKey: KeyIndex?
     
+    // MARK: - View Controller
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -203,7 +205,7 @@ private extension EditKeyViewController {
         }
     }
     
-    private func presentKeyDialog() {
+    func presentKeyDialog() {
         let title = "New Key"
         let message = "The key must be a 32-character hexadecimal string."
         
@@ -213,7 +215,7 @@ private extension EditKeyViewController {
         }
     }
     
-    private func presentNameDialog() {
+    func presentNameDialog() {
         presentTextAlert(title: "Edit Key Name", message: nil, text: newName,
                          placeHolder: "E.g. Lights and Switches",
                          type: .nameRequired) { name in
@@ -222,7 +224,7 @@ private extension EditKeyViewController {
         }
     }
     
-    private func saveKey() {
+    func saveKey() {
         let network = MeshNetworkManager.instance.meshNetwork!
         
         let adding = isNewKey

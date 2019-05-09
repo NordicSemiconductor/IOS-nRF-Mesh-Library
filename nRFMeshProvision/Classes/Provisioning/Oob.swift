@@ -12,6 +12,7 @@ import Foundation
 public struct OobInformation: OptionSet {
     public let rawValue: UInt16
     
+    public static let unknown        = OobInformation(rawValue: 0)
     public static let other          = OobInformation(rawValue: 1 << 0)
     public static let electornicURI  = OobInformation(rawValue: 1 << 1)
     public static let qrCode         = OobInformation(rawValue: 1 << 2)
@@ -104,12 +105,15 @@ public struct InputOobActions: OptionSet {
 
 // MARK: - Custom String Convertible
 
-extension OobInformation: CustomStringConvertible {
+extension OobInformation: CustomDebugStringConvertible {
     
-    public var description: String {
+    public var debugDescription: String {
+        if rawValue == 0 {
+            return "Unknown"
+        }
         return [
-            (.other,         "Other"),
-            (.electornicURI, "Electornic URI"),
+            (.other,          "Other"),
+            (.electornicURI,  "Electornic URI"),
             (.qrCode,         "QR Code"),
             (.barCode,        "Bar Code"),
             (.nfc,            "NFC"),
@@ -127,9 +131,12 @@ extension OobInformation: CustomStringConvertible {
     
 }
 
-extension StaticOobType: CustomStringConvertible {
+extension StaticOobType: CustomDebugStringConvertible {
     
-    public var description: String {
+    public var debugDescription: String {
+        if rawValue == 0 {
+            return "None"
+        }
         return [(.staticOobInformationAvailable, "Static OOB Information Available")]
             .compactMap { (option, name) in contains(option) ? name : nil }
             .joined(separator: ", ")
@@ -137,9 +144,12 @@ extension StaticOobType: CustomStringConvertible {
     
 }
 
-extension OutputOobActions: CustomStringConvertible {
+extension OutputOobActions: CustomDebugStringConvertible {
     
-    public var description: String {
+    public var debugDescription: String {
+        if rawValue == 0 {
+            return "None"
+        }
         return [
             (.blink, "Blink"),
             (.beep, "Beep"),
@@ -153,12 +163,15 @@ extension OutputOobActions: CustomStringConvertible {
     
 }
 
-extension InputOobActions: CustomStringConvertible {
+extension InputOobActions: CustomDebugStringConvertible {
     
-    public var description: String {
+    public var debugDescription: String {
+        if rawValue == 0 {
+            return "None"
+        }
         return [
-            (.push, "push"),
-            (.twist, "twist"),
+            (.push, "Push"),
+            (.twist, "Twist"),
             (.inputNumeric, "Input Numeric"),
             (.inputAlphanumeric, "Input Alphanumeric")
             ]

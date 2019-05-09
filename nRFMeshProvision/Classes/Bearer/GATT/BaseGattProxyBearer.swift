@@ -28,6 +28,10 @@ open class BaseGattProxyBearer<Service: MeshService>: NSObject, Bearer, CBCentra
         return basePeripheral.state == .connected
     }
     
+    public var supportedMesasgeTypes: MessageTypes {
+        return [.networkPdu, .meshBeacon, .proxyConfiguration, .provisioningPdu]
+    }
+    
     // MARK: - Characteristic properties
     
     private var dataInCharacteristic:  CBCharacteristic?
@@ -183,10 +187,10 @@ open class BaseGattProxyBearer<Service: MeshService>: NSObject, Bearer, CBCentra
         // Look for required characteristics.
         if let characteristics = service.characteristics {
             for characteristic in characteristics {
-                if characteristic.isMeshProxyDataInCharacteristic {
+                if Service.dataInUuid == characteristic.uuid {
                     print("Data In characteristic found")
                     dataInCharacteristic = characteristic
-                } else if characteristic.isMeshProxyDataOutCharacteristic {
+                } else if Service.dataOutUuid == characteristic.uuid {
                     print("Data Out characteristic found")
                     dataOutCharacteristic = characteristic
                 }

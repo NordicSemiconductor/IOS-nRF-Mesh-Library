@@ -26,9 +26,12 @@ public struct PublicKeyType: OptionSet {
     
 }
 
-extension PublicKeyType: CustomStringConvertible {
+extension PublicKeyType: CustomDebugStringConvertible {
     
-    public var description: String {
+    public var debugDescription: String {
+        if rawValue == 0 {
+            return "None"
+        }
         return [(.publicKeyOobInformationAvailable, "Public Key OOB Information Available")]
             .compactMap { (option, name) in contains(option) ? name : nil }
             .joined(separator: ", ")

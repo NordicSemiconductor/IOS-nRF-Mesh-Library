@@ -26,24 +26,25 @@ public struct ProvisioningCapabilities {
     public let inputOobActions:  InputOobActions
     
     init?(_ data: Data) {
-        guard data.count == 11 else {
+        guard data.count == 12 && data[0] == ProvisioningPduType.capabilities.type else {
             return nil
         }
-        numberOfElements = data.convert(offset: 0)
-        algorithms = Algorithms(data: data, offset: 1)
-        publicKeyType = PublicKeyType(data: data, offset: 3)
-        staticOobType = StaticOobType(data: data, offset: 4)
-        outputOobSize = data.convert(offset: 5)
-        outputOobActions = OutputOobActions(data: data, offset: 6)
-        inputOobSize = data.convert(offset: 8)
-        inputOobActions = InputOobActions(data: data, offset: 9)
+        numberOfElements = data.convert(offset: 1)
+        algorithms       = Algorithms(data: data, offset: 2)
+        publicKeyType    = PublicKeyType(data: data, offset: 4)
+        staticOobType    = StaticOobType(data: data, offset: 5)
+        outputOobSize    = data.convert(offset: 6)
+        outputOobActions = OutputOobActions(data: data, offset: 7)
+        inputOobSize     = data.convert(offset: 9)
+        inputOobActions  = InputOobActions(data: data, offset: 10)
     }
 }
 
-extension ProvisioningCapabilities: CustomStringConvertible {
+extension ProvisioningCapabilities: CustomDebugStringConvertible {
     
-    public var description: String {
+    public var debugDescription: String {
         return """
+        --- Capabilities ---
         Number of elements: \(numberOfElements)
         Algorithms: \(algorithms)
         Public Key Type: \(publicKeyType)
@@ -52,6 +53,7 @@ extension ProvisioningCapabilities: CustomStringConvertible {
         Output OOB Actions: \(outputOobActions)
         Input OOB Size: \(inputOobSize)
         Input OOB Actions: \(inputOobActions)
+        --------------------
         """
     }
     
