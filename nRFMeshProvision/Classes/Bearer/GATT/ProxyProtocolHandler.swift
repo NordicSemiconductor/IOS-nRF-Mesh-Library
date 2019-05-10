@@ -17,18 +17,8 @@ enum SAR: UInt8 {
         return rawValue << 6
     }
     
-    static func from(_ data: Data) -> SAR? {
-        guard data.count > 0 else {
-            return nil
-        }
-        let rawValue = data[0] >> 6
-        switch rawValue {
-        case 0: return .completeMessage
-        case 1: return .firstSegment
-        case 2: return .continuation
-        case 3: return .lastSegment
-        default: return nil
-        }
+    init?(data data: Data) {
+        self.init(rawValue: data[0] >> 6)
     }
 }
 
@@ -51,8 +41,6 @@ extension MessageType {
 }
 
 public class ProxyProtocolHandler {
-    private static let headerSize = 1
-    
     private var buffer: Data?
     private var bufferType: MessageType?
     
@@ -70,20 +58,20 @@ public class ProxyProtocolHandler {
     public func segment(_ data: Data, ofType messageType: MessageType, toMtu mtu: Int) -> [Data] {
         var packets: [Data] = []
         
-        if data.count < mtu - ProxyProtocolHandler.headerSize {
+        if data.count < mtu - 1 {
             // Whole data can fit into a single packet.
             var singlePacket = Data([SAR.completeMessage.value | messageType.rawValue])
             singlePacket += data
             packets.append(singlePacket)
         } else {
             // Data needs to be segmented.
-            for i in stride(from: 0, to: data.count, by: mtu - ProxyProtocolHandler.headerSize) {
+            for i in stride(from: 0, to: data.count, by: mtu - 1) {
                 let sar = i == 0 ?
                         SAR.firstSegment :
-                        i + mtu - ProxyProtocolHandler.headerSize > data.count ?
+                        i + mtu - 1 > data.count ?
                             SAR.lastSegment : SAR.continuation
                 var singlePacket = Data([sar.value | messageType.rawValue])
-                singlePacket += data.subdata(in: i ..< min(data.count, i + mtu - ProxyProtocolHandler.headerSize))
+                singlePacket += data.subdata(in: i ..< min(data.count, i + mtu - 1))
                 packets.append(singlePacket)
             }
         }
@@ -104,7 +92,12 @@ public class ProxyProtocolHandler {
     /// - returns: The message and its type, or `nil`, if more data
     ///            are expected.
     public func reassemble(_ data: Data) -> (data: Data, messageType: MessageType)? {
-        guard let sar = SAR.from(data) else {
+        guard data.count > 0 else {
+            // Disregard invalid packet.
+            return nil
+        }
+        
+        guard let sar = SAR(data: data) else {
             // Disregard invalid packet.
             return nil
         }

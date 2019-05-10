@@ -118,9 +118,15 @@ extension ProvisioningManager: BearerDelegate {
     public func bearer(_ bearer: Bearer, didDeliverData data: Data, ofType type: MessageType) {
         bearerDelegate?.bearer(bearer, didDeliverData: data, ofType: type)
         
-        switch state {
-        case .invitationSent:
-            guard let provisioningCapabilities = ProvisioningCapabilities(data) else {
+        // Try parsing the response.
+        guard let response = ProvisioningResponse(data) else {
+            return
+        }
+        
+        // Act depending on the current state and the response received.
+        switch (state, response.type) {
+        case (.invitationSent, .capabilities):
+            guard let provisioningCapabilities = response.capabilities else {
                 print("Error: Failed to parse Provisioning Capabilities")
                 state = .invalidState
                 return

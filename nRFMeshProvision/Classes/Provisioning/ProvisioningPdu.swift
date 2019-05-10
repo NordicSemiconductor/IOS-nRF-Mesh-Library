@@ -24,6 +24,14 @@ internal enum ProvisioningPduType: UInt8 {
     var type: UInt8 {
         return rawValue
     }
+    
+    /*static func from(_ type: UInt8) -> ProvisioningPduType? {
+        switch type {
+        case 0: return .invite
+        default:
+            <#code#>
+        }
+    }*/
 }
 
 internal enum ProvisioningRequest {
@@ -37,6 +45,26 @@ internal enum ProvisioningRequest {
         }
     }
     
+}
+
+internal struct ProvisioningResponse {
+    let type: ProvisioningPduType
+    let capabilities: ProvisioningCapabilities?
+    
+    init?(_ data: Data) {
+        guard data.count > 0, let pduType = ProvisioningPduType(rawValue: data[0]) else {
+            return nil
+        }
+        
+        self.type = pduType
+        
+        switch pduType {
+        case .capabilities:
+            capabilities = ProvisioningCapabilities(data)
+        default:
+            return nil
+        }
+    }
 }
 
 extension ProvisioningRequest: CustomDebugStringConvertible {
