@@ -11,11 +11,9 @@ import nRFMeshProvision
 
 class ProvisioningViewController: UITableViewController {
     
-    // MARK: - Outlets and Actions
+    // MARK: - Outlets
 
     @IBOutlet weak var actionProvision: UIBarButtonItem!
-    @IBAction func provisionTapped(_ sender: UIBarButtonItem) {
-    }
     @IBOutlet weak var nameLabel: UILabel!
     @IBOutlet weak var unicastAddressLabel: UILabel!
     @IBOutlet weak var networkKeyLabel: UILabel!
@@ -28,6 +26,11 @@ class ProvisioningViewController: UITableViewController {
     @IBOutlet weak var supportedOutputOobActionsLabel: UILabel!
     @IBOutlet weak var inputOobSizeLabel: UILabel!
     @IBOutlet weak var supportedInputOobActionsLabel: UILabel!
+    
+    // MARK: - Actions
+    
+    @IBAction func provisionTapped(_ sender: UIBarButtonItem) {
+    }
     
     // MARK: - Properties
     
@@ -170,7 +173,7 @@ private extension IndexPath {
     
     /// Returns whether the IndexPath point to the Unicast Address settings.
     var isUnicastAddress: Bool {
-        return section == 2 && row == 0
+        return section == 1 && row == 0
     }
     
 }
