@@ -11,6 +11,12 @@ import Foundation
 
 public extension MeshNetwork {
     
+    /// Returns the local Provisioner, or `nil` if the mesh network
+    /// does not have any.
+    var localProvisioner: Provisioner? {
+        return provisioners.first
+    }
+    
     /// Sets the given Provisioner as the one that will be used for
     /// provisioning new nodes, sending commands, etc. It will be moved
     /// to index 0 in the list of provisioners in the mesh network.
@@ -223,7 +229,7 @@ public extension MeshNetwork {
         }
         
         // Is it in Provisioner's range?
-        guard provisioner.isInAllocatedRange(address) else {
+        guard provisioner.isAddressInAllocatedRange(address, elementCount: 1) else {
             throw MeshModelError.addressNotInAllocatedRange
         }
         

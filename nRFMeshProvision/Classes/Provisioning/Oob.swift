@@ -12,7 +12,6 @@ import Foundation
 public struct OobInformation: OptionSet {
     public let rawValue: UInt16
     
-    public static let unknown        = OobInformation(rawValue: 0)
     public static let other          = OobInformation(rawValue: 1 << 0)
     public static let electornicURI  = OobInformation(rawValue: 1 << 1)
     public static let qrCode         = OobInformation(rawValue: 1 << 2)
@@ -32,22 +31,27 @@ public struct OobInformation: OptionSet {
     
 }
 
-public enum AuthenticationMethod: UInt8 {
+public enum AuthenticationMethod {
     /// No OOB authentication is used.
-    case noOob     = 0
+    case noOob
     /// Static OOB authentication is used.
-    case staticOob = 1
+    case staticOob(key: Data)
     /// Output OOB authentication is used.
-    case outputOob = 2
+    case outputOob(action: OutputAction, size: UInt8)
     /// Input OOB authentication is used.
-    case inputOob  = 3
+    case inputOob(action: InputAction, size: UInt8)
+    
+    var value: UInt8 {
+        switch self {
+        case .noOob:                         return 0
+        case .staticOob(key: _):             return 1
+        case .outputOob(action: _, size: _): return 2
+        case .inputOob(action: _, size: _):  return 3
+        }
+    }
 }
 
-public protocol OobAction {
-    // Empty.
-}
-
-public enum OutputAction: UInt8, OobAction {
+public enum OutputAction: UInt8 {
     case blink              = 0
     case beep               = 1
     case vibrate            = 2
@@ -55,7 +59,7 @@ public enum OutputAction: UInt8, OobAction {
     case outputAlphanumeric = 4
 }
 
-public enum InputAction: UInt8, OobAction {
+public enum InputAction: UInt8 {
     case push              = 0
     case twist             = 1
     case inputNumeric      = 2
@@ -70,6 +74,10 @@ public struct StaticOobType: OptionSet {
     
     public init(rawValue: UInt8) {
         self.rawValue = rawValue
+    }
+    
+    public var count: Int {
+        return rawValue.nonzeroBitCount
     }
     
 }
@@ -87,6 +95,10 @@ public struct OutputOobActions: OptionSet {
         self.rawValue = rawValue
     }
     
+    public var count: Int {
+        return rawValue.nonzeroBitCount
+    }
+    
 }
 
 public struct InputOobActions: OptionSet {
@@ -99,6 +111,10 @@ public struct InputOobActions: OptionSet {
     
     public init(rawValue: UInt16) {
         self.rawValue = rawValue
+    }
+    
+    public var count: Int {
+        return rawValue.nonzeroBitCount
     }
     
 }
@@ -127,6 +143,33 @@ extension OobInformation: CustomDebugStringConvertible {
             ]
             .compactMap { (option, name) in contains(option) ? name : nil }
             .joined(separator: ", ")
+    }
+    
+}
+
+extension OutputAction: CustomDebugStringConvertible {
+    
+    public var debugDescription: String {
+        switch self {
+        case .blink: return "Blink"
+        case .beep:  return "Beep"
+        case .vibrate: return "Vibrate"
+        case .outputNumeric: return "Output Numeric"
+        case .outputAlphanumeric: return "Output Alphanumeric"
+        }
+    }
+    
+}
+
+extension InputAction: CustomDebugStringConvertible {
+    
+    public var debugDescription: String {
+        switch self {
+        case .push: return "Push"
+        case .twist:  return "Twist"
+        case .inputNumeric: return "Input Numeric"
+        case .inputAlphanumeric: return "Input Alphanumeric"
+        }
     }
     
 }

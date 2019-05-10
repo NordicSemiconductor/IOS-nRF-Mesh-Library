@@ -69,6 +69,8 @@
 		528352B022830F380097B949 /* ProxyProtocolHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 528352AF22830F380097B949 /* ProxyProtocolHandler.swift */; };
 		528352B2228408C20097B949 /* GattBearerError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 528352B1228408C20097B949 /* GattBearerError.swift */; };
 		528352B622843DA50097B949 /* ProvisioningManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 528352B522843DA50097B949 /* ProvisioningManager.swift */; };
+		528352B82285A3A30097B949 /* Node+Address.swift in Sources */ = {isa = PBXBuildFile; fileRef = 528352B72285A3A30097B949 /* Node+Address.swift */; };
+		528352BA2285A3DF0097B949 /* Node+Keys.swift in Sources */ = {isa = PBXBuildFile; fileRef = 528352B92285A3DF0097B949 /* Node+Keys.swift */; };
 		529B757922411970008F1CE7 /* MeshNetworkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529B757822411970008F1CE7 /* MeshNetworkManager.swift */; };
 		529B757D22423DEE008F1CE7 /* Storage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529B757C22423DEE008F1CE7 /* Storage.swift */; };
 		529B75EA224A6CE4008F1CE7 /* Element.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529B75E1224A6CE2008F1CE7 /* Element.swift */; };
@@ -208,6 +210,8 @@
 		528352AF22830F380097B949 /* ProxyProtocolHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProxyProtocolHandler.swift; sourceTree = "<group>"; };
 		528352B1228408C20097B949 /* GattBearerError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GattBearerError.swift; sourceTree = "<group>"; };
 		528352B522843DA50097B949 /* ProvisioningManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProvisioningManager.swift; sourceTree = "<group>"; };
+		528352B72285A3A30097B949 /* Node+Address.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Node+Address.swift"; sourceTree = "<group>"; };
+		528352B92285A3DF0097B949 /* Node+Keys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Node+Keys.swift"; sourceTree = "<group>"; };
 		529B757822411970008F1CE7 /* MeshNetworkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MeshNetworkManager.swift; path = nRFMeshProvision/Classes/MeshNetworkManager.swift; sourceTree = "<group>"; };
 		529B757C22423DEE008F1CE7 /* Storage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Storage.swift; path = nRFMeshProvision/Classes/Storage.swift; sourceTree = "<group>"; };
 		529B75E1224A6CE2008F1CE7 /* Element.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Element.swift; sourceTree = "<group>"; };
@@ -464,6 +468,8 @@
 				5283529F2282CE830097B949 /* NetworkKey+MeshNetwork.swift */,
 				528352A12282CF0B0097B949 /* ApplicationKey+MeshNetwork.swift */,
 				528352A32282CF9A0097B949 /* ApplicationKey+NetworkKey.swift */,
+				528352B72285A3A30097B949 /* Node+Address.swift */,
+				528352B92285A3DF0097B949 /* Node+Keys.swift */,
 			);
 			name = "Mesh API";
 			path = "nRFMeshProvision/Classes/Mesh API";
@@ -929,6 +935,7 @@
 				529B7616224A6D47008F1CE7 /* MeshUUID.swift in Sources */,
 				5283527D22802A370097B949 /* BearerError.swift in Sources */,
 				529B7618224A6D47008F1CE7 /* KeyIndex.swift in Sources */,
+				528352B82285A3A30097B949 /* Node+Address.swift in Sources */,
 				528352B022830F380097B949 /* ProxyProtocolHandler.swift in Sources */,
 				529B7623224BAB26008F1CE7 /* Publish.swift in Sources */,
 				528352A62282D0350097B949 /* MeshNetwork+Provisioning.swift in Sources */,
@@ -953,6 +960,7 @@
 				D159EC79D610DF8F7CA2F21321FD6D7E /* PublishPeriodResolution.swift in Sources */,
 				528352B622843DA50097B949 /* ProvisioningManager.swift in Sources */,
 				529B761F224B7D2D008F1CE7 /* UUID+Hex.swift in Sources */,
+				528352BA2285A3DF0097B949 /* Node+Keys.swift in Sources */,
 				529B757D22423DEE008F1CE7 /* Storage.swift in Sources */,
 				52835278228029720097B949 /* UnprovisionedDevice.swift in Sources */,
 				528352942281B8A10097B949 /* Data.swift in Sources */,

@@ -43,14 +43,15 @@ class ProvisioningViewController: UITableViewController {
     var unprovisionedDevice: UnprovisionedDevice!
     var bearer: ProvisioningBearer!
     
-    private var unicastAddress: Address?
-    private var networkKey: NetworkKey?
+    private var publicKey: PublicKey?
+    private var authenticationMethod: AuthenticationMethod?
+    
     private var provisioningManager: ProvisioningManager!
     private var capabilitiesReceived = false
     
     private var alert: UIAlertController?
     
-    // MARK: - Implementation
+    // MARK: - View Controller
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -58,18 +59,15 @@ class ProvisioningViewController: UITableViewController {
         let network = MeshNetworkManager.instance.meshNetwork!
         nameLabel.text = unprovisionedDevice.name
         
-        // Unicast Address initially will be assigned automatically.
-        unicastAddress = nil
-        unicastAddressLabel.text = "Automatic"
-        // If there is no Network Key, one will have to be created
-        // automatically.
-        networkKey = network.networkKeys.first
-        networkKeyLabel.text = networkKey?.name ?? "New Network Key"
-        
         // Obtain the Provisioning Manager instance for the Unprovisioned Device.
         provisioningManager = network.provision(unprovisionedDevice: self.unprovisionedDevice, over: self.bearer!)
         provisioningManager.delegate = self
         bearer.delegate = self
+        
+        // Unicast Address initially will be assigned automatically.
+        unicastAddressLabel.text = "Automatic"
+        networkKeyLabel.text = provisioningManager.networkKey?.name ?? "New Network Key"
+        actionProvision.isEnabled = network.localProvisioner != nil
         
         // We are now connected. Proceed by sending Provisioning Invite request.
         alert = UIAlertController(title: "Status", message: "Identifying...", preferredStyle: .alert)
@@ -94,10 +92,12 @@ class ProvisioningViewController: UITableViewController {
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "networkKey" {
             let destination = segue.destination as! NetworkKeySelectionViewController
-            destination.selectedNetworkKey = networkKey
+            destination.selectedNetworkKey = provisioningManager.networkKey
             destination.delegate = self
         }
     }
+    
+    // MARK: - Table View Delegate
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
@@ -109,6 +109,10 @@ class ProvisioningViewController: UITableViewController {
             presentUnicastAddressDialog()
         }
     }
+    
+}
+
+extension ProvisioningViewController: OobSelector {
     
 }
 
@@ -127,19 +131,20 @@ private extension ProvisioningViewController {
     /// Presents a dialog to edit or unbind the Provisioner Unicast Address.
     func presentUnicastAddressDialog() {
         let action = UIAlertAction(title: "Automatic", style: .default) { _ in
-            self.unicastAddress = nil
+            self.provisioningManager.unicastAddress = nil
             self.unicastAddressLabel.text = "Automatic"
         }
         presentTextAlert(title: "Unicast address", message: "Hexadecimal value in Provisioner's range.",
-                         text: unicastAddress?.hex, placeHolder: "Address", type: .unicastAddressRequired,
+                         text: provisioningManager.unicastAddress?.hex, placeHolder: "Address", type: .unicastAddressRequired,
                          option: action) { text in
-                            self.unicastAddress = Address(text, radix: 16)
-                            self.unicastAddressLabel.text = self.unicastAddress!.asString()
+                            self.provisioningManager.unicastAddress = Address(text, radix: 16)
+                            self.unicastAddressLabel.text = self.provisioningManager.unicastAddress!.asString()
+                            let addressValid = self.provisioningManager.isUnicastAddressValid == true
+                            self.actionProvision.isEnabled = addressValid
+                            if !addressValid {
+                                self.presentAlert(title: "Error", message: "Address is not available.")
+                            }
         }
-    }
-    
-    func presentOobOptionsDialog() {
-        
     }
     
 }
@@ -160,7 +165,34 @@ private extension ProvisioningViewController {
         }
     }
     
+    /// Starts provisioning process of the device.
     func startProvisioning() {
+        guard let capabilities = provisioningManager.provisioningCapabilities else {
+            return
+        }
+        
+        // If the device's Public Key is available OOB, it should be read.
+        let publicKeyNotAvailable = capabilities.publicKeyType.isEmpty
+        guard publicKeyNotAvailable || publicKey != nil else {
+            presentOobPublicKeyDialog(for: unprovisionedDevice) { publicKey in
+                self.publicKey = publicKey
+                self.startProvisioning()
+            }
+            return
+        }
+        publicKey = publicKey ?? .noOobPublicKey
+        
+        // If any of OOB methods is supported, if should be chosen.
+        let staticOobNotSupported = capabilities.staticOobType.isEmpty
+        let outputOobNotSupported = capabilities.outputOobActions.isEmpty
+        let inputOobNotSupported  = capabilities.inputOobActions.isEmpty
+        guard (staticOobNotSupported && outputOobNotSupported && inputOobNotSupported) || authenticationMethod != nil else {
+            presentOobOptionsDialog(for: provisioningManager) { method in
+                self.authenticationMethod = method
+                self.startProvisioning()
+            }
+            return
+        }
         
     }
     
@@ -231,15 +263,39 @@ extension ProvisioningViewController: ProvisioningDelegate {
                 self.inputOobSizeLabel.text = "\(capabilities.inputOobSize)"
                 self.supportedInputOobActionsLabel.text = "\(capabilities.inputOobActions)"
                 
+                // If the Unicast Address was set to automatic (nil), it should be
+                // set to the correct value by now, as we know the number of elements.
+                let addressValid = self.provisioningManager.isUnicastAddressValid == true
+                if !addressValid {
+                   self.provisioningManager.unicastAddress = nil
+                }
+                self.unicastAddressLabel.text = self.provisioningManager.unicastAddress?.asString() ?? "No address available"
+                self.actionProvision.isEnabled = addressValid
+                
                 let capabilitiesWereAlreadyReceived = self.capabilitiesReceived
                 self.capabilitiesReceived = true
                 
                 self.alert?.dismiss(animated: true) {
-                    if capabilitiesWereAlreadyReceived {
-                        self.startProvisioning()
+                    if addressValid {
+                        // If the device got disconnected after the capabilities were received
+                        // the first time, the app had to send invitation again.
+                        // This time we can just directly proceed with provisioning.
+                        if capabilitiesWereAlreadyReceived {
+                            self.startProvisioning()
+                        }
+                    } else {
+                        self.presentAlert(title: "Error", message: "No available Unicast Address in Provisioner's range.")
                     }
                 }
                 
+            case .invalidState:
+                if let alert = self.alert {
+                    alert.dismiss(animated: true) {
+                        self.presentAlert(title: "Error", message: "Device sent unexpected data.")
+                    }
+                } else {
+                    self.presentAlert(title: "Error", message: "Device sent unexpected data.")
+                }
             default:
                 break
             }
@@ -250,9 +306,9 @@ extension ProvisioningViewController: ProvisioningDelegate {
 
 extension ProvisioningViewController: SelectionDelegate {
     
-    func networkKeySelected(_ networkKey: NetworkKey) {
-        self.networkKey = networkKey
-        self.networkKeyLabel.text = networkKey.name
+    func networkKeySelected(_ networkKey: NetworkKey?) {
+        self.provisioningManager.networkKey = networkKey
+        self.networkKeyLabel.text = networkKey?.name ?? "New Network Key"
     }
     
 }

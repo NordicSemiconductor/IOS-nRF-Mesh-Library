@@ -11,6 +11,17 @@ import Foundation
 
 extension MeshNetwork {
     
+    /// Returns whether the given address can be assigned to a new Node
+    /// with given number of elements.
+    ///
+    /// - parameter address: The first address to check.
+    /// - parameter count:   Number of following addresses to check.
+    /// - returns: `True`, if the address range is available, `false` otherwise.
+    func isAddressAvailable(_ address: Address, elementsCount count: UInt8) -> Bool {
+        return address.isUnicast && (address + UInt16(count)).isUnicast &&
+            !nodes.contains { $0.overlapsWithAddress(address, elementsCount: count) }
+    }
+    
     /// Returns the next available unicast address from the Provisioner's range
     /// that can be assigned to a new node with given number of elements.
     /// The 0'th element is identified by the node's unicast address.
@@ -22,7 +33,7 @@ extension MeshNetwork {
     ///                            The address will be taken from it's allocated range.
     /// - returns: The next available unicast address that can be assigned to a node,
     ///            or nil, if there are no more available addresses in the allocated range.
-    func nextAvailableUnicastAddress(for elementsCount: UInt16, elementsUsing provisioner: Provisioner) -> Address? {
+    func nextAvailableUnicastAddress(for elementsCount: UInt8, elementsUsing provisioner: Provisioner) -> Address? {
         let sortedNodes = nodes.sorted { $0.unicastAddress < $1.unicastAddress }
         
         // Iterate through all nodes just once, while iterating over ranges.
@@ -42,20 +53,20 @@ extension MeshNetwork {
                     continue
                 }
                 // If we found a space before the current node, return the address.
-                if address + elementsCount - 1 < node.unicastAddress {
+                if address + UInt16(elementsCount) - 1 < node.unicastAddress {
                     return address
                 }
                 // Else, move the address to the next available address.
                 address = node.lastUnicastAddress + 1
                 
                 // If the new address is outside of the range, go to the next one.
-                if address + elementsCount - 1 > range.highAddress {
+                if address + UInt16(elementsCount) - 1 > range.highAddress {
                     break
                 }
             }
             
             // If the range has available space, return the address.
-            if address + elementsCount - 1 <= range.highAddress {
+            if address + UInt16(elementsCount) - 1 <= range.highAddress {
                 return address
             }
         }
@@ -63,8 +74,10 @@ extension MeshNetwork {
         return nil
     }
     
-    /// Returns the next available unicast address from the provisioner's range
+    /// Returns the next available Unicast Address from the provisioner's range
     /// that can be assigned to a new provisioner's node.
+    ///
+    /// This method is assuming that the Provisioner has only 1 element.
     ///
     /// - parameter provisioner: The provisioner that is creating the node for itself.
     ///                          The address will be taken from it's allocated range.

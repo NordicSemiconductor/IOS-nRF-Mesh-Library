@@ -10,7 +10,7 @@ import UIKit
 import nRFMeshProvision
 
 protocol SelectionDelegate {
-    func networkKeySelected(_ networkKey: NetworkKey)
+    func networkKeySelected(_ networkKey: NetworkKey?)
 }
 
 class NetworkKeySelectionViewController: UITableViewController {

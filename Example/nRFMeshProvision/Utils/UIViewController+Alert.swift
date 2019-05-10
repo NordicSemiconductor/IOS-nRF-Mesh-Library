@@ -19,6 +19,7 @@ extension Selector {
     static let scene = #selector(UIViewController.sceneOptional(_:))
     static let sceneRequired = #selector(UIViewController.sceneRequired(_:))
     static let keyRequired = #selector(UIViewController.keyRequired(_:))
+    static let publicKeyRequired = #selector(UIViewController.publicKeyRequired(_:))
     static let ttlRequired = #selector(UIViewController.ttlRequired(_:))
     
 }
@@ -328,6 +329,17 @@ extension UIViewController {
         if let text = textField.text, let data = Data(hex: text) {
             // A valid key is 16 bytes long (128-bit).
             alert.setValid(data.count == 16)
+        } else {
+            alert.setValid(false)
+        }
+    }
+    
+    @objc func publicKeyRequired(_ textField: UITextField) {
+        let alert = getAlert(from: textField)
+        
+        if let text = textField.text, let data = Data(hex: text) {
+            // A valid key is 2 * 32 bytes long.
+            alert.setValid(data.count == 128)
         } else {
             alert.setValid(false)
         }

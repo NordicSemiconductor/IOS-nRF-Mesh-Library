@@ -8,6 +8,7 @@
 import Foundation
 
 public class Provisioner: Codable {
+    internal var meshNetwork: MeshNetwork?
     
     /// 128-bit Device UUID.
     internal let provisionerUuid: MeshUUID
@@ -29,8 +30,6 @@ public class Provisioner: Codable {
     public internal(set) var allocatedGroupRange:   [AddressRange]
     /// An array of scene range objects.
     public internal(set) var allocatedSceneRange:   [SceneRange]
-    
-    internal var meshNetwork: MeshNetwork?
     
     public init(name: String,
                 uuid: UUID,
@@ -87,7 +86,7 @@ public class Provisioner: Codable {
 
 // MARK: - Private API
 
-extension Provisioner {
+private extension Provisioner {
     
     /// Returns the first allocated address that is greater or equal to
     /// the given one from the allocated ranges.

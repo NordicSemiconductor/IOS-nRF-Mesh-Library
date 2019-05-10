@@ -193,28 +193,29 @@ public extension Provisioner {
         allocatedSceneRange -= range
     }
     
-    /// Returns true if the count addresses starting from the given one are in
+    /// Returns `true` if the count addresses starting from the given one are in
     /// the Provisioner's allocated address ranges.
+    ///
     /// The address may be a unicast or group address.
     ///
     /// - parameter address: The first address to be checked.
     /// - parameter count:   Number of subsequent addresses to be checked.
     /// - returns: `True` if the address is in allocated ranges, `false` otherwise.
-    func isInAllocatedRange(_ address: Address, count: UInt16 = 1) -> Bool {
+    func isAddressInAllocatedRange(_ address: Address, elementCount count: UInt8) -> Bool {
         guard address.isUnicast || address.isGroup else {
             return false
         }
         
         let ranges = address.isUnicast ? allocatedUnicastRange : allocatedGroupRange
         for range in ranges {
-            if range.contains(address) && range.contains(address + count - 1) {
+            if range.contains(address) && range.contains(address + UInt16(count) - 1) {
                 return true
             }
         }
         return false
     }
     
-    /// Returns true if at least one range overlaps with the given Provisioner.
+    /// Returns `true` if at least one range overlaps with the given Provisioner.
     ///
     /// - parameter provisioner: The Provisioner to check ranges with.
     /// - returns: `True` if this and the given Provisioner have overlaping ranges,
@@ -225,7 +226,7 @@ public extension Provisioner {
             || hasOverlappingSceneRanges(with: provisioner)
     }
     
-    /// Returns true if at least one Unicast Address range overlaps with address
+    /// Returns `true` if at least one Unicast Address range overlaps with address
     /// ranges of the given Provisioner.
     ///
     /// - parameter provisioner: The Provisioner to check ranges with.
@@ -243,7 +244,7 @@ public extension Provisioner {
         return false
     }
     
-    /// Returns true if at least one Group Address range overlaps with address
+    /// Returns `true` if at least one Group Address range overlaps with address
     /// ranges of the given Provisioner.
     ///
     /// - parameter provisioner: The Provisioner to check ranges with.
@@ -261,7 +262,7 @@ public extension Provisioner {
         return false
     }
     
-    /// Returns true if at least one Scene range overlaps with scene ranges of
+    /// Returns `true` if at least one Scene range overlaps with scene ranges of
     /// the given Provisioner.
     ///
     /// - parameter provisioner: The Provisioner to check ranges with.

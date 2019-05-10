@@ -23,6 +23,8 @@ public enum MeshModelError: Error {
     /// Thrown when the address cannot be assigne as it is being used by
     /// another node.
     case addressNotAvailable
+    /// Thrown when the address is of a wrong type.
+    case invalidAddress
     /// Thrown when a node cannot be added due to its address not being
     /// inside Provisioner's unicast address range.
     case addressNotInAllocatedRange

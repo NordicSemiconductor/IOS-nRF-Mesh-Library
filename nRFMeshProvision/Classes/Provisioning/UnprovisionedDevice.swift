@@ -22,7 +22,7 @@ public class UnprovisionedDevice: NSObject {
     /// - parameter name: The optional name of the device.
     /// - parameter uuid: The UUID of the Unprovisioned Device.
     /// - parameter oobInformation: The information about OOB data.
-    public init(name: String? = nil, uuid: UUID, oobInformation: OobInformation = .unknown) {
+    public init(name: String? = nil, uuid: UUID, oobInformation: OobInformation = OobInformation(rawValue: 0)) {
         self.name = name
         self.uuid = uuid
         self.oobInformation = oobInformation

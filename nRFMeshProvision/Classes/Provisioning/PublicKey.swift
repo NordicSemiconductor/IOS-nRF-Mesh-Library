@@ -7,18 +7,25 @@
 
 import Foundation
 
-public enum PublicKey: UInt8 {
+public enum PublicKey {
     /// No OOB Public Key is used.
-    case noOobPublicKey = 0
+    case noOobPublicKey
     /// OOB Public Key is used.
-    case oobPublicKey   = 1
+    case oobPublicKey(key: Data)
+    
+    var value: UInt8 {
+        switch self {
+        case .noOobPublicKey:       return 0
+        case .oobPublicKey(key: _): return 1
+        }
+    }
 }
 
 public struct PublicKeyType: OptionSet {
     public let rawValue: UInt8
     
     /// Public Key OOB Information is available.
-    static let publicKeyOobInformationAvailable = PublicKeyType(rawValue: 1 << 0)
+    public static let publicKeyOobInformationAvailable = PublicKeyType(rawValue: 1 << 0)
     
     public init(rawValue: UInt8) {
         self.rawValue = rawValue

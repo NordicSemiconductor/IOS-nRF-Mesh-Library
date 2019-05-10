@@ -17,7 +17,7 @@ public struct Algorithms: OptionSet {
     public let rawValue: UInt16
     
     /// FIPS P-256 Elliptic Curve algorithm is supported.
-    static let fipsP256EllipticCurve = Algorithms(rawValue: 1 << 0)
+    public static let fipsP256EllipticCurve = Algorithms(rawValue: 1 << 0)
     
     public init(rawValue: UInt16) {
         self.rawValue = rawValue
