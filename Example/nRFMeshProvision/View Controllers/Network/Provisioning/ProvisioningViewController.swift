@@ -13,7 +13,6 @@ class ProvisioningViewController: UITableViewController {
     
     // MARK: - Outlets
 
-    @IBOutlet weak var actionProvision: UIBarButtonItem!
     @IBOutlet weak var nameLabel: UILabel!
     @IBOutlet weak var unicastAddressLabel: UILabel!
     @IBOutlet weak var networkKeyLabel: UILabel!
@@ -29,6 +28,7 @@ class ProvisioningViewController: UITableViewController {
     
     // MARK: - Actions
     
+    @IBOutlet weak var actionProvision: UIBarButtonItem!
     @IBAction func provisionTapped(_ sender: UIBarButtonItem) {
     }
     
@@ -97,7 +97,38 @@ class ProvisioningViewController: UITableViewController {
         tableView.deselectRow(at: indexPath, animated: true)
         
         if indexPath.isDeviceName {
-            
+            presentNameDialog()
+        }
+        if indexPath.isUnicastAddress {
+            presentUnicastAddressDialog()
+        }
+    }
+    
+}
+
+private extension ProvisioningViewController {
+    
+    /// Presents a dialog to edit the Provisioner name.
+    func presentNameDialog() {
+        presentTextAlert(title: "Device name", message: nil,
+                         text: unprovisionedDevice.name, placeHolder: "Name",
+                         type: .nameRequired) { newName in
+                            self.unprovisionedDevice.name = newName
+                            self.nameLabel.text = newName
+        }
+    }
+    
+    /// Presents a dialog to edit or unbind the Provisioner Unicast Address.
+    func presentUnicastAddressDialog() {
+        let action = UIAlertAction(title: "Automatic", style: .default) { _ in
+            self.unicastAddress = nil
+            self.unicastAddressLabel.text = "Automatic"
+        }
+        presentTextAlert(title: "Unicast address", message: "Hexadecimal value in Provisioner's range.",
+                         text: unicastAddress?.hex, placeHolder: "Address", type: .unicastAddressRequired,
+                         option: action) { text in
+                            self.unicastAddress = Address(text, radix: 16)
+                            self.unicastAddressLabel.text = self.unicastAddress!.asString()
         }
     }
     

@@ -24,8 +24,8 @@ class EditProvisionerViewController: UITableViewController {
 
     // MARK: - Outlets
     
-    @IBOutlet weak var name: UITableViewCell!
-    @IBOutlet weak var unicastAddress: UITableViewCell!
+    @IBOutlet weak var nameLabel: UILabel!
+    @IBOutlet weak var unicastAddressLabel: UILabel!
     @IBOutlet weak var unicastAddressRange: RangeView!
     @IBOutlet weak var groupAddressRange: RangeView!
     @IBOutlet weak var sceneRange: RangeView!
@@ -69,7 +69,7 @@ class EditProvisionerViewController: UITableViewController {
         }
         
         // Show Provisioner's parameters.
-        name.detailTextLabel?.text = provisioner.provisionerName
+        nameLabel.text = provisioner.provisionerName
         
         let meshNetwork = MeshNetworkManager.instance.meshNetwork!
         
@@ -77,7 +77,7 @@ class EditProvisionerViewController: UITableViewController {
         // A Provisioner without a node can't perform nodes configuration operations.
         let node = meshNetwork.node(for: provisioner)
         if let node = node {
-            unicastAddress.detailTextLabel?.text = node.unicastAddress.asString()
+            unicastAddressLabel.text = node.unicastAddress.asString()
         }
         
         // Draw ranges for the Provisioner.
@@ -164,7 +164,7 @@ private extension EditProvisionerViewController {
                          text: provisioner.provisionerName, placeHolder: "Name",
                          type: .nameRequired) { newName in
                             self.newName = newName
-                            self.name.detailTextLabel?.text = newName
+                            self.nameLabel.text = newName
         }
     }
     
@@ -180,14 +180,14 @@ private extension EditProvisionerViewController {
                          message: "A Provisioner without the unicast address assigned is not able to perform configuration operations.") { _ in
                             self.disableConfigCapabilities = true
                             self.newAddress = nil
-                            self.unicastAddress.detailTextLabel?.text = "Not assigned"
+                            self.unicastAddressLabel.text = "Not assigned"
             }
         }
         presentTextAlert(title: "Unicast address", message: "Hexadecimal value in range\n0001 - 7FFF.",
                          text: address, placeHolder: "Address", type: .unicastAddressRequired,
                          option: action) { text in
                             let address = Address(text, radix: 16)
-                            self.unicastAddress.detailTextLabel?.text = address!.asString()
+                            self.unicastAddressLabel.text = address!.asString()
                             self.disableConfigCapabilities = false
                             self.newAddress = address
         }
@@ -367,7 +367,7 @@ private extension IndexPath {
     
     /// Returns whether the IndexPath point to the Unicast Address.
     var isUnicastAddress: Bool {
-        return section == 1
+        return section == 0 && row == 1
     }
     
 }

@@ -11,16 +11,15 @@ import nRFMeshProvision
 
 class SettingsViewController: UITableViewController {
     
-    // MARK: - IBOutlets -
-    @IBOutlet weak var globalTTL: UITableViewCell!
+    // MARK: - Outlets -
     
-    @IBOutlet weak var networkName: UITableViewCell!
-    @IBOutlet weak var provisioners: UITableViewCell!
-    @IBOutlet weak var networkKeys: UITableViewCell!
-    @IBOutlet weak var appKeys: UITableViewCell!
+    @IBOutlet weak var networkNameLabel: UILabel!
+    @IBOutlet weak var provisionersLabel: UILabel!
+    @IBOutlet weak var networkKeysLabel: UILabel!
+    @IBOutlet weak var appKeysLabel: UILabel!
     
-    @IBOutlet weak var appVersion: UITableViewCell!
-    @IBOutlet weak var appBuildNumber: UITableViewCell!
+    @IBOutlet weak var appVersionLabel: UILabel!
+    @IBOutlet weak var appBuildNumberLabel: UILabel!
     
     // MARK: - IBActions
     
@@ -34,21 +33,20 @@ class SettingsViewController: UITableViewController {
         super.viewDidLoad()
         
         // Load versions.
-        appVersion.detailTextLabel?.text = AppInfo.version
-        appBuildNumber.detailTextLabel?.text = AppInfo.buildNumber
+        appVersionLabel.text = AppInfo.version
+        appBuildNumberLabel.text = AppInfo.buildNumber
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
         let manager = MeshNetworkManager.instance
-        globalTTL.detailTextLabel?.text = "\(manager.globalTTL)"
         
         let meshNetwork = manager.meshNetwork!
-        networkName.detailTextLabel?.text  = meshNetwork.meshName
-        provisioners.detailTextLabel?.text = "\(meshNetwork.provisioners.count)"
-        networkKeys.detailTextLabel?.text  = "\(meshNetwork.networkKeys.count)"
-        appKeys.detailTextLabel?.text      = "\(meshNetwork.applicationKeys.count)"
+        networkNameLabel.text  = meshNetwork.meshName
+        provisionersLabel.text = "\(meshNetwork.provisioners.count)"
+        networkKeysLabel.text  = "\(meshNetwork.networkKeys.count)"
+        appKeysLabel.text      = "\(meshNetwork.applicationKeys.count)"
     }
     
     // MARK: - Table view delegate
@@ -56,9 +54,6 @@ class SettingsViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         
-        if indexPath.isDefaultTTL {
-            presentTTLDialog()
-        }
         if indexPath.isNetworkName {
             presentNameDialog()
         }
@@ -82,7 +77,7 @@ class SettingsViewController: UITableViewController {
 private extension SettingsViewController {
     
     /// Presents a dialog to edit the default TTL.
-    func presentTTLDialog() {
+    /*func presentTTLDialog() {
         let manager = MeshNetworkManager.instance
         
         presentTextAlert(title: "Default TTL",
@@ -98,7 +93,7 @@ private extension SettingsViewController {
                                 self.presentAlert(title: "Error", message: "Mesh configuration could not be saved.")
                             }
         }
-    }
+    }*/
     
     /// Presents a dialog to edit the network name.
     func presentNameDialog() {
@@ -109,7 +104,7 @@ private extension SettingsViewController {
                             network.meshName = name
                             
                             if MeshNetworkManager.instance.save() {
-                                self.networkName.detailTextLabel?.text = name
+                                self.networkNameLabel.text = name
                             } else {
                                 self.presentAlert(title: "Error", message: "Mesh configuration could not be saved.")
                             }
@@ -151,10 +146,10 @@ private extension SettingsViewController {
         if manager.save() {
             // Reload network data.
             let meshNetwork = manager.meshNetwork!
-            networkName.detailTextLabel?.text  = meshNetwork.meshName
-            provisioners.detailTextLabel?.text = "\(meshNetwork.provisioners.count)"
-            networkKeys.detailTextLabel?.text  = "\(meshNetwork.networkKeys.count)"
-            appKeys.detailTextLabel?.text      = "\(meshNetwork.applicationKeys.count)"
+            networkNameLabel.text  = meshNetwork.meshName
+            provisionersLabel.text = "\(meshNetwork.provisioners.count)"
+            networkKeysLabel.text  = "\(meshNetwork.networkKeys.count)"
+            appKeysLabel.text      = "\(meshNetwork.applicationKeys.count)"
         } else {
             self.presentAlert(title: "Error", message: "Mesh configuration could not be saved.")
         }
@@ -215,29 +210,24 @@ extension SettingsViewController: UIDocumentPickerDelegate {
 
 private extension IndexPath {
     
-    /// Returns whether the IndexPath point to the default TTL.
-    var isDefaultTTL: Bool {
-        return section == 0 && row == 0
-    }
-    
     /// Returns whether the IndexPath point to the mesh network name row.
     var isNetworkName: Bool {
-        return section == 1 && row == 0
+        return section == 0 && row == 0
     }
     
     /// Returns whether the IndexPath point to the network resetting option.
     var isResetNetwork: Bool {
-        return section == 2 && row == 0
+        return section == 1 && row == 0
     }
     
     /// Returns whether the IndexPath point to the Source Code link.
     var isLinkToGitHub: Bool {
-        return section == 3 && row == 2
+        return section == 2 && row == 2
     }
     
     /// Returns whether the IndexPath point to the Issues on GitHub.
     var isLinkToIssues: Bool {
-        return section == 3 && row == 3
+        return section == 2 && row == 3
     }
     
     static let name = IndexPath(row: 0, section: 1)
@@ -245,6 +235,6 @@ private extension IndexPath {
 
 private extension IndexSet {
     
-    static let networkSection = IndexSet(integer: 1)
+    static let networkSection = IndexSet(integer: 0)
     
 }

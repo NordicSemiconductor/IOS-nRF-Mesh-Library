@@ -14,5 +14,6 @@ public class MeshData: Codable {
     /// Mesh Network state.
     public internal(set) var meshNetwork: MeshNetwork?
     /// Global Time To Leave value. This value is used for all mesh messages.
+    // TODO: This should be removed. TTL settings are per node.
     public var globalTTL: UInt8  = 5
 }
