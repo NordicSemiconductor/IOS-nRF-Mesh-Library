@@ -10,6 +10,7 @@ import UIKit
 import nRFMeshProvision
 
 class ProvisioningViewController: UITableViewController {
+    static let attentionTimer: UInt8 = 5
     
     // MARK: - Outlets
 
@@ -30,6 +31,11 @@ class ProvisioningViewController: UITableViewController {
     
     @IBOutlet weak var actionProvision: UIBarButtonItem!
     @IBAction func provisionTapped(_ sender: UIBarButtonItem) {
+        guard bearer.isOpen else {
+            openBearer()
+            return
+        }
+        startProvisioning()
     }
     
     // MARK: - Properties
@@ -39,7 +45,8 @@ class ProvisioningViewController: UITableViewController {
     
     private var unicastAddress: Address?
     private var networkKey: NetworkKey?
-    private var provisioningManager: ProvisioningManager?
+    private var provisioningManager: ProvisioningManager!
+    private var capabilitiesReceived = false
     
     private var alert: UIAlertController?
     
@@ -59,10 +66,9 @@ class ProvisioningViewController: UITableViewController {
         networkKey = network.networkKeys.first
         networkKeyLabel.text = networkKey?.name ?? "New Network Key"
         
-        // Obtainn the Provisioning Manager instance for the
-        // Unprovisioned Device.
+        // Obtain the Provisioning Manager instance for the Unprovisioned Device.
         provisioningManager = network.provision(unprovisionedDevice: self.unprovisionedDevice, over: self.bearer!)
-        provisioningManager!.delegate = self
+        provisioningManager.delegate = self
         bearer.delegate = self
         
         // We are now connected. Proceed by sending Provisioning Invite request.
@@ -75,7 +81,7 @@ class ProvisioningViewController: UITableViewController {
         })
         present(alert!, animated: false) {
             do {
-                try self.provisioningManager!.identify(andAttractFor: 5)
+                try self.provisioningManager.identify(andAttractFor: ProvisioningViewController.attentionTimer)
             } catch {
                 print(error)
                 self.alert!.title   = "Aborting"
@@ -132,14 +138,59 @@ private extension ProvisioningViewController {
         }
     }
     
+    func presentOobOptionsDialog() {
+        
+    }
+    
+}
+
+private extension ProvisioningViewController {    
+    
+    /// This method tries to open the bearer had it been closed when on this screen.
+    func openBearer() {
+        alert = UIAlertController(title: "Status", message: "Connecting...", preferredStyle: .alert)
+        alert!.addAction(UIAlertAction(title: "Cancel", style: .cancel) { action in
+            action.isEnabled = false
+            self.alert!.title   = "Aborting"
+            self.alert!.message = "Cancelling connection..."
+            self.bearer.close()
+        })
+        present(alert!, animated: true) {
+            self.bearer.open()
+        }
+    }
+    
+    func startProvisioning() {
+        
+    }
+    
 }
 
 extension ProvisioningViewController: GattBearerDelegate {
     
+    func bearerDidConnect(_ bearer: Bearer) {
+        DispatchQueue.main.async {
+            self.alert?.message = "Discovering services..."
+        }
+    }
+    
+    func bearerDidDiscoverServices(_ bearer: Bearer) {
+        DispatchQueue.main.async {
+            self.alert?.message = "Initializing..."
+        }
+    }
+    
     func bearerDidOpen(_ bearer: Bearer) {
         DispatchQueue.main.async {
-            self.alert?.dismiss(animated: true)
-            self.alert = nil
+            do {
+                self.alert?.message = "Identifying..."
+                try self.provisioningManager!.identify(andAttractFor: ProvisioningViewController.attentionTimer)
+            } catch {
+                print(error)
+                self.alert!.title   = "Aborting"
+                self.alert!.message = "Cancelling connection..."
+                self.bearer.close()
+            }
         }
     }
     
@@ -166,8 +217,10 @@ extension ProvisioningViewController: ProvisioningDelegate {
     func provisioningState(of unprovisionedDevice: UnprovisionedDevice, didChangeTo state: ProvisionigState) {
         DispatchQueue.main.async {
             switch state {
+                
             case .invitationSent:
                 self.alert?.message = "Receiving capabilities..."
+                
             case .capabilitiesReceived(let capabilities):
                 self.elementsCountLabel.text = "\(capabilities.numberOfElements)"
                 self.supportedAlgorithmsLabel.text = "\(capabilities.algorithms)"
@@ -177,7 +230,16 @@ extension ProvisioningViewController: ProvisioningDelegate {
                 self.supportedOutputOobActionsLabel.text = "\(capabilities.outputOobActions)"
                 self.inputOobSizeLabel.text = "\(capabilities.inputOobSize)"
                 self.supportedInputOobActionsLabel.text = "\(capabilities.inputOobActions)"
-                self.alert?.dismiss(animated: true)
+                
+                let capabilitiesWereAlreadyReceived = self.capabilitiesReceived
+                self.capabilitiesReceived = true
+                
+                self.alert?.dismiss(animated: true) {
+                    if capabilitiesWereAlreadyReceived {
+                        self.startProvisioning()
+                    }
+                }
+                
             default:
                 break
             }
