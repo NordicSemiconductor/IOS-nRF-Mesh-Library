@@ -133,7 +133,7 @@ extension ProvisioningViewController: ProvisioningDelegate {
         DispatchQueue.main.async {
             switch state {
             case .invitationSent:
-                self.alert?.message = "Receiving capabilities"
+                self.alert?.message = "Receiving capabilities..."
             case .capabilitiesReceived(let capabilities):
                 self.elementsCountLabel.text = "\(capabilities.numberOfElements)"
                 self.supportedAlgorithmsLabel.text = "\(capabilities.algorithms)"
