@@ -24,6 +24,7 @@ public class ProvisioningManager {
     private let meshNetwork: MeshNetwork
     
     private var privateKey: SecKey?
+    private var sharedSecret: CFData?
     
     /// The original Bearer delegate. It will be notified on bearer state updates.
     private weak var bearerDelegate: BearerDelegate?
@@ -176,7 +177,6 @@ public class ProvisioningManager {
         try bearer.send(.start(algorithm: algorithm, publicKey: publicKey, authenticationMethod: authenticationMethod))
         
         // Send the Public Key of the Provisioner.
-        state = .publicKeySent
         try bearer.send(.publicKey(pk.publicKey()))
         
         // If the device's Public Key was obtained OOB, we are now ready to
@@ -235,7 +235,7 @@ extension ProvisioningManager: BearerDelegate {
             state = .capabilitiesReceived(capabilities)
             
         // Device Public Key has been received.
-        case (.publicKeySent, .publicKey):
+        case (.provisioningStarted, .publicKey):
             let publicKey = response.publicKey!
             do {
                 try calculateSharedSecret(publicKey: publicKey)
@@ -314,17 +314,17 @@ private extension ProvisioningManager {
         
         let exchangeResultParams = [kSecAttrKeyType: kSecAttrKeyTypeECSECPrimeRandom] as CFDictionary
         
-        let shared = SecKeyCopyKeyExchangeResult(privateKey!,
-                                                 SecKeyAlgorithm.ecdhKeyExchangeStandardX963SHA256,
-                                                 devicePublicKey!, exchangeResultParams, &error)
+        let ssk = SecKeyCopyKeyExchangeResult(privateKey!,
+                                              SecKeyAlgorithm.ecdhKeyExchangeStandardX963SHA256,
+                                              devicePublicKey!, exchangeResultParams, &error)
         guard error == nil else {
             privateKey = nil
             throw error!.takeRetainedValue()
         }
         
         privateKey = nil
-        let ecdh = shared! as Data
-        print("Key: \(ecdh.hex)")
+        sharedSecret = ssk!
+        state = .sharedSecretCalculated
     }
 
 }

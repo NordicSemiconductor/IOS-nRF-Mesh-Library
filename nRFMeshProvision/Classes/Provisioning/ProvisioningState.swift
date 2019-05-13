@@ -16,8 +16,9 @@ public enum ProvisionigState {
     case capabilitiesReceived(_ capabilities: ProvisioningCapabilities)
     /// Provisioning method has been sent.
     case provisioningStarted
-    /// The Provisioner has sent its Public Key.
-    case publicKeySent
+    /// The Provisioner and Unprovisioned Device have exchanged Public Keys
+    /// and have calculated ECDH Shared Secret.
+    case sharedSecretCalculated
     
     // TODO: finish
     
@@ -55,8 +56,8 @@ extension ProvisionigState: CustomDebugStringConvertible {
             return "Provisioning Capabilities received:\n\(capabilities)"
         case .provisioningStarted:
             return "Provisioning started"
-        case .publicKeySent:
-            return "Provisioner's Public Key sent"
+        case .sharedSecretCalculated:
+            return "ECDH Shared Secret calculated"
         case .complete:
             return "Provisioning complete"
         case .invalidState:
