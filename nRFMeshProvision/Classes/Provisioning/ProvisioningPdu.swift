@@ -24,24 +24,28 @@ internal enum ProvisioningPduType: UInt8 {
     var type: UInt8 {
         return rawValue
     }
-    
-    /*static func from(_ type: UInt8) -> ProvisioningPduType? {
-        switch type {
-        case 0: return .invite
-        default:
-            <#code#>
-        }
-    }*/
 }
 
 internal enum ProvisioningRequest {
     case invite(attentionTimer: UInt8)
+    case start(algorithm: Algorithm, publicKey: PublicKey, authenticationMethod: AuthenticationMethod)
+    case publicKey(_ key: Data)
     
     var pdu: ProvisioningPdu {
         switch self {
-        case .invite(attentionTimer: let timer):
+        case let .invite(attentionTimer: timer):
             var data = ProvisioningPdu(pdu: .invite)
             return data.with(timer)
+        case let .start(algorithm: algorithm, publicKey: publicKey, authenticationMethod: method):
+            var data = ProvisioningPdu(pdu: .start)
+            data += algorithm.value
+            data += publicKey.value
+            data += method.value
+            return data
+        case let .publicKey(key):
+            var data = ProvisioningPdu(pdu: .publicKey)
+            data += key
+            return data
         }
     }
     
@@ -50,6 +54,7 @@ internal enum ProvisioningRequest {
 internal struct ProvisioningResponse {
     let type: ProvisioningPduType
     let capabilities: ProvisioningCapabilities?
+    let publicKey: Data?
     
     init?(_ data: Data) {
         guard data.count > 0, let pduType = ProvisioningPduType(rawValue: data[0]) else {
@@ -61,8 +66,23 @@ internal struct ProvisioningResponse {
         switch pduType {
         case .capabilities:
             capabilities = ProvisioningCapabilities(data)
+            publicKey = nil
+        case .publicKey:
+            publicKey = data.subdata(in: 1..<data.count)
+            capabilities = nil
         default:
             return nil
+        }
+    }
+    
+    var isValid: Bool {
+        switch type {
+        case .capabilities:
+            return capabilities != nil
+        case .publicKey:
+            return publicKey != nil
+        default:
+            return false
         }
     }
 }
@@ -71,8 +91,12 @@ extension ProvisioningRequest: CustomDebugStringConvertible {
     
     var debugDescription: String {
         switch self {
-        case .invite(attentionTimer: let timer):
+        case let .invite(attentionTimer: timer):
             return "Provisioning Invite (attention timer: \(timer) sec)"
+        case let .start(algorithm: algorithm, publicKey: publicKey, authenticationMethod: authenticationMethod):
+            return "Provisioning Start (algorithm: \(algorithm), public Key: \(publicKey), authentication Method: \(authenticationMethod))"
+        case let .publicKey(key):
+            return "Provisioner Public Key (0x\(key.hex))"
         }
     }
 

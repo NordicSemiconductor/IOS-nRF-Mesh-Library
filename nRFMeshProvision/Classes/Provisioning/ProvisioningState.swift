@@ -32,6 +32,15 @@ public enum ProvisionigState {
 public enum ProvisioningError: Error {
     /// Thrown when the ProvisioningManager is in invalid state.
     case invalidState
+    /// Thrown when an unsupported algorighm has been selected for provisioning.
+    case unsupportedAlgorithm
+    /// Thrown when the Unprovisioned Device is not supported by the manager.
+    case unsupportedDevice
+    /// Thrown when the Unprovisioned Device exposes its Public Key via an OOB
+    /// mechanism, but the key was not provided.
+    case oobPublicKeyRequired
+    /// Thrown when a security error occured during key pair generation.
+    case securityError(_ errorCode: OSStatus)
 }
 
 extension ProvisionigState: CustomDebugStringConvertible {

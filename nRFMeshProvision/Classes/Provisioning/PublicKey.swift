@@ -7,19 +7,35 @@
 
 import Foundation
 
+/// The type of Device Public key to be used.
 public enum PublicKey {
     /// No OOB Public Key is used.
     case noOobPublicKey
-    /// OOB Public Key is used.
+    /// OOB Public Key is used. The key must contain the full value of the Public Key,
+    /// depending on the chosen algorithm.
     case oobPublicKey(key: Data)
     
-    var value: UInt8 {
+    var value: Data {
         switch self {
-        case .noOobPublicKey:       return 0
-        case .oobPublicKey(key: _): return 1
+        case .noOobPublicKey:       return Data([0])
+        case .oobPublicKey(key: _): return Data([1])
         }
     }
 }
+
+extension PublicKey: CustomDebugStringConvertible {
+    
+    public var debugDescription: String {
+        switch self {
+        case .noOobPublicKey:
+            return "No OOB Public Key"
+        case .oobPublicKey(key: _):
+            return "OOB Public Key"
+        }
+    }
+    
+}
+
 
 public struct PublicKeyType: OptionSet {
     public let rawValue: UInt8

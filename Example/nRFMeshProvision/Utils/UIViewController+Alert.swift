@@ -339,7 +339,7 @@ extension UIViewController {
         
         if let text = textField.text, let data = Data(hex: text) {
             // A valid key is 2 * 32 bytes long.
-            alert.setValid(data.count == 128)
+            alert.setValid(data.count == 64)
         } else {
             alert.setValid(false)
         }

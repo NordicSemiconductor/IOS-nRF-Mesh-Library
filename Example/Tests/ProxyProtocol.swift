@@ -23,7 +23,7 @@ class ProxyProtocol: XCTestCase {
         let proxyProtocol = ProxyProtocolHandler()
         
         let data = Data([0,1,2,3,4,5,6,7,8,9])
-        let packets = proxyProtocol.segment(data, ofType: .networkPdu, toMtu: 20)
+        let packets = proxyProtocol.segment(data, ofType: .networkPdu, toMtu: 11)
         
         XCTAssertEqual(packets.count, 1)
         XCTAssert(packets[0] == Data([0,0,1,2,3,4,5,6,7,8,9]))

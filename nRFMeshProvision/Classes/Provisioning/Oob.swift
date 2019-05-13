@@ -19,6 +19,7 @@ public struct OobInformation: OptionSet {
     public static let nfc            = OobInformation(rawValue: 1 << 4)
     public static let number         = OobInformation(rawValue: 1 << 5)
     public static let string         = OobInformation(rawValue: 1 << 6)
+    // Bits 7-10 are reserved for future use.
     public static let onBox          = OobInformation(rawValue: 1 << 11)
     public static let insideBox      = OobInformation(rawValue: 1 << 12)
     public static let onPieceOfPaper = OobInformation(rawValue: 1 << 13)
@@ -31,6 +32,7 @@ public struct OobInformation: OptionSet {
     
 }
 
+/// The authentication method chosen for provisioning.
 public enum AuthenticationMethod {
     /// No OOB authentication is used.
     case noOob
@@ -41,16 +43,24 @@ public enum AuthenticationMethod {
     /// Input OOB authentication is used.
     case inputOob(action: InputAction, size: UInt8)
     
-    var value: UInt8 {
+    var value: Data {
         switch self {
-        case .noOob:                         return 0
-        case .staticOob(key: _):             return 1
-        case .outputOob(action: _, size: _): return 2
-        case .inputOob(action: _, size: _):  return 3
+        case .noOob:
+            return Data([0, 0, 0])
+        case .staticOob(key: _):
+            return Data([1, 0, 0])
+        case let .outputOob(action: action, size: size):
+            return Data([2, action.rawValue, size])
+        case let .inputOob(action: action, size: size):
+            return Data([3, action.rawValue, size])
         }
     }
 }
 
+/// The output action will be displayed on the device.
+/// For example, the device may use its LED to blink number of times.
+/// The mumber of blinks will then have to be entered to the
+/// Provisioner Manager.
 public enum OutputAction: UInt8 {
     case blink              = 0
     case beep               = 1
@@ -59,13 +69,17 @@ public enum OutputAction: UInt8 {
     case outputAlphanumeric = 4
 }
 
+/// The user will have to enter the input action on the device.
+/// For example, if the device supports `.push`, user will be asked to
+/// press a button on the device required number of times.
 public enum InputAction: UInt8 {
-    case push              = 0
-    case twist             = 1
-    case inputNumeric      = 2
-    case inputAlphanumeric = 3
+    case push               = 0
+    case twist              = 1
+    case inputNumeric       = 2
+    case inputAlphanumeric  = 3
 }
 
+/// A set of supported Static Out-of-band types.
 public struct StaticOobType: OptionSet {
     public let rawValue: UInt8
     
@@ -77,11 +91,12 @@ public struct StaticOobType: OptionSet {
     }
     
     public var count: Int {
-        return rawValue.nonzeroBitCount
+        return rawValue.nonzeroBitCount & 0b1
     }
     
 }
 
+/// A set of supported Output Out-of-band actions.
 public struct OutputOobActions: OptionSet {
     public let rawValue: UInt16
     
@@ -96,11 +111,12 @@ public struct OutputOobActions: OptionSet {
     }
     
     public var count: Int {
-        return rawValue.nonzeroBitCount
+        return rawValue.nonzeroBitCount & 0b11111
     }
     
 }
 
+/// A set of supported Input Out-of-band actions.
 public struct InputOobActions: OptionSet {
     public let rawValue: UInt16
     
@@ -114,7 +130,7 @@ public struct InputOobActions: OptionSet {
     }
     
     public var count: Int {
-        return rawValue.nonzeroBitCount
+        return rawValue.nonzeroBitCount & 0b1111
     }
     
 }
@@ -143,6 +159,19 @@ extension OobInformation: CustomDebugStringConvertible {
             ]
             .compactMap { (option, name) in contains(option) ? name : nil }
             .joined(separator: ", ")
+    }
+    
+}
+
+extension AuthenticationMethod: CustomDebugStringConvertible {
+    
+    public var debugDescription: String {
+        switch self {
+        case .noOob: return "No OOB"
+        case .staticOob(key: _):  return "Static OOB"
+        case let .outputOob(action: action, size: size): return "Output Action: \(action) (size: \(size))"
+        case let .inputOob(action: action, size: size): return "Input Action: \(action) (size: \(size))"
+        }
     }
     
 }

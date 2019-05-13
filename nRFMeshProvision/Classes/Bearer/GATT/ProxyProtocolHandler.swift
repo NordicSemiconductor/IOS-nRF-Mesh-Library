@@ -17,7 +17,7 @@ enum SAR: UInt8 {
         return rawValue << 6
     }
     
-    init?(data data: Data) {
+    init?(data: Data) {
         self.init(rawValue: data[0] >> 6)
     }
 }
@@ -58,7 +58,7 @@ public class ProxyProtocolHandler {
     public func segment(_ data: Data, ofType messageType: MessageType, toMtu mtu: Int) -> [Data] {
         var packets: [Data] = []
         
-        if data.count < mtu - 1 {
+        if data.count <= mtu - 1 {
             // Whole data can fit into a single packet.
             var singlePacket = Data([SAR.completeMessage.value | messageType.rawValue])
             singlePacket += data

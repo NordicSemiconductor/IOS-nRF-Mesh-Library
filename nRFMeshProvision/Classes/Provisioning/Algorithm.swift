@@ -7,18 +7,31 @@
 
 import Foundation
 
+/// The algorighm used for calculating Device Key.
 public enum Algorithm {
     /// FIPS P-256 Elliptic Curve algorithm will be used to calculate the
     /// shared secret.
     case fipsP256EllipticCurve
     
-    var value: UInt8 {
+    var value: Data {
         switch self {
-        case .fipsP256EllipticCurve: return 0
+        case .fipsP256EllipticCurve: return Data([0])
         }
     }
 }
 
+extension Algorithm: CustomDebugStringConvertible {
+    
+    public var debugDescription: String {
+        switch self {
+        case .fipsP256EllipticCurve:
+            return "FIPS P-256 Elliptic Curve"
+        }
+    }
+    
+}
+
+/// A set of algorighms supported by the Unprovisioned Device.
 public struct Algorithms: OptionSet {
     public let rawValue: UInt16
     

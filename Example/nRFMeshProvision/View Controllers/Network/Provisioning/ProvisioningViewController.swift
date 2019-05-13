@@ -199,6 +199,14 @@ private extension ProvisioningViewController {
             return
         }
         
+        // Start provisioning.
+        do {
+            try provisioningManager.provision(usingAlgorithm: .fipsP256EllipticCurve,
+                                              publicKey: publicKey!,
+                                              authenticationMethod: authenticationMethod!)
+        } catch {
+            presentAlert(title: "Error", message: "Provisioning failed with an error: \(error)")
+        }
     }
     
 }

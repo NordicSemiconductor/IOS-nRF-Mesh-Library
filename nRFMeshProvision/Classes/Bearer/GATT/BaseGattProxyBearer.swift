@@ -74,7 +74,9 @@ open class BaseGattProxyBearer<Service: MeshService>: NSObject, Bearer, CBCentra
         }
         
         let mtu = basePeripheral.maximumWriteValueLength(for: .withoutResponse)
+        print("MTU: \(mtu)")
         let packets = protocolHandler.segment(data, ofType: type, toMtu: mtu)
+        print("#packets: \(packets.count)")
         
         // On iOS 11+ only the first packet is sent here. When the peripheral is ready
         // to send more data, a `peripheralIsReady(toSendWriteWithoutResponse:)` callback
@@ -88,11 +90,12 @@ open class BaseGattProxyBearer<Service: MeshService>: NSObject, Bearer, CBCentra
             // Just assume, that the first packet can always be sent.
             if queueWasEmpty {
                 let packet = queue.remove(at: 0)
+                print("Sending first packet of size: \(packet.count)")
                 print("-> 0x\(packet.hex)")
                 basePeripheral.writeValue(packet, for: dataInCharacteristic, type: .withoutResponse)
             }
         } else {
-            // For iOS versions before 11, the data must just be sent in a loop.
+            // For iOS versions before 11, the data must be just sent in a loop.
             // This may not work if there is more than ~20 packets to be sent, as a
             // buffer may overflow. The solution would be to add some delays, but
             // let's hope it will work as is. For now.
@@ -239,8 +242,10 @@ open class BaseGattProxyBearer<Service: MeshService>: NSObject, Bearer, CBCentra
     // This method is available only on iOS 11+.
     public func peripheralIsReady(toSendWriteWithoutResponse peripheral: CBPeripheral) {
         guard !queue.isEmpty else {
+            print("Queue ready but empty")
             return
         }
+        print("Queue ready")
         
         let packet = queue.remove(at: 0)
         print("-> 0x\(packet.hex)")
