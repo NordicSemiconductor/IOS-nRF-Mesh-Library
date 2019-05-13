@@ -73,6 +73,15 @@ public class ProvisioningManager {
             provisioner.isAddressInAllocatedRange(unicastAddress, elementCount: capabilities.numberOfElements)
     }
     
+    /// Returns whether the Unprovisioned Device can be provisioned using this
+    /// Provisioner Manager.
+    public var isDeviceSupported: Bool? {
+        guard let capabilities = provisioningCapabilities else {
+                return nil
+        }
+        return capabilities.algorithms.contains(.fipsP256EllipticCurve)
+    }
+    
     /// Creates the Provisioning Manager that will handle provisioning of the
     /// Unprovisioned Device over the given Provisioning Bearer.
     ///

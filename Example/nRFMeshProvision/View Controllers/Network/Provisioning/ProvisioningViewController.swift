@@ -134,15 +134,18 @@ private extension ProvisioningViewController {
         let action = UIAlertAction(title: "Automatic", style: .default) { _ in
             manager.unicastAddress = manager.suggestedUnicastAddress
             self.unicastAddressLabel.text = manager.unicastAddress?.asString() ?? "Automatic"
-            self.actionProvision.isEnabled = manager.isUnicastAddressValid == true
+            let deviceSupported = manager.isDeviceSupported == true
+            let addressValid = manager.isUnicastAddressValid == true
+            self.actionProvision.isEnabled = addressValid && deviceSupported
         }
         presentTextAlert(title: "Unicast address", message: "Hexadecimal value in Provisioner's range.",
                          text: manager.unicastAddress?.hex, placeHolder: "Address", type: .unicastAddressRequired,
                          option: action) { text in
                             manager.unicastAddress = Address(text, radix: 16)
                             self.unicastAddressLabel.text = manager.unicastAddress!.asString()
+                            let deviceSupported = manager.isDeviceSupported == true
                             let addressValid = manager.isUnicastAddressValid == true
-                            self.actionProvision.isEnabled = addressValid
+                            self.actionProvision.isEnabled = addressValid && deviceSupported
                             if !addressValid {
                                 self.presentAlert(title: "Error", message: "Address is not available.")
                             }
@@ -277,8 +280,10 @@ extension ProvisioningViewController: ProvisioningDelegate {
                 let capabilitiesWereAlreadyReceived = self.capabilitiesReceived
                 self.capabilitiesReceived = true
                 
+                let deviceSupported = self.provisioningManager.isDeviceSupported == true
+                
                 self.alert?.dismiss(animated: true) {
-                    if addressValid {
+                    if deviceSupported && addressValid {
                         // If the device got disconnected after the capabilities were received
                         // the first time, the app had to send invitation again.
                         // This time we can just directly proceed with provisioning.
@@ -286,7 +291,13 @@ extension ProvisioningViewController: ProvisioningDelegate {
                             self.startProvisioning()
                         }
                     } else {
-                        self.presentAlert(title: "Error", message: "No available Unicast Address in Provisioner's range.")
+                        if !deviceSupported {
+                            print("Selected device does not support P256 Elliptic Curve algorithm")
+                            self.presentAlert(title: "Error", message: "Selected device is not supported.")
+                            self.actionProvision.isEnabled = false
+                        } else if !addressValid {
+                            self.presentAlert(title: "Error", message: "No available Unicast Address in Provisioner's range.")
+                        }
                     }
                 }
                 
