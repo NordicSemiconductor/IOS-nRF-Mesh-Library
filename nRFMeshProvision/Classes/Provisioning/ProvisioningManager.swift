@@ -28,6 +28,11 @@ public class ProvisioningManager {
     
     /// The Unicast Address that will be assigned to the device.
     public var unicastAddress: Address?
+    /// Automatically assigned Unicast Address. This is the first available
+    /// Unicast Address from the Provisioner's range with enough free following
+    /// addresses to be assigned to the device. This value is available after
+    /// the Provisioning Capabilities have been received and such address was found.
+    public internal(set) var suggestedUnicastAddress: Address?
     /// The Network Key to be sent to the device during provisioning.
     /// Set to `nil` to automatically create a new Network Key.
     public var networkKey: NetworkKey?
@@ -107,8 +112,8 @@ public class ProvisioningManager {
         bearerDelegate = bearer.delegate
         bearer.delegate = self
         
-        state = .invitationSent
         try bearer.send(.invite(attentionTimer: attentionTimer))
+        state = .invitationSent
     }
     
     /// This method starts the provisioning of the device.
@@ -127,13 +132,17 @@ public class ProvisioningManager {
 extension ProvisioningManager: BearerDelegate {
     
     public func bearerDidOpen(_ bearer: Bearer) {
-        bearerDelegate?.bearerDidOpen(bearer)
-        provisioningCapabilities = nil
-        state = .ready
+        // This method will not be called, as bearer.delegate is restored
+        // when is bearer closed.
     }
     
     public func bearer(_ bearer: Bearer, didClose error: Error?) {
         bearerDelegate?.bearer(bearer, didClose: error)
+        bearer.delegate = bearerDelegate
+        bearerDelegate = nil
+        
+        // Clear provisioning data. Provisioning will have to start again.
+        provisioningCapabilities = nil
     }
     
     public func bearer(_ bearer: Bearer, didDeliverData data: Data, ofType type: MessageType) {
@@ -156,6 +165,7 @@ extension ProvisioningManager: BearerDelegate {
             if unicastAddress == nil, let provisioner = meshNetwork.localProvisioner {
                 let count = capabilities.numberOfElements
                 unicastAddress = meshNetwork.nextAvailableUnicastAddress(for: count, elementsUsing: provisioner)
+                suggestedUnicastAddress = unicastAddress
             }
             state = .capabilitiesReceived(capabilities)
         default:

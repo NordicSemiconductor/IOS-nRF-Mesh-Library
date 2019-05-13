@@ -7,10 +7,16 @@
 
 import Foundation
 
-public enum Algorithm: UInt8 {
+public enum Algorithm {
     /// FIPS P-256 Elliptic Curve algorithm will be used to calculate the
     /// shared secret.
-    case fipsP256EllipticCurve = 0
+    case fipsP256EllipticCurve
+    
+    var value: UInt8 {
+        switch self {
+        case .fipsP256EllipticCurve: return 0
+        }
+    }
 }
 
 public struct Algorithms: OptionSet {

@@ -109,7 +109,6 @@ extension ProvisioningBearer {
     ///           is not supported, or data could not be sent for
     ///           some other reason.
     func send(_ request: ProvisioningRequest) throws {
-        print("Sending \(request)")
         try send(request.pdu, ofType: .provisioningPdu)
     }
     

@@ -41,7 +41,7 @@ extension ProvisionigState: CustomDebugStringConvertible {
         case .ready:
             return "Provisioner is ready"
         case .invitationSent:
-            return "Invitation sent"
+            return "Provisioning Invitation sent"
         case .capabilitiesReceived(let capabilities):
             return "Provisioning Capabilities received:\n\(capabilities)"
         case .provisioningStarted:

@@ -130,16 +130,18 @@ private extension ProvisioningViewController {
     
     /// Presents a dialog to edit or unbind the Provisioner Unicast Address.
     func presentUnicastAddressDialog() {
+        let manager = self.provisioningManager!
         let action = UIAlertAction(title: "Automatic", style: .default) { _ in
-            self.provisioningManager.unicastAddress = nil
-            self.unicastAddressLabel.text = "Automatic"
+            manager.unicastAddress = manager.suggestedUnicastAddress
+            self.unicastAddressLabel.text = manager.unicastAddress?.asString() ?? "Automatic"
+            self.actionProvision.isEnabled = manager.isUnicastAddressValid == true
         }
         presentTextAlert(title: "Unicast address", message: "Hexadecimal value in Provisioner's range.",
-                         text: provisioningManager.unicastAddress?.hex, placeHolder: "Address", type: .unicastAddressRequired,
+                         text: manager.unicastAddress?.hex, placeHolder: "Address", type: .unicastAddressRequired,
                          option: action) { text in
-                            self.provisioningManager.unicastAddress = Address(text, radix: 16)
-                            self.unicastAddressLabel.text = self.provisioningManager.unicastAddress!.asString()
-                            let addressValid = self.provisioningManager.isUnicastAddressValid == true
+                            manager.unicastAddress = Address(text, radix: 16)
+                            self.unicastAddressLabel.text = manager.unicastAddress!.asString()
+                            let addressValid = manager.isUnicastAddressValid == true
                             self.actionProvision.isEnabled = addressValid
                             if !addressValid {
                                 self.presentAlert(title: "Error", message: "Address is not available.")
