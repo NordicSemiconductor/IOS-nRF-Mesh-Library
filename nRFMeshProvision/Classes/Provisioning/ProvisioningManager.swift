@@ -25,7 +25,11 @@ public class ProvisioningManager {
     
     private var authenticationMethod: AuthenticationMethod?
     private var privateKey: SecKey?
-    private var sharedSecret: CFData?
+    private var sharedSecret: Data?
+    /// The Confirmation Inputs is built over the provisioning process.
+    /// It is composed for: Provisioning Invite PDU, Provisioning Capabilities PDU,
+    /// Provisioning Start PDU, Provisioner's Public Key and device's Public Key.
+    private var confirmationInputs: Data!
     
     /// The original Bearer delegate. It will be notified on bearer state updates.
     private weak var bearerDelegate: BearerDelegate?
@@ -134,8 +138,10 @@ public class ProvisioningManager {
         bearerDelegate = bearer.delegate
         bearer.delegate = self
         
+        // Clear the Confirmation Inputs buffer.
+        confirmationInputs = Data(capacity: 1 + 11 + 5 + 64 + 64)
         state = .invitationSent
-        try bearer.send(.invite(attentionTimer: attentionTimer))
+        try send(.invite(attentionTimer: attentionTimer), andAccumulateTo: &confirmationInputs)
     }
     
     /// This method starts the provisioning of the device.
@@ -174,21 +180,35 @@ public class ProvisioningManager {
         
         // Send Provisioning Start request.
         state = .provisioningStarted
-        try bearer.send(.start(algorithm: algorithm, publicKey: publicKey, authenticationMethod: authenticationMethod))
+        try send(.start(algorithm: algorithm, publicKey: publicKey,
+                        authenticationMethod: authenticationMethod),
+                 andAccumulateTo: &confirmationInputs)
         self.authenticationMethod = authenticationMethod
         
         // Send the Public Key of the Provisioner.
-        try bearer.send(.publicKey(pk.publicKey()))
+        try send(.publicKey(pk.publicKey()), andAccumulateTo: &confirmationInputs)
         
         // If the device's Public Key was obtained OOB, we are now ready to
         // calculate the device's Shared Secret.
         if case let .oobPublicKey(key: key) = publicKey {
+            confirmationInputs += key
             try calculateSharedSecret(publicKey: key)
         }
     }
 }
 
 extension ProvisioningManager: BearerDelegate {
+    
+    private func send(_ request: ProvisioningRequest) throws {
+       try bearer.send(request)
+    }
+    
+    private func send(_ request: ProvisioningRequest, andAccumulateTo inputs: inout Data) throws {
+        let data = request.pdu
+        // The first byte is the type. We only accumulate payload.
+        inputs += data.dropFirst()
+        try bearer.send(data, ofType: .provisioningPdu)
+    }
     
     public func bearerDidOpen(_ bearer: Bearer) {
         // This method will not be called, as bearer.delegate is restored
@@ -225,6 +245,7 @@ extension ProvisioningManager: BearerDelegate {
         case (.invitationSent, .capabilities):
             let capabilities = response.capabilities!
             provisioningCapabilities = capabilities
+            confirmationInputs += data.dropFirst()
             
             // Calculate the Unicast Address automatically based on the
             // elements count.
@@ -238,6 +259,7 @@ extension ProvisioningManager: BearerDelegate {
         // Device Public Key has been received.
         case (.provisioningStarted, .publicKey):
             let publicKey = response.publicKey!
+            confirmationInputs += data.dropFirst()
             do {
                 try calculateSharedSecret(publicKey: publicKey)
             } catch {
@@ -254,7 +276,7 @@ extension ProvisioningManager: BearerDelegate {
                 self.authValueReceived(authValue)
             case let .displayAlphanumeric(text):
                 var authValue = text.data(using: .ascii)!
-                authValue += Data(repeating: 0, count: 16 - authValue.count)
+                authValue += Data(count: 16 - authValue.count)
                 self.authValueReceived(authValue)
             default:
                 // The Input Complete should not be received for other actions.
@@ -341,8 +363,7 @@ private extension ProvisioningManager {
         }
         
         privateKey = nil
-        sharedSecret = ssk!
-        state = .sharedSecretCalculated
+        sharedSecret = ssk! as Data
         obtainAuthValue()
     }
     
@@ -376,12 +397,12 @@ private extension ProvisioningManager {
                         self.state = .invalidState
                         return
                     }
-                    authValue += Data(repeating: 0, count: 16 - authValue.count)
+                    authValue += Data(count: 16 - authValue.count)
                     self.authValueReceived(authValue)
                 }))
             case .blink, .beep, .vibrate, .outputNumeric:
                 state = .authActionRequired(type: .provideNumeric(maximumNumberOfDigits: size, outputAction: action, callback: { value in
-                    var authValue = Data(repeating: 0, count: 16 - MemoryLayout.size(ofValue: value))
+                    var authValue = Data(count: 16 - MemoryLayout.size(ofValue: value))
                     authValue += value.bigEndian
                     self.authValueReceived(authValue)
                 }))
@@ -390,31 +411,58 @@ private extension ProvisioningManager {
         case let .inputOob(action: action, size: size):
             switch action {
             case .inputAlphanumeric:
-                let random = randomString(length: size)
+                let random = randomString(length: Int(size))
                 state = .authActionRequired(type: .displayAlphanumeric(random))
             case .push, .twist, .inputNumeric:
-                let random = randomInt(length: size)
+                let random = randomInt(length: Int(size))
                 state = .authActionRequired(type: .displayNumber(random, inputAction: action))
             }
         }
     }
 
     func authValueReceived(_ authValue: Data) {
-        print("Auth Value: \(authValue.hex). Success!")
+        self.state = .authValueReceived
+        
+        let helper = OpenSSLHelper()
+        // Calculate the Confirmation Salt = s1(confirmationInputs).
+        let confirmationSalt  = helper.calculateSalt(confirmationInputs)!
+        
+        // Calculate the Confirmation Key = k1(ECDH Secret, confirmationSalt, 'prck')
+        let confirmationKey   = helper.calculateK1(withN: sharedSecret!, salt: confirmationSalt, andP: "prck".data(using: .ascii))!
+        
+        let randomProvisioner = randomData(length: 16)
+        let confirmationData  = randomProvisioner + authValue
+        
+        // Calculate the Confirmation Provisioner using CMAC(random + authValue)
+        let confirmationProvisioner  = helper.calculateCMAC(confirmationData, andKey: confirmationKey)!
+        
+        do {
+            try send(.confirmation(confirmationProvisioner))
+        } catch {
+            print("Error: Sending Provisioning Confirmation failed: \(error)")
+            state = .invalidState
+        }
     }
     
     /// Generates a random string of numerics and capital English letters
     /// with given length.
-    func randomString(length: UInt8) -> String {
+    func randomString(length: Int) -> String {
         let letters = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"
         return String((0..<length).map{ _ in letters.randomElement()! })
     }
     
     /// Generates a random integer with at most `length` digits.
-    func randomInt(length: UInt8) -> Int {
+    func randomInt(length: Int) -> Int {
         let upperbound = Int(pow(10.0, Double(length)))
         return Int.random(in: 1...upperbound)
     }
+    
+    func randomData(length: Int) -> Data {
+        var data = Data(count: length)
+        _ = SecRandomCopyBytes(kSecRandomDefault, length, &data)
+        return data
+    }
+
 }
 
 private extension SecKey {

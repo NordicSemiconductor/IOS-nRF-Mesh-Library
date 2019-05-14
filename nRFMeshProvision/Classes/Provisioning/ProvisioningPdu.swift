@@ -30,6 +30,8 @@ internal enum ProvisioningRequest {
     case invite(attentionTimer: UInt8)
     case start(algorithm: Algorithm, publicKey: PublicKey, authenticationMethod: AuthenticationMethod)
     case publicKey(_ key: Data)
+    case confirmation(_ data: Data)
+    case random(_ data: Data)
     
     var pdu: ProvisioningPdu {
         switch self {
@@ -46,6 +48,14 @@ internal enum ProvisioningRequest {
             var data = ProvisioningPdu(pdu: .publicKey)
             data += key
             return data
+        case let .confirmation(confirmation):
+            var data = ProvisioningPdu(pdu: .confirmation)
+            data += confirmation
+            return data
+        case let .random(random):
+            var data = ProvisioningPdu(pdu: .random)
+            data += random
+            return data
         }
     }
     
@@ -55,6 +65,8 @@ internal struct ProvisioningResponse {
     let type: ProvisioningPduType
     let capabilities: ProvisioningCapabilities?
     let publicKey: Data?
+    let confirmation: Data?
+    let random: Data?
     
     init?(_ data: Data) {
         guard data.count > 0, let pduType = ProvisioningPduType(rawValue: data[0]) else {
@@ -67,12 +79,28 @@ internal struct ProvisioningResponse {
         case .capabilities:
             capabilities = ProvisioningCapabilities(data)
             publicKey = nil
+            confirmation = nil
+            random = nil
         case .publicKey:
             publicKey = data.subdata(in: 1..<data.count)
             capabilities = nil
+            confirmation = nil
+            random = nil
         case .inputComplete:
             publicKey = nil
             capabilities = nil
+            confirmation = nil
+            random = nil
+        case .confirmation:
+            publicKey = nil
+            capabilities = nil
+            confirmation = data.subdata(in: 1..<data.count)
+            random = nil
+        case .random:
+            publicKey = nil
+            capabilities = nil
+            confirmation = nil
+            random = data.subdata(in: 1..<data.count)
         default:
             return nil
         }
@@ -86,6 +114,10 @@ internal struct ProvisioningResponse {
             return publicKey != nil
         case .inputComplete:
             return true
+        case .confirmation:
+            return confirmation != nil && confirmation!.count == 16
+        case .random:
+            return random != nil && random!.count == 16
         default:
             return false
         }
@@ -102,6 +134,10 @@ extension ProvisioningRequest: CustomDebugStringConvertible {
             return "Provisioning Start (algorithm: \(algorithm), public Key: \(publicKey), authentication Method: \(authenticationMethod))"
         case let .publicKey(key):
             return "Provisioner Public Key (0x\(key.hex))"
+        case let .confirmation(data):
+            return "Provisioning Confirmation (0x\(data.hex)"
+        case let .random(data):
+            return "Provisioning Random (0x\(data.hex)"
         }
     }
 

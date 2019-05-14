@@ -239,10 +239,8 @@ open class BaseGattProxyBearer<Service: MeshService>: NSObject, Bearer, CBCentra
     // This method is available only on iOS 11+.
     public func peripheralIsReady(toSendWriteWithoutResponse peripheral: CBPeripheral) {
         guard !queue.isEmpty else {
-            print("Queue ready but empty")
             return
         }
-        print("Queue ready")
         
         let packet = queue.remove(at: 0)
         print("-> 0x\(packet.hex)")

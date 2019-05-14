@@ -16,12 +16,10 @@ public enum ProvisionigState {
     case capabilitiesReceived(_ capabilities: ProvisioningCapabilities)
     /// Provisioning method has been sent.
     case provisioningStarted
-    /// The Provisioner and Unprovisioned Device have exchanged Public Keys
-    /// and have calculated ECDH Shared Secret.
-    case sharedSecretCalculated
-    
+    /// The Provisioner is waiting for user input.
     case authActionRequired(type: AuthAction)
     
+    case authValueReceived
     // TODO: finish
     
     /// The provisioning process is complete.
@@ -74,10 +72,10 @@ extension ProvisionigState: CustomDebugStringConvertible {
             return "Provisioning Capabilities received:\n\(capabilities)"
         case .provisioningStarted:
             return "Provisioning started"
-        case .sharedSecretCalculated:
-            return "ECDH Shared Secret calculated"
         case .authActionRequired(type: _):
             return "Auth Action required"
+        case .authValueReceived:
+            return "Auth Value received"
         case .complete:
             return "Provisioning complete"
         case .invalidState:

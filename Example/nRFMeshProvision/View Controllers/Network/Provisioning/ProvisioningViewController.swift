@@ -161,12 +161,14 @@ private extension ProvisioningViewController {
     }
     
     func dismissStatusDialog(completion: (() -> Void)? = nil) {
-        if let alert = alert {
-            alert.dismiss(animated: true, completion: completion)
-        } else {
-            completion?()
+        DispatchQueue.main.async {
+            if let alert = self.alert {
+                alert.dismiss(animated: true, completion: completion)
+            } else {
+                completion?()
+            }
+            self.alert = nil
         }
-        alert = nil
     }
     
     func abort() {
@@ -257,10 +259,7 @@ extension ProvisioningViewController: GattBearerDelegate {
     
     func bearer(_ bearer: Bearer, didClose error: Error?) {
         DispatchQueue.main.async {
-            if let _ = self.alert {
-                self.presentStatusDialog(message: "Device disconnected")
-                self.dismissStatusDialog()
-            } else {
+            self.dismissStatusDialog() {
                 self.presentAlert(title: "Status", message: "Device disconnected.")
             }
         }
@@ -338,6 +337,9 @@ extension ProvisioningViewController: ProvisioningDelegate {
                 default:
                     break
                 }
+                
+            case .authValueReceived:
+                self.presentStatusDialog(message: "Provisioning...")
                 
             case .invalidState:
                 self.dismissStatusDialog() {
