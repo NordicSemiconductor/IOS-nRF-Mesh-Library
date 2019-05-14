@@ -37,17 +37,19 @@ public enum AuthenticationMethod {
     /// No OOB authentication is used.
     case noOob
     /// Static OOB authentication is used.
-    case staticOob(key: Data)
+    case staticOob
     /// Output OOB authentication is used.
+    /// Size must be in range 1...8.
     case outputOob(action: OutputAction, size: UInt8)
     /// Input OOB authentication is used.
+    /// Size must be in range 1...8.
     case inputOob(action: InputAction, size: UInt8)
     
     var value: Data {
         switch self {
         case .noOob:
             return Data([0, 0, 0])
-        case .staticOob(key: _):
+        case .staticOob:
             return Data([1, 0, 0])
         case let .outputOob(action: action, size: size):
             return Data([2, action.rawValue, size])
@@ -168,7 +170,7 @@ extension AuthenticationMethod: CustomDebugStringConvertible {
     public var debugDescription: String {
         switch self {
         case .noOob: return "No OOB"
-        case .staticOob(key: _):  return "Static OOB"
+        case .staticOob: return "Static OOB"
         case let .outputOob(action: action, size: size): return "Output Action: \(action) (size: \(size))"
         case let .inputOob(action: action, size: size): return "Input Action: \(action) (size: \(size))"
         }

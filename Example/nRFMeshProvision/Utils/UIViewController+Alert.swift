@@ -125,16 +125,17 @@ extension UIViewController {
     /// Use type parameter to set the value validator.
     ///
     /// - parameters:
-    ///   - title:       The alert title.
-    ///   - message:     The message below the title.
-    ///   - text:        Initial value of the text field.
-    ///   - placeholder: The placeholder if text is empty.
-    ///   - type:        The selector to be used for value validation.
-    ///   - action:      An optional additional action.
-    ///   - handler:     The OK button handler.
+    ///   - title:         The alert title.
+    ///   - message:       The message below the title.
+    ///   - text:          Initial value of the text field.
+    ///   - placeholder:   The placeholder if text is empty.
+    ///   - type:          The selector to be used for value validation.
+    ///   - action:        An optional additional action.
+    ///   - cancelHandler: The Cancel button handler.
+    ///   - handler:       The OK button handler.
     func presentTextAlert(title: String?, message: String?, text: String? = "", placeHolder: String? = "",
                           type selector: Selector? = nil, option action: UIAlertAction? = nil,
-                          handler: ((String) -> Void)? = nil) {
+                          cancelHandler: (() -> Void)? = nil, handler: ((String) -> Void)? = nil) {
         DispatchQueue.main.async {
             var alert: UIAlertController? = UIAlertController(title: title, message: message, preferredStyle: .alert)
             alert!.addTextField { textField in
@@ -171,7 +172,9 @@ extension UIViewController {
             if let action = action {
                 alert!.addAction(action)
             }
-            alert!.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+            alert!.addAction(UIAlertAction(title: "Cancel", style: .cancel) { _ in
+                cancelHandler?()
+            })
             self.present(alert!, animated: true)
         }
     }

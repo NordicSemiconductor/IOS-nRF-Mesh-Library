@@ -70,6 +70,9 @@ internal struct ProvisioningResponse {
         case .publicKey:
             publicKey = data.subdata(in: 1..<data.count)
             capabilities = nil
+        case .inputComplete:
+            publicKey = nil
+            capabilities = nil
         default:
             return nil
         }
@@ -81,6 +84,8 @@ internal struct ProvisioningResponse {
             return capabilities != nil
         case .publicKey:
             return publicKey != nil
+        case .inputComplete:
+            return true
         default:
             return false
         }

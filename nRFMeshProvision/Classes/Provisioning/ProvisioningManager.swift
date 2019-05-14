@@ -23,6 +23,7 @@ public class ProvisioningManager {
     private let bearer: ProvisioningBearer
     private let meshNetwork: MeshNetwork
     
+    private var authenticationMethod: AuthenticationMethod?
     private var privateKey: SecKey?
     private var sharedSecret: CFData?
     
@@ -54,7 +55,6 @@ public class ProvisioningManager {
     /// The current state of the provisioning process.
     public internal(set) var state: ProvisionigState = .ready {
         didSet {
-            print("New state: \(state)")
             switch state {
             case .invalidState, .complete:
                 // Restore the delegate.
@@ -175,6 +175,7 @@ public class ProvisioningManager {
         // Send Provisioning Start request.
         state = .provisioningStarted
         try bearer.send(.start(algorithm: algorithm, publicKey: publicKey, authenticationMethod: authenticationMethod))
+        self.authenticationMethod = authenticationMethod
         
         // Send the Public Key of the Provisioner.
         try bearer.send(.publicKey(pk.publicKey()))
@@ -244,6 +245,23 @@ extension ProvisioningManager: BearerDelegate {
                 state = .invalidState
             }
             
+        // The user has performed the Input Action on the device.
+        case let (.authActionRequired(type: authAction), .inputComplete):
+            switch authAction {
+            case let .displayNumber(value, inputAction: _):
+                var authValue = Data(repeating: 0, count: 16 - MemoryLayout.size(ofValue: value))
+                authValue += value.bigEndian
+                self.authValueReceived(authValue)
+            case let .displayAlphanumeric(text):
+                var authValue = text.data(using: .ascii)!
+                authValue += Data(repeating: 0, count: 16 - authValue.count)
+                self.authValueReceived(authValue)
+            default:
+                // The Input Complete should not be received for other actions.
+                break
+            }
+            break
+            
         default:
             break
         }
@@ -296,7 +314,7 @@ private extension ProvisioningManager {
     /// and the local Private Key.
     ///
     /// - parameter publicKey: The device's Public Key as bytes.
-    private func calculateSharedSecret(publicKey: Data) throws {
+    func calculateSharedSecret(publicKey: Data) throws {
         // First byte has to be 0x04 to indicate uncompressed representation.
         var devicePublicKeyData = Data([0x04])
         devicePublicKeyData.append(contentsOf: publicKey)
@@ -325,8 +343,78 @@ private extension ProvisioningManager {
         privateKey = nil
         sharedSecret = ssk!
         state = .sharedSecretCalculated
+        obtainAuthValue()
+    }
+    
+    /// This method asks the user to provide a OOB value based on the
+    /// authentication method specified in the provisioning process.
+    /// For `.noOob` case, the value is automatically set to 0s.
+    /// This method will call `authValueReceived(:)` when the value
+    /// has been obtained.
+    func obtainAuthValue() {
+        switch self.authenticationMethod! {
+        // For No OOB, the AuthValue is just 16 byte array filled with 0.
+        case .noOob:
+            let authValue = Data(repeating: 0, count: 16)
+            authValueReceived(authValue)
+            
+        // For Static OOB, the AuthValue is the Key enetered by the user.
+        // The key must be 16 bytes long.
+        case .staticOob:
+            state = .authActionRequired(type: .provideStaticKey(callback: { key in
+                self.authValueReceived(key)
+            }))
+            
+        // For Output OOB, the device will blink, beep, vibrate or display a
+        // value, and the user must enter the value on the phone. The entered
+        // value becomes a part of the AuthValue.
+        case let .outputOob(action: action, size: size):
+            switch action {
+            case .outputAlphanumeric:
+                state = .authActionRequired(type: .provideAlphanumeric(maximumNumberOfCharacters: size, callback: { text in
+                    guard var authValue = text.data(using: .ascii) else {
+                        self.state = .invalidState
+                        return
+                    }
+                    authValue += Data(repeating: 0, count: 16 - authValue.count)
+                    self.authValueReceived(authValue)
+                }))
+            case .blink, .beep, .vibrate, .outputNumeric:
+                state = .authActionRequired(type: .provideNumeric(maximumNumberOfDigits: size, outputAction: action, callback: { value in
+                    var authValue = Data(repeating: 0, count: 16 - MemoryLayout.size(ofValue: value))
+                    authValue += value.bigEndian
+                    self.authValueReceived(authValue)
+                }))
+            }
+            
+        case let .inputOob(action: action, size: size):
+            switch action {
+            case .inputAlphanumeric:
+                let random = randomString(length: size)
+                state = .authActionRequired(type: .displayAlphanumeric(random))
+            case .push, .twist, .inputNumeric:
+                let random = randomInt(length: size)
+                state = .authActionRequired(type: .displayNumber(random, inputAction: action))
+            }
+        }
     }
 
+    func authValueReceived(_ authValue: Data) {
+        print("Auth Value: \(authValue.hex). Success!")
+    }
+    
+    /// Generates a random string of numerics and capital English letters
+    /// with given length.
+    func randomString(length: UInt8) -> String {
+        let letters = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+        return String((0..<length).map{ _ in letters.randomElement()! })
+    }
+    
+    /// Generates a random integer with at most `length` digits.
+    func randomInt(length: UInt8) -> Int {
+        let upperbound = Int(pow(10.0, Double(length)))
+        return Int.random(in: 1...upperbound)
+    }
 }
 
 private extension SecKey {

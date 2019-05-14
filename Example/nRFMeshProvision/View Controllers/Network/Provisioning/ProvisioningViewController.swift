@@ -70,21 +70,13 @@ class ProvisioningViewController: UITableViewController {
         actionProvision.isEnabled = network.localProvisioner != nil
         
         // We are now connected. Proceed by sending Provisioning Invite request.
-        alert = UIAlertController(title: "Status", message: "Identifying...", preferredStyle: .alert)
-        alert!.addAction(UIAlertAction(title: "Cancel", style: .cancel) { action in
-            action.isEnabled = false
-            self.alert!.title   = "Aborting"
-            self.alert!.message = "Cancelling connection..."
-            self.bearer.close()
-        })
-        present(alert!, animated: false) {
+        presentStatusDialog(message: "Identifying...", animated: false) {
             do {
                 try self.provisioningManager.identify(andAttractFor: ProvisioningViewController.attentionTimer)
             } catch {
                 print(error)
-                self.alert!.title   = "Aborting"
-                self.alert!.message = "Cancelling connection..."
-                self.bearer.close()
+                self.abort()
+                self.presentAlert(title: "Error", message: "Identifying failed with an error: \(error)")
             }
         }
     }
@@ -152,20 +144,46 @@ private extension ProvisioningViewController {
         }
     }
     
+    func presentStatusDialog(message: String, animated flag: Bool = true, completion: (() -> Void)? = nil) {
+        DispatchQueue.main.async {
+            if let alert = self.alert {
+                alert.message = message
+                completion?()
+            } else {
+                self.alert = UIAlertController(title: "Status", message: message, preferredStyle: .alert)
+                self.alert!.addAction(UIAlertAction(title: "Cancel", style: .cancel) { action in
+                    action.isEnabled = false
+                    self.abort()
+                })
+                self.present(self.alert!, animated: flag, completion: completion)
+            }
+        }
+    }
+    
+    func dismissStatusDialog(completion: (() -> Void)? = nil) {
+        if let alert = alert {
+            alert.dismiss(animated: true, completion: completion)
+        } else {
+            completion?()
+        }
+        alert = nil
+    }
+    
+    func abort() {
+        DispatchQueue.main.async {
+            self.alert?.title   = "Aborting"
+            self.alert?.message = "Cancelling connection..."
+            self.bearer.close()
+        }
+    }
+    
 }
 
 private extension ProvisioningViewController {    
     
     /// This method tries to open the bearer had it been closed when on this screen.
     func openBearer() {
-        alert = UIAlertController(title: "Status", message: "Connecting...", preferredStyle: .alert)
-        alert!.addAction(UIAlertAction(title: "Cancel", style: .cancel) { action in
-            action.isEnabled = false
-            self.alert!.title   = "Aborting"
-            self.alert!.message = "Cancelling connection..."
-            self.bearer.close()
-        })
-        present(alert!, animated: true) {
+        presentStatusDialog(message: "Connecting...") {
             self.bearer.open()
         }
     }
@@ -200,12 +218,16 @@ private extension ProvisioningViewController {
         }
         
         // Start provisioning.
-        do {
-            try provisioningManager.provision(usingAlgorithm: .fipsP256EllipticCurve,
-                                              publicKey: publicKey!,
-                                              authenticationMethod: authenticationMethod!)
-        } catch {
-            presentAlert(title: "Error", message: "Provisioning failed with an error: \(error)")
+        presentStatusDialog(message: "Exchanging keys...") {
+            do {
+                try self.provisioningManager.provision(usingAlgorithm:       .fipsP256EllipticCurve,
+                                                       publicKey:            self.publicKey!,
+                                                       authenticationMethod: self.authenticationMethod!)
+            } catch {
+                print(error)
+                self.abort()
+                self.presentAlert(title: "Error", message: "Provisioning failed with an error: \(error)")
+            }
         }
     }
     
@@ -214,43 +236,32 @@ private extension ProvisioningViewController {
 extension ProvisioningViewController: GattBearerDelegate {
     
     func bearerDidConnect(_ bearer: Bearer) {
-        DispatchQueue.main.async {
-            self.alert?.message = "Discovering services..."
-        }
+        presentStatusDialog(message: "Discovering services...")
     }
     
     func bearerDidDiscoverServices(_ bearer: Bearer) {
-        DispatchQueue.main.async {
-            self.alert?.message = "Initializing..."
-        }
+        presentStatusDialog(message: "Initializing...")
     }
     
     func bearerDidOpen(_ bearer: Bearer) {
-        DispatchQueue.main.async {
+        presentStatusDialog(message: "Identifying...") {
             do {
-                self.alert?.message = "Identifying..."
                 try self.provisioningManager!.identify(andAttractFor: ProvisioningViewController.attentionTimer)
             } catch {
                 print(error)
-                self.alert!.title   = "Aborting"
-                self.alert!.message = "Cancelling connection..."
-                self.bearer.close()
+                self.abort()
+                self.presentAlert(title: "Error", message: "Identifying failed with an error: \(error)")
             }
         }
     }
     
     func bearer(_ bearer: Bearer, didClose error: Error?) {
         DispatchQueue.main.async {
-            if let alert = self.alert {
-                alert.message = "Device disconnected"
-                alert.dismiss(animated: true)
-                self.alert = nil
+            if let _ = self.alert {
+                self.presentStatusDialog(message: "Device disconnected")
+                self.dismissStatusDialog()
             } else {
-                let alert = UIAlertController(title: "Status", message: "Device disconnected", preferredStyle: .alert)
-                alert.addAction(UIAlertAction(title: "OK", style: .cancel) { action in
-                    alert.dismiss(animated: true)
-                })
-                self.present(alert, animated: true)
+                self.presentAlert(title: "Status", message: "Device disconnected.")
             }
         }
     }
@@ -260,11 +271,13 @@ extension ProvisioningViewController: GattBearerDelegate {
 extension ProvisioningViewController: ProvisioningDelegate {
     
     func provisioningState(of unprovisionedDevice: UnprovisionedDevice, didChangeTo state: ProvisionigState) {
+        print("New state: \(state)")
+        
         DispatchQueue.main.async {
             switch state {
                 
             case .invitationSent:
-                self.alert?.message = "Receiving capabilities..."
+                self.presentStatusDialog(message: "Receiving capabilities...")
                 
             case .capabilitiesReceived(let capabilities):
                 self.elementsCountLabel.text = "\(capabilities.numberOfElements)"
@@ -290,7 +303,7 @@ extension ProvisioningViewController: ProvisioningDelegate {
                 
                 let deviceSupported = self.provisioningManager.isDeviceSupported == true
                 
-                self.alert?.dismiss(animated: true) {
+                self.dismissStatusDialog() {
                     if deviceSupported && addressValid {
                         // If the device got disconnected after the capabilities were received
                         // the first time, the app had to send invitation again.
@@ -309,13 +322,27 @@ extension ProvisioningViewController: ProvisioningDelegate {
                     }
                 }
                 
-            case .invalidState:
-                if let alert = self.alert {
-                    alert.dismiss(animated: true) {
-                        self.presentAlert(title: "Error", message: "Device sent unexpected data.")
+            case let .authActionRequired(type: authAction):
+                switch authAction {
+                case let .provideStaticKey(callback: callback):
+                    self.dismissStatusDialog() {
+                        let message = "Enter 16-character hexadecimal string."
+                        self.presentTextAlert(title: "Static OOB Key", message: message, type: .keyRequired) { hex in
+                           callback(Data(hex: hex)!)
+                        }
                     }
-                } else {
+                case let .displayAlphanumeric(text):
+                    self.presentStatusDialog(message: "Enter the following text on your device:\n\n\(text)")
+                case let .displayNumber(value, inputAction: action):
+                    self.presentStatusDialog(message: "Perform \(action) \(value) times on your device.")
+                default:
+                    break
+                }
+                
+            case .invalidState:
+                self.dismissStatusDialog() {
                     self.presentAlert(title: "Error", message: "Device sent unexpected data.")
+                    self.abort()
                 }
             default:
                 break

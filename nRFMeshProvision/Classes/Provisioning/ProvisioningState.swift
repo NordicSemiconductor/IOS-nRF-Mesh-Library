@@ -20,6 +20,8 @@ public enum ProvisionigState {
     /// and have calculated ECDH Shared Secret.
     case sharedSecretCalculated
     
+    case authActionRequired(type: AuthAction)
+    
     // TODO: finish
     
     /// The provisioning process is complete.
@@ -44,6 +46,22 @@ public enum ProvisioningError: Error {
     case securityError(_ errorCode: OSStatus)
 }
 
+public enum AuthAction {
+    /// The user shall provide 16 byte OOB Static Key.
+    case provideStaticKey(callback: (Data) -> Void)
+    /// The user shall provide a number.
+    case provideNumeric(maximumNumberOfDigits: UInt8, outputAction: OutputAction, callback: (Int) -> Void)
+    /// The user shall provide an alphanumeric text.
+    case provideAlphanumeric(maximumNumberOfCharacters: UInt8, callback: (String) -> Void)
+    /// The application should display this number to the user.
+    /// User should perform selected action given number of times,
+    /// or enter the number on the remote device.
+    case displayNumber(_ value: Int, inputAction: InputAction)
+    /// The application should display the text to the user.
+    /// User should enter the text on the provisioning device.
+    case displayAlphanumeric(_ text: String)
+}
+
 extension ProvisionigState: CustomDebugStringConvertible {
     
     public var debugDescription: String {
@@ -58,6 +76,8 @@ extension ProvisionigState: CustomDebugStringConvertible {
             return "Provisioning started"
         case .sharedSecretCalculated:
             return "ECDH Shared Secret calculated"
+        case .authActionRequired(type: _):
+            return "Auth Action required"
         case .complete:
             return "Provisioning complete"
         case .invalidState:

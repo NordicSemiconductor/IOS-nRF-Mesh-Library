@@ -40,12 +40,7 @@ extension OobSelector where Self: UIViewController {
         }))
         if capabilities.staticOobType.contains(.staticOobInformationAvailable) {
             alert.addAction(UIAlertAction(title: "Static OOB", style: .default, handler: { _ in
-                let message = "Enter 16-character hexadecimal string."
-                self.presentTextAlert(title: "Static OOB Key", message: message, type: .keyRequired) { hex in
-                    if let key = Data(hex: hex) {
-                        callback(.staticOob(key: key))
-                    }
-                }
+                callback(.staticOob)
             }))
         }
         if !capabilities.outputOobActions.isEmpty {
