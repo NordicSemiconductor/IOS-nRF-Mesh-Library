@@ -26,6 +26,10 @@ public class ProvisioningManager {
     private var authenticationMethod: AuthenticationMethod?
     private var privateKey: SecKey?
     private var sharedSecret: Data?
+    private var deviceConfirmation: Data?
+    private var authValue: Data?
+    private var provisionerRandom: Data?
+    
     /// The Confirmation Inputs is built over the provisioning process.
     /// It is composed for: Provisioning Invite PDU, Provisioning Capabilities PDU,
     /// Provisioning Start PDU, Provisioner's Public Key and device's Public Key.
@@ -273,16 +277,31 @@ extension ProvisioningManager: BearerDelegate {
             case let .displayNumber(value, inputAction: _):
                 var authValue = Data(repeating: 0, count: 16 - MemoryLayout.size(ofValue: value))
                 authValue += value.bigEndian
-                self.authValueReceived(authValue)
+                authValueReceived(authValue)
             case let .displayAlphanumeric(text):
                 var authValue = text.data(using: .ascii)!
                 authValue += Data(count: 16 - authValue.count)
-                self.authValueReceived(authValue)
+                authValueReceived(authValue)
             default:
                 // The Input Complete should not be received for other actions.
                 break
             }
-            break
+        
+        // The Provisioning Confirmation value has been received.
+        case (.authValueReceived, .confirmation):
+            deviceConfirmation = response.confirmation!
+            do {
+                try send(.random(provisionerRandom!))
+            } catch {
+                print("Error: Sending Provisioner Random failed: \(error)")
+                state = .invalidState
+            }
+            
+        case (.authValueReceived, .random):
+            let random = response.random!
+            let confirmation = calculateConfirmation(random: random, authValue: authValue!)
+            print("Received:   \(deviceConfirmation!.hex)")
+            print("Calculated: \(confirmation.hex)")
             
         default:
             break
@@ -420,22 +439,13 @@ private extension ProvisioningManager {
         }
     }
 
-    func authValueReceived(_ authValue: Data) {
-        self.state = .authValueReceived
+    func authValueReceived(_ value: Data) {
+        state = .authValueReceived
         
-        let helper = OpenSSLHelper()
-        // Calculate the Confirmation Salt = s1(confirmationInputs).
-        let confirmationSalt  = helper.calculateSalt(confirmationInputs)!
+        authValue = value
+        provisionerRandom = randomData(length: 16)
         
-        // Calculate the Confirmation Key = k1(ECDH Secret, confirmationSalt, 'prck')
-        let confirmationKey   = helper.calculateK1(withN: sharedSecret!, salt: confirmationSalt, andP: "prck".data(using: .ascii))!
-        
-        let randomProvisioner = randomData(length: 16)
-        let confirmationData  = randomProvisioner + authValue
-        
-        // Calculate the Confirmation Provisioner using CMAC(random + authValue)
-        let confirmationProvisioner  = helper.calculateCMAC(confirmationData, andKey: confirmationKey)!
-        
+        let confirmationProvisioner = calculateConfirmation(random: provisionerRandom!, authValue: value)
         do {
             try send(.confirmation(confirmationProvisioner))
         } catch {
@@ -457,10 +467,26 @@ private extension ProvisioningManager {
         return Int.random(in: 1...upperbound)
     }
     
+    /// Generates an array of cryptographically secure random bytes.
     func randomData(length: Int) -> Data {
-        var data = Data(count: length)
+        var data = [UInt8](repeating: 0, count: length)
         _ = SecRandomCopyBytes(kSecRandomDefault, length, &data)
-        return data
+        return Data(data)
+    }
+    
+    func calculateConfirmation(random: Data, authValue: Data) -> Data {
+        let helper = OpenSSLHelper()
+        // Calculate the Confirmation Salt = s1(confirmationInputs).
+        let confirmationSalt = helper.calculateSalt(confirmationInputs)!
+        
+        // Calculate the Confirmation Key = k1(ECDH Secret, confirmationSalt, 'prck')
+        let confirmationKey  = helper.calculateK1(withN: sharedSecret!,
+                                                  salt: confirmationSalt,
+                                                  andP: "prck".data(using: .ascii))!
+        
+        // Calculate the Confirmation Provisioner using CMAC(random + authValue)
+        let confirmationData = random + authValue
+        return helper.calculateCMAC(confirmationData, andKey: confirmationKey)!
     }
 
 }

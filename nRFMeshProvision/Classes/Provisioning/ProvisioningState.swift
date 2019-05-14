@@ -18,8 +18,10 @@ public enum ProvisionigState {
     case provisioningStarted
     /// The Provisioner is waiting for user input.
     case authActionRequired(type: AuthAction)
-    
+    /// The input value has been provided by the user.
+    /// The Provisioner may continue with provisioning.
     case authValueReceived
+    
     // TODO: finish
     
     /// The provisioning process is complete.
