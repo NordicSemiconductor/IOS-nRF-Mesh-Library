@@ -8,10 +8,10 @@
 import Foundation
 
 public enum ProvisionigState {
-    /// Provisioning has not been started.
+    /// Provisioning Manager is ready to start.
     case ready
-    /// Provisioning Invite has been sent.
-    case receivingCapabilities
+    /// The manager is requesting Provisioioning Capabilities from the device.
+    case requestingCapabilities
     /// Provisioning Capabilities were received.
     case capabilitiesReceived(_ capabilities: ProvisioningCapabilities)
     /// Provisioning has been started.
@@ -45,36 +45,36 @@ public enum ProvisioningError: Error {
 
 public enum RemoteProvisioningError: UInt8 {
     /// The provisioning protocol PDU is not recognized by the device.
-    case invalidPdu
+    case invalidPdu = 1
     /// The arguments of the protocol PDUs are outside expected values
     /// or the length of the PDU is different than expected.
-    case invalidFormat
+    case invalidFormat = 2
     /// The PDU received was not expected at this moment of the procedure.
-    case unexpectedPdu
+    case unexpectedPdu = 3
     /// The computed confirmation value was not successfully verified.
-    case confirmationFailed
+    case confirmationFailed = 4
     /// The provisioning protocol cannot be continued due to insufficient
     /// resources in the device.
-    case outOfResources
+    case outOfResources = 5
     /// The Data block was not successfully decrypted.
-    case decryptionFailed
+    case decryptionFailed = 6
     /// An unexpected error occurred that may not be recoverable.
-    case unexpectedError
+    case unexpectedError = 7
     /// The device cannot assign consecutive unicast addresses to all elements.
-    case cannotAcssignAddresses
+    case cannotAcssignAddresses = 8
 }
 
 public enum AuthAction {
     /// The user shall provide 16 byte OOB Static Key.
     case provideStaticKey(callback: (Data) -> Void)
     /// The user shall provide a number.
-    case provideNumeric(maximumNumberOfDigits: UInt8, outputAction: OutputAction, callback: (Int) -> Void)
+    case provideNumeric(maximumNumberOfDigits: UInt8, outputAction: OutputAction, callback: (UInt) -> Void)
     /// The user shall provide an alphanumeric text.
     case provideAlphanumeric(maximumNumberOfCharacters: UInt8, callback: (String) -> Void)
     /// The application should display this number to the user.
     /// User should perform selected action given number of times,
     /// or enter the number on the remote device.
-    case displayNumber(_ value: Int, inputAction: InputAction)
+    case displayNumber(_ value: UInt, inputAction: InputAction)
     /// The application should display the text to the user.
     /// User should enter the text on the provisioning device.
     case displayAlphanumeric(_ text: String)
@@ -86,7 +86,7 @@ extension ProvisionigState: CustomDebugStringConvertible {
         switch self {
         case .ready:
             return "Provisioner is ready"
-        case .receivingCapabilities:
+        case .requestingCapabilities:
             return "Provisioning Invitation sent"
         case let .capabilitiesReceived(capabilities):
             return "Provisioning Capabilities received:\n\(capabilities)"

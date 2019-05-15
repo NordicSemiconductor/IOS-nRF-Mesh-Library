@@ -157,7 +157,7 @@ public class ProvisioningManager {
         // Clear the Confirmation Inputs buffer.
         confirmationInputs = Data(capacity: 1 + 11 + 5 + 64 + 64)
         
-        state = .receivingCapabilities
+        state = .requestingCapabilities
         try send(.invite(attentionTimer: attentionTimer), andAccumulateTo: &confirmationInputs)
     }
     
@@ -272,7 +272,7 @@ extension ProvisioningManager: BearerDelegate {
         switch (state, response.type) {
             
         // Provisioning Capabilities have been received.
-        case (.receivingCapabilities, .capabilities):
+        case (.requestingCapabilities, .capabilities):
             let capabilities = response.capabilities!
             provisioningCapabilities = capabilities
             confirmationInputs += data.dropFirst()
@@ -360,6 +360,7 @@ private extension ProvisioningManager {
         // The key must be 16 bytes long.
         case .staticOob:
             delegate?.authenticationActionRequired(.provideStaticKey(callback: { key in
+                self.delegate?.inputComplete()
                 self.authValueReceived(key)
             }))
             
@@ -390,10 +391,10 @@ private extension ProvisioningManager {
         case let .inputOob(action: action, size: size):
             switch action {
             case .inputAlphanumeric:
-                let random = randomString(length: Int(size))
+                let random = randomString(length: UInt(size))
                 authAction = .displayAlphanumeric(random)
             case .push, .twist, .inputNumeric:
-                let random = randomInt(length: Int(size))
+                let random = randomInt(length: UInt(size))
                 authAction = .displayNumber(random, inputAction: action)
             }
             delegate?.authenticationActionRequired(authAction!)
@@ -530,15 +531,15 @@ private extension ProvisioningManager {
     
     /// Generates a random string of numerics and capital English letters
     /// with given length.
-    func randomString(length: Int) -> String {
+    func randomString(length: UInt) -> String {
         let letters = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"
         return String((0..<length).map{ _ in letters.randomElement()! })
     }
     
     /// Generates a random integer with at most `length` digits.
-    func randomInt(length: Int) -> Int {
-        let upperbound = Int(pow(10.0, Double(length)))
-        return Int.random(in: 1...upperbound)
+    func randomInt(length: UInt) -> UInt {
+        let upperbound = UInt(pow(10.0, Double(length)))
+        return UInt.random(in: 1...upperbound)
     }
     
     /// Generates an array of cryptographically secure random bytes.

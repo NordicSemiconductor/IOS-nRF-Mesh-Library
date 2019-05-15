@@ -66,9 +66,9 @@ extension OobSelector where Self: UIViewController {
         let size = capabilities.outputOobSize
         
         let alert = UIAlertController(title: "Select Output OOB Type", message: nil, preferredStyle: .actionSheet)
-        if actions.contains(.blink) { alert.addAction(action(for: .blink, size: 1, callback: callback)) }
-        if actions.contains(.beep) { alert.addAction(action(for: .beep, size: 1, callback: callback)) }
-        if actions.contains(.vibrate) { alert.addAction(action(for: .vibrate, size: 1, callback: callback)) }
+        if actions.contains(.blink) { alert.addAction(action(for: .blink, size: size, callback: callback)) }
+        if actions.contains(.beep) { alert.addAction(action(for: .beep, size: size, callback: callback)) }
+        if actions.contains(.vibrate) { alert.addAction(action(for: .vibrate, size: size, callback: callback)) }
         if actions.contains(.outputNumeric) { alert.addAction(action(for: .outputNumeric, size: size, callback: callback)) }
         if actions.contains(.outputAlphanumeric) { alert.addAction(action(for: .outputAlphanumeric, size: size, callback: callback)) }
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
@@ -84,8 +84,8 @@ extension OobSelector where Self: UIViewController {
         let size = capabilities.inputOobSize
         
         let alert = UIAlertController(title: "Select Input OOB Type", message: nil, preferredStyle: .actionSheet)
-        if actions.contains(.push) { alert.addAction(action(for: .push, size: 1, callback: callback)) }
-        if actions.contains(.twist) { alert.addAction(action(for: .twist, size: 1, callback: callback)) }
+        if actions.contains(.push) { alert.addAction(action(for: .push, size: size, callback: callback)) }
+        if actions.contains(.twist) { alert.addAction(action(for: .twist, size: size, callback: callback)) }
         if actions.contains(.inputNumeric) { alert.addAction(action(for: .inputNumeric, size: size, callback: callback)) }
         if actions.contains(.inputAlphanumeric) { alert.addAction(action(for: .inputAlphanumeric, size: size, callback: callback)) }
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))

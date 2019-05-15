@@ -12,6 +12,8 @@ import nRFMeshProvision
 extension Selector {
     
     static let nameRequired = #selector(UIViewController.nameRequired(_:))
+    static let numberRequired = #selector(UIViewController.numberRequired(_:))
+    static let unsignedNumberRequired = #selector(UIViewController.unsignedNumberRequired(_:))
     static let unicastAddress = #selector(UIViewController.unicastAddressOptional(_:))
     static let unicastAddressRequired = #selector(UIViewController.unicastAddressRequired(_:))
     static let groupAddress = #selector(UIViewController.groupAddressOptional(_:))
@@ -220,6 +222,18 @@ extension UIViewController {
         let alert = getAlert(from: textField)
         let ttl = UInt8(textField.text!)
         alert.setValid(ttl != nil && ttl! <= 127)
+    }
+    
+    @objc func numberRequired(_ textField: UITextField) {
+        let alert = getAlert(from: textField)
+        let number = Int(textField.text!)
+        alert.setValid(number != nil)
+    }
+    
+    @objc func unsignedNumberRequired(_ textField: UITextField) {
+        let alert = getAlert(from: textField)
+        let number = UInt(textField.text!)
+        alert.setValid(number != nil)
     }
     
     @objc func nameRequired(_ textField: UITextField) {

@@ -275,8 +275,8 @@ extension ProvisioningViewController: ProvisioningDelegate {
         DispatchQueue.main.async {
             switch state {
                 
-            case .reveivingCapabilities:
-                self.presentStatusDialog(message: "Receiving capabilities...")
+            case .requestingCapabilities:
+                self.presentStatusDialog(message: "Identifying...")
                 
             case .capabilitiesReceived(let capabilities):
                 self.elementsCountLabel.text = "\(capabilities.numberOfElements)"
@@ -342,12 +342,36 @@ extension ProvisioningViewController: ProvisioningDelegate {
                     callback(Data(hex: hex)!)
                 }
             }
+        case let .provideNumeric(maximumNumberOfDigits: _, outputAction: action, callback: callback):
+            self.dismissStatusDialog() {
+                var message: String
+                switch action {
+                case .blink:
+                    message = "Enter number of blinks."
+                case .beep:
+                    message = "Enter number of beeps."
+                case .vibrate:
+                    message = "Enter number of vibrations."
+                case .outputNumeric:
+                    message = "Enter the number displayed on the device."
+                default:
+                    message = "Action /(action) is not supported."
+                }
+                self.presentTextAlert(title: "Authentication", message: message, type: .unsignedNumberRequired) { text in
+                    callback(UInt(text)!)
+                }
+            }
+        case let .provideAlphanumeric(maximumNumberOfCharacters: _, callback: callback):
+            self.dismissStatusDialog() {
+                let message = "Enter the text displayed on the device."
+                self.presentTextAlert(title: "Authentication", message: message, type: .nameRequired) { text in
+                    callback(text)
+                }
+            }
         case let .displayAlphanumeric(text):
             self.presentStatusDialog(message: "Enter the following text on your device:\n\n\(text)")
         case let .displayNumber(value, inputAction: action):
             self.presentStatusDialog(message: "Perform \(action) \(value) times on your device.")
-        default:
-            break
         }
     }
     

@@ -54,6 +54,7 @@ extension UInt16 : DataConvertible { }
 extension UInt32 : DataConvertible { }
 
 extension Int    : DataConvertible { }
+extension UInt   : DataConvertible { }
 extension Float  : DataConvertible { }
 extension Double : DataConvertible { }
 
