@@ -14,27 +14,19 @@ public enum ProvisionigState {
     case invitationSent
     /// Provisioning Capabilities were received.
     case capabilitiesReceived(_ capabilities: ProvisioningCapabilities)
-    /// Provisioning method has been sent.
-    case provisioningStarted
-    /// The Provisioner is waiting for user input.
-    case authActionRequired(type: AuthAction)
-    /// The input value has been provided by the user.
-    /// The Provisioner may continue with provisioning.
-    case authValueReceived
-    
-    // TODO: finish
-    
+    /// Provisioning has been started.
+    case provisioning
     /// The provisioning process is complete.
     case complete
-    /// Set when the device is in invalid state or sent invalida data.
-    /// For example, when the Provisioning Invite has been send and
-    /// is sent for the second time.
-    case invalidState
+    /// The provisioning has failed because of a local error.
+    case fail(_ error: Error)
 }
 
 public enum ProvisioningError: Error {
     /// Thrown when the ProvisioningManager is in invalid state.
     case invalidState
+    /// The received PDU is invalid.
+    case invalidPdu
     /// Thrown when an unsupported algorighm has been selected for provisioning.
     case unsupportedAlgorithm
     /// Thrown when the Unprovisioned Device is not supported by the manager.
@@ -42,8 +34,34 @@ public enum ProvisioningError: Error {
     /// Thrown when the Unprovisioned Device exposes its Public Key via an OOB
     /// mechanism, but the key was not provided.
     case oobPublicKeyRequired
-    /// Thrown when a security error occured during key pair generation.
-    case securityError(_ errorCode: OSStatus)
+    /// Thrown when the provided alphanumberic value could not be converted into
+    /// bytes using ASCII encoding.
+    case invalidOobValueFormat
+    /// Thrown when the remove device sent a failure indication.
+    case remoteError(_ error: RemoteProvisioningError)
+    /// Thrown when the key pair generation has failed.
+    case keyGenerationFailed(_ error: OSStatus)
+}
+
+public enum RemoteProvisioningError: UInt8 {
+    /// The provisioning protocol PDU is not recognized by the device.
+    case invalidPdu
+    /// The arguments of the protocol PDUs are outside expected values
+    /// or the length of the PDU is different than expected.
+    case invalidFormat
+    /// The PDU received was not expected at this moment of the procedure.
+    case unexpectedPdu
+    /// The computed confirmation value was not successfully verified.
+    case confirmationFailed
+    /// The provisioning protocol cannot be continued due to insufficient
+    /// resources in the device.
+    case outOfResources
+    /// The Data block was not successfully decrypted.
+    case decryptionFailed
+    /// An unexpected error occurred that may not be recoverable.
+    case unexpectedError
+    /// The device cannot assign consecutive unicast addresses to all elements.
+    case cannotAcssignAddresses
 }
 
 public enum AuthAction {
@@ -70,18 +88,64 @@ extension ProvisionigState: CustomDebugStringConvertible {
             return "Provisioner is ready"
         case .invitationSent:
             return "Provisioning Invitation sent"
-        case .capabilitiesReceived(let capabilities):
+        case let .capabilitiesReceived(capabilities):
             return "Provisioning Capabilities received:\n\(capabilities)"
-        case .provisioningStarted:
+        case .provisioning:
             return "Provisioning started"
-        case .authActionRequired(type: _):
-            return "Auth Action required"
-        case .authValueReceived:
-            return "Auth Value received"
         case .complete:
             return "Provisioning complete"
+        case let .fail(error):
+            return "Provisioning failed: \(error)"
+        }
+    }
+    
+}
+
+extension ProvisioningError: CustomDebugStringConvertible {
+    
+    public var debugDescription: String {
+        switch self {
         case .invalidState:
             return "Invalid state"
+        case .invalidPdu:
+            return "Invalid PDU"
+        case .unsupportedAlgorithm:
+            return "Unsupported algorighm"
+        case .unsupportedDevice:
+            return "Unsupported Device"
+        case .oobPublicKeyRequired:
+            return "OOB Public Key required"
+        case .invalidOobValueFormat:
+            return "Invalid value format"
+        case let .remoteError(error):
+            return "\(error)"
+        case let .keyGenerationFailed(status):
+            return "Key generation failed with status \(status)"
+        }
+    }
+    
+}
+
+extension RemoteProvisioningError: CustomDebugStringConvertible {
+    
+    public var debugDescription: String {
+        switch self {
+        case .invalidPdu:
+            return "Invalid PDU"
+        case .invalidFormat:
+            return "Invalid format"
+        case .unexpectedPdu:
+            return "Unexpected PDU"
+        case .confirmationFailed:
+            return "Confirmation failed"
+        case .outOfResources:
+            return "Out of resources"
+        case .decryptionFailed:
+            return "Decryption failed"
+        case .unexpectedError:
+            return "Unexpected error"
+        case .cannotAcssignAddresses:
+            return "Cannot assign addresses"
         }
     }
     

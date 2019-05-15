@@ -114,7 +114,7 @@
                                 <action selector="cancelTapped:" destination="9xq-E9-AJj" id="5je-tU-FwX"/>
                             </connections>
                         </barButtonItem>
-                        <barButtonItem key="rightBarButtonItem" style="plain" id="Rbv-7s-uYB">
+                        <barButtonItem key="rightBarButtonItem" id="Rbv-7s-uYB">
                             <view key="customView" contentMode="scaleToFill" id="5wa-H8-1JI">
                                 <rect key="frame" x="276" y="0.0" width="83" height="44"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>

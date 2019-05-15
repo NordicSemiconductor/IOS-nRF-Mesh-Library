@@ -220,7 +220,7 @@ private extension ProvisioningViewController {
         }
         
         // Start provisioning.
-        presentStatusDialog(message: "Exchanging keys...") {
+        presentStatusDialog(message: "Provisioning...") {
             do {
                 try self.provisioningManager.provision(usingAlgorithm:       .fipsP256EllipticCurve,
                                                        publicKey:            self.publicKey!,
@@ -321,35 +321,38 @@ extension ProvisioningViewController: ProvisioningDelegate {
                     }
                 }
                 
-            case let .authActionRequired(type: authAction):
-                switch authAction {
-                case let .provideStaticKey(callback: callback):
-                    self.dismissStatusDialog() {
-                        let message = "Enter 16-character hexadecimal string."
-                        self.presentTextAlert(title: "Static OOB Key", message: message, type: .keyRequired) { hex in
-                           callback(Data(hex: hex)!)
-                        }
-                    }
-                case let .displayAlphanumeric(text):
-                    self.presentStatusDialog(message: "Enter the following text on your device:\n\n\(text)")
-                case let .displayNumber(value, inputAction: action):
-                    self.presentStatusDialog(message: "Perform \(action) \(value) times on your device.")
-                default:
-                    break
-                }
-                
-            case .authValueReceived:
-                self.presentStatusDialog(message: "Provisioning...")
-                
-            case .invalidState:
+            case let .fail(error):
                 self.dismissStatusDialog() {
-                    self.presentAlert(title: "Error", message: "Device sent unexpected data.")
+                    self.presentAlert(title: "Error", message: "Provisionig failed with an error:\n\(error)")
                     self.abort()
                 }
+                
             default:
                 break
             }
         }
+    }
+    
+    func authenticationActionRequired(_ action: AuthAction) {
+        switch action {
+        case let .provideStaticKey(callback: callback):
+            self.dismissStatusDialog() {
+                let message = "Enter 16-character hexadecimal string."
+                self.presentTextAlert(title: "Static OOB Key", message: message, type: .keyRequired) { hex in
+                    callback(Data(hex: hex)!)
+                }
+            }
+        case let .displayAlphanumeric(text):
+            self.presentStatusDialog(message: "Enter the following text on your device:\n\n\(text)")
+        case let .displayNumber(value, inputAction: action):
+            self.presentStatusDialog(message: "Perform \(action) \(value) times on your device.")
+        default:
+            break
+        }
+    }
+    
+    func inputComplete() {
+        self.presentStatusDialog(message: "Provisioning...")
     }
     
 }

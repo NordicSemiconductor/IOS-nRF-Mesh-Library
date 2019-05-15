@@ -10,6 +10,16 @@ import Security
 
 public protocol ProvisioningDelegate: class {
     
+    /// Callback called when an authentication action is required
+    /// from the user.
+    ///
+    /// - parameter action: The action to be performed.
+    func authenticationActionRequired(_ action: AuthAction)
+    
+    /// Callback called when the user finished Input Action on the
+    /// device.
+    func inputComplete()
+    
     /// Callback called whenever the provisioning status changes.
     ///
     /// - parameter unprovisionedDevice: The device which state has changed.
@@ -24,6 +34,7 @@ public class ProvisioningManager {
     private let meshNetwork: MeshNetwork
     
     private var authenticationMethod: AuthenticationMethod?
+    private var authAction: AuthAction?
     private var privateKey: SecKey?
     private var sharedSecret: Data?
     private var deviceConfirmation: Data?
@@ -64,7 +75,7 @@ public class ProvisioningManager {
     public internal(set) var state: ProvisionigState = .ready {
         didSet {
             switch state {
-            case .invalidState, .complete:
+            case .fail(error: _), .complete:
                 // Restore the delegate.
                 bearer.delegate = bearerDelegate
                 bearerDelegate = nil
@@ -183,7 +194,7 @@ public class ProvisioningManager {
         privateKey = sk
         
         // Send Provisioning Start request.
-        state = .provisioningStarted
+        state = .provisioning
         try send(.start(algorithm: algorithm, publicKey: publicKey,
                         authenticationMethod: authenticationMethod),
                  andAccumulateTo: &confirmationInputs)
@@ -196,7 +207,8 @@ public class ProvisioningManager {
         // calculate the device's Shared Secret.
         if case let .oobPublicKey(key: key) = publicKey {
             confirmationInputs += key
-            try calculateSharedSecret(publicKey: key)
+            sharedSecret = try calculateSharedSecret(publicKey: key)
+            obtainAuthValue()
         }
     }
 }
@@ -221,11 +233,20 @@ extension ProvisioningManager: BearerDelegate {
     
     public func bearer(_ bearer: Bearer, didClose error: Error?) {
         bearerDelegate?.bearer(bearer, didClose: error)
-        bearer.delegate = bearerDelegate
-        bearerDelegate = nil
+        if let delegate = bearerDelegate {
+            bearer.delegate = delegate
+            bearerDelegate = nil
+        }
         
         // Clear provisioning data. Provisioning will have to start again.
+        authenticationMethod = nil
+        privateKey = nil
+        sharedSecret = nil
+        deviceConfirmation = nil
+        provisionerRandom = nil
+        confirmationInputs = Data()
         provisioningCapabilities = nil
+        state = .ready
     }
     
     public func bearer(_ bearer: Bearer, didDeliverData data: Data, ofType type: MessageType) {
@@ -238,7 +259,7 @@ extension ProvisioningManager: BearerDelegate {
         
         guard response.isValid else {
             print("Error: Failed to parse response")
-            state = .invalidState
+            state = .fail(ProvisioningError.invalidPdu)
             return
         }
         
@@ -261,19 +282,20 @@ extension ProvisioningManager: BearerDelegate {
             state = .capabilitiesReceived(capabilities)
             
         // Device Public Key has been received.
-        case (.provisioningStarted, .publicKey):
+        case (.provisioning, .publicKey):
             let publicKey = response.publicKey!
             confirmationInputs += data.dropFirst()
             do {
-                try calculateSharedSecret(publicKey: publicKey)
+                sharedSecret = try calculateSharedSecret(publicKey: publicKey)
+                obtainAuthValue()
             } catch {
                 print("Error: Generating Shared secret failed: \(error)")
-                state = .invalidState
+                state = .fail(error)
             }
             
         // The user has performed the Input Action on the device.
-        case let (.authActionRequired(type: authAction), .inputComplete):
-            switch authAction {
+        case (.provisioning, .inputComplete):
+            switch authAction! {
             case let .displayNumber(value, inputAction: _):
                 var authValue = Data(repeating: 0, count: 16 - MemoryLayout.size(ofValue: value))
                 authValue += value.bigEndian
@@ -288,20 +310,25 @@ extension ProvisioningManager: BearerDelegate {
             }
         
         // The Provisioning Confirmation value has been received.
-        case (.authValueReceived, .confirmation):
+        case (.provisioning, .confirmation):
             deviceConfirmation = response.confirmation!
             do {
                 try send(.random(provisionerRandom!))
             } catch {
                 print("Error: Sending Provisioner Random failed: \(error)")
-                state = .invalidState
+                state = .fail(error)
             }
             
-        case (.authValueReceived, .random):
+        // The device Random value has been received. We may now authenticate the device.
+        case (.provisioning, .random):
             let random = response.random!
             let confirmation = calculateConfirmation(random: random, authValue: authValue!)
             print("Received:   \(deviceConfirmation!.hex)")
             print("Calculated: \(confirmation.hex)")
+            
+        // The provisioned device sent an error.
+        case (_, .failed):
+            state = .fail(ProvisioningError.remoteError(response.error!))
             
         default:
             break
@@ -309,6 +336,85 @@ extension ProvisioningManager: BearerDelegate {
     }
     
 }
+
+private extension ProvisioningManager {
+    
+    /// This method asks the user to provide a OOB value based on the
+    /// authentication method specified in the provisioning process.
+    /// For `.noOob` case, the value is automatically set to 0s.
+    /// This method will call `authValueReceived(:)` when the value
+    /// has been obtained.
+    func obtainAuthValue() {
+        switch self.authenticationMethod! {
+        // For No OOB, the AuthValue is just 16 byte array filled with 0.
+        case .noOob:
+            let authValue = Data(repeating: 0, count: 16)
+            authValueReceived(authValue)
+            
+        // For Static OOB, the AuthValue is the Key enetered by the user.
+        // The key must be 16 bytes long.
+        case .staticOob:
+            delegate?.authenticationActionRequired(.provideStaticKey(callback: { key in
+                self.authValueReceived(key)
+            }))
+            
+        // For Output OOB, the device will blink, beep, vibrate or display a
+        // value, and the user must enter the value on the phone. The entered
+        // value becomes a part of the AuthValue.
+        case let .outputOob(action: action, size: size):
+            switch action {
+            case .outputAlphanumeric:
+                delegate?.authenticationActionRequired(.provideAlphanumeric(maximumNumberOfCharacters: size, callback: { text in
+                    guard var authValue = text.data(using: .ascii) else {
+                        self.state = .fail(ProvisioningError.invalidOobValueFormat)
+                        return
+                    }
+                    authValue += Data(count: 16 - authValue.count)
+                    self.delegate?.inputComplete()
+                    self.authValueReceived(authValue)
+                }))
+            case .blink, .beep, .vibrate, .outputNumeric:
+                delegate?.authenticationActionRequired(.provideNumeric(maximumNumberOfDigits: size, outputAction: action, callback: { value in
+                    var authValue = Data(count: 16 - MemoryLayout.size(ofValue: value))
+                    authValue += value.bigEndian
+                    self.delegate?.inputComplete()
+                    self.authValueReceived(authValue)
+                }))
+            }
+            
+        case let .inputOob(action: action, size: size):
+            switch action {
+            case .inputAlphanumeric:
+                let random = randomString(length: Int(size))
+                delegate?.authenticationActionRequired(.displayAlphanumeric(random))
+            case .push, .twist, .inputNumeric:
+                let random = randomInt(length: Int(size))
+                delegate?.authenticationActionRequired(.displayNumber(random, inputAction: action))
+            }
+        }
+    }
+
+    /// This method should be called when the OOB value has been received
+    /// and Auth Value has been calculated.
+    /// It computes and sends the Provisioner Confirmation to the device.
+    ///
+    /// - parameter value: The 16 byte long Auth Value.
+    func authValueReceived(_ value: Data) {
+        authValue = value
+        provisionerRandom = randomData(length: 16)
+        
+        let confirmationProvisioner = calculateConfirmation(random: provisionerRandom!, authValue: value)
+        do {
+            try send(.confirmation(confirmationProvisioner))
+        } catch {
+            print("Error: Sending Provisioning Confirmation failed: \(error)")
+            state = .fail(error)
+        }
+    }
+    
+}
+
+// MARK: - Helper methods
 
 private extension ProvisioningManager {
     
@@ -346,7 +452,7 @@ private extension ProvisioningManager {
             } else {
                 print("SecKeyGeneratePair failed with error code: \(status)")
             }
-            throw ProvisioningError.securityError(status)
+            throw ProvisioningError.keyGenerationFailed(status)
         }
         return (privateKey!, publicKey!)
     }
@@ -355,7 +461,8 @@ private extension ProvisioningManager {
     /// and the local Private Key.
     ///
     /// - parameter publicKey: The device's Public Key as bytes.
-    func calculateSharedSecret(publicKey: Data) throws {
+    /// - returns: The ECDH Shared Secret.
+    func calculateSharedSecret(publicKey: Data) throws -> Data {
         // First byte has to be 0x04 to indicate uncompressed representation.
         var devicePublicKeyData = Data([0x04])
         devicePublicKeyData.append(contentsOf: publicKey)
@@ -367,7 +474,6 @@ private extension ProvisioningManager {
         let devicePublicKey = SecKeyCreateWithData(devicePublicKeyData as CFData,
                                                    pubKeyParameters, &error)
         guard error == nil else {
-            privateKey = nil
             throw error!.takeRetainedValue()
         }
         
@@ -377,81 +483,31 @@ private extension ProvisioningManager {
                                               SecKeyAlgorithm.ecdhKeyExchangeStandardX963SHA256,
                                               devicePublicKey!, exchangeResultParams, &error)
         guard error == nil else {
-            privateKey = nil
             throw error!.takeRetainedValue()
         }
         
-        privateKey = nil
-        sharedSecret = ssk! as Data
-        obtainAuthValue()
+        return ssk! as Data
     }
     
-    /// This method asks the user to provide a OOB value based on the
-    /// authentication method specified in the provisioning process.
-    /// For `.noOob` case, the value is automatically set to 0s.
-    /// This method will call `authValueReceived(:)` when the value
-    /// has been obtained.
-    func obtainAuthValue() {
-        switch self.authenticationMethod! {
-        // For No OOB, the AuthValue is just 16 byte array filled with 0.
-        case .noOob:
-            let authValue = Data(repeating: 0, count: 16)
-            authValueReceived(authValue)
-            
-        // For Static OOB, the AuthValue is the Key enetered by the user.
-        // The key must be 16 bytes long.
-        case .staticOob:
-            state = .authActionRequired(type: .provideStaticKey(callback: { key in
-                self.authValueReceived(key)
-            }))
-            
-        // For Output OOB, the device will blink, beep, vibrate or display a
-        // value, and the user must enter the value on the phone. The entered
-        // value becomes a part of the AuthValue.
-        case let .outputOob(action: action, size: size):
-            switch action {
-            case .outputAlphanumeric:
-                state = .authActionRequired(type: .provideAlphanumeric(maximumNumberOfCharacters: size, callback: { text in
-                    guard var authValue = text.data(using: .ascii) else {
-                        self.state = .invalidState
-                        return
-                    }
-                    authValue += Data(count: 16 - authValue.count)
-                    self.authValueReceived(authValue)
-                }))
-            case .blink, .beep, .vibrate, .outputNumeric:
-                state = .authActionRequired(type: .provideNumeric(maximumNumberOfDigits: size, outputAction: action, callback: { value in
-                    var authValue = Data(count: 16 - MemoryLayout.size(ofValue: value))
-                    authValue += value.bigEndian
-                    self.authValueReceived(authValue)
-                }))
-            }
-            
-        case let .inputOob(action: action, size: size):
-            switch action {
-            case .inputAlphanumeric:
-                let random = randomString(length: Int(size))
-                state = .authActionRequired(type: .displayAlphanumeric(random))
-            case .push, .twist, .inputNumeric:
-                let random = randomInt(length: Int(size))
-                state = .authActionRequired(type: .displayNumber(random, inputAction: action))
-            }
-        }
-    }
-
-    func authValueReceived(_ value: Data) {
-        state = .authValueReceived
+    /// This method calculates the Provisioning Confirmation based on the
+    /// 16-byte Random and 16 byte AuthValue.
+    ///
+    /// - parameter random:    An array of 16 random bytes.
+    /// - parameter authValue: The Auth Value calculated based on the Authentication Method.
+    /// - returns: The Provisioning Confirmation value.
+    func calculateConfirmation(random: Data, authValue: Data) -> Data {
+        let helper = OpenSSLHelper()
+        // Calculate the Confirmation Salt = s1(confirmationInputs).
+        let confirmationSalt = helper.calculateSalt(confirmationInputs)!
         
-        authValue = value
-        provisionerRandom = randomData(length: 16)
+        // Calculate the Confirmation Key = k1(ECDH Secret, confirmationSalt, 'prck')
+        let confirmationKey  = helper.calculateK1(withN: sharedSecret!,
+                                                  salt: confirmationSalt,
+                                                  andP: "prck".data(using: .ascii))!
         
-        let confirmationProvisioner = calculateConfirmation(random: provisionerRandom!, authValue: value)
-        do {
-            try send(.confirmation(confirmationProvisioner))
-        } catch {
-            print("Error: Sending Provisioning Confirmation failed: \(error)")
-            state = .invalidState
-        }
+        // Calculate the Confirmation Provisioner using CMAC(random + authValue)
+        let confirmationData = random + authValue
+        return helper.calculateCMAC(confirmationData, andKey: confirmationKey)!
     }
     
     /// Generates a random string of numerics and capital English letters
@@ -472,21 +528,6 @@ private extension ProvisioningManager {
         var data = [UInt8](repeating: 0, count: length)
         _ = SecRandomCopyBytes(kSecRandomDefault, length, &data)
         return Data(data)
-    }
-    
-    func calculateConfirmation(random: Data, authValue: Data) -> Data {
-        let helper = OpenSSLHelper()
-        // Calculate the Confirmation Salt = s1(confirmationInputs).
-        let confirmationSalt = helper.calculateSalt(confirmationInputs)!
-        
-        // Calculate the Confirmation Key = k1(ECDH Secret, confirmationSalt, 'prck')
-        let confirmationKey  = helper.calculateK1(withN: sharedSecret!,
-                                                  salt: confirmationSalt,
-                                                  andP: "prck".data(using: .ascii))!
-        
-        // Calculate the Confirmation Provisioner using CMAC(random + authValue)
-        let confirmationData = random + authValue
-        return helper.calculateCMAC(confirmationData, andKey: confirmationKey)!
     }
 
 }

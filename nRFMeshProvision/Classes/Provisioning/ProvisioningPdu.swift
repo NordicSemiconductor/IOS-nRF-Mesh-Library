@@ -67,6 +67,7 @@ internal struct ProvisioningResponse {
     let publicKey: Data?
     let confirmation: Data?
     let random: Data?
+    let error: RemoteProvisioningError?
     
     init?(_ data: Data) {
         guard data.count > 0, let pduType = ProvisioningPduType(rawValue: data[0]) else {
@@ -81,26 +82,37 @@ internal struct ProvisioningResponse {
             publicKey = nil
             confirmation = nil
             random = nil
+            error = nil
         case .publicKey:
             publicKey = data.subdata(in: 1..<data.count)
             capabilities = nil
             confirmation = nil
             random = nil
+            error = nil
         case .inputComplete:
             publicKey = nil
             capabilities = nil
             confirmation = nil
             random = nil
+            error = nil
         case .confirmation:
             publicKey = nil
             capabilities = nil
             confirmation = data.subdata(in: 1..<data.count)
             random = nil
+            error = nil
         case .random:
             publicKey = nil
             capabilities = nil
             confirmation = nil
             random = data.subdata(in: 1..<data.count)
+            error = nil
+        case .failed:
+            publicKey = nil
+            capabilities = nil
+            confirmation = nil
+            random = nil
+            error = RemoteProvisioningError(rawValue: data[1])
         default:
             return nil
         }
@@ -118,6 +130,8 @@ internal struct ProvisioningResponse {
             return confirmation != nil && confirmation!.count == 16
         case .random:
             return random != nil && random!.count == 16
+        case .failed:
+            return error != nil
         default:
             return false
         }
