@@ -386,11 +386,12 @@ private extension ProvisioningManager {
             switch action {
             case .inputAlphanumeric:
                 let random = randomString(length: Int(size))
-                delegate?.authenticationActionRequired(.displayAlphanumeric(random))
+                authAction = .displayAlphanumeric(random)
             case .push, .twist, .inputNumeric:
                 let random = randomInt(length: Int(size))
-                delegate?.authenticationActionRequired(.displayNumber(random, inputAction: action))
+                authAction = .displayNumber(random, inputAction: action)
             }
+            delegate?.authenticationActionRequired(authAction!)
         }
     }
 
