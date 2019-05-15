@@ -69,19 +69,13 @@ public class ProvisioningManager {
     public var networkKey: NetworkKey?
     
     /// The provisioning delegate will receive provisioning state updates.
+    /// It is required if the authentication method is set to other value
+    /// than `.noOob`.
     public weak var delegate: ProvisioningDelegate?
     
     /// The current state of the provisioning process.
     public internal(set) var state: ProvisionigState = .ready {
         didSet {
-            switch state {
-            case .fail(error: _), .complete:
-                // Restore the delegate.
-                bearer.delegate = bearerDelegate
-                bearerDelegate = nil
-            default:
-                break
-            }
             delegate?.provisioningState(of: unprovisionedDevice, didChangeTo: state)
         }
     }
@@ -140,6 +134,11 @@ public class ProvisioningManager {
             throw BearerError.messageTypeNotSupported
         }
         
+        // Has the provisioning been restarted?
+        if case .fail = state {
+            reset()
+        }
+        
         // Is the Provisioner Manager in the right state?
         guard case .ready = state else {
             throw ProvisioningError.invalidState
@@ -150,12 +149,15 @@ public class ProvisioningManager {
             throw BearerError.bearerClosed
         }
         
+        // Assign bearer delegate to self. If one was already set, events
+        // will be forwarded. Don't modify Bearer delegate from now on.
         bearerDelegate = bearer.delegate
         bearer.delegate = self
         
         // Clear the Confirmation Inputs buffer.
         confirmationInputs = Data(capacity: 1 + 11 + 5 + 64 + 64)
-        state = .invitationSent
+        
+        state = .receivingCapabilities
         try send(.invite(attentionTimer: attentionTimer), andAccumulateTo: &confirmationInputs)
     }
     
@@ -215,10 +217,21 @@ public class ProvisioningManager {
 
 extension ProvisioningManager: BearerDelegate {
     
+    /// This method sends the provisioning request to the device
+    /// over the Bearer specified in the init.
+    ///
+    /// - parameter request: The request to be sent.
     private func send(_ request: ProvisioningRequest) throws {
        try bearer.send(request)
     }
     
+    /// This method sends the provisioning request to the device
+    /// over the Bearer specified in the init. Additionally, it
+    /// adds the request payload to given inputs. Inputs are
+    /// required in device authorization.
+    ///
+    /// - parameter request: The request to be sent.
+    /// - parameter inputs:  The Provisioning Inputs.
     private func send(_ request: ProvisioningRequest, andAccumulateTo inputs: inout Data) throws {
         let data = request.pdu
         // The first byte is the type. We only accumulate payload.
@@ -238,15 +251,7 @@ extension ProvisioningManager: BearerDelegate {
             bearerDelegate = nil
         }
         
-        // Clear provisioning data. Provisioning will have to start again.
-        authenticationMethod = nil
-        privateKey = nil
-        sharedSecret = nil
-        deviceConfirmation = nil
-        provisionerRandom = nil
-        confirmationInputs = Data()
-        provisioningCapabilities = nil
-        state = .ready
+        reset()
     }
     
     public func bearer(_ bearer: Bearer, didDeliverData data: Data, ofType type: MessageType) {
@@ -267,7 +272,7 @@ extension ProvisioningManager: BearerDelegate {
         switch (state, response.type) {
             
         // Provisioning Capabilities have been received.
-        case (.invitationSent, .capabilities):
+        case (.receivingCapabilities, .capabilities):
             let capabilities = response.capabilities!
             provisioningCapabilities = capabilities
             confirmationInputs += data.dropFirst()
@@ -297,7 +302,7 @@ extension ProvisioningManager: BearerDelegate {
         case (.provisioning, .inputComplete):
             switch authAction! {
             case let .displayNumber(value, inputAction: _):
-                var authValue = Data(repeating: 0, count: 16 - MemoryLayout.size(ofValue: value))
+                var authValue = Data(count: 16 - MemoryLayout.size(ofValue: value))
                 authValue += value.bigEndian
                 authValueReceived(authValue)
             case let .displayAlphanumeric(text):
@@ -348,7 +353,7 @@ private extension ProvisioningManager {
         switch self.authenticationMethod! {
         // For No OOB, the AuthValue is just 16 byte array filled with 0.
         case .noOob:
-            let authValue = Data(repeating: 0, count: 16)
+            let authValue = Data(count: 16)
             authValueReceived(authValue)
             
         // For Static OOB, the AuthValue is the Key enetered by the user.
@@ -401,6 +406,7 @@ private extension ProvisioningManager {
     ///
     /// - parameter value: The 16 byte long Auth Value.
     func authValueReceived(_ value: Data) {
+        authAction = nil
         authValue = value
         provisionerRandom = randomData(length: 16)
         
@@ -411,6 +417,17 @@ private extension ProvisioningManager {
             print("Error: Sending Provisioning Confirmation failed: \(error)")
             state = .fail(error)
         }
+    }
+    
+    func reset() {
+        authenticationMethod = nil
+        privateKey = nil
+        sharedSecret = nil
+        deviceConfirmation = nil
+        provisionerRandom = nil
+        confirmationInputs = Data()
+        provisioningCapabilities = nil
+        state = .ready
     }
     
 }

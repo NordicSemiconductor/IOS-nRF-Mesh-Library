@@ -11,7 +11,7 @@ public enum ProvisionigState {
     /// Provisioning has not been started.
     case ready
     /// Provisioning Invite has been sent.
-    case invitationSent
+    case receivingCapabilities
     /// Provisioning Capabilities were received.
     case capabilitiesReceived(_ capabilities: ProvisioningCapabilities)
     /// Provisioning has been started.
@@ -86,7 +86,7 @@ extension ProvisionigState: CustomDebugStringConvertible {
         switch self {
         case .ready:
             return "Provisioner is ready"
-        case .invitationSent:
+        case .receivingCapabilities:
             return "Provisioning Invitation sent"
         case let .capabilitiesReceived(capabilities):
             return "Provisioning Capabilities received:\n\(capabilities)"

@@ -275,7 +275,7 @@ extension ProvisioningViewController: ProvisioningDelegate {
         DispatchQueue.main.async {
             switch state {
                 
-            case .invitationSent:
+            case .reveivingCapabilities:
                 self.presentStatusDialog(message: "Receiving capabilities...")
                 
             case .capabilitiesReceived(let capabilities):
