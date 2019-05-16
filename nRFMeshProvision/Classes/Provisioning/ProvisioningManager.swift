@@ -29,22 +29,18 @@ public protocol ProvisioningDelegate: class {
 }
 
 public class ProvisioningManager {
+    private let helper = OpenSSLHelper()
+    
     private let unprovisionedDevice: UnprovisionedDevice
     private let bearer: ProvisioningBearer
     private let meshNetwork: MeshNetwork
     
-    private var authenticationMethod: AuthenticationMethod?
-    private var authAction: AuthAction?
-    private var privateKey: SecKey?
-    private var sharedSecret: Data?
-    private var deviceConfirmation: Data?
-    private var authValue: Data?
-    private var provisionerRandom: Data?
+    private var authenticationMethod: AuthenticationMethod!
+    private var authAction: AuthAction!
+    private var provisioningData: ProvisioningData!
     
-    /// The Confirmation Inputs is built over the provisioning process.
-    /// It is composed for: Provisioning Invite PDU, Provisioning Capabilities PDU,
-    /// Provisioning Start PDU, Provisioner's Public Key and device's Public Key.
-    private var confirmationInputs: Data!
+    /// The Device Key. This field is set when the provisioning process is complete.
+    var deviceKey: Data?
     
     /// The original Bearer delegate. It will be notified on bearer state updates.
     private weak var bearerDelegate: BearerDelegate?
@@ -155,10 +151,9 @@ public class ProvisioningManager {
         bearer.delegate = self
         
         // Clear the Confirmation Inputs buffer.
-        confirmationInputs = Data(capacity: 1 + 11 + 5 + 64 + 64)
         
         state = .requestingCapabilities
-        try send(.invite(attentionTimer: attentionTimer), andAccumulateTo: &confirmationInputs)
+        try send(.invite(attentionTimer: attentionTimer), andAccumulateTo: provisioningData)
     }
     
     /// This method starts the provisioning of the device.
@@ -192,24 +187,31 @@ public class ProvisioningManager {
         
         // Try generating Private and Public Keys. This may fail if the given
         // algorithm is not supported.
-        let (sk, pk) = try generateKeyPair(algorithm: algorithm)
-        privateKey = sk
+        provisioningData = try ProvisioningData(for: meshNetwork,
+                                                networkKey: networkKey!,
+                                                unicastAddress: unicastAddress!,
+                                                using: algorithm)
+        
+        // If the device's Public Key was obtained OOB, we are now ready to
+        // calculate the device's Shared Secret.
+        if case let .oobPublicKey(key: key) = publicKey {
+            try provisioningData.provisionerDidObtain(devicePublicKey: key)
+        }
         
         // Send Provisioning Start request.
         state = .provisioning
         try send(.start(algorithm: algorithm, publicKey: publicKey,
                         authenticationMethod: authenticationMethod),
-                 andAccumulateTo: &confirmationInputs)
+                 andAccumulateTo: provisioningData)
         self.authenticationMethod = authenticationMethod
         
         // Send the Public Key of the Provisioner.
-        try send(.publicKey(pk.publicKey()), andAccumulateTo: &confirmationInputs)
+        try send(.publicKey(provisioningData.provisionerPublicKey), andAccumulateTo: provisioningData)
         
         // If the device's Public Key was obtained OOB, we are now ready to
-        // calculate the device's Shared Secret.
+        // authenticate.
         if case let .oobPublicKey(key: key) = publicKey {
-            confirmationInputs += key
-            sharedSecret = try calculateSharedSecret(publicKey: key)
+            provisioningData.accumulate(pdu: key)
             obtainAuthValue()
         }
     }
@@ -232,11 +234,11 @@ extension ProvisioningManager: BearerDelegate {
     ///
     /// - parameter request: The request to be sent.
     /// - parameter inputs:  The Provisioning Inputs.
-    private func send(_ request: ProvisioningRequest, andAccumulateTo inputs: inout Data) throws {
-        let data = request.pdu
+    private func send(_ request: ProvisioningRequest, andAccumulateTo data: ProvisioningData) throws {
+        let pdu = request.pdu
         // The first byte is the type. We only accumulate payload.
-        inputs += data.dropFirst()
-        try bearer.send(data, ofType: .provisioningPdu)
+        data.accumulate(pdu: pdu.dropFirst())
+        try bearer.send(pdu, ofType: .provisioningPdu)
     }
     
     public func bearerDidOpen(_ bearer: Bearer) {
@@ -263,7 +265,6 @@ extension ProvisioningManager: BearerDelegate {
         }
         
         guard response.isValid else {
-            print("Error: Failed to parse response")
             state = .fail(ProvisioningError.invalidPdu)
             return
         }
@@ -275,7 +276,7 @@ extension ProvisioningManager: BearerDelegate {
         case (.requestingCapabilities, .capabilities):
             let capabilities = response.capabilities!
             provisioningCapabilities = capabilities
-            confirmationInputs += data.dropFirst()
+            provisioningData.accumulate(pdu: data.dropFirst())
             
             // Calculate the Unicast Address automatically based on the
             // elements count.
@@ -289,12 +290,11 @@ extension ProvisioningManager: BearerDelegate {
         // Device Public Key has been received.
         case (.provisioning, .publicKey):
             let publicKey = response.publicKey!
-            confirmationInputs += data.dropFirst()
+            provisioningData.accumulate(pdu: data.dropFirst())
             do {
-                sharedSecret = try calculateSharedSecret(publicKey: publicKey)
+                try provisioningData.provisionerDidObtain(devicePublicKey: publicKey)
                 obtainAuthValue()
             } catch {
-                print("Error: Generating Shared secret failed: \(error)")
                 state = .fail(error)
             }
             
@@ -316,20 +316,28 @@ extension ProvisioningManager: BearerDelegate {
         
         // The Provisioning Confirmation value has been received.
         case (.provisioning, .confirmation):
-            deviceConfirmation = response.confirmation!
+            provisioningData.provisionerDidObtain(deviceConfirmation: response.confirmation!)
             do {
-                try send(.random(provisionerRandom!))
+                try send(.random(provisioningData.provisionerRandom))
             } catch {
-                print("Error: Sending Provisioner Random failed: \(error)")
                 state = .fail(error)
             }
             
         // The device Random value has been received. We may now authenticate the device.
         case (.provisioning, .random):
-            let random = response.random!
-            let confirmation = calculateConfirmation(random: random, authValue: authValue!)
-            print("Received:   \(deviceConfirmation!.hex)")
-            print("Calculated: \(confirmation.hex)")
+            provisioningData.provisionerDidObtain(deviceRandom: response.random!)
+            do {
+                try provisioningData.validateConfirmation()
+                try send(.data(provisioningData.encryptedProvisioningDataWithMic))
+            } catch {
+                state = .fail(error)
+                return
+            }
+            
+        // The provisioning process is complete.
+        case (.provisioning, .complete):
+            deviceKey = provisioningData.deviceKey
+            state = .complete
             
         // The provisioned device sent an error.
         case (_, .failed):
@@ -408,26 +416,18 @@ private extension ProvisioningManager {
     /// - parameter value: The 16 byte long Auth Value.
     func authValueReceived(_ value: Data) {
         authAction = nil
-        authValue = value
-        provisionerRandom = randomData(length: 16)
-        
-        let confirmationProvisioner = calculateConfirmation(random: provisionerRandom!, authValue: value)
+        provisioningData.provisionerDidObtain(authValue: value)
         do {
-            try send(.confirmation(confirmationProvisioner))
+            try send(.confirmation(provisioningData.provisionerConfirmation))
         } catch {
-            print("Error: Sending Provisioning Confirmation failed: \(error)")
             state = .fail(error)
         }
     }
     
     func reset() {
         authenticationMethod = nil
-        privateKey = nil
-        sharedSecret = nil
-        deviceConfirmation = nil
-        provisionerRandom = nil
-        confirmationInputs = Data()
         provisioningCapabilities = nil
+        provisioningData = nil
         state = .ready
     }
     
@@ -436,98 +436,6 @@ private extension ProvisioningManager {
 // MARK: - Helper methods
 
 private extension ProvisioningManager {
-    
-    /// Generates a pair of Private and Public Keys using P256 Elliptic Curve
-    /// algorithm.
-    ///
-    /// - parameter algorithm: The algorithm for key pair generation.
-    /// - returns: The Private and Public Key pair.
-    /// - throws: This method throws an error if the key pair generation has failed
-    ///           or the given algorithm is not supported.
-    func generateKeyPair(algorithm: Algorithm) throws -> (privateKey: SecKey, publicKey: SecKey) {
-        guard case .fipsP256EllipticCurve = algorithm else {
-            throw ProvisioningError.unsupportedAlgorithm
-        }
-        
-        // Private key parameters.
-        let privateKeyParams = [kSecAttrIsPermanent : false] as CFDictionary
-        
-        // Public key parameters.
-        let publicKeyParams = [kSecAttrIsPermanent : false] as CFDictionary
-        
-        // Global parameters.
-        let parameters = [kSecAttrKeyType : kSecAttrKeyTypeECSECPrimeRandom,
-                          kSecAttrKeySizeInBits : 256,
-                          kSecPublicKeyAttrs : publicKeyParams,
-                          kSecPrivateKeyAttrs : privateKeyParams] as CFDictionary
-        
-        var publicKey, privateKey: SecKey?
-        let status = SecKeyGeneratePair(parameters as CFDictionary, &publicKey, &privateKey)
-        
-        guard status == errSecSuccess else {
-            if #available(iOS 11.3, *) {
-                let message = SecCopyErrorMessageString(status, nil)
-                print("SecKeyGeneratePair failed with error: \(String(describing: message))")
-            } else {
-                print("SecKeyGeneratePair failed with error code: \(status)")
-            }
-            throw ProvisioningError.keyGenerationFailed(status)
-        }
-        return (privateKey!, publicKey!)
-    }
-    
-    /// Calculates the Shared Secret based on the given Public Key
-    /// and the local Private Key.
-    ///
-    /// - parameter publicKey: The device's Public Key as bytes.
-    /// - returns: The ECDH Shared Secret.
-    func calculateSharedSecret(publicKey: Data) throws -> Data {
-        // First byte has to be 0x04 to indicate uncompressed representation.
-        var devicePublicKeyData = Data([0x04])
-        devicePublicKeyData.append(contentsOf: publicKey)
-        
-        let pubKeyParameters = [kSecAttrKeyType : kSecAttrKeyTypeECSECPrimeRandom,
-                                kSecAttrKeyClass: kSecAttrKeyClassPublic] as CFDictionary
-        
-        var error: Unmanaged<CFError>?
-        let devicePublicKey = SecKeyCreateWithData(devicePublicKeyData as CFData,
-                                                   pubKeyParameters, &error)
-        guard error == nil else {
-            throw error!.takeRetainedValue()
-        }
-        
-        let exchangeResultParams = [kSecAttrKeyType: kSecAttrKeyTypeECSECPrimeRandom] as CFDictionary
-        
-        let ssk = SecKeyCopyKeyExchangeResult(privateKey!,
-                                              SecKeyAlgorithm.ecdhKeyExchangeStandardX963SHA256,
-                                              devicePublicKey!, exchangeResultParams, &error)
-        guard error == nil else {
-            throw error!.takeRetainedValue()
-        }
-        
-        return ssk! as Data
-    }
-    
-    /// This method calculates the Provisioning Confirmation based on the
-    /// 16-byte Random and 16 byte AuthValue.
-    ///
-    /// - parameter random:    An array of 16 random bytes.
-    /// - parameter authValue: The Auth Value calculated based on the Authentication Method.
-    /// - returns: The Provisioning Confirmation value.
-    func calculateConfirmation(random: Data, authValue: Data) -> Data {
-        let helper = OpenSSLHelper()
-        // Calculate the Confirmation Salt = s1(confirmationInputs).
-        let confirmationSalt = helper.calculateSalt(confirmationInputs)!
-        
-        // Calculate the Confirmation Key = k1(ECDH Secret, confirmationSalt, 'prck')
-        let confirmationKey  = helper.calculateK1(withN: sharedSecret!,
-                                                  salt: confirmationSalt,
-                                                  andP: "prck".data(using: .ascii))!
-        
-        // Calculate the Confirmation Provisioner using CMAC(random + authValue)
-        let confirmationData = random + authValue
-        return helper.calculateCMAC(confirmationData, andKey: confirmationKey)!
-    }
     
     /// Generates a random string of numerics and capital English letters
     /// with given length.
@@ -541,28 +449,5 @@ private extension ProvisioningManager {
         let upperbound = UInt(pow(10.0, Double(length)))
         return UInt.random(in: 1...upperbound)
     }
-    
-    /// Generates an array of cryptographically secure random bytes.
-    func randomData(length: Int) -> Data {
-        var data = [UInt8](repeating: 0, count: length)
-        _ = SecRandomCopyBytes(kSecRandomDefault, length, &data)
-        return Data(data)
-    }
 
-}
-
-private extension SecKey {
-    
-    /// Returns the Public Key as Data from the SecKey. The SecKey must contain the
-    /// valid public key.
-    func publicKey() throws -> Data {
-        var error: Unmanaged<CFError>?
-        guard let representation = SecKeyCopyExternalRepresentation(self, &error) else {
-            throw error!.takeRetainedValue()
-        }
-        let data = representation as Data
-        // First is 0x04 to indicate uncompressed representation.
-        return data.dropFirst()
-    }
-    
 }

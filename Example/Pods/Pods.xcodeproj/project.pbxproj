@@ -71,6 +71,8 @@
 		528352B622843DA50097B949 /* ProvisioningManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 528352B522843DA50097B949 /* ProvisioningManager.swift */; };
 		528352B82285A3A30097B949 /* Node+Address.swift in Sources */ = {isa = PBXBuildFile; fileRef = 528352B72285A3A30097B949 /* Node+Address.swift */; };
 		528352BA2285A3DF0097B949 /* Node+Keys.swift in Sources */ = {isa = PBXBuildFile; fileRef = 528352B92285A3DF0097B949 /* Node+Keys.swift */; };
+		528AB9F2228C4F3E000BE9DC /* IvIndex.swift in Sources */ = {isa = PBXBuildFile; fileRef = 528AB9F1228C4F3E000BE9DC /* IvIndex.swift */; };
+		528AB9F4228C51AA000BE9DC /* ProvisioningData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 528AB9F3228C51AA000BE9DC /* ProvisioningData.swift */; };
 		529B757922411970008F1CE7 /* MeshNetworkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529B757822411970008F1CE7 /* MeshNetworkManager.swift */; };
 		529B757D22423DEE008F1CE7 /* Storage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529B757C22423DEE008F1CE7 /* Storage.swift */; };
 		529B75EA224A6CE4008F1CE7 /* Element.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529B75E1224A6CE2008F1CE7 /* Element.swift */; };
@@ -212,6 +214,8 @@
 		528352B522843DA50097B949 /* ProvisioningManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProvisioningManager.swift; sourceTree = "<group>"; };
 		528352B72285A3A30097B949 /* Node+Address.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Node+Address.swift"; sourceTree = "<group>"; };
 		528352B92285A3DF0097B949 /* Node+Keys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Node+Keys.swift"; sourceTree = "<group>"; };
+		528AB9F1228C4F3E000BE9DC /* IvIndex.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IvIndex.swift; sourceTree = "<group>"; };
+		528AB9F3228C51AA000BE9DC /* ProvisioningData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProvisioningData.swift; sourceTree = "<group>"; };
 		529B757822411970008F1CE7 /* MeshNetworkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MeshNetworkManager.swift; path = nRFMeshProvision/Classes/MeshNetworkManager.swift; sourceTree = "<group>"; };
 		529B757C22423DEE008F1CE7 /* Storage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Storage.swift; path = nRFMeshProvision/Classes/Storage.swift; sourceTree = "<group>"; };
 		529B75E1224A6CE2008F1CE7 /* Element.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Element.swift; sourceTree = "<group>"; };
@@ -450,6 +454,7 @@
 				5283528D2281B3510097B949 /* ProvisioningState.swift */,
 				5283528F2281B57A0097B949 /* Beacon.swift */,
 				528352912281B68E0097B949 /* ProvisioningPdu.swift */,
+				528AB9F3228C51AA000BE9DC /* ProvisioningData.swift */,
 			);
 			name = Provisioning;
 			path = nRFMeshProvision/Classes/Provisioning;
@@ -500,6 +505,7 @@
 				529B760F224A6D47008F1CE7 /* KeyIndex.swift */,
 				529B7620224B8213008F1CE7 /* MeshAddress.swift */,
 				529B7622224BAB26008F1CE7 /* Publish.swift */,
+				528AB9F1228C4F3E000BE9DC /* IvIndex.swift */,
 			);
 			name = "Mesh Model";
 			path = "nRFMeshProvision/Classes/Mesh Model";
@@ -905,6 +911,7 @@
 			files = (
 				529B761D224A6E20008F1CE7 /* Model.swift in Sources */,
 				5283527C22802A370097B949 /* GattBearer.swift in Sources */,
+				528AB9F4228C51AA000BE9DC /* ProvisioningData.swift in Sources */,
 				528352882281B2DC0097B949 /* PublicKey.swift in Sources */,
 				529B75EF224A6CE4008F1CE7 /* MeshData.swift in Sources */,
 				528352442271F0650097B949 /* MeshNetwork+Nodes.swift in Sources */,
@@ -945,6 +952,7 @@
 				5283529A2282C55B0097B949 /* PBGattBearer.swift in Sources */,
 				2545014E9EC8A64DE403DC5863089112 /* OpenSSLHelper.m in Sources */,
 				528352AE228302860097B949 /* BaseGattProxyBearer.swift in Sources */,
+				528AB9F2228C4F3E000BE9DC /* IvIndex.swift in Sources */,
 				5283524C2276F53A0097B949 /* Key.swift in Sources */,
 				529B7625224BB02E008F1CE7 /* Data+Hex.swift in Sources */,
 				529B75ED224A6CE4008F1CE7 /* AddressRange.swift in Sources */,

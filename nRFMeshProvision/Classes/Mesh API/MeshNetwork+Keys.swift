@@ -11,14 +11,20 @@ public extension MeshNetwork {
     
     /// Returns the next available Key Index that can be assigned
     /// to a new Application Key.
-    var nextAvailableApplicationKeyIndex: KeyIndex {
-        return (applicationKeys.last?.index ?? -1) + 1 as KeyIndex
+    var nextAvailableApplicationKeyIndex: KeyIndex? {
+        guard let lastAppKey = applicationKeys.last, (lastAppKey.index + 1).isValidKeyIndex else {
+            return nil
+        }
+        return lastAppKey.index + 1
     }
     
     /// Returns the next available Key Index that can be assigned
     /// to a new Network Key.
-    var nextAvailableNetworkKeyIndex: KeyIndex {
-        return (networkKeys.last?.index ?? -1) + 1 as KeyIndex
+    var nextAvailableNetworkKeyIndex: KeyIndex? {
+        guard let lastNetKey = networkKeys.last, (lastNetKey.index + 1).isValidKeyIndex else {
+            return nil
+        }
+        return lastNetKey.index + 1
     }
     
     /// Adds a new Application Key and binds it to the first Network Key.
@@ -36,7 +42,10 @@ public extension MeshNetwork {
         guard let defaultNetworkKey = networkKeys.first else {
             throw MeshModelError.noNetworkKey
         }
-        let key = try ApplicationKey(name: name, index: nextAvailableApplicationKeyIndex,
+        guard let nextIndex = nextAvailableApplicationKeyIndex else {
+            throw MeshModelError.keyIndexOutOfRange
+        }
+        let key = try ApplicationKey(name: name, index: nextIndex,
                                  key: applicationKey, bindTo: defaultNetworkKey)
         applicationKeys.append(key)
         
@@ -98,7 +107,10 @@ public extension MeshNetwork {
         guard networkKey.count == 16 else {
             throw MeshModelError.invalidKey
         }
-        let key = try NetworkKey(name: name, index: nextAvailableNetworkKeyIndex, key: networkKey)
+        guard let nextIndex = nextAvailableNetworkKeyIndex else {
+            throw MeshModelError.keyIndexOutOfRange
+        }
+        let key = try NetworkKey(name: name, index: nextIndex, key: networkKey)
         networkKeys.append(key)
         
         // Make the local Provisioner aware of the new key.

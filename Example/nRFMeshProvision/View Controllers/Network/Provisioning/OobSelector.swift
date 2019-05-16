@@ -84,8 +84,8 @@ extension OobSelector where Self: UIViewController {
         let size = capabilities.inputOobSize
         
         let alert = UIAlertController(title: "Select Input OOB Type", message: nil, preferredStyle: .actionSheet)
-        if actions.contains(.push) { alert.addAction(action(for: .push, size: size, callback: callback)) }
-        if actions.contains(.twist) { alert.addAction(action(for: .twist, size: size, callback: callback)) }
+        if actions.contains(.push) { alert.addAction(action(for: .push, size: 1, callback: callback)) }
+        if actions.contains(.twist) { alert.addAction(action(for: .twist, size: 1, callback: callback)) }
         if actions.contains(.inputNumeric) { alert.addAction(action(for: .inputNumeric, size: size, callback: callback)) }
         if actions.contains(.inputAlphanumeric) { alert.addAction(action(for: .inputAlphanumeric, size: size, callback: callback)) }
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
@@ -122,4 +122,5 @@ extension OobSelector where Self: UIViewController {
             callback(.inputOob(action: action, size: size))
         }
     }
+    
 }

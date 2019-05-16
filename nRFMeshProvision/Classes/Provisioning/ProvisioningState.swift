@@ -37,6 +37,9 @@ public enum ProvisioningError: Error {
     /// Thrown when the provided alphanumberic value could not be converted into
     /// bytes using ASCII encoding.
     case invalidOobValueFormat
+    /// Thrown when confirmation value received from the device does not match
+    /// calculated value. Authentication failed.
+    case confirmationFailed
     /// Thrown when the remove device sent a failure indication.
     case remoteError(_ error: RemoteProvisioningError)
     /// Thrown when the key pair generation has failed.
@@ -117,6 +120,8 @@ extension ProvisioningError: CustomDebugStringConvertible {
             return "OOB Public Key required"
         case .invalidOobValueFormat:
             return "Invalid value format"
+        case .confirmationFailed:
+            return "Confirmation failed"
         case let .remoteError(error):
             return "\(error)"
         case let .keyGenerationFailed(status):

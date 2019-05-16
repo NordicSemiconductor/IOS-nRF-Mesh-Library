@@ -9,9 +9,9 @@ import Foundation
 
 /// The Bluetooth Mesh Network configuration.
 public class MeshNetwork: Codable {
-    public let schema  = "http://json-schema.org/draft-04/schema#"
-    public let id      = "TBD"
-    public let version = "1.0.0"
+    public let schema: String
+    public let id: String
+    public let version: String
     
     /// Random 128-bit UUID allows differentiation among multiple mesh networks.
     internal let meshUUID: MeshUUID
@@ -37,10 +37,15 @@ public class MeshNetwork: Codable {
     /// An array of application keys that include information about application
     /// keys used in the network.
     public internal(set) var applicationKeys: [ApplicationKey]
-    // An array of nodes in the network.
+    /// An array of nodes in the network.
     public internal(set) var nodes: [Node]
+    /// The IV Index.
+    internal var ivIndex: IvIndex
     
     internal init(name: String, uuid: UUID = UUID()) {
+        schema          = "http://json-schema.org/draft-04/schema#"
+        id              = "TBD"
+        version         = "1.0.0"
         meshUUID        = MeshUUID(uuid)
         meshName        = name
         timestamp       = Date()
@@ -48,6 +53,7 @@ public class MeshNetwork: Codable {
         networkKeys     = []
         applicationKeys = []
         nodes           = []
+        ivIndex         = IvIndex()
     }
     
     // MARK: - Codable
@@ -64,6 +70,23 @@ public class MeshNetwork: Codable {
         case networkKeys     = "netKeys"
         case applicationKeys = "appKeys"
         case nodes
+    }
+    
+    public required init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        schema = try container.decode(String.self, forKey: .schema)
+        id = try container.decode(String.self, forKey: .id)
+        version = try container.decode(String.self, forKey: .version)
+        meshUUID = try container.decode(MeshUUID.self, forKey: .meshUUID)
+        meshName = try container.decode(String.self, forKey: .meshName)
+        timestamp = try container.decode(Date.self, forKey: .timestamp)
+        provisioners = try container.decode([Provisioner].self, forKey: .provisioners)
+        networkKeys = try container.decode([NetworkKey].self, forKey: .networkKeys)
+        applicationKeys = try container.decode([ApplicationKey].self, forKey: .applicationKeys)
+        nodes = try container.decode([Node].self, forKey: .nodes)
+        // The IV Index is not a shared in the JSON, as it may change.
+        // The value may be obtained from the Security Beacon.
+        ivIndex = IvIndex()
     }
     
 }

@@ -32,6 +32,7 @@ internal enum ProvisioningRequest {
     case publicKey(_ key: Data)
     case confirmation(_ data: Data)
     case random(_ data: Data)
+    case data(_ encryptedDataWithMic: Data)
     
     var pdu: ProvisioningPdu {
         switch self {
@@ -55,6 +56,10 @@ internal enum ProvisioningRequest {
         case let .random(random):
             var data = ProvisioningPdu(pdu: .random)
             data += random
+            return data
+        case let .data(encryptedDataWithMic):
+            var data = ProvisioningPdu(pdu: .data)
+            data += encryptedDataWithMic
             return data
         }
     }
@@ -89,7 +94,7 @@ internal struct ProvisioningResponse {
             confirmation = nil
             random = nil
             error = nil
-        case .inputComplete:
+        case .inputComplete, .complete:
             publicKey = nil
             capabilities = nil
             confirmation = nil
@@ -108,11 +113,14 @@ internal struct ProvisioningResponse {
             random = data.subdata(in: 1..<data.count)
             error = nil
         case .failed:
+            guard data.count == 2, let status = RemoteProvisioningError(rawValue: data[1]) else {
+                return nil
+            }
             publicKey = nil
             capabilities = nil
             confirmation = nil
             random = nil
-            error = RemoteProvisioningError(rawValue: data[1])
+            error = status
         default:
             return nil
         }
@@ -124,7 +132,7 @@ internal struct ProvisioningResponse {
             return capabilities != nil
         case .publicKey:
             return publicKey != nil
-        case .inputComplete:
+        case .inputComplete, .complete:
             return true
         case .confirmation:
             return confirmation != nil && confirmation!.count == 16
@@ -152,6 +160,8 @@ extension ProvisioningRequest: CustomDebugStringConvertible {
             return "Provisioning Confirmation (0x\(data.hex)"
         case let .random(data):
             return "Provisioning Random (0x\(data.hex)"
+        case let .data(data):
+            return "Encrypted Provisioning Data (0x\(data.hex))"
         }
     }
 

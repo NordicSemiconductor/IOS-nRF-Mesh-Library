@@ -199,9 +199,9 @@ private extension EditKeyViewController {
     var defaultName: String {
         let network = MeshNetworkManager.instance.meshNetwork!
         if isApplicationKey {
-            return "App Key \(network.nextAvailableApplicationKeyIndex + 1)"
+            return "App Key \((network.nextAvailableApplicationKeyIndex ?? 0xFFF) + 1)"
         } else {
-            return "Network Key \(network.nextAvailableNetworkKeyIndex + 1)"
+            return "Network Key \((network.nextAvailableNetworkKeyIndex ?? 0xFFF) + 1)"
         }
     }
     
