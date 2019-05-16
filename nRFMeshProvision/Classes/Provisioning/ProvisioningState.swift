@@ -37,6 +37,13 @@ public enum ProvisioningError: Error {
     /// Thrown when the provided alphanumberic value could not be converted into
     /// bytes using ASCII encoding.
     case invalidOobValueFormat
+    /// Thrown when no available Unicast Address was found in the Provisioner's
+    /// range that could be allocated for the device.
+    case noAddressAvailable
+    /// Throws when the Unicast Address has not been set.
+    case addressNotSpecified
+    /// Throws when the Network Key has not been set.
+    case networkKeyNotSpecified
     /// Thrown when confirmation value received from the device does not match
     /// calculated value. Authentication failed.
     case confirmationFailed
@@ -120,6 +127,12 @@ extension ProvisioningError: CustomDebugStringConvertible {
             return "OOB Public Key required"
         case .invalidOobValueFormat:
             return "Invalid value format"
+        case .noAddressAvailable:
+            return "No address available in Provisioner's range"
+        case .addressNotSpecified:
+            return "Address not specified"
+        case .networkKeyNotSpecified:
+            return "Network Key not specified"
         case .confirmationFailed:
             return "Confirmation failed"
         case let .remoteError(error):

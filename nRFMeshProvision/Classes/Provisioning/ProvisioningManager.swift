@@ -40,7 +40,7 @@ public class ProvisioningManager {
     private var provisioningData: ProvisioningData!
     
     /// The Device Key. This field is set when the provisioning process is complete.
-    var deviceKey: Data?
+    public private(set) var deviceKey: Data?
     
     /// The original Bearer delegate. It will be notified on bearer state updates.
     private weak var bearerDelegate: BearerDelegate?
@@ -49,19 +49,22 @@ public class ProvisioningManager {
     
     /// The provisioning capabilities of the device. This information
     /// is retrieved from the remote device during identification process.
-    public internal(set) var provisioningCapabilities: ProvisioningCapabilities?
+    public private(set) var provisioningCapabilities: ProvisioningCapabilities?
     
     /// The Unicast Address that will be assigned to the device.
+    /// After device capabilies are received, the address is automatically set to
+    /// the first available unicast address from Provisioner's range.
     public var unicastAddress: Address?
     
     /// Automatically assigned Unicast Address. This is the first available
     /// Unicast Address from the Provisioner's range with enough free following
     /// addresses to be assigned to the device. This value is available after
     /// the Provisioning Capabilities have been received and such address was found.
-    public internal(set) var suggestedUnicastAddress: Address?
+    public private(set) var suggestedUnicastAddress: Address?
     
     /// The Network Key to be sent to the device during provisioning.
-    /// Set to `nil` to automatically create a new Network Key.
+    /// Setting this proeprty is mandatory before calling
+    /// `provision(usingAlgorithm:publicKey:authenticationMethod)`.
     public var networkKey: NetworkKey?
     
     /// The provisioning delegate will receive provisioning state updates.
@@ -70,7 +73,7 @@ public class ProvisioningManager {
     public weak var delegate: ProvisioningDelegate?
     
     /// The current state of the provisioning process.
-    public internal(set) var state: ProvisionigState = .ready {
+    public private(set) var state: ProvisionigState = .ready {
         didSet {
             delegate?.provisioningState(of: unprovisionedDevice, didChangeTo: state)
         }
@@ -150,7 +153,8 @@ public class ProvisioningManager {
         bearerDelegate = bearer.delegate
         bearer.delegate = self
         
-        // Clear the Confirmation Inputs buffer.
+        // Initialize provisioning data.
+        provisioningData = ProvisioningData()
         
         state = .requestingCapabilities
         try send(.invite(attentionTimer: attentionTimer), andAccumulateTo: provisioningData)
@@ -173,6 +177,19 @@ public class ProvisioningManager {
             throw ProvisioningError.unsupportedDevice
         }
         
+        // Was the Unicast Address specified?
+        if unicastAddress == nil {
+            unicastAddress = suggestedUnicastAddress
+        }
+        guard let unicastAddress = unicastAddress else {
+            throw ProvisioningError.addressNotSpecified
+        }
+        
+        // Ensure the Network Key is set.
+        guard let networkKey = networkKey else {
+            throw ProvisioningError.networkKeyNotSpecified
+        }
+        
         // An OOB Public Key must be given for devices supporting this.
         if capabilities.publicKeyType.contains(.publicKeyOobInformationAvailable) {
             guard case .oobPublicKey(key: _) = publicKey else {
@@ -187,10 +204,7 @@ public class ProvisioningManager {
         
         // Try generating Private and Public Keys. This may fail if the given
         // algorithm is not supported.
-        provisioningData = try ProvisioningData(for: meshNetwork,
-                                                networkKey: networkKey!,
-                                                unicastAddress: unicastAddress!,
-                                                using: algorithm)
+        try provisioningData.generateKeys(usingAlgorithm: algorithm)
         
         // If the device's Public Key was obtained OOB, we are now ready to
         // calculate the device's Shared Secret.
@@ -200,6 +214,9 @@ public class ProvisioningManager {
         
         // Send Provisioning Start request.
         state = .provisioning
+        provisioningData.prepare(for: meshNetwork,
+                                 networkKey: networkKey,
+                                 unicastAddress: unicastAddress)
         try send(.start(algorithm: algorithm, publicKey: publicKey,
                         authenticationMethod: authenticationMethod),
                  andAccumulateTo: provisioningData)
@@ -286,6 +303,9 @@ extension ProvisioningManager: BearerDelegate {
                 suggestedUnicastAddress = unicastAddress
             }
             state = .capabilitiesReceived(capabilities)
+            if unicastAddress == nil {
+                state = .fail(ProvisioningError.noAddressAvailable)
+            }
             
         // Device Public Key has been received.
         case (.provisioning, .publicKey):
@@ -300,6 +320,7 @@ extension ProvisioningManager: BearerDelegate {
             
         // The user has performed the Input Action on the device.
         case (.provisioning, .inputComplete):
+            delegate?.inputComplete()
             switch authAction! {
             case let .displayNumber(value, inputAction: _):
                 var authValue = Data(count: 16 - MemoryLayout.size(ofValue: value))
@@ -447,7 +468,7 @@ private extension ProvisioningManager {
     /// Generates a random integer with at most `length` digits.
     func randomInt(length: UInt) -> UInt {
         let upperbound = UInt(pow(10.0, Double(length)))
-        return UInt.random(in: 1...upperbound)
+        return UInt.random(in: 1..<upperbound)
     }
 
 }

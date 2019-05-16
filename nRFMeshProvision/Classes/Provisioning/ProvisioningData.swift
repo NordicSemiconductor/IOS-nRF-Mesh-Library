@@ -10,9 +10,9 @@ import Foundation
 internal class ProvisioningData {
     private let helper = OpenSSLHelper()
     
-    private let networkKey: NetworkKey
-    private let ivIndex: IvIndex
-    private let unicastAddress: Address
+    private(set) var networkKey: NetworkKey!
+    private(set) var ivIndex: IvIndex!
+    private(set) var unicastAddress: Address!
     
     private var privateKey: SecKey!
     private var publicKey: SecKey!
@@ -20,6 +20,7 @@ internal class ProvisioningData {
     private var authValue: Data!
     private var deviceConfirmation: Data!
     private var deviceRandom: Data!
+    
     private(set) var deviceKey: Data!
     private(set) var provisionerRandom: Data!
     private(set) var provisionerPublicKey: Data!
@@ -27,59 +28,99 @@ internal class ProvisioningData {
     /// The Confirmation Inputs is built over the provisioning process.
     /// It is composed for: Provisioning Invite PDU, Provisioning Capabilities PDU,
     /// Provisioning Start PDU, Provisioner's Public Key and device's Public Key.
-    private var confirmationInputs: Data
+    private var confirmationInputs: Data = Data(capacity: 1 + 11 + 5 + 64 + 64)
     
-    init(for network: MeshNetwork, networkKey: NetworkKey, unicastAddress: Address, using algorithm: Algorithm) throws {
-        self.networkKey = networkKey
-        self.ivIndex = network.ivIndex
+    func prepare(for network: MeshNetwork, networkKey: NetworkKey, unicastAddress: Address) {
+        self.networkKey     = networkKey
+        self.ivIndex        = network.ivIndex
         self.unicastAddress = unicastAddress
-        self.confirmationInputs = Data(capacity: 1 + 11 + 5 + 64 + 64)
-        
-        // Generate Provisioner Random.
-        provisionerRandom = randomData(length: 16)
-        
-        // Generate Public and Private Keys.
-        let (pk, sk) = try generateKeyPair(using: algorithm)
+    }
+    
+    func generateKeys(usingAlgorithm algorithm: Algorithm) throws {
+        // Generate Private and Public Keys.
+        let (sk, pk) = try generateKeyPair(using: algorithm)
         privateKey = sk
         publicKey  = pk
         try provisionerPublicKey = pk.toData()
+        
+        // Generate Provisioner Random.
+        provisionerRandom = randomData(length: 16)
     }
     
 }
 
 internal extension ProvisioningData {
     
+    /// This method adds the given PDU to the Provisioning Inputs.
+    /// Provisioning Inputs are used for authenticating the Provisioner
+    /// and the Unprovisioned Device.
+    ///
+    /// This method must be called (in order) for:
+    /// * Provisioning Invite
+    /// * Provisioning Capabilities
+    /// * Provisioning Start
+    /// * Provisioner Public Key
+    /// * Device Public Key
     func accumulate(pdu: Data) {
         confirmationInputs += pdu
     }
     
+    /// Call this method when the device Public Key has been
+    /// obtained. This must be called after generating keys.
+    ///
+    /// - parameter key: The device Public Key.
+    /// - throws: This method throws when generating ECDH Secure
+    ///           Secret failed.
     func provisionerDidObtain(devicePublicKey key: Data) throws {
+        guard let _ = privateKey else {
+            throw ProvisioningError.invalidState
+        }
         sharedSecret = try calculateSharedSecret(publicKey: key)
     }
     
+    /// Call this method when the Auth Value has been obtained.
     func provisionerDidObtain(authValue data: Data) {
         authValue = data
     }
     
+    /// Call this method when the device Provisioning Confirmation
+    /// has been obtained.
     func provisionerDidObtain(deviceConfirmation data: Data) {
         deviceConfirmation = data
     }
     
+    /// Call this method when the device Provisioning Random
+    /// has been obtained.
     func provisionerDidObtain(deviceRandom data: Data) {
         deviceRandom = data
     }
     
+    /// This method validates the received Provisioning Confirmation and
+    /// matches it with one calculated locally based on the Provisioning
+    /// Random received from the device and Auth Value.
+    ///
+    /// - throws: The method throws when the validation failed, or
+    ///           it was called before all data were ready.
     func validateConfirmation() throws {
+        guard let deviceRandom = deviceRandom, let authValue = authValue, let _ = sharedSecret else {
+            throw ProvisioningError.invalidState
+        }
         let confirmation = calculateConfirmation(random: deviceRandom, authValue: authValue)
         guard deviceConfirmation == confirmation else {
             throw ProvisioningError.confirmationFailed
         }
     }
     
+    /// Returns the Provisioner Confirmation value. The Auth Value
+    /// must be set prior to calling this method.
     var provisionerConfirmation: Data {
         return calculateConfirmation(random: provisionerRandom, authValue: authValue)
     }
     
+    /// Returns the encrypted Provisioning Data together with MIC.
+    /// Data will be encrypted using Session Key and Session Nonce.
+    /// For that, all properties should be set when this method is called.
+    /// Returned value is 25 + 8 bytes long, where the MIC is the last 8 bytes.
     var encryptedProvisioningDataWithMic: Data {
         let keys = calculateKeys()
         deviceKey = keys.deviceKey
@@ -88,6 +129,7 @@ internal extension ProvisioningData {
         let data  = networkKey.key + networkKey.index.bigEndian + flags.rawValue + ivIndex.index.bigEndian + unicastAddress.bigEndian
         return helper.calculateCCM(data, withKey: keys.sessionKey, nonce: keys.sessionNonce, dataSize: 25, andMICSize: 8)
     }
+    
 }
 
 // MARK: - Helper methods
