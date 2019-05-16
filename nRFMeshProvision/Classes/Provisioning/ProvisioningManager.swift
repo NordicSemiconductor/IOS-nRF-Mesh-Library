@@ -39,9 +39,6 @@ public class ProvisioningManager {
     private var authAction: AuthAction!
     private var provisioningData: ProvisioningData!
     
-    /// The Device Key. This field is set when the provisioning process is complete.
-    public private(set) var deviceKey: Data?
-    
     /// The original Bearer delegate. It will be notified on bearer state updates.
     private weak var bearerDelegate: BearerDelegate?
     
@@ -357,7 +354,11 @@ extension ProvisioningManager: BearerDelegate {
             
         // The provisioning process is complete.
         case (.provisioning, .complete):
-            deviceKey = provisioningData.deviceKey
+            let deviceKey = provisioningData.deviceKey!
+            let node = Node(for: unprovisionedDevice, withDeviceKey: deviceKey,
+                            andAssignedNetworkKey: provisioningData.networkKey,
+                            andAddress: provisioningData.unicastAddress)
+            meshNetwork.add(node: node)
             state = .complete
             
         // The provisioned device sent an error.

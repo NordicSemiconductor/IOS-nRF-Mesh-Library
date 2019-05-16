@@ -322,7 +322,11 @@ extension ProvisioningViewController: ProvisioningDelegate {
                 }
                 
             case .complete:
-                self.presentStatusDialog(message: "Provisioning complete.")
+                self.dismissStatusDialog() {
+                    self.presentAlert(title: "Success", message: "Provisioning complete.") { _ in
+                        
+                    }
+                }
                 
             case let .fail(error):
                 self.dismissStatusDialog() {

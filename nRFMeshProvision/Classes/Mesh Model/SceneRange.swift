@@ -109,35 +109,3 @@ public extension Array where Element == SceneRange {
     }
     
 }
-
-// MARK: - Public API
-
-public extension SceneRange {
-    
-    /// Returns `true` if the scene range is valid.
-    ///
-    /// - returns: `True` if the scene range is valid, `false` otherwise.
-    var isValid: Bool {
-        return firstScene.isValidScene && lastScene.isValidScene
-    }
-    
-}
-
-public extension Array where Element == SceneRange {
-    
-    /// Returns `true` if all the scene ranges are valid.
-    ///
-    /// - returns: `True` if the all scene ranges are valid, `false` otherwise.
-    var isValid: Bool {
-        return !contains{ !$0.isValid }
-    }
-    
-}
-
-// MARK: - Defaults
-
-public extension SceneRange {
-    
-    static let allScenes: SceneRange = SceneRange(Scene.minScene...Scene.maxScene)
-    
-}

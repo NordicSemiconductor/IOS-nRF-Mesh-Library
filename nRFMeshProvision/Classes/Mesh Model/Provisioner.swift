@@ -84,27 +84,6 @@ public class Provisioner: Codable {
     }
 }
 
-// MARK: - Private API
-
-private extension Provisioner {
-    
-    /// Returns the first allocated address that is greater or equal to
-    /// the given one from the allocated ranges.
-    ///
-    /// - parameter address: The lower bound of the look-up address.
-    /// - returns: The address found, or nil if one cound not be found
-    ///            with given restrictions.
-    func firstAllocatedUnicastAddress(greaterOrEqualTo address: Address = Address.minUnicastAddress) -> Address? {
-        for range in allocatedUnicastRange {
-            if range.lowAddress >= address || range.contains(address) {
-                return address
-            }
-        }
-        return nil
-    }
-    
-}
-
 // MARK: - Operators
 
 extension Provisioner: Equatable {

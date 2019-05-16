@@ -177,6 +177,23 @@ public class Node: Codable {
         self.elements = [element]
     }
     
+    internal init(for unprovisionedDevice: UnprovisionedDevice, withDeviceKey deviceKey: Data,
+                  andAssignedNetworkKey networkKey: NetworkKey, andAddress address: Address) {
+        self.nodeUuid = MeshUUID(unprovisionedDevice.uuid)
+        self.name     = unprovisionedDevice.name ?? "Unknown Device"
+        self.unicastAddress = address
+        self.deviceKey = deviceKey
+        self.security = .high
+        // Composition Data were not obtained.
+        self.configComplete = false
+        
+        // The node has been provisioned with one Network Key.
+        self.appKeys  = [NodeKey(index: networkKey.index, updated: false)]
+        self.netKeys  = []
+        // Elements will be queried with Composition Data.
+        self.elements = []
+    }
+    
     // MARK: - Codable
     
     private enum CodingKeys: String, CodingKey {
