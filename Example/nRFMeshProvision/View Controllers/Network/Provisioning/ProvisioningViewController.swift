@@ -40,6 +40,7 @@ class ProvisioningViewController: UITableViewController {
     
     // MARK: - Properties
     
+    weak var delegate: ProvisioningViewDelegate?
     var unprovisionedDevice: UnprovisionedDevice!
     var bearer: ProvisioningBearer!
     
@@ -258,7 +259,14 @@ extension ProvisioningViewController: GattBearerDelegate {
     }
     
     func bearer(_ bearer: Bearer, didClose error: Error?) {
-        DispatchQueue.main.async {
+        if case .complete = provisioningManager.state {
+            navigationController!.dismiss(animated: true) {
+                let network = MeshNetworkManager.instance.meshNetwork!
+                if let node = network.node(for: self.unprovisionedDevice) {
+                    self.delegate?.provisionerDidProvisionNewDevice(node)
+                }
+            }
+        } else {
             self.dismissStatusDialog() {
                 self.presentAlert(title: "Status", message: "Device disconnected.")
             }
@@ -324,7 +332,7 @@ extension ProvisioningViewController: ProvisioningDelegate {
             case .complete:
                 self.dismissStatusDialog() {
                     self.presentAlert(title: "Success", message: "Provisioning complete.") { _ in
-                        
+                        self.bearer.close()
                     }
                 }
                 

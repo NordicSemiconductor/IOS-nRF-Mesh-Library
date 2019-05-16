@@ -21,6 +21,8 @@ class ScannerTableViewController: UITableViewController {
     
     // MARK: - Properties
     
+    weak var delegate: ProvisioningViewDelegate?
+    
     private var centralManager: CBCentralManager!
     private var discoveredPeripherals = [(device: UnprovisionedDevice, peripheral: CBPeripheral, rssi: Int)]()
     
@@ -48,6 +50,7 @@ class ScannerTableViewController: UITableViewController {
             let destination = segue.destination as! ProvisioningViewController
             destination.unprovisionedDevice = self.selectedDevice
             destination.bearer = sender as? ProvisioningBearer
+            destination.delegate = delegate
             selectedDevice = nil
         }
     }

@@ -22,6 +22,8 @@
 		5283528222806D7C0097B949 /* NetworkKeySelectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5283528122806D7C0097B949 /* NetworkKeySelectionViewController.swift */; };
 		528352B42284139F0097B949 /* ProxyProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 528352B32284139F0097B949 /* ProxyProtocol.swift */; };
 		528352BC2285B6150097B949 /* OobSelector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 528352BB2285B6150097B949 /* OobSelector.swift */; };
+		528AB9F8228D847C000BE9DC /* NetworkViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 528AB9F7228D847C000BE9DC /* NetworkViewController.swift */; };
+		528AB9FA228D856C000BE9DC /* ProvisioningViewDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 528AB9F9228D856C000BE9DC /* ProvisioningViewDelegate.swift */; };
 		529B756D223FE7F1008F1CE7 /* RootViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529B756C223FE7F1008F1CE7 /* RootViewController.swift */; };
 		529B7570223FF1AE008F1CE7 /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529B756F223FF1AE008F1CE7 /* SettingsViewController.swift */; };
 		529B7572223FFC39008F1CE7 /* AppKeysViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529B7571223FFC39008F1CE7 /* AppKeysViewController.swift */; };
@@ -71,6 +73,8 @@
 		5283528122806D7C0097B949 /* NetworkKeySelectionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkKeySelectionViewController.swift; sourceTree = "<group>"; };
 		528352B32284139F0097B949 /* ProxyProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProxyProtocol.swift; sourceTree = "<group>"; };
 		528352BB2285B6150097B949 /* OobSelector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OobSelector.swift; sourceTree = "<group>"; };
+		528AB9F7228D847C000BE9DC /* NetworkViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkViewController.swift; sourceTree = "<group>"; };
+		528AB9F9228D856C000BE9DC /* ProvisioningViewDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProvisioningViewDelegate.swift; sourceTree = "<group>"; };
 		529B756C223FE7F1008F1CE7 /* RootViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootViewController.swift; sourceTree = "<group>"; };
 		529B756F223FF1AE008F1CE7 /* SettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
 		529B7571223FFC39008F1CE7 /* AppKeysViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppKeysViewController.swift; sourceTree = "<group>"; };
@@ -175,6 +179,7 @@
 		52835256227AED670097B949 /* Network */ = {
 			isa = PBXGroup;
 			children = (
+				528AB9F7228D847C000BE9DC /* NetworkViewController.swift */,
 				5283527E22806BA60097B949 /* Provisioning */,
 			);
 			path = Network;
@@ -188,6 +193,7 @@
 				5283527F22806C280097B949 /* ProvisioningViewController.swift */,
 				5283528122806D7C0097B949 /* NetworkKeySelectionViewController.swift */,
 				528352BB2285B6150097B949 /* OobSelector.swift */,
+				528AB9F9228D856C000BE9DC /* ProvisioningViewDelegate.swift */,
 			);
 			path = Provisioning;
 			sourceTree = "<group>";
@@ -484,7 +490,9 @@
 				528352BC2285B6150097B949 /* OobSelector.swift in Sources */,
 				52DAA5E2225B633B0041C43A /* RangeView.swift in Sources */,
 				52DAA5DB22560EEE0041C43A /* EditProvisionerViewController.swift in Sources */,
+				528AB9FA228D856C000BE9DC /* ProvisioningViewDelegate.swift in Sources */,
 				5283524822733BCF0097B949 /* EditKeyViewController.swift in Sources */,
+				528AB9F8228D847C000BE9DC /* NetworkViewController.swift in Sources */,
 				529B759A2243BA0A008F1CE7 /* ProvisionersViewController.swift in Sources */,
 				529B76492252499E008F1CE7 /* UIColor+Nordic.swift in Sources */,
 				525242E0225CBFEC0044CECB /* RangeObject+String.swift in Sources */,
