@@ -8,7 +8,7 @@
 import Foundation
 
 public class Provisioner: Codable {
-    internal var meshNetwork: MeshNetwork?
+    internal weak var meshNetwork: MeshNetwork?
     
     /// 128-bit Device UUID.
     internal let provisionerUuid: MeshUUID

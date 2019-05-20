@@ -42,6 +42,8 @@
 		52DAA5E2225B633B0041C43A /* RangeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52DAA5E1225B633B0041C43A /* RangeView.swift */; };
 		52DAA5E4225B93320041C43A /* EditRangesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52DAA5E3225B93320041C43A /* EditRangesViewController.swift */; };
 		52DAA5E6225B957B0041C43A /* RangeCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52DAA5E5225B957B0041C43A /* RangeCell.swift */; };
+		52DF5D8A228DA78A00C297C1 /* ConfigurationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52DF5D89228DA78A00C297C1 /* ConfigurationViewController.swift */; };
+		52DF5D8C228DAA0500C297C1 /* NodeViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52DF5D8B228DAA0500C297C1 /* NodeViewCell.swift */; };
 		607FACD61AFB9204008FA782 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACD51AFB9204008FA782 /* AppDelegate.swift */; };
 		607FACDB1AFB9204008FA782 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 607FACD91AFB9204008FA782 /* Main.storyboard */; };
 		607FACDD1AFB9204008FA782 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 607FACDC1AFB9204008FA782 /* Images.xcassets */; };
@@ -95,6 +97,8 @@
 		52DAA5E1225B633B0041C43A /* RangeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RangeView.swift; sourceTree = "<group>"; };
 		52DAA5E3225B93320041C43A /* EditRangesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = EditRangesViewController.swift; path = "View Controllers/Settings/EditRangesViewController.swift"; sourceTree = "<group>"; };
 		52DAA5E5225B957B0041C43A /* RangeCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = RangeCell.swift; path = "View Controllers/Settings/RangeCell.swift"; sourceTree = "<group>"; };
+		52DF5D89228DA78A00C297C1 /* ConfigurationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigurationViewController.swift; sourceTree = "<group>"; };
+		52DF5D8B228DAA0500C297C1 /* NodeViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NodeViewCell.swift; sourceTree = "<group>"; };
 		5A51F9AF82598D8D5D40BD77 /* Pods_nRFMeshProvision_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_nRFMeshProvision_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		607FACD01AFB9204008FA782 /* nRFMeshProvision_Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = nRFMeshProvision_Example.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		607FACD41AFB9204008FA782 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -180,7 +184,9 @@
 			isa = PBXGroup;
 			children = (
 				528AB9F7228D847C000BE9DC /* NetworkViewController.swift */,
+				52DF5D8B228DAA0500C297C1 /* NodeViewCell.swift */,
 				5283527E22806BA60097B949 /* Provisioning */,
+				52DF5D88228DA75F00C297C1 /* Configuration */,
 			);
 			path = Network;
 			sourceTree = "<group>";
@@ -221,6 +227,14 @@
 			);
 			name = Provisioners;
 			path = ../..;
+			sourceTree = "<group>";
+		};
+		52DF5D88228DA75F00C297C1 /* Configuration */ = {
+			isa = PBXGroup;
+			children = (
+				52DF5D89228DA78A00C297C1 /* ConfigurationViewController.swift */,
+			);
+			path = Configuration;
 			sourceTree = "<group>";
 		};
 		607FACC71AFB9204008FA782 = {
@@ -490,6 +504,7 @@
 				528352BC2285B6150097B949 /* OobSelector.swift in Sources */,
 				52DAA5E2225B633B0041C43A /* RangeView.swift in Sources */,
 				52DAA5DB22560EEE0041C43A /* EditProvisionerViewController.swift in Sources */,
+				52DF5D8C228DAA0500C297C1 /* NodeViewCell.swift in Sources */,
 				528AB9FA228D856C000BE9DC /* ProvisioningViewDelegate.swift in Sources */,
 				5283524822733BCF0097B949 /* EditKeyViewController.swift in Sources */,
 				528AB9F8228D847C000BE9DC /* NetworkViewController.swift in Sources */,
@@ -501,6 +516,7 @@
 				52DAA5E4225B93320041C43A /* EditRangesViewController.swift in Sources */,
 				52DAA5E6225B957B0041C43A /* RangeCell.swift in Sources */,
 				529B756D223FE7F1008F1CE7 /* RootViewController.swift in Sources */,
+				52DF5D8A228DA78A00C297C1 /* ConfigurationViewController.swift in Sources */,
 				529B758622428A45008F1CE7 /* UIViewController+Alert.swift in Sources */,
 				529B7572223FFC39008F1CE7 /* AppKeysViewController.swift in Sources */,
 				52835258227AEDA30097B949 /* DeviceTableViewCell.swift in Sources */,
