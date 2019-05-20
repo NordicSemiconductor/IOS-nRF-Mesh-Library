@@ -263,7 +263,11 @@ extension ProvisioningViewController: GattBearerDelegate {
             navigationController!.dismiss(animated: true) {
                 let network = MeshNetworkManager.instance.meshNetwork!
                 if let node = network.node(for: self.unprovisionedDevice) {
-                    self.delegate?.provisionerDidProvisionNewDevice(node)
+                    if MeshNetworkManager.instance.save() {
+                        self.delegate?.provisionerDidProvisionNewDevice(node)
+                    } else {
+                        self.presentAlert(title: "Error", message: "Mesh configuration could not be saved.")
+                    }
                 }
             }
         } else {

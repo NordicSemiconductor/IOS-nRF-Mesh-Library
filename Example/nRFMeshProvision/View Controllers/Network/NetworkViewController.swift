@@ -23,9 +23,13 @@ class NetworkViewController: UITableViewController {
             let scannerViewController = destination.topViewController! as! ScannerTableViewController
             scannerViewController.delegate = self
         case "configure":
-            let destination = segue.destination as! UINavigationController
-            let configurationViewController = destination.topViewController! as! ConfigurationViewController
-            configurationViewController.node = sender as? Node
+            let destination = segue.destination as! ConfigurationViewController
+            destination.node = sender as? Node
+        case "open":
+            let cell = sender as! NodeViewCell
+            
+            let destination = segue.destination as! ConfigurationViewController
+            destination.node = cell.node
         default:
             break
         }

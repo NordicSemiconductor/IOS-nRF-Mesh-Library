@@ -94,13 +94,13 @@ public class Node: Codable {
     public var name: String?
     /// The 16-bit Company Identifier (CID) assigned by the Bluetooth SIG.
     /// The value of this property is obtained from node composition data.
-    public var companyIdentifier: UInt16?
+    public internal(set) var companyIdentifier: UInt16?
     /// The 16-bit vendor-assigned Product Identifier (PID).
     /// The value of this property is obtained from node composition data.
-    public var productIdentifier: UInt16?
+    public internal(set) var productIdentifier: UInt16?
     /// The 16-bit vendor-assigned Version Identifier (VID).
     /// The value of this property is obtained from node composition data.
-    public var versionIdentifier: UInt16?
+    public internal(set) var versionIdentifier: UInt16?
     /// The minimum number of Replay Protection List (RPL) entries for this
     /// node. The value of this property is obtained from node composition
     /// data.

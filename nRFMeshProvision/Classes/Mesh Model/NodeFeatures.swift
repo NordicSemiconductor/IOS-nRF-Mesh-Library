@@ -34,3 +34,27 @@ public class NodeFeatures: Codable {
     }
 }
 
+extension NodeFeatures.State: CustomDebugStringConvertible {
+    
+    public var debugDescription: String {
+        switch self {
+        case .notEnabled:   return "Not enabled"
+        case .enabled:      return "Enabled"
+        case .notSupported: return "Not supported"
+        }
+    }
+    
+}
+
+extension NodeFeatures: CustomDebugStringConvertible {
+    
+    public var debugDescription: String {
+        return """
+        Relay Feature:     \(relay?.debugDescription ?? "Unknown")
+        Proxy Feature:     \(proxy?.debugDescription ?? "Unknown")
+        Low Power Feature: \(lowPower?.debugDescription ?? "Unknown")
+        Friend Feature:    \(friend?.debugDescription ?? "Unknown")
+        """
+    }
+    
+}
