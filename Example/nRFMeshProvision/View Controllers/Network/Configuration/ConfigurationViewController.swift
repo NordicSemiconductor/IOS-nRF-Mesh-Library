@@ -15,7 +15,7 @@ class ConfigurationViewController: UITableViewController {
     // MARK: - Table view data source
 
     override func numberOfSections(in tableView: UITableView) -> Int {
-        return node.elements.count > 0 ? 3 : 2
+        return 4
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -23,9 +23,11 @@ class ConfigurationViewController: UITableViewController {
         case 0:
             return IndexPath.titles.count
         case 1:
-            return IndexPath.detailsTitles.count
+            return max(1, node.elements.count)
         case 2:
-            return node.elements.count
+            return IndexPath.detailsTitles.count
+        case 3:
+            return 1 // Reset button
         default:
             return 0
         }
@@ -33,8 +35,17 @@ class ConfigurationViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         switch section {
-        case 2:
+        case 1:
             return "Elements"
+        default:
+            return nil
+        }
+    }
+    
+    override func tableView(_ tableView: UITableView, titleForFooterInSection section: Int) -> String? {
+        switch section {
+        case 3:
+            return "Resetting the node will change its state back to un-provisioned state."
         default:
             return nil
         }
@@ -42,13 +53,14 @@ class ConfigurationViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: indexPath.cellIdentifier, for: indexPath)
-        cell.textLabel?.text = indexPath.title ?? node.elements[indexPath.row].name ?? "Element \(indexPath.row + 1)"
         
         if indexPath.isName {
+            cell.textLabel?.text = indexPath.title
             cell.detailTextLabel?.text = node.name
             cell.accessoryType = .disclosureIndicator
         }
         if indexPath.isDetailsSection {
+            cell.textLabel?.text = indexPath.title
             switch indexPath.row {
             case 0:
                 cell.detailTextLabel?.text = node.unicastAddress.asString()
@@ -89,8 +101,18 @@ class ConfigurationViewController: UITableViewController {
             }
         }
         if indexPath.isElementSection {
-            cell.detailTextLabel?.text = "\(node.elements[indexPath.row].models.count) models"
-            cell.accessoryType = .disclosureIndicator
+            if node.elements.count > indexPath.row {
+                let element = node.elements[indexPath.row]
+                cell.textLabel?.text = element.name ?? "Element \(indexPath.row + 1)"
+                cell.detailTextLabel?.text = "\(element.models.count) models"
+                cell.accessoryType = .disclosureIndicator
+                cell.selectionStyle = .default
+            } else {
+                cell.textLabel?.text = "Composition Data not received."
+                cell.detailTextLabel?.text = nil
+                cell.accessoryType = .none
+                cell.selectionStyle = .none
+            }
         }
         return cell
     }
@@ -116,6 +138,9 @@ private extension IndexPath {
         if isDetailsSection {
             return "subtitle"
         }
+        if isReset {
+            return "reset"
+        }
         return "normal"
     }
     
@@ -133,11 +158,15 @@ private extension IndexPath {
         return section == 0 && row == 0
     }
     
-    var isDetailsSection: Bool {
-        return section == 1
+    var isReset: Bool {
+        return section == 3 && row == 0
     }
     
     var isElementSection: Bool {
+        return section == 1
+    }
+    
+    var isDetailsSection: Bool {
         return section == 2
     }
     

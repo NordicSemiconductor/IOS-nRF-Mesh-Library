@@ -174,6 +174,35 @@
                                     </subviews>
                                 </tableViewCellContentView>
                             </tableViewCell>
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="reset" id="lc6-Lu-n3M">
+                                <rect key="frame" x="0.0" y="143.33333333333334" width="375" height="44"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="lc6-Lu-n3M" id="WjU-Yf-R69">
+                                    <rect key="frame" x="0.0" y="0.0" width="375" height="43.666666666666664"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                    <subviews>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Reset Node" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="UTY-9G-OJi">
+                                            <rect key="frame" x="16" y="11.333333333333336" width="89.333333333333329" height="21"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                            <nil key="textColor"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                        <button opaque="NO" contentMode="scaleToFill" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="JcH-ep-PUT">
+                                            <rect key="frame" x="241" y="7" width="118" height="30"/>
+                                            <state key="normal" title="Reset and Forget">
+                                                <color key="titleColor" red="0.93333333330000001" green="0.1843137255" blue="0.30588235289999999" alpha="1" colorSpace="calibratedRGB"/>
+                                            </state>
+                                        </button>
+                                    </subviews>
+                                    <constraints>
+                                        <constraint firstItem="UTY-9G-OJi" firstAttribute="centerY" secondItem="WjU-Yf-R69" secondAttribute="centerY" id="Drv-j0-eQK"/>
+                                        <constraint firstItem="JcH-ep-PUT" firstAttribute="trailing" secondItem="WjU-Yf-R69" secondAttribute="trailingMargin" id="O9u-9i-ilg"/>
+                                        <constraint firstItem="JcH-ep-PUT" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="UTY-9G-OJi" secondAttribute="trailing" constant="8" id="egl-CU-gGN"/>
+                                        <constraint firstItem="JcH-ep-PUT" firstAttribute="centerY" secondItem="UTY-9G-OJi" secondAttribute="centerY" id="nxX-sf-g8K"/>
+                                        <constraint firstItem="UTY-9G-OJi" firstAttribute="leading" secondItem="WjU-Yf-R69" secondAttribute="leadingMargin" id="x5V-8i-Mmj"/>
+                                    </constraints>
+                                </tableViewCellContentView>
+                            </tableViewCell>
                         </prototypes>
                         <connections>
                             <outlet property="dataSource" destination="DVn-IC-M3j" id="xXf-QX-2Bj"/>
