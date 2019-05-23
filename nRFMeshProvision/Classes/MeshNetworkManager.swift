@@ -69,13 +69,13 @@ public extension MeshNetworkManager {
     /// Network Keys and Application Keys must be added manually
     /// using `add(networkKey:name)` and `add(applicationKey:name)`.
     ///
-    /// - parameter name:          The user given network name.
-    /// - parameter provionerName: The user given local provisioner name.
-    func createNewMeshNetwork(named name: String, by provionerName: String) -> MeshNetwork {
+    /// - parameter name:            The user given network name.
+    /// - parameter provisionerName: The user given local provisioner name.
+    func createNewMeshNetwork(named name: String, by provisionerName: String) -> MeshNetwork {
         let network = MeshNetwork(name: name)
         
         // Add a new default provisioner.
-        try! network.add(provisioner: Provisioner(name: provionerName))
+        try! network.add(provisioner: Provisioner(name: provisionerName))
         
         meshData.meshNetwork = network
         return network
@@ -89,12 +89,12 @@ public extension MeshNetworkManager {
     /// using `add(networkKey:name)` and `add(applicationKey:name)`.
     ///
     /// - parameter name:      The user given network name.
-    /// - parameter provioner: The default Provisioner.
-    func createNewMeshNetwork(named name: String, by provioner: Provisioner) -> MeshNetwork {
+    /// - parameter provisioner: The default Provisioner.
+    func createNewMeshNetwork(withName name: String, by provisioner: Provisioner) -> MeshNetwork {
         let network = MeshNetwork(name: name)
         
         // Add a new default provisioner.
-        try! network.add(provisioner: provioner)
+        try! network.add(provisioner: provisioner)
         
         meshData.meshNetwork = network
         return network
