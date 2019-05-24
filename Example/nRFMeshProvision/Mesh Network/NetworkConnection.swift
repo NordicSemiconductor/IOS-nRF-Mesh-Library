@@ -99,7 +99,7 @@ extension NetworkConnection: CBCentralManagerDelegate {
             }
         }
         
-        let bearer = GattBearer(to: peripheral, using: central, withRssiUpdateInterval: 5.0)
+        let bearer = GattBearer(to: peripheral, using: central)
         bearer.delegate = self
         proxies.append(bearer)
         bearer.open()
@@ -138,13 +138,6 @@ extension NetworkConnection: GattBearerDelegate {
     
     func bearer(_ bearer: Bearer, didDeliverData data: Data, ofType type: MessageType) {
         delegate?.bearer(self, didDeliverData: data, ofType: type)
-    }
-    
-    func bearer(_ bearer: Bearer, didReadRSSI RSSI: NSNumber) {
-        print("RSSI value to \(bearer) is \(RSSI) dBm")
-        proxies.sort { (left, right) -> Bool in
-            return left.lastRSSI?.intValue ?? -128 < right.lastRSSI?.intValue ?? -128
-        }
     }
     
 }

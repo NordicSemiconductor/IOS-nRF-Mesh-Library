@@ -21,14 +21,6 @@ open class BaseGattProxyBearer<Service: MeshService>: NSObject, Bearer, CBCentra
     /// The protocol used for segmentation and reassembly.
     private let protocolHandler: ProxyProtocolHandler
     private var queue: [Data] = []
-    private var rssiTimer: Timer?
-    private var rssiInterval: TimeInterval?
-    
-    /// The last read RSSI value. The first RSSI is read just
-    /// after enabling notifications.
-    /// If an interval was set in the Bearer constructor, the RSSI
-    /// will be updated every given number of seconds.
-    public var lastRSSI: NSNumber?
     
     // MARK: - Computed properties
     
@@ -55,16 +47,11 @@ open class BaseGattProxyBearer<Service: MeshService>: NSObject, Bearer, CBCentra
     /// - parameters:
     ///   - peripheral: The CBPeripheral poiting a Bluetooth LE device with
     ///                 Bluetooth Mesh GATT service (Provisioning or Proxy Service).
-    ///   - manager:    The CBCentralManager used to obtain the peripheral.
-    ///   - interval:   The time interval (in seconds) for RSSI updates. Set `nil`
-    ///                 (default) to disable RSSI polling. RSSI updates may be useful to
-    ///                 select the closes device when an app allows to connect to
-    ///                 multiple proxies at a time.
-    public init(to peripheral: CBPeripheral, using manager: CBCentralManager, withRssiUpdateInterval interval: TimeInterval? = nil) {
+    ///   - manager:    The CBCentralManager that was used to obtain the peripheral.
+    public init(to peripheral: CBPeripheral, using manager: CBCentralManager) {
         centralManager  = manager
         basePeripheral  = peripheral
         protocolHandler = ProxyProtocolHandler()
-        rssiInterval = interval
         super.init()
         basePeripheral.delegate = self
     }
@@ -82,8 +69,6 @@ open class BaseGattProxyBearer<Service: MeshService>: NSObject, Bearer, CBCentra
             print("Cancelling connection...")
             centralManager.cancelPeripheralConnection(basePeripheral)            
         }
-        rssiTimer?.invalidate()
-        rssiTimer = nil
     }
     
     open func send(_ data: Data, ofType type: MessageType) throws {
@@ -128,6 +113,17 @@ open class BaseGattProxyBearer<Service: MeshService>: NSObject, Bearer, CBCentra
         }
     }
     
+    /// Retrieves the current RSSI value for the peripheral while it is connected
+    /// to the central manager.
+    ///
+    /// The result will be returned using `bearer(_:didReadRSSI)` callback.
+    open func readRSSI() {
+        guard basePeripheral.state == .connected else {
+            return
+        }
+        basePeripheral.readRSSI()
+    }
+    
     // MARK: - Implementation
     
     /// Starts service discovery, only given Service.
@@ -159,9 +155,6 @@ open class BaseGattProxyBearer<Service: MeshService>: NSObject, Bearer, CBCentra
         if central.state != .poweredOn {
             print("Central Manager state changed to \(central.state)")
             delegate?.bearer(self, didClose: BearerError.centralManagerNotPoweredOn)
-            
-            rssiTimer?.invalidate()
-            rssiTimer = nil
         }
     }
     
@@ -177,9 +170,6 @@ open class BaseGattProxyBearer<Service: MeshService>: NSObject, Bearer, CBCentra
     
     open func centralManager(_ central: CBCentralManager, didDisconnectPeripheral peripheral: CBPeripheral, error: Error?) {
         if peripheral == basePeripheral {
-            rssiTimer?.invalidate()
-            rssiTimer = nil
-            
             if let error = error {
                 print("Disconnected with error: \(error)")
                 delegate?.bearer(self, didClose: error)
@@ -249,13 +239,6 @@ open class BaseGattProxyBearer<Service: MeshService>: NSObject, Bearer, CBCentra
         print("Data Out notifications enabled")
         print("GATT Bearer open and ready")
         delegate?.bearerDidOpen(self)
-        basePeripheral.readRSSI()
-        
-        if let rssiInterval = rssiInterval {
-            rssiTimer = Timer.scheduledTimer(withTimeInterval: rssiInterval, repeats: true) { _ in
-                self.basePeripheral.readRSSI()
-            }
-        }
     }
     
     open func peripheral(_ peripheral: CBPeripheral, didUpdateValueFor characteristic: CBCharacteristic, error: Error?) {
@@ -273,15 +256,14 @@ open class BaseGattProxyBearer<Service: MeshService>: NSObject, Bearer, CBCentra
         // This method will not be called.
     }
     
-    public func peripheral(_ peripheral: CBPeripheral, didReadRSSI RSSI: NSNumber, error: Error?) {
-        lastRSSI = RSSI
+    open func peripheral(_ peripheral: CBPeripheral, didReadRSSI RSSI: NSNumber, error: Error?) {
         if let delegate = delegate as? GattBearerDelegate {
             delegate.bearer(self, didReadRSSI: RSSI)
         }
     }
     
     // This method is available only on iOS 11+.
-    public func peripheralIsReady(toSendWriteWithoutResponse peripheral: CBPeripheral) {
+    open func peripheralIsReady(toSendWriteWithoutResponse peripheral: CBPeripheral) {
         guard !queue.isEmpty else {
             return
         }
