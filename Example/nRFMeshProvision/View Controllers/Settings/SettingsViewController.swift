@@ -139,10 +139,9 @@ private extension SettingsViewController {
     
     /// Resets all network settings to default values.
     func resetNetwork() {
-        let manager = MeshNetworkManager.instance
-        // TODO: Implement creator
-        _ = manager.createNewMeshNetwork(named: "nRF Mesh Network", by: UIDevice.current.name)
+        (UIApplication.shared.delegate as! AppDelegate).createNewMeshNetwork()
         
+        let manager = MeshNetworkManager.instance
         if manager.save() {
             // Reload network data.
             let meshNetwork = manager.meshNetwork!

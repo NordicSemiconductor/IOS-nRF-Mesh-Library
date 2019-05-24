@@ -15,16 +15,6 @@ public class MeshNetworkManager {
     
     // MARK: - Computed properties
     
-    /// Returns the Global TTL property.
-    public var globalTTL: UInt8 {
-        set {
-            meshData.globalTTL = newValue
-        }
-        get {
-            return meshData.globalTTL
-        }
-    }
-    
     /// Returns the MeshNetwork object.
     public var meshNetwork: MeshNetwork? {
         return meshData.meshNetwork
@@ -71,7 +61,7 @@ public extension MeshNetworkManager {
     ///
     /// - parameter name:            The user given network name.
     /// - parameter provisionerName: The user given local provisioner name.
-    func createNewMeshNetwork(named name: String, by provisionerName: String) -> MeshNetwork {
+    func createNewMeshNetwork(withName name: String, by provisionerName: String) -> MeshNetwork {
         let network = MeshNetwork(name: name)
         
         // Add a new default provisioner.

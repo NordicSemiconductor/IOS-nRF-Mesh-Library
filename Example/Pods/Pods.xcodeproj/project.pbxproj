@@ -454,7 +454,6 @@
 				528352892281B30D0097B949 /* Oob.swift */,
 				5283528B2281B3310097B949 /* ProvisioningCapabilities.swift */,
 				5283528D2281B3510097B949 /* ProvisioningState.swift */,
-				5283528F2281B57A0097B949 /* Beacon.swift */,
 				528352912281B68E0097B949 /* ProvisioningPdu.swift */,
 				528AB9F3228C51AA000BE9DC /* ProvisioningData.swift */,
 			);
@@ -586,6 +585,7 @@
 		A1F75DB0D8F3EBCDE7B76E218C87AECD /* Utils */ = {
 			isa = PBXGroup;
 			children = (
+				5283528F2281B57A0097B949 /* Beacon.swift */,
 				045D235D97EFC49E1F2183DAE067E868 /* MeshConstants.swift */,
 				BEC1ACD529AAFA4B1CA0FCB54D4024FD /* OpenSSLHelper.h */,
 				9DA238DDA2D45895883214B988C1C10E /* OpenSSLHelper.m */,

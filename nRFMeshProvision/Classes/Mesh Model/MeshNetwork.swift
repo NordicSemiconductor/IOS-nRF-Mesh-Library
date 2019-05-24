@@ -112,8 +112,30 @@ extension MeshNetwork {
         return provisioners.contains { $0.uuid == uuid }
     }
     
+    /// Adds the Node to the mesh network. If a node with the same UUID
+    /// was already in the mesh network, it will be replaced.
     func add(node: Node) {
+        remove(nodeWithUuid: node.uuid)
+        
+        node.meshNetwork = self
         nodes.append(node)
+    }
+    
+    /// Removes the Node from the mesh network.
+    func remove(node: Node) {
+        remove(nodeWithUuid: node.uuid)
+    }
+    
+    /// Removes the Provisioner's Node from the mesh network.
+    func remove(nodeForProvisioner provisioner: Provisioner) {
+        remove(nodeWithUuid: provisioner.uuid)
+    }
+    
+    /// Removes the Node with given UUID from the mesh network.
+    func remove(nodeWithUuid uuid: UUID) {
+        if let index = nodes.firstIndex(where: { $0.uuid == uuid }) {
+            nodes.remove(at: index).meshNetwork = nil
+        }
     }
     
 }

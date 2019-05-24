@@ -21,12 +21,12 @@ class ManagingProvisioners: XCTestCase {
     
     func testAddAndRemoveProvisioner() {
         let meshNetwork = MeshNetwork(name: "Test network")
-        meshNetwork.nodes.append(Node(name: "Node 0", unicastAddress: 1, elements: 10))
-        meshNetwork.nodes.append(Node(name: "Node 1", unicastAddress: 12, elements: 18))
-        meshNetwork.nodes.append(Node(name: "Node 2", unicastAddress: 30, elements: 11))
-        meshNetwork.nodes.append(Node(name: "Node 3", unicastAddress: 55, elements: 10))
-        meshNetwork.nodes.append(Node(name: "Node 4", unicastAddress: 65, elements: 5))
-        meshNetwork.nodes.append(Node(name: "Node 5", unicastAddress: 73, elements: 5))
+        meshNetwork.add(node: Node(name: "Node 0", unicastAddress: 1, elements: 10))
+        meshNetwork.add(node: Node(name: "Node 1", unicastAddress: 12, elements: 18))
+        meshNetwork.add(node: Node(name: "Node 2", unicastAddress: 30, elements: 11))
+        meshNetwork.add(node: Node(name: "Node 3", unicastAddress: 55, elements: 10))
+        meshNetwork.add(node: Node(name: "Node 4", unicastAddress: 65, elements: 5))
+        meshNetwork.add(node: Node(name: "Node 5", unicastAddress: 73, elements: 5))
         
         let provisioner = Provisioner(name: "New provisioner",
                                       allocatedUnicastRange: [
@@ -52,12 +52,12 @@ class ManagingProvisioners: XCTestCase {
     
     func testAddProvisioner_missingRanges() {
         let meshNetwork = MeshNetwork(name: "Test network")
-        meshNetwork.nodes.append(Node(name: "Node 0", unicastAddress: 1, elements: 10))
-        meshNetwork.nodes.append(Node(name: "Node 1", unicastAddress: 12, elements: 18))
-        meshNetwork.nodes.append(Node(name: "Node 2", unicastAddress: 30, elements: 11))
-        meshNetwork.nodes.append(Node(name: "Node 3", unicastAddress: 55, elements: 10))
-        meshNetwork.nodes.append(Node(name: "Node 4", unicastAddress: 65, elements: 5))
-        meshNetwork.nodes.append(Node(name: "Node 5", unicastAddress: 73, elements: 5))
+        meshNetwork.add(node: Node(name: "Node 0", unicastAddress: 1, elements: 10))
+        meshNetwork.add(node: Node(name: "Node 1", unicastAddress: 12, elements: 18))
+        meshNetwork.add(node: Node(name: "Node 2", unicastAddress: 30, elements: 11))
+        meshNetwork.add(node: Node(name: "Node 3", unicastAddress: 55, elements: 10))
+        meshNetwork.add(node: Node(name: "Node 4", unicastAddress: 65, elements: 5))
+        meshNetwork.add(node: Node(name: "Node 5", unicastAddress: 73, elements: 5))
         
         let provisioner = Provisioner(name: "New provisioner",
                                       allocatedUnicastRange: [
@@ -73,12 +73,12 @@ class ManagingProvisioners: XCTestCase {
     
     func testAddProvisioner_noAddress() {
         let meshNetwork = MeshNetwork(name: "Test network")
-        meshNetwork.nodes.append(Node(name: "Node 0", unicastAddress: 1, elements: 11))
-        meshNetwork.nodes.append(Node(name: "Node 1", unicastAddress: 12, elements: 18))
-        meshNetwork.nodes.append(Node(name: "Node 2", unicastAddress: 30, elements: 11))
-        meshNetwork.nodes.append(Node(name: "Node 3", unicastAddress: 55, elements: 10))
-        meshNetwork.nodes.append(Node(name: "Node 4", unicastAddress: 65, elements: 5))
-        meshNetwork.nodes.append(Node(name: "Node 5", unicastAddress: 73, elements: 5))
+        meshNetwork.add(node: Node(name: "Node 0", unicastAddress: 1, elements: 11))
+        meshNetwork.add(node: Node(name: "Node 1", unicastAddress: 12, elements: 18))
+        meshNetwork.add(node: Node(name: "Node 2", unicastAddress: 30, elements: 11))
+        meshNetwork.add(node: Node(name: "Node 3", unicastAddress: 55, elements: 10))
+        meshNetwork.add(node: Node(name: "Node 4", unicastAddress: 65, elements: 5))
+        meshNetwork.add(node: Node(name: "Node 5", unicastAddress: 73, elements: 5))
         
         let provisioner = Provisioner(name: "New provisioner",
                                       allocatedUnicastRange: [

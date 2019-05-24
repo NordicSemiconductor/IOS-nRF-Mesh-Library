@@ -12,6 +12,9 @@ public extension MeshNetwork {
     /// Returns the next available Key Index that can be assigned
     /// to a new Application Key.
     var nextAvailableApplicationKeyIndex: KeyIndex? {
+        if applicationKeys.isEmpty {
+            return 0
+        }
         guard let lastAppKey = applicationKeys.last, (lastAppKey.index + 1).isValidKeyIndex else {
             return nil
         }
@@ -21,6 +24,9 @@ public extension MeshNetwork {
     /// Returns the next available Key Index that can be assigned
     /// to a new Network Key.
     var nextAvailableNetworkKeyIndex: KeyIndex? {
+        if networkKeys.isEmpty {
+            return 0
+        }
         guard let lastNetKey = networkKeys.last, (lastNetKey.index + 1).isValidKeyIndex else {
             return nil
         }

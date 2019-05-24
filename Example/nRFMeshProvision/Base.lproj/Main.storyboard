@@ -522,6 +522,7 @@
                         <outlet property="elementsCountLabel" destination="E9e-8N-Sbw" id="DIz-uQ-FKW"/>
                         <outlet property="inputOobSizeLabel" destination="Sef-42-c2U" id="9AA-me-DKW"/>
                         <outlet property="nameLabel" destination="6zU-SL-IBl" id="RaQ-2T-wIL"/>
+                        <outlet property="networkKeyCell" destination="Ndg-0Q-WKP" id="eoi-0Q-Pg1"/>
                         <outlet property="networkKeyLabel" destination="jB2-Ks-5Wg" id="G06-A9-2iG"/>
                         <outlet property="outputOobSizeLabel" destination="xit-9M-VEk" id="OUn-Oi-aSn"/>
                         <outlet property="publicKeyTypeLabel" destination="zDh-JJ-bBg" id="yeg-Hd-EDU"/>

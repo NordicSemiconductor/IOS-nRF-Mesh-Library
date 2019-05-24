@@ -58,7 +58,7 @@ public protocol Bearer: class {
     /// Bearer state changes or a message is received from the Bearer.
     var delegate: BearerDelegate? { get set }
     /// Returns the message types supported by this bearer.
-    var supportedMesasgeTypes: MessageTypes { get }
+    var supportedMessageTypes: MessageTypes { get }
     /// This property returns `true` if the Bearer is open, otherwise `false`.
     var isOpen: Bool { get }
     
@@ -84,7 +84,7 @@ public extension Bearer {
     
     /// Returns whether the Bearer supports the given message type.
     func supports(_ messageType: MessageType) -> Bool {
-        return supportedMesasgeTypes.contains(MessageTypes(rawValue: messageType.mask))
+        return supportedMessageTypes.contains(MessageTypes(rawValue: messageType.mask))
     }
     
 }

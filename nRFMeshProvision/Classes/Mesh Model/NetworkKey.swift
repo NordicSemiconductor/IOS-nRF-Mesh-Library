@@ -28,6 +28,12 @@ public class NetworkKey: Key, Codable {
     }
     /// 128-bit Network Key.
     public internal(set) var key: Data
+    /// The Network ID derived from this Network Key. This identifier
+    /// is public information.
+    public internal(set) var networkId: Data
+    /// The Identity Key.
+    internal var identityKey: Data
+
     /// Minimum security level for a subnet associated with this network key.
     /// If all nodes on the subnet associated with this network key have been
     /// provisioned using network the Secure Provisioning procedure, then
@@ -47,6 +53,13 @@ public class NetworkKey: Key, Codable {
         self.key         = key
         self.minSecurity = .high
         self.timestamp   = Date()
+        
+        // Calculate Network ID and Identity Key.
+        let helper = OpenSSLHelper()
+        networkId = helper.calculateK3(withN: key)
+        let salt = helper.calculateSalt("nkik".data(using: .ascii)!)!
+        let P = Data([0x69, 0x64, 0x31, 0x32, 0x38, 0x01]) // "id128" || 0x01
+        identityKey = helper.calculateK1(withN: key, salt: salt, andP: P)
     }
     
     // MARK: - Codable
@@ -72,6 +85,7 @@ public class NetworkKey: Key, Codable {
                                                    debugDescription: "Key must be 32-character hexadecimal string")
         }
         key = keyData
+        networkId = OpenSSLHelper().calculateK3(withN: key)
         if let oldKeyHex = try container.decodeIfPresent(String.self, forKey: .oldKey) {
             guard let oldKeyData = Data(hex: oldKeyHex) else {
                 throw DecodingError.dataCorruptedError(forKey: .oldKey, in: container,
@@ -82,6 +96,13 @@ public class NetworkKey: Key, Codable {
         phase = try container.decode(KeyRefreshPhase.self, forKey: .phase)
         minSecurity = try container.decode(Security.self, forKey: .minSecurity)
         timestamp = try container.decode(Date.self, forKey: .timestamp)
+        
+        // Calculate Network ID and Identity Key.
+        let helper = OpenSSLHelper()
+        networkId = helper.calculateK3(withN: key)
+        let salt = helper.calculateSalt("nkik".data(using: .ascii)!)!
+        let P = Data([0x69, 0x64, 0x31, 0x32, 0x38, 0x01]) // "id128" || 0x01
+        identityKey = helper.calculateK1(withN: key, salt: salt, andP: P)
     }
     
     public func encode(to encoder: Encoder) throws {

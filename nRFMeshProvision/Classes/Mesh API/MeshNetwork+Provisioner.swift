@@ -129,7 +129,7 @@ public extension MeshNetwork {
             applicationKeys.forEach { key in
                 node.appKeys.append(Node.NodeKey(of: key))
             }
-            nodes.append(node)
+            add(node: node)
         }
         
         // And finally, add the provisioner.
@@ -144,10 +144,7 @@ public extension MeshNetwork {
     /// - returns: The removed Provisioner.
     func remove(provisionerAt index: Int) -> Provisioner {
         let provisioner = provisioners.remove(at: index)
-        
-        if let index = nodes.firstIndex(where: { $0.uuid == provisioner.uuid }) {
-            nodes.remove(at: index)
-        }
+        remove(nodeForProvisioner: provisioner)
         provisioner.meshNetwork = nil
         return provisioner
     }
@@ -245,7 +242,7 @@ public extension MeshNetwork {
             // Not found? The Provisioner without a node may not perform
             // configuration operations. Seems like it will support it from now on.
             let provisionerNode = Node(for: provisioner, withAddress: address)
-            nodes.append(provisionerNode)
+            add(node: provisionerNode)
         }
     }
     
@@ -257,10 +254,7 @@ public extension MeshNetwork {
     ///
     /// - parameter provisioner: The provisioner to be modified.
     func disableConfigurationCapabilities(for provisioner: Provisioner) {
-        // Search for Provisioner's node and remove it.
-        if let index = nodes.firstIndex(where: { $0.uuid == provisioner.uuid }) {
-            nodes.remove(at: index)
-        }
+        remove(nodeForProvisioner: provisioner)
     }
     
 }

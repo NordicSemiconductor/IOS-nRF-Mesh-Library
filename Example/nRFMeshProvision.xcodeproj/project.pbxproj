@@ -44,6 +44,7 @@
 		52DAA5E6225B957B0041C43A /* RangeCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52DAA5E5225B957B0041C43A /* RangeCell.swift */; };
 		52DF5D8A228DA78A00C297C1 /* ConfigurationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52DF5D89228DA78A00C297C1 /* ConfigurationViewController.swift */; };
 		52DF5D8C228DAA0500C297C1 /* NodeViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52DF5D8B228DAA0500C297C1 /* NodeViewCell.swift */; };
+		52DF5D8F229691BD00C297C1 /* NetworkConnection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52DF5D8E229691BD00C297C1 /* NetworkConnection.swift */; };
 		607FACD61AFB9204008FA782 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACD51AFB9204008FA782 /* AppDelegate.swift */; };
 		607FACDB1AFB9204008FA782 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 607FACD91AFB9204008FA782 /* Main.storyboard */; };
 		607FACDD1AFB9204008FA782 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 607FACDC1AFB9204008FA782 /* Images.xcassets */; };
@@ -99,6 +100,7 @@
 		52DAA5E5225B957B0041C43A /* RangeCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = RangeCell.swift; path = "View Controllers/Settings/RangeCell.swift"; sourceTree = "<group>"; };
 		52DF5D89228DA78A00C297C1 /* ConfigurationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigurationViewController.swift; sourceTree = "<group>"; };
 		52DF5D8B228DAA0500C297C1 /* NodeViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NodeViewCell.swift; sourceTree = "<group>"; };
+		52DF5D8E229691BD00C297C1 /* NetworkConnection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkConnection.swift; sourceTree = "<group>"; };
 		5A51F9AF82598D8D5D40BD77 /* Pods_nRFMeshProvision_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_nRFMeshProvision_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		607FACD01AFB9204008FA782 /* nRFMeshProvision_Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = nRFMeshProvision_Example.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		607FACD41AFB9204008FA782 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -237,6 +239,14 @@
 			path = Configuration;
 			sourceTree = "<group>";
 		};
+		52DF5D8D22968F7C00C297C1 /* Mesh Network */ = {
+			isa = PBXGroup;
+			children = (
+				52DF5D8E229691BD00C297C1 /* NetworkConnection.swift */,
+			);
+			path = "Mesh Network";
+			sourceTree = "<group>";
+		};
 		607FACC71AFB9204008FA782 = {
 			isa = PBXGroup;
 			children = (
@@ -263,6 +273,7 @@
 			isa = PBXGroup;
 			children = (
 				607FACD51AFB9204008FA782 /* AppDelegate.swift */,
+				52DF5D8D22968F7C00C297C1 /* Mesh Network */,
 				525242E6225F2D2E0044CECB /* Views */,
 				52835253227AEC8C0097B949 /* View Controllers */,
 				529B757322410784008F1CE7 /* Utils */,
@@ -502,6 +513,7 @@
 				5283528022806C280097B949 /* ProvisioningViewController.swift in Sources */,
 				52835269227B2BAE0097B949 /* ScannerTableViewController.swift in Sources */,
 				528352BC2285B6150097B949 /* OobSelector.swift in Sources */,
+				52DF5D8F229691BD00C297C1 /* NetworkConnection.swift in Sources */,
 				52DAA5E2225B633B0041C43A /* RangeView.swift in Sources */,
 				52DAA5DB22560EEE0041C43A /* EditProvisionerViewController.swift in Sources */,
 				52DF5D8C228DAA0500C297C1 /* NodeViewCell.swift in Sources */,

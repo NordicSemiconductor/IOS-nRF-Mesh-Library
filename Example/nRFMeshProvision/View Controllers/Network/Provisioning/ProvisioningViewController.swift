@@ -17,6 +17,7 @@ class ProvisioningViewController: UITableViewController {
     @IBOutlet weak var nameLabel: UILabel!
     @IBOutlet weak var unicastAddressLabel: UILabel!
     @IBOutlet weak var networkKeyLabel: UILabel!
+    @IBOutlet weak var networkKeyCell: UITableViewCell!
     
     @IBOutlet weak var elementsCountLabel: UILabel!
     @IBOutlet weak var supportedAlgorithmsLabel: UILabel!
@@ -68,6 +69,10 @@ class ProvisioningViewController: UITableViewController {
         // Unicast Address initially will be assigned automatically.
         unicastAddressLabel.text = "Automatic"
         networkKeyLabel.text = provisioningManager.networkKey?.name ?? "New Network Key"
+        if provisioningManager.networkKey == nil {
+            networkKeyCell.selectionStyle = .none
+            networkKeyCell.accessoryType = .none
+        }
         actionProvision.isEnabled = network.localProvisioner != nil
         
         // We are now connected. Proceed by sending Provisioning Invite request.
@@ -80,6 +85,13 @@ class ProvisioningViewController: UITableViewController {
                 self.presentAlert(title: "Error", message: "Identifying failed with an error: \(error)")
             }
         }
+    }
+    
+    override func shouldPerformSegue(withIdentifier identifier: String, sender: Any?) -> Bool {
+        if identifier == "networkKey" {
+            return provisioningManager.networkKey != nil
+        }
+        return true
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -218,6 +230,12 @@ private extension ProvisioningViewController {
                 self.startProvisioning()
             }
             return
+        }
+        
+        if provisioningManager.networkKey == nil {
+            let network = MeshNetworkManager.instance.meshNetwork!
+            let networkKey = try! network.add(networkKey: OpenSSLHelper().generateRandom(), name: "Primary Network Key")
+            provisioningManager.networkKey = networkKey
         }
         
         // Start provisioning.

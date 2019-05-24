@@ -44,7 +44,7 @@ internal class ProvisioningData {
         try provisionerPublicKey = pk.toData()
         
         // Generate Provisioner Random.
-        provisionerRandom = randomData(length: 16)
+        provisionerRandom = helper.generateRandom()
     }
     
 }
@@ -248,13 +248,6 @@ private extension ProvisioningData {
                                            salt: provisioningSalt,
                                            andP: "prdk".data(using: .ascii)!)!
         return (sessionKey: sessionKey, sessionNonce: sessionNonce, deviceKey: deviceKey)
-    }
-    
-    /// Generates an array of cryptographically secure random bytes.
-    func randomData(length: Int) -> Data {
-        var data = [UInt8](repeating: 0, count: length)
-        _ = SecRandomCopyBytes(kSecRandomDefault, length, &data)
-        return Data(data)
     }
     
 }

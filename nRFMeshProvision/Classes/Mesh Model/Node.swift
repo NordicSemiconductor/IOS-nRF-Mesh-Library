@@ -8,6 +8,7 @@
 import Foundation
 
 public class Node: Codable {
+    internal weak var meshNetwork: MeshNetwork?
 
     /// The state of a network or application key distributed to a mesh
     /// node by a Mesh Manager.
@@ -81,10 +82,10 @@ public class Node: Codable {
     public internal(set) var security: Security
     /// An array of node network key objects that include information
     /// about the network keys known to this node.
-    public internal(set) var netKeys: [NodeKey]
+    internal var netKeys: [NodeKey]
     /// An array of node application key objects that include information
     /// about the application keys known to this node.
-    public internal(set) var appKeys: [NodeKey]
+    internal var appKeys: [NodeKey]
     /// The boolean value represents whether the Mesh Manager
     /// has finished configuring this node. The property is set to `true`
     /// once a Mesh Manager is done completing this node's
@@ -124,6 +125,15 @@ public class Node: Codable {
     /// deleted and is excluded from the new network key distribution
     /// during the key refresh procedure; otherwise is set to `false`.
     public internal(set) var blacklisted: Bool = false
+    
+    /// Returns list of Network Keys known to this Node.
+    public var networkKeys: [NetworkKey] {
+        return meshNetwork?.networkKeys.filter { knows(networkKey: $0) } ?? []
+    }
+    /// Returns list of Application Keys known to this Node.
+    public var applicationKeys: [ApplicationKey] {
+        return meshNetwork?.applicationKeys.filter { knows(applicationKey: $0) } ?? []
+    }
     
     /// A constructor needed only for testing.
     internal init(name: String?, unicastAddress: Address, elements: UInt8) {

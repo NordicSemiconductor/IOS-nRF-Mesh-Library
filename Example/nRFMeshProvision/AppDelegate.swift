@@ -13,6 +13,7 @@ import nRFMeshProvision
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var meshNetworkManager: MeshNetworkManager!
+    var connection: NetworkConnection!
     var window: UIWindow?
 
     func application(_ application: UIApplication,
@@ -31,11 +32,26 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         // If load failed, create a new MeshNetwork.
         if !loaded {
-            // TODO: Implement creator
-            _ = meshNetworkManager.createNewMeshNetwork(named: "nRF Mesh Network", by: UIDevice.current.name)
-            _ = meshNetworkManager.save()
+            createNewMeshNetwork()
+        } else {
+            let meshNetwork = meshNetworkManager.meshNetwork!
+            connection = NetworkConnection(to: meshNetwork)
+            connection!.open()
         }
+        
         return true
+    }
+    
+    func createNewMeshNetwork() {
+        // TODO: Implement creator
+        connection?.close()
+        
+        _ = meshNetworkManager.createNewMeshNetwork(withName: "nRF Mesh Network", by: UIDevice.current.name)
+        _ = meshNetworkManager.save()
+        
+        let meshNetwork = meshNetworkManager.meshNetwork!
+        connection = NetworkConnection(to: meshNetwork)
+        connection!.open()
     }
 }
 
@@ -45,4 +61,7 @@ extension MeshNetworkManager {
         return (UIApplication.shared.delegate as! AppDelegate).meshNetworkManager
     }
     
+    static var bearer: Bearer! {
+        return (UIApplication.shared.delegate as! AppDelegate).connection
+    }
 }
