@@ -38,6 +38,7 @@
 		529B7643225222E8008F1CE7 /* UInt16+String.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529B7642225222E8008F1CE7 /* UInt16+String.swift */; };
 		529B764722522D37008F1CE7 /* UITableView+EmptyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529B764622522D37008F1CE7 /* UITableView+EmptyView.swift */; };
 		529B76492252499E008F1CE7 /* UIColor+Nordic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529B76482252499E008F1CE7 /* UIColor+Nordic.swift */; };
+		52B7F67D229829F200B0A42F /* Addresses.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52B7F67C229829F200B0A42F /* Addresses.swift */; };
 		52DAA5DB22560EEE0041C43A /* EditProvisionerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52DAA5DA22560EEE0041C43A /* EditProvisionerViewController.swift */; };
 		52DAA5E2225B633B0041C43A /* RangeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52DAA5E1225B633B0041C43A /* RangeView.swift */; };
 		52DAA5E4225B93320041C43A /* EditRangesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52DAA5E3225B93320041C43A /* EditRangesViewController.swift */; };
@@ -94,6 +95,7 @@
 		529B7642225222E8008F1CE7 /* UInt16+String.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "UInt16+String.swift"; path = "Utils/UInt16+String.swift"; sourceTree = "<group>"; };
 		529B764622522D37008F1CE7 /* UITableView+EmptyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "UITableView+EmptyView.swift"; path = "Utils/UITableView+EmptyView.swift"; sourceTree = "<group>"; };
 		529B76482252499E008F1CE7 /* UIColor+Nordic.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "UIColor+Nordic.swift"; path = "Utils/UIColor+Nordic.swift"; sourceTree = "<group>"; };
+		52B7F67C229829F200B0A42F /* Addresses.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Addresses.swift; sourceTree = "<group>"; };
 		52DAA5DA22560EEE0041C43A /* EditProvisionerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = EditProvisionerViewController.swift; path = "View Controllers/Settings/EditProvisionerViewController.swift"; sourceTree = "<group>"; };
 		52DAA5E1225B633B0041C43A /* RangeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RangeView.swift; sourceTree = "<group>"; };
 		52DAA5E3225B93320041C43A /* EditRangesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = EditRangesViewController.swift; path = "View Controllers/Settings/EditRangesViewController.swift"; sourceTree = "<group>"; };
@@ -304,6 +306,7 @@
 				529B7628224CE481008F1CE7 /* AssigningUnicastAddress.swift */,
 				529B764022521075008F1CE7 /* ManagingProvisioners.swift */,
 				528352B32284139F0097B949 /* ProxyProtocol.swift */,
+				52B7F67C229829F200B0A42F /* Addresses.swift */,
 				529B75A92248E275008F1CE7 /* nRFMeshProvision_Tests-Bridging-Header.h */,
 			);
 			path = Tests;
@@ -544,6 +547,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				52B7F67D229829F200B0A42F /* Addresses.swift in Sources */,
 				529B7629224CE481008F1CE7 /* AssigningUnicastAddress.swift in Sources */,
 				528352B42284139F0097B949 /* ProxyProtocol.swift in Sources */,
 				529B75AD22491770008F1CE7 /* AddressRanges.swift in Sources */,

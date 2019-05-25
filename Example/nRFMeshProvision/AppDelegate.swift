@@ -36,6 +36,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         } else {
             let meshNetwork = meshNetworkManager.meshNetwork!
             connection = NetworkConnection(to: meshNetwork)
+            connection.dataDelegate = meshNetworkManager
             connection!.open()
         }
         
@@ -51,6 +52,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         let meshNetwork = meshNetworkManager.meshNetwork!
         connection = NetworkConnection(to: meshNetwork)
+        connection.dataDelegate = meshNetworkManager
         connection!.open()
     }
 }

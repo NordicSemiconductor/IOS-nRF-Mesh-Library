@@ -14,6 +14,7 @@ class NetworkConnection: NSObject, Bearer {
     let centralManager: CBCentralManager
     
     weak var delegate: BearerDelegate?
+    weak var dataDelegate: BearerDataDelegate?
     
     /// The Mesh Network for this connection.
     let meshNetwork: MeshNetwork
@@ -27,6 +28,10 @@ class NetworkConnection: NSObject, Bearer {
     }
     
     var isOpen: Bool = false
+    
+    var mtu: Int {
+        return proxies.first?.mtu ?? 0
+    }
     
     /// Returns `true` if at least one Proxy is connected.
     var isConnected: Bool {
@@ -101,12 +106,13 @@ extension NetworkConnection: CBCentralManagerDelegate {
         
         let bearer = GattBearer(to: peripheral, using: central)
         bearer.delegate = self
+        bearer.dataDelegate = self
         proxies.append(bearer)
         bearer.open()
     }
 }
 
-extension NetworkConnection: GattBearerDelegate {
+extension NetworkConnection: GattBearerDelegate, BearerDataDelegate {
     
     func bearerDidOpen(_ bearer: Bearer) {
         let connectionsCount = proxies.reduce(0) { (last, bearer) -> Int in
@@ -137,7 +143,7 @@ extension NetworkConnection: GattBearerDelegate {
     }
     
     func bearer(_ bearer: Bearer, didDeliverData data: Data, ofType type: MessageType) {
-        delegate?.bearer(self, didDeliverData: data, ofType: type)
+        dataDelegate?.bearer(self, didDeliverData: data, ofType: type)
     }
     
 }

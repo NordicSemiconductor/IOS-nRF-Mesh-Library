@@ -15,27 +15,43 @@ public struct MeshAddress {
     
     internal init?(hex: String) {
         if let address = Address(hex: hex) {
-            self.address = address
-            self.virtualLabel = nil
+            self.init(address)
         } else if let virtualLabel = UUID(hex: hex) {
-            self.virtualLabel = virtualLabel
-            
-            // Calculate the 16-bit virtual address based on the 128-bit label.
-            let helper = OpenSSLHelper()
-            guard let data = helper.calculateSalt(Data(hex: hex)) else {
-                return nil
-            }
-            self.address = UInt16(data: data)
+            self.init(virtualLabel)
         } else {
             return nil
         }
+    }
+    
+    /// Creates a Mesh Address. For virtual addresses use
+    /// `init(_ virtualAddress:UUID)` instead.
+    public init?(_ address: Address) {
+        guard !address.isVirtual else {
+            return nil
+        }
+        self.address = address
+        self.virtualLabel = nil
+    }
+    
+    /// Creates a Mesh Address based on the virtual label.
+    public init(_ virtualLabel: UUID) {
+        self.virtualLabel = virtualLabel
+        
+        // Calculate the 16-bit virtual address based on the 128-bit label.
+        let helper = OpenSSLHelper()
+        let salt = helper.calculateSalt("vtad".data(using: .ascii)!)!
+        let hash = helper.calculateCMAC(Data(hex: virtualLabel.hex), andKey: salt)!
+        var address = UInt16(data: hash.dropFirst(14)).bigEndian
+        address |= 0x8000
+        address &= 0xBFFF
+        self.address = address
     }
 }
 
 public extension MeshAddress {
     
-    /// Returns true if the Subscriber is an Virtual Address
-    /// identified by a virtual label.
+    /// Returns `true` if the destination is a Virtual Address
+    /// identified by a virtual label, `false` otherwise.
     var isVirtual: Bool {
         return virtualLabel != nil
     }

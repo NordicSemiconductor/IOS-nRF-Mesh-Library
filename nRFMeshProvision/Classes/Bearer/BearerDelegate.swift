@@ -7,6 +7,19 @@
 
 import Foundation
 
+public protocol BearerDataDelegate: class {
+    
+    /// Callback called when a packet has been received using the Bearer.
+    /// Data longer than MTU will automatically be reassembled
+    /// using the bearer protocol if bearer implements segmentation.
+    ///
+    /// - parameter bearer: The Bearer on which the data were received.
+    /// - parameter data:   The data received.
+    /// - parameter type:   The type of the received data.
+    func bearer(_ bearer: Bearer, didDeliverData data: Data, ofType type: MessageType)
+    
+}
+
 public protocol BearerDelegate: class {
     
     /// Callback called when the Bearer is ready for use.
@@ -20,21 +33,5 @@ public protocol BearerDelegate: class {
     /// - parameter error:  The reason of closing the Bearer, or `nil`
     ///                     if closing was intended.
     func bearer(_ bearer: Bearer, didClose error: Error?)
-    
-    /// Callback called when a packet has been received using the Bearer.
-    /// Data longer than MTU will automatically be reassembled
-    /// using the bearer protocol if bearer implements segmentation.
-    ///
-    /// - parameter bearer: The Bearer on which the data were received.
-    /// - parameter data:   The data received.
-    /// - parameter type:   The type of the received data.
-    func bearer(_ bearer: Bearer, didDeliverData data: Data, ofType type: MessageType)
-}
-
-public extension BearerDelegate {
-    
-    func bearer(_ bearer: Bearer, didDeliverData data: Data, ofType type: MessageType) {
-        // This method is optional.
-    }
     
 }

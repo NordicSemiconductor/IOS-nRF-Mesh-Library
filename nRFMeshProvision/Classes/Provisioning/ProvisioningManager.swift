@@ -41,6 +41,7 @@ public class ProvisioningManager {
     
     /// The original Bearer delegate. It will be notified on bearer state updates.
     private weak var bearerDelegate: BearerDelegate?
+    private weak var bearerDataDelegate: BearerDataDelegate?
     
     // MARK: - Public properties
     
@@ -148,7 +149,9 @@ public class ProvisioningManager {
         // Assign bearer delegate to self. If one was already set, events
         // will be forwarded. Don't modify Bearer delegate from now on.
         bearerDelegate = bearer.delegate
+        bearerDataDelegate = bearer.dataDelegate
         bearer.delegate = self
+        bearer.dataDelegate = self
         
         // Initialize provisioning data.
         provisioningData = ProvisioningData()
@@ -231,7 +234,7 @@ public class ProvisioningManager {
     }
 }
 
-extension ProvisioningManager: BearerDelegate {
+extension ProvisioningManager: BearerDelegate, BearerDataDelegate {
     
     /// This method sends the provisioning request to the device
     /// over the Bearer specified in the init.
@@ -266,12 +269,16 @@ extension ProvisioningManager: BearerDelegate {
             bearer.delegate = delegate
             bearerDelegate = nil
         }
+        if let dataDelegate = bearerDataDelegate {
+            bearer.dataDelegate = dataDelegate
+            bearerDataDelegate = nil
+        }
         
         reset()
     }
     
     public func bearer(_ bearer: Bearer, didDeliverData data: Data, ofType type: MessageType) {
-        bearerDelegate?.bearer(bearer, didDeliverData: data, ofType: type)
+        bearerDataDelegate?.bearer(bearer, didDeliverData: data, ofType: type)
         
         // Try parsing the response.
         guard let response = ProvisioningResponse(data) else {

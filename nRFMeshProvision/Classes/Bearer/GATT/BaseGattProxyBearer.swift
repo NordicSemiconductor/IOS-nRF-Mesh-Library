@@ -14,6 +14,7 @@ open class BaseGattProxyBearer<Service: MeshService>: NSObject, Bearer, CBCentra
     // MARK: - Properties
     
     public weak var delegate: BearerDelegate?
+    public weak var dataDelegate: BearerDataDelegate?
     
     private let centralManager   : CBCentralManager
     private let basePeripheral   : CBPeripheral
@@ -24,12 +25,16 @@ open class BaseGattProxyBearer<Service: MeshService>: NSObject, Bearer, CBCentra
     
     // MARK: - Computed properties
     
+    public var supportedMessageTypes: MessageTypes {
+        return [.networkPdu, .meshBeacon, .proxyConfiguration, .provisioningPdu]
+    }
+    
     public var isOpen: Bool {
         return basePeripheral.state == .connected
     }
     
-    public var supportedMessageTypes: MessageTypes {
-        return [.networkPdu, .meshBeacon, .proxyConfiguration, .provisioningPdu]
+    public var mtu: Int {
+        return basePeripheral.maximumWriteValueLength(for: .withoutResponse)
     }
     
     // MARK: - Characteristic properties
@@ -247,7 +252,7 @@ open class BaseGattProxyBearer<Service: MeshService>: NSObject, Bearer, CBCentra
         }
         print("<- 0x\(data.hex)")
         if let message = protocolHandler.reassemble(data) {
-            delegate?.bearer(self, didDeliverData: message.data, ofType: message.messageType)
+            dataDelegate?.bearer(self, didDeliverData: message.data, ofType: message.messageType)
         }
     }
     

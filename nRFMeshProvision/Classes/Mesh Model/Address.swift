@@ -59,4 +59,5 @@ public extension Address {
     var isGroup: Bool {
         return (self & 0xC000) == 0xC000
     }
+    
 }

@@ -55,12 +55,18 @@ public struct MessageTypes: OptionSet {
 /// to the mesh network.
 public protocol Bearer: class {
     /// The Bearer delegate object will receive callbacks whenever the
-    /// Bearer state changes or a message is received from the Bearer.
+    /// Bearer state changes.
     var delegate: BearerDelegate? { get set }
+    /// The data delegate will receive callbacks whenever a message is
+    /// received from the Bearer.
+    var dataDelegate: BearerDataDelegate? { get set }
     /// Returns the message types supported by this bearer.
     var supportedMessageTypes: MessageTypes { get }
     /// This property returns `true` if the Bearer is open, otherwise `false`.
     var isOpen: Bool { get }
+    /// The Maximum Transmission Unit (MTU) is the maximum size of payload
+    /// that the bearer can send in a single packet.
+    var mtu: Int { get }
     
     /// This method opens the Bearer.
     func open()
