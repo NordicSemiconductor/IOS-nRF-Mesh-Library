@@ -23,7 +23,7 @@ class NetworkConnection: NSObject, Bearer {
     var proxies: [GattBearer] = []
     var buffer: [(data: Data, type: PduType)] = []
     
-    public var supportedMessageTypes: PduTypes {
+    public var supportedPduTypes: PduTypes {
         return [.networkPdu, .meshBeacon, .proxyConfiguration]
     }
     
