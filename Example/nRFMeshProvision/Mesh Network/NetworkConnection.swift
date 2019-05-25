@@ -21,9 +21,9 @@ class NetworkConnection: NSObject, Bearer {
     
     /// The list of connected GATT Proxies.
     var proxies: [GattBearer] = []
-    var buffer: [(data: Data, type: MessageType)] = []
+    var buffer: [(data: Data, type: PduType)] = []
     
-    public var supportedMessageTypes: MessageTypes {
+    public var supportedMessageTypes: PduTypes {
         return [.networkPdu, .meshBeacon, .proxyConfiguration]
     }
     
@@ -59,9 +59,9 @@ class NetworkConnection: NSObject, Bearer {
         isOpen = false
     }
     
-    func send(_ data: Data, ofType type: MessageType) throws {
+    func send(_ data: Data, ofType type: PduType) throws {
         guard supports(type) else {
-            throw BearerError.messageTypeNotSupported
+            throw BearerError.pduTypeNotSupported
         }
         guard let proxy = proxies.first else {
             buffer.append((data: data, type: type))
@@ -142,7 +142,7 @@ extension NetworkConnection: GattBearerDelegate, BearerDataDelegate {
         }
     }
     
-    func bearer(_ bearer: Bearer, didDeliverData data: Data, ofType type: MessageType) {
+    func bearer(_ bearer: Bearer, didDeliverData data: Data, ofType type: PduType) {
         dataDelegate?.bearer(self, didDeliverData: data, ofType: type)
     }
     

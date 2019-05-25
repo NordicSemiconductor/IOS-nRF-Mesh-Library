@@ -128,7 +128,7 @@ public class ProvisioningManager {
     public func identify(andAttractFor attentionTimer: UInt8) throws {
         // Does the Bearer support provisioning?
         guard bearer.supports(.provisioningPdu) else {
-            throw BearerError.messageTypeNotSupported
+            throw BearerError.pduTypeNotSupported
         }
         
         // Has the provisioning been restarted?
@@ -277,7 +277,7 @@ extension ProvisioningManager: BearerDelegate, BearerDataDelegate {
         reset()
     }
     
-    public func bearer(_ bearer: Bearer, didDeliverData data: Data, ofType type: MessageType) {
+    public func bearer(_ bearer: Bearer, didDeliverData data: Data, ofType type: PduType) {
         bearerDataDelegate?.bearer(bearer, didDeliverData: data, ofType: type)
         
         // Try parsing the response.

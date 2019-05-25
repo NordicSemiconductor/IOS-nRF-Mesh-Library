@@ -25,7 +25,7 @@ open class BaseGattProxyBearer<Service: MeshService>: NSObject, Bearer, CBCentra
     
     // MARK: - Computed properties
     
-    public var supportedMessageTypes: MessageTypes {
+    public var supportedPduTypes: PduTypes {
         return [.networkPdu, .meshBeacon, .proxyConfiguration, .provisioningPdu]
     }
     
@@ -76,9 +76,9 @@ open class BaseGattProxyBearer<Service: MeshService>: NSObject, Bearer, CBCentra
         }
     }
     
-    open func send(_ data: Data, ofType type: MessageType) throws {
+    open func send(_ data: Data, ofType type: PduType) throws {
         guard supports(type) else {
-            throw BearerError.messageTypeNotSupported
+            throw BearerError.pduTypeNotSupported
         }
         guard isOpen else {
             throw BearerError.bearerClosed

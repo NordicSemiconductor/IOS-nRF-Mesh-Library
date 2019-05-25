@@ -16,7 +16,7 @@ public protocol BearerDataDelegate: class {
     /// - parameter bearer: The Bearer on which the data were received.
     /// - parameter data:   The data received.
     /// - parameter type:   The type of the received data.
-    func bearer(_ bearer: Bearer, didDeliverData data: Data, ofType type: MessageType)
+    func bearer(_ bearer: Bearer, didDeliverData data: Data, ofType type: PduType)
     
 }
 

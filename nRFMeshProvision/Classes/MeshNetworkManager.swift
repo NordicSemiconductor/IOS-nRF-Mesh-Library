@@ -19,6 +19,7 @@ public protocol MeshNetworkDelegate: class {
     ///   - source:      The Unicast Address of the Element from which
     ///                  the message was sent.
     func meshNetwork(_ meshNetwork: MeshNetwork, didDeliverMessage message: MeshMessage, from source: MeshAddress)
+    
 }
 
 public class MeshNetworkManager {
@@ -26,8 +27,12 @@ public class MeshNetworkManager {
     private var meshData: MeshData!
     /// Storage to keep the app data.
     private let storage: Storage
-    
+    /// The delegate will receive callbacks whenever a complete
+    /// Mesh Message has been received and reassembled.
     public weak var delegate: MeshNetworkDelegate?
+    /// The sender object should send PDUs created by the manager
+    /// using any Bearer.
+    public var transmitter: Transmitter?
     
     // MARK: - Computed properties
     
@@ -78,13 +83,7 @@ public extension MeshNetworkManager {
     /// - parameter name:            The user given network name.
     /// - parameter provisionerName: The user given local provisioner name.
     func createNewMeshNetwork(withName name: String, by provisionerName: String) -> MeshNetwork {
-        let network = MeshNetwork(name: name)
-        
-        // Add a new default provisioner.
-        try! network.add(provisioner: Provisioner(name: provisionerName))
-        
-        meshData.meshNetwork = network
-        return network
+        return createNewMeshNetwork(withName: name, by: Provisioner(name: provisionerName))
     }
     
     /// Generates a new Mesh Network configuration with random or default values.
@@ -112,20 +111,51 @@ public extension MeshNetworkManager {
 
 public extension MeshNetworkManager {
     
-    func bearerDidDeliverData(_ data: Data, ofType type: MessageType) {
+    /// This method should be called whenever a PDU has been received
+    /// from the mesh network using any bearer.
+    /// When a complete Mesh Message is received and reassembled, the
+    /// delegate's `meshNetwork(:didDeliverMessage:from)` will be called.
+    ///
+    /// For easier integration with Bearers use
+    /// `bearer(didDeliverData:ofType)` instead and set the manager
+    /// as Bearer's `dataDelegate`.
+    ///
+    /// - parameter data: The PDU received.
+    /// - parameter type: The PDU type.
+    func bearerDidDeliverData(_ data: Data, ofType type: PduType) {
         // TODO
     }
     
-    func createMeshMessage(_ message: MeshMessage, for destination: MeshAddress, withMtu mtu: Int) -> [Data] {
+    /// Encrypts the message with given destination address and,
+    /// if required, performs segmentation. For each created segment
+    /// the transmitter's `send(:ofType)` will be called.
+    /// The transmitter should send the message over Bluetooth Mesh
+    /// using any bearer.
+    ///
+    /// This method does not return PDUs to be sent. Instead, for each
+    /// segment it calls a callback which should send it over the air.
+    /// This is in order to support retransmittion in case a packet was
+    /// lost and needs to be sent again after block acknowlegment was
+    /// received.
+    ///
+    /// - parameter message:     The message to be sent.
+    /// - parameter destination: The destination address.
+    func createMeshMessage(_ message: MeshMessage, for destination: MeshAddress) {
         // TODO
-        return []
     }
     
-    func createMeshMessage(_ message: MeshMessage, for destination: Address, withMtu mtu: Int) throws -> [Data] {
+    /// Does the same as the other `createMeshMessage(:for)`, but takes
+    /// Address as destination address.
+    ///
+    /// - parameter message:     The message to be sent.
+    /// - parameter destination: The destination address.
+    /// - throws: This method throws when the address is not a Unicast
+    ///           or Group Address.
+    func createMeshMessage(_ message: MeshMessage, for destination: Address) throws {
         guard let address = MeshAddress(destination) else {
             throw MeshMessageError.invalidAddress
         }
-        return createMeshMessage(message, for: address, withMtu: mtu)
+        createMeshMessage(message, for: address)
     }
     
 }
@@ -134,22 +164,8 @@ public extension MeshNetworkManager {
 
 extension MeshNetworkManager: BearerDataDelegate {
     
-    public func bearer(_ bearer: Bearer, didDeliverData data: Data, ofType type: MessageType) {
+    public func bearer(_ bearer: Bearer, didDeliverData data: Data, ofType type: PduType) {
         bearerDidDeliverData(data, ofType: type)
-    }
-    
-    func createMeshMessage(_ message: MeshMessage, for destination: MeshAddress, andSendUsing bearer: Bearer) throws {
-        let packets = createMeshMessage(message, for: destination, withMtu: bearer.mtu)
-        try packets.forEach {
-            try bearer.send($0, ofType: .networkPdu)
-        }
-    }
-    
-    func createMeshMessage(_ message: MeshMessage, for destination: Address, andSendUsing bearer: Bearer) throws {
-        guard let address = MeshAddress(destination) else {
-            throw MeshMessageError.invalidAddress
-        }
-        try createMeshMessage(message, for: address, andSendUsing: bearer)
     }
     
 }

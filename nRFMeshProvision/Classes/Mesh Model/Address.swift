@@ -31,30 +31,30 @@ public extension Address {
 
 public extension Address {
     
-    /// Returns true if the address is from a valid range.
+    /// Returns `true` if the address is from a valid range.
     var isValidAddress: Bool {
         return self < 0xFF00 || self > 0xFFFB
     }
     
-    /// Returns true if the address is an Unassigned Address.
+    /// Returns `true` if the address is an Unassigned Address.
     /// Unassigned addresses is equal to 0b0000000000000000.
     var isUnassigned: Bool {
         return self == Address.unassignedAddress
     }
     
-    /// Returns true if the address is an Unicat Address.
+    /// Returns `true` if the address is an Unicat Address.
     /// Unicat addresses match 0b00xxxxxxxxxxxxxx (except 0b0000000000000000).
     var isUnicast: Bool {
         return (self & 0x8000) == 0x0000 && !isUnassigned
     }
     
-    /// Returns true if the address is a Virtual Address.
+    /// Returns `true` if the address is a Virtual Address.
     /// Virtual addresses match 0b10xxxxxxxxxxxxxx.
     var isVirtual: Bool {
         return (self & 0xC000) == 0x8000
     }
     
-    /// Returns true if the address is a Group Address.
+    /// Returns `true` if the address is a Group Address.
     /// Group addresses match 0b11xxxxxxxxxxxxxx.
     var isGroup: Bool {
         return (self & 0xC000) == 0xC000

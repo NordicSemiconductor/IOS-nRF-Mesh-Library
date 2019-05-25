@@ -26,7 +26,7 @@ public struct MeshAddress {
     /// Creates a Mesh Address. For virtual addresses use
     /// `init(_ virtualAddress:UUID)` instead.
     public init?(_ address: Address) {
-        guard !address.isVirtual else {
+        guard address.isUnicast || address.isGroup else {
             return nil
         }
         self.address = address
@@ -55,4 +55,5 @@ public extension MeshAddress {
     var isVirtual: Bool {
         return virtualLabel != nil
     }
+    
 }

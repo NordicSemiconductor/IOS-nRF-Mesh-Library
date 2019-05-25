@@ -22,9 +22,9 @@ enum SAR: UInt8 {
     }
 }
 
-extension MessageType {
+extension PduType {
     
-    static func from(_ data: Data) -> MessageType? {
+    static func from(_ data: Data) -> PduType? {
         guard data.count > 0 else {
             return nil
         }
@@ -42,7 +42,7 @@ extension MessageType {
 
 public class ProxyProtocolHandler {
     private var buffer: Data?
-    private var bufferType: MessageType?
+    private var bufferType: PduType?
     
     /// Segments the given data with given message type to 1+ messages
     /// where all but the last one are of the MTU size and the last one
@@ -55,7 +55,7 @@ public class ProxyProtocolHandler {
     ///   - data:        The data to be semgneted.
     ///   - messageType: The data type.
     ///   - mtu:         The maximum size of a packet to be sent.
-    public func segment(_ data: Data, ofType messageType: MessageType, toMtu mtu: Int) -> [Data] {
+    public func segment(_ data: Data, ofType messageType: PduType, toMtu mtu: Int) -> [Data] {
         var packets: [Data] = []
         
         if data.count <= mtu - 1 {
@@ -91,7 +91,7 @@ public class ProxyProtocolHandler {
     /// - parameter data: The data received.
     /// - returns: The message and its type, or `nil`, if more data
     ///            are expected.
-    public func reassemble(_ data: Data) -> (data: Data, messageType: MessageType)? {
+    public func reassemble(_ data: Data) -> (data: Data, messageType: PduType)? {
         guard data.count > 0 else {
             // Disregard invalid packet.
             return nil
@@ -102,7 +102,7 @@ public class ProxyProtocolHandler {
             return nil
         }
         
-        guard let messageType = MessageType.from(data) else {
+        guard let messageType = PduType.from(data) else {
             // Disregard invalid packet.
             return nil
         }
