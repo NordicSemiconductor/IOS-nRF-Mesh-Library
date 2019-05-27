@@ -33,10 +33,6 @@ open class BaseGattProxyBearer<Service: MeshService>: NSObject, Bearer, CBCentra
         return basePeripheral.state == .connected
     }
     
-    public var mtu: Int {
-        return basePeripheral.maximumWriteValueLength(for: .withoutResponse)
-    }
-    
     // MARK: - Characteristic properties
     
     private var dataInCharacteristic:  CBCharacteristic?

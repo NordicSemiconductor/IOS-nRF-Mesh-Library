@@ -80,9 +80,6 @@ public protocol Bearer: Transmitter {
     var supportedPduTypes: PduTypes { get }
     /// This property returns `true` if the Bearer is open, otherwise `false`.
     var isOpen: Bool { get }
-    /// The Maximum Transmission Unit (MTU) is the maximum size of payload
-    /// that the bearer can send in a single packet.
-    var mtu: Int { get }
     
     /// This method opens the Bearer.
     func open()

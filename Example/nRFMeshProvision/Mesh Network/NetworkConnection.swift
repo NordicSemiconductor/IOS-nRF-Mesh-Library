@@ -29,10 +29,6 @@ class NetworkConnection: NSObject, Bearer {
     
     var isOpen: Bool = false
     
-    var mtu: Int {
-        return proxies.first?.mtu ?? 0
-    }
-    
     /// Returns `true` if at least one Proxy is connected.
     var isConnected: Bool {
         return proxies.contains { $0.isOpen }
