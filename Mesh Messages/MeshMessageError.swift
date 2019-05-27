@@ -9,5 +9,5 @@ import Foundation
 
 public enum MeshMessageError: Error {
     case invalidAddress
-    case mtuTooSmall
+    case invalidPdu
 }

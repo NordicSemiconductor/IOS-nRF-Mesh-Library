@@ -28,12 +28,6 @@ public class NetworkKey: Key, Codable {
     }
     /// 128-bit Network Key.
     public internal(set) var key: Data
-    /// The Network ID derived from this Network Key. This identifier
-    /// is public information.
-    public internal(set) var networkId: Data
-    /// The Identity Key.
-    internal var identityKey: Data
-
     /// Minimum security level for a subnet associated with this network key.
     /// If all nodes on the subnet associated with this network key have been
     /// provisioned using network the Secure Provisioning procedure, then
@@ -43,6 +37,18 @@ public class NetworkKey: Key, Codable {
     /// The old Network Key is present when the phase property has a non-zero
     /// value, such as when a Key Refresh procedure is in progress.
     public internal(set) var oldKey: Data? = nil
+    
+    /// The Network ID derived from this Network Key. This identifier
+    /// is public information.
+    public internal(set) var networkId: Data
+    /// The Identity Key.
+    internal var identityKey: Data
+    /// The Encryption Key.
+    internal var encryptionKey: Data
+    /// The Privacy Key.
+    internal var privacyKey: Data
+    /// Network identifier.
+    internal var nid: UInt8
     
     internal init(name: String, index: KeyIndex, key: Data) throws {
         guard index.isValidKeyIndex else {
@@ -60,6 +66,11 @@ public class NetworkKey: Key, Codable {
         let salt = helper.calculateSalt("nkik".data(using: .ascii)!)!
         let P = Data([0x69, 0x64, 0x31, 0x32, 0x38, 0x01]) // "id128" || 0x01
         identityKey = helper.calculateK1(withN: key, salt: salt, andP: P)
+        // Calculate NIC, Encryption Key and Privacy Key.
+        let hash = helper.calculateK2(withN: key, andP: Data([0x00]))!
+        nid = hash[0] & 0x7F
+        encryptionKey = hash.subdata(in: 1..<17)
+        privacyKey = hash.subdata(in: 17..<33)
     }
     
     // MARK: - Codable
@@ -103,6 +114,11 @@ public class NetworkKey: Key, Codable {
         let salt = helper.calculateSalt("nkik".data(using: .ascii)!)!
         let P = Data([0x69, 0x64, 0x31, 0x32, 0x38, 0x01]) // "id128" || 0x01
         identityKey = helper.calculateK1(withN: key, salt: salt, andP: P)
+        // Calculate NIC, Encryption Key and Privacy Key.
+        let hash = helper.calculateK2(withN: key, andP: Data([0x00]))!
+        nid = hash[0] & 0x7F
+        encryptionKey = hash.subdata(in: 1..<17)
+        privacyKey = hash.subdata(in: 17..<33)
     }
     
     public func encode(to encoder: Encoder) throws {

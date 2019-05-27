@@ -102,6 +102,7 @@
 		529B7625224BB02E008F1CE7 /* Data+Hex.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529B7624224BB02E008F1CE7 /* Data+Hex.swift */; };
 		52B7F68022994B3E00B0A42F /* MeshMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52B7F67F22994B3E00B0A42F /* MeshMessage.swift */; };
 		52B7F68222994D3C00B0A42F /* MeshMessageError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52B7F68122994D3C00B0A42F /* MeshMessageError.swift */; };
+		52B7F688229BCC4000B0A42F /* NetworkPdu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52B7F687229BCC4000B0A42F /* NetworkPdu.swift */; };
 		76AD7DBB6F78223071CAB41C3AE42393 /* MeshConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 045D235D97EFC49E1F2183DAE067E868 /* MeshConstants.swift */; };
 		931A62151708A6FCE40E1EE898EEB7A5 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CB4607EFCA7C5F75397649E792E2AFCB /* Foundation.framework */; };
 		960FB84461FE8AC810DBA945C761C9ED /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CB4607EFCA7C5F75397649E792E2AFCB /* Foundation.framework */; };
@@ -248,6 +249,7 @@
 		529B7624224BB02E008F1CE7 /* Data+Hex.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Data+Hex.swift"; sourceTree = "<group>"; };
 		52B7F67F22994B3E00B0A42F /* MeshMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeshMessage.swift; sourceTree = "<group>"; };
 		52B7F68122994D3C00B0A42F /* MeshMessageError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeshMessageError.swift; sourceTree = "<group>"; };
+		52B7F687229BCC4000B0A42F /* NetworkPdu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkPdu.swift; sourceTree = "<group>"; };
 		573AFBF1BDAB242832B4146C926392C7 /* blowfish.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = blowfish.h; path = "include-ios/openssl/blowfish.h"; sourceTree = "<group>"; };
 		575A90FFDDE767E0A52A6ABDC699E9B5 /* dsa.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = dsa.h; path = "include-ios/openssl/dsa.h"; sourceTree = "<group>"; };
 		57E13D43B8F7A9E973DAAF745860C9AA /* Pods-nRFMeshProvision_Tests-acknowledgements.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-nRFMeshProvision_Tests-acknowledgements.plist"; sourceTree = "<group>"; };
@@ -405,6 +407,7 @@
 				529B75E0224A6CE2008F1CE7 /* Mesh Model */,
 				528352842281A3B50097B949 /* Provisioning */,
 				52835274228029720097B949 /* Bearer */,
+				52B7F686229BCC1F00B0A42F /* Layers */,
 				529B7606224A6D47008F1CE7 /* Mesh Errors */,
 				529B7619224A6D59008F1CE7 /* Type Extensions */,
 				A1F75DB0D8F3EBCDE7B76E218C87AECD /* Utils */,
@@ -549,6 +552,15 @@
 				52B7F68122994D3C00B0A42F /* MeshMessageError.swift */,
 			);
 			path = "Mesh Messages";
+			sourceTree = "<group>";
+		};
+		52B7F686229BCC1F00B0A42F /* Layers */ = {
+			isa = PBXGroup;
+			children = (
+				52B7F687229BCC4000B0A42F /* NetworkPdu.swift */,
+			);
+			name = Layers;
+			path = nRFMeshProvision/Classes/Layers;
 			sourceTree = "<group>";
 		};
 		67151D3FE9B5A8AC1BFC390B9F8E9FEF /* SwiftLint */ = {
@@ -962,6 +974,7 @@
 				529B7618224A6D47008F1CE7 /* KeyIndex.swift in Sources */,
 				528352B82285A3A30097B949 /* Node+Address.swift in Sources */,
 				528352B022830F380097B949 /* ProxyProtocolHandler.swift in Sources */,
+				52B7F688229BCC4000B0A42F /* NetworkPdu.swift in Sources */,
 				529B7623224BAB26008F1CE7 /* Publish.swift in Sources */,
 				528352A62282D0350097B949 /* MeshNetwork+Provisioning.swift in Sources */,
 				528352A02282CE830097B949 /* NetworkKey+MeshNetwork.swift in Sources */,

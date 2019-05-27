@@ -117,7 +117,7 @@ public extension MeshNetworkManager {
     /// delegate's `meshNetwork(:didDeliverMessage:from)` will be called.
     ///
     /// For easier integration with Bearers use
-    /// `bearer(didDeliverData:ofType)` instead and set the manager
+    /// `bearer(didDeliverData:ofType)` instead, and set the manager
     /// as Bearer's `dataDelegate`.
     ///
     /// - parameter data: The PDU received.
