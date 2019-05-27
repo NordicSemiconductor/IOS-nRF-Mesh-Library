@@ -37,31 +37,50 @@ internal struct NetworkPdu {
     let destination: Address
     /// Transport Protocol Data Unit.
     let transportPdu: Data
-    /// Message Integrity Check for Network.
-    let netMic: Data
     
-    init?(_ data: Data) {
+    init?(_ data: Data, using networkKey: NetworkKey, and ivIndex: IvIndex) {
         // Valid message must have at least 14 octets.
         guard data.count >= 14 else {
             return nil
         }
-        // Control Messages have NetMIC of size 64 bits.
-        let ctl = data[1] >> 7
+        
+        // The first byte is not obfuscated.
+        ivi  = data[0] >> 7
+        nid  = data[0] & 0x7F
+        
+        // The NID must match.
+        guard nid == networkKey.nid else {
+            return nil
+        }
+        
+        // Deobfuscate CTL, TTL, SEQ and SRC.
+        let helper = OpenSSLHelper()
+        let deobfuscatedData = helper.deobfuscateNetworkPdu(data, ivIndex: ivIndex.index, privacyKey: networkKey.privacyKey)!
+        
+        // First validation: Control Messages have NetMIC of size 64 bits.
+        let ctl = deobfuscatedData[0] >> 7
         guard ctl == 0 || data.count >= 18 else {
             return nil
         }
         
-        ivi  = data[0] >> 7
-        nid  = data[0] & 0x7F
         type = NetworkPduType(rawValue: ctl)!
-        ttl  = data[1] & 0x7F
+        ttl  = deobfuscatedData[0] & 0x7F
         // Multiple octet values use Big Endian.
-        sequence    = UInt32(data[2] << 16) | UInt32(data[3] << 8) | UInt32(data[4])
-        source      = Address(data[5] << 8) | Address(data[6])
-        destination = Address(data[7] << 8) | Address(data[8])
+        sequence = UInt32(deobfuscatedData[1]) << 16 | UInt32(deobfuscatedData[2]) << 8 | UInt32(deobfuscatedData[3])
+        source   = Address(deobfuscatedData[4]) << 8 | Address(deobfuscatedData[5])
         
         let micOffset = data.count - type.netMicSize
-        transportPdu = data.subdata(in: 9..<micOffset)
-        netMic = data.subdata(in: micOffset..<data.count)
+        let destAndTransportPdu = data.subdata(in: 7..<micOffset)
+        let mic = data.subdata(in: micOffset..<data.count)
+        
+        let networkNonce = Data([0x00]) + deobfuscatedData + Data([0x00, 0x00]) + ivIndex.index.bigEndian
+        guard let decryptedData = helper.calculateDecryptedCCM(destAndTransportPdu,
+                                                               withKey: networkKey.encryptionKey,
+                                                               nonce: networkNonce, andMIC: mic) else {
+                                                                return nil
+        }
+        
+        destination = Address(decryptedData[0]) << 8 | Address(decryptedData[1])
+        transportPdu = decryptedData.subdata(in: 2..<decryptedData.count)
     }
 }

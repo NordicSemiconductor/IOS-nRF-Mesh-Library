@@ -83,9 +83,9 @@
     return outputData;
 }
 
-- (NSData*) obfuscateENCPDU: (NSData*) anENCPDUData cTLTTLValue:(NSData*) aCTLTTLValue sequenceNumber:(NSData*) aSeq ivIndex:(NSData*) anIVIndex privacyKey:(NSData*) aPrivacyKey andsrcAddr:(NSData*) aSrc {
+- (NSData*) obfuscateNetworkPdu: (NSData*) encryptedData ctlTtlValue: (NSData*) aCtlTtlValue sequenceNumber: (NSData*) aSeq ivIndex: (NSData*) anIVIndex privacyKey: (NSData*) aPrivacyKey andSrcAddr: (NSData*) aSrc {
     NSMutableData* privacyRandomSource = [[NSMutableData alloc] init];
-    [privacyRandomSource appendData:anENCPDUData];
+    [privacyRandomSource appendData: encryptedData];
     NSData* privacyRandom = [privacyRandomSource subdataWithRange:NSMakeRange(0, 7)];
     NSMutableData* pecbInputs = [[NSMutableData alloc] init];
     
@@ -98,7 +98,7 @@
     
     NSData* pecb = [[self calculateECB:pecbInputs andKey:aPrivacyKey] subdataWithRange:NSMakeRange(0, 6)];
     NSMutableData* dataToObfuscate = [[NSMutableData alloc] init];
-    [dataToObfuscate appendData:aCTLTTLValue];
+    [dataToObfuscate appendData:aCtlTtlValue];
     [dataToObfuscate appendData:aSeq];
     [dataToObfuscate appendData:aSrc];
     
@@ -106,16 +106,17 @@
     return obfuscatedData;
 }
 
-- (NSData*) deobfuscateENCPDU: (NSData*) anENCPDUData ivIndex:(NSData*) anIVIndex privacyKey:(NSData*) aPrivacyKey {
+- (NSData*) deobfuscateNetworkPdu: (NSData*) data ivIndex: (UInt32) anIVIndex privacyKey: (NSData*) aPrivacyKey {
     //Privacy random = EncDST || ENCTransportPDU || NetMIC [0-6]
-    NSData* obfuscatedData = [anENCPDUData subdataWithRange:NSMakeRange(1, 6)];
-    NSData* privacyRandom = [anENCPDUData subdataWithRange:NSMakeRange(7, 7)];
+    NSData* obfuscatedData = [data subdataWithRange:NSMakeRange(1, 6)];
+    NSData* privacyRandom = [data subdataWithRange:NSMakeRange(7, 7)];
+    const unsigned ivIndexBigEndian = CFSwapInt32HostToBig(anIVIndex);
     //Pad
     const char byteArray[] = { 0x00, 0x00, 0x00, 0x00, 0x00 };
     NSData* padding = [[NSData alloc] initWithBytes:byteArray length:5];
     NSMutableData* pecbInputs = [[NSMutableData alloc] init];
     [pecbInputs appendData:padding];
-    [pecbInputs appendData:anIVIndex];
+    [pecbInputs appendData:[[NSData alloc] initWithBytes: &ivIndexBigEndian length: 4]];
     [pecbInputs appendData:privacyRandom];
     
     NSData* pecb = [[self calculateECB:pecbInputs andKey:aPrivacyKey] subdataWithRange:NSMakeRange(0, 6)];
@@ -125,7 +126,7 @@
     return deobfuscatedData;
 }
 
-- (NSData*) calculateDecryptedCCM:(NSData *)someData withKey:(NSData *)aKey nonce:(NSData *)aNonce dataSize:(UInt8)aSize andMIC:(NSData*)aMIC {
+- (NSData*) calculateDecryptedCCM:(NSData *)someData withKey:(NSData *)aKey nonce:(NSData *)aNonce andMIC:(NSData*)aMIC {
     int outlen;
     unsigned char outbuf[1024];
     
@@ -150,7 +151,7 @@
         NSData* outputData = [[NSData alloc] initWithBytes:outbuf length:outlen];
         return outputData;
     } else {
-        return [[NSData alloc] init];
+        return nil;
     }
 }
 
@@ -266,8 +267,8 @@
     const char *otherDataBytes  = [otherData bytes];
     NSMutableData *result = [[NSMutableData alloc] init];
     for (int i = 0; i < someData.length; i++){
-        const char resultByte = someDataBytes[i] ^ otherDataBytes[i];
-        [result appendBytes:&resultByte length:1];
+        const char resultByte = someDataBytes[i] ^ otherDataBytes[i % otherData.length];
+        [result appendBytes: &resultByte length: 1];
     }
    return result;
 }
