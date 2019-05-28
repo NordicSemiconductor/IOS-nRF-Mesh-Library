@@ -24,7 +24,9 @@ public protocol MeshNetworkDelegate: class {
 
 public class MeshNetworkManager {
     /// Mesh Network data.
-    private var meshData: MeshData!
+    private var meshData: MeshData
+    /// The Network Layer handler.
+    private var networkLayer: NetworkLayer?
     /// Storage to keep the app data.
     private let storage: Storage
     /// The delegate will receive callbacks whenever a complete
@@ -41,7 +43,7 @@ public class MeshNetworkManager {
         return meshData.meshNetwork
     }
     
-    /// Returns true if Mesh Network has been created.
+    /// Returns `true` if Mesh Network has been created, `false` otherwise.
     public var isNetworkCreated: Bool {
         return meshData.meshNetwork != nil
     }
@@ -49,7 +51,7 @@ public class MeshNetworkManager {
     // MARK: - Constructors
     
     /// Initializes the MeshNetworkManager.
-    /// If storage not provided, a local file will be used instead.
+    /// If storage is not provided, a local file will be used instead.
     ///
     /// - parameter storage: The storage to use to save the network configuration.
     /// - seeAlso: `LocalStorage`
@@ -73,8 +75,8 @@ public class MeshNetworkManager {
 
 public extension MeshNetworkManager {
     
-    /// Generates a new Mesh Network configuration with random or default values.
-    /// This will override the existing one, if such exists.
+    /// Generates a new Mesh Network configuration with default values.
+    /// This method will override the existing configuration, if such exists.
     /// The mesh network will contain one Provisioner with given name.
     ///
     /// Network Keys and Application Keys must be added manually
@@ -86,9 +88,9 @@ public extension MeshNetworkManager {
         return createNewMeshNetwork(withName: name, by: Provisioner(name: provisionerName))
     }
     
-    /// Generates a new Mesh Network configuration with random or default values.
-    /// This will override the existing one, if such exists.
-    /// The mesh network will contain the given Provisioner.
+    /// Generates a new Mesh Network configuration with default values.
+    /// This method will override the existing configuration, if such exists.
+    /// The mesh network will contain one Provisioner with given name.
     ///
     /// Network Keys and Application Keys must be added manually
     /// using `add(networkKey:name)` and `add(applicationKey:name)`.
@@ -102,6 +104,7 @@ public extension MeshNetworkManager {
         try! network.add(provisioner: provisioner)
         
         meshData.meshNetwork = network
+        networkLayer = NetworkLayer(self)
         return network
     }
     
@@ -123,7 +126,10 @@ public extension MeshNetworkManager {
     /// - parameter data: The PDU received.
     /// - parameter type: The PDU type.
     func bearerDidDeliverData(_ data: Data, ofType type: PduType) {
-        // TODO
+        guard let networkLayer = networkLayer else {
+            return
+        }
+        networkLayer.handleIncomingPdu(data, ofType: type)
     }
     
     /// Encrypts the message with given destination address and,
@@ -140,7 +146,7 @@ public extension MeshNetworkManager {
     ///
     /// - parameter message:     The message to be sent.
     /// - parameter destination: The destination address.
-    func createMeshMessage(_ message: MeshMessage, for destination: MeshAddress) {
+    func sendMeshMessage(_ message: MeshMessage, to destination: MeshAddress) {
         // TODO
     }
     
@@ -151,11 +157,11 @@ public extension MeshNetworkManager {
     /// - parameter destination: The destination address.
     /// - throws: This method throws when the address is not a Unicast
     ///           or Group Address.
-    func createMeshMessage(_ message: MeshMessage, for destination: Address) throws {
+    func sendMeshMessage(_ message: MeshMessage, to destination: Address) throws {
         guard let address = MeshAddress(destination) else {
             throw MeshMessageError.invalidAddress
         }
-        createMeshMessage(message, for: address)
+        sendMeshMessage(message, to: address)
     }
     
 }
@@ -185,9 +191,11 @@ public extension MeshNetworkManager {
             decoder.dateDecodingStrategy = .iso8601
             
             meshData = try decoder.decode(MeshData.self, from: data)
+            let network = meshData.meshNetwork!
             meshNetwork!.provisioners.forEach {
-                $0.meshNetwork = meshNetwork
+                $0.meshNetwork = network
             }
+            networkLayer = NetworkLayer(self)
             return true
         }
         return false
@@ -196,7 +204,7 @@ public extension MeshNetworkManager {
     /// Saves the Mesh Network configuration in the storage.
     /// If storage is not given, a local file will be used.
     ///
-    /// - returns: True if the network settings was saved, false otherwise.
+    /// - returns: `True` if the network settings was saved, `false` otherwise.
     func save() -> Bool {
         let encoder = JSONEncoder()
         encoder.dateEncodingStrategy = .iso8601
@@ -214,6 +222,8 @@ public extension MeshNetworkManager {
     /// Returns the exported Mesh Network configuration as JSON Data.
     /// The returned Data can be transferred to another application and
     /// imported. The JSON is compatible with Bluetooth Mesh scheme.
+    ///
+    /// - returns: The mesh network configuration as JSON Data.
     func export() -> Data {
         let encoder = JSONEncoder()
         encoder.dateEncodingStrategy = .iso8601
@@ -225,7 +235,8 @@ public extension MeshNetworkManager {
     /// The data must contain valid JSON with Bluetooth Mesh scheme.
     ///
     /// - parameter data: JSON as Data.
-    /// - throws: An error if import or adding local Provisioner failed.
+    /// - throws: This method throws an error if import or adding
+    ///           the local Provisioner failed.
     func `import`(from data: Data) throws {
         let decoder = JSONDecoder()
         decoder.dateDecodingStrategy = .iso8601
@@ -235,7 +246,8 @@ public extension MeshNetworkManager {
             $0.meshNetwork = meshNetwork
         }
         
-        self.meshData.meshNetwork = meshNetwork
+        meshData.meshNetwork = meshNetwork
+        networkLayer = NetworkLayer(self)
     }
     
 }

@@ -22,6 +22,7 @@ internal enum NetworkPduType: UInt8 {
 internal struct NetworkPdu {
     /// Raw PDU data.
     let pdu: Data
+    
     /// Least significant bit of IV Index.
     let ivi: UInt8
     /// Value derived from the NetKey used to identify the Encryption Key
@@ -145,4 +146,40 @@ internal struct NetworkPdu {
         
         self.pdu = Data() + iviNid + obfuscatedData + encryptedData
     }
+    
+    /// This method goes over all Network Keys in the mesh network and tries
+    /// to deobfuscate and decode the network PDU.
+    ///
+    /// - parameter pdu:         The received PDU.
+    /// - parameter meshNetwork: The mesh network for which the PDU should be decoded.
+    /// - returns: The deobfuscated and decoded Network PDU, or `nil` if the PDU was not
+    ///            signed with any of the Network Keys, the IV Index was not valid, or the
+    ///            PDU was invalid.
+    static func decode(_ pdu: Data, for meshNetwork: MeshNetwork) -> NetworkPdu? {
+        for networkKey in meshNetwork.networkKeys {
+            if let networkPdu = NetworkPdu(decode: pdu, usingNetworkKey: networkKey, andIvIndex: meshNetwork.ivIndex) {
+                return networkPdu
+            }
+        }
+        return nil
+    }
+}
+
+extension NetworkPduType: CustomDebugStringConvertible {
+    
+    var debugDescription: String {
+        switch self {
+        case .accessMessage:  return "Access Message"
+        case .controlMessage: return "Control Message"
+        }
+    }
+    
+}
+
+extension NetworkPdu: CustomDebugStringConvertible {
+    
+    var debugDescription: String {
+        return "Network PDU: \(type) from 0x\(source.hex) to 0x\(destination.hex), seq: \(sequence), ttl: \(ttl)"
+    }
+    
 }
