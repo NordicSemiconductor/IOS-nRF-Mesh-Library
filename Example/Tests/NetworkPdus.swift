@@ -18,8 +18,32 @@ class NetworkPdus: XCTestCase {
     override func tearDown() {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
     }
+    
+    func testEncodingControlMessage() {
+        let networkKey = try! NetworkKey(name: "Test Key", index: 0, key: Data(hex: "7dd7364cd842ad18c17c2b820c84c3d6")!)
+        let ivIndex = IvIndex()
+        ivIndex.index = 0x12345678
+        ivIndex.updateActive = false
+        
+        let networkPdu = NetworkPdu(encode: Data(hex: "034b50057e400000010000")!, ofType: .controlMessage,
+                                    sentFrom: 0x1201, to: 0xFFFD, usingNetworkKey: networkKey, sequence: 1, ttl: 0, andIvIndex: ivIndex)
+        let data = Data(hex: "68eca487516765b5e5bfdacbaf6cb7fb6bff871f035444ce83a670df")!
+        XCTAssertEqual(networkPdu.pdu, data)
+    }
+    
+    func testEncodingAccessMessage() {
+        let networkKey = try! NetworkKey(name: "Test Key", index: 0, key: Data(hex: "7dd7364cd842ad18c17c2b820c84c3d6")!)
+        let ivIndex = IvIndex()
+        ivIndex.index = 0x12345678
+        ivIndex.updateActive = false
+        
+        let networkPdu = NetworkPdu(encode: Data(hex: "8026ac01ee9dddfd2169326d23f3afdf")!, ofType: .accessMessage,
+                                    sentFrom: 0x0003, to: 0x1201, usingNetworkKey: networkKey, sequence: 0x3129AB, ttl: 4, andIvIndex: ivIndex)
+        let data = Data(hex: "68cab5c5348a230afba8c63d4e686364979deaf4fd40961145939cda0e")!
+        XCTAssertEqual(networkPdu.pdu, data)
+    }
 
-    func testControlMessage() {
+    func testDecodingControlMessage() {
         let networkKey = try! NetworkKey(name: "Test Key", index: 0, key: Data(hex: "7dd7364cd842ad18c17c2b820c84c3d6")!)
         let ivIndex = IvIndex()
         ivIndex.index = 0x12345678
@@ -27,18 +51,19 @@ class NetworkPdus: XCTestCase {
         
         let data = Data(hex: "68eca487516765b5e5bfdacbaf6cb7fb6bff871f035444ce83a670df")!
         
-        let networkPdu = NetworkPdu(data, using: networkKey, and: ivIndex)
+        let networkPdu = NetworkPdu(decode: data, usingNetworkKey: networkKey, andIvIndex: ivIndex)
         XCTAssertNotNil(networkPdu)
         XCTAssertEqual(networkPdu!.ivi, 0x0)
         XCTAssertEqual(networkPdu!.nid, 0x68)
         XCTAssertEqual(networkPdu!.type, .controlMessage)
+        XCTAssertEqual(networkPdu!.ttl, 0)
         XCTAssertEqual(networkPdu!.sequence, 1)
         XCTAssertEqual(networkPdu!.source, 0x1201)
         XCTAssertEqual(networkPdu!.destination, 0xFFFD)
         XCTAssertEqual(networkPdu!.transportPdu, Data(hex: "034b50057e400000010000")!)
     }
     
-    func testControlMessageNextIvIndex() {
+    func testDecodingControlMessageWithNextIvIndex() {
         let networkKey = try! NetworkKey(name: "Test Key", index: 0, key: Data(hex: "7dd7364cd842ad18c17c2b820c84c3d6")!)
         let ivIndex = IvIndex()
         ivIndex.index = 0x12345679
@@ -46,7 +71,7 @@ class NetworkPdus: XCTestCase {
         
         let data = Data(hex: "68eca487516765b5e5bfdacbaf6cb7fb6bff871f035444ce83a670df")!
         
-        let networkPdu = NetworkPdu(data, using: networkKey, and: ivIndex)
+        let networkPdu = NetworkPdu(decode: data, usingNetworkKey: networkKey, andIvIndex: ivIndex)
         XCTAssertNotNil(networkPdu)
         XCTAssertEqual(networkPdu!.ivi, 0x0)
         XCTAssertEqual(networkPdu!.nid, 0x68)
@@ -57,7 +82,7 @@ class NetworkPdus: XCTestCase {
         XCTAssertEqual(networkPdu!.transportPdu, Data(hex: "034b50057e400000010000")!)
     }
     
-    func testControlMessageWrongIvIndex() {
+    func testDecodingControlMessageWithWrongIvIndex() {
         let networkKey = try! NetworkKey(name: "Test Key", index: 0, key: Data(hex: "7dd7364cd842ad18c17c2b820c84c3d6")!)
         let ivIndex = IvIndex()
         ivIndex.index = 0x12345679
@@ -65,11 +90,11 @@ class NetworkPdus: XCTestCase {
         
         let data = Data(hex: "68eca487516765b5e5bfdacbaf6cb7fb6bff871f035444ce83a670df")!
         
-        let networkPdu = NetworkPdu(data, using: networkKey, and: ivIndex)
+        let networkPdu = NetworkPdu(decode: data, usingNetworkKey: networkKey, andIvIndex: ivIndex)
         XCTAssertNil(networkPdu)
     }
     
-    func testWrongKey() {
+    func testDecodingControlMessageWithWrongKey() {
         let networkKey = try! NetworkKey(name: "Other Key", index: 0, key: Data(hex: "8dd7364cd842ad18c17c2b820c84c3d6")!)
         let ivIndex = IvIndex()
         ivIndex.index = 0x12345678
@@ -77,11 +102,11 @@ class NetworkPdus: XCTestCase {
         
         let data = Data(hex: "68eca487516765b5e5bfdacbaf6cb7fb6bff871f035444ce83a670df")!
         
-        let networkPdu = NetworkPdu(data, using: networkKey, and: ivIndex)
+        let networkPdu = NetworkPdu(decode: data, usingNetworkKey: networkKey, andIvIndex: ivIndex)
         XCTAssertNil(networkPdu)
     }
     
-    func testWrongKey2() {
+    func testDecodingControlMessageWithWrongKey2() {
         let networkKey = try! NetworkKey(name: "Test Key", index: 0, key: Data(hex: "7dd7364cd842ad18c17c2b820c84c3d6")!)
         let ivIndex = IvIndex()
         ivIndex.index = 0x12345678
@@ -89,11 +114,11 @@ class NetworkPdus: XCTestCase {
         
         let otherData = Data(hex: "68eca487516765b5e5bfdacbaf6cb7fb7bff871f035444ce83a670df")!
         
-        let networkPdu = NetworkPdu(otherData, using: networkKey, and: ivIndex)
+        let networkPdu = NetworkPdu(decode: otherData, usingNetworkKey: networkKey, andIvIndex: ivIndex)
         XCTAssertNil(networkPdu)
     }
     
-    func testWrongNid() {
+    func testDecodingControlMessageWithWrongNid() {
         let networkKey = try! NetworkKey(name: "Test Key", index: 0, key: Data(hex: "7dd7364cd842ad18c17c2b820c84c3d6")!)
         let ivIndex = IvIndex()
         ivIndex.index = 0x12345678
@@ -101,7 +126,7 @@ class NetworkPdus: XCTestCase {
         
         let data = Data(hex: "69eca487516765b5e5bfdacbaf6cb7fb6bff871f035444ce83a670df")!
         
-        let networkPdu = NetworkPdu(data, using: networkKey, and: ivIndex)
+        let networkPdu = NetworkPdu(decode: data, usingNetworkKey: networkKey, andIvIndex: ivIndex)
         XCTAssertNil(networkPdu)
     }
 

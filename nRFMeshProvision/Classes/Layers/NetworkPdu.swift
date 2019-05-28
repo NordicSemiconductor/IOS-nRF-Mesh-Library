@@ -11,7 +11,7 @@ internal enum NetworkPduType: UInt8 {
     case accessMessage  = 0
     case controlMessage = 1
     
-    var netMicSize: Int {
+    var netMicSize: UInt8 {
         switch self {
         case .accessMessage:  return 4 // 32 bits
         case .controlMessage: return 8 // 64 bits
@@ -20,6 +20,8 @@ internal enum NetworkPduType: UInt8 {
 }
 
 internal struct NetworkPdu {
+    /// Raw PDU data.
+    let pdu: Data
     /// Least significant bit of IV Index.
     let ivi: UInt8
     /// Value derived from the NetKey used to identify the Encryption Key
@@ -38,15 +40,25 @@ internal struct NetworkPdu {
     /// Transport Protocol Data Unit.
     let transportPdu: Data
     
-    init?(_ data: Data, using networkKey: NetworkKey, and ivIndex: IvIndex) {
+    /// Creates Network PDU object from received PDU. The initiator tries
+    /// to deobfuscate and decrypt the data using given Network Key and IV Index.
+    ///
+    /// - parameter pdu:        The data received from mesh network.
+    /// - parameter networkKey: The Network Key to decrypt the PDU.
+    /// - parameter ivIndex:    The current IV Index.
+    /// - returns: The deobfuscated and decided Network PDU object, or `nil`,
+    ///            if the key or IV Index don't match.
+    init?(decode pdu: Data, usingNetworkKey networkKey: NetworkKey, andIvIndex ivIndex: IvIndex) {
+        self.pdu = pdu
+        
         // Valid message must have at least 14 octets.
-        guard data.count >= 14 else {
+        guard pdu.count >= 14 else {
             return nil
         }
         
         // The first byte is not obfuscated.
-        ivi  = data[0] >> 7
-        nid  = data[0] & 0x7F
+        ivi  = pdu[0] >> 7
+        nid  = pdu[0] & 0x7F
         
         // The NID must match.
         guard nid == networkKey.nid else {
@@ -63,11 +75,11 @@ internal struct NetworkPdu {
         
         // Deobfuscate CTL, TTL, SEQ and SRC.
         let helper = OpenSSLHelper()
-        let deobfuscatedData = helper.deobfuscateNetworkPdu(data, ivIndex: index, privacyKey: networkKey.privacyKey)!
+        let deobfuscatedData = helper.deobfuscate(pdu, ivIndex: index, privacyKey: networkKey.privacyKey)!
         
         // First validation: Control Messages have NetMIC of size 64 bits.
         let ctl = deobfuscatedData[0] >> 7
-        guard ctl == 0 || data.count >= 18 else {
+        guard ctl == 0 || pdu.count >= 18 else {
             return nil
         }
         
@@ -77,9 +89,9 @@ internal struct NetworkPdu {
         sequence = UInt32(deobfuscatedData[1]) << 16 | UInt32(deobfuscatedData[2]) << 8 | UInt32(deobfuscatedData[3])
         source   = Address(deobfuscatedData[4]) << 8 | Address(deobfuscatedData[5])
         
-        let micOffset = data.count - type.netMicSize
-        let destAndTransportPdu = data.subdata(in: 7..<micOffset)
-        let mic = data.subdata(in: micOffset..<data.count)
+        let micOffset = pdu.count - Int(type.netMicSize)
+        let destAndTransportPdu = pdu.subdata(in: 7..<micOffset)
+        let mic = pdu.subdata(in: micOffset..<pdu.count)
         
         let networkNonce = Data([0x00]) + deobfuscatedData + Data([0x00, 0x00]) + index.bigEndian
         guard let decryptedData = helper.calculateDecryptedCCM(destAndTransportPdu,
@@ -90,5 +102,47 @@ internal struct NetworkPdu {
         
         destination = Address(decryptedData[0]) << 8 | Address(decryptedData[1])
         transportPdu = decryptedData.subdata(in: 2..<decryptedData.count)
+    }
+    
+    /// Creates the Network PDU. This method enctypts and obfuscates data
+    /// that are to be send to the mesh network.
+    ///
+    /// - parameter transportPdu: The data received from higher layer.
+    /// - parameter type:         The PDU type: access or control message.
+    /// - parameter source:       The Source Address.
+    /// - parameter destination:  The Destination Address.
+    /// - parameter networkKey:   The key for encrypting the data.
+    /// - parameter sequence:     The SEQ number of the PDU. Each PDU between the source
+    ///                           and destination must have strictly increasing sequence number.
+    /// - parameter ttl:          Time To Leave.
+    /// - parameter ivIndex:      The current IV Index.
+    /// - returns: The Network PDU object.
+    init(encode transportPdu: Data, ofType type: NetworkPduType, sentFrom source: Address, to destination: Address,
+         usingNetworkKey networkKey: NetworkKey, sequence: UInt32, ttl: UInt8, andIvIndex ivIndex: IvIndex) {
+        self.ivi = UInt8(ivIndex.index & 0x1)
+        self.nid = networkKey.nid
+        self.type = type
+        self.ttl = ttl
+        self.sequence = sequence
+        self.source = source
+        self.destination = destination
+        self.transportPdu = transportPdu
+        
+        let index = ivIndex.index
+        let iviNid = (ivi << 7) | (nid & 0x7F)
+        let ctlTtl = (type.rawValue << 7) | (ttl & 0x7F)
+        
+        // Data to be obfuscated: CTL/TTL, Sequence Number, Source Address.
+        let seq = (Data() + sequence.bigEndian).dropFirst()
+        let deobfuscatedData = Data() + ctlTtl + seq + source.bigEndian
+        // Data to be encrypted: Destination Address, Transport PDU.
+        let decryptedData = Data() + destination.bigEndian + transportPdu
+        
+        let helper = OpenSSLHelper()
+        let networkNonce = Data([0x00]) + deobfuscatedData + Data([0x00, 0x00]) + index.bigEndian
+        let encryptedData = helper.calculateCCM(decryptedData, withKey: networkKey.encryptionKey, nonce: networkNonce, andMICSize: type.netMicSize)!
+        let obfuscatedData = helper.obfuscate(deobfuscatedData, usingPrivacyRandom: encryptedData, ivIndex: index, andPrivacyKey: networkKey.privacyKey)!
+        
+        self.pdu = Data() + iviNid + obfuscatedData + encryptedData
     }
 }

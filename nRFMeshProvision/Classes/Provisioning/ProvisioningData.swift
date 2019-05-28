@@ -127,7 +127,7 @@ internal extension ProvisioningData {
         
         let flags = Flags(ivIndex: ivIndex, networkKey: networkKey)
         let data  = networkKey.key + networkKey.index.bigEndian + flags.rawValue + ivIndex.index.bigEndian + unicastAddress.bigEndian
-        return helper.calculateCCM(data, withKey: keys.sessionKey, nonce: keys.sessionNonce, dataSize: 25, andMICSize: 8)
+        return helper.calculateCCM(data, withKey: keys.sessionKey, nonce: keys.sessionNonce, andMICSize: 8)
     }
     
 }
