@@ -26,7 +26,7 @@ public class MeshNetworkManager {
     /// Mesh Network data.
     private var meshData: MeshData
     /// The Network Layer handler.
-    private var networkLayer: NetworkLayer?
+    private var networkManager: NetworkManager?
     /// Storage to keep the app data.
     private let storage: Storage
     /// The delegate will receive callbacks whenever a complete
@@ -104,7 +104,7 @@ public extension MeshNetworkManager {
         try! network.add(provisioner: provisioner)
         
         meshData.meshNetwork = network
-        networkLayer = NetworkLayer(self)
+        networkManager = NetworkManager(self)
         return network
     }
     
@@ -126,10 +126,10 @@ public extension MeshNetworkManager {
     /// - parameter data: The PDU received.
     /// - parameter type: The PDU type.
     func bearerDidDeliverData(_ data: Data, ofType type: PduType) {
-        guard let networkLayer = networkLayer else {
+        guard let networkManager = networkManager else {
             return
         }
-        networkLayer.handleIncomingPdu(data, ofType: type)
+        networkManager.handleIncomingPdu(data, ofType: type)
     }
     
     /// Encrypts the message with given destination address and,
@@ -147,7 +147,10 @@ public extension MeshNetworkManager {
     /// - parameter message:     The message to be sent.
     /// - parameter destination: The destination address.
     func sendMeshMessage(_ message: MeshMessage, to destination: MeshAddress) {
-        // TODO
+        guard let networkManager = networkManager else {
+            return
+        }
+        networkManager.sendMeshMessage(message, to: destination)
     }
     
     /// Does the same as the other `createMeshMessage(:for)`, but takes
@@ -195,7 +198,7 @@ public extension MeshNetworkManager {
             meshNetwork!.provisioners.forEach {
                 $0.meshNetwork = network
             }
-            networkLayer = NetworkLayer(self)
+            networkManager = NetworkManager(self)
             return true
         }
         return false
@@ -247,7 +250,7 @@ public extension MeshNetworkManager {
         }
         
         meshData.meshNetwork = meshNetwork
-        networkLayer = NetworkLayer(self)
+        networkManager = NetworkManager(self)
     }
     
 }

@@ -8,16 +8,22 @@
 import Foundation
 
 internal class NetworkLayer {
-    var meshNetworkManager: MeshNetworkManager
+    let networkManager: NetworkManager
+    let lowerTransportLayer: LowerTransportLayer
     let networkMessageCache: NSCache<NSData, NSNull>
     
-    init(_ meshNetworkManager: MeshNetworkManager) {
+    init(_ networkManager: NetworkManager) {
         self.networkMessageCache = NSCache()
-        self.meshNetworkManager = meshNetworkManager
+        self.networkManager = networkManager
+        self.lowerTransportLayer = networkManager.lowerTransportLayer!
     }
     
+    /// This method handles the received PDU of given type.
+    ///
+    /// - parameter pdu:  The data received.
+    /// - parameter type: The PDU type.
     func handleIncomingPdu(_ pdu: Data, ofType type: PduType) {
-        guard let meshNetwork = meshNetworkManager.meshNetwork else {
+        guard let meshNetwork = networkManager.meshNetwork else {
             return
         }
         
@@ -37,6 +43,8 @@ internal class NetworkLayer {
         guard let networkPdu = NetworkPdu.decode(pdu, for: meshNetwork) else {
             return
         }
+        
+        lowerTransportLayer.handleNetworkPdu(networkPdu)
     }
     
 }
