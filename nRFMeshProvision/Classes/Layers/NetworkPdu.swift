@@ -53,9 +53,17 @@ internal struct NetworkPdu {
             return nil
         }
         
+        // IVI should match the LSB bit of current IV Index.
+        // If it doesn't, and the IV Update procedure is active, the PDU will be
+        // deobfuscated and decoded with IV Index decremented by 1.
+        var index = ivIndex.index
+        if ivi != index & 0x1 && ivIndex.updateActive {
+            index -= 1
+        }
+        
         // Deobfuscate CTL, TTL, SEQ and SRC.
         let helper = OpenSSLHelper()
-        let deobfuscatedData = helper.deobfuscateNetworkPdu(data, ivIndex: ivIndex.index, privacyKey: networkKey.privacyKey)!
+        let deobfuscatedData = helper.deobfuscateNetworkPdu(data, ivIndex: index, privacyKey: networkKey.privacyKey)!
         
         // First validation: Control Messages have NetMIC of size 64 bits.
         let ctl = deobfuscatedData[0] >> 7
@@ -73,7 +81,7 @@ internal struct NetworkPdu {
         let destAndTransportPdu = data.subdata(in: 7..<micOffset)
         let mic = data.subdata(in: micOffset..<data.count)
         
-        let networkNonce = Data([0x00]) + deobfuscatedData + Data([0x00, 0x00]) + ivIndex.index.bigEndian
+        let networkNonce = Data([0x00]) + deobfuscatedData + Data([0x00, 0x00]) + index.bigEndian
         guard let decryptedData = helper.calculateDecryptedCCM(destAndTransportPdu,
                                                                withKey: networkKey.encryptionKey,
                                                                nonce: networkNonce, andMIC: mic) else {

@@ -33,7 +33,7 @@ public class NetworkKey: Key, Codable {
     /// provisioned using network the Secure Provisioning procedure, then
     /// the value of this property for the subnet is set to .high; otherwise
     /// the value is set to .low and the subnet is considered less secure.
-    public var minSecurity: Security
+    public internal(set) var minSecurity: Security
     /// The old Network Key is present when the phase property has a non-zero
     /// value, such as when a Key Refresh procedure is in progress.
     public internal(set) var oldKey: Data? = nil
@@ -43,6 +43,8 @@ public class NetworkKey: Key, Codable {
     public internal(set) var networkId: Data
     /// The Identity Key.
     internal var identityKey: Data
+    /// The Beacon Key.
+    internal var beaconKey: Data
     /// The Encryption Key.
     internal var encryptionKey: Data
     /// The Privacy Key.
@@ -60,12 +62,15 @@ public class NetworkKey: Key, Codable {
         self.minSecurity = .high
         self.timestamp   = Date()
         
-        // Calculate Network ID and Identity Key.
         let helper = OpenSSLHelper()
+        // Calculate Network ID.
         networkId = helper.calculateK3(withN: key)
-        let salt = helper.calculateSalt("nkik".data(using: .ascii)!)!
+        // Calculate Identity Key and Beacon Key.
         let P = Data([0x69, 0x64, 0x31, 0x32, 0x38, 0x01]) // "id128" || 0x01
-        identityKey = helper.calculateK1(withN: key, salt: salt, andP: P)
+        let saltIK = helper.calculateSalt("nkik".data(using: .ascii)!)!
+        identityKey = helper.calculateK1(withN: key, salt: saltIK, andP: P)
+        let saltBK = helper.calculateSalt("nkbk".data(using: .ascii)!)!
+        beaconKey = helper.calculateK1(withN: key, salt: saltBK, andP: P)
         // Calculate NIC, Encryption Key and Privacy Key.
         let hash = helper.calculateK2(withN: key, andP: Data([0x00]))!
         nid = hash[0] & 0x7F
@@ -108,12 +113,15 @@ public class NetworkKey: Key, Codable {
         minSecurity = try container.decode(Security.self, forKey: .minSecurity)
         timestamp = try container.decode(Date.self, forKey: .timestamp)
         
-        // Calculate Network ID and Identity Key.
         let helper = OpenSSLHelper()
+        // Calculate Network ID.
         networkId = helper.calculateK3(withN: key)
-        let salt = helper.calculateSalt("nkik".data(using: .ascii)!)!
+        // Calculate Identity Key and Beacon Key.
         let P = Data([0x69, 0x64, 0x31, 0x32, 0x38, 0x01]) // "id128" || 0x01
-        identityKey = helper.calculateK1(withN: key, salt: salt, andP: P)
+        let saltIK = helper.calculateSalt("nkik".data(using: .ascii)!)!
+        identityKey = helper.calculateK1(withN: key, salt: saltIK, andP: P)
+        let saltBK = helper.calculateSalt("nkbk".data(using: .ascii)!)!
+        beaconKey = helper.calculateK1(withN: key, salt: saltBK, andP: P)
         // Calculate NIC, Encryption Key and Privacy Key.
         let hash = helper.calculateK2(withN: key, andP: Data([0x00]))!
         nid = hash[0] & 0x7F
