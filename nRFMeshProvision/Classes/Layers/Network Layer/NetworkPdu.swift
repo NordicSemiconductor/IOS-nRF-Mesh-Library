@@ -58,11 +58,20 @@ internal struct NetworkPdu {
         }
         
         // The first byte is not obfuscated.
-        ivi  = pdu[0] >> 7
-        nid  = pdu[0] & 0x7F
+        self.ivi  = pdu[0] >> 7
+        self.nid  = pdu[0] & 0x7F
         
         // The NID must match.
-        guard nid == networkKey.nid else {
+        // If the Key Refresh procedure is in place, the received packet might have been
+        // encrypted using an old key. We have to try both.
+        var keySets: [NetworkKeyDerivaties] = []
+        if nid == networkKey.nid {
+            keySets.append(networkKey.keys)
+        }
+        if let oldNid = networkKey.oldNid, nid == oldNid {
+            keySets.append(networkKey.oldKeys!)
+        }
+        guard !keySets.isEmpty else {
             return nil
         }
         
@@ -74,35 +83,43 @@ internal struct NetworkPdu {
             index -= 1
         }
         
-        // Deobfuscate CTL, TTL, SEQ and SRC.
         let helper = OpenSSLHelper()
-        let deobfuscatedData = helper.deobfuscate(pdu, ivIndex: index, privacyKey: networkKey.privacyKey)!
-        
-        // First validation: Control Messages have NetMIC of size 64 bits.
-        let ctl = deobfuscatedData[0] >> 7
-        guard ctl == 0 || pdu.count >= 18 else {
-            return nil
+        for keys in keySets {
+            // Deobfuscate CTL, TTL, SEQ and SRC.
+            let deobfuscatedData = helper.deobfuscate(pdu, ivIndex: index, privacyKey: keys.privacyKey)!
+            
+            // First validation: Control Messages have NetMIC of size 64 bits.
+            let ctl = deobfuscatedData[0] >> 7
+            guard ctl == 0 || pdu.count >= 18 else {
+                continue
+            }
+            
+            let type = NetworkPduType(rawValue: ctl)!
+            let ttl  = deobfuscatedData[0] & 0x7F
+            // Multiple octet values use Big Endian.
+            let sequence = UInt32(deobfuscatedData[1]) << 16 | UInt32(deobfuscatedData[2]) << 8 | UInt32(deobfuscatedData[3])
+            let source   = Address(deobfuscatedData[4]) << 8 | Address(deobfuscatedData[5])
+            
+            let micOffset = pdu.count - Int(type.netMicSize)
+            let destAndTransportPdu = pdu.subdata(in: 7..<micOffset)
+            let mic = pdu.subdata(in: micOffset..<pdu.count)
+            
+            let networkNonce = Data([0x00]) + deobfuscatedData + Data([0x00, 0x00]) + index.bigEndian
+            guard let decryptedData = helper.calculateDecryptedCCM(destAndTransportPdu,
+                                                                   withKey: keys.encryptionKey,
+                                                                   nonce: networkNonce, andMIC: mic) else {
+                                                                    continue
+            }
+            
+            self.type = type
+            self.ttl = ttl
+            self.sequence = sequence
+            self.source = source
+            self.destination = Address(decryptedData[0]) << 8 | Address(decryptedData[1])
+            self.transportPdu = decryptedData.subdata(in: 2..<decryptedData.count)
+            return
         }
-        
-        type = NetworkPduType(rawValue: ctl)!
-        ttl  = deobfuscatedData[0] & 0x7F
-        // Multiple octet values use Big Endian.
-        sequence = UInt32(deobfuscatedData[1]) << 16 | UInt32(deobfuscatedData[2]) << 8 | UInt32(deobfuscatedData[3])
-        source   = Address(deobfuscatedData[4]) << 8 | Address(deobfuscatedData[5])
-        
-        let micOffset = pdu.count - Int(type.netMicSize)
-        let destAndTransportPdu = pdu.subdata(in: 7..<micOffset)
-        let mic = pdu.subdata(in: micOffset..<pdu.count)
-        
-        let networkNonce = Data([0x00]) + deobfuscatedData + Data([0x00, 0x00]) + index.bigEndian
-        guard let decryptedData = helper.calculateDecryptedCCM(destAndTransportPdu,
-                                                               withKey: networkKey.encryptionKey,
-                                                               nonce: networkNonce, andMIC: mic) else {
-                                                                return nil
-        }
-        
-        destination = Address(decryptedData[0]) << 8 | Address(decryptedData[1])
-        transportPdu = decryptedData.subdata(in: 2..<decryptedData.count)
+        return nil
     }
     
     /// Creates the Network PDU. This method enctypts and obfuscates data
@@ -136,13 +153,17 @@ internal struct NetworkPdu {
         // Data to be obfuscated: CTL/TTL, Sequence Number, Source Address.
         let seq = (Data() + sequence.bigEndian).dropFirst()
         let deobfuscatedData = Data() + ctlTtl + seq + source.bigEndian
+        
         // Data to be encrypted: Destination Address, Transport PDU.
         let decryptedData = Data() + destination.bigEndian + transportPdu
         
+        // The key set used for encryption depends on the Key Refresh Phase.
+        let keys = networkKey.transmitKeys
+        
         let helper = OpenSSLHelper()
         let networkNonce = Data([0x00]) + deobfuscatedData + Data([0x00, 0x00]) + index.bigEndian
-        let encryptedData = helper.calculateCCM(decryptedData, withKey: networkKey.encryptionKey, nonce: networkNonce, andMICSize: type.netMicSize)!
-        let obfuscatedData = helper.obfuscate(deobfuscatedData, usingPrivacyRandom: encryptedData, ivIndex: index, andPrivacyKey: networkKey.privacyKey)!
+        let encryptedData = helper.calculateCCM(decryptedData, withKey: keys.encryptionKey, nonce: networkNonce, andMICSize: type.netMicSize)!
+        let obfuscatedData = helper.obfuscate(deobfuscatedData, usingPrivacyRandom: encryptedData, ivIndex: index, andPrivacyKey: keys.privacyKey)!
         
         self.pdu = Data() + iviNid + obfuscatedData + encryptedData
     }

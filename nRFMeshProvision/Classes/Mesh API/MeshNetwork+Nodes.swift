@@ -70,9 +70,17 @@ public extension MeshNetwork {
             let data = Data(repeating: 0, count: 6) + random + node.unicastAddress
             
             for networkKey in node.networkKeys {
-                let encryptedData = helper.calculateEvalue(with: data, andKey: networkKey.identityKey)!
+                let encryptedData = helper.calculateEvalue(with: data, andKey: networkKey.keys.identityKey)!
                 if encryptedData == hash {
                     return true
+                }
+                // If the Key refresh procedure is in place, the identity might have been
+                // generated with the old key.
+                if let oldIdentityKey = networkKey.oldKeys?.identityKey {
+                    let encryptedData = helper.calculateEvalue(with: data, andKey: oldIdentityKey)!
+                    if encryptedData == hash {
+                        return true
+                    }
                 }
             }
         }

@@ -217,7 +217,7 @@
 
 - (NSData*) calculateK3WithN: (NSData*) N {
     // Calculace K3 (outputs public value).
-    // SALT is clculated using S1 with smk3 in ascii.
+    // SALT is calculated using S1 with smk3 in ASCII.
     const char saltInput[] = { 0x73, 0x6D, 0x6B, 0x33 }; // smk3 string.
     NSData* saltInputData = [[NSData alloc] initWithBytes: saltInput length:4];
     NSData* salt = [self calculateSalt: saltInputData];
@@ -229,14 +229,14 @@
     NSData* cmacInputData = [[NSData alloc] initWithBytes: cmacInput length: 5];
     NSData* finalData = [self calculateCMAC: cmacInputData andKey: t];
     
-    // data mod 2^64 (keeps last 64 bits), as per K3 spec.
+    // Data mod 2^64 (keeps last 64 bits), as per K3 spec.
     NSData *output = (NSMutableData*) [finalData subdataWithRange: NSMakeRange(8, [finalData length] - 8)];
     return output;
 }
 
-- (NSData*) calculateK4WithN: (NSData*) N {
+- (UInt8) calculateK4WithN: (NSData*) N {
     // Calculace K4 (outputs 6 bit public value)
-    // SALT is clculated using S1 with smk3 in ascii.
+    // SALT is calculated using S1 with smk3 in ASCII.
     const char saltInput[] = { 0x73, 0x6D, 0x6B, 0x34 }; // smk4 string.
     NSData* saltInputData = [[NSData alloc] initWithBytes: saltInput length:4];
     NSData* salt = [self calculateSalt: saltInputData];
@@ -251,9 +251,7 @@
     // data mod 2^6 (keeps last 6 bits), as per K4 spec.
     const unsigned char* dataPtr = [finalData bytes];
     // We need only the last 6 bits from the octet, bitmask bit0 and bit1 off.
-    const unsigned char outputBytes = dataPtr[15] & 0x3F;
-    NSData *output = [[NSData alloc] initWithBytes: &outputBytes length: sizeof(outputBytes)];
-    return output;
+    return dataPtr[15] & 0x3F;
 }
 
 - (NSData*) calculateEvalueWithData: (NSData*) someData andKey: (NSData*) key {

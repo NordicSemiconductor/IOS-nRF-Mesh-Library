@@ -16,9 +16,28 @@ public class ApplicationKey: Key, Codable {
     /// Corresponding Network Key index from the Network Keys array.
     public internal(set) var boundNetKey: KeyIndex
     /// 128-bit application key.
-    public internal(set) var key: Data
+    public internal(set) var key: Data {
+        willSet {
+            oldKey = key
+            oldAid = aid
+        }
+        didSet {
+            regenerateKeyDerivaties()
+        }
+    }
     /// Previous 128-bit application key, if Key Update procedure is in progress.
-    public internal(set) var oldKey: Data?
+    public internal(set) var oldKey: Data? {
+        didSet {
+            if oldKey == nil {
+                oldAid = nil
+            }
+        }
+    }
+    
+    /// Application Key identifier.
+    internal var aid: UInt8!
+    /// Application Key identifier derived from the old key.
+    internal var oldAid: UInt8?
     
     internal init(name: String, index: KeyIndex, key: Data, bindTo networkKey: NetworkKey) throws {
         guard index.isValidKeyIndex else {
@@ -28,6 +47,8 @@ public class ApplicationKey: Key, Codable {
         self.index       = index
         self.key         = key
         self.boundNetKey = networkKey.index
+        
+        regenerateKeyDerivaties()
     }
     
     // MARK: - Codable
@@ -59,6 +80,8 @@ public class ApplicationKey: Key, Codable {
             oldKey = oldKeyData
         }
         boundNetKey = try container.decode(KeyIndex.self, forKey: .boundNetKey)
+        
+        regenerateKeyDerivaties()
     }
     
     public func encode(to encoder: Encoder) throws {
@@ -68,6 +91,17 @@ public class ApplicationKey: Key, Codable {
         try container.encode(key.hex, forKey: .key)
         try container.encodeIfPresent(oldKey?.hex, forKey: .oldKey)
         try container.encode(boundNetKey, forKey: .boundNetKey)
+    }
+    
+    private func regenerateKeyDerivaties() {
+        let helper = OpenSSLHelper()
+        aid = helper.calculateK4(withN: key)
+        
+        // When the Application Key is imported from JSON, old key derivaties must
+        // be calculated.
+        if let oldKey = oldKey, oldAid == nil {
+            oldAid = helper.calculateK4(withN: oldKey)
+        }
     }
     
 }

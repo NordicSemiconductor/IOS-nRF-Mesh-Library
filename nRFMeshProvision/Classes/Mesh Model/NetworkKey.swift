@@ -7,6 +7,31 @@
 
 import Foundation
 
+internal struct NetworkKeyDerivaties {
+    /// The Identity Key.
+    let identityKey: Data!
+    /// The Beacon Key.
+    let beaconKey: Data!
+    /// The Encryption Key.
+    let encryptionKey: Data!
+    /// The Privacy Key.
+    let privacyKey: Data!
+    
+    init(withKey key: Data, using helper: OpenSSLHelper) {
+        // Calculate Identity Key and Beacon Key.
+        let P = Data([0x69, 0x64, 0x31, 0x32, 0x38, 0x01]) // "id128" || 0x01
+        let saltIK = helper.calculateSalt("nkik".data(using: .ascii)!)!
+        identityKey = helper.calculateK1(withN: key, salt: saltIK, andP: P)
+        let saltBK = helper.calculateSalt("nkbk".data(using: .ascii)!)!
+        beaconKey = helper.calculateK1(withN: key, salt: saltBK, andP: P)
+        // Calculate Encryption Key and Privacy Key.
+        let hash = helper.calculateK2(withN: key, andP: Data([0x00]))!
+        // NID was already generated in Network Key below and is ignored here.
+        encryptionKey = hash.subdata(in: 1..<17)
+        privacyKey = hash.subdata(in: 17..<33)
+    }
+}
+
 public class NetworkKey: Key, Codable {
     /// The timestamp represents the last time the phase property has been
     /// updated.
@@ -27,30 +52,58 @@ public class NetworkKey: Key, Codable {
         }
     }
     /// 128-bit Network Key.
-    public internal(set) var key: Data
+    public internal(set) var key: Data {
+        willSet {
+            oldKey = key
+            oldNetworkId = networkId
+            oldNid = nid
+            oldKeys = keys
+        }
+        didSet {
+            phase = .distributingKeys
+            regenerateKeyDerivaties()
+        }
+    }
+    /// The old Network Key is present when the phase property has a non-zero
+    /// value, such as when a Key Refresh procedure is in progress.
+    public internal(set) var oldKey: Data? {
+        didSet {
+            if oldKey == nil {
+                oldNetworkId = nil
+                oldNid = nil
+                oldKeys = nil
+                phase = .normalOperation
+            }
+        }
+    }
     /// Minimum security level for a subnet associated with this network key.
     /// If all nodes on the subnet associated with this network key have been
     /// provisioned using network the Secure Provisioning procedure, then
     /// the value of this property for the subnet is set to .high; otherwise
     /// the value is set to .low and the subnet is considered less secure.
     public internal(set) var minSecurity: Security
-    /// The old Network Key is present when the phase property has a non-zero
-    /// value, such as when a Key Refresh procedure is in progress.
-    public internal(set) var oldKey: Data? = nil
     
     /// The Network ID derived from this Network Key. This identifier
     /// is public information.
-    public internal(set) var networkId: Data
-    /// The Identity Key.
-    internal var identityKey: Data
-    /// The Beacon Key.
-    internal var beaconKey: Data
-    /// The Encryption Key.
-    internal var encryptionKey: Data
-    /// The Privacy Key.
-    internal var privacyKey: Data
+    public internal(set) var networkId: Data!
+    /// The Network ID derived from the old Network Key. This identifier
+    /// is public information. It is set when `oldKey` is set.
+    public internal(set) var oldNetworkId: Data?
+    /// Network Key derivaties.
+    internal var keys: NetworkKeyDerivaties!
+    /// Network Key derivaties.
+    internal var oldKeys: NetworkKeyDerivaties?
+    /// Returns the key set that should be used for encrypting outgoing packets.
+    internal var transmitKeys: NetworkKeyDerivaties {
+        if case .distributingKeys = phase {
+            return oldKeys!
+        }
+        return keys
+    }
     /// Network identifier.
-    internal var nid: UInt8
+    internal var nid: UInt8!
+    /// Network identifier derived from the old key.
+    internal var oldNid: UInt8?
     
     internal init(name: String, index: KeyIndex, key: Data) throws {
         guard index.isValidKeyIndex else {
@@ -62,20 +115,7 @@ public class NetworkKey: Key, Codable {
         self.minSecurity = .high
         self.timestamp   = Date()
         
-        let helper = OpenSSLHelper()
-        // Calculate Network ID.
-        networkId = helper.calculateK3(withN: key)
-        // Calculate Identity Key and Beacon Key.
-        let P = Data([0x69, 0x64, 0x31, 0x32, 0x38, 0x01]) // "id128" || 0x01
-        let saltIK = helper.calculateSalt("nkik".data(using: .ascii)!)!
-        identityKey = helper.calculateK1(withN: key, salt: saltIK, andP: P)
-        let saltBK = helper.calculateSalt("nkbk".data(using: .ascii)!)!
-        beaconKey = helper.calculateK1(withN: key, salt: saltBK, andP: P)
-        // Calculate NIC, Encryption Key and Privacy Key.
-        let hash = helper.calculateK2(withN: key, andP: Data([0x00]))!
-        nid = hash[0] & 0x7F
-        encryptionKey = hash.subdata(in: 1..<17)
-        privacyKey = hash.subdata(in: 17..<33)
+        regenerateKeyDerivaties()
     }
     
     // MARK: - Codable
@@ -113,20 +153,7 @@ public class NetworkKey: Key, Codable {
         minSecurity = try container.decode(Security.self, forKey: .minSecurity)
         timestamp = try container.decode(Date.self, forKey: .timestamp)
         
-        let helper = OpenSSLHelper()
-        // Calculate Network ID.
-        networkId = helper.calculateK3(withN: key)
-        // Calculate Identity Key and Beacon Key.
-        let P = Data([0x69, 0x64, 0x31, 0x32, 0x38, 0x01]) // "id128" || 0x01
-        let saltIK = helper.calculateSalt("nkik".data(using: .ascii)!)!
-        identityKey = helper.calculateK1(withN: key, salt: saltIK, andP: P)
-        let saltBK = helper.calculateSalt("nkbk".data(using: .ascii)!)!
-        beaconKey = helper.calculateK1(withN: key, salt: saltBK, andP: P)
-        // Calculate NIC, Encryption Key and Privacy Key.
-        let hash = helper.calculateK2(withN: key, andP: Data([0x00]))!
-        nid = hash[0] & 0x7F
-        encryptionKey = hash.subdata(in: 1..<17)
-        privacyKey = hash.subdata(in: 17..<33)
+        regenerateKeyDerivaties()
     }
     
     public func encode(to encoder: Encoder) throws {
@@ -140,6 +167,28 @@ public class NetworkKey: Key, Codable {
         try container.encode(timestamp, forKey: .timestamp)
     }
     
+    private func regenerateKeyDerivaties() {
+        let helper = OpenSSLHelper()
+        // Calculate Network ID.
+        networkId = helper.calculateK3(withN: key)
+        // Calculate NID.
+        let hash = helper.calculateK2(withN: key, andP: Data([0x00]))!
+        nid = hash[0] & 0x7F
+        // Calculate other keys.
+        keys = NetworkKeyDerivaties(withKey: key, using: helper)
+        
+        // When the Network Key is imported from JSON, old key derivaties must
+        // be calculated.
+        if let oldKey = oldKey, oldNid == nil {
+            // Calculate Network ID.
+            oldNetworkId = helper.calculateK3(withN: oldKey)
+            // Calculate NID.
+            let hash = helper.calculateK2(withN: oldKey, andP: Data([0x00]))!
+            oldNid = hash[0] & 0x7F
+            // Calculate other keys.
+            oldKeys = NetworkKeyDerivaties(withKey: oldKey, using: helper)
+        }
+    }
 }
 
 // MARK: - Operators

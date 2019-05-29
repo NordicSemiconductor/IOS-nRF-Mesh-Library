@@ -9,13 +9,11 @@ import Foundation
 
 internal class NetworkLayer {
     let networkManager: NetworkManager
-    let lowerTransportLayer: LowerTransportLayer
     let networkMessageCache: NSCache<NSData, NSNull>
     
     init(_ networkManager: NetworkManager) {
         self.networkMessageCache = NSCache()
         self.networkManager = networkManager
-        self.lowerTransportLayer = networkManager.lowerTransportLayer!
     }
     
     /// This method handles the received PDU of given type.
@@ -44,7 +42,7 @@ internal class NetworkLayer {
             return
         }
         
-        lowerTransportLayer.handleNetworkPdu(networkPdu)
+        networkManager.lowerTransportLayer.handleNetworkPdu(networkPdu)
     }
     
 }

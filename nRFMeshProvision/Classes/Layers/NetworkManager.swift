@@ -15,6 +15,7 @@ internal class NetworkManager {
     var networkLayer: NetworkLayer!
     var lowerTransportLayer: LowerTransportLayer!
     var upperTransportLayer: UpperTransportLayer!
+    var accessLayer: AccessLayer!
     
     // MARK: - Computed properties
     
@@ -35,7 +36,8 @@ internal class NetworkManager {
         
         networkLayer = NetworkLayer(self)
         lowerTransportLayer = LowerTransportLayer(self)
-        
+        upperTransportLayer = UpperTransportLayer(self)
+        accessLayer = AccessLayer(self)
     }
     
     /// This method handles the received PDU of given type.
