@@ -7,18 +7,6 @@
 
 import Foundation
 
-internal enum NetworkPduType: UInt8 {
-    case accessMessage  = 0
-    case controlMessage = 1
-    
-    var netMicSize: UInt8 {
-        switch self {
-        case .accessMessage:  return 4 // 32 bits
-        case .controlMessage: return 8 // 64 bits
-        }
-    }
-}
-
 internal struct NetworkPdu {
     /// Raw PDU data.
     let pdu: Data
@@ -29,7 +17,7 @@ internal struct NetworkPdu {
     /// and Privacy Key used to secure this PDU.
     let nid: UInt8
     /// PDU type.
-    let type: NetworkPduType
+    let type: LowerTransportPduType
     /// Time To Live.
     let ttl: UInt8
     /// Sequence Number.
@@ -94,7 +82,7 @@ internal struct NetworkPdu {
                 continue
             }
             
-            let type = NetworkPduType(rawValue: ctl)!
+            let type = LowerTransportPduType(rawValue: ctl)!
             let ttl  = deobfuscatedData[0] & 0x7F
             // Multiple octet values use Big Endian.
             let sequence = UInt32(deobfuscatedData[1]) << 16 | UInt32(deobfuscatedData[2]) << 8 | UInt32(deobfuscatedData[3])
@@ -135,16 +123,17 @@ internal struct NetworkPdu {
     /// - parameter ttl:          Time To Leave.
     /// - parameter ivIndex:      The current IV Index.
     /// - returns: The Network PDU object.
-    init(encode transportPdu: Data, ofType type: NetworkPduType, sentFrom source: Address, to destination: Address,
+    init(encode lowerTransportPdu: LowerTransportPdu,
+         sentFrom source: Address, to destination: Address,
          usingNetworkKey networkKey: NetworkKey, sequence: UInt32, ttl: UInt8, andIvIndex ivIndex: IvIndex) {
         self.ivi = UInt8(ivIndex.index & 0x1)
         self.nid = networkKey.nid
-        self.type = type
+        self.type = lowerTransportPdu.type
         self.ttl = ttl
         self.sequence = sequence
         self.source = source
         self.destination = destination
-        self.transportPdu = transportPdu
+        self.transportPdu = lowerTransportPdu.transportPdu
         
         let index = ivIndex.index
         let iviNid = (ivi << 7) | (nid & 0x7F)
@@ -186,12 +175,12 @@ internal struct NetworkPdu {
     }
 }
 
-extension NetworkPduType: CustomDebugStringConvertible {
+extension LowerTransportPduType {
     
-    var debugDescription: String {
+    var netMicSize: UInt8 {
         switch self {
-        case .accessMessage:  return "Access Message"
-        case .controlMessage: return "Control Message"
+        case .accessMessage:  return 4 // 32 bits
+        case .controlMessage: return 8 // 64 bits
         }
     }
     

@@ -1,5 +1,5 @@
 //
-//  SegmentedLowerTransportPdu.swift
+//  SegmentedAccessMessage.swift
 //  nRFMeshProvision
 //
 //  Created by Aleksander Nowakowski on 31/05/2019.
@@ -7,26 +7,38 @@
 
 import Foundation
 
-internal struct SegmentedLowerTransportPdu {
+internal struct SegmentedAccessMessage: SegmentedMessage {
     /// The Application Key identifier.
     /// This field is set to `nil` if the message is signed with a
     /// Device Key instead.
     let aid: UInt8?
     /// The size of Transport MIC: 4 or 8 bytes.
     let transportMicSize: UInt8
-    /// 13 least significant bits of SeqAuth.
+    
     let segmentZero: UInt16
-    /// This field is set to the segment number (zero-based)
-    /// of the segment m of this Upper Transport PDU.
     let segmentOffset: UInt8
-    /// This field is set to the last segment number (zero-based)
-    /// of this Upper Transport PDU.
     let lastSegmentNumber: UInt8
-    /// Segment data.
     let segment: Data
     
-    init(_ networkPdu: NetworkPdu) {
+    var transportPdu: Data {
+        var octet0: UInt8 = 0x80 // SEG = 1
+        if let aid = aid {
+            octet0 |= 0b01000000 // AKF = 1
+            octet0 |= aid
+        }
+        let octet1 = ((transportMicSize << 4) & 0x80) | UInt8(segmentZero >> 5)
+        let octet2 = UInt8((segmentZero & 0x3F) << 2) | (segmentOffset >> 3)
+        let octet3 = ((segmentOffset & 0x07) << 5) | (lastSegmentNumber & 0x1F)
+        return Data([octet0, octet1, octet2, octet3]) + segment
+    }
+    
+    let type: LowerTransportPduType = .accessMessage
+    
+    init?(fromSegment networkPdu: NetworkPdu) {
         let data = networkPdu.transportPdu
+        guard data.count >= 5, data[0] & 0x80 != 0 else {
+            return nil
+        }
         let akf = (data[0] & 0b01000000) != 0
         if akf {
             aid = data[0] & 0x3F
@@ -39,6 +51,10 @@ internal struct SegmentedLowerTransportPdu {
         segmentZero = (UInt16(data[1] & 0x7F) << 6) | UInt16(data[2] >> 2)
         segmentOffset = ((data[2] & 0x03) << 3) | ((data[3] & 0xE0) >> 5)
         lastSegmentNumber = data[3] & 0x1F
+        guard segmentOffset <= lastSegmentNumber else {
+            return nil
+        }
         segment = data.dropFirst(4)
     }
+
 }

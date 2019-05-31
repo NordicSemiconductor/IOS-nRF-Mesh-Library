@@ -7,10 +7,7 @@
 
 import Foundation
 
-internal protocol ControlMessage {
+internal protocol ControlMessage: LowerTransportPdu {
     /// Message Op Code.
     var opCode: UInt8 { get }
-    /// Message parameters.
-    var parameters: Data { get }
-    
 }

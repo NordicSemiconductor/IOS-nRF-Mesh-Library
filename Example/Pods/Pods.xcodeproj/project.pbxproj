@@ -37,10 +37,13 @@
 		3F050E2ED9231EC203697587364B553C /* Pods-nRFMeshProvision_Tests-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 21CDD8648681CE8D31824BB49C8D17A6 /* Pods-nRFMeshProvision_Tests-dummy.m */; };
 		525242E2225CC6D30044CECB /* ClosedRange.swift in Sources */ = {isa = PBXBuildFile; fileRef = 525242E1225CC6D30044CECB /* ClosedRange.swift */; };
 		525242E4225DE1EF0044CECB /* RangeObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 525242E3225DE1EF0044CECB /* RangeObject.swift */; };
-		5274B75122A1599F008450BC /* SegmentedLowerTransportPdu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5274B75022A1599F008450BC /* SegmentedLowerTransportPdu.swift */; };
+		5274B75122A1599F008450BC /* SegmentedAccessMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5274B75022A1599F008450BC /* SegmentedAccessMessage.swift */; };
 		5274B75322A16009008450BC /* ControlMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5274B75222A16009008450BC /* ControlMessage.swift */; };
 		5274B75522A161D1008450BC /* SegmentAcknowledmentMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5274B75422A161D1008450BC /* SegmentAcknowledmentMessage.swift */; };
-		5274B75722A1776F008450BC /* SegmentedControlMessagePdu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5274B75622A1776F008450BC /* SegmentedControlMessagePdu.swift */; };
+		5274B75722A1776F008450BC /* SegmentedControlMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5274B75622A1776F008450BC /* SegmentedControlMessage.swift */; };
+		5274B75922A1C7B9008450BC /* LowerTransportPdu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5274B75822A1C7B9008450BC /* LowerTransportPdu.swift */; };
+		5274B75B22A1D2C9008450BC /* HeartbeatMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5274B75A22A1D2C9008450BC /* HeartbeatMessage.swift */; };
+		5274B75D22A1D7C6008450BC /* SegmentedMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5274B75C22A1D7C6008450BC /* SegmentedMessage.swift */; };
 		5283523E2271EF1D0097B949 /* MeshNetwork+Provisioner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5283523D2271EF1D0097B949 /* MeshNetwork+Provisioner.swift */; };
 		528352402271EF770097B949 /* MeshNetwork+Ranges.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5283523F2271EF770097B949 /* MeshNetwork+Ranges.swift */; };
 		528352422271EFC20097B949 /* MeshNetwork+Address.swift in Sources */ = {isa = PBXBuildFile; fileRef = 528352412271EFC20097B949 /* MeshNetwork+Address.swift */; };
@@ -109,7 +112,7 @@
 		52B7F688229BCC4000B0A42F /* NetworkPdu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52B7F687229BCC4000B0A42F /* NetworkPdu.swift */; };
 		52DF5D91229C000D00C297C1 /* NetworkLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52DF5D90229C000D00C297C1 /* NetworkLayer.swift */; };
 		52DF5D97229D6B4800C297C1 /* LowerTransportLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52DF5D96229D6B4800C297C1 /* LowerTransportLayer.swift */; };
-		52DF5D99229D6B6400C297C1 /* LowerTransportPdu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52DF5D98229D6B6400C297C1 /* LowerTransportPdu.swift */; };
+		52DF5D99229D6B6400C297C1 /* AccessMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52DF5D98229D6B6400C297C1 /* AccessMessage.swift */; };
 		52DF5D9B229D78CA00C297C1 /* NetworkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52DF5D9A229D78CA00C297C1 /* NetworkManager.swift */; };
 		52DF5D9E229D7C9000C297C1 /* UpperTransportPdu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52DF5D9D229D7C9000C297C1 /* UpperTransportPdu.swift */; };
 		52DF5DA0229D7CAC00C297C1 /* UpperTransportLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52DF5D9F229D7CAC00C297C1 /* UpperTransportLayer.swift */; };
@@ -195,10 +198,13 @@
 		51BBAA3978BFB1C9BAA0B3563DB01A48 /* Pods-nRFMeshProvision_Example-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-nRFMeshProvision_Example-Info.plist"; sourceTree = "<group>"; };
 		525242E1225CC6D30044CECB /* ClosedRange.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClosedRange.swift; sourceTree = "<group>"; };
 		525242E3225DE1EF0044CECB /* RangeObject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RangeObject.swift; sourceTree = "<group>"; };
-		5274B75022A1599F008450BC /* SegmentedLowerTransportPdu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SegmentedLowerTransportPdu.swift; sourceTree = "<group>"; };
+		5274B75022A1599F008450BC /* SegmentedAccessMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SegmentedAccessMessage.swift; sourceTree = "<group>"; };
 		5274B75222A16009008450BC /* ControlMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ControlMessage.swift; sourceTree = "<group>"; };
 		5274B75422A161D1008450BC /* SegmentAcknowledmentMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SegmentAcknowledmentMessage.swift; sourceTree = "<group>"; };
-		5274B75622A1776F008450BC /* SegmentedControlMessagePdu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SegmentedControlMessagePdu.swift; sourceTree = "<group>"; };
+		5274B75622A1776F008450BC /* SegmentedControlMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SegmentedControlMessage.swift; sourceTree = "<group>"; };
+		5274B75822A1C7B9008450BC /* LowerTransportPdu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LowerTransportPdu.swift; sourceTree = "<group>"; };
+		5274B75A22A1D2C9008450BC /* HeartbeatMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeartbeatMessage.swift; sourceTree = "<group>"; };
+		5274B75C22A1D7C6008450BC /* SegmentedMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SegmentedMessage.swift; sourceTree = "<group>"; };
 		5283523D2271EF1D0097B949 /* MeshNetwork+Provisioner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MeshNetwork+Provisioner.swift"; sourceTree = "<group>"; };
 		5283523F2271EF770097B949 /* MeshNetwork+Ranges.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MeshNetwork+Ranges.swift"; sourceTree = "<group>"; };
 		528352412271EFC20097B949 /* MeshNetwork+Address.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MeshNetwork+Address.swift"; sourceTree = "<group>"; };
@@ -267,7 +273,7 @@
 		52B7F687229BCC4000B0A42F /* NetworkPdu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkPdu.swift; sourceTree = "<group>"; };
 		52DF5D90229C000D00C297C1 /* NetworkLayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkLayer.swift; sourceTree = "<group>"; };
 		52DF5D96229D6B4800C297C1 /* LowerTransportLayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LowerTransportLayer.swift; sourceTree = "<group>"; };
-		52DF5D98229D6B6400C297C1 /* LowerTransportPdu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LowerTransportPdu.swift; sourceTree = "<group>"; };
+		52DF5D98229D6B6400C297C1 /* AccessMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccessMessage.swift; sourceTree = "<group>"; };
 		52DF5D9A229D78CA00C297C1 /* NetworkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkManager.swift; sourceTree = "<group>"; };
 		52DF5D9D229D7C9000C297C1 /* UpperTransportPdu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpperTransportPdu.swift; sourceTree = "<group>"; };
 		52DF5D9F229D7CAC00C297C1 /* UpperTransportLayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpperTransportLayer.swift; sourceTree = "<group>"; };
@@ -602,11 +608,14 @@
 			isa = PBXGroup;
 			children = (
 				52DF5D96229D6B4800C297C1 /* LowerTransportLayer.swift */,
-				52DF5D98229D6B6400C297C1 /* LowerTransportPdu.swift */,
-				5274B75022A1599F008450BC /* SegmentedLowerTransportPdu.swift */,
-				5274B75622A1776F008450BC /* SegmentedControlMessagePdu.swift */,
+				5274B75822A1C7B9008450BC /* LowerTransportPdu.swift */,
+				5274B75C22A1D7C6008450BC /* SegmentedMessage.swift */,
+				52DF5D98229D6B6400C297C1 /* AccessMessage.swift */,
+				5274B75022A1599F008450BC /* SegmentedAccessMessage.swift */,
 				5274B75222A16009008450BC /* ControlMessage.swift */,
+				5274B75622A1776F008450BC /* SegmentedControlMessage.swift */,
 				5274B75422A161D1008450BC /* SegmentAcknowledmentMessage.swift */,
+				5274B75A22A1D2C9008450BC /* HeartbeatMessage.swift */,
 			);
 			path = "Lower Transport Layer";
 			sourceTree = "<group>";
@@ -1031,9 +1040,10 @@
 				528352A22282CF0B0097B949 /* ApplicationKey+MeshNetwork.swift in Sources */,
 				5283524A227358DE0097B949 /* Data+Keys.swift in Sources */,
 				529B7621224B8213008F1CE7 /* MeshAddress.swift in Sources */,
-				5274B75122A1599F008450BC /* SegmentedLowerTransportPdu.swift in Sources */,
+				5274B75B22A1D2C9008450BC /* HeartbeatMessage.swift in Sources */,
+				5274B75122A1599F008450BC /* SegmentedAccessMessage.swift in Sources */,
 				5283528E2281B3510097B949 /* ProvisioningState.swift in Sources */,
-				5274B75722A1776F008450BC /* SegmentedControlMessagePdu.swift in Sources */,
+				5274B75722A1776F008450BC /* SegmentedControlMessage.swift in Sources */,
 				529B75EB224A6CE4008F1CE7 /* NetworkKey.swift in Sources */,
 				52DF5DA0229D7CAC00C297C1 /* UpperTransportLayer.swift in Sources */,
 				528352462271F0C60097B949 /* MeshNetwork+Keys.swift in Sources */,
@@ -1045,6 +1055,7 @@
 				529B7618224A6D47008F1CE7 /* KeyIndex.swift in Sources */,
 				52DF5D97229D6B4800C297C1 /* LowerTransportLayer.swift in Sources */,
 				528352B82285A3A30097B949 /* Node+Address.swift in Sources */,
+				5274B75D22A1D7C6008450BC /* SegmentedMessage.swift in Sources */,
 				528352B022830F380097B949 /* ProxyProtocolHandler.swift in Sources */,
 				52DF5DA3229E6EF800C297C1 /* AccessLayer.swift in Sources */,
 				52B7F688229BCC4000B0A42F /* NetworkPdu.swift in Sources */,
@@ -1072,6 +1083,7 @@
 				529B757922411970008F1CE7 /* MeshNetworkManager.swift in Sources */,
 				528352422271EFC20097B949 /* MeshNetwork+Address.swift in Sources */,
 				D159EC79D610DF8F7CA2F21321FD6D7E /* PublishPeriodResolution.swift in Sources */,
+				5274B75922A1C7B9008450BC /* LowerTransportPdu.swift in Sources */,
 				528352B622843DA50097B949 /* ProvisioningManager.swift in Sources */,
 				529B761F224B7D2D008F1CE7 /* UUID+Hex.swift in Sources */,
 				528352BA2285A3DF0097B949 /* Node+Keys.swift in Sources */,
@@ -1080,7 +1092,7 @@
 				52835278228029720097B949 /* UnprovisionedDevice.swift in Sources */,
 				528352942281B8A10097B949 /* Data.swift in Sources */,
 				529B7615224A6D47008F1CE7 /* NodeFeatures.swift in Sources */,
-				52DF5D99229D6B6400C297C1 /* LowerTransportPdu.swift in Sources */,
+				52DF5D99229D6B6400C297C1 /* AccessMessage.swift in Sources */,
 				525242E4225DE1EF0044CECB /* RangeObject.swift in Sources */,
 				5283523E2271EF1D0097B949 /* MeshNetwork+Provisioner.swift in Sources */,
 				529B75F0224A6CE4008F1CE7 /* MeshNetwork.swift in Sources */,
