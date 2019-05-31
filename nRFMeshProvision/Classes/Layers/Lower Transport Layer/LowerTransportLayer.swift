@@ -14,7 +14,15 @@ internal class LowerTransportLayer {
         self.networkLayer = networkManager.networkLayer!
     }
     
-    func handleNetworkPdu(_ networkPdu: NetworkPdu) {
+    func handle(networkPdu: NetworkPdu) {
+        
+    }
+    
+    func handle(unprovisionedDeviceBeacon: UnprovisionedDeviceBeacon) {
+        
+    }
+    
+    func handle(secureNetworkBeacon: SecureNetworkBeacon) {
         
     }
     

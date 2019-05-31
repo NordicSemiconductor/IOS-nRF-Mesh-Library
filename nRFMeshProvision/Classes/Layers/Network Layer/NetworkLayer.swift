@@ -20,7 +20,7 @@ internal class NetworkLayer {
     ///
     /// - parameter pdu:  The data received.
     /// - parameter type: The PDU type.
-    func handleIncomingPdu(_ pdu: Data, ofType type: PduType) {
+    func handle(incomingPdu pdu: Data, ofType type: PduType) {
         guard let meshNetwork = networkManager.meshNetwork else {
             return
         }
@@ -38,11 +38,27 @@ internal class NetworkLayer {
         networkMessageCache.setObject(NSNull(), forKey: pdu as NSData)
         
         // Try decoding the PDU.
-        guard let networkPdu = NetworkPdu.decode(pdu, for: meshNetwork) else {
+        switch type {
+        case .networkPdu:
+            guard let networkPdu = NetworkPdu.decode(pdu, for: meshNetwork) else {
+                return
+            }
+            networkManager.lowerTransportLayer.handle(networkPdu: networkPdu)
+        case .meshBeacon:
+            if let beaconPdu = SecureNetworkBeacon.decode(pdu, for: meshNetwork) {
+                networkManager.lowerTransportLayer.handle(secureNetworkBeacon: beaconPdu)
+                return
+            }
+            if let beaconPdu = UnprovisionedDeviceBeacon.decode(pdu, for: meshNetwork) {
+                networkManager.lowerTransportLayer.handle(unprovisionedDeviceBeacon: beaconPdu)
+                return
+            }
+            // Invalid or unsupported beacon type.
+        default:
+            // Proxy configuration not supported yet.
             return
         }
         
-        networkManager.lowerTransportLayer.handleNetworkPdu(networkPdu)
     }
     
 }

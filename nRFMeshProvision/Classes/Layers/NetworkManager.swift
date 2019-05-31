@@ -45,7 +45,7 @@ internal class NetworkManager {
     /// - parameter pdu:  The data received.
     /// - parameter type: The PDU type.
     func handleIncomingPdu(_ pdu: Data, ofType type: PduType) {
-        networkLayer.handleIncomingPdu(pdu, ofType: type)
+        networkLayer.handle(incomingPdu: pdu, ofType: type)
     }
     
     /// Encrypts the message with given destination address and,

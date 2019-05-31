@@ -44,6 +44,9 @@
 		5274B75922A1C7B9008450BC /* LowerTransportPdu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5274B75822A1C7B9008450BC /* LowerTransportPdu.swift */; };
 		5274B75B22A1D2C9008450BC /* HeartbeatMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5274B75A22A1D2C9008450BC /* HeartbeatMessage.swift */; };
 		5274B75D22A1D7C6008450BC /* SegmentedMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5274B75C22A1D7C6008450BC /* SegmentedMessage.swift */; };
+		5274B75F22A1D9C9008450BC /* UnprovisionedDeviceBeacon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5274B75E22A1D9C9008450BC /* UnprovisionedDeviceBeacon.swift */; };
+		5274B76122A1D9FB008450BC /* BeaconPdu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5274B76022A1D9FB008450BC /* BeaconPdu.swift */; };
+		5274B76322A1DE40008450BC /* SecureNetworkBeacon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5274B76222A1DE40008450BC /* SecureNetworkBeacon.swift */; };
 		5283523E2271EF1D0097B949 /* MeshNetwork+Provisioner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5283523D2271EF1D0097B949 /* MeshNetwork+Provisioner.swift */; };
 		528352402271EF770097B949 /* MeshNetwork+Ranges.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5283523F2271EF770097B949 /* MeshNetwork+Ranges.swift */; };
 		528352422271EFC20097B949 /* MeshNetwork+Address.swift in Sources */ = {isa = PBXBuildFile; fileRef = 528352412271EFC20097B949 /* MeshNetwork+Address.swift */; };
@@ -205,6 +208,9 @@
 		5274B75822A1C7B9008450BC /* LowerTransportPdu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LowerTransportPdu.swift; sourceTree = "<group>"; };
 		5274B75A22A1D2C9008450BC /* HeartbeatMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeartbeatMessage.swift; sourceTree = "<group>"; };
 		5274B75C22A1D7C6008450BC /* SegmentedMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SegmentedMessage.swift; sourceTree = "<group>"; };
+		5274B75E22A1D9C9008450BC /* UnprovisionedDeviceBeacon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnprovisionedDeviceBeacon.swift; sourceTree = "<group>"; };
+		5274B76022A1D9FB008450BC /* BeaconPdu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BeaconPdu.swift; sourceTree = "<group>"; };
+		5274B76222A1DE40008450BC /* SecureNetworkBeacon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecureNetworkBeacon.swift; sourceTree = "<group>"; };
 		5283523D2271EF1D0097B949 /* MeshNetwork+Provisioner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MeshNetwork+Provisioner.swift"; sourceTree = "<group>"; };
 		5283523F2271EF770097B949 /* MeshNetwork+Ranges.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MeshNetwork+Ranges.swift"; sourceTree = "<group>"; };
 		528352412271EFC20097B949 /* MeshNetwork+Address.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MeshNetwork+Address.swift"; sourceTree = "<group>"; };
@@ -600,6 +606,9 @@
 			children = (
 				52DF5D90229C000D00C297C1 /* NetworkLayer.swift */,
 				52B7F687229BCC4000B0A42F /* NetworkPdu.swift */,
+				5274B76022A1D9FB008450BC /* BeaconPdu.swift */,
+				5274B76222A1DE40008450BC /* SecureNetworkBeacon.swift */,
+				5274B75E22A1D9C9008450BC /* UnprovisionedDeviceBeacon.swift */,
 			);
 			path = "Network Layer";
 			sourceTree = "<group>";
@@ -1023,11 +1032,13 @@
 				5283528A2281B30D0097B949 /* Oob.swift in Sources */,
 				528352A82282D9FF0097B949 /* BearerDelegate.swift in Sources */,
 				52835277228029720097B949 /* Bearer.swift in Sources */,
+				5274B76122A1D9FB008450BC /* BeaconPdu.swift in Sources */,
 				76AD7DBB6F78223071CAB41C3AE42393 /* MeshConstants.swift in Sources */,
 				52DF5D9E229D7C9000C297C1 /* UpperTransportPdu.swift in Sources */,
 				528352962281C0FE0097B949 /* OptionSet+Data.swift in Sources */,
 				35A52D4DECCD815F8B14722C2D96207D /* nRFMeshProvision-dummy.m in Sources */,
 				529B75F1224A6CE4008F1CE7 /* Provisioner.swift in Sources */,
+				5274B76322A1DE40008450BC /* SecureNetworkBeacon.swift in Sources */,
 				529B7610224A6D47008F1CE7 /* KeyRefreshPhase.swift in Sources */,
 				529B7614224A6D47008F1CE7 /* Address.swift in Sources */,
 				5283529E2282CCE60097B949 /* Provisioner+Ranges.swift in Sources */,
@@ -1083,6 +1094,7 @@
 				529B757922411970008F1CE7 /* MeshNetworkManager.swift in Sources */,
 				528352422271EFC20097B949 /* MeshNetwork+Address.swift in Sources */,
 				D159EC79D610DF8F7CA2F21321FD6D7E /* PublishPeriodResolution.swift in Sources */,
+				5274B75F22A1D9C9008450BC /* UnprovisionedDeviceBeacon.swift in Sources */,
 				5274B75922A1C7B9008450BC /* LowerTransportPdu.swift in Sources */,
 				528352B622843DA50097B949 /* ProvisioningManager.swift in Sources */,
 				529B761F224B7D2D008F1CE7 /* UUID+Hex.swift in Sources */,
