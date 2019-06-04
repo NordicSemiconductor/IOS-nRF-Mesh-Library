@@ -231,6 +231,10 @@ private extension ProvisioningViewController {
             }
             return
         }
+        // If none of OOB methods are supported, select the only option left.
+        if authenticationMethod == nil {
+            authenticationMethod = .noOob
+        }
         
         if provisioningManager.networkKey == nil {
             let network = MeshNetworkManager.instance.meshNetwork!

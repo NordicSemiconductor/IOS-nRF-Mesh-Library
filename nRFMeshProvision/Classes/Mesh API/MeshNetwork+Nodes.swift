@@ -67,18 +67,18 @@ public extension MeshNetwork {
         
         for node in nodes {
             // Data are: 48 bits of Padding (0s), 64 bit Random and Unicast Address.
-            let data = Data(repeating: 0, count: 6) + random + node.unicastAddress
+            let data = Data(repeating: 0, count: 6) + random + node.unicastAddress.bigEndian
             
             for networkKey in node.networkKeys {
                 let encryptedData = helper.calculateEvalue(with: data, andKey: networkKey.keys.identityKey)!
-                if encryptedData == hash {
+                if encryptedData.dropFirst(8) == hash {
                     return true
                 }
                 // If the Key refresh procedure is in place, the identity might have been
                 // generated with the old key.
                 if let oldIdentityKey = networkKey.oldKeys?.identityKey {
                     let encryptedData = helper.calculateEvalue(with: data, andKey: oldIdentityKey)!
-                    if encryptedData == hash {
+                    if encryptedData.dropFirst(8) == hash {
                         return true
                     }
                 }

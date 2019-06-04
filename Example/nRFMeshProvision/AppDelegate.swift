@@ -66,4 +66,5 @@ extension MeshNetworkManager {
     static var bearer: Bearer! {
         return (UIApplication.shared.delegate as! AppDelegate).connection
     }
+    
 }

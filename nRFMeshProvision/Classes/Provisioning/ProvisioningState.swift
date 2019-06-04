@@ -31,9 +31,6 @@ public enum ProvisioningError: Error {
     case unsupportedAlgorithm
     /// Thrown when the Unprovisioned Device is not supported by the manager.
     case unsupportedDevice
-    /// Thrown when the Unprovisioned Device exposes its Public Key via an OOB
-    /// mechanism, but the key was not provided.
-    case oobPublicKeyRequired
     /// Thrown when the provided alphanumberic value could not be converted into
     /// bytes using ASCII encoding.
     case invalidOobValueFormat
@@ -123,8 +120,6 @@ extension ProvisioningError: CustomDebugStringConvertible {
             return "Unsupported algorighm"
         case .unsupportedDevice:
             return "Unsupported Device"
-        case .oobPublicKeyRequired:
-            return "OOB Public Key required"
         case .invalidOobValueFormat:
             return "Invalid value format"
         case .noAddressAvailable:

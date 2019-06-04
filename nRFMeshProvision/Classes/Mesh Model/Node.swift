@@ -199,8 +199,8 @@ public class Node: Codable {
         self.configComplete = false
         
         // The node has been provisioned with one Network Key.
-        self.appKeys  = [NodeKey(index: networkKey.index, updated: false)]
-        self.netKeys  = []
+        self.netKeys  = [NodeKey(index: networkKey.index, updated: false)]
+        self.appKeys  = []
         // Elements will be queried with Composition Data.
         self.elements = []
     }

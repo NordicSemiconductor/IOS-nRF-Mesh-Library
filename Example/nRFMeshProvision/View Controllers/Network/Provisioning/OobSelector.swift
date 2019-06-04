@@ -21,7 +21,10 @@ extension OobSelector where Self: UIViewController {
         let oobLocation = unprovisionedDevice.oobInformation
         let location = oobLocation.isEmpty ? "" : "\nLocation: \(oobLocation)"
         let message = "Enter the 128-character hexadecimal Public Key of the device.\(location)"
-        presentTextAlert(title: "Public Key", message: message, type: .publicKeyRequired) { hex in
+        let skipAction = UIAlertAction(title: "Skip", style: .destructive) { _ in
+            callback(.noOobPublicKey)
+        }
+        presentTextAlert(title: "Public Key", message: message, type: .publicKeyRequired, option: skipAction) { hex in
             if let key = Data(hex: hex) {
                 callback(.oobPublicKey(key: key))
             }

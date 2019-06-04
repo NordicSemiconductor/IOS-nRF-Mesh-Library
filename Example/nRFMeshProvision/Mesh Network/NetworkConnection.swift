@@ -85,7 +85,7 @@ extension NetworkConnection: CBCentralManagerDelegate {
     }
     
     func centralManager(_ central: CBCentralManager, didDiscover peripheral: CBPeripheral, advertisementData: [String : Any], rssi RSSI: NSNumber) {
-        // Is it a Network ID beacon?
+        // Is it a Network ID beacon?ś
         if let networkId = advertisementData.networkId {
             guard meshNetwork.matches(networkId: networkId) else {
                 // A Node from another mesh network.

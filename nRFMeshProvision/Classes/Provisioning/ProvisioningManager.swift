@@ -168,7 +168,7 @@ public class ProvisioningManager {
                           authenticationMethod: AuthenticationMethod) throws {
         // Is the Provisioner Manager in the right state?
         guard case .capabilitiesReceived = state,
-            let capabilities = provisioningCapabilities else {
+            let _ = provisioningCapabilities else {
             throw ProvisioningError.invalidState
         }
         
@@ -188,13 +188,6 @@ public class ProvisioningManager {
         // Ensure the Network Key is set.
         guard let networkKey = networkKey else {
             throw ProvisioningError.networkKeyNotSpecified
-        }
-        
-        // An OOB Public Key must be given for devices supporting this.
-        if capabilities.publicKeyType.contains(.publicKeyOobInformationAvailable) {
-            guard case .oobPublicKey(key: _) = publicKey else {
-                throw ProvisioningError.oobPublicKeyRequired
-            }
         }
         
         // Is the Bearer open?
@@ -265,14 +258,12 @@ extension ProvisioningManager: BearerDelegate, BearerDataDelegate {
     
     public func bearer(_ bearer: Bearer, didClose error: Error?) {
         bearerDelegate?.bearer(bearer, didClose: error)
-        if let delegate = bearerDelegate {
-            bearer.delegate = delegate
-            bearerDelegate = nil
-        }
-        if let dataDelegate = bearerDataDelegate {
-            bearer.dataDelegate = dataDelegate
-            bearerDataDelegate = nil
-        }
+        
+        // Restore original delegates.
+        bearer.delegate = bearerDelegate
+        bearer.dataDelegate = bearerDataDelegate
+        bearerDelegate = nil
+        bearerDataDelegate = nil
         
         reset()
     }

@@ -175,7 +175,7 @@ internal struct NetworkPdu {
     }
 }
 
-extension LowerTransportPduType {
+private extension LowerTransportPduType {
     
     var netMicSize: UInt8 {
         switch self {
