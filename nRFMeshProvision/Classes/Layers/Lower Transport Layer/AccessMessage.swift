@@ -8,6 +8,9 @@
 import Foundation
 
 internal struct AccessMessage: LowerTransportPdu {
+    let source: Address?
+    let destination: Address
+    
     /// Application Key identifier. This field is set to `nil`
     /// if the message is signed with a Device Key instead.
     let aid: UInt8?
@@ -25,7 +28,7 @@ internal struct AccessMessage: LowerTransportPdu {
     
     let type: LowerTransportPduType = .accessMessage
     
-    init?(fromUnsegmented networkPdu: NetworkPdu) {
+    init?(fromUnsegmentedPdu networkPdu: NetworkPdu) {
         let data = networkPdu.transportPdu
         guard data.count >= 6 && data[0] & 0x80 == 0 else {
             return nil
@@ -37,15 +40,23 @@ internal struct AccessMessage: LowerTransportPdu {
             aid = nil
         }
         upperTransportPdu = data.dropFirst()
+        
+        source = networkPdu.source
+        destination = networkPdu.destination
     }
     
     init(fromSegments segments: [SegmentedAccessMessage]) {
         aid = segments.first!.aid
         
+        // Segments are already sorted by `segmentOffset`.
         upperTransportPdu = segments
-            .sorted(by: { $0.segmentOffset < $1.segmentOffset })
             .reduce(Data(), { (result, next) -> Data in
                 return result + next.segment
             })
+        
+        // Assuming all segments have the same source and destination addresses.
+        let segment = segments.first!
+        source = segment.source
+        destination = segment.destination
     }
 }

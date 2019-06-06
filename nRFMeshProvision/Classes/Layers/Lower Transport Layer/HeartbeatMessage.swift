@@ -17,7 +17,11 @@ internal struct Features: OptionSet {
 }
 
 internal struct HearbeatMessage: ControlMessage {
+    let source: Address?
+    let destination: Address
+    
     let opCode: UInt8
+    
     /// Initial TTL used when sending the message.
     let initTtl: UInt8
     /// Currently active features of the node.
@@ -40,15 +44,21 @@ internal struct HearbeatMessage: ControlMessage {
         }
         initTtl = data[1] & 0x7F
         features = Features(rawValue: UInt16(data[2] << 8) | UInt16(data[3]))
+        
+        source = networkPdu.source
+        destination = networkPdu.destination
     }
     
     /// Creates the Heartbeat message.
     ///
-    /// - parameter ttl:      Initial TTL used when sending the message.
-    /// - parameter features: Currently active features of the node.
-    init(withInitialTtl ttl: UInt8, andFeatures features: Features) {
+    /// - parameter ttl:         Initial TTL used when sending the message.
+    /// - parameter features:    Currently active features of the node.
+    /// - parameter destination: The destination address.
+    init(withInitialTtl ttl: UInt8, andFeatures features: Features, targetting destination: Address) {
         self.opCode = 0x0A
         self.initTtl = ttl
         self.features = features
+        self.source = nil
+        self.destination = destination
     }
 }
