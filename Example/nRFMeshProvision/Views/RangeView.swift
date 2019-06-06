@@ -15,8 +15,9 @@ class RangeView: UIView {
     @IBInspectable var lowerBound: UInt16 = 0x0001
     @IBInspectable var upperBound: UInt16 = 0xFFFF
     @IBInspectable var rangesColor:      UIColor = UIColor.nordicLake
-    @IBInspectable var otherRangesColor: UIColor = UIColor.lightGray
+    @IBInspectable var otherRangesColor: UIColor = UIColor.nordicMediumGray
     @IBInspectable var collisionColor:   UIColor = UIColor.nordicRed
+    @IBInspectable var unallocatedColor: UIColor = UIColor.nordicLightGray
     
     private var ranges:      [ClosedRange<UInt16>] = []
     private var otherRanges: [ClosedRange<UInt16>] = []
@@ -95,7 +96,7 @@ class RangeView: UIView {
         }
         
         // Draw background
-        context.setFillColor(UIColor.tableViewBackground.cgColor)
+        context.setFillColor(unallocatedColor.cgColor)
         context.fill(bounds)
         
         // Draw ranges
