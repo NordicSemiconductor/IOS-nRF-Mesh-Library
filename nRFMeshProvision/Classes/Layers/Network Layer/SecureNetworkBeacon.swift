@@ -27,24 +27,24 @@ internal struct SecureNetworkBeacon: BeaconPdu {
     /// - returns: The beacon object, or `nil` if the data are invalid.
     init?(decode pdu: Data, usingNetworkKey networkKey: NetworkKey) {
         self.pdu = pdu
-        guard pdu.count == 22, pdu[0] == 0 else {
+        guard pdu.count == 22, pdu[0] == 1 else {
             return nil
         }
         keyRefreshFlag = pdu[1] & 0x01 != 0
         ivUpdateActive = pdu[1] & 0x02 != 0
-        networkId = pdu.subdata(in: 2..<9)
-        ivIndex = CFSwapInt32BigToHost(pdu.convert(offset: 9))
+        networkId = pdu.subdata(in: 2..<10)
+        ivIndex = CFSwapInt32BigToHost(pdu.convert(offset: 10))
         
         // Authenticate beacon using given Network Key.
         let helper = OpenSSLHelper()
         if networkId == networkKey.networkId {
             let authenticationValue = helper.calculateCMAC(pdu.subdata(in: 1..<14), andKey: networkKey.keys.beaconKey)!
-            guard authenticationValue == pdu.subdata(in: 14..<22) else {
+            guard authenticationValue.subdata(in: 0..<8) == pdu.subdata(in: 14..<22) else {
                 return nil
             }
         } else if let oldNetworkId = networkKey.oldNetworkId, networkId == oldNetworkId {
             let authenticationValue = helper.calculateCMAC(pdu.subdata(in: 1..<14), andKey: networkKey.oldKeys!.beaconKey)!
-            guard authenticationValue == pdu.subdata(in: 14..<22) else {
+            guard authenticationValue.subdata(in: 0..<8) == pdu.subdata(in: 14..<22) else {
                 return nil
             }
         } else {
@@ -77,6 +77,14 @@ internal extension SecureNetworkBeacon {
         default:
             return nil
         }
+    }
+    
+}
+
+extension SecureNetworkBeacon: CustomDebugStringConvertible {
+    
+    var debugDescription: String {
+        return "Secure Network Beacon (network ID: \(networkId.hex), ivIndex: \(ivIndex), Key refresh Flag: \(keyRefreshFlag), IV Update active: \(ivUpdateActive))"
     }
     
 }

@@ -10,6 +10,8 @@ import Foundation
 internal struct NetworkPdu {
     /// Raw PDU data.
     let pdu: Data
+    /// The Network Key used to decode/endoce the PDU.
+    let networkKey: NetworkKey
     
     /// Least significant bit of IV Index.
     let ivi: UInt8
@@ -26,7 +28,7 @@ internal struct NetworkPdu {
     let source: Address
     /// Destination Address.
     let destination: Address
-    /// Transport Protocol Data Unit.
+    /// Transport Protocol Data Unit. It is guaranteed to have 1 to 16 bytes.
     let transportPdu: Data
     
     /// Creates Network PDU object from received PDU. The initiator tries
@@ -34,10 +36,9 @@ internal struct NetworkPdu {
     ///
     /// - parameter pdu:        The data received from mesh network.
     /// - parameter networkKey: The Network Key to decrypt the PDU.
-    /// - parameter ivIndex:    The current IV Index.
     /// - returns: The deobfuscated and decided Network PDU object, or `nil`,
     ///            if the key or IV Index don't match.
-    init?(decode pdu: Data, usingNetworkKey networkKey: NetworkKey, andIvIndex ivIndex: IvIndex) {
+    init?(decode pdu: Data, usingNetworkKey networkKey: NetworkKey) {
         self.pdu = pdu
         
         // Valid message must have at least 14 octets.
@@ -66,8 +67,8 @@ internal struct NetworkPdu {
         // IVI should match the LSB bit of current IV Index.
         // If it doesn't, and the IV Update procedure is active, the PDU will be
         // deobfuscated and decoded with IV Index decremented by 1.
-        var index = ivIndex.index
-        if ivi != index & 0x1 && ivIndex.updateActive {
+        var index = networkKey.ivIndex.index
+        if ivi != index & 0x1 && networkKey.ivIndex.updateActive {
             index -= 1
         }
         
@@ -99,6 +100,7 @@ internal struct NetworkPdu {
                                                                     continue
             }
             
+            self.networkKey = networkKey
             self.type = type
             self.ttl = ttl
             self.sequence = sequence
@@ -116,26 +118,25 @@ internal struct NetworkPdu {
     /// - parameter transportPdu: The data received from higher layer.
     /// - parameter type:         The PDU type: access or control message.
     /// - parameter source:       The Source Address.
-    /// - parameter destination:  The Destination Address.
     /// - parameter networkKey:   The key for encrypting the data.
     /// - parameter sequence:     The SEQ number of the PDU. Each PDU between the source
     ///                           and destination must have strictly increasing sequence number.
     /// - parameter ttl:          Time To Leave.
-    /// - parameter ivIndex:      The current IV Index.
     /// - returns: The Network PDU object.
-    init(encode lowerTransportPdu: LowerTransportPdu,
-         sentFrom source: Address, to destination: Address,
-         usingNetworkKey networkKey: NetworkKey, sequence: UInt32, ttl: UInt8, andIvIndex ivIndex: IvIndex) {
-        self.ivi = UInt8(ivIndex.index & 0x1)
+    init(encode lowerTransportPdu: LowerTransportPdu, sentFrom source: Address,
+         usingNetworkKey networkKey: NetworkKey, withSequence sequence: UInt32, andTtl ttl: UInt8) {
+        let index = networkKey.ivIndex.index
+        
+        self.networkKey = networkKey
+        self.ivi = UInt8(index & 0x1)
         self.nid = networkKey.nid
         self.type = lowerTransportPdu.type
         self.ttl = ttl
         self.sequence = sequence
         self.source = source
-        self.destination = destination
+        self.destination = lowerTransportPdu.destination
         self.transportPdu = lowerTransportPdu.transportPdu
         
-        let index = ivIndex.index
         let iviNid = (ivi << 7) | (nid & 0x7F)
         let ctlTtl = (type.rawValue << 7) | (ttl & 0x7F)
         
@@ -167,7 +168,7 @@ internal struct NetworkPdu {
     ///            PDU was invalid.
     static func decode(_ pdu: Data, for meshNetwork: MeshNetwork) -> NetworkPdu? {
         for networkKey in meshNetwork.networkKeys {
-            if let networkPdu = NetworkPdu(decode: pdu, usingNetworkKey: networkKey, andIvIndex: meshNetwork.ivIndex) {
+            if let networkPdu = NetworkPdu(decode: pdu, usingNetworkKey: networkKey) {
                 return networkPdu
             }
         }

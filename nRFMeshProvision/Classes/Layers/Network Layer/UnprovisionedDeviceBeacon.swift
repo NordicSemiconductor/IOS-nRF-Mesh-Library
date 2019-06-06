@@ -63,3 +63,11 @@ internal extension UnprovisionedDeviceBeacon {
     }
     
 }
+
+extension UnprovisionedDeviceBeacon: CustomDebugStringConvertible {
+    
+    var debugDescription: String {
+        return "Unprovisioned Device Beacon (uuid: \(deviceUuid.uuidString), OOB Info: \(oob), URI hash: \(uriHash?.hex ?? "None"))"
+    }
+    
+}

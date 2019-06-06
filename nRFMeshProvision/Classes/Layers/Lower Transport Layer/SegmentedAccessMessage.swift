@@ -8,6 +8,9 @@
 import Foundation
 
 internal struct SegmentedAccessMessage: SegmentedMessage {
+    let source: Address?
+    let destination: Address
+    
     /// The Application Key identifier.
     /// This field is set to `nil` if the message is signed with a
     /// Device Key instead.
@@ -34,7 +37,7 @@ internal struct SegmentedAccessMessage: SegmentedMessage {
     
     let type: LowerTransportPduType = .accessMessage
     
-    init?(fromSegment networkPdu: NetworkPdu) {
+    init?(fromSegmentPdu networkPdu: NetworkPdu) {
         let data = networkPdu.transportPdu
         guard data.count >= 5, data[0] & 0x80 != 0 else {
             return nil
@@ -55,6 +58,9 @@ internal struct SegmentedAccessMessage: SegmentedMessage {
             return nil
         }
         segment = data.dropFirst(4)
+        
+        source = networkPdu.source
+        destination = networkPdu.destination
     }
 
 }

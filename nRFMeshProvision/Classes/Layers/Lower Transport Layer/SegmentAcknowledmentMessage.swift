@@ -8,7 +8,11 @@
 import Foundation
 
 internal struct SegmentAcknowledmentMessage: ControlMessage {
+    let source: Address?
+    let destination: Address
+    
     let opCode: UInt8
+    
     /// Flag set to `true` if the message was sent by a Friend
     /// on behalf of a Low Power node.
     let isOnBehalfOfLowPowerNode: Bool
@@ -38,18 +42,32 @@ internal struct SegmentAcknowledmentMessage: ControlMessage {
         isOnBehalfOfLowPowerNode = (data[1] & 0x80) != 0
         segmentZero = (UInt16(data[1] & 0x7F) << 6) | UInt16(data[2] >> 2)
         blockAck = CFSwapInt32BigToHost(data.convert(offset: 3))
+        
+        source = networkPdu.source
+        destination = networkPdu.destination
     }
     
-    init(forSequece sequence: UInt32, segments: [SegmentedMessage]) {
+    /// Creates the ACK for given array of segments. At least one of
+    /// segments must not be `nil`.
+    ///
+    /// - parameter segments: The list of segments to be acknowledged.
+    init(for segments: [SegmentedMessage?]) {
         opCode = 0x00
         isOnBehalfOfLowPowerNode = false // Friendship is not supported.
-        segmentZero = UInt16(sequence & 0x1FFF)
+        let segment = segments.first { $0 != nil }!!
+        segmentZero = segment.segmentZero
         
         var ack: UInt32 = 0
         segments.forEach {
-            ack |= 1 << $0.segmentOffset
+            if let segment = $0 {
+                ack |= 1 << segment.segmentOffset
+            }
         }
         blockAck = ack
+        
+        // Assuming all segments have the same destination addresses.
+        source = nil
+        destination = segment.source!
     }
     
     /// Returns whether the segment with given index has been received.

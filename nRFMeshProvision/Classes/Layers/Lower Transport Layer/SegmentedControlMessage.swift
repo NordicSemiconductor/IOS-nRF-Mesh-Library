@@ -7,7 +7,10 @@
 
 import Foundation
 
-internal struct SegmentedControlMessage: SegmentedMessage {
+internal struct SegmentedControlMessage: ControlMessage, SegmentedMessage {
+    let source: Address?
+    let destination: Address
+    
     let opCode: UInt8
     
     let segmentZero: UInt16
@@ -41,5 +44,8 @@ internal struct SegmentedControlMessage: SegmentedMessage {
             return nil
         }
         segment = data.dropFirst(4)
+        
+        source = networkPdu.source
+        destination = networkPdu.destination
     }
 }

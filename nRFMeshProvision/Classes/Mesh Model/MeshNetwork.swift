@@ -39,8 +39,6 @@ public class MeshNetwork: Codable {
     public internal(set) var applicationKeys: [ApplicationKey]
     /// An array of nodes in the network.
     public internal(set) var nodes: [Node]
-    /// The IV Index.
-    internal var ivIndex: IvIndex
     
     internal init(name: String, uuid: UUID = UUID()) {
         schema          = "http://json-schema.org/draft-04/schema#"
@@ -53,7 +51,6 @@ public class MeshNetwork: Codable {
         networkKeys     = []
         applicationKeys = []
         nodes           = []
-        ivIndex         = IvIndex()
     }
     
     // MARK: - Codable
@@ -84,9 +81,6 @@ public class MeshNetwork: Codable {
         networkKeys = try container.decode([NetworkKey].self, forKey: .networkKeys)
         applicationKeys = try container.decode([ApplicationKey].self, forKey: .applicationKeys)
         nodes = try container.decode([Node].self, forKey: .nodes)
-        // The IV Index is not a shared in the JSON, as it may change.
-        // The value may be obtained from the Security Beacon.
-        ivIndex = IvIndex()
     }
     
 }

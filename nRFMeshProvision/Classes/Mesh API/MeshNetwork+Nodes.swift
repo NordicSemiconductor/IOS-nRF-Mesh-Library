@@ -7,7 +7,7 @@
 
 import Foundation
 
-public extension MeshNetwork {    
+public extension MeshNetwork {
     
     /// Returns Provisioner's node object, if such exist and the Provisioner
     /// is in the mesh network.

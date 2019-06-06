@@ -19,3 +19,25 @@ internal protocol SegmentedMessage: LowerTransportPdu {
     /// Segment data.
     var segment: Data { get }
 }
+
+internal extension SegmentedMessage {
+    
+    /// Returns whether the message is composed of only a single
+    /// segment. Single segment messages are used to send short,
+    /// acknowledged messages. The maximum size of payload of upper
+    /// transport control PDU is 8 bytes.
+    var isSingleSegment: Bool {
+        return lastSegmentNumber == 0
+    }
+    
+    /// Returns the `segmentOffset` as `Int`.
+    var index: Int {
+        return Int(segmentOffset)
+    }
+    
+    /// Returns the expected number of segments for this message.
+    var count: Int {
+        return Int(lastSegmentNumber + 1)
+    }
+    
+}
