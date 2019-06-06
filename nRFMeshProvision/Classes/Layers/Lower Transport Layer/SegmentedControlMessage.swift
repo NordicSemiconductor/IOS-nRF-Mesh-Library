@@ -7,10 +7,11 @@
 
 import Foundation
 
-internal struct SegmentedControlMessage: ControlMessage, SegmentedMessage {
+internal struct SegmentedControlMessage: SegmentedMessage {
     let source: Address?
     let destination: Address
     
+    /// Message Op Code.
     let opCode: UInt8
     
     let segmentZero: UInt16

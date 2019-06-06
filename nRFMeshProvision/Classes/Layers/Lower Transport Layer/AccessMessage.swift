@@ -28,6 +28,9 @@ internal struct AccessMessage: LowerTransportPdu {
     
     let type: LowerTransportPduType = .accessMessage
     
+    /// Creates an Access Message from a Network PDU that contains
+    /// an unsegmented access message. If the PDU is invalid, the
+    /// init returns `nil`.
     init?(fromUnsegmentedPdu networkPdu: NetworkPdu) {
         let data = networkPdu.transportPdu
         guard data.count >= 6 && data[0] & 0x80 == 0 else {
@@ -45,6 +48,9 @@ internal struct AccessMessage: LowerTransportPdu {
         destination = networkPdu.destination
     }
     
+    /// Creates an Access Message object from the given list of segments.
+    ///
+    /// - parameter segments: List of ordered segments.
     init(fromSegments segments: [SegmentedAccessMessage]) {
         aid = segments.first!.aid
         
