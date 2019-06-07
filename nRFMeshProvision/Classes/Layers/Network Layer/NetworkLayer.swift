@@ -88,9 +88,8 @@ internal class NetworkLayer {
         defaults.set(sequence + 1, forKey: source.hex)
         
         let networkPdu = NetworkPdu(encode: pdu, sentFrom: source,
-                                    usingNetworkKey: networkKey, withSequence: sequence, andTtl: ttl)
+                                    usingNetworkKey: networkKey, withSequence: sequence,
+                                    andTtl: ttl)
         try? networkManager.transmitter?.send(networkPdu.pdu, ofType: type)
     }
-    
-    
 }

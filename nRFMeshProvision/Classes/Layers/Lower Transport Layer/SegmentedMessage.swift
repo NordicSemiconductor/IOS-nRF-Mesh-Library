@@ -16,8 +16,6 @@ internal protocol SegmentedMessage: LowerTransportPdu {
     /// This field is set to the last segment number (zero-based)
     /// of this Upper Transport PDU.
     var lastSegmentNumber: UInt8 { get }
-    /// Segment data.
-    var segment: Data { get }
 }
 
 internal extension SegmentedMessage {

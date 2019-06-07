@@ -11,10 +11,16 @@ internal struct AccessMessage: LowerTransportPdu {
     let source: Address?
     let destination: Address
     
-    /// Application Key identifier. This field is set to `nil`
+    /// 6-bit Application Key identifier. This field is set to `nil`
     /// if the message is signed with a Device Key instead.
     let aid: UInt8?
-    /// Upper Transport PDU.
+    /// The sequence number used to encode this message.
+    let sequence: UInt32
+    /// The Network Key used to decode/endoce the PDU.
+    let networkKey: NetworkKey
+    /// The size of Transport MIC: 4 or 8 bytes.
+    let transportMicSize: UInt8
+    
     let upperTransportPdu: Data
     
     var transportPdu: Data {
@@ -42,6 +48,10 @@ internal struct AccessMessage: LowerTransportPdu {
         } else {
             aid = nil
         }
+        // For unsegmented messages, the size of the TransMIC is 32 bits.
+        transportMicSize = 4
+        sequence = networkPdu.sequence
+        networkKey = networkPdu.networkKey
         upperTransportPdu = data.dropFirst()
         
         source = networkPdu.source
@@ -52,17 +62,19 @@ internal struct AccessMessage: LowerTransportPdu {
     ///
     /// - parameter segments: List of ordered segments.
     init(fromSegments segments: [SegmentedAccessMessage]) {
-        aid = segments.first!.aid
+        // Assuming all segments have the same AID, source and destination addresses and TransMIC.
+        let segment = segments.first!
+        aid = segment.aid
+        transportMicSize = segment.transportMicSize
+        source = segment.source
+        destination = segment.destination
+        sequence = segment.sequence
+        networkKey = segment.networkKey
         
         // Segments are already sorted by `segmentOffset`.
         upperTransportPdu = segments
             .reduce(Data(), { (result, next) -> Data in
-                return result + next.segment
+                return result + next.upperTransportPdu
             })
-        
-        // Assuming all segments have the same source and destination addresses.
-        let segment = segments.first!
-        source = segment.source
-        destination = segment.destination
     }
 }

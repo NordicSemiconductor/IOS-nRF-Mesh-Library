@@ -17,14 +17,15 @@ internal struct SegmentedControlMessage: SegmentedMessage {
     let segmentZero: UInt16
     let segmentOffset: UInt8
     let lastSegmentNumber: UInt8
-    let segment: Data
+    
+    let upperTransportPdu: Data
     
     var transportPdu: Data {
         let octet0: UInt8 = 0x80 | (opCode & 0x7F) // SEG = 1
         let octet1 = UInt8(segmentZero >> 5)
         let octet2 = UInt8((segmentZero & 0x3F) << 2) | (segmentOffset >> 3)
         let octet3 = ((segmentOffset & 0x07) << 5) | (lastSegmentNumber & 0x1F)
-        return Data([octet0, octet1, octet2, octet3]) + segment
+        return Data([octet0, octet1, octet2, octet3]) + upperTransportPdu
     }
     
     let type: LowerTransportPduType = .controlMessage
@@ -44,7 +45,7 @@ internal struct SegmentedControlMessage: SegmentedMessage {
         guard segmentOffset <= lastSegmentNumber else {
             return nil
         }
-        segment = data.dropFirst(4)
+        upperTransportPdu = data.dropFirst(4)
         
         source = networkPdu.source
         destination = networkPdu.destination

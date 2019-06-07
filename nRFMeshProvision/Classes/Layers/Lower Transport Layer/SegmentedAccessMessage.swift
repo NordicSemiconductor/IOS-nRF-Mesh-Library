@@ -17,11 +17,16 @@ internal struct SegmentedAccessMessage: SegmentedMessage {
     let aid: UInt8?
     /// The size of Transport MIC: 4 or 8 bytes.
     let transportMicSize: UInt8
+    /// The sequence number used to encode this message.
+    let sequence: UInt32
+    /// The Network Key used to decode/endoce the PDU.
+    let networkKey: NetworkKey
     
     let segmentZero: UInt16
     let segmentOffset: UInt8
     let lastSegmentNumber: UInt8
-    let segment: Data
+    
+    let upperTransportPdu: Data
     
     var transportPdu: Data {
         var octet0: UInt8 = 0x80 // SEG = 1
@@ -32,7 +37,7 @@ internal struct SegmentedAccessMessage: SegmentedMessage {
         let octet1 = ((transportMicSize << 4) & 0x80) | UInt8(segmentZero >> 5)
         let octet2 = UInt8((segmentZero & 0x3F) << 2) | (segmentOffset >> 3)
         let octet3 = ((segmentOffset & 0x07) << 5) | (lastSegmentNumber & 0x1F)
-        return Data([octet0, octet1, octet2, octet3]) + segment
+        return Data([octet0, octet1, octet2, octet3]) + upperTransportPdu
     }
     
     let type: LowerTransportPduType = .accessMessage
@@ -57,7 +62,9 @@ internal struct SegmentedAccessMessage: SegmentedMessage {
         guard segmentOffset <= lastSegmentNumber else {
             return nil
         }
-        segment = data.dropFirst(4)
+        upperTransportPdu = data.dropFirst(4)
+        sequence = (networkPdu.sequence & 0xFFE000) | UInt32(segmentZero)
+        networkKey = networkPdu.networkKey
         
         source = networkPdu.source
         destination = networkPdu.destination

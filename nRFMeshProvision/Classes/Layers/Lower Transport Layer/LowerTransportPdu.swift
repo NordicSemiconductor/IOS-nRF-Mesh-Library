@@ -24,6 +24,8 @@ internal protocol LowerTransportPdu {
     var type: LowerTransportPduType { get }
     /// The raw data of Lower Transport Layer PDU.
     var transportPdu: Data { get }
+    /// The raw data of Upper Transport Layer PDU.
+    var upperTransportPdu: Data { get }
 }
 
 extension LowerTransportPduType: CustomDebugStringConvertible {

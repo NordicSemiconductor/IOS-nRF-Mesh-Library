@@ -129,42 +129,34 @@ public extension MeshNetworkManager {
         guard let networkManager = networkManager else {
             return
         }
-        networkManager.handleIncomingPdu(data, ofType: type)
+        networkManager.handle(incomingPdu: data, ofType: type)
     }
     
     /// Encrypts the message with given destination address and,
-    /// if required, performs segmentation. For each created segment
-    /// the transmitter's `send(:ofType)` will be called.
-    /// The transmitter should send the message over Bluetooth Mesh
-    /// using any bearer.
+    /// if required, performs segmentation.
     ///
     /// This method does not return PDUs to be sent. Instead, for each
-    /// segment it calls a callback which should send it over the air.
-    /// This is in order to support retransmittion in case a packet was
-    /// lost and needs to be sent again after block acknowlegment was
-    /// received.
+    /// segment it calls transmitter's `send(:ofType)` which should send
+    /// the PDU over the air. This is in order to support retransmittion
+    /// in case a packet was lost and needs to be sent again after block
+    /// acknowlegment was received.
     ///
     /// - parameter message:     The message to be sent.
     /// - parameter destination: The destination address.
-    func sendMeshMessage(_ message: MeshMessage, to destination: MeshAddress) {
+    func send(_ message: MeshMessage, to destination: Address) {
         guard let networkManager = networkManager else {
             return
         }
-        networkManager.sendMeshMessage(message, to: destination)
+        networkManager.send(message, to: destination)
     }
     
     /// Does the same as the other `createMeshMessage(:for)`, but takes
-    /// Address as destination address.
+    /// MeshAddress as destination address.
     ///
     /// - parameter message:     The message to be sent.
     /// - parameter destination: The destination address.
-    /// - throws: This method throws when the address is not a Unicast
-    ///           or Group Address.
-    func sendMeshMessage(_ message: MeshMessage, to destination: Address) throws {
-        guard let address = MeshAddress(destination) else {
-            throw MeshMessageError.invalidAddress
-        }
-        sendMeshMessage(message, to: address)
+    func send(_ message: MeshMessage, to destination: MeshAddress) {
+        send(message, to: destination.address)
     }
     
 }

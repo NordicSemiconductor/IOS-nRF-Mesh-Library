@@ -16,37 +16,28 @@ internal struct Features: OptionSet {
     static let lowPower = Features(rawValue: 1 << 3)
 }
 
-internal struct HearbeatMessage: ControlMessage {
+internal struct HearbeatMessage {
     let source: Address?
     let destination: Address
     
+    /// Message Op Code.
     let opCode: UInt8
-    
     /// Initial TTL used when sending the message.
     let initTtl: UInt8
     /// Currently active features of the node.
     let features: Features
     
-    var transportPdu: Data {
-        return Data() + opCode + initTtl + features.rawValue.bigEndian
-    }
-    
-    let type: LowerTransportPduType = .controlMessage
-    
-    init?(from networkPdu: NetworkPdu) {
-        let data = networkPdu.transportPdu
-        guard data.count == 4, data[0] & 0x80 == 0 else {
+    init?(fromControlMessage message: ControlMessage) {
+        opCode = message.opCode
+        let data = message.upperTransportPdu
+        guard opCode == 0x0A, data.count == 3 else {
             return nil
         }
-        opCode = data[0] & 0x7F
-        guard opCode == 0x0A else {
-            return nil
-        }
-        initTtl = data[1] & 0x7F
-        features = Features(rawValue: UInt16(data[2] << 8) | UInt16(data[3]))
+        initTtl = data[0] & 0x7F
+        features = Features(rawValue: UInt16(data[1] << 8) | UInt16(data[2]))
         
-        source = networkPdu.source
-        destination = networkPdu.destination
+        source = message.source
+        destination = message.destination
     }
     
     /// Creates the Heartbeat message.

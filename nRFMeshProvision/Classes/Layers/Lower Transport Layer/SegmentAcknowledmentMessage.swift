@@ -7,10 +7,11 @@
 
 import Foundation
 
-internal struct SegmentAcknowledmentMessage: ControlMessage {
+internal struct SegmentAcknowledmentMessage: LowerTransportPdu {
     let source: Address?
     let destination: Address
     
+    /// Message Op Code.
     let opCode: UInt8
     
     /// Flag set to `true` if the message was sent by a Friend
@@ -20,17 +21,23 @@ internal struct SegmentAcknowledmentMessage: ControlMessage {
     let segmentZero: UInt16
     /// Block acknowledgment for segments, bit field.
     let blockAck: UInt32
+    /// This PDU contains the `blockAck` as `Data`.
+    let upperTransportPdu: Data
     
     var transportPdu: Data {
         let octet0: UInt8 = opCode & 0x7F
         let octet1 = (isOnBehalfOfLowPowerNode ? 0x80 : 0x00) | UInt8(segmentZero >> 5)
         let octet2 = UInt8((segmentZero & 0x3F) << 2)
-        return Data([octet0, octet1, octet2]) + blockAck.bigEndian
+        return Data([octet0, octet1, octet2]) + upperTransportPdu
     }
     
     let type: LowerTransportPduType = .controlMessage
     
-    init?(from networkPdu: NetworkPdu) {
+    /// Creates the Segmented Acknowledgement Message from the given Network PDU.
+    /// If the PDU is not valid, it will return `nil`.
+    ///
+    /// - parameter networkPdu: The Network PDU received.
+    init?(fromNetworkPdu networkPdu: NetworkPdu) {
         let data = networkPdu.transportPdu
         guard data.count == 7, data[0] & 0x80 == 0 else {
             return nil
@@ -42,6 +49,7 @@ internal struct SegmentAcknowledmentMessage: ControlMessage {
         isOnBehalfOfLowPowerNode = (data[1] & 0x80) != 0
         segmentZero = (UInt16(data[1] & 0x7F) << 6) | UInt16(data[2] >> 2)
         blockAck = CFSwapInt32BigToHost(data.convert(offset: 3))
+        upperTransportPdu = Data() + blockAck.bigEndian
         
         source = networkPdu.source
         destination = networkPdu.destination
@@ -64,6 +72,7 @@ internal struct SegmentAcknowledmentMessage: ControlMessage {
             }
         }
         blockAck = ack
+        upperTransportPdu = Data() + blockAck.bigEndian
         
         // Assuming all segments have the same destination addresses.
         source = nil

@@ -14,7 +14,11 @@ internal class AccessLayer {
         self.networkManager = networkManager
     }
     
-    func handleUpperTransportPdu(_ upperTransportPdu: UpperTransportPdu) {
+    func handle(upperTransportPdu: UpperTransportPdu) {
+        
+    }
+    
+    func send(_ message: MeshMessage, to destination: Address) {
         
     }
     

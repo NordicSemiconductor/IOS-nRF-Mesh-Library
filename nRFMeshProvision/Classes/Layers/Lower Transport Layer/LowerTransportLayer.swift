@@ -23,11 +23,17 @@ internal class LowerTransportLayer {
     /// was used before.
     let defaults: UserDefaults
     
-    /// The map of incomplete segments.
+    /// The map of incomplete segments. The key consists of 16 bits of source address in
+    /// 2 most significant bytes and `segmentZero` field in 13 least significant bits.
+    /// See `UInt32(keyFor:segment)` below.
     var segments: [UInt32 : [SegmentedMessage?]]
-    /// The map of active timers.
+    /// The map of active timers. The key consists of 16 bits of source address in
+    /// 2 most significant bytes and `segmentZero` field in 13 least significant bits.
+    /// See `UInt32(keyFor:segment)` below.
     var incompleteTimers: [UInt32 : Timer]
-    /// The map of acknowledgment timers.
+    /// The map of acknowledgment timers. The key consists of 16 bits of source address in
+    /// 2 most significant bytes and `segmentZero` field in 13 least significant bits.
+    /// See `UInt32(keyFor:segment)` below.
     var acknowledgmentTimers: [UInt32 : Timer]
     
     init(_ networkManager: NetworkManager) {
@@ -39,6 +45,11 @@ internal class LowerTransportLayer {
         self.acknowledgmentTimers = [:]
     }
     
+    /// This method handles the received Network PDU. If needed, it will reassembly
+    /// the message, send block acknowledgment to the sender, and pass the Upper
+    /// Transport PDU to the Upper Transport Layer.
+    ///
+    /// - parameter networkPdu: The Network PDU received.
     func handle(networkPdu: NetworkPdu) {
         // Some validation, just to be sure. This should pass for sure.
         guard networkPdu.transportPdu.count > 1 else {
@@ -57,16 +68,17 @@ internal class LowerTransportLayer {
         // SeqAuth is valid, save the new sequence authentication value.
         defaults.set(networkPdu.sequence, forKey: networkPdu.source.hex)
         
+        // Lower Transport Messages can be Unsegmented or Segmented.
+        let unsegmented = networkPdu.transportPdu[0] & 0x80 == 0
+        
         // The Lower Transport Layer behaves differently based on the message type.
         switch networkPdu.type {
         case .accessMessage:
-            // Access Messages can be Unsegmented or Segmented.
             // This information is stored in the MSB bit of the first octet.
-            let unsegmented = networkPdu.transportPdu[0] & 0x80 == 0
             if unsegmented {
                 if let accessMessage = AccessMessage(fromUnsegmentedPdu: networkPdu) {
                     // Unsegmented message is not acknowledged. Just pass it to higher layer.
-                    networkManager.upperTransportLayer.handleLowerTransportPdu(accessMessage)
+                    networkManager.upperTransportLayer.handle(lowerTransportPdu: accessMessage)
                 }
             } else {
                 if let segment = SegmentedAccessMessage(fromSegmentPdu: networkPdu) {
@@ -75,11 +87,11 @@ internal class LowerTransportLayer {
                         // A single segment message may immediately be acknowledged
                         if let provisionerNode = meshNetwork.localProvisioner?.node,
                             networkPdu.destination == provisionerNode.unicastAddress {
-                            let ttl = provisionerNode.defaultTTL ?? defaultTtl
+                            let ttl = networkPdu.ttl > 0 ? provisionerNode.defaultTTL ?? defaultTtl : 0
                             sendAck(for: [segment], usingNetworkKey: networkPdu.networkKey, withTtl: ttl)
                         }
                         let accessMessage = AccessMessage(fromSegments: [segment])
-                        networkManager.upperTransportLayer.handleLowerTransportPdu(accessMessage)
+                        networkManager.upperTransportLayer.handle(lowerTransportPdu: accessMessage)
                     } else {
                         // If a message is composed of multiple segments, they all need to
                         // be received before it can be processed.
@@ -101,7 +113,7 @@ internal class LowerTransportLayer {
                             if let provisionerNode = meshNetwork.localProvisioner?.node,
                                 networkPdu.destination == provisionerNode.unicastAddress {
                                 // ...send the ACK that all segments were received...
-                                let ttl = provisionerNode.defaultTTL ?? defaultTtl
+                                let ttl = networkPdu.ttl > 0 ? provisionerNode.defaultTTL ?? defaultTtl : 0
                                 sendAck(for: allSegments, usingNetworkKey: networkPdu.networkKey, withTtl: ttl)
                                 
                                 // ...and invalidate timers.
@@ -110,7 +122,7 @@ internal class LowerTransportLayer {
                             }
                             
                             let accessMessage = AccessMessage(fromSegments: allSegments)
-                            networkManager.upperTransportLayer.handleLowerTransportPdu(accessMessage)
+                            networkManager.upperTransportLayer.handle(lowerTransportPdu: accessMessage)
                         } else {
                             // The Provisioner shall send block acknowledgment only if the message was
                             // send directly to it's Unicast Address.
@@ -129,9 +141,9 @@ internal class LowerTransportLayer {
                             // If the Lower Transport Layer receives any segment while the acknowlegment
                             // timer is inactive, it shall restart the timer. Active timer should not be restarted.
                             if acknowledgmentTimers[key] == nil {
-                                let ttl = Double(meshNetwork.node(withAddress: networkPdu.source)?.defaultTTL ?? defaultTtl)
-                                acknowledgmentTimers[key] = Timer(timeInterval: 0.150 + ttl * 0.050, repeats: false) { _ in
-                                    let ttl = provisionerNode.defaultTTL ?? self.defaultTtl
+                                let ttl = provisionerNode.defaultTTL ?? self.defaultTtl
+                                acknowledgmentTimers[key] = Timer(timeInterval: 0.150 + Double(ttl) * 0.050, repeats: false) { _ in
+                                    let ttl = networkPdu.ttl > 0 ? ttl : 0
                                     self.sendAck(for: self.segments[key]!, usingNetworkKey: networkPdu.networkKey, withTtl: ttl)
                                     self.acknowledgmentTimers.removeValue(forKey: key)?.invalidate()
                                 }
@@ -141,17 +153,66 @@ internal class LowerTransportLayer {
                 }
             }
         case .controlMessage:
-            break
+            let unsegmented = networkPdu.transportPdu[0] & 0x80 == 0
+            let opCode = networkPdu.transportPdu[0] & 0x7F
+            switch opCode {
+            case 0x00:
+                if let ack = SegmentAcknowledmentMessage(fromNetworkPdu: networkPdu) {
+                    
+                }
+            default:
+                break
+            }
         }
     }
     
+    /// This method handles the Unprovisioned Device Beacon.
+    ///
+    /// The curernt implementation does nothing, as remote provisioning is
+    /// currently not supported.
+    ///
+    /// - parameter unprovisionedDeviceBeacon: The Unprovisioned Device Beacon received.
     func handle(unprovisionedDeviceBeacon: UnprovisionedDeviceBeacon) {
-        print(unprovisionedDeviceBeacon)
+        // Do nothing.
+        // TODO: Handle Unprovisioned Device Beacon.
     }
     
+    /// This method handles the Secure Network Beacon.
+    /// It will set the proper IV Index and IV Update Active flag for the Network Key
+    /// that matches Network ID and change the Key Refresh Phase based on the
+    /// key refresh flag specified in the beacon.
+    ///
+    /// - parameter secureNetworkBeacon: The Secure Network Beacon received.
     func handle(secureNetworkBeacon: SecureNetworkBeacon) {
-        print(secureNetworkBeacon)
-        // TODO: handle Secure Beacon, change IV Index, etc.
+        if let networkKey = meshNetwork.networkKeys[secureNetworkBeacon.networkId] {
+            networkKey.ivIndex.index = secureNetworkBeacon.ivIndex
+            networkKey.ivIndex.updateActive = secureNetworkBeacon.ivUpdateActive
+            // If the Key Refresh Procedure is in progress, and the new Network Key
+            // has already been set, the key erfresh flag indicates switching to phase 2.
+            if case .distributingKeys = networkKey.phase, secureNetworkBeacon.keyRefreshFlag {
+                networkKey.phase = .finalizing
+            }
+            // If the Key Refresh Procedure is in phase 2, and the key refresh flag is
+            // set to false.
+            if case .finalizing = networkKey.phase, !secureNetworkBeacon.keyRefreshFlag {
+                networkKey.oldKey = nil // This will set the phase to .normalOperation.
+            }
+        }
+    }
+    
+    /// This method tries to send the Lower Transport Message of given type to the
+    /// given destination address. If the local Provisioner does not exist, or
+    /// does not have Unicast Address assigned, this method does nothing.
+    ///
+    /// If the `transporter` throws an error during sending, this error will be ignored.
+    ///
+    /// - parameter pdu:         The Upper Transport PDU to be sent.
+    /// - parameter type:        The PDU type.
+    /// - parameter networkKey:  The Network Key to be used to encrypt the message on
+    ///                          on Network Layer.
+    func handle(outgoingPdu pdu: UpperTransportPdu, ofType type: PduType,
+                usingNetworkKey networkKey: NetworkKey) {
+        
     }
     
 }
@@ -184,6 +245,7 @@ private extension LowerTransportLayer {
         networkManager.networkLayer.handle(outgoingPdu: ack, ofType: .networkPdu,
                                            usingNetworkKey: networkKey, withTtl: ttl)
     }
+    
 }
 
 private extension Array where Element == SegmentedMessage? {

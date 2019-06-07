@@ -7,7 +7,48 @@
 
 import Foundation
 
-internal protocol ControlMessage: LowerTransportPdu {
+internal struct ControlMessage: LowerTransportPdu {    
+    let source: Address?
+    let destination: Address
+    
     /// Message Op Code.
-    var opCode: UInt8 { get }
+    let opCode: UInt8
+    
+    let upperTransportPdu: Data
+    
+    var transportPdu: Data {
+        return Data() + opCode + upperTransportPdu
+    }
+    
+    let type: LowerTransportPduType = .controlMessage
+    
+    init?(fromNetworkPdu networkPdu: NetworkPdu) {
+        let data = networkPdu.transportPdu
+        guard data.count >= 5, data[0] & 0x80 == 0 else {
+            return nil
+        }
+        opCode = data[0] & 0x7F
+        guard opCode == 0x00 else {
+            return nil
+        }
+        upperTransportPdu = data.dropFirst()
+        
+        source = networkPdu.source
+        destination = networkPdu.destination
+    }
+    
+    init(from segments: [SegmentedControlMessage]) {
+        // Assuming all segments have the same AID, source and destination addresses and TransMIC.
+        let segment = segments.first!
+        opCode = segment.opCode
+        source = segment.source
+        destination = segment.destination
+        
+        // Segments are already sorted by `segmentOffset`.
+        upperTransportPdu = segments
+            .reduce(Data(), { (result, next) -> Data in
+                return result + next.upperTransportPdu
+            })
+    }
+    
 }
