@@ -77,11 +77,11 @@ internal struct UpperTransportPdu {
             + destination.bigEndian
             + ivIndex.index.bigEndian
         
-        self.transportPdu = OpenSSLHelper().calculateCCM(message.accessPdu, withKey: key.key, nonce: nonce,
-                                                         andMICSize: message.security.transportMicSize)
         self.aid = key.aid
         self.sequence = sequence
         self.transportMicSize = aszmic == 0 ? 4 : 8
+        self.transportPdu = OpenSSLHelper().calculateCCM(message.accessPdu, withKey: key.key, nonce: nonce,
+                                                         andMICSize: transportMicSize)
     }
     
     init(fromConfigMessage message: ConfigMessage, sentFrom source: Address, to destination: Address,
@@ -104,11 +104,11 @@ internal struct UpperTransportPdu {
             + destination.bigEndian
             + ivIndex.index.bigEndian
         
-        self.transportPdu = OpenSSLHelper().calculateCCM(message.accessPdu, withKey: key, nonce: nonce,
-                                                         andMICSize: message.security.transportMicSize)
         self.aid = nil
         self.sequence = sequence
         self.transportMicSize = aszmic == 0 ? 4 : 8
+        self.transportPdu = OpenSSLHelper().calculateCCM(message.accessPdu, withKey: key, nonce: nonce,
+                                                         andMICSize: transportMicSize)
     }
     
     /// This method tries to decode teh Access Message using a matching Application Key

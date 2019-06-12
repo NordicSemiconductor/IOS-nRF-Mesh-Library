@@ -67,7 +67,7 @@ public class Provisioner: Codable {
     // MARK: - Codable
     
     private enum CodingKeys: String, CodingKey {
-        case provisionerUuid = "uuid"
+        case provisionerUuid = "UUID"
         case provisionerName
         case allocatedUnicastRange
         case allocatedGroupRange

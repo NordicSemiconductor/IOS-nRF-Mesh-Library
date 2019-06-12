@@ -62,25 +62,81 @@
 - (NSData*) calculateCCM: (NSData*) someData withKey:(NSData*) key nonce:(NSData *) nonce andMICSize:(UInt8) size {
     int outlen = 0;
     int messageLength = (int) [someData length] / sizeof(unsigned char);
-    int nonceLength = (int) [nonce length] / sizeof(unsigned char);
+    int nonceLength   = (int) [nonce length]    / sizeof(unsigned char);
     int micLength = size;
-    unsigned char outbuf[messageLength + micLength]; //octets for Encrypted data + octets for TAG (MIC)
+    // Octets for Encrypted data + octets for TAG (MIC).
+    unsigned char outbuf[messageLength + micLength];
 
-    unsigned char* keyBytes = (unsigned char*) [key bytes];
-    unsigned char* nonceBytes = (unsigned char*) [nonce bytes];
+    unsigned char* keyBytes     = (unsigned char*) [key bytes];
+    unsigned char* nonceBytes   = (unsigned char*) [nonce bytes];
     unsigned char* messageBytes = (unsigned char*) [someData bytes];
+    // Create and initialise the context.
     EVP_CIPHER_CTX *ctx = EVP_CIPHER_CTX_new();
+    // Initialise the encryption operation.
     EVP_EncryptInit_ex(ctx, EVP_aes_128_ccm(), NULL, NULL, NULL);
+    // Setting IV len to nonce length.
     EVP_CIPHER_CTX_ctrl(ctx, EVP_CTRL_CCM_SET_IVLEN, nonceLength, NULL);
+    // Set tag length.
     EVP_CIPHER_CTX_ctrl(ctx, EVP_CTRL_CCM_SET_TAG, micLength, NULL);
+    // Initialise key and IV.
     EVP_EncryptInit_ex(ctx, NULL, NULL, keyBytes, nonceBytes);
+    // Provide the total plaintext length.
     EVP_EncryptUpdate(ctx, NULL, &outlen, NULL, messageLength);
+    // Provide any AAD data. This can be called zero or one times as required.
+    //     EVP_EncryptUpdate(ctx, NULL, &outlen, aad, aadLen)
+    // Provide the message to be encrypted, and obtain the encrypted output.
+    // EVP_EncryptUpdate can only be called once for this.
     EVP_EncryptUpdate(ctx, outbuf, &outlen, messageBytes, messageLength);
-    EVP_EncryptFinal_ex(ctx, &outbuf[outlen], &outlen);
-    EVP_CIPHER_CTX_ctrl(ctx, EVP_CTRL_CCM_GET_TAG, micLength, &outbuf[messageLength]);
-    NSData* outputData = [[NSData alloc] initWithBytes: outbuf length: sizeof(outbuf)];
+    // Finalise the encryption. Normally ciphertext bytes may be written at
+    // this stage, but this does not occur in CCM mode.
+    EVP_EncryptFinal_ex(ctx, outbuf + outlen, &outlen);
+    // Get the tag.
+    EVP_CIPHER_CTX_ctrl(ctx, EVP_CTRL_CCM_GET_TAG, micLength, outbuf + messageLength);
+    // Clean up.
     EVP_CIPHER_CTX_free(ctx);
+    
+    NSData* outputData = [[NSData alloc] initWithBytes: outbuf length: sizeof(outbuf)];
     return outputData;
+}
+
+- (NSData*) calculateDecryptedCCM: (NSData*) someData withKey: (NSData*) key nonce: (NSData*) nonce andMIC: (NSData*) mic {
+    int outlen;
+    unsigned char outbuf[1024];
+    
+    int micLength     = (int)[mic length] / sizeof(unsigned char);
+    int messageLength = (int)[someData length] / sizeof(unsigned char);
+    int nonceLength   = (int) [nonce length] / sizeof(unsigned char);
+    
+    unsigned char* keyBytes     = (unsigned char*)[key bytes];
+    unsigned char* nonceBytes   = (unsigned char*)[nonce bytes];
+    unsigned char* messageBytes = (unsigned char*)[someData bytes];
+    unsigned char* micBytes     = (unsigned char*)[mic bytes];
+    
+    // Create and initialise the context.
+    EVP_CIPHER_CTX *ctx = EVP_CIPHER_CTX_new();
+    // Initialise the decryption operation.
+    EVP_DecryptInit_ex(ctx, EVP_aes_128_ccm(), NULL, NULL, NULL);
+    // Setting IV len to nonce length.
+    EVP_CIPHER_CTX_ctrl(ctx, EVP_CTRL_CCM_SET_IVLEN, nonceLength, NULL);
+    // Set expected tag value.
+    EVP_CIPHER_CTX_ctrl(ctx, EVP_CTRL_CCM_SET_TAG, micLength, micBytes);
+    // Initialise key and IV.
+    EVP_DecryptInit_ex(ctx, NULL, NULL, keyBytes, nonceBytes);
+    // Provide the total ciphertext length.
+    EVP_DecryptUpdate(ctx, NULL, &outlen, NULL, messageLength);
+    // Provide any AAD data. This can be called zero or more times as required.
+    //   EVP_DecryptUpdate(ctx, NULL, &len, aad, aadLen)
+    // Provide the message to be decrypted, and obtain the plaintext output.
+    // EVP_DecryptUpdate can be called multiple times if necessary.
+    int ret = EVP_DecryptUpdate(ctx, outbuf, &outlen, messageBytes, messageLength);
+    // Clean up.
+    EVP_CIPHER_CTX_free(ctx);
+    if (ret > 0) {
+        NSData* outputData = [[NSData alloc] initWithBytes: outbuf length: outlen];
+        return outputData;
+    } else {
+        return nil;
+    }
 }
 
 - (NSData*) obfuscate: (NSData*) data usingPrivacyRandom: (NSData*) random ivIndex: (UInt32) ivIndex andPrivacyKey: (NSData*) privacyKey {
@@ -122,35 +178,6 @@
     //DeobfuscatedData = CTL, TTL, SEQ, SRC
     NSData* deobfuscatedData = [self xor: obfuscatedData withData: pecb];
     return deobfuscatedData;
-}
-
-- (NSData*) calculateDecryptedCCM: (NSData*) someData withKey: (NSData*) key nonce: (NSData*) nonce andMIC: (NSData*) mic {
-    int outlen;
-    unsigned char outbuf[1024];
-    
-    int micLength = (int)[mic length] / sizeof(unsigned char);
-    int messageLength = (int)[someData length] / sizeof(unsigned char);
-    int nonceLength = (int) [nonce length] / sizeof(unsigned char);
-    
-    unsigned char* keyBytes     = (unsigned char*)[key bytes];
-    unsigned char* nonceBytes   = (unsigned char*)[nonce bytes];
-    unsigned char* messageBytes = (unsigned char*)[someData bytes];
-    unsigned char* micBytes     = (unsigned char*)[mic bytes];
-    
-    EVP_CIPHER_CTX *ctx = EVP_CIPHER_CTX_new();
-    EVP_DecryptInit_ex(ctx, EVP_aes_128_ccm(), NULL, NULL, NULL);
-    EVP_CIPHER_CTX_ctrl(ctx, EVP_CTRL_CCM_SET_IVLEN, nonceLength, NULL);
-    EVP_CIPHER_CTX_ctrl(ctx, EVP_CTRL_CCM_SET_TAG, micLength, micBytes);
-    EVP_DecryptInit_ex(ctx, NULL, NULL, keyBytes, nonceBytes);
-    EVP_DecryptUpdate(ctx, NULL, &outlen, NULL, messageLength);
-    int ret = EVP_DecryptUpdate(ctx, outbuf, &outlen, messageBytes, messageLength);
-    EVP_CIPHER_CTX_free(ctx);
-    if (ret > 0) {
-        NSData* outputData = [[NSData alloc] initWithBytes:outbuf length:outlen];
-        return outputData;
-    } else {
-        return nil;
-    }
 }
 
 // MARK:- Helpers

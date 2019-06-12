@@ -81,6 +81,16 @@ public class MeshNetwork: Codable {
         networkKeys = try container.decode([NetworkKey].self, forKey: .networkKeys)
         applicationKeys = try container.decode([ApplicationKey].self, forKey: .applicationKeys)
         nodes = try container.decode([Node].self, forKey: .nodes)
+        
+        provisioners.forEach {
+            $0.meshNetwork = self
+        }
+        applicationKeys.forEach {
+            $0.meshNetwork = self
+        }
+        nodes.forEach {
+            $0.meshNetwork = self
+        }
     }
     
 }

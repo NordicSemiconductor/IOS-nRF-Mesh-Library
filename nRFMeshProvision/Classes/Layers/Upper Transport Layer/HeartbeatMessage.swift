@@ -45,11 +45,11 @@ internal struct HearbeatMessage {
     /// - parameter ttl:         Initial TTL used when sending the message.
     /// - parameter features:    Currently active features of the node.
     /// - parameter destination: The destination address.
-    init(withInitialTtl ttl: UInt8, andFeatures features: Features, targetting destination: Address) {
+    init(withInitialTtl ttl: UInt8, andFeatures features: Features, from source: Address, targetting destination: Address) {
         self.opCode = 0x0A
         self.initTtl = ttl
         self.features = features
-        self.source = nil
+        self.source = source
         self.destination = destination
     }
 }

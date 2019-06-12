@@ -40,9 +40,18 @@ public class Element: Codable {
     
     public required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        name  = try container.decode(String.self, forKey: .name)
+        name  = try container.decodeIfPresent(String.self, forKey: .name)
         index  = try container.decode(UInt8.self, forKey: .index)
-        location  = try container.decode(Location.self, forKey: .location)
+        let locationAsString = try container.decode(String.self, forKey: .location)
+        guard let rawValue = UInt16(hex: locationAsString) else {
+            throw DecodingError.dataCorruptedError(forKey: .location, in: container,
+                                                   debugDescription: "Location must be 4-character hexadecimal string")
+        }
+        guard let loc = Location(rawValue: rawValue) else {
+            throw DecodingError.dataCorruptedError(forKey: .location, in: container,
+                                                   debugDescription: "Unknown location: 0x\(locationAsString)")
+        }
+        location = loc
         models  = try container.decode([Model].self, forKey: .models)
         
         models.forEach {
@@ -52,9 +61,9 @@ public class Element: Codable {
     
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(name, forKey: .name)
+        try container.encodeIfPresent(name, forKey: .name)
         try container.encode(index, forKey: .index)
-        try container.encode(location, forKey: .location)
+        try container.encode(location.hex, forKey: .location)
         try container.encode(models, forKey: .models)
     }
 }

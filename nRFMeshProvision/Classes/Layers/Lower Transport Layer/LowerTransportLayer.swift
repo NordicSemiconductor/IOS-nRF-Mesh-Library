@@ -262,8 +262,8 @@ internal class LowerTransportLayer {
     /// - parameter secureNetworkBeacon: The Secure Network Beacon received.
     func handle(secureNetworkBeacon: SecureNetworkBeacon) {
         if let networkKey = meshNetwork.networkKeys[secureNetworkBeacon.networkId] {
-            networkKey.ivIndex.index = secureNetworkBeacon.ivIndex
-            networkKey.ivIndex.updateActive = secureNetworkBeacon.ivUpdateActive
+            networkKey.ivIndex = IvIndex(index: secureNetworkBeacon.ivIndex,
+                                         updateActive: secureNetworkBeacon.ivUpdateActive)
             // If the Key Refresh Procedure is in progress, and the new Network Key
             // has already been set, the key erfresh flag indicates switching to phase 2.
             if case .distributingKeys = networkKey.phase, secureNetworkBeacon.keyRefreshFlag {

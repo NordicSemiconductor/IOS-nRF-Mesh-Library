@@ -147,8 +147,8 @@ public class Node: Codable {
         self.netKeys  = []
         self.elements = []
         
-        for i in 0..<elements {
-            add(element: Element(index: i, location: .unknown))
+        for _ in 0..<elements {
+            add(element: Element(location: .unknown))
         }
     }
     
@@ -180,7 +180,7 @@ public class Node: Codable {
         self.elements = []
         
         // Add the primary Element.
-        let element = Element(index: 0, location: .unknown)
+        let element = Element(location: .unknown)
         element.name = "Primary Element"
         // Those 2 models are required for all nodes.
         element.add(model: .configurationServer)
@@ -210,7 +210,7 @@ public class Node: Codable {
     // MARK: - Codable
     
     private enum CodingKeys: String, CodingKey {
-        case nodeUuid = "uuid"
+        case nodeUuid = "UUID"
         case unicastAddress
         case deviceKey
         case security
@@ -251,10 +251,41 @@ public class Node: Codable {
         self.appKeys = try container.decode([NodeKey].self, forKey: .appKeys)
         self.configComplete = try container.decode(Bool.self, forKey: .configComplete)
         self.name = try container.decodeIfPresent(String.self, forKey: .name)
-        self.companyIdentifier = try container.decodeIfPresent(UInt16.self, forKey: .companyIdentifier)
-        self.productIdentifier = try container.decodeIfPresent(UInt16.self, forKey: .productIdentifier)
-        self.versionIdentifier = try container.decodeIfPresent(UInt16.self, forKey: .versionIdentifier)
-        self.minimumNumberOfReplayProtectionList = try container.decodeIfPresent(UInt16.self, forKey: .minimumNumberOfReplayProtectionList)
+        if let companyIdentifierAsString = try container.decodeIfPresent(String.self, forKey: .companyIdentifier) {
+            guard let companyIdentifier = UInt16(hex: companyIdentifierAsString) else {
+                throw DecodingError.dataCorruptedError(forKey: .companyIdentifier, in: container,
+                                                       debugDescription: "Company Identifier must be 4-character hexadecimal string")
+            }
+            self.companyIdentifier = companyIdentifier
+        }
+        if let companyIdentifierAsString = try container.decodeIfPresent(String.self, forKey: .companyIdentifier) {
+            guard let companyIdentifier = UInt16(hex: companyIdentifierAsString) else {
+                throw DecodingError.dataCorruptedError(forKey: .companyIdentifier, in: container,
+                                                       debugDescription: "Company Identifier must be 4-character hexadecimal string")
+            }
+            self.companyIdentifier = companyIdentifier
+        }
+        if let productIdentifierAsString = try container.decodeIfPresent(String.self, forKey: .productIdentifier) {
+            guard let productIdentifier = UInt16(hex: productIdentifierAsString) else {
+                throw DecodingError.dataCorruptedError(forKey: .productIdentifier, in: container,
+                                                       debugDescription: "Product Identifier must be 4-character hexadecimal string")
+            }
+            self.productIdentifier = productIdentifier
+        }
+        if let versionIdentifierAsString = try container.decodeIfPresent(String.self, forKey: .versionIdentifier) {
+            guard let versionIdentifier = UInt16(hex: versionIdentifierAsString) else {
+                throw DecodingError.dataCorruptedError(forKey: .versionIdentifier, in: container,
+                                                       debugDescription: "Version Identifier must be 4-character hexadecimal string")
+            }
+            self.versionIdentifier = versionIdentifier
+        }
+        if let crplAsString = try container.decodeIfPresent(String.self, forKey: .minimumNumberOfReplayProtectionList) {
+            guard let crpl = UInt16(hex: crplAsString) else {
+                throw DecodingError.dataCorruptedError(forKey: .minimumNumberOfReplayProtectionList, in: container,
+                                                       debugDescription: "CRPL must be 4-character hexadecimal string")
+            }
+            self.minimumNumberOfReplayProtectionList = crpl
+        }
         self.features = try container.decodeIfPresent(NodeFeatures.self, forKey: .features)
         self.secureNetworkBeacon = try container.decodeIfPresent(Bool.self, forKey: .secureNetworkBeacon)
         self.defaultTTL = try container.decodeIfPresent(UInt8.self, forKey: .defaultTTL)
@@ -278,10 +309,10 @@ public class Node: Codable {
         try container.encode(appKeys, forKey: .appKeys)
         try container.encode(configComplete, forKey: .configComplete)
         try container.encodeIfPresent(name, forKey: .name)
-        try container.encodeIfPresent(companyIdentifier, forKey: .companyIdentifier)
-        try container.encodeIfPresent(productIdentifier, forKey: .productIdentifier)
-        try container.encodeIfPresent(versionIdentifier, forKey: .versionIdentifier)
-        try container.encodeIfPresent(minimumNumberOfReplayProtectionList, forKey: .minimumNumberOfReplayProtectionList)
+        try container.encodeIfPresent(companyIdentifier?.hex, forKey: .companyIdentifier)
+        try container.encodeIfPresent(productIdentifier?.hex, forKey: .productIdentifier)
+        try container.encodeIfPresent(versionIdentifier?.hex, forKey: .versionIdentifier)
+        try container.encodeIfPresent(minimumNumberOfReplayProtectionList?.hex, forKey: .minimumNumberOfReplayProtectionList)
         try container.encodeIfPresent(features, forKey: .features)
         try container.encodeIfPresent(secureNetworkBeacon, forKey: .secureNetworkBeacon)
         try container.encodeIfPresent(defaultTTL, forKey: .defaultTTL)

@@ -228,7 +228,7 @@ public extension MeshNetworkManager {
     /// Loads the Mesh Network configuration from the storage.
     /// If storage is not given, a local file will be used.
     ///
-    /// - returns: True if the network settings were loaded, false otherwise.
+    /// - returns: `True` if the network settings were loaded, `false` otherwise.
     /// - throws: If loading configuration failed.
     func load() throws -> Bool {
         if let data = storage.load() {
@@ -236,8 +236,10 @@ public extension MeshNetworkManager {
             decoder.dateDecodingStrategy = .iso8601
             
             meshData = try decoder.decode(MeshData.self, from: data)
-            let network = meshData.meshNetwork!
-            meshNetwork!.provisioners.forEach {
+            guard let network = meshData.meshNetwork else {
+                return false
+            }
+            network.provisioners.forEach {
                 $0.meshNetwork = network
             }
             networkManager = NetworkManager(self)

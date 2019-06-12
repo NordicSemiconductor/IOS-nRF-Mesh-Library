@@ -7,7 +7,7 @@
 
 import Foundation
 
-class IvIndex {
+struct IvIndex {
     var index: UInt32 = 0
     var updateActive: Bool = false
 }

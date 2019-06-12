@@ -47,6 +47,22 @@ public protocol MeshMessage {
     var isSegmented: Bool { get }
 }
 
+// MARK: - Default values
+
+public extension MeshMessage {
+    
+    var security: MeshMessageSecurity {
+        return .low
+    }
+    
+    var isSegmented: Bool {
+        return accessPdu.count > 11
+    }
+    
+}
+
+// MARK: - Private API
+
 internal extension MeshMessage {
     
     /// The Access Layer PDU data that will be sent.
@@ -55,18 +71,10 @@ internal extension MeshMessage {
         if opCode < 0x80 {
             return Data([UInt8(opCode & 0xFF)]) + parameters
         }
-        if opCode < 0x4000 {
+        if opCode < 0x4000 || opCode & 0xFFFC00 == 0x8000 {
             return Data([UInt8(0x80 | ((opCode >> 8) & 0x3F)), UInt8(opCode & 0xFF)]) + parameters
         }
         return Data([UInt8(0xC0 | ((opCode >> 16) & 0x3F)), UInt8((opCode >> 8) & 0xFF), UInt8(opCode & 0xFF)]) + parameters
-    }
-    
-    var security: MeshMessageSecurity {
-        return .low
-    }
-    
-    var isSegmented: Bool {
-        return accessPdu.count > 11
     }
     
 }

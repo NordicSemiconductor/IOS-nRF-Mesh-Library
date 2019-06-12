@@ -14,12 +14,12 @@ import Foundation
 public protocol Storage {
     /// Loads data from the storage.
     ///
-    /// - returns: Data or nil if not found.
+    /// - returns: Data or `nil` if not found.
     func load() -> Data?
     
     /// Save given data.
     ///
-    /// - returns: True in case of success, false otherwise.
+    /// - returns: `True` in case of success, `false` otherwise.
     func save(_ data: Data) -> Bool
 }
 

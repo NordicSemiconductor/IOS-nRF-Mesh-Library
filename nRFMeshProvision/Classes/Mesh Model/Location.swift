@@ -9,7 +9,7 @@ import Foundation
 
 /// Locations defined by Bluetooth SIG.
 /// Imported from: https://www.bluetooth.com/specifications/assigned-numbers/gatt-namespace-descriptors
-public enum Location: Int, Codable {
+public enum Location: UInt16, Codable {
     case auxiliary                    = 0x0108
     case back                         = 0x0101
     case backup                       = 0x0107
@@ -283,4 +283,12 @@ public enum Location: Int, Codable {
     case twoHundredth                 = 0x00c8
     case unknown                      = 0x0000
     case upper                        = 0x0104
+}
+
+internal extension Location {
+    
+    var hex: String {
+        return rawValue.hex
+    }
+    
 }
