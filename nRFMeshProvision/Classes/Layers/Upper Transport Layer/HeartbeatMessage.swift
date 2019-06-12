@@ -17,7 +17,7 @@ internal struct Features: OptionSet {
 }
 
 internal struct HearbeatMessage {
-    let source: Address?
+    let source: Address
     let destination: Address
     
     /// Message Op Code.

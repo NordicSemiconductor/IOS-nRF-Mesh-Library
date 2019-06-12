@@ -8,8 +8,9 @@
 import Foundation
 
 internal struct SegmentedAccessMessage: SegmentedMessage {
-    let source: Address?
+    let source: Address
     let destination: Address
+    let networkKey: NetworkKey
     
     /// The Application Key identifier.
     /// This field is set to `nil` if the message is signed with a
@@ -19,8 +20,6 @@ internal struct SegmentedAccessMessage: SegmentedMessage {
     let transportMicSize: UInt8
     /// The sequence number used to encode this message.
     let sequence: UInt32
-    /// The Network Key used to decode/endoce the PDU.
-    let networkKey: NetworkKey
     
     let segmentZero: UInt16
     let segmentOffset: UInt8
@@ -64,10 +63,26 @@ internal struct SegmentedAccessMessage: SegmentedMessage {
         }
         upperTransportPdu = data.dropFirst(4)
         sequence = (networkPdu.sequence & 0xFFE000) | UInt32(segmentZero)
-        networkKey = networkPdu.networkKey
         
         source = networkPdu.source
         destination = networkPdu.destination
+        networkKey = networkPdu.networkKey
     }
 
+    init(fromUpperTransportPdu pdu: UpperTransportPdu, usingNetworkKey networkKey: NetworkKey, offset: UInt8) {
+        self.aid = pdu.aid
+        self.source = pdu.source
+        self.destination = pdu.destination
+        self.networkKey = networkKey
+        self.transportMicSize = pdu.transportMicSize
+        self.sequence = pdu.sequence
+        self.segmentZero = UInt16(pdu.sequence & 0x1FFF)
+        self.segmentOffset = offset
+        
+        let lowerBound = Int(offset * 12)
+        let upperBound = min(pdu.transportPdu.count, Int(offset + 1) * 12)
+        let segment = pdu.transportPdu.subdata(in: lowerBound..<upperBound)
+        self.lastSegmentNumber = UInt8((pdu.transportPdu.count + 11) / 12) - 1
+        self.upperTransportPdu = segment
+    }
 }

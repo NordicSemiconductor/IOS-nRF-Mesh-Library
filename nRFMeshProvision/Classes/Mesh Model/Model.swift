@@ -41,8 +41,11 @@ public class Model: Codable {
     }
     /// The configuration of this model's publication.
     public internal(set) var publish: Publish?
-    /// An array of appliaction key indexes to which this model is bound.
+    /// An array of Appliaction Key indexes to which this model is bound.
     public internal(set) var bind: [KeyIndex]
+    
+    /// Parent Element.
+    public internal(set) weak var parentElement: Element!
     
     internal init(modelId: UInt32) {
         self.modelId   = modelId

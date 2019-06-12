@@ -18,8 +18,8 @@ internal class AccessLayer {
         
     }
     
-    func send(_ message: MeshMessage, to destination: Address) {
-        
+    func send(_ message: MeshMessage, to destination: Address, using applicationKey: ApplicationKey) {
+        networkManager.upperTransportLayer.send(message, to: destination, using: applicationKey)
     }
     
 }

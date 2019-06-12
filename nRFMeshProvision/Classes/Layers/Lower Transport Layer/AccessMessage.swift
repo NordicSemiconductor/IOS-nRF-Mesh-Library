@@ -8,16 +8,15 @@
 import Foundation
 
 internal struct AccessMessage: LowerTransportPdu {
-    let source: Address?
+    let source: Address
     let destination: Address
+    let networkKey: NetworkKey
     
     /// 6-bit Application Key identifier. This field is set to `nil`
     /// if the message is signed with a Device Key instead.
     let aid: UInt8?
     /// The sequence number used to encode this message.
     let sequence: UInt32
-    /// The Network Key used to decode/endoce the PDU.
-    let networkKey: NetworkKey
     /// The size of Transport MIC: 4 or 8 bytes.
     let transportMicSize: UInt8
     
@@ -76,5 +75,15 @@ internal struct AccessMessage: LowerTransportPdu {
             .reduce(Data(), { (result, next) -> Data in
                 return result + next.upperTransportPdu
             })
+    }
+    
+    init(fromUnsegmentedUpperTransportPdu pdu: UpperTransportPdu, usingNetworkKey networkKey: NetworkKey) {
+        self.aid = pdu.aid
+        self.upperTransportPdu = pdu.transportPdu
+        self.transportMicSize = 4
+        self.source = pdu.source
+        self.destination = pdu.destination
+        self.sequence = pdu.sequence
+        self.networkKey = networkKey
     }
 }

@@ -8,13 +8,15 @@
 import Foundation
 
 public class ApplicationKey: Key, Codable {
+    internal weak var meshNetwork: MeshNetwork?
+    
     /// UTF-8 string, which should be a human readable name for the application
     /// functionality associated with this application key, e.g. "Home Automation".
     public var name: String
     /// Index of this Application Key, in range from 0 through to 4095.
     public internal(set) var index: KeyIndex
     /// Corresponding Network Key index from the Network Keys array.
-    public internal(set) var boundNetKey: KeyIndex
+    public internal(set) var boundNetworkKeyIndex: KeyIndex
     /// 128-bit application key.
     public internal(set) var key: Data {
         willSet {
@@ -43,10 +45,10 @@ public class ApplicationKey: Key, Codable {
         guard index.isValidKeyIndex else {
             throw MeshModelError.keyIndexOutOfRange
         }
-        self.name        = name
-        self.index       = index
-        self.key         = key
-        self.boundNetKey = networkKey.index
+        self.name = name
+        self.index = index
+        self.key = key
+        self.boundNetworkKeyIndex = networkKey.index
         
         regenerateKeyDerivaties()
     }
@@ -59,7 +61,7 @@ public class ApplicationKey: Key, Codable {
         case index
         case key
         case oldKey
-        case boundNetKey
+        case boundNetworkKeyIndex = "boundNetKey"
     }
     
     public required init(from decoder: Decoder) throws {
@@ -79,7 +81,7 @@ public class ApplicationKey: Key, Codable {
             }
             oldKey = oldKeyData
         }
-        boundNetKey = try container.decode(KeyIndex.self, forKey: .boundNetKey)
+        boundNetworkKeyIndex = try container.decode(KeyIndex.self, forKey: .boundNetworkKeyIndex)
         
         regenerateKeyDerivaties()
     }
@@ -90,7 +92,7 @@ public class ApplicationKey: Key, Codable {
         try container.encode(index, forKey: .index)
         try container.encode(key.hex, forKey: .key)
         try container.encodeIfPresent(oldKey?.hex, forKey: .oldKey)
-        try container.encode(boundNetKey, forKey: .boundNetKey)
+        try container.encode(boundNetworkKeyIndex, forKey: .boundNetworkKeyIndex)
     }
     
     private func regenerateKeyDerivaties() {

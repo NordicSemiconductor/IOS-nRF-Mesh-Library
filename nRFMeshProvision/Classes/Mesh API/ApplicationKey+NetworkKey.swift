@@ -13,7 +13,7 @@ public extension ApplicationKey {
     ///
     /// - parameter networkKey: The Network Key to bound the Application Key to.
     func bind(to networkKey: NetworkKey) {
-        self.boundNetKey = networkKey.index
+        self.boundNetworkKeyIndex = networkKey.index
     }
     
     /// Returns whether the Application Key is bound to the given
@@ -21,9 +21,13 @@ public extension ApplicationKey {
     ///
     /// - parameter networkKey: The Network Key to check.
     func isBound(to networkKey: NetworkKey) -> Bool {
-        return self.boundNetKey == networkKey.index
+        return self.boundNetworkKeyIndex == networkKey.index
     }
-    
+
+    /// Returns the Network Key bound to this Application Key.
+    var boundNetworkKey: NetworkKey {
+        return meshNetwork!.networkKeys[boundNetworkKeyIndex]!
+    }
 }
 
 // MARK: - Array methods

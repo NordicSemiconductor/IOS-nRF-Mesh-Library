@@ -10,7 +10,7 @@ import Foundation
 internal struct NetworkPdu {
     /// Raw PDU data.
     let pdu: Data
-    /// The Network Key used to decode/endoce the PDU.
+    /// The Network Key used to decode/encode the PDU.
     let networkKey: NetworkKey
     
     /// Least significant bit of IV Index.
@@ -115,27 +115,24 @@ internal struct NetworkPdu {
     /// Creates the Network PDU. This method enctypts and obfuscates data
     /// that are to be send to the mesh network.
     ///
-    /// - parameter transportPdu: The data received from higher layer.
-    /// - parameter type:         The PDU type: access or control message.
-    /// - parameter source:       The Source Address.
-    /// - parameter networkKey:   The key for encrypting the data.
-    /// - parameter sequence:     The SEQ number of the PDU. Each PDU between the source
-    ///                           and destination must have strictly increasing sequence number.
-    /// - parameter ttl:          Time To Leave.
+    /// - parameter lowerTransportPdu: The data received from higher layer.
+    /// - parameter sequence: The SEQ number of the PDU. Each PDU between the source
+    ///                       and destination must have strictly increasing sequence number.
+    /// - parameter ttl: Time To Leave.
     /// - returns: The Network PDU object.
-    init(encode lowerTransportPdu: LowerTransportPdu, sentFrom source: Address,
-         usingNetworkKey networkKey: NetworkKey, withSequence sequence: UInt32, andTtl ttl: UInt8) {
-        let index = networkKey.ivIndex.index
+    init(encode lowerTransportPdu: LowerTransportPdu,
+         withSequence sequence: UInt32, andTtl ttl: UInt8) {
+        let index = lowerTransportPdu.networkKey.ivIndex.index
         
-        self.networkKey = networkKey
+        self.networkKey = lowerTransportPdu.networkKey
         self.ivi = UInt8(index & 0x1)
         self.nid = networkKey.nid
         self.type = lowerTransportPdu.type
-        self.ttl = ttl
-        self.sequence = sequence
-        self.source = source
+        self.source = lowerTransportPdu.source
         self.destination = lowerTransportPdu.destination
         self.transportPdu = lowerTransportPdu.transportPdu
+        self.ttl = ttl
+        self.sequence = sequence
         
         let iviNid = (ivi << 7) | (nid & 0x7F)
         let ctlTtl = (type.rawValue << 7) | (ttl & 0x7F)

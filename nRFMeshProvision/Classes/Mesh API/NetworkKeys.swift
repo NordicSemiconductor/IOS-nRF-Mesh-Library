@@ -15,4 +15,10 @@ public extension Array where Element == NetworkKey {
         }
     }
     
+    subscript(keyIndex: KeyIndex) -> NetworkKey? {
+        return first {
+            $0.index == keyIndex
+        }
+    }
+    
 }

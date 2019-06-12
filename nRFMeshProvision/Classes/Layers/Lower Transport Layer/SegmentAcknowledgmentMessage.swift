@@ -1,5 +1,5 @@
 //
-//  SegmentAcknowledmentMessage.swift
+//  SegmentAcknowledgmentMessage.swift
 //  nRFMeshProvision
 //
 //  Created by Aleksander Nowakowski on 31/05/2019.
@@ -7,9 +7,10 @@
 
 import Foundation
 
-internal struct SegmentAcknowledmentMessage: LowerTransportPdu {
-    let source: Address?
+internal struct SegmentAcknowledgmentMessage: LowerTransportPdu {
+    let source: Address
     let destination: Address
+    let networkKey: NetworkKey
     
     /// Message Op Code.
     let opCode: UInt8
@@ -53,6 +54,7 @@ internal struct SegmentAcknowledmentMessage: LowerTransportPdu {
         
         source = networkPdu.source
         destination = networkPdu.destination
+        networkKey = networkPdu.networkKey
     }
     
     /// Creates the ACK for given array of segments. At least one of
@@ -74,9 +76,11 @@ internal struct SegmentAcknowledmentMessage: LowerTransportPdu {
         blockAck = ack
         upperTransportPdu = Data() + blockAck.bigEndian
         
-        // Assuming all segments have the same destination addresses.
-        source = nil
-        destination = segment.source!
+        // Assuming all segments have the same source and destination addresses and network key.
+        // Swaping source with destination. Destination here is guaranteed to be a Unicast Address.
+        source = segment.destination
+        destination = segment.source
+        networkKey = segment.networkKey
     }
     
     /// Returns whether the segment with given index has been received.
@@ -84,7 +88,7 @@ internal struct SegmentAcknowledmentMessage: LowerTransportPdu {
     /// - parameter m: The segment number.
     /// - returns: `True`, if the segment of the given number has been
     ///            acknowledged, `false` otherwise.
-    func isSegmentReceived(_ m: UInt8) -> Bool {
+    func isSegmentReceived(_ m: Int) -> Bool {
         return blockAck & (1 << m) != 0
     }
     

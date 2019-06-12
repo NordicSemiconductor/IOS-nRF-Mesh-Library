@@ -45,4 +45,5 @@ public extension Node {
     func overlapsWithAddress(_ address: Address, elementsCount count: UInt8) -> Bool {
         return !(unicastAddress + elementsCount - 1 < address || unicastAddress > address + UInt16(count) - 1)
     }
+    
 }

@@ -53,9 +53,9 @@ class EditKeyViewController: UITableViewController {
                 network.nextAvailableApplicationKeyIndex :
                 network.nextAvailableNetworkKeyIndex)
             if isApplicationKey {
-                newBoundNetKey = (key as? ApplicationKey)?.boundNetKey ?? 0
+                newBoundNetworkKeyIndex = (key as? ApplicationKey)?.boundNetworkKeyIndex ?? 0
             } else {
-                newBoundNetKey = nil
+                newBoundNetworkKeyIndex = nil
             }
         }
     }
@@ -67,7 +67,7 @@ class EditKeyViewController: UITableViewController {
     private var newName: String!
     private var newKey: Data! = Data.random128BitKey()
     private var keyIndex: KeyIndex!
-    private var newBoundNetKey: KeyIndex?
+    private var newBoundNetworkKeyIndex: KeyIndex?
     
     // MARK: - View Controller
     
@@ -146,7 +146,7 @@ class EditKeyViewController: UITableViewController {
             cell.detailTextLabel?.text = networkKey.key.hex
             cell.selectionStyle = isKeyUsed ? .none : .default
             
-            if networkKey.index == newBoundNetKey {
+            if networkKey.index == newBoundNetworkKeyIndex {
                 cell.textLabel?.textColor = .black
                 cell.detailTextLabel?.textColor = .black
                 cell.accessoryType = .checkmark
@@ -174,7 +174,7 @@ class EditKeyViewController: UITableViewController {
         if !isKeyUsed && indexPath.isBoundKeyIndex {
             let network = MeshNetworkManager.instance.meshNetwork!
             let networkKey = network.networkKeys[indexPath.row]
-            newBoundNetKey = networkKey.index
+            newBoundNetworkKeyIndex = networkKey.index
             
             tableView.reloadRows(at: [indexPath, IndexPath(row: tableView.tag, section: 2)], with: .fade)
         }
@@ -228,7 +228,7 @@ private extension EditKeyViewController {
         let network = MeshNetworkManager.instance.meshNetwork!
         
         let adding = isNewKey
-        let index  = newBoundNetKey
+        let index  = newBoundNetworkKeyIndex
         if key == nil {
             if isApplicationKey {
                 key = try! network.add(applicationKey: newKey, name: newName)

@@ -148,7 +148,7 @@ public class Node: Codable {
         self.elements = []
         
         for i in 0..<elements {
-            self.elements.append(Element(index: i, location: .unknown))
+            add(element: Element(index: i, location: .unknown))
         }
     }
     
@@ -176,16 +176,18 @@ public class Node: Codable {
         // Keys will ba added later.
         self.appKeys  = []
         self.netKeys  = []
+        // Initialize elements.
+        self.elements = []
         
         // Add the primary Element.
         let element = Element(index: 0, location: .unknown)
         element.name = "Primary Element"
         // Those 2 models are required for all nodes.
-        element.models.append(.configurationServer)
-        element.models.append(.healthServer)
+        element.add(model: .configurationServer)
+        element.add(model: .healthServer)
         // Configuration Client model is added, as this is a Provisioner's node.
-        element.models.append(.configurationClient)
-        self.elements = [element]
+        element.add(model: .configurationClient)
+        add(element: element)
     }
     
     internal init(for unprovisionedDevice: UnprovisionedDevice, withDeviceKey deviceKey: Data,
@@ -260,6 +262,10 @@ public class Node: Codable {
         self.relayRetransmit = try container.decodeIfPresent(RelayRetransmit.self, forKey: .relayRetransmit)
         self.elements = try container.decode([Element].self, forKey: .elements)
         self.blacklisted = try container.decode(Bool.self, forKey: .blacklisted)
+        
+        elements.forEach {
+            $0.parentNode = self
+        }
     }
     
     public func encode(to encoder: Encoder) throws {
@@ -284,4 +290,18 @@ public class Node: Codable {
         try container.encode(elements, forKey: .elements)
         try container.encode(blacklisted, forKey: .blacklisted)
     }
+}
+
+internal extension Node {
+    
+    /// Adds the given element to the Node.
+    ///
+    /// - parameter element: The Element to be added.
+    func add(element: Element) {
+        let index = UInt8(elements.count)
+        elements.append(element)
+        element.parentNode = self
+        element.index = index
+    }
+    
 }

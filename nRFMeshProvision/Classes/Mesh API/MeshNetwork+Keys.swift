@@ -53,6 +53,7 @@ public extension MeshNetwork {
         }
         let key = try ApplicationKey(name: name, index: nextIndex,
                                  key: applicationKey, bindTo: defaultNetworkKey)
+        key.meshNetwork = self
         applicationKeys.append(key)
         
         // Make the local Provisioner aware of the new key.
@@ -87,6 +88,7 @@ public extension MeshNetwork {
         guard !applicationKey.isUsed(in: self) else {
             throw MeshModelError.keyInUse
         }
+        applicationKey.meshNetwork = nil
         return applicationKeys.remove(at: index)
     }
     

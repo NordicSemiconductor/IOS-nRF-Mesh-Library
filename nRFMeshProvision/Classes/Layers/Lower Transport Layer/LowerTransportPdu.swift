@@ -14,12 +14,12 @@ internal enum LowerTransportPduType: UInt8 {
 }
 
 internal protocol LowerTransportPdu {
-    /// Source Address. This is set to `nil` for outgoing messages,
-    /// where the Network Layer will set the local Provisioner's
-    /// Unicast Address as source address.
-    var source: Address? { get }
+    /// Source Address.
+    var source: Address { get }
     /// Destination Address.
     var destination: Address { get }
+    /// The Network Key used to decode/encode the PDU.
+    var networkKey: NetworkKey { get }
     /// Message type.
     var type: LowerTransportPduType { get }
     /// The raw data of Lower Transport Layer PDU.

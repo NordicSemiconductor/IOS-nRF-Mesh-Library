@@ -48,18 +48,23 @@ internal class NetworkManager {
         networkLayer.handle(incomingPdu: pdu, ofType: type)
     }
     
-    /// Encrypts the message with given destination address and,
-    /// if required, performs segmentation.
+    /// Encrypts the message with the Application Key and a Network Key
+    /// bound to it, and sends to the given destination address.
     ///
-    /// This method does not return PDUs to be sent. Instead, for each
-    /// segment it calls transmitter's `send(:ofType)` which should send
-    /// the PDU over the air. This is in order to support retransmittion
-    /// in case a packet was lost and needs to be sent again after block
-    /// acknowlegment was received.
+    /// This method does not send nor return PDUs to be sent. Instead,
+    /// for each created segment it calls transmitter's `send(:ofType)`,
+    /// which should send the PDU over the air. This is in order to support
+    /// retransmittion in case a packet was lost and needs to be sent again
+    /// after block acknowlegment was received.
     ///
-    /// - parameter message:     The message to be sent.
-    /// - parameter destination: The destination address.
-    func send(_ message: MeshMessage, to destination: Address) {
-        accessLayer.send(message, to: destination)
+    /// - parameter message:        The message to be sent.
+    /// - parameter destination:    The destination address.
+    /// - parameter applicationKey: The Application Key to sign the message.
+    func send(_ message: MeshMessage, to destination: Address, using applicationKey: ApplicationKey) {
+        accessLayer.send(message, to: destination, using: applicationKey)
+    }
+    
+    func send(_ configMessage: ConfigMessage, to destination: Address) {
+        
     }
 }

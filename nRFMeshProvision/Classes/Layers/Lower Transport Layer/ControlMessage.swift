@@ -8,8 +8,9 @@
 import Foundation
 
 internal struct ControlMessage: LowerTransportPdu {    
-    let source: Address?
+    let source: Address
     let destination: Address
+    let networkKey: NetworkKey
     
     /// Message Op Code.
     let opCode: UInt8
@@ -35,6 +36,7 @@ internal struct ControlMessage: LowerTransportPdu {
         
         source = networkPdu.source
         destination = networkPdu.destination
+        networkKey = networkPdu.networkKey
     }
     
     init(from segments: [SegmentedControlMessage]) {
@@ -43,6 +45,7 @@ internal struct ControlMessage: LowerTransportPdu {
         opCode = segment.opCode
         source = segment.source
         destination = segment.destination
+        networkKey = segment.networkKey
         
         // Segments are already sorted by `segmentOffset`.
         upperTransportPdu = segments

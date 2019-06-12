@@ -70,26 +70,27 @@ internal class NetworkLayer {
     /// given destination address. If the local Provisioner does not exist, or
     /// does not have Unicast Address assigned, this method does nothing.
     ///
-    /// If the `transporter` throws an error during sending, this error will be ignored.
-    ///
-    /// - parameter pdu:         The Lower Transport PDU to be sent.
-    /// - parameter type:        The PDU type.
-    /// - parameter ttl:         The initial TTL (Time To Leave) value of the message.
-    /// - parameter networkKey:  The Network Key to be used to encrypt the message on
-    ///                          on Network Layer.
-    func handle(outgoingPdu pdu: LowerTransportPdu, ofType type: PduType,
-                usingNetworkKey networkKey: NetworkKey, withTtl ttl: UInt8) {
-        guard let source = meshNetwork.localProvisioner?.unicastAddress else {
-            return
+    /// - parameter pdu:  The Lower Transport PDU to be sent.
+    /// - parameter type: The PDU type.
+    /// - parameter ttl:  The initial TTL (Time To Leave) value of the message.
+    /// - parameter multipleTimes: Should the message be resent with the same sequence
+    ///                            number after a random delay, default `false`.
+    func send(lowerTransportPdu pdu: LowerTransportPdu, ofType type: PduType,
+              withTtl ttl: UInt8, multipleTimes: Bool = false) throws {
+        // Get the current sequence number for local Provisioner's source address.
+        let sequence = UInt32(defaults.integer(forKey: pdu.source.hex))
+        // As the sequnce number was just used, it has to be incremented.
+        defaults.set(sequence + 1, forKey: pdu.source.hex)
+        
+        let networkPdu = NetworkPdu(encode: pdu, withSequence: sequence, andTtl: ttl)
+        try networkManager.transmitter?.send(networkPdu.pdu, ofType: type)
+        
+        if multipleTimes {
+            _ = Timer(timeInterval: TimeInterval.random(in: 0.050...0.300), repeats: false) { timer in
+                print("Retransmitting...")
+                try? self.networkManager.transmitter?.send(networkPdu.pdu, ofType: type)
+                timer.invalidate()
+            }
         }
-        
-        // Get the next sequence number for current Provisioner's source address.
-        let sequence = UInt32(defaults.integer(forKey: source.hex))
-        defaults.set(sequence + 1, forKey: source.hex)
-        
-        let networkPdu = NetworkPdu(encode: pdu, sentFrom: source,
-                                    usingNetworkKey: networkKey, withSequence: sequence,
-                                    andTtl: ttl)
-        try? networkManager.transmitter?.send(networkPdu.pdu, ofType: type)
     }
 }

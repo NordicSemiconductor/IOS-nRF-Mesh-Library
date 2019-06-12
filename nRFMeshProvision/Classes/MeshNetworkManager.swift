@@ -132,31 +132,81 @@ public extension MeshNetworkManager {
         networkManager.handle(incomingPdu: data, ofType: type)
     }
     
-    /// Encrypts the message with given destination address and,
-    /// if required, performs segmentation.
+    /// Encrypts the message with the Application Key and a Network Key
+    /// bound to it, and sends to the given destination address.
     ///
-    /// This method does not return PDUs to be sent. Instead, for each
-    /// segment it calls transmitter's `send(:ofType)` which should send
-    /// the PDU over the air. This is in order to support retransmittion
-    /// in case a packet was lost and needs to be sent again after block
-    /// acknowlegment was received.
+    /// This method does not send nor return PDUs to be sent. Instead,
+    /// for each created segment it calls transmitter's `send(:ofType)`,
+    /// which should send the PDU over the air. This is in order to support
+    /// retransmittion in case a packet was lost and needs to be sent again
+    /// after block acknowlegment was received.
+    ///
+    /// If the `transporter` throws an error during sending, this error will be ignored.
+    ///
+    /// - parameter message:        The message to be sent.
+    /// - parameter destination:    The destination address.
+    /// - parameter applicationKey: The Application Key to sign the message.
+    func send(_ message: MeshMessage, to destination: Address, using applicationKey: ApplicationKey) {
+        guard let networkManager = networkManager else {
+            return
+        }
+        networkManager.send(message, to: destination, using: applicationKey)
+    }
+    
+    /// Does the same as the other `send(:to:key)`, but takes
+    /// MeshAddress as destination address, which could be used for virtual
+    /// labels.
+    ///
+    /// - parameter message:        The message to be sent.
+    /// - parameter destination:    The destination address.
+    /// - parameter applicationKey: The Application Key to sign the message.
+    func send(_ message: MeshMessage, to destination: MeshAddress, using applicationKey: ApplicationKey) {
+        send(message, to: destination.address, using: applicationKey)
+    }
+    
+    /// Sends Configuration Message to the Node with given destination Address.
+    /// The `destination` must be a Unicast Address, otherwise the method
+    /// does nothing.
+    ///
+    /// If the `transporter` throws an error during sending, this error will be ignored.
     ///
     /// - parameter message:     The message to be sent.
-    /// - parameter destination: The destination address.
-    func send(_ message: MeshMessage, to destination: Address) {
+    /// - parameter destination: The destination Unicast Address.
+    func send(_ message: ConfigMessage, to destination: Address) {
+        guard destination.isUnicast else {
+            return
+        }
         guard let networkManager = networkManager else {
             return
         }
         networkManager.send(message, to: destination)
     }
     
-    /// Does the same as the other `createMeshMessage(:for)`, but takes
-    /// MeshAddress as destination address.
+    /// Encrypts the message with the first Application Key bound to the given
+    /// Model and a Network Key bound to it, and sends it to the Node
+    /// to which the Model belongs to.
     ///
-    /// - parameter message:     The message to be sent.
-    /// - parameter destination: The destination address.
-    func send(_ message: MeshMessage, to destination: MeshAddress) {
-        send(message, to: destination.address)
+    /// If the `transporter` throws an error during sending, this error will be ignored.
+    ///
+    /// - parameter message: The message to be sent.
+    /// - parameter model:   The destination Model.
+    func send(_ message: MeshMessage, to model: Model) {
+        if let meshNetwork = meshNetwork,
+            let element = model.parentElement,
+            let firstKeyIndex = model.bind.first,
+            let applicationKey = meshNetwork.applicationKeys[firstKeyIndex] {
+            send(message, to: element.unicastAddress, using: applicationKey)
+        }
+    }
+    
+    /// Sends Configuration Message to the given Node.
+    ///
+    /// If the `transporter` throws an error during sending, this error will be ignored.
+    ///
+    /// - parameter message: The message to be sent.
+    /// - parameter node:    The destination Node.
+    func send(_ message: ConfigMessage, to node: Node) {
+        send(message, to: node.unicastAddress)
     }
     
 }
