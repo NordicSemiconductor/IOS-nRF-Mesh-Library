@@ -168,10 +168,7 @@ public class Node: Codable {
         // a Provisioner's node.
         self.configComplete = true
         // This Provisioner does not support any of those features.
-        self.features = NodeFeatures(relay: .notSupported,
-                                     proxy: .notSupported,
-                                     lowPower: .notSupported,
-                                     friend: .notSupported)
+        self.features = NodeFeatures()
         
         // Keys will ba added later.
         self.appKeys  = []

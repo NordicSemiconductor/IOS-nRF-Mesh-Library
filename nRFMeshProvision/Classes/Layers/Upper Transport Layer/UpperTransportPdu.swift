@@ -28,12 +28,13 @@ internal struct UpperTransportPdu {
     
     init?(fromLowerTransportAccessMessage accessMessage: AccessMessage, usingKey key: Data) {
         let micSize = Int(accessMessage.transportMicSize)
-        let pduSize = accessMessage.upperTransportPdu.count
-        let mic = accessMessage.upperTransportPdu.subdata(in: pduSize - micSize..<pduSize)
+        let encryptedDataSize = accessMessage.upperTransportPdu.count - micSize
+        let encryptedData = accessMessage.upperTransportPdu.prefix(upTo: encryptedDataSize)
+        let mic = accessMessage.upperTransportPdu.suffix(from: encryptedDataSize)
         
         // The nonce type is 0x01 for messages signed with Application Key and
         // 0x02 for messages signed using Device Key (Configuration Messages).
-        let type: UInt8 = accessMessage.aid != 0 ? 0x01 : 0x02
+        let type: UInt8 = accessMessage.aid != nil ? 0x01 : 0x02
         // ASZMIC is set to 1 for messages sent with high security
         // (64-bit TransMIC). This is possible only for Segmented Access Messages.
         let aszmic: UInt8 = micSize == 4 ? 0 : 1
@@ -44,7 +45,7 @@ internal struct UpperTransportPdu {
             + accessMessage.destination.bigEndian
             + accessMessage.networkKey.ivIndex.index.bigEndian
         
-        guard let decryptedData = OpenSSLHelper().calculateDecryptedCCM(accessMessage.upperTransportPdu,
+        guard let decryptedData = OpenSSLHelper().calculateDecryptedCCM(encryptedData,
                   withKey: key, nonce: nonce, andMIC: mic) else {
              return nil
         }

@@ -77,4 +77,15 @@ extension Data : DataConvertible {
         return data
     }
     
+    static func + (lhs: Data, rhs: Data?) -> Data {
+        guard let rhs = rhs else {
+            return lhs
+        }
+        var data = Data()
+        data.append(lhs)
+        data.append(rhs)
+        
+        return data
+    }
+    
 }

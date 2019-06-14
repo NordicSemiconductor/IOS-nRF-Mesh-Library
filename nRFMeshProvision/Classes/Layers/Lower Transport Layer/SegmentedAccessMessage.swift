@@ -33,7 +33,7 @@ internal struct SegmentedAccessMessage: SegmentedMessage {
             octet0 |= 0b01000000 // AKF = 1
             octet0 |= aid
         }
-        let octet1 = ((transportMicSize << 4) & 0x80) | UInt8(segmentZero >> 5)
+        let octet1 = ((transportMicSize << 4) & 0x80) | UInt8(segmentZero >> 6)
         let octet2 = UInt8((segmentZero & 0x3F) << 2) | (segmentOffset >> 3)
         let octet3 = ((segmentOffset & 0x07) << 5) | (lastSegmentNumber & 0x1F)
         return Data([octet0, octet1, octet2, octet3]) + upperTransportPdu

@@ -21,16 +21,30 @@ public class NodeFeatures: Codable {
     public internal(set) var relay: State?
     /// The state of Proxy feature. `nil` if unknown.
     public internal(set) var proxy: State?
-    /// The state of Low Power feature. `nil` if unknown.
-    public internal(set) var lowPower: State?
     /// The state of Friend feature. `nil` if unknown.
     public internal(set) var friend: State?
+    /// The state of Low Power feature. `nil` if unknown.
+    public internal(set) var lowPower: State?
     
-    internal init(relay: State?, proxy: State?, lowPower: State?, friend: State?) {
-        self.relay = relay
-        self.proxy = proxy
+    internal init(relay: State?, proxy: State?, friend: State?, lowPower: State?) {
+        self.relay    = relay
+        self.proxy    = proxy
+        self.friend   = friend
         self.lowPower = lowPower
-        self.friend = friend
+    }
+    
+    internal init() {
+        self.relay    = .notSupported
+        self.proxy    = .notSupported
+        self.friend   = .notSupported
+        self.lowPower = .notSupported
+    }
+    
+    internal init(rawValue: UInt16) {
+        self.relay    = rawValue & 0x01 == 0 ? .notSupported : .notEnabled
+        self.proxy    = rawValue & 0x02 == 0 ? .notSupported : .notEnabled
+        self.friend   = rawValue & 0x04 == 0 ? .notSupported : .notEnabled
+        self.lowPower = rawValue & 0x08 == 0 ? .notSupported : .notEnabled
     }
 }
 

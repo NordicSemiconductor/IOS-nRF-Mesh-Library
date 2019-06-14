@@ -28,7 +28,7 @@ public protocol MeshMessage {
     /// The message Op Code.
     var opCode: UInt32 { get }
     /// Message parameters as Data.
-    var parameters: Data { get }
+    var parameters: Data? { get }
     /// Returns whether the message should be sent or has been sent using
     /// 32-bit or 64-bit TransMIC value. By default `.low` is returned.
     ///
@@ -45,6 +45,12 @@ public protocol MeshMessage {
     /// payload length. If payload size is longer than 11 bytes this
     /// field is not checked as the message must be segmented.
     var isSegmented: Bool { get }
+    
+    /// This initializer should construct the message based on the received
+    /// parameters.
+    ///
+    /// - parameter parameters: The Access Layer parameters.
+    init?(parameters: Data)
 }
 
 // MARK: - Default values

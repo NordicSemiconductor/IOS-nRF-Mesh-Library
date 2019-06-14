@@ -1,15 +1,14 @@
 //
-//  ConfigAppKeyAdd.swift
+//  ConfigAppKeyUpdate.swift
 //  nRFMeshProvision
 //
-//  Created by Aleksander Nowakowski on 12/06/2019.
+//  Created by Aleksander Nowakowski on 14/06/2019.
 //
 
 import Foundation
 
-public struct ConfigAppKeyAdd: ConfigAppKeyMessage {
-    
-    public let opCode: UInt32 = 0x00
+public struct ConfigAppKeyUpdate: ConfigAppKeyMessage {
+    public let opCode: UInt32 = 0x01
     public var parameters: Data? {
         return encodeNetKeyAndAppKeyIndex() + key
     }
@@ -29,7 +28,7 @@ public struct ConfigAppKeyAdd: ConfigAppKeyMessage {
         guard parameters.count == 19 else {
             return nil
         }
-        (networkKeyIndex, applicationKeyIndex) = ConfigAppKeyAdd.decodeNetKeyAndAppKeyIndex(from: parameters, at: 0)
+        (networkKeyIndex, applicationKeyIndex) = ConfigAppKeyUpdate.decodeNetKeyAndAppKeyIndex(from: parameters, at: 0)
         key = parameters.suffix(from: 3)
     }
     

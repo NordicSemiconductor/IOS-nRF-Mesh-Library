@@ -207,47 +207,156 @@ class Pdus: XCTestCase {
         XCTAssertNotNil(meshNetwork.nodes[0].meshNetwork)
         XCTAssertNotNil(meshNetwork.nodes[1].meshNetwork)
     }
-
-    func testConfigAppKeyAddMessage() {
+    
+    func testSending() {
         XCTAssertNotNil(manager.meshNetwork)
         let meshNetwork = manager.meshNetwork!
+        let networkKey = meshNetwork.networkKeys.first!
+        networkKey.ivIndex = IvIndex(index: 0x12345678, updateActive: false)
+        let source = meshNetwork.localProvisioner?.unicastAddress
+        XCTAssertNotNil(source)
+        let node = meshNetwork.nodes[1]
+        let destination = node.unicastAddress
+        let sequence: UInt32 = 0x3129AB
+        
+        // Test begins here
         let message = ConfigAppKeyAdd(applicationKey: meshNetwork.applicationKeys[1])
         XCTAssertEqual(message.opCode, 0)
         XCTAssertEqual(message.applicationKey, meshNetwork.applicationKeys[1])
         XCTAssertEqual(message.parameters, Data(hex: "56341263964771734FBD76E3B40519D1D94A48"))
         XCTAssertEqual(message.accessPdu, Data(hex: "0056341263964771734FBD76E3B40519D1D94A48"))
-    }
-    
-    func testUpperTransportPdu() {
-        XCTAssertNotNil(manager.meshNetwork)
-        let meshNetwork = manager.meshNetwork!
-        XCTAssertNotNil(meshNetwork.networkKeys.first)
-        let networkKey = meshNetwork.networkKeys.first!
-        networkKey.ivIndex = IvIndex(index: 0x12345678, updateActive: false)
-        
-        let message = ConfigAppKeyAdd(applicationKey: meshNetwork.applicationKeys[1])
-        
-        let source = meshNetwork.localProvisioner?.unicastAddress
-        XCTAssertNotNil(source)
-        XCTAssertEqual(source!, 0x0003)
-        
-        XCTAssert(meshNetwork.nodes.count > 1)
-        let node = meshNetwork.nodes[1]
-        let destination = node.unicastAddress
-        XCTAssertEqual(destination, 0x1201)
-        
-        let sequence: UInt32 = 0x3129AB
         
         let pdu = UpperTransportPdu(fromConfigMessage: message,
                                     sentFrom: source!, to: destination,
                                     usingDeviceKey: node.deviceKey, sequence: sequence, andIvIndex: networkKey.ivIndex)
-        XCTAssertEqual(pdu.source, source!)
+        XCTAssertEqual(pdu.source, source)
         XCTAssertEqual(pdu.destination, destination)
         XCTAssertEqual(pdu.sequence, sequence)
         XCTAssertNil(pdu.aid)
         XCTAssertEqual(pdu.transportMicSize, 4)
         XCTAssertEqual(pdu.accessPdu, Data(hex: "0056341263964771734FBD76E3B40519D1D94A48"))
         XCTAssertEqual(pdu.transportPdu, Data(hex: "EE9DDDFD2169326D23F3AFDFCFDC18C52FDEF772E0E17308"))
+        
+        let segment0 = SegmentedAccessMessage(fromUpperTransportPdu: pdu, usingNetworkKey: networkKey, offset: 0)
+        XCTAssertNil(segment0.aid)
+        XCTAssertEqual(segment0.source, source)
+        XCTAssertEqual(segment0.destination, destination)
+        XCTAssertEqual(segment0.networkKey, networkKey)
+        XCTAssertEqual(segment0.segmentZero, 0x9AB)
+        XCTAssertEqual(segment0.segmentOffset, 0)
+        XCTAssertEqual(segment0.lastSegmentNumber, 1)
+        XCTAssertEqual(segment0.upperTransportPdu, Data(hex: "EE9DDDFD2169326D23F3AFDF"))
+        XCTAssertEqual(segment0.transportPdu, Data(hex: "8026AC01EE9DDDFD2169326D23F3AFDF"))
+        
+        let segment1 = SegmentedAccessMessage(fromUpperTransportPdu: pdu, usingNetworkKey: networkKey, offset: 1)
+        XCTAssertEqual(segment1.source, source)
+        XCTAssertEqual(segment1.destination, destination)
+        XCTAssertEqual(segment1.networkKey, networkKey)
+        XCTAssertEqual(segment1.segmentZero, 0x9AB)
+        XCTAssertEqual(segment1.segmentOffset, 1)
+        XCTAssertEqual(segment1.lastSegmentNumber, 1)
+        XCTAssertEqual(segment1.upperTransportPdu, Data(hex: "CFDC18C52FDEF772E0E17308"))
+        XCTAssertEqual(segment1.transportPdu, Data(hex: "8026AC21CFDC18C52FDEF772E0E17308"))
+        
+        let networkPdu0 = NetworkPdu(encode: segment0, withSequence: sequence, andTtl: 4)
+        XCTAssertEqual(networkPdu0.sequence, sequence)
+        XCTAssertEqual(networkPdu0.source, source)
+        XCTAssertEqual(networkPdu0.destination, destination)
+        XCTAssertEqual(networkPdu0.ivi, 0)
+        XCTAssertEqual(networkPdu0.nid, 0x68)
+        XCTAssertEqual(networkPdu0.networkKey, networkKey)
+        XCTAssertEqual(networkPdu0.pdu, Data(hex: "68CAB5C5348A230AFBA8C63D4E686364979DEAF4FD40961145939CDA0E"))
+        
+        let networkPdu1 = NetworkPdu(encode: segment1, withSequence: sequence + 1, andTtl: 4)
+        XCTAssertEqual(networkPdu1.sequence, sequence + 1)
+        XCTAssertEqual(networkPdu1.source, source)
+        XCTAssertEqual(networkPdu1.destination, destination)
+        XCTAssertEqual(networkPdu1.ivi, 0)
+        XCTAssertEqual(networkPdu1.nid, 0x68)
+        XCTAssertEqual(networkPdu1.networkKey, networkKey)
+        XCTAssertEqual(networkPdu1.pdu, Data(hex: "681615B5DD4A846CAE0C032BF0746F44F1B8CC8CE5EDC57E55BEED49C0"))
+    }
+    
+    func testReceiving() {
+        XCTAssertNotNil(manager.meshNetwork)
+        let meshNetwork = manager.meshNetwork!
+        let networkKey = meshNetwork.networkKeys.first!
+        networkKey.ivIndex = IvIndex(index: 0x12345678, updateActive: false)
+        let source = meshNetwork.localProvisioner?.unicastAddress
+        let node = meshNetwork.nodes[1]
+        let destination = node.unicastAddress
+        let sequence: UInt32 = 0x3129AB
+        
+        // Test begins here
+        let networkPdu0 = NetworkPdu(decode: Data(hex: "68CAB5C5348A230AFBA8C63D4E686364979DEAF4FD40961145939CDA0E")!,
+                                     usingNetworkKey: networkKey)
+        XCTAssertNotNil(networkPdu0)
+        XCTAssertEqual(networkPdu0?.source, source)
+        XCTAssertEqual(networkPdu0?.destination, destination)
+        XCTAssertEqual(networkPdu0?.type, .accessMessage)
+        XCTAssertEqual(networkPdu0?.ivi, 0)
+        XCTAssertEqual(networkPdu0?.nid, 0x68)
+        XCTAssertEqual(networkPdu0?.networkKey, networkKey)
+        XCTAssertEqual(networkPdu0?.transportPdu, Data(hex: "8026AC01EE9DDDFD2169326D23F3AFDF"))
+        XCTAssertEqual(networkPdu0?.pdu, Data(hex: "68CAB5C5348A230AFBA8C63D4E686364979DEAF4FD40961145939CDA0E"))
+        
+        let networkPdu1 = NetworkPdu(decode: Data(hex: "681615B5DD4A846CAE0C032BF0746F44F1B8CC8CE5EDC57E55BEED49C0")!,
+                                     usingNetworkKey: networkKey)
+        XCTAssertNotNil(networkPdu1)
+        XCTAssertEqual(networkPdu1?.source, source)
+        XCTAssertEqual(networkPdu1?.destination, destination)
+        XCTAssertEqual(networkPdu1?.type, .accessMessage)
+        XCTAssertEqual(networkPdu1?.ivi, 0)
+        XCTAssertEqual(networkPdu1?.nid, 0x68)
+        XCTAssertEqual(networkPdu1?.networkKey, networkKey)
+        XCTAssertEqual(networkPdu1?.transportPdu, Data(hex: "8026AC21CFDC18C52FDEF772E0E17308"))
+        XCTAssertEqual(networkPdu1?.pdu, Data(hex: "681615B5DD4A846CAE0C032BF0746F44F1B8CC8CE5EDC57E55BEED49C0"))
+        
+        let segment0 = SegmentedAccessMessage(fromSegmentPdu: networkPdu0!)
+        XCTAssertNotNil(segment0)
+        XCTAssertNil(segment0?.aid)
+        XCTAssertEqual(segment0?.source, source)
+        XCTAssertEqual(segment0?.destination, destination)
+        XCTAssertEqual(segment0?.sequence, sequence)
+        XCTAssertEqual(segment0?.lastSegmentNumber, 1)
+        XCTAssertEqual(segment0?.segmentZero, 0x9AB)
+        XCTAssertEqual(segment0?.segmentOffset, 0)
+        XCTAssertEqual(segment0?.transportMicSize, 4)
+        XCTAssertEqual(segment0?.type, .accessMessage)
+        XCTAssertEqual(segment0?.networkKey, networkKey)
+        XCTAssertEqual(segment0?.transportPdu, Data(hex: "8026AC01EE9DDDFD2169326D23F3AFDF"))
+        XCTAssertEqual(segment0?.upperTransportPdu, Data(hex: "EE9DDDFD2169326D23F3AFDF"))
+        
+        let segment1 = SegmentedAccessMessage(fromSegmentPdu: networkPdu1!)
+        XCTAssertNotNil(segment1)
+        XCTAssertNil(segment1?.aid)
+        XCTAssertEqual(segment1?.source, source)
+        XCTAssertEqual(segment1?.destination, destination)
+        XCTAssertEqual(segment1?.sequence, sequence)
+        XCTAssertEqual(segment1?.lastSegmentNumber, 1)
+        XCTAssertEqual(segment1?.segmentZero, 0x9AB)
+        XCTAssertEqual(segment1?.segmentOffset, 1)
+        XCTAssertEqual(segment1?.transportMicSize, 4)
+        XCTAssertEqual(segment1?.type, .accessMessage)
+        XCTAssertEqual(segment1?.networkKey, networkKey)
+        XCTAssertEqual(segment1?.transportPdu, Data(hex: "8026AC21CFDC18C52FDEF772E0E17308"))
+        XCTAssertEqual(segment1?.upperTransportPdu, Data(hex: "CFDC18C52FDEF772E0E17308"))
+        
+        let accessMessage = AccessMessage(fromSegments: [segment0!, segment1!])
+        XCTAssertEqual(accessMessage.source, source!)
+        XCTAssertEqual(accessMessage.destination, destination)
+        XCTAssertEqual(accessMessage.networkKey, networkKey)
+        XCTAssertEqual(accessMessage.upperTransportPdu, Data(hex: "EE9DDDFD2169326D23F3AFDFCFDC18C52FDEF772E0E17308"))
+        
+        let pdu = UpperTransportPdu(fromLowerTransportAccessMessage: accessMessage, usingKey: node.deviceKey)
+        XCTAssertNotNil(pdu)
+        XCTAssertEqual(pdu?.source, source)
+        XCTAssertEqual(pdu?.destination, destination)
+        XCTAssertNil(pdu?.aid)
+        XCTAssertEqual(pdu?.sequence, sequence)
+        XCTAssertEqual(pdu?.transportMicSize, 4)
+        XCTAssertEqual(pdu?.transportPdu, Data(hex: "EE9DDDFD2169326D23F3AFDFCFDC18C52FDEF772E0E17308"))
+        XCTAssertEqual(pdu?.accessPdu, Data(hex: "0056341263964771734FBD76E3B40519D1D94A48"))
     }
 
 }
