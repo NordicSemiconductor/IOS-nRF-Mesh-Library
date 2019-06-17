@@ -104,6 +104,7 @@ public struct Page0: CompositionDataPage {
             guard let element = Element(compositionData: parameters, offset: &offset) else {
                 return nil
             }
+            element.index = UInt8(readElements.count)
             readElements.append(element)
         }
         elements = readElements
