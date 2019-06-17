@@ -88,10 +88,10 @@ public struct Page0: CompositionDataPage {
     ///
     /// - parameter parameters: The Access Layer parameters.
     public init?(parameters: Data) {
-        guard parameters.count >= 11 else {
+        guard parameters.count >= 11, parameters[0] == 0 else {
             return nil
         }
-        page = parameters[0]
+        page = 0
         companyIdentifier = parameters.convert(offset: 1)
         productIdentifier = parameters.convert(offset: 3)
         versionIdentifier = parameters.convert(offset: 5)
