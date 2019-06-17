@@ -66,7 +66,7 @@ public struct Page0: CompositionDataPage {
         return Data([page])
             + companyIdentifier + productIdentifier + versionIdentifier
             + minimumNumberOfReplayProtectionList
-            + features.rawValue + elements.rawValue
+            + features.rawValue + elements.data
     }
     
     /// This initializer constructs the Page 0 of Composition Data from
@@ -92,11 +92,11 @@ public struct Page0: CompositionDataPage {
             return nil
         }
         page = 0
-        companyIdentifier = parameters.convert(offset: 1)
-        productIdentifier = parameters.convert(offset: 3)
-        versionIdentifier = parameters.convert(offset: 5)
-        minimumNumberOfReplayProtectionList = parameters.convert(offset: 7)
-        features = NodeFeatures(rawValue: parameters.convert(offset: 9))
+        companyIdentifier = CFSwapInt16LittleToHost(parameters.convert(offset: 1))
+        productIdentifier = CFSwapInt16LittleToHost(parameters.convert(offset: 3))
+        versionIdentifier = CFSwapInt16LittleToHost(parameters.convert(offset: 5))
+        minimumNumberOfReplayProtectionList = CFSwapInt16LittleToHost(parameters.convert(offset: 7))
+        features = NodeFeatures(rawValue: CFSwapInt16LittleToHost(parameters.convert(offset: 9)))
         
         var readElements: [Element] = []
         var offset = 11
@@ -136,7 +136,7 @@ private extension Array where Element == El {
     
     /// Returns Elements and their Models as Data, to be sent in
     /// Page 0 of the Composition Data.
-    var rawValue: Data {
+    var data: Data {
         var data = Data()
         for element in self {
             data += element.location.rawValue
@@ -150,7 +150,8 @@ private extension Array where Element == El {
                     vendorModel.append(model)
                 }
             }
-            data += UInt8(sigModels.count) + UInt8(vendorModel.count)
+            data += UInt8(sigModels.count)
+            data += UInt8(vendorModel.count)
             
             for model in sigModels {
                 data += model.modelIdentifier

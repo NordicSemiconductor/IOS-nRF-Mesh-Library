@@ -48,6 +48,7 @@
 		52DF5D8C228DAA0500C297C1 /* NodeViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52DF5D8B228DAA0500C297C1 /* NodeViewCell.swift */; };
 		52DF5D8F229691BD00C297C1 /* NetworkConnection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52DF5D8E229691BD00C297C1 /* NetworkConnection.swift */; };
 		52DF5D93229C009200C297C1 /* NetworkPdus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52DF5D92229C009200C297C1 /* NetworkPdus.swift */; };
+		52F6AD6C22B78F3000F0D7DF /* CompositionData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52F6AD6B22B78F3000F0D7DF /* CompositionData.swift */; };
 		607FACD61AFB9204008FA782 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACD51AFB9204008FA782 /* AppDelegate.swift */; };
 		607FACDB1AFB9204008FA782 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 607FACD91AFB9204008FA782 /* Main.storyboard */; };
 		607FACDD1AFB9204008FA782 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 607FACDC1AFB9204008FA782 /* Images.xcassets */; };
@@ -107,6 +108,7 @@
 		52DF5D8B228DAA0500C297C1 /* NodeViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NodeViewCell.swift; sourceTree = "<group>"; };
 		52DF5D8E229691BD00C297C1 /* NetworkConnection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkConnection.swift; sourceTree = "<group>"; };
 		52DF5D92229C009200C297C1 /* NetworkPdus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkPdus.swift; sourceTree = "<group>"; };
+		52F6AD6B22B78F3000F0D7DF /* CompositionData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompositionData.swift; sourceTree = "<group>"; };
 		5A51F9AF82598D8D5D40BD77 /* Pods_nRFMeshProvision_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_nRFMeshProvision_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		607FACD01AFB9204008FA782 /* nRFMeshProvision_Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = nRFMeshProvision_Example.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		607FACD41AFB9204008FA782 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -313,6 +315,7 @@
 				52B7F67C229829F200B0A42F /* Addresses.swift */,
 				52DF5D92229C009200C297C1 /* NetworkPdus.swift */,
 				5294DAD922B109810041370E /* Pdus.swift */,
+				52F6AD6B22B78F3000F0D7DF /* CompositionData.swift */,
 				529B75A92248E275008F1CE7 /* nRFMeshProvision_Tests-Bridging-Header.h */,
 			);
 			path = Tests;
@@ -555,6 +558,7 @@
 			files = (
 				52B7F67D229829F200B0A42F /* Addresses.swift in Sources */,
 				5294DADA22B109810041370E /* Pdus.swift in Sources */,
+				52F6AD6C22B78F3000F0D7DF /* CompositionData.swift in Sources */,
 				52DF5D93229C009200C297C1 /* NetworkPdus.swift in Sources */,
 				529B7629224CE481008F1CE7 /* AssigningUnicastAddress.swift in Sources */,
 				528352B42284139F0097B949 /* ProxyProtocol.swift in Sources */,

@@ -11,7 +11,7 @@ public protocol ConfigMessage: MeshMessage {
     // Empty
 }
 
-public protocol ConfigAppKeyMessage {
+public protocol ConfigAppKeyMessage: ConfigMessage {
     /// The Network Key Index.
     var networkKeyIndex: KeyIndex { get }
     /// Application Key Index.

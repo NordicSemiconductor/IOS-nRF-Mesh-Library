@@ -28,10 +28,10 @@ public class NodeFeatures: Codable {
     
     internal var rawValue: UInt16 {
         var bitField: UInt16 = 0
-        if let relay = relay, relay != .notSupported { bitField |= 0x01 }
-        if let proxy = relay, proxy != .notSupported { bitField |= 0x02 }
-        if let friend = relay, friend != .notSupported { bitField |= 0x04 }
-        if let lowPower = relay, lowPower != .notSupported { bitField |= 0x08 }
+        if let relay = relay, case .notSupported = relay {} else { bitField |= 0x01 }
+        if let proxy = proxy, case .notSupported = proxy {} else { bitField |= 0x02 }
+        if let friend = friend, case .notSupported = friend {} else { bitField |= 0x04 }
+        if let lowPower = lowPower, case .notSupported = lowPower {} else { bitField |= 0x08 }
         return bitField
     }
     
@@ -84,8 +84,8 @@ extension NodeFeatures: CustomDebugStringConvertible {
         return """
         Relay Feature:     \(relay?.debugDescription ?? "Unknown")
         Proxy Feature:     \(proxy?.debugDescription ?? "Unknown")
-        Low Power Feature: \(lowPower?.debugDescription ?? "Unknown")
         Friend Feature:    \(friend?.debugDescription ?? "Unknown")
+        Low Power Feature: \(lowPower?.debugDescription ?? "Unknown")
         """
     }
     
