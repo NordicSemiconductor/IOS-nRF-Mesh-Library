@@ -47,8 +47,14 @@ public class Model: Codable {
     /// Parent Element.
     public internal(set) weak var parentElement: Element!
     
-    internal init(modelId: UInt32) {
-        self.modelId   = modelId
+    internal init(sigModelId: UInt16) {
+        self.modelId   = UInt32(sigModelId)
+        self.subscribe = []
+        self.bind      = []
+    }
+    
+    internal init(vendorModelId: UInt32) {
+        self.modelId   = vendorModelId
         self.subscribe = []
         self.bind      = []
     }
@@ -88,9 +94,9 @@ public class Model: Codable {
 
 extension Model {
     
-    static let configurationServer = Model(modelId: 0x0000)
-    static let configurationClient = Model(modelId: 0x0001)
-    static let healthServer = Model(modelId: 0x0002)
-    static let healthClient = Model(modelId: 0x0003)
+    static let configurationServer = Model(sigModelId: 0x0000)
+    static let configurationClient = Model(sigModelId: 0x0001)
+    static let healthServer = Model(sigModelId: 0x0002)
+    static let healthClient = Model(sigModelId: 0x0003)
     
 }

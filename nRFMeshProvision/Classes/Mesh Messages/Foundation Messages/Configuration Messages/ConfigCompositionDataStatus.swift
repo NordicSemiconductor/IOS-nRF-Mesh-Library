@@ -7,12 +7,40 @@
 
 import Foundation
 
+public protocol CompositionDataPage {
+    /// Page number of the Composition Data to get.
+    var page: UInt8 { get }
+    /// Composition Data parameters as Data.
+    var parameters: Data? { get }
+}
+
 public struct ConfigCompositionDataStatus: ConfigMessage {
     public let opCode: UInt32 = 0x02
     public var parameters: Data? {
-        return Data([page]) // TODO
+        return page?.parameters
     }
     
+    /// The Composition Data page.
+    public let page: CompositionDataPage?
+    
+    public init?(parameters: Data) {
+        guard parameters.count > 0 else {
+            return nil
+        }
+        switch parameters[0] {
+        case 0:
+            guard let page0 = Page0(parameters: parameters) else {
+                return nil
+            }
+            page = page0
+        default:
+            // Other Pages are not supoprted.
+            return nil
+        }
+    }
+}
+
+public struct Page0: CompositionDataPage {
     /// Page number of the Composition Data to get.
     public let page: UInt8
     
@@ -34,6 +62,17 @@ public struct ConfigCompositionDataStatus: ConfigMessage {
     /// An array of node's elements.
     public let elements: [Element]
     
+    public var parameters: Data? {
+        return Data([page])
+            + companyIdentifier + productIdentifier + versionIdentifier
+            + minimumNumberOfReplayProtectionList
+            + features.rawValue + elements.rawValue
+    }
+    
+    /// This initializer constructs the Page 0 of Composition Data from
+    /// the given Node.
+    ///
+    /// - parameter node: The Node to construct the Page 0 from.
     public init(node: Node) {
         page = 0
         companyIdentifier = node.companyIdentifier ?? 0
@@ -44,30 +83,83 @@ public struct ConfigCompositionDataStatus: ConfigMessage {
         elements = node.elements
     }
     
+    /// This initializer should construct the message based on the
+    /// received parameters.
+    ///
+    /// - parameter parameters: The Access Layer parameters.
     public init?(parameters: Data) {
         guard parameters.count >= 11 else {
             return nil
         }
         page = parameters[0]
-        companyIdentifier = CFSwapInt16BigToHost(parameters.convert(offset: 1))
-        productIdentifier = CFSwapInt16BigToHost(parameters.convert(offset: 3))
-        versionIdentifier = CFSwapInt16BigToHost(parameters.convert(offset: 5))
-        minimumNumberOfReplayProtectionList = CFSwapInt16BigToHost(parameters.convert(offset: 7))
-        let bitField = CFSwapInt16BigToHost(parameters.convert(offset: 9))
-        features = NodeFeatures(rawValue: bitField)
+        companyIdentifier = parameters.convert(offset: 1)
+        productIdentifier = parameters.convert(offset: 3)
+        versionIdentifier = parameters.convert(offset: 5)
+        minimumNumberOfReplayProtectionList = parameters.convert(offset: 7)
+        features = NodeFeatures(rawValue: parameters.convert(offset: 9))
         
-        if parameters.count == 11 {
-            elements = []
-        } else {
-            /*
-            var offset = 11
-            while offset < parameters.count {
-                guard parameters.count >= offset + 4 else {
-                    return nil
-                }
-            }*/
-            elements = [] // TODO: Finish implementation
+        var readElements: [Element] = []
+        var offset = 11
+        while offset < parameters.count {
+            guard let element = Element(compositionData: parameters, offset: &offset) else {
+                return nil
+            }
+            readElements.append(element)
         }
+        elements = readElements
+    }
+    
+    /// Applies the Composition Data to given Node.
+    ///
+    /// - parameter node: The Node to apply the data to.
+    public func apply(to node: Node) {
+        node.companyIdentifier = companyIdentifier
+        node.productIdentifier = productIdentifier
+        node.versionIdentifier = versionIdentifier
+        node.minimumNumberOfReplayProtectionList = minimumNumberOfReplayProtectionList
+        node.features = features
+        // Remove any existing Elements. There should not be any, but just to be sure.
+        node.elements.forEach {
+            $0.parentNode = nil
+            $0.index = 0
+        }
+        node.elements.removeAll()
+        // And add the Elements received.
+        node.add(elements: elements)
+    }
+}
+
+// MARK: - Helper extension
+
+private typealias El = Element
+private extension Array where Element == El {
+    
+    /// Returns Elements and their Models as Data, to be sent in
+    /// Page 0 of the Composition Data.
+    var rawValue: Data {
+        var data = Data()
+        for element in self {
+            data += element.location.rawValue
+            
+            var sigModels: [Model] = []
+            var vendorModel: [Model] = []
+            for model in element.models {
+                if model.isBluetoothSIGAssigned {
+                    sigModels.append(model)
+                } else {
+                    vendorModel.append(model)
+                }
+            }
+            data += UInt8(sigModels.count) + UInt8(vendorModel.count)
+            
+            for model in sigModels {
+                data += model.modelIdentifier
+            }
+            for model in vendorModel {
+                data += model.modelId
+            }
+        }
+        return data
     }
     
 }

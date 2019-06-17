@@ -26,6 +26,24 @@ public class NodeFeatures: Codable {
     /// The state of Low Power feature. `nil` if unknown.
     public internal(set) var lowPower: State?
     
+    internal var rawValue: UInt16 {
+        var bitField: UInt16 = 0
+        if let relay = relay, relay != .notSupported { bitField |= 0x01 }
+        if let proxy = relay, proxy != .notSupported { bitField |= 0x02 }
+        if let friend = relay, friend != .notSupported { bitField |= 0x04 }
+        if let lowPower = relay, lowPower != .notSupported { bitField |= 0x08 }
+        return bitField
+    }
+    
+    // MARK: - Codable
+    
+    private enum CodingKeys: CodingKey {
+        case relay
+        case proxy
+        case friend
+        case lowPower
+    }
+    
     internal init(relay: State?, proxy: State?, friend: State?, lowPower: State?) {
         self.relay    = relay
         self.proxy    = proxy

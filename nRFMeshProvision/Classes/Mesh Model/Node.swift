@@ -322,7 +322,7 @@ public class Node: Codable {
 
 internal extension Node {
     
-    /// Adds the given element to the Node.
+    /// Adds the given Element to the Node.
     ///
     /// - parameter element: The Element to be added.
     func add(element: Element) {
@@ -332,4 +332,12 @@ internal extension Node {
         element.index = index
     }
     
+    /// Adds given list of Elements to the Node.
+    ///
+    /// - parameter element: The list of Elements to be added.
+    func add(elements: [Element]) {
+        elements.forEach {
+            add(element: $0)
+        }
+    }
 }
