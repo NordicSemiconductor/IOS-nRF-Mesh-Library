@@ -34,7 +34,7 @@ public class MeshNetworkManager {
     public weak var delegate: MeshNetworkDelegate?
     /// The sender object should send PDUs created by the manager
     /// using any Bearer.
-    public var transmitter: Transmitter?
+    public weak var transmitter: Transmitter?
     
     // MARK: - Computed properties
     
@@ -207,6 +207,19 @@ public extension MeshNetworkManager {
     /// - parameter node:    The destination Node.
     func send(_ message: ConfigMessage, to node: Node) {
         send(message, to: node.unicastAddress)
+    }
+    
+    /// Sends Configuration Message to the given Node.
+    ///
+    /// If the `transporter` throws an error during sending, this error will be ignored.
+    ///
+    /// - parameter message: The message to be sent.
+    /// - parameter element: The destination Element.
+    func send(_ message: ConfigMessage, to element: Element) {
+        guard let _ = element.parentNode else {
+            return
+        }
+        send(message, to: element.unicastAddress)
     }
     
 }

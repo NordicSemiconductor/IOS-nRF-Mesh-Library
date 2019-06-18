@@ -87,7 +87,6 @@ internal class NetworkLayer {
         
         if multipleTimes {
             _ = Timer(timeInterval: TimeInterval.random(in: 0.050...0.300), repeats: false) { timer in
-                print("Retransmitting...")
                 try? self.networkManager.transmitter?.send(networkPdu.pdu, ofType: type)
                 timer.invalidate()
             }

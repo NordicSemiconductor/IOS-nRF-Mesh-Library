@@ -43,16 +43,17 @@ public extension MeshNetwork {
         }
     }
     
-    /// Returns the first found Node with given Unicast Address.
+    /// Returns the Node with given Unicast Address. The address may
+    /// be belong to any of the Node's Elements.
     ///
-    /// - parameter address: The Node's Unicast Address.
+    /// - parameter address: A Unicast Address to look for.
     /// - returns: The Node found, or `nil` if no such exists.
     func node(withAddress address: Address) -> Node? {
         guard address.isUnicast else {
             return nil
         }
         return nodes.first {
-            $0.unicastAddress == address
+            $0.hasAllocatedAddress(address)
         }
     }
     

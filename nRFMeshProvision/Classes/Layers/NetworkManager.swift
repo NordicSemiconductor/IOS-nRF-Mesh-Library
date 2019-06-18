@@ -64,7 +64,21 @@ internal class NetworkManager {
         accessLayer.send(message, to: destination, using: applicationKey)
     }
     
+    /// Encrypts the message with the Device Key and the first Network Key
+    /// known to the target device, and sends to the given destination address.
+    ///
+    /// This method does not send nor return PDUs to be sent. Instead,
+    /// for each created segment it calls transmitter's `send(:ofType)`,
+    /// which should send the PDU over the air. This is in order to support
+    /// retransmittion in case a packet was lost and needs to be sent again
+    /// after block acknowlegment was received.
+    ///
+    /// - parameter message:        The message to be sent.
+    /// - parameter destination:    The destination address.
     func send(_ configMessage: ConfigMessage, to destination: Address) {
-        
+        guard destination.isUnicast else {
+            return
+        }
+        accessLayer.send(configMessage, to: destination)
     }
 }

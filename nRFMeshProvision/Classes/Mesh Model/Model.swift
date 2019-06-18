@@ -71,11 +71,19 @@ public class Model: Codable {
     public required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         let modelIdString  = try container.decode(String.self, forKey: .modelId)
-        guard let modelId = UInt32(hex: modelIdString) else {
-            throw DecodingError.dataCorruptedError(forKey: .modelId, in: container,
-                                                   debugDescription: "Model ID must be 4-character hexadecimal string")
+        if modelIdString.count == 4 {
+            guard let modelId = UInt16(hex: modelIdString) else {
+                throw DecodingError.dataCorruptedError(forKey: .modelId, in: container,
+                                                       debugDescription: "Model ID must be 4-character hexadecimal string")
+            }
+            self.modelId = UInt32(modelId)
+        } else {
+            guard let modelId = UInt32(hex: modelIdString) else {
+                throw DecodingError.dataCorruptedError(forKey: .modelId, in: container,
+                                                       debugDescription: "Vendor Model ID must be 8-character hexadecimal string")
+            }
+            self.modelId = modelId
         }
-        self.modelId = modelId
         self.subscribe = try container.decode([String].self, forKey: .subscribe)
         if let publish = try container.decodeIfPresent(Publish.self, forKey: .publish) {
             self.publish = publish
@@ -85,7 +93,11 @@ public class Model: Codable {
     
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(modelId.hex, forKey: .modelId)
+        if isBluetoothSIGAssigned {
+            try container.encode(modelIdentifier.hex, forKey: .modelId)
+        } else {
+            try container.encode(modelId.hex, forKey: .modelId)
+        }
         try container.encode(subscribe, forKey: .subscribe)
         try container.encodeIfPresent(publish, forKey: .publish)
         try container.encode(bind, forKey: .bind)

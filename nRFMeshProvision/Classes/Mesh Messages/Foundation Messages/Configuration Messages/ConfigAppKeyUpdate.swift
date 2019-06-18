@@ -32,4 +32,8 @@ public struct ConfigAppKeyUpdate: ConfigAppKeyMessage {
         key = parameters.suffix(from: 3)
     }
     
+    public var isSegmented: Bool {
+        return true
+    }
+    
 }

@@ -95,15 +95,18 @@ internal class LowerTransportLayer {
         guard networkPdu.transportPdu.count > 1 else {
             return
         }
-        // Check, if the sequence number is greater than the one used last
-        // time by the source address.
-        let lastSequence = defaults.integer(forKey: networkPdu.source.hex)
-        let localSeqAuth = (UInt64(networkPdu.networkKey.ivIndex.index) << 24) | UInt64(lastSequence)
-        let receivedSeqAuth = (UInt64(networkPdu.networkKey.ivIndex.index) << 24) | UInt64(networkPdu.sequence)
-       
-        guard receivedSeqAuth > localSeqAuth else {
-            // Ignore that message.
-            return
+        let newSource = defaults.object(forKey: networkPdu.source.hex) == nil
+        if !newSource {
+            // Check, if the sequence number is greater than the one used last
+            // time by the source address.
+            let lastSequence = defaults.integer(forKey: networkPdu.source.hex)
+            let localSeqAuth = (UInt64(networkPdu.networkKey.ivIndex.index) << 24) | UInt64(lastSequence)
+            let receivedSeqAuth = (UInt64(networkPdu.networkKey.ivIndex.index) << 24) | UInt64(networkPdu.sequence)
+           
+            guard receivedSeqAuth > localSeqAuth else {
+                // Ignore that message.
+                return
+            }
         }
         // SeqAuth is valid, save the new sequence authentication value.
         defaults.set(networkPdu.sequence, forKey: networkPdu.source.hex)

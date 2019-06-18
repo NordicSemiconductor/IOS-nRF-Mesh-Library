@@ -34,14 +34,14 @@ internal extension UInt16 {
 internal extension UInt32 {
     
     init?(hex: String) {
-        guard hex.count == 4, let value = UInt32(hex, radix: 16) else {
+        guard hex.count == 8, let value = UInt32(hex, radix: 16) else {
             return nil
         }
         self = value
     }
     
     var hex: String {
-        return String(format: "%04X", self)
+        return String(format: "%08X", self)
     }
     
     init(data: Data) {

@@ -27,7 +27,7 @@ internal struct SegmentAcknowledgmentMessage: LowerTransportPdu {
     
     var transportPdu: Data {
         let octet0: UInt8 = opCode & 0x7F
-        let octet1 = (isOnBehalfOfLowPowerNode ? 0x80 : 0x00) | UInt8(segmentZero >> 5)
+        let octet1 = (isOnBehalfOfLowPowerNode ? 0x80 : 0x00) | UInt8(segmentZero >> 6)
         let octet2 = UInt8((segmentZero & 0x3F) << 2)
         return Data([octet0, octet1, octet2]) + upperTransportPdu
     }

@@ -14,6 +14,10 @@ public struct ConfigCompositionDataGet: ConfigMessage {
         return Data([page])
     }
     
+    public var isSegmented: Bool {
+        return false
+    }
+    
     /// Page number of the Composition Data to get.
     public let page: UInt8
     

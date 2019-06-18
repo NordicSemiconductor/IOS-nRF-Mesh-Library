@@ -37,6 +37,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             let meshNetwork = meshNetworkManager.meshNetwork!
             connection = NetworkConnection(to: meshNetwork)
             connection!.dataDelegate = meshNetworkManager
+            meshNetworkManager.transmitter = connection
             connection!.open()
         }
         
@@ -53,6 +54,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let meshNetwork = meshNetworkManager.meshNetwork!
         connection = NetworkConnection(to: meshNetwork)
         connection!.dataDelegate = meshNetworkManager
+        meshNetworkManager.transmitter = connection
         connection!.open()
     }
 }
@@ -63,8 +65,8 @@ extension MeshNetworkManager {
         return (UIApplication.shared.delegate as! AppDelegate).meshNetworkManager
     }
     
-    static var bearer: Bearer! {
-        return (UIApplication.shared.delegate as! AppDelegate).connection
-    }
+    //static var bearer: Bearer! {
+    //    return (UIApplication.shared.delegate as! AppDelegate).connection
+    //}
     
 }

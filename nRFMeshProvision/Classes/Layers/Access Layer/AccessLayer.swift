@@ -22,4 +22,8 @@ internal class AccessLayer {
         networkManager.upperTransportLayer.send(message, to: destination, using: applicationKey)
     }
     
+    func send(_ message: ConfigMessage, to destination: Address) {
+        networkManager.upperTransportLayer.send(message, to: destination)
+    }
+    
 }

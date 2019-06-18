@@ -69,6 +69,10 @@ public struct Page0: CompositionDataPage {
             + features.rawValue + elements.data
     }
     
+    public var isSegmented: Bool {
+        return true
+    }
+    
     /// This initializer constructs the Page 0 of Composition Data from
     /// the given Node.
     ///
