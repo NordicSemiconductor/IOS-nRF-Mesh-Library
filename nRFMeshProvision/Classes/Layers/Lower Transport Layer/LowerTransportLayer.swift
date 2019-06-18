@@ -308,7 +308,7 @@ internal class LowerTransportLayer {
         } else {
             let message = AccessMessage(fromUnsegmentedUpperTransportPdu: pdu, usingNetworkKey: networkKey)
             // The message will be retransmit twice (with the same sequence number).
-            try? self.networkManager.networkLayer.send(lowerTransportPdu: message, ofType: .networkPdu, withTtl: ttl)
+            try? self.networkManager.networkLayer.send(lowerTransportPdu: message, ofType: .networkPdu, withTtl: ttl, multipleTimes: true)
         }
     }
     
