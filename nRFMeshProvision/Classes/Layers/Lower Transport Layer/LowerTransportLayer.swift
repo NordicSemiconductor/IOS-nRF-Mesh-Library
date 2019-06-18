@@ -339,7 +339,9 @@ private extension LowerTransportLayer {
     /// - parameter ttl:        Initial Time To Leave (TTL) value.
     func sendAck(for segments: [SegmentedMessage?], usingNetworkKey networkKey: NetworkKey, withTtl ttl: UInt8) {
         let ack = SegmentAcknowledgmentMessage(for: segments)
-        acknowledgments[ack.destination] = ack
+        if segments.isComplete {
+            acknowledgments[ack.destination] = ack
+        }
         try? networkManager.networkLayer.send(lowerTransportPdu: ack, ofType: .networkPdu, withTtl: ttl)
     }
     
