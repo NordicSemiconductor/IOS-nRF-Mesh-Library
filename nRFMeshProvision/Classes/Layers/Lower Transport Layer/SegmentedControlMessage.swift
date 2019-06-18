@@ -53,3 +53,11 @@ internal struct SegmentedControlMessage: SegmentedMessage {
         networkKey = networkPdu.networkKey
     }
 }
+
+extension SegmentedControlMessage: CustomDebugStringConvertible {
+    
+    var debugDescription: String {
+        return "Segmented \(type) (\(source.hex)->\(destination.hex) for \(segmentZero) (\(segmentOffset)/\(lastSegmentNumber)): Op Code: \(opCode), 0x\(upperTransportPdu.hex)"
+    }
+    
+}

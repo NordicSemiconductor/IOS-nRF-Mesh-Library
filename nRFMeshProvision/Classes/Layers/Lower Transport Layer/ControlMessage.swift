@@ -53,5 +53,12 @@ internal struct ControlMessage: LowerTransportPdu {
                 return result + next.upperTransportPdu
             })
     }
+}
+
+extension ControlMessage: CustomDebugStringConvertible {
+    
+    var debugDescription: String {
+        return "\(type) (\(source.hex)->\(destination.hex)): Op Code: \(opCode), 0x\(upperTransportPdu.hex)"
+    }
     
 }

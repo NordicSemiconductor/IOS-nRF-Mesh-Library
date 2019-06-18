@@ -87,3 +87,11 @@ internal struct AccessMessage: LowerTransportPdu {
         self.networkKey = networkKey
     }
 }
+
+extension AccessMessage: CustomDebugStringConvertible {
+    
+    var debugDescription: String {
+        return "\(type) (\(source.hex)->\(destination.hex)): Seq: \(sequence), 0x\(upperTransportPdu.hex), MIC size: \(transportMicSize) bytes"
+    }
+    
+}

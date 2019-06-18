@@ -109,3 +109,11 @@ internal struct SegmentAcknowledgmentMessage: LowerTransportPdu {
         return blockAck == (1 << (lastSegmentNumber + 1)) - 1
     }
 }
+
+extension SegmentAcknowledgmentMessage: CustomDebugStringConvertible {
+    
+    var debugDescription: String {
+        return "ACK (\(source.hex)->\(destination.hex)) for SeqZero: \(segmentZero) with: 0x\(blockAck.hex)" 
+    }
+    
+}

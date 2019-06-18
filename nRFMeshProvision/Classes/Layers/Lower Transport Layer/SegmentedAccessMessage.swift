@@ -86,3 +86,11 @@ internal struct SegmentedAccessMessage: SegmentedMessage {
         self.upperTransportPdu = segment
     }
 }
+
+extension SegmentedAccessMessage: CustomDebugStringConvertible {
+    
+    var debugDescription: String {
+        return "Segmented \(type) (\(source.hex)->\(destination.hex) for \(segmentZero) (\(segmentOffset)/\(lastSegmentNumber)): Seq: \(sequence), 0x\(upperTransportPdu.hex)"
+    }
+    
+}

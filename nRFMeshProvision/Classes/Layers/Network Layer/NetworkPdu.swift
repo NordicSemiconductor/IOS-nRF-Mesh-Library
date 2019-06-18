@@ -187,7 +187,7 @@ private extension LowerTransportPduType {
 extension NetworkPdu: CustomDebugStringConvertible {
     
     var debugDescription: String {
-        return "Network PDU: \(type) from 0x\(source.hex) to 0x\(destination.hex), seq: \(sequence), ttl: \(ttl)"
+        return "Network PDU (\(source.hex)->\(destination.hex)): \(type), seq: \(sequence), ttl: \(ttl)"
     }
     
 }
