@@ -16,7 +16,7 @@ extension Data {
     ///
     /// - parameter offset: The offset from where the bytes are to be read.
     /// - returns: The value of type of the return type.
-    func convert<R>(offset: Int = 0) -> R {
+    func read<R: FixedWidthInteger>(fromOffset offset: Int = 0) -> R {
         let length = MemoryLayout<R>.size
         
         #if swift(>=5.0)
@@ -26,6 +26,10 @@ extension Data {
         #endif
     }
     
+    func readBigEndian<R: FixedWidthInteger>(fromOffset offset: Int = 0) -> R {
+        let r: R = read(fromOffset: offset)
+        return r.bigEndian
+    }
 }
 
 // Source: http://stackoverflow.com/a/42241894/2115352

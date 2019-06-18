@@ -37,7 +37,7 @@ public class Element: Codable {
             return nil
         }
         // Is Location valid?
-        let rawValue = CFSwapInt16LittleToHost(compositionData.convert(offset: offset))
+        let rawValue: UInt16 = compositionData.read(fromOffset: offset)
         guard let location = Location(rawValue: rawValue) else {
             return nil
         }
@@ -66,13 +66,13 @@ public class Element: Codable {
         // Read models.
         self.models = []
         for o in stride(from: offset, to: offset + sigModelsByteCount, by: 2) {
-            let modelId = CFSwapInt16LittleToHost(compositionData.convert(offset: o))
+            let modelId: UInt16 = compositionData.read(fromOffset: o)
             add(model: Model(sigModelId: modelId))
         }
         offset += sigModelsByteCount
         
         for o in stride(from: offset, to: offset + vendorModelsByteCount, by: 4) {
-            let modelId = CFSwapInt32LittleToHost(compositionData.convert(offset: o))
+            let modelId: UInt32 = compositionData.read(fromOffset: o)
             add(model: Model(vendorModelId: modelId))
         }
         offset += vendorModelsByteCount

@@ -31,7 +31,7 @@ public struct ConfigAppKeyStatus: ConfigAppKeyMessage {
         case invalidBinding = 0x11
     }
     
-    public let opCode: UInt32 = 0x8003
+    public static let opCode: UInt32 = 0x8003
     public var parameters: Data? {
         return Data([status.rawValue]) + encodeNetKeyAndAppKeyIndex()
     }

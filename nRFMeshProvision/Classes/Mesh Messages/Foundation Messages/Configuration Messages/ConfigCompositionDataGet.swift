@@ -9,7 +9,7 @@ import Foundation
 
 public struct ConfigCompositionDataGet: ConfigMessage {
     
-    public let opCode: UInt32 = 0x8008
+    public static let opCode: UInt32 = 0x8008
     public var parameters: Data? {
         return Data([page])
     }

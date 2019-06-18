@@ -11,6 +11,16 @@ import nRFMeshProvision
 
 class ConfigurationViewController: UITableViewController {
     var node: Node!
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        let manager = MeshNetworkManager.instance
+        manager.delegate = self
+        if !node.configComplete {
+            manager.send(ConfigCompositionDataGet(), to: node)
+        }
+    }
 
     // MARK: - Table view data source
 
@@ -121,6 +131,22 @@ class ConfigurationViewController: UITableViewController {
         tableView.deselectRow(at: indexPath, animated: true)
     }
 
+}
+
+extension ConfigurationViewController: MeshNetworkDelegate {
+    
+    func meshNetwork(_ meshNetwork: MeshNetwork, didDeliverMessage message: MeshMessage, from source: Address) {
+        if let compositionDataStatus = message as? ConfigCompositionDataStatus,
+            let page0 = compositionDataStatus.page as? Page0 {
+            page0.apply(to: node)
+            
+            if !MeshNetworkManager.instance.save() {
+                self.presentAlert(title: "Error", message: "Mesh configuration could not be saved.")
+            }
+            tableView.reloadData()
+        }
+    }
+    
 }
 
 private extension IndexPath {

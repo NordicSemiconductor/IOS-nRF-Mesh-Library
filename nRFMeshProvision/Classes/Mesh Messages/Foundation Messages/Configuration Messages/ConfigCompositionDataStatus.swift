@@ -15,7 +15,7 @@ public protocol CompositionDataPage {
 }
 
 public struct ConfigCompositionDataStatus: ConfigMessage {
-    public let opCode: UInt32 = 0x02
+    public static let opCode: UInt32 = 0x02
     public var parameters: Data? {
         return page?.parameters
     }
@@ -96,11 +96,11 @@ public struct Page0: CompositionDataPage {
             return nil
         }
         page = 0
-        companyIdentifier = CFSwapInt16LittleToHost(parameters.convert(offset: 1))
-        productIdentifier = CFSwapInt16LittleToHost(parameters.convert(offset: 3))
-        versionIdentifier = CFSwapInt16LittleToHost(parameters.convert(offset: 5))
-        minimumNumberOfReplayProtectionList = CFSwapInt16LittleToHost(parameters.convert(offset: 7))
-        features = NodeFeatures(rawValue: CFSwapInt16LittleToHost(parameters.convert(offset: 9)))
+        companyIdentifier = parameters.read(fromOffset: 1)
+        productIdentifier = parameters.read(fromOffset: 3)
+        versionIdentifier = parameters.read(fromOffset: 5)
+        minimumNumberOfReplayProtectionList = parameters.read(fromOffset: 7)
+        features = NodeFeatures(rawValue: parameters.read(fromOffset: 9))
         
         var readElements: [Element] = []
         var offset = 11
@@ -131,6 +131,8 @@ public struct Page0: CompositionDataPage {
         node.elements.removeAll()
         // And add the Elements received.
         node.add(elements: elements)
+        // Mark the Configuration as complete. No further Composition Data will be requested.
+        node.configComplete = true
     }
 }
 

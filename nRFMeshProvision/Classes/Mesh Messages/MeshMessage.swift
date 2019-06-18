@@ -26,7 +26,7 @@ public enum MeshMessageSecurity {
 
 public protocol MeshMessage {
     /// The message Op Code.
-    var opCode: UInt32 { get }
+    static var opCode: UInt32 { get }
     /// Message parameters as Data.
     var parameters: Data? { get }
     /// Returns whether the message should be sent or has been sent using
@@ -73,6 +73,8 @@ internal extension MeshMessage {
     
     /// The Access Layer PDU data that will be sent.
     var accessPdu: Data {
+        let opCode = Self.opCode
+        
         // Op Code 0b01111111 is invalid. We will ignore this case here now and send as single byte OpCode.
         if opCode < 0x80 {
             return Data([UInt8(opCode & 0xFF)]) + parameters

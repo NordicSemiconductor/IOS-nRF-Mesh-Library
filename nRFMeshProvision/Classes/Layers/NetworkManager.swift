@@ -19,9 +19,6 @@ internal class NetworkManager {
     
     // MARK: - Computed properties
     
-    var delegate: MeshNetworkDelegate? {
-        return meshNetworkManager.delegate
-    }
     var transmitter: Transmitter? {
         return meshNetworkManager.transmitter
     }
@@ -80,5 +77,9 @@ internal class NetworkManager {
             return
         }
         accessLayer.send(configMessage, to: destination)
+    }
+    
+    func notifyAbout(_ message: MeshMessage, from source: Address) {
+        meshNetworkManager.delegate?.meshNetwork(meshNetwork!, didDeliverMessage: message, from: source)
     }
 }

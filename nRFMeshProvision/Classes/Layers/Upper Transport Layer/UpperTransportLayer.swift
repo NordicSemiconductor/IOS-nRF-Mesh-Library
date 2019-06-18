@@ -51,6 +51,9 @@ internal class UpperTransportLayer {
     ///                          valid address.
     /// - parameter applicationKey: The Application Key to sign the message with.
     func send(_ message: MeshMessage, to destination: Address, using applicationKey: ApplicationKey) {
+        guard destination.isValidAddress else {
+            return
+        }
         guard let source = meshNetwork.localProvisioner?.unicastAddress else {
             return
         }

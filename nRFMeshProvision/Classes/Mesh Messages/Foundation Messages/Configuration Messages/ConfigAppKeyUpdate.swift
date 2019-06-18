@@ -8,7 +8,7 @@
 import Foundation
 
 public struct ConfigAppKeyUpdate: ConfigAppKeyMessage {
-    public let opCode: UInt32 = 0x01
+    public static let opCode: UInt32 = 0x01
     public var parameters: Data? {
         return encodeNetKeyAndAppKeyIndex() + key
     }
@@ -29,7 +29,7 @@ public struct ConfigAppKeyUpdate: ConfigAppKeyMessage {
             return nil
         }
         (networkKeyIndex, applicationKeyIndex) = ConfigAppKeyUpdate.decodeNetKeyAndAppKeyIndex(from: parameters, at: 0)
-        key = parameters.suffix(from: 3)
+        key = parameters.subdata(in: 3..<19)
     }
     
     public var isSegmented: Bool {

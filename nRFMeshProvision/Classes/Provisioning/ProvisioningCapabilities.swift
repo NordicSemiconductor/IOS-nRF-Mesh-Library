@@ -29,13 +29,13 @@ public struct ProvisioningCapabilities {
         guard data.count == 12 && data[0] == ProvisioningPduType.capabilities.type else {
             return nil
         }
-        numberOfElements = data.convert(offset: 1)
+        numberOfElements = data.read(fromOffset: 1)
         algorithms       = Algorithms(data: data, offset: 2)
         publicKeyType    = PublicKeyType(data: data, offset: 4)
         staticOobType    = StaticOobType(data: data, offset: 5)
-        outputOobSize    = data.convert(offset: 6)
+        outputOobSize    = data.read(fromOffset: 6)
         outputOobActions = OutputOobActions(data: data, offset: 7)
-        inputOobSize     = data.convert(offset: 9)
+        inputOobSize     = data.read(fromOffset: 9)
         inputOobActions  = InputOobActions(data: data, offset: 10)
     }
 }

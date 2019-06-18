@@ -130,6 +130,7 @@
 		52F6AD6622B3AF2700F0D7DF /* ConfigCompositionDataGet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52F6AD6522B3AF2700F0D7DF /* ConfigCompositionDataGet.swift */; };
 		52F6AD6822B3B16800F0D7DF /* ConfigCompositionDataStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52F6AD6722B3B16800F0D7DF /* ConfigCompositionDataStatus.swift */; };
 		52F6AD6A22B3B1A900F0D7DF /* ConfigAppKeyUpdate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52F6AD6922B3B1A900F0D7DF /* ConfigAppKeyUpdate.swift */; };
+		52F6AD6E22B8F8EA00F0D7DF /* AccessPdu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52F6AD6D22B8F8EA00F0D7DF /* AccessPdu.swift */; };
 		76AD7DBB6F78223071CAB41C3AE42393 /* MeshConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 045D235D97EFC49E1F2183DAE067E868 /* MeshConstants.swift */; };
 		931A62151708A6FCE40E1EE898EEB7A5 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CB4607EFCA7C5F75397649E792E2AFCB /* Foundation.framework */; };
 		960FB84461FE8AC810DBA945C761C9ED /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CB4607EFCA7C5F75397649E792E2AFCB /* Foundation.framework */; };
@@ -304,6 +305,7 @@
 		52F6AD6522B3AF2700F0D7DF /* ConfigCompositionDataGet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigCompositionDataGet.swift; sourceTree = "<group>"; };
 		52F6AD6722B3B16800F0D7DF /* ConfigCompositionDataStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigCompositionDataStatus.swift; sourceTree = "<group>"; };
 		52F6AD6922B3B1A900F0D7DF /* ConfigAppKeyUpdate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigAppKeyUpdate.swift; sourceTree = "<group>"; };
+		52F6AD6D22B8F8EA00F0D7DF /* AccessPdu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccessPdu.swift; sourceTree = "<group>"; };
 		573AFBF1BDAB242832B4146C926392C7 /* blowfish.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = blowfish.h; path = "include-ios/openssl/blowfish.h"; sourceTree = "<group>"; };
 		575A90FFDDE767E0A52A6ABDC699E9B5 /* dsa.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = dsa.h; path = "include-ios/openssl/dsa.h"; sourceTree = "<group>"; };
 		57E13D43B8F7A9E973DAAF745860C9AA /* Pods-nRFMeshProvision_Tests-acknowledgements.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-nRFMeshProvision_Tests-acknowledgements.plist"; sourceTree = "<group>"; };
@@ -689,6 +691,7 @@
 			isa = PBXGroup;
 			children = (
 				52DF5DA2229E6EF800C297C1 /* AccessLayer.swift */,
+				52F6AD6D22B8F8EA00F0D7DF /* AccessPdu.swift */,
 			);
 			path = "Access Layer";
 			sourceTree = "<group>";
@@ -1133,6 +1136,7 @@
 				5283529A2282C55B0097B949 /* PBGattBearer.swift in Sources */,
 				5274B75522A161D1008450BC /* SegmentAcknowledgmentMessage.swift in Sources */,
 				2545014E9EC8A64DE403DC5863089112 /* OpenSSLHelper.m in Sources */,
+				52F6AD6E22B8F8EA00F0D7DF /* AccessPdu.swift in Sources */,
 				528352AE228302860097B949 /* BaseGattProxyBearer.swift in Sources */,
 				528AB9F2228C4F3E000BE9DC /* IvIndex.swift in Sources */,
 				5283524C2276F53A0097B949 /* Key.swift in Sources */,

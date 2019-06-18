@@ -8,9 +8,7 @@
 import Foundation
 
 internal struct UpperTransportPdu {
-    /// Source Address. This is set to `nil` for outgoing messages,
-    /// where the Network Layer will set the local Provisioner's
-    /// Unicast Address as source address.
+    /// Source Address.
     let source: Address
     /// Destination Address.
     let destination: Address
@@ -131,12 +129,20 @@ internal struct UpperTransportPdu {
                 }
             }
         } else {
-            if let node = meshNetwork.node(withAddress: accessMessage.destination) {
+            if let node = meshNetwork.node(withAddress: accessMessage.source) {
                 let deviceKey = node.deviceKey
                 return UpperTransportPdu(fromLowerTransportAccessMessage: accessMessage, usingKey: deviceKey)
             }
         }
         return nil
+    }
+    
+}
+
+extension UpperTransportPdu: CustomDebugStringConvertible {
+    
+    var debugDescription: String {
+        return "Upper Transport PDU (\(source.hex)->\(destination.hex)): Seq: \(sequence), 0x\(accessPdu.hex), MIC size: \(transportMicSize) bytes"
     }
     
 }

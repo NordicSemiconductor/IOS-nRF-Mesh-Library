@@ -44,7 +44,7 @@ public extension Dictionary where Key == String, Value == Any {
             return nil
         }
         
-        let rawValue: UInt16 = data.convert(offset: 16)
+        let rawValue: UInt16 = data.read(fromOffset: 16)
         return OobInformation(rawValue: rawValue)
     }
     

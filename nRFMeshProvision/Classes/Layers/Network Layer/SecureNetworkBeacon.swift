@@ -33,7 +33,7 @@ internal struct SecureNetworkBeacon: BeaconPdu {
         keyRefreshFlag = pdu[1] & 0x01 != 0
         ivUpdateActive = pdu[1] & 0x02 != 0
         networkId = pdu.subdata(in: 2..<10)
-        ivIndex = CFSwapInt32BigToHost(pdu.convert(offset: 10))
+        ivIndex = CFSwapInt32BigToHost(pdu.read(fromOffset: 10))
         
         // Authenticate beacon using given Network Key.
         let helper = OpenSSLHelper()

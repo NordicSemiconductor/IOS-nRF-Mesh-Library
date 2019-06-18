@@ -18,7 +18,7 @@ public protocol MeshNetworkDelegate: class {
     ///   - message:     The received message.
     ///   - source:      The Unicast Address of the Element from which
     ///                  the message was sent.
-    func meshNetwork(_ meshNetwork: MeshNetwork, didDeliverMessage message: MeshMessage, from source: MeshAddress)
+    func meshNetwork(_ meshNetwork: MeshNetwork, didDeliverMessage message: MeshMessage, from source: Address)
     
 }
 

@@ -9,7 +9,7 @@ import Foundation
 
 public struct ConfigAppKeyAdd: ConfigAppKeyMessage {
     
-    public let opCode: UInt32 = 0x00
+    public static let opCode: UInt32 = 0x00
     public var parameters: Data? {
         return encodeNetKeyAndAppKeyIndex() + key
     }
@@ -34,7 +34,7 @@ public struct ConfigAppKeyAdd: ConfigAppKeyMessage {
             return nil
         }
         (networkKeyIndex, applicationKeyIndex) = ConfigAppKeyAdd.decodeNetKeyAndAppKeyIndex(from: parameters, at: 0)
-        key = parameters.suffix(from: 3)
+        key = parameters.subdata(in: 3..<19)
     }
     
 }
