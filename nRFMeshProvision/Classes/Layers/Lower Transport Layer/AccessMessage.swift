@@ -36,6 +36,9 @@ internal struct AccessMessage: LowerTransportPdu {
     /// Creates an Access Message from a Network PDU that contains
     /// an unsegmented access message. If the PDU is invalid, the
     /// init returns `nil`.
+    ///
+    /// - parameter networkPdu: The received Network PDU with unsegmented
+    ///                         Upper Transport message.
     init?(fromUnsegmentedPdu networkPdu: NetworkPdu) {
         let data = networkPdu.transportPdu
         guard data.count >= 6 && data[0] & 0x80 == 0 else {
@@ -77,6 +80,10 @@ internal struct AccessMessage: LowerTransportPdu {
             })
     }
     
+    /// Creates an Access Message object from the Upper Transport PDU.
+    ///
+    /// - parameter pdu: The Upper Transport PDU.
+    /// - parameter networkKey: The Network Key to encrypt the PCU with.
     init(fromUnsegmentedUpperTransportPdu pdu: UpperTransportPdu, usingNetworkKey networkKey: NetworkKey) {
         self.aid = pdu.aid
         self.upperTransportPdu = pdu.transportPdu

@@ -23,6 +23,12 @@ internal struct ControlMessage: LowerTransportPdu {
     
     let type: LowerTransportPduType = .controlMessage
     
+    /// Creates an Control Message from a Network PDU that contains
+    /// an unsegmented control message. If the PDU is invalid, the
+    /// init returns `nil`.
+    ///
+    /// - parameter networkPdu: The received Network PDU with unsegmented
+    ///                         Upper Transport message.
     init?(fromNetworkPdu networkPdu: NetworkPdu) {
         let data = networkPdu.transportPdu
         guard data.count >= 5, data[0] & 0x80 == 0 else {
@@ -39,6 +45,9 @@ internal struct ControlMessage: LowerTransportPdu {
         networkKey = networkPdu.networkKey
     }
     
+    /// Creates an Control Message object from the given list of segments.
+    ///
+    /// - parameter segments: List of ordered segments.
     init(from segments: [SegmentedControlMessage]) {
         // Assuming all segments have the same AID, source and destination addresses and TransMIC.
         let segment = segments.first!

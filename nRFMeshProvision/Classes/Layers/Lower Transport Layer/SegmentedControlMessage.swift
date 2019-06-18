@@ -31,6 +31,12 @@ internal struct SegmentedControlMessage: SegmentedMessage {
     
     let type: LowerTransportPduType = .controlMessage
     
+    /// Creates a Segment of an Control Message from a Network PDU that contains
+    /// a segmented control message. If the PDU is invalid, the
+    /// init returns `nil`.
+    ///
+    /// - parameter networkPdu: The received Network PDU with segmented
+    ///                         Upper Transport message.
     init?(fromSegment networkPdu: NetworkPdu) {
         let data = networkPdu.transportPdu
         guard data.count >= 5, data[0] & 0x80 != 0 else {

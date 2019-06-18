@@ -41,6 +41,12 @@ internal struct SegmentedAccessMessage: SegmentedMessage {
     
     let type: LowerTransportPduType = .accessMessage
     
+    /// Creates a Segment of an Access Message from a Network PDU that contains
+    /// a segmented access message. If the PDU is invalid, the
+    /// init returns `nil`.
+    ///
+    /// - parameter networkPdu: The received Network PDU with segmented
+    ///                         Upper Transport message.
     init?(fromSegmentPdu networkPdu: NetworkPdu) {
         let data = networkPdu.transportPdu
         guard data.count >= 5, data[0] & 0x80 != 0 else {
@@ -69,6 +75,12 @@ internal struct SegmentedAccessMessage: SegmentedMessage {
         networkKey = networkPdu.networkKey
     }
 
+    /// Creates a Segment of an Access Message object from the Upper Transport PDU
+    /// with given segment offset.
+    ///
+    /// - parameter pdu: The segmented Upper Transport PDU.
+    /// - parameter networkKey: The Network Key to encrypt the PCU with.
+    /// - parameter offset: The segment offset.
     init(fromUpperTransportPdu pdu: UpperTransportPdu, usingNetworkKey networkKey: NetworkKey, offset: UInt8) {
         self.aid = pdu.aid
         self.source = pdu.source
