@@ -19,7 +19,7 @@ internal struct SegmentAcknowledgmentMessage: LowerTransportPdu {
     /// on behalf of a Low Power node.
     let isOnBehalfOfLowPowerNode: Bool
     /// 13 least significant bits of SeqAuth.
-    let segmentZero: UInt16
+    let sequenceZero: UInt16
     /// Block acknowledgment for segments, bit field.
     let blockAck: UInt32
     /// This PDU contains the `blockAck` as `Data`.
@@ -27,8 +27,8 @@ internal struct SegmentAcknowledgmentMessage: LowerTransportPdu {
     
     var transportPdu: Data {
         let octet0: UInt8 = opCode & 0x7F
-        let octet1 = (isOnBehalfOfLowPowerNode ? 0x80 : 0x00) | UInt8(segmentZero >> 6)
-        let octet2 = UInt8((segmentZero & 0x3F) << 2)
+        let octet1 = (isOnBehalfOfLowPowerNode ? 0x80 : 0x00) | UInt8(sequenceZero >> 6)
+        let octet2 = UInt8((sequenceZero & 0x3F) << 2)
         return Data([octet0, octet1, octet2]) + upperTransportPdu
     }
     
@@ -48,7 +48,7 @@ internal struct SegmentAcknowledgmentMessage: LowerTransportPdu {
             return nil
         }
         isOnBehalfOfLowPowerNode = (data[1] & 0x80) != 0
-        segmentZero = (UInt16(data[1] & 0x7F) << 6) | UInt16(data[2] >> 2)
+        sequenceZero = (UInt16(data[1] & 0x7F) << 6) | UInt16(data[2] >> 2)
         blockAck = CFSwapInt32BigToHost(data.convert(offset: 3))
         upperTransportPdu = Data() + blockAck.bigEndian
         
@@ -65,7 +65,7 @@ internal struct SegmentAcknowledgmentMessage: LowerTransportPdu {
         opCode = 0x00
         isOnBehalfOfLowPowerNode = false // Friendship is not supported.
         let segment = segments.first { $0 != nil }!!
-        segmentZero = segment.segmentZero
+        sequenceZero = segment.sequenceZero
         
         var ack: UInt32 = 0
         segments.forEach {
@@ -94,10 +94,10 @@ internal struct SegmentAcknowledgmentMessage: LowerTransportPdu {
     
     /// Returns whether all segments have been received.
     ///
-    /// - parameter number: The total number of segments expected.
+    /// - parameter segments: The array of segments received and expected.
     /// - returns: `True` if all segments were received, `false` otherwise.
-    func areAllSegmentsReceived(of number: UInt8) -> Bool {
-        return areAllSegmentsReceived(lastSegmentNumber: number - 1)
+    func areAllSegmentsReceived(of segments: [SegmentedMessage?]) -> Bool {
+        return areAllSegmentsReceived(lastSegmentNumber: UInt8(segments.count - 1))
     }
     
     /// Returns whether all segments have been received.
@@ -113,7 +113,7 @@ internal struct SegmentAcknowledgmentMessage: LowerTransportPdu {
 extension SegmentAcknowledgmentMessage: CustomDebugStringConvertible {
     
     var debugDescription: String {
-        return "ACK (\(source.hex)->\(destination.hex)) for SeqZero: \(segmentZero) with: 0x\(blockAck.hex)" 
+        return "ACK (\(source.hex)->\(destination.hex)) for SeqZero: \(sequenceZero) with Block ACK: 0x\(blockAck.hex)" 
     }
     
 }

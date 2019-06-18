@@ -15,7 +15,7 @@ internal struct SegmentedControlMessage: SegmentedMessage {
     /// Message Op Code.
     let opCode: UInt8
     
-    let segmentZero: UInt16
+    let sequenceZero: UInt16
     let segmentOffset: UInt8
     let lastSegmentNumber: UInt8
     
@@ -23,8 +23,8 @@ internal struct SegmentedControlMessage: SegmentedMessage {
     
     var transportPdu: Data {
         let octet0: UInt8 = 0x80 | (opCode & 0x7F) // SEG = 1
-        let octet1 = UInt8(segmentZero >> 5)
-        let octet2 = UInt8((segmentZero & 0x3F) << 2) | (segmentOffset >> 3)
+        let octet1 = UInt8(sequenceZero >> 5)
+        let octet2 = UInt8((sequenceZero & 0x3F) << 2) | (segmentOffset >> 3)
         let octet3 = ((segmentOffset & 0x07) << 5) | (lastSegmentNumber & 0x1F)
         return Data([octet0, octet1, octet2, octet3]) + upperTransportPdu
     }
@@ -46,7 +46,7 @@ internal struct SegmentedControlMessage: SegmentedMessage {
         guard opCode != 0x00 else {
             return nil
         }
-        segmentZero = (UInt16(data[1] & 0x7F) << 6) | UInt16(data[2] >> 2)
+        sequenceZero = (UInt16(data[1] & 0x7F) << 6) | UInt16(data[2] >> 2)
         segmentOffset = ((data[2] & 0x03) << 3) | ((data[3] & 0xE0) >> 5)
         lastSegmentNumber = data[3] & 0x1F
         guard segmentOffset <= lastSegmentNumber else {
@@ -63,7 +63,7 @@ internal struct SegmentedControlMessage: SegmentedMessage {
 extension SegmentedControlMessage: CustomDebugStringConvertible {
     
     var debugDescription: String {
-        return "Segmented \(type) (\(source.hex)->\(destination.hex) for \(segmentZero) (\(segmentOffset)/\(lastSegmentNumber)): Op Code: \(opCode), 0x\(upperTransportPdu.hex)"
+        return "Segmented \(type) (\(source.hex)->\(destination.hex)) for SeqZero: \(sequenceZero) (\(segmentOffset)/\(lastSegmentNumber)), Op Code: \(opCode), 0x\(upperTransportPdu.hex)"
     }
     
 }

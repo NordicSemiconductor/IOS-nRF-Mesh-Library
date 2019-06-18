@@ -9,7 +9,7 @@ import Foundation
 
 internal protocol SegmentedMessage: LowerTransportPdu {
     /// 13 least significant bits of SeqAuth.
-    var segmentZero: UInt16 { get }
+    var sequenceZero: UInt16 { get }
     /// This field is set to the segment number (zero-based)
     /// of the segment m of this Upper Transport PDU.
     var segmentOffset: UInt8 { get }

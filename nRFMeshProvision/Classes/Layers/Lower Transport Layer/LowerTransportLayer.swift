@@ -29,7 +29,7 @@ internal class LowerTransportLayer {
     /// they are sent for processing to higher layer.
     ///
     /// The key consists of 16 bits of source address in 2 most significant bytes
-    /// and `segmentZero` field in 13 least significant bits.
+    /// and `sequenceZero` field in 13 least significant bits.
     /// See `UInt32(keyFor:segment)` below.
     var incompleteSegments: [UInt32 : [SegmentedMessage?]]
     /// This map contains Segment Acknowlegment Messages of completed messages.
@@ -47,8 +47,8 @@ internal class LowerTransportLayer {
     /// After that time the segments are discarded.
     ///
     /// The key consists of 16 bits of source address in 2 most significant bytes
-    /// and `segmentZero` field in 13 least significant bits.
-    /// See `UInt32(keyFor:segmentZero)` below.
+    /// and `sequenceZero` field in 13 least significant bits.
+    /// See `UInt32(keyFor:sequenceZero)` below.
     var incompleteTimers: [UInt32 : Timer]
     /// The map of acknowledgment timers. After receiving a segment targetting
     /// any of the Unicast Addresses of one of the Elements of the local Node, a
@@ -57,20 +57,20 @@ internal class LowerTransportLayer {
     /// has been completed.
     ///
     /// The key consists of 16 bits of source address in 2 most significant bytes
-    /// and `segmentZero` field in 13 least significant bits.
-    /// See `UInt32(keyFor:segmentZero)` below.
+    /// and `sequenceZero` field in 13 least significant bits.
+    /// See `UInt32(keyFor:sequenceZero)` below.
     var acknowledgmentTimers: [UInt32 : Timer]
     
     /// The map of outgoing segmented messages.
     ///
-    /// The key is the `segmentZero` of the message.
+    /// The key is the `sequenceZero` of the message.
     var outgoingSegments: [UInt16: [SegmentedMessage?]]
     /// The map of segment transmission timers. A segment transmission timer
-    /// for a Segmented Message with `segmentZero` is started whenever such
+    /// for a Segmented Message with `sequenceZero` is started whenever such
     /// message is sent to a Unicast Address. After the timer expires, the
     /// layer will resend all non-confirmed segments and reset the timer.
     ///
-    /// The key is the `segmentZero` of the message.
+    /// The key is the `sequenceZero` of the message.
     var segmentTransmissionTimers: [UInt16 : Timer]
     
     init(_ networkManager: NetworkManager) {
@@ -138,7 +138,7 @@ internal class LowerTransportLayer {
                     } else {
                         // If the received segment comes from an already completed and
                         // acknowledged message, send the same ACK immediatelly.
-                        if let lastAck = acknowledgments[segment.source], lastAck.segmentZero == segment.segmentZero {
+                        if let lastAck = acknowledgments[segment.source], lastAck.sequenceZero == segment.sequenceZero {
                             if let provisionerNode = meshNetwork.localProvisioner?.node {
                                 let ttl = networkPdu.ttl > 0 ? provisionerNode.defaultTTL ?? defaultTtl : 0
                                 try? networkManager.networkLayer.send(lowerTransportPdu: lastAck, ofType: .networkPdu, withTtl: ttl)
@@ -153,7 +153,7 @@ internal class LowerTransportLayer {
                         
                         // If a message is composed of multiple segments, they all need to
                         // be received before it can be processed.
-                        let key = UInt32(keyFor: networkPdu.source, segmentZero: segment.segmentZero)
+                        let key = UInt32(keyFor: networkPdu.source, sequenceZero: segment.sequenceZero)
                         if incompleteSegments[key] == nil {
                             incompleteSegments[key] = Array<SegmentedMessage?>(repeating: nil, count: segment.count)
                         }
@@ -170,13 +170,13 @@ internal class LowerTransportLayer {
                             // If the access message was targetting directly the local Provisioner...
                             if let provisionerNode = meshNetwork.localProvisioner?.node,
                                 networkPdu.destination == provisionerNode.unicastAddress {
-                                // ...send the ACK that all segments were received...
-                                let ttl = networkPdu.ttl > 0 ? provisionerNode.defaultTTL ?? defaultTtl : 0
-                                sendAck(for: allSegments, usingNetworkKey: networkPdu.networkKey, withTtl: ttl)
-                                
-                                // ...and invalidate timers.
+                                // ...invalidate timers...
                                 incompleteTimers.removeValue(forKey: key)?.invalidate()
                                 acknowledgmentTimers.removeValue(forKey: key)?.invalidate()
+                                
+                                // ...and send the ACK that all segments were received.
+                                let ttl = networkPdu.ttl > 0 ? provisionerNode.defaultTTL ?? defaultTtl : 0
+                                sendAck(for: allSegments, usingNetworkKey: networkPdu.networkKey, withTtl: ttl)
                             }
                             
                             let accessMessage = AccessMessage(fromSegments: allSegments)
@@ -191,7 +191,7 @@ internal class LowerTransportLayer {
                             // If the Lower Transport Layer receives any segment while the incomplete
                             // timer is active, the timer shall be restarted.
                             incompleteTimers[key]?.invalidate()
-                            incompleteTimers[key] = Timer(timeInterval: defaultIncompleteTimerInterval, repeats: false) { _ in
+                            incompleteTimers[key] = Timer.scheduledTimer(withTimeInterval: defaultIncompleteTimerInterval, repeats: false) { _ in
                                 self.incompleteTimers.removeValue(forKey: key)?.invalidate()
                                 self.acknowledgmentTimers.removeValue(forKey: key)?.invalidate()
                                 self.incompleteSegments.removeValue(forKey: key)
@@ -200,7 +200,7 @@ internal class LowerTransportLayer {
                             // timer is inactive, it shall restart the timer. Active timer should not be restarted.
                             if acknowledgmentTimers[key] == nil {
                                 let ttl = provisionerNode.defaultTTL ?? self.defaultTtl
-                                acknowledgmentTimers[key] = Timer(timeInterval: 0.150 + Double(ttl) * 0.050, repeats: false) { _ in
+                                acknowledgmentTimers[key] = Timer.scheduledTimer(withTimeInterval: 0.150 + Double(ttl) * 0.050, repeats: false) { _ in
                                     let ttl = networkPdu.ttl > 0 ? ttl : 0
                                     self.sendAck(for: self.incompleteSegments[key]!, usingNetworkKey: networkPdu.networkKey, withTtl: ttl)
                                     self.acknowledgmentTimers.removeValue(forKey: key)?.invalidate()
@@ -216,20 +216,20 @@ internal class LowerTransportLayer {
             switch opCode {
             case 0x00:
                 if let ack = SegmentAcknowledgmentMessage(fromNetworkPdu: networkPdu) {
-                    guard outgoingSegments[ack.segmentZero] != nil else {
+                    guard outgoingSegments[ack.sequenceZero] != nil else {
                         return
                     }
-                    for index in 0..<outgoingSegments[ack.segmentZero]!.count {
+                    for index in 0..<outgoingSegments[ack.sequenceZero]!.count {
                         if ack.isSegmentReceived(index) {
-                            outgoingSegments[ack.segmentZero]![index] = nil
+                            outgoingSegments[ack.sequenceZero]![index] = nil
                         }
                     }
                     
-                    segmentTransmissionTimers.removeValue(forKey: ack.segmentZero)?.invalidate()
-                    if outgoingSegments[ack.segmentZero]!.isComplete {
-                        outgoingSegments.removeValue(forKey: ack.segmentZero)
+                    segmentTransmissionTimers.removeValue(forKey: ack.sequenceZero)?.invalidate()
+                    if outgoingSegments[ack.sequenceZero]!.isComplete {
+                        outgoingSegments.removeValue(forKey: ack.sequenceZero)
                     } else {
-                        sendSegments(for: ack.segmentZero)
+                        sendSegments(for: ack.sequenceZero)
                     }
                 }
             default:
@@ -294,17 +294,17 @@ internal class LowerTransportLayer {
         let ttl = provisionerNode.defaultTTL ?? defaultTtl
         
         if isSegmented {
-            let segmentZero = UInt16(pdu.sequence & 0x1FFF)
+            let sequenceZero = UInt16(pdu.sequence & 0x1FFF)
             /// Number of segments to be sent.
             let count = (pdu.transportPdu.count + 11) / 12
             
             // Create all segments to be sent.
-            outgoingSegments[segmentZero] = Array<SegmentedAccessMessage?>(repeating: nil, count: count)
+            outgoingSegments[sequenceZero] = Array<SegmentedAccessMessage?>(repeating: nil, count: count)
             for i in 0..<count {
-                outgoingSegments[segmentZero]![i] = SegmentedAccessMessage(fromUpperTransportPdu: pdu,
+                outgoingSegments[sequenceZero]![i] = SegmentedAccessMessage(fromUpperTransportPdu: pdu,
                                                                            usingNetworkKey: networkKey, offset: UInt8(i))
             }
-            sendSegments(for: segmentZero)
+            sendSegments(for: sequenceZero)
         } else {
             let message = AccessMessage(fromUnsegmentedUpperTransportPdu: pdu, usingNetworkKey: networkKey)
             // The message will be retransmit twice (with the same sequence number).
@@ -318,8 +318,8 @@ private extension UInt32 {
     
     /// Returns the key used in maps in Lower Transport Layer to keep
     /// segments received to or from given source address.
-    init(keyFor address: Address, segmentZero: UInt16) {
-        self = (UInt32(address) << 16) | UInt32(segmentZero & 0x1FFF)
+    init(keyFor address: Address, sequenceZero: UInt16) {
+        self = (UInt32(address) << 16) | UInt32(sequenceZero & 0x1FFF)
     }
     
 }
@@ -344,11 +344,11 @@ private extension LowerTransportLayer {
     }
     
     /// Sends all non-`nil` segments from `outgoingSegments` map from the given
-    /// `segmentZero` key.
+    /// `sequenceZero` key.
     ///
-    /// - parameter segmentZero: The key to get segments from the map.
-    func sendSegments(for segmentZero: UInt16) {
-        guard let count = outgoingSegments[segmentZero]?.count, count > 0,
+    /// - parameter sequenceZero: The key to get segments from the map.
+    func sendSegments(for sequenceZero: UInt16) {
+        guard let count = outgoingSegments[sequenceZero]?.count, count > 0,
               let provisionerNode = meshNetwork.localProvisioner?.node else {
             return
         }
@@ -356,27 +356,27 @@ private extension LowerTransportLayer {
         let ttl = provisionerNode.defaultTTL ?? defaultTtl
         /// Segment Acknowledgment Message is expected when the message is targetting
         /// a Unicast Address.
-        let ackExpected = outgoingSegments[segmentZero]!.first!!.destination.isUnicast
+        let ackExpected = outgoingSegments[sequenceZero]!.first!!.destination.isUnicast
         
         for i in 0..<count {
-            if let segment = self.outgoingSegments[segmentZero]![i] {
+            if let segment = self.outgoingSegments[sequenceZero]![i] {
                 do {
                     try self.networkManager.networkLayer.send(lowerTransportPdu: segment, ofType: .networkPdu,
                                                               withTtl: ttl, multipleTimes: !ackExpected)
                 } catch {
                     // Sending failed, remove the Segment from waiting list.
-                    self.outgoingSegments[segmentZero]![i] = nil
+                    self.outgoingSegments[sequenceZero]![i] = nil
                 }
             }
         }
         
-        segmentTransmissionTimers.removeValue(forKey: segmentZero)?.invalidate()
-        if ackExpected && !outgoingSegments[segmentZero]!.isComplete {
-            segmentTransmissionTimers[segmentZero] = Timer(timeInterval: 0.200 + Double(ttl) * 50, repeats: false) { _ in
-                self.sendSegments(for: segmentZero)
+        segmentTransmissionTimers.removeValue(forKey: sequenceZero)?.invalidate()
+        if ackExpected && !outgoingSegments[sequenceZero]!.isComplete {
+            segmentTransmissionTimers[sequenceZero] = Timer(timeInterval: 0.200 + Double(ttl) * 50, repeats: false) { _ in
+                self.sendSegments(for: sequenceZero)
             }
         } else {
-            outgoingSegments.removeValue(forKey: segmentZero)
+            outgoingSegments.removeValue(forKey: sequenceZero)
         }
     }
 }

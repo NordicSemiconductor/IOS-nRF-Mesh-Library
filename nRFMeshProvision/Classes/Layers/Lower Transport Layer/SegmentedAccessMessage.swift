@@ -21,7 +21,7 @@ internal struct SegmentedAccessMessage: SegmentedMessage {
     /// The sequence number used to encode this message.
     let sequence: UInt32
     
-    let segmentZero: UInt16
+    let sequenceZero: UInt16
     let segmentOffset: UInt8
     let lastSegmentNumber: UInt8
     
@@ -33,8 +33,8 @@ internal struct SegmentedAccessMessage: SegmentedMessage {
             octet0 |= 0b01000000 // AKF = 1
             octet0 |= aid
         }
-        let octet1 = ((transportMicSize << 4) & 0x80) | UInt8(segmentZero >> 6)
-        let octet2 = UInt8((segmentZero & 0x3F) << 2) | (segmentOffset >> 3)
+        let octet1 = ((transportMicSize << 4) & 0x80) | UInt8(sequenceZero >> 6)
+        let octet2 = UInt8((sequenceZero & 0x3F) << 2) | (segmentOffset >> 3)
         let octet3 = ((segmentOffset & 0x07) << 5) | (lastSegmentNumber & 0x1F)
         return Data([octet0, octet1, octet2, octet3]) + upperTransportPdu
     }
@@ -61,14 +61,14 @@ internal struct SegmentedAccessMessage: SegmentedMessage {
         let szmic = data[1] >> 7
         transportMicSize = szmic == 0 ? 4 : 8
         
-        segmentZero = (UInt16(data[1] & 0x7F) << 6) | UInt16(data[2] >> 2)
+        sequenceZero = (UInt16(data[1] & 0x7F) << 6) | UInt16(data[2] >> 2)
         segmentOffset = ((data[2] & 0x03) << 3) | ((data[3] & 0xE0) >> 5)
         lastSegmentNumber = data[3] & 0x1F
         guard segmentOffset <= lastSegmentNumber else {
             return nil
         }
         upperTransportPdu = data.dropFirst(4)
-        sequence = (networkPdu.sequence & 0xFFE000) | UInt32(segmentZero)
+        sequence = (networkPdu.sequence & 0xFFE000) | UInt32(sequenceZero)
         
         source = networkPdu.source
         destination = networkPdu.destination
@@ -88,7 +88,7 @@ internal struct SegmentedAccessMessage: SegmentedMessage {
         self.networkKey = networkKey
         self.transportMicSize = pdu.transportMicSize
         self.sequence = pdu.sequence
-        self.segmentZero = UInt16(pdu.sequence & 0x1FFF)
+        self.sequenceZero = UInt16(pdu.sequence & 0x1FFF)
         self.segmentOffset = offset
         
         let lowerBound = Int(offset * 12)
@@ -102,7 +102,7 @@ internal struct SegmentedAccessMessage: SegmentedMessage {
 extension SegmentedAccessMessage: CustomDebugStringConvertible {
     
     var debugDescription: String {
-        return "Segmented \(type) (\(source.hex)->\(destination.hex) for \(segmentZero) (\(segmentOffset)/\(lastSegmentNumber)): Seq: \(sequence), 0x\(upperTransportPdu.hex)"
+        return "Segmented \(type) (\(source.hex)->\(destination.hex)) for SeqZero: \(sequenceZero) (\(segmentOffset)/\(lastSegmentNumber)), Seq: \(sequence), 0x\(upperTransportPdu.hex)"
     }
     
 }
