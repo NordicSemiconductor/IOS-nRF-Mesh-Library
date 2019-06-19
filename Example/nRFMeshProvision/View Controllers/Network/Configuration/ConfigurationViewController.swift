@@ -22,7 +22,7 @@ class ConfigurationViewController: UITableViewController {
         let manager = MeshNetworkManager.instance
         manager.delegate = self
         // If the Composition Data were never obtained, get them now.
-        if node.companyIdentifier == nil {
+        if !node.isConfigured {
             manager.send(ConfigCompositionDataGet(), to: node)
         }
     }
@@ -38,7 +38,10 @@ class ConfigurationViewController: UITableViewController {
         case 0:
             return IndexPath.titles.count
         case 1:
-            return max(1, node.elements.count)
+            if node.isConfigured {
+                return node.elements.count
+            }
+            return 1 // "Composition Data not received" message
         case 2:
             return IndexPath.detailsTitles.count
         case 3:
@@ -117,14 +120,14 @@ class ConfigurationViewController: UITableViewController {
             }
         }
         if indexPath.isElementSection {
-            if node.elements.count > indexPath.row {
+            if node.isConfigured {
                 let element = node.elements[indexPath.row]
                 cell.textLabel?.text = element.name ?? "Element \(indexPath.row + 1)"
                 cell.detailTextLabel?.text = "\(element.models.count) models"
                 cell.accessoryType = .disclosureIndicator
                 cell.selectionStyle = .default
             } else {
-                cell.textLabel?.text = "Composition Data not received."
+                cell.textLabel?.text = "Composition Data not received"
                 cell.detailTextLabel?.text = nil
                 cell.accessoryType = .none
                 cell.selectionStyle = .none

@@ -40,6 +40,7 @@
 		525242E2225CC6D30044CECB /* ClosedRange.swift in Sources */ = {isa = PBXBuildFile; fileRef = 525242E1225CC6D30044CECB /* ClosedRange.swift */; };
 		525242E4225DE1EF0044CECB /* RangeObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 525242E3225DE1EF0044CECB /* RangeObject.swift */; };
 		525A3C0022AD2167000D3791 /* ConfigMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 525A3BFF22AD2167000D3791 /* ConfigMessage.swift */; };
+		525EEA4F22BAD6D3000CB00F /* Node+Configuration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 525EEA4E22BAD6D3000CB00F /* Node+Configuration.swift */; };
 		5274B75122A1599F008450BC /* SegmentedAccessMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5274B75022A1599F008450BC /* SegmentedAccessMessage.swift */; };
 		5274B75322A16009008450BC /* ControlMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5274B75222A16009008450BC /* ControlMessage.swift */; };
 		5274B75522A161D1008450BC /* SegmentAcknowledgmentMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5274B75422A161D1008450BC /* SegmentAcknowledgmentMessage.swift */; };
@@ -218,6 +219,7 @@
 		525242E1225CC6D30044CECB /* ClosedRange.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClosedRange.swift; sourceTree = "<group>"; };
 		525242E3225DE1EF0044CECB /* RangeObject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RangeObject.swift; sourceTree = "<group>"; };
 		525A3BFF22AD2167000D3791 /* ConfigMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigMessage.swift; sourceTree = "<group>"; };
+		525EEA4E22BAD6D3000CB00F /* Node+Configuration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Node+Configuration.swift"; sourceTree = "<group>"; };
 		5274B75022A1599F008450BC /* SegmentedAccessMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SegmentedAccessMessage.swift; sourceTree = "<group>"; };
 		5274B75222A16009008450BC /* ControlMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ControlMessage.swift; sourceTree = "<group>"; };
 		5274B75422A161D1008450BC /* SegmentAcknowledgmentMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SegmentAcknowledgmentMessage.swift; sourceTree = "<group>"; };
@@ -549,6 +551,7 @@
 				528352A32282CF9A0097B949 /* ApplicationKey+NetworkKey.swift */,
 				528352B72285A3A30097B949 /* Node+Address.swift */,
 				528352B92285A3DF0097B949 /* Node+Keys.swift */,
+				525EEA4E22BAD6D3000CB00F /* Node+Configuration.swift */,
 				524C039722AF8FEF00C5B1B9 /* Element+Address.swift */,
 				528AB9F5228D7654000BE9DC /* Ranges.swift */,
 			);
@@ -1164,6 +1167,7 @@
 				529B7612224A6D47008F1CE7 /* Location.swift in Sources */,
 				528352B2228408C20097B949 /* GattBearerError.swift in Sources */,
 				529B757922411970008F1CE7 /* MeshNetworkManager.swift in Sources */,
+				525EEA4F22BAD6D3000CB00F /* Node+Configuration.swift in Sources */,
 				528352422271EFC20097B949 /* MeshNetwork+Address.swift in Sources */,
 				D159EC79D610DF8F7CA2F21321FD6D7E /* PublishPeriodResolution.swift in Sources */,
 				5274B75F22A1D9C9008450BC /* UnprovisionedDeviceBeacon.swift in Sources */,

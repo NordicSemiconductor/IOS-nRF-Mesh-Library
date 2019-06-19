@@ -105,6 +105,7 @@ internal class LowerTransportLayer {
            
             guard receivedSeqAuth > localSeqAuth else {
                 // Ignore that message.
+                print("Error: Received SeqAuth \(receivedSeqAuth) <= Local SeqAuth \(localSeqAuth)")
                 return
             }
         }

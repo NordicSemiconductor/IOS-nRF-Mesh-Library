@@ -128,7 +128,13 @@ extension MeshNetwork {
     /// - parameter uuid: The UUID of a Node to remove.
     func remove(nodeWithUuid uuid: UUID) {
         if let index = nodes.firstIndex(where: { $0.uuid == uuid }) {
-            nodes.remove(at: index).meshNetwork = nil
+            let node = nodes.remove(at: index)
+            node.meshNetwork = nil
+            
+            // Forget the last sequence number for the device.
+            let meshUuid = self.uuid
+            let defauts = UserDefaults(suiteName: meshUuid.uuidString)
+            defauts?.removeObject(forKey: node.unicastAddress.hex)
         }
     }
     
