@@ -116,7 +116,7 @@ public extension MeshNetwork {
             return
         }
         if let netKeyIndex = node.netKeys.first?.index,
-           networkKeys.contains(where: { $0.index == netKeyIndex }) {
+           !networkKeys.contains(where: { $0.index == netKeyIndex }) {
             print("Error: Network Key Index \(netKeyIndex) does not exist in the network")
             return
         }
