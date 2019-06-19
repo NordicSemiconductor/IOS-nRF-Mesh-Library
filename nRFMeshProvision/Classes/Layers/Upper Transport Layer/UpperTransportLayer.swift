@@ -52,9 +52,11 @@ internal class UpperTransportLayer {
     /// - parameter applicationKey: The Application Key to sign the message with.
     func send(_ message: MeshMessage, to destination: Address, using applicationKey: ApplicationKey) {
         guard destination.isValidAddress else {
+            print("Error: Invalid address: 0x\(destination.hex)")
             return
         }
         guard let source = meshNetwork.localProvisioner?.unicastAddress else {
+            print("Error: Local Provisioner has no Unicast Address assigned")
             return
         }
         
@@ -77,13 +79,16 @@ internal class UpperTransportLayer {
     /// - parameter destination: The destination address. This must be a Unicast Address.
     func send(_ message: ConfigMessage, to destination: Address) {
         guard destination.isUnicast else {
+            print("Error: Address: 0x\(destination.hex) is not a Unicast Address")
             return
         }
         guard let source = meshNetwork.localProvisioner?.unicastAddress else {
+            print("Error: Local Provisioner has no Unicast Address assigned")
             return
         }
         guard let node = meshNetwork.node(withAddress: destination),
             let networkKey = node.networkKeys.first else {
+            print("Error: Node or Network Key not found")
             return
         }
         

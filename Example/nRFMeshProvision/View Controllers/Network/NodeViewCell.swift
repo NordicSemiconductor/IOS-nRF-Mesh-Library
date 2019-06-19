@@ -23,16 +23,17 @@ class NodeViewCell: UITableViewCell {
         didSet {
             nodeName.text = node.name ?? "Unknown Device"
             address.text = node.unicastAddress.asString()
+            elements.text = "\(node.elements.count)"
             
-            if node.configComplete {
-                elements.text = "\(node.elements.count)"
+            if let companyIdentifier = node.companyIdentifier {
+                company.text = CompanyIdentifier.name(for: companyIdentifier)
                 let modelCount = node.elements.reduce(0, { (result, element) -> Int in
                     result + element.models.count
                 })
                 models.text = "\(modelCount)"
             } else {
                 company.text = "Unknown"
-                elements.text = "Configuration not complete"
+                models.text = "Configuration not complete"
             }
         }
     }

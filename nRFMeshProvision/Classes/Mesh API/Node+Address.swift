@@ -11,8 +11,8 @@ import Foundation
 public extension Node {
     
     /// Number of mode's elements.
-    var elementsCount: UInt16 {
-        return UInt16(elements.count)
+    var elementsCount: UInt8 {
+        return UInt8(elements.count)
     }
     
     /// The last unicast address allocated to this node. Each node's element
@@ -21,7 +21,7 @@ public extension Node {
     /// is equal to the node's unicast address.
     var lastUnicastAddress: UInt16 {
         // Provisioner may not have any elements
-        let allocatedAddresses = elementsCount > 0 ? elementsCount : 1
+        let allocatedAddresses = Address(elementsCount > 0 ? elementsCount : 1)
         return unicastAddress + allocatedAddresses - 1
     }
     
@@ -43,7 +43,7 @@ public extension Node {
     /// - returns: `True`, if the node address range overlaps with the given
     ///            range, `false` otherwise.
     func overlapsWithAddress(_ address: Address, elementsCount count: UInt8) -> Bool {
-        return !(unicastAddress + elementsCount - 1 < address || unicastAddress > address + UInt16(count) - 1)
+        return !(unicastAddress + UInt16(elementsCount) - 1 < address || unicastAddress > address + UInt16(count) - 1)
     }
     
 }

@@ -90,7 +90,7 @@ public class Node: Codable {
     /// has finished configuring this node. The property is set to `true`
     /// once a Mesh Manager is done completing this node's
     /// configuration, otherwise it is set to `false`.
-    public internal(set) var configComplete: Bool = false
+    public var configComplete: Bool = false
     /// UTF-8 human-readable name of the node within the network.
     public var name: String?
     /// The 16-bit Company Identifier (CID) assigned by the Bluetooth SIG.
@@ -187,10 +187,11 @@ public class Node: Codable {
         add(element: element)
     }
     
-    internal init(for unprovisionedDevice: UnprovisionedDevice, withDeviceKey deviceKey: Data,
+    internal init(for unprovisionedDevice: UnprovisionedDevice,
+                  with n: UInt8, elementsDeviceKey deviceKey: Data,
                   andAssignedNetworkKey networkKey: NetworkKey, andAddress address: Address) {
         self.nodeUuid = MeshUUID(unprovisionedDevice.uuid)
-        self.name     = unprovisionedDevice.name ?? "Unknown Device"
+        self.name     = unprovisionedDevice.name
         self.unicastAddress = address
         self.deviceKey = deviceKey
         self.security = .high
@@ -202,6 +203,47 @@ public class Node: Codable {
         self.appKeys  = []
         // Elements will be queried with Composition Data.
         self.elements = []
+        for _ in 0..<n {
+            add(element: Element(location: .unknown))
+        }
+    }
+    
+    /// Creates a low security Node with given Device Key, Network Key and Unicast Address.
+    /// Usually, a Node is added to a network during provisioning. However, for debug
+    /// purposes, or to add an already provisioned Node, one can use this method.
+    /// A Node created this way will have security set to `.low`.
+    ///
+    /// Use `meshNetwork.add(node: Node)` to add the Node. Other parameters must be
+    /// read from the Node using Configuration messages.
+    ///
+    /// - parameter name: Optional Node name.
+    /// - parameter n: Number of Elements. Elements must be read using
+    ///                `ConfigCompositionDataGet` message.
+    /// - parameter deviceKey: The 128-bit Device Key.
+    /// - parameter networkKey: The Network Key known to this device.
+    /// - parameter address: The device Unicast Address.
+    public init?(lowSecurityNode name: String?, with n: UInt, elementsDeviceKey deviceKey: Data,
+                andAssignedNetworkKey networkKey: NetworkKey, andAddress address: Address) {
+        guard address.isUnicast else {
+            return nil
+        }
+        self.nodeUuid = MeshUUID()
+        self.name     = name
+        self.unicastAddress = address
+        self.deviceKey = deviceKey
+        self.security = .low
+        // Composition Data were not obtained.
+        self.configComplete = false
+        
+        self.netKeys  = [NodeKey(index: networkKey.index, updated: false)]
+        self.appKeys  = []
+        // Elements will be queried with Composition Data.
+        // But we have to mark how many Elements there will be to validate the
+        // Unicast address when adding a Node.
+        self.elements = []
+        for _ in 0..<n {
+            add(element: Element(location: .unknown))
+        }
     }
     
     // MARK: - Codable

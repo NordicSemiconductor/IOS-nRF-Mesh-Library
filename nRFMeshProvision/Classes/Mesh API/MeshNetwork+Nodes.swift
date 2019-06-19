@@ -101,4 +101,36 @@ public extension MeshNetwork {
         return false
     }
     
+    /// Adds the Node to the mesh network. If a node with the same UUID
+    /// was already in the mesh network, it will be replaced.
+    ///
+    /// This method should only be used to add debug Nodes, or Nodes
+    /// that have already been provisioned. Use `provision(unprovisionedDevice:over)`
+    /// to provision and add a Node.
+    ///
+    /// - parameter node: A Node to be added.
+    func add(node: Node) {
+        // Verify if the address range is avaialble for the new Node.
+        guard isAddressAvailable(node.unicastAddress, elementsCount: node.elementsCount) else {
+            print("Error: Address \(node.unicastAddress) is not available")
+            return
+        }
+        if let netKeyIndex = node.netKeys.first?.index,
+           networkKeys.contains(where: { $0.index == netKeyIndex }) {
+            print("Error: Network Key Index \(netKeyIndex) does not exist in the network")
+            return
+        }
+        remove(nodeWithUuid: node.uuid)
+        
+        node.meshNetwork = self
+        nodes.append(node)
+    }
+    
+    /// Removes the Node from the mesh network.
+    ///
+    /// - parameter node: The Node to be removed.
+    func remove(node: Node) {
+        remove(nodeWithUuid: node.uuid)
+    }
+    
 }

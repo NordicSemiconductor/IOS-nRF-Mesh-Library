@@ -11,6 +11,7 @@ import nRFMeshProvision
 
 extension Selector {
     
+    static let name = #selector(UIViewController.nameOptional(_:))
     static let nameRequired = #selector(UIViewController.nameRequired(_:))
     static let numberRequired = #selector(UIViewController.numberRequired(_:))
     static let unsignedNumberRequired = #selector(UIViewController.unsignedNumberRequired(_:))
@@ -152,7 +153,7 @@ extension UIViewController {
                     textField.addTarget(self, action: selector, for: .editingDidBegin)
                     
                     switch selector {
-                    case .nameRequired:
+                    case .nameRequired, .name:
                         textField.autocapitalizationType = .words
                         break
                     case .unicastAddress, .groupAddress,
@@ -234,6 +235,10 @@ extension UIViewController {
         let alert = getAlert(from: textField)
         let number = UInt(textField.text!)
         alert.setValid(number != nil)
+    }
+    
+    @objc func nameOptional(_ textField: UITextField) {
+        // Empty
     }
     
     @objc func nameRequired(_ textField: UITextField) {

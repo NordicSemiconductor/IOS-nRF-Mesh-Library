@@ -12,12 +12,17 @@ import nRFMeshProvision
 class ConfigurationViewController: UITableViewController {
     var node: Node!
     
+    private var alert: UIAlertController?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        title = node.name ?? "Unknown device"
+        
         let manager = MeshNetworkManager.instance
         manager.delegate = self
-        if !node.configComplete {
+        // If the Composition Data were never obtained, get them now.
+        if node.companyIdentifier == nil {
             manager.send(ConfigCompositionDataGet(), to: node)
         }
     }
@@ -66,7 +71,7 @@ class ConfigurationViewController: UITableViewController {
         
         if indexPath.isName {
             cell.textLabel?.text = indexPath.title
-            cell.detailTextLabel?.text = node.name
+            cell.detailTextLabel?.text = node.name ?? "No name"
             cell.accessoryType = .disclosureIndicator
         }
         if indexPath.isDetailsSection {
@@ -78,7 +83,8 @@ class ConfigurationViewController: UITableViewController {
                 cell.detailTextLabel?.text = node.deviceKey.hex
             case 2:
                 if let id = node.companyIdentifier {
-                    cell.detailTextLabel?.text = "\(id.asString())"
+                    let name = CompanyIdentifier.name(for: id)
+                    cell.detailTextLabel?.text = "\(id.asString()) - " + (name != nil ? name! : "Unknown")
                 } else {
                     cell.detailTextLabel?.text = "Unknown"
                 }
@@ -127,23 +133,88 @@ class ConfigurationViewController: UITableViewController {
         return cell
     }
     
+    override func tableView(_ tableView: UITableView, shouldHighlightRowAt indexPath: IndexPath) -> Bool {
+        if !indexPath.isDetailsSection || indexPath.isDeviceKey {
+            return true
+        }
+        return false
+    }
+    
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
+        
+        if indexPath.isName {
+            presentNameDialog()
+        }
+        if indexPath.isReset {
+            presentResetConfirmation()
+        }
+        if indexPath.isDeviceKey {
+            UIPasteboard.general.string = node.deviceKey.hex
+            showToast("Device Key copied to Clipboard.", delay: .shortDelay)
+        }
     }
 
+}
+
+private extension ConfigurationViewController {
+
+    /// Presents a dialog to edit the node name.
+    func presentNameDialog() {
+        presentTextAlert(title: "Name", message: nil, text: node.name,
+                         placeHolder: "E.g. Bedroom Light", type: .name) { name in
+                            if name.isEmpty {
+                                self.node.name = nil
+                            } else {
+                                self.node.name = name
+                            }
+                            
+                            if MeshNetworkManager.instance.save() {
+                                self.title = self.node.name ?? "Unknown device"
+                                self.tableView.reloadRows(at: [.name], with: .automatic)
+                            } else {
+                                self.presentAlert(title: "Error", message: "Mesh configuration could not be saved.")
+                            }
+        }
+    }
+    
+    /// Presents a dialog with resetting confirmation.
+    func presentResetConfirmation() {
+        let alert = UIAlertController(title: "Reset Node",
+                                      message: "Resetting the node will change its state back to unprovisioned state.",
+                                      preferredStyle: .actionSheet)
+        let resetAction = UIAlertAction(title: "Reset", style: .destructive) { _ in self.resetNode() }
+        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel)
+        alert.addAction(resetAction)
+        alert.addAction(cancelAction)
+        present(alert, animated: true)
+    }
+    
+    /// Sends a message to the node that will reset its state to unprovisioned.
+    func resetNode() {
+        MeshNetworkManager.instance.send(ConfigNodeReset(), to: node)
+    }
+    
 }
 
 extension ConfigurationViewController: MeshNetworkDelegate {
     
     func meshNetwork(_ meshNetwork: MeshNetwork, didDeliverMessage message: MeshMessage, from source: Address) {
-        if let compositionDataStatus = message as? ConfigCompositionDataStatus,
-            let page0 = compositionDataStatus.page as? Page0 {
-            page0.apply(to: node)
-            
-            if !MeshNetworkManager.instance.save() {
-                self.presentAlert(title: "Error", message: "Mesh configuration could not be saved.")
+        switch message {
+        case let compositionDataStatus as ConfigCompositionDataStatus:
+            if let page0 = compositionDataStatus.page as? Page0 {
+                page0.apply(to: node)
+                
+                if !MeshNetworkManager.instance.save() {
+                    self.presentAlert(title: "Error", message: "Mesh configuration could not be saved.")
+                }
+                tableView.reloadData()
             }
-            tableView.reloadData()
+        case is ConfigNodeResetStatus:
+            MeshNetworkManager.instance.meshNetwork!.remove(node: node)
+            navigationController?.popViewController(animated: true)
+        default:
+            break
         }
     }
     
@@ -188,6 +259,10 @@ private extension IndexPath {
         return section == 3 && row == 0
     }
     
+    var isDeviceKey: Bool {
+        return section == 2 && row == 1
+    }
+    
     var isElementSection: Bool {
         return section == 1
     }
@@ -196,4 +271,5 @@ private extension IndexPath {
         return section == 2
     }
     
+    static let name = IndexPath(row: 0, section: 0)
 }

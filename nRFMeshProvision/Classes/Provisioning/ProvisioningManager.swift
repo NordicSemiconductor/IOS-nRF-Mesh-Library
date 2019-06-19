@@ -353,7 +353,8 @@ extension ProvisioningManager: BearerDelegate, BearerDataDelegate {
         // The provisioning process is complete.
         case (.provisioning, .complete):
             let deviceKey = provisioningData.deviceKey!
-            let node = Node(for: unprovisionedDevice, withDeviceKey: deviceKey,
+            let n = provisioningCapabilities!.numberOfElements
+            let node = Node(for: unprovisionedDevice, with: n, elementsDeviceKey: deviceKey,
                             andAssignedNetworkKey: provisioningData.networkKey,
                             andAddress: provisioningData.unicastAddress)
             meshNetwork.add(node: node)

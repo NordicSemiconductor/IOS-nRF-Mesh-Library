@@ -173,9 +173,6 @@ public extension MeshNetworkManager {
     /// - parameter message:     The message to be sent.
     /// - parameter destination: The destination Unicast Address.
     func send(_ message: ConfigMessage, to destination: Address) {
-        guard destination.isUnicast else {
-            return
-        }
         guard let networkManager = networkManager else {
             return
         }
@@ -191,12 +188,17 @@ public extension MeshNetworkManager {
     /// - parameter message: The message to be sent.
     /// - parameter model:   The destination Model.
     func send(_ message: MeshMessage, to model: Model) {
-        if let meshNetwork = meshNetwork,
-            let element = model.parentElement,
-            let firstKeyIndex = model.bind.first,
-            let applicationKey = meshNetwork.applicationKeys[firstKeyIndex] {
-            send(message, to: element.unicastAddress, using: applicationKey)
+        guard let element = model.parentElement else {
+            print("Error: Element does not belong to a Node")
+            return
         }
+        guard let firstKeyIndex = model.bind.first,
+              let meshNetwork = meshNetwork,
+              let applicationKey = meshNetwork.applicationKeys[firstKeyIndex] else {
+            print("Error: Model is not bound to any Application Key")
+            return
+        }
+        send(message, to: element.unicastAddress, using: applicationKey)
     }
     
     /// Sends Configuration Message to the given Node.
@@ -217,6 +219,7 @@ public extension MeshNetworkManager {
     /// - parameter element: The destination Element.
     func send(_ message: ConfigMessage, to element: Element) {
         guard let _ = element.parentNode else {
+            print("Error: Element does not belong to a Node")
             return
         }
         send(message, to: element.unicastAddress)

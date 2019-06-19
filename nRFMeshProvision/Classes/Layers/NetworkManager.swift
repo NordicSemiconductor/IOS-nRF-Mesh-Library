@@ -73,12 +73,13 @@ internal class NetworkManager {
     /// - parameter message:        The message to be sent.
     /// - parameter destination:    The destination address.
     func send(_ configMessage: ConfigMessage, to destination: Address) {
-        guard destination.isUnicast else {
-            return
-        }
         accessLayer.send(configMessage, to: destination)
     }
     
+    /// Notifies the delegate about a new mesh message from given source.
+    ///
+    /// - parameter message: The mesh message that was received.
+    /// - parameter source:  The source Unicast Address.
     func notifyAbout(_ message: MeshMessage, from source: Address) {
         meshNetworkManager.delegate?.meshNetwork(meshNetwork!, didDeliverMessage: message, from: source)
     }

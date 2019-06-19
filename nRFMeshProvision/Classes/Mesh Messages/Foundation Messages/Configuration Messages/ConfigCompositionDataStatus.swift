@@ -115,24 +115,26 @@ public struct Page0: CompositionDataPage {
     }
     
     /// Applies the Composition Data to given Node.
+    /// The Composition Data can only be applied to a Node once.
+    /// This method does nothing if the Node already has been configured.
     ///
     /// - parameter node: The Node to apply the data to.
     public func apply(to node: Node) {
-        node.companyIdentifier = companyIdentifier
-        node.productIdentifier = productIdentifier
-        node.versionIdentifier = versionIdentifier
-        node.minimumNumberOfReplayProtectionList = minimumNumberOfReplayProtectionList
-        node.features = features
-        // Remove any existing Elements. There should not be any, but just to be sure.
-        node.elements.forEach {
-            $0.parentNode = nil
-            $0.index = 0
+        if node.companyIdentifier == nil {
+            node.companyIdentifier = companyIdentifier
+            node.productIdentifier = productIdentifier
+            node.versionIdentifier = versionIdentifier
+            node.minimumNumberOfReplayProtectionList = minimumNumberOfReplayProtectionList
+            node.features = features
+            // Remove any existing Elements. There should not be any, but just to be sure.
+            node.elements.forEach {
+                $0.parentNode = nil
+                $0.index = 0
+            }
+            node.elements.removeAll()
+            // And add the Elements received.
+            node.add(elements: elements)
         }
-        node.elements.removeAll()
-        // And add the Elements received.
-        node.add(elements: elements)
-        // Mark the Configuration as complete. No further Composition Data will be requested.
-        node.configComplete = true
     }
 }
 

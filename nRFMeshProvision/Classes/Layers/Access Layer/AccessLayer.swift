@@ -35,9 +35,6 @@ internal class AccessLayer {
     ///                          valid mesh Address.
     /// - parameter applicationKey: The Application Key to sign the message with.
     func send(_ message: MeshMessage, to destination: Address, using applicationKey: ApplicationKey) {
-        guard destination.isValidAddress else {
-            return
-        }
         networkManager.upperTransportLayer.send(message, to: destination, using: applicationKey)
     }
     
@@ -48,9 +45,6 @@ internal class AccessLayer {
     /// - parameter message: The Mesh Message to send.
     /// - parameter destination: The destination Address. This must be a Unicast Address.
     func send(_ message: ConfigMessage, to destination: Address) {
-        guard destination.isUnicast else {
-            return
-        }
         networkManager.upperTransportLayer.send(message, to: destination)
     }
     
@@ -79,6 +73,13 @@ private extension AccessLayer {
             
         case ConfigAppKeyStatus.opCode:
             message = ConfigAppKeyStatus(parameters: accessPdu.parameters)
+            
+        // Resetting Node
+        case ConfigNodeReset.opCode:
+            message = ConfigNodeReset(parameters: accessPdu.parameters)
+            
+        case ConfigNodeResetStatus.opCode:
+            message = ConfigNodeResetStatus(parameters: accessPdu.parameters)
             
         default:
             message = nil
