@@ -67,7 +67,7 @@ internal struct SegmentedAccessMessage: SegmentedMessage {
         guard segmentOffset <= lastSegmentNumber else {
             return nil
         }
-        upperTransportPdu = data.dropFirst(4)
+        upperTransportPdu = data.advanced(by: 4)
         sequence = (networkPdu.sequence & 0xFFE000) | UInt32(sequenceZero)
         
         source = networkPdu.source

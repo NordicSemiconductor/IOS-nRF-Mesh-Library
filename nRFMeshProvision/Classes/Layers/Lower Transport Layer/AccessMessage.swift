@@ -54,7 +54,7 @@ internal struct AccessMessage: LowerTransportPdu {
         transportMicSize = 4
         sequence = networkPdu.sequence
         networkKey = networkPdu.networkKey
-        upperTransportPdu = data.dropFirst()
+        upperTransportPdu = data.advanced(by: 1)
         
         source = networkPdu.source
         destination = networkPdu.destination

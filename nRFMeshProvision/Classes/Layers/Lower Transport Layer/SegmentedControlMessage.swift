@@ -52,7 +52,7 @@ internal struct SegmentedControlMessage: SegmentedMessage {
         guard segmentOffset <= lastSegmentNumber else {
             return nil
         }
-        upperTransportPdu = data.dropFirst(4)
+        upperTransportPdu = data.advanced(by: 4)
         
         source = networkPdu.source
         destination = networkPdu.destination

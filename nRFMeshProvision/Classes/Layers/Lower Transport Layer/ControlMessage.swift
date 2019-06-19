@@ -38,7 +38,7 @@ internal struct ControlMessage: LowerTransportPdu {
         guard opCode == 0x00 else {
             return nil
         }
-        upperTransportPdu = data.dropFirst()
+        upperTransportPdu = data.advanced(by: 1)
         
         source = networkPdu.source
         destination = networkPdu.destination

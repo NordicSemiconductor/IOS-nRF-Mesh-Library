@@ -28,7 +28,7 @@ internal struct UpperTransportPdu {
         let micSize = Int(accessMessage.transportMicSize)
         let encryptedDataSize = accessMessage.upperTransportPdu.count - micSize
         let encryptedData = accessMessage.upperTransportPdu.prefix(upTo: encryptedDataSize)
-        let mic = accessMessage.upperTransportPdu.suffix(from: encryptedDataSize)
+        let mic = accessMessage.upperTransportPdu.advanced(by: encryptedDataSize)
         
         // The nonce type is 0x01 for messages signed with Application Key and
         // 0x02 for messages signed using Device Key (Configuration Messages).
