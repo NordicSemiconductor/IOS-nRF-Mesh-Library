@@ -51,17 +51,27 @@ extension RangeObject: Equatable {
     
 }
 
+extension RangeObject: CustomDebugStringConvertible {
+    
+    public var debugDescription: String {
+        return "\(type(of: self)): \(range)"
+    }
+    
+}
+
 // MARK: - Operators
     
 public func +<T: RangeObject>(left: T, right: T) -> [T] {
     if left.distance(to: right) == 0 {
-        return [T(min(left.lowerBound, right.lowerBound)...max(left.upperBound, right.upperBound))]
+        let RangeType = type(of: left)
+        return [RangeType.init(min(left.lowerBound, right.lowerBound)...max(left.upperBound, right.upperBound))]
     }
     return [left, right]
 }
 
 public func -<T: RangeObject>(left: T, right: T) -> [T] {
     var result: [T] = []
+    let RangeType = type(of: left)
     
     // Left:   |------------|                    |-----------|                 |---------|
     //                  -                              -                            -
@@ -69,7 +79,7 @@ public func -<T: RangeObject>(left: T, right: T) -> [T] {
     //                  =                              =                            =
     // Result: |---|                             |-----------|                 |--|
     if right.lowerBound > left.lowerBound {
-        let leftSlice = T(left.lowerBound...(min(left.upperBound, right.lowerBound - 1)))
+        let leftSlice = RangeType.init(left.lowerBound...(min(left.upperBound, right.lowerBound - 1)))
         result.append(leftSlice)
     }
     
@@ -79,7 +89,7 @@ public func -<T: RangeObject>(left: T, right: T) -> [T] {
     //                         =                          =                             =
     // Result:                      |--|                      |--|                     |--------|
     if right.upperBound < left.upperBound {
-        let rightSlice = T(max(right.upperBound + 1, left.lowerBound)...left.upperBound)
+        let rightSlice = RangeType.init(max(right.upperBound + 1, left.lowerBound)...left.upperBound)
         result.append(rightSlice)
     }
     

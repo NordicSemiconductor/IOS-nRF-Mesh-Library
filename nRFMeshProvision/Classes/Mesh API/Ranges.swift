@@ -48,16 +48,23 @@ public extension RangeObject {
     
 }
 
-public extension Array where Element : RangeObject {
+public extension Array where Element: RangeObject {
     
     /// Returns a sorted array of ranges. If any ranges were overlapping, they
     /// will be merged.
     ///
     /// - returns: Sorted array of ranges with all overlapping ranges merged.
     func merged() -> [Element] {
+        guard count > 1 else {
+            return self
+        }
+        // We have to get the type from the first object, otherwise the result
+        // array would be [RangeObject] instead of [AddressRange] or [SceneRange].
+        let RangeType = type(of: self.first!)
+        
         var result: [Element] = []
         
-        var accumulator = Element(0...0)
+        var accumulator = RangeType.init(0...0)
         
         for range in sorted(by: { $0.range.lowerBound < $1.range.lowerBound }) {
             // Analyzing first range? Set it as the accumulator.
@@ -73,7 +80,7 @@ public extension Array where Element : RangeObject {
                 // Does the range start inside the accumulator, or just after the accumulator?
             else if accumulator.range.upperBound + 1 >= range.range.lowerBound {
                 // Set the accumulator as merged range.
-                accumulator = Element(accumulator.range.lowerBound...range.range.upperBound)
+                accumulator = RangeType.init(accumulator.range.lowerBound...range.range.upperBound)
             }
                 
                 // There must have been a gap, the accumulator can be appended to result array.

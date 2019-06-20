@@ -49,9 +49,12 @@ class EditRangesViewController: UIViewController, Editable {
     @IBAction func resolveConflitsTapped(_ sender: UIButton) {
         removeConflictingRanges()
         
-        UIView.animate(withDuration: 0.5) {
+        UIView.animate(withDuration: 0.5, animations: {
             self.resolveConflictsFab.alpha = 0
-        }
+        }, completion: { _ in
+            self.resolveConflictsFab.alpha = 1
+            self.resolveConflictsFab.isHidden = true
+        })
     }
     
     // MARK: - Public parameters
@@ -125,7 +128,8 @@ extension EditRangesViewController: UITableViewDelegate, UITableViewDataSource {
         cell.rangeView.setBounds(bounds)
         let range = ranges[indexPath.row]
         cell.range = range
-        cell.otherRanges = ranges.filter({ $0 != range }) + otherProvisionerRanges
+        let notRange = RangeObject(bounds) - range
+        cell.otherRanges = otherProvisionerRanges! - notRange
         return cell
     }
     
@@ -185,15 +189,13 @@ private extension EditRangesViewController {
             if let indexPath = indexPath {
                 self.ranges.remove(at: indexPath.row)
             }
-            // Add the new range. It will be added to the end, but the `merge()` will sort them again.
+            // Add the new range. They will be merged automatically.
             switch self.type! {
             case .unicastAddress, .groupAddress:
-                self.ranges.append(AddressRange(newRange))
+                self.ranges += AddressRange(newRange)
             case .scene:
-                self.ranges.append(SceneRange(newRange))
+                self.ranges += SceneRange(newRange)
             }
-            // Sort ranges.
-            self.ranges.merge()
             
             // And refresh the table view.
             self.tableView.reloadData()
@@ -208,22 +210,7 @@ private extension EditRangesViewController {
     }
     
     func removeConflictingRanges() {
-        // Try removing other Provisioner's ranges form ranges
-        // if they are Address Ranges.
-        if var addressRanges = ranges as? [AddressRange] {
-            otherProvisionerRanges.forEach {
-                addressRanges -= $0 as! AddressRange
-            }
-            ranges = addressRanges
-        } else
-        // Try removing other Provisioner's ranges form ranges
-        // if they are Scene Ranges.
-        if var sceneRanges = ranges as? [SceneRange] {
-            otherProvisionerRanges.forEach {
-                sceneRanges -= $0 as! SceneRange
-            }
-            ranges = sceneRanges
-        }
+        ranges -= otherProvisionerRanges
         modified = true
         
         // Reload views.
