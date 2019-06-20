@@ -106,4 +106,86 @@ class AddressRanges: XCTestCase {
         XCTAssertEqual(ranges[0].lowAddress, 28672)
         XCTAssertEqual(ranges[0].highAddress, 32767)
     }
+    
+    func testAdd() {
+        let ranges = [
+            RangeObject(1...1000),
+            RangeObject(2000...3000)
+        ]
+        
+        let result = ranges + RangeObject(4000...5000)
+        XCTAssertEqual(result.count, 3)
+        XCTAssertEqual(result[0].lowerBound, 1)
+        XCTAssertEqual(result[0].upperBound, 1000)
+        XCTAssertEqual(result[1].lowerBound, 2000)
+        XCTAssertEqual(result[1].upperBound, 3000)
+        XCTAssertEqual(result[2].lowerBound, 4000)
+        XCTAssertEqual(result[2].upperBound, 5000)
+        
+        let result2 = ranges + RangeObject(1001...1999)
+        XCTAssertEqual(result2.count, 1)
+        XCTAssertEqual(result2[0].lowerBound, 1)
+        XCTAssertEqual(result2[0].upperBound, 3000)
+    }
+    
+    func testAddArray() {
+        let ranges = [
+            RangeObject(1...1000),
+            RangeObject(2000...3000)
+        ]
+        let otherRanges = [
+            RangeObject(500...800),
+            RangeObject(1999...2003),
+            RangeObject(2500...3000)
+        ]
+        let result = ranges + otherRanges
+        
+        XCTAssertEqual(result.count, 2)
+        XCTAssertEqual(result[0].lowerBound, 1)
+        XCTAssertEqual(result[0].upperBound, 1000)
+        XCTAssertEqual(result[1].lowerBound, 1999)
+        XCTAssertEqual(result[1].upperBound, 3000)
+    }
+    
+    func testMinus() {
+        let ranges = [
+            RangeObject(1...1000),
+            RangeObject(2000...3000)
+        ]
+        
+        let result2 = ranges - RangeObject(4000...5000)
+        XCTAssertEqual(result2.count, 2)
+        XCTAssertEqual(result2[0].lowerBound, 1)
+        XCTAssertEqual(result2[0].upperBound, 1000)
+        XCTAssertEqual(result2[1].lowerBound, 2000)
+        XCTAssertEqual(result2[1].upperBound, 3000)
+        
+        let result3 = ranges - RangeObject(500...2500)
+        XCTAssertEqual(result3.count, 2)
+        XCTAssertEqual(result3[0].lowerBound, 1)
+        XCTAssertEqual(result3[0].upperBound, 499)
+        XCTAssertEqual(result3[1].lowerBound, 2501)
+        XCTAssertEqual(result3[1].upperBound, 3000)
+    }
+    
+    func testMinusArray() {
+        let ranges = [
+            RangeObject(1...1000),
+            RangeObject(2000...3000)
+        ]
+        let otherRanges = [
+            RangeObject(500...800),
+            RangeObject(1999...2003),
+            RangeObject(2500...3000)
+        ]
+        let result = ranges - otherRanges
+        
+        XCTAssertEqual(result.count, 3)
+        XCTAssertEqual(result[0].lowerBound, 1)
+        XCTAssertEqual(result[0].upperBound, 499)
+        XCTAssertEqual(result[1].lowerBound, 801)
+        XCTAssertEqual(result[1].upperBound, 1000)
+        XCTAssertEqual(result[2].lowerBound, 2004)
+        XCTAssertEqual(result[2].upperBound, 2499)
+    }
 }
