@@ -63,10 +63,10 @@ public struct Page0: CompositionDataPage {
     public let elements: [Element]
     
     public var parameters: Data? {
-        return Data([page])
+        let data = Data([page])
             + companyIdentifier + productIdentifier + versionIdentifier
             + minimumNumberOfReplayProtectionList
-            + features.rawValue + elements.data
+        return data + features.rawValue + elements.data
     }
     
     public var isSegmented: Bool {
