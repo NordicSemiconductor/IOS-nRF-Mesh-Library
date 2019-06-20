@@ -110,10 +110,8 @@ class ConfigurationViewController: UITableViewController {
                     cell.detailTextLabel?.text = "Unknown"
                 }
             case 6:
-                if let features = node.features {
-                    cell.detailTextLabel?.text = "\(features)"
-                } else {
-                    cell.detailTextLabel?.text = "Unknown"
+                if let featuresCell = cell as? NodeFeaturesCell {
+                   featuresCell.node = node
                 }
             default:
                 break
@@ -234,10 +232,13 @@ private extension IndexPath {
     static let detailsTitles = [
         "Unicast Address", "Device Key",
         "Company Identifier", "Product Identifier", "Product Version",
-        "Replay Protection Count", "Node Features"
+        "Replay Protection Count", nil
     ]
     
     var cellIdentifier: String {
+        if isNodeFeatures {
+            return "features"
+        }
         if isDetailsSection {
             return "subtitle"
         }
@@ -267,6 +268,10 @@ private extension IndexPath {
     
     var isDeviceKey: Bool {
         return section == 2 && row == 1
+    }
+    
+    var isNodeFeatures: Bool {
+        return section == 2 && row == 6
     }
     
     var isElementSection: Bool {
