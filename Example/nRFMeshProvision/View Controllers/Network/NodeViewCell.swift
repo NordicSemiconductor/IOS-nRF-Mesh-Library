@@ -26,7 +26,7 @@ class NodeViewCell: UITableViewCell {
             elements.text = "\(node.elements.count)"
             
             if let companyIdentifier = node.companyIdentifier {
-                company.text = CompanyIdentifier.name(for: companyIdentifier)
+                company.text = CompanyIdentifier.name(for: companyIdentifier) ?? "Unknown"
                 let modelCount = node.elements.reduce(0, { (result, element) -> Int in
                     result + element.models.count
                 })
