@@ -16,7 +16,6 @@ class CompositionData: XCTestCase {
         let compositionData = ConfigCompositionDataStatus(parameters: data)
         
         XCTAssertNotNil(compositionData)
-        XCTAssertEqual(compositionData?.opCode, 0x02)
         XCTAssertNotNil(compositionData?.page)
         XCTAssertEqual(compositionData?.page?.page, 0)
         let page0 = compositionData?.page as? Page0

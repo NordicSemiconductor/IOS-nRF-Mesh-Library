@@ -221,7 +221,6 @@ class Pdus: XCTestCase {
         
         // Test begins here
         let message = ConfigAppKeyAdd(applicationKey: meshNetwork.applicationKeys[1])
-        XCTAssertEqual(message.opCode, 0)
         XCTAssertEqual(message.key, Data(hex: "63964771734FBD76E3B40519D1D94A48"))
         XCTAssertEqual(message.parameters, Data(hex: "56341263964771734FBD76E3B40519D1D94A48"))
         XCTAssertEqual(message.accessPdu, Data(hex: "0056341263964771734FBD76E3B40519D1D94A48"))
