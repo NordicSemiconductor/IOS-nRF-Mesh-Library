@@ -37,6 +37,7 @@ extension UIViewController {
     ///   - message: The message below the title.
     ///   - handler: The Confirm button handler.
     func confirm(title: String?, message: String?, handler: ((UIAlertAction) -> Void)? = nil) {
+        // TODO: Should only iPad be handled differently? How about carPlay or Apple TV?
         let ipad = UIDevice.current.userInterfaceIdiom == .pad
         let style: UIAlertController.Style = ipad ? .alert : .actionSheet
         DispatchQueue.main.async {
