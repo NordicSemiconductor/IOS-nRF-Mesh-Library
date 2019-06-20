@@ -123,12 +123,10 @@ class ConfigurationViewController: UITableViewController {
                 cell.textLabel?.text = element.name ?? "Element \(indexPath.row + 1)"
                 cell.detailTextLabel?.text = "\(element.models.count) models"
                 cell.accessoryType = .disclosureIndicator
-                cell.selectionStyle = .default
             } else {
                 cell.textLabel?.text = "Composition Data not received"
                 cell.detailTextLabel?.text = nil
                 cell.accessoryType = .none
-                cell.selectionStyle = .none
             }
         }
         return cell

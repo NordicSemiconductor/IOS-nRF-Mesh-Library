@@ -33,7 +33,7 @@ class EditKeyViewController: UITableViewController {
     
     // MARK: - Public members
     
-    /// The Key to be modified.
+    /// The Key to be modified. This is `nil` when a new key is being added.
     var key: Key? {
         didSet {
             if let key = key {
@@ -133,6 +133,7 @@ class EditKeyViewController: UITableViewController {
             // The key may only be editable for new keys.
             cell.selectionStyle = isNewKey ? .default : .none
             cell.accessoryType = isNewKey ? .disclosureIndicator : .none
+            cell.selectionStyle = .default
         } else if indexPath.isKeyIndex {
             cell = tableView.dequeueReusableCell(withIdentifier: "detailCell", for: indexPath)
             cell.textLabel?.text = "Key Index"
@@ -168,8 +169,13 @@ class EditKeyViewController: UITableViewController {
         if indexPath.isName {
             presentNameDialog()
         }
-        if isNewKey && indexPath.isKey {
-            presentKeyDialog()
+        if indexPath.isKey {
+            if isNewKey {
+                presentKeyDialog()
+            } else {
+                UIPasteboard.general.string = newKey.hex
+                showToast("Key copied to Clipboard.")
+            }
         }
         if !isKeyUsed && indexPath.isBoundKeyIndex {
             let network = MeshNetworkManager.instance.meshNetwork!
