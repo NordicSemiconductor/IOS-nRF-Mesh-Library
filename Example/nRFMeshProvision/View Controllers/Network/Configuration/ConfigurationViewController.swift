@@ -150,7 +150,7 @@ class ConfigurationViewController: UITableViewController {
             presentNameDialog()
         }
         if indexPath.isReset {
-            presentResetConfirmation()
+            presentResetConfirmation(from: indexPath)
         }
         if indexPath.isDeviceKey {
             UIPasteboard.general.string = node.deviceKey.hex
@@ -182,7 +182,7 @@ private extension ConfigurationViewController {
     }
     
     /// Presents a dialog with resetting confirmation.
-    func presentResetConfirmation() {
+    func presentResetConfirmation(from indexPath: IndexPath) {
         let alert = UIAlertController(title: "Reset Node",
                                       message: "Resetting the node will change its state back to unprovisioned state.",
                                       preferredStyle: .actionSheet)
@@ -190,6 +190,9 @@ private extension ConfigurationViewController {
         let cancelAction = UIAlertAction(title: "Cancel", style: .cancel)
         alert.addAction(resetAction)
         alert.addAction(cancelAction)
+        let cell = tableView.cellForRow(at: indexPath)
+        alert.popoverPresentationController?.sourceView = (cell as? ResetNodeCell)?.resetButton ?? cell
+        alert.popoverPresentationController?.permittedArrowDirections = [.down, .up, .right]
         present(alert, animated: true)
     }
     
@@ -275,4 +278,5 @@ private extension IndexPath {
     }
     
     static let name = IndexPath(row: 0, section: 0)
+    static let reset = IndexPath(row: 3, section: 0)
 }

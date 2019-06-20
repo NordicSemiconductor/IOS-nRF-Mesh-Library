@@ -13,7 +13,8 @@ class ProvisioningViewController: UITableViewController {
     static let attentionTimer: UInt8 = 5
     
     // MARK: - Outlets
-
+    @IBOutlet weak var provisionButton: UIBarButtonItem!
+    
     @IBOutlet weak var nameLabel: UILabel!
     @IBOutlet weak var unicastAddressLabel: UILabel!
     @IBOutlet weak var networkKeyLabel: UILabel!
@@ -225,7 +226,7 @@ private extension ProvisioningViewController {
         let outputOobNotSupported = capabilities.outputOobActions.isEmpty
         let inputOobNotSupported  = capabilities.inputOobActions.isEmpty
         guard (staticOobNotSupported && outputOobNotSupported && inputOobNotSupported) || authenticationMethod != nil else {
-            presentOobOptionsDialog(for: provisioningManager) { method in
+            presentOobOptionsDialog(for: provisioningManager, from: provisionButton) { method in
                 self.authenticationMethod = method
                 self.startProvisioning()
             }

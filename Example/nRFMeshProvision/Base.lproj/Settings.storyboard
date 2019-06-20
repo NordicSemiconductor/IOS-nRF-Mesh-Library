@@ -280,7 +280,9 @@
                         <outlet property="appVersionLabel" destination="Qhb-tk-JeS" id="LbT-9w-B5J"/>
                         <outlet property="networkKeysLabel" destination="EmX-2O-NSn" id="pMO-8P-aaU"/>
                         <outlet property="networkNameLabel" destination="2pZ-ON-hY3" id="dHa-pS-pA8"/>
+                        <outlet property="organizeButton" destination="zst-iu-EQ0" id="gb6-0O-6er"/>
                         <outlet property="provisionersLabel" destination="b79-JM-XHL" id="aHv-Sl-Zm7"/>
+                        <outlet property="resetNetworkButton" destination="RSr-Rm-7VT" id="93N-eA-fS9"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="3Ya-K3-rPi" userLabel="First Responder" sceneMemberID="firstResponder"/>

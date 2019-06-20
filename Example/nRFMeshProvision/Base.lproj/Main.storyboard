@@ -174,7 +174,7 @@
                                     </subviews>
                                 </tableViewCellContentView>
                             </tableViewCell>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="reset" id="lc6-Lu-n3M">
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="reset" id="lc6-Lu-n3M" customClass="ResetNodeCell" customModule="nRFMeshProvision_Example" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="143.33333333333334" width="375" height="44"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="lc6-Lu-n3M" id="WjU-Yf-R69">
@@ -202,6 +202,9 @@
                                         <constraint firstItem="UTY-9G-OJi" firstAttribute="leading" secondItem="WjU-Yf-R69" secondAttribute="leadingMargin" id="x5V-8i-Mmj"/>
                                     </constraints>
                                 </tableViewCellContentView>
+                                <connections>
+                                    <outlet property="resetButton" destination="JcH-ep-PUT" id="DB1-rY-BWO"/>
+                                </connections>
                             </tableViewCell>
                         </prototypes>
                         <connections>
@@ -525,6 +528,7 @@
                         <outlet property="networkKeyCell" destination="Ndg-0Q-WKP" id="eoi-0Q-Pg1"/>
                         <outlet property="networkKeyLabel" destination="jB2-Ks-5Wg" id="G06-A9-2iG"/>
                         <outlet property="outputOobSizeLabel" destination="xit-9M-VEk" id="OUn-Oi-aSn"/>
+                        <outlet property="provisionButton" destination="QVW-Ct-Tf7" id="Jrn-Ox-fyk"/>
                         <outlet property="publicKeyTypeLabel" destination="zDh-JJ-bBg" id="yeg-Hd-EDU"/>
                         <outlet property="staticOobTypeLabel" destination="Qdh-uv-1ef" id="Prn-1J-dNf"/>
                         <outlet property="supportedAlgorithmsLabel" destination="pS5-Y5-QgE" id="9fM-jm-2KW"/>

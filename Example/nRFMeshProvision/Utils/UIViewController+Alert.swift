@@ -37,8 +37,10 @@ extension UIViewController {
     ///   - message: The message below the title.
     ///   - handler: The Confirm button handler.
     func confirm(title: String?, message: String?, handler: ((UIAlertAction) -> Void)? = nil) {
+        let ipad = UIDevice.current.userInterfaceIdiom == .pad
+        let style: UIAlertController.Style = ipad ? .alert : .actionSheet
         DispatchQueue.main.async {
-            let alert = UIAlertController(title: title, message: message, preferredStyle: .actionSheet)
+            let alert = UIAlertController(title: title, message: message, preferredStyle: style)
             alert.addAction(UIAlertAction(title: "Confirm", style: .destructive, handler: handler))
             alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
             self.present(alert, animated: true)

@@ -12,11 +12,14 @@ import nRFMeshProvision
 class SettingsViewController: UITableViewController {
     
     // MARK: - Outlets -
+    @IBOutlet weak var organizeButton: UIBarButtonItem!
     
     @IBOutlet weak var networkNameLabel: UILabel!
     @IBOutlet weak var provisionersLabel: UILabel!
     @IBOutlet weak var networkKeysLabel: UILabel!
     @IBOutlet weak var appKeysLabel: UILabel!
+    
+    @IBOutlet weak var resetNetworkButton: UIButton!
     
     @IBOutlet weak var appVersionLabel: UILabel!
     @IBOutlet weak var appBuildNumberLabel: UILabel!
@@ -120,6 +123,7 @@ private extension SettingsViewController {
         let cancelAction = UIAlertAction(title: "Cancel", style: .cancel)
         alert.addAction(resetAction)
         alert.addAction(cancelAction)
+        alert.popoverPresentationController?.sourceView = resetNetworkButton
         present(alert, animated: true)
     }
     
@@ -134,6 +138,7 @@ private extension SettingsViewController {
         alert.addAction(exportAction)
         alert.addAction(importAction)
         alert.addAction(cancelAction)
+        alert.popoverPresentationController?.barButtonItem = organizeButton
         present(alert, animated: true)
     }
     

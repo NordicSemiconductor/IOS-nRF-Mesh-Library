@@ -32,6 +32,7 @@ extension OobSelector where Self: UIViewController {
     }
     
     func presentOobOptionsDialog(for provisioningManager: ProvisioningManager,
+                                 from item: UIBarButtonItem,
                                  callback: @escaping (AuthenticationMethod) -> Void) {
         guard let capabilities = provisioningManager.provisioningCapabilities else {
             return
@@ -48,19 +49,21 @@ extension OobSelector where Self: UIViewController {
         }
         if !capabilities.outputOobActions.isEmpty {
             alert.addAction(UIAlertAction(title: "Output OOB", style: .default, handler: { _ in
-                self.presentOutputOobOptionsDialog(for: provisioningManager, callback: callback)
+                self.presentOutputOobOptionsDialog(for: provisioningManager, from: item, callback: callback)
             }))
         }
         if !capabilities.inputOobActions.isEmpty {
             alert.addAction(UIAlertAction(title: "Input OOB", style: .default, handler: { _ in
-                self.presentInputOobOptionsDialog(for: provisioningManager, callback: callback)
+                self.presentInputOobOptionsDialog(for: provisioningManager, from: item, callback: callback)
             }))
         }
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+        alert.popoverPresentationController?.barButtonItem = item
         present(alert, animated: true)
     }
     
     func presentOutputOobOptionsDialog(for provisioningManager: ProvisioningManager,
+                                       from item: UIBarButtonItem,
                                        callback: @escaping (AuthenticationMethod) -> Void) {
         guard let capabilities = provisioningManager.provisioningCapabilities else {
             return
@@ -75,10 +78,12 @@ extension OobSelector where Self: UIViewController {
         if actions.contains(.outputNumeric) { alert.addAction(action(for: .outputNumeric, size: size, callback: callback)) }
         if actions.contains(.outputAlphanumeric) { alert.addAction(action(for: .outputAlphanumeric, size: size, callback: callback)) }
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+        alert.popoverPresentationController?.barButtonItem = item
         present(alert, animated: true)
     }
     
     func presentInputOobOptionsDialog(for provisioningManager: ProvisioningManager,
+                                      from item: UIBarButtonItem,
                                       callback: @escaping (AuthenticationMethod) -> Void) {
         guard let capabilities = provisioningManager.provisioningCapabilities else {
             return
@@ -92,6 +97,7 @@ extension OobSelector where Self: UIViewController {
         if actions.contains(.inputNumeric) { alert.addAction(action(for: .inputNumeric, size: size, callback: callback)) }
         if actions.contains(.inputAlphanumeric) { alert.addAction(action(for: .inputAlphanumeric, size: size, callback: callback)) }
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+        alert.popoverPresentationController?.barButtonItem = item
         present(alert, animated: true)
     }
     
