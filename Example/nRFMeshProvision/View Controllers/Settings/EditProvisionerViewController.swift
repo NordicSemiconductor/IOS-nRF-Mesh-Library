@@ -187,7 +187,8 @@ private extension EditProvisionerViewController {
         let address = newAddress?.hex ?? node?.unicastAddress.hex ?? ""
         
         // If node has been assigned, add the option to unbind the node.
-        let action = node == nil && newAddress == nil ? nil : UIAlertAction(title: "Unbind", style: .destructive) { action in
+        let nodeAssigned = newAddress != nil || (node != nil && !disableConfigCapabilities)
+        let action = !nodeAssigned ? nil : UIAlertAction(title: "Unassign", style: .destructive) { action in
             self.confirm(title: "Disable configuration capabilities",
                          message: "A Provisioner without the unicast address assigned is not able to perform configuration operations.") { _ in
                             self.disableConfigCapabilities = true
