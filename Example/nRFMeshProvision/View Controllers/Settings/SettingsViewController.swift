@@ -79,25 +79,6 @@ class SettingsViewController: UITableViewController {
 
 private extension SettingsViewController {
     
-    /// Presents a dialog to edit the default TTL.
-    /*func presentTTLDialog() {
-        let manager = MeshNetworkManager.instance
-        
-        presentTextAlert(title: "Default TTL",
-                         message: "TTL = Time To Leave\n\nTTL limits the number of times a message can be relayed.\nMax value is 127.",
-                         text: "\(manager.globalTTL)", placeHolder: "Default is 5",
-                         type: .ttlRequired) { value in
-                            let ttl = UInt8(value)!
-                            manager.globalTTL = ttl
-                            
-                            if MeshNetworkManager.instance.save() {
-                                self.globalTTL.detailTextLabel?.text = "\(ttl)"
-                            } else {
-                                self.presentAlert(title: "Error", message: "Mesh configuration could not be saved.")
-                            }
-        }
-    }*/
-    
     /// Presents a dialog to edit the network name.
     func presentNameDialog() {
         let network = MeshNetworkManager.instance.meshNetwork!

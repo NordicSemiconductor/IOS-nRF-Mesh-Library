@@ -112,7 +112,7 @@ public class Node: Codable {
     /// Secure Network messages.
     public internal(set) var secureNetworkBeacon: Bool?
     /// The default Time To Leave (TTL) value used when sending messages.
-    public internal(set) var defaultTTL: UInt8?
+    public var defaultTTL: UInt8?
     /// The object represents parameters of the transmissions of network
     /// layer messages originating from a mesh node.
     public internal(set) var networkTransmit: NetworkTransmit?

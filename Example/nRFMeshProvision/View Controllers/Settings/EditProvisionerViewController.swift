@@ -26,6 +26,7 @@ class EditProvisionerViewController: UITableViewController {
     
     @IBOutlet weak var nameLabel: UILabel!
     @IBOutlet weak var unicastAddressLabel: UILabel!
+    @IBOutlet weak var ttlCell: UITableViewCell!
     @IBOutlet weak var unicastAddressRange: RangeView!
     @IBOutlet weak var groupAddressRange: RangeView!
     @IBOutlet weak var sceneRange: RangeView!
@@ -53,6 +54,7 @@ class EditProvisionerViewController: UITableViewController {
     private var newName: String? = nil
     private var newAddress: Address? = nil
     private var disableConfigCapabilities: Bool = false
+    private var newTtl: UInt8? = nil
     private var newUnicastAddressRange: [AddressRange]? = nil
     private var newGroupAddressRange: [AddressRange]? = nil
     private var newSceneRange: [SceneRange]? = nil
@@ -78,6 +80,11 @@ class EditProvisionerViewController: UITableViewController {
         let node = meshNetwork.node(for: provisioner)
         if let node = node {
             unicastAddressLabel.text = node.unicastAddress.asString()
+            ttlCell.detailTextLabel?.text = "\(node.defaultTTL ?? 5)"
+            ttlCell.accessoryType = .disclosureIndicator
+        } else {
+            ttlCell.detailTextLabel?.text = "N/A"
+            ttlCell.accessoryType = .none
         }
         
         // Draw ranges for the Provisioner.
@@ -98,8 +105,7 @@ class EditProvisionerViewController: UITableViewController {
         let cell = sender! as! UITableViewCell
         let indexPath = tableView.indexPath(for: cell)!
         
-        switch indexPath.section {
-        case 1: // Allocated ranges
+        if indexPath.isAllocatedRangesSection {
             let destination = segue.destination as! EditRangesViewController
             destination.delegate = self
             
@@ -135,13 +141,17 @@ class EditProvisionerViewController: UITableViewController {
                 // Not possible
                 break
             }
-        default:
-            // Not possible
-            break
         }
     }
     
     // MARK: - Table View Delegate
+    
+    override func tableView(_ tableView: UITableView, shouldHighlightRowAt indexPath: IndexPath) -> Bool {
+        if indexPath.isTtl {
+           return newAddress != nil || provisioner.node != nil
+        }
+        return true
+    }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
@@ -151,6 +161,9 @@ class EditProvisionerViewController: UITableViewController {
         }
         if indexPath.isUnicastAddress {
             presentUnicastAddressDialog()
+        }
+        if indexPath.isTtl {
+            presentTTLDialog()
         }
     }
     
@@ -170,17 +183,19 @@ private extension EditProvisionerViewController {
     
     /// Presents a dialog to edit or unbind the Provisioner Unicast Address.
     func presentUnicastAddressDialog() {
-        let meshNetwork = MeshNetworkManager.instance.meshNetwork!
-        let node = meshNetwork.node(for: provisioner)
-        let address = node?.unicastAddress.hex ?? ""
+        let node = provisioner.node
+        let address = newAddress?.hex ?? node?.unicastAddress.hex ?? ""
         
         // If node has been assigned, add the option to unbind the node.
-        let action = node == nil ? nil : UIAlertAction(title: "Unbind", style: .destructive) { action in
+        let action = node == nil && newAddress == nil ? nil : UIAlertAction(title: "Unbind", style: .destructive) { action in
             self.confirm(title: "Disable configuration capabilities",
                          message: "A Provisioner without the unicast address assigned is not able to perform configuration operations.") { _ in
                             self.disableConfigCapabilities = true
                             self.newAddress = nil
                             self.unicastAddressLabel.text = "Not assigned"
+                            self.ttlCell.detailTextLabel?.text = "N/A"
+                            self.ttlCell.accessoryType = .none
+                            self.newTtl = nil
             }
         }
         presentTextAlert(title: "Unicast address", message: "Hexadecimal value in range\n0001 - 7FFF.",
@@ -190,8 +205,24 @@ private extension EditProvisionerViewController {
                             self.unicastAddressLabel.text = address!.asString()
                             self.disableConfigCapabilities = false
                             self.newAddress = address
+                            self.ttlCell.detailTextLabel?.text = "\(self.newTtl ?? self.provisioner.node?.defaultTTL ?? 5)"
+                            self.ttlCell.accessoryType = .disclosureIndicator
         }
     }
+    
+    /// Presents a dialog to edit the default TTL.
+    func presentTTLDialog() {
+        let node = provisioner.node
+        
+        presentTextAlert(title: "Default TTL",
+                         message: "TTL = Time To Leave\n\nTTL limits the number of times a message can be relayed.\nMax value is 127.",
+                         text: "\(node?.defaultTTL ?? 5)", placeHolder: "Default is 5",
+                         type: .ttlRequired) { value in
+                            let ttl = UInt8(value)!
+                            self.newTtl = ttl
+                            self.ttlCell.detailTextLabel?.text = "\(ttl)"
+        }
+     }
     
     /// Saves the edited or new Provisioner and pops the view contoller if saving
     /// succeeded.
@@ -221,9 +252,12 @@ private extension EditProvisionerViewController {
                     meshNetwork.disableConfigurationCapabilities(for: provisioner)
                 }
             }
-            // When we reached that far, changing the name is just a formality.
+            // When we reached that far, changing the name and TTL is just a formality.
             if let newName = newName {
                 provisioner.provisionerName = newName
+            }
+            if let newTtl = newTtl {
+                provisioner.node?.defaultTTL = newTtl
             }
             
             if MeshNetworkManager.instance.save() {
@@ -360,6 +394,11 @@ extension EditProvisionerViewController: EditRangesDelegate {
 
 private extension IndexPath {
     
+    /// Returns whether the IndexPath points the Allocated Ranges section.
+    var isAllocatedRangesSection: Bool {
+        return section == 2
+    }
+    
     /// Returns whether the IndexPath points the Provisioner name.
     var isProvisionerName: Bool {
         return section == 0 && row == 0
@@ -367,7 +406,12 @@ private extension IndexPath {
     
     /// Returns whether the IndexPath point to the Unicast Address.
     var isUnicastAddress: Bool {
-        return section == 0 && row == 1
+        return section == 1 && row == 0
+    }
+    
+    /// Returns whether the IndexPath point to the TTL field.
+    var isTtl: Bool {
+        return section == 1 && row == 1
     }
     
 }
