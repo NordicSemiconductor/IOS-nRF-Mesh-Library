@@ -7,7 +7,6 @@
 
 import Foundation
 
-
 public extension Node {
     
     /// Number of mode's elements.

@@ -7,8 +7,6 @@
 
 import Foundation
 
-// MARK: - Ranges validation
-
 public extension MeshNetwork {
     
     /// Checks whether the given range is available for allocation to a new

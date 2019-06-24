@@ -7,8 +7,6 @@
 
 import Foundation
 
-// MARK: - MeshNetwork API
-
 public extension MeshNetwork {
     
     /// Returns the local Provisioner, or `nil` if the mesh network

@@ -7,9 +7,7 @@
 
 import Foundation
 
-// MARK: - Internal MeshNetwork API
-
-extension MeshNetwork {
+public extension MeshNetwork {
     
     /// Returns whether the given address can be assigned to a new Node
     /// with given number of elements.
@@ -22,10 +20,10 @@ extension MeshNetwork {
             !nodes.contains { $0.overlapsWithAddress(address, elementsCount: count) }
     }
     
-    /// Returns the next available unicast address from the Provisioner's range
+    /// Returns the next available Unicast Address from the Provisioner's range
     /// that can be assigned to a new node with given number of elements.
-    /// The 0'th element is identified by the node's unicast address.
-    /// Each following element is identified by a subsequent unicast address.
+    /// The 0'th element is identified by the node's Unicast Address.
+    /// Each following element is identified by a subsequent Unicast Address.
     ///
     /// - parameter elementsCount: The number of node's elements. Each element will be
     ///                            identified by a subsequent unicast address.
