@@ -62,8 +62,17 @@ class EditProvisionerViewController: UITableViewController {
     // MARK: - View Controller
 
     override func viewDidLoad() {
+        let meshNetwork = MeshNetworkManager.instance.meshNetwork!
+        
         if provisioner == nil {
-            provisioner = Provisioner(name: UIDevice.current.name)
+            // These ranges grow propotionally.
+            let nextAddressRange = meshNetwork.nextAvailableUnicastAddressRange(ofSize: 0x199A)
+            let nextGroupRange = meshNetwork.nextAvailableGroupAddressRange(ofSize: 0x0C9A)
+            let nextSceneRange = meshNetwork.nextAvailableSceneRange(ofSize: 0x3334)
+            provisioner = Provisioner(name: UIDevice.current.name,
+                                      allocatedUnicastRange: [nextAddressRange ?? AddressRange.allUnicastAddresses],
+                                      allocatedGroupRange: [nextGroupRange ?? AddressRange.allGroupAddresses],
+                                      allocatedSceneRange: [nextSceneRange ?? SceneRange.allScenes])
             adding = true
             title = "New Provisioner"
         } else {
@@ -73,7 +82,6 @@ class EditProvisionerViewController: UITableViewController {
         // Show Provisioner's parameters.
         nameLabel.text = provisioner.provisionerName
         
-        let meshNetwork = MeshNetworkManager.instance.meshNetwork!
         
         // A Provisioner does not need to have an associated node.
         // A Provisioner without a node can't perform nodes configuration operations.
@@ -327,6 +335,9 @@ private extension EditProvisionerViewController {
     func ensureNewRangesAreValid(for provisioner: Provisioner) throws {
         let meshNetwork = MeshNetworkManager.instance.meshNetwork!
         
+        guard newUnicastAddressRange == nil || !newUnicastAddressRange!.isEmpty else {
+            throw MeshModelError.invalidRange
+        }
         if let newUnicastAddressRange = newUnicastAddressRange {
             guard meshNetwork.areRanges(newUnicastAddressRange, availableForAllocationTo: provisioner) else {
                 throw MeshModelError.overlappingProvisionerRanges

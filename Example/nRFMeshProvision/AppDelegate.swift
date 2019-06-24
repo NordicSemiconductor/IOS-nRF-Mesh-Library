@@ -48,7 +48,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // TODO: Implement creator
         connection?.close()
         
-        _ = meshNetworkManager.createNewMeshNetwork(withName: "nRF Mesh Network", by: UIDevice.current.name)
+        let provisioner = Provisioner(name: UIDevice.current.name,
+                                      allocatedUnicastRange: [AddressRange(0x0001...0x199A)],
+                                      allocatedGroupRange:   [AddressRange(0xC000...0xCC9A)],
+                                      allocatedSceneRange:   [SceneRange(0x0001...0x3333)])
+        _ = meshNetworkManager.createNewMeshNetwork(withName: "nRF Mesh Network", by: provisioner)
         _ = meshNetworkManager.save()
         
         let meshNetwork = meshNetworkManager.meshNetwork!

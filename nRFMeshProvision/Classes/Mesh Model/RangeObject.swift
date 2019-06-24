@@ -19,6 +19,11 @@ public class RangeObject {
         return range.upperBound
     }
     
+    // Number of elements in the range.
+    public var count: Int {
+        return range.count
+    }
+    
     public required init(from lowerBound: UInt16, to upperBound: UInt16) {
         self.range = lowerBound...upperBound
     }

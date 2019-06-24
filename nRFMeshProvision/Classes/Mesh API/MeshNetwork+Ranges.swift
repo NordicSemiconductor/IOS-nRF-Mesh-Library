@@ -99,4 +99,103 @@ public extension MeshNetwork {
         return ranges.isValid && !provisioners.filter({ $0 != provisioner }).contains { $0.allocatedSceneRange.overlaps(ranges) }
     }
     
+    /// Returns the next available Unicast Address range of given size that is
+    /// not allocated to any Provisioner. If no range of given size can be found,
+    /// a range of maximum available space is returned. If all addresses have
+    /// been allocated, `nil` is returned.
+    ///
+    /// - parameter size: The preferred and maximum size of a range to find.
+    /// - returns: The range of given size, a smaller one if such is not available
+    ///            or `nil` if all addresses are alread allocated.
+    func nextAvailableUnicastAddressRange(ofSize size: UInt16 = Address.maxUnicastAddress) -> AddressRange? {
+        let allRangesSorted: [AddressRange] = provisioners.reduce([], { ranges, next in
+            ranges + next.allocatedUnicastRange
+        }).sorted { $0.lowerBound < $1.lowerBound }
+        
+        guard let range = nextAvailableRange(ofSize: size, in: Address.minUnicastAddress...Address.maxUnicastAddress,
+                                             among: allRangesSorted) else {
+                                                return nil
+        }
+        return AddressRange(range.range)
+    }
+    
+    /// Returns the next available Group Address range of given size that is
+    /// not allocated to any Provisioner. If no range of given size can be found,
+    /// a range of maximum available space is returned. If all addresses have
+    /// been allocated, `nil` is returned.
+    ///
+    /// - parameter size: The preferred and maximum size of a range to find.
+    /// - returns: The range of given size, a smaller one if such is not available
+    ///            or `nil` if all addresses are alread allocated.
+    func nextAvailableGroupAddressRange(ofSize size: UInt16 = Address.maxGroupAddress) -> AddressRange? {
+        let allRangesSorted: [AddressRange] = provisioners.reduce([], { ranges, next in
+            ranges + next.allocatedGroupRange
+        }).sorted { $0.lowerBound < $1.lowerBound }
+        
+        guard let range = nextAvailableRange(ofSize: size, in: Address.minGroupAddress...Address.maxGroupAddress,
+                                             among: allRangesSorted) else {
+                                                return nil
+        }
+        return AddressRange(range.range)
+    }
+    
+    /// Returns the next available Scene range of given size that is
+    /// not allocated to any Provisioner. If no range of given size can be found,
+    /// a range of maximum available space is returned. If all scenes have
+    /// been allocated, `nil` is returned.
+    ///
+    /// - parameter size: The preferred and maximum size of a range to find.
+    /// - returns: The range of given size, a smaller one if such is not available
+    ///            or `nil` if all scenes are alread allocated.
+    func nextAvailableSceneRange(ofSize size: UInt16 = Scene.minScene) -> SceneRange? {
+        let allRangesSorted: [SceneRange] = provisioners.reduce([], { ranges, next in
+            ranges + next.allocatedSceneRange
+        }).sorted { $0.lowerBound < $1.lowerBound }
+        
+        guard let range = nextAvailableRange(ofSize: size, in: Scene.minScene...Scene.maxScene,
+                                             among: allRangesSorted) else {
+                                                return nil
+        }
+        return SceneRange(range.range)
+    }
+    
+    /// Returns the next available Group Address range of given size that is
+    /// not allocated to any Provisioner. If no range of given size can be found,
+    /// a range of maximum available space is returned. If all addresses have
+    /// been allocated, `nil` is returned.
+    ///
+    /// - parameter size: The preferred and maximum size of a range to find.
+    /// - returns: The range of given size, a smaller one if such is not available
+    ///            or `nil` if all addresses are alread allocated.
+    private func nextAvailableRange(ofSize size: UInt16, in space: ClosedRange<Address>,
+                                    among ranges: [RangeObject]) -> RangeObject? {
+        var bestRange: RangeObject? = nil
+        var lastUpperBound: Address = space.lowerBound - 1
+        
+        // Go through all ranges looking for a gaps.
+        for range in ranges {
+            // If there is a space available before this range, return it.
+            if UInt32(lastUpperBound) + UInt32(size) < range.lowerBound {
+                return RangeObject(lastUpperBound + 1...lastUpperBound + size)
+            }
+            // If the space exists, but it's not as big as requested, compare
+            // it with the best range so far and replace if it's bigger.
+            if range.lowerBound - lastUpperBound > 1 {
+                let newRange = RangeObject(lastUpperBound + 1...range.lowerBound - 1)
+                if bestRange == nil || newRange.count > bestRange!.count {
+                    bestRange = newRange
+                }
+            }
+            lastUpperBound = range.upperBound
+        }
+        
+        // If if we didn't return earlier, check after the last range.
+        if UInt32(lastUpperBound) + UInt32(size) < space.upperBound {
+            return RangeObject(lastUpperBound + 1...lastUpperBound + size - 1)
+        }
+        
+        // The gap of requested size hasn't been found. Return the best found.
+        return bestRange
+    }
+    
 }

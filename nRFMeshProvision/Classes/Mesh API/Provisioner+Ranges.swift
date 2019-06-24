@@ -9,11 +9,14 @@ import Foundation
 
 public extension Provisioner {
     
-    /// Returns true if all defined ranges are valid or empty.
+    /// Returns `true` if all defined ranges are valid.
+    /// Unicase Address range may not be empty, as it needs to assign addresses
+    /// during provisioning.
     var isValid: Bool {
         return allocatedUnicastRange.isUnicastRange
             && allocatedGroupRange.isGroupRange
             && allocatedSceneRange.isValid
+            && !allocatedUnicastRange.isEmpty
     }
     
     /// Allocates Unicast Address range for the Provisioner. This method
