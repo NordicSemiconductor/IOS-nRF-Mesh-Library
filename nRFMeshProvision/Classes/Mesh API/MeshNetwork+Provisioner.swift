@@ -178,16 +178,16 @@ public extension MeshNetwork {
             // The target index must be modifed if the Provisioner is
             // being moved below, as it was removed and other Provisioners
             // were already moved to fill the space.
-            let newToIndex = toIndex > fromIndex ? toIndex - 1 : toIndex
-            if newToIndex <= provisioners.count {
+            let newToIndex = toIndex > fromIndex + 1 ? toIndex - 1 : toIndex
+            if newToIndex < provisioners.count {
                 provisioners.insert(provisioner, at: newToIndex)
             } else {
                 provisioners.append(provisioner)
             }
-            // If the Provisioner was moved to index 0 it becomes the new local Provisioner.
+            // If a Provisioner was moved to index 0 it becomes the new local Provisioner.
             // The local Provisioner is, by definition, aware of all Network and Application
             // Keys currently existing in the network.
-            if newToIndex == 0, let n = node(for: provisioner) {
+            if let n = localProvisioner?.node {
                 networkKeys.forEach { key in
                     n.netKeys.append(Node.NodeKey(of: key))
                 }
