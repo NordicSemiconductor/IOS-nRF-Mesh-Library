@@ -27,6 +27,7 @@ class EditProvisionerViewController: UITableViewController {
     @IBOutlet weak var nameLabel: UILabel!
     @IBOutlet weak var unicastAddressLabel: UILabel!
     @IBOutlet weak var ttlCell: UITableViewCell!
+    @IBOutlet weak var deviceKeyCell: UITableViewCell!
     @IBOutlet weak var unicastAddressRange: RangeView!
     @IBOutlet weak var groupAddressRange: RangeView!
     @IBOutlet weak var sceneRange: RangeView!
@@ -89,9 +90,11 @@ class EditProvisionerViewController: UITableViewController {
             unicastAddressLabel.text = node.unicastAddress.asString()
             ttlCell.detailTextLabel?.text = "\(node.defaultTTL ?? 5)"
             ttlCell.accessoryType = .disclosureIndicator
+            deviceKeyCell.textLabel?.text = node.deviceKey.hex
         } else {
             ttlCell.detailTextLabel?.text = "N/A"
             ttlCell.accessoryType = .none
+            deviceKeyCell.textLabel?.text = "No Device Key"
         }
         
         // Draw ranges for the Provisioner.
@@ -154,8 +157,8 @@ class EditProvisionerViewController: UITableViewController {
     // MARK: - Table View Delegate
     
     override func tableView(_ tableView: UITableView, shouldHighlightRowAt indexPath: IndexPath) -> Bool {
-        if indexPath.isTtl {
-           return newAddress != nil || provisioner.node != nil
+        if indexPath.isTtl || indexPath.isDeviceKey {
+           return newAddress != nil || (provisioner.node != nil && !disableConfigCapabilities)
         }
         return true
     }
@@ -171,6 +174,12 @@ class EditProvisionerViewController: UITableViewController {
         }
         if indexPath.isTtl {
             presentTTLDialog()
+        }
+        if indexPath.isDeviceKey {
+            if let deviceKey = provisioner.node?.deviceKey {
+                UIPasteboard.general.string = deviceKey.hex
+                showToast("Key copied to Clipboard.")
+            }
         }
     }
     
@@ -204,6 +213,7 @@ private extension EditProvisionerViewController {
                             self.ttlCell.detailTextLabel?.text = "N/A"
                             self.ttlCell.accessoryType = .none
                             self.newTtl = nil
+                            self.deviceKeyCell.textLabel?.text = "No Device Key"
             }
         }
         presentTextAlert(title: "Unicast address", message: "Hexadecimal value in range\n0001 - 7FFF.",
@@ -215,6 +225,9 @@ private extension EditProvisionerViewController {
                             self.newAddress = address
                             self.ttlCell.detailTextLabel?.text = "\(self.newTtl ?? self.provisioner.node?.defaultTTL ?? 5)"
                             self.ttlCell.accessoryType = .disclosureIndicator
+                            // If the Node does not exist yet, the key will be generated later,
+                            // after the Provisioner is saved. For the time being print Unknown.
+                            self.deviceKeyCell.textLabel?.text = "\(self.provisioner.node?.deviceKey.hex ?? "Unknown")"
         }
     }
     
@@ -426,6 +439,11 @@ private extension IndexPath {
     /// Returns whether the IndexPath point to the TTL field.
     var isTtl: Bool {
         return section == IndexPath.detailsSection && row == 1
+    }
+    
+    /// Returns whether the IndexPath point to the Device Key.
+    var isDeviceKey: Bool {
+        return section == IndexPath.detailsSection && row == 2
     }
     
 }
