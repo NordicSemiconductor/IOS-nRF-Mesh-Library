@@ -90,11 +90,13 @@ class EditProvisionerViewController: UITableViewController {
             unicastAddressLabel.text = node.unicastAddress.asString()
             ttlCell.detailTextLabel?.text = "\(node.defaultTTL ?? 5)"
             ttlCell.accessoryType = .disclosureIndicator
-            deviceKeyCell.textLabel?.text = node.deviceKey.hex
+            deviceKeyCell.detailTextLabel?.text = node.deviceKey.hex
+            deviceKeyCell.detailTextLabel?.font = .systemFont(ofSize: 14)
         } else {
             ttlCell.detailTextLabel?.text = "N/A"
             ttlCell.accessoryType = .none
-            deviceKeyCell.textLabel?.text = "No Device Key"
+            deviceKeyCell.detailTextLabel?.text = "N/A"
+            deviceKeyCell.detailTextLabel?.font = .systemFont(ofSize: 17)
         }
         
         // Draw ranges for the Provisioner.
@@ -213,7 +215,8 @@ private extension EditProvisionerViewController {
                             self.ttlCell.detailTextLabel?.text = "N/A"
                             self.ttlCell.accessoryType = .none
                             self.newTtl = nil
-                            self.deviceKeyCell.textLabel?.text = "No Device Key"
+                            self.deviceKeyCell.detailTextLabel?.text = "N/A"
+                            self.deviceKeyCell.detailTextLabel?.font = .systemFont(ofSize: 17)
             }
         }
         presentTextAlert(title: "Unicast address", message: "Hexadecimal value in range\n0001 - 7FFF.",
@@ -227,7 +230,13 @@ private extension EditProvisionerViewController {
                             self.ttlCell.accessoryType = .disclosureIndicator
                             // If the Node does not exist yet, the key will be generated later,
                             // after the Provisioner is saved. For the time being print Unknown.
-                            self.deviceKeyCell.textLabel?.text = "\(self.provisioner.node?.deviceKey.hex ?? "Unknown")"
+                            if let deviceKey = self.provisioner.node?.deviceKey {
+                                self.deviceKeyCell.detailTextLabel?.text = "\(deviceKey.hex)"
+                                self.deviceKeyCell.detailTextLabel?.font = .systemFont(ofSize: 14)
+                            } else {
+                                self.deviceKeyCell.detailTextLabel?.text = "Unknown"
+                                self.deviceKeyCell.detailTextLabel?.font = .systemFont(ofSize: 17)
+                            }
         }
     }
     

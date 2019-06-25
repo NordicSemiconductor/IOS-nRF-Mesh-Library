@@ -129,7 +129,7 @@ class EditKeyViewController: UITableViewController {
             cell.selectionStyle = .default
         } else if indexPath.isKey {
             cell = tableView.dequeueReusableCell(withIdentifier: "keyCell", for: indexPath)
-            cell.textLabel?.text = newKey.hex
+            cell.detailTextLabel?.text = newKey.hex
             // The key may only be editable for new keys.
             cell.selectionStyle = isNewKey ? .default : .none
             cell.accessoryType = isNewKey ? .disclosureIndicator : .none
@@ -144,18 +144,16 @@ class EditKeyViewController: UITableViewController {
             
             cell = tableView.dequeueReusableCell(withIdentifier: "subtitleCell", for: indexPath)
             cell.textLabel?.text = networkKey.name
-            cell.detailTextLabel?.text = networkKey.key.hex
+            cell.detailTextLabel?.text = "Key Index: \(networkKey.index)"
             cell.selectionStyle = isKeyUsed ? .none : .default
             
             if networkKey.index == newBoundNetworkKeyIndex {
                 cell.textLabel?.textColor = .black
-                cell.detailTextLabel?.textColor = .black
                 cell.accessoryType = .checkmark
                 // Save the checked row number as tag.
                 tableView.tag = indexPath.row
             } else {
                 cell.textLabel?.textColor = isKeyUsed ? .lightGray : .black
-                cell.detailTextLabel?.textColor = isKeyUsed ? .lightGray : .black
                 cell.accessoryType = .none
             }
         }
