@@ -26,25 +26,42 @@ class ConfigurationViewController: UITableViewController {
             manager.send(ConfigCompositionDataGet(), to: node)
         }
     }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        // Element name might have been updated.
+        tableView.reloadSections(IndexSet.elementsSection, with: .automatic)
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "showElement" {
+            let indexPath = sender as! IndexPath
+            let destination = segue.destination as! ElementsViewController
+            destination.element = node.elements[indexPath.row]
+        }
+    }
 
     // MARK: - Table view data source
 
     override func numberOfSections(in tableView: UITableView) -> Int {
-        return 4
+        return IndexPath.numberOfSection
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch section {
-        case 0:
+        case IndexPath.nameSection:
             return IndexPath.titles.count
-        case 1:
+        case IndexPath.nodeSection:
+            return IndexPath.nodeTitles.count
+        case IndexPath.elementsSection:
             if node.isConfigured {
                 return node.elements.count
             }
             return 1 // "Composition Data not received" message
-        case 2:
+        case IndexPath.compositionDataSection:
             return IndexPath.detailsTitles.count
-        case 3:
+        case IndexPath.actionsSection:
             return 1 // Reset button
         default:
             return 0
@@ -53,8 +70,10 @@ class ConfigurationViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         switch section {
-        case 1:
+        case IndexPath.elementsSection:
             return "Elements"
+        case IndexPath.compositionDataSection:
+            return "Composition Data"
         default:
             return nil
         }
@@ -62,7 +81,7 @@ class ConfigurationViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, titleForFooterInSection section: Int) -> String? {
         switch section {
-        case 3:
+        case IndexPath.actionsSection:
             return "Resetting the node will change its state back to un-provisioned state."
         default:
             return nil
@@ -77,39 +96,46 @@ class ConfigurationViewController: UITableViewController {
             cell.detailTextLabel?.text = node.name ?? "No name"
             cell.accessoryType = .disclosureIndicator
         }
-        if indexPath.isDetailsSection {
+        if indexPath.isNodeSection {
             cell.textLabel?.text = indexPath.title
             switch indexPath.row {
             case 0:
                 cell.detailTextLabel?.text = node.unicastAddress.asString()
             case 1:
                 cell.detailTextLabel?.text = node.deviceKey.hex
-            case 2:
+            default:
+                break
+            }
+        }
+        if indexPath.isDetailsSection {
+            cell.textLabel?.text = indexPath.title
+            switch indexPath.row {
+            case 0:
                 if let id = node.companyIdentifier {
                     let name = CompanyIdentifier.name(for: id)
                     cell.detailTextLabel?.text = "\(id.asString()) - " + (name != nil ? name! : "Unknown")
                 } else {
                     cell.detailTextLabel?.text = "Unknown"
                 }
-            case 3:
+            case 1:
                 if let id = node.productIdentifier {
                     cell.detailTextLabel?.text = "\(id.asString())"
                 } else {
                     cell.detailTextLabel?.text = "Unknown"
                 }
-            case 4:
+            case 2:
                 if let version = node.versionIdentifier {
                     cell.detailTextLabel?.text = "\(version)"
                 } else {
                     cell.detailTextLabel?.text = "Unknown"
                 }
-            case 5:
+            case 3:
                 if let rpc = node.minimumNumberOfReplayProtectionList {
                     cell.detailTextLabel?.text = "\(rpc)"
                 } else {
                     cell.detailTextLabel?.text = "Unknown"
                 }
-            case 6:
+            case 4:
                 if let featuresCell = cell as? NodeFeaturesCell {
                    featuresCell.node = node
                 }
@@ -120,7 +146,7 @@ class ConfigurationViewController: UITableViewController {
         if indexPath.isElementSection {
             if node.isConfigured {
                 let element = node.elements[indexPath.row]
-                cell.textLabel?.text = element.name ?? "Element \(indexPath.row + 1)"
+                cell.textLabel?.text = element.name ?? "Element \(element.index + 1)"
                 cell.detailTextLabel?.text = "\(element.models.count) models"
                 cell.accessoryType = .disclosureIndicator
             } else {
@@ -133,10 +159,7 @@ class ConfigurationViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, shouldHighlightRowAt indexPath: IndexPath) -> Bool {
-        if !indexPath.isDetailsSection || indexPath.isDeviceKey {
-            return true
-        }
-        return false
+        return !indexPath.isDetailsSection && !indexPath.isUnicastAddress && (node.isConfigured || !indexPath.isElementSection)
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -145,12 +168,15 @@ class ConfigurationViewController: UITableViewController {
         if indexPath.isName {
             presentNameDialog()
         }
-        if indexPath.isReset {
-            presentResetConfirmation(from: indexPath)
-        }
         if indexPath.isDeviceKey {
             UIPasteboard.general.string = node.deviceKey.hex
             showToast("Device Key copied to Clipboard.", delay: .shortDelay)
+        }
+        if indexPath.isElementSection {
+            performSegue(withIdentifier: "showElement", sender: indexPath)
+        }
+        if indexPath.isReset {
+            presentResetConfirmation(from: indexPath)
         }
     }
 
@@ -223,19 +249,30 @@ extension ConfigurationViewController: MeshNetworkDelegate {
 }
 
 private extension IndexPath {
+    static let nameSection = 0
+    static let nodeSection = 1
+    static let elementsSection = 2
+    static let compositionDataSection = 3
+    static let actionsSection = 4
+    static let numberOfSection = IndexPath.actionsSection + 1
     
     static let titles = [
         "Name"
     ]
+    static let nodeTitles = [
+        "Unicast Address", "Device Key"
+    ]
     static let detailsTitles = [
-        "Unicast Address", "Device Key",
         "Company Identifier", "Product Identifier", "Product Version",
-        "Replay Protection Count", nil
+        "Replay Protection Count", nil // Node Features is using its own cell.
     ]
     
     var cellIdentifier: String {
         if isNodeFeatures {
             return "features"
+        }
+        if isDeviceKey {
+            return "key"
         }
         if isDetailsSection {
             return "subtitle"
@@ -250,6 +287,9 @@ private extension IndexPath {
         if isName {
             return IndexPath.titles[row]
         }
+        if isNodeSection {
+            return IndexPath.nodeTitles[row]
+        }
         if isDetailsSection {
             return IndexPath.detailsTitles[row]
         }
@@ -257,29 +297,44 @@ private extension IndexPath {
     }
     
     var isName: Bool {
-        return section == 0 && row == 0
+        return section == IndexPath.nameSection && row == 0
     }
     
     var isReset: Bool {
-        return section == 3 && row == 0
+        return section == IndexPath.actionsSection && row == 0
+    }
+    
+    var isUnicastAddress: Bool {
+        return isNodeSection && row == 0
     }
     
     var isDeviceKey: Bool {
-        return section == 2 && row == 1
+        return isNodeSection && row == 1
     }
     
     var isNodeFeatures: Bool {
-        return section == 2 && row == 6
+        return isDetailsSection && row == 4
+    }
+    
+    var isNodeSection: Bool {
+        return section == IndexPath.nodeSection
     }
     
     var isElementSection: Bool {
-        return section == 1
+        return section == IndexPath.elementsSection
     }
     
     var isDetailsSection: Bool {
-        return section == 2
+        return section == IndexPath.compositionDataSection
     }
     
-    static let name = IndexPath(row: 0, section: 0)
-    static let reset = IndexPath(row: 3, section: 0)
+    static let name  = IndexPath(row: 0, section: IndexPath.nameSection)
+    static let reset = IndexPath(row: 0, section: IndexPath.actionsSection)
+    
+}
+
+private extension IndexSet {
+    
+    static let elementsSection = IndexSet(integer: IndexPath.elementsSection)
+    
 }
