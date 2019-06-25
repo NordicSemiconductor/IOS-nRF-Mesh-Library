@@ -154,6 +154,7 @@ private extension SettingsViewController {
                 
                 DispatchQueue.main.async {
                     let controller = UIActivityViewController(activityItems: [fileURL], applicationActivities: nil)
+                    controller.popoverPresentationController?.barButtonItem = self.organizeButton
                     self.present(controller, animated: true)
                 }
             } catch {
