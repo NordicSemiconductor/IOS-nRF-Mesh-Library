@@ -28,7 +28,26 @@ public extension Node {
         guard let page0 = compositionData.page as? Page0 else {
             return
         }
-        page0.apply(to: self)
+       companyIdentifier = page0.companyIdentifier
+       productIdentifier = page0.productIdentifier
+       versionIdentifier = page0.versionIdentifier
+       minimumNumberOfReplayProtectionList = page0.minimumNumberOfReplayProtectionList
+       features = page0.features
+        // Remove any existing Elements. There should not be any, but just to be sure.
+        elements.forEach {
+            $0.parentNode = nil
+            $0.index = 0
+        }
+        elements.removeAll()
+        // And add the Elements received.
+        add(elements: page0.elements)
+    }
+    
+    /// Applies the result of Config Default TTL Status message.
+    ///
+    /// - parameter defaultTtl: The response received.
+    func apply(defaultTtl: ConfigDefaultTtlStatus) {
+        ttl = defaultTtl.ttl
     }
     
 }

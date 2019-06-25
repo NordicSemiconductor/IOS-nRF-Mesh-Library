@@ -112,7 +112,24 @@ public class Node: Codable {
     /// Secure Network messages.
     public internal(set) var secureNetworkBeacon: Bool?
     /// The default Time To Leave (TTL) value used when sending messages.
-    public var defaultTTL: UInt8?
+    internal var ttl: UInt8?
+    /// The default Time To Leave (TTL) value used when sending messages.
+    /// The TTL may only be set for a Provisioner's Node, or for a Node
+    /// that has not been added to a mesh network.
+    ///
+    /// Use `ConfigDefaultTtlGet` and `ConfigDefaultTtlSet` messages to read
+    /// or set the default TTL value.
+    public var defaultTTL: UInt8? {
+        set {
+            if let meshNetwork = meshNetwork, !meshNetwork.hasProvisioner(with: uuid) {
+                return
+            }
+            ttl = newValue
+        }
+        get {
+            return ttl
+        }
+    }
     /// The object represents parameters of the transmissions of network
     /// layer messages originating from a mesh node.
     public internal(set) var networkTransmit: NetworkTransmit?
@@ -263,7 +280,7 @@ public class Node: Codable {
         case minimumNumberOfReplayProtectionList = "crpl"
         case features
         case secureNetworkBeacon
-        case defaultTTL
+        case ttl = "defaultTTL"
         case networkTransmit
         case relayRetransmit
         case elements
@@ -327,7 +344,7 @@ public class Node: Codable {
         }
         self.features = try container.decodeIfPresent(NodeFeatures.self, forKey: .features)
         self.secureNetworkBeacon = try container.decodeIfPresent(Bool.self, forKey: .secureNetworkBeacon)
-        self.defaultTTL = try container.decodeIfPresent(UInt8.self, forKey: .defaultTTL)
+        self.ttl = try container.decodeIfPresent(UInt8.self, forKey: .ttl)
         self.networkTransmit = try container.decodeIfPresent(NetworkTransmit.self, forKey: .networkTransmit)
         self.relayRetransmit = try container.decodeIfPresent(RelayRetransmit.self, forKey: .relayRetransmit)
         self.elements = try container.decode([Element].self, forKey: .elements)
@@ -354,7 +371,7 @@ public class Node: Codable {
         try container.encodeIfPresent(minimumNumberOfReplayProtectionList?.hex, forKey: .minimumNumberOfReplayProtectionList)
         try container.encodeIfPresent(features, forKey: .features)
         try container.encodeIfPresent(secureNetworkBeacon, forKey: .secureNetworkBeacon)
-        try container.encodeIfPresent(defaultTTL, forKey: .defaultTTL)
+        try container.encodeIfPresent(ttl, forKey: .ttl)
         try container.encodeIfPresent(networkTransmit, forKey: .networkTransmit)
         try container.encodeIfPresent(relayRetransmit, forKey: .relayRetransmit)
         try container.encode(elements, forKey: .elements)

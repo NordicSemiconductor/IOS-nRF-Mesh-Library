@@ -102,6 +102,8 @@ class ConfigurationViewController: UITableViewController {
             case 0:
                 cell.detailTextLabel?.text = node.unicastAddress.asString()
             case 1:
+                cell.detailTextLabel?.text = node.defaultTTL != nil ? "\(node.defaultTTL!)" : "Unknown"
+            case 2:
                 cell.detailTextLabel?.text = node.deviceKey.hex
             default:
                 break
@@ -147,10 +149,12 @@ class ConfigurationViewController: UITableViewController {
             if node.isConfigured {
                 let element = node.elements[indexPath.row]
                 cell.textLabel?.text = element.name ?? "Element \(element.index + 1)"
+                cell.textLabel?.textColor = .darkText
                 cell.detailTextLabel?.text = "\(element.models.count) models"
                 cell.accessoryType = .disclosureIndicator
             } else {
                 cell.textLabel?.text = "Composition Data not received"
+                cell.textLabel?.textColor = .lightGray
                 cell.detailTextLabel?.text = nil
                 cell.accessoryType = .none
             }
@@ -159,7 +163,7 @@ class ConfigurationViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, shouldHighlightRowAt indexPath: IndexPath) -> Bool {
-        return !indexPath.isDetailsSection && !indexPath.isUnicastAddress && (node.isConfigured || !indexPath.isElementSection)
+        return indexPath.isHighlightable
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -230,13 +234,16 @@ extension ConfigurationViewController: MeshNetworkDelegate {
     func meshNetwork(_ meshNetwork: MeshNetwork, didDeliverMessage message: MeshMessage, from source: Address) {
         switch message {
         case let compositionDataStatus as ConfigCompositionDataStatus:
-            if let page0 = compositionDataStatus.page as? Page0 {
-                page0.apply(to: node)
-                
-                if !MeshNetworkManager.instance.save() {
-                    self.presentAlert(title: "Error", message: "Mesh configuration could not be saved.")
-                }
-                tableView.reloadData()
+            node.apply(compositionData: compositionDataStatus)
+            tableView.reloadData()
+            // Composition Data is ready, let's read the TTL.
+            MeshNetworkManager.instance.send(ConfigDefaultTtlGet(), to: node)
+        case let defaultTtlStatus as ConfigDefaultTtlStatus:
+            node.apply(defaultTtl: defaultTtlStatus)
+            tableView.reloadRows(at: [.ttl], with: .automatic)
+            
+            if !MeshNetworkManager.instance.save() {
+                self.presentAlert(title: "Error", message: "Mesh configuration could not be saved.")
             }
         case is ConfigNodeResetStatus:
             MeshNetworkManager.instance.meshNetwork!.remove(node: node)
@@ -260,7 +267,7 @@ private extension IndexPath {
         "Name"
     ]
     static let nodeTitles = [
-        "Unicast Address", "Device Key"
+        "Unicast Address", "TTL", "Device Key"
     ]
     static let detailsTitles = [
         "Company Identifier", "Product Identifier", "Product Version",
@@ -296,6 +303,10 @@ private extension IndexPath {
         return nil
     }
     
+    var isHighlightable: Bool {
+        return isName || isDeviceKey || isElementSection || isReset
+    }
+    
     var isName: Bool {
         return section == IndexPath.nameSection && row == 0
     }
@@ -308,8 +319,12 @@ private extension IndexPath {
         return isNodeSection && row == 0
     }
     
-    var isDeviceKey: Bool {
+    var isTtl: Bool {
         return isNodeSection && row == 1
+    }
+    
+    var isDeviceKey: Bool {
+        return isNodeSection && row == 2
     }
     
     var isNodeFeatures: Bool {
@@ -329,6 +344,7 @@ private extension IndexPath {
     }
     
     static let name  = IndexPath(row: 0, section: IndexPath.nameSection)
+    static let ttl   = IndexPath(row: 1, section: IndexPath.nodeSection)
     static let reset = IndexPath(row: 0, section: IndexPath.actionsSection)
     
 }

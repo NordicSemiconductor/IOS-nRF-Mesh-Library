@@ -38,6 +38,15 @@ public struct ConfigCompositionDataStatus: ConfigMessage {
             return nil
         }
     }
+    
+    /// Applies the Composition Data to given Node.
+    /// The Composition Data can only be applied to a Node once.
+    /// This method does nothing if the Node already has been configured.
+    ///
+    /// - parameter node: The Node to apply the data to.
+    public func apply(to node: Node) {
+        node.apply(compositionData: self)
+    }
 }
 
 public struct Page0: CompositionDataPage {
@@ -112,29 +121,6 @@ public struct Page0: CompositionDataPage {
             readElements.append(element)
         }
         elements = readElements
-    }
-    
-    /// Applies the Composition Data to given Node.
-    /// The Composition Data can only be applied to a Node once.
-    /// This method does nothing if the Node already has been configured.
-    ///
-    /// - parameter node: The Node to apply the data to.
-    public func apply(to node: Node) {
-        if node.companyIdentifier == nil {
-            node.companyIdentifier = companyIdentifier
-            node.productIdentifier = productIdentifier
-            node.versionIdentifier = versionIdentifier
-            node.minimumNumberOfReplayProtectionList = minimumNumberOfReplayProtectionList
-            node.features = features
-            // Remove any existing Elements. There should not be any, but just to be sure.
-            node.elements.forEach {
-                $0.parentNode = nil
-                $0.index = 0
-            }
-            node.elements.removeAll()
-            // And add the Elements received.
-            node.add(elements: elements)
-        }
     }
 }
 

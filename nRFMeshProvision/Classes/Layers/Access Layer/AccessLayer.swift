@@ -81,6 +81,17 @@ private extension AccessLayer {
         case ConfigNodeResetStatus.opCode:
             message = ConfigNodeResetStatus(parameters: accessPdu.parameters)
             
+        // Default TTL
+        case ConfigDefaultTtlGet.opCode:
+            message = ConfigDefaultTtlGet(parameters: accessPdu.parameters)
+        
+        case ConfigDefaultTtlSet.opCode:
+            message = ConfigDefaultTtlSet(parameters: accessPdu.parameters)
+            
+        case ConfigDefaultTtlStatus.opCode:
+            message = ConfigDefaultTtlStatus(parameters: accessPdu.parameters)
+            
+            
         default:
             message = nil
         }
