@@ -82,7 +82,6 @@ class EditProvisionerViewController: UITableViewController {
         // Show Provisioner's parameters.
         nameLabel.text = provisioner.provisionerName
         
-        
         // A Provisioner does not need to have an associated node.
         // A Provisioner without a node can't perform nodes configuration operations.
         let node = meshNetwork.node(for: provisioner)
@@ -405,25 +404,28 @@ extension EditProvisionerViewController: EditRangesDelegate {
 }
 
 private extension IndexPath {
+    static let nameSection    = 0
+    static let detailsSection = 1
+    static let rangesSection  = 2
     
     /// Returns whether the IndexPath points the Allocated Ranges section.
     var isAllocatedRangesSection: Bool {
-        return section == 2
+        return section == IndexPath.rangesSection
     }
     
     /// Returns whether the IndexPath points the Provisioner name.
     var isProvisionerName: Bool {
-        return section == 0 && row == 0
+        return section == IndexPath.nameSection && row == 0
     }
     
     /// Returns whether the IndexPath point to the Unicast Address.
     var isUnicastAddress: Bool {
-        return section == 1 && row == 0
+        return section == IndexPath.detailsSection && row == 0
     }
     
     /// Returns whether the IndexPath point to the TTL field.
     var isTtl: Bool {
-        return section == 1 && row == 1
+        return section == IndexPath.detailsSection && row == 1
     }
     
 }

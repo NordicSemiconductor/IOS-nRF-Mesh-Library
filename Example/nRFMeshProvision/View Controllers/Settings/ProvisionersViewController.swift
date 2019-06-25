@@ -49,10 +49,10 @@ class ProvisionersViewController: UITableViewController, Editable {
         let count = MeshNetworkManager.instance.meshNetwork?.provisioners.count ?? 0
         
         switch section {
-        case 0:
+        case IndexPath.localProvisionerSection:
             // The first section contains the local Provisioner.
             return count > 0 ? 1 : 0
-        case 1:
+        case IndexPath.otherProvisionersSection:
             // The second section contains other Provisioners.
             return count - 1
         default:
@@ -63,10 +63,10 @@ class ProvisionersViewController: UITableViewController, Editable {
     
     override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         switch section {
-        case 0:
+        case IndexPath.localProvisionerSection:
             // The first section contains the local Provisioner.
             return "This Provisioner"
-        case 1:
+        case IndexPath.otherProvisionersSection:
             // The second section contains other Provisioners.
             return "Other Provisioners"
         default:
@@ -125,14 +125,14 @@ class ProvisionersViewController: UITableViewController, Editable {
             // previous one to the top of the second section.
             DispatchQueue.main.async {
                 // Moving has to be enqueued, otherwise it doesn't work.
-                tableView.moveRow(at: IndexPath(row: 1, section: 0), to: IndexPath(row: 0, section: 1))
+                tableView.moveRow(at: IndexPath(row: 1, section: IndexPath.localProvisionerSection), to: IndexPath(otherAtRow: 0))
             }
         } else if sourceIndexPath.isThisProvisioner && destinationIndexPath.isOtherProvisioner {
             // If the main Provisioner was moved to hte second section,
             // bring the next one on its place.
             DispatchQueue.main.async {
                 // Moving has to be enqueued, otherwise it doesn't work.
-                tableView.moveRow(at: IndexPath(row: 0, section: 1), to: IndexPath(row: 0, section: 0))
+                tableView.moveRow(at: IndexPath(otherAtRow: 0), to: .localProvisioner)
             }
         }
     }
@@ -145,7 +145,7 @@ class ProvisionersViewController: UITableViewController, Editable {
         proposedDestinationIndexPath: IndexPath) -> IndexPath {
         if proposedDestinationIndexPath.isThisProvisioner ||
             (sourceIndexPath.isThisProvisioner && proposedDestinationIndexPath.row == 0) {
-            return IndexPath(row: 0, section: 0)
+            return .localProvisioner
         }
         return proposedDestinationIndexPath
     }
@@ -173,15 +173,15 @@ private extension ProvisionersViewController {
         tableView.deleteRows(at: [indexPath], with: .top)
         if indexPath.isThisProvisioner && provisionerCount > 0 {
             // Bring another one as local Provisioner.
-            tableView.moveRow(at: IndexPath(row: 0, section: 1), to: IndexPath(row: 0, section: 0))
+            tableView.moveRow(at: IndexPath(otherAtRow: 0), to: .localProvisioner)
         }
         if provisionerCount == 1 {
             // Remove Other Provisioners section.
             tableView.deleteSections(.otherProvisionersSection, with: .fade)
         }
         if provisionerCount == 0 {
-            // Remove This Provisioner section.
-            tableView.deleteSections(.thisProvisionerSection, with: .fade)
+            // Remove Local Provisioner section.
+            tableView.deleteSections(.localProvisionerSection, with: .fade)
             showEmptyView()
         }
         tableView.endUpdates()
@@ -207,9 +207,9 @@ extension ProvisionersViewController: EditProvisionerDelegate {
             tableView.insertSections(IndexSet(integer: count - 1), with: .fade)
         }
         if count == 1 {
-            tableView.insertRows(at: [IndexPath(row: 0, section: 0)], with: .top)
+            tableView.insertRows(at: [.localProvisioner], with: .top)
         } else {
-            tableView.insertRows(at: [IndexPath(row: count - 2, section: 1)], with: .top)
+            tableView.insertRows(at: [IndexPath(otherAtRow: count - 2)], with: .top)
         }
         tableView.endUpdates()
         hideEmptyView()
@@ -222,8 +222,8 @@ extension ProvisionersViewController: EditProvisionerDelegate {
         
         if let index = index {
             let indexPath = index == 0 ?
-                IndexPath(row: 0, section: 0) :
-                IndexPath(row: index - 1, section: 1)
+                IndexPath.localProvisioner :
+                IndexPath(otherAtRow: index - 1)
             tableView.reloadRows(at: [indexPath], with: .fade)
         }
     }
@@ -231,6 +231,10 @@ extension ProvisionersViewController: EditProvisionerDelegate {
 }
 
 private extension IndexPath {
+    static let localProvisionerSection  = 0
+    static let otherProvisionersSection = 1
+    
+    static let localProvisioner = IndexPath(row: 0, section: IndexPath.localProvisionerSection)
     
     /// Returns the Provisioner index in mesh network based on the
     /// IndexPath.
@@ -240,19 +244,23 @@ private extension IndexPath {
     
     /// Returns whether the IndexPath points the local Provisioner.
     var isThisProvisioner: Bool {
-        return section == 0
+        return section == IndexPath.localProvisionerSection
     }
     
     /// Returns whether the IndexPath point some other Provisioner.
     var isOtherProvisioner: Bool {
-        return section == 1
+        return section == IndexPath.otherProvisionersSection
+    }
+    
+    init(otherAtRow: Int) {
+        self.init(row: otherAtRow, section: IndexPath.otherProvisionersSection)
     }
     
 }
 
 private extension IndexSet {
     
-    static let thisProvisionerSection   = IndexSet(integer: 0)
-    static let otherProvisionersSection = IndexSet(integer: 1)
+    static let localProvisionerSection   = IndexSet(integer: IndexPath.localProvisionerSection)
+    static let otherProvisionersSection = IndexSet(integer: IndexPath.otherProvisionersSection)
     
 }

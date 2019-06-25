@@ -131,7 +131,7 @@ private extension AppKeysViewController {
         tableView.beginUpdates()
         tableView.deleteRows(at: [indexPath], with: .top)
         if network.applicationKeys.isEmpty {
-            tableView.deleteSections(IndexSet(integer: 0), with: .fade)
+            tableView.deleteSections(.keySection, with: .fade)
             showEmptyView()
         }
         tableView.endUpdates()
@@ -151,10 +151,10 @@ extension AppKeysViewController: EditKeyDelegate {
         
         tableView.beginUpdates()
         if count == 1 {
-            tableView.insertSections(IndexSet(integer: 0), with: .fade)
-            tableView.insertRows(at: [IndexPath(row: 0, section: 0)], with: .top)
+            tableView.insertSections(.keySection, with: .fade)
+            tableView.insertRows(at: [IndexPath(row: 0)], with: .top)
         } else {
-            tableView.insertRows(at: [IndexPath(row: count - 1, section: 0)], with: .top)
+            tableView.insertRows(at: [IndexPath(row: count - 1)], with: .top)
         }
         tableView.endUpdates()
         hideEmptyView()
@@ -174,11 +174,21 @@ extension AppKeysViewController: EditKeyDelegate {
 }
 
 private extension IndexPath {
+    static let keySection = 0
     
     /// Returns the Application Key index in mesh network based on the
     /// IndexPath.
     var keyIndex: Int {
         return section + row
     }
+    
+    init(row: Int) {
+        self.init(row: row, section: IndexPath.keySection)
+    }
+}
+
+private extension IndexSet {
+    
+    static let keySection = IndexSet(integer: IndexPath.keySection)
     
 }

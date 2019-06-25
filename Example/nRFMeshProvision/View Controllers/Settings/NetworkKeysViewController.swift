@@ -152,9 +152,9 @@ extension NetworkKeysViewController: EditKeyDelegate {
             tableView.insertSections(IndexSet(integer: count - 1), with: .fade)
         }
         if count == 1 {
-            tableView.insertRows(at: [IndexPath(row: 0, section: 0)], with: .top)
+            tableView.insertRows(at: [.primaryKey], with: .top)
         } else {
-            tableView.insertRows(at: [IndexPath(row: count - 2, section: 1)], with: .top)
+            tableView.insertRows(at: [IndexPath(row: count - 2)], with: .top)
         }
         tableView.endUpdates()
         hideEmptyView()
@@ -167,8 +167,8 @@ extension NetworkKeysViewController: EditKeyDelegate {
         
         if let index = index {
             let indexPath = index == 0 ?
-                IndexPath(row: 0, section: 0) :
-                IndexPath(row: index - 1, section: 1)
+                IndexPath.primaryKey :
+                IndexPath(row: index - 1)
             tableView.reloadRows(at: [indexPath], with: .fade)
         }
     }
@@ -176,6 +176,10 @@ extension NetworkKeysViewController: EditKeyDelegate {
 }
 
 private extension IndexPath {
+    static let primaryKeySection = 0
+    static let otherKeySection   = 1
+    
+    static let primaryKey = IndexPath(row: 0, section: IndexPath.primaryKeySection)
     
     /// Returns the Network Key index in mesh network based on the
     /// IndexPath.
@@ -183,11 +187,15 @@ private extension IndexPath {
         return section + row
     }
     
+    init(row: Int) {
+        self.init(row: row, section: IndexPath.otherKeySection)
+    }
+    
 }
 
 private extension IndexSet {
     
-    static let primaryNetworkSection = IndexSet(integer: 0)
-    static let subnetworkSection     = IndexSet(integer: 1)
+    static let primaryNetworkSection = IndexSet(integer: IndexPath.primaryKeySection)
+    static let subnetworkSection     = IndexSet(integer: IndexPath.otherKeySection)
     
 }

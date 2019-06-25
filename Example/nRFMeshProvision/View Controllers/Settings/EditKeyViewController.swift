@@ -265,27 +265,30 @@ private extension EditKeyViewController {
 }
 
 private extension IndexPath {
-    
-    /// Returns whether the IndexPath point to the 128-bit Network Key.
-    var isKey: Bool {
-        return section == 0 && row == 0
-    }
+    static let nameSection = 0
+    static let keySection  = 1
+    static let boundKeySection = 2
     
     /// Returns whether the IndexPath points to the key name.
     var isName: Bool {
-        return section == 1 && row == 0
+        return section == IndexPath.nameSection && row == 0
+    }
+    
+    /// Returns whether the IndexPath point to the 128-bit Network Key.
+    var isKey: Bool {
+        return section == IndexPath.keySection && row == 0
     }
     
     /// Returns whether the IndexPath point to Key Index.
     var isKeyIndex: Bool {
-        return section == 1 && row == 1
+        return section == IndexPath.keySection && row == 1
     }
     
     /// Returns whether the IndexPath point to Key Index.
     var isBoundKeyIndex: Bool {
-        return section == 2
+        return section == IndexPath.boundKeySection
     }
     
-    static let key  = IndexPath(row: 0, section: 0)
-    static let name = IndexPath(row: 0, section: 1)
+    static let key  = IndexPath(row: 0, section: IndexPath.keySection)
+    static let name = IndexPath(row: 0, section: IndexPath.nameSection)
 }

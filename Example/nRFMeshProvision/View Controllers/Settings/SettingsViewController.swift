@@ -164,7 +164,7 @@ private extension SettingsViewController {
         }
     }
     
-    /// Opens the Cocument Picker to select the Mesh Network configuration to import.
+    /// Opens the Document Picker to select the Mesh Network configuration to import.
     func importNetwork() {
         let picker = UIDocumentPickerViewController(documentTypes: ["public.data", "public.content"], in: .import)
         picker.delegate = self
@@ -195,32 +195,30 @@ extension SettingsViewController: UIDocumentPickerDelegate {
 }
 
 private extension IndexPath {
+    static let nameSection    = 0
+    static let networkSection = 1
+    static let actionsSection = 2
+    static let aboutSection   = 3
     
     /// Returns whether the IndexPath point to the mesh network name row.
     var isNetworkName: Bool {
-        return section == 0 && row == 0
+        return section == IndexPath.nameSection && row == 0
     }
     
     /// Returns whether the IndexPath point to the network resetting option.
     var isResetNetwork: Bool {
-        return section == 1 && row == 0
+        return section == IndexPath.actionsSection && row == 0
     }
     
     /// Returns whether the IndexPath point to the Source Code link.
     var isLinkToGitHub: Bool {
-        return section == 2 && row == 2
+        return section == IndexPath.aboutSection && row == 2
     }
     
     /// Returns whether the IndexPath point to the Issues on GitHub.
     var isLinkToIssues: Bool {
-        return section == 2 && row == 3
+        return section == IndexPath.aboutSection && row == 3
     }
     
-    static let name = IndexPath(row: 0, section: 1)
-}
-
-private extension IndexSet {
-    
-    static let networkSection = IndexSet(integer: 0)
-    
+    static let name = IndexPath(row: 0, section: IndexPath.nameSection)
 }
