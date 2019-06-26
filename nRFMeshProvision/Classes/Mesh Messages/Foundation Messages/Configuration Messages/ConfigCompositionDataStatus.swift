@@ -38,15 +38,6 @@ public struct ConfigCompositionDataStatus: ConfigMessage {
             return nil
         }
     }
-    
-    /// Applies the Composition Data to given Node.
-    /// The Composition Data can only be applied to a Node once.
-    /// This method does nothing if the Node already has been configured.
-    ///
-    /// - parameter node: The Node to apply the data to.
-    public func apply(to node: Node) {
-        node.apply(compositionData: self)
-    }
 }
 
 public struct Page0: CompositionDataPage {

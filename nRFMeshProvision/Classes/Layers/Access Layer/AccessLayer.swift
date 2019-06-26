@@ -63,6 +63,10 @@ private extension AccessLayer {
             
         case ConfigCompositionDataStatus.opCode:
             message = ConfigCompositionDataStatus(parameters: accessPdu.parameters)
+            if let compositionData = message as? ConfigCompositionDataStatus,
+                let node = networkManager.meshNetwork?.node(withAddress: accessPdu.source) {
+                node.apply(compositionData: compositionData)
+            }
             
         // App Keys Management
         case ConfigAppKeyAdd.opCode:
@@ -90,7 +94,10 @@ private extension AccessLayer {
             
         case ConfigDefaultTtlStatus.opCode:
             message = ConfigDefaultTtlStatus(parameters: accessPdu.parameters)
-            
+            if let defaultTtl = message as? ConfigDefaultTtlStatus,
+                let node = networkManager.meshNetwork?.node(withAddress: accessPdu.source) {
+                node.apply(defaultTtl: defaultTtl)
+            }
             
         default:
             message = nil

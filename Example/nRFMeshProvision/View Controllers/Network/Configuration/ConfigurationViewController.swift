@@ -320,14 +320,12 @@ extension ConfigurationViewController: MeshNetworkDelegate {
     
     func meshNetwork(_ meshNetwork: MeshNetwork, didDeliverMessage message: MeshMessage, from source: Address) {
         switch message {
-        case let compositionDataStatus as ConfigCompositionDataStatus:
-            node.apply(compositionData: compositionDataStatus)
+        case is ConfigCompositionDataStatus:
             tableView.reloadData()
             alert?.message = "Requesting default TTL..."
             // Composition Data is ready, let's read the TTL.
             MeshNetworkManager.instance.send(ConfigDefaultTtlGet(), to: node)
-        case let defaultTtlStatus as ConfigDefaultTtlStatus:
-            node.apply(defaultTtl: defaultTtlStatus)
+        case is ConfigDefaultTtlStatus:
             tableView.reloadRows(at: [.ttl], with: .automatic)
             alert?.dismiss(animated: true)
             
