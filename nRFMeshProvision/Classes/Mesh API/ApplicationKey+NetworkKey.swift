@@ -20,11 +20,13 @@ public extension ApplicationKey {
     /// Network Key. The Key comparison bases on Key Index property.
     ///
     /// - parameter networkKey: The Network Key to check.
+    /// - returns: `True`, if the Application Key is bound to the
+    ///            given Network Key.
     func isBound(to networkKey: NetworkKey) -> Bool {
         return self.boundNetworkKeyIndex == networkKey.index
     }
 
-    /// Returns the Network Key bound to this Application Key.
+    /// The Network Key bound to this Application Key.
     var boundNetworkKey: NetworkKey {
         return meshNetwork!.networkKeys[boundNetworkKeyIndex]!
     }
@@ -38,6 +40,8 @@ public extension Array where Element == ApplicationKey {
     /// the given Network Key. The Key comparison bases on Key Index property.
     ///
     /// - parameter networkKey: The Network Key to check.
+    /// - returns: `True`, if the array contains an Application Key bound to
+    ///            the given Network Key, `false` otherwise.
     func contains(keyBoundTo networkKey: NetworkKey) -> Bool {
         return contains(where: { $0.isBound(to: networkKey) })
     }
