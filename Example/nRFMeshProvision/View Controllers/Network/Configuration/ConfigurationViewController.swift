@@ -82,7 +82,7 @@ class ConfigurationViewController: UITableViewController {
         case IndexPath.compositionDataSection:
             return IndexPath.detailsTitles.count
         case IndexPath.actionsSection:
-            return 1 // Reset button
+            return IndexPath.actionsTitles.count
         default:
             return 0
         }
@@ -94,15 +94,6 @@ class ConfigurationViewController: UITableViewController {
             return "Elements"
         case IndexPath.compositionDataSection:
             return "Composition Data"
-        default:
-            return nil
-        }
-    }
-    
-    override func tableView(_ tableView: UITableView, titleForFooterInSection section: Int) -> String? {
-        switch section {
-        case IndexPath.actionsSection:
-            return "Resetting the node will change its state back to un-provisioned state."
         default:
             return nil
         }
@@ -179,6 +170,11 @@ class ConfigurationViewController: UITableViewController {
                 cell.accessoryType = .none
             }
         }
+        if indexPath.isActionsSection {
+            let cell = cell as! ActionCell
+            cell.title.text = indexPath.title
+            cell.button.setTitle(indexPath.action, for: .disabled)
+        }
         return cell
     }
     
@@ -199,8 +195,11 @@ class ConfigurationViewController: UITableViewController {
         if indexPath.isElementSection {
             performSegue(withIdentifier: "showElement", sender: indexPath)
         }
-        if indexPath.isReset {
+        if indexPath.isResetNode {
             presentResetConfirmation(from: indexPath)
+        }
+        if indexPath.isRemoveNode {
+            presentRemoveNodeConfirmation(from: indexPath)
         }
     }
 
@@ -264,8 +263,23 @@ private extension ConfigurationViewController {
         let cancelAction = UIAlertAction(title: "Cancel", style: .cancel)
         alert.addAction(resetAction)
         alert.addAction(cancelAction)
-        let cell = tableView.cellForRow(at: indexPath)
-        alert.popoverPresentationController?.sourceView = (cell as? ResetNodeCell)?.resetButton ?? cell
+        let cell = tableView.cellForRow(at: indexPath) as? ActionCell
+        alert.popoverPresentationController?.sourceView = cell?.button ?? cell
+        alert.popoverPresentationController?.permittedArrowDirections = [.down, .up, .right]
+        present(alert, animated: true)
+    }
+    
+    /// Presents a dialog with resetting confirmation.
+    func presentRemoveNodeConfirmation(from indexPath: IndexPath) {
+        let alert = UIAlertController(title: "Remove Node",
+                                      message: "Forgotten node will still be able to send messages to the network. Use this only if the device is no longer available.",
+                                      preferredStyle: .actionSheet)
+        let resetAction = UIAlertAction(title: "Remove", style: .destructive) { _ in self.removeNode() }
+        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel)
+        alert.addAction(resetAction)
+        alert.addAction(cancelAction)
+        let cell = tableView.cellForRow(at: indexPath) as? ActionCell
+        alert.popoverPresentationController?.sourceView = cell?.button ?? cell
         alert.popoverPresentationController?.permittedArrowDirections = [.down, .up, .right]
         present(alert, animated: true)
     }
@@ -274,6 +288,18 @@ private extension ConfigurationViewController {
     func resetNode() {
         activityIndicator.startAnimating()
         MeshNetworkManager.instance.send(ConfigNodeReset(), to: self.node)
+    }
+    
+    /// Removes the Node from the local database and pops the Navigation Controller.
+    func removeNode() {
+        MeshNetworkManager.instance.meshNetwork!.remove(node: node)
+        activityIndicator.stopAnimating()
+        
+        if MeshNetworkManager.instance.save() {
+            navigationController?.popViewController(animated: true)
+        } else {
+            presentAlert(title: "Error", message: "Mesh configuration could not be saved.")
+        }
     }
     
 }
@@ -297,14 +323,7 @@ extension ConfigurationViewController: MeshNetworkDelegate {
                 presentAlert(title: "Error", message: "Mesh configuration could not be saved.")
             }
         case is ConfigNodeResetStatus:
-            MeshNetworkManager.instance.meshNetwork!.remove(node: node)
-            activityIndicator.stopAnimating()
-            
-            if MeshNetworkManager.instance.save() {
-                navigationController?.popViewController(animated: true)
-            } else {
-                presentAlert(title: "Error", message: "Mesh configuration could not be saved.")
-            }
+            removeNode()
         default:
             break
         }
@@ -330,6 +349,12 @@ private extension IndexPath {
         "Company Identifier", "Product Identifier", "Product Version",
         "Replay Protection Count", nil // Node Features is using its own cell.
     ]
+    static let actionsTitles = [
+        "Reset Node", "Remove Node"
+    ]
+    static let actions = [
+        "Reset and Forget", "Remove"
+    ]
     
     var cellIdentifier: String {
         if isNodeFeatures {
@@ -341,8 +366,8 @@ private extension IndexPath {
         if isDetailsSection {
             return "subtitle"
         }
-        if isReset {
-            return "reset"
+        if isActionsSection {
+            return "action"
         }
         return "normal"
     }
@@ -357,19 +382,33 @@ private extension IndexPath {
         if isDetailsSection {
             return IndexPath.detailsTitles[row]
         }
+        if isActionsSection {
+            return IndexPath.actionsTitles[row]
+        }
+        return nil
+    }
+    
+    var action: String? {
+        if isActionsSection {
+            return IndexPath.actions[row]
+        }
         return nil
     }
     
     var isHighlightable: Bool {
-        return isName || isDeviceKey || isElementSection || isReset
+        return isName || isDeviceKey || isElementSection || isActionsSection
     }
     
     var isName: Bool {
         return section == IndexPath.nameSection && row == 0
     }
     
-    var isReset: Bool {
+    var isResetNode: Bool {
         return section == IndexPath.actionsSection && row == 0
+    }
+    
+    var isRemoveNode: Bool {
+        return section == IndexPath.actionsSection && row == 1
     }
     
     var isUnicastAddress: Bool {
@@ -398,6 +437,10 @@ private extension IndexPath {
     
     var isDetailsSection: Bool {
         return section == IndexPath.compositionDataSection
+    }
+    
+    var isActionsSection: Bool {
+        return section == IndexPath.actionsSection
     }
     
     static let name  = IndexPath(row: 0, section: IndexPath.nameSection)

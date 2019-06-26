@@ -150,7 +150,6 @@ open class BaseGattProxyBearer<Service: MeshService>: NSObject, Bearer, CBCentra
     /// Starts service discovery, only given Service.
     private func discoverServices() {
         print("Discovering services...")
-        basePeripheral.delegate = self
         basePeripheral.discoverServices([Service.uuid])
     }
     
@@ -196,10 +195,9 @@ open class BaseGattProxyBearer<Service: MeshService>: NSObject, Bearer, CBCentra
     open func centralManager(_ central: CBCentralManager, didDisconnectPeripheral peripheral: CBPeripheral, error: Error?) {
         if peripheral == basePeripheral {
             if let error = error as NSError? {
-                if error.code == 7 {
-                    print("The device has disconnected from us.")
-                } else {
-                    print("Disconnected with error: \(error)")
+                switch error.code {
+                case 6, 7: print(error.localizedDescription)
+                default: print("Disconnected with error: \(error)")
                 }
                 delegate?.bearer(self, didClose: error)
             } else {

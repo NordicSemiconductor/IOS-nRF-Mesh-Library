@@ -8,8 +8,9 @@
 
 import UIKit
 
-class ResetNodeCell: UITableViewCell {
+class ActionCell: UITableViewCell {
     
-    @IBOutlet weak var resetButton: UIButton!
+    @IBOutlet weak var title: UILabel!
+    @IBOutlet weak var button: UIButton!
     
 }
