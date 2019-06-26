@@ -343,7 +343,7 @@
                     </tableView>
                     <navigationItem key="navigationItem" title="Device Name" id="XGj-Sj-Rwy">
                         <barButtonItem key="backBarButtonItem" title="Node" id="P45-IY-Y5M"/>
-                        <barButtonItem key="rightBarButtonItem" style="plain" id="hqh-yy-qFP">
+                        <barButtonItem key="rightBarButtonItem" id="hqh-yy-qFP">
                             <view key="customView" contentMode="scaleToFill" id="obU-C9-dj6">
                                 <rect key="frame" x="276" y="0.0" width="83" height="44"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
