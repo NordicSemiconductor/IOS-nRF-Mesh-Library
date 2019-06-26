@@ -235,13 +235,22 @@ public extension MeshNetwork {
         }
         
         // Search for Provisioner's node.
-        if let provisionerNode = node(for: provisioner) {
+        var provisionerNode: Node! = node(for: provisioner)
+        if let provisionerNode = provisionerNode {
             provisionerNode.unicastAddress = address
         } else {
             // Not found? The Provisioner without a node may not perform
             // configuration operations. Seems like it will support it from now on.
-            let provisionerNode = Node(for: provisioner, withAddress: address)
+            provisionerNode = Node(for: provisioner, withAddress: address)
             add(node: provisionerNode)
+        }
+        // If an address has been assigned to a Provisioner's Node,
+        // mark that it knows all keys.
+        networkKeys.forEach { key in
+            provisionerNode.netKeys.append(Node.NodeKey(of: key))
+        }
+        applicationKeys.forEach { key in
+            provisionerNode.appKeys.append(Node.NodeKey(of: key))
         }
     }
     
