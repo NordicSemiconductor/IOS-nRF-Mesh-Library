@@ -10,20 +10,40 @@ import UIKit
 import nRFMeshProvision
 
 class ConfigurationViewController: UITableViewController {
+    
+    // MARK: - Outlets and Actions
+    
+    @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
+    
+    // MARK: - Public properties
+    
     var node: Node!
     
+    // MARK: - Private properties
+    
     private var alert: UIAlertController?
+    
+    // MARK: - Implementation
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         title = node.name ?? "Unknown device"
         
+        MeshNetworkManager.bearer.delegate = self
         let manager = MeshNetworkManager.instance
         manager.delegate = self
         // If the Composition Data were never obtained, get them now.
         if !node.isConfigured {
-            manager.send(ConfigCompositionDataGet(), to: node)
+            let connected = MeshNetworkManager.bearer.isConnected
+            let status = connected ? "Requesting Composition Data..." : "Connecting..."
+            alert = UIAlertController(title: "Status", message: status, preferredStyle: .alert)
+            alert!.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+            present(alert!, animated: true) {
+                // This message will be enqueued and sent when we are connected
+                // to the mesh network.
+                manager.send(ConfigCompositionDataGet(page: 0xFF), to: self.node)
+            }
         }
     }
     
@@ -186,6 +206,34 @@ class ConfigurationViewController: UITableViewController {
 
 }
 
+extension ConfigurationViewController: GattBearerDelegate {
+    
+    func bearerDidConnect(_ bearer: Bearer) {
+        DispatchQueue.main.async {
+            self.alert?.message = "Discovering services..."
+        }
+    }
+    
+    func bearerDidDiscoverServices(_ bearer: Bearer) {
+        DispatchQueue.main.async {
+            self.alert?.message = "Initializing..."
+        }
+    }
+    
+    func bearerDidOpen(_ bearer: Bearer) {
+        DispatchQueue.main.async {
+            self.alert?.message = "Requesting Composition Data..."
+        }
+    }
+    
+    func bearer(_ bearer: Bearer, didClose error: Error?) {
+        DispatchQueue.main.async {
+            self.alert?.dismiss(animated: true)
+        }
+    }
+    
+}
+
 private extension ConfigurationViewController {
 
     /// Presents a dialog to edit the node name.
@@ -224,7 +272,8 @@ private extension ConfigurationViewController {
     
     /// Sends a message to the node that will reset its state to unprovisioned.
     func resetNode() {
-        MeshNetworkManager.instance.send(ConfigNodeReset(), to: node)
+        activityIndicator.startAnimating()
+        MeshNetworkManager.instance.send(ConfigNodeReset(), to: self.node)
     }
     
 }
@@ -236,18 +285,26 @@ extension ConfigurationViewController: MeshNetworkDelegate {
         case let compositionDataStatus as ConfigCompositionDataStatus:
             node.apply(compositionData: compositionDataStatus)
             tableView.reloadData()
+            alert?.message = "Requesting default TTL..."
             // Composition Data is ready, let's read the TTL.
             MeshNetworkManager.instance.send(ConfigDefaultTtlGet(), to: node)
         case let defaultTtlStatus as ConfigDefaultTtlStatus:
             node.apply(defaultTtl: defaultTtlStatus)
             tableView.reloadRows(at: [.ttl], with: .automatic)
+            alert?.dismiss(animated: true)
             
             if !MeshNetworkManager.instance.save() {
-                self.presentAlert(title: "Error", message: "Mesh configuration could not be saved.")
+                presentAlert(title: "Error", message: "Mesh configuration could not be saved.")
             }
         case is ConfigNodeResetStatus:
             MeshNetworkManager.instance.meshNetwork!.remove(node: node)
-            navigationController?.popViewController(animated: true)
+            activityIndicator.stopAnimating()
+            
+            if MeshNetworkManager.instance.save() {
+                navigationController?.popViewController(animated: true)
+            } else {
+                presentAlert(title: "Error", message: "Mesh configuration could not be saved.")
+            }
         default:
             break
         }

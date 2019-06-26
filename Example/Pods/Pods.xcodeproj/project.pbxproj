@@ -518,8 +518,8 @@
 				5283527A22802A370097B949 /* GattBearer.swift */,
 				528352992282C55B0097B949 /* PBGattBearer.swift */,
 				528352A92282DA1E0097B949 /* GattBearerDelegate.swift */,
-				528352AF22830F380097B949 /* ProxyProtocolHandler.swift */,
 				528352B1228408C20097B949 /* GattBearerError.swift */,
+				528352AF22830F380097B949 /* ProxyProtocolHandler.swift */,
 			);
 			path = GATT;
 			sourceTree = "<group>";

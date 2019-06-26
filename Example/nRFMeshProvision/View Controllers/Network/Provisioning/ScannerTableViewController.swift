@@ -74,11 +74,14 @@ class ScannerTableViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        stopScanning()
         
-        selectedDevice = discoveredPeripherals[indexPath.row].device
-        let bearer = PBGattBearer(to: discoveredPeripherals[indexPath.row].peripheral, using: centralManager)
+        guard let bearer = PBGattBearer(target: discoveredPeripherals[indexPath.row].peripheral) else {
+            return
+        }
         bearer.delegate = self
+        
+        stopScanning()        
+        selectedDevice = discoveredPeripherals[indexPath.row].device
         
         alert = UIAlertController(title: "Status", message: "Connecting...", preferredStyle: .alert)
         alert!.addAction(UIAlertAction(title: "Cancel", style: .cancel) { action in

@@ -9,6 +9,11 @@
 import Foundation
 import CoreBluetooth
 
+/// Base implementation for GATT Proxy bearer.
+///
+/// This object is not required to be used with nRF Mesh Provisioning library.
+/// Bearers are separate from the mesh networking part and the data must be
+/// passed to and from by the application.
 open class BaseGattProxyBearer<Service: MeshService>: NSObject, Bearer, CBCentralManagerDelegate, CBPeripheralDelegate {
     
     // MARK: - Properties
@@ -16,12 +21,15 @@ open class BaseGattProxyBearer<Service: MeshService>: NSObject, Bearer, CBCentra
     public weak var delegate: BearerDelegate?
     public weak var dataDelegate: BearerDataDelegate?
     
-    private let centralManager   : CBCentralManager
-    private let basePeripheral   : CBPeripheral
+    private let centralManager: CBCentralManager
+    private let basePeripheral: CBPeripheral
     
     /// The protocol used for segmentation and reassembly.
     private let protocolHandler: ProxyProtocolHandler
+    /// The queue of PDUs to be sent. Used if the perpheral is busy.
     private var queue: [Data] = []
+    /// A flag indicating whether `open()` method was called.
+    private var isOpened: Bool = false
     
     // MARK: - Computed properties
     
@@ -33,6 +41,11 @@ open class BaseGattProxyBearer<Service: MeshService>: NSObject, Bearer, CBCentra
         return basePeripheral.state == .connected
     }
     
+    /// The UUID associated with the peer.
+    public var identifier: UUID {
+        return basePeripheral.identifier
+    }
+    
     // MARK: - Characteristic properties
     
     private var dataInCharacteristic:  CBCharacteristic?
@@ -40,29 +53,35 @@ open class BaseGattProxyBearer<Service: MeshService>: NSObject, Bearer, CBCentra
     
     // MARK: - Public API
     
-    /// Creates the Gatt Proxy Bearer object. This object is not required to be
-    /// used with nRF Mesh Provisioning library. Bearers are separate from the
-    /// mesh networking part and the data must be passed to and from by the
-    /// application.
+    /// Creates the Gatt Proxy Bearer object. Call `open()` to open connection to the proxy.
     ///
-    /// - parameters:
-    ///   - peripheral: The CBPeripheral poiting a Bluetooth LE device with
-    ///                 Bluetooth Mesh GATT service (Provisioning or Proxy Service).
-    ///   - manager:    The CBCentralManager that was used to obtain the peripheral.
-    public init(to peripheral: CBPeripheral, using manager: CBCentralManager) {
-        centralManager  = manager
-        basePeripheral  = peripheral
+    /// - parameter peripheral: The CBPeripheral poiting a Bluetooth LE device with
+    ///                         Bluetooth Mesh GATT service (Provisioning or Proxy Service).
+    public convenience init?(target peripheral: CBPeripheral) {
+        self.init(targetWithIdentifier: peripheral.identifier)
+    }
+    
+    /// Creates the Gatt Proxy Bearer object. Call `open()` to open connection to the proxy.
+    ///
+    /// - parameter uuid: The UUID associated with the peer.
+    public init?(targetWithIdentifier uuid: UUID) {
+        centralManager  = CBCentralManager()
+        guard let peripheral = centralManager.retrievePeripherals(withIdentifiers: [uuid]).first else {
+            return nil
+        }
+        basePeripheral = peripheral
         protocolHandler = ProxyProtocolHandler()
         super.init()
+        centralManager.delegate = self
         basePeripheral.delegate = self
     }
     
     open func open() {
-        if basePeripheral.state == .disconnected {
-            centralManager.delegate = self
+        if centralManager.state == .poweredOn && basePeripheral.state == .disconnected {
             print("Connecting...")
             centralManager.connect(basePeripheral, options: nil)
         }
+        isOpened = true
     }
     
     open func close() {
@@ -70,6 +89,7 @@ open class BaseGattProxyBearer<Service: MeshService>: NSObject, Bearer, CBCentra
             print("Cancelling connection...")
             centralManager.cancelPeripheralConnection(basePeripheral)            
         }
+        isOpened = false
     }
     
     open func send(_ data: Data, ofType type: PduType) throws {
@@ -153,7 +173,11 @@ open class BaseGattProxyBearer<Service: MeshService>: NSObject, Bearer, CBCentra
     // MARK: - CBCentralManagerDelegate
     
     open func centralManagerDidUpdateState(_ central: CBCentralManager) {
-        if central.state != .poweredOn {
+        if central.state == .poweredOn {
+            if isOpened {
+                open()
+            }
+        } else {
             print("Central Manager state changed to \(central.state)")
             delegate?.bearer(self, didClose: BearerError.centralManagerNotPoweredOn)
         }
@@ -171,8 +195,12 @@ open class BaseGattProxyBearer<Service: MeshService>: NSObject, Bearer, CBCentra
     
     open func centralManager(_ central: CBCentralManager, didDisconnectPeripheral peripheral: CBPeripheral, error: Error?) {
         if peripheral == basePeripheral {
-            if let error = error {
-                print("Disconnected with error: \(error)")
+            if let error = error as NSError? {
+                if error.code == 7 {
+                    print("The device has disconnected from us.")
+                } else {
+                    print("Disconnected with error: \(error)")
+                }
                 delegate?.bearer(self, didClose: error)
             } else {
                 guard let dataOutCharacteristic = dataOutCharacteristic, let _ = dataInCharacteristic,
@@ -230,6 +258,10 @@ open class BaseGattProxyBearer<Service: MeshService>: NSObject, Bearer, CBCentra
             delegate.bearerDidDiscoverServices(self)
         }
         enableNotifications(for: dataOutCharacteristic)
+    }
+    
+    open func peripheral(_ peripheral: CBPeripheral, didModifyServices invalidatedServices: [CBService]) {
+        // TODO: implement
     }
     
     open func peripheral(_ peripheral: CBPeripheral, didUpdateNotificationStateFor characteristic: CBCharacteristic, error: Error?) {

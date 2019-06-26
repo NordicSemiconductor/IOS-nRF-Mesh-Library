@@ -10,26 +10,43 @@ import Foundation
 import CoreBluetooth
 import nRFMeshProvision
 
+/// The Network Connection object maintains connections to Bluetooth
+/// mesh proxies. It scans in the background and connects to nodes that
+/// advertise with Network ID or Node Identity beacon.
+///
+/// The maximum number of simultaneous connections is defined by
+/// `maxConnections`. By connecting to more than one device, this
+/// object allows quick switching to another proxy in case link
+/// to one of the devices is lost. Only the first device will
+/// receive outgoing messages. However, the `dataDelegate` will be
+/// notified about messages received from any of the connected proxies.
 class NetworkConnection: NSObject, Bearer {
+    /// Maximum number of connections that `NetworkConnection` can
+    /// handle.
+    static let maxConnections = 3
+    /// The Bluetooth Central Manager instance that will scan and
+    /// connect to proxies.
     let centralManager: CBCentralManager
-    
-    weak var delegate: BearerDelegate?
-    weak var dataDelegate: BearerDataDelegate?
-    
     /// The Mesh Network for this connection.
     let meshNetwork: MeshNetwork
-    
     /// The list of connected GATT Proxies.
     var proxies: [GattBearer] = []
     var buffer: [(data: Data, type: PduType)] = []
+    var isOpen: Bool = false
+    
+    weak var delegate: BearerDelegate?
+    weak var dataDelegate: BearerDataDelegate?
     
     public var supportedPduTypes: PduTypes {
         return [.networkPdu, .meshBeacon, .proxyConfiguration]
     }
     
-    var isOpen: Bool = false
+    /// A flag indicating whether the network connection is open.
+    /// When open, it will scan for mesh nodes in range and connect to
+    /// them if found.
+    private var isStarted: Bool = false
     
-    /// Returns `true` if at least one Proxy is connected.
+    /// Returns `true` if at least one Proxy is connected, `false` otherwie.
     var isConnected: Bool {
         return proxies.contains { $0.isOpen }
     }
@@ -42,24 +59,24 @@ class NetworkConnection: NSObject, Bearer {
     }
     
     func open() {
-        if !isOpen && centralManager.state == .poweredOn {
+        if !isStarted && centralManager.state == .poweredOn {
             centralManager.scanForPeripherals(withServices: [MeshProxyService.uuid], options: nil)
         }
-        isOpen = true
+        isStarted = true
     }
     
     func close() {
         centralManager.stopScan()
         proxies.forEach { $0.close() }
         proxies.removeAll()
-        isOpen = false
+        isStarted = false
     }
     
     func send(_ data: Data, ofType type: PduType) throws {
         guard supports(type) else {
             throw BearerError.pduTypeNotSupported
         }
-        guard let proxy = proxies.first else {
+        guard let proxy = proxies.first(where: { $0.isOpen }) else {
             buffer.append((data: data, type: type))
             return
         }
@@ -73,7 +90,7 @@ extension NetworkConnection: CBCentralManagerDelegate {
     func centralManagerDidUpdateState(_ central: CBCentralManager) {
         switch central.state {
         case .poweredOn:
-            if isOpen {
+            if isStarted && proxies.count < NetworkConnection.maxConnections {
                 central.scanForPeripherals(withServices: [MeshProxyService.uuid], options: nil)
             }
         case .poweredOff, .resetting:
@@ -84,8 +101,9 @@ extension NetworkConnection: CBCentralManagerDelegate {
         }
     }
     
-    func centralManager(_ central: CBCentralManager, didDiscover peripheral: CBPeripheral, advertisementData: [String : Any], rssi RSSI: NSNumber) {
-        // Is it a Network ID beacon?ś
+    func centralManager(_ central: CBCentralManager, didDiscover peripheral: CBPeripheral,
+                        advertisementData: [String : Any], rssi RSSI: NSNumber) {
+        // Is it a Network ID beacon?
         if let networkId = advertisementData.networkId {
             guard meshNetwork.matches(networkId: networkId) else {
                 // A Node from another mesh network.
@@ -100,10 +118,17 @@ extension NetworkConnection: CBCentralManagerDelegate {
             }
         }
         
-        let bearer = GattBearer(to: peripheral, using: central)
+        guard !proxies.contains(where: { $0.identifier == peripheral.identifier }),
+              let bearer = GattBearer(target: peripheral) else {
+            return
+        }
+        proxies.append(bearer)
         bearer.delegate = self
         bearer.dataDelegate = self
-        proxies.append(bearer)
+        // Is the limit reached?
+        if proxies.count >= NetworkConnection.maxConnections {
+            central.stopScan()
+        }
         bearer.open()
     }
 }
@@ -111,14 +136,12 @@ extension NetworkConnection: CBCentralManagerDelegate {
 extension NetworkConnection: GattBearerDelegate, BearerDataDelegate {
     
     func bearerDidOpen(_ bearer: Bearer) {
-        let connectionsCount = proxies.reduce(0) { (last, bearer) -> Int in
-            return last + (bearer.isOpen ? 1 : 0)
+        guard !isOpen else {
+            return
         }
-        
-        if connectionsCount == 0 {
-            print("Bearer open")
-            delegate?.bearerDidOpen(self)
-        }
+        isOpen = true
+        print("Bearer open")
+        delegate?.bearerDidOpen(self)
         
         // If any packets were buffered, send them to the first connected Proxy.
         buffer.forEach {
@@ -131,10 +154,25 @@ extension NetworkConnection: GattBearerDelegate, BearerDataDelegate {
         if let index = proxies.firstIndex(of: bearer as! GattBearer) {
             proxies.remove(at: index)
         }
-        
+        if isStarted && proxies.count < NetworkConnection.maxConnections {
+            centralManager.scanForPeripherals(withServices: [MeshProxyService.uuid], options: nil)
+        }
         if proxies.isEmpty {
+            isOpen = false
             print("Bearer closed")
             delegate?.bearer(self, didClose: nil)
+        }
+    }
+    
+    func bearerDidConnect(_ bearer: Bearer) {
+        if !isOpen, let delegate = delegate as? GattBearerDelegate {
+            delegate.bearerDidConnect(bearer)
+        }
+    }
+    
+    func bearerDidDiscoverServices(_ bearer: Bearer) {
+        if !isOpen, let delegate = delegate as? GattBearerDelegate {
+            delegate.bearerDidDiscoverServices(bearer)
         }
     }
     

@@ -342,8 +342,21 @@
                     </tableView>
                     <navigationItem key="navigationItem" title="Device Name" id="XGj-Sj-Rwy">
                         <barButtonItem key="backBarButtonItem" title="Node" id="P45-IY-Y5M"/>
+                        <barButtonItem key="rightBarButtonItem" style="plain" id="hqh-yy-qFP">
+                            <view key="customView" contentMode="scaleToFill" id="obU-C9-dj6">
+                                <rect key="frame" x="276" y="0.0" width="83" height="44"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <subviews>
+                                    <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" hidesWhenStopped="YES" style="white" translatesAutoresizingMaskIntoConstraints="NO" id="DJa-l9-IR3">
+                                        <rect key="frame" x="55" y="8" width="20" height="20"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                    </activityIndicatorView>
+                                </subviews>
+                            </view>
+                        </barButtonItem>
                     </navigationItem>
                     <connections>
+                        <outlet property="activityIndicator" destination="DJa-l9-IR3" id="iE7-fT-NTW"/>
                         <segue destination="2Zq-WA-bzR" kind="show" identifier="showElement" id="LdH-3L-wVk"/>
                     </connections>
                 </tableViewController>
