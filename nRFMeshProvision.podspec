@@ -21,7 +21,7 @@ This Library is under extensive development and will have missing features and c
   s.social_media_url = 'https://twitter.com/nordictweets'
   s.platform         = :ios
   s.static_framework = true
-  s.swift_version    = '4.2'
+  s.swift_version    = '5.0'
   s.ios.deployment_target = '10.0'
   s.source_files = 'nRFMeshProvision/Classes/**/*'
   s.dependency 'OpenSSL-Universal'
