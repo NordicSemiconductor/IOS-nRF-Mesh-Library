@@ -74,6 +74,8 @@ class ConfigurationViewController: UITableViewController {
             return IndexPath.titles.count
         case IndexPath.nodeSection:
             return IndexPath.nodeTitles.count
+        case IndexPath.keysSection:
+            return IndexPath.keysTitles.count
         case IndexPath.elementsSection:
             if node.isConfigured {
                 return node.elements.count
@@ -156,7 +158,7 @@ class ConfigurationViewController: UITableViewController {
                 break
             }
         }
-        if indexPath.isElementSection {
+        if indexPath.isElementsSection {
             if node.isConfigured {
                 let element = node.elements[indexPath.row]
                 cell.textLabel?.text = element.name ?? "Element \(element.index + 1)"
@@ -169,6 +171,16 @@ class ConfigurationViewController: UITableViewController {
                 cell.detailTextLabel?.text = nil
                 cell.accessoryType = .none
             }
+        }
+        if indexPath.isKeysSection {
+            cell.textLabel?.text = indexPath.title
+            switch indexPath.row {
+            case 0: // Network Keys
+                cell.detailTextLabel?.text = "\(node.networkKeys.count)"
+            default:
+                cell.detailTextLabel?.text = "\(node.applicationKeys.count)"
+            }
+            cell.accessoryType = .disclosureIndicator
         }
         if indexPath.isActionsSection {
             let cell = cell as! ActionCell
@@ -192,7 +204,7 @@ class ConfigurationViewController: UITableViewController {
             UIPasteboard.general.string = node.deviceKey.hex
             showToast("Device Key copied to Clipboard.", delay: .shortDelay)
         }
-        if indexPath.isElementSection {
+        if indexPath.isElementsSection {
             performSegue(withIdentifier: "showElement", sender: indexPath)
         }
         if indexPath.isResetNode {
@@ -334,9 +346,10 @@ extension ConfigurationViewController: MeshNetworkDelegate {
 private extension IndexPath {
     static let nameSection = 0
     static let nodeSection = 1
-    static let elementsSection = 2
-    static let compositionDataSection = 3
-    static let actionsSection = 4
+    static let keysSection = 2
+    static let elementsSection = 3
+    static let compositionDataSection = 4
+    static let actionsSection = 5
     static let numberOfSection = IndexPath.actionsSection + 1
     
     static let titles = [
@@ -344,6 +357,9 @@ private extension IndexPath {
     ]
     static let nodeTitles = [
         "Unicast Address", "TTL", "Device Key"
+    ]
+    static let keysTitles = [
+        "Network Keys", "Application Keys"
     ]
     static let detailsTitles = [
         "Company Identifier", "Product Identifier", "Product Version",
@@ -379,6 +395,9 @@ private extension IndexPath {
         if isNodeSection {
             return IndexPath.nodeTitles[row]
         }
+        if isKeysSection {
+            return IndexPath.keysTitles[row]
+        }
         if isDetailsSection {
             return IndexPath.detailsTitles[row]
         }
@@ -396,7 +415,7 @@ private extension IndexPath {
     }
     
     var isHighlightable: Bool {
-        return isName || isDeviceKey || isElementSection || isActionsSection
+        return isName || isDeviceKey || isElementsSection || isKeysSection || isActionsSection
     }
     
     var isName: Bool {
@@ -431,8 +450,12 @@ private extension IndexPath {
         return section == IndexPath.nodeSection
     }
     
-    var isElementSection: Bool {
+    var isElementsSection: Bool {
         return section == IndexPath.elementsSection
+    }
+    
+    var isKeysSection: Bool {
+        return section == IndexPath.keysSection
     }
     
     var isDetailsSection: Bool {
