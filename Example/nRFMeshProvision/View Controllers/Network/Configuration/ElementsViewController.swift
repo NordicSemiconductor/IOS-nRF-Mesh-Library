@@ -51,7 +51,7 @@ class ElementsViewController: UITableViewController {
         
         if indexPath.isName {
             cell.textLabel?.text = indexPath.title
-            cell.detailTextLabel?.text = element.name ?? "Element \(element.index + 1)"
+            cell.detailTextLabel?.text = element.name ?? "No name"
             cell.accessoryType = .disclosureIndicator
         }
         if indexPath.isDetailsSection {
@@ -88,6 +88,10 @@ class ElementsViewController: UITableViewController {
             }
         }
         return cell
+    }
+    
+    override func tableView(_ tableView: UITableView, shouldHighlightRowAt indexPath: IndexPath) -> Bool {
+        return !indexPath.isDetailsSection
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
