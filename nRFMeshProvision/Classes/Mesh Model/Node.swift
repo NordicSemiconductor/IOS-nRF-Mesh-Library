@@ -90,7 +90,7 @@ public class Node: Codable {
     /// has finished configuring this node. The property is set to `true`
     /// once a Mesh Manager is done completing this node's
     /// configuration, otherwise it is set to `false`.
-    public var configComplete: Bool = false
+    public var isConfigComplete: Bool = false
     /// UTF-8 human-readable name of the node within the network.
     public var name: String?
     /// The 16-bit Company Identifier (CID) assigned by the Bluetooth SIG.
@@ -142,7 +142,7 @@ public class Node: Codable {
     /// The flag is set to `true` when the Node is in the process of being
     /// deleted and is excluded from the new network key distribution
     /// during the key refresh procedure; otherwise is set to `false`.
-    public internal(set) var blacklisted: Bool = false
+    public var isBlacklisted: Bool = false
     
     /// Returns list of Network Keys known to this Node.
     public var networkKeys: [NetworkKey] {
@@ -185,7 +185,7 @@ public class Node: Codable {
         self.companyIdentifier = 0x004C // Apple Inc.
         // A flag that there is no need to perform configuration of
         // a Provisioner's node.
-        self.configComplete = true
+        self.isConfigComplete = true
         // This Provisioner does not support any of those features.
         self.features = NodeFeatures()
         
@@ -215,7 +215,7 @@ public class Node: Codable {
         self.deviceKey = deviceKey
         self.security = .high
         // Composition Data were not obtained.
-        self.configComplete = false
+        self.isConfigComplete = false
         
         // The node has been provisioned with one Network Key.
         self.netKeys  = [NodeKey(index: networkKey.index, updated: false)]
@@ -252,7 +252,7 @@ public class Node: Codable {
         self.deviceKey = deviceKey
         self.security = .low
         // Composition Data were not obtained.
-        self.configComplete = false
+        self.isConfigComplete = false
         
         self.netKeys  = [NodeKey(index: networkKey.index, updated: false)]
         self.appKeys  = []
@@ -274,7 +274,7 @@ public class Node: Codable {
         case security
         case netKeys
         case appKeys
-        case configComplete
+        case isConfigComplete = "configComplete"
         case name
         case companyIdentifier = "cid"
         case productIdentifier = "pid"
@@ -286,7 +286,7 @@ public class Node: Codable {
         case networkTransmit
         case relayRetransmit
         case elements
-        case blacklisted
+        case isBlacklisted = "blacklisted"
     }
     
     public required init(from decoder: Decoder) throws {
@@ -307,7 +307,7 @@ public class Node: Codable {
         self.security = try container.decode(Security.self, forKey: .security)
         self.netKeys = try container.decode([NodeKey].self, forKey: .netKeys)
         self.appKeys = try container.decode([NodeKey].self, forKey: .appKeys)
-        self.configComplete = try container.decode(Bool.self, forKey: .configComplete)
+        self.isConfigComplete = try container.decode(Bool.self, forKey: .isConfigComplete)
         self.name = try container.decodeIfPresent(String.self, forKey: .name)
         if let companyIdentifierAsString = try container.decodeIfPresent(String.self, forKey: .companyIdentifier) {
             guard let companyIdentifier = UInt16(hex: companyIdentifierAsString) else {
@@ -350,7 +350,7 @@ public class Node: Codable {
         self.networkTransmit = try container.decodeIfPresent(NetworkTransmit.self, forKey: .networkTransmit)
         self.relayRetransmit = try container.decodeIfPresent(RelayRetransmit.self, forKey: .relayRetransmit)
         self.elements = try container.decode([Element].self, forKey: .elements)
-        self.blacklisted = try container.decode(Bool.self, forKey: .blacklisted)
+        self.isBlacklisted = try container.decode(Bool.self, forKey: .isBlacklisted)
         
         elements.forEach {
             $0.parentNode = self
@@ -365,7 +365,7 @@ public class Node: Codable {
         try container.encode(security, forKey: .security)
         try container.encode(netKeys, forKey: .netKeys)
         try container.encode(appKeys, forKey: .appKeys)
-        try container.encode(configComplete, forKey: .configComplete)
+        try container.encode(isConfigComplete, forKey: .isConfigComplete)
         try container.encodeIfPresent(name, forKey: .name)
         try container.encodeIfPresent(companyIdentifier?.hex, forKey: .companyIdentifier)
         try container.encodeIfPresent(productIdentifier?.hex, forKey: .productIdentifier)
@@ -377,7 +377,7 @@ public class Node: Codable {
         try container.encodeIfPresent(networkTransmit, forKey: .networkTransmit)
         try container.encodeIfPresent(relayRetransmit, forKey: .relayRetransmit)
         try container.encode(elements, forKey: .elements)
-        try container.encode(blacklisted, forKey: .blacklisted)
+        try container.encode(isBlacklisted, forKey: .isBlacklisted)
     }
 }
 

@@ -83,6 +83,8 @@ class ConfigurationViewController: UITableViewController {
             return 1 // "Composition Data not received" message
         case IndexPath.compositionDataSection:
             return IndexPath.detailsTitles.count
+        case IndexPath.switchesSection:
+            return IndexPath.switchesTitles.count
         case IndexPath.actionsSection:
             return IndexPath.actionsTitles.count
         default:
@@ -181,6 +183,20 @@ class ConfigurationViewController: UITableViewController {
                 cell.detailTextLabel?.text = "\(node.applicationKeys.count)"
             }
             cell.accessoryType = .disclosureIndicator
+        }
+        if indexPath.isSwitchesSection {
+            let cell = cell as! SwitchCell
+            cell.title.text = indexPath.title
+            cell.switch.tag = indexPath.row
+            cell.switch.addTarget(self, action: #selector(switchDidChangeValue(switch:)), for: .valueChanged)
+            switch indexPath.row {
+            case 0:
+                cell.switch.isOn = node.isConfigComplete
+            case 1:
+                cell.switch.isOn = node.isBlacklisted
+            default:
+                break
+            }
         }
         if indexPath.isActionsSection {
             let cell = cell as! ActionCell
@@ -296,6 +312,21 @@ private extension ConfigurationViewController {
         present(alert, animated: true)
     }
     
+    /// Method called whenever any switch value changes. The tag contains the row number.
+    @objc func switchDidChangeValue(switch: UISwitch) {
+        switch `switch`.tag {
+        case 0:
+            node.isConfigComplete = `switch`.isOn
+        case 1:
+            node.isBlacklisted = `switch`.isOn
+        default:
+            break
+        }
+        if !MeshNetworkManager.instance.save() {
+            presentAlert(title: "Error", message: "Mesh configuration could not be saved.")
+        }
+    }
+    
     /// Sends a message to the node that will reset its state to unprovisioned.
     func resetNode() {
         activityIndicator.startAnimating()
@@ -347,7 +378,8 @@ private extension IndexPath {
     static let keysSection = 2
     static let elementsSection = 3
     static let compositionDataSection = 4
-    static let actionsSection = 5
+    static let switchesSection = 5
+    static let actionsSection = 6
     static let numberOfSection = IndexPath.actionsSection + 1
     
     static let titles = [
@@ -362,6 +394,9 @@ private extension IndexPath {
     static let detailsTitles = [
         "Company Identifier", "Product Identifier", "Product Version",
         "Replay Protection Count", nil // Node Features is using its own cell.
+    ]
+    static let switchesTitles = [
+        "Configured", "Blacklisted"
     ]
     static let actionsTitles = [
         "Reset Node", "Remove Node"
@@ -379,6 +414,9 @@ private extension IndexPath {
         }
         if isDetailsSection {
             return "subtitle"
+        }
+        if isSwitchesSection {
+            return "switch"
         }
         if isActionsSection {
             return "action"
@@ -398,6 +436,9 @@ private extension IndexPath {
         }
         if isDetailsSection {
             return IndexPath.detailsTitles[row]
+        }
+        if isSwitchesSection {
+            return IndexPath.switchesTitles[row]
         }
         if isActionsSection {
             return IndexPath.actionsTitles[row]
@@ -458,6 +499,10 @@ private extension IndexPath {
     
     var isDetailsSection: Bool {
         return section == IndexPath.compositionDataSection
+    }
+    
+    var isSwitchesSection: Bool {
+        return section == IndexPath.switchesSection
     }
     
     var isActionsSection: Bool {
