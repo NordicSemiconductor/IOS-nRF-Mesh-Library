@@ -16,6 +16,7 @@ public protocol CompositionDataPage {
 
 public struct ConfigCompositionDataStatus: ConfigMessage {
     public static let opCode: UInt32 = 0x02
+    
     public var parameters: Data? {
         return page?.parameters
     }

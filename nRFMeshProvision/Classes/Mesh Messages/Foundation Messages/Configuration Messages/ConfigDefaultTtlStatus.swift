@@ -8,8 +8,8 @@
 import Foundation
 
 public struct ConfigDefaultTtlStatus: ConfigMessage {
-    
     public static let opCode: UInt32 = 0x800E
+    
     public var parameters: Data? {
         return Data([ttl])
     }
@@ -18,6 +18,7 @@ public struct ConfigDefaultTtlStatus: ConfigMessage {
         return false
     }
     
+    /// The Time To Leave (TTL) value. Valid value is in range 1...127.
     public let ttl: UInt8
     
     public init(ttl: UInt8) {

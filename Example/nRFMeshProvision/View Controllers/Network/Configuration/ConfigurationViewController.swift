@@ -305,10 +305,9 @@ private extension ConfigurationViewController {
     /// Removes the Node from the local database and pops the Navigation Controller.
     func removeNode() {
         MeshNetworkManager.instance.meshNetwork!.remove(node: node)
-        activityIndicator.stopAnimating()
         
         if MeshNetworkManager.instance.save() {
-            navigationController?.popViewController(animated: true)
+            navigationController!.popViewController(animated: true)
         } else {
             presentAlert(title: "Error", message: "Mesh configuration could not be saved.")
         }
@@ -320,20 +319,21 @@ extension ConfigurationViewController: MeshNetworkDelegate {
     
     func meshNetwork(_ meshNetwork: MeshNetwork, didDeliverMessage message: MeshMessage, from source: Address) {
         switch message {
+            
         case is ConfigCompositionDataStatus:
             tableView.reloadData()
             alert?.message = "Requesting default TTL..."
             // Composition Data is ready, let's read the TTL.
             MeshNetworkManager.instance.send(ConfigDefaultTtlGet(), to: node)
+            
         case is ConfigDefaultTtlStatus:
             tableView.reloadRows(at: [.ttl], with: .automatic)
             alert?.dismiss(animated: true)
             
-            if !MeshNetworkManager.instance.save() {
-                presentAlert(title: "Error", message: "Mesh configuration could not be saved.")
-            }
         case is ConfigNodeResetStatus:
-            removeNode()
+            activityIndicator.stopAnimating()
+            navigationController!.popViewController(animated: true)
+            
         default:
             break
         }

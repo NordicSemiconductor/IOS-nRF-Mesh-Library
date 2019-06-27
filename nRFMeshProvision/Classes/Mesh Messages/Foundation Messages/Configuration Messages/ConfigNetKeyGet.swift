@@ -1,14 +1,14 @@
 //
-//  ConfigDefaultTtlGet.swift
+//  ConfigNetKeyGet.swift
 //  nRFMeshProvision
 //
-//  Created by Aleksander Nowakowski on 25/06/2019.
+//  Created by Aleksander Nowakowski on 27/06/2019.
 //
 
 import Foundation
 
-public struct ConfigDefaultTtlGet: ConfigMessage {
-    public static let opCode: UInt32 = 0x800C
+public struct ConfigNetKeyGet: ConfigMessage {
+    public static let opCode: UInt32 = 0x8042
     
     public var parameters: Data? {
         return nil

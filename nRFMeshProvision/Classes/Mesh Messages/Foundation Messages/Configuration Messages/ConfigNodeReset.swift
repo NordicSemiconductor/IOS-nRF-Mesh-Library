@@ -8,8 +8,8 @@
 import Foundation
 
 public struct ConfigNodeReset: ConfigMessage {
-    
     public static let opCode: UInt32 = 0x8049
+    
     public var parameters: Data? {
         return nil
     }

@@ -118,10 +118,11 @@ public class Node: Codable {
     /// that has not been added to a mesh network.
     ///
     /// Use `ConfigDefaultTtlGet` and `ConfigDefaultTtlSet` messages to read
-    /// or set the default TTL value.
+    /// or set the default TTL value of a remote Node.
     public var defaultTTL: UInt8? {
         set {
-            if let meshNetwork = meshNetwork, !meshNetwork.hasProvisioner(with: uuid) {
+            guard meshNetwork == nil || isProvisioner else {
+                print("Default TTL may only be set for a Provisioner's Node. Use ConfigDefaultTtlSet(ttl) message to send new TTL value to a remote Node.")
                 return
             }
             ttl = newValue
@@ -435,6 +436,16 @@ internal extension Node {
     /// - parameter defaultTtl: The response received.
     func apply(defaultTtl: ConfigDefaultTtlStatus) {
         ttl = defaultTtl.ttl
+    }
+    
+}
+
+internal extension Array where Element == Node.NodeKey {
+    
+    subscript(keyIndex: KeyIndex) -> Node.NodeKey? {
+        return first {
+            $0.index == keyIndex
+        }
     }
     
 }

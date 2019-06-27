@@ -16,7 +16,17 @@ public extension Node {
     /// - returns: `True` if the Node has knowledge about the Applicaiton Key
     ///            with the same Key Index as given key, `false` otherwise.
     func knows(applicationKey: ApplicationKey) -> Bool {
-        return appKeys.contains(where: { $0.index == applicationKey.index })
+        return knows(applicationKeyIndex: applicationKey.index)
+    }
+    
+    /// Returns whether the Node has knowledge about Application Key with the
+    /// given index.
+    ///
+    /// - parameter applicationKeyIndex: The Application Key Index to look for.
+    /// - returns: `True` if the Node has knowledge about the Applicaiton Key
+    ///            index, `false` otherwise.
+    func knows(applicationKeyIndex: KeyIndex) -> Bool {
+        return appKeys.contains(where: { $0.index == applicationKeyIndex })
     }
     
     /// Returns whether the Node has knowledge about the given Network Key.
@@ -26,7 +36,17 @@ public extension Node {
     /// - returns: `True` if the Node has knowledge about the Network Key
     ///            with the same Key Index as given key, `false` otherwise.
     func knows(networkKey: NetworkKey) -> Bool {
-        return netKeys.contains(where: { $0.index == networkKey.index })
+        return knows(networkKeyIndex: networkKey.index)
+    }
+    
+    /// Returns whether the Node has knowledge about Network Key with the
+    /// given index.
+    ///
+    /// - parameter networkKeyIndex: The Network Key Index to look for.
+    /// - returns: `True` if the Node has knowledge about the Network Key
+    ///            index, `false` otherwise.
+    func knows(networkKeyIndex: KeyIndex) -> Bool {
+        return netKeys.contains(where: { $0.index == networkKeyIndex })
     }
     
 }
@@ -41,7 +61,17 @@ public extension Array where Element == Node {
     ///            Applicaiton Key with the same Key Index as given key,
     ///            `false` otherwise.
     func knows(applicationKey: ApplicationKey) -> Bool {
-        return contains(where: { $0.knows(applicationKey: applicationKey) })
+        return knows(applicationKeyIndex: applicationKey.index)
+    }
+    
+    /// Returns whether any of elements of this array is using an
+    /// Application Key with given Key Index.
+    ///
+    /// - parameter applicationKeyIndex: The Application Key Index to look for.
+    /// - returns: `True` if any of the Nodes have knowledge about the
+    ///            Applicaiton Key Index, `false` otherwise.
+    func knows(applicationKeyIndex: KeyIndex) -> Bool {
+        return contains(where: { $0.knows(applicationKeyIndex: applicationKeyIndex) })
     }
     
     /// Returns whether any of elements of this array is using the given
@@ -52,7 +82,17 @@ public extension Array where Element == Node {
     ///            Applicaiton Key with the same Key Index as given key,
     ///            `false` otherwise.
     func knows(networkKey: NetworkKey) -> Bool {
-        return contains(where: { $0.knows(networkKey: networkKey) })
+        return knows(networkKeyIndex: networkKey.index)
+    }
+    
+    /// Returns whether any of elements of this array is using an
+    /// Network Key with given Key Index.
+    ///
+    /// - parameter applicationKeyIndex: The Network Key Index to look for.
+    /// - returns: `True` if any of the Nodes have knowledge about the
+    ///            Network Key Index, `false` otherwise.
+    func knows(networkKeyIndex: KeyIndex) -> Bool {
+        return contains(where: { $0.knows(networkKeyIndex: networkKeyIndex) })
     }
     
 }
