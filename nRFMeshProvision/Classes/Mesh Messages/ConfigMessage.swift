@@ -142,3 +142,48 @@ internal extension ConfigAppKeyMessage {
     }
     
 }
+
+extension ConfigKeyStatus: CustomDebugStringConvertible {
+    
+    public var debugDescription: String {
+        switch self {
+        case .success:
+            return "Success"
+        case .invalidAddress:
+            return "Invalid Address"
+        case .invalidModel:
+            return "Invalid Model"
+        case .invalidAppKeyIndex:
+            return "Invalid Application Key Index"
+        case .invalidNetKeyIndex:
+            return "Invalid Network Key Index"
+        case .insufficientResources:
+            return "Insufficient resources"
+        case .keyIndexAlreadyStored:
+            return "Key Index already stored"
+        case .invalidPublishParameters:
+            return "Invalid publish parameters"
+        case .notASubscribeModel:
+            return "Not a Subscribe Model"
+        case .storageFailure:
+            return "Storage failure"
+        case .featureNotSupported:
+            return "Feature not supported"
+        case .cannotUpdate:
+            return "Cannot update"
+        case .cannotRemove:
+            return "Cannot remove"
+        case .cannotBind:
+            return "Cannot bind"
+        case .temporarilyUnableToChangeState:
+            return "Temporarily unable to change state"
+        case .cannotSet:
+            return "Cannot set"
+        case .unspecifiedError:
+            return "Unspecified error"
+        case .invalidBinding:
+            return "Invalid binding"            
+        }
+    }
+    
+}
