@@ -285,7 +285,7 @@ private extension ConfigurationViewController {
     /// Presents a dialog with resetting confirmation.
     func presentResetConfirmation(from indexPath: IndexPath) {
         let alert = UIAlertController(title: "Reset Node",
-                                      message: "Resetting the node will change its state back to unprovisioned state.",
+                                      message: "Resetting the node will change its state back to unprovisioned state and remove it from the local database.",
                                       preferredStyle: .actionSheet)
         let resetAction = UIAlertAction(title: "Reset", style: .destructive) { _ in self.resetNode() }
         let cancelAction = UIAlertAction(title: "Cancel", style: .cancel)
@@ -300,7 +300,7 @@ private extension ConfigurationViewController {
     /// Presents a dialog with resetting confirmation.
     func presentRemoveNodeConfirmation(from indexPath: IndexPath) {
         let alert = UIAlertController(title: "Remove Node",
-                                      message: "Forgotten node will still be able to send messages to the network. Use this only if the device is no longer available.",
+                                      message: "The node will only be removed from the local database. It will still be able to send and receive messages from the network. Remove the node only if the device is no longer available.",
                                       preferredStyle: .actionSheet)
         let resetAction = UIAlertAction(title: "Remove", style: .destructive) { _ in self.removeNode() }
         let cancelAction = UIAlertAction(title: "Cancel", style: .cancel)
@@ -402,7 +402,7 @@ private extension IndexPath {
         "Reset Node", "Remove Node"
     ]
     static let actions = [
-        "Reset and Forget", "Remove"
+        "Reset", "Remove"
     ]
     
     var cellIdentifier: String {

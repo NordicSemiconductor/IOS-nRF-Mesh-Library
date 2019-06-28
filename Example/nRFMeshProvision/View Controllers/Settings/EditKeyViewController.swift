@@ -84,35 +84,37 @@ class EditKeyViewController: UITableViewController {
     override func numberOfSections(in tableView: UITableView) -> Int {
         // Display Network Key in 2 sections while Application Keys in 3.
         // The second section contains key bindings.
-        return isApplicationKey ? 3 : 2
+        return isApplicationKey ? IndexPath.numberOfSections : IndexPath.numberOfSections - 1
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch section {
-        case 0:
+        case IndexPath.nameSection:
             return 1 // Name
-        case 1:
+        case IndexPath.keySection:
             return 2 // Key, Key Index
-        default:
+        case IndexPath.boundKeySection:
             let network = MeshNetworkManager.instance.meshNetwork!
             return network.networkKeys.count
+        default:
+            return 0
         }
     }
     
     override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         switch section {
-        case 0:
-            return nil
-        case 1:
+        case IndexPath.keySection:
             return "Key details"
-        default:
+        case IndexPath.boundKeySection:
             return "Bound Network Key"
+        default:
+            return nil
         }
     }
     
     override func tableView(_ tableView: UITableView, titleForFooterInSection section: Int) -> String? {
-        if section == 2 {
-            return "An Application Key must be bound to a Network Key. A key that is already used may not be re-bound to a different key."
+        if section == IndexPath.boundKeySection {
+            return "An Application Key must be bound to a Network Key. A key that is in use may not be re-bound to a different key."
         }
         return nil
     }
@@ -266,6 +268,7 @@ private extension IndexPath {
     static let nameSection = 0
     static let keySection  = 1
     static let boundKeySection = 2
+    static let numberOfSections = boundKeySection + 1
     
     /// Returns whether the IndexPath points to the key name.
     var isName: Bool {
