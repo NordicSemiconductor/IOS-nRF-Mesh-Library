@@ -194,8 +194,10 @@ class ConfigurationViewController: UITableViewController {
             switch indexPath.row {
             case 0:
                 cell.switch.isOn = node.isConfigComplete
+                cell.switch.onTintColor = UIColor.nordicLake
             case 1:
                 cell.switch.isOn = node.isBlacklisted
+                cell.switch.onTintColor = UIColor.nordicRed
             default:
                 break
             }
