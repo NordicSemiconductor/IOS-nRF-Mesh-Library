@@ -58,7 +58,7 @@ internal extension ConfigMessage {
         }
         if indexes.count == 1 {
             // Encode a sigle Key Index into 2 bytes.
-            return Data() + (indexes.first! << 4).littleEndian
+            return Data() + indexes.first!.littleEndian
         } else {
             // Encode a pair of Key Indexes into 3 bytes.
             let first  = indexes.first!
@@ -82,7 +82,7 @@ internal extension ConfigMessage {
         }
         if size == 2 {
             // Decode a sigle Key Index from 2 bytes.
-            let index: KeyIndex = UInt16(data[offset + 1]) << 4 | UInt16(data[offset] >> 4)
+            let index: KeyIndex = UInt16(data[offset + 1]) | UInt16(data[offset])
             return [index]
         } else {
             // Decode a pair of Key Indexes from 3 bytes.
