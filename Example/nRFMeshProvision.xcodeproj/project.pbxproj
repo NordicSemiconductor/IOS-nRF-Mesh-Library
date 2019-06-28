@@ -21,6 +21,7 @@
 		523F776A22C621F50030EA6A /* NodeAddNetworkKeyViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 523F776922C621F50030EA6A /* NodeAddNetworkKeyViewController.swift */; };
 		523F776C22C6324A0030EA6A /* ConnectableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 523F776B22C6324A0030EA6A /* ConnectableViewController.swift */; };
 		523F776E22C63EAD0030EA6A /* NodeAddAppKeyViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 523F776D22C63EAD0030EA6A /* NodeAddAppKeyViewController.swift */; };
+		523F777022C64FD20030EA6A /* ConfigMessages.swift in Sources */ = {isa = PBXBuildFile; fileRef = 523F776F22C64FD20030EA6A /* ConfigMessages.swift */; };
 		525242E0225CBFEC0044CECB /* RangeObject+String.swift in Sources */ = {isa = PBXBuildFile; fileRef = 525242DF225CBFEC0044CECB /* RangeObject+String.swift */; };
 		525242E8225F2D6A0044CECB /* FabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 525242E7225F2D6A0044CECB /* FabView.swift */; };
 		5283524822733BCF0097B949 /* EditKeyViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5283524722733BCF0097B949 /* EditKeyViewController.swift */; };
@@ -89,6 +90,7 @@
 		523F776922C621F50030EA6A /* NodeAddNetworkKeyViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NodeAddNetworkKeyViewController.swift; sourceTree = "<group>"; };
 		523F776B22C6324A0030EA6A /* ConnectableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectableViewController.swift; sourceTree = "<group>"; };
 		523F776D22C63EAD0030EA6A /* NodeAddAppKeyViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NodeAddAppKeyViewController.swift; sourceTree = "<group>"; };
+		523F776F22C64FD20030EA6A /* ConfigMessages.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigMessages.swift; sourceTree = "<group>"; };
 		525242DF225CBFEC0044CECB /* RangeObject+String.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "RangeObject+String.swift"; path = "Utils/RangeObject+String.swift"; sourceTree = "<group>"; };
 		525242E7225F2D6A0044CECB /* FabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FabView.swift; sourceTree = "<group>"; };
 		5283524722733BCF0097B949 /* EditKeyViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditKeyViewController.swift; sourceTree = "<group>"; };
@@ -354,6 +356,7 @@
 				52DF5D92229C009200C297C1 /* NetworkPdus.swift */,
 				5294DAD922B109810041370E /* Pdus.swift */,
 				52F6AD6B22B78F3000F0D7DF /* CompositionData.swift */,
+				523F776F22C64FD20030EA6A /* ConfigMessages.swift */,
 				529B75A92248E275008F1CE7 /* nRFMeshProvision_Tests-Bridging-Header.h */,
 			);
 			path = Tests;
@@ -607,6 +610,7 @@
 				52B7F67D229829F200B0A42F /* Addresses.swift in Sources */,
 				5294DADA22B109810041370E /* Pdus.swift in Sources */,
 				52F6AD6C22B78F3000F0D7DF /* CompositionData.swift in Sources */,
+				523F777022C64FD20030EA6A /* ConfigMessages.swift in Sources */,
 				52DF5D93229C009200C297C1 /* NetworkPdus.swift in Sources */,
 				529B7629224CE481008F1CE7 /* AssigningUnicastAddress.swift in Sources */,
 				528352B42284139F0097B949 /* ProxyProtocol.swift in Sources */,
