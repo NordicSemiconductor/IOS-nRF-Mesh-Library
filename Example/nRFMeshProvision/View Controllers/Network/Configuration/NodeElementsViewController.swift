@@ -9,8 +9,13 @@
 import UIKit
 import nRFMeshProvision
 
-class ElementsViewController: UITableViewController {
+class NodeElementsViewController: UITableViewController {
+    
+    // MARK: - Properties
+    
     var element: Element!
+    
+    // MARK: - View Controller
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -103,7 +108,7 @@ class ElementsViewController: UITableViewController {
     }
 }
 
-private extension ElementsViewController {
+private extension NodeElementsViewController {
     
     /// Presents a dialog to edit the Element name.
     func presentNameDialog() {

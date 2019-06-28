@@ -9,7 +9,7 @@
 import UIKit
 import nRFMeshProvision
 
-class ConfigurationViewController: UITableViewController {
+class ConfigurationViewController: ConnectableViewController {
     
     // MARK: - Outlets and Actions
     
@@ -19,10 +19,6 @@ class ConfigurationViewController: UITableViewController {
     
     var node: Node!
     
-    // MARK: - Private properties
-    
-    private var alert: UIAlertController?
-    
     // MARK: - Implementation
     
     override func viewDidLoad() {
@@ -30,35 +26,39 @@ class ConfigurationViewController: UITableViewController {
         
         title = node.name ?? "Unknown device"
         
-        MeshNetworkManager.bearer.delegate = self
-        let manager = MeshNetworkManager.instance
-        manager.delegate = self
+        MeshNetworkManager.instance.delegate = self
         // If the Composition Data were never obtained, get them now.
         if !node.isConfigured {
-            let connected = MeshNetworkManager.bearer.isConnected
-            let status = connected ? "Requesting Composition Data..." : "Connecting..."
-            alert = UIAlertController(title: "Status", message: status, preferredStyle: .alert)
-            alert!.addAction(UIAlertAction(title: "Cancel", style: .cancel))
-            present(alert!, animated: true) {
-                // This message will be enqueued and sent when we are connected
-                // to the mesh network.
-                manager.send(ConfigCompositionDataGet(page: 0xFF), to: self.node)
-            }
+            // This will request Composition Data when the bearer is open.
+            connect()
         }
+    }
+    
+    override func networkReady(alert: UIAlertController) {
+        alert.message = "Requesting Composition Data..."
+        MeshNetworkManager.instance.send(ConfigCompositionDataGet(), to: node)
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
         // Element name might have been updated.
-        tableView.reloadSections(IndexSet.elementsSection, with: .automatic)
+        tableView.reloadSections(.keysAndElementsSections, with: .automatic)
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "showElement" {
             let indexPath = sender as! IndexPath
-            let destination = segue.destination as! ElementsViewController
+            let destination = segue.destination as! NodeElementsViewController
             destination.element = node.elements[indexPath.row]
+        }
+        if segue.identifier == "showNetworkKeys" {
+            let destination = segue.destination as! NodeNetworkKeysViewController
+            destination.node = node
+        }
+        if segue.identifier == "showAppKeys" {
+            let destination = segue.destination as! NodeAppKeysViewController
+            destination.node = node
         }
     }
 
@@ -227,6 +227,12 @@ class ConfigurationViewController: UITableViewController {
             UIPasteboard.general.string = node.deviceKey.hex
             showToast("Device Key copied to Clipboard.", delay: .shortDelay)
         }
+        if indexPath.isNetworkKeys {
+            performSegue(withIdentifier: "showNetworkKeys", sender: nil)
+        }
+        if indexPath.isApplicationKeys {
+            performSegue(withIdentifier: "showAppKeys", sender: nil)
+        }
         if indexPath.isElementsSection {
             performSegue(withIdentifier: "showElement", sender: indexPath)
         }
@@ -246,34 +252,6 @@ class ConfigurationViewController: UITableViewController {
             presentAlert(title: "Info", message: "A blacklisted node will be excluded from key exchange process. When the key refresh procedure is complete, this node will no longer be able to receive or send messages to the mesh network.")
         default:
             break
-        }
-    }
-
-}
-
-extension ConfigurationViewController: GattBearerDelegate {
-    
-    func bearerDidConnect(_ bearer: Bearer) {
-        DispatchQueue.main.async {
-            self.alert?.message = "Discovering services..."
-        }
-    }
-    
-    func bearerDidDiscoverServices(_ bearer: Bearer) {
-        DispatchQueue.main.async {
-            self.alert?.message = "Initializing..."
-        }
-    }
-    
-    func bearerDidOpen(_ bearer: Bearer) {
-        DispatchQueue.main.async {
-            self.alert?.message = "Requesting Composition Data..."
-        }
-    }
-    
-    func bearer(_ bearer: Bearer, didClose error: Error?) {
-        DispatchQueue.main.async {
-            self.alert?.dismiss(animated: true)
         }
     }
     
@@ -516,6 +494,14 @@ private extension IndexPath {
         return isNodeSection && row == 2
     }
     
+    var isNetworkKeys: Bool {
+        return isKeysSection && row == 0
+    }
+    
+    var isApplicationKeys: Bool {
+        return isKeysSection && row == 1
+    }
+    
     var isNodeFeatures: Bool {
         return isDetailsSection && row == 4
     }
@@ -551,6 +537,6 @@ private extension IndexPath {
 
 private extension IndexSet {
     
-    static let elementsSection = IndexSet(integer: IndexPath.elementsSection)
+    static let keysAndElementsSections = IndexSet(integersIn: IndexPath.keysSection...IndexPath.elementsSection)
     
 }

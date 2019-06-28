@@ -146,7 +146,7 @@ public class Node: Codable {
     
     /// Returns list of Network Keys known to this Node.
     public var networkKeys: [NetworkKey] {
-        return meshNetwork?.networkKeys.filter { knows(networkKey: $0) } ?? []
+        return meshNetwork?.networkKeys.knownTo(node: self) ?? []
     }
     /// Returns list of Application Keys known to this Node.
     public var applicationKeys: [ApplicationKey] {

@@ -339,7 +339,7 @@
                             <outlet property="delegate" destination="bs4-xQ-JR5" id="hTK-zp-i39"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" title="App Keys" id="0Lh-2f-TX3">
+                    <navigationItem key="navigationItem" title="Application Keys" id="0Lh-2f-TX3">
                         <barButtonItem key="rightBarButtonItem" systemItem="add" id="Idv-mb-BiW">
                             <connections>
                                 <action selector="addTapped:" destination="bs4-xQ-JR5" id="fse-Hp-meR"/>
@@ -1289,7 +1289,7 @@
     <inferredMetricsTieBreakers>
         <segue reference="oYf-da-8MK"/>
         <segue reference="N6d-TP-uON"/>
-        <segue reference="sOz-KS-cF1"/>
+        <segue reference="lOU-nl-uhX"/>
         <segue reference="ZYN-EB-pgW"/>
     </inferredMetricsTieBreakers>
     <color key="tintColor" red="0.0" green="0.46666666670000001" blue="0.7843137255" alpha="1" colorSpace="calibratedRGB"/>

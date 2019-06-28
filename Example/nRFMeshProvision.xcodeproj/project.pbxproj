@@ -14,8 +14,13 @@
 		3089BCA02099CA4900E30192 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3089BC9E2099CA4900E30192 /* LaunchScreen.storyboard */; };
 		522AFFDC22BBA34900521EDC /* ActionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 522AFFDB22BBA34900521EDC /* ActionCell.swift */; };
 		522AFFDE22BBBC6400521EDC /* NodeFeaturesCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 522AFFDD22BBBC6400521EDC /* NodeFeaturesCell.swift */; };
-		522AFFE022C2376C00521EDC /* ElementsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 522AFFDF22C2376C00521EDC /* ElementsViewController.swift */; };
+		522AFFE022C2376C00521EDC /* NodeElementsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 522AFFDF22C2376C00521EDC /* NodeElementsViewController.swift */; };
 		523F776422C4EDD90030EA6A /* SwitchCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 523F776322C4EDD90030EA6A /* SwitchCell.swift */; };
+		523F776622C609D90030EA6A /* NodeNetworkKeysViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 523F776522C609D90030EA6A /* NodeNetworkKeysViewController.swift */; };
+		523F776822C615CE0030EA6A /* NodeAppKeysViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 523F776722C615CE0030EA6A /* NodeAppKeysViewController.swift */; };
+		523F776A22C621F50030EA6A /* NodeAddNetworkKeyViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 523F776922C621F50030EA6A /* NodeAddNetworkKeyViewController.swift */; };
+		523F776C22C6324A0030EA6A /* ConnectableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 523F776B22C6324A0030EA6A /* ConnectableViewController.swift */; };
+		523F776E22C63EAD0030EA6A /* NodeAddAppKeyViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 523F776D22C63EAD0030EA6A /* NodeAddAppKeyViewController.swift */; };
 		525242E0225CBFEC0044CECB /* RangeObject+String.swift in Sources */ = {isa = PBXBuildFile; fileRef = 525242DF225CBFEC0044CECB /* RangeObject+String.swift */; };
 		525242E8225F2D6A0044CECB /* FabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 525242E7225F2D6A0044CECB /* FabView.swift */; };
 		5283524822733BCF0097B949 /* EditKeyViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5283524722733BCF0097B949 /* EditKeyViewController.swift */; };
@@ -77,8 +82,13 @@
 		4973E9CDA09CE2398E5C269A /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
 		522AFFDB22BBA34900521EDC /* ActionCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionCell.swift; sourceTree = "<group>"; };
 		522AFFDD22BBBC6400521EDC /* NodeFeaturesCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NodeFeaturesCell.swift; sourceTree = "<group>"; };
-		522AFFDF22C2376C00521EDC /* ElementsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ElementsViewController.swift; sourceTree = "<group>"; };
+		522AFFDF22C2376C00521EDC /* NodeElementsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NodeElementsViewController.swift; sourceTree = "<group>"; };
 		523F776322C4EDD90030EA6A /* SwitchCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwitchCell.swift; sourceTree = "<group>"; };
+		523F776522C609D90030EA6A /* NodeNetworkKeysViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NodeNetworkKeysViewController.swift; sourceTree = "<group>"; };
+		523F776722C615CE0030EA6A /* NodeAppKeysViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NodeAppKeysViewController.swift; sourceTree = "<group>"; };
+		523F776922C621F50030EA6A /* NodeAddNetworkKeyViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NodeAddNetworkKeyViewController.swift; sourceTree = "<group>"; };
+		523F776B22C6324A0030EA6A /* ConnectableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectableViewController.swift; sourceTree = "<group>"; };
+		523F776D22C63EAD0030EA6A /* NodeAddAppKeyViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NodeAddAppKeyViewController.swift; sourceTree = "<group>"; };
 		525242DF225CBFEC0044CECB /* RangeObject+String.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "RangeObject+String.swift"; path = "Utils/RangeObject+String.swift"; sourceTree = "<group>"; };
 		525242E7225F2D6A0044CECB /* FabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FabView.swift; sourceTree = "<group>"; };
 		5283524722733BCF0097B949 /* EditKeyViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditKeyViewController.swift; sourceTree = "<group>"; };
@@ -213,6 +223,7 @@
 		52835256227AED670097B949 /* Network */ = {
 			isa = PBXGroup;
 			children = (
+				523F776B22C6324A0030EA6A /* ConnectableViewController.swift */,
 				528AB9F7228D847C000BE9DC /* NetworkViewController.swift */,
 				52DF5D8B228DAA0500C297C1 /* NodeViewCell.swift */,
 				5283527E22806BA60097B949 /* Provisioning */,
@@ -265,7 +276,11 @@
 			children = (
 				522AFFE122C23B3900521EDC /* Cells */,
 				52DF5D89228DA78A00C297C1 /* ConfigurationViewController.swift */,
-				522AFFDF22C2376C00521EDC /* ElementsViewController.swift */,
+				522AFFDF22C2376C00521EDC /* NodeElementsViewController.swift */,
+				523F776522C609D90030EA6A /* NodeNetworkKeysViewController.swift */,
+				523F776922C621F50030EA6A /* NodeAddNetworkKeyViewController.swift */,
+				523F776722C615CE0030EA6A /* NodeAppKeysViewController.swift */,
+				523F776D22C63EAD0030EA6A /* NodeAddAppKeyViewController.swift */,
 			);
 			path = Configuration;
 			sourceTree = "<group>";
@@ -545,6 +560,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				529B764722522D37008F1CE7 /* UITableView+EmptyView.swift in Sources */,
+				523F776A22C621F50030EA6A /* NodeAddNetworkKeyViewController.swift in Sources */,
 				5283528022806C280097B949 /* ProvisioningViewController.swift in Sources */,
 				52835269227B2BAE0097B949 /* ScannerTableViewController.swift in Sources */,
 				528352BC2285B6150097B949 /* OobSelector.swift in Sources */,
@@ -559,11 +575,14 @@
 				529B76492252499E008F1CE7 /* UIColor+Nordic.swift in Sources */,
 				525242E0225CBFEC0044CECB /* RangeObject+String.swift in Sources */,
 				529B7575224107A5008F1CE7 /* AppInfo.swift in Sources */,
+				523F776622C609D90030EA6A /* NodeNetworkKeysViewController.swift in Sources */,
 				607FACD61AFB9204008FA782 /* AppDelegate.swift in Sources */,
 				52DAA5E4225B93320041C43A /* EditRangesViewController.swift in Sources */,
+				523F776C22C6324A0030EA6A /* ConnectableViewController.swift in Sources */,
 				52DAA5E6225B957B0041C43A /* RangeCell.swift in Sources */,
 				529B756D223FE7F1008F1CE7 /* RootViewController.swift in Sources */,
-				522AFFE022C2376C00521EDC /* ElementsViewController.swift in Sources */,
+				523F776822C615CE0030EA6A /* NodeAppKeysViewController.swift in Sources */,
+				522AFFE022C2376C00521EDC /* NodeElementsViewController.swift in Sources */,
 				523F776422C4EDD90030EA6A /* SwitchCell.swift in Sources */,
 				522AFFDC22BBA34900521EDC /* ActionCell.swift in Sources */,
 				52DF5D8A228DA78A00C297C1 /* ConfigurationViewController.swift in Sources */,
@@ -576,6 +595,7 @@
 				529B759C2243BA10008F1CE7 /* NetworkKeysViewController.swift in Sources */,
 				5283528222806D7C0097B949 /* NetworkKeySelectionViewController.swift in Sources */,
 				522AFFDE22BBBC6400521EDC /* NodeFeaturesCell.swift in Sources */,
+				523F776E22C63EAD0030EA6A /* NodeAddAppKeyViewController.swift in Sources */,
 				529B7643225222E8008F1CE7 /* UInt16+String.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
