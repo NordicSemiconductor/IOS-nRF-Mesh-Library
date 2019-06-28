@@ -18,6 +18,7 @@ public struct ConfigNetKeyList: ConfigMessage {
         return false
     }
     
+    /// Network Key Indexes known to the Node.
     public let networkKeyIndexs: [KeyIndex]
     
     public init(networkKeys: [NetworkKey]) {

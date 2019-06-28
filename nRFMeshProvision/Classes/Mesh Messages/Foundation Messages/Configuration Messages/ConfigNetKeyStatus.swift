@@ -19,10 +19,10 @@ public struct ConfigNetKeyStatus: ConfigNetKeyMessage {
     }
     
     public let networkKeyIndex: KeyIndex
-    /// The status of the App Key operation.
-    public let status: ConfigKeyStatus
+    /// Operation status.
+    public let status: ConfigMessageStatus
     
-    public init(networkKey: NetworkKey, status: ConfigKeyStatus) {
+    public init(networkKey: NetworkKey, status: ConfigMessageStatus) {
         self.networkKeyIndex = networkKey.index
         self.status = status
     }
@@ -31,7 +31,7 @@ public struct ConfigNetKeyStatus: ConfigNetKeyMessage {
         guard parameters.count == 3 else {
             return nil
         }
-        guard let status = ConfigKeyStatus(rawValue: parameters[0]) else {
+        guard let status = ConfigMessageStatus(rawValue: parameters[0]) else {
             return nil
         }
         self.status = status

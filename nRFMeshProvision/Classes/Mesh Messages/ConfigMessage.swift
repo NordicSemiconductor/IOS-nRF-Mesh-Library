@@ -11,8 +11,8 @@ public protocol ConfigMessage: MeshMessage {
     // Empty
 }
 
-// The status of App or Net Key operation.
-public enum ConfigKeyStatus: UInt8 {
+/// The status of a Config operation.
+public enum ConfigMessageStatus: UInt8 {
     case success                        = 0x00
     case invalidAddress                 = 0x01
     case invalidModel                   = 0x02
@@ -112,7 +112,7 @@ internal extension ConfigNetKeyMessage {
     /// - parameter offset: The offset from where to read the indexes.
     /// - returns: Decoded Key Index.
     static func decodeNetKeyIndex(from data: Data, at offset: Int) -> KeyIndex {
-        return decodeIndexes(from: data, at: offset).first!
+        return KeyIndex(data[offset + 1]) << 8 | KeyIndex(data[offset])
     }
     
 }
@@ -137,13 +137,14 @@ internal extension ConfigAppKeyMessage {
     /// - parameter offset: The offset from where to read the indexes.
     /// - returns: Decoded Key Indexes.
     static func decodeNetKeyAndAppKeyIndex(from data: Data, at offset: Int) -> (networkKeyIndex: KeyIndex, applicationKeyIndex: KeyIndex) {
-        let indexes = decodeIndexes(from: data, at: offset)
-        return (indexes[0], indexes[1])
+        let networkKeyIndex     = KeyIndex(data[offset + 2]) << 4 | KeyIndex(data[offset + 1] >> 4)
+        let applicationKeyIndex = KeyIndex(data[offset + 1] & 0x0F) << 8 | KeyIndex(data[offset])
+        return (networkKeyIndex, applicationKeyIndex)
     }
     
 }
 
-extension ConfigKeyStatus: CustomDebugStringConvertible {
+extension ConfigMessageStatus: CustomDebugStringConvertible {
     
     public var debugDescription: String {
         switch self {

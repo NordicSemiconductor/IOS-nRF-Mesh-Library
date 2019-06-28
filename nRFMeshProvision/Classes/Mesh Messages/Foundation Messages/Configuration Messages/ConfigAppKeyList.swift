@@ -11,28 +11,30 @@ public struct ConfigAppKeyList: ConfigNetKeyMessage {
     public static let opCode: UInt32 = 0x8002
     
     public var parameters: Data? {
-        return encodeNetKeyIndex()
+        return Data([status.rawValue]) + encodeNetKeyIndex() + encodeIndexes(applicationKeyIndexes[...])
     }
     
     public var isSegmented: Bool {
         return false
     }
     
-    public let status: ConfigKeyStatus
     public let networkKeyIndex: KeyIndex
+    /// Application Key Indexes bound to the Network Key known to the Node.
     public let applicationKeyIndexes: [KeyIndex]
+    /// Operation status.
+    public let status: ConfigMessageStatus
     
-    public init(status: ConfigKeyStatus, networkKey: NetworkKey, applicationKeys: [ApplicationKey]) {
-        self.status = status
+    public init(networkKey: NetworkKey, applicationKeys: [ApplicationKey], status: ConfigMessageStatus) {
         self.networkKeyIndex = networkKey.index
         self.applicationKeyIndexes = applicationKeys.map { return $0.index }
+        self.status = status
     }
     
     public init?(parameters: Data) {
         guard parameters.count >= 3 else {
             return nil
         }
-        guard let status = ConfigKeyStatus(rawValue: 0) else {
+        guard let status = ConfigMessageStatus(rawValue: 0) else {
             return nil
         }
         self.status = status
