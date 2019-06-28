@@ -9,7 +9,23 @@
 import UIKit
 import nRFMeshProvision
 
-class NetworkViewController: UITableViewController {
+class NetworkViewController: UITableViewController, Editable {
+    
+    // MARK: - Implementation
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        tableView.setEmptyView(title: "No Nodes", message: "Click + to provision a new device.", messageImage: #imageLiteral(resourceName: "baseline-network"))
+        
+        let network = MeshNetworkManager.instance.meshNetwork
+        let localProvisioner = network?.localProvisioner
+        let hasNodes = network?.nodes.filter({ $0.uuid != localProvisioner?.uuid }).count ?? 0 > 0
+        if !hasNodes {
+            showEmptyView()
+        } else {
+            hideEmptyView()
+        }
+    }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
