@@ -114,7 +114,7 @@ class EditKeyViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, titleForFooterInSection section: Int) -> String? {
         if section == IndexPath.boundKeySection {
-            return "An Application Key must be bound to a Network Key. A key that is in use may not be re-bound to a different key."
+            return "An Application Key must be bound to a Network Key. A key that is in use cannot be re-bound to a different key."
         }
         return nil
     }
