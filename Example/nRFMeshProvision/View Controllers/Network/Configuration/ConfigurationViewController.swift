@@ -230,6 +230,17 @@ class ConfigurationViewController: UITableViewController {
             presentRemoveNodeConfirmation(from: indexPath)
         }
     }
+    
+    override func tableView(_ tableView: UITableView, accessoryButtonTappedForRowWith indexPath: IndexPath) {
+        switch indexPath.row {
+        case 0:
+            presentAlert(title: "Info", message: "Mark a node as Configured when you finished setting it up.")
+        case 1:
+            presentAlert(title: "Info", message: "A blacklisted node will be excluded from key exchange process. When the key refresh procedure is complete, this node will no longer be able to receive or send messages to the mesh network.")
+        default:
+            break
+        }
+    }
 
 }
 
@@ -511,7 +522,6 @@ private extension IndexPath {
     
     static let name  = IndexPath(row: 0, section: IndexPath.nameSection)
     static let ttl   = IndexPath(row: 1, section: IndexPath.nodeSection)
-    static let reset = IndexPath(row: 0, section: IndexPath.actionsSection)
     
 }
 
