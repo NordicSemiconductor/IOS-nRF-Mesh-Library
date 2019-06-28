@@ -82,7 +82,7 @@ internal extension ConfigMessage {
         }
         if size == 2 {
             // Decode a sigle Key Index from 2 bytes.
-            let index: KeyIndex = UInt16(data[offset + 1]) | UInt16(data[offset])
+            let index: KeyIndex = UInt16(data[offset + 1]) << 8 | UInt16(data[offset])
             return [index]
         } else {
             // Decode a pair of Key Indexes from 3 bytes.
