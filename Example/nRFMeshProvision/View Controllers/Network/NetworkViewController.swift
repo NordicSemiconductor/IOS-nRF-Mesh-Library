@@ -16,6 +16,11 @@ class NetworkViewController: UITableViewController, Editable {
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.setEmptyView(title: "No Nodes", message: "Click + to provision a new device.", messageImage: #imageLiteral(resourceName: "baseline-network"))
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        tableView.reloadData()
         
         let network = MeshNetworkManager.instance.meshNetwork
         let localProvisioner = network?.localProvisioner
@@ -25,11 +30,6 @@ class NetworkViewController: UITableViewController, Editable {
         } else {
             hideEmptyView()
         }
-    }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        tableView.reloadData()
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
