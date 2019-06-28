@@ -113,15 +113,17 @@ class ConfigurationViewController: UITableViewController {
         }
         if indexPath.isNodeSection {
             cell.textLabel?.text = indexPath.title
-            switch indexPath.row {
-            case 0:
+            if indexPath.isUnicastAddress {
                 cell.detailTextLabel?.text = node.unicastAddress.asString()
-            case 1:
+                cell.accessoryType = .none
+            }
+            if indexPath.isTtl {
                 cell.detailTextLabel?.text = node.defaultTTL != nil ? "\(node.defaultTTL!)" : "Unknown"
-            case 2:
+                cell.accessoryType = .disclosureIndicator
+            }
+            if indexPath.isDeviceKey {
                 cell.detailTextLabel?.text = node.deviceKey.hex
-            default:
-                break
+                cell.accessoryType = .none
             }
         }
         if indexPath.isDetailsSection {
@@ -216,6 +218,9 @@ class ConfigurationViewController: UITableViewController {
         if indexPath.isName {
             presentNameDialog()
         }
+        if indexPath.isTtl {
+            presentTTLDialog()
+        }
         if indexPath.isDeviceKey {
             UIPasteboard.general.string = node.deviceKey.hex
             showToast("Device Key copied to Clipboard.", delay: .shortDelay)
@@ -293,6 +298,17 @@ private extension ConfigurationViewController {
         }
     }
     
+    /// Presents a dialog to edit the default TTL.
+    func presentTTLDialog() {
+        presentTextAlert(title: "Default TTL",
+                         message: "TTL = Time To Leave\n\nTTL limits the number of times a message can be relayed.\nMax value is 127.",
+                         text: node.defaultTTL != nil ? "\(node.defaultTTL!)" : nil,
+                         type: .ttlRequired) { value in
+                            let ttl = UInt8(value)!
+                            self.setTtl(ttl)
+        }
+    }
+    
     /// Presents a dialog with resetting confirmation.
     func presentResetConfirmation(from indexPath: IndexPath) {
         let alert = UIAlertController(title: "Reset Node",
@@ -338,10 +354,15 @@ private extension ConfigurationViewController {
         }
     }
     
+    func setTtl(_ ttl: UInt8) {
+        activityIndicator.startAnimating()
+        MeshNetworkManager.instance.send(ConfigDefaultTtlSet(ttl: ttl), to: node)
+    }
+    
     /// Sends a message to the node that will reset its state to unprovisioned.
     func resetNode() {
         activityIndicator.startAnimating()
-        MeshNetworkManager.instance.send(ConfigNodeReset(), to: self.node)
+        MeshNetworkManager.instance.send(ConfigNodeReset(), to: node)
     }
     
     /// Removes the Node from the local database and pops the Navigation Controller.
@@ -369,6 +390,7 @@ extension ConfigurationViewController: MeshNetworkDelegate {
             MeshNetworkManager.instance.send(ConfigDefaultTtlGet(), to: node)
             
         case is ConfigDefaultTtlStatus:
+            activityIndicator.stopAnimating()
             tableView.reloadRows(at: [.ttl], with: .automatic)
             alert?.dismiss(animated: true)
             
@@ -465,7 +487,7 @@ private extension IndexPath {
     }
     
     var isHighlightable: Bool {
-        return isName || isDeviceKey || isElementsSection || isKeysSection || isActionsSection
+        return isName || isTtl || isDeviceKey || isElementsSection || isKeysSection || isActionsSection
     }
     
     var isName: Bool {
