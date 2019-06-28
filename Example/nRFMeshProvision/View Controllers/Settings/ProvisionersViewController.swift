@@ -118,6 +118,10 @@ class ProvisionersViewController: UITableViewController, Editable {
         let network = MeshNetworkManager.instance.meshNetwork!
         network.moveProvisioner(fromIndex: fromIndex, toIndex: toIndex)
         
+        if !MeshNetworkManager.instance.save() {
+            presentAlert(title: "Error", message: "Mesh configuration could not be saved.")
+        }        
+        
         // In here we have to ensure that there is only one Provisioner
         // in the first section.
         if sourceIndexPath.isOtherProvisioner && destinationIndexPath.isThisProvisioner {
