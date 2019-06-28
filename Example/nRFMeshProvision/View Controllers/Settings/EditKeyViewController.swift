@@ -233,8 +233,6 @@ private extension EditKeyViewController {
     func saveKey() {
         let network = MeshNetworkManager.instance.meshNetwork!
         
-        let adding = isNewKey
-        let index  = newBoundNetworkKeyIndex
         if key == nil {
             if isApplicationKey {
                 key = try! network.add(applicationKey: newKey, name: newName)
@@ -243,16 +241,17 @@ private extension EditKeyViewController {
             }
         }
         key!.name = newName
-        if let applicationKey = key as? ApplicationKey {
-            let networkKey = network.networkKeys.first { $0.index == index }
-            applicationKey.bind(to: networkKey!)
+        if let applicationKey = key as? ApplicationKey,
+           let index  = newBoundNetworkKeyIndex,
+           let networkKey = network.networkKeys[index] {
+            try? applicationKey.bind(to: networkKey)
         }
         
         if MeshNetworkManager.instance.save() {
             dismiss(animated: true)
             
             // Finally, notify the parent view controller.
-            if adding {
+            if isNewKey {
                 delegate?.keyWasAdded(key!)
             } else {
                 delegate?.keyWasModified(key!)

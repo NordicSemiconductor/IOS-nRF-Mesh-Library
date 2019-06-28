@@ -10,9 +10,14 @@ import Foundation
 public extension ApplicationKey {
     
     /// Bounds the Application Key to the given Network Key.
+    /// The Application Key must not be in use. If any of the network Nodes
+    /// already knows this key, this method throws an error.
     ///
     /// - parameter networkKey: The Network Key to bound the Application Key to.
-    func bind(to networkKey: NetworkKey) {
+    func bind(to networkKey: NetworkKey) throws {
+        guard !isUsed(in: meshNetwork!) else {
+            throw MeshModelError.keyInUse
+        }
         self.boundNetworkKeyIndex = networkKey.index
     }
     
