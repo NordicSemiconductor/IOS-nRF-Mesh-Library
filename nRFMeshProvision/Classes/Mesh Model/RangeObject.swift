@@ -107,7 +107,23 @@ public func +<T: RangeObject>(array: [T], other: T) -> [T] {
     return result
 }
 
+// This mehtod is not called when 2 arrays are added. It's split
+// into 2 below.
+/*
 public func +<T: RangeObject>(array: [T], otherArray: [T]) -> [T] {
+    var result = array
+    result += otherArray
+    return result
+}
+*/
+
+public func +(array: [AddressRange], otherArray: [AddressRange]) -> [AddressRange] {
+    var result = array
+    result += otherArray
+    return result
+}
+
+public func +(array: [SceneRange], otherArray: [SceneRange]) -> [SceneRange] {
     var result = array
     result += otherArray
     return result
@@ -130,7 +146,21 @@ public func +=<T: RangeObject>(array: inout [T], other: T) {
     array.merge()
 }
 
+// This mehtod is not called when 2 arrays are added. It's split
+// into 2 below.
+/*
 public func +=<T: RangeObject>(array: inout [T], otherArray: [T]) {
+    array.append(contentsOf: otherArray)
+    array.merge()
+}
+*/
+
+public func +=(array: inout [AddressRange], otherArray: [AddressRange]) {
+    array.append(contentsOf: otherArray)
+    array.merge()
+}
+
+public func +=(array: inout [SceneRange], otherArray: [SceneRange]) {
     array.append(contentsOf: otherArray)
     array.merge()
 }

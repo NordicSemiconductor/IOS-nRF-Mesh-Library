@@ -109,11 +109,11 @@ class AddressRanges: XCTestCase {
     
     func testAdd() {
         let ranges = [
-            RangeObject(1...1000),
-            RangeObject(2000...3000)
+            AddressRange(1...1000),
+            AddressRange(2000...3000)
         ]
         
-        let result = ranges + RangeObject(4000...5000)
+        let result = ranges + AddressRange(4000...5000)
         XCTAssertEqual(result.count, 3)
         XCTAssertEqual(result[0].lowerBound, 1)
         XCTAssertEqual(result[0].upperBound, 1000)
@@ -122,7 +122,7 @@ class AddressRanges: XCTestCase {
         XCTAssertEqual(result[2].lowerBound, 4000)
         XCTAssertEqual(result[2].upperBound, 5000)
         
-        let result2 = ranges + RangeObject(1001...1999)
+        let result2 = ranges + AddressRange(1001...1999)
         XCTAssertEqual(result2.count, 1)
         XCTAssertEqual(result2[0].lowerBound, 1)
         XCTAssertEqual(result2[0].upperBound, 3000)
@@ -130,13 +130,13 @@ class AddressRanges: XCTestCase {
     
     func testAddArray() {
         let ranges = [
-            RangeObject(1...1000),
-            RangeObject(2000...3000)
+            AddressRange(1...1000),
+            AddressRange(2000...3000)
         ]
         let otherRanges = [
-            RangeObject(500...800),
-            RangeObject(1999...2003),
-            RangeObject(2500...3000)
+            AddressRange(500...800),
+            AddressRange(1999...2003),
+            AddressRange(2500...3000)
         ]
         let result = ranges + otherRanges
         
