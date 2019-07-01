@@ -49,6 +49,7 @@
 		523F775E22C4CE9A0030EA6A /* ConfigNetKeyStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 523F775D22C4CE9A0030EA6A /* ConfigNetKeyStatus.swift */; };
 		523F776022C4DC110030EA6A /* ConfigNetKeyGet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 523F775F22C4DC110030EA6A /* ConfigNetKeyGet.swift */; };
 		523F776222C4DEE60030EA6A /* ConfigNetKeyList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 523F776122C4DEE60030EA6A /* ConfigNetKeyList.swift */; };
+		523F777322CA1B780030EA6A /* FoundationLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 523F777222CA1B780030EA6A /* FoundationLayer.swift */; };
 		524C039622AE671900C5B1B9 /* ApplicationKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = 524C039522AE671900C5B1B9 /* ApplicationKeys.swift */; };
 		524C039822AF8FEF00C5B1B9 /* Element+Address.swift in Sources */ = {isa = PBXBuildFile; fileRef = 524C039722AF8FEF00C5B1B9 /* Element+Address.swift */; };
 		525242E2225CC6D30044CECB /* ClosedRange.swift in Sources */ = {isa = PBXBuildFile; fileRef = 525242E1225CC6D30044CECB /* ClosedRange.swift */; };
@@ -242,6 +243,7 @@
 		523F775D22C4CE9A0030EA6A /* ConfigNetKeyStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigNetKeyStatus.swift; sourceTree = "<group>"; };
 		523F775F22C4DC110030EA6A /* ConfigNetKeyGet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigNetKeyGet.swift; sourceTree = "<group>"; };
 		523F776122C4DEE60030EA6A /* ConfigNetKeyList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigNetKeyList.swift; sourceTree = "<group>"; };
+		523F777222CA1B780030EA6A /* FoundationLayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FoundationLayer.swift; sourceTree = "<group>"; };
 		524C039522AE671900C5B1B9 /* ApplicationKeys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplicationKeys.swift; sourceTree = "<group>"; };
 		524C039722AF8FEF00C5B1B9 /* Element+Address.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Element+Address.swift"; sourceTree = "<group>"; };
 		525242E1225CC6D30044CECB /* ClosedRange.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClosedRange.swift; sourceTree = "<group>"; };
@@ -519,6 +521,14 @@
 			path = "../Target Support Files/OpenSSL-Universal";
 			sourceTree = "<group>";
 		};
+		523F777122CA1B4E0030EA6A /* Foundation Layer */ = {
+			isa = PBXGroup;
+			children = (
+				523F777222CA1B780030EA6A /* FoundationLayer.swift */,
+			);
+			path = "Foundation Layer";
+			sourceTree = "<group>";
+		};
 		52835274228029720097B949 /* Bearer */ = {
 			isa = PBXGroup;
 			children = (
@@ -698,6 +708,7 @@
 				52DF5D95229D6B2300C297C1 /* Lower Transport Layer */,
 				52DF5D9C229D7C7800C297C1 /* Upper Transport Layer */,
 				52DF5DA1229E6EA400C297C1 /* Access Layer */,
+				523F777122CA1B4E0030EA6A /* Foundation Layer */,
 			);
 			name = Layers;
 			path = nRFMeshProvision/Classes/Layers;
@@ -1205,6 +1216,7 @@
 				52F6AD6E22B8F8EA00F0D7DF /* AccessPdu.swift in Sources */,
 				523F775C22C4CDFC0030EA6A /* ConfigNetKeyUpdate.swift in Sources */,
 				528352AE228302860097B949 /* BaseGattProxyBearer.swift in Sources */,
+				523F777322CA1B780030EA6A /* FoundationLayer.swift in Sources */,
 				528AB9F2228C4F3E000BE9DC /* IvIndex.swift in Sources */,
 				5283524C2276F53A0097B949 /* Key.swift in Sources */,
 				5294DACE22A6AFA20041370E /* Provisioner+Node.swift in Sources */,
