@@ -87,9 +87,19 @@ internal class UpperTransportLayer {
             return
         }
         guard let node = meshNetwork.node(withAddress: destination),
-            let networkKey = node.networkKeys.first else {
+            var networkKey = node.networkKeys.first else {
             print("Error: Node or Network Key not found")
             return
+        }
+        // ConfigNetKeyDelete must not be signed using the key that is being deleted.
+        if let netKeyDelete = message as? ConfigNetKeyDelete {
+            if netKeyDelete.networkKeyIndex == networkKey.index {
+                guard node.networkKeys.count > 1 else {
+                    print("Error: Cannot remove the last Network Key")
+                    return
+                }
+                networkKey = node.networkKeys.last!
+            }
         }
         
         // Get the current sequence number for local Provisioner's source address.

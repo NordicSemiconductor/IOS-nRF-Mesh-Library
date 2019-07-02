@@ -9,7 +9,7 @@
 import UIKit
 import nRFMeshProvision
 
-class NodeNetworkKeysViewController: UITableViewController, Editable {
+class NodeNetworkKeysViewController: ConnectableViewController, Editable {
     
     // MARK: - Properties
     
@@ -21,8 +21,7 @@ class NodeNetworkKeysViewController: UITableViewController, Editable {
         super.viewDidLoad()
         tableView.setEmptyView(title: "No keys", message: "Click + to add a new key.", messageImage: #imageLiteral(resourceName: "baseline-key"))
         
-        let hasNetKeys = node.networkKeys.count > 0
-        if !hasNetKeys {
+        if node.networkKeys.isEmpty {
             showEmptyView()
         }
     }
@@ -30,8 +29,9 @@ class NodeNetworkKeysViewController: UITableViewController, Editable {
     override func viewDidAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        let hasNetKeys = node.networkKeys.count > 0
-        if hasNetKeys {
+        MeshNetworkManager.instance.delegate = self
+        
+        if !node.networkKeys.isEmpty {
             hideEmptyView()
         }
     }
@@ -80,6 +80,53 @@ class NodeNetworkKeysViewController: UITableViewController, Editable {
         }
         return nil
     }
+    
+    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+        let networkKey = node.networkKeys[indexPath.row]
+        // Show confirmation dialog only when the key is bound to an Application Key.
+        if node.hasApplicationKeyBoundTo(networkKey) {
+            confirm(title: "Remove Key", message: "The selected key is bound to one or more Application Keys in the Node. When removed, those keys will also be removed and all models bound to them will be unbound, which may cause them to stop working.") { _ in
+                self.whenConnected() { alert in
+                    alert?.message = "Deleting Network Key..."
+                    self.deleteNetworkKeyAt(indexPath)
+                }
+            }
+        } else {
+            // Otherwise, just try removing it.
+            whenConnected() { alert in
+                alert?.message = "Deleting Network Key..."
+                self.deleteNetworkKeyAt(indexPath)
+            }
+        }
+    }
+}
+
+private extension NodeNetworkKeysViewController {
+    
+    func deleteNetworkKeyAt(_ indexPath: IndexPath) {
+        let networkKey = node.networkKeys[indexPath.row]
+        MeshNetworkManager.instance.send(ConfigNetKeyDelete(networkKey: networkKey), to: node)
+    }
+    
+}
+
+extension NodeNetworkKeysViewController: MeshNetworkDelegate {
+    
+    func meshNetwork(_ meshNetwork: MeshNetwork, didDeliverMessage message: MeshMessage, from source: Address) {
+        if let status = message as? ConfigNetKeyStatus {
+            done()
+            
+            if status.isSuccess {
+                tableView.reloadData()
+                if node.networkKeys.isEmpty {
+                    showEmptyView()
+                }
+            } else {
+                presentAlert(title: "Error", message: "\(status.status)")
+            }
+        }
+    }
+    
 }
 
 extension NodeNetworkKeysViewController: NetworkKeyDelegate {

@@ -58,6 +58,17 @@ public extension Node {
     func hasModelBoundTo(_ applicationKey: ApplicationKey) -> Bool {
         return elements.contains { $0.hasModelBoundTo(applicationKey) }
     }
+    
+    /// Returns whether the Node has at least one Application Key bound
+    /// to the given Network Key.
+    ///
+    /// - parameter networkKey: The Network Key to check binding.
+    /// - returns: `True` if at least one Application Key known to this Node
+    ///            is bound to the given Network Key.
+    func hasApplicationKeyBoundTo(_ networkKey: NetworkKey) -> Bool {
+        return applicationKeys.contains(keyBoundTo: networkKey)
+    }
+    
 }
 
 public extension Array where Element == Node {
