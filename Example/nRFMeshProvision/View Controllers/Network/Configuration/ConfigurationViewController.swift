@@ -27,6 +27,10 @@ class ConfigurationViewController: ConnectableViewController {
         if !node.isCompositionDataReceived {
             // This will request Composition Data when the bearer is open.
             getCompositionData()
+        } else {
+            if node.defaultTTL == nil {
+                getTtl()
+            }
         }
     }
     
