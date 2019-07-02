@@ -13,8 +13,8 @@ class ConnectableViewController: UITableViewController, GattBearerDelegate {
     
     // MARK: - Properties
     
-    var alert: UIAlertController?
-    private var callback: (() -> Void)?
+    private var alert: UIAlertController?
+    private var callback: ((UIAlertController?) -> Void)?
     
     // MARK: - Implementation
     
@@ -28,7 +28,7 @@ class ConnectableViewController: UITableViewController, GattBearerDelegate {
     /// already open, the handler is called immediately.
     ///
     /// - parameter completion: An optional completion handler.
-    func whenConnected(completion: (() -> Void)? = nil) {
+    func whenConnected(completion: ((UIAlertController?) -> Void)? = nil) {
         callback = completion
         
         alert = UIAlertController(title: "Status", message: "Connecting...", preferredStyle: .alert)
@@ -37,7 +37,7 @@ class ConnectableViewController: UITableViewController, GattBearerDelegate {
             if MeshNetworkManager.bearer.isConnected {
                 if let completion = completion {
                     self.callback = nil
-                    completion()
+                    completion(self.alert)
                 } else {
                     self.alert?.dismiss(animated: true)
                 }
@@ -45,6 +45,12 @@ class ConnectableViewController: UITableViewController, GattBearerDelegate {
             }
         }
     }
+    
+    func done() {
+        alert?.dismiss(animated: true)
+    }
+    
+    // MARK: - GattBearerDelegate
     
     func bearerDidConnect(_ bearer: Bearer) {
         DispatchQueue.main.async {
@@ -61,7 +67,7 @@ class ConnectableViewController: UITableViewController, GattBearerDelegate {
     func bearerDidOpen(_ bearer: Bearer) {
         DispatchQueue.main.async {
             if let completion = self.callback {
-                completion()
+                completion(self.alert)
             }
             self.callback = nil
         }

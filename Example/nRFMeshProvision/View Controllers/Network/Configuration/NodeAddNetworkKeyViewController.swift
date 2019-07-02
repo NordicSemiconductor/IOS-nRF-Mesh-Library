@@ -28,8 +28,8 @@ class NodeAddNetworkKeyViewController: ConnectableViewController {
             return
         }
         let selectedNetworkKey = keys[selectedIndexPath.row]
-        whenConnected() {
-            self.alert?.message = "Adding Network Key..."
+        whenConnected() { alert in
+            alert?.message = "Adding Network Key..."
             MeshNetworkManager.instance.send(ConfigNetKeyAdd(networkKey: selectedNetworkKey), to: self.node)
         }
     }
@@ -98,7 +98,7 @@ extension NodeAddNetworkKeyViewController: MeshNetworkDelegate {
     func meshNetwork(_ meshNetwork: MeshNetwork, didDeliverMessage message: MeshMessage, from source: Address) {
         switch message {
         case let status as ConfigNetKeyStatus:
-            alert?.dismiss(animated: true)
+            done()
             
             if status.status == .success {
                 dismiss(animated: true)

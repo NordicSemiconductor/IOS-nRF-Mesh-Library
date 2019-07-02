@@ -11,10 +11,6 @@ import nRFMeshProvision
 
 class NodeAppKeysViewController: ConnectableViewController, Editable {
     
-    // MARK: - Outlets and Actions
-    
-    @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
-    
     // MARK: - Properties
     
     var node: Node!
@@ -82,13 +78,15 @@ class NodeAppKeysViewController: ConnectableViewController, Editable {
         // Show confirmation dialog only when the key is bound to some Models.
         if node.hasModelBoundTo(applicationKey) {
             confirm(title: "Remove Key", message: "The selected key is bound to one or more models in the Node. When removed, it will be unbound automatically, and the models may stop working.") { _ in
-                self.whenConnected() {
+                self.whenConnected() { alert in
+                    alert?.message = "Deleting Application Key..."
                     self.deleteApplicationKeyAt(indexPath)
                 }
             }
         } else {
             // Otherwise, just try removing it.
-            whenConnected() {
+            whenConnected() { alert in
+                alert?.message = "Deleting Application Key..."
                 self.deleteApplicationKeyAt(indexPath)
             }
         }
@@ -99,7 +97,6 @@ private extension NodeAppKeysViewController {
     
     func deleteApplicationKeyAt(_ indexPath: IndexPath) {
         let applicationKey = node.applicationKeys[indexPath.row]
-        alert?.message = "Deleting Application Key..."
         MeshNetworkManager.instance.send(ConfigAppKeyDelete(applicationKey: applicationKey), to: node)
     }
     
@@ -109,7 +106,7 @@ extension NodeAppKeysViewController: MeshNetworkDelegate {
     
     func meshNetwork(_ meshNetwork: MeshNetwork, didDeliverMessage message: MeshMessage, from source: Address) {
         if let status = message as? ConfigAppKeyStatus {
-            alert?.dismiss(animated: true)
+            done()
             
             if status.isSuccess {
                 tableView.reloadData()

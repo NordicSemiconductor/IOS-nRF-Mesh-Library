@@ -11,10 +11,6 @@ import nRFMeshProvision
 
 class ConfigurationViewController: ConnectableViewController {
     
-    // MARK: - Outlets and Actions
-    
-    @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
-    
     // MARK: - Public properties
     
     var node: Node!
@@ -30,9 +26,7 @@ class ConfigurationViewController: ConnectableViewController {
         // If the Composition Data were never obtained, get them now.
         if !node.isCompositionDataReceived {
             // This will request Composition Data when the bearer is open.
-            whenConnected() {
-                self.getCompositionData()
-            }
+            getCompositionData()
         }
     }
     
@@ -332,26 +326,32 @@ private extension ConfigurationViewController {
     }
     
     func getCompositionData() {
-        activityIndicator.startAnimating()
-        alert?.message = "Requesting Composition Data..."
-        MeshNetworkManager.instance.send(ConfigCompositionDataGet(), to: node)
+        whenConnected { alert in
+            alert?.message = "Requesting Composition Data..."
+            MeshNetworkManager.instance.send(ConfigCompositionDataGet(), to: self.node)
+        }
     }
     
     func getTtl() {
-        activityIndicator.startAnimating()
-        alert?.message = "Requesting default TTL..."
-        MeshNetworkManager.instance.send(ConfigDefaultTtlGet(), to: node)
+        whenConnected { alert in
+            alert?.message = "Requesting default TTL..."
+            MeshNetworkManager.instance.send(ConfigDefaultTtlGet(), to: self.node)
+        }
     }
     
     func setTtl(_ ttl: UInt8) {
-        activityIndicator.startAnimating()
-        MeshNetworkManager.instance.send(ConfigDefaultTtlSet(ttl: ttl), to: node)
+        whenConnected { alert in
+            alert?.message = "Setting TTL to \(ttl)..."
+            MeshNetworkManager.instance.send(ConfigDefaultTtlSet(ttl: ttl), to: self.node)
+        }
     }
     
     /// Sends a message to the node that will reset its state to unprovisioned.
     func resetNode() {
-        activityIndicator.startAnimating()
-        MeshNetworkManager.instance.send(ConfigNodeReset(), to: node)
+        whenConnected() { alert in
+            alert?.message = "Resetting node..."
+            MeshNetworkManager.instance.send(ConfigNodeReset(), to: self.node)
+        }
     }
     
     /// Removes the Node from the local database and pops the Navigation Controller.
@@ -370,7 +370,6 @@ private extension ConfigurationViewController {
 extension ConfigurationViewController: MeshNetworkDelegate {
     
     func meshNetwork(_ meshNetwork: MeshNetwork, didDeliverMessage message: MeshMessage, from source: Address) {
-        activityIndicator.stopAnimating()
         switch message {
             
         case is ConfigCompositionDataStatus:
@@ -379,7 +378,7 @@ extension ConfigurationViewController: MeshNetworkDelegate {
             
         case is ConfigDefaultTtlStatus:
             tableView.reloadRows(at: [.ttl], with: .automatic)
-            alert?.dismiss(animated: true)
+            done()
             
         case is ConfigNodeResetStatus:
             navigationController!.popViewController(animated: true)

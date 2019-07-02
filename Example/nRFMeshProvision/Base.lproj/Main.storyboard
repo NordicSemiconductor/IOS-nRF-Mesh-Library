@@ -375,24 +375,8 @@
                     </tableView>
                     <navigationItem key="navigationItem" title="Device Name" id="XGj-Sj-Rwy">
                         <barButtonItem key="backBarButtonItem" title="Node" id="P45-IY-Y5M"/>
-                        <barButtonItem key="rightBarButtonItem" id="hqh-yy-qFP">
-                            <view key="customView" contentMode="scaleToFill" id="obU-C9-dj6">
-                                <rect key="frame" x="276" y="0.0" width="83" height="44"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <subviews>
-                                    <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="white" translatesAutoresizingMaskIntoConstraints="NO" id="DJa-l9-IR3">
-                                        <rect key="frame" x="47" y="12" width="20" height="20"/>
-                                    </activityIndicatorView>
-                                </subviews>
-                                <constraints>
-                                    <constraint firstItem="DJa-l9-IR3" firstAttribute="centerY" secondItem="obU-C9-dj6" secondAttribute="centerY" id="2Kl-6W-DhN"/>
-                                    <constraint firstItem="DJa-l9-IR3" firstAttribute="trailing" secondItem="obU-C9-dj6" secondAttribute="trailingMargin" id="9Ob-zM-5Eb"/>
-                                </constraints>
-                            </view>
-                        </barButtonItem>
                     </navigationItem>
                     <connections>
-                        <outlet property="activityIndicator" destination="DJa-l9-IR3" id="iE7-fT-NTW"/>
                         <segue destination="2Zq-WA-bzR" kind="show" identifier="showElement" id="LdH-3L-wVk"/>
                         <segue destination="LqZ-nU-tB4" kind="show" identifier="showNetworkKeys" id="HeG-0V-N7l"/>
                         <segue destination="Sjk-ZU-4jx" kind="show" identifier="showAppKeys" id="zqk-vS-7T1"/>
@@ -507,32 +491,12 @@
                         </connections>
                     </tableView>
                     <navigationItem key="navigationItem" title="Network Keys" id="Ylb-ON-E21">
-                        <rightBarButtonItems>
-                            <barButtonItem systemItem="add" id="2B0-L1-7tF">
-                                <connections>
-                                    <segue destination="gxy-FZ-0xP" kind="show" identifier="add" id="T3x-uL-rh5"/>
-                                </connections>
-                            </barButtonItem>
-                            <barButtonItem id="6lk-Kj-Oy9">
-                                <view key="customView" contentMode="scaleToFill" id="BpZ-Q0-Hho">
-                                    <rect key="frame" x="240" y="0.0" width="83" height="44"/>
-                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                    <subviews>
-                                        <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="white" translatesAutoresizingMaskIntoConstraints="NO" id="qWu-yR-cSl">
-                                            <rect key="frame" x="47" y="12" width="20" height="20"/>
-                                        </activityIndicatorView>
-                                    </subviews>
-                                    <constraints>
-                                        <constraint firstItem="qWu-yR-cSl" firstAttribute="centerY" secondItem="BpZ-Q0-Hho" secondAttribute="centerY" id="bIh-LD-rBx"/>
-                                        <constraint firstAttribute="trailingMargin" secondItem="qWu-yR-cSl" secondAttribute="trailing" id="lQh-fd-VWD"/>
-                                    </constraints>
-                                </view>
-                            </barButtonItem>
-                        </rightBarButtonItems>
+                        <barButtonItem key="rightBarButtonItem" systemItem="add" id="2B0-L1-7tF">
+                            <connections>
+                                <segue destination="gxy-FZ-0xP" kind="show" identifier="add" id="T3x-uL-rh5"/>
+                            </connections>
+                        </barButtonItem>
                     </navigationItem>
-                    <connections>
-                        <outlet property="activityIndicator" destination="qWu-yR-cSl" id="df6-tE-WEu"/>
-                    </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="7vF-wo-XEF" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
@@ -1272,32 +1236,12 @@
                         </connections>
                     </tableView>
                     <navigationItem key="navigationItem" title="Application Keys" id="va2-4f-JdV">
-                        <rightBarButtonItems>
-                            <barButtonItem systemItem="add" id="HCz-BD-Cje">
-                                <connections>
-                                    <segue destination="Hle-HX-WF1" kind="show" identifier="add" id="dVd-Iw-uMG"/>
-                                </connections>
-                            </barButtonItem>
-                            <barButtonItem id="o7e-lM-ict">
-                                <view key="customView" contentMode="scaleToFill" id="3Be-Qi-w6y">
-                                    <rect key="frame" x="240" y="0.0" width="83" height="44"/>
-                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                    <subviews>
-                                        <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="white" translatesAutoresizingMaskIntoConstraints="NO" id="cHR-qk-ddz">
-                                            <rect key="frame" x="47" y="12" width="20" height="20"/>
-                                        </activityIndicatorView>
-                                    </subviews>
-                                    <constraints>
-                                        <constraint firstItem="cHR-qk-ddz" firstAttribute="centerY" secondItem="3Be-Qi-w6y" secondAttribute="centerY" id="6kw-2u-dnd"/>
-                                        <constraint firstAttribute="trailingMargin" secondItem="cHR-qk-ddz" secondAttribute="trailing" id="jbw-3T-rwM"/>
-                                    </constraints>
-                                </view>
-                            </barButtonItem>
-                        </rightBarButtonItems>
+                        <barButtonItem key="rightBarButtonItem" systemItem="add" id="HCz-BD-Cje">
+                            <connections>
+                                <segue destination="Hle-HX-WF1" kind="show" identifier="add" id="dVd-Iw-uMG"/>
+                            </connections>
+                        </barButtonItem>
                     </navigationItem>
-                    <connections>
-                        <outlet property="activityIndicator" destination="cHR-qk-ddz" id="2Yr-Ee-xjj"/>
-                    </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="G4H-pf-ieF" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>

@@ -11,10 +11,6 @@ import nRFMeshProvision
 
 class NodeNetworkKeysViewController: UITableViewController, Editable {
     
-    // MARK: - Outlets and Actions
-    
-    @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
-    
     // MARK: - Properties
     
     var node: Node!

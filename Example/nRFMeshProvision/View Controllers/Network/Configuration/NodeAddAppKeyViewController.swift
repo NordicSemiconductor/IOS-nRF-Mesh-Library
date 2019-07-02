@@ -28,8 +28,8 @@ class NodeAddAppKeyViewController: ConnectableViewController {
             return
         }
         let selectedAppKey = keys[selectedIndexPath.row]
-        whenConnected() {
-            self.alert?.message = "Adding Application Key..."
+        whenConnected() { alert in
+            alert?.message = "Adding Application Key..."
             MeshNetworkManager.instance.send(ConfigAppKeyAdd(applicationKey: selectedAppKey), to: self.node)
         }
     }
@@ -101,7 +101,7 @@ extension NodeAddAppKeyViewController: MeshNetworkDelegate {
     func meshNetwork(_ meshNetwork: MeshNetwork, didDeliverMessage message: MeshMessage, from source: Address) {
         switch message {
         case let status as ConfigAppKeyStatus:
-            alert?.dismiss(animated: true)
+            done()
             
             if status.status == .success {
                 dismiss(animated: true)
