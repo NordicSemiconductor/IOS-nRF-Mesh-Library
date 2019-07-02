@@ -10,8 +10,11 @@ import Foundation
 internal class FoundationLayer {
     let networkManager: NetworkManager
     
+    var requests: [Address : ConfigMessage]
+    
     init(_ networkManager: NetworkManager) {
         self.networkManager = networkManager
+        self.requests = [:]
     }
     
     /// This method handles the received Config Message, depending on its type.
@@ -33,36 +36,52 @@ internal class FoundationLayer {
             }
             
         case let netKeyStatus as ConfigNetKeyStatus:
-            if netKeyStatus.status == .success,
-                let node = meshNetwork.node(withAddress: source) {
-                // Did the Node already know this Key Index? If yes, an Update must
-                // have been sent.
-                if let netKey = node.netKeys[netKeyStatus.networkKeyIndex] {
-                    // Note: This may actually be wrong: When ConfigNetKeyAdd was sent twice to
-                    //       the same Node with the same Key Index, this will assume the second
-                    //       message to be ConfigNetKeyUpdate.
-                    netKey.updated = true
-                } else {
+            if netKeyStatus.isSuccess, let node = meshNetwork.node(withAddress: source) {
+                switch requests[source] {
+                case is ConfigNetKeyAdd:
+                    guard node.netKeys[netKeyStatus.networkKeyIndex] == nil else {
+                        break
+                    }
                     node.netKeys.append(Node.NodeKey(index: netKeyStatus.networkKeyIndex, updated: false))
+                    save()
+                case is ConfigNetKeyUpdate:
+                    guard let netKey = node.netKeys[netKeyStatus.networkKeyIndex] else {
+                        break
+                    }
+                    netKey.updated = true
+                    save()
+                case is ConfigNetKeyDelete:
+                    node.remove(networkKeyIndex: netKeyStatus.networkKeyIndex)
+                    save()
+                default:
+                    break
                 }
-                save()
             }
+            requests.removeValue(forKey: source)
             
         case let appKeyStatus as ConfigAppKeyStatus:
-            if appKeyStatus.status == .success,
-                let node = meshNetwork.node(withAddress: source) {
-                // Did the Node already know this Key Index? If yes, an Update must
-                // have been sent.
-                if let appKey = node.appKeys[appKeyStatus.applicationKeyIndex] {
-                    // Note: This may actually be wrong: When ConfigAppKeyAdd was sent twice to
-                    //       the same Node with the same Key Index, this will assume the second
-                    //       message to be ConfigAppKeyUpdate.
-                    appKey.updated = true
-                } else {
+            if appKeyStatus.isSuccess, let node = meshNetwork.node(withAddress: source) {
+                switch requests[source] {
+                case is ConfigAppKeyAdd:
+                    guard node.appKeys[appKeyStatus.applicationKeyIndex] == nil else {
+                        break
+                    }
                     node.appKeys.append(Node.NodeKey(index: appKeyStatus.applicationKeyIndex, updated: false))
+                    save()
+                case is ConfigAppKeyUpdate:
+                    guard let appKey = node.appKeys[appKeyStatus.applicationKeyIndex] else {
+                        break
+                    }
+                    appKey.updated = true
+                    save()
+                case is ConfigAppKeyDelete:
+                    node.remove(applicationKeyIndex: appKeyStatus.applicationKeyIndex)
+                    save()
+                default:
+                    break
                 }
-                save()
             }
+            requests.removeValue(forKey: source)
             
         case let defaultTtl as ConfigDefaultTtlStatus:
             if let node = meshNetwork.node(withAddress: source) {
@@ -86,17 +105,34 @@ internal class FoundationLayer {
     ///
     /// - parameter configMessage: The Mesh Message to be sent.
     /// - parameter destination:   The Unicast Address of the target Node.
-    func handle(configMessage: ConfigMessage, to destination: Address) {
+    /// - returns: `True`, if the message can be send, otherwise `false`.
+    func handle(configMessage: ConfigMessage, to destination: Address) -> Bool {
         switch configMessage {
+            
+        // Those messages are ACK on the Foundation Layer with Config...KeyStatus.
+        // The action taken upon receiving the status depends on the request.
+        // Here we also have to ensure that no two requests are sent to the same
+        // destination address before a status is received.
+        case is ConfigNetKeyAdd, is ConfigNetKeyDelete, is ConfigNetKeyUpdate,
+             is ConfigAppKeyAdd, is ConfigAppKeyDelete, is ConfigAppKeyUpdate:
+            guard requests[destination] == nil else {
+                return false
+            }
+            requests[destination] = configMessage
             
         default:
             break
         }
+        return true
     }
+}
+
+private extension FoundationLayer {
     
     /// Save the state of the mesh network to the storage associated with
     /// the manager. This method ignores the result of saving.
-    func save() {
+    private func save() {
         _ = networkManager.meshNetworkManager.save()
     }
+    
 }

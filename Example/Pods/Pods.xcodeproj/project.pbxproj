@@ -50,12 +50,12 @@
 		523F776022C4DC110030EA6A /* ConfigNetKeyGet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 523F775F22C4DC110030EA6A /* ConfigNetKeyGet.swift */; };
 		523F776222C4DEE60030EA6A /* ConfigNetKeyList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 523F776122C4DEE60030EA6A /* ConfigNetKeyList.swift */; };
 		523F777322CA1B780030EA6A /* FoundationLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 523F777222CA1B780030EA6A /* FoundationLayer.swift */; };
+		523F777522CA210F0030EA6A /* Element+Keys.swift in Sources */ = {isa = PBXBuildFile; fileRef = 523F777422CA210F0030EA6A /* Element+Keys.swift */; };
 		524C039622AE671900C5B1B9 /* ApplicationKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = 524C039522AE671900C5B1B9 /* ApplicationKeys.swift */; };
 		524C039822AF8FEF00C5B1B9 /* Element+Address.swift in Sources */ = {isa = PBXBuildFile; fileRef = 524C039722AF8FEF00C5B1B9 /* Element+Address.swift */; };
 		525242E2225CC6D30044CECB /* ClosedRange.swift in Sources */ = {isa = PBXBuildFile; fileRef = 525242E1225CC6D30044CECB /* ClosedRange.swift */; };
 		525242E4225DE1EF0044CECB /* RangeObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 525242E3225DE1EF0044CECB /* RangeObject.swift */; };
 		525A3C0022AD2167000D3791 /* ConfigMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 525A3BFF22AD2167000D3791 /* ConfigMessage.swift */; };
-		525EEA4F22BAD6D3000CB00F /* Node+Configuration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 525EEA4E22BAD6D3000CB00F /* Node+Configuration.swift */; };
 		5274B75122A1599F008450BC /* SegmentedAccessMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5274B75022A1599F008450BC /* SegmentedAccessMessage.swift */; };
 		5274B75322A16009008450BC /* ControlMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5274B75222A16009008450BC /* ControlMessage.swift */; };
 		5274B75522A161D1008450BC /* SegmentAcknowledgmentMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5274B75422A161D1008450BC /* SegmentAcknowledgmentMessage.swift */; };
@@ -244,12 +244,12 @@
 		523F775F22C4DC110030EA6A /* ConfigNetKeyGet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigNetKeyGet.swift; sourceTree = "<group>"; };
 		523F776122C4DEE60030EA6A /* ConfigNetKeyList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigNetKeyList.swift; sourceTree = "<group>"; };
 		523F777222CA1B780030EA6A /* FoundationLayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FoundationLayer.swift; sourceTree = "<group>"; };
+		523F777422CA210F0030EA6A /* Element+Keys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Element+Keys.swift"; sourceTree = "<group>"; };
 		524C039522AE671900C5B1B9 /* ApplicationKeys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplicationKeys.swift; sourceTree = "<group>"; };
 		524C039722AF8FEF00C5B1B9 /* Element+Address.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Element+Address.swift"; sourceTree = "<group>"; };
 		525242E1225CC6D30044CECB /* ClosedRange.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClosedRange.swift; sourceTree = "<group>"; };
 		525242E3225DE1EF0044CECB /* RangeObject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RangeObject.swift; sourceTree = "<group>"; };
 		525A3BFF22AD2167000D3791 /* ConfigMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigMessage.swift; sourceTree = "<group>"; };
-		525EEA4E22BAD6D3000CB00F /* Node+Configuration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Node+Configuration.swift"; sourceTree = "<group>"; };
 		5274B75022A1599F008450BC /* SegmentedAccessMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SegmentedAccessMessage.swift; sourceTree = "<group>"; };
 		5274B75222A16009008450BC /* ControlMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ControlMessage.swift; sourceTree = "<group>"; };
 		5274B75422A161D1008450BC /* SegmentAcknowledgmentMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SegmentAcknowledgmentMessage.swift; sourceTree = "<group>"; };
@@ -589,9 +589,9 @@
 				528352A32282CF9A0097B949 /* ApplicationKey+NetworkKey.swift */,
 				528352B72285A3A30097B949 /* Node+Address.swift */,
 				528352B92285A3DF0097B949 /* Node+Keys.swift */,
-				525EEA4E22BAD6D3000CB00F /* Node+Configuration.swift */,
 				523F774F22C3AD2C0030EA6A /* Node+Provisioner.swift */,
 				524C039722AF8FEF00C5B1B9 /* Element+Address.swift */,
+				523F777422CA210F0030EA6A /* Element+Keys.swift */,
 				522AFFE222C23DD300521EDC /* Model+Name.swift */,
 				528AB9F5228D7654000BE9DC /* Ranges.swift */,
 			);
@@ -1142,6 +1142,7 @@
 				528AB9F4228C51AA000BE9DC /* ProvisioningData.swift in Sources */,
 				528352882281B2DC0097B949 /* PublicKey.swift in Sources */,
 				52F6AD6A22B3B1A900F0D7DF /* ConfigAppKeyUpdate.swift in Sources */,
+				523F777522CA210F0030EA6A /* Element+Keys.swift in Sources */,
 				529B75EF224A6CE4008F1CE7 /* MeshData.swift in Sources */,
 				528352442271F0650097B949 /* MeshNetwork+Nodes.swift in Sources */,
 				529B75EE224A6CE4008F1CE7 /* ApplicationKey.swift in Sources */,
@@ -1232,7 +1233,6 @@
 				529B7612224A6D47008F1CE7 /* Location.swift in Sources */,
 				528352B2228408C20097B949 /* GattBearerError.swift in Sources */,
 				529B757922411970008F1CE7 /* MeshNetworkManager.swift in Sources */,
-				525EEA4F22BAD6D3000CB00F /* Node+Configuration.swift in Sources */,
 				528352422271EFC20097B949 /* MeshNetwork+Address.swift in Sources */,
 				D159EC79D610DF8F7CA2F21321FD6D7E /* PublishPeriodResolution.swift in Sources */,
 				523F775622C4B1D30030EA6A /* ConfigAppKeyList.swift in Sources */,

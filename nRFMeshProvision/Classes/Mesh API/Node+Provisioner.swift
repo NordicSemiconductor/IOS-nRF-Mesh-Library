@@ -8,6 +8,11 @@
 import Foundation
 
 public extension Node {
+    
+    /// Returns weather Composition Data has been applied to the Node.
+    var isCompositionDataReceived: Bool {
+        return companyIdentifier != nil
+    }
 
     /// Returns whether the Node belongs to one of the Provisioners
     /// of the mesh network.

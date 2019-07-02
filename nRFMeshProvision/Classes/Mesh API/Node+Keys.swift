@@ -26,7 +26,7 @@ public extension Node {
     /// - returns: `True` if the Node has knowledge about the Applicaiton Key
     ///            index, `false` otherwise.
     func knows(applicationKeyIndex: KeyIndex) -> Bool {
-        return appKeys.contains(where: { $0.index == applicationKeyIndex })
+        return appKeys.contains { $0.index == applicationKeyIndex }
     }
     
     /// Returns whether the Node has knowledge about the given Network Key.
@@ -46,9 +46,18 @@ public extension Node {
     /// - returns: `True` if the Node has knowledge about the Network Key
     ///            index, `false` otherwise.
     func knows(networkKeyIndex: KeyIndex) -> Bool {
-        return netKeys.contains(where: { $0.index == networkKeyIndex })
+        return netKeys.contains { $0.index == networkKeyIndex }
     }
     
+    /// Returns whether any of the Element's Models are bound to the
+    /// guven Application Key.
+    ///
+    /// - parameter applicationKey: The Application Key to check bindings.
+    /// - returns: `True` if there is at least one Model bound to the given
+    ///            Application Key, `false` otherwise.
+    func hasModelBoundTo(_ applicationKey: ApplicationKey) -> Bool {
+        return elements.contains { $0.hasModelBoundTo(applicationKey) }
+    }
 }
 
 public extension Array where Element == Node {

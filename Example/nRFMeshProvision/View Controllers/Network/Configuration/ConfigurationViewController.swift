@@ -28,15 +28,12 @@ class ConfigurationViewController: ConnectableViewController {
         
         MeshNetworkManager.instance.delegate = self
         // If the Composition Data were never obtained, get them now.
-        if !node.isConfigured {
+        if !node.isCompositionDataReceived {
             // This will request Composition Data when the bearer is open.
-            connect()
+            whenConnected() {
+                self.getCompositionData()
+            }
         }
-    }
-    
-    override func networkReady(alert: UIAlertController) {
-        alert.message = "Requesting Composition Data..."
-        MeshNetworkManager.instance.send(ConfigCompositionDataGet(), to: node)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -77,7 +74,7 @@ class ConfigurationViewController: ConnectableViewController {
         case IndexPath.keysSection:
             return IndexPath.keysTitles.count
         case IndexPath.elementsSection:
-            if node.isConfigured {
+            if node.isCompositionDataReceived {
                 return node.elements.count
             }
             return 1 // "Composition Data not received" message
@@ -163,7 +160,7 @@ class ConfigurationViewController: ConnectableViewController {
             }
         }
         if indexPath.isElementsSection {
-            if node.isConfigured {
+            if node.isCompositionDataReceived {
                 let element = node.elements[indexPath.row]
                 cell.textLabel?.text = element.name ?? "Element \(element.index + 1)"
                 cell.textLabel?.textColor = .darkText
@@ -334,6 +331,18 @@ private extension ConfigurationViewController {
         }
     }
     
+    func getCompositionData() {
+        activityIndicator.startAnimating()
+        alert?.message = "Requesting Composition Data..."
+        MeshNetworkManager.instance.send(ConfigCompositionDataGet(), to: node)
+    }
+    
+    func getTtl() {
+        activityIndicator.startAnimating()
+        alert?.message = "Requesting default TTL..."
+        MeshNetworkManager.instance.send(ConfigDefaultTtlGet(), to: node)
+    }
+    
     func setTtl(_ ttl: UInt8) {
         activityIndicator.startAnimating()
         MeshNetworkManager.instance.send(ConfigDefaultTtlSet(ttl: ttl), to: node)
@@ -361,21 +370,18 @@ private extension ConfigurationViewController {
 extension ConfigurationViewController: MeshNetworkDelegate {
     
     func meshNetwork(_ meshNetwork: MeshNetwork, didDeliverMessage message: MeshMessage, from source: Address) {
+        activityIndicator.stopAnimating()
         switch message {
             
         case is ConfigCompositionDataStatus:
             tableView.reloadData()
-            alert?.message = "Requesting default TTL..."
-            // Composition Data is ready, let's read the TTL.
-            MeshNetworkManager.instance.send(ConfigDefaultTtlGet(), to: node)
+            getTtl()
             
         case is ConfigDefaultTtlStatus:
-            activityIndicator.stopAnimating()
             tableView.reloadRows(at: [.ttl], with: .automatic)
             alert?.dismiss(animated: true)
             
         case is ConfigNodeResetStatus:
-            activityIndicator.stopAnimating()
             navigationController!.popViewController(animated: true)
             
         default:

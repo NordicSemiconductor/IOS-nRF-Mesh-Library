@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct ConfigNetKeyStatus: ConfigNetKeyMessage {
+public struct ConfigNetKeyStatus: ConfigNetKeyMessage, ConfigStatusMessage {
     public static let opCode: UInt32 = 0x8044
     
     public var parameters: Data? {
@@ -19,7 +19,6 @@ public struct ConfigNetKeyStatus: ConfigNetKeyMessage {
     }
     
     public let networkKeyIndex: KeyIndex
-    /// Operation status.
     public let status: ConfigMessageStatus
     
     public init(networkKey: NetworkKey, status: ConfigMessageStatus) {

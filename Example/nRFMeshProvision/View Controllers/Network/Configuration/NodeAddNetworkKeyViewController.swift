@@ -24,7 +24,14 @@ class NodeAddNetworkKeyViewController: ConnectableViewController {
         dismiss(animated: true)
     }
     @IBAction func doneTapped(_ sender: UIBarButtonItem) {
-        connect()
+        guard let selectedIndexPath = selectedIndexPath else {
+            return
+        }
+        let selectedNetworkKey = keys[selectedIndexPath.row]
+        whenConnected() {
+            self.alert?.message = "Adding Network Key..."
+            MeshNetworkManager.instance.send(ConfigNetKeyAdd(networkKey: selectedNetworkKey), to: self.node)
+        }
     }
     
     // MARK: - Properties
@@ -33,7 +40,7 @@ class NodeAddNetworkKeyViewController: ConnectableViewController {
     var delegate: NetworkKeyDelegate?
     
     private var keys: [NetworkKey]!
-    private var selectedRow: Int?
+    private var selectedIndexPath: IndexPath?
     
     // MARK: - View Controller
     
@@ -52,15 +59,6 @@ class NodeAddNetworkKeyViewController: ConnectableViewController {
         // Initially, no key is checked.
         doneButton.isEnabled = false
     }
-    
-    override func networkReady(alert: UIAlertController) {
-        guard let selectedRow = selectedRow else {
-            return
-        }
-        let selectedNetworkKey = keys[selectedRow]
-        alert.message = "Adding Network Key..."
-        MeshNetworkManager.instance.send(ConfigNetKeyAdd(networkKey: selectedNetworkKey), to: node)
-    }
 
     // MARK: - Table view data source
 
@@ -77,18 +75,18 @@ class NodeAddNetworkKeyViewController: ConnectableViewController {
         
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
         cell.textLabel?.text = key.name
-        cell.accessoryType = indexPath.row == selectedRow ? .checkmark : .none
+        cell.accessoryType = indexPath == selectedIndexPath ? .checkmark : .none
         return cell
     }
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         var rows: [IndexPath] = []
-        if selectedRow != nil {
-            rows.append(IndexPath(row: selectedRow!, section: 0))
+        if let selectedIndexPath = selectedIndexPath {
+            rows.append(selectedIndexPath)
         }
         rows.append(indexPath)
-        selectedRow = indexPath.row
+        selectedIndexPath = indexPath
         tableView.reloadRows(at: rows, with: .automatic)
         
         doneButton.isEnabled = true

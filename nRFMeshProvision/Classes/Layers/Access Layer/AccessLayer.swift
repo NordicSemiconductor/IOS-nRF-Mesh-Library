@@ -49,8 +49,9 @@ internal class AccessLayer {
             print("Error: Address: 0x\(destination.hex) is not a Unicast Address")
             return
         }
-        networkManager.foundationLayer.handle(configMessage: message, to: destination)
-        networkManager.upperTransportLayer.send(message, to: destination)
+        if networkManager.foundationLayer.handle(configMessage: message, to: destination) {
+            networkManager.upperTransportLayer.send(message, to: destination)
+        }
     }
     
 }

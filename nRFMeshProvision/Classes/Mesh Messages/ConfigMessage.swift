@@ -33,6 +33,11 @@ public enum ConfigMessageStatus: UInt8 {
     case invalidBinding                 = 0x11
 }
 
+public protocol ConfigStatusMessage: ConfigMessage {
+    /// Operation status.
+    var status: ConfigMessageStatus { get }
+}
+
 public protocol ConfigNetKeyMessage: ConfigMessage {
     /// The Network Key Index.
     var networkKeyIndex: KeyIndex { get }
@@ -50,13 +55,14 @@ internal extension ConfigMessage {
     /// This method ensures that they are packed in compliance to the
     /// Bluetooth Mesh specification.
     ///
+    /// - parameter limit:  Maximim number of Key Indexes to encode.
     /// - parameter indexes: An array of 12-bit Key Indexes.
     /// - returns: Key Indexes encoded to a Data.
-    func encodeIndexes(_ indexes: ArraySlice<KeyIndex>) -> Data {
-        if indexes.isEmpty {
+    func encode(_ limit: Int = 10000, indexes: ArraySlice<KeyIndex>) -> Data {
+        if limit == 0 || indexes.isEmpty {
             return Data()
         }
-        if indexes.count == 1 {
+        if limit == 1 || indexes.count == 1 {
             // Encode a sigle Key Index into 2 bytes.
             return Data() + indexes.first!.littleEndian
         } else {
@@ -64,7 +70,7 @@ internal extension ConfigMessage {
             let first  = indexes.first!
             let second = indexes.dropFirst().first!
             let pair: UInt32 = UInt32(first) << 12 | UInt32(second)
-            return (Data() + pair.littleEndian).dropLast() + encodeIndexes(indexes.dropFirst(2))
+            return (Data() + pair.littleEndian).dropLast() + encode(limit - 2, indexes: indexes.dropFirst(2))
         }
     }
     
@@ -72,15 +78,16 @@ internal extension ConfigMessage {
     /// This will decode as many Indexes as possible, until the end of data is
     /// reached.
     ///
-    /// - parameter data: The data from where the indexes should be read.
+    /// - parameter limit:  Maximim number of Key Indexes to decode.
+    /// - parameter data:   The data from where the indexes should be read.
     /// - parameter offset: The offset from where to read the indexes.
     /// - returns: Decoded Key Indexes.
-    static func decodeIndexes(from data: Data, at offset: Int) -> [KeyIndex] {
+    static func decode(_ limit: Int = 10000, indexesFrom data: Data, at offset: Int) -> [KeyIndex] {
         let size = data.count - offset
-        guard size >= 2 else {
+        guard limit > 0 && size >= 2 else {
             return []
         }
-        if size == 2 {
+        if limit == 1 || size == 2 {
             // Decode a sigle Key Index from 2 bytes.
             let index: KeyIndex = UInt16(data[offset + 1]) << 8 | UInt16(data[offset])
             return [index]
@@ -88,8 +95,17 @@ internal extension ConfigMessage {
             // Decode a pair of Key Indexes from 3 bytes.
             let first:  KeyIndex = UInt16(data[offset + 2]) << 4 | UInt16(data[offset + 1] >> 4)
             let second: KeyIndex = UInt16(data[offset + 1] & 0x0F) << 8 | UInt16(data[offset])
-            return [first, second] + decodeIndexes(from: data, at: offset + 3)
+            return [first, second] + decode(limit - 2, indexesFrom: data, at: offset + 3)
         }
+    }
+    
+}
+
+public extension ConfigStatusMessage {
+    
+    /// Returns whether the operation was successful or not.
+    var isSuccess: Bool {
+        return status == .success
     }
     
 }
@@ -100,7 +116,7 @@ internal extension ConfigNetKeyMessage {
     ///
     /// - returns: Key Index encoded in 2 bytes.
     func encodeNetKeyIndex() -> Data {
-        return encodeIndexes([networkKeyIndex])
+        return encode(indexes: [networkKeyIndex])
     }
     
     /// Decodes the Network Key Index from 2 bytes at given offset.
@@ -112,7 +128,7 @@ internal extension ConfigNetKeyMessage {
     /// - parameter offset: The offset from where to read the indexes.
     /// - returns: Decoded Key Index.
     static func decodeNetKeyIndex(from data: Data, at offset: Int) -> KeyIndex {
-        return KeyIndex(data[offset + 1]) << 8 | KeyIndex(data[offset])
+        return decode(1, indexesFrom: data, at: offset).first!
     }
     
 }
@@ -124,7 +140,7 @@ internal extension ConfigAppKeyMessage {
     ///
     /// - returns: Key Indexes encoded in 3 bytes.
     func encodeNetKeyAndAppKeyIndex() -> Data {
-        return encodeIndexes([networkKeyIndex, applicationKeyIndex])
+        return encode(indexes: [networkKeyIndex, applicationKeyIndex])
     }
     
     /// Decodes the Network Key Index and Application Key Index from
@@ -137,9 +153,8 @@ internal extension ConfigAppKeyMessage {
     /// - parameter offset: The offset from where to read the indexes.
     /// - returns: Decoded Key Indexes.
     static func decodeNetKeyAndAppKeyIndex(from data: Data, at offset: Int) -> (networkKeyIndex: KeyIndex, applicationKeyIndex: KeyIndex) {
-        let networkKeyIndex     = KeyIndex(data[offset + 2]) << 4 | KeyIndex(data[offset + 1] >> 4)
-        let applicationKeyIndex = KeyIndex(data[offset + 1] & 0x0F) << 8 | KeyIndex(data[offset])
-        return (networkKeyIndex, applicationKeyIndex)
+        let indexes = decode(2, indexesFrom: data, at: offset)
+        return (indexes[0], indexes[1])
     }
     
 }

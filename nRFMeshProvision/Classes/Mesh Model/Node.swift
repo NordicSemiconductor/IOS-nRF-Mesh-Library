@@ -402,6 +402,39 @@ internal extension Node {
         }
     }
     
+    /// Removes the Network Key with given index and all Application Keys
+    /// bound to it from the Node. This method also removes all Model bindings
+    /// that point any of the removed Application Keys.
+    ///
+    /// - parameter networkKeyIndex: The Key Index of Network Key to be removed.
+    func remove(networkKeyIndex: KeyIndex) {
+        if let index = netKeys.firstIndex(where: { $0.index == networkKeyIndex }) {
+            // Remove the Key Index from 'appKeys'.
+            netKeys.remove(at: index)
+            // Remove all Application Keys bound to the removed Network Key.
+            applicationKeys.filter({ $0.boundNetworkKeyIndex == networkKeyIndex }).forEach { applicationKey in
+                remove(applicationKeyIndex: applicationKey.index)
+            }
+        }
+    }
+    
+    /// Removes the Application Key with given index and all Model bindings
+    /// that point to it.
+    ///
+    /// - parameter applicationKeyIndex: The Key Index of Application Key to be removed.
+    func remove(applicationKeyIndex: KeyIndex) {
+        if let index = appKeys.firstIndex(where: { $0.index == applicationKeyIndex }) {
+            // Remove the Key Index from 'appKeys'.
+            appKeys.remove(at: index)
+            // Remove all bindings with given Key Index from all models.
+            elements.flatMap({ $0.models }).forEach { model in
+                if let index = model.bind.firstIndex(where: { $0 == applicationKeyIndex }) {
+                    model.bind.remove(at: index)
+                }
+            }
+        }
+    }
+    
     /// Applies the result of Composition Data to the Node.
     ///
     /// This method does nothing if the Node already was configured
@@ -410,7 +443,7 @@ internal extension Node {
     /// - parameter compositionData: The result of Config Composition Data Get
     ///                              with page 0.
     func apply(compositionData: ConfigCompositionDataStatus) {
-        guard !isConfigured else {
+        guard !isCompositionDataReceived else {
             return
         }
         guard let page0 = compositionData.page as? Page0 else {

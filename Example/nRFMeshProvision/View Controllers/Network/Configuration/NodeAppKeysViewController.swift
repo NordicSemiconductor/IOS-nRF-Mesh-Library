@@ -9,7 +9,7 @@
 import UIKit
 import nRFMeshProvision
 
-class NodeAppKeysViewController: UITableViewController, Editable {
+class NodeAppKeysViewController: ConnectableViewController, Editable {
     
     // MARK: - Outlets and Actions
     
@@ -25,8 +25,7 @@ class NodeAppKeysViewController: UITableViewController, Editable {
         super.viewDidLoad()
         tableView.setEmptyView(title: "No keys", message: "Click + to add a new key.", messageImage: #imageLiteral(resourceName: "baseline-key"))
         
-        let hasNetKeys = node.applicationKeys.count > 0
-        if !hasNetKeys {
+        if node.applicationKeys.isEmpty {
             showEmptyView()
         }
     }
@@ -34,8 +33,9 @@ class NodeAppKeysViewController: UITableViewController, Editable {
     override func viewDidAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        let hasNetKeys = node.applicationKeys.count > 0
-        if hasNetKeys {
+        MeshNetworkManager.instance.delegate = self
+        
+        if !node.applicationKeys.isEmpty {
             hideEmptyView()
         }
     }
@@ -71,12 +71,63 @@ class NodeAppKeysViewController: UITableViewController, Editable {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
     }
+    
+    override func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
+        // This is required to allow swipe to delete action.
+        return nil
+    }
+    
+    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+        let applicationKey = node.applicationKeys[indexPath.row]
+        // Show confirmation dialog only when the key is bound to some Models.
+        if node.hasModelBoundTo(applicationKey) {
+            confirm(title: "Remove Key", message: "The selected key is bound to one or more models in the Node. When removed, it will be unbound automatically, and the models may stop working.") { _ in
+                self.whenConnected() {
+                    self.deleteApplicationKeyAt(indexPath)
+                }
+            }
+        } else {
+            // Otherwise, just try removing it.
+            whenConnected() {
+                self.deleteApplicationKeyAt(indexPath)
+            }
+        }
+    }
+}
+
+private extension NodeAppKeysViewController {
+    
+    func deleteApplicationKeyAt(_ indexPath: IndexPath) {
+        let applicationKey = node.applicationKeys[indexPath.row]
+        alert?.message = "Deleting Application Key..."
+        MeshNetworkManager.instance.send(ConfigAppKeyDelete(applicationKey: applicationKey), to: node)
+    }
+    
+}
+
+extension NodeAppKeysViewController: MeshNetworkDelegate {
+    
+    func meshNetwork(_ meshNetwork: MeshNetwork, didDeliverMessage message: MeshMessage, from source: Address) {
+        if let status = message as? ConfigAppKeyStatus {
+            alert?.dismiss(animated: true)
+            
+            if status.isSuccess {
+                tableView.reloadData()
+                if node.applicationKeys.isEmpty {
+                    showEmptyView()
+                }
+            } else {
+                presentAlert(title: "Error", message: "\(status.status)")
+            }
+        }
+    }
+    
 }
 
 extension NodeAppKeysViewController: AppKeyDelegate {
     
     func keyAdded() {
-        tableView.insertRows(at: [IndexPath(row: node.applicationKeys.count - 1, section: 0)], with: .fade)
+        tableView.reloadData()
     }
     
 }

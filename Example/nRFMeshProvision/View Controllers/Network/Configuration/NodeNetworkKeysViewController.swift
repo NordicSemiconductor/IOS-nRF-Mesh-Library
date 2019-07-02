@@ -89,7 +89,7 @@ class NodeNetworkKeysViewController: UITableViewController, Editable {
 extension NodeNetworkKeysViewController: NetworkKeyDelegate {
     
     func keyAdded() {
-        tableView.insertRows(at: [IndexPath(row: node.networkKeys.count - 1, section: 0)], with: .fade)
+        tableView.reloadData()
     }
     
 }

@@ -11,7 +11,7 @@ public struct ConfigAppKeyList: ConfigNetKeyMessage {
     public static let opCode: UInt32 = 0x8002
     
     public var parameters: Data? {
-        return Data([status.rawValue]) + encodeNetKeyIndex() + encodeIndexes(applicationKeyIndexes[...])
+        return Data([status.rawValue]) + encodeNetKeyIndex() + encode(indexes: applicationKeyIndexes[...])
     }
     
     public var isSegmented: Bool {
@@ -39,6 +39,6 @@ public struct ConfigAppKeyList: ConfigNetKeyMessage {
         }
         self.status = status
         self.networkKeyIndex = ConfigAppKeyList.decodeNetKeyIndex(from: parameters, at: 1)
-        self.applicationKeyIndexes = ConfigAppKeyList.decodeIndexes(from: parameters, at: 3)
+        self.applicationKeyIndexes = ConfigAppKeyList.decode(indexesFrom: parameters, at: 3)
     }
 }
