@@ -9,7 +9,7 @@
 import UIKit
 import nRFMeshProvision
 
-class NetworkViewController: UITableViewController, Editable {
+class NetworkViewController: UITableViewController {
     
     // MARK: - Implementation
     
@@ -26,9 +26,9 @@ class NetworkViewController: UITableViewController, Editable {
         let localProvisioner = network?.localProvisioner
         let hasNodes = network?.nodes.filter({ $0.uuid != localProvisioner?.uuid }).count ?? 0 > 0
         if !hasNodes {
-            showEmptyView()
+            tableView.showEmptyView()
         } else {
-            hideEmptyView()
+            tableView.hideEmptyView()
         }
     }
     
@@ -58,9 +58,9 @@ class NetworkViewController: UITableViewController, Editable {
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        let network = MeshNetworkManager.instance.meshNetwork!
-        let localProvisioner = network.localProvisioner
-        return network.nodes.filter({ $0.uuid != localProvisioner?.uuid }).count
+        let network = MeshNetworkManager.instance.meshNetwork
+        let localProvisioner = network?.localProvisioner
+        return network?.nodes.filter({ $0.uuid != localProvisioner?.uuid }).count ?? 0
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
