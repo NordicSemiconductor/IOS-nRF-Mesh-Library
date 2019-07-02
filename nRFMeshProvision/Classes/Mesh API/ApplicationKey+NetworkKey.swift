@@ -18,7 +18,7 @@ public extension ApplicationKey {
         guard !isUsed(in: meshNetwork!) else {
             throw MeshModelError.keyInUse
         }
-        self.boundNetworkKeyIndex = networkKey.index
+        boundNetworkKeyIndex = networkKey.index
     }
     
     /// Returns whether the Application Key is bound to the given
@@ -28,7 +28,7 @@ public extension ApplicationKey {
     /// - returns: `True`, if the Application Key is bound to the
     ///            given Network Key.
     func isBound(to networkKey: NetworkKey) -> Bool {
-        return self.boundNetworkKeyIndex == networkKey.index
+        return boundNetworkKeyIndex == networkKey.index
     }
 
     /// The Network Key bound to this Application Key.

@@ -51,6 +51,7 @@
 		523F776222C4DEE60030EA6A /* ConfigNetKeyList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 523F776122C4DEE60030EA6A /* ConfigNetKeyList.swift */; };
 		523F777322CA1B780030EA6A /* FoundationLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 523F777222CA1B780030EA6A /* FoundationLayer.swift */; };
 		523F777522CA210F0030EA6A /* Element+Keys.swift in Sources */ = {isa = PBXBuildFile; fileRef = 523F777422CA210F0030EA6A /* Element+Keys.swift */; };
+		523F777722CB53FA0030EA6A /* Model+Keys.swift in Sources */ = {isa = PBXBuildFile; fileRef = 523F777622CB53FA0030EA6A /* Model+Keys.swift */; };
 		524C039622AE671900C5B1B9 /* ApplicationKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = 524C039522AE671900C5B1B9 /* ApplicationKeys.swift */; };
 		524C039822AF8FEF00C5B1B9 /* Element+Address.swift in Sources */ = {isa = PBXBuildFile; fileRef = 524C039722AF8FEF00C5B1B9 /* Element+Address.swift */; };
 		525242E2225CC6D30044CECB /* ClosedRange.swift in Sources */ = {isa = PBXBuildFile; fileRef = 525242E1225CC6D30044CECB /* ClosedRange.swift */; };
@@ -245,6 +246,7 @@
 		523F776122C4DEE60030EA6A /* ConfigNetKeyList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigNetKeyList.swift; sourceTree = "<group>"; };
 		523F777222CA1B780030EA6A /* FoundationLayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FoundationLayer.swift; sourceTree = "<group>"; };
 		523F777422CA210F0030EA6A /* Element+Keys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Element+Keys.swift"; sourceTree = "<group>"; };
+		523F777622CB53FA0030EA6A /* Model+Keys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Model+Keys.swift"; sourceTree = "<group>"; };
 		524C039522AE671900C5B1B9 /* ApplicationKeys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplicationKeys.swift; sourceTree = "<group>"; };
 		524C039722AF8FEF00C5B1B9 /* Element+Address.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Element+Address.swift"; sourceTree = "<group>"; };
 		525242E1225CC6D30044CECB /* ClosedRange.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClosedRange.swift; sourceTree = "<group>"; };
@@ -593,6 +595,7 @@
 				524C039722AF8FEF00C5B1B9 /* Element+Address.swift */,
 				523F777422CA210F0030EA6A /* Element+Keys.swift */,
 				522AFFE222C23DD300521EDC /* Model+Name.swift */,
+				523F777622CB53FA0030EA6A /* Model+Keys.swift */,
 				528AB9F5228D7654000BE9DC /* Ranges.swift */,
 			);
 			name = "Mesh API";
@@ -1227,6 +1230,7 @@
 				525242E2225CC6D30044CECB /* ClosedRange.swift in Sources */,
 				529B7617224A6D47008F1CE7 /* MeshModelError.swift in Sources */,
 				529B7613224A6D47008F1CE7 /* Security.swift in Sources */,
+				523F777722CB53FA0030EA6A /* Model+Keys.swift in Sources */,
 				528AB9F6228D7654000BE9DC /* Ranges.swift in Sources */,
 				529B761B224A6D5B008F1CE7 /* Int+Hex.swift in Sources */,
 				529B75F2224A6CE4008F1CE7 /* Node.swift in Sources */,

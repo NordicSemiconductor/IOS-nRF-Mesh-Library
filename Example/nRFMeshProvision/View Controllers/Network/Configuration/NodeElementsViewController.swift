@@ -22,6 +22,15 @@ class NodeElementsViewController: UITableViewController {
         
         title = element.name ?? "Element \(element.index + 1)"
     }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "showModel" {
+            let indexPath = sender as! IndexPath
+            let model = element.models[indexPath.row]
+            let destination = segue.destination as! ModelViewController
+            destination.model = model
+        }
+    }
 
     // MARK: - Table view data source
 
@@ -104,6 +113,9 @@ class NodeElementsViewController: UITableViewController {
         
         if indexPath.isName {
             presentNameDialog()
+        }
+        if indexPath.isModelsSection {
+            performSegue(withIdentifier: "showModel", sender: indexPath)
         }
     }
 }

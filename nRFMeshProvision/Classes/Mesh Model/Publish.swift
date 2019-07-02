@@ -31,7 +31,7 @@ public class Publish: Codable {
         }
     }
     
-    /// Publication address for the model. It's 4 or 32-character long
+    /// Publication address for the Model. It's 4 or 32-character long
     /// hexadecimal string.
     internal let address: String
     /// Publication address for the model.
@@ -39,9 +39,9 @@ public class Publish: Codable {
         // Warning: assuming hex address is valid!
         return MeshAddress(hex: address)!
     }
-    /// An application key index, indicating which applicaiton key to
+    /// An Application Key index, indicating which Applicaiton Key to
     /// use for the publication.
-    public let index: KeyIndex
+    internal let index: KeyIndex
     /// An integer from 0 to 127 that represents the Time To Leave (TTL)
     /// value for the outgoing publish message.
     public internal(set) var ttl: UInt8 = 5 {

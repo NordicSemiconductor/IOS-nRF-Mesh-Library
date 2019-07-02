@@ -22,6 +22,7 @@
 		523F776C22C6324A0030EA6A /* ConnectableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 523F776B22C6324A0030EA6A /* ConnectableViewController.swift */; };
 		523F776E22C63EAD0030EA6A /* NodeAddAppKeyViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 523F776D22C63EAD0030EA6A /* NodeAddAppKeyViewController.swift */; };
 		523F777022C64FD20030EA6A /* ConfigMessages.swift in Sources */ = {isa = PBXBuildFile; fileRef = 523F776F22C64FD20030EA6A /* ConfigMessages.swift */; };
+		523F777922CB57190030EA6A /* ModelViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 523F777822CB57190030EA6A /* ModelViewController.swift */; };
 		525242E0225CBFEC0044CECB /* RangeObject+String.swift in Sources */ = {isa = PBXBuildFile; fileRef = 525242DF225CBFEC0044CECB /* RangeObject+String.swift */; };
 		525242E8225F2D6A0044CECB /* FabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 525242E7225F2D6A0044CECB /* FabView.swift */; };
 		5283524822733BCF0097B949 /* EditKeyViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5283524722733BCF0097B949 /* EditKeyViewController.swift */; };
@@ -91,6 +92,7 @@
 		523F776B22C6324A0030EA6A /* ConnectableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectableViewController.swift; sourceTree = "<group>"; };
 		523F776D22C63EAD0030EA6A /* NodeAddAppKeyViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NodeAddAppKeyViewController.swift; sourceTree = "<group>"; };
 		523F776F22C64FD20030EA6A /* ConfigMessages.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigMessages.swift; sourceTree = "<group>"; };
+		523F777822CB57190030EA6A /* ModelViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelViewController.swift; sourceTree = "<group>"; };
 		525242DF225CBFEC0044CECB /* RangeObject+String.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "RangeObject+String.swift"; path = "Utils/RangeObject+String.swift"; sourceTree = "<group>"; };
 		525242E7225F2D6A0044CECB /* FabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FabView.swift; sourceTree = "<group>"; };
 		5283524722733BCF0097B949 /* EditKeyViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditKeyViewController.swift; sourceTree = "<group>"; };
@@ -283,6 +285,7 @@
 				523F776922C621F50030EA6A /* NodeAddNetworkKeyViewController.swift */,
 				523F776722C615CE0030EA6A /* NodeAppKeysViewController.swift */,
 				523F776D22C63EAD0030EA6A /* NodeAddAppKeyViewController.swift */,
+				523F777822CB57190030EA6A /* ModelViewController.swift */,
 			);
 			path = Configuration;
 			sourceTree = "<group>";
@@ -585,6 +588,7 @@
 				52DAA5E6225B957B0041C43A /* RangeCell.swift in Sources */,
 				529B756D223FE7F1008F1CE7 /* RootViewController.swift in Sources */,
 				523F776822C615CE0030EA6A /* NodeAppKeysViewController.swift in Sources */,
+				523F777922CB57190030EA6A /* ModelViewController.swift in Sources */,
 				522AFFE022C2376C00521EDC /* NodeElementsViewController.swift in Sources */,
 				523F776422C4EDD90030EA6A /* SwitchCell.swift in Sources */,
 				522AFFDC22BBA34900521EDC /* ActionCell.swift in Sources */,
