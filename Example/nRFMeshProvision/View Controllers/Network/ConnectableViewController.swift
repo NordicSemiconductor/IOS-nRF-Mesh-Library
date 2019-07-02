@@ -28,26 +28,28 @@ class ConnectableViewController: UITableViewController, GattBearerDelegate {
     /// already open, the handler is called immediately.
     ///
     /// - parameter completion: An optional completion handler.
-    func whenConnected(completion: ((UIAlertController?) -> Void)? = nil) {
-        callback = completion
-        
-        alert = UIAlertController(title: "Status", message: "Connecting...", preferredStyle: .alert)
-        alert!.addAction(UIAlertAction(title: "Cancel", style: .cancel))
-        present(alert!, animated: true) {
-            if MeshNetworkManager.bearer.isConnected {
-                if let completion = completion {
-                    self.callback = nil
-                    completion(self.alert)
-                } else {
-                    self.alert?.dismiss(animated: true)
-                }
-                self.callback = nil
-            }
+    func whenConnected(completion: @escaping ((UIAlertController?) -> Void)) {
+        if alert == nil {
+            alert = UIAlertController(title: "Status", message: "Connecting...", preferredStyle: .alert)
+            alert!.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+            present(alert!, animated: true)
+        }
+            
+        if MeshNetworkManager.bearer.isConnected {
+            // If we are already connected, don't wait with the request
+            // until the alert is presented.
+            completion(alert)
+        } else {
+            // Otherwise, the completion delegate will be called upon
+            // connection.
+            callback = completion
         }
     }
     
+    /// This method dismisses the progress alert dialog.
     func done() {
         alert?.dismiss(animated: true)
+        alert = nil
     }
     
     // MARK: - GattBearerDelegate
@@ -77,6 +79,7 @@ class ConnectableViewController: UITableViewController, GattBearerDelegate {
         DispatchQueue.main.async {
             self.alert?.dismiss(animated: true)
             self.callback = nil
+            self.alert = nil
         }
     }
     
