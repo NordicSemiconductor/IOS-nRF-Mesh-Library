@@ -38,7 +38,7 @@ open class BaseGattProxyBearer<Service: MeshService>: NSObject, Bearer, CBCentra
     }
     
     public var isOpen: Bool {
-        return basePeripheral.state == .connected
+        return dataOutCharacteristic?.isNotifying ?? false
     }
     
     /// The UUID associated with the peer.
