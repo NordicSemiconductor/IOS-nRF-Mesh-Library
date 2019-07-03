@@ -40,6 +40,15 @@ class SetPublicationViewController: ConnectableViewController {
     var delegate: PublicationDelegate?
     
     private var applicationKey: ApplicationKey!
+    private var ttl: UInt8 = 0xFF {
+        didSet {
+            if ttl == 0xFF {
+                ttlLabel.text = "Default"
+            } else {
+                ttlLabel.text = "\(ttl)"
+            }
+        }
+    }
     
     // MARK: - View Controller
 
@@ -67,8 +76,29 @@ class SetPublicationViewController: ConnectableViewController {
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
+        
+        if indexPath == .ttl {
+            presentTTLDialog()
+        }
     }
 
+}
+
+private extension SetPublicationViewController {
+    
+    /// Presents a dialog to edit the Publish TTL.
+    func presentTTLDialog() {
+        presentTextAlert(title: "Publish TTL",
+                         message: "TTL = Time To Live\n\nTTL limits the number of times a message can be relayed.\nMax value is 127. Message with TTL 0 will not be relayed.",
+                         text: "5", placeHolder: "Default is 5",
+                         type: .ttlRequired,
+                         option: UIAlertAction(title: "Use Node's default", style: .default, handler: { _ in
+                            self.ttl = 0xFF
+                         })) { value in
+                            self.ttl = UInt8(value)!
+        }
+    }
+    
 }
 
 extension SetPublicationViewController: KeySelectionDelegate {
@@ -87,4 +117,8 @@ extension SetPublicationViewController: MeshNetworkDelegate {
         
     }
     
+}
+
+private extension IndexPath {
+    static let ttl = IndexPath(row: 0, section: 2)
 }
