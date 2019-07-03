@@ -112,6 +112,16 @@ private extension AccessLayer {
         case ConfigAppKeyList.opCode:
             MessageType = ConfigAppKeyList.self
             
+        // Model Bindings
+        case ConfigModelAppBind.opCode:
+            MessageType = ConfigModelAppBind.self
+            
+        case ConfigModelAppUnbind.opCode:
+            MessageType = ConfigModelAppUnbind.self
+            
+        case ConfigModelAppStatus.opCode:
+            MessageType = ConfigModelAppStatus.self
+            
         // Resetting Node
         case ConfigNodeReset.opCode:
             MessageType = ConfigNodeReset.self

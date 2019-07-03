@@ -43,9 +43,40 @@ public protocol ConfigNetKeyMessage: ConfigMessage {
     var networkKeyIndex: KeyIndex { get }
 }
 
-public protocol ConfigAppKeyMessage: ConfigNetKeyMessage {
+public protocol ConfigAppKeyMessage: ConfigMessage {
     /// Application Key Index.
     var applicationKeyIndex: KeyIndex { get }
+}
+
+public protocol ConfigNetAndAppKeyMessage: ConfigNetKeyMessage, ConfigAppKeyMessage {
+    // Empty.
+}
+
+public protocol ConfigElementMessage: ConfigMessage {
+    /// The Unicast Address of the Model's parent Element.
+    var elementAddress: Address { get }
+}
+
+public protocol ConfigModelMessage: ConfigElementMessage {
+    /// The 16-bit Model identifier.
+    var modelIdentifier: UInt16 { get }
+    /// The 32-bit Model identifier.
+    var modelId: UInt32 { get }
+}
+
+public protocol ConfigAnyModelMessage: ConfigModelMessage {
+    /// The Company identified, as defined in Assigned Numbers, or `nil`,
+    /// if the Model is defined in Bluetooth Mesh Model Specification.
+    ///
+    /// - seeAlso: https://www.bluetooth.com/specifications/assigned-numbers/company-identifiers/
+    var companyIdentifier: UInt16? { get }
+}
+
+public protocol ConfigVendorModelMessage: ConfigModelMessage {
+    /// The Company identified, as defined in Assigned Numbers.
+    ///
+    /// - seeAlso: https://www.bluetooth.com/specifications/assigned-numbers/company-identifiers/
+    var companyIdentifier: UInt16 { get }
 }
 
 internal extension ConfigMessage {
@@ -108,6 +139,10 @@ public extension ConfigStatusMessage {
         return status == .success
     }
     
+    /// The status as String.
+    var message: String {
+        return "\(status)"
+    }
 }
 
 internal extension ConfigNetKeyMessage {
@@ -133,13 +168,13 @@ internal extension ConfigNetKeyMessage {
     
 }
 
-internal extension ConfigAppKeyMessage {
+internal extension ConfigNetAndAppKeyMessage {
     
     /// Encodes Network Key Index and Application Key Index in 3 bytes
     /// using Little Endian.
     ///
     /// - returns: Key Indexes encoded in 3 bytes.
-    func encodeNetKeyAndAppKeyIndex() -> Data {
+    func encodeNetAndAppKeyIndex() -> Data {
         return encode(indexes: [networkKeyIndex, applicationKeyIndex])
     }
     
@@ -152,9 +187,43 @@ internal extension ConfigAppKeyMessage {
     /// - parameter data: The data from where the indexes should be read.
     /// - parameter offset: The offset from where to read the indexes.
     /// - returns: Decoded Key Indexes.
-    static func decodeNetKeyAndAppKeyIndex(from data: Data, at offset: Int) -> (networkKeyIndex: KeyIndex, applicationKeyIndex: KeyIndex) {
+    static func decodeNetAndAppKeyIndex(from data: Data, at offset: Int) -> (networkKeyIndex: KeyIndex, applicationKeyIndex: KeyIndex) {
         let indexes = decode(2, indexesFrom: data, at: offset)
         return (indexes[0], indexes[1])
+    }
+    
+}
+
+public extension ConfigModelMessage {
+    
+    var modelId: UInt32 {
+        return UInt32(modelIdentifier)
+    }
+    
+}
+
+public extension ConfigAnyModelMessage {
+    
+    /// Returns `true` for Models with identifiers assigned by Bluetooth SIG,
+    /// `false` otherwise.
+    var isBluetoothSIGAssigned: Bool {
+        return companyIdentifier == nil
+    }
+    
+    var modelId: UInt32 {
+        if let companyIdentifier = companyIdentifier {
+            return UInt32(companyIdentifier << 16) | UInt32(modelIdentifier)
+        } else {
+            return UInt32(modelIdentifier)
+        }
+    }
+    
+}
+
+public extension ConfigVendorModelMessage {
+    
+    var modelId: UInt32 {
+        return UInt32(companyIdentifier << 16) | UInt32(modelIdentifier)
     }
     
 }

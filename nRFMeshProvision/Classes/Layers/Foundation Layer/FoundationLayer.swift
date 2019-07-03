@@ -44,20 +44,30 @@ internal class FoundationLayer {
                     }
                     node.netKeys.append(Node.NodeKey(index: netKeyStatus.networkKeyIndex, updated: false))
                     save()
+                    requests.removeValue(forKey: source)
                 case is ConfigNetKeyUpdate:
                     guard let netKey = node.netKeys[netKeyStatus.networkKeyIndex] else {
                         break
                     }
                     netKey.updated = true
                     save()
+                    requests.removeValue(forKey: source)
                 case is ConfigNetKeyDelete:
                     node.remove(networkKeyIndex: netKeyStatus.networkKeyIndex)
                     save()
+                    requests.removeValue(forKey: source)
                 default:
                     break
                 }
             }
-            requests.removeValue(forKey: source)
+            
+        case let list as ConfigNetKeyList:
+            if let node = meshNetwork.node(withAddress: source) {
+                node.netKeys.removeAll()
+                node.netKeys.append(contentsOf: list.networkKeyIndexs.map({ Node.NodeKey(index: $0, updated: false) }))
+                node.netKeys.sort()
+                save()
+            }
             
         case let appKeyStatus as ConfigAppKeyStatus:
             if appKeyStatus.isSuccess, let node = meshNetwork.node(withAddress: source) {
@@ -68,20 +78,47 @@ internal class FoundationLayer {
                     }
                     node.appKeys.append(Node.NodeKey(index: appKeyStatus.applicationKeyIndex, updated: false))
                     save()
+                    requests.removeValue(forKey: source)
                 case is ConfigAppKeyUpdate:
                     guard let appKey = node.appKeys[appKeyStatus.applicationKeyIndex] else {
                         break
                     }
                     appKey.updated = true
                     save()
+                    requests.removeValue(forKey: source)
                 case is ConfigAppKeyDelete:
                     node.remove(applicationKeyIndex: appKeyStatus.applicationKeyIndex)
                     save()
+                    requests.removeValue(forKey: source)
                 default:
                     break
                 }
             }
-            requests.removeValue(forKey: source)
+            
+        case let list as ConfigAppKeyList:
+            if let node = meshNetwork.node(withAddress: source) {
+                // Leave only those App Keys, that are bound to a different Network Key than in the
+                // received response.
+                node.appKeys = node.appKeys.filter {
+                    node.applicationKeys[$0.index]?.boundNetworkKeyIndex != list.networkKeyIndex
+                }
+                node.appKeys.append(contentsOf: list.applicationKeyIndexes.map({ Node.NodeKey(index: $0, updated: false) }))
+                node.appKeys.sort()
+                save()
+            }
+            
+        case let status as ConfigModelAppStatus:
+            if status.isSuccess,
+                let node = meshNetwork.node(withAddress: source),
+                let element = node.element(withAddress: status.elementAddress),
+                let model = element.model(withModelId: status.modelId) {
+                guard !model.bind.contains(status.applicationKeyIndex) else {
+                    break
+                }
+                model.bind.append(status.applicationKeyIndex)
+                model.bind.sort()
+                save()
+            }
             
         case let defaultTtl as ConfigDefaultTtlStatus:
             if let node = meshNetwork.node(withAddress: source) {
@@ -111,13 +148,8 @@ internal class FoundationLayer {
             
         // Those messages are ACK on the Foundation Layer with Config...KeyStatus.
         // The action taken upon receiving the status depends on the request.
-        // Here we also have to ensure that no two requests are sent to the same
-        // destination address before a status is received.
         case is ConfigNetKeyAdd, is ConfigNetKeyDelete, is ConfigNetKeyUpdate,
              is ConfigAppKeyAdd, is ConfigAppKeyDelete, is ConfigAppKeyUpdate:
-            guard requests[destination] == nil else {
-                return false
-            }
             requests[destination] = configMessage
             
         default:
