@@ -24,7 +24,7 @@ public class Model: Codable {
         }
         return nil
     }
-    /// Returns `true` for model with identifiers assigned by Bluetooth SIG,
+    /// Returns `true` for Models with identifiers assigned by Bluetooth SIG,
     /// `false` otherwise.
     public var isBluetoothSIGAssigned: Bool {
         return modelId <= 0xFFFF
@@ -110,5 +110,17 @@ extension Model {
     static let configurationClient = Model(sigModelId: 0x0001)
     static let healthServer = Model(sigModelId: 0x0002)
     static let healthClient = Model(sigModelId: 0x0003)
+    
+}
+
+extension Model: Equatable {
+    
+    public static func == (lhs: Model, rhs: Model) -> Bool {
+        return lhs.modelId == rhs.modelId
+    }
+    
+    public static func != (lhs: Model, rhs: Model) -> Bool {
+        return lhs.modelId != rhs.modelId
+    }
     
 }
