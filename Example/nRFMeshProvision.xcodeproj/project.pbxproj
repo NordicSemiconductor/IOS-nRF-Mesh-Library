@@ -24,6 +24,8 @@
 		523F777022C64FD20030EA6A /* ConfigMessages.swift in Sources */ = {isa = PBXBuildFile; fileRef = 523F776F22C64FD20030EA6A /* ConfigMessages.swift */; };
 		523F777922CB57190030EA6A /* ModelViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 523F777822CB57190030EA6A /* ModelViewController.swift */; };
 		523F777B22CB86A00030EA6A /* ModelBindAppKeyViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 523F777A22CB86A00030EA6A /* ModelBindAppKeyViewController.swift */; };
+		523F778722CCDE250030EA6A /* SetPublicationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 523F778622CCDE250030EA6A /* SetPublicationViewController.swift */; };
+		523F778922CCE3650030EA6A /* SetPublicationSelectKeyViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 523F778822CCE3650030EA6A /* SetPublicationSelectKeyViewController.swift */; };
 		525242E0225CBFEC0044CECB /* RangeObject+String.swift in Sources */ = {isa = PBXBuildFile; fileRef = 525242DF225CBFEC0044CECB /* RangeObject+String.swift */; };
 		525242E8225F2D6A0044CECB /* FabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 525242E7225F2D6A0044CECB /* FabView.swift */; };
 		5283524822733BCF0097B949 /* EditKeyViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5283524722733BCF0097B949 /* EditKeyViewController.swift */; };
@@ -95,6 +97,8 @@
 		523F776F22C64FD20030EA6A /* ConfigMessages.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigMessages.swift; sourceTree = "<group>"; };
 		523F777822CB57190030EA6A /* ModelViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelViewController.swift; sourceTree = "<group>"; };
 		523F777A22CB86A00030EA6A /* ModelBindAppKeyViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelBindAppKeyViewController.swift; sourceTree = "<group>"; };
+		523F778622CCDE250030EA6A /* SetPublicationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetPublicationViewController.swift; sourceTree = "<group>"; };
+		523F778822CCE3650030EA6A /* SetPublicationSelectKeyViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetPublicationSelectKeyViewController.swift; sourceTree = "<group>"; };
 		525242DF225CBFEC0044CECB /* RangeObject+String.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "RangeObject+String.swift"; path = "Utils/RangeObject+String.swift"; sourceTree = "<group>"; };
 		525242E7225F2D6A0044CECB /* FabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FabView.swift; sourceTree = "<group>"; };
 		5283524722733BCF0097B949 /* EditKeyViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditKeyViewController.swift; sourceTree = "<group>"; };
@@ -289,6 +293,8 @@
 				523F776D22C63EAD0030EA6A /* NodeAddAppKeyViewController.swift */,
 				523F777822CB57190030EA6A /* ModelViewController.swift */,
 				523F777A22CB86A00030EA6A /* ModelBindAppKeyViewController.swift */,
+				523F778622CCDE250030EA6A /* SetPublicationViewController.swift */,
+				523F778822CCE3650030EA6A /* SetPublicationSelectKeyViewController.swift */,
 			);
 			path = Configuration;
 			sourceTree = "<group>";
@@ -582,6 +588,7 @@
 				5283524822733BCF0097B949 /* EditKeyViewController.swift in Sources */,
 				528AB9F8228D847C000BE9DC /* NetworkViewController.swift in Sources */,
 				529B759A2243BA0A008F1CE7 /* ProvisionersViewController.swift in Sources */,
+				523F778722CCDE250030EA6A /* SetPublicationViewController.swift in Sources */,
 				529B76492252499E008F1CE7 /* UIColor+Nordic.swift in Sources */,
 				525242E0225CBFEC0044CECB /* RangeObject+String.swift in Sources */,
 				529B7575224107A5008F1CE7 /* AppInfo.swift in Sources */,
@@ -591,6 +598,7 @@
 				523F776C22C6324A0030EA6A /* ConnectableViewController.swift in Sources */,
 				52DAA5E6225B957B0041C43A /* RangeCell.swift in Sources */,
 				529B756D223FE7F1008F1CE7 /* RootViewController.swift in Sources */,
+				523F778922CCE3650030EA6A /* SetPublicationSelectKeyViewController.swift in Sources */,
 				523F776822C615CE0030EA6A /* NodeAppKeysViewController.swift in Sources */,
 				523F777922CB57190030EA6A /* ModelViewController.swift in Sources */,
 				522AFFE022C2376C00521EDC /* NodeElementsViewController.swift in Sources */,

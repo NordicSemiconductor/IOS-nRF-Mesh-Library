@@ -57,3 +57,14 @@ public extension MeshAddress {
     }
     
 }
+
+extension MeshAddress: CustomDebugStringConvertible {
+    
+    public var debugDescription: String {
+        if let virtualLabel = virtualLabel {
+            return virtualLabel.uuidString
+        }
+        return "0x\(address.hex)"
+    }
+    
+}
