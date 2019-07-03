@@ -52,6 +52,11 @@
 		523F777322CA1B780030EA6A /* FoundationLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 523F777222CA1B780030EA6A /* FoundationLayer.swift */; };
 		523F777522CA210F0030EA6A /* Element+Keys.swift in Sources */ = {isa = PBXBuildFile; fileRef = 523F777422CA210F0030EA6A /* Element+Keys.swift */; };
 		523F777722CB53FA0030EA6A /* Model+Keys.swift in Sources */ = {isa = PBXBuildFile; fileRef = 523F777622CB53FA0030EA6A /* Model+Keys.swift */; };
+		523F777D22CB8B210030EA6A /* ConfigModelAppBind.swift in Sources */ = {isa = PBXBuildFile; fileRef = 523F777C22CB8B210030EA6A /* ConfigModelAppBind.swift */; };
+		523F777F22CB90700030EA6A /* ConfigModelAppUnbind.swift in Sources */ = {isa = PBXBuildFile; fileRef = 523F777E22CB90700030EA6A /* ConfigModelAppUnbind.swift */; };
+		523F778122CB912B0030EA6A /* ConfigModelAppStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 523F778022CB912B0030EA6A /* ConfigModelAppStatus.swift */; };
+		523F778322CB94EA0030EA6A /* Node+Elements.swift in Sources */ = {isa = PBXBuildFile; fileRef = 523F778222CB94EA0030EA6A /* Node+Elements.swift */; };
+		523F778522CC888D0030EA6A /* Element+Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = 523F778422CC888D0030EA6A /* Element+Models.swift */; };
 		524C039622AE671900C5B1B9 /* ApplicationKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = 524C039522AE671900C5B1B9 /* ApplicationKeys.swift */; };
 		524C039822AF8FEF00C5B1B9 /* Element+Address.swift in Sources */ = {isa = PBXBuildFile; fileRef = 524C039722AF8FEF00C5B1B9 /* Element+Address.swift */; };
 		525242E2225CC6D30044CECB /* ClosedRange.swift in Sources */ = {isa = PBXBuildFile; fileRef = 525242E1225CC6D30044CECB /* ClosedRange.swift */; };
@@ -247,6 +252,11 @@
 		523F777222CA1B780030EA6A /* FoundationLayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FoundationLayer.swift; sourceTree = "<group>"; };
 		523F777422CA210F0030EA6A /* Element+Keys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Element+Keys.swift"; sourceTree = "<group>"; };
 		523F777622CB53FA0030EA6A /* Model+Keys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Model+Keys.swift"; sourceTree = "<group>"; };
+		523F777C22CB8B210030EA6A /* ConfigModelAppBind.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigModelAppBind.swift; sourceTree = "<group>"; };
+		523F777E22CB90700030EA6A /* ConfigModelAppUnbind.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigModelAppUnbind.swift; sourceTree = "<group>"; };
+		523F778022CB912B0030EA6A /* ConfigModelAppStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigModelAppStatus.swift; sourceTree = "<group>"; };
+		523F778222CB94EA0030EA6A /* Node+Elements.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Node+Elements.swift"; sourceTree = "<group>"; };
+		523F778422CC888D0030EA6A /* Element+Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Element+Models.swift"; sourceTree = "<group>"; };
 		524C039522AE671900C5B1B9 /* ApplicationKeys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplicationKeys.swift; sourceTree = "<group>"; };
 		524C039722AF8FEF00C5B1B9 /* Element+Address.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Element+Address.swift"; sourceTree = "<group>"; };
 		525242E1225CC6D30044CECB /* ClosedRange.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClosedRange.swift; sourceTree = "<group>"; };
@@ -592,8 +602,10 @@
 				528352B72285A3A30097B949 /* Node+Address.swift */,
 				528352B92285A3DF0097B949 /* Node+Keys.swift */,
 				523F774F22C3AD2C0030EA6A /* Node+Provisioner.swift */,
+				523F778222CB94EA0030EA6A /* Node+Elements.swift */,
 				524C039722AF8FEF00C5B1B9 /* Element+Address.swift */,
 				523F777422CA210F0030EA6A /* Element+Keys.swift */,
+				523F778422CC888D0030EA6A /* Element+Models.swift */,
 				522AFFE222C23DD300521EDC /* Model+Name.swift */,
 				523F777622CB53FA0030EA6A /* Model+Keys.swift */,
 				528AB9F5228D7654000BE9DC /* Ranges.swift */,
@@ -639,6 +651,9 @@
 				5294DADB22B144D10041370E /* ConfigAppKeyStatus.swift */,
 				523F775322C4AC210030EA6A /* ConfigAppKeyGet.swift */,
 				523F775522C4B1D30030EA6A /* ConfigAppKeyList.swift */,
+				523F777C22CB8B210030EA6A /* ConfigModelAppBind.swift */,
+				523F777E22CB90700030EA6A /* ConfigModelAppUnbind.swift */,
+				523F778022CB912B0030EA6A /* ConfigModelAppStatus.swift */,
 				52F6AD6F22BA172900F0D7DF /* ConfigNodeReset.swift */,
 				52F6AD7122BA17E100F0D7DF /* ConfigNodeResetStatus.swift */,
 				522AFFE422C24F6000521EDC /* ConfigDefaultTtlGet.swift */,
@@ -1150,6 +1165,7 @@
 				528352442271F0650097B949 /* MeshNetwork+Nodes.swift in Sources */,
 				529B75EE224A6CE4008F1CE7 /* ApplicationKey.swift in Sources */,
 				5283528A2281B30D0097B949 /* Oob.swift in Sources */,
+				523F777F22CB90700030EA6A /* ConfigModelAppUnbind.swift in Sources */,
 				528352A82282D9FF0097B949 /* BearerDelegate.swift in Sources */,
 				52835277228029720097B949 /* Bearer.swift in Sources */,
 				52F6AD6622B3AF2700F0D7DF /* ConfigCompositionDataGet.swift in Sources */,
@@ -1167,6 +1183,7 @@
 				5283529E2282CCE60097B949 /* Provisioner+Ranges.swift in Sources */,
 				528352402271EF770097B949 /* MeshNetwork+Ranges.swift in Sources */,
 				523F775E22C4CE9A0030EA6A /* ConfigNetKeyStatus.swift in Sources */,
+				523F778122CB912B0030EA6A /* ConfigModelAppStatus.swift in Sources */,
 				52B7F68022994B3E00B0A42F /* MeshMessage.swift in Sources */,
 				5294DADC22B144D10041370E /* ConfigAppKeyStatus.swift in Sources */,
 				529B75EC224A6CE4008F1CE7 /* SceneRange.swift in Sources */,
@@ -1177,6 +1194,7 @@
 				5283524A227358DE0097B949 /* Data+Keys.swift in Sources */,
 				529B7621224B8213008F1CE7 /* MeshAddress.swift in Sources */,
 				5274B75B22A1D2C9008450BC /* HeartbeatMessage.swift in Sources */,
+				523F778322CB94EA0030EA6A /* Node+Elements.swift in Sources */,
 				5274B75122A1599F008450BC /* SegmentedAccessMessage.swift in Sources */,
 				5283528E2281B3510097B949 /* ProvisioningState.swift in Sources */,
 				525A3C0022AD2167000D3791 /* ConfigMessage.swift in Sources */,
@@ -1220,6 +1238,7 @@
 				52F6AD6E22B8F8EA00F0D7DF /* AccessPdu.swift in Sources */,
 				523F775C22C4CDFC0030EA6A /* ConfigNetKeyUpdate.swift in Sources */,
 				528352AE228302860097B949 /* BaseGattProxyBearer.swift in Sources */,
+				523F778522CC888D0030EA6A /* Element+Models.swift in Sources */,
 				523F777322CA1B780030EA6A /* FoundationLayer.swift in Sources */,
 				528AB9F2228C4F3E000BE9DC /* IvIndex.swift in Sources */,
 				5283524C2276F53A0097B949 /* Key.swift in Sources */,
@@ -1256,6 +1275,7 @@
 				52DF5D99229D6B6400C297C1 /* AccessMessage.swift in Sources */,
 				525242E4225DE1EF0044CECB /* RangeObject.swift in Sources */,
 				5283523E2271EF1D0097B949 /* MeshNetwork+Provisioner.swift in Sources */,
+				523F777D22CB8B210030EA6A /* ConfigModelAppBind.swift in Sources */,
 				529B75F0224A6CE4008F1CE7 /* MeshNetwork.swift in Sources */,
 				528352AA2282DA1E0097B949 /* GattBearerDelegate.swift in Sources */,
 				52B7F68222994D3C00B0A42F /* MeshMessageError.swift in Sources */,

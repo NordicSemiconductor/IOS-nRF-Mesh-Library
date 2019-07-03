@@ -69,6 +69,17 @@ public extension Node {
         return applicationKeys.contains(keyBoundTo: networkKey)
     }
     
+    /// Returns a list of Application Keys known to the Node, that are not
+    /// bound to the given Model, and therefore can be bound to it.
+    ///
+    /// - parameter model: The Model which keys will be excluded.
+    /// - returns: List of Application Keys that may be bound to the given Model.
+    func applicationKeysAvailableFor(_ model: Model) -> [ApplicationKey] {
+        return applicationKeys.filter {
+            !model.boundApplicationKeys.contains($0)
+        }
+    }
+    
 }
 
 public extension Array where Element == Node {
