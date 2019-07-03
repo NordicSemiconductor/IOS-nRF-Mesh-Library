@@ -42,7 +42,7 @@ public class Publish: Codable {
     /// An Application Key index, indicating which Applicaiton Key to
     /// use for the publication.
     internal let index: KeyIndex
-    /// An integer from 0 to 127 that represents the Time To Leave (TTL)
+    /// An integer from 0 to 127 that represents the Time To Live (TTL)
     /// value for the outgoing publish message.
     public internal(set) var ttl: UInt8 = 5 {
         didSet {

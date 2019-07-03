@@ -118,7 +118,7 @@ internal struct NetworkPdu {
     /// - parameter lowerTransportPdu: The data received from higher layer.
     /// - parameter sequence: The SEQ number of the PDU. Each PDU between the source
     ///                       and destination must have strictly increasing sequence number.
-    /// - parameter ttl: Time To Leave.
+    /// - parameter ttl: Time To Live.
     /// - returns: The Network PDU object.
     init(encode lowerTransportPdu: LowerTransportPdu,
          withSequence sequence: UInt32, andTtl ttl: UInt8) {

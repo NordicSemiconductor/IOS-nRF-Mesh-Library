@@ -276,7 +276,7 @@ private extension ConfigurationViewController {
     /// Presents a dialog to edit the default TTL.
     func presentTTLDialog() {
         presentTextAlert(title: "Default TTL",
-                         message: "TTL = Time To Leave\n\nTTL limits the number of times a message can be relayed.\nMax value is 127.",
+                         message: "TTL = Time To Live\n\nTTL limits the number of times a message can be relayed.\nMax value is 127.",
                          text: node.defaultTTL != nil ? "\(node.defaultTTL!)" : nil,
                          type: .ttlRequired) { value in
                             let ttl = UInt8(value)!

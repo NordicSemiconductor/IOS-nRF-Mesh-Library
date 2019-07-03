@@ -245,7 +245,7 @@ private extension EditProvisionerViewController {
         let node = provisioner.node
         
         presentTextAlert(title: "Default TTL",
-                         message: "TTL = Time To Leave\n\nTTL limits the number of times a message can be relayed.\nMax value is 127.",
+                         message: "TTL = Time To Live\n\nTTL limits the number of times a message can be relayed.\nMax value is 127.",
                          text: "\(node?.defaultTTL ?? 5)", placeHolder: "Default is 5",
                          type: .ttlRequired) { value in
                             let ttl = UInt8(value)!

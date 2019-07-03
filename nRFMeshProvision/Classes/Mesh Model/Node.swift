@@ -111,9 +111,9 @@ public class Node: Codable {
     /// This flag represents whether or not the node is configured to send
     /// Secure Network messages.
     public internal(set) var secureNetworkBeacon: Bool?
-    /// The default Time To Leave (TTL) value used when sending messages.
+    /// The default Time To Live (TTL) value used when sending messages.
     internal var ttl: UInt8?
-    /// The default Time To Leave (TTL) value used when sending messages.
+    /// The default Time To Live (TTL) value used when sending messages.
     /// The TTL may only be set for a Provisioner's Node, or for a Node
     /// that has not been added to a mesh network.
     ///
