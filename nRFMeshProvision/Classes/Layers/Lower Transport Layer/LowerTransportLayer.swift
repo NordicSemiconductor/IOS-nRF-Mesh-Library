@@ -337,7 +337,7 @@ private extension LowerTransportLayer {
     ///                         has to be not `nil`.
     /// - parameter networkKey: The Network Key to be used to encrypt the message on
     ///                         on Network Layer.
-    /// - parameter ttl:        Initial Time To Leave (TTL) value.
+    /// - parameter ttl:        Initial Time To Live (TTL) value.
     func sendAck(for segments: [SegmentedMessage?], usingNetworkKey networkKey: NetworkKey, withTtl ttl: UInt8) {
         let ack = SegmentAcknowledgmentMessage(for: segments)
         if segments.isComplete {

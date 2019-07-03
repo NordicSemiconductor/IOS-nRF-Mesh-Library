@@ -72,7 +72,7 @@ internal class NetworkLayer {
     ///
     /// - parameter pdu:  The Lower Transport PDU to be sent.
     /// - parameter type: The PDU type.
-    /// - parameter ttl:  The initial TTL (Time To Leave) value of the message.
+    /// - parameter ttl:  The initial TTL (Time To Live) value of the message.
     /// - parameter multipleTimes: Should the message be resent with the same sequence
     ///                            number after a random delay, default `false`.
     func send(lowerTransportPdu pdu: LowerTransportPdu, ofType type: PduType,
