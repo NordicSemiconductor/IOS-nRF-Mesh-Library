@@ -52,8 +52,7 @@ class NodeAddNetworkKeyViewController: ConnectableViewController {
         
         let meshNetwork = MeshNetworkManager.instance.meshNetwork!
         keys = meshNetwork.networkKeys.notKnownTo(node: node)
-        let areMoreNetKeys = keys.count > 0
-        if !areMoreNetKeys {
+        if keys.isEmpty {
             tableView.showEmptyView()
         }
         // Initially, no key is checked.
@@ -98,13 +97,13 @@ extension NodeAddNetworkKeyViewController: MeshNetworkDelegate {
     func meshNetwork(_ meshNetwork: MeshNetwork, didDeliverMessage message: MeshMessage, from source: Address) {
         switch message {
         case let status as ConfigNetKeyStatus:
-            done()
-            
-            if status.status == .success {
-                dismiss(animated: true)
-                delegate?.keyAdded()
-            } else {
-                presentAlert(title: "Error", message: "\(status.status)")
+            done() {
+                if status.status == .success {
+                    self.dismiss(animated: true)
+                    self.delegate?.keyAdded()
+                } else {
+                    self.presentAlert(title: "Error", message: "\(status.status)")
+                }
             }
         default:
             // Ignore
