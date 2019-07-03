@@ -2,6 +2,9 @@
 <Workspace
    version = "1.0">
    <FileRef
+      location = "group:/Users/alno/Desktop/nRFMesh 2/Example/nRFMeshProvision/SetPublication.storyboard">
+   </FileRef>
+   <FileRef
       location = "group:nRFMeshProvision.xcodeproj">
    </FileRef>
    <FileRef
