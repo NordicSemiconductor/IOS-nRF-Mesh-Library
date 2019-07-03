@@ -21,6 +21,13 @@ class ModelViewController: ConnectableViewController {
         super.viewDidLoad()
         
         title = model.name ?? "Model"
+        navigationItem.rightBarButtonItems!.append(editButtonItem)
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        MeshNetworkManager.instance.delegate = self
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -67,13 +74,6 @@ class ModelViewController: ConnectableViewController {
         default:
             return nil
         }
-    }
-    
-    override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-        if indexPath.isBindingsSection {
-            return indexPath.row < model.boundApplicationKeys.count
-        }
-        return false
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -132,7 +132,64 @@ class ModelViewController: ConnectableViewController {
             performSegue(withIdentifier: "bind", sender: indexPath)
         }
     }
+    
+    override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
+        if indexPath.isBindingsSection {
+            return indexPath.row < model.boundApplicationKeys.count
+        }
+        return false
+    }
+    
+    override func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
+        if indexPath.isBindingsSection {
+            return [UITableViewRowAction(style: .destructive, title: "Unbind",
+                                         handler: { _, indexPath in self.unbindApplicationKey(at: indexPath) })]
+        }
+        return nil
+    }
 
+}
+
+private extension ModelViewController {
+    
+    /// Sends a message to the mesh network to unbind the Application Key
+    /// from given indexPath from the Model.
+    ///
+    /// - parameter indexPath: An IndexPath pointing the Application Key
+    //                         to unbind.
+    func unbindApplicationKey(at indexPath: IndexPath) {
+        whenConnected { action in
+            guard let node = self.model.parentElement.parentNode,
+                indexPath.row < self.model.boundApplicationKeys.count else {
+                self.done()
+                return
+            }
+            let applicationKey = self.model.boundApplicationKeys[indexPath.row]
+            action?.message = "Unbinding Application Key"
+            MeshNetworkManager.instance.send(ConfigModelAppUnbind(applicationKey: applicationKey, to: self.model), to: node)
+        }
+    }
+    
+}
+
+extension ModelViewController: MeshNetworkDelegate {
+    
+    func meshNetwork(_ meshNetwork: MeshNetwork, didDeliverMessage message: MeshMessage, from source: Address) {
+        switch message {
+        case let status as ConfigModelAppStatus:
+            done()
+            
+            if status.isSuccess {
+                tableView.reloadSections(.bindings, with: .automatic)
+                setEditing(false, animated: true)
+            } else {
+                presentAlert(title: "Error", message: "\(status.status)")
+            }
+        default:
+            break
+        }
+    }
+    
 }
 
 extension ModelViewController: BindAppKeyDelegate {
@@ -187,4 +244,10 @@ private extension IndexPath {
     var isBindingsSection: Bool {
         return section == IndexPath.bindingsSection
     }
+}
+
+private extension IndexSet {
+    
+    static let bindings = IndexSet(integer: IndexPath.bindingsSection)
+    
 }

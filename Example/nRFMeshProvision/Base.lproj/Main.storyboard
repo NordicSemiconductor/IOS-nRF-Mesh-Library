@@ -540,9 +540,7 @@
                             <outlet property="delegate" destination="veF-nS-gn0" id="yqD-ne-XzR"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" title="Model" id="J13-Dv-UXh">
-                        <barButtonItem key="rightBarButtonItem" systemItem="add" id="lpg-7m-Svr"/>
-                    </navigationItem>
+                    <navigationItem key="navigationItem" title="Model" id="J13-Dv-UXh"/>
                     <connections>
                         <segue destination="gj6-4N-egc" kind="presentation" identifier="bind" id="wef-vj-jmc"/>
                     </connections>

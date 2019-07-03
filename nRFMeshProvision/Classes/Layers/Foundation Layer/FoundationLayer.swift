@@ -112,12 +112,25 @@ internal class FoundationLayer {
                 let node = meshNetwork.node(withAddress: source),
                 let element = node.element(withAddress: status.elementAddress),
                 let model = element.model(withModelId: status.modelId) {
-                guard !model.bind.contains(status.applicationKeyIndex) else {
+                switch requests[source] {
+                case is ConfigModelAppBind:
+                    guard !model.bind.contains(status.applicationKeyIndex) else {
+                        break
+                    }
+                    model.bind.append(status.applicationKeyIndex)
+                    model.bind.sort()
+                    save()
+                    requests.removeValue(forKey: source)
+                case is ConfigModelAppUnbind:
+                    guard let index = model.bind.firstIndex(of: status.applicationKeyIndex) else {
+                        break
+                    }
+                    model.bind.remove(at: index)
+                    save()
+                    requests.removeValue(forKey: source)
+                default:
                     break
                 }
-                model.bind.append(status.applicationKeyIndex)
-                model.bind.sort()
-                save()
             }
             
         case let defaultTtl as ConfigDefaultTtlStatus:
@@ -146,10 +159,15 @@ internal class FoundationLayer {
     func handle(configMessage: ConfigMessage, to destination: Address) -> Bool {
         switch configMessage {
             
-        // Those messages are ACK on the Foundation Layer with Config...KeyStatus.
+        // Those messages are ACK on the Foundation Layer with Config...Status.
         // The action taken upon receiving the status depends on the request.
-        case is ConfigNetKeyAdd, is ConfigNetKeyDelete, is ConfigNetKeyUpdate,
-             is ConfigAppKeyAdd, is ConfigAppKeyDelete, is ConfigAppKeyUpdate:
+        case is ConfigNetKeyAdd, is ConfigNetKeyDelete, is ConfigNetKeyUpdate:
+            requests[destination] = configMessage
+                
+        case is ConfigAppKeyAdd, is ConfigAppKeyDelete, is ConfigAppKeyUpdate:
+            requests[destination] = configMessage
+            
+        case is ConfigModelAppBind, is ConfigModelAppUnbind:
             requests[destination] = configMessage
             
         default:
