@@ -388,7 +388,7 @@ private extension Array where Element == SegmentedMessage? {
     
     /// Returns whether all the segments were received.
     var isComplete: Bool {
-        return !contains { $0 == nil }
+        return !contains { $0 != nil }
     }
     
 }
