@@ -198,11 +198,12 @@ public class Node: Codable {
         // Add the primary Element.
         let element = Element(location: .unknown)
         element.name = "Primary Element"
-        // Those 2 models are required for all nodes.
+        // Configuration Server is required for all nodes.
         element.add(model: .configurationServer)
-        element.add(model: .healthServer)
         // Configuration Client model is added, as this is a Provisioner's node.
         element.add(model: .configurationClient)
+        // Health Server is required for all nodes.
+        element.add(model: .healthServer)
         add(element: element)
     }
     
