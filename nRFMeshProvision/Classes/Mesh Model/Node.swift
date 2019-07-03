@@ -483,3 +483,27 @@ internal extension Array where Element == Node.NodeKey {
     }
     
 }
+
+extension Node.NodeKey: Comparable {
+    
+    public static func < (lhs: Node.NodeKey, rhs: Node.NodeKey) -> Bool {
+        return lhs.index < rhs.index
+    }
+    
+    public static func == (lhs: Node.NodeKey, rhs: Node.NodeKey) -> Bool {
+        return lhs.index == rhs.index
+    }
+    
+    public static func != (lhs: Node.NodeKey, rhs: Node.NodeKey) -> Bool {
+        return lhs.index != rhs.index
+    }
+    
+}
+
+extension Node.NodeKey: CustomDebugStringConvertible {
+
+    public var debugDescription: String {
+        return "Key Index: \(index), updated: \(updated)"
+    }
+    
+}
