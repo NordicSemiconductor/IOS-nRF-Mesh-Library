@@ -20,6 +20,9 @@ class NodeNetworkKeysViewController: ConnectableViewController, Editable {
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.setEmptyView(title: "No keys", message: "Click + to add a new key.", messageImage: #imageLiteral(resourceName: "baseline-key"))
+        refreshControl = UIRefreshControl()
+        refreshControl!.tintColor = UIColor.white
+        refreshControl!.addTarget(self, action: #selector(readKeys(_:)), for: .valueChanged)
         
         if node.networkKeys.isEmpty {
             showEmptyView()
@@ -103,6 +106,13 @@ class NodeNetworkKeysViewController: ConnectableViewController, Editable {
 
 private extension NodeNetworkKeysViewController {
     
+    @objc func readKeys(_ sender: Any) {
+        whenConnected { alert in
+            alert?.message = "Reading Network Keys..."
+            MeshNetworkManager.instance.send(ConfigNetKeyGet(), to: self.node)
+        }
+    }
+    
     func deleteNetworkKeyAt(_ indexPath: IndexPath) {
         let networkKey = node.networkKeys[indexPath.row]
         MeshNetworkManager.instance.send(ConfigNetKeyDelete(networkKey: networkKey), to: node)
@@ -113,7 +123,8 @@ private extension NodeNetworkKeysViewController {
 extension NodeNetworkKeysViewController: MeshNetworkDelegate {
     
     func meshNetwork(_ meshNetwork: MeshNetwork, didDeliverMessage message: MeshMessage, from source: Address) {
-        if let status = message as? ConfigNetKeyStatus {
+        switch message {
+        case let status as ConfigNetKeyStatus:
             done()
             
             if status.isSuccess {
@@ -124,6 +135,16 @@ extension NodeNetworkKeysViewController: MeshNetworkDelegate {
             } else {
                 presentAlert(title: "Error", message: "\(status.status)")
             }
+        case is ConfigNetKeyList:
+            done()
+            tableView.reloadData()            
+            if node.networkKeys.isEmpty {
+                showEmptyView()
+            }
+            refreshControl?.endRefreshing()
+            
+        default:
+            break
         }
     }
     

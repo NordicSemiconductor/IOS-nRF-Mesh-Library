@@ -20,6 +20,11 @@ class NodeAppKeysViewController: ConnectableViewController, Editable {
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.setEmptyView(title: "No keys", message: "Click + to add a new key.", messageImage: #imageLiteral(resourceName: "baseline-key"))
+        if !node.networkKeys.isEmpty {
+            refreshControl = UIRefreshControl()
+            refreshControl!.tintColor = UIColor.white
+            refreshControl!.addTarget(self, action: #selector(readKeys(_:)), for: .valueChanged)
+        }
         
         if node.applicationKeys.isEmpty {
             showEmptyView()
@@ -95,6 +100,13 @@ class NodeAppKeysViewController: ConnectableViewController, Editable {
 
 private extension NodeAppKeysViewController {
     
+    @objc func readKeys(_ sender: Any) {
+        whenConnected { alert in
+            alert?.message = "Reading Application Keys..."
+            MeshNetworkManager.instance.send(ConfigAppKeyGet(networkKey: self.node.networkKeys.first!), to: self.node)
+        }
+    }
+    
     func deleteApplicationKeyAt(_ indexPath: IndexPath) {
         let applicationKey = node.applicationKeys[indexPath.row]
         MeshNetworkManager.instance.send(ConfigAppKeyDelete(applicationKey: applicationKey), to: node)
@@ -105,7 +117,8 @@ private extension NodeAppKeysViewController {
 extension NodeAppKeysViewController: MeshNetworkDelegate {
     
     func meshNetwork(_ meshNetwork: MeshNetwork, didDeliverMessage message: MeshMessage, from source: Address) {
-        if let status = message as? ConfigAppKeyStatus {
+        switch message {
+        case let status as ConfigAppKeyStatus:
             done()
             
             if status.isSuccess {
@@ -116,6 +129,21 @@ extension NodeAppKeysViewController: MeshNetworkDelegate {
             } else {
                 presentAlert(title: "Error", message: "\(status.status)")
             }
+            
+        case let list as ConfigAppKeyList:
+            let index = node.networkKeys.firstIndex { $0.index == list.networkKeyIndex }
+            if let index = index, index + 1 < node.networkKeys.count {
+                MeshNetworkManager.instance.send(ConfigAppKeyGet(networkKey: node.networkKeys[index + 1]), to: node)
+            } else {
+                done()
+                tableView.reloadData()
+                if node.applicationKeys.isEmpty {
+                    showEmptyView()
+                }
+                refreshControl?.endRefreshing()
+            }
+        default:
+            break
         }
     }
     
