@@ -53,8 +53,14 @@ class SetPublicationViewController: ConnectableViewController {
             periodLabel.text = "\(Int(period) / 6 - 19) min \(secString) sec"
             periodSteps = UInt8(period) - 114
             periodResolution = ._10_seconds
-        case let period where period >= 178:
+        case let period where period >= 178 && period < 182:
             periodLabel.text = "\((Int(period) - 176) * 10) min"
+            periodSteps = UInt8(period) - 176
+            periodResolution = ._10_minutes
+        case let period where period >= 182:
+            let min = (Int(period) - 176) % 6 * 10
+            let minString = min == 0 ? "00" : "\(min)"
+            periodLabel.text = "\(Int(period) / 6 - 29) h \(minString) min"
             periodSteps = UInt8(period) - 176
             periodResolution = ._10_minutes
         default:
