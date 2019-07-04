@@ -75,6 +75,9 @@ class SetPublicationViewController: ConnectableViewController {
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         switch segue.identifier {
+        case .some("setDestination"):
+            let destination = segue.destination as! SetPublicationDestinationsViewController
+            destination.model = model
         case .some("selectKey"):
             let destination = segue.destination as! SetPublicationSelectKeyViewController
             destination.model = model
