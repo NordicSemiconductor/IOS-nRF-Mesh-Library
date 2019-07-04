@@ -20,22 +20,15 @@
                         <sections>
                             <tableViewSection id="38a-4A-Bb7">
                                 <cells>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" accessoryType="disclosureIndicator" indentationWidth="10" textLabel="ySn-7j-h5a" detailTextLabel="LfM-p3-epY" style="IBUITableViewCellStyleValue1" id="6Sj-2I-aX6">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" accessoryType="disclosureIndicator" indentationWidth="10" textLabel="ySn-7j-h5a" style="IBUITableViewCellStyleDefault" id="6Sj-2I-aX6">
                                         <rect key="frame" x="0.0" y="35" width="414" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="6Sj-2I-aX6" id="AlB-Cn-u4m">
                                             <rect key="frame" x="0.0" y="0.0" width="376" height="43.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Destination" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="ySn-7j-h5a">
-                                                    <rect key="frame" x="20" y="12" width="87" height="20.5"/>
-                                                    <autoresizingMask key="autoresizingMask"/>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                                    <nil key="textColor"/>
-                                                    <nil key="highlightedColor"/>
-                                                </label>
-                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="LfM-p3-epY">
-                                                    <rect key="frame" x="332" y="12" width="44" height="20.5"/>
+                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="No destination selected" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="ySn-7j-h5a">
+                                                    <rect key="frame" x="20" y="0.0" width="356" height="43.5"/>
                                                     <autoresizingMask key="autoresizingMask"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -244,7 +237,7 @@
                         </barButtonItem>
                     </navigationItem>
                     <connections>
-                        <outlet property="destinationLabel" destination="LfM-p3-epY" id="vrQ-ds-vUH"/>
+                        <outlet property="destinationLabel" destination="ySn-7j-h5a" id="AUX-mn-y1s"/>
                         <outlet property="doneButton" destination="pOA-WT-eUG" id="s2t-M4-FaH"/>
                         <outlet property="friendshipCredentialsFlagSwitch" destination="BMf-2m-pnI" id="lhx-JB-oGo"/>
                         <outlet property="keyCell" destination="6gd-60-7PQ" id="dDg-3Q-zDa"/>

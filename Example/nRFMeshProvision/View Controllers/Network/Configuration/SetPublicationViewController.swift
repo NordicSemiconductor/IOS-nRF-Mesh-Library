@@ -39,7 +39,7 @@ class SetPublicationViewController: ConnectableViewController {
     var model: Model!
     var delegate: PublicationDelegate?
     
-    private var destination: Address?
+    private var destination: MeshAddress?
     private var applicationKey: ApplicationKey!
     private var ttl: UInt8 = 0xFF {
         didSet {
@@ -78,6 +78,7 @@ class SetPublicationViewController: ConnectableViewController {
         case .some("setDestination"):
             let destination = segue.destination as! SetPublicationDestinationsViewController
             destination.model = model
+            destination.delegate = self
         case .some("selectKey"):
             let destination = segue.destination as! SetPublicationSelectKeyViewController
             destination.model = model
@@ -117,7 +118,14 @@ private extension SetPublicationViewController {
     
 }
 
-extension SetPublicationViewController: KeySelectionDelegate {
+extension SetPublicationViewController: KeySelectionDelegate, DestinationDelegate {
+    
+    func destinationSet(to name: String, withAddress address: MeshAddress) {
+        self.destination = address
+        self.destinationLabel.text = name
+        self.destinationLabel.textColor = .darkText
+        self.doneButton.isEnabled = true
+    }
     
     func keySelected(_ applicationKey: ApplicationKey) {
         self.applicationKey = applicationKey

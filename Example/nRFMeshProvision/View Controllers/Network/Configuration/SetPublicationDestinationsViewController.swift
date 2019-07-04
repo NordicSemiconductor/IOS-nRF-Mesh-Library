@@ -9,18 +9,23 @@
 import UIKit
 import nRFMeshProvision
 
+protocol DestinationDelegate {
+    func destinationSet(to name: String, withAddress address: MeshAddress)
+}
+
 class SetPublicationDestinationsViewController: UITableViewController {
     
     // MARK: - Properties
     
     var model: Model!
+    var delegate: DestinationDelegate?
     
     /// List of Elements containing a compatible Model. For example,
     /// for Generic On/Off Server this list will contain all Elements
     /// with Genetic On/Off Client.
     private var compatibleElements: [Element]!
-    private let specialGroups = [
-        ("All Proxie", 0xFFFC),
+    private let specialGroups: [(title: String, address: UInt16)] = [
+        ("All Proxies", 0xFFFC),
         ("All Friends", 0xFFFD),
         ("All Relays", 0xFFFE),
         ("All Nodes", 0xFFFF)
@@ -75,7 +80,7 @@ class SetPublicationDestinationsViewController: UITableViewController {
         }
         if indexPath.isSpecialGroupsSection {
             let pair = specialGroups[indexPath.row]
-            cell.textLabel?.text = pair.0
+            cell.textLabel?.text = pair.title
         }
         cell.accessoryType = indexPath == selectedIndexPath ? .checkmark : .none
         return cell
@@ -85,6 +90,22 @@ class SetPublicationDestinationsViewController: UITableViewController {
         tableView.deselectRow(at: indexPath, animated: true)
         selectedIndexPath = indexPath
         tableView.reloadData()
+        
+        switch indexPath.section {
+        case IndexPath.elementsSection:
+            let element = compatibleElements[indexPath.row]
+            let nodeName = element.parentNode!.name ?? "Unknown Device"
+            let elementName = element.name ?? "Element \(indexPath.row)"
+            let name = "\(nodeName) / \(elementName)"
+            delegate?.destinationSet(to: name,
+                                     withAddress: MeshAddress(element.unicastAddress))
+        case IndexPath.specialGroupsSection:
+            let selectedGroup = specialGroups[indexPath.row]
+            delegate?.destinationSet(to: selectedGroup.title,
+                                     withAddress: MeshAddress(selectedGroup.address))
+        default:
+            break
+        }
     }
 
 }
