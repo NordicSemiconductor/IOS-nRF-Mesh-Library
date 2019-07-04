@@ -25,12 +25,48 @@ class SetPublicationViewController: ConnectableViewController {
     }
     @IBAction func doneTapped(_ sender: UIBarButtonItem) {
     }
-    
+    @IBAction func periodDidChange(_ sender: UISlider) {
+        switch sender.value {
+        case let period where period < 1.0:
+            periodLabel.text = "Disabled"
+            periodSteps = 0
+            periodResolution = ._100_milliseconds
+        case let period where period >= 1 && period < 10:
+            periodLabel.text = "\(Int(period) * 100) ms"
+            periodSteps = UInt8(period)
+            periodResolution = ._100_milliseconds
+        case let period where period >= 10 && period < 64:
+            periodLabel.text = String(format: "%.1f sec", floorf(period) / 10)
+            periodSteps = UInt8(period)
+            periodResolution = ._100_milliseconds
+        case let period where period >= 64 && period < 117:
+            periodLabel.text = "\(Int(period) - 57) sec"
+            periodSteps = UInt8(period) - 57
+            periodResolution = ._1_second
+        case let period where period >= 117 && period < 121:
+            periodLabel.text = "\(Int((period + 3) / 60) - 1) min 0\(Int(period + 3) % 60) sec"
+            periodSteps = UInt8(period) - 57
+            periodResolution = ._1_second
+        case let period where period >= 121 && period < 178:
+            let sec = (Int(period) % 6) * 10
+            let secString = sec == 0 ? "00" : "\(sec)"
+            periodLabel.text = "\(Int(period) / 6 - 19) min \(secString) sec"
+            periodSteps = UInt8(period) - 114
+            periodResolution = ._10_seconds
+        case let period where period >= 178:
+            periodLabel.text = "\((Int(period) - 176) * 10) min"
+            periodSteps = UInt8(period) - 176
+            periodResolution = ._10_minutes
+        default:
+            break
+        }
+        print("Value: \(sender.value) -> \(Int(sender.value)) step: \(periodSteps)\tresolution: \(periodResolution)")
+    }
     @IBOutlet weak var destinationLabel: UILabel!
     @IBOutlet weak var keyCell: UITableViewCell!
     @IBOutlet weak var friendshipCredentialsFlagSwitch: UISwitch!
     @IBOutlet weak var ttlLabel: UILabel!
-    @IBOutlet weak var publishingPeriodLabel: UILabel!
+    @IBOutlet weak var periodLabel: UILabel!
     @IBOutlet weak var retransmitCountLabel: UILabel!
     @IBOutlet weak var retransmitIntervalLabel: UIView!
         
@@ -50,6 +86,8 @@ class SetPublicationViewController: ConnectableViewController {
             }
         }
     }
+    private var periodSteps: UInt8 = 0
+    private var periodResolution: Publish.StepResolution = ._100_milliseconds
     
     // MARK: - View Controller
 

@@ -139,28 +139,36 @@
                             </tableViewSection>
                             <tableViewSection headerTitle="Periodic publishing" id="vZk-us-KBy">
                                 <cells>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" accessoryType="disclosureIndicator" indentationWidth="10" textLabel="DKh-OI-HFE" detailTextLabel="jtI-V2-0ST" style="IBUITableViewCellStyleValue1" id="XuS-bx-mcA">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" id="ja8-Xh-9nV">
                                         <rect key="frame" x="0.0" y="379" width="414" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
-                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="XuS-bx-mcA" id="cL5-f8-ags">
-                                            <rect key="frame" x="0.0" y="0.0" width="376" height="43.5"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="ja8-Xh-9nV" id="COE-Fk-s7D">
+                                            <rect key="frame" x="0.0" y="0.0" width="414" height="43.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Publishing period" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="DKh-OI-HFE">
-                                                    <rect key="frame" x="20" y="12" width="132.5" height="20.5"/>
-                                                    <autoresizingMask key="autoresizingMask"/>
+                                                <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" minValue="0.0" maxValue="239" translatesAutoresizingMaskIntoConstraints="NO" id="Jiv-Le-ay1">
+                                                    <rect key="frame" x="18" y="7" width="252" height="31"/>
+                                                    <connections>
+                                                        <action selector="periodDidChange:" destination="LXv-CP-ocX" eventType="valueChanged" id="db9-gC-vJU"/>
+                                                    </connections>
+                                                </slider>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Disabled" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="LO7-zu-dod">
+                                                    <rect key="frame" x="284" y="11.5" width="110" height="21"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="110" id="hNw-ej-zAT"/>
+                                                    </constraints>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                                    <nil key="textColor"/>
-                                                    <nil key="highlightedColor"/>
-                                                </label>
-                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Default" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="jtI-V2-0ST">
-                                                    <rect key="frame" x="320.5" y="12" width="55.5" height="20.5"/>
-                                                    <autoresizingMask key="autoresizingMask"/>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                                    <color key="textColor" white="0.66666666669999997" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                    <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                             </subviews>
+                                            <constraints>
+                                                <constraint firstItem="Jiv-Le-ay1" firstAttribute="leading" secondItem="COE-Fk-s7D" secondAttribute="leadingMargin" id="0E1-5Y-DhW"/>
+                                                <constraint firstItem="LO7-zu-dod" firstAttribute="centerY" secondItem="COE-Fk-s7D" secondAttribute="centerY" id="4Hf-tC-uUv"/>
+                                                <constraint firstItem="Jiv-Le-ay1" firstAttribute="centerY" secondItem="COE-Fk-s7D" secondAttribute="centerY" id="Ixx-Ei-BEK"/>
+                                                <constraint firstItem="LO7-zu-dod" firstAttribute="trailing" secondItem="COE-Fk-s7D" secondAttribute="trailingMargin" id="TjL-o3-1El"/>
+                                                <constraint firstItem="LO7-zu-dod" firstAttribute="leading" secondItem="Jiv-Le-ay1" secondAttribute="trailing" constant="16" id="YGY-e7-TTs"/>
+                                            </constraints>
                                         </tableViewCellContentView>
                                     </tableViewCell>
                                 </cells>
@@ -181,8 +189,8 @@
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Default" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="tFY-D8-yRW">
-                                                    <rect key="frame" x="320.5" y="12" width="55.5" height="20.5"/>
+                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="0" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="tFY-D8-yRW">
+                                                    <rect key="frame" x="365.5" y="12" width="10.5" height="20.5"/>
                                                     <autoresizingMask key="autoresizingMask"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <color key="textColor" white="0.66666666669999997" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -191,11 +199,11 @@
                                             </subviews>
                                         </tableViewCellContentView>
                                     </tableViewCell>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" accessoryType="disclosureIndicator" indentationWidth="10" textLabel="CkE-9s-cqo" detailTextLabel="rzE-Nc-jLc" style="IBUITableViewCellStyleValue1" id="abE-8s-0Yz">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" textLabel="CkE-9s-cqo" detailTextLabel="rzE-Nc-jLc" style="IBUITableViewCellStyleValue1" id="abE-8s-0Yz">
                                         <rect key="frame" x="0.0" y="523" width="414" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="abE-8s-0Yz" id="aIT-pG-6NL">
-                                            <rect key="frame" x="0.0" y="0.0" width="376" height="43.5"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="414" height="43.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Retransmission interval" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="CkE-9s-cqo">
@@ -205,8 +213,8 @@
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Default" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="rzE-Nc-jLc">
-                                                    <rect key="frame" x="320.5" y="12" width="55.5" height="20.5"/>
+                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="N/A" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="rzE-Nc-jLc">
+                                                    <rect key="frame" x="365.5" y="12" width="28.5" height="20.5"/>
                                                     <autoresizingMask key="autoresizingMask"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <color key="textColor" white="0.66666666669999997" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -241,7 +249,7 @@
                         <outlet property="doneButton" destination="pOA-WT-eUG" id="s2t-M4-FaH"/>
                         <outlet property="friendshipCredentialsFlagSwitch" destination="BMf-2m-pnI" id="lhx-JB-oGo"/>
                         <outlet property="keyCell" destination="6gd-60-7PQ" id="dDg-3Q-zDa"/>
-                        <outlet property="publishingPeriodLabel" destination="jtI-V2-0ST" id="Lgi-7I-678"/>
+                        <outlet property="periodLabel" destination="LO7-zu-dod" id="DAd-Ad-r7c"/>
                         <outlet property="retransmitCountLabel" destination="tFY-D8-yRW" id="Oyt-i6-1tr"/>
                         <outlet property="retransmitIntervalLabel" destination="rzE-Nc-jLc" id="Fwa-2O-fF7"/>
                         <outlet property="ttlLabel" destination="WJZ-yR-wNf" id="OwH-nc-5pf"/>
