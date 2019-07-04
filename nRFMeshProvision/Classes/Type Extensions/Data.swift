@@ -65,7 +65,7 @@ extension Double : DataConvertible { }
 extension String : DataConvertible {
     
     static func + (lhs: Data, rhs: String) -> Data {
-        guard let data = rhs.data(using: .utf8) else { return lhs}
+        guard let data = rhs.data(using: .utf8) else { return lhs }
         return lhs + data
     }
     

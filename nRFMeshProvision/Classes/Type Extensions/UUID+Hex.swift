@@ -33,4 +33,10 @@ internal extension UUID {
     var hex: String {
         return uuidString.replacingOccurrences(of: "-", with: "")
     }
+    
+    /// The UUID as Data.
+    var data: Data {
+        return withUnsafeBytes(of: uuid, { Data($0) })
+    }
+    
 }

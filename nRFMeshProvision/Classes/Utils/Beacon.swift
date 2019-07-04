@@ -73,11 +73,11 @@ public extension Dictionary where Key == String, Value == Any {
     }
 }
 
-public extension CBUUID {
+extension CBUUID {
     
-    /// Converts teh CBUUID to foundation UUID.
+    /// Converts the CBUUID to foundation UUID.
     var uuid: UUID {
-        return self.data.withUnsafeBytes { UUID(uuid: $0.load(as: uuid_t.self)) }
+        return data.withUnsafeBytes { UUID(uuid: $0.load(as: uuid_t.self)) }
     }
     
 }
