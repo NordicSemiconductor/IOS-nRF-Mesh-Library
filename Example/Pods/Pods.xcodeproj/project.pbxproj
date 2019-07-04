@@ -57,6 +57,10 @@
 		523F778122CB912B0030EA6A /* ConfigModelAppStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 523F778022CB912B0030EA6A /* ConfigModelAppStatus.swift */; };
 		523F778322CB94EA0030EA6A /* Node+Elements.swift in Sources */ = {isa = PBXBuildFile; fileRef = 523F778222CB94EA0030EA6A /* Node+Elements.swift */; };
 		523F778522CC888D0030EA6A /* Element+Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = 523F778422CC888D0030EA6A /* Element+Models.swift */; };
+		523F778F22CCF0C10030EA6A /* ConfigModelPublicationSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 523F778E22CCF0C10030EA6A /* ConfigModelPublicationSet.swift */; };
+		523F779122CDF4BB0030EA6A /* ConfigModelPublicationGet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 523F779022CDF4BB0030EA6A /* ConfigModelPublicationGet.swift */; };
+		523F779322CDF5A00030EA6A /* ConfigModelPublicationStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 523F779222CDF5A00030EA6A /* ConfigModelPublicationStatus.swift */; };
+		523F779522CDF82E0030EA6A /* ConfigModelPublicationVirtualAddressSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 523F779422CDF82E0030EA6A /* ConfigModelPublicationVirtualAddressSet.swift */; };
 		524C039622AE671900C5B1B9 /* ApplicationKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = 524C039522AE671900C5B1B9 /* ApplicationKeys.swift */; };
 		524C039822AF8FEF00C5B1B9 /* Element+Address.swift in Sources */ = {isa = PBXBuildFile; fileRef = 524C039722AF8FEF00C5B1B9 /* Element+Address.swift */; };
 		525242E2225CC6D30044CECB /* ClosedRange.swift in Sources */ = {isa = PBXBuildFile; fileRef = 525242E1225CC6D30044CECB /* ClosedRange.swift */; };
@@ -257,6 +261,10 @@
 		523F778022CB912B0030EA6A /* ConfigModelAppStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigModelAppStatus.swift; sourceTree = "<group>"; };
 		523F778222CB94EA0030EA6A /* Node+Elements.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Node+Elements.swift"; sourceTree = "<group>"; };
 		523F778422CC888D0030EA6A /* Element+Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Element+Models.swift"; sourceTree = "<group>"; };
+		523F778E22CCF0C10030EA6A /* ConfigModelPublicationSet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigModelPublicationSet.swift; sourceTree = "<group>"; };
+		523F779022CDF4BB0030EA6A /* ConfigModelPublicationGet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigModelPublicationGet.swift; sourceTree = "<group>"; };
+		523F779222CDF5A00030EA6A /* ConfigModelPublicationStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigModelPublicationStatus.swift; sourceTree = "<group>"; };
+		523F779422CDF82E0030EA6A /* ConfigModelPublicationVirtualAddressSet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigModelPublicationVirtualAddressSet.swift; sourceTree = "<group>"; };
 		524C039522AE671900C5B1B9 /* ApplicationKeys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplicationKeys.swift; sourceTree = "<group>"; };
 		524C039722AF8FEF00C5B1B9 /* Element+Address.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Element+Address.swift"; sourceTree = "<group>"; };
 		525242E1225CC6D30044CECB /* ClosedRange.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClosedRange.swift; sourceTree = "<group>"; };
@@ -654,6 +662,10 @@
 				523F777C22CB8B210030EA6A /* ConfigModelAppBind.swift */,
 				523F777E22CB90700030EA6A /* ConfigModelAppUnbind.swift */,
 				523F778022CB912B0030EA6A /* ConfigModelAppStatus.swift */,
+				523F779022CDF4BB0030EA6A /* ConfigModelPublicationGet.swift */,
+				523F778E22CCF0C10030EA6A /* ConfigModelPublicationSet.swift */,
+				523F779422CDF82E0030EA6A /* ConfigModelPublicationVirtualAddressSet.swift */,
+				523F779222CDF5A00030EA6A /* ConfigModelPublicationStatus.swift */,
 				52F6AD6F22BA172900F0D7DF /* ConfigNodeReset.swift */,
 				52F6AD7122BA17E100F0D7DF /* ConfigNodeResetStatus.swift */,
 				522AFFE422C24F6000521EDC /* ConfigDefaultTtlGet.swift */,
@@ -1197,10 +1209,12 @@
 				523F778322CB94EA0030EA6A /* Node+Elements.swift in Sources */,
 				5274B75122A1599F008450BC /* SegmentedAccessMessage.swift in Sources */,
 				5283528E2281B3510097B949 /* ProvisioningState.swift in Sources */,
+				523F779122CDF4BB0030EA6A /* ConfigModelPublicationGet.swift in Sources */,
 				525A3C0022AD2167000D3791 /* ConfigMessage.swift in Sources */,
 				5274B75722A1776F008450BC /* SegmentedControlMessage.swift in Sources */,
 				529B75EB224A6CE4008F1CE7 /* NetworkKey.swift in Sources */,
 				52DF5DA0229D7CAC00C297C1 /* UpperTransportLayer.swift in Sources */,
+				523F778F22CCF0C10030EA6A /* ConfigModelPublicationSet.swift in Sources */,
 				52F6AD7022BA172900F0D7DF /* ConfigNodeReset.swift in Sources */,
 				52F6AD7422BA3BCA00F0D7DF /* CompanyIdentifier.swift in Sources */,
 				528352462271F0C60097B949 /* MeshNetwork+Keys.swift in Sources */,
@@ -1226,6 +1240,7 @@
 				529B7623224BAB26008F1CE7 /* Publish.swift in Sources */,
 				528352A62282D0350097B949 /* MeshNetwork+Provisioning.swift in Sources */,
 				528352A02282CE830097B949 /* NetworkKey+MeshNetwork.swift in Sources */,
+				523F779322CDF5A00030EA6A /* ConfigModelPublicationStatus.swift in Sources */,
 				528352902281B57A0097B949 /* Beacon.swift in Sources */,
 				5283528C2281B3310097B949 /* ProvisioningCapabilities.swift in Sources */,
 				522AFFE922C2502F00521EDC /* ConfigDefaultTtlStatus.swift in Sources */,
@@ -1279,6 +1294,7 @@
 				529B75F0224A6CE4008F1CE7 /* MeshNetwork.swift in Sources */,
 				528352AA2282DA1E0097B949 /* GattBearerDelegate.swift in Sources */,
 				52B7F68222994D3C00B0A42F /* MeshMessageError.swift in Sources */,
+				523F779522CDF82E0030EA6A /* ConfigModelPublicationVirtualAddressSet.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

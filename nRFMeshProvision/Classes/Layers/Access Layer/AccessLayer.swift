@@ -122,6 +122,19 @@ private extension AccessLayer {
         case ConfigModelAppStatus.opCode:
             MessageType = ConfigModelAppStatus.self
             
+        // Publications
+        case ConfigModelPublicationGet.opCode:
+            MessageType = ConfigModelPublicationGet.self
+            
+        case ConfigModelPublicationSet.opCode:
+            MessageType = ConfigModelPublicationSet.self
+            
+        case ConfigModelPublicationVirtualAddressSet.opCode:
+            MessageType = ConfigModelPublicationVirtualAddressSet.self
+            
+        case ConfigModelPublicationStatus.opCode:
+            MessageType = ConfigModelPublicationStatus.self            
+            
         // Resetting Node
         case ConfigNodeReset.opCode:
             MessageType = ConfigNodeReset.self

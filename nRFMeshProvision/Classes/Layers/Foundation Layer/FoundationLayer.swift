@@ -133,6 +133,32 @@ internal class FoundationLayer {
                 }
             }
             
+        case let status as ConfigModelPublicationStatus:
+            if status.isSuccess,
+                let node = meshNetwork.node(withAddress: source),
+                let element = node.element(withAddress: status.elementAddress),
+                let model = element.model(withModelId: status.modelId) {
+                switch requests[source] {
+                case is ConfigModelPublicationSet:
+                    model.publish = status.publish
+                    save()
+                case let request as ConfigModelPublicationVirtualAddressSet:
+                    // Note: The Publish from the request has the Virtual Label set,
+                    //       while the status has only the 16-bit Virtual Address.
+                    // Note: We assume here, that the response is identical to the
+                    //       request, with an exception of the Virtual Label.
+                    model.publish = request.publish
+                    save()
+                case is ConfigModelPublicationGet:
+                    // TODO: The Virtual Label must be obtained from somewhere,
+                    //       as the status has only the 16-bit Virtual Address.
+                    model.publish = status.publish
+                    save()
+                default:
+                    break
+                }
+            }
+            
         case let defaultTtl as ConfigDefaultTtlStatus:
             if let node = meshNetwork.node(withAddress: source) {
                 node.apply(defaultTtl: defaultTtl)
@@ -168,6 +194,9 @@ internal class FoundationLayer {
             requests[destination] = configMessage
             
         case is ConfigModelAppBind, is ConfigModelAppUnbind:
+            requests[destination] = configMessage
+            
+        case is ConfigModelPublicationSet, is ConfigModelPublicationVirtualAddressSet, is ConfigModelPublicationGet:
             requests[destination] = configMessage
             
         default:

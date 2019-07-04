@@ -25,10 +25,11 @@ public struct MeshAddress {
     
     /// Creates a Mesh Address. For virtual addresses use
     /// `init(_ virtualAddress:UUID)` instead.
-    public init?(_ address: Address) {
-        guard address.isUnicast || address.isGroup else {
-            return nil
-        }
+    ///
+    /// This method will be used for Virtual Address
+    /// if the Virtual Label is not known, that is in
+    /// `ConfigModelPublicationStatus`.
+    public init(_ address: Address) {
         self.address = address
         self.virtualLabel = nil
     }
@@ -46,6 +47,17 @@ public struct MeshAddress {
         address &= 0xBFFF
         self.address = address
     }
+}
+
+extension MeshAddress {
+    
+    var hex: String {
+        if let virtualLabel = virtualLabel {
+            return virtualLabel.hex
+        }
+        return address.hex
+    }
+    
 }
 
 public extension MeshAddress {

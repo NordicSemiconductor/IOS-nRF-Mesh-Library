@@ -79,6 +79,16 @@ public protocol ConfigVendorModelMessage: ConfigModelMessage {
     var companyIdentifier: UInt16 { get }
 }
 
+public protocol ConfigAddressMessage: ConfigMessage {
+    /// Value of the Address.
+    var address: Address { get }
+}
+
+public protocol ConfigVirtualLabelMessage: ConfigMessage {
+    /// Value of the 128-bt Virtual Label UUID.
+    var virtualLabel: UUID { get }
+}
+
 internal extension ConfigMessage {
     
     /// Encodes given list of Key Indexes into a Data.
