@@ -39,6 +39,7 @@ class SetPublicationViewController: ConnectableViewController {
     var model: Model!
     var delegate: PublicationDelegate?
     
+    private var destination: Address?
     private var applicationKey: ApplicationKey!
     private var ttl: UInt8 = 0xFF {
         didSet {
@@ -58,6 +59,18 @@ class SetPublicationViewController: ConnectableViewController {
         MeshNetworkManager.instance.delegate = self
         
         keySelected(model.boundApplicationKeys.first!)
+        if model.boundApplicationKeys.count == 1 {
+            keyCell.accessoryType = .none
+            keyCell.selectionStyle = .none
+        }
+        doneButton.isEnabled = destination != nil
+    }
+    
+    override func shouldPerformSegue(withIdentifier identifier: String, sender: Any?) -> Bool {
+        if identifier == "selectKey" {
+            return model.boundApplicationKeys.count > 1
+        }
+        return true
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
