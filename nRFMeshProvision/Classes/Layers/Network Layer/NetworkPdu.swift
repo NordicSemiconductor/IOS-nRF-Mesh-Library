@@ -68,8 +68,12 @@ internal struct NetworkPdu {
         // If it doesn't, and the IV Update procedure is active, the PDU will be
         // deobfuscated and decoded with IV Index decremented by 1.
         var index = networkKey.ivIndex.index
-        if ivi != index & 0x1 && networkKey.ivIndex.updateActive {
-            index -= 1
+        if ivi != index & 0x1 {
+            if networkKey.ivIndex.updateActive && index > 1 {
+                index -= 1
+            } else {
+                return nil
+            }
         }
         
         let helper = OpenSSLHelper()
