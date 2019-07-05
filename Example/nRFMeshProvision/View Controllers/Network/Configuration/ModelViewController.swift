@@ -129,18 +129,53 @@ class ModelViewController: ConnectableViewController {
                 cell.textLabel?.text = "Set Publication"
                 return cell
             }
-            let cell = tableView.dequeueReusableCell(withIdentifier: "normal", for: indexPath)
+            let cell = tableView.dequeueReusableCell(withIdentifier: "destination", for: indexPath)
             let address = publish.publicationAddress
             if address.isVirtual {
-                cell.textLabel?.text = "Virtual label"
+                cell.textLabel?.text = "\(address)"
+                cell.detailTextLabel?.text = "Virtual label"
             } else if address.address.isUnicast {
-                cell.textLabel?.text = "Unicast address"
+                let meshNetwork = MeshNetworkManager.instance.meshNetwork!
+                let node = meshNetwork.node(withAddress: address.address)
+                if let element = node?.element(withAddress: address.address) {
+                    if let name = element.name {
+                        cell.textLabel?.text = name
+                        cell.detailTextLabel?.text = node?.name ?? "Unknown Device"
+                    } else {
+                        let index = node!.elements.firstIndex(of: element)!
+                        let name = "Element \(index + 1)"
+                        cell.textLabel?.text = name
+                        cell.detailTextLabel?.text = node?.name ?? "Unknown Device"
+                    }
+                } else {
+                    cell.textLabel?.text = "Unknown Element"
+                    cell.detailTextLabel?.text = "Unknown Node"
+                }
+                cell.tintColor = .nordicLake
             } else if address.address.isGroup {
-                cell.textLabel?.text = "Group address"
+                switch address.address {
+                case .allProxies:
+                    cell.textLabel?.text = "All Proxies"
+                    cell.detailTextLabel?.text = nil
+                case .allFriends:
+                    cell.textLabel?.text = "All Friends"
+                    cell.detailTextLabel?.text = nil
+                case .allRelays:
+                    cell.textLabel?.text = "All Relays"
+                    cell.detailTextLabel?.text = nil
+                case .allNodes:
+                    cell.textLabel?.text = "All Nodes"
+                    cell.detailTextLabel?.text = nil
+                default:
+                    // TODO: Read group name.
+                    cell.textLabel?.text = "\(address)"
+                    cell.detailTextLabel?.text = "Group address"
+                }
             } else {
                 cell.textLabel?.text = "Invalid address"
+                cell.detailTextLabel?.text = nil
+                cell.tintColor = .lightGray
             }
-            cell.detailTextLabel?.text = "\(address)"
             return cell
         }
         // Not possible.
