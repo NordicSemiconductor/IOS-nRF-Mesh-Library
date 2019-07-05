@@ -11,7 +11,7 @@ import nRFMeshProvision
 
 protocol DestinationDelegate {
     func keySelected(_ applicationKey: ApplicationKey)
-    func destinationSet(to name: String, withAddress address: MeshAddress, indexPath: IndexPath)
+    func destinationSet(to title: String, subtitle: String?, withAddress address: MeshAddress, indexPath: IndexPath)
     func destinationCleared()
 }
 
@@ -194,13 +194,12 @@ private extension SetPublicationDestinationsViewController {
             let element = compatibleElements[indexPath.row]
             let nodeName = element.parentNode!.name ?? "Unknown Device"
             let elementName = element.name ?? "Element \(indexPath.row)"
-            let name = "\(nodeName) / \(elementName)"
-            delegate?.destinationSet(to: name,
+            delegate?.destinationSet(to: nodeName, subtitle: elementName,
                                      withAddress: MeshAddress(element.unicastAddress),
                                      indexPath: indexPath)
         case IndexPath.specialGroupsSection:
             let selectedGroup = specialGroups[indexPath.row]
-            delegate?.destinationSet(to: selectedGroup.title,
+            delegate?.destinationSet(to: selectedGroup.title, subtitle: nil,
                                      withAddress: MeshAddress(selectedGroup.address),
                                      indexPath: indexPath)
         default:

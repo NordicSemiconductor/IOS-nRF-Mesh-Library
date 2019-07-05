@@ -35,7 +35,7 @@ class SetPublicationViewController: ConnectableViewController {
         retransmissionIntervalSelected(UInt8(sender.value))
     }
     
-    @IBOutlet weak var destinationLabel: UILabel!
+    @IBOutlet weak var destinationCell: UITableViewCell!
     @IBOutlet weak var friendshipCredentialsFlagSwitch: UISwitch!
     @IBOutlet weak var ttlLabel: UILabel!
     @IBOutlet weak var periodLabel: UILabel!
@@ -97,6 +97,13 @@ class SetPublicationViewController: ConnectableViewController {
     }
     
     // MARK: - Table view data source
+    
+    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        if indexPath.isDestination {
+            return 56
+        }
+        return UITableView.automaticDimension
+    }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
@@ -194,20 +201,23 @@ extension SetPublicationViewController: DestinationDelegate {
     func keySelected(_ applicationKey: ApplicationKey) {
         self.applicationKey = applicationKey
     }
-    
-    func destinationSet(to name: String, withAddress address: MeshAddress, indexPath: IndexPath) {
+    func destinationSet(to title: String, subtitle: String?, withAddress address: MeshAddress, indexPath: IndexPath) {
         self.selectedDestinationIndexPath = indexPath
         self.destination = address
-        self.destinationLabel.text = name
-        self.destinationLabel.textColor = .darkText
+        self.destinationCell.textLabel?.text = title
+        self.destinationCell.textLabel?.textColor = .darkText
+        self.destinationCell.detailTextLabel?.text = subtitle
+        self.destinationCell.tintColor = .nordicLake
         self.doneButton.isEnabled = true
     }
     
     func destinationCleared() {
         self.selectedDestinationIndexPath = nil
         self.destination = nil
-        self.destinationLabel.text = "No destination selected"
-        self.destinationLabel.textColor = .lightGray
+        self.destinationCell.textLabel?.text = "No destination selected"
+        self.destinationCell.textLabel?.textColor = .lightGray
+        self.destinationCell.detailTextLabel?.text = nil
+        self.destinationCell.tintColor = .lightGray
         self.doneButton.isEnabled = false
     }
     
@@ -230,5 +240,11 @@ private extension UInt8 {
 }
 
 private extension IndexPath {
+    static let destinationSection = 0
+    
     static let ttl = IndexPath(row: 0, section: 2)
+    
+    var isDestination: Bool {
+        return section == IndexPath.destinationSection && row == 0
+    }
 }
