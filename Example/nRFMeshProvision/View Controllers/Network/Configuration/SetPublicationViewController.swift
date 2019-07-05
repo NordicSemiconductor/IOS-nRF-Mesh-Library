@@ -28,13 +28,21 @@ class SetPublicationViewController: ConnectableViewController {
     @IBAction func periodDidChange(_ sender: UISlider) {
         periodSelected(sender.value)
     }
+    @IBAction func retransmissionCountDidChange(_ sender: UISlider) {
+        retransmissionCountSelected(UInt8(sender.value))
+    }
+    @IBAction func retransmissionIntervalDidChange(_ sender: UISlider) {
+        retransmissionIntervalSelected(UInt8(sender.value))
+    }
+    
     @IBOutlet weak var destinationLabel: UILabel!
     @IBOutlet weak var keyCell: UITableViewCell!
     @IBOutlet weak var friendshipCredentialsFlagSwitch: UISwitch!
     @IBOutlet weak var ttlLabel: UILabel!
     @IBOutlet weak var periodLabel: UILabel!
     @IBOutlet weak var retransmitCountLabel: UILabel!
-    @IBOutlet weak var retransmitIntervalLabel: UIView!
+    @IBOutlet weak var retransmitIntervalSlider: UISlider!
+    @IBOutlet weak var retransmitIntervalLabel: UILabel!
         
     // MARK: - Properties
     
@@ -54,6 +62,8 @@ class SetPublicationViewController: ConnectableViewController {
     }
     private var periodSteps: UInt8 = 0
     private var periodResolution: Publish.StepResolution = ._100_milliseconds
+    private var retransmissionCount: UInt8 = 0
+    private var retransmissionIntervalSteps: UInt8 = 0
     
     // MARK: - View Controller
 
@@ -180,12 +190,41 @@ extension SetPublicationViewController: KeySelectionDelegate, DestinationDelegat
         }
     }
     
+    func retransmissionCountSelected( _ count: UInt8) {
+        retransmitIntervalSlider.isEnabled = count > 0
+        if count == 0 {
+            retransmitCountLabel.text = "Disabled"
+            retransmitIntervalLabel.text = "N/A"
+        } else if count == 1 {
+            retransmitCountLabel.text = "\(count) time"
+            retransmitIntervalLabel.text = "\(retransmissionIntervalSteps.interval) ms"
+        } else {
+            retransmitCountLabel.text = "\(count) times"
+            retransmitIntervalLabel.text = "\(retransmissionIntervalSteps.interval) ms"
+        }
+        retransmissionCount = count
+    }
+    
+    func retransmissionIntervalSelected(_ steps: UInt8) {
+        retransmissionIntervalSteps = steps
+        retransmitIntervalLabel.text = "\(steps.interval) ms"
+        print("Steps: \(steps)")
+    }
+    
 }
 
 extension SetPublicationViewController: MeshNetworkDelegate {
     
     func meshNetwork(_ meshNetwork: MeshNetwork, didDeliverMessage message: MeshMessage, from source: Address) {
         
+    }
+    
+}
+
+private extension UInt8 {
+    
+    var interval: Int {
+        return (Int(self) + 1) * 50
     }
     
 }
