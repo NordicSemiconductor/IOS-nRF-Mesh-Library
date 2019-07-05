@@ -16,15 +16,19 @@ public class Publish: Codable {
         /// Number of retransmissions for network messages.
         /// The value is in range from 0 to 7, where 0 means no retransmissions.
         public internal(set) var count: UInt8
-        /// The interval (in milliseconds) between retransmissions.
+        /// The interval (in milliseconds) between retransmissions (50...3200 with step 50).
         public internal(set) var interval: UInt16
+        /// Retransmission steps, from 0 to 63.
+        internal var steps: UInt8 {
+            return UInt8((interval / 50) - 1)
+        }
         
         internal init() {
             self.count = 0
-            self.interval = 1000
+            self.interval = 50
         }
         
-        internal init(publishRetransmitCount: UInt8, intervalSteps: UInt8) {
+        public init(publishRetransmitCount: UInt8, intervalSteps: UInt8) {
             self.count    = publishRetransmitCount
             // Interval is in 50 ms steps.
             self.interval = UInt16(intervalSteps + 1) * 50 // ms

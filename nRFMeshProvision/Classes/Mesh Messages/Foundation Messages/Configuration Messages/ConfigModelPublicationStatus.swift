@@ -16,7 +16,7 @@ public struct ConfigModelPublicationStatus: ConfigAnyModelMessage, ConfigStatusM
         data += UInt8(publish.index >> 8) | UInt8(publish.credentials << 4)
         data += publish.ttl
         data += (publish.periodSteps! & 0x3F) | (publish.periodResolution!.rawValue >> 6)
-        data += (publish.retransmit.count & 0x07) | UInt8((publish.retransmit.interval / 50) - 1)
+        data += (publish.retransmit.count & 0x07) | (publish.retransmit.steps << 3)
         data += modelIdentifier
         if let companyIdentifier = companyIdentifier {
             return data + companyIdentifier
@@ -69,7 +69,7 @@ public struct ConfigModelPublicationStatus: ConfigAnyModelMessage, ConfigStatusM
                                periodSteps: periodSteps, periodResolution: periodResolution,
                                retransmit: retransmit)
         self.modelIdentifier = parameters.read(fromOffset: 10)
-        if parameters.count == 12 {
+        if parameters.count == 14 {
             self.companyIdentifier = parameters.read(fromOffset: 12)
         } else {
             self.companyIdentifier = nil
