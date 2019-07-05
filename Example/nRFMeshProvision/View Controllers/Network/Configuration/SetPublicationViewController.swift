@@ -102,6 +102,9 @@ class SetPublicationViewController: ConnectableViewController {
         if indexPath.isDestination {
             return 56
         }
+        if indexPath.isDetailsSection {
+            return 44
+        }
         return UITableView.automaticDimension
     }
     
@@ -241,10 +244,15 @@ private extension UInt8 {
 
 private extension IndexPath {
     static let destinationSection = 0
+    static let detailsSection     = 1
     
-    static let ttl = IndexPath(row: 0, section: 2)
+    static let ttl = IndexPath(row: 0, section: 1)
     
     var isDestination: Bool {
         return section == IndexPath.destinationSection && row == 0
+    }
+    
+    var isDetailsSection: Bool {
+        return section == IndexPath.detailsSection
     }
 }

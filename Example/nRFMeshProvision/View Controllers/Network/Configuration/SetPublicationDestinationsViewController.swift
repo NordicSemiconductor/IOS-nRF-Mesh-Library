@@ -65,7 +65,7 @@ class SetPublicationDestinationsViewController: UITableViewController {
         if section == IndexPath.groupsSection {
             return specialGroups.count
         }
-        return 0 // TODO: Groups and special groups
+        return 0 // TODO: Groups, including virtual addresses.
     }
     
     override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
@@ -194,7 +194,7 @@ private extension SetPublicationDestinationsViewController {
             let element = compatibleElements[indexPath.row]
             let nodeName = element.parentNode!.name ?? "Unknown Device"
             let elementName = element.name ?? "Element \(indexPath.row)"
-            delegate?.destinationSet(to: nodeName, subtitle: elementName,
+            delegate?.destinationSet(to: elementName, subtitle: nodeName,
                                      withAddress: MeshAddress(element.unicastAddress),
                                      indexPath: indexPath)
         case IndexPath.specialGroupsSection:
