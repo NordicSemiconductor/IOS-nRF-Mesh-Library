@@ -164,21 +164,6 @@ public extension MeshNetworkManager {
         send(message, to: destination.address, using: applicationKey)
     }
     
-    /// Sends Configuration Message to the Node with given destination Address.
-    /// The `destination` must be a Unicast Address, otherwise the method
-    /// does nothing.
-    ///
-    /// If the `transporter` throws an error during sending, this error will be ignored.
-    ///
-    /// - parameter message:     The message to be sent.
-    /// - parameter destination: The destination Unicast Address.
-    func send(_ message: ConfigMessage, to destination: Address) {
-        guard let networkManager = networkManager else {
-            return
-        }
-        networkManager.send(message, to: destination)
-    }
-    
     /// Encrypts the message with the first Application Key bound to the given
     /// Model and a Network Key bound to it, and sends it to the Node
     /// to which the Model belongs to.
@@ -201,6 +186,23 @@ public extension MeshNetworkManager {
         send(message, to: element.unicastAddress, using: applicationKey)
     }
     
+    // TODO: Add send to Group method.
+    
+    /// Sends Configuration Message to the Node with given destination Address.
+    /// The `destination` must be a Unicast Address, otherwise the method
+    /// does nothing.
+    ///
+    /// If the `transporter` throws an error during sending, this error will be ignored.
+    ///
+    /// - parameter message:     The message to be sent.
+    /// - parameter destination: The destination Unicast Address.
+    func send(_ message: ConfigMessage, to destination: Address) {
+        guard let networkManager = networkManager else {
+            return
+        }
+        networkManager.send(message, to: destination)
+    }
+    
     /// Sends Configuration Message to the given Node.
     ///
     /// If the `transporter` throws an error during sending, this error will be ignored.
@@ -218,11 +220,25 @@ public extension MeshNetworkManager {
     /// - parameter message: The message to be sent.
     /// - parameter element: The destination Element.
     func send(_ message: ConfigMessage, to element: Element) {
-        guard let _ = element.parentNode else {
+        guard let node = element.parentNode else {
             print("Error: Element does not belong to a Node")
             return
         }
-        send(message, to: element.unicastAddress)
+        send(message, to: node)
+    }
+    
+    /// Sends Configuration Message to the given Node.
+    ///
+    /// If the `transporter` throws an error during sending, this error will be ignored.
+    ///
+    /// - parameter message: The message to be sent.
+    /// - parameter model:   The destination Model.
+    func send(_ message: ConfigMessage, to model: Model) {
+        guard let element = model.parentElement else {
+            print("Error: Model does not belong to an Element")
+            return
+        }
+        send(message, to: element)
     }
     
 }
