@@ -105,7 +105,7 @@ extension NodeAddAppKeyViewController: MeshNetworkDelegate {
                     self.dismiss(animated: true)
                     self.delegate?.keyAdded()
                 } else {
-                    self.presentAlert(title: "Error", message: "\(status.status)")
+                    self.presentAlert(title: "Error", message: status.message)
                 }
             }
         default:

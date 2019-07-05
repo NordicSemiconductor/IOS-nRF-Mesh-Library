@@ -24,18 +24,7 @@ class ModelBindAppKeyViewController: ConnectableViewController {
         dismiss(animated: true)
     }
     @IBAction func doneTapped(_ sender: UIBarButtonItem) {
-        guard let selectedIndexPath = selectedIndexPath else {
-            return
-        }
-        let selectedAppKey = keys[selectedIndexPath.row]
-        whenConnected() { alert in
-            guard let node = self.model.parentElement.parentNode else {
-                self.done()
-                return
-            }
-            alert?.message = "Binding Application Key..."
-            MeshNetworkManager.instance.send(ConfigModelAppBind(applicationKey: selectedAppKey, to: self.model), to: node)
-        }
+        bind()
     }
     
     // MARK: - Properties
@@ -95,6 +84,24 @@ class ModelBindAppKeyViewController: ConnectableViewController {
         doneButton.isEnabled = true
     }
 
+}
+
+private extension ModelBindAppKeyViewController {
+    
+    func bind() {
+        guard let selectedIndexPath = selectedIndexPath else {
+            return
+        }
+        guard let node = self.model.parentElement.parentNode else {
+            return
+        }
+        let selectedAppKey = keys[selectedIndexPath.row]
+        whenConnected() { alert in
+            alert?.message = "Binding Application Key..."
+            MeshNetworkManager.instance.send(ConfigModelAppBind(applicationKey: selectedAppKey, to: self.model), to: node)
+        }
+    }
+    
 }
 
 extension ModelBindAppKeyViewController: MeshNetworkDelegate {

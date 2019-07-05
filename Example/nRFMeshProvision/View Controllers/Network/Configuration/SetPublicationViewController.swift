@@ -24,6 +24,7 @@ class SetPublicationViewController: ConnectableViewController {
         dismiss(animated: true)
     }
     @IBAction func doneTapped(_ sender: UIBarButtonItem) {
+        setPublication()
     }
     @IBAction func periodDidChange(_ sender: UISlider) {
         periodSelected(sender.value)
@@ -197,6 +198,24 @@ private extension SetPublicationViewController {
         print("Steps: \(steps)")
     }
     
+    func setPublication() {
+        guard let destination = destination, let applicationKey = applicationKey else {
+            return
+        }
+        guard let node = self.model.parentElement.parentNode else {
+            return
+        }
+        whenConnected { alert in
+            alert?.message = "Setting Model Publication..."
+            let publish = Publish(to: destination, using: applicationKey,
+                                  usingFriendshipMaterial: self.friendshipCredentialsFlagSwitch.isOn, ttl: self.ttl,
+                                  periodSteps: self.periodSteps, periodResolution: self.periodResolution,
+                                  retransmit: Publish.Retransmit(publishRetransmitCount: self.retransmissionCount,
+                                                                 intervalSteps: self.retransmissionIntervalSteps))
+            MeshNetworkManager.instance.send(ConfigModelPublicationSet(publish, to: self.model), to: node)
+        }
+    }
+    
 }
 
 extension SetPublicationViewController: DestinationDelegate {
@@ -204,6 +223,7 @@ extension SetPublicationViewController: DestinationDelegate {
     func keySelected(_ applicationKey: ApplicationKey) {
         self.applicationKey = applicationKey
     }
+    
     func destinationSet(to title: String, subtitle: String?, withAddress address: MeshAddress, indexPath: IndexPath) {
         self.selectedDestinationIndexPath = indexPath
         self.destination = address
@@ -229,7 +249,19 @@ extension SetPublicationViewController: DestinationDelegate {
 extension SetPublicationViewController: MeshNetworkDelegate {
     
     func meshNetwork(_ meshNetwork: MeshNetwork, didDeliverMessage message: MeshMessage, from source: Address) {
-        
+        switch message {
+        case let status as ConfigModelPublicationStatus:
+            done() {
+                if status.status == .success {
+                    self.dismiss(animated: true)
+                    self.delegate?.publicationChanged()
+                } else {
+                    self.presentAlert(title: "Error", message: status.message)
+                }
+            }
+        default:
+            break
+        }
     }
     
 }
@@ -255,4 +287,5 @@ private extension IndexPath {
     var isDetailsSection: Bool {
         return section == IndexPath.detailsSection
     }
+    
 }
