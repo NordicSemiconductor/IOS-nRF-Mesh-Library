@@ -229,7 +229,7 @@ class ModelViewController: ConnectableViewController {
     
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if indexPath.isPublishSection {
-            
+            removePublication()
         }
     }
 
@@ -243,15 +243,25 @@ private extension ModelViewController {
     /// - parameter indexPath: An IndexPath pointing the Application Key
     //                         to unbind.
     func unbindApplicationKey(at indexPath: IndexPath) {
-        whenConnected { action in
-            guard let node = self.model.parentElement.parentNode,
-                indexPath.row < self.model.boundApplicationKeys.count else {
-                self.done()
+        guard let node = self.model.parentElement.parentNode,
+            indexPath.row < self.model.boundApplicationKeys.count else {
                 return
-            }
-            let applicationKey = self.model.boundApplicationKeys[indexPath.row]
+        }
+        let applicationKey = model.boundApplicationKeys[indexPath.row]
+        whenConnected { action in
             action?.message = "Unbinding Application Key"
             MeshNetworkManager.instance.send(ConfigModelAppUnbind(applicationKey: applicationKey, to: self.model), to: node)
+        }
+    }
+    
+    /// Removes the publicaton from the model.
+    func removePublication() {
+        guard let node = self.model.parentElement.parentNode else {
+            return
+        }
+        whenConnected { action in
+            action?.message = "Removing Publication..."
+            MeshNetworkManager.instance.send(ConfigModelPublicationSet(removeFrom: self.model), to: node)
         }
     }
     
@@ -268,7 +278,16 @@ extension ModelViewController: MeshNetworkDelegate {
                 tableView.reloadSections(.bindings, with: .automatic)
                 setEditing(false, animated: true)
             } else {
-                presentAlert(title: "Error", message: "\(status.status)")
+                presentAlert(title: "Error", message: status.message)
+            }
+        case let status as ConfigModelPublicationStatus:
+            done()
+            
+            if status.isSuccess {
+                tableView.reloadSections(.publication, with: .automatic)
+                setEditing(false, animated: true)
+            } else {
+                presentAlert(title: "Error", message: status.message)
             }
         default:
             break

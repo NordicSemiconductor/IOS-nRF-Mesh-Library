@@ -140,7 +140,12 @@ internal class FoundationLayer {
                 let model = element.model(withModelId: status.modelId) {
                 switch requests[source] {
                 case is ConfigModelPublicationSet:
-                    model.publish = status.publish
+                    if !status.publish.publicationAddress.address.isUnassigned {
+                        model.publish = status.publish
+                    } else {
+                        // An unassigned Address is sent to remove the publication.
+                        model.publish = nil
+                    }
                     save()
                 case let request as ConfigModelPublicationVirtualAddressSet:
                     // Note: The Publish from the request has the Virtual Label set,

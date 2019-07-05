@@ -100,6 +100,18 @@ public class Publish: Codable {
         self.retransmit = retransmit
     }
     
+    /// This constructor should be used to remove the publication from a Model.
+    internal init() {
+        self.address = "0000"
+        self.index = 0
+        self.credentials = 0
+        self.ttl = 0
+        self.periodSteps = 0
+        self.periodResolution = ._100_milliseconds
+        self.period = 0
+        self.retransmit = Retransmit(publishRetransmitCount: 0, intervalSteps: 0)
+    }
+    
     internal init(to destination: String, withKeyIndex keyIndex: KeyIndex,
                 friendshipCredentialsFlag: Int,
                 ttl: UInt8, periodSteps: UInt8, periodResolution: StepResolution, retransmit: Retransmit) {

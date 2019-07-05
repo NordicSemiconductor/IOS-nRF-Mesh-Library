@@ -42,6 +42,13 @@ public struct ConfigModelPublicationSet: ConfigAnyModelMessage {
         self.companyIdentifier = model.companyIdentifier
     }
     
+    public init(removeFrom model: Model) {
+        self.publish = Publish()
+        self.elementAddress = model.parentElement.unicastAddress
+        self.modelIdentifier = model.modelIdentifier
+        self.companyIdentifier = model.companyIdentifier
+    }
+    
     public init?(parameters: Data) {
         guard parameters.count == 11 || parameters.count == 13 else {
             return nil
