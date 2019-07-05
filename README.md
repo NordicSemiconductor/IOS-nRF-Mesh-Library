@@ -1,19 +1,44 @@
-# nRFMeshProvision
+# nRFMeshProvision version 2
 
 ## About
 
-An early alpha version of the Bluetooth Mesh specification, this library will allow you to provision and configure bluetooth Mesh compliant nodes.
-Addtionally, GenericOnOff Server models can be controlled from within the Example Application.
-This is a preview version that has missing features and capabilities that are going to be added in the near future. 
+This is the second version of the nRF Mesh Provision library for iOS. It is still under development and many features are not supported.
+However, all implemented features should work and are tested againt nRF Mesh SDK 3.1 and Zephyr based mesh device.
+
+The first version of this library is no longer maintained. The application available on App Store will eventually be replaced with the new sample
+application.
+
+## Supported features
+
+1. Provisionig with all features that available in Bluetooth Mesh Profile 1.0.1, including OOB Public Key and all types of OOB.
+2. Managing Provisioners, Network Keys, Application Keys, resetting network, etc.
+3. All network layers are working.
+4. Parsing Secure Network beacons.
+5. Adding, removing and refreshing Network and Application Keys to Nodes.
+6. Binging and unbinding Application Keys to Models.
+7. Setting publication to a Model.
+
+## NOT (yet) supported features
+
+1. Setting subscriptions.
+2. Vendor models and SIG defined models, except from supported ones.
+3. Handling Configuration Server message sent by other Provisioner.
+4. Proxy Filter.
+5. Groups, including those with Virtual Addresses.
+6. Key Refresh Procedure.
+
+## Feedback
+
+Any feedback is more than welcome. Please, test the app, test the library and check out the API.
 
 ## Requirements
 
-* Xcode
+* Xcode 10.2.1 or newer
 * An iOS device with BLE capabilities
 
 ## Optional
 
-* nrf52832 based Development Kit(s) to test the sample firmwares on.
+* nrf52832 or nrf52840 based Development Kit(s) to test the sample firmwares on.
 
 ## Installation
 
