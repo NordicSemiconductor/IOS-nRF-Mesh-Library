@@ -48,12 +48,16 @@ public extension Element {
     /// For example, a compatible Model to Generic On/Off Server is
     /// Generic On/Off Client, and vice versa.
     ///
-    /// - parameter model: The Model, which pair is required.
+    /// - parameter model:          The Model, which pair is required.
+    /// - parameter applicationKey: The Application Key which the Model
+    ///                             must be bound to.
     /// - returns: `True`, if the Element has the matching Model.
-    func contains(modelCompatibleWith model: Model) -> Bool {
+    func contains(modelCompatibleWith model: Model, boundTo applicationKey: ApplicationKey) -> Bool {
         // Find a Client for a Server, or Server for a Client.
         let compatibleModelId = (model.modelId % 2 == 0) ? model.modelId + 1 : model.modelId - 1
-        return models.contains(where: { $0.modelId == compatibleModelId })
+        return models.contains {
+            $0.modelId == compatibleModelId && $0.bind.contains(applicationKey.index)
+        }
     }
     
 }

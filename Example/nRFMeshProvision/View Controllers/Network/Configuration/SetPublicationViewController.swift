@@ -36,7 +36,6 @@ class SetPublicationViewController: ConnectableViewController {
     }
     
     @IBOutlet weak var destinationLabel: UILabel!
-    @IBOutlet weak var keyCell: UITableViewCell!
     @IBOutlet weak var friendshipCredentialsFlagSwitch: UISwitch!
     @IBOutlet weak var ttlLabel: UILabel!
     @IBOutlet weak var periodLabel: UILabel!
@@ -50,7 +49,7 @@ class SetPublicationViewController: ConnectableViewController {
     var delegate: PublicationDelegate?
     
     private var destination: MeshAddress?
-    private var applicationKey: ApplicationKey!
+    private var applicationKey: ApplicationKey?
     private var ttl: UInt8 = 0xFF {
         didSet {
             if ttl == 0xFF {
@@ -65,6 +64,8 @@ class SetPublicationViewController: ConnectableViewController {
     private var retransmissionCount: UInt8 = 0
     private var retransmissionIntervalSteps: UInt8 = 0
     
+    private var selectedDestinationIndexPath: IndexPath?
+    
     // MARK: - View Controller
 
     override func viewDidLoad() {
@@ -72,12 +73,7 @@ class SetPublicationViewController: ConnectableViewController {
         
         MeshNetworkManager.instance.delegate = self
         
-        keySelected(model.boundApplicationKeys.first!)
-        if model.boundApplicationKeys.count == 1 {
-            keyCell.accessoryType = .none
-            keyCell.selectionStyle = .none
-        }
-        doneButton.isEnabled = destination != nil
+        destinationCleared()
     }
     
     override func shouldPerformSegue(withIdentifier identifier: String, sender: Any?) -> Bool {
@@ -92,12 +88,9 @@ class SetPublicationViewController: ConnectableViewController {
         case .some("setDestination"):
             let destination = segue.destination as! SetPublicationDestinationsViewController
             destination.model = model
+            destination.selectedApplicationKey = applicationKey
+            destination.selectedIndexPath = selectedDestinationIndexPath
             destination.delegate = self
-        case .some("selectKey"):
-            let destination = segue.destination as! SetPublicationSelectKeyViewController
-            destination.model = model
-            destination.delegate = self
-            destination.selectedKey = applicationKey
         default:
             break
         }
@@ -128,23 +121,6 @@ private extension SetPublicationViewController {
                          })) { value in
                             self.ttl = UInt8(value)!
         }
-    }
-    
-}
-
-extension SetPublicationViewController: KeySelectionDelegate, DestinationDelegate {
-    
-    func destinationSet(to name: String, withAddress address: MeshAddress) {
-        self.destination = address
-        self.destinationLabel.text = name
-        self.destinationLabel.textColor = .darkText
-        self.doneButton.isEnabled = true
-    }
-    
-    func keySelected(_ applicationKey: ApplicationKey) {
-        self.applicationKey = applicationKey
-        self.keyCell.textLabel?.text = applicationKey.name
-        self.keyCell.detailTextLabel?.text = "Bound to \(applicationKey.boundNetworkKey.name)"
     }
     
     func periodSelected(_ period: Float) {
@@ -209,6 +185,30 @@ extension SetPublicationViewController: KeySelectionDelegate, DestinationDelegat
         retransmissionIntervalSteps = steps
         retransmitIntervalLabel.text = "\(steps.interval) ms"
         print("Steps: \(steps)")
+    }
+    
+}
+
+extension SetPublicationViewController: DestinationDelegate {
+    
+    func keySelected(_ applicationKey: ApplicationKey) {
+        self.applicationKey = applicationKey
+    }
+    
+    func destinationSet(to name: String, withAddress address: MeshAddress, indexPath: IndexPath) {
+        self.selectedDestinationIndexPath = indexPath
+        self.destination = address
+        self.destinationLabel.text = name
+        self.destinationLabel.textColor = .darkText
+        self.doneButton.isEnabled = true
+    }
+    
+    func destinationCleared() {
+        self.selectedDestinationIndexPath = nil
+        self.destination = nil
+        self.destinationLabel.text = "No destination selected"
+        self.destinationLabel.textColor = .lightGray
+        self.doneButton.isEnabled = false
     }
     
 }
