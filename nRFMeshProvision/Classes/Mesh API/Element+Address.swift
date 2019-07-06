@@ -13,7 +13,7 @@ public extension Element {
     /// For Elements not added to Node this returns the Element index
     /// value as `Address`.
     var unicastAddress: Address {
-        return parentNode?.unicastAddress ?? 0 + Address(index)
+        return (parentNode?.unicastAddress ?? 0) + Address(index)
     }
     
 }
