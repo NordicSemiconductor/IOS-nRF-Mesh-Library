@@ -39,6 +39,8 @@ public class MeshNetwork: Codable {
     public internal(set) var applicationKeys: [ApplicationKey]
     /// An array of nodes in the network.
     public internal(set) var nodes: [Node]
+    /// An array of groups in teh network.
+    public internal(set) var groups: [Group]
     
     internal init(name: String, uuid: UUID = UUID()) {
         schema          = "http://json-schema.org/draft-04/schema#"
@@ -51,6 +53,7 @@ public class MeshNetwork: Codable {
         networkKeys     = []
         applicationKeys = []
         nodes           = []
+        groups          = []
     }
     
     // MARK: - Codable
@@ -67,6 +70,7 @@ public class MeshNetwork: Codable {
         case networkKeys     = "netKeys"
         case applicationKeys = "appKeys"
         case nodes
+        case groups
     }
     
     public required init(from decoder: Decoder) throws {
@@ -81,6 +85,7 @@ public class MeshNetwork: Codable {
         networkKeys = try container.decode([NetworkKey].self, forKey: .networkKeys)
         applicationKeys = try container.decode([ApplicationKey].self, forKey: .applicationKeys)
         nodes = try container.decode([Node].self, forKey: .nodes)
+        groups = try container.decode([Group].self, forKey: .groups)
         
         provisioners.forEach {
             $0.meshNetwork = self
@@ -89,6 +94,9 @@ public class MeshNetwork: Codable {
             $0.meshNetwork = self
         }
         nodes.forEach {
+            $0.meshNetwork = self
+        }
+        groups.forEach {
             $0.meshNetwork = self
         }
     }
@@ -129,6 +137,9 @@ extension MeshNetwork {
     func remove(nodeWithUuid uuid: UUID) {
         if let index = nodes.firstIndex(where: { $0.uuid == uuid }) {
             let node = nodes.remove(at: index)
+            // TODO: Verify that no Node is publishing to this Node.
+            //       If such Node is found, this method should throw, as
+            //       the Node is in use.
             node.meshNetwork = nil
             
             // Forget the last sequence number for the device.

@@ -57,7 +57,7 @@ public extension Address {
     /// Returns `true` if the address is a Group Address.
     /// Group addresses match 0b11xxxxxxxxxxxxxx.
     var isGroup: Bool {
-        return (self & 0xC000) == 0xC000
+        return (self & 0xC000) == 0xC000 && isValidAddress
     }
     
 }

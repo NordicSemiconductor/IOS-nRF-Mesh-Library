@@ -8,13 +8,13 @@
 import Foundation
 
 public class Element: Codable {
-    /// UTF-8 human-readable name of the element.
+    /// UTF-8 human-readable name of the Element.
     public var name: String?
-    /// Numeric order of the element within this node.
+    /// Numeric order of the Element within this Node.
     public internal(set) var index: UInt8
-    /// Description of the element's location.
+    /// Description of the Element's location.
     public internal(set) var location: Location
-    /// An array of model objects in the element.
+    /// An array of Model objects in the Element.
     public internal(set) var models: [Model]
     
     /// Parent Node. This may be `nil` if the Element was obtained in

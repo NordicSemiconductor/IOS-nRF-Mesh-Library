@@ -70,6 +70,18 @@ public extension MeshAddress {
     
 }
 
+extension MeshAddress: Equatable {
+    
+    public static func == (lhs: MeshAddress, rhs: MeshAddress) -> Bool {
+        return lhs.address == rhs.address
+    }
+    
+    public static func != (lhs: MeshAddress, rhs: MeshAddress) -> Bool {
+        return lhs.address != rhs.address
+    }
+    
+}
+
 extension MeshAddress: CustomDebugStringConvertible {
     
     public var debugDescription: String {

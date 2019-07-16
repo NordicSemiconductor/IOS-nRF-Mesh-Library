@@ -36,6 +36,9 @@ public enum MeshModelError: Error {
     case invalidKey
     /// Thrown when trying to remove a key that is being used by some node.
     case keyInUse
+    /// Throw when trying to remove a Group that is either a parent of another
+    /// Group, or set as publication or subcription address for any Model.
+    case groupInUse
     /// Thrown when the given Key Index is not valid.
     case keyIndexOutOfRange
     /// Thrown when Network Key is required to continue with the operation.

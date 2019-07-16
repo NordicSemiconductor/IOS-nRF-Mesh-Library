@@ -57,7 +57,7 @@ public class Publish: Codable {
     
     /// Publication address for the Model. It's 4 or 32-character long
     /// hexadecimal string.
-    internal let address: String
+    private let address: String
     /// Publication address for the model.
     public var publicationAddress: MeshAddress {
         // Warning: assuming hex address is valid!
