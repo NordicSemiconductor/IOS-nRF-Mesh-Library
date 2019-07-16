@@ -153,7 +153,8 @@ struct TestStorage: Storage {
                                     ],
                                     "blacklisted": false
                                 }
-                            ]
+                            ],
+                            "groups": []
                         }
                 }
                 """#.data(using: .utf8)
