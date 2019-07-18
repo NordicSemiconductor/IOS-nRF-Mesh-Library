@@ -27,6 +27,9 @@ public class Group: Codable {
     /// in another group (i.e., the group has no parent).
     internal var _parentAddress: String = "0000"
     /// The parent Group of this Group, or `nil`, if the Group has no parent.
+    /// The Group must be added to a mesh network in order to get or set the
+    /// parent Group. The parent Group must be added to the network prior to
+    /// the child.
     public var parent: Group? {
         get {
             guard let meshNetwork = meshNetwork else {
@@ -40,21 +43,27 @@ public class Group: Codable {
             }
         }
         set {
-            _parentAddress = newValue?._address ?? "0000"
+            guard let parent = newValue else {
+                _parentAddress = "0000"
+                return
+            }
+            if let meshNetwork = meshNetwork, meshNetwork.groups.contains(parent) {
+                _parentAddress = parent._address
+            }
         }
     }
     
-    public init(name: String, address: MeshAddress, parent: Group? = nil) throws {
+    public init(name: String, address: MeshAddress) throws {
         guard address.address.isGroup && address.address < 0xFF00 else {
             throw MeshModelError.invalidAddress
         }
         self.name = name
         self._address = address.hex
-        self._parentAddress = parent?.address.hex ?? "0000"
+        self._parentAddress = "0000"
     }
     
-    public convenience init(name: String, address: Address, parent: Group? = nil) throws {
-        try self.init(name: name, address: MeshAddress(address), parent: parent)
+    public convenience init(name: String, address: Address) throws {
+        try self.init(name: name, address: MeshAddress(address))
     }
     
     // MARK: - Codable

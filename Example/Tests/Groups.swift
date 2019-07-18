@@ -25,10 +25,13 @@ class Groups: XCTestCase {
         XCTAssertEqual(meshNetwork.groups[0]._parentAddress, "0000")
         XCTAssertEqual(meshNetwork.groups[0]._address, "C000")
         XCTAssert(meshNetwork.groups[0].meshNetwork === meshNetwork)
+    }
+    
+    func testAddingAgain() throws {
+        let meshNetwork = MeshNetwork(name: "Test")
         
-        // The other group has the same address as above.
-        let theSameGroup = try Group(name: "Other", address: MeshAddress(0xC000))
-        meshNetwork.add(group: theSameGroup)
+        meshNetwork.add(group: try Group(name: "Group 1", address: 0xC000))
+        meshNetwork.add(group: try Group(name: "Other group with the same address", address: 0xC000))
         XCTAssertEqual(meshNetwork.groups.count, 1)
         XCTAssertEqual(meshNetwork.groups[0].name, "Group 1")
     }
@@ -62,15 +65,23 @@ class Groups: XCTestCase {
         let meshNetwork = MeshNetwork(name: "Kaczka")
         
         let root = try Group(name: "Root", address: 0xC000)
-        let child1 = try Group(name: "Child 1", address: 0xC001, parent: root)
-        let child2 = try Group(name: "Child 2", address: 0xC002, parent: root)
-        let childOfAChild = try Group(name: "Inner child", address: 0xC100, parent: child2)
+        let child1 = try Group(name: "Child 1", address: 0xC001)
+        let child2 = try Group(name: "Child 2", address: 0xC002)
+        let childOfAChild = try Group(name: "Inner child", address: 0xC100)
         
         meshNetwork.add(group: root)
         meshNetwork.add(group: child1)
         meshNetwork.add(group: child2)
         meshNetwork.add(group: childOfAChild)
         XCTAssert(meshNetwork.groups.count == 4)
+        
+        child1.parent = root
+        child2.parent = root
+        childOfAChild.parent = child2
+        
+        XCTAssertEqual(child1.parent, root)
+        XCTAssertEqual(child2.parent, root)
+        XCTAssertEqual(childOfAChild.parent, child2)
         
         XCTAssertTrue(root.isDirectParentOf(child1))
         XCTAssertTrue(root.isDirectParentOf(child2))

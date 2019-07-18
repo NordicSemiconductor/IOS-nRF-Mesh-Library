@@ -26,7 +26,8 @@ public extension MeshNetwork {
     
     /// Removes the given Group from the network.
     ///
-    /// The Group must not be in use in order to be removed.
+    /// The Group must not be in use, i.e. it may not be a parent of
+    /// another Group.
     ///
     /// - parameter group: The Group to be removed.
     /// - throws: This method throws `MeshModelError.groupInUse` when the
