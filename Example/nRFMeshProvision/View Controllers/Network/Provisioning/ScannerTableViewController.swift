@@ -66,7 +66,7 @@ class ScannerTableViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "peripheralCell", for: indexPath) as! DeviceTableViewCell
+        let cell = tableView.dequeueReusableCell(withIdentifier: "peripheralCell", for: indexPath) as! DeviceCell
         let peripheral = discoveredPeripherals[indexPath.row]
         cell.setupView(withDevice: peripheral.device, andRSSI: peripheral.rssi)
         return cell
@@ -121,7 +121,7 @@ extension ScannerTableViewController: CBCentralManagerDelegate {
             }
         } else {
             if let index = discoveredPeripherals.firstIndex(where: { $0.device == peripheral }) {
-                if let cell = tableView.cellForRow(at: IndexPath(row: index, section: 0)) as? DeviceTableViewCell {
+                if let cell = tableView.cellForRow(at: IndexPath(row: index, section: 0)) as? DeviceCell {
                     cell.deviceDidUpdate(discoveredPeripherals[index].device, andRSSI: RSSI.intValue)
                 }
             }

@@ -10,7 +10,7 @@ import UIKit
 import CoreBluetooth
 import nRFMeshProvision
 
-class DeviceTableViewCell: UITableViewCell {
+class DeviceCell: UITableViewCell {
 
     //MARK: - Outlets and Actions
     
