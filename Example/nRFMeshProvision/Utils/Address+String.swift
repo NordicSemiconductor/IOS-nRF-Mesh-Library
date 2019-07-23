@@ -37,4 +37,14 @@ extension MeshAddress {
         }
         return address.asString()
     }
+    
+    /// Returns the 16-bit Address, or Virtual Label as String.
+    ///
+    /// Example: "0001" or "00000000-0000-0000-000000000000"
+    var hex: String {
+        if let uuid = virtualLabel {
+            return uuid.uuidString
+        }
+        return address.hex
+    }
 }

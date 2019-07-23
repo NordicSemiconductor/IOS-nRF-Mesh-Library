@@ -9,7 +9,7 @@ import Foundation
 
 public extension MeshNetwork {
     
-    /// Returns the next available Key Index that can be assigned
+    /// Next available Key Index that can be assigned
     /// to a new Application Key.
     var nextAvailableApplicationKeyIndex: KeyIndex? {
         if applicationKeys.isEmpty {
@@ -21,7 +21,7 @@ public extension MeshNetwork {
         return lastAppKey.index + 1
     }
     
-    /// Returns the next available Key Index that can be assigned
+    /// Next available Key Index that can be assigned
     /// to a new Network Key.
     var nextAvailableNetworkKeyIndex: KeyIndex? {
         if networkKeys.isEmpty {
@@ -52,7 +52,7 @@ public extension MeshNetwork {
             throw MeshModelError.keyIndexOutOfRange
         }
         let key = try ApplicationKey(name: name, index: nextIndex,
-                                 key: applicationKey, bindTo: defaultNetworkKey)
+                                     key: applicationKey, bindTo: defaultNetworkKey)
         key.meshNetwork = self
         applicationKeys.append(key)
         

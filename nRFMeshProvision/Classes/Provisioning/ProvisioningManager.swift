@@ -357,8 +357,12 @@ extension ProvisioningManager: BearerDelegate, BearerDataDelegate {
             let node = Node(for: unprovisionedDevice, with: n, elementsDeviceKey: deviceKey,
                             andAssignedNetworkKey: provisioningData.networkKey,
                             andAddress: provisioningData.unicastAddress)
-            meshNetwork.add(node: node)
-            state = .complete
+            do {
+                try meshNetwork.add(node: node)
+                state = .complete
+            } catch {
+                state = .fail(error)
+            }
             
         // The provisioned device sent an error.
         case (_, .failed):

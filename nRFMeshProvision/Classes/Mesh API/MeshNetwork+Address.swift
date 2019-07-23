@@ -29,8 +29,8 @@ public extension MeshNetwork {
     ///                            identified by a subsequent unicast address.
     /// - parameter provisioner:   The Provisioner that is creating the node.
     ///                            The address will be taken from it's allocated range.
-    /// - returns: The next available unicast address that can be assigned to a node,
-    ///            or nil, if there are no more available addresses in the allocated range.
+    /// - returns: The next available Unicast Address that can be assigned to a node,
+    ///            or `nil`, if there are no more available addresses in the allocated range.
     func nextAvailableUnicastAddress(for elementsCount: UInt8, elementsUsing provisioner: Provisioner) -> Address? {
         let sortedNodes = nodes.sorted { $0.unicastAddress < $1.unicastAddress }
         
@@ -40,7 +40,7 @@ public extension MeshNetwork {
             // Start from the beginning of the current range.
             var address = range.lowAddress
             
-            // Iterate through modes that weren't checked yet.
+            // Iterate through nodes that weren't checked yet.
             let currentIndex = index
             for _ in currentIndex..<sortedNodes.count {
                 let node = sortedNodes[index]
@@ -77,10 +77,10 @@ public extension MeshNetwork {
     ///
     /// This method is assuming that the Provisioner has only 1 element.
     ///
-    /// - parameter provisioner: The provisioner that is creating the node for itself.
+    /// - parameter provisioner: The provisioner that is creating the Node for itself.
     ///                          The address will be taken from it's allocated range.
-    /// - returns: The next available unicast address that can be assigned to a node,
-    ///            or nil, if there are no more available addresses in the allocated range.
+    /// - returns: The next available Unicast Address that can be assigned to a node,
+    ///            or `nil`, if there are no more available addresses in the allocated range.
     func nextAvailableUnicastAddress(for provisioner: Provisioner) -> Address? {
         return nextAvailableUnicastAddress(for: 1, elementsUsing: provisioner)
     }

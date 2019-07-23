@@ -13,7 +13,7 @@ public struct MeshAddress {
     /// Virtual label UUID.
     public let virtualLabel: UUID?
     
-    internal init?(hex: String) {
+    public init?(hex: String) {
         if let address = Address(hex: hex) {
             self.init(address)
         } else if let virtualLabel = UUID(hex: hex) {

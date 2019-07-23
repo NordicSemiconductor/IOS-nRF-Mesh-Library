@@ -12,13 +12,14 @@ public extension MeshNetwork {
     /// Adds a new Group to the network.
     ///
     /// If the mesh network already contains a Group with the same address,
-    /// this method does nothing.
+    /// this method throws an error.
     ///
     /// - parameter group: The Group to be added.
-    func add(group: Group) {
+    /// - throws: This method throws an error if a Group with the same address
+    ///           already exists in the mesh network.
+    func add(group: Group) throws {
         guard !groups.contains(group) else {
-            // The Group with this address already exists.
-            return
+            throw MeshModelError.groupAlreadyExists
         }
         groups.append(group)
         group.meshNetwork = self

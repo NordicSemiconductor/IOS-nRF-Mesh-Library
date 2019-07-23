@@ -109,16 +109,21 @@ public extension MeshNetwork {
     /// to provision and add a Node.
     ///
     /// - parameter node: A Node to be added.
-    func add(node: Node) {
+    /// - throws: This method throws if the Node's address is not available,
+    ///           the Node does not have a Network Key, or the Network Key does
+    ///           not belong to the mesh network.
+    func add(node: Node) throws {
         // Verify if the address range is avaialble for the new Node.
         guard isAddressAvailable(node.unicastAddress, elementsCount: node.elementsCount) else {
-            print("Error: Address \(node.unicastAddress) is not available")
-            return
+            throw MeshModelError.addressNotAvailable
         }
-        if let netKeyIndex = node.netKeys.first?.index,
-           !networkKeys.contains(where: { $0.index == netKeyIndex }) {
-            print("Error: Network Key Index \(netKeyIndex) does not exist in the network")
-            return
+        // Ensure the Network Key exists.
+        guard let netKeyIndex = node.netKeys.first?.index else {
+            throw MeshModelError.noNetworkKey
+        }
+        // Make sure the network contains a Network Key with the same Key Index.
+        guard networkKeys.contains(where: { $0.index == netKeyIndex }) else {
+            throw MeshModelError.invalidKey
         }
         remove(nodeWithUuid: node.uuid)
         

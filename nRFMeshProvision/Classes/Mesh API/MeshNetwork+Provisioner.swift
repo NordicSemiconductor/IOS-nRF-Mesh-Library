@@ -128,7 +128,7 @@ public extension MeshNetwork {
             applicationKeys.forEach { key in
                 node.appKeys.append(Node.NodeKey(of: key))
             }
-            add(node: node)
+            try add(node: node)
         }
         
         // And finally, add the provisioner.
@@ -242,7 +242,7 @@ public extension MeshNetwork {
             // Not found? The Provisioner without a node may not perform
             // configuration operations. Seems like it will support it from now on.
             provisionerNode = Node(for: provisioner, withAddress: address)
-            add(node: provisionerNode)
+            try add(node: provisionerNode)
         }
         // If an address has been assigned to a Provisioner's Node,
         // mark that it knows all keys.

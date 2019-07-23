@@ -15,11 +15,9 @@ public class Group: Codable {
     /// The address property contains a 4-character hexadecimal
     /// string from 0xC000 to 0xFEFF or a 32-character hexadecimal
     /// string of virtual label UUUID, and is the address of the group.
-    internal var _address: String
+    internal let _address: String
     /// The address of the group.
-    public var address: MeshAddress {
-        return MeshAddress(hex: _address)!
-    }
+    public lazy var address: MeshAddress = MeshAddress(hex: _address)!
     /// The parentAddress property contains a 4-character hexadecimal
     /// string or a 32-character hexadecimal string and represents
     /// an address of a parent Group in which this group is included.
