@@ -30,6 +30,14 @@ class GroupsViewController: UITableViewController, Editable {
             hideEmptyView()
         }
     }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "addGroup" {
+            let destination = segue.destination as! UINavigationController
+            let viewController = destination.topViewController as! AddGroupViewController
+            viewController.delegate = self
+        }
+    }
 
     // MARK: - Table view data source
 
@@ -47,6 +55,10 @@ class GroupsViewController: UITableViewController, Editable {
         cell.group = MeshNetworkManager.instance.meshNetwork!.groups[indexPath.row]
         
         return cell
+    }
+    
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
     }
 
     /*
@@ -84,14 +96,14 @@ class GroupsViewController: UITableViewController, Editable {
     }
     */
 
-    /*
-    // MARK: - Navigation
+}
 
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
+extension GroupsViewController: AddGroupDelegate {
+    
+    func groupAdded() {
+        let meshNetwork = MeshNetworkManager.instance.meshNetwork!
+        tableView.insertRows(at: [IndexPath(row: meshNetwork.groups.count - 1, section: 0)], with: .automatic)
+        hideEmptyView()
     }
-    */
-
+    
 }
