@@ -307,11 +307,11 @@ extension UIViewController {
     @objc func groupAddressRequired(_ textField: UITextField) {
         let alert = getAlert(from: textField)
         
-        if validateRange(in: alert, validator: { $0.isGroup }) {
+        if validateRange(in: alert, validator: { $0.isGroup && $0 <= Address.maxGroupAddress }) {
             return
         }
         if let text = textField.text, let address = UInt16(text, radix: 16) {
-            alert.setValid(address.isGroup)
+            alert.setValid(address.isGroup && address <= Address.maxGroupAddress)
         } else {
             alert.setValid(false)
         }

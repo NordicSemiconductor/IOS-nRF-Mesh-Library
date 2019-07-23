@@ -159,8 +159,11 @@ class EditProvisionerViewController: UITableViewController {
     // MARK: - Table View Delegate
     
     override func tableView(_ tableView: UITableView, shouldHighlightRowAt indexPath: IndexPath) -> Bool {
-        if indexPath.isTtl || indexPath.isDeviceKey {
+        if indexPath.isTtl {
            return newAddress != nil || (provisioner.node != nil && !disableConfigCapabilities)
+        }
+        if indexPath.isDeviceKey {
+            return provisioner.node != nil && !disableConfigCapabilities
         }
         return true
     }
