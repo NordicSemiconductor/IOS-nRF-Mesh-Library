@@ -18,7 +18,7 @@ class AddGroupViewController: UITableViewController {
     // MARK: - Outlets & Actions
     
     @IBAction func cancelTapped(_ sender: UIBarButtonItem) {
-        navigationController?.dismiss(animated: true)
+        dismiss(animated: true)
     }
     @IBOutlet weak var doneButton: UIBarButtonItem!
     @IBAction func doneTapped(_ sender: UIBarButtonItem) {

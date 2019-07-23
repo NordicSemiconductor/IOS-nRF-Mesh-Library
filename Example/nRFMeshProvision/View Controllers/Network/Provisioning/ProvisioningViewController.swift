@@ -283,7 +283,7 @@ extension ProvisioningViewController: GattBearerDelegate {
     
     func bearer(_ bearer: Bearer, didClose error: Error?) {
         if case .complete = provisioningManager.state {
-            navigationController!.dismiss(animated: true) {
+            dismiss(animated: true) {
                 let network = MeshNetworkManager.instance.meshNetwork!
                 if let node = network.node(for: self.unprovisionedDevice) {
                     if MeshNetworkManager.instance.save() {
