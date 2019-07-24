@@ -359,14 +359,16 @@ private extension LowerTransportLayer {
         let ttl = provisionerNode.defaultTTL ?? LowerTransportLayer.defaultTtl
         /// Segment Acknowledgment Message is expected when the message is targetting
         /// a Unicast Address.
-        var ackExpected: Bool = false
+        var ackExpected: Bool?
         
         for i in 0..<count {
             if let segment = self.outgoingSegments[sequenceZero]![i] {
                 do {
+                    if ackExpected == nil {
+                        ackExpected = segment.destination.isUnicast
+                    }
                     try self.networkManager.networkLayer.send(lowerTransportPdu: segment, ofType: .networkPdu,
-                                                              withTtl: ttl, multipleTimes: !ackExpected)
-                    ackExpected = segment.destination.isUnicast
+                                                              withTtl: ttl, multipleTimes: !ackExpected!)
                 } catch {
                     // Sending failed, remove the Segment from waiting list.
                     self.outgoingSegments[sequenceZero]![i] = nil
@@ -375,7 +377,7 @@ private extension LowerTransportLayer {
         }
         
         segmentTransmissionTimers.removeValue(forKey: sequenceZero)?.invalidate()
-        if ackExpected && outgoingSegments[sequenceZero]!.hasMore {
+        if ackExpected ?? false && outgoingSegments[sequenceZero]!.hasMore {
             segmentTransmissionTimers[sequenceZero] =
                 Timer.scheduledTimer(withTimeInterval: 0.200 + Double(ttl) * 0.050, repeats: false) { _ in
                     self.sendSegments(for: sequenceZero)
