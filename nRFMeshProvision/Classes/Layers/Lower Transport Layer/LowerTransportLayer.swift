@@ -376,8 +376,9 @@ private extension LowerTransportLayer {
         
         segmentTransmissionTimers.removeValue(forKey: sequenceZero)?.invalidate()
         if ackExpected && outgoingSegments[sequenceZero]!.hasMore {
-            segmentTransmissionTimers[sequenceZero] = Timer(timeInterval: 0.200 + Double(ttl) * 50, repeats: false) { _ in
-                self.sendSegments(for: sequenceZero)
+            segmentTransmissionTimers[sequenceZero] =
+                Timer.scheduledTimer(withTimeInterval: 0.200 + Double(ttl) * 0.050, repeats: false) { _ in
+                    self.sendSegments(for: sequenceZero)
             }
         } else {
             outgoingSegments.removeValue(forKey: sequenceZero)
