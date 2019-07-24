@@ -9,6 +9,14 @@ import Foundation
 
 public extension MeshNetwork {
     
+    /// Returns the Group with given Address, or 'nil` if no such was found.
+    ///
+    /// - parameter address: The Group Address.
+    /// - returns: The Group with given Address, or `nil` if no such found.
+    func group(withAddress address: MeshAddress) -> Group? {
+        return groups.first { $0.address == address }
+    }
+    
     /// Adds a new Group to the network.
     ///
     /// If the mesh network already contains a Group with the same address,
