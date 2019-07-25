@@ -39,6 +39,7 @@
 		522AFFE522C24F6000521EDC /* ConfigDefaultTtlGet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 522AFFE422C24F6000521EDC /* ConfigDefaultTtlGet.swift */; };
 		522AFFE722C24FB100521EDC /* ConfigDefaultTtlSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 522AFFE622C24FB100521EDC /* ConfigDefaultTtlSet.swift */; };
 		522AFFE922C2502F00521EDC /* ConfigDefaultTtlStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 522AFFE822C2502F00521EDC /* ConfigDefaultTtlStatus.swift */; };
+		52313FEC22E9CE3C0074325A /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52313FEB22E9CE3C0074325A /* Models.swift */; };
 		523F775022C3AD2C0030EA6A /* Node+Provisioner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 523F774F22C3AD2C0030EA6A /* Node+Provisioner.swift */; };
 		523F775222C4A9F80030EA6A /* ConfigAppKeyDelete.swift in Sources */ = {isa = PBXBuildFile; fileRef = 523F775122C4A9F80030EA6A /* ConfigAppKeyDelete.swift */; };
 		523F775422C4AC210030EA6A /* ConfigAppKeyGet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 523F775322C4AC210030EA6A /* ConfigAppKeyGet.swift */; };
@@ -246,6 +247,7 @@
 		522AFFE422C24F6000521EDC /* ConfigDefaultTtlGet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigDefaultTtlGet.swift; sourceTree = "<group>"; };
 		522AFFE622C24FB100521EDC /* ConfigDefaultTtlSet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigDefaultTtlSet.swift; sourceTree = "<group>"; };
 		522AFFE822C2502F00521EDC /* ConfigDefaultTtlStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigDefaultTtlStatus.swift; sourceTree = "<group>"; };
+		52313FEB22E9CE3C0074325A /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
 		523F774F22C3AD2C0030EA6A /* Node+Provisioner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Node+Provisioner.swift"; sourceTree = "<group>"; };
 		523F775122C4A9F80030EA6A /* ConfigAppKeyDelete.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigAppKeyDelete.swift; sourceTree = "<group>"; };
 		523F775322C4AC210030EA6A /* ConfigAppKeyGet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigAppKeyGet.swift; sourceTree = "<group>"; };
@@ -624,6 +626,7 @@
 				523F778422CC888D0030EA6A /* Element+Models.swift */,
 				522AFFE222C23DD300521EDC /* Model+Name.swift */,
 				523F777622CB53FA0030EA6A /* Model+Keys.swift */,
+				52313FEB22E9CE3C0074325A /* Models.swift */,
 				528AB9F5228D7654000BE9DC /* Ranges.swift */,
 			);
 			name = "Mesh API";
@@ -1209,6 +1212,7 @@
 				5294DADC22B144D10041370E /* ConfigAppKeyStatus.swift in Sources */,
 				529B75EC224A6CE4008F1CE7 /* SceneRange.swift in Sources */,
 				528352922281B68E0097B949 /* ProvisioningPdu.swift in Sources */,
+				52313FEC22E9CE3C0074325A /* Models.swift in Sources */,
 				529B75EA224A6CE4008F1CE7 /* Element.swift in Sources */,
 				529B7611224A6D47008F1CE7 /* Scene.swift in Sources */,
 				528352A22282CF0B0097B949 /* ApplicationKey+MeshNetwork.swift in Sources */,
