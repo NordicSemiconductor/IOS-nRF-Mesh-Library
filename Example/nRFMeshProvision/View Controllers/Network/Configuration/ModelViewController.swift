@@ -223,8 +223,51 @@ class ModelViewController: ConnectableViewController {
     
     override func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
         if indexPath.isBindingsSection {
-            return [UITableViewRowAction(style: .destructive, title: "Unbind",
-                                         handler: { _, indexPath in self.unbindApplicationKey(at: indexPath) })]
+            return [UITableViewRowAction(style: .destructive, title: "Unbind", handler: { _, indexPath in
+                guard indexPath.row < self.model.boundApplicationKeys.count else {
+                        return
+                }
+                let applicationKey = self.model.boundApplicationKeys[indexPath.row]
+                
+                // Let's check if the key that's being unbound is set for publication.
+                let boundKeyUsedInPublication = self.model.publish?.index == applicationKey.index
+                // Check also, if any other Node is set to publish to this Model
+                // (using parent Element's Unicast Address) using this key.
+                let network = MeshNetworkManager.instance.meshNetwork!
+                let currentNode = self.model.parentElement.parentNode!
+                let otherNodes = network.nodes.filter { $0 != currentNode }
+                let elementsWithCompatibleModels = otherNodes.flatMap {
+                    $0.elements.filter({ $0.contains(modelCompatibleWith: self.model, boundTo: applicationKey)})
+                }
+                let compatibleModels = elementsWithCompatibleModels.flatMap {
+                    $0.models.filter({ $0.isCompatible(to: self.model) && $0.boundApplicationKeys.contains(applicationKey) })
+                }
+                let boundKeyUsedByOtherNodes = compatibleModels.contains {
+                        $0.publish?.publicationAddress.address == currentNode.unicastAddress &&
+                            $0.publish?.index == applicationKey.index
+                }
+                
+                if boundKeyUsedInPublication || boundKeyUsedByOtherNodes {
+                    var message = "The key you want to unbind is set"
+                    if boundKeyUsedInPublication {
+                        message += " in the publication settings in this model"
+                        if boundKeyUsedByOtherNodes {
+                            message += " and"
+                        }
+                    }
+                    if boundKeyUsedByOtherNodes {
+                        message += " on other nodes for publishing directly to this model."
+                    }
+                    if boundKeyUsedInPublication {
+                        message += "\nThe publication will be cancelled automatically."
+                    }
+                    self.confirm(title: "Key in use", message: message, handler: { _ in
+                        self.unbindApplicationKey(applicationKey)
+                    })
+                } else {
+                    self.unbindApplicationKey(applicationKey)
+                }
+            })]
         }
         return nil
     }
@@ -239,17 +282,14 @@ class ModelViewController: ConnectableViewController {
 
 private extension ModelViewController {
     
-    /// Sends a message to the mesh network to unbind the Application Key
-    /// from given indexPath from the Model.
+    /// Sends a message to the mesh network to unbind the given Application Key
+    /// from the Model.
     ///
-    /// - parameter indexPath: An IndexPath pointing the Application Key
-    //                         to unbind.
-    func unbindApplicationKey(at indexPath: IndexPath) {
-        guard let node = self.model.parentElement.parentNode,
-            indexPath.row < self.model.boundApplicationKeys.count else {
-                return
+    /// - parameter applicationKey: The Application Key to unbind.
+    func unbindApplicationKey(_ applicationKey: ApplicationKey) {
+        guard let node = model.parentElement.parentNode else {
+            return
         }
-        let applicationKey = model.boundApplicationKeys[indexPath.row]
         whenConnected { action in
             action?.message = "Unbinding Application Key"
             MeshNetworkManager.instance.send(ConfigModelAppUnbind(applicationKey: applicationKey, to: self.model), to: node)
@@ -258,7 +298,7 @@ private extension ModelViewController {
     
     /// Removes the publicaton from the model.
     func removePublication() {
-        guard let node = self.model.parentElement.parentNode else {
+        guard let node = model.parentElement.parentNode else {
             return
         }
         whenConnected { action in
@@ -277,7 +317,7 @@ extension ModelViewController: MeshNetworkDelegate {
             done()
             
             if status.isSuccess {
-                tableView.reloadSections(.bindings, with: .automatic)
+                tableView.reloadSections(.bindingsAndPublication, with: .automatic)
                 setEditing(false, animated: true)
             } else {
                 presentAlert(title: "Error", message: status.message)
@@ -364,5 +404,6 @@ private extension IndexSet {
     
     static let bindings = IndexSet(integer: IndexPath.bindingsSection)
     static let publication = IndexSet(integer: IndexPath.publishSection)
+    static let bindingsAndPublication = IndexSet([IndexPath.bindingsSection, IndexPath.publishSection])
     
 }
