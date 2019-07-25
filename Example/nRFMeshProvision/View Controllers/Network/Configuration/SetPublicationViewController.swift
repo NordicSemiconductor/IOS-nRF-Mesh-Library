@@ -65,8 +65,6 @@ class SetPublicationViewController: ConnectableViewController {
     private var retransmissionCount: UInt8 = 0
     private var retransmissionIntervalSteps: UInt8 = 0
     
-    private var selectedDestinationIndexPath: IndexPath?
-    
     // MARK: - View Controller
 
     override func viewDidLoad() {
@@ -74,7 +72,13 @@ class SetPublicationViewController: ConnectableViewController {
         
         MeshNetworkManager.instance.delegate = self
         
-        destinationCleared()
+        if let publish = model.publish {
+            destination = publish.publicationAddress
+            //applicationKey = publish.
+            fillDestination(destination!)
+        } else {
+            destinationCleared()
+        }
     }
     
     override func shouldPerformSegue(withIdentifier identifier: String, sender: Any?) -> Bool {
@@ -87,11 +91,11 @@ class SetPublicationViewController: ConnectableViewController {
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         switch segue.identifier {
         case .some("setDestination"):
-            let destination = segue.destination as! SetPublicationDestinationsViewController
-            destination.model = model
-            destination.selectedApplicationKey = applicationKey
-            destination.selectedIndexPath = selectedDestinationIndexPath
-            destination.delegate = self
+            let viewController = segue.destination as! SetPublicationDestinationsViewController
+            viewController.model = model
+            viewController.selectedApplicationKey = applicationKey
+            viewController.selectedDestination = destination
+            viewController.delegate = self
         default:
             break
         }
@@ -195,7 +199,61 @@ private extension SetPublicationViewController {
     func retransmissionIntervalSelected(_ steps: UInt8) {
         retransmissionIntervalSteps = steps
         retransmitIntervalLabel.text = "\(steps.interval) ms"
-        print("Steps: \(steps)")
+    }
+    
+    func fillDestination(_ address: MeshAddress) {
+        destinationCell.textLabel?.textColor = .darkText
+        if address.address.isUnicast {
+            let meshNetwork = MeshNetworkManager.instance.meshNetwork!
+            let node = meshNetwork.node(withAddress: address.address)
+            if let element = node?.element(withAddress: address.address) {
+                if let name = element.name {
+                    destinationCell.textLabel?.text = name
+                    destinationCell.detailTextLabel?.text = node?.name ?? "Unknown Device"
+                } else {
+                    let index = node!.elements.firstIndex(of: element)!
+                    let name = "Element \(index + 1)"
+                    destinationCell.textLabel?.text = name
+                    destinationCell.detailTextLabel?.text = node?.name ?? "Unknown Device"
+                }
+            } else {
+                destinationCell.textLabel?.text = "Unknown Element"
+                destinationCell.detailTextLabel?.text = "Unknown Node"
+            }
+            destinationCell.tintColor = .nordicLake
+            destinationCell.imageView?.image = #imageLiteral(resourceName: "ic_flag_24pt")
+            doneButton.isEnabled = true
+        } else if address.address.isGroup || address.isVirtual {
+            switch address.address {
+            case .allProxies:
+                destinationCell.textLabel?.text = "All Proxies"
+                destinationCell.detailTextLabel?.text = nil
+            case .allFriends:
+                destinationCell.textLabel?.text = "All Friends"
+                destinationCell.detailTextLabel?.text = nil
+            case .allRelays:
+                destinationCell.textLabel?.text = "All Relays"
+                destinationCell.detailTextLabel?.text = nil
+            case .allNodes:
+                destinationCell.textLabel?.text = "All Nodes"
+                destinationCell.detailTextLabel?.text = nil
+            default:
+                let meshNetwork = MeshNetworkManager.instance.meshNetwork!
+                if let group = meshNetwork.group(withAddress: address) {
+                    destinationCell.textLabel?.text = group.name
+                    destinationCell.detailTextLabel?.text = nil
+                }
+            }
+            destinationCell.imageView?.image = #imageLiteral(resourceName: "outline_group_work_black_24pt")
+            destinationCell.tintColor = .nordicLake
+            doneButton.isEnabled = true
+        } else {
+            destinationCell.textLabel?.text = "Invalid address"
+            destinationCell.detailTextLabel?.text = nil
+            destinationCell.tintColor = .nordicRed
+            destinationCell.imageView?.image = #imageLiteral(resourceName: "ic_flag_24pt")
+            doneButton.isEnabled = false
+        }
     }
     
     func setPublication() {
@@ -212,7 +270,11 @@ private extension SetPublicationViewController {
                                   periodSteps: self.periodSteps, periodResolution: self.periodResolution,
                                   retransmit: Publish.Retransmit(publishRetransmitCount: self.retransmissionCount,
                                                                  intervalSteps: self.retransmissionIntervalSteps))
-            MeshNetworkManager.instance.send(ConfigModelPublicationSet(publish, to: self.model), to: node)
+            if destination.isVirtual {
+                MeshNetworkManager.instance.send(ConfigModelPublicationVirtualAddressSet(publish, to: self.model), to: node)
+            } else {
+                MeshNetworkManager.instance.send(ConfigModelPublicationSet(publish, to: self.model), to: node)
+            }
         }
     }
     
@@ -220,28 +282,22 @@ private extension SetPublicationViewController {
 
 extension SetPublicationViewController: DestinationDelegate {
     
-    func keySelected(_ applicationKey: ApplicationKey) {
-        self.applicationKey = applicationKey
+    func keySelected(_ key: ApplicationKey) {
+        applicationKey = key
     }
     
-    func destinationSet(to title: String, subtitle: String?, withAddress address: MeshAddress, indexPath: IndexPath) {
-        self.selectedDestinationIndexPath = indexPath
-        self.destination = address
-        self.destinationCell.textLabel?.text = title
-        self.destinationCell.textLabel?.textColor = .darkText
-        self.destinationCell.detailTextLabel?.text = subtitle
-        self.destinationCell.tintColor = .nordicLake
-        self.doneButton.isEnabled = true
+    func destinationSelected(_ address: MeshAddress) {
+        destination = address
+        fillDestination(address)
     }
     
     func destinationCleared() {
-        self.selectedDestinationIndexPath = nil
-        self.destination = nil
-        self.destinationCell.textLabel?.text = "No destination selected"
-        self.destinationCell.textLabel?.textColor = .lightGray
-        self.destinationCell.detailTextLabel?.text = nil
-        self.destinationCell.tintColor = .lightGray
-        self.doneButton.isEnabled = false
+        destination = nil
+        destinationCell.textLabel?.text = "No destination selected"
+        destinationCell.textLabel?.textColor = .lightGray
+        destinationCell.detailTextLabel?.text = nil
+        destinationCell.tintColor = .lightGray
+        doneButton.isEnabled = false
     }
     
 }

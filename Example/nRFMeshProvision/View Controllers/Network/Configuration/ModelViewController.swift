@@ -67,7 +67,7 @@ class ModelViewController: ConnectableViewController {
         case IndexPath.bindingsSection:
             return model.boundApplicationKeys.count + 1 // Add Action.
         case IndexPath.publishSection:
-            return model.publish != nil ? 2 : 1 // Set Publication Action.
+            return 1 // Set Publication Action or the Publication.
         default:
             return 0
         }
@@ -124,17 +124,14 @@ class ModelViewController: ConnectableViewController {
             return cell
         }
         if indexPath.isPublishSection {
-            guard let publish = model.publish, indexPath.row == 0 else {
+            guard let publish = model.publish else {
                 let cell = tableView.dequeueReusableCell(withIdentifier: "action", for: indexPath)
                 cell.textLabel?.text = "Set Publication"
                 return cell
             }
             let cell = tableView.dequeueReusableCell(withIdentifier: "destination", for: indexPath)
             let address = publish.publicationAddress
-            if address.isVirtual {
-                cell.textLabel?.text = "\(address)"
-                cell.detailTextLabel?.text = "Virtual label"
-            } else if address.address.isUnicast {
+            if address.address.isUnicast {
                 let meshNetwork = MeshNetworkManager.instance.meshNetwork!
                 let node = meshNetwork.node(withAddress: address.address)
                 if let element = node?.element(withAddress: address.address) {
@@ -152,7 +149,8 @@ class ModelViewController: ConnectableViewController {
                     cell.detailTextLabel?.text = "Unknown Node"
                 }
                 cell.tintColor = .nordicLake
-            } else if address.address.isGroup {
+                cell.imageView?.image = #imageLiteral(resourceName: "ic_flag_24pt")
+            } else if address.address.isGroup || address.isVirtual {
                 switch address.address {
                 case .allProxies:
                     cell.textLabel?.text = "All Proxies"
@@ -167,14 +165,19 @@ class ModelViewController: ConnectableViewController {
                     cell.textLabel?.text = "All Nodes"
                     cell.detailTextLabel?.text = nil
                 default:
-                    // TODO: Read group name.
-                    cell.textLabel?.text = "\(address)"
-                    cell.detailTextLabel?.text = "Group address"
+                    let meshNetwork = MeshNetworkManager.instance.meshNetwork!
+                    if let group = meshNetwork.group(withAddress: address) {
+                        cell.textLabel?.text = group.name
+                        cell.detailTextLabel?.text = nil
+                    }
                 }
+                cell.imageView?.image = #imageLiteral(resourceName: "outline_group_work_black_24pt")
+                cell.tintColor = .nordicLake
             } else {
                 cell.textLabel?.text = "Invalid address"
                 cell.detailTextLabel?.text = nil
                 cell.tintColor = .lightGray
+                cell.imageView?.image = #imageLiteral(resourceName: "ic_flag_24pt")
             }
             return cell
         }
@@ -187,7 +190,7 @@ class ModelViewController: ConnectableViewController {
             return indexPath.row == model.boundApplicationKeys.count
         }
         if indexPath.isPublishSection {
-            return indexPath.row > 0 || model.publish == nil
+            return true
         }
         return false
     }
@@ -200,7 +203,6 @@ class ModelViewController: ConnectableViewController {
             performSegue(withIdentifier: "bind", sender: indexPath)
         }
         if indexPath.isPublishSection {
-            // Only Add Publication is selectable.
             guard !model.boundApplicationKeys.isEmpty else {
                 presentAlert(title: "Application Key required", message: "Bind at least one Application Key before setting the publication.")
                 return

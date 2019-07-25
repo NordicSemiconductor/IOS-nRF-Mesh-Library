@@ -11,7 +11,7 @@ import nRFMeshProvision
 
 protocol DestinationDelegate {
     func keySelected(_ applicationKey: ApplicationKey)
-    func destinationSet(to title: String, subtitle: String?, withAddress address: MeshAddress, indexPath: IndexPath)
+    func destinationSelected(_ address: MeshAddress)
     func destinationCleared()
 }
 
@@ -21,8 +21,8 @@ class SetPublicationDestinationsViewController: UITableViewController {
     
     var model: Model!
     var delegate: DestinationDelegate?
-    var selectedApplicationKey: ApplicationKey!
-    var selectedIndexPath: IndexPath?
+    var selectedApplicationKey: ApplicationKey?
+    var selectedDestination: MeshAddress?
     
     /// List of Elements containing a compatible Model. For example,
     /// for Generic On/Off Server this list will contain all Elements
@@ -34,7 +34,8 @@ class SetPublicationDestinationsViewController: UITableViewController {
         ("All Relays", 0xFFFE),
         ("All Nodes", 0xFFFF)
     ]
-    private var selectedKeyIndexPath: IndexPath!
+    private var selectedKeyIndexPath: IndexPath?
+    private var selectedIndexPath: IndexPath?
     
     // MARK: - View Controller
     
@@ -42,6 +43,7 @@ class SetPublicationDestinationsViewController: UITableViewController {
         super.viewDidLoad()
         
         if let key = selectedApplicationKey {
+            selectedApplicationKey = nil
             let index = model.boundApplicationKeys.firstIndex(of: key) ?? 0
             keySelected(IndexPath(row: index, section: IndexPath.keysSection), initial: true)
         } else {
@@ -52,7 +54,7 @@ class SetPublicationDestinationsViewController: UITableViewController {
     // MARK: - Table view data source
 
     override func numberOfSections(in tableView: UITableView) -> Int {
-        return 3
+        return IndexPath.numberOfSections
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -63,9 +65,13 @@ class SetPublicationDestinationsViewController: UITableViewController {
             return max(compatibleElements.count, 1)
         }
         if section == IndexPath.groupsSection {
+            let network = MeshNetworkManager.instance.meshNetwork!
+            return network.groups.count
+        }
+        if section == IndexPath.specialGroupsSection {
             return specialGroups.count
         }
-        return 0 // TODO: Groups, including virtual addresses.
+        return 0
     }
     
     override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
@@ -84,7 +90,7 @@ class SetPublicationDestinationsViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, titleForFooterInSection section: Int) -> String? {
         switch section {
         case IndexPath.elementsSection:
-            return "Elements from all nodes that contain a compatible model bound to the selected key."
+            return "Note: The list above contains elements with compatible models that are bound to the selected key. Bind the key before setting the publication."
         default:
             return nil
         }
@@ -111,13 +117,34 @@ class SetPublicationDestinationsViewController: UITableViewController {
         }
         if indexPath.isElementsSection {
             let element = compatibleElements[indexPath.row]
+            if let destination = selectedDestination, destination.address == element.unicastAddress {
+                selectedIndexPath = indexPath
+                selectedDestination = nil
+            }
             cell.textLabel?.text = element.name ?? "Element \(indexPath.row + 1)"
             cell.detailTextLabel?.text = element.parentNode!.name ?? "Unknown Device"
+            cell.imageView?.image = #imageLiteral(resourceName: "ic_flag_24pt")
+            cell.accessoryType = indexPath == selectedIndexPath ? .checkmark : .none
+        }
+        if indexPath.isGroupsSection {
+            let network = MeshNetworkManager.instance.meshNetwork!
+            let group = network.groups[indexPath.row]
+            if let destination = selectedDestination, destination == group.address {
+                selectedIndexPath = indexPath
+                selectedDestination = nil
+            }
+            cell.textLabel?.text = group.name
+            cell.imageView?.image = #imageLiteral(resourceName: "outline_group_work_black_24pt")
             cell.accessoryType = indexPath == selectedIndexPath ? .checkmark : .none
         }
         if indexPath.isSpecialGroupsSection {
             let pair = specialGroups[indexPath.row]
+            if let destination = selectedDestination, destination.address == pair.address {
+                selectedIndexPath = indexPath
+                selectedDestination = nil
+            }
             cell.textLabel?.text = pair.title
+            cell.imageView?.image = #imageLiteral(resourceName: "outline_group_work_black_24pt")
             cell.accessoryType = indexPath == selectedIndexPath ? .checkmark : .none
         }
         return cell
@@ -162,10 +189,8 @@ private extension SetPublicationDestinationsViewController {
         }
         rows.append(indexPath)
         selectedKeyIndexPath = indexPath
-        selectedApplicationKey = model.boundApplicationKeys[indexPath.row]
-        delegate?.keySelected(selectedApplicationKey)
         
-        // If an Element was selected, the selection must be cancelled, as Elements
+        // If an Element was selected before, the selection must be cancelled as Elements
         // are invalidated.
         if !initial, let indexPath = selectedIndexPath, indexPath.isElementsSection {
             rows.append(indexPath)
@@ -173,35 +198,31 @@ private extension SetPublicationDestinationsViewController {
             delegate?.destinationCleared()
         }
         
-        tableView.beginUpdates()
-        tableView.reloadRows(at: rows, with: .automatic)
-        
+        let key = model.boundApplicationKeys[indexPath.row]
         let meshNetwork = MeshNetworkManager.instance.meshNetwork!
         compatibleElements = meshNetwork.nodes
             .flatMap({ $0.elements })
-            .filter({ $0.contains(modelCompatibleWith: model, boundTo: selectedApplicationKey) })
+            .filter({ $0.contains(modelCompatibleWith: model, boundTo: key) })
+        delegate?.keySelected(key)
+        
+        tableView.beginUpdates()
+        tableView.reloadRows(at: rows, with: .automatic)
         tableView.reloadSections(.elements, with: .automatic)
         tableView.endUpdates()
-        
-        if let indexPath = selectedIndexPath {
-            destinationSelected(indexPath)
-        }
     }
     
     func destinationSelected(_ indexPath: IndexPath) {
         switch indexPath.section {
         case IndexPath.elementsSection:
             let element = compatibleElements[indexPath.row]
-            let nodeName = element.parentNode!.name ?? "Unknown Device"
-            let elementName = element.name ?? "Element \(indexPath.row)"
-            delegate?.destinationSet(to: elementName, subtitle: nodeName,
-                                     withAddress: MeshAddress(element.unicastAddress),
-                                     indexPath: indexPath)
+            delegate?.destinationSelected(MeshAddress(element.unicastAddress))
+        case IndexPath.groupsSection:
+            let meshNetwork = MeshNetworkManager.instance.meshNetwork!
+            let selectedGroup = meshNetwork.groups[indexPath.row]
+            delegate?.destinationSelected(selectedGroup.address)
         case IndexPath.specialGroupsSection:
             let selectedGroup = specialGroups[indexPath.row]
-            delegate?.destinationSet(to: selectedGroup.title, subtitle: nil,
-                                     withAddress: MeshAddress(selectedGroup.address),
-                                     indexPath: indexPath)
+            delegate?.destinationSelected(MeshAddress(selectedGroup.address))
         default:
             break
         }
@@ -212,7 +233,8 @@ private extension IndexPath {
     static let keysSection          = 0
     static let elementsSection      = 1
     static let groupsSection        = 2
-    static let specialGroupsSection = 2 // 3
+    static let specialGroupsSection = 3
+    static let numberOfSections     = IndexPath.specialGroupsSection + 1
     
     var reuseIdentifier: String {
         if isKeySection {
