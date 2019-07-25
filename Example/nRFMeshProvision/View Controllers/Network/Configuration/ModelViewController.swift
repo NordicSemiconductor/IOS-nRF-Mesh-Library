@@ -259,7 +259,11 @@ class ModelViewController: ConnectableViewController {
                         message += " on other nodes for publishing directly to this model."
                     }
                     if boundKeyUsedInPublication {
-                        message += "\nThe publication will be cancelled automatically."
+                        if boundKeyUsedByOtherNodes {
+                            message += "The local publication will be cancelled automatically, but other nodes will not be affected. Their publications will not be handled by this model."
+                        } else {
+                            message += "\nThe publication will be cancelled automatically."
+                        }
                     }
                     self.confirm(title: "Key in use", message: message, handler: { _ in
                         self.unbindApplicationKey(applicationKey)
