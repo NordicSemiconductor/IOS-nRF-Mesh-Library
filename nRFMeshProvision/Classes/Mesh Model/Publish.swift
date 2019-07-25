@@ -7,31 +7,31 @@
 
 import Foundation
 
-public class Publish: Codable {
+public struct Publish: Codable {
     
     /// The object is used to describe the number of times a message is
     /// published and the interval between retransmissions of the published
     /// message.
-    public class Retransmit: Codable {
+    public struct Retransmit: Codable {
         /// Number of retransmissions for network messages.
         /// The value is in range from 0 to 7, where 0 means no retransmissions.
-        public internal(set) var count: UInt8
+        public let count: UInt8
         /// The interval (in milliseconds) between retransmissions (50...3200 with step 50).
-        public internal(set) var interval: UInt16
+        public let interval: UInt16
         /// Retransmission steps, from 0 to 63.
         internal var steps: UInt8 {
             return UInt8((interval / 50) - 1)
         }
         
         internal init() {
-            self.count = 0
-            self.interval = 50
+            count = 0
+            interval = 50
         }
         
         public init(publishRetransmitCount: UInt8, intervalSteps: UInt8) {
-            self.count    = publishRetransmitCount
+            count    = publishRetransmitCount
             // Interval is in 50 ms steps.
-            self.interval = UInt16(intervalSteps + 1) * 50 // ms
+            interval = UInt16(intervalSteps + 1) * 50 // ms
         }
     }
     
@@ -65,16 +65,16 @@ public class Publish: Codable {
     }
     /// An Application Key index, indicating which Applicaiton Key to
     /// use for the publication.
-    internal let index: KeyIndex
+    public let index: KeyIndex
     /// An integer from 0 to 127 that represents the Time To Live (TTL)
     /// value for the outgoing publish message. 255 means default TTL value.
-    public internal(set) var ttl: UInt8 = 0xFF
+    public let ttl: UInt8
     /// The interval (in milliseconds) between subsequent publications.
-    internal var period: Int
+    internal let period: Int
     /// The number of steps.
-    internal var periodSteps: UInt8?
+    public let periodSteps: UInt8
     /// The resolution of the number of steps.
-    internal var periodResolution: StepResolution?
+    public let periodResolution: StepResolution
     /// Returns the interval between subsequent publications
     /// in seconds.
     public var publicationInterval: TimeInterval {
@@ -82,14 +82,13 @@ public class Publish: Codable {
     }
     /// An integer 0 o 1 that represents whether master security
     /// (0) materials or friendship security material (1) are used.
-    internal var credentials: Int = 0
+    internal let credentials: Int
     /// The object describes the number of times a message is published and the
     /// interval between retransmissions of the published message.
     public internal(set) var retransmit: Retransmit
     
     public init(to destination: MeshAddress, using applicationKey: ApplicationKey,
-                usingFriendshipMaterial friendshipCredentialsFlag: Bool,
-                ttl: UInt8, periodSteps: UInt8, periodResolution: StepResolution, retransmit: Retransmit) {
+                usingFriendshipMaterial friendshipCredentialsFlag: Bool, ttl: UInt8, periodSteps: UInt8, periodResolution: StepResolution, retransmit: Retransmit) {
         self.address = destination.hex
         self.index = applicationKey.index
         self.credentials = friendshipCredentialsFlag ? 1 : 0
@@ -113,8 +112,8 @@ public class Publish: Codable {
     }
     
     internal init(to destination: String, withKeyIndex keyIndex: KeyIndex,
-                friendshipCredentialsFlag: Int,
-                ttl: UInt8, periodSteps: UInt8, periodResolution: StepResolution, retransmit: Retransmit) {
+                  friendshipCredentialsFlag: Int, ttl: UInt8,
+                  periodSteps: UInt8, periodResolution: StepResolution, retransmit: Retransmit) {
         self.address = destination
         self.index = keyIndex
         self.credentials = friendshipCredentialsFlag
@@ -136,12 +135,26 @@ public class Publish: Codable {
         case retransmit
     }
     
-    public required init(from decoder: Decoder) throws {
+    public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         address = try container.decode(String.self, forKey: .address)
         index = try container.decode(KeyIndex.self, forKey: .index)
         ttl = try container.decode(UInt8.self, forKey: .ttl)
         period = try container.decode(Int.self, forKey: .period)
+        switch period {
+        case let period where period % 600000 == 0:
+            periodResolution = ._10_minutes
+            periodSteps = UInt8(period / 600000)
+        case let period where period % 10000 == 0:
+            periodResolution = ._10_seconds
+            periodSteps = UInt8(period / 10000)
+        case let period where period % 1000 == 0:
+            periodResolution = ._1_second
+            periodSteps = UInt8(period / 1000)
+        default:
+            periodResolution = ._100_milliseconds
+            periodSteps = UInt8(period / 100)
+        }
         let flag = try container.decode(Int.self, forKey: .credentials)
         guard flag == 0 || flag == 1 else {
             throw DecodingError.dataCorruptedError(forKey: .credentials, in: container,
