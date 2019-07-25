@@ -53,11 +53,7 @@ public extension Element {
     ///                             must be bound to.
     /// - returns: `True`, if the Element has the matching Model.
     func contains(modelCompatibleWith model: Model, boundTo applicationKey: ApplicationKey) -> Bool {
-        // Find a Client for a Server, or Server for a Client.
-        let compatibleModelId = (model.modelId % 2 == 0) ? model.modelId + 1 : model.modelId - 1
-        return models.contains {
-            $0.modelId == compatibleModelId && $0.bind.contains(applicationKey.index)
-        }
+        return models.contains { $0.isCompatible(to: model) && $0.bind.contains(applicationKey.index) }
     }
     
 }
