@@ -185,7 +185,7 @@ internal extension ConfigNetAndAppKeyMessage {
     ///
     /// - returns: Key Indexes encoded in 3 bytes.
     func encodeNetAndAppKeyIndex() -> Data {
-        return encode(indexes: [networkKeyIndex, applicationKeyIndex])
+        return encode(indexes: [applicationKeyIndex, networkKeyIndex])
     }
     
     /// Decodes the Network Key Index and Application Key Index from
@@ -199,7 +199,7 @@ internal extension ConfigNetAndAppKeyMessage {
     /// - returns: Decoded Key Indexes.
     static func decodeNetAndAppKeyIndex(from data: Data, at offset: Int) -> (networkKeyIndex: KeyIndex, applicationKeyIndex: KeyIndex) {
         let indexes = decode(2, indexesFrom: data, at: offset)
-        return (indexes[0], indexes[1])
+        return (indexes[1], indexes[0])
     }
     
 }
