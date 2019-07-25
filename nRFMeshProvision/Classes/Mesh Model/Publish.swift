@@ -18,8 +18,8 @@ public struct Publish: Codable {
         public let count: UInt8
         /// The interval (in milliseconds) between retransmissions (50...3200 with step 50).
         public let interval: UInt16
-        /// Retransmission steps, from 0 to 63.
-        internal var steps: UInt8 {
+        /// Retransmission steps, from 0 to 31. Use `interval` to get the interval in ms.
+        public var steps: UInt8 {
             return UInt8((interval / 50) - 1)
         }
         
@@ -71,7 +71,7 @@ public struct Publish: Codable {
     public let ttl: UInt8
     /// The interval (in milliseconds) between subsequent publications.
     internal let period: Int
-    /// The number of steps.
+    /// The number of steps, in range 0...63.
     public let periodSteps: UInt8
     /// The resolution of the number of steps.
     public let periodResolution: StepResolution
@@ -87,8 +87,24 @@ public struct Publish: Codable {
     /// interval between retransmissions of the published message.
     public internal(set) var retransmit: Retransmit
     
+    /// Creates an instance of Publish object.
+    ///
+    /// - parameters:
+    ///   - destination: The publication address.
+    ///   - applicationKey: The Application Key that will be used to send messages.
+    ///   - friendshipCredentialsFlag: `True`, to use Friendship Security Material,
+    ///                                `false` to use Master Security Material.
+    ///   - ttl: Time to live. Use 0xFF to use Node's default TTL.
+    ///   - periodSteps: Period steps, together with `periodResolution` are used to
+    ///                  calculate period interval. Value can be in range 0...63.
+    ///                  Value 0 disables periodic publishing.
+    ///   - periodResolution: The period resolution, used to calculate interval.
+    ///                       Use `._100_milliseconds` when periodic publishing is
+    ///                       disabled.
+    ///   - retransmit: The retransmission data. See `Retransmit` for details.
     public init(to destination: MeshAddress, using applicationKey: ApplicationKey,
-                usingFriendshipMaterial friendshipCredentialsFlag: Bool, ttl: UInt8, periodSteps: UInt8, periodResolution: StepResolution, retransmit: Retransmit) {
+                usingFriendshipMaterial friendshipCredentialsFlag: Bool, ttl: UInt8,
+                periodSteps: UInt8, periodResolution: StepResolution, retransmit: Retransmit) {
         self.address = destination.hex
         self.index = applicationKey.index
         self.credentials = friendshipCredentialsFlag ? 1 : 0
@@ -99,7 +115,7 @@ public struct Publish: Codable {
         self.retransmit = retransmit
     }
     
-    /// This constructor should be used to remove the publication from a Model.
+    /// This initializer should be used to remove the publication from a Model.
     internal init() {
         self.address = "0000"
         self.index = 0
