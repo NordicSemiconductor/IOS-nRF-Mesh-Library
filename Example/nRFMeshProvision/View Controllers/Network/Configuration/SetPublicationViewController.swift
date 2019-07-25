@@ -105,7 +105,7 @@ class SetPublicationViewController: ConnectableViewController {
     
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         if indexPath.isDestination {
-            return 56
+            return destination?.address.isUnicast ?? false ? 56 : 44
         }
         if indexPath.isDetailsSection {
             return 44
@@ -289,6 +289,10 @@ extension SetPublicationViewController: DestinationDelegate {
     func destinationSelected(_ address: MeshAddress) {
         destination = address
         fillDestination(address)
+        // This will reload the row heights. The height of destination cell
+        // depends on the destination type.
+        tableView.beginUpdates()
+        tableView.endUpdates()
     }
     
     func destinationCleared() {
@@ -298,6 +302,10 @@ extension SetPublicationViewController: DestinationDelegate {
         destinationCell.detailTextLabel?.text = nil
         destinationCell.tintColor = .lightGray
         doneButton.isEnabled = false
+        // This will reload the row heights. The height of destination cell
+        // depends on the destination type.
+        tableView.beginUpdates()
+        tableView.endUpdates()
     }
     
 }
