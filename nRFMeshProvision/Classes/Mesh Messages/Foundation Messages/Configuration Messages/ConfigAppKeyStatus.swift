@@ -14,10 +14,6 @@ public struct ConfigAppKeyStatus: ConfigNetAndAppKeyMessage, ConfigStatusMessage
         return Data([status.rawValue]) + encodeNetAndAppKeyIndex()
     }
     
-    public var isSegmented: Bool {
-        return true
-    }
-    
     public let networkKeyIndex: KeyIndex
     public let applicationKeyIndex: KeyIndex
     public let status: ConfigMessageStatus

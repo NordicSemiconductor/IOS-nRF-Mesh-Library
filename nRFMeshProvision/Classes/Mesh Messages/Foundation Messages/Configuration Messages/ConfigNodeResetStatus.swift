@@ -14,10 +14,6 @@ public struct ConfigNodeResetStatus: ConfigMessage {
         return nil
     }
     
-    public var isSegmented: Bool {
-        return false
-    }
-    
     public init() {
         // Empty
     }

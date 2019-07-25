@@ -14,10 +14,6 @@ public struct ConfigAppKeyList: ConfigNetKeyMessage {
         return Data([status.rawValue]) + encodeNetKeyIndex() + encode(indexes: applicationKeyIndexes[...])
     }
     
-    public var isSegmented: Bool {
-        return false
-    }
-    
     public let networkKeyIndex: KeyIndex
     /// Application Key Indexes bound to the Network Key known to the Node.
     public let applicationKeyIndexes: [KeyIndex]

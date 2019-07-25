@@ -19,10 +19,6 @@ public struct ConfigModelPublicationGet: ConfigAnyModelMessage {
         }
     }
     
-    public var isSegmented: Bool {
-        return false
-    }
-    
     public let elementAddress: Address
     public let modelIdentifier: UInt16
     public let companyIdentifier: UInt16?

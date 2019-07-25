@@ -204,6 +204,16 @@ internal extension ConfigNetAndAppKeyMessage {
     
 }
 
+public extension ConfigMessage {
+    
+    var isSegmented: Bool {
+        // By default, all Config Messages will be sent as segmented to make
+        // them more reliable.
+        return true
+    }
+    
+}
+
 public extension ConfigModelMessage {
     
     var modelId: UInt32 {

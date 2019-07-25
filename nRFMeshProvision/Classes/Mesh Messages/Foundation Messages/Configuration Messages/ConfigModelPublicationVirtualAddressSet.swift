@@ -16,7 +16,7 @@ public struct ConfigModelPublicationVirtualAddressSet: ConfigAnyModelMessage {
         data += UInt8(publish.index & 0xFF)
         data += UInt8(publish.index >> 8) | UInt8(publish.credentials << 4)
         data += publish.ttl
-        data += (publish.periodSteps! & 0x3F) | (publish.periodResolution!.rawValue >> 6)
+        data += (publish.periodSteps & 0x3F) | (publish.periodResolution.rawValue >> 6)
         data += (publish.retransmit.count & 0x07) | (publish.retransmit.steps << 3)
         data += modelIdentifier
         if let companyIdentifier = companyIdentifier {
@@ -24,10 +24,6 @@ public struct ConfigModelPublicationVirtualAddressSet: ConfigAnyModelMessage {
         } else {
             return data
         }
-    }
-    
-    public var isSegmented: Bool {
-        return true
     }
     
     public let elementAddress: Address

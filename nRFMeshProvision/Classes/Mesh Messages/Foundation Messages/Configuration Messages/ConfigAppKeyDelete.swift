@@ -14,10 +14,6 @@ public struct ConfigAppKeyDelete: ConfigNetAndAppKeyMessage {
         return encodeNetAndAppKeyIndex()
     }
     
-    public var isSegmented: Bool {
-        return false
-    }
-    
     public let networkKeyIndex: KeyIndex
     public let applicationKeyIndex: KeyIndex
     

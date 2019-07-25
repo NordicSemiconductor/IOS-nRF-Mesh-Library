@@ -14,10 +14,6 @@ public struct ConfigNetKeyList: ConfigMessage {
         return encode(indexes: networkKeyIndexs[...])
     }
     
-    public var isSegmented: Bool {
-        return false
-    }
-    
     /// Network Key Indexes known to the Node.
     public let networkKeyIndexs: [KeyIndex]
     

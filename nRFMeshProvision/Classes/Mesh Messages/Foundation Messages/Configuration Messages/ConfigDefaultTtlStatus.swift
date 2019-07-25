@@ -14,10 +14,6 @@ public struct ConfigDefaultTtlStatus: ConfigMessage {
         return Data([ttl])
     }
     
-    public var isSegmented: Bool {
-        return false
-    }
-    
     /// The Time To Live (TTL) value. Valid value is in range 1...127.
     public let ttl: UInt8
     

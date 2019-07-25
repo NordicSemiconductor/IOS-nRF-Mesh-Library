@@ -14,10 +14,6 @@ public struct ConfigNetKeyStatus: ConfigNetKeyMessage, ConfigStatusMessage {
         return Data([status.rawValue]) + encodeNetKeyIndex()
     }
     
-    public var isSegmented: Bool {
-        return true
-    }
-    
     public let networkKeyIndex: KeyIndex
     public let status: ConfigMessageStatus
     

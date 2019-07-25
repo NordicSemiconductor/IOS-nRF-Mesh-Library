@@ -19,10 +19,6 @@ public struct ConfigModelAppUnbind: ConfigAppKeyMessage, ConfigAnyModelMessage {
         }
     }
     
-    public var isSegmented: Bool {
-        return false
-    }
-    
     public let applicationKeyIndex: KeyIndex
     public let elementAddress: Address
     public let modelIdentifier: UInt16

@@ -14,10 +14,6 @@ public struct ConfigNetKeyAdd: ConfigNetKeyMessage {
         return encodeNetKeyIndex() + key
     }
     
-    public var isSegmented: Bool {
-        return true
-    }
-    
     public let networkKeyIndex: KeyIndex
     /// The 128-bit Application Key data.
     public let key: Data

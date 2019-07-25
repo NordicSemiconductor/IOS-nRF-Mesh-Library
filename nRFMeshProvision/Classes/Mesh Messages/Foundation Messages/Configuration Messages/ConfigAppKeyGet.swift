@@ -14,10 +14,6 @@ public struct ConfigAppKeyGet: ConfigNetKeyMessage {
         return encodeNetKeyIndex()
     }
     
-    public var isSegmented: Bool {
-        return false
-    }
-    
     public let networkKeyIndex: KeyIndex
     
     public init(networkKey: NetworkKey) {
