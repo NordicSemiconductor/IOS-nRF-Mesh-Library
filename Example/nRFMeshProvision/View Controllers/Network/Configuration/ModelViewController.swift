@@ -263,7 +263,7 @@ private extension ModelViewController {
         }
         whenConnected { action in
             action?.message = "Removing Publication..."
-            MeshNetworkManager.instance.send(ConfigModelPublicationSet(removeFrom: self.model), to: node)
+            MeshNetworkManager.instance.send(ConfigModelPublicationSet(disablePublicationFor: self.model), to: node)
         }
     }
     

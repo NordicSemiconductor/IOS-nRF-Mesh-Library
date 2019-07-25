@@ -200,7 +200,7 @@
                                                     <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <slider opaque="NO" contentMode="scaleToFill" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" minValue="0.0" maxValue="63" translatesAutoresizingMaskIntoConstraints="NO" id="ovA-jN-FiQ">
+                                                <slider opaque="NO" contentMode="scaleToFill" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" minValue="0.0" maxValue="31" translatesAutoresizingMaskIntoConstraints="NO" id="ovA-jN-FiQ">
                                                     <rect key="frame" x="14" y="7" width="221" height="31"/>
                                                     <connections>
                                                         <action selector="retransmissionIntervalDidChange:" destination="LXv-CP-ocX" eventType="valueChanged" id="Drd-C3-5Kk"/>
@@ -242,7 +242,9 @@
                         <outlet property="doneButton" destination="pOA-WT-eUG" id="s2t-M4-FaH"/>
                         <outlet property="friendshipCredentialsFlagSwitch" destination="BMf-2m-pnI" id="lhx-JB-oGo"/>
                         <outlet property="periodLabel" destination="LO7-zu-dod" id="DAd-Ad-r7c"/>
+                        <outlet property="periodSlider" destination="Jiv-Le-ay1" id="NQh-YM-w5g"/>
                         <outlet property="retransmitCountLabel" destination="sca-nS-hF8" id="GMj-2Z-53g"/>
+                        <outlet property="retransmitCountSlider" destination="HOI-NZ-mdo" id="tQO-d2-yk9"/>
                         <outlet property="retransmitIntervalLabel" destination="Ddb-4h-1kT" id="zyk-ks-CAO"/>
                         <outlet property="retransmitIntervalSlider" destination="ovA-jN-FiQ" id="u4x-aA-5R1"/>
                         <outlet property="ttlLabel" destination="WJZ-yR-wNf" id="OwH-nc-5pf"/>

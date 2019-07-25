@@ -39,7 +39,9 @@ class SetPublicationViewController: ConnectableViewController {
     @IBOutlet weak var destinationCell: UITableViewCell!
     @IBOutlet weak var friendshipCredentialsFlagSwitch: UISwitch!
     @IBOutlet weak var ttlLabel: UILabel!
+    @IBOutlet weak var periodSlider: UISlider!
     @IBOutlet weak var periodLabel: UILabel!
+    @IBOutlet weak var retransmitCountSlider: UISlider!
     @IBOutlet weak var retransmitCountLabel: UILabel!
     @IBOutlet weak var retransmitIntervalSlider: UISlider!
     @IBOutlet weak var retransmitIntervalLabel: UILabel!
@@ -74,11 +76,35 @@ class SetPublicationViewController: ConnectableViewController {
         
         if let publish = model.publish {
             destination = publish.publicationAddress
-            //applicationKey = publish.
-            fillDestination(destination!)
-        } else {
-            destinationCleared()
+            applicationKey = model.boundApplicationKeys.first { $0.index == publish.index }
+            ttl = publish.ttl
+            friendshipCredentialsFlagSwitch.isOn = publish.isUsingFriendshipSecurityMaterial
+            // The Period Slider displays all 4 resolutions.
+            // There are 63 values for resolution 100 ms: 0 - 6.3 sec.
+            // For resolution 1 sec there are 7 options less, as, as it is possible to set 1 sec as 1 step of
+            // resolution 1 sec, the slider will use 10 steps of 100 ms instead. 1 sec resolution is only
+            // used from 7 sec until 1 minute 3 sec.
+            // Similar situation is for 10 sec resolution, which starts from 1 minute and 10 seconds (7 steps).
+            // The maximum value that can be calculated using resolution 10 sec is 10 min 30 sec, therefore
+            // the last resolution starts from step 2 (20 minutes).
+            switch publish.periodResolution {
+            case ._100_milliseconds:
+                periodSlider.value = Float(publish.periodResolution.rawValue * 64 + publish.periodSteps)
+            case ._1_second:
+                periodSlider.value = Float(publish.periodResolution.rawValue * 64 + publish.periodSteps - 7)
+            case ._10_seconds:
+                periodSlider.value = Float(publish.periodResolution.rawValue * 64 + publish.periodSteps - 7 - 7)
+            case ._10_minutes:
+                periodSlider.value = Float(publish.periodResolution.rawValue * 64 + publish.periodSteps - 7 - 7 - 2)
+            }
+            retransmitCountSlider.value = Float(publish.retransmit.count)
+            retransmitIntervalSlider.value = Float(publish.retransmit.steps)
+            periodDidChange(periodSlider)
+            // The following 2 methods must be called in order: interval, count.
+            retransmissionIntervalDidChange(retransmitIntervalSlider)
+            retransmissionCountDidChange(retransmitCountSlider)
         }
+        reloadDestinationView()
     }
     
     override func shouldPerformSegue(withIdentifier identifier: String, sender: Any?) -> Bool {
@@ -201,7 +227,15 @@ private extension SetPublicationViewController {
         retransmitIntervalLabel.text = "\(steps.interval) ms"
     }
     
-    func fillDestination(_ address: MeshAddress) {
+    func reloadDestinationView() {
+        guard let address = destination else {
+            destinationCell.textLabel?.text = "No destination selected"
+            destinationCell.textLabel?.textColor = .lightGray
+            destinationCell.detailTextLabel?.text = nil
+            destinationCell.tintColor = .lightGray
+            doneButton.isEnabled = false
+            return
+        }
         destinationCell.textLabel?.textColor = .darkText
         if address.address.isUnicast {
             let meshNetwork = MeshNetworkManager.instance.meshNetwork!
@@ -288,7 +322,7 @@ extension SetPublicationViewController: DestinationDelegate {
     
     func destinationSelected(_ address: MeshAddress) {
         destination = address
-        fillDestination(address)
+        reloadDestinationView()
         // This will reload the row heights. The height of destination cell
         // depends on the destination type.
         tableView.beginUpdates()
@@ -297,11 +331,7 @@ extension SetPublicationViewController: DestinationDelegate {
     
     func destinationCleared() {
         destination = nil
-        destinationCell.textLabel?.text = "No destination selected"
-        destinationCell.textLabel?.textColor = .lightGray
-        destinationCell.detailTextLabel?.text = nil
-        destinationCell.tintColor = .lightGray
-        doneButton.isEnabled = false
+        reloadDestinationView()
         // This will reload the row heights. The height of destination cell
         // depends on the destination type.
         tableView.beginUpdates()
