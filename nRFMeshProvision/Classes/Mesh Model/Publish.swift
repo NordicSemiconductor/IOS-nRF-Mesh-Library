@@ -178,3 +178,42 @@ public extension Publish {
     }
     
 }
+
+extension Publish: CustomDebugStringConvertible {
+    
+    public var debugDescription: String {
+        if address == "0000" {
+            return "Disabled"
+        }
+        return "\(publicationAddress) using App Key Index: \(index), ttl: \(ttl), flag: \(isUsingFriendshipSecurityMaterial), period: \(publicationInterval) sec, retransmit: \(retransmit)"
+    }
+    
+}
+
+extension Publish.Retransmit: CustomDebugStringConvertible {
+    
+    public var debugDescription: String {
+        if count == 0 {
+            return "Disabled"
+        }
+        return "\(count) times every \(interval) ms"
+    }
+    
+}
+
+extension Publish.StepResolution: CustomDebugStringConvertible {
+    
+    public var debugDescription: String {
+        switch self {
+        case ._100_milliseconds:
+            return "100 milliseconds"
+        case ._1_second:
+            return "1 second"
+        case ._10_seconds:
+            return "10 seconds"
+        case ._10_minutes:
+            return "10 minutes"
+        }
+    }
+    
+}
