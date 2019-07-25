@@ -507,3 +507,11 @@ extension Node.NodeKey: CustomDebugStringConvertible {
     }
     
 }
+
+extension Node: Equatable {
+    
+    public static func == (lhs: Node, rhs: Node) -> Bool {
+        return lhs.uuid == rhs.uuid
+    }    
+    
+}
