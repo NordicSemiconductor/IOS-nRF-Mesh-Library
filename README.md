@@ -16,16 +16,17 @@ application.
 4. Parsing Secure Network beacons.
 5. Adding, removing and refreshing Network and Application Keys to Nodes.
 6. Binging and unbinding Application Keys to Models.
-7. Setting publication to a Model.
+7. Setting and clearing publication to a Model.
+8. Setting and removing subscriptions to a Model.
+9. Groups, including those with Virtual Addresses (without sending messages to them).
 
 ## NOT (yet) supported features
 
-1. Setting subscriptions.
-2. Vendor models and SIG defined models, except from supported ones.
+1. Vendor models and SIG defined models, except from supported ones.
+2. UI for controlling groups.
 3. Handling Configuration Server message sent by other Provisioner.
 4. Proxy Filter.
-5. Groups, including those with Virtual Addresses.
-6. Key Refresh Procedure.
+5. Key Refresh Procedure.
 
 ## Feedback
 
