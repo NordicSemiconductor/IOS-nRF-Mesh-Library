@@ -32,12 +32,16 @@ public struct ConfigModelPublicationStatus: ConfigAnyModelMessage, ConfigStatusM
     public let publish: Publish
     public let status: ConfigMessageStatus
     
-    public init(_ publish: Publish, to model: Model, status: ConfigMessageStatus) {
+    public init(confirmSetting publish: Publish, to model: Model, withStatus status: ConfigMessageStatus) {
         self.publish = publish
         self.elementAddress = model.parentElement.unicastAddress
         self.modelIdentifier = model.modelIdentifier
         self.companyIdentifier = model.companyIdentifier
         self.status = status
+    }
+    
+    public init(confirmDeletingPublicationFrom model: Model, withStatus status: ConfigMessageStatus) {
+        self.init(confirmSetting: Publish(), to: model, withStatus: status)
     }
     
     public init?(parameters: Data) {

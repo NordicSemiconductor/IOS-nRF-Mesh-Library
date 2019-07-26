@@ -32,7 +32,11 @@ public struct ConfigModelPublicationVirtualAddressSet: ConfigAnyModelMessage {
     /// Publication data.
     public let publish: Publish
     
-    public init(_ publish: Publish, to model: Model) {
+    public init?(_ publish: Publish, to model: Model) {
+        guard publish.publicationAddress.address.isVirtual else {
+            // ConfigModelPublicationSet should be used instead.
+            return nil
+        }
         self.publish = publish
         self.elementAddress = model.parentElement.unicastAddress
         self.modelIdentifier = model.modelIdentifier

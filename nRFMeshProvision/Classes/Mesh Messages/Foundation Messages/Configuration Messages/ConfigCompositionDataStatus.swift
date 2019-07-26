@@ -24,6 +24,10 @@ public struct ConfigCompositionDataStatus: ConfigMessage {
     /// The Composition Data page.
     public let page: CompositionDataPage?
     
+    public init(report page: CompositionDataPage) {
+        self.page = page
+    }
+    
     public init?(parameters: Data) {
         guard parameters.count > 0 else {
             return nil
