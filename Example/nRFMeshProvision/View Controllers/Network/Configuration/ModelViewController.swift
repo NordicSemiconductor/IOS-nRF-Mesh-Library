@@ -234,8 +234,9 @@ class ModelViewController: ConnectableViewController {
                 // Check also, if any other Node is set to publish to this Model
                 // (using parent Element's Unicast Address) using this key.
                 let network = MeshNetworkManager.instance.meshNetwork!
-                let currentNode = self.model.parentElement.parentNode!
-                let otherNodes = network.nodes.filter { $0 != currentNode }
+                let thisElement = self.model.parentElement!
+                let thisNode = thisElement.parentNode!
+                let otherNodes = network.nodes.filter { $0 != thisNode }
                 let elementsWithCompatibleModels = otherNodes.flatMap {
                     $0.elements.filter({ $0.contains(modelCompatibleWith: self.model, boundTo: applicationKey)})
                 }
@@ -243,7 +244,7 @@ class ModelViewController: ConnectableViewController {
                     $0.models.filter({ $0.isCompatible(to: self.model) && $0.boundApplicationKeys.contains(applicationKey) })
                 }
                 let boundKeyUsedByOtherNodes = compatibleModels.contains {
-                        $0.publish?.publicationAddress.address == currentNode.unicastAddress &&
+                        $0.publish?.publicationAddress.address == thisElement.unicastAddress &&
                             $0.publish?.index == applicationKey.index
                 }
                 
@@ -256,11 +257,11 @@ class ModelViewController: ConnectableViewController {
                         }
                     }
                     if boundKeyUsedByOtherNodes {
-                        message += " on other nodes for publishing directly to this model."
+                        message += " in at least one model on another node that publish directly to this element."
                     }
                     if boundKeyUsedInPublication {
                         if boundKeyUsedByOtherNodes {
-                            message += "The local publication will be cancelled automatically, but other nodes will not be affected. Their publications will not be handled by this model."
+                            message += " The local publication will be cancelled automatically, but other nodes will not be affected. This model will no longer be able to handle those publications."
                         } else {
                             message += "\nThe publication will be cancelled automatically."
                         }
