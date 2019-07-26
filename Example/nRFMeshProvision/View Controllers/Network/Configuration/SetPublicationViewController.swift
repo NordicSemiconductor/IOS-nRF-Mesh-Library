@@ -257,7 +257,7 @@ private extension SetPublicationViewController {
             destinationCell.tintColor = .nordicLake
             destinationCell.imageView?.image = #imageLiteral(resourceName: "ic_flag_24pt")
             doneButton.isEnabled = true
-        } else if address.address.isGroup || address.isVirtual {
+        } else if address.address.isGroup || address.address.isVirtual {
             switch address.address {
             case .allProxies:
                 destinationCell.textLabel?.text = "All Proxies"

@@ -60,16 +60,6 @@ extension MeshAddress {
     
 }
 
-public extension MeshAddress {
-    
-    /// Returns `true` if the destination is a Virtual Address
-    /// identified by a virtual label, `false` otherwise.
-    var isVirtual: Bool {
-        return virtualLabel != nil
-    }
-    
-}
-
 extension MeshAddress: Equatable {
     
     public static func == (lhs: MeshAddress, rhs: MeshAddress) -> Bool {

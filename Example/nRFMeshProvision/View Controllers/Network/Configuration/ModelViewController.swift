@@ -150,7 +150,7 @@ class ModelViewController: ConnectableViewController {
                 }
                 cell.tintColor = .nordicLake
                 cell.imageView?.image = #imageLiteral(resourceName: "ic_flag_24pt")
-            } else if address.address.isGroup || address.isVirtual {
+            } else if address.address.isGroup || address.address.isVirtual {
                 switch address.address {
                 case .allProxies:
                     cell.textLabel?.text = "All Proxies"

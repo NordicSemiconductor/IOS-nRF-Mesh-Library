@@ -41,7 +41,7 @@ class AddGroupViewController: UITableViewController {
         didSet {
             if let address = address {
                 addressCell.detailTextLabel?.text = address.asString()
-                addressCell.detailTextLabel?.font = .systemFont(ofSize: address.isVirtual ? 14 : 17)
+                addressCell.detailTextLabel?.font = .systemFont(ofSize: address.address.isVirtual ? 14 : 17)
                 doneButton.isEnabled = true
             } else {
                 addressCell.detailTextLabel?.text = "Invalid address"

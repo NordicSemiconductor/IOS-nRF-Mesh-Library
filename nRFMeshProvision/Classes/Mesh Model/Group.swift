@@ -52,7 +52,7 @@ public class Group: Codable {
     }
     
     public init(name: String, address: MeshAddress) throws {
-        guard address.address.isGroup && address.address < 0xFF00 || address.isVirtual else {
+        guard address.address.isGroup && address.address < 0xFF00 || address.address.isVirtual else {
             throw MeshModelError.invalidAddress
         }
         self.name = name
