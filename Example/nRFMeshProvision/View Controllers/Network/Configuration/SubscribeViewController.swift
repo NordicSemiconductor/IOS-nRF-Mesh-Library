@@ -37,6 +37,7 @@ class SubscribeViewController: ConnectableViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        tableView.setEmptyView(title: "No groups", message: "Go to Groups to create a group.", messageImage: #imageLiteral(resourceName: "baseline-groups"))
         
         MeshNetworkManager.instance.delegate = self
         
@@ -45,6 +46,10 @@ class SubscribeViewController: ConnectableViewController {
         groups = network.groups.filter {
             !alreadySubscribedGroups.contains($0)
         }
+        if groups.isEmpty {
+            tableView.showEmptyView()
+        }
+        // Initially, no group is checked.
         doneButton.isEnabled = false
     }
 
