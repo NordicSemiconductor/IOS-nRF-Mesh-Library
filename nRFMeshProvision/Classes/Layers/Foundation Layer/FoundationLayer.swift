@@ -173,6 +173,42 @@ internal class FoundationLayer {
                 }
             }
             
+        case let status as ConfigModelSubscriptionStatus:
+            if status.isSuccess,
+                let node = meshNetwork.node(withAddress: source),
+                let element = node.element(withAddress: status.elementAddress),
+                let model = element.model(withModelId: status.modelId) {
+                let address = MeshAddress(status.address)
+                
+                // The status for Delete All request has an invalid address.
+                // Handle it differently here.
+                if let _ = requests[source] as? ConfigModelSubscriptionDeleteAll {
+                    model.subscribe.removeAll()
+                    save()
+                    requests.removeValue(forKey: source)
+                }
+                // Here it should be safe to search for the group.
+                guard let group = meshNetwork.group(withAddress: address) else {
+                    requests.removeValue(forKey: source)
+                    return
+                }
+                switch requests[source] {
+                case is ConfigModelSubscriptionOverwrite, is ConfigModelSubscriptionVirtualAddressOverwrite:
+                    model.subscribe.removeAll()
+                    fallthrough
+                case is ConfigModelSubscriptionAdd, is ConfigModelSubscriptionVirtualAddressAdd:
+                    model.subscribe(to: group)
+                    save()
+                    requests.removeValue(forKey: source)
+                case is ConfigModelSubscriptionDelete, is ConfigModelSubscriptionVirtualAddressDelete:
+                    model.unsubscribe(from: group)
+                    save()
+                    requests.removeValue(forKey: source)
+                default:
+                    break
+                }
+            }
+            
         case let defaultTtl as ConfigDefaultTtlStatus:
             if let node = meshNetwork.node(withAddress: source) {
                 node.apply(defaultTtl: defaultTtl)

@@ -36,7 +36,7 @@ public extension Group {
                         }
                     }
                     // If any Node is subscribed to this Group, return `true`.
-                    if model.subscribers.contains(address) {
+                    if model.subscribe.contains(_address) {
                         return true
                     }
                 }

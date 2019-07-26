@@ -32,12 +32,9 @@ public class Model: Codable {
     /// The array of Unicast or Group Addresses (4-character hexadecimal value),
     /// or virtual label UUIDs (32-character hexadecimal string).
     internal var subscribe: [String]
-    /// Returns the list of addresses subscribed to this model.
-    public var subscribers: [MeshAddress] {
-        return subscribe.map {
-            // Warning: assuming hex addresses are valid!
-            return MeshAddress(hex: $0)!
-        }
+    /// Returns the list of Groups that this model is subscribed to.
+    public var subscriptions: [Group] {
+        return parentElement.parentNode?.meshNetwork?.groups.filter({ subscribe.contains($0._address )}) ?? []
     }
     /// The configuration of this model's publication.
     public internal(set) var publish: Publish?
@@ -137,6 +134,26 @@ internal extension Model {
             if let publish = publish, publish.index == applicationKeyIndex {
                 self.publish = nil
             }
+        }
+    }
+    
+    /// Adds the given Group to the list of subscriptions.
+    ///
+    /// - parameter: The new Group to be added.
+    func subscribe(to group: Group) {
+        let address = group.address.hex
+        if !subscribe.contains(address) {
+            subscribe.append(address)
+        }
+    }
+    
+    /// Removes the given Group from list of subscriptions.
+    ///
+    /// - parameter: The Group to be removed.
+    func unsubscribe(from group: Group) {
+        let address = group.address.hex
+        if let index = subscribe.firstIndex(of: address) {
+            subscribe.remove(at: index)
         }
     }
     
