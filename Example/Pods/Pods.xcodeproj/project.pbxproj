@@ -40,6 +40,14 @@
 		522AFFE722C24FB100521EDC /* ConfigDefaultTtlSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 522AFFE622C24FB100521EDC /* ConfigDefaultTtlSet.swift */; };
 		522AFFE922C2502F00521EDC /* ConfigDefaultTtlStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 522AFFE822C2502F00521EDC /* ConfigDefaultTtlStatus.swift */; };
 		52313FEC22E9CE3C0074325A /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52313FEB22E9CE3C0074325A /* Models.swift */; };
+		52313FF022EB092F0074325A /* ConfigModelSubscriptionAdd.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52313FEF22EB092F0074325A /* ConfigModelSubscriptionAdd.swift */; };
+		52313FF222EB0A830074325A /* ConfigModelSubscriptionVirtualAddressAdd.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52313FF122EB0A830074325A /* ConfigModelSubscriptionVirtualAddressAdd.swift */; };
+		52313FF422EB0BFA0074325A /* ConfigModelSubscriptionDelete.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52313FF322EB0BFA0074325A /* ConfigModelSubscriptionDelete.swift */; };
+		52313FF622EB0D8A0074325A /* ConfigModelSubscriptionVirtualAddressDelete.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52313FF522EB0D8A0074325A /* ConfigModelSubscriptionVirtualAddressDelete.swift */; };
+		52313FF822EB0DCB0074325A /* ConfigModelSubscriptionOverwrite.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52313FF722EB0DCB0074325A /* ConfigModelSubscriptionOverwrite.swift */; };
+		52313FFA22EB0E160074325A /* ConfigModelSubscriptionVirtualAddressOverwrite.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52313FF922EB0E160074325A /* ConfigModelSubscriptionVirtualAddressOverwrite.swift */; };
+		52313FFC22EB0E5B0074325A /* ConfigModelSubscriptionDeleteAll.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52313FFB22EB0E5B0074325A /* ConfigModelSubscriptionDeleteAll.swift */; };
+		52313FFE22EB10010074325A /* ConfigModelSubscriptionStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52313FFD22EB10010074325A /* ConfigModelSubscriptionStatus.swift */; };
 		523F775022C3AD2C0030EA6A /* Node+Provisioner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 523F774F22C3AD2C0030EA6A /* Node+Provisioner.swift */; };
 		523F775222C4A9F80030EA6A /* ConfigAppKeyDelete.swift in Sources */ = {isa = PBXBuildFile; fileRef = 523F775122C4A9F80030EA6A /* ConfigAppKeyDelete.swift */; };
 		523F775422C4AC210030EA6A /* ConfigAppKeyGet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 523F775322C4AC210030EA6A /* ConfigAppKeyGet.swift */; };
@@ -248,6 +256,14 @@
 		522AFFE622C24FB100521EDC /* ConfigDefaultTtlSet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigDefaultTtlSet.swift; sourceTree = "<group>"; };
 		522AFFE822C2502F00521EDC /* ConfigDefaultTtlStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigDefaultTtlStatus.swift; sourceTree = "<group>"; };
 		52313FEB22E9CE3C0074325A /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
+		52313FEF22EB092F0074325A /* ConfigModelSubscriptionAdd.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigModelSubscriptionAdd.swift; sourceTree = "<group>"; };
+		52313FF122EB0A830074325A /* ConfigModelSubscriptionVirtualAddressAdd.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigModelSubscriptionVirtualAddressAdd.swift; sourceTree = "<group>"; };
+		52313FF322EB0BFA0074325A /* ConfigModelSubscriptionDelete.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigModelSubscriptionDelete.swift; sourceTree = "<group>"; };
+		52313FF522EB0D8A0074325A /* ConfigModelSubscriptionVirtualAddressDelete.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigModelSubscriptionVirtualAddressDelete.swift; sourceTree = "<group>"; };
+		52313FF722EB0DCB0074325A /* ConfigModelSubscriptionOverwrite.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigModelSubscriptionOverwrite.swift; sourceTree = "<group>"; };
+		52313FF922EB0E160074325A /* ConfigModelSubscriptionVirtualAddressOverwrite.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigModelSubscriptionVirtualAddressOverwrite.swift; sourceTree = "<group>"; };
+		52313FFB22EB0E5B0074325A /* ConfigModelSubscriptionDeleteAll.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigModelSubscriptionDeleteAll.swift; sourceTree = "<group>"; };
+		52313FFD22EB10010074325A /* ConfigModelSubscriptionStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigModelSubscriptionStatus.swift; sourceTree = "<group>"; };
 		523F774F22C3AD2C0030EA6A /* Node+Provisioner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Node+Provisioner.swift"; sourceTree = "<group>"; };
 		523F775122C4A9F80030EA6A /* ConfigAppKeyDelete.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigAppKeyDelete.swift; sourceTree = "<group>"; };
 		523F775322C4AC210030EA6A /* ConfigAppKeyGet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigAppKeyGet.swift; sourceTree = "<group>"; };
@@ -677,6 +693,14 @@
 				523F778E22CCF0C10030EA6A /* ConfigModelPublicationSet.swift */,
 				523F779422CDF82E0030EA6A /* ConfigModelPublicationVirtualAddressSet.swift */,
 				523F779222CDF5A00030EA6A /* ConfigModelPublicationStatus.swift */,
+				52313FEF22EB092F0074325A /* ConfigModelSubscriptionAdd.swift */,
+				52313FF322EB0BFA0074325A /* ConfigModelSubscriptionDelete.swift */,
+				52313FFB22EB0E5B0074325A /* ConfigModelSubscriptionDeleteAll.swift */,
+				52313FF722EB0DCB0074325A /* ConfigModelSubscriptionOverwrite.swift */,
+				52313FFD22EB10010074325A /* ConfigModelSubscriptionStatus.swift */,
+				52313FF122EB0A830074325A /* ConfigModelSubscriptionVirtualAddressAdd.swift */,
+				52313FF522EB0D8A0074325A /* ConfigModelSubscriptionVirtualAddressDelete.swift */,
+				52313FF922EB0E160074325A /* ConfigModelSubscriptionVirtualAddressOverwrite.swift */,
 				52F6AD6F22BA172900F0D7DF /* ConfigNodeReset.swift */,
 				52F6AD7122BA17E100F0D7DF /* ConfigNodeResetStatus.swift */,
 				522AFFE422C24F6000521EDC /* ConfigDefaultTtlGet.swift */,
@@ -1194,6 +1218,7 @@
 				52835277228029720097B949 /* Bearer.swift in Sources */,
 				52F6AD6622B3AF2700F0D7DF /* ConfigCompositionDataGet.swift in Sources */,
 				5274B76122A1D9FB008450BC /* BeaconPdu.swift in Sources */,
+				52313FFE22EB10010074325A /* ConfigModelSubscriptionStatus.swift in Sources */,
 				76AD7DBB6F78223071CAB41C3AE42393 /* MeshConstants.swift in Sources */,
 				52DF5D9E229D7C9000C297C1 /* UpperTransportPdu.swift in Sources */,
 				528352962281C0FE0097B949 /* OptionSet+Data.swift in Sources */,
@@ -1214,6 +1239,7 @@
 				528352922281B68E0097B949 /* ProvisioningPdu.swift in Sources */,
 				52313FEC22E9CE3C0074325A /* Models.swift in Sources */,
 				529B75EA224A6CE4008F1CE7 /* Element.swift in Sources */,
+				52313FF822EB0DCB0074325A /* ConfigModelSubscriptionOverwrite.swift in Sources */,
 				529B7611224A6D47008F1CE7 /* Scene.swift in Sources */,
 				528352A22282CF0B0097B949 /* ApplicationKey+MeshNetwork.swift in Sources */,
 				5283524A227358DE0097B949 /* Data+Keys.swift in Sources */,
@@ -1252,12 +1278,14 @@
 				523F775422C4AC210030EA6A /* ConfigAppKeyGet.swift in Sources */,
 				529B7623224BAB26008F1CE7 /* Publish.swift in Sources */,
 				528352A62282D0350097B949 /* MeshNetwork+Provisioning.swift in Sources */,
+				52313FF622EB0D8A0074325A /* ConfigModelSubscriptionVirtualAddressDelete.swift in Sources */,
 				528352A02282CE830097B949 /* NetworkKey+MeshNetwork.swift in Sources */,
 				523F779322CDF5A00030EA6A /* ConfigModelPublicationStatus.swift in Sources */,
 				528352902281B57A0097B949 /* Beacon.swift in Sources */,
 				5283528C2281B3310097B949 /* ProvisioningCapabilities.swift in Sources */,
 				522AFFE922C2502F00521EDC /* ConfigDefaultTtlStatus.swift in Sources */,
 				523F775822C4C3350030EA6A /* ConfigNetKeyAdd.swift in Sources */,
+				52313FF222EB0A830074325A /* ConfigModelSubscriptionVirtualAddressAdd.swift in Sources */,
 				523F776022C4DC110030EA6A /* ConfigNetKeyGet.swift in Sources */,
 				52F6AD7222BA17E100F0D7DF /* ConfigNodeResetStatus.swift in Sources */,
 				5283529A2282C55B0097B949 /* PBGattBearer.swift in Sources */,
@@ -1270,6 +1298,8 @@
 				523F778522CC888D0030EA6A /* Element+Models.swift in Sources */,
 				523F777322CA1B780030EA6A /* FoundationLayer.swift in Sources */,
 				528AB9F2228C4F3E000BE9DC /* IvIndex.swift in Sources */,
+				52313FF422EB0BFA0074325A /* ConfigModelSubscriptionDelete.swift in Sources */,
+				52313FFA22EB0E160074325A /* ConfigModelSubscriptionVirtualAddressOverwrite.swift in Sources */,
 				5283524C2276F53A0097B949 /* Key.swift in Sources */,
 				5294DACE22A6AFA20041370E /* Provisioner+Node.swift in Sources */,
 				529B7625224BB02E008F1CE7 /* Data+Hex.swift in Sources */,
@@ -1294,6 +1324,7 @@
 				529B761F224B7D2D008F1CE7 /* UUID+Hex.swift in Sources */,
 				52568D4922DDEA4400B7B236 /* Group+MeshNetwork.swift in Sources */,
 				523F775222C4A9F80030EA6A /* ConfigAppKeyDelete.swift in Sources */,
+				52313FF022EB092F0074325A /* ConfigModelSubscriptionAdd.swift in Sources */,
 				528352BA2285A3DF0097B949 /* Node+Keys.swift in Sources */,
 				5294DAD022AA54D60041370E /* NetworkKeys.swift in Sources */,
 				529B757D22423DEE008F1CE7 /* Storage.swift in Sources */,
@@ -1309,6 +1340,7 @@
 				523F777D22CB8B210030EA6A /* ConfigModelAppBind.swift in Sources */,
 				529B75F0224A6CE4008F1CE7 /* MeshNetwork.swift in Sources */,
 				528352AA2282DA1E0097B949 /* GattBearerDelegate.swift in Sources */,
+				52313FFC22EB0E5B0074325A /* ConfigModelSubscriptionDeleteAll.swift in Sources */,
 				52B7F68222994D3C00B0A42F /* MeshMessageError.swift in Sources */,
 				523F779522CDF82E0030EA6A /* ConfigModelPublicationVirtualAddressSet.swift in Sources */,
 			);
