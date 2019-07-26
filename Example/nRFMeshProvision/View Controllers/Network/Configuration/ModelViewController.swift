@@ -42,6 +42,11 @@ class ModelViewController: ConnectableViewController {
             let viewController = destination.topViewController as! SetPublicationViewController
             viewController.model = model
             viewController.delegate = self
+        case .some("subscribe"):
+            let destination = segue.destination as! UINavigationController
+            let viewController = destination.topViewController as! SubscribeViewController
+            viewController.model = model
+            viewController.delegate = self
         default:
             break
         }
@@ -51,13 +56,13 @@ class ModelViewController: ConnectableViewController {
     
     override func numberOfSections(in tableView: UITableView) -> Int {
         if model.isBluetoothSIGAssigned && model.isConfigurationServer {
-            // TODO: Add Relay and Transmit controlls.
+            // TODO: Add Relay and Transmit controls.
             return 1
         }
         if model.isBluetoothSIGAssigned && model.isConfigurationClient {
             return 1
         }
-        return 3 // TODO: Add Subscribe and custom sections
+        return 4 // TODO: Add Custom sections
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -68,6 +73,8 @@ class ModelViewController: ConnectableViewController {
             return model.boundApplicationKeys.count + 1 // Add Action.
         case IndexPath.publishSection:
             return 1 // Set Publication Action or the Publication.
+        case IndexPath.subscribeSection:
+            return model.subscriptions.count + 1 // Add Action.
         default:
             return 0
         }
@@ -169,6 +176,9 @@ class ModelViewController: ConnectableViewController {
                     if let group = meshNetwork.group(withAddress: address) {
                         cell.textLabel?.text = group.name
                         cell.detailTextLabel?.text = nil
+                    } else {
+                        cell.textLabel?.text = "Unknown group"
+                        cell.detailTextLabel?.text = address.asString()
                     }
                 }
                 cell.imageView?.image = #imageLiteral(resourceName: "outline_group_work_black_24pt")
@@ -181,6 +191,18 @@ class ModelViewController: ConnectableViewController {
             }
             return cell
         }
+        if indexPath.isSubscribeSection {
+            guard indexPath.row < model.subscriptions.count else {
+                let cell = tableView.dequeueReusableCell(withIdentifier: "action", for: indexPath)
+                cell.textLabel?.text = "Subscribe"
+                return cell
+            }
+            let cell = tableView.dequeueReusableCell(withIdentifier: "group", for: indexPath)
+            let group = model.subscriptions[indexPath.row]
+            cell.textLabel?.text = group.name
+            cell.detailTextLabel?.text = nil
+            return cell
+        }
         // Not possible.
         return tableView.dequeueReusableCell(withIdentifier: "normal", for: indexPath)
     }
@@ -191,6 +213,9 @@ class ModelViewController: ConnectableViewController {
         }
         if indexPath.isPublishSection {
             return true
+        }
+        if indexPath.isSubscribeSection {
+            return indexPath.row == model.subscriptions.count
         }
         return false
     }
@@ -209,6 +234,10 @@ class ModelViewController: ConnectableViewController {
             }
             performSegue(withIdentifier: "publish", sender: indexPath)
         }
+        if indexPath.isSubscribeSection {
+            // Only the "Subscribe" row is selectable.
+            performSegue(withIdentifier: "subscribe", sender: indexPath)
+        }
     }
     
     override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
@@ -217,6 +246,9 @@ class ModelViewController: ConnectableViewController {
         }
         if indexPath.isPublishSection {
             return indexPath.row == 0 && model.publish != nil
+        }
+        if indexPath.isSubscribeSection {
+            return indexPath.row < model.subscriptions.count
         }
         return false
     }
@@ -281,6 +313,10 @@ class ModelViewController: ConnectableViewController {
         if indexPath.isPublishSection {
             removePublication()
         }
+        if indexPath.isSubscribeSection {
+            let group = model.subscriptions[indexPath.row]
+            unsubscribe(from: group)
+        }
     }
 
 }
@@ -292,23 +328,32 @@ private extension ModelViewController {
     ///
     /// - parameter applicationKey: The Application Key to unbind.
     func unbindApplicationKey(_ applicationKey: ApplicationKey) {
-        guard let node = model.parentElement.parentNode else {
-            return
-        }
-        whenConnected { action in
-            action?.message = "Unbinding Application Key"
-            MeshNetworkManager.instance.send(ConfigModelAppUnbind(applicationKey: applicationKey, to: self.model), to: node)
+        whenConnected { alert in
+            alert?.message = "Unbinding Application Key"
+            MeshNetworkManager.instance.send(ConfigModelAppUnbind(applicationKey: applicationKey, to: self.model), to: self.model)
         }
     }
     
     /// Removes the publicaton from the model.
     func removePublication() {
-        guard let node = model.parentElement.parentNode else {
-            return
+        whenConnected { alert in
+            alert?.message = "Removing Publication..."
+            MeshNetworkManager.instance.send(ConfigModelPublicationSet(disablePublicationFor: self.model), to: self.model)
         }
-        whenConnected { action in
-            action?.message = "Removing Publication..."
-            MeshNetworkManager.instance.send(ConfigModelPublicationSet(disablePublicationFor: self.model), to: node)
+    }
+    
+    /// Unsubscribes the Model from publications sent to the given Group.
+    ///
+    /// - parameter group: The Group to be removed from subscriptions.
+    func unsubscribe(from group: Group) {
+        whenConnected { alert in
+            alert?.message = "Unsubscribing..."
+            guard let message: ConfigMessage =
+                ConfigModelSubscriptionDelete(group: group, from: self.model) ??
+                ConfigModelSubscriptionVirtualAddressDelete(group: group, from: self.model) else {
+                    return
+            }
+            MeshNetworkManager.instance.send(message, to: self.model)
         }
     }
     
@@ -336,6 +381,15 @@ extension ModelViewController: MeshNetworkDelegate {
             } else {
                 presentAlert(title: "Error", message: status.message)
             }
+        case let status as ConfigModelSubscriptionStatus:
+            done()
+            
+            if status.isSuccess {
+                tableView.reloadSections(.subscriptions, with: .automatic)
+                setEditing(false, animated: true)
+            } else {
+                presentAlert(title: "Error", message: status.message)
+            }
         default:
             break
         }
@@ -343,7 +397,7 @@ extension ModelViewController: MeshNetworkDelegate {
     
 }
 
-extension ModelViewController: BindAppKeyDelegate, PublicationDelegate {
+extension ModelViewController: BindAppKeyDelegate, PublicationDelegate, SubscriptionDelegate {
     
     func keyBound() {
         tableView.reloadSections(.bindings, with: .automatic)
@@ -351,6 +405,10 @@ extension ModelViewController: BindAppKeyDelegate, PublicationDelegate {
     
     func publicationChanged() {
         tableView.reloadSections(.publication, with: .automatic)
+    }
+    
+    func subscriptionAdded() {
+        tableView.reloadSections(.subscriptions, with: .automatic)
     }
     
 }
@@ -403,12 +461,18 @@ private extension IndexPath {
     var isPublishSection: Bool {
         return section == IndexPath.publishSection
     }
+    
+    var isSubscribeSection: Bool {
+        return section == IndexPath.subscribeSection
+    }
+    
 }
 
 private extension IndexSet {
     
     static let bindings = IndexSet(integer: IndexPath.bindingsSection)
     static let publication = IndexSet(integer: IndexPath.publishSection)
+    static let subscriptions = IndexSet(integer: IndexPath.subscribeSection)
     static let bindingsAndPublication = IndexSet([IndexPath.bindingsSection, IndexPath.publishSection])
     
 }

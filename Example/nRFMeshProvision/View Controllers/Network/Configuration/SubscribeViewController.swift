@@ -1,22 +1,22 @@
 //
-//  ModelBindAppKeyViewController.swift
+//  SubscribeViewController.swift
 //  nRFMeshProvision_Example
 //
-//  Created by Aleksander Nowakowski on 02/07/2019.
+//  Created by Aleksander Nowakowski on 26/07/2019.
 //  Copyright © 2019 CocoaPods. All rights reserved.
 //
 
 import UIKit
 import nRFMeshProvision
 
-protocol BindAppKeyDelegate {
-    /// This method is called when a new Application Key has been bound to the Model.
-    func keyBound()
+protocol SubscriptionDelegate {
+    /// This method is called when a new subscription was added.
+    func subscriptionAdded()
 }
 
-class ModelBindAppKeyViewController: ConnectableViewController {
+class SubscribeViewController: ConnectableViewController {
     
-    // MARK: - Outlets and Actions
+    // MARK: - Outlets & Actions
     
     @IBOutlet weak var doneButton: UIBarButtonItem!
     
@@ -24,30 +24,27 @@ class ModelBindAppKeyViewController: ConnectableViewController {
         dismiss(animated: true)
     }
     @IBAction func doneTapped(_ sender: UIBarButtonItem) {
-        bind()
+        addSubscription()
     }
     
     // MARK: - Properties
     
     var model: Model!
-    var delegate: BindAppKeyDelegate?
+    var delegate: SubscriptionDelegate?
     
-    private var keys: [ApplicationKey]!
+    private var groups: [Group]!
     private var selectedIndexPath: IndexPath?
-    
-    // MARK: - View Controller
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
-        tableView.setEmptyView(title: "No keys available", message: "Add a new key to the node first.", messageImage: #imageLiteral(resourceName: "baseline-key"))
         
         MeshNetworkManager.instance.delegate = self
         
-        keys = model.parentElement?.parentNode?.applicationKeysAvailableFor(model)
-        if keys.isEmpty {
-            tableView.showEmptyView()
+        let network = MeshNetworkManager.instance.meshNetwork!
+        let alreadySubscribedGroups = model.subscriptions
+        groups = network.groups.filter {
+            !alreadySubscribedGroups.contains($0)
         }
-        // Initially, no key is checked.
         doneButton.isEnabled = false
     }
 
@@ -58,64 +55,67 @@ class ModelBindAppKeyViewController: ConnectableViewController {
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return keys.count
+        return groups.count
     }
-    
+
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let key = keys[indexPath.row]
-        
-        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
-        cell.textLabel?.text = key.name
-        cell.detailTextLabel?.text = "Bound to \(key.boundNetworkKey.name)"
+        let cell = tableView.dequeueReusableCell(withIdentifier: "group", for: indexPath)
+        cell.textLabel?.text = groups[indexPath.row].name
         cell.accessoryType = indexPath == selectedIndexPath ? .checkmark : .none
         return cell
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
+        
         var rows: [IndexPath] = []
-        if let selectedIndexPath = selectedIndexPath {
-            rows.append(selectedIndexPath)
+        if let previousSelection = selectedIndexPath {
+            rows.append(previousSelection)
         }
         rows.append(indexPath)
         selectedIndexPath = indexPath
-        tableView.reloadRows(at: rows, with: .automatic)
         
+        tableView.reloadRows(at: rows, with: .automatic)
         doneButton.isEnabled = true
     }
 
 }
 
-private extension ModelBindAppKeyViewController {
+private extension SubscribeViewController {
     
-    func bind() {
+    func addSubscription() {
         guard let selectedIndexPath = selectedIndexPath else {
             return
         }
-        let selectedAppKey = keys[selectedIndexPath.row]
-        whenConnected() { alert in
-            alert?.message = "Binding Application Key..."
-            MeshNetworkManager.instance.send(ConfigModelAppBind(applicationKey: selectedAppKey, to: self.model), to: self.model)
+        let group = groups[selectedIndexPath.row]
+        whenConnected { alert in
+            alert?.message = "Subscribing..."
+            guard let message: ConfigMessage =
+                ConfigModelSubscriptionAdd(group: group, to: self.model) ??
+                ConfigModelSubscriptionVirtualAddressAdd(group: group, to: self.model) else {
+                    self.done()
+                    return
+            }
+            MeshNetworkManager.instance.send(message, to: self.model)
         }
     }
     
 }
 
-extension ModelBindAppKeyViewController: MeshNetworkDelegate {
+extension SubscribeViewController: MeshNetworkDelegate {
     
     func meshNetwork(_ meshNetwork: MeshNetwork, didDeliverMessage message: MeshMessage, from source: Address) {
         switch message {
-        case let status as ConfigModelAppStatus:
+        case let status as ConfigModelSubscriptionStatus:
             done() {
                 if status.status == .success {
                     self.dismiss(animated: true)
-                    self.delegate?.keyBound()
+                    self.delegate?.subscriptionAdded()
                 } else {
-                    self.presentAlert(title: "Error", message: "\(status.status)")
+                    self.presentAlert(title: "Error", message: status.message)
                 }
             }
         default:
-            // Ignore
             break
         }
     }

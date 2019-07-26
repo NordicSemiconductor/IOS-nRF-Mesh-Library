@@ -294,9 +294,6 @@ private extension SetPublicationViewController {
         guard let destination = destination, let applicationKey = applicationKey else {
             return
         }
-        guard let node = self.model.parentElement.parentNode else {
-            return
-        }
         whenConnected { alert in
             alert?.message = "Setting Model Publication..."
             let publish = Publish(to: destination, using: applicationKey,
@@ -304,11 +301,13 @@ private extension SetPublicationViewController {
                                   periodSteps: self.periodSteps, periodResolution: self.periodResolution,
                                   retransmit: Publish.Retransmit(publishRetransmitCount: self.retransmissionCount,
                                                                  intervalSteps: self.retransmissionIntervalSteps))
-            if destination.isVirtual {
-                MeshNetworkManager.instance.send(ConfigModelPublicationVirtualAddressSet(publish, to: self.model), to: node)
-            } else {
-                MeshNetworkManager.instance.send(ConfigModelPublicationSet(publish, to: self.model), to: node)
+            guard let message: ConfigMessage =
+                ConfigModelPublicationSet(publish, to: self.model) ??
+                ConfigModelPublicationVirtualAddressSet(publish, to: self.model) else {
+                    self.done()
+                    return
             }
+            MeshNetworkManager.instance.send(message, to: self.model)
         }
     }
     
