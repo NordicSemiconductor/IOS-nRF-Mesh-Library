@@ -405,32 +405,36 @@ internal extension Node {
     
     /// Removes the Network Key with given index and all Application Keys
     /// bound to it from the Node. This method also removes all Model bindings
-    /// that point any of the removed Application Keys.
+    /// that point any of the removed Application Keys and the publications
+    /// that are using this key.
     ///
     /// - parameter networkKeyIndex: The Key Index of Network Key to be removed.
-    func remove(networkKeyIndex: KeyIndex) {
+    func remove(networkKeyWithIndex networkKeyIndex: KeyIndex) {
         if let index = netKeys.firstIndex(where: { $0.index == networkKeyIndex }) {
             // Remove the Key Index from 'appKeys'.
             netKeys.remove(at: index)
             // Remove all Application Keys bound to the removed Network Key.
-            applicationKeys.filter({ $0.boundNetworkKeyIndex == networkKeyIndex }).forEach { applicationKey in
-                remove(applicationKeyIndex: applicationKey.index)
-            }
+            applicationKeys
+                .filter({ $0.boundNetworkKeyIndex == networkKeyIndex })
+                .forEach { key in remove(applicationKeyWithIndex: key.index) }
         }
     }
     
     /// Removes the Application Key with given index and all Model bindings
-    /// that point to it.
+    /// that point to it and the publications that are using this key.
     ///
     /// - parameter applicationKeyIndex: The Key Index of Application Key to be removed.
-    func remove(applicationKeyIndex: KeyIndex) {
+    func remove(applicationKeyWithIndex applicationKeyIndex: KeyIndex) {
         if let index = appKeys.firstIndex(where: { $0.index == applicationKeyIndex }) {
             // Remove the Key Index from 'appKeys'.
             appKeys.remove(at: index)
             // Remove all bindings with given Key Index from all models.
             elements.flatMap({ $0.models }).forEach { model in
-                if let index = model.bind.firstIndex(where: { $0 == applicationKeyIndex }) {
-                    model.bind.remove(at: index)
+                // Remove the Key Index from bound keys.
+                model.bind = model.bind.filter { $0 != applicationKeyIndex }
+                // Clear publication if it was set to use the removed Application Key.
+                if let publish = model.publish, publish.index == applicationKeyIndex {
+                    model.publish = nil
                 }
             }
         }

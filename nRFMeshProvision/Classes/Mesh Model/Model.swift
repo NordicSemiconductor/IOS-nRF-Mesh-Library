@@ -104,12 +104,41 @@ public class Model: Codable {
     }
 }
 
-extension Model {
+internal extension Model {
     
     static let configurationServer = Model(sigModelId: 0x0000)
     static let configurationClient = Model(sigModelId: 0x0001)
     static let healthServer = Model(sigModelId: 0x0002)
     static let healthClient = Model(sigModelId: 0x0003)
+    
+}
+
+internal extension Model {
+    
+    /// Adds the given Application Key Index to the bound keys.
+    ///
+    /// - paramter applicationKeyIndex: The Application Key index to bind.
+    func bind(applicationKeyWithIndex applicationKeyIndex: KeyIndex) {
+        guard !bind.contains(applicationKeyIndex) else {
+            return
+        }
+        bind.append(applicationKeyIndex)
+        bind.sort()
+    }
+    
+    /// Removes the Application Key binding to with the given Key Index
+    /// and clears the publication, if it was set to use the same key.
+    ///
+    /// - parameter applicationKeyIndex: The Application Key index to unbind.
+    func unbind(applicationKeyWithIndex applicationKeyIndex: KeyIndex) {
+        if let index = bind.firstIndex(of: applicationKeyIndex) {
+            bind.remove(at: index)
+            // If this Application Key was used for publication, the publication has been cancelled.
+            if let publish = publish, publish.index == applicationKeyIndex {
+                self.publish = nil
+            }
+        }
+    }
     
 }
 

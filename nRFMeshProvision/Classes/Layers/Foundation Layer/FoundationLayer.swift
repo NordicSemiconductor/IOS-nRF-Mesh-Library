@@ -53,25 +53,7 @@ internal class FoundationLayer {
                     save()
                     requests.removeValue(forKey: source)
                 case is ConfigNetKeyDelete:
-                    node.remove(networkKeyIndex: netKeyStatus.networkKeyIndex)
-                    // When a Network Key was deleted, all Application Keys bound to it were
-                    // removed as well.
-                    // First, go through all removed Application Keys and unbind them from all
-                    // Models, then remove publications that were using them.
-                    node.applicationKeys.filter({ $0.boundNetworkKeyIndex == netKeyStatus.networkKeyIndex}).forEach { key in
-                        // If the removed Application Key was used in any of Node's Models,
-                        // clear all the usages of it.
-                        node.elements.flatMap({ $0.models }).forEach { model in
-                            // Remove the Key Index from bound keys.
-                            model.bind = model.bind.filter { $0 != key.index }
-                            // Clear publication if it was set to use the removed Application Key.
-                            if let publish = model.publish, publish.index == key.index {
-                                model.publish = nil
-                            }
-                        }
-                    }
-                    // At last, remove all indexes of keys bound to the deleted Network Key.
-                    node.appKeys = node.appKeys.filter { $0.index != netKeyStatus.networkKeyIndex }
+                    node.remove(networkKeyWithIndex: netKeyStatus.networkKeyIndex)
                     save()
                     requests.removeValue(forKey: source)
                 default:
@@ -105,17 +87,7 @@ internal class FoundationLayer {
                     save()
                     requests.removeValue(forKey: source)
                 case is ConfigAppKeyDelete:
-                    node.remove(applicationKeyIndex: appKeyStatus.applicationKeyIndex)
-                    // If the removed Application Key was used in any of Node's Models,
-                    // clear all the usages of it.
-                    node.elements.flatMap({ $0.models }).forEach { model in
-                        // Remove the Key Index from bound keys.
-                        model.bind = model.bind.filter { $0 != appKeyStatus.applicationKeyIndex }
-                        // Clear publication if it was set to use the removed Application Key.
-                        if let publish = model.publish, publish.index == appKeyStatus.applicationKeyIndex {
-                            model.publish = nil
-                        }
-                    }
+                    node.remove(applicationKeyWithIndex: appKeyStatus.applicationKeyIndex)
                     save()
                     requests.removeValue(forKey: source)
                 default:
@@ -142,22 +114,11 @@ internal class FoundationLayer {
                 let model = element.model(withModelId: status.modelId) {
                 switch requests[source] {
                 case is ConfigModelAppBind:
-                    guard !model.bind.contains(status.applicationKeyIndex) else {
-                        break
-                    }
-                    model.bind.append(status.applicationKeyIndex)
-                    model.bind.sort()
+                    model.bind(applicationKeyWithIndex: status.applicationKeyIndex)
                     save()
                     requests.removeValue(forKey: source)
                 case is ConfigModelAppUnbind:
-                    guard let index = model.bind.firstIndex(of: status.applicationKeyIndex) else {
-                        break
-                    }
-                    model.bind.remove(at: index)
-                    // If this Application Key was used for publication, the publication has been cancelled.
-                    if let publish = model.publish, publish.index == status.applicationKeyIndex {
-                        model.publish = nil
-                    }
+                    model.unbind(applicationKeyWithIndex: status.applicationKeyIndex)
                     save()
                     requests.removeValue(forKey: source)
                 default:
