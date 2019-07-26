@@ -140,6 +140,7 @@ internal class FoundationLayer {
                         model.publish = nil
                     }
                     save()
+                    requests.removeValue(forKey: source)
                 case let request as ConfigModelPublicationVirtualAddressSet:
                     // Note: The Publish from the request has the Virtual Label set,
                     //       while the status has only the 16-bit Virtual Address.
@@ -147,11 +148,26 @@ internal class FoundationLayer {
                     //       request, with an exception of the Virtual Label.
                     model.publish = request.publish
                     save()
+                    requests.removeValue(forKey: source)
                 case is ConfigModelPublicationGet:
-                    // TODO: The Virtual Label must be obtained from somewhere,
-                    //       as the status has only the 16-bit Virtual Address.
-                    model.publish = status.publish
+                    let publicationAddress = status.publish.publicationAddress
+                    if publicationAddress.address.isVirtual {
+                        // The received status message is missing the Virtual Label.
+                        // Let's try to find it in the local groups.
+                        if let group = meshNetwork.group(withAddress: publicationAddress),
+                            let _ = group.address.virtualLabel {
+                            // A Group with the same address and non-nil Virtual Label has been found.
+                            model.publish = status.publish.withAddress(address: group.address)
+                        } else {
+                            // The Model is publishing to an unknown Virtual Label.
+                            // The label will remain `nil`, but it's virtual address is known.
+                            model.publish = status.publish
+                        }
+                    } else {
+                        model.publish = status.publish
+                    }
                     save()
+                    requests.removeValue(forKey: source)
                 default:
                     break
                 }
@@ -195,6 +211,11 @@ internal class FoundationLayer {
             requests[destination] = configMessage
             
         case is ConfigModelPublicationSet, is ConfigModelPublicationVirtualAddressSet, is ConfigModelPublicationGet:
+            requests[destination] = configMessage
+            
+        case is ConfigModelSubscriptionAdd, is ConfigModelSubscriptionDelete, is ConfigModelSubscriptionDeleteAll,
+             is ConfigModelSubscriptionOverwrite, is ConfigModelSubscriptionVirtualAddressAdd,
+             is ConfigModelSubscriptionVirtualAddressDelete, is ConfigModelSubscriptionVirtualAddressOverwrite:
             requests[destination] = configMessage
             
         default:

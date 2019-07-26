@@ -195,6 +195,20 @@ public extension Publish {
     
 }
 
+internal extension Publish {
+    
+    /// Creates a copy of the Publish object, but replaces the address
+    /// with the given one. This method should be used to fill the virtual
+    /// label after a ConfigModelPublicationStatus has been received.
+    func withAddress(address: MeshAddress) -> Publish {
+        return Publish(to: address.hex, withKeyIndex: index,
+                       friendshipCredentialsFlag: credentials, ttl: ttl,
+                       periodSteps: periodSteps, periodResolution: periodResolution,
+                       retransmit: retransmit)
+    }
+    
+}
+
 extension Publish: CustomDebugStringConvertible {
     
     public var debugDescription: String {
