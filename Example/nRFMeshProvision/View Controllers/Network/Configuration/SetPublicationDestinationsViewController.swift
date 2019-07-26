@@ -190,19 +190,30 @@ private extension SetPublicationDestinationsViewController {
         rows.append(indexPath)
         selectedKeyIndexPath = indexPath
         
-        // If an Element was selected before, the selection must be cancelled as Elements
-        // are invalidated.
+        // The list of Elements contains Elements with compatible models, that are bound
+        // to the selected key. Changing the key will cause the Elements list to reload.
+        // If an Element was selected, it may happen that it also is bound to the
+        // new key, or not. We have either to update the selected index path, or
+        // clear the selection.
+        var selectedElementIndex: UInt8?
         if !initial, let indexPath = selectedIndexPath, indexPath.isElementsSection {
-            rows.append(indexPath)
-            selectedIndexPath = nil
-            delegate?.destinationCleared()
+            selectedElementIndex = compatibleElements[indexPath.row].index
         }
-        
+        // Refresh the Elements list.
         let key = model.boundApplicationKeys[indexPath.row]
         let meshNetwork = MeshNetworkManager.instance.meshNetwork!
         compatibleElements = meshNetwork.nodes
             .flatMap({ $0.elements })
             .filter({ $0.contains(modelCompatibleWith: model, boundTo: key) })
+        
+        if let selectedElementIndex = selectedElementIndex {
+            if let newRow = compatibleElements.firstIndex(where: { $0.index == selectedElementIndex }) {
+                selectedIndexPath = IndexPath(row: newRow, section: IndexPath.elementsSection)
+            } else {
+                selectedIndexPath = nil
+                delegate?.destinationCleared()
+            }
+        }
         delegate?.keySelected(key)
         
         tableView.beginUpdates()
