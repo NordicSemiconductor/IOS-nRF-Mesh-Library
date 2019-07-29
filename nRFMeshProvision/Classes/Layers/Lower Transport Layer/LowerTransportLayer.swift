@@ -217,6 +217,7 @@ internal class LowerTransportLayer {
             switch opCode {
             case 0x00:
                 if let ack = SegmentAcknowledgmentMessage(fromNetworkPdu: networkPdu) {
+                    print("\(ack) received") // TODO: Remove me
                     guard outgoingSegments[ack.sequenceZero] != nil else {
                         return
                     }

@@ -50,6 +50,7 @@ internal class AccessLayer {
             return
         }
         if networkManager.foundationLayer.handle(configMessage: message, to: destination) {
+            print("Sending \(message) to 0x\(destination.hex)") // TODO: Remove me
             networkManager.upperTransportLayer.send(message, to: destination)
         }
     }
@@ -183,6 +184,7 @@ private extension AccessLayer {
         
         if let MessageType = MessageType,
            let message = MessageType.init(parameters: accessPdu.parameters) {
+            print("\(message) received") // TODO: Remove me
             if let configMessage = message as? ConfigMessage {
                 networkManager.foundationLayer.handle(configMessage: configMessage, from: accessPdu.source)
             }
