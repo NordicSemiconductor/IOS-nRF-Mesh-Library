@@ -166,6 +166,19 @@ private struct TestStorage: Storage {
     
 }
 
+/// There is a bug in encoding NetKeyIndex and AppKeyIndex in Bluetooth Mesh spec 1.0.1.
+/// This test covers sample data #6 and #16 wich actually use messages that encode those
+/// indexes, and does it correctly.
+///
+/// Correct encoding goes as follows:
+///
+/// NetKeyIndex: 0x123
+///
+/// AppKeyIndex: 0x456
+///
+/// Correct Output: 0x236145
+///
+/// Incorrect Output: 0x563412
 class Pdus: XCTestCase {
     var manager: MeshNetworkManager!
 
@@ -209,7 +222,7 @@ class Pdus: XCTestCase {
         XCTAssertNotNil(meshNetwork.nodes[1].meshNetwork)
     }
     
-    func testSending() {
+    func testSending_message_6() {
         XCTAssertNotNil(manager.meshNetwork)
         let meshNetwork = manager.meshNetwork!
         let networkKey = meshNetwork.networkKeys.first!
@@ -233,7 +246,7 @@ class Pdus: XCTestCase {
         XCTAssertEqual(pdu.destination, destination)
         XCTAssertEqual(pdu.sequence, sequence)
         XCTAssertNil(pdu.aid)
-        XCTAssertEqual(pdu.transportMicSize, 4)
+        XCTAssertEqual(pdu.transportMicSize, 4) // 32-bits
         XCTAssertEqual(pdu.accessPdu, Data(hex: "0023614563964771734FBD76E3B40519D1D94A48"))
         XCTAssertEqual(pdu.transportPdu, Data(hex: "EEE888AA2169326D23F3AFDFCFDC18C52FDEF7720F8AF48F"))
         
@@ -275,6 +288,57 @@ class Pdus: XCTestCase {
         XCTAssertEqual(networkPdu1.nid, 0x68)
         XCTAssertEqual(networkPdu1.networkKey, networkKey)
         XCTAssertEqual(networkPdu1.pdu, Data(hex: "681615B5DD4A846CAE0C032BF0746F44F1B8CC8CE502AEF9D2393E5B93"))
+    }
+    
+    func testSending_message_16() {
+        XCTAssertNotNil(manager.meshNetwork)
+        let meshNetwork = manager.meshNetwork!
+        let networkKey = meshNetwork.networkKeys.first!
+        networkKey.ivIndex = IvIndex(index: 0x12345678, updateActive: false)
+        let node = meshNetwork.nodes[1]
+        let source = node.unicastAddress
+        let destination = meshNetwork.localProvisioner?.unicastAddress
+        XCTAssertNotNil(destination)
+        let sequence: UInt32 = 0x000006
+        
+        // Test begins here
+        let message = ConfigAppKeyStatus(confirmAdding: meshNetwork.applicationKeys[1], withStatus: .success)
+        XCTAssertEqual(message.networkKeyIndex, 0x123)
+        XCTAssertEqual(message.applicationKeyIndex, 0x456)
+        XCTAssertEqual(message.status, .success)
+        XCTAssertEqual(message.parameters, Data(hex: "00236145"))
+        XCTAssertEqual(message.accessPdu, Data(hex: "800300236145"))
+        
+        let pdu = UpperTransportPdu(fromConfigMessage: message,
+                                    sentFrom: source, to: destination!,
+                                    usingDeviceKey: node.deviceKey, sequence: sequence, andIvIndex: networkKey.ivIndex)
+        XCTAssertEqual(pdu.source, source)
+        XCTAssertEqual(pdu.destination, destination)
+        XCTAssertEqual(pdu.sequence, sequence)
+        XCTAssertNil(pdu.aid)
+        XCTAssertEqual(pdu.transportMicSize, 4) // 32-bits
+        XCTAssertEqual(pdu.accessPdu, Data(hex: "800300236145"))
+        XCTAssertEqual(pdu.transportPdu, Data(hex: "89511B8484FF7501A689"))
+        
+        let segment = SegmentedAccessMessage(fromUpperTransportPdu: pdu, usingNetworkKey: networkKey, offset: 0)
+        XCTAssertNil(segment.aid)
+        XCTAssertEqual(segment.source, source)
+        XCTAssertEqual(segment.destination, destination)
+        XCTAssertEqual(segment.networkKey, networkKey)
+        XCTAssertEqual(segment.sequenceZero, 0x006)
+        XCTAssertEqual(segment.segmentOffset, 0)
+        XCTAssertEqual(segment.lastSegmentNumber, 0)
+        XCTAssertEqual(segment.upperTransportPdu, Data(hex: "89511B8484FF7501A689"))
+        XCTAssertEqual(segment.transportPdu, Data(hex: "8000180089511B8484FF7501A689"))
+        
+        let networkPdu = NetworkPdu(encode: segment, withSequence: sequence, andTtl: 0)
+        XCTAssertEqual(networkPdu.sequence, sequence)
+        XCTAssertEqual(networkPdu.source, source)
+        XCTAssertEqual(networkPdu.destination, destination)
+        XCTAssertEqual(networkPdu.ivi, 0)
+        XCTAssertEqual(networkPdu.nid, 0x68)
+        XCTAssertEqual(networkPdu.networkKey, networkKey)
+        XCTAssertEqual(networkPdu.pdu, Data(hex: "68A878FE9CD29FC9E344863A3827BFAEE1265C9A1D334285C640A2"))
     }
     
     func testReceiving() {
