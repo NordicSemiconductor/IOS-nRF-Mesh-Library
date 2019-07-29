@@ -79,6 +79,11 @@ public protocol ConfigVendorModelMessage: ConfigModelMessage {
     var companyIdentifier: UInt16 { get }
 }
 
+public protocol ConfigModelAppList: ConfigStatusMessage, ConfigModelMessage {    
+    /// Application Key Indexes bound to the Model.
+    var applicationKeyIndexes: [KeyIndex] { get }
+}
+
 public protocol ConfigAddressMessage: ConfigMessage {
     /// Value of the Address.
     var address: Address { get }

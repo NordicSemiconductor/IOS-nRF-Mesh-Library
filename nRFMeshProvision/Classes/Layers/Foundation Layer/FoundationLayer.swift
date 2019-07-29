@@ -126,6 +126,17 @@ internal class FoundationLayer {
                 }
             }
             
+        case let status as ConfigModelAppList:
+            if status.isSuccess,
+                let node = meshNetwork.node(withAddress: source),
+                let element = node.element(withAddress: status.elementAddress),
+                let model = element.model(withModelId: status.modelId) {
+                // Replace the known binding with what was received in the message.
+                model.bind = status.applicationKeyIndexes
+                model.bind.sort()
+                save()
+            }
+            
         case let status as ConfigModelPublicationStatus:
             if status.isSuccess,
                 let node = meshNetwork.node(withAddress: source),

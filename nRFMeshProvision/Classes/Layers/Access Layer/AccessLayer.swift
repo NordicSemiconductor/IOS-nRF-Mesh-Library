@@ -123,6 +123,18 @@ private extension AccessLayer {
         case ConfigModelAppStatus.opCode:
             MessageType = ConfigModelAppStatus.self
             
+        case ConfigSIGModelAppGet.opCode:
+            MessageType = ConfigSIGModelAppGet.self
+            
+        case ConfigSIGModelAppList.opCode:
+            MessageType = ConfigSIGModelAppList.self
+            
+        case ConfigVendorModelAppGet.opCode:
+            MessageType = ConfigVendorModelAppGet.self
+            
+        case ConfigVendorModelAppList.opCode:
+            MessageType = ConfigVendorModelAppList.self
+            
         // Publications
         case ConfigModelPublicationGet.opCode:
             MessageType = ConfigModelPublicationGet.self
