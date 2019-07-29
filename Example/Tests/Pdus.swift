@@ -9,7 +9,7 @@
 import XCTest
 @testable import nRFMeshProvision
 
-struct TestStorage: Storage {
+private struct TestStorage: Storage {
     
     func load() -> Data? {
         return #"""
