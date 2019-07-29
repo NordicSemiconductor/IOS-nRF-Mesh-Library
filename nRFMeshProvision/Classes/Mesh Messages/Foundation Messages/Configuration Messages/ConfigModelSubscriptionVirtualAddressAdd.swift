@@ -27,6 +27,7 @@ public struct ConfigModelSubscriptionVirtualAddressAdd: ConfigVirtualLabelMessag
     
     public init?(group: Group, to model: Model) {
         guard let label = group.address.virtualLabel else {
+            // ConfigModelSubscriptionAdd should be used instead.
             return nil
         }
         self.virtualLabel = label

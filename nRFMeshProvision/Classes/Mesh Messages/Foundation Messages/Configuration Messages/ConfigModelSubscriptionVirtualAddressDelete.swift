@@ -27,6 +27,7 @@ public struct ConfigModelSubscriptionVirtualAddressDelete: ConfigVirtualLabelMes
     
     public init?(group: Group, from model: Model) {
         guard let label = group.address.virtualLabel else {
+            // ConfigModelSubscriptionDelete should be used instead.
             return nil
         }
         self.virtualLabel = label
