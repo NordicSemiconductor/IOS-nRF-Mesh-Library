@@ -162,7 +162,9 @@ internal class FoundationLayer {
                     requests.removeValue(forKey: source)
                 case is ConfigModelPublicationGet:
                     let publicationAddress = status.publish.publicationAddress
-                    if publicationAddress.address.isVirtual {
+                    if publicationAddress.address.isUnassigned {
+                        model.publish = nil
+                    } else if publicationAddress.address.isVirtual {
                         // The received status message is missing the Virtual Label.
                         // Let's try to find it in the local groups.
                         if let group = meshNetwork.group(withAddress: publicationAddress),
