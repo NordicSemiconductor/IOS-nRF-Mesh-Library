@@ -150,7 +150,7 @@ public class Node: Codable {
     }
     /// Returns list of Application Keys known to this Node.
     public var applicationKeys: [ApplicationKey] {
-        return meshNetwork?.applicationKeys.filter { knows(applicationKey: $0) } ?? []
+        return meshNetwork?.applicationKeys.knownTo(node: self) ?? []
     }
     
     /// A constructor needed only for testing.

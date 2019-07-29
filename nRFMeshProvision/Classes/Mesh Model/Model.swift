@@ -30,13 +30,16 @@ public class Model: Codable {
         return modelId <= 0xFFFF
     }
     /// The array of Unicast or Group Addresses (4-character hexadecimal value),
-    /// or virtual label UUIDs (32-character hexadecimal string).
+    /// or Virtual Label UUIDs (32-character hexadecimal string).
     internal var subscribe: [String]
-    /// Returns the list of Groups that this model is subscribed to.
+    /// Returns the list of known Groups that this Model is subscribed to.
+    /// It may be that the Model is subscribed to some other Groups, which are
+    /// not known to the local database, and those are not returned.
+    /// Use `isSubscribed(to:)` to check other Groups.
     public var subscriptions: [Group] {
         return parentElement.parentNode?.meshNetwork?.groups.filter({ subscribe.contains($0._address )}) ?? []
     }
-    /// The configuration of this model's publication.
+    /// The configuration of this Model's publication.
     public internal(set) var publish: Publish?
     /// An array of Appliaction Key indexes to which this model is bound.
     internal var bind: [KeyIndex]
