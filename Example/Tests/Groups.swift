@@ -15,7 +15,7 @@ class Groups: XCTestCase {
         let meshNetwork = MeshNetwork(name: "Test")
         
         let group = try Group(name: "Group 1", address: 0xC000)
-        meshNetwork.add(group: group)
+        XCTAssertNoThrow(try meshNetwork.add(group: group))
         
         XCTAssertEqual(meshNetwork.groups.count, 1)
         XCTAssertEqual(meshNetwork.groups[0], group)
@@ -30,8 +30,8 @@ class Groups: XCTestCase {
     func testAddingAgain() throws {
         let meshNetwork = MeshNetwork(name: "Test")
         
-        meshNetwork.add(group: try Group(name: "Group 1", address: 0xC000))
-        meshNetwork.add(group: try Group(name: "Other group with the same address", address: 0xC000))
+        XCTAssertNoThrow(try meshNetwork.add(group: try Group(name: "Group 1", address: 0xC000)))
+        XCTAssertThrowsError(try meshNetwork.add(group: try Group(name: "Other group with the same address", address: 0xC000)))
         XCTAssertEqual(meshNetwork.groups.count, 1)
         XCTAssertEqual(meshNetwork.groups[0].name, "Group 1")
     }
@@ -53,7 +53,7 @@ class Groups: XCTestCase {
         let meshNetwork = MeshNetwork(name: "Test")
         
         let group = try Group(name: "Group 2", address: MeshAddress(0xC000))
-        meshNetwork.add(group: group)
+        XCTAssertNoThrow(try meshNetwork.add(group: group))
         
         XCTAssertEqual(meshNetwork.groups.count, 1)
         
@@ -69,10 +69,10 @@ class Groups: XCTestCase {
         let child2 = try Group(name: "Child 2", address: 0xC002)
         let childOfAChild = try Group(name: "Inner child", address: 0xC100)
         
-        meshNetwork.add(group: root)
-        meshNetwork.add(group: child1)
-        meshNetwork.add(group: child2)
-        meshNetwork.add(group: childOfAChild)
+        XCTAssertNoThrow(try meshNetwork.add(group: root))
+        XCTAssertNoThrow(try meshNetwork.add(group: child1))
+        XCTAssertNoThrow(try meshNetwork.add(group: child2))
+        XCTAssertNoThrow(try meshNetwork.add(group: childOfAChild))
         XCTAssert(meshNetwork.groups.count == 4)
         
         child1.parent = root
