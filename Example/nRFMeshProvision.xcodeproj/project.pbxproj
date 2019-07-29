@@ -16,6 +16,7 @@
 		522AFFDE22BBBC6400521EDC /* NodeFeaturesCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 522AFFDD22BBBC6400521EDC /* NodeFeaturesCell.swift */; };
 		522AFFE022C2376C00521EDC /* NodeElementsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 522AFFDF22C2376C00521EDC /* NodeElementsViewController.swift */; };
 		52313FEE22EAFB090074325A /* SubscribeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52313FED22EAFB090074325A /* SubscribeViewController.swift */; };
+		5231400022EEE1770074325A /* AssigningGroupAddresses.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52313FFF22EEE1770074325A /* AssigningGroupAddresses.swift */; };
 		523F776422C4EDD90030EA6A /* SwitchCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 523F776322C4EDD90030EA6A /* SwitchCell.swift */; };
 		523F776622C609D90030EA6A /* NodeNetworkKeysViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 523F776522C609D90030EA6A /* NodeNetworkKeysViewController.swift */; };
 		523F776822C615CE0030EA6A /* NodeAppKeysViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 523F776722C615CE0030EA6A /* NodeAppKeysViewController.swift */; };
@@ -95,6 +96,7 @@
 		522AFFDD22BBBC6400521EDC /* NodeFeaturesCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NodeFeaturesCell.swift; sourceTree = "<group>"; };
 		522AFFDF22C2376C00521EDC /* NodeElementsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NodeElementsViewController.swift; sourceTree = "<group>"; };
 		52313FED22EAFB090074325A /* SubscribeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubscribeViewController.swift; sourceTree = "<group>"; };
+		52313FFF22EEE1770074325A /* AssigningGroupAddresses.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssigningGroupAddresses.swift; sourceTree = "<group>"; };
 		523F776322C4EDD90030EA6A /* SwitchCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwitchCell.swift; sourceTree = "<group>"; };
 		523F776522C609D90030EA6A /* NodeNetworkKeysViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NodeNetworkKeysViewController.swift; sourceTree = "<group>"; };
 		523F776722C615CE0030EA6A /* NodeAppKeysViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NodeAppKeysViewController.swift; sourceTree = "<group>"; };
@@ -387,6 +389,7 @@
 				529B75AA2248E276008F1CE7 /* SceneRanges.swift */,
 				529B75AC22491770008F1CE7 /* AddressRanges.swift */,
 				529B7628224CE481008F1CE7 /* AssigningUnicastAddress.swift */,
+				52313FFF22EEE1770074325A /* AssigningGroupAddresses.swift */,
 				529B764022521075008F1CE7 /* ManagingProvisioners.swift */,
 				528352B32284139F0097B949 /* ProxyProtocol.swift */,
 				52B7F67C229829F200B0A42F /* Addresses.swift */,
@@ -656,6 +659,7 @@
 			files = (
 				52B7F67D229829F200B0A42F /* Addresses.swift in Sources */,
 				5294DADA22B109810041370E /* Pdus.swift in Sources */,
+				5231400022EEE1770074325A /* AssigningGroupAddresses.swift in Sources */,
 				52568D4B22DDFAC700B7B236 /* Groups.swift in Sources */,
 				52F6AD6C22B78F3000F0D7DF /* CompositionData.swift in Sources */,
 				523F777022C64FD20030EA6A /* ConfigMessages.swift in Sources */,
