@@ -126,13 +126,13 @@ internal class FoundationLayer {
                 }
             }
             
-        case let status as ConfigModelAppList:
-            if status.isSuccess,
+        case let list as ConfigModelAppList:
+            if list.isSuccess,
                 let node = meshNetwork.node(withAddress: source),
-                let element = node.element(withAddress: status.elementAddress),
-                let model = element.model(withModelId: status.modelId) {
+                let element = node.element(withAddress: list.elementAddress),
+                let model = element.model(withModelId: list.modelId) {
                 // Replace the known binding with what was received in the message.
-                model.bind = status.applicationKeyIndexes
+                model.bind = list.applicationKeyIndexes
                 model.bind.sort()
                 save()
             }
@@ -218,6 +218,22 @@ internal class FoundationLayer {
                 default:
                     break
                 }
+            }
+            
+        case let list as ConfigModelSubscriptionList:
+            if list.isSuccess,
+                let node = meshNetwork.node(withAddress: source),
+                let element = node.element(withAddress: list.elementAddress),
+                let model = element.model(withModelId: list.modelId) {
+                model.subscribe.removeAll()
+                for address in list.addresses {
+                    if let group = meshNetwork.groups.first(where: { $0.address.address == address }) {
+                        model.subscribe.append(group.address.hex)
+                    } else {
+                        model.subscribe.append(address.hex)
+                    }
+                }
+                save()
             }
             
         case let defaultTtl as ConfigDefaultTtlStatus:

@@ -79,11 +79,6 @@ public protocol ConfigVendorModelMessage: ConfigModelMessage {
     var companyIdentifier: UInt16 { get }
 }
 
-public protocol ConfigModelAppList: ConfigStatusMessage, ConfigModelMessage {    
-    /// Application Key Indexes bound to the Model.
-    var applicationKeyIndexes: [KeyIndex] { get }
-}
-
 public protocol ConfigAddressMessage: ConfigMessage {
     /// Value of the Address.
     var address: Address { get }
@@ -92,6 +87,16 @@ public protocol ConfigAddressMessage: ConfigMessage {
 public protocol ConfigVirtualLabelMessage: ConfigMessage {
     /// Value of the 128-bt Virtual Label UUID.
     var virtualLabel: UUID { get }
+}
+
+public protocol ConfigModelAppList: ConfigStatusMessage, ConfigModelMessage {
+    /// Application Key Indexes bound to the Model.
+    var applicationKeyIndexes: [KeyIndex] { get }
+}
+
+public protocol ConfigModelSubscriptionList: ConfigStatusMessage, ConfigModelMessage {
+    /// A list of Addresses.
+    var addresses: [Address] { get }
 }
 
 internal extension ConfigMessage {
@@ -124,7 +129,7 @@ internal extension ConfigMessage {
     /// This will decode as many Indexes as possible, until the end of data is
     /// reached.
     ///
-    /// - parameter limit:  Maximim number of Key Indexes to decode.
+    /// - parameter limit:  Maximum number of Key Indexes to decode.
     /// - parameter data:   The data from where the indexes should be read.
     /// - parameter offset: The offset from where to read the indexes.
     /// - returns: Decoded Key Indexes.

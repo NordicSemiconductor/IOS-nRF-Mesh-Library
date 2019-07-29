@@ -173,6 +173,18 @@ private extension AccessLayer {
         case ConfigModelSubscriptionVirtualAddressOverwrite.opCode:
             MessageType = ConfigModelSubscriptionVirtualAddressOverwrite.self
             
+        case ConfigSIGModelSubscriptionGet.opCode:
+            MessageType = ConfigSIGModelSubscriptionGet.self
+            
+        case ConfigSIGModelSubscriptionList.opCode:
+            MessageType = ConfigSIGModelSubscriptionList.self
+            
+        case ConfigVendorModelSubscriptionGet.opCode:
+            MessageType = ConfigVendorModelSubscriptionGet.self
+            
+        case ConfigVendorModelSubscriptionList.opCode:
+            MessageType = ConfigVendorModelSubscriptionList.self
+            
         // Resetting Node
         case ConfigNodeReset.opCode:
             MessageType = ConfigNodeReset.self
