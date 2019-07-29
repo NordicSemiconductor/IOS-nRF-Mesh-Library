@@ -7,18 +7,17 @@
 
 import Foundation
 
-public struct ConfigAppKeyList: ConfigNetKeyMessage {
+public struct ConfigAppKeyList: ConfigStatusMessage, ConfigNetKeyMessage {
     public static let opCode: UInt32 = 0x8002
     
     public var parameters: Data? {
         return Data([status.rawValue]) + encodeNetKeyIndex() + encode(indexes: applicationKeyIndexes[...])
     }
     
+    public let status: ConfigMessageStatus
     public let networkKeyIndex: KeyIndex
     /// Application Key Indexes bound to the Network Key known to the Node.
     public let applicationKeyIndexes: [KeyIndex]
-    /// Operation status.
-    public let status: ConfigMessageStatus
     
     public init(networkKey: NetworkKey, applicationKeys: [ApplicationKey], status: ConfigMessageStatus) {
         self.networkKeyIndex = networkKey.index
