@@ -40,11 +40,11 @@ class ConfigMessages: XCTestCase {
         
         XCTAssertEqual(message.networkKeyIndex, 0x123)
         XCTAssertEqual(message.applicationKeyIndex, 0x456)
-        XCTAssertEqual(message.parameters, Data(hex: "5634120123456789ABCDEF0123456789ABCDEF"))
+        XCTAssertEqual(message.parameters, Data(hex: "2361450123456789ABCDEF0123456789ABCDEF"))
     }
     
     func testDecodingConfigAppKeyAdd() {
-        let message = ConfigAppKeyAdd(parameters: Data(hex: "5634120123456789ABCDEF0123456789ABCDEF")!)
+        let message = ConfigAppKeyAdd(parameters: Data(hex: "2361450123456789ABCDEF0123456789ABCDEF")!)
         
         XCTAssertNotNil(message)
         XCTAssertEqual(message?.networkKeyIndex, 0x123)
