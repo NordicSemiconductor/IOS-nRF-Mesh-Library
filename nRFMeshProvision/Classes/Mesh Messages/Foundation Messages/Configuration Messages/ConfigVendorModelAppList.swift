@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct ConfigVendorModelAppList: ConfigStatusMessage, ConfigVendorModelMessage, ConfigModelAppList {
+public struct ConfigVendorModelAppList: ConfigModelAppList, ConfigVendorModelMessage {
     public static let opCode: UInt32 = 0x804E
     
     public var parameters: Data? {
