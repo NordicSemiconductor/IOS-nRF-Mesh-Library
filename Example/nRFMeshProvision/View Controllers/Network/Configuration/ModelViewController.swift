@@ -22,6 +22,10 @@ class ModelViewController: ConnectableViewController {
         
         title = model.name ?? "Model"
         navigationItem.rightBarButtonItem = editButtonItem
+        
+        refreshControl = UIRefreshControl()
+        refreshControl!.tintColor = UIColor.white
+        refreshControl!.addTarget(self, action: #selector(reloadBindings(_:)), for: .valueChanged)
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -186,7 +190,7 @@ class ModelViewController: ConnectableViewController {
             } else {
                 cell.textLabel?.text = "Invalid address"
                 cell.detailTextLabel?.text = nil
-                cell.tintColor = .lightGray
+                cell.tintColor = .nordicRed
                 cell.imageView?.image = #imageLiteral(resourceName: "ic_flag_24pt")
             }
             return cell
@@ -323,6 +327,39 @@ class ModelViewController: ConnectableViewController {
 
 private extension ModelViewController {
     
+    @objc func reloadBindings(_ sender: Any) {
+        whenConnected { alert in
+            alert?.message = "Reading Bound Application Keys..."
+            guard let message: ConfigMessage =
+                ConfigSIGModelAppGet(of: self.model) ??
+                ConfigVendorModelAppGet(of: self.model) else {
+                    self.done()
+                    return
+            }
+            MeshNetworkManager.instance.send(message, to: self.model)
+        }
+    }
+    
+    func reloadPublication() {
+        whenConnected { alert in
+            alert?.message = "Reading Publication settings..."
+            MeshNetworkManager.instance.send(ConfigModelPublicationGet(for: self.model), to: self.model)
+        }
+    }
+    
+    func reloadSubscriptions() {
+        whenConnected { alert in
+            alert?.message = "Reading Subscriptions..."
+            guard let message: ConfigMessage =
+                ConfigSIGModelSubscriptionGet(of: self.model) ??
+                ConfigVendorModelSubscriptionGet(of: self.model) else {
+                    self.done()
+                    return
+            }
+            MeshNetworkManager.instance.send(message, to: self.model)
+        }
+    }
+    
     /// Sends a message to the mesh network to unbind the given Application Key
     /// from the Model.
     ///
@@ -374,13 +411,14 @@ extension ModelViewController: MeshNetworkDelegate {
             }
         case let status as ConfigModelPublicationStatus:
             done()
-            
+        
             if status.isSuccess {
                 tableView.reloadSections(.publication, with: .automatic)
                 setEditing(false, animated: true)
             } else {
                 presentAlert(title: "Error", message: status.message)
             }
+            refreshControl?.endRefreshing()
         case let status as ConfigModelSubscriptionStatus:
             done()
             
@@ -389,6 +427,26 @@ extension ModelViewController: MeshNetworkDelegate {
                 setEditing(false, animated: true)
             } else {
                 presentAlert(title: "Error", message: status.message)
+            }
+        case let list as ConfigModelAppList:
+            if list.isSuccess {
+                tableView.reloadSections(.bindingsAndPublication, with: .automatic)
+                reloadSubscriptions()
+            } else {
+                done() {
+                    self.presentAlert(title: "Error", message: list.message)
+                    self.refreshControl?.endRefreshing()
+                }
+            }
+        case let list as ConfigModelSubscriptionList:
+            if list.isSuccess {
+                tableView.reloadSections(.subscriptions, with: .automatic)
+                reloadPublication()
+            } else {
+                done() {
+                    self.presentAlert(title: "Error", message: list.message)
+                    self.refreshControl?.endRefreshing()
+                }
             }
         default:
             break
