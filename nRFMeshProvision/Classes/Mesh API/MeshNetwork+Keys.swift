@@ -150,7 +150,7 @@ public extension MeshNetwork {
     func remove(networkKeyAt index: Int) throws -> NetworkKey {
         let networkKey = networkKeys[index]
         // Ensure no node is using this Application Key.
-        guard !networkKey.isUsed(in: self) else {
+        guard !networkKey.isPrimary && !networkKey.isUsed(in: self) else {
             throw MeshModelError.keyInUse
         }
         return networkKeys.remove(at: index)

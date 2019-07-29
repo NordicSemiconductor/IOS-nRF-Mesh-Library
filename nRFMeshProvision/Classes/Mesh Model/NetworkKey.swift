@@ -124,6 +124,11 @@ public class NetworkKey: Key, Codable {
         regenerateKeyDerivaties()
     }
     
+    /// Creates the primary Network Key for a mesh network.
+    internal convenience init() {
+        try! self.init(name: "Primary Network Key", index: 0, key: OpenSSLHelper().generateRandom())
+    }
+    
     // MARK: - Codable
     
     /// Coding keys used to export / import Network Keys.

@@ -161,8 +161,8 @@ public class Node: Codable {
         self.deviceKey = Data.random128BitKey()
         self.security = .high
         // Default values
+        self.netKeys  = [ NodeKey(index: 0, updated: false) ]
         self.appKeys  = []
-        self.netKeys  = []
         self.elements = []
         
         for _ in 0..<elements {
@@ -190,8 +190,8 @@ public class Node: Codable {
         self.features = NodeFeatures()
         
         // Keys will ba added later.
-        self.appKeys  = []
         self.netKeys  = []
+        self.appKeys  = []
         // Initialize elements.
         self.elements = []
         

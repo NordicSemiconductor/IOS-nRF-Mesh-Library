@@ -19,9 +19,9 @@ public extension NetworkKey {
     
     /// Return whether the Network Key is used in the given mesh network.
     ///
-    /// A Network Key must be added to Network Keys array of the network
-    /// and be either a Primary Key, a key known to at least one node,
-    /// or bound to an existing Application Key to be used by it.
+    /// A `true` is returned when the Network Key is added to Network Keys
+    /// array of the network and is known to at least one node, or bound
+    /// to an existing Application Key.
     ///
     /// An used Network Key may not be removed from the network.
     ///
@@ -32,8 +32,6 @@ public extension NetworkKey {
         let localProvisioner = meshNetwork.provisioners.first
         return meshNetwork.networkKeys.contains(self) &&
             (
-                // Primary Network Key.
-                isPrimary ||
                 // Network Key known by at least one node (except the local Provisioner).
                 meshNetwork.nodes.filter({ $0.uuid != localProvisioner?.uuid }).knows(networkKey: self) ||
                 // Network Key bound to an Application Key.

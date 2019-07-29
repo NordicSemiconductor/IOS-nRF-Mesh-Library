@@ -50,7 +50,7 @@ public class MeshNetwork: Codable {
         meshName        = name
         timestamp       = Date()
         provisioners    = []
-        networkKeys     = []
+        networkKeys     = [ NetworkKey() ]
         applicationKeys = []
         nodes           = []
         groups          = []

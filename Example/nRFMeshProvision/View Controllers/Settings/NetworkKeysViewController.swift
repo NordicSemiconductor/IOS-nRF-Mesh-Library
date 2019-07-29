@@ -91,7 +91,7 @@ class NetworkKeysViewController: UITableViewController, Editable {
     override func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
         let network = MeshNetworkManager.instance.meshNetwork!
         let networkKey = network.networkKeys[indexPath.keyIndex]
-        return networkKey.isUsed(in: network) ? .none : .delete
+        return networkKey.isPrimary || networkKey.isUsed(in: network) ? .none : .delete
     }
     
     override func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
@@ -99,7 +99,7 @@ class NetworkKeysViewController: UITableViewController, Editable {
         let networkKey = network.networkKeys[indexPath.keyIndex]
         
         // It should not be possible to delete a key that is in use.
-        if networkKey.isUsed(in: network) {
+        if networkKey.isPrimary || networkKey.isUsed(in: network) {
             let title = networkKey.isPrimary ? "Primary Key" : "Key in use"
             return [UITableViewRowAction(style: .normal, title: title, handler: {_,_ in })]
         }

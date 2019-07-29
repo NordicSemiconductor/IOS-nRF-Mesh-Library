@@ -132,9 +132,8 @@ class EditKeyViewController: UITableViewController {
         } else if indexPath.isKey {
             cell = tableView.dequeueReusableCell(withIdentifier: "keyCell", for: indexPath)
             cell.detailTextLabel?.text = newKey.hex
-            // The key may only be editable for new keys.
-            cell.selectionStyle = isNewKey ? .default : .none
-            cell.accessoryType = isNewKey ? .disclosureIndicator : .none
+            // Only new or not used keys may be editted.
+            cell.accessoryType = isNewKey || !isKeyUsed ? .disclosureIndicator : .none
             cell.selectionStyle = .default
         } else if indexPath.isKeyIndex {
             cell = tableView.dequeueReusableCell(withIdentifier: "detailCell", for: indexPath)
@@ -170,19 +169,19 @@ class EditKeyViewController: UITableViewController {
             presentNameDialog()
         }
         if indexPath.isKey {
-            if isNewKey {
+            if isNewKey || !isKeyUsed {
                 presentKeyDialog()
             } else {
                 UIPasteboard.general.string = newKey.hex
                 showToast("Key copied to Clipboard.")
             }
         }
-        if !isKeyUsed && indexPath.isBoundKeyIndex {
+        if indexPath.isBoundKeyIndex && !isKeyUsed {
             let network = MeshNetworkManager.instance.meshNetwork!
             let networkKey = network.networkKeys[indexPath.row]
             newBoundNetworkKeyIndex = networkKey.index
             
-            tableView.reloadRows(at: [indexPath, IndexPath(row: tableView.tag, section: 2)], with: .fade)
+            tableView.reloadRows(at: [indexPath, IndexPath(row: tableView.tag, section: IndexPath.boundKeySection)], with: .fade)
         }
     }
 
@@ -195,6 +194,10 @@ private extension EditKeyViewController {
     }
     
     var isKeyUsed: Bool {
+        if key is NetworkKey {
+            let network = MeshNetworkManager.instance.meshNetwork!
+            return (key as! NetworkKey).isUsed(in: network)
+        }
         if key is ApplicationKey {
             let network = MeshNetworkManager.instance.meshNetwork!
             return (key as! ApplicationKey).isUsed(in: network)
