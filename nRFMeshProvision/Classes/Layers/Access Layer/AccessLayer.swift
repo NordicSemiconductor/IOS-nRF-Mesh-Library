@@ -133,7 +133,32 @@ private extension AccessLayer {
             MessageType = ConfigModelPublicationVirtualAddressSet.self
             
         case ConfigModelPublicationStatus.opCode:
-            MessageType = ConfigModelPublicationStatus.self            
+            MessageType = ConfigModelPublicationStatus.self
+            
+        // Subscriptions
+        case ConfigModelSubscriptionAdd.opCode:
+            MessageType = ConfigModelSubscriptionAdd.self
+            
+        case ConfigModelSubscriptionDelete.opCode:
+            MessageType = ConfigModelSubscriptionDelete.self
+            
+        case ConfigModelSubscriptionDeleteAll.opCode:
+            MessageType = ConfigModelSubscriptionDeleteAll.self
+            
+        case ConfigModelSubscriptionOverwrite.opCode:
+            MessageType = ConfigModelSubscriptionOverwrite.self
+            
+        case ConfigModelSubscriptionStatus.opCode:
+            MessageType = ConfigModelSubscriptionStatus.self
+            
+        case ConfigModelSubscriptionVirtualAddressAdd.opCode:
+            MessageType = ConfigModelSubscriptionVirtualAddressAdd.self
+            
+        case ConfigModelSubscriptionVirtualAddressDelete.opCode:
+            MessageType = ConfigModelSubscriptionVirtualAddressDelete.self
+            
+        case ConfigModelSubscriptionVirtualAddressOverwrite.opCode:
+            MessageType = ConfigModelSubscriptionVirtualAddressOverwrite.self
             
         // Resetting Node
         case ConfigNodeReset.opCode:
