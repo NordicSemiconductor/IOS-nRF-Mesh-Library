@@ -31,7 +31,10 @@ class ConnectableViewController: UITableViewController, GattBearerDelegate {
     func whenConnected(completion: @escaping ((UIAlertController?) -> Void)) {
         if alert == nil {
             alert = UIAlertController(title: "Status", message: "Connecting...", preferredStyle: .alert)
-            alert!.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { _ in self.alert = nil }))
+            alert!.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: {
+                _ in self.alert = nil
+                self.refreshControl?.endRefreshing()
+            }))
             present(alert!, animated: true)
         }
             
