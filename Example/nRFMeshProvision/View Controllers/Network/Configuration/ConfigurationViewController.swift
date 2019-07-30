@@ -164,11 +164,13 @@ class ConfigurationViewController: ConnectableViewController {
                 cell.textLabel?.textColor = .darkText
                 cell.detailTextLabel?.text = "\(element.models.count) models"
                 cell.accessoryType = .disclosureIndicator
+                cell.selectionStyle = .default
             } else {
                 cell.textLabel?.text = "Composition Data not received"
                 cell.textLabel?.textColor = .lightGray
                 cell.detailTextLabel?.text = nil
                 cell.accessoryType = .none
+                cell.selectionStyle = .none
             }
         }
         if indexPath.isKeysSection {
@@ -228,7 +230,7 @@ class ConfigurationViewController: ConnectableViewController {
         if indexPath.isApplicationKeys {
             performSegue(withIdentifier: "showAppKeys", sender: nil)
         }
-        if indexPath.isElementsSection {
+        if indexPath.isElementsSection && node.isCompositionDataReceived {
             performSegue(withIdentifier: "showElement", sender: indexPath)
         }
         if indexPath.isResetNode {

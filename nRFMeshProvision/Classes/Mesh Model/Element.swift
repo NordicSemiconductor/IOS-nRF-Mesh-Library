@@ -7,6 +7,9 @@
 
 import Foundation
 
+/// An alias for the Element type.
+public typealias MeshElement = Element
+
 public class Element: Codable {
     /// UTF-8 human-readable name of the Element.
     public var name: String?
@@ -140,6 +143,27 @@ internal extension Element {
     func add(model: Model) {
         models.append(model)
         model.parentElement = self
+    }
+    
+    /// The primary Element for Provisioner's Node.
+    ///
+    /// The Element will contain all mandatory Models (Configuration Server
+    /// and Health Server) and supported clients (Configuration Client
+    /// and Health Client).
+    static var primaryElement: Element {
+        // The Provisioner will always have a first Element with obligatory
+        // Models.
+        let element = Element(location: .unknown)
+        element.name = "Primary Element"
+        // Configuration Server is required for all nodes.
+        element.add(model: .configurationServer)
+        // Configuration Client is added, as this is a Provisioner's node.
+        element.add(model: .configurationClient)
+        // Health Server is required for all nodes.
+        element.add(model: .healthServer)
+        // Health Client is added, as this is a Provisioner's node.
+        element.add(model: .healthClient)
+        return element
     }
     
 }

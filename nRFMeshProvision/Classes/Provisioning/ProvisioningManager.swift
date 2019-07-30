@@ -90,7 +90,7 @@ public class ProvisioningManager {
                 // Unknown.
                 return nil
         }
-        return meshNetwork.isAddressAvailable(unicastAddress, elementsCount: capabilities.numberOfElements) &&
+        return meshNetwork.isAddressRangeAvailable(unicastAddress, elementsCount: capabilities.numberOfElements) &&
             provisioner.isAddressInAllocatedRange(unicastAddress, elementCount: capabilities.numberOfElements)
     }
     

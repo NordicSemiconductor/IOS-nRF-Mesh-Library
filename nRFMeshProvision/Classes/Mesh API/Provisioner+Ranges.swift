@@ -218,6 +218,45 @@ public extension Provisioner {
         return false
     }
     
+    /// Returns the maximum number of Elements that can be assigned to a Node
+    /// with given Unicast Address.
+    ///
+    /// This method makes sure that the addresses are in a single Unicast Address
+    /// range allocated to the Provisioner and are not already assigned to any
+    /// other Node.
+    ///
+    /// - parameter address: The Node address to check.
+    /// - returns: The maximum number of Elements that the Node can have before
+    ///            the addresses go out of Provisioner's range, or will overlap
+    ///            an existing Node.
+    func maxElementCount(for address: Address) -> Int {
+        var count = 0
+        guard address.isUnicast else {
+            return count
+        }
+        // Check the maximum number of Elements that fit inside a single range.
+        for range in allocatedUnicastRange {
+            if range.contains(address) {
+                count = Int(min(range.highAddress - address + 1, UInt16(UInt8.max))) // This must fit in UInt8.
+                break
+            }
+        }
+        // The requested address is not in Provisioner's range.
+        guard count > 0 else {
+            return 0
+        }
+        // If the Provisioner is added to a network,
+        if let meshNetwork = meshNetwork {
+            for node in meshNetwork.nodes.filter({ $0.unicastAddress != address }) {
+                if node.overlapsWithAddress(address, elementsCount: UInt8(count)) {
+                    count = Int(node.unicastAddress - address)
+                    break
+                }
+            }
+        }
+        return count
+    }
+    
     /// Returns `true` if at least one range overlaps with the given Provisioner.
     ///
     /// - parameter provisioner: The Provisioner to check ranges with.

@@ -108,6 +108,30 @@ public extension MeshNetworkManager {
         return network
     }
     
+    /// An array of Elements of the local Node.
+    ///
+    /// Use this property if you want to extend the capabilities of the local
+    /// Node with additional Elements and Models. For example, you may add an
+    /// additional Element with Generic On/Off Client Model if you support this
+    /// feature in your app. Make sure there is enough addresses for all the
+    /// Elements created. If a collision is found, the coliding Elements will
+    /// be ignored.
+    ///
+    /// The Element with all mandatory Models (Configuration Server and Client
+    /// and Health Server and Client) will be added automatically at index 0,
+    /// and should be skipped when setting.
+    ///
+    /// The mesh network must be created or loaded before setting this field,
+    /// otherwise it has no effect.
+    var localElements: [Element] {
+        get {
+            return meshNetwork?.localElements ?? []
+        }
+        set {
+            meshNetwork?.localElements = newValue
+        }
+    }
+    
 }
 
 // MARK: - Send / Receive Mesh Messages

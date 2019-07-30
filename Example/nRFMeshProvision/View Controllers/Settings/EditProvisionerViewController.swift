@@ -318,7 +318,7 @@ private extension EditProvisionerViewController {
             case .invalidRange:
                 presentAlert(title: "Error", message: "At least one of specified ranges is invalid.")
             case .addressNotInAllocatedRange:
-                presentAlert(title: "Error", message: "The Provisioner's unicast address is outside of its allocated range.")
+                presentAlert(title: "Error", message: "The Provisioner's address range is outside of its allocated range.")
             case .addressNotAvailable:
                 presentAlert(title: "Error", message: "The address is already in use.")
             default:

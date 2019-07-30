@@ -42,6 +42,33 @@ public extension Element {
         }
     }
     
+    /// Returns whether the Element contains a Model with given Model ID.
+    ///
+    /// - parameter modelId: The Model ID to look for.
+    /// - returns: `True` if the Element contains a Model with given Model ID,
+    ///            `false` otherwise.
+    func contains(modelWithId modelId: UInt32) -> Bool {
+        return models.contains { $0.modelId == modelId }
+    }
+    
+    /// Returns whether the Element contains a Model with given Model identifier.
+    ///
+    /// - parameter modelIdentifier: Bluetooth SIG or vendor-assigned model
+    ///                              identifier.
+    /// - returns: `True` if the Element contains a Model with given Model
+    ///            identifier, `false` otherwise.
+    func contains(modelWithIdentifier modelIdentifier: UInt16) -> Bool {
+        return models.contains { $0.modelIdentifier == modelIdentifier }
+    }
+    
+    /// Returns whether the Element contains the given Model.
+    ///
+    /// - parameter modelId: The Model to look for.
+    /// - returns: `True` if the Element contains the given Model, `false` otherwise.
+    func contains(model: Model) -> Bool {
+        return models.contains(model)
+    }
+    
     /// Returns `true` if the Element contains a Model compatible
     /// with given one. Compatible Models make a pair of Client - Server.
     ///
@@ -54,6 +81,45 @@ public extension Element {
     /// - returns: `True`, if the Element has the matching Model.
     func contains(modelCompatibleWith model: Model, boundTo applicationKey: ApplicationKey) -> Bool {
         return models.contains { $0.isCompatible(to: model) && $0.bind.contains(applicationKey.index) }
+    }
+    
+}
+
+public extension Array where Element == MeshElement {
+    
+    /// Returns whether any of Elements in the array contains a Model with given
+    /// Model ID.
+    ///
+    /// - parameter modelId: The Model ID to look for.
+    /// - returns: `True` if the array contains an Element with a Model with
+    ///            given Model ID, `false` otherwise.
+    func contains(modelWithId modelId: UInt32) -> Bool {
+        return contains {
+            $0.models.contains(where: { $0.modelId == modelId })
+        }
+    }
+    
+    /// Returns whether any of Elements in the array contains a Model with given
+    /// Model identifier.
+    ///
+    /// - parameter modelIdentifier: Bluetooth SIG or vendor-assigned model
+    ///                              identifier.
+    /// - returns: `True` if the array contains an Element with a Model with
+    ///            given Model identifier, `false` otherwise.
+    func contains(modelWithIdentifier modelIdentifier: UInt16) -> Bool {
+        return contains {
+            $0.models.contains(where: { $0.modelIdentifier == modelIdentifier })
+        }
+    }
+    
+    /// Returns whether the Element contains the given Model.
+    ///
+    /// - parameter modelId: The Model to look for.
+    /// - returns: `True` if the Element contains the given Model, `false` otherwise.
+    func contains(model: Model) -> Bool {
+        return contains {
+            $0.contains(model: model)
+        }
     }
     
 }

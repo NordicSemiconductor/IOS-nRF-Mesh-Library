@@ -42,6 +42,50 @@ public class MeshNetwork: Codable {
     /// An array of groups in teh network.
     public internal(set) var groups: [Group]
     
+    /// An array of Elements of the local Provisioner.
+    private var _localElements: [Element]
+    /// An array of Elements of the local Provisioner.
+    internal var localElements: [Element] {
+        get {
+            return _localElements
+        }
+        set {
+            var elements = newValue
+            // Configuration and Health Models will be added automatically.
+            // Let's make sure they are not in the array.
+            elements.forEach {
+                    $0.models = $0.models.filter { model in
+                        model != Model.configurationServer &&
+                        model != Model.configurationClient &&
+                        model != Model.healthServer &&
+                        model != Model.healthClient
+                    }
+                }
+            // Remove all empty Elements.
+            elements = elements.filter { !$0.models.isEmpty }
+            // Add the required Models in the Primary Element.
+            elements.insert(.primaryElement, at: 0)
+            // Make sure the indexes are correct.
+            for (index, element) in localElements.enumerated() {
+                element.index = UInt8(index)
+                element.parentNode = localProvisioner?.node
+            }
+            _localElements = elements
+            // Make sure there is enough address space for all the Elements
+            // that are not taken by other Nodes and are in the local Provisioner's
+            // address range. If required, cut the Elements array.
+            if let provisioner = localProvisioner, let node = provisioner.node {
+                var availableElements = elements
+                let availableElementsCount = provisioner.maxElementCount(for: node.unicastAddress)
+                if availableElementsCount < elements.count {
+                    availableElements = elements.dropLast(elements.count - availableElementsCount)
+                }
+                // Assign the Elements to the Provisioner's Node.
+                node.elements = availableElements
+            }
+        }
+    }
+    
     internal init(name: String, uuid: UUID = UUID()) {
         schema          = "http://json-schema.org/draft-04/schema#"
         id              = "TBD"
@@ -54,6 +98,7 @@ public class MeshNetwork: Codable {
         applicationKeys = []
         nodes           = []
         groups          = []
+        _localElements  = [ .primaryElement ]
     }
     
     // MARK: - Codable
@@ -86,6 +131,8 @@ public class MeshNetwork: Codable {
         applicationKeys = try container.decode([ApplicationKey].self, forKey: .applicationKeys)
         nodes = try container.decode([Node].self, forKey: .nodes)
         groups = try container.decode([Group].self, forKey: .groups)
+        
+        _localElements = [ .primaryElement ]
         
         provisioners.forEach {
             $0.meshNetwork = self

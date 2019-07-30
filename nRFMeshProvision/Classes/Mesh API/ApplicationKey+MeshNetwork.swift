@@ -20,7 +20,7 @@ public extension ApplicationKey {
     /// - returns: `True` if the key is used in the given network,
     ///            `false` otherwise.
     func isUsed(in meshNetwork: MeshNetwork) -> Bool {
-        let localProvisioner = meshNetwork.provisioners.first
+        let localProvisioner = meshNetwork.localProvisioner
         return meshNetwork.applicationKeys.contains(self) &&
                // Application Key known by at least one node.
                meshNetwork.nodes.filter({ $0.uuid != localProvisioner?.uuid }).knows(applicationKey: self)

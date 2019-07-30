@@ -29,7 +29,7 @@ public extension NetworkKey {
     /// - returns: `True` if the key is used in the given network,
     ///            `false` otherwise.
     func isUsed(in meshNetwork: MeshNetwork) -> Bool {
-        let localProvisioner = meshNetwork.provisioners.first
+        let localProvisioner = meshNetwork.localProvisioner
         return meshNetwork.networkKeys.contains(self) &&
             (
                 // Network Key known by at least one node (except the local Provisioner).

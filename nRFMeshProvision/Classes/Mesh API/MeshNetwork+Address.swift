@@ -14,10 +14,13 @@ public extension MeshNetwork {
     ///
     /// - parameter address: The first address to check.
     /// - parameter count:   Number of following addresses to check.
+    /// - parameter node:    The Node, which address is to change. It will be excluded
+    ///                      from checking address collisions.
     /// - returns: `True`, if the address range is available, `false` otherwise.
-    func isAddressAvailable(_ address: Address, elementsCount count: UInt8) -> Bool {
+    func isAddressRangeAvailable(_ address: Address, elementsCount count: UInt8, for node: Node? = nil) -> Bool {
+        let otherNodes = nodes.filter { $0 != node }
         return address.isUnicast && (address + UInt16(count)).isUnicast &&
-            !nodes.contains { $0.overlapsWithAddress(address, elementsCount: count) }
+            !otherNodes.contains { $0.overlapsWithAddress(address, elementsCount: count) }
     }
     
     /// Returns the next available Unicast Address from the Provisioner's range

@@ -194,17 +194,6 @@ public class Node: Codable {
         self.appKeys  = []
         // Initialize elements.
         self.elements = []
-        
-        // Add the primary Element.
-        let element = Element(location: .unknown)
-        element.name = "Primary Element"
-        // Configuration Server is required for all nodes.
-        element.add(model: .configurationServer)
-        // Configuration Client model is added, as this is a Provisioner's node.
-        element.add(model: .configurationClient)
-        // Health Server is required for all nodes.
-        element.add(model: .healthServer)
-        add(element: element)
     }
     
     internal init(for unprovisionedDevice: UnprovisionedDevice,
@@ -221,7 +210,8 @@ public class Node: Codable {
         // The node has been provisioned with one Network Key.
         self.netKeys  = [NodeKey(index: networkKey.index, updated: false)]
         self.appKeys  = []
-        // Elements will be queried with Composition Data.
+        // Elements will be queried with Composition Data. Let's just add
+        // n empty Elements to reserve addresses.
         self.elements = []
         for _ in 0..<n {
             add(element: Element(location: .unknown))

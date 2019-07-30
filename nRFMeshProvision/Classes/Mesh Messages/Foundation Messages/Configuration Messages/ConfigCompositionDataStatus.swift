@@ -122,8 +122,7 @@ public struct Page0: CompositionDataPage {
 
 // MARK: - Helper extension
 
-private typealias El = Element
-private extension Array where Element == El {
+private extension Array where Element == MeshElement {
     
     /// Returns Elements and their Models as Data, to be sent in
     /// Page 0 of the Composition Data.
