@@ -19,6 +19,9 @@ class ConfigurationViewController: ConnectableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        refreshControl = UIRefreshControl()
+        refreshControl!.tintColor = UIColor.white
+        refreshControl!.addTarget(self, action: #selector(getCompositionData), for: .valueChanged)
         
         title = node.name ?? "Unknown device"
         
@@ -331,7 +334,7 @@ private extension ConfigurationViewController {
         }
     }
     
-    func getCompositionData() {
+    @objc func getCompositionData() {
         whenConnected { alert in
             alert?.message = "Requesting Composition Data..."
             MeshNetworkManager.instance.send(ConfigCompositionDataGet(), to: self.node)
@@ -385,6 +388,7 @@ extension ConfigurationViewController: MeshNetworkDelegate {
         case is ConfigDefaultTtlStatus:
             tableView.reloadRows(at: [.ttl], with: .automatic)
             done()
+            refreshControl?.endRefreshing()
             
         case is ConfigNodeResetStatus:
             navigationController!.popViewController(animated: true)
