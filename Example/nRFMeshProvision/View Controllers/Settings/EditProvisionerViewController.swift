@@ -195,7 +195,7 @@ private extension EditProvisionerViewController {
     /// Presents a dialog to edit the Provisioner name.
     func presentNameDialog() {
         presentTextAlert(title: "Provisioner name", message: nil,
-                         text: provisioner.provisionerName, placeHolder: "Name",
+                         text: newName ?? provisioner.provisionerName, placeHolder: "Name",
                          type: .nameRequired) { newName in
                             self.newName = newName
                             self.nameLabel.text = newName
