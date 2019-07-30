@@ -52,13 +52,18 @@ class GroupsViewController: UITableViewController, Editable {
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "group", for: indexPath) as! GroupCell
-        cell.group = MeshNetworkManager.instance.meshNetwork!.groups[indexPath.row]
-        
+        cell.group = MeshNetworkManager.instance.meshNetwork!.groups[indexPath.row]        
         return cell
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
+    }
+    
+    override func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
+        let network = MeshNetworkManager.instance.meshNetwork!
+        let group = network.groups[indexPath.row]
+        return group.isUsed ? .none : .delete
     }
     
     override func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
