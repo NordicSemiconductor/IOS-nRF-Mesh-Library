@@ -131,16 +131,23 @@ extension NodeAppKeysViewController: MeshNetworkDelegate {
             }
             
         case let list as ConfigAppKeyList:
-            let index = node.networkKeys.firstIndex { $0.index == list.networkKeyIndex }
-            if let index = index, index + 1 < node.networkKeys.count {
-                MeshNetworkManager.instance.send(ConfigAppKeyGet(networkKey: node.networkKeys[index + 1]), to: node)
-            } else {
-                done()
-                tableView.reloadData()
-                if node.applicationKeys.isEmpty {
-                    showEmptyView()
+            if list.isSuccess {
+                let index = node.networkKeys.firstIndex { $0.index == list.networkKeyIndex }
+                if let index = index, index + 1 < node.networkKeys.count {
+                    MeshNetworkManager.instance.send(ConfigAppKeyGet(networkKey: node.networkKeys[index + 1]), to: node)
+                } else {
+                    done()
+                    tableView.reloadData()
+                    if node.applicationKeys.isEmpty {
+                        showEmptyView()
+                    }
+                    refreshControl?.endRefreshing()
                 }
-                refreshControl?.endRefreshing()
+            } else {
+                done() {
+                    self.presentAlert(title: "Error", message: "\(list.status)")
+                    self.refreshControl?.endRefreshing()
+                }
             }
         default:
             break
