@@ -63,9 +63,9 @@ internal class FoundationLayer {
             
         case let list as ConfigNetKeyList:
             if let node = meshNetwork.node(withAddress: source) {
-                node.netKeys.removeAll()
-                node.netKeys.append(contentsOf: list.networkKeyIndexs.map({ Node.NodeKey(index: $0, updated: false) }))
-                node.netKeys.sort()
+                node.netKeys = list.networkKeyIndexs
+                    .map({ Node.NodeKey(index: $0, updated: false) })
+                    .sorted()
                 save()
             }
             
@@ -132,8 +132,7 @@ internal class FoundationLayer {
                 let element = node.element(withAddress: list.elementAddress),
                 let model = element.model(withModelId: list.modelId) {
                 // Replace the known binding with what was received in the message.
-                model.bind = list.applicationKeyIndexes
-                model.bind.sort()
+                model.bind = list.applicationKeyIndexes.sorted()
                 save()
             }
             
