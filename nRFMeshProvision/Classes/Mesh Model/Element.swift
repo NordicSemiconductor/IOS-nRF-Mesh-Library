@@ -34,9 +34,8 @@ public class Element: Codable {
     }
     
     internal init?(compositionData: Data, offset: inout Int) {
-        // Composition Data must have at least 4 bytes: 2 for Location and one for NumS and NumV
-        // and at least 1 model identifier.
-        guard compositionData.count >= offset + 5 else {
+        // Composition Data must have at least 4 bytes: 2 for Location and one for NumS and NumV.
+        guard compositionData.count >= offset + 4 else {
             return nil
         }
         // Is Location valid?
@@ -49,11 +48,6 @@ public class Element: Codable {
         // Read NumS and NumV.
         let sigModelsByteCount    = Int(compositionData[offset + 2]) * 2 // SIG Model ID is 16-bit long.
         let vendorModelsByteCount = Int(compositionData[offset + 3]) * 4 // Vendor Model ID is 32-bit long.
-        
-        // At least one model is required.
-        guard sigModelsByteCount + vendorModelsByteCount > 0 else {
-            return nil
-        }
         
         // Ensure the Composition Data have enough data.
         guard compositionData.count >= offset + 3 + sigModelsByteCount + vendorModelsByteCount else {
