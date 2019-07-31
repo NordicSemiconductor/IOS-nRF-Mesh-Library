@@ -127,6 +127,7 @@ public extension MeshNetwork {
             // Set the Node's Elements.
             if provisioners.isEmpty {
                 node.add(elements: localElements)
+                node.companyIdentifier = 0x004C // Apple Inc.
             } else {
                 node.add(element: .primaryElement)
             }

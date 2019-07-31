@@ -182,7 +182,6 @@ public class Node: Codable {
         self.deviceKey = Data.random128BitKey()
         self.security = .high
         self.ttl = LowerTransportLayer.defaultTtl
-        self.companyIdentifier = 0x004C // Apple Inc.
         // A flag that there is no need to perform configuration of
         // a Provisioner's node.
         self.isConfigComplete = true
