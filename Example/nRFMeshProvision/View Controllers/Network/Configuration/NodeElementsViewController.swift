@@ -35,6 +35,9 @@ class NodeElementsViewController: UITableViewController {
     // MARK: - Table view data source
 
     override func numberOfSections(in tableView: UITableView) -> Int {
+        if element.models.isEmpty {
+            return IndexPath.numberOfSection - 1
+        }
         return IndexPath.numberOfSection
     }
 
