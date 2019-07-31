@@ -187,7 +187,7 @@ public extension MeshNetwork {
             // If a local Provisioner was moved, it's Composition Data must
             // be cleared, as most probably it will be exported to another phone,
             // which will have it's own manufacturer, Elements, etc.
-            if fromIndex == 0, let n = provisioner.node {
+            if newToIndex == 0 || fromIndex == 0, let n = provisioner.node {
                 n.companyIdentifier = nil
                 n.productIdentifier = nil
                 n.versionIdentifier = nil
@@ -195,12 +195,17 @@ public extension MeshNetwork {
                 // another phone, that phone will update the local Elements array.
                 // As the final Elements count is unknown at this place, just add
                 // the required Element.
+                n.elements.forEach {
+                    $0.parentNode = nil
+                    $0.index = 0                    
+                }
+                n.elements.removeAll()
                 n.add(element: .primaryElement)
             }
             // If a Provisioner was moved to index 0 it becomes the new local Provisioner.
             // The local Provisioner is, by definition, aware of all Network and Application
             // Keys currently existing in the network.
-            if toIndex == 0, let n = localProvisioner?.node {
+            if newToIndex == 0 || fromIndex == 0, let n = localProvisioner?.node {
                 n.netKeys = networkKeys.map { Node.NodeKey(of: $0) }
                 n.appKeys = applicationKeys.map { Node.NodeKey(of: $0) }
                 n.companyIdentifier = 0x004C // Apple Inc.
