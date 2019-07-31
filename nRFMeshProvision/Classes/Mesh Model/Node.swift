@@ -437,9 +437,6 @@ internal extension Node {
     /// - parameter compositionData: The result of Config Composition Data Get
     ///                              with page 0.
     func apply(compositionData: ConfigCompositionDataStatus) {
-        guard !isCompositionDataReceived else {
-            return
-        }
         guard let page0 = compositionData.page as? Page0 else {
             return
         }
