@@ -126,6 +126,21 @@ internal class LowerTransportLayer {
                 }
             } else {
                 if let segment = SegmentedAccessMessage(fromSegmentPdu: networkPdu) {
+                    // If the received segment comes from an already completed and
+                    // acknowledged message, send the same ACK immediately.
+                    if let lastAck = acknowledgments[segment.source], lastAck.sequenceZero == segment.sequenceZero {
+                        if let provisionerNode = meshNetwork.localProvisioner?.node {
+                            let ttl = networkPdu.ttl > 0 ? provisionerNode.defaultTTL ?? LowerTransportLayer.defaultTtl : 0
+                            try? networkManager.networkLayer.send(lowerTransportPdu: lastAck, ofType: .networkPdu, withTtl: ttl)
+                        } else {
+                            acknowledgments.removeValue(forKey: segment.source)
+                        }
+                        return
+                    }
+                    // Remove the last ACK. The source Node has sent a new message, so
+                    // the last ACK must have been received.
+                    acknowledgments.removeValue(forKey: segment.source)
+                    
                     // A segmented message may be composed of 1 or more segments.
                     if segment.isSingleSegment {
                         // A single segment message may immediately be acknowledged.
@@ -137,21 +152,6 @@ internal class LowerTransportLayer {
                         let accessMessage = AccessMessage(fromSegments: [segment])
                         networkManager.upperTransportLayer.handle(lowerTransportPdu: accessMessage)
                     } else {
-                        // If the received segment comes from an already completed and
-                        // acknowledged message, send the same ACK immediatelly.
-                        if let lastAck = acknowledgments[segment.source], lastAck.sequenceZero == segment.sequenceZero {
-                            if let provisionerNode = meshNetwork.localProvisioner?.node {
-                                let ttl = networkPdu.ttl > 0 ? provisionerNode.defaultTTL ?? LowerTransportLayer.defaultTtl : 0
-                                try? networkManager.networkLayer.send(lowerTransportPdu: lastAck, ofType: .networkPdu, withTtl: ttl)
-                            } else {
-                                acknowledgments.removeValue(forKey: segment.source)
-                            }
-                            return
-                        }
-                        // Remove the last ACK. The source Node has sent a new message, so
-                        // the last ACK must have been received.
-                        acknowledgments.removeValue(forKey: segment.source)
-                        
                         // If a message is composed of multiple segments, they all need to
                         // be received before it can be processed.
                         let key = UInt32(keyFor: networkPdu.source, sequenceZero: segment.sequenceZero)
