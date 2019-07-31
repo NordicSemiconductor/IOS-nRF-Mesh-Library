@@ -29,6 +29,12 @@ internal class FoundationLayer {
         
         switch configMessage {
             
+        case is ConfigCompositionDataGet:
+            if let node = meshNetwork.localProvisioner?.node {
+                let compositionData = Page0(node: node)
+                networkManager.send(ConfigCompositionDataStatus(report: compositionData), to: source)
+            }
+            
         case let compositionData as ConfigCompositionDataStatus:
             if let node = meshNetwork.node(withAddress: source) {
                 node.apply(compositionData: compositionData)
