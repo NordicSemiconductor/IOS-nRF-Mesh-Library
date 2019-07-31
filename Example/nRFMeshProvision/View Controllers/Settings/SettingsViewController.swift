@@ -129,14 +129,9 @@ private extension SettingsViewController {
         
         let manager = MeshNetworkManager.instance
         if manager.save() {
-            // Reload network data.
-            let meshNetwork = manager.meshNetwork!
-            networkNameLabel.text  = meshNetwork.meshName
-            provisionersLabel.text = "\(meshNetwork.provisioners.count)"
-            networkKeysLabel.text  = "\(meshNetwork.networkKeys.count)"
-            appKeysLabel.text      = "\(meshNetwork.applicationKeys.count)"
+            reload()
         } else {
-            self.presentAlert(title: "Error", message: "Mesh configuration could not be saved.")
+            presentAlert(title: "Error", message: "Mesh configuration could not be saved.")
         }
     }
     
@@ -170,6 +165,15 @@ private extension SettingsViewController {
         picker.delegate = self
         present(picker, animated: true, completion: nil)
     }
+    
+    /// Reloads network data.
+    func reload() {
+        let meshNetwork = MeshNetworkManager.instance.meshNetwork!
+        networkNameLabel.text  = meshNetwork.meshName
+        provisionersLabel.text = "\(meshNetwork.provisioners.count)"
+        networkKeysLabel.text  = "\(meshNetwork.networkKeys.count)"
+        appKeysLabel.text      = "\(meshNetwork.applicationKeys.count)"
+    }
 }
 
 // MARK: - UIDocumentPickerDelegate -
@@ -183,11 +187,19 @@ extension SettingsViewController: UIDocumentPickerDelegate {
             do {
                 let data = try Data(contentsOf: url)
                 try manager.import(from: data)
-                
-                self.presentAlert(title: "Success", message: "Mesh Network configuration imported.")
+                if manager.save() {
+                    DispatchQueue.main.async {
+                        self.reload()
+                        self.presentAlert(title: "Success", message: "Mesh Network configuration imported.")
+                    }
+                } else {
+                    self.presentAlert(title: "Error", message: "Mesh configuration could not be saved.")
+                }
             } catch {
-                self.presentAlert(title: "Error", message: "Importing Mesh Network configuration failed.\nCheck if the file is valid.")
                 print("Import failed: \(error)")
+                DispatchQueue.main.async {
+                    self.presentAlert(title: "Error", message: "Importing Mesh Network configuration failed.\nCheck if the file is valid.")
+                }
             }
         }
     }
