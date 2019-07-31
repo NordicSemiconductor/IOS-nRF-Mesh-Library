@@ -102,7 +102,7 @@ internal struct SegmentedAccessMessage: SegmentedMessage {
 extension SegmentedAccessMessage: CustomDebugStringConvertible {
     
     var debugDescription: String {
-        return "Segmented \(type) (\(source.hex)->\(destination.hex)) for SeqZero: \(sequenceZero) (\(segmentOffset)/\(lastSegmentNumber)), Seq: \(sequence), 0x\(upperTransportPdu.hex)"
+        return "Segmented \(type) (\(source.hex)->\(destination.hex)) for SeqZero: \(sequenceZero) (\(segmentOffset + 1)/\(lastSegmentNumber + 1)), Seq: \(sequence), 0x\(upperTransportPdu.hex)"
     }
     
 }

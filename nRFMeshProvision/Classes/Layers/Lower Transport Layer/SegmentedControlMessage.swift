@@ -63,7 +63,7 @@ internal struct SegmentedControlMessage: SegmentedMessage {
 extension SegmentedControlMessage: CustomDebugStringConvertible {
     
     var debugDescription: String {
-        return "Segmented \(type) (\(source.hex)->\(destination.hex)) for SeqZero: \(sequenceZero) (\(segmentOffset)/\(lastSegmentNumber)), Op Code: \(opCode), 0x\(upperTransportPdu.hex)"
+        return "Segmented \(type) (\(source.hex)->\(destination.hex)) for SeqZero: \(sequenceZero) (\(segmentOffset + 1)/\(lastSegmentNumber + 1)), Op Code: \(opCode), 0x\(upperTransportPdu.hex)"
     }
     
 }
