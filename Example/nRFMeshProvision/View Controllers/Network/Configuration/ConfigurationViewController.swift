@@ -142,7 +142,7 @@ class ConfigurationViewController: ConnectableViewController {
                 }
             case 2:
                 if let version = node.versionIdentifier {
-                    cell.detailTextLabel?.text = "\(version)"
+                    cell.detailTextLabel?.text = "\(version.asString())"
                 } else {
                     cell.detailTextLabel?.text = "Unknown"
                 }
