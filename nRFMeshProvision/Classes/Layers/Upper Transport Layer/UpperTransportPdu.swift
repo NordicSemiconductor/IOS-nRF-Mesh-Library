@@ -117,6 +117,7 @@ internal struct UpperTransportPdu {
     /// - parameter meshNetwork: The mesh network for which the PDU should be decoded.
     /// - returns: The Upper Transport Layer PDU, of `nil` if none of the keys worked.
     static func decode(_ accessMessage: AccessMessage, for meshNetwork: MeshNetwork) -> UpperTransportPdu? {
+        // Was the message signed using Application Key?
         if let aid = accessMessage.aid {
             for applicationKey in meshNetwork.applicationKeys {
                 if aid == applicationKey.aid,
@@ -129,11 +130,20 @@ internal struct UpperTransportPdu {
                 }
             }
         } else {
-            if let node = meshNetwork.node(withAddress: accessMessage.source) {
-                let deviceKey = node.deviceKey
-                return UpperTransportPdu(fromLowerTransportAccessMessage: accessMessage, usingKey: deviceKey)
+            // Try decoding using source's Node Device Key. This should work if a status
+            // message was sent as a response to a Config Message sent by this Provisioner.
+            if let deviceKey = meshNetwork.node(withAddress: accessMessage.source)?.deviceKey,
+                let pdu = UpperTransportPdu(fromLowerTransportAccessMessage: accessMessage, usingKey: deviceKey) {
+                return pdu
+            }
+            // On the other hand, if another Provisioner is sending Config Messages,
+            // they will be signed using the local Provisioner's Device Key instead.
+            if let deviceKey = meshNetwork.localProvisioner?.node?.deviceKey,
+                let pdu = UpperTransportPdu(fromLowerTransportAccessMessage: accessMessage, usingKey: deviceKey) {
+                return pdu
             }
         }
+        print("Error: Decryption failed")
         return nil
     }
     
