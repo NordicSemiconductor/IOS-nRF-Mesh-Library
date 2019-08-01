@@ -135,9 +135,10 @@ public extension MeshNetwork {
     /// - returns: The removed key.
     /// - throws: The method throws if the key is in use and cannot be
     ///           removed, or such Key Index was not found.
-    func remove(networkKeyWithKeyIndex index: KeyIndex) throws -> NetworkKey {
-        let i = networkKeys.firstIndex(where: { $0.index == index }) ?? -1
-        return try remove(networkKeyAt: i)
+    func remove(networkKeyWithKeyIndex index: KeyIndex) throws {
+        if let networkKey = networkKeys[index] {
+            _ = try remove(networkKey: networkKey)
+        }
     }
     
     /// Removes Network Key at the given index.
