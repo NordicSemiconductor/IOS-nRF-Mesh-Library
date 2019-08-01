@@ -95,20 +95,8 @@ class NodeAddNetworkKeyViewController: ConnectableViewController {
 extension NodeAddNetworkKeyViewController: MeshNetworkDelegate {
     
     func meshNetwork(_ meshNetwork: MeshNetwork, didDeliverMessage message: MeshMessage, from source: Address) {
-        switch message {
-            
-        case let status as ConfigNetKeyStatus:
-            done() {
-                if status.status == .success {
-                    self.dismiss(animated: true)
-                    self.delegate?.keyAdded()
-                } else {
-                    self.presentAlert(title: "Error", message: status.message)
-                }
-            }
-            
-        case is ConfigNodeReset:
-            // The node has been reset remotely.
+        // Has the Node been reset remotely.
+        guard !(message is ConfigNodeReset) else {
             (UIApplication.shared.delegate as! AppDelegate).meshNetworkDidChange()
             done() {
                 let rootViewControllers = self.presentingViewController?.children
@@ -118,6 +106,25 @@ extension NodeAddNetworkKeyViewController: MeshNetworkDelegate {
                             navigationController.popToRootViewController(animated: true)
                         }
                     }
+                }
+            }
+            return
+        }
+        // Is the message targetting the current Node?
+        guard node.unicastAddress == source else {
+            return
+        }
+        
+        // Handle the message based on its type.
+        switch message {
+            
+        case let status as ConfigNetKeyStatus:
+            done() {
+                if status.status == .success {
+                    self.dismiss(animated: true)
+                    self.delegate?.keyAdded()
+                } else {
+                    self.presentAlert(title: "Error", message: status.message)
                 }
             }
             

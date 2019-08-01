@@ -110,20 +110,8 @@ private extension SubscribeViewController {
 extension SubscribeViewController: MeshNetworkDelegate {
     
     func meshNetwork(_ meshNetwork: MeshNetwork, didDeliverMessage message: MeshMessage, from source: Address) {
-        switch message {
-            
-        case let status as ConfigModelSubscriptionStatus:
-            done() {
-                if status.status == .success {
-                    self.dismiss(animated: true)
-                    self.delegate?.subscriptionAdded()
-                } else {
-                    self.presentAlert(title: "Error", message: status.message)
-                }
-            }
-            
-        case is ConfigNodeReset:
-            // The node has been reset remotely.
+        // Has the Node been reset remotely.
+        guard !(message is ConfigNodeReset) else {
             (UIApplication.shared.delegate as! AppDelegate).meshNetworkDidChange()
             done() {
                 let rootViewControllers = self.presentingViewController?.children
@@ -133,6 +121,25 @@ extension SubscribeViewController: MeshNetworkDelegate {
                             navigationController.popToRootViewController(animated: true)
                         }
                     }
+                }
+            }
+            return
+        }
+        // Is the message targetting the current Node?
+        guard model.parentElement.parentNode!.unicastAddress == source else {
+            return
+        }
+        
+        // Handle the message based on its type.
+        switch message {
+            
+        case let status as ConfigModelSubscriptionStatus:
+            done() {
+                if status.status == .success {
+                    self.dismiss(animated: true)
+                    self.delegate?.subscriptionAdded()
+                } else {
+                    self.presentAlert(title: "Error", message: status.message)
                 }
             }
             

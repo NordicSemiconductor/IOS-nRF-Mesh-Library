@@ -132,12 +132,19 @@ class NodeElementsViewController: UITableViewController {
 extension NodeElementsViewController: MeshNetworkDelegate {
     
     func meshNetwork(_ meshNetwork: MeshNetwork, didDeliverMessage message: MeshMessage, from source: Address) {
-        switch message {
-            
-        case is ConfigNodeReset:
-            // The node has been reset remotely.
+        // Has the Node been reset remotely.
+        guard !(message is ConfigNodeReset) else {
             (UIApplication.shared.delegate as! AppDelegate).meshNetworkDidChange()
             navigationController?.popToRootViewController(animated: true)
+            return
+        }
+        // Is the message targetting the current Node?
+        guard element.unicastAddress == source else {
+            return
+        }
+        
+        // Handle the message based on its type.
+        switch message {
             
         default:
             break

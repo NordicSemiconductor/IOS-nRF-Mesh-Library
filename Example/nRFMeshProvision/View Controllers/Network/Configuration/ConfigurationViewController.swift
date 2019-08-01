@@ -379,6 +379,20 @@ private extension ConfigurationViewController {
 extension ConfigurationViewController: MeshNetworkDelegate {
     
     func meshNetwork(_ meshNetwork: MeshNetwork, didDeliverMessage message: MeshMessage, from source: Address) {
+        // Has the Node been reset remotely.
+        guard !(message is ConfigNodeReset) else {
+            (UIApplication.shared.delegate as! AppDelegate).meshNetworkDidChange()
+            done() {
+                self.navigationController?.popToRootViewController(animated: true)
+            }
+            return
+        }
+        // Is the message targetting the current Node?
+        guard node.unicastAddress == source else {
+            return
+        }
+        
+        // Handle the message based on its type.
         switch message {
             
         case is ConfigCompositionDataStatus:
@@ -393,13 +407,6 @@ extension ConfigurationViewController: MeshNetworkDelegate {
         case is ConfigNodeResetStatus:
             done() {
                 self.navigationController?.popViewController(animated: true)
-            }
-            
-        case is ConfigNodeReset:
-            // The node has been reset remotely.
-            (UIApplication.shared.delegate as! AppDelegate).meshNetworkDidChange()
-            done() {
-                self.navigationController?.popToRootViewController(animated: true)
             }
             
         default:
