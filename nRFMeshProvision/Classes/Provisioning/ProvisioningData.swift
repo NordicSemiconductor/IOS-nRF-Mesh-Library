@@ -189,10 +189,10 @@ private extension ProvisioningData {
             throw error!.takeRetainedValue()
         }
         
-        let exchangeResultParams = [kSecAttrKeyType: kSecAttrKeyTypeECSECPrimeRandom] as CFDictionary
+        let exchangeResultParams = [SecKeyKeyExchangeParameter.requestedSize: 32] as CFDictionary
         
         let ssk = SecKeyCopyKeyExchangeResult(privateKey,
-                                              SecKeyAlgorithm.ecdhKeyExchangeStandardX963SHA256,
+                                              SecKeyAlgorithm.ecdhKeyExchangeStandard,
                                               devicePublicKey!, exchangeResultParams, &error)
         guard error == nil else {
             throw error!.takeRetainedValue()
