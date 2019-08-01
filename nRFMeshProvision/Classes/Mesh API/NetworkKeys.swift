@@ -40,4 +40,5 @@ public extension Array where Element == NetworkKey {
     func notKnownTo(node: Node) -> [NetworkKey] {
         return filter { !node.knows(networkKey: $0) }
     }
+    
 }

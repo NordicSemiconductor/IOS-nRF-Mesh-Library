@@ -36,19 +36,22 @@ public extension MeshNetwork {
     /// Adds a new Application Key and binds it to the first Network Key.
     ///
     /// - parameter applicationKey: The 128-bit Application Key.
+    /// - parameter index:          The optional Key Index to assign. If `nil`,
+    ///                             the next available Key Index will be assigned
+    ///                             automatically.
     /// - parameter name:           The human readable name.
     /// - throws: This method throws an error if the key is not 128-bit long,
     ///           there isn't any Network Key to bind the new key to
     ///           or the assigned Key Index is out of range.
     /// - seeAlso: `nextAvailableApplicationKeyIndex`
-    func add(applicationKey: Data, name: String) throws -> ApplicationKey {
+    func add(applicationKey: Data, withIndex index: KeyIndex? = nil, name: String) throws -> ApplicationKey {
         guard applicationKey.count == 16 else {
             throw MeshModelError.invalidKey
         }
         guard let defaultNetworkKey = networkKeys.first else {
             throw MeshModelError.noNetworkKey
         }
-        guard let nextIndex = nextAvailableApplicationKeyIndex else {
+        guard let nextIndex = index ?? nextAvailableNetworkKeyIndex, nextIndex.isValidKeyIndex else {
             throw MeshModelError.keyIndexOutOfRange
         }
         let key = try ApplicationKey(name: name, index: nextIndex,
@@ -107,15 +110,17 @@ public extension MeshNetwork {
     /// Adds a new Network Key.
     ///
     /// - parameter networkKey: The 128-bit Application Key.
+    /// - parameter index:      The optional Key Index to assign. If `nil`, the next
+    ///                         available Key Index will be assigned automatically.
     /// - parameter name:       The human readable name.
     /// - throws: This method throws an error if the key is not 128-bit long
     ///           or the assigned Key Index is out of range.
     /// - seeAlso: `nextAvailableNetworkKeyIndex`
-    func add(networkKey: Data, name: String) throws -> NetworkKey {
+    func add(networkKey: Data, withIndex index: KeyIndex? = nil, name: String) throws -> NetworkKey {
         guard networkKey.count == 16 else {
             throw MeshModelError.invalidKey
         }
-        guard let nextIndex = nextAvailableNetworkKeyIndex else {
+        guard let nextIndex = index ?? nextAvailableNetworkKeyIndex, nextIndex.isValidKeyIndex else {
             throw MeshModelError.keyIndexOutOfRange
         }
         let key = try NetworkKey(name: name, index: nextIndex, key: networkKey)
