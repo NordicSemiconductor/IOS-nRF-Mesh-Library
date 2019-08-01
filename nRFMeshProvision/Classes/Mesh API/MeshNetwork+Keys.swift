@@ -137,12 +137,14 @@ public extension MeshNetwork {
     /// Removes Network Key with given Key Index.
     ///
     /// - parameter index: The Key Index of a key to be removed.
+    /// - parameter force: If set to `true`, the key will be deleted even
+    ///                    if there are other Nodes known to use this key.
     /// - returns: The removed key.
     /// - throws: The method throws if the key is in use and cannot be
-    ///           removed, or such Key Index was not found.
-    func remove(networkKeyWithKeyIndex index: KeyIndex) throws {
+    ///           removed (unless `force` was set to `true`).
+    func remove(networkKeyWithKeyIndex index: KeyIndex, force: Bool = false) throws {
         if let networkKey = networkKeys[index] {
-            _ = try remove(networkKey: networkKey)
+            _ = try remove(networkKey: networkKey, force: force)
         }
     }
     
@@ -150,13 +152,15 @@ public extension MeshNetwork {
     ///
     /// - parameter index: The position of the element to remove.
     ///                    `index` must be a valid index of the array.
+    /// - parameter force: If set to `true`, the key will be deleted even
+    ///                    if there are other Nodes known to use this key.
     /// - returns: The removed key.
     /// - throws: The method throws if the key is in use and cannot be
-    ///           removed.
-    func remove(networkKeyAt index: Int) throws -> NetworkKey {
+    ///           removed (unless `force` was set to `true`).
+    func remove(networkKeyAt index: Int, force: Bool = false) throws -> NetworkKey {
         let networkKey = networkKeys[index]
-        // Ensure no node is using this Application Key.
-        guard !networkKey.isPrimary && !networkKey.isUsed(in: self) else {
+        // Ensure no Node is using this Application Key.
+        guard force || !networkKey.isPrimary && !networkKey.isUsed(in: self) else {
             throw MeshModelError.keyInUse
         }
         return networkKeys.remove(at: index)
@@ -166,11 +170,13 @@ public extension MeshNetwork {
     /// Network Key was not added to the Mesh Network before.
     ///
     /// - parameter networkKey: Key to be removed.
+    /// - parameter force: If set to `true`, the key will be deleted even
+    ///                    if there are other Nodes known to use this key.
     /// - throws: The method throws if the key is in use and cannot be
-    ///           removed.
-    func remove(networkKey: NetworkKey) throws {
+    ///           removed (unless `force` was set to `true`).
+    func remove(networkKey: NetworkKey, force: Bool = false) throws {
         if let index = networkKeys.firstIndex(of: networkKey) {
-            _ = try remove(networkKeyAt: index)
+            _ = try remove(networkKeyAt: index, force: force)
         }
     }
     

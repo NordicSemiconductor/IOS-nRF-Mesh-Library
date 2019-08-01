@@ -74,7 +74,7 @@ internal class FoundationLayer {
                 networkManager.send(ConfigNetKeyStatus(report: .invalidNetKeyIndex, forKeyWithIndex: keyIndex), to: source)
                 break
             }
-            // Update the key data (observer will set the oldKey automatically).
+            // Update the key data (observer will set the `oldKey` automatically).
             networkKey.key = request.key
             // And mark the key in the local Node as updated.
             if let node = meshNetwork.localProvisioner?.node {
@@ -85,6 +85,10 @@ internal class FoundationLayer {
             
         case let request as ConfigNetKeyDelete:
             let keyIndex = request.networkKeyIndex
+            // Force delete the key from the global configuration.
+            try? meshNetwork.remove(networkKeyWithKeyIndex: keyIndex, force: true)
+            // Remove the key also from the local Node. This will also remove all
+            // Application Keys bound to it.
             if let node = meshNetwork.localProvisioner?.node {
                 node.remove(networkKeyWithIndex: keyIndex)
             }
