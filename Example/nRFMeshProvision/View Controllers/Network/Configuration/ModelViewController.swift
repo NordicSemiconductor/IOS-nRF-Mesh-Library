@@ -400,6 +400,7 @@ extension ModelViewController: MeshNetworkDelegate {
     
     func meshNetwork(_ meshNetwork: MeshNetwork, didDeliverMessage message: MeshMessage, from source: Address) {
         switch message {
+            
         case let status as ConfigModelAppStatus:
             done()
             
@@ -409,6 +410,7 @@ extension ModelViewController: MeshNetworkDelegate {
             } else {
                 presentAlert(title: "Error", message: status.message)
             }
+            
         case let status as ConfigModelPublicationStatus:
             done()
         
@@ -419,6 +421,7 @@ extension ModelViewController: MeshNetworkDelegate {
                 presentAlert(title: "Error", message: status.message)
             }
             refreshControl?.endRefreshing()
+            
         case let status as ConfigModelSubscriptionStatus:
             done()
             
@@ -428,6 +431,7 @@ extension ModelViewController: MeshNetworkDelegate {
             } else {
                 presentAlert(title: "Error", message: status.message)
             }
+            
         case let list as ConfigModelAppList:
             if list.isSuccess {
                 tableView.reloadSections(.bindingsAndPublication, with: .automatic)
@@ -438,6 +442,7 @@ extension ModelViewController: MeshNetworkDelegate {
                     self.refreshControl?.endRefreshing()
                 }
             }
+            
         case let list as ConfigModelSubscriptionList:
             if list.isSuccess {
                 tableView.reloadSections(.subscriptions, with: .automatic)
@@ -448,6 +453,14 @@ extension ModelViewController: MeshNetworkDelegate {
                     self.refreshControl?.endRefreshing()
                 }
             }
+            
+        case is ConfigNodeReset:
+            // The node has been reset remotely.
+            (UIApplication.shared.delegate as! AppDelegate).meshNetworkDidChange()
+            done() {
+                self.navigationController?.popToRootViewController(animated: true)
+            }
+            
         default:
             break
         }

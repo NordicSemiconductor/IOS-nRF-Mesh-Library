@@ -99,6 +99,7 @@ extension NodeAddAppKeyViewController: MeshNetworkDelegate {
     
     func meshNetwork(_ meshNetwork: MeshNetwork, didDeliverMessage message: MeshMessage, from source: Address) {
         switch message {
+            
         case let status as ConfigAppKeyStatus:
             done() {
                 if status.status == .success {
@@ -108,6 +109,21 @@ extension NodeAddAppKeyViewController: MeshNetworkDelegate {
                     self.presentAlert(title: "Error", message: status.message)
                 }
             }
+            
+        case is ConfigNodeReset:
+            // The node has been reset remotely.
+            (UIApplication.shared.delegate as! AppDelegate).meshNetworkDidChange()
+            done() {
+                let rootViewControllers = self.presentingViewController?.children
+                self.dismiss(animated: true) {
+                    rootViewControllers?.forEach {
+                        if let navigationController = $0 as? UINavigationController {
+                            navigationController.popToRootViewController(animated: true)
+                        }
+                    }
+                }
+            }
+            
         default:
             // Ignore
             break

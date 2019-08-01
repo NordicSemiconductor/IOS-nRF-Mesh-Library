@@ -23,6 +23,12 @@ class NodeElementsViewController: UITableViewController {
         title = element.name ?? "Element \(element.index + 1)"
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        MeshNetworkManager.instance.delegate = self
+    }
+    
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "showModel" {
             let indexPath = sender as! IndexPath
@@ -121,6 +127,23 @@ class NodeElementsViewController: UITableViewController {
             performSegue(withIdentifier: "showModel", sender: indexPath)
         }
     }
+}
+
+extension NodeElementsViewController: MeshNetworkDelegate {
+    
+    func meshNetwork(_ meshNetwork: MeshNetwork, didDeliverMessage message: MeshMessage, from source: Address) {
+        switch message {
+            
+        case is ConfigNodeReset:
+            // The node has been reset remotely.
+            (UIApplication.shared.delegate as! AppDelegate).meshNetworkDidChange()
+            navigationController?.popToRootViewController(animated: true)
+            
+        default:
+            break
+        }
+    }
+    
 }
 
 private extension NodeElementsViewController {

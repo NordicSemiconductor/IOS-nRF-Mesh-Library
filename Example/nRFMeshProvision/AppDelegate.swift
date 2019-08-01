@@ -34,11 +34,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         if !loaded {
             createNewMeshNetwork()
         } else {
-            let meshNetwork = meshNetworkManager.meshNetwork!
-            connection = NetworkConnection(to: meshNetwork)
-            connection!.dataDelegate = meshNetworkManager
-            meshNetworkManager.transmitter = connection
-            connection!.open()
+            meshNetworkDidChange()
         }
         
         return true
@@ -46,14 +42,18 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func createNewMeshNetwork() {
         // TODO: Implement creator
-        connection?.close()
-        
         let provisioner = Provisioner(name: UIDevice.current.name,
                                       allocatedUnicastRange: [AddressRange(0x0001...0x199A)],
                                       allocatedGroupRange:   [AddressRange(0xC000...0xCC9A)],
                                       allocatedSceneRange:   [SceneRange(0x0001...0x3333)])
         _ = meshNetworkManager.createNewMeshNetwork(withName: "nRF Mesh Network", by: provisioner)
         _ = meshNetworkManager.save()
+        
+        meshNetworkDidChange()
+    }
+    
+    func meshNetworkDidChange() {
+        connection?.close()
         
         let meshNetwork = meshNetworkManager.meshNetwork!
         connection = NetworkConnection(to: meshNetwork)

@@ -124,6 +124,7 @@ extension NodeNetworkKeysViewController: MeshNetworkDelegate {
     
     func meshNetwork(_ meshNetwork: MeshNetwork, didDeliverMessage message: MeshMessage, from source: Address) {
         switch message {
+            
         case let status as ConfigNetKeyStatus:
             done()
             
@@ -135,6 +136,7 @@ extension NodeNetworkKeysViewController: MeshNetworkDelegate {
             } else {
                 presentAlert(title: "Error", message: "\(status.status)")
             }
+            
         case is ConfigNetKeyList:
             done()
             tableView.reloadData()            
@@ -142,6 +144,13 @@ extension NodeNetworkKeysViewController: MeshNetworkDelegate {
                 showEmptyView()
             }
             refreshControl?.endRefreshing()
+            
+        case is ConfigNodeReset:
+            // The node has been reset remotely.
+            (UIApplication.shared.delegate as! AppDelegate).meshNetworkDidChange()
+            done() {
+                self.navigationController?.popToRootViewController(animated: true)
+            }
             
         default:
             break

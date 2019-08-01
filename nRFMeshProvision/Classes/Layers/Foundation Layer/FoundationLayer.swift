@@ -413,6 +413,20 @@ internal class FoundationLayer {
             }
             
         // Resetting Node
+        case is ConfigNodeReset:
+            // Reset the network. Keep the same Provisioner and network settings.
+            if let provisioner = meshNetwork.localProvisioner {
+                // Replying with ConfigNodeResetStatus() may fail, as the network is
+                // being reset and forgotten in a second.
+                networkManager.send(ConfigNodeResetStatus(), to: source)
+                
+                let localElements = meshNetwork.localElements
+                provisioner.meshNetwork = nil
+                let manager = networkManager.meshNetworkManager.createNewMeshNetwork(withName: meshNetwork.meshName, by: provisioner)
+                manager.localElements = localElements
+                save()
+            }
+            
         case is ConfigNodeResetStatus:
             if let node = meshNetwork.node(withAddress: source) {
                 meshNetwork.remove(node: node)

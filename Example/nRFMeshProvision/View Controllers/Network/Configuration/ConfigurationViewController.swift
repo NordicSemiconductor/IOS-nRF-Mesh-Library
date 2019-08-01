@@ -25,7 +25,6 @@ class ConfigurationViewController: ConnectableViewController {
         
         title = node.name ?? "Unknown device"
         
-        MeshNetworkManager.instance.delegate = self
         // If the Composition Data were never obtained, get them now.
         if !node.isCompositionDataReceived {
             // This will request Composition Data when the bearer is open.
@@ -40,6 +39,7 @@ class ConfigurationViewController: ConnectableViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
+        MeshNetworkManager.instance.delegate = self
         // Element name might have been updated.
         tableView.reloadSections(.keysAndElementsSections, with: .automatic)
     }
@@ -386,12 +386,21 @@ extension ConfigurationViewController: MeshNetworkDelegate {
             getTtl()
             
         case is ConfigDefaultTtlStatus:
-            tableView.reloadRows(at: [.ttl], with: .automatic)
             done()
+            tableView.reloadRows(at: [.ttl], with: .automatic)
             refreshControl?.endRefreshing()
             
         case is ConfigNodeResetStatus:
-            navigationController!.popViewController(animated: true)
+            done() {
+                self.navigationController?.popViewController(animated: true)
+            }
+            
+        case is ConfigNodeReset:
+            // The node has been reset remotely.
+            (UIApplication.shared.delegate as! AppDelegate).meshNetworkDidChange()
+            done() {
+                self.navigationController?.popToRootViewController(animated: true)
+            }
             
         default:
             break

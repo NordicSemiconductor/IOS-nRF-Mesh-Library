@@ -51,7 +51,11 @@ class ConnectableViewController: UITableViewController, GattBearerDelegate {
     
     /// This method dismisses the progress alert dialog.
     func done(completion: (() -> Void)? = nil) {
-        alert?.dismiss(animated: true, completion: completion)
+        if let alert = alert {
+            alert.dismiss(animated: true, completion: completion)
+        } else {
+            completion?()
+        }
         alert = nil
     }
     
@@ -80,6 +84,7 @@ class ConnectableViewController: UITableViewController, GattBearerDelegate {
     
     func bearer(_ bearer: Bearer, didClose error: Error?) {
         DispatchQueue.main.async {
+            self.refreshControl?.endRefreshing()
             self.alert?.dismiss(animated: true)
             self.callback = nil
             self.alert = nil

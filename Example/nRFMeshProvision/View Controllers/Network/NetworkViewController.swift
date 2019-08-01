@@ -22,6 +22,8 @@ class NetworkViewController: UITableViewController {
         super.viewWillAppear(animated)
         tableView.reloadData()
         
+        MeshNetworkManager.instance.delegate = self
+        
         let network = MeshNetworkManager.instance.meshNetwork
         let localProvisioner = network?.localProvisioner
         let hasNodes = network?.nodes.filter({ $0.uuid != localProvisioner?.uuid }).count ?? 0 > 0
@@ -81,6 +83,25 @@ extension NetworkViewController: ProvisioningViewDelegate {
     
     func provisionerDidProvisionNewDevice(_ node: Node) {
         performSegue(withIdentifier: "configure", sender: node)
+    }
+    
+}
+
+extension NetworkViewController: MeshNetworkDelegate {
+    
+    func meshNetwork(_ meshNetwork: MeshNetwork, didDeliverMessage message: MeshMessage, from source: Address) {
+        switch message {
+            
+        case is ConfigNodeReset:
+            // The node has been reset remotely.
+            (UIApplication.shared.delegate as! AppDelegate).meshNetworkDidChange()
+            tableView.reloadData()
+            tableView.showEmptyView()
+            presentAlert(title: "Reset", message: "The mesh network was reset remotely.")
+            
+        default:
+            break
+        }
     }
     
 }

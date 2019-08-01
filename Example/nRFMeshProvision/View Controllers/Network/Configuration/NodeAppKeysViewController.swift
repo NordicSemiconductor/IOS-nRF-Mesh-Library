@@ -149,6 +149,14 @@ extension NodeAppKeysViewController: MeshNetworkDelegate {
                     self.refreshControl?.endRefreshing()
                 }
             }
+            
+        case is ConfigNodeReset:
+            // The node has been reset remotely.
+            (UIApplication.shared.delegate as! AppDelegate).meshNetworkDidChange()
+            done() {
+                self.navigationController?.popToRootViewController(animated: true)
+            }
+            
         default:
             break
         }

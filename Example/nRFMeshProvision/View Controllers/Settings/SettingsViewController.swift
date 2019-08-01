@@ -127,8 +127,7 @@ private extension SettingsViewController {
     func resetNetwork() {
         (UIApplication.shared.delegate as! AppDelegate).createNewMeshNetwork()
         
-        let manager = MeshNetworkManager.instance
-        if manager.save() {
+        if MeshNetworkManager.instance.save() {
             reload()
         } else {
             presentAlert(title: "Error", message: "Mesh configuration could not be saved.")
