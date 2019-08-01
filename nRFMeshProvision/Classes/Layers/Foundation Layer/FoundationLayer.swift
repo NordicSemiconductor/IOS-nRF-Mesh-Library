@@ -50,7 +50,7 @@ internal class FoundationLayer {
                 // one in the request. Otherwise, return .keyIndexAlreadyStored.
                 var networkKey = meshNetwork.networkKeys[keyIndex]
                 guard networkKey == nil || networkKey!.key == request.key else {
-                    networkManager.send(ConfigNetKeyStatus(report: .keyIndexAlreadyStored, forKeyWithIndex: keyIndex), to: source)
+                    networkManager.send(ConfigNetKeyStatus(.keyIndexAlreadyStored, for: request), to: source)
                     break
                 }
                 if networkKey == nil {
@@ -64,14 +64,14 @@ internal class FoundationLayer {
                 save()
                 networkManager.send(ConfigNetKeyStatus(confirm: networkKey!), to: source)
             } catch {
-                networkManager.send(ConfigNetKeyStatus(report: .unspecifiedError, forKeyWithIndex: keyIndex), to: source)
+                networkManager.send(ConfigNetKeyStatus(.unspecifiedError, for: request), to: source)
             }
             
         case let request as ConfigNetKeyUpdate:
             let keyIndex = request.networkKeyIndex
             // If there is no such key, return .invalidNetKeyIndex.
             guard let networkKey = meshNetwork.networkKeys[keyIndex] else {
-                networkManager.send(ConfigNetKeyStatus(report: .invalidNetKeyIndex, forKeyWithIndex: keyIndex), to: source)
+                networkManager.send(ConfigNetKeyStatus(.invalidNetKeyIndex, for: request), to: source)
                 break
             }
             // Update the key data (observer will set the `oldKey` automatically).
@@ -93,7 +93,7 @@ internal class FoundationLayer {
                 node.remove(networkKeyWithIndex: keyIndex)
             }
             save()
-            networkManager.send(ConfigNetKeyStatus(report: .success, forKeyWithIndex: keyIndex), to: source)
+            networkManager.send(ConfigNetKeyStatus(.success, for: request), to: source)
             
         case let netKeyStatus as ConfigNetKeyStatus:
             if netKeyStatus.isSuccess, let node = meshNetwork.node(withAddress: source) {
@@ -132,6 +132,84 @@ internal class FoundationLayer {
                 save()
             }
             
+        // Application Key Management
+        case let request as ConfigAppKeyAdd:
+            let networkKeyIndex = request.networkKeyIndex
+            let keyIndex = request.applicationKeyIndex
+            // If the Network Key does not exist, return .invalidNetKeyIndex.
+            guard let _ = meshNetwork.networkKeys[networkKeyIndex] else {
+                networkManager.send(ConfigAppKeyStatus(.invalidNetKeyIndex, for: request), to: source)
+                break
+            }
+            do {
+                // Make sure the key with given index didn't exist or was identical to the
+                // one in the request. Otherwise, return .keyIndexAlreadyStored.
+                var applicationKey = meshNetwork.applicationKeys[keyIndex]
+                guard applicationKey == nil ||
+                    (applicationKey!.key == request.key && applicationKey!.boundNetworkKeyIndex == networkKeyIndex) else {
+                    networkManager.send(ConfigAppKeyStatus(.keyIndexAlreadyStored, for: request), to: source)
+                    break
+                }
+                if applicationKey == nil {
+                    applicationKey = try meshNetwork.add(applicationKey: request.key, withIndex: keyIndex,
+                                                         name: "Application Key \(keyIndex + 1)")
+                    applicationKey!.boundNetworkKeyIndex = networkKeyIndex
+                }
+                // Add the Network Key index to the local Node.
+                if let node = meshNetwork.localProvisioner?.node {
+                    node.add(applicationKeyWithIndex: keyIndex)
+                }
+                save()
+                networkManager.send(ConfigAppKeyStatus(confirm: applicationKey!), to: source)
+            } catch {
+                networkManager.send(ConfigAppKeyStatus(.unspecifiedError, for: request), to: source)
+            }
+            
+        case let request as ConfigAppKeyUpdate:
+            let networkKeyIndex = request.networkKeyIndex
+            let keyIndex = request.applicationKeyIndex
+            // If the Network Key does not exist, return .invalidNetKeyIndex.
+            guard let _ = meshNetwork.networkKeys[networkKeyIndex] else {
+                networkManager.send(ConfigAppKeyStatus(.invalidNetKeyIndex, for: request), to: source)
+                break
+            }
+            // If the Application key does not exist, return .invalidAppKeyIndex.
+            guard let applicationKey = meshNetwork.applicationKeys[keyIndex] else {
+                networkManager.send(ConfigAppKeyStatus(.invalidAppKeyIndex, for: request), to: source)
+                break
+            }
+            // If the binding is incorrect, return .invalidBinding.
+            guard applicationKey.boundNetworkKeyIndex == networkKeyIndex else {
+                networkManager.send(ConfigAppKeyStatus(.invalidBinding, for: request), to: source)
+                break
+            }
+            // Update the key data (observer will set the `oldKey` automatically).
+            applicationKey.key = request.key
+            // And mark the key in the local Node as updated.
+            if let node = meshNetwork.localProvisioner?.node {
+                node.update(applicationKeyWithIndex: keyIndex)
+            }
+            save()
+            networkManager.send(ConfigAppKeyStatus(confirm: applicationKey), to: source)
+            
+        case let request as ConfigAppKeyDelete:
+            let networkKeyIndex = request.networkKeyIndex
+            let keyIndex = request.applicationKeyIndex
+            // If the Network Key does not exist, return .invalidNetKeyIndex.
+            guard let _ = meshNetwork.networkKeys[networkKeyIndex] else {
+                networkManager.send(ConfigAppKeyStatus(.invalidNetKeyIndex, for: request), to: source)
+                break
+            }
+            // Force delete the key from the global configuration.
+            try? meshNetwork.remove(applicationKeyWithKeyIndex: keyIndex, force: true)
+            // Remove the key also from the local Node. This will also remove all
+            // Application Keys bound to it.
+            if let node = meshNetwork.localProvisioner?.node {
+                node.remove(applicationKeyWithIndex: keyIndex)
+            }
+            save()
+            networkManager.send(ConfigAppKeyStatus(.success, for: request), to: source)
+        
         case let appKeyStatus as ConfigAppKeyStatus:
             if appKeyStatus.isSuccess, let node = meshNetwork.node(withAddress: source) {
                 switch requests[source] {
@@ -158,6 +236,18 @@ internal class FoundationLayer {
                 }
             }
             
+        case let request as ConfigAppKeyGet:
+            let networkKeyIndex = request.networkKeyIndex
+            // If the Network Key does not exist, return .invalidNetKeyIndex.
+            guard let networkKey = meshNetwork.networkKeys[networkKeyIndex] else {
+                networkManager.send(ConfigAppKeyList(.invalidNetKeyIndex, for: request), to: source)
+                break
+            }
+            let boundAppKeys = meshNetwork.applicationKeys.filter {
+                $0.boundNetworkKeyIndex == networkKeyIndex
+            }
+            networkManager.send(ConfigAppKeyList(networkKey: networkKey, applicationKeys: boundAppKeys, status: .success), to: source)
+            
         case let list as ConfigAppKeyList:
             if let node = meshNetwork.node(withAddress: source) {
                 // Leave only those App Keys, that are bound to a different Network Key than in the
@@ -170,6 +260,7 @@ internal class FoundationLayer {
                 save()
             }
             
+        // Model Bindings
         case let status as ConfigModelAppStatus:
             if status.isSuccess,
                 let node = meshNetwork.node(withAddress: source),
@@ -199,6 +290,7 @@ internal class FoundationLayer {
                 save()
             }
             
+        // Publications
         case let status as ConfigModelPublicationStatus:
             if status.isSuccess,
                 let node = meshNetwork.node(withAddress: source),
@@ -248,6 +340,7 @@ internal class FoundationLayer {
                 }
             }
             
+        // Subscriptions
         case let status as ConfigModelSubscriptionStatus:
             if status.isSuccess,
                 let node = meshNetwork.node(withAddress: source),
@@ -300,6 +393,7 @@ internal class FoundationLayer {
                 save()
             }
             
+        // Default TTL
         case let request as ConfigDefaultTtlSet:
             if let node = meshNetwork.localProvisioner?.node {
                 node.defaultTTL = request.ttl
@@ -318,6 +412,7 @@ internal class FoundationLayer {
                 save()
             }
             
+        // Resetting Node
         case is ConfigNodeResetStatus:
             if let node = meshNetwork.node(withAddress: source) {
                 meshNetwork.remove(node: node)

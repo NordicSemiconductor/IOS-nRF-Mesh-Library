@@ -22,8 +22,8 @@ public struct ConfigNetKeyStatus: ConfigNetKeyMessage, ConfigStatusMessage {
         self.status = .success
     }
     
-    public init(report status: ConfigMessageStatus, forKeyWithIndex index: KeyIndex) {
-        self.networkKeyIndex = index
+    public init(_ status: ConfigMessageStatus, for message: ConfigNetKeyMessage) {
+        self.networkKeyIndex = message.networkKeyIndex
         self.status = status
     }
     

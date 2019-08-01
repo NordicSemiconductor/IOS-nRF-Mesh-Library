@@ -410,6 +410,24 @@ internal extension Node {
         }
     }
     
+    /// Adds the Application Key with given index to the Node.
+    ///
+    /// - parameter applicationKeyIndex: The Application Key index to add.
+    func add(applicationKeyWithIndex applicationKeyIndex: KeyIndex) {
+        if !appKeys.contains(where: { $0.index == applicationKeyIndex }) {
+            appKeys.append(NodeKey(index: applicationKeyIndex, updated: false))
+        }
+    }
+    
+    /// Marks the Application Key in the Node as updated.
+    ///
+    /// - parameter applicationKeyIndex: The Application Key index to add.
+    func update(applicationKeyWithIndex applicationKeyIndex: KeyIndex) {
+        if let key = netKeys.first(where: { $0.index == applicationKeyIndex }) {
+            key.updated = true
+        }
+    }
+    
     /// Removes the Network Key with given index and all Application Keys
     /// bound to it from the Node. This method also removes all Model bindings
     /// that point any of the removed Application Keys and the publications

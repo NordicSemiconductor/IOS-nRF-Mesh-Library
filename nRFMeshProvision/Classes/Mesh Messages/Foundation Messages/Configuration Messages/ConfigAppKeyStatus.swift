@@ -18,18 +18,16 @@ public struct ConfigAppKeyStatus: ConfigNetAndAppKeyMessage, ConfigStatusMessage
     public let applicationKeyIndex: KeyIndex
     public let status: ConfigMessageStatus
     
-    public init(confirmAdding applicationKey: ApplicationKey, withStatus status: ConfigMessageStatus) {
+    public init(confirm applicationKey: ApplicationKey) {
         self.applicationKeyIndex = applicationKey.index
         self.networkKeyIndex = applicationKey.boundNetworkKey.index
+        self.status = .success
+    }
+    
+    public init(_ status: ConfigMessageStatus, for message: ConfigNetAndAppKeyMessage) {
+        self.applicationKeyIndex = message.applicationKeyIndex
+        self.networkKeyIndex = message.networkKeyIndex
         self.status = status
-    }
-    
-    public init(confirmDeleting applicationKey: ApplicationKey, withStatus status: ConfigMessageStatus) {
-        self.init(confirmAdding: applicationKey, withStatus: status)
-    }
-    
-    public init(confirmUpdating applicationKey: ApplicationKey, withStatus status: ConfigMessageStatus) {
-        self.init(confirmAdding: applicationKey, withStatus: status)
     }
     
     public init?(parameters: Data) {

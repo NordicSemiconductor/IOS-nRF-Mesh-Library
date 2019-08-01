@@ -25,6 +25,12 @@ public struct ConfigAppKeyList: ConfigStatusMessage, ConfigNetKeyMessage {
         self.status = status
     }
     
+    public init(_ status: ConfigMessageStatus, for message: ConfigAppKeyGet) {
+        self.networkKeyIndex = message.networkKeyIndex
+        self.applicationKeyIndexes = []
+        self.status = status
+    }
+    
     public init?(parameters: Data) {
         guard parameters.count >= 3 else {
             return nil
