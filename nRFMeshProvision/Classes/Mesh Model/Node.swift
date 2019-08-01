@@ -392,6 +392,24 @@ internal extension Node {
         }
     }
     
+    /// Adds the Network Key with given index to the Node.
+    ///
+    /// - parameter networkKeyIndex: The Network Key index to add.
+    func add(networkKeyWithIndex networkKeyIndex: KeyIndex) {
+        if !netKeys.contains(where: { $0.index == networkKeyIndex }) {
+            netKeys.append(NodeKey(index: networkKeyIndex, updated: false))
+        }
+    }
+    
+    /// Marks the Network Key in the Node as updated.
+    ///
+    /// - parameter networkKeyIndex: The Network Key index to add.
+    func update(networkKeyWithIndex networkKeyIndex: KeyIndex) {
+        if let key = netKeys.first(where: { $0.index == networkKeyIndex }) {
+            key.updated = true
+        }
+    }
+    
     /// Removes the Network Key with given index and all Application Keys
     /// bound to it from the Node. This method also removes all Model bindings
     /// that point any of the removed Application Keys and the publications
@@ -453,13 +471,6 @@ internal extension Node {
         elements.removeAll()
         // And add the Elements received.
         add(elements: page0.elements)
-    }
-    
-    /// Applies the result of Config Default TTL Status message.
-    ///
-    /// - parameter defaultTtl: The response received.
-    func apply(defaultTtl: ConfigDefaultTtlStatus) {
-        ttl = defaultTtl.ttl
     }
     
 }

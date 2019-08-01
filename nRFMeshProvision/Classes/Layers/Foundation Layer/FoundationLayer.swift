@@ -29,6 +29,7 @@ internal class FoundationLayer {
         
         switch configMessage {
             
+        // Composition Data
         case is ConfigCompositionDataGet:
             if let node = meshNetwork.localProvisioner?.node {
                 let compositionData = Page0(node: node)
@@ -40,6 +41,55 @@ internal class FoundationLayer {
                 node.apply(compositionData: compositionData)
                 save()
             }
+
+        // Network Keys Management
+        case let request as ConfigNetKeyAdd:
+            let keyIndex = request.networkKeyIndex
+            do {
+                // Make sure the key with given index didn't exist or was identical to the
+                // one in the request. Otherwise, return .keyIndexAlreadyStored.
+                var networkKey = meshNetwork.networkKeys[keyIndex]
+                guard networkKey == nil || networkKey!.key == request.key else {
+                    networkManager.send(ConfigNetKeyStatus(report: .keyIndexAlreadyStored, forKeyWithIndex: keyIndex), to: source)
+                    break
+                }
+                if networkKey == nil {
+                    networkKey = try meshNetwork.add(networkKey: request.key, withIndex: keyIndex,
+                                                     name: "Network Key \(keyIndex + 1)")
+                }
+                // Add the Network Key index to the local Node.
+                if let node = meshNetwork.localProvisioner?.node {
+                    node.add(networkKeyWithIndex: keyIndex)
+                }
+                save()
+                networkManager.send(ConfigNetKeyStatus(confirm: networkKey!), to: source)
+            } catch {
+                networkManager.send(ConfigNetKeyStatus(report: .unspecifiedError, forKeyWithIndex: keyIndex), to: source)
+            }
+            
+        case let request as ConfigNetKeyUpdate:
+            let keyIndex = request.networkKeyIndex
+            // If there is no such key, return .invalidNetKeyIndex.
+            guard let networkKey = meshNetwork.networkKeys[keyIndex] else {
+                networkManager.send(ConfigNetKeyStatus(report: .invalidNetKeyIndex, forKeyWithIndex: keyIndex), to: source)
+                break
+            }
+            // Update the key data (observer will set the oldKey automatically).
+            networkKey.key = request.key
+            // And mark the key in the local Node as updated.
+            if let node = meshNetwork.localProvisioner?.node {
+                node.update(networkKeyWithIndex: keyIndex)
+            }
+            save()
+            networkManager.send(ConfigNetKeyStatus(confirm: networkKey), to: source)
+            
+        case let request as ConfigNetKeyDelete:
+            let keyIndex = request.networkKeyIndex
+            if let node = meshNetwork.localProvisioner?.node {
+                node.remove(networkKeyWithIndex: keyIndex)
+            }
+            save()
+            networkManager.send(ConfigNetKeyStatus(report: .success, forKeyWithIndex: keyIndex), to: source)
             
         case let netKeyStatus as ConfigNetKeyStatus:
             if netKeyStatus.isSuccess, let node = meshNetwork.node(withAddress: source) {
@@ -66,6 +116,9 @@ internal class FoundationLayer {
                     break
                 }
             }
+            
+        case is ConfigNetKeyGet:
+            networkManager.send(ConfigNetKeyList(networkKeys: meshNetwork.networkKeys), to: source)
             
         case let list as ConfigNetKeyList:
             if let node = meshNetwork.node(withAddress: source) {
@@ -246,7 +299,8 @@ internal class FoundationLayer {
         case let request as ConfigDefaultTtlSet:
             if let node = meshNetwork.localProvisioner?.node {
                 node.defaultTTL = request.ttl
-                fallthrough
+                save()
+                networkManager.send(ConfigDefaultTtlStatus(ttl: node.defaultTTL ?? LowerTransportLayer.defaultTtl), to: source)
             }
             
         case is ConfigDefaultTtlGet:
@@ -256,7 +310,7 @@ internal class FoundationLayer {
             
         case let defaultTtl as ConfigDefaultTtlStatus:
             if let node = meshNetwork.node(withAddress: source) {
-                node.apply(defaultTtl: defaultTtl)
+                node.ttl = defaultTtl.ttl
                 save()
             }
             

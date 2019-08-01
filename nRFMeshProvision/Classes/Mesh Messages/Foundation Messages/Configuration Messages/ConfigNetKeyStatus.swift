@@ -17,17 +17,14 @@ public struct ConfigNetKeyStatus: ConfigNetKeyMessage, ConfigStatusMessage {
     public let networkKeyIndex: KeyIndex
     public let status: ConfigMessageStatus
     
-    public init(confirmAdding networkKey: NetworkKey, withStatus status: ConfigMessageStatus) {
+    public init(confirm networkKey: NetworkKey) {
         self.networkKeyIndex = networkKey.index
+        self.status = .success
+    }
+    
+    public init(report status: ConfigMessageStatus, forKeyWithIndex index: KeyIndex) {
+        self.networkKeyIndex = index
         self.status = status
-    }
-    
-    public init(confirmDeleting networkKey: NetworkKey, withStatus status: ConfigMessageStatus) {
-        self.init(confirmAdding: networkKey, withStatus: status)
-    }
-    
-    public init(confirmUpdating networkKey: NetworkKey, withStatus status: ConfigMessageStatus) {
-        self.init(confirmAdding: networkKey, withStatus: status)
     }
     
     public init?(parameters: Data) {
