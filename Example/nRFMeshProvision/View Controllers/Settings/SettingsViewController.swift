@@ -195,6 +195,7 @@ extension SettingsViewController: UIDocumentPickerDelegate {
                 try manager.import(from: data)
                 if manager.save() {
                     DispatchQueue.main.async {
+                        (UIApplication.shared.delegate as! AppDelegate).meshNetworkDidChange()
                         self.reload()
                         self.presentAlert(title: "Success", message: "Mesh Network configuration imported.")
                     }
