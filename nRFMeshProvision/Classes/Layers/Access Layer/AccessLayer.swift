@@ -75,7 +75,7 @@ private extension AccessLayer {
         case ConfigCompositionDataStatus.opCode:
             MessageType = ConfigCompositionDataStatus.self
             
-        // Net Keys Management
+        // Network Keys Management
         case ConfigNetKeyAdd.opCode:
             MessageType = ConfigNetKeyAdd.self
             
