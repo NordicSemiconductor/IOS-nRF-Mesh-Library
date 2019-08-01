@@ -172,6 +172,13 @@ private extension SettingsViewController {
         provisionersLabel.text = "\(meshNetwork.provisioners.count)"
         networkKeysLabel.text  = "\(meshNetwork.networkKeys.count)"
         appKeysLabel.text      = "\(meshNetwork.applicationKeys.count)"
+        
+        // All tabs should be reset to the root view controller.
+        parent?.parent?.children.forEach {
+            if let rootViewController = $0 as? UINavigationController {
+                rootViewController.popToRootViewController(animated: false)
+            }
+        }
     }
 }
 
