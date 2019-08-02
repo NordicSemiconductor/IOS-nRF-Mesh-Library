@@ -40,6 +40,15 @@ public protocol MeshNetworkDelegate: class {
     /// acknowledged by the target Node, or when the target Node is busy and
     /// not able to proceed the message at the moment.
     ///
+    /// Possible errors are:
+    /// - Any error thrown by the `transmitter`.
+    /// - `BearerError.bearerClosed` - when the `transmitter` object was net set.
+    /// - `LowerTransportError.busy` - when the target Node is busy and can't
+    ///   accept the message.
+    /// - `LowerTransportError.timeout` - when the segmented message targetting
+    ///   a Unicast Address was not acknowledgned before the `retransmissionLimit`
+    ///   was reached.
+    ///
     /// - parameters:
     ///   - meshNetwork: The mesh network to which the message has
     ///                  been sent.
