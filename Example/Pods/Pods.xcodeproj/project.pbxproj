@@ -56,6 +56,7 @@
 		5231400E22EF17860074325A /* ConfigVendorModelSubscriptionGet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5231400D22EF17860074325A /* ConfigVendorModelSubscriptionGet.swift */; };
 		5231401022EF18AB0074325A /* ConfigSIGModelSubscriptionList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5231400F22EF18AB0074325A /* ConfigSIGModelSubscriptionList.swift */; };
 		5231401222EF238B0074325A /* ConfigVendorModelSubscriptionList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5231401122EF238B0074325A /* ConfigVendorModelSubscriptionList.swift */; };
+		5231401422F44AFE0074325A /* LowerTransportError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5231401322F44AFE0074325A /* LowerTransportError.swift */; };
 		523F775022C3AD2C0030EA6A /* Node+Provisioner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 523F774F22C3AD2C0030EA6A /* Node+Provisioner.swift */; };
 		523F775222C4A9F80030EA6A /* ConfigAppKeyDelete.swift in Sources */ = {isa = PBXBuildFile; fileRef = 523F775122C4A9F80030EA6A /* ConfigAppKeyDelete.swift */; };
 		523F775422C4AC210030EA6A /* ConfigAppKeyGet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 523F775322C4AC210030EA6A /* ConfigAppKeyGet.swift */; };
@@ -280,6 +281,7 @@
 		5231400D22EF17860074325A /* ConfigVendorModelSubscriptionGet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigVendorModelSubscriptionGet.swift; sourceTree = "<group>"; };
 		5231400F22EF18AB0074325A /* ConfigSIGModelSubscriptionList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigSIGModelSubscriptionList.swift; sourceTree = "<group>"; };
 		5231401122EF238B0074325A /* ConfigVendorModelSubscriptionList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigVendorModelSubscriptionList.swift; sourceTree = "<group>"; };
+		5231401322F44AFE0074325A /* LowerTransportError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LowerTransportError.swift; sourceTree = "<group>"; };
 		523F774F22C3AD2C0030EA6A /* Node+Provisioner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Node+Provisioner.swift"; sourceTree = "<group>"; };
 		523F775122C4A9F80030EA6A /* ConfigAppKeyDelete.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigAppKeyDelete.swift; sourceTree = "<group>"; };
 		523F775322C4AC210030EA6A /* ConfigAppKeyGet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigAppKeyGet.swift; sourceTree = "<group>"; };
@@ -820,6 +822,7 @@
 			isa = PBXGroup;
 			children = (
 				52DF5D96229D6B4800C297C1 /* LowerTransportLayer.swift */,
+				5231401322F44AFE0074325A /* LowerTransportError.swift */,
 				5274B75822A1C7B9008450BC /* LowerTransportPdu.swift */,
 				52DF5D98229D6B6400C297C1 /* AccessMessage.swift */,
 				5274B75222A16009008450BC /* ControlMessage.swift */,
@@ -1320,6 +1323,7 @@
 				523F776022C4DC110030EA6A /* ConfigNetKeyGet.swift in Sources */,
 				52F6AD7222BA17E100F0D7DF /* ConfigNodeResetStatus.swift in Sources */,
 				5283529A2282C55B0097B949 /* PBGattBearer.swift in Sources */,
+				5231401422F44AFE0074325A /* LowerTransportError.swift in Sources */,
 				5274B75522A161D1008450BC /* SegmentAcknowledgmentMessage.swift in Sources */,
 				2545014E9EC8A64DE403DC5863089112 /* OpenSSLHelper.m in Sources */,
 				52F6AD6E22B8F8EA00F0D7DF /* AccessPdu.swift in Sources */,

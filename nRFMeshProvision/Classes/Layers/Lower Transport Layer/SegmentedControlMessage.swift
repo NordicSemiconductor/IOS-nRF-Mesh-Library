@@ -8,6 +8,7 @@
 import Foundation
 
 internal struct SegmentedControlMessage: SegmentedMessage {
+    var message: MeshMessage?
     let source: Address
     let destination: Address
     let networkKey: NetworkKey

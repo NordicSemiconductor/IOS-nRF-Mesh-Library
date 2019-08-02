@@ -108,6 +108,11 @@ internal struct SegmentAcknowledgmentMessage: LowerTransportPdu {
     func areAllSegmentsReceived(lastSegmentNumber: UInt8) -> Bool {
         return blockAck == (1 << (lastSegmentNumber + 1)) - 1
     }
+    
+    /// Whether the source Node is busy and the message should be cancelled, or not.
+    var isBusy: Bool {
+        return blockAck == 0
+    }
 }
 
 extension SegmentAcknowledgmentMessage: CustomDebugStringConvertible {

@@ -8,6 +8,7 @@
 import Foundation
 
 internal struct SegmentedAccessMessage: SegmentedMessage {
+    let message: MeshMessage?
     let source: Address
     let destination: Address
     let networkKey: NetworkKey
@@ -73,6 +74,7 @@ internal struct SegmentedAccessMessage: SegmentedMessage {
         source = networkPdu.source
         destination = networkPdu.destination
         networkKey = networkPdu.networkKey
+        message = nil
     }
 
     /// Creates a Segment of an Access Message object from the Upper Transport PDU
@@ -82,6 +84,7 @@ internal struct SegmentedAccessMessage: SegmentedMessage {
     /// - parameter networkKey: The Network Key to encrypt the PCU with.
     /// - parameter offset: The segment offset.
     init(fromUpperTransportPdu pdu: UpperTransportPdu, usingNetworkKey networkKey: NetworkKey, offset: UInt8) {
+        self.message = pdu.message
         self.aid = pdu.aid
         self.source = pdu.source
         self.destination = pdu.destination

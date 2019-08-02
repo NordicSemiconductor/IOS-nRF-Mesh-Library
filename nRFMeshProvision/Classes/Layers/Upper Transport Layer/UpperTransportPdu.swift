@@ -8,6 +8,9 @@
 import Foundation
 
 internal struct UpperTransportPdu {
+    /// The Mesh Message that is being sent, or `nil`, when the message
+    /// was received.
+    let message: MeshMessage?
     /// Source Address.
     let source: Address
     /// Destination Address.
@@ -54,10 +57,12 @@ internal struct UpperTransportPdu {
         transportPdu = accessMessage.upperTransportPdu
         accessPdu = decryptedData
         sequence = accessMessage.sequence
+        message = nil
     }
     
     init(fromMeshMessage message: MeshMessage, sentFrom source: Address, to destination: Address,
          usingApplicationKey key: ApplicationKey, sequence: UInt32, andIvIndex ivIndex: IvIndex) {
+        self.message = message
         self.source = source
         self.destination = destination
         self.accessPdu = message.accessPdu
@@ -85,6 +90,7 @@ internal struct UpperTransportPdu {
     
     init(fromConfigMessage message: ConfigMessage, sentFrom source: Address, to destination: Address,
          usingDeviceKey key: Data, sequence: UInt32, andIvIndex ivIndex: IvIndex) {
+        self.message = message
         self.source = source
         self.destination = destination
         self.accessPdu = message.accessPdu

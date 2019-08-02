@@ -78,11 +78,30 @@ internal class NetworkManager {
         accessLayer.send(configMessage, to: destination)
     }
     
-    /// Notifies the delegate about a new mesh message from given source.
+    /// Notifies the delegate about a new mesh message from the given source.
     ///
     /// - parameter message: The mesh message that was received.
     /// - parameter source:  The source Unicast Address.
-    func notifyAbout(_ message: MeshMessage, from source: Address) {
+    func notifyAbout(newMessage message: MeshMessage, from source: Address) {
         meshNetworkManager.delegate?.meshNetwork(meshNetwork!, didDeliverMessage: message, from: source)
+    }
+    
+    /// Notifies the delegate about the mesh message being sent to the given
+    /// destination address.
+    ///
+    /// - parameter message: The mesh message that was sent.
+    /// - parameter source:  The destination address.
+    func notifyAbout(message: MeshMessage, sentTo destination: Address) {
+        meshNetworkManager.delegate?.meshNetwork(meshNetwork!, didDeliverMessage: message, to: destination)
+    }
+    
+    /// Notifies the delegate about an error during sending the mesh message
+    /// to the given destination address.
+    ///
+    /// - parameter error:   The error that occurred.
+    /// - parameter message: The mesh message that failed to be sent.
+    /// - parameter source:  The destination address.
+    func notifyAbout(_ error: Error, duringSendingMessage message: MeshMessage, to destination: Address) {
+        meshNetworkManager.delegate?.meshNetwork(meshNetwork!, failedToDeliverMessage: message, to: destination, error: error)
     }
 }
