@@ -57,10 +57,9 @@ internal struct ControlMessage: LowerTransportPdu {
         networkKey = segment.networkKey
         
         // Segments are already sorted by `segmentOffset`.
-        upperTransportPdu = segments
-            .reduce(Data(), { (result, next) -> Data in
-                return result + next.upperTransportPdu
-            })
+        upperTransportPdu = segments.reduce(Data()) {
+            $0 + $1.upperTransportPdu
+        }
     }
 }
 
