@@ -75,15 +75,20 @@ internal class NetworkLayer {
     /// - parameter ttl:  The initial TTL (Time To Live) value of the message.
     /// - parameter multipleTimes: Should the message be resent with the same sequence
     ///                            number after a random delay, default `false`.
+    /// - throws: This method may throw when the `transmitter` is not set, or has
+    ///           failed to send the PDU.
     func send(lowerTransportPdu pdu: LowerTransportPdu, ofType type: PduType,
               withTtl ttl: UInt8, multipleTimes: Bool = false) throws {
+        guard let transmitter = networkManager.transmitter else {
+            throw BearerError.bearerClosed
+        }
         // Get the current sequence number for local Provisioner's source address.
         let sequence = UInt32(defaults.integer(forKey: pdu.source.hex))
         // As the sequnce number was just used, it has to be incremented.
         defaults.set(sequence + 1, forKey: pdu.source.hex)
         
         let networkPdu = NetworkPdu(encode: pdu, withSequence: sequence, andTtl: ttl)
-        try networkManager.transmitter?.send(networkPdu.pdu, ofType: type)
+        try transmitter.send(networkPdu.pdu, ofType: type)
         
         if multipleTimes {
             _ = Timer.scheduledTimer(withTimeInterval: TimeInterval.random(in: 0.050...0.300), repeats: false) { timer in
