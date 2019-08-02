@@ -40,10 +40,11 @@ internal struct HearbeatMessage {
         destination = message.destination
     }
     
-    /// Creates the Heartbeat message.
+    /// Creates a Heartbeat message.
     ///
     /// - parameter ttl:         Initial TTL used when sending the message.
     /// - parameter features:    Currently active features of the node.
+    /// - parameter source:      The source address.
     /// - parameter destination: The destination address.
     init(withInitialTtl ttl: UInt8, andFeatures features: Features, from source: Address, targetting destination: Address) {
         self.opCode = 0x0A
