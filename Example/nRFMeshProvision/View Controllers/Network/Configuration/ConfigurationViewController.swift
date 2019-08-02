@@ -430,7 +430,7 @@ private extension IndexPath {
         "Name"
     ]
     static let nodeTitles = [
-        "Unicast Address", "TTL", "Device Key"
+        "Unicast Address", "Default TTL", "Device Key"
     ]
     static let keysTitles = [
         "Network Keys", "Application Keys"
