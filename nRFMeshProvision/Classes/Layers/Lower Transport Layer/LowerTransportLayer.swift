@@ -14,7 +14,7 @@ internal class LowerTransportLayer {
     /// Provisioner.
     static let defaultTtl: UInt8 = 5
     /// The time after which an incomplete segmented message will be discarded, in seconds.
-    let defaultIncompleteTimerInterval: TimeInterval = 10.0
+    static let defaultIncompleteTimerInterval: TimeInterval = 10.0
     
     let networkManager: NetworkManager
     let meshNetwork: MeshNetwork
@@ -192,7 +192,7 @@ internal class LowerTransportLayer {
                             // If the Lower Transport Layer receives any segment while the incomplete
                             // timer is active, the timer shall be restarted.
                             incompleteTimers[key]?.invalidate()
-                            incompleteTimers[key] = Timer.scheduledTimer(withTimeInterval: defaultIncompleteTimerInterval, repeats: false) { _ in
+                            incompleteTimers[key] = Timer.scheduledTimer(withTimeInterval: LowerTransportLayer.defaultIncompleteTimerInterval, repeats: false) { _ in
                                 self.incompleteTimers.removeValue(forKey: key)?.invalidate()
                                 self.acknowledgmentTimers.removeValue(forKey: key)?.invalidate()
                                 self.incompleteSegments.removeValue(forKey: key)
