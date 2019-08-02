@@ -8,14 +8,6 @@
 import Foundation
 
 internal class LowerTransportLayer {
-    /// The Default TTL will be used for sending messages, if the value has not been
-    /// set in the Provisioner's Node. It is set to 5, which is a reasonable value.
-    /// If this value is not enough, make sure the default TTL value is set for the
-    /// Provisioner.
-    static let defaultTtl: UInt8 = 5
-    /// The time after which an incomplete segmented message will be discarded, in seconds.
-    static let defaultIncompleteTimerInterval: TimeInterval = 10.0
-    
     let networkManager: NetworkManager
     let meshNetwork: MeshNetwork
     
@@ -130,7 +122,7 @@ internal class LowerTransportLayer {
                     // acknowledged message, send the same ACK immediately.
                     if let lastAck = acknowledgments[segment.source], lastAck.sequenceZero == segment.sequenceZero {
                         if let provisionerNode = meshNetwork.localProvisioner?.node {
-                            let ttl = networkPdu.ttl > 0 ? provisionerNode.defaultTTL ?? LowerTransportLayer.defaultTtl : 0
+                            let ttl = networkPdu.ttl > 0 ? provisionerNode.defaultTTL ?? networkManager.defaultTtl : 0
                             try? networkManager.networkLayer.send(lowerTransportPdu: lastAck, ofType: .networkPdu, withTtl: ttl)
                         } else {
                             acknowledgments.removeValue(forKey: segment.source)
@@ -146,7 +138,7 @@ internal class LowerTransportLayer {
                         // A single segment message may immediately be acknowledged.
                         if let provisionerNode = meshNetwork.localProvisioner?.node,
                             networkPdu.destination == provisionerNode.unicastAddress {
-                            let ttl = networkPdu.ttl > 0 ? provisionerNode.defaultTTL ?? LowerTransportLayer.defaultTtl : 0
+                            let ttl = networkPdu.ttl > 0 ? provisionerNode.defaultTTL ?? networkManager.defaultTtl : 0
                             sendAck(for: [segment], usingNetworkKey: networkPdu.networkKey, withTtl: ttl)
                         }
                         let accessMessage = AccessMessage(fromSegments: [segment])
@@ -176,7 +168,7 @@ internal class LowerTransportLayer {
                                 acknowledgmentTimers.removeValue(forKey: key)?.invalidate()
                                 
                                 // ...and send the ACK that all segments were received.
-                                let ttl = networkPdu.ttl > 0 ? provisionerNode.defaultTTL ?? LowerTransportLayer.defaultTtl : 0
+                                let ttl = networkPdu.ttl > 0 ? provisionerNode.defaultTTL ?? networkManager.defaultTtl : 0
                                 sendAck(for: allSegments, usingNetworkKey: networkPdu.networkKey, withTtl: ttl)
                             }
                             
@@ -192,7 +184,7 @@ internal class LowerTransportLayer {
                             // If the Lower Transport Layer receives any segment while the incomplete
                             // timer is active, the timer shall be restarted.
                             incompleteTimers[key]?.invalidate()
-                            incompleteTimers[key] = Timer.scheduledTimer(withTimeInterval: LowerTransportLayer.defaultIncompleteTimerInterval, repeats: false) { _ in
+                            incompleteTimers[key] = Timer.scheduledTimer(withTimeInterval: networkManager.incompleteMessageTimeout, repeats: false) { _ in
                                 self.incompleteTimers.removeValue(forKey: key)?.invalidate()
                                 self.acknowledgmentTimers.removeValue(forKey: key)?.invalidate()
                                 self.incompleteSegments.removeValue(forKey: key)
@@ -200,8 +192,8 @@ internal class LowerTransportLayer {
                             // If the Lower Transport Layer receives any segment while the acknowlegment
                             // timer is inactive, it shall restart the timer. Active timer should not be restarted.
                             if acknowledgmentTimers[key] == nil {
-                                let ttl = provisionerNode.defaultTTL ?? LowerTransportLayer.defaultTtl
-                                acknowledgmentTimers[key] = Timer.scheduledTimer(withTimeInterval: 0.150 + Double(ttl) * 0.050, repeats: false) { _ in
+                                let ttl = provisionerNode.defaultTTL ?? networkManager.defaultTtl
+                                acknowledgmentTimers[key] = Timer.scheduledTimer(withTimeInterval: networkManager.acknowledgmentTimerInterval(ttl), repeats: false) { _ in
                                     let ttl = networkPdu.ttl > 0 ? ttl : 0
                                     self.sendAck(for: self.incompleteSegments[key]!, usingNetworkKey: networkPdu.networkKey, withTtl: ttl)
                                     self.acknowledgmentTimers.removeValue(forKey: key)?.invalidate()
@@ -310,7 +302,7 @@ internal class LowerTransportLayer {
         guard let provisionerNode = meshNetwork.localProvisioner?.node else {
                 return
         }
-        let ttl = provisionerNode.defaultTTL ?? LowerTransportLayer.defaultTtl
+        let ttl = provisionerNode.defaultTTL ?? networkManager.defaultTtl
         
         if isSegmented {
             let sequenceZero = UInt16(pdu.sequence & 0x1FFF)
@@ -379,7 +371,7 @@ private extension LowerTransportLayer {
             return
         }
         /// The default TTL of the local Node.
-        let ttl = provisionerNode.defaultTTL ?? LowerTransportLayer.defaultTtl
+        let ttl = provisionerNode.defaultTTL ?? networkManager.defaultTtl
         /// Segment Acknowledgment Message is expected when the message is targetting
         /// a Unicast Address.
         var ackExpected: Bool?
@@ -408,7 +400,7 @@ private extension LowerTransportLayer {
         if ackExpected ?? false, let segments = outgoingSegments[sequenceZero], segments.hasMore {
             if limit > 0 {
                 segmentTransmissionTimers[sequenceZero] =
-                    Timer.scheduledTimer(withTimeInterval: 0.200 + Double(ttl) * 0.050, repeats: false) { _ in
+                    Timer.scheduledTimer(withTimeInterval: networkManager.transmissionTimerInteral(ttl), repeats: false) { _ in
                         self.sendSegments(for: sequenceZero, limit: limit - 1)
                     }
             } else {

@@ -26,6 +26,21 @@ internal class NetworkManager {
     var meshNetwork: MeshNetwork? {
         return meshNetworkManager.meshNetwork
     }
+    public var defaultTtl: UInt8 {
+        return max(min(meshNetworkManager.defaultTtl, 127), 2)
+    }
+    public var incompleteMessageTimeout: TimeInterval {
+        return max(meshNetworkManager.incompleteMessageTimeout, 10.0)
+    }
+    public func acknowledgmentTimerInterval(_ ttl: UInt8) -> TimeInterval {
+        return max(meshNetworkManager.acknowledgmentTimerInterval, 0.150) + Double(ttl) * 0.050
+    }
+    public func transmissionTimerInteral(_ ttl: UInt8) -> TimeInterval {
+        return max(meshNetworkManager.acknowledgmentTimerInterval, 0.200) + Double(ttl) * 0.050
+    }
+    public var retransmissionLimit: Int {
+        return max(meshNetworkManager.retransmissionLimit, 2)
+    }
     
     // MARK: - Implementation
     

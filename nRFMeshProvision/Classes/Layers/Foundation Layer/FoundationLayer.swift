@@ -398,12 +398,12 @@ internal class FoundationLayer {
             if let node = meshNetwork.localProvisioner?.node {
                 node.defaultTTL = request.ttl
                 save()
-                networkManager.send(ConfigDefaultTtlStatus(ttl: node.defaultTTL ?? LowerTransportLayer.defaultTtl), to: source)
+                networkManager.send(ConfigDefaultTtlStatus(ttl: node.defaultTTL ?? networkManager.defaultTtl), to: source)
             }
             
         case is ConfigDefaultTtlGet:
             if let node = meshNetwork.localProvisioner?.node {
-                networkManager.send(ConfigDefaultTtlStatus(ttl: node.defaultTTL ?? LowerTransportLayer.defaultTtl), to: source)
+                networkManager.send(ConfigDefaultTtlStatus(ttl: node.defaultTTL ?? networkManager.defaultTtl), to: source)
             }
             
         case let defaultTtl as ConfigDefaultTtlStatus:

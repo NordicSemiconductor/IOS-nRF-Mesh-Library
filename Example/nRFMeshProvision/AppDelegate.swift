@@ -20,6 +20,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                      didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Create the main MeshNetworkManager instance.
         meshNetworkManager = MeshNetworkManager()
+        meshNetworkManager.acknowledgmentTimerInterval = 0.600
+        meshNetworkManager.transmissionTimerInteral = 0.600
         
         // Try loading the saved configuration.
         var loaded = false
