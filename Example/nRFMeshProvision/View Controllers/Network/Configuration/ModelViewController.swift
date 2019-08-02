@@ -140,59 +140,8 @@ class ModelViewController: ConnectableViewController {
                 cell.textLabel?.text = "Set Publication"
                 return cell
             }
-            let cell = tableView.dequeueReusableCell(withIdentifier: "destination", for: indexPath)
-            let address = publish.publicationAddress
-            if address.address.isUnicast {
-                let meshNetwork = MeshNetworkManager.instance.meshNetwork!
-                let node = meshNetwork.node(withAddress: address.address)
-                if let element = node?.element(withAddress: address.address) {
-                    if let name = element.name {
-                        cell.textLabel?.text = name
-                        cell.detailTextLabel?.text = node?.name ?? "Unknown Device"
-                    } else {
-                        let index = node!.elements.firstIndex(of: element)!
-                        let name = "Element \(index + 1)"
-                        cell.textLabel?.text = name
-                        cell.detailTextLabel?.text = node?.name ?? "Unknown Device"
-                    }
-                } else {
-                    cell.textLabel?.text = "Unknown Element"
-                    cell.detailTextLabel?.text = "Unknown Node"
-                }
-                cell.tintColor = .nordicLake
-                cell.imageView?.image = #imageLiteral(resourceName: "ic_flag_24pt")
-            } else if address.address.isGroup || address.address.isVirtual {
-                switch address.address {
-                case .allProxies:
-                    cell.textLabel?.text = "All Proxies"
-                    cell.detailTextLabel?.text = nil
-                case .allFriends:
-                    cell.textLabel?.text = "All Friends"
-                    cell.detailTextLabel?.text = nil
-                case .allRelays:
-                    cell.textLabel?.text = "All Relays"
-                    cell.detailTextLabel?.text = nil
-                case .allNodes:
-                    cell.textLabel?.text = "All Nodes"
-                    cell.detailTextLabel?.text = nil
-                default:
-                    let meshNetwork = MeshNetworkManager.instance.meshNetwork!
-                    if let group = meshNetwork.group(withAddress: address) {
-                        cell.textLabel?.text = group.name
-                        cell.detailTextLabel?.text = nil
-                    } else {
-                        cell.textLabel?.text = "Unknown group"
-                        cell.detailTextLabel?.text = address.asString()
-                    }
-                }
-                cell.imageView?.image = #imageLiteral(resourceName: "outline_group_work_black_24pt")
-                cell.tintColor = .nordicLake
-            } else {
-                cell.textLabel?.text = "Invalid address"
-                cell.detailTextLabel?.text = nil
-                cell.tintColor = .nordicRed
-                cell.imageView?.image = #imageLiteral(resourceName: "ic_flag_24pt")
-            }
+            let cell = tableView.dequeueReusableCell(withIdentifier: "destination", for: indexPath) as! PublicationCell
+            cell.publish = publish
             return cell
         }
         if indexPath.isSubscribeSection {

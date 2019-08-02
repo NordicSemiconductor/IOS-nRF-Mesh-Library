@@ -18,6 +18,7 @@
 		52313FEE22EAFB090074325A /* SubscribeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52313FED22EAFB090074325A /* SubscribeViewController.swift */; };
 		5231400022EEE1770074325A /* AssigningGroupAddresses.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52313FFF22EEE1770074325A /* AssigningGroupAddresses.swift */; };
 		5231400222EEF7940074325A /* CreatingMeshNetwork.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5231400122EEF7940074325A /* CreatingMeshNetwork.swift */; };
+		5231401622F460380074325A /* PublicationCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5231401522F460380074325A /* PublicationCell.swift */; };
 		523F776422C4EDD90030EA6A /* SwitchCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 523F776322C4EDD90030EA6A /* SwitchCell.swift */; };
 		523F776622C609D90030EA6A /* NodeNetworkKeysViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 523F776522C609D90030EA6A /* NodeNetworkKeysViewController.swift */; };
 		523F776822C615CE0030EA6A /* NodeAppKeysViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 523F776722C615CE0030EA6A /* NodeAppKeysViewController.swift */; };
@@ -99,6 +100,7 @@
 		52313FED22EAFB090074325A /* SubscribeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubscribeViewController.swift; sourceTree = "<group>"; };
 		52313FFF22EEE1770074325A /* AssigningGroupAddresses.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssigningGroupAddresses.swift; sourceTree = "<group>"; };
 		5231400122EEF7940074325A /* CreatingMeshNetwork.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreatingMeshNetwork.swift; sourceTree = "<group>"; };
+		5231401522F460380074325A /* PublicationCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PublicationCell.swift; sourceTree = "<group>"; };
 		523F776322C4EDD90030EA6A /* SwitchCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwitchCell.swift; sourceTree = "<group>"; };
 		523F776522C609D90030EA6A /* NodeNetworkKeysViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NodeNetworkKeysViewController.swift; sourceTree = "<group>"; };
 		523F776722C615CE0030EA6A /* NodeAppKeysViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NodeAppKeysViewController.swift; sourceTree = "<group>"; };
@@ -211,6 +213,7 @@
 				522AFFDD22BBBC6400521EDC /* NodeFeaturesCell.swift */,
 				522AFFDB22BBA34900521EDC /* ActionCell.swift */,
 				523F776322C4EDD90030EA6A /* SwitchCell.swift */,
+				5231401522F460380074325A /* PublicationCell.swift */,
 			);
 			path = Cells;
 			sourceTree = "<group>";
@@ -620,6 +623,7 @@
 				52DF5D8C228DAA0500C297C1 /* NodeViewCell.swift in Sources */,
 				528AB9FA228D856C000BE9DC /* ProvisioningViewDelegate.swift in Sources */,
 				5283524822733BCF0097B949 /* EditKeyViewController.swift in Sources */,
+				5231401622F460380074325A /* PublicationCell.swift in Sources */,
 				528AB9F8228D847C000BE9DC /* NetworkViewController.swift in Sources */,
 				529B759A2243BA0A008F1CE7 /* ProvisionersViewController.swift in Sources */,
 				523F778722CCDE250030EA6A /* SetPublicationViewController.swift in Sources */,
