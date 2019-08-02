@@ -36,7 +36,13 @@ class SetPublicationViewController: ConnectableViewController {
         retransmissionIntervalSelected(UInt8(sender.value))
     }
     
-    @IBOutlet weak var destinationCell: UITableViewCell!
+    @IBOutlet weak var destinationIcon: UIImageView!
+    @IBOutlet weak var destinationLabel: UILabel!
+    @IBOutlet weak var destinationSubtitleLabel: UILabel!
+    @IBOutlet weak var keyIcon: UIImageView!
+    @IBOutlet weak var keyLabel: UILabel!
+    @IBOutlet weak var boundKeyLabel: UILabel!
+    
     @IBOutlet weak var friendshipCredentialsFlagSwitch: UISwitch!
     @IBOutlet weak var ttlLabel: UILabel!
     @IBOutlet weak var periodSlider: UISlider!
@@ -103,7 +109,10 @@ class SetPublicationViewController: ConnectableViewController {
             // The following 2 methods must be called in order: interval, count.
             retransmissionIntervalDidChange(retransmitIntervalSlider)
             retransmissionCountDidChange(retransmitCountSlider)
+        } else {
+            applicationKey = model.boundApplicationKeys.first
         }
+        reloadKeyView()
         reloadDestinationView()
     }
     
@@ -131,7 +140,7 @@ class SetPublicationViewController: ConnectableViewController {
     
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         if indexPath.isDestination {
-            return destination?.address.isUnicast ?? false ? 56 : 44
+            return 123
         }
         if indexPath.isDetailsSection {
             return 44
@@ -227,65 +236,77 @@ private extension SetPublicationViewController {
         retransmitIntervalLabel.text = "\(steps.interval) ms"
     }
     
+    func reloadKeyView() {
+        if let applicationKey = applicationKey {
+            keyIcon.tintColor = .nordicLake
+            keyLabel.text = applicationKey.name
+            boundKeyLabel.text = "Bound to \(applicationKey.boundNetworkKey.name)"
+        } else {
+            keyIcon.tintColor = .lightGray
+            keyLabel.text = "No Key Selected"
+            boundKeyLabel.text = nil
+        }
+    }
+    
     func reloadDestinationView() {
         guard let address = destination else {
-            destinationCell.textLabel?.text = "No destination selected"
-            destinationCell.textLabel?.textColor = .lightGray
-            destinationCell.detailTextLabel?.text = nil
-            destinationCell.tintColor = .lightGray
+            destinationLabel.text = "No destination selected"
+            destinationLabel.textColor = .lightGray
+            destinationSubtitleLabel.text = nil
+            destinationIcon.tintColor = .lightGray
             doneButton.isEnabled = false
             return
         }
-        destinationCell.textLabel?.textColor = .darkText
+        destinationLabel.textColor = .darkText
         if address.address.isUnicast {
             let meshNetwork = MeshNetworkManager.instance.meshNetwork!
             let node = meshNetwork.node(withAddress: address.address)
             if let element = node?.element(withAddress: address.address) {
                 if let name = element.name {
-                    destinationCell.textLabel?.text = name
-                    destinationCell.detailTextLabel?.text = node?.name ?? "Unknown Device"
+                    destinationLabel.text = name
+                    destinationSubtitleLabel.text = node?.name ?? "Unknown Device"
                 } else {
                     let index = node!.elements.firstIndex(of: element)!
                     let name = "Element \(index + 1)"
-                    destinationCell.textLabel?.text = name
-                    destinationCell.detailTextLabel?.text = node?.name ?? "Unknown Device"
+                    destinationLabel.text = name
+                    destinationSubtitleLabel.text = node?.name ?? "Unknown Device"
                 }
             } else {
-                destinationCell.textLabel?.text = "Unknown Element"
-                destinationCell.detailTextLabel?.text = "Unknown Node"
+                destinationLabel.text = "Unknown Element"
+                destinationSubtitleLabel.text = "Unknown Node"
             }
-            destinationCell.tintColor = .nordicLake
-            destinationCell.imageView?.image = #imageLiteral(resourceName: "ic_flag_24pt")
+            destinationIcon.tintColor = .nordicLake
+            destinationIcon.image = #imageLiteral(resourceName: "ic_flag_24pt")
             doneButton.isEnabled = true
         } else if address.address.isGroup || address.address.isVirtual {
             switch address.address {
             case .allProxies:
-                destinationCell.textLabel?.text = "All Proxies"
-                destinationCell.detailTextLabel?.text = nil
+                destinationLabel.text = "All Proxies"
+                destinationSubtitleLabel.text = nil
             case .allFriends:
-                destinationCell.textLabel?.text = "All Friends"
-                destinationCell.detailTextLabel?.text = nil
+                destinationLabel.text = "All Friends"
+                destinationSubtitleLabel.text = nil
             case .allRelays:
-                destinationCell.textLabel?.text = "All Relays"
-                destinationCell.detailTextLabel?.text = nil
+                destinationLabel.text = "All Relays"
+                destinationSubtitleLabel.text = nil
             case .allNodes:
-                destinationCell.textLabel?.text = "All Nodes"
-                destinationCell.detailTextLabel?.text = nil
+                destinationLabel.text = "All Nodes"
+                destinationSubtitleLabel.text = nil
             default:
                 let meshNetwork = MeshNetworkManager.instance.meshNetwork!
                 if let group = meshNetwork.group(withAddress: address) {
-                    destinationCell.textLabel?.text = group.name
-                    destinationCell.detailTextLabel?.text = nil
+                    destinationLabel.text = group.name
+                    destinationSubtitleLabel.text = nil
                 }
             }
-            destinationCell.imageView?.image = #imageLiteral(resourceName: "outline_group_work_black_24pt")
-            destinationCell.tintColor = .nordicLake
+            destinationIcon.image = #imageLiteral(resourceName: "outline_group_work_black_24pt")
+            destinationIcon.tintColor = .nordicLake
             doneButton.isEnabled = true
         } else {
-            destinationCell.textLabel?.text = "Invalid address"
-            destinationCell.detailTextLabel?.text = nil
-            destinationCell.tintColor = .nordicRed
-            destinationCell.imageView?.image = #imageLiteral(resourceName: "ic_flag_24pt")
+            destinationLabel.text = "Invalid address"
+            destinationSubtitleLabel.text = nil
+            destinationIcon.tintColor = .nordicRed
+            destinationIcon.image = #imageLiteral(resourceName: "ic_flag_24pt")
             doneButton.isEnabled = false
         }
     }
@@ -317,24 +338,17 @@ extension SetPublicationViewController: DestinationDelegate {
     
     func keySelected(_ key: ApplicationKey) {
         applicationKey = key
+        reloadKeyView()
     }
     
     func destinationSelected(_ address: MeshAddress) {
         destination = address
         reloadDestinationView()
-        // This will reload the row heights. The height of destination cell
-        // depends on the destination type.
-        tableView.beginUpdates()
-        tableView.endUpdates()
     }
     
     func destinationCleared() {
         destination = nil
         reloadDestinationView()
-        // This will reload the row heights. The height of destination cell
-        // depends on the destination type.
-        tableView.beginUpdates()
-        tableView.endUpdates()
     }
     
 }
