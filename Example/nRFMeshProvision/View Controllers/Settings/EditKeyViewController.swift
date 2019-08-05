@@ -145,7 +145,6 @@ class EditKeyViewController: UITableViewController {
             
             cell = tableView.dequeueReusableCell(withIdentifier: "subtitleCell", for: indexPath)
             cell.textLabel?.text = networkKey.name
-            cell.detailTextLabel?.text = "Key Index: \(networkKey.index)"
             cell.selectionStyle = isKeyUsed ? .none : .default
             
             if networkKey.index == newBoundNetworkKeyIndex {
