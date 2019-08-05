@@ -57,6 +57,12 @@
 		5231401022EF18AB0074325A /* ConfigSIGModelSubscriptionList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5231400F22EF18AB0074325A /* ConfigSIGModelSubscriptionList.swift */; };
 		5231401222EF238B0074325A /* ConfigVendorModelSubscriptionList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5231401122EF238B0074325A /* ConfigVendorModelSubscriptionList.swift */; };
 		5231401422F44AFE0074325A /* LowerTransportError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5231401322F44AFE0074325A /* LowerTransportError.swift */; };
+		5231401822F83DE50074325A /* ConfigRelayGet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5231401722F83DE50074325A /* ConfigRelayGet.swift */; };
+		5231401A22F83EEC0074325A /* ConfigRelaySet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5231401922F83EEC0074325A /* ConfigRelaySet.swift */; };
+		5231401C22F84B560074325A /* ConfigRelayStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5231401B22F84B560074325A /* ConfigRelayStatus.swift */; };
+		5231401E22F84F9B0074325A /* ConfigNetworkTransmitGet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5231401D22F84F9B0074325A /* ConfigNetworkTransmitGet.swift */; };
+		5231402022F84FC00074325A /* ConfigNetworkTransmitSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5231401F22F84FC00074325A /* ConfigNetworkTransmitSet.swift */; };
+		5231402222F851950074325A /* ConfigNetworkTransmitStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5231402122F851950074325A /* ConfigNetworkTransmitStatus.swift */; };
 		523F775022C3AD2C0030EA6A /* Node+Provisioner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 523F774F22C3AD2C0030EA6A /* Node+Provisioner.swift */; };
 		523F775222C4A9F80030EA6A /* ConfigAppKeyDelete.swift in Sources */ = {isa = PBXBuildFile; fileRef = 523F775122C4A9F80030EA6A /* ConfigAppKeyDelete.swift */; };
 		523F775422C4AC210030EA6A /* ConfigAppKeyGet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 523F775322C4AC210030EA6A /* ConfigAppKeyGet.swift */; };
@@ -282,6 +288,12 @@
 		5231400F22EF18AB0074325A /* ConfigSIGModelSubscriptionList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigSIGModelSubscriptionList.swift; sourceTree = "<group>"; };
 		5231401122EF238B0074325A /* ConfigVendorModelSubscriptionList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigVendorModelSubscriptionList.swift; sourceTree = "<group>"; };
 		5231401322F44AFE0074325A /* LowerTransportError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LowerTransportError.swift; sourceTree = "<group>"; };
+		5231401722F83DE50074325A /* ConfigRelayGet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigRelayGet.swift; sourceTree = "<group>"; };
+		5231401922F83EEC0074325A /* ConfigRelaySet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigRelaySet.swift; sourceTree = "<group>"; };
+		5231401B22F84B560074325A /* ConfigRelayStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigRelayStatus.swift; sourceTree = "<group>"; };
+		5231401D22F84F9B0074325A /* ConfigNetworkTransmitGet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigNetworkTransmitGet.swift; sourceTree = "<group>"; };
+		5231401F22F84FC00074325A /* ConfigNetworkTransmitSet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigNetworkTransmitSet.swift; sourceTree = "<group>"; };
+		5231402122F851950074325A /* ConfigNetworkTransmitStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigNetworkTransmitStatus.swift; sourceTree = "<group>"; };
 		523F774F22C3AD2C0030EA6A /* Node+Provisioner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Node+Provisioner.swift"; sourceTree = "<group>"; };
 		523F775122C4A9F80030EA6A /* ConfigAppKeyDelete.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigAppKeyDelete.swift; sourceTree = "<group>"; };
 		523F775322C4AC210030EA6A /* ConfigAppKeyGet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigAppKeyGet.swift; sourceTree = "<group>"; };
@@ -692,6 +704,12 @@
 			children = (
 				52F6AD6522B3AF2700F0D7DF /* ConfigCompositionDataGet.swift */,
 				52F6AD6722B3B16800F0D7DF /* ConfigCompositionDataStatus.swift */,
+				5231401722F83DE50074325A /* ConfigRelayGet.swift */,
+				5231401922F83EEC0074325A /* ConfigRelaySet.swift */,
+				5231401B22F84B560074325A /* ConfigRelayStatus.swift */,
+				5231401D22F84F9B0074325A /* ConfigNetworkTransmitGet.swift */,
+				5231401F22F84FC00074325A /* ConfigNetworkTransmitSet.swift */,
+				5231402122F851950074325A /* ConfigNetworkTransmitStatus.swift */,
 				523F775722C4C3350030EA6A /* ConfigNetKeyAdd.swift */,
 				523F775922C4CCD40030EA6A /* ConfigNetKeyDelete.swift */,
 				523F775B22C4CDFC0030EA6A /* ConfigNetKeyUpdate.swift */,
@@ -1266,6 +1284,7 @@
 				523F778122CB912B0030EA6A /* ConfigModelAppStatus.swift in Sources */,
 				52B7F68022994B3E00B0A42F /* MeshMessage.swift in Sources */,
 				5294DADC22B144D10041370E /* ConfigAppKeyStatus.swift in Sources */,
+				5231401C22F84B560074325A /* ConfigRelayStatus.swift in Sources */,
 				5231401222EF238B0074325A /* ConfigVendorModelSubscriptionList.swift in Sources */,
 				529B75EC224A6CE4008F1CE7 /* SceneRange.swift in Sources */,
 				528352922281B68E0097B949 /* ProvisioningPdu.swift in Sources */,
@@ -1290,6 +1309,7 @@
 				523F778F22CCF0C10030EA6A /* ConfigModelPublicationSet.swift in Sources */,
 				52F6AD7022BA172900F0D7DF /* ConfigNodeReset.swift in Sources */,
 				52F6AD7422BA3BCA00F0D7DF /* CompanyIdentifier.swift in Sources */,
+				5231401822F83DE50074325A /* ConfigRelayGet.swift in Sources */,
 				528352462271F0C60097B949 /* MeshNetwork+Keys.swift in Sources */,
 				5294DAD822B0F7FE0041370E /* ConfigAppKeyAdd.swift in Sources */,
 				528352862281B2B30097B949 /* Algorithm.swift in Sources */,
@@ -1308,6 +1328,7 @@
 				528352B022830F380097B949 /* ProxyProtocolHandler.swift in Sources */,
 				52DF5DA3229E6EF800C297C1 /* AccessLayer.swift in Sources */,
 				524C039622AE671900C5B1B9 /* ApplicationKeys.swift in Sources */,
+				5231402022F84FC00074325A /* ConfigNetworkTransmitSet.swift in Sources */,
 				52B7F688229BCC4000B0A42F /* NetworkPdu.swift in Sources */,
 				523F775422C4AC210030EA6A /* ConfigAppKeyGet.swift in Sources */,
 				529B7623224BAB26008F1CE7 /* Publish.swift in Sources */,
@@ -1328,6 +1349,7 @@
 				2545014E9EC8A64DE403DC5863089112 /* OpenSSLHelper.m in Sources */,
 				52F6AD6E22B8F8EA00F0D7DF /* AccessPdu.swift in Sources */,
 				523F775C22C4CDFC0030EA6A /* ConfigNetKeyUpdate.swift in Sources */,
+				5231402222F851950074325A /* ConfigNetworkTransmitStatus.swift in Sources */,
 				528352AE228302860097B949 /* BaseGattProxyBearer.swift in Sources */,
 				52568D4722DDE8E800B7B236 /* MeshNetwork+Groups.swift in Sources */,
 				523F778522CC888D0030EA6A /* Element+Models.swift in Sources */,
@@ -1338,6 +1360,7 @@
 				52313FFA22EB0E160074325A /* ConfigModelSubscriptionVirtualAddressOverwrite.swift in Sources */,
 				5283524C2276F53A0097B949 /* Key.swift in Sources */,
 				5294DACE22A6AFA20041370E /* Provisioner+Node.swift in Sources */,
+				5231401A22F83EEC0074325A /* ConfigRelaySet.swift in Sources */,
 				529B7625224BB02E008F1CE7 /* Data+Hex.swift in Sources */,
 				522AFFE522C24F6000521EDC /* ConfigDefaultTtlGet.swift in Sources */,
 				529B75ED224A6CE4008F1CE7 /* AddressRange.swift in Sources */,
@@ -1353,6 +1376,7 @@
 				529B757922411970008F1CE7 /* MeshNetworkManager.swift in Sources */,
 				528352422271EFC20097B949 /* MeshNetwork+Address.swift in Sources */,
 				D159EC79D610DF8F7CA2F21321FD6D7E /* PublishPeriodResolution.swift in Sources */,
+				5231401E22F84F9B0074325A /* ConfigNetworkTransmitGet.swift in Sources */,
 				523F775622C4B1D30030EA6A /* ConfigAppKeyList.swift in Sources */,
 				5274B75F22A1D9C9008450BC /* UnprovisionedDeviceBeacon.swift in Sources */,
 				5274B75922A1C7B9008450BC /* LowerTransportPdu.swift in Sources */,

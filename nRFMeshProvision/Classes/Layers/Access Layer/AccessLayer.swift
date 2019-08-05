@@ -75,6 +75,28 @@ private extension AccessLayer {
         case ConfigCompositionDataStatus.opCode:
             MessageType = ConfigCompositionDataStatus.self
             
+        // Relay configuration
+            
+        case ConfigRelayGet.opCode:
+            MessageType = ConfigRelayGet.self
+            
+        case ConfigRelaySet.opCode:
+            MessageType = ConfigRelaySet.self
+            
+        case ConfigRelayStatus.opCode:
+            MessageType = ConfigRelayStatus.self
+            
+        // Network Transmit configuration
+            
+        case ConfigNetworkTransmitGet.opCode:
+            MessageType = ConfigNetworkTransmitGet.self
+            
+        case ConfigNetworkTransmitSet.opCode:
+            MessageType = ConfigNetworkTransmitSet.self
+            
+        case ConfigNetworkTransmitStatus.opCode:
+            MessageType = ConfigNetworkTransmitStatus.self
+            
         // Network Keys Management
         case ConfigNetKeyAdd.opCode:
             MessageType = ConfigNetKeyAdd.self

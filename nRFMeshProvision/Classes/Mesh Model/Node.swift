@@ -33,37 +33,31 @@ public class Node: Codable {
     
     /// The object represents parameters of the transmissions of network
     /// layer messages originating from a mesh node.
-    public class NetworkTransmit: Codable {
+    public struct NetworkTransmit: Codable {
         /// Number of retransmissions for relay messages.
         /// The value is in range from 1 to 8.
-        public internal(set) var count: UInt8
+        public let count: UInt8
         /// The interval (in milliseconds) between retransmissions.
-        public internal(set) var interval: UInt16
+        public let interval: UInt16
         
-        internal init(transmissionCount: UInt8, intervalSteps: UInt16) {
-            // The number of times that packet is transmitted for each
-            // packet that is relayed is Ttransmit Count + 1.
-            self.count    = transmissionCount + 1
-            // Interval is in 10 ms steps.
-            self.interval = intervalSteps * 10 // ms
+        internal init(_ status: ConfigNetworkTransmitStatus) {
+            self.count = status.count + 1
+            self.interval = UInt16(status.steps + 1) * 10
         }
     }
     
     /// The object represents parameters of the retransmissions of network
     /// layer messages relayed by a mesh node.
-    public class RelayRetransmit: Codable {
+    public struct RelayRetransmit: Codable {
         /// Number of retransmissions for network messages.
         /// The value is in range from 1 to 8.
-        public internal(set) var count: UInt8
+        public let count: UInt8
         /// The interval (in milliseconds) between retransmissions.
-        public internal(set) var interval: UInt16
+        public let interval: UInt16
         
-        internal init(relayRetransmitCount: UInt8, intervalSteps: UInt16) {
-            // The number of times that packet is retransmitted for each
-            // packet that is relayed is Relay Retransmit Count + 1.
-            self.count    = relayRetransmitCount + 1
-            // Interval is in 10 ms steps.
-            self.interval = intervalSteps * 10 // ms
+        internal init(_ status: ConfigRelayStatus) {
+            self.count = status.count + 1
+            self.interval = UInt16(status.steps + 1) * 10
         }
     }
     

@@ -412,6 +412,28 @@ internal class FoundationLayer {
                 save()
             }
             
+        // Relay settings
+        case is ConfigRelayGet, is ConfigRelaySet:
+            // Relay feature is not supported.
+            networkManager.send(ConfigRelayStatus(state: .notSupported, count: 0, steps: 0), to: source)
+            
+        case let status as ConfigRelayStatus:
+            if let node = meshNetwork.node(withAddress: source) {
+                node.relayRetransmit = Node.RelayRetransmit(status)
+                save()
+            }
+            
+        // Network Transmit settings
+        case is ConfigNetworkTransmitGet, is ConfigNetworkTransmitSet:
+            // Relay feature is not supported.
+            networkManager.send(ConfigRelayStatus(state: .notSupported, count: 0, steps: 0), to: source)
+            
+        case let status as ConfigNetworkTransmitStatus:
+            if let node = meshNetwork.node(withAddress: source) {
+                node.networkTransmit = Node.NetworkTransmit(status)
+                save()
+            }
+            
         // Resetting Node
         case is ConfigNodeReset:
             // Reset the network. Keep the same Provisioner and network settings.
@@ -464,6 +486,9 @@ internal class FoundationLayer {
         case is ConfigModelSubscriptionAdd, is ConfigModelSubscriptionDelete, is ConfigModelSubscriptionDeleteAll,
              is ConfigModelSubscriptionOverwrite, is ConfigModelSubscriptionVirtualAddressAdd,
              is ConfigModelSubscriptionVirtualAddressDelete, is ConfigModelSubscriptionVirtualAddressOverwrite:
+            requests[destination] = configMessage
+            
+        case is ConfigRelayGet, is ConfigRelaySet:
             requests[destination] = configMessage
             
         default:
