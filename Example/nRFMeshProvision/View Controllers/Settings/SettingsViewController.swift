@@ -143,7 +143,8 @@ private extension SettingsViewController {
             let data = manager.export()
             
             do {
-                let fileURL = FileManager.default.temporaryDirectory.appendingPathComponent("mesh.json")
+                let name = manager.meshNetwork?.meshName ?? "mesh"
+                let fileURL = FileManager.default.temporaryDirectory.appendingPathComponent("\(name).json")
                 try data.write(to: fileURL)
                 
                 DispatchQueue.main.async {
