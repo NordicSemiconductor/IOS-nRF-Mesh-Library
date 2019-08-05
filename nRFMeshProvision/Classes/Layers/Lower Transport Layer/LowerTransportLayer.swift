@@ -118,10 +118,13 @@ internal class LowerTransportLayer {
                 }
             } else {
                 if let segment = SegmentedAccessMessage(fromSegmentPdu: networkPdu) {
+                    print("Segment \(segment) received") // TODO: Remove me
+                    
                     // If the received segment comes from an already completed and
                     // acknowledged message, send the same ACK immediately.
                     if let lastAck = acknowledgments[segment.source], lastAck.sequenceZero == segment.sequenceZero {
                         if let provisionerNode = meshNetwork.localProvisioner?.node {
+                            print("Re-sending \(lastAck)") // TODO: Remove me
                             let ttl = networkPdu.ttl > 0 ? provisionerNode.defaultTTL ?? networkManager.defaultTtl : 0
                             try? networkManager.networkLayer.send(lowerTransportPdu: lastAck, ofType: .networkPdu, withTtl: ttl)
                         } else {
@@ -152,6 +155,7 @@ internal class LowerTransportLayer {
                         }
                         guard incompleteSegments[key]!.count > segment.index && incompleteSegments[key]![segment.index] == nil else {
                             // Segment was sent again or it's invalid. We can stop here.
+                            print("Error: Segment invalid or repeated")
                             return
                         }
                         incompleteSegments[key]![segment.index] = segment
@@ -358,6 +362,7 @@ private extension LowerTransportLayer {
         if segments.isComplete {
             acknowledgments[ack.destination] = ack
         }
+        print("Sending \(ack)") // TODO: Remove me
         try? networkManager.networkLayer.send(lowerTransportPdu: ack, ofType: .networkPdu, withTtl: ttl)
     }
     
