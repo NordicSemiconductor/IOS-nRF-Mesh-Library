@@ -9,7 +9,34 @@
 import UIKit
 import nRFMeshProvision
 
+private enum SectionType: String {
+    case notConfiguredNodes = "Not configured Nodes"
+    case configuredNodes    = "Configured Nodes"
+    case provisionersNodes  = "Other Provisioners"
+}
+
+private class Section {
+    let type: SectionType
+    let nodes: [Node]
+    
+    init(type: SectionType, nodes: [Node]) {
+        self.type = type
+        self.nodes = nodes
+    }
+    
+    var title: String {
+        return type.rawValue
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> NodeViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "node", for: indexPath) as! NodeViewCell
+        cell.node = nodes[indexPath.row]
+        return cell
+    }
+}
+
 class NetworkViewController: UITableViewController {
+    private var sections: [Section] = []
     
     // MARK: - Implementation
     
@@ -24,14 +51,7 @@ class NetworkViewController: UITableViewController {
         
         MeshNetworkManager.instance.delegate = self
         
-        let network = MeshNetworkManager.instance.meshNetwork
-        let localProvisioner = network?.localProvisioner
-        let hasNodes = network?.nodes.filter({ $0.uuid != localProvisioner?.uuid }).count ?? 0 > 0
-        if !hasNodes {
-            tableView.showEmptyView()
-        } else {
-            tableView.hideEmptyView()
-        }
+        reloadData()
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -56,27 +76,54 @@ class NetworkViewController: UITableViewController {
     // MARK: - Table view data source
 
     override func numberOfSections(in tableView: UITableView) -> Int {
-        return 1
+        return sections.count
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        let network = MeshNetworkManager.instance.meshNetwork
-        let localProvisioner = network?.localProvisioner
-        return network?.nodes.filter({ $0.uuid != localProvisioner?.uuid }).count ?? 0
+        return sections[section].nodes.count
+    }
+    
+    override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        return sections[section].title
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let network = MeshNetworkManager.instance.meshNetwork!
-        let localProvisioner = network.localProvisioner
-        
-        let cell = tableView.dequeueReusableCell(withIdentifier: "node", for: indexPath) as! NodeViewCell
-        cell.node = network.nodes.filter({ $0.uuid != localProvisioner?.uuid })[indexPath.row]
-        return cell
+        return sections[indexPath.section].tableView(tableView, cellForRowAt: indexPath)
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
     }
+}
+
+private extension NetworkViewController {
+    
+    func reloadData() {
+        sections.removeAll()
+        if let network = MeshNetworkManager.instance.meshNetwork {
+            let notConfiguredNodes = network.nodes.filter({ !$0.isConfigComplete && !$0.isProvisioner })
+            let configuredNodes    = network.nodes.filter({ $0.isConfigComplete && !$0.isProvisioner })
+            let provisionersNodes  = network.nodes.filter({ $0.isProvisioner && !$0.isLocalProvisioner })
+            
+            if !notConfiguredNodes.isEmpty {
+                sections.append(Section(type: .notConfiguredNodes, nodes: notConfiguredNodes))
+            }
+            if !configuredNodes.isEmpty {
+                sections.append(Section(type: .configuredNodes, nodes: configuredNodes))
+            }
+            if !provisionersNodes.isEmpty {
+                sections.append(Section(type: .provisionersNodes, nodes: provisionersNodes))
+            }
+        }
+        tableView.reloadData()
+        
+        if sections.isEmpty {
+            tableView.showEmptyView()
+        } else {
+            tableView.hideEmptyView()
+        }
+    }
+    
 }
 
 extension NetworkViewController: ProvisioningViewDelegate {
@@ -95,8 +142,7 @@ extension NetworkViewController: MeshNetworkDelegate {
         case is ConfigNodeReset:
             // The node has been reset remotely.
             (UIApplication.shared.delegate as! AppDelegate).meshNetworkDidChange()
-            tableView.reloadData()
-            tableView.showEmptyView()
+            reloadData()
             presentAlert(title: "Reset", message: "The mesh network was reset remotely.")
             
         default:
