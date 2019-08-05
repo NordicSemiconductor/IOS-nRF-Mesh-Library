@@ -449,6 +449,7 @@ private extension ProvisioningManager {
         }
     }
     
+    /// Resets the provisioning properties and state.
     func reset() {
         authenticationMethod = nil
         provisioningCapabilities = nil
