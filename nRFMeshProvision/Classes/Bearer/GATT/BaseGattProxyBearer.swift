@@ -78,7 +78,7 @@ open class BaseGattProxyBearer<Service: MeshService>: NSObject, Bearer, CBCentra
     
     open func open() {
         if centralManager.state == .poweredOn && basePeripheral.state == .disconnected {
-            print("Connecting...")
+            print("Connecting to \(basePeripheral.name ?? "Unknown Device")...")
             centralManager.connect(basePeripheral, options: nil)
         }
         isOpened = true
@@ -184,7 +184,7 @@ open class BaseGattProxyBearer<Service: MeshService>: NSObject, Bearer, CBCentra
     
     open func centralManager(_ central: CBCentralManager, didConnect peripheral: CBPeripheral) {
         if peripheral == basePeripheral {
-            print("Connected")
+            print("Connected to \(peripheral.name ?? "Unknown Device")")
             if let delegate = delegate as? GattBearerDelegate {
                 delegate.bearerDidConnect(self)
             }
@@ -197,17 +197,17 @@ open class BaseGattProxyBearer<Service: MeshService>: NSObject, Bearer, CBCentra
             if let error = error as NSError? {
                 switch error.code {
                 case 6, 7: print(error.localizedDescription)
-                default: print("Disconnected with error: \(error)")
+                default: print("Disconnected from \(peripheral.name ?? "Unknown Device") with error: \(error)")
                 }
                 delegate?.bearer(self, didClose: error)
             } else {
                 guard let dataOutCharacteristic = dataOutCharacteristic, let _ = dataInCharacteristic,
                     dataOutCharacteristic.properties.contains(.notify) else {
-                        print("Disconnected with error: Device not supported")
+                        print("Disconnected from \(peripheral.name ?? "Unknown Device") with error: Device not supported")
                         delegate?.bearer(self, didClose: GattBearerError.deviceNotSupported)
                         return
                 }
-                print("Disconnected")
+                print("Disconnected from \(peripheral.name ?? "Unknown Device")")
                 delegate?.bearer(self, didClose: nil)
             }
         }
