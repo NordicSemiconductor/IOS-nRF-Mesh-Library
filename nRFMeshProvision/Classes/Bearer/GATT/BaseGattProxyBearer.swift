@@ -194,6 +194,8 @@ open class BaseGattProxyBearer<Service: MeshService>: NSObject, Bearer, CBCentra
     
     open func centralManager(_ central: CBCentralManager, didDisconnectPeripheral peripheral: CBPeripheral, error: Error?) {
         if peripheral == basePeripheral {
+            dataInCharacteristic = nil
+            dataOutCharacteristic = nil
             if let error = error as NSError? {
                 switch error.code {
                 case 6, 7: print(error.localizedDescription)
