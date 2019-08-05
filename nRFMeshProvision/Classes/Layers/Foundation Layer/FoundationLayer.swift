@@ -425,8 +425,8 @@ internal class FoundationLayer {
             
         // Network Transmit settings
         case is ConfigNetworkTransmitGet, is ConfigNetworkTransmitSet:
-            // Relay feature is not supported.
-            networkManager.send(ConfigRelayStatus(state: .notSupported, count: 0, steps: 0), to: source)
+            // Advertiser bearer is not supported.
+            networkManager.send(ConfigNetworkTransmitStatus(count: 0, steps: 0), to: source)
             
         case let status as ConfigNetworkTransmitStatus:
             if let node = meshNetwork.node(withAddress: source) {
