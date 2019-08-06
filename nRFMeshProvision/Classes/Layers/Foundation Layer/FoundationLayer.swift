@@ -415,18 +415,49 @@ internal class FoundationLayer {
         // Relay settings
         case is ConfigRelayGet, is ConfigRelaySet:
             // Relay feature is not supported.
-            networkManager.send(ConfigRelayStatus(state: .notSupported, count: 0, steps: 0), to: source)
+            networkManager.send(ConfigRelayStatus(.notSupported, count: 0, steps: 0), to: source)
             
         case let status as ConfigRelayStatus:
             if let node = meshNetwork.node(withAddress: source) {
+                node.ensureFeatures.relay = status.state
                 node.relayRetransmit = Node.RelayRetransmit(status)
                 save()
             }
             
+        // GATT Proxy settings
+        case is ConfigGATTProxyGet, is ConfigGATTProxySet:
+            // Relay feature is not supported.
+            networkManager.send(ConfigGATTProxyStatus(.notSupported), to: source)
+            
+        case let status as ConfigGATTProxyStatus:
+            if let node = meshNetwork.node(withAddress: source) {
+                node.ensureFeatures.proxy = status.state
+                save()
+            }
+            
+        // Friend settings
+        case is ConfigFriendGet, is ConfigFriendSet:
+            // Friend feature is not supported.
+            networkManager.send(ConfigFriendStatus(.notSupported), to: source)
+            
+        case let status as ConfigFriendStatus:
+            if let node = meshNetwork.node(withAddress: source) {
+                node.ensureFeatures.friend = status.state
+                save()
+            }
+            
         // Network Transmit settings
-        case is ConfigNetworkTransmitGet, is ConfigNetworkTransmitSet:
-            // Advertiser bearer is not supported.
-            networkManager.send(ConfigNetworkTransmitStatus(count: 0, steps: 0), to: source)
+        case let request as ConfigNetworkTransmitSet:
+            if let node = meshNetwork.localProvisioner?.node {
+                node.networkTransmit = Node.NetworkTransmit(request)
+                save()
+            }
+            fallthrough
+            
+        case is ConfigNetworkTransmitGet:
+            if let node = meshNetwork.localProvisioner?.node {
+                networkManager.send(ConfigNetworkTransmitStatus(for: node), to: source)
+            }
             
         case let status as ConfigNetworkTransmitStatus:
             if let node = meshNetwork.node(withAddress: source) {

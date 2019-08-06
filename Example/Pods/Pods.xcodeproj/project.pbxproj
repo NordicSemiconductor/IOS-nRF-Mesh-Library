@@ -63,6 +63,12 @@
 		5231401E22F84F9B0074325A /* ConfigNetworkTransmitGet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5231401D22F84F9B0074325A /* ConfigNetworkTransmitGet.swift */; };
 		5231402022F84FC00074325A /* ConfigNetworkTransmitSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5231401F22F84FC00074325A /* ConfigNetworkTransmitSet.swift */; };
 		5231402222F851950074325A /* ConfigNetworkTransmitStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5231402122F851950074325A /* ConfigNetworkTransmitStatus.swift */; };
+		5231402422F95E4C0074325A /* ConfigGATTProxyGet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5231402322F95E4C0074325A /* ConfigGATTProxyGet.swift */; };
+		5231402622F95E7B0074325A /* ConfigGATTProxySet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5231402522F95E7B0074325A /* ConfigGATTProxySet.swift */; };
+		5231402822F95F650074325A /* ConfigGATTProxyStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5231402722F95F650074325A /* ConfigGATTProxyStatus.swift */; };
+		5231402A22F9865D0074325A /* ConfigFriendGet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5231402922F9865D0074325A /* ConfigFriendGet.swift */; };
+		5231402C22F986810074325A /* ConfigFriendSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5231402B22F986810074325A /* ConfigFriendSet.swift */; };
+		5231402E22F986C30074325A /* ConfigFriendStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5231402D22F986C30074325A /* ConfigFriendStatus.swift */; };
 		523F775022C3AD2C0030EA6A /* Node+Provisioner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 523F774F22C3AD2C0030EA6A /* Node+Provisioner.swift */; };
 		523F775222C4A9F80030EA6A /* ConfigAppKeyDelete.swift in Sources */ = {isa = PBXBuildFile; fileRef = 523F775122C4A9F80030EA6A /* ConfigAppKeyDelete.swift */; };
 		523F775422C4AC210030EA6A /* ConfigAppKeyGet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 523F775322C4AC210030EA6A /* ConfigAppKeyGet.swift */; };
@@ -294,6 +300,12 @@
 		5231401D22F84F9B0074325A /* ConfigNetworkTransmitGet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigNetworkTransmitGet.swift; sourceTree = "<group>"; };
 		5231401F22F84FC00074325A /* ConfigNetworkTransmitSet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigNetworkTransmitSet.swift; sourceTree = "<group>"; };
 		5231402122F851950074325A /* ConfigNetworkTransmitStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigNetworkTransmitStatus.swift; sourceTree = "<group>"; };
+		5231402322F95E4C0074325A /* ConfigGATTProxyGet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigGATTProxyGet.swift; sourceTree = "<group>"; };
+		5231402522F95E7B0074325A /* ConfigGATTProxySet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigGATTProxySet.swift; sourceTree = "<group>"; };
+		5231402722F95F650074325A /* ConfigGATTProxyStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigGATTProxyStatus.swift; sourceTree = "<group>"; };
+		5231402922F9865D0074325A /* ConfigFriendGet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigFriendGet.swift; sourceTree = "<group>"; };
+		5231402B22F986810074325A /* ConfigFriendSet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigFriendSet.swift; sourceTree = "<group>"; };
+		5231402D22F986C30074325A /* ConfigFriendStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigFriendStatus.swift; sourceTree = "<group>"; };
 		523F774F22C3AD2C0030EA6A /* Node+Provisioner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Node+Provisioner.swift"; sourceTree = "<group>"; };
 		523F775122C4A9F80030EA6A /* ConfigAppKeyDelete.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigAppKeyDelete.swift; sourceTree = "<group>"; };
 		523F775322C4AC210030EA6A /* ConfigAppKeyGet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigAppKeyGet.swift; sourceTree = "<group>"; };
@@ -710,6 +722,12 @@
 				5231401D22F84F9B0074325A /* ConfigNetworkTransmitGet.swift */,
 				5231401F22F84FC00074325A /* ConfigNetworkTransmitSet.swift */,
 				5231402122F851950074325A /* ConfigNetworkTransmitStatus.swift */,
+				5231402322F95E4C0074325A /* ConfigGATTProxyGet.swift */,
+				5231402522F95E7B0074325A /* ConfigGATTProxySet.swift */,
+				5231402722F95F650074325A /* ConfigGATTProxyStatus.swift */,
+				5231402922F9865D0074325A /* ConfigFriendGet.swift */,
+				5231402B22F986810074325A /* ConfigFriendSet.swift */,
+				5231402D22F986C30074325A /* ConfigFriendStatus.swift */,
 				523F775722C4C3350030EA6A /* ConfigNetKeyAdd.swift */,
 				523F775922C4CCD40030EA6A /* ConfigNetKeyDelete.swift */,
 				523F775B22C4CDFC0030EA6A /* ConfigNetKeyUpdate.swift */,
@@ -1262,6 +1280,7 @@
 				523F777F22CB90700030EA6A /* ConfigModelAppUnbind.swift in Sources */,
 				528352A82282D9FF0097B949 /* BearerDelegate.swift in Sources */,
 				52835277228029720097B949 /* Bearer.swift in Sources */,
+				5231402822F95F650074325A /* ConfigGATTProxyStatus.swift in Sources */,
 				52F6AD6622B3AF2700F0D7DF /* ConfigCompositionDataGet.swift in Sources */,
 				5274B76122A1D9FB008450BC /* BeaconPdu.swift in Sources */,
 				5231400622EF10E60074325A /* ConfigVendorModelAppGet.swift in Sources */,
@@ -1273,6 +1292,7 @@
 				35A52D4DECCD815F8B14722C2D96207D /* nRFMeshProvision-dummy.m in Sources */,
 				529B75F1224A6CE4008F1CE7 /* Provisioner.swift in Sources */,
 				5274B76322A1DE40008450BC /* SecureNetworkBeacon.swift in Sources */,
+				5231402E22F986C30074325A /* ConfigFriendStatus.swift in Sources */,
 				529B7610224A6D47008F1CE7 /* KeyRefreshPhase.swift in Sources */,
 				5231400E22EF17860074325A /* ConfigVendorModelSubscriptionGet.swift in Sources */,
 				5231400C22EF17410074325A /* ConfigSIGModelSubscriptionGet.swift in Sources */,
@@ -1314,10 +1334,12 @@
 				5294DAD822B0F7FE0041370E /* ConfigAppKeyAdd.swift in Sources */,
 				528352862281B2B30097B949 /* Algorithm.swift in Sources */,
 				52F6AD6822B3B16800F0D7DF /* ConfigCompositionDataStatus.swift in Sources */,
+				5231402622F95E7B0074325A /* ConfigGATTProxySet.swift in Sources */,
 				528352A42282CF9A0097B949 /* ApplicationKey+NetworkKey.swift in Sources */,
 				52DF5D91229C000D00C297C1 /* NetworkLayer.swift in Sources */,
 				529B7616224A6D47008F1CE7 /* MeshUUID.swift in Sources */,
 				5283527D22802A370097B949 /* BearerError.swift in Sources */,
+				5231402C22F986810074325A /* ConfigFriendSet.swift in Sources */,
 				522AFFE722C24FB100521EDC /* ConfigDefaultTtlSet.swift in Sources */,
 				524C039822AF8FEF00C5B1B9 /* Element+Address.swift in Sources */,
 				529B7618224A6D47008F1CE7 /* KeyIndex.swift in Sources */,
@@ -1325,6 +1347,7 @@
 				522AFFE322C23DD300521EDC /* Model+Name.swift in Sources */,
 				528352B82285A3A30097B949 /* Node+Address.swift in Sources */,
 				5274B75D22A1D7C6008450BC /* SegmentedMessage.swift in Sources */,
+				5231402422F95E4C0074325A /* ConfigGATTProxyGet.swift in Sources */,
 				528352B022830F380097B949 /* ProxyProtocolHandler.swift in Sources */,
 				52DF5DA3229E6EF800C297C1 /* AccessLayer.swift in Sources */,
 				524C039622AE671900C5B1B9 /* ApplicationKeys.swift in Sources */,
@@ -1338,6 +1361,7 @@
 				523F779322CDF5A00030EA6A /* ConfigModelPublicationStatus.swift in Sources */,
 				528352902281B57A0097B949 /* Beacon.swift in Sources */,
 				5283528C2281B3310097B949 /* ProvisioningCapabilities.swift in Sources */,
+				5231402A22F9865D0074325A /* ConfigFriendGet.swift in Sources */,
 				522AFFE922C2502F00521EDC /* ConfigDefaultTtlStatus.swift in Sources */,
 				523F775822C4C3350030EA6A /* ConfigNetKeyAdd.swift in Sources */,
 				52313FF222EB0A830074325A /* ConfigModelSubscriptionVirtualAddressAdd.swift in Sources */,

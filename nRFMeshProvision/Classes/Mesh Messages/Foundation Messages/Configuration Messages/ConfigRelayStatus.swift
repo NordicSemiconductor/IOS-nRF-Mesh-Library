@@ -39,10 +39,16 @@ public struct ConfigRelayStatus: ConfigMessage {
     /// - parameter steps: Number of 10-millisecond steps between retransmissions,
     ///                    decremented by 1. Possible values are 0...31, which
     ///                    corresponds to 10-320 milliseconds intervals.
-    public init(state: NodeFeaturesState, count: UInt8, steps: UInt8) {
+    public init(_ state: NodeFeaturesState, count: UInt8, steps: UInt8) {
         self.state = state
         self.count = min(7, count)
         self.steps = min(63, steps)
+    }
+    
+    public init(for node: Node) {
+        self.state = node.features?.relay ?? .notSupported
+        self.count = (node.relayRetransmit?.count ?? 1) - 1
+        self.steps = node.relayRetransmit?.steps ?? 0
     }
     
     public init?(parameters: Data) {

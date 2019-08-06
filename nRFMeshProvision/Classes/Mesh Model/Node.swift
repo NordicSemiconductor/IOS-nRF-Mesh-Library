@@ -44,6 +44,11 @@ public class Node: Codable {
             return UInt8(interval / 10) - 1
         }
         
+        internal init(_ request: ConfigNetworkTransmitSet) {
+            self.count = request.count + 1
+            self.interval = UInt16(request.steps + 1) * 10
+        }
+        
         internal init(_ status: ConfigNetworkTransmitStatus) {
             self.count = status.count + 1
             self.interval = UInt16(status.steps + 1) * 10
@@ -61,6 +66,11 @@ public class Node: Codable {
         /// Number of 10-millisecond steps between transmissions.
         internal var steps: UInt8 {
             return UInt8(interval / 10) - 1
+        }
+        
+        internal init(_ request: ConfigRelaySet) {
+            self.count = request.count + 1
+            self.interval = UInt16(request.steps + 1) * 10
         }
         
         internal init(_ status: ConfigRelayStatus) {
@@ -188,7 +198,10 @@ public class Node: Codable {
         // a Provisioner's node.
         self.isConfigComplete = true
         // This Provisioner does not support any of those features.
-        self.features = NodeFeatures()
+        self.features = NodeFeatures(relay: .notSupported,
+                                     proxy: .notSupported,
+                                     friend: .notSupported,
+                                     lowPower: .notSupported)
         
         // Keys will ba added later.
         self.netKeys  = []
@@ -491,6 +504,13 @@ internal extension Node {
         elements.removeAll()
         // And add the Elements received.
         add(elements: page0.elements)
+    }
+    
+    var ensureFeatures: NodeFeatures {
+        if features == nil {
+            features = NodeFeatures()
+        }
+        return features!
     }
     
 }

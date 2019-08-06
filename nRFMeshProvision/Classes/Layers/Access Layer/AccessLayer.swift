@@ -86,6 +86,28 @@ private extension AccessLayer {
         case ConfigRelayStatus.opCode:
             MessageType = ConfigRelayStatus.self
             
+            // GATT Proxy configuration
+            
+        case ConfigGATTProxyGet.opCode:
+            MessageType = ConfigGATTProxyGet.self
+            
+        case ConfigGATTProxySet.opCode:
+            MessageType = ConfigGATTProxySet.self
+            
+        case ConfigGATTProxyStatus.opCode:
+            MessageType = ConfigGATTProxyStatus.self
+            
+        // Friend configuration
+            
+        case ConfigFriendGet.opCode:
+            MessageType = ConfigFriendGet.self
+            
+        case ConfigFriendSet.opCode:
+            MessageType = ConfigFriendSet.self
+            
+        case ConfigFriendStatus.opCode:
+            MessageType = ConfigFriendStatus.self
+            
         // Network Transmit configuration
             
         case ConfigNetworkTransmitGet.opCode:

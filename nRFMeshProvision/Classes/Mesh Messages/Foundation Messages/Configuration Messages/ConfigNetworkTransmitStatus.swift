@@ -27,7 +27,7 @@ public struct ConfigNetworkTransmitStatus: ConfigMessage {
         return TimeInterval(steps + 1) / 100
     }
     
-    /// Creates the Network Transmit status message.
+    /// Creates the Config Network Transmit Status message.
     ///
     /// - parameter count: Number of message transmissions of Network PDU
     ///                    originating from the Node. Possible values are 0...7,
@@ -38,6 +38,12 @@ public struct ConfigNetworkTransmitStatus: ConfigMessage {
     public init(count: UInt8, steps: UInt8) {
         self.count = min(7, count)
         self.steps = min(63, steps)
+    }
+    
+    public init(for node: Node) {
+        let transmit = node.networkTransmit
+        self.count = transmit?.count ?? 0
+        self.steps = transmit?.steps ?? 0
     }
     
     public init?(parameters: Data) {
