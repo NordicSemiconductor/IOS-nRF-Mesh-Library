@@ -380,6 +380,7 @@ private extension LowerTransportLayer {
         /// a Unicast Address.
         var ackExpected: Bool?
         
+        // Send all the segments that have not been acknowledged yet.
         for i in 0..<count {
             if let segment = outgoingSegments[sequenceZero]![i] {
                 do {
@@ -396,6 +397,20 @@ private extension LowerTransportLayer {
                         return
                     }
                 }
+            }
+        }
+        // It is recommended to send all Lower Transport PDUs that are being sent
+        // to a Group or Virtual Address mutliple times, introducing small random
+        // delays between repetitions. The specification does not say what small
+        // random delay is, so assuming 0.5-1.5 second.
+        if !ackExpected! {
+            _ = Timer.scheduledTimer(withTimeInterval: TimeInterval.random(in: 0.500...1.500), repeats: false) { timer in
+                for i in 0..<count {
+                    if let segment = self.outgoingSegments[sequenceZero]?[i] {
+                        try? self.networkManager.networkLayer.send(lowerTransportPdu: segment, ofType: .networkPdu, withTtl: ttl)
+                    }
+                }
+                timer.invalidate()
             }
         }
         
