@@ -73,12 +73,10 @@ internal class NetworkLayer {
     /// - parameter pdu:  The Lower Transport PDU to be sent.
     /// - parameter type: The PDU type.
     /// - parameter ttl:  The initial TTL (Time To Live) value of the message.
-    /// - parameter multipleTimes: Should the message be resent with the same sequence
-    ///                            number after a random delay, default `false`.
     /// - throws: This method may throw when the `transmitter` is not set, or has
     ///           failed to send the PDU.
     func send(lowerTransportPdu pdu: LowerTransportPdu, ofType type: PduType,
-              withTtl ttl: UInt8, multipleTimes: Bool = false) throws {
+              withTtl ttl: UInt8) throws {
         guard let transmitter = networkManager.transmitter else {
             throw BearerError.bearerClosed
         }
@@ -90,10 +88,18 @@ internal class NetworkLayer {
         let networkPdu = NetworkPdu(encode: pdu, withSequence: sequence, andTtl: ttl)
         try transmitter.send(networkPdu.pdu, ofType: type)
         
-        if multipleTimes {
-            _ = Timer.scheduledTimer(withTimeInterval: TimeInterval.random(in: 0.050...0.300), repeats: false) { timer in
+        // Unless a GATT Bearer is used, network PDUs should be sent mutlitple times
+        // if Network Transmit has been set for the local Provisioner's Node.
+        if case .networkPdu = type, !(transmitter is GattBearer),
+            let networkTransmit = meshNetwork.localProvisioner?.node?.networkTransmit,
+            networkTransmit.count > 1 {
+            var count = networkTransmit.count
+            _ = Timer.scheduledTimer(withTimeInterval: TimeInterval(networkTransmit.interval), repeats: true) { timer in
                 try? self.networkManager.transmitter?.send(networkPdu.pdu, ofType: type)
-                timer.invalidate()
+                count -= 1
+                if count == 0 {
+                    timer.invalidate()
+                }
             }
         }
     }

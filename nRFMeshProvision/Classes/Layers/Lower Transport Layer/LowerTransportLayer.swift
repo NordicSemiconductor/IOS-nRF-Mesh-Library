@@ -324,7 +324,7 @@ internal class LowerTransportLayer {
             let message = AccessMessage(fromUnsegmentedUpperTransportPdu: pdu, usingNetworkKey: networkKey)
             // The message will be retransmit twice (with the same sequence number).
             do {
-                try networkManager.networkLayer.send(lowerTransportPdu: message, ofType: .networkPdu, withTtl: ttl, multipleTimes: true)
+                try networkManager.networkLayer.send(lowerTransportPdu: message, ofType: .networkPdu, withTtl: ttl)
                 networkManager.notifyAbout(message: pdu.message!, sentTo: pdu.destination)
             } catch {
                 networkManager.notifyAbout(error, duringSendingMessage: pdu.message!, to: pdu.destination)
@@ -387,8 +387,7 @@ private extension LowerTransportLayer {
                     if ackExpected == nil {
                         ackExpected = segment.destination.isUnicast
                     }
-                    try networkManager.networkLayer.send(lowerTransportPdu: segment, ofType: .networkPdu,
-                                                              withTtl: ttl, multipleTimes: !ackExpected!)
+                    try networkManager.networkLayer.send(lowerTransportPdu: segment, ofType: .networkPdu, withTtl: ttl)
                 } catch {
                     // Sending a segment failed.
                     if !ackExpected! {
