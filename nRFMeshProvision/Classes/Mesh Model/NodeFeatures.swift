@@ -28,10 +28,10 @@ public class NodeFeatures: Codable {
     
     internal var rawValue: UInt16 {
         var bitField: UInt16 = 0
-        if let relay = relay, case .notSupported = relay {} else { bitField |= 0x01 }
-        if let proxy = proxy, case .notSupported = proxy {} else { bitField |= 0x02 }
-        if let friend = friend, case .notSupported = friend {} else { bitField |= 0x04 }
-        if let lowPower = lowPower, case .notSupported = lowPower {} else { bitField |= 0x08 }
+        if relay    == nil || relay!    == .notSupported {} else { bitField |= 0x01 }
+        if proxy    == nil || proxy!    == .notSupported {} else { bitField |= 0x02 }
+        if friend   == nil || friend!   == .notSupported {} else { bitField |= 0x04 }
+        if lowPower == nil || lowPower! == .notSupported {} else { bitField |= 0x08 }
         return bitField
     }
     
@@ -52,10 +52,10 @@ public class NodeFeatures: Codable {
     }
     
     internal init() {
-        self.relay    = .notSupported
-        self.proxy    = .notSupported
-        self.friend   = .notSupported
-        self.lowPower = .notSupported
+        self.relay    = nil
+        self.proxy    = nil
+        self.friend   = nil
+        self.lowPower = nil
     }
     
     internal init(rawValue: UInt16) {
