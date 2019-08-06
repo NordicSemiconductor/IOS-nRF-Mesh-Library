@@ -488,9 +488,6 @@ internal class FoundationLayer {
              is ConfigModelSubscriptionVirtualAddressDelete, is ConfigModelSubscriptionVirtualAddressOverwrite:
             requests[destination] = configMessage
             
-        case is ConfigRelayGet, is ConfigRelaySet:
-            requests[destination] = configMessage
-            
         default:
             break
         }
