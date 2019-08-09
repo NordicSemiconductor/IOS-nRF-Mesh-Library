@@ -242,7 +242,7 @@ public extension ConfigAnyModelMessage {
     
     var modelId: UInt32 {
         if let companyIdentifier = companyIdentifier {
-            return UInt32(companyIdentifier << 16) | UInt32(modelIdentifier)
+            return (UInt32(companyIdentifier) << 16) | UInt32(modelIdentifier)
         } else {
             return UInt32(modelIdentifier)
         }
@@ -253,7 +253,7 @@ public extension ConfigAnyModelMessage {
 public extension ConfigVendorModelMessage {
     
     var modelId: UInt32 {
-        return UInt32(companyIdentifier << 16) | UInt32(modelIdentifier)
+        return (UInt32(companyIdentifier) << 16) | UInt32(modelIdentifier)
     }
     
 }
