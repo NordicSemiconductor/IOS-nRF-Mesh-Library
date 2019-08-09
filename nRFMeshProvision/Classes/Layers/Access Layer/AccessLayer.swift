@@ -75,6 +75,17 @@ private extension AccessLayer {
         case ConfigCompositionDataStatus.opCode:
             MessageType = ConfigCompositionDataStatus.self
             
+        // Secure Network Beacon configuration
+            
+        case ConfigBeaconGet.opCode:
+            MessageType = ConfigBeaconGet.self
+            
+        case ConfigBeaconSet.opCode:
+            MessageType = ConfigBeaconSet.self
+            
+        case ConfigBeaconStatus.opCode:
+            MessageType = ConfigBeaconStatus.self
+            
         // Relay configuration
             
         case ConfigRelayGet.opCode:

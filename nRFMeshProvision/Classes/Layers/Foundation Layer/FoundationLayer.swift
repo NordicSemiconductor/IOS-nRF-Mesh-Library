@@ -446,6 +446,17 @@ internal class FoundationLayer {
                 save()
             }
             
+        // Secure Network Beacon configuration
+        case is ConfigBeaconGet, is ConfigBeaconSet:
+            // Secure Network Beacon feature is not supported.
+            networkManager.send(ConfigBeaconStatus(enabled: false), to: source)
+            
+        case let status as ConfigBeaconStatus:
+            if let node = meshNetwork.node(withAddress: source) {
+                node.secureNetworkBeacon = status.isEnabled
+                save()
+            }
+            
         // Network Transmit settings
         case let request as ConfigNetworkTransmitSet:
             if let node = meshNetwork.localProvisioner?.node {

@@ -69,6 +69,9 @@
 		5231402A22F9865D0074325A /* ConfigFriendGet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5231402922F9865D0074325A /* ConfigFriendGet.swift */; };
 		5231402C22F986810074325A /* ConfigFriendSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5231402B22F986810074325A /* ConfigFriendSet.swift */; };
 		5231402E22F986C30074325A /* ConfigFriendStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5231402D22F986C30074325A /* ConfigFriendStatus.swift */; };
+		5231403422FDA2DF0074325A /* ConfigBeaconStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5231403322FDA2DF0074325A /* ConfigBeaconStatus.swift */; };
+		5231403622FDA2F60074325A /* ConfigBeaconGet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5231403522FDA2F60074325A /* ConfigBeaconGet.swift */; };
+		5231403822FDA3020074325A /* ConfigBeaconSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5231403722FDA3020074325A /* ConfigBeaconSet.swift */; };
 		523F775022C3AD2C0030EA6A /* Node+Provisioner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 523F774F22C3AD2C0030EA6A /* Node+Provisioner.swift */; };
 		523F775222C4A9F80030EA6A /* ConfigAppKeyDelete.swift in Sources */ = {isa = PBXBuildFile; fileRef = 523F775122C4A9F80030EA6A /* ConfigAppKeyDelete.swift */; };
 		523F775422C4AC210030EA6A /* ConfigAppKeyGet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 523F775322C4AC210030EA6A /* ConfigAppKeyGet.swift */; };
@@ -306,6 +309,9 @@
 		5231402922F9865D0074325A /* ConfigFriendGet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigFriendGet.swift; sourceTree = "<group>"; };
 		5231402B22F986810074325A /* ConfigFriendSet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigFriendSet.swift; sourceTree = "<group>"; };
 		5231402D22F986C30074325A /* ConfigFriendStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigFriendStatus.swift; sourceTree = "<group>"; };
+		5231403322FDA2DF0074325A /* ConfigBeaconStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigBeaconStatus.swift; sourceTree = "<group>"; };
+		5231403522FDA2F60074325A /* ConfigBeaconGet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigBeaconGet.swift; sourceTree = "<group>"; };
+		5231403722FDA3020074325A /* ConfigBeaconSet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigBeaconSet.swift; sourceTree = "<group>"; };
 		523F774F22C3AD2C0030EA6A /* Node+Provisioner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Node+Provisioner.swift"; sourceTree = "<group>"; };
 		523F775122C4A9F80030EA6A /* ConfigAppKeyDelete.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigAppKeyDelete.swift; sourceTree = "<group>"; };
 		523F775322C4AC210030EA6A /* ConfigAppKeyGet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigAppKeyGet.swift; sourceTree = "<group>"; };
@@ -716,6 +722,9 @@
 			children = (
 				52F6AD6522B3AF2700F0D7DF /* ConfigCompositionDataGet.swift */,
 				52F6AD6722B3B16800F0D7DF /* ConfigCompositionDataStatus.swift */,
+				5231403522FDA2F60074325A /* ConfigBeaconGet.swift */,
+				5231403722FDA3020074325A /* ConfigBeaconSet.swift */,
+				5231403322FDA2DF0074325A /* ConfigBeaconStatus.swift */,
 				5231401722F83DE50074325A /* ConfigRelayGet.swift */,
 				5231401922F83EEC0074325A /* ConfigRelaySet.swift */,
 				5231401B22F84B560074325A /* ConfigRelayStatus.swift */,
@@ -1316,6 +1325,7 @@
 				528352A22282CF0B0097B949 /* ApplicationKey+MeshNetwork.swift in Sources */,
 				5283524A227358DE0097B949 /* Data+Keys.swift in Sources */,
 				529B7621224B8213008F1CE7 /* MeshAddress.swift in Sources */,
+				5231403422FDA2DF0074325A /* ConfigBeaconStatus.swift in Sources */,
 				5274B75B22A1D2C9008450BC /* HeartbeatMessage.swift in Sources */,
 				523F778322CB94EA0030EA6A /* Node+Elements.swift in Sources */,
 				5231400822EF11DB0074325A /* ConfigSIGModelAppList.swift in Sources */,
@@ -1377,6 +1387,7 @@
 				528352AE228302860097B949 /* BaseGattProxyBearer.swift in Sources */,
 				52568D4722DDE8E800B7B236 /* MeshNetwork+Groups.swift in Sources */,
 				523F778522CC888D0030EA6A /* Element+Models.swift in Sources */,
+				5231403822FDA3020074325A /* ConfigBeaconSet.swift in Sources */,
 				5231400422EF0F970074325A /* CnofigSIGModelAppGet.swift in Sources */,
 				523F777322CA1B780030EA6A /* FoundationLayer.swift in Sources */,
 				528AB9F2228C4F3E000BE9DC /* IvIndex.swift in Sources */,
@@ -1422,6 +1433,7 @@
 				5253027822D5F717007567DB /* Group.swift in Sources */,
 				5283523E2271EF1D0097B949 /* MeshNetwork+Provisioner.swift in Sources */,
 				523F777D22CB8B210030EA6A /* ConfigModelAppBind.swift in Sources */,
+				5231403622FDA2F60074325A /* ConfigBeaconGet.swift in Sources */,
 				529B75F0224A6CE4008F1CE7 /* MeshNetwork.swift in Sources */,
 				528352AA2282DA1E0097B949 /* GattBearerDelegate.swift in Sources */,
 				52313FFC22EB0E5B0074325A /* ConfigModelSubscriptionDeleteAll.swift in Sources */,
