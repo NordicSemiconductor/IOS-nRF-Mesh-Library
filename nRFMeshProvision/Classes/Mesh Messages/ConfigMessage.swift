@@ -33,7 +33,7 @@ public enum ConfigMessageStatus: UInt8 {
     case invalidBinding                 = 0x11
 }
 
-public protocol ConfigStatusMessage: ConfigMessage {
+public protocol ConfigStatusMessage: ConfigMessage, StatusMessage {
     /// Operation status.
     var status: ConfigMessageStatus { get }
 }
@@ -154,12 +154,10 @@ internal extension ConfigMessage {
 
 public extension ConfigStatusMessage {
     
-    /// Returns whether the operation was successful or not.
     var isSuccess: Bool {
         return status == .success
     }
     
-    /// The status as String.
     var message: String {
         return "\(status)"
     }

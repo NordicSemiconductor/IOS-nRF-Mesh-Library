@@ -15,6 +15,8 @@ class ModelViewController: ConnectableViewController {
     
     var model: Model!
     
+    private weak var modelViewCell: ModelViewCell?
+    
     // MARK: - View Controller
     
     override func viewDidLoad() {
@@ -25,7 +27,9 @@ class ModelViewController: ConnectableViewController {
         
         refreshControl = UIRefreshControl()
         refreshControl!.tintColor = UIColor.white
-        refreshControl!.addTarget(self, action: #selector(reloadBindings(_:)), for: .valueChanged)
+        refreshControl!.addTarget(self, action: #selector(reload(_:)), for: .valueChanged)
+        
+        tableView.register(UINib(nibName: "ConfigurationServer", bundle: nil), forCellReuseIdentifier: "0000")
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -59,11 +63,10 @@ class ModelViewController: ConnectableViewController {
     // MARK: - Table View Controller
     
     override func numberOfSections(in tableView: UITableView) -> Int {
-        if model.isBluetoothSIGAssigned && model.isConfigurationServer {
-            // TODO: Add Relay and Transmit controls.
-            return 1
+        if model.isConfigurationServer {
+            return 2
         }
-        if model.isBluetoothSIGAssigned && model.isConfigurationClient {
+        if model.isConfigurationClient {
             return 1
         }
         return 4 // TODO: Add Custom sections
@@ -73,6 +76,8 @@ class ModelViewController: ConnectableViewController {
         switch section {
         case IndexPath.detailsSection:
             return IndexPath.detailsTitles.count
+        case IndexPath.configurationServerSection where model.isConfigurationServer:
+            return 1
         case IndexPath.bindingsSection:
             return model.boundApplicationKeys.count + 1 // Add Action.
         case IndexPath.publishSection:
@@ -80,12 +85,15 @@ class ModelViewController: ConnectableViewController {
         case IndexPath.subscribeSection:
             return model.subscriptions.count + 1 // Add Action.
         default:
-            return 0
+            // If we went that far, there has to be a supported UI for the Model.
+            return 1
         }
     }
     
     override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         switch section {
+        case IndexPath.configurationServerSection where model.isConfigurationServer:
+            return "Relay Count & Interval"
         case IndexPath.bindingsSection:
             return "Bound Application Keys"
         case IndexPath.publishSection:
@@ -121,7 +129,7 @@ class ModelViewController: ConnectableViewController {
             }
             return cell
         }
-        if indexPath.isBindingsSection {
+        if indexPath.isBindingsSection && !model.isConfigurationServer {
             guard indexPath.row < model.boundApplicationKeys.count else {
                 let cell = tableView.dequeueReusableCell(withIdentifier: "action", for: indexPath)
                 cell.textLabel?.text = "Bind Application Key"
@@ -156,12 +164,16 @@ class ModelViewController: ConnectableViewController {
             cell.detailTextLabel?.text = nil
             return cell
         }
-        // Not possible.
-        return tableView.dequeueReusableCell(withIdentifier: "normal", for: indexPath)
+        // A custom cell for the Model.
+        let cell = tableView.dequeueReusableCell(withIdentifier: model.modelIdentifier.hex, for: indexPath) as! ModelViewCell
+        cell.delegate = self
+        cell.model    = model
+        modelViewCell = cell
+        return cell
     }
     
     override func tableView(_ tableView: UITableView, shouldHighlightRowAt indexPath: IndexPath) -> Bool {
-        if indexPath.isBindingsSection {
+        if indexPath.isBindingsSection && !model.isConfigurationServer {
             return indexPath.row == model.boundApplicationKeys.count
         }
         if indexPath.isPublishSection {
@@ -274,9 +286,39 @@ class ModelViewController: ConnectableViewController {
 
 }
 
+extension ModelViewController: ModelViewCellDelegate {
+    
+    func send(_ message: MeshMessage, description: String) {
+        whenConnected { alert in
+            alert?.message = description
+            MeshNetworkManager.instance.send(message, to: self.model)
+        }
+    }
+    
+    func send(_ message: ConfigMessage, description: String) {
+        whenConnected { alert in
+            alert?.message = description
+            MeshNetworkManager.instance.send(message, to: self.model)
+        }
+    }
+    
+    var isRefreshing: Bool {
+        return refreshControl?.isRefreshing ?? false
+    }
+    
+}
+
 private extension ModelViewController {
     
-    @objc func reloadBindings(_ sender: Any) {
+    @objc func reload(_ sender: Any) {
+        if model.isConfigurationClient {
+            modelViewCell?.startRefreshing()
+        } else {
+            reloadBindings()
+        }
+    }
+    
+    func reloadBindings() {
         whenConnected { alert in
             alert?.message = "Reading Bound Application Keys..."
             guard let message: ConfigMessage =
@@ -356,8 +398,9 @@ extension ModelViewController: MeshNetworkDelegate {
             }
             return
         }
-        // Is the message targetting the current Node?
-        guard model.parentElement.parentNode!.unicastAddress == source else {
+        // Is the message targetting the current Node or Model?
+        guard model.parentElement.unicastAddress == source ||
+            (model.parentElement.parentNode!.unicastAddress == source && message is ConfigMessage) else {
             return
         }
         
@@ -375,6 +418,13 @@ extension ModelViewController: MeshNetworkDelegate {
             }
             
         case let status as ConfigModelPublicationStatus:
+            // If the Model is being refreshed, the Bindings, Subscriptions
+            // and Publication has been read. If the Model has custom UI,
+            // try refreshing it as well.
+            if let cell = modelViewCell, refreshControl?.isRefreshing ?? false {
+                cell.startRefreshing()
+                break
+            }
             done()
         
             if status.isSuccess {
@@ -418,7 +468,21 @@ extension ModelViewController: MeshNetworkDelegate {
             }
             
         default:
-            break
+            let isMore = modelViewCell?.meshNetwork(meshNetwork, didDeliverMessage: message, from: source) ?? false
+            if !isMore {
+                done()
+                
+                if let status = message as? StatusMessage {
+                    presentAlert(title: "Error", message: status.message)
+                } else {
+                    if model.isConfigurationServer {
+                        tableView.reloadSections(.configurationServer, with: .automatic)
+                    } else {
+                        tableView.reloadSections(.custom, with: .automatic)
+                    }
+                }
+                refreshControl?.endRefreshing()
+            }
         }
     }
     
@@ -455,6 +519,7 @@ private extension Model {
 private extension IndexPath {
     static let detailsSection   = 0
     static let bindingsSection  = 1
+    static let configurationServerSection = 1
     static let publishSection   = 2
     static let subscribeSection = 3
     
@@ -485,6 +550,10 @@ private extension IndexPath {
         return section == IndexPath.bindingsSection
     }
     
+    var isConfigurationServer: Bool {
+        return section == IndexPath.configurationServerSection
+    }
+    
     var isPublishSection: Bool {
         return section == IndexPath.publishSection
     }
@@ -501,5 +570,7 @@ private extension IndexSet {
     static let publication = IndexSet(integer: IndexPath.publishSection)
     static let subscriptions = IndexSet(integer: IndexPath.subscribeSection)
     static let bindingsAndPublication = IndexSet([IndexPath.bindingsSection, IndexPath.publishSection])
+    static let configurationServer = IndexSet(integer: IndexPath.configurationServerSection)
+    static let custom = IndexSet(integer: IndexPath.subscribeSection + 1)
     
 }

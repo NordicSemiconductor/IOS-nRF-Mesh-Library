@@ -40,7 +40,7 @@ public class Node: Codable {
         /// The interval (in milliseconds) between retransmissions.
         public let interval: UInt16
         /// Number of 10-millisecond steps between transmissions.
-        internal var steps: UInt8 {
+        public var steps: UInt8 {
             return UInt8(interval / 10) - 1
         }
         
@@ -64,7 +64,7 @@ public class Node: Codable {
         /// The interval (in milliseconds) between retransmissions.
         public let interval: UInt16
         /// Number of 10-millisecond steps between transmissions.
-        internal var steps: UInt8 {
+        public var steps: UInt8 {
             return UInt8(interval / 10) - 1
         }
         

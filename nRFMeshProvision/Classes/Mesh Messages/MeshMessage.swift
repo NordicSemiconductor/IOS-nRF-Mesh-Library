@@ -53,6 +53,14 @@ public protocol MeshMessage {
     init?(parameters: Data)
 }
 
+public protocol StatusMessage: MeshMessage {
+    /// Returns whether the operation was successful or not.
+    var isSuccess: Bool { get }
+    
+    /// The status as String.
+    var message: String { get }
+}
+
 // MARK: - Default values
 
 public extension MeshMessage {

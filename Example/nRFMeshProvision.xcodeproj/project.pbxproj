@@ -19,6 +19,9 @@
 		5231400022EEE1770074325A /* AssigningGroupAddresses.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52313FFF22EEE1770074325A /* AssigningGroupAddresses.swift */; };
 		5231400222EEF7940074325A /* CreatingMeshNetwork.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5231400122EEF7940074325A /* CreatingMeshNetwork.swift */; };
 		5231401622F460380074325A /* PublicationCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5231401522F460380074325A /* PublicationCell.swift */; };
+		5231403C22FDA8670074325A /* ConfigurationServer.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5231403B22FDA8670074325A /* ConfigurationServer.xib */; };
+		5231403F2301761C0074325A /* ConfigurationServerViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5231403E2301761C0074325A /* ConfigurationServerViewCell.swift */; };
+		52314041230192C50074325A /* ModelViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52314040230192C50074325A /* ModelViewCell.swift */; };
 		523F776422C4EDD90030EA6A /* SwitchCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 523F776322C4EDD90030EA6A /* SwitchCell.swift */; };
 		523F776622C609D90030EA6A /* NodeNetworkKeysViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 523F776522C609D90030EA6A /* NodeNetworkKeysViewController.swift */; };
 		523F776822C615CE0030EA6A /* NodeAppKeysViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 523F776722C615CE0030EA6A /* NodeAppKeysViewController.swift */; };
@@ -101,6 +104,9 @@
 		52313FFF22EEE1770074325A /* AssigningGroupAddresses.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssigningGroupAddresses.swift; sourceTree = "<group>"; };
 		5231400122EEF7940074325A /* CreatingMeshNetwork.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreatingMeshNetwork.swift; sourceTree = "<group>"; };
 		5231401522F460380074325A /* PublicationCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PublicationCell.swift; sourceTree = "<group>"; };
+		5231403B22FDA8670074325A /* ConfigurationServer.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ConfigurationServer.xib; sourceTree = "<group>"; };
+		5231403E2301761C0074325A /* ConfigurationServerViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigurationServerViewCell.swift; sourceTree = "<group>"; };
+		52314040230192C50074325A /* ModelViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelViewCell.swift; sourceTree = "<group>"; };
 		523F776322C4EDD90030EA6A /* SwitchCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwitchCell.swift; sourceTree = "<group>"; };
 		523F776522C609D90030EA6A /* NodeNetworkKeysViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NodeNetworkKeysViewController.swift; sourceTree = "<group>"; };
 		523F776722C615CE0030EA6A /* NodeAppKeysViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NodeAppKeysViewController.swift; sourceTree = "<group>"; };
@@ -218,6 +224,35 @@
 			path = Cells;
 			sourceTree = "<group>";
 		};
+		5231403922FDA80E0074325A /* UI */ = {
+			isa = PBXGroup;
+			children = (
+				5231403A22FDA8280074325A /* Model */,
+				607FACD91AFB9204008FA782 /* Main.storyboard */,
+				523F778B22CCEA900030EA6A /* SetPublication.storyboard */,
+				5283524E227887970097B949 /* Settings.storyboard */,
+				3089BC9E2099CA4900E30192 /* LaunchScreen.storyboard */,
+			);
+			path = UI;
+			sourceTree = "<group>";
+		};
+		5231403A22FDA8280074325A /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				5231403B22FDA8670074325A /* ConfigurationServer.xib */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		5231403D230175F30074325A /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				52314040230192C50074325A /* ModelViewCell.swift */,
+				5231403E2301761C0074325A /* ConfigurationServerViewCell.swift */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
 		52518B2F22E0B14500A1FD1E /* Groups */ = {
 			isa = PBXGroup;
 			children = (
@@ -314,6 +349,7 @@
 		52DF5D88228DA75F00C297C1 /* Configuration */ = {
 			isa = PBXGroup;
 			children = (
+				5231403D230175F30074325A /* Model */,
 				522AFFE122C23B3900521EDC /* Cells */,
 				52DF5D89228DA78A00C297C1 /* ConfigurationViewController.swift */,
 				522AFFDF22C2376C00521EDC /* NodeElementsViewController.swift */,
@@ -368,10 +404,7 @@
 				525242E6225F2D2E0044CECB /* Views */,
 				52835253227AEC8C0097B949 /* View Controllers */,
 				529B757322410784008F1CE7 /* Utils */,
-				607FACD91AFB9204008FA782 /* Main.storyboard */,
-				523F778B22CCEA900030EA6A /* SetPublication.storyboard */,
-				5283524E227887970097B949 /* Settings.storyboard */,
-				3089BC9E2099CA4900E30192 /* LaunchScreen.storyboard */,
+				5231403922FDA80E0074325A /* UI */,
 				607FACDC1AFB9204008FA782 /* Images.xcassets */,
 				607FACD31AFB9204008FA782 /* Supporting Files */,
 			);
@@ -539,6 +572,7 @@
 				523F778D22CCEA910030EA6A /* SetPublication.storyboard in Resources */,
 				3089BCA02099CA4900E30192 /* LaunchScreen.storyboard in Resources */,
 				607FACDB1AFB9204008FA782 /* Main.storyboard in Resources */,
+				5231403C22FDA8670074325A /* ConfigurationServer.xib in Resources */,
 				607FACDD1AFB9204008FA782 /* Images.xcassets in Resources */,
 				52835250227887970097B949 /* Settings.storyboard in Resources */,
 			);
@@ -622,6 +656,7 @@
 				52DAA5DB22560EEE0041C43A /* EditProvisionerViewController.swift in Sources */,
 				52DF5D8C228DAA0500C297C1 /* NodeViewCell.swift in Sources */,
 				528AB9FA228D856C000BE9DC /* ProvisioningViewDelegate.swift in Sources */,
+				52314041230192C50074325A /* ModelViewCell.swift in Sources */,
 				5283524822733BCF0097B949 /* EditKeyViewController.swift in Sources */,
 				5231401622F460380074325A /* PublicationCell.swift in Sources */,
 				528AB9F8228D847C000BE9DC /* NetworkViewController.swift in Sources */,
@@ -644,6 +679,7 @@
 				522AFFDC22BBA34900521EDC /* ActionCell.swift in Sources */,
 				52DF5D8A228DA78A00C297C1 /* ConfigurationViewController.swift in Sources */,
 				52F6AD7622BA612900F0D7DF /* UIViewController+Toast.swift in Sources */,
+				5231403F2301761C0074325A /* ConfigurationServerViewCell.swift in Sources */,
 				529B758622428A45008F1CE7 /* UIViewController+Alert.swift in Sources */,
 				529B7572223FFC39008F1CE7 /* AppKeysViewController.swift in Sources */,
 				5251498122E0E36600CBF1E3 /* AddGroupViewController.swift in Sources */,
