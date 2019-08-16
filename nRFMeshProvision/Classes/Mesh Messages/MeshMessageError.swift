@@ -10,4 +10,5 @@ import Foundation
 public enum MeshMessageError: Error {
     case invalidAddress
     case invalidPdu
+    case invalidOpCode
 }

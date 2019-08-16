@@ -83,14 +83,29 @@ internal extension MeshMessage {
     var accessPdu: Data {
         let opCode = Self.opCode
         
-        // Op Code 0b01111111 is invalid. We will ignore this case here now and send as single byte OpCode.
+        // Op Code 0b01111111 is invalid. We will ignore this case here
+        // now and send as single byte OpCode.
         if opCode < 0x80 {
             return Data([UInt8(opCode & 0xFF)]) + parameters
         }
         if opCode < 0x4000 || opCode & 0xFFFC00 == 0x8000 {
             return Data([UInt8(0x80 | ((opCode >> 8) & 0x3F)), UInt8(opCode & 0xFF)]) + parameters
         }
-        return Data([UInt8(0xC0 | ((opCode >> 16) & 0x3F)), UInt8((opCode >> 8) & 0xFF), UInt8(opCode & 0xFF)]) + parameters
+        return Data([
+                     UInt8(0xC0 | ((opCode >> 16) & 0x3F)),
+                     UInt8((opCode >> 8) & 0xFF),
+                     UInt8(opCode & 0xFF)
+               ]) + parameters
+    }
+    
+    /// Whether the message is a Vendor Message, or not.
+    ///
+    /// Vendor messages use 3-byte Op Codes, where the 2 most significant
+    /// bits of the first octet are set to 1. The remaining bits of the
+    /// first octet are the operation code, while the last 2 bytes are the
+    /// Company Identifier (Big Endian), as registered by Bluetooth SIG.
+    var isVendorMessage: Bool {
+        return Self.opCode & 0xFFC00000 == 0x00C00000
     }
     
 }

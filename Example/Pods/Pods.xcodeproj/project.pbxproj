@@ -73,6 +73,8 @@
 		5231403622FDA2F60074325A /* ConfigBeaconGet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5231403522FDA2F60074325A /* ConfigBeaconGet.swift */; };
 		5231403822FDA3020074325A /* ConfigBeaconSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5231403722FDA3020074325A /* ConfigBeaconSet.swift */; };
 		52314043230195320074325A /* MeshNetworkDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52314042230195320074325A /* MeshNetworkDelegate.swift */; };
+		523140482306BC3A0074325A /* VendorMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 523140472306BC3A0074325A /* VendorMessage.swift */; };
+		5231404A2306EB260074325A /* UnknownMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 523140492306EB260074325A /* UnknownMessage.swift */; };
 		523F775022C3AD2C0030EA6A /* Node+Provisioner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 523F774F22C3AD2C0030EA6A /* Node+Provisioner.swift */; };
 		523F775222C4A9F80030EA6A /* ConfigAppKeyDelete.swift in Sources */ = {isa = PBXBuildFile; fileRef = 523F775122C4A9F80030EA6A /* ConfigAppKeyDelete.swift */; };
 		523F775422C4AC210030EA6A /* ConfigAppKeyGet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 523F775322C4AC210030EA6A /* ConfigAppKeyGet.swift */; };
@@ -314,6 +316,8 @@
 		5231403522FDA2F60074325A /* ConfigBeaconGet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigBeaconGet.swift; sourceTree = "<group>"; };
 		5231403722FDA3020074325A /* ConfigBeaconSet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigBeaconSet.swift; sourceTree = "<group>"; };
 		52314042230195320074325A /* MeshNetworkDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeshNetworkDelegate.swift; sourceTree = "<group>"; };
+		523140472306BC3A0074325A /* VendorMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VendorMessage.swift; sourceTree = "<group>"; };
+		523140492306EB260074325A /* UnknownMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnknownMessage.swift; sourceTree = "<group>"; };
 		523F774F22C3AD2C0030EA6A /* Node+Provisioner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Node+Provisioner.swift"; sourceTree = "<group>"; };
 		523F775122C4A9F80030EA6A /* ConfigAppKeyDelete.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigAppKeyDelete.swift; sourceTree = "<group>"; };
 		523F775322C4AC210030EA6A /* ConfigAppKeyGet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigAppKeyGet.swift; sourceTree = "<group>"; };
@@ -707,6 +711,8 @@
 				52B7F67F22994B3E00B0A42F /* MeshMessage.swift */,
 				52B7F68122994D3C00B0A42F /* MeshMessageError.swift */,
 				525A3BFF22AD2167000D3791 /* ConfigMessage.swift */,
+				523140472306BC3A0074325A /* VendorMessage.swift */,
+				523140492306EB260074325A /* UnknownMessage.swift */,
 			);
 			name = "Mesh Messages";
 			path = "nRFMeshProvision/Classes/Mesh Messages";
@@ -1335,6 +1341,7 @@
 				5274B75122A1599F008450BC /* SegmentedAccessMessage.swift in Sources */,
 				5283528E2281B3510097B949 /* ProvisioningState.swift in Sources */,
 				523F779122CDF4BB0030EA6A /* ConfigModelPublicationGet.swift in Sources */,
+				523140482306BC3A0074325A /* VendorMessage.swift in Sources */,
 				525A3C0022AD2167000D3791 /* ConfigMessage.swift in Sources */,
 				5274B75722A1776F008450BC /* SegmentedControlMessage.swift in Sources */,
 				529B75EB224A6CE4008F1CE7 /* NetworkKey.swift in Sources */,
@@ -1424,6 +1431,7 @@
 				52568D4922DDEA4400B7B236 /* Group+MeshNetwork.swift in Sources */,
 				523F775222C4A9F80030EA6A /* ConfigAppKeyDelete.swift in Sources */,
 				52313FF022EB092F0074325A /* ConfigModelSubscriptionAdd.swift in Sources */,
+				5231404A2306EB260074325A /* UnknownMessage.swift in Sources */,
 				528352BA2285A3DF0097B949 /* Node+Keys.swift in Sources */,
 				5294DAD022AA54D60041370E /* NetworkKeys.swift in Sources */,
 				529B757D22423DEE008F1CE7 /* Storage.swift in Sources */,

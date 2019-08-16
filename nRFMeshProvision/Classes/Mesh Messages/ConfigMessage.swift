@@ -8,7 +8,7 @@
 import Foundation
 
 public protocol ConfigMessage: MeshMessage {
-    // Empty
+    // No additional fields.
 }
 
 /// The status of a Config operation.
@@ -49,7 +49,7 @@ public protocol ConfigAppKeyMessage: ConfigMessage {
 }
 
 public protocol ConfigNetAndAppKeyMessage: ConfigNetKeyMessage, ConfigAppKeyMessage {
-    // Empty.
+    // No additional fields.
 }
 
 public protocol ConfigElementMessage: ConfigMessage {
@@ -161,6 +161,7 @@ public extension ConfigStatusMessage {
     var message: String {
         return "\(status)"
     }
+    
 }
 
 internal extension ConfigNetKeyMessage {

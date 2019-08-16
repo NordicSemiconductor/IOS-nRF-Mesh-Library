@@ -20,6 +20,8 @@ public class MeshNetworkManager {
     /// The sender object should send PDUs created by the manager
     /// using any Bearer.
     public weak var transmitter: Transmitter?
+    /// Registered vendor message types.
+    internal var vendorTypes: [UInt32 : VendorMessage.Type] = [:]
     
     // MARK: - Network Manager properties
     
@@ -159,6 +161,20 @@ public extension MeshNetworkManager {
         }
     }
     
+    /// Registers the given Vendor Message type in the manager. Whenever
+    /// a mesh message with its opcode is received, the manager will instantiate
+    /// an object of this type and return using the `delegate`.
+    ///
+    /// - parameter vendorMessageType: The Vendor Message type to register.
+    /// - throws: This method throws when the registered message has an invalid
+    ///           op code, that is not matching vendor op code requirement.
+    func register(vendorMessageType: VendorMessage.Type) throws {
+        let opCode = vendorMessageType.opCode
+        guard (opCode & 0xFFC00000) == 0x00C00000 else {
+            throw MeshMessageError.invalidOpCode
+        }
+        vendorTypes[opCode] = vendorMessageType
+    }
 }
 
 // MARK: - Send / Receive Mesh Messages

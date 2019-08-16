@@ -68,6 +68,10 @@ private extension AccessLayer {
         
         switch accessPdu.opCode {
             
+        // Vendor Messages
+        case let opCode where (opCode & 0xC00000) == 0xC00000:
+            MessageType = networkManager.meshNetworkManager.vendorTypes[opCode]
+            
         // Composition Data
         case ConfigCompositionDataGet.opCode:
             MessageType = ConfigCompositionDataGet.self
@@ -258,11 +262,14 @@ private extension AccessLayer {
             MessageType = ConfigDefaultTtlStatus.self
             
         default:
-            MessageType = nil
+            MessageType = UnknownMessage.self
         }
         
         if let MessageType = MessageType,
            let message = MessageType.init(parameters: accessPdu.parameters) {
+            if var unknownMessage = message as? UnknownMessage {
+                unknownMessage.opCode = accessPdu.opCode
+            }
             print("\(message) received") // TODO: Remove me
             if let configMessage = message as? ConfigMessage {
                 networkManager.foundationLayer.handle(configMessage: configMessage, from: accessPdu.source)
