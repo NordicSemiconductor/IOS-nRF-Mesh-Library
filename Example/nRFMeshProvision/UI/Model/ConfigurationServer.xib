@@ -310,7 +310,7 @@
                     </view>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="gVr-aU-fD1">
                         <rect key="frame" x="20" y="806" width="374" height="54"/>
-                        <string key="text">The Friend state indicates support for the Friend feature. Disabling this feature will terminate all friend relationships and clear the associated Friend Queue</string>
+                        <string key="text">The Friend state indicates support for the Friend feature. Disabling this feature will terminate all friend relationships and clear the associated Friend Queue.</string>
                         <fontDescription key="fontDescription" type="system" pointSize="15"/>
                         <color key="textColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <nil key="highlightedColor"/>

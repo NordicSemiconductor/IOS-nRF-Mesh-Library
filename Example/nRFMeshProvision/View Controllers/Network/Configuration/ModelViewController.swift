@@ -25,9 +25,11 @@ class ModelViewController: ConnectableViewController {
         title = model.name ?? "Model"
         navigationItem.rightBarButtonItem = editButtonItem
         
-        refreshControl = UIRefreshControl()
-        refreshControl!.tintColor = UIColor.white
-        refreshControl!.addTarget(self, action: #selector(reload(_:)), for: .valueChanged)
+        if !model.isConfigurationClient {
+            refreshControl = UIRefreshControl()
+            refreshControl!.tintColor = UIColor.white
+            refreshControl!.addTarget(self, action: #selector(reload(_:)), for: .valueChanged)
+        }
         
         tableView.register(UINib(nibName: "ConfigurationServer", bundle: nil), forCellReuseIdentifier: "0000")
     }
@@ -311,9 +313,10 @@ extension ModelViewController: ModelViewCellDelegate {
 private extension ModelViewController {
     
     @objc func reload(_ sender: Any) {
-        if model.isConfigurationClient {
+        switch model! {
+        case let model where model.isConfigurationServer:
             modelViewCell?.startRefreshing()
-        } else {
+        default:
             reloadBindings()
         }
     }

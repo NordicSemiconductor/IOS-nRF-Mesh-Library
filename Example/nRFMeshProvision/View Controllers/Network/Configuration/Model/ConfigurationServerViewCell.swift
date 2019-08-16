@@ -20,12 +20,21 @@ class ConfigurationServerViewCell: ModelViewCell {
     @IBOutlet weak var relayIntervalLabel: UILabel!
     
     @IBAction func relayCountDidChange(_ sender: UISlider) {
-        relayCountLabel.text = "\(Int(sender.value + 1)) transmissions"
+        let value = Int(sender.value + 1)
+        relayIntervalSlider.isEnabled = value > 1
+        if value == 1 {
+            relayCountLabel.text = "\(value) transmission"
+            relayIntervalLabel.text = "N/A"
+        } else {
+            relayCountLabel.text = "\(value) transmissions"
+            relayIntervalLabel.text = "\(Int(relayIntervalSlider.value + 1) * 10) ms"
+        }
     }
     @IBAction func relayIntervalDidChange(_ sender: UISlider) {
         relayIntervalLabel.text = "\(Int(sender.value + 1) * 10) ms"
     }
     @IBAction func setRelayTapped(_ sender: UIButton) {
+        setRelay()
     }
     
     // Network Transmit
@@ -35,38 +44,56 @@ class ConfigurationServerViewCell: ModelViewCell {
     @IBOutlet weak var networkTransmitIntervalLabel: UILabel!
     
     @IBAction func networkTransmitCountDidChange(_ sender: UISlider) {
-        networkTransmitCountLabel.text = "\(Int(sender.value + 1)) transmissions"
+        let value = Int(sender.value + 1)
+        networkTransmitIntervalLabel.isEnabled = value > 1
+        if value == 1 {
+            networkTransmitCountLabel.text = "\(value) transmission"
+            networkTransmitIntervalLabel.text = "N/A"
+        } else {
+            networkTransmitCountLabel.text = "\(value) transmissions"
+            networkTransmitIntervalLabel.text = "\(Int(networkTransmitIntervalSlider.value + 1) * 10) ms"
+        }
     }
     @IBAction func networkTransmitIntervalDidChange(_ sender: UISlider) {
         networkTransmitIntervalLabel.text = "\(Int(sender.value + 1) * 10) ms"
     }
     @IBAction func setNetworkTransmitTapped(_ sender: UIButton) {
+        setNetworkTransmit()
     }
     
     // Secure Network Beacon
     @IBOutlet weak var secureNetworkBeaconSwitch: UISwitch!
     @IBAction func secureNetworkBeaconDidChange(_ sender: UISwitch) {
+        setSecureNetworkBeaconStatus(enable: sender.isOn)
     }
     
     // GATT Proxy
     @IBOutlet weak var gattProxySwitch: UISwitch!
     @IBAction func gattProxyDidChange(_ sender: UISwitch) {
+        setGATTProxyStatus(enable: sender.isOn)
     }
     
     // Friend Feature
     @IBOutlet weak var friendFeatureSwitch: UISwitch!
     @IBAction func friendFeatureDidChange(_ sender: UISwitch) {
+        setFriendFeatureStatus(enable: sender.isOn)
     }
     
     override func reload(using model: Model) {
         if let node = model.parentElement?.parentNode {
             if let relay = node.relayRetransmit {
-                relayCountSlider.value = Float(relay.count)
+                // Interval needs to be set first, as Count may override its Label to N/A.
                 relayIntervalSlider.value = Float(relay.steps)
+                relayIntervalDidChange(relayIntervalSlider)
+                relayCountSlider.value = Float(relay.count)
+                relayCountDidChange(relayCountSlider)
             }
             if let networkTransmit = node.networkTransmit {
-                networkTransmitCountSlider.value = Float(networkTransmit.count)
+                // Interval needs to be set first, as Count may override its Label to N/A.
                 networkTransmitIntervalSlider.value = Float(networkTransmit.steps)
+                networkTransmitIntervalDidChange(networkTransmitIntervalSlider)
+                networkTransmitCountSlider.value = Float(networkTransmit.count)
+                networkTransmitCountDidChange(networkTransmitCountSlider)
             }
             secureNetworkBeaconSwitch.isOn = node.secureNetworkBeacon ?? false
             if let features = node.features {
@@ -85,9 +112,8 @@ class ConfigurationServerViewCell: ModelViewCell {
     override func meshNetwork(_ meshNetwork: MeshNetwork, didDeliverMessage message: MeshMessage, from source: Address) -> Bool {
         switch message {
             
-        case let status as ConfigRelayStatus:
-            relayCountSlider.value = Float(status.count + 1)
-            relayIntervalSlider.value = Float(status.steps)
+        case is ConfigRelayStatus:
+            reload(using: model)
             
             if delegate?.isRefreshing ?? false {
                 readNetworkTransmit()
@@ -95,9 +121,8 @@ class ConfigurationServerViewCell: ModelViewCell {
             }
             return false
             
-        case let status as ConfigNetworkTransmitStatus:
-            networkTransmitCountSlider.value = Float(status.count)
-            networkTransmitIntervalSlider.value = Float(status.steps)
+        case is ConfigNetworkTransmitStatus:
+            reload(using: model)
             
             if delegate?.isRefreshing ?? false {
                 readSecureNetworkBeaconStatus()
@@ -105,28 +130,26 @@ class ConfigurationServerViewCell: ModelViewCell {
             }
             return false
             
-        case let status as ConfigBeaconStatus:
-            secureNetworkBeaconSwitch.isOn = status.isEnabled
+        case is ConfigBeaconStatus:
+            reload(using: model)
             
             if delegate?.isRefreshing ?? false {
-                readGattProxyStatus()
+                readGATTProxyStatus()
                 return true
             }
             return false
             
-        case let status as ConfigGATTProxyStatus:
-            gattProxySwitch.isOn = status.state == .enabled
-            gattProxySwitch.isEnabled = status.state != .notSupported
+        case is ConfigGATTProxyStatus:
+            reload(using: model)
             
             if delegate?.isRefreshing ?? false {
-                readGattProxyStatus()
+                readFriendFeatureStatus()
                 return true
             }
             return false
             
-        case let status as ConfigFriendStatus:
-            friendFeatureSwitch.isOn = status.state == .enabled
-            friendFeatureSwitch.isEnabled = status.state != .notSupported
+        case is ConfigFriendStatus:
+            reload(using: model)
             return false
             
         default:
@@ -142,20 +165,47 @@ private extension ConfigurationServerViewCell {
         delegate?.send(ConfigRelayGet(), description: "Reading Relay status...")
     }
     
+    func setRelay() {
+        let count = UInt8(relayCountSlider.value)
+        let steps = UInt8(relayIntervalSlider.value)
+        delegate?.send(ConfigRelaySet(count: count, steps: steps), description: "Sending Relay settings...")
+    }
+    
     func readNetworkTransmit() {
         delegate?.send(ConfigNetworkTransmitGet(), description: "Reading Network Transmit status...")
+    }
+    
+    func setNetworkTransmit() {
+        let count = UInt8(networkTransmitCountSlider.value)
+        let steps = UInt8(networkTransmitIntervalSlider.value)
+        delegate?.send(ConfigNetworkTransmitSet(count: count, steps: steps), description: "Sending Network Transmit settings...")
     }
     
     func readSecureNetworkBeaconStatus() {
         delegate?.send(ConfigBeaconGet(), description: "Reading Secure Beacon Network status...")
     }
     
-    func readGattProxyStatus() {
-        delegate?.send(ConfigBeaconGet(), description: "Reading GATT Proxy status...")
+    func setSecureNetworkBeaconStatus(enable: Bool) {
+        let message = "\(enable ? "Enabling" : "Disabling") Secure Network Beacons..."
+        delegate?.send(ConfigBeaconSet(enable: enable), description: message)
+    }
+    
+    func readGATTProxyStatus() {
+        delegate?.send(ConfigGATTProxyGet(), description: "Reading GATT Proxy status...")
+    }
+    
+    func setGATTProxyStatus(enable: Bool) {
+        let message = "\(enable ? "Enabling" : "Disabling") GATT Proxy..."
+        delegate?.send(ConfigGATTProxySet(enable: enable), description: message)
     }
     
     func readFriendFeatureStatus() {
-        delegate?.send(ConfigBeaconGet(), description: "Reading Friend Feature status...")
+        delegate?.send(ConfigFriendGet(), description: "Reading Friend Feature status...")
+    }
+    
+    func setFriendFeatureStatus(enable: Bool) {
+        let message = "\(enable ? "Enabling" : "Disabling") Friend feature..."
+        delegate?.send(ConfigFriendSet(enable: enable), description: message)
     }
     
 }
