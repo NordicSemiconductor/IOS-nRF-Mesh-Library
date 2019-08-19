@@ -168,8 +168,28 @@ public extension MeshNetworkManager {
     /// - parameter vendorMessageType: The Vendor Message type to register.
     /// - throws: This method throws when the registered message has an invalid
     ///           op code, that is not matching vendor op code requirement.
-    func register(vendorMessageType: VendorMessage.Type) throws {
+    func register(vendorMessageType: StaticVendorMessage.Type) throws {
         let opCode = vendorMessageType.opCode
+        guard (opCode & 0xFFC00000) == 0x00C00000 else {
+            throw MeshMessageError.invalidOpCode
+        }
+        vendorTypes[opCode] = vendorMessageType
+    }
+    
+    /// Registers the given Vendor Message type in the manager. Whenever
+    /// a mesh message with its opcode is received, the manager will instantiate
+    /// an object of this type and return using the `delegate`.
+    ///
+    /// This method should be used when the Op Code is not known during
+    /// compliation. Otherwise, the `register(vendorMessageType:)` should
+    /// be preferred.
+    ///
+    /// - parameter vendorMessageType: The Vendor Message type to register.
+    /// - parameter opCode: The runtime given op code of the message.
+    /// - throws: This method throws when the given op code is not matching
+    ///           vendor op code requirement.
+    func register(vendorMessageType: VendorMessage.Type, withOpCode opCode: UInt32) throws {
+        let opCode = opCode
         guard (opCode & 0xFFC00000) == 0x00C00000 else {
             throw MeshMessageError.invalidOpCode
         }

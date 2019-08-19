@@ -24,9 +24,15 @@ public enum MeshMessageSecurity {
     }
 }
 
+/// The base class of every mesh message. Mesh messages can be sent and
+/// and recieved from the mesh network. For messages with the opcode known
+/// during compilation a `StaticMeshMessage` protocol should be preferred.
+///
+/// Parameters `security` and `isSegmented` are checked and should be set
+/// only for outgoing messages.
 public protocol MeshMessage {
     /// The message Op Code.
-    static var opCode: UInt32 { get }
+    var opCode: UInt32 { get }
     /// Message parameters as Data.
     var parameters: Data? { get }
     /// Returns whether the message should be sent or has been sent using
@@ -53,12 +59,19 @@ public protocol MeshMessage {
     init?(parameters: Data)
 }
 
+/// A mesh message containing the operation status.
 public protocol StatusMessage: MeshMessage {
     /// Returns whether the operation was successful or not.
     var isSuccess: Bool { get }
     
     /// The status as String.
     var message: String { get }
+}
+
+/// A type of a mesh message which opcode is known during compilation time.
+public protocol StaticMeshMessage: MeshMessage {
+    /// The message Op Code.
+    static var opCode: UInt32 { get }
 }
 
 // MARK: - Default values
@@ -75,14 +88,20 @@ public extension MeshMessage {
     
 }
 
+public extension StaticMeshMessage {
+    
+    var opCode: UInt32 {
+        return Self.opCode
+    }
+    
+}
+
 // MARK: - Private API
 
 internal extension MeshMessage {
     
     /// The Access Layer PDU data that will be sent.
     var accessPdu: Data {
-        let opCode = Self.opCode
-        
         // Op Code 0b01111111 is invalid. We will ignore this case here
         // now and send as single byte OpCode.
         if opCode < 0x80 {
@@ -105,7 +124,7 @@ internal extension MeshMessage {
     /// first octet are the operation code, while the last 2 bytes are the
     /// Company Identifier (Big Endian), as registered by Bluetooth SIG.
     var isVendorMessage: Bool {
-        return Self.opCode & 0xFFC00000 == 0x00C00000
+        return opCode & 0xFFC00000 == 0x00C00000
     }
     
 }

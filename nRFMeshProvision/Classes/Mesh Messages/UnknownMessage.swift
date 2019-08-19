@@ -8,12 +8,10 @@
 import Foundation
 
 public struct UnknownMessage: MeshMessage {
-    // The op code for an unknown message is not know before it's
-    // received. A field will be set instead.
-    public static let opCode: UInt32 = 0xFFFFFFFF
+    // The opcode is set when the message is received. Initally it is set
+    // to 0, as the constructor takes only parameters.
+    public internal(set) var opCode: UInt32 = 0
     
-    /// The message Op Code.
-    public internal(set) var opCode: UInt32!
     public let parameters: Data?
     
     public init?(parameters: Data) {
@@ -26,7 +24,7 @@ extension UnknownMessage: CustomDebugStringConvertible {
     
     public var debugDescription: String {
         let value = parameters?.hex ?? "nil"
-        return "UnknownMessage(opCode: \(opCode!), parameters: \(value))"
+        return "UnknownMessage(opCode: \(opCode), parameters: \(value))"
     }
     
 }

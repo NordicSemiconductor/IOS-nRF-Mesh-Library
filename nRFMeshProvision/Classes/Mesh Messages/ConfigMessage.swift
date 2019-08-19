@@ -7,7 +7,7 @@
 
 import Foundation
 
-public protocol ConfigMessage: MeshMessage {
+public protocol ConfigMessage: StaticMeshMessage {
     // No additional fields.
 }
 
