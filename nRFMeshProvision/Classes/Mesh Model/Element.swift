@@ -69,8 +69,10 @@ public class Element: Codable {
         offset += sigModelsByteCount
         
         for o in stride(from: offset, to: offset + vendorModelsByteCount, by: 4) {
-            let modelId: UInt32 = compositionData.read(fromOffset: o)
-            add(model: Model(vendorModelId: modelId))
+            let companyId: UInt16 = compositionData.read(fromOffset: o)
+            let modelId:   UInt16 = compositionData.read(fromOffset: o + 2)
+            let vendorModelId = (UInt32(companyId) << 16) | UInt32(modelId)
+            add(model: Model(vendorModelId: vendorModelId))
         }
         offset += vendorModelsByteCount
     }
