@@ -58,7 +58,6 @@ class VendorModelViewCell: ModelViewCell, UITextFieldDelegate {
             parametersField.becomeFirstResponder()
             return false
         }
-        textField.resignFirstResponder()
         return true
     }
     
@@ -81,6 +80,9 @@ private extension VendorModelViewCell {
     /// Sends the Vendor Message with the opcode and parameters given
     /// by the user.
     func send() {
+        opCodeField.resignFirstResponder()
+        parametersField.resignFirstResponder()
+        
         guard !model.boundApplicationKeys.isEmpty else {
             parentViewController?.presentAlert(
                 title: "Bound key required",
