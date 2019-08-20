@@ -89,6 +89,11 @@ private extension VendorModelViewCell {
                 message: "Bind at least one Application Key before sending the message.")
             return
         }
+        
+        // Clear the response fields.
+        responseOpCodeLabel.text = nil
+        responseParametersLabel.text = nil
+        
         if let opCode = UInt8(opCodeField.text!, radix: 16) {
             let parameters = Data(hex: parametersField.text!)
             delegate?.send(RuntimeVendorMessage(opCode: opCode, for: model, parameters: parameters), description: "Sending message...")
