@@ -11,11 +11,11 @@ public struct ConfigModelSubscriptionDeleteAll: ConfigAnyModelMessage {
     public static let opCode: UInt32 = 0x801D
     
     public var parameters: Data? {
-        let data = Data() + elementAddress + modelIdentifier
+        let data = Data() + elementAddress
         if let companyIdentifier = companyIdentifier {
-            return data + companyIdentifier
+            return data + companyIdentifier + modelIdentifier
         } else {
-            return data
+            return data + modelIdentifier
         }
     }
     
@@ -34,11 +34,12 @@ public struct ConfigModelSubscriptionDeleteAll: ConfigAnyModelMessage {
             return nil
         }
         elementAddress = parameters.read(fromOffset: 0)
-        modelIdentifier = parameters.read(fromOffset: 2)
         if parameters.count == 6 {
-            companyIdentifier = parameters.read(fromOffset: 4)
+            companyIdentifier = parameters.read(fromOffset: 2)
+            modelIdentifier = parameters.read(fromOffset: 4)
         } else {
             companyIdentifier = nil
+            modelIdentifier = parameters.read(fromOffset: 2)
         }
     }
 }

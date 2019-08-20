@@ -11,7 +11,7 @@ public struct ConfigVendorModelSubscriptionList: ConfigModelSubscriptionList, Co
     public static let opCode: UInt32 = 0x802C
     
     public var parameters: Data? {
-        let data = Data([status.rawValue]) + elementAddress + modelIdentifier + companyIdentifier
+        let data = Data([status.rawValue]) + elementAddress + companyIdentifier + modelIdentifier
         return addresses.reduce(data, { data, address in data + address })
     }
     
@@ -42,8 +42,8 @@ public struct ConfigVendorModelSubscriptionList: ConfigModelSubscriptionList, Co
         }
         self.status = status
         elementAddress = parameters.read(fromOffset: 1)
-        modelIdentifier = parameters.read(fromOffset: 3)
-        companyIdentifier = parameters.read(fromOffset: 5)
+        companyIdentifier = parameters.read(fromOffset: 3)
+        modelIdentifier = parameters.read(fromOffset: 5)
         // Read list of addresses.
         var array: [Address] = []
         for offset in stride(from: 7, to: parameters.count, by: 2) {

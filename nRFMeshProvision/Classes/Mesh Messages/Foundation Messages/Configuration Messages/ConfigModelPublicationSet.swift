@@ -17,11 +17,10 @@ public struct ConfigModelPublicationSet: ConfigAnyModelMessage {
         data += publish.ttl
         data += (publish.periodSteps & 0x3F) | (publish.periodResolution.rawValue << 6)
         data += (publish.retransmit.count & 0x07) | (publish.retransmit.steps << 3)
-        data += modelIdentifier
         if let companyIdentifier = companyIdentifier {
-            return data + companyIdentifier
+            return data + companyIdentifier + modelIdentifier
         } else {
-            return data
+            return data + modelIdentifier
         }
     }
     
@@ -69,11 +68,12 @@ public struct ConfigModelPublicationSet: ConfigAnyModelMessage {
                                friendshipCredentialsFlag: flag, ttl: ttl,
                                periodSteps: periodSteps, periodResolution: periodResolution,
                                retransmit: retransmit)
-        self.modelIdentifier = parameters.read(fromOffset: 9)
         if parameters.count == 13 {
-            self.companyIdentifier = parameters.read(fromOffset: 11)
+            self.companyIdentifier = parameters.read(fromOffset: 9)
+            self.modelIdentifier = parameters.read(fromOffset: 11)
         } else {
             self.companyIdentifier = nil
+            self.modelIdentifier = parameters.read(fromOffset: 9)
         }
     }
 }

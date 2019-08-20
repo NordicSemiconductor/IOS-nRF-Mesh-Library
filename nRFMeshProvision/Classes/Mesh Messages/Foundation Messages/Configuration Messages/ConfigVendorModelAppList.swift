@@ -11,7 +11,7 @@ public struct ConfigVendorModelAppList: ConfigModelAppList, ConfigVendorModelMes
     public static let opCode: UInt32 = 0x804E
     
     public var parameters: Data? {
-        let data = Data([status.rawValue]) + elementAddress + modelIdentifier + companyIdentifier
+        let data = Data([status.rawValue]) + elementAddress + companyIdentifier + modelIdentifier
         return data + encode(indexes: applicationKeyIndexes[...])
     }
     
@@ -42,8 +42,8 @@ public struct ConfigVendorModelAppList: ConfigModelAppList, ConfigVendorModelMes
         }
         self.status = status
         elementAddress = parameters.read(fromOffset: 1)
-        modelIdentifier = parameters.read(fromOffset: 3)
-        companyIdentifier = parameters.read(fromOffset: 5)
+        companyIdentifier = parameters.read(fromOffset: 3)
+        modelIdentifier = parameters.read(fromOffset: 5)
         applicationKeyIndexes = ConfigSIGModelAppList.decode(indexesFrom: parameters, at: 7)
     }
 }

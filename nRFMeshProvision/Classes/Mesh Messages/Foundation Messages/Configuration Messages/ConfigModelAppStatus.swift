@@ -11,11 +11,11 @@ public struct ConfigModelAppStatus: ConfigAppKeyMessage, ConfigAnyModelMessage, 
     public static let opCode: UInt32 = 0x803E
     
     public var parameters: Data? {
-        let data = Data([status.rawValue]) + elementAddress + applicationKeyIndex + modelIdentifier
+        let data = Data([status.rawValue]) + elementAddress + applicationKeyIndex
         if let companyIdentifier = companyIdentifier {
-            return data + companyIdentifier
+            return data + companyIdentifier + modelIdentifier
         } else {
-            return data
+            return data + modelIdentifier
         }
     }
     
@@ -47,11 +47,12 @@ public struct ConfigModelAppStatus: ConfigAppKeyMessage, ConfigAnyModelMessage, 
         self.status = status
         elementAddress = parameters.read(fromOffset: 1)
         applicationKeyIndex = parameters.read(fromOffset: 3)
-        modelIdentifier = parameters.read(fromOffset: 5)
         if parameters.count == 9 {
-            companyIdentifier = parameters.read(fromOffset: 7)
+            companyIdentifier = parameters.read(fromOffset: 5)
+            modelIdentifier = parameters.read(fromOffset: 7)
         } else {
             companyIdentifier = nil
+            modelIdentifier = parameters.read(fromOffset: 5)
         }
     }
 }

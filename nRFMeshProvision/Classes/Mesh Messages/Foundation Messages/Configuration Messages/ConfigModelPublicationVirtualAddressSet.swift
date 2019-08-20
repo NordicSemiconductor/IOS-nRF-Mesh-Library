@@ -18,11 +18,10 @@ public struct ConfigModelPublicationVirtualAddressSet: ConfigAnyModelMessage {
         data += publish.ttl
         data += (publish.periodSteps & 0x3F) | (publish.periodResolution.rawValue << 6)
         data += (publish.retransmit.count & 0x07) | (publish.retransmit.steps << 3)
-        data += modelIdentifier
         if let companyIdentifier = companyIdentifier {
-            return data + companyIdentifier
+            return data + companyIdentifier + modelIdentifier
         } else {
-            return data
+            return data + modelIdentifier
         }
     }
     
@@ -63,11 +62,12 @@ public struct ConfigModelPublicationVirtualAddressSet: ConfigAnyModelMessage {
                                friendshipCredentialsFlag: flag, ttl: ttl,
                                periodSteps: periodSteps, periodResolution: periodResolution,
                                retransmit: retransmit)
-        self.modelIdentifier = parameters.read(fromOffset: 23)
         if parameters.count == 27 {
-            self.companyIdentifier = parameters.read(fromOffset: 25)
+            self.companyIdentifier = parameters.read(fromOffset: 23)
+            self.modelIdentifier = parameters.read(fromOffset: 25)
         } else {
             self.companyIdentifier = nil
+            self.modelIdentifier = parameters.read(fromOffset: 23)
         }
     }
 }

@@ -12,11 +12,11 @@ public struct ConfigModelSubscriptionVirtualAddressAdd: ConfigVirtualLabelMessag
     public static let opCode: UInt32 = 0x8020
     
     public var parameters: Data? {
-        let data = Data() + elementAddress + virtualLabel.data + modelIdentifier
+        let data = Data() + elementAddress + virtualLabel.data
         if let companyIdentifier = companyIdentifier {
-            return data + companyIdentifier
+            return data + companyIdentifier + modelIdentifier
         } else {
-            return data
+            return data + modelIdentifier
         }
     }
     
@@ -42,11 +42,12 @@ public struct ConfigModelSubscriptionVirtualAddressAdd: ConfigVirtualLabelMessag
         }
         elementAddress = parameters.read(fromOffset: 0)
         virtualLabel = CBUUID(data: parameters.dropFirst(2).prefix(16)).uuid
-        modelIdentifier = parameters.read(fromOffset: 18)
         if parameters.count == 24 {
-            companyIdentifier = parameters.read(fromOffset: 20)
+            companyIdentifier = parameters.read(fromOffset: 18)
+            modelIdentifier = parameters.read(fromOffset: 20)
         } else {
             companyIdentifier = nil
+            modelIdentifier = parameters.read(fromOffset: 18)
         }
     }
 }

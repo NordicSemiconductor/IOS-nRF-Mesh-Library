@@ -11,11 +11,11 @@ public struct ConfigModelSubscriptionStatus: ConfigStatusMessage, ConfigAddressM
     public static let opCode: UInt32 = 0x801F
     
     public var parameters: Data? {
-        let data = Data([status.rawValue]) + elementAddress + address + modelIdentifier
+        let data = Data([status.rawValue]) + elementAddress + address
         if let companyIdentifier = companyIdentifier {
-            return data + companyIdentifier
+            return data + companyIdentifier + modelIdentifier
         } else {
-            return data
+            return data + modelIdentifier
         }
     }
     
@@ -59,11 +59,12 @@ public struct ConfigModelSubscriptionStatus: ConfigStatusMessage, ConfigAddressM
         self.status = status
         elementAddress = parameters.read(fromOffset: 1)
         address = parameters.read(fromOffset: 3)
-        modelIdentifier = parameters.read(fromOffset: 5)
         if parameters.count == 9 {
-            companyIdentifier = parameters.read(fromOffset: 7)
+            companyIdentifier = parameters.read(fromOffset: 5)
+            modelIdentifier = parameters.read(fromOffset: 7)
         } else {
             companyIdentifier = nil
+            modelIdentifier = parameters.read(fromOffset: 5)
         }
     }
 }

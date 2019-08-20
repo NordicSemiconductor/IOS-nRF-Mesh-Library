@@ -11,7 +11,7 @@ public struct ConfigVendorModelAppGet: ConfigVendorModelMessage {
     public static let opCode: UInt32 = 0x804D
     
     public var parameters: Data? {
-        return Data() + elementAddress + modelIdentifier + companyIdentifier
+        return Data() + elementAddress + companyIdentifier + modelIdentifier
     }
     
     public let elementAddress: Address
@@ -33,7 +33,7 @@ public struct ConfigVendorModelAppGet: ConfigVendorModelMessage {
             return nil
         }
         elementAddress = parameters.read(fromOffset: 0)
-        modelIdentifier = parameters.read(fromOffset: 2)
-        companyIdentifier = parameters.read(fromOffset: 4)
+        companyIdentifier = parameters.read(fromOffset: 2)
+        modelIdentifier = parameters.read(fromOffset: 4)
     }
 }

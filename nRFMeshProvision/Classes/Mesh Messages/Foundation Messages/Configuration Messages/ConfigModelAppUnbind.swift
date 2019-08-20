@@ -11,11 +11,11 @@ public struct ConfigModelAppUnbind: ConfigAppKeyMessage, ConfigAnyModelMessage {
     public static let opCode: UInt32 = 0x803F
     
     public var parameters: Data? {
-        let data = Data() + elementAddress + applicationKeyIndex + modelIdentifier
+        let data = Data() + elementAddress + applicationKeyIndex
         if let companyIdentifier = companyIdentifier {
-            return data + companyIdentifier
+            return data + companyIdentifier + modelIdentifier
         } else {
-            return data
+            return data + modelIdentifier
         }
     }
     
@@ -37,11 +37,12 @@ public struct ConfigModelAppUnbind: ConfigAppKeyMessage, ConfigAnyModelMessage {
         }
         elementAddress = parameters.read(fromOffset: 0)
         applicationKeyIndex = parameters.read(fromOffset: 2)
-        modelIdentifier = parameters.read(fromOffset: 4)
         if parameters.count == 8 {
-            companyIdentifier = parameters.read(fromOffset: 6)
+            companyIdentifier = parameters.read(fromOffset: 4)
+            modelIdentifier = parameters.read(fromOffset: 6)
         } else {
             companyIdentifier = nil
+            modelIdentifier = parameters.read(fromOffset: 4)
         }
     }  
 }
