@@ -42,10 +42,12 @@ class ModelViewCell: UITableViewCell {
     
     /// Initializes reading of all fields in the Model View. This should
     /// send the first request, after which the cell should wait for a response,
-    /// call another request, wait, etc. When refreshing is complete,
-    /// the `delegate.reloadComplete(:)` method should be called.
-    func startRefreshing() {
-        // Empty.
+    /// call another request, wait, etc.
+    ///
+    /// - returns: `True`, if any request has been made, `false` if the cell does not
+    ///            provide any refreshing mechanism.
+    func startRefreshing() -> Bool {
+        return false
     }
 
     /// A callback called whenever a Mesh Message has been received

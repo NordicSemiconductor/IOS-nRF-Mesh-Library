@@ -105,8 +105,9 @@ class ConfigurationServerViewCell: ModelViewCell {
         }
     }
     
-    override func startRefreshing() {
+    override func startRefreshing() -> Bool {
         readRelay()
+        return true
     }
     
     override func meshNetwork(_ meshNetwork: MeshNetwork, didDeliverMessage message: MeshMessage, from source: Address) -> Bool {

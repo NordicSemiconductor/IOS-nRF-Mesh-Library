@@ -9,16 +9,16 @@
 import UIKit
 import nRFMeshProvision
 
-class RuntimeVendorMessage: VendorMessage {
-    var opCode: UInt32
+struct RuntimeVendorMessage: VendorMessage {
+    let opCode: UInt32
+    let parameters: Data?
     
-    var parameters: Data?
-    
-    init(opCode: UInt8, for model: Model, parameters: Data) {
-        self.opCode = (UInt32(0xC0 | opCode) << 16) | UInt32(model.companyIdentifier!)
+    init(opCode: UInt8, for model: Model, parameters: Data?) {
+        self.opCode = (UInt32(0xC0 | opCode) << 16) | UInt32(model.companyIdentifier!.bigEndian)
+        self.parameters = parameters
     }
     
-    required init?(parameters: Data) {
+    init?(parameters: Data) {
         // This init will never be used, as it's used for incoming messages.
         return nil
     }
@@ -58,14 +58,17 @@ class VendorModelViewCell: ModelViewCell, UITextFieldDelegate {
             parametersField.becomeFirstResponder()
             return false
         }
+        textField.resignFirstResponder()
         return true
     }
     
     override func meshNetwork(_ meshNetwork: MeshNetwork, didDeliverMessage message: MeshMessage, from source: Address) -> Bool {
         switch message {
-        case let message as UnknownMessage where (message.opCode & 0xC0FFFF) == (0xC00000 | UInt32(model.companyIdentifier!)):
-            responseOpCodeLabel.text = String(format: "%2X", (message.opCode >> 16) & 0x3F)
-            responseParametersLabel.text = message.parameters?.hex ?? "Empty"
+        case let message as UnknownMessage where
+            (message.opCode & 0xC0FFFF) == (0xC00000 | UInt32(model.companyIdentifier!.bigEndian)):
+            responseOpCodeLabel.text = String(format: "0x%02X", (message.opCode >> 16) & 0x3F)
+            responseParametersLabel.text = message.parameters != nil && !message.parameters!.isEmpty ?
+                "0x\(message.parameters!.hex)" : "Empty"
         default:
             break
         }
@@ -84,8 +87,8 @@ private extension VendorModelViewCell {
                 message: "Bind at least one Application Key before sending the message.")
             return
         }
-        if let opCode = UInt8(opCodeField.text!, radix: 16),
-            let parameters = Data(hex: parametersField.text!) {
+        if let opCode = UInt8(opCodeField.text!, radix: 16) {
+            let parameters = Data(hex: parametersField.text!)
             delegate?.send(RuntimeVendorMessage(opCode: opCode, for: model, parameters: parameters), description: "Sending message...")
         }
     }

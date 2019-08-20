@@ -320,7 +320,7 @@ private extension ModelViewController {
     @objc func reload(_ sender: Any) {
         switch model! {
         case let model where model.isConfigurationServer:
-            modelViewCell?.startRefreshing()
+            _ = modelViewCell?.startRefreshing()
         default:
             reloadBindings()
         }
@@ -429,8 +429,7 @@ extension ModelViewController: MeshNetworkDelegate {
             // If the Model is being refreshed, the Bindings, Subscriptions
             // and Publication has been read. If the Model has custom UI,
             // try refreshing it as well.
-            if let cell = modelViewCell, refreshControl?.isRefreshing ?? false {
-                cell.startRefreshing()
+            if let cell = modelViewCell, refreshControl?.isRefreshing ?? false, cell.startRefreshing() {
                 break
             }
             done()
@@ -485,8 +484,6 @@ extension ModelViewController: MeshNetworkDelegate {
                 } else {
                     if model.isConfigurationServer {
                         tableView.reloadSections(.configurationServer, with: .automatic)
-                    } else {
-                        tableView.reloadSections(.custom, with: .automatic)
                     }
                 }
                 refreshControl?.endRefreshing()
