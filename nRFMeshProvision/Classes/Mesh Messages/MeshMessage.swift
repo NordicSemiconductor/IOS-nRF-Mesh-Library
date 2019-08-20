@@ -128,3 +128,18 @@ internal extension MeshMessage {
     }
     
 }
+
+// MARK: - Other
+
+extension CustomDebugStringConvertible: CustomDebugStringConvertible {
+    
+    public var debugDescription: String {
+        switch self {
+        case .high:
+            return "High (64-bit TransMIC)"
+        case .low:
+            return "Low (32-bit TransMIC)"
+        }
+    }
+    
+}
