@@ -32,6 +32,7 @@ class ModelViewController: ConnectableViewController {
         }
         
         tableView.register(UINib(nibName: "ConfigurationServer", bundle: nil), forCellReuseIdentifier: "0000")
+        tableView.register(UINib(nibName: "VendorModel", bundle: nil), forCellReuseIdentifier: "vendor")
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -71,6 +72,9 @@ class ModelViewController: ConnectableViewController {
         if model.isConfigurationClient {
             return 1
         }
+        if !model.isBluetoothSIGAssigned {
+            return 5
+        }
         return 4 // TODO: Add Custom sections
     }
     
@@ -103,7 +107,7 @@ class ModelViewController: ConnectableViewController {
         case IndexPath.subscribeSection:
             return "Subscriptions"
         default:
-            return nil
+            return "Controls"
         }
     }
     
@@ -167,7 +171,8 @@ class ModelViewController: ConnectableViewController {
             return cell
         }
         // A custom cell for the Model.
-        let cell = tableView.dequeueReusableCell(withIdentifier: model.modelIdentifier.hex, for: indexPath) as! ModelViewCell
+        let identifier = model.isBluetoothSIGAssigned ? model.modelIdentifier.hex : "vendor"
+        let cell = tableView.dequeueReusableCell(withIdentifier: identifier, for: indexPath) as! ModelViewCell
         cell.delegate = self
         cell.model    = model
         modelViewCell = cell
