@@ -479,7 +479,7 @@ extension ModelViewController: MeshNetworkDelegate {
             if !isMore {
                 done()
                 
-                if let status = message as? StatusMessage {
+                if let status = message as? StatusMessage, !status.isSuccess {
                     presentAlert(title: "Error", message: status.message)
                 } else {
                     if model.isConfigurationServer {
@@ -488,6 +488,27 @@ extension ModelViewController: MeshNetworkDelegate {
                 }
                 refreshControl?.endRefreshing()
             }
+        }
+    }
+    
+    func meshNetwork(_ meshNetwork: MeshNetwork, didDeliverMessage message: MeshMessage, to destination: Address) {
+        switch message {
+        case is ConfigMessage:
+            // Ignore.
+            break
+            
+        default:
+            let isMore = modelViewCell?.meshNetwork(meshNetwork, didDeliverMessage: message, to: destination) ?? false
+            if !isMore {
+                done()
+            }
+        }
+    }
+    
+    func meshNetwork(_ meshNetwork: MeshNetwork, failedToDeliverMessage message: MeshMessage, to destination: Address, error: Error) {
+        done() {
+            self.presentAlert(title: "Error", message: "Message could not be sent.")
+            self.refreshControl?.endRefreshing()
         }
     }
     

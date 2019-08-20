@@ -13,6 +13,9 @@ struct RuntimeVendorMessage: VendorMessage {
     let opCode: UInt32
     let parameters: Data?
     
+    var isSegmented: Bool = false
+    var security: MeshMessageSecurity = .low
+    
     init(opCode: UInt8, for model: Model, parameters: Data?) {
         self.opCode = (UInt32(0xC0 | opCode) << 16) | UInt32(model.companyIdentifier!.bigEndian)
         self.parameters = parameters
@@ -40,7 +43,18 @@ class VendorModelViewCell: ModelViewCell, UITextFieldDelegate {
         }
     }
     
+    @IBOutlet weak var acknowledgmentSwitch: UISwitch!
+    @IBOutlet weak var transMicSwitch: UISwitch!
+    @IBAction func transMicDidChange(_ sender: UISwitch) {
+        if sender.isOn {
+            forceSegmentationSwitch.setOn(true, animated: true)
+        }
+        forceSegmentationSwitch.isEnabled = !sender.isOn
+    }
+    @IBOutlet weak var forceSegmentationSwitch: UISwitch!
+    
     @IBOutlet weak var sendButton: UIButton!
+    
     @IBAction func sendTapped(_ sender: UIButton) {
         send()
     }
@@ -73,6 +87,11 @@ class VendorModelViewCell: ModelViewCell, UITextFieldDelegate {
         }
         return false
     }
+    
+    override func meshNetwork(_ meshNetwork: MeshNetwork, didDeliverMessage message: MeshMessage, to destination: Address) -> Bool {
+        // For acknowledged messages wait for the Acknowledgement Message.
+        return acknowledgmentSwitch.isOn
+    }
 }
 
 private extension VendorModelViewCell {
@@ -96,7 +115,10 @@ private extension VendorModelViewCell {
         
         if let opCode = UInt8(opCodeField.text!, radix: 16) {
             let parameters = Data(hex: parametersField.text!)
-            delegate?.send(RuntimeVendorMessage(opCode: opCode, for: model, parameters: parameters), description: "Sending message...")
+            var message = RuntimeVendorMessage(opCode: opCode, for: model, parameters: parameters)
+            message.isSegmented = forceSegmentationSwitch.isOn
+            message.security = transMicSwitch.isOn ? .high : .low
+            delegate?.send(message, description: "Sending message...")
         }
     }
     

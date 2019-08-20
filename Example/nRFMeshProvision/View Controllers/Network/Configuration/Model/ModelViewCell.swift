@@ -64,5 +64,21 @@ class ModelViewCell: UITableViewCell {
     func meshNetwork(_ meshNetwork: MeshNetwork, didDeliverMessage message: MeshMessage, from source: Address) -> Bool {
         return false
     }
+    
+    /// A callback called when an unsegmented message was sent to the
+    /// `transmitter`, or when all segments of a segmented message targetting
+    /// a Unicast Address were acknowledged by the target Node.
+    ///
+    /// - parameters:
+    ///   - meshNetwork: The mesh network to which the message has
+    ///                  been sent.
+    ///   - message:     The message that has been sent.
+    ///   - source:      The Unicast Address of the Element to which
+    ///                  the message was sent.
+    /// - returns: `True`, when another request has been made or an Acknowledgement
+    ///            is expected, `false` if the request has complete.
+    func meshNetwork(_ meshNetwork: MeshNetwork, didDeliverMessage message: MeshMessage, to destination: Address) -> Bool {
+        return false
+    }
 
 }
