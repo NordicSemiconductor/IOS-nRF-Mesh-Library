@@ -35,6 +35,7 @@ internal class AccessLayer {
     ///                          valid mesh Address.
     /// - parameter applicationKey: The Application Key to sign the message with.
     func send(_ message: MeshMessage, to destination: Address, using applicationKey: ApplicationKey) {
+        print("Sending \(message) to 0x\(destination.hex)") // TODO: Remove me
         networkManager.upperTransportLayer.send(message, to: destination, using: applicationKey)
     }
     
@@ -70,7 +71,7 @@ private extension AccessLayer {
             
         // Vendor Messages
         case let opCode where (opCode & 0xC00000) == 0xC00000:
-            MessageType = networkManager.meshNetworkManager.vendorTypes[opCode]
+            MessageType = networkManager.meshNetworkManager.vendorTypes[opCode] ?? UnknownMessage.self
             
         // Composition Data
         case ConfigCompositionDataGet.opCode:
@@ -266,9 +267,10 @@ private extension AccessLayer {
         }
         
         if let MessageType = MessageType,
-           let message = MessageType.init(parameters: accessPdu.parameters) {
+           var message = MessageType.init(parameters: accessPdu.parameters) {
             if var unknownMessage = message as? UnknownMessage {
                 unknownMessage.opCode = accessPdu.opCode
+                message = unknownMessage
             }
             print("\(message) received") // TODO: Remove me
             if let configMessage = message as? ConfigMessage {

@@ -23,8 +23,9 @@ public struct UnknownMessage: MeshMessage {
 extension UnknownMessage: CustomDebugStringConvertible {
     
     public var debugDescription: String {
-        let value = parameters?.hex ?? "nil"
-        return "UnknownMessage(opCode: \(opCode), parameters: \(value))"
+        let opCodeHex = opCode.hex.suffix(6)
+        let parametersHex = parameters?.hex ?? "nil"
+        return "UnknownMessage(opCode: 0x\(opCodeHex), parameters: \(parametersHex))"
     }
     
 }
