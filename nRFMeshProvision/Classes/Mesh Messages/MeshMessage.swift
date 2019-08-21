@@ -131,7 +131,7 @@ internal extension MeshMessage {
 
 // MARK: - Other
 
-extension CustomDebugStringConvertible: CustomDebugStringConvertible {
+extension MeshMessageSecurity: CustomDebugStringConvertible {
     
     public var debugDescription: String {
         switch self {
