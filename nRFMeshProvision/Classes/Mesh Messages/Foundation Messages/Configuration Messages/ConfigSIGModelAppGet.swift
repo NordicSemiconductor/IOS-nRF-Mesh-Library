@@ -1,5 +1,5 @@
 //
-//  CnofigSIGModelAppGet.swift
+//  ConfigSIGModelAppGet.swift
 //  nRFMeshProvision
 //
 //  Created by Aleksander Nowakowski on 29/07/2019.

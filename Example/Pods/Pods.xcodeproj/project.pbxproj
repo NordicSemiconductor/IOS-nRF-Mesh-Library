@@ -48,7 +48,7 @@
 		52313FFA22EB0E160074325A /* ConfigModelSubscriptionVirtualAddressOverwrite.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52313FF922EB0E160074325A /* ConfigModelSubscriptionVirtualAddressOverwrite.swift */; };
 		52313FFC22EB0E5B0074325A /* ConfigModelSubscriptionDeleteAll.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52313FFB22EB0E5B0074325A /* ConfigModelSubscriptionDeleteAll.swift */; };
 		52313FFE22EB10010074325A /* ConfigModelSubscriptionStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52313FFD22EB10010074325A /* ConfigModelSubscriptionStatus.swift */; };
-		5231400422EF0F970074325A /* CnofigSIGModelAppGet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5231400322EF0F970074325A /* CnofigSIGModelAppGet.swift */; };
+		5231400422EF0F970074325A /* ConfigSIGModelAppGet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5231400322EF0F970074325A /* ConfigSIGModelAppGet.swift */; };
 		5231400622EF10E60074325A /* ConfigVendorModelAppGet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5231400522EF10E60074325A /* ConfigVendorModelAppGet.swift */; };
 		5231400822EF11DB0074325A /* ConfigSIGModelAppList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5231400722EF11DB0074325A /* ConfigSIGModelAppList.swift */; };
 		5231400A22EF130D0074325A /* ConfigVendorModelAppList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5231400922EF130D0074325A /* ConfigVendorModelAppList.swift */; };
@@ -296,7 +296,7 @@
 		52313FF922EB0E160074325A /* ConfigModelSubscriptionVirtualAddressOverwrite.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigModelSubscriptionVirtualAddressOverwrite.swift; sourceTree = "<group>"; };
 		52313FFB22EB0E5B0074325A /* ConfigModelSubscriptionDeleteAll.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigModelSubscriptionDeleteAll.swift; sourceTree = "<group>"; };
 		52313FFD22EB10010074325A /* ConfigModelSubscriptionStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigModelSubscriptionStatus.swift; sourceTree = "<group>"; };
-		5231400322EF0F970074325A /* CnofigSIGModelAppGet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CnofigSIGModelAppGet.swift; sourceTree = "<group>"; };
+		5231400322EF0F970074325A /* ConfigSIGModelAppGet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigSIGModelAppGet.swift; sourceTree = "<group>"; };
 		5231400522EF10E60074325A /* ConfigVendorModelAppGet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigVendorModelAppGet.swift; sourceTree = "<group>"; };
 		5231400722EF11DB0074325A /* ConfigSIGModelAppList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigSIGModelAppList.swift; sourceTree = "<group>"; };
 		5231400922EF130D0074325A /* ConfigVendorModelAppList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigVendorModelAppList.swift; sourceTree = "<group>"; };
@@ -772,7 +772,7 @@
 				523F777C22CB8B210030EA6A /* ConfigModelAppBind.swift */,
 				523F777E22CB90700030EA6A /* ConfigModelAppUnbind.swift */,
 				523F778022CB912B0030EA6A /* ConfigModelAppStatus.swift */,
-				5231400322EF0F970074325A /* CnofigSIGModelAppGet.swift */,
+				5231400322EF0F970074325A /* ConfigSIGModelAppGet.swift */,
 				5231400722EF11DB0074325A /* ConfigSIGModelAppList.swift */,
 				5231400522EF10E60074325A /* ConfigVendorModelAppGet.swift */,
 				5231400922EF130D0074325A /* ConfigVendorModelAppList.swift */,
@@ -1426,7 +1426,7 @@
 				52568D4722DDE8E800B7B236 /* MeshNetwork+Groups.swift in Sources */,
 				523F778522CC888D0030EA6A /* Element+Models.swift in Sources */,
 				5231403822FDA3020074325A /* ConfigBeaconSet.swift in Sources */,
-				5231400422EF0F970074325A /* CnofigSIGModelAppGet.swift in Sources */,
+				5231400422EF0F970074325A /* ConfigSIGModelAppGet.swift in Sources */,
 				523F777322CA1B780030EA6A /* FoundationLayer.swift in Sources */,
 				528AB9F2228C4F3E000BE9DC /* IvIndex.swift in Sources */,
 				52313FF422EB0BFA0074325A /* ConfigModelSubscriptionDelete.swift in Sources */,
