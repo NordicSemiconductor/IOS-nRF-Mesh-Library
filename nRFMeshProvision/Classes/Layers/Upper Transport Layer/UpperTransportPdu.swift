@@ -65,14 +65,15 @@ internal struct UpperTransportPdu {
         self.message = message
         self.source = source
         self.destination = destination
-        self.accessPdu = message.accessPdu
+        let accessPdu = message.accessPdu
+        self.accessPdu = accessPdu
         
         // The nonce type is 0x01 for messages signed with Application Key and
         // 0x02 for messages signed using Device Key (Configuration Messages).
         let type: UInt8 = 0x01
         // ASZMIC is set to 1 for messages that shall be sent with high security
         // (64-bit TransMIC). This is possible only for Segmented Access Messages.
-        let aszmic: UInt8 = message.security == .high && (message.accessPdu.count > 11 || message.isSegmented)  ? 1 : 0
+        let aszmic: UInt8 = message.security == .high && (accessPdu.count > 11 || message.isSegmented)  ? 1 : 0
         // SEQ is 24-bit value, in Big Endian.
         let seq = (Data() + sequence.bigEndian).dropFirst()
         
@@ -84,7 +85,7 @@ internal struct UpperTransportPdu {
         self.aid = key.aid
         self.sequence = sequence
         self.transportMicSize = aszmic == 0 ? 4 : 8
-        self.transportPdu = OpenSSLHelper().calculateCCM(message.accessPdu, withKey: key.key, nonce: nonce,
+        self.transportPdu = OpenSSLHelper().calculateCCM(accessPdu, withKey: key.key, nonce: nonce,
                                                          andMICSize: transportMicSize)
     }
     
@@ -93,14 +94,15 @@ internal struct UpperTransportPdu {
         self.message = message
         self.source = source
         self.destination = destination
-        self.accessPdu = message.accessPdu
+        let accessPdu = message.accessPdu
+        self.accessPdu = accessPdu
         
         // The nonce type is 0x01 for messages signed with Application Key and
         // 0x02 for messages signed using Device Key (Configuration Messages).
         let type: UInt8 = 0x02
         // ASZMIC is set to 1 for messages that shall be sent with high security
         // (64-bit TransMIC). This is possible only for Segmented Access Messages.
-        let aszmic: UInt8 = message.security == .high && (message.accessPdu.count > 11 || message.isSegmented)  ? 1 : 0
+        let aszmic: UInt8 = message.security == .high && (accessPdu.count > 11 || message.isSegmented)  ? 1 : 0
         // SEQ is 24-bit value, in Big Endian.
         let seq = (Data() + sequence.bigEndian).dropFirst()
         
@@ -112,7 +114,7 @@ internal struct UpperTransportPdu {
         self.aid = nil
         self.sequence = sequence
         self.transportMicSize = aszmic == 0 ? 4 : 8
-        self.transportPdu = OpenSSLHelper().calculateCCM(message.accessPdu, withKey: key, nonce: nonce,
+        self.transportPdu = OpenSSLHelper().calculateCCM(accessPdu, withKey: key, nonce: nonce,
                                                          andMICSize: transportMicSize)
     }
     
