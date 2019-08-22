@@ -59,7 +59,7 @@ public struct ConfigModelPublicationSet: ConfigAnyModelMessage {
         let flag = Int((parameters[5] & 0x10) >> 4)
         let ttl = parameters[6]
         let periodSteps = parameters[7] & 0x3F
-        let periodResolution = Publish.StepResolution(rawValue: parameters[7] >> 6)!
+        let periodResolution = StepResolution(rawValue: parameters[7] >> 6)!
         let count = parameters[8] & 0x07
         let interval = parameters[8] >> 3
         let retransmit = Publish.Retransmit(publishRetransmitCount: count, intervalSteps: interval)

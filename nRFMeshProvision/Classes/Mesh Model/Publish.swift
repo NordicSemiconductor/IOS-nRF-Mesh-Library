@@ -35,26 +35,6 @@ public struct Publish: Codable {
         }
     }
     
-    public enum StepResolution: UInt8 {
-        case _100_milliseconds = 0
-        case _1_second         = 1
-        case _10_seconds       = 2
-        case _10_minutes       = 3
-        
-        func toPeriod(steps: UInt8) -> Int {
-            switch self {
-            case ._100_milliseconds:
-                return Int(steps) * 100
-            case ._1_second:
-                return Int(steps) * 1000
-            case ._10_seconds:
-                return Int(steps) * 10000
-            case ._10_minutes:
-                return Int(steps) * 600000
-            }
-        }
-    }
-    
     /// Publication address for the Model. It's 4 or 32-character long
     /// hexadecimal string.
     private let address: String
@@ -122,7 +102,7 @@ public struct Publish: Codable {
         self.credentials = 0
         self.ttl = 0
         self.periodSteps = 0
-        self.periodResolution = ._100_milliseconds
+        self.periodResolution = .hundredsOfMilliseconds
         self.period = 0
         self.retransmit = Retransmit(publishRetransmitCount: 0, intervalSteps: 0)
     }
@@ -159,16 +139,16 @@ public struct Publish: Codable {
         period = try container.decode(Int.self, forKey: .period)
         switch period {
         case let period where period % 600000 == 0:
-            periodResolution = ._10_minutes
+            periodResolution = .tensOfMinutes
             periodSteps = UInt8(period / 600000)
         case let period where period % 10000 == 0:
-            periodResolution = ._10_seconds
+            periodResolution = .tensOfSeconds
             periodSteps = UInt8(period / 10000)
         case let period where period % 1000 == 0:
-            periodResolution = ._1_second
+            periodResolution = .seconds
             periodSteps = UInt8(period / 1000)
         default:
-            periodResolution = ._100_milliseconds
+            periodResolution = .hundredsOfMilliseconds
             periodSteps = UInt8(period / 100)
         }
         let flag = try container.decode(Int.self, forKey: .credentials)
@@ -227,23 +207,6 @@ extension Publish.Retransmit: CustomDebugStringConvertible {
             return "Disabled"
         }
         return "\(count) times every \(interval) ms"
-    }
-    
-}
-
-extension Publish.StepResolution: CustomDebugStringConvertible {
-    
-    public var debugDescription: String {
-        switch self {
-        case ._100_milliseconds:
-            return "100 milliseconds"
-        case ._1_second:
-            return "1 second"
-        case ._10_seconds:
-            return "10 seconds"
-        case ._10_minutes:
-            return "10 minutes"
-        }
     }
     
 }

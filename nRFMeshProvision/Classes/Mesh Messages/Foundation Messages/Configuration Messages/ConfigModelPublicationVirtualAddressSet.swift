@@ -53,7 +53,7 @@ public struct ConfigModelPublicationVirtualAddressSet: ConfigAnyModelMessage {
         let flag = Int((parameters[19] & 0x10) >> 4)
         let ttl = parameters[20]
         let periodSteps = parameters[21] & 0x3F
-        let periodResolution = Publish.StepResolution(rawValue: parameters[21] >> 6)!
+        let periodResolution = StepResolution(rawValue: parameters[21] >> 6)!
         let count = parameters[22] & 0x07
         let interval = parameters[22] >> 3
         let retransmit = Publish.Retransmit(publishRetransmitCount: count, intervalSteps: interval)

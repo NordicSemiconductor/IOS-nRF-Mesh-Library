@@ -69,7 +69,7 @@ class SetPublicationViewController: ConnectableViewController {
         }
     }
     private var periodSteps: UInt8 = 0
-    private var periodResolution: Publish.StepResolution = ._100_milliseconds
+    private var periodResolution: StepResolution = .hundredsOfMilliseconds
     private var retransmissionCount: UInt8 = 0
     private var retransmissionIntervalSteps: UInt8 = 0
     
@@ -94,13 +94,13 @@ class SetPublicationViewController: ConnectableViewController {
             // The maximum value that can be calculated using resolution 10 sec is 10 min 30 sec, therefore
             // the last resolution starts from step 2 (20 minutes).
             switch publish.periodResolution {
-            case ._100_milliseconds:
+            case .hundredsOfMilliseconds:
                 periodSlider.value = Float(publish.periodResolution.rawValue * 64 + publish.periodSteps)
-            case ._1_second:
+            case .seconds:
                 periodSlider.value = Float(publish.periodResolution.rawValue * 64 + publish.periodSteps - 7)
-            case ._10_seconds:
+            case .tensOfSeconds:
                 periodSlider.value = Float(publish.periodResolution.rawValue * 64 + publish.periodSteps - 7 - 7)
-            case ._10_minutes:
+            case .tensOfMinutes:
                 periodSlider.value = Float(publish.periodResolution.rawValue * 64 + publish.periodSteps - 7 - 7 - 2)
             }
             retransmitCountSlider.value = Float(publish.retransmit.count)
@@ -178,39 +178,39 @@ private extension SetPublicationViewController {
         case let period where period < 1.0:
             periodLabel.text = "Disabled"
             periodSteps = 0
-            periodResolution = ._100_milliseconds
+            periodResolution = .hundredsOfMilliseconds
         case let period where period >= 1 && period < 10:
             periodLabel.text = "\(Int(period) * 100) ms"
             periodSteps = UInt8(period)
-            periodResolution = ._100_milliseconds
+            periodResolution = .hundredsOfMilliseconds
         case let period where period >= 10 && period < 64:
             periodLabel.text = String(format: "%.1f sec", floorf(period) / 10)
             periodSteps = UInt8(period)
-            periodResolution = ._100_milliseconds
+            periodResolution = .hundredsOfMilliseconds
         case let period where period >= 64 && period < 117:
             periodLabel.text = "\(Int(period) - 57) sec"
             periodSteps = UInt8(period) - 57
-            periodResolution = ._1_second
+            periodResolution = .seconds
         case let period where period >= 117 && period < 121:
             periodLabel.text = "\(Int((period + 3) / 60) - 1) min 0\(Int(period + 3) % 60) sec"
             periodSteps = UInt8(period) - 57
-            periodResolution = ._1_second
+            periodResolution = .seconds
         case let period where period >= 121 && period < 178:
             let sec = (Int(period) % 6) * 10
             let secString = sec == 0 ? "00" : "\(sec)"
             periodLabel.text = "\(Int(period) / 6 - 19) min \(secString) sec"
             periodSteps = UInt8(period) - 114
-            periodResolution = ._10_seconds
+            periodResolution = .tensOfSeconds
         case let period where period >= 178 && period < 182:
             periodLabel.text = "\((Int(period) - 176) * 10) min"
             periodSteps = UInt8(period) - 176
-            periodResolution = ._10_minutes
+            periodResolution = .tensOfMinutes
         case let period where period >= 182:
             let min = (Int(period) - 176) % 6 * 10
             let minString = min == 0 ? "00" : "\(min)"
             periodLabel.text = "\(Int(period) / 6 - 29) h \(minString) min"
             periodSteps = UInt8(period) - 176
-            periodResolution = ._10_minutes
+            periodResolution = .tensOfMinutes
         default:
             break
         }
