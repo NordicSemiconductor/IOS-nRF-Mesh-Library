@@ -68,6 +68,17 @@ public protocol StatusMessage: MeshMessage {
     var message: String { get }
 }
 
+/// A message with Transaction Identifier.
+///
+/// The Transaction Identifier will automatically be set and incremented
+/// each time a message is sent. The counter is reuesed for all types that
+/// extend this protocol.
+public protocol TransactionMessage: MeshMessage {
+    /// Transaction identifier. If not set, this field will automatically
+    /// be set when the message is being sent or received.
+    var tid: UInt8! { get set }
+}
+
 /// A type of a mesh message which opcode is known during compilation time.
 public protocol StaticMeshMessage: MeshMessage {
     /// The message Op Code.

@@ -9,6 +9,8 @@ import Foundation
 
 internal class AccessLayer {
     let networkManager: NetworkManager
+    /// Next Transaction Identifier to use.
+    var tid = UInt8.random(in: UInt8.min...UInt8.max)
     
     init(_ networkManager: NetworkManager) {
         self.networkManager = networkManager
@@ -35,8 +37,15 @@ internal class AccessLayer {
     ///                          valid mesh Address.
     /// - parameter applicationKey: The Application Key to sign the message with.
     func send(_ message: MeshMessage, to destination: Address, using applicationKey: ApplicationKey) {
-        print("Sending \(message) to 0x\(destination.hex)") // TODO: Remove me
-        networkManager.upperTransportLayer.send(message, to: destination, using: applicationKey)
+        var m = message
+        if var tranactionMessage = message as? TransactionMessage, tranactionMessage.tid == nil {
+            tranactionMessage.tid = tid
+            // Increase the TID to the next value modulo 255.
+            if tid < 255 { tid = tid + 1 } else { tid = 0 }
+            m = tranactionMessage
+        }
+        print("Sending \(m) to 0x\(destination.hex)") // TODO: Remove me
+        networkManager.upperTransportLayer.send(m, to: destination, using: applicationKey)
     }
     
     /// Sends the ConfigMessage to the destination. The message is encrypted
