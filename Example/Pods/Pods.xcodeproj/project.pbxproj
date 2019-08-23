@@ -220,6 +220,8 @@
 		52A9C1BA231012730036792A /* GenericPowerDefaultSetUnacknowledged.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52A9C1B9231012730036792A /* GenericPowerDefaultSetUnacknowledged.swift */; };
 		52A9C1BC231012B90036792A /* GenericPowerRangeSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52A9C1BB231012B90036792A /* GenericPowerRangeSet.swift */; };
 		52A9C1BE231013010036792A /* GenericPowerRangeSetUnacknowledged.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52A9C1BD231013010036792A /* GenericPowerRangeSetUnacknowledged.swift */; };
+		52A9C1C023101C340036792A /* GenericBatteryGet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52A9C1BF23101C340036792A /* GenericBatteryGet.swift */; };
+		52A9C1C223101C540036792A /* GenericBatteryStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52A9C1C123101C540036792A /* GenericBatteryStatus.swift */; };
 		52B7F68022994B3E00B0A42F /* MeshMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52B7F67F22994B3E00B0A42F /* MeshMessage.swift */; };
 		52B7F68222994D3C00B0A42F /* MeshMessageError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52B7F68122994D3C00B0A42F /* MeshMessageError.swift */; };
 		52B7F688229BCC4000B0A42F /* NetworkPdu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52B7F687229BCC4000B0A42F /* NetworkPdu.swift */; };
@@ -500,6 +502,8 @@
 		52A9C1B9231012730036792A /* GenericPowerDefaultSetUnacknowledged.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericPowerDefaultSetUnacknowledged.swift; sourceTree = "<group>"; };
 		52A9C1BB231012B90036792A /* GenericPowerRangeSet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericPowerRangeSet.swift; sourceTree = "<group>"; };
 		52A9C1BD231013010036792A /* GenericPowerRangeSetUnacknowledged.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericPowerRangeSetUnacknowledged.swift; sourceTree = "<group>"; };
+		52A9C1BF23101C340036792A /* GenericBatteryGet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericBatteryGet.swift; sourceTree = "<group>"; };
+		52A9C1C123101C540036792A /* GenericBatteryStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericBatteryStatus.swift; sourceTree = "<group>"; };
 		52B7F67F22994B3E00B0A42F /* MeshMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeshMessage.swift; sourceTree = "<group>"; };
 		52B7F68122994D3C00B0A42F /* MeshMessageError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeshMessageError.swift; sourceTree = "<group>"; };
 		52B7F687229BCC4000B0A42F /* NetworkPdu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkPdu.swift; sourceTree = "<group>"; };
@@ -962,6 +966,8 @@
 				52A9C1B9231012730036792A /* GenericPowerDefaultSetUnacknowledged.swift */,
 				52A9C1BB231012B90036792A /* GenericPowerRangeSet.swift */,
 				52A9C1BD231013010036792A /* GenericPowerRangeSetUnacknowledged.swift */,
+				52A9C1BF23101C340036792A /* GenericBatteryGet.swift */,
+				52A9C1C123101C540036792A /* GenericBatteryStatus.swift */,
 			);
 			path = "Generic Messages";
 			sourceTree = "<group>";
@@ -1486,6 +1492,7 @@
 				52A9C182230FE3B90036792A /* GenericLevelSet.swift in Sources */,
 				5231401822F83DE50074325A /* ConfigRelayGet.swift in Sources */,
 				528352462271F0C60097B949 /* MeshNetwork+Keys.swift in Sources */,
+				52A9C1C223101C540036792A /* GenericBatteryStatus.swift in Sources */,
 				5294DAD822B0F7FE0041370E /* ConfigAppKeyAdd.swift in Sources */,
 				528352862281B2B30097B949 /* Algorithm.swift in Sources */,
 				52F6AD6822B3B16800F0D7DF /* ConfigCompositionDataStatus.swift in Sources */,
@@ -1500,6 +1507,7 @@
 				522AFFE722C24FB100521EDC /* ConfigDefaultTtlSet.swift in Sources */,
 				52314050230BE2540074325A /* MeshNetworkDelegate.swift in Sources */,
 				524C039822AF8FEF00C5B1B9 /* Element+Address.swift in Sources */,
+				52A9C1C023101C340036792A /* GenericBatteryGet.swift in Sources */,
 				529B7618224A6D47008F1CE7 /* KeyIndex.swift in Sources */,
 				52DF5D97229D6B4800C297C1 /* LowerTransportLayer.swift in Sources */,
 				522AFFE322C23DD300521EDC /* Model+Name.swift in Sources */,

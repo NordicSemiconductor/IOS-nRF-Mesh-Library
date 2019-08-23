@@ -374,6 +374,12 @@ private extension AccessLayer {
         case GenericPowerRangeSetUnacknowledged.opCode:
             MessageType = GenericPowerRangeSetUnacknowledged.self
             
+        case GenericBatteryGet.opCode:
+            MessageType = GenericBatteryGet.self
+            
+        case GenericBatteryStatus.opCode:
+            MessageType = GenericBatteryStatus.self
+            
         // Other
             
         default:
