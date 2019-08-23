@@ -43,14 +43,6 @@ class GenericOnOffViewCell: ModelViewCell {
     }
     
     @IBOutlet weak var acknowledgmentSwitch: UISwitch!
-    @IBOutlet weak var transMicSwitch: UISwitch!
-    @IBAction func transMicDidChange(_ sender: UISwitch) {
-        if sender.isOn {
-            forceSegmentationSwitch.setOn(true, animated: true)
-        }
-        forceSegmentationSwitch.isEnabled = !sender.isOn
-    }
-    @IBOutlet weak var forceSegmentationSwitch: UISwitch!
     
     @IBAction func onTapped(_ sender: UIButton) {
         sendGenericOnOffMessage(turnOn: true)
