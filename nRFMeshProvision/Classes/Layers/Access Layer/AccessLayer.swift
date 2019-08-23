@@ -309,6 +309,18 @@ private extension AccessLayer {
         case GenericMoveSetUnacknowledged.opCode:
             MessageType = GenericMoveSetUnacknowledged.self
             
+        case GenericDefaultTransitionTimeGet.opCode:
+            MessageType = GenericDefaultTransitionTimeGet.self
+            
+        case GenericDefaultTransitionTimeSet.opCode:
+            MessageType = GenericDefaultTransitionTimeSet.self
+            
+        case GenericDefaultTransitionTimeSetUnacknowledged.opCode:
+            MessageType = GenericDefaultTransitionTimeSetUnacknowledged.self
+            
+        case GenericDefaultTransitionTimeStatus.opCode:
+            MessageType = GenericDefaultTransitionTimeStatus.self
+            
         // Other
             
         default:

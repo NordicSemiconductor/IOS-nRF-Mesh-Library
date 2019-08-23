@@ -196,6 +196,10 @@
 		52A9C18A230FE8540036792A /* GenericDeltaSetUnacknowledged.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52A9C189230FE8540036792A /* GenericDeltaSetUnacknowledged.swift */; };
 		52A9C18C230FF0D50036792A /* GenericMoveSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52A9C18B230FF0D50036792A /* GenericMoveSet.swift */; };
 		52A9C18E230FF1F20036792A /* GenericMoveSetUnacknowledged.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52A9C18D230FF1F20036792A /* GenericMoveSetUnacknowledged.swift */; };
+		52A9C190230FFFBC0036792A /* GenericDefaultTransitionTimeGet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52A9C18F230FFFBC0036792A /* GenericDefaultTransitionTimeGet.swift */; };
+		52A9C192230FFFE20036792A /* GenericDefaultTransitionTimeSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52A9C191230FFFE20036792A /* GenericDefaultTransitionTimeSet.swift */; };
+		52A9C194231001E20036792A /* GenericDefaultTransitionTimeSetUnacknowledged.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52A9C193231001E20036792A /* GenericDefaultTransitionTimeSetUnacknowledged.swift */; };
+		52A9C1962310027D0036792A /* GenericDefaultTransitionTimeStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52A9C1952310027D0036792A /* GenericDefaultTransitionTimeStatus.swift */; };
 		52B7F68022994B3E00B0A42F /* MeshMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52B7F67F22994B3E00B0A42F /* MeshMessage.swift */; };
 		52B7F68222994D3C00B0A42F /* MeshMessageError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52B7F68122994D3C00B0A42F /* MeshMessageError.swift */; };
 		52B7F688229BCC4000B0A42F /* NetworkPdu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52B7F687229BCC4000B0A42F /* NetworkPdu.swift */; };
@@ -452,6 +456,10 @@
 		52A9C189230FE8540036792A /* GenericDeltaSetUnacknowledged.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericDeltaSetUnacknowledged.swift; sourceTree = "<group>"; };
 		52A9C18B230FF0D50036792A /* GenericMoveSet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericMoveSet.swift; sourceTree = "<group>"; };
 		52A9C18D230FF1F20036792A /* GenericMoveSetUnacknowledged.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericMoveSetUnacknowledged.swift; sourceTree = "<group>"; };
+		52A9C18F230FFFBC0036792A /* GenericDefaultTransitionTimeGet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericDefaultTransitionTimeGet.swift; sourceTree = "<group>"; };
+		52A9C191230FFFE20036792A /* GenericDefaultTransitionTimeSet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericDefaultTransitionTimeSet.swift; sourceTree = "<group>"; };
+		52A9C193231001E20036792A /* GenericDefaultTransitionTimeSetUnacknowledged.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericDefaultTransitionTimeSetUnacknowledged.swift; sourceTree = "<group>"; };
+		52A9C1952310027D0036792A /* GenericDefaultTransitionTimeStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericDefaultTransitionTimeStatus.swift; sourceTree = "<group>"; };
 		52B7F67F22994B3E00B0A42F /* MeshMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeshMessage.swift; sourceTree = "<group>"; };
 		52B7F68122994D3C00B0A42F /* MeshMessageError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeshMessageError.swift; sourceTree = "<group>"; };
 		52B7F687229BCC4000B0A42F /* NetworkPdu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkPdu.swift; sourceTree = "<group>"; };
@@ -890,6 +898,10 @@
 				52A9C189230FE8540036792A /* GenericDeltaSetUnacknowledged.swift */,
 				52A9C18B230FF0D50036792A /* GenericMoveSet.swift */,
 				52A9C18D230FF1F20036792A /* GenericMoveSetUnacknowledged.swift */,
+				52A9C18F230FFFBC0036792A /* GenericDefaultTransitionTimeGet.swift */,
+				52A9C191230FFFE20036792A /* GenericDefaultTransitionTimeSet.swift */,
+				52A9C193231001E20036792A /* GenericDefaultTransitionTimeSetUnacknowledged.swift */,
+				52A9C1952310027D0036792A /* GenericDefaultTransitionTimeStatus.swift */,
 			);
 			path = "Generic Messages";
 			sourceTree = "<group>";
@@ -1358,11 +1370,13 @@
 				35A52D4DECCD815F8B14722C2D96207D /* nRFMeshProvision-dummy.m in Sources */,
 				529B75F1224A6CE4008F1CE7 /* Provisioner.swift in Sources */,
 				5274B76322A1DE40008450BC /* SecureNetworkBeacon.swift in Sources */,
+				52A9C190230FFFBC0036792A /* GenericDefaultTransitionTimeGet.swift in Sources */,
 				5231402E22F986C30074325A /* ConfigFriendStatus.swift in Sources */,
 				529B7610224A6D47008F1CE7 /* KeyRefreshPhase.swift in Sources */,
 				5231400E22EF17860074325A /* ConfigVendorModelSubscriptionGet.swift in Sources */,
 				5231400C22EF17410074325A /* ConfigSIGModelSubscriptionGet.swift in Sources */,
 				529B7614224A6D47008F1CE7 /* Address.swift in Sources */,
+				52A9C1962310027D0036792A /* GenericDefaultTransitionTimeStatus.swift in Sources */,
 				523F776222C4DEE60030EA6A /* ConfigNetKeyList.swift in Sources */,
 				5283529E2282CCE60097B949 /* Provisioner+Ranges.swift in Sources */,
 				528352402271EF770097B949 /* MeshNetwork+Ranges.swift in Sources */,
@@ -1386,6 +1400,7 @@
 				529B7621224B8213008F1CE7 /* MeshAddress.swift in Sources */,
 				5231403422FDA2DF0074325A /* ConfigBeaconStatus.swift in Sources */,
 				5274B75B22A1D2C9008450BC /* HeartbeatMessage.swift in Sources */,
+				52A9C194231001E20036792A /* GenericDefaultTransitionTimeSetUnacknowledged.swift in Sources */,
 				523F778322CB94EA0030EA6A /* Node+Elements.swift in Sources */,
 				52A9C17A230EA0D40036792A /* GenericOnOffStatus.swift in Sources */,
 				5231400822EF11DB0074325A /* ConfigSIGModelAppList.swift in Sources */,
@@ -1467,6 +1482,7 @@
 				52A9C176230E88E90036792A /* StepResolution.swift in Sources */,
 				522AFFE522C24F6000521EDC /* ConfigDefaultTtlGet.swift in Sources */,
 				529B75ED224A6CE4008F1CE7 /* AddressRange.swift in Sources */,
+				52A9C192230FFFE20036792A /* GenericDefaultTransitionTimeSet.swift in Sources */,
 				525242E2225CC6D30044CECB /* ClosedRange.swift in Sources */,
 				529B7617224A6D47008F1CE7 /* MeshModelError.swift in Sources */,
 				529B7613224A6D47008F1CE7 /* Security.swift in Sources */,
