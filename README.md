@@ -3,7 +3,7 @@
 ## About
 
 This is the second version of the nRF Mesh Provision library for iOS. It is still under development and many features are not supported.
-However, all implemented features should work and are tested againt nRF Mesh SDK 3.1 and Zephyr based mesh device.
+However, all implemented features should work and are tested againt nRF Mesh SDK 3.2 and Zephyr based mesh device.
 
 The first version of this library is no longer maintained. The application available on App Store will eventually be replaced with the new sample
 application.
@@ -12,21 +12,24 @@ application.
 
 1. Provisionig with all features that available in Bluetooth Mesh Profile 1.0.1, including OOB Public Key and all types of OOB.
 2. Managing Provisioners, Network Keys, Application Keys, resetting network, etc.
-3. All network layers are working.
+3. All network layers are working (except 6. from section below).
 4. Parsing Secure Network beacons.
 5. Adding, removing and refreshing Network and Application Keys to Nodes.
 6. Binging and unbinding Application Keys to Models.
 7. Setting and clearing publication to a Model.
 8. Setting and removing subscriptions to a Model.
 9. Groups, including those with Virtual Addresses (without sending messages to them).
+10. Handling Configuration Server message sent by other Provisioner.
+11. Generic OnOff and Vendor model have dedicated controls in sample app.
 
 ## NOT (yet) supported features
 
-1. Vendor models and SIG defined models, except from supported ones.
+1. Many SIG defined models, except from supported ones.
 2. UI for controlling groups.
-3. Handling Configuration Server message sent by other Provisioner.
-4. Proxy Filter.
-5. Key Refresh Procedure.
+3. Proxy Filter.
+4. Key Refresh Procedure.
+5. Health server messages.
+6. Segmentation of Segmented Control Messages.
 
 ## Feedback
 
