@@ -18,7 +18,7 @@ public struct GenericDefaultTransitionTimeSetUnacknowledged: StaticMeshMessage {
     /// element will take to transition to the target state from the present state.
     public let transitionTime: TransitionTime
     
-    /// Creates the Generic Default Transition Time Set message.
+    /// Creates the Generic Default Transition Time Set Unacknowledged message.
     ///
     /// - parameter transitionTime: The default time that an element will take to transition
     ///                             to the target state from the present state.

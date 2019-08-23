@@ -271,8 +271,7 @@ private extension AccessLayer {
         case ConfigDefaultTtlStatus.opCode:
             MessageType = ConfigDefaultTtlStatus.self
             
-        // Generics
-            
+        // Generics            
         case GenericOnOffGet.opCode:
             MessageType = GenericOnOffGet.self
             
@@ -320,6 +319,18 @@ private extension AccessLayer {
             
         case GenericDefaultTransitionTimeStatus.opCode:
             MessageType = GenericDefaultTransitionTimeStatus.self
+            
+        case GenericOnPowerUpGet.opCode:
+            MessageType = GenericOnPowerUpGet.self
+            
+        case GenericOnPowerUpSet.opCode:
+            MessageType = GenericOnPowerUpSet.self
+            
+        case GenericOnPowerUpSetUnacknowledged.opCode:
+            MessageType = GenericOnPowerUpSetUnacknowledged.self
+            
+        case GenericOnPowerUpStatus.opCode:
+            MessageType = GenericOnPowerUpStatus.self
             
         // Other
             

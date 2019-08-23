@@ -200,6 +200,11 @@
 		52A9C192230FFFE20036792A /* GenericDefaultTransitionTimeSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52A9C191230FFFE20036792A /* GenericDefaultTransitionTimeSet.swift */; };
 		52A9C194231001E20036792A /* GenericDefaultTransitionTimeSetUnacknowledged.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52A9C193231001E20036792A /* GenericDefaultTransitionTimeSetUnacknowledged.swift */; };
 		52A9C1962310027D0036792A /* GenericDefaultTransitionTimeStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52A9C1952310027D0036792A /* GenericDefaultTransitionTimeStatus.swift */; };
+		52A9C198231005380036792A /* GenericOnPowerUpGet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52A9C197231005380036792A /* GenericOnPowerUpGet.swift */; };
+		52A9C19A231005600036792A /* GenericOnPowerUpSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52A9C199231005600036792A /* GenericOnPowerUpSet.swift */; };
+		52A9C19C231005A20036792A /* OnPowerUp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52A9C19B231005A20036792A /* OnPowerUp.swift */; };
+		52A9C19E231006780036792A /* GenericOnPowerUpSetUnacknowledged.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52A9C19D231006780036792A /* GenericOnPowerUpSetUnacknowledged.swift */; };
+		52A9C1A0231006AA0036792A /* GenericOnPowerUpStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52A9C19F231006AA0036792A /* GenericOnPowerUpStatus.swift */; };
 		52B7F68022994B3E00B0A42F /* MeshMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52B7F67F22994B3E00B0A42F /* MeshMessage.swift */; };
 		52B7F68222994D3C00B0A42F /* MeshMessageError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52B7F68122994D3C00B0A42F /* MeshMessageError.swift */; };
 		52B7F688229BCC4000B0A42F /* NetworkPdu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52B7F687229BCC4000B0A42F /* NetworkPdu.swift */; };
@@ -460,6 +465,11 @@
 		52A9C191230FFFE20036792A /* GenericDefaultTransitionTimeSet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericDefaultTransitionTimeSet.swift; sourceTree = "<group>"; };
 		52A9C193231001E20036792A /* GenericDefaultTransitionTimeSetUnacknowledged.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericDefaultTransitionTimeSetUnacknowledged.swift; sourceTree = "<group>"; };
 		52A9C1952310027D0036792A /* GenericDefaultTransitionTimeStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericDefaultTransitionTimeStatus.swift; sourceTree = "<group>"; };
+		52A9C197231005380036792A /* GenericOnPowerUpGet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericOnPowerUpGet.swift; sourceTree = "<group>"; };
+		52A9C199231005600036792A /* GenericOnPowerUpSet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericOnPowerUpSet.swift; sourceTree = "<group>"; };
+		52A9C19B231005A20036792A /* OnPowerUp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnPowerUp.swift; sourceTree = "<group>"; };
+		52A9C19D231006780036792A /* GenericOnPowerUpSetUnacknowledged.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericOnPowerUpSetUnacknowledged.swift; sourceTree = "<group>"; };
+		52A9C19F231006AA0036792A /* GenericOnPowerUpStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericOnPowerUpStatus.swift; sourceTree = "<group>"; };
 		52B7F67F22994B3E00B0A42F /* MeshMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeshMessage.swift; sourceTree = "<group>"; };
 		52B7F68122994D3C00B0A42F /* MeshMessageError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeshMessageError.swift; sourceTree = "<group>"; };
 		52B7F687229BCC4000B0A42F /* NetworkPdu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkPdu.swift; sourceTree = "<group>"; };
@@ -853,6 +863,7 @@
 				529B7622224BAB26008F1CE7 /* Publish.swift */,
 				52A9C175230E88E90036792A /* StepResolution.swift */,
 				52A9C173230E88700036792A /* TransitionTime.swift */,
+				52A9C19B231005A20036792A /* OnPowerUp.swift */,
 				528AB9F1228C4F3E000BE9DC /* IvIndex.swift */,
 			);
 			name = "Mesh Model";
@@ -902,6 +913,10 @@
 				52A9C191230FFFE20036792A /* GenericDefaultTransitionTimeSet.swift */,
 				52A9C193231001E20036792A /* GenericDefaultTransitionTimeSetUnacknowledged.swift */,
 				52A9C1952310027D0036792A /* GenericDefaultTransitionTimeStatus.swift */,
+				52A9C197231005380036792A /* GenericOnPowerUpGet.swift */,
+				52A9C19F231006AA0036792A /* GenericOnPowerUpStatus.swift */,
+				52A9C199231005600036792A /* GenericOnPowerUpSet.swift */,
+				52A9C19D231006780036792A /* GenericOnPowerUpSetUnacknowledged.swift */,
 			);
 			path = "Generic Messages";
 			sourceTree = "<group>";
@@ -1359,6 +1374,7 @@
 				528352A82282D9FF0097B949 /* BearerDelegate.swift in Sources */,
 				52835277228029720097B949 /* Bearer.swift in Sources */,
 				5231402822F95F650074325A /* ConfigGATTProxyStatus.swift in Sources */,
+				52A9C19E231006780036792A /* GenericOnPowerUpSetUnacknowledged.swift in Sources */,
 				52F6AD6622B3AF2700F0D7DF /* ConfigCompositionDataGet.swift in Sources */,
 				5274B76122A1D9FB008450BC /* BeaconPdu.swift in Sources */,
 				5231400622EF10E60074325A /* ConfigVendorModelAppGet.swift in Sources */,
@@ -1388,8 +1404,10 @@
 				5231401C22F84B560074325A /* ConfigRelayStatus.swift in Sources */,
 				5231401222EF238B0074325A /* ConfigVendorModelSubscriptionList.swift in Sources */,
 				52A9C16E230D7BCA0036792A /* GenericOnOffSet.swift in Sources */,
+				52A9C19A231005600036792A /* GenericOnPowerUpSet.swift in Sources */,
 				529B75EC224A6CE4008F1CE7 /* SceneRange.swift in Sources */,
 				528352922281B68E0097B949 /* ProvisioningPdu.swift in Sources */,
+				52A9C198231005380036792A /* GenericOnPowerUpGet.swift in Sources */,
 				52313FEC22E9CE3C0074325A /* Models.swift in Sources */,
 				529B75EA224A6CE4008F1CE7 /* Element.swift in Sources */,
 				52313FF822EB0DCB0074325A /* ConfigModelSubscriptionOverwrite.swift in Sources */,
@@ -1473,6 +1491,8 @@
 				5231400422EF0F970074325A /* ConfigSIGModelAppGet.swift in Sources */,
 				523F777322CA1B780030EA6A /* FoundationLayer.swift in Sources */,
 				528AB9F2228C4F3E000BE9DC /* IvIndex.swift in Sources */,
+				52A9C19C231005A20036792A /* OnPowerUp.swift in Sources */,
+				52A9C1A0231006AA0036792A /* GenericOnPowerUpStatus.swift in Sources */,
 				52313FF422EB0BFA0074325A /* ConfigModelSubscriptionDelete.swift in Sources */,
 				52313FFA22EB0E160074325A /* ConfigModelSubscriptionVirtualAddressOverwrite.swift in Sources */,
 				5283524C2276F53A0097B949 /* Key.swift in Sources */,
