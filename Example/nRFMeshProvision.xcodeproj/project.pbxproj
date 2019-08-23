@@ -67,6 +67,8 @@
 		529B7643225222E8008F1CE7 /* Address+String.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529B7642225222E8008F1CE7 /* Address+String.swift */; };
 		529B764722522D37008F1CE7 /* UITableView+EmptyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529B764622522D37008F1CE7 /* UITableView+EmptyView.swift */; };
 		529B76492252499E008F1CE7 /* UIColor+Nordic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529B76482252499E008F1CE7 /* UIColor+Nordic.swift */; };
+		52A9C17D230EB9490036792A /* GenericOnOffViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52A9C17B230EB9490036792A /* GenericOnOffViewCell.swift */; };
+		52A9C17E230EB9490036792A /* GenericOnOff.xib in Resources */ = {isa = PBXBuildFile; fileRef = 52A9C17C230EB9490036792A /* GenericOnOff.xib */; };
 		52B7F67D229829F200B0A42F /* Addresses.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52B7F67C229829F200B0A42F /* Addresses.swift */; };
 		52DAA5DB22560EEE0041C43A /* EditProvisionerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52DAA5DA22560EEE0041C43A /* EditProvisionerViewController.swift */; };
 		52DAA5E2225B633B0041C43A /* RangeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52DAA5E1225B633B0041C43A /* RangeView.swift */; };
@@ -156,6 +158,8 @@
 		529B7642225222E8008F1CE7 /* Address+String.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "Address+String.swift"; path = "Utils/Address+String.swift"; sourceTree = "<group>"; };
 		529B764622522D37008F1CE7 /* UITableView+EmptyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "UITableView+EmptyView.swift"; path = "Utils/UITableView+EmptyView.swift"; sourceTree = "<group>"; };
 		529B76482252499E008F1CE7 /* UIColor+Nordic.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "UIColor+Nordic.swift"; path = "Utils/UIColor+Nordic.swift"; sourceTree = "<group>"; };
+		52A9C17B230EB9490036792A /* GenericOnOffViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericOnOffViewCell.swift; sourceTree = "<group>"; };
+		52A9C17C230EB9490036792A /* GenericOnOff.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = GenericOnOff.xib; sourceTree = "<group>"; };
 		52B7F67C229829F200B0A42F /* Addresses.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Addresses.swift; sourceTree = "<group>"; };
 		52DAA5DA22560EEE0041C43A /* EditProvisionerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = EditProvisionerViewController.swift; path = "View Controllers/Settings/EditProvisionerViewController.swift"; sourceTree = "<group>"; };
 		52DAA5E1225B633B0041C43A /* RangeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RangeView.swift; sourceTree = "<group>"; };
@@ -244,6 +248,7 @@
 			isa = PBXGroup;
 			children = (
 				5231403B22FDA8670074325A /* ConfigurationServer.xib */,
+				52A9C17C230EB9490036792A /* GenericOnOff.xib */,
 				5231404C230AC4680074325A /* VendorModel.xib */,
 			);
 			path = Model;
@@ -254,6 +259,7 @@
 			children = (
 				52314040230192C50074325A /* ModelViewCell.swift */,
 				5231403E2301761C0074325A /* ConfigurationServerViewCell.swift */,
+				52A9C17B230EB9490036792A /* GenericOnOffViewCell.swift */,
 				5231404B230AC4680074325A /* VendorModelViewCell.swift */,
 			);
 			path = Model;
@@ -576,6 +582,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				523F778D22CCEA910030EA6A /* SetPublication.storyboard in Resources */,
+				52A9C17E230EB9490036792A /* GenericOnOff.xib in Resources */,
 				3089BCA02099CA4900E30192 /* LaunchScreen.storyboard in Resources */,
 				607FACDB1AFB9204008FA782 /* Main.storyboard in Resources */,
 				5231404E230AC4680074325A /* VendorModel.xib in Resources */,
@@ -669,6 +676,7 @@
 				528AB9F8228D847C000BE9DC /* NetworkViewController.swift in Sources */,
 				529B759A2243BA0A008F1CE7 /* ProvisionersViewController.swift in Sources */,
 				523F778722CCDE250030EA6A /* SetPublicationViewController.swift in Sources */,
+				52A9C17D230EB9490036792A /* GenericOnOffViewCell.swift in Sources */,
 				529B76492252499E008F1CE7 /* UIColor+Nordic.swift in Sources */,
 				525242E0225CBFEC0044CECB /* RangeObject+String.swift in Sources */,
 				529B7575224107A5008F1CE7 /* AppInfo.swift in Sources */,

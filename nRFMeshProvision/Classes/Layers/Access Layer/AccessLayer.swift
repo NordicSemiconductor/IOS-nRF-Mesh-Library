@@ -271,6 +271,22 @@ private extension AccessLayer {
         case ConfigDefaultTtlStatus.opCode:
             MessageType = ConfigDefaultTtlStatus.self
             
+        // Generics
+            
+        case GenericOnOffGet.opCode:
+            MessageType = GenericOnOffGet.self
+            
+        case GenericOnOffSet.opCode:
+            MessageType = GenericOnOffSet.self
+            
+        case GenericOnOffSetUnacknowledged.opCode:
+            MessageType = GenericOnOffSetUnacknowledged.self
+            
+        case GenericOnOffStatus.opCode:
+            MessageType = GenericOnOffStatus.self
+            
+        // Other
+            
         default:
             MessageType = UnknownMessage.self
         }

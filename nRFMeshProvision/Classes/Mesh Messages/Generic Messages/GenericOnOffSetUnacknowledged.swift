@@ -30,8 +30,7 @@ public struct GenericOnOffSetUnacknowledged: StaticMeshMessage, TransactionMessa
     
     /// Creates the Generic OnOff Set message.
     ///
-    /// - parameters:
-    ///   - isOn: The target value of the Generic OnOff state.
+    /// - parameter isOn: The target value of the Generic OnOff state.
     public init(_ isOn: Bool) {
         self.isOn = isOn
         self.transitionTime = nil

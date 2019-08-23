@@ -15,16 +15,16 @@ public struct TransitionTime {
     /// Value 0x3F means that the value is unknown. The state cannot be
     /// set to this value, but an element may report an unknown value if
     /// a transition is higher than 0x3E or not determined.
-    let steps: UInt8
+    public let steps: UInt8
     /// The step resolution.
-    let stepResolution: StepResolution
+    public let stepResolution: StepResolution
     
     /// The transition time in milliseconds.
-    var milliseconds: Int {
+    public var milliseconds: Int {
         return stepResolution.toPeriod(steps: steps & 0x3F)
     }
     /// The transition time as `TimeInterval` in seconds.
-    var interval: TimeInterval {
+    public var interval: TimeInterval {
         return TimeInterval(milliseconds) / 1000.0
     }
     
@@ -41,7 +41,7 @@ public struct TransitionTime {
     ///                    range 0...62. Value 63 means that the value is
     ///                    unknown and the state cannot be set to this value.
     /// - parameter stepResolution: The step resolution.
-    init(steps: UInt8, stepResolution: StepResolution) {
+    public init(steps: UInt8, stepResolution: StepResolution) {
         self.steps = min(steps, 0x3E)
         self.stepResolution = stepResolution
     }

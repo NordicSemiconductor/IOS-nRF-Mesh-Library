@@ -32,6 +32,7 @@ class ModelViewController: ConnectableViewController {
         }
         
         tableView.register(UINib(nibName: "ConfigurationServer", bundle: nil), forCellReuseIdentifier: "0000")
+        tableView.register(UINib(nibName: "GenericOnOff", bundle: nil), forCellReuseIdentifier: "1000")
         tableView.register(UINib(nibName: "VendorModel", bundle: nil), forCellReuseIdentifier: "vendor")
     }
     
@@ -72,10 +73,10 @@ class ModelViewController: ConnectableViewController {
         if model.isConfigurationClient {
             return 1
         }
-        if !model.isBluetoothSIGAssigned {
+        if model.hasCustomUI {
             return 5
         }
-        return 4 // TODO: Add Custom sections
+        return 4
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -598,5 +599,14 @@ private extension IndexSet {
     static let bindingsAndPublication = IndexSet([IndexPath.bindingsSection, IndexPath.publishSection])
     static let configurationServer = IndexSet(integer: IndexPath.configurationServerSection)
     static let custom = IndexSet(integer: IndexPath.subscribeSection + 1)
+    
+}
+
+private extension Model {
+    
+    var hasCustomUI: Bool {
+        return !isBluetoothSIGAssigned
+            || modelIdentifier == 0x1000 // Generic On Off Server.
+    }
     
 }
