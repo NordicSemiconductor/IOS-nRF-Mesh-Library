@@ -271,7 +271,7 @@ private extension AccessLayer {
         case ConfigDefaultTtlStatus.opCode:
             MessageType = ConfigDefaultTtlStatus.self
             
-        // Generics            
+        // Generics
         case GenericOnOffGet.opCode:
             MessageType = GenericOnOffGet.self
             
@@ -331,6 +331,48 @@ private extension AccessLayer {
             
         case GenericOnPowerUpStatus.opCode:
             MessageType = GenericOnPowerUpStatus.self
+            
+        case GenericPowerLevelGet.opCode:
+            MessageType = GenericPowerLevelGet.self
+            
+        case GenericPowerLevelSet.opCode:
+            MessageType = GenericPowerLevelSet.self
+            
+        case GenericPowerLevelSetUnacknowledged.opCode:
+            MessageType = GenericPowerLevelSetUnacknowledged.self
+            
+        case GenericPowerLevelStatus.opCode:
+            MessageType = GenericPowerLevelStatus.self
+            
+        case GenericPowerLastGet.opCode:
+            MessageType = GenericPowerLastGet.self
+            
+        case GenericPowerLastStatus.opCode:
+            MessageType = GenericPowerLastStatus.self
+            
+        case GenericPowerDefaultGet.opCode:
+            MessageType = GenericPowerDefaultGet.self
+            
+        case GenericPowerDefaultStatus.opCode:
+            MessageType = GenericPowerDefaultStatus.self
+            
+        case GenericPowerRangeGet.opCode:
+            MessageType = GenericPowerRangeGet.self
+            
+        case GenericPowerRangeStatus.opCode:
+            MessageType = GenericPowerRangeStatus.self
+            
+        case GenericPowerDefaultSet.opCode:
+            MessageType = GenericPowerDefaultSet.self
+            
+        case GenericPowerDefaultSetUnacknowledged.opCode:
+            MessageType = GenericPowerDefaultSetUnacknowledged.self
+            
+        case GenericPowerRangeSet.opCode:
+            MessageType = GenericPowerRangeSet.self
+            
+        case GenericPowerRangeSetUnacknowledged.opCode:
+            MessageType = GenericPowerRangeSetUnacknowledged.self
             
         // Other
             

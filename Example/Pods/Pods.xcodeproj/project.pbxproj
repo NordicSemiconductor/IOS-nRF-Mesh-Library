@@ -205,6 +205,21 @@
 		52A9C19C231005A20036792A /* OnPowerUp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52A9C19B231005A20036792A /* OnPowerUp.swift */; };
 		52A9C19E231006780036792A /* GenericOnPowerUpSetUnacknowledged.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52A9C19D231006780036792A /* GenericOnPowerUpSetUnacknowledged.swift */; };
 		52A9C1A0231006AA0036792A /* GenericOnPowerUpStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52A9C19F231006AA0036792A /* GenericOnPowerUpStatus.swift */; };
+		52A9C1A223100A0C0036792A /* GenericPowerLevelGet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52A9C1A123100A0C0036792A /* GenericPowerLevelGet.swift */; };
+		52A9C1A423100A360036792A /* GenericPowerLevelSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52A9C1A323100A360036792A /* GenericPowerLevelSet.swift */; };
+		52A9C1A623100B230036792A /* GenericPowerLevelSetUnacknowledged.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52A9C1A523100B230036792A /* GenericPowerLevelSetUnacknowledged.swift */; };
+		52A9C1A823100B640036792A /* GenericPowerLevelStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52A9C1A723100B640036792A /* GenericPowerLevelStatus.swift */; };
+		52A9C1AA23100CEC0036792A /* GenericPowerLastGet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52A9C1A923100CEC0036792A /* GenericPowerLastGet.swift */; };
+		52A9C1AC23100D2A0036792A /* GenericPowerLastStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52A9C1AB23100D2A0036792A /* GenericPowerLastStatus.swift */; };
+		52A9C1AE23100DDA0036792A /* GenericPowerDefautGet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52A9C1AD23100DDA0036792A /* GenericPowerDefautGet.swift */; };
+		52A9C1B023100E000036792A /* GenericPowerDefaultStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52A9C1AF23100E000036792A /* GenericPowerDefaultStatus.swift */; };
+		52A9C1B223100E870036792A /* GenericPowerRangeGet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52A9C1B123100E870036792A /* GenericPowerRangeGet.swift */; };
+		52A9C1B423100EAB0036792A /* GenericPowerRangeStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52A9C1B323100EAB0036792A /* GenericPowerRangeStatus.swift */; };
+		52A9C1B623100F160036792A /* GenericMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52A9C1B523100F160036792A /* GenericMessage.swift */; };
+		52A9C1B8231012430036792A /* GenericPowerDefaultSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52A9C1B7231012430036792A /* GenericPowerDefaultSet.swift */; };
+		52A9C1BA231012730036792A /* GenericPowerDefaultSetUnacknowledged.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52A9C1B9231012730036792A /* GenericPowerDefaultSetUnacknowledged.swift */; };
+		52A9C1BC231012B90036792A /* GenericPowerRangeSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52A9C1BB231012B90036792A /* GenericPowerRangeSet.swift */; };
+		52A9C1BE231013010036792A /* GenericPowerRangeSetUnacknowledged.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52A9C1BD231013010036792A /* GenericPowerRangeSetUnacknowledged.swift */; };
 		52B7F68022994B3E00B0A42F /* MeshMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52B7F67F22994B3E00B0A42F /* MeshMessage.swift */; };
 		52B7F68222994D3C00B0A42F /* MeshMessageError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52B7F68122994D3C00B0A42F /* MeshMessageError.swift */; };
 		52B7F688229BCC4000B0A42F /* NetworkPdu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52B7F687229BCC4000B0A42F /* NetworkPdu.swift */; };
@@ -470,6 +485,21 @@
 		52A9C19B231005A20036792A /* OnPowerUp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnPowerUp.swift; sourceTree = "<group>"; };
 		52A9C19D231006780036792A /* GenericOnPowerUpSetUnacknowledged.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericOnPowerUpSetUnacknowledged.swift; sourceTree = "<group>"; };
 		52A9C19F231006AA0036792A /* GenericOnPowerUpStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericOnPowerUpStatus.swift; sourceTree = "<group>"; };
+		52A9C1A123100A0C0036792A /* GenericPowerLevelGet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericPowerLevelGet.swift; sourceTree = "<group>"; };
+		52A9C1A323100A360036792A /* GenericPowerLevelSet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericPowerLevelSet.swift; sourceTree = "<group>"; };
+		52A9C1A523100B230036792A /* GenericPowerLevelSetUnacknowledged.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericPowerLevelSetUnacknowledged.swift; sourceTree = "<group>"; };
+		52A9C1A723100B640036792A /* GenericPowerLevelStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericPowerLevelStatus.swift; sourceTree = "<group>"; };
+		52A9C1A923100CEC0036792A /* GenericPowerLastGet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericPowerLastGet.swift; sourceTree = "<group>"; };
+		52A9C1AB23100D2A0036792A /* GenericPowerLastStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericPowerLastStatus.swift; sourceTree = "<group>"; };
+		52A9C1AD23100DDA0036792A /* GenericPowerDefautGet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericPowerDefautGet.swift; sourceTree = "<group>"; };
+		52A9C1AF23100E000036792A /* GenericPowerDefaultStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericPowerDefaultStatus.swift; sourceTree = "<group>"; };
+		52A9C1B123100E870036792A /* GenericPowerRangeGet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericPowerRangeGet.swift; sourceTree = "<group>"; };
+		52A9C1B323100EAB0036792A /* GenericPowerRangeStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericPowerRangeStatus.swift; sourceTree = "<group>"; };
+		52A9C1B523100F160036792A /* GenericMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericMessage.swift; sourceTree = "<group>"; };
+		52A9C1B7231012430036792A /* GenericPowerDefaultSet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericPowerDefaultSet.swift; sourceTree = "<group>"; };
+		52A9C1B9231012730036792A /* GenericPowerDefaultSetUnacknowledged.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericPowerDefaultSetUnacknowledged.swift; sourceTree = "<group>"; };
+		52A9C1BB231012B90036792A /* GenericPowerRangeSet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericPowerRangeSet.swift; sourceTree = "<group>"; };
+		52A9C1BD231013010036792A /* GenericPowerRangeSetUnacknowledged.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericPowerRangeSetUnacknowledged.swift; sourceTree = "<group>"; };
 		52B7F67F22994B3E00B0A42F /* MeshMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeshMessage.swift; sourceTree = "<group>"; };
 		52B7F68122994D3C00B0A42F /* MeshMessageError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeshMessageError.swift; sourceTree = "<group>"; };
 		52B7F687229BCC4000B0A42F /* NetworkPdu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkPdu.swift; sourceTree = "<group>"; };
@@ -756,6 +786,7 @@
 				52B7F67F22994B3E00B0A42F /* MeshMessage.swift */,
 				52B7F68122994D3C00B0A42F /* MeshMessageError.swift */,
 				525A3BFF22AD2167000D3791 /* ConfigMessage.swift */,
+				52A9C1B523100F160036792A /* GenericMessage.swift */,
 				523140472306BC3A0074325A /* VendorMessage.swift */,
 				523140492306EB260074325A /* UnknownMessage.swift */,
 			);
@@ -917,6 +948,20 @@
 				52A9C19F231006AA0036792A /* GenericOnPowerUpStatus.swift */,
 				52A9C199231005600036792A /* GenericOnPowerUpSet.swift */,
 				52A9C19D231006780036792A /* GenericOnPowerUpSetUnacknowledged.swift */,
+				52A9C1A123100A0C0036792A /* GenericPowerLevelGet.swift */,
+				52A9C1A323100A360036792A /* GenericPowerLevelSet.swift */,
+				52A9C1A523100B230036792A /* GenericPowerLevelSetUnacknowledged.swift */,
+				52A9C1A723100B640036792A /* GenericPowerLevelStatus.swift */,
+				52A9C1A923100CEC0036792A /* GenericPowerLastGet.swift */,
+				52A9C1AB23100D2A0036792A /* GenericPowerLastStatus.swift */,
+				52A9C1AD23100DDA0036792A /* GenericPowerDefautGet.swift */,
+				52A9C1AF23100E000036792A /* GenericPowerDefaultStatus.swift */,
+				52A9C1B123100E870036792A /* GenericPowerRangeGet.swift */,
+				52A9C1B323100EAB0036792A /* GenericPowerRangeStatus.swift */,
+				52A9C1B7231012430036792A /* GenericPowerDefaultSet.swift */,
+				52A9C1B9231012730036792A /* GenericPowerDefaultSetUnacknowledged.swift */,
+				52A9C1BB231012B90036792A /* GenericPowerRangeSet.swift */,
+				52A9C1BD231013010036792A /* GenericPowerRangeSetUnacknowledged.swift */,
 			);
 			path = "Generic Messages";
 			sourceTree = "<group>";
@@ -1370,6 +1415,7 @@
 				5283528A2281B30D0097B949 /* Oob.swift in Sources */,
 				52A9C180230FE2A60036792A /* GenericLevelGet.swift in Sources */,
 				5231400A22EF130D0074325A /* ConfigVendorModelAppList.swift in Sources */,
+				52A9C1B623100F160036792A /* GenericMessage.swift in Sources */,
 				523F777F22CB90700030EA6A /* ConfigModelAppUnbind.swift in Sources */,
 				528352A82282D9FF0097B949 /* BearerDelegate.swift in Sources */,
 				52835277228029720097B949 /* Bearer.swift in Sources */,
@@ -1379,6 +1425,7 @@
 				5274B76122A1D9FB008450BC /* BeaconPdu.swift in Sources */,
 				5231400622EF10E60074325A /* ConfigVendorModelAppGet.swift in Sources */,
 				52313FFE22EB10010074325A /* ConfigModelSubscriptionStatus.swift in Sources */,
+				52A9C1A823100B640036792A /* GenericPowerLevelStatus.swift in Sources */,
 				76AD7DBB6F78223071CAB41C3AE42393 /* MeshConstants.swift in Sources */,
 				52DF5D9E229D7C9000C297C1 /* UpperTransportPdu.swift in Sources */,
 				528352962281C0FE0097B949 /* OptionSet+Data.swift in Sources */,
@@ -1397,6 +1444,7 @@
 				5283529E2282CCE60097B949 /* Provisioner+Ranges.swift in Sources */,
 				528352402271EF770097B949 /* MeshNetwork+Ranges.swift in Sources */,
 				523F775E22C4CE9A0030EA6A /* ConfigNetKeyStatus.swift in Sources */,
+				52A9C1AC23100D2A0036792A /* GenericPowerLastStatus.swift in Sources */,
 				52A9C18A230FE8540036792A /* GenericDeltaSetUnacknowledged.swift in Sources */,
 				523F778122CB912B0030EA6A /* ConfigModelAppStatus.swift in Sources */,
 				52B7F68022994B3E00B0A42F /* MeshMessage.swift in Sources */,
@@ -1418,6 +1466,7 @@
 				529B7621224B8213008F1CE7 /* MeshAddress.swift in Sources */,
 				5231403422FDA2DF0074325A /* ConfigBeaconStatus.swift in Sources */,
 				5274B75B22A1D2C9008450BC /* HeartbeatMessage.swift in Sources */,
+				52A9C1BC231012B90036792A /* GenericPowerRangeSet.swift in Sources */,
 				52A9C194231001E20036792A /* GenericDefaultTransitionTimeSetUnacknowledged.swift in Sources */,
 				523F778322CB94EA0030EA6A /* Node+Elements.swift in Sources */,
 				52A9C17A230EA0D40036792A /* GenericOnOffStatus.swift in Sources */,
@@ -1440,10 +1489,12 @@
 				5294DAD822B0F7FE0041370E /* ConfigAppKeyAdd.swift in Sources */,
 				528352862281B2B30097B949 /* Algorithm.swift in Sources */,
 				52F6AD6822B3B16800F0D7DF /* ConfigCompositionDataStatus.swift in Sources */,
+				52A9C1B8231012430036792A /* GenericPowerDefaultSet.swift in Sources */,
 				5231402622F95E7B0074325A /* ConfigGATTProxySet.swift in Sources */,
 				528352A42282CF9A0097B949 /* ApplicationKey+NetworkKey.swift in Sources */,
 				52DF5D91229C000D00C297C1 /* NetworkLayer.swift in Sources */,
 				529B7616224A6D47008F1CE7 /* MeshUUID.swift in Sources */,
+				52A9C1B223100E870036792A /* GenericPowerRangeGet.swift in Sources */,
 				5283527D22802A370097B949 /* BearerError.swift in Sources */,
 				5231402C22F986810074325A /* ConfigFriendSet.swift in Sources */,
 				522AFFE722C24FB100521EDC /* ConfigDefaultTtlSet.swift in Sources */,
@@ -1456,6 +1507,7 @@
 				5274B75D22A1D7C6008450BC /* SegmentedMessage.swift in Sources */,
 				5231402422F95E4C0074325A /* ConfigGATTProxyGet.swift in Sources */,
 				528352B022830F380097B949 /* ProxyProtocolHandler.swift in Sources */,
+				52A9C1A423100A360036792A /* GenericPowerLevelSet.swift in Sources */,
 				52DF5DA3229E6EF800C297C1 /* AccessLayer.swift in Sources */,
 				524C039622AE671900C5B1B9 /* ApplicationKeys.swift in Sources */,
 				5231402022F84FC00074325A /* ConfigNetworkTransmitSet.swift in Sources */,
@@ -1474,6 +1526,7 @@
 				52A9C178230E96F70036792A /* GenericOnOffSetUnacknowledged.swift in Sources */,
 				522AFFE922C2502F00521EDC /* ConfigDefaultTtlStatus.swift in Sources */,
 				523F775822C4C3350030EA6A /* ConfigNetKeyAdd.swift in Sources */,
+				52A9C1A623100B230036792A /* GenericPowerLevelSetUnacknowledged.swift in Sources */,
 				52313FF222EB0A830074325A /* ConfigModelSubscriptionVirtualAddressAdd.swift in Sources */,
 				523F776022C4DC110030EA6A /* ConfigNetKeyGet.swift in Sources */,
 				52F6AD7222BA17E100F0D7DF /* ConfigNodeResetStatus.swift in Sources */,
@@ -1484,13 +1537,16 @@
 				52F6AD6E22B8F8EA00F0D7DF /* AccessPdu.swift in Sources */,
 				523F775C22C4CDFC0030EA6A /* ConfigNetKeyUpdate.swift in Sources */,
 				5231402222F851950074325A /* ConfigNetworkTransmitStatus.swift in Sources */,
+				52A9C1A223100A0C0036792A /* GenericPowerLevelGet.swift in Sources */,
 				528352AE228302860097B949 /* BaseGattProxyBearer.swift in Sources */,
 				52568D4722DDE8E800B7B236 /* MeshNetwork+Groups.swift in Sources */,
 				523F778522CC888D0030EA6A /* Element+Models.swift in Sources */,
+				52A9C1B023100E000036792A /* GenericPowerDefaultStatus.swift in Sources */,
 				5231403822FDA3020074325A /* ConfigBeaconSet.swift in Sources */,
 				5231400422EF0F970074325A /* ConfigSIGModelAppGet.swift in Sources */,
 				523F777322CA1B780030EA6A /* FoundationLayer.swift in Sources */,
 				528AB9F2228C4F3E000BE9DC /* IvIndex.swift in Sources */,
+				52A9C1AA23100CEC0036792A /* GenericPowerLastGet.swift in Sources */,
 				52A9C19C231005A20036792A /* OnPowerUp.swift in Sources */,
 				52A9C1A0231006AA0036792A /* GenericOnPowerUpStatus.swift in Sources */,
 				52313FF422EB0BFA0074325A /* ConfigModelSubscriptionDelete.swift in Sources */,
@@ -1503,9 +1559,11 @@
 				522AFFE522C24F6000521EDC /* ConfigDefaultTtlGet.swift in Sources */,
 				529B75ED224A6CE4008F1CE7 /* AddressRange.swift in Sources */,
 				52A9C192230FFFE20036792A /* GenericDefaultTransitionTimeSet.swift in Sources */,
+				52A9C1BE231013010036792A /* GenericPowerRangeSetUnacknowledged.swift in Sources */,
 				525242E2225CC6D30044CECB /* ClosedRange.swift in Sources */,
 				529B7617224A6D47008F1CE7 /* MeshModelError.swift in Sources */,
 				529B7613224A6D47008F1CE7 /* Security.swift in Sources */,
+				52A9C1BA231012730036792A /* GenericPowerDefaultSetUnacknowledged.swift in Sources */,
 				523F777722CB53FA0030EA6A /* Model+Keys.swift in Sources */,
 				528AB9F6228D7654000BE9DC /* Ranges.swift in Sources */,
 				529B761B224A6D5B008F1CE7 /* Int+Hex.swift in Sources */,
@@ -1536,12 +1594,14 @@
 				529B7615224A6D47008F1CE7 /* NodeFeatures.swift in Sources */,
 				52DF5D99229D6B6400C297C1 /* AccessMessage.swift in Sources */,
 				525242E4225DE1EF0044CECB /* RangeObject.swift in Sources */,
+				52A9C1B423100EAB0036792A /* GenericPowerRangeStatus.swift in Sources */,
 				5253027822D5F717007567DB /* Group.swift in Sources */,
 				52A9C186230FE5360036792A /* GenericLevelStatus.swift in Sources */,
 				5283523E2271EF1D0097B949 /* MeshNetwork+Provisioner.swift in Sources */,
 				523F777D22CB8B210030EA6A /* ConfigModelAppBind.swift in Sources */,
 				5231403622FDA2F60074325A /* ConfigBeaconGet.swift in Sources */,
 				529B75F0224A6CE4008F1CE7 /* MeshNetwork.swift in Sources */,
+				52A9C1AE23100DDA0036792A /* GenericPowerDefautGet.swift in Sources */,
 				528352AA2282DA1E0097B949 /* GattBearerDelegate.swift in Sources */,
 				52A9C18E230FF1F20036792A /* GenericMoveSetUnacknowledged.swift in Sources */,
 				52313FFC22EB0E5B0074325A /* ConfigModelSubscriptionDeleteAll.swift in Sources */,
