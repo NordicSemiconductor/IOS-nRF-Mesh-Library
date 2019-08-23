@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct GenericDefaultTransitionTimeSetUnacknowledged: StaticMeshMessage {
+public struct GenericDefaultTransitionTimeSetUnacknowledged: GenericMessage {
     public static let opCode: UInt32 = 0x820F
     
     public var parameters: Data? {

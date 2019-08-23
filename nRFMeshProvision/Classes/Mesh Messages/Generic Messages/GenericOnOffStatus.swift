@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct GenericOnOffStatus: StaticMeshMessage, TransitionStatusMessage {
+public struct GenericOnOffStatus: GenericMessage, TransitionStatusMessage {
     public static var opCode: UInt32 = 0x8204
     
     public var parameters: Data? {

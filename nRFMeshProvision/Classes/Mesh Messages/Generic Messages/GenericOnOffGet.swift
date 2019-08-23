@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct GenericOnOffGet: StaticMeshMessage {
+public struct GenericOnOffGet: GenericMessage {
     public static let opCode: UInt32 = 0x8201
     
     public var parameters: Data? {

@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct GenericOnPowerUpSetUnacknowledged: StaticMeshMessage {
+public struct GenericOnPowerUpSetUnacknowledged: GenericMessage {
     public static let opCode: UInt32 = 0x8214
     
     public var parameters: Data? {
@@ -17,7 +17,7 @@ public struct GenericOnPowerUpSetUnacknowledged: StaticMeshMessage {
     /// The value of the Generic OnPowerUp state.
     public let state: OnPowerUp
     
-    /// Creates the Generic Default Transition Time Set Unacknowledged message.
+    /// Creates the Generic On Power Up Set Unacknowledged message.
     ///
     /// - parameter transitionTime: The value of the Generic OnPowerUp state.
     public init(state: OnPowerUp) {
