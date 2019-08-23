@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct GenericOnOffSet: StaticMeshMessage, TransactionMessage {
+public struct GenericOnOffSet: StaticMeshMessage, TransactionMessage, TransitionMessage {
     public static let opCode: UInt32 = 0x8202
     
     public var tid: UInt8!
@@ -22,10 +22,8 @@ public struct GenericOnOffSet: StaticMeshMessage, TransactionMessage {
     
     /// The new state of Generic OnOff Server.
     public let isOn: Bool
-    /// The Transition Time field identifies the time that an element will
-    /// take to transition to the target state from the present state.
+    
     public let transitionTime: TransitionTime?
-    /// Message execution delay in 5 millisecond steps.
     public let delay: UInt8?
     
     /// Creates the Generic OnOff Set message.

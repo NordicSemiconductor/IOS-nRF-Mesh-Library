@@ -79,6 +79,20 @@ public protocol TransactionMessage: MeshMessage {
     var tid: UInt8! { get set }
 }
 
+public protocol TransitionMessage: MeshMessage {
+    /// The Transition Time field identifies the time that an element will
+    /// take to transition to the target state from the present state.
+    var transitionTime: TransitionTime? { get }
+    /// Message execution delay in 5 millisecond steps.
+    var delay: UInt8? { get }
+}
+
+public protocol TransitionStatusMessage: MeshMessage {
+    /// The Remaining Time field identifies the time that an element will
+    /// take to transition to the target state from the present state.
+    var remainingTime: TransitionTime? { get }
+}
+
 /// A type of a mesh message which opcode is known during compilation time.
 public protocol StaticMeshMessage: MeshMessage {
     /// The message Op Code.

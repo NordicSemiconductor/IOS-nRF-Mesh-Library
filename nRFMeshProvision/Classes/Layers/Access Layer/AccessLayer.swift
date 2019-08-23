@@ -285,6 +285,30 @@ private extension AccessLayer {
         case GenericOnOffStatus.opCode:
             MessageType = GenericOnOffStatus.self
             
+        case GenericLevelGet.opCode:
+            MessageType = GenericLevelGet.self
+            
+        case GenericLevelSet.opCode:
+            MessageType = GenericLevelSet.self
+            
+        case GenericLevelSetUnacknowledged.opCode:
+            MessageType = GenericLevelSetUnacknowledged.self
+            
+        case GenericLevelStatus.opCode:
+            MessageType = GenericLevelStatus.self
+            
+        case GenericDeltaSet.opCode:
+            MessageType = GenericDeltaSet.self
+            
+        case GenericDeltaSetUnacknowledged.opCode:
+            MessageType = GenericDeltaSetUnacknowledged.self
+            
+        case GenericMoveSet.opCode:
+            MessageType = GenericMoveSet.self
+            
+        case GenericMoveSetUnacknowledged.opCode:
+            MessageType = GenericMoveSetUnacknowledged.self
+            
         // Other
             
         default:

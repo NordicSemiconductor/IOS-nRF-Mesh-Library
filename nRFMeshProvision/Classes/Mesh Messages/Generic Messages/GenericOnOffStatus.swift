@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct GenericOnOffStatus: StaticMeshMessage {
+public struct GenericOnOffStatus: StaticMeshMessage, TransitionStatusMessage {
     public static var opCode: UInt32 = 0x8204
     
     public var parameters: Data? {
@@ -23,8 +23,7 @@ public struct GenericOnOffStatus: StaticMeshMessage {
     public let isOn: Bool
     /// The target state of Generic OnOff Server.
     public let targetState: Bool?
-    /// The Remaining Time field identifies the time that an element will
-    /// take to transition to the target state from the present state.
+    
     public let remainingTime: TransitionTime?
     
     /// Creates the Generic OnOff Status message.
@@ -41,8 +40,8 @@ public struct GenericOnOffStatus: StaticMeshMessage {
     /// - parameters:
     ///   - isOn: The current value of the Generic OnOff state.
     ///   - targetState: The target value of the Generic OnOff state.
-    ///   - transitionTime: The time that an element will take to transition
-    ///                     to the target state from the present state.
+    ///   - remainingTime: The time that an element will take to transition
+    ///                    to the target state from the present state.
     public init(_ isOn: Bool, targetState: Bool, remainingTime: TransitionTime) {
         self.isOn = isOn
         self.targetState = targetState
