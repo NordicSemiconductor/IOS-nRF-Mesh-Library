@@ -77,6 +77,11 @@ class GenericOnOffViewCell: ModelViewCell {
         }
         return false
     }
+    
+    override func meshNetwork(_ meshNetwork: MeshNetwork, didDeliverMessage message: MeshMessage, to destination: Address) -> Bool {
+        // For acknowledged messages wait for the Acknowledgement Message.
+        return acknowledgmentSwitch.isOn
+    }
 }
 
 private extension GenericOnOffViewCell {
