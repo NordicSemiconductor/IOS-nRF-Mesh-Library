@@ -46,6 +46,12 @@ public struct TransitionTime {
         self.stepResolution = stepResolution
     }
     
+    /// Creates the Transition Time object for an unknown time.
+    public init() {
+        self.steps = 0x3F
+        self.stepResolution = .hundredsOfMilliseconds
+    }
+    
     internal init(rawValue: UInt8) {
         self.steps = rawValue & 0x3F
         self.stepResolution = StepResolution(rawValue: rawValue >> 6)!
@@ -57,6 +63,51 @@ public extension TransitionTime {
     /// Returns whether the transition time is known.
     var isKnown: Bool {
         return steps < 0x3F
+    }
+    
+}
+
+extension TransitionTime: CustomDebugStringConvertible {
+    
+    public var debugDescription: String {
+        guard isKnown else {
+            return "Unknown"
+        }
+        if steps == 0 {
+            return "Immediate"
+        }
+        
+        let value = Int(steps)
+        
+        switch stepResolution {
+        case .hundredsOfMilliseconds where steps < 10:
+            return "\(value * 100) ms"
+        case .hundredsOfMilliseconds where steps == 10:
+            return "1 sec"
+        case .hundredsOfMilliseconds:
+            return "\(value / 10).\(value % 10) sec"
+            
+        case .seconds where steps < 60:
+            return "\(value) sec"
+        case .seconds where steps == 60:
+            return "1 min"
+        case .seconds:
+            return "1 min \(value - 60) sec"
+            
+        case .tensOfSeconds where steps < 6:
+            return "\(value * 10) sec"
+        case .tensOfSeconds where steps % 6 == 0:
+            return "\(value / 6) min"
+        case .tensOfSeconds:
+            return "\(value / 6) min \(value % 6 * 10) sec"
+            
+        case .tensOfMinutes where steps < 6:
+            return "\(value * 10) min"
+        case .tensOfMinutes where steps % 6 == 0:
+            return "\(value / 6) h"
+        case .tensOfMinutes:
+            return "\(value / 6) h \(value % 6 * 10) min"
+        }
     }
     
 }
