@@ -55,8 +55,7 @@ public struct Publish: Codable {
     public let periodSteps: UInt8
     /// The resolution of the number of steps.
     public let periodResolution: StepResolution
-    /// Returns the interval between subsequent publications
-    /// in seconds.
+    /// Returns the interval between subsequent publications in seconds.
     public var publicationInterval: TimeInterval {
         return TimeInterval(period) / 1000.0
     }
