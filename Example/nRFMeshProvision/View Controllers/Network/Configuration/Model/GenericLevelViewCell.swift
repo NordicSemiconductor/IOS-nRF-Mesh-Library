@@ -15,7 +15,14 @@ class GenericLevelViewCell: ModelViewCell {
     
     @IBOutlet weak var levelSlider: UISlider!
     @IBAction func levelDidChange(_ sender: UISlider) {
-        levelLabel.text = "\(Int(sender.value))"
+        switch segmentControl.selectedSegmentIndex {
+        case 1:
+            let value = max(min(Int32(sender.value) * 2048 * 2, 65535), -65535)
+            levelLabel.text = "\(value)"
+        default:
+            let value = Int16(min(Int(sender.value) * 2048, Int(Int16.max)))
+            levelLabel.text = "\(value)"
+        }
     }
     @IBOutlet weak var levelLabel: UILabel!
     
@@ -36,6 +43,11 @@ class GenericLevelViewCell: ModelViewCell {
     @IBOutlet weak var transitionTimeSlider: UISlider!
     @IBOutlet weak var delaySlider: UISlider!
     
+    @IBOutlet weak var segmentControl: UISegmentedControl!
+    @IBAction func segmentDidChange(_ sender: UISegmentedControl) {
+        levelDidChange(levelSlider)
+    }
+    
     @IBOutlet weak var transitionTimeLabel: UILabel!
     @IBOutlet weak var delayLabel: UILabel!
     @IBOutlet weak var currentStatusLabel: UILabel!
@@ -51,13 +63,19 @@ class GenericLevelViewCell: ModelViewCell {
     @IBOutlet weak var acknowledgmentSwitch: UISwitch!
     
     @IBAction func setTapped(_ sender: UIButton) {
-        sendGenericLevelSetMessage(level: Int16(levelSlider.value))
-    }
-    @IBAction func deltaTapped(_ sender: UIButton) {
-        sendGenericDeltaSetMessage(level: Int32(levelSlider.value) * 2)
-    }
-    @IBAction func moveTapped(_ sender: UIButton) {
-        sendGenericMoveSetMessage(level: Int16(levelSlider.value))
+        switch segmentControl.selectedSegmentIndex {
+        case 0:
+            let value = Int16(min(Int(levelSlider.value) * 2048, Int(Int16.max)))
+            sendGenericLevelSetMessage(level: Int16(value))
+        case 1:
+            let value = max(min(Int32(levelSlider.value) * 2048 * 2, 65535), -65535)
+            sendGenericDeltaSetMessage(level: Int32(value))
+        case 2:
+            let value = Int16(min(Int(levelSlider.value) * 2048, Int(Int16.max)))
+            sendGenericMoveSetMessage(level: Int16(value))
+        default:
+            break
+        }
     }
     @IBAction func readTapped(_ sender: UIButton) {
         readGenericLevelState()
