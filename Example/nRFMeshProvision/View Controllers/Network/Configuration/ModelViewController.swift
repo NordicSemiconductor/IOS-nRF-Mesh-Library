@@ -33,6 +33,7 @@ class ModelViewController: ConnectableViewController {
         
         tableView.register(UINib(nibName: "ConfigurationServer", bundle: nil), forCellReuseIdentifier: "0000")
         tableView.register(UINib(nibName: "GenericOnOff", bundle: nil), forCellReuseIdentifier: "1000")
+        tableView.register(UINib(nibName: "GenericLevel", bundle: nil), forCellReuseIdentifier: "1002")
         tableView.register(UINib(nibName: "VendorModel", bundle: nil), forCellReuseIdentifier: "vendor")
     }
     
@@ -605,8 +606,9 @@ private extension IndexSet {
 private extension Model {
     
     var hasCustomUI: Bool {
-        return !isBluetoothSIGAssigned
+        return !isBluetoothSIGAssigned   // Vendor Movels.
             || modelIdentifier == 0x1000 // Generic On Off Server.
+            || modelIdentifier == 0x1002 // Generic Level Server.
     }
     
 }

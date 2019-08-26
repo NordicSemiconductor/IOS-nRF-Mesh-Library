@@ -1,18 +1,24 @@
 //
-//  GenericOnOffViewCell.swift
+//  GenericLevelViewCell.swift
 //  nRFMeshProvision_Example
 //
-//  Created by Aleksander Nowakowski on 22/08/2019.
+//  Created by Aleksander Nowakowski on 26/08/2019.
 //  Copyright © 2019 CocoaPods. All rights reserved.
 //
 
 import UIKit
 import nRFMeshProvision
 
-class GenericOnOffViewCell: ModelViewCell {
-    
-    // MARK: - Outlets and Actinos
+class GenericLevelViewCell: ModelViewCell {
 
+    // MARK: - Outlets and Actions
+    
+    @IBOutlet weak var levelSlider: UISlider!
+    @IBAction func levelDidChange(_ sender: UISlider) {
+        levelLabel.text = "\(Int(sender.value))"
+    }
+    @IBOutlet weak var levelLabel: UILabel!
+    
     @IBOutlet weak var defaultTransitionSettingsSwitch: UISwitch!
     @IBAction func defaultTransitionSettingsDidChange(_ sender: UISwitch) {
         transitionTimeSlider.isEnabled = !sender.isOn
@@ -44,14 +50,17 @@ class GenericOnOffViewCell: ModelViewCell {
     
     @IBOutlet weak var acknowledgmentSwitch: UISwitch!
     
-    @IBAction func onTapped(_ sender: UIButton) {
-        sendGenericOnOffMessage(turnOn: true)
+    @IBAction func setTapped(_ sender: UIButton) {
+        sendGenericLevelSetMessage(level: Int16(levelSlider.value))
     }
-    @IBAction func offTapped(_ sender: UIButton) {
-        sendGenericOnOffMessage(turnOn: false)
+    @IBAction func deltaTapped(_ sender: UIButton) {
+        sendGenericDeltaSetMessage(level: Int32(levelSlider.value) * 2)
+    }
+    @IBAction func moveTapped(_ sender: UIButton) {
+        sendGenericMoveSetMessage(level: Int16(levelSlider.value))
     }
     @IBAction func readTapped(_ sender: UIButton) {
-        readGenericOnOffState()
+        readGenericLevelState()
     }
     
     // MARK: - Properties
@@ -64,13 +73,13 @@ class GenericOnOffViewCell: ModelViewCell {
     
     override func meshNetwork(_ meshNetwork: MeshNetwork, didDeliverMessage message: MeshMessage, from source: Address) -> Bool {
         switch message {
-        case let status as GenericOnOffStatus:
-            currentStatusLabel.text = status.isOn ? "ON" : "OFF"
-            if let targetStatus = status.targetState, let remainingTime = status.remainingTime {
+        case let status as GenericLevelStatus:
+            currentStatusLabel.text = "\(status.level)"
+            if let targetLevel = status.targetLevel, let remainingTime = status.remainingTime {
                 if remainingTime.isKnown {
-                    targetStatusLabel.text = "\(targetStatus ? "ON" : "OFF") in \(remainingTime.interval) sec"
+                    targetStatusLabel.text = "\(targetLevel) in \(remainingTime.interval) sec"
                 } else {
-                    targetStatusLabel.text = "\(targetStatus ? "ON" : "OFF") in unknown time"
+                    targetStatusLabel.text = "\(targetLevel) in unknown time"
                 }
             } else {
                 targetStatusLabel.text = "N/A"
@@ -88,7 +97,7 @@ class GenericOnOffViewCell: ModelViewCell {
     }
 }
 
-private extension GenericOnOffViewCell {
+private extension GenericLevelViewCell {
     
     func transitionTimeSelected(_ value: Float) {
         switch value {
@@ -142,7 +151,11 @@ private extension GenericOnOffViewCell {
         }
     }
     
-    func sendGenericOnOffMessage(turnOn: Bool) {
+    /// Sends Generic Level Set message, either acknowledged or not, depending
+    /// on the switch position, with or without the Transition Time settings.
+    ///
+    /// - parameter level: The target level of Generic Level state.
+    func sendGenericLevelSetMessage(level: Int16) {
         guard !model.boundApplicationKeys.isEmpty else {
             parentViewController?.presentAlert(
                 title: "Bound key required",
@@ -158,24 +171,28 @@ private extension GenericOnOffViewCell {
         
         if acknowledgmentSwitch.isOn {
             if defaultTransitionSettingsSwitch.isOn {
-                message = GenericOnOffSet(turnOn)
+                message = GenericLevelSet(level: level)
             } else {
                 let transitionTime = TransitionTime(steps: steps, stepResolution: stepResolution)
-                message = GenericOnOffSet(turnOn, transitionTime: transitionTime, delay: delay)
+                message = GenericLevelSet(level: level, transitionTime: transitionTime, delay: delay)
             }
         } else {
             if defaultTransitionSettingsSwitch.isOn {
-                message = GenericOnOffSetUnacknowledged(turnOn)
+                message = GenericLevelSetUnacknowledged(level: level)
             } else {
                 let transitionTime = TransitionTime(steps: steps, stepResolution: stepResolution)
-                message = GenericOnOffSetUnacknowledged(turnOn, transitionTime: transitionTime, delay: delay)
+                message = GenericLevelSetUnacknowledged(level: level, transitionTime: transitionTime, delay: delay)
             }
         }
-            
-        delegate?.send(message, description: "Sending...")
+        
+        delegate?.send(message, description: "Sending Level Set...")
     }
     
-    func readGenericOnOffState() {
+    /// Sends Generic Delta Set message, either acknowledged or not, depending
+    /// on the switch position, with or without the Transition Time settings.
+    ///
+    /// - parameter level: The relative level of Generic Level state.
+    func sendGenericDeltaSetMessage(level: Int32) {
         guard !model.boundApplicationKeys.isEmpty else {
             parentViewController?.presentAlert(
                 title: "Bound key required",
@@ -183,6 +200,78 @@ private extension GenericOnOffViewCell {
             return
         }
         
-        delegate?.send(GenericOnOffGet(), description: "Reading state...")
+        // Clear the response fields.
+        currentStatusLabel.text = nil
+        targetStatusLabel.text = nil
+        
+        var message: MeshMessage!
+        
+        if acknowledgmentSwitch.isOn {
+            if defaultTransitionSettingsSwitch.isOn {
+                message = GenericDeltaSet(level: level)
+            } else {
+                let transitionTime = TransitionTime(steps: steps, stepResolution: stepResolution)
+                message = GenericDeltaSet(level: level, transitionTime: transitionTime, delay: delay)
+            }
+        } else {
+            if defaultTransitionSettingsSwitch.isOn {
+                message = GenericDeltaSetUnacknowledged(level: level)
+            } else {
+                let transitionTime = TransitionTime(steps: steps, stepResolution: stepResolution)
+                message = GenericDeltaSetUnacknowledged(level: level, transitionTime: transitionTime, delay: delay)
+            }
+        }
+        
+        delegate?.send(message, description: "Sending Delta Set...")
+    }
+    
+    /// Sends Generic Move Set message, either acknowledged or not, depending
+    /// on the switch position, with or without the Transition Time settings.
+    ///
+    /// - parameter level: The Delta Level step to calculate Move speed for
+    ///                    the Generic Level state.
+    func sendGenericMoveSetMessage(level: Int16) {
+        guard !model.boundApplicationKeys.isEmpty else {
+            parentViewController?.presentAlert(
+                title: "Bound key required",
+                message: "Bind at least one Application Key before sending the message.")
+            return
+        }
+        
+        // Clear the response fields.
+        currentStatusLabel.text = nil
+        targetStatusLabel.text = nil
+        
+        var message: MeshMessage!
+        
+        if acknowledgmentSwitch.isOn {
+            if defaultTransitionSettingsSwitch.isOn {
+                message = GenericMoveSet(deltaLevel: level)
+            } else {
+                let transitionTime = TransitionTime(steps: steps, stepResolution: stepResolution)
+                message = GenericMoveSet(deltaLevel: level, transitionTime: transitionTime, delay: delay)
+            }
+        } else {
+            if defaultTransitionSettingsSwitch.isOn {
+                message = GenericMoveSetUnacknowledged(deltaLevel: level)
+            } else {
+                let transitionTime = TransitionTime(steps: steps, stepResolution: stepResolution)
+                message = GenericMoveSetUnacknowledged(deltaLevel: level, transitionTime: transitionTime, delay: delay)
+            }
+        }
+        
+        delegate?.send(message, description: "Sending Move Set...")
+    }
+    
+    /// Sends Generic Level Get message.
+    func readGenericLevelState() {
+        guard !model.boundApplicationKeys.isEmpty else {
+            parentViewController?.presentAlert(
+                title: "Bound key required",
+                message: "Bind at least one Application Key before sending the message.")
+            return
+        }
+        
+        delegate?.send(GenericLevelGet(), description: "Reading state...")
     }
 }

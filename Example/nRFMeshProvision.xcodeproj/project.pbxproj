@@ -69,6 +69,8 @@
 		529B76492252499E008F1CE7 /* UIColor+Nordic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529B76482252499E008F1CE7 /* UIColor+Nordic.swift */; };
 		52A9C17D230EB9490036792A /* GenericOnOffViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52A9C17B230EB9490036792A /* GenericOnOffViewCell.swift */; };
 		52A9C17E230EB9490036792A /* GenericOnOff.xib in Resources */ = {isa = PBXBuildFile; fileRef = 52A9C17C230EB9490036792A /* GenericOnOff.xib */; };
+		52A9C1C52313D7D80036792A /* GenericLevelViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52A9C1C32313D7D80036792A /* GenericLevelViewCell.swift */; };
+		52A9C1C62313D7D80036792A /* GenericLevel.xib in Resources */ = {isa = PBXBuildFile; fileRef = 52A9C1C42313D7D80036792A /* GenericLevel.xib */; };
 		52B7F67D229829F200B0A42F /* Addresses.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52B7F67C229829F200B0A42F /* Addresses.swift */; };
 		52DAA5DB22560EEE0041C43A /* EditProvisionerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52DAA5DA22560EEE0041C43A /* EditProvisionerViewController.swift */; };
 		52DAA5E2225B633B0041C43A /* RangeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52DAA5E1225B633B0041C43A /* RangeView.swift */; };
@@ -160,6 +162,8 @@
 		529B76482252499E008F1CE7 /* UIColor+Nordic.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "UIColor+Nordic.swift"; path = "Utils/UIColor+Nordic.swift"; sourceTree = "<group>"; };
 		52A9C17B230EB9490036792A /* GenericOnOffViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericOnOffViewCell.swift; sourceTree = "<group>"; };
 		52A9C17C230EB9490036792A /* GenericOnOff.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = GenericOnOff.xib; sourceTree = "<group>"; };
+		52A9C1C32313D7D80036792A /* GenericLevelViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericLevelViewCell.swift; sourceTree = "<group>"; };
+		52A9C1C42313D7D80036792A /* GenericLevel.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = GenericLevel.xib; sourceTree = "<group>"; };
 		52B7F67C229829F200B0A42F /* Addresses.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Addresses.swift; sourceTree = "<group>"; };
 		52DAA5DA22560EEE0041C43A /* EditProvisionerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = EditProvisionerViewController.swift; path = "View Controllers/Settings/EditProvisionerViewController.swift"; sourceTree = "<group>"; };
 		52DAA5E1225B633B0041C43A /* RangeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RangeView.swift; sourceTree = "<group>"; };
@@ -249,6 +253,7 @@
 			children = (
 				5231403B22FDA8670074325A /* ConfigurationServer.xib */,
 				52A9C17C230EB9490036792A /* GenericOnOff.xib */,
+				52A9C1C42313D7D80036792A /* GenericLevel.xib */,
 				5231404C230AC4680074325A /* VendorModel.xib */,
 			);
 			path = Model;
@@ -260,6 +265,7 @@
 				52314040230192C50074325A /* ModelViewCell.swift */,
 				5231403E2301761C0074325A /* ConfigurationServerViewCell.swift */,
 				52A9C17B230EB9490036792A /* GenericOnOffViewCell.swift */,
+				52A9C1C32313D7D80036792A /* GenericLevelViewCell.swift */,
 				5231404B230AC4680074325A /* VendorModelViewCell.swift */,
 			);
 			path = Model;
@@ -585,6 +591,7 @@
 				52A9C17E230EB9490036792A /* GenericOnOff.xib in Resources */,
 				3089BCA02099CA4900E30192 /* LaunchScreen.storyboard in Resources */,
 				607FACDB1AFB9204008FA782 /* Main.storyboard in Resources */,
+				52A9C1C62313D7D80036792A /* GenericLevel.xib in Resources */,
 				5231404E230AC4680074325A /* VendorModel.xib in Resources */,
 				5231403C22FDA8670074325A /* ConfigurationServer.xib in Resources */,
 				607FACDD1AFB9204008FA782 /* Images.xcassets in Resources */,
@@ -703,6 +710,7 @@
 				52518B3322E0B43200A1FD1E /* GroupCell.swift in Sources */,
 				525242E8225F2D6A0044CECB /* FabView.swift in Sources */,
 				529B7570223FF1AE008F1CE7 /* SettingsViewController.swift in Sources */,
+				52A9C1C52313D7D80036792A /* GenericLevelViewCell.swift in Sources */,
 				529B759C2243BA10008F1CE7 /* NetworkKeysViewController.swift in Sources */,
 				52518B3122E0B18400A1FD1E /* GroupsViewController.swift in Sources */,
 				5283528222806D7C0097B949 /* NetworkKeySelectionViewController.swift in Sources */,

@@ -51,3 +51,12 @@ public struct TransitionTime {
         self.stepResolution = StepResolution(rawValue: rawValue >> 6)!
     }
 }
+
+public extension TransitionTime {
+    
+    /// Returns whether the transition time is known.
+    var isKnown: Bool {
+        return steps < 0x3F
+    }
+    
+}
