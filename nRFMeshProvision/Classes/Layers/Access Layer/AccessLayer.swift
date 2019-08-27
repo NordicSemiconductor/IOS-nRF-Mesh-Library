@@ -38,6 +38,8 @@ internal class AccessLayer {
     /// - parameter applicationKey: The Application Key to sign the message with.
     func send(_ message: MeshMessage, to destination: Address, using applicationKey: ApplicationKey) {
         var m = message
+        // TODO: Some messages, like GenericDeltaSet support transactions. They can
+        //       be sent with the same TID when send less than 6 seconds apart.
         if var tranactionMessage = message as? TransactionMessage, tranactionMessage.tid == nil {
             tranactionMessage.tid = tid
             // Increase the TID to the next value modulo 255.
