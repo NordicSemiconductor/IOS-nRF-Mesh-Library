@@ -36,6 +36,10 @@ class GroupsViewController: UITableViewController, Editable {
             let destination = segue.destination as! UINavigationController
             let viewController = destination.topViewController as! AddGroupViewController
             viewController.delegate = self
+        } else if segue.identifier == "show" {
+            let destination = segue.destination as! GroupControlViewController
+            let cell = sender as! GroupCell
+            destination.group = cell.group
         }
     }
 

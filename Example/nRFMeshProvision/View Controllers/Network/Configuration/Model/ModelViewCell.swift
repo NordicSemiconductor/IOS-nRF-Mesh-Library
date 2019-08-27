@@ -29,6 +29,9 @@ protocol ModelViewCellDelegate: class {
 }
 
 class ModelViewCell: UITableViewCell {
+    
+    // MARK: - Properties
+    
     var model: Model! {
         didSet {
             reload(using: model)
@@ -36,9 +39,13 @@ class ModelViewCell: UITableViewCell {
     }
     weak var delegate: ModelViewCellDelegate!
     
+    // MARK: - Implementation
+    
     func reload(using model: Model) {
         // Empty.
     }
+    
+    // MARK: - API
     
     /// Initializes reading of all fields in the Model View. This should
     /// send the first request, after which the cell should wait for a response,

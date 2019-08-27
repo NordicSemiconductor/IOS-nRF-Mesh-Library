@@ -83,6 +83,25 @@ public extension Element {
         return models.contains { $0.isCompatible(to: model) && $0.bind.contains(applicationKey.index) }
     }
     
+    /// Returns whether the Element contains any Models that are
+    /// subscribed to the given Group.
+    ///
+    /// - parameter group: The Group to look for.
+    /// - returns: `True`, if the Element contains at least one Model
+    ///            that is subscribed to the given Group, `false` otherwise.
+    func contains(modelSubscribedTo group: Group) -> Bool {
+        return models.contains { $0.subscriptions.contains(group) }
+    }
+    
+    /// Returns list of Models belonging to this Element that are
+    /// subscribed to the given Group.
+    ///
+    /// - parameter group: The Group to look for.
+    /// - returns: List of Models that are subscribed to the given Group.
+    func models(subscribedTo group: Group) -> [Model] {
+        return models.filter { $0.subscriptions.contains(group) }
+    }
+    
 }
 
 public extension Array where Element == MeshElement {
@@ -119,6 +138,29 @@ public extension Array where Element == MeshElement {
     func contains(model: Model) -> Bool {
         return contains {
             $0.contains(model: model)
+        }
+    }
+    
+    /// Returns whether the Element contains any Models that are
+    /// subscribed to the given Group.
+    ///
+    /// - parameter group: The Group to look for.
+    /// - returns: `True`, if the Element contains at least one Model
+    ///            that is subscribed to the given Group, `false` otherwise.
+    func contains(modelSubscribedTo group: Group) -> Bool {
+        return contains {
+            $0.models.contains { $0.subscriptions.contains(group) }
+        }
+    }
+    
+    /// Returns list of Models belonging to any of the Elements in the list
+    /// that are subscribed to the given Group.
+    ///
+    /// - parameter group: The Group to look for.
+    /// - returns: List of Models that are subscribed to the given Group.
+    func models(subscribedTo group: Group) -> [Model] {
+        return flatMap {
+            $0.models.filter { $0.subscriptions.contains(group) }
         }
     }
     

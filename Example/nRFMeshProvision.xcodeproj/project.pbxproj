@@ -12,6 +12,11 @@
 		30208A1C2175DBE900BC3789 /* libssl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 30208A192175DBD900BC3789 /* libssl.a */; };
 		30208A1D2175DBE900BC3789 /* libcrypto.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 30208A182175DBD900BC3789 /* libcrypto.a */; };
 		3089BCA02099CA4900E30192 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3089BC9E2099CA4900E30192 /* LaunchScreen.storyboard */; };
+		52121526231528AC0059FB3D /* GenericOnOffGroupCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52121525231528AC0059FB3D /* GenericOnOffGroupCell.swift */; };
+		521215292315290F0059FB3D /* GroupControlViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 521215282315290F0059FB3D /* GroupControlViewController.swift */; };
+		5212152B23152A450059FB3D /* SectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5212152A23152A450059FB3D /* SectionView.swift */; };
+		5212152D231545D40059FB3D /* ModelGroupCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5212152C231545D40059FB3D /* ModelGroupCell.swift */; };
+		5212152F231554190059FB3D /* ConnectableCollectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5212152E231554190059FB3D /* ConnectableCollectionViewController.swift */; };
 		522AFFDC22BBA34900521EDC /* ActionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 522AFFDB22BBA34900521EDC /* ActionCell.swift */; };
 		522AFFDE22BBBC6400521EDC /* NodeFeaturesCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 522AFFDD22BBBC6400521EDC /* NodeFeaturesCell.swift */; };
 		522AFFE022C2376C00521EDC /* NodeElementsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 522AFFDF22C2376C00521EDC /* NodeElementsViewController.swift */; };
@@ -103,6 +108,11 @@
 		30208A192175DBD900BC3789 /* libssl.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libssl.a; path = "Pods/OpenSSL-Universal/lib-ios/libssl.a"; sourceTree = "<group>"; };
 		3089BC9F2099CA4900E30192 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		4973E9CDA09CE2398E5C269A /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
+		52121525231528AC0059FB3D /* GenericOnOffGroupCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericOnOffGroupCell.swift; sourceTree = "<group>"; };
+		521215282315290F0059FB3D /* GroupControlViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupControlViewController.swift; sourceTree = "<group>"; };
+		5212152A23152A450059FB3D /* SectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SectionView.swift; sourceTree = "<group>"; };
+		5212152C231545D40059FB3D /* ModelGroupCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelGroupCell.swift; sourceTree = "<group>"; };
+		5212152E231554190059FB3D /* ConnectableCollectionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectableCollectionViewController.swift; sourceTree = "<group>"; };
 		522AFFDB22BBA34900521EDC /* ActionCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionCell.swift; sourceTree = "<group>"; };
 		522AFFDD22BBBC6400521EDC /* NodeFeaturesCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NodeFeaturesCell.swift; sourceTree = "<group>"; };
 		522AFFDF22C2376C00521EDC /* NodeElementsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NodeElementsViewController.swift; sourceTree = "<group>"; };
@@ -225,6 +235,24 @@
 			name = Pods;
 			sourceTree = "<group>";
 		};
+		52121524231528400059FB3D /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				5212152C231545D40059FB3D /* ModelGroupCell.swift */,
+				52121525231528AC0059FB3D /* GenericOnOffGroupCell.swift */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		52121527231528E60059FB3D /* Cells */ = {
+			isa = PBXGroup;
+			children = (
+				52518B3222E0B43200A1FD1E /* GroupCell.swift */,
+				5212152A23152A450059FB3D /* SectionView.swift */,
+			);
+			path = Cells;
+			sourceTree = "<group>";
+		};
 		522AFFE122C23B3900521EDC /* Cells */ = {
 			isa = PBXGroup;
 			children = (
@@ -274,9 +302,11 @@
 		52518B2F22E0B14500A1FD1E /* Groups */ = {
 			isa = PBXGroup;
 			children = (
+				52121524231528400059FB3D /* Model */,
+				52121527231528E60059FB3D /* Cells */,
 				52518B3022E0B18400A1FD1E /* GroupsViewController.swift */,
 				5251498022E0E36600CBF1E3 /* AddGroupViewController.swift */,
-				52518B3222E0B43200A1FD1E /* GroupCell.swift */,
+				521215282315290F0059FB3D /* GroupControlViewController.swift */,
 			);
 			path = Groups;
 			sourceTree = "<group>";
@@ -294,6 +324,8 @@
 			isa = PBXGroup;
 			children = (
 				529B756C223FE7F1008F1CE7 /* RootViewController.swift */,
+				523F776B22C6324A0030EA6A /* ConnectableViewController.swift */,
+				5212152E231554190059FB3D /* ConnectableCollectionViewController.swift */,
 				52835256227AED670097B949 /* Network */,
 				52518B2F22E0B14500A1FD1E /* Groups */,
 				52835255227AED0A0097B949 /* Settings */,
@@ -316,7 +348,6 @@
 		52835256227AED670097B949 /* Network */ = {
 			isa = PBXGroup;
 			children = (
-				523F776B22C6324A0030EA6A /* ConnectableViewController.swift */,
 				528AB9F7228D847C000BE9DC /* NetworkViewController.swift */,
 				52DF5D8B228DAA0500C297C1 /* NodeViewCell.swift */,
 				5283527E22806BA60097B949 /* Provisioning */,
@@ -667,6 +698,8 @@
 			files = (
 				529B764722522D37008F1CE7 /* UITableView+EmptyView.swift in Sources */,
 				52313FEE22EAFB090074325A /* SubscribeViewController.swift in Sources */,
+				5212152B23152A450059FB3D /* SectionView.swift in Sources */,
+				5212152F231554190059FB3D /* ConnectableCollectionViewController.swift in Sources */,
 				523F776A22C621F50030EA6A /* NodeAddNetworkKeyViewController.swift in Sources */,
 				5283528022806C280097B949 /* ProvisioningViewController.swift in Sources */,
 				52835269227B2BAE0097B949 /* ScannerTableViewController.swift in Sources */,
@@ -687,6 +720,7 @@
 				529B76492252499E008F1CE7 /* UIColor+Nordic.swift in Sources */,
 				525242E0225CBFEC0044CECB /* RangeObject+String.swift in Sources */,
 				529B7575224107A5008F1CE7 /* AppInfo.swift in Sources */,
+				52121526231528AC0059FB3D /* GenericOnOffGroupCell.swift in Sources */,
 				523F776622C609D90030EA6A /* NodeNetworkKeysViewController.swift in Sources */,
 				607FACD61AFB9204008FA782 /* AppDelegate.swift in Sources */,
 				52DAA5E4225B93320041C43A /* EditRangesViewController.swift in Sources */,
@@ -700,6 +734,7 @@
 				523F776422C4EDD90030EA6A /* SwitchCell.swift in Sources */,
 				522AFFDC22BBA34900521EDC /* ActionCell.swift in Sources */,
 				52DF5D8A228DA78A00C297C1 /* ConfigurationViewController.swift in Sources */,
+				521215292315290F0059FB3D /* GroupControlViewController.swift in Sources */,
 				52F6AD7622BA612900F0D7DF /* UIViewController+Toast.swift in Sources */,
 				5231403F2301761C0074325A /* ConfigurationServerViewCell.swift in Sources */,
 				5231404D230AC4680074325A /* VendorModelViewCell.swift in Sources */,
@@ -707,6 +742,7 @@
 				529B7572223FFC39008F1CE7 /* AppKeysViewController.swift in Sources */,
 				5251498122E0E36600CBF1E3 /* AddGroupViewController.swift in Sources */,
 				52835258227AEDA30097B949 /* DeviceCell.swift in Sources */,
+				5212152D231545D40059FB3D /* ModelGroupCell.swift in Sources */,
 				52518B3322E0B43200A1FD1E /* GroupCell.swift in Sources */,
 				525242E8225F2D6A0044CECB /* FabView.swift in Sources */,
 				529B7570223FF1AE008F1CE7 /* SettingsViewController.swift in Sources */,

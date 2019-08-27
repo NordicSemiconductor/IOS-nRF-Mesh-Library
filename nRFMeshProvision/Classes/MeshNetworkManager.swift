@@ -229,7 +229,7 @@ public extension MeshNetworkManager {
     /// after block acknowlegment was received.
     ///
     /// A `delegate` method will be called when the message has been sent,
-    /// delivered, or fail to be sent.
+    /// delivered, or failed to be sent.
     ///
     /// - parameter message:        The message to be sent.
     /// - parameter destination:    The destination address.
@@ -250,6 +250,19 @@ public extension MeshNetworkManager {
     /// - parameter applicationKey: The Application Key to sign the message.
     func send(_ message: MeshMessage, to destination: MeshAddress, using applicationKey: ApplicationKey) {
         send(message, to: destination.address, using: applicationKey)
+    }
+    
+    /// Encrypts the message with the Application Key and a Network Key
+    /// bound to it, and sends to the given Group.
+    ///
+    /// A `delegate` method will be called when the message has been sent,
+    /// or failed to be sent.
+    ///
+    /// - parameter message:        The message to be sent.
+    /// - parameter group:          The destination Group.
+    /// - parameter applicationKey: The Application Key to sign the message.
+    func send(_ message: MeshMessage, to group: Group, using applicationKey: ApplicationKey) {
+        send(message, to: group.address, using: applicationKey)
     }
     
     /// Encrypts the message with the first Application Key bound to the given

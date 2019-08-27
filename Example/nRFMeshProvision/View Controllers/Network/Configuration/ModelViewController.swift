@@ -494,6 +494,13 @@ extension ModelViewController: MeshNetworkDelegate {
     }
     
     func meshNetwork(_ meshNetwork: MeshNetwork, didDeliverMessage message: MeshMessage, to destination: Address) {
+        // Has the Node been reset remotely.
+        guard !(message is ConfigNodeReset) else {
+            (UIApplication.shared.delegate as! AppDelegate).meshNetworkDidChange()
+            navigationController?.popToRootViewController(animated: true)
+            return
+        }
+        
         switch message {
         case is ConfigMessage:
             // Ignore.

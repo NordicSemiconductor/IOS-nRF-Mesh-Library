@@ -50,4 +50,15 @@ public extension MeshNetwork {
         }
     }
     
+    /// Returns list of Models belonging to any of the Elements in the
+    /// network that are subscribed to the given Group.
+    ///
+    /// - parameter group: The Group to look for.
+    /// - returns: List of Models that are subscribed to the given Group.
+    func models(subscribedTo group: Group) -> [Model] {
+        return nodes.flatMap {
+            $0.elements.models(subscribedTo: group)
+        }
+    }
+    
 }
