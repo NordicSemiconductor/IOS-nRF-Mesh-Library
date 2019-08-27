@@ -16,12 +16,15 @@ class GenericLevelViewCell: ModelViewCell {
     @IBOutlet weak var levelSlider: UISlider!
     @IBAction func levelDidChange(_ sender: UISlider) {
         switch segmentControl.selectedSegmentIndex {
+        case 0:
+            let value = Int(sender.value / 2) // 0...100 (%)
+            levelLabel.text = "\(value)%"
         case 1:
-            let value = max(min(Int32(sender.value) * 2048 * 2, 65535), -65535)
-            levelLabel.text = "\(value)"
+            let value = Int(sender.value) - 100 // -100...100 (%)
+            levelLabel.text = "\(value)%"
         default:
-            let value = Int16(min(Int(sender.value) * 2048, Int(Int16.max)))
-            levelLabel.text = "\(value)"
+            let value = Int(sender.value) - 100 // -100...100 (%)
+            levelLabel.text = "\(value)%"
         }
     }
     @IBOutlet weak var levelLabel: UILabel!
@@ -65,13 +68,16 @@ class GenericLevelViewCell: ModelViewCell {
     @IBAction func setTapped(_ sender: UIButton) {
         switch segmentControl.selectedSegmentIndex {
         case 0:
-            let value = Int16(min(Int(levelSlider.value) * 2048, Int(Int16.max)))
-            sendGenericLevelSetMessage(level: Int16(value))
+            let percent = floorf(levelSlider.value / 2)              // 0...100
+            let value = Int16(min(32767, -32768 + 655.36 * percent)) // -32768...32767
+            sendGenericLevelSetMessage(level: value)
         case 1:
-            let value = max(min(Int32(levelSlider.value) * 2048 * 2, 65535), -65535)
-            sendGenericDeltaSetMessage(level: Int32(value))
+            let percent = floorf(levelSlider.value - 100)   // -100...100
+            let value = Int32(min(65535, 655.36 * percent)) // -65536...65535
+            sendGenericDeltaSetMessage(level: value)
         case 2:
-            let value = Int16(min(Int(levelSlider.value) * 2048, Int(Int16.max)))
+            let percent = floorf(levelSlider.value - 100)   // -100...100
+            let value = Int16(min(32767, 327.68 * percent)) // -32768...32767
             sendGenericMoveSetMessage(level: Int16(value))
         default:
             break
@@ -92,12 +98,14 @@ class GenericLevelViewCell: ModelViewCell {
     override func meshNetwork(_ meshNetwork: MeshNetwork, didDeliverMessage message: MeshMessage, from source: Address) -> Bool {
         switch message {
         case let status as GenericLevelStatus:
-            currentStatusLabel.text = "\(status.level)"
+            let level = floorf(0.1 + (Float(status.level) + 32768.0) / 655.35)
+            currentStatusLabel.text = "\(Int(level))%"
             if let targetLevel = status.targetLevel, let remainingTime = status.remainingTime {
+                let level = floorf(0.1 + (Float(targetLevel) + 32768.0) / 655.35)
                 if remainingTime.isKnown {
-                    targetStatusLabel.text = "\(targetLevel) in \(remainingTime.interval) sec"
+                    targetStatusLabel.text = "\(Int(level))% in \(remainingTime.interval) sec"
                 } else {
-                    targetStatusLabel.text = "\(targetLevel) in unknown time"
+                    targetStatusLabel.text = "\(Int(level))% in unknown time"
                 }
             } else {
                 targetStatusLabel.text = "N/A"
