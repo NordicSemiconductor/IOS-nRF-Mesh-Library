@@ -304,7 +304,7 @@ class Pdus: XCTestCase {
         let sequence: UInt32 = 0x000006
         
         // Test begins here
-        let message = ConfigAppKeyStatus(confirmAdding: meshNetwork.applicationKeys[1], withStatus: .success)
+        let message = ConfigAppKeyStatus(confirm: meshNetwork.applicationKeys[1])
         XCTAssertEqual(message.networkKeyIndex, 0x123)
         XCTAssertEqual(message.applicationKeyIndex, 0x456)
         XCTAssertEqual(message.status, .success)
@@ -313,7 +313,8 @@ class Pdus: XCTestCase {
         
         let pdu = UpperTransportPdu(fromConfigMessage: message,
                                     sentFrom: source, to: destination!,
-                                    usingDeviceKey: node.deviceKey, sequence: sequence, andIvIndex: networkKey.ivIndex)
+                                    usingDeviceKey: node.deviceKey, sequence: sequence,
+                                    andIvIndex: networkKey.ivIndex)
         XCTAssertEqual(pdu.source, source)
         XCTAssertEqual(pdu.destination, destination)
         XCTAssertEqual(pdu.sequence, sequence)
@@ -322,7 +323,8 @@ class Pdus: XCTestCase {
         XCTAssertEqual(pdu.accessPdu, Data(hex: "800300236145"))
         XCTAssertEqual(pdu.transportPdu, Data(hex: "89511B8484FF7501A689"))
         
-        let segment = SegmentedAccessMessage(fromUpperTransportPdu: pdu, usingNetworkKey: networkKey, offset: 0)
+        let segment = SegmentedAccessMessage(fromUpperTransportPdu: pdu,
+                                             usingNetworkKey: networkKey, offset: 0)
         XCTAssertNil(segment.aid)
         XCTAssertEqual(segment.source, source)
         XCTAssertEqual(segment.destination, destination)

@@ -38,16 +38,16 @@ class CompositionData: XCTestCase {
         XCTAssert(element0?.models[0].isBluetoothSIGAssigned ?? false)
         XCTAssertEqual(element0?.models[1].modelId, 0x0001)
         XCTAssert(element0?.models[1].isBluetoothSIGAssigned ?? false)
-        XCTAssertEqual(element0?.models[2].modelId, 0x12345678)
+        XCTAssertEqual(element0?.models[2].modelId, 0x56781234)
         XCTAssertFalse(element0?.models[2].isBluetoothSIGAssigned ?? true)
         
         let element1 = page0?.elements[1]
         XCTAssertEqual(element1?.location, .auxiliary)
         XCTAssertEqual(element1?.index, 1)
         XCTAssertEqual(element1?.models.count, 2)
-        XCTAssertEqual(element1?.models[0].modelId, 0x87654321)
+        XCTAssertEqual(element1?.models[0].modelId, 0x43218765)
         XCTAssertFalse(element1?.models[0].isBluetoothSIGAssigned ?? true)
-        XCTAssertEqual(element1?.models[1].modelId, 0xDDCCBBAA)
+        XCTAssertEqual(element1?.models[1].modelId, 0xBBAADDCC)
         XCTAssertFalse(element1?.models[1].isBluetoothSIGAssigned ?? true)
         
         XCTAssertEqual(compositionData?.parameters, data)

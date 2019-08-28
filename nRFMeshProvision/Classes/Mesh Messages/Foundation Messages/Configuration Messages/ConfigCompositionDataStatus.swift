@@ -147,7 +147,8 @@ private extension Array where Element == MeshElement {
                 data += model.modelIdentifier
             }
             for model in vendorModel {
-                data += model.modelId
+                data += model.companyIdentifier!
+                data += model.modelIdentifier
             }
         }
         return data
