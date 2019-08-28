@@ -234,22 +234,11 @@ public extension MeshNetworkManager {
     /// - parameter message:        The message to be sent.
     /// - parameter destination:    The destination address.
     /// - parameter applicationKey: The Application Key to sign the message.
-    func send(_ message: MeshMessage, to destination: Address, using applicationKey: ApplicationKey) {
+    func send(_ message: MeshMessage, to destination: MeshAddress, using applicationKey: ApplicationKey) {
         guard let networkManager = networkManager else {
             return
         }
         networkManager.send(message, to: destination, using: applicationKey)
-    }
-    
-    /// Does the same as the other `send(:to:key)`, but takes
-    /// MeshAddress as destination address, which could be used for virtual
-    /// labels.
-    ///
-    /// - parameter message:        The message to be sent.
-    /// - parameter destination:    The destination address.
-    /// - parameter applicationKey: The Application Key to sign the message.
-    func send(_ message: MeshMessage, to destination: MeshAddress, using applicationKey: ApplicationKey) {
-        send(message, to: destination.address, using: applicationKey)
     }
     
     /// Encrypts the message with the Application Key and a Network Key
@@ -259,7 +248,7 @@ public extension MeshNetworkManager {
     /// or failed to be sent.
     ///
     /// - parameter message:        The message to be sent.
-    /// - parameter group:          The destination Group.
+    /// - parameter group:          The target Group.
     /// - parameter applicationKey: The Application Key to sign the message.
     func send(_ message: MeshMessage, to group: Group, using applicationKey: ApplicationKey) {
         send(message, to: group.address, using: applicationKey)
@@ -285,7 +274,7 @@ public extension MeshNetworkManager {
             print("Error: Model is not bound to any Application Key")
             return
         }
-        send(message, to: element.unicastAddress, using: applicationKey)
+        send(message, to: MeshAddress(element.unicastAddress), using: applicationKey)
     }
     
     // TODO: Add send to Group method.

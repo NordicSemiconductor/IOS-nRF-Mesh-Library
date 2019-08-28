@@ -100,9 +100,8 @@ internal struct NetworkPdu {
             let networkNonce = Data([0x00]) + deobfuscatedData + Data([0x00, 0x00]) + index.bigEndian
             guard let decryptedData = helper.calculateDecryptedCCM(destAndTransportPdu,
                                                                    withKey: keys.encryptionKey,
-                                                                   nonce: networkNonce, andMIC: mic) else {
-                                                                    continue
-            }
+                                                                   nonce: networkNonce, andMIC: mic,
+                                                                   withAdditionalData: nil) else { continue }
             
             self.networkKey = networkKey
             self.type = type
@@ -153,8 +152,14 @@ internal struct NetworkPdu {
         
         let helper = OpenSSLHelper()
         let networkNonce = Data([0x00]) + deobfuscatedData + Data([0x00, 0x00]) + index.bigEndian
-        let encryptedData = helper.calculateCCM(decryptedData, withKey: keys.encryptionKey, nonce: networkNonce, andMICSize: type.netMicSize)!
-        let obfuscatedData = helper.obfuscate(deobfuscatedData, usingPrivacyRandom: encryptedData, ivIndex: index, andPrivacyKey: keys.privacyKey)!
+        let encryptedData = helper.calculateCCM(decryptedData,
+                                                withKey: keys.encryptionKey,
+                                                nonce: networkNonce,
+                                                andMICSize: type.netMicSize,
+                                                withAdditionalData: nil)!
+        let obfuscatedData = helper.obfuscate(deobfuscatedData,
+                                              usingPrivacyRandom: encryptedData, ivIndex: index,
+                                              andPrivacyKey: keys.privacyKey)!
         
         self.pdu = Data() + iviNid + obfuscatedData + encryptedData
     }

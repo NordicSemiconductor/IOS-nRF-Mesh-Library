@@ -28,16 +28,18 @@
 /// @param key The 128-bit key.
 /// @param nonce A 104-bit nonce.
 /// @param micSize Length of the MIC to be generated, in bytes.
+/// @param aad Additional data to be authenticated.
 /// @return Encrypted data concatenated with MIC of given size.
-- (NSData*) calculateCCM: (NSData*) someData withKey: (NSData*) key nonce: (NSData *) nonce andMICSize: (UInt8) micSize;
+- (NSData*) calculateCCM: (NSData*) someData withKey: (NSData*) key nonce: (NSData *) nonce andMICSize: (UInt8) micSize withAdditionalData: (NSData*) aad;
 
 /// Decrypts data encrypted with CCM.
 /// @param someData Encrypted data.
 /// @param key The 128-bit key.
 /// @param nonce A 104-bit nonce.
 /// @param mic Message Integrity Check data.
+/// @param aad Additional data to be authenticated.
 /// @return Decrypted data, if decryption is successful and MIC is valid, otherwise `nil`.
-- (NSData*) calculateDecryptedCCM: (NSData*) someData withKey: (NSData*) key nonce: (NSData*) nonce andMIC: (NSData*) mic;
+- (NSData*) calculateDecryptedCCM: (NSData*) someData withKey: (NSData*) key nonce: (NSData*) nonce andMIC: (NSData*) mic withAdditionalData: (NSData*) aad;
 
 /// Obfuscates given data by XORing it with PECB, which is caluclated by encrypting
 /// Privacy Plaintext (encrypted data (used as Privacy Random) and IV Index)

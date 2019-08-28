@@ -59,10 +59,15 @@
     return [[NSData alloc] initWithBytes: outbuf length: 16];
 }
 
-- (NSData*) calculateCCM: (NSData*) someData withKey:(NSData*) key nonce:(NSData *) nonce andMICSize:(UInt8) size {
+- (NSData*) calculateCCM: (NSData*) someData
+                 withKey: (NSData*) key
+                   nonce: (NSData*) nonce
+              andMICSize: (UInt8) size
+      withAdditionalData: (NSData*) aad {
     int outlen = 0;
     int messageLength = (int) [someData length] / sizeof(unsigned char);
     int nonceLength   = (int) [nonce length]    / sizeof(unsigned char);
+    int aadLength     = (int) [aad length]      / sizeof(unsigned char);
     int micLength = size;
     // Octets for Encrypted data + octets for TAG (MIC).
     unsigned char outbuf[messageLength + micLength];
@@ -70,6 +75,7 @@
     unsigned char* keyBytes     = (unsigned char*) [key bytes];
     unsigned char* nonceBytes   = (unsigned char*) [nonce bytes];
     unsigned char* messageBytes = (unsigned char*) [someData bytes];
+    unsigned char* aadBytes     = (unsigned char*) [aad bytes];
     // Create and initialise the context.
     EVP_CIPHER_CTX *ctx = EVP_CIPHER_CTX_new();
     // Initialise the encryption operation.
@@ -83,7 +89,9 @@
     // Provide the total plaintext length.
     EVP_EncryptUpdate(ctx, NULL, &outlen, NULL, messageLength);
     // Provide any AAD data. This can be called zero or one times as required.
-    //     EVP_EncryptUpdate(ctx, NULL, &outlen, aad, aadLen)
+    if (aadLength > 0) {
+        EVP_EncryptUpdate(ctx, NULL, &outlen, aadBytes, aadLength);
+    }
     // Provide the message to be encrypted, and obtain the encrypted output.
     // EVP_EncryptUpdate can only be called once for this.
     EVP_EncryptUpdate(ctx, outbuf, &outlen, messageBytes, messageLength);
@@ -99,18 +107,24 @@
     return outputData;
 }
 
-- (NSData*) calculateDecryptedCCM: (NSData*) someData withKey: (NSData*) key nonce: (NSData*) nonce andMIC: (NSData*) mic {
+- (NSData*) calculateDecryptedCCM: (NSData*) someData
+                          withKey: (NSData*) key
+                            nonce: (NSData*) nonce
+                           andMIC: (NSData*) mic
+               withAdditionalData: (NSData*) aad {
     int outlen;
     unsigned char outbuf[1024];
     
-    int micLength     = (int)[mic length] / sizeof(unsigned char);
-    int messageLength = (int)[someData length] / sizeof(unsigned char);
-    int nonceLength   = (int) [nonce length] / sizeof(unsigned char);
+    int micLength     = (int) [mic length]      / sizeof(unsigned char);
+    int messageLength = (int) [someData length] / sizeof(unsigned char);
+    int nonceLength   = (int) [nonce length]    / sizeof(unsigned char);
+    int aadLength     = (int) [aad length]      / sizeof(unsigned char);
     
-    unsigned char* keyBytes     = (unsigned char*)[key bytes];
-    unsigned char* nonceBytes   = (unsigned char*)[nonce bytes];
-    unsigned char* messageBytes = (unsigned char*)[someData bytes];
-    unsigned char* micBytes     = (unsigned char*)[mic bytes];
+    unsigned char* keyBytes     = (unsigned char*) [key bytes];
+    unsigned char* nonceBytes   = (unsigned char*) [nonce bytes];
+    unsigned char* messageBytes = (unsigned char*) [someData bytes];
+    unsigned char* micBytes     = (unsigned char*) [mic bytes];
+    unsigned char* aadBytes     = (unsigned char*) [aad bytes];
     
     // Create and initialise the context.
     EVP_CIPHER_CTX *ctx = EVP_CIPHER_CTX_new();
@@ -125,7 +139,9 @@
     // Provide the total ciphertext length.
     EVP_DecryptUpdate(ctx, NULL, &outlen, NULL, messageLength);
     // Provide any AAD data. This can be called zero or more times as required.
-    //   EVP_DecryptUpdate(ctx, NULL, &len, aad, aadLen)
+    if (aadLength > 0) {
+        EVP_DecryptUpdate(ctx, NULL, &outlen, aadBytes, aadLength);
+    }
     // Provide the message to be decrypted, and obtain the plaintext output.
     // EVP_DecryptUpdate can be called multiple times if necessary.
     int ret = EVP_DecryptUpdate(ctx, outbuf, &outlen, messageBytes, messageLength);
@@ -139,7 +155,10 @@
     }
 }
 
-- (NSData*) obfuscate: (NSData*) data usingPrivacyRandom: (NSData*) random ivIndex: (UInt32) ivIndex andPrivacyKey: (NSData*) privacyKey {
+- (NSData*) obfuscate: (NSData*) data
+   usingPrivacyRandom: (NSData*) random
+              ivIndex: (UInt32) ivIndex
+        andPrivacyKey: (NSData*) privacyKey {
     NSMutableData* privacyRandomSource = [[NSMutableData alloc] init];
     [privacyRandomSource appendData: random];
     NSData* privacyRandom = [privacyRandomSource subdataWithRange: NSMakeRange(0, 7)];
@@ -159,7 +178,9 @@
     return obfuscatedData;
 }
 
-- (NSData*) deobfuscate: (NSData*) data ivIndex: (UInt32) ivIndex privacyKey: (NSData*) privacyKey {
+- (NSData*) deobfuscate: (NSData*) data
+                ivIndex: (UInt32) ivIndex
+             privacyKey: (NSData*) privacyKey {
     //Privacy random = EncDST || ENCTransportPDU || NetMIC [0-6]
     NSData* obfuscatedData = [data subdataWithRange: NSMakeRange(1, 6)];
     NSData* privacyRandom = [data subdataWithRange: NSMakeRange(7, 7)];
@@ -233,7 +254,7 @@
     // We need only the first 7 bits from first octet, bitmask bit0 off.
     unsigned char firstOffset = dataPtr[15] & 0x7F;
     // Then get the rest of the data up to the 16th octet.
-    finalData = (NSMutableData*)[finalData subdataWithRange: NSMakeRange(16, [finalData length] - 16)];
+    finalData = (NSMutableData*) [finalData subdataWithRange: NSMakeRange(16, [finalData length] - 16)];
     // and concat the first octet with the chunked data, this is equivalent to removing first 15 octets - 7 bits).
     NSMutableData* output = [[NSMutableData alloc] init];
     [output appendBytes: &firstOffset length:1];

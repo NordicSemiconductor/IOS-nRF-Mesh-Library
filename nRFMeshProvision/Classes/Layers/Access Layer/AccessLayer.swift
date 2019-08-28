@@ -36,7 +36,7 @@ internal class AccessLayer {
     /// - parameter destination: The destination Address. This can be any
     ///                          valid mesh Address.
     /// - parameter applicationKey: The Application Key to sign the message with.
-    func send(_ message: MeshMessage, to destination: Address, using applicationKey: ApplicationKey) {
+    func send(_ message: MeshMessage, to destination: MeshAddress, using applicationKey: ApplicationKey) {
         var m = message
         // TODO: Some messages, like GenericDeltaSet support transactions. They can
         //       be sent with the same TID when send less than 6 seconds apart.
@@ -46,7 +46,7 @@ internal class AccessLayer {
             if tid < 255 { tid = tid + 1 } else { tid = 0 }
             m = tranactionMessage
         }
-        print("Sending \(m) to 0x\(destination.hex)") // TODO: Remove me
+        print("Sending \(m) to \(destination.hex)") // TODO: Remove me
         networkManager.upperTransportLayer.send(m, to: destination, using: applicationKey)
     }
     

@@ -50,9 +50,9 @@ internal class UpperTransportLayer {
     /// - parameter destination: The destination address. This can be any type of
     ///                          valid address.
     /// - parameter applicationKey: The Application Key to sign the message with.
-    func send(_ message: MeshMessage, to destination: Address, using applicationKey: ApplicationKey) {
-        guard destination.isValidAddress else {
-            print("Error: Invalid address: 0x\(destination.hex)")
+    func send(_ message: MeshMessage, to destination: MeshAddress, using applicationKey: ApplicationKey) {
+        guard destination.address.isValidAddress else {
+            print("Error: Invalid address: \(destination.hex)")
             return
         }
         guard let source = meshNetwork.localProvisioner?.unicastAddress else {
@@ -67,9 +67,11 @@ internal class UpperTransportLayer {
         
         let pdu = UpperTransportPdu(fromMeshMessage: message,
                                     sentFrom: source, to: destination,
-                                    usingApplicationKey: applicationKey, sequence: sequence, andIvIndex: ivIndex)
+                                    usingApplicationKey: applicationKey, sequence: sequence,
+                                    andIvIndex: ivIndex)
         let isSegmented = pdu.transportPdu.count > 15 || message.isSegmented
-        networkManager.lowerTransportLayer.send(upperTransportPdu: pdu, asSegmentedMessage: isSegmented,
+        networkManager.lowerTransportLayer.send(upperTransportPdu: pdu,
+                                                asSegmentedMessage: isSegmented,
                                                 usingNetworkKey: networkKey)
     }
     
@@ -108,9 +110,11 @@ internal class UpperTransportLayer {
         
         let pdu = UpperTransportPdu(fromConfigMessage: message,
                                     sentFrom: source, to: destination,
-                                    usingDeviceKey: node.deviceKey, sequence: sequence, andIvIndex: ivIndex)
+                                    usingDeviceKey: node.deviceKey, sequence: sequence,
+                                    andIvIndex: ivIndex)
         let isSegmented = pdu.transportPdu.count > 15 || message.isSegmented
-        networkManager.lowerTransportLayer.send(upperTransportPdu: pdu, asSegmentedMessage: isSegmented,
+        networkManager.lowerTransportLayer.send(upperTransportPdu: pdu,
+                                                asSegmentedMessage: isSegmented,
                                                 usingNetworkKey: networkKey)
     }
     

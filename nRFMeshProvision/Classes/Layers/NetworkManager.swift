@@ -74,7 +74,7 @@ internal class NetworkManager {
     /// - parameter message:        The message to be sent.
     /// - parameter destination:    The destination address.
     /// - parameter applicationKey: The Application Key to sign the message.
-    func send(_ message: MeshMessage, to destination: Address, using applicationKey: ApplicationKey) {
+    func send(_ message: MeshMessage, to destination: MeshAddress, using applicationKey: ApplicationKey) {
         accessLayer.send(message, to: destination, using: applicationKey)
     }
     

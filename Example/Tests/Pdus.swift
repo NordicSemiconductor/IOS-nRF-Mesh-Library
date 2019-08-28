@@ -152,9 +152,60 @@ private struct TestStorage: Storage {
                                         }
                                     ],
                                     "blacklisted": false
+                                },
+                                {
+                                    "UUID": "EAA389973B4345B691494865D2885555",
+                                    "name": "Low Power Node",
+                                    "deviceKey": "9D6DD0E96EB25DC19A40ED9914F8F03F",
+                                    "unicastAddress": "1234",
+                                    "security": "high",
+                                    "cid": "0007",
+                                    "pid": "001A",
+                                    "vid": "0003",
+                                    "crpl": "0100",
+                                    "features": {
+                                        "relay": 0,
+                                        "proxy": 0,
+                                        "friend": 0,
+                                        "lowPower": 1
+                                    },
+                                    "configComplete": true,
+                                    "netKeys": [ { "index": 291, "updated": false } ],
+                                    "appKeys": [ { "index": 1110, "updated": false } ],
+                                    "defaultTTL": 3,
+                                    "elements": [
+                                        {
+                                            "index": 0,
+                                            "location": "010C",
+                                            "models": [
+                                                {
+                                                    "modelId": "0000",
+                                                    "subscribe": [],
+                                                    "bind": []
+                                                },
+                                                {
+                                                    "modelId": "0002",
+                                                    "subscribe": [],
+                                                    "bind": []
+                                                },
+                                                {
+                                                    "modelId": "000a0000",
+                                                    "subscribe": [],
+                                                    "bind": [ 1110 ]
+                                                }
+                                            ]
+                                        }
+                                    ],
+                                    "blacklisted": false
                                 }
                             ],
-                            "groups": []
+                            "groups": [
+                                {
+                                    "name": "Virtual Group",
+                                    "address": "0073E7E4D8B9440FAF8415DF4C56C0E1",
+                                    "parentAddress": "0000"
+                                }
+                            ]
                         }
                 }
                 """#.data(using: .utf8)
@@ -217,7 +268,7 @@ class Pdus: XCTestCase {
         XCTAssertEqual(meshNetwork.applicationKeys[0].boundNetworkKey, meshNetwork.networkKeys[0])
         XCTAssertEqual(meshNetwork.applicationKeys[1].boundNetworkKey, meshNetwork.networkKeys[0])
         
-        XCTAssertEqual(meshNetwork.nodes.count, 2)
+        XCTAssertEqual(meshNetwork.nodes.count, 3)
         XCTAssertNotNil(meshNetwork.nodes[0].meshNetwork)
         XCTAssertNotNil(meshNetwork.nodes[1].meshNetwork)
     }
@@ -440,4 +491,57 @@ class Pdus: XCTestCase {
         XCTAssertEqual(message?.accessPdu, Data(hex: "0023614563964771734FBD76E3B40519D1D94A48"))
     }
 
+    func testSending_message_22() {
+        XCTAssertNotNil(manager.meshNetwork)
+        let meshNetwork = manager.meshNetwork!
+        let networkKey = meshNetwork.networkKeys.first!
+        networkKey.ivIndex = IvIndex(index: 0x12345677, updateActive: false)
+        let node = meshNetwork.nodes[2] // Low Power Node
+        let applicationKey = meshNetwork.applicationKeys[1]
+        let source = node.unicastAddress
+        let virtualGroup = meshNetwork.groups.first
+        XCTAssertNotNil(virtualGroup)
+        let sequence: UInt32 = 0x07080B
+        
+        struct TestVendorMessage: StaticVendorMessage {
+            static let opCode: UInt32 = 0xD50A00
+            
+            var parameters: Data?
+            
+            init?(parameters: Data) {
+                self.parameters = parameters
+            }
+        }
+        
+        let message = TestVendorMessage(parameters: Data(hex: "48656C6C6F")!)
+        XCTAssertNotNil(message)
+        let pdu = UpperTransportPdu(fromMeshMessage: message!, sentFrom: node.unicastAddress,
+                                    to: virtualGroup!.address, usingApplicationKey: applicationKey,
+                                    sequence: sequence, andIvIndex: networkKey.ivIndex)
+        XCTAssertEqual(pdu.source, source)
+        XCTAssertEqual(pdu.destination, virtualGroup!.address.address)
+        XCTAssertEqual(pdu.sequence, sequence)
+        XCTAssertEqual(pdu.aid, 0x26)
+        XCTAssertEqual(pdu.transportMicSize, 4) // 32-bits
+        XCTAssertEqual(pdu.accessPdu, Data(hex: "D50A0048656C6C6F"))
+        XCTAssertEqual(pdu.transportPdu, Data(hex: "3871B904D431526316CA48A0"))
+        
+        let segment = AccessMessage(fromUnsegmentedUpperTransportPdu: pdu,
+                                    usingNetworkKey: networkKey)
+        XCTAssertEqual(pdu.aid, 0x26)
+        XCTAssertEqual(segment.source, source)
+        XCTAssertEqual(segment.destination, virtualGroup?.address.address)
+        XCTAssertEqual(segment.networkKey, networkKey)
+        XCTAssertEqual(segment.upperTransportPdu, Data(hex: "3871B904D431526316CA48A0"))
+        XCTAssertEqual(segment.transportPdu, Data(hex: "663871B904D431526316CA48A0"))
+        
+        let networkPdu = NetworkPdu(encode: segment, withSequence: sequence, andTtl: 3)
+        XCTAssertEqual(networkPdu.sequence, sequence)
+        XCTAssertEqual(networkPdu.source, source)
+        XCTAssertEqual(networkPdu.destination, virtualGroup?.address.address)
+        XCTAssertEqual(networkPdu.ivi, 1)
+        XCTAssertEqual(networkPdu.nid, 0x68)
+        XCTAssertEqual(networkPdu.networkKey, networkKey)
+        XCTAssertEqual(networkPdu.pdu, Data(hex: "E8D85CAECEF1E3ED31F3FDCF88A411135FEA55DF730B6B28E255"))
+    }
 }
