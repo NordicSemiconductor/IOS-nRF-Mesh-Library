@@ -47,6 +47,8 @@
 		52518B3322E0B43200A1FD1E /* GroupCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52518B3222E0B43200A1FD1E /* GroupCell.swift */; };
 		525242E0225CBFEC0044CECB /* RangeObject+String.swift in Sources */ = {isa = PBXBuildFile; fileRef = 525242DF225CBFEC0044CECB /* RangeObject+String.swift */; };
 		525242E8225F2D6A0044CECB /* FabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 525242E7225F2D6A0044CECB /* FabView.swift */; };
+		52547EF92317ECA70002AA7B /* BottomSheetSegue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52547EF82317ECA70002AA7B /* BottomSheetSegue.swift */; };
+		52547EFB231800F30002AA7B /* BottomSheetViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52547EFA231800F30002AA7B /* BottomSheetViewController.swift */; };
 		52568D4B22DDFAC700B7B236 /* Groups.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52568D4A22DDFAC700B7B236 /* Groups.swift */; };
 		5283524822733BCF0097B949 /* EditKeyViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5283524722733BCF0097B949 /* EditKeyViewController.swift */; };
 		52835250227887970097B949 /* Settings.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5283524E227887970097B949 /* Settings.storyboard */; };
@@ -144,6 +146,8 @@
 		52518B3222E0B43200A1FD1E /* GroupCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupCell.swift; sourceTree = "<group>"; };
 		525242DF225CBFEC0044CECB /* RangeObject+String.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "RangeObject+String.swift"; path = "Utils/RangeObject+String.swift"; sourceTree = "<group>"; };
 		525242E7225F2D6A0044CECB /* FabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FabView.swift; sourceTree = "<group>"; };
+		52547EF82317ECA70002AA7B /* BottomSheetSegue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomSheetSegue.swift; sourceTree = "<group>"; };
+		52547EFA231800F30002AA7B /* BottomSheetViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomSheetViewController.swift; sourceTree = "<group>"; };
 		52568D4A22DDFAC700B7B236 /* Groups.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Groups.swift; sourceTree = "<group>"; };
 		5283524722733BCF0097B949 /* EditKeyViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditKeyViewController.swift; sourceTree = "<group>"; };
 		5283524F227887970097B949 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Settings.storyboard; sourceTree = "<group>"; };
@@ -310,6 +314,8 @@
 				52518B3022E0B18400A1FD1E /* GroupsViewController.swift */,
 				5251498022E0E36600CBF1E3 /* AddGroupViewController.swift */,
 				521215282315290F0059FB3D /* GroupControlViewController.swift */,
+				52547EF82317ECA70002AA7B /* BottomSheetSegue.swift */,
+				52547EFA231800F30002AA7B /* BottomSheetViewController.swift */,
 			);
 			path = Groups;
 			sourceTree = "<group>";
@@ -722,6 +728,7 @@
 				523F778722CCDE250030EA6A /* SetPublicationViewController.swift in Sources */,
 				52A9C17D230EB9490036792A /* GenericOnOffViewCell.swift in Sources */,
 				529B76492252499E008F1CE7 /* UIColor+Nordic.swift in Sources */,
+				52547EF92317ECA70002AA7B /* BottomSheetSegue.swift in Sources */,
 				525242E0225CBFEC0044CECB /* RangeObject+String.swift in Sources */,
 				529B7575224107A5008F1CE7 /* AppInfo.swift in Sources */,
 				52121526231528AC0059FB3D /* GenericOnOffGroupCell.swift in Sources */,
@@ -741,6 +748,7 @@
 				521215292315290F0059FB3D /* GroupControlViewController.swift in Sources */,
 				52F6AD7622BA612900F0D7DF /* UIViewController+Toast.swift in Sources */,
 				5231403F2301761C0074325A /* ConfigurationServerViewCell.swift in Sources */,
+				52547EFB231800F30002AA7B /* BottomSheetViewController.swift in Sources */,
 				5231404D230AC4680074325A /* VendorModelViewCell.swift in Sources */,
 				529B758622428A45008F1CE7 /* UIViewController+Alert.swift in Sources */,
 				529B7572223FFC39008F1CE7 /* AppKeysViewController.swift in Sources */,

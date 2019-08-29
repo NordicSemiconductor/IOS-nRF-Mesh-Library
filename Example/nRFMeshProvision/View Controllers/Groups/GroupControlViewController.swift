@@ -78,6 +78,10 @@ class GroupControlViewController: ConnectableCollectionViewController {
             let viewController = destination.topViewController as! AddGroupViewController
             viewController.group = group
             viewController.delegate = self
+        } else if segue.identifier == "showDetails" {
+            let destination = segue.destination as! UINavigationController
+            let bottomSheet = destination.topViewController as! BottomSheetViewController
+            bottomSheet.models = sender as? [Model]
         }
     }
 
@@ -108,6 +112,12 @@ class GroupControlViewController: ConnectableCollectionViewController {
         cell.delegate = self
         cell.models = item.models
         return cell
+    }
+    
+    override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let section = sections[indexPath.section]
+        let models = section.items[indexPath.row].models
+        performSegue(withIdentifier: "showDetails", sender: models)
     }
 }
 
