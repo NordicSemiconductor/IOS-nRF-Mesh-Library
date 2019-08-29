@@ -25,10 +25,11 @@ class GenericLevelGroupCell: ModelGroupCell {
     // MARK: - Implementation
     
     override func reload() {
+        let numberOfDevices = models.count
         if numberOfDevices == 1 {
             title.text = "1 device"
         } else {
-            title.text = "\(numberOfDevices!) device"
+            title.text = "\(numberOfDevices) devices"
         }
     }
     

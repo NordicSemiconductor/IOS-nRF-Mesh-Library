@@ -33,6 +33,7 @@ class AddGroupViewController: UITableViewController {
     var group: Group?
     var delegate: AddGroupDelegate?
     
+    private var canModifyAddress: Bool = false
     private var name: String? {
         didSet {
             nameLabel.text = name
@@ -77,17 +78,17 @@ class AddGroupViewController: UITableViewController {
                 name = "New Virtual Group"
                 address = MeshAddress(UUID())
             }
+            canModifyAddress = true
         } else {
             name = "New Group"
             addressCell.detailTextLabel?.text = "Provisioner not set"
             addressCell.accessoryType = .none
-            addressCell.selectionStyle = .none
             doneButton.isEnabled = false
         }
     }
     
     override func tableView(_ tableView: UITableView, shouldHighlightRowAt indexPath: IndexPath) -> Bool {
-        return indexPath == .name || (indexPath == .address && group == nil)
+        return indexPath == .name || (indexPath == .address && canModifyAddress)
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {

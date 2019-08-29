@@ -9,7 +9,7 @@
 import UIKit
 
 // Inspired from https://github.com/tahasonmez/handleEmptyTableView
-extension UITableView {
+extension UIView {
     
     /// Sets an empty view, initially hidden.
     func setEmptyView(title: String, message: String, messageImage: UIImage) {

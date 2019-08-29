@@ -11,7 +11,7 @@ import nRFMeshProvision
 
 private class Section {
     let applicationKey: ApplicationKey
-    var models: [(modelId: UInt32, count: Int)] = []
+    var items: [(modelId: UInt32, models: [Model])] = []
     
     init(_ applicationKey: ApplicationKey) {
         self.applicationKey = applicationKey
@@ -55,10 +55,10 @@ class GroupControlViewController: ConnectableCollectionViewController {
                             section = Section(key)
                             sections.append(section)
                         }
-                        if let index = section.models.firstIndex(where: { $0.modelId == model.modelId }) {
-                            section.models[index].count += 1
+                        if let index = section.items.firstIndex(where: { $0.modelId == model.modelId }) {
+                            section.items[index].models.append(model)
                         } else {
-                            section.models.append((modelId: model.modelId, count: 1))
+                            section.items.append((modelId: model.modelId, models: [model]))
                         }
                     }
                 }
@@ -89,7 +89,7 @@ class GroupControlViewController: ConnectableCollectionViewController {
 
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         let section = sections[section]
-        return section.models.count
+        return section.items.count
     }
     
     override func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
@@ -100,13 +100,13 @@ class GroupControlViewController: ConnectableCollectionViewController {
 
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let section = sections[indexPath.section]
-        let model = section.models[indexPath.row]
-        let identifier = String(format: "%08X", model.modelId)
+        let item = section.items[indexPath.row]
+        let identifier = String(format: "%08X", item.modelId)
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: identifier, for: indexPath) as! ModelGroupCell
         cell.group = group
         cell.applicationKey = section.applicationKey
         cell.delegate = self
-        cell.numberOfDevices = model.count
+        cell.models = item.models
         return cell
     }
 }

@@ -25,7 +25,7 @@ class ModelGroupCell: UICollectionViewCell {
     
     var group: Group!
     var applicationKey: ApplicationKey!
-    var numberOfDevices: Int! {
+    var models: [Model]! {
         didSet {
             reload()
         }
