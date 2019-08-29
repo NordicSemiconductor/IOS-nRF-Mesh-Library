@@ -94,7 +94,7 @@ class GroupsViewController: UITableViewController, Editable {
                 presentAlert(title: "Error", message: "Mesh configuration could not be saved.")
             }
         } catch {
-            
+            presentAlert(title: "Error", message: error.localizedDescription)
         }
     }
 
@@ -102,7 +102,7 @@ class GroupsViewController: UITableViewController, Editable {
 
 extension GroupsViewController: AddGroupDelegate {
     
-    func groupAdded() {
+    func groupChanged(_ group: Group) {
         let meshNetwork = MeshNetworkManager.instance.meshNetwork!
         tableView.insertRows(at: [IndexPath(row: meshNetwork.groups.count - 1, section: 0)], with: .automatic)
         hideEmptyView()

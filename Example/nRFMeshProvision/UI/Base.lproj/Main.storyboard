@@ -86,7 +86,7 @@
             </objects>
             <point key="canvasLocation" x="1176.8" y="220.93596059113301"/>
         </scene>
-        <!--Group Control View Controller-->
+        <!--Title-->
         <scene sceneID="Mxx-sp-edq">
             <objects>
                 <collectionViewController id="NiG-9S-OVX" customClass="GroupControlViewController" customModule="nRFMeshProvision_Example" customModuleProvider="target" sceneMemberID="viewController">
@@ -244,6 +244,13 @@
                             <outlet property="delegate" destination="NiG-9S-OVX" id="xxE-UK-Bak"/>
                         </connections>
                     </collectionView>
+                    <navigationItem key="navigationItem" title="Title" id="T4S-kG-u1x">
+                        <barButtonItem key="rightBarButtonItem" systemItem="edit" id="Y9t-Ry-h9Y">
+                            <connections>
+                                <segue destination="y7P-mW-r9X" kind="show" identifier="edit" id="Jtn-5N-mgs"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
                 </collectionViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="qdR-KH-jUW" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
@@ -364,7 +371,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="aZZ-3T-7b5" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2119" y="1023"/>
+            <point key="canvasLocation" x="2588" y="1024"/>
         </scene>
         <!--Provision Device-->
         <scene sceneID="yKm-Cw-E5m">
@@ -2076,7 +2083,7 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="4Sx-9s-gr1" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1177" y="1023"/>
+            <point key="canvasLocation" x="1647" y="1024"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="T7d-wd-neH">
@@ -2117,6 +2124,7 @@
         <image name="rssi_4" width="170.66667175292969" height="170.66667175292969"/>
     </resources>
     <inferredMetricsTieBreakers>
+        <segue reference="Jtn-5N-mgs"/>
         <segue reference="26w-gP-a1O"/>
     </inferredMetricsTieBreakers>
     <color key="tintColor" red="0.0" green="0.46666666670000001" blue="0.7843137255" alpha="1" colorSpace="calibratedRGB"/>

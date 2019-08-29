@@ -71,6 +71,15 @@ class GroupControlViewController: ConnectableCollectionViewController {
         
         MeshNetworkManager.instance.delegate = self
     }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "edit" {
+            let destination = segue.destination as! UINavigationController
+            let viewController = destination.topViewController as! AddGroupViewController
+            viewController.group = group
+            viewController.delegate = self
+        }
+    }
 
     // MARK: - UICollectionViewDataSource
 
@@ -115,6 +124,14 @@ extension GroupControlViewController: UICollectionViewDelegateFlowLayout {
             return CGSize(width: standardSize, height: standardSize)
         }
         return CGSize(width: width / 2 - inset / 2, height: standardSize)
+    }
+    
+}
+
+extension GroupControlViewController: AddGroupDelegate {
+    
+    func groupChanged(_ group: Group) {
+        title = group.name
     }
     
 }

@@ -10,7 +10,7 @@ import UIKit
 import nRFMeshProvision
 
 protocol AddGroupDelegate {
-    func groupAdded()
+    func groupChanged(_ group: Group)
 }
 
 class AddGroupViewController: UITableViewController {
@@ -22,7 +22,7 @@ class AddGroupViewController: UITableViewController {
     }
     @IBOutlet weak var doneButton: UIBarButtonItem!
     @IBAction func doneTapped(_ sender: UIBarButtonItem) {
-        createGroup()
+        save()
     }
     
     @IBOutlet weak var nameLabel: UILabel!
@@ -30,6 +30,7 @@ class AddGroupViewController: UITableViewController {
     
     // MARK: - Properties
     
+    var group: Group?
     var delegate: AddGroupDelegate?
     
     private var name: String? {
@@ -55,6 +56,15 @@ class AddGroupViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        // Editting a Group?
+        if let group = group {
+            title = "Edit Group"
+            name = group.name
+            address = group.address
+            addressCell.accessoryType = .none
+            return
+        }
+        // If not, let's set default values.
         if let network = MeshNetworkManager.instance.meshNetwork,
            let localProvisioner = network.localProvisioner {
             // Try assigning next available Group Address.
@@ -74,6 +84,10 @@ class AddGroupViewController: UITableViewController {
             addressCell.selectionStyle = .none
             doneButton.isEnabled = false
         }
+    }
+    
+    override func tableView(_ tableView: UITableView, shouldHighlightRowAt indexPath: IndexPath) -> Bool {
+        return indexPath == .name || (indexPath == .address && group == nil)
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -112,18 +126,21 @@ private extension AddGroupViewController {
         }
     }
     
-    func createGroup() {
+    func save() {
         if let name = name, let address = address {
             do {
-                let group = try Group(name: name, address: address)
-                let network = MeshNetworkManager.instance.meshNetwork!
-                try network.add(group: group)
-                
+                if let group = group {
+                    group.name = name
+                    delegate?.groupChanged(group)
+                } else {
+                    let group = try Group(name: name, address: address)
+                    let network = MeshNetworkManager.instance.meshNetwork!
+                    try network.add(group: group)
+                    
+                    delegate?.groupChanged(group)
+                }
                 if MeshNetworkManager.instance.save() {
                     dismiss(animated: true)
-                    
-                    // Finally, notify the parent view controller.
-                    delegate?.groupAdded()
                 } else {
                     presentAlert(title: "Error", message: "Mesh configuration could not be saved.")
                 }
@@ -143,6 +160,7 @@ private extension AddGroupViewController {
 }
 
 private extension IndexPath {
+    
     static let detailsSection     = 0
     static let parentGroupSection = 1
     
