@@ -24,6 +24,14 @@ class GenericOnOffGroupCell: ModelGroupCell {
     
     // MARK: - Implementation
     
+    override func reload() {
+        if numberOfDevices == 1 {
+            title.text = "1 device"
+        } else {
+            title.text = "\(numberOfDevices!) device"
+        }
+    }
+    
 }
 
 private extension GenericOnOffGroupCell {

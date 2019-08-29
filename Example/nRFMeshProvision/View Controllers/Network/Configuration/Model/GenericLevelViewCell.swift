@@ -241,10 +241,10 @@ private extension GenericLevelViewCell {
             }
         } else {
             if defaultTransitionSettingsSwitch.isOn {
-                message = GenericDeltaSetUnacknowledged(level: level)
+                message = GenericDeltaSetUnacknowledged(delta: level)
             } else {
                 let transitionTime = TransitionTime(steps: steps, stepResolution: stepResolution)
-                message = GenericDeltaSetUnacknowledged(level: level, transitionTime: transitionTime, delay: delay)
+                message = GenericDeltaSetUnacknowledged(delta: level, transitionTime: transitionTime, delay: delay)
             }
         }
         

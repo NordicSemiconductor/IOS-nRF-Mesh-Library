@@ -11,8 +11,7 @@ import nRFMeshProvision
 
 private class Section {
     let applicationKey: ApplicationKey
-    var sigModelIds: [UInt16] = []
-    var hasVendorModels: Bool = false
+    var models: [(modelId: UInt32, count: Int)] = []
     
     init(_ applicationKey: ApplicationKey) {
         self.applicationKey = applicationKey
@@ -44,27 +43,22 @@ class GroupControlViewController: ConnectableCollectionViewController {
         super.viewDidLoad()
         
         title = group.name
+        collectionView.delegate = self
         
         if let network = MeshNetworkManager.instance.meshNetwork {
             let models = network.models(subscribedTo: group)
             models.forEach { model in
                 model.boundApplicationKeys.forEach { key in
-                    var section = sections[key]
-                    let newSection = section == nil
-                    if newSection {
-                        section = Section(key)
-                    }
-                    if model.isBluetoothSIGAssigned {
-                        if model.isSupported && !section!.sigModelIds.contains(model.modelIdentifier) {
-                            section!.sigModelIds.append(model.modelIdentifier)
-                            if newSection {
-                                sections.append(section!)
-                            }
+                    if model.isSupported {
+                        var section: Section! = sections[key]
+                        if section == nil {
+                            section = Section(key)
+                            sections.append(section)
                         }
-                    } else {
-                        section!.hasVendorModels = true
-                        if newSection {
-                            sections.append(section!)
+                        if let index = section.models.firstIndex(where: { $0.modelId == model.modelId }) {
+                            section.models[index].count += 1
+                        } else {
+                            section.models.append((modelId: model.modelId, count: 1))
                         }
                     }
                 }
@@ -86,7 +80,7 @@ class GroupControlViewController: ConnectableCollectionViewController {
 
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         let section = sections[section]
-        return section.sigModelIds.count + (section.hasVendorModels ? 1 : 0)
+        return section.models.count
     }
     
     override func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
@@ -97,18 +91,32 @@ class GroupControlViewController: ConnectableCollectionViewController {
 
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let section = sections[indexPath.section]
-        var identifier = "1000" //"vendor" // TODO: Uncomment
-        if indexPath.row < section.sigModelIds.count {
-            let modelId = section.sigModelIds[indexPath.row]
-            identifier = modelId.hex
-        }
+        let model = section.models[indexPath.row]
+        let identifier = String(format: "%08X", model.modelId)
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: identifier, for: indexPath) as! ModelGroupCell
         cell.group = group
         cell.applicationKey = section.applicationKey
         cell.delegate = self
+        cell.numberOfDevices = model.count
         return cell
     }
+}
 
+extension GroupControlViewController: UICollectionViewDelegateFlowLayout {
+    
+    func collectionView(_ collectionView: UICollectionView,
+                        layout collectionViewLayout: UICollectionViewLayout,
+                        sizeForItemAt indexPath: IndexPath) -> CGSize {
+        let inset: CGFloat = 16
+        let standardSize: CGFloat = 130
+        let numberOfColumnsOnCompactWidth: CGFloat = 3
+        let width = view.frame.width - inset * 2
+        if width > standardSize * numberOfColumnsOnCompactWidth + inset * (numberOfColumnsOnCompactWidth - 1) {
+            return CGSize(width: standardSize, height: standardSize)
+        }
+        return CGSize(width: width / 2 - inset / 2, height: standardSize)
+    }
+    
 }
 
 extension GroupControlViewController: ModelGroupViewCellDelegate {
@@ -147,7 +155,13 @@ extension GroupControlViewController: MeshNetworkDelegate {
 private extension Model {
     
     var isSupported: Bool {
-        return modelIdentifier == 0x1000
+        return modelIdentifier == 0x1000 ||
+               modelIdentifier == 0x1002
+    }
+    
+    var modelId: UInt32 {
+        let companyId = isBluetoothSIGAssigned ? 0 : companyIdentifier!
+        return (UInt32(companyId) << 16) | UInt32(modelIdentifier)
     }
     
 }

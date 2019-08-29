@@ -25,6 +25,17 @@ class ModelGroupCell: UICollectionViewCell {
     
     var group: Group!
     var applicationKey: ApplicationKey!
+    var numberOfDevices: Int! {
+        didSet {
+            reload()
+        }
+    }
     
     weak var delegate: ModelGroupViewCellDelegate!
+    
+    // MARK: - Private methods
+    
+    func reload() {
+        // Empty.
+    }
 }
