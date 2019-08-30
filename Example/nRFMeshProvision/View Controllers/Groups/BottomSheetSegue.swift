@@ -10,10 +10,10 @@ import UIKit
 
 class BottomSheetSegue: UIStoryboardSegue {
 
-    private var selfRetainer: BottomSheetSegue? = nil
+    private var selfRetained: BottomSheetSegue? = nil
     
     override func perform() {
-        selfRetainer = self
+        selfRetained = self
         destination.transitioningDelegate = self
         destination.modalPresentationStyle = .overCurrentContext
         // To display the BottomSheet above the TabBar, present
@@ -30,7 +30,7 @@ extension BottomSheetSegue: UIViewControllerTransitioningDelegate {
     }
     
     public func animationController(forDismissed dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
-        selfRetainer = nil
+        selfRetained = nil
         return Dismisser()
     }
     
@@ -56,13 +56,13 @@ extension BottomSheetSegue {
                 container.addSubview(toView)
                 
                 if #available(iOS 11.0, *) {
-                    container.safeAreaLayoutGuide.bottomAnchor.constraint(equalTo: toView.bottomAnchor, constant: 0).isActive = true
-                    container.safeAreaLayoutGuide.leadingAnchor.constraint(equalTo: toView.leadingAnchor, constant: 0).isActive = true
-                    container.safeAreaLayoutGuide.trailingAnchor.constraint(equalTo: toView.trailingAnchor, constant: 0).isActive = true
+                    container.safeAreaLayoutGuide.centerYAnchor.constraint(equalTo: toView.centerYAnchor, constant: 0).isActive = true
+                    container.safeAreaLayoutGuide.leadingAnchor.constraint(equalTo: toView.leadingAnchor, constant: -20).isActive = true
+                    container.safeAreaLayoutGuide.trailingAnchor.constraint(equalTo: toView.trailingAnchor, constant: 20).isActive = true
                 } else {
-                    container.bottomAnchor.constraint(equalTo: toView.bottomAnchor, constant: 0).isActive = true
-                    container.leadingAnchor.constraint(equalTo: toView.leadingAnchor, constant: 0).isActive = true
-                    container.trailingAnchor.constraint(equalTo: toView.trailingAnchor, constant: 0).isActive = true
+                    container.centerYAnchor.constraint(equalTo: toView.centerYAnchor, constant: 0).isActive = true
+                    container.leadingAnchor.constraint(equalTo: toView.leadingAnchor, constant: -20).isActive = true
+                    container.trailingAnchor.constraint(equalTo: toView.trailingAnchor, constant: 20).isActive = true
                 }
                 
                 if let navigationController = toViewController as? UINavigationController,
@@ -84,21 +84,15 @@ extension BottomSheetSegue {
             do {
                 toView.layer.masksToBounds = true
                 toView.layer.cornerRadius = 20
-                if #available(iOS 11.0, *) {
-                    if container.safeAreaInsets.bottom == 0 {
-                        toView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
-                    }
-                }
             }
             
             // Perform the animation.
             do {
                 container.layoutIfNeeded()
-                let originalOriginY = toView.frame.origin.y
-                toView.frame.origin.y += container.frame.height - toView.frame.minY
+                toView.transform = CGAffineTransform(scaleX: 0, y: 0)
                 UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 0.8,
                                initialSpringVelocity: 0, options: [], animations: {
-                    toView.frame.origin.y = originalOriginY
+                    toView.transform = CGAffineTransform.identity
                     fromViewController.view.alpha = 0.5
                 }) { completed in
                     transitionContext.completeTransition(completed)
@@ -114,12 +108,11 @@ extension BottomSheetSegue {
         }
         
         func animateTransition(using transitionContext: UIViewControllerContextTransitioning) {
-            let container = transitionContext.containerView
             let fromView = transitionContext.view(forKey: .from)!
             let toViewController = transitionContext.viewController(forKey: .to)!
             
             UIView.animate(withDuration: 0.2, animations: {
-                fromView.frame.origin.y += container.frame.height - fromView.frame.minY
+                fromView.transform = CGAffineTransform(scaleX: 0.01, y: 0.01)
                 toViewController.view.alpha = 1.0
             }) { completed in
                 transitionContext.completeTransition(completed)
