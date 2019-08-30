@@ -45,6 +45,8 @@ class GroupControlViewController: ConnectableCollectionViewController {
         title = group.name
         collectionView.delegate = self
         
+        title = group.name
+        
         if let network = MeshNetworkManager.instance.meshNetwork {
             let models = network.models(subscribedTo: group)
             models.forEach { model in
@@ -68,7 +70,6 @@ class GroupControlViewController: ConnectableCollectionViewController {
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        
         MeshNetworkManager.instance.delegate = self
     }
     
@@ -78,6 +79,7 @@ class GroupControlViewController: ConnectableCollectionViewController {
             let viewController = destination.topViewController as! AddGroupViewController
             viewController.group = group
             viewController.delegate = self
+            viewController.canModifyAddress = sections.isEmpty
         } else if segue.identifier == "showDetails" {
             let destination = segue.destination as! UINavigationController
             let bottomSheet = destination.topViewController as! BottomSheetViewController
@@ -138,7 +140,7 @@ extension GroupControlViewController: UICollectionViewDelegateFlowLayout {
     
 }
 
-extension GroupControlViewController: AddGroupDelegate {
+extension GroupControlViewController: GroupDelegate {
     
     func groupChanged(_ group: Group) {
         title = group.name
