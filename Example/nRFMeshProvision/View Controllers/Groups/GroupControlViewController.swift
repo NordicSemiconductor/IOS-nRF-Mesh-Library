@@ -41,8 +41,7 @@ class GroupControlViewController: ConnectableCollectionViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        title = group.name
+        collectionView.setEmptyView(title: "No models configured", message: "No models are subscribed to this group.", messageImage: #imageLiteral(resourceName: "baseline-groups"))
         collectionView.delegate = self
         
         title = group.name
@@ -65,6 +64,9 @@ class GroupControlViewController: ConnectableCollectionViewController {
                     }
                 }
             }
+        }
+        if sections.isEmpty {
+            collectionView.showEmptyView()
         }
     }
     
