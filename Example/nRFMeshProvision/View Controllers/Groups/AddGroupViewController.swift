@@ -9,7 +9,7 @@
 import UIKit
 import nRFMeshProvision
 
-protocol AddGroupDelegate {
+protocol GroupDelegate {
     func groupChanged(_ group: Group)
 }
 
@@ -31,9 +31,9 @@ class AddGroupViewController: UITableViewController {
     // MARK: - Properties
     
     var group: Group?
-    var delegate: AddGroupDelegate?
+    var delegate: GroupDelegate?
+    var canModifyAddress: Bool = false
     
-    private var canModifyAddress: Bool = false
     private var name: String? {
         didSet {
             nameLabel.text = name
@@ -62,7 +62,9 @@ class AddGroupViewController: UITableViewController {
             title = "Edit Group"
             name = group.name
             address = group.address
-            addressCell.accessoryType = .none
+            if !canModifyAddress {
+                addressCell.accessoryType = .none
+            }
             return
         }
         // If not, let's set default values.
@@ -84,6 +86,7 @@ class AddGroupViewController: UITableViewController {
             addressCell.detailTextLabel?.text = "Provisioner not set"
             addressCell.accessoryType = .none
             doneButton.isEnabled = false
+            canModifyAddress = false
         }
     }
     

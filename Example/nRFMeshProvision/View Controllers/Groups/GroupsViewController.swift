@@ -100,7 +100,7 @@ class GroupsViewController: UITableViewController, Editable {
 
 }
 
-extension GroupsViewController: AddGroupDelegate {
+extension GroupsViewController: GroupDelegate {
     
     func groupChanged(_ group: Group) {
         let meshNetwork = MeshNetworkManager.instance.meshNetwork!
