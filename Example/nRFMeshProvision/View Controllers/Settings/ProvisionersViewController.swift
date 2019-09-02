@@ -16,12 +16,16 @@ class ProvisionersViewController: UITableViewController, Editable {
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.setEmptyView(title: "No provisioners", message: "Click + to add a new one.", messageImage: #imageLiteral(resourceName: "baseline-security"))
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
         
         let hasProvisioners = MeshNetworkManager.instance.meshNetwork?.provisioners.count ?? 0 > 0
         if !hasProvisioners {
             showEmptyView()
         } else {
-            hideEmptyView()
+            hideEmptyView(false)
         }
     }
     

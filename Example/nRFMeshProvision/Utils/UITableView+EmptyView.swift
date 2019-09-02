@@ -98,9 +98,13 @@ extension UIView {
         }
     }
     
-    func hideEmptyView() {
+    func hideEmptyView(_ animated: Bool = true) {
         if let emptyView = subviews.first(where: { $0.tag == 100 }) {
-            UIView.animate(withDuration: 0.5) {
+            if animated {
+                UIView.animate(withDuration: 0.5) {
+                    emptyView.alpha = 0.0
+                }
+            } else {
                 emptyView.alpha = 0.0
             }
         }
@@ -114,7 +118,7 @@ protocol Editable {
     /// Shows the 'Empty View'.
     func showEmptyView()
     /// Hides the 'Empty View'.
-    func hideEmptyView()
+    func hideEmptyView(_ animated: Bool)
 }
 
 extension Editable where Self: UIViewController {
@@ -130,11 +134,11 @@ extension Editable where Self: UIViewController {
         tableView.setEditing(false, animated: false)
     }
     
-    func hideEmptyView() {
+    func hideEmptyView(_ animated: Bool = true) {
         if !navigationItem.rightBarButtonItems!.contains(editButtonItem) {
             navigationItem.rightBarButtonItems!.append(editButtonItem)
         }
-        tableView.hideEmptyView()
+        tableView.hideEmptyView(animated)
     }
     
 }

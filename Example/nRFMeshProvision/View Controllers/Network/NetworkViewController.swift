@@ -54,6 +54,30 @@ class NetworkViewController: UITableViewController {
         reloadData()
     }
     
+    override func shouldPerformSegue(withIdentifier identifier: String, sender: Any?) -> Bool {
+        if identifier == "provision" {
+            let network = MeshNetworkManager.instance.meshNetwork
+            let hasProvisioner = network?.localProvisioner != nil
+            // If the Provisioner has not been set before,
+            // display the error message.
+            // When the OK button is clicked the Add Provisioner popup will present.
+            // When done, the Provisioning will resume.
+            if !hasProvisioner {
+                presentAlert(title: "Provisioner not set", message: "Create a Provisioner before provisioning a new device.") { _ in
+                    let storyboard = UIStoryboard(name: "Settings", bundle: .main)
+                    let popup = storyboard.instantiateViewController(withIdentifier: "newProvisioner")
+                    if let popup = popup as? UINavigationController,
+                        let editProvisionerViewController = popup.topViewController as? EditProvisionerViewController {
+                        editProvisionerViewController.delegate = self
+                    }
+                    self.present(popup, animated: true)
+                }
+            }
+            return hasProvisioner
+        }
+        return true
+    }
+    
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         switch segue.identifier! {
         case "provision":
@@ -130,6 +154,19 @@ extension NetworkViewController: ProvisioningViewDelegate {
     
     func provisionerDidProvisionNewDevice(_ node: Node) {
         performSegue(withIdentifier: "configure", sender: node)
+    }
+    
+}
+
+extension NetworkViewController: EditProvisionerDelegate {
+    
+    func provisionerWasAdded(_ provisioner: Provisioner) {
+        // A new Provisioner was added. Continue wit provisioning.
+        performSegue(withIdentifier: "provision", sender: nil)
+    }
+    
+    func provisionerWasModified(_ provisioner: Provisioner) {
+        // Not used.
     }
     
 }
