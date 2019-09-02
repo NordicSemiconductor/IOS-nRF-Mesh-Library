@@ -23,18 +23,34 @@ class ModelViewController: ConnectableViewController {
         super.viewDidLoad()
         
         title = model.name ?? "Model"
-        navigationItem.rightBarButtonItem = editButtonItem
-        
-        if !model.isConfigurationClient {
-            refreshControl = UIRefreshControl()
-            refreshControl!.tintColor = UIColor.white
-            refreshControl!.addTarget(self, action: #selector(reload(_:)), for: .valueChanged)
+        if !model.isConfigurationServer && !model.isConfigurationClient {
+            navigationItem.rightBarButtonItem = editButtonItem
         }
         
         tableView.register(UINib(nibName: "ConfigurationServer", bundle: nil), forCellReuseIdentifier: "0000")
         tableView.register(UINib(nibName: "GenericOnOff", bundle: nil), forCellReuseIdentifier: "1000")
         tableView.register(UINib(nibName: "GenericLevel", bundle: nil), forCellReuseIdentifier: "1002")
         tableView.register(UINib(nibName: "VendorModel", bundle: nil), forCellReuseIdentifier: "vendor")
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        // Check if the local Provisioner has configuration capabilities.
+        let localProvisioner = MeshNetworkManager.instance.meshNetwork?.localProvisioner
+        guard localProvisioner?.hasConfigurationCapabilities ?? false else {
+            // The Provisioner cannot sent or receive messages.
+            refreshControl = nil
+            editButtonItem.isEnabled = false
+            return
+        }
+        
+        if !model.isConfigurationClient {
+            refreshControl = UIRefreshControl()
+            refreshControl!.tintColor = UIColor.white
+            refreshControl!.addTarget(self, action: #selector(reload(_:)), for: .valueChanged)
+        }
+        editButtonItem.isEnabled = true
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -114,6 +130,8 @@ class ModelViewController: ConnectableViewController {
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let localProvisioner = MeshNetworkManager.instance.meshNetwork?.localProvisioner
+        
         if indexPath.isDetailsSection {
             let cell = tableView.dequeueReusableCell(withIdentifier: "normal", for: indexPath)
             cell.textLabel?.text = indexPath.title
@@ -141,6 +159,7 @@ class ModelViewController: ConnectableViewController {
             guard indexPath.row < model.boundApplicationKeys.count else {
                 let cell = tableView.dequeueReusableCell(withIdentifier: "action", for: indexPath)
                 cell.textLabel?.text = "Bind Application Key"
+                cell.textLabel?.isEnabled = localProvisioner?.hasConfigurationCapabilities ?? false
                 return cell
             }
             let applicationKey = model.boundApplicationKeys[indexPath.row]
@@ -154,6 +173,7 @@ class ModelViewController: ConnectableViewController {
             guard let publish = model.publish else {
                 let cell = tableView.dequeueReusableCell(withIdentifier: "action", for: indexPath)
                 cell.textLabel?.text = "Set Publication"
+                cell.textLabel?.isEnabled = localProvisioner?.hasConfigurationCapabilities ?? false
                 return cell
             }
             let cell = tableView.dequeueReusableCell(withIdentifier: "destination", for: indexPath) as! PublicationCell
@@ -164,6 +184,7 @@ class ModelViewController: ConnectableViewController {
             guard indexPath.row < model.subscriptions.count else {
                 let cell = tableView.dequeueReusableCell(withIdentifier: "action", for: indexPath)
                 cell.textLabel?.text = "Subscribe"
+                cell.textLabel?.isEnabled = localProvisioner?.hasConfigurationCapabilities ?? false
                 return cell
             }
             let cell = tableView.dequeueReusableCell(withIdentifier: "group", for: indexPath)
@@ -182,6 +203,11 @@ class ModelViewController: ConnectableViewController {
     }
     
     override func tableView(_ tableView: UITableView, shouldHighlightRowAt indexPath: IndexPath) -> Bool {
+        let localProvisioner = MeshNetworkManager.instance.meshNetwork?.localProvisioner
+        guard localProvisioner?.hasConfigurationCapabilities ?? false else {
+            return false
+        }
+        
         if indexPath.isBindingsSection && !model.isConfigurationServer {
             return indexPath.row == model.boundApplicationKeys.count
         }

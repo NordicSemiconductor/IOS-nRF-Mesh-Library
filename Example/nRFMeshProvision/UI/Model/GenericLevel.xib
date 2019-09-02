@@ -327,7 +327,9 @@
                 <outlet property="delaySlider" destination="25O-a0-Dt8" id="A6z-rk-GMW"/>
                 <outlet property="levelLabel" destination="BGq-Rw-Ddg" id="nDB-oB-Jao"/>
                 <outlet property="levelSlider" destination="oHF-St-UXO" id="YhA-xY-MXz"/>
+                <outlet property="readButton" destination="VyJ-54-gMc" id="VlI-yo-dgU"/>
                 <outlet property="segmentControl" destination="S4d-Vv-gEU" id="JYA-Su-MEe"/>
+                <outlet property="setButton" destination="9zm-0c-B8T" id="jYX-zi-Epu"/>
                 <outlet property="targetStatusLabel" destination="T7V-mL-Fnf" id="W5P-SF-Lkp"/>
                 <outlet property="transitionTimeLabel" destination="ocE-z9-cIU" id="j8g-HE-RyU"/>
                 <outlet property="transitionTimeSlider" destination="aGp-Gi-JKC" id="mBH-Zs-aJ7"/>

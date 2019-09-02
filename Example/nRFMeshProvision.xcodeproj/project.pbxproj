@@ -20,7 +20,7 @@
 		521215312316C36B0059FB3D /* GenericLevelGroupCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 521215302316C36B0059FB3D /* GenericLevelGroupCell.swift */; };
 		522AFFDC22BBA34900521EDC /* ActionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 522AFFDB22BBA34900521EDC /* ActionCell.swift */; };
 		522AFFDE22BBBC6400521EDC /* NodeFeaturesCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 522AFFDD22BBBC6400521EDC /* NodeFeaturesCell.swift */; };
-		522AFFE022C2376C00521EDC /* NodeElementsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 522AFFDF22C2376C00521EDC /* NodeElementsViewController.swift */; };
+		522AFFE022C2376C00521EDC /* ElementViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 522AFFDF22C2376C00521EDC /* ElementViewController.swift */; };
 		52313FEE22EAFB090074325A /* SubscribeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52313FED22EAFB090074325A /* SubscribeViewController.swift */; };
 		5231400022EEE1770074325A /* AssigningGroupAddresses.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52313FFF22EEE1770074325A /* AssigningGroupAddresses.swift */; };
 		5231400222EEF7940074325A /* CreatingMeshNetwork.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5231400122EEF7940074325A /* CreatingMeshNetwork.swift */; };
@@ -119,7 +119,7 @@
 		521215302316C36B0059FB3D /* GenericLevelGroupCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericLevelGroupCell.swift; sourceTree = "<group>"; };
 		522AFFDB22BBA34900521EDC /* ActionCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionCell.swift; sourceTree = "<group>"; };
 		522AFFDD22BBBC6400521EDC /* NodeFeaturesCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NodeFeaturesCell.swift; sourceTree = "<group>"; };
-		522AFFDF22C2376C00521EDC /* NodeElementsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NodeElementsViewController.swift; sourceTree = "<group>"; };
+		522AFFDF22C2376C00521EDC /* ElementViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ElementViewController.swift; sourceTree = "<group>"; };
 		52313FED22EAFB090074325A /* SubscribeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubscribeViewController.swift; sourceTree = "<group>"; };
 		52313FFF22EEE1770074325A /* AssigningGroupAddresses.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssigningGroupAddresses.swift; sourceTree = "<group>"; };
 		5231400122EEF7940074325A /* CreatingMeshNetwork.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreatingMeshNetwork.swift; sourceTree = "<group>"; };
@@ -410,7 +410,7 @@
 				5231403D230175F30074325A /* Model */,
 				522AFFE122C23B3900521EDC /* Cells */,
 				52DF5D89228DA78A00C297C1 /* ConfigurationViewController.swift */,
-				522AFFDF22C2376C00521EDC /* NodeElementsViewController.swift */,
+				522AFFDF22C2376C00521EDC /* ElementViewController.swift */,
 				523F776522C609D90030EA6A /* NodeNetworkKeysViewController.swift */,
 				523F776922C621F50030EA6A /* NodeAddNetworkKeyViewController.swift */,
 				523F776722C615CE0030EA6A /* NodeAppKeysViewController.swift */,
@@ -740,7 +740,7 @@
 				529B756D223FE7F1008F1CE7 /* RootViewController.swift in Sources */,
 				523F776822C615CE0030EA6A /* NodeAppKeysViewController.swift in Sources */,
 				523F777922CB57190030EA6A /* ModelViewController.swift in Sources */,
-				522AFFE022C2376C00521EDC /* NodeElementsViewController.swift in Sources */,
+				522AFFE022C2376C00521EDC /* ElementViewController.swift in Sources */,
 				523F779722CE2BF60030EA6A /* SetPublicationDestinationsViewController.swift in Sources */,
 				523F776422C4EDD90030EA6A /* SwitchCell.swift in Sources */,
 				522AFFDC22BBA34900521EDC /* ActionCell.swift in Sources */,

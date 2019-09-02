@@ -15,9 +15,11 @@ class GenericLevelGroupCell: ModelGroupCell {
     
     @IBOutlet weak var title: UILabel!
     
+    @IBOutlet weak var minusButton: UIButton!
     @IBAction func minusTapped(_ sender: UIButton) {
         sendGenericDeltaMessage(delta: -2048)
     }
+    @IBOutlet weak var plusButton: UIButton!
     @IBAction func plusTapped(_ sender: UIButton) {
         sendGenericDeltaMessage(delta: 2048)
     }
@@ -31,8 +33,13 @@ class GenericLevelGroupCell: ModelGroupCell {
         } else {
             title.text = "\(numberOfDevices) devices"
         }
+        
+        let localProvisioner = MeshNetworkManager.instance.meshNetwork?.localProvisioner
+        let isEnabled = localProvisioner?.hasConfigurationCapabilities ?? false
+        
+        minusButton.isEnabled = isEnabled
+        plusButton.isEnabled = isEnabled
     }
-    
 }
 
 private extension GenericLevelGroupCell {

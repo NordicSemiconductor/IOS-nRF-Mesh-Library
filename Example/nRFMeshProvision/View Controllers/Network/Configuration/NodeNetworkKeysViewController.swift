@@ -11,6 +11,10 @@ import nRFMeshProvision
 
 class NodeNetworkKeysViewController: ConnectableViewController, Editable {
     
+    // MARK: - Outlets and Actions
+    
+    @IBOutlet weak var addButton: UIBarButtonItem!
+    
     // MARK: - Properties
     
     var node: Node!
@@ -19,24 +23,40 @@ class NodeNetworkKeysViewController: ConnectableViewController, Editable {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         tableView.setEmptyView(title: "No keys", message: "Click + to add a new key.", messageImage: #imageLiteral(resourceName: "baseline-key"))
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        if node.networkKeys.isEmpty {
+            showEmptyView()
+        } else {
+            hideEmptyView()
+        }
+        
+        // Check if the local Provisioner has configuration capabilities.
+        let localProvisioner = MeshNetworkManager.instance.meshNetwork?.localProvisioner
+        guard localProvisioner?.hasConfigurationCapabilities ?? false else {
+            // The Provisioner cannot sent or receive messages.
+            refreshControl = nil
+            editButtonItem.isEnabled = false
+            addButton.isEnabled = false
+            return
+        }
         refreshControl = UIRefreshControl()
         refreshControl!.tintColor = UIColor.white
         refreshControl!.addTarget(self, action: #selector(readKeys(_:)), for: .valueChanged)
         
-        if node.networkKeys.isEmpty {
-            showEmptyView()
-        }
+        editButtonItem.isEnabled = true
+        addButton.isEnabled = true
     }
     
     override func viewDidAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
+        super.viewDidAppear(animated)
         
         MeshNetworkManager.instance.delegate = self
-        
-        if !node.networkKeys.isEmpty {
-            hideEmptyView()
-        }
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {

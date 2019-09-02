@@ -19,35 +19,49 @@ class ConfigurationViewController: ConnectableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        refreshControl = UIRefreshControl()
-        refreshControl!.tintColor = UIColor.white
-        refreshControl!.addTarget(self, action: #selector(getCompositionData), for: .valueChanged)
         
         title = node.name ?? "Unknown device"
-        
-        // If the Composition Data were never obtained, get them now.
-        if !node.isCompositionDataReceived {
-            // This will request Composition Data when the bearer is open.
-            getCompositionData()
-        } else {
-            if node.defaultTTL == nil {
-                getTtl()
-            }
-        }
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        MeshNetworkManager.instance.delegate = self
         // Element name might have been updated.
         tableView.reloadSections(.keysAndElementsSections, with: .automatic)
+        
+        // Check if the local Provisioner has configuration capabilities.
+        let localProvisioner = MeshNetworkManager.instance.meshNetwork?.localProvisioner
+        guard localProvisioner?.hasConfigurationCapabilities ?? false else {
+            // The Provisioner cannot sent or receive messages.
+            refreshControl = nil
+            return
+        }
+        
+        if refreshControl == nil {
+            refreshControl = UIRefreshControl()
+            refreshControl!.tintColor = UIColor.white
+            refreshControl!.addTarget(self, action: #selector(getCompositionData), for: .valueChanged)
+        }
+        
+        // If the Composition Data were never obtained, get them now.
+        if !node.isCompositionDataReceived {
+            // This will request Composition Data when the bearer is open.
+            getCompositionData()
+        } else if node.defaultTTL == nil {
+            getTtl()
+        }
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        MeshNetworkManager.instance.delegate = self
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "showElement" {
             let indexPath = sender as! IndexPath
-            let destination = segue.destination as! NodeElementsViewController
+            let destination = segue.destination as! ElementViewController
             destination.element = node.elements[indexPath.row]
         }
         if segue.identifier == "showNetworkKeys" {

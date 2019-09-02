@@ -54,12 +54,25 @@ class VendorModelViewCell: ModelViewCell, UITextFieldDelegate {
     @IBOutlet weak var forceSegmentationSwitch: UISwitch!
     
     @IBOutlet weak var sendButton: UIButton!
-    
     @IBAction func sendTapped(_ sender: UIButton) {
         send()
     }
     @IBAction func sendActionTapped(_ sender: UITextField) {
         send()
+    }
+    
+    // MARK: - Implementation
+    
+    override func reload(using model: Model) {
+        let localProvisioner = MeshNetworkManager.instance.meshNetwork?.localProvisioner
+        let isEnabled = localProvisioner?.hasConfigurationCapabilities ?? false
+        
+        acknowledgmentSwitch.isEnabled = isEnabled
+        transMicSwitch.isEnabled = isEnabled
+        forceSegmentationSwitch.isEnabled = isEnabled
+        opCodeField.isEnabled = isEnabled
+        parametersField.isEnabled = isEnabled
+        sendButton.isEnabled = isEnabled
     }
     
     override func awakeFromNib() {

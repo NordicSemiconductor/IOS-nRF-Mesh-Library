@@ -65,6 +65,7 @@ class GenericLevelViewCell: ModelViewCell {
     
     @IBOutlet weak var acknowledgmentSwitch: UISwitch!
     
+    @IBOutlet weak var setButton: UIButton!
     @IBAction func setTapped(_ sender: UIButton) {
         switch segmentControl.selectedSegmentIndex {
         case 0:
@@ -83,6 +84,7 @@ class GenericLevelViewCell: ModelViewCell {
             break
         }
     }
+    @IBOutlet weak var readButton: UIButton!
     @IBAction func readTapped(_ sender: UIButton) {
         readGenericLevelState()
     }
@@ -94,6 +96,18 @@ class GenericLevelViewCell: ModelViewCell {
     private var delay: UInt8 = 0
     
     // MARK: - Implementation
+    
+    override func reload(using model: Model) {
+        let localProvisioner = MeshNetworkManager.instance.meshNetwork?.localProvisioner
+        let isEnabled = localProvisioner?.hasConfigurationCapabilities ?? false
+        
+        defaultTransitionSettingsSwitch.isEnabled = isEnabled
+        acknowledgmentSwitch.isEnabled = isEnabled
+        levelSlider.isEnabled = isEnabled
+        segmentControl.isEnabled = isEnabled
+        setButton.isEnabled = isEnabled
+        readButton.isEnabled = isEnabled
+    }
     
     override func meshNetwork(_ meshNetwork: MeshNetwork, didDeliverMessage message: MeshMessage, from source: Address) -> Bool {
         switch message {

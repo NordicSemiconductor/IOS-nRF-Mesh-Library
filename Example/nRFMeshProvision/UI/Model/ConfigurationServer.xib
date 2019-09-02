@@ -418,6 +418,7 @@
             <connections>
                 <outlet property="friendFeatureSwitch" destination="plw-fg-Zic" id="XE1-mB-XRY"/>
                 <outlet property="gattProxySwitch" destination="ztF-Vw-61s" id="ROQ-3X-yoN"/>
+                <outlet property="networkTransmitButton" destination="KOs-C7-Mi1" id="Y8H-t2-0Zc"/>
                 <outlet property="networkTransmitCountLabel" destination="4OU-Wl-Pn6" id="aZF-K5-lWr"/>
                 <outlet property="networkTransmitCountSlider" destination="jYX-uN-s3g" id="bgQ-oe-fJJ"/>
                 <outlet property="networkTransmitIntervalLabel" destination="Eac-j2-yZp" id="0Lg-Xd-MFW"/>
@@ -427,6 +428,7 @@
                 <outlet property="relayIntervalLabel" destination="NG0-c0-Iid" id="LmS-sY-Yt6"/>
                 <outlet property="relayIntervalSlider" destination="4xc-mA-Pwm" id="Cfs-1y-61m"/>
                 <outlet property="secureNetworkBeaconSwitch" destination="cFg-Ds-bZw" id="6AA-Qk-0F4"/>
+                <outlet property="setRelayButton" destination="hn1-Xh-LXI" id="0HA-W0-Cc6"/>
             </connections>
             <point key="canvasLocation" x="-10.144927536231885" y="82.366071428571431"/>
         </tableViewCell>

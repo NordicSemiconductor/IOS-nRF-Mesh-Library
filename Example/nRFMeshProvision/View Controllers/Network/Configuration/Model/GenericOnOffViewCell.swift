@@ -44,12 +44,15 @@ class GenericOnOffViewCell: ModelViewCell {
     
     @IBOutlet weak var acknowledgmentSwitch: UISwitch!
     
+    @IBOutlet weak var onButton: UIButton!
     @IBAction func onTapped(_ sender: UIButton) {
         sendGenericOnOffMessage(turnOn: true)
     }
+    @IBOutlet weak var offButton: UIButton!
     @IBAction func offTapped(_ sender: UIButton) {
         sendGenericOnOffMessage(turnOn: false)
     }
+    @IBOutlet weak var readButton: UIButton!
     @IBAction func readTapped(_ sender: UIButton) {
         readGenericOnOffState()
     }
@@ -61,6 +64,17 @@ class GenericOnOffViewCell: ModelViewCell {
     private var delay: UInt8 = 0
     
     // MARK: - Implementation
+    
+    override func reload(using model: Model) {
+        let localProvisioner = MeshNetworkManager.instance.meshNetwork?.localProvisioner
+        let isEnabled = localProvisioner?.hasConfigurationCapabilities ?? false
+        
+        defaultTransitionSettingsSwitch.isEnabled = isEnabled
+        acknowledgmentSwitch.isEnabled = isEnabled
+        onButton.isEnabled = isEnabled
+        offButton.isEnabled = isEnabled
+        readButton.isEnabled = isEnabled
+    }
     
     override func meshNetwork(_ meshNetwork: MeshNetwork, didDeliverMessage message: MeshMessage, from source: Address) -> Bool {
         switch message {

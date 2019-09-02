@@ -285,6 +285,9 @@
                 <outlet property="defaultTransitionSettingsSwitch" destination="GfX-TC-eac" id="yhq-6p-EpF"/>
                 <outlet property="delayLabel" destination="ph1-rg-z1R" id="HsJ-12-v6F"/>
                 <outlet property="delaySlider" destination="art-BU-RUB" id="bBU-lk-v6O"/>
+                <outlet property="offButton" destination="QnB-D2-UUb" id="f44-xF-DBd"/>
+                <outlet property="onButton" destination="XQL-Ih-bsU" id="6ya-6e-KLc"/>
+                <outlet property="readButton" destination="Fo0-bD-53O" id="cal-NF-ZlK"/>
                 <outlet property="targetStatusLabel" destination="oKD-rp-ELg" id="xDh-0v-XNG"/>
                 <outlet property="transitionTimeLabel" destination="BfN-fi-USC" id="L3f-Nv-v77"/>
                 <outlet property="transitionTimeSlider" destination="sBd-2J-lVo" id="AcO-v5-2h3"/>

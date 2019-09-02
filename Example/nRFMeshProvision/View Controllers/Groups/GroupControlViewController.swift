@@ -70,8 +70,14 @@ class GroupControlViewController: ConnectableCollectionViewController {
         }
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        collectionView.reloadData()
+    }
+    
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+        
         MeshNetworkManager.instance.delegate = self
     }
     

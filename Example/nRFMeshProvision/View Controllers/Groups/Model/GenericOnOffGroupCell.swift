@@ -15,9 +15,11 @@ class GenericOnOffGroupCell: ModelGroupCell {
     
     @IBOutlet weak var title: UILabel!
     
+    @IBOutlet weak var onButton: UIButton!
     @IBAction func onTapped(_ sender: UIButton) {
         sendGenericOnOffMessage(turnOn: true)
     }
+    @IBOutlet weak var offButton: UIButton!
     @IBAction func offTapped(_ sender: UIButton) {
         sendGenericOnOffMessage(turnOn: false)
     }
@@ -31,8 +33,13 @@ class GenericOnOffGroupCell: ModelGroupCell {
         } else {
             title.text = "\(numberOfDevices) devices"
         }
-    }
-    
+        
+        let localProvisioner = MeshNetworkManager.instance.meshNetwork?.localProvisioner
+        let isEnabled = localProvisioner?.hasConfigurationCapabilities ?? false
+        
+        onButton.isEnabled = isEnabled
+        offButton.isEnabled = isEnabled
+    }    
 }
 
 private extension GenericOnOffGroupCell {

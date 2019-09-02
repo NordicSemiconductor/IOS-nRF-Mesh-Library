@@ -33,6 +33,7 @@ class ConfigurationServerViewCell: ModelViewCell {
     @IBAction func relayIntervalDidChange(_ sender: UISlider) {
         relayIntervalLabel.text = "\(Int(sender.value + 1) * 10) ms"
     }
+    @IBOutlet weak var setRelayButton: UIButton!
     @IBAction func setRelayTapped(_ sender: UIButton) {
         setRelay()
     }
@@ -43,6 +44,7 @@ class ConfigurationServerViewCell: ModelViewCell {
     @IBOutlet weak var networkTransmitCountLabel: UILabel!
     @IBOutlet weak var networkTransmitIntervalLabel: UILabel!
     
+    @IBOutlet weak var networkTransmitButton: UIButton!
     @IBAction func networkTransmitCountDidChange(_ sender: UISlider) {
         let value = Int(sender.value + 1)
         networkTransmitIntervalLabel.isEnabled = value > 1
@@ -95,12 +97,18 @@ class ConfigurationServerViewCell: ModelViewCell {
                 networkTransmitCountSlider.value = Float(networkTransmit.count)
                 networkTransmitCountDidChange(networkTransmitCountSlider)
             }
+            let localProvisioner = MeshNetworkManager.instance.meshNetwork?.localProvisioner
+            let isEnabled = localProvisioner?.hasConfigurationCapabilities ?? false
+            setRelayButton.isEnabled = isEnabled
+            networkTransmitButton.isEnabled = isEnabled
+            
             secureNetworkBeaconSwitch.isOn = node.secureNetworkBeacon ?? false
+            secureNetworkBeaconSwitch.isEnabled = isEnabled
             if let features = node.features {
                 gattProxySwitch.isOn = features.proxy != nil && features.proxy! == .enabled
-                gattProxySwitch.isEnabled = features.proxy != nil && features.proxy! != .notSupported
+                gattProxySwitch.isEnabled = isEnabled && features.proxy != nil && features.proxy! != .notSupported
                 friendFeatureSwitch.isOn = features.friend != nil && features.friend! == .enabled
-                friendFeatureSwitch.isEnabled = features.friend != nil && features.friend! != .notSupported
+                friendFeatureSwitch.isEnabled = isEnabled && features.friend != nil && features.friend! != .notSupported
             }
         }
     }

@@ -1,5 +1,5 @@
 //
-//  ElementsViewController.swift
+//  ElementViewController.swift
 //  nRFMeshProvision_Example
 //
 //  Created by Aleksander Nowakowski on 25/06/2019.
@@ -9,7 +9,7 @@
 import UIKit
 import nRFMeshProvision
 
-class NodeElementsViewController: UITableViewController {
+class ElementViewController: UITableViewController {
     
     // MARK: - Properties
     
@@ -129,7 +129,7 @@ class NodeElementsViewController: UITableViewController {
     }
 }
 
-extension NodeElementsViewController: MeshNetworkDelegate {
+extension ElementViewController: MeshNetworkDelegate {
     
     func meshNetwork(_ meshNetwork: MeshNetwork, didDeliverMessage message: MeshMessage, from source: Address) {
         // Has the Node been reset remotely.
@@ -153,7 +153,7 @@ extension NodeElementsViewController: MeshNetworkDelegate {
     
 }
 
-private extension NodeElementsViewController {
+private extension ElementViewController {
     
     /// Presents a dialog to edit the Element name.
     func presentNameDialog() {
