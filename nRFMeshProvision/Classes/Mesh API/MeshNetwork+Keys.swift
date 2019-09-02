@@ -51,7 +51,7 @@ public extension MeshNetwork {
         guard let defaultNetworkKey = networkKeys.first else {
             throw MeshModelError.noNetworkKey
         }
-        guard let nextIndex = index ?? nextAvailableNetworkKeyIndex, nextIndex.isValidKeyIndex else {
+        guard let nextIndex = index ?? nextAvailableApplicationKeyIndex, nextIndex.isValidKeyIndex else {
             throw MeshModelError.keyIndexOutOfRange
         }
         let key = try ApplicationKey(name: name, index: nextIndex,
