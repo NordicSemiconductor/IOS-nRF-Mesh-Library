@@ -33,7 +33,10 @@ class ScannerTableViewController: UITableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        tableView.setEmptyView(title: "Can't see your device?", message: "1. Make sure the device is turned on\nand connected to a power source.\n\n2. Make sure the relevant firmware\nand SoftDevices are flashed.", messageImage: #imageLiteral(resourceName: "baseline-bluetooth"))
         centralManager = CBCentralManager()
+        
+        tableView.showEmptyView()
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -118,6 +121,7 @@ extension ScannerTableViewController: CBCentralManagerDelegate {
             if let unprovisionedDevice = UnprovisionedDevice(advertisementData: advertisementData) {
                 discoveredPeripherals.append((unprovisionedDevice, peripheral, RSSI.intValue))
                 tableView.insertRows(at: [IndexPath(row: discoveredPeripherals.count - 1, section: 0)], with: .fade)
+                tableView.hideEmptyView()
             }
         } else {
             if let index = discoveredPeripherals.firstIndex(where: { $0.device == peripheral }) {
