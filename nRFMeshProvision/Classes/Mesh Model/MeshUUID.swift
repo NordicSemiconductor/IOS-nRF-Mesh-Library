@@ -9,7 +9,7 @@ import Foundation
 
 /// The wrapper for Unified Unique Identifier (UUID).
 /// The reason for the wrapper is to ensure that it is encoded without dashes.
-internal class MeshUUID: Codable, Equatable {
+internal class MeshUUID: Codable {
     /// The underlying UUID.
     let uuid: UUID
     
@@ -55,7 +55,7 @@ internal class MeshUUID: Codable, Equatable {
 
 // MARK: - Operators
 
-extension MeshUUID {
+extension MeshUUID: Equatable {
     
     public static func == (lhs: MeshUUID, rhs: MeshUUID) -> Bool {
         return lhs.uuid == rhs.uuid

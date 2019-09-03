@@ -12,8 +12,12 @@ public enum StepResolution: UInt8 {
     case seconds                = 0b01
     case tensOfSeconds          = 0b10
     case tensOfMinutes          = 0b11
+}
+
+internal extension StepResolution {
     
-    func toPeriod(steps: UInt8) -> Int {
+    /// Converts the steps to milliseconds using the step resolution.
+    func toMilliseconds(steps: UInt8) -> Int {
         switch self {
         case .hundredsOfMilliseconds:
             return Int(steps) * 100
@@ -25,6 +29,7 @@ public enum StepResolution: UInt8 {
             return Int(steps) * 600000
         }
     }
+    
 }
 
 extension StepResolution: CustomDebugStringConvertible {

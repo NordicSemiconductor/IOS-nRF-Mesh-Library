@@ -12,3 +12,15 @@ public enum OnPowerUp: UInt8 {
     case `default` = 0x01
     case restore   = 0x02
 }
+
+extension OnPowerUp: CustomDebugStringConvertible {
+    
+    public var debugDescription: String {
+        switch self {
+        case .off:     return "Off"
+        case .default: return "Default"
+        case .restore: return "Restore"
+        }
+    }
+    
+}

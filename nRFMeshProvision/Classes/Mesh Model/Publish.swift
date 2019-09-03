@@ -90,7 +90,7 @@ public struct Publish: Codable {
         self.ttl = ttl
         self.periodSteps = periodSteps
         self.periodResolution = periodResolution
-        self.period = periodResolution.toPeriod(steps: periodSteps)
+        self.period = periodResolution.toMilliseconds(steps: periodSteps)
         self.retransmit = retransmit
     }
     
@@ -115,7 +115,7 @@ public struct Publish: Codable {
         self.ttl = ttl
         self.periodSteps = periodSteps
         self.periodResolution = periodResolution
-        self.period = periodResolution.toPeriod(steps: periodSteps)
+        self.period = periodResolution.toMilliseconds(steps: periodSteps)
         self.retransmit = retransmit
     }
     

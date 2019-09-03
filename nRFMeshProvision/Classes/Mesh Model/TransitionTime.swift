@@ -21,7 +21,7 @@ public struct TransitionTime {
     
     /// The transition time in milliseconds.
     public var milliseconds: Int {
-        return stepResolution.toPeriod(steps: steps & 0x3F)
+        return stepResolution.toMilliseconds(steps: steps & 0x3F)
     }
     /// The transition time as `TimeInterval` in seconds.
     public var interval: TimeInterval {

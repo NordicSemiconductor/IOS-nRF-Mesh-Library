@@ -13,3 +13,14 @@ public enum Security: String, Codable {
     case low    = "low"
     case high   = "high"
 }
+
+extension Security: CustomDebugStringConvertible {
+    
+    public var debugDescription: String {
+        switch self {
+        case .low:  return "Low"
+        case .high: return "High"
+        }
+    }
+    
+}

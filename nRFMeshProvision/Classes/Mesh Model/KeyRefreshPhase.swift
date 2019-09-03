@@ -32,3 +32,15 @@ public enum KeyRefreshPhase: Int, Codable {
         }
     }
 }
+
+extension KeyRefreshPhase: CustomDebugStringConvertible {
+    
+    public var debugDescription: String {
+        switch self {
+        case .normalOperation:  return "Normal operation"
+        case .distributingKeys: return "Distributing keys"
+        case .finalizing:       return "Finalizing"
+        }
+    }
+    
+}
