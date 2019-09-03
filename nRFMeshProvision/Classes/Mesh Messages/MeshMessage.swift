@@ -77,6 +77,21 @@ public protocol TransactionMessage: MeshMessage {
     /// Transaction identifier. If not set, this field will automatically
     /// be set when the message is being sent or received.
     var tid: UInt8! { get set }
+    /// Whether the message should start a new transaction.
+    ///
+    /// The messages within a transaction carry the cumulative values of
+    /// a field. In case one or more messages within a transaction are not
+    /// received by the Server (e.g., as a result of radio collisions),
+    /// the next received message will make up for the lost messages,
+    /// carrying cumulative values of the field.
+    ///
+    /// A new transaction is started when this field is set to `true`,
+    /// or when the last message of the transaction was sent 6 or
+    /// more seconds earlier.
+    ///
+    /// This defaults to `false`, which means that each new message will
+    /// receive a new transaction identifier (if not set explicitly).
+    var continueTransaction: Bool { get }
 }
 
 public protocol TransitionMessage: MeshMessage {
@@ -109,6 +124,14 @@ public extension MeshMessage {
     
     var isSegmented: Bool {
         return accessPdu.count > 11
+    }
+    
+}
+
+public extension TransactionMessage {
+    
+    var continueTransaction: Bool {
+        return false
     }
     
 }

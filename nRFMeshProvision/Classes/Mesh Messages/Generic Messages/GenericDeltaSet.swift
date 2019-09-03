@@ -11,6 +11,7 @@ public struct GenericDeltaSet: GenericMessage, TransactionMessage, TransitionMes
     public static let opCode: UInt32 = 0x8209
     
     public var tid: UInt8!
+    public var continueTransaction: Bool = true
     public var parameters: Data? {
         let data = Data() + level + tid
         if let transitionTime = transitionTime, let delay = delay {

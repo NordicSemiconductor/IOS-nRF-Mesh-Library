@@ -9,8 +9,10 @@ import Foundation
 
 internal class AccessLayer {
     let networkManager: NetworkManager
-    /// Next Transaction Identifier to use.
-    var tid = UInt8.random(in: UInt8.min...UInt8.max)
+    /// Last used Transaction Identifier.
+    var lastTid = UInt8.random(in: UInt8.min...UInt8.max)
+    /// The timestamp of the last transaction message sent.
+    var transactionTimestamp: Date? = nil
     
     init(_ networkManager: NetworkManager) {
         self.networkManager = networkManager
@@ -32,20 +34,33 @@ internal class AccessLayer {
     /// Sends the MeshMessage to the destination. The message is encrypted
     /// using given Application Key and a Network Key bound to it.
     ///
+    /// Before sending, this method updates the transaction identifier (TID)
+    /// for message extending `TransactionMessage`.
+    ///
     /// - parameter message: The Mesh Message to send.
     /// - parameter destination: The destination Address. This can be any
     ///                          valid mesh Address.
     /// - parameter applicationKey: The Application Key to sign the message with.
     func send(_ message: MeshMessage, to destination: MeshAddress, using applicationKey: ApplicationKey) {
         var m = message
-        // TODO: Some messages, like GenericDeltaSet support transactions. They can
-        //       be sent with the same TID when send less than 6 seconds apart.
+        
+        // Should the TID be updated?
         if var tranactionMessage = message as? TransactionMessage, tranactionMessage.tid == nil {
-            tranactionMessage.tid = tid
-            // Increase the TID to the next value modulo 255.
-            if tid < 255 { tid = tid + 1 } else { tid = 0 }
+            // Should the last transaction be continued?
+            if tranactionMessage.continueTransaction,
+                let timestamp = transactionTimestamp, timestamp.timeIntervalSinceNow > -6.0 {
+                tranactionMessage.tid = lastTid
+            } else {
+                // If not, start a new transaction by setting a new TID value.
+                let nextTid = lastTid.next()
+                tranactionMessage.tid = nextTid
+                lastTid = nextTid
+            }
+            // Save the last transaction time.
+            transactionTimestamp = Date()
             m = tranactionMessage
         }
+        
         print("Sending \(m) to \(destination.hex)") // TODO: Remove me
         networkManager.upperTransportLayer.send(m, to: destination, using: applicationKey)
     }
@@ -400,6 +415,17 @@ private extension AccessLayer {
             }
             networkManager.notifyAbout(newMessage: message, from: accessPdu.source)
         }
+    }
+    
+}
+
+private extension UInt8 {
+    
+    func next() -> UInt8 {
+        if self == 255 {
+            return 0
+        }
+        return self + 1
     }
     
 }
