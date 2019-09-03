@@ -277,8 +277,6 @@ public extension MeshNetworkManager {
         send(message, to: MeshAddress(element.unicastAddress), using: applicationKey)
     }
     
-    // TODO: Add send to Group method.
-    
     /// Sends Configuration Message to the Node with given destination Address.
     /// The `destination` must be a Unicast Address, otherwise the method
     /// does nothing.
