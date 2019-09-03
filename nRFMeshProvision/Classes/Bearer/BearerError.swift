@@ -17,3 +17,15 @@ public enum BearerError: Error {
     /// Thrown when the Bearer is not ready to send data.
     case bearerClosed
 }
+
+public extension BearerError {
+    
+    var localizedDescription: String {
+        switch self {
+        case .centralManagerNotPoweredOn: return "Central Manager not powered on"
+        case .pduTypeNotSupported:        return "PDU type not supported"
+        case .bearerClosed:               return "The bearer is closed"
+        }
+    }
+    
+}

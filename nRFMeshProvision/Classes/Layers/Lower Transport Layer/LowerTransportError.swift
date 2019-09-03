@@ -14,9 +14,9 @@ public enum LowerTransportError: Error {
     case busy
 }
 
-extension LowerTransportError: CustomDebugStringConvertible {
+public extension LowerTransportError {
     
-    public var debugDescription: String {
+    var localizedDescription: String {
         switch self {
         case .timeout: return "Timeout"
         case .busy:    return "Node busy"

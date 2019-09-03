@@ -12,3 +12,16 @@ public enum MeshMessageError: Error {
     case invalidPdu
     case invalidOpCode
 }
+
+public extension MeshMessageError {
+    
+    var localizedDescription: String {
+        switch self {
+        case .invalidAddress: return "Invalid address"
+        case .invalidPdu:     return "Invalid PDU"
+        case .invalidOpCode:  return "Invalid Opcode"
+        }
+    }
+    
+}
+

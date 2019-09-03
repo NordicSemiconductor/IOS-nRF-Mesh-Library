@@ -49,3 +49,28 @@ public enum MeshModelError: Error {
     /// Thrown when Application Key is required to continue with the operation.
     case noApplicationKey
 }
+
+public extension MeshModelError {
+    
+    var localizedDescription: String {
+        switch self {
+        case .overlappingProvisionerRanges:    return "Overlapping Provisioner ranges"
+        case .provisionerUsedInAnotherNetwork: return "Provisioner used in another network"
+        case .nodeAlreadyExist:                return "Node with the same UUID already exists in the network"
+        case .noAddressAvailable:              return "No address available in Provisioner's range"
+        case .addressNotAvailable:             return "Address used by another Node in the network"
+        case .invalidAddress:                  return "Invalid address"
+        case .addressNotInAllocatedRange:      return "Address outside Provisioner's range"
+        case .provisionerNotInNetwork:         return "Provisioner does not belong to the network"
+        case .invalidRange:                    return "Invalid range"
+        case .invalidKey:                      return "Invalid key: The key must be 128-bit long"
+        case .keyInUse:                        return "Cannot remove: Key in use"
+        case .groupAlreadyExists:              return "Group with the same address already exists in the network"
+        case .groupInUse:                      return "Cannot remove: Group is use"
+        case .keyIndexOutOfRange:              return "Key Index out of range"
+        case .noNetworkKey:                    return "No Network Key"
+        case .noApplicationKey:                return "No Application Key"
+        }
+    }
+    
+}
