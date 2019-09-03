@@ -102,6 +102,7 @@
 		525242E2225CC6D30044CECB /* ClosedRange.swift in Sources */ = {isa = PBXBuildFile; fileRef = 525242E1225CC6D30044CECB /* ClosedRange.swift */; };
 		525242E4225DE1EF0044CECB /* RangeObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 525242E3225DE1EF0044CECB /* RangeObject.swift */; };
 		5253027822D5F717007567DB /* Group.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5253027722D5F717007567DB /* Group.swift */; };
+		52547EFF231E69DC0002AA7B /* AccessError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52547EFE231E69DC0002AA7B /* AccessError.swift */; };
 		52568D4722DDE8E800B7B236 /* MeshNetwork+Groups.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52568D4622DDE8E800B7B236 /* MeshNetwork+Groups.swift */; };
 		52568D4922DDEA4400B7B236 /* Group+MeshNetwork.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52568D4822DDEA4400B7B236 /* Group+MeshNetwork.swift */; };
 		525A3C0022AD2167000D3791 /* ConfigMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 525A3BFF22AD2167000D3791 /* ConfigMessage.swift */; };
@@ -384,6 +385,7 @@
 		525242E1225CC6D30044CECB /* ClosedRange.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClosedRange.swift; sourceTree = "<group>"; };
 		525242E3225DE1EF0044CECB /* RangeObject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RangeObject.swift; sourceTree = "<group>"; };
 		5253027722D5F717007567DB /* Group.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Group.swift; sourceTree = "<group>"; };
+		52547EFE231E69DC0002AA7B /* AccessError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccessError.swift; sourceTree = "<group>"; };
 		52568D4622DDE8E800B7B236 /* MeshNetwork+Groups.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MeshNetwork+Groups.swift"; sourceTree = "<group>"; };
 		52568D4822DDEA4400B7B236 /* Group+MeshNetwork.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Group+MeshNetwork.swift"; sourceTree = "<group>"; };
 		525A3BFF22AD2167000D3791 /* ConfigMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigMessage.swift; sourceTree = "<group>"; };
@@ -1028,6 +1030,7 @@
 			isa = PBXGroup;
 			children = (
 				52DF5DA2229E6EF800C297C1 /* AccessLayer.swift */,
+				52547EFE231E69DC0002AA7B /* AccessError.swift */,
 				52F6AD6D22B8F8EA00F0D7DF /* AccessPdu.swift */,
 			);
 			path = "Access Layer";
@@ -1528,6 +1531,7 @@
 				528352A02282CE830097B949 /* NetworkKey+MeshNetwork.swift in Sources */,
 				52A9C18C230FF0D50036792A /* GenericMoveSet.swift in Sources */,
 				523F779322CDF5A00030EA6A /* ConfigModelPublicationStatus.swift in Sources */,
+				52547EFF231E69DC0002AA7B /* AccessError.swift in Sources */,
 				528352902281B57A0097B949 /* Beacon.swift in Sources */,
 				5283528C2281B3310097B949 /* ProvisioningCapabilities.swift in Sources */,
 				5231402A22F9865D0074325A /* ConfigFriendGet.swift in Sources */,

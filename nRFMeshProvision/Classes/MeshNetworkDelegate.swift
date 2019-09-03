@@ -28,8 +28,7 @@ public protocol MeshNetworkDelegate: class {
     ///   - meshNetwork: The mesh network to which the message has
     ///                  been sent.
     ///   - message:     The message that has been sent.
-    ///   - source:      The Unicast Address of the Element to which
-    ///                  the message was sent.
+    ///   - destination: The address to which the message was sent.
     func meshNetwork(_ meshNetwork: MeshNetwork, didDeliverMessage message: MeshMessage, to destination: Address)
     
     /// A callback called when a message failed to be sent to the target
@@ -53,8 +52,7 @@ public protocol MeshNetworkDelegate: class {
     ///   - meshNetwork: The mesh network to which the message has
     ///                  been sent.
     ///   - message:     The message that has failed to be delivered.
-    ///   - destination: The Unicast Address of the Element to which
-    ///                  the message was sent.
+    ///   - destination: The address to which the message was being sent.
     ///   - error:       The error that occurred.
     func meshNetwork(_ meshNetwork: MeshNetwork, failedToDeliverMessage message: MeshMessage, to destination: Address, error: Error)
     

@@ -42,9 +42,16 @@ internal class AccessLayer {
     ///                          valid mesh Address.
     /// - parameter applicationKey: The Application Key to sign the message with.
     func send(_ message: MeshMessage, to destination: MeshAddress, using applicationKey: ApplicationKey) {
-        var m = message
+        guard let localProvisioner = networkManager.meshNetwork?.localProvisioner,
+            localProvisioner.hasConfigurationCapabilities else {
+                networkManager.notifyAbout(AccessError.invalidSource,
+                                           duringSendingMessage: message, to: destination.address)
+                return
+        }
+        
         
         // Should the TID be updated?
+        var m = message
         if var tranactionMessage = message as? TransactionMessage, tranactionMessage.tid == nil {
             // Should the last transaction be continued?
             if tranactionMessage.continueTransaction,
@@ -72,6 +79,12 @@ internal class AccessLayer {
     /// - parameter message: The Mesh Config Message to send.
     /// - parameter destination: The destination Address. This must be a Unicast Address.
     func send(_ message: ConfigMessage, to destination: Address) {
+        guard let localProvisioner = networkManager.meshNetwork?.localProvisioner,
+            localProvisioner.hasConfigurationCapabilities else {
+                networkManager.notifyAbout(AccessError.invalidSource,
+                                           duringSendingMessage: message, to: destination)
+                return
+        }
         guard destination.isUnicast else {
             print("Error: Address: 0x\(destination.hex) is not a Unicast Address")
             return
