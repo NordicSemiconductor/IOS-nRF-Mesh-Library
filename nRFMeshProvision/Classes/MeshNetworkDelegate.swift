@@ -47,6 +47,8 @@ public protocol MeshNetworkDelegate: class {
     /// - `LowerTransportError.timeout` - when the segmented message targetting
     ///   a Unicast Address was not acknowledgned before the `retransmissionLimit`
     ///   was reached.
+    /// - `AccessError.invalidSource` - when the local Provisioner does not have
+    ///   a Unicast Address specified.
     ///
     /// - parameters:
     ///   - meshNetwork: The mesh network to which the message has
