@@ -118,133 +118,15 @@ internal class LowerTransportLayer {
                 }
             } else {
                 if let segment = SegmentedAccessMessage(fromSegmentPdu: networkPdu) {
-                    print("Segment \(segment) received") // TODO: Remove me
-                    
-                    // If the received segment comes from an already completed and
-                    // acknowledged message, send the same ACK immediately.
-                    if let lastAck = acknowledgments[segment.source], lastAck.sequenceZero == segment.sequenceZero {
-                        if let provisionerNode = meshNetwork.localProvisioner?.node {
-                            print("Re-sending \(lastAck)") // TODO: Remove me
-                            let ttl = networkPdu.ttl > 0 ? provisionerNode.defaultTTL ?? networkManager.defaultTtl : 0
-                            try? networkManager.networkLayer.send(lowerTransportPdu: lastAck, ofType: .networkPdu, withTtl: ttl)
-                        } else {
-                            acknowledgments.removeValue(forKey: segment.source)
-                        }
-                        return
-                    }
-                    // Remove the last ACK. The source Node has sent a new message, so
-                    // the last ACK must have been received.
-                    acknowledgments.removeValue(forKey: segment.source)
-                    
-                    // A segmented message may be composed of 1 or more segments.
-                    if segment.isSingleSegment {
-                        // A single segment message may immediately be acknowledged.
-                        if let provisionerNode = meshNetwork.localProvisioner?.node,
-                            networkPdu.destination == provisionerNode.unicastAddress {
-                            let ttl = networkPdu.ttl > 0 ? provisionerNode.defaultTTL ?? networkManager.defaultTtl : 0
-                            sendAck(for: [segment], usingNetworkKey: networkPdu.networkKey, withTtl: ttl)
-                        }
-                        let accessMessage = AccessMessage(fromSegments: [segment])
-                        networkManager.upperTransportLayer.handle(lowerTransportPdu: accessMessage)
-                    } else {
-                        // If a message is composed of multiple segments, they all need to
-                        // be received before it can be processed.
-                        let key = UInt32(keyFor: networkPdu.source, sequenceZero: segment.sequenceZero)
-                        if incompleteSegments[key] == nil {
-                            incompleteSegments[key] = Array<SegmentedMessage?>(repeating: nil, count: segment.count)
-                        }
-                        guard incompleteSegments[key]!.count > segment.index && incompleteSegments[key]![segment.index] == nil else {
-                            // Segment was sent again or it's invalid. We can stop here.
-                            print("Error: Segment invalid or repeated")
-                            return
-                        }
-                        incompleteSegments[key]![segment.index] = segment
-                        
-                        // If all segments were received, send ACK and send the PDU to Upper
-                        // Transport Layer for processing.
-                        if incompleteSegments[key]!.isComplete {
-                            let allSegments = incompleteSegments.removeValue(forKey: key)! as! [SegmentedAccessMessage]
-                            // If the access message was targetting directly the local Provisioner...
-                            if let provisionerNode = meshNetwork.localProvisioner?.node,
-                                networkPdu.destination == provisionerNode.unicastAddress {
-                                // ...invalidate timers...
-                                incompleteTimers.removeValue(forKey: key)?.invalidate()
-                                acknowledgmentTimers.removeValue(forKey: key)?.invalidate()
-                                
-                                // ...and send the ACK that all segments were received.
-                                let ttl = networkPdu.ttl > 0 ? provisionerNode.defaultTTL ?? networkManager.defaultTtl : 0
-                                sendAck(for: allSegments, usingNetworkKey: networkPdu.networkKey, withTtl: ttl)
-                            }
-                            
-                            let accessMessage = AccessMessage(fromSegments: allSegments)
-                            networkManager.upperTransportLayer.handle(lowerTransportPdu: accessMessage)
-                        } else {
-                            // The Provisioner shall send block acknowledgment only if the message was
-                            // send directly to it's Unicast Address.
-                            guard let provisionerNode = meshNetwork.localProvisioner?.node,
-                                networkPdu.destination == provisionerNode.unicastAddress else {
-                                    return
-                            }
-                            // If the Lower Transport Layer receives any segment while the incomplete
-                            // timer is active, the timer shall be restarted.
-                            incompleteTimers[key]?.invalidate()
-                            incompleteTimers[key] = Timer.scheduledTimer(withTimeInterval: networkManager.incompleteMessageTimeout, repeats: false) { _ in
-                                self.incompleteTimers.removeValue(forKey: key)?.invalidate()
-                                self.acknowledgmentTimers.removeValue(forKey: key)?.invalidate()
-                                self.incompleteSegments.removeValue(forKey: key)
-                            }
-                            // If the Lower Transport Layer receives any segment while the acknowlegment
-                            // timer is inactive, it shall restart the timer. Active timer should not be restarted.
-                            if acknowledgmentTimers[key] == nil {
-                                let ttl = provisionerNode.defaultTTL ?? networkManager.defaultTtl
-                                acknowledgmentTimers[key] = Timer.scheduledTimer(withTimeInterval: networkManager.acknowledgmentTimerInterval(ttl), repeats: false) { _ in
-                                    let ttl = networkPdu.ttl > 0 ? ttl : 0
-                                    self.sendAck(for: self.incompleteSegments[key]!, usingNetworkKey: networkPdu.networkKey, withTtl: ttl)
-                                    self.acknowledgmentTimers.removeValue(forKey: key)?.invalidate()
-                                }
-                            }
-                        }
-                    }
+                    handle(segment: segment, createdFrom: networkPdu)
                 }
             }
         case .controlMessage:
-            let unsegmented = networkPdu.transportPdu[0] & 0x80 == 0
             let opCode = networkPdu.transportPdu[0] & 0x7F
             switch opCode {
             case 0x00:
                 if let ack = SegmentAcknowledgmentMessage(fromNetworkPdu: networkPdu) {
-                    print("\(ack) received") // TODO: Remove me
-                    // Ensure the ACK is for some message that has been sent.
-                    guard outgoingSegments[ack.sequenceZero] != nil,
-                        let segment = outgoingSegments[ack.sequenceZero]!.firstNotAcknowledged else {
-                        return
-                    }
-                    
-                    // Invalidate transmission timer for this message.
-                    segmentTransmissionTimers.removeValue(forKey: ack.sequenceZero)?.invalidate()
-                    
-                    // Is the target Node busy?
-                    guard !ack.isBusy else {
-                        outgoingSegments.removeValue(forKey: ack.sequenceZero)
-                        networkManager.notifyAbout(LowerTransportError.busy, duringSendingMessage: segment.message!, to: ack.source)
-                        return
-                    }
-                    
-                    // Clear all acknowledged segments.
-                    for index in 0..<outgoingSegments[ack.sequenceZero]!.count {
-                        if ack.isSegmentReceived(index) {
-                            outgoingSegments[ack.sequenceZero]![index] = nil
-                        }
-                    }
-                    
-                    // If all the segments were acknowledged, notify the manager.
-                    if !outgoingSegments[ack.sequenceZero]!.hasMore {
-                        outgoingSegments.removeValue(forKey: ack.sequenceZero)
-                        networkManager.notifyAbout(message: segment.message!, sentTo: ack.source)
-                    } else {
-                        // Else, send again all packets that were not acknowledged.
-                        sendSegments(for: ack.sequenceZero)
-                    }
+                    handle(ack: ack)
                 }
             default:
                 if unsegmented {
@@ -254,7 +136,7 @@ internal class LowerTransportLayer {
                     }
                 } else {
                     if let segment = SegmentedControlMessage(fromSegment: networkPdu) {
-                        // TODO: Finish implementation
+                        handle(segment: segment, createdFrom: networkPdu)
                     }
                 }
             }
@@ -344,6 +226,135 @@ private extension UInt32 {
 }
 
 private extension LowerTransportLayer {
+    
+    /// Handles the segment created from the given network PDU.
+    ///
+    /// - parameter segment: The segment to handle.
+    /// - parameter networkPdu: The Network PDU from which the segment was decoded.
+    func handle(segment: SegmentedMessage, createdFrom networkPdu: NetworkPdu) {
+        print("Segment \(segment) received") // TODO: Remove me
+        
+        // If the received segment comes from an already completed and
+        // acknowledged message, send the same ACK immediately.
+        if let lastAck = acknowledgments[segment.source], lastAck.sequenceZero == segment.sequenceZero {
+            if let provisionerNode = meshNetwork.localProvisioner?.node {
+                print("Re-sending \(lastAck)") // TODO: Remove me
+                let ttl = networkPdu.ttl > 0 ? provisionerNode.defaultTTL ?? networkManager.defaultTtl : 0
+                try? networkManager.networkLayer.send(lowerTransportPdu: lastAck, ofType: .networkPdu, withTtl: ttl)
+            } else {
+                acknowledgments.removeValue(forKey: segment.source)
+            }
+            return
+        }
+        // Remove the last ACK. The source Node has sent a new message, so
+        // the last ACK must have been received.
+        acknowledgments.removeValue(forKey: segment.source)
+        
+        // A segmented message may be composed of 1 or more segments.
+        if segment.isSingleSegment {
+            // A single segment message may immediately be acknowledged.
+            if let provisionerNode = meshNetwork.localProvisioner?.node,
+                networkPdu.destination == provisionerNode.unicastAddress {
+                let ttl = networkPdu.ttl > 0 ? provisionerNode.defaultTTL ?? networkManager.defaultTtl : 0
+                sendAck(for: [segment], usingNetworkKey: networkPdu.networkKey, withTtl: ttl)
+            }
+            networkManager.upperTransportLayer.handle(lowerTransportPdu: [segment].reassembled)
+        } else {
+            // If a message is composed of multiple segments, they all need to
+            // be received before it can be processed.
+            let key = UInt32(keyFor: networkPdu.source, sequenceZero: segment.sequenceZero)
+            if incompleteSegments[key] == nil {
+                incompleteSegments[key] = Array<SegmentedMessage?>(repeating: nil, count: segment.count)
+            }
+            guard incompleteSegments[key]!.count > segment.index && incompleteSegments[key]![segment.index] == nil else {
+                // Segment was sent again or it's invalid. We can stop here.
+                print("Error: Segment invalid or repeated")
+                return
+            }
+            incompleteSegments[key]![segment.index] = segment
+            
+            // If all segments were received, send ACK and send the PDU to Upper
+            // Transport Layer for processing.
+            if incompleteSegments[key]!.isComplete {
+                let allSegments = incompleteSegments.removeValue(forKey: key)!
+                // If the access message was targetting directly the local Provisioner...
+                if let provisionerNode = meshNetwork.localProvisioner?.node,
+                    networkPdu.destination == provisionerNode.unicastAddress {
+                    // ...invalidate timers...
+                    incompleteTimers.removeValue(forKey: key)?.invalidate()
+                    acknowledgmentTimers.removeValue(forKey: key)?.invalidate()
+                    
+                    // ...and send the ACK that all segments were received.
+                    let ttl = networkPdu.ttl > 0 ? provisionerNode.defaultTTL ?? networkManager.defaultTtl : 0
+                    sendAck(for: allSegments, usingNetworkKey: networkPdu.networkKey, withTtl: ttl)
+                }
+                networkManager.upperTransportLayer.handle(lowerTransportPdu: allSegments.reassembled)
+            } else {
+                // The Provisioner shall send block acknowledgment only if the message was
+                // send directly to it's Unicast Address.
+                guard let provisionerNode = meshNetwork.localProvisioner?.node,
+                    networkPdu.destination == provisionerNode.unicastAddress else {
+                        return
+                }
+                // If the Lower Transport Layer receives any segment while the incomplete
+                // timer is active, the timer shall be restarted.
+                incompleteTimers[key]?.invalidate()
+                incompleteTimers[key] = Timer.scheduledTimer(withTimeInterval: networkManager.incompleteMessageTimeout, repeats: false) { _ in
+                    self.incompleteTimers.removeValue(forKey: key)?.invalidate()
+                    self.acknowledgmentTimers.removeValue(forKey: key)?.invalidate()
+                    self.incompleteSegments.removeValue(forKey: key)
+                }
+                // If the Lower Transport Layer receives any segment while the acknowlegment
+                // timer is inactive, it shall restart the timer. Active timer should not be restarted.
+                if acknowledgmentTimers[key] == nil {
+                    let ttl = provisionerNode.defaultTTL ?? networkManager.defaultTtl
+                    acknowledgmentTimers[key] = Timer.scheduledTimer(withTimeInterval: networkManager.acknowledgmentTimerInterval(ttl), repeats: false) { _ in
+                        let ttl = networkPdu.ttl > 0 ? ttl : 0
+                        self.sendAck(for: self.incompleteSegments[key]!, usingNetworkKey: networkPdu.networkKey, withTtl: ttl)
+                        self.acknowledgmentTimers.removeValue(forKey: key)?.invalidate()
+                    }
+                }
+            }
+        }
+    }
+    
+    /// This method handles the Segment Acknowledgment Message.
+    ///
+    /// - parameter ack: The Segment Acknowledgment Message received.
+    func handle(ack: SegmentAcknowledgmentMessage) {
+        print("\(ack) received") // TODO: Remove me
+        // Ensure the ACK is for some message that has been sent.
+        guard outgoingSegments[ack.sequenceZero] != nil,
+            let segment = outgoingSegments[ack.sequenceZero]!.firstNotAcknowledged else {
+                return
+        }
+        
+        // Invalidate transmission timer for this message.
+        segmentTransmissionTimers.removeValue(forKey: ack.sequenceZero)?.invalidate()
+        
+        // Is the target Node busy?
+        guard !ack.isBusy else {
+            outgoingSegments.removeValue(forKey: ack.sequenceZero)
+            networkManager.notifyAbout(LowerTransportError.busy, duringSendingMessage: segment.message!, to: ack.source)
+            return
+        }
+        
+        // Clear all acknowledged segments.
+        for index in 0..<outgoingSegments[ack.sequenceZero]!.count {
+            if ack.isSegmentReceived(index) {
+                outgoingSegments[ack.sequenceZero]![index] = nil
+            }
+        }
+        
+        // If all the segments were acknowledged, notify the manager.
+        if !outgoingSegments[ack.sequenceZero]!.hasMore {
+            outgoingSegments.removeValue(forKey: ack.sequenceZero)
+            networkManager.notifyAbout(message: segment.message!, sentTo: ack.source)
+        } else {
+            // Else, send again all packets that were not acknowledged.
+            sendSegments(for: ack.sequenceZero)
+        }
+    }
     
     /// This method tries to send the Segment Acknowledgment Message to the
     /// given address. It will try to send if the local Provisioner is set and
@@ -453,6 +464,18 @@ private extension Array where Element == SegmentedMessage? {
     /// Returns the first not yet acknowledged segment.
     var firstNotAcknowledged: SegmentedMessage? {
         return first { $0 != nil }!
+    }
+    
+    /// Converts the list of segments into either an `AccessMessage`,
+    /// or a `ControlMessage`, depending on the first element type.
+    ///
+    /// All the segments in the Array must not be `nil`.
+    var reassembled: LowerTransportPdu {
+        if self[0] is SegmentedAccessMessage {
+            return AccessMessage(fromSegments: self as! [SegmentedAccessMessage])
+        } else {
+            return ControlMessage(fromSegments: self as! [SegmentedControlMessage])
+        }
     }
     
 }

@@ -48,7 +48,7 @@ internal struct ControlMessage: LowerTransportPdu {
     /// Creates an Control Message object from the given list of segments.
     ///
     /// - parameter segments: List of ordered segments.
-    init(from segments: [SegmentedControlMessage]) {
+    init(fromSegments segments: [SegmentedControlMessage]) {
         // Assuming all segments have the same AID, source and destination addresses and TransMIC.
         let segment = segments.first!
         opCode = segment.opCode
