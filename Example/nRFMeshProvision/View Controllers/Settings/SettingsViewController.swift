@@ -153,8 +153,10 @@ private extension SettingsViewController {
                     self.present(controller, animated: true)
                 }
             } catch {
-                self.presentAlert(title: "Error", message: "Exporting Mesh Network configuration failed.")
                 print("Export failed: \(error)")
+                DispatchQueue.main.async {
+                    self.presentAlert(title: "Error", message: "Exporting Mesh Network configuration failed.")
+                }
             }
         }
     }
