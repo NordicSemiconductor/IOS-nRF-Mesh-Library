@@ -13,15 +13,19 @@ public enum MeshMessageSecurity {
     /// Message will be sent with 64-bit Transport MIC.
     /// Unsegmented messages cannot be sent with this option.
     case high
+}
+
+/// The base class of every mesh message. Mesh messages can be sent and
+/// and recieved from the mesh network.
+public protocol BaseMeshMessage {
+    /// Message parameters as Data.
+    var parameters: Data? { get }
     
-    /// Returns the Transport MIC size in bytes: 4 for 32-bit
-    /// or 8 for 64-bit size.
-    internal var transportMicSize: UInt8 {
-        switch self {
-        case .low:  return 4
-        case .high: return 8
-        }
-    }
+    /// This initializer should construct the message based on the received
+    /// parameters.
+    ///
+    /// - parameter parameters: The Access Layer parameters.
+    init?(parameters: Data)
 }
 
 /// The base class of every mesh message. Mesh messages can be sent and
@@ -30,11 +34,9 @@ public enum MeshMessageSecurity {
 ///
 /// Parameters `security` and `isSegmented` are checked and should be set
 /// only for outgoing messages.
-public protocol MeshMessage {
+public protocol MeshMessage: BaseMeshMessage {
     /// The message Op Code.
     var opCode: UInt32 { get }
-    /// Message parameters as Data.
-    var parameters: Data? { get }
     /// Returns whether the message should be sent or has been sent using
     /// 32-bit or 64-bit TransMIC value. By default `.low` is returned.
     ///
@@ -51,12 +53,12 @@ public protocol MeshMessage {
     /// payload length. If payload size is longer than 11 bytes this
     /// field is not checked as the message must be segmented.
     var isSegmented: Bool { get }
-    
-    /// This initializer should construct the message based on the received
-    /// parameters.
-    ///
-    /// - parameter parameters: The Access Layer parameters.
-    init?(parameters: Data)
+}
+
+/// A type of a mesh message which opcode is known during compilation time.
+public protocol StaticMeshMessage: MeshMessage {
+    /// The message Op Code.
+    static var opCode: UInt32 { get }
 }
 
 /// A mesh message containing the operation status.
@@ -106,12 +108,6 @@ public protocol TransitionStatusMessage: MeshMessage {
     /// The Remaining Time field identifies the time that an element will
     /// take to transition to the target state from the present state.
     var remainingTime: TransitionTime? { get }
-}
-
-/// A type of a mesh message which opcode is known during compilation time.
-public protocol StaticMeshMessage: MeshMessage {
-    /// The message Op Code.
-    static var opCode: UInt32 { get }
 }
 
 // MARK: - Default values
@@ -178,6 +174,19 @@ internal extension MeshMessage {
 }
 
 // MARK: - Other
+
+extension MeshMessageSecurity {
+    
+    /// Returns the Transport MIC size in bytes: 4 for 32-bit
+    /// or 8 for 64-bit size.
+    var transportMicSize: UInt8 {
+        switch self {
+        case .low:  return 4
+        case .high: return 8
+        }
+    }
+    
+}
 
 extension MeshMessageSecurity: CustomDebugStringConvertible {
     

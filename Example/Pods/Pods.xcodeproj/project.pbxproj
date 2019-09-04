@@ -103,6 +103,12 @@
 		525242E4225DE1EF0044CECB /* RangeObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 525242E3225DE1EF0044CECB /* RangeObject.swift */; };
 		5253027822D5F717007567DB /* Group.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5253027722D5F717007567DB /* Group.swift */; };
 		52547EFF231E69DC0002AA7B /* AccessError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52547EFE231E69DC0002AA7B /* AccessError.swift */; };
+		52547F03231E8CAB0002AA7B /* ProxyFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52547F02231E8CAA0002AA7B /* ProxyFilter.swift */; };
+		52547F06231E94140002AA7B /* ProxyConfigurationMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52547F05231E94140002AA7B /* ProxyConfigurationMessage.swift */; };
+		52547F08231E96CB0002AA7B /* SetFilterType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52547F07231E96CB0002AA7B /* SetFilterType.swift */; };
+		52547F0A231E98A80002AA7B /* AddAddressesToFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52547F09231E98A80002AA7B /* AddAddressesToFilter.swift */; };
+		52547F0C231E9C670002AA7B /* RemoveAddressesFromFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52547F0B231E9C670002AA7B /* RemoveAddressesFromFilter.swift */; };
+		52547F0E231E9C960002AA7B /* FilterStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52547F0D231E9C960002AA7B /* FilterStatus.swift */; };
 		52568D4722DDE8E800B7B236 /* MeshNetwork+Groups.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52568D4622DDE8E800B7B236 /* MeshNetwork+Groups.swift */; };
 		52568D4922DDEA4400B7B236 /* Group+MeshNetwork.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52568D4822DDEA4400B7B236 /* Group+MeshNetwork.swift */; };
 		525A3C0022AD2167000D3791 /* ConfigMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 525A3BFF22AD2167000D3791 /* ConfigMessage.swift */; };
@@ -386,6 +392,12 @@
 		525242E3225DE1EF0044CECB /* RangeObject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RangeObject.swift; sourceTree = "<group>"; };
 		5253027722D5F717007567DB /* Group.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Group.swift; sourceTree = "<group>"; };
 		52547EFE231E69DC0002AA7B /* AccessError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccessError.swift; sourceTree = "<group>"; };
+		52547F02231E8CAA0002AA7B /* ProxyFilter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ProxyFilter.swift; path = nRFMeshProvision/Classes/ProxyFilter.swift; sourceTree = "<group>"; };
+		52547F05231E94140002AA7B /* ProxyConfigurationMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProxyConfigurationMessage.swift; sourceTree = "<group>"; };
+		52547F07231E96CB0002AA7B /* SetFilterType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetFilterType.swift; sourceTree = "<group>"; };
+		52547F09231E98A80002AA7B /* AddAddressesToFilter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddAddressesToFilter.swift; sourceTree = "<group>"; };
+		52547F0B231E9C670002AA7B /* RemoveAddressesFromFilter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoveAddressesFromFilter.swift; sourceTree = "<group>"; };
+		52547F0D231E9C960002AA7B /* FilterStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterStatus.swift; sourceTree = "<group>"; };
 		52568D4622DDE8E800B7B236 /* MeshNetwork+Groups.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MeshNetwork+Groups.swift"; sourceTree = "<group>"; };
 		52568D4822DDEA4400B7B236 /* Group+MeshNetwork.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Group+MeshNetwork.swift"; sourceTree = "<group>"; };
 		525A3BFF22AD2167000D3791 /* ConfigMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigMessage.swift; sourceTree = "<group>"; };
@@ -674,6 +686,7 @@
 			children = (
 				529B757822411970008F1CE7 /* MeshNetworkManager.swift */,
 				5231404F230BE2540074325A /* MeshNetworkDelegate.swift */,
+				52547F02231E8CAA0002AA7B /* ProxyFilter.swift */,
 				529B757C22423DEE008F1CE7 /* Storage.swift */,
 				5283529C2282CC720097B949 /* Mesh API */,
 				5294DAD422B0F5370041370E /* Mesh Messages */,
@@ -706,6 +719,18 @@
 				523F777222CA1B780030EA6A /* FoundationLayer.swift */,
 			);
 			path = "Foundation Layer";
+			sourceTree = "<group>";
+		};
+		52547F04231E92380002AA7B /* Proxy Configuration */ = {
+			isa = PBXGroup;
+			children = (
+				52547F05231E94140002AA7B /* ProxyConfigurationMessage.swift */,
+				52547F07231E96CB0002AA7B /* SetFilterType.swift */,
+				52547F09231E98A80002AA7B /* AddAddressesToFilter.swift */,
+				52547F0B231E9C670002AA7B /* RemoveAddressesFromFilter.swift */,
+				52547F0D231E9C960002AA7B /* FilterStatus.swift */,
+			);
+			path = "Proxy Configuration";
 			sourceTree = "<group>";
 		};
 		52835274228029720097B949 /* Bearer */ = {
@@ -787,6 +812,7 @@
 		5294DAD422B0F5370041370E /* Mesh Messages */ = {
 			isa = PBXGroup;
 			children = (
+				52547F04231E92380002AA7B /* Proxy Configuration */,
 				5294DAD522B0F7480041370E /* Foundation Messages */,
 				52A9C16A230D7A490036792A /* Generic Messages */,
 				52B7F67F22994B3E00B0A42F /* MeshMessage.swift */,
@@ -1444,9 +1470,11 @@
 				5274B76322A1DE40008450BC /* SecureNetworkBeacon.swift in Sources */,
 				52A9C190230FFFBC0036792A /* GenericDefaultTransitionTimeGet.swift in Sources */,
 				5231402E22F986C30074325A /* ConfigFriendStatus.swift in Sources */,
+				52547F0C231E9C670002AA7B /* RemoveAddressesFromFilter.swift in Sources */,
 				529B7610224A6D47008F1CE7 /* KeyRefreshPhase.swift in Sources */,
 				5231400E22EF17860074325A /* ConfigVendorModelSubscriptionGet.swift in Sources */,
 				5231400C22EF17410074325A /* ConfigSIGModelSubscriptionGet.swift in Sources */,
+				52547F0E231E9C960002AA7B /* FilterStatus.swift in Sources */,
 				529B7614224A6D47008F1CE7 /* Address.swift in Sources */,
 				52A9C1962310027D0036792A /* GenericDefaultTransitionTimeStatus.swift in Sources */,
 				523F776222C4DEE60030EA6A /* ConfigNetKeyList.swift in Sources */,
@@ -1493,6 +1521,7 @@
 				52F6AD7022BA172900F0D7DF /* ConfigNodeReset.swift in Sources */,
 				52F6AD7422BA3BCA00F0D7DF /* CompanyIdentifier.swift in Sources */,
 				52A9C182230FE3B90036792A /* GenericLevelSet.swift in Sources */,
+				52547F03231E8CAB0002AA7B /* ProxyFilter.swift in Sources */,
 				5231401822F83DE50074325A /* ConfigRelayGet.swift in Sources */,
 				528352462271F0C60097B949 /* MeshNetwork+Keys.swift in Sources */,
 				52A9C1C223101C540036792A /* GenericBatteryStatus.swift in Sources */,
@@ -1517,6 +1546,7 @@
 				528352B82285A3A30097B949 /* Node+Address.swift in Sources */,
 				5274B75D22A1D7C6008450BC /* SegmentedMessage.swift in Sources */,
 				5231402422F95E4C0074325A /* ConfigGATTProxyGet.swift in Sources */,
+				52547F06231E94140002AA7B /* ProxyConfigurationMessage.swift in Sources */,
 				528352B022830F380097B949 /* ProxyProtocolHandler.swift in Sources */,
 				52A9C1A423100A360036792A /* GenericPowerLevelSet.swift in Sources */,
 				52DF5DA3229E6EF800C297C1 /* AccessLayer.swift in Sources */,
@@ -1539,10 +1569,12 @@
 				522AFFE922C2502F00521EDC /* ConfigDefaultTtlStatus.swift in Sources */,
 				523F775822C4C3350030EA6A /* ConfigNetKeyAdd.swift in Sources */,
 				52A9C1A623100B230036792A /* GenericPowerLevelSetUnacknowledged.swift in Sources */,
+				52547F08231E96CB0002AA7B /* SetFilterType.swift in Sources */,
 				52313FF222EB0A830074325A /* ConfigModelSubscriptionVirtualAddressAdd.swift in Sources */,
 				523F776022C4DC110030EA6A /* ConfigNetKeyGet.swift in Sources */,
 				52F6AD7222BA17E100F0D7DF /* ConfigNodeResetStatus.swift in Sources */,
 				5283529A2282C55B0097B949 /* PBGattBearer.swift in Sources */,
+				52547F0A231E98A80002AA7B /* AddAddressesToFilter.swift in Sources */,
 				5231401422F44AFE0074325A /* LowerTransportError.swift in Sources */,
 				5274B75522A161D1008450BC /* SegmentAcknowledgmentMessage.swift in Sources */,
 				2545014E9EC8A64DE403DC5863089112 /* OpenSSLHelper.m in Sources */,

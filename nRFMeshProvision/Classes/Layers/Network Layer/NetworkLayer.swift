@@ -45,10 +45,11 @@ internal class NetworkLayer {
         // Try decoding the PDU.
         switch type {
         case .networkPdu:
-            guard let networkPdu = NetworkPdu.decode(pdu, for: meshNetwork) else {
+            guard let networkPdu = NetworkPdu.decode(pdu, ofType: type, for: meshNetwork) else {
                 return
             }
             networkManager.lowerTransportLayer.handle(networkPdu: networkPdu)
+            
         case .meshBeacon:
             if let beaconPdu = SecureNetworkBeacon.decode(pdu, for: meshNetwork) {
                 networkManager.lowerTransportLayer.handle(secureNetworkBeacon: beaconPdu)
@@ -58,9 +59,15 @@ internal class NetworkLayer {
                 networkManager.lowerTransportLayer.handle(unprovisionedDeviceBeacon: beaconPdu)
                 return
             }
-            // Invalid or unsupported beacon type.
+            // else: Invalid or unsupported beacon type.
+            
+        case .proxyConfiguration:
+            guard let proxyPdu = NetworkPdu.decode(pdu, ofType: type, for: meshNetwork) else {
+                return
+            }
+            networkManager.lowerTransportLayer.handle(proxyConfigurationPdu: proxyPdu)
+            
         default:
-            // Proxy configuration not supported yet.
             return
         }
         
@@ -85,10 +92,10 @@ internal class NetworkLayer {
         // As the sequnce number was just used, it has to be incremented.
         defaults.set(sequence + 1, forKey: pdu.source.hex)
         
-        let networkPdu = NetworkPdu(encode: pdu, withSequence: sequence, andTtl: ttl)
+        let networkPdu = NetworkPdu(encode: pdu, ofType: type, withSequence: sequence, andTtl: ttl)
         try transmitter.send(networkPdu.pdu, ofType: type)
         
-        // Unless a GATT Bearer is used, network PDUs should be sent mutlitple times
+        // Unless a GATT Bearer is used, the Network PDUs should be sent multiple times
         // if Network Transmit has been set for the local Provisioner's Node.
         if case .networkPdu = type, !(transmitter is GattBearer),
             let networkTransmit = meshNetwork.localProvisioner?.node?.networkTransmit,

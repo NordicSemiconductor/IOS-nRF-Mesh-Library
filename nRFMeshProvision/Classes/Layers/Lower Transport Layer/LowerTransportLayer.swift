@@ -11,6 +11,30 @@ internal class LowerTransportLayer {
     let networkManager: NetworkManager
     let meshNetwork: MeshNetwork
     
+    /// The Network Key from the received Secure Network Beacon that contained
+    /// information about the Primary Network Key, if such was received,
+    /// or from the most recently received beacon otherwise.
+    ///
+    /// Secure Network Beacons are sent each time a Proxy Client connects
+    /// to a Proxy Server, one for each Network Key known to this server Node.
+    ///
+    /// This property is used for the Proxy Configuration messages, as they must be
+    /// encrypted with a Network Key known to the connected Proxy Node. To make the
+    /// implementation simpler (as it is not known to which Node the Proxy Client
+    /// is connected to), instead of trying all Network Keys, the messages are
+    /// encrypted with only the primary or the last received key. The primary, as
+    /// it is unlikely that the primary key will be removed from a Node, or last
+    /// received, as there is the highest chance of success, as this one was added
+    /// most recently.
+    ///
+    /// - important: Each time a new Network Key is added to the Proxy Node,
+    ///              it sends the Secure Network Beacon to the connected Proxy Client.
+    ///              However, as there is no beacon sent when a key is removed, the
+    ///              stored Network Key may be invalid. Therefore, it may be, that the
+    ///              key with this index is no longer stored on the connected Node
+    ///              and the Proxy Configuration messages will not work.
+    var proxyNetworkKey: NetworkKey?
+    
     /// The storage for keeping sequence numbers. Each mesh network (with different UUID)
     /// has a unique storage, which can be reloaded when the network is imported after it
     /// was used before.
@@ -174,7 +198,43 @@ internal class LowerTransportLayer {
             if case .finalizing = networkKey.phase, !secureNetworkBeacon.keyRefreshFlag {
                 networkKey.oldKey = nil // This will set the phase to .normalOperation.
             }
+            // Keep the primary Network Key or the most received one from the connected
+            // Proxy Server. This is to make sure (almost) that the Proxy Configuration
+            // messages are sent encrypted with a key known to this Node.
+            let justConnected = proxyNetworkKey == nil
+            let reconnected = networkKey == proxyNetworkKey
+            if networkKey.isPrimary || proxyNetworkKey?.isPrimary == false {
+                proxyNetworkKey = networkKey
+            }
+            if justConnected || reconnected {
+                print("Adding local Address and All Nodes to Proxy Filter...") // TODO: Remove me
+                var whitelist = [Address.allNodes]
+                if let localAddress = meshNetwork.localProvisioner?.node?.unicastAddress {
+                    whitelist.append(localAddress)
+                }
+                send(proxyConfigurationMessage: AddAddressesToFilter(whitelist))
+            }
         }
+    }
+    
+    func handle(proxyConfigurationPdu proxyPdu: NetworkPdu) {
+        print("Proxy data 0x\(proxyPdu.transportPdu.hex) received")
+    }
+    
+    /// This method tries to send the Proxy Configuration Message.
+    ///
+    /// - parameter ProxyConfigurationMessage: The Proxy Confifuration message to be sent.
+    func send(proxyConfigurationMessage message: ProxyConfigurationMessage) {
+        guard let source = meshNetwork.localProvisioner?.node?.unicastAddress else {
+            return
+        }
+        guard let networkKey = proxyNetworkKey else {
+            return
+        }
+        let pdu = ControlMessage(fromProxyConfigurationMessage: message,
+                                 sentFrom: source, using: networkKey)
+        try? networkManager.networkLayer.send(lowerTransportPdu: pdu,
+                                              ofType: .proxyConfiguration, withTtl: 0)
     }
     
     /// This method tries to send the Upper Transport Message.

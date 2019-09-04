@@ -18,7 +18,9 @@ public protocol MeshNetworkDelegate: class {
     ///   - message:     The received message.
     ///   - source:      The Unicast Address of the Element from which
     ///                  the message was sent.
-    func meshNetwork(_ meshNetwork: MeshNetwork, didDeliverMessage message: MeshMessage, from source: Address)
+    func meshNetwork(_ meshNetwork: MeshNetwork,
+                     didDeliverMessage message: MeshMessage,
+                     from source: Address)
     
     /// A callback called when an unsegmented message was sent to the
     /// `transmitter`, or when all segments of a segmented message targetting
@@ -29,7 +31,9 @@ public protocol MeshNetworkDelegate: class {
     ///                  been sent.
     ///   - message:     The message that has been sent.
     ///   - destination: The address to which the message was sent.
-    func meshNetwork(_ meshNetwork: MeshNetwork, didDeliverMessage message: MeshMessage, to destination: Address)
+    func meshNetwork(_ meshNetwork: MeshNetwork,
+                     didDeliverMessage message: MeshMessage,
+                     to destination: Address)
     
     /// A callback called when a message failed to be sent to the target
     /// Node. For unsegmented messages this may happen when the `transmitter`
@@ -56,17 +60,25 @@ public protocol MeshNetworkDelegate: class {
     ///   - message:     The message that has failed to be delivered.
     ///   - destination: The address to which the message was being sent.
     ///   - error:       The error that occurred.
-    func meshNetwork(_ meshNetwork: MeshNetwork, failedToDeliverMessage message: MeshMessage, to destination: Address, error: Error)
+    func meshNetwork(_ meshNetwork: MeshNetwork,
+                     failedToDeliverMessage message: MeshMessage,
+                     to destination: Address,
+                     error: Error)
     
 }
 
 public extension MeshNetworkDelegate {
     
-    func meshNetwork(_ meshNetwork: MeshNetwork, didDeliverMessage message: MeshMessage, to destination: Address) {
+    func meshNetwork(_ meshNetwork: MeshNetwork,
+                     didDeliverMessage message: MeshMessage,
+                     to destination: Address) {
         // Empty.
     }
     
-    func meshNetwork(_ meshNetwork: MeshNetwork, failedToDeliverMessage message: MeshMessage, to destination: Address, error: Error) {
+    func meshNetwork(_ meshNetwork: MeshNetwork,
+                     failedToDeliverMessage message: MeshMessage,
+                     to destination: Address,
+                     error: Error) {
         // Empty.
     }
     

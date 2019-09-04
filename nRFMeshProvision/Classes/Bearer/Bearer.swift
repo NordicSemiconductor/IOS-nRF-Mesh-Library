@@ -32,7 +32,7 @@ public enum PduType: UInt8 {
     /// See: Section 5.4.1 of Bluetooth Mesh Specification 1.0.1.
     case provisioningPdu    = 3
     
-    var mask: UInt8 {
+    internal var mask: UInt8 {
         return 1 << rawValue
     }
 }

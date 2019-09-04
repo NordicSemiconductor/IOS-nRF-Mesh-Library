@@ -35,10 +35,14 @@ internal struct NetworkPdu {
     /// to deobfuscate and decrypt the data using given Network Key and IV Index.
     ///
     /// - parameter pdu:        The data received from mesh network.
+    /// - parameter pduType:    The type of the PDU: `.networkPdu` of `.proxyConfiguration`.
     /// - parameter networkKey: The Network Key to decrypt the PDU.
     /// - returns: The deobfuscated and decided Network PDU object, or `nil`,
     ///            if the key or IV Index don't match.
-    init?(decode pdu: Data, usingNetworkKey networkKey: NetworkKey) {
+    init?(decode pdu: Data, ofType pduType: PduType, usingNetworkKey networkKey: NetworkKey) {
+        guard pduType == .networkPdu || pduType == .proxyConfiguration else {
+            return nil
+        }
         self.pdu = pdu
         
         // Valid message must have at least 14 octets.
@@ -97,10 +101,13 @@ internal struct NetworkPdu {
             let destAndTransportPdu = pdu.subdata(in: 7..<micOffset)
             let mic = pdu.subdata(in: micOffset..<pdu.count)
             
-            let networkNonce = Data([0x00]) + deobfuscatedData + Data([0x00, 0x00]) + index.bigEndian
+            var nonce = Data([pduType.nonceId]) + deobfuscatedData + Data([0x00, 0x00]) + index.bigEndian
+            if case .proxyConfiguration = pduType {
+                nonce[1] = 0x00 // Pad
+            }
             guard let decryptedData = helper.calculateDecryptedCCM(destAndTransportPdu,
                                                                    withKey: keys.encryptionKey,
-                                                                   nonce: networkNonce, andMIC: mic,
+                                                                   nonce: nonce, andMIC: mic,
                                                                    withAdditionalData: nil) else { continue }
             
             self.networkKey = networkKey
@@ -119,12 +126,16 @@ internal struct NetworkPdu {
     /// that are to be send to the mesh network.
     ///
     /// - parameter lowerTransportPdu: The data received from higher layer.
+    /// - parameter pduType:  The type of the PDU: `.networkPdu` of `.proxyConfiguration`.
     /// - parameter sequence: The SEQ number of the PDU. Each PDU between the source
     ///                       and destination must have strictly increasing sequence number.
     /// - parameter ttl: Time To Live.
     /// - returns: The Network PDU object.
-    init(encode lowerTransportPdu: LowerTransportPdu,
+    init(encode lowerTransportPdu: LowerTransportPdu, ofType pduType: PduType,
          withSequence sequence: UInt32, andTtl ttl: UInt8) {
+        guard pduType == .networkPdu || pduType == .proxyConfiguration else {
+            fatalError("Only .networkPdu and .configurationPdu may be encoded into a NetworkPdu")
+        }
         let index = lowerTransportPdu.networkKey.ivIndex.index
         
         self.networkKey = lowerTransportPdu.networkKey
@@ -151,10 +162,13 @@ internal struct NetworkPdu {
         let keys = networkKey.transmitKeys
         
         let helper = OpenSSLHelper()
-        let networkNonce = Data([0x00]) + deobfuscatedData + Data([0x00, 0x00]) + index.bigEndian
+        var nonce = Data([pduType.nonceId]) + deobfuscatedData + Data([0x00, 0x00]) + index.bigEndian
+        if case .proxyConfiguration = pduType {
+            nonce[1] = 0x00 // Pad
+        }
         let encryptedData = helper.calculateCCM(decryptedData,
                                                 withKey: keys.encryptionKey,
-                                                nonce: networkNonce,
+                                                nonce: nonce,
                                                 andMICSize: type.netMicSize,
                                                 withAdditionalData: nil)!
         let obfuscatedData = helper.obfuscate(deobfuscatedData,
@@ -168,18 +182,34 @@ internal struct NetworkPdu {
     /// to deobfuscate and decode the network PDU.
     ///
     /// - parameter pdu:         The received PDU.
+    /// - parameter type:        The type of the PDU: `.networkPdu` of `.proxyConfiguration`.
     /// - parameter meshNetwork: The mesh network for which the PDU should be decoded.
     /// - returns: The deobfuscated and decoded Network PDU, or `nil` if the PDU was not
     ///            signed with any of the Network Keys, the IV Index was not valid, or the
     ///            PDU was invalid.
-    static func decode(_ pdu: Data, for meshNetwork: MeshNetwork) -> NetworkPdu? {
+    static func decode(_ pdu: Data, ofType type: PduType, for meshNetwork: MeshNetwork) -> NetworkPdu? {
         for networkKey in meshNetwork.networkKeys {
-            if let networkPdu = NetworkPdu(decode: pdu, usingNetworkKey: networkKey) {
+            if let networkPdu = NetworkPdu(decode: pdu, ofType: type, usingNetworkKey: networkKey) {
                 return networkPdu
             }
         }
         return nil
     }
+}
+
+private extension PduType {
+    
+    var nonceId: UInt8 {
+        switch self {
+        case .networkPdu:
+            return 0x00
+        case .proxyConfiguration:
+            return 0x03
+        default:
+            fatalError("Unsupported PDU Type: \(self)")
+        }
+    }
+    
 }
 
 private extension LowerTransportPduType {

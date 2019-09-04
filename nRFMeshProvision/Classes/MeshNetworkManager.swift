@@ -14,12 +14,19 @@ public class MeshNetworkManager {
     private var networkManager: NetworkManager?
     /// Storage to keep the app data.
     private let storage: Storage
+    
+    /// The Proxy Filter state.
+    public internal(set) var proxyFilter: ProxyFilter?
+    
     /// The delegate will receive callbacks whenever a complete
     /// Mesh Message has been received and reassembled.
     public weak var delegate: MeshNetworkDelegate?
     /// The sender object should send PDUs created by the manager
     /// using any Bearer.
     public weak var transmitter: Transmitter?
+    
+    // MARK: - Vendor message properties
+    
     /// Registered vendor message types.
     internal var vendorTypes: [UInt32 : VendorMessage.Type] = [:]
     
@@ -134,6 +141,7 @@ public extension MeshNetworkManager {
         
         meshData.meshNetwork = network
         networkManager = NetworkManager(self)
+        proxyFilter = ProxyFilter(self)
         return network
     }
     
@@ -236,6 +244,7 @@ public extension MeshNetworkManager {
     /// - parameter applicationKey: The Application Key to sign the message.
     func send(_ message: MeshMessage, to destination: MeshAddress, using applicationKey: ApplicationKey) {
         guard let networkManager = networkManager else {
+            print("Error: Mesh Network not created")
             return
         }
         networkManager.send(message, to: destination, using: applicationKey)
@@ -288,6 +297,7 @@ public extension MeshNetworkManager {
     /// - parameter destination: The destination Unicast Address.
     func send(_ message: ConfigMessage, to destination: Address) {
         guard let networkManager = networkManager else {
+            print("Error: Mesh Network not created")
             return
         }
         networkManager.send(message, to: destination)
@@ -334,6 +344,21 @@ public extension MeshNetworkManager {
         send(message, to: element)
     }
     
+    /// Sends the Proxy Configuration Message to the connected Proxy Node.
+    ///
+    /// This method will only work if the bearer uses is GATT Proxy.
+    /// The message will be encrypted and sent to the `transported`, which
+    /// should deliver the PDU to the connected Node.
+    ///
+    /// - parameter message: The Proxy Configuration message to be sent.
+    func send(_ message: ProxyConfigurationMessage) {
+        guard let networkManager = networkManager else {
+            print("Error: Mesh Network not created")
+            return
+        }
+        networkManager.send(message)
+    }
+    
 }
 
 // MARK: - Helper methods for Bearer support
@@ -368,6 +393,7 @@ public extension MeshNetworkManager {
                 $0.meshNetwork = network
             }
             networkManager = NetworkManager(self)
+            proxyFilter = ProxyFilter(self)
             return true
         }
         return false
@@ -420,6 +446,7 @@ public extension MeshNetworkManager {
         
         meshData.meshNetwork = meshNetwork
         networkManager = NetworkManager(self)
+        proxyFilter = ProxyFilter(self)
     }
     
 }
