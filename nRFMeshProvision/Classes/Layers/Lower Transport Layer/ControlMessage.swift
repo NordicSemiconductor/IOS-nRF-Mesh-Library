@@ -73,7 +73,7 @@ internal struct ControlMessage: LowerTransportPdu {
     ///                         The key should be known to the connected
     ///                         Proxy Node.
     init(fromProxyConfigurationMessage message: ProxyConfigurationMessage,
-         sentFrom source: Address, using networkKey: NetworkKey) {
+         sentFrom source: Address, usingNetworkKey networkKey: NetworkKey) {
         self.opCode = message.opCode
         self.source = source
         self.destination = Address.unassignedAddress

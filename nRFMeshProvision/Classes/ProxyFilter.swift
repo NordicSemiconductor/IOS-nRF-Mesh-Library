@@ -20,13 +20,24 @@ public enum ProxyFilerType: UInt8 {
     case blacklist = 0x01
 }
 
+public protocol ProxyFilterDelegate: class {
+    /// Method called when the Proxy Filter has been updated.
+    ///
+    /// - parameter type: The current Proxy Filter type.
+    /// - parameter addresses: The addresses in the filter.
+    func proxyFilterUpdated(type: ProxyFilerType, addresses: Set<Address>)
+}
+
 public class ProxyFilter {
     internal var manager: MeshNetworkManager
     
     // MARK: - Proxy Filter properties
     
+    /// The delegate to be informed about Proxy Filter changes.
+    public weak var delegate: ProxyFilterDelegate?
+    
     /// List of addresses currently added to the Proxy Filter.
-    public internal(set) var addresses: [Address] = []
+    public internal(set) var addresses: Set<Address> = []
     /// The active Proxy Filter type.
     ///
     /// By default the Proxy Filter is set to `.whitelist`.
@@ -36,6 +47,41 @@ public class ProxyFilter {
     
     internal init(_ manager: MeshNetworkManager) {
         self.manager = manager
+    }
+    
+    internal func newProxyDidConnect() {
+        addresses.removeAll()
+        type = .whitelist
+        delegate?.proxyFilterUpdated(type: type, addresses: addresses)
+    }
+    
+    internal func managerDidDeliverMessage(_ message: ProxyConfigurationMessage) {
+        switch message {
+        case let request as AddAddressesToFilter:
+            addresses.formUnion(request.addresses)
+        case let request as RemoveAddressesFromFilter:
+            addresses.subtract(request.addresses)
+        case let request as SetFilterType:
+            type = request.filterType
+            addresses.removeAll()
+        default:
+            // Ignore.
+            break
+        }
+    }
+    
+    internal func handle(_ message: ProxyConfigurationMessage) {
+        switch message {
+        case let status as FilterStatus:
+            guard addresses.count == status.listSize else {
+                print("Warning: Proxy Filter lost track of devices")
+                return
+            }
+            delegate?.proxyFilterUpdated(type: type, addresses: addresses)
+        default:
+            // Ignore.
+            break
+        }
     }
     
     /// Sets the Filter Type on the connected GATT Proxy Node.
@@ -79,6 +125,17 @@ public class ProxyFilter {
     public func remove(groups: [Group]) {
         let addresses = groups.map { $0.address.address }
         remove(addresses: addresses)
+    }
+    
+}
+
+extension ProxyFilerType: CustomDebugStringConvertible {
+    
+    public var debugDescription: String {
+        switch self {
+        case .whitelist: return "Whitelist"
+        case .blacklist: return "Blacklist"
+        }
     }
     
 }

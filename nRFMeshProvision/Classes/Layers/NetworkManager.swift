@@ -104,7 +104,11 @@ internal class NetworkManager {
     ///
     /// - parameter proxyConfigurationMessage: The message to be sent.
     func send(_ message: ProxyConfigurationMessage) {
-        lowerTransportLayer.send(proxyConfigurationMessage: message)
+        do {
+            try networkLayer.send(proxyConfigurationMessage: message)
+        } catch {
+            print("Error: \(error)")
+        }
     }
     
     // MARK: - Callbacks
