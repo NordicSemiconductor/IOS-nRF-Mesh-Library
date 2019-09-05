@@ -99,11 +99,11 @@ internal class NetworkLayer {
     
     /// This method tries to send the Proxy Configuration Message.
     ///
+    /// The Proxy Filter object will be informed about the success or a failure.
+    ///
     /// - parameter ProxyConfigurationMessage: The Proxy Confifuration message to
     ///                                        be sent.
-    /// - throws: This method may throw when the transmitter is not set, or has
-    ///           failed to send the PDU.
-    func send(proxyConfigurationMessage message: ProxyConfigurationMessage) throws {
+    func send(proxyConfigurationMessage message: ProxyConfigurationMessage) {
         guard let source = meshNetwork.localProvisioner?.node?.unicastAddress else {
             print("Error: Local Provisioner has no Unicast Address assigned")
             return
@@ -115,8 +115,12 @@ internal class NetworkLayer {
         }
         let pdu = ControlMessage(fromProxyConfigurationMessage: message,
                                  sentFrom: source, usingNetworkKey: networkKey)
-        try send(lowerTransportPdu: pdu, ofType: .proxyConfiguration, withTtl: 0)
-        networkManager.meshNetworkManager.proxyFilter?.managerDidDeliverMessage(message)
+        do {
+            try send(lowerTransportPdu: pdu, ofType: .proxyConfiguration, withTtl: 0)
+            networkManager.meshNetworkManager.proxyFilter?.managerDidDeliverMessage(message)
+        } catch {
+            networkManager.meshNetworkManager.proxyFilter?.managerFailedToDeliverMessage(message, error: error)
+        }
     }
     
     /// This method tries to send the Lower Transport Message of given type to the

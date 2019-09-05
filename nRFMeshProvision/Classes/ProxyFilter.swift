@@ -167,6 +167,21 @@ internal extension ProxyFilter {
         }
     }
     
+    /// Callback called when the manager failed to send the Proxy
+    /// Configuration Message.
+    ///
+    /// This method clears the local filter and sets it back to `.whitelist`.
+    /// All the messages waiting to be sent are cancelled.
+    ///
+    /// - parameter message: The message that has not been sent.
+    /// - parameter error: The error received.
+    func managerFailedToDeliverMessage(_ message: ProxyConfigurationMessage, error: Error) {
+        type = .whitelist
+        addresses.removeAll()
+        buffer.removeAll()
+        busy = false
+    }
+    
     /// Handler for the received Proxy Configuration Messages.
     ///
     /// This method notifies the delegate about changes in the Proxy Filter.
