@@ -24,8 +24,9 @@ public extension AccessError {
     
     var localizedDescription: String {
         switch self {
-        case .invalidSource: return "Local Provisioner does not have Unicast Address specified"
-        case .cannotRemove:  return "Cannot remove the last Network Key"
+        case .invalidSource:      return "Local Provisioner does not have Unicast Address specified"
+        case .invalidDestination: return "The destination address is unknown"
+        case .cannotRemove:       return "Cannot remove the last Network Key"
         }
     }
     

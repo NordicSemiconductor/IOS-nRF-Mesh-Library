@@ -88,7 +88,7 @@ internal class AccessLayer {
         }
         guard destination.isUnicast else {
             print("Error: Address: 0x\(destination.hex) is not a Unicast Address")
-            networkManager.notifyAbout(AccessError.invalidDestination,
+            networkManager.notifyAbout(MeshMessageError.invalidAddress,
                                        duringSendingMessage: message, to: destination)
             return
         }
