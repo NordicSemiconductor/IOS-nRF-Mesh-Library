@@ -42,6 +42,19 @@ class ConfigurationViewController: ConnectableViewController {
             refreshControl!.tintColor = UIColor.white
             refreshControl!.addTarget(self, action: #selector(getCompositionData), for: .valueChanged)
         }
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        MeshNetworkManager.instance.delegate = self
+        
+        // Check if the local Provisioner has configuration capabilities.
+        let localProvisioner = MeshNetworkManager.instance.meshNetwork?.localProvisioner
+        guard localProvisioner?.hasConfigurationCapabilities ?? false else {
+            // The Provisioner cannot sent or receive messages.
+            return
+        }
         
         // If the Composition Data were never obtained, get them now.
         if !node.isCompositionDataReceived {
@@ -50,12 +63,6 @@ class ConfigurationViewController: ConnectableViewController {
         } else if node.defaultTTL == nil {
             getTtl()
         }
-    }
-    
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        
-        MeshNetworkManager.instance.delegate = self
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
