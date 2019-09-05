@@ -71,6 +71,13 @@ public extension ProxyFilter {
         send(SetFilterType(type))
     }
     
+    /// Adds the given Address to the active filter.
+    ///
+    /// - parameter address: The address to add to the filter.
+    func add(address: Address) {
+        send(AddAddressesToFilter(Set(arrayLiteral: address)))
+    }
+    
     /// Adds the given Addresses to the active filter.
     ///
     /// - parameter addresses: The addresses to add to the filter.
@@ -93,14 +100,21 @@ public extension ProxyFilter {
         add(addresses: addresses)
     }
     
-    /// Removes the given GroAddresses from the active filter.
+    /// Removes the given Address from the active filter.
+    ///
+    /// - parameter address: The address to remove from the filter.
+    func remove(address: Address) {
+        send(RemoveAddressesFromFilter(Set(arrayLiteral: address)))
+    }
+    
+    /// Removes the given Addresses from the active filter.
     ///
     /// - parameter addresses: The addresses to remove from the filter.
     func remove(addresses: [Address]) {
         send(RemoveAddressesFromFilter(Set(addresses)))
     }
     
-    /// Removes the given GroAddresses from the active filter.
+    /// Removes the given Addresses from the active filter.
     ///
     /// - parameter addresses: The addresses to remove from the filter.
     func remove(addresses: Set<Address>) {
@@ -113,6 +127,18 @@ public extension ProxyFilter {
     func remove(groups: [Group]) {
         let addresses = groups.map { $0.address.address }
         remove(addresses: addresses)
+    }
+    
+    /// Removes one and adds the other address to the Proxy Filter.
+    ///
+    /// This method is intended to be called when the local Provisioner
+    /// has been swapped with another one or its Address has changed.
+    ///
+    /// - parameter address:    The Address to be removed.
+    /// - parameter newAddress: The new Address to be added.
+    func replace(address: Address, with newAddress: Address) {
+        remove(address: address)
+        add(address: newAddress)
     }
     
 }
