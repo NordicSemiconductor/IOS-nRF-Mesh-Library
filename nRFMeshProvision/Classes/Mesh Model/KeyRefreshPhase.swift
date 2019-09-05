@@ -16,7 +16,8 @@ public enum KeyRefreshPhase: Int, Codable {
     case distributingKeys = 1
     /// Phase 2: Transmitting a Secure Network beacon that signals to the network
     /// that all nodes have the new keys. The nodes will then transmit using
-    /// the new keys but can receive using the old or new keys.
+    /// the new keys but can receive using the old or new keys, and shall only
+    /// receive Secure Network beacons secured using the new Network Key.
     case finalizing       = 2
     
     internal static func from(_ value: Int) -> KeyRefreshPhase? {

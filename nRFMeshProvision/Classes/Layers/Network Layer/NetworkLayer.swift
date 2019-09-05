@@ -218,17 +218,6 @@ private extension NetworkLayer {
         
         if justConnected || reconnected {
             networkManager.meshNetworkManager.proxyFilter?.newProxyDidConnect()
-            
-            print("Adding local Address and All Nodes to Proxy Filter...") // TODO: Remove me
-            var whitelist = [Address.allNodes]
-            if let localAddress = meshNetwork.localProvisioner?.node?.unicastAddress {
-                whitelist.append(localAddress)
-            }
-            do {
-                try send(proxyConfigurationMessage: AddAddressesToFilter(whitelist))
-            } catch {
-                print("Error: \(error)")
-            }
         }
     }
     
