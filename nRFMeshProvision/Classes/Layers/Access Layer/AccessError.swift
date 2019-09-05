@@ -12,6 +12,12 @@ public enum AccessError: Error {
     /// a Unicast Address specified and is not able to send
     /// requested message.
     case invalidSource
+    /// Thrown when the destination Address is not known and the
+    /// library cannot determine the Network Key to use.
+    case invalidDestination
+    /// Error thrown when the Provisioner is trying to remove
+    /// the last Network Key from the Node.
+    case cannotRemove
 }
 
 public extension AccessError {
@@ -19,6 +25,7 @@ public extension AccessError {
     var localizedDescription: String {
         switch self {
         case .invalidSource: return "Local Provisioner does not have Unicast Address specified"
+        case .cannotRemove:  return "Cannot remove the last Network Key"
         }
     }
     

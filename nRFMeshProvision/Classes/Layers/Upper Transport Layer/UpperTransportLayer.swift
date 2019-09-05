@@ -53,10 +53,14 @@ internal class UpperTransportLayer {
     func send(_ message: MeshMessage, to destination: MeshAddress, using applicationKey: ApplicationKey) {
         guard destination.address.isValidAddress else {
             print("Error: Invalid address: \(destination.hex)")
+            networkManager.notifyAbout(MeshMessageError.invalidAddress,
+                                       duringSendingMessage: message, to: destination.address)
             return
         }
         guard let source = meshNetwork.localProvisioner?.unicastAddress else {
             print("Error: Local Provisioner has no Unicast Address assigned")
+            networkManager.notifyAbout(AccessError.invalidSource,
+                                       duringSendingMessage: message, to: destination.address)
             return
         }
         
@@ -82,15 +86,21 @@ internal class UpperTransportLayer {
     func send(_ message: ConfigMessage, to destination: Address) {
         guard destination.isUnicast else {
             print("Error: Address: 0x\(destination.hex) is not a Unicast Address")
+            networkManager.notifyAbout(MeshMessageError.invalidAddress,
+                                       duringSendingMessage: message, to: destination)
             return
         }
         guard let source = meshNetwork.localProvisioner?.unicastAddress else {
             print("Error: Local Provisioner has no Unicast Address assigned")
+            networkManager.notifyAbout(AccessError.invalidSource,
+                                       duringSendingMessage: message, to: destination)
             return
         }
         guard let node = meshNetwork.node(withAddress: destination),
             var networkKey = node.networkKeys.first else {
             print("Error: Node or Network Key not found")
+                networkManager.notifyAbout(AccessError.invalidDestination,
+                                           duringSendingMessage: message, to: destination)
             return
         }
         // ConfigNetKeyDelete must not be signed using the key that is being deleted.
@@ -98,6 +108,8 @@ internal class UpperTransportLayer {
             if netKeyDelete.networkKeyIndex == networkKey.index {
                 guard node.networkKeys.count > 1 else {
                     print("Error: Cannot remove the last Network Key")
+                    networkManager.notifyAbout(AccessError.cannotRemove,
+                                               duringSendingMessage: message, to: destination)
                     return
                 }
                 networkKey = node.networkKeys.last!

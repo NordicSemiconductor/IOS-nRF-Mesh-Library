@@ -44,11 +44,11 @@ internal class AccessLayer {
     func send(_ message: MeshMessage, to destination: MeshAddress, using applicationKey: ApplicationKey) {
         guard let localProvisioner = networkManager.meshNetwork?.localProvisioner,
             localProvisioner.hasConfigurationCapabilities else {
+                print("Error: Local Provisioner has no Unicast Address assigned")
                 networkManager.notifyAbout(AccessError.invalidSource,
                                            duringSendingMessage: message, to: destination.address)
                 return
         }
-        
         
         // Should the TID be updated?
         var m = message
@@ -81,12 +81,15 @@ internal class AccessLayer {
     func send(_ message: ConfigMessage, to destination: Address) {
         guard let localProvisioner = networkManager.meshNetwork?.localProvisioner,
             localProvisioner.hasConfigurationCapabilities else {
+                print("Error: Local Provisioner has no Unicast Address assigned")
                 networkManager.notifyAbout(AccessError.invalidSource,
                                            duringSendingMessage: message, to: destination)
                 return
         }
         guard destination.isUnicast else {
             print("Error: Address: 0x\(destination.hex) is not a Unicast Address")
+            networkManager.notifyAbout(AccessError.invalidDestination,
+                                       duringSendingMessage: message, to: destination)
             return
         }
         if networkManager.foundationLayer.handle(configMessage: message, to: destination) {
