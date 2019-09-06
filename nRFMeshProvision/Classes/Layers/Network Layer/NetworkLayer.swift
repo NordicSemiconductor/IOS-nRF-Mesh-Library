@@ -104,16 +104,17 @@ internal class NetworkLayer {
     /// - parameter ProxyConfigurationMessage: The Proxy Confifuration message to
     ///                                        be sent.
     func send(proxyConfigurationMessage message: ProxyConfigurationMessage) {
-        guard let source = meshNetwork.localProvisioner?.node?.unicastAddress else {
-            print("Error: Local Provisioner has no Unicast Address assigned")
-            return
-        }
         guard let networkKey = proxyNetworkKey else {
             // The Proxy Network Key is unknown.
-            print("Error: The Secure Network Beacon has not been received yet")
+            networkManager.meshNetworkManager.proxyFilter?.managerFailedToDeliverMessage(message, error: BearerError.bearerClosed)
             return
         }
         print("Sending \(message)...") // TODO: Remove me
+        
+        // If the Provisioner does not have a Unicast Address, just use a fake one
+        // to configure the Proxy Server. This allows sniffing the network without
+        // an option to send messages.
+        let source = meshNetwork.localProvisioner?.node?.unicastAddress ?? Address.maxUnicastAddress
         let pdu = ControlMessage(fromProxyConfigurationMessage: message,
                                  sentFrom: source, usingNetworkKey: networkKey)
         do {

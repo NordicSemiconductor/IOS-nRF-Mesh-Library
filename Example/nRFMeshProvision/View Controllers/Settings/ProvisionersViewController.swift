@@ -130,7 +130,7 @@ class ProvisionersViewController: UITableViewController, Editable {
                 manager.proxyFilter?.reset()
         }
         // Make the required change in the data source.
-        network.moveProvisioner(fromIndex: fromIndex, toIndex: toIndex)        
+        network.moveProvisioner(fromIndex: fromIndex, toIndex: toIndex)
         if !manager.save() {
             presentAlert(title: "Error", message: "Mesh configuration could not be saved.")
         }
@@ -207,7 +207,8 @@ private extension ProvisionersViewController {
         // If another Provisioner became the local one, and the current Proxy
         /// Filter type is a whitelist, set up the Proxy Filter with all
         /// addresses the new Provisioner is subscribed to.
-        if let newLocalProvisioner = meshNetwork.localProvisioner,
+        if indexPath.isThisProvisioner,
+            let newLocalProvisioner = meshNetwork.localProvisioner,
             manager.proxyFilter?.type == .whitelist {
             manager.proxyFilter?.setup(for: newLocalProvisioner)
         }
