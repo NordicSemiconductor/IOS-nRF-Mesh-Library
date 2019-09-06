@@ -12,24 +12,26 @@ application.
 
 1. Provisionig with all features that available in Bluetooth Mesh Profile 1.0.1, including OOB Public Key and all types of OOB.
 2. Managing Provisioners, Network Keys, Application Keys, resetting network, etc.
-3. All network layers are working (except 6. from section below).
+3. All network layers are working.
 4. Parsing Secure Network beacons.
 5. Adding, removing and refreshing Network and Application Keys to Nodes.
 6. Binging and unbinding Application Keys to Models.
 7. Setting and clearing publication to a Model.
 8. Setting and removing subscriptions to a Model.
-9. Groups, including those with Virtual Addresses (without sending messages to them).
-10. Handling Configuration Server message sent by other Provisioner.
-11. Generic OnOff and Vendor model have dedicated controls in sample app.
+9. Groups, including those with Virtual Addresses.
+10. UI for controlling groups (Generic OnOff and Generic Level (delta) are supported).
+12. Handling Configuration Server message sent by other Provisioner.
+13. Generic OnOff and Vendor model have dedicated controls in sample app.
+14. Proxy Filter support in the library.
 
 ## NOT (yet) supported features
 
 1. Many SIG defined models, except from supported ones.
-2. UI for controlling groups.
-3. Proxy Filter.
-4. Key Refresh Procedure.
-5. Health server messages.
-6. Segmentation of Segmented Control Messages.
+2. Proxy Filter (in UI)
+3. Key Refresh Procedure.
+4. Health server messages.
+5. Hearbeats.
+6. Remote Provisioning.
 
 ## Feedback
 
