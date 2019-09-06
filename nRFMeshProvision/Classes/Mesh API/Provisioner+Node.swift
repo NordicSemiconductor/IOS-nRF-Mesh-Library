@@ -32,4 +32,10 @@ public extension Provisioner {
         return node != nil
     }
     
+    /// Whether the Provisioner is the one currently set
+    /// as a local Provisioner.
+    var isLocal: Bool {
+        return meshNetwork?.isLocalProvisioner(self) ?? false
+    }
+    
 }

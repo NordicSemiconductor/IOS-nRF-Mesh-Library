@@ -113,6 +113,7 @@ internal class NetworkLayer {
             print("Error: The Secure Network Beacon has not been received yet")
             return
         }
+        print("Sending \(message)...") // TODO: Remove me
         let pdu = ControlMessage(fromProxyConfigurationMessage: message,
                                  sentFrom: source, usingNetworkKey: networkKey)
         do {
@@ -216,7 +217,7 @@ private extension NetworkLayer {
         // Keep the primary Network Key or the most recently received one from the connected
         // Proxy Server. This is to make sure (almost) that the Proxy Configuration messages
         // are sent encrypted with a key known to this Node.
-        if networkKey.isPrimary || proxyNetworkKey?.isPrimary == false {
+        if justConnected || networkKey.isPrimary || proxyNetworkKey?.isPrimary == false {
             proxyNetworkKey = networkKey
         }
         

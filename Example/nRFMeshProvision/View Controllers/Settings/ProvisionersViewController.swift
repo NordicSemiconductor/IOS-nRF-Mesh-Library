@@ -118,13 +118,22 @@ class ProvisionersViewController: UITableViewController, Editable {
         let fromIndex = sourceIndexPath.provisionerIndex
         let toIndex = destinationIndexPath.provisionerIndex
         
-        // Make the required change in the data source.
-        let network = MeshNetworkManager.instance.meshNetwork!
-        network.moveProvisioner(fromIndex: fromIndex, toIndex: toIndex)
+        let manager = MeshNetworkManager.instance
+        let network = manager.meshNetwork!
         
-        if !MeshNetworkManager.instance.save() {
+        // If the local Provisioner is changing, and the Proxy Filter was set to a whitelist,
+        // reset the filter.
+        if sourceIndexPath.isThisProvisioner || destinationIndexPath.isThisProvisioner,
+            let previousLocalProvisioner = network.localProvisioner,
+            previousLocalProvisioner.hasConfigurationCapabilities &&
+            manager.proxyFilter?.type == .whitelist {
+                manager.proxyFilter?.reset()
+        }
+        // Make the required change in the data source.
+        network.moveProvisioner(fromIndex: fromIndex, toIndex: toIndex)        
+        if !manager.save() {
             presentAlert(title: "Error", message: "Mesh configuration could not be saved.")
-        }        
+        }
         
         // In here we have to ensure that there is only one Provisioner
         // in the first section.
@@ -135,6 +144,7 @@ class ProvisionersViewController: UITableViewController, Editable {
                 // Moving has to be enqueued, otherwise it doesn't work.
                 tableView.moveRow(at: IndexPath(row: 1, section: IndexPath.localProvisionerSection), to: IndexPath(otherAtRow: 0))
             }
+            
         } else if sourceIndexPath.isThisProvisioner && destinationIndexPath.isOtherProvisioner {
             // If the main Provisioner was moved to hte second section,
             // bring the next one on its place.
@@ -142,6 +152,13 @@ class ProvisionersViewController: UITableViewController, Editable {
                 // Moving has to be enqueued, otherwise it doesn't work.
                 tableView.moveRow(at: IndexPath(otherAtRow: 0), to: .localProvisioner)
             }
+        }
+        
+        // Update the Proxy Filter after the local Provisioner has changed.
+        if sourceIndexPath.isThisProvisioner || destinationIndexPath.isThisProvisioner,
+            let newLocalProvisioner = network.localProvisioner,
+            manager.proxyFilter?.type == .whitelist {
+                manager.proxyFilter?.setup(for: newLocalProvisioner)
         }
     }
     
@@ -171,10 +188,29 @@ class ProvisionersViewController: UITableViewController, Editable {
 private extension ProvisionersViewController {
     
     func removeProvisioner(at indexPath: IndexPath) {
-        let meshNetwork = MeshNetworkManager.instance.meshNetwork!
+        let manager = MeshNetworkManager.instance
+        let meshNetwork = manager.meshNetwork!
+        
+        // If this Provisioner has been removed and the Proxy Filter
+        // type was `.whitelist`, clear the Proxy Filter.
+        // Blacklist filter must have been set up by the user, so don't
+        // modify it.
+        if indexPath.isThisProvisioner && manager.proxyFilter?.type == .whitelist {
+            manager.proxyFilter?.reset()
+        }
+        
+        // Remove the Provisioner and its Node from the network configuration.
         let index = indexPath.provisionerIndex
         _ = meshNetwork.remove(provisionerAt: index)
         let provisionerCount = meshNetwork.provisioners.count
+        
+        // If another Provisioner became the local one, and the current Proxy
+        /// Filter type is a whitelist, set up the Proxy Filter with all
+        /// addresses the new Provisioner is subscribed to.
+        if let newLocalProvisioner = meshNetwork.localProvisioner,
+            manager.proxyFilter?.type == .whitelist {
+            manager.proxyFilter?.setup(for: newLocalProvisioner)
+        }
         
         tableView.beginUpdates()
         // Remove the deleted row.
@@ -194,7 +230,7 @@ private extension ProvisionersViewController {
         }
         tableView.endUpdates()
         
-        if !MeshNetworkManager.instance.save() {
+        if !manager.save() {
             presentAlert(title: "Error", message: "Mesh configuration could not be saved.")
         }
     }

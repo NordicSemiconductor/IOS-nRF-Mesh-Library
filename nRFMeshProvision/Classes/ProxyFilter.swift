@@ -66,6 +66,11 @@ public extension ProxyFilter {
         send(SetFilterType(type))
     }
     
+    /// Resets the filter to an empty whitelist filter.
+    func reset() {
+        send(SetFilterType(.whitelist))
+    }
+    
     /// Clears the current filter.
     func clear() {
         send(SetFilterType(type))
@@ -129,16 +134,23 @@ public extension ProxyFilter {
         remove(addresses: addresses)
     }
     
-    /// Removes one and adds the other address to the Proxy Filter.
-    ///
-    /// This method is intended to be called when the local Provisioner
-    /// has been swapped with another one or its Address has changed.
-    ///
-    /// - parameter address:    The Address to be removed.
-    /// - parameter newAddress: The new Address to be added.
-    func replace(address: Address, with newAddress: Address) {
-        remove(address: address)
-        add(address: newAddress)
+    /// Adds all the addresses the Provisioner is subscribed to to the
+    /// Proxy Filter.
+    func setup(for provisioner: Provisioner) {
+        guard let node = provisioner.node else {
+            return
+        }
+        var addresses: Set<Address> = []
+        // Add Unicast Addresses of all Elements of the Provisioner's Node.
+        addresses.formUnion(node.elements.map({ $0.unicastAddress }))
+        // Add all addresses that the Node's Models are subscribed to.
+        let models = node.elements.flatMap { $0.models }
+        let subscriptions = models.flatMap { $0.subscriptions }
+        addresses.formUnion(subscriptions.map({ $0.address.address }))
+        // Add All Nodes group address.
+        addresses.insert(Address.allNodes)
+        // Submit.
+        add(addresses: addresses)
     }
     
 }
@@ -147,7 +159,7 @@ public extension ProxyFilter {
 
 internal extension ProxyFilter {
     
-    /// Callback called when a new Proxy Node might have been discovered.
+    /// Callback called when a possible change of Proxy Node have been discovered.
     ///
     /// This method is called in two cases: when the first Secure Network
     /// beacon was received (which indicates the first successful connection
@@ -158,19 +170,15 @@ internal extension ProxyFilter {
     /// in other sircumstances, for example when the IV Update or Key Refresh
     /// Procedure is in progress, or a Network Key was removed and added again.
     ///
-    /// This method reloads the Proxy Filter. Initially, the local Provisioner's
-    /// Unicast Address and All Nodes addresses are added.
+    /// This method reloads the Proxy Filter for the local Provisioner,
+    /// adding all the addresses the Provisioner is subscribed to, including
+    /// its Unicast Addresses and All Nodes address.
     func newProxyDidConnect() {
-        print("New Proxy connected: adding local Address and All Nodes to Proxy Filter...") // TODO: Remove me
-        clear()
-        var addresses = self.addresses
-        if addresses.isEmpty {
-            addresses.insert(Address.allNodes)
-            if let localAddress = manager.meshNetwork?.localProvisioner?.node?.unicastAddress {
-                addresses.insert(localAddress)
-            }
+        print("New Proxy connected") // TODO: Remove me
+        reset()
+        if let localProvisioner = manager.meshNetwork?.localProvisioner {
+            setup(for: localProvisioner)
         }
-        add(addresses: addresses)
     }
     
     /// Callback called when a Proxy Configuration Message has been sent.

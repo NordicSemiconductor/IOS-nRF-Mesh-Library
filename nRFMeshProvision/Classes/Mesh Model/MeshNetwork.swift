@@ -81,7 +81,7 @@ public class MeshNetwork: Codable {
                     availableElements = elements.dropLast(elements.count - availableElementsCount)
                 }
                 // Assign the Elements to the Provisioner's Node.
-                node.elements = availableElements
+                node.set(elements: availableElements)
             }
         }
     }

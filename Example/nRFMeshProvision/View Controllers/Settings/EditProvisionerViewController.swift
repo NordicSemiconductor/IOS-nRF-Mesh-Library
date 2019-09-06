@@ -261,12 +261,17 @@ private extension EditProvisionerViewController {
     /// succeeded.
     func saveProvisioner() {
         do {
-            let meshNetwork = MeshNetworkManager.instance.meshNetwork!
+            let manager = MeshNetworkManager.instance
+            let meshNetwork = manager.meshNetwork!
             if adding {
                 // Allocate new ranges, had they changed.
                 try allocateNewRanges(to: provisioner)
                 // And try adding the new Provisioner. This may throw number of errors.
                 try meshNetwork.add(provisioner: provisioner, withAddress: newAddress)
+                // If the local Provisioner was added, set up the Proxy Filter for it.
+                if provisioner.isLocal && provisioner.hasConfigurationCapabilities {
+                    manager.proxyFilter?.setup(for: provisioner)
+                }
             } else {
                 // First, check if the new ranges are not overlapping other Provisioners' ranges.
                 // The initial check is necessary so that we do not commit any changes before
@@ -276,10 +281,18 @@ private extension EditProvisionerViewController {
                 try ensureAddressIsValid(for: provisioner)
                 // Now it's safe to allocate ranges. They must be valid, so will not throw here.
                 try allocateNewRanges(to: provisioner)
+                // If the address is changing, remove the old addresses from the Proxy Filter.
+                if let node = provisioner.node, newAddress != nil || disableConfigCapabilities {
+                    let unicastAddresses = node.elements.map { $0.unicastAddress }
+                    manager.proxyFilter?.remove(addresses: unicastAddresses)
+                }
                 // Try assigning the new Unicast Address. Hopefully this will not throw,
                 // as ranges were already allocated.
                 if let newAddress = newAddress {
                     try meshNetwork.assign(unicastAddress: newAddress, for: provisioner)
+                    // Add the new addresses to the Proxy Filter.
+                    let unicastAddresses = provisioner.node!.elements.map { $0.unicastAddress }
+                    manager.proxyFilter?.add(addresses: unicastAddresses)
                 }
                 if disableConfigCapabilities {
                     meshNetwork.disableConfigurationCapabilities(for: provisioner)
@@ -293,7 +306,7 @@ private extension EditProvisionerViewController {
                 provisioner.node?.defaultTTL = newTtl
             }
             
-            if MeshNetworkManager.instance.save() {
+            if manager.save() {
                 dismiss(animated: true)
                 
                 // Finally, notify the parent view controller.

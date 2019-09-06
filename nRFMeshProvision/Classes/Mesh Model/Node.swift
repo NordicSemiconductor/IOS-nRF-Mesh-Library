@@ -407,6 +407,20 @@ internal extension Node {
         }
     }
     
+    /// Sets given list of Elements to the Node.
+    ///
+    /// - parameter element: The new list of Elements to be added.
+    func set(elements: [Element]) {
+        self.elements.forEach {
+            $0.parentNode = nil
+            $0.index = 0
+        }
+        self.elements.removeAll()
+        elements.forEach {
+            add(element: $0)
+        }
+    }
+    
     /// Adds the Network Key with given index to the Node.
     ///
     /// - parameter networkKeyIndex: The Network Key index to add.
