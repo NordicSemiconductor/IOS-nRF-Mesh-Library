@@ -24,9 +24,32 @@ public class Element: Codable {
     /// Composition Data and has not yet been added to a Node.
     public internal(set) weak var parentNode: Node?
     
+    /// This initiator should be used to create Elements that will
+    /// be set as local elements using `MeshNetworkManager.localElements`.
+    ///
+    /// - parameter name:     The optional Element name.
+    /// - parameter location: The Element location, by default set to `.unknown`.
+    /// - parameter models:   Array of models belonging to this Element.
+    ///                       It must contain at least one Model.
+    public init(name: String? = nil, location: Location = .unknown, models: [Model]) {
+        guard !models.isEmpty else {
+            fatalError("An element must contain at least one model.")
+        }
+        self.name     = name
+        self.location = location
+        self.models   = models
+        // Set temporary index.
+        // Final index will be set when Element is added to the Node.
+        self.index = 0
+        
+        models.forEach {
+            $0.parentElement = self
+        }
+    }
+    
     internal init(location: Location) {
         self.location = location
-        self.models = []
+        self.models   = []
         
         // Set temporary index.
         // Final index will be set when Element is added to the Node.
@@ -139,6 +162,21 @@ internal extension Element {
     func add(model: Model) {
         models.append(model)
         model.parentElement = self
+    }
+    
+    /// Inserts the given model to the Element at the specified position.
+    ///
+    /// - parameter model: The model to be added.
+    func insert(model: Model, at i: Int) {
+        models.insert(model, at: i)
+        model.parentElement = self
+    }
+    
+    func addPrimaryElementModels() {
+        insert(model: .configurationServer, at: 0)
+        insert(model: .configurationClient, at: 1)
+        insert(model: .healthServer, at: 2)
+        insert(model: .healthClient, at: 3)
     }
     
     /// The primary Element for Provisioner's Node.

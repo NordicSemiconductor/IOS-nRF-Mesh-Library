@@ -47,13 +47,11 @@ public class Model: Codable {
     /// Parent Element.
     public internal(set) weak var parentElement: Element!
     
-    internal init(sigModelId: UInt16) {
-        self.modelId   = UInt32(sigModelId)
-        self.subscribe = []
-        self.bind      = []
+    public convenience init(sigModelId: UInt16) {
+        self.init(vendorModelId: UInt32(sigModelId))
     }
     
-    internal init(vendorModelId: UInt32) {
+    public init(vendorModelId: UInt32) {
         self.modelId   = vendorModelId
         self.subscribe = []
         self.bind      = []
