@@ -192,6 +192,7 @@ public extension MeshNetwork {
                 n.companyIdentifier = nil
                 n.productIdentifier = nil
                 n.versionIdentifier = nil
+                n.ttl = nil
                 // After exporting and importing the mesh network configuration on
                 // another phone, that phone will update the local Elements array.
                 // As the final Elements count is unknown at this place, just add
@@ -212,6 +213,7 @@ public extension MeshNetwork {
                 n.companyIdentifier = 0x004C // Apple Inc.
                 n.productIdentifier = nil
                 n.versionIdentifier = nil
+                n.ttl = nil
                 // The Element adding has to be done this way. Some Elements may get cut
                 // by the property observer when Element addresses overlap other Node's
                 // addresses.
