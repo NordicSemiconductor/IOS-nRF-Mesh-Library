@@ -386,12 +386,16 @@ public extension MeshNetworkManager {
             decoder.dateDecodingStrategy = .iso8601
             
             meshData = try decoder.decode(MeshData.self, from: data)
-            guard let network = meshData.meshNetwork else {
+            guard let meshNetwork = meshData.meshNetwork else {
                 return false
             }
-            network.provisioners.forEach {
-                $0.meshNetwork = network
+            meshNetwork.provisioners.forEach {
+                $0.meshNetwork = meshNetwork
             }
+            // This will reset the local Elements. They have to be set again
+            // by the app after the network was loaded.
+            meshNetwork.localElements = []
+            
             networkManager = NetworkManager(self)
             proxyFilter = ProxyFilter(self)
             return true
@@ -443,6 +447,9 @@ public extension MeshNetworkManager {
         meshNetwork.provisioners.forEach {
             $0.meshNetwork = meshNetwork
         }
+        // This will reset the local Elements. They have to be set again
+        // by the app after the network was imported.
+        meshNetwork.localElements = []
         
         meshData.meshNetwork = meshNetwork
         networkManager = NetworkManager(self)
