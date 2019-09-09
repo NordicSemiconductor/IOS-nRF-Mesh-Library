@@ -205,8 +205,8 @@ private extension ProvisionersViewController {
         let provisionerCount = meshNetwork.provisioners.count
         
         // If another Provisioner became the local one, and the current Proxy
-        /// Filter type is a whitelist, set up the Proxy Filter with all
-        /// addresses the new Provisioner is subscribed to.
+        // Filter type is a whitelist, set up the Proxy Filter with all
+        // addresses the new Provisioner is subscribed to.
         if indexPath.isThisProvisioner,
             let newLocalProvisioner = meshNetwork.localProvisioner,
             manager.proxyFilter?.type == .whitelist {
