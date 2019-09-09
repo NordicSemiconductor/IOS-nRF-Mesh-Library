@@ -13,13 +13,13 @@ public enum MeshMessageError: Error {
     case invalidOpCode
 }
 
-public extension MeshMessageError {
+extension MeshMessageError: LocalizedError {
     
-    var localizedDescription: String {
+    public var errorDescription: String? {
         switch self {
-        case .invalidAddress: return "Invalid address"
-        case .invalidPdu:     return "Invalid PDU"
-        case .invalidOpCode:  return "Invalid Opcode"
+        case .invalidAddress: return NSLocalizedString("Invalid address.", comment: "")
+        case .invalidPdu:     return NSLocalizedString("Invalid PDU.", comment: "")
+        case .invalidOpCode:  return NSLocalizedString("Invalid Opcode.", comment: "")
         }
     }
     

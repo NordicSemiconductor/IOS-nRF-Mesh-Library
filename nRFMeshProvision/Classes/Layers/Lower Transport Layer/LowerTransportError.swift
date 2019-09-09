@@ -14,12 +14,12 @@ public enum LowerTransportError: Error {
     case busy
 }
 
-public extension LowerTransportError {
+extension LowerTransportError: LocalizedError {
     
-    var localizedDescription: String {
+    public var errorDescription: String? {
         switch self {
-        case .timeout: return "Timeout"
-        case .busy:    return "Node busy"
+        case .timeout: return NSLocalizedString("Request timed out.", comment: "")
+        case .busy:    return NSLocalizedString("Node is busy. Try later.", comment: "")
         }
     }
 

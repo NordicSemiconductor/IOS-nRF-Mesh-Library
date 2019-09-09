@@ -50,26 +50,26 @@ public enum MeshModelError: Error {
     case noApplicationKey
 }
 
-public extension MeshModelError {
+extension MeshModelError: LocalizedError {
     
-    var localizedDescription: String {
+    public var errorDescription: String? {
         switch self {
-        case .overlappingProvisionerRanges:    return "Overlapping Provisioner ranges"
-        case .provisionerUsedInAnotherNetwork: return "Provisioner used in another network"
-        case .nodeAlreadyExist:                return "Node with the same UUID already exists in the network"
-        case .noAddressAvailable:              return "No address available in Provisioner's range"
-        case .addressNotAvailable:             return "Address used by another Node in the network"
-        case .invalidAddress:                  return "Invalid address"
-        case .addressNotInAllocatedRange:      return "Address outside Provisioner's range"
-        case .provisionerNotInNetwork:         return "Provisioner does not belong to the network"
-        case .invalidRange:                    return "Invalid range"
-        case .invalidKey:                      return "Invalid key: The key must be 128-bit long"
-        case .keyInUse:                        return "Cannot remove: Key in use"
-        case .groupAlreadyExists:              return "Group with the same address already exists in the network"
-        case .groupInUse:                      return "Cannot remove: Group is use"
-        case .keyIndexOutOfRange:              return "Key Index out of range"
-        case .noNetworkKey:                    return "No Network Key"
-        case .noApplicationKey:                return "No Application Key"
+        case .overlappingProvisionerRanges:    return NSLocalizedString("Overlapping Provisioner ranges.", comment: "")
+        case .provisionerUsedInAnotherNetwork: return NSLocalizedString("Provisioner used in another network.", comment: "")
+        case .nodeAlreadyExist:                return NSLocalizedString("Node with the same UUID already exists in the network.", comment: "")
+        case .noAddressAvailable:              return NSLocalizedString("No address available in Provisioner's range.", comment: "")
+        case .addressNotAvailable:             return NSLocalizedString("Address used by another Node in the network.", comment: "")
+        case .invalidAddress:                  return NSLocalizedString("Invalid address.", comment: "")
+        case .addressNotInAllocatedRange:      return NSLocalizedString("Address outside Provisioner's range.", comment: "")
+        case .provisionerNotInNetwork:         return NSLocalizedString("Provisioner does not belong to the network.", comment: "")
+        case .invalidRange:                    return NSLocalizedString("Invalid range.", comment: "")
+        case .invalidKey:                      return NSLocalizedString("Invalid key: The key must be 128-bit long.", comment: "")
+        case .keyInUse:                        return NSLocalizedString("Cannot remove: Key in use.", comment: "")
+        case .groupAlreadyExists:              return NSLocalizedString("Group with the same address already exists in the network.", comment: "")
+        case .groupInUse:                      return NSLocalizedString("Cannot remove: Group is use.", comment: "")
+        case .keyIndexOutOfRange:              return NSLocalizedString("Key Index out of range.", comment: "")
+        case .noNetworkKey:                    return NSLocalizedString("No Network Key.", comment: "")
+        case .noApplicationKey:                return NSLocalizedString("No Application Key.", comment: "")
         }
     }
     

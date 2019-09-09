@@ -20,13 +20,13 @@ public enum AccessError: Error {
     case cannotRemove
 }
 
-public extension AccessError {
+extension AccessError: LocalizedError {
     
-    var localizedDescription: String {
+    public var errorDescription: String? {
         switch self {
-        case .invalidSource:      return "Local Provisioner does not have Unicast Address specified"
-        case .invalidDestination: return "The destination address is unknown"
-        case .cannotRemove:       return "Cannot remove the last Network Key"
+        case .invalidSource:      return NSLocalizedString("Local Provisioner does not have Unicast Address specified.", comment: "")
+        case .invalidDestination: return NSLocalizedString("The destination address is unknown.", comment: "")
+        case .cannotRemove:       return NSLocalizedString("Cannot remove the last Network Key.", comment: "")
         }
     }
     

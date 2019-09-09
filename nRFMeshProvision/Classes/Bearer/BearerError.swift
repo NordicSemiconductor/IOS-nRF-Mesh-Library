@@ -18,13 +18,13 @@ public enum BearerError: Error {
     case bearerClosed
 }
 
-public extension BearerError {
+extension BearerError: LocalizedError {
     
-    var localizedDescription: String {
+    public var errorDescription: String? {
         switch self {
-        case .centralManagerNotPoweredOn: return "Central Manager not powered on"
-        case .pduTypeNotSupported:        return "PDU type not supported"
-        case .bearerClosed:               return "The bearer is closed"
+        case .centralManagerNotPoweredOn: return NSLocalizedString("Central Manager not powered on.", comment: "")
+        case .pduTypeNotSupported:        return NSLocalizedString("PDU type not supported.", comment: "")
+        case .bearerClosed:               return NSLocalizedString("The bearer is closed.", comment: "")
         }
     }
     
