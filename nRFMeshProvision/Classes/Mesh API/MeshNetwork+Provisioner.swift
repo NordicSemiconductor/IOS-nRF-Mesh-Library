@@ -173,6 +173,7 @@ public extension MeshNetwork {
         if fromIndex >= 0 && fromIndex < provisioners.count &&
             toIndex >= 0 && toIndex <= provisioners.count &&
             fromIndex != toIndex {
+            let oldLocalProvisioner = toIndex == 0 || fromIndex == 0 ? localProvisioner : nil
             let provisioner = provisioners.remove(at: fromIndex)
             
             // The target index must be modifed if the Provisioner is
@@ -187,7 +188,7 @@ public extension MeshNetwork {
             // If a local Provisioner was moved, it's Composition Data must
             // be cleared, as most probably it will be exported to another phone,
             // which will have it's own manufacturer, Elements, etc.
-            if newToIndex == 0 || fromIndex == 0, let n = provisioner.node {
+            if newToIndex == 0 || fromIndex == 0, let n = oldLocalProvisioner?.node {
                 n.companyIdentifier = nil
                 n.productIdentifier = nil
                 n.versionIdentifier = nil
@@ -297,5 +298,4 @@ public extension MeshNetwork {
     func disableConfigurationCapabilities(for provisioner: Provisioner) {
         remove(nodeForProvisioner: provisioner)
     }
-    
 }
