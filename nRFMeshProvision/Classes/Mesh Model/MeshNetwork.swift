@@ -64,9 +64,16 @@ public class MeshNetwork: Codable {
             // Remove all empty Elements.
             elements = elements.filter { !$0.models.isEmpty }
             // Add the required Models in the Primary Element.
-            elements.insert(.primaryElement, at: 0)
+            if elements.isEmpty {
+                elements.append(.primaryElement)
+            } else {
+                elements[0].addPrimaryElementModels()
+                if elements[0].name == nil {
+                    elements[0].name = "Primary Element"
+                }
+            }
             // Make sure the indexes are correct.
-            for (index, element) in localElements.enumerated() {
+            for (index, element) in elements.enumerated() {
                 element.index = UInt8(index)
                 element.parentNode = localProvisioner?.node
             }
