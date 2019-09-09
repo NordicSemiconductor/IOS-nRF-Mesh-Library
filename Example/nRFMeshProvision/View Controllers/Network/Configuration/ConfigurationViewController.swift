@@ -436,7 +436,9 @@ extension ConfigurationViewController: MeshNetworkDelegate {
     }
     
     func meshNetwork(_ meshNetwork: MeshNetwork, failedToDeliverMessage message: MeshMessage, to destination: Address, error: Error) {
-        presentAlert(title: "Error", message: error.localizedDescription)
+        done() {
+            self.presentAlert(title: "Error", message: error.localizedDescription)
+        }
     }
     
 }
