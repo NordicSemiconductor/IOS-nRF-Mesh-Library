@@ -262,12 +262,13 @@ public extension MeshNetwork {
             // Set Elements for the Node. Local Node will receive all local Elements.
             if provisioner == localProvisioner {
                 provisionerNode.add(elements: localElements)
+                provisionerNode.companyIdentifier = 0x004C // Apple Inc.
             } else {
                 // For other Provisioners, just add the Primary Element. It may happen,
                 /// that, after exporting and importing on another phone, the Node will
                 /// be configured to have more Elements, and it's address will have to be
                 /// changed again to find available range.
-                provisionerNode.add(elements: [.primaryElement ])
+                provisionerNode.add(elements: [.primaryElement])
             }
         }
         
