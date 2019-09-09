@@ -335,7 +335,12 @@ private extension EditProvisionerViewController {
             case .addressNotInAllocatedRange:
                 presentAlert(title: "Error", message: "The Provisioner's address range is outside of its allocated range.")
             case .addressNotAvailable:
-                presentAlert(title: "Error", message: "The address is already in use.")
+                let count = max(1, MeshNetworkManager.instance.localElements.count)
+                if count > 1, let address = newAddress {
+                    presentAlert(title: "Error", message: "The address range \(address.asString())...\((address + UInt16(count - 1)).hex) is already in use.")
+                } else {
+                    presentAlert(title: "Error", message: "The address is already in use.")
+                }
             default:
                 presentAlert(title: "Error", message: "An error occurred.")
             }
@@ -402,7 +407,8 @@ private extension EditProvisionerViewController {
     /// - throws: This method may throw if the address is outside of
     ///           Provisioner's range or not available.
     func ensureAddressIsValid(for provisioner: Provisioner) throws {
-        let meshNetwork = MeshNetworkManager.instance.meshNetwork!
+        let manager = MeshNetworkManager.instance
+        let meshNetwork = manager.meshNetwork!
         
         if let newAddress = newAddress {
             // Check whether the address is in Provisioner's unicast range.
@@ -412,9 +418,9 @@ private extension EditProvisionerViewController {
             }
             
             // Check whether the new address is available.
-            guard !meshNetwork.nodes
-                .filter({ $0.uuid != provisioner.uuid })
-                .contains(where: { $0.unicastAddress == newAddress }) else {
+            guard meshNetwork.isAddressRangeAvailable(newAddress,
+                                                      elementsCount: UInt8(manager.localElements.count),
+                                                      for: provisioner.node) else {
                 throw MeshModelError.addressNotAvailable
             }
         }
