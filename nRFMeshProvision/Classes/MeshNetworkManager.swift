@@ -240,14 +240,23 @@ public extension MeshNetworkManager {
     /// delivered, or failed to be sent.
     ///
     /// - parameter message:        The message to be sent.
+    /// - parameter localElement:   The source Element. If `nil`, the primary
+    ///                             Element will be used. The Element must belong
+    ///                             to the local Provisioner's Node.
     /// - parameter destination:    The destination address.
     /// - parameter applicationKey: The Application Key to sign the message.
-    func send(_ message: MeshMessage, to destination: MeshAddress, using applicationKey: ApplicationKey) {
-        guard let networkManager = networkManager else {
+    func send(_ message: MeshMessage,
+              from localElement: Element? = nil, to destination: MeshAddress,
+              using applicationKey: ApplicationKey) {
+        guard let networkManager = networkManager, let meshNetwork = meshNetwork else {
             print("Error: Mesh Network not created")
             return
         }
-        networkManager.send(message, to: destination, using: applicationKey)
+        guard let source = localElement ?? meshNetwork.localProvisioner?.node?.elements.first else {
+            print("Error: Element not specified")
+            return
+        }
+        networkManager.send(message, from: source, to: destination, using: applicationKey)
     }
     
     /// Encrypts the message with the Application Key and a Network Key
@@ -257,10 +266,15 @@ public extension MeshNetworkManager {
     /// or failed to be sent.
     ///
     /// - parameter message:        The message to be sent.
+    /// - parameter localElement:   The source Element. If `nil`, the primary
+    ///                             Element will be used. The Element must belong
+    ///                             to the local Provisioner's Node.
     /// - parameter group:          The target Group.
     /// - parameter applicationKey: The Application Key to sign the message.
-    func send(_ message: MeshMessage, to group: Group, using applicationKey: ApplicationKey) {
-        send(message, to: group.address, using: applicationKey)
+    func send(_ message: MeshMessage,
+              from localElement: Element? = nil, to group: Group,
+              using applicationKey: ApplicationKey) {
+        send(message, from: localElement, to: group.address, using: applicationKey)
     }
     
     /// Encrypts the message with the first Application Key bound to the given
@@ -270,9 +284,13 @@ public extension MeshNetworkManager {
     /// A `delegate` method will be called when the message has been sent,
     /// delivered, or fail to be sent.
     ///
-    /// - parameter message: The message to be sent.
-    /// - parameter model:   The destination Model.
-    func send(_ message: MeshMessage, to model: Model) {
+    /// - parameter message:       The message to be sent.
+    /// - parameter localElement:  The source Element. If `nil`, the primary
+    ///                            Element will be used. The Element must belong
+    ///                            to the local Provisioner's Node.
+    /// - parameter model:         The destination Model.
+    func send(_ message: MeshMessage,
+              from localElement: Element? = nil, to model: Model) {
         guard let element = model.parentElement else {
             print("Error: Element does not belong to a Node")
             return
@@ -283,7 +301,38 @@ public extension MeshNetworkManager {
             print("Error: Model is not bound to any Application Key")
             return
         }
-        send(message, to: MeshAddress(element.unicastAddress), using: applicationKey)
+        send(message, from: localElement, to: MeshAddress(element.unicastAddress), using: applicationKey)
+    }
+    
+    /// Encrypts the message with the common Application Key bound to both given
+    /// Models and a Network Key bound to it, and sends it to the Node
+    /// to which the target Model belongs to.
+    ///
+    /// A `delegate` method will be called when the message has been sent,
+    /// delivered, or fail to be sent.
+    ///
+    /// - parameter message:       The message to be sent.
+    /// - parameter localElement:  The source Element. If `nil`, the primary
+    ///                            Element will be used. The Element must belong
+    ///                            to the local Provisioner's Node.
+    /// - parameter model:         The destination Model.
+    func send(_ message: MeshMessage,
+              from localModel: Model, to model: Model) {
+        guard let element = model.parentElement else {
+            print("Error: Element does not belong to a Node")
+            return
+        }
+        guard let sourceElement = localModel.parentElement else {
+            print("Error: Source Model does not belong to an Element")
+            return
+        }
+        guard let commonKeyIndex = model.bind.first(where: { localModel.bind.contains($0) }),
+              let meshNetwork = meshNetwork,
+              let applicationKey = meshNetwork.applicationKeys[commonKeyIndex] else {
+            print("Error: Models are not bound to any common Application Key")
+            return
+        }
+        send(message, from: sourceElement, to: MeshAddress(element.unicastAddress), using: applicationKey)
     }
     
     /// Sends Configuration Message to the Node with given destination Address.

@@ -76,10 +76,13 @@ internal class NetworkManager {
     /// after block acknowlegment was received.
     ///
     /// - parameter message:        The message to be sent.
+    /// - parameter element:        The source Element.
     /// - parameter destination:    The destination address.
     /// - parameter applicationKey: The Application Key to sign the message.
-    func send(_ message: MeshMessage, to destination: MeshAddress, using applicationKey: ApplicationKey) {
-        accessLayer.send(message, to: destination, using: applicationKey)
+    func send(_ message: MeshMessage,
+              from element: Element, to destination: MeshAddress,
+              using applicationKey: ApplicationKey) {
+        accessLayer.send(message, from: element, to: destination, using: applicationKey)
     }
     
     /// Encrypts the message with the Device Key and the first Network Key

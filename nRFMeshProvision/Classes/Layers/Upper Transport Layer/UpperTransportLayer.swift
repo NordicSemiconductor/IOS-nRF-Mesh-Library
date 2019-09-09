@@ -47,24 +47,20 @@ internal class UpperTransportLayer {
     /// Handles the Mesh Message and sends it down to Lower Transport Layer.
     ///
     /// - parameter message: The message to be sent.
+    /// - parameter element: The source Element.
     /// - parameter destination: The destination address. This can be any type of
     ///                          valid address.
     /// - parameter applicationKey: The Application Key to sign the message with.
-    func send(_ message: MeshMessage, to destination: MeshAddress, using applicationKey: ApplicationKey) {
+    func send(_ message: MeshMessage, from element: Element, to destination: MeshAddress, using applicationKey: ApplicationKey) {
         guard destination.address.isValidAddress else {
             print("Error: Invalid address: \(destination.hex)")
             networkManager.notifyAbout(MeshMessageError.invalidAddress,
                                        duringSendingMessage: message, to: destination.address)
             return
         }
-        guard let source = meshNetwork.localProvisioner?.unicastAddress else {
-            print("Error: Local Provisioner has no Unicast Address assigned")
-            networkManager.notifyAbout(AccessError.invalidSource,
-                                       duringSendingMessage: message, to: destination.address)
-            return
-        }
         
         // Get the current sequence number for local Provisioner's source address.
+        let source = element.unicastAddress
         let sequence = UInt32(defaults.integer(forKey: source.hex))
         let networkKey = applicationKey.boundNetworkKey
         let ivIndex = networkKey.ivIndex

@@ -38,16 +38,25 @@ internal class AccessLayer {
     /// for message extending `TransactionMessage`.
     ///
     /// - parameter message: The Mesh Message to send.
+    /// - parameter element: The source Element.
     /// - parameter destination: The destination Address. This can be any
     ///                          valid mesh Address.
     /// - parameter applicationKey: The Application Key to sign the message with.
-    func send(_ message: MeshMessage, to destination: MeshAddress, using applicationKey: ApplicationKey) {
+    func send(_ message: MeshMessage,
+              from element: Element, to destination: MeshAddress,
+              using applicationKey: ApplicationKey) {
         guard let localProvisioner = networkManager.meshNetwork?.localProvisioner,
-            localProvisioner.hasConfigurationCapabilities else {
+              let node = localProvisioner.node else {
                 print("Error: Local Provisioner has no Unicast Address assigned")
                 networkManager.notifyAbout(AccessError.invalidSource,
                                            duringSendingMessage: message, to: destination.address)
                 return
+        }
+        guard element.parentNode == node else {
+            print("Error: The source Element does not belong to the local Node")
+            networkManager.notifyAbout(AccessError.invalidElement,
+                                       duringSendingMessage: message, to: destination.address)
+            return
         }
         
         // Should the TID be updated?
@@ -68,8 +77,8 @@ internal class AccessLayer {
             m = tranactionMessage
         }
         
-        print("Sending \(m) to \(destination.hex)") // TODO: Remove me
-        networkManager.upperTransportLayer.send(m, to: destination, using: applicationKey)
+        print("Sending \(m) from \(element.name ?? "Element \(element.index + 1)") to \(destination.hex)") // TODO: Remove me
+        networkManager.upperTransportLayer.send(m, from: element, to: destination, using: applicationKey)
     }
     
     /// Sends the ConfigMessage to the destination. The message is encrypted

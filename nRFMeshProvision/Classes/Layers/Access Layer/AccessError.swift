@@ -12,6 +12,9 @@ public enum AccessError: Error {
     /// a Unicast Address specified and is not able to send
     /// requested message.
     case invalidSource
+    /// Thrown when trying to send a message using an Element
+    /// that does not belong to the local Provisioner's Node.
+    case invalidElement
     /// Thrown when the destination Address is not known and the
     /// library cannot determine the Network Key to use.
     case invalidDestination
@@ -25,6 +28,7 @@ extension AccessError: LocalizedError {
     public var errorDescription: String? {
         switch self {
         case .invalidSource:      return NSLocalizedString("Local Provisioner does not have Unicast Address specified.", comment: "")
+        case .invalidElement:     return NSLocalizedString("Element does not belong to the local Node.", comment: "")
         case .invalidDestination: return NSLocalizedString("The destination address is unknown.", comment: "")
         case .cannotRemove:       return NSLocalizedString("Cannot remove the last Network Key.", comment: "")
         }
