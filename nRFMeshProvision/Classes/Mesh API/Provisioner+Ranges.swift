@@ -250,7 +250,6 @@ public extension Provisioner {
             for node in meshNetwork.nodes.filter({ $0.unicastAddress != address }) {
                 if node.overlapsWithAddress(address, elementsCount: UInt8(count)) {
                     count = Int(node.unicastAddress - address)
-                    break
                 }
             }
         }
