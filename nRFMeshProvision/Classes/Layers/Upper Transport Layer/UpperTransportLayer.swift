@@ -61,7 +61,7 @@ internal class UpperTransportLayer {
         
         // Get the current sequence number for local Provisioner's source address.
         let source = element.unicastAddress
-        let sequence = UInt32(defaults.integer(forKey: source.hex))
+        let sequence = UInt32(defaults.integer(forKey: "S\(source.hex)"))
         let networkKey = applicationKey.boundNetworkKey
         let ivIndex = networkKey.ivIndex
         
@@ -113,7 +113,7 @@ internal class UpperTransportLayer {
         }
         
         // Get the current sequence number for local Provisioner's source address.
-        let sequence = UInt32(defaults.integer(forKey: source.hex))
+        let sequence = UInt32(defaults.integer(forKey: "S\(source.hex)"))
         let ivIndex = networkKey.ivIndex
         
         let pdu = UpperTransportPdu(fromConfigMessage: message,

@@ -140,9 +140,9 @@ internal class NetworkLayer {
             throw BearerError.bearerClosed
         }
         // Get the current sequence number for local Provisioner's source address.
-        let sequence = UInt32(defaults.integer(forKey: pdu.source.hex))
+        let sequence = UInt32(defaults.integer(forKey: "S\(pdu.source.hex)"))
         // As the sequnce number was just used, it has to be incremented.
-        defaults.set(sequence + 1, forKey: pdu.source.hex)
+        defaults.set(sequence + 1, forKey: "S\(pdu.source.hex)")
         
         let networkPdu = NetworkPdu(encode: pdu, ofType: type, withSequence: sequence, andTtl: ttl)
         try transmitter.send(networkPdu.pdu, ofType: type)
