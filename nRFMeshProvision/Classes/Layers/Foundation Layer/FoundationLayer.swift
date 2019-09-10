@@ -22,7 +22,8 @@ internal class FoundationLayer {
     /// - parameter configMessage: The Mesh Message received.
     /// - parameter source:        The Unicast Address of the Node that has sent the
     ///                            message.
-    func handle(configMessage: ConfigMessage, from source: Address) {
+    /// - parameter destination:   The destination address of the message.
+    func handle(configMessage: ConfigMessage, from source: Address, to destination: Address) {
         guard let meshNetwork = networkManager.meshNetwork else {
             return
         }
@@ -50,7 +51,7 @@ internal class FoundationLayer {
                 // one in the request. Otherwise, return .keyIndexAlreadyStored.
                 var networkKey = meshNetwork.networkKeys[keyIndex]
                 guard networkKey == nil || networkKey!.key == request.key else {
-                    networkManager.send(ConfigNetKeyStatus(.keyIndexAlreadyStored, for: request), to: source)
+                    networkManager.send(ConfigNetKeyStatus(responseTo: request, with: .keyIndexAlreadyStored), to: source)
                     break
                 }
                 if networkKey == nil {
@@ -64,14 +65,14 @@ internal class FoundationLayer {
                 save()
                 networkManager.send(ConfigNetKeyStatus(confirm: networkKey!), to: source)
             } catch {
-                networkManager.send(ConfigNetKeyStatus(.unspecifiedError, for: request), to: source)
+                networkManager.send(ConfigNetKeyStatus(responseTo: request, with: .unspecifiedError), to: source)
             }
             
         case let request as ConfigNetKeyUpdate:
             let keyIndex = request.networkKeyIndex
             // If there is no such key, return .invalidNetKeyIndex.
             guard let networkKey = meshNetwork.networkKeys[keyIndex] else {
-                networkManager.send(ConfigNetKeyStatus(.invalidNetKeyIndex, for: request), to: source)
+                networkManager.send(ConfigNetKeyStatus(responseTo: request, with: .invalidNetKeyIndex), to: source)
                 break
             }
             // Update the key data (observer will set the `oldKey` automatically).
@@ -93,7 +94,7 @@ internal class FoundationLayer {
                 node.remove(networkKeyWithIndex: keyIndex)
             }
             save()
-            networkManager.send(ConfigNetKeyStatus(.success, for: request), to: source)
+            networkManager.send(ConfigNetKeyStatus(responseTo: request, with: .success), to: source)
             
         case let netKeyStatus as ConfigNetKeyStatus:
             if netKeyStatus.isSuccess, let node = meshNetwork.node(withAddress: source) {
@@ -138,7 +139,7 @@ internal class FoundationLayer {
             let keyIndex = request.applicationKeyIndex
             // If the Network Key does not exist, return .invalidNetKeyIndex.
             guard let _ = meshNetwork.networkKeys[networkKeyIndex] else {
-                networkManager.send(ConfigAppKeyStatus(.invalidNetKeyIndex, for: request), to: source)
+                networkManager.send(ConfigAppKeyStatus(responseTo: request, with: .invalidNetKeyIndex), to: source)
                 break
             }
             do {
@@ -147,7 +148,7 @@ internal class FoundationLayer {
                 var applicationKey = meshNetwork.applicationKeys[keyIndex]
                 guard applicationKey == nil ||
                     (applicationKey!.key == request.key && applicationKey!.boundNetworkKeyIndex == networkKeyIndex) else {
-                    networkManager.send(ConfigAppKeyStatus(.keyIndexAlreadyStored, for: request), to: source)
+                    networkManager.send(ConfigAppKeyStatus(responseTo: request, with: .keyIndexAlreadyStored), to: source)
                     break
                 }
                 if applicationKey == nil {
@@ -162,7 +163,7 @@ internal class FoundationLayer {
                 save()
                 networkManager.send(ConfigAppKeyStatus(confirm: applicationKey!), to: source)
             } catch {
-                networkManager.send(ConfigAppKeyStatus(.unspecifiedError, for: request), to: source)
+                networkManager.send(ConfigAppKeyStatus(responseTo: request, with: .unspecifiedError), to: source)
             }
             
         case let request as ConfigAppKeyUpdate:
@@ -170,17 +171,17 @@ internal class FoundationLayer {
             let keyIndex = request.applicationKeyIndex
             // If the Network Key does not exist, return .invalidNetKeyIndex.
             guard let _ = meshNetwork.networkKeys[networkKeyIndex] else {
-                networkManager.send(ConfigAppKeyStatus(.invalidNetKeyIndex, for: request), to: source)
+                networkManager.send(ConfigAppKeyStatus(responseTo: request, with: .invalidNetKeyIndex), to: source)
                 break
             }
             // If the Application key does not exist, return .invalidAppKeyIndex.
             guard let applicationKey = meshNetwork.applicationKeys[keyIndex] else {
-                networkManager.send(ConfigAppKeyStatus(.invalidAppKeyIndex, for: request), to: source)
+                networkManager.send(ConfigAppKeyStatus(responseTo: request, with: .invalidAppKeyIndex), to: source)
                 break
             }
             // If the binding is incorrect, return .invalidBinding.
             guard applicationKey.boundNetworkKeyIndex == networkKeyIndex else {
-                networkManager.send(ConfigAppKeyStatus(.invalidBinding, for: request), to: source)
+                networkManager.send(ConfigAppKeyStatus(responseTo: request, with: .invalidBinding), to: source)
                 break
             }
             // Update the key data (observer will set the `oldKey` automatically).
@@ -197,7 +198,7 @@ internal class FoundationLayer {
             let keyIndex = request.applicationKeyIndex
             // If the Network Key does not exist, return .invalidNetKeyIndex.
             guard let _ = meshNetwork.networkKeys[networkKeyIndex] else {
-                networkManager.send(ConfigAppKeyStatus(.invalidNetKeyIndex, for: request), to: source)
+                networkManager.send(ConfigAppKeyStatus(responseTo: request, with: .invalidNetKeyIndex), to: source)
                 break
             }
             // Force delete the key from the global configuration.
@@ -208,7 +209,7 @@ internal class FoundationLayer {
                 node.remove(applicationKeyWithIndex: keyIndex)
             }
             save()
-            networkManager.send(ConfigAppKeyStatus(.success, for: request), to: source)
+            networkManager.send(ConfigAppKeyStatus(responseTo: request, with: .success), to: source)
         
         case let appKeyStatus as ConfigAppKeyStatus:
             if appKeyStatus.isSuccess, let node = meshNetwork.node(withAddress: source) {
@@ -239,14 +240,14 @@ internal class FoundationLayer {
         case let request as ConfigAppKeyGet:
             let networkKeyIndex = request.networkKeyIndex
             // If the Network Key does not exist, return .invalidNetKeyIndex.
-            guard let networkKey = meshNetwork.networkKeys[networkKeyIndex] else {
-                networkManager.send(ConfigAppKeyList(.invalidNetKeyIndex, for: request), to: source)
+            guard let _ = meshNetwork.networkKeys[networkKeyIndex] else {
+                networkManager.send(ConfigAppKeyList(responseTo: request, with: .invalidNetKeyIndex), to: source)
                 break
             }
             let boundAppKeys = meshNetwork.applicationKeys.filter {
                 $0.boundNetworkKeyIndex == networkKeyIndex
             }
-            networkManager.send(ConfigAppKeyList(networkKey: networkKey, applicationKeys: boundAppKeys, status: .success), to: source)
+            networkManager.send(ConfigAppKeyList(responseTo: request, with: boundAppKeys), to: source)
             
         case let list as ConfigAppKeyList:
             if let node = meshNetwork.node(withAddress: source) {
@@ -261,6 +262,32 @@ internal class FoundationLayer {
             }
             
         // Model Bindings
+        case let request as ConfigModelAppBind:
+            if let localNode = meshNetwork.localProvisioner?.node, localNode.unicastAddress == destination {
+                if let element = localNode.element(withAddress: destination),
+                   let model = element.model(withModelId: request.modelId) {
+                    model.bind(applicationKeyWithIndex: request.applicationKeyIndex)
+                    save()
+                    networkManager.send(ConfigModelAppStatus(confirm: request), to: source)
+                } else {
+                    networkManager.send(ConfigModelAppStatus(responseTo: request, with: .invalidModel),
+                                        to: source)
+                }
+            }
+            
+        case let request as ConfigModelAppUnbind:
+            if let localNode = meshNetwork.localProvisioner?.node, localNode.unicastAddress == destination {
+                if let element = localNode.element(withAddress: destination),
+                   let model = element.model(withModelId: request.modelId) {
+                    model.unbind(applicationKeyWithIndex: request.applicationKeyIndex)
+                    save()
+                    networkManager.send(ConfigModelAppStatus(confirm: request), to: source)
+                } else {
+                    networkManager.send(ConfigModelAppStatus(responseTo: request, with: .invalidModel),
+                                        to: source)
+                }
+            }
+            
         case let status as ConfigModelAppStatus:
             if status.isSuccess,
                 let node = meshNetwork.node(withAddress: source),
@@ -279,6 +306,32 @@ internal class FoundationLayer {
                     break
                 }
             }
+        
+        case let request as ConfigSIGModelAppGet:
+            if let localNode = meshNetwork.localProvisioner?.node,
+               let element = localNode.element(withAddress: destination) {
+                if let model = element.model(withModelId: request.modelId) {
+                    let applicationKeys = model.boundApplicationKeys
+                    networkManager.send(ConfigSIGModelAppList(responseTo: request, with: applicationKeys),
+                                        to: source)
+                } else {
+                    networkManager.send(ConfigSIGModelAppList(responseTo: request, with: .invalidModel),
+                                        to: source)
+                }
+            }
+            
+        case let request as ConfigVendorModelAppGet:
+            if let localNode = meshNetwork.localProvisioner?.node, localNode.unicastAddress == destination {
+                if let element = localNode.element(withAddress: destination),
+                   let model = element.model(withModelId: request.modelId) {
+                   let applicationKeys = model.boundApplicationKeys
+                    networkManager.send(ConfigVendorModelAppList(responseTo: request, with: applicationKeys),
+                                        to: source)
+                } else {
+                    networkManager.send(ConfigVendorModelAppList(responseTo: request, with: .invalidModel),
+                                        to: source)
+                }
+            }
             
         case let list as ConfigModelAppList:
             if list.isSuccess,
@@ -291,6 +344,72 @@ internal class FoundationLayer {
             }
             
         // Publications
+        case let request as ConfigModelPublicationSet:
+            if let localNode = meshNetwork.localProvisioner?.node, localNode.unicastAddress == destination {
+                if let element = localNode.element(withAddress: destination),
+                   let model = element.model(withModelId: request.modelId) {
+                    // Validate request.
+                    guard request.publish.isCancel || meshNetwork.applicationKeys[request.publish.index] != nil else {
+                        networkManager.send(ConfigModelPublicationStatus(responseTo: request, with: .invalidPublishParameters),
+                                            to: source)
+                        break
+                    }
+                    if !request.publish.isCancel {
+                        // A new Group?
+                        let address = request.publish.publicationAddress.address
+                        if address.isGroup && address < 0xFF00 &&
+                           meshNetwork.group(withAddress: request.publish.publicationAddress) == nil {
+                            let group = try! Group(name: "New Group", address: address)
+                            try! meshNetwork.add(group: group)
+                        }
+                        model.publish = request.publish
+                    } else {
+                        model.publish = nil
+                    }
+                    save()
+                    networkManager.send(ConfigModelPublicationStatus(confirm: request), to: source)
+                } else {
+                    networkManager.send(ConfigModelPublicationStatus(responseTo: request, with: .invalidModel),
+                                        to: source)
+                }
+            }
+            
+        case let request as ConfigModelPublicationVirtualAddressSet:
+            if let localNode = meshNetwork.localProvisioner?.node, localNode.unicastAddress == destination {
+                if let element = localNode.element(withAddress: destination),
+                    let model = element.model(withModelId: request.modelId) {
+                    // Validate request.
+                    guard meshNetwork.applicationKeys[request.publish.index] != nil else {
+                        networkManager.send(ConfigModelPublicationStatus(responseTo: request, with: .invalidPublishParameters),
+                                            to: source)
+                        break
+                    }
+                    // A new Group?
+                    if meshNetwork.group(withAddress: request.publish.publicationAddress) == nil {
+                        let group = try! Group(name: "New Group", address: request.publish.publicationAddress)
+                        try! meshNetwork.add(group: group)
+                    }
+                    model.publish = request.publish
+                    save()
+                    networkManager.send(ConfigModelPublicationStatus(confirm: request), to: source)
+                } else {
+                    networkManager.send(ConfigModelPublicationStatus(responseTo: request, with: .invalidModel),
+                                        to: source)
+                }
+            }
+            
+        case let request as ConfigModelPublicationGet:
+            if let localNode = meshNetwork.localProvisioner?.node, localNode.unicastAddress == destination {
+                if let element = localNode.element(withAddress: destination),
+                   let model = element.model(withModelId: request.modelId) {
+                    networkManager.send(ConfigModelPublicationStatus(responseTo: request, with: model.publish),
+                                        to: source)
+                } else {
+                    networkManager.send(ConfigModelPublicationStatus(responseTo: request, with: .invalidModel),
+                                        to: source)
+                }
+            }
+            
         case let status as ConfigModelPublicationStatus:
             if status.isSuccess,
                 let node = meshNetwork.node(withAddress: source),
@@ -298,7 +417,7 @@ internal class FoundationLayer {
                 let model = element.model(withModelId: status.modelId) {
                 switch requests[source] {
                 case is ConfigModelPublicationSet:
-                    if !status.publish.publicationAddress.address.isUnassigned {
+                    if !status.publish.isCancel {
                         model.publish = status.publish
                     } else {
                         // An unassigned Address is sent to remove the publication.
@@ -311,7 +430,7 @@ internal class FoundationLayer {
                     //       while the status has only the 16-bit Virtual Address.
                     // Note: We assume here, that the response is identical to the
                     //       request, with an exception of the Virtual Label.
-                    model.publish = request.publish
+                    model.publish = request.publish /* NOT status.publish */
                     save()
                     requests.removeValue(forKey: source)
                 case is ConfigModelPublicationGet:
@@ -341,6 +460,177 @@ internal class FoundationLayer {
             }
             
         // Subscriptions
+        case let request as ConfigModelSubscriptionAdd:
+            if let localNode = meshNetwork.localProvisioner?.node, localNode.unicastAddress == destination {
+                if let element = localNode.element(withAddress: destination),
+                   let model = element.model(withModelId: request.modelId) {
+                    guard request.address.isGroup && request.address != Address.allNodes else {
+                        networkManager.send(ConfigModelSubscriptionStatus(responseTo: request, with: .invalidAddress),
+                                            to: source)
+                        break
+                    }
+                    var group = meshNetwork.group(withAddress: MeshAddress(request.address))
+                    if let group = group {
+                        model.subscribe(to: group)
+                    } else {
+                        do {
+                            group = try Group(name: "New Group", address: request.address)
+                            try meshNetwork.add(group: group!)
+                            model.subscribe(to: group!)
+                        } catch {
+                            networkManager.send(ConfigModelSubscriptionStatus(responseTo: request, with: .invalidAddress),
+                                                to: source)
+                            break
+                        }
+                    }
+                    save()
+                    networkManager.send(ConfigModelSubscriptionStatus(confirmAdding: group!, to: model),
+                                        to: source)
+                } else {
+                    networkManager.send(ConfigModelSubscriptionStatus(responseTo: request, with: .invalidModel),
+                                        to: source)
+                }
+            }
+            
+        case let request as ConfigModelSubscriptionOverwrite:
+            if let localNode = meshNetwork.localProvisioner?.node, localNode.unicastAddress == destination {
+                if let element = localNode.element(withAddress: destination),
+                   let model = element.model(withModelId: request.modelId) {
+                    guard request.address.isGroup && request.address != Address.allNodes else {
+                        networkManager.send(ConfigModelSubscriptionStatus(responseTo: request, with: .invalidAddress),
+                                            to: source)
+                        break
+                    }
+                    var group = meshNetwork.group(withAddress: MeshAddress(request.address))
+                    if let group = group {
+                        model.unsubscribeFromAll()
+                        model.subscribe(to: group)
+                    } else {
+                        do {
+                            group = try Group(name: "New Group", address: request.address)
+                            try meshNetwork.add(group: group!)
+                            model.unsubscribeFromAll()
+                            model.subscribe(to: group!)
+                        } catch {
+                            networkManager.send(ConfigModelSubscriptionStatus(responseTo: request, with: .invalidAddress),
+                                                to: source)
+                            break
+                        }
+                    }
+                    save()
+                    networkManager.send(ConfigModelSubscriptionStatus(confirmAdding: group!, to: model),
+                                        to: source)
+                } else {
+                    networkManager.send(ConfigModelSubscriptionStatus(responseTo: request, with: .invalidModel),
+                                        to: source)
+                }
+            }
+            
+        case let request as ConfigModelSubscriptionDelete:
+            if let localNode = meshNetwork.localProvisioner?.node, localNode.unicastAddress == destination {
+                if let element = localNode.element(withAddress: destination),
+                   let model = element.model(withModelId: request.modelId) {
+                    guard request.address.isGroup && request.address != Address.allNodes else {
+                        networkManager.send(ConfigModelSubscriptionStatus(responseTo: request, with: .invalidAddress),
+                                            to: source)
+                        break
+                    }
+                    model.unsubscribe(from: request.address)
+                    save()
+                    networkManager.send(ConfigModelSubscriptionStatus(confirmDeleting: request.address, from: model),
+                                        to: source)
+                } else {
+                    networkManager.send(ConfigModelSubscriptionStatus(responseTo: request, with: .invalidModel),
+                                        to: source)
+                }
+            }
+            
+        case let request as ConfigModelSubscriptionVirtualAddressAdd:
+            if let localNode = meshNetwork.localProvisioner?.node, localNode.unicastAddress == destination {
+                if let element = localNode.element(withAddress: destination),
+                   let model = element.model(withModelId: request.modelId) {
+                    var group = meshNetwork.group(withAddress: MeshAddress(request.virtualLabel))
+                    if group != nil {
+                        model.subscribe(to: group!)
+                    } else {
+                        do {
+                            group = try Group(name: "New Group", address: MeshAddress(request.virtualLabel))
+                            try meshNetwork.add(group: group!)
+                            model.subscribe(to: group!)
+                        } catch {
+                            networkManager.send(ConfigModelSubscriptionStatus(responseTo: request, with: .invalidAddress),
+                                                to: source)
+                            break
+                        }
+                    }
+                    save()
+                    networkManager.send(ConfigModelSubscriptionStatus(confirmAdding: group!, to: model),
+                                        to: source)
+                } else {
+                    networkManager.send(ConfigModelSubscriptionStatus(responseTo: request, with: .invalidModel),
+                                        to: source)
+                }
+            }
+            
+        case let request as ConfigModelSubscriptionVirtualAddressOverwrite:
+            if let localNode = meshNetwork.localProvisioner?.node, localNode.unicastAddress == destination {
+                if let element = localNode.element(withAddress: destination),
+                   let model = element.model(withModelId: request.modelId) {
+                    var group = meshNetwork.group(withAddress: MeshAddress(request.virtualLabel))
+                    if group != nil {
+                        model.unsubscribeFromAll()
+                        model.subscribe(to: group!)
+                    } else {
+                        do {
+                            group = try Group(name: "New Group", address: MeshAddress(request.virtualLabel))
+                            try meshNetwork.add(group: group!)
+                            model.unsubscribeFromAll()
+                            model.subscribe(to: group!)
+                        } catch {
+                            networkManager.send(ConfigModelSubscriptionStatus(responseTo: request, with: .invalidAddress),
+                                                to: source)
+                            break
+                        }
+                    }
+                    save()
+                    networkManager.send(ConfigModelSubscriptionStatus(confirmAdding: group!, to: model),
+                                        to: source)
+                } else {
+                    networkManager.send(ConfigModelSubscriptionStatus(responseTo: request, with: .invalidModel),
+                                        to: source)
+                }
+            }
+            
+        case let request as ConfigModelSubscriptionVirtualAddressDelete:
+            if let localNode = meshNetwork.localProvisioner?.node, localNode.unicastAddress == destination {
+                if let element = localNode.element(withAddress: destination),
+                   let model = element.model(withModelId: request.modelId) {
+                    let address = MeshAddress(request.virtualLabel)
+                    if let group = meshNetwork.group(withAddress: address) {
+                        model.unsubscribe(from: group)
+                        save()
+                    }
+                    networkManager.send(ConfigModelSubscriptionStatus(confirmDeleting: address.address, from: model),
+                                        to: source)
+                } else {
+                    networkManager.send(ConfigModelSubscriptionStatus(responseTo: request, with: .invalidModel),
+                                        to: source)
+                }
+            }
+            
+        case let request as ConfigModelSubscriptionDeleteAll:
+            if let localNode = meshNetwork.localProvisioner?.node, localNode.unicastAddress == destination {
+                if let element = localNode.element(withAddress: destination),
+                   let model = element.model(withModelId: request.modelId) {
+                    model.unsubscribeFromAll()
+                    save()
+                    networkManager.send(ConfigModelSubscriptionStatus(confirmDeletingAllFrom: model), to: source)
+                } else {
+                    networkManager.send(ConfigModelSubscriptionStatus(responseTo: request, with: .invalidModel),
+                                        to: source)
+                }
+            }
+            
         case let status as ConfigModelSubscriptionStatus:
             if status.isSuccess,
                 let node = meshNetwork.node(withAddress: source),
@@ -374,6 +664,28 @@ internal class FoundationLayer {
                     requests.removeValue(forKey: source)
                 default:
                     break
+                }
+            }
+            
+        case let request as ConfigSIGModelSubscriptionGet:
+            if let localNode = meshNetwork.localProvisioner?.node, localNode.unicastAddress == destination {
+                if let element = localNode.element(withAddress: destination),
+                    let model = element.model(withModelId: request.modelId) {
+                    let addresses = model.subscriptions.map { $0.address.address }
+                    networkManager.send(ConfigSIGModelSubscriptionList(responseTo: request, with: addresses), to: source)
+                } else {
+                    networkManager.send(ConfigSIGModelSubscriptionList(responseTo: request, with: .invalidModel), to: source)
+                }
+            }
+            
+        case let request as ConfigVendorModelSubscriptionGet:
+            if let localNode = meshNetwork.localProvisioner?.node, localNode.unicastAddress == destination {
+                if let element = localNode.element(withAddress: destination),
+                    let model = element.model(withModelId: request.modelId) {
+                    let addresses = model.subscriptions.map { $0.address.address }
+                    networkManager.send(ConfigVendorModelSubscriptionList(responseTo: request, with: addresses), to: source)
+                } else {
+                    networkManager.send(ConfigVendorModelSubscriptionList(responseTo: request, with: .invalidModel), to: source)
                 }
             }
             

@@ -31,16 +31,28 @@ public struct ConfigModelPublicationStatus: ConfigAnyModelMessage, ConfigStatusM
     public let publish: Publish
     public let status: ConfigMessageStatus
     
-    public init(confirmSetting publish: Publish, to model: Model, withStatus status: ConfigMessageStatus) {
-        self.publish = publish
-        self.elementAddress = model.parentElement.unicastAddress
-        self.modelIdentifier = model.modelIdentifier
-        self.companyIdentifier = model.companyIdentifier
+    public init(responseTo request: ConfigAnyModelMessage, with publish: Publish?) {
+        self.publish = publish ?? Publish()
+        self.elementAddress = request.elementAddress
+        self.modelIdentifier = request.modelIdentifier
+        self.companyIdentifier = request.companyIdentifier
+        self.status = .success
+    }
+    
+    public init(responseTo request: ConfigAnyModelMessage, with status: ConfigMessageStatus) {
+        self.publish = Publish()
+        self.elementAddress = request.elementAddress
+        self.modelIdentifier = request.modelIdentifier
+        self.companyIdentifier = request.companyIdentifier
         self.status = status
     }
     
-    public init(confirmDeletingPublicationFrom model: Model, withStatus status: ConfigMessageStatus) {
-        self.init(confirmSetting: Publish(), to: model, withStatus: status)
+    public init(confirm request: ConfigModelPublicationSet) {
+        self.init(responseTo: request, with: request.publish)
+    }
+    
+    public init(confirm request: ConfigModelPublicationVirtualAddressSet) {
+        self.init(responseTo: request, with: request.publish)
     }
     
     public init?(parameters: Data) {

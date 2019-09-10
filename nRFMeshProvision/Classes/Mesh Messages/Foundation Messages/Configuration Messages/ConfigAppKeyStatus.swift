@@ -24,9 +24,9 @@ public struct ConfigAppKeyStatus: ConfigNetAndAppKeyMessage, ConfigStatusMessage
         self.status = .success
     }
     
-    public init(_ status: ConfigMessageStatus, for message: ConfigNetAndAppKeyMessage) {
-        self.applicationKeyIndex = message.applicationKeyIndex
-        self.networkKeyIndex = message.networkKeyIndex
+    public init(responseTo request: ConfigNetAndAppKeyMessage, with status: ConfigMessageStatus) {
+        self.applicationKeyIndex = request.applicationKeyIndex
+        self.networkKeyIndex = request.networkKeyIndex
         self.status = status
     }
     

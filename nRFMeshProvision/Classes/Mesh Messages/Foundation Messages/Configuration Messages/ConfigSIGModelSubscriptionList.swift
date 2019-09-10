@@ -20,14 +20,17 @@ public struct ConfigSIGModelSubscriptionList: ConfigModelSubscriptionList {
     public let modelIdentifier: UInt16
     public let addresses: [Address]
     
-    public init?(for model: Model, addresses: [Address], status: ConfigMessageStatus) {
-        guard model.companyIdentifier == nil else {
-            // Use ConfigVendorModelSubscriptionList instead.
-            return nil
-        }
-        self.elementAddress = model.parentElement.unicastAddress
-        self.modelIdentifier = model.modelIdentifier
+    public init(responseTo request: ConfigSIGModelSubscriptionGet, with addresses: [Address]) {
+        self.elementAddress = request.elementAddress
+        self.modelIdentifier = request.modelIdentifier
         self.addresses = addresses
+        self.status = .success
+    }
+    
+    public init(responseTo request: ConfigSIGModelSubscriptionGet, with status: ConfigMessageStatus) {
+        self.elementAddress = request.elementAddress
+        self.modelIdentifier = request.modelIdentifier
+        self.addresses = []
         self.status = status
     }
     

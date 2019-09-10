@@ -19,14 +19,14 @@ public struct ConfigAppKeyList: ConfigStatusMessage, ConfigNetKeyMessage {
     /// Application Key Indexes bound to the Network Key known to the Node.
     public let applicationKeyIndexes: [KeyIndex]
     
-    public init(networkKey: NetworkKey, applicationKeys: [ApplicationKey], status: ConfigMessageStatus) {
-        self.networkKeyIndex = networkKey.index
+    public init(responseTo request: ConfigAppKeyGet, with applicationKeys: [ApplicationKey]) {
+        self.networkKeyIndex = request.networkKeyIndex
         self.applicationKeyIndexes = applicationKeys.map { return $0.index }
-        self.status = status
+        self.status = .success
     }
     
-    public init(_ status: ConfigMessageStatus, for message: ConfigAppKeyGet) {
-        self.networkKeyIndex = message.networkKeyIndex
+    public init(responseTo request: ConfigAppKeyGet, with status: ConfigMessageStatus) {
+        self.networkKeyIndex = request.networkKeyIndex
         self.applicationKeyIndexes = []
         self.status = status
     }

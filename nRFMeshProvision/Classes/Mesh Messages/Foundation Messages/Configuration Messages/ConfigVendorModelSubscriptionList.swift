@@ -21,15 +21,19 @@ public struct ConfigVendorModelSubscriptionList: ConfigModelSubscriptionList, Co
     public let companyIdentifier: UInt16
     public let addresses: [Address]
     
-    public init?(for model: Model, addresses: [Address], status: ConfigMessageStatus) {
-        guard let companyIdentifier = model.companyIdentifier else {
-            // Use ConfigSIGModelSubscriptionList instead.
-            return nil
-        }
-        self.elementAddress = model.parentElement.unicastAddress
-        self.modelIdentifier = model.modelIdentifier
-        self.companyIdentifier = companyIdentifier
+    public init(responseTo request: ConfigVendorModelSubscriptionGet, with addresses: [Address]) {
+        self.elementAddress = request.elementAddress
+        self.modelIdentifier = request.modelIdentifier
+        self.companyIdentifier = request.companyIdentifier
         self.addresses = addresses
+        self.status = .success
+    }
+    
+    public init(responseTo request: ConfigVendorModelSubscriptionGet, with status: ConfigMessageStatus) {
+        self.elementAddress = request.elementAddress
+        self.modelIdentifier = request.modelIdentifier
+        self.companyIdentifier = request.companyIdentifier
+        self.addresses = []
         self.status = status
     }
     

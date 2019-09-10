@@ -25,16 +25,17 @@ public struct ConfigModelAppStatus: ConfigAppKeyMessage, ConfigAnyModelMessage, 
     public let companyIdentifier: UInt16?
     public let status: ConfigMessageStatus
     
-    public init(confirmBinding applicationKey: ApplicationKey, to model: Model, withStatus status: ConfigMessageStatus) {
-        self.applicationKeyIndex = applicationKey.index
-        self.elementAddress = model.parentElement.unicastAddress
-        self.modelIdentifier = model.modelIdentifier
-        self.companyIdentifier = model.companyIdentifier
-        self.status = status
+    public init<T: ConfigAppKeyMessage & ConfigAnyModelMessage>(confirm request: T) {
+        self.init(responseTo: request, with: .success)
     }
     
-    public init(confirmUnbinding applicationKey: ApplicationKey, from model: Model, withStatus status: ConfigMessageStatus) {
-        self.init(confirmBinding: applicationKey, to: model, withStatus: status)
+    public init<T: ConfigAppKeyMessage & ConfigAnyModelMessage>(responseTo request: T,
+                                                                with status: ConfigMessageStatus) {
+        self.applicationKeyIndex = request.applicationKeyIndex
+        self.elementAddress = request.elementAddress
+        self.modelIdentifier = request.modelIdentifier
+        self.companyIdentifier = request.companyIdentifier
+        self.status = status
     }
     
     public init?(parameters: Data) {

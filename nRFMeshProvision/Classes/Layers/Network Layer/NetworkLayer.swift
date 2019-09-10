@@ -145,6 +145,15 @@ internal class NetworkLayer {
         defaults.set(sequence + 1, forKey: "S\(pdu.source.hex)")
         
         let networkPdu = NetworkPdu(encode: pdu, ofType: type, withSequence: sequence, andTtl: ttl)
+        // Loopback interface.
+        if shouldLoopback(networkPdu) {
+            handle(incomingPdu: networkPdu.pdu, ofType: type)
+            
+            if isLocalUnicastAddress(networkPdu.destination) {
+                // No need to send messages targetting local Unicast Addresses.
+                return
+            }
+        }
         try transmitter.send(networkPdu.pdu, ofType: type)
         
         // Unless a GATT Bearer is used, the Network PDUs should be sent multiple times
@@ -256,6 +265,27 @@ private extension NetworkLayer {
         } else {
             print("Info: Unsupported Proxy Configuration Message received: \(payload.hex)")
         }
+    }
+    
+}
+
+private extension NetworkLayer {
+    
+    /// Returns whether the given Address is an address of a local Element.
+    ///
+    /// - parameter address: The Address to check.
+    /// - returns: `True` if the address is a Unicast Address and belongs to
+    ///            one of the local Node's elements; `false` otherwise.
+    func isLocalUnicastAddress(_ address: Address) -> Bool {
+        return meshNetwork.localProvisioner?.node?.hasAllocatedAddress(address) ?? false
+    }
+    
+    /// Returns whether the PDU should loop back for local processing.
+    ///
+    /// - parameter networkPdu: The PDU to check.
+    func shouldLoopback(_ networkPdu: NetworkPdu) -> Bool {
+        let address = networkPdu.destination
+        return address.isGroup || address.isVirtual || isLocalUnicastAddress(address)
     }
     
 }

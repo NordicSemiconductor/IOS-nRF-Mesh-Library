@@ -19,30 +19,54 @@ public struct ConfigModelSubscriptionStatus: ConfigStatusMessage, ConfigAddressM
         }
     }
     
-    public var status: ConfigMessageStatus
+    public let status: ConfigMessageStatus
     public let address: Address
     public let elementAddress: Address
     public let modelIdentifier: UInt16
     public let companyIdentifier: UInt16?
     
-    public init(confirmAdding group: Group, to model: Model, withStatus status: ConfigMessageStatus) {
+    public init<T: ConfigAddressMessage & ConfigAnyModelMessage>(responseTo request: T, with status: ConfigMessageStatus) {
+        self.address = request.address
+        self.elementAddress = request.elementAddress
+        self.modelIdentifier = request.modelIdentifier
+        self.companyIdentifier = request.companyIdentifier
         self.status = status
+    }
+    
+    public init<T: ConfigVirtualLabelMessage & ConfigAnyModelMessage>(responseTo request: T, with status: ConfigMessageStatus) {
+        self.address = MeshAddress(request.virtualLabel).address
+        self.elementAddress = request.elementAddress
+        self.modelIdentifier = request.modelIdentifier
+        self.companyIdentifier = request.companyIdentifier
+        self.status = status
+    }
+    
+    public init(responseTo request: ConfigModelSubscriptionDeleteAll, with status: ConfigMessageStatus) {
+        self.address = Address.unassignedAddress
+        self.elementAddress = request.elementAddress
+        self.modelIdentifier = request.modelIdentifier
+        self.companyIdentifier = request.companyIdentifier
+        self.status = status
+    }
+    
+    public init(confirmAdding group: Group, to model: Model) {
+        self.status = .success
         self.address = group.address.address
         self.elementAddress = model.parentElement.unicastAddress
         self.modelIdentifier = model.modelIdentifier
         self.companyIdentifier = model.companyIdentifier
     }
     
-    public init(confirmDeleting group: Group, to model: Model, withStatus status: ConfigMessageStatus) {
-        self.status = status
-        self.address = group.address.address
+    public init(confirmDeleting address: Address, from model: Model) {
+        self.status = .success
+        self.address = address
         self.elementAddress = model.parentElement.unicastAddress
         self.modelIdentifier = model.modelIdentifier
         self.companyIdentifier = model.companyIdentifier
     }
     
-    public init(confirmDeletingAllFrom model: Model, withStatus status: ConfigMessageStatus) {
-        self.status = status
+    public init(confirmDeletingAllFrom model: Model) {
+        self.status = .success
         self.address = Address.unassignedAddress
         self.elementAddress = model.parentElement.unicastAddress
         self.modelIdentifier = model.modelIdentifier

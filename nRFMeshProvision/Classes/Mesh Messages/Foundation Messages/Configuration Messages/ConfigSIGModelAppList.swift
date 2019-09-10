@@ -19,14 +19,17 @@ public struct ConfigSIGModelAppList: ConfigModelAppList {
     public let modelIdentifier: UInt16
     public let applicationKeyIndexes: [KeyIndex]
     
-    public init?(for model: Model, applicationKeys: [ApplicationKey], status: ConfigMessageStatus) {
-        guard model.companyIdentifier == nil else {
-            // Use ConfigVendorModelAppList instead.
-            return nil
-        }
-        self.elementAddress = model.parentElement.unicastAddress
-        self.modelIdentifier = model.modelIdentifier
+    public init(responseTo request: ConfigSIGModelAppGet, with applicationKeys: [ApplicationKey]) {
+        self.elementAddress = request.elementAddress
+        self.modelIdentifier = request.modelIdentifier
         self.applicationKeyIndexes = applicationKeys.map { return $0.index }
+        self.status = .success
+    }
+    
+    public init(responseTo request: ConfigSIGModelAppGet, with status: ConfigMessageStatus) {
+        self.elementAddress = request.elementAddress
+        self.modelIdentifier = request.modelIdentifier
+        self.applicationKeyIndexes = []
         self.status = status
     }
     
