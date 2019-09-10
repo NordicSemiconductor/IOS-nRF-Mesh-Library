@@ -436,7 +436,8 @@ private extension AccessLayer {
             }
             print("\(message) received") // TODO: Remove me
             if let configMessage = message as? ConfigMessage {
-                networkManager.foundationLayer.handle(configMessage: configMessage, from: accessPdu.source)
+                networkManager.foundationLayer.handle(configMessage: configMessage,
+                                                      from: accessPdu.source, to: accessPdu.destination)
             }
             networkManager.notifyAbout(newMessage: message, from: accessPdu.source)
         }
