@@ -140,7 +140,7 @@ internal extension Model {
     
     /// Adds the given Group to the list of subscriptions.
     ///
-    /// - parameter: The new Group to be added.
+    /// - parameter group: The new Group to be added.
     func subscribe(to group: Group) {
         let address = group.address.hex
         if !subscribe.contains(address) {
@@ -150,12 +150,27 @@ internal extension Model {
     
     /// Removes the given Group from list of subscriptions.
     ///
-    /// - parameter: The Group to be removed.
+    /// - parameter group: The Group to be removed.
     func unsubscribe(from group: Group) {
         let address = group.address.hex
         if let index = subscribe.firstIndex(of: address) {
             subscribe.remove(at: index)
         }
+    }
+    
+    /// Removes the given Address from list of subscriptions.
+    ///
+    /// - parameter address: The Address to be removed.
+    func unsubscribe(from address: Address) {
+        let address = address.hex
+        if let index = subscribe.firstIndex(of: address) {
+            subscribe.remove(at: index)
+        }
+    }
+    
+    /// Removes all subscribtions from this Model.
+    func unsubscribeFromAll() {
+        subscribe.removeAll()
     }
     
 }

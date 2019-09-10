@@ -162,6 +162,11 @@ public struct Publish: Codable {
 
 public extension Publish {
     
+    /// Whether the publication should be cancelled.
+    var isCancel: Bool {
+        return address == "0000"
+    }
+    
     /// Returns whether master security materials are used.
     var isUsingMasterSecurityMaterial: Bool {
         return credentials == 0

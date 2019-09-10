@@ -60,4 +60,15 @@ public extension Address {
         return (self & 0xC000) == 0xC000 && isValidAddress
     }
     
+    /// Returns `true` if the address is a special Group Address.
+    ///
+    /// Special groups are:
+    /// * All Proxies: 0xFFFC
+    /// * All Friends: 0xFFFD
+    /// * All Relays: 0xFFFE
+    /// * All Nodes: 0xFFFF
+    var isSpecialGroup: Bool {
+        return self > 0xFFFB
+    }
+    
 }
