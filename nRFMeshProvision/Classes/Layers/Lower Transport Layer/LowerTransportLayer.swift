@@ -347,7 +347,7 @@ private extension LowerTransportLayer {
     ///
     /// - parameter sequenceZero: The key to get segments from the map.
     func sendSegments(for sequenceZero: UInt16, limit: Int = 10) {
-        guard let count = outgoingSegments[sequenceZero]?.count, count > 0,
+        guard let segments = outgoingSegments[sequenceZero], segments.count > 0,
               let provisionerNode = meshNetwork.localProvisioner?.node else {
             return
         }
@@ -358,8 +358,8 @@ private extension LowerTransportLayer {
         var ackExpected: Bool?
         
         // Send all the segments that have not been acknowledged yet.
-        for i in 0..<count {
-            if let segment = outgoingSegments[sequenceZero]![i] {
+        for i in 0..<segments.count {
+            if let segment = segments[i] {
                 do {
                     if ackExpected == nil {
                         ackExpected = segment.destination.isUnicast
@@ -382,8 +382,8 @@ private extension LowerTransportLayer {
         // random delay is, so assuming 0.5-1.5 second.
         if !ackExpected! {
             _ = Timer.scheduledTimer(withTimeInterval: TimeInterval.random(in: 0.500...1.500), repeats: false) { timer in
-                for i in 0..<count {
-                    if let segment = self.outgoingSegments[sequenceZero]?[i] {
+                for i in 0..<segments.count {
+                    if let segment = segments[i] {
                         try? self.networkManager.networkLayer.send(lowerTransportPdu: segment, ofType: .networkPdu, withTtl: ttl)
                     }
                 }
@@ -407,7 +407,7 @@ private extension LowerTransportLayer {
             }
         } else {
             // All segments have been successfully sent to a Group Address.
-            if let segment = outgoingSegments[sequenceZero]!.firstNotAcknowledged {
+            if let segment = segments.firstNotAcknowledged {
                 networkManager.notifyAbout(message: segment.message!, sentTo: segment.destination)
             }
             outgoingSegments.removeValue(forKey: sequenceZero)
