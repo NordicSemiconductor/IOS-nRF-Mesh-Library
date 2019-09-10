@@ -13,6 +13,7 @@ private enum SectionType: String {
     case notConfiguredNodes = "Not configured Nodes"
     case configuredNodes    = "Configured Nodes"
     case provisionersNodes  = "Other Provisioners"
+    case thisProvisioner    = "This Provisioner"
 }
 
 private class Section {
@@ -137,6 +138,9 @@ private extension NetworkViewController {
             }
             if !provisionersNodes.isEmpty {
                 sections.append(Section(type: .provisionersNodes, nodes: provisionersNodes))
+            }
+            if let thisProvisionerNode = network.localProvisioner?.node {
+                sections.append(Section(type: .thisProvisioner, nodes: [thisProvisionerNode]))
             }
         }
         tableView.reloadData()
