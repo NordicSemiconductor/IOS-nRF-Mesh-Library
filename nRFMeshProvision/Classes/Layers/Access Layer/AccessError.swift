@@ -18,19 +18,23 @@ public enum AccessError: Error {
     /// Thrown when the destination Address is not known and the
     /// library cannot determine the Network Key to use.
     case invalidDestination
-    /// Error thrown when the Provisioner is trying to remove
+    /// Thrown when trying to send a message from a Model that
+    /// does not have any Application Key bound to it.
+    case modelNotBoundToAppKey
+    /// Error thrown when the Provisioner is trying to delete
     /// the last Network Key from the Node.
-    case cannotRemove
+    case cannotDelete
 }
 
 extension AccessError: LocalizedError {
     
     public var errorDescription: String? {
         switch self {
-        case .invalidSource:      return NSLocalizedString("Local Provisioner does not have Unicast Address specified.", comment: "")
-        case .invalidElement:     return NSLocalizedString("Element does not belong to the local Node.", comment: "")
-        case .invalidDestination: return NSLocalizedString("The destination address is unknown.", comment: "")
-        case .cannotRemove:       return NSLocalizedString("Cannot remove the last Network Key.", comment: "")
+        case .invalidSource:         return NSLocalizedString("Local Provisioner does not have Unicast Address specified.", comment: "")
+        case .invalidElement:        return NSLocalizedString("Element does not belong to the local Node.", comment: "")
+        case .invalidDestination:    return NSLocalizedString("The destination address is unknown.", comment: "")
+        case .modelNotBoundToAppKey: return NSLocalizedString("No Application Key bound to the given Model.", comment: "")
+        case .cannotDelete:          return NSLocalizedString("Cannot delete the last Network Key.", comment: "")
         }
     }
     

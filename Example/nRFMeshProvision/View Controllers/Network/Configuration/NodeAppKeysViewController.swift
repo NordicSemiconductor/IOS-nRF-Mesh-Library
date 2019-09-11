@@ -121,20 +121,21 @@ private extension NodeAppKeysViewController {
     
     @objc func readKeys(_ sender: Any) {
         start("Reading Application Keys...") {
-            MeshNetworkManager.instance.send(ConfigAppKeyGet(networkKey: self.node.networkKeys.first!), to: self.node)
+            try? MeshNetworkManager.instance.send(ConfigAppKeyGet(networkKey: self.node.networkKeys.first!), to: self.node)
         }
     }
     
     func deleteApplicationKeyAt(_ indexPath: IndexPath) {
         let applicationKey = node.applicationKeys[indexPath.row]
-        MeshNetworkManager.instance.send(ConfigAppKeyDelete(applicationKey: applicationKey), to: node)
+        try? MeshNetworkManager.instance.send(ConfigAppKeyDelete(applicationKey: applicationKey), to: node)
     }
     
 }
 
 extension NodeAppKeysViewController: MeshNetworkDelegate {
     
-    func meshNetwork(_ meshNetwork: MeshNetwork, didDeliverMessage message: MeshMessage, from source: Address) {
+    func meshNetwork(_ meshNetwork: MeshNetwork, didDeliverMessage message: MeshMessage,
+                     sentFrom source: Address, to destination: Address) {
         // Has the Node been reset remotely.
         guard !(message is ConfigNodeReset) else {
             (UIApplication.shared.delegate as! AppDelegate).meshNetworkDidChange()
@@ -166,7 +167,7 @@ extension NodeAppKeysViewController: MeshNetworkDelegate {
             if list.isSuccess {
                 let index = node.networkKeys.firstIndex { $0.index == list.networkKeyIndex }
                 if let index = index, index + 1 < node.networkKeys.count {
-                    MeshNetworkManager.instance.send(ConfigAppKeyGet(networkKey: node.networkKeys[index + 1]), to: node)
+                    try? MeshNetworkManager.instance.send(ConfigAppKeyGet(networkKey: node.networkKeys[index + 1]), to: node)
                 } else {
                     done()
                     tableView.reloadData()
@@ -187,7 +188,8 @@ extension NodeAppKeysViewController: MeshNetworkDelegate {
         }
     }
     
-    func meshNetwork(_ meshNetwork: MeshNetwork, failedToDeliverMessage message: MeshMessage, to destination: Address, error: Error) {
+    func meshNetwork(_ meshNetwork: MeshNetwork, failedToDeliverMessage message: MeshMessage,
+                     from localElement: Element, to destination: Address, error: Error) {
         done() {
             self.presentAlert(title: "Error", message: error.localizedDescription)
             self.refreshControl?.endRefreshing()

@@ -177,7 +177,8 @@ extension NetworkViewController: EditProvisionerDelegate {
 
 extension NetworkViewController: MeshNetworkDelegate {
     
-    func meshNetwork(_ meshNetwork: MeshNetwork, didDeliverMessage message: MeshMessage, from source: Address) {
+    func meshNetwork(_ meshNetwork: MeshNetwork, didDeliverMessage message: MeshMessage,
+                     sentFrom source: Address, to destination: Address) {
         switch message {
             
         case is ConfigNodeReset:

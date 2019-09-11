@@ -114,10 +114,7 @@ class NodeNetworkKeysViewController: ProgressViewController, Editable {
                 }
             }
         } else {
-            // Otherwise, just try removing it.
-            start("Deleting Network Key...") {
-                self.deleteNetworkKeyAt(indexPath)
-            }
+            deleteNetworkKeyAt(indexPath)            
         }
     }
 }
@@ -126,20 +123,24 @@ private extension NodeNetworkKeysViewController {
     
     @objc func readKeys(_ sender: Any) {
         start("Reading Network Keys...") {
-            MeshNetworkManager.instance.send(ConfigNetKeyGet(), to: self.node)
+            try? MeshNetworkManager.instance.send(ConfigNetKeyGet(), to: self.node)
         }
     }
     
     func deleteNetworkKeyAt(_ indexPath: IndexPath) {
-        let networkKey = node.networkKeys[indexPath.row]
-        MeshNetworkManager.instance.send(ConfigNetKeyDelete(networkKey: networkKey), to: node)
+        // Otherwise, just try removing it.
+        start("Deleting Network Key...") {
+            let networkKey = self.node.networkKeys[indexPath.row]
+            try? MeshNetworkManager.instance.send(ConfigNetKeyDelete(networkKey: networkKey), to: self.node)
+        }
     }
     
 }
 
 extension NodeNetworkKeysViewController: MeshNetworkDelegate {
     
-    func meshNetwork(_ meshNetwork: MeshNetwork, didDeliverMessage message: MeshMessage, from source: Address) {
+    func meshNetwork(_ meshNetwork: MeshNetwork, didDeliverMessage message: MeshMessage,
+                     sentFrom source: Address, to destination: Address) {
         // Has the Node been reset remotely.
         guard !(message is ConfigNodeReset) else {
             (UIApplication.shared.delegate as! AppDelegate).meshNetworkDidChange()
@@ -181,7 +182,8 @@ extension NodeNetworkKeysViewController: MeshNetworkDelegate {
         }
     }
     
-    func meshNetwork(_ meshNetwork: MeshNetwork, failedToDeliverMessage message: MeshMessage, to destination: Address, error: Error) {
+    func meshNetwork(_ meshNetwork: MeshNetwork, failedToDeliverMessage message: MeshMessage,
+                     from localElement: Element, to destination: Address, error: Error) {
         done() {
             self.presentAlert(title: "Error", message: error.localizedDescription)
             self.refreshControl?.endRefreshing()

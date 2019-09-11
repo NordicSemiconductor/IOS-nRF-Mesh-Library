@@ -142,17 +142,26 @@ internal class NetworkManager {
     ///
     /// - parameter message: The mesh message that was received.
     /// - parameter source:  The source Unicast Address.
-    func notifyAbout(newMessage message: MeshMessage, from source: Address) {
-        meshNetworkManager.delegate?.meshNetwork(meshNetwork!, didDeliverMessage: message, from: source)
+    /// - parameter destination: The destination address of the message received.
+    func notifyAbout(newMessage message: MeshMessage, from source: Address, to destination: Address) {
+        meshNetworkManager.delegate?.meshNetwork(meshNetwork!, didDeliverMessage: message,
+                                                 sentFrom: source, to: destination)
     }
     
-    /// Notifies the delegate about the mesh message being sent to the given
+    /// Notifies the delegate about delivering the mesh message to the given
     /// destination address.
     ///
-    /// - parameter message: The mesh message that was sent.
-    /// - parameter source:  The destination address.
-    func notifyAbout(message: MeshMessage, sentTo destination: Address) {
-        meshNetworkManager.delegate?.meshNetwork(meshNetwork!, didDeliverMessage: message, to: destination)
+    /// - parameter message:     The mesh message that was sent.
+    /// - parameter source:      The source Unicast Address.
+    /// - parameter destination: The destination address.
+    func notifyAbout(deliveringMessage message: MeshMessage,
+                     from source: Address, to destination: Address) {
+        guard let localNode = meshNetwork?.localProvisioner?.node,
+              let localElement = localNode.elements.first(where: { $0.unicastAddress == source}) else {
+            return
+        }
+        meshNetworkManager.delegate?.meshNetwork(meshNetwork!, didDeliverMessage: message,
+                                                 sentFrom: localElement, to: destination)
     }
     
     /// Notifies the delegate about an error during sending the mesh message
@@ -160,12 +169,16 @@ internal class NetworkManager {
     ///
     /// - parameter error:   The error that occurred.
     /// - parameter message: The mesh message that failed to be sent.
+    /// - parameter source:  The source Unicast Address.
     /// - parameter source:  The destination address.
-    func notifyAbout(_ error: Error, duringSendingMessage message: MeshMessage, to destination: Address) {
-        meshNetworkManager.delegate?.meshNetwork(meshNetwork!, failedToDeliverMessage: message, to: destination, error: error)
+    func notifyAbout(_ error: Error, duringSendingMessage message: MeshMessage,
+                     from source: Address, to destination: Address) {
+        guard let localNode = meshNetwork?.localProvisioner?.node,
+            let localElement = localNode.elements.first(where: { $0.unicastAddress == source}) else {
+                return
+        }
+        meshNetworkManager.delegate?.meshNetwork(meshNetwork!, failedToDeliverMessage: message,
+                                                 from: localElement, to: destination, error: error)
     }
     
-    func notifyAbout(proxyConfigurationMessage message: ProxyConfigurationMessage) {
-        
-    }
 }

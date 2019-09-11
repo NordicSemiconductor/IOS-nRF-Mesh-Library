@@ -118,7 +118,8 @@ class ConfigurationServerViewCell: ModelViewCell {
         return true
     }
     
-    override func meshNetwork(_ meshNetwork: MeshNetwork, didDeliverMessage message: MeshMessage, from source: Address) -> Bool {
+    override func meshNetwork(_ meshNetwork: MeshNetwork, didDeliverMessage message: MeshMessage,
+                              sentFrom source: Address, to destination: Address) -> Bool {
         switch message {
             
         case is ConfigRelayStatus:

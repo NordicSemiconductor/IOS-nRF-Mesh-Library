@@ -131,7 +131,8 @@ class ElementViewController: UITableViewController {
 
 extension ElementViewController: MeshNetworkDelegate {
     
-    func meshNetwork(_ meshNetwork: MeshNetwork, didDeliverMessage message: MeshMessage, from source: Address) {
+    func meshNetwork(_ meshNetwork: MeshNetwork, didDeliverMessage message: MeshMessage,
+                     sentFrom source: Address, to destination: Address) {
         // Has the Node been reset remotely.
         guard !(message is ConfigNodeReset) else {
             (UIApplication.shared.delegate as! AppDelegate).meshNetworkDidChange()

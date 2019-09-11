@@ -325,13 +325,13 @@ extension ModelViewController: ModelViewCellDelegate {
     
     func send(_ message: MeshMessage, description: String) {
         start(description) {
-            MeshNetworkManager.instance.send(message, to: self.model)
+            try? MeshNetworkManager.instance.send(message, to: self.model)
         }
     }
     
     func send(_ message: ConfigMessage, description: String) {
         start(description) {
-            MeshNetworkManager.instance.send(message, to: self.model)
+            try? MeshNetworkManager.instance.send(message, to: self.model)
         }
     }
     
@@ -360,13 +360,13 @@ private extension ModelViewController {
                     self.done()
                     return
             }
-            MeshNetworkManager.instance.send(message, to: self.model)
+            try? MeshNetworkManager.instance.send(message, to: self.model)
         }
     }
     
     func reloadPublication() {
         start("Reading Publication settings...") {
-            MeshNetworkManager.instance.send(ConfigModelPublicationGet(for: self.model), to: self.model)
+            try? MeshNetworkManager.instance.send(ConfigModelPublicationGet(for: self.model), to: self.model)
         }
     }
     
@@ -378,7 +378,7 @@ private extension ModelViewController {
                     self.done()
                     return
             }
-            MeshNetworkManager.instance.send(message, to: self.model)
+            try? MeshNetworkManager.instance.send(message, to: self.model)
         }
     }
     
@@ -388,14 +388,14 @@ private extension ModelViewController {
     /// - parameter applicationKey: The Application Key to unbind.
     func unbindApplicationKey(_ applicationKey: ApplicationKey) {
         start("Unbinding Application Key") {
-            MeshNetworkManager.instance.send(ConfigModelAppUnbind(applicationKey: applicationKey, to: self.model), to: self.model)
+            try? MeshNetworkManager.instance.send(ConfigModelAppUnbind(applicationKey: applicationKey, to: self.model), to: self.model)
         }
     }
     
     /// Removes the publicaton from the model.
     func removePublication() {
         start("Removing Publication...") {
-            MeshNetworkManager.instance.send(ConfigModelPublicationSet(disablePublicationFor: self.model), to: self.model)
+            try? MeshNetworkManager.instance.send(ConfigModelPublicationSet(disablePublicationFor: self.model), to: self.model)
         }
     }
     
@@ -409,7 +409,7 @@ private extension ModelViewController {
                 ConfigModelSubscriptionVirtualAddressDelete(group: group, from: self.model) else {
                     return
             }
-            MeshNetworkManager.instance.send(message, to: self.model)
+            try? MeshNetworkManager.instance.send(message, to: self.model)
         }
     }
     
@@ -417,7 +417,8 @@ private extension ModelViewController {
 
 extension ModelViewController: MeshNetworkDelegate {
     
-    func meshNetwork(_ meshNetwork: MeshNetwork, didDeliverMessage message: MeshMessage, from source: Address) {
+    func meshNetwork(_ meshNetwork: MeshNetwork, didDeliverMessage message: MeshMessage,
+                     sentFrom source: Address, to destination: Address) {
         // Has the Node been reset remotely.
         guard !(message is ConfigNodeReset) else {
             (UIApplication.shared.delegate as! AppDelegate).meshNetworkDidChange()
@@ -495,7 +496,8 @@ extension ModelViewController: MeshNetworkDelegate {
             }
             
         default:
-            let isMore = modelViewCell?.meshNetwork(meshNetwork, didDeliverMessage: message, from: source) ?? false
+            let isMore = modelViewCell?.meshNetwork(meshNetwork, didDeliverMessage: message,
+                                                    sentFrom: source, to: destination) ?? false
             if !isMore {
                 done()
                 
@@ -511,7 +513,8 @@ extension ModelViewController: MeshNetworkDelegate {
         }
     }
     
-    func meshNetwork(_ meshNetwork: MeshNetwork, didDeliverMessage message: MeshMessage, to destination: Address) {
+    func meshNetwork(_ meshNetwork: MeshNetwork, didDeliverMessage message: MeshMessage,
+                     sentFrom localElement: Element, to destination: Address) {
         // Has the Node been reset remotely.
         guard !(message is ConfigNodeReset) else {
             (UIApplication.shared.delegate as! AppDelegate).meshNetworkDidChange()
@@ -525,14 +528,16 @@ extension ModelViewController: MeshNetworkDelegate {
             break
             
         default:
-            let isMore = modelViewCell?.meshNetwork(meshNetwork, didDeliverMessage: message, to: destination) ?? false
+            let isMore = modelViewCell?.meshNetwork(meshNetwork, didDeliverMessage: message,
+                                                    sentFrom: localElement, to: destination) ?? false
             if !isMore {
                 done()
             }
         }
     }
     
-    func meshNetwork(_ meshNetwork: MeshNetwork, failedToDeliverMessage message: MeshMessage, to destination: Address, error: Error) {
+    func meshNetwork(_ meshNetwork: MeshNetwork, failedToDeliverMessage message: MeshMessage,
+                     from localElement: Element, to destination: Address, error: Error) {
         done() {
             self.presentAlert(title: "Error", message: error.localizedDescription)
             self.refreshControl?.endRefreshing()

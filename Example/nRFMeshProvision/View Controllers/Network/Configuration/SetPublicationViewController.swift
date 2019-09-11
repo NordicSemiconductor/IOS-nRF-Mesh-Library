@@ -327,7 +327,7 @@ private extension SetPublicationViewController {
                     self.done()
                     return
             }
-            MeshNetworkManager.instance.send(message, to: self.model)
+            try? MeshNetworkManager.instance.send(message, to: self.model)
         }
     }
     
@@ -354,7 +354,8 @@ extension SetPublicationViewController: DestinationDelegate {
 
 extension SetPublicationViewController: MeshNetworkDelegate {
     
-    func meshNetwork(_ meshNetwork: MeshNetwork, didDeliverMessage message: MeshMessage, from source: Address) {
+    func meshNetwork(_ meshNetwork: MeshNetwork, didDeliverMessage message: MeshMessage,
+                     sentFrom source: Address, to destination: Address) {
         // Has the Node been reset remotely.
         guard !(message is ConfigNodeReset) else {
             (UIApplication.shared.delegate as! AppDelegate).meshNetworkDidChange()
@@ -393,7 +394,8 @@ extension SetPublicationViewController: MeshNetworkDelegate {
         }
     }
     
-    func meshNetwork(_ meshNetwork: MeshNetwork, failedToDeliverMessage message: MeshMessage, to destination: Address, error: Error) {
+    func meshNetwork(_ meshNetwork: MeshNetwork, failedToDeliverMessage message: MeshMessage,
+                     from localElement: Element, to destination: Address, error: Error) {
         done() {
             self.presentAlert(title: "Error", message: error.localizedDescription)
         }

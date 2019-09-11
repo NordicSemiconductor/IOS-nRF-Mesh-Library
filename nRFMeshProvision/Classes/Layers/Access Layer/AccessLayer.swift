@@ -48,20 +48,6 @@ internal class AccessLayer {
     func send(_ message: MeshMessage,
               from element: Element, to destination: MeshAddress,
               using applicationKey: ApplicationKey) {
-        guard let localProvisioner = networkManager.meshNetwork?.localProvisioner,
-              let node = localProvisioner.node else {
-                print("Error: Local Provisioner has no Unicast Address assigned")
-                networkManager.notifyAbout(AccessError.invalidSource,
-                                           duringSendingMessage: message, to: destination.address)
-                return
-        }
-        guard element.parentNode == node else {
-            print("Error: The source Element does not belong to the local Node")
-            networkManager.notifyAbout(AccessError.invalidElement,
-                                       duringSendingMessage: message, to: destination.address)
-            return
-        }
-        
         // Should the TID be updated?
         var m = message
         if var tranactionMessage = message as? TransactionMessage, tranactionMessage.tid == nil {
@@ -92,36 +78,14 @@ internal class AccessLayer {
     /// - parameter message:     The Mesh Config Message to send.
     /// - parameter destination: The destination Address. This must be a Unicast Address.
     func send(_ message: ConfigMessage, to destination: Address) {
-        guard let localProvisioner = networkManager.meshNetwork?.localProvisioner,
-              let element = localProvisioner.node?.elements.first else {
-                print("Error: Local Provisioner has no Unicast Address assigned")
-                networkManager.notifyAbout(AccessError.invalidSource,
-                                           duringSendingMessage: message, to: destination)
-                return
-        }
-        guard destination.isUnicast else {
-                print("Error: Address: 0x\(destination.hex) is not a Unicast Address")
-                networkManager.notifyAbout(MeshMessageError.invalidAddress,
-                                           duringSendingMessage: message, to: destination)
-                return
-        }
-        guard let node = meshNetwork.node(withAddress: destination),
+        guard let element = meshNetwork.localProvisioner?.node?.elements.first,
+              let node = meshNetwork.node(withAddress: destination),
               var networkKey = node.networkKeys.first else {
-                print("Error: Node or Network Key not found")
-                networkManager.notifyAbout(AccessError.invalidDestination,
-                                           duringSendingMessage: message, to: destination)
-                return
+            return
         }
-        
         // ConfigNetKeyDelete must not be signed using the key that is being deleted.
         if let netKeyDelete = message as? ConfigNetKeyDelete,
            netKeyDelete.networkKeyIndex == networkKey.index {
-            guard node.networkKeys.count > 1 else {
-                print("Error: Cannot remove the last Network Key")
-                networkManager.notifyAbout(AccessError.cannotRemove,
-                                           duringSendingMessage: message, to: destination)
-                return
-            }
             networkKey = node.networkKeys.last!
         }
         
@@ -144,20 +108,6 @@ internal class AccessLayer {
     func reply(with message: MeshMessage,
                from element: Element, to destination: Address,
                using keySet: KeySet) {
-        guard let localProvisioner = networkManager.meshNetwork?.localProvisioner,
-            localProvisioner.hasConfigurationCapabilities else {
-                print("Error: Local Provisioner has no Unicast Address assigned")
-                networkManager.notifyAbout(AccessError.invalidSource,
-                                           duringSendingMessage: message, to: destination)
-                return
-        }
-        guard destination.isUnicast else {
-            print("Error: Address: 0x\(destination.hex) is not a Unicast Address")
-            networkManager.notifyAbout(MeshMessageError.invalidAddress,
-                                       duringSendingMessage: message, to: destination)
-            return
-        }
-        
         print("Replying with \(message) to 0x\(destination.hex)") // TODO: Remove me
         networkManager.upperTransportLayer.send(message,
                                                 from: element, to: MeshAddress(destination),
@@ -498,7 +448,7 @@ private extension AccessLayer {
                                                       sentFrom: accessPdu.source, to: accessPdu.destination,
                                                       with: keySet)
             }
-            networkManager.notifyAbout(newMessage: message, from: accessPdu.source)
+            networkManager.notifyAbout(newMessage: message, from: accessPdu.source, to: accessPdu.destination)
         }
     }
     

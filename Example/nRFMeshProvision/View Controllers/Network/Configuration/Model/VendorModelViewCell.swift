@@ -88,7 +88,8 @@ class VendorModelViewCell: ModelViewCell, UITextFieldDelegate {
         return true
     }
     
-    override func meshNetwork(_ meshNetwork: MeshNetwork, didDeliverMessage message: MeshMessage, from source: Address) -> Bool {
+    override func meshNetwork(_ meshNetwork: MeshNetwork, didDeliverMessage message: MeshMessage,
+                              sentFrom source: Address, to destination: Address) -> Bool {
         switch message {
         case let message as UnknownMessage where
             (message.opCode & 0xC0FFFF) == (0xC00000 | UInt32(model.companyIdentifier!.bigEndian)):
@@ -101,7 +102,8 @@ class VendorModelViewCell: ModelViewCell, UITextFieldDelegate {
         return false
     }
     
-    override func meshNetwork(_ meshNetwork: MeshNetwork, didDeliverMessage message: MeshMessage, to destination: Address) -> Bool {
+    override func meshNetwork(_ meshNetwork: MeshNetwork, didDeliverMessage message: MeshMessage,
+                              sentFrom localElement: Element, to destination: Address) -> Bool {
         // For acknowledged messages wait for the Acknowledgement Message.
         return acknowledgmentSwitch.isOn
     }

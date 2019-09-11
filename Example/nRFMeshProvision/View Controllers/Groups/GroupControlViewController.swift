@@ -160,7 +160,7 @@ extension GroupControlViewController: ModelGroupViewCellDelegate {
     
     func send(_ message: MeshMessage, description: String, using applicationKey: ApplicationKey) {
         start(description) {
-            MeshNetworkManager.instance.send(message, to: self.group, using: applicationKey)
+            try? MeshNetworkManager.instance.send(message, to: self.group, using: applicationKey)
         }
     }
     
@@ -168,7 +168,8 @@ extension GroupControlViewController: ModelGroupViewCellDelegate {
 
 extension GroupControlViewController: MeshNetworkDelegate {
     
-    func meshNetwork(_ meshNetwork: MeshNetwork, didDeliverMessage message: MeshMessage, from source: Address) {
+    func meshNetwork(_ meshNetwork: MeshNetwork, didDeliverMessage message: MeshMessage,
+                     sentFrom source: Address, to destination: Address) {
         // Has the Node been reset remotely.
         guard !(message is ConfigNodeReset) else {
             (UIApplication.shared.delegate as! AppDelegate).meshNetworkDidChange()
@@ -177,13 +178,15 @@ extension GroupControlViewController: MeshNetworkDelegate {
         }
     }
     
-    func meshNetwork(_ meshNetwork: MeshNetwork, didDeliverMessage message: MeshMessage, to destination: Address) {
+    func meshNetwork(_ meshNetwork: MeshNetwork, didDeliverMessage message: MeshMessage,
+                     sentFrom localElement: Element, to destination: Address) {
         done()
     }
     
-    func meshNetwork(_ meshNetwork: MeshNetwork, failedToDeliverMessage message: MeshMessage, to destination: Address, error: Error) {
+    func meshNetwork(_ meshNetwork: MeshNetwork, failedToDeliverMessage message: MeshMessage,
+                     from localElement: Element, to destination: Address, error: Error) {
         done() {
-            self.presentAlert(title: "Error", message: "Message could not be sent.")
+            self.presentAlert(title: "Error", message: error.localizedDescription)
         }
     }
 }
