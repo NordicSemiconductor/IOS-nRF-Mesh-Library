@@ -9,7 +9,7 @@
 import UIKit
 import nRFMeshProvision
 
-class ModelViewController: ConnectableViewController {
+class ModelViewController: ProgressViewController {
 
     // MARK: - Properties
     
@@ -324,15 +324,13 @@ class ModelViewController: ConnectableViewController {
 extension ModelViewController: ModelViewCellDelegate {
     
     func send(_ message: MeshMessage, description: String) {
-        whenConnected { alert in
-            alert?.message = description
+        start(description) {
             MeshNetworkManager.instance.send(message, to: self.model)
         }
     }
     
     func send(_ message: ConfigMessage, description: String) {
-        whenConnected { alert in
-            alert?.message = description
+        start(description) {
             MeshNetworkManager.instance.send(message, to: self.model)
         }
     }
@@ -355,8 +353,7 @@ private extension ModelViewController {
     }
     
     func reloadBindings() {
-        whenConnected { alert in
-            alert?.message = "Reading Bound Application Keys..."
+        start("Reading Bound Application Keys...") {
             guard let message: ConfigMessage =
                 ConfigSIGModelAppGet(of: self.model) ??
                 ConfigVendorModelAppGet(of: self.model) else {
@@ -368,15 +365,13 @@ private extension ModelViewController {
     }
     
     func reloadPublication() {
-        whenConnected { alert in
-            alert?.message = "Reading Publication settings..."
+        start("Reading Publication settings...") {
             MeshNetworkManager.instance.send(ConfigModelPublicationGet(for: self.model), to: self.model)
         }
     }
     
     func reloadSubscriptions() {
-        whenConnected { alert in
-            alert?.message = "Reading Subscriptions..."
+        start("Reading Subscriptions...") {
             guard let message: ConfigMessage =
                 ConfigSIGModelSubscriptionGet(of: self.model) ??
                 ConfigVendorModelSubscriptionGet(of: self.model) else {
@@ -392,16 +387,14 @@ private extension ModelViewController {
     ///
     /// - parameter applicationKey: The Application Key to unbind.
     func unbindApplicationKey(_ applicationKey: ApplicationKey) {
-        whenConnected { alert in
-            alert?.message = "Unbinding Application Key"
+        start("Unbinding Application Key") {
             MeshNetworkManager.instance.send(ConfigModelAppUnbind(applicationKey: applicationKey, to: self.model), to: self.model)
         }
     }
     
     /// Removes the publicaton from the model.
     func removePublication() {
-        whenConnected { alert in
-            alert?.message = "Removing Publication..."
+        start("Removing Publication...") {
             MeshNetworkManager.instance.send(ConfigModelPublicationSet(disablePublicationFor: self.model), to: self.model)
         }
     }
@@ -410,8 +403,7 @@ private extension ModelViewController {
     ///
     /// - parameter group: The Group to be removed from subscriptions.
     func unsubscribe(from group: Group) {
-        whenConnected { alert in
-            alert?.message = "Unsubscribing..."
+        start("Unsubscribing...") {
             guard let message: ConfigMessage =
                 ConfigModelSubscriptionDelete(group: group, from: self.model) ??
                 ConfigModelSubscriptionVirtualAddressDelete(group: group, from: self.model) else {
@@ -542,7 +534,7 @@ extension ModelViewController: MeshNetworkDelegate {
     
     func meshNetwork(_ meshNetwork: MeshNetwork, failedToDeliverMessage message: MeshMessage, to destination: Address, error: Error) {
         done() {
-            self.presentAlert(title: "Error", message: "Message could not be sent.")
+            self.presentAlert(title: "Error", message: error.localizedDescription)
             self.refreshControl?.endRefreshing()
         }
     }

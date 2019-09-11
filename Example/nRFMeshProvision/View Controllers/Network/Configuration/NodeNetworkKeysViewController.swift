@@ -9,7 +9,7 @@
 import UIKit
 import nRFMeshProvision
 
-class NodeNetworkKeysViewController: ConnectableViewController, Editable {
+class NodeNetworkKeysViewController: ProgressViewController, Editable {
     
     // MARK: - Outlets and Actions
     
@@ -109,15 +109,13 @@ class NodeNetworkKeysViewController: ConnectableViewController, Editable {
         // Show confirmation dialog only when the key is bound to an Application Key.
         if node.hasApplicationKeyBoundTo(networkKey) {
             confirm(title: "Remove Key", message: "The selected key is bound to one or more Application Keys in the Node. When removed, those keys will also be removed and all models bound to them will be unbound, which may cause them to stop working.") { _ in
-                self.whenConnected() { alert in
-                    alert?.message = "Deleting Network Key..."
+                self.start("Deleting Network Key...") {
                     self.deleteNetworkKeyAt(indexPath)
                 }
             }
         } else {
             // Otherwise, just try removing it.
-            whenConnected() { alert in
-                alert?.message = "Deleting Network Key..."
+            start("Deleting Network Key...") {
                 self.deleteNetworkKeyAt(indexPath)
             }
         }
@@ -127,8 +125,7 @@ class NodeNetworkKeysViewController: ConnectableViewController, Editable {
 private extension NodeNetworkKeysViewController {
     
     @objc func readKeys(_ sender: Any) {
-        whenConnected { alert in
-            alert?.message = "Reading Network Keys..."
+        start("Reading Network Keys...") {
             MeshNetworkManager.instance.send(ConfigNetKeyGet(), to: self.node)
         }
     }
@@ -181,6 +178,13 @@ extension NodeNetworkKeysViewController: MeshNetworkDelegate {
             
         default:
             break
+        }
+    }
+    
+    func meshNetwork(_ meshNetwork: MeshNetwork, failedToDeliverMessage message: MeshMessage, to destination: Address, error: Error) {
+        done() {
+            self.presentAlert(title: "Error", message: error.localizedDescription)
+            self.refreshControl?.endRefreshing()
         }
     }
     

@@ -9,7 +9,7 @@
 import UIKit
 import nRFMeshProvision
 
-class ConfigurationViewController: ConnectableViewController {
+class ConfigurationViewController: ProgressViewController {
     
     // MARK: - Public properties
     
@@ -356,30 +356,26 @@ private extension ConfigurationViewController {
     }
     
     @objc func getCompositionData() {
-        whenConnected { alert in
-            alert?.message = "Requesting Composition Data..."
+        start("Requesting Composition Data...") {
             MeshNetworkManager.instance.send(ConfigCompositionDataGet(), to: self.node)
         }
     }
     
     func getTtl() {
-        whenConnected { alert in
-            alert?.message = "Requesting default TTL..."
+        start("Requesting default TTL...") {
             MeshNetworkManager.instance.send(ConfigDefaultTtlGet(), to: self.node)
         }
     }
     
     func setTtl(_ ttl: UInt8) {
-        whenConnected { alert in
-            alert?.message = "Setting TTL to \(ttl)..."
+        start("Setting TTL to \(ttl)...") {
             MeshNetworkManager.instance.send(ConfigDefaultTtlSet(ttl: ttl), to: self.node)
         }
     }
     
     /// Sends a message to the node that will reset its state to unprovisioned.
     func resetNode() {
-        whenConnected() { alert in
-            alert?.message = "Resetting node..."
+        start("Resetting node...") {
             MeshNetworkManager.instance.send(ConfigNodeReset(), to: self.node)
         }
     }
@@ -438,6 +434,7 @@ extension ConfigurationViewController: MeshNetworkDelegate {
     func meshNetwork(_ meshNetwork: MeshNetwork, failedToDeliverMessage message: MeshMessage, to destination: Address, error: Error) {
         done() {
             self.presentAlert(title: "Error", message: error.localizedDescription)
+            self.refreshControl?.endRefreshing()
         }
     }
     

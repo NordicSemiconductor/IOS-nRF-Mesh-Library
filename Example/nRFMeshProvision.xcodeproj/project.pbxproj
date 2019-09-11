@@ -16,7 +16,7 @@
 		521215292315290F0059FB3D /* GroupControlViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 521215282315290F0059FB3D /* GroupControlViewController.swift */; };
 		5212152B23152A450059FB3D /* SectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5212152A23152A450059FB3D /* SectionView.swift */; };
 		5212152D231545D40059FB3D /* ModelGroupCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5212152C231545D40059FB3D /* ModelGroupCell.swift */; };
-		5212152F231554190059FB3D /* ConnectableCollectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5212152E231554190059FB3D /* ConnectableCollectionViewController.swift */; };
+		5212152F231554190059FB3D /* ProgressCollectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5212152E231554190059FB3D /* ProgressCollectionViewController.swift */; };
 		521215312316C36B0059FB3D /* GenericLevelGroupCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 521215302316C36B0059FB3D /* GenericLevelGroupCell.swift */; };
 		522AFFDC22BBA34900521EDC /* ActionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 522AFFDB22BBA34900521EDC /* ActionCell.swift */; };
 		522AFFDE22BBBC6400521EDC /* NodeFeaturesCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 522AFFDD22BBBC6400521EDC /* NodeFeaturesCell.swift */; };
@@ -34,7 +34,7 @@
 		523F776622C609D90030EA6A /* NodeNetworkKeysViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 523F776522C609D90030EA6A /* NodeNetworkKeysViewController.swift */; };
 		523F776822C615CE0030EA6A /* NodeAppKeysViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 523F776722C615CE0030EA6A /* NodeAppKeysViewController.swift */; };
 		523F776A22C621F50030EA6A /* NodeAddNetworkKeyViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 523F776922C621F50030EA6A /* NodeAddNetworkKeyViewController.swift */; };
-		523F776C22C6324A0030EA6A /* ConnectableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 523F776B22C6324A0030EA6A /* ConnectableViewController.swift */; };
+		523F776C22C6324A0030EA6A /* ProgressViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 523F776B22C6324A0030EA6A /* ProgressViewController.swift */; };
 		523F776E22C63EAD0030EA6A /* NodeAddAppKeyViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 523F776D22C63EAD0030EA6A /* NodeAddAppKeyViewController.swift */; };
 		523F777022C64FD20030EA6A /* ConfigMessages.swift in Sources */ = {isa = PBXBuildFile; fileRef = 523F776F22C64FD20030EA6A /* ConfigMessages.swift */; };
 		523F777922CB57190030EA6A /* ModelViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 523F777822CB57190030EA6A /* ModelViewController.swift */; };
@@ -115,7 +115,7 @@
 		521215282315290F0059FB3D /* GroupControlViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupControlViewController.swift; sourceTree = "<group>"; };
 		5212152A23152A450059FB3D /* SectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SectionView.swift; sourceTree = "<group>"; };
 		5212152C231545D40059FB3D /* ModelGroupCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelGroupCell.swift; sourceTree = "<group>"; };
-		5212152E231554190059FB3D /* ConnectableCollectionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectableCollectionViewController.swift; sourceTree = "<group>"; };
+		5212152E231554190059FB3D /* ProgressCollectionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgressCollectionViewController.swift; sourceTree = "<group>"; };
 		521215302316C36B0059FB3D /* GenericLevelGroupCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericLevelGroupCell.swift; sourceTree = "<group>"; };
 		522AFFDB22BBA34900521EDC /* ActionCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionCell.swift; sourceTree = "<group>"; };
 		522AFFDD22BBBC6400521EDC /* NodeFeaturesCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NodeFeaturesCell.swift; sourceTree = "<group>"; };
@@ -133,7 +133,7 @@
 		523F776522C609D90030EA6A /* NodeNetworkKeysViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NodeNetworkKeysViewController.swift; sourceTree = "<group>"; };
 		523F776722C615CE0030EA6A /* NodeAppKeysViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NodeAppKeysViewController.swift; sourceTree = "<group>"; };
 		523F776922C621F50030EA6A /* NodeAddNetworkKeyViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NodeAddNetworkKeyViewController.swift; sourceTree = "<group>"; };
-		523F776B22C6324A0030EA6A /* ConnectableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectableViewController.swift; sourceTree = "<group>"; };
+		523F776B22C6324A0030EA6A /* ProgressViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgressViewController.swift; sourceTree = "<group>"; };
 		523F776D22C63EAD0030EA6A /* NodeAddAppKeyViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NodeAddAppKeyViewController.swift; sourceTree = "<group>"; };
 		523F776F22C64FD20030EA6A /* ConfigMessages.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigMessages.swift; sourceTree = "<group>"; };
 		523F777822CB57190030EA6A /* ModelViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelViewController.swift; sourceTree = "<group>"; };
@@ -333,8 +333,8 @@
 			isa = PBXGroup;
 			children = (
 				529B756C223FE7F1008F1CE7 /* RootViewController.swift */,
-				523F776B22C6324A0030EA6A /* ConnectableViewController.swift */,
-				5212152E231554190059FB3D /* ConnectableCollectionViewController.swift */,
+				523F776B22C6324A0030EA6A /* ProgressViewController.swift */,
+				5212152E231554190059FB3D /* ProgressCollectionViewController.swift */,
 				52835256227AED670097B949 /* Network */,
 				52518B2F22E0B14500A1FD1E /* Groups */,
 				52835255227AED0A0097B949 /* Settings */,
@@ -708,7 +708,7 @@
 				529B764722522D37008F1CE7 /* UITableView+EmptyView.swift in Sources */,
 				52313FEE22EAFB090074325A /* SubscribeViewController.swift in Sources */,
 				5212152B23152A450059FB3D /* SectionView.swift in Sources */,
-				5212152F231554190059FB3D /* ConnectableCollectionViewController.swift in Sources */,
+				5212152F231554190059FB3D /* ProgressCollectionViewController.swift in Sources */,
 				523F776A22C621F50030EA6A /* NodeAddNetworkKeyViewController.swift in Sources */,
 				5283528022806C280097B949 /* ProvisioningViewController.swift in Sources */,
 				52835269227B2BAE0097B949 /* ScannerTableViewController.swift in Sources */,
@@ -735,7 +735,7 @@
 				523F776622C609D90030EA6A /* NodeNetworkKeysViewController.swift in Sources */,
 				607FACD61AFB9204008FA782 /* AppDelegate.swift in Sources */,
 				52DAA5E4225B93320041C43A /* EditRangesViewController.swift in Sources */,
-				523F776C22C6324A0030EA6A /* ConnectableViewController.swift in Sources */,
+				523F776C22C6324A0030EA6A /* ProgressViewController.swift in Sources */,
 				52DAA5E6225B957B0041C43A /* RangeCell.swift in Sources */,
 				529B756D223FE7F1008F1CE7 /* RootViewController.swift in Sources */,
 				523F776822C615CE0030EA6A /* NodeAppKeysViewController.swift in Sources */,

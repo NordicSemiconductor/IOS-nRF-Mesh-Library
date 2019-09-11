@@ -14,7 +14,7 @@ protocol AppKeyDelegate {
     func keyAdded()
 }
 
-class NodeAddAppKeyViewController: ConnectableViewController {
+class NodeAddAppKeyViewController: ProgressViewController {
     
     // MARK: - Outlets and Actions
     
@@ -28,8 +28,7 @@ class NodeAddAppKeyViewController: ConnectableViewController {
             return
         }
         let selectedAppKey = keys[selectedIndexPath.row]
-        whenConnected() { alert in
-            alert?.message = "Adding Application Key..."
+        start("Adding Application Key...") {
             MeshNetworkManager.instance.send(ConfigAppKeyAdd(applicationKey: selectedAppKey), to: self.node)
         }
     }
@@ -134,6 +133,12 @@ extension NodeAddAppKeyViewController: MeshNetworkDelegate {
         default:
             // Ignore
             break
+        }
+    }
+    
+    func meshNetwork(_ meshNetwork: MeshNetwork, failedToDeliverMessage message: MeshMessage, to destination: Address, error: Error) {
+        done() {
+            self.presentAlert(title: "Error", message: error.localizedDescription)
         }
     }
     

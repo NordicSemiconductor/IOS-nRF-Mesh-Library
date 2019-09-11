@@ -14,7 +14,7 @@ protocol PublicationDelegate {
     func publicationChanged()
 }
 
-class SetPublicationViewController: ConnectableViewController {
+class SetPublicationViewController: ProgressViewController {
     
     // MARK: - Outlets & Actions
     
@@ -315,8 +315,7 @@ private extension SetPublicationViewController {
         guard let destination = destination, let applicationKey = applicationKey else {
             return
         }
-        whenConnected { alert in
-            alert?.message = "Setting Model Publication..."
+        start("Setting Model Publication...") {
             let publish = Publish(to: destination, using: applicationKey,
                                   usingFriendshipMaterial: self.friendshipCredentialsFlagSwitch.isOn, ttl: self.ttl,
                                   periodSteps: self.periodSteps, periodResolution: self.periodResolution,
@@ -391,6 +390,12 @@ extension SetPublicationViewController: MeshNetworkDelegate {
             
         default:
             break
+        }
+    }
+    
+    func meshNetwork(_ meshNetwork: MeshNetwork, failedToDeliverMessage message: MeshMessage, to destination: Address, error: Error) {
+        done() {
+            self.presentAlert(title: "Error", message: error.localizedDescription)
         }
     }
     

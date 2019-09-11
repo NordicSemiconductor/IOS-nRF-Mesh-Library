@@ -14,7 +14,7 @@ protocol BindAppKeyDelegate {
     func keyBound()
 }
 
-class ModelBindAppKeyViewController: ConnectableViewController {
+class ModelBindAppKeyViewController: ProgressViewController {
     
     // MARK: - Outlets and Actions
     
@@ -93,8 +93,7 @@ private extension ModelBindAppKeyViewController {
             return
         }
         let selectedAppKey = keys[selectedIndexPath.row]
-        whenConnected() { alert in
-            alert?.message = "Binding Application Key..."
+        start("Binding Application Key...") {
             MeshNetworkManager.instance.send(ConfigModelAppBind(applicationKey: selectedAppKey, to: self.model), to: self.model)
         }
     }
@@ -140,6 +139,12 @@ extension ModelBindAppKeyViewController: MeshNetworkDelegate {
         default:
             // Ignore
             break
+        }
+    }
+    
+    func meshNetwork(_ meshNetwork: MeshNetwork, failedToDeliverMessage message: MeshMessage, to destination: Address, error: Error) {
+        done() {
+            self.presentAlert(title: "Error", message: error.localizedDescription)
         }
     }
     
