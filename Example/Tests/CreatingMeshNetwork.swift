@@ -55,53 +55,53 @@ class CreatingMeshNetwork: XCTestCase {
         let manager = MeshNetworkManager(using: TestStorage())
         let network = manager.createNewMeshNetwork(withName: "Test network", by: "Test Provisioner")
         
-        let element1 = Element(location: .first)
-        element1.add(model: Model(sigModelId: 0x1001)) // Generic On/Off Client
-        element1.add(model: Model(sigModelId: 0x1003)) // Generic Level Client
+        let element0 = Element(location: .first)
+        element0.add(model: Model(sigModelId: 0x1001)) // Generic On/Off Client
+        element0.add(model: Model(sigModelId: 0x1003)) // Generic Level Client
         
-        let element2 = Element(location: .second)
-        element2.add(model: Model(sigModelId: 0x1005)) // Generic Default Transition Time Client
-        element2.add(model: Model(sigModelId: 0x1007)) // Generic Power OnOff Setup Server
-        element2.add(model: Model(sigModelId: 0x1009)) // Generic Power Level Server
+        let element1 = Element(location: .second)
+        element1.add(model: Model(sigModelId: 0x1005)) // Generic Default Transition Time Client
+        element1.add(model: Model(sigModelId: 0x1007)) // Generic Power OnOff Setup Server
+        element1.add(model: Model(sigModelId: 0x1009)) // Generic Power Level Server
         
         // Define local Elements. A Primary Element will be added automatically at index 0.
-        manager.localElements = [element1, element2]
+        manager.localElements = [element0, element1]
         
         XCTAssertEqual(network.nodes.count, 1)
-        XCTAssertEqual(network.nodes.first?.elements.count, 3)
-        XCTAssertEqual(network.nodes.first?.elementsCount, 3)
+        XCTAssertEqual(network.nodes.first?.elements.count, 2)
+        XCTAssertEqual(network.nodes.first?.elementsCount, 2)
         // Verify the Primary Element.
-        XCTAssertEqual(network.nodes.first?.elements[1].models.count, 2)
-        XCTAssert(network.nodes.first?.elements[1].contains(modelWithIdentifier: 0x1001) ?? false)
-        XCTAssert(network.nodes.first?.elements[1].contains(modelWithIdentifier: 0x1003) ?? false)
+        XCTAssertEqual(network.nodes.first?.elements[0].models.count, 6)
+        XCTAssert(network.nodes.first?.elements[0].contains(modelWithIdentifier: 0x1001) ?? false)
+        XCTAssert(network.nodes.first?.elements[0].contains(modelWithIdentifier: 0x1003) ?? false)
         // Verify element 1 and 2.
-        XCTAssertEqual(network.nodes.first?.elements[2].models.count, 3)
-        XCTAssertFalse(network.nodes.first?.elements[2].contains(modelWithIdentifier: 0x1001) ?? true)
-        XCTAssertFalse(network.nodes.first?.elements[2].contains(modelWithIdentifier: 0x1003) ?? true)
-        XCTAssert(network.nodes.first?.elements[2].contains(modelWithIdentifier: 0x1005) ?? false)
-        XCTAssert(network.nodes.first?.elements[2].contains(modelWithIdentifier: 0x1007) ?? false)
-        XCTAssert(network.nodes.first?.elements[2].contains(modelWithIdentifier: 0x1009) ?? false)
+        XCTAssertEqual(network.nodes.first?.elements[1].models.count, 3)
+        XCTAssertFalse(network.nodes.first?.elements[1].contains(modelWithIdentifier: 0x1001) ?? true)
+        XCTAssertFalse(network.nodes.first?.elements[1].contains(modelWithIdentifier: 0x1003) ?? true)
+        XCTAssert(network.nodes.first?.elements[1].contains(modelWithIdentifier: 0x1005) ?? false)
+        XCTAssert(network.nodes.first?.elements[1].contains(modelWithIdentifier: 0x1007) ?? false)
+        XCTAssert(network.nodes.first?.elements[1].contains(modelWithIdentifier: 0x1009) ?? false)
     }
     
     func testNextAvailableUnicastAddress() {
         let manager = MeshNetworkManager(using: TestStorage())
         let network = manager.createNewMeshNetwork(withName: "Test network", by: "Test Provisioner")
         
-        let element1 = Element(location: .first)
-        element1.add(model: Model(sigModelId: 0x1001)) // Generic On/Off Client
-        element1.add(model: Model(sigModelId: 0x1003)) // Generic Level Client
+        let element0 = Element(location: .first)
+        element0.add(model: Model(sigModelId: 0x1001)) // Generic On/Off Client
+        element0.add(model: Model(sigModelId: 0x1003)) // Generic Level Client
         
-        let element2 = Element(location: .second)
-        element2.add(model: Model(sigModelId: 0x1005)) // Generic Default Transition Time Client
-        element2.add(model: Model(sigModelId: 0x1007)) // Generic Power OnOff Setup Server
-        element2.add(model: Model(sigModelId: 0x1009)) // Generic Power Level Server
+        let element1 = Element(location: .second)
+        element1.add(model: Model(sigModelId: 0x1005)) // Generic Default Transition Time Client
+        element1.add(model: Model(sigModelId: 0x1007)) // Generic Power OnOff Setup Server
+        element1.add(model: Model(sigModelId: 0x1009)) // Generic Power Level Server
         
-        // Define local Elements. A Primary Element will be added automatically at index 0.
-        manager.localElements = [element1, element2]
+        // Define local Elements. Required models will automatically be added to element 0.
+        manager.localElements = [element0, element1]
         
         let provisioner = network.localProvisioner
         XCTAssertNotNil(provisioner)
-        XCTAssertEqual(network.nextAvailableUnicastAddress(for: provisioner!), 0x0004)
+        XCTAssertEqual(network.nextAvailableUnicastAddress(for: provisioner!), 0x0003)
     }
     
     func testCuttingElements() {
@@ -114,35 +114,45 @@ class CreatingMeshNetwork: XCTestCase {
         XCTAssertNotNil(node)
         XCTAssertNoThrow(try network.add(node: node!))
         
-        let element1 = Element(location: .first)
-        element1.add(model: Model(sigModelId: 0x1001)) // Generic On/Off Client
-        element1.add(model: Model(sigModelId: 0x1003)) // Generic Level Client
+        let element0 = Element(location: .first)
+        element0.add(model: Model(sigModelId: 0x1001)) // Generic On/Off Client
+        element0.add(model: Model(sigModelId: 0x1003)) // Generic Level Client
         
-        let element2 = Element(location: .second)
-        element2.add(model: Model(sigModelId: 0x1005)) // Generic Default Transition Time Client
-        element2.add(model: Model(sigModelId: 0x1007)) // Generic Power OnOff Setup Server
-        element2.add(model: Model(sigModelId: 0x1009)) // Generic Power Level Server
+        let element1 = Element(location: .second)
+        element1.add(model: Model(sigModelId: 0x1005)) // Generic Default Transition Time Client
+        element1.add(model: Model(sigModelId: 0x1007)) // Generic Power OnOff Setup Server
+        element1.add(model: Model(sigModelId: 0x1009)) // Generic Power Level Server
         
-        let element3 = Element(location: .third)
+        let element2 = Element(location: .third)
+        let element3 = Element(location: .fourth)
+        element3.add(model: Model(sigModelId: 0x1009)) // Generic Power Level Server
         
-        // Define local Elements. A Primary Element will be added automatically at index 0.
-        // The element3 will be removed, as it has 0 Models.
-        manager.localElements = [element1, element2, element3]
+        // Define local Elements.
+        // Configuration Server and Client and Health Server and Client
+        // will be added automatically to the first element.
+        // The element 2 will be removed, as it has 0 Models.
+        manager.localElements = [element0, element1, element2, element3]
         
+        // Only the empty element should be removed.
         XCTAssertEqual(manager.localElements.count, 3)
-        XCTAssertEqual(manager.localElements[1].location, .first)
-        XCTAssertEqual(manager.localElements[2].location, .second)
+        XCTAssertEqual(manager.localElements[0].location, .first)
+        XCTAssertEqual(manager.localElements[1].location, .second)
+        XCTAssertEqual(manager.localElements[2].location, .fourth)
         
         let cutElements = network.localProvisioner?.node?.elements
         XCTAssertNotNil(cutElements)
         XCTAssertEqual(cutElements!.count, 2) // There were only 2 addreses available.
-        XCTAssertGreaterThan(cutElements![0].models.count, 3)
+        XCTAssertEqual(cutElements![0].models.count, 6)
         XCTAssert(cutElements![0].contains(model: .configurationServer))
         XCTAssert(cutElements![0].contains(model: .configurationClient))
         XCTAssert(cutElements![0].contains(model: .healthServer))
-        XCTAssertEqual(cutElements![1].models.count, 2)
-        XCTAssertEqual(cutElements![1].models[0].modelIdentifier, 0x1001)
-        XCTAssertEqual(cutElements![1].models[1].modelIdentifier, 0x1003)
+        XCTAssert(cutElements![0].contains(model: .healthClient))
+        XCTAssertEqual(cutElements![0].models[4].modelIdentifier, 0x1001)
+        XCTAssertEqual(cutElements![0].models[5].modelIdentifier, 0x1003)
+        XCTAssertEqual(cutElements![1].models.count, 3)
+        XCTAssertEqual(cutElements![1].models[0].modelIdentifier, 0x1005)
+        XCTAssertEqual(cutElements![1].models[1].modelIdentifier, 0x1007)
+        XCTAssertEqual(cutElements![1].models[2].modelIdentifier, 0x1009)
     }
 
 }

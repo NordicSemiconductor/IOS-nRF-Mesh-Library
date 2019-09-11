@@ -25,7 +25,7 @@ class NetworkPdus: XCTestCase {
         
         let data = Data(hex: "68cab5c5348a230afba8c63d4e686364979deaf4fd40961145939cda0e")!
         
-        let networkPdu = NetworkPdu(decode: data, usingNetworkKey: networkKey)
+        let networkPdu = NetworkPdu(decode: data, ofType: .networkPdu, usingNetworkKey: networkKey)
         XCTAssertNotNil(networkPdu)
         XCTAssertEqual(networkPdu!.ivi, 0x0)
         XCTAssertEqual(networkPdu!.nid, 0x68)
@@ -43,7 +43,7 @@ class NetworkPdus: XCTestCase {
         
         let data = Data(hex: "68eca487516765b5e5bfdacbaf6cb7fb6bff871f035444ce83a670df")!
         
-        let networkPdu = NetworkPdu(decode: data, usingNetworkKey: networkKey)
+        let networkPdu = NetworkPdu(decode: data, ofType: .networkPdu, usingNetworkKey: networkKey)
         XCTAssertNotNil(networkPdu)
         XCTAssertEqual(networkPdu!.ivi, 0x0)
         XCTAssertEqual(networkPdu!.nid, 0x68)
@@ -62,7 +62,7 @@ class NetworkPdus: XCTestCase {
         
         let data = Data(hex: "68eca487516765b5e5bfdacbaf6cb7fb6bff871f035444ce83a670df")!
         
-        let networkPdu = NetworkPdu(decode: data, usingNetworkKey: networkKey)
+        let networkPdu = NetworkPdu(decode: data, ofType: .networkPdu, usingNetworkKey: networkKey)
         XCTAssertNotNil(networkPdu)
         XCTAssertEqual(networkPdu!.ivi, 0x0)
         XCTAssertEqual(networkPdu!.nid, 0x68)
@@ -80,7 +80,7 @@ class NetworkPdus: XCTestCase {
         
         let data = Data(hex: "68eca487516765b5e5bfdacbaf6cb7fb6bff871f035444ce83a670df")!
         
-        let networkPdu = NetworkPdu(decode: data, usingNetworkKey: networkKey)
+        let networkPdu = NetworkPdu(decode: data, ofType: .networkPdu, usingNetworkKey: networkKey)
         XCTAssertNotNil(networkPdu)
         XCTAssertEqual(networkPdu!.ivi, 0x0)
         XCTAssertEqual(networkPdu!.nid, 0x68)
@@ -97,7 +97,7 @@ class NetworkPdus: XCTestCase {
         
         let data = Data(hex: "68eca487516765b5e5bfdacbaf6cb7fb6bff871f035444ce83a670df")!
         
-        let networkPdu = NetworkPdu(decode: data, usingNetworkKey: networkKey)
+        let networkPdu = NetworkPdu(decode: data, ofType: .networkPdu, usingNetworkKey: networkKey)
         XCTAssertNil(networkPdu)
     }
     
@@ -107,7 +107,7 @@ class NetworkPdus: XCTestCase {
         
         let data = Data(hex: "68eca487516765b5e5bfdacbaf6cb7fb6bff871f035444ce83a670df")!
         
-        let networkPdu = NetworkPdu(decode: data, usingNetworkKey: networkKey)
+        let networkPdu = NetworkPdu(decode: data, ofType: .networkPdu, usingNetworkKey: networkKey)
         XCTAssertNil(networkPdu)
     }
     
@@ -117,7 +117,7 @@ class NetworkPdus: XCTestCase {
         
         let otherData = Data(hex: "68eca487516765b5e5bfdacbaf6cb7fb7bff871f035444ce83a670df")!
         
-        let networkPdu = NetworkPdu(decode: otherData, usingNetworkKey: networkKey)
+        let networkPdu = NetworkPdu(decode: otherData, ofType: .networkPdu, usingNetworkKey: networkKey)
         XCTAssertNil(networkPdu)
     }
     
@@ -127,7 +127,7 @@ class NetworkPdus: XCTestCase {
         
         let data = Data(hex: "69eca487516765b5e5bfdacbaf6cb7fb6bff871f035444ce83a670df")!
         
-        let networkPdu = NetworkPdu(decode: data, usingNetworkKey: networkKey)
+        let networkPdu = NetworkPdu(decode: data, ofType: .networkPdu, usingNetworkKey: networkKey)
         XCTAssertNil(networkPdu)
     }
 

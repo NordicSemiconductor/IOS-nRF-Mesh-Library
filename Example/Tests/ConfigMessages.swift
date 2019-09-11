@@ -61,7 +61,8 @@ class ConfigMessages: XCTestCase {
         meshNetwork.applicationKeys.append(applicationKey)
         applicationKey.meshNetwork = meshNetwork
         
-        let message = ConfigAppKeyList(networkKey: networkKey, applicationKeys: [applicationKey], status: .success)
+        let request = ConfigAppKeyGet(networkKey: networkKey)
+        let message = ConfigAppKeyList(responseTo: request, with: [applicationKey])
         
         XCTAssertEqual(message.networkKeyIndex, 0x123)
         XCTAssertEqual(message.applicationKeyIndexes, [0x456])
