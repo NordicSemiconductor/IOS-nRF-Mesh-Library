@@ -29,7 +29,7 @@ private extension Array where Element == Section {
     
 }
 
-class GroupControlViewController: ConnectableCollectionViewController {
+class GroupControlViewController: ProgressCollectionViewController {
     
     // MARK: - Properties
     
@@ -159,8 +159,7 @@ extension GroupControlViewController: GroupDelegate {
 extension GroupControlViewController: ModelGroupViewCellDelegate {
     
     func send(_ message: MeshMessage, description: String, using applicationKey: ApplicationKey) {
-        whenConnected { alert in
-            alert?.message = description
+        start(description) {
             MeshNetworkManager.instance.send(message, to: self.group, using: applicationKey)
         }
     }

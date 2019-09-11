@@ -14,7 +14,7 @@ protocol NetworkKeyDelegate {
     func keyAdded()
 }
 
-class NodeAddNetworkKeyViewController: ConnectableViewController {
+class NodeAddNetworkKeyViewController: ProgressViewController {
     
     // MARK: - Outlets and Actions
     
@@ -28,8 +28,7 @@ class NodeAddNetworkKeyViewController: ConnectableViewController {
             return
         }
         let selectedNetworkKey = keys[selectedIndexPath.row]
-        whenConnected() { alert in
-            alert?.message = "Adding Network Key..."
+        start("Adding Network Key...") {
             MeshNetworkManager.instance.send(ConfigNetKeyAdd(networkKey: selectedNetworkKey), to: self.node)
         }
     }
@@ -131,6 +130,12 @@ extension NodeAddNetworkKeyViewController: MeshNetworkDelegate {
         default:
             // Ignore
             break
+        }
+    }
+    
+    func meshNetwork(_ meshNetwork: MeshNetwork, failedToDeliverMessage message: MeshMessage, to destination: Address, error: Error) {
+        done() {
+            self.presentAlert(title: "Error", message: error.localizedDescription)
         }
     }
     

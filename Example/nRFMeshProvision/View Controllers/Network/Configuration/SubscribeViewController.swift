@@ -14,7 +14,7 @@ protocol SubscriptionDelegate {
     func subscriptionAdded()
 }
 
-class SubscribeViewController: ConnectableViewController {
+class SubscribeViewController: ProgressViewController {
     
     // MARK: - Outlets & Actions
     
@@ -93,8 +93,7 @@ private extension SubscribeViewController {
             return
         }
         let group = groups[selectedIndexPath.row]
-        whenConnected { alert in
-            alert?.message = "Subscribing..."
+        start("Subscribing...") {
             guard let message: ConfigMessage =
                 ConfigModelSubscriptionAdd(group: group, to: self.model) ??
                 ConfigModelSubscriptionVirtualAddressAdd(group: group, to: self.model) else {
@@ -145,6 +144,12 @@ extension SubscribeViewController: MeshNetworkDelegate {
             
         default:
             break
+        }
+    }
+    
+    func meshNetwork(_ meshNetwork: MeshNetwork, failedToDeliverMessage message: MeshMessage, to destination: Address, error: Error) {
+        done() {
+            self.presentAlert(title: "Error", message: error.localizedDescription)
         }
     }
     

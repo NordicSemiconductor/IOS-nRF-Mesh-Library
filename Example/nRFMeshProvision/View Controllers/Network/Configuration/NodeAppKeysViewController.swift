@@ -9,7 +9,7 @@
 import UIKit
 import nRFMeshProvision
 
-class NodeAppKeysViewController: ConnectableViewController, Editable {
+class NodeAppKeysViewController: ProgressViewController, Editable {
     
     // MARK: - Outlets and Actions
     
@@ -104,15 +104,13 @@ class NodeAppKeysViewController: ConnectableViewController, Editable {
         // Show confirmation dialog only when the key is bound to some Models.
         if node.hasModelBoundTo(applicationKey) {
             confirm(title: "Remove Key", message: "The selected key is bound to one or more models in the Node. When removed, it will be unbound automatically, and the models may stop working.") { _ in
-                self.whenConnected() { alert in
-                    alert?.message = "Deleting Application Key..."
+                self.start("Deleting Application Key...") {
                     self.deleteApplicationKeyAt(indexPath)
                 }
             }
         } else {
             // Otherwise, just try removing it.
-            whenConnected() { alert in
-                alert?.message = "Deleting Application Key..."
+            start("Deleting Application Key...") {
                 self.deleteApplicationKeyAt(indexPath)
             }
         }
@@ -122,8 +120,7 @@ class NodeAppKeysViewController: ConnectableViewController, Editable {
 private extension NodeAppKeysViewController {
     
     @objc func readKeys(_ sender: Any) {
-        whenConnected { alert in
-            alert?.message = "Reading Application Keys..."
+        start("Reading Application Keys...") {
             MeshNetworkManager.instance.send(ConfigAppKeyGet(networkKey: self.node.networkKeys.first!), to: self.node)
         }
     }
@@ -187,6 +184,13 @@ extension NodeAppKeysViewController: MeshNetworkDelegate {
             
         default:
             break
+        }
+    }
+    
+    func meshNetwork(_ meshNetwork: MeshNetwork, failedToDeliverMessage message: MeshMessage, to destination: Address, error: Error) {
+        done() {
+            self.presentAlert(title: "Error", message: error.localizedDescription)
+            self.refreshControl?.endRefreshing()
         }
     }
     
