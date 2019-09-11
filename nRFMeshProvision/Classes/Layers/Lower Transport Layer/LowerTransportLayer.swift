@@ -152,7 +152,7 @@ internal class LowerTransportLayer {
     func send(upperTransportPdu pdu: UpperTransportPdu, asSegmentedMessage isSegmented: Bool,
               usingNetworkKey networkKey: NetworkKey) {
         guard let provisionerNode = meshNetwork.localProvisioner?.node else {
-                return
+            return
         }
         let ttl = provisionerNode.defaultTTL ?? networkManager.defaultTtl
         

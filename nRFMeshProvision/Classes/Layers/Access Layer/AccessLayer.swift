@@ -9,6 +9,7 @@ import Foundation
 
 internal class AccessLayer {
     let networkManager: NetworkManager
+    let meshNetwork: MeshNetwork
     /// Last used Transaction Identifier.
     var lastTid = UInt8.random(in: UInt8.min...UInt8.max)
     /// The timestamp of the last transaction message sent.
@@ -16,6 +17,7 @@ internal class AccessLayer {
     
     init(_ networkManager: NetworkManager) {
         self.networkManager = networkManager
+        self.meshNetwork = networkManager.meshNetwork!
     }
     
     /// This method handles the Upper Transport PDU and reads the Opcode.
@@ -24,11 +26,12 @@ internal class AccessLayer {
     /// for the app to handle.
     ///
     /// - parameter upperTransportPdu: The decoded Upper Transport PDU.
-    func handle(upperTransportPdu: UpperTransportPdu) {
+    /// - parameter keySet: The keySet that the message was encrypted with.
+    func handle(upperTransportPdu: UpperTransportPdu, sentWith keySet: KeySet) {
         guard let accessPdu = AccessPdu(fromUpperTransportPdu: upperTransportPdu) else {
             return
         }
-        handle(accessPdu: accessPdu)
+        handle(accessPdu: accessPdu, sentWith: keySet)
     }
     
     /// Sends the MeshMessage to the destination. The message is encrypted
@@ -37,10 +40,10 @@ internal class AccessLayer {
     /// Before sending, this method updates the transaction identifier (TID)
     /// for message extending `TransactionMessage`.
     ///
-    /// - parameter message: The Mesh Message to send.
-    /// - parameter element: The source Element.
-    /// - parameter destination: The destination Address. This can be any
-    ///                          valid mesh Address.
+    /// - parameter message:        The Mesh Message to send.
+    /// - parameter element:        The source Element.
+    /// - parameter destination:    The destination Address. This can be any
+    ///                             valid mesh Address.
     /// - parameter applicationKey: The Application Key to sign the message with.
     func send(_ message: MeshMessage,
               from element: Element, to destination: MeshAddress,
@@ -78,16 +81,69 @@ internal class AccessLayer {
         }
         
         print("Sending \(m) from \(element.name ?? "Element \(element.index + 1)") to \(destination.hex)") // TODO: Remove me
-        networkManager.upperTransportLayer.send(m, from: element, to: destination, using: applicationKey)
+        let keySet = AccessKeySet(applicationKey: applicationKey)
+        networkManager.upperTransportLayer.send(m, from: element, to: destination, using: keySet)
     }
     
     /// Sends the ConfigMessage to the destination. The message is encrypted
     /// using the Device Key which belongs to the target Node, and first
     /// Network Key known to this Node.
     ///
-    /// - parameter message: The Mesh Config Message to send.
+    /// - parameter message:     The Mesh Config Message to send.
     /// - parameter destination: The destination Address. This must be a Unicast Address.
     func send(_ message: ConfigMessage, to destination: Address) {
+        guard let localProvisioner = networkManager.meshNetwork?.localProvisioner,
+              let element = localProvisioner.node?.elements.first else {
+                print("Error: Local Provisioner has no Unicast Address assigned")
+                networkManager.notifyAbout(AccessError.invalidSource,
+                                           duringSendingMessage: message, to: destination)
+                return
+        }
+        guard destination.isUnicast else {
+                print("Error: Address: 0x\(destination.hex) is not a Unicast Address")
+                networkManager.notifyAbout(MeshMessageError.invalidAddress,
+                                           duringSendingMessage: message, to: destination)
+                return
+        }
+        guard let node = meshNetwork.node(withAddress: destination),
+              var networkKey = node.networkKeys.first else {
+                print("Error: Node or Network Key not found")
+                networkManager.notifyAbout(AccessError.invalidDestination,
+                                           duringSendingMessage: message, to: destination)
+                return
+        }
+        
+        // ConfigNetKeyDelete must not be signed using the key that is being deleted.
+        if let netKeyDelete = message as? ConfigNetKeyDelete,
+           netKeyDelete.networkKeyIndex == networkKey.index {
+            guard node.networkKeys.count > 1 else {
+                print("Error: Cannot remove the last Network Key")
+                networkManager.notifyAbout(AccessError.cannotRemove,
+                                           duringSendingMessage: message, to: destination)
+                return
+            }
+            networkKey = node.networkKeys.last!
+        }
+        
+        if networkManager.foundationLayer.handle(configMessage: message, to: destination) {
+            print("Sending \(message) to 0x\(destination.hex)") // TODO: Remove me
+            let keySet = DeviceKeySet(networkKey: networkKey, deviceKey: node.deviceKey)
+            networkManager.upperTransportLayer.send(message,
+                                                    from: element, to: MeshAddress(destination),
+                                                    using: keySet)
+        }
+    }
+    
+    /// Replies to the received message, which was sent with the given key set,
+    /// with the given message.
+    ///
+    /// - parameter message:     The response message to be sent.
+    /// - parameter element:     The source Element.
+    /// - parameter destination: The destination address. This must be a Unicast Address.
+    /// - parameter keySet:      The set of keys that the message was encrypted with.
+    func reply(with message: MeshMessage,
+               from element: Element, to destination: Address,
+               using keySet: KeySet) {
         guard let localProvisioner = networkManager.meshNetwork?.localProvisioner,
             localProvisioner.hasConfigurationCapabilities else {
                 print("Error: Local Provisioner has no Unicast Address assigned")
@@ -101,10 +157,11 @@ internal class AccessLayer {
                                        duringSendingMessage: message, to: destination)
             return
         }
-        if networkManager.foundationLayer.handle(configMessage: message, to: destination) {
-            print("Sending \(message) to 0x\(destination.hex)") // TODO: Remove me
-            networkManager.upperTransportLayer.send(message, to: destination)
-        }
+        
+        print("Replying with \(message) to 0x\(destination.hex)") // TODO: Remove me
+        networkManager.upperTransportLayer.send(message,
+                                                from: element, to: MeshAddress(destination),
+                                                using: keySet)
     }
     
 }
@@ -115,7 +172,8 @@ private extension AccessLayer {
     /// sends to `handle(meshMessage:from)` if message was successfully created.
     ///
     /// - parameter accessPdu: The Access PDU received.
-    func handle(accessPdu: AccessPdu) {
+    /// - parameter keySet:    The set of keys that the message was encrypted with.
+    func handle(accessPdu: AccessPdu, sentWith keySet: KeySet) {
         var MessageType: MeshMessage.Type?
         
         switch accessPdu.opCode {
@@ -437,7 +495,8 @@ private extension AccessLayer {
             print("\(message) received") // TODO: Remove me
             if let configMessage = message as? ConfigMessage {
                 networkManager.foundationLayer.handle(configMessage: configMessage,
-                                                      from: accessPdu.source, to: accessPdu.destination)
+                                                      sentFrom: accessPdu.source, to: accessPdu.destination,
+                                                      with: keySet)
             }
             networkManager.notifyAbout(newMessage: message, from: accessPdu.source)
         }

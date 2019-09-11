@@ -63,63 +63,34 @@ internal struct UpperTransportPdu {
     }
     
     init(fromMeshMessage message: MeshMessage, sentFrom source: Address, to destination: MeshAddress,
-         usingApplicationKey key: ApplicationKey, sequence: UInt32, andIvIndex ivIndex: IvIndex) {
+         usingKeySet keySet: KeySet, sequence: UInt32) {
         self.message = message
         self.source = source
         self.destination = destination.address
+        self.sequence = sequence
         let accessPdu = message.accessPdu
         self.accessPdu = accessPdu
+        self.aid = keySet.aid
         
         // The nonce type is 0x01 for messages signed with Application Key and
         // 0x02 for messages signed using Device Key (Configuration Messages).
-        let type: UInt8 = 0x01
+        let type: UInt8 = aid != nil ? 0x01 : 0x02
         // ASZMIC is set to 1 for messages that shall be sent with high security
         // (64-bit TransMIC). This is possible only for Segmented Access Messages.
         let aszmic: UInt8 = message.security == .high && (accessPdu.count > 11 || message.isSegmented)  ? 1 : 0
         // SEQ is 24-bit value, in Big Endian.
         let seq = (Data() + sequence.bigEndian).dropFirst()
         
+        let ivIndex = keySet.networkKey.ivIndex
         let nonce = Data([type, aszmic << 7]) + seq
             + source.bigEndian
             + destination.address.bigEndian
             + ivIndex.index.bigEndian
         
-        self.aid = key.aid
-        self.sequence = sequence
         self.transportMicSize = aszmic == 0 ? 4 : 8
-        self.transportPdu = OpenSSLHelper().calculateCCM(accessPdu, withKey: key.key, nonce: nonce,
+        self.transportPdu = OpenSSLHelper().calculateCCM(accessPdu, withKey: keySet.accessKey, nonce: nonce,
                                                          andMICSize: transportMicSize,
                                                          withAdditionalData: destination.virtualLabel?.data)
-    }
-    
-    init(fromConfigMessage message: ConfigMessage, sentFrom source: Address, to destination: Address,
-         usingDeviceKey key: Data, sequence: UInt32, andIvIndex ivIndex: IvIndex) {
-        self.message = message
-        self.source = source
-        self.destination = destination
-        let accessPdu = message.accessPdu
-        self.accessPdu = accessPdu
-        
-        // The nonce type is 0x01 for messages signed with Application Key and
-        // 0x02 for messages signed using Device Key (Configuration Messages).
-        let type: UInt8 = 0x02
-        // ASZMIC is set to 1 for messages that shall be sent with high security
-        // (64-bit TransMIC). This is possible only for Segmented Access Messages.
-        let aszmic: UInt8 = message.security == .high && (accessPdu.count > 11 || message.isSegmented)  ? 1 : 0
-        // SEQ is 24-bit value, in Big Endian.
-        let seq = (Data() + sequence.bigEndian).dropFirst()
-        
-        let nonce = Data([type, aszmic << 7]) + seq
-            + source.bigEndian
-            + destination.bigEndian
-            + ivIndex.index.bigEndian
-        
-        self.aid = nil
-        self.sequence = sequence
-        self.transportMicSize = aszmic == 0 ? 4 : 8
-        self.transportPdu = OpenSSLHelper().calculateCCM(accessPdu, withKey: key, nonce: nonce,
-                                                         andMICSize: transportMicSize,
-                                                         withAdditionalData: nil)
     }
     
     /// This method tries to decode teh Access Message using a matching Application Key
@@ -128,7 +99,8 @@ internal struct UpperTransportPdu {
     /// - parameter accessMessage: The Lower Transport Layer Access Message received.
     /// - parameter meshNetwork: The mesh network for which the PDU should be decoded.
     /// - returns: The Upper Transport Layer PDU, of `nil` if none of the keys worked.
-    static func decode(_ accessMessage: AccessMessage, for meshNetwork: MeshNetwork) -> UpperTransportPdu? {
+    static func decode(_ accessMessage: AccessMessage, for meshNetwork: MeshNetwork)
+        -> (pdu: UpperTransportPdu, keySet: KeySet)? {
         // Was the message signed using Application Key?
         if let aid = accessMessage.aid {
             // When the message was sent to a Virtual Address, the message must be decoded
@@ -147,12 +119,14 @@ internal struct UpperTransportPdu {
                     if aid == applicationKey.aid,
                         let pdu = UpperTransportPdu(fromLowerTransportAccessMessage: accessMessage,
                                                     usingKey: applicationKey.key, for: group) {
-                        return pdu
+                        let keySet = AccessKeySet(applicationKey: applicationKey)
+                        return (pdu, keySet)
                     }
                     if let oldAid = applicationKey.oldAid, oldAid == applicationKey.aid, let key = applicationKey.oldKey,
                         let pdu = UpperTransportPdu(fromLowerTransportAccessMessage: accessMessage,
                                                     usingKey: key, for: group) {
-                        return pdu
+                        let keySet = AccessKeySet(applicationKey: applicationKey)
+                        return (pdu, keySet)
                     }
                 }
             }
@@ -162,14 +136,16 @@ internal struct UpperTransportPdu {
             if let deviceKey = meshNetwork.node(withAddress: accessMessage.source)?.deviceKey,
                 let pdu = UpperTransportPdu(fromLowerTransportAccessMessage: accessMessage,
                                             usingKey: deviceKey) {
-                return pdu
+                let keySet = DeviceKeySet(networkKey: accessMessage.networkKey, deviceKey: deviceKey)
+                return (pdu, keySet)
             }
             // On the other hand, if another Provisioner is sending Config Messages,
             // they will be signed using the local Provisioner's Device Key instead.
             if let deviceKey = meshNetwork.localProvisioner?.node?.deviceKey,
                 let pdu = UpperTransportPdu(fromLowerTransportAccessMessage: accessMessage,
                                             usingKey: deviceKey) {
-                return pdu
+                let keySet = DeviceKeySet(networkKey: accessMessage.networkKey, deviceKey: deviceKey)
+                return (pdu, keySet)
             }
         }
         print("Error: Decryption failed")

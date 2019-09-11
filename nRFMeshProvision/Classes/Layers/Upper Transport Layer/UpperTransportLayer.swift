@@ -27,8 +27,8 @@ internal class UpperTransportLayer {
         switch lowerTransportPdu.type {
         case .accessMessage:
             let accessMessage = lowerTransportPdu as! AccessMessage
-            if let upperTransportPdu = UpperTransportPdu.decode(accessMessage, for: meshNetwork) {
-                networkManager.accessLayer.handle(upperTransportPdu: upperTransportPdu)
+            if let (upperTransportPdu, keySet) = UpperTransportPdu.decode(accessMessage, for: meshNetwork) {
+                networkManager.accessLayer.handle(upperTransportPdu: upperTransportPdu, sentWith: keySet)
             }
         case .controlMessage:
             let controlMessage = lowerTransportPdu as! ControlMessage
@@ -48,79 +48,21 @@ internal class UpperTransportLayer {
     ///
     /// - parameter message: The message to be sent.
     /// - parameter element: The source Element.
-    /// - parameter destination: The destination address. This can be any type of
-    ///                          valid address.
-    /// - parameter applicationKey: The Application Key to sign the message with.
-    func send(_ message: MeshMessage, from element: Element, to destination: MeshAddress, using applicationKey: ApplicationKey) {
-        guard destination.address.isValidAddress else {
-            print("Error: Invalid address: \(destination.hex)")
-            networkManager.notifyAbout(MeshMessageError.invalidAddress,
-                                       duringSendingMessage: message, to: destination.address)
-            return
-        }
-        
+    /// - parameter destination: The destination address.
+    /// - parameter keySet:  The set of keys to encrypt the message with.
+    func send(_ message: MeshMessage,
+              from element: Element, to destination: MeshAddress,
+              using keySet: KeySet) {
         // Get the current sequence number for local Provisioner's source address.
         let source = element.unicastAddress
         let sequence = UInt32(defaults.integer(forKey: "S\(source.hex)"))
-        let networkKey = applicationKey.boundNetworkKey
-        let ivIndex = networkKey.ivIndex
         
         let pdu = UpperTransportPdu(fromMeshMessage: message,
                                     sentFrom: source, to: destination,
-                                    usingApplicationKey: applicationKey, sequence: sequence,
-                                    andIvIndex: ivIndex)
-        let isSegmented = pdu.transportPdu.count > 15 || message.isSegmented
-        networkManager.lowerTransportLayer.send(upperTransportPdu: pdu,
-                                                asSegmentedMessage: isSegmented,
-                                                usingNetworkKey: networkKey)
-    }
-    
-    /// Handles the Config Message and sends it down to Lower Transport Layer.
-    ///
-    /// - parameter message: The message to be sent.
-    /// - parameter destination: The destination address. This must be a Unicast Address.
-    func send(_ message: ConfigMessage, to destination: Address) {
-        guard destination.isUnicast else {
-            print("Error: Address: 0x\(destination.hex) is not a Unicast Address")
-            networkManager.notifyAbout(MeshMessageError.invalidAddress,
-                                       duringSendingMessage: message, to: destination)
-            return
-        }
-        guard let source = meshNetwork.localProvisioner?.unicastAddress else {
-            print("Error: Local Provisioner has no Unicast Address assigned")
-            networkManager.notifyAbout(AccessError.invalidSource,
-                                       duringSendingMessage: message, to: destination)
-            return
-        }
-        guard let node = meshNetwork.node(withAddress: destination),
-            var networkKey = node.networkKeys.first else {
-            print("Error: Node or Network Key not found")
-                networkManager.notifyAbout(AccessError.invalidDestination,
-                                           duringSendingMessage: message, to: destination)
-            return
-        }
-        // ConfigNetKeyDelete must not be signed using the key that is being deleted.
-        if let netKeyDelete = message as? ConfigNetKeyDelete {
-            if netKeyDelete.networkKeyIndex == networkKey.index {
-                guard node.networkKeys.count > 1 else {
-                    print("Error: Cannot remove the last Network Key")
-                    networkManager.notifyAbout(AccessError.cannotRemove,
-                                               duringSendingMessage: message, to: destination)
-                    return
-                }
-                networkKey = node.networkKeys.last!
-            }
-        }
+                                    usingKeySet: keySet, sequence: sequence)
         
-        // Get the current sequence number for local Provisioner's source address.
-        let sequence = UInt32(defaults.integer(forKey: "S\(source.hex)"))
-        let ivIndex = networkKey.ivIndex
-        
-        let pdu = UpperTransportPdu(fromConfigMessage: message,
-                                    sentFrom: source, to: destination,
-                                    usingDeviceKey: node.deviceKey, sequence: sequence,
-                                    andIvIndex: ivIndex)
         let isSegmented = pdu.transportPdu.count > 15 || message.isSegmented
+        let networkKey = keySet.networkKey
         networkManager.lowerTransportLayer.send(upperTransportPdu: pdu,
                                                 asSegmentedMessage: isSegmented,
                                                 usingNetworkKey: networkKey)

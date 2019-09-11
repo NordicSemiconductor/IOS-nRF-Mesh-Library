@@ -23,7 +23,10 @@ internal class FoundationLayer {
     /// - parameter source:        The Unicast Address of the Node that has sent the
     ///                            message.
     /// - parameter destination:   The destination address of the message.
-    func handle(configMessage: ConfigMessage, from source: Address, to destination: Address) {
+    /// - parameter keySet:        The set of keys that the message was encrypted with.
+    func handle(configMessage: ConfigMessage,
+                sentFrom source: Address, to destination: Address,
+                with keySet: KeySet) {
         guard let meshNetwork = networkManager.meshNetwork else {
             return
         }
@@ -34,7 +37,8 @@ internal class FoundationLayer {
         case is ConfigCompositionDataGet:
             if let node = meshNetwork.localProvisioner?.node {
                 let compositionData = Page0(node: node)
-                networkManager.send(ConfigCompositionDataStatus(report: compositionData), to: source)
+                networkManager.reply(with: ConfigCompositionDataStatus(report: compositionData),
+                                     to: source, using: keySet)
             }
             
         case let compositionData as ConfigCompositionDataStatus:
@@ -51,7 +55,8 @@ internal class FoundationLayer {
                 // one in the request. Otherwise, return .keyIndexAlreadyStored.
                 var networkKey = meshNetwork.networkKeys[keyIndex]
                 guard networkKey == nil || networkKey!.key == request.key else {
-                    networkManager.send(ConfigNetKeyStatus(responseTo: request, with: .keyIndexAlreadyStored), to: source)
+                    networkManager.reply(with: ConfigNetKeyStatus(responseTo: request, with: .keyIndexAlreadyStored),
+                                         to: source, using: keySet)
                     break
                 }
                 if networkKey == nil {
@@ -63,16 +68,18 @@ internal class FoundationLayer {
                     node.add(networkKeyWithIndex: keyIndex)
                 }
                 save()
-                networkManager.send(ConfigNetKeyStatus(confirm: networkKey!), to: source)
+                networkManager.reply(with: ConfigNetKeyStatus(confirm: networkKey!), to: source, using: keySet)
             } catch {
-                networkManager.send(ConfigNetKeyStatus(responseTo: request, with: .unspecifiedError), to: source)
+                networkManager.reply(with: ConfigNetKeyStatus(responseTo: request, with: .unspecifiedError),
+                                     to: source, using: keySet)
             }
             
         case let request as ConfigNetKeyUpdate:
             let keyIndex = request.networkKeyIndex
             // If there is no such key, return .invalidNetKeyIndex.
             guard let networkKey = meshNetwork.networkKeys[keyIndex] else {
-                networkManager.send(ConfigNetKeyStatus(responseTo: request, with: .invalidNetKeyIndex), to: source)
+                networkManager.reply(with: ConfigNetKeyStatus(responseTo: request, with: .invalidNetKeyIndex),
+                                     to: source, using: keySet)
                 break
             }
             // Update the key data (observer will set the `oldKey` automatically).
@@ -82,7 +89,7 @@ internal class FoundationLayer {
                 node.update(networkKeyWithIndex: keyIndex)
             }
             save()
-            networkManager.send(ConfigNetKeyStatus(confirm: networkKey), to: source)
+            networkManager.reply(with: ConfigNetKeyStatus(confirm: networkKey), to: source, using: keySet)
             
         case let request as ConfigNetKeyDelete:
             let keyIndex = request.networkKeyIndex
@@ -94,7 +101,8 @@ internal class FoundationLayer {
                 node.remove(networkKeyWithIndex: keyIndex)
             }
             save()
-            networkManager.send(ConfigNetKeyStatus(responseTo: request, with: .success), to: source)
+            networkManager.reply(with: ConfigNetKeyStatus(responseTo: request, with: .success),
+                                 to: source, using: keySet)
             
         case let netKeyStatus as ConfigNetKeyStatus:
             if netKeyStatus.isSuccess, let node = meshNetwork.node(withAddress: source) {
@@ -123,7 +131,8 @@ internal class FoundationLayer {
             }
             
         case is ConfigNetKeyGet:
-            networkManager.send(ConfigNetKeyList(networkKeys: meshNetwork.networkKeys), to: source)
+            networkManager.reply(with: ConfigNetKeyList(networkKeys: meshNetwork.networkKeys),
+                                 to: source, using: keySet)
             
         case let list as ConfigNetKeyList:
             if let node = meshNetwork.node(withAddress: source) {
@@ -139,7 +148,8 @@ internal class FoundationLayer {
             let keyIndex = request.applicationKeyIndex
             // If the Network Key does not exist, return .invalidNetKeyIndex.
             guard let _ = meshNetwork.networkKeys[networkKeyIndex] else {
-                networkManager.send(ConfigAppKeyStatus(responseTo: request, with: .invalidNetKeyIndex), to: source)
+                networkManager.reply(with: ConfigAppKeyStatus(responseTo: request, with: .invalidNetKeyIndex),
+                                     to: source, using: keySet)
                 break
             }
             do {
@@ -147,8 +157,10 @@ internal class FoundationLayer {
                 // one in the request. Otherwise, return .keyIndexAlreadyStored.
                 var applicationKey = meshNetwork.applicationKeys[keyIndex]
                 guard applicationKey == nil ||
-                    (applicationKey!.key == request.key && applicationKey!.boundNetworkKeyIndex == networkKeyIndex) else {
-                    networkManager.send(ConfigAppKeyStatus(responseTo: request, with: .keyIndexAlreadyStored), to: source)
+                      (applicationKey!.key == request.key &&
+                       applicationKey!.boundNetworkKeyIndex == networkKeyIndex) else {
+                    networkManager.reply(with: ConfigAppKeyStatus(responseTo: request, with: .keyIndexAlreadyStored),
+                                         to: source, using: keySet)
                     break
                 }
                 if applicationKey == nil {
@@ -161,9 +173,10 @@ internal class FoundationLayer {
                     node.add(applicationKeyWithIndex: keyIndex)
                 }
                 save()
-                networkManager.send(ConfigAppKeyStatus(confirm: applicationKey!), to: source)
+                networkManager.reply(with: ConfigAppKeyStatus(confirm: applicationKey!), to: source, using: keySet)
             } catch {
-                networkManager.send(ConfigAppKeyStatus(responseTo: request, with: .unspecifiedError), to: source)
+                networkManager.reply(with: ConfigAppKeyStatus(responseTo: request, with: .unspecifiedError),
+                                     to: source, using: keySet)
             }
             
         case let request as ConfigAppKeyUpdate:
@@ -171,17 +184,20 @@ internal class FoundationLayer {
             let keyIndex = request.applicationKeyIndex
             // If the Network Key does not exist, return .invalidNetKeyIndex.
             guard let _ = meshNetwork.networkKeys[networkKeyIndex] else {
-                networkManager.send(ConfigAppKeyStatus(responseTo: request, with: .invalidNetKeyIndex), to: source)
+                networkManager.reply(with: ConfigAppKeyStatus(responseTo: request, with: .invalidNetKeyIndex),
+                                     to: source, using: keySet)
                 break
             }
             // If the Application key does not exist, return .invalidAppKeyIndex.
             guard let applicationKey = meshNetwork.applicationKeys[keyIndex] else {
-                networkManager.send(ConfigAppKeyStatus(responseTo: request, with: .invalidAppKeyIndex), to: source)
+                networkManager.reply(with: ConfigAppKeyStatus(responseTo: request, with: .invalidAppKeyIndex),
+                                     to: source, using: keySet)
                 break
             }
             // If the binding is incorrect, return .invalidBinding.
             guard applicationKey.boundNetworkKeyIndex == networkKeyIndex else {
-                networkManager.send(ConfigAppKeyStatus(responseTo: request, with: .invalidBinding), to: source)
+                networkManager.reply(with: ConfigAppKeyStatus(responseTo: request, with: .invalidBinding),
+                                     to: source, using: keySet)
                 break
             }
             // Update the key data (observer will set the `oldKey` automatically).
@@ -191,14 +207,15 @@ internal class FoundationLayer {
                 node.update(applicationKeyWithIndex: keyIndex)
             }
             save()
-            networkManager.send(ConfigAppKeyStatus(confirm: applicationKey), to: source)
+            networkManager.reply(with: ConfigAppKeyStatus(confirm: applicationKey), to: source, using: keySet)
             
         case let request as ConfigAppKeyDelete:
             let networkKeyIndex = request.networkKeyIndex
             let keyIndex = request.applicationKeyIndex
             // If the Network Key does not exist, return .invalidNetKeyIndex.
             guard let _ = meshNetwork.networkKeys[networkKeyIndex] else {
-                networkManager.send(ConfigAppKeyStatus(responseTo: request, with: .invalidNetKeyIndex), to: source)
+                networkManager.reply(with: ConfigAppKeyStatus(responseTo: request, with: .invalidNetKeyIndex),
+                                     to: source, using: keySet)
                 break
             }
             // Force delete the key from the global configuration.
@@ -209,7 +226,8 @@ internal class FoundationLayer {
                 node.remove(applicationKeyWithIndex: keyIndex)
             }
             save()
-            networkManager.send(ConfigAppKeyStatus(responseTo: request, with: .success), to: source)
+            networkManager.reply(with: ConfigAppKeyStatus(responseTo: request, with: .success),
+                                 to: source, using: keySet)
         
         case let appKeyStatus as ConfigAppKeyStatus:
             if appKeyStatus.isSuccess, let node = meshNetwork.node(withAddress: source) {
@@ -241,13 +259,15 @@ internal class FoundationLayer {
             let networkKeyIndex = request.networkKeyIndex
             // If the Network Key does not exist, return .invalidNetKeyIndex.
             guard let _ = meshNetwork.networkKeys[networkKeyIndex] else {
-                networkManager.send(ConfigAppKeyList(responseTo: request, with: .invalidNetKeyIndex), to: source)
+                networkManager.reply(with: ConfigAppKeyList(responseTo: request, with: .invalidNetKeyIndex),
+                                     to: source, using: keySet)
                 break
             }
             let boundAppKeys = meshNetwork.applicationKeys.filter {
                 $0.boundNetworkKeyIndex == networkKeyIndex
             }
-            networkManager.send(ConfigAppKeyList(responseTo: request, with: boundAppKeys), to: source)
+            networkManager.reply(with: ConfigAppKeyList(responseTo: request, with: boundAppKeys),
+                                 to: source, using: keySet)
             
         case let list as ConfigAppKeyList:
             if let node = meshNetwork.node(withAddress: source) {
@@ -268,10 +288,10 @@ internal class FoundationLayer {
                    let model = element.model(withModelId: request.modelId) {
                     model.bind(applicationKeyWithIndex: request.applicationKeyIndex)
                     save()
-                    networkManager.send(ConfigModelAppStatus(confirm: request), to: source)
+                    networkManager.reply(with: ConfigModelAppStatus(confirm: request), to: source, using: keySet)
                 } else {
-                    networkManager.send(ConfigModelAppStatus(responseTo: request, with: .invalidModel),
-                                        to: source)
+                    networkManager.reply(with: ConfigModelAppStatus(responseTo: request, with: .invalidModel),
+                                         to: source, using: keySet)
                 }
             }
             
@@ -281,10 +301,10 @@ internal class FoundationLayer {
                    let model = element.model(withModelId: request.modelId) {
                     model.unbind(applicationKeyWithIndex: request.applicationKeyIndex)
                     save()
-                    networkManager.send(ConfigModelAppStatus(confirm: request), to: source)
+                    networkManager.reply(with: ConfigModelAppStatus(confirm: request), to: source, using: keySet)
                 } else {
-                    networkManager.send(ConfigModelAppStatus(responseTo: request, with: .invalidModel),
-                                        to: source)
+                    networkManager.reply(with: ConfigModelAppStatus(responseTo: request, with: .invalidModel),
+                                         to: source, using: keySet)
                 }
             }
             
@@ -312,11 +332,11 @@ internal class FoundationLayer {
                let element = localNode.element(withAddress: destination) {
                 if let model = element.model(withModelId: request.modelId) {
                     let applicationKeys = model.boundApplicationKeys
-                    networkManager.send(ConfigSIGModelAppList(responseTo: request, with: applicationKeys),
-                                        to: source)
+                    networkManager.reply(with: ConfigSIGModelAppList(responseTo: request, with: applicationKeys),
+                                         to: source, using: keySet)
                 } else {
-                    networkManager.send(ConfigSIGModelAppList(responseTo: request, with: .invalidModel),
-                                        to: source)
+                    networkManager.reply(with: ConfigSIGModelAppList(responseTo: request, with: .invalidModel),
+                                         to: source, using: keySet)
                 }
             }
             
@@ -325,11 +345,11 @@ internal class FoundationLayer {
                 if let element = localNode.element(withAddress: destination),
                    let model = element.model(withModelId: request.modelId) {
                    let applicationKeys = model.boundApplicationKeys
-                    networkManager.send(ConfigVendorModelAppList(responseTo: request, with: applicationKeys),
-                                        to: source)
+                    networkManager.reply(with: ConfigVendorModelAppList(responseTo: request, with: applicationKeys),
+                                         to: source, using: keySet)
                 } else {
-                    networkManager.send(ConfigVendorModelAppList(responseTo: request, with: .invalidModel),
-                                        to: source)
+                    networkManager.reply(with: ConfigVendorModelAppList(responseTo: request, with: .invalidModel),
+                                         to: source, using: keySet)
                 }
             }
             
@@ -350,8 +370,8 @@ internal class FoundationLayer {
                    let model = element.model(withModelId: request.modelId) {
                     // Validate request.
                     guard request.publish.isCancel || meshNetwork.applicationKeys[request.publish.index] != nil else {
-                        networkManager.send(ConfigModelPublicationStatus(responseTo: request, with: .invalidPublishParameters),
-                                            to: source)
+                        networkManager.reply(with: ConfigModelPublicationStatus(responseTo: request, with: .invalidPublishParameters),
+                                             to: source, using: keySet)
                         break
                     }
                     if !request.publish.isCancel {
@@ -367,10 +387,10 @@ internal class FoundationLayer {
                         model.publish = nil
                     }
                     save()
-                    networkManager.send(ConfigModelPublicationStatus(confirm: request), to: source)
+                    networkManager.reply(with: ConfigModelPublicationStatus(confirm: request), to: source, using: keySet)
                 } else {
-                    networkManager.send(ConfigModelPublicationStatus(responseTo: request, with: .invalidModel),
-                                        to: source)
+                    networkManager.reply(with: ConfigModelPublicationStatus(responseTo: request, with: .invalidModel),
+                                         to: source, using: keySet)
                 }
             }
             
@@ -380,8 +400,8 @@ internal class FoundationLayer {
                     let model = element.model(withModelId: request.modelId) {
                     // Validate request.
                     guard meshNetwork.applicationKeys[request.publish.index] != nil else {
-                        networkManager.send(ConfigModelPublicationStatus(responseTo: request, with: .invalidPublishParameters),
-                                            to: source)
+                        networkManager.reply(with: ConfigModelPublicationStatus(responseTo: request, with: .invalidPublishParameters),
+                                             to: source, using: keySet)
                         break
                     }
                     // A new Group?
@@ -391,10 +411,10 @@ internal class FoundationLayer {
                     }
                     model.publish = request.publish
                     save()
-                    networkManager.send(ConfigModelPublicationStatus(confirm: request), to: source)
+                    networkManager.reply(with: ConfigModelPublicationStatus(confirm: request), to: source, using: keySet)
                 } else {
-                    networkManager.send(ConfigModelPublicationStatus(responseTo: request, with: .invalidModel),
-                                        to: source)
+                    networkManager.reply(with: ConfigModelPublicationStatus(responseTo: request, with: .invalidModel),
+                                         to: source, using: keySet)
                 }
             }
             
@@ -402,11 +422,11 @@ internal class FoundationLayer {
             if let localNode = meshNetwork.localProvisioner?.node, localNode.unicastAddress == destination {
                 if let element = localNode.element(withAddress: destination),
                    let model = element.model(withModelId: request.modelId) {
-                    networkManager.send(ConfigModelPublicationStatus(responseTo: request, with: model.publish),
-                                        to: source)
+                    networkManager.reply(with: ConfigModelPublicationStatus(responseTo: request, with: model.publish),
+                                         to: source, using: keySet)
                 } else {
-                    networkManager.send(ConfigModelPublicationStatus(responseTo: request, with: .invalidModel),
-                                        to: source)
+                    networkManager.reply(with: ConfigModelPublicationStatus(responseTo: request, with: .invalidModel),
+                                         to: source, using: keySet)
                 }
             }
             
@@ -465,8 +485,8 @@ internal class FoundationLayer {
                 if let element = localNode.element(withAddress: destination),
                    let model = element.model(withModelId: request.modelId) {
                     guard request.address.isGroup && request.address != Address.allNodes else {
-                        networkManager.send(ConfigModelSubscriptionStatus(responseTo: request, with: .invalidAddress),
-                                            to: source)
+                        networkManager.reply(with: ConfigModelSubscriptionStatus(responseTo: request, with: .invalidAddress),
+                                             to: source, using: keySet)
                         break
                     }
                     var group = meshNetwork.group(withAddress: MeshAddress(request.address))
@@ -478,17 +498,17 @@ internal class FoundationLayer {
                             try meshNetwork.add(group: group!)
                             model.subscribe(to: group!)
                         } catch {
-                            networkManager.send(ConfigModelSubscriptionStatus(responseTo: request, with: .invalidAddress),
-                                                to: source)
+                            networkManager.reply(with: ConfigModelSubscriptionStatus(responseTo: request, with: .invalidAddress),
+                                                 to: source, using: keySet)
                             break
                         }
                     }
                     save()
-                    networkManager.send(ConfigModelSubscriptionStatus(confirmAdding: group!, to: model),
-                                        to: source)
+                    networkManager.reply(with: ConfigModelSubscriptionStatus(confirmAdding: group!, to: model),
+                                         to: source, using: keySet)
                 } else {
-                    networkManager.send(ConfigModelSubscriptionStatus(responseTo: request, with: .invalidModel),
-                                        to: source)
+                    networkManager.reply(with: ConfigModelSubscriptionStatus(responseTo: request, with: .invalidModel),
+                                         to: source, using: keySet)
                 }
             }
             
@@ -497,8 +517,8 @@ internal class FoundationLayer {
                 if let element = localNode.element(withAddress: destination),
                    let model = element.model(withModelId: request.modelId) {
                     guard request.address.isGroup && request.address != Address.allNodes else {
-                        networkManager.send(ConfigModelSubscriptionStatus(responseTo: request, with: .invalidAddress),
-                                            to: source)
+                        networkManager.reply(with: ConfigModelSubscriptionStatus(responseTo: request, with: .invalidAddress),
+                                             to: source, using: keySet)
                         break
                     }
                     var group = meshNetwork.group(withAddress: MeshAddress(request.address))
@@ -512,17 +532,17 @@ internal class FoundationLayer {
                             model.unsubscribeFromAll()
                             model.subscribe(to: group!)
                         } catch {
-                            networkManager.send(ConfigModelSubscriptionStatus(responseTo: request, with: .invalidAddress),
-                                                to: source)
+                            networkManager.reply(with: ConfigModelSubscriptionStatus(responseTo: request, with: .invalidAddress),
+                                                 to: source, using: keySet)
                             break
                         }
                     }
                     save()
-                    networkManager.send(ConfigModelSubscriptionStatus(confirmAdding: group!, to: model),
-                                        to: source)
+                    networkManager.reply(with: ConfigModelSubscriptionStatus(confirmAdding: group!, to: model),
+                                         to: source, using: keySet)
                 } else {
-                    networkManager.send(ConfigModelSubscriptionStatus(responseTo: request, with: .invalidModel),
-                                        to: source)
+                    networkManager.reply(with: ConfigModelSubscriptionStatus(responseTo: request, with: .invalidModel),
+                                         to: source, using: keySet)
                 }
             }
             
@@ -531,17 +551,17 @@ internal class FoundationLayer {
                 if let element = localNode.element(withAddress: destination),
                    let model = element.model(withModelId: request.modelId) {
                     guard request.address.isGroup && request.address != Address.allNodes else {
-                        networkManager.send(ConfigModelSubscriptionStatus(responseTo: request, with: .invalidAddress),
-                                            to: source)
+                        networkManager.reply(with: ConfigModelSubscriptionStatus(responseTo: request, with: .invalidAddress),
+                                             to: source, using: keySet)
                         break
                     }
                     model.unsubscribe(from: request.address)
                     save()
-                    networkManager.send(ConfigModelSubscriptionStatus(confirmDeleting: request.address, from: model),
-                                        to: source)
+                    networkManager.reply(with: ConfigModelSubscriptionStatus(confirmDeleting: request.address, from: model),
+                                         to: source, using: keySet)
                 } else {
-                    networkManager.send(ConfigModelSubscriptionStatus(responseTo: request, with: .invalidModel),
-                                        to: source)
+                    networkManager.reply(with: ConfigModelSubscriptionStatus(responseTo: request, with: .invalidModel),
+                                         to: source, using: keySet)
                 }
             }
             
@@ -558,17 +578,17 @@ internal class FoundationLayer {
                             try meshNetwork.add(group: group!)
                             model.subscribe(to: group!)
                         } catch {
-                            networkManager.send(ConfigModelSubscriptionStatus(responseTo: request, with: .invalidAddress),
-                                                to: source)
+                            networkManager.reply(with: ConfigModelSubscriptionStatus(responseTo: request, with: .invalidAddress),
+                                                 to: source, using: keySet)
                             break
                         }
                     }
                     save()
-                    networkManager.send(ConfigModelSubscriptionStatus(confirmAdding: group!, to: model),
-                                        to: source)
+                    networkManager.reply(with: ConfigModelSubscriptionStatus(confirmAdding: group!, to: model),
+                                         to: source, using: keySet)
                 } else {
-                    networkManager.send(ConfigModelSubscriptionStatus(responseTo: request, with: .invalidModel),
-                                        to: source)
+                    networkManager.reply(with: ConfigModelSubscriptionStatus(responseTo: request, with: .invalidModel),
+                                         to: source, using: keySet)
                 }
             }
             
@@ -587,17 +607,17 @@ internal class FoundationLayer {
                             model.unsubscribeFromAll()
                             model.subscribe(to: group!)
                         } catch {
-                            networkManager.send(ConfigModelSubscriptionStatus(responseTo: request, with: .invalidAddress),
-                                                to: source)
+                            networkManager.reply(with: ConfigModelSubscriptionStatus(responseTo: request, with: .invalidAddress),
+                                                 to: source, using: keySet)
                             break
                         }
                     }
                     save()
-                    networkManager.send(ConfigModelSubscriptionStatus(confirmAdding: group!, to: model),
-                                        to: source)
+                    networkManager.reply(with: ConfigModelSubscriptionStatus(confirmAdding: group!, to: model),
+                                         to: source, using: keySet)
                 } else {
-                    networkManager.send(ConfigModelSubscriptionStatus(responseTo: request, with: .invalidModel),
-                                        to: source)
+                    networkManager.reply(with: ConfigModelSubscriptionStatus(responseTo: request, with: .invalidModel),
+                                         to: source, using: keySet)
                 }
             }
             
@@ -610,11 +630,11 @@ internal class FoundationLayer {
                         model.unsubscribe(from: group)
                         save()
                     }
-                    networkManager.send(ConfigModelSubscriptionStatus(confirmDeleting: address.address, from: model),
-                                        to: source)
+                    networkManager.reply(with: ConfigModelSubscriptionStatus(confirmDeleting: address.address, from: model),
+                                         to: source, using: keySet)
                 } else {
-                    networkManager.send(ConfigModelSubscriptionStatus(responseTo: request, with: .invalidModel),
-                                        to: source)
+                    networkManager.reply(with: ConfigModelSubscriptionStatus(responseTo: request, with: .invalidModel),
+                                         to: source, using: keySet)
                 }
             }
             
@@ -624,10 +644,11 @@ internal class FoundationLayer {
                    let model = element.model(withModelId: request.modelId) {
                     model.unsubscribeFromAll()
                     save()
-                    networkManager.send(ConfigModelSubscriptionStatus(confirmDeletingAllFrom: model), to: source)
+                    networkManager.reply(with: ConfigModelSubscriptionStatus(confirmDeletingAllFrom: model),
+                                         to: source, using: keySet)
                 } else {
-                    networkManager.send(ConfigModelSubscriptionStatus(responseTo: request, with: .invalidModel),
-                                        to: source)
+                    networkManager.reply(with: ConfigModelSubscriptionStatus(responseTo: request, with: .invalidModel),
+                                         to: source, using: keySet)
                 }
             }
             
@@ -672,9 +693,11 @@ internal class FoundationLayer {
                 if let element = localNode.element(withAddress: destination),
                     let model = element.model(withModelId: request.modelId) {
                     let addresses = model.subscriptions.map { $0.address.address }
-                    networkManager.send(ConfigSIGModelSubscriptionList(responseTo: request, with: addresses), to: source)
+                    networkManager.reply(with: ConfigSIGModelSubscriptionList(responseTo: request, with: addresses),
+                                         to: source, using: keySet)
                 } else {
-                    networkManager.send(ConfigSIGModelSubscriptionList(responseTo: request, with: .invalidModel), to: source)
+                    networkManager.reply(with: ConfigSIGModelSubscriptionList(responseTo: request, with: .invalidModel),
+                                         to: source, using: keySet)
                 }
             }
             
@@ -683,9 +706,11 @@ internal class FoundationLayer {
                 if let element = localNode.element(withAddress: destination),
                     let model = element.model(withModelId: request.modelId) {
                     let addresses = model.subscriptions.map { $0.address.address }
-                    networkManager.send(ConfigVendorModelSubscriptionList(responseTo: request, with: addresses), to: source)
+                    networkManager.reply(with: ConfigVendorModelSubscriptionList(responseTo: request, with: addresses),
+                                         to: source, using: keySet)
                 } else {
-                    networkManager.send(ConfigVendorModelSubscriptionList(responseTo: request, with: .invalidModel), to: source)
+                    networkManager.reply(with: ConfigVendorModelSubscriptionList(responseTo: request, with: .invalidModel),
+                                         to: source, using: keySet)
                 }
             }
             
@@ -710,12 +735,14 @@ internal class FoundationLayer {
             if let node = meshNetwork.localProvisioner?.node {
                 node.defaultTTL = request.ttl
                 save()
-                networkManager.send(ConfigDefaultTtlStatus(ttl: node.defaultTTL ?? networkManager.defaultTtl), to: source)
+                networkManager.reply(with: ConfigDefaultTtlStatus(ttl: node.defaultTTL ?? networkManager.defaultTtl),
+                                     to: source, using: keySet)
             }
             
         case is ConfigDefaultTtlGet:
             if let node = meshNetwork.localProvisioner?.node {
-                networkManager.send(ConfigDefaultTtlStatus(ttl: node.defaultTTL ?? networkManager.defaultTtl), to: source)
+                networkManager.reply(with: ConfigDefaultTtlStatus(ttl: node.defaultTTL ?? networkManager.defaultTtl),
+                                     to: source, using: keySet)
             }
             
         case let defaultTtl as ConfigDefaultTtlStatus:
@@ -727,7 +754,7 @@ internal class FoundationLayer {
         // Relay settings
         case is ConfigRelayGet, is ConfigRelaySet:
             // Relay feature is not supported.
-            networkManager.send(ConfigRelayStatus(.notSupported, count: 0, steps: 0), to: source)
+            networkManager.reply(with: ConfigRelayStatus(.notSupported, count: 0, steps: 0), to: source, using: keySet)
             
         case let status as ConfigRelayStatus:
             if let node = meshNetwork.node(withAddress: source) {
@@ -739,7 +766,7 @@ internal class FoundationLayer {
         // GATT Proxy settings
         case is ConfigGATTProxyGet, is ConfigGATTProxySet:
             // Relay feature is not supported.
-            networkManager.send(ConfigGATTProxyStatus(.notSupported), to: source)
+            networkManager.reply(with: ConfigGATTProxyStatus(.notSupported), to: source, using: keySet)
             
         case let status as ConfigGATTProxyStatus:
             if let node = meshNetwork.node(withAddress: source) {
@@ -750,7 +777,7 @@ internal class FoundationLayer {
         // Friend settings
         case is ConfigFriendGet, is ConfigFriendSet:
             // Friend feature is not supported.
-            networkManager.send(ConfigFriendStatus(.notSupported), to: source)
+            networkManager.reply(with: ConfigFriendStatus(.notSupported), to: source, using: keySet)
             
         case let status as ConfigFriendStatus:
             if let node = meshNetwork.node(withAddress: source) {
@@ -761,7 +788,7 @@ internal class FoundationLayer {
         // Secure Network Beacon configuration
         case is ConfigBeaconGet, is ConfigBeaconSet:
             // Secure Network Beacon feature is not supported.
-            networkManager.send(ConfigBeaconStatus(enabled: false), to: source)
+            networkManager.reply(with: ConfigBeaconStatus(enabled: false), to: source, using: keySet)
             
         case let status as ConfigBeaconStatus:
             if let node = meshNetwork.node(withAddress: source) {
@@ -779,7 +806,7 @@ internal class FoundationLayer {
             
         case is ConfigNetworkTransmitGet:
             if let node = meshNetwork.localProvisioner?.node {
-                networkManager.send(ConfigNetworkTransmitStatus(for: node), to: source)
+                networkManager.reply(with: ConfigNetworkTransmitStatus(for: node), to: source, using: keySet)
             }
             
         case let status as ConfigNetworkTransmitStatus:
@@ -794,11 +821,12 @@ internal class FoundationLayer {
             if let provisioner = meshNetwork.localProvisioner {
                 // Replying with ConfigNodeResetStatus() may fail, as the network is
                 // being reset and forgotten in a second.
-                networkManager.send(ConfigNodeResetStatus(), to: source)
+                networkManager.reply(with: ConfigNodeResetStatus(), to: source, using: keySet)
                 
                 let localElements = meshNetwork.localElements
                 provisioner.meshNetwork = nil
-                let manager = networkManager.meshNetworkManager.createNewMeshNetwork(withName: meshNetwork.meshName, by: provisioner)
+                let manager = networkManager.meshNetworkManager
+                    .createNewMeshNetwork(withName: meshNetwork.meshName, by: provisioner)
                 manager.localElements = localElements
                 save()
             }
