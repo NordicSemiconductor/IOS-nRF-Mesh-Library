@@ -47,18 +47,17 @@ internal class UpperTransportLayer {
     /// Handles the Mesh Message and sends it down to Lower Transport Layer.
     ///
     /// - parameter message: The message to be sent.
-    /// - parameter element: The source Element.
+    /// - parameter localElement: The local Element which address will be used as source.
     /// - parameter destination: The destination address.
-    /// - parameter keySet:  The set of keys to encrypt the message with.
+    /// - parameter keySet: The set of keys to encrypt the message with.
     func send(_ message: MeshMessage,
-              from element: Element, to destination: MeshAddress,
+              from localElement: Element, to destination: MeshAddress,
               using keySet: KeySet) {
         // Get the current sequence number for local Provisioner's source address.
-        let source = element.unicastAddress
-        let sequence = UInt32(defaults.integer(forKey: "S\(source.hex)"))
+        let sequence = UInt32(defaults.integer(forKey: "S\(localElement.unicastAddress.hex)"))
         
         let pdu = UpperTransportPdu(fromMeshMessage: message,
-                                    sentFrom: source, to: destination,
+                                    sentFrom: localElement, to: destination,
                                     usingKeySet: keySet, sequence: sequence)
         
         let isSegmented = pdu.transportPdu.count > 15 || message.isSegmented

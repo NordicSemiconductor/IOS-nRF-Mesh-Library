@@ -173,10 +173,10 @@ internal class LowerTransportLayer {
             do {
                 try networkManager.networkLayer.send(lowerTransportPdu: message, ofType: .networkPdu, withTtl: ttl)
                 networkManager.notifyAbout(deliveringMessage: pdu.message!,
-                                           from: pdu.source, to: pdu.destination)
+                                           from: pdu.localElement!, to: pdu.destination)
             } catch {
                 networkManager.notifyAbout(error, duringSendingMessage: pdu.message!,
-                                           from: pdu.source, to: pdu.destination)
+                                           from: pdu.localElement!, to: pdu.destination)
             }
         }
     }
@@ -305,8 +305,7 @@ private extension LowerTransportLayer {
             outgoingSegments.removeValue(forKey: ack.sequenceZero)
             networkManager.notifyAbout(LowerTransportError.busy,
                                        duringSendingMessage: segment.message!,
-                                       // Source and destiation reversed in ACK!
-                                       from: ack.destination, to: ack.source)
+                                       from: segment.localElement!, to: segment.destination)
             return
         }
         
@@ -321,7 +320,7 @@ private extension LowerTransportLayer {
         if !outgoingSegments[ack.sequenceZero]!.hasMore {
             outgoingSegments.removeValue(forKey: ack.sequenceZero)
             networkManager.notifyAbout(deliveringMessage: segment.message!,
-                                       from: ack.destination, to: ack.source)
+                                       from: segment.localElement!, to: segment.destination)
         } else {
             // Else, send again all packets that were not acknowledged.
             sendSegments(for: ack.sequenceZero)
@@ -377,7 +376,7 @@ private extension LowerTransportLayer {
                         segmentTransmissionTimers.removeValue(forKey: sequenceZero)?.invalidate()
                         outgoingSegments.removeValue(forKey: sequenceZero)
                         networkManager.notifyAbout(error, duringSendingMessage: segment.message!,
-                                                   from: segment.source, to: segment.destination)
+                                                   from: segment.localElement!, to: segment.destination)
                         return
                     }
                 }
@@ -413,7 +412,7 @@ private extension LowerTransportLayer {
                 if let segment = segments.firstNotAcknowledged {
                     networkManager.notifyAbout(LowerTransportError.timeout,
                                                duringSendingMessage: segment.message!,
-                                               from: segment.source, to: segment.destination)
+                                               from: segment.localElement!, to: segment.destination)
                 }
                 outgoingSegments.removeValue(forKey: sequenceZero)
             }
@@ -421,7 +420,7 @@ private extension LowerTransportLayer {
             // All segments have been successfully sent to a Group Address.
             if let segment = segments.firstNotAcknowledged {
                 networkManager.notifyAbout(deliveringMessage: segment.message!,
-                                           from: segment.source, to: segment.destination)
+                                           from: segment.localElement!, to: segment.destination)
             }
             outgoingSegments.removeValue(forKey: sequenceZero)
         }

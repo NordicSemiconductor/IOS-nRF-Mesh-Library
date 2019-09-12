@@ -11,6 +11,9 @@ internal struct UpperTransportPdu {
     /// The Mesh Message that is being sent, or `nil`, when the message
     /// was received.
     let message: MeshMessage?
+    /// The local Element that is sending the message, or `nil` when the
+    /// message was received.
+    let localElement: Element?
     /// Source Address.
     let source: Address
     /// Destination Address.
@@ -60,12 +63,15 @@ internal struct UpperTransportPdu {
         accessPdu = decryptedData
         sequence = accessMessage.sequence
         message = nil
+        localElement = nil
     }
     
-    init(fromMeshMessage message: MeshMessage, sentFrom source: Address, to destination: MeshAddress,
+    init(fromMeshMessage message: MeshMessage,
+         sentFrom localElement: Element, to destination: MeshAddress,
          usingKeySet keySet: KeySet, sequence: UInt32) {
         self.message = message
-        self.source = source
+        self.localElement = localElement
+        self.source = localElement.unicastAddress
         self.destination = destination.address
         self.sequence = sequence
         let accessPdu = message.accessPdu

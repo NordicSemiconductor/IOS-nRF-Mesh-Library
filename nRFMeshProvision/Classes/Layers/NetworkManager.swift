@@ -153,15 +153,11 @@ internal class NetworkManager {
     /// Notifies the delegate about delivering the mesh message to the given
     /// destination address.
     ///
-    /// - parameter message:     The mesh message that was sent.
-    /// - parameter source:      The source Unicast Address.
-    /// - parameter destination: The destination address.
+    /// - parameter message:      The mesh message that was sent.
+    /// - parameter localElement: The local element used to send the message.
+    /// - parameter destination:  The destination address.
     func notifyAbout(deliveringMessage message: MeshMessage,
-                     from source: Address, to destination: Address) {
-        guard let localNode = meshNetwork?.localProvisioner?.node,
-              let localElement = localNode.elements.first(where: { $0.unicastAddress == source}) else {
-            return
-        }
+                     from localElement: Element, to destination: Address) {
         manager.delegateQueue.async {
             self.manager.delegate?.meshNetworkManager(self.manager, didSendMessage: message,
                                                       from: localElement, to: destination)
@@ -173,14 +169,10 @@ internal class NetworkManager {
     ///
     /// - parameter error:   The error that occurred.
     /// - parameter message: The mesh message that failed to be sent.
-    /// - parameter source:  The source Unicast Address.
-    /// - parameter source:  The destination address.
+    /// - parameter localElement: The local element used to send the message.
+    /// - parameter destination:  The destination address.
     func notifyAbout(_ error: Error, duringSendingMessage message: MeshMessage,
-                     from source: Address, to destination: Address) {
-        guard let localNode = meshNetwork?.localProvisioner?.node,
-            let localElement = localNode.elements.first(where: { $0.unicastAddress == source}) else {
-                return
-        }
+                     from localElement: Element, to destination: Address) {
         manager.delegateQueue.async {
             self.manager.delegate?.meshNetworkManager(self.manager, failedToSendMessage: message,
                                                       from: localElement, to: destination, error: error)

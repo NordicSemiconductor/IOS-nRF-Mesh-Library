@@ -11,6 +11,8 @@ internal protocol SegmentedMessage: LowerTransportPdu {
     /// The Mesh Message that is being sent, or `nil`, when the message
     /// was received.
     var message: MeshMessage? { get }
+    /// The local Element used to send the message.
+    var localElement: Element? { get }
     /// 13 least significant bits of SeqAuth.
     var sequenceZero: UInt16 { get }
     /// This field is set to the segment number (zero-based)
