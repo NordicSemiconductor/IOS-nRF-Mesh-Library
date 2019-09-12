@@ -417,8 +417,9 @@ private extension ModelViewController {
 
 extension ModelViewController: MeshNetworkDelegate {
     
-    func meshNetwork(_ meshNetwork: MeshNetwork, didDeliverMessage message: MeshMessage,
-                     sentFrom source: Address, to destination: Address) {
+    func meshNetworkManager(_ manager: MeshNetworkManager,
+                            didReceiveMessage message: MeshMessage,
+                            sentFrom source: Address, to destination: Address) {
         // Has the Node been reset remotely.
         guard !(message is ConfigNodeReset) else {
             (UIApplication.shared.delegate as! AppDelegate).meshNetworkDidChange()
@@ -496,8 +497,8 @@ extension ModelViewController: MeshNetworkDelegate {
             }
             
         default:
-            let isMore = modelViewCell?.meshNetwork(meshNetwork, didDeliverMessage: message,
-                                                    sentFrom: source, to: destination) ?? false
+            let isMore = modelViewCell?.meshNetworkManager(manager, didReceiveMessage: message,
+                                                           sentFrom: source, to: destination) ?? false
             if !isMore {
                 done()
                 
@@ -513,8 +514,9 @@ extension ModelViewController: MeshNetworkDelegate {
         }
     }
     
-    func meshNetwork(_ meshNetwork: MeshNetwork, didDeliverMessage message: MeshMessage,
-                     sentFrom localElement: Element, to destination: Address) {
+    func meshNetworkManager(_ manager: MeshNetworkManager,
+                            didSendMessage message: MeshMessage,
+                            from localElement: Element, to destination: Address) {
         // Has the Node been reset remotely.
         guard !(message is ConfigNodeReset) else {
             (UIApplication.shared.delegate as! AppDelegate).meshNetworkDidChange()
@@ -528,16 +530,18 @@ extension ModelViewController: MeshNetworkDelegate {
             break
             
         default:
-            let isMore = modelViewCell?.meshNetwork(meshNetwork, didDeliverMessage: message,
-                                                    sentFrom: localElement, to: destination) ?? false
+            let isMore = modelViewCell?.meshNetworkManager(manager, didSendMessage: message,
+                                                           from: localElement, to: destination) ?? false
             if !isMore {
                 done()
             }
         }
     }
     
-    func meshNetwork(_ meshNetwork: MeshNetwork, failedToDeliverMessage message: MeshMessage,
-                     from localElement: Element, to destination: Address, error: Error) {
+    func meshNetworkManager(_ manager: MeshNetworkManager,
+                            failedToSendMessage message: MeshMessage,
+                            from localElement: Element, to destination: Address,
+                            error: Error) {
         done() {
             self.presentAlert(title: "Error", message: error.localizedDescription)
             self.refreshControl?.endRefreshing()

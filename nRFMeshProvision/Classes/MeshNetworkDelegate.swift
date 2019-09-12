@@ -22,29 +22,27 @@ public protocol MeshNetworkDelegate: class {
     /// an Element on a remote Node.
     ///
     /// - parameters:
-    ///   - meshNetwork: The mesh network from which the message has
-    ///                  been received.
+    ///   - manager:     The manager which has received the message.
     ///   - message:     The received message.
     ///   - source:      The Unicast Address of the Element from which
     ///                  the message was sent.
     ///   - destination: The address to which the message was sent.
-    func meshNetwork(_ meshNetwork: MeshNetwork,
-                     didDeliverMessage message: MeshMessage,
-                     sentFrom source: Address, to destination: Address)
+    func meshNetworkManager(_ manager: MeshNetworkManager,
+                            didReceiveMessage message: MeshMessage,
+                            sentFrom source: Address, to destination: Address)
     
     /// A callback called when an unsegmented message was sent to the
     /// `transmitter`, or when all segments of a segmented message targetting
     /// a Unicast Address were acknowledged by the target Node.
     ///
     /// - parameters:
-    ///   - meshNetwork:  The mesh network to which the message has
-    ///                   been sent.
+    ///   - manager:      The manager used to send the message.
     ///   - message:      The message that has been sent.
     ///   - localElement: The local Element used as a source of this message.
     ///   - destination:  The address to which the message was sent.
-    func meshNetwork(_ meshNetwork: MeshNetwork,
-                     didDeliverMessage message: MeshMessage,
-                     sentFrom localElement: Element, to destination: Address)
+    func meshNetworkManager(_ manager: MeshNetworkManager,
+                            didSendMessage message: MeshMessage,
+                            from localElement: Element, to destination: Address)
     
     /// A callback called when a message failed to be sent to the target
     /// Node. For unsegmented messages this may happen when the `transmitter`
@@ -64,14 +62,13 @@ public protocol MeshNetworkDelegate: class {
     ///   was reached.
     ///
     /// - parameters:
-    ///   - meshNetwork:  The mesh network to which the message has
-    ///                   been sent.
+    ///   - manager:      The manager used to send the message.
     ///   - message:      The message that has failed to be delivered.
     ///   - localElement: The local Element used as a source of this message.
     ///   - destination:  The address to which the message was sent.
     ///   - error:        The error that occurred.
-    func meshNetwork(_ meshNetwork: MeshNetwork,
-                     failedToDeliverMessage message: MeshMessage,
+    func meshNetworkManager(_ manager: MeshNetworkManager,
+                     failedToSendMessage message: MeshMessage,
                      from localElement: Element, to destination: Address,
                      error: Error)
     
@@ -79,16 +76,16 @@ public protocol MeshNetworkDelegate: class {
 
 public extension MeshNetworkDelegate {
     
-    func meshNetwork(_ meshNetwork: MeshNetwork,
-                     didDeliverMessage message: MeshMessage,
-                     sentFrom localElement: Element, to destination: Address) {
+    func meshNetworkManager(_ manager: MeshNetworkManager,
+                            didSendMessage message: MeshMessage,
+                            from localElement: Element, to destination: Address) {
         // Empty.
     }
     
-    func meshNetwork(_ meshNetwork: MeshNetwork,
-                     failedToDeliverMessage message: MeshMessage,
-                     from localElement: Element, to destination: Address,
-                     error: Error) {
+    func meshNetworkManager(_ manager: MeshNetworkManager,
+                            failedToSendMessage message: MeshMessage,
+                            from localElement: Element, to destination: Address,
+                            error: Error) {
         // Empty.
     }
     

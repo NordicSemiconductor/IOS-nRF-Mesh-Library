@@ -76,8 +76,9 @@ class GenericOnOffViewCell: ModelViewCell {
         readButton.isEnabled = isEnabled
     }
     
-    override func meshNetwork(_ meshNetwork: MeshNetwork, didDeliverMessage message: MeshMessage,
-                              sentFrom source: Address, to destination: Address) -> Bool {
+    override func meshNetworkManager(_ manager: MeshNetworkManager,
+                                     didReceiveMessage message: MeshMessage,
+                                     sentFrom source: Address, to destination: Address) -> Bool {
         switch message {
         case let status as GenericOnOffStatus:
             currentStatusLabel.text = status.isOn ? "ON" : "OFF"
@@ -97,8 +98,9 @@ class GenericOnOffViewCell: ModelViewCell {
         return false
     }
     
-    override func meshNetwork(_ meshNetwork: MeshNetwork, didDeliverMessage message: MeshMessage,
-                              sentFrom localElement: Element, to destination: Address) -> Bool {
+    override func meshNetworkManager(_ manager: MeshNetworkManager,
+                                     didSendMessage message: MeshMessage,
+                                     from localElement: Element, to destination: Address) -> Bool {
         // For acknowledged messages wait for the Acknowledgement Message.
         return acknowledgmentSwitch.isOn
     }

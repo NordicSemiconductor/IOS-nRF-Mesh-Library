@@ -130,7 +130,7 @@ private extension AccessLayer {
             
         // Vendor Messages
         case let opCode where (opCode & 0xC00000) == 0xC00000:
-            MessageType = networkManager.meshNetworkManager.vendorTypes[opCode] ?? UnknownMessage.self
+            MessageType = networkManager.manager.vendorTypes[opCode] ?? UnknownMessage.self
             
         // Composition Data
         case ConfigCompositionDataGet.opCode:

@@ -61,17 +61,16 @@ class ModelViewCell: UITableViewCell {
     /// from the mesh network.
     ///
     /// - parameters:
-    ///   - meshNetwork: The mesh network from which the message has
-    ///                  been received.
+    ///   - manager:     The manager which has received the message.
     ///   - message:     The received message.
     ///   - source:      The Unicast Address of the Element from which
     ///                  the message was sent.
     ///   - destination: The address to which the message was sent.
     /// - returns: `True`, when another request has been made, `false` if
     ///            the request has complete.
-    func meshNetwork(_ meshNetwork: MeshNetwork,
-                     didDeliverMessage message: MeshMessage,
-                     sentFrom source: Address, to destination: Address) -> Bool {
+    func meshNetworkManager(_ manager: MeshNetworkManager,
+                            didReceiveMessage message: MeshMessage,
+                            sentFrom source: Address, to destination: Address) -> Bool {
         return false
     }
     
@@ -80,16 +79,15 @@ class ModelViewCell: UITableViewCell {
     /// a Unicast Address were acknowledged by the target Node.
     ///
     /// - parameters:
-    ///   - meshNetwork:  The mesh network to which the message has
-    ///                   been sent.
+    ///   - manager:      The manager used to send the message.
     ///   - message:      The message that has been sent.
     ///   - localElement: The local Element used as a source of this message.
     ///   - destination:  The address to which the message was sent.
     /// - returns: `True`, when another request has been made or an Acknowledgement
     ///            is expected, `false` if the request has complete.
-    func meshNetwork(_ meshNetwork: MeshNetwork,
-                     didDeliverMessage message: MeshMessage,
-                     sentFrom localElement: Element, to destination: Address) -> Bool {
+    func meshNetworkManager(_ manager: MeshNetworkManager,
+                            didSendMessage message: MeshMessage,
+                            from localElement: Element, to destination: Address) -> Bool {
         return false
     }
 

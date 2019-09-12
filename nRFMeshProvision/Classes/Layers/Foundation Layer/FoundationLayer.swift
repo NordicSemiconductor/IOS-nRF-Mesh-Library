@@ -825,7 +825,7 @@ internal class FoundationLayer {
                 
                 let localElements = meshNetwork.localElements
                 provisioner.meshNetwork = nil
-                let manager = networkManager.meshNetworkManager
+                let manager = networkManager.manager
                     .createNewMeshNetwork(withName: meshNetwork.meshName, by: provisioner)
                 manager.localElements = localElements
                 save()
@@ -882,7 +882,7 @@ private extension FoundationLayer {
     /// Save the state of the mesh network to the storage associated with
     /// the manager. This method ignores the result of saving.
     private func save() {
-        _ = networkManager.meshNetworkManager.save()
+        _ = networkManager.manager.save()
     }
     
 }
