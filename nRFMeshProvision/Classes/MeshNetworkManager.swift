@@ -14,6 +14,10 @@ public class MeshNetworkManager {
     private var networkManager: NetworkManager?
     /// Storage to keep the app data.
     private let storage: Storage
+    /// A queue to handle incoming and outgoing messages.
+    internal let queue: DispatchQueue
+    /// A queue to call delegate methods on.
+    internal let delegateQueue: DispatchQueue
     
     /// The Proxy Filter state.
     public internal(set) var proxyFilter: ProxyFilter?
@@ -90,10 +94,18 @@ public class MeshNetworkManager {
     /// If storage is not provided, a local file will be used instead.
     ///
     /// - parameter storage: The storage to use to save the network configuration.
+    /// - parameter queue: The DispatQueue to process reqeusts on. By default
+    ///                    the global background queue will be used.
+    /// - parameter delegateQueue: The DispatQueue to call delegate methods on.
+    ///                            By default the global main queue will be used.
     /// - seeAlso: `LocalStorage`
-    public init(using storage: Storage = LocalStorage()) {
+    public init(using storage: Storage = LocalStorage(),
+                queue: DispatchQueue = DispatchQueue.global(qos: .background),
+                delegateQueue: DispatchQueue = DispatchQueue.main) {
         self.storage = storage
         self.meshData = MeshData()
+        self.queue = queue
+        self.delegateQueue = delegateQueue
     }
     
     /// Initializes the MeshNetworkManager. It will use the `LocalStorage`
@@ -224,7 +236,9 @@ public extension MeshNetworkManager {
         guard let networkManager = networkManager else {
             return
         }
-        networkManager.handle(incomingPdu: data, ofType: type)
+        queue.async {
+            networkManager.handle(incomingPdu: data, ofType: type)
+        }
     }
     
     /// Encrypts the message with the Application Key and a Network Key
@@ -265,7 +279,9 @@ public extension MeshNetworkManager {
             print("Error: The Element does not belong to the local Node")
             throw AccessError.invalidElement
         }
-        networkManager.send(message, from: source, to: destination, using: applicationKey)
+        queue.async {
+            networkManager.send(message, from: source, to: destination, using: applicationKey)
+        }
     }
     
     /// Encrypts the message with the Application Key and a Network Key
@@ -408,7 +424,9 @@ public extension MeshNetworkManager {
                 throw AccessError.cannotDelete
             }
         }
-        networkManager.send(message, to: destination)
+        queue.async {
+            networkManager.send(message, to: destination)
+        }
     }
     
     /// Sends Configuration Message to the given Node.
@@ -477,7 +495,9 @@ public extension MeshNetworkManager {
             print("Error: Mesh Network not created")
             throw MeshNetworkError.noNetwork
         }
-        networkManager.send(message)
+        queue.async {
+            networkManager.send(message)
+        }
     }
     
 }

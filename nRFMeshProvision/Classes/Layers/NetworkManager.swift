@@ -144,8 +144,10 @@ internal class NetworkManager {
     /// - parameter source:  The source Unicast Address.
     /// - parameter destination: The destination address of the message received.
     func notifyAbout(newMessage message: MeshMessage, from source: Address, to destination: Address) {
-        manager.delegate?.meshNetworkManager(manager, didReceiveMessage: message,
-                                             sentFrom: source, to: destination)
+        manager.delegateQueue.async {
+            self.manager.delegate?.meshNetworkManager(self.manager, didReceiveMessage: message,
+                                                      sentFrom: source, to: destination)
+        }
     }
     
     /// Notifies the delegate about delivering the mesh message to the given
@@ -160,8 +162,10 @@ internal class NetworkManager {
               let localElement = localNode.elements.first(where: { $0.unicastAddress == source}) else {
             return
         }
-        manager.delegate?.meshNetworkManager(manager, didSendMessage: message,
-                                             from: localElement, to: destination)
+        manager.delegateQueue.async {
+            self.manager.delegate?.meshNetworkManager(self.manager, didSendMessage: message,
+                                                      from: localElement, to: destination)
+        }
     }
     
     /// Notifies the delegate about an error during sending the mesh message
@@ -177,8 +181,10 @@ internal class NetworkManager {
             let localElement = localNode.elements.first(where: { $0.unicastAddress == source}) else {
                 return
         }
-        manager.delegate?.meshNetworkManager(manager, failedToSendMessage: message,
-                                             from: localElement, to: destination, error: error)
+        manager.delegateQueue.async {
+            self.manager.delegate?.meshNetworkManager(self.manager, failedToSendMessage: message,
+                                                      from: localElement, to: destination, error: error)
+        }
     }
     
 }
