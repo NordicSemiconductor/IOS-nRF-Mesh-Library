@@ -245,16 +245,25 @@ public extension MeshNetworkManager {
     ///                             to the local Provisioner's Node.
     /// - parameter destination:    The destination address.
     /// - parameter applicationKey: The Application Key to sign the message.
+    /// - throws: This method throws when the mesh network has not been created,
+    ///           the local Node does not have configuration capabilities
+    ///           (no Unicast Address assigned), or the given local Element
+    ///           does not belong to the local Node.
     func send(_ message: MeshMessage,
               from localElement: Element? = nil, to destination: MeshAddress,
-              using applicationKey: ApplicationKey) {
+              using applicationKey: ApplicationKey) throws {
         guard let networkManager = networkManager, let meshNetwork = meshNetwork else {
             print("Error: Mesh Network not created")
-            return
+            throw MeshNetworkError.noNetwork
         }
-        guard let source = localElement ?? meshNetwork.localProvisioner?.node?.elements.first else {
-            print("Error: Element not specified")
-            return
+        guard let localNode = meshNetwork.localProvisioner?.node,
+              let source = localElement ?? localNode.elements.first else {
+            print("Error: Local Provisioner has no Unicast Address assigned")
+            throw AccessError.invalidSource
+        }
+        guard source.parentNode == localNode else {
+            print("Error: The Element does not belong to the local Node")
+            throw AccessError.invalidElement
         }
         networkManager.send(message, from: source, to: destination, using: applicationKey)
     }
@@ -271,10 +280,14 @@ public extension MeshNetworkManager {
     ///                             to the local Provisioner's Node.
     /// - parameter group:          The target Group.
     /// - parameter applicationKey: The Application Key to sign the message.
+    /// - throws: This method throws when the mesh network has not been created,
+    ///           the local Node does not have configuration capabilities
+    ///           (no Unicast Address assigned), or the given local Element
+    ///           does not belong to the local Node.
     func send(_ message: MeshMessage,
               from localElement: Element? = nil, to group: Group,
-              using applicationKey: ApplicationKey) {
-        send(message, from: localElement, to: group.address, using: applicationKey)
+              using applicationKey: ApplicationKey) throws {
+        try send(message, from: localElement, to: group.address, using: applicationKey)
     }
     
     /// Encrypts the message with the first Application Key bound to the given
@@ -289,19 +302,27 @@ public extension MeshNetworkManager {
     ///                            Element will be used. The Element must belong
     ///                            to the local Provisioner's Node.
     /// - parameter model:         The destination Model.
+    /// - parameter applicationKey: The Application Key to sign the message.
+    /// - throws: This method throws when the mesh network has not been created,
+    ///           the target Model does not belong to any Element, or has
+    ///           no Application Key bound to it, or when
+    ///           the local Node does not have configuration capabilities
+    ///           (no Unicast Address assigned), or the given local Element
+    ///           does not belong to the local Node.
     func send(_ message: MeshMessage,
-              from localElement: Element? = nil, to model: Model) {
+              from localElement: Element? = nil, to model: Model) throws {
         guard let element = model.parentElement else {
             print("Error: Element does not belong to a Node")
-            return
+            throw AccessError.invalidDestination
         }
         guard let firstKeyIndex = model.bind.first,
               let meshNetwork = meshNetwork,
               let applicationKey = meshNetwork.applicationKeys[firstKeyIndex] else {
             print("Error: Model is not bound to any Application Key")
-            return
+            throw AccessError.modelNotBoundToAppKey
         }
-        send(message, from: localElement, to: MeshAddress(element.unicastAddress), using: applicationKey)
+        try send(message, from: localElement, to: MeshAddress(element.unicastAddress),
+                 using: applicationKey)
     }
     
     /// Encrypts the message with the common Application Key bound to both given
@@ -316,23 +337,32 @@ public extension MeshNetworkManager {
     ///                            Element will be used. The Element must belong
     ///                            to the local Provisioner's Node.
     /// - parameter model:         The destination Model.
+    /// - throws: This method throws when the mesh network has not been created,
+    ///           the local or target Model do not belong to any Element, or have
+    ///           no common Application Key bound to them, or when
+    ///           the local Node does not have configuration capabilities
+    ///           (no Unicast Address assigned), or the given local Element
+    ///           does not belong to the local Node.
     func send(_ message: MeshMessage,
-              from localModel: Model, to model: Model) {
+              from localModel: Model, to model: Model) throws {
+        guard let meshNetwork = meshNetwork else {
+            print("Error: Mesh Network not created")
+            throw MeshNetworkError.noNetwork
+        }
         guard let element = model.parentElement else {
             print("Error: Element does not belong to a Node")
-            return
+            throw AccessError.invalidDestination
         }
-        guard let sourceElement = localModel.parentElement else {
+        guard let localElement = localModel.parentElement else {
             print("Error: Source Model does not belong to an Element")
-            return
+            throw AccessError.invalidSource
         }
         guard let commonKeyIndex = model.bind.first(where: { localModel.bind.contains($0) }),
-              let meshNetwork = meshNetwork,
               let applicationKey = meshNetwork.applicationKeys[commonKeyIndex] else {
             print("Error: Models are not bound to any common Application Key")
-            return
+            throw AccessError.modelNotBoundToAppKey
         }
-        send(message, from: sourceElement, to: MeshAddress(element.unicastAddress), using: applicationKey)
+        try send(message, from: localElement, to: MeshAddress(element.unicastAddress), using: applicationKey)
     }
     
     /// Sends Configuration Message to the Node with given destination Address.
@@ -344,10 +374,39 @@ public extension MeshNetworkManager {
     ///
     /// - parameter message:     The message to be sent.
     /// - parameter destination: The destination Unicast Address.
-    func send(_ message: ConfigMessage, to destination: Address) {
-        guard let networkManager = networkManager else {
+    /// - throws: This method throws when the mesh network has not been created,
+    ///           the local Node does not have configuration capabilities
+    ///           (no Unicast Address assigned), or the destination address
+    ///           is not a Unicast Address or it belongs to an unknown Node.
+    ///           Error `AccessError.cannotDelete` is sent when trying to
+    ///           delete the last Network Key on the device.
+    func send(_ message: ConfigMessage, to destination: Address) throws {
+        guard let networkManager = networkManager, let meshNetwork = meshNetwork else {
             print("Error: Mesh Network not created")
-            return
+            throw MeshNetworkError.noNetwork
+        }
+        guard let localProvisioner = meshNetwork.localProvisioner,
+              localProvisioner.hasConfigurationCapabilities else {
+            print("Error: Local Provisioner has no Unicast Address assigned")
+            throw AccessError.invalidSource
+        }
+        guard destination.isUnicast else {
+            print("Error: Address: 0x\(destination.hex) is not a Unicast Address")
+            throw MeshMessageError.invalidAddress
+        }
+        guard let node = meshNetwork.node(withAddress: destination) else {
+            print("Error: Unknown destination Node")
+            throw AccessError.invalidDestination
+        }
+        guard let _ = node.networkKeys.first else {
+            print("Fatal Error: The target Node does not have Network Key")
+            throw AccessError.invalidDestination
+        }
+        if message is ConfigNetKeyDelete {
+            guard node.networkKeys.count > 2 else {
+                print("Error: Cannot remove last Network Key")
+                throw AccessError.cannotDelete
+            }
         }
         networkManager.send(message, to: destination)
     }
@@ -359,8 +418,12 @@ public extension MeshNetworkManager {
     ///
     /// - parameter message: The message to be sent.
     /// - parameter node:    The destination Node.
-    func send(_ message: ConfigMessage, to node: Node) {
-        send(message, to: node.unicastAddress)
+    /// - throws: This method throws when the mesh network has not been created,
+    ///           the local Node does not have configuration capabilities
+    ///           (no Unicast Address assigned), or the destination address
+    ///           is not a Unicast Address or it belongs to an unknown Node.
+    func send(_ message: ConfigMessage, to node: Node) throws {
+        try send(message, to: node.unicastAddress)
     }
     
     /// Sends Configuration Message to the given Node.
@@ -370,12 +433,16 @@ public extension MeshNetworkManager {
     ///
     /// - parameter message: The message to be sent.
     /// - parameter element: The destination Element.
-    func send(_ message: ConfigMessage, to element: Element) {
+    /// - throws: This method throws when the mesh network has not been created,
+    ///           the local Node does not have configuration capabilities
+    ///           (no Unicast Address assigned), or the target Element does not
+    ///           belong to any known Node.
+    func send(_ message: ConfigMessage, to element: Element) throws {
         guard let node = element.parentNode else {
             print("Error: Element does not belong to a Node")
-            return
+            throw AccessError.invalidDestination
         }
-        send(message, to: node)
+        try send(message, to: node)
     }
     
     /// Sends Configuration Message to the given Node.
@@ -385,12 +452,16 @@ public extension MeshNetworkManager {
     ///
     /// - parameter message: The message to be sent.
     /// - parameter model:   The destination Model.
-    func send(_ message: ConfigMessage, to model: Model) {
+    /// - throws: This method throws when the mesh network has not been created,
+    ///           the local Node does not have configuration capabilities
+    ///           (no Unicast Address assigned), or the target Element does
+    ///           not belong to any known Node.
+    func send(_ message: ConfigMessage, to model: Model) throws {
         guard let element = model.parentElement else {
             print("Error: Model does not belong to an Element")
-            return
+            throw AccessError.invalidDestination
         }
-        send(message, to: element)
+        try send(message, to: element)
     }
     
     /// Sends the Proxy Configuration Message to the connected Proxy Node.
@@ -400,10 +471,11 @@ public extension MeshNetworkManager {
     /// should deliver the PDU to the connected Node.
     ///
     /// - parameter message: The Proxy Configuration message to be sent.
-    func send(_ message: ProxyConfigurationMessage) {
+    /// - throws: This method throws when the mesh network has not been created.
+    func send(_ message: ProxyConfigurationMessage) throws {
         guard let networkManager = networkManager else {
             print("Error: Mesh Network not created")
-            return
+            throw MeshNetworkError.noNetwork
         }
         networkManager.send(message)
     }

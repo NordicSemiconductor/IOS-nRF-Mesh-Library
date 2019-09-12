@@ -109,7 +109,9 @@ class GenericLevelViewCell: ModelViewCell {
         readButton.isEnabled = isEnabled
     }
     
-    override func meshNetwork(_ meshNetwork: MeshNetwork, didDeliverMessage message: MeshMessage, from source: Address) -> Bool {
+    override func meshNetworkManager(_ manager: MeshNetworkManager,
+                                     didReceiveMessage message: MeshMessage,
+                                     sentFrom source: Address, to destination: Address) -> Bool {
         switch message {
         case let status as GenericLevelStatus:
             let level = floorf(0.1 + (Float(status.level) + 32768.0) / 655.35)
@@ -131,7 +133,9 @@ class GenericLevelViewCell: ModelViewCell {
         return false
     }
     
-    override func meshNetwork(_ meshNetwork: MeshNetwork, didDeliverMessage message: MeshMessage, to destination: Address) -> Bool {
+    override func meshNetworkManager(_ manager: MeshNetworkManager,
+                                     didSendMessage message: MeshMessage,
+                                     from localElement: Element, to destination: Address) -> Bool {
         // For acknowledged messages wait for the Acknowledgement Message.
         return acknowledgmentSwitch.isOn
     }

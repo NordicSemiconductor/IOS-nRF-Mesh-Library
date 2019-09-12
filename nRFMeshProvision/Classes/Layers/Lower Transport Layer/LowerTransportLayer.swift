@@ -172,9 +172,11 @@ internal class LowerTransportLayer {
             let message = AccessMessage(fromUnsegmentedUpperTransportPdu: pdu, usingNetworkKey: networkKey)
             do {
                 try networkManager.networkLayer.send(lowerTransportPdu: message, ofType: .networkPdu, withTtl: ttl)
-                networkManager.notifyAbout(message: pdu.message!, sentTo: pdu.destination)
+                networkManager.notifyAbout(deliveringMessage: pdu.message!,
+                                           from: pdu.source, to: pdu.destination)
             } catch {
-                networkManager.notifyAbout(error, duringSendingMessage: pdu.message!, to: pdu.destination)
+                networkManager.notifyAbout(error, duringSendingMessage: pdu.message!,
+                                           from: pdu.source, to: pdu.destination)
             }
         }
     }
@@ -301,7 +303,10 @@ private extension LowerTransportLayer {
         // Is the target Node busy?
         guard !ack.isBusy else {
             outgoingSegments.removeValue(forKey: ack.sequenceZero)
-            networkManager.notifyAbout(LowerTransportError.busy, duringSendingMessage: segment.message!, to: ack.source)
+            networkManager.notifyAbout(LowerTransportError.busy,
+                                       duringSendingMessage: segment.message!,
+                                       // Source and destiation reversed in ACK!
+                                       from: ack.destination, to: ack.source)
             return
         }
         
@@ -315,7 +320,8 @@ private extension LowerTransportLayer {
         // If all the segments were acknowledged, notify the manager.
         if !outgoingSegments[ack.sequenceZero]!.hasMore {
             outgoingSegments.removeValue(forKey: ack.sequenceZero)
-            networkManager.notifyAbout(message: segment.message!, sentTo: ack.source)
+            networkManager.notifyAbout(deliveringMessage: segment.message!,
+                                       from: ack.destination, to: ack.source)
         } else {
             // Else, send again all packets that were not acknowledged.
             sendSegments(for: ack.sequenceZero)
@@ -370,7 +376,8 @@ private extension LowerTransportLayer {
                     if !ackExpected! {
                         segmentTransmissionTimers.removeValue(forKey: sequenceZero)?.invalidate()
                         outgoingSegments.removeValue(forKey: sequenceZero)
-                        networkManager.notifyAbout(error, duringSendingMessage: segment.message!, to: segment.destination)
+                        networkManager.notifyAbout(error, duringSendingMessage: segment.message!,
+                                                   from: segment.source, to: segment.destination)
                         return
                     }
                 }
@@ -381,10 +388,12 @@ private extension LowerTransportLayer {
         // delays between repetitions. The specification does not say what small
         // random delay is, so assuming 0.5-1.5 second.
         if !ackExpected! {
-            _ = Timer.scheduledTimer(withTimeInterval: TimeInterval.random(in: 0.500...1.500), repeats: false) { timer in
+            let interval = TimeInterval.random(in: 0.500...1.500)
+            _ = Timer.scheduledTimer(withTimeInterval: interval, repeats: false) { timer in
                 for i in 0..<segments.count {
                     if let segment = segments[i] {
-                        try? self.networkManager.networkLayer.send(lowerTransportPdu: segment, ofType: .networkPdu, withTtl: ttl)
+                        try? self.networkManager.networkLayer.send(lowerTransportPdu: segment,
+                                                                   ofType: .networkPdu, withTtl: ttl)
                     }
                 }
                 timer.invalidate()
@@ -394,21 +403,25 @@ private extension LowerTransportLayer {
         segmentTransmissionTimers.removeValue(forKey: sequenceZero)?.invalidate()
         if ackExpected ?? false, let segments = outgoingSegments[sequenceZero], segments.hasMore {
             if limit > 0 {
+                let interval = networkManager.transmissionTimerInteral(ttl)
                 segmentTransmissionTimers[sequenceZero] =
-                    Timer.scheduledTimer(withTimeInterval: networkManager.transmissionTimerInteral(ttl), repeats: false) { _ in
+                    Timer.scheduledTimer(withTimeInterval: interval, repeats: false) { _ in
                         self.sendSegments(for: sequenceZero, limit: limit - 1)
                     }
             } else {
                 // A limit has been reached and some segments were not ACK.
                 if let segment = segments.firstNotAcknowledged {
-                    networkManager.notifyAbout(LowerTransportError.timeout, duringSendingMessage: segment.message!, to: segment.destination)
+                    networkManager.notifyAbout(LowerTransportError.timeout,
+                                               duringSendingMessage: segment.message!,
+                                               from: segment.source, to: segment.destination)
                 }
                 outgoingSegments.removeValue(forKey: sequenceZero)
             }
         } else {
             // All segments have been successfully sent to a Group Address.
             if let segment = segments.firstNotAcknowledged {
-                networkManager.notifyAbout(message: segment.message!, sentTo: segment.destination)
+                networkManager.notifyAbout(deliveringMessage: segment.message!,
+                                           from: segment.source, to: segment.destination)
             }
             outgoingSegments.removeValue(forKey: sequenceZero)
         }

@@ -231,7 +231,7 @@ internal extension ProxyFilter {
             // Handle buffered messages.
             guard buffer.isEmpty else {
                 let message = buffer.removeFirst()
-                manager.send(message)
+                try? manager.send(message)
                 return
             }
             busy = false
@@ -281,7 +281,11 @@ private extension ProxyFilter {
             return
         }
         busy = true
-        manager.send(message)
+        do {
+            try manager.send(message)
+        } catch {
+            busy = false
+        }
     }
     
 }

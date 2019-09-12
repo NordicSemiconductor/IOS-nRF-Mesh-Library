@@ -106,7 +106,7 @@ internal class NetworkLayer {
     func send(proxyConfigurationMessage message: ProxyConfigurationMessage) {
         guard let networkKey = proxyNetworkKey else {
             // The Proxy Network Key is unknown.
-            networkManager.meshNetworkManager.proxyFilter?.managerFailedToDeliverMessage(message, error: BearerError.bearerClosed)
+            networkManager.manager.proxyFilter?.managerFailedToDeliverMessage(message, error: BearerError.bearerClosed)
             return
         }
         print("Sending \(message)...") // TODO: Remove me
@@ -119,9 +119,9 @@ internal class NetworkLayer {
                                  sentFrom: source, usingNetworkKey: networkKey)
         do {
             try send(lowerTransportPdu: pdu, ofType: .proxyConfiguration, withTtl: 0)
-            networkManager.meshNetworkManager.proxyFilter?.managerDidDeliverMessage(message)
+            networkManager.manager.proxyFilter?.managerDidDeliverMessage(message)
         } catch {
-            networkManager.meshNetworkManager.proxyFilter?.managerFailedToDeliverMessage(message, error: error)
+            networkManager.manager.proxyFilter?.managerFailedToDeliverMessage(message, error: error)
         }
     }
     
@@ -232,7 +232,7 @@ private extension NetworkLayer {
         }
         
         if justConnected || reconnected {
-            networkManager.meshNetworkManager.proxyFilter?.newProxyDidConnect()
+            networkManager.manager.proxyFilter?.newProxyDidConnect()
         }
     }
     
@@ -261,7 +261,7 @@ private extension NetworkLayer {
         if let MessageType = MessageType,
            let message = MessageType.init(parameters: payload.subdata(in: 1..<payload.count)) {
             print("\(message) received") // TODO: Remove me
-            networkManager.meshNetworkManager.proxyFilter?.handle(message)
+            networkManager.manager.proxyFilter?.handle(message)
         } else {
             print("Info: Unsupported Proxy Configuration Message received: \(payload.hex)")
         }

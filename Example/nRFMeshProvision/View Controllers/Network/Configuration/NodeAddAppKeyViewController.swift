@@ -29,7 +29,7 @@ class NodeAddAppKeyViewController: ProgressViewController {
         }
         let selectedAppKey = keys[selectedIndexPath.row]
         start("Adding Application Key...") {
-            MeshNetworkManager.instance.send(ConfigAppKeyAdd(applicationKey: selectedAppKey), to: self.node)
+            try? MeshNetworkManager.instance.send(ConfigAppKeyAdd(applicationKey: selectedAppKey), to: self.node)
         }
     }
     
@@ -96,7 +96,9 @@ class NodeAddAppKeyViewController: ProgressViewController {
 
 extension NodeAddAppKeyViewController: MeshNetworkDelegate {
     
-    func meshNetwork(_ meshNetwork: MeshNetwork, didDeliverMessage message: MeshMessage, from source: Address) {
+    func meshNetworkManager(_ manager: MeshNetworkManager,
+                            didReceiveMessage message: MeshMessage,
+                            sentFrom source: Address, to destination: Address) {
         // Has the Node been reset remotely.
         guard !(message is ConfigNodeReset) else {
             (UIApplication.shared.delegate as! AppDelegate).meshNetworkDidChange()
@@ -136,7 +138,10 @@ extension NodeAddAppKeyViewController: MeshNetworkDelegate {
         }
     }
     
-    func meshNetwork(_ meshNetwork: MeshNetwork, failedToDeliverMessage message: MeshMessage, to destination: Address, error: Error) {
+    func meshNetworkManager(_ manager: MeshNetworkManager,
+                            failedToSendMessage message: MeshMessage,
+                            from localElement: Element, to destination: Address,
+                            error: Error) {
         done() {
             self.presentAlert(title: "Error", message: error.localizedDescription)
         }

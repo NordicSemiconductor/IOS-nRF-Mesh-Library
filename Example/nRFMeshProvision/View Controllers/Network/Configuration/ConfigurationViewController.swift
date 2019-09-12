@@ -357,26 +357,26 @@ private extension ConfigurationViewController {
     
     @objc func getCompositionData() {
         start("Requesting Composition Data...") {
-            MeshNetworkManager.instance.send(ConfigCompositionDataGet(), to: self.node)
+            try? MeshNetworkManager.instance.send(ConfigCompositionDataGet(), to: self.node)
         }
     }
     
     func getTtl() {
         start("Requesting default TTL...") {
-            MeshNetworkManager.instance.send(ConfigDefaultTtlGet(), to: self.node)
+            try? MeshNetworkManager.instance.send(ConfigDefaultTtlGet(), to: self.node)
         }
     }
     
     func setTtl(_ ttl: UInt8) {
         start("Setting TTL to \(ttl)...") {
-            MeshNetworkManager.instance.send(ConfigDefaultTtlSet(ttl: ttl), to: self.node)
+            try? MeshNetworkManager.instance.send(ConfigDefaultTtlSet(ttl: ttl), to: self.node)
         }
     }
     
     /// Sends a message to the node that will reset its state to unprovisioned.
     func resetNode() {
         start("Resetting node...") {
-            MeshNetworkManager.instance.send(ConfigNodeReset(), to: self.node)
+            try? MeshNetworkManager.instance.send(ConfigNodeReset(), to: self.node)
         }
     }
     
@@ -395,7 +395,9 @@ private extension ConfigurationViewController {
 
 extension ConfigurationViewController: MeshNetworkDelegate {
     
-    func meshNetwork(_ meshNetwork: MeshNetwork, didDeliverMessage message: MeshMessage, from source: Address) {
+    func meshNetworkManager(_ manager: MeshNetworkManager,
+                            didReceiveMessage message: MeshMessage,
+                            sentFrom source: Address, to destination: Address) {
         // Has the Node been reset remotely.
         guard !(message is ConfigNodeReset) else {
             (UIApplication.shared.delegate as! AppDelegate).meshNetworkDidChange()
@@ -417,9 +419,10 @@ extension ConfigurationViewController: MeshNetworkDelegate {
             getTtl()
             
         case is ConfigDefaultTtlStatus:
-            done()
-            tableView.reloadRows(at: [.ttl], with: .automatic)
-            refreshControl?.endRefreshing()
+            done() {
+                self.tableView.reloadRows(at: [.ttl], with: .automatic)
+                self.refreshControl?.endRefreshing()
+            }
             
         case is ConfigNodeResetStatus:
             done() {
@@ -431,7 +434,10 @@ extension ConfigurationViewController: MeshNetworkDelegate {
         }
     }
     
-    func meshNetwork(_ meshNetwork: MeshNetwork, failedToDeliverMessage message: MeshMessage, to destination: Address, error: Error) {
+    func meshNetworkManager(_ manager: MeshNetworkManager,
+                            failedToSendMessage message: MeshMessage,
+                            from localElement: Element, to destination: Address,
+                            error: Error) {
         done() {
             self.presentAlert(title: "Error", message: error.localizedDescription)
             self.refreshControl?.endRefreshing()
