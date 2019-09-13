@@ -121,3 +121,11 @@ extension ApplicationKey: Equatable {
     }
     
 }
+
+extension ApplicationKey: CustomDebugStringConvertible {
+    
+    public var debugDescription: String {
+        return "\(name) (index: \(index))"
+    }
+    
+}

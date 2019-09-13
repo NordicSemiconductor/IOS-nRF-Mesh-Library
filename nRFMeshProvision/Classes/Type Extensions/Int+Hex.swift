@@ -7,6 +7,30 @@
 
 import Foundation
 
+
+internal extension UInt8 {
+    
+    init?(hex: String) {
+        guard hex.count == 2, let value = UInt8(hex, radix: 16) else {
+            return nil
+        }
+        self = value
+    }
+    
+    var hex: String {
+        return String(format: "%02X", self)
+    }
+    
+    init(data: Data) {
+        self = data[0]
+    }
+    
+    var data: Data {
+        return Data([self])
+    }
+    
+}
+
 internal extension UInt16 {
     
     init?(hex: String) {

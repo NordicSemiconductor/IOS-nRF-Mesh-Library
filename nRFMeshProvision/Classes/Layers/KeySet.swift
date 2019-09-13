@@ -50,3 +50,18 @@ internal struct DeviceKeySet: KeySet {
     }
 }
 
+extension AccessKeySet: CustomDebugStringConvertible {
+    
+    var debugDescription: String {
+        return "\(applicationKey)"
+    }
+    
+}
+
+extension DeviceKeySet: CustomDebugStringConvertible {
+    
+    var debugDescription: String {
+        return "Device Key"
+    }
+    
+}

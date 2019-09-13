@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import os.log
 import nRFMeshProvision
 
 @UIApplicationMain
@@ -22,6 +23,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         meshNetworkManager = MeshNetworkManager()
         meshNetworkManager.acknowledgmentTimerInterval = 0.600
         meshNetworkManager.transmissionTimerInteral = 0.600
+        meshNetworkManager.logger = self
         
         // Try loading the saved configuration.
         var loaded = false
@@ -60,6 +62,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let meshNetwork = meshNetworkManager.meshNetwork!
         connection = NetworkConnection(to: meshNetwork)
         connection!.dataDelegate = meshNetworkManager
+        connection!.logger = self
         meshNetworkManager.transmitter = connection
         connection!.open()
     }
@@ -73,6 +76,44 @@ extension MeshNetworkManager {
     
     static var bearer: NetworkConnection! {
         return (UIApplication.shared.delegate as! AppDelegate).connection
+    }
+    
+}
+
+// MARK: - Logger
+
+extension AppDelegate: LoggerDelegate {
+    
+    func log(message: String, ofCategory category: LogCategory, withLevel level: LogLevel) {
+        if #available(iOS 10.0, *) {
+            os_log("%@", log: category.log, type: level.type, message)
+        } else {
+            NSLog("%@", message)
+        }
+    }
+    
+}
+
+extension LogLevel {
+    
+    /// Mapping from mesh log levels to system log types.
+    var type: OSLogType {
+        switch self {
+        case .debug:       return .debug
+        case .verbose:     return .debug
+        case .info:        return .info
+        case .application: return .default
+        case .warning:     return .error
+        case .error:       return .fault
+        }
+    }
+    
+}
+
+extension LogCategory {
+    
+    var log: OSLog {
+        return OSLog(subsystem: Bundle.main.bundleIdentifier!, category: rawValue)
     }
     
 }

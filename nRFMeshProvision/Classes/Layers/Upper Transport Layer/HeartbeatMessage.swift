@@ -54,3 +54,11 @@ internal struct HearbeatMessage {
         self.destination = destination
     }
 }
+
+extension HearbeatMessage: CustomDebugStringConvertible {
+    
+    var debugDescription: String {
+        return "Heartbeat Message (initTTL: \(initTtl), features: 0x\(features.rawValue.hex))"
+    }
+    
+}

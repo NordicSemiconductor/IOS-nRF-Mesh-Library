@@ -11,6 +11,10 @@ internal class LowerTransportLayer {
     let networkManager: NetworkManager
     let meshNetwork: MeshNetwork
     
+    private var logger: LoggerDelegate? {
+        return networkManager.manager.logger
+    }
+    
     /// The storage for keeping sequence numbers. Each mesh network (with different UUID)
     /// has a unique storage, which can be reloaded when the network is imported after it
     /// was used before.
@@ -97,7 +101,7 @@ internal class LowerTransportLayer {
            
             guard receivedSeqAuth > localSeqAuth else {
                 // Ignore that message.
-                print("Error: Received SeqAuth \(receivedSeqAuth) <= Local SeqAuth \(localSeqAuth)")
+                logger?.w(.lowerTransport, "Discarding packet (seqAuth: \(receivedSeqAuth), expected > \(localSeqAuth))")
                 return
             }
         }
@@ -113,11 +117,13 @@ internal class LowerTransportLayer {
         case .accessMessage:
             if unsegmented {
                 if let accessMessage = AccessMessage(fromUnsegmentedPdu: networkPdu) {
+                    logger?.i(.lowerTransport, "\(accessMessage) receieved (decrypted using key: \(accessMessage.networkKey))")
                     // Unsegmented message is not acknowledged. Just pass it to higher layer.
                     networkManager.upperTransportLayer.handle(lowerTransportPdu: accessMessage)
                 }
             } else {
                 if let segment = SegmentedAccessMessage(fromSegmentPdu: networkPdu) {
+                    logger?.d(.lowerTransport, "\(segment) receieved (decrypted using key: \(segment.networkKey))")
                     assemble(segment: segment, createdFrom: networkPdu)
                 }
             }
@@ -126,16 +132,19 @@ internal class LowerTransportLayer {
             switch opCode {
             case 0x00:
                 if let ack = SegmentAcknowledgmentMessage(fromNetworkPdu: networkPdu) {
+                    logger?.d(.lowerTransport, "\(ack) receieved (decrypted using key: \(ack.networkKey))")
                     handle(ack: ack)
                 }
             default:
                 if unsegmented {
                     if let controlMessage = ControlMessage(fromNetworkPdu: networkPdu) {
+                        logger?.i(.lowerTransport, "\(controlMessage) receieved (decrypted using key: \(controlMessage.networkKey))")
                         // Unsegmented message is not acknowledged. Just pass it to higher layer.
                         networkManager.upperTransportLayer.handle(lowerTransportPdu: controlMessage)
                     }
                 } else {
                     if let segment = SegmentedControlMessage(fromSegment: networkPdu) {
+                        logger?.d(.lowerTransport, "\(segment) receieved (decrypted using key: \(segment.networkKey))")
                         assemble(segment: segment, createdFrom: networkPdu)
                     }
                 }
@@ -171,10 +180,12 @@ internal class LowerTransportLayer {
         } else {
             let message = AccessMessage(fromUnsegmentedUpperTransportPdu: pdu, usingNetworkKey: networkKey)
             do {
+                logger?.i(.lowerTransport, "Sending \(message)")
                 try networkManager.networkLayer.send(lowerTransportPdu: message, ofType: .networkPdu, withTtl: ttl)
                 networkManager.notifyAbout(deliveringMessage: pdu.message!,
                                            from: pdu.localElement!, to: pdu.destination)
             } catch {
+                logger?.w(.lowerTransport, error)
                 networkManager.notifyAbout(error, duringSendingMessage: pdu.message!,
                                            from: pdu.localElement!, to: pdu.destination)
             }
@@ -200,15 +211,18 @@ private extension LowerTransportLayer {
     /// - parameter segment: The segment to handle.
     /// - parameter networkPdu: The Network PDU from which the segment was decoded.
     func assemble(segment: SegmentedMessage, createdFrom networkPdu: NetworkPdu) {
-        print("Segment \(segment) received") // TODO: Remove me
-        
         // If the received segment comes from an already completed and
         // acknowledged message, send the same ACK immediately.
         if let lastAck = acknowledgments[segment.source], lastAck.sequenceZero == segment.sequenceZero {
             if let provisionerNode = meshNetwork.localProvisioner?.node {
-                print("Re-sending \(lastAck)") // TODO: Remove me
+                logger?.d(.lowerTransport, "Message already acknowledged, sending ACK again")
+                logger?.d(.lowerTransport, "Sending \(lastAck)")
                 let ttl = networkPdu.ttl > 0 ? provisionerNode.defaultTTL ?? networkManager.defaultTtl : 0
-                try? networkManager.networkLayer.send(lowerTransportPdu: lastAck, ofType: .networkPdu, withTtl: ttl)
+                do {
+                    try networkManager.networkLayer.send(lowerTransportPdu: lastAck, ofType: .networkPdu, withTtl: ttl)
+                } catch {
+                    logger?.w(.lowerTransport, error)
+                }
             } else {
                 acknowledgments.removeValue(forKey: segment.source)
             }
@@ -220,13 +234,15 @@ private extension LowerTransportLayer {
         
         // A segmented message may be composed of 1 or more segments.
         if segment.isSingleSegment {
+            let message = [segment].reassembled
+            logger?.i(.lowerTransport, "\(message) received")
             // A single segment message may immediately be acknowledged.
             if let provisionerNode = meshNetwork.localProvisioner?.node,
                 networkPdu.destination == provisionerNode.unicastAddress {
                 let ttl = networkPdu.ttl > 0 ? provisionerNode.defaultTTL ?? networkManager.defaultTtl : 0
                 sendAck(for: [segment], usingNetworkKey: networkPdu.networkKey, withTtl: ttl)
             }
-            networkManager.upperTransportLayer.handle(lowerTransportPdu: [segment].reassembled)
+            networkManager.upperTransportLayer.handle(lowerTransportPdu: message)
         } else {
             // If a message is composed of multiple segments, they all need to
             // be received before it can be processed.
@@ -236,7 +252,7 @@ private extension LowerTransportLayer {
             }
             guard incompleteSegments[key]!.count > segment.index && incompleteSegments[key]![segment.index] == nil else {
                 // Segment was sent again or it's invalid. We can stop here.
-                print("Error: Segment invalid or repeated")
+                logger?.d(.lowerTransport, "Segment invalid or repeated")
                 return
             }
             incompleteSegments[key]![segment.index] = segment
@@ -245,6 +261,8 @@ private extension LowerTransportLayer {
             // Transport Layer for processing.
             if incompleteSegments[key]!.isComplete {
                 let allSegments = incompleteSegments.removeValue(forKey: key)!
+                let message = allSegments.reassembled
+                logger?.i(.lowerTransport, "\(message) received")
                 // If the access message was targetting directly the local Provisioner...
                 if let provisionerNode = meshNetwork.localProvisioner?.node,
                     networkPdu.destination == provisionerNode.unicastAddress {
@@ -256,7 +274,7 @@ private extension LowerTransportLayer {
                     let ttl = networkPdu.ttl > 0 ? provisionerNode.defaultTTL ?? networkManager.defaultTtl : 0
                     sendAck(for: allSegments, usingNetworkKey: networkPdu.networkKey, withTtl: ttl)
                 }
-                networkManager.upperTransportLayer.handle(lowerTransportPdu: allSegments.reassembled)
+                networkManager.upperTransportLayer.handle(lowerTransportPdu: message)
             } else {
                 // The Provisioner shall send block acknowledgment only if the message was
                 // send directly to it's Unicast Address.
@@ -268,6 +286,7 @@ private extension LowerTransportLayer {
                 // timer is active, the timer shall be restarted.
                 incompleteTimers[key]?.invalidate()
                 incompleteTimers[key] = Timer.scheduledTimer(withTimeInterval: networkManager.incompleteMessageTimeout, repeats: false) { _ in
+                    self.logger?.w(.lowerTransport, "Incomplete message timeout: cancelling message (src: \(Address(key >> 16).hex), seqZero: \(key & 0x1FFF))")
                     self.incompleteTimers.removeValue(forKey: key)?.invalidate()
                     self.acknowledgmentTimers.removeValue(forKey: key)?.invalidate()
                     self.incompleteSegments.removeValue(forKey: key)
@@ -290,7 +309,6 @@ private extension LowerTransportLayer {
     ///
     /// - parameter ack: The Segment Acknowledgment Message received.
     func handle(ack: SegmentAcknowledgmentMessage) {
-        print("\(ack) received") // TODO: Remove me
         // Ensure the ACK is for some message that has been sent.
         guard outgoingSegments[ack.sequenceZero] != nil,
             let segment = outgoingSegments[ack.sequenceZero]!.firstNotAcknowledged else {
@@ -343,8 +361,12 @@ private extension LowerTransportLayer {
         if segments.isComplete {
             acknowledgments[ack.destination] = ack
         }
-        print("Sending \(ack)") // TODO: Remove me
-        try? networkManager.networkLayer.send(lowerTransportPdu: ack, ofType: .networkPdu, withTtl: ttl)
+        logger?.d(.lowerTransport, "Sending \(ack)")
+        do {
+            try networkManager.networkLayer.send(lowerTransportPdu: ack, ofType: .networkPdu, withTtl: ttl)
+        } catch {
+            logger?.w(.lowerTransport, error)
+        }
     }
     
     /// Sends all non-`nil` segments from `outgoingSegments` map from the given
@@ -369,8 +391,10 @@ private extension LowerTransportLayer {
                     if ackExpected == nil {
                         ackExpected = segment.destination.isUnicast
                     }
+                    logger?.d(.lowerTransport, "Sending \(segment)")
                     try networkManager.networkLayer.send(lowerTransportPdu: segment, ofType: .networkPdu, withTtl: ttl)
                 } catch {
+                    logger?.w(.lowerTransport, error)
                     // Sending a segment failed.
                     if !ackExpected! {
                         segmentTransmissionTimers.removeValue(forKey: sequenceZero)?.invalidate()
@@ -391,8 +415,13 @@ private extension LowerTransportLayer {
             _ = Timer.scheduledTimer(withTimeInterval: interval, repeats: false) { timer in
                 for i in 0..<segments.count {
                     if let segment = segments[i] {
-                        try? self.networkManager.networkLayer.send(lowerTransportPdu: segment,
-                                                                   ofType: .networkPdu, withTtl: ttl)
+                        self.logger?.d(.lowerTransport, "Sending \(segment)")
+                        do {
+                            try self.networkManager.networkLayer.send(lowerTransportPdu: segment,
+                                                                      ofType: .networkPdu, withTtl: ttl)
+                        } catch {
+                            self.logger?.w(.lowerTransport, error)
+                        }
                     }
                 }
                 timer.invalidate()

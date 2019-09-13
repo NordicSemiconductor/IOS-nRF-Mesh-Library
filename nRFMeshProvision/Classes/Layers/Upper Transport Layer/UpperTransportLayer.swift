@@ -12,6 +12,10 @@ internal class UpperTransportLayer {
     let meshNetwork: MeshNetwork
     let defaults: UserDefaults
     
+    private var logger: LoggerDelegate? {
+        return networkManager.manager.logger
+    }
+    
     init(_ networkManager: NetworkManager) {
         self.networkManager = networkManager
         self.meshNetwork = networkManager.meshNetwork!
@@ -28,39 +32,43 @@ internal class UpperTransportLayer {
         case .accessMessage:
             let accessMessage = lowerTransportPdu as! AccessMessage
             if let (upperTransportPdu, keySet) = UpperTransportPdu.decode(accessMessage, for: meshNetwork) {
+                logger?.i(.upperTransport, "\(upperTransportPdu) received")
                 networkManager.accessLayer.handle(upperTransportPdu: upperTransportPdu, sentWith: keySet)
+            } else {
+                logger?.w(.upperTransport, "Failed to decode PDU")
             }
         case .controlMessage:
             let controlMessage = lowerTransportPdu as! ControlMessage
             switch controlMessage.opCode {
             case 0x0A:
                 if let heartbeat = HearbeatMessage(fromControlMessage: controlMessage) {
+                    logger?.i(.upperTransport, "\(heartbeat) received")
                     handle(hearbeat: heartbeat)
                 }
             default:
+                logger?.w(.upperTransport, "Unsupported Control Message received (opCode: \(controlMessage.opCode))")
                 // Other Control Messages are not supported.
                 break
             }
         }
     }
     
-    /// Handles the Mesh Message and sends it down to Lower Transport Layer.
+    /// Encrypts the Access PDU using given key set and sends it down to
+    /// Lower Transport Layer.
     ///
-    /// - parameter message: The message to be sent.
-    /// - parameter localElement: The local Element which address will be used as source.
-    /// - parameter destination: The destination address.
+    /// - parameter pdu: The Access PDU to be sent.
     /// - parameter keySet: The set of keys to encrypt the message with.
-    func send(_ message: MeshMessage,
-              from localElement: Element, to destination: MeshAddress,
-              using keySet: KeySet) {
-        // Get the current sequence number for local Provisioner's source address.
-        let sequence = UInt32(defaults.integer(forKey: "S\(localElement.unicastAddress.hex)"))
+    func send(_ accessPdu: AccessPdu, using keySet: KeySet) {
+        // Get the current sequence number for source Element's address.
+        let source = accessPdu.localElement!.unicastAddress
+        let sequence = UInt32(defaults.integer(forKey: "S\(source.hex)"))
         
-        let pdu = UpperTransportPdu(fromMeshMessage: message,
-                                    sentFrom: localElement, to: destination,
+        let pdu = UpperTransportPdu(fromAccessPdu: accessPdu,
                                     usingKeySet: keySet, sequence: sequence)
         
-        let isSegmented = pdu.transportPdu.count > 15 || message.isSegmented
+        logger?.i(.upperTransport, "Sending \(pdu) encrypted using key: \(keySet)")
+        
+        let isSegmented = pdu.transportPdu.count > 15 || accessPdu.isSegmented
         let networkKey = keySet.networkKey
         networkManager.lowerTransportLayer.send(upperTransportPdu: pdu,
                                                 asSegmentedMessage: isSegmented,

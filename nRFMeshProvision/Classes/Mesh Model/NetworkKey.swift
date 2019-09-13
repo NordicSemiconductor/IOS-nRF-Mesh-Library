@@ -219,3 +219,14 @@ extension NetworkKey: Equatable {
     }
     
 }
+
+extension NetworkKey: CustomDebugStringConvertible {
+    
+    public var debugDescription: String {
+        if phase != .normalOperation {
+            return "\(name) (index: \(index), phase: \(phase))"
+        }
+        return "\(name) (index: \(index))"
+    }
+    
+}

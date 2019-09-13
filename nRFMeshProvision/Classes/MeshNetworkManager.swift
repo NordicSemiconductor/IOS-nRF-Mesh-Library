@@ -22,6 +22,8 @@ public class MeshNetworkManager {
     /// The Proxy Filter state.
     public internal(set) var proxyFilter: ProxyFilter?
     
+    /// The logger delegate will be called whenever a new log entry is created.
+    public weak var logger: LoggerDelegate?
     /// The delegate will receive callbacks whenever a complete
     /// Mesh Message has been received and reassembled.
     public weak var delegate: MeshNetworkDelegate?

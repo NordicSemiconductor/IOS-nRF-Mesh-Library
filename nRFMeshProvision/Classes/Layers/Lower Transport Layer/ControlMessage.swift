@@ -32,13 +32,10 @@ internal struct ControlMessage: LowerTransportPdu {
     ///            was invalid.
     init?(fromNetworkPdu networkPdu: NetworkPdu) {
         let data = networkPdu.transportPdu
-        guard data.count >= 5, data[0] & 0x80 == 0 else {
+        guard data.count >= 1, data[0] & 0x80 == 0 else {
             return nil
         }
         opCode = data[0] & 0x7F
-        guard opCode == 0x00 else {
-            return nil
-        }
         upperTransportPdu = data.advanced(by: 1)
         
         source = networkPdu.source
@@ -85,7 +82,7 @@ internal struct ControlMessage: LowerTransportPdu {
 extension ControlMessage: CustomDebugStringConvertible {
     
     var debugDescription: String {
-        return "\(type) (\(source.hex)->\(destination.hex)): Op Code: \(opCode), 0x\(upperTransportPdu.hex)"
+        return "\(type) (opCode: 0x\(opCode.hex), data: 0x\(upperTransportPdu.hex))"
     }
     
 }

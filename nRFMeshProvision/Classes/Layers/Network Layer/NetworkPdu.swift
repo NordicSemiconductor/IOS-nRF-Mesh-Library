@@ -226,7 +226,11 @@ private extension LowerTransportPduType {
 extension NetworkPdu: CustomDebugStringConvertible {
     
     var debugDescription: String {
-        return "Network PDU (\(source.hex)->\(destination.hex)): \(type), seq: \(sequence), ttl: \(ttl)"
+        let micSize = Int(type.netMicSize)
+        let encryptedDataSize = pdu.count - micSize - 9
+        let encryptedData = pdu.subdata(in: 9..<9 + encryptedDataSize)
+        let mic = pdu.advanced(by: 9 + encryptedDataSize)
+        return "Network PDU (ivi: \(ivi), nid: 0x\(nid.hex), ctl: \(type.rawValue), ttl: \(ttl), seq: \(sequence), src: \(source.hex), dst: \(destination.hex), transportPdu: 0x\(encryptedData.hex), netMic: 0x\(mic.hex))"
     }
     
 }

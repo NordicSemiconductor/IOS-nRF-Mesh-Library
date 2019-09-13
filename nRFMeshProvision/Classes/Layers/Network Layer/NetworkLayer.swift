@@ -13,6 +13,10 @@ internal class NetworkLayer {
     let networkMessageCache: NSCache<NSData, NSNull>
     let defaults: UserDefaults
     
+    private var logger: LoggerDelegate? {
+        return networkManager.manager.logger
+    }
+    
     /// The Network Key from the received Secure Network Beacon that contained
     /// information about the Primary Network Key, if such was received,
     /// or from the most recently received beacon otherwise.
@@ -62,6 +66,7 @@ internal class NetworkLayer {
         // Ensure the PDU has not been handled already.
         guard networkMessageCache.object(forKey: pdu as NSData) == nil else {
             // PDU has already been handled.
+            logger?.d(.network, "PDU already handled")
             return
         }
         networkMessageCache.setObject(NSNull(), forKey: pdu as NSData)
@@ -70,59 +75,38 @@ internal class NetworkLayer {
         switch type {
         case .networkPdu:
             guard let networkPdu = NetworkPdu.decode(pdu, ofType: type, for: meshNetwork) else {
+                logger?.w(.network, "Failed to decrypt PDU")
                 return
             }
+            logger?.i(.network, "\(networkPdu) received")
             networkManager.lowerTransportLayer.handle(networkPdu: networkPdu)
             
         case .meshBeacon:
             if let beaconPdu = SecureNetworkBeacon.decode(pdu, for: meshNetwork) {
+                logger?.i(.network, "\(beaconPdu) receieved (decrypted using key: \(beaconPdu.networkKey))")
                 handle(secureNetworkBeacon: beaconPdu)
                 return
             }
             if let beaconPdu = UnprovisionedDeviceBeacon.decode(pdu, for: meshNetwork) {
+                logger?.i(.network, "\(beaconPdu) receieved")
                 handle(unprovisionedDeviceBeacon: beaconPdu)
                 return
             }
+            logger?.w(.network, "Failed to decrypt Mesh Beacon PDU")
             // else: Invalid or unsupported beacon type.
             
         case .proxyConfiguration:
             guard let proxyPdu = NetworkPdu.decode(pdu, ofType: type, for: meshNetwork) else {
+                logger?.w(.network, "Failed to decrypt proxy PDU")
                 return
             }
+            logger?.i(.network, "\(proxyPdu) received")
             handle(proxyConfigurationPdu: proxyPdu)
             
         default:
             return
         }
         
-    }
-    
-    /// This method tries to send the Proxy Configuration Message.
-    ///
-    /// The Proxy Filter object will be informed about the success or a failure.
-    ///
-    /// - parameter ProxyConfigurationMessage: The Proxy Confifuration message to
-    ///                                        be sent.
-    func send(proxyConfigurationMessage message: ProxyConfigurationMessage) {
-        guard let networkKey = proxyNetworkKey else {
-            // The Proxy Network Key is unknown.
-            networkManager.manager.proxyFilter?.managerFailedToDeliverMessage(message, error: BearerError.bearerClosed)
-            return
-        }
-        print("Sending \(message)...") // TODO: Remove me
-        
-        // If the Provisioner does not have a Unicast Address, just use a fake one
-        // to configure the Proxy Server. This allows sniffing the network without
-        // an option to send messages.
-        let source = meshNetwork.localProvisioner?.node?.unicastAddress ?? Address.maxUnicastAddress
-        let pdu = ControlMessage(fromProxyConfigurationMessage: message,
-                                 sentFrom: source, usingNetworkKey: networkKey)
-        do {
-            try send(lowerTransportPdu: pdu, ofType: .proxyConfiguration, withTtl: 0)
-            networkManager.manager.proxyFilter?.managerDidDeliverMessage(message)
-        } catch {
-            networkManager.manager.proxyFilter?.managerFailedToDeliverMessage(message, error: error)
-        }
     }
     
     /// This method tries to send the Lower Transport Message of given type to the
@@ -145,6 +129,7 @@ internal class NetworkLayer {
         defaults.set(sequence + 1, forKey: "S\(pdu.source.hex)")
         
         let networkPdu = NetworkPdu(encode: pdu, ofType: type, withSequence: sequence, andTtl: ttl)
+        logger?.i(.network, "Sending \(networkPdu) encrypted using \(networkPdu.networkKey)")
         // Loopback interface.
         if shouldLoopback(networkPdu) {
             handle(incomingPdu: networkPdu.pdu, ofType: type)
@@ -171,6 +156,35 @@ internal class NetworkLayer {
             }
         }
     }
+    
+    /// This method tries to send the Proxy Configuration Message.
+    ///
+    /// The Proxy Filter object will be informed about the success or a failure.
+    ///
+    /// - parameter ProxyConfigurationMessage: The Proxy Confifuration message to
+    ///                                        be sent.
+    func send(proxyConfigurationMessage message: ProxyConfigurationMessage) {
+        guard let networkKey = proxyNetworkKey else {
+            // The Proxy Network Key is unknown.
+            networkManager.manager.proxyFilter?.managerFailedToDeliverMessage(message, error: BearerError.bearerClosed)
+            return
+        }
+        
+        // If the Provisioner does not have a Unicast Address, just use a fake one
+        // to configure the Proxy Server. This allows sniffing the network without
+        // an option to send messages.
+        let source = meshNetwork.localProvisioner?.node?.unicastAddress ?? Address.maxUnicastAddress
+        logger?.i(.proxy, "Sending \(message) from: \(source.hex) to: 0000")
+        let pdu = ControlMessage(fromProxyConfigurationMessage: message,
+                                 sentFrom: source, usingNetworkKey: networkKey)
+        logger?.i(.network, "Sending \(pdu)")
+        do {
+            try send(lowerTransportPdu: pdu, ofType: .proxyConfiguration, withTtl: 0)
+            networkManager.manager.proxyFilter?.managerDidDeliverMessage(message)
+        } catch {
+            networkManager.manager.proxyFilter?.managerFailedToDeliverMessage(message, error: error)
+        }
+    }
 }
 
 private extension NetworkLayer {
@@ -182,7 +196,6 @@ private extension NetworkLayer {
     ///
     /// - parameter unprovisionedDeviceBeacon: The Unprovisioned Device Beacon received.
     func handle(unprovisionedDeviceBeacon: UnprovisionedDeviceBeacon) {
-        // Do nothing.
         // TODO: Handle Unprovisioned Device Beacon.
     }
     
@@ -193,22 +206,21 @@ private extension NetworkLayer {
     ///
     /// - parameter secureNetworkBeacon: The Secure Network Beacon received.
     func handle(secureNetworkBeacon: SecureNetworkBeacon) {
-        if let networkKey = meshNetwork.networkKeys[secureNetworkBeacon.networkId] {
-            networkKey.ivIndex = IvIndex(index: secureNetworkBeacon.ivIndex,
-                                         updateActive: secureNetworkBeacon.ivUpdateActive)
-            // If the Key Refresh Procedure is in progress, and the new Network Key
-            // has already been set, the key erfresh flag indicates switching to phase 2.
-            if case .distributingKeys = networkKey.phase, secureNetworkBeacon.keyRefreshFlag {
-                networkKey.phase = .finalizing
-            }
-            // If the Key Refresh Procedure is in phase 2, and the key refresh flag is
-            // set to false.
-            if case .finalizing = networkKey.phase, !secureNetworkBeacon.keyRefreshFlag {
-                networkKey.oldKey = nil // This will set the phase to .normalOperation.
-            }
-            
-            updateProxyFilter(usingNetworkKey: networkKey)
+        let networkKey = secureNetworkBeacon.networkKey
+        networkKey.ivIndex = IvIndex(index: secureNetworkBeacon.ivIndex,
+                                     updateActive: secureNetworkBeacon.ivUpdateActive)
+        // If the Key Refresh Procedure is in progress, and the new Network Key
+        // has already been set, the key erfresh flag indicates switching to phase 2.
+        if case .distributingKeys = networkKey.phase, secureNetworkBeacon.keyRefreshFlag {
+            networkKey.phase = .finalizing
         }
+        // If the Key Refresh Procedure is in phase 2, and the key refresh flag is
+        // set to false.
+        if case .finalizing = networkKey.phase, !secureNetworkBeacon.keyRefreshFlag {
+            networkKey.oldKey = nil // This will set the phase to .normalOperation.
+        }
+        
+        updateProxyFilter(usingNetworkKey: networkKey)
     }
     
     /// Updates the information about the Network Key known to the current Proxy Server.
@@ -247,11 +259,16 @@ private extension NetworkLayer {
         guard payload.count > 1 else {
             return
         }
-        let opCode = payload[0]
+        
+        guard let controlMessage = ControlMessage(fromNetworkPdu: proxyPdu) else {
+            logger?.w(.network, "Failed to decrypt proxy PDU")
+            return
+        }
+        logger?.i(.network, "\(controlMessage) receieved (decrypted using key: \(controlMessage.networkKey))")
         
         var MessageType: ProxyConfigurationMessage.Type?
         
-        switch opCode {
+        switch controlMessage.opCode {
         case FilterStatus.opCode:
             MessageType = FilterStatus.self
         default:
@@ -259,11 +276,11 @@ private extension NetworkLayer {
         }
         
         if let MessageType = MessageType,
-           let message = MessageType.init(parameters: payload.subdata(in: 1..<payload.count)) {
-            print("\(message) received") // TODO: Remove me
+           let message = MessageType.init(parameters: controlMessage.upperTransportPdu) {
+            logger?.i(.proxy, "\(message) received from: \(proxyPdu.source.hex) to: \(proxyPdu.destination.hex)")
             networkManager.manager.proxyFilter?.handle(message)
         } else {
-            print("Info: Unsupported Proxy Configuration Message received: \(payload.hex)")
+            logger?.w(.proxy, "Unsupported proxy configuration message (opcode: \(controlMessage.opCode))")
         }
     }
     

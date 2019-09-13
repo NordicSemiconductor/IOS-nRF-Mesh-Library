@@ -66,37 +66,37 @@ internal struct UpperTransportPdu {
         localElement = nil
     }
     
-    init(fromMeshMessage message: MeshMessage,
-         sentFrom localElement: Element, to destination: MeshAddress,
+    init(fromAccessPdu pdu: AccessPdu,
          usingKeySet keySet: KeySet, sequence: UInt32) {
-        self.message = message
-        self.localElement = localElement
-        self.source = localElement.unicastAddress
-        self.destination = destination.address
+        self.message = pdu.message
+        self.localElement = pdu.localElement
+        self.source = pdu.localElement!.unicastAddress
+        self.destination = pdu.destination.address
         self.sequence = sequence
-        let accessPdu = message.accessPdu
+        let accessPdu = pdu.accessPdu
         self.accessPdu = accessPdu
         self.aid = keySet.aid
+        let security = pdu.message!.security
         
         // The nonce type is 0x01 for messages signed with Application Key and
         // 0x02 for messages signed using Device Key (Configuration Messages).
         let type: UInt8 = aid != nil ? 0x01 : 0x02
         // ASZMIC is set to 1 for messages that shall be sent with high security
         // (64-bit TransMIC). This is possible only for Segmented Access Messages.
-        let aszmic: UInt8 = message.security == .high && (accessPdu.count > 11 || message.isSegmented)  ? 1 : 0
+        let aszmic: UInt8 = security == .high && (accessPdu.count > 11 || pdu.isSegmented)  ? 1 : 0
         // SEQ is 24-bit value, in Big Endian.
         let seq = (Data() + sequence.bigEndian).dropFirst()
         
         let ivIndex = keySet.networkKey.ivIndex
         let nonce = Data([type, aszmic << 7]) + seq
             + source.bigEndian
-            + destination.address.bigEndian
+            + destination.bigEndian
             + ivIndex.index.bigEndian
         
         self.transportMicSize = aszmic == 0 ? 4 : 8
         self.transportPdu = OpenSSLHelper().calculateCCM(accessPdu, withKey: keySet.accessKey, nonce: nonce,
                                                          andMICSize: transportMicSize,
-                                                         withAdditionalData: destination.virtualLabel?.data)
+                                                         withAdditionalData: pdu.destination.virtualLabel?.data)
     }
     
     /// This method tries to decode teh Access Message using a matching Application Key
@@ -154,7 +154,6 @@ internal struct UpperTransportPdu {
                 return (pdu, keySet)
             }
         }
-        print("Error: Decryption failed")
         return nil
     }
     
@@ -163,7 +162,11 @@ internal struct UpperTransportPdu {
 extension UpperTransportPdu: CustomDebugStringConvertible {
     
     var debugDescription: String {
-        return "Upper Transport PDU (\(source.hex)->\(destination.hex)): Seq: \(sequence), 0x\(accessPdu.hex), MIC size: \(transportMicSize) bytes"
+        let micSize = Int(transportMicSize)
+        let encryptedDataSize = transportPdu.count - micSize
+        let encryptedData = transportPdu.prefix(upTo: encryptedDataSize)
+        let mic = transportPdu.advanced(by: encryptedDataSize)
+        return "Upper Transport PDU (encrypted data: 0x\(encryptedData.hex), transMic: 0x\(mic.hex))"
     }
     
 }

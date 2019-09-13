@@ -110,7 +110,6 @@
 		52547F0C231E9C670002AA7B /* RemoveAddressesFromFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52547F0B231E9C670002AA7B /* RemoveAddressesFromFilter.swift */; };
 		52547F0E231E9C960002AA7B /* FilterStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52547F0D231E9C960002AA7B /* FilterStatus.swift */; };
 		52547F162327C7570002AA7B /* KeySet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52547F152327C7570002AA7B /* KeySet.swift */; };
-		52547F182329210F0002AA7B /* MeshNetworkError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52547F172329210F0002AA7B /* MeshNetworkError.swift */; };
 		52568D4722DDE8E800B7B236 /* MeshNetwork+Groups.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52568D4622DDE8E800B7B236 /* MeshNetwork+Groups.swift */; };
 		52568D4922DDEA4400B7B236 /* Group+MeshNetwork.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52568D4822DDEA4400B7B236 /* Group+MeshNetwork.swift */; };
 		525A3C0022AD2167000D3791 /* ConfigMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 525A3BFF22AD2167000D3791 /* ConfigMessage.swift */; };
@@ -234,6 +233,8 @@
 		52B7F68022994B3E00B0A42F /* MeshMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52B7F67F22994B3E00B0A42F /* MeshMessage.swift */; };
 		52B7F68222994D3C00B0A42F /* MeshMessageError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52B7F68122994D3C00B0A42F /* MeshMessageError.swift */; };
 		52B7F688229BCC4000B0A42F /* NetworkPdu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52B7F687229BCC4000B0A42F /* NetworkPdu.swift */; };
+		52CD0A4B232BD43200A9A181 /* MeshNetworkError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52CD0A4A232BD43200A9A181 /* MeshNetworkError.swift */; };
+		52CD0A4D232BD47500A9A181 /* MeshLoggerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52CD0A4C232BD47400A9A181 /* MeshLoggerDelegate.swift */; };
 		52DF5D91229C000D00C297C1 /* NetworkLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52DF5D90229C000D00C297C1 /* NetworkLayer.swift */; };
 		52DF5D97229D6B4800C297C1 /* LowerTransportLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52DF5D96229D6B4800C297C1 /* LowerTransportLayer.swift */; };
 		52DF5D99229D6B6400C297C1 /* AccessMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52DF5D98229D6B6400C297C1 /* AccessMessage.swift */; };
@@ -401,7 +402,6 @@
 		52547F0B231E9C670002AA7B /* RemoveAddressesFromFilter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoveAddressesFromFilter.swift; sourceTree = "<group>"; };
 		52547F0D231E9C960002AA7B /* FilterStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterStatus.swift; sourceTree = "<group>"; };
 		52547F152327C7570002AA7B /* KeySet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeySet.swift; sourceTree = "<group>"; };
-		52547F172329210F0002AA7B /* MeshNetworkError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeshNetworkError.swift; sourceTree = "<group>"; };
 		52568D4622DDE8E800B7B236 /* MeshNetwork+Groups.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MeshNetwork+Groups.swift"; sourceTree = "<group>"; };
 		52568D4822DDEA4400B7B236 /* Group+MeshNetwork.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Group+MeshNetwork.swift"; sourceTree = "<group>"; };
 		525A3BFF22AD2167000D3791 /* ConfigMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigMessage.swift; sourceTree = "<group>"; };
@@ -525,6 +525,8 @@
 		52B7F67F22994B3E00B0A42F /* MeshMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeshMessage.swift; sourceTree = "<group>"; };
 		52B7F68122994D3C00B0A42F /* MeshMessageError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeshMessageError.swift; sourceTree = "<group>"; };
 		52B7F687229BCC4000B0A42F /* NetworkPdu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkPdu.swift; sourceTree = "<group>"; };
+		52CD0A4A232BD43200A9A181 /* MeshNetworkError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MeshNetworkError.swift; path = nRFMeshProvision/Classes/MeshNetworkError.swift; sourceTree = "<group>"; };
+		52CD0A4C232BD47400A9A181 /* MeshLoggerDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MeshLoggerDelegate.swift; sourceTree = "<group>"; };
 		52DF5D90229C000D00C297C1 /* NetworkLayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkLayer.swift; sourceTree = "<group>"; };
 		52DF5D96229D6B4800C297C1 /* LowerTransportLayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LowerTransportLayer.swift; sourceTree = "<group>"; };
 		52DF5D98229D6B6400C297C1 /* AccessMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccessMessage.swift; sourceTree = "<group>"; };
@@ -690,7 +692,7 @@
 			children = (
 				529B757822411970008F1CE7 /* MeshNetworkManager.swift */,
 				5231404F230BE2540074325A /* MeshNetworkDelegate.swift */,
-				52547F172329210F0002AA7B /* MeshNetworkError.swift */,
+				52CD0A4A232BD43200A9A181 /* MeshNetworkError.swift */,
 				52547F02231E8CAA0002AA7B /* ProxyFilter.swift */,
 				529B757C22423DEE008F1CE7 /* Storage.swift */,
 				5283529C2282CC720097B949 /* Mesh API */,
@@ -1121,6 +1123,7 @@
 				BEC1ACD529AAFA4B1CA0FCB54D4024FD /* OpenSSLHelper.h */,
 				9DA238DDA2D45895883214B988C1C10E /* OpenSSLHelper.m */,
 				52F6AD7322BA3BCA00F0D7DF /* CompanyIdentifier.swift */,
+				52CD0A4C232BD47400A9A181 /* MeshLoggerDelegate.swift */,
 			);
 			name = Utils;
 			path = nRFMeshProvision/Classes/Utils;
@@ -1485,13 +1488,14 @@
 				52A9C1962310027D0036792A /* GenericDefaultTransitionTimeStatus.swift in Sources */,
 				523F776222C4DEE60030EA6A /* ConfigNetKeyList.swift in Sources */,
 				5283529E2282CCE60097B949 /* Provisioner+Ranges.swift in Sources */,
-				52547F182329210F0002AA7B /* MeshNetworkError.swift in Sources */,
 				528352402271EF770097B949 /* MeshNetwork+Ranges.swift in Sources */,
 				523F775E22C4CE9A0030EA6A /* ConfigNetKeyStatus.swift in Sources */,
 				52A9C1AC23100D2A0036792A /* GenericPowerLastStatus.swift in Sources */,
 				52A9C18A230FE8540036792A /* GenericDeltaSetUnacknowledged.swift in Sources */,
 				523F778122CB912B0030EA6A /* ConfigModelAppStatus.swift in Sources */,
 				52B7F68022994B3E00B0A42F /* MeshMessage.swift in Sources */,
+				52CD0A4D232BD47500A9A181 /* MeshLoggerDelegate.swift in Sources */,
+				52CD0A4B232BD43200A9A181 /* MeshNetworkError.swift in Sources */,
 				5294DADC22B144D10041370E /* ConfigAppKeyStatus.swift in Sources */,
 				5231401C22F84B560074325A /* ConfigRelayStatus.swift in Sources */,
 				5231401222EF238B0074325A /* ConfigVendorModelSubscriptionList.swift in Sources */,

@@ -10,6 +10,11 @@ import Foundation
 internal class AccessLayer {
     let networkManager: NetworkManager
     let meshNetwork: MeshNetwork
+    
+    private var logger: LoggerDelegate? {
+        return networkManager.manager.logger
+    }
+    
     /// Last used Transaction Identifier.
     var lastTid = UInt8.random(in: UInt8.min...UInt8.max)
     /// The timestamp of the last transaction message sent.
@@ -31,6 +36,7 @@ internal class AccessLayer {
         guard let accessPdu = AccessPdu(fromUpperTransportPdu: upperTransportPdu) else {
             return
         }
+        logger?.i(.access, "\(accessPdu) receieved (decrypted using key: \(keySet))")
         handle(accessPdu: accessPdu, sentWith: keySet)
     }
     
@@ -66,9 +72,11 @@ internal class AccessLayer {
             m = tranactionMessage
         }
         
-        print("Sending \(m) from \(element.name ?? "Element \(element.index + 1)") to \(destination.hex)") // TODO: Remove me
+        logger?.i(.access, "Sending \(m) from: \(element), to: \(destination.hex)")
+        let pdu = AccessPdu(fromMeshMessage: m, sentFrom: element, to: destination)
+        logger?.i(.access, "Sending \(pdu)")
         let keySet = AccessKeySet(applicationKey: applicationKey)
-        networkManager.upperTransportLayer.send(m, from: element, to: destination, using: keySet)
+        networkManager.upperTransportLayer.send(pdu, using: keySet)
     }
     
     /// Sends the ConfigMessage to the destination. The message is encrypted
@@ -90,11 +98,11 @@ internal class AccessLayer {
         }
         
         if networkManager.foundationLayer.handle(configMessage: message, to: destination) {
-            print("Sending \(message) to 0x\(destination.hex)") // TODO: Remove me
+            logger?.i(.access, "Sending \(message) from: \(element), to: \(destination.hex)")
+            let pdu = AccessPdu(fromMeshMessage: message, sentFrom: element, to: MeshAddress(destination))
+            logger?.i(.access, "Sending \(pdu)")
             let keySet = DeviceKeySet(networkKey: networkKey, deviceKey: node.deviceKey)
-            networkManager.upperTransportLayer.send(message,
-                                                    from: element, to: MeshAddress(destination),
-                                                    using: keySet)
+            networkManager.upperTransportLayer.send(pdu, using: keySet)
         }
     }
     
@@ -108,10 +116,10 @@ internal class AccessLayer {
     func reply(with message: MeshMessage,
                from element: Element, to destination: Address,
                using keySet: KeySet) {
-        print("Replying with \(message) to 0x\(destination.hex)") // TODO: Remove me
-        networkManager.upperTransportLayer.send(message,
-                                                from: element, to: MeshAddress(destination),
-                                                using: keySet)
+        logger?.i(.access, "Replying with \(message) from: \(element), to: \(destination.hex)")
+        let pdu = AccessPdu(fromMeshMessage: message, sentFrom: element, to: MeshAddress(destination))
+        logger?.i(.access, "Sending \(pdu)")
+        networkManager.upperTransportLayer.send(pdu, using: keySet)
     }
     
 }
@@ -442,13 +450,13 @@ private extension AccessLayer {
                 unknownMessage.opCode = accessPdu.opCode
                 message = unknownMessage
             }
-            print("\(message) received") // TODO: Remove me
+            logger?.i(.access, "\(message) received")
             if let configMessage = message as? ConfigMessage {
                 networkManager.foundationLayer.handle(configMessage: configMessage,
-                                                      sentFrom: accessPdu.source, to: accessPdu.destination,
+                                                      sentFrom: accessPdu.source, to: accessPdu.destination.address,
                                                       with: keySet)
             }
-            networkManager.notifyAbout(newMessage: message, from: accessPdu.source, to: accessPdu.destination)
+            networkManager.notifyAbout(newMessage: message, from: accessPdu.source, to: accessPdu.destination.address)
         }
     }
     

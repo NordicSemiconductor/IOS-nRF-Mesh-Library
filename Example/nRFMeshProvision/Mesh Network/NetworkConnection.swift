@@ -36,6 +36,13 @@ class NetworkConnection: NSObject, Bearer {
     
     weak var delegate: BearerDelegate?
     weak var dataDelegate: BearerDataDelegate?
+    weak var logger: LoggerDelegate? {
+        didSet {
+            proxies.forEach {
+                $0.logger = logger
+            }
+        }
+    }
     
     public var supportedPduTypes: PduTypes {
         return [.networkPdu, .meshBeacon, .proxyConfiguration]
@@ -125,6 +132,7 @@ extension NetworkConnection: CBCentralManagerDelegate {
         proxies.append(bearer)
         bearer.delegate = self
         bearer.dataDelegate = self
+        bearer.logger = logger
         // Is the limit reached?
         if proxies.count >= NetworkConnection.maxConnections {
             central.stopScan()

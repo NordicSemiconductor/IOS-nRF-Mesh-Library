@@ -201,3 +201,11 @@ internal extension Element {
     }
     
 }
+
+extension Element: CustomDebugStringConvertible {
+    
+    public var debugDescription: String {
+        return "\(name ?? "Element \(index)") (\(unicastAddress.hex))"
+    }
+    
+}

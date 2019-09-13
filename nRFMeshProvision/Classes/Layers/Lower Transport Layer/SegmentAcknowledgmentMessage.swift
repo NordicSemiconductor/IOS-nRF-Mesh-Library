@@ -118,7 +118,7 @@ internal struct SegmentAcknowledgmentMessage: LowerTransportPdu {
 extension SegmentAcknowledgmentMessage: CustomDebugStringConvertible {
     
     var debugDescription: String {
-        return "ACK (\(source.hex)->\(destination.hex)) for SeqZero: \(sequenceZero) with Block ACK: 0x\(blockAck.hex)" 
+        return "ACK (seqZero: \(sequenceZero), blockAck: 0x\(blockAck.hex))" 
     }
     
 }

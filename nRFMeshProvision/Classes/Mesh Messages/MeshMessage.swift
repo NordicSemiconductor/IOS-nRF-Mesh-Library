@@ -46,8 +46,7 @@ public protocol MeshMessage: BaseMeshMessage {
     var security: MeshMessageSecurity { get }
     /// Returns whether the message should be sent or was sent as
     /// Segmented Access Message. By default, this parameter returns
-    /// `true` if payload (Op Code and parameters) size is longer than 11 bytes
-    /// and `false` otherwise.
+    /// `false`.
     ///
     /// To force segmentation for shorter messages return `true` despite
     /// payload length. If payload size is longer than 11 bytes this
@@ -119,7 +118,7 @@ public extension MeshMessage {
     }
     
     var isSegmented: Bool {
-        return accessPdu.count > 11
+        return false
     }
     
 }
@@ -143,23 +142,6 @@ public extension StaticMeshMessage {
 // MARK: - Private API
 
 internal extension MeshMessage {
-    
-    /// The Access Layer PDU data that will be sent.
-    var accessPdu: Data {
-        // Op Code 0b01111111 is invalid. We will ignore this case here
-        // now and send as single byte OpCode.
-        if opCode < 0x80 {
-            return Data([UInt8(opCode & 0xFF)]) + parameters
-        }
-        if opCode < 0x4000 || opCode & 0xFFFC00 == 0x8000 {
-            return Data([UInt8(0x80 | ((opCode >> 8) & 0x3F)), UInt8(opCode & 0xFF)]) + parameters
-        }
-        return Data([
-                     UInt8(0xC0 | ((opCode >> 16) & 0x3F)),
-                     UInt8((opCode >> 8) & 0xFF),
-                     UInt8(opCode & 0xFF)
-               ]) + parameters
-    }
     
     /// Whether the message is a Vendor Message, or not.
     ///

@@ -17,9 +17,9 @@ import CoreBluetooth
 open class BaseGattProxyBearer<Service: MeshService>: NSObject, Bearer, CBCentralManagerDelegate, CBPeripheralDelegate {
     
     // MARK: - Properties
-    
     public weak var delegate: BearerDelegate?
     public weak var dataDelegate: BearerDataDelegate?
+    public weak var logger: LoggerDelegate?
     
     private let centralManager: CBCentralManager
     private let basePeripheral: CBPeripheral
@@ -78,7 +78,7 @@ open class BaseGattProxyBearer<Service: MeshService>: NSObject, Bearer, CBCentra
     
     open func open() {
         if centralManager.state == .poweredOn && basePeripheral.state == .disconnected {
-            print("Connecting to \(basePeripheral.name ?? "Unknown Device")...")
+            logger?.v(.bearer, "Connecting to \(basePeripheral.name ?? "Unknown Device")...")
             centralManager.connect(basePeripheral, options: nil)
         }
         isOpened = true
@@ -86,7 +86,7 @@ open class BaseGattProxyBearer<Service: MeshService>: NSObject, Bearer, CBCentra
     
     open func close() {
         if basePeripheral.state == .connected || basePeripheral.state == .connecting {
-            print("Cancelling connection...")
+            logger?.v(.bearer, "Cancelling connection...")
             centralManager.cancelPeripheralConnection(basePeripheral)            
         }
         isOpened = false
@@ -118,7 +118,7 @@ open class BaseGattProxyBearer<Service: MeshService>: NSObject, Bearer, CBCentra
             // Just assume, that the first packet can always be sent.
             if queueWasEmpty {
                 let packet = queue.remove(at: 0)
-                print("-> 0x\(packet.hex)")
+                logger?.d(.bearer, "-> 0x\(packet.hex)")
                 basePeripheral.writeValue(packet, for: dataInCharacteristic, type: .withoutResponse)
             }
         } else {
@@ -128,7 +128,7 @@ open class BaseGattProxyBearer<Service: MeshService>: NSObject, Bearer, CBCentra
             // let's hope it will work as is. For now.
             // TODO: Handle very long packets on iOS 9 and 10.
             for packet in packets {
-                print("-> 0x\(packet.hex)")
+                logger?.d(.bearer, "-> 0x\(packet.hex)")
                 basePeripheral.writeValue(packet, for: dataInCharacteristic, type: .withoutResponse)
             }
         }
@@ -149,7 +149,7 @@ open class BaseGattProxyBearer<Service: MeshService>: NSObject, Bearer, CBCentra
     
     /// Starts service discovery, only given Service.
     private func discoverServices() {
-        print("Discovering services...")
+        logger?.v(.bearer, "Discovering services...")
         basePeripheral.discoverServices([Service.uuid])
     }
     
@@ -157,7 +157,7 @@ open class BaseGattProxyBearer<Service: MeshService>: NSObject, Bearer, CBCentra
     ///
     /// - parameter service: The service to look for the characteristics in.
     private func discoverCharacteristics(for service: CBService) {
-        print("Discovering characteristrics...")
+        logger?.v(.bearer, "Discovering characteristrics...")
         basePeripheral.discoverCharacteristics([Service.dataInUuid, Service.dataOutUuid], for: service)
     }
     
@@ -165,7 +165,7 @@ open class BaseGattProxyBearer<Service: MeshService>: NSObject, Bearer, CBCentra
     ///
     /// - parameter characteristic: The characteristic to enable notifications for.
     private func enableNotifications(for characteristic: CBCharacteristic) {
-        print("Enabling notifications...")
+        logger?.v(.bearer, "Enabling notifications...")
         basePeripheral.setNotifyValue(true, for: characteristic)
     }
     
@@ -177,14 +177,14 @@ open class BaseGattProxyBearer<Service: MeshService>: NSObject, Bearer, CBCentra
                 open()
             }
         } else {
-            print("Central Manager state changed to \(central.state)")
+            logger?.i(.bearer, "Central Manager state changed to \(central.state)")
             delegate?.bearer(self, didClose: BearerError.centralManagerNotPoweredOn)
         }
     }
     
     open func centralManager(_ central: CBCentralManager, didConnect peripheral: CBPeripheral) {
         if peripheral == basePeripheral {
-            print("Connected to \(peripheral.name ?? "Unknown Device")")
+            logger?.i(.bearer, "Connected to \(peripheral.name ?? "Unknown Device")")
             if let delegate = delegate as? GattBearerDelegate {
                 delegate.bearerDidConnect(self)
             }
@@ -198,18 +198,18 @@ open class BaseGattProxyBearer<Service: MeshService>: NSObject, Bearer, CBCentra
             dataOutCharacteristic = nil
             if let error = error as NSError? {
                 switch error.code {
-                case 6, 7: print(error.localizedDescription)
-                default: print("Disconnected from \(peripheral.name ?? "Unknown Device") with error: \(error)")
+                case 6, 7: logger?.e(.bearer, error.localizedDescription)
+                default: logger?.e(.bearer, "Disconnected from \(peripheral.name ?? "Unknown Device") with error: \(error)")
                 }
                 delegate?.bearer(self, didClose: error)
             } else {
                 guard let dataOutCharacteristic = dataOutCharacteristic, let _ = dataInCharacteristic,
                     dataOutCharacteristic.properties.contains(.notify) else {
-                        print("Disconnected from \(peripheral.name ?? "Unknown Device") with error: Device not supported")
+                        logger?.e(.bearer, "Disconnected from \(peripheral.name ?? "Unknown Device") with error: Device not supported")
                         delegate?.bearer(self, didClose: GattBearerError.deviceNotSupported)
                         return
                 }
-                print("Disconnected from \(peripheral.name ?? "Unknown Device")")
+                logger?.i(.bearer, "Disconnected from \(peripheral.name ?? "Unknown Device")")
                 delegate?.bearer(self, didClose: nil)
             }
         }
@@ -221,14 +221,14 @@ open class BaseGattProxyBearer<Service: MeshService>: NSObject, Bearer, CBCentra
         if let services = peripheral.services {
             for service in services {
                 if Service.matches(service) {
-                    print("Service found")
+                    logger?.v(.bearer, "Service found")
                     discoverCharacteristics(for: service)
                     return
                 }
             }
         }
         // Required service not found.
-        print("Device not supported")
+        logger?.e(.bearer, "Device not supported")
         close()
     }
     
@@ -237,10 +237,10 @@ open class BaseGattProxyBearer<Service: MeshService>: NSObject, Bearer, CBCentra
         if let characteristics = service.characteristics {
             for characteristic in characteristics {
                 if Service.dataInUuid == characteristic.uuid {
-                    print("Data In characteristic found")
+                    logger?.v(.bearer, "Data In characteristic found")
                     dataInCharacteristic = characteristic
                 } else if Service.dataOutUuid == characteristic.uuid {
-                    print("Data Out characteristic found")
+                    logger?.v(.bearer, "Data Out characteristic found")
                     dataOutCharacteristic = characteristic
                 }
             }
@@ -249,7 +249,7 @@ open class BaseGattProxyBearer<Service: MeshService>: NSObject, Bearer, CBCentra
         // Ensure all required characteristics were found.
         guard let dataOutCharacteristic = dataOutCharacteristic, let _ = dataInCharacteristic,
             dataOutCharacteristic.properties.contains(.notify) else {
-                print("Device not supported")
+                logger?.e(.bearer, "Device not supported")
                 close()
                 return
         }
@@ -269,8 +269,8 @@ open class BaseGattProxyBearer<Service: MeshService>: NSObject, Bearer, CBCentra
             return
         }
         
-        print("Data Out notifications enabled")
-        print("GATT Bearer open and ready")
+        logger?.v(.bearer, "Data Out notifications enabled")
+        logger?.i(.bearer, "GATT Bearer open and ready")
         delegate?.bearerDidOpen(self)
     }
     
@@ -278,7 +278,7 @@ open class BaseGattProxyBearer<Service: MeshService>: NSObject, Bearer, CBCentra
         guard characteristic == dataOutCharacteristic, let data = characteristic.value else {
             return
         }
-        print("<- 0x\(data.hex)")
+        logger?.d(.bearer, "<- 0x\(data.hex)")
         if let message = protocolHandler.reassemble(data) {
             dataDelegate?.bearer(self, didDeliverData: message.data, ofType: message.messageType)
         }
@@ -302,8 +302,24 @@ open class BaseGattProxyBearer<Service: MeshService>: NSObject, Bearer, CBCentra
         }
         
         let packet = queue.remove(at: 0)
-        print("-> 0x\(packet.hex)")
+        logger?.d(.bearer, "-> 0x\(packet.hex)")
         peripheral.writeValue(packet, for: dataInCharacteristic!, type: .withoutResponse)
+    }
+    
+}
+
+extension CBManagerState: CustomDebugStringConvertible {
+    
+    public var debugDescription: String {
+        switch self {
+        case .unknown: return ".unknown"
+        case .resetting: return ".resetting"
+        case .unsupported: return ".unsupported"
+        case .unauthorized: return ".unauthorized"
+        case .poweredOff: return ".poweredOff"
+        case .poweredOn: return ".poweredOn"
+        default: return "Unknown"
+        }
     }
     
 }

@@ -27,6 +27,15 @@ struct RuntimeVendorMessage: VendorMessage {
     }
 }
 
+extension RuntimeVendorMessage: CustomDebugStringConvertible {
+
+    var debugDescription: String {
+        let hexOpCode = String(format: "%2X", opCode)
+        return "RuntimeVendorMessage(opCode: \(hexOpCode), parameters: \(parameters!.hex), isSegmented: \(isSegmented), security: \(security))"
+    }
+    
+}
+
 class VendorModelViewCell: ModelViewCell, UITextFieldDelegate {
     
     @IBOutlet weak var opCodeField: UITextField!

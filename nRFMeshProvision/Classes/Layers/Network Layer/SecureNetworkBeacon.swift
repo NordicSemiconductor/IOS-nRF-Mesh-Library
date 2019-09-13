@@ -11,6 +11,8 @@ internal struct SecureNetworkBeacon: BeaconPdu {
     let pdu: Data
     let beaconType: BeaconType = .secureNetwork
     
+    /// The Network Key related to this Secure Network Beacon.
+    let networkKey: NetworkKey
     /// Key Refresh flag value.
     ///
     /// When this flag is active, the Node shall set the Key Refresh
@@ -49,11 +51,13 @@ internal struct SecureNetworkBeacon: BeaconPdu {
             guard authenticationValue.subdata(in: 0..<8) == pdu.subdata(in: 14..<22) else {
                 return nil
             }
+            self.networkKey = networkKey
         } else if let oldNetworkId = networkKey.oldNetworkId, networkId == oldNetworkId {
             let authenticationValue = helper.calculateCMAC(pdu.subdata(in: 1..<14), andKey: networkKey.oldKeys!.beaconKey)!
             guard authenticationValue.subdata(in: 0..<8) == pdu.subdata(in: 14..<22) else {
                 return nil
             }
+            self.networkKey = networkKey
         } else {
             return nil
         }
@@ -91,7 +95,7 @@ internal extension SecureNetworkBeacon {
 extension SecureNetworkBeacon: CustomDebugStringConvertible {
     
     var debugDescription: String {
-        return "Secure Network Beacon (network ID: \(networkId.hex), ivIndex: \(ivIndex), Key refresh Flag: \(keyRefreshFlag), IV Update active: \(ivUpdateActive))"
+        return "Secure Network Beacon (Network ID: \(networkId.hex), IV Index: \(ivIndex), Key Refresh Flag: \(keyRefreshFlag), IV Update active: \(ivUpdateActive))"
     }
     
 }

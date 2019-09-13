@@ -97,7 +97,7 @@ internal struct AccessMessage: LowerTransportPdu {
 extension AccessMessage: CustomDebugStringConvertible {
     
     var debugDescription: String {
-        return "\(type) (\(source.hex)->\(destination.hex)): Seq: \(sequence), 0x\(upperTransportPdu.hex), MIC size: \(transportMicSize) bytes"
+        return "\(type) (akf: \(aid != nil ? "1, aid: 0x\(aid!.hex)" : "0"), szmic: \(transportMicSize == 4 ? 0 : 1), data: 0x\(upperTransportPdu.hex))"
     }
     
 }

@@ -35,6 +35,10 @@ public class ProxyFilter {
     private var busy = false
     private var buffer: [ProxyConfigurationMessage] = []
     
+    private var logger: LoggerDelegate? {
+        return manager.logger
+    }
+    
     // MARK: - Proxy Filter properties
     
     /// The delegate to be informed about Proxy Filter changes.
@@ -174,7 +178,7 @@ internal extension ProxyFilter {
     /// adding all the addresses the Provisioner is subscribed to, including
     /// its Unicast Addresses and All Nodes address.
     func newProxyDidConnect() {
-        print("New Proxy connected") // TODO: Remove me
+        logger?.i(.proxy, "New Proxy connected")
         reset()
         if let localProvisioner = manager.meshNetwork?.localProvisioner {
             setup(for: localProvisioner)
@@ -242,13 +246,13 @@ internal extension ProxyFilter {
                 // filter in a loop when the Proxy Server responds with
                 // an unexpected list size.
                 guard counter == 0 else {
-                    print("Error: Proxy Filter lost track of devices")
+                    logger?.e(.proxy, "Proxy Filter lost track of devices")
                     counter = 0
                     return
                 }
                 counter += 1
                 
-                print("Warning: Refreshing Proxy Filter...")
+                logger?.w(.proxy, "Refreshing Proxy Filter...")
                 let addresses = self.addresses
                 clear()
                 add(addresses: addresses)
