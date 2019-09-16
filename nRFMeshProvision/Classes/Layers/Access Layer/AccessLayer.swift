@@ -72,7 +72,7 @@ internal class AccessLayer {
             m = tranactionMessage
         }
         
-        logger?.i(.access, "Sending \(m) from: \(element), to: \(destination.hex)")
+        logger?.i(.model, "Sending \(m) from: \(element), to: \(destination.hex)")
         let pdu = AccessPdu(fromMeshMessage: m, sentFrom: element, to: destination)
         logger?.i(.access, "Sending \(pdu)")
         let keySet = AccessKeySet(applicationKey: applicationKey)
@@ -98,7 +98,7 @@ internal class AccessLayer {
         }
         
         if networkManager.foundationLayer.handle(configMessage: message, to: destination) {
-            logger?.i(.access, "Sending \(message) from: \(element), to: \(destination.hex)")
+            logger?.i(.foundationModel, "Sending \(message) from: \(element), to: \(destination.hex)")
             let pdu = AccessPdu(fromMeshMessage: message, sentFrom: element, to: MeshAddress(destination))
             logger?.i(.access, "Sending \(pdu)")
             let keySet = DeviceKeySet(networkKey: networkKey, deviceKey: node.deviceKey)
@@ -116,7 +116,8 @@ internal class AccessLayer {
     func reply(with message: MeshMessage,
                from element: Element, to destination: Address,
                using keySet: KeySet) {
-        logger?.i(.access, "Replying with \(message) from: \(element), to: \(destination.hex)")
+        let category: LogCategory = message is ConfigMessage ? .foundationModel : .model
+        logger?.i(category, "Replying with \(message) from: \(element), to: \(destination.hex)")
         let pdu = AccessPdu(fromMeshMessage: message, sentFrom: element, to: MeshAddress(destination))
         logger?.i(.access, "Sending \(pdu)")
         networkManager.upperTransportLayer.send(pdu, using: keySet)
@@ -450,11 +451,13 @@ private extension AccessLayer {
                 unknownMessage.opCode = accessPdu.opCode
                 message = unknownMessage
             }
-            logger?.i(.access, "\(message) received")
             if let configMessage = message as? ConfigMessage {
+                logger?.i(.foundationModel, "\(message) received")
                 networkManager.foundationLayer.handle(configMessage: configMessage,
                                                       sentFrom: accessPdu.source, to: accessPdu.destination.address,
                                                       with: keySet)
+            } else {
+                logger?.i(.model, "\(message) received")
             }
             networkManager.notifyAbout(newMessage: message, from: accessPdu.source, to: accessPdu.destination.address)
         }

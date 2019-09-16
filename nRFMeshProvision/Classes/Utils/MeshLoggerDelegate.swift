@@ -62,12 +62,14 @@ public enum LogLevel: Int {
 
 /// The log category indicates the component that created the log entry.
 public enum LogCategory: String {
-    case bearer         = "Bearer"
-    case proxy          = "Proxy"
-    case network        = "Network"
-    case lowerTransport = "LowerTransport"
-    case upperTransport = "UpperTransport"
-    case access         = "Access"
+    case bearer          = "Bearer"
+    case proxy           = "Proxy"
+    case network         = "Network"
+    case lowerTransport  = "LowerTransport"
+    case upperTransport  = "UpperTransport"
+    case access          = "Access"
+    case foundationModel = "FoundationModel"
+    case model           = "Model"
 }
 
 /// The Logger delegate.
