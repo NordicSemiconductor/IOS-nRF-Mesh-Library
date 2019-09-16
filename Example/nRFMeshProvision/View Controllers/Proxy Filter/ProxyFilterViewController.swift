@@ -47,6 +47,17 @@ class ProxyFilterViewController: ProgressViewController, Editable {
             return MeshNetworkManager.instance.proxyFilter?.addresses.count ?? 0
         }
     }
+    
+    override func tableView(_ tableView: UITableView, titleForFooterInSection section: Int) -> String? {
+        if section == 0 {
+            if MeshNetworkManager.instance.proxyFilter?.type == .blacklist {
+                return "The black list filter accepts all destination addresses except those that have been added to the black list."
+            } else {
+                return "The white list filter blocks all destination addresses except those that have been added to the white list."
+            }
+        }
+        return nil
+    }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let manager = MeshNetworkManager.instance
@@ -91,6 +102,14 @@ extension ProxyFilterViewController: ProxyFilterTypeDelegate {
         guard let proxyFilter = MeshNetworkManager.instance.proxyFilter else {
             return
         }
+        let footer = tableView.footerView(forSection: 0)?.textLabel
+        switch type {
+        case .blacklist:
+            footer?.text = "The black list filter accepts all destination addresses except those that have been added to the black list."
+        default:
+            footer?.text = "The white list filter blocks all destination addresses except those that have been added to the white list."
+        }
+        footer?.sizeToFit()
         start("Setting proxy filter...") {
             proxyFilter.setType(type)
         }
@@ -137,5 +156,6 @@ private extension IndexPath {
 }
 
 private extension IndexSet {
+    static let details   = IndexSet(integer: 0)
     static let addresses = IndexSet(integer: 1)
 }
