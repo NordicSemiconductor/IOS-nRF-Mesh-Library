@@ -98,7 +98,7 @@ internal class AccessLayer {
         }
         
         if networkManager.foundationLayer.handle(configMessage: message, to: destination) {
-            logger?.i(.foundationModel, "Sending \(message) from: \(element), to: \(destination.hex)")
+            logger?.i(.foundationModel, "Sending \(message) to: \(destination.hex)")
             let pdu = AccessPdu(fromMeshMessage: message, sentFrom: element, to: MeshAddress(destination))
             logger?.i(.access, "Sending \(pdu)")
             let keySet = DeviceKeySet(networkKey: networkKey, deviceKey: node.deviceKey)
@@ -452,12 +452,12 @@ private extension AccessLayer {
                 message = unknownMessage
             }
             if let configMessage = message as? ConfigMessage {
-                logger?.i(.foundationModel, "\(message) received")
+                logger?.i(.foundationModel, "\(message) received from: \(accessPdu.source.hex)")
                 networkManager.foundationLayer.handle(configMessage: configMessage,
                                                       sentFrom: accessPdu.source, to: accessPdu.destination.address,
                                                       with: keySet)
             } else {
-                logger?.i(.model, "\(message) received")
+                logger?.i(.model, "\(message) received from: \(accessPdu.source.hex), to: \(accessPdu.destination.hex)")
             }
             networkManager.notifyAbout(newMessage: message, from: accessPdu.source, to: accessPdu.destination.address)
         }
