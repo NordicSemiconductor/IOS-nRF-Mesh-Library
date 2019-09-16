@@ -41,7 +41,9 @@ class ProgressViewController: UITableViewController {
         if let alert = alert {
             alert.dismiss(animated: true, completion: completion)
         } else {
-            completion?()
+            DispatchQueue.main.async {
+                completion?()
+            }
         }
         alert = nil
     }

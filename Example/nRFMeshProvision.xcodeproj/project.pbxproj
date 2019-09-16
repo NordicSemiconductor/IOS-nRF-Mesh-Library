@@ -84,6 +84,9 @@
 		52A9C1C52313D7D80036792A /* GenericLevelViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52A9C1C32313D7D80036792A /* GenericLevelViewCell.swift */; };
 		52A9C1C62313D7D80036792A /* GenericLevel.xib in Resources */ = {isa = PBXBuildFile; fileRef = 52A9C1C42313D7D80036792A /* GenericLevel.xib */; };
 		52B7F67D229829F200B0A42F /* Addresses.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52B7F67C229829F200B0A42F /* Addresses.swift */; };
+		52CD0A50232FA6CD00A9A181 /* ProxyFilterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52CD0A4F232FA6CD00A9A181 /* ProxyFilterViewController.swift */; };
+		52CD0A53232FA79300A9A181 /* FilterTypeCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52CD0A52232FA79300A9A181 /* FilterTypeCell.swift */; };
+		52CD0A55232FC11700A9A181 /* AddressCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52CD0A54232FC11700A9A181 /* AddressCell.swift */; };
 		52DF5D8A228DA78A00C297C1 /* ConfigurationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52DF5D89228DA78A00C297C1 /* ConfigurationViewController.swift */; };
 		52DF5D8C228DAA0500C297C1 /* NodeViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52DF5D8B228DAA0500C297C1 /* NodeViewCell.swift */; };
 		52DF5D8F229691BD00C297C1 /* NetworkConnection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52DF5D8E229691BD00C297C1 /* NetworkConnection.swift */; };
@@ -185,6 +188,9 @@
 		52A9C1C32313D7D80036792A /* GenericLevelViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericLevelViewCell.swift; sourceTree = "<group>"; };
 		52A9C1C42313D7D80036792A /* GenericLevel.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = GenericLevel.xib; sourceTree = "<group>"; };
 		52B7F67C229829F200B0A42F /* Addresses.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Addresses.swift; sourceTree = "<group>"; };
+		52CD0A4F232FA6CD00A9A181 /* ProxyFilterViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProxyFilterViewController.swift; sourceTree = "<group>"; };
+		52CD0A52232FA79300A9A181 /* FilterTypeCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterTypeCell.swift; sourceTree = "<group>"; };
+		52CD0A54232FC11700A9A181 /* AddressCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddressCell.swift; sourceTree = "<group>"; };
 		52DF5D89228DA78A00C297C1 /* ConfigurationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigurationViewController.swift; sourceTree = "<group>"; };
 		52DF5D8B228DAA0500C297C1 /* NodeViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NodeViewCell.swift; sourceTree = "<group>"; };
 		52DF5D8E229691BD00C297C1 /* NetworkConnection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkConnection.swift; sourceTree = "<group>"; };
@@ -357,6 +363,7 @@
 				5212152E231554190059FB3D /* ProgressCollectionViewController.swift */,
 				52835256227AED670097B949 /* Network */,
 				52518B2F22E0B14500A1FD1E /* Groups */,
+				52CD0A4E232F92E100A9A181 /* Proxy Filter */,
 				52835255227AED0A0097B949 /* Settings */,
 			);
 			path = "View Controllers";
@@ -410,6 +417,24 @@
 				525242DF225CBFEC0044CECB /* RangeObject+String.swift */,
 			);
 			name = Utils;
+			sourceTree = "<group>";
+		};
+		52CD0A4E232F92E100A9A181 /* Proxy Filter */ = {
+			isa = PBXGroup;
+			children = (
+				52CD0A51232FA76A00A9A181 /* Cells */,
+				52CD0A4F232FA6CD00A9A181 /* ProxyFilterViewController.swift */,
+			);
+			path = "Proxy Filter";
+			sourceTree = "<group>";
+		};
+		52CD0A51232FA76A00A9A181 /* Cells */ = {
+			isa = PBXGroup;
+			children = (
+				52CD0A52232FA79300A9A181 /* FilterTypeCell.swift */,
+				52CD0A54232FC11700A9A181 /* AddressCell.swift */,
+			);
+			path = Cells;
 			sourceTree = "<group>";
 		};
 		52DF5D88228DA75F00C297C1 /* Configuration */ = {
@@ -713,6 +738,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				529B764722522D37008F1CE7 /* UITableView+EmptyView.swift in Sources */,
+				52CD0A55232FC11700A9A181 /* AddressCell.swift in Sources */,
 				52313FEE22EAFB090074325A /* SubscribeViewController.swift in Sources */,
 				5212152B23152A450059FB3D /* SectionView.swift in Sources */,
 				5212152F231554190059FB3D /* ProgressCollectionViewController.swift in Sources */,
@@ -725,6 +751,7 @@
 				52547F27232A3F470002AA7B /* EditRangesViewController.swift in Sources */,
 				521215312316C36B0059FB3D /* GenericLevelGroupCell.swift in Sources */,
 				52DF5D8C228DAA0500C297C1 /* NodeViewCell.swift in Sources */,
+				52CD0A50232FA6CD00A9A181 /* ProxyFilterViewController.swift in Sources */,
 				528AB9FA228D856C000BE9DC /* ProvisioningViewDelegate.swift in Sources */,
 				52547F28232A3F470002AA7B /* RangeView.swift in Sources */,
 				52314041230192C50074325A /* ModelViewCell.swift in Sources */,
@@ -744,6 +771,7 @@
 				523F776C22C6324A0030EA6A /* ProgressViewController.swift in Sources */,
 				52547F25232A3F470002AA7B /* EditProvisionerViewController.swift in Sources */,
 				529B756D223FE7F1008F1CE7 /* RootViewController.swift in Sources */,
+				52CD0A53232FA79300A9A181 /* FilterTypeCell.swift in Sources */,
 				523F776822C615CE0030EA6A /* NodeAppKeysViewController.swift in Sources */,
 				523F777922CB57190030EA6A /* ModelViewController.swift in Sources */,
 				522AFFE022C2376C00521EDC /* ElementViewController.swift in Sources */,

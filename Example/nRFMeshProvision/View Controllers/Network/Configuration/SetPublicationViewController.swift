@@ -299,7 +299,7 @@ private extension SetPublicationViewController {
                     destinationSubtitleLabel.text = nil
                 }
             }
-            destinationIcon.image = #imageLiteral(resourceName: "outline_group_work_black_24pt")
+            destinationIcon.image = #imageLiteral(resourceName: "ic_group_24pt")
             destinationIcon.tintColor = .nordicLake
             doneButton.isEnabled = true
         } else {

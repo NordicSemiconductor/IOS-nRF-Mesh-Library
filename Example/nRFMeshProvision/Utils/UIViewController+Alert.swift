@@ -15,6 +15,7 @@ extension Selector {
     static let nameRequired = #selector(UIViewController.nameRequired(_:))
     static let numberRequired = #selector(UIViewController.numberRequired(_:))
     static let unsignedNumberRequired = #selector(UIViewController.unsignedNumberRequired(_:))
+    static let validAddressRequired = #selector(UIViewController.validAddressRequired(_:))
     static let unicastAddress = #selector(UIViewController.unicastAddressOptional(_:))
     static let unicastAddressRequired = #selector(UIViewController.unicastAddressRequired(_:))
     static let groupAddress = #selector(UIViewController.groupAddressOptional(_:))
@@ -288,6 +289,19 @@ extension UIViewController {
             }
         } else {
             alert.setValid(true)
+        }
+    }
+    
+    @objc func validAddressRequired(_ textField: UITextField) {
+        let alert = getAlert(from: textField)
+        
+        if validateRange(in: alert, validator: { $0.isValidAddress }) {
+            return
+        }
+        if let text = textField.text, let address = UInt16(text, radix: 16) {
+            alert.setValid(address.isValidAddress)
+        } else {
+            alert.setValid(false)
         }
     }
     

@@ -134,7 +134,7 @@ class SetPublicationDestinationsViewController: UITableViewController {
                 selectedDestination = nil
             }
             cell.textLabel?.text = group.name
-            cell.imageView?.image = #imageLiteral(resourceName: "outline_group_work_black_24pt")
+            cell.imageView?.image = #imageLiteral(resourceName: "ic_group_24pt")
             cell.accessoryType = indexPath == selectedIndexPath ? .checkmark : .none
         }
         if indexPath.isSpecialGroupsSection {
@@ -144,7 +144,7 @@ class SetPublicationDestinationsViewController: UITableViewController {
                 selectedDestination = nil
             }
             cell.textLabel?.text = pair.title
-            cell.imageView?.image = #imageLiteral(resourceName: "outline_group_work_black_24pt")
+            cell.imageView?.image = #imageLiteral(resourceName: "ic_group_24pt")
             cell.accessoryType = indexPath == selectedIndexPath ? .checkmark : .none
         }
         return cell

@@ -148,7 +148,6 @@ extension NetworkConnection: GattBearerDelegate, BearerDataDelegate {
             return
         }
         isOpen = true
-        print("Bearer open")
         delegate?.bearerDidOpen(self)
         
         // If any packets were buffered, send them to the first connected Proxy.
@@ -167,7 +166,6 @@ extension NetworkConnection: GattBearerDelegate, BearerDataDelegate {
         }
         if proxies.isEmpty {
             isOpen = false
-            print("Bearer closed")
             delegate?.bearer(self, didClose: nil)
         }
     }

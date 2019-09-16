@@ -64,7 +64,7 @@ class PublicationCell: UITableViewCell {
                         destinationSubtitleLabel.text = address.asString()
                     }
                 }
-                destinationIcon.image = #imageLiteral(resourceName: "outline_group_work_black_24pt")
+                destinationIcon.image = #imageLiteral(resourceName: "tab_groups_outline_black_24pt")
                 destinationIcon.tintColor = .nordicLake
             } else {
                 destinationLabel.text = "Invalid address"
