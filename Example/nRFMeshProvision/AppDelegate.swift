@@ -86,7 +86,7 @@ extension AppDelegate: LoggerDelegate {
     
     func log(message: String, ofCategory category: LogCategory, withLevel level: LogLevel) {
         if #available(iOS 10.0, *) {
-            os_log("%@", log: category.log, type: level.type, message)
+            os_log("%{public}@", log: category.log, type: level.type, message)
         } else {
             NSLog("%@", message)
         }
