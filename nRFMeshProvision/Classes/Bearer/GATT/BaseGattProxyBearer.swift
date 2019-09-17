@@ -79,7 +79,7 @@ open class BaseGattProxyBearer<Service: MeshService>: NSObject, Bearer, CBCentra
     }
     
     open func open() {
-        if centralManager.state == .poweredOn && basePeripheral.state == .disconnected {
+        if centralManager.state == .poweredOn && basePeripheral?.state == .disconnected {
             logger?.v(.bearer, "Connecting to \(basePeripheral.name ?? "Unknown Device")...")
             centralManager.connect(basePeripheral, options: nil)
         }
@@ -87,7 +87,7 @@ open class BaseGattProxyBearer<Service: MeshService>: NSObject, Bearer, CBCentra
     }
     
     open func close() {
-        if basePeripheral.state == .connected || basePeripheral.state == .connecting {
+        if basePeripheral.state == .connected || basePeripheral?.state == .connecting {
             logger?.v(.bearer, "Cancelling connection...")
             centralManager.cancelPeripheralConnection(basePeripheral)            
         }
