@@ -22,7 +22,7 @@ open class BaseGattProxyBearer<Service: MeshService>: NSObject, Bearer, CBCentra
     public weak var logger: LoggerDelegate?
     
     private let centralManager: CBCentralManager
-    private let basePeripheral: CBPeripheral
+    private var basePeripheral: CBPeripheral!
     
     /// The protocol used for segmentation and reassembly.
     private let protocolHandler: ProxyProtocolHandler
@@ -42,8 +42,14 @@ open class BaseGattProxyBearer<Service: MeshService>: NSObject, Bearer, CBCentra
     }
     
     /// The UUID associated with the peer.
-    public var identifier: UUID {
-        return basePeripheral.identifier
+    public let identifier: UUID
+    
+    /// The name of the peripheral.
+    ///
+    /// This returns `nil` if the peripheral hasn't been yet retrieved (Bluetooth is off)
+    /// or the device does not have a name.
+    public var name: String? {
+        return basePeripheral?.name
     }
     
     // MARK: - Characteristic properties
@@ -66,14 +72,10 @@ open class BaseGattProxyBearer<Service: MeshService>: NSObject, Bearer, CBCentra
     /// - parameter uuid: The UUID associated with the peer.
     public init?(targetWithIdentifier uuid: UUID) {
         centralManager  = CBCentralManager()
-        guard let peripheral = centralManager.retrievePeripherals(withIdentifiers: [uuid]).first else {
-            return nil
-        }
-        basePeripheral = peripheral
+        identifier = uuid
         protocolHandler = ProxyProtocolHandler()
         super.init()
         centralManager.delegate = self
-        basePeripheral.delegate = self
     }
     
     open func open() {
@@ -172,12 +174,19 @@ open class BaseGattProxyBearer<Service: MeshService>: NSObject, Bearer, CBCentra
     // MARK: - CBCentralManagerDelegate
     
     open func centralManagerDidUpdateState(_ central: CBCentralManager) {
+        logger?.i(.bearer, "Central Manager state changed to \(central.state)")
         if central.state == .poweredOn {
+            guard let peripheral = centralManager.retrievePeripherals(withIdentifiers: [identifier]).first else {
+                logger?.w(.bearer, "Device with identifier \(identifier.uuidString) not found")
+                isOpened = false
+                return
+            }
+            basePeripheral = peripheral
+            basePeripheral.delegate = self
             if isOpened {
                 open()
             }
         } else {
-            logger?.i(.bearer, "Central Manager state changed to \(central.state)")
             delegate?.bearer(self, didClose: BearerError.centralManagerNotPoweredOn)
         }
     }
