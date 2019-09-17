@@ -359,8 +359,9 @@
         <scene sceneID="fba-RQ-uyH">
             <objects>
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="xI8-8S-2a8" customClass="RootViewController" customModule="nRFMeshProvision_Example" customModuleProvider="target" sceneMemberID="viewController">
-                    <tabBarItem key="tabBarItem" title="Settings" image="tab_settings_outline_black_24pt" id="n9p-Gb-55t"/>
+                    <tabBarItem key="tabBarItem" title="Settings" image="tab_settings_outline_black_24pt" id="leN-cE-bPx"/>
                     <toolbarItems/>
+                    <simulatedTabBarMetrics key="simulatedBottomBarMetrics"/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" translucent="NO" largeTitles="YES" id="87M-ir-23X">
                         <rect key="frame" x="0.0" y="44" width="414" height="96"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -1282,7 +1283,7 @@
     <inferredMetricsTieBreakers>
         <segue reference="oYf-da-8MK"/>
         <segue reference="N6d-TP-uON"/>
-        <segue reference="lOU-nl-uhX"/>
+        <segue reference="sOz-KS-cF1"/>
         <segue reference="ZYN-EB-pgW"/>
     </inferredMetricsTieBreakers>
     <color key="tintColor" red="0.0" green="0.46666666670000001" blue="0.7843137255" alpha="1" colorSpace="calibratedRGB"/>

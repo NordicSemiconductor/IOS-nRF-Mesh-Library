@@ -87,6 +87,9 @@
 		52CD0A50232FA6CD00A9A181 /* ProxyFilterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52CD0A4F232FA6CD00A9A181 /* ProxyFilterViewController.swift */; };
 		52CD0A53232FA79300A9A181 /* FilterTypeCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52CD0A52232FA79300A9A181 /* FilterTypeCell.swift */; };
 		52CD0A55232FC11700A9A181 /* AddressCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52CD0A54232FC11700A9A181 /* AddressCell.swift */; };
+		52CD0A582330BDE600A9A181 /* Groups.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 52CD0A562330BDE500A9A181 /* Groups.storyboard */; };
+		52CD0A5B2330BF4800A9A181 /* ProxyFilter.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 52CD0A592330BF4800A9A181 /* ProxyFilter.storyboard */; };
+		52CD0A5E2330C04700A9A181 /* Network.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 52CD0A5C2330C04700A9A181 /* Network.storyboard */; };
 		52DF5D8A228DA78A00C297C1 /* ConfigurationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52DF5D89228DA78A00C297C1 /* ConfigurationViewController.swift */; };
 		52DF5D8C228DAA0500C297C1 /* NodeViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52DF5D8B228DAA0500C297C1 /* NodeViewCell.swift */; };
 		52DF5D8F229691BD00C297C1 /* NetworkConnection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52DF5D8E229691BD00C297C1 /* NetworkConnection.swift */; };
@@ -191,6 +194,9 @@
 		52CD0A4F232FA6CD00A9A181 /* ProxyFilterViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProxyFilterViewController.swift; sourceTree = "<group>"; };
 		52CD0A52232FA79300A9A181 /* FilterTypeCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterTypeCell.swift; sourceTree = "<group>"; };
 		52CD0A54232FC11700A9A181 /* AddressCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddressCell.swift; sourceTree = "<group>"; };
+		52CD0A572330BDE500A9A181 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Groups.storyboard; sourceTree = "<group>"; };
+		52CD0A5A2330BF4800A9A181 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/ProxyFilter.storyboard; sourceTree = "<group>"; };
+		52CD0A5D2330C04700A9A181 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Network.storyboard; sourceTree = "<group>"; };
 		52DF5D89228DA78A00C297C1 /* ConfigurationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigurationViewController.swift; sourceTree = "<group>"; };
 		52DF5D8B228DAA0500C297C1 /* NodeViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NodeViewCell.swift; sourceTree = "<group>"; };
 		52DF5D8E229691BD00C297C1 /* NetworkConnection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkConnection.swift; sourceTree = "<group>"; };
@@ -281,10 +287,13 @@
 			isa = PBXGroup;
 			children = (
 				5231403A22FDA8280074325A /* Model */,
-				607FACD91AFB9204008FA782 /* Main.storyboard */,
-				523F778B22CCEA900030EA6A /* SetPublication.storyboard */,
-				5283524E227887970097B949 /* Settings.storyboard */,
 				3089BC9E2099CA4900E30192 /* LaunchScreen.storyboard */,
+				607FACD91AFB9204008FA782 /* Main.storyboard */,
+				52CD0A5C2330C04700A9A181 /* Network.storyboard */,
+				523F778B22CCEA900030EA6A /* SetPublication.storyboard */,
+				52CD0A562330BDE500A9A181 /* Groups.storyboard */,
+				52CD0A592330BF4800A9A181 /* ProxyFilter.storyboard */,
+				5283524E227887970097B949 /* Settings.storyboard */,
 			);
 			path = UI;
 			sourceTree = "<group>";
@@ -659,9 +668,12 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				52CD0A582330BDE600A9A181 /* Groups.storyboard in Resources */,
 				523F778D22CCEA910030EA6A /* SetPublication.storyboard in Resources */,
 				52A9C17E230EB9490036792A /* GenericOnOff.xib in Resources */,
+				52CD0A5E2330C04700A9A181 /* Network.storyboard in Resources */,
 				3089BCA02099CA4900E30192 /* LaunchScreen.storyboard in Resources */,
+				52CD0A5B2330BF4800A9A181 /* ProxyFilter.storyboard in Resources */,
 				607FACDB1AFB9204008FA782 /* Main.storyboard in Resources */,
 				52A9C1C62313D7D80036792A /* GenericLevel.xib in Resources */,
 				5231404E230AC4680074325A /* VendorModel.xib in Resources */,
@@ -856,6 +868,30 @@
 				5283524F227887970097B949 /* Base */,
 			);
 			name = Settings.storyboard;
+			sourceTree = "<group>";
+		};
+		52CD0A562330BDE500A9A181 /* Groups.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				52CD0A572330BDE500A9A181 /* Base */,
+			);
+			name = Groups.storyboard;
+			sourceTree = "<group>";
+		};
+		52CD0A592330BF4800A9A181 /* ProxyFilter.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				52CD0A5A2330BF4800A9A181 /* Base */,
+			);
+			name = ProxyFilter.storyboard;
+			sourceTree = "<group>";
+		};
+		52CD0A5C2330C04700A9A181 /* Network.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				52CD0A5D2330C04700A9A181 /* Base */,
+			);
+			name = Network.storyboard;
 			sourceTree = "<group>";
 		};
 		607FACD91AFB9204008FA782 /* Main.storyboard */ = {
