@@ -79,6 +79,16 @@ class ProxyFilterViewController: ProgressViewController, Editable {
         cell.address = proxyFilter.addresses.sorted()[indexPath.row]
         return cell
     }
+    
+    override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
+        return indexPath.section == IndexPath.addressesSection
+    }
+    
+    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+        let proxyFilter = MeshNetworkManager.instance.proxyFilter!
+        let address = proxyFilter.addresses.sorted()[indexPath.row]
+        deleteAddress(address)
+    }
 
 }
 
@@ -148,14 +158,27 @@ private extension ProxyFilterViewController {
         }
     }
     
+    func deleteAddress(_ address: Address) {
+        guard let proxyFilter = MeshNetworkManager.instance.proxyFilter,
+              proxyFilter.addresses.contains(address) else {
+            return
+        }
+        start("Deleting address...") {
+            proxyFilter.remove(address: address)
+        }
+    }
+    
 }
 
 private extension IndexPath {
-    static let status  = IndexPath(row: 0, section: 0)
-    static let control = IndexPath(row: 1, section: 0)
+    static let statusSection = 0
+    static let addressesSection = 1
+    
+    static let status  = IndexPath(row: 0, section: IndexPath.statusSection)
+    static let control = IndexPath(row: 1, section: IndexPath.statusSection)
 }
 
 private extension IndexSet {
-    static let details   = IndexSet(integer: 0)
-    static let addresses = IndexSet(integer: 1)
+    static let details   = IndexSet(integer: IndexPath.statusSection)
+    static let addresses = IndexSet(integer: IndexPath.addressesSection)
 }
