@@ -65,7 +65,8 @@ class ProxyFilterViewController: ProgressViewController, Editable {
         
         if indexPath == .status {
             let cell = tableView.dequeueReusableCell(withIdentifier: "status", for: indexPath)
-            cell.detailTextLabel?.text = MeshNetworkManager.bearer.isOpen ? "Connected" : "Connecting..."
+            let bearer = MeshNetworkManager.bearer!
+            cell.detailTextLabel?.text = bearer.isOpen ? "\(bearer.name ?? "Unknown device")" : "Connecting..."
             return cell
         }
         if indexPath == .control {

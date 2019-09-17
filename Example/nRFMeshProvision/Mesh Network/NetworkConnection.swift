@@ -57,6 +57,10 @@ class NetworkConnection: NSObject, Bearer {
     var isConnected: Bool {
         return proxies.contains { $0.isOpen }
     }
+    /// Returns the name of the connected Proxy.
+    var name: String? {
+        return proxies.first(where: { $0.isOpen })?.name
+    }
     
     init(to meshNetwork: MeshNetwork) {
         centralManager = CBCentralManager()
