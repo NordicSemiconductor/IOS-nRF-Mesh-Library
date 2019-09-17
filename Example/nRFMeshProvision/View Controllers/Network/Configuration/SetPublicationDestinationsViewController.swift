@@ -28,11 +28,11 @@ class SetPublicationDestinationsViewController: UITableViewController {
     /// for Generic On/Off Server this list will contain all Elements
     /// with Genetic On/Off Client.
     private var compatibleElements: [Element]!
-    private let specialGroups: [(title: String, address: UInt16)] = [
-        ("All Proxies", 0xFFFC),
-        ("All Friends", 0xFFFD),
-        ("All Relays", 0xFFFE),
-        ("All Nodes", 0xFFFF)
+    private let specialGroups: [(title: String, address: Address)] = [
+        ("All Proxies", Address.allProxies),
+        ("All Friends", Address.allFriends),
+        ("All Relays", Address.allRelays),
+        ("All Nodes", Address.allNodes)
     ]
     private var selectedKeyIndexPath: IndexPath?
     private var selectedIndexPath: IndexPath?
