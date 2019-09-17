@@ -14,23 +14,24 @@ class ProxyFilterViewController: ProgressViewController, Editable {
     // MARK: - Outlets and Actions
     
     @IBOutlet weak var addButton: UIBarButtonItem!
-    @IBAction func addTapped(_ sender: UIBarButtonItem) {
-        presentAddressDialog()
-    }
     
     // MARK: - Implementation
     
     override func viewDidLoad() {
         super.viewDidLoad()
         MeshNetworkManager.bearer.delegate = self
-        MeshNetworkManager.instance.proxyFilter?.delegate = self
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         tableView.reloadData()
         
+        MeshNetworkManager.instance.proxyFilter?.delegate = self
         addButton.isEnabled = MeshNetworkManager.bearer.isOpen
+        
+        if MeshNetworkManager.instance.proxyFilter?.addresses.isEmpty == false {
+            hideEmptyView()
+        }
     }
 
     // MARK: - Table view data source
@@ -133,6 +134,11 @@ extension ProxyFilterViewController: ProxyFilterDelegate {
     func proxyFilterUpdated(type: ProxyFilerType, addresses: Set<Address>) {
         done() {
             self.tableView.reloadSections(.addresses, with: .automatic)
+            if addresses.isEmpty {
+                self.showEmptyView()
+            } else {
+                self.hideEmptyView()
+            }
         }
     }
     
@@ -140,25 +146,9 @@ extension ProxyFilterViewController: ProxyFilterDelegate {
 
 private extension ProxyFilterViewController {
     
-    /// Presents a dialog to add a new Address.
-    func presentAddressDialog() {
-        presentTextAlert(title: "Address", message: "Hexadecimal value.",
-                         text: nil, placeHolder: "Address", type: .validAddressRequired) { text in
-                            let address = Address(text, radix: 16)!
-                            self.addAddress(address)
-        }
-    }
-    
-    func addAddress(_ address: Address) {
-        guard let proxyFilter = MeshNetworkManager.instance.proxyFilter,
-              !proxyFilter.addresses.contains(address) else {
-            return
-        }
-        start("Adding address...") {
-            proxyFilter.add(address: address)
-        }
-    }
-    
+    /// Deletes the given address from Proxy Filter.
+    ///
+    /// - parameter address: The address to delete.
     func deleteAddress(_ address: Address) {
         guard let proxyFilter = MeshNetworkManager.instance.proxyFilter,
               proxyFilter.addresses.contains(address) else {

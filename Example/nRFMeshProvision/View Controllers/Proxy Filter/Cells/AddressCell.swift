@@ -46,6 +46,7 @@ class AddressCell: UITableViewCell {
                 let group = meshNetwork.groups.first { $0.address.address == address }
                 
                 title.text = group?.name ?? "Unknown group"
+                subtitle.text = group?.address.virtualLabel?.uuidString
                 icon.image = #imageLiteral(resourceName: "ic_group_24pt")
                 tintColor = .nordicLake
                 
