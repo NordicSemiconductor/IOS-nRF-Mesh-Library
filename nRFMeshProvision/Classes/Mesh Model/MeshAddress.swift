@@ -72,6 +72,14 @@ extension MeshAddress: Equatable {
     
 }
 
+extension MeshAddress: Hashable {
+    
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(address)
+    }
+    
+}
+
 extension MeshAddress: CustomDebugStringConvertible {
     
     public var debugDescription: String {
