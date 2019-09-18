@@ -129,7 +129,7 @@ internal class AccessLayer {
             logger?.i(.foundationModel, "Sending \(message) to: \(destination.hex)")
             let pdu = AccessPdu(fromMeshMessage: message, sentFrom: element, to: MeshAddress(destination))
             logger?.i(.access, "Sending \(pdu)")
-            let keySet = DeviceKeySet(networkKey: networkKey, deviceKey: node.deviceKey)
+            let keySet = DeviceKeySet(networkKey: networkKey, node: node)
             networkManager.upperTransportLayer.send(pdu, using: keySet)
         }
     }
