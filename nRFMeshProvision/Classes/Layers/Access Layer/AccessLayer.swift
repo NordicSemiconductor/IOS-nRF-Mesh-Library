@@ -112,7 +112,7 @@ internal class AccessLayer {
     /// Network Key known to this Node.
     ///
     /// - parameter message:     The Mesh Config Message to send.
-    /// - parameter destination: The destination Address. This must be a Unicast Address.
+    /// - parameter destination: The destination address. This must be a Unicast Address.
     func send(_ message: ConfigMessage, to destination: Address) {
         guard let element = meshNetwork.localProvisioner?.node?.elements.first,
               let node = meshNetwork.node(withAddress: destination),
@@ -137,18 +137,35 @@ internal class AccessLayer {
     /// Replies to the received message, which was sent with the given key set,
     /// with the given message.
     ///
-    /// - parameter message:     The response message to be sent.
-    /// - parameter element:     The source Element.
-    /// - parameter destination: The destination address. This must be a Unicast Address.
-    /// - parameter keySet:      The set of keys that the message was encrypted with.
-    func reply(with message: MeshMessage,
+    /// - parameters:
+    ///   - origin:      The destination address of the message that the reply is for.
+    ///   - message:     The response message to be sent.
+    ///   - element:     The source Element.
+    ///   - destination: The destination address. This must be a Unicast Address.
+    ///   - keySet:      The set of keys that the message was encrypted with.
+    func reply(toMessageSentTo origin: Address, with message: MeshMessage,
                from element: Element, to destination: Address,
                using keySet: KeySet) {
         let category: LogCategory = message is ConfigMessage ? .foundationModel : .model
         logger?.i(category, "Replying with \(message) from: \(element), to: \(destination.hex)")
         let pdu = AccessPdu(fromMeshMessage: message, sentFrom: element, to: MeshAddress(destination))
-        logger?.i(.access, "Sending \(pdu)")
-        networkManager.upperTransportLayer.send(pdu, using: keySet)
+        
+        // If the message is sent in response to a received message that was sent to
+        // a Unicast Address, the node should transmit the response message with a random
+        // delay between 20 and 50 milliseconds. If the message is sent in response to a
+        // received message that was sent to a group address or a virtual address, the node
+        // should transmit the response message with a random delay between 20 and 500
+        // milliseconds. This reduces the probability of multiple nodes responding to this
+        // message at exactly the same time, and therefore increases the probability of
+        // message delivery rather than message collisions.
+        let delay = origin.isUnicast ?
+            TimeInterval.random(in: 0.020...0.050) :
+            TimeInterval.random(in: 0.020...0.500)
+        
+        Timer.scheduledTimer(withTimeInterval: delay, repeats: false) { _ in
+            self.logger?.i(.access, "Sending \(pdu)")
+            self.networkManager.upperTransportLayer.send(pdu, using: keySet)
+        }
     }
     
 }

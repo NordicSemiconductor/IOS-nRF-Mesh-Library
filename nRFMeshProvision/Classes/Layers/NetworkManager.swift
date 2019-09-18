@@ -104,29 +104,36 @@ internal class NetworkManager {
     }
     
     /// Replies to the received message, which was sent with the given key set,
-    /// with the given message.
+    /// with the given message. The message will be sent from the local
+    /// Primary Element.
     ///
-    /// - parameter message:     The response message to be sent.
-    /// - parameter destination: The destination address.
-    /// - parameter keySet:      The keySet that should be used to encrypt the message.
-    func reply(with message: MeshMessage, to destination: Address, using keySet: KeySet) {
+    /// - parameters:
+    ///   - origin:      The destination address of the message that the reply is for.
+    ///   - message:     The response message to be sent.
+    ///   - destination: The destination address. This must be a Unicast Address.
+    ///   - keySet:      The keySet that should be used to encrypt the message.
+    func reply(toMessageSentTo origin: Address, with message: MeshMessage, to destination: Address, using keySet: KeySet) {
         guard let primaryElement = meshNetwork?.localProvisioner?.node?.elements.first else {
             return
         }
-        accessLayer.reply(with: message, from: primaryElement, to: destination, using: keySet)
+        accessLayer.reply(toMessageSentTo: origin, with: message,
+                          from: primaryElement, to: destination, using: keySet)
     }
     
     /// Replies to the received message, which was sent with the given key set,
     /// with the given message.
     ///
-    /// - parameter message:     The response message to be sent.
-    /// - parameter element:     The source Element.
-    /// - parameter destination: The destination address.
-    /// - parameter keySet:      The keySet that should be used to encrypt the message.
-    func reply(with message: MeshMessage,
+    /// - parameters:
+    ///   - origin:      The destination address of the message that the reply is for.
+    ///   - message:     The response message to be sent.
+    ///   - element:     The source Element.
+    ///   - destination: The destination address. This must be a Unicast Address.
+    ///   - keySet:      The keySet that should be used to encrypt the message.
+    func reply(toMessageSentTo origin: Address, with message: MeshMessage,
                from element: Element, to destination: Address,
                using keySet: KeySet) {
-        accessLayer.reply(with: message, from: element, to: destination, using: keySet)
+        accessLayer.reply(toMessageSentTo: origin, with: message,
+                          from: element, to: destination, using: keySet)
     }
     
     /// Sends the Proxy Configuration message to the connected Proxy Node.
