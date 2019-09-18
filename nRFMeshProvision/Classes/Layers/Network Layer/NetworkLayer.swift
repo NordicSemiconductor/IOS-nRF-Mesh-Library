@@ -207,6 +207,11 @@ private extension NetworkLayer {
     /// - parameter secureNetworkBeacon: The Secure Network Beacon received.
     func handle(secureNetworkBeacon: SecureNetworkBeacon) {
         let networkKey = secureNetworkBeacon.networkKey
+        // The IV Index in the beacon must be greater or equal to the current one.
+        guard secureNetworkBeacon.ivIndex >= networkKey.ivIndex.index else {
+            logger?.w(.network, "Discarding beacon (ivIndex: \(secureNetworkBeacon.ivIndex), expected >= \(networkKey.ivIndex.index))")
+            return
+        }
         networkKey.ivIndex = IvIndex(index: secureNetworkBeacon.ivIndex,
                                      updateActive: secureNetworkBeacon.ivUpdateActive)
         // If the Key Refresh Procedure is in progress, and the new Network Key
