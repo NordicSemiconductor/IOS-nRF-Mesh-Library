@@ -7,7 +7,7 @@
 
 import Foundation
 
-internal struct ControlMessage: LowerTransportPdu {    
+internal struct ControlMessage: LowerTransportPdu {
     let source: Address
     let destination: Address
     let networkKey: NetworkKey

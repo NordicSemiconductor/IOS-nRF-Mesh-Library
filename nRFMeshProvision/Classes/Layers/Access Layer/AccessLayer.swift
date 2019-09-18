@@ -7,6 +7,38 @@
 
 import Foundation
 
+/// The transaction object is used for Transaction Messages,
+/// for example `GenericLevelSet`.
+private struct Transaction {
+    /// Last used Transaction Identifier.
+    private var lastTid = UInt8.random(in: UInt8.min...UInt8.max)
+    /// The timestamp of the last transaction message sent.
+    private var timestamp: Date = Date()
+    
+    /// Returns the last used TID.
+    mutating func currentTid() -> UInt8 {
+        timestamp = Date()
+        return lastTid
+    }
+    
+    /// Returns the next TID.
+    mutating func nextTid() -> UInt8 {
+        if lastTid < 255 {
+            lastTid = lastTid + 1
+        } else {
+            lastTid = 0
+        }
+        timestamp = Date()
+        return lastTid
+    }
+    
+    /// Whether the transaction can be continued.
+    var isActive: Bool {
+        // A transaction may last up to 6 seconds.
+        return timestamp.timeIntervalSinceNow > -6.0
+    }
+}
+
 internal class AccessLayer {
     let networkManager: NetworkManager
     let meshNetwork: MeshNetwork
@@ -15,10 +47,8 @@ internal class AccessLayer {
         return networkManager.manager.logger
     }
     
-    /// Last used Transaction Identifier.
-    var lastTid = UInt8.random(in: UInt8.min...UInt8.max)
-    /// The timestamp of the last transaction message sent.
-    var transactionTimestamp: Date? = nil
+    /// A map of current transactions.
+    private var transactions: [Int : Transaction] = [:]
     
     init(_ networkManager: NetworkManager) {
         self.networkManager = networkManager
@@ -57,18 +87,16 @@ internal class AccessLayer {
         // Should the TID be updated?
         var m = message
         if var tranactionMessage = message as? TransactionMessage, tranactionMessage.tid == nil {
+            // Ensure there is a transaction for our destination.
+            let k = key(for: element, and: destination)
+            transactions[k] = transactions[k] ?? Transaction()
             // Should the last transaction be continued?
-            if tranactionMessage.continueTransaction,
-                let timestamp = transactionTimestamp, timestamp.timeIntervalSinceNow > -6.0 {
-                tranactionMessage.tid = lastTid
+            if tranactionMessage.continueTransaction, transactions[k]!.isActive {
+                tranactionMessage.tid = transactions[k]!.currentTid()
             } else {
                 // If not, start a new transaction by setting a new TID value.
-                let nextTid = lastTid.next()
-                tranactionMessage.tid = nextTid
-                lastTid = nextTid
+                tranactionMessage.tid = transactions[k]!.nextTid()
             }
-            // Save the last transaction time.
-            transactionTimestamp = Date()
             m = tranactionMessage
         }
         
@@ -465,13 +493,10 @@ private extension AccessLayer {
     
 }
 
-private extension UInt8 {
+private extension AccessLayer {
     
-    func next() -> UInt8 {
-        if self == 255 {
-            return 0
-        }
-        return self + 1
+    func key(for element: Element, and destination: MeshAddress) -> Int {
+        return (Int(element.unicastAddress) << 16) | Int(destination.address)
     }
     
 }
