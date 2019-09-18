@@ -139,18 +139,18 @@ internal struct UpperTransportPdu {
         } else {
             // Try decoding using source's Node Device Key. This should work if a status
             // message was sent as a response to a Config Message sent by this Provisioner.
-            if let deviceKey = meshNetwork.node(withAddress: accessMessage.source)?.deviceKey,
-                let pdu = UpperTransportPdu(fromLowerTransportAccessMessage: accessMessage,
-                                            usingKey: deviceKey) {
-                let keySet = DeviceKeySet(networkKey: accessMessage.networkKey, deviceKey: deviceKey)
+            if let node = meshNetwork.node(withAddress: accessMessage.source),
+               let pdu = UpperTransportPdu(fromLowerTransportAccessMessage: accessMessage,
+                                           usingKey: node.deviceKey) {
+                let keySet = DeviceKeySet(networkKey: accessMessage.networkKey, node: node)
                 return (pdu, keySet)
             }
             // On the other hand, if another Provisioner is sending Config Messages,
             // they will be signed using the local Provisioner's Device Key instead.
-            if let deviceKey = meshNetwork.localProvisioner?.node?.deviceKey,
-                let pdu = UpperTransportPdu(fromLowerTransportAccessMessage: accessMessage,
-                                            usingKey: deviceKey) {
-                let keySet = DeviceKeySet(networkKey: accessMessage.networkKey, deviceKey: deviceKey)
+            if let node = meshNetwork.localProvisioner?.node,
+               let pdu = UpperTransportPdu(fromLowerTransportAccessMessage: accessMessage,
+                                           usingKey: node.deviceKey) {
+                let keySet = DeviceKeySet(networkKey: accessMessage.networkKey, node: node)
                 return (pdu, keySet)
             }
         }

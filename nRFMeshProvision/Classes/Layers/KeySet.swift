@@ -40,13 +40,16 @@ internal struct AccessKeySet: KeySet {
 
 internal struct DeviceKeySet: KeySet {
     let networkKey: NetworkKey
-    let accessKey: Data
+    let node: Node
     
     var aid: UInt8? = nil
+    var accessKey: Data {
+        return node.deviceKey
+    }
     
-    init(networkKey: NetworkKey, deviceKey: Data) {
+    init(networkKey: NetworkKey, node: Node) {
         self.networkKey = networkKey
-        self.accessKey = deviceKey
+        self.node = node
     }
 }
 
@@ -61,7 +64,7 @@ extension AccessKeySet: CustomDebugStringConvertible {
 extension DeviceKeySet: CustomDebugStringConvertible {
     
     var debugDescription: String {
-        return "Device Key"
+        return "\(node.name ?? "Unknown device")'s Device Key"
     }
     
 }
