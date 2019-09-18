@@ -36,7 +36,7 @@ internal class NetworkManager {
         return max(manager.acknowledgmentTimerInterval, 0.150) + Double(ttl) * 0.050
     }
     func transmissionTimerInteral(_ ttl: UInt8) -> TimeInterval {
-        return max(manager.acknowledgmentTimerInterval, 0.200) + Double(ttl) * 0.050
+        return max(manager.transmissionTimerInteral, 0.200) + Double(ttl) * 0.050
     }
     var retransmissionLimit: Int {
         return max(manager.retransmissionLimit, 2)
