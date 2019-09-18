@@ -8,9 +8,9 @@
 import Foundation
 
 internal class UpperTransportLayer {
-    let networkManager: NetworkManager
-    let meshNetwork: MeshNetwork
-    let defaults: UserDefaults
+    private let networkManager: NetworkManager
+    private let meshNetwork: MeshNetwork
+    private let defaults: UserDefaults
     
     private var logger: LoggerDelegate? {
         return networkManager.manager.logger

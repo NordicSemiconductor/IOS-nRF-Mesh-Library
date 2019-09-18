@@ -8,8 +8,8 @@
 import Foundation
 
 internal class LowerTransportLayer {
-    let networkManager: NetworkManager
-    let meshNetwork: MeshNetwork
+    private let networkManager: NetworkManager
+    private let meshNetwork: MeshNetwork
     
     private var logger: LoggerDelegate? {
         return networkManager.manager.logger

@@ -8,10 +8,10 @@
 import Foundation
 
 internal class NetworkLayer {
-    let networkManager: NetworkManager
-    let meshNetwork: MeshNetwork
-    let networkMessageCache: NSCache<NSData, NSNull>
-    let defaults: UserDefaults
+    private let networkManager: NetworkManager
+    private let meshNetwork: MeshNetwork
+    private let networkMessageCache: NSCache<NSData, NSNull>
+    private let defaults: UserDefaults
     
     private var logger: LoggerDelegate? {
         return networkManager.manager.logger
@@ -39,7 +39,7 @@ internal class NetworkLayer {
     ///              stored Network Key may be invalid. Therefore, it may be, that the
     ///              key with this index is no longer stored on the connected Node
     ///              and the Proxy Configuration messages will not work.
-    var proxyNetworkKey: NetworkKey?
+    private var proxyNetworkKey: NetworkKey?
     
     init(_ networkManager: NetworkManager) {
         self.networkManager = networkManager
