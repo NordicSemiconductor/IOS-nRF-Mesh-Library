@@ -16,10 +16,19 @@ internal class UpperTransportLayer {
         return networkManager.manager.logger
     }
     
+    /// The upper transport layer shall not transmit a new segmented
+    /// Upper Transport PDU to a given destination until the previous
+    /// Upper Transport PDU to that destination has been either completed
+    /// or cancelled.
+    ///
+    /// This map contains queues of messages targetting each destination.
+    private var queues: [Address : [(pdu: UpperTransportPdu, networkKey: NetworkKey)]]
+    
     init(_ networkManager: NetworkManager) {
         self.networkManager = networkManager
         self.meshNetwork = networkManager.meshNetwork!
         self.defaults = UserDefaults(suiteName: meshNetwork.uuid.uuidString)!
+        self.queues = [:]
     }
     
     /// Handles received Lower Transport PDU.
@@ -62,6 +71,7 @@ internal class UpperTransportLayer {
         // Get the current sequence number for source Element's address.
         let source = accessPdu.localElement!.unicastAddress
         let sequence = UInt32(defaults.integer(forKey: "S\(source.hex)"))
+        let networkKey = keySet.networkKey
         
         let pdu = UpperTransportPdu(fromAccessPdu: accessPdu,
                                     usingKeySet: keySet, sequence: sequence)
@@ -69,9 +79,58 @@ internal class UpperTransportLayer {
         logger?.i(.upperTransport, "Sending \(pdu) encrypted using key: \(keySet)")
         
         let isSegmented = pdu.transportPdu.count > 15 || accessPdu.isSegmented
-        let networkKey = keySet.networkKey
-        networkManager.lowerTransportLayer.send(upperTransportPdu: pdu,
-                                                asSegmentedMessage: isSegmented,
+        if isSegmented {
+            // Enquque the PDU. If the queue was empty, the PDU will be sent
+            // immediately.
+            enqueue(pdu: pdu, networkKey: networkKey)
+        } else {
+            networkManager.lowerTransportLayer.send(unsegmentedUpperTransportPdu: pdu,
+                                                    usingNetworkKey: networkKey)
+        }
+    }
+    
+    /// A callback called by the lower transport layer when the segmented PDU
+    /// has been sent to the given destination.
+    ///
+    /// This method removes the sent PDU from the queue and initiates sending
+    /// a next one, had it been enqueued.
+    ///
+    /// - parameter destination: The destination address.
+    func lowerTransportLayerDidSend(segmentedUpperTransportPduTo destination: Address) {
+        guard !(queues[destination]?.isEmpty ?? true) else {
+            return
+        }
+        // Remove the PDU that has just been sent.
+        queues[destination]?.removeFirst()
+        // Try to send the next one.
+        sendNext(to: destination)
+    }
+}
+
+private extension UpperTransportLayer {
+    
+    /// Enqueues the PDU to be sent using the given Network Key.
+    ///
+    /// - parameter pdu: The Upper Transport PDU to be sent.
+    /// - parameter networkKey: The Network Key to encrypt the PDU with.
+    func enqueue(pdu: UpperTransportPdu, networkKey: NetworkKey) {
+        queues[pdu.destination] = queues[pdu.destination] ?? []
+        queues[pdu.destination]!.append((pdu: pdu, networkKey: networkKey))
+        if queues[pdu.destination]!.count == 1 {
+            sendNext(to: pdu.destination)
+        }
+    }
+    
+    /// Sends the next enqueded PDU.
+    ///
+    /// If the queue for the given destination does not exist or is empty,
+    /// this method does nothing.
+    func sendNext(to destination: Address) {
+        // If another PDU has been enqueued, proceed.
+        guard let (pdu, networkKey) = queues[destination]?.first else {
+            return
+        }
+        networkManager.lowerTransportLayer.send(segmentedUpperTransportPdu: pdu,
                                                 usingNetworkKey: networkKey)
     }
     

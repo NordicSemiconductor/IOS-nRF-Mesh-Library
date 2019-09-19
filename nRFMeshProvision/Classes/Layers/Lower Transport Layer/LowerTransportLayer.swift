@@ -154,42 +154,49 @@ internal class LowerTransportLayer {
     
     /// This method tries to send the Upper Transport Message.
     ///
-    /// - parameter pdu:         The Upper Transport PDU to be sent.
-    /// - parameter isSegmented: `True` if the message should be sent as segmented, `false` otherwise.
-    /// - parameter networkKey:  The Network Key to be used to encrypt the message on
-    ///                          on Network Layer.
-    func send(upperTransportPdu pdu: UpperTransportPdu, asSegmentedMessage isSegmented: Bool,
-              usingNetworkKey networkKey: NetworkKey) {
+    /// - parameter pdu:        The unsegmented Upper Transport PDU to be sent.
+    /// - parameter networkKey: The Network Key to be used to encrypt the message on
+    ///                         on Network Layer.
+    func send(unsegmentedUpperTransportPdu pdu: UpperTransportPdu, usingNetworkKey networkKey: NetworkKey) {
         guard let provisionerNode = meshNetwork.localProvisioner?.node else {
             return
         }
+        /// The default TTL of the local Node.
         let ttl = provisionerNode.defaultTTL ?? networkManager.defaultTtl
-        
-        if isSegmented {
-            let sequenceZero = UInt16(pdu.sequence & 0x1FFF)
-            /// Number of segments to be sent.
-            let count = (pdu.transportPdu.count + 11) / 12
-            
-            // Create all segments to be sent.
-            outgoingSegments[sequenceZero] = Array<SegmentedAccessMessage?>(repeating: nil, count: count)
-            for i in 0..<count {
-                outgoingSegments[sequenceZero]![i] = SegmentedAccessMessage(fromUpperTransportPdu: pdu,
-                                                                            usingNetworkKey: networkKey, offset: UInt8(i))
-            }
-            sendSegments(for: sequenceZero)
-        } else {
-            let message = AccessMessage(fromUnsegmentedUpperTransportPdu: pdu, usingNetworkKey: networkKey)
-            do {
-                logger?.i(.lowerTransport, "Sending \(message)")
-                try networkManager.networkLayer.send(lowerTransportPdu: message, ofType: .networkPdu, withTtl: ttl)
-                networkManager.notifyAbout(deliveringMessage: pdu.message!,
-                                           from: pdu.localElement!, to: pdu.destination)
-            } catch {
-                logger?.w(.lowerTransport, error)
-                networkManager.notifyAbout(error, duringSendingMessage: pdu.message!,
-                                           from: pdu.localElement!, to: pdu.destination)
-            }
+        let message = AccessMessage(fromUnsegmentedUpperTransportPdu: pdu, usingNetworkKey: networkKey)
+        do {
+            logger?.i(.lowerTransport, "Sending \(message)")
+            try networkManager.networkLayer.send(lowerTransportPdu: message, ofType: .networkPdu, withTtl: ttl)
+            networkManager.notifyAbout(deliveringMessage: pdu.message!,
+                                       from: pdu.localElement!, to: pdu.destination)
+        } catch {
+            logger?.w(.lowerTransport, error)
+            networkManager.notifyAbout(error, duringSendingMessage: pdu.message!,
+                                       from: pdu.localElement!, to: pdu.destination)
         }
+    }
+    
+    /// This method tries to send the Upper Transport Message.
+    ///
+    /// - parameter pdu:        The segmented Upper Transport PDU to be sent.
+    /// - parameter networkKey: The Network Key to be used to encrypt the message on
+    ///                         on Network Layer.
+    func send(segmentedUpperTransportPdu pdu: UpperTransportPdu, usingNetworkKey networkKey: NetworkKey) {
+        guard let _ = meshNetwork.localProvisioner?.node else {
+            return
+        }
+        /// Last 13 bits of the sequence number are known as seqZero.
+        let sequenceZero = UInt16(pdu.sequence & 0x1FFF)
+        /// Number of segments to be sent.
+        let count = (pdu.transportPdu.count + 11) / 12
+        
+        // Create all segments to be sent.
+        outgoingSegments[sequenceZero] = Array<SegmentedAccessMessage?>(repeating: nil, count: count)
+        for i in 0..<count {
+            outgoingSegments[sequenceZero]![i] = SegmentedAccessMessage(fromUpperTransportPdu: pdu,
+                                                                        usingNetworkKey: networkKey, offset: UInt8(i))
+        }
+        sendSegments(for: sequenceZero)
     }
     
 }
@@ -339,6 +346,7 @@ private extension LowerTransportLayer {
             outgoingSegments.removeValue(forKey: ack.sequenceZero)
             networkManager.notifyAbout(deliveringMessage: segment.message!,
                                        from: segment.localElement!, to: segment.destination)
+            networkManager.upperTransportLayer.lowerTransportLayerDidSend(segmentedUpperTransportPduTo:  segment.destination)
         } else {
             // Else, send again all packets that were not acknowledged.
             sendSegments(for: ack.sequenceZero)
@@ -401,6 +409,7 @@ private extension LowerTransportLayer {
                         outgoingSegments.removeValue(forKey: sequenceZero)
                         networkManager.notifyAbout(error, duringSendingMessage: segment.message!,
                                                    from: segment.localElement!, to: segment.destination)
+                        networkManager.upperTransportLayer.lowerTransportLayerDidSend(segmentedUpperTransportPduTo:  segment.destination)
                         return
                     }
                 }
@@ -412,9 +421,13 @@ private extension LowerTransportLayer {
         // random delay is, so assuming 0.5-1.5 second.
         if !ackExpected! {
             let interval = TimeInterval.random(in: 0.500...1.500)
-            _ = Timer.scheduledTimer(withTimeInterval: interval, repeats: false) { timer in
+            _ = BackgroundTimer.scheduledTimer(withTimeInterval: interval, repeats: false) { timer in
+                var destination: Address?
                 for i in 0..<segments.count {
                     if let segment = segments[i] {
+                        if destination == nil {
+                            destination = segment.destination
+                        }
                         self.logger?.d(.lowerTransport, "Sending \(segment)")
                         do {
                             try self.networkManager.networkLayer.send(lowerTransportPdu: segment,
@@ -425,6 +438,9 @@ private extension LowerTransportLayer {
                     }
                 }
                 timer.invalidate()
+                if let destination = destination {
+                    self.networkManager.upperTransportLayer.lowerTransportLayerDidSend(segmentedUpperTransportPduTo: destination)
+                }
             }
         }
         
@@ -442,6 +458,7 @@ private extension LowerTransportLayer {
                     networkManager.notifyAbout(LowerTransportError.timeout,
                                                duringSendingMessage: segment.message!,
                                                from: segment.localElement!, to: segment.destination)
+                    networkManager.upperTransportLayer.lowerTransportLayerDidSend(segmentedUpperTransportPduTo: segment.destination)
                 }
                 outgoingSegments.removeValue(forKey: sequenceZero)
             }
