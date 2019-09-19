@@ -415,8 +415,10 @@ extension ConfigurationViewController: MeshNetworkDelegate {
         switch message {
             
         case is ConfigCompositionDataStatus:
-            tableView.reloadData()
-            getTtl()
+            self.getTtl()
+            DispatchQueue.main.async {
+                self.tableView.reloadData()
+            }
             
         case is ConfigDefaultTtlStatus:
             done() {

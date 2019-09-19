@@ -30,6 +30,8 @@ class ProgressViewController: UITableViewController {
                     self.refreshControl?.endRefreshing()
                 }))
                 self.present(self.alert!, animated: true)
+            } else {
+                self.alert?.message = message
             }
         
             completion()

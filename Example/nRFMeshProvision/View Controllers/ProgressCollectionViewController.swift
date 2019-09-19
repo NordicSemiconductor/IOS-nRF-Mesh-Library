@@ -29,6 +29,8 @@ class ProgressCollectionViewController: UICollectionViewController {
                     _ in self.alert = nil
                 }))
                 self.present(self.alert!, animated: true)
+            } else {
+                self.alert?.message = message
             }
             
             completion()
