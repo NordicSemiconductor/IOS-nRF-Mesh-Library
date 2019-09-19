@@ -63,13 +63,16 @@ internal class NetworkLayer {
             return
         }
         
-        // Ensure the PDU has not been handled already.
-        guard networkMessageCache.object(forKey: pdu as NSData) == nil else {
-            // PDU has already been handled.
-            logger?.d(.network, "PDU already handled")
-            return
+        // Secure Network Beacons can repeat whenever the device connects to a new Proxy.
+        if type != .meshBeacon {
+            // Ensure the PDU has not been handled already.
+            guard networkMessageCache.object(forKey: pdu as NSData) == nil else {
+                // PDU has already been handled.
+                logger?.d(.network, "PDU already handled")
+                return
+            }
+            networkMessageCache.setObject(NSNull(), forKey: pdu as NSData)
         }
-        networkMessageCache.setObject(NSNull(), forKey: pdu as NSData)
         
         // Try decoding the PDU.
         switch type {
