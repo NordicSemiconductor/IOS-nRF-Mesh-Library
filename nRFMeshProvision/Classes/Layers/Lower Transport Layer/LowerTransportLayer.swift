@@ -303,9 +303,11 @@ private extension LowerTransportLayer {
                 if acknowledgmentTimers[key] == nil {
                     let ttl = provisionerNode.defaultTTL ?? networkManager.defaultTtl
                     acknowledgmentTimers[key] = BackgroundTimer.scheduledTimer(withTimeInterval: networkManager.acknowledgmentTimerInterval(ttl), repeats: false) { _ in
-                        let ttl = networkPdu.ttl > 0 ? ttl : 0
-                        self.sendAck(for: self.incompleteSegments[key]!, usingNetworkKey: networkPdu.networkKey, withTtl: ttl)
-                        self.acknowledgmentTimers.removeValue(forKey: key)?.invalidate()
+                        if let segments = self.incompleteSegments[key] {
+                            let ttl = networkPdu.ttl > 0 ? ttl : 0
+                            self.sendAck(for: segments, usingNetworkKey: networkPdu.networkKey, withTtl: ttl)
+                        }
+                        self.acknowledgmentTimers.removeValue(forKey: key)?.invalidate()                        
                     }
                 }
             }
