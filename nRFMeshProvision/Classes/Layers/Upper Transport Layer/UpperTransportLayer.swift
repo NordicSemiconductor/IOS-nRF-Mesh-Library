@@ -97,7 +97,7 @@ internal class UpperTransportLayer {
     ///
     /// - parameter destination: The destination address.
     func lowerTransportLayerDidSend(segmentedUpperTransportPduTo destination: Address) {
-        guard !(queues[destination]?.isEmpty ?? true) else {
+        guard queues[destination]?.isEmpty == false else {
             return
         }
         // Remove the PDU that has just been sent.
