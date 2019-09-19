@@ -51,7 +51,7 @@ public class MeshNetworkManager {
     /// The amount of time after which the lower transport layer sends a
     /// Segment Acknowledgment message after receiving a segment of a
     /// multi-segment message where the destination is a Unicast Address
-    /// of the Provisioner's Node.
+    /// of the Provisioner's Element.
     ///
     /// The acknowledgment timer shall be set to a minimum of
     /// 150 + 50 * TTL milliseconds. The TTL dependent part is added
@@ -70,8 +70,8 @@ public class MeshNetworkManager {
     /// interval longer than the connection interval, so that the acknowledgment
     /// had a chance to be received.
     public var transmissionTimerInteral: TimeInterval = 0.200
-    /// Number of times a non-acknowledged segment will be re-send before
-    /// the message will be cancelled.
+    /// Number of times a non-acknowledged segment of a segmented message
+    /// will be retransmitted before the message will be cancelled.
     ///
     /// The limit may be decreased with increasing of `transmissionTimerInterval`
     /// as the target Node has more time to reply with the Segment
@@ -97,12 +97,15 @@ public class MeshNetworkManager {
     ///
     /// - parameter storage: The storage to use to save the network configuration.
     /// - parameter queue: The DispatQueue to process reqeusts on. By default
-    ///                    the global background queue will be used.
+    ///                    the a serial background queue will be used.
+    ///                    It is important this queue to be serial, otherwise packets
+    ///                    may be handled in random order and discarded, when one
+    ///                    with higher SEQ has been already processed.
     /// - parameter delegateQueue: The DispatQueue to call delegate methods on.
     ///                            By default the global main queue will be used.
     /// - seeAlso: `LocalStorage`
     public init(using storage: Storage = LocalStorage(),
-                queue: DispatchQueue = DispatchQueue.global(qos: .background),
+                queue: DispatchQueue = DispatchQueue(label: "Message handler", qos: .background),
                 delegateQueue: DispatchQueue = DispatchQueue.main) {
         self.storage = storage
         self.meshData = MeshData()

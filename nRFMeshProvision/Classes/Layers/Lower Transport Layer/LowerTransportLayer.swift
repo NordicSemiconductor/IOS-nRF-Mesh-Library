@@ -45,7 +45,7 @@ internal class LowerTransportLayer {
     /// The key consists of 16 bits of source address in 2 most significant bytes
     /// and `sequenceZero` field in 13 least significant bits.
     /// See `UInt32(keyFor:sequenceZero)` below.
-    var incompleteTimers: [UInt32 : Timer]
+    var incompleteTimers: [UInt32 : BackgroundTimer]
     /// The map of acknowledgment timers. After receiving a segment targetting
     /// any of the Unicast Addresses of one of the Elements of the local Node, a
     /// timer is started that will send the Segment Acknowledgment Message for
@@ -55,7 +55,7 @@ internal class LowerTransportLayer {
     /// The key consists of 16 bits of source address in 2 most significant bytes
     /// and `sequenceZero` field in 13 least significant bits.
     /// See `UInt32(keyFor:sequenceZero)` below.
-    var acknowledgmentTimers: [UInt32 : Timer]
+    var acknowledgmentTimers: [UInt32 : BackgroundTimer]
     
     /// The map of outgoing segmented messages.
     ///
@@ -67,7 +67,7 @@ internal class LowerTransportLayer {
     /// layer will resend all non-confirmed segments and reset the timer.
     ///
     /// The key is the `sequenceZero` of the message.
-    var segmentTransmissionTimers: [UInt16 : Timer]
+    var segmentTransmissionTimers: [UInt16 : BackgroundTimer]
     
     init(_ networkManager: NetworkManager) {
         self.networkManager = networkManager
@@ -250,9 +250,9 @@ private extension LowerTransportLayer {
             if incompleteSegments[key] == nil {
                 incompleteSegments[key] = Array<SegmentedMessage?>(repeating: nil, count: segment.count)
             }
-            guard incompleteSegments[key]!.count > segment.index && incompleteSegments[key]![segment.index] == nil else {
-                // Segment was sent again or it's invalid. We can stop here.
-                logger?.d(.lowerTransport, "Segment invalid or repeated")
+            guard incompleteSegments[key]!.count > segment.index else {
+                // Segment is invalid. We can stop here.
+                logger?.w(.lowerTransport, "Invalid segment")
                 return
             }
             incompleteSegments[key]![segment.index] = segment
@@ -279,13 +279,13 @@ private extension LowerTransportLayer {
                 // The Provisioner shall send block acknowledgment only if the message was
                 // send directly to it's Unicast Address.
                 guard let provisionerNode = meshNetwork.localProvisioner?.node,
-                    networkPdu.destination == provisionerNode.unicastAddress else {
-                        return
+                      networkPdu.destination == provisionerNode.unicastAddress else {
+                    return
                 }
                 // If the Lower Transport Layer receives any segment while the incomplete
                 // timer is active, the timer shall be restarted.
                 incompleteTimers[key]?.invalidate()
-                incompleteTimers[key] = Timer.scheduledTimer(withTimeInterval: networkManager.incompleteMessageTimeout, repeats: false) { _ in
+                incompleteTimers[key] = BackgroundTimer.scheduledTimer(withTimeInterval: networkManager.incompleteMessageTimeout, repeats: false) { _ in
                     self.logger?.w(.lowerTransport, "Incomplete message timeout: cancelling message (src: \(Address(key >> 16).hex), seqZero: \(key & 0x1FFF))")
                     self.incompleteTimers.removeValue(forKey: key)?.invalidate()
                     self.acknowledgmentTimers.removeValue(forKey: key)?.invalidate()
@@ -295,7 +295,7 @@ private extension LowerTransportLayer {
                 // timer is inactive, it shall restart the timer. Active timer should not be restarted.
                 if acknowledgmentTimers[key] == nil {
                     let ttl = provisionerNode.defaultTTL ?? networkManager.defaultTtl
-                    acknowledgmentTimers[key] = Timer.scheduledTimer(withTimeInterval: networkManager.acknowledgmentTimerInterval(ttl), repeats: false) { _ in
+                    acknowledgmentTimers[key] = BackgroundTimer.scheduledTimer(withTimeInterval: networkManager.acknowledgmentTimerInterval(ttl), repeats: false) { _ in
                         let ttl = networkPdu.ttl > 0 ? ttl : 0
                         self.sendAck(for: self.incompleteSegments[key]!, usingNetworkKey: networkPdu.networkKey, withTtl: ttl)
                         self.acknowledgmentTimers.removeValue(forKey: key)?.invalidate()
@@ -433,7 +433,7 @@ private extension LowerTransportLayer {
             if limit > 0 {
                 let interval = networkManager.transmissionTimerInteral(ttl)
                 segmentTransmissionTimers[sequenceZero] =
-                    Timer.scheduledTimer(withTimeInterval: interval, repeats: false) { _ in
+                    BackgroundTimer.scheduledTimer(withTimeInterval: interval, repeats: false) { _ in
                         self.sendSegments(for: sequenceZero, limit: limit - 1)
                     }
             } else {

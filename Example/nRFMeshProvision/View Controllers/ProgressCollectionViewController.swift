@@ -22,15 +22,17 @@ class ProgressCollectionViewController: UICollectionViewController {
     ///
     /// - parameter completion: A completion handler.
     func start(_ message: String, completion: @escaping (() -> Void)) {
-        if alert == nil {
-            alert = UIAlertController(title: "Status", message: message, preferredStyle: .alert)
-            alert!.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: {
-                _ in self.alert = nil
-            }))
-            present(alert!, animated: true)
+        DispatchQueue.main.async {
+            if self.alert == nil {
+                self.alert = UIAlertController(title: "Status", message: message, preferredStyle: .alert)
+                self.alert!.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: {
+                    _ in self.alert = nil
+                }))
+                self.present(self.alert!, animated: true)
+            }
+            
+            completion()
         }
-        
-        completion()
     }
     
     /// This method dismisses the progress alert dialog.
@@ -38,9 +40,13 @@ class ProgressCollectionViewController: UICollectionViewController {
     /// - parameter completion: An optional completion handler.
     func done(completion: (() -> Void)? = nil) {
         if let alert = alert {
-            alert.dismiss(animated: true, completion: completion)
+            DispatchQueue.main.async {
+                alert.dismiss(animated: true, completion: completion)
+            }
         } else {
-            completion?()
+            DispatchQueue.main.async {
+                completion?()
+            }
         }
         alert = nil
     }

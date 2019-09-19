@@ -235,6 +235,7 @@
 		52B7F688229BCC4000B0A42F /* NetworkPdu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52B7F687229BCC4000B0A42F /* NetworkPdu.swift */; };
 		52CD0A4B232BD43200A9A181 /* MeshNetworkError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52CD0A4A232BD43200A9A181 /* MeshNetworkError.swift */; };
 		52CD0A4D232BD47500A9A181 /* MeshLoggerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52CD0A4C232BD47400A9A181 /* MeshLoggerDelegate.swift */; };
+		52CD0A64233375DB00A9A181 /* BackgroundTimer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52CD0A63233375DB00A9A181 /* BackgroundTimer.swift */; };
 		52DF5D91229C000D00C297C1 /* NetworkLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52DF5D90229C000D00C297C1 /* NetworkLayer.swift */; };
 		52DF5D97229D6B4800C297C1 /* LowerTransportLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52DF5D96229D6B4800C297C1 /* LowerTransportLayer.swift */; };
 		52DF5D99229D6B6400C297C1 /* AccessMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52DF5D98229D6B6400C297C1 /* AccessMessage.swift */; };
@@ -527,6 +528,7 @@
 		52B7F687229BCC4000B0A42F /* NetworkPdu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkPdu.swift; sourceTree = "<group>"; };
 		52CD0A4A232BD43200A9A181 /* MeshNetworkError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MeshNetworkError.swift; path = nRFMeshProvision/Classes/MeshNetworkError.swift; sourceTree = "<group>"; };
 		52CD0A4C232BD47400A9A181 /* MeshLoggerDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MeshLoggerDelegate.swift; sourceTree = "<group>"; };
+		52CD0A63233375DB00A9A181 /* BackgroundTimer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundTimer.swift; sourceTree = "<group>"; };
 		52DF5D90229C000D00C297C1 /* NetworkLayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkLayer.swift; sourceTree = "<group>"; };
 		52DF5D96229D6B4800C297C1 /* LowerTransportLayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LowerTransportLayer.swift; sourceTree = "<group>"; };
 		52DF5D98229D6B6400C297C1 /* AccessMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccessMessage.swift; sourceTree = "<group>"; };
@@ -1124,6 +1126,7 @@
 				9DA238DDA2D45895883214B988C1C10E /* OpenSSLHelper.m */,
 				52F6AD7322BA3BCA00F0D7DF /* CompanyIdentifier.swift */,
 				52CD0A4C232BD47400A9A181 /* MeshLoggerDelegate.swift */,
+				52CD0A63233375DB00A9A181 /* BackgroundTimer.swift */,
 			);
 			name = Utils;
 			path = nRFMeshProvision/Classes/Utils;
@@ -1599,6 +1602,7 @@
 				52A9C1B023100E000036792A /* GenericPowerDefaultStatus.swift in Sources */,
 				5231403822FDA3020074325A /* ConfigBeaconSet.swift in Sources */,
 				5231400422EF0F970074325A /* ConfigSIGModelAppGet.swift in Sources */,
+				52CD0A64233375DB00A9A181 /* BackgroundTimer.swift in Sources */,
 				523F777322CA1B780030EA6A /* FoundationLayer.swift in Sources */,
 				528AB9F2228C4F3E000BE9DC /* IvIndex.swift in Sources */,
 				52A9C1AA23100CEC0036792A /* GenericPowerLastGet.swift in Sources */,
