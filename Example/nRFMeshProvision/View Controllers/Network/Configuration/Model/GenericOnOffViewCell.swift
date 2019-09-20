@@ -102,7 +102,7 @@ class GenericOnOffViewCell: ModelViewCell {
                                      didSendMessage message: MeshMessage,
                                      from localElement: Element, to destination: Address) -> Bool {
         // For acknowledged messages wait for the Acknowledgement Message.
-        return acknowledgmentSwitch.isOn
+        return message is AcknowledgedMeshMessage
     }
 }
 

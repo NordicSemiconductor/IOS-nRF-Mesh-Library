@@ -25,24 +25,39 @@ internal struct AccessPdu {
     let parameters: Data
     
     /// The Access Layer PDU data that will be sent.
-    var accessPdu: Data {
-        // Op Code 0b01111111 is invalid. We will ignore this case here
-        // now and send as single byte OpCode.
-        if opCode < 0x80 {
-            return Data([UInt8(opCode & 0xFF)]) + parameters
-        }
-        if opCode < 0x4000 || opCode & 0xFFFC00 == 0x8000 {
-            return Data([UInt8(0x80 | ((opCode >> 8) & 0x3F)), UInt8(opCode & 0xFF)]) + parameters
-        }
-        return Data([
-                   UInt8(0xC0 | ((opCode >> 16) & 0x3F)),
-                   UInt8((opCode >> 8) & 0xFF),
-                   UInt8(opCode & 0xFF)
-               ]) + parameters
-    }
+    let accessPdu: Data
     
+    /// Whether the outgoind message will be sent as segmented, or not.
     var isSegmented: Bool {
-        return accessPdu.count > 11 || message!.isSegmented
+        guard let message = message else {
+            return false
+        }
+        return accessPdu.count > 11 || message.isSegmented
+    }
+    /// Number of packets for this PDU.
+    ///
+    /// Number of Packets | Maximum useful access payload size (octets)
+    ///                   | 32 bit TransMIC  | 64 bit TransMIC
+    /// ------------------+------------------+-------------------------
+    /// 1                 | 11 (unsegmented) | n/a
+    /// 1                 | 8 (segmented)    | 4 (segmented)
+    /// 2                 | 20               | 16
+    /// 3                 | 32               | 28
+    /// n                 | (n×12)-4         | (n×12)-8
+    /// 32                | 380              | 376
+    var segmentsCount: Int {
+        guard let message = message else {
+            return 0
+        }
+        if !isSegmented {
+            return 1
+        }
+        switch message.security {
+        case .low:
+            return 1 + (accessPdu.count + 3) / 12
+        case .high:
+            return 1 + (accessPdu.count + 7) / 12
+        }
     }
     
     init?(fromUpperTransportPdu pdu: UpperTransportPdu) {
@@ -50,6 +65,7 @@ internal struct AccessPdu {
         localElement = nil
         source = pdu.source
         destination = MeshAddress(pdu.destination)
+        accessPdu = pdu.accessPdu
         
         // At least 1 octet is required.
         guard pdu.accessPdu.count >= 1 else {
@@ -99,6 +115,22 @@ internal struct AccessPdu {
         
         self.opCode = message.opCode
         self.parameters = message.parameters ?? Data()
+        
+        // Op Code 0b01111111 is invalid. We will ignore this case here
+        // for now and send as a single byte OpCode.
+        // TODO: Handle 0b0111111 opcode correctly.
+        switch opCode {
+        case let opCode where opCode < 0x80:
+            accessPdu = Data([UInt8(opCode & 0xFF)]) + parameters
+        case let opCode where opCode < 0x4000 || opCode & 0xFFFC00 == 0x8000:
+            accessPdu = Data([UInt8(0x80 | ((opCode >> 8) & 0x3F)), UInt8(opCode & 0xFF)]) + parameters
+        default:
+            accessPdu = Data([
+                UInt8(0xC0 | ((opCode >> 16) & 0x3F)),
+                UInt8((opCode >> 8) & 0xFF),
+                UInt8(opCode & 0xFF)
+                ]) + parameters
+        }
     }
 }
 

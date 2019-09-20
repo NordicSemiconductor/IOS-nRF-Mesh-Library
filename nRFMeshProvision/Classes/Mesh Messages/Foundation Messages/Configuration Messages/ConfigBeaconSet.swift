@@ -7,8 +7,9 @@
 
 import Foundation
 
-public struct ConfigBeaconSet: ConfigMessage {
+public struct ConfigBeaconSet: AcknowledgedConfigMessage {
     public static let opCode: UInt32 = 0x800A
+    public static let responseType: StaticMeshMessage.Type = ConfigBeaconStatus.self
     
     public var parameters: Data? {
         return Data([state ? 0x01 : 0x00])

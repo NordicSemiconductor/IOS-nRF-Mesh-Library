@@ -68,9 +68,30 @@ public protocol MeshNetworkDelegate: class {
     ///   - destination:  The address to which the message was sent.
     ///   - error:        The error that occurred.
     func meshNetworkManager(_ manager: MeshNetworkManager,
-                     failedToSendMessage message: MeshMessage,
-                     from localElement: Element, to destination: Address,
-                     error: Error)
+                            failedToSendMessage message: MeshMessage,
+                            from localElement: Element, to destination: Address,
+                            error: Error)
+    
+    /// A callback called when an acknowledged message sent from the local Element
+    /// has not been replied acknowledged by any of the target Nodes before the
+    /// timeout occurred.
+    ///
+    /// Use `MeshNetworkManager.acknowledgmentMessageTimeout` to set the timeout.
+    ///
+    /// The only possible error so far is:
+    /// - `AccessError.timeout` - when the response has not been received before the
+    ///   time run out.
+    ///
+    /// - parameters:
+    ///   - manager:      The manager used to send the request.
+    ///   - message:      The request that has been sent, but not acknowledged.
+    ///   - localElement: The local Element used as a source of the request.
+    ///   - destination:  The address to which the request was sent.
+    ///   - error:        The error that occurred.
+    func meshNetworkManager(_ manager: MeshNetworkManager,
+                            failedToReceiveResponseForMessage message: AcknowledgedMeshMessage,
+                            sentFrom localElement: Element, to destination: Address,
+                            error: Error)
     
 }
 
@@ -85,6 +106,13 @@ public extension MeshNetworkDelegate {
     func meshNetworkManager(_ manager: MeshNetworkManager,
                             failedToSendMessage message: MeshMessage,
                             from localElement: Element, to destination: Address,
+                            error: Error) {
+        // Empty.
+    }
+    
+    func meshNetworkManager(_ manager: MeshNetworkManager,
+                            failedToReceiveResponseForMessage message: AcknowledgedMeshMessage,
+                            sentFrom localElement: Element, to destination: Address,
                             error: Error) {
         // Empty.
     }

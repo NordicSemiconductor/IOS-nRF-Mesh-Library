@@ -8,7 +8,7 @@
 import Foundation
 
 public struct FilterStatus: StaticProxyConfigurationMessage {
-    public static var opCode: UInt8 = 0x03
+    public static let opCode: UInt8 = 0x03
     
     public var parameters: Data? {
         return Data([filterType.rawValue]) + listSize.bigEndian

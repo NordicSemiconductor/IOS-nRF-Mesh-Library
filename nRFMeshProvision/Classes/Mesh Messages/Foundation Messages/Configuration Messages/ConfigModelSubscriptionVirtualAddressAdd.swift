@@ -8,8 +8,10 @@
 import Foundation
 import CoreBluetooth
 
-public struct ConfigModelSubscriptionVirtualAddressAdd: ConfigVirtualLabelMessage, ConfigAnyModelMessage {
+public struct ConfigModelSubscriptionVirtualAddressAdd: AcknowledgedConfigMessage,
+    ConfigVirtualLabelMessage, ConfigAnyModelMessage {
     public static let opCode: UInt32 = 0x8020
+    public static let responseType: StaticMeshMessage.Type = ConfigModelSubscriptionStatus.self
     
     public var parameters: Data? {
         let data = Data() + elementAddress + virtualLabel.data

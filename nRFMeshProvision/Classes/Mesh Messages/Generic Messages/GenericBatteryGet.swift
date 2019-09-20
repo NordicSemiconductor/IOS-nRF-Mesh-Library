@@ -7,8 +7,9 @@
 
 import Foundation
 
-public struct GenericBatteryGet: GenericMessage {
+public struct GenericBatteryGet: AcknowledgedGenericMessage {
     public static let opCode: UInt32 = 0x8223
+    public static let responseType: StaticMeshMessage.Type = GenericBatteryStatus.self
     
     public var parameters: Data? {
         return nil

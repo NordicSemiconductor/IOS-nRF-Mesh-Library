@@ -7,8 +7,9 @@
 
 import Foundation
 
-public struct ConfigModelPublicationSet: ConfigAnyModelMessage {
+public struct ConfigModelPublicationSet: AcknowledgedConfigMessage, ConfigAnyModelMessage {
     public static let opCode: UInt32 = 0x03
+    public static let responseType: StaticMeshMessage.Type = ConfigModelPublicationStatus.self
     
     public var parameters: Data? {
         var data = Data() + elementAddress + publish.publicationAddress.address

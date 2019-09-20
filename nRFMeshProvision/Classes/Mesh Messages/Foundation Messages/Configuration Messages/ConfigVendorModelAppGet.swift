@@ -7,8 +7,9 @@
 
 import Foundation
 
-public struct ConfigVendorModelAppGet: ConfigVendorModelMessage {
+public struct ConfigVendorModelAppGet: AcknowledgedConfigMessage, ConfigVendorModelMessage {
     public static let opCode: UInt32 = 0x804D
+    public static let responseType: StaticMeshMessage.Type = ConfigVendorModelAppList.self
     
     public var parameters: Data? {
         return Data() + elementAddress + companyIdentifier + modelIdentifier

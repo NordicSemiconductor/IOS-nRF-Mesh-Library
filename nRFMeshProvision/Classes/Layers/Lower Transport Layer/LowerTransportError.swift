@@ -18,8 +18,8 @@ extension LowerTransportError: LocalizedError {
     
     public var errorDescription: String? {
         switch self {
-        case .timeout: return NSLocalizedString("Request timed out.", comment: "")
-        case .busy:    return NSLocalizedString("Node is busy. Try later.", comment: "")
+        case .timeout: return NSLocalizedString("Request timed out.", comment: "lowerTransport")
+        case .busy:    return NSLocalizedString("Node is busy. Try later.", comment: "lowerTransport")
         }
     }
 

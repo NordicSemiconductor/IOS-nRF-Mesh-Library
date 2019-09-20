@@ -7,8 +7,9 @@
 
 import Foundation
 
-public struct ConfigRelayGet: ConfigMessage {
+public struct ConfigRelayGet: AcknowledgedConfigMessage {
     public static let opCode: UInt32 = 0x8026
+    public static let responseType: StaticMeshMessage.Type = ConfigRelayStatus.self
     
     public var parameters: Data? {
         return nil

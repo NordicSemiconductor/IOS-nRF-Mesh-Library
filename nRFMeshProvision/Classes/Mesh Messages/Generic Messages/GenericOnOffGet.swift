@@ -7,8 +7,9 @@
 
 import Foundation
 
-public struct GenericOnOffGet: GenericMessage {
+public struct GenericOnOffGet: AcknowledgedGenericMessage {
     public static let opCode: UInt32 = 0x8201
+    public static let responseType: StaticMeshMessage.Type = GenericOnOffStatus.self
     
     public var parameters: Data? {
         return nil

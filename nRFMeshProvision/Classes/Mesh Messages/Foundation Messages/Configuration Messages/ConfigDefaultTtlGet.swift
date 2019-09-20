@@ -7,8 +7,9 @@
 
 import Foundation
 
-public struct ConfigDefaultTtlGet: ConfigMessage {
+public struct ConfigDefaultTtlGet: AcknowledgedConfigMessage {
     public static let opCode: UInt32 = 0x800C
+    public static let responseType: StaticMeshMessage.Type = ConfigDefaultTtlStatus.self
     
     public var parameters: Data? {
         return nil

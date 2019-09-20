@@ -144,4 +144,12 @@ extension NodeAddNetworkKeyViewController: MeshNetworkDelegate {
         }
     }
     
+    func meshNetworkManager(_ manager: MeshNetworkManager,
+                            failedToReceiveResponseForMessage message: AcknowledgedMeshMessage,
+                            sentFrom localElement: Element, to destination: Address, error: Error) {
+        done() {
+            self.presentAlert(title: "Error", message: error.localizedDescription)
+        }
+    }
+    
 }

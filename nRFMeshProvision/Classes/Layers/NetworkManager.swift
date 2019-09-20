@@ -32,6 +32,14 @@ internal class NetworkManager {
     var incompleteMessageTimeout: TimeInterval {
         return max(manager.incompleteMessageTimeout, 10.0)
     }
+    var acknowledgmentMessageTimeout: TimeInterval {
+        return max(manager.acknowledgmentMessageTimeout, 30.0)
+    }
+    func acknowledgmentMessageInterval(_ ttl: UInt8, _ segmentCount: Int) -> TimeInterval {
+        return max(manager.acknowledgmentMessageInterval, 2.0)
+            + Double(ttl) * 0.050
+            + Double(segmentCount) * 0.050
+    }
     func acknowledgmentTimerInterval(_ ttl: UInt8) -> TimeInterval {
         return max(manager.acknowledgmentTimerInterval, 0.150) + Double(ttl) * 0.050
     }
@@ -183,6 +191,21 @@ internal class NetworkManager {
         manager.delegateQueue.async {
             self.manager.delegate?.meshNetworkManager(self.manager, failedToSendMessage: message,
                                                       from: localElement, to: destination, error: error)
+        }
+    }
+    
+    /// Notifies the delegate that the response for an acknowledged message
+    /// has not been received before the timeout occurred.
+    ///
+    /// - parameter message: The mesh message that failed to be acknowledged.
+    /// - parameter localElement: The local element used to send the request.
+    /// - parameter destination:  The destination address.
+    /// - parameter error:        The error that occurred.
+    func notifyAbout(notReceivingResponseForMessage message: AcknowledgedMeshMessage,
+                     sentFrom localElement: Element, to destination: Address, becauseOf error: Error) {
+        manager.delegateQueue.async {
+            self.manager.delegate?.meshNetworkManager(self.manager, failedToReceiveResponseForMessage: message,
+                                                      sentFrom: localElement, to: destination, error: error)
         }
     }
     

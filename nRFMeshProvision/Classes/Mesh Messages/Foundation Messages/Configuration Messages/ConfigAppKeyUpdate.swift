@@ -7,8 +7,9 @@
 
 import Foundation
 
-public struct ConfigAppKeyUpdate: ConfigNetAndAppKeyMessage {
+public struct ConfigAppKeyUpdate: AcknowledgedConfigMessage, ConfigNetAndAppKeyMessage {
     public static let opCode: UInt32 = 0x01
+    public static let responseType: StaticMeshMessage.Type = ConfigAppKeyStatus.self
     
     public var parameters: Data? {
         return encodeNetAndAppKeyIndex() + key

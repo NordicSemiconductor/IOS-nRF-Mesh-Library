@@ -7,8 +7,9 @@
 
 import Foundation
 
-public struct GenericOnPowerUpGet: GenericMessage {
+public struct GenericOnPowerUpGet: AcknowledgedGenericMessage {
     public static let opCode: UInt32 = 0x8211
+    public static let responseType: StaticMeshMessage.Type = GenericOnPowerUpStatus.self
     
     public var parameters: Data? {
         return nil

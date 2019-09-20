@@ -7,8 +7,9 @@
 
 import Foundation
 
-public struct ConfigNetKeyDelete: ConfigNetKeyMessage {
+public struct ConfigNetKeyDelete: AcknowledgedConfigMessage, ConfigNetKeyMessage {
     public static let opCode: UInt32 = 0x8041
+    public static let responseType: StaticMeshMessage.Type = ConfigNetKeyStatus.self
     
     public var parameters: Data? {
         return encodeNetKeyIndex()

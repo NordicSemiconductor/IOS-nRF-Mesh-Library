@@ -10,6 +10,9 @@ import Foundation
 internal class BackgroundTimer {
     private let timer: DispatchSourceTimer
     
+    let interval: TimeInterval
+    let repeats: Bool
+    
     /// Chedules a timer that can be started from a background DispatchQueue.
     static func scheduledTimer(withTimeInterval interval: TimeInterval, repeats: Bool,
                                block: @escaping  (BackgroundTimer) -> Void) -> BackgroundTimer {
@@ -18,12 +21,16 @@ internal class BackgroundTimer {
     
     private init(withTimeInterval interval: TimeInterval, repeats: Bool,
                  block: @escaping  (BackgroundTimer) -> Void) {
+        self.interval = interval
+        self.repeats = repeats
+        
         timer = DispatchSource.makeTimerSource(queue: DispatchQueue.global(qos: .background))
         timer.setEventHandler { [weak self] in
             guard let self = self else {
                 return
             }
             block(self)
+            self.invalidate()
         }
         if repeats {
             timer.schedule(deadline: .now() + interval, repeating: interval)

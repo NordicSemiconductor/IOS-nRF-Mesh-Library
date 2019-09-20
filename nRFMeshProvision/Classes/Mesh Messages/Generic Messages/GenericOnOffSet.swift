@@ -7,8 +7,9 @@
 
 import Foundation
 
-public struct GenericOnOffSet: GenericMessage, TransactionMessage, TransitionMessage {
+public struct GenericOnOffSet: AcknowledgedGenericMessage, TransactionMessage, TransitionMessage {
     public static let opCode: UInt32 = 0x8202
+    public static let responseType: StaticMeshMessage.Type = GenericOnOffStatus.self
     
     public var tid: UInt8!
     public var parameters: Data? {

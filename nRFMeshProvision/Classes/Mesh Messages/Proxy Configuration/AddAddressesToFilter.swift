@@ -7,8 +7,9 @@
 
 import Foundation
 
-public struct AddAddressesToFilter: StaticProxyConfigurationMessage {
-    public static var opCode: UInt8 = 0x01
+public struct AddAddressesToFilter: StaticAcknowledgedProxyConfigurationMessage {
+    public static let opCode: UInt8 = 0x01
+    public static let responseType: StaticProxyConfigurationMessage.Type = FilterStatus.self
     
     public var parameters: Data? {
         var data = Data()

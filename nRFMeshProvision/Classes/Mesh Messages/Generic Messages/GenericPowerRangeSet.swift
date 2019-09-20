@@ -7,8 +7,9 @@
 
 import Foundation
 
-public struct GenericPowerRangeSet: GenericMessage {
+public struct GenericPowerRangeSet: AcknowledgedGenericMessage {
     public static let opCode: UInt32 = 0x8221
+    public static let responseType: StaticMeshMessage.Type = GenericPowerRangeStatus.self
     
     public var parameters: Data? {
         return Data() + range.lowerBound + range.upperBound

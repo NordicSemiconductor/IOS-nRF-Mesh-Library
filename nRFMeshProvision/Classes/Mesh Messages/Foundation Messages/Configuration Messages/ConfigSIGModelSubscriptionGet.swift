@@ -7,8 +7,9 @@
 
 import Foundation
 
-public struct ConfigSIGModelSubscriptionGet: ConfigModelMessage {
+public struct ConfigSIGModelSubscriptionGet: AcknowledgedConfigMessage, ConfigModelMessage {
     public static let opCode: UInt32 = 0x8029
+    public static let responseType: StaticMeshMessage.Type = ConfigSIGModelSubscriptionList.self
     
     public var parameters: Data? {
         return Data() + elementAddress + modelIdentifier

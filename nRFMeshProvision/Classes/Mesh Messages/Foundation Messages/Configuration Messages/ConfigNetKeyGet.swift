@@ -7,8 +7,9 @@
 
 import Foundation
 
-public struct ConfigNetKeyGet: ConfigMessage {
+public struct ConfigNetKeyGet: AcknowledgedConfigMessage {
     public static let opCode: UInt32 = 0x8042
+    public static let responseType: StaticMeshMessage.Type = ConfigNetKeyList.self
     
     public var parameters: Data? {
         return nil

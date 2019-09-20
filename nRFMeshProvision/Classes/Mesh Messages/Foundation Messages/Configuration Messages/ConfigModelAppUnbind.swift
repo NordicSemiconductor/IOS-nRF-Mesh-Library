@@ -7,8 +7,9 @@
 
 import Foundation
 
-public struct ConfigModelAppUnbind: ConfigAppKeyMessage, ConfigAnyModelMessage {
+public struct ConfigModelAppUnbind: AcknowledgedConfigMessage, ConfigAppKeyMessage, ConfigAnyModelMessage {
     public static let opCode: UInt32 = 0x803F
+    public static let responseType: StaticMeshMessage.Type = ConfigModelAppStatus.self
     
     public var parameters: Data? {
         let data = Data() + elementAddress + applicationKeyIndex

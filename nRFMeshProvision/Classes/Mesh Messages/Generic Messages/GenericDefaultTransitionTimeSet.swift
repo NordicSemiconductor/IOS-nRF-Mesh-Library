@@ -7,8 +7,9 @@
 
 import Foundation
 
-public struct GenericDefaultTransitionTimeSet: GenericMessage {
+public struct GenericDefaultTransitionTimeSet: AcknowledgedGenericMessage {
     public static let opCode: UInt32 = 0x820E
+    public static let responseType: StaticMeshMessage.Type = GenericDefaultTransitionTimeStatus.self
     
     public var parameters: Data? {
         return Data([transitionTime.rawValue])

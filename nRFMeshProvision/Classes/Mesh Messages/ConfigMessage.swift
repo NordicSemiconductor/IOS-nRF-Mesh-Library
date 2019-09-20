@@ -7,7 +7,11 @@
 
 import Foundation
 
+
 public protocol ConfigMessage: StaticMeshMessage {
+    // No additional fields.
+}
+public protocol AcknowledgedConfigMessage: ConfigMessage, StaticAcknowledgedMeshMessage {
     // No additional fields.
 }
 

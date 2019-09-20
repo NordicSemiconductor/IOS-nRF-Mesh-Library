@@ -7,8 +7,9 @@
 
 import Foundation
 
-public struct GenericPowerDefaultSet: GenericMessage {
+public struct GenericPowerDefaultSet: AcknowledgedGenericMessage {
     public static let opCode: UInt32 = 0x821F
+    public static let responseType: StaticMeshMessage.Type = GenericPowerDefaultStatus.self
     
     public var parameters: Data? {
         return Data() + power

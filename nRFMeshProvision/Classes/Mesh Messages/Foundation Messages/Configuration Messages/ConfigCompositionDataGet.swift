@@ -7,8 +7,9 @@
 
 import Foundation
 
-public struct ConfigCompositionDataGet: ConfigMessage {    
+public struct ConfigCompositionDataGet: AcknowledgedConfigMessage {
     public static let opCode: UInt32 = 0x8008
+    public static let responseType: StaticMeshMessage.Type = ConfigCompositionDataStatus.self
     
     public var parameters: Data? {
         return Data([page])

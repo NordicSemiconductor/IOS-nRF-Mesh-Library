@@ -7,8 +7,9 @@
 
 import Foundation
 
-public struct GenericDeltaSet: GenericMessage, TransactionMessage, TransitionMessage {
+public struct GenericDeltaSet: AcknowledgedGenericMessage, TransactionMessage, TransitionMessage {
     public static let opCode: UInt32 = 0x8209
+    public static let responseType: StaticMeshMessage.Type = GenericOnOffStatus.self
     
     public var tid: UInt8!
     public var continueTransaction: Bool = true

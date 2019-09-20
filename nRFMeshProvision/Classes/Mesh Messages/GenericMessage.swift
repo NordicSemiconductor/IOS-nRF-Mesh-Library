@@ -8,7 +8,10 @@
 import Foundation
 
 public protocol GenericMessage: StaticMeshMessage {
-    // Empty.
+    // No additional fields.
+}
+public protocol AcknowledgedGenericMessage: GenericMessage, StaticAcknowledgedMeshMessage {
+    // No additional fields.
 }
 
 public enum GenericMessageStatus: UInt8 {

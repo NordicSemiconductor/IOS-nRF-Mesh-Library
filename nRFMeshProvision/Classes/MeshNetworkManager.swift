@@ -77,6 +77,21 @@ public class MeshNetworkManager {
     /// as the target Node has more time to reply with the Segment
     /// Acknowledgment message.
     public var retransmissionLimit: Int = 10
+    /// If the Element does not receive a response within a period of time known
+    /// as the acknowledged message timeout, then the Element may consider the
+    /// message has not been delivered, without sending any additional messages.
+    ///
+    /// The `meshNetworkManager(_:failedToReceiveResponseForMessage:sentFrom:to:error)`
+    /// callback will be called on timeout.
+    ///
+    /// The acknowledged message timeout should be set to a minimum of 30 seconds.
+    public var acknowledgmentMessageTimeout: TimeInterval = 30.0
+    /// The base time after which the acknowledgmed message will be repeated.
+    ///
+    /// The repeat timer will be set to the base time + 50 * TTL milliseconds +
+    /// 50 * segment count. The TTL and segment count dependent parts are added
+    /// automatically, and this value shall specify only the constant part.
+    public var acknowledgmentMessageInterval: TimeInterval = 2.0
     
     // MARK: - Computed properties
     
@@ -93,6 +108,7 @@ public class MeshNetworkManager {
     // MARK: - Constructors
     
     /// Initializes the MeshNetworkManager.
+    ///
     /// If storage is not provided, a local file will be used instead.
     ///
     /// - parameter storage: The storage to use to save the network configuration.

@@ -7,8 +7,9 @@
 
 import Foundation
 
-public struct ConfigModelSubscriptionDeleteAll: ConfigAnyModelMessage {
+public struct ConfigModelSubscriptionDeleteAll: AcknowledgedConfigMessage, ConfigAnyModelMessage {
     public static let opCode: UInt32 = 0x801D
+    public static let responseType: StaticMeshMessage.Type = ConfigModelSubscriptionStatus.self
     
     public var parameters: Data? {
         let data = Data() + elementAddress

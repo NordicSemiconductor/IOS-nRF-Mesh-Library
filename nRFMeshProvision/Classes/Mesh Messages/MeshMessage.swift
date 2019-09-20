@@ -54,10 +54,27 @@ public protocol MeshMessage: BaseMeshMessage {
     var isSegmented: Bool { get }
 }
 
+/// The base class for acknowledged messages.
+///
+/// An acknowledged message is transmitted and acknowledged by each
+/// receiving element by responding to that message. The response is
+/// typically a status message. If a response is not received within
+/// an arbitrary time period, the message will be retransmitted
+/// automatically until the timeout occurs.
+public protocol AcknowledgedMeshMessage: MeshMessage {
+    /// The Op Code of the response message.
+    var responseOpCode: UInt32 { get }
+}
+
 /// A type of a mesh message which opcode is known during compilation time.
 public protocol StaticMeshMessage: MeshMessage {
     /// The message Op Code.
     static var opCode: UInt32 { get }
+}
+
+public protocol StaticAcknowledgedMeshMessage: AcknowledgedMeshMessage, StaticMeshMessage {
+    /// The Type of the response message.
+    static var responseType: StaticMeshMessage.Type { get }
 }
 
 /// A mesh message containing the operation status.
@@ -135,6 +152,14 @@ public extension StaticMeshMessage {
     
     var opCode: UInt32 {
         return Self.opCode
+    }
+    
+}
+
+public extension StaticAcknowledgedMeshMessage {
+    
+    var responseOpCode: UInt32 {
+        return Self.responseType.opCode
     }
     
 }

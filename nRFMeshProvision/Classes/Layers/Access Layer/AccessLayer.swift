@@ -39,6 +39,43 @@ private struct Transaction {
     }
 }
 
+private class AcknowledgmentContext {
+    let request: AcknowledgedMeshMessage
+    let source: Address
+    var timeoutTimer: BackgroundTimer?
+    var retryTimer: BackgroundTimer?
+    
+    init(for request: AcknowledgedMeshMessage, sentFrom source: Address,
+         repeatAfter delay: TimeInterval, repeatBlock: @escaping () -> Void,
+         timeout: TimeInterval, timeoutBlock: @escaping () -> Void) {
+        self.request = request
+        self.source = source
+        self.timeoutTimer = BackgroundTimer.scheduledTimer(withTimeInterval: timeout, repeats: false) { _ in
+            self.invalidate()
+            timeoutBlock()
+        }
+        initializeRetryTimer(withDelay: delay, callback: repeatBlock)
+    }
+    
+    /// Invalidates the timers.
+    func invalidate() {
+        print("Invalidating context")
+        timeoutTimer?.invalidate()
+        timeoutTimer = nil
+        retryTimer?.invalidate()
+        retryTimer = nil
+    }
+    
+    private func initializeRetryTimer(withDelay delay: TimeInterval,
+                                      callback: @escaping () -> Void) {
+        retryTimer?.invalidate()
+        retryTimer = BackgroundTimer.scheduledTimer(withTimeInterval: delay, repeats: false) { timer in
+            callback()
+            self.initializeRetryTimer(withDelay: timer.interval * 2, callback: callback)
+        }
+    }
+}
+
 internal class AccessLayer {
     private let networkManager: NetworkManager
     private let meshNetwork: MeshNetwork
@@ -48,11 +85,27 @@ internal class AccessLayer {
     }
     
     /// A map of current transactions.
-    private var transactions: [Int : Transaction] = [:]
+    ///
+    /// The key is a value combined from the source and destination addresses.
+    private var transactions: [UInt32 : Transaction]
+    /// This array contains information about the expected acknowledgments
+    /// for acknowledged mesh messages that have been sent, and for which
+    /// the response has not been received yet.
+    private var reliableMessageContexts: [AcknowledgmentContext]
     
     init(_ networkManager: NetworkManager) {
         self.networkManager = networkManager
         self.meshNetwork = networkManager.meshNetwork!
+        self.transactions = [:]
+        self.reliableMessageContexts = []
+    }
+    
+    deinit {
+        transactions.removeAll()
+        reliableMessageContexts.forEach { ack in
+            ack.invalidate()
+        }
+        reliableMessageContexts.removeAll()
     }
     
     /// This method handles the Upper Transport PDU and reads the Opcode.
@@ -66,7 +119,19 @@ internal class AccessLayer {
         guard let accessPdu = AccessPdu(fromUpperTransportPdu: upperTransportPdu) else {
             return
         }
-        logger?.i(.access, "\(accessPdu) receieved (decrypted using key: \(keySet))")
+        
+        // If a response to a sent request has been received, cancel the context.
+        if upperTransportPdu.destination.isUnicast,
+           let index = reliableMessageContexts.firstIndex(where: {
+                    $0.source == upperTransportPdu.destination &&
+                    $0.request.responseOpCode == accessPdu.opCode
+           }) {
+            let ctx = reliableMessageContexts.remove(at: index)
+            ctx.invalidate()
+            logger?.i(.access, "Response \(accessPdu) receieved (decrypted using key: \(keySet))")
+        } else {
+            logger?.i(.access, "\(accessPdu) receieved (decrypted using key: \(keySet))")
+        }
         handle(accessPdu: accessPdu, sentWith: keySet)
     }
     
@@ -84,6 +149,7 @@ internal class AccessLayer {
     func send(_ message: MeshMessage,
               from element: Element, to destination: MeshAddress,
               using applicationKey: ApplicationKey) {
+        
         // Should the TID be updated?
         var m = message
         if var tranactionMessage = message as? TransactionMessage, tranactionMessage.tid == nil {
@@ -102,8 +168,14 @@ internal class AccessLayer {
         
         logger?.i(.model, "Sending \(m) from: \(element), to: \(destination.hex)")
         let pdu = AccessPdu(fromMeshMessage: m, sentFrom: element, to: destination)
-        logger?.i(.access, "Sending \(pdu)")
         let keySet = AccessKeySet(applicationKey: applicationKey)
+        logger?.i(.access, "Sending \(pdu)")
+        
+        // Set timers for the acknowledged messages.
+        if let _ = message as? AcknowledgedMeshMessage {
+            createReliableContext(for: pdu, sentFrom: element, using: keySet)
+        }
+        
         networkManager.upperTransportLayer.send(pdu, using: keySet)
     }
     
@@ -130,6 +202,12 @@ internal class AccessLayer {
             let pdu = AccessPdu(fromMeshMessage: message, sentFrom: element, to: MeshAddress(destination))
             logger?.i(.access, "Sending \(pdu)")
             let keySet = DeviceKeySet(networkKey: networkKey, node: node)
+            
+            // Set timers for the acknowledged messages.
+            if let _ = message as? AcknowledgedConfigMessage {
+                createReliableContext(for: pdu, sentFrom: element, using: keySet)
+            }
+            
             networkManager.upperTransportLayer.send(pdu, using: keySet)
         }
     }
@@ -512,8 +590,38 @@ private extension AccessLayer {
 
 private extension AccessLayer {
     
-    func key(for element: Element, and destination: MeshAddress) -> Int {
-        return (Int(element.unicastAddress) << 16) | Int(destination.address)
+    func key(for element: Element, and destination: MeshAddress) -> UInt32 {
+        return (UInt32(element.unicastAddress) << 16) | UInt32(destination.address)
+    }
+    
+    func createReliableContext(for pdu: AccessPdu, sentFrom element: Element, using keySet: KeySet) {
+        if let request = pdu.message as? AcknowledgedMeshMessage {
+            /// The TTL with which the request will be sent.
+            let ttl = element.parentNode?.defaultTTL ?? networkManager.defaultTtl
+            /// The delay after which the local Element will try to resend the
+            /// request. When the response isn't received after the first retry,
+            /// it will try again every time doubling the last delay until the
+            /// time goes out.
+            let initialDelay: TimeInterval =
+                networkManager.acknowledgmentMessageInterval(ttl, pdu.segmentsCount)
+            /// The timeout before which the response should be received.
+            let timeout = networkManager.acknowledgmentMessageTimeout
+            
+            let ack = AcknowledgmentContext(for: pdu.message as! AcknowledgedMeshMessage, sentFrom: pdu.source,
+                                            repeatAfter: initialDelay, repeatBlock: {
+                                                self.logger?.d(.access, "Resending \(pdu)")
+                                                self.networkManager.upperTransportLayer.send(pdu, using: keySet)
+                                            }, timeout: timeout, timeoutBlock: {
+                                                self.logger?.w(.access, "Response to \(pdu) not received (timeout)")
+                                                let category: LogCategory = request is AcknowledgedConfigMessage ? .foundationModel : .model
+                                                self.logger?.w(category, "\(request) sent from: \(pdu.source.hex), to: \(pdu.destination.hex) timed out")
+                                                self.reliableMessageContexts.removeAll(where: { $0.timeoutTimer == nil })
+                                                self.networkManager.notifyAbout(notReceivingResponseForMessage: request,
+                                                                                sentFrom: element, to: pdu.destination.address,
+                                                                                becauseOf: AccessError.timeout)
+            })
+            reliableMessageContexts.append(ack)
+        }
     }
     
 }
