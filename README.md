@@ -22,16 +22,15 @@ application.
 10. UI for controlling groups (Generic OnOff and Generic Level (delta) are supported).
 12. Handling Configuration Server message sent by other Provisioner.
 13. Generic OnOff and Vendor model have dedicated controls in sample app.
-14. Proxy Filter support in the library.
+14. Proxy Filter.
 
 ## NOT (yet) supported features
 
 1. Many SIG defined models, except from supported ones.
-2. Proxy Filter (in UI)
-3. Key Refresh Procedure.
-4. Health server messages.
-5. Hearbeats.
-6. Remote Provisioning.
+2. Key Refresh Procedure.
+3. Health server messages.
+4. Hearbeats.
+5. Remote Provisioning.
 
 ## Feedback
 
