@@ -251,13 +251,22 @@ private extension SetPublicationViewController {
     func reloadDestinationView() {
         guard let address = destination else {
             destinationLabel.text = "No destination selected"
-            destinationLabel.textColor = .lightGray
+            if #available(iOS 13.0, *) {
+                destinationLabel.textColor = .secondaryLabel
+                destinationIcon.tintColor = .secondaryLabel
+            } else {
+                destinationLabel.textColor = .lightGray
+                destinationIcon.tintColor = .lightGray
+            }
             destinationSubtitleLabel.text = nil
-            destinationIcon.tintColor = .lightGray
             doneButton.isEnabled = false
             return
         }
-        destinationLabel.textColor = .darkText
+        if #available(iOS 13.0, *) {
+            destinationLabel.textColor = .label
+        } else {
+            destinationLabel.textColor = .darkText
+        }
         if address.address.isUnicast {
             let meshNetwork = MeshNetworkManager.instance.meshNetwork!
             let node = meshNetwork.node(withAddress: address.address)

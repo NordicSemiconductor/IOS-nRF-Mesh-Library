@@ -185,7 +185,11 @@ class ConfigurationViewController: ProgressViewController {
             if node.isCompositionDataReceived {
                 let element = node.elements[indexPath.row]
                 cell.textLabel?.text = element.name ?? "Element \(element.index + 1)"
-                cell.textLabel?.textColor = .darkText
+                if #available(iOS 13.0, *) {
+                    cell.textLabel?.textColor = .label
+                } else {
+                    cell.textLabel?.textColor = .darkText
+                }
                 cell.detailTextLabel?.text = "\(element.models.count) models"
                 cell.accessoryType = .disclosureIndicator
                 cell.selectionStyle = .default
@@ -268,7 +272,7 @@ class ConfigurationViewController: ProgressViewController {
     override func tableView(_ tableView: UITableView, accessoryButtonTappedForRowWith indexPath: IndexPath) {
         switch indexPath.row {
         case 0:
-            presentAlert(title: "Info", message: "Mark a node as Configured when you finished setting it up.")
+            presentAlert(title: "Info", message: "Mark a node as configured when you finished setting it up.")
         case 1:
             presentAlert(title: "Info", message: "A blacklisted node will be excluded from key exchange process. When the key refresh procedure is complete, this node will no longer be able to receive or send messages to the mesh network.")
         default:
