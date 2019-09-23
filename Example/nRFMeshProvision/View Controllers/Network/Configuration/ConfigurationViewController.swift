@@ -185,7 +185,11 @@ class ConfigurationViewController: ProgressViewController {
             if node.isCompositionDataReceived {
                 let element = node.elements[indexPath.row]
                 cell.textLabel?.text = element.name ?? "Element \(element.index + 1)"
-                cell.textLabel?.textColor = .darkText
+                if #available(iOS 13.0, *) {
+                    cell.textLabel?.textColor = .label
+                } else {
+                    cell.textLabel?.textColor = .darkText
+                }
                 cell.detailTextLabel?.text = "\(element.models.count) models"
                 cell.accessoryType = .disclosureIndicator
                 cell.selectionStyle = .default

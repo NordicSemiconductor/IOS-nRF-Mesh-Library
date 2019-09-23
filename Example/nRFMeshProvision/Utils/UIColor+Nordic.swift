@@ -12,6 +12,16 @@ import UIKit
 
 extension UIColor {
     
+    static func dynamicColor(light: UIColor, dark: UIColor) -> UIColor {
+        if #available(iOS 13.0, *) {
+            return UIColor { (traitCollection) -> UIColor in
+                return traitCollection.userInterfaceStyle == .light ? light : dark
+            }
+        } else {
+            return light
+        }
+    }
+    
     static let nordicBlue = #colorLiteral(red: 0, green: 0.7181802392, blue: 0.8448022008, alpha: 1)
     
     static let nordicLake = #colorLiteral(red: 0, green: 0.5483048558, blue: 0.8252354264, alpha: 1)
