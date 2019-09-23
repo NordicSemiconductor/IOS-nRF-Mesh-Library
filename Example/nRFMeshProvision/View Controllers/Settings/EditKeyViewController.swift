@@ -148,12 +148,20 @@ class EditKeyViewController: UITableViewController {
             cell.selectionStyle = isKeyUsed ? .none : .default
             
             if networkKey.index == newBoundNetworkKeyIndex {
-                cell.textLabel?.textColor = .black
+                if #available(iOS 13.0, *) {
+                    cell.textLabel?.textColor = UIColor.label
+                } else {
+                    cell.textLabel?.textColor = UIColor.darkText
+                }
                 cell.accessoryType = .checkmark
                 // Save the checked row number as tag.
                 tableView.tag = indexPath.row
             } else {
-                cell.textLabel?.textColor = isKeyUsed ? .lightGray : .black
+                if #available(iOS 13.0, *) {
+                    cell.textLabel?.textColor = isKeyUsed ? .secondaryLabel : .label
+                } else {
+                    cell.textLabel?.textColor = isKeyUsed ? .lightGray : .darkText
+                }
                 cell.accessoryType = .none
             }
         }
