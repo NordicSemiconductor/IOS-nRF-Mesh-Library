@@ -272,7 +272,7 @@ class ConfigurationViewController: ProgressViewController {
     override func tableView(_ tableView: UITableView, accessoryButtonTappedForRowWith indexPath: IndexPath) {
         switch indexPath.row {
         case 0:
-            presentAlert(title: "Info", message: "Mark a node as Configured when you finished setting it up.")
+            presentAlert(title: "Info", message: "Mark a node as configured when you finished setting it up.")
         case 1:
             presentAlert(title: "Info", message: "A blacklisted node will be excluded from key exchange process. When the key refresh procedure is complete, this node will no longer be able to receive or send messages to the mesh network.")
         default:

@@ -32,12 +32,17 @@ extension UIView {
             messageImageView.translatesAutoresizingMaskIntoConstraints = false
             messageLabel.translatesAutoresizingMaskIntoConstraints = false
             
-            messageImageView.tintColor = UIColor.darkGray
             
-            titleLabel.textColor = UIColor.nordicLake
+            titleLabel.textColor = UIColor.dynamicColor(light: .nordicLake, dark: .nordicBlue)
             titleLabel.font = UIFont.systemFont(ofSize: 15.0, weight: .semibold)
             
-            messageLabel.textColor = UIColor.nordicDarkGray
+            if #available(iOS 13.0, *) {
+                messageImageView.tintColor = UIColor.secondaryLabel
+                messageLabel.textColor = UIColor.secondaryLabel
+            } else {
+                messageImageView.tintColor = UIColor.darkText
+                messageLabel.textColor = UIColor.darkText
+            }
             messageLabel.font = UIFont.systemFont(ofSize: 14.0, weight: .medium)
             
             emptyView.addSubview(titleLabel)

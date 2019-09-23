@@ -9,11 +9,20 @@
 import UIKit
 import nRFMeshProvision
 
-private enum SectionType: String {
-    case notConfiguredNodes = "Not configured Nodes"
-    case configuredNodes    = "Configured Nodes"
-    case provisionersNodes  = "Other Provisioners"
-    case thisProvisioner    = "This Provisioner"
+private enum SectionType {
+    case notConfiguredNodes
+    case configuredNodes
+    case provisionersNodes
+    case thisProvisioner
+    
+    var title: String? {
+        switch self {
+        case .notConfiguredNodes: return nil
+        case .configuredNodes:    return "Configured Nodes"
+        case .provisionersNodes:  return "Other Provisioners"
+        case .thisProvisioner:    return "This Provisioner"
+        }
+    }
 }
 
 private class Section {
@@ -25,8 +34,8 @@ private class Section {
         self.nodes = nodes
     }
     
-    var title: String {
-        return type.rawValue
+    var title: String? {
+        return type.title
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> NodeViewCell {

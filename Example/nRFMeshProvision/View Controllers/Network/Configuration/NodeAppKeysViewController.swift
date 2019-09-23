@@ -214,6 +214,10 @@ extension NodeAppKeysViewController: AppKeyDelegate {
     
     func keyAdded() {
         tableView.reloadData()
+        
+        if !node.applicationKeys.isEmpty {
+            hideEmptyView()
+        }
     }
     
 }
