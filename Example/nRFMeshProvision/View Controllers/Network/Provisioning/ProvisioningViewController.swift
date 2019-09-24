@@ -63,8 +63,9 @@ class ProvisioningViewController: UITableViewController {
         nameLabel.text = unprovisionedDevice.name
         
         // Obtain the Provisioning Manager instance for the Unprovisioned Device.
-        provisioningManager = network.provision(unprovisionedDevice: self.unprovisionedDevice, over: self.bearer!)
+        provisioningManager = network.provision(unprovisionedDevice: unprovisionedDevice, over: bearer)
         provisioningManager.delegate = self
+        provisioningManager.logger = MeshNetworkManager.instance.logger
         bearer.delegate = self
         
         // Unicast Address initially will be assigned automatically.
@@ -81,9 +82,8 @@ class ProvisioningViewController: UITableViewController {
             do {
                 try self.provisioningManager.identify(andAttractFor: ProvisioningViewController.attentionTimer)
             } catch {
-                print(error)
                 self.abort()
-                self.presentAlert(title: "Error", message: "Identifying failed with an error: \(error)")
+                self.presentAlert(title: "Error", message: error.localizedDescription)
             }
         }
     }
@@ -250,9 +250,8 @@ private extension ProvisioningViewController {
                                                        publicKey:            self.publicKey!,
                                                        authenticationMethod: self.authenticationMethod!)
             } catch {
-                print(error)
                 self.abort()
-                self.presentAlert(title: "Error", message: "Provisioning failed with an error: \(error)")
+                self.presentAlert(title: "Error", message: error.localizedDescription)
             }
         }
     }
@@ -274,15 +273,18 @@ extension ProvisioningViewController: GattBearerDelegate {
             do {
                 try self.provisioningManager!.identify(andAttractFor: ProvisioningViewController.attentionTimer)
             } catch {
-                print(error)
                 self.abort()
-                self.presentAlert(title: "Error", message: "Identifying failed with an error: \(error)")
+                self.presentAlert(title: "Error", message: error.localizedDescription)
             }
         }
     }
     
     func bearer(_ bearer: Bearer, didClose error: Error?) {
         if case .complete = provisioningManager.state {
+            // If the "Provisioning complete" alert is still presented, dismiss it.
+            if let _ = presentedViewController as? UIAlertController {
+                dismiss(animated: false)
+            }
             dismiss(animated: true) {
                 let network = MeshNetworkManager.instance.meshNetwork!
                 if let node = network.node(for: self.unprovisionedDevice) {
@@ -305,8 +307,6 @@ extension ProvisioningViewController: GattBearerDelegate {
 extension ProvisioningViewController: ProvisioningDelegate {
     
     func provisioningState(of unprovisionedDevice: UnprovisionedDevice, didChangeTo state: ProvisionigState) {
-        print("New state: \(state)")
-        
         DispatchQueue.main.async {
             switch state {
                 
@@ -347,7 +347,6 @@ extension ProvisioningViewController: ProvisioningDelegate {
                         }
                     } else {
                         if !deviceSupported {
-                            print("Selected device does not support P256 Elliptic Curve algorithm")
                             self.presentAlert(title: "Error", message: "Selected device is not supported.")
                             self.actionProvision.isEnabled = false
                         } else if !addressValid {
@@ -365,7 +364,7 @@ extension ProvisioningViewController: ProvisioningDelegate {
                 
             case let .fail(error):
                 self.dismissStatusDialog() {
-                    self.presentAlert(title: "Error", message: "Provisionig failed with an error:\n\(error)")
+                    self.presentAlert(title: "Error", message: error.localizedDescription)
                     self.abort()
                 }
                 
@@ -397,7 +396,7 @@ extension ProvisioningViewController: ProvisioningDelegate {
                 case .outputNumeric:
                     message = "Enter the number displayed on the device."
                 default:
-                    message = "Action /(action) is not supported."
+                    message = "Action \(action) is not supported."
                 }
                 self.presentTextAlert(title: "Authentication", message: message, type: .unsignedNumberRequired) { text in
                     callback(UInt(text)!)

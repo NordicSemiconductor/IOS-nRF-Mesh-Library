@@ -146,6 +146,24 @@ internal struct ProvisioningResponse {
     }
 }
 
+extension ProvisioningPduType: CustomDebugStringConvertible {
+    
+    var debugDescription: String {
+        switch self {
+        case .invite:        return "Provisioning Invite"
+        case .capabilities:  return "Provisioning Capabilities"
+        case .start:         return "Provisioning Start"
+        case .publicKey:     return "Provisioning Public Key"
+        case .inputComplete: return "Provisioning Input Complete"
+        case .confirmation:  return "Provisioning Confirmation"
+        case .random:        return "Provisioning Random"
+        case .data:          return "Provisioning Data"
+        case .complete:      return "Provisioning Complete"
+        case .failed:        return "Provisioning Failed"
+        }
+    }
+}
+
 extension ProvisioningRequest: CustomDebugStringConvertible {
     
     var debugDescription: String {
@@ -157,14 +175,32 @@ extension ProvisioningRequest: CustomDebugStringConvertible {
         case let .publicKey(key):
             return "Provisioner Public Key (0x\(key.hex))"
         case let .confirmation(data):
-            return "Provisioning Confirmation (0x\(data.hex)"
+            return "Provisioner Confirmation (0x\(data.hex))"
         case let .random(data):
-            return "Provisioning Random (0x\(data.hex)"
+            return "Provisioner Random (0x\(data.hex))"
         case let .data(data):
             return "Encrypted Provisioning Data (0x\(data.hex))"
         }
     }
 
+}
+
+extension ProvisioningResponse: CustomDebugStringConvertible {
+    
+    var debugDescription: String {
+        guard isValid else {
+            return "Invalid response of type: \(type)"
+        }
+        switch type {
+        case .capabilities: return "Device Capabilities: \(capabilities!)"
+        case .publicKey:    return "Device Public Key (0x\(publicKey!.hex))"
+        case .confirmation: return "Device Confirmation (0x\(confirmation!.hex))"
+        case .random:       return "Device Random (0x\(random!.hex))"
+        case .failed:       return "Error: \(error!)"
+        default:            return "\(type)"
+        }
+    }
+    
 }
 
 private extension Data {

@@ -70,9 +70,17 @@ public class ProvisioningManager {
     /// than `.noOob`.
     public weak var delegate: ProvisioningDelegate?
     
+    /// The logger delegate will be called whenever a new log entry is created.
+    public weak var logger: LoggerDelegate?
+    
     /// The current state of the provisioning process.
     public private(set) var state: ProvisionigState = .ready {
         didSet {
+            if case .fail = state {
+                logger?.e(.provisioning, "\(state)")
+            } else {
+                logger?.i(.provisioning, "\(state)")
+            }
             delegate?.provisioningState(of: unprovisionedDevice, didChangeTo: state)
         }
     }
@@ -85,20 +93,20 @@ public class ProvisioningManager {
     /// network must have the local Provisioner set.
     public var isUnicastAddressValid: Bool? {
         guard let provisioner = meshNetwork.localProvisioner,
-            let capabilities = provisioningCapabilities,
-            let unicastAddress = unicastAddress else {
+              let capabilities = provisioningCapabilities,
+              let unicastAddress = unicastAddress else {
                 // Unknown.
                 return nil
         }
         return meshNetwork.isAddressRangeAvailable(unicastAddress, elementsCount: capabilities.numberOfElements) &&
-            provisioner.isAddressInAllocatedRange(unicastAddress, elementCount: capabilities.numberOfElements)
+               provisioner.isAddressInAllocatedRange(unicastAddress, elementCount: capabilities.numberOfElements)
     }
     
     /// Returns whether the Unprovisioned Device can be provisioned using this
     /// Provisioner Manager.
     public var isDeviceSupported: Bool? {
         guard let capabilities = provisioningCapabilities else {
-                return nil
+            return nil
         }
         return capabilities.algorithms.contains(.fipsP256EllipticCurve)
     }
@@ -111,7 +119,8 @@ public class ProvisioningManager {
     /// - parameter unprovisionedDevice: The device to provision into the network.
     /// - parameter bearer:              The Bearer used for sending Provisioning PDUs.
     /// - parameter meshNetwork:         The mesh network to provision the device to.
-    public init(for unprovisionedDevice: UnprovisionedDevice, over bearer: ProvisioningBearer, in meshNetwork: MeshNetwork) {
+    public init(for unprovisionedDevice: UnprovisionedDevice,
+                over bearer: ProvisioningBearer, in meshNetwork: MeshNetwork) {
         self.unprovisionedDevice = unprovisionedDevice
         self.bearer = bearer
         self.meshNetwork = meshNetwork
@@ -128,6 +137,7 @@ public class ProvisioningManager {
     public func identify(andAttractFor attentionTimer: UInt8) throws {
         // Does the Bearer support provisioning?
         guard bearer.supports(.provisioningPdu) else {
+            logger?.e(.provisioning, "Bearer does not support provisioning PDU")
             throw BearerError.pduTypeNotSupported
         }
         
@@ -138,11 +148,13 @@ public class ProvisioningManager {
         
         // Is the Provisioner Manager in the right state?
         guard case .ready = state else {
+            logger?.e(.provisioning, "Provisioning manager is in invalid state")
             throw ProvisioningError.invalidState
         }
         
         // Is the Bearer open?
         guard bearer.isOpen else {
+            logger?.e(.provisioning, "Bearer closed")
             throw BearerError.bearerClosed
         }
         
@@ -157,7 +169,9 @@ public class ProvisioningManager {
         provisioningData = ProvisioningData()
         
         state = .requestingCapabilities
-        try send(.invite(attentionTimer: attentionTimer), andAccumulateTo: provisioningData)
+        let provisioningInvite = ProvisioningRequest.invite(attentionTimer: attentionTimer)
+        logger?.v(.provisioning, "Sending \(provisioningInvite)")
+        try send(provisioningInvite, andAccumulateTo: provisioningData)
     }
     
     /// This method starts the provisioning of the device.
@@ -169,11 +183,13 @@ public class ProvisioningManager {
         // Is the Provisioner Manager in the right state?
         guard case .capabilitiesReceived = state,
             let _ = provisioningCapabilities else {
+                logger?.e(.provisioning, "Provisioning manager is in invalid state")
             throw ProvisioningError.invalidState
         }
         
         // Can the Unprovisioned Device be provisioned by this manager?
         guard isDeviceSupported == true else {
+            logger?.e(.provisioning, "Device not supported")
             throw ProvisioningError.unsupportedDevice
         }
         
@@ -182,16 +198,19 @@ public class ProvisioningManager {
             unicastAddress = suggestedUnicastAddress
         }
         guard let unicastAddress = unicastAddress else {
+            logger?.e(.provisioning, "Unicast Address not specified")
             throw ProvisioningError.addressNotSpecified
         }
         
         // Ensure the Network Key is set.
         guard let networkKey = networkKey else {
+            logger?.e(.provisioning, "Network Key not specified")
             throw ProvisioningError.networkKeyNotSpecified
         }
         
         // Is the Bearer open?
         guard bearer.isOpen else {
+            logger?.e(.provisioning, "Bearer closed")
             throw BearerError.bearerClosed
         }
         
@@ -202,7 +221,12 @@ public class ProvisioningManager {
         // If the device's Public Key was obtained OOB, we are now ready to
         // calculate the device's Shared Secret.
         if case let .oobPublicKey(key: key) = publicKey {
-            try provisioningData.provisionerDidObtain(devicePublicKey: key)
+            do {
+                try provisioningData.provisionerDidObtain(devicePublicKey: key)
+            } catch {
+                state = .fail(error)
+                return
+            }
         }
         
         // Send Provisioning Start request.
@@ -210,13 +234,16 @@ public class ProvisioningManager {
         provisioningData.prepare(for: meshNetwork,
                                  networkKey: networkKey,
                                  unicastAddress: unicastAddress)
-        try send(.start(algorithm: algorithm, publicKey: publicKey,
-                        authenticationMethod: authenticationMethod),
-                 andAccumulateTo: provisioningData)
+        let provisioningStart = ProvisioningRequest.start(algorithm: algorithm, publicKey: publicKey,
+                                                          authenticationMethod: authenticationMethod)
+        logger?.v(.provisioning, "Sending \(provisioningStart)")
+        try send(provisioningStart, andAccumulateTo: provisioningData)
         self.authenticationMethod = authenticationMethod
         
         // Send the Public Key of the Provisioner.
-        try send(.publicKey(provisioningData.provisionerPublicKey), andAccumulateTo: provisioningData)
+        let provisioningPublicKey = ProvisioningRequest.publicKey(provisioningData.provisionerPublicKey)
+        logger?.v(.provisioning, "Sending \(provisioningPublicKey)")
+        try send(provisioningPublicKey, andAccumulateTo: provisioningData)
         
         // If the device's Public Key was obtained OOB, we are now ready to
         // authenticate.
@@ -280,6 +307,7 @@ extension ProvisioningManager: BearerDelegate, BearerDataDelegate {
             state = .fail(ProvisioningError.invalidPdu)
             return
         }
+        logger?.v(.provisioning, "\(response) received")
         
         // Act depending on the current state and the response received.
         switch (state, response.type) {
@@ -334,7 +362,9 @@ extension ProvisioningManager: BearerDelegate, BearerDataDelegate {
         case (.provisioning, .confirmation):
             provisioningData.provisionerDidObtain(deviceConfirmation: response.confirmation!)
             do {
-                try send(.random(provisioningData.provisionerRandom))
+                let provisioningRandom = ProvisioningRequest.random(provisioningData.provisionerRandom)
+                logger?.v(.provisioning, "Sending \(provisioningRandom)")
+                try send(provisioningRandom)
             } catch {
                 state = .fail(error)
             }
@@ -344,10 +374,11 @@ extension ProvisioningManager: BearerDelegate, BearerDataDelegate {
             provisioningData.provisionerDidObtain(deviceRandom: response.random!)
             do {
                 try provisioningData.validateConfirmation()
-                try send(.data(provisioningData.encryptedProvisioningDataWithMic))
+                let encryptedData = ProvisioningRequest.data(provisioningData.encryptedProvisioningDataWithMic)
+                logger?.v(.provisioning, "Sending \(encryptedData)")
+                try send(encryptedData)
             } catch {
                 state = .fail(error)
-                return
             }
             
         // The provisioning process is complete.
@@ -369,7 +400,7 @@ extension ProvisioningManager: BearerDelegate, BearerDataDelegate {
             state = .fail(ProvisioningError.remoteError(response.error!))
             
         default:
-            break
+            state = .fail(ProvisioningError.invalidState)
         }
     }
     
@@ -393,6 +424,14 @@ private extension ProvisioningManager {
         // The key must be 16 bytes long.
         case .staticOob:
             delegate?.authenticationActionRequired(.provideStaticKey(callback: { key in
+                guard self.bearer.isOpen else {
+                    self.state = .fail(BearerError.bearerClosed)
+                    return
+                }
+                guard case .provisioning = self.state, let _ = self.provisioningData else {
+                    self.state = .fail(ProvisioningError.invalidState)
+                    return
+                }
                 self.delegate?.inputComplete()
                 self.authValueReceived(key)
             }))
@@ -408,12 +447,28 @@ private extension ProvisioningManager {
                         self.state = .fail(ProvisioningError.invalidOobValueFormat)
                         return
                     }
+                    guard self.bearer.isOpen else {
+                        self.state = .fail(BearerError.bearerClosed)
+                        return
+                    }
+                    guard case .provisioning = self.state, let _ = self.provisioningData else {
+                        self.state = .fail(ProvisioningError.invalidState)
+                        return
+                    }
                     authValue += Data(count: 16 - authValue.count)
                     self.delegate?.inputComplete()
                     self.authValueReceived(authValue)
                 }))
             case .blink, .beep, .vibrate, .outputNumeric:
                 delegate?.authenticationActionRequired(.provideNumeric(maximumNumberOfDigits: size, outputAction: action, callback: { value in
+                    guard self.bearer.isOpen else {
+                        self.state = .fail(BearerError.bearerClosed)
+                        return
+                    }
+                    guard case .provisioning = self.state, let _ = self.provisioningData else {
+                        self.state = .fail(ProvisioningError.invalidState)
+                        return
+                    }
                     var authValue = Data(count: 16 - MemoryLayout.size(ofValue: value))
                     authValue += value.bigEndian
                     self.delegate?.inputComplete()
@@ -443,7 +498,9 @@ private extension ProvisioningManager {
         authAction = nil
         provisioningData.provisionerDidObtain(authValue: value)
         do {
-            try send(.confirmation(provisioningData.provisionerConfirmation))
+            let provisioningConfirmation = ProvisioningRequest.confirmation(provisioningData.provisionerConfirmation)
+            logger?.v(.provisioning, "Sending \(provisioningConfirmation)")
+            try send(provisioningConfirmation)
         } catch {
             state = .fail(error)
         }

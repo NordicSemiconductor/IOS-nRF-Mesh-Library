@@ -44,7 +44,6 @@ extension ProvisioningCapabilities: CustomDebugStringConvertible {
     
     public var debugDescription: String {
         return """
-        --- Capabilities ---
         Number of elements: \(numberOfElements)
         Algorithms: \(algorithms)
         Public Key Type: \(publicKeyType)
@@ -53,7 +52,6 @@ extension ProvisioningCapabilities: CustomDebugStringConvertible {
         Output OOB Actions: \(outputOobActions)
         Input OOB Size: \(inputOobSize)
         Input OOB Actions: \(inputOobActions)
-        --------------------
         """
     }
     

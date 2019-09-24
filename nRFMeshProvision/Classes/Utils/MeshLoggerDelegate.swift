@@ -34,12 +34,12 @@ import Foundation
 /// Logger application may filter log entries based on their level.
 /// Levels allow to ignore less important messages.
 ///
-/// - Debug -       Lowest priority. Usually names of called methods or callbacks received.
-/// - Verbose -     Low priority messages what the service is doing.
-/// - Info -        Messages about completed tasks.
+/// - Debug       - Lowest priority. Usually names of called methods or callbacks received.
+/// - Verbose     - Low priority messages what the service is doing.
+/// - Info        - Messages about completed tasks.
 /// - Application - Messages about application level events, in this case DFU messages in human-readable form.
-/// - Warning -     Important messages.
-/// - Error -       Highest priority messages with errors.
+/// - Warning     - Important messages.
+/// - Error       - Highest priority messages with errors.
 public enum LogLevel: Int {
     case debug       = 0
     case verbose     = 1
@@ -70,6 +70,7 @@ public enum LogCategory: String {
     case access          = "Access"
     case foundationModel = "FoundationModel"
     case model           = "Model"
+    case provisioning    = "Provisioning"
 }
 
 /// The Logger delegate.

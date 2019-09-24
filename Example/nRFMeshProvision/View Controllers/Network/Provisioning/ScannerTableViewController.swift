@@ -81,6 +81,7 @@ class ScannerTableViewController: UITableViewController {
         guard let bearer = PBGattBearer(target: discoveredPeripherals[indexPath.row].peripheral) else {
             return
         }
+        bearer.logger = MeshNetworkManager.instance.logger
         bearer.delegate = self
         
         stopScanning()        
@@ -116,7 +117,8 @@ extension ScannerTableViewController: CBCentralManagerDelegate {
         centralManager.stopScan()
     }
     
-    func centralManager(_ central: CBCentralManager, didDiscover peripheral: CBPeripheral, advertisementData: [String : Any], rssi RSSI: NSNumber) {
+    func centralManager(_ central: CBCentralManager, didDiscover peripheral: CBPeripheral,
+                        advertisementData: [String : Any], rssi RSSI: NSNumber) {
         if !discoveredPeripherals.contains(where: { $0.peripheral == peripheral }) {
             if let unprovisionedDevice = UnprovisionedDevice(advertisementData: advertisementData) {
                 discoveredPeripherals.append((unprovisionedDevice, peripheral, RSSI.intValue))

@@ -203,8 +203,10 @@ open class BaseGattProxyBearer<Service: MeshService>: NSObject, Bearer, CBCentra
     
     open func centralManager(_ central: CBCentralManager, didDisconnectPeripheral peripheral: CBPeripheral, error: Error?) {
         if peripheral == basePeripheral {
-            dataInCharacteristic = nil
-            dataOutCharacteristic = nil
+            let deviceNotSupported = dataInCharacteristic == nil || dataOutCharacteristic == nil
+                || !dataOutCharacteristic!.properties.contains(.notify)
+            self.dataInCharacteristic = nil
+            self.dataOutCharacteristic = nil
             if let error = error as NSError? {
                 switch error.code {
                 case 6, 7: logger?.e(.bearer, error.localizedDescription)
@@ -212,8 +214,7 @@ open class BaseGattProxyBearer<Service: MeshService>: NSObject, Bearer, CBCentra
                 }
                 delegate?.bearer(self, didClose: error)
             } else {
-                guard let dataOutCharacteristic = dataOutCharacteristic, let _ = dataInCharacteristic,
-                    dataOutCharacteristic.properties.contains(.notify) else {
+                guard !deviceNotSupported else {
                         logger?.e(.bearer, "Disconnected from \(peripheral.name ?? "Unknown Device") with error: Device not supported")
                         delegate?.bearer(self, didClose: GattBearerError.deviceNotSupported)
                         return

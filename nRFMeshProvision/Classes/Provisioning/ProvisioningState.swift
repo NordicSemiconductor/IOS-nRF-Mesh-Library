@@ -94,46 +94,55 @@ extension ProvisionigState: CustomDebugStringConvertible {
         case .ready:
             return "Provisioner is ready"
         case .requestingCapabilities:
-            return "Provisioning Invitation sent"
-        case let .capabilitiesReceived(capabilities):
-            return "Provisioning Capabilities received:\n\(capabilities)"
+            return "Requesting Provisioning Capabilities"
+        case .capabilitiesReceived(_):
+            return "Provisioning Capabilities received"
         case .provisioning:
             return "Provisioning started"
         case .complete:
             return "Provisioning complete"
         case let .fail(error):
-            return "Provisioning failed: \(error)"
+            return "Provisioning failed: \(error.localizedDescription)"
         }
     }
     
 }
 
-extension ProvisioningError: CustomDebugStringConvertible {
+extension ProvisioningError: LocalizedError {
     
-    public var debugDescription: String {
+    public var errorDescription: String? {
         switch self {
         case .invalidState:
-            return "Invalid state"
+            return NSLocalizedString("Invalid state", comment: "provisioning")
         case .invalidPdu:
-            return "Invalid PDU"
+            return NSLocalizedString("Invalid PDU", comment: "provisioning")
         case .unsupportedAlgorithm:
-            return "Unsupported algorighm"
+            return NSLocalizedString("Unsupported algorighm", comment: "provisioning")
         case .unsupportedDevice:
-            return "Unsupported Device"
+            return NSLocalizedString("Unsupported device", comment: "provisioning")
         case .invalidOobValueFormat:
-            return "Invalid value format"
+            return NSLocalizedString("Invalid value format", comment: "provisioning")
         case .noAddressAvailable:
-            return "No address available in Provisioner's range"
+            return NSLocalizedString("No address available in Provisioner's range", comment: "provisioning")
         case .addressNotSpecified:
-            return "Address not specified"
+            return NSLocalizedString("Address not specified", comment: "provisioning")
         case .networkKeyNotSpecified:
-            return "Network Key not specified"
+            return NSLocalizedString("Network Key not specified", comment: "provisioning")
         case .confirmationFailed:
-            return "Confirmation failed"
+            return NSLocalizedString("Confirmation failed", comment: "provisioning")
         case let .remoteError(error):
-            return "\(error)"
+            switch error {
+            case .invalidPdu:              return NSLocalizedString("Invalid PDU", comment: "provisioning")
+            case .invalidFormat:           return NSLocalizedString("Invalid format", comment: "provisioning")
+            case .unexpectedPdu:           return NSLocalizedString("Unexpected PDU", comment: "provisioning")
+            case .confirmationFailed:      return NSLocalizedString("Confirmation failed", comment: "provisioning")
+            case .outOfResources:          return NSLocalizedString("Out of resources", comment: "provisioning")
+            case .decryptionFailed:        return NSLocalizedString("Decryption failed", comment: "provisioning")
+            case .unexpectedError:         return NSLocalizedString("Unexpected error", comment: "provisioning")
+            case .cannotAcssignAddresses:  return NSLocalizedString("Cannot assign addresses", comment: "provisioning")
+            }
         case let .keyGenerationFailed(status):
-            return "Key generation failed with status \(status)"
+            return NSLocalizedString("Key generation failed with status \(status)", comment: "provisioning")
         }
     }
     
