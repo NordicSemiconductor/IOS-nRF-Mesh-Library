@@ -462,9 +462,11 @@ private extension LowerTransportLayer {
             } else {
                 // A limit has been reached and some segments were not ACK.
                 if let segment = segments.firstNotAcknowledged {
-                    networkManager.notifyAbout(LowerTransportError.timeout,
-                                               duringSendingMessage: segment.message!,
-                                               from: segment.localElement!, to: segment.destination)
+                    if !segment.message!.isAcknowledged {
+                        networkManager.notifyAbout(LowerTransportError.timeout,
+                                                   duringSendingMessage: segment.message!,
+                                                   from: segment.localElement!, to: segment.destination)
+                    }
                     networkManager.upperTransportLayer.lowerTransportLayerDidSend(segmentedUpperTransportPduTo: segment.destination)
                 }
                 outgoingSegments.removeValue(forKey: sequenceZero)
