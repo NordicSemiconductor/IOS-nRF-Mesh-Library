@@ -171,8 +171,10 @@ internal class LowerTransportLayer {
                                        from: pdu.localElement!, to: pdu.destination)
         } catch {
             logger?.w(.lowerTransport, error)
-            networkManager.notifyAbout(error, duringSendingMessage: pdu.message!,
-                                       from: pdu.localElement!, to: pdu.destination)
+            if !pdu.message!.isAcknowledged {
+                networkManager.notifyAbout(error, duringSendingMessage: pdu.message!,
+                                           from: pdu.localElement!, to: pdu.destination)
+            }
         }
     }
     
@@ -319,9 +321,8 @@ private extension LowerTransportLayer {
     /// - parameter ack: The Segment Acknowledgment Message received.
     func handle(ack: SegmentAcknowledgmentMessage) {
         // Ensure the ACK is for some message that has been sent.
-        guard outgoingSegments[ack.sequenceZero] != nil,
-            let segment = outgoingSegments[ack.sequenceZero]!.firstNotAcknowledged else {
-                return
+        guard let segment = outgoingSegments[ack.sequenceZero]?.firstNotAcknowledged else {
+            return
         }
         
         // Invalidate transmission timer for this message.
@@ -330,9 +331,11 @@ private extension LowerTransportLayer {
         // Is the target Node busy?
         guard !ack.isBusy else {
             outgoingSegments.removeValue(forKey: ack.sequenceZero)
-            networkManager.notifyAbout(LowerTransportError.busy,
-                                       duringSendingMessage: segment.message!,
-                                       from: segment.localElement!, to: segment.destination)
+            if !segment.message!.isAcknowledged {
+                networkManager.notifyAbout(LowerTransportError.busy,
+                                           duringSendingMessage: segment.message!,
+                                           from: segment.localElement!, to: segment.destination)
+            }
             return
         }
         
@@ -409,9 +412,11 @@ private extension LowerTransportLayer {
                     if !ackExpected! {
                         segmentTransmissionTimers.removeValue(forKey: sequenceZero)?.invalidate()
                         outgoingSegments.removeValue(forKey: sequenceZero)
-                        networkManager.notifyAbout(error, duringSendingMessage: segment.message!,
-                                                   from: segment.localElement!, to: segment.destination)
-                        networkManager.upperTransportLayer.lowerTransportLayerDidSend(segmentedUpperTransportPduTo:  segment.destination)
+                        if !segment.message!.isAcknowledged {
+                            networkManager.notifyAbout(error, duringSendingMessage: segment.message!,
+                                                       from: segment.localElement!, to: segment.destination)
+                        }
+                        networkManager.upperTransportLayer.lowerTransportLayerDidSend(segmentedUpperTransportPduTo: segment.destination)
                         return
                     }
                 }

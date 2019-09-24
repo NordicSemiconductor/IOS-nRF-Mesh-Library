@@ -194,19 +194,4 @@ internal class NetworkManager {
         }
     }
     
-    /// Notifies the delegate that the response for an acknowledged message
-    /// has not been received before the timeout occurred.
-    ///
-    /// - parameter message: The mesh message that failed to be acknowledged.
-    /// - parameter localElement: The local element used to send the request.
-    /// - parameter destination:  The destination address.
-    /// - parameter error:        The error that occurred.
-    func notifyAbout(notReceivingResponseForMessage message: AcknowledgedMeshMessage,
-                     sentFrom localElement: Element, to destination: Address, becauseOf error: Error) {
-        manager.delegateQueue.async {
-            self.manager.delegate?.meshNetworkManager(self.manager, failedToReceiveResponseForMessage: message,
-                                                      sentFrom: localElement, to: destination, error: error)
-        }
-    }
-    
 }

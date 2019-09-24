@@ -45,12 +45,24 @@ public protocol MeshNetworkDelegate: class {
                             from localElement: Element, to destination: Address)
     
     /// A callback called when a message failed to be sent to the target
-    /// Node. For unsegmented messages this may happen when the `transmitter`
-    /// was `nil`, or has thrown an exception from `send(data:ofType)`.
-    /// For segmented messages targetting a Unicast Address this may also be
-    /// called when sending timeouted before all of the segments were
-    /// acknowledged by the target Node, or when the target Node is busy and
-    /// not able to proceed the message at the moment.
+    /// Node, or the respnse for an acknowledged message hasn't been received
+    /// before the time run out.
+    ///
+    /// For unsegmented unacknowledged messages this callback will be invoked when
+    /// the `transmitter` was set to `nil`, or has thrown an exception from
+    /// `send(data:ofType)`.
+    ///
+    /// For segmented unacknowledged messages targetting a Unicast Address,
+    /// besides that, it may also be called when sending timed out before all of
+    /// the segments were acknowledged by the target Node, or when the target
+    /// Node is busy and not able to proceed the message at the moment.
+    ///
+    /// For acknowledged messages the callback will be called when the response
+    /// has not been received before the time set by `acknowledgmentMessageTimeout`
+    /// run out. The message might have been retransmitted multiple times
+    /// and might have been received by the target Node. For acknowledged messages
+    /// sent to a Group or Virtual Address this will be called when the response
+    /// has not been received from any Node.
     ///
     /// Possible errors are:
     /// - Any error thrown by the `transmitter`.
@@ -59,7 +71,10 @@ public protocol MeshNetworkDelegate: class {
     ///   accept the message.
     /// - `LowerTransportError.timeout` - when the segmented message targetting
     ///   a Unicast Address was not acknowledgned before the `retransmissionLimit`
-    ///   was reached.
+    ///   was reached (for unacknowledged messages only).
+    /// - `AccessError.timeout` - when the response for an acknowledged message
+    ///   has not been received before the time run out (for acknowledged messages
+    ///   only).
     ///
     /// - parameters:
     ///   - manager:      The manager used to send the message.
@@ -70,27 +85,6 @@ public protocol MeshNetworkDelegate: class {
     func meshNetworkManager(_ manager: MeshNetworkManager,
                             failedToSendMessage message: MeshMessage,
                             from localElement: Element, to destination: Address,
-                            error: Error)
-    
-    /// A callback called when an acknowledged message sent from the local Element
-    /// has not been replied acknowledged by any of the target Nodes before the
-    /// timeout occurred.
-    ///
-    /// Use `MeshNetworkManager.acknowledgmentMessageTimeout` to set the timeout.
-    ///
-    /// The only possible error so far is:
-    /// - `AccessError.timeout` - when the response has not been received before the
-    ///   time run out.
-    ///
-    /// - parameters:
-    ///   - manager:      The manager used to send the request.
-    ///   - message:      The request that has been sent, but not acknowledged.
-    ///   - localElement: The local Element used as a source of the request.
-    ///   - destination:  The address to which the request was sent.
-    ///   - error:        The error that occurred.
-    func meshNetworkManager(_ manager: MeshNetworkManager,
-                            failedToReceiveResponseForMessage message: AcknowledgedMeshMessage,
-                            sentFrom localElement: Element, to destination: Address,
                             error: Error)
     
 }
@@ -106,13 +100,6 @@ public extension MeshNetworkDelegate {
     func meshNetworkManager(_ manager: MeshNetworkManager,
                             failedToSendMessage message: MeshMessage,
                             from localElement: Element, to destination: Address,
-                            error: Error) {
-        // Empty.
-    }
-    
-    func meshNetworkManager(_ manager: MeshNetworkManager,
-                            failedToReceiveResponseForMessage message: AcknowledgedMeshMessage,
-                            sentFrom localElement: Element, to destination: Address,
                             error: Error) {
         // Empty.
     }

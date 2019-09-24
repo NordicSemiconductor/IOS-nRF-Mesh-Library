@@ -616,9 +616,9 @@ private extension AccessLayer {
                                                 let category: LogCategory = request is AcknowledgedConfigMessage ? .foundationModel : .model
                                                 self.logger?.w(category, "\(request) sent from: \(pdu.source.hex), to: \(pdu.destination.hex) timed out")
                                                 self.reliableMessageContexts.removeAll(where: { $0.timeoutTimer == nil })
-                                                self.networkManager.notifyAbout(notReceivingResponseForMessage: request,
-                                                                                sentFrom: element, to: pdu.destination.address,
-                                                                                becauseOf: AccessError.timeout)
+                                                self.networkManager.notifyAbout(AccessError.timeout,
+                                                                                duringSendingMessage: request,
+                                                                                from: element, to: pdu.destination.address)
             })
             reliableMessageContexts.append(ack)
         }

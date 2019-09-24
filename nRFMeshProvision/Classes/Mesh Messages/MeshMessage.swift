@@ -178,6 +178,11 @@ internal extension MeshMessage {
         return opCode & 0xFFC00000 == 0x00C00000
     }
     
+    /// Whether the message is an acknowledged message, or not.
+    var isAcknowledged: Bool {
+        return self is AcknowledgedMeshMessage
+    }
+    
 }
 
 // MARK: - Other
