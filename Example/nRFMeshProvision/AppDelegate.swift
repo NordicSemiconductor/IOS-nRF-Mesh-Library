@@ -60,7 +60,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         connection?.close()
         
         let meshNetwork = meshNetworkManager.meshNetwork!
-        
+        /*
         let genericOnOffServer_0 = Model(sigModelId: 0x1000)
         let genericOnOffClient_0 = Model(sigModelId: 0x1001)
         let element_0 = Element(location: .first, models: [genericOnOffServer_0, genericOnOffClient_0])
@@ -68,7 +68,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let genericOnOffClient_1 = Model(sigModelId: 0x1001)
         let element_1 = Element(location: .first, models: [genericOnOffServer_1, genericOnOffClient_1])
         meshNetworkManager.localElements = [element_0, element_1]
-        
+        */
         connection = NetworkConnection(to: meshNetwork)
         connection!.dataDelegate = meshNetworkManager
         connection!.logger = self
