@@ -60,20 +60,20 @@ class ModelViewController: ProgressViewController {
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        let navigationController = segue.destination as? UINavigationController
+        navigationController?.presentationController?.delegate = self
+        
         switch segue.identifier {
         case .some("bind"):
-            let destination = segue.destination as! UINavigationController
-            let viewController = destination.topViewController as! ModelBindAppKeyViewController
+            let viewController = navigationController?.topViewController as! ModelBindAppKeyViewController
             viewController.model = model
             viewController.delegate = self
         case .some("publish"):
-            let destination = segue.destination as! UINavigationController
-            let viewController = destination.topViewController as! SetPublicationViewController
+            let viewController = navigationController?.topViewController as! SetPublicationViewController
             viewController.model = model
             viewController.delegate = self
         case .some("subscribe"):
-            let destination = segue.destination as! UINavigationController
-            let viewController = destination.topViewController as! SubscribeViewController
+            let viewController = navigationController?.topViewController as! SubscribeViewController
             viewController.model = model
             viewController.delegate = self
         default:
@@ -321,6 +321,14 @@ class ModelViewController: ProgressViewController {
 
 }
 
+extension ModelViewController: UIAdaptivePresentationControllerDelegate {
+    
+    func presentationControllerDidDismiss(_ presentationController: UIPresentationController) {
+        MeshNetworkManager.instance.delegate = self
+    }
+    
+}
+
 extension ModelViewController: ModelViewCellDelegate {
     
     func send(_ message: MeshMessage, description: String) {
@@ -387,7 +395,7 @@ private extension ModelViewController {
     ///
     /// - parameter applicationKey: The Application Key to unbind.
     func unbindApplicationKey(_ applicationKey: ApplicationKey) {
-        start("Unbinding Application Key") {
+        start("Unbinding Application Key...") {
             try? MeshNetworkManager.instance.send(ConfigModelAppUnbind(applicationKey: applicationKey, to: self.model), to: self.model)
         }
     }

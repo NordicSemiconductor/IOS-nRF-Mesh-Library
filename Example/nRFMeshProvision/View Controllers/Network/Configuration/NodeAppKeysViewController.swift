@@ -64,8 +64,9 @@ class NodeAppKeysViewController: ProgressViewController, Editable {
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "add" {
-            let destination = segue.destination as! UINavigationController
-            let viewController = destination.topViewController as! NodeAddAppKeyViewController
+            let navigationController = segue.destination as! UINavigationController
+            navigationController.presentationController?.delegate = self
+            let viewController = navigationController.topViewController as! NodeAddAppKeyViewController
             viewController.node = node
             viewController.delegate = self
         }
@@ -115,6 +116,14 @@ class NodeAppKeysViewController: ProgressViewController, Editable {
             }
         }
     }
+}
+
+extension NodeAppKeysViewController: UIAdaptivePresentationControllerDelegate {
+    
+    func presentationControllerDidDismiss(_ presentationController: UIPresentationController) {
+        MeshNetworkManager.instance.delegate = self
+    }
+    
 }
 
 private extension NodeAppKeysViewController {

@@ -17,6 +17,16 @@ class ProgressViewController: UITableViewController {
     
     // MARK: - Implementation
     
+    override func dismiss(animated flag: Bool, completion: (() -> Void)? = nil) {
+        super.dismiss(animated: flag, completion: completion)
+        
+        if #available(iOS 13.0, *) {
+            if let presentationController = self.parent?.presentationController {
+                presentationController.delegate?.presentationControllerDidDismiss?(presentationController)
+            }
+        }
+    }
+    
     /// Displays the progress alert with specified status message
     /// and calls the completion callback.
     ///

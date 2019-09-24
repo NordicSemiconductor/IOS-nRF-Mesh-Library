@@ -61,8 +61,9 @@ class NodeNetworkKeysViewController: ProgressViewController, Editable {
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "add" {
-            let destination = segue.destination as! UINavigationController
-            let viewController = destination.topViewController as! NodeAddNetworkKeyViewController
+            let navigationController = segue.destination as! UINavigationController
+            navigationController.presentationController?.delegate = self
+            let viewController = navigationController.topViewController as! NodeAddNetworkKeyViewController
             viewController.node = node
             viewController.delegate = self
         }
@@ -117,6 +118,14 @@ class NodeNetworkKeysViewController: ProgressViewController, Editable {
             deleteNetworkKeyAt(indexPath)            
         }
     }
+}
+
+extension NodeNetworkKeysViewController: UIAdaptivePresentationControllerDelegate {
+    
+    func presentationControllerDidDismiss(_ presentationController: UIPresentationController) {
+        MeshNetworkManager.instance.delegate = self
+    }
+    
 }
 
 private extension NodeNetworkKeysViewController {
