@@ -11,11 +11,19 @@ public protocol VendorMessage: MeshMessage {
     // No additional fields.
 }
 
-public protocol VendorStatusMessage: StatusMessage {
+public protocol AcknowledgedVendorMessage: VendorMessage, AcknowledgedMeshMessage {
     // No additional fields.
 }
 
 public protocol StaticVendorMessage: VendorMessage, StaticMeshMessage {
+    // No additional fields.
+}
+
+public protocol AcknowledgedStaticVendorMessage: StaticVendorMessage, StaticAcknowledgedMeshMessage {
+    // No additional fields.
+}
+
+public protocol VendorStatusMessage: StatusMessage {
     // No additional fields.
 }
 
