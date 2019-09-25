@@ -86,11 +86,15 @@ internal class NetworkManager {
     /// - parameter message:        The message to be sent.
     /// - parameter element:        The source Element.
     /// - parameter destination:    The destination address.
+    /// - parameter initialTtl:     The initial TTL (Time To Live) value of the message.
+    ///                             If `nil`, the default Node TTL will be used.
     /// - parameter applicationKey: The Application Key to sign the message.
     func send(_ message: MeshMessage,
               from element: Element, to destination: MeshAddress,
+              withTtl initialTtl: UInt8?,
               using applicationKey: ApplicationKey) {
-        accessLayer.send(message, from: element, to: destination, using: applicationKey)
+        accessLayer.send(message, from: element, to: destination,
+                         withTtl: initialTtl, using: applicationKey)
     }
     
     /// Encrypts the message with the Device Key and the first Network Key
@@ -107,8 +111,11 @@ internal class NetworkManager {
     ///
     /// - parameter configMessage: The message to be sent.
     /// - parameter destination:   The destination address.
-    func send(_ configMessage: ConfigMessage, to destination: Address) {
-        accessLayer.send(configMessage, to: destination)
+    /// - parameter initialTtl:    The initial TTL (Time To Live) value of the message.
+    ///                            If `nil`, the default Node TTL will be used.
+    func send(_ configMessage: ConfigMessage, to destination: Address,
+              withTtl initialTtl: UInt8?) {
+        accessLayer.send(configMessage, to: destination, withTtl: initialTtl)
     }
     
     /// Replies to the received message, which was sent with the given key set,

@@ -22,7 +22,7 @@ internal class UpperTransportLayer {
     /// or cancelled.
     ///
     /// This map contains queues of messages targetting each destination.
-    private var queues: [Address : [(pdu: UpperTransportPdu, networkKey: NetworkKey)]]
+    private var queues: [Address : [(pdu: UpperTransportPdu, ttl: UInt8?, networkKey: NetworkKey)]]
     
     init(_ networkManager: NetworkManager) {
         self.networkManager = networkManager
@@ -66,8 +66,10 @@ internal class UpperTransportLayer {
     /// Lower Transport Layer.
     ///
     /// - parameter pdu: The Access PDU to be sent.
+    /// - parameter initialTtl: The initial TTL (Time To Live) value of the message.
+    ///                         If `nil`, the default Node TTL will be used.
     /// - parameter keySet: The set of keys to encrypt the message with.
-    func send(_ accessPdu: AccessPdu, using keySet: KeySet) {
+    func send(_ accessPdu: AccessPdu, withTtl initialTtl: UInt8?, using keySet: KeySet) {
         // Get the current sequence number for source Element's address.
         let source = accessPdu.localElement!.unicastAddress
         let sequence = UInt32(defaults.integer(forKey: "S\(source.hex)"))
@@ -82,10 +84,10 @@ internal class UpperTransportLayer {
         if isSegmented {
             // Enquque the PDU. If the queue was empty, the PDU will be sent
             // immediately.
-            enqueue(pdu: pdu, networkKey: networkKey)
+            enqueue(pdu: pdu, initialTtl: initialTtl, networkKey: networkKey)
         } else {
             networkManager.lowerTransportLayer.send(unsegmentedUpperTransportPdu: pdu,
-                                                    usingNetworkKey: networkKey)
+                                                    withTtl: initialTtl, usingNetworkKey: networkKey)
         }
     }
     
@@ -139,10 +141,12 @@ private extension UpperTransportLayer {
     /// Enqueues the PDU to be sent using the given Network Key.
     ///
     /// - parameter pdu: The Upper Transport PDU to be sent.
+    /// - parameter initialTtl: The initial TTL (Time To Live) value of the message.
+    ///                         If `nil`, the default Node TTL will be used.
     /// - parameter networkKey: The Network Key to encrypt the PDU with.
-    func enqueue(pdu: UpperTransportPdu, networkKey: NetworkKey) {
+    func enqueue(pdu: UpperTransportPdu, initialTtl: UInt8?, networkKey: NetworkKey) {
         queues[pdu.destination] = queues[pdu.destination] ?? []
-        queues[pdu.destination]!.append((pdu: pdu, networkKey: networkKey))
+        queues[pdu.destination]!.append((pdu: pdu, ttl: initialTtl, networkKey: networkKey))
         if queues[pdu.destination]!.count == 1 {
             sendNext(to: pdu.destination)
         }
@@ -153,12 +157,12 @@ private extension UpperTransportLayer {
     /// If the queue for the given destination does not exist or is empty,
     /// this method does nothing.
     func sendNext(to destination: Address) {
-        // If another PDU has been enqueued, proceed.
-        guard let (pdu, networkKey) = queues[destination]?.first else {
+        guard let (pdu, ttl, networkKey) = queues[destination]?.first else {
             return
         }
+        // If another PDU has been enqueued, send it.
         networkManager.lowerTransportLayer.send(segmentedUpperTransportPdu: pdu,
-                                                usingNetworkKey: networkKey)
+                                                withTtl: ttl, usingNetworkKey: networkKey)
     }
     
 }

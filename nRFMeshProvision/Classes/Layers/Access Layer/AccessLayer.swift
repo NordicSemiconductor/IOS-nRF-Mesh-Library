@@ -147,10 +147,12 @@ internal class AccessLayer {
     /// - parameter element:        The source Element.
     /// - parameter destination:    The destination Address. This can be any
     ///                             valid mesh Address.
+    /// - parameter initialTtl:     The initial TTL (Time To Live) value of the message.
+    ///                             If `nil`, the default Node TTL will be used.
     /// - parameter applicationKey: The Application Key to sign the message with.
     func send(_ message: MeshMessage,
               from element: Element, to destination: MeshAddress,
-              using applicationKey: ApplicationKey) {
+              withTtl initialTtl: UInt8?, using applicationKey: ApplicationKey) {
         // Should the TID be updated?
         var m = message
         if var tranactionMessage = message as? TransactionMessage, tranactionMessage.tid == nil {
@@ -174,10 +176,10 @@ internal class AccessLayer {
         
         // Set timers for the acknowledged messages.
         if let _ = message as? AcknowledgedMeshMessage {
-            createReliableContext(for: pdu, sentFrom: element, using: keySet)
+            createReliableContext(for: pdu, sentFrom: element, withTtl: initialTtl, using: keySet)
         }
         
-        networkManager.upperTransportLayer.send(pdu, using: keySet)
+        networkManager.upperTransportLayer.send(pdu, withTtl: initialTtl, using: keySet)
     }
     
     /// Sends the ConfigMessage to the destination. The message is encrypted
@@ -186,7 +188,10 @@ internal class AccessLayer {
     ///
     /// - parameter message:     The Mesh Config Message to send.
     /// - parameter destination: The destination address. This must be a Unicast Address.
-    func send(_ message: ConfigMessage, to destination: Address) {
+    /// - parameter initialTtl:  The initial TTL (Time To Live) value of the message.
+    ///                          If `nil`, the default Node TTL will be used.
+    func send(_ message: ConfigMessage, to destination: Address,
+              withTtl initialTtl: UInt8?) {
         guard let element = meshNetwork.localProvisioner?.node?.elements.first,
               let node = meshNetwork.node(withAddress: destination),
               var networkKey = node.networkKeys.first else {
@@ -206,10 +211,10 @@ internal class AccessLayer {
             
             // Set timers for the acknowledged messages.
             if let _ = message as? AcknowledgedConfigMessage {
-                createReliableContext(for: pdu, sentFrom: element, using: keySet)
+                createReliableContext(for: pdu, sentFrom: element, withTtl: initialTtl, using: keySet)
             }
             
-            networkManager.upperTransportLayer.send(pdu, using: keySet)
+            networkManager.upperTransportLayer.send(pdu, withTtl: initialTtl, using: keySet)
         }
     }
     
@@ -243,7 +248,7 @@ internal class AccessLayer {
         
         Timer.scheduledTimer(withTimeInterval: delay, repeats: false) { _ in
             self.logger?.i(.access, "Sending \(pdu)")
-            self.networkManager.upperTransportLayer.send(pdu, using: keySet)
+            self.networkManager.upperTransportLayer.send(pdu, withTtl: nil, using: keySet)
         }
     }
     
@@ -610,7 +615,8 @@ private extension AccessLayer {
         return (UInt32(element.unicastAddress) << 16) | UInt32(destination.address)
     }
     
-    func createReliableContext(for pdu: AccessPdu, sentFrom element: Element, using keySet: KeySet) {
+    func createReliableContext(for pdu: AccessPdu, sentFrom element: Element,
+                               withTtl initialTtl: UInt8?, using keySet: KeySet) {
         guard let request = pdu.message as? AcknowledgedMeshMessage else {
             return
         }
@@ -629,7 +635,7 @@ private extension AccessLayer {
         let ack = AcknowledgmentContext(for: request, sentFrom: pdu.source, to: pdu.destination.address,
             repeatAfter: initialDelay, repeatBlock: {
                 self.logger?.d(.access, "Resending \(pdu)")
-                self.networkManager.upperTransportLayer.send(pdu, using: keySet)
+                self.networkManager.upperTransportLayer.send(pdu, withTtl: initialTtl, using: keySet)
             }, timeout: timeout, timeoutBlock: {
                 self.logger?.w(.access, "Response to \(pdu) not received (timeout)")
                 let category: LogCategory = request is AcknowledgedConfigMessage ? .foundationModel : .model

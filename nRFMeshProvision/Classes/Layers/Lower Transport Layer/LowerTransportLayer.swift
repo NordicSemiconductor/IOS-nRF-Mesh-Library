@@ -68,6 +68,10 @@ internal class LowerTransportLayer {
     ///
     /// The key is the `sequenceZero` of the message.
     var segmentTransmissionTimers: [UInt16 : BackgroundTimer]
+    /// The initial TTL values.
+    ///
+    /// The key is the `sequenceZero` of the message.
+    var segmentTtl: [UInt16 : UInt8]
     
     init(_ networkManager: NetworkManager) {
         self.networkManager = networkManager
@@ -79,6 +83,7 @@ internal class LowerTransportLayer {
         self.outgoingSegments = [:]
         self.segmentTransmissionTimers = [:]
         self.acknowledgments = [:]
+        self.segmentTtl = [:]
     }
     
     /// This method handles the received Network PDU. If needed, it will reassembly
@@ -155,14 +160,18 @@ internal class LowerTransportLayer {
     /// This method tries to send the Upper Transport Message.
     ///
     /// - parameter pdu:        The unsegmented Upper Transport PDU to be sent.
+    /// - parameter initialTtl: The initial TTL (Time To Live) value of the message.
+    ///                         If `nil`, the default Node TTL will be used.
     /// - parameter networkKey: The Network Key to be used to encrypt the message on
     ///                         on Network Layer.
-    func send(unsegmentedUpperTransportPdu pdu: UpperTransportPdu, usingNetworkKey networkKey: NetworkKey) {
+    func send(unsegmentedUpperTransportPdu pdu: UpperTransportPdu,
+              withTtl initialTtl: UInt8?,
+              usingNetworkKey networkKey: NetworkKey) {
         guard let provisionerNode = meshNetwork.localProvisioner?.node else {
             return
         }
-        /// The default TTL of the local Node.
-        let ttl = provisionerNode.defaultTTL ?? networkManager.defaultTtl
+        /// The Time To Live value.
+        let ttl = initialTtl ?? provisionerNode.defaultTTL ?? networkManager.defaultTtl
         let message = AccessMessage(fromUnsegmentedUpperTransportPdu: pdu, usingNetworkKey: networkKey)
         do {
             logger?.i(.lowerTransport, "Sending \(message)")
@@ -181,10 +190,14 @@ internal class LowerTransportLayer {
     /// This method tries to send the Upper Transport Message.
     ///
     /// - parameter pdu:        The segmented Upper Transport PDU to be sent.
+    /// - parameter initialTtl: The initial TTL (Time To Live) value of the message.
+    ///                         If `nil`, the default Node TTL will be used.
     /// - parameter networkKey: The Network Key to be used to encrypt the message on
     ///                         on Network Layer.
-    func send(segmentedUpperTransportPdu pdu: UpperTransportPdu, usingNetworkKey networkKey: NetworkKey) {
-        guard let _ = meshNetwork.localProvisioner?.node else {
+    func send(segmentedUpperTransportPdu pdu: UpperTransportPdu,
+              withTtl initialTtl: UInt8?,
+              usingNetworkKey networkKey: NetworkKey) {
+        guard let provisionerNode = meshNetwork.localProvisioner?.node else {
             return
         }
         /// Last 13 bits of the sequence number are known as seqZero.
@@ -198,7 +211,8 @@ internal class LowerTransportLayer {
             outgoingSegments[sequenceZero]![i] = SegmentedAccessMessage(fromUpperTransportPdu: pdu,
                                                                         usingNetworkKey: networkKey, offset: UInt8(i))
         }
-        sendSegments(for: sequenceZero)
+        segmentTtl[sequenceZero] = initialTtl ?? provisionerNode.defaultTTL ?? networkManager.defaultTtl
+        sendSegments(for: sequenceZero, limit: networkManager.retransmissionLimit)
     }
     
     /// Cancels sending segmented Upper Transoprt PDU.
@@ -210,6 +224,7 @@ internal class LowerTransportLayer {
         
         logger?.d(.lowerTransport, "Cancelling sending segments with seqZero: \(sequenceZero)")
         outgoingSegments.removeValue(forKey: sequenceZero)
+        segmentTtl.removeValue(forKey: sequenceZero)
         segmentTransmissionTimers.removeValue(forKey: sequenceZero)?.invalidate()
     }
     
@@ -366,7 +381,7 @@ private extension LowerTransportLayer {
             networkManager.upperTransportLayer.lowerTransportLayerDidSend(segmentedUpperTransportPduTo: segment.destination)
         } else {
             // Else, send again all packets that were not acknowledged.
-            sendSegments(for: ack.sequenceZero)
+            sendSegments(for: ack.sequenceZero, limit: networkManager.retransmissionLimit)
         }
     }
     
@@ -398,13 +413,12 @@ private extension LowerTransportLayer {
     /// `sequenceZero` key.
     ///
     /// - parameter sequenceZero: The key to get segments from the map.
-    func sendSegments(for sequenceZero: UInt16, limit: Int? = nil) {
+    /// - parameter limit:        Maximum number of retransmissions.
+    func sendSegments(for sequenceZero: UInt16, limit: Int) {
         guard let segments = outgoingSegments[sequenceZero], segments.count > 0,
-              let provisionerNode = meshNetwork.localProvisioner?.node else {
+              let ttl = segmentTtl[sequenceZero] else {
             return
         }
-        /// The default TTL of the local Node.
-        let ttl = provisionerNode.defaultTTL ?? networkManager.defaultTtl
         /// Segment Acknowledgment Message is expected when the message is targetting
         /// a Unicast Address.
         var ackExpected: Bool?
@@ -465,12 +479,11 @@ private extension LowerTransportLayer {
         
         segmentTransmissionTimers.removeValue(forKey: sequenceZero)?.invalidate()
         if ackExpected ?? false, let segments = outgoingSegments[sequenceZero], segments.hasMore {
-            let count = limit ?? networkManager.retransmissionLimit
-            if count > 0 {
+            if limit > 0 {
                 let interval = networkManager.transmissionTimerInteral(ttl)
                 segmentTransmissionTimers[sequenceZero] =
                     BackgroundTimer.scheduledTimer(withTimeInterval: interval, repeats: false) { _ in
-                        self.sendSegments(for: sequenceZero, limit: count - 1)
+                        self.sendSegments(for: sequenceZero, limit: limit - 1)
                     }
             } else {
                 // A limit has been reached and some segments were not ACK.
