@@ -102,7 +102,8 @@ class ProxyFilterViewController: ProgressViewController, Editable {
 extension ProxyFilterViewController: UIAdaptivePresentationControllerDelegate {
     
     func presentationControllerDidDismiss(_ presentationController: UIPresentationController) {
-        MeshNetworkManager.bearer.delegate = self
+        MeshNetworkManager.instance.proxyFilter?.delegate = self
+        tableView.reloadSections(.addresses, with: .automatic)
     }
     
 }
