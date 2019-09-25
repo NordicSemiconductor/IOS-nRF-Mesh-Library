@@ -31,7 +31,7 @@ class NetworkConnection: NSObject, Bearer {
     let meshNetwork: MeshNetwork
     /// The list of connected GATT Proxies.
     var proxies: [GattBearer] = []
-    var buffer: [(data: Data, type: PduType)] = []
+    /// A flag set to `true` when any of the underlying bearers is open.
     var isOpen: Bool = false
     
     weak var delegate: BearerDelegate?
@@ -87,9 +87,11 @@ class NetworkConnection: NSObject, Bearer {
         guard supports(type) else {
             throw BearerError.pduTypeNotSupported
         }
+        // Find the first connected proxy. This may be modified to find
+        // the closes one, or, if needed, the message can be sent to all
+        // connected nodes.
         guard let proxy = proxies.first(where: { $0.isOpen }) else {
-            buffer.append((data: data, type: type))
-            return
+            throw BearerError.bearerClosed
         }
         try proxy.send(data, ofType: type)
     }
@@ -153,12 +155,6 @@ extension NetworkConnection: GattBearerDelegate, BearerDataDelegate {
         }
         isOpen = true
         delegate?.bearerDidOpen(self)
-        
-        // If any packets were buffered, send them to the first connected Proxy.
-        buffer.forEach {
-            try? bearer.send($0.data, ofType: $0.type)
-        }
-        buffer.removeAll()
     }
     
     func bearer(_ bearer: Bearer, didClose error: Error?) {
