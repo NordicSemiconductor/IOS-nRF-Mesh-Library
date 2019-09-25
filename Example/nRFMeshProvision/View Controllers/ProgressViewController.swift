@@ -14,6 +14,7 @@ class ProgressViewController: UITableViewController {
     // MARK: - Properties
     
     private var alert: UIAlertController?
+    private var messageId: MessageHandle?
     
     // MARK: - Implementation
     
@@ -30,6 +31,7 @@ class ProgressViewController: UITableViewController {
     /// Displays the progress alert with specified status message
     /// and calls the completion callback.
     ///
+    /// - parameter message: Message to be displayed to the user.
     /// - parameter completion: A completion handler.
     func start(_ message: String, completion: @escaping (() -> Void)) {
         DispatchQueue.main.async {
@@ -37,14 +39,51 @@ class ProgressViewController: UITableViewController {
                 self.alert = UIAlertController(title: "Status", message: message, preferredStyle: .alert)
                 self.alert!.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: {
                     _ in self.alert = nil
-                    self.refreshControl?.endRefreshing()
                 }))
                 self.present(self.alert!, animated: true)
             } else {
                 self.alert?.message = message
             }
-        
+            
             completion()
+        }
+    }
+    
+    /// Displays the progress alert with specified status message
+    /// and calls the completion callback.
+    ///
+    /// - parameter message: Message to be displayed to the user.
+    /// - parameter completion: A completion handler.
+    func start(_ message: String, completion: @escaping (() throws -> MessageHandle)) {
+        DispatchQueue.main.async {
+            do {
+                self.messageId = try completion()
+
+                if self.alert == nil {
+                    self.alert = UIAlertController(title: "Status", message: message, preferredStyle: .alert)
+                    self.alert!.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { _ in
+                        self.messageId?.cancel()
+                        self.alert = nil
+                        self.refreshControl?.endRefreshing()
+                    }))
+                    self.present(self.alert!, animated: true)
+                } else {
+                    self.alert?.message = message
+                }
+            } catch {
+                let completition: () -> Void = {
+                    self.alert = UIAlertController(title: "Error", message: error.localizedDescription, preferredStyle: .alert)
+                    self.alert!.addAction(UIAlertAction(title: "OK", style: .cancel, handler: { _ in
+                        self.alert = nil
+                        self.refreshControl?.endRefreshing()
+                    }))
+                }
+                if self.alert != nil {
+                    self.alert?.dismiss(animated: true, completion: completition)
+                } else {
+                    completition()
+                }
+            }
         }
     }
     

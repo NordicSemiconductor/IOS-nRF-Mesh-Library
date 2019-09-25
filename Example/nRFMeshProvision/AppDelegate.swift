@@ -19,10 +19,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication,
                      didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        // Create the main MeshNetworkManager instance.
+        // Create the main MeshNetworkManager instance and customize
+        // configuration values.
         meshNetworkManager = MeshNetworkManager()
         meshNetworkManager.acknowledgmentTimerInterval = 0.600
         meshNetworkManager.transmissionTimerInteral = 0.600
+        meshNetworkManager.retransmissionLimit = 2
         meshNetworkManager.logger = self
         
         // Try loading the saved configuration.

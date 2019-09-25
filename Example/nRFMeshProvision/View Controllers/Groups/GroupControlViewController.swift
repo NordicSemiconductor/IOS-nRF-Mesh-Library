@@ -160,7 +160,7 @@ extension GroupControlViewController: ModelGroupViewCellDelegate {
     
     func send(_ message: MeshMessage, description: String, using applicationKey: ApplicationKey) {
         start(description) {
-            try? MeshNetworkManager.instance.send(message, to: self.group, using: applicationKey)
+            return try MeshNetworkManager.instance.send(message, to: self.group, using: applicationKey)
         }
     }
     

@@ -333,13 +333,13 @@ extension ModelViewController: ModelViewCellDelegate {
     
     func send(_ message: MeshMessage, description: String) {
         start(description) {
-            try? MeshNetworkManager.instance.send(message, to: self.model)
+            return try MeshNetworkManager.instance.send(message, to: self.model)
         }
     }
     
     func send(_ message: ConfigMessage, description: String) {
         start(description) {
-            try? MeshNetworkManager.instance.send(message, to: self.model)
+            return try MeshNetworkManager.instance.send(message, to: self.model)
         }
     }
     
@@ -362,31 +362,26 @@ private extension ModelViewController {
     
     func reloadBindings() {
         start("Reading Bound Application Keys...") {
-            guard let message: ConfigMessage =
+            let message: ConfigMessage =
                 ConfigSIGModelAppGet(of: self.model) ??
-                ConfigVendorModelAppGet(of: self.model) else {
-                    self.done()
-                    return
-            }
-            try? MeshNetworkManager.instance.send(message, to: self.model)
+                ConfigVendorModelAppGet(of: self.model)!
+            return try MeshNetworkManager.instance.send(message, to: self.model)
         }
     }
     
     func reloadPublication() {
         start("Reading Publication settings...") {
-            try? MeshNetworkManager.instance.send(ConfigModelPublicationGet(for: self.model), to: self.model)
+            let message = ConfigModelPublicationGet(for: self.model)
+            return try MeshNetworkManager.instance.send(message, to: self.model)
         }
     }
     
     func reloadSubscriptions() {
         start("Reading Subscriptions...") {
-            guard let message: ConfigMessage =
+            let message: ConfigMessage =
                 ConfigSIGModelSubscriptionGet(of: self.model) ??
-                ConfigVendorModelSubscriptionGet(of: self.model) else {
-                    self.done()
-                    return
-            }
-            try? MeshNetworkManager.instance.send(message, to: self.model)
+                ConfigVendorModelSubscriptionGet(of: self.model)!
+            return try MeshNetworkManager.instance.send(message, to: self.model)
         }
     }
     
@@ -396,14 +391,16 @@ private extension ModelViewController {
     /// - parameter applicationKey: The Application Key to unbind.
     func unbindApplicationKey(_ applicationKey: ApplicationKey) {
         start("Unbinding Application Key...") {
-            try? MeshNetworkManager.instance.send(ConfigModelAppUnbind(applicationKey: applicationKey, to: self.model), to: self.model)
+            let message = ConfigModelAppUnbind(applicationKey: applicationKey, to: self.model)
+            return try MeshNetworkManager.instance.send(message, to: self.model)
         }
     }
     
     /// Removes the publicaton from the model.
     func removePublication() {
         start("Removing Publication...") {
-            try? MeshNetworkManager.instance.send(ConfigModelPublicationSet(disablePublicationFor: self.model), to: self.model)
+            let message = ConfigModelPublicationSet(disablePublicationFor: self.model)
+            return try MeshNetworkManager.instance.send(message, to: self.model)
         }
     }
     
@@ -412,12 +409,10 @@ private extension ModelViewController {
     /// - parameter group: The Group to be removed from subscriptions.
     func unsubscribe(from group: Group) {
         start("Unsubscribing...") {
-            guard let message: ConfigMessage =
+            let message: ConfigMessage =
                 ConfigModelSubscriptionDelete(group: group, from: self.model) ??
-                ConfigModelSubscriptionVirtualAddressDelete(group: group, from: self.model) else {
-                    return
-            }
-            try? MeshNetworkManager.instance.send(message, to: self.model)
+                ConfigModelSubscriptionVirtualAddressDelete(group: group, from: self.model)!
+            return try MeshNetworkManager.instance.send(message, to: self.model)
         }
     }
     

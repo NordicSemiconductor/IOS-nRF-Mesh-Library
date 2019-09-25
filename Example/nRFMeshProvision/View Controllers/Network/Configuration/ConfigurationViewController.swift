@@ -361,26 +361,30 @@ private extension ConfigurationViewController {
     
     @objc func getCompositionData() {
         start("Requesting Composition Data...") {
-            try? MeshNetworkManager.instance.send(ConfigCompositionDataGet(), to: self.node)
+            let message = ConfigCompositionDataGet()
+            return try MeshNetworkManager.instance.send(message, to: self.node)
         }
     }
     
     func getTtl() {
         start("Requesting default TTL...") {
-            try? MeshNetworkManager.instance.send(ConfigDefaultTtlGet(), to: self.node)
+            let message = ConfigDefaultTtlGet()
+            return try MeshNetworkManager.instance.send(message, to: self.node)
         }
     }
     
     func setTtl(_ ttl: UInt8) {
         start("Setting TTL to \(ttl)...") {
-            try? MeshNetworkManager.instance.send(ConfigDefaultTtlSet(ttl: ttl), to: self.node)
+            let message = ConfigDefaultTtlSet(ttl: ttl)
+            return try MeshNetworkManager.instance.send(message, to: self.node)
         }
     }
     
     /// Sends a message to the node that will reset its state to unprovisioned.
     func resetNode() {
         start("Resetting node...") {
-            try? MeshNetworkManager.instance.send(ConfigNodeReset(), to: self.node)
+            let message = ConfigNodeReset()
+            return try MeshNetworkManager.instance.send(message, to: self.node)
         }
     }
     

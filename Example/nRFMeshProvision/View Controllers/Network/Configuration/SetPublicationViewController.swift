@@ -330,13 +330,10 @@ private extension SetPublicationViewController {
                                   periodSteps: self.periodSteps, periodResolution: self.periodResolution,
                                   retransmit: Publish.Retransmit(publishRetransmitCount: self.retransmissionCount,
                                                                  intervalSteps: self.retransmissionIntervalSteps))
-            guard let message: ConfigMessage =
+            let message: ConfigMessage =
                 ConfigModelPublicationSet(publish, to: self.model) ??
-                ConfigModelPublicationVirtualAddressSet(publish, to: self.model) else {
-                    self.done()
-                    return
-            }
-            try? MeshNetworkManager.instance.send(message, to: self.model)
+                ConfigModelPublicationVirtualAddressSet(publish, to: self.model)!
+            return try MeshNetworkManager.instance.send(message, to: self.model)
         }
     }
     

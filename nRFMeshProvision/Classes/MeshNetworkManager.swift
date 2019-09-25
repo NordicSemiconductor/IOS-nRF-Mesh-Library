@@ -76,7 +76,7 @@ public class MeshNetworkManager {
     /// The limit may be decreased with increasing of `transmissionTimerInterval`
     /// as the target Node has more time to reply with the Segment
     /// Acknowledgment message.
-    public var retransmissionLimit: Int = 10
+    public var retransmissionLimit: Int = 5
     /// If the Element does not receive a response within a period of time known
     /// as the acknowledged message timeout, then the Element may consider the
     /// message has not been delivered, without sending any additional messages.
@@ -284,9 +284,10 @@ public extension MeshNetworkManager {
     ///           the local Node does not have configuration capabilities
     ///           (no Unicast Address assigned), or the given local Element
     ///           does not belong to the local Node.
+    /// - returns: Message handle that can be used to cancel sending.
     func send(_ message: MeshMessage,
               from localElement: Element? = nil, to destination: MeshAddress,
-              using applicationKey: ApplicationKey) throws {
+              using applicationKey: ApplicationKey) throws -> MessageHandle {
         guard let networkManager = networkManager, let meshNetwork = meshNetwork else {
             print("Error: Mesh Network not created")
             throw MeshNetworkError.noNetwork
@@ -303,6 +304,8 @@ public extension MeshNetworkManager {
         queue.async {
             networkManager.send(message, from: source, to: destination, using: applicationKey)
         }
+        return MessageHandle(for: message, sentFrom: source.unicastAddress,
+                         to: destination.address, using: self)
     }
     
     /// Encrypts the message with the Application Key and a Network Key
@@ -321,10 +324,11 @@ public extension MeshNetworkManager {
     ///           the local Node does not have configuration capabilities
     ///           (no Unicast Address assigned), or the given local Element
     ///           does not belong to the local Node.
+    /// - returns: Message handle that can be used to cancel sending.
     func send(_ message: MeshMessage,
               from localElement: Element? = nil, to group: Group,
-              using applicationKey: ApplicationKey) throws {
-        try send(message, from: localElement, to: group.address, using: applicationKey)
+              using applicationKey: ApplicationKey) throws -> MessageHandle {
+        return try send(message, from: localElement, to: group.address, using: applicationKey)
     }
     
     /// Encrypts the message with the first Application Key bound to the given
@@ -346,8 +350,9 @@ public extension MeshNetworkManager {
     ///           the local Node does not have configuration capabilities
     ///           (no Unicast Address assigned), or the given local Element
     ///           does not belong to the local Node.
+    /// - returns: Message handle that can be used to cancel sending.
     func send(_ message: MeshMessage,
-              from localElement: Element? = nil, to model: Model) throws {
+              from localElement: Element? = nil, to model: Model) throws -> MessageHandle {
         guard let element = model.parentElement else {
             print("Error: Element does not belong to a Node")
             throw AccessError.invalidDestination
@@ -358,8 +363,8 @@ public extension MeshNetworkManager {
             print("Error: Model is not bound to any Application Key")
             throw AccessError.modelNotBoundToAppKey
         }
-        try send(message, from: localElement, to: MeshAddress(element.unicastAddress),
-                 using: applicationKey)
+        return try send(message, from: localElement, to: MeshAddress(element.unicastAddress),
+                        using: applicationKey)
     }
     
     /// Encrypts the message with the common Application Key bound to both given
@@ -380,8 +385,9 @@ public extension MeshNetworkManager {
     ///           the local Node does not have configuration capabilities
     ///           (no Unicast Address assigned), or the given local Element
     ///           does not belong to the local Node.
+    /// - returns: Message handle that can be used to cancel sending.
     func send(_ message: MeshMessage,
-              from localModel: Model, to model: Model) throws {
+              from localModel: Model, to model: Model) throws -> MessageHandle {
         guard let meshNetwork = meshNetwork else {
             print("Error: Mesh Network not created")
             throw MeshNetworkError.noNetwork
@@ -399,7 +405,8 @@ public extension MeshNetworkManager {
             print("Error: Models are not bound to any common Application Key")
             throw AccessError.modelNotBoundToAppKey
         }
-        try send(message, from: localElement, to: MeshAddress(element.unicastAddress), using: applicationKey)
+        return try send(message, from: localElement, to: MeshAddress(element.unicastAddress),
+                        using: applicationKey)
     }
     
     /// Sends Configuration Message to the Node with given destination Address.
@@ -417,13 +424,14 @@ public extension MeshNetworkManager {
     ///           is not a Unicast Address or it belongs to an unknown Node.
     ///           Error `AccessError.cannotDelete` is sent when trying to
     ///           delete the last Network Key on the device.
-    func send(_ message: ConfigMessage, to destination: Address) throws {
+    /// - returns: Message handle that can be used to cancel sending.
+    func send(_ message: ConfigMessage, to destination: Address) throws -> MessageHandle {
         guard let networkManager = networkManager, let meshNetwork = meshNetwork else {
             print("Error: Mesh Network not created")
             throw MeshNetworkError.noNetwork
         }
         guard let localProvisioner = meshNetwork.localProvisioner,
-              localProvisioner.hasConfigurationCapabilities else {
+              let source = localProvisioner.unicastAddress else {
             print("Error: Local Provisioner has no Unicast Address assigned")
             throw AccessError.invalidSource
         }
@@ -448,6 +456,8 @@ public extension MeshNetworkManager {
         queue.async {
             networkManager.send(message, to: destination)
         }
+        return MessageHandle(for: message, sentFrom: source,
+                         to: destination, using: self)
     }
     
     /// Sends Configuration Message to the given Node.
@@ -461,8 +471,9 @@ public extension MeshNetworkManager {
     ///           the local Node does not have configuration capabilities
     ///           (no Unicast Address assigned), or the destination address
     ///           is not a Unicast Address or it belongs to an unknown Node.
-    func send(_ message: ConfigMessage, to node: Node) throws {
-        try send(message, to: node.unicastAddress)
+    /// - returns: Message handle that can be used to cancel sending.
+    func send(_ message: ConfigMessage, to node: Node) throws -> MessageHandle {
+        return try send(message, to: node.unicastAddress)
     }
     
     /// Sends Configuration Message to the given Node.
@@ -476,12 +487,13 @@ public extension MeshNetworkManager {
     ///           the local Node does not have configuration capabilities
     ///           (no Unicast Address assigned), or the target Element does not
     ///           belong to any known Node.
-    func send(_ message: ConfigMessage, to element: Element) throws {
+    /// - returns: Message handle that can be used to cancel sending.
+    func send(_ message: ConfigMessage, to element: Element) throws -> MessageHandle {
         guard let node = element.parentNode else {
             print("Error: Element does not belong to a Node")
             throw AccessError.invalidDestination
         }
-        try send(message, to: node)
+        return try send(message, to: node)
     }
     
     /// Sends Configuration Message to the given Node.
@@ -495,12 +507,13 @@ public extension MeshNetworkManager {
     ///           the local Node does not have configuration capabilities
     ///           (no Unicast Address assigned), or the target Element does
     ///           not belong to any known Node.
-    func send(_ message: ConfigMessage, to model: Model) throws {
+    /// - returns: Message handle that can be used to cancel sending.
+    func send(_ message: ConfigMessage, to model: Model) throws -> MessageHandle {
         guard let element = model.parentElement else {
             print("Error: Model does not belong to an Element")
             throw AccessError.invalidDestination
         }
-        try send(message, to: element)
+        return try send(message, to: element)
     }
     
     /// Sends the Proxy Configuration Message to the connected Proxy Node.
@@ -518,6 +531,19 @@ public extension MeshNetworkManager {
         }
         queue.async {
             networkManager.send(message)
+        }
+    }
+    
+    /// Cancels sending the message with the given identifier.
+    ///
+    /// - parameter messageId: The message identifier.
+    func cancel(_ messageId: MessageHandle) throws {
+        guard let networkManager = networkManager else {
+            print("Error: Mesh Network not created")
+            throw MeshNetworkError.noNetwork
+        }
+        queue.async {
+            networkManager.cancel(messageId)
         }
     }
     

@@ -201,6 +201,18 @@ internal class LowerTransportLayer {
         sendSegments(for: sequenceZero)
     }
     
+    /// Cancels sending segmented Upper Transoprt PDU.
+    ///
+    /// - parameter pdu: The Upper Transport PDU
+    func cancelSending(segmentedUpperTransportPdu pdu: UpperTransportPdu) {
+        /// Last 13 bits of the sequence number are known as seqZero.
+        let sequenceZero = UInt16(pdu.sequence & 0x1FFF)
+        
+        logger?.d(.lowerTransport, "Cancelling sending segments with seqZero: \(sequenceZero)")
+        outgoingSegments.removeValue(forKey: sequenceZero)
+        segmentTransmissionTimers.removeValue(forKey: sequenceZero)?.invalidate()
+    }
+    
 }
 
 private extension UInt32 {
@@ -340,18 +352,18 @@ private extension LowerTransportLayer {
         }
         
         // Clear all acknowledged segments.
-        for index in 0..<outgoingSegments[ack.sequenceZero]!.count {
+        for index in 0..<(outgoingSegments[ack.sequenceZero]?.count ?? 0) {
             if ack.isSegmentReceived(index) {
-                outgoingSegments[ack.sequenceZero]![index] = nil
+                outgoingSegments[ack.sequenceZero]?[index] = nil
             }
         }
         
         // If all the segments were acknowledged, notify the manager.
-        if !outgoingSegments[ack.sequenceZero]!.hasMore {
+        if outgoingSegments[ack.sequenceZero]?.hasMore == false {
             outgoingSegments.removeValue(forKey: ack.sequenceZero)
             networkManager.notifyAbout(deliveringMessage: segment.message!,
                                        from: segment.localElement!, to: segment.destination)
-            networkManager.upperTransportLayer.lowerTransportLayerDidSend(segmentedUpperTransportPduTo:  segment.destination)
+            networkManager.upperTransportLayer.lowerTransportLayerDidSend(segmentedUpperTransportPduTo: segment.destination)
         } else {
             // Else, send again all packets that were not acknowledged.
             sendSegments(for: ack.sequenceZero)
@@ -386,7 +398,7 @@ private extension LowerTransportLayer {
     /// `sequenceZero` key.
     ///
     /// - parameter sequenceZero: The key to get segments from the map.
-    func sendSegments(for sequenceZero: UInt16, limit: Int = 10) {
+    func sendSegments(for sequenceZero: UInt16, limit: Int? = nil) {
         guard let segments = outgoingSegments[sequenceZero], segments.count > 0,
               let provisionerNode = meshNetwork.localProvisioner?.node else {
             return
@@ -453,11 +465,12 @@ private extension LowerTransportLayer {
         
         segmentTransmissionTimers.removeValue(forKey: sequenceZero)?.invalidate()
         if ackExpected ?? false, let segments = outgoingSegments[sequenceZero], segments.hasMore {
-            if limit > 0 {
+            let count = limit ?? networkManager.retransmissionLimit
+            if count > 0 {
                 let interval = networkManager.transmissionTimerInteral(ttl)
                 segmentTransmissionTimers[sequenceZero] =
                     BackgroundTimer.scheduledTimer(withTimeInterval: interval, repeats: false) { _ in
-                        self.sendSegments(for: sequenceZero, limit: limit - 1)
+                        self.sendSegments(for: sequenceZero, limit: count - 1)
                     }
             } else {
                 // A limit has been reached and some segments were not ACK.

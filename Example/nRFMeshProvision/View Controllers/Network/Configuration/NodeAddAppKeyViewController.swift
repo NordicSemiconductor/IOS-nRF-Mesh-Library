@@ -29,7 +29,7 @@ class NodeAddAppKeyViewController: ProgressViewController {
         }
         let selectedAppKey = keys[selectedIndexPath.row]
         start("Adding Application Key...") {
-            try? MeshNetworkManager.instance.send(ConfigAppKeyAdd(applicationKey: selectedAppKey), to: self.node)
+            return try MeshNetworkManager.instance.send(ConfigAppKeyAdd(applicationKey: selectedAppKey), to: self.node)
         }
     }
     

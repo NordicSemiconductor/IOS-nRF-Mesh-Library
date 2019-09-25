@@ -14,6 +14,7 @@ class ProgressCollectionViewController: UICollectionViewController {
     // MARK: - Properties
     
     private var alert: UIAlertController?
+    private var messageId: MessageHandle?
     
     // MARK: - Implementation
     
@@ -30,25 +31,42 @@ class ProgressCollectionViewController: UICollectionViewController {
     /// Displays the progress alert with specified status message
     /// and calls the completion callback.
     ///
+    /// - parameter message: Message to be displayed to the user.
     /// - parameter completion: A completion handler.
-    func start(_ message: String, completion: @escaping (() -> Void)) {
+    func start(_ message: String, completion: @escaping (() throws -> MessageHandle)) {
         DispatchQueue.main.async {
-            if self.alert == nil {
-                self.alert = UIAlertController(title: "Status", message: message, preferredStyle: .alert)
-                self.alert!.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: {
-                    _ in self.alert = nil
-                }))
-                self.present(self.alert!, animated: true)
-            } else {
-                self.alert?.message = message
+            do {
+                self.messageId = try completion()
+
+                if self.alert == nil {
+                    self.alert = UIAlertController(title: "Status", message: message, preferredStyle: .alert)
+                    self.alert!.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { _ in
+                        self.messageId?.cancel()
+                        self.alert = nil
+                    }))
+                    self.present(self.alert!, animated: true)
+                } else {
+                    self.alert?.message = message
+                }
+            } catch {
+                let completition: () -> Void = {
+                    self.alert = UIAlertController(title: "Error", message: error.localizedDescription, preferredStyle: .alert)
+                    self.alert!.addAction(UIAlertAction(title: "OK", style: .cancel, handler: { _ in
+                        self.alert = nil
+                    }))
+                }
+                if self.alert != nil {
+                    self.alert?.dismiss(animated: true, completion: completition)
+                } else {
+                    completition()
+                }
             }
-            
-            completion()
         }
     }
     
     /// This method dismisses the progress alert dialog.
     ///
+    /// - parameter message: Message to be displayed to the user.
     /// - parameter completion: An optional completion handler.
     func done(completion: (() -> Void)? = nil) {
         if let alert = alert {

@@ -94,13 +94,10 @@ private extension SubscribeViewController {
         }
         let group = groups[selectedIndexPath.row]
         start("Subscribing...") {
-            guard let message: ConfigMessage =
+            let message: ConfigMessage =
                 ConfigModelSubscriptionAdd(group: group, to: self.model) ??
-                ConfigModelSubscriptionVirtualAddressAdd(group: group, to: self.model) else {
-                    self.done()
-                    return
-            }
-            try? MeshNetworkManager.instance.send(message, to: self.model)
+                ConfigModelSubscriptionVirtualAddressAdd(group: group, to: self.model)!
+            return try MeshNetworkManager.instance.send(message, to: self.model)
         }
     }
     

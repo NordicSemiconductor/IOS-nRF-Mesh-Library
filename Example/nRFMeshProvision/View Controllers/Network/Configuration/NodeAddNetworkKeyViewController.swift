@@ -29,7 +29,8 @@ class NodeAddNetworkKeyViewController: ProgressViewController {
         }
         let selectedNetworkKey = keys[selectedIndexPath.row]
         start("Adding Network Key...") {
-            try? MeshNetworkManager.instance.send(ConfigNetKeyAdd(networkKey: selectedNetworkKey), to: self.node)
+            let message = ConfigNetKeyAdd(networkKey: selectedNetworkKey)
+            return try MeshNetworkManager.instance.send(message, to: self.node)
         }
     }
     

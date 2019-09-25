@@ -110,12 +110,11 @@ class NodeNetworkKeysViewController: ProgressViewController, Editable {
         // Show confirmation dialog only when the key is bound to an Application Key.
         if node.hasApplicationKeyBoundTo(networkKey) {
             confirm(title: "Remove Key", message: "The selected key is bound to one or more Application Keys in the Node. When removed, those keys will also be removed and all models bound to them will be unbound, which may cause them to stop working.") { _ in
-                self.start("Deleting Network Key...") {
-                    self.deleteNetworkKeyAt(indexPath)
-                }
+                self.deleteNetworkKey(networkKey)
             }
         } else {
-            deleteNetworkKeyAt(indexPath)            
+            // Otherwise, just try removing it.
+            deleteNetworkKey(networkKey)
         }
     }
 }
@@ -132,15 +131,15 @@ private extension NodeNetworkKeysViewController {
     
     @objc func readKeys(_ sender: Any) {
         start("Reading Network Keys...") {
-            try? MeshNetworkManager.instance.send(ConfigNetKeyGet(), to: self.node)
+            let message = ConfigNetKeyGet()
+            return try MeshNetworkManager.instance.send(message, to: self.node)
         }
     }
     
-    func deleteNetworkKeyAt(_ indexPath: IndexPath) {
-        // Otherwise, just try removing it.
+    func deleteNetworkKey(_ networkKey: NetworkKey) {
         start("Deleting Network Key...") {
-            let networkKey = self.node.networkKeys[indexPath.row]
-            try? MeshNetworkManager.instance.send(ConfigNetKeyDelete(networkKey: networkKey), to: self.node)
+            let message = ConfigNetKeyDelete(networkKey: networkKey)
+            return try MeshNetworkManager.instance.send(message, to: self.node)
         }
     }
     

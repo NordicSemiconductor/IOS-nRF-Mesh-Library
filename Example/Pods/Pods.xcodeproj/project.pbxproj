@@ -250,6 +250,7 @@
 		52F6AD7022BA172900F0D7DF /* ConfigNodeReset.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52F6AD6F22BA172900F0D7DF /* ConfigNodeReset.swift */; };
 		52F6AD7222BA17E100F0D7DF /* ConfigNodeResetStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52F6AD7122BA17E100F0D7DF /* ConfigNodeResetStatus.swift */; };
 		52F6AD7422BA3BCA00F0D7DF /* CompanyIdentifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52F6AD7322BA3BCA00F0D7DF /* CompanyIdentifier.swift */; };
+		52FE1FE9233B4B85002B377F /* MessageHandle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52FE1FE8233B4B85002B377F /* MessageHandle.swift */; };
 		76AD7DBB6F78223071CAB41C3AE42393 /* MeshConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 045D235D97EFC49E1F2183DAE067E868 /* MeshConstants.swift */; };
 		931A62151708A6FCE40E1EE898EEB7A5 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CB4607EFCA7C5F75397649E792E2AFCB /* Foundation.framework */; };
 		960FB84461FE8AC810DBA945C761C9ED /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CB4607EFCA7C5F75397649E792E2AFCB /* Foundation.framework */; };
@@ -543,6 +544,7 @@
 		52F6AD6F22BA172900F0D7DF /* ConfigNodeReset.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigNodeReset.swift; sourceTree = "<group>"; };
 		52F6AD7122BA17E100F0D7DF /* ConfigNodeResetStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigNodeResetStatus.swift; sourceTree = "<group>"; };
 		52F6AD7322BA3BCA00F0D7DF /* CompanyIdentifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompanyIdentifier.swift; sourceTree = "<group>"; };
+		52FE1FE8233B4B85002B377F /* MessageHandle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageHandle.swift; sourceTree = "<group>"; };
 		573AFBF1BDAB242832B4146C926392C7 /* blowfish.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = blowfish.h; path = "include-ios/openssl/blowfish.h"; sourceTree = "<group>"; };
 		575A90FFDDE767E0A52A6ABDC699E9B5 /* dsa.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = dsa.h; path = "include-ios/openssl/dsa.h"; sourceTree = "<group>"; };
 		57E13D43B8F7A9E973DAAF745860C9AA /* Pods-nRFMeshProvision_Tests-acknowledgements.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-nRFMeshProvision_Tests-acknowledgements.plist"; sourceTree = "<group>"; };
@@ -1014,6 +1016,7 @@
 			children = (
 				52DF5D9A229D78CA00C297C1 /* NetworkManager.swift */,
 				52547F152327C7570002AA7B /* KeySet.swift */,
+				52FE1FE8233B4B85002B377F /* MessageHandle.swift */,
 				52DF5D94229D6B0900C297C1 /* Network Layer */,
 				52DF5D95229D6B2300C297C1 /* Lower Transport Layer */,
 				52DF5D9C229D7C7800C297C1 /* Upper Transport Layer */,
@@ -1490,6 +1493,7 @@
 				529B7614224A6D47008F1CE7 /* Address.swift in Sources */,
 				52A9C1962310027D0036792A /* GenericDefaultTransitionTimeStatus.swift in Sources */,
 				523F776222C4DEE60030EA6A /* ConfigNetKeyList.swift in Sources */,
+				52FE1FE9233B4B85002B377F /* MessageHandle.swift in Sources */,
 				5283529E2282CCE60097B949 /* Provisioner+Ranges.swift in Sources */,
 				528352402271EF770097B949 /* MeshNetwork+Ranges.swift in Sources */,
 				523F775E22C4CE9A0030EA6A /* ConfigNetKeyStatus.swift in Sources */,

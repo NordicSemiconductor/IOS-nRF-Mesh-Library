@@ -146,9 +146,16 @@ internal class NetworkManager {
     
     /// Sends the Proxy Configuration message to the connected Proxy Node.
     ///
-    /// - parameter proxyConfigurationMessage: The message to be sent.
+    /// - parameter message: The message to be sent.
     func send(_ message: ProxyConfigurationMessage) {
         networkLayer.send(proxyConfigurationMessage: message)
+    }
+    
+    /// Cancels sending the message with the given handler.
+    ///
+    /// - parameter handler: The message identifier.
+    func cancel(_ handler: MessageHandle) {
+        accessLayer.cancel(handler)
     }
     
     // MARK: - Callbacks

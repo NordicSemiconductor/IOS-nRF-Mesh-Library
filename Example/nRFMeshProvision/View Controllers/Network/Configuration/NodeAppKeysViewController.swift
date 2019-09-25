@@ -105,15 +105,11 @@ class NodeAppKeysViewController: ProgressViewController, Editable {
         // Show confirmation dialog only when the key is bound to some Models.
         if node.hasModelBoundTo(applicationKey) {
             confirm(title: "Remove Key", message: "The selected key is bound to one or more models in the Node. When removed, it will be unbound automatically, and the models may stop working.") { _ in
-                self.start("Deleting Application Key...") {
-                    self.deleteApplicationKeyAt(indexPath)
-                }
+                self.delete(applicationKey: applicationKey)
             }
         } else {
             // Otherwise, just try removing it.
-            start("Deleting Application Key...") {
-                self.deleteApplicationKeyAt(indexPath)
-            }
+            delete(applicationKey: applicationKey)
         }
     }
 }
@@ -129,14 +125,21 @@ extension NodeAppKeysViewController: UIAdaptivePresentationControllerDelegate {
 private extension NodeAppKeysViewController {
     
     @objc func readKeys(_ sender: Any) {
+        readApplicationKeys(boundTo: node.networkKeys.first!)
+    }
+    
+    func readApplicationKeys(boundTo networkKey: NetworkKey) {
         start("Reading Application Keys...") {
-            try? MeshNetworkManager.instance.send(ConfigAppKeyGet(networkKey: self.node.networkKeys.first!), to: self.node)
+            let message = ConfigAppKeyGet(networkKey: networkKey)
+            return try MeshNetworkManager.instance.send(message, to: self.node)
         }
     }
     
-    func deleteApplicationKeyAt(_ indexPath: IndexPath) {
-        let applicationKey = node.applicationKeys[indexPath.row]
-        try? MeshNetworkManager.instance.send(ConfigAppKeyDelete(applicationKey: applicationKey), to: node)
+    func delete(applicationKey: ApplicationKey) {
+        start("Deleting Application Key...") {
+            let message = ConfigAppKeyDelete(applicationKey: applicationKey)
+            return try MeshNetworkManager.instance.send(message, to: self.node)
+        }
     }
     
 }
@@ -177,7 +180,8 @@ extension NodeAppKeysViewController: MeshNetworkDelegate {
             if list.isSuccess {
                 let index = node.networkKeys.firstIndex { $0.index == list.networkKeyIndex }
                 if let index = index, index + 1 < node.networkKeys.count {
-                    try? MeshNetworkManager.instance.send(ConfigAppKeyGet(networkKey: node.networkKeys[index + 1]), to: node)
+                    let networkKey = node.networkKeys[index + 1]
+                    readApplicationKeys(boundTo: networkKey)
                 } else {
                     done()
                     tableView.reloadData()

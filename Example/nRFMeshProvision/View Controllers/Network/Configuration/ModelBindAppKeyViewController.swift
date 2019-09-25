@@ -94,7 +94,8 @@ private extension ModelBindAppKeyViewController {
         }
         let selectedAppKey = keys[selectedIndexPath.row]
         start("Binding Application Key...") {
-            try? MeshNetworkManager.instance.send(ConfigModelAppBind(applicationKey: selectedAppKey, to: self.model), to: self.model)
+            let message = ConfigModelAppBind(applicationKey: selectedAppKey, to: self.model)
+            return try MeshNetworkManager.instance.send(message, to: self.model)
         }
     }
     

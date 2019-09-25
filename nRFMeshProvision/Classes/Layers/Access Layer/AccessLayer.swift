@@ -42,14 +42,17 @@ private struct Transaction {
 private class AcknowledgmentContext {
     let request: AcknowledgedMeshMessage
     let source: Address
+    let destination: Address
     var timeoutTimer: BackgroundTimer?
     var retryTimer: BackgroundTimer?
     
-    init(for request: AcknowledgedMeshMessage, sentFrom source: Address,
+    init(for request: AcknowledgedMeshMessage,
+         sentFrom source: Address, to destination: Address,
          repeatAfter delay: TimeInterval, repeatBlock: @escaping () -> Void,
          timeout: TimeInterval, timeoutBlock: @escaping () -> Void) {
         self.request = request
         self.source = source
+        self.destination = destination
         self.timeoutTimer = BackgroundTimer.scheduledTimer(withTimeInterval: timeout, repeats: false) { _ in
             self.invalidate()
             timeoutBlock()
@@ -69,6 +72,7 @@ private class AcknowledgmentContext {
                                       callback: @escaping () -> Void) {
         retryTimer?.invalidate()
         retryTimer = BackgroundTimer.scheduledTimer(withTimeInterval: delay, repeats: false) { timer in
+            guard let _ = self.retryTimer else { return }
             callback()
             self.initializeRetryTimer(withDelay: timer.interval * 2, callback: callback)
         }
@@ -241,6 +245,21 @@ internal class AccessLayer {
             self.logger?.i(.access, "Sending \(pdu)")
             self.networkManager.upperTransportLayer.send(pdu, using: keySet)
         }
+    }
+    
+    /// Cancels sending the message with the given handler.
+    ///
+    /// - parameter handler: The message handler.
+    func cancel(_ handler: MessageHandle) {
+        logger?.i(.access, "Cancelling messages with op code: \(handler.opCode), sent from: \(handler.source.hex) to: \(handler.destination.hex)")
+        if let index = reliableMessageContexts.firstIndex(where: {
+            $0.request.opCode == handler.opCode &&
+            $0.source == handler.source &&
+            $0.destination == handler.destination
+        }) {
+            reliableMessageContexts.remove(at: index).invalidate()
+        }
+        networkManager.upperTransportLayer.cancel(handler)
     }
     
 }
@@ -607,7 +626,7 @@ private extension AccessLayer {
         /// The timeout before which the response should be received.
         let timeout = networkManager.acknowledgmentMessageTimeout
         
-        let ack = AcknowledgmentContext(for: request, sentFrom: pdu.source,
+        let ack = AcknowledgmentContext(for: request, sentFrom: pdu.source, to: pdu.destination.address,
             repeatAfter: initialDelay, repeatBlock: {
                 self.logger?.d(.access, "Resending \(pdu)")
                 self.networkManager.upperTransportLayer.send(pdu, using: keySet)
