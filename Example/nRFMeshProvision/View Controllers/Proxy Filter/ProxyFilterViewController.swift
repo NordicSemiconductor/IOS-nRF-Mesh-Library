@@ -33,7 +33,12 @@ class ProxyFilterViewController: ProgressViewController, Editable {
             hideEmptyView()
         }
     }
-
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        let navigationController = segue.destination as? UINavigationController
+        navigationController?.presentationController?.delegate = self
+    }
+    
     // MARK: - Table view data source
 
     override func numberOfSections(in tableView: UITableView) -> Int {
@@ -94,6 +99,14 @@ class ProxyFilterViewController: ProgressViewController, Editable {
 
 }
 
+extension ProxyFilterViewController: UIAdaptivePresentationControllerDelegate {
+    
+    func presentationControllerDidDismiss(_ presentationController: UIPresentationController) {
+        MeshNetworkManager.bearer.delegate = self
+    }
+    
+}
+
 extension ProxyFilterViewController: BearerDelegate {
     
     func bearerDidOpen(_ bearer: Bearer) {
@@ -151,7 +164,7 @@ private extension ProxyFilterViewController {
     /// - parameter address: The address to delete.
     func deleteAddress(_ address: Address) {
         guard let proxyFilter = MeshNetworkManager.instance.proxyFilter,
-              proxyFilter.addresses.contains(address) else {
+                  proxyFilter.addresses.contains(address) else {
             return
         }
         start("Deleting address...") {
