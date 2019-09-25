@@ -126,8 +126,7 @@ internal class AccessLayer {
                     $0.source == upperTransportPdu.destination &&
                     $0.request.responseOpCode == accessPdu.opCode
            }) {
-            let ctx = reliableMessageContexts.remove(at: index)
-            ctx.invalidate()
+            reliableMessageContexts.remove(at: index).invalidate()
             logger?.i(.access, "Response \(accessPdu) receieved (decrypted using key: \(keySet))")
         } else {
             logger?.i(.access, "\(accessPdu) receieved (decrypted using key: \(keySet))")
@@ -149,7 +148,6 @@ internal class AccessLayer {
     func send(_ message: MeshMessage,
               from element: Element, to destination: MeshAddress,
               using applicationKey: ApplicationKey) {
-        
         // Should the TID be updated?
         var m = message
         if var tranactionMessage = message as? TransactionMessage, tranactionMessage.tid == nil {
@@ -595,33 +593,35 @@ private extension AccessLayer {
     }
     
     func createReliableContext(for pdu: AccessPdu, sentFrom element: Element, using keySet: KeySet) {
-        if let request = pdu.message as? AcknowledgedMeshMessage {
-            /// The TTL with which the request will be sent.
-            let ttl = element.parentNode?.defaultTTL ?? networkManager.defaultTtl
-            /// The delay after which the local Element will try to resend the
-            /// request. When the response isn't received after the first retry,
-            /// it will try again every time doubling the last delay until the
-            /// time goes out.
-            let initialDelay: TimeInterval =
-                networkManager.acknowledgmentMessageInterval(ttl, pdu.segmentsCount)
-            /// The timeout before which the response should be received.
-            let timeout = networkManager.acknowledgmentMessageTimeout
-            
-            let ack = AcknowledgmentContext(for: pdu.message as! AcknowledgedMeshMessage, sentFrom: pdu.source,
-                                            repeatAfter: initialDelay, repeatBlock: {
-                                                self.logger?.d(.access, "Resending \(pdu)")
-                                                self.networkManager.upperTransportLayer.send(pdu, using: keySet)
-                                            }, timeout: timeout, timeoutBlock: {
-                                                self.logger?.w(.access, "Response to \(pdu) not received (timeout)")
-                                                let category: LogCategory = request is AcknowledgedConfigMessage ? .foundationModel : .model
-                                                self.logger?.w(category, "\(request) sent from: \(pdu.source.hex), to: \(pdu.destination.hex) timed out")
-                                                self.reliableMessageContexts.removeAll(where: { $0.timeoutTimer == nil })
-                                                self.networkManager.notifyAbout(AccessError.timeout,
-                                                                                duringSendingMessage: request,
-                                                                                from: element, to: pdu.destination.address)
-            })
-            reliableMessageContexts.append(ack)
+        guard let request = pdu.message as? AcknowledgedMeshMessage else {
+            return
         }
+        
+        /// The TTL with which the request will be sent.
+        let ttl = element.parentNode?.defaultTTL ?? networkManager.defaultTtl
+        /// The delay after which the local Element will try to resend the
+        /// request. When the response isn't received after the first retry,
+        /// it will try again every time doubling the last delay until the
+        /// time goes out.
+        let initialDelay: TimeInterval =
+            networkManager.acknowledgmentMessageInterval(ttl, pdu.segmentsCount)
+        /// The timeout before which the response should be received.
+        let timeout = networkManager.acknowledgmentMessageTimeout
+        
+        let ack = AcknowledgmentContext(for: request, sentFrom: pdu.source,
+            repeatAfter: initialDelay, repeatBlock: {
+                self.logger?.d(.access, "Resending \(pdu)")
+                self.networkManager.upperTransportLayer.send(pdu, using: keySet)
+            }, timeout: timeout, timeoutBlock: {
+                self.logger?.w(.access, "Response to \(pdu) not received (timeout)")
+                let category: LogCategory = request is AcknowledgedConfigMessage ? .foundationModel : .model
+                self.logger?.w(category, "\(request) sent from: \(pdu.source.hex), to: \(pdu.destination.hex) timed out")
+                self.reliableMessageContexts.removeAll(where: { $0.timeoutTimer == nil })
+                self.networkManager.notifyAbout(AccessError.timeout,
+                                                duringSendingMessage: request,
+                                                from: element, to: pdu.destination.address)
+            })
+        reliableMessageContexts.append(ack)
     }
     
 }
