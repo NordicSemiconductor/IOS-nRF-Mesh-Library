@@ -59,7 +59,6 @@ private class AcknowledgmentContext {
     
     /// Invalidates the timers.
     func invalidate() {
-        print("Invalidating context")
         timeoutTimer?.invalidate()
         timeoutTimer = nil
         retryTimer?.invalidate()
