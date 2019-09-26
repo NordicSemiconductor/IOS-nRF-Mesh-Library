@@ -832,7 +832,11 @@ internal class FoundationLayer {
         case let status as ConfigRelayStatus:
             if let node = meshNetwork.node(withAddress: source) {
                 node.ensureFeatures.relay = status.state
-                node.relayRetransmit = Node.RelayRetransmit(status)
+                if case .notSupported = status.state {
+                    node.relayRetransmit = nil
+                } else {
+                    node.relayRetransmit = Node.RelayRetransmit(status)
+                }
                 save()
             }
             

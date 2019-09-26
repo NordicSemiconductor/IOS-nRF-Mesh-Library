@@ -47,7 +47,7 @@ class ConfigurationServerViewCell: ModelViewCell {
     @IBOutlet weak var networkTransmitButton: UIButton!
     @IBAction func networkTransmitCountDidChange(_ sender: UISlider) {
         let value = Int(sender.value + 1)
-        networkTransmitIntervalLabel.isEnabled = value > 1
+        networkTransmitIntervalSlider.isEnabled = value > 1
         if value == 1 {
             networkTransmitCountLabel.text = "\(value) transmission"
             networkTransmitIntervalLabel.text = "N/A"
@@ -86,20 +86,26 @@ class ConfigurationServerViewCell: ModelViewCell {
             if let relay = node.relayRetransmit {
                 // Interval needs to be set first, as Count may override its Label to N/A.
                 relayIntervalSlider.value = Float(relay.steps)
+                relayIntervalSlider.isEnabled = true
                 relayIntervalDidChange(relayIntervalSlider)
                 relayCountSlider.value = Float(relay.count)
                 relayCountDidChange(relayCountSlider)
+            } else {
+                relayCountLabel.text = "Not supported"
+                relayIntervalLabel.text = "N/A"
+                relayCountSlider.isEnabled = false
+                relayIntervalSlider.isEnabled = false
             }
             if let networkTransmit = node.networkTransmit {
                 // Interval needs to be set first, as Count may override its Label to N/A.
                 networkTransmitIntervalSlider.value = Float(networkTransmit.steps)
                 networkTransmitIntervalDidChange(networkTransmitIntervalSlider)
-                networkTransmitCountSlider.value = Float(networkTransmit.count)
+                networkTransmitCountSlider.value = Float(networkTransmit.count - 1)
                 networkTransmitCountDidChange(networkTransmitCountSlider)
             }
             let localProvisioner = MeshNetworkManager.instance.meshNetwork?.localProvisioner
             let isEnabled = localProvisioner?.hasConfigurationCapabilities ?? false
-            setRelayButton.isEnabled = isEnabled
+            setRelayButton.isEnabled = isEnabled && node.relayRetransmit != nil
             networkTransmitButton.isEnabled = isEnabled
             
             secureNetworkBeaconSwitch.isOn = node.secureNetworkBeacon ?? false
@@ -164,7 +170,7 @@ class ConfigurationServerViewCell: ModelViewCell {
             return false
             
         default:
-            return false
+            return delegate?.isRefreshing ?? false
         }
     }
 

@@ -42,7 +42,7 @@ public struct ConfigNetworkTransmitStatus: ConfigMessage {
     
     public init(for node: Node) {
         let transmit = node.networkTransmit
-        self.count = transmit?.count ?? 0
+        self.count = (transmit?.count ?? 1) - 1
         self.steps = transmit?.steps ?? 0
     }
     
