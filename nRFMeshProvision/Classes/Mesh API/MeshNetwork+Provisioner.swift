@@ -214,6 +214,7 @@ public extension MeshNetwork {
                 n.productIdentifier = nil
                 n.versionIdentifier = nil
                 n.ttl = nil
+                n.minimumNumberOfReplayProtectionList = Address.maxUnicastAddress
                 // The Element adding has to be done this way. Some Elements may get cut
                 // by the property observer when Element addresses overlap other Node's
                 // addresses.
@@ -263,11 +264,12 @@ public extension MeshNetwork {
             if provisioner == localProvisioner {
                 provisionerNode.add(elements: localElements)
                 provisionerNode.companyIdentifier = 0x004C // Apple Inc.
+                provisionerNode.minimumNumberOfReplayProtectionList = Address.maxUnicastAddress
             } else {
                 // For other Provisioners, just add the Primary Element. It may happen,
-                /// that, after exporting and importing on another phone, the Node will
-                /// be configured to have more Elements, and it's address will have to be
-                /// changed again to find available range.
+                // that after exporting and importing on another phone the Node will
+                // be configured to have more Elements, and its address will have to be
+                // changed again to find available range.
                 provisionerNode.add(elements: [.primaryElement])
             }
         }

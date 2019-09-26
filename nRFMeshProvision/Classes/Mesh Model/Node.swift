@@ -194,6 +194,8 @@ public class Node: Codable {
         self.deviceKey = Data.random128BitKey()
         self.security = .high
         self.ttl = nil
+        // iDevice can handle a lot of addresses.
+        self.minimumNumberOfReplayProtectionList = Address.maxUnicastAddress
         // A flag that there is no need to perform configuration of
         // a Provisioner's node.
         self.isConfigComplete = true
