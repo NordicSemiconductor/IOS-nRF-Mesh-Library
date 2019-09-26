@@ -45,6 +45,7 @@ internal class BackgroundTimer {
     /// Asynchronously cancels the dispatch source, preventing any further invocation
     /// of its event handler block.
     func invalidate() {
+        timer.setEventHandler {}
         timer.cancel()
     }
     
