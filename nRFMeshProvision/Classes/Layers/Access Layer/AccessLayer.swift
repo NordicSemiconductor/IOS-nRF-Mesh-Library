@@ -246,7 +246,7 @@ internal class AccessLayer {
             TimeInterval.random(in: 0.020...0.050) :
             TimeInterval.random(in: 0.020...0.500)
         
-        Timer.scheduledTimer(withTimeInterval: delay, repeats: false) { _ in
+        BackgroundTimer.scheduledTimer(withTimeInterval: delay, repeats: false) { _ in
             self.logger?.i(.access, "Sending \(pdu)")
             self.networkManager.upperTransportLayer.send(pdu, withTtl: nil, using: keySet)
         }
