@@ -679,9 +679,9 @@
 		0A0A6B01B1E30B3F85BBE9D20FD75457 /* Network Layer */ = {
 			isa = PBXGroup;
 			children = (
-				E7A277FE54FFA423195E269E855B9698 /* BeaconPdu.swift */,
 				EF0993433A7524CE3A0EE6CF325F966B /* NetworkLayer.swift */,
 				D0B6C4FB5E348EA74817E0A70F4AA1B7 /* NetworkPdu.swift */,
+				E7A277FE54FFA423195E269E855B9698 /* BeaconPdu.swift */,
 				BD3713D8437660503B2882C8A08F0A06 /* SecureNetworkBeacon.swift */,
 				ACD077D8229B95EA469874172A9C48B9 /* UnprovisionedDeviceBeacon.swift */,
 			);
@@ -788,15 +788,15 @@
 		3B401F5AC5E208300D4BDC4B3FA5CF9F /* Lower Transport Layer */ = {
 			isa = PBXGroup;
 			children = (
+				8D6C7DC49B5A76B92CA80FCFCD78F749 /* LowerTransportLayer.swift */,
+				ADE3849EB43A923732A43A123136C607 /* LowerTransportError.swift */,
+				BE44DE9DF85E10EF3072D9A17E99834D /* LowerTransportPdu.swift */,
 				F5C3B796EA523A2177582A4582F53C91 /* AccessMessage.swift */,
 				E1E066BB8A5A67A92DCEA879AD8AC011 /* ControlMessage.swift */,
-				ADE3849EB43A923732A43A123136C607 /* LowerTransportError.swift */,
-				8D6C7DC49B5A76B92CA80FCFCD78F749 /* LowerTransportLayer.swift */,
-				BE44DE9DF85E10EF3072D9A17E99834D /* LowerTransportPdu.swift */,
-				FA80C03FADA734384C22864E1BE3CF66 /* SegmentAcknowledgmentMessage.swift */,
+				63227B4274E5BDEBC057E0B60793690D /* SegmentedMessage.swift */,
 				81EFD391217FE721768B38CCFE9DA130 /* SegmentedAccessMessage.swift */,
 				B8029476C24167DC4A78F586DD4BAF40 /* SegmentedControlMessage.swift */,
-				63227B4274E5BDEBC057E0B60793690D /* SegmentedMessage.swift */,
+				FA80C03FADA734384C22864E1BE3CF66 /* SegmentAcknowledgmentMessage.swift */,
 			);
 			path = "Lower Transport Layer";
 			sourceTree = "<group>";
@@ -819,14 +819,14 @@
 		491750811266B46F04769D6506DA3F51 /* Layers */ = {
 			isa = PBXGroup;
 			children = (
+				ADFDEE8BBCB593E2D21D28E91C5BC907 /* NetworkManager.swift */,
 				D67B4A8E466B7FC9F517D18F6F6D6C5E /* KeySet.swift */,
 				A266E8F62CC89006A44FA650F75BF272 /* MessageHandle.swift */,
-				ADFDEE8BBCB593E2D21D28E91C5BC907 /* NetworkManager.swift */,
+				0A0A6B01B1E30B3F85BBE9D20FD75457 /* Network Layer */,
+				3B401F5AC5E208300D4BDC4B3FA5CF9F /* Lower Transport Layer */,
+				F5D123B510703BD081798BF39E60DB49 /* Upper Transport Layer */,
 				4E4086CE1433B7487B0376FA69C0A7C4 /* Access Layer */,
 				76686424BA5AF519AEBF1219A76F7184 /* Foundation Layer */,
-				3B401F5AC5E208300D4BDC4B3FA5CF9F /* Lower Transport Layer */,
-				0A0A6B01B1E30B3F85BBE9D20FD75457 /* Network Layer */,
-				F5D123B510703BD081798BF39E60DB49 /* Upper Transport Layer */,
 			);
 			name = Layers;
 			path = nRFMeshProvision/Classes/Layers;
@@ -869,9 +869,9 @@
 		4E4086CE1433B7487B0376FA69C0A7C4 /* Access Layer */ = {
 			isa = PBXGroup;
 			children = (
-				12C38CCC92288054006DEE7BF17982BF /* AccessError.swift */,
 				3EE4E20A9DA6EFD2985CC6D318A5B534 /* AccessLayer.swift */,
 				C63486A52F4275D3BA0897E9FB0CF956 /* AccessPdu.swift */,
+				12C38CCC92288054006DEE7BF17982BF /* AccessError.swift */,
 			);
 			path = "Access Layer";
 			sourceTree = "<group>";
@@ -879,11 +879,11 @@
 		5353D636427FC3C52B4214D85F7CAE9F /* Proxy Configuration */ = {
 			isa = PBXGroup;
 			children = (
-				62BCA3E67C1C50D80649B9B9C72BCCF6 /* AddAddressesToFilter.swift */,
-				53636D6009F11E92279009B6E670BADF /* FilterStatus.swift */,
 				37EDF13F71BDDF43E2AFBF2071D8F7F1 /* ProxyConfigurationMessage.swift */,
-				556645CD8915801AEFD72EC5F44A5829 /* RemoveAddressesFromFilter.swift */,
 				2582B42310AF76E272D5FCC3FC916740 /* SetFilterType.swift */,
+				62BCA3E67C1C50D80649B9B9C72BCCF6 /* AddAddressesToFilter.swift */,
+				556645CD8915801AEFD72EC5F44A5829 /* RemoveAddressesFromFilter.swift */,
+				53636D6009F11E92279009B6E670BADF /* FilterStatus.swift */,
 			);
 			path = "Proxy Configuration";
 			sourceTree = "<group>";
@@ -910,11 +910,11 @@
 				4B4A7D025ABEAAD5255903E538AD9045 /* Mesh API */,
 				FBE381FA6281E5E7D92D7AD6BCAFE731 /* Mesh Messages */,
 				69A6ED0E622FC19751C821103DDC38AB /* Mesh Model */,
-				C43487812F1C79EA07B9B524705EDFF9 /* Pod */,
 				CCDCCEEC7A089BC2CEA12F1C63AB254C /* Provisioning */,
-				CADB8E2ADFA71DE4EE855B4F860E10C5 /* Support Files */,
 				4082F755F3DCA0AF9337F733865E35BD /* Type Extensions */,
 				A5814A4E8BB117C879E501FA54A9F651 /* Utils */,
+				CADB8E2ADFA71DE4EE855B4F860E10C5 /* Support Files */,
+				C43487812F1C79EA07B9B524705EDFF9 /* Pod */,
 			);
 			name = nRFMeshProvision;
 			path = ../..;
@@ -1194,13 +1194,13 @@
 		CCDCCEEC7A089BC2CEA12F1C63AB254C /* Provisioning */ = {
 			isa = PBXGroup;
 			children = (
-				213C0815536B01480EF5A1FEADFD807A /* Algorithm.swift */,
-				63E1922513A327C170EA97E855FF7644 /* Oob.swift */,
+				FF19700466FF4048A69D5BAB36AFBA73 /* ProvisioningManager.swift */,
 				33B54B4D751452A69F4546E676EAEEFD /* ProvisioningCapabilities.swift */,
 				83A909C129BA14A154CF95F1197F50A4 /* ProvisioningData.swift */,
-				FF19700466FF4048A69D5BAB36AFBA73 /* ProvisioningManager.swift */,
 				76DC73959341972F8A9280709E9B78C1 /* ProvisioningPdu.swift */,
 				D0C3A01CF9ADA1179D37C9E08FD6D332 /* ProvisioningState.swift */,
+				213C0815536B01480EF5A1FEADFD807A /* Algorithm.swift */,
+				63E1922513A327C170EA97E855FF7644 /* Oob.swift */,
 				A424C39753DE2C60621E11A8E16F9C69 /* PublicKey.swift */,
 				38E959197BB379BFFF8C2C05FA038E89 /* UnprovisionedDevice.swift */,
 			);
@@ -1268,9 +1268,9 @@
 		F5D123B510703BD081798BF39E60DB49 /* Upper Transport Layer */ = {
 			isa = PBXGroup;
 			children = (
-				556987544AAF2A0962CE878BCFD67690 /* HeartbeatMessage.swift */,
 				D0D580D408525F702989EBEBA7927179 /* UpperTransportLayer.swift */,
 				84365DD513AEE1A8BE46885A225674FA /* UpperTransportPdu.swift */,
+				556987544AAF2A0962CE878BCFD67690 /* HeartbeatMessage.swift */,
 			);
 			path = "Upper Transport Layer";
 			sourceTree = "<group>";
@@ -1278,10 +1278,10 @@
 		FBE381FA6281E5E7D92D7AD6BCAFE731 /* Mesh Messages */ = {
 			isa = PBXGroup;
 			children = (
-				B2709D84F58637153EDF6BC09B0FAC05 /* ConfigMessage.swift */,
-				D7C26BECE51814AD16706BAC2665EA93 /* GenericMessage.swift */,
 				F46F2691C829792FB70A4DE676464B36 /* MeshMessage.swift */,
 				A44D9AF0595832208DEDAF5ADE70A947 /* MeshMessageError.swift */,
+				B2709D84F58637153EDF6BC09B0FAC05 /* ConfigMessage.swift */,
+				D7C26BECE51814AD16706BAC2665EA93 /* GenericMessage.swift */,
 				9CAD8CF798D23C77DCA62B6252544BAD /* UnknownMessage.swift */,
 				ED7EA899D5E17E330CB65FEC70A8C7FD /* VendorMessage.swift */,
 				DFB1A7F112AEB98109C02E7EDEC3F1B2 /* Foundation Messages */,
