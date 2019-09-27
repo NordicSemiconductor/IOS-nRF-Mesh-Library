@@ -146,8 +146,8 @@ internal struct UpperTransportPdu {
                 return (pdu, keySet)
             }
             // On the other hand, if another Provisioner is sending Config Messages,
-            // they will be signed using the local Provisioner's Device Key instead.
-            if let node = meshNetwork.localProvisioner?.node,
+            // they will be signed using the target Node Device Key instead.
+            if let node = meshNetwork.node(withAddress: accessMessage.destination),
                let pdu = UpperTransportPdu(fromLowerTransportAccessMessage: accessMessage,
                                            usingKey: node.deviceKey) {
                 let keySet = DeviceKeySet(networkKey: accessMessage.networkKey, node: node)

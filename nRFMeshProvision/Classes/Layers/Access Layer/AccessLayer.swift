@@ -596,10 +596,14 @@ private extension AccessLayer {
                 message = unknownMessage
             }
             if let configMessage = message as? ConfigMessage {
-                logger?.i(.foundationModel, "\(message) received from: \(accessPdu.source.hex)")
-                networkManager.foundationLayer.handle(configMessage: configMessage,
-                                                      sentFrom: accessPdu.source, to: accessPdu.destination.address,
-                                                      with: keySet)
+                if accessPdu.destination.address == meshNetwork.localProvisioner?.unicastAddress {
+                    logger?.i(.foundationModel, "\(configMessage) received from: \(accessPdu.source.hex)")
+                    networkManager.foundationLayer.handle(configMessage: configMessage,
+                                                          sentFrom: accessPdu.source, to: accessPdu.destination.address,
+                                                          with: keySet)
+                } else {
+                    logger?.i(.foundationModel, "\(configMessage) received from: \(accessPdu.source.hex), to: \(accessPdu.destination.hex)")
+                }
             } else {
                 logger?.i(.model, "\(message) received from: \(accessPdu.source.hex), to: \(accessPdu.destination.hex)")
             }

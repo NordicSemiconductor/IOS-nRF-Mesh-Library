@@ -255,6 +255,11 @@ private extension LowerTransportLayer {
     ///
     /// - parameter networkPdu: The Network PDU to validate.
     func checkAgainstReplayAttack(_ networkPdu: NetworkPdu) -> Bool {
+        // Don't check messages sent to another Node's Elements.
+        guard !networkPdu.destination.isUnicast ||
+              meshNetwork.localProvisioner?.node?.hasAllocatedAddress(networkPdu.destination) ?? false else {
+            return true
+        }
         let sequence = networkPdu.messageSequence
         
         let newSource = defaults.object(forKey: networkPdu.source.hex) == nil
