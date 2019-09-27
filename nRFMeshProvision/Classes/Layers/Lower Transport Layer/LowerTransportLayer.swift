@@ -7,9 +7,16 @@
 
 import Foundation
 
+private enum Message {
+    case lowerTransportPdu(_ pdu: LowerTransportPdu)
+    case acknowledgement(_ ack: SegmentAcknowledgmentMessage)
+    case none
+}
+
 internal class LowerTransportLayer {
     private let networkManager: NetworkManager
     private let meshNetwork: MeshNetwork
+    private let mutex = DispatchQueue(label: "Mutex")
     
     private var logger: LoggerDelegate? {
         return networkManager.manager.logger
@@ -96,52 +103,69 @@ internal class LowerTransportLayer {
         guard networkPdu.transportPdu.count > 1 else {
             return
         }
-        
-        guard checkAgainstReplyAttack(networkPdu) else {
-            return
-        }
-        
-        // Lower Transport Messages can be Unsegmented or Segmented.
-        // This information is stored in the most significant bit of the first octet.
-        let unsegmented = networkPdu.transportPdu[0] & 0x80 == 0
-        
-        // The Lower Transport Layer behaves differently based on the message type.
-        switch networkPdu.type {
-        case .accessMessage:
-            if unsegmented {
-                if let accessMessage = AccessMessage(fromUnsegmentedPdu: networkPdu) {
-                    logger?.i(.lowerTransport, "\(accessMessage) receieved (decrypted using key: \(accessMessage.networkKey))")
-                    // Unsegmented message is not acknowledged. Just pass it to higher layer.
-                    networkManager.upperTransportLayer.handle(lowerTransportPdu: accessMessage)
-                }
-            } else {
-                if let segment = SegmentedAccessMessage(fromSegmentPdu: networkPdu) {
-                    logger?.d(.lowerTransport, "\(segment) receieved (decrypted using key: \(segment.networkKey))")
-                    assemble(segment: segment, createdFrom: networkPdu)
-                }
+                
+        // Segmented messages must be validated and assembled in thread safe way.
+        let result: Result<Message, Error> = mutex.sync {
+            guard checkAgainstReplayAttack(networkPdu) else {
+                return .failure(LowerTransportError.replayAttack)
             }
-        case .controlMessage:
-            let opCode = networkPdu.transportPdu[0] & 0x7F
-            switch opCode {
-            case 0x00:
-                if let ack = SegmentAcknowledgmentMessage(fromNetworkPdu: networkPdu) {
-                    logger?.d(.lowerTransport, "\(ack) receieved (decrypted using key: \(ack.networkKey))")
-                    handle(ack: ack)
-                }
-            default:
-                if unsegmented {
-                    if let controlMessage = ControlMessage(fromNetworkPdu: networkPdu) {
-                        logger?.i(.lowerTransport, "\(controlMessage) receieved (decrypted using key: \(controlMessage.networkKey))")
-                        // Unsegmented message is not acknowledged. Just pass it to higher layer.
-                        networkManager.upperTransportLayer.handle(lowerTransportPdu: controlMessage)
+
+            // Lower Transport Messages can be Unsegmented or Segmented.
+            // This information is stored in the most significant bit of the first octet.
+            let segmented = networkPdu.isSegmented
+            
+            if segmented {
+                switch networkPdu.type {
+                case .accessMessage:
+                    if let segment = SegmentedAccessMessage(fromSegmentPdu: networkPdu) {
+                        logger?.d(.lowerTransport, "\(segment) receieved (decrypted using key: \(segment.networkKey))")
+                        if let pdu = assemble(segment: segment, createdFrom: networkPdu) {
+                            return .success(.lowerTransportPdu(pdu))
+                        }
                     }
-                } else {
+                case .controlMessage:
                     if let segment = SegmentedControlMessage(fromSegment: networkPdu) {
                         logger?.d(.lowerTransport, "\(segment) receieved (decrypted using key: \(segment.networkKey))")
-                        assemble(segment: segment, createdFrom: networkPdu)
+                        if let pdu = assemble(segment: segment, createdFrom: networkPdu) {
+                            return .success(.lowerTransportPdu(pdu))
+                        }
+                    }
+                }
+            } else {
+                switch networkPdu.type {
+                case .accessMessage:
+                    if let accessMessage = AccessMessage(fromUnsegmentedPdu: networkPdu) {
+                        logger?.i(.lowerTransport, "\(accessMessage) receieved (decrypted using key: \(accessMessage.networkKey))")
+                        // Unsegmented message is not acknowledged. Just pass it to higher layer.
+                        return .success(.lowerTransportPdu(accessMessage))
+                    }
+                case .controlMessage:
+                    let opCode = networkPdu.transportPdu[0] & 0x7F
+                    switch opCode {
+                    case 0x00:
+                        if let ack = SegmentAcknowledgmentMessage(fromNetworkPdu: networkPdu) {
+                            logger?.d(.lowerTransport, "\(ack) receieved (decrypted using key: \(ack.networkKey))")
+                            return .success(.acknowledgement(ack))
+                        }
+                    default:
+                        if let controlMessage = ControlMessage(fromNetworkPdu: networkPdu) {
+                            logger?.i(.lowerTransport, "\(controlMessage) receieved (decrypted using key: \(controlMessage.networkKey))")
+                            // Unsegmented message is not acknowledged. Just pass it to higher layer.
+                            return .success(.lowerTransportPdu(controlMessage))
+                        }
                     }
                 }
             }
+            return .success(.none)
+        }
+        // Process the message on the original queue.
+        switch try? result.get() {
+        case .lowerTransportPdu(let pdu):
+            networkManager.upperTransportLayer.handle(lowerTransportPdu: pdu)
+        case .acknowledgement(let ack):
+            handle(ack: ack)
+        default:
+            break
         }
     }
     
@@ -230,19 +254,31 @@ private extension LowerTransportLayer {
     /// is not possible.
     ///
     /// - parameter networkPdu: The Network PDU to validate.
-    func checkAgainstReplyAttack(_ networkPdu: NetworkPdu) -> Bool {
-        let sequence = networkPdu.sequenceZero
+    func checkAgainstReplayAttack(_ networkPdu: NetworkPdu) -> Bool {
+        let sequence = networkPdu.messageSequence
         
         let newSource = defaults.object(forKey: networkPdu.source.hex) == nil
         if !newSource {
             let lastSequence = defaults.integer(forKey: networkPdu.source.hex)
             let localSeqAuth = (UInt64(networkPdu.networkKey.ivIndex.index) << 24) | UInt64(lastSequence)
             let receivedSeqAuth = (UInt64(networkPdu.networkKey.ivIndex.index) << 24) | UInt64(sequence)
-
-            // Check, if the SeqAuth is greater (or equal, for segmented messages)
-            // than the last received SeqAuth from that source address.
+            
+            // In general, the SeqAuth of the received message must be greater
+            // than SeqAuth of any previously received message from the same source.
+            // However, for SAR (Segmentation and Reassembly) sessions, it is
+            // the SeqAuth of the message, not segment, that is being checked.
+            // If SAR is active (at least one segment for the same SeqAuth has
+            // been previously received), the segments may be processed in any order.
+            // The SeqAuth of this message must be greater or equal to the last one.
+            var reassemblyInProgress = false
+            if networkPdu.isSegmented {
+                let sequenceZero = UInt16(sequence & 0x1FFF)
+                let key = UInt32(keyFor: networkPdu.source, sequenceZero: sequenceZero)
+                reassemblyInProgress = incompleteSegments[key] != nil ||
+                                       acknowledgments[networkPdu.source]?.sequenceZero == sequenceZero
+            }
             guard receivedSeqAuth > localSeqAuth ||
-                  (networkPdu.isSegmented && receivedSeqAuth == localSeqAuth) else {
+                  (reassemblyInProgress && receivedSeqAuth == localSeqAuth) else {
                 // Ignore that message.
                 logger?.w(.lowerTransport, "Discarding packet (seqAuth: \(receivedSeqAuth), expected > \(localSeqAuth))")
                 return false
@@ -257,7 +293,9 @@ private extension LowerTransportLayer {
     ///
     /// - parameter segment: The segment to handle.
     /// - parameter networkPdu: The Network PDU from which the segment was decoded.
-    func assemble(segment: SegmentedMessage, createdFrom networkPdu: NetworkPdu) {
+    /// - returns: The Lower Transport PDU had it been fully assembled,
+    ///            `nil` otherwise.
+    func assemble(segment: SegmentedMessage, createdFrom networkPdu: NetworkPdu) -> LowerTransportPdu? {
         // If the received segment comes from an already completed and
         // acknowledged message, send the same ACK immediately.
         if let lastAck = acknowledgments[segment.source], lastAck.sequenceZero == segment.sequenceZero {
@@ -273,7 +311,7 @@ private extension LowerTransportLayer {
             } else {
                 acknowledgments.removeValue(forKey: segment.source)
             }
-            return
+            return nil
         }
         // Remove the last ACK. The source Node has sent a new message, so
         // the last ACK must have been received.
@@ -289,7 +327,7 @@ private extension LowerTransportLayer {
                 let ttl = networkPdu.ttl > 0 ? provisionerNode.defaultTTL ?? networkManager.defaultTtl : 0
                 sendAck(for: [segment], usingNetworkKey: networkPdu.networkKey, withTtl: ttl)
             }
-            networkManager.upperTransportLayer.handle(lowerTransportPdu: message)
+            return message
         } else {
             // If a message is composed of multiple segments, they all need to
             // be received before it can be processed.
@@ -300,7 +338,7 @@ private extension LowerTransportLayer {
             guard incompleteSegments[key]!.count > segment.index else {
                 // Segment is invalid. We can stop here.
                 logger?.w(.lowerTransport, "Invalid segment")
-                return
+                return nil
             }
             incompleteSegments[key]![segment.index] = segment
             
@@ -321,13 +359,13 @@ private extension LowerTransportLayer {
                     let ttl = networkPdu.ttl > 0 ? provisionerNode.defaultTTL ?? networkManager.defaultTtl : 0
                     sendAck(for: allSegments, usingNetworkKey: networkPdu.networkKey, withTtl: ttl)
                 }
-                networkManager.upperTransportLayer.handle(lowerTransportPdu: message)
+                return message
             } else {
                 // The Provisioner shall send block acknowledgment only if the message was
                 // send directly to it's Unicast Address.
                 guard let provisionerNode = meshNetwork.localProvisioner?.node,
                       networkPdu.destination == provisionerNode.unicastAddress else {
-                    return
+                    return nil
                 }
                 // If the Lower Transport Layer receives any segment while the incomplete
                 // timer is active, the timer shall be restarted.
@@ -347,9 +385,10 @@ private extension LowerTransportLayer {
                             let ttl = networkPdu.ttl > 0 ? ttl : 0
                             self.sendAck(for: segments, usingNetworkKey: networkPdu.networkKey, withTtl: ttl)
                         }
-                        self.acknowledgmentTimers.removeValue(forKey: key)?.invalidate()                        
+                        self.acknowledgmentTimers.removeValue(forKey: key)?.invalidate()
                     }
                 }
+                return nil
             }
         }
     }
@@ -537,12 +576,10 @@ private extension NetworkPdu {
         return transportPdu[0] & 0x80 > 1
     }
     
-    /// The seqZero of a segmented messages, or the sequence number for
-    /// unsegmented messages.
-    ///
-    /// SeqZero is the sequence number of the first segment of a segmented
+    /// The 24-bit Seq Auth used to transmit the first segment of a
+    /// segmented message, or the 24-bit sequence number of an unsegmented
     /// message.
-    var sequenceZero: UInt32 {
+    var messageSequence: UInt32 {
         if isSegmented {
             let sequenceZero = (UInt16(transportPdu[1] & 0x7F) << 6) | UInt16(transportPdu[2] >> 2)
             return (sequence & 0xFFE000) | UInt32(sequenceZero)
