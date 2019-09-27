@@ -244,13 +244,13 @@ internal class LowerTransportLayer {
 
 private extension LowerTransportLayer {
     
-    /// This method checks the given Network PDU against reply attacks.
+    /// This method checks the given Network PDU against replay attacks.
     ///
     /// Unsegmented messages are checked against their sequence number.
     ///
     /// Segmented messages are checked against the SeqAuth value of the first
     /// segment of the message. Segments may be received in random order
-    /// and unless the message SeqAuth is always greater, the reply attack
+    /// and unless the message SeqAuth is always greater, the replay attack
     /// is not possible.
     ///
     /// - parameter networkPdu: The Network PDU to validate.
