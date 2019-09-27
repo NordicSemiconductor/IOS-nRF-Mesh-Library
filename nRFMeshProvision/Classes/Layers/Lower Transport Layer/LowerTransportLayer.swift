@@ -301,13 +301,8 @@ private extension LowerTransportLayer {
         if let lastAck = acknowledgments[segment.source], lastAck.sequenceZero == segment.sequenceZero {
             if let provisionerNode = meshNetwork.localProvisioner?.node {
                 logger?.d(.lowerTransport, "Message already acknowledged, sending ACK again")
-                logger?.d(.lowerTransport, "Sending \(lastAck)")
                 let ttl = networkPdu.ttl > 0 ? provisionerNode.defaultTTL ?? networkManager.defaultTtl : 0
-                do {
-                    try networkManager.networkLayer.send(lowerTransportPdu: lastAck, ofType: .networkPdu, withTtl: ttl)
-                } catch {
-                    logger?.w(.lowerTransport, error)
-                }
+                sendAck(lastAck, withTtl: ttl)
             } else {
                 acknowledgments.removeValue(forKey: segment.source)
             }
@@ -325,7 +320,7 @@ private extension LowerTransportLayer {
             if let provisionerNode = meshNetwork.localProvisioner?.node,
                 networkPdu.destination == provisionerNode.unicastAddress {
                 let ttl = networkPdu.ttl > 0 ? provisionerNode.defaultTTL ?? networkManager.defaultTtl : 0
-                sendAck(for: [segment], usingNetworkKey: networkPdu.networkKey, withTtl: ttl)
+                sendAck(for: [segment], withTtl: ttl)
             }
             return message
         } else {
@@ -357,7 +352,7 @@ private extension LowerTransportLayer {
                     
                     // ...and send the ACK that all segments were received.
                     let ttl = networkPdu.ttl > 0 ? provisionerNode.defaultTTL ?? networkManager.defaultTtl : 0
-                    sendAck(for: allSegments, usingNetworkKey: networkPdu.networkKey, withTtl: ttl)
+                    sendAck(for: allSegments, withTtl: ttl)
                 }
                 return message
             } else {
@@ -383,7 +378,7 @@ private extension LowerTransportLayer {
                     acknowledgmentTimers[key] = BackgroundTimer.scheduledTimer(withTimeInterval: networkManager.acknowledgmentTimerInterval(ttl), repeats: false) { _ in
                         if let segments = self.incompleteSegments[key] {
                             let ttl = networkPdu.ttl > 0 ? ttl : 0
-                            self.sendAck(for: segments, usingNetworkKey: networkPdu.networkKey, withTtl: ttl)
+                            self.sendAck(for: segments, withTtl: ttl)
                         }
                         self.acknowledgmentTimers.removeValue(forKey: key)?.invalidate()
                     }
@@ -443,19 +438,27 @@ private extension LowerTransportLayer {
     ///
     /// - parameter segments:   The array of message segments, of which at least one
     ///                         has to be not `nil`.
-    /// - parameter networkKey: The Network Key to be used to encrypt the message on
-    ///                         on Network Layer.
     /// - parameter ttl:        Initial Time To Live (TTL) value.
-    func sendAck(for segments: [SegmentedMessage?], usingNetworkKey networkKey: NetworkKey, withTtl ttl: UInt8) {
+    func sendAck(for segments: [SegmentedMessage?], withTtl ttl: UInt8) {
         let ack = SegmentAcknowledgmentMessage(for: segments)
         if segments.isComplete {
             acknowledgments[ack.destination] = ack
         }
-        logger?.d(.lowerTransport, "Sending \(ack)")
-        do {
-            try networkManager.networkLayer.send(lowerTransportPdu: ack, ofType: .networkPdu, withTtl: ttl)
-        } catch {
-            logger?.w(.lowerTransport, error)
+        sendAck(ack, withTtl: ttl)
+    }
+    
+    /// Sends the given ACK on the global background queue.
+    ///
+    /// - parameter ack: The Segment Acknowledgment Message to sent.
+    /// - parameter ttl: Initial Time To Live (TTL) value.
+    func sendAck(_ ack: SegmentAcknowledgmentMessage, withTtl ttl: UInt8) {
+        DispatchQueue.global(qos: .background).async {
+            self.logger?.d(.lowerTransport, "Sending \(ack)")
+            do {
+                try self.networkManager.networkLayer.send(lowerTransportPdu: ack, ofType: .networkPdu, withTtl: ttl)
+            } catch {
+                self.logger?.w(.lowerTransport, error)
+            }
         }
     }
     
