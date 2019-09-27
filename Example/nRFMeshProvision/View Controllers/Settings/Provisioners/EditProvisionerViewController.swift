@@ -321,7 +321,7 @@ private extension EditProvisionerViewController {
                 presentAlert(title: "Error", message: "Mesh configuration could not be saved.")
             }
         } catch {
-            switch error as! MeshModelError {
+            switch error as! MeshNetworkError {
             case .nodeAlreadyExist:
                 // A node with the same UUID as the Provisioner has been found.
                 // This is very unlikely to happen, as UUIDs are randomly generated.
@@ -380,21 +380,21 @@ private extension EditProvisionerViewController {
         let meshNetwork = MeshNetworkManager.instance.meshNetwork!
         
         guard newUnicastAddressRange == nil || !newUnicastAddressRange!.isEmpty else {
-            throw MeshModelError.invalidRange
+            throw MeshNetworkError.invalidRange
         }
         if let newUnicastAddressRange = newUnicastAddressRange {
             guard meshNetwork.areRanges(newUnicastAddressRange, availableForAllocationTo: provisioner) else {
-                throw MeshModelError.overlappingProvisionerRanges
+                throw MeshNetworkError.overlappingProvisionerRanges
             }
         }
         if let newGroupAddressRange = newGroupAddressRange {
             guard meshNetwork.areRanges(newGroupAddressRange, availableForAllocationTo: provisioner) else {
-                throw MeshModelError.overlappingProvisionerRanges
+                throw MeshNetworkError.overlappingProvisionerRanges
             }
         }
         if let newSceneRange = newSceneRange {
             guard meshNetwork.areRanges(newSceneRange, availableForAllocationTo: provisioner) else {
-                throw MeshModelError.overlappingProvisionerRanges
+                throw MeshNetworkError.overlappingProvisionerRanges
             }
         }
     }
@@ -414,14 +414,14 @@ private extension EditProvisionerViewController {
             // Check whether the address is in Provisioner's unicast range.
             let range = newUnicastAddressRange ?? provisioner.allocatedUnicastRange
             guard range.contains(newAddress) else {
-                throw MeshModelError.addressNotInAllocatedRange
+                throw MeshNetworkError.addressNotInAllocatedRange
             }
             
             // Check whether the new address is available.
             guard meshNetwork.isAddressRangeAvailable(newAddress,
                                                       elementsCount: UInt8(manager.localElements.count),
                                                       for: provisioner.node) else {
-                throw MeshModelError.addressNotAvailable
+                throw MeshNetworkError.addressNotAvailable
             }
         }
     }

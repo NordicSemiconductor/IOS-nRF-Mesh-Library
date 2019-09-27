@@ -115,15 +115,15 @@ public extension MeshNetwork {
     func add(node: Node) throws {
         // Verify if the address range is avaialble for the new Node.
         guard isAddressRangeAvailable(node.unicastAddress, elementsCount: node.elementsCount) else {
-            throw MeshModelError.addressNotAvailable
+            throw MeshNetworkError.addressNotAvailable
         }
         // Ensure the Network Key exists.
         guard let netKeyIndex = node.netKeys.first?.index else {
-            throw MeshModelError.noNetworkKey
+            throw MeshNetworkError.noNetworkKey
         }
         // Make sure the network contains a Network Key with the same Key Index.
         guard networkKeys.contains(where: { $0.index == netKeyIndex }) else {
-            throw MeshModelError.invalidKey
+            throw MeshNetworkError.invalidKey
         }
         remove(nodeWithUuid: node.uuid)
         

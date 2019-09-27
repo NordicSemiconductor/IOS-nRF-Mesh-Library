@@ -182,7 +182,6 @@
 		529B7614224A6D47008F1CE7 /* Address.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529B760B224A6D47008F1CE7 /* Address.swift */; };
 		529B7615224A6D47008F1CE7 /* NodeFeatures.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529B760C224A6D47008F1CE7 /* NodeFeatures.swift */; };
 		529B7616224A6D47008F1CE7 /* MeshUUID.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529B760D224A6D47008F1CE7 /* MeshUUID.swift */; };
-		529B7617224A6D47008F1CE7 /* MeshModelError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529B760E224A6D47008F1CE7 /* MeshModelError.swift */; };
 		529B7618224A6D47008F1CE7 /* KeyIndex.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529B760F224A6D47008F1CE7 /* KeyIndex.swift */; };
 		529B761B224A6D5B008F1CE7 /* Int+Hex.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529B761A224A6D59008F1CE7 /* Int+Hex.swift */; };
 		529B761D224A6E20008F1CE7 /* Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529B761C224A6E20008F1CE7 /* Model.swift */; };
@@ -233,7 +232,6 @@
 		52B7F68022994B3E00B0A42F /* MeshMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52B7F67F22994B3E00B0A42F /* MeshMessage.swift */; };
 		52B7F68222994D3C00B0A42F /* MeshMessageError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52B7F68122994D3C00B0A42F /* MeshMessageError.swift */; };
 		52B7F688229BCC4000B0A42F /* NetworkPdu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52B7F687229BCC4000B0A42F /* NetworkPdu.swift */; };
-		52CD0A4B232BD43200A9A181 /* MeshNetworkError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52CD0A4A232BD43200A9A181 /* MeshNetworkError.swift */; };
 		52CD0A4D232BD47500A9A181 /* MeshLoggerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52CD0A4C232BD47400A9A181 /* MeshLoggerDelegate.swift */; };
 		52CD0A64233375DB00A9A181 /* BackgroundTimer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52CD0A63233375DB00A9A181 /* BackgroundTimer.swift */; };
 		52DF5D91229C000D00C297C1 /* NetworkLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52DF5D90229C000D00C297C1 /* NetworkLayer.swift */; };
@@ -251,6 +249,7 @@
 		52F6AD7222BA17E100F0D7DF /* ConfigNodeResetStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52F6AD7122BA17E100F0D7DF /* ConfigNodeResetStatus.swift */; };
 		52F6AD7422BA3BCA00F0D7DF /* CompanyIdentifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52F6AD7322BA3BCA00F0D7DF /* CompanyIdentifier.swift */; };
 		52FE1FE9233B4B85002B377F /* MessageHandle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52FE1FE8233B4B85002B377F /* MessageHandle.swift */; };
+		52FE1FEB233E27C0002B377F /* MeshNetworkError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52FE1FEA233E27C0002B377F /* MeshNetworkError.swift */; };
 		76AD7DBB6F78223071CAB41C3AE42393 /* MeshConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 045D235D97EFC49E1F2183DAE067E868 /* MeshConstants.swift */; };
 		931A62151708A6FCE40E1EE898EEB7A5 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CB4607EFCA7C5F75397649E792E2AFCB /* Foundation.framework */; };
 		960FB84461FE8AC810DBA945C761C9ED /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CB4607EFCA7C5F75397649E792E2AFCB /* Foundation.framework */; };
@@ -476,7 +475,6 @@
 		529B760B224A6D47008F1CE7 /* Address.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Address.swift; sourceTree = "<group>"; };
 		529B760C224A6D47008F1CE7 /* NodeFeatures.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NodeFeatures.swift; sourceTree = "<group>"; };
 		529B760D224A6D47008F1CE7 /* MeshUUID.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MeshUUID.swift; sourceTree = "<group>"; };
-		529B760E224A6D47008F1CE7 /* MeshModelError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MeshModelError.swift; sourceTree = "<group>"; };
 		529B760F224A6D47008F1CE7 /* KeyIndex.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeyIndex.swift; sourceTree = "<group>"; };
 		529B761A224A6D59008F1CE7 /* Int+Hex.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Int+Hex.swift"; sourceTree = "<group>"; };
 		529B761C224A6E20008F1CE7 /* Model.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Model.swift; sourceTree = "<group>"; };
@@ -527,7 +525,6 @@
 		52B7F67F22994B3E00B0A42F /* MeshMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeshMessage.swift; sourceTree = "<group>"; };
 		52B7F68122994D3C00B0A42F /* MeshMessageError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeshMessageError.swift; sourceTree = "<group>"; };
 		52B7F687229BCC4000B0A42F /* NetworkPdu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkPdu.swift; sourceTree = "<group>"; };
-		52CD0A4A232BD43200A9A181 /* MeshNetworkError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MeshNetworkError.swift; path = nRFMeshProvision/Classes/MeshNetworkError.swift; sourceTree = "<group>"; };
 		52CD0A4C232BD47400A9A181 /* MeshLoggerDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MeshLoggerDelegate.swift; sourceTree = "<group>"; };
 		52CD0A63233375DB00A9A181 /* BackgroundTimer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundTimer.swift; sourceTree = "<group>"; };
 		52DF5D90229C000D00C297C1 /* NetworkLayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkLayer.swift; sourceTree = "<group>"; };
@@ -545,6 +542,7 @@
 		52F6AD7122BA17E100F0D7DF /* ConfigNodeResetStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigNodeResetStatus.swift; sourceTree = "<group>"; };
 		52F6AD7322BA3BCA00F0D7DF /* CompanyIdentifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompanyIdentifier.swift; sourceTree = "<group>"; };
 		52FE1FE8233B4B85002B377F /* MessageHandle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageHandle.swift; sourceTree = "<group>"; };
+		52FE1FEA233E27C0002B377F /* MeshNetworkError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MeshNetworkError.swift; path = nRFMeshProvision/Classes/MeshNetworkError.swift; sourceTree = "<group>"; };
 		573AFBF1BDAB242832B4146C926392C7 /* blowfish.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = blowfish.h; path = "include-ios/openssl/blowfish.h"; sourceTree = "<group>"; };
 		575A90FFDDE767E0A52A6ABDC699E9B5 /* dsa.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = dsa.h; path = "include-ios/openssl/dsa.h"; sourceTree = "<group>"; };
 		57E13D43B8F7A9E973DAAF745860C9AA /* Pods-nRFMeshProvision_Tests-acknowledgements.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-nRFMeshProvision_Tests-acknowledgements.plist"; sourceTree = "<group>"; };
@@ -696,7 +694,7 @@
 			children = (
 				529B757822411970008F1CE7 /* MeshNetworkManager.swift */,
 				5231404F230BE2540074325A /* MeshNetworkDelegate.swift */,
-				52CD0A4A232BD43200A9A181 /* MeshNetworkError.swift */,
+				52FE1FEA233E27C0002B377F /* MeshNetworkError.swift */,
 				52547F02231E8CAA0002AA7B /* ProxyFilter.swift */,
 				529B757C22423DEE008F1CE7 /* Storage.swift */,
 				5283529C2282CC720097B949 /* Mesh API */,
@@ -705,7 +703,6 @@
 				528352842281A3B50097B949 /* Provisioning */,
 				52835274228029720097B949 /* Bearer */,
 				52B7F686229BCC1F00B0A42F /* Layers */,
-				529B7606224A6D47008F1CE7 /* Mesh Errors */,
 				529B7619224A6D59008F1CE7 /* Type Extensions */,
 				A1F75DB0D8F3EBCDE7B76E218C87AECD /* Utils */,
 				67372E0EF879A1ED80ED2D7AD7EF77C9 /* Pod */,
@@ -942,15 +939,6 @@
 			);
 			name = "Mesh Model";
 			path = "nRFMeshProvision/Classes/Mesh Model";
-			sourceTree = "<group>";
-		};
-		529B7606224A6D47008F1CE7 /* Mesh Errors */ = {
-			isa = PBXGroup;
-			children = (
-				529B760E224A6D47008F1CE7 /* MeshModelError.swift */,
-			);
-			name = "Mesh Errors";
-			path = "nRFMeshProvision/Classes/Mesh Errors";
 			sourceTree = "<group>";
 		};
 		529B7619224A6D59008F1CE7 /* Type Extensions */ = {
@@ -1502,7 +1490,6 @@
 				523F778122CB912B0030EA6A /* ConfigModelAppStatus.swift in Sources */,
 				52B7F68022994B3E00B0A42F /* MeshMessage.swift in Sources */,
 				52CD0A4D232BD47500A9A181 /* MeshLoggerDelegate.swift in Sources */,
-				52CD0A4B232BD43200A9A181 /* MeshNetworkError.swift in Sources */,
 				5294DADC22B144D10041370E /* ConfigAppKeyStatus.swift in Sources */,
 				5231401C22F84B560074325A /* ConfigRelayStatus.swift in Sources */,
 				5231401222EF238B0074325A /* ConfigVendorModelSubscriptionList.swift in Sources */,
@@ -1624,7 +1611,6 @@
 				52A9C192230FFFE20036792A /* GenericDefaultTransitionTimeSet.swift in Sources */,
 				52A9C1BE231013010036792A /* GenericPowerRangeSetUnacknowledged.swift in Sources */,
 				525242E2225CC6D30044CECB /* ClosedRange.swift in Sources */,
-				529B7617224A6D47008F1CE7 /* MeshModelError.swift in Sources */,
 				529B7613224A6D47008F1CE7 /* Security.swift in Sources */,
 				52A9C1BA231012730036792A /* GenericPowerDefaultSetUnacknowledged.swift in Sources */,
 				523F777722CB53FA0030EA6A /* Model+Keys.swift in Sources */,
@@ -1668,6 +1654,7 @@
 				52A9C1AE23100DDA0036792A /* GenericPowerDefautGet.swift in Sources */,
 				528352AA2282DA1E0097B949 /* GattBearerDelegate.swift in Sources */,
 				52A9C18E230FF1F20036792A /* GenericMoveSetUnacknowledged.swift in Sources */,
+				52FE1FEB233E27C0002B377F /* MeshNetworkError.swift in Sources */,
 				52313FFC22EB0E5B0074325A /* ConfigModelSubscriptionDeleteAll.swift in Sources */,
 				52B7F68222994D3C00B0A42F /* MeshMessageError.swift in Sources */,
 				523F779522CDF82E0030EA6A /* ConfigModelPublicationVirtualAddressSet.swift in Sources */,

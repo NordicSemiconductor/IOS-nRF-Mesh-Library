@@ -43,7 +43,7 @@ public class ApplicationKey: Key, Codable {
     
     internal init(name: String, index: KeyIndex, key: Data, bindTo networkKey: NetworkKey) throws {
         guard index.isValidKeyIndex else {
-            throw MeshModelError.keyIndexOutOfRange
+            throw MeshNetworkError.keyIndexOutOfRange
         }
         self.name = name
         self.index = index

@@ -149,7 +149,7 @@ private extension AddGroupViewController {
                     presentAlert(title: "Error", message: "Mesh configuration could not be saved.")
                 }
             } catch {
-                switch error as! MeshModelError {
+                switch error as! MeshNetworkError {
                 case .invalidAddress:
                     presentAlert(title: "Error", message: "The address \(address.asString()) is not a valid group address.")
                 case .groupAlreadyExists:

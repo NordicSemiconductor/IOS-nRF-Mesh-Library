@@ -46,13 +46,13 @@ public extension MeshNetwork {
     /// - seeAlso: `nextAvailableApplicationKeyIndex`
     func add(applicationKey: Data, withIndex index: KeyIndex? = nil, name: String) throws -> ApplicationKey {
         guard applicationKey.count == 16 else {
-            throw MeshModelError.invalidKey
+            throw MeshNetworkError.invalidKey
         }
         guard let defaultNetworkKey = networkKeys.first else {
-            throw MeshModelError.noNetworkKey
+            throw MeshNetworkError.noNetworkKey
         }
         guard let nextIndex = index ?? nextAvailableApplicationKeyIndex, nextIndex.isValidKeyIndex else {
-            throw MeshModelError.keyIndexOutOfRange
+            throw MeshNetworkError.keyIndexOutOfRange
         }
         let key = try ApplicationKey(name: name, index: nextIndex,
                                      key: applicationKey, bindTo: defaultNetworkKey)
@@ -94,7 +94,7 @@ public extension MeshNetwork {
         let applicationKey = applicationKeys[index]
         // Ensure no node is using this Application Key.
         guard force || !applicationKey.isUsed(in: self) else {
-            throw MeshModelError.keyInUse
+            throw MeshNetworkError.keyInUse
         }
         applicationKey.meshNetwork = nil
         return applicationKeys.remove(at: index)
@@ -125,10 +125,10 @@ public extension MeshNetwork {
     /// - seeAlso: `nextAvailableNetworkKeyIndex`
     func add(networkKey: Data, withIndex index: KeyIndex? = nil, name: String) throws -> NetworkKey {
         guard networkKey.count == 16 else {
-            throw MeshModelError.invalidKey
+            throw MeshNetworkError.invalidKey
         }
         guard let nextIndex = index ?? nextAvailableNetworkKeyIndex, nextIndex.isValidKeyIndex else {
-            throw MeshModelError.keyIndexOutOfRange
+            throw MeshNetworkError.keyIndexOutOfRange
         }
         let key = try NetworkKey(name: name, index: nextIndex, key: networkKey)
         networkKeys.append(key)
@@ -168,7 +168,7 @@ public extension MeshNetwork {
         let networkKey = networkKeys[index]
         // Ensure no Node is using this Application Key.
         guard force || !networkKey.isPrimary && !networkKey.isUsed(in: self) else {
-            throw MeshModelError.keyInUse
+            throw MeshNetworkError.keyInUse
         }
         return networkKeys.remove(at: index)
     }

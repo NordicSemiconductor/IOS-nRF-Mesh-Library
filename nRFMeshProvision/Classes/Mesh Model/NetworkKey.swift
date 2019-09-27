@@ -109,7 +109,7 @@ public class NetworkKey: Key, Codable {
     
     internal init(name: String, index: KeyIndex, key: Data) throws {
         guard index.isValidKeyIndex else {
-            throw MeshModelError.keyIndexOutOfRange
+            throw MeshNetworkError.keyIndexOutOfRange
         }
         self.name        = name
         self.index       = index

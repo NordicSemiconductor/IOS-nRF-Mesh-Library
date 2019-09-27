@@ -27,7 +27,7 @@ public extension MeshNetwork {
     ///           already exists in the mesh network.
     func add(group: Group) throws {
         guard !groups.contains(group) else {
-            throw MeshModelError.groupAlreadyExists
+            throw MeshNetworkError.groupAlreadyExists
         }
         groups.append(group)
         group.meshNetwork = self
@@ -39,11 +39,11 @@ public extension MeshNetwork {
     /// another Group.
     ///
     /// - parameter group: The Group to be removed.
-    /// - throws: This method throws `MeshModelError.groupInUse` when the
+    /// - throws: This method throws `MeshNetworkError.groupInUse` when the
     //            Group is in use in this mesh network.
     func remove(group: Group) throws {
         if group.isUsed {
-            throw MeshModelError.groupInUse
+            throw MeshNetworkError.groupInUse
         }
         if let index = groups.firstIndex(of: group) {
             groups.remove(at: index).meshNetwork = nil

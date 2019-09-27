@@ -29,14 +29,14 @@ public extension Provisioner {
     func allocateUnicastAddressRange(_ range: AddressRange) throws {
         // Validate range type.
         guard range.isUnicastRange else {
-            throw MeshModelError.invalidRange
+            throw MeshNetworkError.invalidRange
         }
         // If the Provisioner is added to the mesh network, check if
         // the new range does not overlap with other Provisioner's ranges.
         if let meshNetwork = meshNetwork {
             for otherProvisioner in meshNetwork.provisioners.filter({ $0 != self }) {
                 guard !otherProvisioner.allocatedUnicastRange.overlaps(range) else {
-                    throw MeshModelError.overlappingProvisionerRanges
+                    throw MeshNetworkError.overlappingProvisionerRanges
                 }
             }
         }
@@ -53,13 +53,13 @@ public extension Provisioner {
     func allocateUnicastAddressRanges(_ ranges: [AddressRange]) throws {
         // Validate ranges type.
         guard ranges.isUnicastRange else {
-            throw MeshModelError.invalidRange
+            throw MeshNetworkError.invalidRange
         }
         // Check if the ranges don't overlap with other Prvisioners' ranges.
         if let meshNetwork = meshNetwork {
             for otherProvisioner in meshNetwork.provisioners.filter({ $0 != self }) {
                 guard !otherProvisioner.allocatedUnicastRange.overlaps(ranges) else {
-                    throw MeshModelError.overlappingProvisionerRanges
+                    throw MeshNetworkError.overlappingProvisionerRanges
                 }
             }
         }
@@ -76,14 +76,14 @@ public extension Provisioner {
     func allocateGroupAddressRange(_ range: AddressRange) throws {
         // Validate range type.
         guard range.isGroupRange else {
-            throw MeshModelError.invalidRange
+            throw MeshNetworkError.invalidRange
         }
         // If the Provisioner is added to the mesh network, check if
         // the new range does not overlap with other Provisioner's ranges.
         if let meshNetwork = meshNetwork {
             for otherProvisioner in meshNetwork.provisioners.filter({ $0 != self }) {
                 guard !otherProvisioner.allocatedGroupRange.overlaps(range) else {
-                    throw MeshModelError.overlappingProvisionerRanges
+                    throw MeshNetworkError.overlappingProvisionerRanges
                 }
             }
         }
@@ -100,13 +100,13 @@ public extension Provisioner {
     func allocateGroupAddressRanges(_ ranges: [AddressRange]) throws {
         // Validate ranges type.
         guard ranges.isGroupRange else {
-            throw MeshModelError.invalidRange
+            throw MeshNetworkError.invalidRange
         }
         // Check if the ranges don't overlap with other Prvisioners' ranges.
         if let meshNetwork = meshNetwork {
             for otherProvisioner in meshNetwork.provisioners.filter({ $0 != self }) {
                 guard !otherProvisioner.allocatedGroupRange.overlaps(ranges) else {
-                    throw MeshModelError.overlappingProvisionerRanges
+                    throw MeshNetworkError.overlappingProvisionerRanges
                 }
             }
         }
@@ -123,14 +123,14 @@ public extension Provisioner {
     func allocateSceneRange(_ range: SceneRange) throws {
         // Validate range type.
         guard range.isValid else {
-            throw MeshModelError.invalidRange
+            throw MeshNetworkError.invalidRange
         }
         // If the Provisioner is added to the mesh network, check if
         // the new range does not overlap with other Provisioner's ranges.
         if let meshNetwork = meshNetwork {
             for otherProvisioner in meshNetwork.provisioners.filter({ $0 != self }) {
                 guard !otherProvisioner.allocatedSceneRange.overlaps(range) else {
-                    throw MeshModelError.overlappingProvisionerRanges
+                    throw MeshNetworkError.overlappingProvisionerRanges
                 }
             }
         }
@@ -147,13 +147,13 @@ public extension Provisioner {
     func allocateSceneRanges(_ ranges: [SceneRange]) throws {
         // Validate ranges type.
         guard ranges.isValid else {
-            throw MeshModelError.invalidRange
+            throw MeshNetworkError.invalidRange
         }
         // Check if the ranges don't overlap with other Prvisioners' ranges.
         if let meshNetwork = meshNetwork {
             for otherProvisioner in meshNetwork.provisioners.filter({ $0 != self }) {
                 guard !otherProvisioner.allocatedSceneRange.overlaps(ranges) else {
-                    throw MeshModelError.overlappingProvisionerRanges
+                    throw MeshNetworkError.overlappingProvisionerRanges
                 }
             }
         }
