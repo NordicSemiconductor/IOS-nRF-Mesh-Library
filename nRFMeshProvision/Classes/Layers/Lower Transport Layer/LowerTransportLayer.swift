@@ -33,7 +33,7 @@ internal class LowerTransportLayer {
     ///
     /// The key consists of 16 bits of source address in 2 most significant bytes
     /// and `sequenceZero` field in 13 least significant bits.
-    /// See `UInt32(keyFor:segment)` below.
+    /// See `UInt32(keyFor:sequenceZero)` below.
     var incompleteSegments: [UInt32 : [SegmentedMessage?]]
     /// This map contains Segment Acknowlegment Messages of completed messages.
     /// It is used when a complete Segmented Message has been received and the
