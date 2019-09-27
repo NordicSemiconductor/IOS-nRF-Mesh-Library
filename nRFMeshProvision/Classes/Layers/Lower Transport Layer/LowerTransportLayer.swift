@@ -239,10 +239,8 @@ private extension LowerTransportLayer {
             let localSeqAuth = (UInt64(networkPdu.networkKey.ivIndex.index) << 24) | UInt64(lastSequence)
             let receivedSeqAuth = (UInt64(networkPdu.networkKey.ivIndex.index) << 24) | UInt64(sequence)
 
-            // Check, if the SeqAuth is greater than the last received SeqAuth
-            // from that source address.
-            // For segmented messages all segments will have the same value of
-            // SeqAuth.
+            // Check, if the SeqAuth is greater (or equal, for segmented messages)
+            // than the last received SeqAuth from that source address.
             guard receivedSeqAuth > localSeqAuth ||
                   (networkPdu.isSegmented && receivedSeqAuth == localSeqAuth) else {
                 // Ignore that message.
