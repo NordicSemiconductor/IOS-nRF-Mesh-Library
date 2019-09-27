@@ -96,22 +96,10 @@ internal class LowerTransportLayer {
         guard networkPdu.transportPdu.count > 1 else {
             return
         }
-        let newSource = defaults.object(forKey: networkPdu.source.hex) == nil
-        if !newSource {
-            // Check, if the sequence number is greater than the one used last
-            // time by the source address.
-            let lastSequence = defaults.integer(forKey: networkPdu.source.hex)
-            let localSeqAuth = (UInt64(networkPdu.networkKey.ivIndex.index) << 24) | UInt64(lastSequence)
-            let receivedSeqAuth = (UInt64(networkPdu.networkKey.ivIndex.index) << 24) | UInt64(networkPdu.sequence)
-           
-            guard receivedSeqAuth > localSeqAuth else {
-                // Ignore that message.
-                logger?.w(.lowerTransport, "Discarding packet (seqAuth: \(receivedSeqAuth), expected > \(localSeqAuth))")
-                return
-            }
+        
+        guard checkAgainstReplyAttack(networkPdu) else {
+            return
         }
-        // SeqAuth is valid, save the new sequence authentication value.
-        defaults.set(networkPdu.sequence, forKey: networkPdu.source.hex)
         
         // Lower Transport Messages can be Unsegmented or Segmented.
         // This information is stored in the most significant bit of the first octet.
@@ -230,17 +218,42 @@ internal class LowerTransportLayer {
     
 }
 
-private extension UInt32 {
-    
-    /// Returns the key used in maps in Lower Transport Layer to keep
-    /// segments received to or from given source address.
-    init(keyFor address: Address, sequenceZero: UInt16) {
-        self = (UInt32(address) << 16) | UInt32(sequenceZero & 0x1FFF)
-    }
-    
-}
-
 private extension LowerTransportLayer {
+    
+    /// This method checks the given Network PDU against reply attacks.
+    ///
+    /// Unsegmented messages are checked against their sequence number.
+    ///
+    /// Segmented messages are checked against the SeqAuth value of the first
+    /// segment of the message. Segments may be received in random order
+    /// and unless the message SeqAuth is always greater, the reply attack
+    /// is not possible.
+    ///
+    /// - parameter networkPdu: The Network PDU to validate.
+    func checkAgainstReplyAttack(_ networkPdu: NetworkPdu) -> Bool {
+        let sequence = networkPdu.sequenceZero
+        
+        let newSource = defaults.object(forKey: networkPdu.source.hex) == nil
+        if !newSource {
+            let lastSequence = defaults.integer(forKey: networkPdu.source.hex)
+            let localSeqAuth = (UInt64(networkPdu.networkKey.ivIndex.index) << 24) | UInt64(lastSequence)
+            let receivedSeqAuth = (UInt64(networkPdu.networkKey.ivIndex.index) << 24) | UInt64(sequence)
+
+            // Check, if the SeqAuth is greater than the last received SeqAuth
+            // from that source address.
+            // For segmented messages all segments will have the same value of
+            // SeqAuth.
+            guard receivedSeqAuth > localSeqAuth ||
+                  (networkPdu.isSegmented && receivedSeqAuth == localSeqAuth) else {
+                // Ignore that message.
+                logger?.w(.lowerTransport, "Discarding packet (seqAuth: \(receivedSeqAuth), expected > \(localSeqAuth))")
+                return false
+            }
+        }
+        // SeqAuth is valid, save the new sequence authentication value.
+        defaults.set(sequence, forKey: networkPdu.source.hex)
+        return true
+    }
     
     /// Handles the segment created from the given network PDU.
     ///
@@ -506,6 +519,40 @@ private extension LowerTransportLayer {
             outgoingSegments.removeValue(forKey: sequenceZero)
         }
     }
+}
+
+private extension UInt32 {
+    
+    /// The key used in maps in Lower Transport Layer to keep
+    /// segments received to or from given source address.
+    init(keyFor address: Address, sequenceZero: UInt16) {
+        self = (UInt32(address) << 16) | UInt32(sequenceZero & 0x1FFF)
+    }
+    
+}
+
+private extension NetworkPdu {
+    
+    /// Whether the Network PDU contains a segmented Lower Transport PDU,
+    /// or not.
+    var isSegmented: Bool {
+        return transportPdu[0] & 0x80 > 1
+    }
+    
+    /// The seqZero of a segmented messages, or the sequence number for
+    /// unsegmented messages.
+    ///
+    /// SeqZero is the sequence number of the first segment of a segmented
+    /// message.
+    var sequenceZero: UInt32 {
+        if isSegmented {
+            let sequenceZero = (UInt16(transportPdu[1] & 0x7F) << 6) | UInt16(transportPdu[2] >> 2)
+            return (sequence & 0xFFE000) | UInt32(sequenceZero)
+        } else {
+            return sequence
+        }
+    }
+    
 }
 
 private extension Array where Element == SegmentedMessage? {

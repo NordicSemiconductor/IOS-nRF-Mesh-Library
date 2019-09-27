@@ -114,15 +114,12 @@ public class MeshNetworkManager {
     ///
     /// - parameter storage: The storage to use to save the network configuration.
     /// - parameter queue: The DispatQueue to process reqeusts on. By default
-    ///                    the a serial background queue will be used.
-    ///                    It is important this queue to be serial, otherwise packets
-    ///                    may be handled in random order and discarded, when one
-    ///                    with higher SEQ has been already processed.
+    ///                    the a global background queue will be used.
     /// - parameter delegateQueue: The DispatQueue to call delegate methods on.
     ///                            By default the global main queue will be used.
     /// - seeAlso: `LocalStorage`
     public init(using storage: Storage = LocalStorage(),
-                queue: DispatchQueue = DispatchQueue(label: "Message handler", qos: .background),
+                queue: DispatchQueue = DispatchQueue.global(qos: .background),
                 delegateQueue: DispatchQueue = DispatchQueue.main) {
         self.storage = storage
         self.meshData = MeshData()
