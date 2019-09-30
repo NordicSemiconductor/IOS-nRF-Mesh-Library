@@ -27,7 +27,9 @@ internal class BackgroundTimer {
         timer = DispatchSource.makeTimerSource(queue: DispatchQueue.global(qos: .background))
         timer.setEventHandler {
             block(self)
-            self.invalidate()
+            if !repeats {
+                self.invalidate()
+            }
         }
         if repeats {
             timer.schedule(deadline: .now() + interval, repeating: interval)
