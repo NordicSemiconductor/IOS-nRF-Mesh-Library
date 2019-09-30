@@ -310,7 +310,7 @@ internal class FoundationLayer {
             
         // Model Bindings
         case let request as ConfigModelAppBind:
-            if let element = localNode.element(withAddress: destination),
+            if let element = localNode.element(withAddress: request.elementAddress),
                let model = element.model(withModelId: request.modelId) {
                 model.bind(applicationKeyWithIndex: request.applicationKeyIndex)
                 save()
@@ -324,7 +324,7 @@ internal class FoundationLayer {
             }
             
         case let request as ConfigModelAppUnbind:
-            if let element = localNode.element(withAddress: destination),
+            if let element = localNode.element(withAddress: request.elementAddress),
                let model = element.model(withModelId: request.modelId) {
                 model.unbind(applicationKeyWithIndex: request.applicationKeyIndex)
                 save()
@@ -357,7 +357,7 @@ internal class FoundationLayer {
             }
         
         case let request as ConfigSIGModelAppGet:
-            if let element = localNode.element(withAddress: destination) {
+            if let element = localNode.element(withAddress: request.elementAddress) {
                 if let model = element.model(withModelId: request.modelId) {
                     let applicationKeys = model.boundApplicationKeys
                     networkManager.reply(toMessageSentTo: destination,
@@ -371,7 +371,7 @@ internal class FoundationLayer {
             }
             
         case let request as ConfigVendorModelAppGet:
-            if let element = localNode.element(withAddress: destination),
+            if let element = localNode.element(withAddress: request.elementAddress),
                let model = element.model(withModelId: request.modelId) {
                let applicationKeys = model.boundApplicationKeys
                 networkManager.reply(toMessageSentTo: destination,
@@ -395,7 +395,7 @@ internal class FoundationLayer {
             
         // Publications
         case let request as ConfigModelPublicationSet:
-            if let element = localNode.element(withAddress: destination),
+            if let element = localNode.element(withAddress: request.elementAddress),
                let model = element.model(withModelId: request.modelId) {
                 // Validate request.
                 guard request.publish.isCancel || meshNetwork.applicationKeys[request.publish.index] != nil else {
@@ -427,7 +427,7 @@ internal class FoundationLayer {
             }
             
         case let request as ConfigModelPublicationVirtualAddressSet:
-            if let element = localNode.element(withAddress: destination),
+            if let element = localNode.element(withAddress: request.elementAddress),
                 let model = element.model(withModelId: request.modelId) {
                 // Validate request.
                 guard meshNetwork.applicationKeys[request.publish.index] != nil else {
@@ -453,7 +453,7 @@ internal class FoundationLayer {
             }
             
         case let request as ConfigModelPublicationGet:
-            if let element = localNode.element(withAddress: destination),
+            if let element = localNode.element(withAddress: request.elementAddress),
                let model = element.model(withModelId: request.modelId) {
                 networkManager.reply(toMessageSentTo: destination,
                                      with: ConfigModelPublicationStatus(responseTo: request, with: model.publish),
@@ -515,7 +515,7 @@ internal class FoundationLayer {
             
         // Subscriptions
         case let request as ConfigModelSubscriptionAdd:
-            if let element = localNode.element(withAddress: destination),
+            if let element = localNode.element(withAddress: request.elementAddress),
                let model = element.model(withModelId: request.modelId) {
                 guard request.address.isGroup && request.address != Address.allNodes else {
                     networkManager.reply(toMessageSentTo: destination,
@@ -549,7 +549,7 @@ internal class FoundationLayer {
             }
             
         case let request as ConfigModelSubscriptionOverwrite:
-            if let element = localNode.element(withAddress: destination),
+            if let element = localNode.element(withAddress: request.elementAddress),
                let model = element.model(withModelId: request.modelId) {
                 guard request.address.isGroup && request.address != Address.allNodes else {
                     networkManager.reply(toMessageSentTo: destination,
@@ -585,7 +585,7 @@ internal class FoundationLayer {
             }
             
         case let request as ConfigModelSubscriptionDelete:
-            if let element = localNode.element(withAddress: destination),
+            if let element = localNode.element(withAddress: request.elementAddress),
                let model = element.model(withModelId: request.modelId) {
                 guard request.address.isGroup && request.address != Address.allNodes else {
                     networkManager.reply(toMessageSentTo: destination,
@@ -605,7 +605,7 @@ internal class FoundationLayer {
             }
             
         case let request as ConfigModelSubscriptionVirtualAddressAdd:
-            if let element = localNode.element(withAddress: destination),
+            if let element = localNode.element(withAddress: request.elementAddress),
                let model = element.model(withModelId: request.modelId) {
                 var group = meshNetwork.group(withAddress: MeshAddress(request.virtualLabel))
                 if group != nil {
@@ -633,7 +633,7 @@ internal class FoundationLayer {
             }
             
         case let request as ConfigModelSubscriptionVirtualAddressOverwrite:
-            if let element = localNode.element(withAddress: destination),
+            if let element = localNode.element(withAddress: request.elementAddress),
                let model = element.model(withModelId: request.modelId) {
                 var group = meshNetwork.group(withAddress: MeshAddress(request.virtualLabel))
                 if group != nil {
@@ -663,7 +663,7 @@ internal class FoundationLayer {
             }
             
         case let request as ConfigModelSubscriptionVirtualAddressDelete:
-            if let element = localNode.element(withAddress: destination),
+            if let element = localNode.element(withAddress: request.elementAddress),
                let model = element.model(withModelId: request.modelId) {
                 let address = MeshAddress(request.virtualLabel)
                 if let group = meshNetwork.group(withAddress: address) {
@@ -680,7 +680,7 @@ internal class FoundationLayer {
             }
             
         case let request as ConfigModelSubscriptionDeleteAll:
-            if let element = localNode.element(withAddress: destination),
+            if let element = localNode.element(withAddress: request.elementAddress),
                let model = element.model(withModelId: request.modelId) {
                 model.unsubscribeFromAll()
                 save()
@@ -730,7 +730,7 @@ internal class FoundationLayer {
             }
             
         case let request as ConfigSIGModelSubscriptionGet:
-            if let element = localNode.element(withAddress: destination),
+            if let element = localNode.element(withAddress: request.elementAddress),
                 let model = element.model(withModelId: request.modelId) {
                 let addresses = model.subscriptions.map { $0.address.address }
                 networkManager.reply(toMessageSentTo: destination,
@@ -743,7 +743,7 @@ internal class FoundationLayer {
             }
             
         case let request as ConfigVendorModelSubscriptionGet:
-            if let element = localNode.element(withAddress: destination),
+            if let element = localNode.element(withAddress: request.elementAddress),
                 let model = element.model(withModelId: request.modelId) {
                 let addresses = model.subscriptions.map { $0.address.address }
                 networkManager.reply(toMessageSentTo: destination,
