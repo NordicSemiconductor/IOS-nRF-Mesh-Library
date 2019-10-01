@@ -128,6 +128,7 @@ public extension MeshNetwork {
             if provisioners.isEmpty {
                 node.add(elements: localElements)
                 node.companyIdentifier = 0x004C // Apple Inc.
+                node.minimumNumberOfReplayProtectionList = Address.maxUnicastAddress
             } else {
                 node.add(element: .primaryElement)
             }
