@@ -465,7 +465,7 @@ public extension MeshNetworkManager {
             throw AccessError.invalidDestination
         }
         if message is ConfigNetKeyDelete {
-            guard node.networkKeys.count > 2 else {
+            guard node.networkKeys.count > 1 else {
                 print("Error: Cannot remove last Network Key")
                 throw AccessError.cannotDelete
             }
