@@ -44,17 +44,38 @@ public class Model: Codable {
     /// An array of Appliaction Key indexes to which this model is bound.
     internal var bind: [KeyIndex]
     
+    /// The model message handler. This is non-`nil` for supported local Models
+    /// and `nil` for Models of remote Nodes.
+    internal let handler: ModelHandler?
+    
     /// Parent Element.
     public internal(set) weak var parentElement: Element!
     
-    public convenience init(sigModelId: UInt16) {
-        self.init(vendorModelId: UInt32(sigModelId))
-    }
-    
-    public init(vendorModelId: UInt32) {
+    internal init(vendorModelId: UInt32) {
         self.modelId   = vendorModelId
         self.subscribe = []
         self.bind      = []
+        self.handler   = nil
+    }
+    
+    internal convenience init(sigModelId: UInt16) {
+        self.init(vendorModelId: UInt32(sigModelId))
+    }
+    
+    public init(vendorModelId: UInt32, handler: ModelHandler) {
+        self.modelId   = vendorModelId
+        self.subscribe = []
+        self.bind      = []
+        self.handler   = handler
+    }
+    
+    public convenience init(modelId: UInt16, companyId: UInt16, handler: ModelHandler) {
+        let vendorModelId = (UInt32(companyId) << 16) | UInt32(modelId)
+        self.init(vendorModelId: vendorModelId, handler: handler)
+    }
+    
+    public convenience init(sigModelId: UInt16, handler: ModelHandler) {
+        self.init(vendorModelId: UInt32(sigModelId), handler: handler)
     }
     
     // MARK: - Codable
@@ -87,6 +108,7 @@ public class Model: Codable {
             self.publish = publish
         }
         self.bind = try container.decode([KeyIndex].self, forKey: .bind)
+        self.handler = nil
     }
     
     public func encode(to encoder: Encoder) throws {
@@ -102,12 +124,21 @@ public class Model: Codable {
     }
 }
 
+internal extension UInt16 {
+    
+    static let configurationServerModelId: UInt16 = 0x0000
+    static let configurationClientModelId: UInt16 = 0x0001
+    static let healthServerModelId: UInt16 = 0x0002
+    static let healthClientModelId: UInt16 = 0x0003
+    
+}
+
 internal extension Model {
     
-    static let configurationServer = Model(sigModelId: 0x0000)
-    static let configurationClient = Model(sigModelId: 0x0001)
-    static let healthServer = Model(sigModelId: 0x0002)
-    static let healthClient = Model(sigModelId: 0x0003)
+    var isConfigurationServer: Bool { modelId == UInt32(UInt16.configurationServerModelId) }
+    var isConfigurationClient: Bool { modelId == UInt32(UInt16.configurationClientModelId) }
+    var isHealthServer: Bool { modelId == UInt32(UInt16.healthServerModelId) }
+    var isHealthClient: Bool { modelId == UInt32(UInt16.healthClientModelId) }
     
 }
 

@@ -53,25 +53,25 @@ public class MeshNetwork: Codable {
             var elements = newValue
             // Configuration and Health Models will be added automatically.
             // Let's make sure they are not in the array.
-            elements.forEach {
-                    $0.models = $0.models.filter { model in
-                        model != Model.configurationServer &&
-                        model != Model.configurationClient &&
-                        model != Model.healthServer &&
-                        model != Model.healthClient
-                    }
+            elements.forEach { element in
+                element.models = element.models.filter { model in
+                    !model.isConfigurationServer &&
+                    !model.isConfigurationClient &&
+                    !model.isHealthServer &&
+                    !model.isHealthClient
                 }
+            }
             // Remove all empty Elements.
             elements = elements.filter { !$0.models.isEmpty }
             // Add the required Models in the Primary Element.
             if elements.isEmpty {
-                elements.append(.primaryElement)
-            } else {
-                elements[0].addPrimaryElementModels()
-                if elements[0].name == nil {
-                    elements[0].name = "Primary Element"
-                }
+                elements.append(Element(location: .unknown))
             }
+            elements[0].addPrimaryElementModels(self)
+            if elements[0].name == nil {
+                elements[0].name = "Primary Element"
+            }
+            
             // Make sure the indexes are correct.
             for (index, element) in elements.enumerated() {
                 element.index = UInt8(index)

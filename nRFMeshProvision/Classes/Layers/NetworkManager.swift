@@ -16,7 +16,6 @@ internal class NetworkManager {
     var lowerTransportLayer : LowerTransportLayer!
     var upperTransportLayer : UpperTransportLayer!
     var accessLayer         : AccessLayer!
-    var foundationLayer     : FoundationLayer!
     
     // MARK: - Computed properties
     
@@ -59,7 +58,6 @@ internal class NetworkManager {
         lowerTransportLayer = LowerTransportLayer(self)
         upperTransportLayer = UpperTransportLayer(self)
         accessLayer = AccessLayer(self)
-        foundationLayer = FoundationLayer(self)
     }
     
     // MARK: - Receiving messages

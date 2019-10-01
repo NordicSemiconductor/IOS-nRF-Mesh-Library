@@ -69,10 +69,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let meshNetwork = meshNetworkManager.meshNetwork!
         
         // Set up local Elements on the phone.
-        let genericOnOffClient = Model(sigModelId: 0x1001)
-        let genericLevelClient = Model(sigModelId: 0x1003)
-        let element = Element(location: .main, models: [genericOnOffClient, genericLevelClient])
-        meshNetworkManager.localElements = [element]
+//        let genericOnOffClient = Model(sigModelId: 0x1001)
+//        let genericLevelClient = Model(sigModelId: 0x1003)
+//        let element = Element(location: .main, models: [genericOnOffClient, genericLevelClient])
+//        meshNetworkManager.localElements = [element]
         
         connection = NetworkConnection(to: meshNetwork)
         connection!.dataDelegate = meshNetworkManager
