@@ -64,8 +64,9 @@ internal class NetworkManager {
     
     /// This method handles the received PDU of given type.
     ///
-    /// - parameter pdu:  The data received.
-    /// - parameter type: The PDU type.
+    /// - parameters:
+    ///   - pdu:  The data received.
+    ///   - type: The PDU type.
     func handle(incomingPdu pdu: Data, ofType type: PduType) {
         networkLayer.handle(incomingPdu: pdu, ofType: type)
     }
@@ -81,12 +82,13 @@ internal class NetworkManager {
     /// retransmittion in case a packet was lost and needs to be sent again
     /// after block acknowlegment was received.
     ///
-    /// - parameter message:        The message to be sent.
-    /// - parameter element:        The source Element.
-    /// - parameter destination:    The destination address.
-    /// - parameter initialTtl:     The initial TTL (Time To Live) value of the message.
-    ///                             If `nil`, the default Node TTL will be used.
-    /// - parameter applicationKey: The Application Key to sign the message.
+    /// - parameters:
+    ///   - message:        The message to be sent.
+    ///   - element:        The source Element.
+    ///   - destination:    The destination address.
+    ///   - initialTtl:     The initial TTL (Time To Live) value of the message.
+    ///                     If `nil`, the default Node TTL will be used.
+    ///   - applicationKey: The Application Key to sign the message.
     func send(_ message: MeshMessage,
               from element: Element, to destination: MeshAddress,
               withTtl initialTtl: UInt8?,
@@ -107,10 +109,11 @@ internal class NetworkManager {
     /// retransmittion in case a packet was lost and needs to be sent again
     /// after block acknowlegment was received.
     ///
-    /// - parameter configMessage: The message to be sent.
-    /// - parameter destination:   The destination address.
-    /// - parameter initialTtl:    The initial TTL (Time To Live) value of the message.
-    ///                            If `nil`, the default Node TTL will be used.
+    /// - parameters:
+    ///   - configMessage: The message to be sent.
+    ///   - destination:   The destination address.
+    ///   - initialTtl:    The initial TTL (Time To Live) value of the message.
+    ///                    If `nil`, the default Node TTL will be used.
     func send(_ configMessage: ConfigMessage, to destination: Address,
               withTtl initialTtl: UInt8?) {
         accessLayer.send(configMessage, to: destination, withTtl: initialTtl)
@@ -167,9 +170,10 @@ internal class NetworkManager {
     
     /// Notifies the delegate about a new mesh message from the given source.
     ///
-    /// - parameter message: The mesh message that was received.
-    /// - parameter source:  The source Unicast Address.
-    /// - parameter destination: The destination address of the message received.
+    /// - parameters:
+    ///   - message: The mesh message that was received.
+    ///   - source:  The source Unicast Address.
+    ///   - destination: The destination address of the message received.
     func notifyAbout(newMessage message: MeshMessage, from source: Address, to destination: Address) {
         manager.delegateQueue.async {
             self.manager.delegate?.meshNetworkManager(self.manager, didReceiveMessage: message,
@@ -180,9 +184,10 @@ internal class NetworkManager {
     /// Notifies the delegate about delivering the mesh message to the given
     /// destination address.
     ///
-    /// - parameter message:      The mesh message that was sent.
-    /// - parameter localElement: The local element used to send the message.
-    /// - parameter destination:  The destination address.
+    /// - parameters:
+    ///   - message:      The mesh message that was sent.
+    ///   - localElement: The local element used to send the message.
+    ///   - destination:  The destination address.
     func notifyAbout(deliveringMessage message: MeshMessage,
                      from localElement: Element, to destination: Address) {
         manager.delegateQueue.async {
@@ -194,10 +199,11 @@ internal class NetworkManager {
     /// Notifies the delegate about an error during sending the mesh message
     /// to the given destination address.
     ///
-    /// - parameter error:   The error that occurred.
-    /// - parameter message: The mesh message that failed to be sent.
-    /// - parameter localElement: The local element used to send the message.
-    /// - parameter destination:  The destination address.
+    /// - parameters:
+    ///   - error:   The error that occurred.
+    ///   - message: The mesh message that failed to be sent.
+    ///   - localElement: The local element used to send the message.
+    ///   - destination:  The destination address.
     func notifyAbout(_ error: Error, duringSendingMessage message: MeshMessage,
                      from localElement: Element, to destination: Address) {
         manager.delegateQueue.async {

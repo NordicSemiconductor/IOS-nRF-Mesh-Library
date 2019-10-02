@@ -116,8 +116,9 @@ internal class AccessLayer {
     /// to the delegate. Otherwise, a generic MeshMessage object is created
     /// for the app to handle.
     ///
-    /// - parameter upperTransportPdu: The decoded Upper Transport PDU.
-    /// - parameter keySet: The keySet that the message was encrypted with.
+    /// - parameters:
+    ///   - upperTransportPdu: The decoded Upper Transport PDU.
+    ///   - keySet: The keySet that the message was encrypted with.
     func handle(upperTransportPdu: UpperTransportPdu, sentWith keySet: KeySet) {
         guard let accessPdu = AccessPdu(fromUpperTransportPdu: upperTransportPdu) else {
             return
@@ -146,13 +147,14 @@ internal class AccessLayer {
     /// Before sending, this method updates the transaction identifier (TID)
     /// for message extending `TransactionMessage`.
     ///
-    /// - parameter message:        The Mesh Message to send.
-    /// - parameter element:        The source Element.
-    /// - parameter destination:    The destination Address. This can be any
-    ///                             valid mesh Address.
-    /// - parameter initialTtl:     The initial TTL (Time To Live) value of the message.
-    ///                             If `nil`, the default Node TTL will be used.
-    /// - parameter applicationKey: The Application Key to sign the message with.
+    /// - parameters:
+    ///   - message:        The Mesh Message to send.
+    ///   - element:        The source Element.
+    ///   - destination:    The destination Address. This can be any
+    ///                     valid mesh Address.
+    ///   - initialTtl:     The initial TTL (Time To Live) value of the message.
+    ///                     If `nil`, the default Node TTL will be used.
+    ///   - applicationKey: The Application Key to sign the message with.
     func send(_ message: MeshMessage,
               from element: Element, to destination: MeshAddress,
               withTtl initialTtl: UInt8?, using applicationKey: ApplicationKey) {
@@ -189,10 +191,11 @@ internal class AccessLayer {
     /// using the Device Key which belongs to the target Node, and first
     /// Network Key known to this Node.
     ///
-    /// - parameter message:     The Mesh Config Message to send.
-    /// - parameter destination: The destination address. This must be a Unicast Address.
-    /// - parameter initialTtl:  The initial TTL (Time To Live) value of the message.
-    ///                          If `nil`, the default Node TTL will be used.
+    /// - parameters:
+    ///   - message:     The Mesh Config Message to send.
+    ///   - destination: The destination address. This must be a Unicast Address.
+    ///   - initialTtl:  The initial TTL (Time To Live) value of the message.
+    ///                  If `nil`, the default Node TTL will be used.
     func send(_ message: ConfigMessage, to destination: Address,
               withTtl initialTtl: UInt8?) {
         guard let element = meshNetwork.localProvisioner?.node?.elements.first,
@@ -292,11 +295,12 @@ private extension AccessLayer {
     /// decoded to the type specified in `messageTypes` in its `ModelHandler`,
     /// but the manager's delegate will be notified with the first message only.
     ///
-    /// - parameter accessPdu: The Access PDU received.
-    /// - parameter keySet:    The set of keys that the message was encrypted with.
-    /// - parameter request:   The previosly sent request message, that the received
-    ///                        message responds to, or `nil`, if no request has
-    ///                        been sent.
+    /// - parameters:
+    ///   - accessPdu: The Access PDU received.
+    ///   - keySet:    The set of keys that the message was encrypted with.
+    ///   - request:   The previosly sent request message, that the received
+    ///                message responds to, or `nil`, if no request has
+    ///                been sent.
     func handle(accessPdu: AccessPdu, sentWith keySet: KeySet,
                 asResponseTo request: AcknowledgedMeshMessage?) {
         guard let localNode = meshNetwork.localProvisioner?.node else {

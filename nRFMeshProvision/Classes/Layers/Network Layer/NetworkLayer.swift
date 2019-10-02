@@ -51,8 +51,9 @@ internal class NetworkLayer {
     /// This method handles the received PDU of given type and
     /// passes it to Upper Transport Layer.
     ///
-    /// - parameter pdu:  The data received.
-    /// - parameter type: The PDU type.
+    /// - parameters:
+    ///   - pdu:  The data received.
+    ///   - type: The PDU type.
     func handle(incomingPdu pdu: Data, ofType type: PduType) {
         guard let meshNetwork = networkManager.meshNetwork else {
             return
@@ -116,9 +117,10 @@ internal class NetworkLayer {
     /// given destination address. If the local Provisioner does not exist, or
     /// does not have Unicast Address assigned, this method does nothing.
     ///
-    /// - parameter pdu:  The Lower Transport PDU to be sent.
-    /// - parameter type: The PDU type.
-    /// - parameter ttl:  The initial TTL (Time To Live) value of the message.
+    /// - parameters:
+    ///   - pdu:  The Lower Transport PDU to be sent.
+    ///   - type: The PDU type.
+    ///   - ttl:  The initial TTL (Time To Live) value of the message.
     /// - throws: This method may throw when the `transmitter` is not set, or has
     ///           failed to send the PDU.
     func send(lowerTransportPdu pdu: LowerTransportPdu, ofType type: PduType,
@@ -164,8 +166,7 @@ internal class NetworkLayer {
     ///
     /// The Proxy Filter object will be informed about the success or a failure.
     ///
-    /// - parameter ProxyConfigurationMessage: The Proxy Confifuration message to
-    ///                                        be sent.
+    /// - parameter message: The Proxy Confifuration message to be sent.
     func send(proxyConfigurationMessage message: ProxyConfigurationMessage) {
         guard let networkKey = proxyNetworkKey else {
             // The Proxy Network Key is unknown.

@@ -171,11 +171,12 @@ internal class LowerTransportLayer {
     
     /// This method tries to send the Upper Transport Message.
     ///
-    /// - parameter pdu:        The unsegmented Upper Transport PDU to be sent.
-    /// - parameter initialTtl: The initial TTL (Time To Live) value of the message.
-    ///                         If `nil`, the default Node TTL will be used.
-    /// - parameter networkKey: The Network Key to be used to encrypt the message on
-    ///                         on Network Layer.
+    /// - parameters:
+    ///   - pdu:        The unsegmented Upper Transport PDU to be sent.
+    ///   - initialTtl: The initial TTL (Time To Live) value of the message.
+    ///                 If `nil`, the default Node TTL will be used.
+    ///   - networkKey: The Network Key to be used to encrypt the message on
+    ///                 on Network Layer.
     func send(unsegmentedUpperTransportPdu pdu: UpperTransportPdu,
               withTtl initialTtl: UInt8?,
               usingNetworkKey networkKey: NetworkKey) {
@@ -296,8 +297,9 @@ private extension LowerTransportLayer {
     
     /// Handles the segment created from the given network PDU.
     ///
-    /// - parameter segment: The segment to handle.
-    /// - parameter networkPdu: The Network PDU from which the segment was decoded.
+    /// - parameters:
+    ///   - segment: The segment to handle.
+    ///   - networkPdu: The Network PDU from which the segment was decoded.
     /// - returns: The Lower Transport PDU had it been fully assembled,
     ///            `nil` otherwise.
     func assemble(segment: SegmentedMessage, createdFrom networkPdu: NetworkPdu) -> LowerTransportPdu? {
@@ -441,9 +443,10 @@ private extension LowerTransportLayer {
     ///
     /// If the `transporter` throws an error during sending, this error will be ignored.
     ///
-    /// - parameter segments:   The array of message segments, of which at least one
-    ///                         has to be not `nil`.
-    /// - parameter ttl:        Initial Time To Live (TTL) value.
+    /// - parameters:
+    ///   - segments: The array of message segments, of which at least one
+    ///               has to be not `nil`.
+    ///   - ttl:      Initial Time To Live (TTL) value.
     func sendAck(for segments: [SegmentedMessage?], withTtl ttl: UInt8) {
         let ack = SegmentAcknowledgmentMessage(for: segments)
         if segments.isComplete {
@@ -454,8 +457,9 @@ private extension LowerTransportLayer {
     
     /// Sends the given ACK on the global background queue.
     ///
-    /// - parameter ack: The Segment Acknowledgment Message to sent.
-    /// - parameter ttl: Initial Time To Live (TTL) value.
+    /// - parameters:
+    ///   - ack: The Segment Acknowledgment Message to sent.
+    ///   - ttl: Initial Time To Live (TTL) value.
     func sendAck(_ ack: SegmentAcknowledgmentMessage, withTtl ttl: UInt8) {
         DispatchQueue.global(qos: .background).async {
             self.logger?.d(.lowerTransport, "Sending \(ack)")
@@ -470,8 +474,9 @@ private extension LowerTransportLayer {
     /// Sends all non-`nil` segments from `outgoingSegments` map from the given
     /// `sequenceZero` key.
     ///
-    /// - parameter sequenceZero: The key to get segments from the map.
-    /// - parameter limit:        Maximum number of retransmissions.
+    /// - parameters:
+    ///   - sequenceZero: The key to get segments from the map.
+    ///   - limit:        Maximum number of retransmissions.
     func sendSegments(for sequenceZero: UInt16, limit: Int) {
         guard let segments = outgoingSegments[sequenceZero], segments.count > 0,
               let ttl = segmentTtl[sequenceZero] else {
