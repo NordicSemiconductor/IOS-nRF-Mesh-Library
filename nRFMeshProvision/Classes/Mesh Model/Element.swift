@@ -177,11 +177,11 @@ internal extension Element {
     ///
     /// This method should only be called for the primary Element of the
     /// local Node.
-    func addPrimaryElementModels() {
+    func addPrimaryElementModels(_ meshNetwork: MeshNetwork) {
         insert(model: Model(sigModelId: .configurationServerModelId,
-                            handler: ConfigurationServerHandler()), at: 0)
+                            handler: ConfigurationServerHandler(meshNetwork)), at: 0)
         insert(model: Model(sigModelId: .configurationClientModelId,
-                            handler: ConfigurationClientHandler()), at: 1)
+                            handler: ConfigurationClientHandler(meshNetwork)), at: 1)
         insert(model: Model(sigModelId: .healthServerModelId), at: 2)
         insert(model: Model(sigModelId: .healthClientModelId), at: 3)
     }

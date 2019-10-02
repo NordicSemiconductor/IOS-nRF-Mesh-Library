@@ -10,8 +10,6 @@ import Foundation
 import nRFMeshProvision
 
 class GenericOnOffServerHandler: ModelHandler {
-    var manager: MeshNetworkManager!
-    var model: Model!
     let messageTypes: [UInt32 : MeshMessage.Type]
     
     private(set) var isOn: Bool = false
@@ -28,7 +26,7 @@ class GenericOnOffServerHandler: ModelHandler {
     // MARK: - Message handlers
     
     func handle(acknowledgedMessage request: AcknowledgedMeshMessage,
-                sentFrom source: Address) -> MeshMessage {
+                sentFrom source: Address, to model: Model) -> MeshMessage {
         switch request {
         case let request as GenericOnOffSet:
             isOn = request.isOn
@@ -39,7 +37,7 @@ class GenericOnOffServerHandler: ModelHandler {
     }
     
     func handle(unacknowledgedMessage message: MeshMessage,
-                sentFrom source: Address) {
+                sentFrom source: Address, to model: Model) {
         switch message {
         case let request as GenericOnOffSetUnacknowledged:
             isOn = request.isOn
@@ -49,7 +47,7 @@ class GenericOnOffServerHandler: ModelHandler {
     }
     
     func handle(response: MeshMessage, toAcknowledgedMessage request: AcknowledgedMeshMessage,
-                sentFrom source: Address) {
+                sentFrom source: Address, to model: Model) {
         // Not possible.
     }
     

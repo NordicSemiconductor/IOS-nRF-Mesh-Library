@@ -194,11 +194,6 @@ public extension MeshNetworkManager {
             return meshNetwork?.localElements ?? []
         }
         set {
-            newValue.forEach { element in
-                element.models.forEach { model in
-                    model.handler?.manager = self
-                }
-            }
             meshNetwork?.localElements = newValue
         }
     }
@@ -227,6 +222,25 @@ public extension MeshNetworkManager {
         queue.async {
             networkManager.handle(incomingPdu: data, ofType: type)
         }
+    }
+    
+    /// This method tries to publish the given message using the
+    /// publication information set in the Model.
+    ///
+    /// - parameters:
+    ///   - message:    The message to be sent.
+    ///   - model:      The model from which to send the message.
+    ///   - initialTtl: The initial TTL (Time To Live) value of the message.
+    ///                 If `nil`, the default Node TTL will be used.
+    func publish(_ message: MeshMessage, fromModel model: Model,
+                 withTtl initialTtl: UInt8? = nil) -> MessageHandle? {
+        guard let publish = model.publish,
+            let localElement = model.parentElement,
+            let applicationKey = meshNetwork?.applicationKeys[publish.index] else {
+            return nil
+        }
+        return try? send(message, from: localElement, to: publish.publicationAddress,
+                         withTtl: initialTtl, using: applicationKey)
     }
     
     /// Encrypts the message with the Application Key and a Network Key

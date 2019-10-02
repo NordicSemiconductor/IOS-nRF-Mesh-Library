@@ -7,21 +7,26 @@
 //
 
 import UIKit
+import nRFMeshProvision
 
 class GenericOnOffClientCell: BaseModelControlCell<GenericOnOffClientHandler> {
     
     @IBAction func onTapped(_ sender: UIButton) {
-        start("Turning ON...") {
-            return self.handler?.set(true, acknowledged: self.model.parentElement.index > 0)
-        }
+        publishGenericOnOffMessage(turnOn: true)
     }
     @IBAction func offTapped(_ sender: UIButton) {
-        start("Turning OFF...") {
-            return self.handler?.set(false, acknowledged: self.model.parentElement.index > 0)
-        }
+        publishGenericOnOffMessage(turnOn: false)
     }
     
     override func setup(_ handler: GenericOnOffClientHandler?) {
-        
     }
+}
+
+private extension GenericOnOffClientCell {
+    
+    func publishGenericOnOffMessage(turnOn: Bool) {
+        let label = turnOn ? "Turning ON..." : "Turning OFF..."
+        delegate?.publish(GenericOnOffSetUnacknowledged(turnOn), description: label, fromModel: model)
+    }
+    
 }

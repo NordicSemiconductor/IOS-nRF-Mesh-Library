@@ -108,7 +108,6 @@
 		52E54CDF23438D2600478F05 /* GenericOnOffServerHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52E54CDE23438D2600478F05 /* GenericOnOffServerHandler.swift */; };
 		52E54CE12344974B00478F05 /* GenericLevelClientHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52E54CE02344974B00478F05 /* GenericLevelClientHandler.swift */; };
 		52E54CE32344978300478F05 /* GenericLevelServerHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52E54CE22344978300478F05 /* GenericLevelServerHandler.swift */; };
-		52E54CE52344B7ED00478F05 /* ProgressCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52E54CE42344B7ED00478F05 /* ProgressCollectionViewCell.swift */; };
 		52F6AD6C22B78F3000F0D7DF /* CompositionData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52F6AD6B22B78F3000F0D7DF /* CompositionData.swift */; };
 		52F6AD7622BA612900F0D7DF /* UIViewController+Toast.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52F6AD7522BA612900F0D7DF /* UIViewController+Toast.swift */; };
 		607FACD61AFB9204008FA782 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACD51AFB9204008FA782 /* AppDelegate.swift */; };
@@ -231,7 +230,6 @@
 		52E54CDE23438D2600478F05 /* GenericOnOffServerHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericOnOffServerHandler.swift; sourceTree = "<group>"; };
 		52E54CE02344974B00478F05 /* GenericLevelClientHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericLevelClientHandler.swift; sourceTree = "<group>"; };
 		52E54CE22344978300478F05 /* GenericLevelServerHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericLevelServerHandler.swift; sourceTree = "<group>"; };
-		52E54CE42344B7ED00478F05 /* ProgressCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgressCollectionViewCell.swift; sourceTree = "<group>"; };
 		52F6AD6B22B78F3000F0D7DF /* CompositionData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompositionData.swift; sourceTree = "<group>"; };
 		52F6AD7522BA612900F0D7DF /* UIViewController+Toast.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "UIViewController+Toast.swift"; path = "Utils/UIViewController+Toast.swift"; sourceTree = "<group>"; };
 		5A51F9AF82598D8D5D40BD77 /* Pods_nRFMeshProvision_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_nRFMeshProvision_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -414,7 +412,6 @@
 				529B756C223FE7F1008F1CE7 /* RootViewController.swift */,
 				523F776B22C6324A0030EA6A /* ProgressViewController.swift */,
 				5212152E231554190059FB3D /* ProgressCollectionViewController.swift */,
-				52E54CE42344B7ED00478F05 /* ProgressCollectionViewCell.swift */,
 				526021F4234365E100E88F06 /* Control */,
 				52835256227AED670097B949 /* Network */,
 				52518B2F22E0B14500A1FD1E /* Groups */,
@@ -861,7 +858,6 @@
 				52121526231528AC0059FB3D /* GenericOnOffGroupCell.swift in Sources */,
 				523F776622C609D90030EA6A /* NodeNetworkKeysViewController.swift in Sources */,
 				607FACD61AFB9204008FA782 /* AppDelegate.swift in Sources */,
-				52E54CE52344B7ED00478F05 /* ProgressCollectionViewCell.swift in Sources */,
 				523F776C22C6324A0030EA6A /* ProgressViewController.swift in Sources */,
 				52547F25232A3F470002AA7B /* EditProvisionerViewController.swift in Sources */,
 				529B756D223FE7F1008F1CE7 /* RootViewController.swift in Sources */,

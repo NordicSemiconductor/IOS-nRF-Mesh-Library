@@ -39,7 +39,7 @@
         <scene sceneID="tW9-1O-Mih">
             <objects>
                 <collectionViewController id="E9W-n1-Wdt" customClass="ControlViewController" customModule="nRFMeshProvision_Example" customModuleProvider="target" sceneMemberID="viewController">
-                    <collectionView key="view" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" misplaced="YES" dataMode="prototypes" id="Urm-V3-iEi">
+                    <collectionView key="view" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" id="Urm-V3-iEi">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="808"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
@@ -135,7 +135,7 @@
                                             <color key="tintColor" red="0.96078431369999995" green="0.50980392159999999" blue="0.16078431369999999" alpha="1" colorSpace="calibratedRGB"/>
                                         </imageView>
                                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="9Xt-K4-EIU">
-                                            <rect key="frame" x="0.0" y="82" width="65" height="48"/>
+                                            <rect key="frame" x="65" y="82" width="65" height="48"/>
                                             <constraints>
                                                 <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="48" id="is5-El-fEa"/>
                                                 <constraint firstAttribute="height" constant="48" id="kZE-Rp-8lx"/>
@@ -147,7 +147,7 @@
                                             </connections>
                                         </button>
                                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Qjv-Hy-YYJ">
-                                            <rect key="frame" x="65" y="82" width="65" height="48"/>
+                                            <rect key="frame" x="0.0" y="82" width="65" height="48"/>
                                             <constraints>
                                                 <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="48" id="HpB-rd-gLO"/>
                                                 <constraint firstAttribute="height" constant="48" id="rYp-U8-xwj"/>
@@ -162,15 +162,15 @@
                                     <color key="backgroundColor" cocoaTouchSystemColor="tableCellGroupedBackgroundColor"/>
                                     <constraints>
                                         <constraint firstAttribute="trailing" secondItem="KMJ-gl-Mn4" secondAttribute="trailing" id="BXy-pK-BwK"/>
-                                        <constraint firstItem="9Xt-K4-EIU" firstAttribute="leading" secondItem="T0j-vx-REu" secondAttribute="leading" id="GzQ-CL-Tsl"/>
                                         <constraint firstAttribute="bottom" secondItem="KMJ-gl-Mn4" secondAttribute="bottomMargin" multiplier="1.8" id="HrW-ee-JUi"/>
-                                        <constraint firstAttribute="trailing" secondItem="9Xt-K4-EIU" secondAttribute="trailing" multiplier="2" id="I22-PW-GJX"/>
                                         <constraint firstItem="KMJ-gl-Mn4" firstAttribute="top" secondItem="T0j-vx-REu" secondAttribute="top" id="JcD-SY-y6H"/>
-                                        <constraint firstAttribute="trailing" secondItem="Qjv-Hy-YYJ" secondAttribute="trailing" id="OK8-E6-6uA"/>
+                                        <constraint firstItem="Qjv-Hy-YYJ" firstAttribute="leading" secondItem="T0j-vx-REu" secondAttribute="leading" id="Nx3-5u-uRc"/>
                                         <constraint firstAttribute="bottom" secondItem="Qjv-Hy-YYJ" secondAttribute="bottom" id="YYO-5M-SUh"/>
+                                        <constraint firstItem="9Xt-K4-EIU" firstAttribute="leading" secondItem="Qjv-Hy-YYJ" secondAttribute="trailing" id="aDr-4u-Cvp"/>
+                                        <constraint firstAttribute="trailing" secondItem="Qjv-Hy-YYJ" secondAttribute="trailing" multiplier="2" id="aL9-86-q0V"/>
                                         <constraint firstAttribute="bottom" secondItem="9Xt-K4-EIU" secondAttribute="bottom" id="cKL-43-5GP"/>
+                                        <constraint firstAttribute="trailing" secondItem="9Xt-K4-EIU" secondAttribute="trailing" id="q60-73-g7h"/>
                                         <constraint firstItem="KMJ-gl-Mn4" firstAttribute="leading" secondItem="T0j-vx-REu" secondAttribute="leading" id="qbs-YG-OLR"/>
-                                        <constraint firstItem="Qjv-Hy-YYJ" firstAttribute="leading" secondItem="9Xt-K4-EIU" secondAttribute="trailing" id="wkF-67-Di8"/>
                                     </constraints>
                                 </collectionViewCellContentView>
                             </collectionViewCell>

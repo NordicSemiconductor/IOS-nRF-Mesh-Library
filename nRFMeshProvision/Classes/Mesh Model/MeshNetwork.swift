@@ -67,7 +67,7 @@ public class MeshNetwork: Codable {
             if elements.isEmpty {
                 elements.append(Element(location: .unknown))
             }
-            elements[0].addPrimaryElementModels()
+            elements[0].addPrimaryElementModels(self)
             
             // Make sure the indexes are correct.
             for (index, element) in elements.enumerated() {

@@ -8,11 +8,10 @@
 import Foundation
 
 internal class ConfigurationClientHandler: ModelHandler {
-    var manager: MeshNetworkManager!
-    var model: Model!
+    let meshNetwork: MeshNetwork
     let messageTypes: [UInt32 : MeshMessage.Type]
     
-    init() {
+    init(_ meshNetwork: MeshNetwork) {
         let types: [ConfigMessage.Type] = [
             ConfigCompositionDataStatus.self,
             ConfigNetKeyStatus.self,
@@ -34,11 +33,12 @@ internal class ConfigurationClientHandler: ModelHandler {
             ConfigVendorModelAppList.self,
             ConfigVendorModelSubscriptionList.self
         ]
+        self.meshNetwork = meshNetwork
         self.messageTypes = types.toMap()
     }
     
     func handle(acknowledgedMessage request: AcknowledgedMeshMessage,
-                sentFrom source: Address) -> MeshMessage {
+                sentFrom source: Address, to model: Model) -> MeshMessage {
         switch request {
             
         default:
@@ -47,7 +47,7 @@ internal class ConfigurationClientHandler: ModelHandler {
     }
     
     func handle(unacknowledgedMessage message: MeshMessage,
-                sentFrom source: Address) {
+                sentFrom source: Address, to model: Model) {
         switch message {
             
         default:
@@ -58,8 +58,7 @@ internal class ConfigurationClientHandler: ModelHandler {
     
     func handle(response: MeshMessage,
                 toAcknowledgedMessage request: AcknowledgedMeshMessage,
-                sentFrom source: Address) {
-        let meshNetwork = manager.meshNetwork!
+                sentFrom source: Address, to model: Model) {
         switch response {
 
         // Composition Data

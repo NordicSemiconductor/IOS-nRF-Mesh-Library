@@ -8,11 +8,10 @@
 import Foundation
 
 internal class ConfigurationServerHandler: ModelHandler {
-    var manager: MeshNetworkManager!
-    var model: Model!
+    let meshNetwork: MeshNetwork
     let messageTypes: [UInt32 : MeshMessage.Type]
     
-    init() {
+    init(_ meshNetwork: MeshNetwork) {
         let types: [ConfigMessage.Type] = [
             ConfigCompositionDataGet.self,
             ConfigNetKeyAdd.self,
@@ -53,12 +52,12 @@ internal class ConfigurationServerHandler: ModelHandler {
             ConfigNetworkTransmitGet.self,
             ConfigNodeReset.self,
         ]
+        self.meshNetwork = meshNetwork
         self.messageTypes = types.toMap()
     }
     
     func handle(acknowledgedMessage request: AcknowledgedMeshMessage,
-                sentFrom source: Address) -> MeshMessage {
-        let meshNetwork = manager.meshNetwork!
+                sentFrom source: Address, to model: Model) -> MeshMessage {
         let localNode = model.parentElement.parentNode!
         
         switch request {
@@ -488,7 +487,7 @@ internal class ConfigurationServerHandler: ModelHandler {
     
     func handle(response: MeshMessage,
                 toAcknowledgedMessage request: AcknowledgedMeshMessage,
-                sentFrom source: Address) {
+                sentFrom source: Address, to model: Model) {
         switch response {
             
         default:
@@ -497,7 +496,7 @@ internal class ConfigurationServerHandler: ModelHandler {
     }
     
     func handle(unacknowledgedMessage message: MeshMessage,
-                sentFrom source: Address) {
+                sentFrom source: Address, to model: Model) {
         switch message {
             
         default:

@@ -9,11 +9,16 @@
 import UIKit
 import nRFMeshProvision
 
-protocol ModelControlCell {
-    var model: Model! { set get }
+protocol ModelControlDelegate: class {
+    func publish(_ message: MeshMessage, description: String, fromModel model: Model)
 }
 
-class BaseModelControlCell<MH: ModelHandler>: ProgressCollectionViewCell, ModelControlCell {
+protocol ModelControlCell {
+    var model: Model! { set get }
+    var delegate: ModelControlDelegate? { get set }
+}
+
+class BaseModelControlCell<MH: ModelHandler>: UICollectionViewCell, ModelControlCell {
     
     // MARK: - Properties
     
@@ -26,6 +31,7 @@ class BaseModelControlCell<MH: ModelHandler>: ProgressCollectionViewCell, ModelC
     }
     /// The Model Handler.
     var handler: MH?
+    weak var delegate: ModelControlDelegate?
     
     // MARK: - Private methods
     

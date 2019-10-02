@@ -47,7 +47,7 @@ public class Model: Codable {
     
     /// The model message handler. This is non-`nil` for supported local Models
     /// and `nil` for Models of remote Nodes.
-    public internal(set) var handler: ModelHandler?
+    public let handler: ModelHandler?
     
     /// Parent Element.
     public internal(set) weak var parentElement: Element!
@@ -68,7 +68,6 @@ public class Model: Codable {
         self.subscribe = []
         self.bind      = []
         self.handler   = handler
-        self.handler!.model = self
     }
     
     public convenience init(modelId: UInt16, companyId: UInt16, handler: ModelHandler) {

@@ -93,9 +93,20 @@ class ControlViewController: ProgressCollectionViewController {
         let identifier = String(format: "%08X", model.modelId)
         var cell = collectionView.dequeueReusableCell(withReuseIdentifier: identifier, for: indexPath) as! ModelControlCell
         cell.model = model
+        cell.delegate = self
         return cell as! UICollectionViewCell
     }
 
+}
+
+extension ControlViewController: ModelControlDelegate {
+    
+    func publish(_ message: MeshMessage, description: String, fromModel model: Model) {
+        start(description) {
+            return MeshNetworkManager.instance.publish(message, fromModel: model)
+        }
+    }
+    
 }
 
 extension ControlViewController: UICollectionViewDelegateFlowLayout {
@@ -120,12 +131,7 @@ extension ControlViewController: MeshNetworkDelegate {
     func meshNetworkManager(_ manager: MeshNetworkManager,
                             didReceiveMessage message: MeshMessage,
                             sentFrom source: Address, to destination: Address) {
-        // Has the Node been reset remotely.
-        guard !(message is ConfigNodeReset) else {
-            (UIApplication.shared.delegate as! AppDelegate).meshNetworkDidChange()
-            navigationController?.popToRootViewController(animated: true)
-            return
-        }
+        // Ignore.
     }
     
     func meshNetworkManager(_ manager: MeshNetworkManager, didSendMessage message: MeshMessage,
