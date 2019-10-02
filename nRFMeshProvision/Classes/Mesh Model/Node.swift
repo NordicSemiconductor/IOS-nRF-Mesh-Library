@@ -37,11 +37,16 @@ public class Node: Codable {
         /// Number of retransmissions for relay messages.
         /// The value is in range from 1 to 8.
         public let count: UInt8
-        /// The interval (in milliseconds) between retransmissions.
+        /// The interval (in milliseconds) between retransmissions
+        /// (from 10 to 320 ms in 10 ms steps).
         public let interval: UInt16
         /// Number of 10-millisecond steps between transmissions.
         public var steps: UInt8 {
             return UInt8(interval / 10) - 1
+        }
+        /// The interval in as `TimeInterval` in seconds.
+        public var timeInterval: TimeInterval {
+            return TimeInterval(interval) / 1000.0
         }
         
         internal init(_ request: ConfigNetworkTransmitSet) {
@@ -61,11 +66,16 @@ public class Node: Codable {
         /// Number of retransmissions for network messages.
         /// The value is in range from 1 to 8.
         public let count: UInt8
-        /// The interval (in milliseconds) between retransmissions.
+        /// The interval (in milliseconds) between retransmissions
+        /// (from 10 to 320 ms in 10 ms steps).
         public let interval: UInt16
         /// Number of 10-millisecond steps between transmissions.
         public var steps: UInt8 {
             return UInt8(interval / 10) - 1
+        }
+        /// The interval in as `TimeInterval` in seconds.
+        public var timeInterval: TimeInterval {
+            return TimeInterval(interval) / 1000.0
         }
         
         internal init(_ request: ConfigRelaySet) {
