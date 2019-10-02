@@ -175,13 +175,13 @@ internal extension Element {
     /// Adds Configuration Server and Client and Health Server and Client
     /// to the Element.
     ///
-    /// This method should only be called for the primaty Element of the
+    /// This method should only be called for the primary Element of the
     /// local Node.
-    func addPrimaryElementModels(_ meshNetwork: MeshNetwork) {
+    func addPrimaryElementModels() {
         insert(model: Model(sigModelId: .configurationServerModelId,
-                            handler: ConfigurationServerHandler(meshNetwork)), at: 0)
+                            handler: ConfigurationServerHandler()), at: 0)
         insert(model: Model(sigModelId: .configurationClientModelId,
-                            handler: ConfigurationClientHandler(meshNetwork)), at: 1)
+                            handler: ConfigurationClientHandler()), at: 1)
         insert(model: Model(sigModelId: .healthServerModelId), at: 2)
         insert(model: Model(sigModelId: .healthClientModelId), at: 3)
     }

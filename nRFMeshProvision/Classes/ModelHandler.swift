@@ -9,9 +9,14 @@ import Foundation
 
 public protocol ModelHandler {
     
-    /// A map of mesh message types supported by this Model.
+    /// The Mesh Network Manager.
+    var manager: MeshNetworkManager! { get set }
+    /// The Model associated with this handler.
+    var model: Model! { get set }
+    
+    /// A map of mesh message types that this Model can receive.
     ///
-    /// The key in the map should be the Op Code and the value
+    /// The key in the map should be the opcode and the value
     /// the message type supported by the handler.
     var messageTypes: [UInt32 : MeshMessage.Type] { get }
     
@@ -20,19 +25,17 @@ public protocol ModelHandler {
     /// - parameters:
     ///   - request: The Acknowledged Message received.
     ///   - source: The source Unicast Address.
-    ///   - model: The local model that received the request.
     /// - returns: The response message to be sent to the sender.
     func handle(acknowledgedMessage request: AcknowledgedMeshMessage,
-                sentFrom source: Address, to model: Model) -> MeshMessage
+                sentFrom source: Address) -> MeshMessage
     
     /// This method should handle the received Unacknowledged Message.
     ///
     /// - parameters:
     ///   - message: The Unacknowledged Message received.
     ///   - source: The source Unicast Address.
-    ///   - model: The local model that received the message.
     func handle(unacknowledgedMessage message: MeshMessage,
-                sentFrom source: Address, to model: Model)
+                sentFrom source: Address)
     
     /// This method should handle the received response to the
     /// previously sent request.
@@ -42,10 +45,30 @@ public protocol ModelHandler {
     ///   - request: The Acknowledged Message sent.
     ///   - source: The Unicast Address of the Element that sent the
     ///             response.
-    ///   - model: The local model that received the response.
     func handle(response: MeshMessage,
                 toAcknowledgedMessage request: AcknowledgedMeshMessage,
-                sentFrom source: Address, to model: Model)
+                sentFrom source: Address)
+    
+}
+
+public extension ModelHandler {
+    
+    /// Sends the given message to the destination specified in the
+    /// publication of the associated model.
+    ///
+    /// - parameter message: The mesh message to be sent.
+    /// - returns: The message handle if the message was send, `nil`
+    ///            otherwise.
+    func send(_ message: MeshMessage) -> MessageHandle? {
+        guard let publish = model.publish,
+              let element = model.parentElement,
+              let applicationKey = manager.meshNetwork?.applicationKeys[publish.index] else {
+            return nil
+        }
+        return try? manager.send(message, from: element,
+                                 to: publish.publicationAddress,
+                                 using: applicationKey)
+    }
     
 }
 

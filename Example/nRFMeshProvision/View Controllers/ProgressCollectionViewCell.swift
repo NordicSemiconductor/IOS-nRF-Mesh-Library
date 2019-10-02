@@ -1,15 +1,15 @@
 //
-//  ProgressCollectionViewController.swift
+//  ProgressCollectionViewCell.swift
 //  nRFMeshProvision_Example
 //
-//  Created by Aleksander Nowakowski on 27/08/2019.
+//  Created by Aleksander Nowakowski on 02/10/2019.
 //  Copyright © 2019 CocoaPods. All rights reserved.
 //
 
 import UIKit
 import nRFMeshProvision
 
-class ProgressCollectionViewController: UICollectionViewController {
+class ProgressCollectionViewCell: UICollectionViewCell {
     
     // MARK: - Properties
     
@@ -18,25 +18,16 @@ class ProgressCollectionViewController: UICollectionViewController {
     
     // MARK: - Implementation
     
-    override func dismiss(animated flag: Bool, completion: (() -> Void)? = nil) {
-        super.dismiss(animated: flag, completion: completion)
-        
-        if #available(iOS 13.0, *) {
-            if let presentationController = self.parent?.presentationController {
-                presentationController.delegate?.presentationControllerDidDismiss?(presentationController)
-            }
-        }
-    }
-    
     /// Displays the progress alert with specified status message
     /// and calls the completion callback.
     ///
     /// - parameter message: Message to be displayed to the user.
     /// - parameter completion: A completion handler.
-    func start(_ message: String, completion: @escaping (() throws -> MessageHandle)) {
+    func start(_ message: String, completion: @escaping (() throws -> MessageHandle?)) {
         DispatchQueue.main.async {
             do {
                 self.messageHandle = try completion()
+                guard let _ = self.messageHandle else { return }
 
                 if self.alert == nil {
                     self.alert = UIAlertController(title: "Status", message: message, preferredStyle: .alert)
@@ -44,7 +35,7 @@ class ProgressCollectionViewController: UICollectionViewController {
                         self.messageHandle?.cancel()
                         self.alert = nil
                     }))
-                    self.present(self.alert!, animated: true)
+                    self.parentViewController?.present(self.alert!, animated: true)
                 } else {
                     self.alert?.message = message
                 }

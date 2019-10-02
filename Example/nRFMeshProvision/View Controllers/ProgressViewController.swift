@@ -14,7 +14,7 @@ class ProgressViewController: UITableViewController {
     // MARK: - Properties
     
     private var alert: UIAlertController?
-    private var messageId: MessageHandle?
+    private var messageHandle: MessageHandle?
     
     // MARK: - Implementation
     
@@ -57,12 +57,12 @@ class ProgressViewController: UITableViewController {
     func start(_ message: String, completion: @escaping (() throws -> MessageHandle)) {
         DispatchQueue.main.async {
             do {
-                self.messageId = try completion()
+                self.messageHandle = try completion()
 
                 if self.alert == nil {
                     self.alert = UIAlertController(title: "Status", message: message, preferredStyle: .alert)
                     self.alert!.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { _ in
-                        self.messageId?.cancel()
+                        self.messageHandle?.cancel()
                         self.alert = nil
                         self.refreshControl?.endRefreshing()
                     }))

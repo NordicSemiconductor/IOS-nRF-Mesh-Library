@@ -31,7 +31,7 @@ class ModelGroupCell: UICollectionViewCell {
         }
     }
     
-    weak var delegate: ModelGroupViewCellDelegate!
+    weak var delegate: ModelGroupViewCellDelegate?
     
     // MARK: - Private methods
     

@@ -191,6 +191,11 @@ public extension MeshNetworkManager {
             return meshNetwork?.localElements ?? []
         }
         set {
+            newValue.forEach { element in
+                element.models.forEach { model in
+                    model.handler?.manager = self
+                }
+            }
             meshNetwork?.localElements = newValue
         }
     }

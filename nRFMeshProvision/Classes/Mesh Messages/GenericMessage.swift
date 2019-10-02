@@ -37,6 +37,18 @@ public extension GenericStatusMessage {
     
 }
 
+public extension Array where Element == GenericMessage.Type {
+    
+    /// A helper method that can create a map of message types required
+    /// by the `ModelHandler` from a list of `GenericMessage`s.
+    ///
+    /// - returns: A map of message types.
+    func toMap() -> [UInt32 : MeshMessage.Type] {
+        return (self as [StaticMeshMessage.Type]).toMap()
+    }
+    
+}
+
 extension GenericMessageStatus: CustomDebugStringConvertible {
     
     public var debugDescription: String {

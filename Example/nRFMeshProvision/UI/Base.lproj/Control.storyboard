@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14868" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="xxw-ay-9Ic">
+    <device id="retina6_1" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14824"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="collection view cell content view" minToolsVersion="11.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--Local Node-->
+        <scene sceneID="XJM-pf-bpe">
+            <objects>
+                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="xxw-ay-9Ic" customClass="RootViewController" customModule="nRFMeshProvision_Example" customModuleProvider="target" sceneMemberID="viewController">
+                    <tabBarItem key="tabBarItem" title="Local Node" image="tab_control_outline_black_24pt" id="6y7-KH-m0o"/>
+                    <toolbarItems/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" translucent="NO" largeTitles="YES" id="Ihc-oA-91a">
+                        <rect key="frame" x="0.0" y="44" width="414" height="96"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <color key="barTintColor" red="0.0" green="0.66274509800000003" blue="0.80784313730000001" alpha="1" colorSpace="calibratedRGB"/>
+                        <textAttributes key="titleTextAttributes">
+                            <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        </textAttributes>
+                        <textAttributes key="largeTitleTextAttributes">
+                            <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        </textAttributes>
+                    </navigationBar>
+                    <nil name="viewControllers"/>
+                    <connections>
+                        <segue destination="E9W-n1-Wdt" kind="relationship" relationship="rootViewController" id="hqf-gq-mhB"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="ejg-ys-m0j" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="664.79999999999995" y="-236.45320197044336"/>
+        </scene>
+        <!--Local Node-->
+        <scene sceneID="tW9-1O-Mih">
+            <objects>
+                <collectionViewController id="E9W-n1-Wdt" customClass="ControlViewController" customModule="nRFMeshProvision_Example" customModuleProvider="target" sceneMemberID="viewController">
+                    <collectionView key="view" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" misplaced="YES" dataMode="prototypes" id="Urm-V3-iEi">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="808"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
+                        <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="10" minimumInteritemSpacing="10" id="U0e-mu-hcz">
+                            <size key="itemSize" width="130" height="130"/>
+                            <size key="headerReferenceSize" width="50" height="50"/>
+                            <size key="footerReferenceSize" width="0.0" height="0.0"/>
+                            <inset key="sectionInset" minX="16" minY="0.0" maxX="16" maxY="0.0"/>
+                        </collectionViewFlowLayout>
+                        <cells>
+                            <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="00001001" id="TEP-VO-Bjf" customClass="GenericOnOffClientCell" customModule="nRFMeshProvision_Example" customModuleProvider="target">
+                                <rect key="frame" x="16" y="50" width="130" height="130"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <collectionViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="6Ok-dl-x1h">
+                                    <rect key="frame" x="0.0" y="0.0" width="130" height="130"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                    <subviews>
+                                        <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="bottom" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="groups_generic_onoff_outline" translatesAutoresizingMaskIntoConstraints="NO" id="I2I-f3-Kpz">
+                                            <rect key="frame" x="0.0" y="0.0" width="130" height="72"/>
+                                            <color key="tintColor" red="0.81568627449999997" green="0.87450980389999999" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                        </imageView>
+                                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="LGq-Zr-OtD">
+                                            <rect key="frame" x="0.0" y="82" width="65" height="48"/>
+                                            <constraints>
+                                                <constraint firstAttribute="height" constant="48" id="xd6-kl-m7m"/>
+                                            </constraints>
+                                            <fontDescription key="fontDescription" type="system" pointSize="18"/>
+                                            <state key="normal" title="ON"/>
+                                            <connections>
+                                                <action selector="onTapped:" destination="TEP-VO-Bjf" eventType="touchUpInside" id="hW8-tO-pR4"/>
+                                            </connections>
+                                        </button>
+                                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="xX7-oQ-uFu">
+                                            <rect key="frame" x="65" y="82" width="65" height="48"/>
+                                            <constraints>
+                                                <constraint firstAttribute="height" constant="48" id="URJ-6p-slB"/>
+                                            </constraints>
+                                            <fontDescription key="fontDescription" type="system" pointSize="18"/>
+                                            <state key="normal" title="OFF"/>
+                                            <connections>
+                                                <action selector="offTapped:" destination="TEP-VO-Bjf" eventType="touchUpInside" id="bfo-Vl-uwy"/>
+                                            </connections>
+                                        </button>
+                                    </subviews>
+                                    <color key="backgroundColor" cocoaTouchSystemColor="tableCellGroupedBackgroundColor"/>
+                                    <constraints>
+                                        <constraint firstItem="I2I-f3-Kpz" firstAttribute="leading" secondItem="6Ok-dl-x1h" secondAttribute="leading" id="Afw-gx-RWy"/>
+                                        <constraint firstItem="xX7-oQ-uFu" firstAttribute="leading" secondItem="LGq-Zr-OtD" secondAttribute="trailing" id="D9D-DH-RXR"/>
+                                        <constraint firstAttribute="trailing" secondItem="LGq-Zr-OtD" secondAttribute="trailing" multiplier="2" id="I2s-ig-e5X"/>
+                                        <constraint firstItem="I2I-f3-Kpz" firstAttribute="top" secondItem="6Ok-dl-x1h" secondAttribute="top" id="KEt-lw-yw2"/>
+                                        <constraint firstAttribute="bottom" secondItem="xX7-oQ-uFu" secondAttribute="bottom" id="SMs-p0-OdA"/>
+                                        <constraint firstAttribute="bottom" secondItem="I2I-f3-Kpz" secondAttribute="bottom" multiplier="1.8" id="c49-8x-y9D"/>
+                                        <constraint firstAttribute="trailing" secondItem="xX7-oQ-uFu" secondAttribute="trailing" id="dTy-45-KDD"/>
+                                        <constraint firstAttribute="trailing" secondItem="I2I-f3-Kpz" secondAttribute="trailing" id="pMb-Rn-uVY"/>
+                                        <constraint firstItem="LGq-Zr-OtD" firstAttribute="leading" secondItem="6Ok-dl-x1h" secondAttribute="leading" id="x9P-w3-45M"/>
+                                        <constraint firstAttribute="bottom" secondItem="LGq-Zr-OtD" secondAttribute="bottom" id="xb3-hc-M9n"/>
+                                    </constraints>
+                                </collectionViewCellContentView>
+                            </collectionViewCell>
+                            <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" reuseIdentifier="00001000" id="txW-pE-MsP" customClass="GenericOnOffServerCell" customModule="nRFMeshProvision_Example" customModuleProvider="target">
+                                <rect key="frame" x="268" y="50" width="130" height="130"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <collectionViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="KDx-Nz-DhB">
+                                    <rect key="frame" x="0.0" y="0.0" width="130" height="130"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                    <subviews>
+                                        <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="center" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="groups_generic_onoff_outline" translatesAutoresizingMaskIntoConstraints="NO" id="iL6-2P-Blm">
+                                            <rect key="frame" x="0.0" y="0.0" width="130" height="130"/>
+                                            <color key="tintColor" white="0.66666666669999997" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        </imageView>
+                                    </subviews>
+                                    <color key="backgroundColor" cocoaTouchSystemColor="tableCellGroupedBackgroundColor"/>
+                                    <constraints>
+                                        <constraint firstAttribute="bottom" secondItem="iL6-2P-Blm" secondAttribute="bottom" id="0PY-Ic-8h7"/>
+                                        <constraint firstItem="iL6-2P-Blm" firstAttribute="leading" secondItem="KDx-Nz-DhB" secondAttribute="leading" id="JCu-kR-MaR"/>
+                                        <constraint firstAttribute="trailing" secondItem="iL6-2P-Blm" secondAttribute="trailing" id="SSX-wE-MFi"/>
+                                        <constraint firstItem="iL6-2P-Blm" firstAttribute="top" secondItem="KDx-Nz-DhB" secondAttribute="top" id="rQo-k1-Vym"/>
+                                    </constraints>
+                                </collectionViewCellContentView>
+                                <connections>
+                                    <outlet property="icon" destination="iL6-2P-Blm" id="PxH-Na-WMl"/>
+                                </connections>
+                            </collectionViewCell>
+                            <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" reuseIdentifier="00001003" id="Axc-6v-6B2" customClass="GenericLevelClientCell" customModule="nRFMeshProvision_Example" customModuleProvider="target">
+                                <rect key="frame" x="16" y="190" width="130" height="130"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <collectionViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="T0j-vx-REu">
+                                    <rect key="frame" x="0.0" y="0.0" width="130" height="130"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                    <subviews>
+                                        <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="bottom" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="groups_generic_level_outline" translatesAutoresizingMaskIntoConstraints="NO" id="KMJ-gl-Mn4">
+                                            <rect key="frame" x="0.0" y="0.0" width="130" height="80"/>
+                                            <color key="tintColor" red="0.96078431369999995" green="0.50980392159999999" blue="0.16078431369999999" alpha="1" colorSpace="calibratedRGB"/>
+                                        </imageView>
+                                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="9Xt-K4-EIU">
+                                            <rect key="frame" x="0.0" y="82" width="65" height="48"/>
+                                            <constraints>
+                                                <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="48" id="is5-El-fEa"/>
+                                                <constraint firstAttribute="height" constant="48" id="kZE-Rp-8lx"/>
+                                            </constraints>
+                                            <fontDescription key="fontDescription" type="system" pointSize="18"/>
+                                            <state key="normal" title="+"/>
+                                            <connections>
+                                                <action selector="plusTapped:" destination="Axc-6v-6B2" eventType="touchUpInside" id="0fj-Di-B5m"/>
+                                            </connections>
+                                        </button>
+                                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Qjv-Hy-YYJ">
+                                            <rect key="frame" x="65" y="82" width="65" height="48"/>
+                                            <constraints>
+                                                <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="48" id="HpB-rd-gLO"/>
+                                                <constraint firstAttribute="height" constant="48" id="rYp-U8-xwj"/>
+                                            </constraints>
+                                            <fontDescription key="fontDescription" type="system" pointSize="18"/>
+                                            <state key="normal" title="-"/>
+                                            <connections>
+                                                <action selector="minusTapped:" destination="Axc-6v-6B2" eventType="touchUpInside" id="MEB-54-kEV"/>
+                                            </connections>
+                                        </button>
+                                    </subviews>
+                                    <color key="backgroundColor" cocoaTouchSystemColor="tableCellGroupedBackgroundColor"/>
+                                    <constraints>
+                                        <constraint firstAttribute="trailing" secondItem="KMJ-gl-Mn4" secondAttribute="trailing" id="BXy-pK-BwK"/>
+                                        <constraint firstItem="9Xt-K4-EIU" firstAttribute="leading" secondItem="T0j-vx-REu" secondAttribute="leading" id="GzQ-CL-Tsl"/>
+                                        <constraint firstAttribute="bottom" secondItem="KMJ-gl-Mn4" secondAttribute="bottomMargin" multiplier="1.8" id="HrW-ee-JUi"/>
+                                        <constraint firstAttribute="trailing" secondItem="9Xt-K4-EIU" secondAttribute="trailing" multiplier="2" id="I22-PW-GJX"/>
+                                        <constraint firstItem="KMJ-gl-Mn4" firstAttribute="top" secondItem="T0j-vx-REu" secondAttribute="top" id="JcD-SY-y6H"/>
+                                        <constraint firstAttribute="trailing" secondItem="Qjv-Hy-YYJ" secondAttribute="trailing" id="OK8-E6-6uA"/>
+                                        <constraint firstAttribute="bottom" secondItem="Qjv-Hy-YYJ" secondAttribute="bottom" id="YYO-5M-SUh"/>
+                                        <constraint firstAttribute="bottom" secondItem="9Xt-K4-EIU" secondAttribute="bottom" id="cKL-43-5GP"/>
+                                        <constraint firstItem="KMJ-gl-Mn4" firstAttribute="leading" secondItem="T0j-vx-REu" secondAttribute="leading" id="qbs-YG-OLR"/>
+                                        <constraint firstItem="Qjv-Hy-YYJ" firstAttribute="leading" secondItem="9Xt-K4-EIU" secondAttribute="trailing" id="wkF-67-Di8"/>
+                                    </constraints>
+                                </collectionViewCellContentView>
+                            </collectionViewCell>
+                            <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" reuseIdentifier="00001002" id="dEZ-Nh-6sy" customClass="GenericLevelServerCell" customModule="nRFMeshProvision_Example" customModuleProvider="target">
+                                <rect key="frame" x="268" y="190" width="130" height="130"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <collectionViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="9tw-2h-HJs">
+                                    <rect key="frame" x="0.0" y="0.0" width="130" height="130"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                    <subviews>
+                                        <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="center" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="groups_generic_level_outline" translatesAutoresizingMaskIntoConstraints="NO" id="KSw-i1-MGx">
+                                            <rect key="frame" x="0.0" y="0.0" width="130" height="130"/>
+                                            <color key="tintColor" white="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        </imageView>
+                                    </subviews>
+                                    <color key="backgroundColor" cocoaTouchSystemColor="tableCellGroupedBackgroundColor"/>
+                                    <constraints>
+                                        <constraint firstAttribute="bottom" secondItem="KSw-i1-MGx" secondAttribute="bottom" id="5aQ-Jv-hng"/>
+                                        <constraint firstItem="KSw-i1-MGx" firstAttribute="top" secondItem="9tw-2h-HJs" secondAttribute="top" id="MNd-tF-pIY"/>
+                                        <constraint firstAttribute="trailing" secondItem="KSw-i1-MGx" secondAttribute="trailing" id="R01-Fh-sFH"/>
+                                        <constraint firstItem="KSw-i1-MGx" firstAttribute="leading" secondItem="9tw-2h-HJs" secondAttribute="leading" id="vSY-nF-lI8"/>
+                                    </constraints>
+                                </collectionViewCellContentView>
+                                <connections>
+                                    <outlet property="icon" destination="KSw-i1-MGx" id="iXu-jC-jtn"/>
+                                </connections>
+                            </collectionViewCell>
+                        </cells>
+                        <collectionReusableView key="sectionHeaderView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" reuseIdentifier="element" id="NIO-oH-X2Q" customClass="ElementSectionView" customModule="nRFMeshProvision_Example" customModuleProvider="target">
+                            <rect key="frame" x="0.0" y="0.0" width="414" height="50"/>
+                            <autoresizingMask key="autoresizingMask"/>
+                            <subviews>
+                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="ELEMENT 1" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="r5F-dR-kRq">
+                                    <rect key="frame" x="16" y="25" width="74" height="17"/>
+                                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                    <color key="textColor" red="0.42745098040000001" green="0.42745098040000001" blue="0.44705882349999998" alpha="1" colorSpace="calibratedRGB"/>
+                                    <nil key="highlightedColor"/>
+                                </label>
+                            </subviews>
+                            <constraints>
+                                <constraint firstAttribute="bottomMargin" secondItem="r5F-dR-kRq" secondAttribute="bottom" id="QJm-KT-6MF"/>
+                                <constraint firstItem="r5F-dR-kRq" firstAttribute="leading" secondItem="mQo-Ye-Jfj" secondAttribute="leading" constant="16" id="mPb-Bv-aQd"/>
+                            </constraints>
+                            <viewLayoutGuide key="safeArea" id="mQo-Ye-Jfj"/>
+                            <connections>
+                                <outlet property="title" destination="r5F-dR-kRq" id="Z8N-Yn-jC7"/>
+                            </connections>
+                        </collectionReusableView>
+                        <connections>
+                            <outlet property="dataSource" destination="E9W-n1-Wdt" id="AjY-e5-jGH"/>
+                            <outlet property="delegate" destination="E9W-n1-Wdt" id="0Fz-XB-fqq"/>
+                        </connections>
+                    </collectionView>
+                    <navigationItem key="navigationItem" title="Local Node" id="rk2-QS-QD9"/>
+                </collectionViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="sDS-pe-rb0" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1701.5999999999999" y="-236.45320197044336"/>
+        </scene>
+    </scenes>
+    <resources>
+        <image name="groups_generic_level_outline" width="50" height="50"/>
+        <image name="groups_generic_onoff_outline" width="50" height="50"/>
+        <image name="tab_control_outline_black_24pt" width="24" height="24"/>
+    </resources>
+    <color key="tintColor" red="0.0" green="0.46666666670000001" blue="0.7843137255" alpha="1" colorSpace="calibratedRGB"/>
+</document>

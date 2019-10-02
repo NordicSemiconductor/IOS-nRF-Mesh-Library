@@ -37,7 +37,8 @@ public class Model: Codable {
     /// not known to the local database, and those are not returned.
     /// Use `isSubscribed(to:)` to check other Groups.
     public var subscriptions: [Group] {
-        return parentElement.parentNode?.meshNetwork?.groups.filter({ subscribe.contains($0._address )}) ?? []
+        return parentElement.parentNode?.meshNetwork?.groups
+            .filter({ subscribe.contains($0._address )}) ?? []
     }
     /// The configuration of this Model's publication.
     public internal(set) var publish: Publish?
@@ -46,7 +47,7 @@ public class Model: Codable {
     
     /// The model message handler. This is non-`nil` for supported local Models
     /// and `nil` for Models of remote Nodes.
-    internal let handler: ModelHandler?
+    public internal(set) var handler: ModelHandler?
     
     /// Parent Element.
     public internal(set) weak var parentElement: Element!
@@ -67,6 +68,7 @@ public class Model: Codable {
         self.subscribe = []
         self.bind      = []
         self.handler   = handler
+        self.handler!.model = self
     }
     
     public convenience init(modelId: UInt16, companyId: UInt16, handler: ModelHandler) {

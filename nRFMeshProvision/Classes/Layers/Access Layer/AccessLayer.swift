@@ -331,8 +331,9 @@ private extension AccessLayer {
                             accessPdu.destination.address == element.unicastAddress ||
                             model.isSubscribed(to: accessPdu.destination)
                            ) {
-                            if let response = handler.handle(message: message, sentFrom: accessPdu.source,
-                                                             to: model, asResponseTo: request) {
+                            if let response = handler.handle(message: message,
+                                                             sentFrom: accessPdu.source,
+                                                             asResponseTo: request) {
                                 networkManager.reply(toMessageSentTo: accessPdu.destination.address,
                                                      with: response, to: accessPdu.source, using: keySet)
                             }
@@ -352,7 +353,6 @@ private extension AccessLayer {
                     logger?.i(.foundationModel, "\(configMessage) received from: \(accessPdu.source.hex)")
                     if let response = handler.handle(message: configMessage,
                                                      sentFrom: accessPdu.source,
-                                                     to: configurationServerModel,
                                                      asResponseTo: request) {
                         networkManager.reply(toMessageSentTo: accessPdu.destination.address,
                                              with: response, to: accessPdu.source, using: keySet)
@@ -369,8 +369,8 @@ private extension AccessLayer {
                 // Is this message targetting the local Node?
                 if accessPdu.destination.address == firstElement.unicastAddress {
                     logger?.i(.foundationModel, "\(configMessage) received from: \(accessPdu.source.hex)")
-                    if let response = handler.handle(message: configMessage, sentFrom: accessPdu.source,
-                                                     to: configurationClientModel,
+                    if let response = handler.handle(message: configMessage,
+                                                     sentFrom: accessPdu.source,
                                                      asResponseTo: request) {
                         networkManager.reply(toMessageSentTo: accessPdu.destination.address,
                                              with: response, to: accessPdu.source, using: keySet)
@@ -418,21 +418,19 @@ private extension ModelHandler {
     ///   - message: The decoded message.
     ///   - source:  The Unicast Address of the Element that the message
     ///              originates from.
-    ///   - model:   The local Model that received the message.
     ///   - request: The request message sent previously that this message
     ///              replies to, or `nil`, if this is not a response.
     /// - returns: The response message, if the received message is an
     ///            Acknowledged Mesh Message that needs to be replied.
-    func handle(message: MeshMessage, sentFrom source: Address, to model: Model,
+    func handle(message: MeshMessage, sentFrom source: Address,
                 asResponseTo request: AcknowledgedMeshMessage?) -> MeshMessage? {
         if let request = request {
-            handle(response: message, toAcknowledgedMessage: request,
-                   sentFrom: source, to: model)
+            handle(response: message, toAcknowledgedMessage: request, sentFrom: source)
             return nil
         } else if let request = message as? AcknowledgedMeshMessage {
-            return handle(acknowledgedMessage: request, sentFrom: source, to: model)
+            return handle(acknowledgedMessage: request, sentFrom: source)
         } else {
-            handle(unacknowledgedMessage: message, sentFrom: source, to: model)
+            handle(unacknowledgedMessage: message, sentFrom: source)
             return nil
         }
     }
