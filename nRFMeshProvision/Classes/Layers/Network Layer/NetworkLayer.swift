@@ -150,7 +150,7 @@ internal class NetworkLayer {
             let networkTransmit = meshNetwork.localProvisioner?.node?.networkTransmit,
             networkTransmit.count > 1 {
             var count = networkTransmit.count
-            _ = Timer.scheduledTimer(withTimeInterval: TimeInterval(networkTransmit.interval), repeats: true) { timer in
+            BackgroundTimer.scheduledTimer(withTimeInterval: networkTransmit.timeInterval, repeats: true) { timer in
                 try? self.networkManager.transmitter?.send(networkPdu.pdu, ofType: type)
                 count -= 1
                 if count == 0 {
