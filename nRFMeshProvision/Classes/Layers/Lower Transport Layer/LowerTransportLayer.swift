@@ -230,7 +230,7 @@ internal class LowerTransportLayer {
     
     /// Cancels sending segmented Upper Transoprt PDU.
     ///
-    /// - parameter pdu: The Upper Transport PDU
+    /// - parameter pdu: The Upper Transport PDU.
     func cancelSending(segmentedUpperTransportPdu pdu: UpperTransportPdu) {
         /// Last 13 bits of the sequence number are known as seqZero.
         let sequenceZero = UInt16(pdu.sequence & 0x1FFF)

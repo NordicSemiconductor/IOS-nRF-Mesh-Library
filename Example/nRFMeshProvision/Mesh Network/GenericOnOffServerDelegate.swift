@@ -1,24 +1,24 @@
 //
-//  GenericLevelServerHandler.swift
+//  GenericOnOffServerDelegate.swift
 //  nRFMeshProvision_Example
 //
-//  Created by Aleksander Nowakowski on 02/10/2019.
+//  Created by Aleksander Nowakowski on 01/10/2019.
 //  Copyright © 2019 CocoaPods. All rights reserved.
 //
 
 import Foundation
 import nRFMeshProvision
 
-class GenericLevelServerHandler: ModelHandler {
+class GenericOnOffServerDelegate: ModelDelegate {
     let messageTypes: [UInt32 : MeshMessage.Type]
     
-    private(set) var level: Int16 = Int16.min
+    private(set) var isOn: Bool = false
     
     init() {
         let types: [GenericMessage.Type] = [
-            GenericLevelGet.self,
-            GenericLevelSet.self,
-            GenericLevelSetUnacknowledged.self
+            GenericOnOffGet.self,
+            GenericOnOffSet.self,
+            GenericOnOffSetUnacknowledged.self
         ]
         messageTypes = types.toMap()
     }
@@ -28,19 +28,19 @@ class GenericLevelServerHandler: ModelHandler {
     func handle(acknowledgedMessage request: AcknowledgedMeshMessage,
                 sentFrom source: Address, to model: Model) -> MeshMessage {
         switch request {
-        case let request as GenericLevelSet:
-            level = request.level
+        case let request as GenericOnOffSet:
+            isOn = request.isOn
             fallthrough
         default:
-            return GenericLevelStatus(level: level)
+            return GenericOnOffStatus(isOn)
         }
     }
     
     func handle(unacknowledgedMessage message: MeshMessage,
                 sentFrom source: Address, to model: Model) {
         switch message {
-        case let request as GenericLevelSetUnacknowledged:
-        level = request.level
+        case let request as GenericOnOffSetUnacknowledged:
+            isOn = request.isOn
         default:
             break
         }

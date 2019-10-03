@@ -92,30 +92,30 @@ internal class UpperTransportLayer {
         }
     }
     
-    /// Cancels sending all segmented messages matching given handler.
+    /// Cancels sending all segmented messages matching given handle.
     /// Unsegmented messages are sent almost instantaneously and cannot be
     /// cancelled.
     ///
-    /// - parameter handler: The message handler.
-    func cancel(_ handler: MessageHandle) {
+    /// - parameter handle: The message handle.
+    func cancel(_ handle: MessageHandle) {
         var shouldSendNext = false
         // Check if the message that is currently being sent mathes the
         // handler data. If so, cancel it.
-        if let first = queues[handler.destination]?.first,
-            first.pdu.message!.opCode == handler.opCode && first.pdu.source == handler.source {
+        if let first = queues[handle.destination]?.first,
+            first.pdu.message!.opCode == handle.opCode && first.pdu.source == handle.source {
             logger?.d(.upperTransport, "Cancelling sending \(first.pdu)")
             networkManager.lowerTransportLayer.cancelSending(segmentedUpperTransportPdu: first.pdu)
             shouldSendNext = true
         }
         // Remove all enqueued messages that match the handler.
-        queues[handler.destination]!.removeAll() {
-            $0.pdu.message!.opCode == handler.opCode &&
-            $0.pdu.source == handler.source &&
-            $0.pdu.destination == handler.destination
+        queues[handle.destination]!.removeAll() {
+            $0.pdu.message!.opCode == handle.opCode &&
+            $0.pdu.source == handle.source &&
+            $0.pdu.destination == handle.destination
         }
         // If sending a message was cancelled, try sending another one.
         if shouldSendNext {
-            lowerTransportLayerDidSend(segmentedUpperTransportPduTo: handler.destination)
+            lowerTransportLayerDidSend(segmentedUpperTransportPduTo: handle.destination)
         }
     }
     

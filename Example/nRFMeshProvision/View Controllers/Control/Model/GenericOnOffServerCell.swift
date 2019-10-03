@@ -8,11 +8,11 @@
 
 import UIKit
 
-class GenericOnOffServerCell: BaseModelControlCell<GenericOnOffServerHandler> {
+class GenericOnOffServerCell: BaseModelControlCell<GenericOnOffServerDelegate> {
     
     @IBOutlet weak var icon: UIImageView!
     
-    override func setup(_ handler: GenericOnOffServerHandler?) {
+    override func setup(_ handler: GenericOnOffServerDelegate?) {
         
     }
 }

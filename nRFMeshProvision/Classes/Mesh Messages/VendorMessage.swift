@@ -50,7 +50,7 @@ public extension VendorMessage {
 public extension Array where Element == StaticVendorMessage.Type {
     
     /// A helper method that can create a map of message types required
-    /// by the `ModelHandler` from a list of `StaticVendorMessage`s.
+    /// by the `ModelDelegate` from a list of `StaticVendorMessage`s.
     ///
     /// - returns: A map of message types.
     func toMap() -> [UInt32 : MeshMessage.Type] {

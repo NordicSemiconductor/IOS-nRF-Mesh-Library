@@ -47,7 +47,7 @@ public class Model: Codable {
     
     /// The model message handler. This is non-`nil` for supported local Models
     /// and `nil` for Models of remote Nodes.
-    public let handler: ModelHandler?
+    public let delegate: ModelDelegate?
     
     /// Parent Element.
     public internal(set) weak var parentElement: Element!
@@ -56,27 +56,27 @@ public class Model: Codable {
         self.modelId   = vendorModelId
         self.subscribe = []
         self.bind      = []
-        self.handler   = nil
+        self.delegate  = nil
     }
     
     internal convenience init(sigModelId: UInt16) {
         self.init(vendorModelId: UInt32(sigModelId))
     }
     
-    public init(vendorModelId: UInt32, handler: ModelHandler) {
+    public init(vendorModelId: UInt32, delegate: ModelDelegate) {
         self.modelId   = vendorModelId
         self.subscribe = []
         self.bind      = []
-        self.handler   = handler
+        self.delegate  = delegate
     }
     
-    public convenience init(modelId: UInt16, companyId: UInt16, handler: ModelHandler) {
+    public convenience init(modelId: UInt16, companyId: UInt16, delegate: ModelDelegate) {
         let vendorModelId = (UInt32(companyId) << 16) | UInt32(modelId)
-        self.init(vendorModelId: vendorModelId, handler: handler)
+        self.init(vendorModelId: vendorModelId, delegate: delegate)
     }
     
-    public convenience init(sigModelId: UInt16, handler: ModelHandler) {
-        self.init(vendorModelId: UInt32(sigModelId), handler: handler)
+    public convenience init(sigModelId: UInt16, delegate: ModelDelegate) {
+        self.init(vendorModelId: UInt32(sigModelId), delegate: delegate)
     }
     
     // MARK: - Codable
@@ -109,7 +109,7 @@ public class Model: Codable {
             self.publish = publish
         }
         self.bind = try container.decode([KeyIndex].self, forKey: .bind)
-        self.handler = nil
+        self.delegate = nil
     }
     
     public func encode(to encoder: Encoder) throws {

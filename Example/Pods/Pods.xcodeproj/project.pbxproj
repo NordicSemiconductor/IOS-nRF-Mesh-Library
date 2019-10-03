@@ -106,7 +106,7 @@
 		4EB00929A328DDDA796D452CCF4791AF /* ConfigRelayStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E34881927E1DA3DED3EC553E2454204 /* ConfigRelayStatus.swift */; };
 		50AB0682318A38036213CF74CB3AC54E /* NetworkPdu.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0B6C4FB5E348EA74817E0A70F4AA1B7 /* NetworkPdu.swift */; };
 		522254796E82C4D8792978ACEE3D4724 /* Data+Keys.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45814F4C4FD15FB89BA793B23E344302 /* Data+Keys.swift */; };
-		52FE1FF02341E524002B377F /* ModelHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52FE1FEF2341E524002B377F /* ModelHandler.swift */; };
+		52FE1FF02341E524002B377F /* ModelDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52FE1FEF2341E524002B377F /* ModelDelegate.swift */; };
 		52FE1FF22341E7E1002B377F /* ConfigurationServerHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52FE1FF12341E7E1002B377F /* ConfigurationServerHandler.swift */; };
 		52FE1FF423420519002B377F /* ConfigurationClientHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52FE1FF323420519002B377F /* ConfigurationClientHandler.swift */; };
 		5518F22E4296714A3199AD17E6FC8A6E /* ApplicationKey+NetworkKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76DC50E7CDF4B41DF8C1373AEA5805FA /* ApplicationKey+NetworkKey.swift */; };
@@ -407,7 +407,7 @@
 		5183D75DFC2421E30C8B8AE4110CCD04 /* OpenSSLHelper.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = OpenSSLHelper.m; sourceTree = "<group>"; };
 		51BBAA3978BFB1C9BAA0B3563DB01A48 /* Pods-nRFMeshProvision_Example-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-nRFMeshProvision_Example-Info.plist"; sourceTree = "<group>"; };
 		5248DAAA31591B861A6C0CFA0DD02ED1 /* GenericPowerLastGet.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = GenericPowerLastGet.swift; sourceTree = "<group>"; };
-		52FE1FEF2341E524002B377F /* ModelHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ModelHandler.swift; path = nRFMeshProvision/Classes/ModelHandler.swift; sourceTree = "<group>"; };
+		52FE1FEF2341E524002B377F /* ModelDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ModelDelegate.swift; path = nRFMeshProvision/Classes/ModelDelegate.swift; sourceTree = "<group>"; };
 		52FE1FF12341E7E1002B377F /* ConfigurationServerHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigurationServerHandler.swift; sourceTree = "<group>"; };
 		52FE1FF323420519002B377F /* ConfigurationClientHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigurationClientHandler.swift; sourceTree = "<group>"; };
 		53636D6009F11E92279009B6E670BADF /* FilterStatus.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = FilterStatus.swift; sourceTree = "<group>"; };
@@ -907,7 +907,7 @@
 				C40AF7C07D4FA37F096E135D9A19F825 /* MeshNetworkManager.swift */,
 				29C53CB5854166A2C10265B40EF58420 /* MeshNetworkDelegate.swift */,
 				C8292DBF8F78F4941B228DC15F92099A /* MeshNetworkError.swift */,
-				52FE1FEF2341E524002B377F /* ModelHandler.swift */,
+				52FE1FEF2341E524002B377F /* ModelDelegate.swift */,
 				5EAB5E48BC083699E9DDF2134383B947 /* ProxyFilter.swift */,
 				CE4019A87F54B74F10D87262EA0CA5A6 /* Storage.swift */,
 				CD8AF0BD96F5DC18102EFA05E074DA63 /* Bearer */,
@@ -1464,7 +1464,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				1FE6B49007D7EF8C19127FCF3519B044 /* AccessError.swift in Sources */,
-				52FE1FF02341E524002B377F /* ModelHandler.swift in Sources */,
+				52FE1FF02341E524002B377F /* ModelDelegate.swift in Sources */,
 				B5460A5976DD22173B9A5B6027CC40D4 /* AccessLayer.swift in Sources */,
 				1CDE9AE453EECFED3CF8E0FEF41CF793 /* AccessMessage.swift in Sources */,
 				F972E8D6FCD3F0173A551DD563872CA6 /* AccessPdu.swift in Sources */,

@@ -70,16 +70,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         // Set up local Elements on the phone.
         let element0 = Element(name: "Primary Element", location: .first, models: [
-            Model(sigModelId: 0x1000, handler: GenericOnOffServerHandler()),
-            Model(sigModelId: 0x1002, handler: GenericLevelServerHandler()),
-            Model(sigModelId: 0x1001, handler: GenericOnOffClientHandler()),
-            Model(sigModelId: 0x1003, handler: GenericLevelClientHandler())
+            Model(sigModelId: 0x1000, handler: GenericOnOffServerDelegate()),
+            Model(sigModelId: 0x1002, handler: GenericLevelServerDelegate()),
+            Model(sigModelId: 0x1001, handler: GenericOnOffClientDelegate()),
+            Model(sigModelId: 0x1003, handler: GenericLevelClientDelegate())
         ])
         let element1 = Element(name: "Secondary Element", location: .second, models: [
-            Model(sigModelId: 0x1000, handler: GenericOnOffServerHandler()),
-            Model(sigModelId: 0x1002, handler: GenericLevelServerHandler()),
-            Model(sigModelId: 0x1001, handler: GenericOnOffClientHandler()),
-            Model(sigModelId: 0x1003, handler: GenericLevelClientHandler())
+            Model(sigModelId: 0x1000, handler: GenericOnOffServerDelegate()),
+            Model(sigModelId: 0x1002, handler: GenericLevelServerDelegate()),
+            Model(sigModelId: 0x1001, handler: GenericOnOffClientDelegate()),
+            Model(sigModelId: 0x1003, handler: GenericLevelClientDelegate())
         ])
         meshNetworkManager.localElements = [element0, element1]
         

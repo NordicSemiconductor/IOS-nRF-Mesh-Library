@@ -8,11 +8,11 @@
 
 import UIKit
 
-class GenericLevelServerCell: BaseModelControlCell<GenericLevelServerHandler> {
+class GenericLevelServerCell: BaseModelControlCell<GenericLevelServerDelegate> {
     
     @IBOutlet weak var icon: UIImageView!
     
-    override func setup(_ handler: GenericLevelServerHandler?) {
+    override func setup(_ handler: GenericLevelServerDelegate?) {
         
     }
 }

@@ -1,20 +1,20 @@
 //
-//  GenericLevelClientHandler.swift
+//  GenericOnOffClientDelegate.swift
 //  nRFMeshProvision_Example
 //
-//  Created by Aleksander Nowakowski on 02/10/2019.
+//  Created by Aleksander Nowakowski on 01/10/2019.
 //  Copyright © 2019 CocoaPods. All rights reserved.
 //
 
 import Foundation
 import nRFMeshProvision
 
-class GenericLevelClientHandler: ModelHandler {
+class GenericOnOffClientDelegate: ModelDelegate {
     let messageTypes: [UInt32 : MeshMessage.Type]
     
     init() {
         let types: [GenericMessage.Type] = [
-            GenericLevelStatus.self
+            GenericOnOffStatus.self
         ]
         messageTypes = types.toMap()
     }

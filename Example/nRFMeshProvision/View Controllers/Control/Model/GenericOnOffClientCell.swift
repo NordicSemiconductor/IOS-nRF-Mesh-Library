@@ -9,7 +9,7 @@
 import UIKit
 import nRFMeshProvision
 
-class GenericOnOffClientCell: BaseModelControlCell<GenericOnOffClientHandler> {
+class GenericOnOffClientCell: BaseModelControlCell<GenericOnOffClientDelegate> {
     
     @IBAction func onTapped(_ sender: UIButton) {
         publishGenericOnOffMessage(turnOn: true)
@@ -18,7 +18,7 @@ class GenericOnOffClientCell: BaseModelControlCell<GenericOnOffClientHandler> {
         publishGenericOnOffMessage(turnOn: false)
     }
     
-    override func setup(_ handler: GenericOnOffClientHandler?) {
+    override func setup(_ handler: GenericOnOffClientDelegate?) {
     }
 }
 

@@ -9,7 +9,7 @@
 import UIKit
 import nRFMeshProvision
 
-class GenericLevelClientCell: BaseModelControlCell<GenericLevelClientHandler> {
+class GenericLevelClientCell: BaseModelControlCell<GenericLevelClientDelegate> {
     
     @IBAction func plusTapped(_ sender: UIButton) {
         publishGenericDeltaMessage(delta: +2048)
@@ -18,7 +18,7 @@ class GenericLevelClientCell: BaseModelControlCell<GenericLevelClientHandler> {
         publishGenericDeltaMessage(delta: -2048)
     }
     
-    override func setup(_ handler: GenericLevelClientHandler?) {
+    override func setup(_ handler: GenericLevelClientDelegate?) {
     }
 }
 

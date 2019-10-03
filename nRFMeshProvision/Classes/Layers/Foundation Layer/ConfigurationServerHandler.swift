@@ -7,7 +7,7 @@
 
 import Foundation
 
-internal class ConfigurationServerHandler: ModelHandler {
+internal class ConfigurationServerHandler: ModelDelegate {
     let meshNetwork: MeshNetwork
     let messageTypes: [UInt32 : MeshMessage.Type]
     

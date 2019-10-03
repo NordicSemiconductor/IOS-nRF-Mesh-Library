@@ -104,10 +104,10 @@
 		52E54CD62343875400478F05 /* GenericLevelClientCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52E54CD52343875400478F05 /* GenericLevelClientCell.swift */; };
 		52E54CD82343876000478F05 /* GenericLevelServerCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52E54CD72343876000478F05 /* GenericLevelServerCell.swift */; };
 		52E54CDB2343878B00478F05 /* Control.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 52E54CD92343878B00478F05 /* Control.storyboard */; };
-		52E54CDD23438B2E00478F05 /* GenericOnOffClientHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52E54CDC23438B2E00478F05 /* GenericOnOffClientHandler.swift */; };
-		52E54CDF23438D2600478F05 /* GenericOnOffServerHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52E54CDE23438D2600478F05 /* GenericOnOffServerHandler.swift */; };
-		52E54CE12344974B00478F05 /* GenericLevelClientHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52E54CE02344974B00478F05 /* GenericLevelClientHandler.swift */; };
-		52E54CE32344978300478F05 /* GenericLevelServerHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52E54CE22344978300478F05 /* GenericLevelServerHandler.swift */; };
+		52E54CDD23438B2E00478F05 /* GenericOnOffClientDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52E54CDC23438B2E00478F05 /* GenericOnOffClientDelegate.swift */; };
+		52E54CDF23438D2600478F05 /* GenericOnOffServerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52E54CDE23438D2600478F05 /* GenericOnOffServerDelegate.swift */; };
+		52E54CE12344974B00478F05 /* GenericLevelClientDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52E54CE02344974B00478F05 /* GenericLevelClientDelegate.swift */; };
+		52E54CE32344978300478F05 /* GenericLevelServerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52E54CE22344978300478F05 /* GenericLevelServerDelegate.swift */; };
 		52F6AD6C22B78F3000F0D7DF /* CompositionData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52F6AD6B22B78F3000F0D7DF /* CompositionData.swift */; };
 		52F6AD7622BA612900F0D7DF /* UIViewController+Toast.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52F6AD7522BA612900F0D7DF /* UIViewController+Toast.swift */; };
 		607FACD61AFB9204008FA782 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACD51AFB9204008FA782 /* AppDelegate.swift */; };
@@ -226,10 +226,10 @@
 		52E54CD52343875400478F05 /* GenericLevelClientCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericLevelClientCell.swift; sourceTree = "<group>"; };
 		52E54CD72343876000478F05 /* GenericLevelServerCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericLevelServerCell.swift; sourceTree = "<group>"; };
 		52E54CDA2343878B00478F05 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Control.storyboard; sourceTree = "<group>"; };
-		52E54CDC23438B2E00478F05 /* GenericOnOffClientHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericOnOffClientHandler.swift; sourceTree = "<group>"; };
-		52E54CDE23438D2600478F05 /* GenericOnOffServerHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericOnOffServerHandler.swift; sourceTree = "<group>"; };
-		52E54CE02344974B00478F05 /* GenericLevelClientHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericLevelClientHandler.swift; sourceTree = "<group>"; };
-		52E54CE22344978300478F05 /* GenericLevelServerHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericLevelServerHandler.swift; sourceTree = "<group>"; };
+		52E54CDC23438B2E00478F05 /* GenericOnOffClientDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericOnOffClientDelegate.swift; sourceTree = "<group>"; };
+		52E54CDE23438D2600478F05 /* GenericOnOffServerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericOnOffServerDelegate.swift; sourceTree = "<group>"; };
+		52E54CE02344974B00478F05 /* GenericLevelClientDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericLevelClientDelegate.swift; sourceTree = "<group>"; };
+		52E54CE22344978300478F05 /* GenericLevelServerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericLevelServerDelegate.swift; sourceTree = "<group>"; };
 		52F6AD6B22B78F3000F0D7DF /* CompositionData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompositionData.swift; sourceTree = "<group>"; };
 		52F6AD7522BA612900F0D7DF /* UIViewController+Toast.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "UIViewController+Toast.swift"; path = "Utils/UIViewController+Toast.swift"; sourceTree = "<group>"; };
 		5A51F9AF82598D8D5D40BD77 /* Pods_nRFMeshProvision_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_nRFMeshProvision_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -515,10 +515,10 @@
 			isa = PBXGroup;
 			children = (
 				52DF5D8E229691BD00C297C1 /* NetworkConnection.swift */,
-				52E54CDC23438B2E00478F05 /* GenericOnOffClientHandler.swift */,
-				52E54CDE23438D2600478F05 /* GenericOnOffServerHandler.swift */,
-				52E54CE02344974B00478F05 /* GenericLevelClientHandler.swift */,
-				52E54CE22344978300478F05 /* GenericLevelServerHandler.swift */,
+				52E54CDC23438B2E00478F05 /* GenericOnOffClientDelegate.swift */,
+				52E54CDE23438D2600478F05 /* GenericOnOffServerDelegate.swift */,
+				52E54CE02344974B00478F05 /* GenericLevelClientDelegate.swift */,
+				52E54CE22344978300478F05 /* GenericLevelServerDelegate.swift */,
 			);
 			path = "Mesh Network";
 			sourceTree = "<group>";
@@ -826,17 +826,17 @@
 				5212152B23152A450059FB3D /* SectionView.swift in Sources */,
 				5212152F231554190059FB3D /* ProgressCollectionViewController.swift in Sources */,
 				523F776A22C621F50030EA6A /* NodeAddNetworkKeyViewController.swift in Sources */,
-				52E54CE12344974B00478F05 /* GenericLevelClientHandler.swift in Sources */,
+				52E54CE12344974B00478F05 /* GenericLevelClientDelegate.swift in Sources */,
 				5283528022806C280097B949 /* ProvisioningViewController.swift in Sources */,
 				52CD0A602330D71900A9A181 /* AddAddressViewController.swift in Sources */,
 				52835269227B2BAE0097B949 /* ScannerTableViewController.swift in Sources */,
 				528352BC2285B6150097B949 /* OobSelector.swift in Sources */,
-				52E54CDF23438D2600478F05 /* GenericOnOffServerHandler.swift in Sources */,
+				52E54CDF23438D2600478F05 /* GenericOnOffServerDelegate.swift in Sources */,
 				523F777B22CB86A00030EA6A /* ModelBindAppKeyViewController.swift in Sources */,
 				52DF5D8F229691BD00C297C1 /* NetworkConnection.swift in Sources */,
 				52547F27232A3F470002AA7B /* EditRangesViewController.swift in Sources */,
 				521215312316C36B0059FB3D /* GenericLevelGroupCell.swift in Sources */,
-				52E54CDD23438B2E00478F05 /* GenericOnOffClientHandler.swift in Sources */,
+				52E54CDD23438B2E00478F05 /* GenericOnOffClientDelegate.swift in Sources */,
 				52DF5D8C228DAA0500C297C1 /* NodeViewCell.swift in Sources */,
 				52CD0A50232FA6CD00A9A181 /* ProxyFilterViewController.swift in Sources */,
 				528AB9FA228D856C000BE9DC /* ProvisioningViewDelegate.swift in Sources */,
@@ -844,7 +844,7 @@
 				52314041230192C50074325A /* ModelViewCell.swift in Sources */,
 				5283524822733BCF0097B949 /* EditKeyViewController.swift in Sources */,
 				5231401622F460380074325A /* PublicationCell.swift in Sources */,
-				52E54CE32344978300478F05 /* GenericLevelServerHandler.swift in Sources */,
+				52E54CE32344978300478F05 /* GenericLevelServerDelegate.swift in Sources */,
 				528AB9F8228D847C000BE9DC /* NetworkViewController.swift in Sources */,
 				523F778722CCDE250030EA6A /* SetPublicationViewController.swift in Sources */,
 				52CD0A622330DCFF00A9A181 /* CustomAddressCell.swift in Sources */,

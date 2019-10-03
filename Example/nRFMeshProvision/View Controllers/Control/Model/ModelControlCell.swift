@@ -18,14 +18,14 @@ protocol ModelControlCell {
     var delegate: ModelControlDelegate? { get set }
 }
 
-class BaseModelControlCell<MH: ModelHandler>: UICollectionViewCell, ModelControlCell {
+class BaseModelControlCell<MH: ModelDelegate>: UICollectionViewCell, ModelControlCell {
     
     // MARK: - Properties
     
     /// The Model.
     var model: Model! {
         didSet {
-            handler = model.handler as? MH
+            handler = model.delegate as? MH
             setup(handler)
         }
     }

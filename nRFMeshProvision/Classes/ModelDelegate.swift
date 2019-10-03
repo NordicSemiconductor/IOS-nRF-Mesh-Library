@@ -7,9 +7,12 @@
 
 import Foundation
 
-public protocol ModelHandler {
+public protocol ModelDelegate {
     
-    /// A map of mesh message types supported by this Model.
+    /// A map of mesh message types that the associated Model may receive
+    /// and handle. It should not contain types of messages that this
+    /// Model only sends. Items of this map are used to instantiate a
+    /// message when an Access PDU with given opcode is received.
     ///
     /// The key in the map should be the opcode and the value
     /// the message type supported by the handler.
@@ -52,7 +55,7 @@ public protocol ModelHandler {
 public extension Array where Element == StaticMeshMessage.Type {
     
     /// A helper method that can create a map of message types required
-    /// by the `ModelHandler` from a list of `StaticMeshMessage`s.
+    /// by the `ModelDelegate` from a list of `StaticMeshMessage`s.
     ///
     /// - returns: A map of message types.
     func toMap() -> [UInt32 : MeshMessage.Type] {

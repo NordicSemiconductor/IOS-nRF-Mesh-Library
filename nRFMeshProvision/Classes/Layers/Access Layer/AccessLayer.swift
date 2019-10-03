@@ -256,19 +256,19 @@ internal class AccessLayer {
         }
     }
     
-    /// Cancels sending the message with the given handler.
+    /// Cancels sending the message with the given handle.
     ///
-    /// - parameter handler: The message handler.
-    func cancel(_ handler: MessageHandle) {
-        logger?.i(.access, "Cancelling messages with op code: \(handler.opCode), sent from: \(handler.source.hex) to: \(handler.destination.hex)")
+    /// - parameter handle: The message handle.
+    func cancel(_ handle: MessageHandle) {
+        logger?.i(.access, "Cancelling messages with op code: \(handle.opCode), sent from: \(handle.source.hex) to: \(handle.destination.hex)")
         if let index = reliableMessageContexts.firstIndex(where: {
-            $0.request.opCode == handler.opCode &&
-            $0.source == handler.source &&
-            $0.destination == handler.destination
+            $0.request.opCode == handle.opCode &&
+            $0.source == handle.source &&
+            $0.destination == handle.destination
         }) {
             reliableMessageContexts.remove(at: index).invalidate()
         }
-        networkManager.upperTransportLayer.cancel(handler)
+        networkManager.upperTransportLayer.cancel(handle)
     }
     
 }
@@ -292,7 +292,7 @@ private extension AccessLayer {
     /// some "Message X" type.
     ///
     /// This method will make sure that each Model will receive a message
-    /// decoded to the type specified in `messageTypes` in its `ModelHandler`,
+    /// decoded to the type specified in `messageTypes` in its `ModelDelegate`,
     /// but the manager's delegate will be notified with the first message only.
     ///
     /// - parameters:
@@ -318,10 +318,10 @@ private extension AccessLayer {
                 // (except Configuration Server and Client, which use Device Key)
                 for model in element.models
                     .filter({ !$0.isConfigurationServer && !$0.isConfigurationClient }) {
-                    // check, if the handler is set, and it supports the opcode
+                    // check, if the delegate is set, and it supports the opcode
                     // specified in the received Access PDU.
-                    if let handler = model.handler,
-                       let message = handler.decode(accessPdu) {
+                    if let delegate = model.delegate,
+                       let message = delegate.decode(accessPdu) {
                         // Save and log only the first decoded message (see mehtod's comment).
                         if newMessage == nil {
                             logger?.i(.model, "\(message) received from: \(accessPdu.source.hex), to: \(accessPdu.destination.hex)")
@@ -335,8 +335,8 @@ private extension AccessLayer {
                             accessPdu.destination.address == element.unicastAddress ||
                             model.isSubscribed(to: accessPdu.destination)
                            ) {
-                            if let response = handler.handle(message: message, sentFrom: accessPdu.source,
-                                                             to: model, asResponseTo: request) {
+                            if let response = delegate.handle(message: message, sentFrom: accessPdu.source,
+                                                              to: model, asResponseTo: request) {
                                 networkManager.reply(toMessageSentTo: accessPdu.destination.address,
                                                      with: response, to: accessPdu.source, using: keySet)
                             }
@@ -348,16 +348,16 @@ private extension AccessLayer {
             // Check Configuration Server Model.
             if let configurationServerModel = firstElement.models
                    .first(where: { $0.isConfigurationServer }),
-               let handler = configurationServerModel.handler,
-               let configMessage = handler.decode(accessPdu) {
+               let delegate = configurationServerModel.delegate,
+               let configMessage = delegate.decode(accessPdu) {
                 newMessage = configMessage
                 // Is this message targetting the local Node?
                 if accessPdu.destination.address == firstElement.unicastAddress {
                     logger?.i(.foundationModel, "\(configMessage) received from: \(accessPdu.source.hex)")
-                    if let response = handler.handle(message: configMessage,
-                                                     sentFrom: accessPdu.source,
-                                                     to: configurationServerModel,
-                                                     asResponseTo: request) {
+                    if let response = delegate.handle(message: configMessage,
+                                                      sentFrom: accessPdu.source,
+                                                      to: configurationServerModel,
+                                                      asResponseTo: request) {
                         networkManager.reply(toMessageSentTo: accessPdu.destination.address,
                                              with: response, to: accessPdu.source, using: keySet)
                     }
@@ -367,15 +367,15 @@ private extension AccessLayer {
                 }
             } else if let configurationClientModel = firstElement.models
                           .first(where: { $0.isConfigurationClient }),
-                      let handler = configurationClientModel.handler,
-                      let configMessage = handler.decode(accessPdu) {
+                      let delegate = configurationClientModel.delegate,
+                      let configMessage = delegate.decode(accessPdu) {
                 newMessage = configMessage
                 // Is this message targetting the local Node?
                 if accessPdu.destination.address == firstElement.unicastAddress {
                     logger?.i(.foundationModel, "\(configMessage) received from: \(accessPdu.source.hex)")
-                    if let response = handler.handle(message: configMessage, sentFrom: accessPdu.source,
-                                                     to: configurationClientModel,
-                                                     asResponseTo: request) {
+                    if let response = delegate.handle(message: configMessage, sentFrom: accessPdu.source,
+                                                      to: configurationClientModel,
+                                                      asResponseTo: request) {
                         networkManager.reply(toMessageSentTo: accessPdu.destination.address,
                                              with: response, to: accessPdu.source, using: keySet)
                     }
@@ -397,7 +397,7 @@ private extension AccessLayer {
     
 }
 
-private extension ModelHandler {
+private extension ModelDelegate {
     
     /// This method tries to decode the Access PDU into a Message.
     ///
