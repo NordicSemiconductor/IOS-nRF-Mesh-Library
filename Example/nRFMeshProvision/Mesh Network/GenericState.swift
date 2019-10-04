@@ -9,15 +9,20 @@
 import Foundation
 import nRFMeshProvision
 
-struct GenericState<T> {
+struct GenericState<T: Equatable> {
     
     struct Transition {
         let targetState: T
         let start: Date
+        let delay: TimeInterval
         let duration: TimeInterval
         
+        var startTime: Date {
+            return start.addingTimeInterval(delay)
+        }
+        
         var remainingTime: TimeInterval {
-            let startsIn = start.timeIntervalSinceNow
+            let startsIn = startTime.timeIntervalSinceNow
             if startsIn >= 0 {
                 return startsIn + duration
             } else if duration - startsIn > 0 {
@@ -38,11 +43,34 @@ struct GenericState<T> {
         self.transition = nil
     }
     
-    init(transitionFrom state: T, to targetState: T, delay: TimeInterval, duration: TimeInterval) {
-        self.state = state
-        self.transition = GenericState<T>.Transition(targetState: targetState,
-                                                     start: Date(timeIntervalSinceNow: delay),
-                                                     duration: duration)
+    init(transitionFrom state: GenericState<T>, to targetState: T,
+         delay: TimeInterval, duration: TimeInterval) {
+        self.state = state.state
+        guard state.state != targetState else {
+            self.transition = nil
+            return
+        }
+        self.transition = Self.Transition(targetState: targetState,
+                                          start: Date(), delay: delay,
+                                          duration: duration)
+    }
+    
+    init(continueTransitionFrom state: GenericState<T>, to targetState: T,
+         delay: TimeInterval, duration: TimeInterval) {
+        self.state = state.state
+        guard state.state != targetState else {
+            self.transition = nil
+            return
+        }
+        if let transition = state.transition {
+            self.transition = Self.Transition(targetState: targetState,
+                                              start: transition.start, delay: delay,
+                                              duration: duration)
+        } else {
+            self.transition = Self.Transition(targetState: targetState,
+                                              start: Date(), delay: delay,
+                                              duration: duration)
+        }
     }
 }
 

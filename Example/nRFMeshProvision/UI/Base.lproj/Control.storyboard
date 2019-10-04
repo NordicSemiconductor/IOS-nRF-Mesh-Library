@@ -98,6 +98,10 @@
                                         <constraint firstAttribute="bottom" secondItem="LGq-Zr-OtD" secondAttribute="bottom" id="xb3-hc-M9n"/>
                                     </constraints>
                                 </collectionViewCellContentView>
+                                <connections>
+                                    <outlet property="offButton" destination="xX7-oQ-uFu" id="Ha1-3l-4Wd"/>
+                                    <outlet property="onButton" destination="LGq-Zr-OtD" id="nUv-yl-WNE"/>
+                                </connections>
                             </collectionViewCell>
                             <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" reuseIdentifier="00001000" id="txW-pE-MsP" customClass="GenericOnOffServerCell" customModule="nRFMeshProvision_Example" customModuleProvider="target">
                                 <rect key="frame" x="268" y="50" width="130" height="130"/>
@@ -173,6 +177,10 @@
                                         <constraint firstItem="KMJ-gl-Mn4" firstAttribute="leading" secondItem="T0j-vx-REu" secondAttribute="leading" id="qbs-YG-OLR"/>
                                     </constraints>
                                 </collectionViewCellContentView>
+                                <connections>
+                                    <outlet property="minusButton" destination="Qjv-Hy-YYJ" id="atQ-hd-XXV"/>
+                                    <outlet property="plusButton" destination="9Xt-K4-EIU" id="5lK-7s-Fwn"/>
+                                </connections>
                             </collectionViewCell>
                             <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" reuseIdentifier="00001002" id="dEZ-Nh-6sy" customClass="GenericLevelServerCell" customModule="nRFMeshProvision_Example" customModuleProvider="target">
                                 <rect key="frame" x="268" y="190" width="130" height="130"/>
@@ -183,18 +191,28 @@
                                     <subviews>
                                         <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="center" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="groups_generic_level_outline" translatesAutoresizingMaskIntoConstraints="NO" id="KSw-i1-MGx">
                                             <rect key="frame" x="0.0" y="0.0" width="130" height="130"/>
-                                            <color key="tintColor" white="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                            <color key="tintColor" red="0.96078431369999995" green="0.50980392159999999" blue="0.16078431369999999" alpha="1" colorSpace="calibratedRGB"/>
+                                        </imageView>
+                                        <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="center" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="groups_generic_level_outline" translatesAutoresizingMaskIntoConstraints="NO" id="ToJ-Et-z0y">
+                                            <rect key="frame" x="0.0" y="0.0" width="130" height="130"/>
+                                            <color key="backgroundColor" red="0.96078431369999995" green="0.50980392159999999" blue="0.16078431369999999" alpha="1" colorSpace="calibratedRGB"/>
+                                            <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         </imageView>
                                     </subviews>
                                     <color key="backgroundColor" cocoaTouchSystemColor="tableCellGroupedBackgroundColor"/>
                                     <constraints>
+                                        <constraint firstAttribute="bottom" secondItem="ToJ-Et-z0y" secondAttribute="bottom" id="2VK-Ve-AE4"/>
                                         <constraint firstAttribute="bottom" secondItem="KSw-i1-MGx" secondAttribute="bottom" id="5aQ-Jv-hng"/>
                                         <constraint firstItem="KSw-i1-MGx" firstAttribute="top" secondItem="9tw-2h-HJs" secondAttribute="top" id="MNd-tF-pIY"/>
                                         <constraint firstAttribute="trailing" secondItem="KSw-i1-MGx" secondAttribute="trailing" id="R01-Fh-sFH"/>
+                                        <constraint firstItem="ToJ-Et-z0y" firstAttribute="leading" secondItem="9tw-2h-HJs" secondAttribute="leading" id="hCP-2l-qha"/>
+                                        <constraint firstItem="ToJ-Et-z0y" firstAttribute="top" secondItem="9tw-2h-HJs" secondAttribute="top" id="lVV-0d-lqm"/>
                                         <constraint firstItem="KSw-i1-MGx" firstAttribute="leading" secondItem="9tw-2h-HJs" secondAttribute="leading" id="vSY-nF-lI8"/>
+                                        <constraint firstAttribute="trailing" secondItem="ToJ-Et-z0y" secondAttribute="trailing" id="zKs-9D-AQ4"/>
                                     </constraints>
                                 </collectionViewCellContentView>
                                 <connections>
+                                    <outlet property="fullIcon" destination="ToJ-Et-z0y" id="WfJ-ws-8CY"/>
                                     <outlet property="icon" destination="KSw-i1-MGx" id="iXu-jC-jtn"/>
                                 </connections>
                             </collectionViewCell>
@@ -228,7 +246,7 @@
                 </collectionViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="sDS-pe-rb0" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1701.5999999999999" y="-236.45320197044336"/>
+            <point key="canvasLocation" x="1701.449275362319" y="-237.05357142857142"/>
         </scene>
     </scenes>
     <resources>

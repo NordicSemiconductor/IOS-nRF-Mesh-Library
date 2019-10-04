@@ -36,6 +36,8 @@ class GenericOnOffServerDelegate: ModelDelegate {
             }
         }
     }
+    /// The last transaction details.
+    private var lastTransaction: (source: Address, destination: MeshAddress, tid: UInt8, timestamp: Date)?
     /// The state observer.
     private var observer: ((GenericState<Bool>) -> ())?
     
@@ -54,23 +56,37 @@ class GenericOnOffServerDelegate: ModelDelegate {
                from source: Address, sentTo destination: MeshAddress) -> MeshMessage {
         switch request {
         case let request as GenericOnOffSet:
+        // Ignore a repeated request (with the same TID) from the same source
+        // and sent to the same destinatino when it was received within 6 seconds.
+            guard lastTransaction == nil ||
+                  lastTransaction!.source != source || lastTransaction!.destination != destination ||
+                  request.isNewTransaction(previousTid: lastTransaction!.tid, timestamp: lastTransaction!.timestamp) else {
+                    lastTransaction = (source: source, destination: destination, tid: request.tid, timestamp: Date())
+                break
+            }
+            lastTransaction = (source: source, destination: destination, tid: request.tid, timestamp: Date())
+            
             if let transitionTime = request.transitionTime,
                let delay = request.delay {
-                state = GenericState<Bool>(transitionFrom: state.state, to: request.isOn,
+                state = GenericState<Bool>(transitionFrom: state, to: request.isOn,
                                            delay: TimeInterval(delay) * 0.005,
                                            duration: transitionTime.interval)
             } else {
                 state = GenericState<Bool>(request.isOn)
             }
-            fallthrough
+            
         default:
-            if let transition = state.transition, transition.remainingTime > 0 {
-                return GenericOnOffStatus(state.state,
-                                          targetState: transition.targetState,
-                                          remainingTime: TransitionTime(transition.remainingTime))
-            } else {
-                return GenericOnOffStatus(state.state)
-            }
+            // Not possible.
+            break
+        }
+        
+        // Reply with GenericOnOffStatus.
+        if let transition = state.transition, transition.remainingTime > 0 {
+            return GenericOnOffStatus(state.state,
+                                      targetState: transition.targetState,
+                                      remainingTime: TransitionTime(transition.remainingTime))
+        } else {
+            return GenericOnOffStatus(state.state)
         }
     }
     
@@ -78,15 +94,27 @@ class GenericOnOffServerDelegate: ModelDelegate {
                from source: Address, sentTo destination: MeshAddress) {
         switch message {
         case let request as GenericOnOffSetUnacknowledged:
+            // Ignore a repeated request (with the same TID) from the same source
+            // and sent to the same destinatino when it was received within 6 seconds.
+            guard lastTransaction == nil ||
+                  lastTransaction!.source != source || lastTransaction!.destination != destination ||
+                  request.isNewTransaction(previousTid: lastTransaction!.tid, timestamp: lastTransaction!.timestamp) else {
+                lastTransaction = (source: source, destination: destination, tid: request.tid, timestamp: Date())
+                break
+            }
+            lastTransaction = (source: source, destination: destination, tid: request.tid, timestamp: Date())
+            
             if let transitionTime = request.transitionTime,
                let delay = request.delay {
-                state = GenericState<Bool>(transitionFrom: state.state, to: request.isOn,
+                state = GenericState<Bool>(transitionFrom: state, to: request.isOn,
                                            delay: TimeInterval(delay) * 0.005,
                                            duration: transitionTime.interval)
             } else {
                 state = GenericState<Bool>(request.isOn)
             }
+            
         default:
+            // Not possible.
             break
         }
     }
@@ -97,6 +125,10 @@ class GenericOnOffServerDelegate: ModelDelegate {
         // Not possible.
     }
     
+    /// Sets a model state observer.
+    ///
+    /// - parameter observer: The observer that will be informed about
+    ///                       state changes.
     func observe(_ observer: @escaping (GenericState<Bool>) -> ()) {
         self.observer = observer
         observer(state)

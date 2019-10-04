@@ -46,7 +46,10 @@ private extension GenericOnOffGroupCell {
     
     func sendGenericOnOffMessage(turnOn: Bool) {
         let label = turnOn ? "Turning ON..." : "Turning OFF..."
-        delegate?.send(GenericOnOffSetUnacknowledged(turnOn), description: label, using: applicationKey)
+        delegate?.send(GenericOnOffSetUnacknowledged(turnOn,
+                                                     transitionTime: TransitionTime(1.0),
+                                                     delay: 20), // 100 ms
+                       description: label, using: applicationKey)
     }
     
 }

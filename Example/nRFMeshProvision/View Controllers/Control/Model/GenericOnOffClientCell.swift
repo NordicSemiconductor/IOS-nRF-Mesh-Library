@@ -11,11 +11,21 @@ import nRFMeshProvision
 
 class GenericOnOffClientCell: BaseModelControlCell<GenericOnOffClientDelegate> {
     
+    @IBOutlet weak var onButton: UIButton!
     @IBAction func onTapped(_ sender: UIButton) {
         publishGenericOnOffMessage(turnOn: true)
     }
+    @IBOutlet weak var offButton: UIButton!
     @IBAction func offTapped(_ sender: UIButton) {
         publishGenericOnOffMessage(turnOn: false)
+    }
+    
+    override func setup(_ model: GenericOnOffClientDelegate?) {        
+        let localProvisioner = MeshNetworkManager.instance.meshNetwork?.localProvisioner
+        let isEnabled = localProvisioner?.hasConfigurationCapabilities ?? false
+        
+        onButton.isEnabled = isEnabled
+        offButton.isEnabled = isEnabled
     }
 }
 
@@ -25,7 +35,7 @@ private extension GenericOnOffClientCell {
         let label = turnOn ? "Turning ON..." : "Turning OFF..."
         delegate?.publish(GenericOnOffSetUnacknowledged(turnOn,
                                                         transitionTime: TransitionTime(1.0),
-                                                        delay: 100),
+                                                        delay: 20), // 100 ms
                           description: label, fromModel: model)
     }
     

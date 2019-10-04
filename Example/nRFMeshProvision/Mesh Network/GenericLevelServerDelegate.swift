@@ -12,13 +12,44 @@ import nRFMeshProvision
 class GenericLevelServerDelegate: ModelDelegate {
     let messageTypes: [UInt32 : MeshMessage.Type]
     
-    private(set) var level: Int16 = Int16.min
+    /// Model state.
+    private var state = GenericState<Int16>(Int16.min) {
+        didSet {
+            if let transition = state.transition {
+                if transition.remainingTime > 0 {
+                    DispatchQueue.main.async {
+                        Timer.scheduledTimer(withTimeInterval: transition.remainingTime, repeats: false) { _ in
+                            // If the state has not change since it was set,
+                            // remove the Transition.
+                            if self.state.transition?.start == transition.start {
+                                self.state = GenericState<Int16>(self.state.transition?.targetState ?? self.state.state)
+                            }
+                        }
+                    }
+                }
+            }
+            let state = self.state
+            if let observer = observer {
+                DispatchQueue.main.async {
+                    observer(state)
+                }
+            }
+        }
+    }
+    /// The last transaction details.
+    private var lastTransaction: (source: Address, destination: MeshAddress, tid: UInt8, timestamp: Date)?    
+    /// The state observer.
+    private var observer: ((GenericState<Int16>) -> ())?
     
     init() {
         let types: [GenericMessage.Type] = [
             GenericLevelGet.self,
             GenericLevelSet.self,
-            GenericLevelSetUnacknowledged.self
+            GenericLevelSetUnacknowledged.self,
+            GenericDeltaSet.self,
+            GenericDeltaSetUnacknowledged.self,
+            GenericMoveSet.self,
+            GenericMoveSetUnacknowledged.self
         ]
         messageTypes = types.toMap()
     }
@@ -29,10 +60,62 @@ class GenericLevelServerDelegate: ModelDelegate {
                from source: Address, sentTo destination: MeshAddress) -> MeshMessage {
         switch request {
         case let request as GenericLevelSet:
-            level = request.level
-            fallthrough
+            // Ignore a repeated request (with the same TID) from the same source
+            // and sent to the same destinatino when it was received within 6 seconds.
+            guard lastTransaction == nil ||
+                  lastTransaction!.source != source || lastTransaction!.destination != destination ||
+                  request.isNewTransaction(previousTid: lastTransaction!.tid, timestamp: lastTransaction!.timestamp) else {
+                lastTransaction = (source: source, destination: destination, tid: request.tid, timestamp: Date())
+                break
+            }
+            lastTransaction = (source: source, destination: destination, tid: request.tid, timestamp: Date())
+            
+            if let transitionTime = request.transitionTime,
+               let delay = request.delay {
+                state = GenericState<Int16>(transitionFrom: state, to: request.level,
+                                            delay: TimeInterval(delay) * 0.005,
+                                            duration: transitionTime.interval)
+            } else {
+                state = GenericState<Int16>(request.level)
+            }
+
+        case let request as GenericDeltaSet:
+            let targetLevel = Int16(truncatingIfNeeded: Int32(state.state) + request.delta)
+            
+            if let transitionTime = request.transitionTime,
+               let delay = request.delay {
+                // Is the same transaction already in progress?
+                if let transition = state.transition, transition.remainingTime > 0,
+                   lastTransaction != nil &&
+                   lastTransaction!.source == source && lastTransaction!.destination == destination &&
+                   !request.isNewTransaction(previousTid: lastTransaction!.tid, timestamp: lastTransaction!.timestamp) {
+                    // Continue the same transition.
+                    state = GenericState<Int16>(continueTransitionFrom: state, to: targetLevel,
+                                                delay: TimeInterval(delay) * 0.005,
+                                                duration: transitionTime.interval)
+                } else {
+                    // Start a new transaction.
+                    state = GenericState<Int16>(transitionFrom: state, to: targetLevel,
+                                                delay: TimeInterval(delay) * 0.005,
+                                                duration: transitionTime.interval)
+                }
+            } else {
+                state = GenericState<Int16>(targetLevel)
+            }
+            lastTransaction = (source: source, destination: destination, tid: request.tid, timestamp: Date())
+            
         default:
-            return GenericLevelStatus(level: level)
+            // Not possible.
+            break
+        }
+
+        // Reply with GenericLevelStatus.
+        if let transition = state.transition, transition.remainingTime > 0 {
+            return GenericLevelStatus(level: state.state,
+                                      targetLevel: transition.targetState,
+                                      remainingTime: TransitionTime(transition.remainingTime))
+        } else {
+            return GenericLevelStatus(level: state.state)
         }
     }
     
@@ -40,8 +123,52 @@ class GenericLevelServerDelegate: ModelDelegate {
                from source: Address, sentTo destination: MeshAddress) {
         switch message {
         case let request as GenericLevelSetUnacknowledged:
-        level = request.level
+            // Ignore a repeated request (with the same TID) from the same source
+            // and sent to the same destinatino when it was received within 6 seconds.
+            guard lastTransaction == nil ||
+                  lastTransaction!.source != source || lastTransaction!.destination != destination ||
+                  request.isNewTransaction(previousTid: lastTransaction!.tid, timestamp: lastTransaction!.timestamp) else {
+                lastTransaction = (source: source, destination: destination, tid: request.tid, timestamp: Date())
+                break
+            }
+            lastTransaction = (source: source, destination: destination, tid: request.tid, timestamp: Date())
+            
+            if let transitionTime = request.transitionTime,
+               let delay = request.delay {
+                state = GenericState<Int16>(transitionFrom: state, to: request.level,
+                                            delay: TimeInterval(delay) * 0.005,
+                                            duration: transitionTime.interval)
+            } else {
+                state = GenericState<Int16>(request.level)
+            }
+
+        case let request as GenericDeltaSetUnacknowledged:
+            let targetLevel = Int16(truncatingIfNeeded: Int32(state.state) + request.delta)
+            
+            if let transitionTime = request.transitionTime,
+               let delay = request.delay {
+                // Is the same transaction already in progress?
+                if let transition = state.transition, transition.remainingTime > 0,
+                   lastTransaction != nil &&
+                   lastTransaction!.source == source && lastTransaction!.destination == destination &&
+                   !request.isNewTransaction(previousTid: lastTransaction!.tid, timestamp: lastTransaction!.timestamp) {
+                    // Continue the same transition.
+                    state = GenericState<Int16>(continueTransitionFrom: state, to: targetLevel,
+                                                delay: TimeInterval(delay) * 0.005,
+                                                duration: transitionTime.interval)
+                } else {
+                    // Start a new transaction.
+                    state = GenericState<Int16>(transitionFrom: state, to: targetLevel,
+                                                delay: TimeInterval(delay) * 0.005,
+                                                duration: transitionTime.interval)
+                }
+            } else {
+                state = GenericState<Int16>(targetLevel)
+            }
+            lastTransaction = (source: source, destination: destination, tid: request.tid, timestamp: Date())
+            
         default:
+            // Not possible.
             break
         }
     }
@@ -50,6 +177,15 @@ class GenericLevelServerDelegate: ModelDelegate {
                toAcknowledgedMessage request: AcknowledgedMeshMessage,
                from source: Address) {
         // Not possible.
+    }
+    
+    /// Sets a model state observer.
+    ///
+    /// - parameter observer: The observer that will be informed about
+    ///                       state changes.
+    func observe(_ observer: @escaping (GenericState<Int16>) -> ()) {
+        self.observer = observer
+        observer(state)
     }
     
 }
