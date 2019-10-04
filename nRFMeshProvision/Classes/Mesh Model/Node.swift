@@ -423,6 +423,19 @@ internal extension Node {
     ///
     /// - parameter element: The new list of Elements to be added.
     func set(elements: [Element]) {
+        for e in 0..<min(self.elements.count, elements.count) {
+            let oldElement = self.elements[e]
+            let newElement = elements[e]
+            for m in 0..<min(oldElement.models.count, newElement.models.count) {
+                let oldModel = oldElement.models[m]
+                let newModel = newElement.models[m]
+                if oldModel.modelId == newModel.modelId {
+                    newModel.bind = oldModel.bind
+                    newModel.publish = oldModel.publish
+                    newModel.subscribe = oldModel.subscribe
+                }
+            }
+        }
         self.elements.forEach {
             $0.parentNode = nil
             $0.index = 0

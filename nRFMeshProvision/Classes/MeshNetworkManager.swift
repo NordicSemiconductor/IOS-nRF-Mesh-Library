@@ -604,9 +604,6 @@ public extension MeshNetworkManager {
             meshNetwork.provisioners.forEach {
                 $0.meshNetwork = meshNetwork
             }
-            // This will reset the local Elements. They have to be set again
-            // by the app after the network was loaded.
-            meshNetwork.localElements = []
             
             networkManager = NetworkManager(self)
             proxyFilter = ProxyFilter(self)
@@ -659,9 +656,6 @@ public extension MeshNetworkManager {
         meshNetwork.provisioners.forEach {
             $0.meshNetwork = meshNetwork
         }
-        // This will reset the local Elements. They have to be set again
-        // by the app after the network was imported.
-        meshNetwork.localElements = []
         
         meshData.meshNetwork = meshNetwork
         networkManager = NetworkManager(self)
