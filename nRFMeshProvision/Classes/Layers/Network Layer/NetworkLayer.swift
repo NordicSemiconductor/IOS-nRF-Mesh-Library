@@ -143,8 +143,11 @@ internal class NetworkLayer {
                 // No need to send messages targetting local Unicast Addresses.
                 return
             }
+            // If the message was sent locally, don't report Bearer closer error.
+            try? transmitter.send(networkPdu.pdu, ofType: type)
+        } else {
+            try transmitter.send(networkPdu.pdu, ofType: type)
         }
-        try transmitter.send(networkPdu.pdu, ofType: type)
         
         // Unless a GATT Bearer is used, the Network PDUs should be sent multiple times
         // if Network Transmit has been set for the local Provisioner's Node.
