@@ -334,7 +334,8 @@ private extension AccessLayer {
                         // Application Key bound to this Model and the message is
                         // targetting this Element, or the Model is subscribed to the
                         // destination address.
-                        if model.isBoundTo(keySet.applicationKey) && (                        accessPdu.destination.address == Address.allNodes ||
+                        if model.isBoundTo(keySet.applicationKey) && (
+                            accessPdu.destination.address == Address.allNodes ||
                             accessPdu.destination.address == element.unicastAddress ||
                             model.isSubscribed(to: accessPdu.destination)
                            ) {
