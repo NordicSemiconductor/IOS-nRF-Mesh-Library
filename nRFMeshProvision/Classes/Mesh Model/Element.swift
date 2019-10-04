@@ -179,9 +179,9 @@ internal extension Element {
     /// local Node.
     func addPrimaryElementModels(_ meshNetwork: MeshNetwork) {
         insert(model: Model(sigModelId: .configurationServerModelId,
-                            handler: ConfigurationServerHandler(meshNetwork)), at: 0)
+                            delegate: ConfigurationServerHandler(meshNetwork)), at: 0)
         insert(model: Model(sigModelId: .configurationClientModelId,
-                            handler: ConfigurationClientHandler(meshNetwork)), at: 1)
+                            delegate: ConfigurationClientHandler(meshNetwork)), at: 1)
         insert(model: Model(sigModelId: .healthServerModelId), at: 2)
         insert(model: Model(sigModelId: .healthClientModelId), at: 3)
     }

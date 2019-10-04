@@ -18,24 +18,24 @@ protocol ModelControlCell {
     var delegate: ModelControlDelegate? { get set }
 }
 
-class BaseModelControlCell<MH: ModelDelegate>: UICollectionViewCell, ModelControlCell {
+class BaseModelControlCell<MD: ModelDelegate>: UICollectionViewCell, ModelControlCell {
     
     // MARK: - Properties
     
     /// The Model.
     var model: Model! {
         didSet {
-            handler = model.delegate as? MH
-            setup(handler)
+            modelDelegate = model.delegate as? MD
+            setup(modelDelegate)
         }
     }
-    /// The Model Handler.
-    var handler: MH?
+    /// The Model delegate.
+    var modelDelegate: MD?
     weak var delegate: ModelControlDelegate?
     
     // MARK: - Private methods
     
-    func setup(_ handler: MH?) {
+    func setup(_ model: MD?) {
         // Empty.
     }
 }
