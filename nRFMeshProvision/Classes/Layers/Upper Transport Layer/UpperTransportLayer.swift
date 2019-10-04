@@ -108,7 +108,7 @@ internal class UpperTransportLayer {
             shouldSendNext = true
         }
         // Remove all enqueued messages that match the handler.
-        queues[handle.destination]!.removeAll() {
+        queues[handle.destination]?.removeAll() {
             $0.pdu.message!.opCode == handle.opCode &&
             $0.pdu.source == handle.source &&
             $0.pdu.destination == handle.destination
