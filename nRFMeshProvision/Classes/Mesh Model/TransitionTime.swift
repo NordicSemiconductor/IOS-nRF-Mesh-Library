@@ -52,6 +52,30 @@ public struct TransitionTime {
         self.stepResolution = .hundredsOfMilliseconds
     }
     
+    /// Creates the Transition Time object for the `TimeInterval`.
+    public init(_ interval: TimeInterval) {
+        switch interval {
+        case let interval where interval < 0:
+            steps = 0
+            stepResolution = .hundredsOfMilliseconds
+        case let interval where interval <= 62 * 0.100:
+            steps = UInt8(interval * 10)
+            stepResolution = .hundredsOfMilliseconds
+        case let interval where interval <= 62 * 1.0:
+            steps = UInt8(interval)
+            stepResolution = .seconds
+        case let interval where interval <= 62 * 10.0:
+            steps = UInt8(interval / 10.0)
+            stepResolution = .tensOfSeconds
+        case let interval where interval <= 62 * 10 * 60.0:
+            steps = UInt8(interval / (10 * 60.0))
+            stepResolution = .tensOfMinutes
+        default:
+            steps = 0x3E
+            stepResolution = .tensOfMinutes
+        }
+    }
+    
     internal init(rawValue: UInt8) {
         self.steps = rawValue & 0x3F
         self.stepResolution = StepResolution(rawValue: rawValue >> 6)!
