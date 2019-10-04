@@ -17,16 +17,16 @@ class GenericOnOffClientCell: BaseModelControlCell<GenericOnOffClientDelegate> {
     @IBAction func offTapped(_ sender: UIButton) {
         publishGenericOnOffMessage(turnOn: false)
     }
-    
-    override func setup(_ handler: GenericOnOffClientDelegate?) {
-    }
 }
 
 private extension GenericOnOffClientCell {
     
     func publishGenericOnOffMessage(turnOn: Bool) {
         let label = turnOn ? "Turning ON..." : "Turning OFF..."
-        delegate?.publish(GenericOnOffSetUnacknowledged(turnOn), description: label, fromModel: model)
+        delegate?.publish(GenericOnOffSetUnacknowledged(turnOn,
+                                                        transitionTime: TransitionTime(1.0),
+                                                        delay: 100),
+                          description: label, fromModel: model)
     }
     
 }

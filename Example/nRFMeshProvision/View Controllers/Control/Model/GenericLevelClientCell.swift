@@ -18,7 +18,7 @@ class GenericLevelClientCell: BaseModelControlCell<GenericLevelClientDelegate> {
         publishGenericDeltaMessage(delta: -2048)
     }
     
-    override func setup(_ handler: GenericLevelClientDelegate?) {
+    override func setup(_ model: GenericLevelClientDelegate?) {
     }
 }
 

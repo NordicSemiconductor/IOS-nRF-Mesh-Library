@@ -108,6 +108,7 @@
 		52E54CDF23438D2600478F05 /* GenericOnOffServerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52E54CDE23438D2600478F05 /* GenericOnOffServerDelegate.swift */; };
 		52E54CE12344974B00478F05 /* GenericLevelClientDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52E54CE02344974B00478F05 /* GenericLevelClientDelegate.swift */; };
 		52E54CE32344978300478F05 /* GenericLevelServerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52E54CE22344978300478F05 /* GenericLevelServerDelegate.swift */; };
+		52E54CE72345EDA700478F05 /* GenericState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52E54CE62345EDA700478F05 /* GenericState.swift */; };
 		52F6AD6C22B78F3000F0D7DF /* CompositionData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52F6AD6B22B78F3000F0D7DF /* CompositionData.swift */; };
 		52F6AD7622BA612900F0D7DF /* UIViewController+Toast.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52F6AD7522BA612900F0D7DF /* UIViewController+Toast.swift */; };
 		607FACD61AFB9204008FA782 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACD51AFB9204008FA782 /* AppDelegate.swift */; };
@@ -230,6 +231,7 @@
 		52E54CDE23438D2600478F05 /* GenericOnOffServerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericOnOffServerDelegate.swift; sourceTree = "<group>"; };
 		52E54CE02344974B00478F05 /* GenericLevelClientDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericLevelClientDelegate.swift; sourceTree = "<group>"; };
 		52E54CE22344978300478F05 /* GenericLevelServerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericLevelServerDelegate.swift; sourceTree = "<group>"; };
+		52E54CE62345EDA700478F05 /* GenericState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericState.swift; sourceTree = "<group>"; };
 		52F6AD6B22B78F3000F0D7DF /* CompositionData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompositionData.swift; sourceTree = "<group>"; };
 		52F6AD7522BA612900F0D7DF /* UIViewController+Toast.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "UIViewController+Toast.swift"; path = "Utils/UIViewController+Toast.swift"; sourceTree = "<group>"; };
 		5A51F9AF82598D8D5D40BD77 /* Pods_nRFMeshProvision_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_nRFMeshProvision_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -519,6 +521,7 @@
 				52E54CDE23438D2600478F05 /* GenericOnOffServerDelegate.swift */,
 				52E54CE02344974B00478F05 /* GenericLevelClientDelegate.swift */,
 				52E54CE22344978300478F05 /* GenericLevelServerDelegate.swift */,
+				52E54CE62345EDA700478F05 /* GenericState.swift */,
 			);
 			path = "Mesh Network";
 			sourceTree = "<group>";
@@ -869,6 +872,7 @@
 				52E54CD023437D3D00478F05 /* ModelControlCell.swift in Sources */,
 				523F776422C4EDD90030EA6A /* SwitchCell.swift in Sources */,
 				522AFFDC22BBA34900521EDC /* ActionCell.swift in Sources */,
+				52E54CE72345EDA700478F05 /* GenericState.swift in Sources */,
 				52DF5D8A228DA78A00C297C1 /* ConfigurationViewController.swift in Sources */,
 				521215292315290F0059FB3D /* GroupControlViewController.swift in Sources */,
 				52F6AD7622BA612900F0D7DF /* UIViewController+Toast.swift in Sources */,

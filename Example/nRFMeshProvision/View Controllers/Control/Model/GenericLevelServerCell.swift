@@ -12,7 +12,7 @@ class GenericLevelServerCell: BaseModelControlCell<GenericLevelServerDelegate> {
     
     @IBOutlet weak var icon: UIImageView!
     
-    override func setup(_ handler: GenericLevelServerDelegate?) {
+    override func setup(_ model: GenericLevelServerDelegate?) {
         
     }
 }
