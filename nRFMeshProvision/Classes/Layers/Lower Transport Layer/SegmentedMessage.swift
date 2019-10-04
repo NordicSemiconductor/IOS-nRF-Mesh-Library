@@ -13,6 +13,8 @@ internal protocol SegmentedMessage: LowerTransportPdu {
     var message: MeshMessage? { get }
     /// The local Element used to send the message.
     var localElement: Element? { get }
+    /// Whether sending this message has been initiated by the user.
+    var userInitiated: Bool { get }
     /// 13 least significant bits of SeqAuth.
     var sequenceZero: UInt16 { get }
     /// This field is set to the segment number (zero-based)

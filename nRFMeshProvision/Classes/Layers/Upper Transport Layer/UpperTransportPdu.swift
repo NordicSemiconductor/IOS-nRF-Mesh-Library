@@ -14,6 +14,8 @@ internal struct UpperTransportPdu {
     /// The local Element that is sending the message, or `nil` when the
     /// message was received.
     let localElement: Element?
+    /// Whether sending this message has been initiated by the user.
+    let userInitiated: Bool
     /// Source Address.
     let source: Address
     /// Destination Address.
@@ -64,12 +66,14 @@ internal struct UpperTransportPdu {
         sequence = accessMessage.sequence
         message = nil
         localElement = nil
+        userInitiated = false
     }
     
     init(fromAccessPdu pdu: AccessPdu,
          usingKeySet keySet: KeySet, sequence: UInt32) {
         self.message = pdu.message
         self.localElement = pdu.localElement
+        self.userInitiated = pdu.userInitiated
         self.source = pdu.localElement!.unicastAddress
         self.destination = pdu.destination.address
         self.sequence = sequence

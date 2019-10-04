@@ -410,7 +410,7 @@ private extension LowerTransportLayer {
         // Is the target Node busy?
         guard !ack.isBusy else {
             outgoingSegments.removeValue(forKey: ack.sequenceZero)
-            if !segment.message!.isAcknowledged {
+            if segment.userInitiated && !segment.message!.isAcknowledged {
                 networkManager.notifyAbout(LowerTransportError.busy,
                                            duringSendingMessage: segment.message!,
                                            from: segment.localElement!, to: segment.destination)
@@ -501,7 +501,7 @@ private extension LowerTransportLayer {
                     if !ackExpected! {
                         segmentTransmissionTimers.removeValue(forKey: sequenceZero)?.invalidate()
                         outgoingSegments.removeValue(forKey: sequenceZero)
-                        if !segment.message!.isAcknowledged {
+                        if segment.userInitiated && !segment.message!.isAcknowledged {
                             networkManager.notifyAbout(error, duringSendingMessage: segment.message!,
                                                        from: segment.localElement!, to: segment.destination)
                         }
@@ -551,7 +551,7 @@ private extension LowerTransportLayer {
             } else {
                 // A limit has been reached and some segments were not ACK.
                 if let segment = segments.firstNotAcknowledged {
-                    if !segment.message!.isAcknowledged {
+                    if segment.userInitiated && !segment.message!.isAcknowledged {
                         networkManager.notifyAbout(LowerTransportError.timeout,
                                                    duringSendingMessage: segment.message!,
                                                    from: segment.localElement!, to: segment.destination)

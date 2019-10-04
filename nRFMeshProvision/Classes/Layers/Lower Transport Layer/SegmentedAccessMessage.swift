@@ -10,6 +10,7 @@ import Foundation
 internal struct SegmentedAccessMessage: SegmentedMessage {
     let message: MeshMessage?
     let localElement: Element?
+    let userInitiated: Bool
     let source: Address
     let destination: Address
     let networkKey: NetworkKey
@@ -77,6 +78,7 @@ internal struct SegmentedAccessMessage: SegmentedMessage {
         networkKey = networkPdu.networkKey
         message = nil
         localElement = nil
+        userInitiated = false
     }
 
     /// Creates a Segment of an Access Message object from the Upper Transport PDU
@@ -102,6 +104,7 @@ internal struct SegmentedAccessMessage: SegmentedMessage {
         let segment = pdu.transportPdu.subdata(in: lowerBound..<upperBound)
         self.lastSegmentNumber = UInt8((pdu.transportPdu.count + 11) / 12) - 1
         self.upperTransportPdu = segment
+        self.userInitiated = pdu.userInitiated
     }
 }
 
