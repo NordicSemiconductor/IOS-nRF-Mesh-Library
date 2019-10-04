@@ -361,6 +361,7 @@ private extension AccessLayer {
                         networkManager.reply(toMessageSentTo: accessPdu.destination.address,
                                              with: response, to: accessPdu.source, using: keySet)
                     }
+                    _ = networkManager.manager.save()
                 } else {
                     // If not, it was received by adding another Node's address to the Proxy Filter.
                     logger?.i(.foundationModel, "\(configMessage) received from: \(accessPdu.source.hex), to: \(accessPdu.destination.hex)")
@@ -379,13 +380,12 @@ private extension AccessLayer {
                         networkManager.reply(toMessageSentTo: accessPdu.destination.address,
                                              with: response, to: accessPdu.source, using: keySet)
                     }
+                    _ = networkManager.manager.save()
                 } else {
                     // If not, it was received by adding another Node's address to the Proxy Filter.
                     logger?.i(.foundationModel, "\(configMessage) received from: \(accessPdu.source.hex), to: \(accessPdu.destination.hex)")
                 }
             }
-        } else {
-            
         }
         if newMessage == nil {
             var unknownMessage = UnknownMessage(parameters: accessPdu.parameters)!
