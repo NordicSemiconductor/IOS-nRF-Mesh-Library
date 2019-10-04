@@ -146,6 +146,16 @@ public extension TransactionMessage {
         return false
     }
     
+    /// Returns whether this message is a continuation of another
+    /// transaction message sent before at the given timestamp.
+    ///
+    /// - parameter previousTid: The TID of the previously received message.
+    /// - parameter timestamp:   The timestamp when the previous message was
+    ///                          received.
+    func isNewTransaction(previousTid: UInt8, timestamp: Date) -> Bool {
+        return tid != previousTid || timestamp.timeIntervalSinceNow < -6.0
+    }
+    
 }
 
 public extension StaticMeshMessage {
