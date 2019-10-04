@@ -339,8 +339,10 @@ private extension AccessLayer {
                             accessPdu.destination.address == element.unicastAddress ||
                             model.isSubscribed(to: accessPdu.destination)
                            ) {
-                            if let response = delegate.handle(message: message, sentFrom: accessPdu.source,
-                                                              to: model, asResponseTo: request) {
+                               if let response = delegate.model(model, didReceiveMessage: message,
+                                                                sentFrom: accessPdu.source,
+                                                                to: accessPdu.destination,
+                                                                asResponseTo: request) {
                                 networkManager.reply(toMessageSentTo: accessPdu.destination.address,
                                                      with: response, to: accessPdu.source, using: keySet)
                             }
@@ -358,10 +360,9 @@ private extension AccessLayer {
                 // Is this message targetting the local Node?
                 if accessPdu.destination.address == firstElement.unicastAddress {
                     logger?.i(.foundationModel, "\(configMessage) received from: \(accessPdu.source.hex)")
-                    if let response = delegate.handle(message: configMessage,
-                                                      sentFrom: accessPdu.source,
-                                                      to: configurationServerModel,
-                                                      asResponseTo: request) {
+                    if let response = delegate.model(configurationServerModel, didReceiveMessage: configMessage,
+                                                     sentFrom: accessPdu.source, to: accessPdu.destination,
+                                                     asResponseTo: request) {
                         networkManager.reply(toMessageSentTo: accessPdu.destination.address,
                                              with: response, to: accessPdu.source, using: keySet)
                     }
@@ -378,9 +379,9 @@ private extension AccessLayer {
                 // Is this message targetting the local Node?
                 if accessPdu.destination.address == firstElement.unicastAddress {
                     logger?.i(.foundationModel, "\(configMessage) received from: \(accessPdu.source.hex)")
-                    if let response = delegate.handle(message: configMessage, sentFrom: accessPdu.source,
-                                                      to: configurationClientModel,
-                                                      asResponseTo: request) {
+                    if let response = delegate.model(configurationClientModel, didReceiveMessage: configMessage,
+                                                     sentFrom: accessPdu.source, to: accessPdu.destination,
+                                                     asResponseTo: request) {
                         networkManager.reply(toMessageSentTo: accessPdu.destination.address,
                                              with: response, to: accessPdu.source, using: keySet)
                     }
@@ -396,7 +397,8 @@ private extension AccessLayer {
             unknownMessage.opCode = accessPdu.opCode
             newMessage = unknownMessage
         }
-        networkManager.notifyAbout(newMessage: newMessage, from: accessPdu.source, to: accessPdu.destination.address)
+        networkManager.notifyAbout(newMessage: newMessage,
+                                   from: accessPdu.source, to: accessPdu.destination.address)
     }
     
 }
@@ -423,24 +425,25 @@ private extension ModelDelegate {
     /// it is a response to a previously sent request.
     ///
     /// - parameters:
+    ///   - model:   The local Model that received the message.
     ///   - message: The decoded message.
     ///   - source:  The Unicast Address of the Element that the message
     ///              originates from.
-    ///   - model:   The local Model that received the message.
+    ///   - destination: The destination address of the request.
     ///   - request: The request message sent previously that this message
     ///              replies to, or `nil`, if this is not a response.
     /// - returns: The response message, if the received message is an
     ///            Acknowledged Mesh Message that needs to be replied.
-    func handle(message: MeshMessage, sentFrom source: Address, to model: Model,
-                asResponseTo request: AcknowledgedMeshMessage?) -> MeshMessage? {
+    func model(_ model: Model, didReceiveMessage message: MeshMessage,
+               sentFrom source: Address, to destination: MeshAddress,
+               asResponseTo request: AcknowledgedMeshMessage?) -> MeshMessage? {
         if let request = request {
-            handle(response: message, toAcknowledgedMessage: request,
-                   sentFrom: source, to: model)
+            self.model(model, didReceiveResponse: message, toAcknowledgedMessage: request, from: source)
             return nil
         } else if let request = message as? AcknowledgedMeshMessage {
-            return handle(acknowledgedMessage: request, sentFrom: source, to: model)
+            return self.model(model, didReceiveAcknowledgedMessage: request, from: source, sentTo: destination)
         } else {
-            handle(unacknowledgedMessage: message, sentFrom: source, to: model)
+            self.model(model, didReceiveUnacknowledgedMessage: message, from: source, sentTo: destination)
             return nil
         }
     }

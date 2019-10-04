@@ -21,18 +21,19 @@ class GenericOnOffClientDelegate: ModelDelegate {
     
     // MARK: - Message handlers
     
-    func handle(acknowledgedMessage request: AcknowledgedMeshMessage,
-                sentFrom source: Address, to model: Model) -> MeshMessage {
+    func model(_ model: Model, didReceiveAcknowledgedMessage request: AcknowledgedMeshMessage,
+               from source: Address, sentTo destination: MeshAddress) -> MeshMessage {
         fatalError("Not possible")
     }
     
-    func handle(unacknowledgedMessage message: MeshMessage,
-                sentFrom source: Address, to model: Model) {
+    func model(_ model: Model, didReceiveUnacknowledgedMessage message: MeshMessage,
+               from source: Address, sentTo destination: MeshAddress) {
         // Not possible.
     }
     
-    func handle(response: MeshMessage, toAcknowledgedMessage request: AcknowledgedMeshMessage,
-                sentFrom source: Address, to model: Model) {
+    func model(_ model: Model, didReceiveResponse response: MeshMessage,
+               toAcknowledgedMessage request: AcknowledgedMeshMessage,
+               from source: Address) {
         // Ignore.
     }
     

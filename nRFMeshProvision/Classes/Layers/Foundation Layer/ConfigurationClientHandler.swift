@@ -8,7 +8,7 @@
 import Foundation
 
 internal class ConfigurationClientHandler: ModelDelegate {
-    let meshNetwork: MeshNetwork
+    weak var meshNetwork: MeshNetwork!
     let messageTypes: [UInt32 : MeshMessage.Type]
     
     init(_ meshNetwork: MeshNetwork) {
@@ -37,8 +37,8 @@ internal class ConfigurationClientHandler: ModelDelegate {
         self.messageTypes = types.toMap()
     }
     
-    func handle(acknowledgedMessage request: AcknowledgedMeshMessage,
-                sentFrom source: Address, to model: Model) -> MeshMessage {
+    func model(_ model: Model, didReceiveAcknowledgedMessage request: AcknowledgedMeshMessage,
+               from source: Address, sentTo destination: MeshAddress) -> MeshMessage {
         switch request {
             
         default:
@@ -46,8 +46,8 @@ internal class ConfigurationClientHandler: ModelDelegate {
         }
     }
     
-    func handle(unacknowledgedMessage message: MeshMessage,
-                sentFrom source: Address, to model: Model) {
+    func model(_ model: Model, didReceiveUnacknowledgedMessage message: MeshMessage,
+               from source: Address, sentTo destination: MeshAddress) {
         switch message {
             
         default:
@@ -56,9 +56,9 @@ internal class ConfigurationClientHandler: ModelDelegate {
         }
     }
     
-    func handle(response: MeshMessage,
-                toAcknowledgedMessage request: AcknowledgedMeshMessage,
-                sentFrom source: Address, to model: Model) {
+    func model(_ model: Model, didReceiveResponse response: MeshMessage,
+               toAcknowledgedMessage request: AcknowledgedMeshMessage,
+               from source: Address) {
         switch response {
 
         // Composition Data

@@ -21,34 +21,36 @@ public protocol ModelDelegate {
     /// This method should handle the received Acknowledged Message.
     ///
     /// - parameters:
+    ///   - model: The Model associated with this Model Delegate.
     ///   - request: The Acknowledged Message received.
-    ///   - source: The source Unicast Address.
-    ///   - model: The local model that received the request.
+    ///   - source:  The source Unicast Address.
+    ///   - destination: The destination address of the request.
     /// - returns: The response message to be sent to the sender.
-    func handle(acknowledgedMessage request: AcknowledgedMeshMessage,
-                sentFrom source: Address, to model: Model) -> MeshMessage
+    func model(_ model: Model, didReceiveAcknowledgedMessage request: AcknowledgedMeshMessage,
+               from source: Address, sentTo destination: MeshAddress) -> MeshMessage
     
     /// This method should handle the received Unacknowledged Message.
     ///
     /// - parameters:
+    ///   - model: The Model associated with this Model Delegate.
     ///   - message: The Unacknowledged Message received.
     ///   - source: The source Unicast Address.
-    ///   - model: The local model that received the message.
-    func handle(unacknowledgedMessage message: MeshMessage,
-                sentFrom source: Address, to model: Model)
+    ///   - destination: The destination address of the request.
+    func model(_ model: Model, didReceiveUnacknowledgedMessage message: MeshMessage,
+               from source: Address, sentTo destination: MeshAddress)
     
     /// This method should handle the received response to the
     /// previously sent request.
     ///
     /// - parameters:
+    ///   - model: The Model associated with this Model Delegate.
     ///   - response: The response received.
     ///   - request: The Acknowledged Message sent.
     ///   - source: The Unicast Address of the Element that sent the
     ///             response.
-    ///   - model: The local model that received the response.
-    func handle(response: MeshMessage,
-                toAcknowledgedMessage request: AcknowledgedMeshMessage,
-                sentFrom source: Address, to model: Model)
+    func model(_ model: Model, didReceiveResponse response: MeshMessage,
+               toAcknowledgedMessage request: AcknowledgedMeshMessage,
+               from source: Address)
     
 }
 

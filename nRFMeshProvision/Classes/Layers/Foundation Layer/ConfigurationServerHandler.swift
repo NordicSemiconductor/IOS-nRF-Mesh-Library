@@ -8,7 +8,7 @@
 import Foundation
 
 internal class ConfigurationServerHandler: ModelDelegate {
-    let meshNetwork: MeshNetwork
+    weak var meshNetwork: MeshNetwork!
     let messageTypes: [UInt32 : MeshMessage.Type]
     
     init(_ meshNetwork: MeshNetwork) {
@@ -56,8 +56,8 @@ internal class ConfigurationServerHandler: ModelDelegate {
         self.messageTypes = types.toMap()
     }
     
-    func handle(acknowledgedMessage request: AcknowledgedMeshMessage,
-                sentFrom source: Address, to model: Model) -> MeshMessage {
+    func model(_ model: Model, didReceiveAcknowledgedMessage request: AcknowledgedMeshMessage,
+               from source: Address, sentTo destination: MeshAddress) -> MeshMessage {
         let localNode = model.parentElement.parentNode!
         
         switch request {
@@ -485,22 +485,22 @@ internal class ConfigurationServerHandler: ModelDelegate {
         }
     }
     
-    func handle(response: MeshMessage,
-                toAcknowledgedMessage request: AcknowledgedMeshMessage,
-                sentFrom source: Address, to model: Model) {
-        switch response {
-            
-        default:
-            fatalError("Message not supported: \(response)")
-        }
-    }
-    
-    func handle(unacknowledgedMessage message: MeshMessage,
-                sentFrom source: Address, to model: Model) {
+    func model(_ model: Model, didReceiveUnacknowledgedMessage message: MeshMessage,
+               from source: Address, sentTo destination: MeshAddress) {
         switch message {
             
         default:
             fatalError("Message not supported: \(message)")
+        }
+    }
+    
+    func model(_ model: Model, didReceiveResponse response: MeshMessage,
+               toAcknowledgedMessage request: AcknowledgedMeshMessage,
+               from source: Address) {
+        switch response {
+            
+        default:
+            fatalError("Message not supported: \(response)")
         }
     }
         

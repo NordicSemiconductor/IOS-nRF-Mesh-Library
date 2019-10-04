@@ -50,8 +50,8 @@ class GenericOnOffServerDelegate: ModelDelegate {
     
     // MARK: - Message handlers
     
-    func handle(acknowledgedMessage request: AcknowledgedMeshMessage,
-                sentFrom source: Address, to model: Model) -> MeshMessage {
+    func model(_ model: Model, didReceiveAcknowledgedMessage request: AcknowledgedMeshMessage,
+               from source: Address, sentTo destination: MeshAddress) -> MeshMessage {
         switch request {
         case let request as GenericOnOffSet:
             if let transitionTime = request.transitionTime,
@@ -74,8 +74,8 @@ class GenericOnOffServerDelegate: ModelDelegate {
         }
     }
     
-    func handle(unacknowledgedMessage message: MeshMessage,
-                sentFrom source: Address, to model: Model) {
+    func model(_ model: Model, didReceiveUnacknowledgedMessage message: MeshMessage,
+               from source: Address, sentTo destination: MeshAddress) {
         switch message {
         case let request as GenericOnOffSetUnacknowledged:
             if let transitionTime = request.transitionTime,
@@ -91,8 +91,9 @@ class GenericOnOffServerDelegate: ModelDelegate {
         }
     }
     
-    func handle(response: MeshMessage, toAcknowledgedMessage request: AcknowledgedMeshMessage,
-                sentFrom source: Address, to model: Model) {
+    func model(_ model: Model, didReceiveResponse response: MeshMessage,
+               toAcknowledgedMessage request: AcknowledgedMeshMessage,
+               from source: Address) {
         // Not possible.
     }
     
