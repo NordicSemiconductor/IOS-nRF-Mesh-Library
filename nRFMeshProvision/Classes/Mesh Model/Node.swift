@@ -433,6 +433,9 @@ internal extension Node {
                     newModel.bind = oldModel.bind
                     newModel.publish = oldModel.publish
                     newModel.subscribe = oldModel.subscribe
+                    // If at least one Model matches, assume the Element didn't
+                    // change much and copy the name of it.
+                    newElement.name = oldElement.name
                 }
             }
         }
@@ -535,14 +538,8 @@ internal extension Node {
         versionIdentifier = page0.versionIdentifier
         minimumNumberOfReplayProtectionList = page0.minimumNumberOfReplayProtectionList
         features = page0.features
-        // Remove any existing Elements. There should not be any, but just to be sure.
-        elements.forEach {
-            $0.parentNode = nil
-            $0.index = 0
-        }
-        elements.removeAll()
-        // And add the Elements received.
-        add(elements: page0.elements)
+        // And set the Elements received.
+        set(elements: page0.elements)
     }
     
     var ensureFeatures: NodeFeatures {
