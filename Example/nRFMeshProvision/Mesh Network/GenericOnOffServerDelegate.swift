@@ -22,7 +22,7 @@ class GenericOnOffServerDelegate: ModelDelegate {
                             // If the state has not change since it was set,
                             // remove the Transition.
                             if self.state.transition?.start == transition.start {
-                                self.state = GenericState<Bool>(self.state.transition?.targetState ?? self.state.state)
+                                self.state = GenericState<Bool>(self.state.transition?.targetValue ?? self.state.value)
                             }
                         }
                     }
@@ -82,11 +82,11 @@ class GenericOnOffServerDelegate: ModelDelegate {
         
         // Reply with GenericOnOffStatus.
         if let transition = state.transition, transition.remainingTime > 0 {
-            return GenericOnOffStatus(state.state,
-                                      targetState: transition.targetState,
+            return GenericOnOffStatus(state.value,
+                                      targetState: transition.targetValue,
                                       remainingTime: TransitionTime(transition.remainingTime))
         } else {
-            return GenericOnOffStatus(state.state)
+            return GenericOnOffStatus(state.value)
         }
     }
     

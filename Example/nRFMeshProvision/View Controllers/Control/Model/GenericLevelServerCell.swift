@@ -30,19 +30,69 @@ class GenericLevelServerCell: BaseModelControlCell<GenericLevelServerDelegate> {
             let width = self.fullIcon.frame.width
             let height = self.fullIcon.frame.height
             if let transition = state.transition {
-                let value = (CGFloat(Int16.max) + CGFloat(transition.targetState)) / (2 * CGFloat(Int16.max))
+                let currentValue = state.currentValue
+                let targetHeight = ceil(height * (0.5 + CGFloat(transition.targetValue) / (2 * CGFloat(Int16.max))))
+                let currentHeight = ceil(height * (0.5 + CGFloat(currentValue) / (2 * CGFloat(Int16.max))))
                 let delay = max(transition.startTime.timeIntervalSinceNow, 0.0)
+                
+                self.progress.layer.removeAllAnimations()
+                self.progress.frame = CGRect(x: 0, y: height - currentHeight,
+                                             width: width, height: currentHeight)
                 UIView.animate(withDuration: transition.remainingTime - delay,
                                delay: delay,
-                               animations: { [weak self] in
+                               options: .curveLinear, animations: { [weak self] in
                     guard let self = self else { return }
-                                self.progress.frame = CGRect(x: 0, y: height - height * value,
-                                                             width: width, height: height * value)
+                    self.progress.frame = CGRect(x: 0, y: height - targetHeight,
+                                                 width: width, height: targetHeight)
+                })
+            } else if let animation = state.animation {
+                let targetValue: Int16 = animation.speed > 0 ? Int16.max : Int16.min
+                let currentValue = state.currentValue
+                let targetHeight: CGFloat = animation.speed > 0 ? height : 0
+                let currentHeight = ceil(height * (0.5 + CGFloat(currentValue) / (2 * CGFloat(Int16.max))))
+                let diff = abs(Double(targetValue) - Double(currentValue))
+                let duration: TimeInterval = diff / abs(Double(animation.speed))
+                let delay = max(animation.startTime.timeIntervalSinceNow, 0.0)
+                
+                self.progress.layer.removeAllAnimations()
+                self.progress.frame = CGRect(x: 0, y: height - currentHeight,
+                                             width: width, height: currentHeight)
+                UIView.animate(withDuration: duration, delay: delay,
+                               options: .curveLinear, animations: { [weak self] in
+                    guard let self = self else { return }
+                    self.progress.frame = CGRect(x: 0, y: height - targetHeight,
+                                                 width: width, height: targetHeight)
+                }, completion: { completed in
+                    if completed {
+                        self.animateMove(speed: animation.speed)
+                    }
                 })
             } else {
-                let value = (CGFloat(Int16.max) + CGFloat(state.state)) / (2 * CGFloat(Int16.max))
-                self.progress.frame = CGRect(x: 0, y: height - height * value, width: width, height: height * value)
+                let targetHeight = ceil(height * (0.5 + CGFloat(state.value) / (2 * CGFloat(Int16.max))))
+                self.progress.layer.removeAllAnimations()
+                self.progress.frame = CGRect(x: 0, y: height - targetHeight, width: width, height: targetHeight)
             }
         }
+    }
+    
+    private func animateMove(speed: Int16) {
+        let width = fullIcon.frame.width
+        let height = fullIcon.frame.height
+        let currentHeight: CGFloat = speed > 0 ? 0 : height
+        let targetHeight: CGFloat = speed > 0 ? height : 0
+        let duration: TimeInterval = 2 * Double(Int16.max) / abs(Double(speed))
+        
+        progress.frame = CGRect(x: 0, y: height - currentHeight,
+                                     width: width, height: currentHeight)
+        UIView.animate(withDuration: duration, delay: 0,
+                       options: .curveLinear, animations: { [weak self] in
+            guard let self = self else { return }
+            self.progress.frame = CGRect(x: 0, y: height - targetHeight,
+                                         width: width, height: targetHeight)
+        }, completion: { completed in
+            if completed {
+                self.animateMove(speed: speed)
+            }
+        })
     }
 }

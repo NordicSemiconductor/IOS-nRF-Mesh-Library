@@ -22,7 +22,7 @@ class GenericLevelServerDelegate: ModelDelegate {
                             // If the state has not change since it was set,
                             // remove the Transition.
                             if self.state.transition?.start == transition.start {
-                                self.state = GenericState<Int16>(self.state.transition?.targetState ?? self.state.state)
+                                self.state = GenericState<Int16>(self.state.transition?.targetValue ?? self.state.value)
                             }
                         }
                     }
@@ -80,7 +80,7 @@ class GenericLevelServerDelegate: ModelDelegate {
             }
 
         case let request as GenericDeltaSet:
-            let targetLevel = Int16(truncatingIfNeeded: Int32(state.state) + request.delta)
+            let targetLevel = Int16(truncatingIfNeeded: Int32(state.value) + request.delta)
             
             if let transitionTime = request.transitionTime,
                let delay = request.delay {
@@ -104,6 +104,27 @@ class GenericLevelServerDelegate: ModelDelegate {
             }
             lastTransaction = (source: source, destination: destination, tid: request.tid, timestamp: Date())
             
+        case let request as GenericMoveSet:
+            // Ignore a repeated request (with the same TID) from the same source
+            // and sent to the same destinatino when it was received within 6 seconds.
+            guard lastTransaction == nil ||
+                  lastTransaction!.source != source || lastTransaction!.destination != destination ||
+                  request.isNewTransaction(previousTid: lastTransaction!.tid, timestamp: lastTransaction!.timestamp) else {
+                lastTransaction = (source: source, destination: destination, tid: request.tid, timestamp: Date())
+                break
+            }
+            lastTransaction = (source: source, destination: destination, tid: request.tid, timestamp: Date())
+            
+            if let transitionTime = request.transitionTime,
+               let delay = request.delay {
+                state = GenericState<Int16>(animateFrom: state, to: request.deltaLevel,
+                                            delay: TimeInterval(delay) * 0.005,
+                                            duration: transitionTime.interval)
+            } else {
+                // Generic Default Transition Time is not supported, so the command
+                // shall not initiate any change.
+            }
+            
         default:
             // Not possible.
             break
@@ -111,11 +132,11 @@ class GenericLevelServerDelegate: ModelDelegate {
 
         // Reply with GenericLevelStatus.
         if let transition = state.transition, transition.remainingTime > 0 {
-            return GenericLevelStatus(level: state.state,
-                                      targetLevel: transition.targetState,
+            return GenericLevelStatus(level: state.value,
+                                      targetLevel: transition.targetValue,
                                       remainingTime: TransitionTime(transition.remainingTime))
         } else {
-            return GenericLevelStatus(level: state.state)
+            return GenericLevelStatus(level: state.value)
         }
     }
     
@@ -143,7 +164,7 @@ class GenericLevelServerDelegate: ModelDelegate {
             }
 
         case let request as GenericDeltaSetUnacknowledged:
-            let targetLevel = Int16(truncatingIfNeeded: Int32(state.state) + request.delta)
+            let targetLevel = Int16(truncatingIfNeeded: Int32(state.value) + request.delta)
             
             if let transitionTime = request.transitionTime,
                let delay = request.delay {
@@ -166,6 +187,27 @@ class GenericLevelServerDelegate: ModelDelegate {
                 state = GenericState<Int16>(targetLevel)
             }
             lastTransaction = (source: source, destination: destination, tid: request.tid, timestamp: Date())
+                
+        case let request as GenericMoveSetUnacknowledged:
+            // Ignore a repeated request (with the same TID) from the same source
+            // and sent to the same destinatino when it was received within 6 seconds.
+            guard lastTransaction == nil ||
+                  lastTransaction!.source != source || lastTransaction!.destination != destination ||
+                  request.isNewTransaction(previousTid: lastTransaction!.tid, timestamp: lastTransaction!.timestamp) else {
+                lastTransaction = (source: source, destination: destination, tid: request.tid, timestamp: Date())
+                break
+            }
+            lastTransaction = (source: source, destination: destination, tid: request.tid, timestamp: Date())
+            
+            if let transitionTime = request.transitionTime,
+               let delay = request.delay {
+                state = GenericState<Int16>(animateFrom: state, to: request.deltaLevel,
+                                            delay: TimeInterval(delay) * 0.005,
+                                            duration: transitionTime.interval)
+            } else {
+                // Generic Default Transition Time is not supported, so the command
+                // shall not initiate any change.
+            }
             
         default:
             // Not possible.
