@@ -344,7 +344,8 @@ private extension AccessLayer {
                                                                 to: accessPdu.destination,
                                                                 asResponseTo: request) {
                                 networkManager.reply(toMessageSentTo: accessPdu.destination.address,
-                                                     with: response, to: accessPdu.source, using: keySet)
+                                                     with: response, from: element,
+                                                     to: accessPdu.source, using: keySet)
                             }
                         }
                     }
