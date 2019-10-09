@@ -14,6 +14,8 @@ internal struct AccessPdu {
     /// The local Element that is sending the message, or `nil` when the
     /// message was received.
     let localElement: Element?
+    /// Whether sending this message has been initiated by the user.
+    let userInitiated: Bool
     
     /// Source Address.
     let source: Address
@@ -63,6 +65,7 @@ internal struct AccessPdu {
     init?(fromUpperTransportPdu pdu: UpperTransportPdu) {
         message = nil
         localElement = nil
+        userInitiated = false
         source = pdu.source
         destination = MeshAddress(pdu.destination)
         accessPdu = pdu.accessPdu
@@ -107,9 +110,11 @@ internal struct AccessPdu {
     }
     
     init(fromMeshMessage message: MeshMessage,
-         sentFrom localElement: Element, to destination: MeshAddress) {
+         sentFrom localElement: Element, to destination: MeshAddress,
+         userInitiated: Bool) {
         self.message = message
         self.localElement = localElement
+        self.userInitiated = userInitiated
         self.source = localElement.unicastAddress
         self.destination = destination
         

@@ -50,7 +50,7 @@ public extension Model {
     /// - returns: `True` if the Model is subscribed to a Group with given,
     ///            address, `false` otherwise.
     func isSubscribed(to address: MeshAddress) -> Bool {
-        return subscribe.contains(address.hex)
+        return subscriptions.contains(where: { $0.address == address })
     }
     
 }

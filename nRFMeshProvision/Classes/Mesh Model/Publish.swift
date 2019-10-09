@@ -16,7 +16,7 @@ public struct Publish: Codable {
         /// Number of retransmissions for network messages.
         /// The value is in range from 0 to 7, where 0 means no retransmissions.
         public let count: UInt8
-        /// The interval (in milliseconds) between retransmissions (50...3200 with step 50).
+        /// The interval (in milliseconds) between retransmissions (50...1600 with step 50).
         public let interval: UInt16
         /// Retransmission steps, from 0 to 31. Use `interval` to get the interval in ms.
         public var steps: UInt8 {

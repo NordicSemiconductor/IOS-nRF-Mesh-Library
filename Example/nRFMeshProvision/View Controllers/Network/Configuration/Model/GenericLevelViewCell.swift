@@ -75,7 +75,7 @@ class GenericLevelViewCell: ModelViewCell {
         case 1:
             let percent = floorf(levelSlider.value - 100)   // -100...100
             let value = Int32(min(65535, 655.36 * percent)) // -65536...65535
-            sendGenericDeltaSetMessage(level: value)
+            sendGenericDeltaSetMessage(delta: value)
         case 2:
             let percent = floorf(levelSlider.value - 100)   // -100...100
             let value = Int16(min(32767, 327.68 * percent)) // -32768...32767
@@ -235,8 +235,8 @@ private extension GenericLevelViewCell {
     /// Sends Generic Delta Set message, either acknowledged or not, depending
     /// on the switch position, with or without the Transition Time settings.
     ///
-    /// - parameter level: The relative level of Generic Level state.
-    func sendGenericDeltaSetMessage(level: Int32) {
+    /// - parameter delta: The relative level of Generic Level state.
+    func sendGenericDeltaSetMessage(delta: Int32) {
         guard !model.boundApplicationKeys.isEmpty else {
             parentViewController?.presentAlert(
                 title: "Bound key required",
@@ -252,17 +252,17 @@ private extension GenericLevelViewCell {
         
         if acknowledgmentSwitch.isOn {
             if defaultTransitionSettingsSwitch.isOn {
-                message = GenericDeltaSet(level: level)
+                message = GenericDeltaSet(delta: delta)
             } else {
                 let transitionTime = TransitionTime(steps: steps, stepResolution: stepResolution)
-                message = GenericDeltaSet(level: level, transitionTime: transitionTime, delay: delay)
+                message = GenericDeltaSet(delta: delta, transitionTime: transitionTime, delay: delay)
             }
         } else {
             if defaultTransitionSettingsSwitch.isOn {
-                message = GenericDeltaSetUnacknowledged(delta: level)
+                message = GenericDeltaSetUnacknowledged(delta: delta)
             } else {
                 let transitionTime = TransitionTime(steps: steps, stepResolution: stepResolution)
-                message = GenericDeltaSetUnacknowledged(delta: level, transitionTime: transitionTime, delay: delay)
+                message = GenericDeltaSetUnacknowledged(delta: delta, transitionTime: transitionTime, delay: delay)
             }
         }
         

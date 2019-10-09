@@ -14,7 +14,7 @@ class ProgressCollectionViewController: UICollectionViewController {
     // MARK: - Properties
     
     private var alert: UIAlertController?
-    private var messageId: MessageHandle?
+    private var messageHandle: MessageHandle?
     
     // MARK: - Implementation
     
@@ -33,15 +33,19 @@ class ProgressCollectionViewController: UICollectionViewController {
     ///
     /// - parameter message: Message to be displayed to the user.
     /// - parameter completion: A completion handler.
-    func start(_ message: String, completion: @escaping (() throws -> MessageHandle)) {
+    func start(_ message: String, completion: @escaping (() throws -> MessageHandle?)) {
         DispatchQueue.main.async {
             do {
-                self.messageId = try completion()
+                self.messageHandle = try completion()
+                guard let _ = self.messageHandle else {
+                    self.done()
+                    return
+                }
 
                 if self.alert == nil {
                     self.alert = UIAlertController(title: "Status", message: message, preferredStyle: .alert)
                     self.alert!.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { _ in
-                        self.messageId?.cancel()
+                        self.messageHandle?.cancel()
                         self.alert = nil
                     }))
                     self.present(self.alert!, animated: true)

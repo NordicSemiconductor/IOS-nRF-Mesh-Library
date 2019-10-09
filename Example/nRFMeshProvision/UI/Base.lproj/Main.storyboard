@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14490.70" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BYb-mK-mH5">
-    <device id="retina5_9" orientation="portrait">
-        <adaptation id="fullscreen"/>
-    </device>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14868" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BYb-mK-mH5">
+    <device id="retina5_9" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14490.49"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14824"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -21,6 +19,7 @@
                         <color key="selectedImageTintColor" red="0.0" green="0.46666666670000001" blue="0.7843137255" alpha="1" colorSpace="calibratedRGB"/>
                     </tabBar>
                     <connections>
+                        <segue destination="Jgl-7d-w1f" kind="relationship" relationship="viewControllers" id="64k-O6-vI9"/>
                         <segue destination="zgn-Sh-bkR" kind="relationship" relationship="viewControllers" id="bML-n5-Lan"/>
                         <segue destination="Ns0-BW-mnp" kind="relationship" relationship="viewControllers" id="P5t-ai-VdT"/>
                         <segue destination="z61-cg-pzs" kind="relationship" relationship="viewControllers" id="p9q-t9-0O2"/>
@@ -71,8 +70,19 @@
             </objects>
             <point key="canvasLocation" x="142" y="-167"/>
         </scene>
+        <!--Control-->
+        <scene sceneID="O4z-u3-u9Z">
+            <objects>
+                <viewControllerPlaceholder storyboardName="Control" id="Jgl-7d-w1f" sceneMemberID="viewController">
+                    <tabBarItem key="tabBarItem" title="Local Node" image="tab_control_outline_black_24pt" id="Nc9-i6-Dm8"/>
+                </viewControllerPlaceholder>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Zz3-0E-Z3e" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="169" y="-256"/>
+        </scene>
     </scenes>
     <resources>
+        <image name="tab_control_outline_black_24pt" width="24" height="24"/>
         <image name="tab_filter_outline_black_24pt" width="24" height="24"/>
         <image name="tab_groups_outline_black_24pt" width="24" height="24"/>
         <image name="tab_network_outline_black_24pt" width="24" height="24"/>

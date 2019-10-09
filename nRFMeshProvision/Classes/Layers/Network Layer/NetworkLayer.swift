@@ -51,8 +51,9 @@ internal class NetworkLayer {
     /// This method handles the received PDU of given type and
     /// passes it to Upper Transport Layer.
     ///
-    /// - parameter pdu:  The data received.
-    /// - parameter type: The PDU type.
+    /// - parameters:
+    ///   - pdu:  The data received.
+    ///   - type: The PDU type.
     func handle(incomingPdu pdu: Data, ofType type: PduType) {
         guard let meshNetwork = networkManager.meshNetwork else {
             return
@@ -116,9 +117,10 @@ internal class NetworkLayer {
     /// given destination address. If the local Provisioner does not exist, or
     /// does not have Unicast Address assigned, this method does nothing.
     ///
-    /// - parameter pdu:  The Lower Transport PDU to be sent.
-    /// - parameter type: The PDU type.
-    /// - parameter ttl:  The initial TTL (Time To Live) value of the message.
+    /// - parameters:
+    ///   - pdu:  The Lower Transport PDU to be sent.
+    ///   - type: The PDU type.
+    ///   - ttl:  The initial TTL (Time To Live) value of the message.
     /// - throws: This method may throw when the `transmitter` is not set, or has
     ///           failed to send the PDU.
     func send(lowerTransportPdu pdu: LowerTransportPdu, ofType type: PduType,
@@ -141,8 +143,11 @@ internal class NetworkLayer {
                 // No need to send messages targetting local Unicast Addresses.
                 return
             }
+            // If the message was sent locally, don't report Bearer closer error.
+            try? transmitter.send(networkPdu.pdu, ofType: type)
+        } else {
+            try transmitter.send(networkPdu.pdu, ofType: type)
         }
-        try transmitter.send(networkPdu.pdu, ofType: type)
         
         // Unless a GATT Bearer is used, the Network PDUs should be sent multiple times
         // if Network Transmit has been set for the local Provisioner's Node.
@@ -150,7 +155,7 @@ internal class NetworkLayer {
             let networkTransmit = meshNetwork.localProvisioner?.node?.networkTransmit,
             networkTransmit.count > 1 {
             var count = networkTransmit.count
-            _ = Timer.scheduledTimer(withTimeInterval: TimeInterval(networkTransmit.interval), repeats: true) { timer in
+            BackgroundTimer.scheduledTimer(withTimeInterval: networkTransmit.timeInterval, repeats: true) { timer in
                 try? self.networkManager.transmitter?.send(networkPdu.pdu, ofType: type)
                 count -= 1
                 if count == 0 {
@@ -164,8 +169,7 @@ internal class NetworkLayer {
     ///
     /// The Proxy Filter object will be informed about the success or a failure.
     ///
-    /// - parameter ProxyConfigurationMessage: The Proxy Confifuration message to
-    ///                                        be sent.
+    /// - parameter message: The Proxy Confifuration message to be sent.
     func send(proxyConfigurationMessage message: ProxyConfigurationMessage) {
         guard let networkKey = proxyNetworkKey else {
             // The Proxy Network Key is unknown.

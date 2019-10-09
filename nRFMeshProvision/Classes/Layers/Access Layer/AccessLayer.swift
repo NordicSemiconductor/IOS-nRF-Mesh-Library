@@ -116,25 +116,29 @@ internal class AccessLayer {
     /// to the delegate. Otherwise, a generic MeshMessage object is created
     /// for the app to handle.
     ///
-    /// - parameter upperTransportPdu: The decoded Upper Transport PDU.
-    /// - parameter keySet: The keySet that the message was encrypted with.
+    /// - parameters:
+    ///   - upperTransportPdu: The decoded Upper Transport PDU.
+    ///   - keySet: The keySet that the message was encrypted with.
     func handle(upperTransportPdu: UpperTransportPdu, sentWith keySet: KeySet) {
         guard let accessPdu = AccessPdu(fromUpperTransportPdu: upperTransportPdu) else {
             return
         }
         
         // If a response to a sent request has been received, cancel the context.
+        var request: AcknowledgedMeshMessage? = nil
         if upperTransportPdu.destination.isUnicast,
            let index = reliableMessageContexts.firstIndex(where: {
                     $0.source == upperTransportPdu.destination &&
                     $0.request.responseOpCode == accessPdu.opCode
            }) {
-            reliableMessageContexts.remove(at: index).invalidate()
+            let context = reliableMessageContexts.remove(at: index)
+            request = context.request
+            context.invalidate()
             logger?.i(.access, "Response \(accessPdu) receieved (decrypted using key: \(keySet))")
         } else {
             logger?.i(.access, "\(accessPdu) receieved (decrypted using key: \(keySet))")
         }
-        handle(accessPdu: accessPdu, sentWith: keySet)
+        handle(accessPdu: accessPdu, sentWith: keySet, asResponseTo: request)
     }
     
     /// Sends the MeshMessage to the destination. The message is encrypted
@@ -143,13 +147,14 @@ internal class AccessLayer {
     /// Before sending, this method updates the transaction identifier (TID)
     /// for message extending `TransactionMessage`.
     ///
-    /// - parameter message:        The Mesh Message to send.
-    /// - parameter element:        The source Element.
-    /// - parameter destination:    The destination Address. This can be any
-    ///                             valid mesh Address.
-    /// - parameter initialTtl:     The initial TTL (Time To Live) value of the message.
-    ///                             If `nil`, the default Node TTL will be used.
-    /// - parameter applicationKey: The Application Key to sign the message with.
+    /// - parameters:
+    ///   - message:        The Mesh Message to send.
+    ///   - element:        The source Element.
+    ///   - destination:    The destination Address. This can be any
+    ///                     valid mesh Address.
+    ///   - initialTtl:     The initial TTL (Time To Live) value of the message.
+    ///                     If `nil`, the default Node TTL will be used.
+    ///   - applicationKey: The Application Key to sign the message with.
     func send(_ message: MeshMessage,
               from element: Element, to destination: MeshAddress,
               withTtl initialTtl: UInt8?, using applicationKey: ApplicationKey) {
@@ -170,7 +175,8 @@ internal class AccessLayer {
         }
         
         logger?.i(.model, "Sending \(m) from: \(element), to: \(destination.hex)")
-        let pdu = AccessPdu(fromMeshMessage: m, sentFrom: element, to: destination)
+        let pdu = AccessPdu(fromMeshMessage: m, sentFrom: element, to: destination,
+                            userInitiated: true)
         let keySet = AccessKeySet(applicationKey: applicationKey)
         logger?.i(.access, "Sending \(pdu)")
         
@@ -186,10 +192,11 @@ internal class AccessLayer {
     /// using the Device Key which belongs to the target Node, and first
     /// Network Key known to this Node.
     ///
-    /// - parameter message:     The Mesh Config Message to send.
-    /// - parameter destination: The destination address. This must be a Unicast Address.
-    /// - parameter initialTtl:  The initial TTL (Time To Live) value of the message.
-    ///                          If `nil`, the default Node TTL will be used.
+    /// - parameters:
+    ///   - message:     The Mesh Config Message to send.
+    ///   - destination: The destination address. This must be a Unicast Address.
+    ///   - initialTtl:  The initial TTL (Time To Live) value of the message.
+    ///                  If `nil`, the default Node TTL will be used.
     func send(_ message: ConfigMessage, to destination: Address,
               withTtl initialTtl: UInt8?) {
         guard let element = meshNetwork.localProvisioner?.node?.elements.first,
@@ -203,19 +210,18 @@ internal class AccessLayer {
             networkKey = node.networkKeys.last!
         }
         
-        if networkManager.foundationLayer.handle(configMessage: message, to: destination) {
-            logger?.i(.foundationModel, "Sending \(message) to: \(destination.hex)")
-            let pdu = AccessPdu(fromMeshMessage: message, sentFrom: element, to: MeshAddress(destination))
-            logger?.i(.access, "Sending \(pdu)")
-            let keySet = DeviceKeySet(networkKey: networkKey, node: node)
-            
-            // Set timers for the acknowledged messages.
-            if let _ = message as? AcknowledgedConfigMessage {
-                createReliableContext(for: pdu, sentFrom: element, withTtl: initialTtl, using: keySet)
-            }
-            
-            networkManager.upperTransportLayer.send(pdu, withTtl: initialTtl, using: keySet)
+        logger?.i(.foundationModel, "Sending \(message) to: \(destination.hex)")
+        let pdu = AccessPdu(fromMeshMessage: message, sentFrom: element, to: MeshAddress(destination),
+                            userInitiated: true)
+        logger?.i(.access, "Sending \(pdu)")
+        let keySet = DeviceKeySet(networkKey: networkKey, node: node)
+        
+        // Set timers for the acknowledged messages.
+        if let _ = message as? AcknowledgedConfigMessage {
+            createReliableContext(for: pdu, sentFrom: element, withTtl: initialTtl, using: keySet)
         }
+        
+        networkManager.upperTransportLayer.send(pdu, withTtl: initialTtl, using: keySet)
     }
     
     /// Replies to the received message, which was sent with the given key set,
@@ -232,7 +238,8 @@ internal class AccessLayer {
                using keySet: KeySet) {
         let category: LogCategory = message is ConfigMessage ? .foundationModel : .model
         logger?.i(category, "Replying with \(message) from: \(element), to: \(destination.hex)")
-        let pdu = AccessPdu(fromMeshMessage: message, sentFrom: element, to: MeshAddress(destination))
+        let pdu = AccessPdu(fromMeshMessage: message, sentFrom: element, to: MeshAddress(destination),
+                            userInitiated: false)
         
         // If the message is sent in response to a received message that was sent to
         // a Unicast Address, the node should transmit the response message with a random
@@ -252,362 +259,192 @@ internal class AccessLayer {
         }
     }
     
-    /// Cancels sending the message with the given handler.
+    /// Cancels sending the message with the given handle.
     ///
-    /// - parameter handler: The message handler.
-    func cancel(_ handler: MessageHandle) {
-        logger?.i(.access, "Cancelling messages with op code: \(handler.opCode), sent from: \(handler.source.hex) to: \(handler.destination.hex)")
+    /// - parameter handle: The message handle.
+    func cancel(_ handle: MessageHandle) {
+        logger?.i(.access, "Cancelling messages with op code: \(handle.opCode), sent from: \(handle.source.hex) to: \(handle.destination.hex)")
         if let index = reliableMessageContexts.firstIndex(where: {
-            $0.request.opCode == handler.opCode &&
-            $0.source == handler.source &&
-            $0.destination == handler.destination
+            $0.request.opCode == handle.opCode &&
+            $0.source == handle.source &&
+            $0.destination == handle.destination
         }) {
             reliableMessageContexts.remove(at: index).invalidate()
         }
-        networkManager.upperTransportLayer.cancel(handler)
+        networkManager.upperTransportLayer.cancel(handle)
     }
     
 }
 
 private extension AccessLayer {
     
-    /// This method converts the received Access PDU to a Mesh Message and
-    /// sends to `handle(meshMessage:from)` if message was successfully created.
+    /// This method delivers the received PDU to all Models that support
+    /// it and are subscribed to the message destination address.
     ///
-    /// - parameter accessPdu: The Access PDU received.
-    /// - parameter keySet:    The set of keys that the message was encrypted with.
-    func handle(accessPdu: AccessPdu, sentWith keySet: KeySet) {
-        var MessageType: MeshMessage.Type?
-        
-        switch accessPdu.opCode {
-            
-        // Vendor Messages
-        case let opCode where (opCode & 0xC00000) == 0xC00000:
-            MessageType = networkManager.manager.vendorTypes[opCode] ?? UnknownMessage.self
-            
-        // Composition Data
-        case ConfigCompositionDataGet.opCode:
-            MessageType = ConfigCompositionDataGet.self
-            
-        case ConfigCompositionDataStatus.opCode:
-            MessageType = ConfigCompositionDataStatus.self
-            
-        // Secure Network Beacon configuration
-            
-        case ConfigBeaconGet.opCode:
-            MessageType = ConfigBeaconGet.self
-            
-        case ConfigBeaconSet.opCode:
-            MessageType = ConfigBeaconSet.self
-            
-        case ConfigBeaconStatus.opCode:
-            MessageType = ConfigBeaconStatus.self
-            
-        // Relay configuration
-            
-        case ConfigRelayGet.opCode:
-            MessageType = ConfigRelayGet.self
-            
-        case ConfigRelaySet.opCode:
-            MessageType = ConfigRelaySet.self
-            
-        case ConfigRelayStatus.opCode:
-            MessageType = ConfigRelayStatus.self
-            
-            // GATT Proxy configuration
-            
-        case ConfigGATTProxyGet.opCode:
-            MessageType = ConfigGATTProxyGet.self
-            
-        case ConfigGATTProxySet.opCode:
-            MessageType = ConfigGATTProxySet.self
-            
-        case ConfigGATTProxyStatus.opCode:
-            MessageType = ConfigGATTProxyStatus.self
-            
-        // Friend configuration
-            
-        case ConfigFriendGet.opCode:
-            MessageType = ConfigFriendGet.self
-            
-        case ConfigFriendSet.opCode:
-            MessageType = ConfigFriendSet.self
-            
-        case ConfigFriendStatus.opCode:
-            MessageType = ConfigFriendStatus.self
-            
-        // Network Transmit configuration
-            
-        case ConfigNetworkTransmitGet.opCode:
-            MessageType = ConfigNetworkTransmitGet.self
-            
-        case ConfigNetworkTransmitSet.opCode:
-            MessageType = ConfigNetworkTransmitSet.self
-            
-        case ConfigNetworkTransmitStatus.opCode:
-            MessageType = ConfigNetworkTransmitStatus.self
-            
-        // Network Keys Management
-        case ConfigNetKeyAdd.opCode:
-            MessageType = ConfigNetKeyAdd.self
-            
-        case ConfigNetKeyDelete.opCode:
-            MessageType = ConfigNetKeyDelete.self
-            
-        case ConfigNetKeyUpdate.opCode:
-            MessageType = ConfigNetKeyUpdate.self
-            
-        case ConfigNetKeyStatus.opCode:
-            MessageType = ConfigNetKeyStatus.self
-            
-        case ConfigNetKeyGet.opCode:
-            MessageType = ConfigNetKeyGet.self
-            
-        case ConfigNetKeyList.opCode:
-            MessageType = ConfigNetKeyList.self
-            
-        // App Keys Management
-        case ConfigAppKeyAdd.opCode:
-            MessageType = ConfigAppKeyAdd.self
-            
-        case ConfigAppKeyDelete.opCode:
-            MessageType = ConfigAppKeyDelete.self
-            
-        case ConfigAppKeyUpdate.opCode:
-            MessageType = ConfigAppKeyUpdate.self
-            
-        case ConfigAppKeyStatus.opCode:
-            MessageType = ConfigAppKeyStatus.self
-            
-        case ConfigAppKeyGet.opCode:
-            MessageType = ConfigAppKeyGet.self
-            
-        case ConfigAppKeyList.opCode:
-            MessageType = ConfigAppKeyList.self
-            
-        // Model Bindings
-        case ConfigModelAppBind.opCode:
-            MessageType = ConfigModelAppBind.self
-            
-        case ConfigModelAppUnbind.opCode:
-            MessageType = ConfigModelAppUnbind.self
-            
-        case ConfigModelAppStatus.opCode:
-            MessageType = ConfigModelAppStatus.self
-            
-        case ConfigSIGModelAppGet.opCode:
-            MessageType = ConfigSIGModelAppGet.self
-            
-        case ConfigSIGModelAppList.opCode:
-            MessageType = ConfigSIGModelAppList.self
-            
-        case ConfigVendorModelAppGet.opCode:
-            MessageType = ConfigVendorModelAppGet.self
-            
-        case ConfigVendorModelAppList.opCode:
-            MessageType = ConfigVendorModelAppList.self
-            
-        // Publications
-        case ConfigModelPublicationGet.opCode:
-            MessageType = ConfigModelPublicationGet.self
-            
-        case ConfigModelPublicationSet.opCode:
-            MessageType = ConfigModelPublicationSet.self
-            
-        case ConfigModelPublicationVirtualAddressSet.opCode:
-            MessageType = ConfigModelPublicationVirtualAddressSet.self
-            
-        case ConfigModelPublicationStatus.opCode:
-            MessageType = ConfigModelPublicationStatus.self
-            
-        // Subscriptions
-        case ConfigModelSubscriptionAdd.opCode:
-            MessageType = ConfigModelSubscriptionAdd.self
-            
-        case ConfigModelSubscriptionDelete.opCode:
-            MessageType = ConfigModelSubscriptionDelete.self
-            
-        case ConfigModelSubscriptionDeleteAll.opCode:
-            MessageType = ConfigModelSubscriptionDeleteAll.self
-            
-        case ConfigModelSubscriptionOverwrite.opCode:
-            MessageType = ConfigModelSubscriptionOverwrite.self
-            
-        case ConfigModelSubscriptionStatus.opCode:
-            MessageType = ConfigModelSubscriptionStatus.self
-            
-        case ConfigModelSubscriptionVirtualAddressAdd.opCode:
-            MessageType = ConfigModelSubscriptionVirtualAddressAdd.self
-            
-        case ConfigModelSubscriptionVirtualAddressDelete.opCode:
-            MessageType = ConfigModelSubscriptionVirtualAddressDelete.self
-            
-        case ConfigModelSubscriptionVirtualAddressOverwrite.opCode:
-            MessageType = ConfigModelSubscriptionVirtualAddressOverwrite.self
-            
-        case ConfigSIGModelSubscriptionGet.opCode:
-            MessageType = ConfigSIGModelSubscriptionGet.self
-            
-        case ConfigSIGModelSubscriptionList.opCode:
-            MessageType = ConfigSIGModelSubscriptionList.self
-            
-        case ConfigVendorModelSubscriptionGet.opCode:
-            MessageType = ConfigVendorModelSubscriptionGet.self
-            
-        case ConfigVendorModelSubscriptionList.opCode:
-            MessageType = ConfigVendorModelSubscriptionList.self
-            
-        // Resetting Node
-        case ConfigNodeReset.opCode:
-            MessageType = ConfigNodeReset.self
-            
-        case ConfigNodeResetStatus.opCode:
-            MessageType = ConfigNodeResetStatus.self
-            
-        // Default TTL
-        case ConfigDefaultTtlGet.opCode:
-            MessageType = ConfigDefaultTtlGet.self
-        
-        case ConfigDefaultTtlSet.opCode:
-            MessageType = ConfigDefaultTtlSet.self
-            
-        case ConfigDefaultTtlStatus.opCode:
-            MessageType = ConfigDefaultTtlStatus.self
-            
-        // Generics
-        case GenericOnOffGet.opCode:
-            MessageType = GenericOnOffGet.self
-            
-        case GenericOnOffSet.opCode:
-            MessageType = GenericOnOffSet.self
-            
-        case GenericOnOffSetUnacknowledged.opCode:
-            MessageType = GenericOnOffSetUnacknowledged.self
-            
-        case GenericOnOffStatus.opCode:
-            MessageType = GenericOnOffStatus.self
-            
-        case GenericLevelGet.opCode:
-            MessageType = GenericLevelGet.self
-            
-        case GenericLevelSet.opCode:
-            MessageType = GenericLevelSet.self
-            
-        case GenericLevelSetUnacknowledged.opCode:
-            MessageType = GenericLevelSetUnacknowledged.self
-            
-        case GenericLevelStatus.opCode:
-            MessageType = GenericLevelStatus.self
-            
-        case GenericDeltaSet.opCode:
-            MessageType = GenericDeltaSet.self
-            
-        case GenericDeltaSetUnacknowledged.opCode:
-            MessageType = GenericDeltaSetUnacknowledged.self
-            
-        case GenericMoveSet.opCode:
-            MessageType = GenericMoveSet.self
-            
-        case GenericMoveSetUnacknowledged.opCode:
-            MessageType = GenericMoveSetUnacknowledged.self
-            
-        case GenericDefaultTransitionTimeGet.opCode:
-            MessageType = GenericDefaultTransitionTimeGet.self
-            
-        case GenericDefaultTransitionTimeSet.opCode:
-            MessageType = GenericDefaultTransitionTimeSet.self
-            
-        case GenericDefaultTransitionTimeSetUnacknowledged.opCode:
-            MessageType = GenericDefaultTransitionTimeSetUnacknowledged.self
-            
-        case GenericDefaultTransitionTimeStatus.opCode:
-            MessageType = GenericDefaultTransitionTimeStatus.self
-            
-        case GenericOnPowerUpGet.opCode:
-            MessageType = GenericOnPowerUpGet.self
-            
-        case GenericOnPowerUpSet.opCode:
-            MessageType = GenericOnPowerUpSet.self
-            
-        case GenericOnPowerUpSetUnacknowledged.opCode:
-            MessageType = GenericOnPowerUpSetUnacknowledged.self
-            
-        case GenericOnPowerUpStatus.opCode:
-            MessageType = GenericOnPowerUpStatus.self
-            
-        case GenericPowerLevelGet.opCode:
-            MessageType = GenericPowerLevelGet.self
-            
-        case GenericPowerLevelSet.opCode:
-            MessageType = GenericPowerLevelSet.self
-            
-        case GenericPowerLevelSetUnacknowledged.opCode:
-            MessageType = GenericPowerLevelSetUnacknowledged.self
-            
-        case GenericPowerLevelStatus.opCode:
-            MessageType = GenericPowerLevelStatus.self
-            
-        case GenericPowerLastGet.opCode:
-            MessageType = GenericPowerLastGet.self
-            
-        case GenericPowerLastStatus.opCode:
-            MessageType = GenericPowerLastStatus.self
-            
-        case GenericPowerDefaultGet.opCode:
-            MessageType = GenericPowerDefaultGet.self
-            
-        case GenericPowerDefaultStatus.opCode:
-            MessageType = GenericPowerDefaultStatus.self
-            
-        case GenericPowerRangeGet.opCode:
-            MessageType = GenericPowerRangeGet.self
-            
-        case GenericPowerRangeStatus.opCode:
-            MessageType = GenericPowerRangeStatus.self
-            
-        case GenericPowerDefaultSet.opCode:
-            MessageType = GenericPowerDefaultSet.self
-            
-        case GenericPowerDefaultSetUnacknowledged.opCode:
-            MessageType = GenericPowerDefaultSetUnacknowledged.self
-            
-        case GenericPowerRangeSet.opCode:
-            MessageType = GenericPowerRangeSet.self
-            
-        case GenericPowerRangeSetUnacknowledged.opCode:
-            MessageType = GenericPowerRangeSetUnacknowledged.self
-            
-        case GenericBatteryGet.opCode:
-            MessageType = GenericBatteryGet.self
-            
-        case GenericBatteryStatus.opCode:
-            MessageType = GenericBatteryStatus.self
-            
-        // Other
-            
-        default:
-            MessageType = UnknownMessage.self
+    /// In general, each Access PDU should be consumed only by one Model
+    /// in an Element. For example, Generic OnOff Client may send Generic
+    /// OnOff Set message to the corresponding Server, which can decode it,
+    /// change its state and reply with Generic OnOff Status message, that
+    /// will be consumed by the Client.
+    ///
+    /// However, nothing stop the developers to reuse the same opcode in
+    /// multiple Models. For example, there may be a Log Model on an Element,
+    /// which accepts all opcodes supported by other Models on this Element,
+    /// and logs the received data. The Log Models, instead of decoding the
+    /// received Access PDU to Generic OnOff Set message, it may decode it as
+    /// some "Message X" type.
+    ///
+    /// This method will make sure that each Model will receive a message
+    /// decoded to the type specified in `messageTypes` in its `ModelDelegate`,
+    /// but the manager's delegate will be notified with the first message only.
+    ///
+    /// - parameters:
+    ///   - accessPdu: The Access PDU received.
+    ///   - keySet:    The set of keys that the message was encrypted with.
+    ///   - request:   The previosly sent request message, that the received
+    ///                message responds to, or `nil`, if no request has
+    ///                been sent.
+    func handle(accessPdu: AccessPdu, sentWith keySet: KeySet,
+                asResponseTo request: AcknowledgedMeshMessage?) {
+        guard let localNode = meshNetwork.localProvisioner?.node else {
+            return
         }
         
-        if let MessageType = MessageType,
-           var message = MessageType.init(parameters: accessPdu.parameters) {
-            if var unknownMessage = message as? UnknownMessage {
-                unknownMessage.opCode = accessPdu.opCode
-                message = unknownMessage
+        // The Access PDU is decoded into a Mesh Message.
+        var newMessage: MeshMessage! = nil
+        
+        // If the message was encrypted using an Application Key...
+        if let keySet = keySet as? AccessKeySet {
+            // ..iterate through all the Elements of the local Node.
+            for element in localNode.elements {
+                // For each of the Models...
+                // (except Configuration Server and Client, which use Device Key)
+                for model in element.models
+                    .filter({ !$0.isConfigurationServer && !$0.isConfigurationClient }) {
+                    // check, if the delegate is set, and it supports the opcode
+                    // specified in the received Access PDU.
+                    if let delegate = model.delegate,
+                       let message = delegate.decode(accessPdu) {
+                        // Save and log only the first decoded message (see mehtod's comment).
+                        if newMessage == nil {
+                            logger?.i(.model, "\(message) received from: \(accessPdu.source.hex), to: \(accessPdu.destination.hex)")
+                            newMessage = message
+                        }
+                        // Deliver the message to the Model if it was signed with an
+                        // Application Key bound to this Model and the message is
+                        // targetting this Element, or the Model is subscribed to the
+                        // destination address.
+                        if model.isBoundTo(keySet.applicationKey) && (
+                            accessPdu.destination.address == Address.allNodes ||
+                            accessPdu.destination.address == element.unicastAddress ||
+                            model.isSubscribed(to: accessPdu.destination)
+                           ) {
+                               if let response = delegate.model(model, didReceiveMessage: message,
+                                                                sentFrom: accessPdu.source,
+                                                                to: accessPdu.destination,
+                                                                asResponseTo: request) {
+                                networkManager.reply(toMessageSentTo: accessPdu.destination.address,
+                                                     with: response, to: accessPdu.source, using: keySet)
+                            }
+                        }
+                    }
+                }
             }
-            if let configMessage = message as? ConfigMessage {
-                if accessPdu.destination.address == meshNetwork.localProvisioner?.unicastAddress {
+        } else if let firstElement = localNode.elements.first {
+            // Check Configuration Server Model.
+            if let configurationServerModel = firstElement.models
+                   .first(where: { $0.isConfigurationServer }),
+               let delegate = configurationServerModel.delegate,
+               let configMessage = delegate.decode(accessPdu) {
+                newMessage = configMessage
+                // Is this message targetting the local Node?
+                if accessPdu.destination.address == firstElement.unicastAddress {
                     logger?.i(.foundationModel, "\(configMessage) received from: \(accessPdu.source.hex)")
-                    networkManager.foundationLayer.handle(configMessage: configMessage,
-                                                          sentFrom: accessPdu.source, to: accessPdu.destination.address,
-                                                          with: keySet)
+                    if let response = delegate.model(configurationServerModel, didReceiveMessage: configMessage,
+                                                     sentFrom: accessPdu.source, to: accessPdu.destination,
+                                                     asResponseTo: request) {
+                        networkManager.reply(toMessageSentTo: accessPdu.destination.address,
+                                             with: response, to: accessPdu.source, using: keySet)
+                    }
+                    _ = networkManager.manager.save()
                 } else {
+                    // If not, it was received by adding another Node's address to the Proxy Filter.
                     logger?.i(.foundationModel, "\(configMessage) received from: \(accessPdu.source.hex), to: \(accessPdu.destination.hex)")
                 }
-            } else {
-                logger?.i(.model, "\(message) received from: \(accessPdu.source.hex), to: \(accessPdu.destination.hex)")
+            } else if let configurationClientModel = firstElement.models
+                          .first(where: { $0.isConfigurationClient }),
+                      let delegate = configurationClientModel.delegate,
+                      let configMessage = delegate.decode(accessPdu) {
+                newMessage = configMessage
+                // Is this message targetting the local Node?
+                if accessPdu.destination.address == firstElement.unicastAddress {
+                    logger?.i(.foundationModel, "\(configMessage) received from: \(accessPdu.source.hex)")
+                    if let response = delegate.model(configurationClientModel, didReceiveMessage: configMessage,
+                                                     sentFrom: accessPdu.source, to: accessPdu.destination,
+                                                     asResponseTo: request) {
+                        networkManager.reply(toMessageSentTo: accessPdu.destination.address,
+                                             with: response, to: accessPdu.source, using: keySet)
+                    }
+                    _ = networkManager.manager.save()
+                } else {
+                    // If not, it was received by adding another Node's address to the Proxy Filter.
+                    logger?.i(.foundationModel, "\(configMessage) received from: \(accessPdu.source.hex), to: \(accessPdu.destination.hex)")
+                }
             }
-            networkManager.notifyAbout(newMessage: message, from: accessPdu.source, to: accessPdu.destination.address)
+        }
+        if newMessage == nil {
+            var unknownMessage = UnknownMessage(parameters: accessPdu.parameters)!
+            unknownMessage.opCode = accessPdu.opCode
+            newMessage = unknownMessage
+        }
+        networkManager.notifyAbout(newMessage: newMessage,
+                                   from: accessPdu.source, to: accessPdu.destination.address)
+    }
+    
+}
+
+private extension ModelDelegate {
+    
+    /// This method tries to decode the Access PDU into a Message.
+    ///
+    /// The Model Handler must support the opcode and specify to
+    /// which type should the message be decoded.
+    ///
+    /// - parameter accessPdu: The Access PDU received.
+    /// - returns: The decoded message, or `nil`, if the message
+    ///            is not supported or invalid.
+    func decode(_ accessPdu: AccessPdu) -> MeshMessage? {
+        if let type = messageTypes[accessPdu.opCode] {
+           return type.init(parameters: accessPdu.parameters)
+        }
+        return nil
+    }
+    
+    /// This method handles the decoded message and passes it to
+    /// the proper handle method, depending on its type or whether
+    /// it is a response to a previously sent request.
+    ///
+    /// - parameters:
+    ///   - model:   The local Model that received the message.
+    ///   - message: The decoded message.
+    ///   - source:  The Unicast Address of the Element that the message
+    ///              originates from.
+    ///   - destination: The destination address of the request.
+    ///   - request: The request message sent previously that this message
+    ///              replies to, or `nil`, if this is not a response.
+    /// - returns: The response message, if the received message is an
+    ///            Acknowledged Mesh Message that needs to be replied.
+    func model(_ model: Model, didReceiveMessage message: MeshMessage,
+               sentFrom source: Address, to destination: MeshAddress,
+               asResponseTo request: AcknowledgedMeshMessage?) -> MeshMessage? {
+        if let request = request {
+            self.model(model, didReceiveResponse: message, toAcknowledgedMessage: request, from: source)
+            return nil
+        } else if let request = message as? AcknowledgedMeshMessage {
+            return self.model(model, didReceiveAcknowledgedMessage: request, from: source, sentTo: destination)
+        } else {
+            self.model(model, didReceiveUnacknowledgedMessage: message, from: source, sentTo: destination)
+            return nil
         }
     }
     

@@ -17,4 +17,12 @@ public extension Model {
         return parentElement?.parentNode?.applicationKeys.filter({ bind.contains($0.index) }) ?? []
     }
     
+    /// Whether the given Application Key is bound to this Model.
+    ///
+    /// - parameter applicationKey: The key to check.
+    /// - returns: `True` if the key is bound to this Model,
+    ///            otherwise `false`.
+    func isBoundTo(_ applicationKey: ApplicationKey) -> Bool {
+        return bind.contains(applicationKey.index)
+    }
 }

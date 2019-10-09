@@ -25,7 +25,7 @@ private enum SectionType {
     }
 }
 
-private class Section {
+private struct Section {
     let type: SectionType
     let nodes: [Node]
     

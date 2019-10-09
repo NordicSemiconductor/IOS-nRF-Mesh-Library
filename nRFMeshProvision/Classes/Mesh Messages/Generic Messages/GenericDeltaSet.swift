@@ -14,7 +14,7 @@ public struct GenericDeltaSet: AcknowledgedGenericMessage, TransactionMessage, T
     public var tid: UInt8!
     public var continueTransaction: Bool = true
     public var parameters: Data? {
-        let data = Data() + level + tid
+        let data = Data() + delta + tid
         if let transitionTime = transitionTime, let delay = delay {
             return data + transitionTime.rawValue + delay
         } else {
@@ -23,16 +23,16 @@ public struct GenericDeltaSet: AcknowledgedGenericMessage, TransactionMessage, T
     }
     
     /// The Delta change of the Generic Level state.
-    public let level: Int32
+    public let delta: Int32
     
     public let transitionTime: TransitionTime?
     public let delay: UInt8?
     
     /// Creates the Generic Level Set message.
     ///
-    /// - parameter level: The Delta change of the Generic Level state.
-    public init(level: Int32) {
-        self.level = level
+    /// - parameter delta: The Delta change of the Generic Level state.
+    public init(delta: Int32) {
+        self.delta = delta
         self.transitionTime = nil
         self.delay = nil
     }
@@ -40,12 +40,12 @@ public struct GenericDeltaSet: AcknowledgedGenericMessage, TransactionMessage, T
     /// Creates the Generic Level Set message.
     ///
     /// - parameters:
-    ///   - level: The Delta change of the Generic Level state.
+    ///   - delta: The Delta change of the Generic Level state.
     ///   - transitionTime: The time that an element will take to transition
     ///                     to the target state from the present state.
     ///   - delay: Message execution delay in 5 millisecond steps.
-    public init(level: Int32, transitionTime: TransitionTime, delay: UInt8) {
-        self.level = level
+    public init(delta: Int32, transitionTime: TransitionTime, delay: UInt8) {
+        self.delta = delta
         self.transitionTime = transitionTime
         self.delay = delay
     }
@@ -54,7 +54,7 @@ public struct GenericDeltaSet: AcknowledgedGenericMessage, TransactionMessage, T
         guard parameters.count == 5 || parameters.count == 7 else {
             return nil
         }
-        level = parameters.read(fromOffset: 0)
+        delta = parameters.read(fromOffset: 0)
         tid = parameters[4]
         if parameters.count == 7 {
             transitionTime = TransitionTime(rawValue: parameters[5])

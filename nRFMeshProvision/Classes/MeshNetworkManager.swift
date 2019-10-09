@@ -32,11 +32,6 @@ public class MeshNetworkManager {
     /// using any Bearer.
     public weak var transmitter: Transmitter?
     
-    // MARK: - Vendor message properties
-    
-    /// Registered vendor message types.
-    internal var vendorTypes: [UInt32 : VendorMessage.Type] = [:]
-    
     // MARK: - Network Manager properties
     
     /// The Default TTL will be used for sending messages, if the value has
@@ -112,11 +107,12 @@ public class MeshNetworkManager {
     ///
     /// If storage is not provided, a local file will be used instead.
     ///
-    /// - parameter storage: The storage to use to save the network configuration.
-    /// - parameter queue: The DispatQueue to process reqeusts on. By default
-    ///                    the a global background queue will be used.
-    /// - parameter delegateQueue: The DispatQueue to call delegate methods on.
-    ///                            By default the global main queue will be used.
+    /// - parameters:
+    ///   - storage: The storage to use to save the network configuration.
+    ///   - queue: The DispatQueue to process reqeusts on. By default
+    ///            the a global background queue will be used.
+    ///   - delegateQueue: The DispatQueue to call delegate methods on.
+    ///                    By default the global main queue will be used.
     /// - seeAlso: `LocalStorage`
     public init(using storage: Storage = LocalStorage(),
                 queue: DispatchQueue = DispatchQueue.global(qos: .background),
@@ -149,8 +145,9 @@ public extension MeshNetworkManager {
     /// Network Keys and Application Keys must be added manually
     /// using `add(networkKey:name)` and `add(applicationKey:name)`.
     ///
-    /// - parameter name:            The user given network name.
-    /// - parameter provisionerName: The user given local provisioner name.
+    /// - parameters:
+    ///   - name:            The user given network name.
+    ///   - provisionerName: The user given local provisioner name.
     func createNewMeshNetwork(withName name: String, by provisionerName: String) -> MeshNetwork {
         return createNewMeshNetwork(withName: name, by: Provisioner(name: provisionerName))
     }
@@ -162,8 +159,9 @@ public extension MeshNetworkManager {
     /// Network Keys and Application Keys must be added manually
     /// using `add(networkKey:name)` and `add(applicationKey:name)`.
     ///
-    /// - parameter name:      The user given network name.
-    /// - parameter provisioner: The default Provisioner.
+    /// - parameters:
+    ///   - name:      The user given network name.
+    ///   - provisioner: The default Provisioner.
     func createNewMeshNetwork(withName name: String, by provisioner: Provisioner) -> MeshNetwork {
         let network = MeshNetwork(name: name)
         
@@ -199,41 +197,6 @@ public extension MeshNetworkManager {
             meshNetwork?.localElements = newValue
         }
     }
-    
-    /// Registers the given Vendor Message type in the manager. Whenever
-    /// a mesh message with its opcode is received, the manager will instantiate
-    /// an object of this type and return using the `delegate`.
-    ///
-    /// - parameter vendorMessageType: The Vendor Message type to register.
-    /// - throws: This method throws when the registered message has an invalid
-    ///           op code, that is not matching vendor op code requirement.
-    func register(vendorMessageType: StaticVendorMessage.Type) throws {
-        let opCode = vendorMessageType.opCode
-        guard (opCode & 0xFFC00000) == 0x00C00000 else {
-            throw MeshMessageError.invalidOpCode
-        }
-        vendorTypes[opCode] = vendorMessageType
-    }
-    
-    /// Registers the given Vendor Message type in the manager. Whenever
-    /// a mesh message with its opcode is received, the manager will instantiate
-    /// an object of this type and return using the `delegate`.
-    ///
-    /// This method should be used when the Op Code is not known during
-    /// compliation. Otherwise, the `register(vendorMessageType:)` should
-    /// be preferred.
-    ///
-    /// - parameter vendorMessageType: The Vendor Message type to register.
-    /// - parameter opCode: The runtime given op code of the message.
-    /// - throws: This method throws when the given op code is not matching
-    ///           vendor op code requirement.
-    func register(vendorMessageType: VendorMessage.Type, withOpCode opCode: UInt32) throws {
-        let opCode = opCode
-        guard (opCode & 0xFFC00000) == 0x00C00000 else {
-            throw MeshMessageError.invalidOpCode
-        }
-        vendorTypes[opCode] = vendorMessageType
-    }
 }
 
 // MARK: - Send / Receive Mesh Messages
@@ -249,8 +212,9 @@ public extension MeshNetworkManager {
     /// `bearer(didDeliverData:ofType)` instead, and set the manager
     /// as Bearer's `dataDelegate`.
     ///
-    /// - parameter data: The PDU received.
-    /// - parameter type: The PDU type.
+    /// - parameters:
+    ///   - data: The PDU received.
+    ///   - type: The PDU type.
     func bearerDidDeliverData(_ data: Data, ofType type: PduType) {
         guard let networkManager = networkManager else {
             return
@@ -258,6 +222,25 @@ public extension MeshNetworkManager {
         queue.async {
             networkManager.handle(incomingPdu: data, ofType: type)
         }
+    }
+    
+    /// This method tries to publish the given message using the
+    /// publication information set in the Model.
+    ///
+    /// - parameters:
+    ///   - message:    The message to be sent.
+    ///   - model:      The model from which to send the message.
+    ///   - initialTtl: The initial TTL (Time To Live) value of the message.
+    ///                 If `nil`, the default Node TTL will be used.
+    func publish(_ message: MeshMessage, fromModel model: Model,
+                 withTtl initialTtl: UInt8? = nil) -> MessageHandle? {
+        guard let publish = model.publish,
+            let localElement = model.parentElement,
+            let applicationKey = meshNetwork?.applicationKeys[publish.index] else {
+            return nil
+        }
+        return try? send(message, from: localElement, to: publish.publicationAddress,
+                         withTtl: initialTtl, using: applicationKey)
     }
     
     /// Encrypts the message with the Application Key and a Network Key
@@ -272,14 +255,15 @@ public extension MeshNetworkManager {
     /// A `delegate` method will be called when the message has been sent,
     /// delivered, or failed to be sent.
     ///
-    /// - parameter message:        The message to be sent.
-    /// - parameter localElement:   The source Element. If `nil`, the primary
-    ///                             Element will be used. The Element must belong
-    ///                             to the local Provisioner's Node.
-    /// - parameter destination:    The destination address.
-    /// - parameter initialTtl:     The initial TTL (Time To Live) value of the message.
-    ///                             If `nil`, the default Node TTL will be used.
-    /// - parameter applicationKey: The Application Key to sign the message.
+    /// - parameters:
+    ///   - message:        The message to be sent.
+    ///   - localElement:   The source Element. If `nil`, the primary
+    ///                     Element will be used. The Element must belong
+    ///                     to the local Provisioner's Node.
+    ///   - destination:    The destination address.
+    ///   - initialTtl:     The initial TTL (Time To Live) value of the message.
+    ///                     If `nil`, the default Node TTL will be used.
+    ///   - applicationKey: The Application Key to sign the message.
     /// - throws: This method throws when the mesh network has not been created,
     ///           the local Node does not have configuration capabilities
     ///           (no Unicast Address assigned), or the given local Element
@@ -319,14 +303,15 @@ public extension MeshNetworkManager {
     /// A `delegate` method will be called when the message has been sent,
     /// or failed to be sent.
     ///
-    /// - parameter message:        The message to be sent.
-    /// - parameter localElement:   The source Element. If `nil`, the primary
-    ///                             Element will be used. The Element must belong
-    ///                             to the local Provisioner's Node.
-    /// - parameter group:          The target Group.
-    /// - parameter initialTtl:     The initial TTL (Time To Live) value of the message.
-    ///                             If `nil`, the default Node TTL will be used.
-    /// - parameter applicationKey: The Application Key to sign the message.
+    /// - parameters:
+    ///   - message:        The message to be sent.
+    ///   - localElement:   The source Element. If `nil`, the primary
+    ///                     Element will be used. The Element must belong
+    ///                     to the local Provisioner's Node.
+    ///   - group:          The target Group.
+    ///   - initialTtl:     The initial TTL (Time To Live) value of the message.
+    ///                     If `nil`, the default Node TTL will be used.
+    ///   - applicationKey: The Application Key to sign the message.
     /// - throws: This method throws when the mesh network has not been created,
     ///           the local Node does not have configuration capabilities
     ///           (no Unicast Address assigned), or the given local Element
@@ -346,14 +331,15 @@ public extension MeshNetworkManager {
     /// A `delegate` method will be called when the message has been sent,
     /// delivered, or fail to be sent.
     ///
-    /// - parameter message:       The message to be sent.
-    /// - parameter localElement:  The source Element. If `nil`, the primary
-    ///                            Element will be used. The Element must belong
-    ///                            to the local Provisioner's Node.
-    /// - parameter model:         The destination Model.
-    /// - parameter initialTtl:    The initial TTL (Time To Live) value of the message.
-    ///                            If `nil`, the default Node TTL will be used.
-    /// - parameter applicationKey: The Application Key to sign the message.
+    /// - parameters:
+    ///   - message:       The message to be sent.
+    ///   - localElement:  The source Element. If `nil`, the primary
+    ///                    Element will be used. The Element must belong
+    ///                    to the local Provisioner's Node.
+    ///   - model:         The destination Model.
+    ///   - initialTtl:    The initial TTL (Time To Live) value of the message.
+    ///                    If `nil`, the default Node TTL will be used.
+    ///   - applicationKey: The Application Key to sign the message.
     /// - throws: This method throws when the mesh network has not been created,
     ///           the target Model does not belong to any Element, or has
     ///           no Application Key bound to it, or when
@@ -385,13 +371,14 @@ public extension MeshNetworkManager {
     /// A `delegate` method will be called when the message has been sent,
     /// delivered, or fail to be sent.
     ///
-    /// - parameter message:       The message to be sent.
-    /// - parameter localElement:  The source Element. If `nil`, the primary
-    ///                            Element will be used. The Element must belong
-    ///                            to the local Provisioner's Node.
-    /// - parameter model:         The destination Model.
-    /// - parameter initialTtl:    The initial TTL (Time To Live) value of the message.
-    ///                            If `nil`, the default Node TTL will be used.
+    /// - parameters:
+    ///   - message:      The message to be sent.
+    ///   - localElement: The source Element. If `nil`, the primary
+    ///                   Element will be used. The Element must belong
+    ///                   to the local Provisioner's Node.
+    ///   - model:        The destination Model.
+    ///   - initialTtl:   The initial TTL (Time To Live) value of the message.
+    ///                   If `nil`, the default Node TTL will be used.
     /// - throws: This method throws when the mesh network has not been created,
     ///           the local or target Model do not belong to any Element, or have
     ///           no common Application Key bound to them, or when
@@ -430,10 +417,11 @@ public extension MeshNetworkManager {
     /// A `delegate` method will be called when the message has been sent,
     /// delivered, or fail to be sent.
     ///
-    /// - parameter message:     The message to be sent.
-    /// - parameter destination: The destination Unicast Address.
-    /// - parameter initialTtl:  The initial TTL (Time To Live) value of the message.
-    ///                          If `nil`, the default Node TTL will be used.
+    /// - parameters:
+    ///   - message:     The message to be sent.
+    ///   - destination: The destination Unicast Address.
+    ///   - initialTtl:  The initial TTL (Time To Live) value of the message.
+    ///                  If `nil`, the default Node TTL will be used.
     /// - throws: This method throws when the mesh network has not been created,
     ///           the local Node does not have configuration capabilities
     ///           (no Unicast Address assigned), or the destination address
@@ -465,7 +453,7 @@ public extension MeshNetworkManager {
             throw AccessError.invalidDestination
         }
         if message is ConfigNetKeyDelete {
-            guard node.networkKeys.count > 2 else {
+            guard node.networkKeys.count > 1 else {
                 print("Error: Cannot remove last Network Key")
                 throw AccessError.cannotDelete
             }
@@ -486,10 +474,11 @@ public extension MeshNetworkManager {
     /// A `delegate` method will be called when the message has been sent,
     /// delivered, or fail to be sent.
     ///
-    /// - parameter message: The message to be sent.
-    /// - parameter node:    The destination Node.
-    /// - parameter initialTtl: The initial TTL (Time To Live) value of the message.
-    ///                         If `nil`, the default Node TTL will be used.
+    /// - parameters:
+    ///   - message: The message to be sent.
+    ///   - node:    The destination Node.
+    ///   - initialTtl: The initial TTL (Time To Live) value of the message.
+    ///                 If `nil`, the default Node TTL will be used.
     /// - throws: This method throws when the mesh network has not been created,
     ///           the local Node does not have configuration capabilities
     ///           (no Unicast Address assigned), or the destination address
@@ -505,10 +494,11 @@ public extension MeshNetworkManager {
     /// A `delegate` method will be called when the message has been sent,
     /// delivered, or fail to be sent.
     ///
-    /// - parameter message: The message to be sent.
-    /// - parameter element: The destination Element.
-    /// - parameter initialTtl: The initial TTL (Time To Live) value of the message.
-    ///                         If `nil`, the default Node TTL will be used.
+    /// - parameters:
+    ///   - message: The message to be sent.
+    ///   - element: The destination Element.
+    ///   - initialTtl: The initial TTL (Time To Live) value of the message.
+    ///                 If `nil`, the default Node TTL will be used.
     /// - throws: This method throws when the mesh network has not been created,
     ///           the local Node does not have configuration capabilities
     ///           (no Unicast Address assigned), or the target Element does not
@@ -528,10 +518,11 @@ public extension MeshNetworkManager {
     /// A `delegate` method will be called when the message has been sent,
     /// delivered, or fail to be sent.
     ///
-    /// - parameter message: The message to be sent.
-    /// - parameter model:   The destination Model.
-    /// - parameter initialTtl: The initial TTL (Time To Live) value of the message.
-    ///                         If `nil`, the default Node TTL will be used.
+    /// - parameters:
+    ///   - message: The message to be sent.
+    ///   - model:   The destination Model.
+    ///   - initialTtl: The initial TTL (Time To Live) value of the message.
+    ///                 If `nil`, the default Node TTL will be used.
     /// - throws: This method throws when the mesh network has not been created,
     ///           the local Node does not have configuration capabilities
     ///           (no Unicast Address assigned), or the target Element does
@@ -552,9 +543,10 @@ public extension MeshNetworkManager {
     /// The message will be encrypted and sent to the `transported`, which
     /// should deliver the PDU to the connected Node.
     ///
-    /// - parameter message: The Proxy Configuration message to be sent.
-    /// - parameter initialTtl: The initial TTL (Time To Live) value of the message.
-    ///                         If `nil`, the default Node TTL will be used.
+    /// - parameters:
+    ///   - message: The Proxy Configuration message to be sent.
+    ///   - initialTtl: The initial TTL (Time To Live) value of the message.
+    ///                 If `nil`, the default Node TTL will be used.
     /// - throws: This method throws when the mesh network has not been created.
     func send(_ message: ProxyConfigurationMessage) throws {
         guard let networkManager = networkManager else {
@@ -612,9 +604,6 @@ public extension MeshNetworkManager {
             meshNetwork.provisioners.forEach {
                 $0.meshNetwork = meshNetwork
             }
-            // This will reset the local Elements. They have to be set again
-            // by the app after the network was loaded.
-            meshNetwork.localElements = []
             
             networkManager = NetworkManager(self)
             proxyFilter = ProxyFilter(self)
@@ -667,9 +656,6 @@ public extension MeshNetworkManager {
         meshNetwork.provisioners.forEach {
             $0.meshNetwork = meshNetwork
         }
-        // This will reset the local Elements. They have to be set again
-        // by the app after the network was imported.
-        meshNetwork.localElements = []
         
         meshData.meshNetwork = meshNetwork
         networkManager = NetworkManager(self)

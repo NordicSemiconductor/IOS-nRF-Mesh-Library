@@ -36,13 +36,13 @@
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="252" verticalHuggingPriority="251" text="Address:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="MxP-9A-xOw">
                                             <rect key="frame" x="84" y="40" width="53.5" height="16"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="13"/>
-                                            <color key="textColor" systemColor="secondaryLabelColor" red="0.23529411764705882" green="0.23529411764705882" blue="0.2627450980392157" alpha="0.59999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
+                                            <color key="textColor" systemColor="secondaryLabelColor" red="0.23529411759999999" green="0.23529411759999999" blue="0.26274509800000001" alpha="0.59999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" verticalHuggingPriority="251" horizontalCompressionResistancePriority="749" text="00000000-1234-5678-ABCD-0123456789AB" textAlignment="natural" lineBreakMode="wordWrap" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="gza-hl-jDH">
                                             <rect key="frame" x="153.5" y="40" width="221" height="31.5"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="13"/>
-                                            <color key="textColor" systemColor="secondaryLabelColor" red="0.23529411764705882" green="0.23529411764705882" blue="0.2627450980392157" alpha="0.59999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
+                                            <color key="textColor" systemColor="secondaryLabelColor" red="0.23529411759999999" green="0.23529411759999999" blue="0.26274509800000001" alpha="0.59999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
                                             <nil key="highlightedColor"/>
                                         </label>
                                     </subviews>
@@ -121,7 +121,7 @@
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="1 Light" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="pDS-88-OHD">
                                             <rect key="frame" x="0.0" y="65" width="130" height="17"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                            <color key="textColor" systemColor="secondaryLabelColor" red="0.23529411764705882" green="0.23529411764705882" blue="0.2627450980392157" alpha="0.59999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
+                                            <color key="textColor" systemColor="secondaryLabelColor" red="0.23529411759999999" green="0.23529411759999999" blue="0.26274509800000001" alpha="0.59999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="jLa-a2-ARj">
@@ -154,6 +154,7 @@
                                 </constraints>
                                 <size key="customSize" width="130" height="130"/>
                                 <connections>
+                                    <outlet property="icon" destination="JY0-Vy-GEP" id="IBK-gI-Opb"/>
                                     <outlet property="offButton" destination="jLa-a2-ARj" id="SoI-Oy-3P6"/>
                                     <outlet property="onButton" destination="wFR-8n-NYa" id="FtJ-cb-sV6"/>
                                     <outlet property="title" destination="pDS-88-OHD" id="Lez-r1-rFN"/>
@@ -173,7 +174,7 @@
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="1 Dimmer" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="frv-aA-PMb">
                                             <rect key="frame" x="0.0" y="65" width="130" height="17"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                            <color key="textColor" systemColor="secondaryLabelColor" red="0.23529411764705882" green="0.23529411764705882" blue="0.2627450980392157" alpha="0.59999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
+                                            <color key="textColor" systemColor="secondaryLabelColor" red="0.23529411759999999" green="0.23529411759999999" blue="0.26274509800000001" alpha="0.59999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="rds-li-Jg2">
@@ -214,6 +215,7 @@
                                 </constraints>
                                 <size key="customSize" width="130" height="130"/>
                                 <connections>
+                                    <outlet property="icon" destination="YSF-Vw-bek" id="dbc-hC-UMw"/>
                                     <outlet property="minusButton" destination="rds-li-Jg2" id="9mq-Fj-i26"/>
                                     <outlet property="plusButton" destination="HLg-tN-aea" id="BaW-zM-Yo7"/>
                                     <outlet property="title" destination="frv-aA-PMb" id="AB1-TE-Ceo"/>
@@ -272,7 +274,7 @@
                         <view key="tableFooterView" contentMode="scaleToFill" id="rVa-mH-T78">
                             <rect key="frame" x="0.0" y="111.5" width="414" height="1"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                            <color key="backgroundColor" systemColor="opaqueSeparatorColor" red="0.77647058823529413" green="0.77647058823529413" blue="0.78431372549019607" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                            <color key="backgroundColor" systemColor="opaqueSeparatorColor" red="0.77647058820000003" green="0.77647058820000003" blue="0.7843137255" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         </view>
                         <prototypes>
                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="item" textLabel="1qu-NR-cux" detailTextLabel="CxP-Zt-Up4" imageView="KsM-xH-U4D" style="IBUITableViewCellStyleSubtitle" id="j1W-Hl-bZg">
@@ -297,7 +299,7 @@
                                             <rect key="frame" x="59" y="31.5" width="44" height="14.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="12"/>
-                                            <color key="textColor" systemColor="secondaryLabelColor" red="0.23529411764705882" green="0.23529411764705882" blue="0.2627450980392157" alpha="0.59999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
+                                            <color key="textColor" systemColor="secondaryLabelColor" red="0.23529411759999999" green="0.23529411759999999" blue="0.26274509800000001" alpha="0.59999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
                                             <nil key="highlightedColor"/>
                                         </label>
                                     </subviews>
@@ -326,7 +328,7 @@
             <objects>
                 <tableViewController id="5hl-UK-X1c" customClass="AddGroupViewController" customModule="nRFMeshProvision_Example" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="grouped" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="18" sectionFooterHeight="18" id="DdI-sU-xdu">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="842"/>
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
                         <sections>
@@ -472,7 +474,7 @@
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="y7P-mW-r9X" sceneMemberID="viewController">
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" largeTitles="YES" id="WJ4-lJ-7ku">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="108"/>
+                        <rect key="frame" x="0.0" y="44" width="414" height="96"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <color key="tintColor" red="0.0" green="0.66274509800000003" blue="0.80784313730000001" alpha="1" colorSpace="custom" customColorSpace="calibratedRGB"/>
                         <textAttributes key="titleTextAttributes">
@@ -526,7 +528,7 @@
         <image name="tab_groups_outline_black_24pt" width="24" height="24"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="6cj-je-47S"/>
+        <segue reference="Jtn-5N-mgs"/>
     </inferredMetricsTieBreakers>
     <color key="tintColor" red="0.0" green="0.46666666670000001" blue="0.7843137255" alpha="1" colorSpace="calibratedRGB"/>
 </document>

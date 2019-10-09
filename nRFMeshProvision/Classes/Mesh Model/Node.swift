@@ -37,11 +37,16 @@ public class Node: Codable {
         /// Number of retransmissions for relay messages.
         /// The value is in range from 1 to 8.
         public let count: UInt8
-        /// The interval (in milliseconds) between retransmissions.
+        /// The interval (in milliseconds) between retransmissions
+        /// (from 10 to 320 ms in 10 ms steps).
         public let interval: UInt16
         /// Number of 10-millisecond steps between transmissions.
         public var steps: UInt8 {
             return UInt8(interval / 10) - 1
+        }
+        /// The interval in as `TimeInterval` in seconds.
+        public var timeInterval: TimeInterval {
+            return TimeInterval(interval) / 1000.0
         }
         
         internal init(_ request: ConfigNetworkTransmitSet) {
@@ -61,11 +66,16 @@ public class Node: Codable {
         /// Number of retransmissions for network messages.
         /// The value is in range from 1 to 8.
         public let count: UInt8
-        /// The interval (in milliseconds) between retransmissions.
+        /// The interval (in milliseconds) between retransmissions
+        /// (from 10 to 320 ms in 10 ms steps).
         public let interval: UInt16
         /// Number of 10-millisecond steps between transmissions.
         public var steps: UInt8 {
             return UInt8(interval / 10) - 1
+        }
+        /// The interval in as `TimeInterval` in seconds.
+        public var timeInterval: TimeInterval {
+            return TimeInterval(interval) / 1000.0
         }
         
         internal init(_ request: ConfigRelaySet) {
@@ -413,6 +423,22 @@ internal extension Node {
     ///
     /// - parameter element: The new list of Elements to be added.
     func set(elements: [Element]) {
+        for e in 0..<min(self.elements.count, elements.count) {
+            let oldElement = self.elements[e]
+            let newElement = elements[e]
+            for m in 0..<min(oldElement.models.count, newElement.models.count) {
+                let oldModel = oldElement.models[m]
+                let newModel = newElement.models[m]
+                if oldModel.modelId == newModel.modelId {
+                    newModel.bind = oldModel.bind
+                    newModel.publish = oldModel.publish
+                    newModel.subscribe = oldModel.subscribe
+                    // If at least one Model matches, assume the Element didn't
+                    // change much and copy the name of it.
+                    newElement.name = oldElement.name
+                }
+            }
+        }
         self.elements.forEach {
             $0.parentNode = nil
             $0.index = 0
@@ -512,14 +538,8 @@ internal extension Node {
         versionIdentifier = page0.versionIdentifier
         minimumNumberOfReplayProtectionList = page0.minimumNumberOfReplayProtectionList
         features = page0.features
-        // Remove any existing Elements. There should not be any, but just to be sure.
-        elements.forEach {
-            $0.parentNode = nil
-            $0.index = 0
-        }
-        elements.removeAll()
-        // And add the Elements received.
-        add(elements: page0.elements)
+        // And set the Elements received.
+        set(elements: page0.elements)
     }
     
     var ensureFeatures: NodeFeatures {

@@ -172,11 +172,18 @@ internal extension Element {
         model.parentElement = self
     }
     
-    func addPrimaryElementModels() {
-        insert(model: .configurationServer, at: 0)
-        insert(model: .configurationClient, at: 1)
-        insert(model: .healthServer, at: 2)
-        insert(model: .healthClient, at: 3)
+    /// Adds Configuration Server and Client and Health Server and Client
+    /// to the Element.
+    ///
+    /// This method should only be called for the primary Element of the
+    /// local Node.
+    func addPrimaryElementModels(_ meshNetwork: MeshNetwork) {
+        insert(model: Model(sigModelId: .configurationServerModelId,
+                            delegate: ConfigurationServerHandler(meshNetwork)), at: 0)
+        insert(model: Model(sigModelId: .configurationClientModelId,
+                            delegate: ConfigurationClientHandler(meshNetwork)), at: 1)
+        insert(model: Model(sigModelId: .healthServerModelId), at: 2)
+        insert(model: Model(sigModelId: .healthClientModelId), at: 3)
     }
     
     /// The primary Element for Provisioner's Node.
@@ -190,13 +197,13 @@ internal extension Element {
         let element = Element(location: .unknown)
         element.name = "Primary Element"
         // Configuration Server is required for all nodes.
-        element.add(model: .configurationServer)
+        element.add(model: Model(sigModelId: .configurationServerModelId))
         // Configuration Client is added, as this is a Provisioner's node.
-        element.add(model: .configurationClient)
+        element.add(model: Model(sigModelId: .configurationClientModelId))
         // Health Server is required for all nodes.
-        element.add(model: .healthServer)
+        element.add(model: Model(sigModelId: .healthServerModelId))
         // Health Client is added, as this is a Provisioner's node.
-        element.add(model: .healthClient)
+        element.add(model: Model(sigModelId: .healthClientModelId))
         return element
     }
     
@@ -205,7 +212,7 @@ internal extension Element {
 extension Element: CustomDebugStringConvertible {
     
     public var debugDescription: String {
-        return "\(name ?? "Element \(index)") (\(unicastAddress.hex))"
+        return "\(name ?? "Element \(index)") (0x\(unicastAddress.hex))"
     }
     
 }

@@ -13,6 +13,7 @@ class GenericOnOffGroupCell: ModelGroupCell {
     
     // MARK: - Outlets and Actions
     
+    @IBOutlet weak var icon: UIImageView!
     @IBOutlet weak var title: UILabel!
     
     @IBOutlet weak var onButton: UIButton!
@@ -27,6 +28,10 @@ class GenericOnOffGroupCell: ModelGroupCell {
     // MARK: - Implementation
     
     override func reload() {
+        // On iOS 12.x tinted icons are initially black.
+        // Forcing adjustment mode fixes the bug.
+        icon.tintAdjustmentMode = .normal
+        
         let numberOfDevices = models.count
         if numberOfDevices == 1 {
             title.text = "1 device"
@@ -46,7 +51,10 @@ private extension GenericOnOffGroupCell {
     
     func sendGenericOnOffMessage(turnOn: Bool) {
         let label = turnOn ? "Turning ON..." : "Turning OFF..."
-        delegate?.send(GenericOnOffSetUnacknowledged(turnOn), description: label, using: applicationKey)
+        delegate?.send(GenericOnOffSetUnacknowledged(turnOn,
+                                                     transitionTime: TransitionTime(1.0),
+                                                     delay: 20), // 100 ms
+                       description: label, using: applicationKey)
     }
     
 }
