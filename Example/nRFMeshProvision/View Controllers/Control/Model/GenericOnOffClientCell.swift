@@ -11,6 +11,7 @@ import nRFMeshProvision
 
 class GenericOnOffClientCell: BaseModelControlCell<GenericOnOffClientDelegate> {
     
+    @IBOutlet weak var icon: UIImageView!
     @IBOutlet weak var onButton: UIButton!
     @IBAction func onTapped(_ sender: UIButton) {
         publishGenericOnOffMessage(turnOn: true)
@@ -20,7 +21,11 @@ class GenericOnOffClientCell: BaseModelControlCell<GenericOnOffClientDelegate> {
         publishGenericOnOffMessage(turnOn: false)
     }
     
-    override func setup(_ model: GenericOnOffClientDelegate?) {        
+    override func setup(_ model: GenericOnOffClientDelegate?) {
+        // On iOS 12.x tinted icons are initially black.
+        // Forcing adjustment mode fixes the bug.
+        icon.tintAdjustmentMode = .normal
+        
         let localProvisioner = MeshNetworkManager.instance.meshNetwork?.localProvisioner
         let isEnabled = localProvisioner?.hasConfigurationCapabilities ?? false
         

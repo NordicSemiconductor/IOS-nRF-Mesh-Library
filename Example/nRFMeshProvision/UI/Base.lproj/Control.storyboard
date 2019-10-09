@@ -99,6 +99,7 @@
                                     </constraints>
                                 </collectionViewCellContentView>
                                 <connections>
+                                    <outlet property="icon" destination="I2I-f3-Kpz" id="gbs-Bo-hbk"/>
                                     <outlet property="offButton" destination="xX7-oQ-uFu" id="Ha1-3l-4Wd"/>
                                     <outlet property="onButton" destination="LGq-Zr-OtD" id="nUv-yl-WNE"/>
                                 </connections>
@@ -178,6 +179,7 @@
                                     </constraints>
                                 </collectionViewCellContentView>
                                 <connections>
+                                    <outlet property="icon" destination="KMJ-gl-Mn4" id="oet-Aa-MUu"/>
                                     <outlet property="minusButton" destination="Qjv-Hy-YYJ" id="atQ-hd-XXV"/>
                                     <outlet property="plusButton" destination="9Xt-K4-EIU" id="5lK-7s-Fwn"/>
                                 </connections>

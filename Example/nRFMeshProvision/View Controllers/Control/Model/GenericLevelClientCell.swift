@@ -11,6 +11,7 @@ import nRFMeshProvision
 
 class GenericLevelClientCell: BaseModelControlCell<GenericLevelClientDelegate> {
     
+    @IBOutlet weak var icon: UIImageView!
     @IBOutlet weak var plusButton: UIButton!
     @IBAction func plusTapped(_ sender: UIButton) {
         publishGenericDeltaMessage(delta: +8192)
@@ -21,6 +22,10 @@ class GenericLevelClientCell: BaseModelControlCell<GenericLevelClientDelegate> {
     }
     
     override func setup(_ model: GenericLevelClientDelegate?) {
+        // On iOS 12.x tinted icons are initially black.
+        // Forcing adjustment mode fixes the bug.
+        icon.tintAdjustmentMode = .normal
+        
         let localProvisioner = MeshNetworkManager.instance.meshNetwork?.localProvisioner
         let isEnabled = localProvisioner?.hasConfigurationCapabilities ?? false
         

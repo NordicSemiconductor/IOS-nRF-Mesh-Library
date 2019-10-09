@@ -13,6 +13,7 @@ class GenericLevelGroupCell: ModelGroupCell {
     
     // MARK: - Outlets and Actions
     
+    @IBOutlet weak var icon: UIImageView!
     @IBOutlet weak var title: UILabel!
     
     @IBOutlet weak var minusButton: UIButton!
@@ -27,6 +28,10 @@ class GenericLevelGroupCell: ModelGroupCell {
     // MARK: - Implementation
     
     override func reload() {
+        // On iOS 12.x tinted icons are initially black.
+        // Forcing adjustment mode fixes the bug.
+        icon.tintAdjustmentMode = .normal
+        
         let numberOfDevices = models.count
         if numberOfDevices == 1 {
             title.text = "1 device"

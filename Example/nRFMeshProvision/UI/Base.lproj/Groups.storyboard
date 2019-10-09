@@ -154,6 +154,7 @@
                                 </constraints>
                                 <size key="customSize" width="130" height="130"/>
                                 <connections>
+                                    <outlet property="icon" destination="JY0-Vy-GEP" id="IBK-gI-Opb"/>
                                     <outlet property="offButton" destination="jLa-a2-ARj" id="SoI-Oy-3P6"/>
                                     <outlet property="onButton" destination="wFR-8n-NYa" id="FtJ-cb-sV6"/>
                                     <outlet property="title" destination="pDS-88-OHD" id="Lez-r1-rFN"/>
@@ -214,6 +215,7 @@
                                 </constraints>
                                 <size key="customSize" width="130" height="130"/>
                                 <connections>
+                                    <outlet property="icon" destination="YSF-Vw-bek" id="dbc-hC-UMw"/>
                                     <outlet property="minusButton" destination="rds-li-Jg2" id="9mq-Fj-i26"/>
                                     <outlet property="plusButton" destination="HLg-tN-aea" id="BaW-zM-Yo7"/>
                                     <outlet property="title" destination="frv-aA-PMb" id="AB1-TE-Ceo"/>
