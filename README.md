@@ -1,12 +1,10 @@
-# nRFMeshProvision version 2
+# nRF Mesh for iOS
 
 ## About
 
-This is the second version of the nRF Mesh Provision library for iOS. It is still under development and many features are not supported.
-However, all implemented features should work and are tested againt nRF Mesh SDK 3.2 and Zephyr based mesh device.
+This is the second version of the nRF Mesh Provision library for iOS. It is still under development and many features are not supported. However, all implemented features should work and are tested againt nRF Mesh SDK 3.2 and Zephyr based mesh device.
 
-The first version of this library is no longer maintained. The application available on App Store will eventually be replaced with the new sample
-application.
+The first version of this library is no longer maintained. The application available on App Store will eventually be replaced with the new sample application.
 
 ## Supported features
 
@@ -32,13 +30,17 @@ application.
 4. Hearbeats.
 5. Remote Provisioning.
 
+## Documentation
+
+The documentation for this library may be found [here](DOCUMENTATION.md).
+
 ## Feedback
 
 Any feedback is more than welcome. Please, test the app, test the library and check out the API.
 
 ## Requirements
 
-* Xcode 10.2.1 or newer
+* Xcode 11 or newer
 * An iOS device with BLE capabilities
 
 ## Optional
