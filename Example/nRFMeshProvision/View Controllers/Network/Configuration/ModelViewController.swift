@@ -361,28 +361,22 @@ private extension ModelViewController {
     }
     
     func reloadBindings() {
-        start("Reading Bound Application Keys...") {
-            let message: ConfigMessage =
-                ConfigSIGModelAppGet(of: self.model) ??
-                ConfigVendorModelAppGet(of: self.model)!
-            return try MeshNetworkManager.instance.send(message, to: self.model)
-        }
+        let message: ConfigMessage =
+            ConfigSIGModelAppGet(of: model) ??
+            ConfigVendorModelAppGet(of: model)!
+        send(message, description: "Reading Bound Application Keys...")
     }
     
     func reloadPublication() {
-        start("Reading Publication settings...") {
-            let message = ConfigModelPublicationGet(for: self.model)
-            return try MeshNetworkManager.instance.send(message, to: self.model)
-        }
+        let message = ConfigModelPublicationGet(for: model)
+        send(message, description: "Reading Publication settings...")
     }
     
     func reloadSubscriptions() {
-        start("Reading Subscriptions...") {
-            let message: ConfigMessage =
-                ConfigSIGModelSubscriptionGet(of: self.model) ??
-                ConfigVendorModelSubscriptionGet(of: self.model)!
-            return try MeshNetworkManager.instance.send(message, to: self.model)
-        }
+        let message: ConfigMessage =
+            ConfigSIGModelSubscriptionGet(of: model) ??
+            ConfigVendorModelSubscriptionGet(of: model)!
+        send(message, description: "Reading Subscriptions...")
     }
     
     /// Sends a message to the mesh network to unbind the given Application Key
@@ -390,30 +384,24 @@ private extension ModelViewController {
     ///
     /// - parameter applicationKey: The Application Key to unbind.
     func unbindApplicationKey(_ applicationKey: ApplicationKey) {
-        start("Unbinding Application Key...") {
-            let message = ConfigModelAppUnbind(applicationKey: applicationKey, to: self.model)
-            return try MeshNetworkManager.instance.send(message, to: self.model)
-        }
+        let message = ConfigModelAppUnbind(applicationKey: applicationKey, to: model)
+        send(message, description: "Unbinding Application Key...")
     }
     
     /// Removes the publicaton from the model.
     func removePublication() {
-        start("Removing Publication...") {
-            let message = ConfigModelPublicationSet(disablePublicationFor: self.model)
-            return try MeshNetworkManager.instance.send(message, to: self.model)
-        }
+        let message = ConfigModelPublicationSet(disablePublicationFor: model)
+        send(message, description: "Removing Publication...")
     }
     
     /// Unsubscribes the Model from publications sent to the given Group.
     ///
     /// - parameter group: The Group to be removed from subscriptions.
     func unsubscribe(from group: Group) {
-        start("Unsubscribing...") {
-            let message: ConfigMessage =
-                ConfigModelSubscriptionDelete(group: group, from: self.model) ??
-                ConfigModelSubscriptionVirtualAddressDelete(group: group, from: self.model)!
-            return try MeshNetworkManager.instance.send(message, to: self.model)
-        }
+        let message: ConfigMessage =
+            ConfigModelSubscriptionDelete(group: group, from: self.model) ??
+            ConfigModelSubscriptionVirtualAddressDelete(group: group, from: self.model)!
+        send(message, description: "Unsubscribing...")
     }
     
 }
