@@ -91,14 +91,18 @@ public extension ProxyFilter {
     ///
     /// - parameter addresses: The addresses to add to the filter.
     func add(addresses: [Address]) {
-        send(AddAddressesToFilter(Set(addresses)))
+        add(addresses: Set(addresses))
     }
     
     /// Adds the given Addresses to the active filter.
     ///
     /// - parameter addresses: The addresses to add to the filter.
     func add(addresses: Set<Address>) {
-        send(AddAddressesToFilter(addresses))
+        // Proxy message must fit in a single Network PDU,
+        // therefore may contain maximum 5 addresses.
+        for set in addresses.chunked(maxSize: 5) {
+            send(AddAddressesToFilter(set))
+        }
     }
     
     /// Adds the given Groups to the active filter.
@@ -120,14 +124,18 @@ public extension ProxyFilter {
     ///
     /// - parameter addresses: The addresses to remove from the filter.
     func remove(addresses: [Address]) {
-        send(RemoveAddressesFromFilter(Set(addresses)))
+        remove(addresses: Set(addresses))
     }
     
     /// Removes the given Addresses from the active filter.
     ///
     /// - parameter addresses: The addresses to remove from the filter.
     func remove(addresses: Set<Address>) {
-        send(RemoveAddressesFromFilter(addresses))
+        // Proxy message must fit in a single Network PDU,
+        // therefore may contain maximum 5 addresses.
+        for set in addresses.chunked(maxSize: 5) {
+            send(RemoveAddressesFromFilter(set))
+        }
     }
     
     /// Removes the given Groups from the active filter.
@@ -303,6 +311,24 @@ extension ProxyFilerType: CustomDebugStringConvertible {
         case .whitelist: return "Whitelist"
         case .blacklist: return "Blacklist"
         }
+    }
+    
+}
+
+extension Set {
+    
+    func chunked(maxSize: Int) -> [Set<Element>] {
+        var result: [Set<Element>] = []
+        var current: Set<Element> = []
+        for element in self {
+            if current.count == maxSize {
+                result.append(current)
+                current = []
+            }
+            current.insert(element)
+        }
+        result.append(current)
+        return result
     }
     
 }
