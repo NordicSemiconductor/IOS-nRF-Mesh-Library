@@ -212,7 +212,6 @@
 		B622DCB797FBDC1B2F93DA050944C8BA /* GenericPowerLastStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B298968CDE39BA6D71990867A87FAD3 /* GenericPowerLastStatus.swift */; };
 		B62AF1BA36891A350024DFBF376C6675 /* ConfigModelSubscriptionDelete.swift in Sources */ = {isa = PBXBuildFile; fileRef = 440DD8A1B8E17FCF471D848B7A70DD20 /* ConfigModelSubscriptionDelete.swift */; };
 		B653488475329D39C772F3A8C2B1CFD7 /* SetFilterType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2582B42310AF76E272D5FCC3FC916740 /* SetFilterType.swift */; };
-		B7602BA91EF7884F47324A0CF64F802C /* MeshNetwork+Provisioning.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0D837500657B723BFE77394E0F5F802 /* MeshNetwork+Provisioning.swift */; };
 		BA18A0F09CC69421852448514D0B8B23 /* ConfigModelSubscriptionStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34C7FFCD705836E0C11B3B280CCBA41D /* ConfigModelSubscriptionStatus.swift */; };
 		BAB6A3FB02B19F0287B79F2D5EEB9166 /* ConfigNetKeyGet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84A5CB55D013B6CD647199DDDA9A0501 /* ConfigNetKeyGet.swift */; };
 		BAD029AB22F538AEEE14A9BFF26068F4 /* Element.swift in Sources */ = {isa = PBXBuildFile; fileRef = 981438627F57CB4D20F56DAB0AEF4E12 /* Element.swift */; };
@@ -508,7 +507,6 @@
 		9DC1D4461EF42E8E4D18906C8E7A25DF /* sha.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = sha.h; path = ios/include/openssl/sha.h; sourceTree = "<group>"; };
 		9E82AE86CFD3FBCD7D4C304B2561C2D7 /* ConfigGATTProxySet.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ConfigGATTProxySet.swift; sourceTree = "<group>"; };
 		A00A19455A5F52EAD4B64BD4DCBDB54C /* Node+Address.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "Node+Address.swift"; sourceTree = "<group>"; };
-		A0D837500657B723BFE77394E0F5F802 /* MeshNetwork+Provisioning.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "MeshNetwork+Provisioning.swift"; sourceTree = "<group>"; };
 		A17903FADD1DE7FE1FC2F38CB3B0EEC3 /* GenericBatteryStatus.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = GenericBatteryStatus.swift; sourceTree = "<group>"; };
 		A18CA251CEA9DB7C5C474DD5E67CC5F6 /* libcrypto.a */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = archive.ar; name = libcrypto.a; path = ios/lib/libcrypto.a; sourceTree = "<group>"; };
 		A1ED9215A8B15F99249476F76576CE4D /* NetworkKey.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = NetworkKey.swift; sourceTree = "<group>"; };
@@ -851,7 +849,6 @@
 				148C3935756C982657E67BAC05E3BCF1 /* MeshNetwork+Keys.swift */,
 				645D21F1193AF2B003242200ADDC3733 /* MeshNetwork+Nodes.swift */,
 				638BAEB2D8260AAF3E52757C54A37672 /* MeshNetwork+Provisioner.swift */,
-				A0D837500657B723BFE77394E0F5F802 /* MeshNetwork+Provisioning.swift */,
 				1D74CBFD9CAB2660B63151776DC3379E /* MeshNetwork+Ranges.swift */,
 				5F08B1E26EA0B8D515DF0894EC41CE4E /* Model+Keys.swift */,
 				08FE38682D0CA8FD943356CF144651D1 /* Model+Name.swift */,
@@ -1403,6 +1400,7 @@
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
+				Base,
 			);
 			mainGroup = CF1408CF629C7361332E53B88F7BD30C;
 			productRefGroup = 8B2299BC6E7B6E0CDA70F95E1971CDCF /* Products */;
@@ -1617,7 +1615,6 @@
 				F3E5381E395E9C51DB1A9868D70BCE65 /* MeshNetwork+Keys.swift in Sources */,
 				070085F9D1BB9241BF14DEB90FE3E526 /* MeshNetwork+Nodes.swift in Sources */,
 				4062E84B3B561C90D054420DD5E6E294 /* MeshNetwork+Provisioner.swift in Sources */,
-				B7602BA91EF7884F47324A0CF64F802C /* MeshNetwork+Provisioning.swift in Sources */,
 				2BC3BCBE7F0CDBBC4405FA2E2C38B192 /* MeshNetwork+Ranges.swift in Sources */,
 				142E6A87F2876C00FA4CDF4156DE1E9C /* MeshNetwork.swift in Sources */,
 				B4D3CC00A01F5C0250D23DA74B9172FD /* MeshNetworkDelegate.swift in Sources */,

@@ -199,6 +199,30 @@ public extension MeshNetworkManager {
     }
 }
 
+// MARK: - Provisioning
+
+public extension MeshNetworkManager {
+    
+    /// This method returns the Provisioning Manager that can be used
+    /// to provision the given device.
+    ///
+    /// - parameter unprovisionedDevice: The device to be added to mes network.
+    /// - parameter bearer: The Provisioning Bearer to be used for sending
+    ///                     provisioning PDUs.
+    /// - returns: The Provisioning manager that should be used to continue
+    ///            provisioning process after identification.
+    /// - throws: This method throws when the mesh network has not been created.
+    func provision(unprovisionedDevice: UnprovisionedDevice,
+                   over bearer: ProvisioningBearer) throws -> ProvisioningManager {
+        guard let meshNetwork = meshNetwork else {
+            print("Error: Mesh Network not created")
+            throw MeshNetworkError.noNetwork
+        }
+        return ProvisioningManager(for: unprovisionedDevice, over: bearer, in: meshNetwork)
+    }
+    
+}
+
 // MARK: - Send / Receive Mesh Messages
 
 public extension MeshNetworkManager {
