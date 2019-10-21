@@ -1,18 +1,3 @@
-#  Documentation
-
-## Bluetooth Mesh
-
-The nRF Mesh Provision library allows to provision and send messages to Bluetooth Mesh devices. 
-
-> Note: Bluetooth Mesh specification may be found here: https://www.bluetooth.com/specifications/mesh-specifications/
-
-The library is compatible with version 1.0.1 of the Bluetooth Mesh Profile Specification.
-
-## Sample app
-
-The sample application demonstrates how to use the library. Use `pod try` to install and set up the sample app when using CocoaPods.
-The app and the library are released under BSD-3 license. Feel free to modify them as you want.
-
 ## Setting up the nRF Mesh library
 
 Using CocoaPods:
@@ -74,4 +59,4 @@ let package = Package(
 )
 ```
 
----
+Next: [Getting started >](GETTING_STARTED.md)
