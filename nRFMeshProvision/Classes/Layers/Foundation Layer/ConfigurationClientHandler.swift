@@ -20,20 +20,20 @@ internal class ConfigurationClientHandler: ModelDelegate {
             ConfigNetKeyList.self,
             ConfigAppKeyStatus.self,
             ConfigAppKeyList.self,
-            ConfigBeaconStatus.self,
-            ConfigDefaultTtlStatus.self,
-            ConfigFriendStatus.self,
-            ConfigGATTProxyStatus.self,
             ConfigModelAppStatus.self,
+            ConfigSIGModelAppList.self,
+            ConfigVendorModelAppList.self,
             ConfigModelPublicationStatus.self,
             ConfigModelSubscriptionStatus.self,
-            ConfigNetworkTransmitStatus.self,
-            ConfigNodeResetStatus.self,
-            ConfigRelayStatus.self,
-            ConfigSIGModelAppList.self,
             ConfigSIGModelSubscriptionList.self,
-            ConfigVendorModelAppList.self,
-            ConfigVendorModelSubscriptionList.self
+            ConfigVendorModelSubscriptionList.self,
+            ConfigDefaultTtlStatus.self,
+            ConfigRelayStatus.self,
+            ConfigGATTProxyStatus.self,
+            ConfigFriendStatus.self,
+            ConfigBeaconStatus.self,
+            ConfigNetworkTransmitStatus.self,
+            ConfigNodeResetStatus.self
         ]
         self.meshNetwork = meshNetwork
         self.messageTypes = types.toMap()
@@ -289,6 +289,12 @@ internal class ConfigurationClientHandler: ModelDelegate {
         case let status as ConfigNetworkTransmitStatus:
             if let node = meshNetwork.node(withAddress: source) {
                 node.networkTransmit = Node.NetworkTransmit(status)
+            }
+            
+        // Reset
+        case is ConfigNodeResetStatus:
+            if let node = meshNetwork.node(withAddress: source) {
+                meshNetwork.remove(node: node)
             }
             
         default:
