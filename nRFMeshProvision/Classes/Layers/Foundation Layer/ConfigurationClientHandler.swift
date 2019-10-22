@@ -9,7 +9,9 @@ import Foundation
 
 internal class ConfigurationClientHandler: ModelDelegate {
     weak var meshNetwork: MeshNetwork!
+    
     let messageTypes: [UInt32 : MeshMessage.Type]
+    let isSubscriptionSupported: Bool = false
     
     init(_ meshNetwork: MeshNetwork) {
         let types: [ConfigMessage.Type] = [

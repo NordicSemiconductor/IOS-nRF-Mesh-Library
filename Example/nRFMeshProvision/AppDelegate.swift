@@ -51,6 +51,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         return true
     }
     
+    /// This method creates a new mesh network with a default name and a
+    /// single Provisioner. When done, if calls `meshNetworkDidChange()`.
     func createNewMeshNetwork() {
         // TODO: Implement creator
         let provisioner = Provisioner(name: UIDevice.current.name,
@@ -63,6 +65,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         meshNetworkDidChange()
     }
     
+    /// Sets up the local Elements and reinitializes the `NetworkConnection`
+    /// so that it starts scanning for devices advertising the new Network ID.
     func meshNetworkDidChange() {
         connection?.close()
         

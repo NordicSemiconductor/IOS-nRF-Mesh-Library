@@ -1,12 +1,21 @@
-# nRFMeshProvision version 2
+# nRF Mesh for iOS
 
 ## About
 
-This is the second version of the nRF Mesh Provision library for iOS. It is still under development and many features are not supported.
-However, all implemented features should work and are tested againt nRF Mesh SDK 3.2 and Zephyr based mesh device.
+The nRF Mesh Provision library allows to provision and send messages to Bluetooth Mesh devices. 
 
-The first version of this library is no longer maintained. The application available on App Store will eventually be replaced with the new sample
-application.
+> Bluetooth Mesh specification may be found here: https://www.bluetooth.com/specifications/mesh-specifications/
+
+The library is compatible with version 1.0.1 of the Bluetooth Mesh Profile Specification.
+
+This is the second version of the nRF Mesh Provision library for iOS. All  features are tested againt nRF Mesh SDK 3.2 and Zephyr based mesh devices.
+
+> The first version of this library is no longer maintained. The application available on App Store will eventually be replaced with the new sample application.
+
+## Sample app
+
+The sample application demonstrates how to use the library. It may also be used to configure your Mesh network. Use `pod try` to install and set up the sample app when using CocoaPods.
+The app and the library are released under BSD-3 license. Feel free to modify them as you want.
 
 ## Supported features
 
@@ -27,30 +36,27 @@ application.
 ## NOT (yet) supported features
 
 1. Many SIG defined models, except from supported ones.
-2. Key Refresh Procedure.
+2. Key Refresh Procedure, IV Index update.
 3. Health server messages.
 4. Hearbeats.
 5. Remote Provisioning.
 
-## Feedback
+## Documentation
 
-Any feedback is more than welcome. Please, test the app, test the library and check out the API.
+The documentation for this library may be found [here](Documentation/DOCUMENTATION.md).
 
 ## Requirements
 
-* Xcode 10.2.1 or newer
-* An iOS device with BLE capabilities
+* Xcode 11 or newer.
+* An iOS 10.0 or newer device with BLE capabilities.
 
 ## Optional
 
 * nrf52832 or nrf52840 based Development Kit(s) to test the sample firmwares on.
 
-## Installation
+## Feedback
 
-* Open `Example/nRFMeshProvision.xcworkspace`
-* Connect an iOS Device.
-* Build and run project.
-* To be able to quickly start testing, use the bundled firmwares directory named `ExampleFirmwares` that includes a light server (Light source) and a light client (Switch) firmwares. those firmwares will work on a `nrf52832` DevKit.
+Any feedback is more than welcome. Please, test the app, test the library and check out the API.
 
 ## License
 

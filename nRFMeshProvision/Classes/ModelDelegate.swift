@@ -18,6 +18,12 @@ public protocol ModelDelegate {
     /// the message type supported by the handler.
     var messageTypes: [UInt32 : MeshMessage.Type] { get }
     
+    /// A flag whether this Model supports subscription mechanism.
+    /// When set to `false`, the library will return error
+    /// `ConfigMessageStatus.notASubscribeModel` whenever subscription
+    /// change was initiated.
+    var isSubscriptionSupported: Bool { get }
+    
     /// This method should handle the received Acknowledged Message.
     ///
     /// - parameters:

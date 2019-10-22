@@ -59,11 +59,11 @@ class ProvisioningViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        let network = MeshNetworkManager.instance.meshNetwork!
+        let manager = MeshNetworkManager.instance
         nameLabel.text = unprovisionedDevice.name
         
         // Obtain the Provisioning Manager instance for the Unprovisioned Device.
-        provisioningManager = network.provision(unprovisionedDevice: unprovisionedDevice, over: bearer)
+        provisioningManager = try! manager.provision(unprovisionedDevice: unprovisionedDevice, over: bearer)
         provisioningManager.delegate = self
         provisioningManager.logger = MeshNetworkManager.instance.logger
         bearer.delegate = self
@@ -75,7 +75,7 @@ class ProvisioningViewController: UITableViewController {
             networkKeyCell.selectionStyle = .none
             networkKeyCell.accessoryType = .none
         }
-        actionProvision.isEnabled = network.localProvisioner != nil
+        actionProvision.isEnabled = manager.meshNetwork!.localProvisioner != nil
         
         // We are now connected. Proceed by sending Provisioning Invite request.
         presentStatusDialog(message: "Identifying...", animated: false) {

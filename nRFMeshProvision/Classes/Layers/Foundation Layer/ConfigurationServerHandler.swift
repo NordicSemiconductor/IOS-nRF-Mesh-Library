@@ -9,7 +9,9 @@ import Foundation
 
 internal class ConfigurationServerHandler: ModelDelegate {
     weak var meshNetwork: MeshNetwork!
+    
     let messageTypes: [UInt32 : MeshMessage.Type]
+    let isSubscriptionSupported: Bool = false
     
     init(_ meshNetwork: MeshNetwork) {
         let types: [ConfigMessage.Type] = [
@@ -294,6 +296,9 @@ internal class ConfigurationServerHandler: ModelDelegate {
                 guard request.address.isGroup && request.address != Address.allNodes else {
                     return ConfigModelSubscriptionStatus(responseTo: request, with: .invalidAddress)
                 }
+                guard model.delegate?.isSubscriptionSupported != false else {
+                    return ConfigModelSubscriptionStatus(responseTo: request, with: .notASubscribeModel)
+                }
                 var group = meshNetwork.group(withAddress: MeshAddress(request.address))
                 if let group = group {
                     model.subscribe(to: group)
@@ -316,6 +321,9 @@ internal class ConfigurationServerHandler: ModelDelegate {
                let model = element.model(withModelId: request.modelId) {
                 guard request.address.isGroup && request.address != Address.allNodes else {
                     return ConfigModelSubscriptionStatus(responseTo: request, with: .invalidAddress)
+                }
+                guard model.delegate?.isSubscriptionSupported != false else {
+                    return ConfigModelSubscriptionStatus(responseTo: request, with: .notASubscribeModel)
                 }
                 var group = meshNetwork.group(withAddress: MeshAddress(request.address))
                 if let group = group {
@@ -351,6 +359,9 @@ internal class ConfigurationServerHandler: ModelDelegate {
         case let request as ConfigModelSubscriptionVirtualAddressAdd:
             if let element = localNode.element(withAddress: request.elementAddress),
                let model = element.model(withModelId: request.modelId) {
+                guard model.delegate?.isSubscriptionSupported != false else {
+                    return ConfigModelSubscriptionStatus(responseTo: request, with: .notASubscribeModel)
+                }
                 var group = meshNetwork.group(withAddress: MeshAddress(request.virtualLabel))
                 if group != nil {
                     model.subscribe(to: group!)
@@ -371,6 +382,9 @@ internal class ConfigurationServerHandler: ModelDelegate {
         case let request as ConfigModelSubscriptionVirtualAddressOverwrite:
             if let element = localNode.element(withAddress: request.elementAddress),
                let model = element.model(withModelId: request.modelId) {
+                guard model.delegate?.isSubscriptionSupported != false else {
+                    return ConfigModelSubscriptionStatus(responseTo: request, with: .notASubscribeModel)
+                }
                 var group = meshNetwork.group(withAddress: MeshAddress(request.virtualLabel))
                 if group != nil {
                     model.unsubscribeFromAll()
