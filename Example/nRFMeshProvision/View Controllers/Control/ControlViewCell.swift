@@ -96,6 +96,33 @@ class ControlViewController: ProgressCollectionViewController {
         cell.delegate = self
         return cell as! UICollectionViewCell
     }
+    
+    override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let section = sections[indexPath.section]
+        let model = section.models[indexPath.row]
+        let element = model.parentElement!
+        let name = model.name ?? "Unknown Model"
+        var message: String?
+        if !model.subscriptions.isEmpty {
+            let groups = model.subscriptions.map({ $0.name }).joined(separator: ", ")
+            message = "This model is subscribed to the following groups: \(groups)."
+            
+            if let publish = model.publish {
+                let network = MeshNetworkManager.instance.meshNetwork!
+                let applicationKey = network.applicationKeys[publish.index]
+                let group = network.group(withAddress: publish.publicationAddress)
+                message! += " It is also set up to publish to \(group?.name ?? publish.publicationAddress.asString()) using \(applicationKey?.name ?? "unknown Application Key")."
+            }
+        } else if let publish = model.publish {
+            let network = MeshNetworkManager.instance.meshNetwork!
+            let applicationKey = network.applicationKeys[publish.index]
+            let group = network.group(withAddress: publish.publicationAddress)
+            message = "This model is set up to publish to \(group?.name ?? publish.publicationAddress.asString()) using \(applicationKey?.name ?? "unknown Application Key")."
+        } else {
+            message = "This model does not have subscription or publication set. Go to Network tab, find the local provisioner and configure the \(name) on \(element.name ?? "Element \(element.index + 1)")."
+        }
+        presentAlert(title: name, message: message)
+    }
 
 }
 
