@@ -90,6 +90,8 @@ let element = Element(name: "Primary Element", location: .unknown, models: [
 meshNetworkManager.localElements = [element]
 ```
 
+**Important:** Even if you don't have any Models (for example only want to allow Configuration Messages in the app) you have to set the `localElements` property. In that case the Configuration Server and Client Models will not be properly initialized and you will be getting `UnknownMessage` instead of proper Status message.
+
 ### Provisioning 
 
 Provisioning is a process of sending a Network Key to a new Unprovisioned Device in a more or less secure way. During provisioning, a Provisioner and the new provisioned Node will generate a common secret that will work as Device Key. Using this key the Provisioner may send and data to the Node privately, so that only this device will be able to decode the message. The first data sent to Node are its unique Unicase Address and the Network Key.
