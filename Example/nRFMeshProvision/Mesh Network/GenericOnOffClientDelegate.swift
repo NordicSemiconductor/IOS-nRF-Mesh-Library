@@ -11,6 +11,7 @@ import nRFMeshProvision
 
 class GenericOnOffClientDelegate: ModelDelegate {
     let messageTypes: [UInt32 : MeshMessage.Type]
+    let isSubscriptionSupported: Bool = false
     
     init() {
         let types: [GenericMessage.Type] = [
