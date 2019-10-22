@@ -39,3 +39,19 @@ A Model may be set to publish a message when its state changes, or to receive me
 To set a publication, use `ConfigModelPubilcationSet` or `ConfigModelPubilcationVirtualAddressSet`. To add a group address to subscribed addresses, use `ConfigModelSubscriptionAdd`, or `ConfigModelSubscriptionVirtualAddressAdd` for virtual address.
 
 These messages may also be sent to local Models. For example, the Sample App contains 2 Elements, each with **Generic OnOff Client** and **Generic OnOff Server** that can be configured to send messages to each other.
+
+After subscribibg a local Model to a group or virtual address you have to add this address to the Proxy Filter.
+
+### Proxy Filter
+
+When using GATT Proxy bearer, the connected mesh node acts as a proxy device and relays messages sent in the mesh network to the phone using proxy protocol. However, it needs to know which messages should it relay and which not. For example, a phone does not need to be informed about a message sent between a switch and a light, but should receive a status message for a message it has sent, or for a message sent to 0xFFFF address (All Nodes).
+
+To let the proxy know to which addresses the phone is subscribed, it needs to configure the Proxy Filter. The Proxy Filter is empty on each connection to a proxy node. To control the filter, use `ProxyFilter` class.
+
+Upon connection, the library will automatically subscribe to all Unicast Addresses of all local Elements, to all Group and Virtual Addresses that at least one local Model is subscribed to, and to All Nodes address. **However, it does not track the messages, so when a Model gets subscribed to another address, you have to add this address on your own.** Otherwise, you will not receive messages sent to this address until you reconnect to this proxy.
+
+```swift
+let proxyFilter = meshNetworkManager.proxyFilter
+proxyFilter?.add(groups: [newGroup])
+```
+
