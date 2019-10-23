@@ -55,15 +55,8 @@ public extension MeshNetwork {
             throw MeshNetworkError.keyIndexOutOfRange
         }
         let key = try ApplicationKey(name: name, index: nextIndex,
-                                     key: applicationKey, bindTo: defaultNetworkKey)
-        key.meshNetwork = self
-        applicationKeys.append(key)
-        
-        // Make the local Provisioner aware of the new key.
-        if let localProvisioner = provisioners.first,
-           let n = node(for: localProvisioner) {
-            n.appKeys.append(Node.NodeKey(of: key))
-        }
+                                     key: applicationKey, boundTo: defaultNetworkKey)
+        add(applicationKey: key)
         return key
     }
     
@@ -131,13 +124,7 @@ public extension MeshNetwork {
             throw MeshNetworkError.keyIndexOutOfRange
         }
         let key = try NetworkKey(name: name, index: nextIndex, key: networkKey)
-        networkKeys.append(key)
-        
-        // Make the local Provisioner aware of the new key.
-        if let localProvisioner = provisioners.first,
-           let n = node(for: localProvisioner) {
-            n.netKeys.append(Node.NodeKey(of: key))
-        }
+        add(networkKey: key)
         return key
     }
     

@@ -29,7 +29,7 @@ class ConfigMessages: XCTestCase {
     
     func testEncodingConfigAppKeyAdd() {
         let networkKey = try! NetworkKey(name: "Test", index: 0x123, key: Data(hex: "00112233445566778899AABBCCDDEEFF")!)
-        let applicationKey = try! ApplicationKey(name: "Test", index: 0x456, key: Data(hex: "0123456789ABCDEF0123456789ABCDEF")!, bindTo: networkKey)
+        let applicationKey = try! ApplicationKey(name: "Test", index: 0x456, key: Data(hex: "0123456789ABCDEF0123456789ABCDEF")!, boundTo: networkKey)
         
         let meshNetwork = MeshNetwork(name: "Test Network")
         meshNetwork.networkKeys.append(networkKey)
@@ -54,7 +54,7 @@ class ConfigMessages: XCTestCase {
     
     func testEncodingConfigAppKeyList() {
         let networkKey = try! NetworkKey(name: "Test", index: 0x123, key: Data(hex: "00112233445566778899AABBCCDDEEFF")!)
-        let applicationKey = try! ApplicationKey(name: "Test", index: 0x456, key: Data(hex: "0123456789ABCDEF0123456789ABCDEF")!, bindTo: networkKey)
+        let applicationKey = try! ApplicationKey(name: "Test", index: 0x456, key: Data(hex: "0123456789ABCDEF0123456789ABCDEF")!, boundTo: networkKey)
         
         let meshNetwork = MeshNetwork(name: "Test Network")
         meshNetwork.networkKeys.append(networkKey)

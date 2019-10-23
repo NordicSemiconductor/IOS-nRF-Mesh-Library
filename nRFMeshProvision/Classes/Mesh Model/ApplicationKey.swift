@@ -41,7 +41,7 @@ public class ApplicationKey: Key, Codable {
     /// Application Key identifier derived from the old key.
     internal var oldAid: UInt8?
     
-    internal init(name: String, index: KeyIndex, key: Data, bindTo networkKey: NetworkKey) throws {
+    internal init(name: String, index: KeyIndex, key: Data, boundTo networkKey: NetworkKey) throws {
         guard index.isValidKeyIndex else {
             throw MeshNetworkError.keyIndexOutOfRange
         }

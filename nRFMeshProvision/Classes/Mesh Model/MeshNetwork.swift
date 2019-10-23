@@ -98,11 +98,12 @@ public class MeshNetwork: Codable {
         meshName        = name
         timestamp       = Date()
         provisioners    = []
-        networkKeys     = [ NetworkKey() ]
+        networkKeys     = [NetworkKey()]
         applicationKeys = []
         nodes           = []
         groups          = []
-        _localElements  = [ .primaryElement ]
+        _localElements  = []
+        localElements   = [ Element(location: .main) ]
     }
     
     // MARK: - Codable
@@ -197,6 +198,33 @@ extension MeshNetwork {
             let meshUuid = self.uuid
             let defauts = UserDefaults(suiteName: meshUuid.uuidString)
             defauts?.removeObject(forKey: node.unicastAddress.hex)
+        }
+    }
+    
+    /// Adds the given Network Key to the network.
+    ///
+    /// - parameter key: The new Network Key to be added.
+    func add(networkKey key: NetworkKey) {
+        networkKeys.append(key)
+        
+        // Make the local Provisioner aware of the new key.
+        if let localProvisioner = provisioners.first,
+           let n = node(for: localProvisioner) {
+            n.netKeys.append(Node.NodeKey(of: key))
+        }
+    }
+    
+    /// Adds the given Application Key to the network.
+    ///
+    /// - parameter key: The new Application Key to be added.
+    func add(applicationKey key: ApplicationKey) {
+        applicationKeys.append(key)
+        key.meshNetwork = self
+        
+        // Make the local Provisioner aware of the new key.
+        if let localProvisioner = provisioners.first,
+           let n = node(for: localProvisioner) {
+            n.appKeys.append(Node.NodeKey(of: key))
         }
     }
     
