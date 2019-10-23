@@ -481,18 +481,7 @@ internal class ConfigurationServerHandler: ModelDelegate {
                 
         // Resetting Node
         case is ConfigNodeReset:
-            // Reset the network. Keep the same Provisioner and network settings.
-//            if let provisioner = meshNetwork.localProvisioner {
-                // Replying with ConfigNodeResetStatus() may fail, as the network is
-                // being reset and forgotten in a second.
-                return ConfigNodeResetStatus()
-                // TODO:
-//                let localElements = meshNetwork.localElements
-//                provisioner.meshNetwork = nil
-//                let manager = networkManager.manager
-//                    .createNewMeshNetwork(withName: meshNetwork.meshName, by: provisioner)
-//                manager.localElements = localElements
-//            }
+            return ConfigNodeResetStatus()
             
         default:
             fatalError("Message not handled: \(request)")

@@ -386,6 +386,15 @@ private extension AccessLayer {
                         networkManager.reply(toMessageSentTo: accessPdu.destination.address,
                                              with: response, to: accessPdu.source, using: keySet)
                     }
+                    // Handle a case when a remote Node resets the local one.
+                    // The ConfigResetStatus has already been sent.
+                    if configMessage is ConfigNodeReset {
+                        let localElements = meshNetwork.localElements
+                        let provisioner = networkManager.manager.meshNetwork!.localProvisioner!
+                        provisioner.meshNetwork = nil
+                        _ = networkManager.manager.createNewMeshNetwork(withName: meshNetwork.meshName, by: provisioner)
+                        networkManager.manager.localElements = localElements
+                    }
                     _ = networkManager.manager.save()
                 } else {
                     // If not, it was received by adding another Node's address to the Proxy Filter.
