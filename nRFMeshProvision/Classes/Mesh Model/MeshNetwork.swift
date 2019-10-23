@@ -92,7 +92,7 @@ public class MeshNetwork: Codable {
     
     internal init(name: String, uuid: UUID = UUID()) {
         schema          = "http://json-schema.org/draft-04/schema#"
-        id              = "TBD"
+        id              = "http://www.bluetooth.com/specifications/assigned-numbers/mesh-profile/cdb-schema.json#"
         version         = "1.0.0"
         meshUUID        = MeshUUID(uuid)
         meshName        = name
