@@ -614,7 +614,14 @@ public extension MeshNetworkManager {
     /// Loads the Mesh Network configuration from the storage.
     /// If storage is not given, a local file will be used.
     ///
-    /// - returns: `True` if the network settings were loaded, `false` otherwise.
+    /// If the storage is empty, this method tries to migrate the
+    /// database from the nRF Mesh 1.0.x to the new format. This
+    /// is useful when the library or the Sample App has been updated.
+    /// For fresh installs, when the storage is empty and the
+    /// legacy version was not found this method returns `false`.
+    ///
+    /// - returns: `True` if the network settings were loaded,
+    ///            `false` otherwise.
     /// - throws: If loading configuration failed.
     func load() throws -> Bool {
         if let data = storage.load() {
@@ -632,6 +639,44 @@ public extension MeshNetworkManager {
             networkManager = NetworkManager(self)
             proxyFilter = ProxyFilter(self)
             return true
+        } else if let legacyState = MeshStateManager.restoreState() {
+            // The app has been updated from version 1.0.x to 2.0.
+            // Time to migrate the data to the new format.
+            let network = MeshNetwork(name: legacyState.name)
+            try! network.add(provisioner: legacyState.provisioner,
+                             withAddress: legacyState.provisionerUnicastAddress)
+            let provisionerNode = network.localProvisioner!.node!
+            provisionerNode.defaultTTL = legacyState.provisionerDefaultTtl
+            network.networkKeys.removeAll()
+            let networkKey = legacyState.networkKey
+            network.add(networkKey: networkKey)
+            legacyState.applicationKeys(boundTo: networkKey).forEach {
+                network.add(applicationKey: $0)
+            }
+            legacyState.groups.forEach {
+                try? network.add(group: $0)
+            }
+            legacyState.nodes(provisionedUsingNetworkKey: networkKey).forEach {
+                try? network.add(node: $0)
+            }
+
+            // Restore the sequence number from the legacy version.
+            let defaultsKey = "nRFMeshSequenceNumber"
+            let oldDefaults = UserDefaults.standard
+            let oldSequence = UInt32(oldDefaults.integer(forKey: defaultsKey))
+            let newDefaults = UserDefaults(suiteName: network.uuid.uuidString)!
+            // The version 1.0.x had only one local Element, so there is no need to
+            // update sequence numbers for other possible local Elements.
+            newDefaults.set(oldSequence + 1, forKey: "S\(legacyState.provisionerUnicastAddress.hex)")
+            
+            // Clean up.
+            oldDefaults.removeObject(forKey: defaultsKey)
+            MeshStateManager.deleteState()
+            
+            meshData.meshNetwork = network
+            networkManager = NetworkManager(self)
+            proxyFilter = ProxyFilter(self)
+            return save()
         }
         return false
     }

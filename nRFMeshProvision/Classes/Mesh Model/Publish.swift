@@ -84,8 +84,17 @@ public struct Publish: Codable {
     public init(to destination: MeshAddress, using applicationKey: ApplicationKey,
                 usingFriendshipMaterial friendshipCredentialsFlag: Bool, ttl: UInt8,
                 periodSteps: UInt8, periodResolution: StepResolution, retransmit: Retransmit) {
+        self.init(to: destination, usingApplicationKeyWithKeyIndex: applicationKey.index,
+                  usingFriendshipMaterial: friendshipCredentialsFlag, ttl: ttl,
+                  periodSteps: periodSteps, periodResolution: periodResolution,
+                  retransmit: retransmit)
+    }
+    
+    internal init(to destination: MeshAddress, usingApplicationKeyWithKeyIndex index: KeyIndex,
+                usingFriendshipMaterial friendshipCredentialsFlag: Bool, ttl: UInt8,
+                periodSteps: UInt8, periodResolution: StepResolution, retransmit: Retransmit) {
         self.address = destination.hex
-        self.index = applicationKey.index
+        self.index = index
         self.credentials = friendshipCredentialsFlag ? 1 : 0
         self.ttl = ttl
         self.periodSteps = periodSteps

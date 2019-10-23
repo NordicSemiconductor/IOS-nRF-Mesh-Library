@@ -106,6 +106,10 @@
 		4EB00929A328DDDA796D452CCF4791AF /* ConfigRelayStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E34881927E1DA3DED3EC553E2454204 /* ConfigRelayStatus.swift */; };
 		50AB0682318A38036213CF74CB3AC54E /* NetworkPdu.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0B6C4FB5E348EA74817E0A70F4AA1B7 /* NetworkPdu.swift */; };
 		522254796E82C4D8792978ACEE3D4724 /* Data+Keys.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45814F4C4FD15FB89BA793B23E344302 /* Data+Keys.swift */; };
+		52CF94AD236050B000D34DFA /* MeshState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52CF94AC236050B000D34DFA /* MeshState.swift */; };
+		52CF94AF236050BF00D34DFA /* MeshNodeEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52CF94AE236050BF00D34DFA /* MeshNodeEntry.swift */; };
+		52CF94B1236050F100D34DFA /* CompositionElement.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52CF94B0236050F100D34DFA /* CompositionElement.swift */; };
+		52CF94B32360540100D34DFA /* MeshStateManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52CF94B22360540100D34DFA /* MeshStateManager.swift */; };
 		52FE1FF02341E524002B377F /* ModelDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52FE1FEF2341E524002B377F /* ModelDelegate.swift */; };
 		52FE1FF22341E7E1002B377F /* ConfigurationServerHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52FE1FF12341E7E1002B377F /* ConfigurationServerHandler.swift */; };
 		52FE1FF423420519002B377F /* ConfigurationClientHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52FE1FF323420519002B377F /* ConfigurationClientHandler.swift */; };
@@ -406,6 +410,10 @@
 		5183D75DFC2421E30C8B8AE4110CCD04 /* OpenSSLHelper.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = OpenSSLHelper.m; sourceTree = "<group>"; };
 		51BBAA3978BFB1C9BAA0B3563DB01A48 /* Pods-nRFMeshProvision_Example-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-nRFMeshProvision_Example-Info.plist"; sourceTree = "<group>"; };
 		5248DAAA31591B861A6C0CFA0DD02ED1 /* GenericPowerLastGet.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = GenericPowerLastGet.swift; sourceTree = "<group>"; };
+		52CF94AC236050B000D34DFA /* MeshState.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MeshState.swift; sourceTree = "<group>"; };
+		52CF94AE236050BF00D34DFA /* MeshNodeEntry.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MeshNodeEntry.swift; sourceTree = "<group>"; };
+		52CF94B0236050F100D34DFA /* CompositionElement.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CompositionElement.swift; sourceTree = "<group>"; };
+		52CF94B22360540100D34DFA /* MeshStateManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MeshStateManager.swift; sourceTree = "<group>"; };
 		52FE1FEF2341E524002B377F /* ModelDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ModelDelegate.swift; path = nRFMeshProvision/Classes/ModelDelegate.swift; sourceTree = "<group>"; };
 		52FE1FF12341E7E1002B377F /* ConfigurationServerHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigurationServerHandler.swift; sourceTree = "<group>"; };
 		52FE1FF323420519002B377F /* ConfigurationClientHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigurationClientHandler.swift; sourceTree = "<group>"; };
@@ -877,6 +885,18 @@
 			path = "Access Layer";
 			sourceTree = "<group>";
 		};
+		52CF94AB2360317D00D34DFA /* Legacy */ = {
+			isa = PBXGroup;
+			children = (
+				52CF94B22360540100D34DFA /* MeshStateManager.swift */,
+				52CF94AC236050B000D34DFA /* MeshState.swift */,
+				52CF94AE236050BF00D34DFA /* MeshNodeEntry.swift */,
+				52CF94B0236050F100D34DFA /* CompositionElement.swift */,
+			);
+			name = Legacy;
+			path = nRFMeshProvision/Classes/Legacy;
+			sourceTree = "<group>";
+		};
 		5353D636427FC3C52B4214D85F7CAE9F /* Proxy Configuration */ = {
 			isa = PBXGroup;
 			children = (
@@ -915,6 +935,7 @@
 				CCDCCEEC7A089BC2CEA12F1C63AB254C /* Provisioning */,
 				4082F755F3DCA0AF9337F733865E35BD /* Type Extensions */,
 				A5814A4E8BB117C879E501FA54A9F651 /* Utils */,
+				52CF94AB2360317D00D34DFA /* Legacy */,
 				CADB8E2ADFA71DE4EE855B4F860E10C5 /* Support Files */,
 				C43487812F1C79EA07B9B524705EDFF9 /* Pod */,
 			);
@@ -1464,6 +1485,7 @@
 				1FE6B49007D7EF8C19127FCF3519B044 /* AccessError.swift in Sources */,
 				52FE1FF02341E524002B377F /* ModelDelegate.swift in Sources */,
 				B5460A5976DD22173B9A5B6027CC40D4 /* AccessLayer.swift in Sources */,
+				52CF94B1236050F100D34DFA /* CompositionElement.swift in Sources */,
 				1CDE9AE453EECFED3CF8E0FEF41CF793 /* AccessMessage.swift in Sources */,
 				F972E8D6FCD3F0173A551DD563872CA6 /* AccessPdu.swift in Sources */,
 				B55E390D8EEA03C5583410B75CA1806E /* AddAddressesToFilter.swift in Sources */,
@@ -1553,6 +1575,7 @@
 				A4D7E6C896DEA3C70642F39EE2C2309C /* FilterStatus.swift in Sources */,
 				8CBD15B911E4EC6DC6B65140F11C5874 /* GattBearer.swift in Sources */,
 				0D5FFEF3DB6632783D1F9C58082B97B9 /* GattBearerDelegate.swift in Sources */,
+				52CF94AD236050B000D34DFA /* MeshState.swift in Sources */,
 				1000CF296F9C775685F387A22C1D0B92 /* GattBearerError.swift in Sources */,
 				167411011D01A4DB2ECA2921BAA45CC2 /* GenericBatteryGet.swift in Sources */,
 				63DD959583C695A329496321AEF061D9 /* GenericBatteryStatus.swift in Sources */,
@@ -1614,6 +1637,7 @@
 				8434272216C61FC1C7D1F622C399EFB8 /* MeshNetwork+Groups.swift in Sources */,
 				F3E5381E395E9C51DB1A9868D70BCE65 /* MeshNetwork+Keys.swift in Sources */,
 				070085F9D1BB9241BF14DEB90FE3E526 /* MeshNetwork+Nodes.swift in Sources */,
+				52CF94AF236050BF00D34DFA /* MeshNodeEntry.swift in Sources */,
 				4062E84B3B561C90D054420DD5E6E294 /* MeshNetwork+Provisioner.swift in Sources */,
 				2BC3BCBE7F0CDBBC4405FA2E2C38B192 /* MeshNetwork+Ranges.swift in Sources */,
 				142E6A87F2876C00FA4CDF4156DE1E9C /* MeshNetwork.swift in Sources */,
@@ -1642,6 +1666,7 @@
 				2C4787F31B967D43BC66D7E2822E30B0 /* OnPowerUp.swift in Sources */,
 				B5DCCC42C6C1D1E303EB2797E2319288 /* Oob.swift in Sources */,
 				9CD1608FC70D632CD276942895294D5D /* OpenSSLHelper.m in Sources */,
+				52CF94B32360540100D34DFA /* MeshStateManager.swift in Sources */,
 				7C99981DECE304F90314D0E86118AD66 /* OptionSet+Data.swift in Sources */,
 				764CE4CBE30845FF0600E6009BBB3958 /* PBGattBearer.swift in Sources */,
 				47115ECBF28B76E661FC9180627FD074 /* Provisioner+Node.swift in Sources */,

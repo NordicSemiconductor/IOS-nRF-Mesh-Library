@@ -182,7 +182,7 @@ public class Node: Codable {
         self.unicastAddress = unicastAddress
         self.deviceKey = Data.random128BitKey()
         self.security = .high
-        // Default values
+        // Default values.
         self.netKeys  = [ NodeKey(index: 0, updated: false) ]
         self.appKeys  = []
         self.elements = []
@@ -222,26 +222,43 @@ public class Node: Codable {
         self.elements = []
     }
     
-    internal init(for unprovisionedDevice: UnprovisionedDevice,
+    /// Initializes a Node for given unprovisioned device.
+    /// The Node will have the same UUID as the device in the advertising
+    /// packet.
+    ///
+    /// - parameters:
+    ///   - unprovisionedDevice: The newly provisioned device.
+    ///   - n: Number of Elements on the new Node.
+    ///   - deviceKey: The Device Key.
+    ///   - networkKey: The Network Key.
+    ///   - address: The Unicast Address to be assigned to the Node.
+    internal convenience init(for unprovisionedDevice: UnprovisionedDevice,
                   with n: UInt8, elementsDeviceKey deviceKey: Data,
                   andAssignedNetworkKey networkKey: NetworkKey, andAddress address: Address) {
-        self.nodeUuid = MeshUUID(unprovisionedDevice.uuid)
-        self.name     = unprovisionedDevice.name
-        self.unicastAddress = address
-        self.deviceKey = deviceKey
-        self.security = .high
-        // Composition Data were not obtained.
-        self.isConfigComplete = false
-        
-        // The node has been provisioned with one Network Key.
-        self.netKeys  = [NodeKey(index: networkKey.index, updated: false)]
-        self.appKeys  = []
+        self.init(name: unprovisionedDevice.name, uuid: unprovisionedDevice.uuid,
+                  deviceKey: deviceKey, andAssignedNetworkKey: networkKey,
+                  andAddress: address)
         // Elements will be queried with Composition Data. Let's just add
         // n empty Elements to reserve addresses.
-        self.elements = []
         for _ in 0..<n {
             add(element: Element(location: .unknown))
         }
+    }
+    
+    internal init(name: String?, uuid: UUID, deviceKey: Data,
+                  andAssignedNetworkKey networkKey: NetworkKey, andAddress address: Address) {
+        self.nodeUuid = MeshUUID(uuid)
+        self.name     = name
+        self.unicastAddress = address
+        self.deviceKey = deviceKey
+        self.security  = .high
+        // Composition Data were not obtained.
+        self.isConfigComplete = false
+        
+        // The node has to have at least one Network Key.
+        self.netKeys  = [NodeKey(index: networkKey.index, updated: false)]
+        self.appKeys  = []
+        self.elements = []
     }
     
     /// Creates a low security Node with given Device Key, Network Key and Unicast Address.
