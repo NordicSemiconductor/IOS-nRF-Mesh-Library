@@ -127,7 +127,7 @@ public extension MeshNetwork {
         
         guard let range = nextAvailableRange(ofSize: size, in: Address.minUnicastAddress...Address.maxUnicastAddress,
                                              among: allRangesSorted) else {
-                                                return nil
+            return nil
         }
         return AddressRange(range.range)
     }
@@ -147,7 +147,7 @@ public extension MeshNetwork {
         
         guard let range = nextAvailableRange(ofSize: size, in: Address.minGroupAddress...Address.maxGroupAddress,
                                              among: allRangesSorted) else {
-                                                return nil
+            return nil
         }
         return AddressRange(range.range)
     }
@@ -167,7 +167,7 @@ public extension MeshNetwork {
         
         guard let range = nextAvailableRange(ofSize: size, in: Scene.minScene...Scene.maxScene,
                                              among: allRangesSorted) else {
-                                                return nil
+            return nil
         }
         return SceneRange(range.range)
     }

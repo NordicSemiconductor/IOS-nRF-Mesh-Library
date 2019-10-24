@@ -137,7 +137,7 @@ public class MeshNetwork: Codable {
         nodes = try container.decode([Node].self, forKey: .nodes)
         groups = try container.decode([Group].self, forKey: .groups)
         
-        _localElements = [ .primaryElement ]
+        _localElements = [.primaryElement]
         
         provisioners.forEach {
             $0.meshNetwork = self

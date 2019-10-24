@@ -629,11 +629,8 @@ public extension MeshNetworkManager {
             decoder.dateDecodingStrategy = .iso8601
             
             meshData = try decoder.decode(MeshData.self, from: data)
-            guard let meshNetwork = meshData.meshNetwork else {
+            guard let _ = meshData.meshNetwork else {
                 return false
-            }
-            meshNetwork.provisioners.forEach {
-                $0.meshNetwork = meshNetwork
             }
             
             networkManager = NetworkManager(self)
@@ -715,20 +712,19 @@ public extension MeshNetworkManager {
     /// The data must contain valid JSON with Bluetooth Mesh scheme.
     ///
     /// - parameter data: JSON as Data.
+    /// - returns: The imported mesh network.
     /// - throws: This method throws an error if import or adding
     ///           the local Provisioner failed.
-    func `import`(from data: Data) throws {
+    func `import`(from data: Data) throws -> MeshNetwork {
         let decoder = JSONDecoder()
         decoder.dateDecodingStrategy = .iso8601
         
         let meshNetwork = try decoder.decode(MeshNetwork.self, from: data)
-        meshNetwork.provisioners.forEach {
-            $0.meshNetwork = meshNetwork
-        }
         
         meshData.meshNetwork = meshNetwork
         networkManager = NetworkManager(self)
         proxyFilter = ProxyFilter(self)
+        return meshNetwork
     }
     
 }

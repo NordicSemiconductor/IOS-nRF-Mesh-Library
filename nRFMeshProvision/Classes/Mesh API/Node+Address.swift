@@ -42,7 +42,8 @@ public extension Node {
     /// - returns: `True`, if the node address range overlaps with the given
     ///            range, `false` otherwise.
     func overlapsWithAddress(_ address: Address, elementsCount count: UInt8) -> Bool {
-        return !(unicastAddress + UInt16(elementsCount) - 1 < address || unicastAddress > address + UInt16(count) - 1)
+        return !(unicastAddress + UInt16(elementsCount) - 1 < address
+              || unicastAddress > address + UInt16(count) - 1)
     }
     
 }
