@@ -13,7 +13,7 @@ public struct GenericOnOffStatus: GenericMessage, TransitionStatusMessage {
     public var parameters: Data? {
         let data = Data([isOn ? 0x01 : 0x00])
         if let targetState = targetState, let remainingTime = remainingTime {
-            return data + (targetState ? 0x01 : 0x00) + remainingTime.rawValue
+            return data + UInt8(targetState ? 0x01 : 0x00) + remainingTime.rawValue
         } else {
             return data
         }
