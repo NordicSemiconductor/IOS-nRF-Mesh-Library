@@ -122,8 +122,6 @@ public extension MeshNetwork {
             // The new Provisioner will be aware of all currently existing Network and Application Keys.
             node.netKeys = networkKeys.map { Node.NodeKey(of: $0 )}
             node.appKeys = applicationKeys.map { Node.NodeKey(of: $0 )}
-            // Add the Node to the Network.
-            try add(node: node)
             // Set the Node's Elements.
             if provisioners.isEmpty {
                 node.add(elements: localElements)
@@ -132,6 +130,8 @@ public extension MeshNetwork {
             } else {
                 node.add(element: .primaryElement)
             }
+            // Add the Node to the Network.
+            try add(node: node)
         }
         
         // And finally, add the Provisioner.
