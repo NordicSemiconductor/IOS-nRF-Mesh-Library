@@ -34,6 +34,27 @@ public extension MeshNetwork {
         moveProvisioner(provisioner, toIndex: 0)
     }
     
+    /// This method restores the local Provisioner to the one used
+    /// last time on this device. If the network is new to this device
+    /// this method returns `false`. In that case a new Provisioner
+    /// object should be created and set a local Provisioner.
+    ///
+    /// - returns: `True`, if the Provisioner has been restored, or
+    ///            `false` when the network is new to this device.
+    ///            In this case, a new Provisioner should be created
+    ///            and set as a local one.
+    func restoreLocalProvisioner() -> Bool {
+        let defaults = UserDefaults(suiteName: uuid.uuidString)!
+        
+        if let uuidString = defaults.string(forKey: "provisioner"),
+           let uuid = UUID(uuidString: uuidString),
+           let provisioner = provisioners.first(where: { $0.uuid == uuid }) {
+            try! setLocalProvisioner(provisioner)
+            return true
+        }
+        return false
+    }
+    
     /// Returns whether the given Provisioner is set as the main
     /// Provisioner. The local Provisioner will be used to perform all
     /// provisioning and communication on this device. Every device
@@ -137,6 +158,12 @@ public extension MeshNetwork {
         // And finally, add the Provisioner.
         provisioner.meshNetwork = self
         provisioners.append(provisioner)
+        
+        // When the local Provisioner has been added, save its UUID.
+        if provisioners.count == 1 {
+            let defaults = UserDefaults(suiteName: uuid.uuidString)!
+            defaults.set(provisioner.uuid.uuidString, forKey: "provisioner")
+        }
     }
     
     /// Removes Provisioner at the given index.
@@ -208,19 +235,24 @@ public extension MeshNetwork {
             // If a Provisioner was moved to index 0 it becomes the new local Provisioner.
             // The local Provisioner is, by definition, aware of all Network and Application
             // Keys currently existing in the network.
-            if newToIndex == 0 || fromIndex == 0, let n = localProvisioner?.node {
-                n.netKeys = networkKeys.map { Node.NodeKey(of: $0) }
-                n.appKeys = applicationKeys.map { Node.NodeKey(of: $0) }
-                n.companyIdentifier = 0x004C // Apple Inc.
-                n.productIdentifier = nil
-                n.versionIdentifier = nil
-                n.ttl = nil
-                n.minimumNumberOfReplayProtectionList = Address.maxUnicastAddress
-                // The Element adding has to be done this way. Some Elements may get cut
-                // by the property observer when Element addresses overlap other Node's
-                // addresses.
-                let elements = localElements
-                localElements = elements
+            if newToIndex == 0 || fromIndex == 0 {
+                if let n = localProvisioner?.node {
+                    n.netKeys = networkKeys.map { Node.NodeKey(of: $0) }
+                    n.appKeys = applicationKeys.map { Node.NodeKey(of: $0) }
+                    n.companyIdentifier = 0x004C // Apple Inc.
+                    n.productIdentifier = nil
+                    n.versionIdentifier = nil
+                    n.ttl = nil
+                    n.minimumNumberOfReplayProtectionList = Address.maxUnicastAddress
+                    // The Element adding has to be done this way. Some Elements may get cut
+                    // by the property observer when Element addresses overlap other Node's
+                    // addresses.
+                    let elements = localElements
+                    localElements = elements
+                }
+                // Save the UUID of the local Provisioner.
+                let defaults = UserDefaults(suiteName: uuid.uuidString)!
+                defaults.set(localProvisioner!.uuid.uuidString, forKey: "provisioner")
             }
         }
     }
@@ -291,6 +323,13 @@ public extension MeshNetwork {
         } else {
             // For a Node that was in the network, it's now safe to update the Address.
             provisionerNode.unicastAddress = address
+        }
+        
+        if isLocalProvisioner(provisioner) {
+            // Reassign local elements. This will ensure they are reinitiated with the
+            // new addresses.
+            let elements = localElements
+            localElements = elements
         }
     }
     

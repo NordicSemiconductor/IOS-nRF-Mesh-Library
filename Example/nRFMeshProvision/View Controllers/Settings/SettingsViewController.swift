@@ -195,12 +195,39 @@ extension SettingsViewController: UIDocumentPickerDelegate {
         DispatchQueue.global(qos: .userInitiated).async {
             do {
                 let data = try Data(contentsOf: url)
-                try manager.import(from: data)
+                let meshNetwork = try manager.import(from: data)
+                // Try restoring the Provisioner used last time on this device.
+                var provisionerSet = true
+                if !meshNetwork.restoreLocalProvisioner() {
+                    // If it's a new network, try creating a new Provisioner.
+                    // This will succeed if available ranges are found.
+                    if let nextAddressRange = meshNetwork.nextAvailableUnicastAddressRange(ofSize: 0x199A),
+                       let nextGroupRange = meshNetwork.nextAvailableGroupAddressRange(ofSize: 0x0C9A),
+                       let nextSceneRange = meshNetwork.nextAvailableSceneRange(ofSize: 0x3334) {
+                        let newProvisioner = Provisioner(name: UIDevice.current.name,
+                                                         allocatedUnicastRange: [nextAddressRange],
+                                                         allocatedGroupRange: [nextGroupRange],
+                                                         allocatedSceneRange: [nextSceneRange])
+                        // Set it a a new local Provisioner.
+                        try? meshNetwork.setLocalProvisioner(newProvisioner)
+                        // And assign a Unicast Address to it.
+                        if let address = meshNetwork.nextAvailableUnicastAddress(for: newProvisioner) {
+                            try? meshNetwork.assign(unicastAddress: address, for: newProvisioner)
+                        }
+                    } else {
+                        provisionerSet = false
+                    }
+                }
+                
                 if manager.save() {
                     DispatchQueue.main.async {
                         (UIApplication.shared.delegate as! AppDelegate).meshNetworkDidChange()
                         self.reload()
-                        self.presentAlert(title: "Success", message: "Mesh Network configuration imported.")
+                        if provisionerSet {
+                            self.presentAlert(title: "Success", message: "Mesh Network configuration imported.")
+                        } else {
+                            self.presentAlert(title: "Warning", message: "Mesh Network configuration imported successfully, but the provisioner could not be set. All ranges are already assigned. Go to Settings -> Provisioners and create a new provisioner manually. Until then this device may not be able to send mesh messages.")
+                        }
                     }
                 } else {
                     self.presentAlert(title: "Error", message: "Mesh configuration could not be saved.")
