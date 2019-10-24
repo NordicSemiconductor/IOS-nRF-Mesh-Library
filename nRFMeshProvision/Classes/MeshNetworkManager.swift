@@ -107,6 +107,12 @@ public class MeshNetworkManager {
     ///
     /// If storage is not provided, a local file will be used instead.
     ///
+    /// - important: Aafter the manager has been initialized, the
+    ///              `localElements` property must be set . Otherwise,
+    ///              none of status messages will be parsed correctly
+    ///              and they will be returned to the delegate as
+    ///              `UnknownMessage`s.
+    ///
     /// - parameters:
     ///   - storage: The storage to use to save the network configuration.
     ///   - queue: The DispatQueue to process reqeusts on. By default

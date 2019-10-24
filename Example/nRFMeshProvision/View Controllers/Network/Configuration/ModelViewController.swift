@@ -487,10 +487,6 @@ extension ModelViewController: MeshNetworkDelegate {
                 }
             }
             
-        case is ConfigMessage:
-            // Ignore.
-            break
-            
         default:
             let isMore = modelViewCell?.meshNetworkManager(manager, didReceiveMessage: message,
                                                            sentFrom: source, to: destination) ?? false

@@ -90,7 +90,7 @@ class ConfigurationServerViewCell: ModelViewCell {
                 relayIntervalDidChange(relayIntervalSlider)
                 relayCountSlider.value = Float(relay.count)
                 relayCountDidChange(relayCountSlider)
-            } else {
+            } else if delegate.isRefreshing {
                 relayCountLabel.text = "Not supported"
                 relayIntervalLabel.text = "N/A"
                 relayCountSlider.isEnabled = false
