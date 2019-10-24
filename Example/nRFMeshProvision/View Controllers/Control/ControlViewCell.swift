@@ -40,7 +40,12 @@ class ControlViewController: ProgressCollectionViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         collectionView.delegate = self
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
         
+        sections.removeAll()
         if let network = MeshNetworkManager.instance.meshNetwork {
             let elements = network.localProvisioner?.node?.elements
             elements?.forEach { element in
@@ -56,10 +61,6 @@ class ControlViewController: ProgressCollectionViewController {
                 }
             }
         }
-    }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
         collectionView.reloadData()
     }
     

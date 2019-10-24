@@ -66,7 +66,7 @@ class EditProvisionerViewController: UITableViewController {
         let meshNetwork = MeshNetworkManager.instance.meshNetwork!
         
         if provisioner == nil {
-            // These ranges grow propotionally.
+            // These ranges grow proportionally.
             let nextAddressRange = meshNetwork.nextAvailableUnicastAddressRange(ofSize: 0x199A)
             let nextGroupRange = meshNetwork.nextAvailableGroupAddressRange(ofSize: 0x0C9A)
             let nextSceneRange = meshNetwork.nextAvailableSceneRange(ofSize: 0x3334)
@@ -337,9 +337,9 @@ private extension EditProvisionerViewController {
             case .addressNotAvailable:
                 let count = max(1, MeshNetworkManager.instance.localElements.count)
                 if count > 1, let address = newAddress {
-                    presentAlert(title: "Error", message: "The address range \(address.asString())...\((address + UInt16(count - 1)).hex) is already in use.")
+                    presentAlert(title: "Error", message: "The address range \(address.asString())...\((address + UInt16(count)  - 1).hex) is already in use or is not valid. A unique unicast address must be assignet to each of the \(count) elements.")
                 } else {
-                    presentAlert(title: "Error", message: "The address is already in use.")
+                    presentAlert(title: "Error", message: "The address is already in use or is not valid.")
                 }
             default:
                 presentAlert(title: "Error", message: "An error occurred.")
