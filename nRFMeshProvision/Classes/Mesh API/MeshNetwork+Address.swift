@@ -9,17 +9,28 @@ import Foundation
 
 public extension MeshNetwork {
     
+    /// Returns whether the given number of unicast addresses starting
+    /// from the given one are valid, that is they are all in Unicast
+    /// Address range.
+    ///
+    /// - parameter address: The first address to check.
+    /// - parameter count:   Number of addresses to check.
+    /// - returns: `True`, if the address range is valid, `false` otherwise.
+    func isAddressRangeValid(_ address: Address, elementsCount count: UInt8) -> Bool {
+        return address.isUnicast && (address + UInt16(count) - 1).isUnicast
+    }
+    
     /// Returns whether the given address can be assigned to a new Node
     /// with given number of elements.
     ///
     /// - parameter address: The first address to check.
-    /// - parameter count:   Number of following addresses to check.
+    /// - parameter count:   Number of addresses to check.
     /// - parameter node:    The Node, which address is to change. It will be excluded
     ///                      from checking address collisions.
     /// - returns: `True`, if the address range is available, `false` otherwise.
     func isAddressRangeAvailable(_ address: Address, elementsCount count: UInt8, for node: Node? = nil) -> Bool {
         let otherNodes = nodes.filter { $0 != node }
-        return address.isUnicast && (address + UInt16(count)).isUnicast &&
+        return isAddressRangeValid(address, elementsCount: count) &&
             !otherNodes.contains { $0.overlapsWithAddress(address, elementsCount: count) }
     }
     
