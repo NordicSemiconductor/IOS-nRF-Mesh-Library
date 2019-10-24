@@ -15,6 +15,7 @@ internal struct AccessPdu {
     /// message was received.
     let localElement: Element?
     /// Whether sending this message has been initiated by the user.
+    /// Status of automatic replies will not be reported to the app.
     let userInitiated: Bool
     
     /// Source Address.
