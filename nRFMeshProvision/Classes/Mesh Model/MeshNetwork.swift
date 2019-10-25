@@ -54,12 +54,7 @@ public class MeshNetwork: Codable {
             // Configuration and Health Models will be added automatically.
             // Let's make sure they are not in the array.
             elements.forEach { element in
-                element.models = element.models.filter { model in
-                    !model.isConfigurationServer &&
-                    !model.isConfigurationClient &&
-                    !model.isHealthServer &&
-                    !model.isHealthClient
-                }
+                element.removePrimaryElementModels()
             }
             // Remove all empty Elements.
             elements = elements.filter { !$0.models.isEmpty }
@@ -193,6 +188,7 @@ extension MeshNetwork {
             //       If such Node is found, this method should throw, as
             //       the Node is in use.
             node.meshNetwork = nil
+            timestamp = Date()
             
             // Forget the last sequence number for the device.
             let meshUuid = self.uuid
@@ -206,11 +202,12 @@ extension MeshNetwork {
     /// - parameter key: The new Network Key to be added.
     func add(networkKey key: NetworkKey) {
         networkKeys.append(key)
+        timestamp = Date()
         
         // Make the local Provisioner aware of the new key.
         if let localProvisioner = provisioners.first,
            let n = node(for: localProvisioner) {
-            n.netKeys.append(Node.NodeKey(of: key))
+            n.add(networkKey: key)
         }
     }
     
@@ -218,13 +215,14 @@ extension MeshNetwork {
     ///
     /// - parameter key: The new Application Key to be added.
     func add(applicationKey key: ApplicationKey) {
-        applicationKeys.append(key)
         key.meshNetwork = self
+        applicationKeys.append(key)
+        timestamp = Date()
         
         // Make the local Provisioner aware of the new key.
         if let localProvisioner = provisioners.first,
            let n = node(for: localProvisioner) {
-            n.appKeys.append(Node.NodeKey(of: key))
+            n.add(applicationKey: key)
         }
     }
     

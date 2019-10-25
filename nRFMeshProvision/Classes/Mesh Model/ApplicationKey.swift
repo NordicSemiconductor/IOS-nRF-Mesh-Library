@@ -16,7 +16,11 @@ public class ApplicationKey: Key, Codable {
     /// Index of this Application Key, in range from 0 through to 4095.
     public internal(set) var index: KeyIndex
     /// Corresponding Network Key index from the Network Keys array.
-    public internal(set) var boundNetworkKeyIndex: KeyIndex
+    public internal(set) var boundNetworkKeyIndex: KeyIndex {
+        didSet {
+            meshNetwork?.timestamp = Date()
+        }
+    }
     /// 128-bit application key.
     public internal(set) var key: Data {
         willSet {
@@ -51,6 +55,17 @@ public class ApplicationKey: Key, Codable {
         self.boundNetworkKeyIndex = networkKey.index
         
         regenerateKeyDerivaties()
+    }
+    
+    private func regenerateKeyDerivaties() {
+        let helper = OpenSSLHelper()
+        aid = helper.calculateK4(withN: key)
+        
+        // When the Application Key is imported from JSON, old key derivaties must
+        // be calculated.
+        if let oldKey = oldKey, oldAid == nil {
+            oldAid = helper.calculateK4(withN: oldKey)
+        }
     }
     
     // MARK: - Codable
@@ -93,19 +108,7 @@ public class ApplicationKey: Key, Codable {
         try container.encode(key.hex, forKey: .key)
         try container.encodeIfPresent(oldKey?.hex, forKey: .oldKey)
         try container.encode(boundNetworkKeyIndex, forKey: .boundNetworkKeyIndex)
-    }
-    
-    private func regenerateKeyDerivaties() {
-        let helper = OpenSSLHelper()
-        aid = helper.calculateK4(withN: key)
-        
-        // When the Application Key is imported from JSON, old key derivaties must
-        // be calculated.
-        if let oldKey = oldKey, oldAid == nil {
-            oldAid = helper.calculateK4(withN: oldKey)
-        }
-    }
-    
+    }    
 }
 
 // MARK: - Operators

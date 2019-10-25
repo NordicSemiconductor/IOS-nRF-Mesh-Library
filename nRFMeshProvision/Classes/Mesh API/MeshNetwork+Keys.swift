@@ -90,6 +90,7 @@ public extension MeshNetwork {
             throw MeshNetworkError.keyInUse
         }
         applicationKey.meshNetwork = nil
+        timestamp = Date()
         return applicationKeys.remove(at: index)
     }
     
@@ -157,6 +158,7 @@ public extension MeshNetwork {
         guard force || !networkKey.isPrimary && !networkKey.isUsed(in: self) else {
             throw MeshNetworkError.keyInUse
         }
+        timestamp = Date()
         return networkKeys.remove(at: index)
     }
     

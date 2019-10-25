@@ -71,13 +71,13 @@ internal struct MeshState: Codable {
                                 deviceKey: old.deviceKey,
                                 andAssignedNetworkKey: networkKey,
                                 andAddress: old.unicastAddress)
-                node.appKeys = old.appKeyIndexes.map { Node.NodeKey(index: $0, updated: false) }
                 node.companyIdentifier = old.cid
                 node.productIdentifier = old.pid
                 node.versionIdentifier = old.vid
                 node.minimumNumberOfReplayProtectionList = old.crpl
                 node.features = old.features
                 node.set(elements: old.nodeElements)
+                node.set(applicationKeysWithIndexes: old.appKeyIndexes)
                 nodes.append(node)
             }
         }

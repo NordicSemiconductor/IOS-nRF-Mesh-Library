@@ -15,7 +15,10 @@ public extension ApplicationKey {
     ///
     /// - parameter networkKey: The Network Key to bound the Application Key to.
     func bind(to networkKey: NetworkKey) throws {
-        guard !isUsed(in: meshNetwork!) else {
+        guard let meshNetwork = meshNetwork else {
+            return
+        }
+        guard !isUsed(in: meshNetwork) else {
             throw MeshNetworkError.keyInUse
         }
         boundNetworkKeyIndex = networkKey.index

@@ -31,7 +31,7 @@ public class Model: Codable {
     }
     /// The array of Unicast or Group Addresses (4-character hexadecimal value),
     /// or Virtual Label UUIDs (32-character hexadecimal string).
-    internal var subscribe: [String]
+    internal private(set) var subscribe: [String]
     /// Returns the list of known Groups that this Model is subscribed to.
     /// It may be that the Model is subscribed to some other Groups, which are
     /// not known to the local database, and those are not returned.
@@ -41,9 +41,9 @@ public class Model: Codable {
             .filter({ subscribe.contains($0._address )}) ?? []
     }
     /// The configuration of this Model's publication.
-    public internal(set) var publish: Publish?
+    public private(set) var publish: Publish?
     /// An array of Appliaction Key indexes to which this model is bound.
-    internal var bind: [KeyIndex]
+    internal private(set) var bind: [KeyIndex]
     
     /// The model message handler. This is non-`nil` for supported local Models
     /// and `nil` for Models of remote Nodes.
@@ -145,15 +145,33 @@ internal extension Model {
 
 internal extension Model {
     
+    /// Copies the properties from the given Model.
+    ///
+    /// - parameter model: The Model to copy from.
+    func copy(from model: Model) {
+        bind = model.bind
+        publish = model.publish
+        subscribe = model.subscribe
+    }
+    
+    /// Sets the given array of Application Key Indexes as bound keys.
+    ///
+    /// - parameter applicationKeyIndexes: The Application Key indexes to set.
+    func set(boundApplicationKeysWithIndexes applicationKeyIndexes: [KeyIndex]) {
+        bind = applicationKeyIndexes.sorted()
+        parentElement?.parentNode?.meshNetwork?.timestamp = Date()
+    }
+    
     /// Adds the given Application Key Index to the bound keys.
     ///
-    /// - paramter applicationKeyIndex: The Application Key index to bind.
+    /// - parameter applicationKeyIndex: The Application Key index to bind.
     func bind(applicationKeyWithIndex applicationKeyIndex: KeyIndex) {
         guard !bind.contains(applicationKeyIndex) else {
             return
         }
         bind.append(applicationKeyIndex)
         bind.sort()
+        parentElement?.parentNode?.meshNetwork?.timestamp = Date()
     }
     
     /// Removes the Application Key binding to with the given Key Index
@@ -161,13 +179,30 @@ internal extension Model {
     ///
     /// - parameter applicationKeyIndex: The Application Key index to unbind.
     func unbind(applicationKeyWithIndex applicationKeyIndex: KeyIndex) {
-        if let index = bind.firstIndex(of: applicationKeyIndex) {
-            bind.remove(at: index)
-            // If this Application Key was used for publication, the publication has been cancelled.
-            if let publish = publish, publish.index == applicationKeyIndex {
-                self.publish = nil
-            }
+        guard let index = bind.firstIndex(of: applicationKeyIndex) else {
+            return
         }
+        bind.remove(at: index)
+        // If this Application Key was used for publication,
+        // the publication has been cancelled.
+        if let publish = publish, publish.index == applicationKeyIndex {
+            self.publish = nil
+        }
+        parentElement?.parentNode?.meshNetwork?.timestamp = Date()
+    }
+    
+    /// Sets the publication to the given object.
+    ///
+    /// - parameter publish: The publication object.
+    func set(publication publish: Publish) {
+        self.publish = publish
+        parentElement?.parentNode?.meshNetwork?.timestamp = Date()
+    }
+    
+    /// Clears the publication data.
+    func clearPublication() {
+        publish = nil
+        parentElement?.parentNode?.meshNetwork?.timestamp = Date()
     }
     
     /// Adds the given Group to the list of subscriptions.
@@ -177,6 +212,7 @@ internal extension Model {
         let address = group.address.hex
         if !subscribe.contains(address) {
             subscribe.append(address)
+            parentElement?.parentNode?.meshNetwork?.timestamp = Date()
         }
     }
     
@@ -187,6 +223,7 @@ internal extension Model {
         let address = group.address.hex
         if let index = subscribe.firstIndex(of: address) {
             subscribe.remove(at: index)
+            parentElement?.parentNode?.meshNetwork?.timestamp = Date()
         }
     }
     
@@ -197,12 +234,14 @@ internal extension Model {
         let address = address.hex
         if let index = subscribe.firstIndex(of: address) {
             subscribe.remove(at: index)
+            parentElement?.parentNode?.meshNetwork?.timestamp = Date()
         }
     }
     
     /// Removes all subscribtions from this Model.
     func unsubscribeFromAll() {
         subscribe.removeAll()
+        parentElement?.parentNode?.meshNetwork?.timestamp = Date()
     }
     
 }

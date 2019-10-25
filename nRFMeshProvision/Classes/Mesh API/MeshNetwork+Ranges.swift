@@ -26,6 +26,22 @@ public extension MeshNetwork {
         return false
     }
     
+    /// Checks whether the given ranges are available for allocation to a new
+    /// provisioner.
+    ///
+    /// - parameter ranges: The ranges to be checked.
+    /// - returns: `True`, if the ranges do not overlap with any address
+    ///            range already allocated by any Provisioner added to the mesh
+    ///            network; `false` otherwise.
+    func areRangesAvailableForAllocation(_ ranges: [AddressRange]) -> Bool {
+        for range in ranges {
+            if !isRangeAvailableForAllocation(range) {
+                return false
+            }
+        }
+        return true
+    }
+    
     /// Checks whether the given range is available for allocation to a new
     /// provisioner.
     ///
@@ -36,6 +52,22 @@ public extension MeshNetwork {
     func isRangeAvailableForAllocation(_ range: SceneRange) -> Bool {
         return range.isValid &&
             !provisioners.contains { $0.allocatedSceneRange.overlaps(range) }
+    }
+    
+    /// Checks whether the given ranges are available for allocation to a new
+    /// provisioner.
+    ///
+    /// - parameter ranges: The ranges to be checked.
+    /// - returns: `True`, if the ranges do not overlap with any address
+    ///            range already allocated by any Provisioner added to the mesh
+    ///            network; `false` otherwise.
+    func areRangesAvailableForAllocation(_ ranges: [SceneRange]) -> Bool {
+        for range in ranges {
+            if !isRangeAvailableForAllocation(range) {
+                return false
+            }
+        }
+        return true
     }
     
     /// Checks whether the given range is available for allocation to the given

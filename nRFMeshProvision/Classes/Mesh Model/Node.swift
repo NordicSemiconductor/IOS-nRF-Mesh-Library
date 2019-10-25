@@ -89,32 +89,40 @@ public class Node: Codable {
         }
     }
     
-    /// Unique node identifier.
+    /// Unique Node identifier.
     internal let nodeUuid: MeshUUID
     /// Random 128-bit UUID allows differentiation among multiple mesh networks.
     public var uuid: UUID {
         return nodeUuid.uuid
     }
-    /// Primary unicast address of the node.
+    /// Primary Unicast Address of the Node.
     public internal(set) var unicastAddress: Address
-    /// 128-bit device key for this node.
-    public internal(set) var deviceKey: Data
+    /// 128-bit device key for this Node.
+    public let deviceKey: Data
     /// The level of security for the subnet on which the node has been
     /// originally provisioner.
-    public internal(set) var security: Security
+    public let security: Security
     /// An array of node network key objects that include information
     /// about the network keys known to this node.
-    internal var netKeys: [NodeKey]
+    internal private(set) var netKeys: [NodeKey]
     /// An array of node application key objects that include information
     /// about the application keys known to this node.
-    internal var appKeys: [NodeKey]
+    internal private(set) var appKeys: [NodeKey]
     /// The boolean value represents whether the Mesh Manager
     /// has finished configuring this node. The property is set to `true`
     /// once a Mesh Manager is done completing this node's
     /// configuration, otherwise it is set to `false`.
-    public var isConfigComplete: Bool = false
+    public var isConfigComplete: Bool = false {
+        didSet {
+            meshNetwork?.timestamp = Date()
+        }
+    }
     /// UTF-8 human-readable name of the node within the network.
-    public var name: String?
+    public var name: String? {
+       didSet {
+           meshNetwork?.timestamp = Date()
+       }
+   }
     /// The 16-bit Company Identifier (CID) assigned by the Bluetooth SIG.
     /// The value of this property is obtained from node composition data.
     public internal(set) var companyIdentifier: UInt16?
@@ -132,9 +140,17 @@ public class Node: Codable {
     public internal(set) var features: NodeFeatures?
     /// This flag represents whether or not the node is configured to send
     /// Secure Network messages.
-    public internal(set) var secureNetworkBeacon: Bool?
+    public internal(set) var secureNetworkBeacon: Bool? {
+       didSet {
+           meshNetwork?.timestamp = Date()
+       }
+   }
     /// The default Time To Live (TTL) value used when sending messages.
-    internal var ttl: UInt8?
+    internal var ttl: UInt8? {
+        didSet {
+            meshNetwork?.timestamp = Date()
+        }
+    }
     /// The default Time To Live (TTL) value used when sending messages.
     /// The TTL may only be set for a Provisioner's Node, or for a Node
     /// that has not been added to a mesh network.
@@ -155,16 +171,28 @@ public class Node: Codable {
     }
     /// The object represents parameters of the transmissions of network
     /// layer messages originating from a mesh node.
-    public internal(set) var networkTransmit: NetworkTransmit?
+    public internal(set) var networkTransmit: NetworkTransmit? {
+          didSet {
+              meshNetwork?.timestamp = Date()
+          }
+      }
     /// The object represents parameters of the retransmissions of network
     /// layer messages relayed by a mesh node.
-    public internal(set) var relayRetransmit: RelayRetransmit?
+    public internal(set) var relayRetransmit: RelayRetransmit? {
+          didSet {
+              meshNetwork?.timestamp = Date()
+          }
+      }
     /// An array of node's elements.
-    public internal(set) var elements: [Element]
+    public private(set) var elements: [Element]
     /// The flag is set to `true` when the Node is in the process of being
     /// deleted and is excluded from the new network key distribution
     /// during the key refresh procedure; otherwise is set to `false`.
-    public var isBlacklisted: Bool = false
+    public var isBlacklisted: Bool = false {
+         didSet {
+             meshNetwork?.timestamp = Date()
+         }
+     }
     
     /// Returns list of Network Keys known to this Node.
     public var networkKeys: [NetworkKey] {
@@ -447,9 +475,7 @@ internal extension Node {
                 let oldModel = oldElement.models[m]
                 let newModel = newElement.models[m]
                 if oldModel.modelId == newModel.modelId {
-                    newModel.bind = oldModel.bind
-                    newModel.publish = oldModel.publish
-                    newModel.subscribe = oldModel.subscribe
+                    newModel.copy(from: oldModel)
                     // If at least one Model matches, assume the Element didn't
                     // change much and copy the name of it.
                     newElement.name = oldElement.name
@@ -466,39 +492,113 @@ internal extension Node {
         }
     }
     
+    /// Adds the Network Key to the Node.
+    ///
+    /// - parameter networkKey: The Network Key to add.
+    func add(networkKey: NetworkKey) {
+        add(networkKeyWithIndex: networkKey.index)
+    }
+    
     /// Adds the Network Key with given index to the Node.
     ///
     /// - parameter networkKeyIndex: The Network Key index to add.
     func add(networkKeyWithIndex networkKeyIndex: KeyIndex) {
-        if !netKeys.contains(where: { $0.index == networkKeyIndex }) {
+        if netKeys[networkKeyIndex] == nil {
             netKeys.append(NodeKey(index: networkKeyIndex, updated: false))
+            meshNetwork?.timestamp = Date()
         }
+    }
+    
+    /// Sets the Network Keys to the Node.
+    /// This will overwrite the previous keys.
+    ///
+    /// - parameter networkKeys: The Network Keys to set.
+    func set(networkKeys: [NetworkKey]) {
+        set(networkKeysWithIndexes: networkKeys.map({ $0.index }))
+    }
+    
+    /// Sets the Network Keys with given indexes to the Node.
+    /// This will overwrite the previous keys.
+    ///
+    /// - parameter networkKeyIndexes: The Network Key indexes to set.
+    func set(networkKeysWithIndexes networkKeyIndexes: [KeyIndex]) {
+        netKeys = networkKeyIndexes
+            .map({ Node.NodeKey(index: $0, updated: false) })
+            .sorted()
+        meshNetwork?.timestamp = Date()
     }
     
     /// Marks the Network Key in the Node as updated.
     ///
     /// - parameter networkKeyIndex: The Network Key index to add.
     func update(networkKeyWithIndex networkKeyIndex: KeyIndex) {
-        if let key = netKeys.first(where: { $0.index == networkKeyIndex }) {
+        if let key = netKeys[networkKeyIndex] {
             key.updated = true
+            meshNetwork?.timestamp = Date()
         }
+    }
+    
+    /// Adds the Application Key to the Node.
+    ///
+    /// - parameter applicationKey: The Application Key to add.
+    func add(applicationKey: ApplicationKey) {
+        add(applicationKeyWithIndex: applicationKey.index)
     }
     
     /// Adds the Application Key with given index to the Node.
     ///
     /// - parameter applicationKeyIndex: The Application Key index to add.
     func add(applicationKeyWithIndex applicationKeyIndex: KeyIndex) {
-        if !appKeys.contains(where: { $0.index == applicationKeyIndex }) {
+        if appKeys[applicationKeyIndex] == nil {
             appKeys.append(NodeKey(index: applicationKeyIndex, updated: false))
+            meshNetwork?.timestamp = Date()
         }
+    }
+    
+    /// Sets the Application Keys to the Node.
+    /// This will overwrite the previous keys.
+    ///
+    /// - parameter applicationKeys: The Application Keys to set.
+    func set(applicationKeys: [ApplicationKey]) {
+        set(applicationKeysWithIndexes: applicationKeys.map({ $0.index }))
+    }
+    
+    /// Sets the Application Keys with given indexes to the Node.
+    /// This will overwrite the previous keys.
+    ///
+    /// - parameter applicationKeyIndexes: The Application Key indexes to set.
+    func set(applicationKeysWithIndexes applicationKeyIndexes: [KeyIndex]) {
+        appKeys = applicationKeyIndexes.map({ Node.NodeKey(index: $0, updated: false) })
+        appKeys.sort()
+        meshNetwork?.timestamp = Date()
+    }
+    
+    /// Sets the Application Keys with given indexes to the Node.
+    /// This will overwrite the previous keys bound to the given
+    /// Network Key.
+    ///
+    /// - parameter applicationKeyIndexes: The Application Key indexes to set.
+    /// - parameter networkKeyIndex: The index of a Network Key that those
+    ///                              keys are bound to.
+    func set(applicationKeysWithIndexes applicationKeyIndexes: [KeyIndex],
+             forNetworkKeyWithIndex networkKeyIndex: KeyIndex) {
+        // Leave only those App Keys, that are bound to a different
+        // Network Key than in the received response.
+        appKeys = appKeys.filter {
+            applicationKeys[$0.index]?.boundNetworkKeyIndex != networkKeyIndex
+        }
+        appKeys.append(contentsOf: applicationKeyIndexes.map({ Node.NodeKey(index: $0, updated: false) }))
+        appKeys.sort()
+        meshNetwork?.timestamp = Date()
     }
     
     /// Marks the Application Key in the Node as updated.
     ///
     /// - parameter applicationKeyIndex: The Application Key index to add.
     func update(applicationKeyWithIndex applicationKeyIndex: KeyIndex) {
-        if let key = netKeys.first(where: { $0.index == applicationKeyIndex }) {
+        if let key = netKeys[applicationKeyIndex] {
             key.updated = true
+            meshNetwork?.timestamp = Date()
         }
     }
     
@@ -516,6 +616,7 @@ internal extension Node {
             applicationKeys
                 .filter({ $0.boundNetworkKeyIndex == networkKeyIndex })
                 .forEach { key in remove(applicationKeyWithIndex: key.index) }
+            meshNetwork?.timestamp = Date()
         }
     }
     
@@ -530,12 +631,11 @@ internal extension Node {
             // Remove all bindings with given Key Index from all models.
             elements.flatMap({ $0.models }).forEach { model in
                 // Remove the Key Index from bound keys.
-                model.bind = model.bind.filter { $0 != applicationKeyIndex }
-                // Clear publication if it was set to use the removed Application Key.
-                if let publish = model.publish, publish.index == applicationKeyIndex {
-                    model.publish = nil
-                }
+                // This will also clear the publication if it was using
+                // the same Application Key.
+                model.unbind(applicationKeyWithIndex: applicationKeyIndex)
             }
+            meshNetwork?.timestamp = Date()
         }
     }
     
@@ -557,12 +657,14 @@ internal extension Node {
         features = page0.features
         // And set the Elements received.
         set(elements: page0.elements)
+        meshNetwork?.timestamp = Date()
     }
     
     var ensureFeatures: NodeFeatures {
         if features == nil {
             features = NodeFeatures()
         }
+        meshNetwork?.timestamp = Date()
         return features!
     }
     

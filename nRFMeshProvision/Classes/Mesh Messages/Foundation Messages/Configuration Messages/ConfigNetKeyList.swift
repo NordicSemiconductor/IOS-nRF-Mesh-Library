@@ -11,17 +11,17 @@ public struct ConfigNetKeyList: ConfigMessage {
     public static let opCode: UInt32 = 0x8043
     
     public var parameters: Data? {
-        return encode(indexes: networkKeyIndexs[...])
+        return encode(indexes: networkKeyIndexes[...])
     }
     
     /// Network Key Indexes known to the Node.
-    public let networkKeyIndexs: [KeyIndex]
+    public let networkKeyIndexes: [KeyIndex]
     
     public init(networkKeys: [NetworkKey]) {
-        self.networkKeyIndexs = networkKeys.map { return $0.index }
+        self.networkKeyIndexes = networkKeys.map { return $0.index }
     }
     
     public init?(parameters: Data) {
-        self.networkKeyIndexs = ConfigAppKeyList.decode(indexesFrom: parameters, at: 0)
+        self.networkKeyIndexes = ConfigAppKeyList.decode(indexesFrom: parameters, at: 0)
     }
 }

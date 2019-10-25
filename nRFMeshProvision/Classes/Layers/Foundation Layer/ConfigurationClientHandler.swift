@@ -65,7 +65,7 @@ internal class ConfigurationClientHandler: ModelDelegate {
 
         // Composition Data
         case let compositionData as ConfigCompositionDataStatus:
-            // Don't override your own elements.
+            // Do not override your own elements.
             guard meshNetwork.localProvisioner?.unicastAddress != source else {
                 break
             }
@@ -79,15 +79,9 @@ internal class ConfigurationClientHandler: ModelDelegate {
                let node = meshNetwork.node(withAddress: source) {
                 switch request {
                 case is ConfigNetKeyAdd:
-                    guard node.netKeys[netKeyStatus.networkKeyIndex] == nil else {
-                        break
-                    }
-                    node.netKeys.append(Node.NodeKey(index: netKeyStatus.networkKeyIndex, updated: false))
+                    node.add(networkKeyWithIndex: netKeyStatus.networkKeyIndex)
                 case is ConfigNetKeyUpdate:
-                    guard let netKey = node.netKeys[netKeyStatus.networkKeyIndex] else {
-                        break
-                    }
-                    netKey.updated = true
+                    node.update(networkKeyWithIndex: netKeyStatus.networkKeyIndex)
                 case is ConfigNetKeyDelete:
                     node.remove(networkKeyWithIndex: netKeyStatus.networkKeyIndex)
                 default:
@@ -97,9 +91,7 @@ internal class ConfigurationClientHandler: ModelDelegate {
                 
         case let list as ConfigNetKeyList:
             if let node = meshNetwork.node(withAddress: source) {
-                node.netKeys = list.networkKeyIndexs
-                    .map({ Node.NodeKey(index: $0, updated: false) })
-                    .sorted()
+                node.set(networkKeysWithIndexes: list.networkKeyIndexes)
             }
 
         // Application Key Management
@@ -108,15 +100,9 @@ internal class ConfigurationClientHandler: ModelDelegate {
                let node = meshNetwork.node(withAddress: source) {
                 switch request {
                 case is ConfigAppKeyAdd:
-                    guard node.appKeys[appKeyStatus.applicationKeyIndex] == nil else {
-                        break
-                    }
-                    node.appKeys.append(Node.NodeKey(index: appKeyStatus.applicationKeyIndex, updated: false))
+                    node.add(applicationKeyWithIndex: appKeyStatus.applicationKeyIndex)
                 case is ConfigAppKeyUpdate:
-                    guard let appKey = node.appKeys[appKeyStatus.applicationKeyIndex] else {
-                        break
-                    }
-                    appKey.updated = true
+                    node.update(applicationKeyWithIndex: appKeyStatus.applicationKeyIndex)
                 case is ConfigAppKeyDelete:
                     node.remove(applicationKeyWithIndex: appKeyStatus.applicationKeyIndex)
                 default:
@@ -126,13 +112,8 @@ internal class ConfigurationClientHandler: ModelDelegate {
                 
         case let list as ConfigAppKeyList:
             if let node = meshNetwork.node(withAddress: source) {
-                // Leave only those App Keys, that are bound to a different
-                // Network Key than in the received response.
-                node.appKeys = node.appKeys.filter {
-                    node.applicationKeys[$0.index]?.boundNetworkKeyIndex != list.networkKeyIndex
-                }
-                node.appKeys.append(contentsOf: list.applicationKeyIndexes.map({ Node.NodeKey(index: $0, updated: false) }))
-                node.appKeys.sort()
+                node.set(applicationKeysWithIndexes: list.applicationKeyIndexes,
+                         forNetworkKeyWithIndex: list.networkKeyIndex)
             }
             
         // Model Bindings
@@ -156,8 +137,7 @@ internal class ConfigurationClientHandler: ModelDelegate {
                let node = meshNetwork.node(withAddress: source),
                let element = node.element(withAddress: list.elementAddress),
                let model = element.model(withModelId: list.modelId) {
-                // Replace the known binding with what was received in the message.
-                model.bind = list.applicationKeyIndexes.sorted()
+                model.set(boundApplicationKeysWithIndexes: list.applicationKeyIndexes)
             }
             
         // Publications
@@ -169,35 +149,35 @@ internal class ConfigurationClientHandler: ModelDelegate {
                 switch request {
                 case is ConfigModelPublicationSet:
                     if !status.publish.isCancel {
-                        model.publish = status.publish
+                        model.set(publication: status.publish)
                     } else {
                         // An unassigned Address is sent to remove the publication.
-                        model.publish = nil
+                        model.clearPublication()
                     }
                 case let request as ConfigModelPublicationVirtualAddressSet:
                     // Note: The Publish from the request has the Virtual Label set,
                     //       while the status has only the 16-bit Virtual Address.
                     // Note: We assume here, that the response is identical to the
                     //       request, with an exception of the Virtual Label.
-                    model.publish = request.publish /* NOT status.publish */
+                    model.set(publication: request.publish) /* NOT status.publish */
                 case is ConfigModelPublicationGet:
                     let publicationAddress = status.publish.publicationAddress
                     if publicationAddress.address.isUnassigned {
-                        model.publish = nil
+                        model.clearPublication()
                     } else if publicationAddress.address.isVirtual {
                         // The received status message is missing the Virtual Label.
                         // Let's try to find it in the local groups.
                         if let group = meshNetwork.group(withAddress: publicationAddress),
                             let _ = group.address.virtualLabel {
                             // A Group with the same address and non-nil Virtual Label has been found.
-                            model.publish = status.publish.withAddress(address: group.address)
+                            model.set(publication: status.publish.withAddress(address: group.address))
                         } else {
                             // The Model is publishing to an unknown Virtual Label.
                             // The label will remain `nil`, but it's virtual address is known.
-                            model.publish = status.publish
+                            model.set(publication: status.publish)
                         }
                     } else {
-                        model.publish = status.publish
+                        model.set(publication: status.publish)
                     }
                 default:
                     break
@@ -215,7 +195,7 @@ internal class ConfigurationClientHandler: ModelDelegate {
                 // The status for Delete All request has an invalid address.
                 // Handle it differently here.
                 if let _ = request as? ConfigModelSubscriptionDeleteAll {
-                    model.subscribe.removeAll()
+                    model.unsubscribeFromAll()
                     break
                 }
                 // Here it should be safe to search for the group.
@@ -224,7 +204,7 @@ internal class ConfigurationClientHandler: ModelDelegate {
                 }
                 switch request {
                 case is ConfigModelSubscriptionOverwrite, is ConfigModelSubscriptionVirtualAddressOverwrite:
-                    model.subscribe.removeAll()
+                    model.unsubscribeFromAll()
                     fallthrough
                 case is ConfigModelSubscriptionAdd, is ConfigModelSubscriptionVirtualAddressAdd:
                     model.subscribe(to: group)
@@ -240,12 +220,26 @@ internal class ConfigurationClientHandler: ModelDelegate {
                let node = meshNetwork.node(withAddress: source),
                let element = node.element(withAddress: list.elementAddress),
                let model = element.model(withModelId: list.modelId) {
-                model.subscribe.removeAll()
+                model.unsubscribeFromAll()
                 for address in list.addresses {
                     if let group = meshNetwork.groups.first(where: { $0.address.address == address }) {
-                        model.subscribe.append(group.address.hex)
+                        model.subscribe(to: group)
                     } else {
-                        model.subscribe.append(address.hex)
+                        if address.isGroup && !address.isSpecialGroup {
+                            do {
+                                let group = try Group(name: NSLocalizedString("New Group", comment: ""),
+                                                      address: MeshAddress(address))
+                                try meshNetwork.add(group: group)
+                                model.subscribe(to: group)
+                            } catch {
+                                // This should never happen.
+                                continue
+                            }
+                        } else {
+                            // Unknown Virtual Group. The Virtual Label is unknown,
+                            // so we can't create it here.
+                            continue
+                        }
                     }
                 }
             }

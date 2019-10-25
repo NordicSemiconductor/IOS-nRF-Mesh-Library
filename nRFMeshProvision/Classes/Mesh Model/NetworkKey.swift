@@ -35,16 +35,12 @@ internal struct NetworkKeyDerivaties {
 public class NetworkKey: Key, Codable {
     /// The timestamp represents the last time the phase property has been
     /// updated.
-    public internal(set) var timestamp: Date
+    public private(set) var timestamp: Date
     /// UTF-8 string, which should be a human readable name of the mesh subnet
     /// associated with this network key.
     public var name: String
     /// Index of this Network Key, in range from 0 through to 4095.
-    public internal(set) var index: KeyIndex {
-        didSet {
-            timestamp = Date()
-        }
-    }
+    public internal(set) var index: KeyIndex
     /// Key Refresh phase.
     public internal(set) var phase: KeyRefreshPhase = .normalOperation {
         didSet {
@@ -76,25 +72,29 @@ public class NetworkKey: Key, Codable {
             }
         }
     }
-    /// Minimum security level for a subnet associated with this network key.
+    /// Minimum security level for a subnet associated with this Network Key.
     /// If all nodes on the subnet associated with this network key have been
     /// provisioned using network the Secure Provisioning procedure, then
     /// the value of this property for the subnet is set to .high; otherwise
-    /// the value is set to .low and the subnet is considered less secure.
-    public internal(set) var minSecurity: Security
+    /// the value is set to `.low` and the subnet is considered less secure.
+    public private(set) var minSecurity: Security
     
     /// The Network ID derived from this Network Key. This identifier
     /// is public information.
-    public internal(set) var networkId: Data!
+    public private(set) var networkId: Data!
     /// The Network ID derived from the old Network Key. This identifier
     /// is public information. It is set when `oldKey` is set.
-    public internal(set) var oldNetworkId: Data?
+    public private(set) var oldNetworkId: Data?
     /// The IV Index for this subnetwork.
     internal var ivIndex: IvIndex
     /// Network Key derivaties.
-    internal var keys: NetworkKeyDerivaties!
+    internal private(set) var keys: NetworkKeyDerivaties!
     /// Network Key derivaties.
-    internal var oldKeys: NetworkKeyDerivaties?
+    internal private(set) var oldKeys: NetworkKeyDerivaties?
+    /// Network identifier.
+    internal private(set) var nid: UInt8!
+    /// Network identifier derived from the old key.
+    internal private(set) var oldNid: UInt8?
     /// Returns the key set that should be used for encrypting outgoing packets.
     internal var transmitKeys: NetworkKeyDerivaties {
         if case .distributingKeys = phase {
@@ -102,10 +102,6 @@ public class NetworkKey: Key, Codable {
         }
         return keys
     }
-    /// Network identifier.
-    internal var nid: UInt8!
-    /// Network identifier derived from the old key.
-    internal var oldNid: UInt8?
     
     internal init(name: String, index: KeyIndex, key: Data) throws {
         guard index.isValidKeyIndex else {
@@ -127,6 +123,29 @@ public class NetworkKey: Key, Codable {
     /// Creates the primary Network Key for a mesh network.
     internal convenience init() {
         try! self.init(name: "Primary Network Key", index: 0, key: OpenSSLHelper().generateRandom())
+    }
+    
+    private func regenerateKeyDerivaties() {
+        let helper = OpenSSLHelper()
+        // Calculate Network ID.
+        networkId = helper.calculateK3(withN: key)
+        // Calculate NID.
+        let hash = helper.calculateK2(withN: key, andP: Data([0x00]))!
+        nid = hash[0] & 0x7F
+        // Calculate other keys.
+        keys = NetworkKeyDerivaties(withKey: key, using: helper)
+        
+        // When the Network Key is imported from JSON, old key derivaties must
+        // be calculated.
+        if let oldKey = oldKey, oldNid == nil {
+            // Calculate Network ID.
+            oldNetworkId = helper.calculateK3(withN: oldKey)
+            // Calculate NID.
+            let hash = helper.calculateK2(withN: oldKey, andP: Data([0x00]))!
+            oldNid = hash[0] & 0x7F
+            // Calculate other keys.
+            oldKeys = NetworkKeyDerivaties(withKey: oldKey, using: helper)
+        }
     }
     
     // MARK: - Codable
@@ -180,29 +199,6 @@ public class NetworkKey: Key, Codable {
         try container.encode(phase, forKey: .phase)
         try container.encode(minSecurity, forKey: .minSecurity)
         try container.encode(timestamp, forKey: .timestamp)
-    }
-    
-    private func regenerateKeyDerivaties() {
-        let helper = OpenSSLHelper()
-        // Calculate Network ID.
-        networkId = helper.calculateK3(withN: key)
-        // Calculate NID.
-        let hash = helper.calculateK2(withN: key, andP: Data([0x00]))!
-        nid = hash[0] & 0x7F
-        // Calculate other keys.
-        keys = NetworkKeyDerivaties(withKey: key, using: helper)
-        
-        // When the Network Key is imported from JSON, old key derivaties must
-        // be calculated.
-        if let oldKey = oldKey, oldNid == nil {
-            // Calculate Network ID.
-            oldNetworkId = helper.calculateK3(withN: oldKey)
-            // Calculate NID.
-            let hash = helper.calculateK2(withN: oldKey, andP: Data([0x00]))!
-            oldNid = hash[0] & 0x7F
-            // Calculate other keys.
-            oldKeys = NetworkKeyDerivaties(withKey: oldKey, using: helper)
-        }
     }
 }
 

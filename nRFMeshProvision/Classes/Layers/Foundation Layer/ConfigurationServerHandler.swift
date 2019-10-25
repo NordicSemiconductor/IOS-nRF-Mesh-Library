@@ -104,7 +104,7 @@ internal class ConfigurationServerHandler: ModelDelegate {
             if let node = meshNetwork.localProvisioner?.node {
                 node.update(networkKeyWithIndex: keyIndex)
             }
-            return  ConfigNetKeyStatus(confirm: networkKey)
+            return ConfigNetKeyStatus(confirm: networkKey)
             
         case let request as ConfigNetKeyDelete:
             let keyIndex = request.networkKeyIndex
@@ -115,7 +115,7 @@ internal class ConfigurationServerHandler: ModelDelegate {
             if let node = meshNetwork.localProvisioner?.node {
                 node.remove(networkKeyWithIndex: keyIndex)
             }
-            return  ConfigNetKeyStatus(responseTo: request, with: .success)
+            return ConfigNetKeyStatus(responseTo: request, with: .success)
                     
         case is ConfigNetKeyGet:
             return ConfigNetKeyList(networkKeys: meshNetwork.networkKeys)
@@ -251,12 +251,13 @@ internal class ConfigurationServerHandler: ModelDelegate {
                     let address = request.publish.publicationAddress.address
                     if address.isGroup && address < 0xFF00 &&
                        meshNetwork.group(withAddress: request.publish.publicationAddress) == nil {
-                        let group = try! Group(name: "New Group", address: address)
+                        let group = try! Group(name: NSLocalizedString("New Group", comment: ""),
+                                               address: address)
                         try! meshNetwork.add(group: group)
                     }
-                    model.publish = request.publish
+                    model.set(publication: request.publish)
                 } else {
-                    model.publish = nil
+                    model.clearPublication()
                 }
                 return ConfigModelPublicationStatus(confirm: request)
             } else {
@@ -272,10 +273,11 @@ internal class ConfigurationServerHandler: ModelDelegate {
                 }
                 // A new Group?
                 if meshNetwork.group(withAddress: request.publish.publicationAddress) == nil {
-                    let group = try! Group(name: "New Group", address: request.publish.publicationAddress)
+                    let group = try! Group(name: NSLocalizedString("New Group", comment: ""),
+                                           address: request.publish.publicationAddress)
                     try! meshNetwork.add(group: group)
                 }
-                model.publish = request.publish
+                model.set(publication: request.publish)
                 return ConfigModelPublicationStatus(confirm: request)
             } else {
                 return ConfigModelPublicationStatus(responseTo: request, with: .invalidModel)
@@ -304,7 +306,8 @@ internal class ConfigurationServerHandler: ModelDelegate {
                     model.subscribe(to: group)
                 } else {
                     do {
-                        group = try Group(name: "New Group", address: request.address)
+                        group = try Group(name: NSLocalizedString("New Group", comment: ""),
+                                          address: request.address)
                         try meshNetwork.add(group: group!)
                         model.subscribe(to: group!)
                     } catch {
@@ -331,7 +334,8 @@ internal class ConfigurationServerHandler: ModelDelegate {
                     model.subscribe(to: group)
                 } else {
                     do {
-                        group = try Group(name: "New Group", address: request.address)
+                        group = try Group(name: NSLocalizedString("New Group", comment: ""),
+                                          address: request.address)
                         try meshNetwork.add(group: group!)
                         model.unsubscribeFromAll()
                         model.subscribe(to: group!)
@@ -367,7 +371,8 @@ internal class ConfigurationServerHandler: ModelDelegate {
                     model.subscribe(to: group!)
                 } else {
                     do {
-                        group = try Group(name: "New Group", address: MeshAddress(request.virtualLabel))
+                        group = try Group(name: NSLocalizedString("New Group", comment: ""),
+                                          address: MeshAddress(request.virtualLabel))
                         try meshNetwork.add(group: group!)
                         model.subscribe(to: group!)
                     } catch {
@@ -391,7 +396,8 @@ internal class ConfigurationServerHandler: ModelDelegate {
                     model.subscribe(to: group!)
                 } else {
                     do {
-                        group = try Group(name: "New Group", address: MeshAddress(request.virtualLabel))
+                        group = try Group(name: NSLocalizedString("New Group", comment: ""),
+                                          address: MeshAddress(request.virtualLabel))
                         try meshNetwork.add(group: group!)
                         model.unsubscribeFromAll()
                         model.subscribe(to: group!)

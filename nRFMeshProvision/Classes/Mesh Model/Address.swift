@@ -68,7 +68,7 @@ public extension Address {
     /// * All Relays: 0xFFFE
     /// * All Nodes: 0xFFFF
     var isSpecialGroup: Bool {
-        return self > 0xFFFB
+        return self >= 0xFF00
     }
     
 }
