@@ -82,6 +82,7 @@ private class AcknowledgmentContext {
 internal class AccessLayer {
     private let networkManager: NetworkManager
     private let meshNetwork: MeshNetwork
+    private let mutex = DispatchQueue(label: "Mutex")
     
     private var logger: LoggerDelegate? {
         return networkManager.manager.logger
@@ -127,13 +128,17 @@ internal class AccessLayer {
         // If a response to a sent request has been received, cancel the context.
         var request: AcknowledgedMeshMessage? = nil
         if upperTransportPdu.destination.isUnicast,
-           let index = reliableMessageContexts.firstIndex(where: {
-                    $0.source == upperTransportPdu.destination &&
-                    $0.request.responseOpCode == accessPdu.opCode
-           }) {
-            let context = reliableMessageContexts.remove(at: index)
-            request = context.request
-            context.invalidate()
+           let index = mutex.sync(execute: {
+                           reliableMessageContexts.firstIndex(where: {
+                               $0.source == upperTransportPdu.destination &&
+                               $0.request.responseOpCode == accessPdu.opCode
+                           })
+                       }) {
+            mutex.sync {
+                let context = reliableMessageContexts.remove(at: index)
+                request = context.request
+                context.invalidate()
+            }
             logger?.i(.access, "Response \(accessPdu) receieved (decrypted using key: \(keySet))")
         } else {
             logger?.i(.access, "\(accessPdu) receieved (decrypted using key: \(keySet))")
@@ -264,12 +269,14 @@ internal class AccessLayer {
     /// - parameter handle: The message handle.
     func cancel(_ handle: MessageHandle) {
         logger?.i(.access, "Cancelling messages with op code: \(handle.opCode), sent from: \(handle.source.hex) to: \(handle.destination.hex)")
-        if let index = reliableMessageContexts.firstIndex(where: {
-            $0.request.opCode == handle.opCode &&
-            $0.source == handle.source &&
-            $0.destination == handle.destination
-        }) {
-            reliableMessageContexts.remove(at: index).invalidate()
+        mutex.sync {
+            if let index = reliableMessageContexts.firstIndex(where: {
+                               $0.request.opCode == handle.opCode &&
+                               $0.source == handle.source &&
+                               $0.destination == handle.destination
+                           }) {
+                reliableMessageContexts.remove(at: index).invalidate()
+            }
         }
         networkManager.upperTransportLayer.cancel(handle)
     }
@@ -491,12 +498,16 @@ private extension AccessLayer {
                 self.logger?.w(.access, "Response to \(pdu) not received (timeout)")
                 let category: LogCategory = request is AcknowledgedConfigMessage ? .foundationModel : .model
                 self.logger?.w(category, "\(request) sent from: \(pdu.source.hex), to: \(pdu.destination.hex) timed out")
-                self.reliableMessageContexts.removeAll(where: { $0.timeoutTimer == nil })
+                self.mutex.sync {
+                    self.reliableMessageContexts.removeAll(where: { $0.timeoutTimer == nil })
+                }
                 self.networkManager.notifyAbout(AccessError.timeout,
                                                 duringSendingMessage: request,
                                                 from: element, to: pdu.destination.address)
             })
-        reliableMessageContexts.append(ack)
+        mutex.sync {
+            reliableMessageContexts.append(ack)
+        }
     }
     
 }
