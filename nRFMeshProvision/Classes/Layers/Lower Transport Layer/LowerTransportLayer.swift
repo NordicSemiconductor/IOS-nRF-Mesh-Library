@@ -373,10 +373,17 @@ private extension LowerTransportLayer {
                 // timer is active, the timer shall be restarted.
                 incompleteTimers[key]?.invalidate()
                 incompleteTimers[key] = BackgroundTimer.scheduledTimer(withTimeInterval: networkManager.incompleteMessageTimeout, repeats: false) { _ in
-                    self.logger?.w(.lowerTransport, "Incomplete message timeout: cancelling message (src: \(Address(key >> 16).hex), seqZero: \(key & 0x1FFF))")
+                    if let segments = self.incompleteSegments.removeValue(forKey: key) {
+                        var marks: UInt32 = 0
+                        segments.forEach {
+                            if let segment = $0 {
+                                marks |= 1 << segment.segmentOffset
+                            }
+                        }
+                        self.logger?.w(.lowerTransport, "Incomplete message timeout: cancelling message (src: \(Address(key >> 16).hex), seqZero: \(key & 0x1FFF), received segments: 0x\(marks.hex))")
+                    }
                     self.incompleteTimers.removeValue(forKey: key)?.invalidate()
                     self.acknowledgmentTimers.removeValue(forKey: key)?.invalidate()
-                    self.incompleteSegments.removeValue(forKey: key)
                 }
                 // If the Lower Transport Layer receives any segment while the acknowlegment
                 // timer is inactive, it shall restart the timer. Active timer should not be restarted.
