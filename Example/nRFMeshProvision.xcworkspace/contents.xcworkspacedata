@@ -2,9 +2,6 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "group:nRFMeshProvision/UI/Base.lproj/Control.storyboard">
-   </FileRef>
-   <FileRef
       location = "group:nRFMeshProvision.xcodeproj">
    </FileRef>
    <FileRef
