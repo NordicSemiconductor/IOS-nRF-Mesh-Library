@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum SAR: UInt8 {
+private enum SAR: UInt8 {
     case completeMessage = 0b00
     case firstSegment    = 0b01
     case continuation    = 0b10
@@ -22,7 +22,7 @@ enum SAR: UInt8 {
     }
 }
 
-extension PduType {
+private extension PduType {
     
     static func from(_ data: Data) -> PduType? {
         guard data.count > 0 else {

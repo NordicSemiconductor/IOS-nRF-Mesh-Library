@@ -23,9 +23,10 @@ public protocol GattBearerDelegate: BearerDelegate {
     /// Callback called periodically when a RSSI value to the
     /// GATT Bearer has been obtained.
     ///
-    /// - parameter bearer: The Bearer.
-    /// - parameter RSSI:   The Received Signal Strength Indication
-    ///                     value, from -127 to around 4.
+    /// - parameters:
+    ///   - bearer: The Bearer.
+    ///   - RSSI:   The Received Signal Strength Indication
+    ///             value, from -127 to around 4.
     func bearer(_ bearer: Bearer, didReadRSSI RSSI: NSNumber)
 }
 

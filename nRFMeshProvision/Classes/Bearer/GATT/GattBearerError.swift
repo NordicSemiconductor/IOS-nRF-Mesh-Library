@@ -12,3 +12,13 @@ public enum GattBearerError: Error {
     /// by the Bearer.
     case deviceNotSupported
 }
+
+extension GattBearerError: LocalizedError {
+    
+    public var errorDescription: String? {
+        switch self {
+        case .deviceNotSupported: return NSLocalizedString("Device not supported", comment: "bearer")
+        }
+    }
+    
+}

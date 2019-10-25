@@ -642,7 +642,7 @@ public extension MeshNetworkManager {
             networkManager = NetworkManager(self)
             proxyFilter = ProxyFilter(self)
             return true
-        } else if let legacyState = MeshStateManager.restoreState() {
+        } else if let legacyState = MeshStateManager.load() {
             // The app has been updated from version 1.0.x to 2.0.
             // Time to migrate the data to the new format.
             let network = MeshNetwork(name: legacyState.name)
@@ -674,7 +674,7 @@ public extension MeshNetworkManager {
             
             // Clean up.
             oldDefaults.removeObject(forKey: defaultsKey)
-            MeshStateManager.deleteState()
+            MeshStateManager.cleanup()
             
             meshData.meshNetwork = network
             networkManager = NetworkManager(self)

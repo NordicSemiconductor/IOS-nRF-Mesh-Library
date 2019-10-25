@@ -28,6 +28,18 @@ public protocol ProxyFilterDelegate: class {
     func proxyFilterUpdated(type: ProxyFilerType, addresses: Set<Address>)
 }
 
+/// The Proxy Filter class allows modification of the proxy filter on the
+/// connected Proxy Node.
+///
+/// Initially, upon connection to a Proxy Node, the manager will automatically
+/// subscribe to the Unicast Addresses of all local Elements and all Groups
+/// that at least one local Model is subscribed to, including address 0xFFFF
+/// (All Nodes).
+///
+/// - important: When a local Model gets subscribed to a new Group, or is
+///              unsubscibed from a Group that no other local Model is
+///              subscribed to, the proxy filter needs to be modified manually
+///              by calling proper `add` or `remove` method.
 public class ProxyFilter {
     internal var manager: MeshNetworkManager
     
@@ -46,6 +58,7 @@ public class ProxyFilter {
     
     /// List of addresses currently added to the Proxy Filter.
     public internal(set) var addresses: Set<Address> = []
+    
     /// The active Proxy Filter type.
     ///
     /// By default the Proxy Filter is set to `.whitelist`.

@@ -13,9 +13,10 @@ public protocol BearerDataDelegate: class {
     /// Data longer than MTU will automatically be reassembled
     /// using the bearer protocol if bearer implements segmentation.
     ///
-    /// - parameter bearer: The Bearer on which the data were received.
-    /// - parameter data:   The data received.
-    /// - parameter type:   The type of the received data.
+    /// - parameters:
+    ///   - bearer: The Bearer on which the data were received.
+    ///   - data:   The data received.
+    ///   - type:   The type of the received data.
     func bearer(_ bearer: Bearer, didDeliverData data: Data, ofType type: PduType)
     
 }
@@ -29,9 +30,10 @@ public protocol BearerDelegate: class {
     
     /// Callback called when the Bearer is no longer open.
     ///
-    /// - parameter bearer: The Bearer.
-    /// - parameter error:  The reason of closing the Bearer, or `nil`
-    ///                     if closing was intended.
+    /// - parameters:
+    ///   - bearer: The Bearer.
+    ///   - error:  The reason of closing the Bearer, or `nil`
+    ///             if closing was intended.
     func bearer(_ bearer: Bearer, didClose error: Error?)
     
 }
