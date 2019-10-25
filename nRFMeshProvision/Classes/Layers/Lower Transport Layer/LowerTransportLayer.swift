@@ -241,6 +241,20 @@ internal class LowerTransportLayer {
         segmentTransmissionTimers.removeValue(forKey: sequenceZero)?.invalidate()
     }
     
+    /// Returns whether the Lower Transport Layer is in progress of
+    /// receiving a segmented message from the given address.
+    ///
+    /// - parameter address: The source address.
+    /// - returns: `True` is some, but not all packets of a segmented
+    ///            message were received from the given source address;
+    ///            `false` if no packets were received or the message
+    ///            was complete before calling this method.
+    func isReceivingMessage(from address: Address) -> Bool {
+        return incompleteSegments.contains { (entry) -> Bool in
+            (entry.key >> 16) & 0xFFFF == UInt32(address)
+        }
+    }
+    
 }
 
 private extension LowerTransportLayer {

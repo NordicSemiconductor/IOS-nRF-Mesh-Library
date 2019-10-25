@@ -492,12 +492,17 @@ private extension AccessLayer {
         
         let ack = AcknowledgmentContext(for: request, sentFrom: pdu.source, to: pdu.destination.address,
             repeatAfter: initialDelay, repeatBlock: {
-                self.logger?.d(.access, "Resending \(pdu)")
-                self.networkManager.upperTransportLayer.send(pdu, withTtl: initialTtl, using: keySet)
+                if !self.networkManager.upperTransportLayer.isReceivingResponse(from: pdu.destination.address) {
+                    self.logger?.d(.access, "Resending \(pdu)")
+                    self.networkManager.upperTransportLayer.send(pdu, withTtl: initialTtl, using: keySet)
+                }
             }, timeout: timeout, timeoutBlock: {
                 self.logger?.w(.access, "Response to \(pdu) not received (timeout)")
                 let category: LogCategory = request is AcknowledgedConfigMessage ? .foundationModel : .model
                 self.logger?.w(category, "\(request) sent from: \(pdu.source.hex), to: \(pdu.destination.hex) timed out")
+                self.cancel(MessageHandle(for: request,
+                                          sentFrom: pdu.source, to: pdu.destination.address,
+                                          using: self.networkManager.manager))
                 self.mutex.sync {
                     self.reliableMessageContexts.removeAll(where: { $0.timeoutTimer == nil })
                 }

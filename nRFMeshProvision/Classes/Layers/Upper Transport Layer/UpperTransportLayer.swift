@@ -119,6 +119,18 @@ internal class UpperTransportLayer {
         }
     }
     
+    /// Returns whether the underlying layer is in progress of
+    /// receiving a message from the given address.
+    ///
+    /// - parameter address: The source address.
+    /// - returns: `True` is some, but not all packets of a segmented
+    ///            message were received from the given source address;
+    ///            `false` if no packets were received or the message
+    ///            was complete before calling this method.
+    func isReceivingResponse(from address: Address) -> Bool {
+        return networkManager.lowerTransportLayer.isReceivingMessage(from: address)
+    }
+    
     /// A callback called by the lower transport layer when the segmented PDU
     /// has been sent to the given destination.
     ///
