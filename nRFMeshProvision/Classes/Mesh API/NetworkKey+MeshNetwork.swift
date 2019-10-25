@@ -33,7 +33,9 @@ public extension NetworkKey {
         return meshNetwork.networkKeys.contains(self) &&
             (
                 // Network Key known by at least one node (except the local Provisioner).
-                meshNetwork.nodes.filter({ $0.uuid != localProvisioner?.uuid }).knows(networkKey: self) ||
+                meshNetwork.nodes
+                    .filter({ $0.uuid != localProvisioner?.uuid })
+                    .knows(networkKey: self) ||
                 // Network Key bound to an Application Key.
                 meshNetwork.applicationKeys.contains(keyBoundTo: self)
             )

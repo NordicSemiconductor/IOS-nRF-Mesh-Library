@@ -18,7 +18,7 @@ public class Element: Codable {
     /// Description of the Element's location.
     public internal(set) var location: Location
     /// An array of Model objects in the Element.
-    public internal(set) var models: [Model]
+    public private(set) var models: [Model]
     
     /// Parent Node. This may be `nil` if the Element was obtained in
     /// Composition Data and has not yet been added to a Node.
@@ -123,7 +123,7 @@ public class Element: Codable {
                                                    debugDescription: "Unknown location: 0x\(locationAsString)")
         }
         location = loc
-        models  = try container.decode([Model].self, forKey: .models)
+        models = try container.decode([Model].self, forKey: .models)
         
         models.forEach {
             $0.parentElement = self
@@ -177,6 +177,8 @@ internal extension Element {
     ///
     /// This method should only be called for the primary Element of the
     /// local Node.
+    ///
+    /// - parameter meshNetwork: The mesh network object.
     func addPrimaryElementModels(_ meshNetwork: MeshNetwork) {
         insert(model: Model(sigModelId: .configurationServerModelId,
                             delegate: ConfigurationServerHandler(meshNetwork)), at: 0)
@@ -184,6 +186,17 @@ internal extension Element {
                             delegate: ConfigurationClientHandler(meshNetwork)), at: 1)
         insert(model: Model(sigModelId: .healthServerModelId), at: 2)
         insert(model: Model(sigModelId: .healthClientModelId), at: 3)
+    }
+    
+    /// Removes the Configuration Server and Client and Health Server
+    /// and Client from the Element.
+    func removePrimaryElementModels() {
+        models = models.filter { model in
+            !model.isConfigurationServer &&
+            !model.isConfigurationClient &&
+            !model.isHealthServer &&
+            !model.isHealthClient
+        }
     }
     
     /// The primary Element for Provisioner's Node.

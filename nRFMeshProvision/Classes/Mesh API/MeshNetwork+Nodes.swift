@@ -129,6 +129,7 @@ public extension MeshNetwork {
         
         node.meshNetwork = self
         nodes.append(node)
+        timestamp = Date()
     }
     
     /// Removes the Node from the mesh network.

@@ -31,6 +31,7 @@ public extension MeshNetwork {
         }
         groups.append(group)
         group.meshNetwork = self
+        timestamp = Date()
     }
     
     /// Removes the given Group from the network.
@@ -48,6 +49,7 @@ public extension MeshNetwork {
         if let index = groups.firstIndex(of: group) {
             groups.remove(at: index).meshNetwork = nil
         }
+        timestamp = Date()
     }
     
     /// Returns list of Models belonging to any of the Elements in the

@@ -100,6 +100,7 @@ public extension Group {
             return
         }
         _parentAddress = parent._address
+        meshNetwork?.timestamp = Date()
     }
     
     /// Sets the parent-child relationship between this and the given Group.
@@ -110,6 +111,7 @@ public extension Group {
             return
         }
         child._parentAddress = _address
+        meshNetwork?.timestamp = Date()
     }
     
 }
