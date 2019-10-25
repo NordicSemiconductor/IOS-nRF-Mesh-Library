@@ -175,9 +175,30 @@ public extension MeshNetwork {
     ///                    `index` must be a valid index of the array.
     /// - returns: The removed Provisioner.
     func remove(provisionerAt index: Int) -> Provisioner {
+        let localProvisionerRemoved = index == 0
+        
         let provisioner = provisioners.remove(at: index)
         remove(nodeForProvisioner: provisioner)
         provisioner.meshNetwork = nil
+        
+        // If the old local Provisioner has been removed, and a new one
+        // has been set on its plase, it needs the properties to be updated.
+        if localProvisionerRemoved,
+           let n = localProvisioner?.node {
+            n.set(networkKeys: networkKeys)
+            n.set(applicationKeys: applicationKeys)
+            n.companyIdentifier = 0x004C // Apple Inc.
+            n.productIdentifier = nil
+            n.versionIdentifier = nil
+            n.ttl = nil
+            n.minimumNumberOfReplayProtectionList = Address.maxUnicastAddress
+            // The Element adding has to be done this way. Some Elements may get cut
+            // by the property observer when Element addresses overlap other Node's
+            // addresses.
+            let elements = localElements
+            localElements = elements
+        }
+        
         timestamp = Date()
         return provisioner
     }
