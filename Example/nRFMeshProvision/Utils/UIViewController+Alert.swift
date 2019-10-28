@@ -226,7 +226,7 @@ extension UIViewController {
     @objc func ttlRequired(_ textField: UITextField) {
         let alert = getAlert(from: textField)
         let ttl = UInt8(textField.text!)
-        alert.setValid(ttl != nil && ttl! >= 1 && ttl! <= 127)
+        alert.setValid(ttl != nil && (ttl! == 0 || ttl! >= 2) && ttl! <= 127)
     }
     
     @objc func numberRequired(_ textField: UITextField) {
