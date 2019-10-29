@@ -1,5 +1,8 @@
 # nRF Mesh for iOS
 
+[![Version](http://img.shields.io/cocoapods/v/nRFMeshProvision.svg)](http://cocoapods.org/pods/nRFMeshProvision)
+[![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
+
 ## About
 
 The nRF Mesh Provision library allows to provision and send messages to Bluetooth Mesh devices. 
