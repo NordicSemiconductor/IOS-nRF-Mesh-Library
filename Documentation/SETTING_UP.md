@@ -28,13 +28,13 @@ Using CocoaPods:
 - Create a new **Cartfile** in your project's root with the following contents
 
     ```
-    github "NordicSemiconductor//IOS-nRF-Mesh-Library" ~> x.y //Replace x.y with your required version
+    github "NordicSemiconductor/IOS-nRF-Mesh-Library" ~> x.y // Replace x.y with your required version
     ```
 
 - Build with carthage
 
     ```
-    carthage update --platform iOS //also OSX platform is available for macOS builds
+    carthage update --platform iOS // also OSX platform is available for macOS builds
     ```
 
 - Carthage will build the **nRFMeshProvision.framework** files in **Carthage/Build/**, 
