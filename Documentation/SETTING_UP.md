@@ -43,20 +43,6 @@ if you need to resymbolicate crash logs. you may want to keep those files bundle
 
 **For Swift Package Manager:**
 
-```swift
-// swift-tools-version:5.0
-import PackageDescription
-
-let package = Package(
-  name: "<Your Product Name>",
-  dependencies: [
-    .package(
-      url: "https://github.com/NordicSemiconductor/IOS-nRF-Mesh-Library/", 
-      .upToNextMajor(from: "2.0.0")
-    )
-  ],
-  targets: [.target(name: "<Your Target Name>", dependencies: ["NordicMesh"])]
-)
-```
+The nRF Mesh library is not available on SPM as it depends on [OpenSSL](https://github.com/krzyzanowskim/OpenSSL) which is released as binaries. Binary dependencies aren't supported by Swift Package Manager [source](https://developer.apple.com/documentation/xcode/creating_a_swift_package_with_xcode).
 
 Next: [Getting started >](GETTING_STARTED.md)
