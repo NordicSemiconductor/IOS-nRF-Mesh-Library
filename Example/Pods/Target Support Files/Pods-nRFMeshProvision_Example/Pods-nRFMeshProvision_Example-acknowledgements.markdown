@@ -159,7 +159,7 @@ SOFTWARE.
 
 ## nRFMeshProvision
 
-Copyright (c) 2018, Nordic Semiconductor ASA
+Copyright (c) 2019, Nordic Semiconductor ASA
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -172,7 +172,7 @@ modification, are permitted provided that the following conditions are met:
     notice, this list of conditions and the following disclaimer in the
     documentation and/or other materials provided with the distribution.
 
-    3. Neither the name of the <organization> nor the
+    3. Neither the name of the Nordic Semiconductor ASA nor the
     names of its contributors may be used to endorse or promote products
     derived from this software without specific prior written permission.
 
