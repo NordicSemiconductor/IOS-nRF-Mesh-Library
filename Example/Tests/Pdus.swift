@@ -399,7 +399,7 @@ class Pdus: XCTestCase {
         let accessPdu = AccessPdu(fromMeshMessage: message,
                                   sentFrom: source!, to: destination,
                                   userInitiated: true)
-        XCTAssertEqual(accessPdu.isSegmented, true)
+        XCTAssertEqual(accessPdu.isSegmented, false)
         XCTAssertEqual(accessPdu.localElement, source)
         XCTAssertEqual(accessPdu.destination, destination)
         XCTAssertEqual(accessPdu.opCode, ConfigAppKeyStatus.opCode)
