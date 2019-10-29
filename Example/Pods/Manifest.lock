@@ -1,15 +1,17 @@
 PODS:
-  - nRFMeshProvision (1.0.4):
+  - nRFMeshProvision (2.0.0):
     - OpenSSL-Universal
-  - OpenSSL-Universal (1.0.2.13)
-  - SwiftLint (0.31.0)
+  - OpenSSL-Universal (1.0.2.19):
+    - OpenSSL-Universal/Static (= 1.0.2.19)
+  - OpenSSL-Universal/Static (1.0.2.19)
+  - SwiftLint (0.36.0)
 
 DEPENDENCIES:
   - nRFMeshProvision (from `../`)
   - SwiftLint
 
 SPEC REPOS:
-  https://github.com/cocoapods/specs.git:
+  trunk:
     - OpenSSL-Universal
     - SwiftLint
 
@@ -18,10 +20,10 @@ EXTERNAL SOURCES:
     :path: "../"
 
 SPEC CHECKSUMS:
-  nRFMeshProvision: e2add401cc946b8076a81ba6a442170c20941e25
-  OpenSSL-Universal: 401888162f11c33ebbd46f782d9229da35c61327
-  SwiftLint: 7a0227733d786395817373b2d0ca799fd0093ff3
+  nRFMeshProvision: 6662daef9dbd7bc6bc48da04f6288b9a5e553ce6
+  OpenSSL-Universal: 8b48cc0d10c1b2923617dfe5c178aa9ed2689355
+  SwiftLint: fc9859e4e1752340664851f667bb1898b9c90114
 
 PODFILE CHECKSUM: d915a99ebadab623fe0a3c47ee4d748c2ba3e43c
 
-COCOAPODS: 1.7.0.beta.2
+COCOAPODS: 1.8.4

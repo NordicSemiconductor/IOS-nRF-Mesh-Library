@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14868" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BYb-mK-mH5">
+    <device id="retina5_9" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14824"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--Tab Bar Controller-->
+        <scene sceneID="zJB-dB-C0K">
+            <objects>
+                <tabBarController title="Tab Bar Controller" id="BYb-mK-mH5" sceneMemberID="viewController">
+                    <navigationItem key="navigationItem" id="uit-TO-OCn"/>
+                    <tabBar key="tabBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="ig6-ap-aTu">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="49"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <color key="selectedImageTintColor" red="0.0" green="0.46666666670000001" blue="0.7843137255" alpha="1" colorSpace="calibratedRGB"/>
+                    </tabBar>
+                    <connections>
+                        <segue destination="Jgl-7d-w1f" kind="relationship" relationship="viewControllers" id="64k-O6-vI9"/>
+                        <segue destination="zgn-Sh-bkR" kind="relationship" relationship="viewControllers" id="bML-n5-Lan"/>
+                        <segue destination="Ns0-BW-mnp" kind="relationship" relationship="viewControllers" id="P5t-ai-VdT"/>
+                        <segue destination="z61-cg-pzs" kind="relationship" relationship="viewControllers" id="p9q-t9-0O2"/>
+                        <segue destination="bcv-6V-ztb" kind="relationship" relationship="viewControllers" id="Ld5-du-qiy"/>
+                    </connections>
+                </tabBarController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="oC9-24-ooo" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-506" y="-15"/>
+        </scene>
+        <!--Settings-->
+        <scene sceneID="nWq-PE-DEP">
+            <objects>
+                <viewControllerPlaceholder storyboardName="Settings" id="bcv-6V-ztb" sceneMemberID="viewController">
+                    <tabBarItem key="tabBarItem" title="Settings" image="tab_settings_outline_black_24pt" id="aAF-LR-tNP"/>
+                </viewControllerPlaceholder>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="YTc-kw-XOJ" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="140" y="140"/>
+        </scene>
+        <!--Groups-->
+        <scene sceneID="0BM-mh-7CO">
+            <objects>
+                <viewControllerPlaceholder storyboardName="Groups" id="Ns0-BW-mnp" sceneMemberID="viewController">
+                    <tabBarItem key="tabBarItem" title="Groups" image="tab_groups_outline_black_24pt" id="itw-BD-btI"/>
+                </viewControllerPlaceholder>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="kKK-6d-1gs" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="134" y="-65"/>
+        </scene>
+        <!--ProxyFilter-->
+        <scene sceneID="hTx-iH-lEi">
+            <objects>
+                <viewControllerPlaceholder storyboardName="ProxyFilter" id="z61-cg-pzs" sceneMemberID="viewController">
+                    <tabBarItem key="tabBarItem" title="Proxy Filter" image="tab_filter_outline_black_24pt" id="pSQ-Pc-nhc"/>
+                </viewControllerPlaceholder>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="KyR-6N-Wgt" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="152" y="41"/>
+        </scene>
+        <!--Network-->
+        <scene sceneID="2th-bN-jIu">
+            <objects>
+                <viewControllerPlaceholder storyboardName="Network" id="zgn-Sh-bkR" sceneMemberID="viewController">
+                    <tabBarItem key="tabBarItem" title="Network" image="tab_network_outline_black_24pt" id="g0q-tV-lCo"/>
+                </viewControllerPlaceholder>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="XHi-EA-eaT" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="142" y="-167"/>
+        </scene>
+        <!--Control-->
+        <scene sceneID="O4z-u3-u9Z">
+            <objects>
+                <viewControllerPlaceholder storyboardName="Control" id="Jgl-7d-w1f" sceneMemberID="viewController">
+                    <tabBarItem key="tabBarItem" title="Local Node" image="tab_control_outline_black_24pt" id="Nc9-i6-Dm8"/>
+                </viewControllerPlaceholder>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Zz3-0E-Z3e" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="169" y="-256"/>
+        </scene>
+    </scenes>
+    <resources>
+        <image name="tab_control_outline_black_24pt" width="24" height="24"/>
+        <image name="tab_filter_outline_black_24pt" width="24" height="24"/>
+        <image name="tab_groups_outline_black_24pt" width="24" height="24"/>
+        <image name="tab_network_outline_black_24pt" width="24" height="24"/>
+        <image name="tab_settings_outline_black_24pt" width="24" height="24"/>
+    </resources>
+    <color key="tintColor" red="0.0" green="0.46666666670000001" blue="0.7843137255" alpha="1" colorSpace="calibratedRGB"/>
+</document>
