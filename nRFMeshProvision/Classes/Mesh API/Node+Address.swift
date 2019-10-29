@@ -9,23 +9,21 @@ import Foundation
 
 public extension Node {
     
-    /// Number of mode's elements.
+    /// Number of Node's Elements.
     var elementsCount: UInt8 {
         return UInt8(elements.count)
     }
     
-    /// The last unicast address allocated to this node. Each node's element
-    /// uses its own subsequent unicast address. The first (0th) element is identified
-    /// by the node's unicast address. If there are no elements, the last unicast address
-    /// is equal to the node's unicast address.
-    var lastUnicastAddress: UInt16 {
-        // Provisioner may not have any elements
+    /// The last Unicast Address allocated to this Node. Each Node's Element
+    /// uses its own subsequent Unicast Address. The first (0th) Element is identified
+    /// by the Node's Unicast Address.
+    var lastUnicastAddress: Address {
         let allocatedAddresses = Address(elementsCount > 0 ? elementsCount : 1)
         return unicastAddress + allocatedAddresses - 1
     }
     
-    /// Returns whether the address uses the given unicast address for one
-    /// of its elements.
+    /// Returns whether the address uses the given Unicast Address for one
+    /// of its Elements.
     ///
     /// - parameter address: Address to check.
     /// - returns: `True` if any of node's elements (or the node itself) was assigned

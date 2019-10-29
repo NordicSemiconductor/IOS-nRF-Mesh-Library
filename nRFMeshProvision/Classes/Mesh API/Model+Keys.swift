@@ -14,7 +14,8 @@ public extension Model {
     /// The list will not contain unknown Application Keys bound
     /// to this Model, possibly bound by other Provisioner.
     var boundApplicationKeys: [ApplicationKey] {
-        return parentElement?.parentNode?.applicationKeys.filter({ bind.contains($0.index) }) ?? []
+        return parentElement?.parentNode?.applicationKeys
+            .filter({ bind.contains($0.index) }) ?? []
     }
     
     /// Whether the given Application Key is bound to this Model.

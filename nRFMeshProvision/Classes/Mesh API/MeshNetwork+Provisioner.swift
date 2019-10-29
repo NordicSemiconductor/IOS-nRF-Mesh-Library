@@ -91,8 +91,8 @@ public extension MeshNetwork {
     ///
     /// - parameter provisioner:    The Provisioner to be added.
     /// - parameter unicastAddress: The Unicast Address to be used by the Provisioner.
-    ///                             A `nil` address means that the Provisioner is not able
-    ///                             to perform configuration operations.
+    ///                             A `nil` address means that the Provisioner is not
+    ///                             able to perform configuration operations.
     /// - throws: MeshNetworkError - if Provisioner may not be added beacose it has
     ///           failed the validation. See possible errors for details.
     func add(provisioner: Provisioner, withAddress unicastAddress: Address?) throws {
@@ -358,14 +358,15 @@ public extension MeshNetwork {
         }
     }
     
-    /// Removes the Provisioner's node. Provisioners without a node
+    /// Removes the Provisioner's Node. Provisioners without a Node
     /// may not perform configuration operations. This method does nothing
-    /// if the Provisoner already didn't have a node.
+    /// if the Provisoner already didn't have a Node.
     ///
     /// Use `assign(address:for provisioner)` to enable configuration capabilities.
     ///
-    /// - parameter provisioner: The provisioner to be modified.
+    /// - parameter provisioner: The Provisioner to be modified.
     func disableConfigurationCapabilities(for provisioner: Provisioner) {
         remove(nodeForProvisioner: provisioner)
     }
+    
 }

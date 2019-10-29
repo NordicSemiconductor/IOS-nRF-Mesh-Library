@@ -9,7 +9,7 @@ import Foundation
 
 public extension MeshNetwork {
     
-    /// Returns Provisioner's node object, if such exist and the Provisioner
+    /// Returns Provisioner's Node object, if such exist and the Provisioner
     /// is in the mesh network.
     ///
     /// - parameter provisioner: The provisioner which node is to be returned.

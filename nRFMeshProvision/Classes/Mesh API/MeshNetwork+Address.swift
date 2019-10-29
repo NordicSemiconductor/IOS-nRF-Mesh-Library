@@ -21,7 +21,7 @@ public extension MeshNetwork {
     }
     
     /// Returns whether the given address can be assigned to a new Node
-    /// with given number of elements.
+    /// with given number of Elements.
     ///
     /// - parameter address: The first address to check.
     /// - parameter count:   Number of addresses to check.
@@ -40,7 +40,7 @@ public extension MeshNetwork {
     /// Each following element is identified by a subsequent Unicast Address.
     ///
     /// - parameter elementsCount: The number of node's elements. Each element will be
-    ///                            identified by a subsequent unicast address.
+    ///                            identified by a subsequent Unicast Address.
     /// - parameter provisioner:   The Provisioner that is creating the node.
     ///                            The address will be taken from it's allocated range.
     /// - returns: The next available Unicast Address that can be assigned to a node,
@@ -86,12 +86,12 @@ public extension MeshNetwork {
         return nil
     }
     
-    /// Returns the next available Unicast Address from the provisioner's range
-    /// that can be assigned to a new provisioner's node.
+    /// Returns the next available Unicast Address from the Provisioner's range
+    /// that can be assigned to a new Provisioner's node.
     ///
     /// This method is assuming that the Provisioner has only 1 element.
     ///
-    /// - parameter provisioner: The provisioner that is creating the Node for itself.
+    /// - parameter provisioner: The Provisioner that is creating the Node for itself.
     ///                          The address will be taken from it's allocated range.
     /// - returns: The next available Unicast Address that can be assigned to a node,
     ///            or `nil`, if there are no more available addresses in the allocated range.
@@ -102,7 +102,7 @@ public extension MeshNetwork {
     /// Returns the next available Group Address from the Provisioner's range
     /// that can be assigned to a new Group.
     ///
-    /// - parameter provisioner: The provisioner, which range is to be used for address
+    /// - parameter provisioner: The Provisioner, which range is to be used for address
     ///                          generation.
     /// - returns: The next available Group Address that can be assigned to a new Group,
     ///            or `nil`, if there are no more available addresses in the allocated range.

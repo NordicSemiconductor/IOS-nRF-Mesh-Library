@@ -9,8 +9,7 @@ import Foundation
 
 public extension MeshNetwork {
     
-    /// Next available Key Index that can be assigned
-    /// to a new Application Key.
+    /// Next available Key Index that can be assigned to a new Application Key.
     var nextAvailableApplicationKeyIndex: KeyIndex? {
         if applicationKeys.isEmpty {
             return 0
@@ -21,8 +20,7 @@ public extension MeshNetwork {
         return lastAppKey.index + 1
     }
     
-    /// Next available Key Index that can be assigned
-    /// to a new Network Key.
+    /// Next available Key Index that can be assigned to a new Network Key.
     var nextAvailableNetworkKeyIndex: KeyIndex? {
         if networkKeys.isEmpty {
             return 0
@@ -36,7 +34,7 @@ public extension MeshNetwork {
     /// Adds a new Application Key and binds it to the first Network Key.
     ///
     /// - parameter applicationKey: The 128-bit Application Key.
-    /// - parameter index:          The optional Key Index to assign. If `nil`,
+    /// - parameter index:          An optional Key Index to assign. If `nil`,
     ///                             the next available Key Index will be assigned
     ///                             automatically.
     /// - parameter name:           The human readable name.
@@ -85,7 +83,7 @@ public extension MeshNetwork {
     ///           removed (unless `force` was set to `true`).
     func remove(applicationKeyAt index: Int, force: Bool = false) throws -> ApplicationKey {
         let applicationKey = applicationKeys[index]
-        // Ensure no node is using this Application Key.
+        // Ensure no Node is using this Application Key.
         guard force || !applicationKey.isUsed(in: self) else {
             throw MeshNetworkError.keyInUse
         }

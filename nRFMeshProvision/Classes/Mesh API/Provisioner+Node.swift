@@ -26,7 +26,7 @@ public extension Provisioner {
     /// Whether the Provisioner can send and receive mesh messages.
     ///
     /// To have configuration capabilities the Provisioner must have
-    /// a Unicast Address assigned, therfore it is a Node in the
+    /// a Unicast Address assigned, therefore it is a Node in the
     /// network.
     var hasConfigurationCapabilities: Bool {
         return node != nil

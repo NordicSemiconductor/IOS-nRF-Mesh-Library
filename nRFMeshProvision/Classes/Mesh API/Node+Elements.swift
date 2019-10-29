@@ -9,8 +9,8 @@ import Foundation
 
 public extension Node {    
     
-    /// Returns the Element inside this Node with the given Unicast Address,
-    /// or `nil`, if such does not exist.
+    /// Returns the Element that belongs to this Node with the given
+    /// Unicast Address, or `nil`, if such does not exist.
     ///
     /// - parameter address: The Unicast Address of an Element to get.
     /// - returns: The Element found, or `nil`, if no such exist.

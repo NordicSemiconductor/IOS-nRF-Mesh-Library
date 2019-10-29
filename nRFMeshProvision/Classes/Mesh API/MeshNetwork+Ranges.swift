@@ -10,7 +10,7 @@ import Foundation
 public extension MeshNetwork {
     
     /// Checks whether the given range is available for allocation to a new
-    /// provisioner.
+    /// Provisioner.
     ///
     /// - parameter range: The range to be checked.
     /// - returns: `True`, if the range does not overlap with any address
@@ -27,7 +27,7 @@ public extension MeshNetwork {
     }
     
     /// Checks whether the given ranges are available for allocation to a new
-    /// provisioner.
+    /// Provisioner.
     ///
     /// - parameter ranges: The ranges to be checked.
     /// - returns: `True`, if the ranges do not overlap with any address
@@ -43,7 +43,7 @@ public extension MeshNetwork {
     }
     
     /// Checks whether the given range is available for allocation to a new
-    /// provisioner.
+    /// Provisioner.
     ///
     /// - parameter range: The range to be checked.
     /// - returns: `True`, if the range does not overlap with any scene
@@ -55,7 +55,7 @@ public extension MeshNetwork {
     }
     
     /// Checks whether the given ranges are available for allocation to a new
-    /// provisioner.
+    /// Provisioner.
     ///
     /// - parameter ranges: The ranges to be checked.
     /// - returns: `True`, if the ranges do not overlap with any address
@@ -71,7 +71,7 @@ public extension MeshNetwork {
     }
     
     /// Checks whether the given range is available for allocation to the given
-    /// provisioner.
+    /// Provisioner.
     ///
     /// - parameter range: The range to be checked.
     /// - returns: `True`, if the range does not overlap with any address
@@ -94,7 +94,7 @@ public extension MeshNetwork {
     }
     
     /// Checks whether the given ranges are available for allocation to the given
-    /// provisioner.
+    /// Provisioner.
     ///
     /// - parameter ranges: The array of ranges to be checked.
     /// - returns: `True`, if none of the ranges overlap with any address
@@ -117,7 +117,7 @@ public extension MeshNetwork {
     }
     
     /// Checks whether the given range is available for allocation to a new
-    /// provisioner.
+    /// Provisioner.
     ///
     /// - parameter range: The range to be checked.
     /// - returns: `True`, if the range does not overlap with any scene
@@ -131,7 +131,7 @@ public extension MeshNetwork {
     }
     
     /// Checks whether the given ranges are available for allocation to a new
-    /// provisioner.
+    /// Provisioner.
     ///
     /// - parameter range: The array of ranges to be checked.
     /// - returns: `True`, if the none of the ranges overlap with any scene

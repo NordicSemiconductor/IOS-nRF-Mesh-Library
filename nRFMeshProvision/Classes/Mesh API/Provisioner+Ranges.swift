@@ -20,11 +20,11 @@ public extension Provisioner {
     }
     
     /// Allocates Unicast Address range for the Provisioner. This method
-    /// will automatically merge ranges if they ovelap.
+    /// will automatically merge ranges if they overlap.
     ///
     /// - parameter range: The new unicast range to allocate.
     /// - throws: The method throws an error when the Provisioner is added
-    ///           to the mesh network and the new range overlapps any of
+    ///           to the mesh network and the new range overlaps any of
     ///           other Provisioners' ranges, or the range is of invalid type.
     func allocateUnicastAddressRange(_ range: AddressRange) throws {
         // Validate range type.
@@ -44,11 +44,11 @@ public extension Provisioner {
     }
     
     /// Allocates the given Unicast Address ranges for the Provisioner.
-    /// This method will automatically merge ranges if they ovelap.
+    /// This method will automatically merge ranges if they overlap.
     ///
     /// - parameter range: The new unicast ranges to allocate.
     /// - throws: The method throws an error when the Provisioner is added
-    ///           to the mesh network and at least one new range overlapps any of
+    ///           to the mesh network and at least one new range overlaps any of
     ///           other Provisioners' ranges, or the range is of invalid type.
     func allocateUnicastAddressRanges(_ ranges: [AddressRange]) throws {
         // Validate ranges type.
@@ -67,11 +67,11 @@ public extension Provisioner {
     }
     
     /// Allocates Group Address range for the Provisioner. This method
-    /// will automatically merge ranges if they ovelap.
+    /// will automatically merge ranges if they overlap.
     ///
     /// - parameter range: The new group range to allocate.
     /// - throws: The method throws an error when the Provisioner is added
-    ///           to the mesh network and the new range overlapps any of
+    ///           to the mesh network and the new range overlaps any of
     ///           other Provisioners' ranges, or the range is of invalid type.
     func allocateGroupAddressRange(_ range: AddressRange) throws {
         // Validate range type.
@@ -91,11 +91,11 @@ public extension Provisioner {
     }
     
     /// Allocates the given Group Address ranges for the Provisioner.
-    /// This method will automatically merge ranges if they ovelap.
+    /// This method will automatically merge ranges if they overlap.
     ///
     /// - parameter range: The new group ranges to allocate.
     /// - throws: The method throws an error when the Provisioner is added
-    ///           to the mesh network and at least one new range overlapps any of
+    ///           to the mesh network and at least one new range overlaps any of
     ///           other Provisioners' ranges, or the range is of invalid type.
     func allocateGroupAddressRanges(_ ranges: [AddressRange]) throws {
         // Validate ranges type.
@@ -118,7 +118,7 @@ public extension Provisioner {
     ///
     /// - parameter range: The new scene range to allocate.
     /// - throws: The method throws an error when the Provisioner is added
-    ///           to the mesh network and the new range overlapps any of
+    ///           to the mesh network and the new range overlaps any of
     ///           other Provisioners' ranges, or the range is of invalid type.
     func allocateSceneRange(_ range: SceneRange) throws {
         // Validate range type.
@@ -138,11 +138,11 @@ public extension Provisioner {
     }
     
     /// Allocates the given Scene ranges for the Provisioner.
-    /// This method will automatically merge ranges if they ovelap.
+    /// This method will automatically merge ranges if they overlap.
     ///
     /// - parameter range: The new scene ranges to allocate.
     /// - throws: The method throws an error when the Provisioner is added
-    ///           to the mesh network and at least one new range overlapps any of
+    ///           to the mesh network and at least one new range overlaps any of
     ///           other Provisioners' ranges, or the range is of invalid type.
     func allocateSceneRanges(_ ranges: [SceneRange]) throws {
         // Validate ranges type.
