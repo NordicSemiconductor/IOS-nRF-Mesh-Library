@@ -43,7 +43,7 @@ The app and the library are released under BSD-3 license. Feel free to modify th
 
 ## Documentation
 
-The documentation for this library may be found [here](Documentation/DOCUMENTATION.md).
+The documentation for this library may be found [here](Documentation/README.md).
 
 ## Requirements
 
