@@ -198,7 +198,7 @@ class EditKeyViewController: UITableViewController {
             presentNameDialog()
         }
         if indexPath.isKey {
-            if isNewKey || !isKeyUsed {
+            if isNewKey {
                 presentKeyDialog()
             } else {
                 UIPasteboard.general.string = newKey.hex
@@ -247,7 +247,7 @@ private extension EditKeyViewController {
         let title = "New Key"
         let message = "The key must be a 32-character hexadecimal string."
         
-        presentKeyDialog(title: title, message: message) { key in
+        presentKeyDialog(title: title, message: message, key: key?.key) { key in
             self.newKey = key
             self.tableView.reloadRows(at: [.key], with: .fade)
         }
