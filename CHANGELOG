@@ -1,13 +1,17 @@
 ## Changelog
+- **2.0.0**:
+    - A complete rewrite of the sample app and underlying mesh library. The API is not backwards compatible with the old version.
+    - The old database will be automatically migrated to the new format when calling `manager.load()`.
+    
 - **1.0.4**:
-    - Adds ability to control GenericOnOff parameters, `TransitionDelay` and `TransitionTime` (some testing needed)
-    - Adds ability to control GenericLevel models, additionally `TransitionDelay` and `TransitionTime` (some testing needed)
+    - Adds ability to control GenericOnOff parameters, `TransitionDelay` and `TransitionTime` (some testing needed).
+    - Adds ability to control GenericLevel models, additionally `TransitionDelay` and `TransitionTime` (some testing needed).
     - Bugfix: Fixed an issue causign the provisioning to halt at 91% intermittently due to block acknowledgements not working as it should, a 2 second delay is restored to workaround this.
 
 - **1.0.1**:
     - Adds minor improvements to the copy on some UI components within the application.
     - Bugfix: Performance improvement due to removing an intended 2 second delay when switching between Composition Data Get state and AppKeyAdd state due to an earlier bug.
-    - Bugfix: fixed an issue with block acknowledgements that caused longer messages that needs multiple acknowledgment to fail
+    - Bugfix: fixed an issue with block acknowledgements that caused longer messages that needs multiple acknowledgment to fail.
     - Bugfix: fixed an issue in the GenericOnOff control view, this bug caused loss of control over the node when it's added then removed from a subscription group.
     - Bugfix: fixed an issue that caused the navigation bar not to reflect the scanner state when directly tapping the `Add Node` button instead of using the tab bar button.
 
