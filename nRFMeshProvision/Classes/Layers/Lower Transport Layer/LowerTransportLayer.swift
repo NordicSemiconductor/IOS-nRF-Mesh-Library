@@ -39,7 +39,7 @@ private enum Message {
 internal class LowerTransportLayer {
     private let networkManager: NetworkManager
     private let meshNetwork: MeshNetwork
-    private let mutex = DispatchQueue(label: "Mutex")
+    private let mutex = DispatchQueue(label: "LowerTransportLayerMutex")
     
     private var logger: LoggerDelegate? {
         return networkManager.manager.logger

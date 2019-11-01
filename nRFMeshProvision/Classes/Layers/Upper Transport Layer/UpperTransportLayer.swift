@@ -33,6 +33,7 @@ internal class UpperTransportLayer {
     private let networkManager: NetworkManager
     private let meshNetwork: MeshNetwork
     private let defaults: UserDefaults
+    private let mutex = DispatchQueue(label: "UpperTransportLayerMutex")
     
     private var logger: LoggerDelegate? {
         return networkManager.manager.logger
@@ -123,17 +124,20 @@ internal class UpperTransportLayer {
         var shouldSendNext = false
         // Check if the message that is currently being sent mathes the
         // handler data. If so, cancel it.
-        if let first = queues[handle.destination]?.first,
-            first.pdu.message!.opCode == handle.opCode && first.pdu.source == handle.source {
-            logger?.d(.upperTransport, "Cancelling sending \(first.pdu)")
-            networkManager.lowerTransportLayer.cancelSending(segmentedUpperTransportPdu: first.pdu)
-            shouldSendNext = true
+        if let first = mutex.sync(execute: { queues[handle.destination]?.first }),
+           first.pdu.message!.opCode == handle.opCode && first.pdu.source == handle.source {
+               logger?.d(.upperTransport, "Cancelling sending \(first.pdu)")
+               networkManager.lowerTransportLayer.cancelSending(segmentedUpperTransportPdu: first.pdu)
+               shouldSendNext = true
         }
+
         // Remove all enqueued messages that match the handler.
-        queues[handle.destination]?.removeAll() {
-            $0.pdu.message!.opCode == handle.opCode &&
-            $0.pdu.source == handle.source &&
-            $0.pdu.destination == handle.destination
+        mutex.sync {
+            queues[handle.destination]?.removeAll() {
+                $0.pdu.message!.opCode == handle.opCode &&
+                $0.pdu.source == handle.source &&
+                $0.pdu.destination == handle.destination
+            }
         }
         // If sending a message was cancelled, try sending another one.
         if shouldSendNext {
@@ -161,11 +165,13 @@ internal class UpperTransportLayer {
     ///
     /// - parameter destination: The destination address.
     func lowerTransportLayerDidSend(segmentedUpperTransportPduTo destination: Address) {
-        guard queues[destination]?.isEmpty == false else {
-            return
+        mutex.sync {
+            guard queues[destination]?.isEmpty == false else {
+                return
+            }
+            // Remove the PDU that has just been sent.
+            _ = queues[destination]?.removeFirst()
         }
-        // Remove the PDU that has just been sent.
-        queues[destination]?.removeFirst()
         // Try to send the next one.
         sendNext(to: destination)
     }
@@ -181,21 +187,25 @@ private extension UpperTransportLayer {
     ///                 If `nil`, the default Node TTL will be used.
     ///   - networkKey: The Network Key to encrypt the PDU with.
     func enqueue(pdu: UpperTransportPdu, initialTtl: UInt8?, networkKey: NetworkKey) {
-        queues[pdu.destination] = queues[pdu.destination] ?? []
-        queues[pdu.destination]!.append((pdu: pdu, ttl: initialTtl, networkKey: networkKey))
-        if queues[pdu.destination]!.count == 1 {
+        var count = 0
+        mutex.sync {
+            queues[pdu.destination] = queues[pdu.destination] ?? []
+            queues[pdu.destination]!.append((pdu: pdu, ttl: initialTtl, networkKey: networkKey))
+            count = queues[pdu.destination]!.count
+        }
+        if count == 1 {
             sendNext(to: pdu.destination)
         }
     }
     
-    /// Sends the next enqueded PDU.
+    /// Sends the next enqueued PDU.
     ///
     /// If the queue for the given destination does not exist or is empty,
     /// this method does nothing.
     ///
     /// - parameter destination: The destination address.
     func sendNext(to destination: Address) {
-        guard let (pdu, ttl, networkKey) = queues[destination]?.first else {
+        guard let (pdu, ttl, networkKey) = mutex.sync(execute: { queues[destination]?.first }) else {
             return
         }
         // If another PDU has been enqueued, send it.

@@ -105,7 +105,7 @@ private class AcknowledgmentContext {
 internal class AccessLayer {
     private let networkManager: NetworkManager
     private let meshNetwork: MeshNetwork
-    private let mutex = DispatchQueue(label: "Mutex")
+    private let mutex = DispatchQueue(label: "AccessLayerMutex")
     
     private var logger: LoggerDelegate? {
         return networkManager.manager.logger
