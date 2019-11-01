@@ -57,7 +57,7 @@ public class Node: Codable {
     /// The object represents parameters of the transmissions of network
     /// layer messages originating from a mesh node.
     public struct NetworkTransmit: Codable {
-        /// Number of retransmissions for relay messages.
+        /// Number of transmissions for network messages.
         /// The value is in range from 1 to 8.
         public let count: UInt8
         /// The interval (in milliseconds) between retransmissions
@@ -86,7 +86,7 @@ public class Node: Codable {
     /// The object represents parameters of the retransmissions of network
     /// layer messages relayed by a mesh node.
     public struct RelayRetransmit: Codable {
-        /// Number of retransmissions for network messages.
+        /// Number of transmissions for relay messages.
         /// The value is in range from 1 to 8.
         public let count: UInt8
         /// The interval (in milliseconds) between retransmissions

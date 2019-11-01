@@ -61,7 +61,7 @@ public struct ConfigNetworkTransmitSet: AcknowledgedConfigMessage {
     ///                    corresponds to 10-320 milliseconds intervals.
     public init(count: UInt8, steps: UInt8) {
         self.count = min(7, count)
-        self.steps = min(63, steps)
+        self.steps = min(31, steps)
     }
     
     public init?(parameters: Data) {
