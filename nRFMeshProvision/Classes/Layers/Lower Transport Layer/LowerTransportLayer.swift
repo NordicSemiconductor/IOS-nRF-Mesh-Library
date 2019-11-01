@@ -183,9 +183,9 @@ internal class LowerTransportLayer {
         }
         // Process the message on the original queue.
         switch try? result.get() {
-        case .lowerTransportPdu(let pdu):
+        case .lowerTransportPdu(let pdu)?:
             networkManager.upperTransportLayer.handle(lowerTransportPdu: pdu)
-        case .acknowledgement(let ack):
+        case .acknowledgement(let ack)?:
             handle(ack: ack)
         default:
             break

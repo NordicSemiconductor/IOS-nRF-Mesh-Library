@@ -159,10 +159,10 @@ internal extension UInt16 {
 
 internal extension Model {
     
-    var isConfigurationServer: Bool { modelId == UInt32(UInt16.configurationServerModelId) }
-    var isConfigurationClient: Bool { modelId == UInt32(UInt16.configurationClientModelId) }
-    var isHealthServer: Bool { modelId == UInt32(UInt16.healthServerModelId) }
-    var isHealthClient: Bool { modelId == UInt32(UInt16.healthClientModelId) }
+    var isConfigurationServer: Bool { return modelId == UInt32(UInt16.configurationServerModelId) }
+    var isConfigurationClient: Bool { return modelId == UInt32(UInt16.configurationClientModelId) }
+    var isHealthServer: Bool { return modelId == UInt32(UInt16.healthServerModelId) }
+    var isHealthClient: Bool { return modelId == UInt32(UInt16.healthClientModelId) }
     
 }
 
