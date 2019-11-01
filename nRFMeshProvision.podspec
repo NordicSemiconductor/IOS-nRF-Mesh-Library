@@ -12,7 +12,6 @@ Pod::Spec.new do |s|
   s.summary          = 'A Bluetooth Mesh library'
   s.description      = <<-DESC
   nRF Mesh is a Bluetooth Mesh compliant library that has many features such as provisioning, configuration and control of Bluetooth Mesh compliant nodes.
-This Library is under extensive development and will have missing features and capabilities that are going to be added in the near future.
                        DESC
   s.homepage         = 'https://github.com/NordicSemiconductor/IOS-nRF-Mesh-Library'
   s.license          = { :type => 'BSD-3-Clause', :file => 'LICENSE' }
