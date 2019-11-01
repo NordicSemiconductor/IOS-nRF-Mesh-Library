@@ -65,7 +65,7 @@ public struct ConfigRelayStatus: ConfigMessage {
     public init(_ state: NodeFeaturesState, count: UInt8, steps: UInt8) {
         self.state = state
         self.count = min(7, count)
-        self.steps = min(63, steps)
+        self.steps = min(31, steps)
     }
     
     public init(for node: Node) {
