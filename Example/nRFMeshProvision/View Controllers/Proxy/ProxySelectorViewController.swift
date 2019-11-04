@@ -32,7 +32,7 @@ import UIKit
 import CoreBluetooth
 import nRFMeshProvision
 
-class ScannerTableViewController: UITableViewController {
+class ProxySelectorViewController: UITableViewController {
     
     // MARK: - Outlets and Actions
     
@@ -44,39 +44,30 @@ class ScannerTableViewController: UITableViewController {
     // MARK: - Properties
     
     weak var delegate: ProvisioningViewDelegate?
+    var meshNetwork: MeshNetwork?
     
     private var centralManager: CBCentralManager!
-    private var discoveredPeripherals = [(device: UnprovisionedDevice, peripheral: CBPeripheral, rssi: Int)]()
+    private var proxies = [(device: GattBearer, rssi: Int)]()
     
     private var alert: UIAlertController?
-    private var selectedDevice: UnprovisionedDevice?
+    private var selectedDevice: GattBearer?
     
     // MARK: - UIViewController
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        tableView.setEmptyView(title: "Can't see your device?", message: "1. Make sure the device is turned on\nand connected to a power source.\n\n2. Make sure the relevant firmware\nand SoftDevices are flashed.", messageImage: #imageLiteral(resourceName: "baseline-bluetooth"))
+        tableView.setEmptyView(title: "Can't see your proxy?", message: "1. Make sure the device is turned on\nand connected to a power source.\n\n2. Make sure it's provisioned to this mesh network.", messageImage: #imageLiteral(resourceName: "baseline-bluetooth"))
         centralManager = CBCentralManager()
         
         tableView.showEmptyView()
+        
+        meshNetwork = MeshNetworkManager.instance.meshNetwork
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         if centralManager.state == .poweredOn {
             startScanning()
-        }
-    }
-    
-    // MARK: - Segue and navigation
-    
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.identifier == "identify" {
-            let destination = segue.destination as! ProvisioningViewController
-            destination.unprovisionedDevice = self.selectedDevice
-            destination.bearer = sender as? ProvisioningBearer
-            destination.delegate = delegate
-            selectedDevice = nil
         }
     }
     
@@ -87,25 +78,25 @@ class ScannerTableViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return discoveredPeripherals.count
+        return proxies.count
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "peripheralCell", for: indexPath) as! DeviceCell
-        let peripheral = discoveredPeripherals[indexPath.row]
-        cell.setupView(withDevice: peripheral.device, andRSSI: peripheral.rssi)
+        let cell = tableView.dequeueReusableCell(withIdentifier: "peripheralCell", for: indexPath) as! ProxyCell
+        let proxy = proxies[indexPath.row]
+        cell.setupView(withProxy: proxy.device, andRSSI: proxy.rssi)
         return cell
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         
-        let bearer = PBGattBearer(target: discoveredPeripherals[indexPath.row].peripheral)
+        let bearer = proxies[indexPath.row].device
         bearer.logger = MeshNetworkManager.instance.logger
         bearer.delegate = self
         
-        stopScanning()        
-        selectedDevice = discoveredPeripherals[indexPath.row].device
+        stopScanning()
+        selectedDevice = bearer
         
         alert = UIAlertController(title: "Status", message: "Connecting...", preferredStyle: .alert)
         alert!.addAction(UIAlertAction(title: "Cancel", style: .cancel) { action in
@@ -123,12 +114,12 @@ class ScannerTableViewController: UITableViewController {
 
 // MARK: - CBCentralManagerDelegate
 
-extension ScannerTableViewController: CBCentralManagerDelegate {
+extension ProxySelectorViewController: CBCentralManagerDelegate {
     
     private func startScanning() {
         activityIndicator.startAnimating()
         centralManager.delegate = self
-        centralManager.scanForPeripherals(withServices: [MeshProvisioningService.uuid],
+        centralManager.scanForPeripherals(withServices: [MeshProxyService.uuid],
                                           options: [CBCentralManagerScanOptionAllowDuplicatesKey : true])
     }
     
@@ -139,18 +130,32 @@ extension ScannerTableViewController: CBCentralManagerDelegate {
     
     func centralManager(_ central: CBCentralManager, didDiscover peripheral: CBPeripheral,
                         advertisementData: [String : Any], rssi RSSI: NSNumber) {
-        if !discoveredPeripherals.contains(where: { $0.peripheral == peripheral }) {
-            if let unprovisionedDevice = UnprovisionedDevice(advertisementData: advertisementData) {
-                discoveredPeripherals.append((unprovisionedDevice, peripheral, RSSI.intValue))
-                tableView.insertRows(at: [IndexPath(row: discoveredPeripherals.count - 1, section: 0)], with: .fade)
-                tableView.hideEmptyView()
+        guard let meshNetwork = meshNetwork else { return }
+        
+        // Is it a Network ID beacon?
+        if let networkId = advertisementData.networkId {
+            guard meshNetwork.matches(networkId: networkId) else {
+                // A Node from another mesh network.
+                return
             }
         } else {
-            if let index = discoveredPeripherals.firstIndex(where: { $0.device == peripheral }) {
-                if let cell = tableView.cellForRow(at: IndexPath(row: index, section: 0)) as? DeviceCell {
-                    cell.deviceDidUpdate(discoveredPeripherals[index].device, andRSSI: RSSI.intValue)
-                }
+            // Is it a Node Identity beacon?
+            guard let nodeIdentity = advertisementData.nodeIdentity,
+                meshNetwork.matches(hash: nodeIdentity.hash, random: nodeIdentity.random) else {
+                // A Node from another mesh network.
+                return
             }
+        }
+        
+        if let index = proxies.firstIndex(where: { $0.device.identifier == peripheral.identifier }) {
+            if let cell = tableView.cellForRow(at: IndexPath(row: index, section: 0)) as? ProxyCell {
+                cell.deviceDidUpdate(proxies[index].device, andRSSI: RSSI.intValue)
+            }
+        } else {
+            let bearer = GattBearer(target: peripheral)
+            proxies.append((device: bearer, rssi: RSSI.intValue))
+            tableView.insertRows(at: [IndexPath(row: proxies.count - 1, section: 0)], with: .fade)
+            tableView.hideEmptyView()
         }
     }
     
@@ -164,7 +169,7 @@ extension ScannerTableViewController: CBCentralManagerDelegate {
     
 }
 
-extension ScannerTableViewController: GattBearerDelegate {
+extension ProxySelectorViewController: GattBearerDelegate {
     
     func bearerDidConnect(_ bearer: Bearer) {
         DispatchQueue.main.async {
@@ -179,11 +184,12 @@ extension ScannerTableViewController: GattBearerDelegate {
     }
         
     func bearerDidOpen(_ bearer: Bearer) {
+        MeshNetworkManager.bearer.use(proxy: bearer as! GattBearer)
         DispatchQueue.main.async {
-            self.alert?.dismiss(animated: false) {
-                self.performSegue(withIdentifier: "identify", sender: bearer)
+            self.alert?.dismiss(animated: true) {
+                self.dismiss(animated: true)
             }
-            self.alert = nil
+            self.alert = nil            
         }
     }
     
