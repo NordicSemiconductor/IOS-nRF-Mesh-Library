@@ -247,6 +247,8 @@ internal extension ProxyFilter {
             // Ignore.
             break
         }
+        // And notify the app.
+        delegate?.proxyFilterUpdated(type: type, addresses: addresses)
     }
     
     /// Callback called when the manager failed to send the Proxy
@@ -262,6 +264,8 @@ internal extension ProxyFilter {
         addresses.removeAll()
         buffer.removeAll()
         busy = false
+        // And notify the app.
+        delegate?.proxyFilterUpdated(type: type, addresses: addresses)
     }
     
     /// Handler for the received Proxy Configuration Messages.
@@ -303,9 +307,6 @@ internal extension ProxyFilter {
                 return
             }
             counter = 0
-            
-            // And notify the app.
-            delegate?.proxyFilterUpdated(type: type, addresses: addresses)
         default:
             // Ignore.
             break

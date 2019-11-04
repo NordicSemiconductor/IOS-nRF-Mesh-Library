@@ -31,7 +31,7 @@
 import UIKit
 import nRFMeshProvision
 
-class ProxyFilterViewController: ProgressViewController, Editable {
+class ProxyViewController: ProgressViewController, Editable {
     
     // MARK: - Outlets and Actions
     
@@ -56,6 +56,13 @@ class ProxyFilterViewController: ProgressViewController, Editable {
         }
     }
     
+    override func shouldPerformSegue(withIdentifier identifier: String, sender: Any?) -> Bool {
+        if identifier == "selectProxy" {
+            return !MeshNetworkManager.bearer.isConnectionModeAutomatic
+        }
+        return true
+    }
+    
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         let navigationController = segue.destination as? UINavigationController
         navigationController?.presentationController?.delegate = self
@@ -64,20 +71,29 @@ class ProxyFilterViewController: ProgressViewController, Editable {
     // MARK: - Table view data source
 
     override func numberOfSections(in tableView: UITableView) -> Int {
-        return 2
+        return 3
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch section {
         case 0:
             return 2
+        case 1:
+            return 1
         default:
             return MeshNetworkManager.instance.proxyFilter?.addresses.count ?? 0
         }
     }
     
+    override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        if section == IndexPath.proxyTypeSection {
+            return "Proxy Filter"
+        }
+        return nil
+    }
+    
     override func tableView(_ tableView: UITableView, titleForFooterInSection section: Int) -> String? {
-        if section == 0 {
+        if section == IndexPath.proxyTypeSection {
             if MeshNetworkManager.instance.proxyFilter?.type == .blacklist {
                 return "The black list filter accepts all destination addresses except those that have been added to the black list."
             } else {
@@ -91,10 +107,19 @@ class ProxyFilterViewController: ProgressViewController, Editable {
         let manager = MeshNetworkManager.instance
         let proxyFilter = manager.proxyFilter!
         
+        if indexPath == .mode {
+            let cell = tableView.dequeueReusableCell(withIdentifier: "mode", for: indexPath) as! ConnectionModeCell
+            cell.delegate = self
+            return cell
+        }
         if indexPath == .status {
             let cell = tableView.dequeueReusableCell(withIdentifier: "status", for: indexPath)
             let bearer = MeshNetworkManager.bearer!
-            cell.detailTextLabel?.text = bearer.isOpen ? "\(bearer.name ?? "Unknown device")" : "Connecting..."
+            cell.detailTextLabel?.text = bearer.isOpen ?
+                "\(bearer.name ?? "Unknown device")" :
+                bearer.isConnectionModeAutomatic ? "Connecting..." : "Not selected"
+            cell.accessoryType = bearer.isConnectionModeAutomatic ? .none : .disclosureIndicator
+            cell.selectionStyle = bearer.isConnectionModeAutomatic ? .none : .default
             return cell
         }
         if indexPath == .control {
@@ -109,6 +134,10 @@ class ProxyFilterViewController: ProgressViewController, Editable {
         return cell
     }
     
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
+    }
+    
     override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
         return indexPath.section == IndexPath.addressesSection
     }
@@ -121,7 +150,7 @@ class ProxyFilterViewController: ProgressViewController, Editable {
 
 }
 
-extension ProxyFilterViewController: UIAdaptivePresentationControllerDelegate {
+extension ProxyViewController: UIAdaptivePresentationControllerDelegate {
     
     func presentationControllerDidDismiss(_ presentationController: UIPresentationController) {
         MeshNetworkManager.instance.proxyFilter?.delegate = self
@@ -130,7 +159,7 @@ extension ProxyFilterViewController: UIAdaptivePresentationControllerDelegate {
     
 }
 
-extension ProxyFilterViewController: BearerDelegate {
+extension ProxyViewController: BearerDelegate {
     
     func bearerDidOpen(_ bearer: Bearer) {
         addButton.isEnabled = true
@@ -139,12 +168,20 @@ extension ProxyFilterViewController: BearerDelegate {
     
     func bearer(_ bearer: Bearer, didClose error: Error?) {
         addButton.isEnabled = false
-        tableView.reloadRows(at: [.status, .control], with: .automatic)
+        MeshNetworkManager.instance.proxyFilter?.clear()
     }
     
 }
 
-extension ProxyFilterViewController: ProxyFilterTypeDelegate {
+extension ProxyViewController: ConnectionModeDelegate {
+    
+    func connectionModeDidChange(automatic: Bool) {
+        tableView.reloadRows(at: [.status], with: .automatic)
+    }
+    
+}
+
+extension ProxyViewController: ProxyFilterTypeDelegate {
     
     func filterTypeDidChange(_ type: ProxyFilerType) {
         guard let proxyFilter = MeshNetworkManager.instance.proxyFilter else {
@@ -165,11 +202,11 @@ extension ProxyFilterViewController: ProxyFilterTypeDelegate {
     
 }
 
-extension ProxyFilterViewController: ProxyFilterDelegate {
+extension ProxyViewController: ProxyFilterDelegate {
     
     func proxyFilterUpdated(type: ProxyFilerType, addresses: Set<Address>) {
         done() {
-            self.tableView.reloadSections(.addresses, with: .automatic)
+            self.tableView.reloadData()
             if addresses.isEmpty {
                 self.showEmptyView()
             } else {
@@ -180,7 +217,7 @@ extension ProxyFilterViewController: ProxyFilterDelegate {
     
 }
 
-private extension ProxyFilterViewController {
+private extension ProxyViewController {
     
     /// Deletes the given address from Proxy Filter.
     ///
@@ -199,10 +236,12 @@ private extension ProxyFilterViewController {
 
 private extension IndexPath {
     static let statusSection = 0
-    static let addressesSection = 1
+    static let proxyTypeSection = 1
+    static let addressesSection = 2
     
-    static let status  = IndexPath(row: 0, section: IndexPath.statusSection)
-    static let control = IndexPath(row: 1, section: IndexPath.statusSection)
+    static let mode    = IndexPath(row: 0, section: IndexPath.statusSection)
+    static let status  = IndexPath(row: 1, section: IndexPath.statusSection)
+    static let control = IndexPath(row: 0, section: IndexPath.proxyTypeSection)
 }
 
 private extension IndexSet {
