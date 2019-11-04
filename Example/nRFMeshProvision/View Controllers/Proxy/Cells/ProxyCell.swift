@@ -32,12 +32,11 @@ import UIKit
 import CoreBluetooth
 import nRFMeshProvision
 
-class DeviceCell: UITableViewCell {
+class ProxyCell: UITableViewCell {
 
     //MARK: - Outlets and Actions
     
     @IBOutlet weak var name: UILabel!
-    @IBOutlet weak var uuid: UILabel!
     @IBOutlet weak var rssiIcon: UIImageView!
     
     // MARK: - Properties
@@ -46,23 +45,22 @@ class DeviceCell: UITableViewCell {
     
     // MARK: - Implementation
     
-    func setupView(withDevice device: UnprovisionedDevice, andRSSI rssi: Int) {
-        name.text = device.name ?? "Unknown Device"
-        uuid.text = device.uuid.uuidString
+    func setupView(withProxy proxy: GattBearer, andRSSI rssi: Int) {
+        name.text = proxy.name ?? "Unknown Proxy"
         updateRssi(rssi)
     }
     
-    func deviceDidUpdate(_ device: UnprovisionedDevice, andRSSI rssi: Int) {
+    func deviceDidUpdate(_ device: GattBearer, andRSSI rssi: Int) {
         if Date().timeIntervalSince(lastUpdateTimestamp) > 1.0 {
             lastUpdateTimestamp = Date()
-            setupView(withDevice: device, andRSSI: rssi)
+            setupView(withProxy: device, andRSSI: rssi)
             
             // Hide the RSSI icon when the device is no loger advertising.
             // Timeout is around 5 seconds.
             DispatchQueue.main.asyncAfter(deadline: .now() + 5.0) { [weak self] in
                 guard let self = self else { return }
                 if Date().timeIntervalSince(self.lastUpdateTimestamp) > 4.5 {
-                    self.setupView(withDevice: device, andRSSI: -128)
+                    self.setupView(withProxy: device, andRSSI: -128)
                 }
             }
         }

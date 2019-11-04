@@ -53,8 +53,8 @@
         <!--ProxyFilter-->
         <scene sceneID="hTx-iH-lEi">
             <objects>
-                <viewControllerPlaceholder storyboardName="ProxyFilter" id="z61-cg-pzs" sceneMemberID="viewController">
-                    <tabBarItem key="tabBarItem" title="Proxy Filter" image="tab_filter_outline_black_24pt" id="pSQ-Pc-nhc"/>
+                <viewControllerPlaceholder storyboardName="Proxy" id="z61-cg-pzs" sceneMemberID="viewController">
+                    <tabBarItem key="tabBarItem" title="Proxy" image="tab_filter_outline_black_24pt" id="pSQ-Pc-nhc"/>
                 </viewControllerPlaceholder>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="KyR-6N-Wgt" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>

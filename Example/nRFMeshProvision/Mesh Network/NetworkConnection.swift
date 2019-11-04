@@ -43,6 +43,8 @@ import nRFMeshProvision
 /// receive outgoing messages. However, the `dataDelegate` will be
 /// notified about messages received from any of the connected proxies.
 class NetworkConnection: NSObject, Bearer {
+    private let connectionModeKey = "connectionMode"
+    
     /// Maximum number of connections that `NetworkConnection` can
     /// handle.
     static let maxConnections = 1
@@ -83,16 +85,30 @@ class NetworkConnection: NSObject, Bearer {
     var name: String? {
         return proxies.first(where: { $0.isOpen })?.name
     }
+    /// Whether the connection to mesh network should be managed automatically,
+    /// or manually.
+    var isConnectionModeAutomatic: Bool {
+        get {
+            return UserDefaults.standard.bool(forKey: connectionModeKey)
+        }
+        set {
+            UserDefaults.standard.set(newValue, forKey: connectionModeKey)
+        }
+    }
     
     init(to meshNetwork: MeshNetwork) {
         centralManager = CBCentralManager()
         self.meshNetwork = meshNetwork
         super.init()
         centralManager.delegate = self
+        
+        // By dafult the connection mode is automatic.
+        UserDefaults.standard.register(defaults: [connectionModeKey : true])
     }
     
     func open() {
-        if !isStarted && centralManager.state == .poweredOn {
+        if !isStarted && isConnectionModeAutomatic &&
+           centralManager.state == .poweredOn {
             centralManager.scanForPeripherals(withServices: [MeshProxyService.uuid], options: nil)
         }
         isStarted = true
@@ -118,6 +134,26 @@ class NetworkConnection: NSObject, Bearer {
         try proxy.send(data, ofType: type)
     }
     
+    /// If manual connection mode is enabled, this method may set the
+    /// proxy that will be used by the mesh network.
+    ///
+    /// - parameter bearer: The GATT Bearer proxy to use.
+    func use(proxy bearer: GattBearer) {
+        guard !isConnectionModeAutomatic else {
+            return
+        }
+        
+        bearer.delegate = self
+        bearer.dataDelegate = self
+        bearer.logger = logger
+        
+        proxies.filter { bearer.identifier != $0.identifier }.forEach { $0.close() }
+        proxies.append(bearer)
+        if bearer.isOpen {
+            bearerDidOpen(self)
+        }
+    }
+    
 }
 
 extension NetworkConnection: CBCentralManagerDelegate {
@@ -125,7 +161,8 @@ extension NetworkConnection: CBCentralManagerDelegate {
     func centralManagerDidUpdateState(_ central: CBCentralManager) {
         switch central.state {
         case .poweredOn:
-            if isStarted && proxies.count < NetworkConnection.maxConnections {
+            if isStarted && isConnectionModeAutomatic &&
+               proxies.count < NetworkConnection.maxConnections {
                 central.scanForPeripherals(withServices: [MeshProxyService.uuid], options: nil)
             }
         case .poweredOff, .resetting:
@@ -153,10 +190,10 @@ extension NetworkConnection: CBCentralManagerDelegate {
             }
         }
         
-        guard !proxies.contains(where: { $0.identifier == peripheral.identifier }),
-              let bearer = GattBearer(target: peripheral) else {
+        guard !proxies.contains(where: { $0.identifier == peripheral.identifier }) else {
             return
         }
+        let bearer = GattBearer(target: peripheral)
         proxies.append(bearer)
         bearer.delegate = self
         bearer.dataDelegate = self
@@ -183,7 +220,8 @@ extension NetworkConnection: GattBearerDelegate, BearerDataDelegate {
         if let index = proxies.firstIndex(of: bearer as! GattBearer) {
             proxies.remove(at: index)
         }
-        if isStarted && proxies.count < NetworkConnection.maxConnections {
+        if isStarted && isConnectionModeAutomatic &&
+           proxies.count < NetworkConnection.maxConnections {
             centralManager.scanForPeripherals(withServices: [MeshProxyService.uuid], options: nil)
         }
         if proxies.isEmpty {

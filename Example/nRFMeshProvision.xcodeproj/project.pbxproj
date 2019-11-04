@@ -64,6 +64,9 @@
 		5283528222806D7C0097B949 /* NetworkKeySelectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5283528122806D7C0097B949 /* NetworkKeySelectionViewController.swift */; };
 		528352B42284139F0097B949 /* ProxyProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 528352B32284139F0097B949 /* ProxyProtocol.swift */; };
 		528352BC2285B6150097B949 /* OobSelector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 528352BB2285B6150097B949 /* OobSelector.swift */; };
+		5288C20423704EF300321ED3 /* ConnectionModeCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5288C20323704EF300321ED3 /* ConnectionModeCell.swift */; };
+		5288C2062370571100321ED3 /* ProxySelectorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5288C2052370571100321ED3 /* ProxySelectorViewController.swift */; };
+		5288C20823705C8D00321ED3 /* ProxyCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5288C20723705C8D00321ED3 /* ProxyCell.swift */; };
 		528AB9F8228D847C000BE9DC /* NetworkViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 528AB9F7228D847C000BE9DC /* NetworkViewController.swift */; };
 		528AB9FA228D856C000BE9DC /* ProvisioningViewDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 528AB9F9228D856C000BE9DC /* ProvisioningViewDelegate.swift */; };
 		5294DADA22B109810041370E /* Pdus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5294DAD922B109810041370E /* Pdus.swift */; };
@@ -85,11 +88,11 @@
 		52A9C1C52313D7D80036792A /* GenericLevelViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52A9C1C32313D7D80036792A /* GenericLevelViewCell.swift */; };
 		52A9C1C62313D7D80036792A /* GenericLevel.xib in Resources */ = {isa = PBXBuildFile; fileRef = 52A9C1C42313D7D80036792A /* GenericLevel.xib */; };
 		52B7F67D229829F200B0A42F /* Addresses.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52B7F67C229829F200B0A42F /* Addresses.swift */; };
-		52CD0A50232FA6CD00A9A181 /* ProxyFilterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52CD0A4F232FA6CD00A9A181 /* ProxyFilterViewController.swift */; };
+		52CD0A50232FA6CD00A9A181 /* ProxyViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52CD0A4F232FA6CD00A9A181 /* ProxyViewController.swift */; };
 		52CD0A53232FA79300A9A181 /* FilterTypeCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52CD0A52232FA79300A9A181 /* FilterTypeCell.swift */; };
 		52CD0A55232FC11700A9A181 /* AddressCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52CD0A54232FC11700A9A181 /* AddressCell.swift */; };
 		52CD0A582330BDE600A9A181 /* Groups.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 52CD0A562330BDE500A9A181 /* Groups.storyboard */; };
-		52CD0A5B2330BF4800A9A181 /* ProxyFilter.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 52CD0A592330BF4800A9A181 /* ProxyFilter.storyboard */; };
+		52CD0A5B2330BF4800A9A181 /* Proxy.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 52CD0A592330BF4800A9A181 /* Proxy.storyboard */; };
 		52CD0A5E2330C04700A9A181 /* Network.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 52CD0A5C2330C04700A9A181 /* Network.storyboard */; };
 		52CD0A602330D71900A9A181 /* AddAddressViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52CD0A5F2330D71900A9A181 /* AddAddressViewController.swift */; };
 		52CD0A622330DCFF00A9A181 /* CustomAddressCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52CD0A612330DCFF00A9A181 /* CustomAddressCell.swift */; };
@@ -185,6 +188,9 @@
 		5283528122806D7C0097B949 /* NetworkKeySelectionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkKeySelectionViewController.swift; sourceTree = "<group>"; };
 		528352B32284139F0097B949 /* ProxyProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProxyProtocol.swift; sourceTree = "<group>"; };
 		528352BB2285B6150097B949 /* OobSelector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OobSelector.swift; sourceTree = "<group>"; };
+		5288C20323704EF300321ED3 /* ConnectionModeCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionModeCell.swift; sourceTree = "<group>"; };
+		5288C2052370571100321ED3 /* ProxySelectorViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProxySelectorViewController.swift; sourceTree = "<group>"; };
+		5288C20723705C8D00321ED3 /* ProxyCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProxyCell.swift; sourceTree = "<group>"; };
 		528AB9F7228D847C000BE9DC /* NetworkViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkViewController.swift; sourceTree = "<group>"; };
 		528AB9F9228D856C000BE9DC /* ProvisioningViewDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProvisioningViewDelegate.swift; sourceTree = "<group>"; };
 		5294DAD922B109810041370E /* Pdus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Pdus.swift; sourceTree = "<group>"; };
@@ -208,11 +214,11 @@
 		52A9C1C32313D7D80036792A /* GenericLevelViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericLevelViewCell.swift; sourceTree = "<group>"; };
 		52A9C1C42313D7D80036792A /* GenericLevel.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = GenericLevel.xib; sourceTree = "<group>"; };
 		52B7F67C229829F200B0A42F /* Addresses.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Addresses.swift; sourceTree = "<group>"; };
-		52CD0A4F232FA6CD00A9A181 /* ProxyFilterViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProxyFilterViewController.swift; sourceTree = "<group>"; };
+		52CD0A4F232FA6CD00A9A181 /* ProxyViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProxyViewController.swift; sourceTree = "<group>"; };
 		52CD0A52232FA79300A9A181 /* FilterTypeCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterTypeCell.swift; sourceTree = "<group>"; };
 		52CD0A54232FC11700A9A181 /* AddressCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddressCell.swift; sourceTree = "<group>"; };
 		52CD0A572330BDE500A9A181 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Groups.storyboard; sourceTree = "<group>"; };
-		52CD0A5A2330BF4800A9A181 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/ProxyFilter.storyboard; sourceTree = "<group>"; };
+		52CD0A5A2330BF4800A9A181 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Proxy.storyboard; sourceTree = "<group>"; };
 		52CD0A5D2330C04700A9A181 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Network.storyboard; sourceTree = "<group>"; };
 		52CD0A5F2330D71900A9A181 /* AddAddressViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddAddressViewController.swift; sourceTree = "<group>"; };
 		52CD0A612330DCFF00A9A181 /* CustomAddressCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomAddressCell.swift; sourceTree = "<group>"; };
@@ -326,7 +332,7 @@
 				52CD0A5C2330C04700A9A181 /* Network.storyboard */,
 				523F778B22CCEA900030EA6A /* SetPublication.storyboard */,
 				52CD0A562330BDE500A9A181 /* Groups.storyboard */,
-				52CD0A592330BF4800A9A181 /* ProxyFilter.storyboard */,
+				52CD0A592330BF4800A9A181 /* Proxy.storyboard */,
 				5283524E227887970097B949 /* Settings.storyboard */,
 			);
 			path = UI;
@@ -417,7 +423,7 @@
 				526021F4234365E100E88F06 /* Control */,
 				52835256227AED670097B949 /* Network */,
 				52518B2F22E0B14500A1FD1E /* Groups */,
-				52CD0A4E232F92E100A9A181 /* Proxy Filter */,
+				52CD0A4E232F92E100A9A181 /* Proxy */,
 				52835255227AED0A0097B949 /* Settings */,
 			);
 			path = "View Controllers";
@@ -473,14 +479,15 @@
 			name = Utils;
 			sourceTree = "<group>";
 		};
-		52CD0A4E232F92E100A9A181 /* Proxy Filter */ = {
+		52CD0A4E232F92E100A9A181 /* Proxy */ = {
 			isa = PBXGroup;
 			children = (
 				52CD0A51232FA76A00A9A181 /* Cells */,
-				52CD0A4F232FA6CD00A9A181 /* ProxyFilterViewController.swift */,
+				52CD0A4F232FA6CD00A9A181 /* ProxyViewController.swift */,
 				52CD0A5F2330D71900A9A181 /* AddAddressViewController.swift */,
+				5288C2052370571100321ED3 /* ProxySelectorViewController.swift */,
 			);
-			path = "Proxy Filter";
+			path = Proxy;
 			sourceTree = "<group>";
 		};
 		52CD0A51232FA76A00A9A181 /* Cells */ = {
@@ -489,6 +496,8 @@
 				52CD0A52232FA79300A9A181 /* FilterTypeCell.swift */,
 				52CD0A54232FC11700A9A181 /* AddressCell.swift */,
 				52CD0A612330DCFF00A9A181 /* CustomAddressCell.swift */,
+				5288C20323704EF300321ED3 /* ConnectionModeCell.swift */,
+				5288C20723705C8D00321ED3 /* ProxyCell.swift */,
 			);
 			path = Cells;
 			sourceTree = "<group>";
@@ -747,7 +756,7 @@
 				52CD0A5E2330C04700A9A181 /* Network.storyboard in Resources */,
 				52E54CDB2343878B00478F05 /* Control.storyboard in Resources */,
 				3089BCA02099CA4900E30192 /* LaunchScreen.storyboard in Resources */,
-				52CD0A5B2330BF4800A9A181 /* ProxyFilter.storyboard in Resources */,
+				52CD0A5B2330BF4800A9A181 /* Proxy.storyboard in Resources */,
 				607FACDB1AFB9204008FA782 /* Main.storyboard in Resources */,
 				52A9C1C62313D7D80036792A /* GenericLevel.xib in Resources */,
 				5231404E230AC4680074325A /* VendorModel.xib in Resources */,
@@ -835,14 +844,16 @@
 				52835269227B2BAE0097B949 /* ScannerTableViewController.swift in Sources */,
 				528352BC2285B6150097B949 /* OobSelector.swift in Sources */,
 				52E54CDF23438D2600478F05 /* GenericOnOffServerDelegate.swift in Sources */,
+				5288C20823705C8D00321ED3 /* ProxyCell.swift in Sources */,
 				523F777B22CB86A00030EA6A /* ModelBindAppKeyViewController.swift in Sources */,
 				52DF5D8F229691BD00C297C1 /* NetworkConnection.swift in Sources */,
 				52547F27232A3F470002AA7B /* EditRangesViewController.swift in Sources */,
 				521215312316C36B0059FB3D /* GenericLevelGroupCell.swift in Sources */,
 				52E54CDD23438B2E00478F05 /* GenericOnOffClientDelegate.swift in Sources */,
 				52DF5D8C228DAA0500C297C1 /* NodeViewCell.swift in Sources */,
-				52CD0A50232FA6CD00A9A181 /* ProxyFilterViewController.swift in Sources */,
+				52CD0A50232FA6CD00A9A181 /* ProxyViewController.swift in Sources */,
 				528AB9FA228D856C000BE9DC /* ProvisioningViewDelegate.swift in Sources */,
+				5288C20423704EF300321ED3 /* ConnectionModeCell.swift in Sources */,
 				52547F28232A3F470002AA7B /* RangeView.swift in Sources */,
 				52314041230192C50074325A /* ModelViewCell.swift in Sources */,
 				5283524822733BCF0097B949 /* EditKeyViewController.swift in Sources */,
@@ -900,6 +911,7 @@
 				522AFFDE22BBBC6400521EDC /* NodeFeaturesCell.swift in Sources */,
 				523F776E22C63EAD0030EA6A /* NodeAddAppKeyViewController.swift in Sources */,
 				529B7643225222E8008F1CE7 /* Address+String.swift in Sources */,
+				5288C2062370571100321ED3 /* ProxySelectorViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -966,12 +978,12 @@
 			name = Groups.storyboard;
 			sourceTree = "<group>";
 		};
-		52CD0A592330BF4800A9A181 /* ProxyFilter.storyboard */ = {
+		52CD0A592330BF4800A9A181 /* Proxy.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
 				52CD0A5A2330BF4800A9A181 /* Base */,
 			);
-			name = ProxyFilter.storyboard;
+			name = Proxy.storyboard;
 			sourceTree = "<group>";
 		};
 		52CD0A5C2330C04700A9A181 /* Network.storyboard */ = {
