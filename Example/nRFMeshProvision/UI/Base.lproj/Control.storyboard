@@ -218,6 +218,60 @@
                                     <outlet property="icon" destination="KSw-i1-MGx" id="iXu-jC-jtn"/>
                                 </connections>
                             </collectionViewCell>
+                            <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="00590001" id="XSm-FN-yJm" customClass="SimpleOnOffClientCell" customModule="nRFMeshProvision_Example" customModuleProvider="target">
+                                <rect key="frame" x="16" y="330" width="130" height="130"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <collectionViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="WPp-KP-9Qd">
+                                    <rect key="frame" x="0.0" y="0.0" width="130" height="130"/>
+                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                    <subviews>
+                                        <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="bottom" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="groups_generic_onoff_outline" translatesAutoresizingMaskIntoConstraints="NO" id="w88-ff-jaJ">
+                                            <rect key="frame" x="0.0" y="0.0" width="130" height="72"/>
+                                            <color key="tintColor" red="0.0" green="0.46666666670000001" blue="0.7843137255" alpha="1" colorSpace="calibratedRGB"/>
+                                        </imageView>
+                                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Oib-i6-1MV">
+                                            <rect key="frame" x="0.0" y="82" width="65" height="48"/>
+                                            <constraints>
+                                                <constraint firstAttribute="height" constant="48" id="Chc-EM-btV"/>
+                                            </constraints>
+                                            <fontDescription key="fontDescription" type="system" pointSize="18"/>
+                                            <state key="normal" title="ON"/>
+                                            <connections>
+                                                <action selector="onTapped:" destination="XSm-FN-yJm" eventType="touchUpInside" id="YwK-ky-gDG"/>
+                                            </connections>
+                                        </button>
+                                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Yfd-1S-qki">
+                                            <rect key="frame" x="65" y="82" width="65" height="48"/>
+                                            <constraints>
+                                                <constraint firstAttribute="height" constant="48" id="0cz-uc-R2g"/>
+                                            </constraints>
+                                            <fontDescription key="fontDescription" type="system" pointSize="18"/>
+                                            <state key="normal" title="OFF"/>
+                                            <connections>
+                                                <action selector="offTapped:" destination="XSm-FN-yJm" eventType="touchUpInside" id="yan-NY-uui"/>
+                                            </connections>
+                                        </button>
+                                    </subviews>
+                                    <color key="backgroundColor" cocoaTouchSystemColor="tableCellGroupedBackgroundColor"/>
+                                    <constraints>
+                                        <constraint firstAttribute="bottom" secondItem="Oib-i6-1MV" secondAttribute="bottom" id="2wm-ak-vFv"/>
+                                        <constraint firstItem="w88-ff-jaJ" firstAttribute="leading" secondItem="WPp-KP-9Qd" secondAttribute="leading" id="8Hl-9r-NDn"/>
+                                        <constraint firstAttribute="trailing" secondItem="Oib-i6-1MV" secondAttribute="trailing" multiplier="2" id="OYd-l5-RW1"/>
+                                        <constraint firstItem="Yfd-1S-qki" firstAttribute="leading" secondItem="Oib-i6-1MV" secondAttribute="trailing" id="R4f-5W-7WM"/>
+                                        <constraint firstAttribute="trailing" secondItem="w88-ff-jaJ" secondAttribute="trailing" id="Rbn-LI-VsB"/>
+                                        <constraint firstAttribute="trailing" secondItem="Yfd-1S-qki" secondAttribute="trailing" id="UyQ-PH-gtv"/>
+                                        <constraint firstAttribute="bottom" secondItem="w88-ff-jaJ" secondAttribute="bottom" multiplier="1.8" id="ejr-4y-s2m"/>
+                                        <constraint firstAttribute="bottom" secondItem="Yfd-1S-qki" secondAttribute="bottom" id="nL0-Vj-fX9"/>
+                                        <constraint firstItem="w88-ff-jaJ" firstAttribute="top" secondItem="WPp-KP-9Qd" secondAttribute="top" id="uHe-6k-IU5"/>
+                                        <constraint firstItem="Oib-i6-1MV" firstAttribute="leading" secondItem="WPp-KP-9Qd" secondAttribute="leading" id="z6W-U8-9d9"/>
+                                    </constraints>
+                                </collectionViewCellContentView>
+                                <connections>
+                                    <outlet property="icon" destination="w88-ff-jaJ" id="AeB-UF-WWR"/>
+                                    <outlet property="offButton" destination="Yfd-1S-qki" id="H6P-SF-yRO"/>
+                                    <outlet property="onButton" destination="Oib-i6-1MV" id="9FY-bI-yWC"/>
+                                </connections>
+                            </collectionViewCell>
                         </cells>
                         <collectionReusableView key="sectionHeaderView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" reuseIdentifier="element" id="NIO-oH-X2Q" customClass="ElementSectionView" customModule="nRFMeshProvision_Example" customModuleProvider="target">
                             <rect key="frame" x="0.0" y="0.0" width="414" height="50"/>
