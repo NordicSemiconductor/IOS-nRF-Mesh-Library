@@ -67,6 +67,12 @@
 		5288C20423704EF300321ED3 /* ConnectionModeCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5288C20323704EF300321ED3 /* ConnectionModeCell.swift */; };
 		5288C2062370571100321ED3 /* ProxySelectorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5288C2052370571100321ED3 /* ProxySelectorViewController.swift */; };
 		5288C20823705C8D00321ED3 /* ProxyCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5288C20723705C8D00321ED3 /* ProxyCell.swift */; };
+		5288C20A2371A89900321ED3 /* SimpleOnOffClientDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5288C2092371A89900321ED3 /* SimpleOnOffClientDelegate.swift */; };
+		5288C20E2371A91900321ED3 /* SimpleOnOffSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5288C20D2371A91900321ED3 /* SimpleOnOffSet.swift */; };
+		5288C2102371B0F700321ED3 /* SimpleOnOffGet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5288C20F2371B0F700321ED3 /* SimpleOnOffGet.swift */; };
+		5288C2122371B16500321ED3 /* SimpleOnOffSetUnacknowledged.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5288C2112371B16500321ED3 /* SimpleOnOffSetUnacknowledged.swift */; };
+		5288C2142371B32200321ED3 /* SimpleOnOffStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5288C2132371B32200321ED3 /* SimpleOnOffStatus.swift */; };
+		5288C2162371BC1300321ED3 /* SimpleOnOffClientCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5288C2152371BC1300321ED3 /* SimpleOnOffClientCell.swift */; };
 		528AB9F8228D847C000BE9DC /* NetworkViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 528AB9F7228D847C000BE9DC /* NetworkViewController.swift */; };
 		528AB9FA228D856C000BE9DC /* ProvisioningViewDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 528AB9F9228D856C000BE9DC /* ProvisioningViewDelegate.swift */; };
 		5294DADA22B109810041370E /* Pdus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5294DAD922B109810041370E /* Pdus.swift */; };
@@ -191,6 +197,12 @@
 		5288C20323704EF300321ED3 /* ConnectionModeCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionModeCell.swift; sourceTree = "<group>"; };
 		5288C2052370571100321ED3 /* ProxySelectorViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProxySelectorViewController.swift; sourceTree = "<group>"; };
 		5288C20723705C8D00321ED3 /* ProxyCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProxyCell.swift; sourceTree = "<group>"; };
+		5288C2092371A89900321ED3 /* SimpleOnOffClientDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimpleOnOffClientDelegate.swift; sourceTree = "<group>"; };
+		5288C20D2371A91900321ED3 /* SimpleOnOffSet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimpleOnOffSet.swift; sourceTree = "<group>"; };
+		5288C20F2371B0F700321ED3 /* SimpleOnOffGet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimpleOnOffGet.swift; sourceTree = "<group>"; };
+		5288C2112371B16500321ED3 /* SimpleOnOffSetUnacknowledged.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimpleOnOffSetUnacknowledged.swift; sourceTree = "<group>"; };
+		5288C2132371B32200321ED3 /* SimpleOnOffStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimpleOnOffStatus.swift; sourceTree = "<group>"; };
+		5288C2152371BC1300321ED3 /* SimpleOnOffClientCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimpleOnOffClientCell.swift; sourceTree = "<group>"; };
 		528AB9F7228D847C000BE9DC /* NetworkViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkViewController.swift; sourceTree = "<group>"; };
 		528AB9F9228D856C000BE9DC /* ProvisioningViewDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProvisioningViewDelegate.swift; sourceTree = "<group>"; };
 		5294DAD922B109810041370E /* Pdus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Pdus.swift; sourceTree = "<group>"; };
@@ -465,6 +477,26 @@
 			path = Provisioning;
 			sourceTree = "<group>";
 		};
+		5288C20B2371A8E000321ED3 /* Simple OnOff */ = {
+			isa = PBXGroup;
+			children = (
+				5288C20C2371A90200321ED3 /* Messages */,
+				5288C2092371A89900321ED3 /* SimpleOnOffClientDelegate.swift */,
+			);
+			path = "Simple OnOff";
+			sourceTree = "<group>";
+		};
+		5288C20C2371A90200321ED3 /* Messages */ = {
+			isa = PBXGroup;
+			children = (
+				5288C20D2371A91900321ED3 /* SimpleOnOffSet.swift */,
+				5288C20F2371B0F700321ED3 /* SimpleOnOffGet.swift */,
+				5288C2112371B16500321ED3 /* SimpleOnOffSetUnacknowledged.swift */,
+				5288C2132371B32200321ED3 /* SimpleOnOffStatus.swift */,
+			);
+			path = Messages;
+			sourceTree = "<group>";
+		};
 		529B757322410784008F1CE7 /* Utils */ = {
 			isa = PBXGroup;
 			children = (
@@ -525,6 +557,7 @@
 		52DF5D8D22968F7C00C297C1 /* Mesh Network */ = {
 			isa = PBXGroup;
 			children = (
+				5288C20B2371A8E000321ED3 /* Simple OnOff */,
 				52DF5D8E229691BD00C297C1 /* NetworkConnection.swift */,
 				52E54CDC23438B2E00478F05 /* GenericOnOffClientDelegate.swift */,
 				52E54CDE23438D2600478F05 /* GenericOnOffServerDelegate.swift */,
@@ -551,6 +584,7 @@
 				52E54CD32343874000478F05 /* GenericOnOffServerCell.swift */,
 				52E54CD52343875400478F05 /* GenericLevelClientCell.swift */,
 				52E54CD72343876000478F05 /* GenericLevelServerCell.swift */,
+				5288C2152371BC1300321ED3 /* SimpleOnOffClientCell.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -853,6 +887,7 @@
 				52DF5D8C228DAA0500C297C1 /* NodeViewCell.swift in Sources */,
 				52CD0A50232FA6CD00A9A181 /* ProxyViewController.swift in Sources */,
 				528AB9FA228D856C000BE9DC /* ProvisioningViewDelegate.swift in Sources */,
+				5288C2162371BC1300321ED3 /* SimpleOnOffClientCell.swift in Sources */,
 				5288C20423704EF300321ED3 /* ConnectionModeCell.swift in Sources */,
 				52547F28232A3F470002AA7B /* RangeView.swift in Sources */,
 				52314041230192C50074325A /* ModelViewCell.swift in Sources */,
@@ -862,6 +897,7 @@
 				528AB9F8228D847C000BE9DC /* NetworkViewController.swift in Sources */,
 				523F778722CCDE250030EA6A /* SetPublicationViewController.swift in Sources */,
 				52CD0A622330DCFF00A9A181 /* CustomAddressCell.swift in Sources */,
+				5288C2122371B16500321ED3 /* SimpleOnOffSetUnacknowledged.swift in Sources */,
 				52547F29232A3F470002AA7B /* FabView.swift in Sources */,
 				52A9C17D230EB9490036792A /* GenericOnOffViewCell.swift in Sources */,
 				52E54CD62343875400478F05 /* GenericLevelClientCell.swift in Sources */,
@@ -874,11 +910,13 @@
 				607FACD61AFB9204008FA782 /* AppDelegate.swift in Sources */,
 				523F776C22C6324A0030EA6A /* ProgressViewController.swift in Sources */,
 				52547F25232A3F470002AA7B /* EditProvisionerViewController.swift in Sources */,
+				5288C2102371B0F700321ED3 /* SimpleOnOffGet.swift in Sources */,
 				529B756D223FE7F1008F1CE7 /* RootViewController.swift in Sources */,
 				52CD0A53232FA79300A9A181 /* FilterTypeCell.swift in Sources */,
 				523F776822C615CE0030EA6A /* NodeAppKeysViewController.swift in Sources */,
 				523F777922CB57190030EA6A /* ModelViewController.swift in Sources */,
 				522AFFE022C2376C00521EDC /* ElementViewController.swift in Sources */,
+				5288C20E2371A91900321ED3 /* SimpleOnOffSet.swift in Sources */,
 				523F779722CE2BF60030EA6A /* SetPublicationDestinationsViewController.swift in Sources */,
 				52E54CD023437D3D00478F05 /* ModelControlCell.swift in Sources */,
 				523F776422C4EDD90030EA6A /* SwitchCell.swift in Sources */,
@@ -896,6 +934,7 @@
 				529B7572223FFC39008F1CE7 /* AppKeysViewController.swift in Sources */,
 				52E54CD22343871E00478F05 /* GenericOnOffClientCell.swift in Sources */,
 				52E54CCD23437B9700478F05 /* ElementSectionView.swift in Sources */,
+				5288C2142371B32200321ED3 /* SimpleOnOffStatus.swift in Sources */,
 				5251498122E0E36600CBF1E3 /* AddGroupViewController.swift in Sources */,
 				52835258227AEDA30097B949 /* DeviceCell.swift in Sources */,
 				52E54CD82343876000478F05 /* GenericLevelServerCell.swift in Sources */,
@@ -905,6 +944,7 @@
 				529B7570223FF1AE008F1CE7 /* SettingsViewController.swift in Sources */,
 				526021F62343660200E88F06 /* ControlViewCell.swift in Sources */,
 				52A9C1C52313D7D80036792A /* GenericLevelViewCell.swift in Sources */,
+				5288C20A2371A89900321ED3 /* SimpleOnOffClientDelegate.swift in Sources */,
 				529B759C2243BA10008F1CE7 /* NetworkKeysViewController.swift in Sources */,
 				52518B3122E0B18400A1FD1E /* GroupsViewController.swift in Sources */,
 				5283528222806D7C0097B949 /* NetworkKeySelectionViewController.swift in Sources */,
