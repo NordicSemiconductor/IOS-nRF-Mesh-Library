@@ -146,7 +146,7 @@ extension ScannerTableViewController: CBCentralManagerDelegate {
                 tableView.hideEmptyView()
             }
         } else {
-            if let index = discoveredPeripherals.firstIndex(where: { $0.device == peripheral }) {
+            if let index = discoveredPeripherals.firstIndex(where: { $0.peripheral == peripheral }) {
                 if let cell = tableView.cellForRow(at: IndexPath(row: index, section: 0)) as? DeviceCell {
                     cell.deviceDidUpdate(discoveredPeripherals[index].device, andRSSI: RSSI.intValue)
                 }
