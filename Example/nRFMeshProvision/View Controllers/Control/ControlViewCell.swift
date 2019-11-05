@@ -124,7 +124,7 @@ class ControlViewController: ProgressCollectionViewController {
         let section = sections[indexPath.section]
         let model = section.models[indexPath.row]
         let element = model.parentElement!
-        let name = model.name ?? "Unknown Model"
+        let name = model.isSimpleOnOffClient ? "Simple OnOff Client" : model.name ?? "Unknown Model"
         var message: String?
         if !model.subscriptions.isEmpty {
             let groups = model.subscriptions.map({ $0.name }).joined(separator: ", ")
@@ -203,12 +203,17 @@ private extension Model {
         return modelIdentifier == 0x1000 ||
                modelIdentifier == 0x1001 ||
                modelIdentifier == 0x1002 ||
-               modelIdentifier == 0x1003
+               modelIdentifier == 0x1003 ||
+               (modelIdentifier == 0x0001 && companyIdentifier == 0x0059)
     }
     
     var modelId: UInt32 {
         let companyId = isBluetoothSIGAssigned ? 0 : companyIdentifier!
         return (UInt32(companyId) << 16) | UInt32(modelIdentifier)
+    }
+    
+    var isSimpleOnOffClient: Bool {
+        return modelIdentifier == 0x0001 && companyIdentifier == 0x0059
     }
     
 }
