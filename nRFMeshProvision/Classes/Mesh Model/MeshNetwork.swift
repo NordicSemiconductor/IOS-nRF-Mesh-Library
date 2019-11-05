@@ -215,8 +215,11 @@ extension MeshNetwork {
             
             // Forget the last sequence number for the device.
             let meshUuid = self.uuid
-            let defauts = UserDefaults(suiteName: meshUuid.uuidString)
-            defauts?.removeObject(forKey: node.unicastAddress.hex)
+            if let defauts = UserDefaults(suiteName: meshUuid.uuidString) {
+                for element in node.elements {
+                    defauts.removeObject(forKey: element.unicastAddress.hex)
+                }
+            }
         }
     }
     
