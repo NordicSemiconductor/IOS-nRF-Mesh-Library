@@ -109,16 +109,15 @@ public class Element: Codable {
         // Read models.
         self.models = []
         for o in stride(from: offset, to: offset + sigModelsByteCount, by: 2) {
-            let modelId: UInt16 = compositionData.read(fromOffset: o)
-            add(model: Model(sigModelId: modelId))
+            let sigModelId: UInt16 = compositionData.read(fromOffset: o)
+            add(model: Model(sigModelId: sigModelId))
         }
         offset += sigModelsByteCount
         
         for o in stride(from: offset, to: offset + vendorModelsByteCount, by: 4) {
             let companyId: UInt16 = compositionData.read(fromOffset: o)
-            let modelId:   UInt16 = compositionData.read(fromOffset: o + 2)
-            let vendorModelId = (UInt32(companyId) << 16) | UInt32(modelId)
-            add(model: Model(vendorModelId: vendorModelId))
+            let vendorModelId: UInt16 = compositionData.read(fromOffset: o + 2)
+            add(model: Model(vendorModelId: vendorModelId, companyId: companyId))
         }
         offset += vendorModelsByteCount
     }

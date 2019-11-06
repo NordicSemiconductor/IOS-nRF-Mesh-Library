@@ -103,8 +103,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             Model(sigModelId: 0x1002, delegate: GenericLevelServerDelegate()),
             Model(sigModelId: 0x1001, delegate: GenericOnOffClientDelegate()),
             Model(sigModelId: 0x1003, delegate: GenericLevelClientDelegate()),
-            // An simple vendor model:
-            Model(modelId: 0x0001, companyId: 0x0059, delegate: SimpleOnOffClientDelegate())
+            // A simple vendor model:
+            Model(vendorModelId: 0x0001, companyId: 0x0059, delegate: SimpleOnOffClientDelegate())
         ])
         let element1 = Element(name: "Secondary Element", location: .second, models: [
             Model(sigModelId: 0x1000, delegate: GenericOnOffServerDelegate()),
