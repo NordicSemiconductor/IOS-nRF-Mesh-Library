@@ -1889,73 +1889,6 @@
 			};
 			name = Debug;
 		};
-		4B8A2A8CA474E707707845131213CDBF /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = DEEFCB1C7EE6CF79EF60A9D66AAAE7AD /* nRFMeshProvision.xcconfig */;
-			buildSettings = {
-				CLANG_ENABLE_OBJC_WEAK = NO;
-				CODE_SIGN_IDENTITY = "";
-				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
-				CURRENT_PROJECT_VERSION = 1;
-				DEFINES_MODULE = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				GCC_PREFIX_HEADER = "Target Support Files/nRFMeshProvision/nRFMeshProvision-prefix.pch";
-				INFOPLIST_FILE = "Target Support Files/nRFMeshProvision/nRFMeshProvision-Info.plist";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				MACH_O_TYPE = staticlib;
-				MODULEMAP_FILE = "Target Support Files/nRFMeshProvision/nRFMeshProvision.modulemap";
-				PRODUCT_MODULE_NAME = nRFMeshProvision;
-				PRODUCT_NAME = nRFMeshProvision;
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				VALIDATE_PRODUCT = YES;
-				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
-			};
-			name = Release;
-		};
-		52B8581ECDF8EDADDB5E850771D04DE9 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = DEEFCB1C7EE6CF79EF60A9D66AAAE7AD /* nRFMeshProvision.xcconfig */;
-			buildSettings = {
-				CLANG_ENABLE_OBJC_WEAK = NO;
-				CODE_SIGN_IDENTITY = "";
-				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
-				CURRENT_PROJECT_VERSION = 1;
-				DEFINES_MODULE = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				GCC_PREFIX_HEADER = "Target Support Files/nRFMeshProvision/nRFMeshProvision-prefix.pch";
-				INFOPLIST_FILE = "Target Support Files/nRFMeshProvision/nRFMeshProvision-Info.plist";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				MACH_O_TYPE = staticlib;
-				MODULEMAP_FILE = "Target Support Files/nRFMeshProvision/nRFMeshProvision.modulemap";
-				PRODUCT_MODULE_NAME = nRFMeshProvision;
-				PRODUCT_NAME = nRFMeshProvision;
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
-			};
-			name = Debug;
-		};
 		5CB7F59DE8031259EE8850E954F2B976 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = EE9E8C1F983733637663B926CB29ECE0 /* Pods-nRFMeshProvision_Tests.debug.xcconfig */;
@@ -1989,6 +1922,73 @@
 				VERSION_INFO_PREFIX = "";
 			};
 			name = Debug;
+		};
+		65E51D789FFE9EC736C7253CDA8DFE34 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = DEEFCB1C7EE6CF79EF60A9D66AAAE7AD /* nRFMeshProvision.xcconfig */;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GCC_PREFIX_HEADER = "Target Support Files/nRFMeshProvision/nRFMeshProvision-prefix.pch";
+				INFOPLIST_FILE = "Target Support Files/nRFMeshProvision/nRFMeshProvision-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MACH_O_TYPE = staticlib;
+				MODULEMAP_FILE = "Target Support Files/nRFMeshProvision/nRFMeshProvision.modulemap";
+				PRODUCT_MODULE_NAME = nRFMeshProvision;
+				PRODUCT_NAME = nRFMeshProvision;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				SWIFT_VERSION = 5.1;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		6973645EB91147AAC58FFA909F26FCA9 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = DEEFCB1C7EE6CF79EF60A9D66AAAE7AD /* nRFMeshProvision.xcconfig */;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GCC_PREFIX_HEADER = "Target Support Files/nRFMeshProvision/nRFMeshProvision-prefix.pch";
+				INFOPLIST_FILE = "Target Support Files/nRFMeshProvision/nRFMeshProvision-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MACH_O_TYPE = staticlib;
+				MODULEMAP_FILE = "Target Support Files/nRFMeshProvision/nRFMeshProvision.modulemap";
+				PRODUCT_MODULE_NAME = nRFMeshProvision;
+				PRODUCT_NAME = nRFMeshProvision;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				SWIFT_VERSION = 5.1;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
 		};
 		84D7C4574E8F0F3095623F0E06F5B402 /* Release */ = {
 			isa = XCBuildConfiguration;
@@ -2190,8 +2190,8 @@
 		EEE3D98911E7FD1B998AE2D5CAAEA2BC /* Build configuration list for PBXNativeTarget "nRFMeshProvision" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				52B8581ECDF8EDADDB5E850771D04DE9 /* Debug */,
-				4B8A2A8CA474E707707845131213CDBF /* Release */,
+				65E51D789FFE9EC736C7253CDA8DFE34 /* Debug */,
+				6973645EB91147AAC58FFA909F26FCA9 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
