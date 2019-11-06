@@ -303,37 +303,40 @@
 /* Begin PBXFileReference section */
 		02BB039824057C8C5146B73AABCF9BB3 /* ConfigCompositionDataStatus.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ConfigCompositionDataStatus.swift; sourceTree = "<group>"; };
 		0463C13E9642D43605C97F20DA28B004 /* GenericOnOffStatus.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = GenericOnOffStatus.swift; sourceTree = "<group>"; };
-		065848DD0D04AE0A9E3FA6B1E467C596 /* engine.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = engine.h; path = ios/include/openssl/engine.h; sourceTree = "<group>"; };
+		05259A0BDB256F91A39213AF8CCAE36A /* libssl.a */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = archive.ar; name = libssl.a; path = ios/lib/libssl.a; sourceTree = "<group>"; };
+		06B5ECA9A5CB4947408A35D3E27232C5 /* ecdh.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = ecdh.h; path = ios/include/openssl/ecdh.h; sourceTree = "<group>"; };
+		0853F88584ABFF8C5D0C54DB22C49133 /* rsa.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = rsa.h; path = ios/include/openssl/rsa.h; sourceTree = "<group>"; };
 		092029798065C8A9BDB689B34A90AB80 /* SecureNetworkBeacon.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SecureNetworkBeacon.swift; sourceTree = "<group>"; };
 		09BF878B65DCA23F0EF4D2EFC30C43A1 /* ConfigNetKeyList.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ConfigNetKeyList.swift; sourceTree = "<group>"; };
 		0ABDB15B373419E8C334349785BA701C /* ConfigNetworkTransmitStatus.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ConfigNetworkTransmitStatus.swift; sourceTree = "<group>"; };
+		0B6DE2B413E4C191250E1A92B8148E99 /* ssl23.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = ssl23.h; path = ios/include/openssl/ssl23.h; sourceTree = "<group>"; };
 		0C72172DF00AD59A21B5BC1CFF543C6F /* GenericPowerRangeStatus.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = GenericPowerRangeStatus.swift; sourceTree = "<group>"; };
-		0CBD9D9DBA4A6EDE32AD9AE2C722779A /* ssl3.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = ssl3.h; path = ios/include/openssl/ssl3.h; sourceTree = "<group>"; };
 		0D52291E7D8F400A8478B5A3E5457BC7 /* Pods_nRFMeshProvision_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = Pods_nRFMeshProvision_Example.framework; path = "Pods-nRFMeshProvision_Example.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
+		0D8EBBF36F76690DEA798BB3714D0FFA /* evp.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = evp.h; path = ios/include/openssl/evp.h; sourceTree = "<group>"; };
+		0DD80B3A0C6644F8EACDDA46EBCDCC50 /* pqueue.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = pqueue.h; path = ios/include/openssl/pqueue.h; sourceTree = "<group>"; };
 		0E0583E7D57DBB366DE34FAA9F4DE33D /* GenericOnPowerUpGet.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = GenericOnPowerUpGet.swift; sourceTree = "<group>"; };
-		0E3B148DC123ACB89A7C12B2DCCEDD23 /* evp.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = evp.h; path = ios/include/openssl/evp.h; sourceTree = "<group>"; };
 		0EDF9F068C7C931CDCE225BC07844844 /* AddressRange.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AddressRange.swift; sourceTree = "<group>"; };
-		10130622754D3546875DF300ECE52C62 /* ripemd.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = ripemd.h; path = ios/include/openssl/ripemd.h; sourceTree = "<group>"; };
 		10A1A908D4B371D8D0C6D863BA5E2FE8 /* MeshNetworkManager.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = MeshNetworkManager.swift; path = nRFMeshProvision/Classes/MeshNetworkManager.swift; sourceTree = "<group>"; };
 		1269E4D8F8733826C20228BC0C2A84BC /* LowerTransportLayer.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LowerTransportLayer.swift; sourceTree = "<group>"; };
 		13587E54CC0D7C01DCFF067331F4E9BE /* Node+Elements.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "Node+Elements.swift"; sourceTree = "<group>"; };
 		157B2513A5584FA35B0E0E3CA27844AA /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; path = README.md; sourceTree = "<group>"; };
-		159748F54A9B94CE9A8D428467723826 /* cms.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = cms.h; path = ios/include/openssl/cms.h; sourceTree = "<group>"; };
 		15B89C1DCC68F0944CB407836A2E0732 /* ConfigNetKeyGet.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ConfigNetKeyGet.swift; sourceTree = "<group>"; };
 		16A462CDFA3A0B194C43E18F5577EC3B /* SegmentedMessage.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SegmentedMessage.swift; sourceTree = "<group>"; };
 		17147FE48282A082DC980CF62EC96487 /* ConfigFriendGet.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ConfigFriendGet.swift; sourceTree = "<group>"; };
 		17528126D8653EA3630FF75CB58FE402 /* ConfigVendorModelSubscriptionList.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ConfigVendorModelSubscriptionList.swift; sourceTree = "<group>"; };
-		188381D81DB98EB12ABB9FAC14922DB1 /* krb5_asn.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = krb5_asn.h; path = ios/include/openssl/krb5_asn.h; sourceTree = "<group>"; };
+		183B1318D89CDB4B5F500E75E99E1A0D /* ripemd.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = ripemd.h; path = ios/include/openssl/ripemd.h; sourceTree = "<group>"; };
+		18D390D47C6B95A04620C1B4CA8089C6 /* dsa.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = dsa.h; path = ios/include/openssl/dsa.h; sourceTree = "<group>"; };
 		1928625469225BCEB799012E13FF12F6 /* VendorMessage.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = VendorMessage.swift; sourceTree = "<group>"; };
 		1941E9AFEDEC35135140D2DCC280CA1C /* KeySet.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = KeySet.swift; sourceTree = "<group>"; };
 		196E24C3AAF0C4B7A6C2982BCA605BC4 /* Group.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Group.swift; sourceTree = "<group>"; };
-		1AB5B42A09B8EEA11EF79CACDF18A041 /* md4.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = md4.h; path = ios/include/openssl/md4.h; sourceTree = "<group>"; };
-		1B56C6DE918CD8A7CE8A66D547C596BC /* opensslconf.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = opensslconf.h; path = ios/include/openssl/opensslconf.h; sourceTree = "<group>"; };
 		1BC779A5906BC2F54E8AC064D4DC0704 /* ConfigModelSubscriptionAdd.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ConfigModelSubscriptionAdd.swift; sourceTree = "<group>"; };
+		1C367C7850D0CE90FF5C2D9C784BE1FB /* x509.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = x509.h; path = ios/include/openssl/x509.h; sourceTree = "<group>"; };
+		1C62310A89D292E53685A22813C74E53 /* mdc2.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = mdc2.h; path = ios/include/openssl/mdc2.h; sourceTree = "<group>"; };
 		1CF44DDEB63F835A107401B79B36D9A0 /* ConfigNetKeyStatus.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ConfigNetKeyStatus.swift; sourceTree = "<group>"; };
 		1E9972924D168E307950C40F8F2451C8 /* GenericMoveSet.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = GenericMoveSet.swift; sourceTree = "<group>"; };
-		1EFF98B4D4D79917A49819FD93FE0309 /* tls1.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = tls1.h; path = ios/include/openssl/tls1.h; sourceTree = "<group>"; };
+		1EA0F99FAA094AE139E13F6E1681E808 /* des.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = des.h; path = ios/include/openssl/des.h; sourceTree = "<group>"; };
 		1FBD7F9BCDAB1DA3E6090BB38C4773F6 /* nRFMeshProvision.podspec */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; indentWidth = 2; lastKnownFileType = text; path = nRFMeshProvision.podspec; sourceTree = "<group>"; tabWidth = 2; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
+		2059BD0065FE9600F1C7C3837FD9AEC9 /* libcrypto.a */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = archive.ar; name = libcrypto.a; path = ios/lib/libcrypto.a; sourceTree = "<group>"; };
 		211437B3F9841EBE68839CFAA459F0CD /* GenericPowerDefaultSet.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = GenericPowerDefaultSet.swift; sourceTree = "<group>"; };
 		21CDD8648681CE8D31824BB49C8D17A6 /* Pods-nRFMeshProvision_Tests-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "Pods-nRFMeshProvision_Tests-dummy.m"; sourceTree = "<group>"; };
 		221CC34F1CCC0A7186D3BDE534AF81FB /* SegmentedControlMessage.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SegmentedControlMessage.swift; sourceTree = "<group>"; };
@@ -342,46 +345,44 @@
 		227D9246F9950BEE1177DC9E331FF6C7 /* GenericDeltaSet.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = GenericDeltaSet.swift; sourceTree = "<group>"; };
 		23971183FAC8B83469599A7374C2E264 /* GenericLevelGet.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = GenericLevelGet.swift; sourceTree = "<group>"; };
 		24B253B0886304B59E6D45D5BB0DD087 /* ApplicationKeys.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ApplicationKeys.swift; sourceTree = "<group>"; };
-		252A457ECBC55D3304548BC3C82E28C1 /* asn1.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = asn1.h; path = ios/include/openssl/asn1.h; sourceTree = "<group>"; };
 		252EB46D0347DCF906FA2AE7CD7B3C90 /* UnprovisionedDeviceBeacon.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = UnprovisionedDeviceBeacon.swift; sourceTree = "<group>"; };
 		25357A299EFD170E03EB4721225EEBFB /* GenericLevelSetUnacknowledged.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = GenericLevelSetUnacknowledged.swift; sourceTree = "<group>"; };
 		255D649F9536012AA6244D949E130F14 /* MeshLoggerDelegate.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MeshLoggerDelegate.swift; sourceTree = "<group>"; };
-		2610B6D65BC6982732B808513B34D902 /* opensslconf-armv7.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = "opensslconf-armv7.h"; path = "ios/include/openssl/opensslconf-armv7.h"; sourceTree = "<group>"; };
 		2861C80CDD336F0C6F1A22B19230794B /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; path = LICENSE; sourceTree = "<group>"; };
+		290340F733ED3A07351DD8E7B773510D /* ts.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = ts.h; path = ios/include/openssl/ts.h; sourceTree = "<group>"; };
 		2AA036F18AB986B0430167C8A8A485CD /* ProvisioningManager.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ProvisioningManager.swift; sourceTree = "<group>"; };
 		2AC43AB90D1D64B8AC094A0381ACEE56 /* GenericOnOffGet.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = GenericOnOffGet.swift; sourceTree = "<group>"; };
-		2B7C5991500ECF48009AE6A9FBCA76DE /* des.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = des.h; path = ios/include/openssl/des.h; sourceTree = "<group>"; };
+		2AD69E91DAD4B877FAC270F5F6E2EA56 /* kssl.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = kssl.h; path = ios/include/openssl/kssl.h; sourceTree = "<group>"; };
+		2B29BDFB0CB9AF56DC4A54283861CA12 /* blowfish.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = blowfish.h; path = ios/include/openssl/blowfish.h; sourceTree = "<group>"; };
+		2BAEDDDCB95D7A1BD48F33D350653E8E /* OpenSSL-Universal.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "OpenSSL-Universal.xcconfig"; sourceTree = "<group>"; };
 		2BFB2697E3E19B4BDB8F769D3FFF995A /* BearerError.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = BearerError.swift; sourceTree = "<group>"; };
+		2C21A692EB11EBFEB652BC278363FABE /* shim.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = shim.h; path = ios/include/openssl/shim.h; sourceTree = "<group>"; };
 		2C2A13D8C16C0DC3CB2605964F1F55D2 /* Beacon.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Beacon.swift; sourceTree = "<group>"; };
-		2D5069B7FE707BFF1AAF1B944A277AF1 /* err.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = err.h; path = ios/include/openssl/err.h; sourceTree = "<group>"; };
 		2DB9441A4349A1BD94AC46F6C9B80737 /* nRFMeshProvision-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "nRFMeshProvision-umbrella.h"; sourceTree = "<group>"; };
 		2E0AA98F4A7319E56711CC2849CA81E3 /* MeshNetwork+Provisioner.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "MeshNetwork+Provisioner.swift"; sourceTree = "<group>"; };
 		2F3064C2952DA00F48864D0AAFBA1BC0 /* Node.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Node.swift; sourceTree = "<group>"; };
+		2F91F5AB98654B7892AA4A2544E76BB4 /* pem.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = pem.h; path = ios/include/openssl/pem.h; sourceTree = "<group>"; };
 		30D6763D7C2252D354F38521C9ACB932 /* Element.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Element.swift; sourceTree = "<group>"; };
-		310030C9F1B10384E7EF78BD5DC0B43B /* mdc2.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = mdc2.h; path = ios/include/openssl/mdc2.h; sourceTree = "<group>"; };
 		3197B45121CD668790AB45539A85F8BD /* ProvisioningCapabilities.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ProvisioningCapabilities.swift; sourceTree = "<group>"; };
 		3212113385A8FBBDB272BD23C409FF61 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS12.2.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 		322AE6B8191CAB62BFE0D94372B624FF /* Publish.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Publish.swift; sourceTree = "<group>"; };
 		334E1A873DDC859E770D46AFFF5EEA4D /* Key.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Key.swift; sourceTree = "<group>"; };
-		3402664FCD018116D7FDAC02C2679BF3 /* OpenSSL-Universal.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "OpenSSL-Universal.xcconfig"; sourceTree = "<group>"; };
-		342FB2563E59BD500371279B44C52DE7 /* dso.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = dso.h; path = ios/include/openssl/dso.h; sourceTree = "<group>"; };
-		34722DA0FE97BF8A6032457407BB9171 /* pqueue.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = pqueue.h; path = ios/include/openssl/pqueue.h; sourceTree = "<group>"; };
-		369DFE6EF74A3C820F63695B245C08A3 /* ssl2.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = ssl2.h; path = ios/include/openssl/ssl2.h; sourceTree = "<group>"; };
+		365DB2FD709DBE3B85E9D0C4F4655998 /* rand.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = rand.h; path = ios/include/openssl/rand.h; sourceTree = "<group>"; };
 		36C68997F4B881994DCDE49861C8DEC1 /* NetworkKey+MeshNetwork.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "NetworkKey+MeshNetwork.swift"; sourceTree = "<group>"; };
-		37CFC2E61A4E86A7255005EC4261A57F /* dh.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = dh.h; path = ios/include/openssl/dh.h; sourceTree = "<group>"; };
 		38BC3BD4D29DA0DFB67C861525007005 /* GattBearerDelegate.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = GattBearerDelegate.swift; sourceTree = "<group>"; };
-		391BB6D55B233E0804435373A8561D9E /* opensslconf-armv7s.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = "opensslconf-armv7s.h"; path = "ios/include/openssl/opensslconf-armv7s.h"; sourceTree = "<group>"; };
+		38E44CFDD30E8196AB182620090077A7 /* asn1t.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = asn1t.h; path = ios/include/openssl/asn1t.h; sourceTree = "<group>"; };
 		3968D47A6151278C50D3BBF02EB67BCB /* GenericMoveSetUnacknowledged.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = GenericMoveSetUnacknowledged.swift; sourceTree = "<group>"; };
-		39A467E0846E5CBE3E75764A4E476F92 /* x509_vfy.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = x509_vfy.h; path = ios/include/openssl/x509_vfy.h; sourceTree = "<group>"; };
+		39D5550D1FE961D228BF66813367C2ED /* opensslconf-x86_64.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = "opensslconf-x86_64.h"; path = "ios/include/openssl/opensslconf-x86_64.h"; sourceTree = "<group>"; };
 		3A13B52BE472BB9581951336E4D7DDAD /* GenericPowerLastGet.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = GenericPowerLastGet.swift; sourceTree = "<group>"; };
+		3A393CA06738942FE9E5343169BE59E0 /* bn.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = bn.h; path = ios/include/openssl/bn.h; sourceTree = "<group>"; };
 		3A9ABB48744E4207A2CBDF57F0E1C2F9 /* Int+Hex.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "Int+Hex.swift"; sourceTree = "<group>"; };
 		3B3241C4B660F9C848A50419BBA0D899 /* ConfigModelSubscriptionVirtualAddressDelete.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ConfigModelSubscriptionVirtualAddressDelete.swift; sourceTree = "<group>"; };
-		3BCFCF7D1BC432231F04706ED11A0C20 /* ecdh.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = ecdh.h; path = ios/include/openssl/ecdh.h; sourceTree = "<group>"; };
 		3C3E417E0CF94D2A49BFB7B65CA06A09 /* GattBearer.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = GattBearer.swift; sourceTree = "<group>"; };
 		3D2147BFCD897AAE5E897EEC9A0D3DDC /* Data+Hex.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "Data+Hex.swift"; sourceTree = "<group>"; };
+		3E73A000C74E3B30A464B36D3485E8DA /* obj_mac.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = obj_mac.h; path = ios/include/openssl/obj_mac.h; sourceTree = "<group>"; };
 		3E9A773299DD61C81D1254D4CCB08333 /* GenericLevelSet.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = GenericLevelSet.swift; sourceTree = "<group>"; };
+		3EA2CA4A7E4FDC95619977869C163C7D /* cast.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = cast.h; path = ios/include/openssl/cast.h; sourceTree = "<group>"; };
 		3F6476B1800BA5207B02D531EAF72AEF /* Pods-nRFMeshProvision_Example-acknowledgements.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-nRFMeshProvision_Example-acknowledgements.plist"; sourceTree = "<group>"; };
-		3FFB7EC671C67222885215102CE15427 /* dsa.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = dsa.h; path = ios/include/openssl/dsa.h; sourceTree = "<group>"; };
 		40DD721CABCB9764B305845513E5F04D /* MeshStateManager.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MeshStateManager.swift; sourceTree = "<group>"; };
 		418259F4F656AE8A482EC627FA952847 /* OnPowerUp.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = OnPowerUp.swift; sourceTree = "<group>"; };
 		41E9AD52BCABEE9986C1D7765A16B128 /* Model.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Model.swift; sourceTree = "<group>"; };
@@ -392,8 +393,9 @@
 		446581C10BBB2D78132A96E9F07F31F7 /* ConfigModelAppStatus.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ConfigModelAppStatus.swift; sourceTree = "<group>"; };
 		45FDB08CFF7F25D1140BDB4254E46E50 /* Element+Keys.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "Element+Keys.swift"; sourceTree = "<group>"; };
 		46ACEEB56CD9CF6394FC46AA11BBD7BB /* ConfigSIGModelAppGet.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ConfigSIGModelAppGet.swift; sourceTree = "<group>"; };
-		47DE826881C5B09495C3D34501DC9192 /* libssl.a */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = archive.ar; name = libssl.a; path = ios/lib/libssl.a; sourceTree = "<group>"; };
-		47E21E94B18B5F88556341739B3CD1A5 /* opensslconf-arm64.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = "opensslconf-arm64.h"; path = "ios/include/openssl/opensslconf-arm64.h"; sourceTree = "<group>"; };
+		46C5A6B96FA76C126AC3AB1583B753C6 /* whrlpool.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = whrlpool.h; path = ios/include/openssl/whrlpool.h; sourceTree = "<group>"; };
+		4884CABA37581DE4BBC1D30CA8692F93 /* hmac.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = hmac.h; path = ios/include/openssl/hmac.h; sourceTree = "<group>"; };
+		48891B981E1D2B401B010AB6EEE4B8F9 /* conf.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = conf.h; path = ios/include/openssl/conf.h; sourceTree = "<group>"; };
 		49935D2E5D89DED5E2A6DD0F809B0245 /* Scene.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Scene.swift; sourceTree = "<group>"; };
 		499A66AB13978CC88AC2201FF39F8516 /* Model+Name.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "Model+Name.swift"; sourceTree = "<group>"; };
 		4A04BD0534750F104AB7240BCD791C55 /* ConfigAppKeyAdd.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ConfigAppKeyAdd.swift; sourceTree = "<group>"; };
@@ -402,12 +404,9 @@
 		4B83660E37172EF519DFD6B7F2CDC142 /* ConfigModelSubscriptionVirtualAddressOverwrite.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ConfigModelSubscriptionVirtualAddressOverwrite.swift; sourceTree = "<group>"; };
 		4C08CED5D258AAF94A57CD2D3DFB9166 /* MeshNetwork+Nodes.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "MeshNetwork+Nodes.swift"; sourceTree = "<group>"; };
 		4CA9CA87744CA41AB8BD4A80793B3958 /* GenericOnPowerUpSetUnacknowledged.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = GenericOnPowerUpSetUnacknowledged.swift; sourceTree = "<group>"; };
-		4D10A1567076B26425179B57B71A947F /* ts.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = ts.h; path = ios/include/openssl/ts.h; sourceTree = "<group>"; };
-		4D66EB48A4DB86ADCC04E3B77AC65D34 /* x509.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = x509.h; path = ios/include/openssl/x509.h; sourceTree = "<group>"; };
 		4E71010E7866084E86BAA5972F84ADEE /* AccessMessage.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AccessMessage.swift; sourceTree = "<group>"; };
 		4EBAE48F1AC04C542AB66DFCF0CC68B0 /* MeshState.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MeshState.swift; sourceTree = "<group>"; };
-		4F083A09842A6CE01039D917057C9165 /* seed.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = seed.h; path = ios/include/openssl/seed.h; sourceTree = "<group>"; };
-		509A3A837AC40B05A76C43A84D659A04 /* pkcs7.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = pkcs7.h; path = ios/include/openssl/pkcs7.h; sourceTree = "<group>"; };
+		518BA6F4ACEEF57F1B0586844E0F8252 /* lhash.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = lhash.h; path = ios/include/openssl/lhash.h; sourceTree = "<group>"; };
 		51BBAA3978BFB1C9BAA0B3563DB01A48 /* Pods-nRFMeshProvision_Example-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-nRFMeshProvision_Example-Info.plist"; sourceTree = "<group>"; };
 		51D13BD5458F594BD37C0C20E0A01F65 /* ConfigModelPublicationSet.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ConfigModelPublicationSet.swift; sourceTree = "<group>"; };
 		520FF6A922520F8DB102D476583078C0 /* BackgroundTimer.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = BackgroundTimer.swift; sourceTree = "<group>"; };
@@ -415,24 +414,29 @@
 		52C7B651AD3DFA130C47DA071C001683 /* ConfigModelSubscriptionVirtualAddressAdd.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ConfigModelSubscriptionVirtualAddressAdd.swift; sourceTree = "<group>"; };
 		52D6B4E04D7281AAA1417A6BF68BC884 /* ModelDelegate.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ModelDelegate.swift; path = nRFMeshProvision/Classes/ModelDelegate.swift; sourceTree = "<group>"; };
 		54F98B5D151C173174A14081EF38D2CF /* AccessPdu.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AccessPdu.swift; sourceTree = "<group>"; };
+		551C02521B09FE0546ACF9740C8AF9FD /* pkcs7.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = pkcs7.h; path = ios/include/openssl/pkcs7.h; sourceTree = "<group>"; };
 		560B314B2BFCE3FE7561C3EB629888CE /* ConfigBeaconSet.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ConfigBeaconSet.swift; sourceTree = "<group>"; };
+		56F4989D082BCF7AF2FB1AA9615B33AD /* md4.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = md4.h; path = ios/include/openssl/md4.h; sourceTree = "<group>"; };
 		57E13D43B8F7A9E973DAAF745860C9AA /* Pods-nRFMeshProvision_Tests-acknowledgements.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-nRFMeshProvision_Tests-acknowledgements.plist"; sourceTree = "<group>"; };
 		58DC9D1A5325334A535FD0B2CC6DE827 /* Pods-nRFMeshProvision_Tests-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-nRFMeshProvision_Tests-Info.plist"; sourceTree = "<group>"; };
+		5910BFA2C60F84D519AAE2C0D4410D33 /* ocsp.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = ocsp.h; path = ios/include/openssl/ocsp.h; sourceTree = "<group>"; };
 		593D9F9A616314C1331F01C6D0993C0B /* ConfigRelayStatus.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ConfigRelayStatus.swift; sourceTree = "<group>"; };
 		595B6679C27469972599E32D0049C6AF /* ConfigModelAppBind.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ConfigModelAppBind.swift; sourceTree = "<group>"; };
 		5A148CAA13F5893935C9A9E9CFE8C1B2 /* nRFMeshProvision.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; path = nRFMeshProvision.modulemap; sourceTree = "<group>"; };
 		5A962948AB796F4CBB0AD40833E312F8 /* NetworkKey.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = NetworkKey.swift; sourceTree = "<group>"; };
-		5AA077ACA054C24F3743E296435232E8 /* bn.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = bn.h; path = ios/include/openssl/bn.h; sourceTree = "<group>"; };
+		5B2806D8A55D3AACAC06D351B90FF243 /* crypto.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = crypto.h; path = ios/include/openssl/crypto.h; sourceTree = "<group>"; };
+		5B2809EDBFAF2D7CFA012EDB6C68DECB /* ssl3.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = ssl3.h; path = ios/include/openssl/ssl3.h; sourceTree = "<group>"; };
+		5B97D7D11587FAB3BFA98746E577C93B /* cmac.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = cmac.h; path = ios/include/openssl/cmac.h; sourceTree = "<group>"; };
 		5D1064AE7769CE96C69DAF830939B26B /* Pods_nRFMeshProvision_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = Pods_nRFMeshProvision_Tests.framework; path = "Pods-nRFMeshProvision_Tests.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
 		5DA0C56E010C5B3B34895D46C778D56A /* Pods-nRFMeshProvision_Example.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; path = "Pods-nRFMeshProvision_Example.modulemap"; sourceTree = "<group>"; };
 		5DFFE474A77447025F86EBD70688956D /* MeshData.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MeshData.swift; sourceTree = "<group>"; };
 		5E661CA118D623D9B773BB9C518C4685 /* ProvisioningState.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ProvisioningState.swift; sourceTree = "<group>"; };
-		5F3FCBB33089DD9EA3D11146311DBE64 /* conf.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = conf.h; path = ios/include/openssl/conf.h; sourceTree = "<group>"; };
 		5FAC9FD1623BEFBFC722027A42CFD246 /* CompanyIdentifier.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CompanyIdentifier.swift; sourceTree = "<group>"; };
 		5FF407F8EB8CDBFE971187C12A5376C6 /* ConfigNodeResetStatus.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ConfigNodeResetStatus.swift; sourceTree = "<group>"; };
+		64561A577F5AF24B9C3DCE9D4667546B /* conf_api.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = conf_api.h; path = ios/include/openssl/conf_api.h; sourceTree = "<group>"; };
 		64F4AAA1FD866B0D9AAD3259A6CE3805 /* NetworkLayer.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = NetworkLayer.swift; sourceTree = "<group>"; };
 		6518FED4A597A0E061F6C643AD96AB73 /* ConfigModelSubscriptionDelete.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ConfigModelSubscriptionDelete.swift; sourceTree = "<group>"; };
-		6707801DD6F076BAA2737491E0878FF3 /* pem.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = pem.h; path = ios/include/openssl/pem.h; sourceTree = "<group>"; };
+		67CBD965B229300D28125A8C206E9C6B /* opensslconf.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = opensslconf.h; path = ios/include/openssl/opensslconf.h; sourceTree = "<group>"; };
 		6821460AA7C1952110F3A9857BE8C78C /* FilterStatus.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = FilterStatus.swift; sourceTree = "<group>"; };
 		6855EB0E3EE25CF7200B5DFC8CC2761D /* NetworkManager.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = NetworkManager.swift; sourceTree = "<group>"; };
 		68D1039CB68885E14E6C53873A6C56C9 /* GenericPowerLevelSetUnacknowledged.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = GenericPowerLevelSetUnacknowledged.swift; sourceTree = "<group>"; };
@@ -440,160 +444,156 @@
 		691FD256CAA837F842A63CE2CAA35930 /* ConfigGATTProxyGet.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ConfigGATTProxyGet.swift; sourceTree = "<group>"; };
 		6A25DF3DB0BCCCB46A2D5E573775C3B1 /* Pods-nRFMeshProvision_Tests.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; path = "Pods-nRFMeshProvision_Tests.modulemap"; sourceTree = "<group>"; };
 		6A39DABDF66DC06DFBBD33D87CF86B4A /* GenericDefaultTransitionTimeSetUnacknowledged.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = GenericDefaultTransitionTimeSetUnacknowledged.swift; sourceTree = "<group>"; };
-		6A8848771348A2D2F817925490ECF60A /* buffer.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = buffer.h; path = ios/include/openssl/buffer.h; sourceTree = "<group>"; };
-		6ACBFCB161092E0210B5207D8E59119E /* objects.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = objects.h; path = ios/include/openssl/objects.h; sourceTree = "<group>"; };
 		6B0F70F9A01A559456406138F264BB33 /* GenericPowerDefautGet.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = GenericPowerDefautGet.swift; sourceTree = "<group>"; };
+		6B1DB51A481F75CA371CBC17389B0BDB /* buffer.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = buffer.h; path = ios/include/openssl/buffer.h; sourceTree = "<group>"; };
 		6B327E9FAED7A4070750B784F5FB29E6 /* Group+MeshNetwork.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "Group+MeshNetwork.swift"; sourceTree = "<group>"; };
+		6B3BFF1E4E33650A00A0D1C0DCBA71AC /* x509_vfy.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = x509_vfy.h; path = ios/include/openssl/x509_vfy.h; sourceTree = "<group>"; };
 		6D8AD6AB232441B41133D5ECD8326D7C /* RangeObject.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = RangeObject.swift; sourceTree = "<group>"; };
 		6DE024D0044F1669F2361E1049337CD4 /* MeshNetwork+Groups.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "MeshNetwork+Groups.swift"; sourceTree = "<group>"; };
-		6E2884750880362AB6EF9B5D76171719 /* stack.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = stack.h; path = ios/include/openssl/stack.h; sourceTree = "<group>"; };
+		6DEE963CC23797F89660C6672FB98075 /* camellia.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = camellia.h; path = ios/include/openssl/camellia.h; sourceTree = "<group>"; };
+		6E737A539ADA1ACF490352BF2E080A58 /* rc2.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = rc2.h; path = ios/include/openssl/rc2.h; sourceTree = "<group>"; };
 		6EF4DC216F935DFA9CA28097B8FC8C80 /* Ranges.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Ranges.swift; sourceTree = "<group>"; };
-		6FC32BD2F1AEE2499A5715033B180505 /* ec.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = ec.h; path = ios/include/openssl/ec.h; sourceTree = "<group>"; };
 		72DD615C7192B913BF8E27EA005B2400 /* GenericOnPowerUpStatus.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = GenericOnPowerUpStatus.swift; sourceTree = "<group>"; };
 		745B7AA7BE7117A46338D11B6FB605F0 /* ConfigBeaconStatus.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ConfigBeaconStatus.swift; sourceTree = "<group>"; };
 		750F77CB6A75AECD5597DFBDF624A475 /* Provisioner+Ranges.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "Provisioner+Ranges.swift"; sourceTree = "<group>"; };
+		76B5718955C80345B5ABED92FCA9B6AE /* ui.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = ui.h; path = ios/include/openssl/ui.h; sourceTree = "<group>"; };
+		76EA37D476259DC133F0D874B66FE43D /* dso.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = dso.h; path = ios/include/openssl/dso.h; sourceTree = "<group>"; };
 		78C713DED78617E6788296BF9727E942 /* Storage.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Storage.swift; path = nRFMeshProvision/Classes/Storage.swift; sourceTree = "<group>"; };
 		790575B191E420FD59BE007003ED9556 /* MeshAddress.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MeshAddress.swift; sourceTree = "<group>"; };
 		7A567ACE2AE0D3643631F91C0986BCAD /* ConfigAppKeyList.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ConfigAppKeyList.swift; sourceTree = "<group>"; };
 		7A9CF9AFB3B571648FC92791653A8C82 /* GenericPowerDefaultStatus.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = GenericPowerDefaultStatus.swift; sourceTree = "<group>"; };
+		7CDB0E8144E43EF595DF7BDBD4292FE1 /* sha.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = sha.h; path = ios/include/openssl/sha.h; sourceTree = "<group>"; };
 		7DA005E10C495F4CCB709E2B355904E3 /* UpperTransportPdu.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = UpperTransportPdu.swift; sourceTree = "<group>"; };
 		7DE94B2DB891494004DD12BDA685C21E /* Node+Provisioner.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "Node+Provisioner.swift"; sourceTree = "<group>"; };
 		7E922BEC50E1712B204C261FBBC6B324 /* Node+Address.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "Node+Address.swift"; sourceTree = "<group>"; };
 		8213C6DAD6CF1DEBC8DA943E03E781B2 /* ConfigNetKeyUpdate.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ConfigNetKeyUpdate.swift; sourceTree = "<group>"; };
+		826F143CFCEEB7462FF9C36E3381075D /* aes.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = aes.h; path = ios/include/openssl/aes.h; sourceTree = "<group>"; };
+		8393B32B917BC7FDB4496FEACE354D3E /* comp.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = comp.h; path = ios/include/openssl/comp.h; sourceTree = "<group>"; };
 		83C50267A7A0C995893B289591D75AB3 /* SwiftLint.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = SwiftLint.xcconfig; sourceTree = "<group>"; };
+		849972502FF92A80EBB092E354A27997 /* rc4.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = rc4.h; path = ios/include/openssl/rc4.h; sourceTree = "<group>"; };
 		85174522BE982211B9C69663ED89BBE1 /* BearerDelegate.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = BearerDelegate.swift; sourceTree = "<group>"; };
 		853CEC04B697589D6D09544FA3A141FA /* LowerTransportError.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LowerTransportError.swift; sourceTree = "<group>"; };
-		873B9C50E70B0F3590ABE7227CB3EC28 /* cast.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = cast.h; path = ios/include/openssl/cast.h; sourceTree = "<group>"; };
-		87809E7385CD9EB2678FFA6143B6484A /* kssl.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = kssl.h; path = ios/include/openssl/kssl.h; sourceTree = "<group>"; };
-		87B6218BB61C03E64346D9E9FDFD3167 /* rand.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = rand.h; path = ios/include/openssl/rand.h; sourceTree = "<group>"; };
 		87EFD8EEE37DDF95C88814FC1ACBFDBD /* BaseGattProxyBearer.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = BaseGattProxyBearer.swift; sourceTree = "<group>"; };
 		8807600511C1BBDBE42671655FC59124 /* SegmentAcknowledgmentMessage.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SegmentAcknowledgmentMessage.swift; sourceTree = "<group>"; };
 		8858B44979E3562C52B882E775D8F3A5 /* RemoveAddressesFromFilter.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = RemoveAddressesFromFilter.swift; sourceTree = "<group>"; };
 		8B68830C0C7E03E95E1737AA84D90C7D /* ConfigModelPublicationVirtualAddressSet.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ConfigModelPublicationVirtualAddressSet.swift; sourceTree = "<group>"; };
+		8D5F4813D73AC7AA00C96E641BC4B65D /* ssl2.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = ssl2.h; path = ios/include/openssl/ssl2.h; sourceTree = "<group>"; };
 		8D7C30513900D88890F24EDC16F2F35E /* Models.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
 		8D879473C1F6FF8B481A04386AB17A4F /* nRFMeshProvision-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "nRFMeshProvision-Info.plist"; sourceTree = "<group>"; };
+		8DBD6F7BD10FF05DC55E48D2441D2F1D /* opensslv.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = opensslv.h; path = ios/include/openssl/opensslv.h; sourceTree = "<group>"; };
 		8E347D9284655C6448AF8395C99DF32A /* NetworkKeys.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = NetworkKeys.swift; sourceTree = "<group>"; };
-		8E3A9BF9A665FD97D08AC08A70BEE231 /* ui.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = ui.h; path = ios/include/openssl/ui.h; sourceTree = "<group>"; };
-		8E4C56C4F48C902FAF6B68A5D6F98458 /* symhacks.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = symhacks.h; path = ios/include/openssl/symhacks.h; sourceTree = "<group>"; };
 		8E702551CE88B760A74AD38983BE0161 /* GenericOnPowerUpSet.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = GenericOnPowerUpSet.swift; sourceTree = "<group>"; };
+		8EA0DD2C386D7D4E38582312A97ED05A /* ui_compat.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = ui_compat.h; path = ios/include/openssl/ui_compat.h; sourceTree = "<group>"; };
+		8F521C0619E90ABCDB06AA611CD08FC7 /* objects.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = objects.h; path = ios/include/openssl/objects.h; sourceTree = "<group>"; };
+		8F6D17CFFBD81514F68C97BBD1FC1FAD /* asn1.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = asn1.h; path = ios/include/openssl/asn1.h; sourceTree = "<group>"; };
 		8F9A9D2405C00161B0104E4702784680 /* Algorithm.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Algorithm.swift; sourceTree = "<group>"; };
 		8FDAEBF0242FD76DFDE2DBF48C7BAF58 /* Pods-nRFMeshProvision_Example-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "Pods-nRFMeshProvision_Example-dummy.m"; sourceTree = "<group>"; };
 		900A6371764DF9559511A9477817873E /* Provisioner.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Provisioner.swift; sourceTree = "<group>"; };
 		908A85A0256F6BF73722CCB8C6A5AD21 /* ConfigFriendSet.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ConfigFriendSet.swift; sourceTree = "<group>"; };
 		90FDAE8B3527574AE4B150B6FE67C582 /* Pods-nRFMeshProvision_Tests-acknowledgements.markdown */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; path = "Pods-nRFMeshProvision_Tests-acknowledgements.markdown"; sourceTree = "<group>"; };
 		9114B7C19F5303E07366839B67523DA4 /* ConfigAppKeyUpdate.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ConfigAppKeyUpdate.swift; sourceTree = "<group>"; };
-		9153F802FC58E0A7663DB12A5D906E0E /* aes.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = aes.h; path = ios/include/openssl/aes.h; sourceTree = "<group>"; };
-		92C82D3CA702DA1C4B673D104551CD11 /* ecdsa.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = ecdsa.h; path = ios/include/openssl/ecdsa.h; sourceTree = "<group>"; };
+		93AA2E365E150CE856017A2307CDE080 /* engine.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = engine.h; path = ios/include/openssl/engine.h; sourceTree = "<group>"; };
 		9425D81D98E211D021575B6C96BAE864 /* SceneRange.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SceneRange.swift; sourceTree = "<group>"; };
-		945A89C71F22A2F51EB99549450DF0FE /* srtp.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = srtp.h; path = ios/include/openssl/srtp.h; sourceTree = "<group>"; };
+		945613B52FF3907CD5347F764E0FA387 /* safestack.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = safestack.h; path = ios/include/openssl/safestack.h; sourceTree = "<group>"; };
 		9498AC70688A627F8CCDB49643828A4A /* UnknownMessage.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = UnknownMessage.swift; sourceTree = "<group>"; };
 		949ACC8B6749F476B9ADAD14A8B0BFC0 /* Bearer.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Bearer.swift; sourceTree = "<group>"; };
-		9517F0EDA9D4A926621A6199EBEA21BC /* whrlpool.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = whrlpool.h; path = ios/include/openssl/whrlpool.h; sourceTree = "<group>"; };
-		973DD207443641467C2E17F5CD139CA3 /* txt_db.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = txt_db.h; path = ios/include/openssl/txt_db.h; sourceTree = "<group>"; };
 		97474B710AB722656B7AD102674F220B /* HeartbeatMessage.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = HeartbeatMessage.swift; sourceTree = "<group>"; };
 		975BF9304357F98C86E9572490A4348C /* nRFMeshProvision-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "nRFMeshProvision-prefix.pch"; sourceTree = "<group>"; };
 		97BEE01639E823631F264CF551747216 /* GenericDefaultTransitionTimeSet.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = GenericDefaultTransitionTimeSet.swift; sourceTree = "<group>"; };
 		984073C92E71D475B040EB28D5168B51 /* MeshNodeEntry.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MeshNodeEntry.swift; sourceTree = "<group>"; };
-		99A74E9CB8FA2BAA7EED1770F73A88EE /* conf_api.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = conf_api.h; path = ios/include/openssl/conf_api.h; sourceTree = "<group>"; };
+		98F58CDCCB224C584D8F86E82CEAF9CA /* err.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = err.h; path = ios/include/openssl/err.h; sourceTree = "<group>"; };
 		9C4F2901EB1ABC8244284EFC056E3D63 /* OpenSSLHelper.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = OpenSSLHelper.h; sourceTree = "<group>"; };
 		9C73382074DC04D069346541FD9303C2 /* ApplicationKey.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ApplicationKey.swift; sourceTree = "<group>"; };
 		9C94EE8D5EDCFE6F4DE74461C6DA5D9F /* MeshNetwork+Keys.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "MeshNetwork+Keys.swift"; sourceTree = "<group>"; };
 		9CA8957B12AA81BB0B05F26F60C735BC /* GenericPowerLevelSet.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = GenericPowerLevelSet.swift; sourceTree = "<group>"; };
 		9CFC99A1252635569CD28587A0AE01CF /* AddAddressesToFilter.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AddAddressesToFilter.swift; sourceTree = "<group>"; };
 		9D940727FF8FB9C785EB98E56350EF41 /* Podfile */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; indentWidth = 2; lastKnownFileType = text; name = Podfile; path = ../Podfile; sourceTree = SOURCE_ROOT; tabWidth = 2; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
-		9DC1D4461EF42E8E4D18906C8E7A25DF /* sha.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = sha.h; path = ios/include/openssl/sha.h; sourceTree = "<group>"; };
 		9E8A7D54122A03CA12E34A298931D8D1 /* GenericPowerRangeGet.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = GenericPowerRangeGet.swift; sourceTree = "<group>"; };
+		A048E7B07E2B5DB65AC4BCDEC7FD46C8 /* e_os2.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = e_os2.h; path = ios/include/openssl/e_os2.h; sourceTree = "<group>"; };
+		A0909F38896F8E4BCB3AFD183CC55D9C /* idea.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = idea.h; path = ios/include/openssl/idea.h; sourceTree = "<group>"; };
+		A09D380947F5F6A824666F6E5CB69780 /* pkcs12.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = pkcs12.h; path = ios/include/openssl/pkcs12.h; sourceTree = "<group>"; };
 		A1377F59A858B71E2B854F31666732FD /* GenericOnOffSetUnacknowledged.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = GenericOnOffSetUnacknowledged.swift; sourceTree = "<group>"; };
-		A18CA251CEA9DB7C5C474DD5E67CC5F6 /* libcrypto.a */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = archive.ar; name = libcrypto.a; path = ios/lib/libcrypto.a; sourceTree = "<group>"; };
 		A1E5AAB55EBB9EBE1D2765083AA3C750 /* ConfigBeaconGet.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ConfigBeaconGet.swift; sourceTree = "<group>"; };
 		A2060D87ED4DBF10FABAAF679D9F23D8 /* Provisioner+Node.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "Provisioner+Node.swift"; sourceTree = "<group>"; };
 		A339C26F66663E0249B7993CD7C9C999 /* AccessLayer.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AccessLayer.swift; sourceTree = "<group>"; };
+		A3F34939E715377F5A72C10670BEFDE8 /* x509v3.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = x509v3.h; path = ios/include/openssl/x509v3.h; sourceTree = "<group>"; };
 		A43359B7BDF9C665A7737B649DD79C1E /* Pods-nRFMeshProvision_Example-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Pods-nRFMeshProvision_Example-umbrella.h"; sourceTree = "<group>"; };
-		A45E277BF3B72429BB55D82E40DDE3E0 /* ui_compat.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = ui_compat.h; path = ios/include/openssl/ui_compat.h; sourceTree = "<group>"; };
+		A478BB51CCDD72A1ED0B041BF739BAC6 /* ebcdic.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = ebcdic.h; path = ios/include/openssl/ebcdic.h; sourceTree = "<group>"; };
+		A6563E3670EA10B84AD69E5530EE94F5 /* dtls1.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = dtls1.h; path = ios/include/openssl/dtls1.h; sourceTree = "<group>"; };
 		A656681799B570D521384669698EF8E2 /* ConfigVendorModelSubscriptionGet.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ConfigVendorModelSubscriptionGet.swift; sourceTree = "<group>"; };
 		A697F51B303101904BF0EAC0B0694F9F /* ConfigRelayGet.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ConfigRelayGet.swift; sourceTree = "<group>"; };
 		A7BBA43F9F430A4ACFE512A24C8A6594 /* ConfigDefaultTtlStatus.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ConfigDefaultTtlStatus.swift; sourceTree = "<group>"; };
-		A7BE6130E3F8A84F9FB511A5B2CA942A /* idea.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = idea.h; path = ios/include/openssl/idea.h; sourceTree = "<group>"; };
+		A7EBF677A3BB55780224DA9B6A131D12 /* bio.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = bio.h; path = ios/include/openssl/bio.h; sourceTree = "<group>"; };
 		A8F526D1C28B9C5D1C6E08012EDE1413 /* GenericOnOffSet.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = GenericOnOffSet.swift; sourceTree = "<group>"; };
-		A9433B7F322E67AD94E6A14DC91FB9E0 /* blowfish.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = blowfish.h; path = ios/include/openssl/blowfish.h; sourceTree = "<group>"; };
 		A9B0A3900EB2FE925A46DE2DF52AB1CD /* AccessError.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AccessError.swift; sourceTree = "<group>"; };
 		A9B1721BB018D7C05CAA0FA72689BBE3 /* ConfigFriendStatus.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ConfigFriendStatus.swift; sourceTree = "<group>"; };
 		A9E8B7646C9CE76DFC15DCF0A1268434 /* Model+Keys.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "Model+Keys.swift"; sourceTree = "<group>"; };
 		AA20FFD14195DC20CDD177EA1F9B1D01 /* GenericPowerRangeSetUnacknowledged.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = GenericPowerRangeSetUnacknowledged.swift; sourceTree = "<group>"; };
 		AAEEEE523ABD564A22ECECB728957B85 /* MeshMessage.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MeshMessage.swift; sourceTree = "<group>"; };
+		AB0387B22960ADAE0DF66447D1B9A219 /* opensslconf-i386.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = "opensslconf-i386.h"; path = "ios/include/openssl/opensslconf-i386.h"; sourceTree = "<group>"; };
 		AB27AB553003B3AF0C864537AE9B4D00 /* Data+Keys.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "Data+Keys.swift"; sourceTree = "<group>"; };
 		AB8796BD227AB37E9E07BA0FC40F2C72 /* ConfigurationServerHandler.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ConfigurationServerHandler.swift; sourceTree = "<group>"; };
-		AE0AE8FA9DB5B42AB78D675666CD8AED /* comp.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = comp.h; path = ios/include/openssl/comp.h; sourceTree = "<group>"; };
 		AE6D4FF8DC52550F30431EFFD89472E1 /* UnprovisionedDevice.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = UnprovisionedDevice.swift; sourceTree = "<group>"; };
-		AEC41A61F13297E2D7B8820B3F41E3FB /* modes.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = modes.h; path = ios/include/openssl/modes.h; sourceTree = "<group>"; };
+		B0572AE881F56C0C29C9C5B16C71B2CA /* pem2.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = pem2.h; path = ios/include/openssl/pem2.h; sourceTree = "<group>"; };
 		B0ED8FE3D41B350FE10005FAB1EBE1B9 /* ConfigRelaySet.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ConfigRelaySet.swift; sourceTree = "<group>"; };
-		B1ABD862B59B96C4E1C261E8BAFF83E6 /* shim.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = shim.h; path = ios/include/openssl/shim.h; sourceTree = "<group>"; };
 		B1DFBF054C2DA1D97A9F1F194768FDC6 /* TransitionTime.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = TransitionTime.swift; sourceTree = "<group>"; };
 		B258CBC5970D26214873BAB058A81625 /* GenericBatteryStatus.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = GenericBatteryStatus.swift; sourceTree = "<group>"; };
-		B3ED8CA896BF68E92429B31A2BE0A6C2 /* obj_mac.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = obj_mac.h; path = ios/include/openssl/obj_mac.h; sourceTree = "<group>"; };
+		B44819F3C3283F02F92CB912FA489CB3 /* opensslconf-armv7s.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = "opensslconf-armv7s.h"; path = "ios/include/openssl/opensslconf-armv7s.h"; sourceTree = "<group>"; };
 		B4C001B7D2FB9649EC19C565872AF0D8 /* nRFMeshProvision.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = nRFMeshProvision.framework; path = nRFMeshProvision.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B545433B65C25698BAAD6AF8E13991A4 /* ConfigNetKeyDelete.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ConfigNetKeyDelete.swift; sourceTree = "<group>"; };
 		B5F2569B24DE44E1E2D47091788CA160 /* SegmentedAccessMessage.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SegmentedAccessMessage.swift; sourceTree = "<group>"; };
 		B76E21B650BC817D872294B7F67BA8BE /* GenericPowerLevelGet.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = GenericPowerLevelGet.swift; sourceTree = "<group>"; };
 		B7A1A5585C9DFCEC51F04D752EB15C20 /* Security.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Security.swift; sourceTree = "<group>"; };
 		B7BF1EA0F62B3B307FA111347CF96C90 /* NetworkPdu.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = NetworkPdu.swift; sourceTree = "<group>"; };
-		B904B032895970EBC580A03492A70FAD /* srp.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = srp.h; path = ios/include/openssl/srp.h; sourceTree = "<group>"; };
 		B9D04B533177E6D6318ED83EE13C71AC /* Pods-nRFMeshProvision_Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-nRFMeshProvision_Tests.release.xcconfig"; sourceTree = "<group>"; };
 		BA3BDD87ABEB6E1050EA102EB900371B /* Element+Models.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "Element+Models.swift"; sourceTree = "<group>"; };
+		BA5CF2529EA2E461ECA971FAF21AB9B9 /* srp.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = srp.h; path = ios/include/openssl/srp.h; sourceTree = "<group>"; };
 		BBACF13201103A2933287F78BEA9C5AA /* Address.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Address.swift; sourceTree = "<group>"; };
 		BBF5BF6AA33C33A1541E81421E55F1D6 /* MeshNetwork+Address.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "MeshNetwork+Address.swift"; sourceTree = "<group>"; };
 		BCC620391E6CEC4900E7C1F315B6144B /* Pods-nRFMeshProvision_Example.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-nRFMeshProvision_Example.debug.xcconfig"; sourceTree = "<group>"; };
 		BCFE8C96D959899050EC1C7BD92526C6 /* ConfigModelSubscriptionStatus.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ConfigModelSubscriptionStatus.swift; sourceTree = "<group>"; };
+		BD891F189D0CE92F0C2B149017CFA991 /* opensslconf-armv7.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = "opensslconf-armv7.h"; path = "ios/include/openssl/opensslconf-armv7.h"; sourceTree = "<group>"; };
 		BE073FFCC64740CF7F1DE377739ED7ED /* ConfigModelSubscriptionOverwrite.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ConfigModelSubscriptionOverwrite.swift; sourceTree = "<group>"; };
 		BEAA2A17FE1EDB9B3B0C2DDE53E9A100 /* Oob.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Oob.swift; sourceTree = "<group>"; };
-		C0916317C1E36B687E9D0BFA2F33A251 /* rc4.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = rc4.h; path = ios/include/openssl/rc4.h; sourceTree = "<group>"; };
+		BEE394C1B12977A209AD33A1E721CDD1 /* md5.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = md5.h; path = ios/include/openssl/md5.h; sourceTree = "<group>"; };
+		C00AFFAEF156231AA2995F0E9BCDC774 /* ecdsa.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = ecdsa.h; path = ios/include/openssl/ecdsa.h; sourceTree = "<group>"; };
 		C115BB4B19306B09777B402A9E12D889 /* GattBearerError.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = GattBearerError.swift; sourceTree = "<group>"; };
+		C2A194E323C0E28EA51D6D7D29A451A0 /* symhacks.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = symhacks.h; path = ios/include/openssl/symhacks.h; sourceTree = "<group>"; };
 		C2DE262768FE61FC3BFF92D46024F65F /* GenericDefaultTransitionTimeGet.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = GenericDefaultTransitionTimeGet.swift; sourceTree = "<group>"; };
 		C3712B73D310A62A71163A203E374899 /* UUID+Hex.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "UUID+Hex.swift"; sourceTree = "<group>"; };
-		C38197AD666246A6EB91B33BA7F6AB07 /* rc2.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = rc2.h; path = ios/include/openssl/rc2.h; sourceTree = "<group>"; };
+		C388617EBE1E2980DE69677752FE3E7D /* ssl.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = ssl.h; path = ios/include/openssl/ssl.h; sourceTree = "<group>"; };
 		C3D98F8EB8135E8C314EE50FD1C8FE7D /* Pods-nRFMeshProvision_Example-acknowledgements.markdown */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; path = "Pods-nRFMeshProvision_Example-acknowledgements.markdown"; sourceTree = "<group>"; };
+		C481344D02E205C678C7092C6BC08932 /* ossl_typ.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = ossl_typ.h; path = ios/include/openssl/ossl_typ.h; sourceTree = "<group>"; };
+		C48D89AB80479892C5A41BB09EBE4246 /* des_old.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = des_old.h; path = ios/include/openssl/des_old.h; sourceTree = "<group>"; };
 		C492761F3D5C24D4342D1B6E0CCA9043 /* ConfigModelPublicationStatus.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ConfigModelPublicationStatus.swift; sourceTree = "<group>"; };
-		C4D4D8488E8715D45B0050FFE4EFC4CD /* e_os2.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = e_os2.h; path = ios/include/openssl/e_os2.h; sourceTree = "<group>"; };
+		C4B6C0195405B1889EB8028C9A52E290 /* srtp.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = srtp.h; path = ios/include/openssl/srtp.h; sourceTree = "<group>"; };
 		C52F3C69AC007783BF1D45DA6CAFCA0C /* GenericPowerDefaultSetUnacknowledged.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = GenericPowerDefaultSetUnacknowledged.swift; sourceTree = "<group>"; };
+		C5D3C2E48A8CEAAEB1E6DF00B2689E1A /* txt_db.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = txt_db.h; path = ios/include/openssl/txt_db.h; sourceTree = "<group>"; };
 		C6D389D49EF5C167FF54859E8A8ABD03 /* MeshMessageError.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MeshMessageError.swift; sourceTree = "<group>"; };
 		C7DA3330100E3CC1C8E19C05EFFAF8F4 /* ConfigNetworkTransmitGet.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ConfigNetworkTransmitGet.swift; sourceTree = "<group>"; };
 		C7E3EFB61FF10E2E619D42108BEAD69F /* ConfigAppKeyStatus.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ConfigAppKeyStatus.swift; sourceTree = "<group>"; };
-		C8124928DEE05CA48A430F89D2EC5619 /* crypto.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = crypto.h; path = ios/include/openssl/crypto.h; sourceTree = "<group>"; };
 		C8A4A581CE14876A3C2FB41FA1D7876C /* StepResolution.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = StepResolution.swift; sourceTree = "<group>"; };
 		C8C61D9B182FAFC28AD27ABCE10C7732 /* MeshNetworkError.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = MeshNetworkError.swift; path = nRFMeshProvision/Classes/MeshNetworkError.swift; sourceTree = "<group>"; };
-		C93D1158986988836DE8D0FD79EA70D4 /* cmac.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = cmac.h; path = ios/include/openssl/cmac.h; sourceTree = "<group>"; };
 		C9FEA8C5FF8B676EE0A6B84D5B413013 /* ConfigSIGModelSubscriptionList.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ConfigSIGModelSubscriptionList.swift; sourceTree = "<group>"; };
 		CA39049CF7D121C4AF771A521CABB3AE /* ApplicationKey+NetworkKey.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "ApplicationKey+NetworkKey.swift"; sourceTree = "<group>"; };
 		CB593D1A601987FF95638BCC8A2497CE /* UpperTransportLayer.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = UpperTransportLayer.swift; sourceTree = "<group>"; };
 		CBF1386F2B5E2AC4736A97E99C05A00F /* ConfigDefaultTtlSet.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ConfigDefaultTtlSet.swift; sourceTree = "<group>"; };
-		CDA756346B5CEE1260DD10536305A8D2 /* des_old.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = des_old.h; path = ios/include/openssl/des_old.h; sourceTree = "<group>"; };
+		CC89C81370A46A43B5120A337F695FCF /* modes.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = modes.h; path = ios/include/openssl/modes.h; sourceTree = "<group>"; };
 		CEAC6C669DF2BB23730633F28084C3E0 /* Pods-nRFMeshProvision_Tests-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Pods-nRFMeshProvision_Tests-umbrella.h"; sourceTree = "<group>"; };
 		CEF49126725274063205116C2A2BFDDC /* Data.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Data.swift; sourceTree = "<group>"; };
 		CFE6CADB548A85B43939D66B280E9F99 /* GenericPowerLevelStatus.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = GenericPowerLevelStatus.swift; sourceTree = "<group>"; };
 		D23324271757F661E0E379CCDD2B6423 /* ConfigNodeReset.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ConfigNodeReset.swift; sourceTree = "<group>"; };
-		D472A9B31B366A00D14D7B1B808F2BDB /* asn1t.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = asn1t.h; path = ios/include/openssl/asn1t.h; sourceTree = "<group>"; };
-		D57A80A6A07A909110768CD3B46BC12A /* ocsp.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = ocsp.h; path = ios/include/openssl/ocsp.h; sourceTree = "<group>"; };
 		D5C94B99022C764A50D471EBB59DF937 /* ConfigGATTProxyStatus.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ConfigGATTProxyStatus.swift; sourceTree = "<group>"; };
-		D5F6F1BF049D826EEE093B76C15F17BF /* ssl.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = ssl.h; path = ios/include/openssl/ssl.h; sourceTree = "<group>"; };
-		D6396FF8A19A96F741F1AD745C6614C2 /* hmac.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = hmac.h; path = ios/include/openssl/hmac.h; sourceTree = "<group>"; };
+		D67BCF31204B04969671509DCBCF0EB1 /* krb5_asn.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = krb5_asn.h; path = ios/include/openssl/krb5_asn.h; sourceTree = "<group>"; };
 		D76F077B8BE5F47FC0D66D6675C39861 /* BeaconPdu.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = BeaconPdu.swift; sourceTree = "<group>"; };
-		D78D449C8990FF1F1A306EA5886187A8 /* pkcs12.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = pkcs12.h; path = ios/include/openssl/pkcs12.h; sourceTree = "<group>"; };
-		D7A429DD57915FDE4194A9A8376EFBD1 /* camellia.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = camellia.h; path = ios/include/openssl/camellia.h; sourceTree = "<group>"; };
-		D7CA1A728711AF0301C927F8F3003740 /* lhash.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = lhash.h; path = ios/include/openssl/lhash.h; sourceTree = "<group>"; };
 		D8D8A01D89D1934565422086AFD41A38 /* Element+Address.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "Element+Address.swift"; sourceTree = "<group>"; };
 		D980E88EFCAF3878C8C78295FFB07E47 /* ProvisioningPdu.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ProvisioningPdu.swift; sourceTree = "<group>"; };
 		D9FFE70A05CA76A45FCEA0C32DB3F1AB /* GenericBatteryGet.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = GenericBatteryGet.swift; sourceTree = "<group>"; };
-		DA5351D42F295F9D58A9D36208AFC4AC /* x509v3.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = x509v3.h; path = ios/include/openssl/x509v3.h; sourceTree = "<group>"; };
-		DAE351FF8DCDA74701BE5C11BBD1885A /* safestack.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = safestack.h; path = ios/include/openssl/safestack.h; sourceTree = "<group>"; };
-		DAE4B97B872D49FD1B7120C2C999C432 /* ssl23.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = ssl23.h; path = ios/include/openssl/ssl23.h; sourceTree = "<group>"; };
 		DCA5D8B34170731337D96E447D82F899 /* IvIndex.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = IvIndex.swift; sourceTree = "<group>"; };
-		DCE27B81C20E059FE30AAEDB9B05DD68 /* bio.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = bio.h; path = ios/include/openssl/bio.h; sourceTree = "<group>"; };
 		DEEFCB1C7EE6CF79EF60A9D66AAAE7AD /* nRFMeshProvision.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = nRFMeshProvision.xcconfig; sourceTree = "<group>"; };
 		DF0F47A7FB4262E38F08F210FBFF08DE /* GenericDeltaSetUnacknowledged.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = GenericDeltaSetUnacknowledged.swift; sourceTree = "<group>"; };
-		DF5429C470CBD89AB538CC744709B80D /* pem2.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = pem2.h; path = ios/include/openssl/pem2.h; sourceTree = "<group>"; };
 		E126787676FB1C55FF571375DB631D34 /* GenericLevelStatus.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = GenericLevelStatus.swift; sourceTree = "<group>"; };
 		E29831B6CFFC923E405B03ECA531E148 /* Pods-nRFMeshProvision_Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-nRFMeshProvision_Example.release.xcconfig"; sourceTree = "<group>"; };
-		E3A61E700639562D01820F02D351499E /* asn1_mac.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = asn1_mac.h; path = ios/include/openssl/asn1_mac.h; sourceTree = "<group>"; };
 		E4D01ABC5D24B2FE788A1613598AA03C /* ApplicationKey+MeshNetwork.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "ApplicationKey+MeshNetwork.swift"; sourceTree = "<group>"; };
 		E5E48834F4194977E4AC0927E58A5184 /* ConfigCompositionDataGet.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ConfigCompositionDataGet.swift; sourceTree = "<group>"; };
 		E64DB1FFBD28A374EEA01C2E9E503AEA /* ConfigAppKeyDelete.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ConfigAppKeyDelete.swift; sourceTree = "<group>"; };
@@ -601,10 +601,10 @@
 		E78678910FAE58BFE2941049C2034D3E /* GenericPowerLastStatus.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = GenericPowerLastStatus.swift; sourceTree = "<group>"; };
 		E7E67464D5D4542E060A7F8F8435EE70 /* ClosedRange.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ClosedRange.swift; sourceTree = "<group>"; };
 		E7F969149EE32CE3B82D0C9B84FE77E7 /* ConfigModelSubscriptionDeleteAll.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ConfigModelSubscriptionDeleteAll.swift; sourceTree = "<group>"; };
-		E83F44E81983C0371496AB09D206152F /* dtls1.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = dtls1.h; path = ios/include/openssl/dtls1.h; sourceTree = "<group>"; };
 		E8CC9CA48D1DC746DB625D2BB1BE9B82 /* ConfigAppKeyGet.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ConfigAppKeyGet.swift; sourceTree = "<group>"; };
-		E9029C9DE902AEA71A3BD190DBEC41DD /* md5.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = md5.h; path = ios/include/openssl/md5.h; sourceTree = "<group>"; };
+		E8F94FB58A0EF115400523384D6D3A2A /* asn1_mac.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = asn1_mac.h; path = ios/include/openssl/asn1_mac.h; sourceTree = "<group>"; };
 		E927F67E881C1BC179A6C943DC5C6791 /* KeyRefreshPhase.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = KeyRefreshPhase.swift; sourceTree = "<group>"; };
+		E94BD40809CD5F9068BDE796E112DAF0 /* dh.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = dh.h; path = ios/include/openssl/dh.h; sourceTree = "<group>"; };
 		E962DE7E816B9B6539B95D63E094FB35 /* MeshConstants.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MeshConstants.swift; sourceTree = "<group>"; };
 		E98A72BAB28D7E4EED4C501C4788BF26 /* ConfigurationClientHandler.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ConfigurationClientHandler.swift; sourceTree = "<group>"; };
 		E9CC53424DF02BE7FE4339443FCF71BE /* OpenSSLHelper.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = OpenSSLHelper.m; sourceTree = "<group>"; };
@@ -612,32 +612,33 @@
 		EB6B289E14FB0C585E36BFBDABFB15D0 /* GenericPowerRangeSet.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = GenericPowerRangeSet.swift; sourceTree = "<group>"; };
 		EC0EF6F4143351B2E8CD5D91E020C937 /* ConfigVendorModelAppList.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ConfigVendorModelAppList.swift; sourceTree = "<group>"; };
 		ECAAE51B06806994A89A70239491C08B /* Node+Keys.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "Node+Keys.swift"; sourceTree = "<group>"; };
-		ED6A1F8AEFC42F9184A33B604975184A /* ossl_typ.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = ossl_typ.h; path = ios/include/openssl/ossl_typ.h; sourceTree = "<group>"; };
-		EE2CD3B5D9509D9D2FF21BE4BF69BCB7 /* rsa.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = rsa.h; path = ios/include/openssl/rsa.h; sourceTree = "<group>"; };
 		EE9894ED588C91C1B62592A4E6A035D8 /* ProvisioningData.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ProvisioningData.swift; sourceTree = "<group>"; };
 		EE9E8C1F983733637663B926CB29ECE0 /* Pods-nRFMeshProvision_Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-nRFMeshProvision_Tests.debug.xcconfig"; sourceTree = "<group>"; };
 		EEF84D03181992266326249DB4A68BE6 /* LowerTransportPdu.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LowerTransportPdu.swift; sourceTree = "<group>"; };
+		F0A484173BF1AD613FA68783E90CE320 /* stack.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = stack.h; path = ios/include/openssl/stack.h; sourceTree = "<group>"; };
 		F108EC7FF6F4BD921EB5664FCFDF3E01 /* ConfigVendorModelAppGet.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ConfigVendorModelAppGet.swift; sourceTree = "<group>"; };
 		F12431FEF688CE43439033D41C0D3AF7 /* CompositionElement.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CompositionElement.swift; sourceTree = "<group>"; };
 		F1C81F7F22393A5BE0341BF7C47D8F6E /* ConfigModelAppUnbind.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ConfigModelAppUnbind.swift; sourceTree = "<group>"; };
 		F28A31E111521A583DA5E0372197F71D /* ConfigModelPublicationGet.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ConfigModelPublicationGet.swift; sourceTree = "<group>"; };
 		F359A392F560FAE3725F7C7F50D9F5EE /* GenericDefaultTransitionTimeStatus.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = GenericDefaultTransitionTimeStatus.swift; sourceTree = "<group>"; };
+		F441BBC830863D5F3A2610B1AA8DC101 /* tls1.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = tls1.h; path = ios/include/openssl/tls1.h; sourceTree = "<group>"; };
 		F4F19846A22DF9176DD2B9FABF5AA830 /* MessageHandle.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MessageHandle.swift; sourceTree = "<group>"; };
 		F4FA2C23B6E86B7F7D7B8BE5EE56F2EF /* GenericMessage.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = GenericMessage.swift; sourceTree = "<group>"; };
 		F5ED606C812AD1B9322D16BE42B41C70 /* ProxyProtocolHandler.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ProxyProtocolHandler.swift; sourceTree = "<group>"; };
 		F5F005EF19F10AAA5CBB29F7C38A0BB4 /* PublicKey.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = PublicKey.swift; sourceTree = "<group>"; };
 		F6043CBFF90788DEDBE67979CFF3A09E /* ConfigDefaultTtlGet.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ConfigDefaultTtlGet.swift; sourceTree = "<group>"; };
 		F607F1AAA96CD3AB3532D923A76F31D3 /* ConfigSIGModelSubscriptionGet.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ConfigSIGModelSubscriptionGet.swift; sourceTree = "<group>"; };
-		F711726AAF4E0EBAA6286C39D367152B /* opensslv.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = opensslv.h; path = ios/include/openssl/opensslv.h; sourceTree = "<group>"; };
+		F6D415230012F59B92D0D09CA4401407 /* cms.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = cms.h; path = ios/include/openssl/cms.h; sourceTree = "<group>"; };
 		F7B7B31C1031482635EF6E57E0BD140B /* MeshNetwork.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MeshNetwork.swift; sourceTree = "<group>"; };
 		F7E0201FBCFC4F282CCE30D820EF21A2 /* MeshNetworkDelegate.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = MeshNetworkDelegate.swift; path = nRFMeshProvision/Classes/MeshNetworkDelegate.swift; sourceTree = "<group>"; };
-		F7F4573926B9BEC017CB82E7091E47E8 /* opensslconf-x86_64.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = "opensslconf-x86_64.h"; path = "ios/include/openssl/opensslconf-x86_64.h"; sourceTree = "<group>"; };
 		F8606494B37BC95F3C9C64E1E0CF96FF /* ConfigSIGModelAppList.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ConfigSIGModelAppList.swift; sourceTree = "<group>"; };
-		FB6402AC176BD28BF7ADD1F0EAF8EE1F /* ebcdic.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = ebcdic.h; path = ios/include/openssl/ebcdic.h; sourceTree = "<group>"; };
+		FA13E8BF02F4C19B33D8D137931D830A /* ec.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = ec.h; path = ios/include/openssl/ec.h; sourceTree = "<group>"; };
 		FBA83F57E5A1594D8CBBCA790D81747C /* ConfigMessage.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ConfigMessage.swift; sourceTree = "<group>"; };
 		FD9505523B28982C6336383842EBF52C /* NodeFeatures.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = NodeFeatures.swift; sourceTree = "<group>"; };
 		FDB18B82D3B2F983D7FD46F078027C74 /* ProxyConfigurationMessage.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ProxyConfigurationMessage.swift; sourceTree = "<group>"; };
 		FEBB22408985CF8406A48FC5BDF4A39F /* nRFMeshProvision-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "nRFMeshProvision-dummy.m"; sourceTree = "<group>"; };
+		FF03B9DCCC524E1C6F89EA356BD435C4 /* seed.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = seed.h; path = ios/include/openssl/seed.h; sourceTree = "<group>"; };
+		FF21D731DD85147D2FDC7642BA0A001D /* opensslconf-arm64.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = "opensslconf-arm64.h"; path = "ios/include/openssl/opensslconf-arm64.h"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -682,6 +683,15 @@
 			);
 			name = "Pods-nRFMeshProvision_Example";
 			path = "Target Support Files/Pods-nRFMeshProvision_Example";
+			sourceTree = "<group>";
+		};
+		07F09E36339D34E54E94A126C0B23D41 /* Support Files */ = {
+			isa = PBXGroup;
+			children = (
+				2BAEDDDCB95D7A1BD48F33D350653E8E /* OpenSSL-Universal.xcconfig */,
+			);
+			name = "Support Files";
+			path = "../Target Support Files/OpenSSL-Universal";
 			sourceTree = "<group>";
 		};
 		0969EC6A3FC75F95FE6E8208D43936E8 /* Layers */ = {
@@ -749,94 +759,6 @@
 			);
 			name = nRFMeshProvision;
 			path = ../..;
-			sourceTree = "<group>";
-		};
-		25BADBA46339C65F5E3738B4B719F294 /* Static */ = {
-			isa = PBXGroup;
-			children = (
-				9153F802FC58E0A7663DB12A5D906E0E /* aes.h */,
-				252A457ECBC55D3304548BC3C82E28C1 /* asn1.h */,
-				E3A61E700639562D01820F02D351499E /* asn1_mac.h */,
-				D472A9B31B366A00D14D7B1B808F2BDB /* asn1t.h */,
-				DCE27B81C20E059FE30AAEDB9B05DD68 /* bio.h */,
-				A9433B7F322E67AD94E6A14DC91FB9E0 /* blowfish.h */,
-				5AA077ACA054C24F3743E296435232E8 /* bn.h */,
-				6A8848771348A2D2F817925490ECF60A /* buffer.h */,
-				D7A429DD57915FDE4194A9A8376EFBD1 /* camellia.h */,
-				873B9C50E70B0F3590ABE7227CB3EC28 /* cast.h */,
-				C93D1158986988836DE8D0FD79EA70D4 /* cmac.h */,
-				159748F54A9B94CE9A8D428467723826 /* cms.h */,
-				AE0AE8FA9DB5B42AB78D675666CD8AED /* comp.h */,
-				5F3FCBB33089DD9EA3D11146311DBE64 /* conf.h */,
-				99A74E9CB8FA2BAA7EED1770F73A88EE /* conf_api.h */,
-				C8124928DEE05CA48A430F89D2EC5619 /* crypto.h */,
-				2B7C5991500ECF48009AE6A9FBCA76DE /* des.h */,
-				CDA756346B5CEE1260DD10536305A8D2 /* des_old.h */,
-				37CFC2E61A4E86A7255005EC4261A57F /* dh.h */,
-				3FFB7EC671C67222885215102CE15427 /* dsa.h */,
-				342FB2563E59BD500371279B44C52DE7 /* dso.h */,
-				E83F44E81983C0371496AB09D206152F /* dtls1.h */,
-				C4D4D8488E8715D45B0050FFE4EFC4CD /* e_os2.h */,
-				FB6402AC176BD28BF7ADD1F0EAF8EE1F /* ebcdic.h */,
-				6FC32BD2F1AEE2499A5715033B180505 /* ec.h */,
-				3BCFCF7D1BC432231F04706ED11A0C20 /* ecdh.h */,
-				92C82D3CA702DA1C4B673D104551CD11 /* ecdsa.h */,
-				065848DD0D04AE0A9E3FA6B1E467C596 /* engine.h */,
-				2D5069B7FE707BFF1AAF1B944A277AF1 /* err.h */,
-				0E3B148DC123ACB89A7C12B2DCCEDD23 /* evp.h */,
-				D6396FF8A19A96F741F1AD745C6614C2 /* hmac.h */,
-				A7BE6130E3F8A84F9FB511A5B2CA942A /* idea.h */,
-				188381D81DB98EB12ABB9FAC14922DB1 /* krb5_asn.h */,
-				87809E7385CD9EB2678FFA6143B6484A /* kssl.h */,
-				D7CA1A728711AF0301C927F8F3003740 /* lhash.h */,
-				1AB5B42A09B8EEA11EF79CACDF18A041 /* md4.h */,
-				E9029C9DE902AEA71A3BD190DBEC41DD /* md5.h */,
-				310030C9F1B10384E7EF78BD5DC0B43B /* mdc2.h */,
-				AEC41A61F13297E2D7B8820B3F41E3FB /* modes.h */,
-				B3ED8CA896BF68E92429B31A2BE0A6C2 /* obj_mac.h */,
-				6ACBFCB161092E0210B5207D8E59119E /* objects.h */,
-				D57A80A6A07A909110768CD3B46BC12A /* ocsp.h */,
-				1B56C6DE918CD8A7CE8A66D547C596BC /* opensslconf.h */,
-				47E21E94B18B5F88556341739B3CD1A5 /* opensslconf-arm64.h */,
-				2610B6D65BC6982732B808513B34D902 /* opensslconf-armv7.h */,
-				391BB6D55B233E0804435373A8561D9E /* opensslconf-armv7s.h */,
-				F7F4573926B9BEC017CB82E7091E47E8 /* opensslconf-x86_64.h */,
-				F711726AAF4E0EBAA6286C39D367152B /* opensslv.h */,
-				ED6A1F8AEFC42F9184A33B604975184A /* ossl_typ.h */,
-				6707801DD6F076BAA2737491E0878FF3 /* pem.h */,
-				DF5429C470CBD89AB538CC744709B80D /* pem2.h */,
-				D78D449C8990FF1F1A306EA5886187A8 /* pkcs12.h */,
-				509A3A837AC40B05A76C43A84D659A04 /* pkcs7.h */,
-				34722DA0FE97BF8A6032457407BB9171 /* pqueue.h */,
-				87B6218BB61C03E64346D9E9FDFD3167 /* rand.h */,
-				C38197AD666246A6EB91B33BA7F6AB07 /* rc2.h */,
-				C0916317C1E36B687E9D0BFA2F33A251 /* rc4.h */,
-				10130622754D3546875DF300ECE52C62 /* ripemd.h */,
-				EE2CD3B5D9509D9D2FF21BE4BF69BCB7 /* rsa.h */,
-				DAE351FF8DCDA74701BE5C11BBD1885A /* safestack.h */,
-				4F083A09842A6CE01039D917057C9165 /* seed.h */,
-				9DC1D4461EF42E8E4D18906C8E7A25DF /* sha.h */,
-				B1ABD862B59B96C4E1C261E8BAFF83E6 /* shim.h */,
-				B904B032895970EBC580A03492A70FAD /* srp.h */,
-				945A89C71F22A2F51EB99549450DF0FE /* srtp.h */,
-				D5F6F1BF049D826EEE093B76C15F17BF /* ssl.h */,
-				369DFE6EF74A3C820F63695B245C08A3 /* ssl2.h */,
-				DAE4B97B872D49FD1B7120C2C999C432 /* ssl23.h */,
-				0CBD9D9DBA4A6EDE32AD9AE2C722779A /* ssl3.h */,
-				6E2884750880362AB6EF9B5D76171719 /* stack.h */,
-				8E4C56C4F48C902FAF6B68A5D6F98458 /* symhacks.h */,
-				1EFF98B4D4D79917A49819FD93FE0309 /* tls1.h */,
-				4D10A1567076B26425179B57B71A947F /* ts.h */,
-				973DD207443641467C2E17F5CD139CA3 /* txt_db.h */,
-				8E3A9BF9A665FD97D08AC08A70BEE231 /* ui.h */,
-				A45E277BF3B72429BB55D82E40DDE3E0 /* ui_compat.h */,
-				9517F0EDA9D4A926621A6199EBEA21BC /* whrlpool.h */,
-				4D66EB48A4DB86ADCC04E3B77AC65D34 /* x509.h */,
-				39A467E0846E5CBE3E75764A4E476F92 /* x509_vfy.h */,
-				DA5351D42F295F9D58A9D36208AFC4AC /* x509v3.h */,
-				A9A65F336C03EC0D6B4682DBBDE0A0AF /* Frameworks */,
-			);
-			name = Static;
 			sourceTree = "<group>";
 		};
 		28850595AD0F1176A5EF763CC522CF63 /* Generic Messages */ = {
@@ -951,6 +873,95 @@
 			path = "Network Layer";
 			sourceTree = "<group>";
 		};
+		533F8B515544EF3D8A2EF844F7047647 /* Static */ = {
+			isa = PBXGroup;
+			children = (
+				826F143CFCEEB7462FF9C36E3381075D /* aes.h */,
+				8F6D17CFFBD81514F68C97BBD1FC1FAD /* asn1.h */,
+				E8F94FB58A0EF115400523384D6D3A2A /* asn1_mac.h */,
+				38E44CFDD30E8196AB182620090077A7 /* asn1t.h */,
+				A7EBF677A3BB55780224DA9B6A131D12 /* bio.h */,
+				2B29BDFB0CB9AF56DC4A54283861CA12 /* blowfish.h */,
+				3A393CA06738942FE9E5343169BE59E0 /* bn.h */,
+				6B1DB51A481F75CA371CBC17389B0BDB /* buffer.h */,
+				6DEE963CC23797F89660C6672FB98075 /* camellia.h */,
+				3EA2CA4A7E4FDC95619977869C163C7D /* cast.h */,
+				5B97D7D11587FAB3BFA98746E577C93B /* cmac.h */,
+				F6D415230012F59B92D0D09CA4401407 /* cms.h */,
+				8393B32B917BC7FDB4496FEACE354D3E /* comp.h */,
+				48891B981E1D2B401B010AB6EEE4B8F9 /* conf.h */,
+				64561A577F5AF24B9C3DCE9D4667546B /* conf_api.h */,
+				5B2806D8A55D3AACAC06D351B90FF243 /* crypto.h */,
+				1EA0F99FAA094AE139E13F6E1681E808 /* des.h */,
+				C48D89AB80479892C5A41BB09EBE4246 /* des_old.h */,
+				E94BD40809CD5F9068BDE796E112DAF0 /* dh.h */,
+				18D390D47C6B95A04620C1B4CA8089C6 /* dsa.h */,
+				76EA37D476259DC133F0D874B66FE43D /* dso.h */,
+				A6563E3670EA10B84AD69E5530EE94F5 /* dtls1.h */,
+				A048E7B07E2B5DB65AC4BCDEC7FD46C8 /* e_os2.h */,
+				A478BB51CCDD72A1ED0B041BF739BAC6 /* ebcdic.h */,
+				FA13E8BF02F4C19B33D8D137931D830A /* ec.h */,
+				06B5ECA9A5CB4947408A35D3E27232C5 /* ecdh.h */,
+				C00AFFAEF156231AA2995F0E9BCDC774 /* ecdsa.h */,
+				93AA2E365E150CE856017A2307CDE080 /* engine.h */,
+				98F58CDCCB224C584D8F86E82CEAF9CA /* err.h */,
+				0D8EBBF36F76690DEA798BB3714D0FFA /* evp.h */,
+				4884CABA37581DE4BBC1D30CA8692F93 /* hmac.h */,
+				A0909F38896F8E4BCB3AFD183CC55D9C /* idea.h */,
+				D67BCF31204B04969671509DCBCF0EB1 /* krb5_asn.h */,
+				2AD69E91DAD4B877FAC270F5F6E2EA56 /* kssl.h */,
+				518BA6F4ACEEF57F1B0586844E0F8252 /* lhash.h */,
+				56F4989D082BCF7AF2FB1AA9615B33AD /* md4.h */,
+				BEE394C1B12977A209AD33A1E721CDD1 /* md5.h */,
+				1C62310A89D292E53685A22813C74E53 /* mdc2.h */,
+				CC89C81370A46A43B5120A337F695FCF /* modes.h */,
+				3E73A000C74E3B30A464B36D3485E8DA /* obj_mac.h */,
+				8F521C0619E90ABCDB06AA611CD08FC7 /* objects.h */,
+				5910BFA2C60F84D519AAE2C0D4410D33 /* ocsp.h */,
+				67CBD965B229300D28125A8C206E9C6B /* opensslconf.h */,
+				FF21D731DD85147D2FDC7642BA0A001D /* opensslconf-arm64.h */,
+				BD891F189D0CE92F0C2B149017CFA991 /* opensslconf-armv7.h */,
+				B44819F3C3283F02F92CB912FA489CB3 /* opensslconf-armv7s.h */,
+				AB0387B22960ADAE0DF66447D1B9A219 /* opensslconf-i386.h */,
+				39D5550D1FE961D228BF66813367C2ED /* opensslconf-x86_64.h */,
+				8DBD6F7BD10FF05DC55E48D2441D2F1D /* opensslv.h */,
+				C481344D02E205C678C7092C6BC08932 /* ossl_typ.h */,
+				2F91F5AB98654B7892AA4A2544E76BB4 /* pem.h */,
+				B0572AE881F56C0C29C9C5B16C71B2CA /* pem2.h */,
+				A09D380947F5F6A824666F6E5CB69780 /* pkcs12.h */,
+				551C02521B09FE0546ACF9740C8AF9FD /* pkcs7.h */,
+				0DD80B3A0C6644F8EACDDA46EBCDCC50 /* pqueue.h */,
+				365DB2FD709DBE3B85E9D0C4F4655998 /* rand.h */,
+				6E737A539ADA1ACF490352BF2E080A58 /* rc2.h */,
+				849972502FF92A80EBB092E354A27997 /* rc4.h */,
+				183B1318D89CDB4B5F500E75E99E1A0D /* ripemd.h */,
+				0853F88584ABFF8C5D0C54DB22C49133 /* rsa.h */,
+				945613B52FF3907CD5347F764E0FA387 /* safestack.h */,
+				FF03B9DCCC524E1C6F89EA356BD435C4 /* seed.h */,
+				7CDB0E8144E43EF595DF7BDBD4292FE1 /* sha.h */,
+				2C21A692EB11EBFEB652BC278363FABE /* shim.h */,
+				BA5CF2529EA2E461ECA971FAF21AB9B9 /* srp.h */,
+				C4B6C0195405B1889EB8028C9A52E290 /* srtp.h */,
+				C388617EBE1E2980DE69677752FE3E7D /* ssl.h */,
+				8D5F4813D73AC7AA00C96E641BC4B65D /* ssl2.h */,
+				0B6DE2B413E4C191250E1A92B8148E99 /* ssl23.h */,
+				5B2809EDBFAF2D7CFA012EDB6C68DECB /* ssl3.h */,
+				F0A484173BF1AD613FA68783E90CE320 /* stack.h */,
+				C2A194E323C0E28EA51D6D7D29A451A0 /* symhacks.h */,
+				F441BBC830863D5F3A2610B1AA8DC101 /* tls1.h */,
+				290340F733ED3A07351DD8E7B773510D /* ts.h */,
+				C5D3C2E48A8CEAAEB1E6DF00B2689E1A /* txt_db.h */,
+				76B5718955C80345B5ABED92FCA9B6AE /* ui.h */,
+				8EA0DD2C386D7D4E38582312A97ED05A /* ui_compat.h */,
+				46C5A6B96FA76C126AC3AB1583B753C6 /* whrlpool.h */,
+				1C367C7850D0CE90FF5C2D9C784BE1FB /* x509.h */,
+				6B3BFF1E4E33650A00A0D1C0DCBA71AC /* x509_vfy.h */,
+				A3F34939E715377F5A72C10670BEFDE8 /* x509v3.h */,
+				C40A2DBA6EE61F61EC0AC8F8640FF98D /* Frameworks */,
+			);
+			name = Static;
+			sourceTree = "<group>";
+		};
 		5970066474E1C9302F0A6E01FAB165B0 /* Support Files */ = {
 			isa = PBXGroup;
 			children = (
@@ -990,16 +1001,6 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		8ED124E82CE3FFA6F78D1CDFB55D6703 /* OpenSSL-Universal */ = {
-			isa = PBXGroup;
-			children = (
-				25BADBA46339C65F5E3738B4B719F294 /* Static */,
-				E7D23C5EBDEADEEA17EAE438003F7C36 /* Support Files */,
-			);
-			name = "OpenSSL-Universal";
-			path = "OpenSSL-Universal";
-			sourceTree = "<group>";
-		};
 		9D036799CEC46BDB30A4A512643D1506 /* Bearer */ = {
 			isa = PBXGroup;
 			children = (
@@ -1030,19 +1031,20 @@
 		A7972FD9AB2A5B3BAA59761A14260292 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				8ED124E82CE3FFA6F78D1CDFB55D6703 /* OpenSSL-Universal */,
+				AEB7C584ECC446DB2308B455A56D7670 /* OpenSSL-Universal */,
 				CEFC20D91920DC922D9FBBD545E36CDA /* SwiftLint */,
 			);
 			name = Pods;
 			sourceTree = "<group>";
 		};
-		A9A65F336C03EC0D6B4682DBBDE0A0AF /* Frameworks */ = {
+		AEB7C584ECC446DB2308B455A56D7670 /* OpenSSL-Universal */ = {
 			isa = PBXGroup;
 			children = (
-				A18CA251CEA9DB7C5C474DD5E67CC5F6 /* libcrypto.a */,
-				47DE826881C5B09495C3D34501DC9192 /* libssl.a */,
+				533F8B515544EF3D8A2EF844F7047647 /* Static */,
+				07F09E36339D34E54E94A126C0B23D41 /* Support Files */,
 			);
-			name = Frameworks;
+			name = "OpenSSL-Universal";
+			path = "OpenSSL-Universal";
 			sourceTree = "<group>";
 		};
 		AF1CCECBDCA74AC7B44B3BFF810C16F9 /* Proxy Configuration */ = {
@@ -1064,6 +1066,15 @@
 				3212113385A8FBBDB272BD23C409FF61 /* Foundation.framework */,
 			);
 			name = iOS;
+			sourceTree = "<group>";
+		};
+		C40A2DBA6EE61F61EC0AC8F8640FF98D /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				2059BD0065FE9600F1C7C3837FD9AEC9 /* libcrypto.a */,
+				05259A0BDB256F91A39213AF8CCAE36A /* libssl.a */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 		C5E2B1B8BF9F03F32B88F80BDD0DA4ED /* Pods-nRFMeshProvision_Tests */ = {
@@ -1280,15 +1291,6 @@
 			);
 			name = "Lower Transport Layer";
 			path = "Lower Transport Layer";
-			sourceTree = "<group>";
-		};
-		E7D23C5EBDEADEEA17EAE438003F7C36 /* Support Files */ = {
-			isa = PBXGroup;
-			children = (
-				3402664FCD018116D7FDAC02C2679BF3 /* OpenSSL-Universal.xcconfig */,
-			);
-			name = "Support Files";
-			path = "../Target Support Files/OpenSSL-Universal";
 			sourceTree = "<group>";
 		};
 		F50E635EDA6349D0781E3ABA8EDA7E5B /* Mesh Model */ = {
@@ -2004,7 +2006,7 @@
 		};
 		8F202A3E600955955D491DA1740A97A6 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 3402664FCD018116D7FDAC02C2679BF3 /* OpenSSL-Universal.xcconfig */;
+			baseConfigurationReference = 2BAEDDDCB95D7A1BD48F33D350653E8E /* OpenSSL-Universal.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
@@ -2017,7 +2019,7 @@
 		};
 		9F9D5DF52F981F21F9F33E148F6D6724 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 3402664FCD018116D7FDAC02C2679BF3 /* OpenSSL-Universal.xcconfig */;
+			baseConfigurationReference = 2BAEDDDCB95D7A1BD48F33D350653E8E /* OpenSSL-Universal.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
