@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'nRFMeshProvision'
-  s.version          = '2.0.0'
+  s.version          = '2.1.0'
   s.summary          = 'A Bluetooth Mesh library'
   s.description      = <<-DESC
   nRF Mesh is a Bluetooth Mesh compliant library that has many features such as provisioning, configuration and control of Bluetooth Mesh compliant nodes.
@@ -20,7 +20,7 @@ Pod::Spec.new do |s|
   s.social_media_url = 'https://twitter.com/nordictweets'
   s.platform         = :ios
   s.static_framework = true
-  s.swift_version    = '5.0'
+  s.swift_version    = '5.1'
   s.ios.deployment_target = '10.0'
   s.source_files = 'nRFMeshProvision/Classes/**/*'
   s.dependency 'OpenSSL-Universal', '= 1.0.2.19'
