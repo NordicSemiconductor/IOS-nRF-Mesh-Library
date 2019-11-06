@@ -85,7 +85,7 @@ Without setting the local Model and specifying the message types, each message w
 let nordicCompanyId: UInt16 = 0x0059
 let element = Element(name: "Primary Element", location: .unknown, models: [
     Model(sigModelId: 0x1001, delegate: GenericOnOffClientDelegate()),
-    Model(vendorModelId: (UInt32(nordicCompanyId) << 16) | 0x0001, delegate: SimpleOnOffDelegate())
+    Model(vendorModelId: 0x0001, companyId: nordicCompanyId, delegate: SimpleOnOffDelegate())
 ])
 meshNetworkManager.localElements = [element]
 ```
