@@ -78,7 +78,7 @@ internal struct CompositionElement: Codable {
             groups(for: $0).forEach { group in model.subscribe(to: group )}
             element.add(model: model)
         }
-        vendorModels.forEach { element.add(model: Model(vendorModelId: $0.asUInt32)) }
+        vendorModels.forEach { element.add(model: Model(modelId: $0.asUInt32)) }
         return element
     }
 }

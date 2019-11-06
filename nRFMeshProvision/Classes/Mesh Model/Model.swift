@@ -75,31 +75,36 @@ public class Model: Codable {
     /// Parent Element.
     public internal(set) weak var parentElement: Element!
     
-    internal init(vendorModelId: UInt32) {
-        self.modelId   = vendorModelId
+    internal init(modelId: UInt32) {
+        self.modelId   = modelId
         self.subscribe = []
         self.bind      = []
         self.delegate  = nil
     }
     
     internal convenience init(sigModelId: UInt16) {
-        self.init(vendorModelId: UInt32(sigModelId))
+        self.init(modelId: UInt32(sigModelId))
     }
     
-    public init(vendorModelId: UInt32, delegate: ModelDelegate) {
-        self.modelId   = vendorModelId
+    internal convenience init(vendorModelId: UInt16, companyId: UInt16) {
+        let modelId = (UInt32(companyId) << 16) | UInt32(vendorModelId)
+        self.init(modelId: modelId)
+    }
+    
+    internal init(modelId: UInt32, delegate: ModelDelegate) {
+        self.modelId   = modelId
         self.subscribe = []
         self.bind      = []
         self.delegate  = delegate
     }
     
-    public convenience init(modelId: UInt16, companyId: UInt16, delegate: ModelDelegate) {
-        let vendorModelId = (UInt32(companyId) << 16) | UInt32(modelId)
-        self.init(vendorModelId: vendorModelId, delegate: delegate)
+    public convenience init(vendorModelId: UInt16, companyId: UInt16, delegate: ModelDelegate) {
+        let modelId = (UInt32(companyId) << 16) | UInt32(vendorModelId)
+        self.init(modelId: modelId, delegate: delegate)
     }
     
     public convenience init(sigModelId: UInt16, delegate: ModelDelegate) {
-        self.init(vendorModelId: UInt32(sigModelId), delegate: delegate)
+        self.init(modelId: UInt32(sigModelId), delegate: delegate)
     }
     
     // MARK: - Codable
