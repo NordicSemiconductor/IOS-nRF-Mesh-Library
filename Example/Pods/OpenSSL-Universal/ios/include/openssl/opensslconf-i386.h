@@ -5,8 +5,8 @@
 extern "C" {
 #endif
 /* OpenSSL was configured with the following options: */
-#ifndef OPENSSL_SYSNAME_iOS
-# define OPENSSL_SYSNAME_iOS
+#ifndef OPENSSL_SYSNAME_MACOSX
+# define OPENSSL_SYSNAME_MACOSX
 #endif
 #ifndef OPENSSL_DOING_MAKEDEPEND
 
@@ -58,9 +58,6 @@ extern "C" {
 
 #ifndef OPENSSL_THREADS
 # define OPENSSL_THREADS
-#endif
-#ifndef OPENSSL_NO_ASM
-# define OPENSSL_NO_ASM
 #endif
 #ifndef OPENSSL_NO_DYNAMIC_ENGINE
 # define OPENSSL_NO_DYNAMIC_ENGINE
@@ -115,6 +112,8 @@ extern "C" {
 # endif
 #endif
 
+#define OPENSSL_CPUID_OBJ
+
 /* crypto/opensslconf.h.in */
 
 /* Generate 80386 code? */
@@ -122,8 +121,8 @@ extern "C" {
 
 #if !(defined(VMS) || defined(__VMS)) /* VMS uses logical names instead */
 #if defined(HEADER_CRYPTLIB_H) && !defined(OPENSSLDIR)
-#define ENGINESDIR "/var/folders/hl/5lwrrzrx20d2h38qww1kr9x80000gn/T/tmp.G75gKHnz/1.0.2t-arm64/lib/engines"
-#define OPENSSLDIR "/var/folders/hl/5lwrrzrx20d2h38qww1kr9x80000gn/T/tmp.G75gKHnz/1.0.2t-arm64/ssl"
+#define ENGINESDIR "/var/folders/hl/5lwrrzrx20d2h38qww1kr9x80000gn/T/tmp.G75gKHnz/1.0.2t-i386/lib/engines"
+#define OPENSSLDIR "/var/folders/hl/5lwrrzrx20d2h38qww1kr9x80000gn/T/tmp.G75gKHnz/1.0.2t-i386/ssl"
 #endif
 #endif
 
@@ -154,7 +153,7 @@ extern "C" {
  * - Intel P6 because partial register stalls are very expensive;
  * - elder Alpha because it lacks byte load/store instructions;
  */
-#define RC4_INT unsigned char
+#define RC4_INT unsigned int
 #endif
 #if !defined(RC4_CHUNK)
 /*
