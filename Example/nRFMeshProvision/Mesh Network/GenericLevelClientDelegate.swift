@@ -51,7 +51,8 @@ class GenericLevelClientDelegate: ModelDelegate {
     
     func model(_ model: Model, didReceiveUnacknowledgedMessage message: MeshMessage,
                from source: Address, sentTo destination: MeshAddress) {
-        // Not possible.
+        // The status message may be received here if the Generic Level Server model
+        // has been configured to publish. Ignore this message.
     }
     
     func model(_ model: Model, didReceiveResponse response: MeshMessage,
