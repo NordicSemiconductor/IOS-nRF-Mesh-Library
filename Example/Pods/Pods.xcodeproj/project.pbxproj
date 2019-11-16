@@ -15,6 +15,7 @@
 			dependencies = (
 			);
 			name = SwiftLint;
+			productName = SwiftLint;
 		};
 		B9ED5194E665042005069EF06C82A050 /* OpenSSL-Universal */ = {
 			isa = PBXAggregateTarget;
@@ -24,6 +25,7 @@
 			dependencies = (
 			);
 			name = "OpenSSL-Universal";
+			productName = "OpenSSL-Universal";
 		};
 /* End PBXAggregateTarget section */
 
@@ -116,6 +118,18 @@
 		5E8E5C72660D94FC3C4C817BBB15A2D9 /* UUID+Hex.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3712B73D310A62A71163A203E374899 /* UUID+Hex.swift */; };
 		5EBD5EE1F7468B1A7067E074D88779BE /* MeshAddress.swift in Sources */ = {isa = PBXBuildFile; fileRef = 790575B191E420FD59BE007003ED9556 /* MeshAddress.swift */; };
 		6060C64F670EABB02E659902A43F7D19 /* MeshNetwork+Address.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBF5BF6AA33C33A1541E81421E55F1D6 /* MeshNetwork+Address.swift */; };
+		6076E88D2380188700F11F02 /* GenericLightnessGet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6076E88C2380188700F11F02 /* GenericLightnessGet.swift */; };
+		6076E88F238018DE00F11F02 /* GenericLightnessStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6076E88E238018DE00F11F02 /* GenericLightnessStatus.swift */; };
+		6076E891238018E600F11F02 /* GenericLightnessSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6076E890238018E600F11F02 /* GenericLightnessSet.swift */; };
+		6076E8932380190000F11F02 /* GenericLightnessSetUnacknowledged.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6076E8922380190000F11F02 /* GenericLightnessSetUnacknowledged.swift */; };
+		6076E89523801A3B00F11F02 /* GenericCTLGet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6076E89423801A3B00F11F02 /* GenericCTLGet.swift */; };
+		6076E89723801A6900F11F02 /* GenericCTLSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6076E89623801A6900F11F02 /* GenericCTLSet.swift */; };
+		6076E89923801A7D00F11F02 /* GenericCTLSetUnackowledged.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6076E89823801A7D00F11F02 /* GenericCTLSetUnackowledged.swift */; };
+		6076E89B23801A8D00F11F02 /* GenericCTLStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6076E89A23801A8D00F11F02 /* GenericCTLStatus.swift */; };
+		6076E89D23801DE300F11F02 /* GenericHSLGet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6076E89C23801DE300F11F02 /* GenericHSLGet.swift */; };
+		6076E89F23801DEE00F11F02 /* GenericHSLSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6076E89E23801DEE00F11F02 /* GenericHSLSet.swift */; };
+		6076E8A123801DFF00F11F02 /* GenericHSLSetUnackowledged.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6076E8A023801DFF00F11F02 /* GenericHSLSetUnackowledged.swift */; };
+		6076E8A323801E0600F11F02 /* GenericHSLStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6076E8A223801E0600F11F02 /* GenericHSLStatus.swift */; };
 		60B7FFED6164CE8AAFFCD14868E82D4F /* LowerTransportLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1269E4D8F8733826C20228BC0C2A84BC /* LowerTransportLayer.swift */; };
 		61DDC10ED1CE0D2029095E0062D1BDB7 /* Data+Keys.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB27AB553003B3AF0C864537AE9B4D00 /* Data+Keys.swift */; };
 		6278503B70ACDD7448CA4118592D5781 /* MeshNetwork+Provisioner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E0AA98F4A7319E56711CC2849CA81E3 /* MeshNetwork+Provisioner.swift */; };
@@ -311,7 +325,7 @@
 		0ABDB15B373419E8C334349785BA701C /* ConfigNetworkTransmitStatus.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ConfigNetworkTransmitStatus.swift; sourceTree = "<group>"; };
 		0B6DE2B413E4C191250E1A92B8148E99 /* ssl23.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = ssl23.h; path = ios/include/openssl/ssl23.h; sourceTree = "<group>"; };
 		0C72172DF00AD59A21B5BC1CFF543C6F /* GenericPowerRangeStatus.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = GenericPowerRangeStatus.swift; sourceTree = "<group>"; };
-		0D52291E7D8F400A8478B5A3E5457BC7 /* Pods_nRFMeshProvision_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = Pods_nRFMeshProvision_Example.framework; path = "Pods-nRFMeshProvision_Example.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
+		0D52291E7D8F400A8478B5A3E5457BC7 /* Pods_nRFMeshProvision_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_nRFMeshProvision_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		0D8EBBF36F76690DEA798BB3714D0FFA /* evp.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = evp.h; path = ios/include/openssl/evp.h; sourceTree = "<group>"; };
 		0DD80B3A0C6644F8EACDDA46EBCDCC50 /* pqueue.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = pqueue.h; path = ios/include/openssl/pqueue.h; sourceTree = "<group>"; };
 		0E0583E7D57DBB366DE34FAA9F4DE33D /* GenericOnPowerUpGet.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = GenericOnPowerUpGet.swift; sourceTree = "<group>"; };
@@ -319,7 +333,7 @@
 		10A1A908D4B371D8D0C6D863BA5E2FE8 /* MeshNetworkManager.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = MeshNetworkManager.swift; path = nRFMeshProvision/Classes/MeshNetworkManager.swift; sourceTree = "<group>"; };
 		1269E4D8F8733826C20228BC0C2A84BC /* LowerTransportLayer.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LowerTransportLayer.swift; sourceTree = "<group>"; };
 		13587E54CC0D7C01DCFF067331F4E9BE /* Node+Elements.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "Node+Elements.swift"; sourceTree = "<group>"; };
-		157B2513A5584FA35B0E0E3CA27844AA /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; path = README.md; sourceTree = "<group>"; };
+		157B2513A5584FA35B0E0E3CA27844AA /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		15B89C1DCC68F0944CB407836A2E0732 /* ConfigNetKeyGet.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ConfigNetKeyGet.swift; sourceTree = "<group>"; };
 		16A462CDFA3A0B194C43E18F5577EC3B /* SegmentedMessage.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SegmentedMessage.swift; sourceTree = "<group>"; };
 		17147FE48282A082DC980CF62EC96487 /* ConfigFriendGet.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ConfigFriendGet.swift; sourceTree = "<group>"; };
@@ -335,7 +349,7 @@
 		1CF44DDEB63F835A107401B79B36D9A0 /* ConfigNetKeyStatus.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ConfigNetKeyStatus.swift; sourceTree = "<group>"; };
 		1E9972924D168E307950C40F8F2451C8 /* GenericMoveSet.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = GenericMoveSet.swift; sourceTree = "<group>"; };
 		1EA0F99FAA094AE139E13F6E1681E808 /* des.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = des.h; path = ios/include/openssl/des.h; sourceTree = "<group>"; };
-		1FBD7F9BCDAB1DA3E6090BB38C4773F6 /* nRFMeshProvision.podspec */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; indentWidth = 2; lastKnownFileType = text; path = nRFMeshProvision.podspec; sourceTree = "<group>"; tabWidth = 2; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
+		1FBD7F9BCDAB1DA3E6090BB38C4773F6 /* nRFMeshProvision.podspec */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; indentWidth = 2; path = nRFMeshProvision.podspec; sourceTree = "<group>"; tabWidth = 2; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		2059BD0065FE9600F1C7C3837FD9AEC9 /* libcrypto.a */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = archive.ar; name = libcrypto.a; path = ios/lib/libcrypto.a; sourceTree = "<group>"; };
 		211437B3F9841EBE68839CFAA459F0CD /* GenericPowerDefaultSet.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = GenericPowerDefaultSet.swift; sourceTree = "<group>"; };
 		21CDD8648681CE8D31824BB49C8D17A6 /* Pods-nRFMeshProvision_Tests-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "Pods-nRFMeshProvision_Tests-dummy.m"; sourceTree = "<group>"; };
@@ -348,7 +362,7 @@
 		252EB46D0347DCF906FA2AE7CD7B3C90 /* UnprovisionedDeviceBeacon.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = UnprovisionedDeviceBeacon.swift; sourceTree = "<group>"; };
 		25357A299EFD170E03EB4721225EEBFB /* GenericLevelSetUnacknowledged.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = GenericLevelSetUnacknowledged.swift; sourceTree = "<group>"; };
 		255D649F9536012AA6244D949E130F14 /* MeshLoggerDelegate.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MeshLoggerDelegate.swift; sourceTree = "<group>"; };
-		2861C80CDD336F0C6F1A22B19230794B /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; path = LICENSE; sourceTree = "<group>"; };
+		2861C80CDD336F0C6F1A22B19230794B /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
 		290340F733ED3A07351DD8E7B773510D /* ts.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = ts.h; path = ios/include/openssl/ts.h; sourceTree = "<group>"; };
 		2AA036F18AB986B0430167C8A8A485CD /* ProvisioningManager.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ProvisioningManager.swift; sourceTree = "<group>"; };
 		2AC43AB90D1D64B8AC094A0381ACEE56 /* GenericOnOffGet.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = GenericOnOffGet.swift; sourceTree = "<group>"; };
@@ -427,12 +441,24 @@
 		5B2806D8A55D3AACAC06D351B90FF243 /* crypto.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = crypto.h; path = ios/include/openssl/crypto.h; sourceTree = "<group>"; };
 		5B2809EDBFAF2D7CFA012EDB6C68DECB /* ssl3.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = ssl3.h; path = ios/include/openssl/ssl3.h; sourceTree = "<group>"; };
 		5B97D7D11587FAB3BFA98746E577C93B /* cmac.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = cmac.h; path = ios/include/openssl/cmac.h; sourceTree = "<group>"; };
-		5D1064AE7769CE96C69DAF830939B26B /* Pods_nRFMeshProvision_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = Pods_nRFMeshProvision_Tests.framework; path = "Pods-nRFMeshProvision_Tests.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
+		5D1064AE7769CE96C69DAF830939B26B /* Pods_nRFMeshProvision_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_nRFMeshProvision_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		5DA0C56E010C5B3B34895D46C778D56A /* Pods-nRFMeshProvision_Example.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; path = "Pods-nRFMeshProvision_Example.modulemap"; sourceTree = "<group>"; };
 		5DFFE474A77447025F86EBD70688956D /* MeshData.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MeshData.swift; sourceTree = "<group>"; };
 		5E661CA118D623D9B773BB9C518C4685 /* ProvisioningState.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ProvisioningState.swift; sourceTree = "<group>"; };
 		5FAC9FD1623BEFBFC722027A42CFD246 /* CompanyIdentifier.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CompanyIdentifier.swift; sourceTree = "<group>"; };
 		5FF407F8EB8CDBFE971187C12A5376C6 /* ConfigNodeResetStatus.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ConfigNodeResetStatus.swift; sourceTree = "<group>"; };
+		6076E88C2380188700F11F02 /* GenericLightnessGet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericLightnessGet.swift; sourceTree = "<group>"; };
+		6076E88E238018DE00F11F02 /* GenericLightnessStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericLightnessStatus.swift; sourceTree = "<group>"; };
+		6076E890238018E600F11F02 /* GenericLightnessSet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericLightnessSet.swift; sourceTree = "<group>"; };
+		6076E8922380190000F11F02 /* GenericLightnessSetUnacknowledged.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericLightnessSetUnacknowledged.swift; sourceTree = "<group>"; };
+		6076E89423801A3B00F11F02 /* GenericCTLGet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericCTLGet.swift; sourceTree = "<group>"; };
+		6076E89623801A6900F11F02 /* GenericCTLSet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericCTLSet.swift; sourceTree = "<group>"; };
+		6076E89823801A7D00F11F02 /* GenericCTLSetUnackowledged.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericCTLSetUnackowledged.swift; sourceTree = "<group>"; };
+		6076E89A23801A8D00F11F02 /* GenericCTLStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericCTLStatus.swift; sourceTree = "<group>"; };
+		6076E89C23801DE300F11F02 /* GenericHSLGet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericHSLGet.swift; sourceTree = "<group>"; };
+		6076E89E23801DEE00F11F02 /* GenericHSLSet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericHSLSet.swift; sourceTree = "<group>"; };
+		6076E8A023801DFF00F11F02 /* GenericHSLSetUnackowledged.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericHSLSetUnackowledged.swift; sourceTree = "<group>"; };
+		6076E8A223801E0600F11F02 /* GenericHSLStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericHSLStatus.swift; sourceTree = "<group>"; };
 		64561A577F5AF24B9C3DCE9D4667546B /* conf_api.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = conf_api.h; path = ios/include/openssl/conf_api.h; sourceTree = "<group>"; };
 		64F4AAA1FD866B0D9AAD3259A6CE3805 /* NetworkLayer.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = NetworkLayer.swift; sourceTree = "<group>"; };
 		6518FED4A597A0E061F6C643AD96AB73 /* ConfigModelSubscriptionDelete.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ConfigModelSubscriptionDelete.swift; sourceTree = "<group>"; };
@@ -507,7 +533,7 @@
 		9C94EE8D5EDCFE6F4DE74461C6DA5D9F /* MeshNetwork+Keys.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "MeshNetwork+Keys.swift"; sourceTree = "<group>"; };
 		9CA8957B12AA81BB0B05F26F60C735BC /* GenericPowerLevelSet.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = GenericPowerLevelSet.swift; sourceTree = "<group>"; };
 		9CFC99A1252635569CD28587A0AE01CF /* AddAddressesToFilter.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AddAddressesToFilter.swift; sourceTree = "<group>"; };
-		9D940727FF8FB9C785EB98E56350EF41 /* Podfile */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; indentWidth = 2; lastKnownFileType = text; name = Podfile; path = ../Podfile; sourceTree = SOURCE_ROOT; tabWidth = 2; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
+		9D940727FF8FB9C785EB98E56350EF41 /* Podfile */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; indentWidth = 2; name = Podfile; path = ../Podfile; sourceTree = SOURCE_ROOT; tabWidth = 2; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		9E8A7D54122A03CA12E34A298931D8D1 /* GenericPowerRangeGet.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = GenericPowerRangeGet.swift; sourceTree = "<group>"; };
 		A048E7B07E2B5DB65AC4BCDEC7FD46C8 /* e_os2.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = e_os2.h; path = ios/include/openssl/e_os2.h; sourceTree = "<group>"; };
 		A0909F38896F8E4BCB3AFD183CC55D9C /* idea.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = idea.h; path = ios/include/openssl/idea.h; sourceTree = "<group>"; };
@@ -539,7 +565,7 @@
 		B1DFBF054C2DA1D97A9F1F194768FDC6 /* TransitionTime.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = TransitionTime.swift; sourceTree = "<group>"; };
 		B258CBC5970D26214873BAB058A81625 /* GenericBatteryStatus.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = GenericBatteryStatus.swift; sourceTree = "<group>"; };
 		B44819F3C3283F02F92CB912FA489CB3 /* opensslconf-armv7s.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = "opensslconf-armv7s.h"; path = "ios/include/openssl/opensslconf-armv7s.h"; sourceTree = "<group>"; };
-		B4C001B7D2FB9649EC19C565872AF0D8 /* nRFMeshProvision.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = nRFMeshProvision.framework; path = nRFMeshProvision.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B4C001B7D2FB9649EC19C565872AF0D8 /* nRFMeshProvision.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = nRFMeshProvision.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B545433B65C25698BAAD6AF8E13991A4 /* ConfigNetKeyDelete.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ConfigNetKeyDelete.swift; sourceTree = "<group>"; };
 		B5F2569B24DE44E1E2D47091788CA160 /* SegmentedAccessMessage.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SegmentedAccessMessage.swift; sourceTree = "<group>"; };
 		B76E21B650BC817D872294B7F67BA8BE /* GenericPowerLevelGet.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = GenericPowerLevelGet.swift; sourceTree = "<group>"; };
@@ -800,8 +826,19 @@
 				EB6B289E14FB0C585E36BFBDABFB15D0 /* GenericPowerRangeSet.swift */,
 				AA20FFD14195DC20CDD177EA1F9B1D01 /* GenericPowerRangeSetUnacknowledged.swift */,
 				0C72172DF00AD59A21B5BC1CFF543C6F /* GenericPowerRangeStatus.swift */,
+				6076E88C2380188700F11F02 /* GenericLightnessGet.swift */,
+				6076E890238018E600F11F02 /* GenericLightnessSet.swift */,
+				6076E8922380190000F11F02 /* GenericLightnessSetUnacknowledged.swift */,
+				6076E88E238018DE00F11F02 /* GenericLightnessStatus.swift */,
+				6076E89423801A3B00F11F02 /* GenericCTLGet.swift */,
+				6076E89623801A6900F11F02 /* GenericCTLSet.swift */,
+				6076E89823801A7D00F11F02 /* GenericCTLSetUnackowledged.swift */,
+				6076E89A23801A8D00F11F02 /* GenericCTLStatus.swift */,
+				6076E89C23801DE300F11F02 /* GenericHSLGet.swift */,
+				6076E89E23801DEE00F11F02 /* GenericHSLSet.swift */,
+				6076E8A023801DFF00F11F02 /* GenericHSLSetUnackowledged.swift */,
+				6076E8A223801E0600F11F02 /* GenericHSLStatus.swift */,
 			);
-			name = "Generic Messages";
 			path = "Generic Messages";
 			sourceTree = "<group>";
 		};
@@ -869,7 +906,6 @@
 				092029798065C8A9BDB689B34A90AB80 /* SecureNetworkBeacon.swift */,
 				252EB46D0347DCF906FA2AE7CD7B3C90 /* UnprovisionedDeviceBeacon.swift */,
 			);
-			name = "Network Layer";
 			path = "Network Layer";
 			sourceTree = "<group>";
 		};
@@ -976,7 +1012,6 @@
 			children = (
 				DF9EE56558419230EE47A4719A379710 /* Configuration Messages */,
 			);
-			name = "Foundation Messages";
 			path = "Foundation Messages";
 			sourceTree = "<group>";
 		};
@@ -987,7 +1022,6 @@
 				A339C26F66663E0249B7993CD7C9C999 /* AccessLayer.swift */,
 				54F98B5D151C173174A14081EF38D2CF /* AccessPdu.swift */,
 			);
-			name = "Access Layer";
 			path = "Access Layer";
 			sourceTree = "<group>";
 		};
@@ -1043,7 +1077,6 @@
 				533F8B515544EF3D8A2EF844F7047647 /* Static */,
 				07F09E36339D34E54E94A126C0B23D41 /* Support Files */,
 			);
-			name = "OpenSSL-Universal";
 			path = "OpenSSL-Universal";
 			sourceTree = "<group>";
 		};
@@ -1056,7 +1089,6 @@
 				8858B44979E3562C52B882E775D8F3A5 /* RemoveAddressesFromFilter.swift */,
 				433703B0075DB8D518F4D39E322FDF5F /* SetFilterType.swift */,
 			);
-			name = "Proxy Configuration";
 			path = "Proxy Configuration";
 			sourceTree = "<group>";
 		};
@@ -1117,7 +1149,6 @@
 				43368F0A58000B09EB640B1C4F9C03BA /* PBGattBearer.swift */,
 				F5ED606C812AD1B9322D16BE42B41C70 /* ProxyProtocolHandler.swift */,
 			);
-			name = GATT;
 			path = GATT;
 			sourceTree = "<group>";
 		};
@@ -1144,7 +1175,6 @@
 				E98A72BAB28D7E4EED4C501C4788BF26 /* ConfigurationClientHandler.swift */,
 				AB8796BD227AB37E9E07BA0FC40F2C72 /* ConfigurationServerHandler.swift */,
 			);
-			name = "Foundation Layer";
 			path = "Foundation Layer";
 			sourceTree = "<group>";
 		};
@@ -1153,7 +1183,6 @@
 			children = (
 				5970066474E1C9302F0A6E01FAB165B0 /* Support Files */,
 			);
-			name = SwiftLint;
 			path = SwiftLint;
 			sourceTree = "<group>";
 		};
@@ -1207,7 +1236,6 @@
 				CB593D1A601987FF95638BCC8A2497CE /* UpperTransportLayer.swift */,
 				7DA005E10C495F4CCB709E2B355904E3 /* UpperTransportPdu.swift */,
 			);
-			name = "Upper Transport Layer";
 			path = "Upper Transport Layer";
 			sourceTree = "<group>";
 		};
@@ -1272,7 +1300,6 @@
 				A656681799B570D521384669698EF8E2 /* ConfigVendorModelSubscriptionGet.swift */,
 				17528126D8653EA3630FF75CB58FE402 /* ConfigVendorModelSubscriptionList.swift */,
 			);
-			name = "Configuration Messages";
 			path = "Configuration Messages";
 			sourceTree = "<group>";
 		};
@@ -1289,7 +1316,6 @@
 				221CC34F1CCC0A7186D3BDE534AF81FB /* SegmentedControlMessage.swift */,
 				16A462CDFA3A0B194C43E18F5577EC3B /* SegmentedMessage.swift */,
 			);
-			name = "Lower Transport Layer";
 			path = "Lower Transport Layer";
 			sourceTree = "<group>";
 		};
@@ -1508,6 +1534,7 @@
 				3D836127699ABBDE9AF255A97652DE6A /* ApplicationKeys.swift in Sources */,
 				2B260B0021A420DFA79409F12133720D /* BackgroundTimer.swift in Sources */,
 				32C8C7BA7F7C95FF64303DB3FC7A208B /* BaseGattProxyBearer.swift in Sources */,
+				6076E8932380190000F11F02 /* GenericLightnessSetUnacknowledged.swift in Sources */,
 				363AB9CFAE39F693E57C103ACC9B7192 /* Beacon.swift in Sources */,
 				CBDD3E3643401D87CB1399A3CDF511E4 /* BeaconPdu.swift in Sources */,
 				98945A1BD1B278FF415D229795996D33 /* Bearer.swift in Sources */,
@@ -1563,8 +1590,11 @@
 				8B8B54B4D96A67803293F8AB35B11F5E /* ConfigNetworkTransmitStatus.swift in Sources */,
 				AB87827BE85A57F9881CD41B60827613 /* ConfigNodeReset.swift in Sources */,
 				70999523AEDACD0D49ADDF458E5479A8 /* ConfigNodeResetStatus.swift in Sources */,
+				6076E8A323801E0600F11F02 /* GenericHSLStatus.swift in Sources */,
 				AEF8427DE215CE75A800B5DCC9A5D4F5 /* ConfigRelayGet.swift in Sources */,
+				6076E88F238018DE00F11F02 /* GenericLightnessStatus.swift in Sources */,
 				2E1C3228C433AA4917F17CB122117FBA /* ConfigRelaySet.swift in Sources */,
+				6076E89F23801DEE00F11F02 /* GenericHSLSet.swift in Sources */,
 				C805D07BFDF9EA20E993778F1991929A /* ConfigRelayStatus.swift in Sources */,
 				A14800D99BD5519C19D270148AD75201 /* ConfigSIGModelAppGet.swift in Sources */,
 				C0D801B99D9A48E53BEAF5E90F4DEE83 /* ConfigSIGModelAppList.swift in Sources */,
@@ -1574,6 +1604,7 @@
 				14C89205F13E3419B9FED09A520FEF71 /* ConfigurationServerHandler.swift in Sources */,
 				00A089707F32F0FDB072C7F0B5E3C7CA /* ConfigVendorModelAppGet.swift in Sources */,
 				1064CC7B8FCB239CA2109D6B3E78A246 /* ConfigVendorModelAppList.swift in Sources */,
+				6076E89523801A3B00F11F02 /* GenericCTLGet.swift in Sources */,
 				81C784CA5AF4A9DC60E3D7D7A16621A9 /* ConfigVendorModelSubscriptionGet.swift in Sources */,
 				26E8485E5668202B0A12306628EB5804 /* ConfigVendorModelSubscriptionList.swift in Sources */,
 				AFE0597ADC10BC4365056C7880949670 /* ControlMessage.swift in Sources */,
@@ -1592,6 +1623,7 @@
 				09D74BACF4FC8E4792EEB00F142458A7 /* GenericBatteryStatus.swift in Sources */,
 				D00E6E7D19CDAD759E203D301EE5001E /* GenericDefaultTransitionTimeGet.swift in Sources */,
 				3E0B715B07191B3D06FA087866D56E4E /* GenericDefaultTransitionTimeSet.swift in Sources */,
+				6076E8A123801DFF00F11F02 /* GenericHSLSetUnackowledged.swift in Sources */,
 				C62ED857D2863EC9C08C6D57F3E1CC58 /* GenericDefaultTransitionTimeSetUnacknowledged.swift in Sources */,
 				221918AB51682957F4BF519A63A94D20 /* GenericDefaultTransitionTimeStatus.swift in Sources */,
 				02C2D27EBB8BC89DA93B33518DE338FB /* GenericDeltaSet.swift in Sources */,
@@ -1607,6 +1639,7 @@
 				2F85AE7E5475E545723DE04CCB363A50 /* GenericOnOffSet.swift in Sources */,
 				917E262D65FE9ACE3A8D98A5403D713D /* GenericOnOffSetUnacknowledged.swift in Sources */,
 				1E1158C57E28749E1EC6E039785A32F6 /* GenericOnOffStatus.swift in Sources */,
+				6076E89923801A7D00F11F02 /* GenericCTLSetUnackowledged.swift in Sources */,
 				DA461EEA331860B99BE3B857F9B8DF10 /* GenericOnPowerUpGet.swift in Sources */,
 				32E35A9FF49346F8D451361B6728CE00 /* GenericOnPowerUpSet.swift in Sources */,
 				3BB9639311EC25FBBB8FD4107511D66A /* GenericOnPowerUpSetUnacknowledged.swift in Sources */,
@@ -1633,6 +1666,7 @@
 				D5DBE30B727196AA6EC6231C303FC38D /* Key.swift in Sources */,
 				67DCCC5FB08F21A1C1A5E5A6D4ABB103 /* KeyIndex.swift in Sources */,
 				5A389436A149A5B74B0CAEEEE331404B /* KeyRefreshPhase.swift in Sources */,
+				6076E891238018E600F11F02 /* GenericLightnessSet.swift in Sources */,
 				9419A190FA77580E6F91CE27462C153E /* KeySet.swift in Sources */,
 				C957CE23D68A5FB7D75C67803D18C196 /* Location.swift in Sources */,
 				6B3705E8A9234569012E9BADA7AA0516 /* LowerTransportError.swift in Sources */,
@@ -1642,6 +1676,7 @@
 				B775B2D74D6954632F86521FB52A505F /* MeshConstants.swift in Sources */,
 				6A2B60DFF23238048258D380F7913B82 /* MeshData.swift in Sources */,
 				7B61C6DA981B64B3928613FC59AD3EB1 /* MeshLoggerDelegate.swift in Sources */,
+				6076E89723801A6900F11F02 /* GenericCTLSet.swift in Sources */,
 				C262F0C3277D5E2EB7B41DD190ABF236 /* MeshMessage.swift in Sources */,
 				EE33CFA08C1956050AD30DB63591D204 /* MeshMessageError.swift in Sources */,
 				6060C64F670EABB02E659902A43F7D19 /* MeshNetwork+Address.swift in Sources */,
@@ -1688,6 +1723,7 @@
 				CB39BC8BD474D51B11C457AE0AEEF431 /* ProvisioningCapabilities.swift in Sources */,
 				A4DEC33C32BD55F90D3C6DB6850C2BBF /* ProvisioningData.swift in Sources */,
 				D898B6D9B4F5FBC840C474CCE8B3192F /* ProvisioningManager.swift in Sources */,
+				6076E88D2380188700F11F02 /* GenericLightnessGet.swift in Sources */,
 				15697DC2AEEA994E3499A2404EA28DF5 /* ProvisioningPdu.swift in Sources */,
 				E6A5DA9834F80C86492E71A8D40ADF76 /* ProvisioningState.swift in Sources */,
 				A211F704F251D2C401B616AF72545F18 /* ProxyConfigurationMessage.swift in Sources */,
@@ -1695,7 +1731,9 @@
 				6AF5361B49737E7275691AABC80B22CE /* ProxyProtocolHandler.swift in Sources */,
 				AEEC018D1DCC461B2760C4DD589B6192 /* PublicKey.swift in Sources */,
 				4AA4270DDCD4D78EA6B18E73E96197FD /* Publish.swift in Sources */,
+				6076E89B23801A8D00F11F02 /* GenericCTLStatus.swift in Sources */,
 				E35F009051D3F11DFD6E10C69468C68A /* RangeObject.swift in Sources */,
+				6076E89D23801DE300F11F02 /* GenericHSLGet.swift in Sources */,
 				F3E540C52739517C91B99F326A76337B /* Ranges.swift in Sources */,
 				ABCE0178975C8537DDA73F0667C9BC26 /* RemoveAddressesFromFilter.swift in Sources */,
 				EFD0DEA3D91FCF3DF83BF58090AACFFA /* Scene.swift in Sources */,
@@ -2119,8 +2157,7 @@
 				MTL_FAST_MATH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRIP_INSTALLED_PRODUCT = NO;
-				SWIFT_COMPILATION_MODE = wholemodule;
-				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
 				SWIFT_VERSION = 5.0;
 				SYMROOT = "${SRCROOT}/../build";
 			};
