@@ -105,6 +105,50 @@
 		516178385756E35F5D07AAF0AB1733EA /* ConfigMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBA83F57E5A1594D8CBBCA790D81747C /* ConfigMessage.swift */; };
 		518C26575C1D5BE92DA13593FFA83CD2 /* ConfigAppKeyGet.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8CC9CA48D1DC746DB625D2BB1BE9B82 /* ConfigAppKeyGet.swift */; };
 		51B3698C36865A0893F3DE71CFD45C6F /* Data+Hex.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D2147BFCD897AAE5E897EEC9A0D3DDC /* Data+Hex.swift */; };
+		520206882382DF1700312CA0 /* LightLightnessLinearGet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 520206872382DF1700312CA0 /* LightLightnessLinearGet.swift */; };
+		5202068A2382DF6400312CA0 /* LightLightnessLinearSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 520206892382DF6400312CA0 /* LightLightnessLinearSet.swift */; };
+		5202068C2382DFB800312CA0 /* LightLightnessLinearSetUnacknowledged.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5202068B2382DFB800312CA0 /* LightLightnessLinearSetUnacknowledged.swift */; };
+		5202068E2382E14F00312CA0 /* LightLightnessLinearStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5202068D2382E14F00312CA0 /* LightLightnessLinearStatus.swift */; };
+		520206902382E22B00312CA0 /* LightLightnessLastGet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5202068F2382E22B00312CA0 /* LightLightnessLastGet.swift */; };
+		520206922382E25300312CA0 /* LightLightnessLastStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 520206912382E25300312CA0 /* LightLightnessLastStatus.swift */; };
+		520206942382E34100312CA0 /* LightLightnessDefaultGet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 520206932382E34100312CA0 /* LightLightnessDefaultGet.swift */; };
+		520206962382E36300312CA0 /* LightLightnessDefaultStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 520206952382E36300312CA0 /* LightLightnessDefaultStatus.swift */; };
+		520206982382E3B400312CA0 /* LightLightnessRangeGet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 520206972382E3B400312CA0 /* LightLightnessRangeGet.swift */; };
+		5202069A2382E3D300312CA0 /* LightLightnessRangeSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 520206992382E3D300312CA0 /* LightLightnessRangeSet.swift */; };
+		5202069C2382E3E600312CA0 /* LightLightnessRangeStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5202069B2382E3E600312CA0 /* LightLightnessRangeStatus.swift */; };
+		5202069E2382E5B000312CA0 /* LightLightnessRangeSetUnacknowledged.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5202069D2382E5B000312CA0 /* LightLightnessRangeSetUnacknowledged.swift */; };
+		520206A02382E78800312CA0 /* LightLightnessDefaultSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5202069F2382E78800312CA0 /* LightLightnessDefaultSet.swift */; };
+		520206A22382E7C400312CA0 /* LightLightnessDefaultSetUnacknowledged.swift in Sources */ = {isa = PBXBuildFile; fileRef = 520206A12382E7C400312CA0 /* LightLightnessDefaultSetUnacknowledged.swift */; };
+		520206A423840A3800312CA0 /* LightCTLTemperatureGet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 520206A323840A3800312CA0 /* LightCTLTemperatureGet.swift */; };
+		520206A623840A6E00312CA0 /* LightCTLTemperatureStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 520206A523840A6E00312CA0 /* LightCTLTemperatureStatus.swift */; };
+		520206A823840B7100312CA0 /* LightCTLTemperatureRangeGet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 520206A723840B7100312CA0 /* LightCTLTemperatureRangeGet.swift */; };
+		520206AA23840B9000312CA0 /* LightCTLTemperatureRangeStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 520206A923840B9000312CA0 /* LightCTLTemperatureRangeStatus.swift */; };
+		520206AC23840C2200312CA0 /* LightCTLTemperatureRangeSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 520206AB23840C2200312CA0 /* LightCTLTemperatureRangeSet.swift */; };
+		520206AE23840CC700312CA0 /* LightCTLTemperatureRangeSetUnacknowledged.swift in Sources */ = {isa = PBXBuildFile; fileRef = 520206AD23840CC700312CA0 /* LightCTLTemperatureRangeSetUnacknowledged.swift */; };
+		520206B023840D3A00312CA0 /* LightCTLTemperatureSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 520206AF23840D3A00312CA0 /* LightCTLTemperatureSet.swift */; };
+		520206B223840F9000312CA0 /* LightCTLTemperatureSetUnacknowledged.swift in Sources */ = {isa = PBXBuildFile; fileRef = 520206B123840F9000312CA0 /* LightCTLTemperatureSetUnacknowledged.swift */; };
+		520206B42384110D00312CA0 /* LightCTLDefaultGet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 520206B32384110D00312CA0 /* LightCTLDefaultGet.swift */; };
+		520206B62384113000312CA0 /* LightCTLDefaultStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 520206B52384113000312CA0 /* LightCTLDefaultStatus.swift */; };
+		520206B8238411CB00312CA0 /* LightCTLDefaultSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 520206B7238411CB00312CA0 /* LightCTLDefaultSet.swift */; };
+		520206BA2384121D00312CA0 /* LightCTLDefaultSetUnacknowledged.swift in Sources */ = {isa = PBXBuildFile; fileRef = 520206B92384121D00312CA0 /* LightCTLDefaultSetUnacknowledged.swift */; };
+		520206BC23841F3B00312CA0 /* LightHSLHueGet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 520206BB23841F3B00312CA0 /* LightHSLHueGet.swift */; };
+		520206BE23841F6200312CA0 /* LightHSLHueSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 520206BD23841F6200312CA0 /* LightHSLHueSet.swift */; };
+		520206C023841FFA00312CA0 /* LightHSLHueSetUnacknowledged.swift in Sources */ = {isa = PBXBuildFile; fileRef = 520206BF23841FFA00312CA0 /* LightHSLHueSetUnacknowledged.swift */; };
+		520206C22384202500312CA0 /* LightHSLHueStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 520206C12384202500312CA0 /* LightHSLHueStatus.swift */; };
+		520206C42384229200312CA0 /* LightHSLSaturationGet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 520206C32384229200312CA0 /* LightHSLSaturationGet.swift */; };
+		520206C6238422B900312CA0 /* LightHSLSaturationSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 520206C5238422B900312CA0 /* LightHSLSaturationSet.swift */; };
+		520206C8238422C700312CA0 /* LightHSLSaturationSetUnacknowledged.swift in Sources */ = {isa = PBXBuildFile; fileRef = 520206C7238422C700312CA0 /* LightHSLSaturationSetUnacknowledged.swift */; };
+		520206CA238422D000312CA0 /* LightHSLSaturationStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 520206C9238422D000312CA0 /* LightHSLSaturationStatus.swift */; };
+		520206CC2384252A00312CA0 /* LightHSLTargetGet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 520206CB2384252A00312CA0 /* LightHSLTargetGet.swift */; };
+		520206CE2384255200312CA0 /* LightHSLTargetStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 520206CD2384255200312CA0 /* LightHSLTargetStatus.swift */; };
+		520206D023842D3200312CA0 /* LightHSLDefaultGet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 520206CF23842D3200312CA0 /* LightHSLDefaultGet.swift */; };
+		520206D223842D6700312CA0 /* LightHSLDefaultStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 520206D123842D6700312CA0 /* LightHSLDefaultStatus.swift */; };
+		520206D423842E2500312CA0 /* LightHSLDefaultSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 520206D323842E2500312CA0 /* LightHSLDefaultSet.swift */; };
+		520206D623842E6F00312CA0 /* LightHSLDefaultSetUnacknowledged.swift in Sources */ = {isa = PBXBuildFile; fileRef = 520206D523842E6F00312CA0 /* LightHSLDefaultSetUnacknowledged.swift */; };
+		520206D823842EC600312CA0 /* LightHSLRangeGet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 520206D723842EC600312CA0 /* LightHSLRangeGet.swift */; };
+		520206DA23842EE500312CA0 /* LightHSLRangeStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 520206D923842EE500312CA0 /* LightHSLRangeStatus.swift */; };
+		520206DC2384309100312CA0 /* LightHSLRangeSetUnacknowledged.swift in Sources */ = {isa = PBXBuildFile; fileRef = 520206DB2384309100312CA0 /* LightHSLRangeSetUnacknowledged.swift */; };
+		520206DE238430E300312CA0 /* LightHSLRangeSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 520206DD238430E300312CA0 /* LightHSLRangeSet.swift */; };
 		53DA916839CA31246953810B3C44CB68 /* ConfigAppKeyUpdate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9114B7C19F5303E07366839B67523DA4 /* ConfigAppKeyUpdate.swift */; };
 		56BF57EDC427FC739D5BA420266885BC /* ConfigNetKeyList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09BF878B65DCA23F0EF4D2EFC30C43A1 /* ConfigNetKeyList.swift */; };
 		56F3CEF194FA69BDAACF43CB778E1D1A /* ConfigFriendGet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17147FE48282A082DC980CF62EC96487 /* ConfigFriendGet.swift */; };
@@ -118,18 +162,18 @@
 		5E8E5C72660D94FC3C4C817BBB15A2D9 /* UUID+Hex.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3712B73D310A62A71163A203E374899 /* UUID+Hex.swift */; };
 		5EBD5EE1F7468B1A7067E074D88779BE /* MeshAddress.swift in Sources */ = {isa = PBXBuildFile; fileRef = 790575B191E420FD59BE007003ED9556 /* MeshAddress.swift */; };
 		6060C64F670EABB02E659902A43F7D19 /* MeshNetwork+Address.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBF5BF6AA33C33A1541E81421E55F1D6 /* MeshNetwork+Address.swift */; };
-		6076E88D2380188700F11F02 /* GenericLightnessGet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6076E88C2380188700F11F02 /* GenericLightnessGet.swift */; };
-		6076E88F238018DE00F11F02 /* GenericLightnessStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6076E88E238018DE00F11F02 /* GenericLightnessStatus.swift */; };
-		6076E891238018E600F11F02 /* GenericLightnessSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6076E890238018E600F11F02 /* GenericLightnessSet.swift */; };
-		6076E8932380190000F11F02 /* GenericLightnessSetUnacknowledged.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6076E8922380190000F11F02 /* GenericLightnessSetUnacknowledged.swift */; };
-		6076E89523801A3B00F11F02 /* GenericCTLGet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6076E89423801A3B00F11F02 /* GenericCTLGet.swift */; };
-		6076E89723801A6900F11F02 /* GenericCTLSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6076E89623801A6900F11F02 /* GenericCTLSet.swift */; };
-		6076E89923801A7D00F11F02 /* GenericCTLSetUnackowledged.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6076E89823801A7D00F11F02 /* GenericCTLSetUnackowledged.swift */; };
-		6076E89B23801A8D00F11F02 /* GenericCTLStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6076E89A23801A8D00F11F02 /* GenericCTLStatus.swift */; };
-		6076E89D23801DE300F11F02 /* GenericHSLGet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6076E89C23801DE300F11F02 /* GenericHSLGet.swift */; };
-		6076E89F23801DEE00F11F02 /* GenericHSLSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6076E89E23801DEE00F11F02 /* GenericHSLSet.swift */; };
-		6076E8A123801DFF00F11F02 /* GenericHSLSetUnackowledged.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6076E8A023801DFF00F11F02 /* GenericHSLSetUnackowledged.swift */; };
-		6076E8A323801E0600F11F02 /* GenericHSLStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6076E8A223801E0600F11F02 /* GenericHSLStatus.swift */; };
+		6076E88D2380188700F11F02 /* LightLightnessGet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6076E88C2380188700F11F02 /* LightLightnessGet.swift */; };
+		6076E88F238018DE00F11F02 /* LightLightnessStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6076E88E238018DE00F11F02 /* LightLightnessStatus.swift */; };
+		6076E891238018E600F11F02 /* LightLightnessSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6076E890238018E600F11F02 /* LightLightnessSet.swift */; };
+		6076E8932380190000F11F02 /* LightLightnessSetUnacknowledged.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6076E8922380190000F11F02 /* LightLightnessSetUnacknowledged.swift */; };
+		6076E89523801A3B00F11F02 /* LightCTLGet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6076E89423801A3B00F11F02 /* LightCTLGet.swift */; };
+		6076E89723801A6900F11F02 /* LightCTLSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6076E89623801A6900F11F02 /* LightCTLSet.swift */; };
+		6076E89923801A7D00F11F02 /* LightCTLSetUnackowledged.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6076E89823801A7D00F11F02 /* LightCTLSetUnackowledged.swift */; };
+		6076E89B23801A8D00F11F02 /* LightCTLStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6076E89A23801A8D00F11F02 /* LightCTLStatus.swift */; };
+		6076E89D23801DE300F11F02 /* LightHSLGet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6076E89C23801DE300F11F02 /* LightHSLGet.swift */; };
+		6076E89F23801DEE00F11F02 /* LightHSLSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6076E89E23801DEE00F11F02 /* LightHSLSet.swift */; };
+		6076E8A123801DFF00F11F02 /* LightHSLSetUnackowledged.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6076E8A023801DFF00F11F02 /* LightHSLSetUnackowledged.swift */; };
+		6076E8A323801E0600F11F02 /* LightHSLStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6076E8A223801E0600F11F02 /* LightHSLStatus.swift */; };
 		60B7FFED6164CE8AAFFCD14868E82D4F /* LowerTransportLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1269E4D8F8733826C20228BC0C2A84BC /* LowerTransportLayer.swift */; };
 		61DDC10ED1CE0D2029095E0062D1BDB7 /* Data+Keys.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB27AB553003B3AF0C864537AE9B4D00 /* Data+Keys.swift */; };
 		6278503B70ACDD7448CA4118592D5781 /* MeshNetwork+Provisioner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E0AA98F4A7319E56711CC2849CA81E3 /* MeshNetwork+Provisioner.swift */; };
@@ -423,6 +467,50 @@
 		518BA6F4ACEEF57F1B0586844E0F8252 /* lhash.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = lhash.h; path = ios/include/openssl/lhash.h; sourceTree = "<group>"; };
 		51BBAA3978BFB1C9BAA0B3563DB01A48 /* Pods-nRFMeshProvision_Example-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-nRFMeshProvision_Example-Info.plist"; sourceTree = "<group>"; };
 		51D13BD5458F594BD37C0C20E0A01F65 /* ConfigModelPublicationSet.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ConfigModelPublicationSet.swift; sourceTree = "<group>"; };
+		520206872382DF1700312CA0 /* LightLightnessLinearGet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LightLightnessLinearGet.swift; sourceTree = "<group>"; };
+		520206892382DF6400312CA0 /* LightLightnessLinearSet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LightLightnessLinearSet.swift; sourceTree = "<group>"; };
+		5202068B2382DFB800312CA0 /* LightLightnessLinearSetUnacknowledged.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LightLightnessLinearSetUnacknowledged.swift; sourceTree = "<group>"; };
+		5202068D2382E14F00312CA0 /* LightLightnessLinearStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LightLightnessLinearStatus.swift; sourceTree = "<group>"; };
+		5202068F2382E22B00312CA0 /* LightLightnessLastGet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LightLightnessLastGet.swift; sourceTree = "<group>"; };
+		520206912382E25300312CA0 /* LightLightnessLastStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LightLightnessLastStatus.swift; sourceTree = "<group>"; };
+		520206932382E34100312CA0 /* LightLightnessDefaultGet.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LightLightnessDefaultGet.swift; sourceTree = "<group>"; };
+		520206952382E36300312CA0 /* LightLightnessDefaultStatus.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LightLightnessDefaultStatus.swift; sourceTree = "<group>"; };
+		520206972382E3B400312CA0 /* LightLightnessRangeGet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LightLightnessRangeGet.swift; sourceTree = "<group>"; };
+		520206992382E3D300312CA0 /* LightLightnessRangeSet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LightLightnessRangeSet.swift; sourceTree = "<group>"; };
+		5202069B2382E3E600312CA0 /* LightLightnessRangeStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LightLightnessRangeStatus.swift; sourceTree = "<group>"; };
+		5202069D2382E5B000312CA0 /* LightLightnessRangeSetUnacknowledged.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LightLightnessRangeSetUnacknowledged.swift; sourceTree = "<group>"; };
+		5202069F2382E78800312CA0 /* LightLightnessDefaultSet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LightLightnessDefaultSet.swift; sourceTree = "<group>"; };
+		520206A12382E7C400312CA0 /* LightLightnessDefaultSetUnacknowledged.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LightLightnessDefaultSetUnacknowledged.swift; sourceTree = "<group>"; };
+		520206A323840A3800312CA0 /* LightCTLTemperatureGet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LightCTLTemperatureGet.swift; sourceTree = "<group>"; };
+		520206A523840A6E00312CA0 /* LightCTLTemperatureStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LightCTLTemperatureStatus.swift; sourceTree = "<group>"; };
+		520206A723840B7100312CA0 /* LightCTLTemperatureRangeGet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LightCTLTemperatureRangeGet.swift; sourceTree = "<group>"; };
+		520206A923840B9000312CA0 /* LightCTLTemperatureRangeStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LightCTLTemperatureRangeStatus.swift; sourceTree = "<group>"; };
+		520206AB23840C2200312CA0 /* LightCTLTemperatureRangeSet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LightCTLTemperatureRangeSet.swift; sourceTree = "<group>"; };
+		520206AD23840CC700312CA0 /* LightCTLTemperatureRangeSetUnacknowledged.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LightCTLTemperatureRangeSetUnacknowledged.swift; sourceTree = "<group>"; };
+		520206AF23840D3A00312CA0 /* LightCTLTemperatureSet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LightCTLTemperatureSet.swift; sourceTree = "<group>"; };
+		520206B123840F9000312CA0 /* LightCTLTemperatureSetUnacknowledged.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LightCTLTemperatureSetUnacknowledged.swift; sourceTree = "<group>"; };
+		520206B32384110D00312CA0 /* LightCTLDefaultGet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LightCTLDefaultGet.swift; sourceTree = "<group>"; };
+		520206B52384113000312CA0 /* LightCTLDefaultStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LightCTLDefaultStatus.swift; sourceTree = "<group>"; };
+		520206B7238411CB00312CA0 /* LightCTLDefaultSet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LightCTLDefaultSet.swift; sourceTree = "<group>"; };
+		520206B92384121D00312CA0 /* LightCTLDefaultSetUnacknowledged.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LightCTLDefaultSetUnacknowledged.swift; sourceTree = "<group>"; };
+		520206BB23841F3B00312CA0 /* LightHSLHueGet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LightHSLHueGet.swift; sourceTree = "<group>"; };
+		520206BD23841F6200312CA0 /* LightHSLHueSet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LightHSLHueSet.swift; sourceTree = "<group>"; };
+		520206BF23841FFA00312CA0 /* LightHSLHueSetUnacknowledged.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LightHSLHueSetUnacknowledged.swift; sourceTree = "<group>"; };
+		520206C12384202500312CA0 /* LightHSLHueStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LightHSLHueStatus.swift; sourceTree = "<group>"; };
+		520206C32384229200312CA0 /* LightHSLSaturationGet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LightHSLSaturationGet.swift; sourceTree = "<group>"; };
+		520206C5238422B900312CA0 /* LightHSLSaturationSet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LightHSLSaturationSet.swift; sourceTree = "<group>"; };
+		520206C7238422C700312CA0 /* LightHSLSaturationSetUnacknowledged.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LightHSLSaturationSetUnacknowledged.swift; sourceTree = "<group>"; };
+		520206C9238422D000312CA0 /* LightHSLSaturationStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LightHSLSaturationStatus.swift; sourceTree = "<group>"; };
+		520206CB2384252A00312CA0 /* LightHSLTargetGet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LightHSLTargetGet.swift; sourceTree = "<group>"; };
+		520206CD2384255200312CA0 /* LightHSLTargetStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LightHSLTargetStatus.swift; sourceTree = "<group>"; };
+		520206CF23842D3200312CA0 /* LightHSLDefaultGet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LightHSLDefaultGet.swift; sourceTree = "<group>"; };
+		520206D123842D6700312CA0 /* LightHSLDefaultStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LightHSLDefaultStatus.swift; sourceTree = "<group>"; };
+		520206D323842E2500312CA0 /* LightHSLDefaultSet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LightHSLDefaultSet.swift; sourceTree = "<group>"; };
+		520206D523842E6F00312CA0 /* LightHSLDefaultSetUnacknowledged.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LightHSLDefaultSetUnacknowledged.swift; sourceTree = "<group>"; };
+		520206D723842EC600312CA0 /* LightHSLRangeGet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LightHSLRangeGet.swift; sourceTree = "<group>"; };
+		520206D923842EE500312CA0 /* LightHSLRangeStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LightHSLRangeStatus.swift; sourceTree = "<group>"; };
+		520206DB2384309100312CA0 /* LightHSLRangeSetUnacknowledged.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LightHSLRangeSetUnacknowledged.swift; sourceTree = "<group>"; };
+		520206DD238430E300312CA0 /* LightHSLRangeSet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LightHSLRangeSet.swift; sourceTree = "<group>"; };
 		520FF6A922520F8DB102D476583078C0 /* BackgroundTimer.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = BackgroundTimer.swift; sourceTree = "<group>"; };
 		52C51B4C3F09340D0526C4D488213752 /* ControlMessage.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ControlMessage.swift; sourceTree = "<group>"; };
 		52C7B651AD3DFA130C47DA071C001683 /* ConfigModelSubscriptionVirtualAddressAdd.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ConfigModelSubscriptionVirtualAddressAdd.swift; sourceTree = "<group>"; };
@@ -447,18 +535,18 @@
 		5E661CA118D623D9B773BB9C518C4685 /* ProvisioningState.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ProvisioningState.swift; sourceTree = "<group>"; };
 		5FAC9FD1623BEFBFC722027A42CFD246 /* CompanyIdentifier.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CompanyIdentifier.swift; sourceTree = "<group>"; };
 		5FF407F8EB8CDBFE971187C12A5376C6 /* ConfigNodeResetStatus.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ConfigNodeResetStatus.swift; sourceTree = "<group>"; };
-		6076E88C2380188700F11F02 /* GenericLightnessGet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericLightnessGet.swift; sourceTree = "<group>"; };
-		6076E88E238018DE00F11F02 /* GenericLightnessStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericLightnessStatus.swift; sourceTree = "<group>"; };
-		6076E890238018E600F11F02 /* GenericLightnessSet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericLightnessSet.swift; sourceTree = "<group>"; };
-		6076E8922380190000F11F02 /* GenericLightnessSetUnacknowledged.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericLightnessSetUnacknowledged.swift; sourceTree = "<group>"; };
-		6076E89423801A3B00F11F02 /* GenericCTLGet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericCTLGet.swift; sourceTree = "<group>"; };
-		6076E89623801A6900F11F02 /* GenericCTLSet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericCTLSet.swift; sourceTree = "<group>"; };
-		6076E89823801A7D00F11F02 /* GenericCTLSetUnackowledged.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericCTLSetUnackowledged.swift; sourceTree = "<group>"; };
-		6076E89A23801A8D00F11F02 /* GenericCTLStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericCTLStatus.swift; sourceTree = "<group>"; };
-		6076E89C23801DE300F11F02 /* GenericHSLGet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericHSLGet.swift; sourceTree = "<group>"; };
-		6076E89E23801DEE00F11F02 /* GenericHSLSet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericHSLSet.swift; sourceTree = "<group>"; };
-		6076E8A023801DFF00F11F02 /* GenericHSLSetUnackowledged.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericHSLSetUnackowledged.swift; sourceTree = "<group>"; };
-		6076E8A223801E0600F11F02 /* GenericHSLStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericHSLStatus.swift; sourceTree = "<group>"; };
+		6076E88C2380188700F11F02 /* LightLightnessGet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LightLightnessGet.swift; sourceTree = "<group>"; };
+		6076E88E238018DE00F11F02 /* LightLightnessStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LightLightnessStatus.swift; sourceTree = "<group>"; };
+		6076E890238018E600F11F02 /* LightLightnessSet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LightLightnessSet.swift; sourceTree = "<group>"; };
+		6076E8922380190000F11F02 /* LightLightnessSetUnacknowledged.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LightLightnessSetUnacknowledged.swift; sourceTree = "<group>"; };
+		6076E89423801A3B00F11F02 /* LightCTLGet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LightCTLGet.swift; sourceTree = "<group>"; };
+		6076E89623801A6900F11F02 /* LightCTLSet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LightCTLSet.swift; sourceTree = "<group>"; };
+		6076E89823801A7D00F11F02 /* LightCTLSetUnackowledged.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LightCTLSetUnackowledged.swift; sourceTree = "<group>"; };
+		6076E89A23801A8D00F11F02 /* LightCTLStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LightCTLStatus.swift; sourceTree = "<group>"; };
+		6076E89C23801DE300F11F02 /* LightHSLGet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LightHSLGet.swift; sourceTree = "<group>"; };
+		6076E89E23801DEE00F11F02 /* LightHSLSet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LightHSLSet.swift; sourceTree = "<group>"; };
+		6076E8A023801DFF00F11F02 /* LightHSLSetUnackowledged.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LightHSLSetUnackowledged.swift; sourceTree = "<group>"; };
+		6076E8A223801E0600F11F02 /* LightHSLStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LightHSLStatus.swift; sourceTree = "<group>"; };
 		64561A577F5AF24B9C3DCE9D4667546B /* conf_api.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = conf_api.h; path = ios/include/openssl/conf_api.h; sourceTree = "<group>"; };
 		64F4AAA1FD866B0D9AAD3259A6CE3805 /* NetworkLayer.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = NetworkLayer.swift; sourceTree = "<group>"; };
 		6518FED4A597A0E061F6C643AD96AB73 /* ConfigModelSubscriptionDelete.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ConfigModelSubscriptionDelete.swift; sourceTree = "<group>"; };
@@ -826,18 +914,62 @@
 				EB6B289E14FB0C585E36BFBDABFB15D0 /* GenericPowerRangeSet.swift */,
 				AA20FFD14195DC20CDD177EA1F9B1D01 /* GenericPowerRangeSetUnacknowledged.swift */,
 				0C72172DF00AD59A21B5BC1CFF543C6F /* GenericPowerRangeStatus.swift */,
-				6076E88C2380188700F11F02 /* GenericLightnessGet.swift */,
-				6076E890238018E600F11F02 /* GenericLightnessSet.swift */,
-				6076E8922380190000F11F02 /* GenericLightnessSetUnacknowledged.swift */,
-				6076E88E238018DE00F11F02 /* GenericLightnessStatus.swift */,
-				6076E89423801A3B00F11F02 /* GenericCTLGet.swift */,
-				6076E89623801A6900F11F02 /* GenericCTLSet.swift */,
-				6076E89823801A7D00F11F02 /* GenericCTLSetUnackowledged.swift */,
-				6076E89A23801A8D00F11F02 /* GenericCTLStatus.swift */,
-				6076E89C23801DE300F11F02 /* GenericHSLGet.swift */,
-				6076E89E23801DEE00F11F02 /* GenericHSLSet.swift */,
-				6076E8A023801DFF00F11F02 /* GenericHSLSetUnackowledged.swift */,
-				6076E8A223801E0600F11F02 /* GenericHSLStatus.swift */,
+				6076E88C2380188700F11F02 /* LightLightnessGet.swift */,
+				6076E890238018E600F11F02 /* LightLightnessSet.swift */,
+				6076E8922380190000F11F02 /* LightLightnessSetUnacknowledged.swift */,
+				6076E88E238018DE00F11F02 /* LightLightnessStatus.swift */,
+				520206872382DF1700312CA0 /* LightLightnessLinearGet.swift */,
+				520206892382DF6400312CA0 /* LightLightnessLinearSet.swift */,
+				5202068B2382DFB800312CA0 /* LightLightnessLinearSetUnacknowledged.swift */,
+				5202068D2382E14F00312CA0 /* LightLightnessLinearStatus.swift */,
+				5202068F2382E22B00312CA0 /* LightLightnessLastGet.swift */,
+				520206912382E25300312CA0 /* LightLightnessLastStatus.swift */,
+				520206932382E34100312CA0 /* LightLightnessDefaultGet.swift */,
+				520206952382E36300312CA0 /* LightLightnessDefaultStatus.swift */,
+				520206972382E3B400312CA0 /* LightLightnessRangeGet.swift */,
+				5202069B2382E3E600312CA0 /* LightLightnessRangeStatus.swift */,
+				520206992382E3D300312CA0 /* LightLightnessRangeSet.swift */,
+				5202069D2382E5B000312CA0 /* LightLightnessRangeSetUnacknowledged.swift */,
+				5202069F2382E78800312CA0 /* LightLightnessDefaultSet.swift */,
+				520206A12382E7C400312CA0 /* LightLightnessDefaultSetUnacknowledged.swift */,
+				6076E89423801A3B00F11F02 /* LightCTLGet.swift */,
+				6076E89623801A6900F11F02 /* LightCTLSet.swift */,
+				6076E89823801A7D00F11F02 /* LightCTLSetUnackowledged.swift */,
+				6076E89A23801A8D00F11F02 /* LightCTLStatus.swift */,
+				520206A323840A3800312CA0 /* LightCTLTemperatureGet.swift */,
+				520206AF23840D3A00312CA0 /* LightCTLTemperatureSet.swift */,
+				520206B123840F9000312CA0 /* LightCTLTemperatureSetUnacknowledged.swift */,
+				520206A723840B7100312CA0 /* LightCTLTemperatureRangeGet.swift */,
+				520206AB23840C2200312CA0 /* LightCTLTemperatureRangeSet.swift */,
+				520206AD23840CC700312CA0 /* LightCTLTemperatureRangeSetUnacknowledged.swift */,
+				520206A923840B9000312CA0 /* LightCTLTemperatureRangeStatus.swift */,
+				520206A523840A6E00312CA0 /* LightCTLTemperatureStatus.swift */,
+				520206B32384110D00312CA0 /* LightCTLDefaultGet.swift */,
+				520206B52384113000312CA0 /* LightCTLDefaultStatus.swift */,
+				520206B7238411CB00312CA0 /* LightCTLDefaultSet.swift */,
+				520206B92384121D00312CA0 /* LightCTLDefaultSetUnacknowledged.swift */,
+				6076E89C23801DE300F11F02 /* LightHSLGet.swift */,
+				6076E89E23801DEE00F11F02 /* LightHSLSet.swift */,
+				6076E8A023801DFF00F11F02 /* LightHSLSetUnackowledged.swift */,
+				6076E8A223801E0600F11F02 /* LightHSLStatus.swift */,
+				520206BB23841F3B00312CA0 /* LightHSLHueGet.swift */,
+				520206BD23841F6200312CA0 /* LightHSLHueSet.swift */,
+				520206BF23841FFA00312CA0 /* LightHSLHueSetUnacknowledged.swift */,
+				520206C12384202500312CA0 /* LightHSLHueStatus.swift */,
+				520206C32384229200312CA0 /* LightHSLSaturationGet.swift */,
+				520206C5238422B900312CA0 /* LightHSLSaturationSet.swift */,
+				520206C7238422C700312CA0 /* LightHSLSaturationSetUnacknowledged.swift */,
+				520206C9238422D000312CA0 /* LightHSLSaturationStatus.swift */,
+				520206CB2384252A00312CA0 /* LightHSLTargetGet.swift */,
+				520206CD2384255200312CA0 /* LightHSLTargetStatus.swift */,
+				520206CF23842D3200312CA0 /* LightHSLDefaultGet.swift */,
+				520206D123842D6700312CA0 /* LightHSLDefaultStatus.swift */,
+				520206D323842E2500312CA0 /* LightHSLDefaultSet.swift */,
+				520206D523842E6F00312CA0 /* LightHSLDefaultSetUnacknowledged.swift */,
+				520206D723842EC600312CA0 /* LightHSLRangeGet.swift */,
+				520206D923842EE500312CA0 /* LightHSLRangeStatus.swift */,
+				520206DD238430E300312CA0 /* LightHSLRangeSet.swift */,
+				520206DB2384309100312CA0 /* LightHSLRangeSetUnacknowledged.swift */,
 			);
 			path = "Generic Messages";
 			sourceTree = "<group>";
@@ -1521,20 +1653,24 @@
 			buildActionMask = 2147483647;
 			files = (
 				26762F4E7CB674B0A85ADF737BD2155A /* AccessError.swift in Sources */,
+				520206982382E3B400312CA0 /* LightLightnessRangeGet.swift in Sources */,
 				E2A9C284EB1F74727D718A427E1B7DA4 /* AccessLayer.swift in Sources */,
 				6DE0D7893A7CA10F5B62C14C321EB956 /* AccessMessage.swift in Sources */,
 				71A138CC215F2F72391CCA4DE35B4A68 /* AccessPdu.swift in Sources */,
 				67914E25799404C9FC2AA3EB80DC6E28 /* AddAddressesToFilter.swift in Sources */,
 				16DE7A3C262AA4144A91FB1FC03FE334 /* Address.swift in Sources */,
+				520206B8238411CB00312CA0 /* LightCTLDefaultSet.swift in Sources */,
 				73A54FCAF2F54E8D678E39A39CA3E14F /* AddressRange.swift in Sources */,
 				5B5F52F29412D875955962E6EEA2CAD7 /* Algorithm.swift in Sources */,
 				95566396745CCE0E62FF445B8602E326 /* ApplicationKey+MeshNetwork.swift in Sources */,
 				34B443542D457704B45EDE49305B7EDB /* ApplicationKey+NetworkKey.swift in Sources */,
 				EA4AAA98422D5DD10688D504318B4EBC /* ApplicationKey.swift in Sources */,
+				520206B023840D3A00312CA0 /* LightCTLTemperatureSet.swift in Sources */,
 				3D836127699ABBDE9AF255A97652DE6A /* ApplicationKeys.swift in Sources */,
 				2B260B0021A420DFA79409F12133720D /* BackgroundTimer.swift in Sources */,
+				520206962382E36300312CA0 /* LightLightnessDefaultStatus.swift in Sources */,
 				32C8C7BA7F7C95FF64303DB3FC7A208B /* BaseGattProxyBearer.swift in Sources */,
-				6076E8932380190000F11F02 /* GenericLightnessSetUnacknowledged.swift in Sources */,
+				6076E8932380190000F11F02 /* LightLightnessSetUnacknowledged.swift in Sources */,
 				363AB9CFAE39F693E57C103ACC9B7192 /* Beacon.swift in Sources */,
 				CBDD3E3643401D87CB1399A3CDF511E4 /* BeaconPdu.swift in Sources */,
 				98945A1BD1B278FF415D229795996D33 /* Bearer.swift in Sources */,
@@ -1546,13 +1682,17 @@
 				CC3D54A3A0F1B8B1C3FA5C635AF91A28 /* ConfigAppKeyAdd.swift in Sources */,
 				E2DBAB574B3BB5F74F1987DA40AA73D7 /* ConfigAppKeyDelete.swift in Sources */,
 				518C26575C1D5BE92DA13593FFA83CD2 /* ConfigAppKeyGet.swift in Sources */,
+				520206AC23840C2200312CA0 /* LightCTLTemperatureRangeSet.swift in Sources */,
 				27EE13C344B52173FA07FDA7001B06E7 /* ConfigAppKeyList.swift in Sources */,
 				E976AD4067BAC2D674052F03B512BF8D /* ConfigAppKeyStatus.swift in Sources */,
 				53DA916839CA31246953810B3C44CB68 /* ConfigAppKeyUpdate.swift in Sources */,
 				B64084569E35834653F545BF39FE6230 /* ConfigBeaconGet.swift in Sources */,
 				58E6E593B26E8E87B759D6E6E600EDD8 /* ConfigBeaconSet.swift in Sources */,
 				22F16F7930A9B3F994F2483C10970FAA /* ConfigBeaconStatus.swift in Sources */,
+				520206BC23841F3B00312CA0 /* LightHSLHueGet.swift in Sources */,
 				7D463CAFF511271AE40AD732C590EF09 /* ConfigCompositionDataGet.swift in Sources */,
+				520206D023842D3200312CA0 /* LightHSLDefaultGet.swift in Sources */,
+				520206BE23841F6200312CA0 /* LightHSLHueSet.swift in Sources */,
 				F18E5137EDA7F14866004A061402F354 /* ConfigCompositionDataStatus.swift in Sources */,
 				3280EE1D4550E59D56E158CF7C91F2BC /* ConfigDefaultTtlGet.swift in Sources */,
 				1DAA183419D20536C85EF1E97BD51A06 /* ConfigDefaultTtlSet.swift in Sources */,
@@ -1565,9 +1705,11 @@
 				14688D59822B063ACC0C831CF8309A66 /* ConfigGATTProxyStatus.swift in Sources */,
 				516178385756E35F5D07AAF0AB1733EA /* ConfigMessage.swift in Sources */,
 				7DF0489A47335CFEE70F679AF6C1B8D3 /* ConfigModelAppBind.swift in Sources */,
+				520206DE238430E300312CA0 /* LightHSLRangeSet.swift in Sources */,
 				C2789B7BDACE2F292890CE72EF6A34B5 /* ConfigModelAppStatus.swift in Sources */,
 				8122CBF0B85AD9FC0F361ABB320E4403 /* ConfigModelAppUnbind.swift in Sources */,
 				6A7E68AB773728F0BEA0BCCFC9B3721F /* ConfigModelPublicationGet.swift in Sources */,
+				520206C6238422B900312CA0 /* LightHSLSaturationSet.swift in Sources */,
 				F5F8CF531535029DD553004D2C0A7F4F /* ConfigModelPublicationSet.swift in Sources */,
 				75EB9DF1CE7C446165C7599C6A6E38A9 /* ConfigModelPublicationStatus.swift in Sources */,
 				360C7B88D4EA18609719217A2D7CD9FD /* ConfigModelPublicationVirtualAddressSet.swift in Sources */,
@@ -1584,17 +1726,22 @@
 				D66CEDDBD3190E588EF1D0675B40EBCB /* ConfigNetKeyGet.swift in Sources */,
 				56BF57EDC427FC739D5BA420266885BC /* ConfigNetKeyList.swift in Sources */,
 				0E03C91EDB95FD8F64AE3AFF813286F5 /* ConfigNetKeyStatus.swift in Sources */,
+				5202069A2382E3D300312CA0 /* LightLightnessRangeSet.swift in Sources */,
 				9D672A8EBB7497D9D04DB5E3867542E7 /* ConfigNetKeyUpdate.swift in Sources */,
+				5202068A2382DF6400312CA0 /* LightLightnessLinearSet.swift in Sources */,
 				28953AE36E7B967A4763A77868045FD6 /* ConfigNetworkTransmitGet.swift in Sources */,
+				520206BA2384121D00312CA0 /* LightCTLDefaultSetUnacknowledged.swift in Sources */,
 				863A7CA5F03D3E5DBBA8F1D14CF86691 /* ConfigNetworkTransmitSet.swift in Sources */,
+				520206D423842E2500312CA0 /* LightHSLDefaultSet.swift in Sources */,
 				8B8B54B4D96A67803293F8AB35B11F5E /* ConfigNetworkTransmitStatus.swift in Sources */,
 				AB87827BE85A57F9881CD41B60827613 /* ConfigNodeReset.swift in Sources */,
 				70999523AEDACD0D49ADDF458E5479A8 /* ConfigNodeResetStatus.swift in Sources */,
-				6076E8A323801E0600F11F02 /* GenericHSLStatus.swift in Sources */,
+				520206A423840A3800312CA0 /* LightCTLTemperatureGet.swift in Sources */,
+				6076E8A323801E0600F11F02 /* LightHSLStatus.swift in Sources */,
 				AEF8427DE215CE75A800B5DCC9A5D4F5 /* ConfigRelayGet.swift in Sources */,
-				6076E88F238018DE00F11F02 /* GenericLightnessStatus.swift in Sources */,
+				6076E88F238018DE00F11F02 /* LightLightnessStatus.swift in Sources */,
 				2E1C3228C433AA4917F17CB122117FBA /* ConfigRelaySet.swift in Sources */,
-				6076E89F23801DEE00F11F02 /* GenericHSLSet.swift in Sources */,
+				6076E89F23801DEE00F11F02 /* LightHSLSet.swift in Sources */,
 				C805D07BFDF9EA20E993778F1991929A /* ConfigRelayStatus.swift in Sources */,
 				A14800D99BD5519C19D270148AD75201 /* ConfigSIGModelAppGet.swift in Sources */,
 				C0D801B99D9A48E53BEAF5E90F4DEE83 /* ConfigSIGModelAppList.swift in Sources */,
@@ -1604,17 +1751,22 @@
 				14C89205F13E3419B9FED09A520FEF71 /* ConfigurationServerHandler.swift in Sources */,
 				00A089707F32F0FDB072C7F0B5E3C7CA /* ConfigVendorModelAppGet.swift in Sources */,
 				1064CC7B8FCB239CA2109D6B3E78A246 /* ConfigVendorModelAppList.swift in Sources */,
-				6076E89523801A3B00F11F02 /* GenericCTLGet.swift in Sources */,
+				520206922382E25300312CA0 /* LightLightnessLastStatus.swift in Sources */,
+				6076E89523801A3B00F11F02 /* LightCTLGet.swift in Sources */,
 				81C784CA5AF4A9DC60E3D7D7A16621A9 /* ConfigVendorModelSubscriptionGet.swift in Sources */,
 				26E8485E5668202B0A12306628EB5804 /* ConfigVendorModelSubscriptionList.swift in Sources */,
 				AFE0597ADC10BC4365056C7880949670 /* ControlMessage.swift in Sources */,
+				520206A823840B7100312CA0 /* LightCTLTemperatureRangeGet.swift in Sources */,
+				520206D223842D6700312CA0 /* LightHSLDefaultStatus.swift in Sources */,
 				51B3698C36865A0893F3DE71CFD45C6F /* Data+Hex.swift in Sources */,
 				61DDC10ED1CE0D2029095E0062D1BDB7 /* Data+Keys.swift in Sources */,
+				5202069E2382E5B000312CA0 /* LightLightnessRangeSetUnacknowledged.swift in Sources */,
 				0CA4448487E61192213FC04D91121BA7 /* Data.swift in Sources */,
 				CFB5C9A764E1ADB084BEB4A0128E4AA7 /* Element+Address.swift in Sources */,
 				79C56F580646E4AB84E91267E1582515 /* Element+Keys.swift in Sources */,
 				832D28AAA5BDEF84A48785205B4319DD /* Element+Models.swift in Sources */,
 				079E1AB3EE472D968A27C807EA17A2A7 /* Element.swift in Sources */,
+				5202069C2382E3E600312CA0 /* LightLightnessRangeStatus.swift in Sources */,
 				303AE6B14AE3EFD1EDFE1E5C5AC7F838 /* FilterStatus.swift in Sources */,
 				9386FA64802580A4A1C1B2EFEC97C62E /* GattBearer.swift in Sources */,
 				36F2DE21D42867DE03BDAD8CEA0EBBE9 /* GattBearerDelegate.swift in Sources */,
@@ -1623,9 +1775,10 @@
 				09D74BACF4FC8E4792EEB00F142458A7 /* GenericBatteryStatus.swift in Sources */,
 				D00E6E7D19CDAD759E203D301EE5001E /* GenericDefaultTransitionTimeGet.swift in Sources */,
 				3E0B715B07191B3D06FA087866D56E4E /* GenericDefaultTransitionTimeSet.swift in Sources */,
-				6076E8A123801DFF00F11F02 /* GenericHSLSetUnackowledged.swift in Sources */,
+				6076E8A123801DFF00F11F02 /* LightHSLSetUnackowledged.swift in Sources */,
 				C62ED857D2863EC9C08C6D57F3E1CC58 /* GenericDefaultTransitionTimeSetUnacknowledged.swift in Sources */,
 				221918AB51682957F4BF519A63A94D20 /* GenericDefaultTransitionTimeStatus.swift in Sources */,
+				520206B62384113000312CA0 /* LightCTLDefaultStatus.swift in Sources */,
 				02C2D27EBB8BC89DA93B33518DE338FB /* GenericDeltaSet.swift in Sources */,
 				B84A5BA9391273700134F5D5568EC29C /* GenericDeltaSetUnacknowledged.swift in Sources */,
 				94C72D4B4BB88B95C29525EFEF7020FC /* GenericLevelGet.swift in Sources */,
@@ -1636,10 +1789,12 @@
 				5866DCD9F397557BA68C6BF51F521AB9 /* GenericMoveSet.swift in Sources */,
 				D317596765C738C6D45ED13F68C41C82 /* GenericMoveSetUnacknowledged.swift in Sources */,
 				3207A1053569BBD124BC56E869DD652E /* GenericOnOffGet.swift in Sources */,
+				520206CE2384255200312CA0 /* LightHSLTargetStatus.swift in Sources */,
 				2F85AE7E5475E545723DE04CCB363A50 /* GenericOnOffSet.swift in Sources */,
 				917E262D65FE9ACE3A8D98A5403D713D /* GenericOnOffSetUnacknowledged.swift in Sources */,
 				1E1158C57E28749E1EC6E039785A32F6 /* GenericOnOffStatus.swift in Sources */,
-				6076E89923801A7D00F11F02 /* GenericCTLSetUnackowledged.swift in Sources */,
+				520206CA238422D000312CA0 /* LightHSLSaturationStatus.swift in Sources */,
+				6076E89923801A7D00F11F02 /* LightCTLSetUnackowledged.swift in Sources */,
 				DA461EEA331860B99BE3B857F9B8DF10 /* GenericOnPowerUpGet.swift in Sources */,
 				32E35A9FF49346F8D451361B6728CE00 /* GenericOnPowerUpSet.swift in Sources */,
 				3BB9639311EC25FBBB8FD4107511D66A /* GenericOnPowerUpSetUnacknowledged.swift in Sources */,
@@ -1649,7 +1804,11 @@
 				8678E72935BC1E63B18BD9C167D7FB78 /* GenericPowerDefaultStatus.swift in Sources */,
 				8171CC0BCD59F955E8F99B48D9641FEF /* GenericPowerDefautGet.swift in Sources */,
 				FC9928BD23AB40B4F05CCF0023FDCAFB /* GenericPowerLastGet.swift in Sources */,
+				520206C023841FFA00312CA0 /* LightHSLHueSetUnacknowledged.swift in Sources */,
 				11D817C5D17F3756EB62C8EEF0F1D8FD /* GenericPowerLastStatus.swift in Sources */,
+				520206902382E22B00312CA0 /* LightLightnessLastGet.swift in Sources */,
+				5202068C2382DFB800312CA0 /* LightLightnessLinearSetUnacknowledged.swift in Sources */,
+				520206A02382E78800312CA0 /* LightLightnessDefaultSet.swift in Sources */,
 				7E6350ADF32301920836A1D1C72CEA04 /* GenericPowerLevelGet.swift in Sources */,
 				B3007E2698126BDEEC394A002F3258C2 /* GenericPowerLevelSet.swift in Sources */,
 				63E4479B8719B05628D0A856438AD4CE /* GenericPowerLevelSetUnacknowledged.swift in Sources */,
@@ -1657,17 +1816,22 @@
 				F7F303526B5C1EC6A4446DC1BB196B93 /* GenericPowerRangeGet.swift in Sources */,
 				8CCCDB42C1BB746ED0D8972E95AA7A17 /* GenericPowerRangeSet.swift in Sources */,
 				BCEF8B90A96DD5D3BE1F14204BF36D1B /* GenericPowerRangeSetUnacknowledged.swift in Sources */,
+				520206D623842E6F00312CA0 /* LightHSLDefaultSetUnacknowledged.swift in Sources */,
 				E1588D4FDF01D1C014D227986FB936B0 /* GenericPowerRangeStatus.swift in Sources */,
+				520206D823842EC600312CA0 /* LightHSLRangeGet.swift in Sources */,
 				FAF44418512F90E34547B1906AC0DC72 /* Group+MeshNetwork.swift in Sources */,
 				02399D67170B20E079E92472009B4D69 /* Group.swift in Sources */,
+				520206882382DF1700312CA0 /* LightLightnessLinearGet.swift in Sources */,
 				7689103AEBA004DEAE5F74D74EA1FD6E /* HeartbeatMessage.swift in Sources */,
+				520206A623840A6E00312CA0 /* LightCTLTemperatureStatus.swift in Sources */,
 				1DC51CBD24B11A0500A8682786A0CE65 /* Int+Hex.swift in Sources */,
 				4C87B53158589F09F8962289ACFA70EF /* IvIndex.swift in Sources */,
 				D5DBE30B727196AA6EC6231C303FC38D /* Key.swift in Sources */,
 				67DCCC5FB08F21A1C1A5E5A6D4ABB103 /* KeyIndex.swift in Sources */,
 				5A389436A149A5B74B0CAEEEE331404B /* KeyRefreshPhase.swift in Sources */,
-				6076E891238018E600F11F02 /* GenericLightnessSet.swift in Sources */,
+				6076E891238018E600F11F02 /* LightLightnessSet.swift in Sources */,
 				9419A190FA77580E6F91CE27462C153E /* KeySet.swift in Sources */,
+				520206942382E34100312CA0 /* LightLightnessDefaultGet.swift in Sources */,
 				C957CE23D68A5FB7D75C67803D18C196 /* Location.swift in Sources */,
 				6B3705E8A9234569012E9BADA7AA0516 /* LowerTransportError.swift in Sources */,
 				60B7FFED6164CE8AAFFCD14868E82D4F /* LowerTransportLayer.swift in Sources */,
@@ -1676,7 +1840,7 @@
 				B775B2D74D6954632F86521FB52A505F /* MeshConstants.swift in Sources */,
 				6A2B60DFF23238048258D380F7913B82 /* MeshData.swift in Sources */,
 				7B61C6DA981B64B3928613FC59AD3EB1 /* MeshLoggerDelegate.swift in Sources */,
-				6076E89723801A6900F11F02 /* GenericCTLSet.swift in Sources */,
+				6076E89723801A6900F11F02 /* LightCTLSet.swift in Sources */,
 				C262F0C3277D5E2EB7B41DD190ABF236 /* MeshMessage.swift in Sources */,
 				EE33CFA08C1956050AD30DB63591D204 /* MeshMessageError.swift in Sources */,
 				6060C64F670EABB02E659902A43F7D19 /* MeshNetwork+Address.swift in Sources */,
@@ -1700,6 +1864,7 @@
 				F83D44F2004C5DDE333C0965148C8BAC /* ModelDelegate.swift in Sources */,
 				C4E2A183747252916280A27DEC9AFF9A /* Models.swift in Sources */,
 				6470AE38EAB84414B5EED6F07C62FD9E /* NetworkKey+MeshNetwork.swift in Sources */,
+				520206C42384229200312CA0 /* LightHSLSaturationGet.swift in Sources */,
 				CCA6EEF1EF2520150A63CC296FA2F79A /* NetworkKey.swift in Sources */,
 				A82A64764EBA31D62797334B8D65949A /* NetworkKeys.swift in Sources */,
 				816DFDD89E8368F548FA25864A74AC8E /* NetworkLayer.swift in Sources */,
@@ -1708,6 +1873,7 @@
 				6FB5E626FD70C65D38CD498118CBC60B /* Node+Address.swift in Sources */,
 				A15FA7E1AA99B9CE303FD8992A436FCB /* Node+Elements.swift in Sources */,
 				667D8BB96F056872F99555F5B10AC288 /* Node+Keys.swift in Sources */,
+				520206DC2384309100312CA0 /* LightHSLRangeSetUnacknowledged.swift in Sources */,
 				3479D61237D517D5AA60975A8EC57221 /* Node+Provisioner.swift in Sources */,
 				28187C48DE0FDE634B738216AE388929 /* Node.swift in Sources */,
 				72CB790FB450B1F3BBE960E86C74CA30 /* NodeFeatures.swift in Sources */,
@@ -1715,29 +1881,37 @@
 				F34F920E0212400D6313A8A7A6CBC9E0 /* OnPowerUp.swift in Sources */,
 				AC22267020EDEC7962A9A2062E1A6367 /* Oob.swift in Sources */,
 				28AB9C180C2E0B1E1024D99288AE2D6E /* OpenSSLHelper.m in Sources */,
+				5202068E2382E14F00312CA0 /* LightLightnessLinearStatus.swift in Sources */,
 				D117B0F0B0AF17A4D2D25F6107E807E9 /* OptionSet+Data.swift in Sources */,
 				CE643EBC270ACC669A67CDAFB4336F37 /* PBGattBearer.swift in Sources */,
+				520206B42384110D00312CA0 /* LightCTLDefaultGet.swift in Sources */,
 				ED6A3F2EC2B75AF360AFDBC0ABACB1BD /* Provisioner+Node.swift in Sources */,
+				520206C22384202500312CA0 /* LightHSLHueStatus.swift in Sources */,
 				DF4C2A20DC477A7F444F3BA89271EF46 /* Provisioner+Ranges.swift in Sources */,
 				3BB57C070AE783A2622AC217B04B8CC2 /* Provisioner.swift in Sources */,
 				CB39BC8BD474D51B11C457AE0AEEF431 /* ProvisioningCapabilities.swift in Sources */,
 				A4DEC33C32BD55F90D3C6DB6850C2BBF /* ProvisioningData.swift in Sources */,
 				D898B6D9B4F5FBC840C474CCE8B3192F /* ProvisioningManager.swift in Sources */,
-				6076E88D2380188700F11F02 /* GenericLightnessGet.swift in Sources */,
+				6076E88D2380188700F11F02 /* LightLightnessGet.swift in Sources */,
 				15697DC2AEEA994E3499A2404EA28DF5 /* ProvisioningPdu.swift in Sources */,
 				E6A5DA9834F80C86492E71A8D40ADF76 /* ProvisioningState.swift in Sources */,
 				A211F704F251D2C401B616AF72545F18 /* ProxyConfigurationMessage.swift in Sources */,
+				520206AA23840B9000312CA0 /* LightCTLTemperatureRangeStatus.swift in Sources */,
+				520206C8238422C700312CA0 /* LightHSLSaturationSetUnacknowledged.swift in Sources */,
 				F32060B3E8C2A5407004EF14044A9A1C /* ProxyFilter.swift in Sources */,
 				6AF5361B49737E7275691AABC80B22CE /* ProxyProtocolHandler.swift in Sources */,
 				AEEC018D1DCC461B2760C4DD589B6192 /* PublicKey.swift in Sources */,
 				4AA4270DDCD4D78EA6B18E73E96197FD /* Publish.swift in Sources */,
-				6076E89B23801A8D00F11F02 /* GenericCTLStatus.swift in Sources */,
+				6076E89B23801A8D00F11F02 /* LightCTLStatus.swift in Sources */,
 				E35F009051D3F11DFD6E10C69468C68A /* RangeObject.swift in Sources */,
-				6076E89D23801DE300F11F02 /* GenericHSLGet.swift in Sources */,
+				6076E89D23801DE300F11F02 /* LightHSLGet.swift in Sources */,
 				F3E540C52739517C91B99F326A76337B /* Ranges.swift in Sources */,
+				520206A22382E7C400312CA0 /* LightLightnessDefaultSetUnacknowledged.swift in Sources */,
 				ABCE0178975C8537DDA73F0667C9BC26 /* RemoveAddressesFromFilter.swift in Sources */,
 				EFD0DEA3D91FCF3DF83BF58090AACFFA /* Scene.swift in Sources */,
+				520206DA23842EE500312CA0 /* LightHSLRangeStatus.swift in Sources */,
 				678FE2B1AEDC73D748704F9921D664B8 /* SceneRange.swift in Sources */,
+				520206AE23840CC700312CA0 /* LightCTLTemperatureRangeSetUnacknowledged.swift in Sources */,
 				18B0D2334794DEE9A69B94AF3C5A16E6 /* SecureNetworkBeacon.swift in Sources */,
 				E1CAC93F50E874E5208C929A4FC80020 /* Security.swift in Sources */,
 				411D3BF063BCBB847B02A538D352EAD5 /* SegmentAcknowledgmentMessage.swift in Sources */,
@@ -1751,7 +1925,9 @@
 				65C0E8D09D3724374EA48272C1A31755 /* UnknownMessage.swift in Sources */,
 				FAFC95400DFAF51709F6A8A63A2127E3 /* UnprovisionedDevice.swift in Sources */,
 				D0C1765FE2578996434E9B34B5755E6E /* UnprovisionedDeviceBeacon.swift in Sources */,
+				520206B223840F9000312CA0 /* LightCTLTemperatureSetUnacknowledged.swift in Sources */,
 				12C2FA87CD55517EEF55DC8742137667 /* UpperTransportLayer.swift in Sources */,
+				520206CC2384252A00312CA0 /* LightHSLTargetGet.swift in Sources */,
 				93BD52AC966DF2D2216EA0CB667115A9 /* UpperTransportPdu.swift in Sources */,
 				5E8E5C72660D94FC3C4C817BBB15A2D9 /* UUID+Hex.swift in Sources */,
 				766FC6FA87FDB56F00FAE02CFFC54665 /* VendorMessage.swift in Sources */,

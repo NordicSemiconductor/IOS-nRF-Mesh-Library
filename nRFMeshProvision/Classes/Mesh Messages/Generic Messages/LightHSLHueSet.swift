@@ -1,8 +1,6 @@
 /*
 * Copyright (c) 2019, Nordic Semiconductor
 * All rights reserved.
-
-* Created by codepgq
 *
 * Redistribution and use in source and binary forms, with or without modification,
 * are permitted provided that the following conditions are met:
@@ -32,21 +30,13 @@
 
 import Foundation
 
-public struct GenericHSLSetUnacknowledged: GenericMessage, TransactionMessage, TransitionMessage {
-    public static var opCode: UInt32 = 0x8277
-    public static var responseType: StaticMeshMessage.Type = GenericHSLStatus.self
+public struct LightHSLHueSet: AcknowledgedGenericMessage, TransactionMessage, TransitionMessage {
+    public static var opCode: UInt32 = 0x826F
+    public static var responseType: StaticMeshMessage.Type = LightHSLHueStatus.self
     
     public var tid: UInt8!
-    
     public var parameters: Data? {
-        
-        guard let (h,s,l,_) = color.hsl else { return Data() }
-        let hValue = UInt16(h * 65535)
-        let sValue = UInt16(s * 65535)
-        let lValue = UInt16(l * 65535)
-                
-        let data = Data() + lValue + hValue + sValue + tid
-
+        let data = Data() + hue + tid
         if let transitionTime = transitionTime, let delay = delay {
             return data + transitionTime.rawValue + delay
         } else {
@@ -54,37 +44,54 @@ public struct GenericHSLSetUnacknowledged: GenericMessage, TransactionMessage, T
         }
     }
     
-    /// The target value of the Generic color state.
-    public let color: UIColor
+    /// The present value of the Light HSL Hue state.
+    public let hue: UInt16
     
-    public var transitionTime: TransitionTime?
-    public var delay: UInt8?
+    public let transitionTime: TransitionTime?
+    public let delay: UInt8?
     
-    public init(color: UIColor) {
-        self.color = color
+    /// Creates the Light HSL Hue Set message.
+    ///
+    /// Hue is representing by 16-bit unasigned integer of a 0-360 degree scale
+    /// using the formula:
+    ///
+    /// H (degrees) = 360 * hue / 65536
+    ///
+    /// - parameters:
+    ///   - hue: The target value of the Light HSL Hue state.
+    public init(hue: UInt16) {
+        self.hue = hue
         self.transitionTime = nil
         self.delay = nil
     }
     
-    public init(color: UIColor, transitionTime: TransitionTime, delay: UInt8) {
-        self.color = color
+    /// Creates the Light HSL Hue Set message.
+    ///
+    /// Hue is representing by 16-bit unasigned integer of a 0-360 degree scale
+    /// using the formula:
+    ///
+    /// H (degrees) = 360 * hue / 65536
+    ///
+    /// - parameters:
+    ///   - hue: The target value of the Light HSL Hue state.
+    ///   - transitionTime: The time that an element will take to transition
+    ///                     to the target state from the present state.
+    ///   - delay: Message execution delay in 5 millisecond steps.
+    public init(hue: UInt16, transitionTime: TransitionTime, delay: UInt8) {
+        self.hue = hue
         self.transitionTime = transitionTime
         self.delay = delay
     }
     
-    
     public init?(parameters: Data) {
-        guard parameters.count == 7 || parameters.count == 9 else {
+        guard parameters.count == 3 || parameters.count == 5 else {
             return nil
         }
-        let l = UInt16(parameters[0]) | (UInt16(parameters[1]) << 8)
-        let h = UInt16(parameters[2]) | (UInt16(parameters[3]) << 8)
-        let s = UInt16(parameters[4]) | (UInt16(parameters[5]) << 8)
-        color = UIColor(hue: CGFloat(h) / 65535, saturation: CGFloat(s) / 65535, lightness: CGFloat(l) / 65535)
-        tid = parameters[6]
-        if parameters.count == 9 {
-            transitionTime = TransitionTime(rawValue: parameters[7])
-            delay = parameters[8]
+        hue = parameters.read()
+        tid = parameters[2]
+        if parameters.count == 5 {
+            transitionTime = TransitionTime(rawValue: parameters[3])
+            delay = parameters[4]
         } else {
             transitionTime = nil
             delay = nil

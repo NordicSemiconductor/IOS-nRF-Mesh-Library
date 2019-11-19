@@ -1,8 +1,6 @@
 /*
  * Copyright (c) 2019, Nordic Semiconductor
  * All rights reserved.
- 
- * Created by codepgq
  *
  * Redistribution and use in source and binary forms, with or without modification,
  * are permitted provided that the following conditions are met:
@@ -32,22 +30,50 @@
 
 import Foundation
 
-public struct GenericCTLGet: AcknowledgedGenericMessage {
-    public static let opCode: UInt32 = 0x825d
-    public static let responseType: StaticMeshMessage.Type = GenericCTLStatus.self
+public struct LightHSLRangeSetUnacknowledged: GenericMessage {
+    public static let opCode: UInt32 = 0x8282
     
     public var parameters: Data? {
-        return nil
+        return Data() + minHue + maxHue + minSaturation + maxSaturation
     }
     
-    public init() {
-        // Empty
+    /// The value of the Hue Range Min field of the Light HSL Range state.
+    public let minHue: UInt16
+    /// The value of the Hue Range Max field of the Light HSL Range state.
+    public let maxHue: UInt16
+    /// The value of the Saturation Range Min field of the Light HSL Range state.
+    public let minSaturation: UInt16
+    /// The value of the Saturation Range Max field of the Light HSL Range state.
+    public let maxSaturation: UInt16
+    
+    /// The value of the Hue Range field of the Light HSL Range state.
+    public var hueRange: ClosedRange<UInt16> {
+        return minHue...maxHue
+    }
+    /// The value of the Saturation Range field of the Light HSL Range state.
+    public var saturationRange: ClosedRange<UInt16> {
+        return minSaturation...maxSaturation
+    }
+    
+    /// Creates the Light HSL Range Set Unacknowledged message.
+    ///
+    /// - parameter hueRange: The value of the Light HSL Hue Range state.
+    /// - parameter saturationRange: The value of the Light HSL Saturation Range state.
+    public init(hueRange: ClosedRange<UInt16>, saturationRange: ClosedRange<UInt16>) {
+        self.minHue = hueRange.lowerBound
+        self.maxHue = hueRange.upperBound
+        self.minSaturation = saturationRange.lowerBound
+        self.maxSaturation = saturationRange.upperBound
     }
     
     public init?(parameters: Data) {
-        guard parameters.isEmpty else {
+        guard parameters.count == 8 else {
             return nil
         }
+        minHue = parameters.read()
+        maxHue = parameters.read(fromOffset: 2)
+        minSaturation = parameters.read(fromOffset: 4)
+        maxSaturation = parameters.read(fromOffset: 6)
     }
     
 }

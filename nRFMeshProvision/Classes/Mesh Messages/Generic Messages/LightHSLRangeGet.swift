@@ -30,32 +30,23 @@
 
 import Foundation
 
-public struct GenericOnPowerUpSet: AcknowledgedGenericMessage {
-    public static let opCode: UInt32 = 0x8213
-    public static let responseType: StaticMeshMessage.Type = GenericOnPowerUpStatus.self
+public struct LightHSLRangeGet: AcknowledgedGenericMessage {
+    public static let opCode: UInt32 = 0x827D
+    public static let responseType: StaticMeshMessage.Type = LightHSLRangeStatus.self
     
     public var parameters: Data? {
-        return Data([state.rawValue])
+        return nil
     }
     
-    /// The value of the Generic OnPowerUp state.
-    public let state: OnPowerUp
-    
-    /// Creates the Generic On Power Up Set message.
-    ///
-    /// - parameter state: The value of the Generic OnPowerUp state.
-    public init(state: OnPowerUp) {
-        self.state = state
+    public init() {
+        // Empty
     }
     
     public init?(parameters: Data) {
-        guard parameters.count == 1 else {
+        guard parameters.isEmpty else {
             return nil
         }
-        guard let state = OnPowerUp(rawValue: parameters[0]) else {
-            return nil
-        }
-        self.state = state
     }
+    
     
 }

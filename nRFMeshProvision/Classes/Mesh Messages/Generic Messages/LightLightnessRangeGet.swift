@@ -1,8 +1,6 @@
 /*
  * Copyright (c) 2019, Nordic Semiconductor
  * All rights reserved.
- 
- * Created by codepgq
  *
  * Redistribution and use in source and binary forms, with or without modification,
  * are permitted provided that the following conditions are met:
@@ -32,25 +30,22 @@
 
 import Foundation
 
-public struct GenericLightnessStatus: GenericMessage, TransitionStatusMessage {
-    public var remainingTime: TransitionTime?
+public struct LightLightnessRangeGet: AcknowledgedGenericMessage {
+    public static let opCode: UInt32 = 0x8257
+    public static let responseType: StaticMeshMessage.Type = LightLightnessRangeStatus.self
     
-    public static var opCode: UInt32 = 0x824e
+    public var parameters: Data? {
+        return nil
+    }
     
-    public let lightness: UInt16
-    
-    public var parameters: Data?
+    public init() {
+        // Empty
+    }
     
     public init?(parameters: Data) {
-        guard parameters.count == 2 || parameters.count == 4 else {
+        guard parameters.isEmpty else {
             return nil
         }
-        
-        lightness = UInt16(parameters[0]) | UInt16(parameters[1] << 8)
-        if parameters.count == 3 {
-            remainingTime = TransitionTime(rawValue: parameters[2])
-        } else {
-            remainingTime = nil
-        }
     }
+    
 }

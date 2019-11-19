@@ -1,8 +1,6 @@
 /*
  * Copyright (c) 2019, Nordic Semiconductor
  * All rights reserved.
- 
- * Created by codepgq
  *
  * Redistribution and use in source and binary forms, with or without modification,
  * are permitted provided that the following conditions are met:
@@ -29,55 +27,32 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
+
 import Foundation
 
-public struct GenericLightnessSetUnacknowledged: GenericMessage, TransactionMessage, TransitionMessage {
-    public static var opCode: UInt32 = 0x824d
-    public static var responseType: StaticMeshMessage.Type = GenericLightnessStatus.self
-    
-    public var tid: UInt8!
+public struct LightLightnessDefaultSet: AcknowledgedGenericMessage {
+    public static let opCode: UInt32 = 0x8259
+    public static let responseType: StaticMeshMessage.Type = LightLightnessDefaultStatus.self
     
     public var parameters: Data? {
-        let data = Data() + lightness + tid
-        if let transitionTime = transitionTime, let delay = delay {
-            return data + transitionTime.rawValue + delay
-        } else {
-            return data
-        }
+        return Data() + lightness
     }
     
-    /// The target value of the Generic lightness state.
+    /// The value of the Light Lightness Default state.
     public let lightness: UInt16
     
-    public var transitionTime: TransitionTime?
-    public var delay: UInt8?
-    
+    /// Creates the Light Lightness Default Set message.
+    ///
+    /// - parameter lightness: The value of the Light Lightness Default state.
     public init(lightness: UInt16) {
         self.lightness = lightness
-        self.transitionTime = nil
-        self.delay = nil
     }
-    
-    public init(lightness: UInt16, transitionTime: TransitionTime, delay: UInt8) {
-        self.lightness = lightness
-        self.transitionTime = transitionTime
-        self.delay = delay
-    }
-    
     
     public init?(parameters: Data) {
-        guard parameters.count == 3 || parameters.count == 5 else {
+        guard parameters.count == 2 else {
             return nil
         }
-        lightness = UInt16(parameters[0]) | (UInt16(parameters[1]) << 8)
-        tid = parameters[2]
-        if parameters.count == 5 {
-            transitionTime = TransitionTime(rawValue: parameters[3])
-            delay = parameters[4]
-        } else {
-            transitionTime = nil
-            delay = nil
-        }
+        lightness = parameters.read()
     }
     
 }

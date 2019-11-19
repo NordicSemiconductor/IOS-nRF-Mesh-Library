@@ -42,7 +42,7 @@ public struct GenericOnPowerUpSetUnacknowledged: GenericMessage {
     
     /// Creates the Generic On Power Up Set Unacknowledged message.
     ///
-    /// - parameter transitionTime: The value of the Generic OnPowerUp state.
+    /// - parameter state: The value of the Generic OnPowerUp state.
     public init(state: OnPowerUp) {
         self.state = state
     }

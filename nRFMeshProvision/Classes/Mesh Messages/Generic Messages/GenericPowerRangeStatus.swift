@@ -37,7 +37,7 @@ public struct GenericPowerRangeStatus: GenericStatusMessage {
         return Data([status.rawValue]) + range.lowerBound + range.upperBound
     }
     
-    public var status: GenericMessageStatus
+    public let status: GenericMessageStatus
     /// The value of the Generic Power Range state.
     public let range: ClosedRange<UInt16>
     
