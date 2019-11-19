@@ -1,8 +1,6 @@
 /*
  * Copyright (c) 2019, Nordic Semiconductor
  * All rights reserved.
- 
- * Created by codepgq
  *
  * Redistribution and use in source and binary forms, with or without modification,
  * are permitted provided that the following conditions are met:
@@ -32,34 +30,22 @@
 
 import Foundation
 
-public struct GenericCTLStatus: GenericMessage, TransitionStatusMessage {
+public struct LightCTLTemperatureRangeGet: AcknowledgedGenericMessage {
+    public static let opCode: UInt32 = 0x8262
+    public static let responseType: StaticMeshMessage.Type = LightCTLTemperatureRangeStatus.self
     
-    public static var opCode: UInt32 = 0x8260
-    public var parameters: Data?
+    public var parameters: Data? {
+        return nil
+    }
     
-    public let presentLightness: UInt16
-    public let presentTemperature: UInt16
-    public let targetLightness: UInt16?
-    public let targetTemperature: UInt16?
-    public var remainingTime: TransitionTime?
-    
+    public init() {
+        // Empty
+    }
     
     public init?(parameters: Data) {
-        guard parameters.count == 4 || parameters.count == 9 else {
+        guard parameters.isEmpty else {
             return nil
         }
-        self.presentLightness = UInt16(parameters[0]) | (UInt16(parameters[1]) << 8)
-        self.presentTemperature = UInt16(parameters[2]) | (UInt16(parameters[3]) << 8)
-        
-        if parameters.count == 9 {
-            targetLightness = UInt16(parameters[4]) | (UInt16(parameters[5]) << 8)
-            targetTemperature = UInt16(parameters[6]) | (UInt16(parameters[7]) << 8)
-            remainingTime = TransitionTime(rawValue: parameters[8])
-            
-        } else {
-            targetLightness = nil
-            targetTemperature = nil
-            remainingTime = nil
-        }
     }
+    
 }

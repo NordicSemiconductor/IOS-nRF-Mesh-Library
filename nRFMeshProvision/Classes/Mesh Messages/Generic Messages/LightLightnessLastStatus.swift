@@ -1,8 +1,6 @@
 /*
  * Copyright (c) 2019, Nordic Semiconductor
  * All rights reserved.
- 
- * Created by codepgq
  *
  * Redistribution and use in source and binary forms, with or without modification,
  * are permitted provided that the following conditions are met:
@@ -32,23 +30,28 @@
 
 import Foundation
 
-public struct GenericLightnessGet: AcknowledgedGenericMessage {
-    public static let opCode: UInt32 = 0x824b
-    public static let responseType: StaticMeshMessage.Type = GenericLightnessStatus.self
+public struct LightLightnessLastStatus: GenericMessage {
+    public static let opCode: UInt32 = 0x8254
     
     public var parameters: Data? {
-        return nil
+        return Data() + lightness
     }
     
-    public init() {
-        // Empty
+    /// The value of the Light Lightness Last state.
+    public let lightness: UInt16
+    
+    /// Creates the Light Lightness Last Status message.
+    ///
+    /// - parameter lightness: The value of the Light Lightness Last state.
+    public init(lightness: UInt16) {
+        self.lightness = lightness
     }
     
     public init?(parameters: Data) {
-        guard parameters.isEmpty else {
+        guard parameters.count == 2 else {
             return nil
         }
+        lightness = parameters.read()
     }
-    
     
 }

@@ -1,8 +1,6 @@
 /*
  * Copyright (c) 2019, Nordic Semiconductor
  * All rights reserved.
- 
- * Created by codepgq
  *
  * Redistribution and use in source and binary forms, with or without modification,
  * are permitted provided that the following conditions are met:
@@ -30,23 +28,18 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+ /*
+  * Created by codepgq.
+  */
+
 import Foundation
 
-internal func resultTemperature(_ cct: UInt16) -> UInt16 {
-    var c = cct > 100 ? 100 : cct
-    c = UInt16((Float(c) / 100) * (20000-800)) + 800
-    print("cct:", cct, "转换之后", c)
-    return c
-}
-
-public struct GenericCTLSet: AcknowledgedGenericMessage, TransactionMessage, TransitionMessage {
-    public static var opCode: UInt32 = 0x825e
-    public static var responseType: StaticMeshMessage.Type = GenericCTLStatus.self
+public struct LightLightnessSetUnacknowledged: GenericMessage, TransactionMessage, TransitionMessage {
+    public static var opCode: UInt32 = 0x824D
     
     public var tid: UInt8!
-    
     public var parameters: Data? {
-        let data = Data() + lightness + temperature + 1 + tid
+        let data = Data() + lightness + tid
         if let transitionTime = transitionTime, let delay = delay {
             return data + transitionTime.rawValue + delay
         } else {
@@ -54,43 +47,54 @@ public struct GenericCTLSet: AcknowledgedGenericMessage, TransactionMessage, Tra
         }
     }
     
-    
-    /// 0 - 65535
+    /// The target value of the Light Lightness Actual state.
     public let lightness: UInt16
-    // 0-100
-    public let temperature: UInt16
-    // uv default is 1
-    public let uv: UInt16
     
-    public var transitionTime: TransitionTime?
-    public var delay: UInt8?
+    public let transitionTime: TransitionTime?
+    public let delay: UInt8?
     
-    public init(lightness: UInt16, temperature: UInt16, uv: UInt16 = 1) {
+    /// Creates the Light Lightness Set Unacknowledged message.
+    ///
+    /// The values for the state are defined in the following table:
+    /// - 0x0000 - light is not emitted by the element.
+    /// - 0x0001 - 0xFFFE - The light lightness of a light emitted by the element.
+    /// - 0xFFFF - the highest lightness of a light emitted by the element.
+    ///
+    /// - parameters:
+    ///   - lightness: The target value of the Light Lightness Actual state.
+    public init(lightness: UInt16) {
         self.lightness = lightness
-        self.temperature = resultTemperature(temperature)
-        self.uv = uv
         self.transitionTime = nil
         self.delay = nil
     }
     
-    public init(lightness: UInt16, temperature: UInt16, uv: UInt16 = 1, transitionTime: TransitionTime, delay: UInt8) {
+    /// Creates the Light Lightness Set Unacknowledged message.
+    ///
+    /// The values for the state are defined in the following table:
+    /// - 0x0000 - light is not emitted by the element.
+    /// - 0x0001 - 0xFFFE - The light lightness of a light emitted by the element.
+    /// - 0xFFFF - the highest lightness of a light emitted by the element.
+    ///
+    /// - parameters:
+    ///   - lightness: The target value of the Light Lightness Actual state.
+    ///   - transitionTime: The time that an element will take to transition
+    ///                     to the target state from the present state.
+    ///   - delay: Message execution delay in 5 millisecond steps.
+    public init(lightness: UInt16, transitionTime: TransitionTime, delay: UInt8) {
         self.lightness = lightness
-        self.temperature = resultTemperature(temperature)
-        self.uv = uv
         self.transitionTime = transitionTime
         self.delay = delay
     }
     
-    
     public init?(parameters: Data) {
-        guard parameters.count == 7 || parameters.count == 9 else { return nil }
+        guard parameters.count == 3 || parameters.count == 5 else {
+            return nil
+        }
         lightness = UInt16(parameters[0]) | (UInt16(parameters[1]) << 8)
-        temperature = UInt16(parameters[2]) | (UInt16(parameters[3]) << 8)
-        uv = UInt16(parameters[4]) | (UInt16(parameters[5]) << 8)
-        tid = parameters[6]
-        if parameters.count == 9 {
-            transitionTime = TransitionTime(rawValue: parameters[7])
-            delay = parameters[8]
+        tid = parameters[2]
+        if parameters.count == 5 {
+            transitionTime = TransitionTime(rawValue: parameters[3])
+            delay = parameters[4]
         } else {
             transitionTime = nil
             delay = nil

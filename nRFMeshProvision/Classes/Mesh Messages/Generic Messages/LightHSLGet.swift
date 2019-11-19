@@ -1,8 +1,6 @@
 /*
 * Copyright (c) 2019, Nordic Semiconductor
 * All rights reserved.
-
-* Created by codepgq
 *
 * Redistribution and use in source and binary forms, with or without modification,
 * are permitted provided that the following conditions are met:
@@ -30,29 +28,29 @@
 * POSSIBILITY OF SUCH DAMAGE.
 */
 
+/*
+ * Created by codepgq.
+ */
+
 import Foundation
 
-public struct GenericHSLStatus: GenericMessage, TransitionStatusMessage {
+public struct LightHSLGet: AcknowledgedGenericMessage {
+    public static let opCode: UInt32 = 0x826D
+    public static let responseType: StaticMeshMessage.Type = LightHSLStatus.self
     
-    public static var opCode: UInt32 = 0x8278
-    public var parameters: Data?
+    public var parameters: Data? {
+        return nil
+    }
     
-    public let color: UIColor
-    public var remainingTime: TransitionTime?
+    public init() {
+        // Empty
+    }
     
     public init?(parameters: Data) {
-        
-        guard parameters.count == 6 || parameters.count == 7 else { return nil }
-        let l = UInt16(parameters[0]) | (UInt16(parameters[0]) << 8)
-        let h = UInt16(parameters[1]) | (UInt16(parameters[2]) << 8)
-        let s = UInt16(parameters[3]) | (UInt16(parameters[4]) << 8)
-        color = UIColor(hue: CGFloat(h) / 65535, saturation: CGFloat(s) / 65535, lightness: CGFloat(l) / 65535)
-        
-        if parameters.count == 7 {
-            remainingTime = TransitionTime(rawValue: parameters[6])
-            
-        } else {
-            remainingTime = nil
+        guard parameters.isEmpty else {
+            return nil
         }
     }
+    
+    
 }

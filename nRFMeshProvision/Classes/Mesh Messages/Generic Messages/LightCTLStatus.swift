@@ -1,8 +1,6 @@
 /*
  * Copyright (c) 2019, Nordic Semiconductor
  * All rights reserved.
- 
- * Created by codepgq
  *
  * Redistribution and use in source and binary forms, with or without modification,
  * are permitted provided that the following conditions are met:
@@ -30,54 +28,50 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+ /*
+  * Created by codepgq.
+  */
+
 import Foundation
-public struct GenericLightnessSet: AcknowledgedGenericMessage, TransactionMessage, TransitionMessage {
-    public static var opCode: UInt32 = 0x824c
-    public static var responseType: StaticMeshMessage.Type = GenericLightnessStatus.self
-    
-    public var tid: UInt8!
+
+public struct LightCTLStatus: GenericMessage, TransitionStatusMessage {
+    public static var opCode: UInt32 = 0x8260
     
     public var parameters: Data? {
-        let data = Data() + lightness + tid
-        if let transitionTime = transitionTime, let delay = delay {
-            return data + transitionTime.rawValue + delay
+        let data = Data() + lightness + temperature
+        if let targetLightness = targetLightness,
+           let targetTemperature = targetTemperature,
+           let remainingTime = remainingTime {
+            return data + targetLightness + targetTemperature +  remainingTime.rawValue
         } else {
             return data
         }
     }
     
-    /// The target value of the Generic lightness state.
+    /// The present value of the Light CTL Lightness state.
     public let lightness: UInt16
-    
-    public var transitionTime: TransitionTime?
-    public var delay: UInt8?
-    
-    public init(lightness: UInt16) {
-        self.lightness = lightness
-        self.transitionTime = nil
-        self.delay = nil
-    }
-    
-    public init(lightness: UInt16, transitionTime: TransitionTime, delay: UInt8) {
-        self.lightness = lightness
-        self.transitionTime = transitionTime
-        self.delay = delay
-    }
+    /// The present value of the Light CTL Temperature state.
+    public let temperature: UInt16
+    /// The target value of the Light CTL Lightness state.
+    public let targetLightness: UInt16?
+    /// The target value of the Light CTL Temperature state.
+    public let targetTemperature: UInt16?
+    public let remainingTime: TransitionTime?
     
     public init?(parameters: Data) {
-        guard parameters.count == 3 || parameters.count == 5 else {
+        guard parameters.count == 4 || parameters.count == 9 else {
             return nil
         }
-        lightness = UInt16(parameters[0]) | (UInt16(parameters[1]) << 8)
-        tid = parameters[2]
-        if parameters.count == 5 {
-            transitionTime = TransitionTime(rawValue: parameters[3])
-            delay = parameters[4]
+        lightness = parameters.read()
+        temperature = parameters.read(fromOffset: 2)
+        if parameters.count == 9 {
+            targetLightness = parameters.read(fromOffset: 4)
+            targetTemperature = parameters.read(fromOffset: 6)
+            remainingTime = TransitionTime(rawValue: parameters[8])
         } else {
-            transitionTime = nil
-            delay = nil
+            targetLightness = nil
+            targetTemperature = nil
+            remainingTime = nil
         }
     }
-    
-    
 }

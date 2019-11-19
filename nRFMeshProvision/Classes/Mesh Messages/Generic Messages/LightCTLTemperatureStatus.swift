@@ -1,8 +1,6 @@
 /*
  * Copyright (c) 2019, Nordic Semiconductor
  * All rights reserved.
- 
- * Created by codepgq
  *
  * Redistribution and use in source and binary forms, with or without modification,
  * are permitted provided that the following conditions are met:
@@ -32,62 +30,44 @@
 
 import Foundation
 
-public struct GenericCTLSetUnackowledged: GenericMessage, TransactionMessage, TransitionMessage {
-    public static var opCode: UInt32 = 0x825e
-    public static var responseType: StaticMeshMessage.Type = GenericCTLStatus.self
-    
-    public var tid: UInt8!
+public struct LightCTLTemperatureStatus: GenericMessage, TransitionStatusMessage {
+    public static var opCode: UInt32 = 0x8266
     
     public var parameters: Data? {
-        let data = Data() + lightness + temperature + 1 + tid
-        if let transitionTime = transitionTime, let delay = delay {
-            return data + transitionTime.rawValue + delay
+        let data = Data() + temperature + deltaUV
+        if let targetTemperature = targetTemperature,
+           let targetDeltaUV = targetDeltaUV,
+           let remainingTime = remainingTime {
+            return data + targetTemperature + targetDeltaUV +  remainingTime.rawValue
         } else {
             return data
         }
     }
     
-    
-    /// 0 - 65535
-    public let lightness: UInt16
-    // 0-100
+    /// The present value of the Light CTL Temperature state.
     public let temperature: UInt16
-    // uv default is 1
-    public let uv: UInt16
-    
-    public var transitionTime: TransitionTime?
-    public var delay: UInt8?
-    
-    public init(lightness: UInt16, temperature: UInt16, uv: UInt16 = 1) {
-        self.lightness = lightness
-        self.temperature = resultTemperature(temperature)
-        self.uv = uv
-        self.transitionTime = nil
-        self.delay = nil
-    }
-    
-    public init(lightness: UInt16, temperature: UInt16, uv: UInt16 = 1, transitionTime: TransitionTime, delay: UInt8) {
-        self.lightness = lightness
-        self.temperature = resultTemperature(temperature)
-        self.uv = uv
-        self.transitionTime = transitionTime
-        self.delay = delay
-    }
-    
+    /// The present value of the Light CTL Delta UV state.
+    public let deltaUV: Int16
+    /// The target value of the Light CTL Temperature state.
+    public let targetTemperature: UInt16?
+    /// The target value of the Light CTL Delta UV state.
+    public let targetDeltaUV: UInt16?
+    public let remainingTime: TransitionTime?
     
     public init?(parameters: Data) {
-        guard parameters.count == 7 || parameters.count == 9 else { return nil }
-        lightness = UInt16(parameters[0]) | (UInt16(parameters[1]) << 8)
-        temperature = UInt16(parameters[2]) | (UInt16(parameters[3]) << 8)
-        uv = UInt16(parameters[4]) | (UInt16(parameters[5]) << 8)
-        tid = parameters[6]
+        guard parameters.count == 4 || parameters.count == 9 else {
+            return nil
+        }
+        temperature = parameters.read()
+        deltaUV = parameters.read(fromOffset: 2)
         if parameters.count == 9 {
-            transitionTime = TransitionTime(rawValue: parameters[7])
-            delay = parameters[8]
+            targetTemperature = parameters.read(fromOffset: 4)
+            targetDeltaUV = parameters.read(fromOffset: 6)
+            remainingTime = TransitionTime(rawValue: parameters[8])
         } else {
-            transitionTime = nil
-            delay = nil
+            targetTemperature = nil
+            targetDeltaUV = nil
+            remainingTime = nil
         }
     }
-    
 }

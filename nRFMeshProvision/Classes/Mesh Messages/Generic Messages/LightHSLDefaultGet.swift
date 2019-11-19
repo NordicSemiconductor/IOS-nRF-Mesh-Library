@@ -1,8 +1,6 @@
 /*
 * Copyright (c) 2019, Nordic Semiconductor
 * All rights reserved.
-
-* Created by codepgq
 *
 * Redistribution and use in source and binary forms, with or without modification,
 * are permitted provided that the following conditions are met:
@@ -32,9 +30,9 @@
 
 import Foundation
 
-public struct GenericHSLGet: AcknowledgedGenericMessage {
-    public static let opCode: UInt32 = 0x8275
-    public static let responseType: StaticMeshMessage.Type = GenericHSLStatus.self
+public struct LightHSLDefaultGet: AcknowledgedGenericMessage {
+    public static let opCode: UInt32 = 0x827B
+    public static let responseType: StaticMeshMessage.Type = LightHSLDefaultStatus.self
     
     public var parameters: Data? {
         return nil
