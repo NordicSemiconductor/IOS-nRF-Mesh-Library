@@ -42,7 +42,7 @@ public struct LightCTLStatus: GenericMessage, TransitionStatusMessage {
         if let targetLightness = targetLightness,
            let targetTemperature = targetTemperature,
            let remainingTime = remainingTime {
-            return data + targetLightness + targetTemperature +  remainingTime.rawValue
+            return data + targetLightness + targetTemperature + remainingTime.rawValue
         } else {
             return data
         }
@@ -56,7 +56,62 @@ public struct LightCTLStatus: GenericMessage, TransitionStatusMessage {
     public let targetLightness: UInt16?
     /// The target value of the Light CTL Temperature state.
     public let targetTemperature: UInt16?
+    
     public let remainingTime: TransitionTime?
+    
+    /// Creates the Light CTL Status message.
+    ///
+    /// The values for the lightness state are defined in the following table:
+    /// - 0x0000 - light is not emitted by the element.
+    /// - 0x0001 - 0xFFFE - The light lightness of a light emitted by the element.
+    /// - 0xFFFF - the highest lightness of a light emitted by the element.
+    ///
+    /// The temperature parameter is color temperature of white light in Kelvin.
+    /// The vales for this state are defined in the following table:
+    /// - 0x0320 - 0x4E20 - color temperature of white light in Kelvin
+    /// - All other values are prohibited and will be rounded to the nearest
+    ///   valid value.
+    ///
+    /// - parameters:
+    ///   - lightness: The present value of the Light CTL Lightness state.
+    ///   - temperature: The present value of the Light CTL Temperature state.
+    public init(lightness: UInt16, temperature: UInt16) {
+        self.lightness = lightness
+        self.temperature = max(0x0320, min(temperature, 0x4E20))
+        self.targetLightness = nil
+        self.targetTemperature = nil
+        self.remainingTime = nil
+    }
+    
+    /// Creates the Light CTL Status message.
+    ///
+    /// The values for the lightness state are defined in the following table:
+    /// - 0x0000 - light is not emitted by the element.
+    /// - 0x0001 - 0xFFFE - The light lightness of a light emitted by the element.
+    /// - 0xFFFF - the highest lightness of a light emitted by the element.
+    ///
+    /// The temperature parameter is color temperature of white light in Kelvin.
+    /// The vales for this state are defined in the following table:
+    /// - 0x0320 - 0x4E20 - color temperature of white light in Kelvin
+    /// - All other values are prohibited and will be rounded to the nearest
+    ///   valid value.
+    ///
+    /// - parameters:
+    ///   - lightness: The present value of the Light CTL Lightness state.
+    ///   - temperature: The present value of the Light CTL Temperature state.
+    ///   - targetLightness: The target value of the Light CTL Lightness state.
+    ///   - targetTemperature: The target value of the Light CTL Temperature state.
+    ///   - remainingTime: The time that an element will take to transition
+    ///                    to the target state from the present state.
+    public init(lightness: UInt16, temperature: UInt16,
+                targetLightness: UInt16, targetTemperature: UInt16,
+                remainingTime: TransitionTime) {
+        self.lightness = lightness
+        self.temperature = max(0x0320, min(temperature, 0x4E20))
+        self.targetLightness = targetLightness
+        self.targetTemperature = targetTemperature
+        self.remainingTime = remainingTime
+    }
     
     public init?(parameters: Data) {
         guard parameters.count == 4 || parameters.count == 9 else {

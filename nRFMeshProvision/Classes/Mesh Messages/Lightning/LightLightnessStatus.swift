@@ -50,6 +50,7 @@ public struct LightLightnessStatus: GenericMessage, TransitionStatusMessage {
     public let lightness: UInt16
     /// The target value of the Light Lightness Actual state.
     public let targetLightness: UInt16?
+    
     public let remainingTime: TransitionTime?
     
     /// Creates the Light Lightness Status message.
