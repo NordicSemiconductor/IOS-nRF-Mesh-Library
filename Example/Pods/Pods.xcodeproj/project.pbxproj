@@ -875,7 +875,7 @@
 			path = ../..;
 			sourceTree = "<group>";
 		};
-		28850595AD0F1176A5EF763CC522CF63 /* Generic Messages */ = {
+		28850595AD0F1176A5EF763CC522CF63 /* Generic */ = {
 			isa = PBXGroup;
 			children = (
 				D9FFE70A05CA76A45FCEA0C32DB3F1AB /* GenericBatteryGet.swift */,
@@ -914,64 +914,8 @@
 				EB6B289E14FB0C585E36BFBDABFB15D0 /* GenericPowerRangeSet.swift */,
 				AA20FFD14195DC20CDD177EA1F9B1D01 /* GenericPowerRangeSetUnacknowledged.swift */,
 				0C72172DF00AD59A21B5BC1CFF543C6F /* GenericPowerRangeStatus.swift */,
-				6076E88C2380188700F11F02 /* LightLightnessGet.swift */,
-				6076E890238018E600F11F02 /* LightLightnessSet.swift */,
-				6076E8922380190000F11F02 /* LightLightnessSetUnacknowledged.swift */,
-				6076E88E238018DE00F11F02 /* LightLightnessStatus.swift */,
-				520206872382DF1700312CA0 /* LightLightnessLinearGet.swift */,
-				520206892382DF6400312CA0 /* LightLightnessLinearSet.swift */,
-				5202068B2382DFB800312CA0 /* LightLightnessLinearSetUnacknowledged.swift */,
-				5202068D2382E14F00312CA0 /* LightLightnessLinearStatus.swift */,
-				5202068F2382E22B00312CA0 /* LightLightnessLastGet.swift */,
-				520206912382E25300312CA0 /* LightLightnessLastStatus.swift */,
-				520206932382E34100312CA0 /* LightLightnessDefaultGet.swift */,
-				520206952382E36300312CA0 /* LightLightnessDefaultStatus.swift */,
-				520206972382E3B400312CA0 /* LightLightnessRangeGet.swift */,
-				5202069B2382E3E600312CA0 /* LightLightnessRangeStatus.swift */,
-				520206992382E3D300312CA0 /* LightLightnessRangeSet.swift */,
-				5202069D2382E5B000312CA0 /* LightLightnessRangeSetUnacknowledged.swift */,
-				5202069F2382E78800312CA0 /* LightLightnessDefaultSet.swift */,
-				520206A12382E7C400312CA0 /* LightLightnessDefaultSetUnacknowledged.swift */,
-				6076E89423801A3B00F11F02 /* LightCTLGet.swift */,
-				6076E89623801A6900F11F02 /* LightCTLSet.swift */,
-				6076E89823801A7D00F11F02 /* LightCTLSetUnackowledged.swift */,
-				6076E89A23801A8D00F11F02 /* LightCTLStatus.swift */,
-				520206A323840A3800312CA0 /* LightCTLTemperatureGet.swift */,
-				520206AF23840D3A00312CA0 /* LightCTLTemperatureSet.swift */,
-				520206B123840F9000312CA0 /* LightCTLTemperatureSetUnacknowledged.swift */,
-				520206A723840B7100312CA0 /* LightCTLTemperatureRangeGet.swift */,
-				520206AB23840C2200312CA0 /* LightCTLTemperatureRangeSet.swift */,
-				520206AD23840CC700312CA0 /* LightCTLTemperatureRangeSetUnacknowledged.swift */,
-				520206A923840B9000312CA0 /* LightCTLTemperatureRangeStatus.swift */,
-				520206A523840A6E00312CA0 /* LightCTLTemperatureStatus.swift */,
-				520206B32384110D00312CA0 /* LightCTLDefaultGet.swift */,
-				520206B52384113000312CA0 /* LightCTLDefaultStatus.swift */,
-				520206B7238411CB00312CA0 /* LightCTLDefaultSet.swift */,
-				520206B92384121D00312CA0 /* LightCTLDefaultSetUnacknowledged.swift */,
-				6076E89C23801DE300F11F02 /* LightHSLGet.swift */,
-				6076E89E23801DEE00F11F02 /* LightHSLSet.swift */,
-				6076E8A023801DFF00F11F02 /* LightHSLSetUnackowledged.swift */,
-				6076E8A223801E0600F11F02 /* LightHSLStatus.swift */,
-				520206BB23841F3B00312CA0 /* LightHSLHueGet.swift */,
-				520206BD23841F6200312CA0 /* LightHSLHueSet.swift */,
-				520206BF23841FFA00312CA0 /* LightHSLHueSetUnacknowledged.swift */,
-				520206C12384202500312CA0 /* LightHSLHueStatus.swift */,
-				520206C32384229200312CA0 /* LightHSLSaturationGet.swift */,
-				520206C5238422B900312CA0 /* LightHSLSaturationSet.swift */,
-				520206C7238422C700312CA0 /* LightHSLSaturationSetUnacknowledged.swift */,
-				520206C9238422D000312CA0 /* LightHSLSaturationStatus.swift */,
-				520206CB2384252A00312CA0 /* LightHSLTargetGet.swift */,
-				520206CD2384255200312CA0 /* LightHSLTargetStatus.swift */,
-				520206CF23842D3200312CA0 /* LightHSLDefaultGet.swift */,
-				520206D123842D6700312CA0 /* LightHSLDefaultStatus.swift */,
-				520206D323842E2500312CA0 /* LightHSLDefaultSet.swift */,
-				520206D523842E6F00312CA0 /* LightHSLDefaultSetUnacknowledged.swift */,
-				520206D723842EC600312CA0 /* LightHSLRangeGet.swift */,
-				520206D923842EE500312CA0 /* LightHSLRangeStatus.swift */,
-				520206DD238430E300312CA0 /* LightHSLRangeSet.swift */,
-				520206DB2384309100312CA0 /* LightHSLRangeSetUnacknowledged.swift */,
 			);
-			path = "Generic Messages";
+			path = Generic;
 			sourceTree = "<group>";
 		};
 		2A001059AD8E6B0D0F631A2D682AF176 /* Mesh API */ = {
@@ -1039,6 +983,69 @@
 				252EB46D0347DCF906FA2AE7CD7B3C90 /* UnprovisionedDeviceBeacon.swift */,
 			);
 			path = "Network Layer";
+			sourceTree = "<group>";
+		};
+		520206DF2385456000312CA0 /* Lightning */ = {
+			isa = PBXGroup;
+			children = (
+				520206B32384110D00312CA0 /* LightCTLDefaultGet.swift */,
+				520206B7238411CB00312CA0 /* LightCTLDefaultSet.swift */,
+				520206B92384121D00312CA0 /* LightCTLDefaultSetUnacknowledged.swift */,
+				520206B52384113000312CA0 /* LightCTLDefaultStatus.swift */,
+				6076E89423801A3B00F11F02 /* LightCTLGet.swift */,
+				6076E89623801A6900F11F02 /* LightCTLSet.swift */,
+				6076E89823801A7D00F11F02 /* LightCTLSetUnackowledged.swift */,
+				6076E89A23801A8D00F11F02 /* LightCTLStatus.swift */,
+				520206A323840A3800312CA0 /* LightCTLTemperatureGet.swift */,
+				520206A723840B7100312CA0 /* LightCTLTemperatureRangeGet.swift */,
+				520206AB23840C2200312CA0 /* LightCTLTemperatureRangeSet.swift */,
+				520206AD23840CC700312CA0 /* LightCTLTemperatureRangeSetUnacknowledged.swift */,
+				520206A923840B9000312CA0 /* LightCTLTemperatureRangeStatus.swift */,
+				520206AF23840D3A00312CA0 /* LightCTLTemperatureSet.swift */,
+				520206B123840F9000312CA0 /* LightCTLTemperatureSetUnacknowledged.swift */,
+				520206A523840A6E00312CA0 /* LightCTLTemperatureStatus.swift */,
+				520206CF23842D3200312CA0 /* LightHSLDefaultGet.swift */,
+				520206D323842E2500312CA0 /* LightHSLDefaultSet.swift */,
+				520206D523842E6F00312CA0 /* LightHSLDefaultSetUnacknowledged.swift */,
+				520206D123842D6700312CA0 /* LightHSLDefaultStatus.swift */,
+				6076E89C23801DE300F11F02 /* LightHSLGet.swift */,
+				520206BB23841F3B00312CA0 /* LightHSLHueGet.swift */,
+				520206BD23841F6200312CA0 /* LightHSLHueSet.swift */,
+				520206BF23841FFA00312CA0 /* LightHSLHueSetUnacknowledged.swift */,
+				520206C12384202500312CA0 /* LightHSLHueStatus.swift */,
+				520206D723842EC600312CA0 /* LightHSLRangeGet.swift */,
+				520206DD238430E300312CA0 /* LightHSLRangeSet.swift */,
+				520206DB2384309100312CA0 /* LightHSLRangeSetUnacknowledged.swift */,
+				520206D923842EE500312CA0 /* LightHSLRangeStatus.swift */,
+				520206C32384229200312CA0 /* LightHSLSaturationGet.swift */,
+				520206C5238422B900312CA0 /* LightHSLSaturationSet.swift */,
+				520206C7238422C700312CA0 /* LightHSLSaturationSetUnacknowledged.swift */,
+				520206C9238422D000312CA0 /* LightHSLSaturationStatus.swift */,
+				6076E89E23801DEE00F11F02 /* LightHSLSet.swift */,
+				6076E8A023801DFF00F11F02 /* LightHSLSetUnackowledged.swift */,
+				6076E8A223801E0600F11F02 /* LightHSLStatus.swift */,
+				520206CB2384252A00312CA0 /* LightHSLTargetGet.swift */,
+				520206CD2384255200312CA0 /* LightHSLTargetStatus.swift */,
+				520206932382E34100312CA0 /* LightLightnessDefaultGet.swift */,
+				5202069F2382E78800312CA0 /* LightLightnessDefaultSet.swift */,
+				520206A12382E7C400312CA0 /* LightLightnessDefaultSetUnacknowledged.swift */,
+				520206952382E36300312CA0 /* LightLightnessDefaultStatus.swift */,
+				6076E88C2380188700F11F02 /* LightLightnessGet.swift */,
+				5202068F2382E22B00312CA0 /* LightLightnessLastGet.swift */,
+				520206912382E25300312CA0 /* LightLightnessLastStatus.swift */,
+				520206872382DF1700312CA0 /* LightLightnessLinearGet.swift */,
+				520206892382DF6400312CA0 /* LightLightnessLinearSet.swift */,
+				5202068B2382DFB800312CA0 /* LightLightnessLinearSetUnacknowledged.swift */,
+				5202068D2382E14F00312CA0 /* LightLightnessLinearStatus.swift */,
+				520206972382E3B400312CA0 /* LightLightnessRangeGet.swift */,
+				520206992382E3D300312CA0 /* LightLightnessRangeSet.swift */,
+				5202069D2382E5B000312CA0 /* LightLightnessRangeSetUnacknowledged.swift */,
+				5202069B2382E3E600312CA0 /* LightLightnessRangeStatus.swift */,
+				6076E890238018E600F11F02 /* LightLightnessSet.swift */,
+				6076E8922380190000F11F02 /* LightLightnessSetUnacknowledged.swift */,
+				6076E88E238018DE00F11F02 /* LightLightnessStatus.swift */,
+			);
+			path = Lightning;
 			sourceTree = "<group>";
 		};
 		533F8B515544EF3D8A2EF844F7047647 /* Static */ = {
@@ -1139,12 +1146,12 @@
 			path = "../Target Support Files/SwiftLint";
 			sourceTree = "<group>";
 		};
-		7A6D46F2CED857E3DED7848F34D4F91C /* Foundation Messages */ = {
+		7A6D46F2CED857E3DED7848F34D4F91C /* Foundation */ = {
 			isa = PBXGroup;
 			children = (
-				DF9EE56558419230EE47A4719A379710 /* Configuration Messages */,
+				DF9EE56558419230EE47A4719A379710 /* Configuration */,
 			);
-			path = "Foundation Messages";
+			path = Foundation;
 			sourceTree = "<group>";
 		};
 		7AB245EF1DE90B85068F5C0DF04D2564 /* Access Layer */ = {
@@ -1293,8 +1300,9 @@
 				C6D389D49EF5C167FF54859E8A8ABD03 /* MeshMessageError.swift */,
 				9498AC70688A627F8CCDB49643828A4A /* UnknownMessage.swift */,
 				1928625469225BCEB799012E13FF12F6 /* VendorMessage.swift */,
-				7A6D46F2CED857E3DED7848F34D4F91C /* Foundation Messages */,
-				28850595AD0F1176A5EF763CC522CF63 /* Generic Messages */,
+				7A6D46F2CED857E3DED7848F34D4F91C /* Foundation */,
+				28850595AD0F1176A5EF763CC522CF63 /* Generic */,
+				520206DF2385456000312CA0 /* Lightning */,
 				AF1CCECBDCA74AC7B44B3BFF810C16F9 /* Proxy Configuration */,
 			);
 			name = "Mesh Messages";
@@ -1371,7 +1379,7 @@
 			path = "Upper Transport Layer";
 			sourceTree = "<group>";
 		};
-		DF9EE56558419230EE47A4719A379710 /* Configuration Messages */ = {
+		DF9EE56558419230EE47A4719A379710 /* Configuration */ = {
 			isa = PBXGroup;
 			children = (
 				4A04BD0534750F104AB7240BCD791C55 /* ConfigAppKeyAdd.swift */,
@@ -1432,7 +1440,7 @@
 				A656681799B570D521384669698EF8E2 /* ConfigVendorModelSubscriptionGet.swift */,
 				17528126D8653EA3630FF75CB58FE402 /* ConfigVendorModelSubscriptionList.swift */,
 			);
-			path = "Configuration Messages";
+			path = Configuration;
 			sourceTree = "<group>";
 		};
 		E3BBA2EB35FFBE95ADBC83F9122B7A0E /* Lower Transport Layer */ = {
