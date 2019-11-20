@@ -34,7 +34,8 @@ public struct ConfigAppKeyList: ConfigStatusMessage, ConfigNetKeyMessage {
     public static let opCode: UInt32 = 0x8002
     
     public var parameters: Data? {
-        return Data([status.rawValue]) + encodeNetKeyIndex() + encode(indexes: applicationKeyIndexes[...])
+        return Data([status.rawValue]) + encodeNetKeyIndex()
+               + encode(indexes: applicationKeyIndexes[...])
     }
     
     public let status: ConfigMessageStatus
