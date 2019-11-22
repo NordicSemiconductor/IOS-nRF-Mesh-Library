@@ -88,7 +88,7 @@ public extension MeshNetwork {
     ///            this mesh network, `false` otherwise.
     func matches(networkId: Data) -> Bool {
         return networkKeys.contains {
-            $0.networkId == networkId
+            $0.networkId == networkId || $0.oldNetworkId == networkId
         }
     }
     
