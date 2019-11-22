@@ -109,7 +109,7 @@ open class BaseGattProxyBearer<Service: MeshService>: NSObject, Bearer, CBCentra
     }
     
     open func close() {
-        if basePeripheral.state == .connected || basePeripheral?.state == .connecting {
+        if basePeripheral?.state == .connected || basePeripheral?.state == .connecting {
             logger?.v(.bearer, "Cancelling connection...")
             centralManager.cancelPeripheralConnection(basePeripheral)            
         }
