@@ -93,6 +93,9 @@ class NetworkConnection: NSObject, Bearer {
         }
         set {
             UserDefaults.standard.set(newValue, forKey: connectionModeKey)
+            if newValue && isStarted && centralManager.state == .poweredOn {
+                centralManager.scanForPeripherals(withServices: [MeshProxyService.uuid], options: nil)
+            }
         }
     }
     
@@ -102,7 +105,7 @@ class NetworkConnection: NSObject, Bearer {
         super.init()
         centralManager.delegate = self
         
-        // By dafult the connection mode is automatic.
+        // By default, the connection mode is automatic.
         UserDefaults.standard.register(defaults: [connectionModeKey : true])
     }
     

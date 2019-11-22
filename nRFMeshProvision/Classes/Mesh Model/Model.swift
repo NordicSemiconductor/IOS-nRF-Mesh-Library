@@ -60,7 +60,7 @@ public class Model: Codable {
     /// not known to the local database, and those are not returned.
     /// Use `isSubscribed(to:)` to check other Groups.
     public var subscriptions: [Group] {
-        return parentElement.parentNode?.meshNetwork?.groups
+        return parentElement?.parentNode?.meshNetwork?.groups
             .filter({ subscribe.contains($0._address )}) ?? []
     }
     /// The configuration of this Model's publication.
@@ -73,7 +73,7 @@ public class Model: Codable {
     public let delegate: ModelDelegate?
     
     /// Parent Element.
-    public internal(set) weak var parentElement: Element!
+    public internal(set) weak var parentElement: Element?
     
     internal init(modelId: UInt32) {
         self.modelId   = modelId

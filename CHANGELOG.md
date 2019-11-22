@@ -1,4 +1,20 @@
 ## Changelog
+- **2.2.0**:
+    - Scene messages added.
+    - Lightness, CTL and HSL messages added.
+    - Improved switching from provisioning to node configuration.
+    - Support for Proxies with proxy filter capacity limited to 1.
+    - Bugfix: Several potential crashes fixed, including #208.
+    - Spelling: Targetting -> targeting.
+
+- **2.1.0**:
+    - Option to select connected proxy manually (disable Automatic Connection on Proxy screen).
+    - An example Simple OnOff client vendor model added.
+    - Bugfix: Race condition on Access and Upper Transport Layer fixed (#179).
+    - Bugfix: Editing keys possible only when new one is created (#188).
+    - Improvement: Clarification of Relay documentation (#168).
+    - Improvement: Compatibility with Xcode 10.x (#180).
+
 - **2.0.0**:
     - A complete rewrite of the sample app and underlying mesh library. The API is not backwards compatible with the old version.
     - The old database will be automatically migrated to the new format when calling `manager.load()`.

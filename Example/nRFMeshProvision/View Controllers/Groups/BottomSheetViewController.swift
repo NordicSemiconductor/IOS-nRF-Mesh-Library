@@ -57,7 +57,7 @@ class BottomSheetViewController: UITableViewController {
         let cell = tableView.dequeueReusableCell(withIdentifier: "item", for: indexPath)
         let model = models[indexPath.row]
         let element = model.parentElement!
-        cell.textLabel?.text = "\(model.parentElement.name ?? "Element \(element.index + 1)")"
+        cell.textLabel?.text = "\(model.parentElement?.name ?? "Element \(element.index + 1)")"
         cell.detailTextLabel?.text = "\(element.parentNode!.name ?? "Unknown node")"
         return cell
     }

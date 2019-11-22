@@ -97,7 +97,7 @@ class ModelViewCell: UITableViewCell {
     }
     
     /// A callback called when an unsegmented message was sent to the
-    /// `transmitter`, or when all segments of a segmented message targetting
+    /// `transmitter`, or when all segments of a segmented message targeting
     /// a Unicast Address were acknowledged by the target Node.
     ///
     /// - parameters:

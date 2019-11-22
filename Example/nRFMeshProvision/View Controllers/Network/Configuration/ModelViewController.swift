@@ -390,7 +390,9 @@ private extension ModelViewController {
     }
     
     func reloadPublication() {
-        let message = ConfigModelPublicationGet(for: model)
+        guard let message = ConfigModelPublicationGet(for: model) else {
+            return
+        }
         send(message, description: "Reading Publication settings...")
     }
     
@@ -406,13 +408,17 @@ private extension ModelViewController {
     ///
     /// - parameter applicationKey: The Application Key to unbind.
     func unbindApplicationKey(_ applicationKey: ApplicationKey) {
-        let message = ConfigModelAppUnbind(applicationKey: applicationKey, to: model)
+        guard let message = ConfigModelAppUnbind(applicationKey: applicationKey, to: model) else {
+            return
+        }
         send(message, description: "Unbinding Application Key...")
     }
     
     /// Removes the publicaton from the model.
     func removePublication() {
-        let message = ConfigModelPublicationSet(disablePublicationFor: model)
+        guard let message = ConfigModelPublicationSet(disablePublicationFor: model) else {
+            return
+        }
         send(message, description: "Removing Publication...")
     }
     
@@ -441,9 +447,10 @@ extension ModelViewController: MeshNetworkDelegate {
             }
             return
         }
-        // Is the message targetting the current Node or Model?
-        guard model.parentElement.unicastAddress == source ||
-            (model.parentElement.parentNode!.unicastAddress == source && message is ConfigMessage) else {
+        // Is the message targeting the current Node or Model?
+        guard model.parentElement?.unicastAddress == source ||
+             (model.parentElement?.parentNode!.unicastAddress == source
+                && message is ConfigMessage) else {
             return
         }
         

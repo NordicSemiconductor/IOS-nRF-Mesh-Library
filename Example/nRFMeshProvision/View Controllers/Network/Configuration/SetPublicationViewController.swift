@@ -400,8 +400,8 @@ extension SetPublicationViewController: MeshNetworkDelegate {
             }
             return
         }
-        // Is the message targetting the current Node?
-        guard model.parentElement.parentNode!.unicastAddress == source else {
+        // Is the message targeting the current Node?
+        guard model.parentElement?.parentNode?.unicastAddress == source else {
             return
         }
         
