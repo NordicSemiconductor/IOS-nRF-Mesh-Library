@@ -46,9 +46,28 @@ public enum ProxyFilerType: UInt8 {
 public protocol ProxyFilterDelegate: class {
     /// Method called when the Proxy Filter has been updated.
     ///
-    /// - parameter type: The current Proxy Filter type.
-    /// - parameter addresses: The addresses in the filter.
+    /// - parameters:
+    ///   - type: The current Proxy Filter type.
+    ///   - addresses: The addresses in the filter.
     func proxyFilterUpdated(type: ProxyFilerType, addresses: Set<Address>)
+    
+    /// This method is called when the connceted Proxy device supports
+    /// only a single address in the Proxy Filter list.
+    ///
+    /// The delegate can switch to `.blacklist` filter type at that point
+    /// to receive messages sent to other addresses than 0th Element
+    /// Unicast Address.
+    ///
+    /// - parameter maxSize: The maximum Proxy Filter list size.
+    func limitedProxyFilterDetected(maxSize: Int)
+}
+
+public extension ProxyFilterDelegate {
+    
+    func limitedProxyFilterDetected(maxSize: Int) {
+        // Do nothing.
+    }
+    
 }
 
 /// The Proxy Filter class allows modification of the proxy filter on the
@@ -300,10 +319,28 @@ internal extension ProxyFilter {
                 }
                 counter += 1
                 
-                logger?.w(.proxy, "Refreshing Proxy Filter...")
-                let addresses = self.addresses
-                clear()
-                add(addresses: addresses)
+                // Some devices support just a single address in Proxy Filter.
+                // After adding 2+ devices they will reply with list size = 1.
+                // In that case we could either switch to black list type of filter
+                // to get all the traffic, or add only 1 address. By default, this
+                // library will add the 0th Element's Unicast Address to allow
+                // configuration, as this is the most common use case. If you need
+                // to receive messages sent to group addresses or other Elements,
+                // switch to black list filter after this single
+                if status.listSize == 1 {
+                    logger?.w(.proxy, "Limited Proxy Filter detected.")
+                    reset()
+                    if let address = manager.meshNetwork?.localProvisioner?.unicastAddress {
+                        addresses = [address]
+                        add(addresses: addresses)
+                    }
+                    delegate?.limitedProxyFilterDetected(maxSize: 1)
+                } else {
+                    logger?.w(.proxy, "Refreshing Proxy Filter...")
+                    let addresses = self.addresses // reset() will erase addresses, store it.
+                    reset()
+                    add(addresses: addresses)
+                }
                 return
             }
             counter = 0
