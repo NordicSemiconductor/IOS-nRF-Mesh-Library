@@ -1,10 +1,10 @@
 PODS:
-  - nRFMeshProvision (2.1.0):
+  - nRFMeshProvision (2.2.0):
     - OpenSSL-Universal (= 1.0.2.19)
   - OpenSSL-Universal (1.0.2.19):
     - OpenSSL-Universal/Static (= 1.0.2.19)
   - OpenSSL-Universal/Static (1.0.2.19)
-  - SwiftLint (0.36.0)
+  - SwiftLint (0.37.0)
 
 DEPENDENCIES:
   - nRFMeshProvision (from `../`)
@@ -20,9 +20,9 @@ EXTERNAL SOURCES:
     :path: "../"
 
 SPEC CHECKSUMS:
-  nRFMeshProvision: 0a7cdf55c9dc7fea11c1b20f18e5a47d12208dd6
+  nRFMeshProvision: 4ad4424113822a83fb88aa7f315ba5bc5e416ae6
   OpenSSL-Universal: 8b48cc0d10c1b2923617dfe5c178aa9ed2689355
-  SwiftLint: fc9859e4e1752340664851f667bb1898b9c90114
+  SwiftLint: c078a14d7d7ade75e5507795d185e3da41d844d2
 
 PODFILE CHECKSUM: d915a99ebadab623fe0a3c47ee4d748c2ba3e43c
 
