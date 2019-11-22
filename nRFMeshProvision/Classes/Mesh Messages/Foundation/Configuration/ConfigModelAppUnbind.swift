@@ -48,9 +48,12 @@ public struct ConfigModelAppUnbind: AcknowledgedConfigMessage, ConfigAppKeyMessa
     public let modelIdentifier: UInt16
     public let companyIdentifier: UInt16?
     
-    public init(applicationKey: ApplicationKey, to model: Model) {
+    public init?(applicationKey: ApplicationKey, to model: Model) {
+        guard let elementAddress = model.parentElement?.unicastAddress else {
+            return nil
+        }
         self.applicationKeyIndex = applicationKey.index
-        self.elementAddress = model.parentElement.unicastAddress
+        self.elementAddress = elementAddress
         self.modelIdentifier = model.modelIdentifier
         self.companyIdentifier = model.companyIdentifier
     }

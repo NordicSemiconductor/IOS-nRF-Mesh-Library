@@ -115,8 +115,10 @@ private extension ModelBindAppKeyViewController {
             return
         }
         let selectedAppKey = keys[selectedIndexPath.row]
+        guard let message = ConfigModelAppBind(applicationKey: selectedAppKey, to: self.model) else {
+            return
+        }
         start("Binding Application Key...") {
-            let message = ConfigModelAppBind(applicationKey: selectedAppKey, to: self.model)
             return try MeshNetworkManager.instance.send(message, to: self.model)
         }
     }
@@ -144,7 +146,7 @@ extension ModelBindAppKeyViewController: MeshNetworkDelegate {
             return
         }
         // Is the message targetting the current Node?
-        guard model.parentElement.parentNode!.unicastAddress == source else {
+        guard model.parentElement?.parentNode?.unicastAddress == source else {
             return
         }
         

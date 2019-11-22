@@ -72,26 +72,35 @@ public struct ConfigModelSubscriptionStatus: ConfigStatusMessage, ConfigAddressM
         self.status = status
     }
     
-    public init(confirmAdding group: Group, to model: Model) {
+    public init?(confirmAdding group: Group, to model: Model) {
+        guard let elementAddress = model.parentElement?.unicastAddress else {
+            return nil
+        }
         self.status = .success
         self.address = group.address.address
-        self.elementAddress = model.parentElement.unicastAddress
+        self.elementAddress = elementAddress
         self.modelIdentifier = model.modelIdentifier
         self.companyIdentifier = model.companyIdentifier
     }
     
-    public init(confirmDeleting address: Address, from model: Model) {
+    public init?(confirmDeleting address: Address, from model: Model) {
+        guard let elementAddress = model.parentElement?.unicastAddress else {
+            return nil
+        }
         self.status = .success
         self.address = address
-        self.elementAddress = model.parentElement.unicastAddress
+        self.elementAddress = elementAddress
         self.modelIdentifier = model.modelIdentifier
         self.companyIdentifier = model.companyIdentifier
     }
     
-    public init(confirmDeletingAllFrom model: Model) {
+    public init?(confirmDeletingAllFrom model: Model) {
+        guard let elementAddress = model.parentElement?.unicastAddress else {
+            return nil
+        }
         self.status = .success
         self.address = Address.unassignedAddress
-        self.elementAddress = model.parentElement.unicastAddress
+        self.elementAddress = elementAddress
         self.modelIdentifier = model.modelIdentifier
         self.companyIdentifier = model.companyIdentifier
     }

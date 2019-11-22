@@ -59,15 +59,21 @@ public struct ConfigModelPublicationSet: AcknowledgedConfigMessage, ConfigAnyMod
             // ConfigModelPublicationVirtualAddressSet should be used instead.
             return nil
         }
+        guard let elementAddress = model.parentElement?.unicastAddress else {
+            return nil
+        }
         self.publish = publish
-        self.elementAddress = model.parentElement.unicastAddress
+        self.elementAddress = elementAddress
         self.modelIdentifier = model.modelIdentifier
         self.companyIdentifier = model.companyIdentifier
     }
     
-    public init(disablePublicationFor model: Model) {
+    public init?(disablePublicationFor model: Model) {
+        guard let elementAddress = model.parentElement?.unicastAddress else {
+            return nil
+        }
         self.publish = Publish()
-        self.elementAddress = model.parentElement.unicastAddress
+        self.elementAddress = elementAddress
         self.modelIdentifier = model.modelIdentifier
         self.companyIdentifier = model.companyIdentifier
     }
