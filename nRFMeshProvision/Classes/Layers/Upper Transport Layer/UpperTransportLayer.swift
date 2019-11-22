@@ -44,7 +44,7 @@ internal class UpperTransportLayer {
     /// Upper Transport PDU to that destination has been either completed
     /// or cancelled.
     ///
-    /// This map contains queues of messages targetting each destination.
+    /// This map contains queues of messages targeting each destination.
     private var queues: [Address : [(pdu: UpperTransportPdu, ttl: UInt8?, networkKey: NetworkKey)]]
     
     init(_ networkManager: NetworkManager) {

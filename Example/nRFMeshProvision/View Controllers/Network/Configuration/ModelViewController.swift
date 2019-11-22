@@ -447,7 +447,7 @@ extension ModelViewController: MeshNetworkDelegate {
             }
             return
         }
-        // Is the message targetting the current Node or Model?
+        // Is the message targeting the current Node or Model?
         guard model.parentElement?.unicastAddress == source ||
              (model.parentElement?.parentNode!.unicastAddress == source
                 && message is ConfigMessage) else {
