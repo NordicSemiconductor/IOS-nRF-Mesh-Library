@@ -47,7 +47,10 @@ public struct ConfigVendorModelSubscriptionGet: AcknowledgedConfigMessage, Confi
             // Use ConfigSIGModelSubscriptionGet instead.
             return nil
         }
-        self.elementAddress = model.parentElement.unicastAddress
+        guard let elementAddress = model.parentElement?.unicastAddress else {
+            return nil
+        }
+        self.elementAddress = elementAddress
         self.modelIdentifier = model.modelIdentifier
         self.companyIdentifier = companyIdentifier
     }

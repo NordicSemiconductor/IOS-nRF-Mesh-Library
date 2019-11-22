@@ -55,8 +55,11 @@ public struct ConfigModelSubscriptionVirtualAddressAdd: AcknowledgedConfigMessag
             // ConfigModelSubscriptionAdd should be used instead.
             return nil
         }
+        guard let elementAddress = model.parentElement?.unicastAddress else {
+            return nil
+        }
         self.virtualLabel = label
-        self.elementAddress = model.parentElement.unicastAddress
+        self.elementAddress = elementAddress
         self.modelIdentifier = model.modelIdentifier
         self.companyIdentifier = model.companyIdentifier
     }

@@ -73,7 +73,7 @@ public class Model: Codable {
     public let delegate: ModelDelegate?
     
     /// Parent Element.
-    public internal(set) weak var parentElement: Element!
+    public internal(set) weak var parentElement: Element?
     
     internal init(modelId: UInt32) {
         self.modelId   = modelId

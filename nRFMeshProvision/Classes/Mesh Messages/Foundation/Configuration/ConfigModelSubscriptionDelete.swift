@@ -53,8 +53,11 @@ public struct ConfigModelSubscriptionDelete: AcknowledgedConfigMessage, ConfigAd
             // ConfigModelSubscriptionVirtualAddressDelete should be used instead.
             return nil
         }
+        guard let elementAddress = model.parentElement?.unicastAddress else {
+            return nil
+        }
         self.address = group.address.address
-        self.elementAddress = model.parentElement.unicastAddress
+        self.elementAddress = elementAddress
         self.modelIdentifier = model.modelIdentifier
         self.companyIdentifier = model.companyIdentifier
     }

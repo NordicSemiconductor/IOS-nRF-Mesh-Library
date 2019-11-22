@@ -83,7 +83,7 @@ internal class ConfigurationServerHandler: ModelDelegate {
     
     func model(_ model: Model, didReceiveAcknowledgedMessage request: AcknowledgedMeshMessage,
                from source: Address, sentTo destination: MeshAddress) -> MeshMessage {
-        let localNode = model.parentElement.parentNode!
+        let localNode = model.parentElement!.parentNode!
         
         switch request {
             
@@ -337,7 +337,7 @@ internal class ConfigurationServerHandler: ModelDelegate {
                         return ConfigModelSubscriptionStatus(responseTo: request, with: .invalidAddress)
                     }
                 }
-                return ConfigModelSubscriptionStatus(confirmAdding: group!, to: model)
+                return ConfigModelSubscriptionStatus(confirmAdding: group!, to: model)!
             } else {
                 return ConfigModelSubscriptionStatus(responseTo: request, with: .invalidModel)
             }
@@ -366,7 +366,7 @@ internal class ConfigurationServerHandler: ModelDelegate {
                         return ConfigModelSubscriptionStatus(responseTo: request, with: .invalidAddress)
                     }
                 }
-                return ConfigModelSubscriptionStatus(confirmAdding: group!, to: model)
+                return ConfigModelSubscriptionStatus(confirmAdding: group!, to: model)!
             } else {
                 return ConfigModelSubscriptionStatus(responseTo: request, with: .invalidModel)
             }
@@ -378,7 +378,7 @@ internal class ConfigurationServerHandler: ModelDelegate {
                     return ConfigModelSubscriptionStatus(responseTo: request, with: .invalidAddress)
                 }
                 model.unsubscribe(from: request.address)
-                return ConfigModelSubscriptionStatus(confirmDeleting: request.address, from: model)
+                return ConfigModelSubscriptionStatus(confirmDeleting: request.address, from: model)!
             } else {
                 return ConfigModelSubscriptionStatus(responseTo: request, with: .invalidModel)
             }
@@ -402,7 +402,7 @@ internal class ConfigurationServerHandler: ModelDelegate {
                         return ConfigModelSubscriptionStatus(responseTo: request, with: .invalidAddress)
                     }
                 }
-                return ConfigModelSubscriptionStatus(confirmAdding: group!, to: model)
+                return ConfigModelSubscriptionStatus(confirmAdding: group!, to: model)!
             } else {
                 return ConfigModelSubscriptionStatus(responseTo: request, with: .invalidModel)
             }
@@ -428,7 +428,7 @@ internal class ConfigurationServerHandler: ModelDelegate {
                         return ConfigModelSubscriptionStatus(responseTo: request, with: .invalidAddress)
                     }
                 }
-                return ConfigModelSubscriptionStatus(confirmAdding: group!, to: model)
+                return ConfigModelSubscriptionStatus(confirmAdding: group!, to: model)!
             } else {
                 return ConfigModelSubscriptionStatus(responseTo: request, with: .invalidModel)
             }
@@ -440,7 +440,7 @@ internal class ConfigurationServerHandler: ModelDelegate {
                 if let group = meshNetwork.group(withAddress: address) {
                     model.unsubscribe(from: group)
                 }
-                return ConfigModelSubscriptionStatus(confirmDeleting: address.address, from: model)
+                return ConfigModelSubscriptionStatus(confirmDeleting: address.address, from: model)!
             } else {
                 return ConfigModelSubscriptionStatus(responseTo: request, with: .invalidModel)
             }
@@ -449,7 +449,7 @@ internal class ConfigurationServerHandler: ModelDelegate {
             if let element = localNode.element(withAddress: request.elementAddress),
                let model = element.model(withModelId: request.modelId) {
                 model.unsubscribeFromAll()
-                return ConfigModelSubscriptionStatus(confirmDeletingAllFrom: model)
+                return ConfigModelSubscriptionStatus(confirmDeletingAllFrom: model)!
             } else {
                 return ConfigModelSubscriptionStatus(responseTo: request, with: .invalidModel)
             }

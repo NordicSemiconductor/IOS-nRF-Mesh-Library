@@ -47,8 +47,11 @@ public struct ConfigModelSubscriptionDeleteAll: AcknowledgedConfigMessage, Confi
     public let modelIdentifier: UInt16
     public let companyIdentifier: UInt16?
     
-    public init(from model: Model) {
-        self.elementAddress = model.parentElement.unicastAddress
+    public init?(from model: Model) {
+        guard let elementAddress = model.parentElement?.unicastAddress else {
+            return nil
+        }
+        self.elementAddress = elementAddress
         self.modelIdentifier = model.modelIdentifier
         self.companyIdentifier = model.companyIdentifier
     }
