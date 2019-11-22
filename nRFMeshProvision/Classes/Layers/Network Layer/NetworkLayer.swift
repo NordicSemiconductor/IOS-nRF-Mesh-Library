@@ -163,7 +163,7 @@ internal class NetworkLayer {
             handle(incomingPdu: networkPdu.pdu, ofType: type)
             
             if isLocalUnicastAddress(networkPdu.destination) {
-                // No need to send messages targetting local Unicast Addresses.
+                // No need to send messages targeting local Unicast Addresses.
                 return
             }
             // If the message was sent locally, don't report Bearer closer error.

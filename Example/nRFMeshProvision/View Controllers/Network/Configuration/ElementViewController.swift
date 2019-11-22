@@ -163,7 +163,7 @@ extension ElementViewController: MeshNetworkDelegate {
             navigationController?.popToRootViewController(animated: true)
             return
         }
-        // Is the message targetting the current Node?
+        // Is the message targeting the current Node?
         guard element.unicastAddress == source else {
             return
         }

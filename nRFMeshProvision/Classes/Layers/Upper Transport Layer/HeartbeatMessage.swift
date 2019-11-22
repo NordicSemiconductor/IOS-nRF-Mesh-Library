@@ -69,7 +69,7 @@ internal struct HearbeatMessage {
     /// - parameter features:    Currently active features of the node.
     /// - parameter source:      The source address.
     /// - parameter destination: The destination address.
-    init(withInitialTtl ttl: UInt8, andFeatures features: Features, from source: Address, targetting destination: Address) {
+    init(withInitialTtl ttl: UInt8, andFeatures features: Features, from source: Address, targeting destination: Address) {
         self.opCode = 0x0A
         self.initTtl = ttl
         self.features = features

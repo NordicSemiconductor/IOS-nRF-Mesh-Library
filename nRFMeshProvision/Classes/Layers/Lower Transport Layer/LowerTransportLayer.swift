@@ -76,7 +76,7 @@ internal class LowerTransportLayer {
     /// and `sequenceZero` field in 13 least significant bits.
     /// See `UInt32(keyFor:sequenceZero)` below.
     var incompleteTimers: [UInt32 : BackgroundTimer]
-    /// The map of acknowledgment timers. After receiving a segment targetting
+    /// The map of acknowledgment timers. After receiving a segment targeting
     /// any of the Unicast Addresses of one of the Elements of the local Node, a
     /// timer is started that will send the Segment Acknowledgment Message for
     /// segments received until than. The timer is invalidated when the message
@@ -387,7 +387,7 @@ private extension LowerTransportLayer {
                 let allSegments = incompleteSegments.removeValue(forKey: key)!
                 let message = allSegments.reassembled
                 logger?.i(.lowerTransport, "\(message) received")
-                // If the access message was targetting directly the local Provisioner...
+                // If the access message was targeting directly the local Provisioner...
                 if let provisionerNode = meshNetwork.localProvisioner?.node,
                     networkPdu.destination == provisionerNode.unicastAddress {
                     // ...invalidate timers...
@@ -526,7 +526,7 @@ private extension LowerTransportLayer {
               let ttl = segmentTtl[sequenceZero] else {
             return
         }
-        /// Segment Acknowledgment Message is expected when the message is targetting
+        /// Segment Acknowledgment Message is expected when the message is targeting
         /// a Unicast Address.
         var ackExpected: Bool?
         

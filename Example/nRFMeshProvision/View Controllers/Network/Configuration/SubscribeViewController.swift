@@ -145,7 +145,7 @@ extension SubscribeViewController: MeshNetworkDelegate {
             }
             return
         }
-        // Is the message targetting the current Node?
+        // Is the message targeting the current Node?
         guard model.parentElement?.parentNode?.unicastAddress == source else {
             return
         }

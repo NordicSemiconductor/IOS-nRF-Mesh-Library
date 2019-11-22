@@ -55,7 +55,7 @@ public protocol MeshNetworkDelegate: class {
                             sentFrom source: Address, to destination: Address)
     
     /// A callback called when an unsegmented message was sent to the
-    /// `transmitter`, or when all segments of a segmented message targetting
+    /// `transmitter`, or when all segments of a segmented message targeting
     /// a Unicast Address were acknowledged by the target Node.
     ///
     /// - parameters:
@@ -75,7 +75,7 @@ public protocol MeshNetworkDelegate: class {
     /// the `transmitter` was set to `nil`, or has thrown an exception from
     /// `send(data:ofType)`.
     ///
-    /// For segmented unacknowledged messages targetting a Unicast Address,
+    /// For segmented unacknowledged messages targeting a Unicast Address,
     /// besides that, it may also be called when sending timed out before all of
     /// the segments were acknowledged by the target Node, or when the target
     /// Node is busy and not able to proceed the message at the moment.
@@ -92,7 +92,7 @@ public protocol MeshNetworkDelegate: class {
     /// - `BearerError.bearerClosed` - when the `transmitter` object was net set.
     /// - `LowerTransportError.busy` - when the target Node is busy and can't
     ///   accept the message.
-    /// - `LowerTransportError.timeout` - when the segmented message targetting
+    /// - `LowerTransportError.timeout` - when the segmented message targeting
     ///   a Unicast Address was not acknowledgned before the `retransmissionLimit`
     ///   was reached (for unacknowledged messages only).
     /// - `AccessError.timeout` - when the response for an acknowledged message

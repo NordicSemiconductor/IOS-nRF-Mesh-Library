@@ -362,7 +362,7 @@ private extension AccessLayer {
                         }
                         // Deliver the message to the Model if it was signed with an
                         // Application Key bound to this Model and the message is
-                        // targetting this Element, or the Model is subscribed to the
+                        // targeting this Element, or the Model is subscribed to the
                         // destination address.
                         if model.isBoundTo(keySet.applicationKey) && (
                             accessPdu.destination.address == Address.allNodes ||
@@ -388,7 +388,7 @@ private extension AccessLayer {
                let delegate = configurationServerModel.delegate,
                let configMessage = delegate.decode(accessPdu) {
                 newMessage = configMessage
-                // Is this message targetting the local Node?
+                // Is this message targeting the local Node?
                 if accessPdu.destination.address == firstElement.unicastAddress {
                     logger?.i(.foundationModel, "\(configMessage) received from: \(accessPdu.source.hex)")
                     if let response = delegate.model(configurationServerModel, didReceiveMessage: configMessage,
@@ -407,7 +407,7 @@ private extension AccessLayer {
                       let delegate = configurationClientModel.delegate,
                       let configMessage = delegate.decode(accessPdu) {
                 newMessage = configMessage
-                // Is this message targetting the local Node?
+                // Is this message targeting the local Node?
                 if accessPdu.destination.address == firstElement.unicastAddress {
                     logger?.i(.foundationModel, "\(configMessage) received from: \(accessPdu.source.hex)")
                     if let response = delegate.model(configurationClientModel, didReceiveMessage: configMessage,
