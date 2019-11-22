@@ -302,24 +302,24 @@ extension ProvisioningViewController: GattBearerDelegate {
     }
     
     func bearer(_ bearer: Bearer, didClose error: Error?) {
-        if case .complete = provisioningManager.state {
-            // If the "Provisioning complete" alert is still presented, dismiss it.
-            if let _ = presentedViewController as? UIAlertController {
-                dismiss(animated: false)
-            }
-            dismiss(animated: true) {
-                let network = MeshNetworkManager.instance.meshNetwork!
-                if let node = network.node(for: self.unprovisionedDevice) {
-                    if MeshNetworkManager.instance.save() {
-                        self.delegate?.provisionerDidProvisionNewDevice(node)
-                    } else {
-                        self.presentAlert(title: "Error", message: "Mesh configuration could not be saved.")
-                    }
-                }
-            }
-        } else {
-            self.dismissStatusDialog() {
+        guard case .complete = provisioningManager.state else {
+            dismissStatusDialog() {
                 self.presentAlert(title: "Status", message: "Device disconnected.")
+            }
+            return
+        }
+        dismissStatusDialog() {
+            self.presentAlert(title: "Success", message: "Provisioning complete.") { _ in
+                if MeshNetworkManager.instance.save() {
+                    self.dismiss(animated: true) {
+                        let network = MeshNetworkManager.instance.meshNetwork!
+                        if let node = network.node(for: self.unprovisionedDevice) {
+                            self.delegate?.provisionerDidProvisionNewDevice(node)
+                        }
+                    }
+                } else {
+                    self.presentAlert(title: "Error", message: "Mesh configuration could not be saved.")
+                }
             }
         }
     }
@@ -378,11 +378,8 @@ extension ProvisioningViewController: ProvisioningDelegate {
                 }
                 
             case .complete:
-                self.dismissStatusDialog() {
-                    self.presentAlert(title: "Success", message: "Provisioning complete.") { _ in
-                        self.bearer.close()
-                    }
-                }
+                self.bearer.close()
+                self.presentStatusDialog(message: "Disconnecting...")
                 
             case let .fail(error):
                 self.dismissStatusDialog() {
