@@ -46,9 +46,7 @@ class SetPublicationDestinationsViewController: UITableViewController {
     var selectedApplicationKey: ApplicationKey?
     var selectedDestination: MeshAddress?
     
-    /// List of Elements containing a compatible Model. For example,
-    /// for Generic On/Off Server this list will contain all Elements
-    /// with Genetic On/Off Client.
+    /// List of Elements containing Model bound to selected Application Key.
     private var compatibleElements: [Element]!
     private let specialGroups: [(title: String, address: Address)] = [
         ("All Proxies", Address.allProxies),
@@ -212,10 +210,10 @@ private extension SetPublicationDestinationsViewController {
         rows.append(indexPath)
         selectedKeyIndexPath = indexPath
         
-        // The list of Elements contains Elements with compatible models, that are bound
+        // The list of Elements contains Elements with models, that are bound
         // to the selected key. Changing the key will cause the Elements list to reload.
         // If an Element was selected, it may happen that it also is bound to the
-        // new key, or not. We have either to update the selected index path, or
+        // new key, or not. We either have to update the selected index path, or
         // clear the selection.
         var selectedElementIndex: UInt8?
         if !initial, let indexPath = selectedIndexPath, indexPath.isElementsSection {
@@ -226,7 +224,7 @@ private extension SetPublicationDestinationsViewController {
         let meshNetwork = MeshNetworkManager.instance.meshNetwork!
         compatibleElements = meshNetwork.nodes
             .flatMap({ $0.elements })
-            .filter({ $0.contains(modelCompatibleWith: model, boundTo: key) })
+            .filter({ $0.contains(modelBoundTo: key) })
         
         if let selectedElementIndex = selectedElementIndex {
             if let newRow = compatibleElements.firstIndex(where: { $0.index == selectedElementIndex }) {
