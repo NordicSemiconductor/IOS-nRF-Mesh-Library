@@ -49,4 +49,5 @@ public extension Model {
     func isBoundTo(_ applicationKey: ApplicationKey) -> Bool {
         return bind.contains(applicationKey.index)
     }
+    
 }

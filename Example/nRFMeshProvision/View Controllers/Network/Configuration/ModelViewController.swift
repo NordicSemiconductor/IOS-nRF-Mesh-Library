@@ -292,14 +292,14 @@ class ModelViewController: ProgressViewController {
                 let thisNode = thisElement.parentNode!
                 let otherNodes = network.nodes.filter { $0 != thisNode }
                 let elementsWithCompatibleModels = otherNodes.flatMap {
-                    $0.elements.filter({ $0.contains(modelCompatibleWith: self.model, boundTo: applicationKey)})
+                    $0.elements.filter({ $0.contains(modelBoundTo: applicationKey)})
                 }
                 let compatibleModels = elementsWithCompatibleModels.flatMap {
-                    $0.models.filter({ $0.isCompatible(to: self.model) && $0.boundApplicationKeys.contains(applicationKey) })
+                    $0.models.filter({ $0.isBoundTo(applicationKey) })
                 }
                 let boundKeyUsedByOtherNodes = compatibleModels.contains {
-                        $0.publish?.publicationAddress.address == thisElement.unicastAddress &&
-                            $0.publish?.index == applicationKey.index
+                    $0.publish?.publicationAddress.address == thisElement.unicastAddress &&
+                    $0.publish?.index == applicationKey.index
                 }
                 
                 if boundKeyUsedInPublication || boundKeyUsedByOtherNodes {

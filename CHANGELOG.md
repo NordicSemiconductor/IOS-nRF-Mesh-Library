@@ -1,4 +1,7 @@
 ## Changelog
+- **2.2.1**:
+    - API related to "compatible models" removed, as the client and server models do not need to have model IDs differing by 1 (#225).
+    
 - **2.2.0**:
     - Scene messages added.
     - Lightness, CTL and HSL messages added.
