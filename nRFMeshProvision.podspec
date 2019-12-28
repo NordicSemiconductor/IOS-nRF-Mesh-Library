@@ -6,6 +6,7 @@
 # To learn more about a Podspec see http://guides.cocoapods.org/syntax/podspec.html
 #
 
+
 Pod::Spec.new do |s|
   s.name             = 'nRFMeshProvision'
   s.version          = '2.2.1'
@@ -18,10 +19,10 @@ Pod::Spec.new do |s|
   s.author           = { 'Aleksander Nowakowski' => 'aleksander.nowakowski@nordicsemi.no' }
   s.source           = { :git => 'https://github.com/NordicSemiconductor/IOS-nRF-Mesh-Library.git', :tag => s.version.to_s }
   s.social_media_url = 'https://twitter.com/nordictweets'
-  s.platform         = :ios
+  s.ios.deployment_target  = '10.0'
+  s.osx.deployment_target  = '10.15'  
   s.static_framework = true
   s.swift_version    = '5.1'
-  s.ios.deployment_target = '10.0'
   s.source_files = 'nRFMeshProvision/Classes/**/*'
   s.dependency 'OpenSSL-Universal', '= 1.0.2.19'
   s.frameworks = 'CoreBluetooth'

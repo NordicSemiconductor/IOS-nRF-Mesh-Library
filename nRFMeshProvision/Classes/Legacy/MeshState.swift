@@ -48,7 +48,13 @@ internal struct MeshState: Codable {
     private let appKeys          : [[String: Data]]
     
     var provisioner: Provisioner {
-        return Provisioner(name: UIDevice.current.name)
+        #if os(OSX)
+        let provisionerName = Host.current().localizedName ?? "OSX"
+        #else
+        let provisionerName = UIDevice.current.name
+        #endif
+        
+        return Provisioner(name: provisionerName)
     }
     
     var provisionerUnicastAddress: Address {
