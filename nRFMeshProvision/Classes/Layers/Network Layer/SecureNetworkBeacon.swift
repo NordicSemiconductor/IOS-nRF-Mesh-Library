@@ -34,7 +34,7 @@ internal struct SecureNetworkBeacon: BeaconPdu {
     let pdu: Data
     let beaconType: BeaconType = .secureNetwork
     
-    /// The Network Key related to this Secure Network Beacon.
+    /// The Network Key related to this Secure Network beacon.
     let networkKey: NetworkKey
     /// Key Refresh flag value.
     ///
@@ -52,7 +52,7 @@ internal struct SecureNetworkBeacon: BeaconPdu {
     /// Contains the current IV Index.
     let ivIndex: UInt32
     
-    /// Creates USecure Network beacon PDU object from received PDU.
+    /// Creates Secure Network beacon PDU object from received PDU.
     ///
     /// - parameter pdu: The data received from mesh network.
     /// - parameter networkKey: The Network Key to validate the beacon.
@@ -118,7 +118,7 @@ internal extension SecureNetworkBeacon {
 extension SecureNetworkBeacon: CustomDebugStringConvertible {
     
     var debugDescription: String {
-        return "Secure Network Beacon (Network ID: \(networkId.hex), IV Index: \(ivIndex), Key Refresh Flag: \(keyRefreshFlag), IV Update active: \(ivUpdateActive))"
+        return "Secure Network beacon (Network ID: \(networkId.hex), IV Index: \(ivIndex), Key Refresh Flag: \(keyRefreshFlag), IV Update active: \(ivUpdateActive))"
     }
     
 }

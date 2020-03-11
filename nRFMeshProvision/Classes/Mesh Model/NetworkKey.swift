@@ -137,7 +137,8 @@ public class NetworkKey: Key, Codable {
         self.timestamp   = Date()
         
         // The IV Index is not a shared in the JSON, as it may change.
-        // The current value will be obtained from the Security Beacon.
+        // The value will be obtained from the Secure Network beacon moment after
+        // connecting to a Proxy node.
         ivIndex = IvIndex()
         
         regenerateKeyDerivaties()
@@ -207,7 +208,8 @@ public class NetworkKey: Key, Codable {
         timestamp = try container.decode(Date.self, forKey: .timestamp)
         
         // The IV Index is not a shared in the JSON, as it may change.
-        // The current value will be obtained from the Security Beacon.
+        // The value will be obtained from the Secure Network beacon moment after
+        // connecting to a Proxy node.
         ivIndex = IvIndex()
         
         regenerateKeyDerivaties()

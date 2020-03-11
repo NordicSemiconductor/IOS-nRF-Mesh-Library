@@ -129,7 +129,7 @@ internal struct UpperTransportPdu {
                                                          withAdditionalData: pdu.destination.virtualLabel?.data)
     }
     
-    /// This method tries to decode teh Access Message using a matching Application Key
+    /// This method tries to decode the Access Message using a matching Application Key
     /// or the node's Device Key, based onthe `aid` field value.
     ///
     /// - parameter accessMessage: The Lower Transport Layer Access Message received.

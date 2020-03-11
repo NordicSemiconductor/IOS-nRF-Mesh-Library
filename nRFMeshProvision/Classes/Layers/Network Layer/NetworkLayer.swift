@@ -219,22 +219,22 @@ internal class NetworkLayer {
 
 private extension NetworkLayer {
     
-    /// This method handles the Unprovisioned Device Beacon.
+    /// This method handles the Unprovisioned Device beacon.
     ///
     /// The curernt implementation does nothing, as remote provisioning is
     /// currently not supported.
     ///
-    /// - parameter unprovisionedDeviceBeacon: The Unprovisioned Device Beacon received.
+    /// - parameter unprovisionedDeviceBeacon: The Unprovisioned Device beacon received.
     func handle(unprovisionedDeviceBeacon: UnprovisionedDeviceBeacon) {
-        // TODO: Handle Unprovisioned Device Beacon.
+        // TODO: Handle Unprovisioned Device beacon.
     }
     
-    /// This method handles the Secure Network Beacon.
+    /// This method handles the Secure Network beacon.
     /// It will set the proper IV Index and IV Update Active flag for the Network Key
     /// that matches Network ID and change the Key Refresh Phase based on the
     /// key refresh flag specified in the beacon.
     ///
-    /// - parameter secureNetworkBeacon: The Secure Network Beacon received.
+    /// - parameter secureNetworkBeacon: The Secure Network beacon received.
     func handle(secureNetworkBeacon: SecureNetworkBeacon) {
         let networkKey = secureNetworkBeacon.networkKey
         // The IV Index in the beacon must be greater or equal to the current one.
