@@ -49,7 +49,7 @@ class ConfigurationViewController: ProgressViewController {
         super.viewWillAppear(animated)
         
         // Element name might have been updated.
-        tableView.reloadSections(.keysAndElementsSections, with: .automatic)
+        tableView.reloadSections(.editableSections, with: .automatic)
         
         // Check if the local Provisioner has configuration capabilities.
         let localProvisioner = MeshNetworkManager.instance.meshNetwork?.localProvisioner
@@ -630,6 +630,6 @@ private extension IndexPath {
 
 private extension IndexSet {
     
-    static let keysAndElementsSections = IndexSet(integersIn: IndexPath.keysSection...IndexPath.elementsSection)
+    static let editableSections = IndexSet(integersIn: IndexPath.keysSection...IndexPath.compositionDataSection)
     
 }
