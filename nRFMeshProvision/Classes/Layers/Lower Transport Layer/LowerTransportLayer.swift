@@ -303,8 +303,8 @@ private extension LowerTransportLayer {
         let newSource = defaults.object(forKey: networkPdu.source.hex) == nil
         if !newSource {
             let lastSequence = defaults.integer(forKey: networkPdu.source.hex)
-            let localSeqAuth = (UInt64(networkPdu.networkKey.ivIndex.index) << 24) | UInt64(lastSequence)
-            let receivedSeqAuth = (UInt64(networkPdu.networkKey.ivIndex.index) << 24) | UInt64(sequence)
+            let localSeqAuth = (UInt64(networkPdu.ivIndex) << 24) | UInt64(lastSequence)
+            let receivedSeqAuth = (UInt64(networkPdu.ivIndex) << 24) | UInt64(sequence)
             
             // In general, the SeqAuth of the received message must be greater
             // than SeqAuth of any previously received message from the same source.

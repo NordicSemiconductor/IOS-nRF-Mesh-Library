@@ -37,6 +37,7 @@ internal struct SegmentedControlMessage: SegmentedMessage {
     let source: Address
     let destination: Address
     let networkKey: NetworkKey
+    let ivIndex: UInt32
     
     /// Message Op Code.
     let opCode: UInt8
@@ -83,6 +84,7 @@ internal struct SegmentedControlMessage: SegmentedMessage {
         source = networkPdu.source
         destination = networkPdu.destination
         networkKey = networkPdu.networkKey
+        ivIndex = networkPdu.ivIndex
         message = nil
         localElement = nil
         userInitiated = false

@@ -242,6 +242,15 @@ private extension NetworkLayer {
             logger?.w(.network, "Discarding beacon (ivIndex: \(secureNetworkBeacon.ivIndex), expected >= \(networkKey.ivIndex.index))")
             return
         }
+        // If this node is a member of a primary subnet and receives a Secure Network
+        // beacon on a secondary subnet with an IV Index greater than the last known IV Index
+        // of the primary subnet, the Secure Network beacon shall be ignored.
+        if let primaryNetworkKey = meshNetwork.networkKeys.first(where: { $0.isPrimary }),
+           networkKey.isSecondary &&
+           secureNetworkBeacon.ivIndex > primaryNetworkKey.ivIndex.index {
+            logger?.w(.network, "Discarding beacon for secondary network (ivIndex: \(secureNetworkBeacon.ivIndex), expected = \(primaryNetworkKey.ivIndex.index))")
+           return
+        }        
         networkKey.ivIndex = IvIndex(index: secureNetworkBeacon.ivIndex,
                                      updateActive: secureNetworkBeacon.ivUpdateActive)
         // If the Key Refresh Procedure is in progress, and the new Network Key

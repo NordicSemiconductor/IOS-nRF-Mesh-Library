@@ -43,6 +43,8 @@ internal protocol LowerTransportPdu {
     var destination: Address { get }
     /// The Network Key used to decode/encode the PDU.
     var networkKey: NetworkKey { get }
+    /// The IV Index used to decode/encode the PDU.
+    var ivIndex: UInt32 { get }
     /// Message type.
     var type: LowerTransportPduType { get }
     /// The raw data of Lower Transport Layer PDU.

@@ -30,7 +30,34 @@
 
 import Foundation
 
+/// The IV Index received with the last Secure Network Beacon and its
+/// current state.
+///
+/// Bluetooth Mesh Profile Specification 1.0.1, Chapter 3.10.5:
+///
+/// During the Normal Operation state, the IV Update Flag in the Secure Network
+/// beacon and in the Friend Update message shall be set to 0. When this state is
+/// active, a node shall transmit using the current IV Index and shall process
+/// messages from the current IV Index and also the current IV Index - 1.
+///
+/// During the IV Update in Progress state, the IV Update Flag in the Secure Network
+/// beacon and in the Friend Update message shall be set to 1. When this state is
+/// active, a node shall transmit using the current IV Index - 1 and shall process
+/// messages from the current IV Index - 1 and also the current IV Index.
 internal struct IvIndex {
     var index: UInt32 = 0
     var updateActive: Bool = false
+    
+    /// The IV Index used for transmitting messages.
+    var transmitIndex: UInt32 {
+        return updateActive && index > 1 ? index - 1 : index
+    }
+    
+    /// The IV Index that is to be used for decrypting messages.
+    ///
+    /// - parameter ivi: The IVI bit of the received Network PDU.
+    /// - returns: The IV Index to be used to decrypt the message.
+    func index(for ivi: UInt8) -> UInt32 {
+        return ivi == index & 1 ? index : index - 1
+    }
 }
