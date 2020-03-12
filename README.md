@@ -35,11 +35,12 @@ The app and the library are released under BSD-3 license. Feel free to modify th
 12. Handling Configuration Server message sent by other Provisioner.
 13. Generic OnOff and Vendor model have dedicated controls in sample app.
 14. Proxy Filter.
+15. IV Index update (handling updates received in Secure Network beacons)
 
 ## NOT (yet) supported features
 
 1. Many SIG defined models, except from supported ones.
-2. Key Refresh Procedure, IV Index update.
+2. Key Refresh Procedure, IV Index update (initiation).
 3. Health server messages.
 4. Hearbeats.
 5. Remote Provisioning.
