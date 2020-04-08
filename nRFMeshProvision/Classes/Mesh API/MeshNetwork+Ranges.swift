@@ -175,7 +175,7 @@ public extension MeshNetwork {
     /// - parameter size: The preferred and maximum size of a range to find.
     /// - returns: The range of given size, a smaller one if such is not available
     ///            or `nil` if all addresses are alread allocated.
-    func nextAvailableUnicastAddressRange(ofSize size: UInt16 = Address.maxUnicastAddress) -> AddressRange? {
+    func nextAvailableUnicastAddressRange(ofSize size: UInt16 = Address.maxUnicastAddress - Address.minUnicastAddress + 1) -> AddressRange? {
         let allRangesSorted: [AddressRange] = provisioners
             .reduce([], { ranges, next in ranges + next.allocatedUnicastRange })
             .sorted { $0.lowerBound < $1.lowerBound }
@@ -195,7 +195,7 @@ public extension MeshNetwork {
     /// - parameter size: The preferred and maximum size of a range to find.
     /// - returns: The range of given size, a smaller one if such is not available
     ///            or `nil` if all addresses are alread allocated.
-    func nextAvailableGroupAddressRange(ofSize size: UInt16 = Address.maxGroupAddress) -> AddressRange? {
+    func nextAvailableGroupAddressRange(ofSize size: UInt16 = Address.maxGroupAddress - Address.minGroupAddress + 1) -> AddressRange? {
         let allRangesSorted: [AddressRange] = provisioners
             .reduce([], { ranges, next in ranges + next.allocatedGroupRange })
             .sorted { $0.lowerBound < $1.lowerBound }
@@ -215,7 +215,7 @@ public extension MeshNetwork {
     /// - parameter size: The preferred and maximum size of a range to find.
     /// - returns: The range of given size, a smaller one if such is not available
     ///            or `nil` if all scenes are alread allocated.
-    func nextAvailableSceneRange(ofSize size: UInt16 = Scene.minScene) -> SceneRange? {
+    func nextAvailableSceneRange(ofSize size: UInt16 = Scene.maxScene - Scene.minScene + 1) -> SceneRange? {
         let allRangesSorted: [SceneRange] = provisioners
             .reduce([], { ranges, next in ranges + next.allocatedSceneRange })
             .sorted { $0.lowerBound < $1.lowerBound }
@@ -239,6 +239,10 @@ public extension MeshNetwork {
     ///            or `nil` if all addresses are alread allocated.
     private func nextAvailableRange(ofSize size: UInt16, in bounds: ClosedRange<Address>,
                                     among ranges: [RangeObject]) -> RangeObject? {
+        guard size > 0 else {
+            return nil
+        }
+        
         var bestRange: RangeObject? = nil
         var lastUpperBound: Address = bounds.lowerBound - 1
         
@@ -250,18 +254,20 @@ public extension MeshNetwork {
             }
             // If the space exists, but it's not as big as requested, compare
             // it with the best range so far and replace if it's bigger.
-            if range.lowerBound - lastUpperBound > 1 {
-                let newRange = RangeObject(lastUpperBound + 1...range.lowerBound - 1)
+            let availableSize = range.lowerBound - lastUpperBound - 1
+            if availableSize > 0 {
+                let newRange = RangeObject(lastUpperBound + 1...lastUpperBound + availableSize)
                 if bestRange == nil || newRange.count > bestRange!.count {
                     bestRange = newRange
                 }
             }
             lastUpperBound = range.upperBound
         }
-        
         // If if we didn't return earlier, check after the last range.
-        if UInt32(lastUpperBound) + UInt32(size) < bounds.upperBound {
-            return RangeObject(lastUpperBound + 1...lastUpperBound + size - 1)
+        let availableSize = bounds.upperBound - lastUpperBound
+        let bestSize = UInt16(bestRange?.count ?? 0)
+        if availableSize > bestSize {
+            return RangeObject(lastUpperBound + 1...lastUpperBound + min(size, availableSize))
         }
         
         // The gap of requested size hasn't been found. Return the best found.

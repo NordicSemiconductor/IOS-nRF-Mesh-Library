@@ -100,5 +100,37 @@ class AssigningGroupAddresses: XCTestCase {
         
         XCTAssertNil(address)
     }
+    
+    func testAssigningGroupAddressRanges_boundaries() {
+        let meshNetwork = MeshNetwork(name: "Test network")
+        let provisioner = Provisioner(name: "P0",
+                                      allocatedUnicastRange: [AddressRange(0x0001...0x0001)],
+                                      allocatedGroupRange: [AddressRange(0xC000...0xC000)],
+                                      allocatedSceneRange: [])
+        XCTAssertNoThrow(try meshNetwork.add(provisioner: provisioner, withAddress: nil))
+        
+        let newRangeNil = meshNetwork.nextAvailableGroupAddressRange(ofSize: 0)
+        XCTAssertNil(newRangeNil)
+        
+        let newRange0 = meshNetwork.nextAvailableGroupAddressRange(ofSize: 1)
+        XCTAssertNotNil(newRange0)
+        XCTAssertEqual(newRange0?.lowerBound, 0xC001)
+        XCTAssertEqual(newRange0?.upperBound, 0xC001)
+        
+        let newRange1 = meshNetwork.nextAvailableGroupAddressRange(ofSize: 2)
+        XCTAssertNotNil(newRange1)
+        XCTAssertEqual(newRange1?.lowerBound, 0xC001)
+        XCTAssertEqual(newRange1?.upperBound, 0xC002)
+        
+        let newRange2 = meshNetwork.nextAvailableGroupAddressRange()
+        XCTAssertNotNil(newRange2)
+        XCTAssertEqual(newRange2?.lowerBound, 0xC001)
+        XCTAssertEqual(newRange2?.upperBound, Address.maxGroupAddress)
+        
+        let newRange3 = meshNetwork.nextAvailableGroupAddressRange(ofSize: 0xFFFF)
+        XCTAssertNotNil(newRange3)
+        XCTAssertEqual(newRange3?.lowerBound, 0xC001)
+        XCTAssertEqual(newRange3?.upperBound, Address.maxGroupAddress)
+    }
 
 }
