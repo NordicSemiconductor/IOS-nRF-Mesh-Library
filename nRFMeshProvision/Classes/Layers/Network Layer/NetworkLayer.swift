@@ -250,9 +250,25 @@ private extension NetworkLayer {
            secureNetworkBeacon.ivIndex > primaryNetworkKey.ivIndex.index {
             logger?.w(.network, "Discarding beacon for secondary network (ivIndex: \(secureNetworkBeacon.ivIndex), expected = \(primaryNetworkKey.ivIndex.index))")
            return
-        }        
+        }
+        // Get the last IV Index for this subnetwork.
+        // Note: Before version 2.2.2 the last IV Index was not stored.
+        let map = defaults.object(forKey: "IV\(networkKey.index)") as? [String : Any] ?? networkKey.ivIndex.asMap
+        let lastIVIndex = IvIndex.fromMap(map)
+        // Update the IV Index based on the information from the Secure Network Beacon.
         networkKey.ivIndex = IvIndex(index: secureNetworkBeacon.ivIndex,
                                      updateActive: secureNetworkBeacon.ivUpdateActive)
+        // If IV Index state transitions from IV Update Active to Normal Operation,
+        // the Node shall reset the sequence number to 0x000000.
+        if let lastIVIndex = lastIVIndex,
+           lastIVIndex.updateActive  && !secureNetworkBeacon.ivUpdateActive {
+            meshNetwork.localProvisioner?.node?.elements.forEach { element in
+                defaults.set(0, forKey: "S\(element.unicastAddress.hex)")
+            }
+        }
+        // Store the last IV Index for this subnetwork.
+        defaults.set(networkKey.ivIndex.asMap, forKey: "IV\(networkKey.index)")
+        
         // If the Key Refresh Procedure is in progress, and the new Network Key
         // has already been set, the key erfresh flag indicates switching to phase 2.
         if case .distributingKeys = networkKey.phase, secureNetworkBeacon.keyRefreshFlag {

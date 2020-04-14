@@ -50,7 +50,7 @@ internal struct IvIndex {
     
     /// The IV Index used for transmitting messages.
     var transmitIndex: UInt32 {
-        return updateActive && index > 1 ? index - 1 : index
+        return updateActive && index > 0 ? index - 1 : index
     }
     
     /// The IV Index that is to be used for decrypting messages.
@@ -59,5 +59,19 @@ internal struct IvIndex {
     /// - returns: The IV Index to be used to decrypt the message.
     func index(for ivi: UInt8) -> UInt32 {
         return ivi == index & 1 ? index : index - 1
+    }
+    
+    /// Returns the IV Index as dictionary.
+    var asMap: [String : Any] {
+        return ["index": index, "updateActive": updateActive]
+    }
+    
+    /// Creates the IV Index from the given dictionary. It must be valid, otherwise nil is returned.
+    static func fromMap(_ map: [String: Any]) -> IvIndex? {
+        if let index = map["index"] as? UInt32,
+           let updateActive = map["updateActive"] as? Bool {
+            return IvIndex(index: index, updateActive: updateActive)
+        }
+        return nil
     }
 }
