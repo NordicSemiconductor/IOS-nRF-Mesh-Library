@@ -65,11 +65,14 @@ internal struct MeshState: Codable {
         return globalTTL[0]
     }
     
+    var ivIndex: IvIndex {
+        return IvIndex(index: IVIndex.asUInt32,
+                       updateActive: flags[0] & 0x40 == 0x40)
+    }
+    
     var networkKey: NetworkKey {
         let index: KeyIndex = keyIndex.asUInt16 & 0x0FFF
         let networkKey = try! NetworkKey(name: "Primary Network Key", index: index, key: netKey)
-        networkKey.ivIndex.index = IVIndex.asUInt32
-        networkKey.ivIndex.updateActive = flags[0] & 0x40 == 0x40
         networkKey.phase = flags[0] & 0x80 == 0x80 ? .finalizing : .normalOperation
         return networkKey
     }

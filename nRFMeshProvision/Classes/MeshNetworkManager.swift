@@ -673,6 +673,7 @@ public extension MeshNetworkManager {
                              withAddress: legacyState.provisionerUnicastAddress)
             let provisionerNode = network.localProvisioner!.node!
             provisionerNode.defaultTTL = legacyState.provisionerDefaultTtl
+            network.ivIndex = legacyState.ivIndex
             network.networkKeys.removeAll()
             let networkKey = legacyState.networkKey
             network.add(networkKey: networkKey)

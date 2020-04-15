@@ -90,18 +90,21 @@ internal struct ControlMessage: LowerTransportPdu {
     /// message. The source should be set to the local Node address.
     /// The given Network Key should be known to the Proxy Node.
     ///
-    /// - parameter message:    The message to be sent.
-    /// - parameter source:     The address of the local Node.
-    /// - parameter networkKey: The Network Key to signe the message with.
-    ///                         The key should be known to the connected
-    ///                         Proxy Node.
+    /// - parameters:
+    ///   - message:    The message to be sent.
+    ///   - source:     The address of the local Node.
+    ///   - networkKey: The Network Key to signe the message with.
+    ///                 The key should be known to the connected
+    ///                 Proxy Node.
+    ///   - ivIndex:    The current IV Index of the mesh network.
     init(fromProxyConfigurationMessage message: ProxyConfigurationMessage,
-         sentFrom source: Address, usingNetworkKey networkKey: NetworkKey) {
+         sentFrom source: Address, usingNetworkKey networkKey: NetworkKey,
+         andIvIndex ivIndex: IvIndex) {
         self.opCode = message.opCode
         self.source = source
         self.destination = Address.unassignedAddress
         self.networkKey = networkKey
-        self.ivIndex = networkKey.ivIndex.transmitIndex
+        self.ivIndex = ivIndex.transmitIndex
         self.upperTransportPdu = message.parameters ?? Data()
     }
 }

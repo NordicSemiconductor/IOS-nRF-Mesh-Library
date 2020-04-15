@@ -59,12 +59,15 @@ internal struct NetworkPdu {
     /// Creates Network PDU object from received PDU. The initiator tries
     /// to deobfuscate and decrypt the data using given Network Key and IV Index.
     ///
-    /// - parameter pdu:        The data received from mesh network.
-    /// - parameter pduType:    The type of the PDU: `.networkPdu` of `.proxyConfiguration`.
-    /// - parameter networkKey: The Network Key to decrypt the PDU.
+    /// - parameters:
+    ///   - pdu:        The data received from mesh network.
+    ///   - pduType:    The type of the PDU: `.networkPdu` of `.proxyConfiguration`.
+    ///   - networkKey: The Network Key to decrypt the PDU.
+    ///   - ivIndex:    The current IV Index.
     /// - returns: The deobfuscated and decided Network PDU object, or `nil`,
     ///            if the key or IV Index don't match.
-    init?(decode pdu: Data, ofType pduType: PduType, usingNetworkKey networkKey: NetworkKey) {
+    init?(decode pdu: Data, ofType pduType: PduType,
+          usingNetworkKey networkKey: NetworkKey, andIvIndex ivIndex: IvIndex) {
         guard pduType == .networkPdu || pduType == .proxyConfiguration else {
             return nil
         }
@@ -97,12 +100,12 @@ internal struct NetworkPdu {
         // If it doesn't, the PDU will be deobfuscated and decoded with IV Index
         // decremented by 1.
         // See: Bluetooth Mesh Profile 1.0.1 Specification, chapter: 3.10.5.
-        self.ivIndex = networkKey.ivIndex.index(for: ivi)
+        self.ivIndex = ivIndex.index(for: ivi)
         
         let helper = OpenSSLHelper()
         for keys in keySets {
             // Deobfuscate CTL, TTL, SEQ and SRC.
-            let deobfuscatedData = helper.deobfuscate(pdu, ivIndex: ivIndex,
+            let deobfuscatedData = helper.deobfuscate(pdu, ivIndex: self.ivIndex,
                                                       privacyKey: keys.privacyKey)!
             
             // First validation: Control Messages have NetMIC of size 64 bits.
@@ -124,7 +127,10 @@ internal struct NetworkPdu {
             let destAndTransportPdu = pdu.subdata(in: 7..<micOffset)
             let mic = pdu.subdata(in: micOffset..<pdu.count)
             
-            var nonce = Data([pduType.nonceId]) + deobfuscatedData + Data([0x00, 0x00]) + ivIndex.bigEndian
+            var nonce = Data([pduType.nonceId])
+                + deobfuscatedData
+                + Data([0x00, 0x00])
+                + self.ivIndex.bigEndian
             if case .proxyConfiguration = pduType {
                 nonce[1] = 0x00 // Pad
             }
@@ -204,15 +210,17 @@ internal struct NetworkPdu {
     /// This method goes over all Network Keys in the mesh network and tries
     /// to deobfuscate and decode the network PDU.
     ///
-    /// - parameter pdu:         The received PDU.
-    /// - parameter type:        The type of the PDU: `.networkPdu` of `.proxyConfiguration`.
-    /// - parameter meshNetwork: The mesh network for which the PDU should be decoded.
+    /// - parameters:
+    ///   - pdu:         The received PDU.
+    ///   - type:        The type of the PDU: `.networkPdu` of `.proxyConfiguration`.
+    ///   - meshNetwork: The mesh network for which the PDU should be decoded.
     /// - returns: The deobfuscated and decoded Network PDU, or `nil` if the PDU was not
     ///            signed with any of the Network Keys, the IV Index was not valid, or the
     ///            PDU was invalid.
     static func decode(_ pdu: Data, ofType type: PduType, for meshNetwork: MeshNetwork) -> NetworkPdu? {
         for networkKey in meshNetwork.networkKeys {
-            if let networkPdu = NetworkPdu(decode: pdu, ofType: type, usingNetworkKey: networkKey) {
+            if let networkPdu = NetworkPdu(decode: pdu, ofType: type,
+                                           usingNetworkKey: networkKey, andIvIndex: meshNetwork.ivIndex) {
                 return networkPdu
             }
         }

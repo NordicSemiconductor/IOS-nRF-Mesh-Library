@@ -65,6 +65,9 @@ public class MeshNetwork: Codable {
     /// An array of groups in teh network.
     public internal(set) var groups: [Group]
     
+    /// The IV Index of the mesh network.
+    internal var ivIndex: IvIndex
+    
     /// An array of Elements of the local Provisioner.
     private var _localElements: [Element]
     /// An array of Elements of the local Provisioner.
@@ -120,6 +123,7 @@ public class MeshNetwork: Codable {
         applicationKeys = []
         nodes           = []
         groups          = []
+        ivIndex         = IvIndex()
         _localElements  = []
         localElements   = [ Element(location: .main) ]
     }
@@ -154,7 +158,10 @@ public class MeshNetwork: Codable {
         applicationKeys = try container.decode([ApplicationKey].self, forKey: .applicationKeys)
         nodes = try container.decode([Node].self, forKey: .nodes)
         groups = try container.decode([Group].self, forKey: .groups)
-        
+        // The IV Index is not a shared in the JSON, as it may change.
+        // The value will be obtained from the Secure Network beacon moment after
+        // connecting to a Proxy node.
+        ivIndex        = IvIndex()
         _localElements = [.primaryElement]
         
         provisioners.forEach {

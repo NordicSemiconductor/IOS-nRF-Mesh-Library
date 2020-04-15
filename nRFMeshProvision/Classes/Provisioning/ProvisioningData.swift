@@ -55,7 +55,7 @@ internal class ProvisioningData {
     
     func prepare(for network: MeshNetwork, networkKey: NetworkKey, unicastAddress: Address) {
         self.networkKey     = networkKey
-        self.ivIndex        = networkKey.ivIndex
+        self.ivIndex        = network.ivIndex
         self.unicastAddress = unicastAddress
     }
     

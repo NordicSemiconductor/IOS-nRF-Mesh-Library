@@ -95,15 +95,15 @@ internal struct UpperTransportPdu {
         userInitiated = false
     }
     
-    init(fromAccessPdu pdu: AccessPdu,
-         usingKeySet keySet: KeySet, sequence: UInt32) {
+    init(fromAccessPdu pdu: AccessPdu, usingKeySet keySet: KeySet,
+         sequence: UInt32, andIvIndex ivIndex: IvIndex) {
         self.message = pdu.message
         self.localElement = pdu.localElement
         self.userInitiated = pdu.userInitiated
         self.source = pdu.localElement!.unicastAddress
         self.destination = pdu.destination.address
         self.sequence = sequence
-        self.ivIndex = keySet.networkKey.ivIndex.transmitIndex
+        self.ivIndex = ivIndex.transmitIndex
         let accessPdu = pdu.accessPdu
         self.accessPdu = accessPdu
         self.aid = keySet.aid
@@ -119,9 +119,9 @@ internal struct UpperTransportPdu {
         let seq = (Data() + sequence.bigEndian).dropFirst()
         
         let nonce = Data([type, aszmic << 7]) + seq
-            + source.bigEndian
-            + destination.bigEndian
-            + ivIndex.bigEndian
+            + self.source.bigEndian
+            + self.destination.bigEndian
+            + self.ivIndex.bigEndian
         
         self.transportMicSize = aszmic == 0 ? 4 : 8
         self.transportPdu = OpenSSLHelper().calculateCCM(accessPdu, withKey: keySet.accessKey, nonce: nonce,

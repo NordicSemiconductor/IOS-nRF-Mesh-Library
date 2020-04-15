@@ -196,7 +196,8 @@ internal class NetworkLayer {
     func send(proxyConfigurationMessage message: ProxyConfigurationMessage) {
         guard let networkKey = proxyNetworkKey else {
             // The Proxy Network Key is unknown.
-            networkManager.manager.proxyFilter?.managerFailedToDeliverMessage(message, error: BearerError.bearerClosed)
+            networkManager.manager.proxyFilter?
+                .managerFailedToDeliverMessage(message, error: BearerError.bearerClosed)
             return
         }
         
@@ -206,7 +207,8 @@ internal class NetworkLayer {
         let source = meshNetwork.localProvisioner?.node?.unicastAddress ?? Address.maxUnicastAddress
         logger?.i(.proxy, "Sending \(message) from: \(source.hex) to: 0000")
         let pdu = ControlMessage(fromProxyConfigurationMessage: message,
-                                 sentFrom: source, usingNetworkKey: networkKey)
+                                 sentFrom: source, usingNetworkKey: networkKey,
+                                 andIvIndex: meshNetwork.ivIndex)
         logger?.i(.network, "Sending \(pdu)")
         do {
             try send(lowerTransportPdu: pdu, ofType: .proxyConfiguration, withTtl: 0)
@@ -236,41 +238,40 @@ private extension NetworkLayer {
     ///
     /// - parameter secureNetworkBeacon: The Secure Network beacon received.
     func handle(secureNetworkBeacon: SecureNetworkBeacon) {
+        /// The Network Key the Secure Network Beacon was encrypted with.
         let networkKey = secureNetworkBeacon.networkKey
         // The IV Index in the beacon must be greater or equal to the current one.
-        guard secureNetworkBeacon.ivIndex >= networkKey.ivIndex.index else {
-            logger?.w(.network, "Discarding beacon (ivIndex: \(secureNetworkBeacon.ivIndex), expected >= \(networkKey.ivIndex.index))")
+        guard secureNetworkBeacon.ivIndex >= meshNetwork.ivIndex.index else {
+            logger?.w(.network, "Discarding beacon (ivIndex: \(secureNetworkBeacon.ivIndex), expected >= \(meshNetwork.ivIndex.index))")
             return
         }
         // If this node is a member of a primary subnet and receives a Secure Network
-        // beacon on a secondary subnet with an IV Index greater than the last known IV Index
-        // of the primary subnet, the Secure Network beacon shall be ignored.
-        if let primaryNetworkKey = meshNetwork.networkKeys.first(where: { $0.isPrimary }),
-           networkKey.isSecondary &&
-           secureNetworkBeacon.ivIndex > primaryNetworkKey.ivIndex.index {
-            logger?.w(.network, "Discarding beacon for secondary network (ivIndex: \(secureNetworkBeacon.ivIndex), expected = \(primaryNetworkKey.ivIndex.index))")
-           return
+        // beacon on a secondary subnet, it will disregard it. The library does not
+        // retransmit Secure Network Beacon.
+        if let _ = meshNetwork.networkKeys.first(where: { $0.isPrimary }), networkKey.isSecondary {
+            logger?.w(.network, "Discarding beacon for secondary network (key index: \(networkKey.index))")
+            return
         }
-        // Get the last IV Index for this subnetwork.
-        // Note: Before version 2.2.2 the last IV Index was not stored.
-        let map = defaults.object(forKey: "IV\(networkKey.index)") as? [String : Any] ?? networkKey.ivIndex.asMap
+        // Get the last IV Index.
+        // Note: Before version 2.3 the last IV Index was not stored.
+        let map = defaults.object(forKey: "IVIndex") as? [String : Any] ?? meshNetwork.ivIndex.asMap
         let lastIVIndex = IvIndex.fromMap(map)
         // Update the IV Index based on the information from the Secure Network Beacon.
-        networkKey.ivIndex = IvIndex(index: secureNetworkBeacon.ivIndex,
-                                     updateActive: secureNetworkBeacon.ivUpdateActive)
+        meshNetwork.ivIndex = IvIndex(index: secureNetworkBeacon.ivIndex,
+                                      updateActive: secureNetworkBeacon.ivUpdateActive)
         // If IV Index state transitions from IV Update Active to Normal Operation,
         // the Node shall reset the sequence number to 0x000000.
         if let lastIVIndex = lastIVIndex,
-           lastIVIndex.updateActive  && !secureNetworkBeacon.ivUpdateActive {
+           lastIVIndex.updateActive && !secureNetworkBeacon.ivUpdateActive {
             meshNetwork.localProvisioner?.node?.elements.forEach { element in
                 defaults.set(0, forKey: "S\(element.unicastAddress.hex)")
             }
         }
-        // Store the last IV Index for this subnetwork.
-        defaults.set(networkKey.ivIndex.asMap, forKey: "IV\(networkKey.index)")
+        // Store the last IV Index.
+        defaults.set(meshNetwork.ivIndex.asMap, forKey: "IVIndex")
         
         // If the Key Refresh Procedure is in progress, and the new Network Key
-        // has already been set, the key erfresh flag indicates switching to phase 2.
+        // has already been set, the key refresh flag indicates switching to phase 2.
         if case .distributingKeys = networkKey.phase, secureNetworkBeacon.keyRefreshFlag {
             networkKey.phase = .finalizing
         }
