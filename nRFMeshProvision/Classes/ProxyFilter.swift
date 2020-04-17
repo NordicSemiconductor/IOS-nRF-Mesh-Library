@@ -242,6 +242,7 @@ internal extension ProxyFilter {
     /// its Unicast Addresses and All Nodes address.
     func newProxyDidConnect() {
         logger?.i(.proxy, "New Proxy connected")
+        busy = false
         reset()
         if let localProvisioner = manager.meshNetwork?.localProvisioner {
             setup(for: localProvisioner)
