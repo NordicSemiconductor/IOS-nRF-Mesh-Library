@@ -240,35 +240,49 @@ private extension NetworkLayer {
     func handle(secureNetworkBeacon: SecureNetworkBeacon) {
         /// The Network Key the Secure Network Beacon was encrypted with.
         let networkKey = secureNetworkBeacon.networkKey
+        // Get the last IV Index.
+        //
+        // Note: Before version 2.3 the last IV Index was not stored.
+        //       Instead IV Index was set to 0
+        let map = defaults.object(forKey: IvIndex.key) as? [String : Any]
+        /// The last used IV Index for this mesh network.
+        let lastIVIndex = IvIndex.fromMap(map) ?? IvIndex()
         // The IV Index in the beacon must be greater or equal to the current one.
-        guard secureNetworkBeacon.ivIndex >= meshNetwork.ivIndex.index else {
-            logger?.w(.network, "Discarding beacon (ivIndex: \(secureNetworkBeacon.ivIndex), expected >= \(meshNetwork.ivIndex.index))")
+        // IV Update Flag may not change from false to true if IV Index
+        // is equal to the current one. Also, for now we skip the max IV Index + 42
+        // requirement, as we are the provisioner, after all.
+        //
+        // Note: The current version of the library does not keep track of when the
+        //       transition to Normal Operation or IV Update in Progress state happened.
+        guard secureNetworkBeacon.ivIndex > lastIVIndex.index ||
+             (secureNetworkBeacon.ivIndex == lastIVIndex.index &&
+                (lastIVIndex.updateActive || !secureNetworkBeacon.ivUpdateActive)) else {
+                    logger?.w(.network, "Discarding beacon (ivIndex: \(secureNetworkBeacon.ivIndex) (update active: \(secureNetworkBeacon.ivUpdateActive)) expected >= \(meshNetwork.ivIndex.index))")
             return
         }
+        // The library does not retransmit Secure Network Beacon.
         // If this node is a member of a primary subnet and receives a Secure Network
-        // beacon on a secondary subnet, it will disregard it. The library does not
-        // retransmit Secure Network Beacon.
-        if let _ = meshNetwork.networkKeys.first(where: { $0.isPrimary }), networkKey.isSecondary {
+        // beacon on a secondary subnet, it will disregard it.
+        if let _ = meshNetwork.networkKeys.primaryKey, networkKey.isSecondary {
             logger?.w(.network, "Discarding beacon for secondary network (key index: \(networkKey.index))")
             return
         }
-        // Get the last IV Index.
-        // Note: Before version 2.3 the last IV Index was not stored.
-        let map = defaults.object(forKey: "IVIndex") as? [String : Any] ?? meshNetwork.ivIndex.asMap
-        let lastIVIndex = IvIndex.fromMap(map)
         // Update the IV Index based on the information from the Secure Network Beacon.
         meshNetwork.ivIndex = IvIndex(index: secureNetworkBeacon.ivIndex,
                                       updateActive: secureNetworkBeacon.ivUpdateActive)
-        // If IV Index state transitions from IV Update Active to Normal Operation,
+        // If the IV Index used for transmitting messages effectively increased,
         // the Node shall reset the sequence number to 0x000000.
-        if let lastIVIndex = lastIVIndex,
-           lastIVIndex.updateActive && !secureNetworkBeacon.ivUpdateActive {
+        //
+        // Note: This library keeps sperate seuqnce numbers for each Element of the
+        //       local provisioner (source Unicast Address). All of them need to be reset.
+        if meshNetwork.ivIndex.transmitIndex > lastIVIndex.transmitIndex {
             meshNetwork.localProvisioner?.node?.elements.forEach { element in
                 defaults.set(0, forKey: "S\(element.unicastAddress.hex)")
             }
         }
+        
         // Store the last IV Index.
-        defaults.set(meshNetwork.ivIndex.asMap, forKey: "IVIndex")
+        defaults.set(meshNetwork.ivIndex.asMap, forKey: IvIndex.key)
         
         // If the Key Refresh Procedure is in progress, and the new Network Key
         // has already been set, the key refresh flag indicates switching to phase 2.
@@ -364,6 +378,29 @@ private extension NetworkLayer {
     func shouldLoopback(_ networkPdu: NetworkPdu) -> Bool {
         let address = networkPdu.destination
         return address.isGroup || address.isVirtual || isLocalUnicastAddress(address)
+    }
+    
+}
+
+private extension IvIndex {
+    static let key = "IVIndex"
+    
+    /// Returns the IV Index as dictionary.
+    var asMap: [String : Any] {
+        return ["index": index, "updateActive": updateActive]
+    }
+    
+    /// Creates the IV Index from the given dictionary. It must be valid, otherwise `nil` is returned.
+    ///
+    /// - parameter map: The dictionary with IV Index.
+    /// - returns: The IV Index object or `nil`.
+    static func fromMap(_ map: [String: Any]?) -> IvIndex? {
+        if let map = map,
+           let index = map["index"] as? UInt32,
+           let updateActive = map["updateActive"] as? Bool {
+            return IvIndex(index: index, updateActive: updateActive)
+        }
+        return nil
     }
     
 }
