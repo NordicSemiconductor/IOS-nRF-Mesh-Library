@@ -169,6 +169,7 @@ extension ProxyViewController: BearerDelegate {
     func bearer(_ bearer: Bearer, didClose error: Error?) {
         addButton.isEnabled = false
         MeshNetworkManager.instance.proxyFilter?.clear()
+        tableView.reloadRows(at: [.status, .control], with: .automatic)
     }
     
 }
