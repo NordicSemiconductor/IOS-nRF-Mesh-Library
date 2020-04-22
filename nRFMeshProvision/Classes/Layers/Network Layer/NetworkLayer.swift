@@ -270,11 +270,11 @@ private extension NetworkLayer {
                                                withIvRecovery: isIvRecoveryActive,
                                                testMode: isIvTestModeActive,
                                                andUnlimitedIvRecoveryAllowed: flag) else {
-            var numberOfHoursSinceDate = "unknown"
+            var numberOfHoursSinceDate = "unknown time"
             if let date = lastTransitionDate {
-                numberOfHoursSinceDate = "\(Int(date.timeIntervalSinceNow / 3600))"
+                numberOfHoursSinceDate = "\(Int(date.timeIntervalSinceNow / 3600))h"
             }
-            logger?.w(.network, "Discarding beacon (IV Index: \(secureNetworkBeacon.ivIndex) (\(secureNetworkBeacon.ivUpdateActive ? "update active" : "normal operation")), last IV Index: \(lastIVIndex.index) (\(lastIVIndex.updateActive ? "update active" : "normal operation")), changed: \(numberOfHoursSinceDate)h ago, test mode: \(networkManager.manager.ivUpdateTestMode)))")
+            logger?.w(.network, "Discarding beacon (IV Index: \(secureNetworkBeacon.ivIndex) (\(secureNetworkBeacon.ivUpdateActive ? "update active" : "normal operation")), last IV Index: \(lastIVIndex.index) (\(lastIVIndex.updateActive ? "update active" : "normal operation")), changed: \(numberOfHoursSinceDate) ago, test mode: \(networkManager.manager.ivUpdateTestMode)))")
             return
         }
         // Update the IV Index based on the information from the Secure Network Beacon.
