@@ -94,6 +94,7 @@
 		52A9C1C52313D7D80036792A /* GenericLevelViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52A9C1C32313D7D80036792A /* GenericLevelViewCell.swift */; };
 		52A9C1C62313D7D80036792A /* GenericLevel.xib in Resources */ = {isa = PBXBuildFile; fileRef = 52A9C1C42313D7D80036792A /* GenericLevel.xib */; };
 		52B7F67D229829F200B0A42F /* Addresses.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52B7F67C229829F200B0A42F /* Addresses.swift */; };
+		52BC6F4824507A5400EBEEA4 /* DisconnectCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52BC6F4724507A5400EBEEA4 /* DisconnectCell.swift */; };
 		52CD0A50232FA6CD00A9A181 /* ProxyViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52CD0A4F232FA6CD00A9A181 /* ProxyViewController.swift */; };
 		52CD0A53232FA79300A9A181 /* FilterTypeCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52CD0A52232FA79300A9A181 /* FilterTypeCell.swift */; };
 		52CD0A55232FC11700A9A181 /* AddressCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52CD0A54232FC11700A9A181 /* AddressCell.swift */; };
@@ -226,6 +227,7 @@
 		52A9C1C32313D7D80036792A /* GenericLevelViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericLevelViewCell.swift; sourceTree = "<group>"; };
 		52A9C1C42313D7D80036792A /* GenericLevel.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = GenericLevel.xib; sourceTree = "<group>"; };
 		52B7F67C229829F200B0A42F /* Addresses.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Addresses.swift; sourceTree = "<group>"; };
+		52BC6F4724507A5400EBEEA4 /* DisconnectCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisconnectCell.swift; sourceTree = "<group>"; };
 		52CD0A4F232FA6CD00A9A181 /* ProxyViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProxyViewController.swift; sourceTree = "<group>"; };
 		52CD0A52232FA79300A9A181 /* FilterTypeCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterTypeCell.swift; sourceTree = "<group>"; };
 		52CD0A54232FC11700A9A181 /* AddressCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddressCell.swift; sourceTree = "<group>"; };
@@ -530,6 +532,7 @@
 				52CD0A612330DCFF00A9A181 /* CustomAddressCell.swift */,
 				5288C20323704EF300321ED3 /* ConnectionModeCell.swift */,
 				5288C20723705C8D00321ED3 /* ProxyCell.swift */,
+				52BC6F4724507A5400EBEEA4 /* DisconnectCell.swift */,
 			);
 			path = Cells;
 			sourceTree = "<group>";
@@ -879,6 +882,7 @@
 				528352BC2285B6150097B949 /* OobSelector.swift in Sources */,
 				52E54CDF23438D2600478F05 /* GenericOnOffServerDelegate.swift in Sources */,
 				5288C20823705C8D00321ED3 /* ProxyCell.swift in Sources */,
+				52BC6F4824507A5400EBEEA4 /* DisconnectCell.swift in Sources */,
 				523F777B22CB86A00030EA6A /* ModelBindAppKeyViewController.swift in Sources */,
 				52DF5D8F229691BD00C297C1 /* NetworkConnection.swift in Sources */,
 				52547F27232A3F470002AA7B /* EditRangesViewController.swift in Sources */,
