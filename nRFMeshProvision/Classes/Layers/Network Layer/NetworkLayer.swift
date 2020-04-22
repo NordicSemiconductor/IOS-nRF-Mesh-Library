@@ -272,17 +272,16 @@ private extension NetworkLayer {
                                                andUnlimitedIvRecoveryAllowed: flag) else {
             var numberOfHoursSinceDate = "unknown time"
             if let date = lastTransitionDate {
-                numberOfHoursSinceDate = "\(Int(date.timeIntervalSinceNow / 3600))h"
+                numberOfHoursSinceDate = "\(Int(-date.timeIntervalSinceNow / 3600))h"
             }
-            logger?.w(.network, "Discarding beacon (IV Index: \(secureNetworkBeacon.ivIndex) (\(secureNetworkBeacon.ivUpdateActive ? "update active" : "normal operation")), last IV Index: \(lastIVIndex.index) (\(lastIVIndex.updateActive ? "update active" : "normal operation")), changed: \(numberOfHoursSinceDate) ago, test mode: \(networkManager.manager.ivUpdateTestMode)))")
+            logger?.w(.network, "Discarding beacon (\(secureNetworkBeacon.ivIndex), last \(lastIVIndex), changed: \(numberOfHoursSinceDate) ago, test mode: \(networkManager.manager.ivUpdateTestMode)))")
             return
         }
         // Update the IV Index based on the information from the Secure Network Beacon.
-        meshNetwork.ivIndex = IvIndex(index: secureNetworkBeacon.ivIndex,
-                                      updateActive: secureNetworkBeacon.ivUpdateActive)
+        meshNetwork.ivIndex = secureNetworkBeacon.ivIndex
         
         if meshNetwork.ivIndex > lastIVIndex {
-            logger?.i(.network, "Applying IV Index: \(meshNetwork.ivIndex.index) (\(meshNetwork.ivIndex.updateActive ? "update active" : "normal operation"))")
+            logger?.i(.network, "Applying \(meshNetwork.ivIndex)")
         }
         // If the IV Index used for transmitting messages effectively increased,
         // the Node shall reset the sequence number to 0x000000.
@@ -303,7 +302,7 @@ private extension NetworkLayer {
             defaults.set(Date(), forKey: IvIndex.timestampKey)
             
             let ivRecovery = meshNetwork.ivIndex.index > lastIVIndex.index + 1 &&
-                             secureNetworkBeacon.ivUpdateActive == false
+                             secureNetworkBeacon.ivIndex.updateActive == false
             defaults.set(ivRecovery, forKey: IvIndex.ivRecoveryKey)
         }
         
@@ -468,11 +467,11 @@ private extension SecureNetworkBeacon {
         // the IV Update Active flag must change from true to false.
         // The new index must not be greater than the current one + 42,
         // unless this rule is disabled.
-        guard (ivIndex > target.index &&
-                (ivRecoveryOver42Allowed || ivIndex < target.index + 42)
+        guard (ivIndex.index > target.index &&
+            (ivRecoveryOver42Allowed || ivIndex.index < target.index + 42)
               ) ||
-              (ivIndex == target.index &&
-                (target.updateActive || !ivUpdateActive)
+            (ivIndex.index == target.index &&
+                (target.updateActive || !ivIndex.updateActive)
               ) else {
             return false
         }
@@ -488,9 +487,9 @@ private extension SecureNetworkBeacon {
             
             // Calculate number of states between the state defined by the target
             // IV Index and this Secure Network Beacon.
-            let stateDiff = Int(ivIndex - target.index) * 2 - 1
+            let stateDiff = Int(ivIndex.index - target.index) * 2 - 1
                 + (target.updateActive ? 1 : 0)
-                + (ivUpdateActive ? 0 : 1)
+                + (ivIndex.updateActive ? 0 : 1)
                 - (ivRecoveryActive || testMode ? 1 : 0) // this may set stateDiff = -1
             
             // Each "state" must last for at least 96 hours.
@@ -501,7 +500,7 @@ private extension SecureNetworkBeacon {
             let numberOfHoursRequired = stateDiff * 96
             
             // Get the number of hours since the state changed last time.
-            let numberOfHoursSinceDate = Int(date.timeIntervalSinceNow / 3600)
+            let numberOfHoursSinceDate = Int(-date.timeIntervalSinceNow / 3600)
             
             // The node shall not execute more than one IV Index Recovery within a
             // period of 192 hours.

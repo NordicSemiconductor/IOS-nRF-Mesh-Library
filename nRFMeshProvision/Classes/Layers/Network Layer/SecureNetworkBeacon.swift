@@ -45,12 +45,10 @@ internal struct SecureNetworkBeacon: BeaconPdu {
     /// and the new keys, and shall only receive Secure Network beacons
     /// secured using the new Network Key.
     let keyRefreshFlag: Bool
-    /// This flag is set to `true` if IV Update procedure is active.
-    let ivUpdateActive: Bool
+    /// The IV Index carried by this Secure Network beacon.
+    let ivIndex: IvIndex
     /// Contains the value of the Network ID.
     let networkId: Data
-    /// Contains the current IV Index.
-    let ivIndex: UInt32
     
     /// Creates Secure Network beacon PDU object from received PDU.
     ///
@@ -63,9 +61,10 @@ internal struct SecureNetworkBeacon: BeaconPdu {
             return nil
         }
         keyRefreshFlag = pdu[1] & 0x01 != 0
-        ivUpdateActive = pdu[1] & 0x02 != 0
+        let updateActive = pdu[1] & 0x02 != 0
         networkId = pdu.subdata(in: 2..<10)
-        ivIndex = CFSwapInt32BigToHost(pdu.read(fromOffset: 10))
+        let index = CFSwapInt32BigToHost(pdu.read(fromOffset: 10))
+        ivIndex = IvIndex(index: index, updateActive: updateActive)
         
         // Authenticate beacon using given Network Key.
         let helper = OpenSSLHelper()
@@ -118,7 +117,7 @@ internal extension SecureNetworkBeacon {
 extension SecureNetworkBeacon: CustomDebugStringConvertible {
     
     var debugDescription: String {
-        return "Secure Network beacon (Network ID: \(networkId.hex), IV Index: \(ivIndex), Key Refresh Flag: \(keyRefreshFlag), IV Update active: \(ivUpdateActive))"
+        return "Secure Network beacon (Network ID: \(networkId.hex), \(ivIndex), Key Refresh Flag: \(keyRefreshFlag))"
     }
     
 }

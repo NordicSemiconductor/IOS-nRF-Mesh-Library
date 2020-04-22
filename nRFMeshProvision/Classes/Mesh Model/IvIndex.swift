@@ -70,3 +70,11 @@ extension IvIndex: Comparable {
     }
     
 }
+
+extension IvIndex: CustomDebugStringConvertible {
+    
+    var debugDescription: String {
+        return "IV Index: \(index) (\(updateActive ? "update active" : "normal operation"))"
+    }
+    
+}
