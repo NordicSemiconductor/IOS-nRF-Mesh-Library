@@ -61,3 +61,12 @@ internal struct IvIndex {
         return ivi == index & 1 ? index : index - 1
     }
 }
+
+extension IvIndex: Comparable {
+    
+    static func < (lhs: IvIndex, rhs: IvIndex) -> Bool {
+        return lhs.index < rhs.index ||
+              (lhs.index == rhs.index && lhs.updateActive && !rhs.updateActive)
+    }
+    
+}

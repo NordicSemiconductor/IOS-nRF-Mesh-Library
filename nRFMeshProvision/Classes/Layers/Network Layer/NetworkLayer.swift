@@ -119,7 +119,7 @@ internal class NetworkLayer {
                 handle(unprovisionedDeviceBeacon: beaconPdu)
                 return
             }
-            logger?.w(.network, "Failed to decrypt Mesh Beacon PDU")
+            logger?.w(.network, "Failed to decrypt mesh beacon PDU")
             // else: Invalid or unsupported beacon type.
             
         case .proxyConfiguration:
@@ -232,34 +232,13 @@ private extension NetworkLayer {
     }
     
     /// This method handles the Secure Network beacon.
-    /// It will set the proper IV Index and IV Update Active flag for the Network Key
-    /// that matches Network ID and change the Key Refresh Phase based on the
-    /// key refresh flag specified in the beacon.
+    /// It will set the IV Index and IV Update Active flag and change the Key Refresh Phase based on the
+    /// information specified in the beacon.
     ///
     /// - parameter secureNetworkBeacon: The Secure Network beacon received.
     func handle(secureNetworkBeacon: SecureNetworkBeacon) {
         /// The Network Key the Secure Network Beacon was encrypted with.
         let networkKey = secureNetworkBeacon.networkKey
-        // Get the last IV Index.
-        //
-        // Note: Before version 2.3 the last IV Index was not stored.
-        //       Instead IV Index was set to 0
-        let map = defaults.object(forKey: IvIndex.key) as? [String : Any]
-        /// The last used IV Index for this mesh network.
-        let lastIVIndex = IvIndex.fromMap(map) ?? IvIndex()
-        // The IV Index in the beacon must be greater or equal to the current one.
-        // IV Update Flag may not change from false to true if IV Index
-        // is equal to the current one. Also, for now we skip the max IV Index + 42
-        // requirement, as we are the provisioner, after all.
-        //
-        // Note: The current version of the library does not keep track of when the
-        //       transition to Normal Operation or IV Update in Progress state happened.
-        guard secureNetworkBeacon.ivIndex > lastIVIndex.index ||
-             (secureNetworkBeacon.ivIndex == lastIVIndex.index &&
-                (lastIVIndex.updateActive || !secureNetworkBeacon.ivUpdateActive)) else {
-                    logger?.w(.network, "Discarding beacon (ivIndex: \(secureNetworkBeacon.ivIndex) (update active: \(secureNetworkBeacon.ivUpdateActive)) expected >= \(meshNetwork.ivIndex.index))")
-            return
-        }
         // The library does not retransmit Secure Network Beacon.
         // If this node is a member of a primary subnet and receives a Secure Network
         // beacon on a secondary subnet, it will disregard it.
@@ -267,22 +246,66 @@ private extension NetworkLayer {
             logger?.w(.network, "Discarding beacon for secondary network (key index: \(networkKey.index))")
             return
         }
+        
+        // Get the last IV Index.
+        //
+        // Note: Before version 2.2.2 the last IV Index was not stored.
+        //       Instead IV Index was set to 0
+        let map = defaults.object(forKey: IvIndex.indexKey) as? [String : Any]
+        /// The last used IV Index for this mesh network.
+        let lastIVIndex = IvIndex.fromMap(map) ?? IvIndex()
+        /// The date of the last change of IV Index or IV Update Flag.
+        let lastTransitionDate = defaults.object(forKey: IvIndex.timestampKey) as? Date
+        /// A flag whether the IV has recently been updated using IV Recovery procedure.
+        /// The at-least-96h requirement for the duration of the current state will not apply.
+        /// The node shall not execute more than one IV Index Recovery within a period of 192 hours.
+        let isIvRecoveryActive = defaults.bool(forKey: IvIndex.ivRecoveryKey)
+        /// The test mode disables the 96h rule, leaving all other behavior unchanged.
+        let isIvTestModeActive = networkManager.manager.ivUpdateTestMode
+        // Ensure, that the received Secure Network Beacon can overwrite current
+        // IV Index.
+        let flag = networkManager.manager.allowIvIndexRecoveryOver42
+        guard secureNetworkBeacon.canOverwrite(ivIndex: lastIVIndex,
+                                               updatedAt: lastTransitionDate,
+                                               withIvRecovery: isIvRecoveryActive,
+                                               testMode: isIvTestModeActive,
+                                               andUnlimitedIvRecoveryAllowed: flag) else {
+            var numberOfHoursSinceDate = "unknown"
+            if let date = lastTransitionDate {
+                numberOfHoursSinceDate = "\(Int(date.timeIntervalSinceNow / 3600))"
+            }
+            logger?.w(.network, "Discarding beacon (IV Index: \(secureNetworkBeacon.ivIndex) (\(secureNetworkBeacon.ivUpdateActive ? "update active" : "normal operation")), last IV Index: \(lastIVIndex.index) (\(lastIVIndex.updateActive ? "update active" : "normal operation")), changed: \(numberOfHoursSinceDate)h ago, test mode: \(networkManager.manager.ivUpdateTestMode)))")
+            return
+        }
         // Update the IV Index based on the information from the Secure Network Beacon.
         meshNetwork.ivIndex = IvIndex(index: secureNetworkBeacon.ivIndex,
                                       updateActive: secureNetworkBeacon.ivUpdateActive)
+        
+        if meshNetwork.ivIndex > lastIVIndex {
+            logger?.i(.network, "Applying IV Index: \(meshNetwork.ivIndex.index) (\(meshNetwork.ivIndex.updateActive ? "update active" : "normal operation"))")
+        }
         // If the IV Index used for transmitting messages effectively increased,
         // the Node shall reset the sequence number to 0x000000.
         //
-        // Note: This library keeps sperate seuqnce numbers for each Element of the
+        // Note: This library keeps seperate sequence numbers for each Element of the
         //       local provisioner (source Unicast Address). All of them need to be reset.
         if meshNetwork.ivIndex.transmitIndex > lastIVIndex.transmitIndex {
+            logger?.i(.network, "Resetting local sequence numbers to 0")
             meshNetwork.localProvisioner?.node?.elements.forEach { element in
                 defaults.set(0, forKey: "S\(element.unicastAddress.hex)")
             }
         }
         
         // Store the last IV Index.
-        defaults.set(meshNetwork.ivIndex.asMap, forKey: IvIndex.key)
+        defaults.set(meshNetwork.ivIndex.asMap, forKey: IvIndex.indexKey)
+        if lastIVIndex != meshNetwork.ivIndex ||
+           defaults.object(forKey: IvIndex.timestampKey) == nil {
+            defaults.set(Date(), forKey: IvIndex.timestampKey)
+            
+            let ivRecovery = meshNetwork.ivIndex.index > lastIVIndex.index + 1 &&
+                             secureNetworkBeacon.ivUpdateActive == false
+            defaults.set(ivRecovery, forKey: IvIndex.ivRecoveryKey)
+        }
         
         // If the Key Refresh Procedure is in progress, and the new Network Key
         // has already been set, the key refresh flag indicates switching to phase 2.
@@ -383,7 +406,9 @@ private extension NetworkLayer {
 }
 
 private extension IvIndex {
-    static let key = "IVIndex"
+    static let indexKey = "IVIndex"
+    static let timestampKey = "IVTimestamp"
+    static let ivRecoveryKey = "IVRecovery"
     
     /// Returns the IV Index as dictionary.
     var asMap: [String : Any] {
@@ -401,6 +426,94 @@ private extension IvIndex {
             return IvIndex(index: index, updateActive: updateActive)
         }
         return nil
+    }
+    
+}
+
+private extension SecureNetworkBeacon {
+    
+    /// This method returns whether the received Secure Network Beacon can override
+    /// the current IV Index.
+    ///
+    /// The following restrictions apply:
+    /// 1. Normal Operation state must last for at least 96 hours.
+    /// 2. IV Update In Progress state must take at least 96 hours and may not be longer than 144h.
+    /// 3. IV Index must not decrease.
+    /// 4. If received Secure Network Beacon has IV Index greater than current IV Index + 1, the
+    ///   device will go into IV Index Recovery procedure. In this state, the 96h rule does not apply
+    ///   and the IV Index or IV Update Active flag may change before 96 hours.
+    /// 5. If received Secure Network Beacon has IV Index greater than current IV Index + 42, the
+    ///   beacon should be ignored (unless a setting in MeshNetworkManager is set to disable this rule).
+    /// 6. The node shall not execute more than one IV Index Recovery within a period of 192 hours.
+    ///
+    /// Note: Library versions before 2.2.2 did not store the last IV Index, so the date and IV Recovery
+    ///       flag are optional.
+    ///
+    /// - parameters:
+    ///   - target: The IV Index to compare.
+    ///   - date: The date of the most recent transition to the current IV Index.
+    ///   - ivRecoveryActive: True if the IV Recovery procedure was used to restore
+    ///                       the IV Index on the previous connection.
+    ///   - ivTestMode: True, if IV Update test mode is enabled; false otherwise.
+    ///   - ivRecoveryOver42Allowed: Whether the IV Index Recovery procedure should be limited
+    ///                              to allow maximum increase of IV Index by 42.
+    /// - returns: True, if the Secure Network beacon can be applied; false otherwise.
+    /// - since: 2.2.2
+    /// - seeAlso: Bluetooth Mesh Profile 1.0.1, section 3.10.5.
+    func canOverwrite(ivIndex target: IvIndex, updatedAt date: Date?,
+                      withIvRecovery ivRecoveryActive: Bool,
+                      testMode: Bool,
+                      andUnlimitedIvRecoveryAllowed ivRecoveryOver42Allowed: Bool) -> Bool {
+        // IV Index must increase, or, in case it's equal to the current one,
+        // the IV Update Active flag must change from true to false.
+        // The new index must not be greater than the current one + 42,
+        // unless this rule is disabled.
+        guard (ivIndex > target.index &&
+                (ivRecoveryOver42Allowed || ivIndex < target.index + 42)
+              ) ||
+              (ivIndex == target.index &&
+                (target.updateActive || !ivUpdateActive)
+              ) else {
+            return false
+        }
+        // Staring from version 2.2.2 the date will not be nil.
+        if let date = date {
+            // Let's define a "state" as a pair of IV and IV Update Active flag.
+            // "States" change as follows:
+            // 1. IV = X,   IVUA = false (Normal Operation)
+            // 2. IV = X+1, IVUA = true  (Update In Progress)
+            // 3. IV = X+1, IVUA = false (Normal Operation)
+            // 4. IV = X+2, IVUA = true  (Update In Progress)
+            // 5. ...
+            
+            // Calculate number of states between the state defined by the target
+            // IV Index and this Secure Network Beacon.
+            let stateDiff = Int(ivIndex - target.index) * 2 - 1
+                + (target.updateActive ? 1 : 0)
+                + (ivUpdateActive ? 0 : 1)
+                - (ivRecoveryActive || testMode ? 1 : 0) // this may set stateDiff = -1
+            
+            // Each "state" must last for at least 96 hours.
+            // Calculate the minimum number of hours that had to pass since last state
+            // change for the Secure Network Beacon to be assumed valid.
+            // If more has passed, it's also valid, as Normal Operation has no maximum
+            // time duration.
+            let numberOfHoursRequired = stateDiff * 96
+            
+            // Get the number of hours since the state changed last time.
+            let numberOfHoursSinceDate = Int(date.timeIntervalSinceNow / 3600)
+            
+            // The node shall not execute more than one IV Index Recovery within a
+            // period of 192 hours.
+            if ivRecoveryActive && stateDiff > 1 && numberOfHoursSinceDate < 192 {
+                return false
+            }
+            
+            return numberOfHoursSinceDate >= numberOfHoursRequired
+        }
+        // Before version 2.2.2 the timestamp was not stored. The initial
+        // Secure Network Beacon is assumed to be valid.
+        return true
     }
     
 }

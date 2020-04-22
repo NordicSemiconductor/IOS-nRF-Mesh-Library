@@ -40,6 +40,10 @@ class SettingsViewController: UITableViewController {
     @IBOutlet weak var provisionersLabel: UILabel!
     @IBOutlet weak var networkKeysLabel: UILabel!
     @IBOutlet weak var appKeysLabel: UILabel!
+    @IBOutlet weak var testModeSwitch: UISwitch!
+    @IBAction func testModeDidChange(_ sender: UISwitch) {
+        MeshNetworkManager.instance.ivUpdateTestMode = sender.isOn
+    }
     
     @IBOutlet weak var resetNetworkButton: UIButton!
     
@@ -148,6 +152,8 @@ private extension SettingsViewController {
     /// Resets all network settings to default values.
     func resetNetwork() {
         (UIApplication.shared.delegate as! AppDelegate).createNewMeshNetwork()
+        MeshNetworkManager.instance.ivUpdateTestMode = false
+        testModeSwitch.setOn(false, animated: true)
         
         if MeshNetworkManager.instance.save() {
             reload()
@@ -197,6 +203,8 @@ private extension SettingsViewController {
         provisionersLabel.text = "\(meshNetwork.provisioners.count)"
         networkKeysLabel.text  = "\(meshNetwork.networkKeys.count)"
         appKeysLabel.text      = "\(meshNetwork.applicationKeys.count)"
+        MeshNetworkManager.instance.ivUpdateTestMode = false
+        testModeSwitch.setOn(false, animated: true)
         
         // All tabs should be reset to the root view controller.
         parent?.parent?.children.forEach {
