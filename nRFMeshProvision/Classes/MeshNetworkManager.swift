@@ -654,6 +654,62 @@ extension MeshNetworkManager: BearerDataDelegate {
     
 }
 
+// MARK: - Managing sequence numbers.
+
+public extension MeshNetworkManager {
+    
+    /// This method sets the next outgoing sequence number of the given Element on local Node.
+    /// This 24-bit number will be set in the next message sent by this Element. The sequence
+    /// number is increased by 1 every time the Element sends a message.
+    ///
+    /// Mind, that the sequence number is the least significant 24-bits of a SeqAuth, where
+    /// the 32 most significant bits are called IV Index. The sequence number resets to 0
+    /// when the device re-enters IV Index Normal Operation after 96-144 hours of being
+    /// in IV Index Update In Progress phase. The current IV Index is obtained from the
+    /// Secure Network beacon upon connection to Proxy Node. Setting too low sequence
+    /// number will effectively block the Element from sending messages to the network,
+    /// until it will increase enough not to be discarded by other nodes.
+    ///
+    /// - important: This method should not be used, unless you need to reuse the same
+    ///              Provisioner's Unicast Address on another device, or a device where the
+    ///              app was uninstalled and reinstalled. Even then the use of it is not recommended.
+    ///              The sequence number is an internal parameter of the Element and is
+    ///              managed automatically by the library. Instead, each device (phone) should
+    ///              use a separate Provisioner with unique set of Unicast Addresses, which
+    ///              should not change on export/import.
+    ///
+    /// - parameters:
+    ///   - sequence: The new sequence number.
+    ///   - element: The Element of a Node associated with the local Provisioner.
+    func setSequenceNumber(_ sequence: UInt32, forLocalElement element: Element) {
+        guard let meshNetwork = meshNetwork,
+              element.parentNode?.isLocalProvisioner == true,
+              let defaults = UserDefaults(suiteName: meshNetwork.uuid.uuidString) else {
+            return
+        }
+        defaults.set(sequence & 0x00FFFFFF, forKey: "S\(element.unicastAddress.hex)")
+    }
+    
+    /// Returns the next sequence number that would be used by the given Element on local Node.
+    ///
+    /// - important: The sequence number is an internal parameter of an Element.
+    ///              Apps should not use this method unless necessary. It is recommended
+    ///              to create a new Provisioner with a unique Unicast Address instead.
+    ///
+    /// - parameter element: The local Element to get sequence number of.
+    /// - returns: The next sequence number, or `nil` if the Element does not belong
+    ///            to the local Element or the mesh network does not exist.
+    func getSequenceNumber(ofLocalElement element: Element) -> UInt32? {
+        guard let meshNetwork = meshNetwork,
+              element.parentNode?.isLocalProvisioner == true,
+              let defaults = UserDefaults(suiteName: meshNetwork.uuid.uuidString) else {
+            return nil
+        }
+        return UInt32(defaults.integer(forKey: "S\(element.unicastAddress.hex)"))
+    }
+    
+}
+
 // MARK: - Save / Load
 
 public extension MeshNetworkManager {
