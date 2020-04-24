@@ -62,6 +62,29 @@ internal struct IvIndex {
     }
 }
 
+internal extension IvIndex {
+    static let indexKey = "IVIndex"
+    
+    /// Returns the IV Index as dictionary.
+    var asMap: [String : Any] {
+        return ["index": index, "updateActive": updateActive]
+    }
+    
+    /// Creates the IV Index from the given dictionary. It must be valid, otherwise `nil` is returned.
+    ///
+    /// - parameter map: The dictionary with IV Index.
+    /// - returns: The IV Index object or `nil`.
+    static func fromMap(_ map: [String: Any]?) -> IvIndex? {
+        if let map = map,
+           let index = map["index"] as? UInt32,
+           let updateActive = map["updateActive"] as? Bool {
+            return IvIndex(index: index, updateActive: updateActive)
+        }
+        return nil
+    }
+    
+}
+
 extension IvIndex: Comparable {
     
     static func < (lhs: IvIndex, rhs: IvIndex) -> Bool {

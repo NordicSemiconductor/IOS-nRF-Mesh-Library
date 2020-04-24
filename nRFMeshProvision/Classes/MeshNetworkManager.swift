@@ -732,8 +732,15 @@ public extension MeshNetworkManager {
             decoder.dateDecodingStrategy = .iso8601
             
             meshData = try decoder.decode(MeshData.self, from: data)
-            guard let _ = meshData.meshNetwork else {
+            guard let meshNetwork = meshData.meshNetwork else {
                 return false
+            }
+            
+            // Restore the last IV Index. The last IV Index is stored since version 2.2.2.
+            if let defaults = UserDefaults(suiteName: meshNetwork.uuid.uuidString),
+               let map = defaults.object(forKey: IvIndex.indexKey) as? [String : Any],
+               let ivIndex = IvIndex.fromMap(map) {
+                meshNetwork.ivIndex = ivIndex
             }
             
             networkManager = NetworkManager(self)
