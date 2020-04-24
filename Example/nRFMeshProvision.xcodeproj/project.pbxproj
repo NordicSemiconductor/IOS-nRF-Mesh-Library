@@ -95,6 +95,7 @@
 		52A9C1C62313D7D80036792A /* GenericLevel.xib in Resources */ = {isa = PBXBuildFile; fileRef = 52A9C1C42313D7D80036792A /* GenericLevel.xib */; };
 		52B7F67D229829F200B0A42F /* Addresses.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52B7F67C229829F200B0A42F /* Addresses.swift */; };
 		52BC6F4824507A5400EBEEA4 /* DisconnectCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52BC6F4724507A5400EBEEA4 /* DisconnectCell.swift */; };
+		52BC6F4A2452C4FB00EBEEA4 /* SecureNetworkBeacons.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52BC6F492452C4FB00EBEEA4 /* SecureNetworkBeacons.swift */; };
 		52CD0A50232FA6CD00A9A181 /* ProxyViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52CD0A4F232FA6CD00A9A181 /* ProxyViewController.swift */; };
 		52CD0A53232FA79300A9A181 /* FilterTypeCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52CD0A52232FA79300A9A181 /* FilterTypeCell.swift */; };
 		52CD0A55232FC11700A9A181 /* AddressCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52CD0A54232FC11700A9A181 /* AddressCell.swift */; };
@@ -228,6 +229,7 @@
 		52A9C1C42313D7D80036792A /* GenericLevel.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = GenericLevel.xib; sourceTree = "<group>"; };
 		52B7F67C229829F200B0A42F /* Addresses.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Addresses.swift; sourceTree = "<group>"; };
 		52BC6F4724507A5400EBEEA4 /* DisconnectCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisconnectCell.swift; sourceTree = "<group>"; };
+		52BC6F492452C4FB00EBEEA4 /* SecureNetworkBeacons.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecureNetworkBeacons.swift; sourceTree = "<group>"; };
 		52CD0A4F232FA6CD00A9A181 /* ProxyViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProxyViewController.swift; sourceTree = "<group>"; };
 		52CD0A52232FA79300A9A181 /* FilterTypeCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterTypeCell.swift; sourceTree = "<group>"; };
 		52CD0A54232FC11700A9A181 /* AddressCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddressCell.swift; sourceTree = "<group>"; };
@@ -654,6 +656,7 @@
 				52F6AD6B22B78F3000F0D7DF /* CompositionData.swift */,
 				523F776F22C64FD20030EA6A /* ConfigMessages.swift */,
 				52568D4A22DDFAC700B7B236 /* Groups.swift */,
+				52BC6F492452C4FB00EBEEA4 /* SecureNetworkBeacons.swift */,
 				529B75A92248E275008F1CE7 /* nRFMeshProvision_Tests-Bridging-Header.h */,
 			);
 			path = Tests;
@@ -966,6 +969,7 @@
 				52B7F67D229829F200B0A42F /* Addresses.swift in Sources */,
 				5294DADA22B109810041370E /* Pdus.swift in Sources */,
 				5231400022EEE1770074325A /* AssigningGroupAddresses.swift in Sources */,
+				52BC6F4A2452C4FB00EBEEA4 /* SecureNetworkBeacons.swift in Sources */,
 				52568D4B22DDFAC700B7B236 /* Groups.swift in Sources */,
 				52F6AD6C22B78F3000F0D7DF /* CompositionData.swift in Sources */,
 				523F777022C64FD20030EA6A /* ConfigMessages.swift in Sources */,

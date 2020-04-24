@@ -299,7 +299,7 @@ class Pdus: XCTestCase {
         XCTAssertNotNil(manager.meshNetwork)
         let meshNetwork = manager.meshNetwork!
         let networkKey = meshNetwork.networkKeys.first!
-        networkKey.ivIndex = IvIndex(index: 0x12345678, updateActive: false)
+        let ivIndex = IvIndex(index: 0x12345678, updateActive: false)
         let source = meshNetwork.localProvisioner?.node?.elements.first
         XCTAssertNotNil(source)
         let node = meshNetwork.nodes[1]
@@ -323,8 +323,8 @@ class Pdus: XCTestCase {
         XCTAssertEqual(accessPdu.opCode, ConfigAppKeyAdd.opCode)
         XCTAssertEqual(accessPdu.accessPdu, Data(hex: "0023614563964771734FBD76E3B40519D1D94A48"))
         
-        let pdu = UpperTransportPdu(fromAccessPdu: accessPdu,
-                                    usingKeySet: keySet, sequence: sequence)
+        let pdu = UpperTransportPdu(fromAccessPdu: accessPdu, usingKeySet: keySet,
+                                    sequence: sequence, andIvIndex: ivIndex)
         XCTAssertEqual(pdu.source, source?.unicastAddress)
         XCTAssertEqual(pdu.destination, destination.address)
         XCTAssertEqual(pdu.sequence, sequence)
@@ -381,7 +381,7 @@ class Pdus: XCTestCase {
         XCTAssertNotNil(manager.meshNetwork)
         let meshNetwork = manager.meshNetwork!
         let networkKey = meshNetwork.networkKeys.first!
-        networkKey.ivIndex = IvIndex(index: 0x12345678, updateActive: false)
+        let ivIndex = IvIndex(index: 0x12345678, updateActive: false)
         let node = meshNetwork.nodes[1]
         let source = node.elements.first
         let destination = MeshAddress(meshNetwork.localProvisioner!.unicastAddress!)
@@ -406,7 +406,7 @@ class Pdus: XCTestCase {
         XCTAssertEqual(accessPdu.accessPdu, Data(hex: "800300236145"))
         
         let pdu = UpperTransportPdu(fromAccessPdu: accessPdu, usingKeySet: keySet,
-                                    sequence: sequence)
+                                    sequence: sequence, andIvIndex: ivIndex)
         XCTAssertEqual(pdu.source, source?.unicastAddress)
         XCTAssertEqual(pdu.destination, destination.address)
         XCTAssertEqual(pdu.sequence, sequence)
@@ -442,7 +442,7 @@ class Pdus: XCTestCase {
         XCTAssertNotNil(manager.meshNetwork)
         let meshNetwork = manager.meshNetwork!
         let networkKey = meshNetwork.networkKeys.first!
-        networkKey.ivIndex = IvIndex(index: 0x12345678, updateActive: false)
+        let ivIndex = IvIndex(index: 0x12345678, updateActive: false)
         let source = meshNetwork.localProvisioner?.unicastAddress
         let node = meshNetwork.nodes[1]
         let destination = node.unicastAddress
@@ -450,7 +450,8 @@ class Pdus: XCTestCase {
         
         // Test begins here
         let networkPdu0 = NetworkPdu(decode: Data(hex: "68CAB5C5348A230AFBA8C63D4E681631C09DEAF4FD409611459A3D6C3E")!,
-                                     ofType: .networkPdu, usingNetworkKey: networkKey)
+                                     ofType: .networkPdu,
+                                     usingNetworkKey: networkKey, andIvIndex: ivIndex)
         XCTAssertNotNil(networkPdu0)
         XCTAssertEqual(networkPdu0?.source, source)
         XCTAssertEqual(networkPdu0?.destination, destination)
@@ -462,7 +463,8 @@ class Pdus: XCTestCase {
         XCTAssertEqual(networkPdu0?.pdu, Data(hex: "68CAB5C5348A230AFBA8C63D4E681631C09DEAF4FD409611459A3D6C3E"))
         
         let networkPdu1 = NetworkPdu(decode: Data(hex: "681615B5DD4A846CAE0C032BF0746F44F1B8CC8CE502AEF9D2393E5B93")!,
-                                     ofType: .networkPdu, usingNetworkKey: networkKey)
+                                     ofType: .networkPdu,
+                                     usingNetworkKey: networkKey, andIvIndex: ivIndex)
         XCTAssertNotNil(networkPdu1)
         XCTAssertEqual(networkPdu1?.source, source)
         XCTAssertEqual(networkPdu1?.destination, destination)
@@ -537,7 +539,7 @@ class Pdus: XCTestCase {
         XCTAssertNotNil(manager.meshNetwork)
         let meshNetwork = manager.meshNetwork!
         let networkKey = meshNetwork.networkKeys.first!
-        networkKey.ivIndex = IvIndex(index: 0x12345677, updateActive: false)
+        let ivIndex = IvIndex(index: 0x12345677, updateActive: false)
         let node = meshNetwork.nodes[2] // Low Power Node
         let applicationKey = meshNetwork.applicationKeys[1]
         let source = node.elements.first
@@ -568,7 +570,7 @@ class Pdus: XCTestCase {
         XCTAssertEqual(accessPdu.accessPdu, Data(hex: "D50A0048656C6C6F"))
         
         let pdu = UpperTransportPdu(fromAccessPdu: accessPdu, usingKeySet: keySet,
-                                    sequence: sequence)
+                                    sequence: sequence, andIvIndex: ivIndex)
         XCTAssertEqual(pdu.source, source?.unicastAddress)
         XCTAssertEqual(pdu.destination, virtualGroup!.address.address)
         XCTAssertEqual(pdu.sequence, sequence)
