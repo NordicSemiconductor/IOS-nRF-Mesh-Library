@@ -219,9 +219,9 @@ class SecureNetworkBeacons: XCTestCase {
         
         // The IV Index changes from 9 to 52, that is by 43. Also, the update active
         // flag changes from false to true, which adds one more step.
-        // At least 43 * 192h + additional 96h are required for the IV Index to be
+        // At least 42 * 192h + additional 96h are required for the IV Index to be
         // assumed valid.
-        let longTimeAgo = Date(hoursAgo: 43 * 192 - 96)
+        let longTimeAgo = Date(hoursAgo: 42 * 192 + 96)
         let notThatLongTimeAgo = Date(timeInterval: +10.0, since: longTimeAgo)
         let longLongTimeAgo = Date(timeInterval: -10.0, since: longTimeAgo)
         
