@@ -36,7 +36,9 @@ public struct AddAddressesToFilter: StaticAcknowledgedProxyConfigurationMessage 
     
     public var parameters: Data? {
         var data = Data()
-        addresses.forEach { address in
+        // Send addresses sorted. The primary Element will be added as a first one,
+        // so if the Proxy Filter supports only one address, it will be that one.
+        addresses.sorted().forEach { address in
             data += address.bigEndian
         }
         return data

@@ -88,6 +88,7 @@ public class ProxyFilter {
     private var counter = 0
     private var busy = false
     private var buffer: [ProxyConfigurationMessage] = []
+    private let mutex = DispatchQueue(label: "ProxyFIlterMutex")
     
     private var logger: LoggerDelegate? {
         return manager.logger
@@ -242,7 +243,9 @@ internal extension ProxyFilter {
     /// its Unicast Addresses and All Nodes address.
     func newProxyDidConnect() {
         logger?.i(.proxy, "New Proxy connected")
-        busy = false
+        mutex.sync {
+            busy = false
+        }
         reset()
         if let localProvisioner = manager.meshNetwork?.localProvisioner {
             setup(for: localProvisioner)
@@ -255,17 +258,19 @@ internal extension ProxyFilter {
     ///
     /// - parameter message: The message sent.
     func managerDidDeliverMessage(_ message: ProxyConfigurationMessage) {
-        switch message {
-        case let request as AddAddressesToFilter:
-            addresses.formUnion(request.addresses)
-        case let request as RemoveAddressesFromFilter:
-            addresses.subtract(request.addresses)
-        case let request as SetFilterType:
-            type = request.filterType
-            addresses.removeAll()
-        default:
-            // Ignore.
-            break
+        mutex.sync {
+            switch message {
+            case let request as AddAddressesToFilter:
+                addresses.formUnion(request.addresses)
+            case let request as RemoveAddressesFromFilter:
+                addresses.subtract(request.addresses)
+            case let request as SetFilterType:
+                type = request.filterType
+                addresses.removeAll()
+            default:
+                // Ignore.
+                break
+            }
         }
         // And notify the app.
         delegate?.proxyFilterUpdated(type: type, addresses: addresses)
@@ -280,10 +285,12 @@ internal extension ProxyFilter {
     /// - parameter message: The message that has not been sent.
     /// - parameter error: The error received.
     func managerFailedToDeliverMessage(_ message: ProxyConfigurationMessage, error: Error) {
-        type = .whitelist
-        addresses.removeAll()
-        buffer.removeAll()
-        busy = false
+        mutex.sync {
+            type = .whitelist
+            addresses.removeAll()
+            buffer.removeAll()
+            busy = false
+        }
         // And notify the app.
         delegate?.proxyFilterUpdated(type: type, addresses: addresses)
     }
@@ -302,11 +309,15 @@ internal extension ProxyFilter {
         case let status as FilterStatus:
             // Handle buffered messages.
             guard buffer.isEmpty else {
-                let message = buffer.removeFirst()
-                try? manager.send(message)
+                mutex.sync {
+                    let message = buffer.removeFirst()
+                    try? manager.send(message)
+                }
                 return
             }
-            busy = false
+            mutex.sync {
+                busy = false
+            }
             
             // Ensure the current information about the filter is up to date.
             guard type == status.filterType && addresses.count == status.listSize else {
@@ -332,7 +343,9 @@ internal extension ProxyFilter {
                     logger?.w(.proxy, "Limited Proxy Filter detected.")
                     reset()
                     if let address = manager.meshNetwork?.localProvisioner?.unicastAddress {
-                        addresses = [address]
+                        mutex.sync {
+                            addresses = [address]
+                        }
                         add(addresses: addresses)
                     }
                     delegate?.limitedProxyFilterDetected(maxSize: 1)
@@ -363,15 +376,19 @@ private extension ProxyFilter {
     ///
     /// - parameter message: The message to be sent.
     func send(_ message: ProxyConfigurationMessage) {
-        guard !busy else {
-            buffer.append(message)
-            return
+        mutex.sync {
+            guard !busy else {
+                buffer.append(message)
+                return
+            }
+            busy = true
         }
-        busy = true
         do {
             try manager.send(message)
         } catch {
-            busy = false
+            mutex.sync {
+                busy = false
+            }
         }
     }
     
