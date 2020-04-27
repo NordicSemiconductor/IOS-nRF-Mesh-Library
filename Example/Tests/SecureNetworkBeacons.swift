@@ -212,7 +212,7 @@ class SecureNetworkBeacons: XCTestCase {
     }
     
     func testOverwritingWithVeryFarIvIndex() {
-        // This Secure Network Beacon has IV Index 52 (update active)
+        // This Secure Network Beacon has IV Index 52 (update active).
         let data = Data(hex: "0102EE6C0EFF5298ECFF00000034A53312BF9198C86F")!
         let snb = SecureNetworkBeacon(decode: data, usingNetworkKey: networkKey)
         let ivIndex = IvIndex(index: 9, updateActive: false)
@@ -220,11 +220,13 @@ class SecureNetworkBeacons: XCTestCase {
         // The IV Index changes from 9 to 52, that is by 43. Also, the update active
         // flag changes from false to true, which adds one more step.
         // At least 42 * 192h + additional 96h are required for the IV Index to be
-        // assumed valid.
+        // assumed valid. Updating IV by more than 42 is not allowed by the spec.
+        // This library allows, however, to disable this check with a flag.
         let longTimeAgo = Date(hoursAgo: 42 * 192 + 96)
         let notThatLongTimeAgo = Date(timeInterval: +10.0, since: longTimeAgo)
         let longLongTimeAgo = Date(timeInterval: -10.0, since: longTimeAgo)
         
+        // First, with the flag set to false. All should fail.
         let result0 = snb?.canOverwrite(ivIndex: ivIndex,
                                         updatedAt: notThatLongTimeAgo,
                                         withIvRecovery: false, testMode: false,
@@ -240,6 +242,7 @@ class SecureNetworkBeacons: XCTestCase {
                                         withIvRecovery: false, testMode: false,
                                         andUnlimitedIvRecoveryAllowed: false)
         
+        // Now, with the flag set to true.
         let result3 = snb?.canOverwrite(ivIndex: ivIndex,
                                         updatedAt: notThatLongTimeAgo,
                                         withIvRecovery: false, testMode: false,
@@ -263,7 +266,7 @@ class SecureNetworkBeacons: XCTestCase {
         XCTAssert(result2 == false)
         // This test returns false, as the time difference is not long enough.
         XCTAssert(result3 == false)
-        // Those tests pass, as more than 43 * 192h + 96h have passed, and
+        // Those tests pass, as more than 42 * 192h + 96h have passed, and
         // the IV Index + 42 limit was turned off.
         XCTAssert(result4 == true)
         XCTAssert(result5 == true)
