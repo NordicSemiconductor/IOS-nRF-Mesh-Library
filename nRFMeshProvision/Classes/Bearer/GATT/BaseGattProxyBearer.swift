@@ -45,6 +45,7 @@ open class BaseGattProxyBearer<Service: MeshService>: NSObject, Bearer, CBCentra
     
     private let centralManager: CBCentralManager
     private var basePeripheral: CBPeripheral!
+    private let mutex = DispatchQueue(label: "GattBearer")
     
     /// The protocol used for segmentation and reassembly.
     private let protocolHandler: ProxyProtocolHandler
@@ -134,14 +135,20 @@ open class BaseGattProxyBearer<Service: MeshService>: NSObject, Bearer, CBCentra
         // to send more data, a `peripheralIsReady(toSendWriteWithoutResponse:)` callback
         // will be called, which will send the next packet.
         if #available(iOS 11.0, *) {
-            let queueWasEmpty = queue.isEmpty
-            queue.append(contentsOf: packets)
-            
-            // Don't look at `basePeripheral.canSendWriteWithoutResponse`. If often returns
-            // `false` even when nothing was sent before and no callback is called afterwards.
-            // Just assume, that the first packet can always be sent.
-            if queueWasEmpty {
-                let packet = queue.remove(at: 0)
+            let packet: Data? = mutex.sync {
+                let queueWasEmpty = queue.isEmpty
+                queue.append(contentsOf: packets)
+                
+                // Don't look at `basePeripheral.canSendWriteWithoutResponse`. If often returns
+                // `false` even when nothing was sent before and no callback is called afterwards.
+                // Just assume, that the first packet can always be sent.
+                if queueWasEmpty {
+                    return queue.remove(at: 0)
+                } else {
+                    return nil
+                }
+            }
+            if let packet = packet {
                 logger?.d(.bearer, "-> 0x\(packet.hex)")
                 basePeripheral.writeValue(packet, for: dataInCharacteristic, type: .withoutResponse)
             }
@@ -329,13 +336,17 @@ open class BaseGattProxyBearer<Service: MeshService>: NSObject, Bearer, CBCentra
     
     // This method is available only on iOS 11+.
     open func peripheralIsReady(toSendWriteWithoutResponse peripheral: CBPeripheral) {
-        guard !queue.isEmpty else {
-            return
+        let packet: Data? = mutex.sync {
+            if queue.isEmpty {
+                return nil
+            } else {
+                return queue.remove(at: 0)
+            }
         }
-        
-        let packet = queue.remove(at: 0)
-        logger?.d(.bearer, "-> 0x\(packet.hex)")
-        peripheral.writeValue(packet, for: dataInCharacteristic!, type: .withoutResponse)
+        if let packet = packet {
+            logger?.d(.bearer, "-> 0x\(packet.hex)")
+            peripheral.writeValue(packet, for: dataInCharacteristic!, type: .withoutResponse)
+        }
     }
     
 }

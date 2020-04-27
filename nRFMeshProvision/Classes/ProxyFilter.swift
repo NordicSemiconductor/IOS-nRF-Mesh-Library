@@ -88,7 +88,7 @@ public class ProxyFilter {
     private var counter = 0
     private var busy = false
     private var buffer: [ProxyConfigurationMessage] = []
-    private let mutex = DispatchQueue(label: "ProxyFIlterMutex")
+    private let mutex = DispatchQueue(label: "ProxyFilterMutex")
     
     private var logger: LoggerDelegate? {
         return manager.logger
@@ -308,11 +308,10 @@ internal extension ProxyFilter {
         switch message {
         case let status as FilterStatus:
             // Handle buffered messages.
-            guard buffer.isEmpty else {
-                mutex.sync {
-                    let message = buffer.removeFirst()
-                    try? manager.send(message)
-                }
+            let bufferEmpty = mutex.sync { buffer.isEmpty }
+            guard bufferEmpty else {
+                let message = mutex.sync { buffer.removeFirst() }
+                try? manager.send(message)
                 return
             }
             mutex.sync {
@@ -376,13 +375,17 @@ private extension ProxyFilter {
     ///
     /// - parameter message: The message to be sent.
     func send(_ message: ProxyConfigurationMessage) {
-        mutex.sync {
-            guard !busy else {
+        let wasBusy = mutex.sync { return busy }
+        guard !wasBusy else {
+            mutex.sync {
                 buffer.append(message)
-                return
             }
+            return
+        }
+        mutex.sync {
             busy = true
         }
+        
         do {
             try manager.send(message)
         } catch {
