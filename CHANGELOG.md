@@ -1,4 +1,16 @@
 ## Changelog
+- **2.2.2**:
+   - Fixed handling IV Index update.
+   - Added a flag to enable IV Index Test Mode.
+   - New method to get next available address from given offset.
+   - 2 methods added to get and set Element's sequence number. Use on your own risk.
+   - A Disconnect button added in the sample app, available with Automatic Connection disabled.
+   - Improvement: Migration to Swift 5.2 and Xcode 11.4.
+   - Improvement: macOs added to podspec (#240).
+   - Improvement: Discovering new proxy connection improved.
+   - Bugfix: Fixed overwriting primary element's name.
+   - Bugfix: Thread synchronization in `ProxyFilter` and `BaseGattBearer`.
+   
 - **2.2.1**:
     - API related to "compatible models" removed, as the client and server models do not need to have model IDs differing by 1 (#225).
     
