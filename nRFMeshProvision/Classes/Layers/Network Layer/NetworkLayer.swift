@@ -133,7 +133,6 @@ internal class NetworkLayer {
         default:
             return
         }
-        
     }
     
     /// This method tries to send the Lower Transport Message of given type to the
@@ -169,7 +168,14 @@ internal class NetworkLayer {
             // If the message was sent locally, don't report Bearer closer error.
             try? transmitter.send(networkPdu.pdu, ofType: type)
         } else {
-            try transmitter.send(networkPdu.pdu, ofType: type)
+            do {
+                try transmitter.send(networkPdu.pdu, ofType: type)
+            } catch {
+                if case BearerError.bearerClosed = error {
+                    proxyNetworkKey = nil
+                }
+                throw error
+            }
         }
         
         // Unless a GATT Bearer is used, the Network PDUs should be sent multiple times
@@ -214,6 +220,9 @@ internal class NetworkLayer {
             try send(lowerTransportPdu: pdu, ofType: .proxyConfiguration, withTtl: 0)
             networkManager.manager.proxyFilter?.managerDidDeliverMessage(message)
         } catch {
+            if case BearerError.bearerClosed = error {
+                proxyNetworkKey = nil
+            }
             networkManager.manager.proxyFilter?.managerFailedToDeliverMessage(message, error: error)
         }
     }
@@ -321,30 +330,30 @@ private extension NetworkLayer {
         // that has not yet transitioned to the one local Node has. Such IV Index
         // is still valid, at least for some time.
         
-        updateProxyFilter(usingNetworkKey: networkKey)
+        updateProxyFilter(usingNetworkKey: networkKey,
+                          afterIvIndexChanged: lastIVIndex != meshNetwork.ivIndex)
     }
     
     /// Updates the information about the Network Key known to the current Proxy Server.
     /// The Network Key is required to send Proxy Configuration Messages that can be
     /// decoded by the connected Proxy.
     ///
-    /// If the method detects that the Proxy has just been connected, or was reconnected,
-    /// it will initiate the Proxy Filter with local Provisioner's Unicast Address and
-    /// the `Address.allNodes` group address.
+    /// This method also initiates the Proxy Filter with local Provisioner's Unicast Address and
+    /// the `Address.allNodes` group address if a new connection has been found.
     ///
-    /// - parameter networkKey: The Network Key known to the connected Proxy.
-    func updateProxyFilter(usingNetworkKey networkKey: NetworkKey) {
+    /// - parameters:
+    ///   - networkKey: The Network Key known to the connected Proxy.
+    ///   - ivIndexChanged: True, if IV Index has changed, false otherwise.
+    func updateProxyFilter(usingNetworkKey networkKey: NetworkKey,
+                           afterIvIndexChanged ivIndexChanged: Bool) {
         let justConnected = proxyNetworkKey == nil
-        let reconnected = networkKey == proxyNetworkKey
         
         // Keep the primary Network Key or the most recently received one from the connected
         // Proxy Server. This is to make sure (almost) that the Proxy Configuration messages
         // are sent encrypted with a key known to this Node.
-        if justConnected || networkKey.isPrimary || proxyNetworkKey?.isPrimary == false {
-            proxyNetworkKey = networkKey
-        }
+        proxyNetworkKey = networkKey
         
-        if justConnected || reconnected {
+        if justConnected || !ivIndexChanged {
             networkManager.manager.proxyFilter?.newProxyDidConnect()
         }
     }
