@@ -265,57 +265,61 @@ private extension NetworkLayer {
         // Ensure, that the received Secure Network Beacon can overwrite current
         // IV Index.
         let flag = networkManager.manager.allowIvIndexRecoveryOver42
-        guard secureNetworkBeacon.canOverwrite(ivIndex: lastIVIndex,
-                                               updatedAt: lastTransitionDate,
-                                               withIvRecovery: isIvRecoveryActive,
-                                               testMode: isIvTestModeActive,
-                                               andUnlimitedIvRecoveryAllowed: flag) else {
+        if secureNetworkBeacon.canOverwrite(ivIndex: lastIVIndex,
+                                            updatedAt: lastTransitionDate,
+                                            withIvRecovery: isIvRecoveryActive,
+                                            testMode: isIvTestModeActive,
+                                            andUnlimitedIvRecoveryAllowed: flag) {
+            // Update the IV Index based on the information from the Secure Network Beacon.
+            meshNetwork.ivIndex = secureNetworkBeacon.ivIndex
+            
+            if meshNetwork.ivIndex > lastIVIndex {
+                logger?.i(.network, "Applying \(meshNetwork.ivIndex)")
+            }
+            // If the IV Index used for transmitting messages effectively increased,
+            // the Node shall reset the sequence number to 0x000000.
+            //
+            // Note: This library keeps seperate sequence numbers for each Element of the
+            //       local provisioner (source Unicast Address). All of them need to be reset.
+            if meshNetwork.ivIndex.transmitIndex > lastIVIndex.transmitIndex {
+                logger?.i(.network, "Resetting local sequence numbers to 0")
+                meshNetwork.localProvisioner?.node?.elements.forEach { element in
+                    defaults.set(0, forKey: "S\(element.unicastAddress.hex)")
+                }
+            }
+            
+            // Store the last IV Index.
+            defaults.set(meshNetwork.ivIndex.asMap, forKey: IvIndex.indexKey)
+            if lastIVIndex != meshNetwork.ivIndex ||
+               defaults.object(forKey: IvIndex.timestampKey) == nil {
+                defaults.set(Date(), forKey: IvIndex.timestampKey)
+                
+                let ivRecovery = meshNetwork.ivIndex.index > lastIVIndex.index + 1 &&
+                                 secureNetworkBeacon.ivIndex.updateActive == false
+                defaults.set(ivRecovery, forKey: IvIndex.ivRecoveryKey)
+            }
+            
+            // If the Key Refresh Procedure is in progress, and the new Network Key
+            // has already been set, the key refresh flag indicates switching to phase 2.
+            if case .distributingKeys = networkKey.phase, secureNetworkBeacon.keyRefreshFlag {
+                networkKey.phase = .finalizing
+            }
+            // If the Key Refresh Procedure is in phase 2, and the key refresh flag is
+            // set to false.
+            if case .finalizing = networkKey.phase, !secureNetworkBeacon.keyRefreshFlag {
+                networkKey.oldKey = nil // This will set the phase to .normalOperation.
+            }
+        } else if secureNetworkBeacon.ivIndex != lastIVIndex.previous {
             var numberOfHoursSinceDate = "unknown time"
             if let date = lastTransitionDate {
                 numberOfHoursSinceDate = "\(Int(-date.timeIntervalSinceNow / 3600))h"
             }
             logger?.w(.network, "Discarding beacon (\(secureNetworkBeacon.ivIndex), last \(lastIVIndex), changed: \(numberOfHoursSinceDate) ago, test mode: \(networkManager.manager.ivUpdateTestMode)))")
             return
-        }
-        // Update the IV Index based on the information from the Secure Network Beacon.
-        meshNetwork.ivIndex = secureNetworkBeacon.ivIndex
-        
-        if meshNetwork.ivIndex > lastIVIndex {
-            logger?.i(.network, "Applying \(meshNetwork.ivIndex)")
-        }
-        // If the IV Index used for transmitting messages effectively increased,
-        // the Node shall reset the sequence number to 0x000000.
-        //
-        // Note: This library keeps seperate sequence numbers for each Element of the
-        //       local provisioner (source Unicast Address). All of them need to be reset.
-        if meshNetwork.ivIndex.transmitIndex > lastIVIndex.transmitIndex {
-            logger?.i(.network, "Resetting local sequence numbers to 0")
-            meshNetwork.localProvisioner?.node?.elements.forEach { element in
-                defaults.set(0, forKey: "S\(element.unicastAddress.hex)")
-            }
-        }
-        
-        // Store the last IV Index.
-        defaults.set(meshNetwork.ivIndex.asMap, forKey: IvIndex.indexKey)
-        if lastIVIndex != meshNetwork.ivIndex ||
-           defaults.object(forKey: IvIndex.timestampKey) == nil {
-            defaults.set(Date(), forKey: IvIndex.timestampKey)
-            
-            let ivRecovery = meshNetwork.ivIndex.index > lastIVIndex.index + 1 &&
-                             secureNetworkBeacon.ivIndex.updateActive == false
-            defaults.set(ivRecovery, forKey: IvIndex.ivRecoveryKey)
-        }
-        
-        // If the Key Refresh Procedure is in progress, and the new Network Key
-        // has already been set, the key refresh flag indicates switching to phase 2.
-        if case .distributingKeys = networkKey.phase, secureNetworkBeacon.keyRefreshFlag {
-            networkKey.phase = .finalizing
-        }
-        // If the Key Refresh Procedure is in phase 2, and the key refresh flag is
-        // set to false.
-        if case .finalizing = networkKey.phase, !secureNetworkBeacon.keyRefreshFlag {
-            networkKey.oldKey = nil // This will set the phase to .normalOperation.
-        }
+        } // else,
+        // the Secure Network beacon was sent by a Node with a previous IV Index,
+        // that has not yet transitioned to the one local Node has. Such IV Index
+        // is still valid, at least for some time.
         
         updateProxyFilter(usingNetworkKey: networkKey)
     }

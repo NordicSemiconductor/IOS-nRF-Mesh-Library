@@ -94,6 +94,28 @@ extension IvIndex: Comparable {
     
 }
 
+extension IvIndex {
+    
+    /// The following IV Index, or `nil` if maximum value has been reached.
+    var next: IvIndex? {
+        return updateActive ?
+            IvIndex(index: index, updateActive: false) :
+            index < UInt32.max - 1 ?
+                IvIndex(index: index + 1, updateActive: true) :
+                nil
+    }
+    
+    /// The previous IV Index, or `nil` in case of an initial one.
+    var previous: IvIndex? {
+        return !updateActive ?
+            IvIndex(index: index, updateActive: true) :
+            index > 0 ?
+                IvIndex(index: index - 1, updateActive: false) :
+                nil
+    }
+    
+}
+
 extension IvIndex: CustomDebugStringConvertible {
     
     var debugDescription: String {
