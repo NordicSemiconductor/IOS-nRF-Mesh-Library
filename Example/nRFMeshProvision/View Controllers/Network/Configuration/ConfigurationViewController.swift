@@ -291,7 +291,8 @@ class ConfigurationViewController: ProgressViewController {
         }
     }
     
-    override func tableView(_ tableView: UITableView, accessoryButtonTappedForRowWith indexPath: IndexPath) {
+    override func tableView(_ tableView: UITableView,
+                            accessoryButtonTappedForRowWith indexPath: IndexPath) {
         switch indexPath.row {
         case 0:
             presentAlert(title: "Info", message: "Mark a node as configured when you finished setting it up.")
