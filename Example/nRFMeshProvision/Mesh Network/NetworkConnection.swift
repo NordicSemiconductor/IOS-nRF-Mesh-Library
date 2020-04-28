@@ -124,6 +124,10 @@ class NetworkConnection: NSObject, Bearer {
         isStarted = false
     }
     
+    func disconnectCurrent() {
+        proxies.first?.close()
+    }
+    
     func send(_ data: Data, ofType type: PduType) throws {
         guard supports(type) else {
             throw BearerError.pduTypeNotSupported

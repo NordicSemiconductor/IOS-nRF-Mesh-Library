@@ -67,7 +67,10 @@ public class NodeFeatures: Codable {
         case lowPower
     }
     
-    internal init(relay: NodeFeaturesState?, proxy: NodeFeaturesState?, friend: NodeFeaturesState?, lowPower: NodeFeaturesState?) {
+    internal init(relay: NodeFeaturesState?,
+                  proxy: NodeFeaturesState?,
+                  friend: NodeFeaturesState?,
+                  lowPower: NodeFeaturesState?) {
         self.relay    = relay
         self.proxy    = proxy
         self.friend   = friend

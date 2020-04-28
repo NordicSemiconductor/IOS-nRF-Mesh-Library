@@ -34,6 +34,7 @@ internal struct SegmentAcknowledgmentMessage: LowerTransportPdu {
     let source: Address
     let destination: Address
     let networkKey: NetworkKey
+    let ivIndex: UInt32
     
     /// Message Op Code.
     let opCode: UInt8
@@ -78,6 +79,7 @@ internal struct SegmentAcknowledgmentMessage: LowerTransportPdu {
         source = networkPdu.source
         destination = networkPdu.destination
         networkKey = networkPdu.networkKey
+        ivIndex = networkPdu.ivIndex
     }
     
     /// Creates the ACK for given array of segments. At least one of
@@ -104,6 +106,7 @@ internal struct SegmentAcknowledgmentMessage: LowerTransportPdu {
         source = segment.destination
         destination = segment.source
         networkKey = segment.networkKey
+        ivIndex = segment.ivIndex
     }
     
     /// Returns whether the segment with given index has been received.

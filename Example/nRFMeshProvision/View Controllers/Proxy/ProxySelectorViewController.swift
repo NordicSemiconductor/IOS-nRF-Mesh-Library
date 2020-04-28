@@ -32,6 +32,8 @@ import UIKit
 import CoreBluetooth
 import nRFMeshProvision
 
+typealias DiscoveredProxy = (device: GattBearer, rssi: Int)
+
 class ProxySelectorViewController: UITableViewController {
     
     // MARK: - Outlets and Actions
@@ -47,7 +49,7 @@ class ProxySelectorViewController: UITableViewController {
     var meshNetwork: MeshNetwork?
     
     private var centralManager: CBCentralManager!
-    private var proxies = [(device: GattBearer, rssi: Int)]()
+    private var proxies: [DiscoveredProxy] = []
     
     private var alert: UIAlertController?
     private var selectedDevice: GattBearer?

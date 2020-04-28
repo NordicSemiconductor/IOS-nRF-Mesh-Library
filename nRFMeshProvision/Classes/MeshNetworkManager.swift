@@ -111,6 +111,24 @@ public class MeshNetworkManager {
     /// 50 * segment count. The TTL and segment count dependent parts are added
     /// automatically, and this value shall specify only the constant part.
     public var acknowledgmentMessageInterval: TimeInterval = 2.0
+    /// According to Bluetooth Mesh Profile 1.0.1, section 3.10.5, if the IV Index of the mesh
+    /// network increased by more than 42 since the last connection (which can take at least
+    /// 48 weeks), the Node should be reprovisioned. However, as this library can be used to
+    /// provision other Nodes, it should not be blocked from sending messages to the network
+    /// only because the phone wasn't connected to the network for that time. This flag can
+    /// disable this check, effectively allowing such connection.
+    ///
+    /// The same can be achieved by clearing the app data (uninstalling and reinstalling the
+    /// app) and importing the mesh network. With no "previous" IV Index, the library will
+    /// accept any IV Index received in the Secure Network beacon upon connection to the
+    /// GATT Proxy Node.
+    public var allowIvIndexRecoveryOver42: Bool = false
+    /// IV Update Test Mode enables efficient testing of the IV Update procedure.
+    /// The IV Update test mode removes the 96-hour limit; all other behavior of the device
+    /// are unchanged.
+    ///
+    /// - seeAlso: Bluetooth Mesh Profile 1.0.1, section 3.10.5.1.
+    public var ivUpdateTestMode: Bool = false
     
     // MARK: - Computed properties
     
@@ -636,6 +654,62 @@ extension MeshNetworkManager: BearerDataDelegate {
     
 }
 
+// MARK: - Managing sequence numbers.
+
+public extension MeshNetworkManager {
+    
+    /// This method sets the next outgoing sequence number of the given Element on local Node.
+    /// This 24-bit number will be set in the next message sent by this Element. The sequence
+    /// number is increased by 1 every time the Element sends a message.
+    ///
+    /// Mind, that the sequence number is the least significant 24-bits of a SeqAuth, where
+    /// the 32 most significant bits are called IV Index. The sequence number resets to 0
+    /// when the device re-enters IV Index Normal Operation after 96-144 hours of being
+    /// in IV Index Update In Progress phase. The current IV Index is obtained from the
+    /// Secure Network beacon upon connection to Proxy Node. Setting too low sequence
+    /// number will effectively block the Element from sending messages to the network,
+    /// until it will increase enough not to be discarded by other nodes.
+    ///
+    /// - important: This method should not be used, unless you need to reuse the same
+    ///              Provisioner's Unicast Address on another device, or a device where the
+    ///              app was uninstalled and reinstalled. Even then the use of it is not recommended.
+    ///              The sequence number is an internal parameter of the Element and is
+    ///              managed automatically by the library. Instead, each device (phone) should
+    ///              use a separate Provisioner with unique set of Unicast Addresses, which
+    ///              should not change on export/import.
+    ///
+    /// - parameters:
+    ///   - sequence: The new sequence number.
+    ///   - element: The Element of a Node associated with the local Provisioner.
+    func setSequenceNumber(_ sequence: UInt32, forLocalElement element: Element) {
+        guard let meshNetwork = meshNetwork,
+              element.parentNode?.isLocalProvisioner == true,
+              let defaults = UserDefaults(suiteName: meshNetwork.uuid.uuidString) else {
+            return
+        }
+        defaults.set(sequence & 0x00FFFFFF, forKey: "S\(element.unicastAddress.hex)")
+    }
+    
+    /// Returns the next sequence number that would be used by the given Element on local Node.
+    ///
+    /// - important: The sequence number is an internal parameter of an Element.
+    ///              Apps should not use this method unless necessary. It is recommended
+    ///              to create a new Provisioner with a unique Unicast Address instead.
+    ///
+    /// - parameter element: The local Element to get sequence number of.
+    /// - returns: The next sequence number, or `nil` if the Element does not belong
+    ///            to the local Element or the mesh network does not exist.
+    func getSequenceNumber(ofLocalElement element: Element) -> UInt32? {
+        guard let meshNetwork = meshNetwork,
+              element.parentNode?.isLocalProvisioner == true,
+              let defaults = UserDefaults(suiteName: meshNetwork.uuid.uuidString) else {
+            return nil
+        }
+        return UInt32(defaults.integer(forKey: "S\(element.unicastAddress.hex)"))
+    }
+    
+}
+
 // MARK: - Save / Load
 
 public extension MeshNetworkManager {
@@ -658,8 +732,15 @@ public extension MeshNetworkManager {
             decoder.dateDecodingStrategy = .iso8601
             
             meshData = try decoder.decode(MeshData.self, from: data)
-            guard let _ = meshData.meshNetwork else {
+            guard let meshNetwork = meshData.meshNetwork else {
                 return false
+            }
+            
+            // Restore the last IV Index. The last IV Index is stored since version 2.2.2.
+            if let defaults = UserDefaults(suiteName: meshNetwork.uuid.uuidString),
+               let map = defaults.object(forKey: IvIndex.indexKey) as? [String : Any],
+               let ivIndex = IvIndex.fromMap(map) {
+                meshNetwork.ivIndex = ivIndex
             }
             
             networkManager = NetworkManager(self)
@@ -673,6 +754,7 @@ public extension MeshNetworkManager {
                              withAddress: legacyState.provisionerUnicastAddress)
             let provisionerNode = network.localProvisioner!.node!
             provisionerNode.defaultTTL = legacyState.provisionerDefaultTtl
+            network.ivIndex = legacyState.ivIndex
             network.networkKeys.removeAll()
             let networkKey = legacyState.networkKey
             network.add(networkKey: networkKey)
@@ -751,6 +833,14 @@ public extension MeshNetworkManager {
         let meshNetwork = try decoder.decode(MeshNetwork.self, from: data)
         
         meshData.meshNetwork = meshNetwork
+
+        // Restore the last IV Index. The last IV Index is stored since version 2.2.2.
+        if let defaults = UserDefaults(suiteName: meshNetwork.uuid.uuidString),
+           let map = defaults.object(forKey: IvIndex.indexKey) as? [String : Any],
+           let ivIndex = IvIndex.fromMap(map) {
+            meshNetwork.ivIndex = ivIndex
+        }
+        
         networkManager = NetworkManager(self)
         proxyFilter = ProxyFilter(self)
         return meshNetwork

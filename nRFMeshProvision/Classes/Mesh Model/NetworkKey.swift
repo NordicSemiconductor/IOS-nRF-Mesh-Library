@@ -108,8 +108,6 @@ public class NetworkKey: Key, Codable {
     /// The Network ID derived from the old Network Key. This identifier
     /// is public information. It is set when `oldKey` is set.
     public private(set) var oldNetworkId: Data?
-    /// The IV Index for this subnetwork.
-    internal var ivIndex: IvIndex
     /// Network Key derivaties.
     internal private(set) var keys: NetworkKeyDerivaties!
     /// Network Key derivaties.
@@ -135,10 +133,6 @@ public class NetworkKey: Key, Codable {
         self.key         = key
         self.minSecurity = .high
         self.timestamp   = Date()
-        
-        // The IV Index is not a shared in the JSON, as it may change.
-        // The current value will be obtained from the Security Beacon.
-        ivIndex = IvIndex()
         
         regenerateKeyDerivaties()
     }
@@ -205,10 +199,6 @@ public class NetworkKey: Key, Codable {
         phase = try container.decode(KeyRefreshPhase.self, forKey: .phase)
         minSecurity = try container.decode(Security.self, forKey: .minSecurity)
         timestamp = try container.decode(Date.self, forKey: .timestamp)
-        
-        // The IV Index is not a shared in the JSON, as it may change.
-        // The current value will be obtained from the Security Beacon.
-        ivIndex = IvIndex()
         
         regenerateKeyDerivaties()
     }

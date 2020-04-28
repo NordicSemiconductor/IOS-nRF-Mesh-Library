@@ -58,17 +58,37 @@ public extension MeshNetwork {
     }
     
     /// Returns the next available Unicast Address from the Provisioner's range
+    /// that can be assigned to a new node with 1 element. The element will be
+    /// identified by the returned address.
+    ///
+    /// - parameters:
+    ///   - offset: Minimum Unicast Address to be assigned.
+    ///   - provisioner:   The Provisioner that is creating the node.
+    ///                    The address will be taken from it's allocated range.
+    /// - returns: The next available Unicast Address that can be assigned to a node,
+    ///            or `nil`, if there are no more available addresses in the allocated range.
+    func nextAvailableUnicastAddress(startingFrom offset: Address = Address.minUnicastAddress,
+                                     using provisioner: Provisioner) -> Address? {
+        return nextAvailableUnicastAddress(startingFrom: offset, for: 1,
+                                           elementsUsing: provisioner)
+    }
+    
+    /// Returns the next available Unicast Address from the Provisioner's range
     /// that can be assigned to a new node with given number of elements.
     /// The 0'th element is identified by the node's Unicast Address.
     /// Each following element is identified by a subsequent Unicast Address.
     ///
-    /// - parameter elementsCount: The number of node's elements. Each element will be
-    ///                            identified by a subsequent Unicast Address.
-    /// - parameter provisioner:   The Provisioner that is creating the node.
-    ///                            The address will be taken from it's allocated range.
+    /// - parameters:
+    ///   - offset: Minimum Unicast Address to be assigned.
+    ///   - elementsCount: The number of Node's elements. Each element will be
+    ///                    identified by a subsequent Unicast Address.
+    ///   - provisioner:   The Provisioner that is creating the node.
+    ///                    The address will be taken from it's allocated range.
     /// - returns: The next available Unicast Address that can be assigned to a node,
     ///            or `nil`, if there are no more available addresses in the allocated range.
-    func nextAvailableUnicastAddress(for elementsCount: UInt8, elementsUsing provisioner: Provisioner) -> Address? {
+    func nextAvailableUnicastAddress(startingFrom offset: Address = Address.minUnicastAddress,
+                                     for elementsCount: UInt8,
+                                     elementsUsing provisioner: Provisioner) -> Address? {
         let sortedNodes = nodes.sorted { $0.unicastAddress < $1.unicastAddress }
         
         // Iterate through all nodes just once, while iterating over ranges.
@@ -76,6 +96,10 @@ public extension MeshNetwork {
         for range in provisioner.allocatedUnicastRange {
             // Start from the beginning of the current range.
             var address = range.lowAddress
+            
+            if range.contains(offset) && address < offset {
+                address = offset
+            }
             
             // Iterate through nodes that weren't checked yet.
             let currentIndex = index

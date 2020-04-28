@@ -48,7 +48,13 @@ internal struct MeshState: Codable {
     private let appKeys          : [[String: Data]]
     
     var provisioner: Provisioner {
-        return Provisioner(name: UIDevice.current.name)
+        #if os(OSX)
+        let provisionerName = Host.current().localizedName ?? "OSX"
+        #else
+        let provisionerName = UIDevice.current.name
+        #endif
+        
+        return Provisioner(name: provisionerName)
     }
     
     var provisionerUnicastAddress: Address {
@@ -59,11 +65,14 @@ internal struct MeshState: Codable {
         return globalTTL[0]
     }
     
+    var ivIndex: IvIndex {
+        return IvIndex(index: IVIndex.asUInt32,
+                       updateActive: flags[0] & 0x40 == 0x40)
+    }
+    
     var networkKey: NetworkKey {
         let index: KeyIndex = keyIndex.asUInt16 & 0x0FFF
         let networkKey = try! NetworkKey(name: "Primary Network Key", index: index, key: netKey)
-        networkKey.ivIndex.index = IVIndex.asUInt32
-        networkKey.ivIndex.updateActive = flags[0] & 0x40 == 0x40
         networkKey.phase = flags[0] & 0x80 == 0x80 ? .finalizing : .normalOperation
         return networkKey
     }

@@ -37,6 +37,7 @@ internal struct SegmentedAccessMessage: SegmentedMessage {
     let source: Address
     let destination: Address
     let networkKey: NetworkKey
+    let ivIndex: UInt32
     
     /// The Application Key identifier.
     /// This field is set to `nil` if the message is signed with a
@@ -99,6 +100,7 @@ internal struct SegmentedAccessMessage: SegmentedMessage {
         source = networkPdu.source
         destination = networkPdu.destination
         networkKey = networkPdu.networkKey
+        ivIndex = networkPdu.ivIndex
         message = nil
         localElement = nil
         userInitiated = false
@@ -117,6 +119,7 @@ internal struct SegmentedAccessMessage: SegmentedMessage {
         self.source = pdu.source
         self.destination = pdu.destination
         self.networkKey = networkKey
+        self.ivIndex = pdu.ivIndex
         self.transportMicSize = pdu.transportMicSize
         self.sequence = pdu.sequence
         self.sequenceZero = UInt16(pdu.sequence & 0x1FFF)

@@ -73,6 +73,31 @@ class AssigningUnicastAddress: XCTestCase {
         XCTAssertEqual(address!, 100)
     }
     
+    func testAssigningUnicastAddress_offset() {
+        let meshNetwork = MeshNetwork(name: "Test network")
+        XCTAssertNoThrow(try meshNetwork.add(node: Node(name: "Node 0", unicastAddress: 1, elements: 9)))
+        XCTAssertNoThrow(try meshNetwork.add(node: Node(name: "Node 1", unicastAddress: 10, elements: 9)))
+        XCTAssertNoThrow(try meshNetwork.add(node: Node(name: "Node 2", unicastAddress: 20, elements: 9)))
+        XCTAssertNoThrow(try meshNetwork.add(node: Node(name: "Node 3", unicastAddress: 30, elements: 9)))
+        XCTAssertNoThrow(try meshNetwork.add(node: Node(name: "Node 4", unicastAddress: 115, elements: 2)))
+        
+        let provisioner = Provisioner(name: "Test provisioner",
+                                      allocatedUnicastRange: [
+                                        AddressRange(100...200)
+                                      ],
+                                      allocatedGroupRange: [], allocatedSceneRange: [])
+        
+        let address1 = meshNetwork.nextAvailableUnicastAddress(startingFrom: 110, for: 3, elementsUsing: provisioner)
+        
+        XCTAssertNotNil(address1)
+        XCTAssertEqual(address1!, 110)
+        
+        let address2 = meshNetwork.nextAvailableUnicastAddress(startingFrom: 110, for: 6, elementsUsing: provisioner)
+        
+        XCTAssertNotNil(address2)
+        XCTAssertEqual(address2!, 117)
+    }
+    
     func testAssigningUnicastAddress_complex() {
         let meshNetwork = MeshNetwork(name: "Test network")
         XCTAssertNoThrow(try meshNetwork.add(node: Node(name: "Node 0", unicastAddress: 1, elements: 9)))
@@ -116,6 +141,28 @@ class AssigningUnicastAddress: XCTestCase {
         XCTAssertEqual(address!, 78)
     }
     
+    func testAssigningUnicastAddress_one() {
+        let meshNetwork = MeshNetwork(name: "Test network")
+        XCTAssertNoThrow(try meshNetwork.add(node: Node(name: "Node 0", unicastAddress: 1, elements: 10)))
+        XCTAssertNoThrow(try meshNetwork.add(node: Node(name: "Node 1", unicastAddress: 12, elements: 18)))
+        XCTAssertNoThrow(try meshNetwork.add(node: Node(name: "Node 2", unicastAddress: 30, elements: 11)))
+        XCTAssertNoThrow(try meshNetwork.add(node: Node(name: "Node 3", unicastAddress: 55, elements: 10)))
+        XCTAssertNoThrow(try meshNetwork.add(node: Node(name: "Node 4", unicastAddress: 65, elements: 5)))
+        XCTAssertNoThrow(try meshNetwork.add(node: Node(name: "Node 5", unicastAddress: 73, elements: 5)))
+        
+        let provisioner = Provisioner(name: "Test provisioner",
+                                      allocatedUnicastRange: [
+                                        AddressRange(8...38),
+                                        AddressRange(50...80)
+                                      ],
+                                      allocatedGroupRange: [], allocatedSceneRange: [])
+        
+        let address = meshNetwork.nextAvailableUnicastAddress(for: 1, elementsUsing: provisioner)
+        
+        XCTAssertNotNil(address)
+        XCTAssertEqual(address!, 11)
+    }
+    
     func testAssigningUnicastAddress_none() {
         let meshNetwork = MeshNetwork(name: "Test network")
         XCTAssertNoThrow(try meshNetwork.add(node: Node(name: "Node 0", unicastAddress: 1, elements: 10)))
@@ -137,7 +184,7 @@ class AssigningUnicastAddress: XCTestCase {
         XCTAssertNil(address)
     }
     
-    func testAssigningUnicastAdderessRanges() {
+    func testAssigningUnicastAddressRanges() {
         let meshNetwork = MeshNetwork(name: "Test network")
         XCTAssertNoThrow(try meshNetwork.add(provisioner:
             Provisioner(name: "P0",
@@ -174,7 +221,7 @@ class AssigningUnicastAddress: XCTestCase {
         XCTAssertEqual(newRangeMax?.upperBound, 0x5FFF)
     }
     
-    func testAssigningUnicastAdderessRanges_none() {
+    func testAssigningUnicastAddressRanges_none() {
         let meshNetwork = MeshNetwork(name: "Test network")
         XCTAssertNoThrow(try meshNetwork.add(provisioner:
             Provisioner(name: "P0",
@@ -184,5 +231,37 @@ class AssigningUnicastAddress: XCTestCase {
         
         let newRange0 = meshNetwork.nextAvailableUnicastAddressRange(ofSize: 1)
         XCTAssertNil(newRange0)
+    }
+    
+    func testAssigningUnicastAddressRanges_boundaries() {
+        let meshNetwork = MeshNetwork(name: "Test network")
+        let provisioner = Provisioner(name: "P0",
+                                      allocatedUnicastRange: [AddressRange(0x0001...0x0001)],
+                                      allocatedGroupRange: [],
+                                      allocatedSceneRange: [])
+        XCTAssertNoThrow(try meshNetwork.add(provisioner: provisioner, withAddress: nil))
+        
+        let newRangeNil = meshNetwork.nextAvailableUnicastAddressRange(ofSize: 0)
+        XCTAssertNil(newRangeNil)
+        
+        let newRange0 = meshNetwork.nextAvailableUnicastAddressRange(ofSize: 1)
+        XCTAssertNotNil(newRange0)
+        XCTAssertEqual(newRange0?.lowerBound, 0x0002)
+        XCTAssertEqual(newRange0?.upperBound, 0x0002)
+        
+        let newRange1 = meshNetwork.nextAvailableUnicastAddressRange(ofSize: 2)
+        XCTAssertNotNil(newRange1)
+        XCTAssertEqual(newRange1?.lowerBound, 0x0002)
+        XCTAssertEqual(newRange1?.upperBound, 0x0003)
+        
+        let newRange2 = meshNetwork.nextAvailableUnicastAddressRange()
+        XCTAssertNotNil(newRange2)
+        XCTAssertEqual(newRange2?.lowerBound, 0x0002)
+        XCTAssertEqual(newRange2?.upperBound, Address.maxUnicastAddress)
+        
+        let newRange3 = meshNetwork.nextAvailableUnicastAddressRange(ofSize: 0xFFFF)
+        XCTAssertNotNil(newRange3)
+        XCTAssertEqual(newRange3?.lowerBound, 0x0002)
+        XCTAssertEqual(newRange3?.upperBound, Address.maxUnicastAddress)
     }
 }

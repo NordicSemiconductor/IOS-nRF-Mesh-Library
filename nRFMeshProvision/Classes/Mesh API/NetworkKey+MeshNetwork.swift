@@ -40,6 +40,12 @@ public extension NetworkKey {
         return index == 0
     }
     
+    /// Returns whether the Network Key is a secondary Network Key,
+    /// that is the Key Index is NOT equal to 0.
+    var isSecondary: Bool {
+        return !isPrimary
+    }
+    
     /// Return whether the Network Key is used in the given mesh network.
     ///
     /// A `true` is returned when the Network Key is added to Network Keys

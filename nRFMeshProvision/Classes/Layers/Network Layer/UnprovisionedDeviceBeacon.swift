@@ -90,7 +90,7 @@ internal extension UnprovisionedDeviceBeacon {
 extension UnprovisionedDeviceBeacon: CustomDebugStringConvertible {
     
     var debugDescription: String {
-        return "Unprovisioned Device Beacon (UUID: \(deviceUuid.uuidString), OOB Info: \(oob), URI hash: \(uriHash?.hex ?? "None"))"
+        return "Unprovisioned Device beacon (UUID: \(deviceUuid.uuidString), OOB Info: \(oob), URI hash: \(uriHash?.hex ?? "None"))"
     }
     
 }

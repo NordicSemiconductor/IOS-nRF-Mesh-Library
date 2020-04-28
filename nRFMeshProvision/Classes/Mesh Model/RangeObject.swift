@@ -34,11 +34,11 @@ public class RangeObject {
     
     public private(set) var range: ClosedRange<UInt16>
     
-    public var lowerBound: Address {
+    public var lowerBound: UInt16 {
         return range.lowerBound
     }
     
-    public var upperBound: Address {
+    public var upperBound: UInt16 {
         return range.upperBound
     }
     

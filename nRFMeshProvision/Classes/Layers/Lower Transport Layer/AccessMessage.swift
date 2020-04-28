@@ -34,6 +34,7 @@ internal struct AccessMessage: LowerTransportPdu {
     let source: Address
     let destination: Address
     let networkKey: NetworkKey
+    let ivIndex: UInt32
     
     /// 6-bit Application Key identifier. This field is set to `nil`
     /// if the message is signed with a Device Key instead.
@@ -77,6 +78,7 @@ internal struct AccessMessage: LowerTransportPdu {
         transportMicSize = 4
         sequence = networkPdu.sequence
         networkKey = networkPdu.networkKey
+        ivIndex = networkPdu.ivIndex
         upperTransportPdu = data.advanced(by: 1)
         
         source = networkPdu.source
@@ -95,6 +97,7 @@ internal struct AccessMessage: LowerTransportPdu {
         destination = segment.destination
         sequence = segment.sequence
         networkKey = segment.networkKey
+        ivIndex = segment.ivIndex
         
         // Segments are already sorted by `segmentOffset`.
         upperTransportPdu = segments.reduce(Data()) {
@@ -106,7 +109,8 @@ internal struct AccessMessage: LowerTransportPdu {
     ///
     /// - parameter pdu: The Upper Transport PDU.
     /// - parameter networkKey: The Network Key to encrypt the PCU with.
-    init(fromUnsegmentedUpperTransportPdu pdu: UpperTransportPdu, usingNetworkKey networkKey: NetworkKey) {
+    init(fromUnsegmentedUpperTransportPdu pdu: UpperTransportPdu,
+         usingNetworkKey networkKey: NetworkKey) {
         self.aid = pdu.aid
         self.upperTransportPdu = pdu.transportPdu
         self.transportMicSize = 4
@@ -114,6 +118,7 @@ internal struct AccessMessage: LowerTransportPdu {
         self.destination = pdu.destination
         self.sequence = pdu.sequence
         self.networkKey = networkKey
+        self.ivIndex = pdu.ivIndex
     }
 }
 

@@ -48,7 +48,7 @@ internal class LowerTransportLayer {
     /// The storage for keeping sequence numbers. Each mesh network (with different UUID)
     /// has a unique storage, which can be reloaded when the network is imported after it
     /// was used before.
-    let defaults: UserDefaults
+    private let defaults: UserDefaults
     
     /// The map of incomplete received segments. Every time a Segmented Message is received
     /// it is added to the map to an ordered array. When all segments are received
@@ -57,7 +57,7 @@ internal class LowerTransportLayer {
     /// The key consists of 16 bits of source address in 2 most significant bytes
     /// and `sequenceZero` field in 13 least significant bits.
     /// See `UInt32(keyFor:sequenceZero)` below.
-    var incompleteSegments: [UInt32 : [SegmentedMessage?]]
+    private var incompleteSegments: [UInt32 : [SegmentedMessage?]]
     /// This map contains Segment Acknowlegment Messages of completed messages.
     /// It is used when a complete Segmented Message has been received and the
     /// ACK has been sent but failed to reach the source Node.
@@ -67,7 +67,7 @@ internal class LowerTransportLayer {
     /// acknowledged message, it can immediatelly send the ACK again.
     ///
     /// An item is removed when a next message has been received from the same Node.
-    var acknowledgments: [Address : SegmentAcknowledgmentMessage]
+    private var acknowledgments: [Address : SegmentAcknowledgmentMessage]
     /// The map of active timers. Every message has `defaultIncompleteTimerInterval`
     /// seconds to be completed (timer resets when next segment was received).
     /// After that time the segments are discarded.
@@ -75,7 +75,7 @@ internal class LowerTransportLayer {
     /// The key consists of 16 bits of source address in 2 most significant bytes
     /// and `sequenceZero` field in 13 least significant bits.
     /// See `UInt32(keyFor:sequenceZero)` below.
-    var incompleteTimers: [UInt32 : BackgroundTimer]
+    private var incompleteTimers: [UInt32 : BackgroundTimer]
     /// The map of acknowledgment timers. After receiving a segment targeting
     /// any of the Unicast Addresses of one of the Elements of the local Node, a
     /// timer is started that will send the Segment Acknowledgment Message for
@@ -85,23 +85,23 @@ internal class LowerTransportLayer {
     /// The key consists of 16 bits of source address in 2 most significant bytes
     /// and `sequenceZero` field in 13 least significant bits.
     /// See `UInt32(keyFor:sequenceZero)` below.
-    var acknowledgmentTimers: [UInt32 : BackgroundTimer]
+    private var acknowledgmentTimers: [UInt32 : BackgroundTimer]
     
     /// The map of outgoing segmented messages.
     ///
     /// The key is the `sequenceZero` of the message.
-    var outgoingSegments: [UInt16: [SegmentedMessage?]]
+    private var outgoingSegments: [UInt16: [SegmentedMessage?]]
     /// The map of segment transmission timers. A segment transmission timer
     /// for a Segmented Message with `sequenceZero` is started whenever such
     /// message is sent to a Unicast Address. After the timer expires, the
     /// layer will resend all non-confirmed segments and reset the timer.
     ///
     /// The key is the `sequenceZero` of the message.
-    var segmentTransmissionTimers: [UInt16 : BackgroundTimer]
+    private var segmentTransmissionTimers: [UInt16 : BackgroundTimer]
     /// The initial TTL values.
     ///
     /// The key is the `sequenceZero` of the message.
-    var segmentTtl: [UInt16 : UInt8]
+    private var segmentTtl: [UInt16 : UInt8]
     
     init(_ networkManager: NetworkManager) {
         self.networkManager = networkManager
@@ -299,13 +299,9 @@ private extension LowerTransportLayer {
             return true
         }
         let sequence = networkPdu.messageSequence
+        let receivedSeqAuth = (UInt64(networkPdu.ivIndex) << 24) | UInt64(sequence)
         
-        let newSource = defaults.object(forKey: networkPdu.source.hex) == nil
-        if !newSource {
-            let lastSequence = defaults.integer(forKey: networkPdu.source.hex)
-            let localSeqAuth = (UInt64(networkPdu.networkKey.ivIndex.index) << 24) | UInt64(lastSequence)
-            let receivedSeqAuth = (UInt64(networkPdu.networkKey.ivIndex.index) << 24) | UInt64(sequence)
-            
+        if let localSeqAuth = defaults.object(forKey: networkPdu.source.hex) as? NSNumber {
             // In general, the SeqAuth of the received message must be greater
             // than SeqAuth of any previously received message from the same source.
             // However, for SAR (Segmentation and Reassembly) sessions, it is
@@ -320,15 +316,15 @@ private extension LowerTransportLayer {
                 reassemblyInProgress = incompleteSegments[key] != nil ||
                                        acknowledgments[networkPdu.source]?.sequenceZero == sequenceZero
             }
-            guard receivedSeqAuth > localSeqAuth ||
-                  (reassemblyInProgress && receivedSeqAuth == localSeqAuth) else {
+            guard receivedSeqAuth > localSeqAuth.uint64Value ||
+                  (reassemblyInProgress && receivedSeqAuth == localSeqAuth.uint64Value) else {
                 // Ignore that message.
                 logger?.w(.lowerTransport, "Discarding packet (seqAuth: \(receivedSeqAuth), expected > \(localSeqAuth))")
                 return false
             }
         }
         // SeqAuth is valid, save the new sequence authentication value.
-        defaults.set(sequence, forKey: networkPdu.source.hex)
+        defaults.set(NSNumber(value: receivedSeqAuth), forKey: networkPdu.source.hex)
         return true
     }
     

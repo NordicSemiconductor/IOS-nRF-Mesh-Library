@@ -76,9 +76,9 @@ class ProxyViewController: ProgressViewController, Editable {
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch section {
-        case 0:
-            return 2
-        case 1:
+        case IndexPath.statusSection:
+            return 3
+        case IndexPath.proxyTypeSection:
             return 1
         default:
             return MeshNetworkManager.instance.proxyFilter?.addresses.count ?? 0
@@ -122,6 +122,13 @@ class ProxyViewController: ProgressViewController, Editable {
             cell.selectionStyle = bearer.isConnectionModeAutomatic ? .none : .default
             return cell
         }
+        if indexPath == .action {
+            let cell = tableView.dequeueReusableCell(withIdentifier: "disconnect", for: indexPath) as! DisconnectCell
+            let bearer = MeshNetworkManager.bearer!
+            cell.disconnectButton.isEnabled = bearer.isOpen &&
+                                             !bearer.isConnectionModeAutomatic
+            return cell
+        }
         if indexPath == .control {
             let cell = tableView.dequeueReusableCell(withIdentifier: "type", for: indexPath) as! FilterTypeCell
             cell.delegate = self
@@ -163,12 +170,13 @@ extension ProxyViewController: BearerDelegate {
     
     func bearerDidOpen(_ bearer: Bearer) {
         addButton.isEnabled = true
-        tableView.reloadRows(at: [.status, .control], with: .automatic)
+        tableView.reloadRows(at: [.status, .action, .control], with: .automatic)
     }
     
     func bearer(_ bearer: Bearer, didClose error: Error?) {
         addButton.isEnabled = false
         MeshNetworkManager.instance.proxyFilter?.clear()
+        tableView.reloadRows(at: [.status, .action, .control], with: .automatic)
     }
     
 }
@@ -176,7 +184,7 @@ extension ProxyViewController: BearerDelegate {
 extension ProxyViewController: ConnectionModeDelegate {
     
     func connectionModeDidChange(automatic: Bool) {
-        tableView.reloadRows(at: [.status], with: .automatic)
+        tableView.reloadRows(at: [.status, .action], with: .automatic)
     }
     
 }
@@ -241,6 +249,7 @@ private extension IndexPath {
     
     static let mode    = IndexPath(row: 0, section: IndexPath.statusSection)
     static let status  = IndexPath(row: 1, section: IndexPath.statusSection)
+    static let action  = IndexPath(row: 2, section: IndexPath.statusSection)
     static let control = IndexPath(row: 0, section: IndexPath.proxyTypeSection)
 }
 

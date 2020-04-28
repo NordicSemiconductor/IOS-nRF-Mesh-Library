@@ -100,7 +100,8 @@ internal class UpperTransportLayer {
         let networkKey = keySet.networkKey
         
         let pdu = UpperTransportPdu(fromAccessPdu: accessPdu,
-                                    usingKeySet: keySet, sequence: sequence)
+                                    usingKeySet: keySet, sequence: sequence,
+                                    andIvIndex: meshNetwork.ivIndex)
         
         logger?.i(.upperTransport, "Sending \(pdu) encrypted using key: \(keySet)")
         

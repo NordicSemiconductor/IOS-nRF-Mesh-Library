@@ -6,9 +6,10 @@
 # To learn more about a Podspec see http://guides.cocoapods.org/syntax/podspec.html
 #
 
+
 Pod::Spec.new do |s|
   s.name             = 'nRFMeshProvision'
-  s.version          = '2.2.1'
+  s.version          = '2.2.2'
   s.summary          = 'A Bluetooth Mesh library'
   s.description      = <<-DESC
   nRF Mesh is a Bluetooth Mesh compliant library that has many features such as provisioning, configuration and control of Bluetooth Mesh compliant nodes.
@@ -18,10 +19,10 @@ Pod::Spec.new do |s|
   s.author           = { 'Aleksander Nowakowski' => 'aleksander.nowakowski@nordicsemi.no' }
   s.source           = { :git => 'https://github.com/NordicSemiconductor/IOS-nRF-Mesh-Library.git', :tag => s.version.to_s }
   s.social_media_url = 'https://twitter.com/nordictweets'
-  s.platform         = :ios
+  s.ios.deployment_target  = '10.0'
+  s.osx.deployment_target  = '10.15'  
   s.static_framework = true
-  s.swift_version    = '5.1'
-  s.ios.deployment_target = '10.0'
+  s.swift_versions   = ['4.2', '5.0', '5.1', '5.2']
   s.source_files = 'nRFMeshProvision/Classes/**/*'
   s.dependency 'OpenSSL-Universal', '= 1.0.2.19'
   s.frameworks = 'CoreBluetooth'

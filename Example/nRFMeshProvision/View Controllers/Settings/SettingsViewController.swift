@@ -40,6 +40,10 @@ class SettingsViewController: UITableViewController {
     @IBOutlet weak var provisionersLabel: UILabel!
     @IBOutlet weak var networkKeysLabel: UILabel!
     @IBOutlet weak var appKeysLabel: UILabel!
+    @IBOutlet weak var testModeSwitch: UISwitch!
+    @IBAction func testModeDidChange(_ sender: UISwitch) {
+        MeshNetworkManager.instance.ivUpdateTestMode = sender.isOn
+    }
     
     @IBOutlet weak var resetNetworkButton: UIButton!
     
@@ -97,6 +101,13 @@ class SettingsViewController: UITableViewController {
         }
     }
     
+    override func tableView(_ tableView: UITableView,
+                            accessoryButtonTappedForRowWith indexPath: IndexPath) {
+        if indexPath.isIvUpdateTestMode {
+            presentAlert(title: "Info", message: "IV Update test mode allows to transition to the subsequent IV Index without having to wait at least 96 hours. The transition will be done upon receving a valid Secure Network beacon.")
+        }
+    }
+    
 }
 
 private extension SettingsViewController {
@@ -148,6 +159,8 @@ private extension SettingsViewController {
     /// Resets all network settings to default values.
     func resetNetwork() {
         (UIApplication.shared.delegate as! AppDelegate).createNewMeshNetwork()
+        MeshNetworkManager.instance.ivUpdateTestMode = false
+        testModeSwitch.setOn(false, animated: true)
         
         if MeshNetworkManager.instance.save() {
             reload()
@@ -197,6 +210,8 @@ private extension SettingsViewController {
         provisionersLabel.text = "\(meshNetwork.provisioners.count)"
         networkKeysLabel.text  = "\(meshNetwork.networkKeys.count)"
         appKeysLabel.text      = "\(meshNetwork.applicationKeys.count)"
+        MeshNetworkManager.instance.ivUpdateTestMode = false
+        testModeSwitch.setOn(false, animated: true)
         
         // All tabs should be reset to the root view controller.
         parent?.parent?.children.forEach {
@@ -271,22 +286,27 @@ private extension IndexPath {
     static let actionsSection = 2
     static let aboutSection   = 3
     
-    /// Returns whether the IndexPath point to the mesh network name row.
+    /// Returns whether the IndexPath points to the mesh network name row.
     var isNetworkName: Bool {
         return section == IndexPath.nameSection && row == 0
     }
     
-    /// Returns whether the IndexPath point to the network resetting option.
+    /// Returns whether the IndexPath points to the IV Update Test Mode switch row.
+    var isIvUpdateTestMode: Bool {
+        return section == IndexPath.networkSection && row == 3
+    }
+    
+    /// Returns whether the IndexPath points to the network resetting option.
     var isResetNetwork: Bool {
         return section == IndexPath.actionsSection && row == 0
     }
     
-    /// Returns whether the IndexPath point to the Source Code link.
+    /// Returns whether the IndexPath points to the Source Code link.
     var isLinkToGitHub: Bool {
         return section == IndexPath.aboutSection && row == 2
     }
     
-    /// Returns whether the IndexPath point to the Issues on GitHub.
+    /// Returns whether the IndexPath points to the Issues on GitHub.
     var isLinkToIssues: Bool {
         return section == IndexPath.aboutSection && row == 3
     }

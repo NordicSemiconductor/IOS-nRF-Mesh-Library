@@ -134,7 +134,7 @@ public class Element: Codable {
     public required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         name  = try container.decodeIfPresent(String.self, forKey: .name)
-        index  = try container.decode(UInt8.self, forKey: .index)
+        index = try container.decode(UInt8.self, forKey: .index)
         let locationAsString = try container.decode(String.self, forKey: .location)
         guard let rawValue = UInt16(hex: locationAsString) else {
             throw DecodingError.dataCorruptedError(forKey: .location, in: container,

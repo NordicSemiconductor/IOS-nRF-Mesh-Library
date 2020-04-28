@@ -501,7 +501,9 @@ internal extension Node {
                     newModel.copy(from: oldModel)
                     // If at least one Model matches, assume the Element didn't
                     // change much and copy the name of it.
-                    newElement.name = oldElement.name
+                    if let oldName = oldElement.name {
+                        newElement.name = oldName
+                    }
                 }
             }
         }

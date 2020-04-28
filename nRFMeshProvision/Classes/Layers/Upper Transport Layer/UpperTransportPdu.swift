@@ -48,6 +48,8 @@ internal struct UpperTransportPdu {
     let aid: UInt8?
     /// The sequence number used to encode this message.
     let sequence: UInt32
+    /// The IV Index used to encode this message.
+    let ivIndex: UInt32
     /// The size of Transport MIC: 4 or 8 bytes.
     let transportMicSize: UInt8
     /// The Access Layer data.
@@ -73,7 +75,7 @@ internal struct UpperTransportPdu {
         let nonce = Data([type, aszmic << 7]) + seq
             + accessMessage.source.bigEndian
             + accessMessage.destination.bigEndian
-            + accessMessage.networkKey.ivIndex.index.bigEndian
+            + accessMessage.ivIndex.bigEndian
         
         guard let decryptedData = OpenSSLHelper().calculateDecryptedCCM(encryptedData,
                   withKey: key, nonce: nonce, andMIC: mic,
@@ -87,19 +89,21 @@ internal struct UpperTransportPdu {
         transportPdu = accessMessage.upperTransportPdu
         accessPdu = decryptedData
         sequence = accessMessage.sequence
+        ivIndex = accessMessage.ivIndex
         message = nil
         localElement = nil
         userInitiated = false
     }
     
-    init(fromAccessPdu pdu: AccessPdu,
-         usingKeySet keySet: KeySet, sequence: UInt32) {
+    init(fromAccessPdu pdu: AccessPdu, usingKeySet keySet: KeySet,
+         sequence: UInt32, andIvIndex ivIndex: IvIndex) {
         self.message = pdu.message
         self.localElement = pdu.localElement
         self.userInitiated = pdu.userInitiated
         self.source = pdu.localElement!.unicastAddress
         self.destination = pdu.destination.address
         self.sequence = sequence
+        self.ivIndex = ivIndex.transmitIndex
         let accessPdu = pdu.accessPdu
         self.accessPdu = accessPdu
         self.aid = keySet.aid
@@ -114,11 +118,10 @@ internal struct UpperTransportPdu {
         // SEQ is 24-bit value, in Big Endian.
         let seq = (Data() + sequence.bigEndian).dropFirst()
         
-        let ivIndex = keySet.networkKey.ivIndex
         let nonce = Data([type, aszmic << 7]) + seq
-            + source.bigEndian
-            + destination.bigEndian
-            + ivIndex.index.bigEndian
+            + self.source.bigEndian
+            + self.destination.bigEndian
+            + self.ivIndex.bigEndian
         
         self.transportMicSize = aszmic == 0 ? 4 : 8
         self.transportPdu = OpenSSLHelper().calculateCCM(accessPdu, withKey: keySet.accessKey, nonce: nonce,
@@ -126,7 +129,7 @@ internal struct UpperTransportPdu {
                                                          withAdditionalData: pdu.destination.virtualLabel?.data)
     }
     
-    /// This method tries to decode teh Access Message using a matching Application Key
+    /// This method tries to decode the Access Message using a matching Application Key
     /// or the node's Device Key, based onthe `aid` field value.
     ///
     /// - parameter accessMessage: The Lower Transport Layer Access Message received.
