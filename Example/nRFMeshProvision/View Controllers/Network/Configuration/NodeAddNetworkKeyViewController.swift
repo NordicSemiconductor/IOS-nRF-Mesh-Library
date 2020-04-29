@@ -68,7 +68,9 @@ class NodeAddNetworkKeyViewController: ProgressViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        tableView.setEmptyView(title: "No keys available", message: "Go to Settings to create a new key.", messageImage: #imageLiteral(resourceName: "baseline-key"))
+        tableView.setEmptyView(title: "No keys available",
+                               message: "Go to Settings to create a new key.",
+                               messageImage: #imageLiteral(resourceName: "baseline-key"))
         
         MeshNetworkManager.instance.delegate = self
         

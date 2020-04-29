@@ -62,6 +62,9 @@ class ControlViewController: ProgressCollectionViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         collectionView.delegate = self
+        collectionView.setEmptyView(title: "No local node",
+                                    message: "The local provisioner has no\nunicast address assigned.\n\nGo to Settings to set the address.",
+                                    messageImage: #imageLiteral(resourceName: "baseline-bulb"))
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -84,6 +87,12 @@ class ControlViewController: ProgressCollectionViewController {
             }
         }
         collectionView.reloadData()
+        
+        if sections.isEmpty {
+            collectionView.showEmptyView()
+        } else {
+            collectionView.hideEmptyView()
+        }
     }
     
     override func viewDidAppear(_ animated: Bool) {

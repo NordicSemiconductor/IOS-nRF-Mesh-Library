@@ -37,7 +37,9 @@ class ProvisionersViewController: UITableViewController, Editable {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        tableView.setEmptyView(title: "No provisioners", message: "Click + to add a new one.", messageImage: #imageLiteral(resourceName: "baseline-security"))
+        tableView.setEmptyView(title: "No provisioners",
+                               message: "Click + to add a new one.",
+                               messageImage: #imageLiteral(resourceName: "baseline-security"))
     }
     
     override func viewDidAppear(_ animated: Bool) {

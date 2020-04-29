@@ -61,7 +61,9 @@ class ModelBindAppKeyViewController: ProgressViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        tableView.setEmptyView(title: "No keys available", message: "Add a new key to the node first.", messageImage: #imageLiteral(resourceName: "baseline-key"))
+        tableView.setEmptyView(title: "No keys available",
+                               message: "Add a new key to the node first.",
+                               messageImage: #imageLiteral(resourceName: "baseline-key"))
         
         MeshNetworkManager.instance.delegate = self
         

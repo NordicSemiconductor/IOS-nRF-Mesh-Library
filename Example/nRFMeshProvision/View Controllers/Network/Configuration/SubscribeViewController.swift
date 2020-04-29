@@ -59,7 +59,9 @@ class SubscribeViewController: ProgressViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        tableView.setEmptyView(title: "No groups", message: "Go to Groups to create a group.", messageImage: #imageLiteral(resourceName: "baseline-groups"))
+        tableView.setEmptyView(title: "No groups",
+                               message: "Go to Groups to create a group.",
+                               messageImage: #imageLiteral(resourceName: "baseline-groups"))
         
         MeshNetworkManager.instance.delegate = self
         

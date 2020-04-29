@@ -74,7 +74,9 @@ class NetworkViewController: UITableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        tableView.setEmptyView(title: "No Nodes", message: "Click + to provision a new device.", messageImage: #imageLiteral(resourceName: "baseline-network"))
+        tableView.setEmptyView(title: "No Nodes",
+                               message: "Click + to provision a new device.",
+                               messageImage: #imageLiteral(resourceName: "baseline-network"))
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -121,7 +123,6 @@ class NetworkViewController: UITableViewController {
             destination.node = sender as? Node
         case "open":
             let cell = sender as! NodeViewCell
-            
             let destination = segue.destination as! ConfigurationViewController
             destination.node = cell.node
         default:

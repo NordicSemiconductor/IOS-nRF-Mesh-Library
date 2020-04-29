@@ -37,7 +37,9 @@ class GroupsViewController: UITableViewController, Editable {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        tableView.setEmptyView(title: "No Groups", message: "Click + to create one.", messageImage: #imageLiteral(resourceName: "baseline-groups"))
+        tableView.setEmptyView(title: "No Groups",
+                               message: "Click + to create one.",
+                               messageImage: #imageLiteral(resourceName: "baseline-groups"))
     }
     
     override func viewWillAppear(_ animated: Bool) {
