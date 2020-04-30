@@ -85,11 +85,16 @@ public extension ProxyFilterDelegate {
 public class ProxyFilter {
     internal var manager: MeshNetworkManager
     
-    private var counter = 0
-    private var busy = false
-    private var buffer: [ProxyConfigurationMessage] = []
     private let mutex = DispatchQueue(label: "ProxyFilterMutex")
-    
+    /// The counter is used to prevent from refreshing the filter in a loop when the Proxy Server
+    /// responds with an unexpected list size.
+    private var counter = 0
+    /// The flag is set to `true` when a request hsa been sent to the connected proxy.
+    /// It is cleared when a response was received, or in case of an error.
+    private var busy = false
+    /// A queue of proxy configuration messages enqueued to be sent.
+    private var buffer: [ProxyConfigurationMessage] = []
+    /// A shortcut to the manager's logger.
     private var logger: LoggerDelegate? {
         return manager.logger
     }
