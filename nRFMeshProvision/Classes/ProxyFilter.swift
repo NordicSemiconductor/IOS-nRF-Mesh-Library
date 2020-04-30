@@ -117,6 +117,11 @@ public class ProxyFilter {
     /// By default the Proxy Filter is set to `.whitelist`.
     public internal(set) var type: ProxyFilerType = .whitelist
     
+    /// The connected Proxy Node. This may be `nil` if the connected Node is unknown
+    /// to the provisioner, that is if a Node with the proxy Unicast Address was not found
+    /// in the local mesh network database. It is also `nil` if no proxy is connected.
+    public internal(set) var proxy: Node?
+    
     // MARK: - Implementation
     
     internal init(_ manager: MeshNetworkManager) {
@@ -256,6 +261,8 @@ internal extension ProxyFilter {
         logger?.i(.proxy, "New Proxy connected")
         mutex.sync {
             busy = false
+            // The proxy Node is unknown at the moment.
+            proxy = nil
         }
         reset()
         if let localProvisioner = manager.meshNetwork?.localProvisioner {
@@ -295,14 +302,18 @@ internal extension ProxyFilter {
     /// This method clears the local filter and sets it back to `.whitelist`.
     /// All the messages waiting to be sent are cancelled.
     ///
-    /// - parameter message: The message that has not been sent.
-    /// - parameter error: The error received.
+    /// - parameters:
+    ///   - message: The message that has not been sent.
+    ///   - error: The error received.
     func managerFailedToDeliverMessage(_ message: ProxyConfigurationMessage, error: Error) {
         mutex.sync {
             type = .whitelist
             addresses.removeAll()
             buffer.removeAll()
             busy = false
+        }
+        if case BearerError.bearerClosed = error {
+            proxy = nil
         }
         // And notify the app.
         delegateQueue.async {
@@ -318,10 +329,13 @@ internal extension ProxyFilter {
     /// the list size received, the method will try to clear the remote
     /// filter and send all the addresses again.
     ///
-    /// - parameter message: The message received.
-    func handle(_ message: ProxyConfigurationMessage) {
+    /// - parameters:
+    ///   - message: The message received.
+    ///   - proxy: The connected Proxy Node, or `nil` if the Node is uknown.
+    func handle(_ message: ProxyConfigurationMessage, sentFrom proxy: Node?) {
         switch message {
         case let status as FilterStatus:
+            self.proxy = proxy
             // Handle buffered messages.
             let bufferEmpty = mutex.sync { buffer.isEmpty }
             guard bufferEmpty else {

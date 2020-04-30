@@ -116,7 +116,7 @@ class ProxyViewController: ProgressViewController, Editable {
             let cell = tableView.dequeueReusableCell(withIdentifier: "status", for: indexPath)
             let bearer = MeshNetworkManager.bearer!
             cell.detailTextLabel?.text = bearer.isOpen ?
-                "\(bearer.name ?? "Unknown device")" :
+                "\(proxyFilter.proxy?.name ?? bearer.name ?? "Unknown device")" :
                 bearer.isConnectionModeAutomatic ? "Connecting..." : "Not selected"
             cell.accessoryType = bearer.isConnectionModeAutomatic ? .none : .disclosureIndicator
             cell.selectionStyle = bearer.isConnectionModeAutomatic ? .none : .default
