@@ -557,7 +557,7 @@ private extension LowerTransportLayer {
         // random delay is, so assuming 0.5-1.5 second.
         if !ackExpected! {
             let interval = TimeInterval.random(in: 0.500...1.500)
-            _ = BackgroundTimer.scheduledTimer(withTimeInterval: interval, repeats: false) { timer in
+            BackgroundTimer.scheduledTimer(withTimeInterval: interval, repeats: false) { _ in
                 var destination: Address?
                 for i in 0..<segments.count {
                     if let segment = segments[i] {
@@ -573,7 +573,6 @@ private extension LowerTransportLayer {
                         }
                     }
                 }
-                timer.invalidate()
                 if let destination = destination {
                     self.networkManager.upperTransportLayer.lowerTransportLayerDidSend(segmentedUpperTransportPduTo: destination)
                 }

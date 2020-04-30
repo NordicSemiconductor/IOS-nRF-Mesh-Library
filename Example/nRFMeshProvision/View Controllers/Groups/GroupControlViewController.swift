@@ -63,7 +63,9 @@ class GroupControlViewController: ProgressCollectionViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        collectionView.setEmptyView(title: "No models configured", message: "No models are subscribed to this group.", messageImage: #imageLiteral(resourceName: "baseline-groups"))
+        collectionView.setEmptyView(title: "No models configured",
+                                    message: "No models are subscribed to this group.",
+                                    messageImage: #imageLiteral(resourceName: "baseline-groups"))
         collectionView.delegate = self
         
         title = group.name

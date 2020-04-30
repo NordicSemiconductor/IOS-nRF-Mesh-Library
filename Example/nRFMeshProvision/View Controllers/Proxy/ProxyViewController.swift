@@ -116,7 +116,7 @@ class ProxyViewController: ProgressViewController, Editable {
             let cell = tableView.dequeueReusableCell(withIdentifier: "status", for: indexPath)
             let bearer = MeshNetworkManager.bearer!
             cell.detailTextLabel?.text = bearer.isOpen ?
-                "\(bearer.name ?? "Unknown device")" :
+                "\(proxyFilter.proxy?.name ?? bearer.name ?? "Unknown device")" :
                 bearer.isConnectionModeAutomatic ? "Connecting..." : "Not selected"
             cell.accessoryType = bearer.isConnectionModeAutomatic ? .none : .disclosureIndicator
             cell.selectionStyle = bearer.isConnectionModeAutomatic ? .none : .default
@@ -137,7 +137,12 @@ class ProxyViewController: ProgressViewController, Editable {
             return cell
         }
         let cell = tableView.dequeueReusableCell(withIdentifier: "subtitle", for: indexPath) as! AddressCell
-        cell.address = proxyFilter.addresses.sorted()[indexPath.row]
+        let addresses = proxyFilter.addresses.sorted()
+        guard addresses.count > indexPath.row else {
+            cell.address = .unassignedAddress
+            return cell
+        }
+        cell.address = addresses.sorted()[indexPath.row]
         return cell
     }
     
@@ -149,7 +154,9 @@ class ProxyViewController: ProgressViewController, Editable {
         return indexPath.section == IndexPath.addressesSection
     }
     
-    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+    override func tableView(_ tableView: UITableView,
+                            commit editingStyle: UITableViewCell.EditingStyle,
+                            forRowAt indexPath: IndexPath) {
         let proxyFilter = MeshNetworkManager.instance.proxyFilter!
         let address = proxyFilter.addresses.sorted()[indexPath.row]
         deleteAddress(address)
@@ -175,8 +182,11 @@ extension ProxyViewController: BearerDelegate {
     
     func bearer(_ bearer: Bearer, didClose error: Error?) {
         addButton.isEnabled = false
+        // The bearer has closed. Attempt to send a message
+        // will fail, but the Proxy Filter will receive .bearerClosed
+        // error, upon which it will clear the filter list and notify
+        // the delegate.
         MeshNetworkManager.instance.proxyFilter?.clear()
-        tableView.reloadRows(at: [.status, .action, .control], with: .automatic)
     }
     
 }
@@ -215,11 +225,6 @@ extension ProxyViewController: ProxyFilterDelegate {
     func proxyFilterUpdated(type: ProxyFilerType, addresses: Set<Address>) {
         done() {
             self.tableView.reloadData()
-            if addresses.isEmpty {
-                self.showEmptyView()
-            } else {
-                self.hideEmptyView()
-            }
         }
     }
     

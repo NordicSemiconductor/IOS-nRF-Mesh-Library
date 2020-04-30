@@ -38,7 +38,9 @@ class NetworkKeysViewController: UITableViewController, Editable {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        tableView.setEmptyView(title: "No keys", message: "Click + to add a new key.", messageImage: #imageLiteral(resourceName: "baseline-key"))
+        tableView.setEmptyView(title: "No keys",
+                               message: "Click + to add a new key.",
+                               messageImage: #imageLiteral(resourceName: "baseline-key"))
         
         let hasNetKeys = MeshNetworkManager.instance.meshNetwork?.networkKeys.count ?? 0 > 0
         if !hasNetKeys {

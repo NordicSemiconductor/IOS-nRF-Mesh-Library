@@ -1,4 +1,11 @@
 ## Changelog
+- **2.2.3**:
+   - A connected Proxy Node, if known, can now we obtained from the `ProxyFilter`.
+   - Displaying Proxy Node name on Proxy screen in the sample app.
+   - New icons in the sample app.
+   - Improvement: `ProxyFilterDelegate` methods will be called on the delegate queue specified in the `MeshNetworkManager`.
+   - Several bugs fixed.
+
 - **2.2.2**:
    - Fixed handling IV Index update.
    - Added a flag to enable IV Index Test Mode.

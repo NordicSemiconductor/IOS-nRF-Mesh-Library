@@ -93,7 +93,9 @@ class EditRangesViewController: UIViewController, Editable {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        tableView.setEmptyView(title: "No ranges allocated", message: "Click + to allocate a range.", messageImage: #imageLiteral(resourceName: "baseline-range"))
+        tableView.setEmptyView(title: "No ranges allocated",
+                               message: "Click + to allocate a range.",
+                               messageImage: #imageLiteral(resourceName: "baseline-range"))
         
         tableView.delegate = self
         tableView.dataSource = self
