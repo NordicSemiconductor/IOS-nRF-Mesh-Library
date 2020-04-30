@@ -101,6 +101,11 @@ public class ProxyFilter {
     
     // MARK: - Proxy Filter properties
     
+    /// A queue to call delegate methods on.
+    ///
+    /// The value is set in the `MeshNetworkManager` initializer.
+    internal let delegateQueue: DispatchQueue
+    
     /// The delegate to be informed about Proxy Filter changes.
     public weak var delegate: ProxyFilterDelegate?
     
@@ -116,6 +121,7 @@ public class ProxyFilter {
     
     internal init(_ manager: MeshNetworkManager) {
         self.manager = manager
+        self.delegateQueue = manager.delegateQueue
     }
 }
 
@@ -278,7 +284,9 @@ internal extension ProxyFilter {
             }
         }
         // And notify the app.
-        delegate?.proxyFilterUpdated(type: type, addresses: addresses)
+        delegateQueue.async {
+            self.delegate?.proxyFilterUpdated(type: self.type, addresses: self.addresses)
+        }
     }
     
     /// Callback called when the manager failed to send the Proxy
@@ -297,7 +305,9 @@ internal extension ProxyFilter {
             busy = false
         }
         // And notify the app.
-        delegate?.proxyFilterUpdated(type: type, addresses: addresses)
+        delegateQueue.async {
+            self.delegate?.proxyFilterUpdated(type: self.type, addresses: self.addresses)
+        }
     }
     
     /// Handler for the received Proxy Configuration Messages.
@@ -352,7 +362,9 @@ internal extension ProxyFilter {
                         }
                         add(addresses: addresses)
                     }
-                    delegate?.limitedProxyFilterDetected(maxSize: 1)
+                    delegateQueue.async {
+                        self.delegate?.limitedProxyFilterDetected(maxSize: 1)
+                    }
                 } else {
                     logger?.w(.proxy, "Refreshing Proxy Filter...")
                     let addresses = self.addresses // reset() will erase addresses, store it.
