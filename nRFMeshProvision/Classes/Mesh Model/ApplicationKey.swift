@@ -109,13 +109,13 @@ public class ApplicationKey: Key, Codable {
         let keyHex = try container.decode(String.self, forKey: .key)
         guard let keyData = Data(hex: keyHex) else {
             throw DecodingError.dataCorruptedError(forKey: .key, in: container,
-                                                   debugDescription: "Key must be 32-character hexadecimal string")
+                                                   debugDescription: "Key must be 32-character hexadecimal string.")
         }
         key = keyData
         if let oldKeyHex = try container.decodeIfPresent(String.self, forKey: .oldKey) {
             guard let oldKeyData = Data(hex: oldKeyHex) else {
                 throw DecodingError.dataCorruptedError(forKey: .oldKey, in: container,
-                                                       debugDescription: "Old key must be 32-character hexadecimal string")
+                                                       debugDescription: "Old key must be 32-character hexadecimal string.")
             }
             oldKey = oldKeyData
         }

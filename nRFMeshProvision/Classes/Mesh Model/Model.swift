@@ -52,7 +52,7 @@ public class Model: Codable {
     public var isBluetoothSIGAssigned: Bool {
         return modelId <= 0xFFFF
     }
-    /// The array of Unicast or Group Addresses (4-character hexadecimal value),
+    /// The array of Group Addresses (4-character hexadecimal string),
     /// or Virtual Label UUIDs (32-character hexadecimal string).
     internal private(set) var subscribe: [String]
     /// Returns the list of known Groups that this Model is subscribed to.
@@ -122,21 +122,37 @@ public class Model: Codable {
         if modelIdString.count == 4 {
             guard let modelId = UInt16(hex: modelIdString) else {
                 throw DecodingError.dataCorruptedError(forKey: .modelId, in: container,
-                                                       debugDescription: "Model ID must be 4-character hexadecimal string")
+                                                       debugDescription: "Model ID must be 4-character hexadecimal string.")
             }
             self.modelId = UInt32(modelId)
         } else {
             guard let modelId = UInt32(hex: modelIdString) else {
                 throw DecodingError.dataCorruptedError(forKey: .modelId, in: container,
-                                                       debugDescription: "Vendor Model ID must be 8-character hexadecimal string")
+                                                       debugDescription: "Vendor Model ID must be 8-character hexadecimal string.")
             }
             self.modelId = modelId
         }
         self.subscribe = try container.decode([String].self, forKey: .subscribe)
+        try subscribe.forEach {
+            guard let meshAddress = MeshAddress(hex: $0) else {
+                throw DecodingError.dataCorruptedError(forKey: .subscribe, in: container,
+                                                       debugDescription: "Address must be 4-character hexadecimal string or UUID.")
+            }
+            guard meshAddress.address.isGroup || meshAddress.address.isVirtual else {
+                throw DecodingError.dataCorruptedError(forKey: .subscribe, in: container,
+                                                       debugDescription: "Address must be of group or virtual type.")
+            }
+        }
         if let publish = try container.decodeIfPresent(Publish.self, forKey: .publish) {
             self.publish = publish
         }
         self.bind = try container.decode([KeyIndex].self, forKey: .bind)
+        try bind.forEach {
+            guard $0.isValidKeyIndex else {
+                throw DecodingError.dataCorruptedError(forKey: .bind, in: container,
+                                                       debugDescription: "Key Index must be in range 0-4095.")
+            }
+        }
         self.delegate = nil
     }
     

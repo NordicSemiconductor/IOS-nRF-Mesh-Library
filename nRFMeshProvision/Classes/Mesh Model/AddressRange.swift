@@ -54,23 +54,23 @@ public class AddressRange: RangeObject, Codable {
         
         guard let lowAddress = Address(hex: lowAddressAsString) else {
             throw DecodingError.dataCorruptedError(forKey: .lowAddress, in: container,
-                                                   debugDescription: "Address must be 4-character hexadecimal string")
+                                                   debugDescription: "Address must be 4-character hexadecimal string.")
         }
         guard let highAddress = Address(hex: highAddressAsString) else {
             throw DecodingError.dataCorruptedError(forKey: .highAddress, in: container,
-                                                   debugDescription: "Address must be 4-character hexadecimal string")
+                                                   debugDescription: "Address must be 4-character hexadecimal string.")
         }
         guard lowAddress.isUnicast || lowAddress.isGroup else {
             throw DecodingError.dataCorruptedError(forKey: .lowAddress, in: container,
-                                                   debugDescription: "Low address must be a Unicast or Group address")
+                                                   debugDescription: "Low address must be a Unicast or Group address.")
         }
         guard highAddress.isUnicast || highAddress.isGroup else {
             throw DecodingError.dataCorruptedError(forKey: .highAddress, in: container,
-                                                   debugDescription: "High address must be a Unicast or Group address")
+                                                   debugDescription: "High address must be a Unicast or Group address.")
         }
         guard (lowAddress.isUnicast && highAddress.isUnicast) || (lowAddress.isGroup && highAddress.isGroup) else {
             throw DecodingError.dataCorruptedError(forKey: .highAddress, in: container,
-                                                   debugDescription: "High address of different type than low address")
+                                                   debugDescription: "High address of different type than low address.")
         }
         self.init(from: lowAddress, to: highAddress)
     }

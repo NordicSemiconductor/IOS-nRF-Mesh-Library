@@ -39,6 +39,8 @@ public struct MeshAddress {
     public init?(hex: String) {
         if let address = Address(hex: hex) {
             self.init(address)
+        } else if let virtualLabel = UUID(uuidString: hex) {
+            self.init(virtualLabel)
         } else if let virtualLabel = UUID(hex: hex) {
             self.init(virtualLabel)
         } else {

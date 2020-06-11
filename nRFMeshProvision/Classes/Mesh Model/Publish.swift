@@ -164,10 +164,20 @@ public struct Publish: Codable {
     
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        address = try container.decode(String.self, forKey: .address)
-        index = try container.decode(KeyIndex.self, forKey: .index)
-        ttl = try container.decode(UInt8.self, forKey: .ttl)
-        period = try container.decode(Int.self, forKey: .period)
+        let publishAddressAsString = try container.decode(String.self, forKey: .address)
+        guard let _ = MeshAddress(hex: publishAddressAsString) else {
+            throw DecodingError.dataCorruptedError(forKey: .address, in: container,
+                                                   debugDescription: "Address must be 4-character hexadecimal string or UUID.")
+        }
+        self.address = publishAddressAsString
+        self.index = try container.decode(KeyIndex.self, forKey: .index)
+        let ttl = try container.decode(UInt8.self, forKey: .ttl)
+        guard ttl != 1 && (ttl <= 127 || ttl == 225) else {
+            throw DecodingError.dataCorruptedError(forKey: .ttl, in: container,
+                                                   debugDescription: "TTL must be in range 0, 2-127 or 255.")
+        }
+        self.ttl = ttl
+        self.period = try container.decode(Int.self, forKey: .period)
         switch period {
         case let period where period % 600000 == 0:
             periodResolution = .tensOfMinutes
@@ -185,10 +195,20 @@ public struct Publish: Codable {
         let flag = try container.decode(Int.self, forKey: .credentials)
         guard flag == 0 || flag == 1 else {
             throw DecodingError.dataCorruptedError(forKey: .credentials, in: container,
-                                                   debugDescription: "Credentials must be 0 or 1")
+                                                   debugDescription: "Credentials must be 0 or 1.")
         }
-        credentials = flag
-        retransmit = try container.decode(Retransmit.self, forKey: .retransmit)
+        self.credentials = flag
+        self.retransmit = try container.decode(Retransmit.self, forKey: .retransmit)
+        guard retransmit.count <= 7 else {
+            throw DecodingError.dataCorruptedError(forKey: .retransmit, in: container,
+                                                   debugDescription: "Retransmit count must be in range 0-7.")
+        }
+        guard retransmit.interval >= 50 &&
+              retransmit.interval <= 1600 &&
+            (retransmit.interval % 50) == 0 else {
+            throw DecodingError.dataCorruptedError(forKey: .retransmit, in: container,
+                                                   debugDescription: "Retransmit interval must be in range 50-1600 ms in 50 ms steps.")
+        }
     }
 }
 

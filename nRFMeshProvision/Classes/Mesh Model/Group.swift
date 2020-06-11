@@ -37,10 +37,10 @@ public class Group: Codable {
     public var name: String
     /// The address property contains a 4-character hexadecimal
     /// string from 0xC000 to 0xFEFF or a 32-character hexadecimal
-    /// string of virtual label UUUID, and is the address of the group.
+    /// string of virtual label UUID, and is the address of the group.
     internal let _address: String
     /// The address of the group.
-    public lazy var address: MeshAddress = MeshAddress(hex: _address)!
+    public let address: MeshAddress
     /// The parentAddress property contains a 4-character hexadecimal
     /// string or a 32-character hexadecimal string and represents
     /// an address of a parent Group in which this group is included.
@@ -81,6 +81,7 @@ public class Group: Codable {
         }
         self.name = name
         self._address = address.hex
+        self.address = address
         self._parentAddress = "0000"
     }
     
@@ -94,6 +95,32 @@ public class Group: Codable {
         case name
         case _address       = "address"
         case _parentAddress = "parentAddress"
+    }
+    
+    public required init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.name = try container.decode(String.self, forKey: .name)
+        self._address = try container.decode(String.self, forKey: ._address)
+        guard let address = MeshAddress(hex: _address) else {
+            throw DecodingError.dataCorruptedError(forKey: ._address, in: container,
+                                                   debugDescription: "Invalid Group address: \(_address).")
+        }
+        guard address.address.isGroup || address.address.isVirtual else {
+            throw DecodingError.dataCorruptedError(forKey: ._address, in: container,
+                                                   debugDescription: "Not a Group address: \(_address).")
+        }
+        self.address = address
+        self._parentAddress = try container.decode(String.self, forKey: ._parentAddress)
+        guard let parentAddress = MeshAddress(hex: _parentAddress) else {
+            throw DecodingError.dataCorruptedError(forKey: ._parentAddress, in: container,
+                                                   debugDescription: "Invalid Group address: \(_address).")
+        }
+        guard parentAddress.address.isValidAddress == false ||
+              parentAddress.address.isGroup ||
+              parentAddress.address.isVirtual else {
+            throw DecodingError.dataCorruptedError(forKey: ._parentAddress, in: container,
+                                                   debugDescription: "Invalid Parent Group address: \(_parentAddress).")
+        }
     }
 }
 

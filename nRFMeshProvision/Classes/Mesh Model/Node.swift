@@ -379,12 +379,16 @@ public class Node: Codable {
         let unicastAddressAsString = try container.decode(String.self, forKey: .unicastAddress)
         guard let unicastAddress = Address(hex: unicastAddressAsString) else {
             throw DecodingError.dataCorruptedError(forKey: .unicastAddress, in: container,
-                                                   debugDescription: "Address must be 4-character hexadecimal string")
+                                                   debugDescription: "Address must be 4-character hexadecimal string.")
+        }
+        guard unicastAddress.isUnicast else {
+            throw DecodingError.dataCorruptedError(forKey: .unicastAddress, in: container,
+                                                   debugDescription: "\(unicastAddressAsString) is not a unicast address.")
         }
         let keyHex = try container.decode(String.self, forKey: .deviceKey)
         guard let keyData = Data(hex: keyHex) else {
             throw DecodingError.dataCorruptedError(forKey: .deviceKey, in: container,
-                                                   debugDescription: "Device Key must be 32-character hexadecimal string")
+                                                   debugDescription: "Device Key must be 32-character hexadecimal string.")
         }
         self.nodeUuid = try container.decode(MeshUUID.self, forKey: .nodeUuid)
         self.unicastAddress = unicastAddress
@@ -397,41 +401,46 @@ public class Node: Codable {
         if let companyIdentifierAsString = try container.decodeIfPresent(String.self, forKey: .companyIdentifier) {
             guard let companyIdentifier = UInt16(hex: companyIdentifierAsString) else {
                 throw DecodingError.dataCorruptedError(forKey: .companyIdentifier, in: container,
-                                                       debugDescription: "Company Identifier must be 4-character hexadecimal string")
+                                                       debugDescription: "Company Identifier must be 4-character hexadecimal string.")
             }
             self.companyIdentifier = companyIdentifier
         }
         if let companyIdentifierAsString = try container.decodeIfPresent(String.self, forKey: .companyIdentifier) {
             guard let companyIdentifier = UInt16(hex: companyIdentifierAsString) else {
                 throw DecodingError.dataCorruptedError(forKey: .companyIdentifier, in: container,
-                                                       debugDescription: "Company Identifier must be 4-character hexadecimal string")
+                                                       debugDescription: "Company Identifier must be 4-character hexadecimal string.")
             }
             self.companyIdentifier = companyIdentifier
         }
         if let productIdentifierAsString = try container.decodeIfPresent(String.self, forKey: .productIdentifier) {
             guard let productIdentifier = UInt16(hex: productIdentifierAsString) else {
                 throw DecodingError.dataCorruptedError(forKey: .productIdentifier, in: container,
-                                                       debugDescription: "Product Identifier must be 4-character hexadecimal string")
+                                                       debugDescription: "Product Identifier must be 4-character hexadecimal string.")
             }
             self.productIdentifier = productIdentifier
         }
         if let versionIdentifierAsString = try container.decodeIfPresent(String.self, forKey: .versionIdentifier) {
             guard let versionIdentifier = UInt16(hex: versionIdentifierAsString) else {
                 throw DecodingError.dataCorruptedError(forKey: .versionIdentifier, in: container,
-                                                       debugDescription: "Version Identifier must be 4-character hexadecimal string")
+                                                       debugDescription: "Version Identifier must be 4-character hexadecimal string.")
             }
             self.versionIdentifier = versionIdentifier
         }
         if let crplAsString = try container.decodeIfPresent(String.self, forKey: .minimumNumberOfReplayProtectionList) {
             guard let crpl = UInt16(hex: crplAsString) else {
                 throw DecodingError.dataCorruptedError(forKey: .minimumNumberOfReplayProtectionList, in: container,
-                                                       debugDescription: "CRPL must be 4-character hexadecimal string")
+                                                       debugDescription: "CRPL must be 4-character hexadecimal string.")
             }
             self.minimumNumberOfReplayProtectionList = crpl
         }
         self.features = try container.decodeIfPresent(NodeFeatures.self, forKey: .features)
         self.secureNetworkBeacon = try container.decodeIfPresent(Bool.self, forKey: .secureNetworkBeacon)
-        self.ttl = try container.decodeIfPresent(UInt8.self, forKey: .ttl)
+        let ttl = try container.decodeIfPresent(UInt8.self, forKey: .ttl)
+        guard ttl != 1 && (ttl == nil || ttl! <= 127) else {
+            throw DecodingError.dataCorruptedError(forKey: .ttl, in: container,
+                                                   debugDescription: "Default TTL must be in range 0-127, except 1.")
+        }
+        self.ttl = ttl
         self.networkTransmit = try container.decodeIfPresent(NetworkTransmit.self, forKey: .networkTransmit)
         self.relayRetransmit = try container.decodeIfPresent(RelayRetransmit.self, forKey: .relayRetransmit)
         self.elements = try container.decode([Element].self, forKey: .elements)

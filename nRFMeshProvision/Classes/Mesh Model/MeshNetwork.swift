@@ -114,7 +114,7 @@ public class MeshNetwork: Codable {
     internal init(name: String, uuid: UUID = UUID()) {
         schema          = "http://json-schema.org/draft-04/schema#"
         id              = "http://www.bluetooth.com/specifications/assigned-numbers/mesh-profile/cdb-schema.json#"
-        version         = "1.0.0"
+        version         = "0.8.0" // TODO: Switch to 1.0.0 when final
         meshUUID        = MeshUUID(uuid)
         meshName        = name
         timestamp       = Date()

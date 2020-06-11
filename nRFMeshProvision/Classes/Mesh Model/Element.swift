@@ -138,11 +138,11 @@ public class Element: Codable {
         let locationAsString = try container.decode(String.self, forKey: .location)
         guard let rawValue = UInt16(hex: locationAsString) else {
             throw DecodingError.dataCorruptedError(forKey: .location, in: container,
-                                                   debugDescription: "Location must be 4-character hexadecimal string")
+                                                   debugDescription: "Location must be 4-character hexadecimal string.")
         }
         guard let loc = Location(rawValue: rawValue) else {
             throw DecodingError.dataCorruptedError(forKey: .location, in: container,
-                                                   debugDescription: "Unknown location: 0x\(locationAsString)")
+                                                   debugDescription: "Unknown location: 0x\(locationAsString).")
         }
         location = loc
         models = try container.decode([Model].self, forKey: .models)

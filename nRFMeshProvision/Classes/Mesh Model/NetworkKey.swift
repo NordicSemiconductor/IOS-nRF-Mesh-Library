@@ -182,17 +182,21 @@ public class NetworkKey: Key, Codable {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         name = try container.decode(String.self, forKey: .name)
         index = try container.decode(KeyIndex.self, forKey: .index)
+        guard index.isValidKeyIndex else {
+            throw DecodingError.dataCorruptedError(forKey: .index, in: container,
+                                                   debugDescription: "Key Index must be in range 0-4095.")
+        }
         let keyHex = try container.decode(String.self, forKey: .key)
         guard let keyData = Data(hex: keyHex) else {
             throw DecodingError.dataCorruptedError(forKey: .key, in: container,
-                                                   debugDescription: "Key must be 32-character hexadecimal string")
+                                                   debugDescription: "Key must be 32-character hexadecimal string.")
         }
         key = keyData
         networkId = OpenSSLHelper().calculateK3(withN: key)
         if let oldKeyHex = try container.decodeIfPresent(String.self, forKey: .oldKey) {
             guard let oldKeyData = Data(hex: oldKeyHex) else {
                 throw DecodingError.dataCorruptedError(forKey: .oldKey, in: container,
-                                                       debugDescription: "Old key must be 32-character hexadecimal string")
+                                                       debugDescription: "Old key must be 32-character hexadecimal string.")
             }
             oldKey = oldKeyData
         }

@@ -54,11 +54,11 @@ public class SceneRange: RangeObject, Codable {
         
         guard let firstScene = Scene(hex: firstSceneAsString) else {
             throw DecodingError.dataCorruptedError(forKey: .firstScene, in: container,
-                                                   debugDescription: "Scene must be 4-character hexadecimal string")
+                                                   debugDescription: "Scene must be 4-character hexadecimal string.")
         }
         guard let lastScene = Scene(hex: lastSceneAsString) else {
             throw DecodingError.dataCorruptedError(forKey: .lastScene, in: container,
-                                                   debugDescription: "Scene must be 4-character hexadecimal string")
+                                                   debugDescription: "Scene must be 4-character hexadecimal string.")
         }
         self.init(from: firstScene, to: lastScene)
     }
