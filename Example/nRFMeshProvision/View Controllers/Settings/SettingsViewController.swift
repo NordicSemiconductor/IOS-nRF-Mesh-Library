@@ -269,6 +269,30 @@ extension SettingsViewController: UIDocumentPickerDelegate {
                 } else {
                     self.presentAlert(title: "Error", message: "Mesh configuration could not be saved.")
                 }
+            } catch let DecodingError.dataCorrupted(context) {
+                let path = context.codingPath.path
+                print("Import failed: \(context.debugDescription) (\(path))")
+                DispatchQueue.main.async {
+                    self.presentAlert(title: "Error", message: "Importing Mesh Network configuration failed.\n\(context.debugDescription)\nPath: \(path).")
+                }
+            } catch let DecodingError.keyNotFound(key, context) {
+                let path = context.codingPath.path
+                print("Import failed: Key \(key) not found in \(path)")
+                DispatchQueue.main.async {
+                    self.presentAlert(title: "Error", message: "Importing Mesh Network configuration failed.\nNo value associated with key: \(key.stringValue) in: \(path).")
+                }
+            } catch let DecodingError.valueNotFound(value, context) {
+                let path = context.codingPath.path
+                print("Import failed: Value of type \(value) required in \(path)")
+                DispatchQueue.main.async {
+                    self.presentAlert(title: "Error", message: "Importing Mesh Network configuration failed.\nNo value associated with key: \(path).")
+                }
+            } catch let DecodingError.typeMismatch(type, context) {
+                let path = context.codingPath.path
+                print("Import failed: Type mismatch in \(path) (\(type) was required)")
+                DispatchQueue.main.async {
+                    self.presentAlert(title: "Error", message: "Importing Mesh Network configuration failed.\nType mismatch in: \(path). Expected: \(type).")
+                }
             } catch {
                 print("Import failed: \(error)")
                 DispatchQueue.main.async {
@@ -312,4 +336,18 @@ private extension IndexPath {
     }
     
     static let name = IndexPath(row: 0, section: IndexPath.nameSection)
+}
+
+private extension Array where Element == CodingKey {
+    
+    var path: String {
+        return reduce("root") { (result, node) -> String in
+            if let range = node.stringValue.range(of: #"(\d+)$"#,
+                                                  options: .regularExpression) {
+                return "\(result)[\(node.stringValue[range])]"
+            }
+            return "\(result)→\(node.stringValue)"
+        }
+    }
+    
 }
