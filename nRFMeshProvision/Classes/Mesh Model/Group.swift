@@ -115,7 +115,7 @@ public class Group: Codable {
             throw DecodingError.dataCorruptedError(forKey: ._parentAddress, in: container,
                                                    debugDescription: "Invalid Group address: \(_address).")
         }
-        guard parentAddress.address.isValidAddress == false ||
+        guard parentAddress.address.isUnassigned ||
               parentAddress.address.isGroup ||
               parentAddress.address.isVirtual else {
             throw DecodingError.dataCorruptedError(forKey: ._parentAddress, in: container,
