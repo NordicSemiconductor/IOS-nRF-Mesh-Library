@@ -172,9 +172,9 @@ public struct Publish: Codable {
         self.address = publishAddressAsString
         self.index = try container.decode(KeyIndex.self, forKey: .index)
         let ttl = try container.decode(UInt8.self, forKey: .ttl)
-        guard ttl != 1 && (ttl <= 127 || ttl == 225) else {
+        guard ttl <= 127 || ttl == 255 else {
             throw DecodingError.dataCorruptedError(forKey: .ttl, in: container,
-                                                   debugDescription: "TTL must be in range 0, 2-127 or 255.")
+                                                   debugDescription: "TTL must be in range 0-127 or 255.")
         }
         self.ttl = ttl
         self.period = try container.decode(Int.self, forKey: .period)
