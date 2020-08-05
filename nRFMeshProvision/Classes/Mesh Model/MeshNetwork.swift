@@ -62,7 +62,7 @@ public class MeshNetwork: Codable {
     public internal(set) var applicationKeys: [ApplicationKey]
     /// An array of nodes in the network.
     public internal(set) var nodes: [Node]
-    /// An array of groups in teh network.
+    /// An array of groups in the network.
     public internal(set) var groups: [Group]
     
     /// The IV Index of the mesh network.
