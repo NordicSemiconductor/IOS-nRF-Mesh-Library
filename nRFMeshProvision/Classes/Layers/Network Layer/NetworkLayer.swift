@@ -160,7 +160,8 @@ internal class NetworkLayer {
         // Loopback interface.
         if shouldLoopback(networkPdu) {
             handle(incomingPdu: networkPdu.pdu, ofType: type)
-            
+            // Messages sent with TTL = 1 will only be sent locally.
+            guard ttl != 1 else { return }
             if isLocalUnicastAddress(networkPdu.destination) {
                 // No need to send messages targeting local Unicast Addresses.
                 return
@@ -168,6 +169,8 @@ internal class NetworkLayer {
             // If the message was sent locally, don't report Bearer closer error.
             try? transmitter.send(networkPdu.pdu, ofType: type)
         } else {
+            // Messages sent with TTL = 1 may only be sent locally.
+            guard ttl != 1 else { return }
             do {
                 try transmitter.send(networkPdu.pdu, ofType: type)
             } catch {

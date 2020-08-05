@@ -436,9 +436,9 @@ public class Node: Codable {
         self.features = try container.decodeIfPresent(NodeFeatures.self, forKey: .features)
         self.secureNetworkBeacon = try container.decodeIfPresent(Bool.self, forKey: .secureNetworkBeacon)
         let ttl = try container.decodeIfPresent(UInt8.self, forKey: .ttl)
-        guard ttl != 1 && (ttl == nil || ttl! <= 127) else {
+        guard ttl == nil || ttl! <= 127 else {
             throw DecodingError.dataCorruptedError(forKey: .ttl, in: container,
-                                                   debugDescription: "Default TTL must be in range 0-127, except 1.")
+                                                   debugDescription: "Default TTL must be in range 0-127.")
         }
         self.ttl = ttl
         self.networkTransmit = try container.decodeIfPresent(NetworkTransmit.self, forKey: .networkTransmit)
