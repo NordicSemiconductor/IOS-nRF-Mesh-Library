@@ -30,6 +30,14 @@
 
 import Foundation
 
+/// Node feature.
+public enum NodeFeature: String, Codable {
+    case relay = "relay"
+    case proxy = "proxy"
+    case friend = "friend"
+    case lowPower = "lowPower"
+}
+
 /// The state of a feature.
 public enum NodeFeaturesState: UInt8, Codable {
     case notEnabled   = 0
