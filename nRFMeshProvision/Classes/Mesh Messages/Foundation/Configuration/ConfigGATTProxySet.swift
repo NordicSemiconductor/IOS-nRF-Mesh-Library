@@ -38,7 +38,7 @@ public struct ConfigGATTProxySet: AcknowledgedConfigMessage {
     }
     
     /// The new GATT Proxy state of the Node.
-    public let state: NodeFeaturesState
+    public let state: NodeFeatureState
     
     /// Configures the GATT Proxy on the Node.
     ///
@@ -54,7 +54,7 @@ public struct ConfigGATTProxySet: AcknowledgedConfigMessage {
         guard parameters.count == 1 else {
             return nil
         }
-        guard let state = NodeFeaturesState(rawValue: parameters[0]) else {
+        guard let state = NodeFeatureState(rawValue: parameters[0]) else {
             return nil
         }
         self.state = state

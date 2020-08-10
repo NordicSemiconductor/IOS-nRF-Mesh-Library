@@ -39,7 +39,7 @@ public enum NodeFeature: String, Codable {
 }
 
 /// The state of a feature.
-public enum NodeFeaturesState: UInt8, Codable {
+public enum NodeFeatureState: UInt8, Codable {
     case notEnabled   = 0
     case enabled      = 1
     case notSupported = 2
@@ -47,15 +47,15 @@ public enum NodeFeaturesState: UInt8, Codable {
 
 /// The features object represents the functionality of a mesh node
 /// that is determined by the set features that the node supports.
-public class NodeFeatures: Codable {
+public class NodeFeaturesState: Codable {
     /// The state of Relay feature. `nil` if unknown.
-    public internal(set) var relay: NodeFeaturesState?
+    public internal(set) var relay: NodeFeatureState?
     /// The state of Proxy feature. `nil` if unknown.
-    public internal(set) var proxy: NodeFeaturesState?
+    public internal(set) var proxy: NodeFeatureState?
     /// The state of Friend feature. `nil` if unknown.
-    public internal(set) var friend: NodeFeaturesState?
+    public internal(set) var friend: NodeFeatureState?
     /// The state of Low Power feature. `nil` if unknown.
-    public internal(set) var lowPower: NodeFeaturesState?
+    public internal(set) var lowPower: NodeFeatureState?
     
     internal var rawValue: UInt16 {
         var bitField: UInt16 = 0
@@ -75,10 +75,10 @@ public class NodeFeatures: Codable {
         case lowPower
     }
     
-    internal init(relay: NodeFeaturesState?,
-                  proxy: NodeFeaturesState?,
-                  friend: NodeFeaturesState?,
-                  lowPower: NodeFeaturesState?) {
+    internal init(relay: NodeFeatureState?,
+                  proxy: NodeFeatureState?,
+                  friend: NodeFeatureState?,
+                  lowPower: NodeFeatureState?) {
         self.relay    = relay
         self.proxy    = proxy
         self.friend   = friend
@@ -100,7 +100,7 @@ public class NodeFeatures: Codable {
     }
 }
 
-extension NodeFeaturesState: CustomDebugStringConvertible {
+extension NodeFeatureState: CustomDebugStringConvertible {
     
     public var debugDescription: String {
         switch self {
@@ -112,7 +112,7 @@ extension NodeFeaturesState: CustomDebugStringConvertible {
     
 }
 
-extension NodeFeatures: CustomDebugStringConvertible {
+extension NodeFeaturesState: CustomDebugStringConvertible {
     
     public var debugDescription: String {
         return """

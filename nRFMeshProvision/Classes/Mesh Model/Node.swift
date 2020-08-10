@@ -160,7 +160,7 @@ public class Node: Codable {
     /// data.
     public internal(set) var minimumNumberOfReplayProtectionList: UInt16?
     /// Node's features. See `NodeFeatures` for details.
-    public internal(set) var features: NodeFeatures?
+    public internal(set) var features: NodeFeaturesState?
     /// This flag represents whether or not the node is configured to send
     /// Secure Network messages.
     public internal(set) var secureNetworkBeacon: Bool? {
@@ -268,7 +268,7 @@ public class Node: Codable {
         // a Provisioner's node.
         self.isConfigComplete = true
         // This Provisioner does not support any of those features.
-        self.features = NodeFeatures(relay: .notSupported,
+        self.features = NodeFeaturesState(relay: .notSupported,
                                      proxy: .notSupported,
                                      friend: .notSupported,
                                      lowPower: .notSupported)
@@ -442,7 +442,7 @@ public class Node: Codable {
             }
             self.minimumNumberOfReplayProtectionList = crpl
         }
-        self.features = try container.decodeIfPresent(NodeFeatures.self, forKey: .features)
+        self.features = try container.decodeIfPresent(NodeFeaturesState.self, forKey: .features)
         self.secureNetworkBeacon = try container.decodeIfPresent(Bool.self, forKey: .secureNetworkBeacon)
         let ttl = try container.decodeIfPresent(UInt8.self, forKey: .ttl)
         guard ttl == nil || ttl! <= 127 else {
@@ -713,9 +713,9 @@ internal extension Node {
         meshNetwork?.timestamp = Date()
     }
     
-    var ensureFeatures: NodeFeatures {
+    var ensureFeatures: NodeFeaturesState {
         if features == nil {
-            features = NodeFeatures()
+            features = NodeFeaturesState()
         }
         meshNetwork?.timestamp = Date()
         return features!
