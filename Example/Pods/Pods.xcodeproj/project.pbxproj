@@ -133,6 +133,12 @@
 		4EDE095731E0241FCF455B787CAFC030 /* LightHSLSaturationGet.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE9BB762BB289CC2D314C3D493D063EB /* LightHSLSaturationGet.swift */; };
 		4F0F22457533D7279AF11191CDE1813A /* MeshMessageError.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC09084034668EB1211CF503E4664E91 /* MeshMessageError.swift */; };
 		51623E007033703B2BDA7DB8A7DA7235 /* LightCTLSetUnackowledged.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47B2C04429BC1B5E4E6E8AF80FBBBA4D /* LightCTLSetUnackowledged.swift */; };
+		5286A9DE24DD83E50002EE9D /* ConfigHeartbeatPublicationGet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5286A9DD24DD83E50002EE9D /* ConfigHeartbeatPublicationGet.swift */; };
+		5286A9E024DD84390002EE9D /* ConfigHeartbeatPublicationSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5286A9DF24DD84390002EE9D /* ConfigHeartbeatPublicationSet.swift */; };
+		5286A9E224DD84510002EE9D /* ConfigHeartbeatPublicationStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5286A9E124DD84510002EE9D /* ConfigHeartbeatPublicationStatus.swift */; };
+		5286A9E424DD84650002EE9D /* ConfigHeartbeatSubscriptionGet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5286A9E324DD84650002EE9D /* ConfigHeartbeatSubscriptionGet.swift */; };
+		5286A9E624DD846E0002EE9D /* ConfigHeartbeatSubscriptionSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5286A9E524DD846E0002EE9D /* ConfigHeartbeatSubscriptionSet.swift */; };
+		5286A9E824DD84790002EE9D /* ConfigHeartbeatSubscriptionStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5286A9E724DD84790002EE9D /* ConfigHeartbeatSubscriptionStatus.swift */; };
 		52DFAA5224DABD31004D6D7A /* HeartbeatPublication.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52DFAA5124DABD31004D6D7A /* HeartbeatPublication.swift */; };
 		52DFAA5424DABD63004D6D7A /* HeartbeatSubscription.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52DFAA5324DABD63004D6D7A /* HeartbeatSubscription.swift */; };
 		5522EFA3CB0EE2B00A1EB9B097A69616 /* OpenSSLHelper.h in Headers */ = {isa = PBXBuildFile; fileRef = 0A5DC2434FC2B09AEDD2E3E5AF59DDAC /* OpenSSLHelper.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -510,6 +516,12 @@
 		50E3D64B04CAD991A9D53D79854F7A6F /* MeshNetwork+Nodes.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "MeshNetwork+Nodes.swift"; sourceTree = "<group>"; };
 		518BA6F4ACEEF57F1B0586844E0F8252 /* lhash.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = lhash.h; path = ios/include/openssl/lhash.h; sourceTree = "<group>"; };
 		51BBAA3978BFB1C9BAA0B3563DB01A48 /* Pods-nRFMeshProvision_Example-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-nRFMeshProvision_Example-Info.plist"; sourceTree = "<group>"; };
+		5286A9DD24DD83E50002EE9D /* ConfigHeartbeatPublicationGet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigHeartbeatPublicationGet.swift; sourceTree = "<group>"; };
+		5286A9DF24DD84390002EE9D /* ConfigHeartbeatPublicationSet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigHeartbeatPublicationSet.swift; sourceTree = "<group>"; };
+		5286A9E124DD84510002EE9D /* ConfigHeartbeatPublicationStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigHeartbeatPublicationStatus.swift; sourceTree = "<group>"; };
+		5286A9E324DD84650002EE9D /* ConfigHeartbeatSubscriptionGet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigHeartbeatSubscriptionGet.swift; sourceTree = "<group>"; };
+		5286A9E524DD846E0002EE9D /* ConfigHeartbeatSubscriptionSet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigHeartbeatSubscriptionSet.swift; sourceTree = "<group>"; };
+		5286A9E724DD84790002EE9D /* ConfigHeartbeatSubscriptionStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigHeartbeatSubscriptionStatus.swift; sourceTree = "<group>"; };
 		52DFAA5124DABD31004D6D7A /* HeartbeatPublication.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeartbeatPublication.swift; sourceTree = "<group>"; };
 		52DFAA5324DABD63004D6D7A /* HeartbeatSubscription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeartbeatSubscription.swift; sourceTree = "<group>"; };
 		52FC263AF94BB4945735E2B0566073C1 /* LightLightnessLinearGet.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LightLightnessLinearGet.swift; sourceTree = "<group>"; };
@@ -928,6 +940,12 @@
 				488D15F191C7C08B4DE8ABD1F5512CA6 /* ConfigGATTProxyGet.swift */,
 				9F62F62727752017D58F66604A931908 /* ConfigGATTProxySet.swift */,
 				102EFEAF34163D6DC20D5D9A524F8CCB /* ConfigGATTProxyStatus.swift */,
+				5286A9DD24DD83E50002EE9D /* ConfigHeartbeatPublicationGet.swift */,
+				5286A9DF24DD84390002EE9D /* ConfigHeartbeatPublicationSet.swift */,
+				5286A9E124DD84510002EE9D /* ConfigHeartbeatPublicationStatus.swift */,
+				5286A9E324DD84650002EE9D /* ConfigHeartbeatSubscriptionGet.swift */,
+				5286A9E524DD846E0002EE9D /* ConfigHeartbeatSubscriptionSet.swift */,
+				5286A9E724DD84790002EE9D /* ConfigHeartbeatSubscriptionStatus.swift */,
 				D7BA6B8010CF5DAC5D1BF00392EB6E69 /* ConfigModelAppBind.swift */,
 				F4D98E1FA536E71C09628A29BB18777A /* ConfigModelAppStatus.swift */,
 				956DDEBE1BCC60D07B5B2E29D56BF1DD /* ConfigModelAppUnbind.swift */,
@@ -1702,6 +1720,7 @@
 				3EDA68C5CE3205415E74FC787A55412F /* ApplicationKeys.swift in Sources */,
 				83494184021814FA38F7A16E11F371AF /* BackgroundTimer.swift in Sources */,
 				C4B76F5106361A18F29AECD0A7084468 /* BaseGattProxyBearer.swift in Sources */,
+				5286A9E824DD84790002EE9D /* ConfigHeartbeatSubscriptionStatus.swift in Sources */,
 				5A3FAE200ED3604CD50E2D00D7730D0B /* Beacon.swift in Sources */,
 				279B0F17087940F4F20DAB5119919FAA /* BeaconPdu.swift in Sources */,
 				6A47139DC0B77309141AFB3CA086B193 /* Bearer.swift in Sources */,
@@ -1734,6 +1753,7 @@
 				CD25F77A375C9E419687B7EDCAA74F78 /* ConfigModelAppBind.swift in Sources */,
 				B34F08C8350DA58DF12B52A0BACEB024 /* ConfigModelAppStatus.swift in Sources */,
 				AA75C42D90441A5CDEFC778723A146B2 /* ConfigModelAppUnbind.swift in Sources */,
+				5286A9E024DD84390002EE9D /* ConfigHeartbeatPublicationSet.swift in Sources */,
 				99560A9B0B571347E394C0EAF71DBE9E /* ConfigModelPublicationGet.swift in Sources */,
 				635FCA1159E40CE55BFDEB2B40FBAA20 /* ConfigModelPublicationSet.swift in Sources */,
 				4C886843FD53DF2710029A91559A5556 /* ConfigModelPublicationStatus.swift in Sources */,
@@ -1782,6 +1802,7 @@
 				488721C4185FED25BB5C7515461E9F31 /* GattBearer.swift in Sources */,
 				374705F372AC0E7EE7E38473283778D5 /* GattBearerDelegate.swift in Sources */,
 				E831F3466246222480083DB13C95E48D /* GattBearerError.swift in Sources */,
+				5286A9DE24DD83E50002EE9D /* ConfigHeartbeatPublicationGet.swift in Sources */,
 				E5E5FE193BA26A7B2C67C360D2765A06 /* GenericBatteryGet.swift in Sources */,
 				7B88ADD1FF236F20912D26F8E7192FCE /* GenericBatteryStatus.swift in Sources */,
 				01FF0E0C4B62A36F53C7CF3C17D06708 /* GenericDefaultTransitionTimeGet.swift in Sources */,
@@ -1892,6 +1913,7 @@
 				666D49FB3B74D12209840F2E3B79E25C /* MeshAddress.swift in Sources */,
 				707E5D6A1F69B8C2E3B7EFEE7D14BA8D /* MeshConstants.swift in Sources */,
 				C88A3C057E2082FE76A8A9F87AB534ED /* MeshData.swift in Sources */,
+				5286A9E624DD846E0002EE9D /* ConfigHeartbeatSubscriptionSet.swift in Sources */,
 				CE293642B10879A8AC0B5A07960DF9F0 /* MeshLoggerDelegate.swift in Sources */,
 				044FA6772F89CBB8FCA13BFB211131C6 /* MeshMessage.swift in Sources */,
 				4F0F22457533D7279AF11191CDE1813A /* MeshMessageError.swift in Sources */,
@@ -1952,7 +1974,9 @@
 				B1F6C013FE96290A8A2F988D58CB42ED /* RemoveAddressesFromFilter.swift in Sources */,
 				CBEC80446DD830AB9E79EA0155F59666 /* Scene.swift in Sources */,
 				32AD0A410DC4B9F6910A917C162EA6EE /* SceneDelete.swift in Sources */,
+				5286A9E424DD84650002EE9D /* ConfigHeartbeatSubscriptionGet.swift in Sources */,
 				5BC28AF264A02DF32AC6A95A0A4AA07E /* SceneDeleteUnacknowledged.swift in Sources */,
+				5286A9E224DD84510002EE9D /* ConfigHeartbeatPublicationStatus.swift in Sources */,
 				4053E0A6EE08B52AB4E3BD5614692F2D /* SceneGet.swift in Sources */,
 				BAFC25604CFCEFC9938CF82DCA765051 /* SceneRange.swift in Sources */,
 				39AD1020806F5D47A922E017C08648EF /* SceneRecall.swift in Sources */,

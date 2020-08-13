@@ -38,6 +38,20 @@ public enum NodeFeature: String, Codable {
     case lowPower = "lowPower"
 }
 
+/// A set of currently active features of a Node.
+public struct NodeFeatures: OptionSet {
+    public let rawValue: UInt16
+    
+    public static let relay    = NodeFeatures(rawValue: 1 << 0)
+    public static let proxy    = NodeFeatures(rawValue: 1 << 1)
+    public static let friend   = NodeFeatures(rawValue: 1 << 2)
+    public static let lowPower = NodeFeatures(rawValue: 1 << 3)
+    
+    public init(rawValue: UInt16) {
+        self.rawValue = rawValue
+    }
+}
+
 /// The state of a feature.
 public enum NodeFeatureState: UInt8, Codable {
     case notEnabled   = 0
@@ -45,7 +59,7 @@ public enum NodeFeatureState: UInt8, Codable {
     case notSupported = 2
 }
 
-/// The features object represents the functionality of a mesh node
+/// The features state object represents the functionality of a mesh node
 /// that is determined by the set features that the node supports.
 public class NodeFeaturesState: Codable {
     /// The state of Relay feature. `nil` if unknown.
@@ -121,6 +135,27 @@ extension NodeFeaturesState: CustomDebugStringConvertible {
         Friend Feature:    \(friend?.debugDescription ?? "Unknown")
         Low Power Feature: \(lowPower?.debugDescription ?? "Unknown")
         """
+    }
+    
+}
+
+internal extension Array where Element == NodeFeature {
+    
+    func toSet() -> NodeFeatures {
+        var set = NodeFeatures()
+        if contains(.relay) {
+            set.insert(.relay)
+        }
+        if contains(.proxy) {
+            set.insert(.proxy)
+        }
+        if contains(.friend) {
+            set.insert(.friend)
+        }
+        if contains(.lowPower) {
+            set.insert(.lowPower)
+        }
+        return set
     }
     
 }

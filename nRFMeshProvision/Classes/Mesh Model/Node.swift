@@ -226,10 +226,10 @@ public class Node: Codable {
         return meshNetwork?.applicationKeys.knownTo(node: self) ?? []
     }
     
-    /// The heartbeat publication object represents parameters that define
+    /// The Heartbeat Publication object represents parameters that define
     /// sending of periodic Heartbeat transport control messages.
     public internal(set) var heartbeatPublication: HeartbeatPublication?
-    /// The heartbeat subscription object represents parameters that define
+    /// The Heartbeat Subscription object represents parameters that define
     /// receiving of periodical Heartbeat transport control messages.
     public internal(set) var heartbeatSubscriptions: [HeartbeatSubscription]?
     
