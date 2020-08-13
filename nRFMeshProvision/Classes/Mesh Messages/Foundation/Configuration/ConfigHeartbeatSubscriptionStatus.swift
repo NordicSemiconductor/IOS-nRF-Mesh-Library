@@ -91,6 +91,11 @@ public struct ConfigHeartbeatSubscriptionStatus: ConfigMessage, ConfigStatusMess
     /// Subscription Set message or reset
     internal let maxHops: UInt8
     
+    /// Returns whether Heartbeat processing is enabled.
+    public var isEnabled: Bool {
+        return source != .unassignedAddress && destination != .unassignedAddress
+    }
+    
     public init(responseTo request: ConfigHeartbeatSubscriptionGet, with subscription: HeartbeatSubscription?) {
         self.source = subscription?.source ?? .unassignedAddress
         self.destination = subscription?.destination ?? .unassignedAddress
