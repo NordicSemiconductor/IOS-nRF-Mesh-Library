@@ -33,6 +33,7 @@ import Foundation
 internal struct HearbeatMessage {
     let source: Address
     let destination: Address
+    let ttl: UInt8
     
     /// Message Op Code.
     let opCode: UInt8
@@ -40,6 +41,10 @@ internal struct HearbeatMessage {
     let initTtl: UInt8
     /// Currently active features of the Node.
     let features: NodeFeaturesState
+    /// Number of hops that this message went through.
+    var hops: UInt8 {
+        return initTtl - ttl + 1
+    }
     
     init?(fromControlMessage message: ControlMessage) {
         opCode = message.opCode
@@ -52,6 +57,7 @@ internal struct HearbeatMessage {
         
         source = message.source
         destination = message.destination
+        ttl = message.ttl
     }
     
     /// Creates a Heartbeat message.
@@ -67,6 +73,7 @@ internal struct HearbeatMessage {
         self.features = features
         self.source = source
         self.destination = destination
+        self.ttl = ttl + 1 // Max TTL is 0x7F so this will fit in UInt8
     }
 }
 

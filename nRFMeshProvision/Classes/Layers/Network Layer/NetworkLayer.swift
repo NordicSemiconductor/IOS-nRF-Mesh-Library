@@ -220,7 +220,7 @@ internal class NetworkLayer {
                                  andIvIndex: meshNetwork.ivIndex)
         logger?.i(.network, "Sending \(pdu)")
         do {
-            try send(lowerTransportPdu: pdu, ofType: .proxyConfiguration, withTtl: 0)
+            try send(lowerTransportPdu: pdu, ofType: .proxyConfiguration, withTtl: pdu.ttl)
             networkManager.manager.proxyFilter?.managerDidDeliverMessage(message)
         } catch {
             if case BearerError.bearerClosed = error {
