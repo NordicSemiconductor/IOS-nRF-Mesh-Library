@@ -96,7 +96,7 @@ public struct ConfigHeartbeatSubscriptionStatus: ConfigMessage, ConfigStatusMess
         return source != .unassignedAddress && destination != .unassignedAddress
     }
     
-    public init(responseTo request: ConfigHeartbeatSubscriptionGet, with subscription: HeartbeatSubscription?) {
+    public init(_ subscription: HeartbeatSubscription?) {
         self.source = subscription?.source ?? .unassignedAddress
         self.destination = subscription?.destination ?? .unassignedAddress
         self.periodLog = subscription?.periodLog ?? 0

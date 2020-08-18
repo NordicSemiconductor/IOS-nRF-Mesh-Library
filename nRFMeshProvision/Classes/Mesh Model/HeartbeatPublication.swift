@@ -112,7 +112,7 @@ public class HeartbeatPublication: Codable {
     ///
     /// Period Log equal to 0 means periodic Heartbeat publications are disabled.
     /// Value 0xFF means 0xFFFF seconds.
-    internal let periodLog: UInt8
+    public let periodLog: UInt8
     /// The cadence of periodical Heartbeat messages in seconds.
     public var period: UInt16 {
         return Self.periodLog2Period(periodLog)
@@ -125,18 +125,38 @@ public class HeartbeatPublication: Codable {
     /// The Network Key Index corresponds to the index value of one of the Network Key
     /// entries in Node `networkKeys` array.
     public let networkKeyIndex: KeyIndex
-    /// An array of features that trigger sending Heartbeat messages when changed.
-    public let features: [NodeFeature]
+    /// Node features that trigger sending Heartbeat messages when changed.
+    public let features: NodeFeatures
     
-    internal init(twoToThePower countLog: UInt8, heartbeatsTo address: Address,
-                  everyTwoToThePower periodLog: UInt8, secondsWithTtl ttl: UInt8,
-                  using networkKey: NetworkKey, on features: [NodeFeature]) {
-        self.state = PeriodicHeartbeatState(countLog)
-        self.address = address
-        self.periodLog = periodLog
-        self.ttl = ttl
-        self.networkKeyIndex = networkKey.index
-        self.features = features
+    /// An initializer for remote Nodes' Heartbeat publication objects.
+    ///
+    /// - parameter status: The received status containing current Heartbeat publication
+    ///                     information.
+    internal init?(_ status: ConfigHeartbeatPublicationStatus) {
+        guard status.isEnabled else {
+            return nil
+        }
+        self.address = status.destination
+        self.periodLog = status.periodLog
+        self.ttl = status.ttl
+        self.networkKeyIndex = status.networkKeyIndex
+        self.features = status.features
+    }
+    
+    /// An initializer for local Node. This sets the count to the value from the Set
+    /// message.
+    ///
+    /// - parameter request: The request sent to the local Node.
+    internal init?(_ request: ConfigHeartbeatPublicationSet) {
+        guard request.isEnabled else {
+            return nil
+        }
+        self.address = request.destination
+        self.periodLog = request.periodLog
+        self.ttl = request.ttl
+        self.networkKeyIndex = request.networkKeyIndex
+        self.features = request.features
+        self.state = PeriodicHeartbeatState(request.countLog)
     }
     
     // MARK: - Codable
@@ -174,7 +194,8 @@ public class HeartbeatPublication: Codable {
         }
         self.ttl = ttl
         self.networkKeyIndex = try container.decode(KeyIndex.self, forKey: .networkKeyIndex)
-        self.features = try container.decode([NodeFeature].self, forKey: .features)
+        let features = try container.decode([NodeFeature].self, forKey: .features)
+        self.features = features.asSet()
         
         // On reset or import periodic Heartbeat messages are stopped.
         self.state = nil
@@ -186,7 +207,7 @@ public class HeartbeatPublication: Codable {
         try container.encode(period, forKey: .period)
         try container.encode(ttl, forKey: .ttl)
         try container.encode(networkKeyIndex, forKey: .networkKeyIndex)
-        try container.encode(features, forKey: .features)
+        try container.encode(features.asArray(), forKey: .features)
     }
 }
 

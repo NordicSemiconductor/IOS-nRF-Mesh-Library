@@ -40,7 +40,7 @@ internal struct HearbeatMessage {
     /// Initial TTL used when sending the message.
     let initTtl: UInt8
     /// Currently active features of the Node.
-    let features: NodeFeaturesState
+    let features: NodeFeatures
     /// Number of hops that this message went through.
     var hops: UInt8 {
         return initTtl - ttl + 1
@@ -53,7 +53,7 @@ internal struct HearbeatMessage {
             return nil
         }
         initTtl = data[0] & 0x7F
-        features = NodeFeaturesState(rawValue: UInt16(data[1] << 8) | UInt16(data[2]))
+        features = NodeFeatures(rawValue: UInt16(data[1] << 8) | UInt16(data[2]))
         
         source = message.source
         destination = message.destination
@@ -66,7 +66,7 @@ internal struct HearbeatMessage {
     /// - parameter features:    Currently active features of the node.
     /// - parameter source:      The source address.
     /// - parameter destination: The destination address.
-    init(withInitialTtl ttl: UInt8, andFeatures features: NodeFeaturesState,
+    init(withInitialTtl ttl: UInt8, andFeatures features: NodeFeatures,
          from source: Address, targeting destination: Address) {
         self.opCode = 0x0A
         self.initTtl = ttl
@@ -80,7 +80,7 @@ internal struct HearbeatMessage {
 extension HearbeatMessage: CustomDebugStringConvertible {
     
     var debugDescription: String {
-        return "Heartbeat Message (initTTL: \(initTtl), features: 0x\(features.rawValue.hex))"
+        return "Heartbeat Message (initTTL: \(initTtl), ttl: \(ttl), hops: \(initTtl - ttl + 1), features: \(features))"
     }
     
 }

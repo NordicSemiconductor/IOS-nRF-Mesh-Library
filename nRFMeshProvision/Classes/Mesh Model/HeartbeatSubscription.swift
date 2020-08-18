@@ -57,7 +57,9 @@ public class HeartbeatSubscription: Codable {
         var countLog: UInt8 {
             return HeartbeatSubscription.countToCountLog(count)
         }
-        
+    
+        /// Updates the counter based on received Heartbeat message.
+        /// - Parameter hearbeat: The received Heartbeat message.
         func update(with hearbeat: HearbeatMessage) {
             if count < 0xFFFF {
                 count += 1
@@ -82,17 +84,37 @@ public class HeartbeatSubscription: Codable {
     ///  Heartbeat transport control messages. When set to 0x0000, Heartbeat messages
     ///  are not processed. When set to a value greater than or equal to 0x0001,
     ///  Heartbeat messages are processed.
-    internal let periodLog: UInt8
+    public let periodLog: UInt8
     /// A last known value, in seconds, of the period that is used for processing periodic
     /// Heartbeat messages.
     public var period: UInt16 {
         return Self.periodLog2Period(periodLog)
     }
     
-    internal init(from source: Address, to destination: Address, forTwoToThePower periodLog: UInt8) {
-        self.source = source
-        self.destination = destination
-        self.periodLog = periodLog
+    /// An initializer for remote Nodes' Heartbeat subscription objects.
+    ///
+    /// - parameter status: The received status containing current Heartbeat subscription
+    ///                     information.
+    internal init?(_ status: ConfigHeartbeatSubscriptionStatus) {
+        guard status.isEnabled else {
+            return nil
+        }
+        self.source = status.source
+        self.destination = status.destination
+        self.periodLog = status.periodLog
+    }
+    
+    /// An initializer for local Node. This sets the state to the value from the Set
+    /// message.
+    ///
+    /// - parameter request: The request sent to the local Node.
+    internal init?(_ request: ConfigHeartbeatSubscriptionSet) {
+        guard request.isEnabled else {
+            return nil
+        }
+        self.source = request.source
+        self.destination = request.destination
+        self.periodLog = request.periodLog
         self.state = State()
     }
     

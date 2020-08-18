@@ -50,6 +50,23 @@ public struct NodeFeatures: OptionSet {
     public init(rawValue: UInt16) {
         self.rawValue = rawValue
     }
+    
+    internal func asArray() -> [NodeFeature] {
+        var result: [NodeFeature] = []
+        if contains(.relay) {
+            result.append(.relay)
+        }
+        if contains(.proxy) {
+            result.append(.proxy)
+        }
+        if contains(.friend) {
+            result.append(.friend)
+        }
+        if contains(.lowPower) {
+            result.append(.lowPower)
+        }
+        return result
+    }
 }
 
 /// The state of a feature.
@@ -114,6 +131,22 @@ public class NodeFeaturesState: Codable {
     }
 }
 
+extension NodeFeature: CustomDebugStringConvertible {
+    
+    public var debugDescription: String {
+        return rawValue
+    }
+    
+}
+
+extension NodeFeatures: CustomDebugStringConvertible {
+    
+    public var debugDescription: String {
+        return "\(asArray())"
+    }
+    
+}
+
 extension NodeFeatureState: CustomDebugStringConvertible {
     
     public var debugDescription: String {
@@ -141,7 +174,7 @@ extension NodeFeaturesState: CustomDebugStringConvertible {
 
 internal extension Array where Element == NodeFeature {
     
-    func toSet() -> NodeFeatures {
+    func asSet() -> NodeFeatures {
         var set = NodeFeatures()
         if contains(.relay) {
             set.insert(.relay)

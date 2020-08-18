@@ -76,6 +76,10 @@ internal class ConfigurationServerHandler: ModelDelegate {
             ConfigNetworkTransmitSet.self,
             ConfigNetworkTransmitGet.self,
             ConfigNodeReset.self,
+            ConfigHeartbeatPublicationGet.self,
+            ConfigHeartbeatPublicationSet.self,
+            ConfigHeartbeatSubscriptionGet.self,
+            ConfigHeartbeatSubscriptionSet.self,
         ]
         self.meshNetwork = meshNetwork
         self.messageTypes = types.toMap()
@@ -475,7 +479,7 @@ internal class ConfigurationServerHandler: ModelDelegate {
         // Default TTL
         case let request as ConfigDefaultTtlSet:
             localNode.defaultTTL = request.ttl
-            return ConfigDefaultTtlStatus(ttl: localNode.defaultTTL!)
+            fallthrough
             
         case is ConfigDefaultTtlGet:
             return ConfigDefaultTtlStatus(ttl: localNode.defaultTTL ?? 5) // TODO: networkManager.defaultTtl)
@@ -498,6 +502,7 @@ internal class ConfigurationServerHandler: ModelDelegate {
         // Secure Network Beacon configuration
         case is ConfigBeaconGet, is ConfigBeaconSet:
             // Secure Network Beacon feature is not supported.
+            // TODO: Add support for sending Secure Network Beacons.
             return ConfigBeaconStatus(enabled: false)
             
         // Network Transmit settings
@@ -511,6 +516,28 @@ internal class ConfigurationServerHandler: ModelDelegate {
         // Resetting Node
         case is ConfigNodeReset:
             return ConfigNodeResetStatus()
+            
+        // Heartbeat publication
+        case let request as ConfigHeartbeatPublicationSet:
+            if localNode.heartbeatPublication != nil {
+                // TODO: Stop publication
+            }
+            localNode.heartbeatPublication = HeartbeatPublication(request)
+            if let publication = localNode.heartbeatPublication {
+                // TODO: Start publication
+            }
+            fallthrough
+            
+        case is ConfigHeartbeatPublicationGet:
+            return ConfigHeartbeatPublicationStatus(localNode.heartbeatPublication)
+                
+        // Heartbeat subscription
+        case let request as ConfigHeartbeatSubscriptionSet:
+            localNode.heartbeatSubscription = HeartbeatSubscription(request)
+            fallthrough
+            
+        case is ConfigHeartbeatSubscriptionGet:
+            return ConfigHeartbeatSubscriptionStatus(localNode.heartbeatSubscription)
             
         default:
             fatalError("Message not handled: \(request)")

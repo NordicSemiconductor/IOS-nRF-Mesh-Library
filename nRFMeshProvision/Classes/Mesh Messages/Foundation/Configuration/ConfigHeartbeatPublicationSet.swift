@@ -30,7 +30,7 @@
 
 import Foundation
 
-public struct ConfigHeartbeatPublicationSet: AcknowledgedConfigMessage {
+public struct ConfigHeartbeatPublicationSet: AcknowledgedConfigMessage, ConfigNetKeyMessage {
     public static let opCode: UInt32 = 0x8039
     public static let responseType: StaticMeshMessage.Type = ConfigHeartbeatPublicationStatus.self
     
@@ -39,7 +39,7 @@ public struct ConfigHeartbeatPublicationSet: AcknowledgedConfigMessage {
         data += countLog
         data += periodLog
         data += ttl
-        data += featuresBits
+        data += features.rawValue
         data += networkKeyIndex
         return data
     }
@@ -86,12 +86,13 @@ public struct ConfigHeartbeatPublicationSet: AcknowledgedConfigMessage {
     ///
     /// Valid values are in range 0-127.
     public let ttl: UInt8
-    /// Bit field indicating features that trigger Heartbeat messages when changed.
-    internal let featuresBits: UInt16
     /// The Heartbeat Publication Features state determines the features that trigger
     /// sending Heartbeat messages when changed.
-    public var features: NodeFeatures {
-        return NodeFeatures(rawValue: featuresBits)
+    public let features: NodeFeatures
+    
+    /// Returns whether Heartbeat publishing will be enabled.
+    public var isEnabled: Bool {
+        return destination != .unassignedAddress
     }
     
     /// Creates Config Heartbeat Publication Set message that will disable all Heartbeat
@@ -101,20 +102,19 @@ public struct ConfigHeartbeatPublicationSet: AcknowledgedConfigMessage {
         self.countLog = 0
         self.periodLog = 0
         self.ttl = 0
-        self.featuresBits = 0
+        self.features = []
         self.networkKeyIndex = 0
     }
     
     /// Creates Config Heartbeat Publication Set message with given parameters.
     /// - Parameters:
-    ///   - countLog: Number of Heartbeat messages to be sent. The value will be calculated
-    ///               as 2^(countLog-1).
+    ///   - countLog: Number of Heartbeat messages to be sent:
     ///
     ///               - 0x00 - Disables publishing periodic Heartbeat messages.
     ///               - 0x01 - 0x11 - Number of Heartbeat messages, 2^(n-1), to be sent.
     ///               - 0xFF - Periodic Heartbeat messages are published indefinitely.
     ///   - periodLog: Period for sending Heartbeat messages. This field is the interval used
-    ///                for sending messages. The value will be calculated as 2^(periodLog-1).
+    ///                for sending messages:
     ///
     ///               - 0x00 - Disables publishing periodic Heartbeat messages.
     ///               - 0x01 - 0x11 - Publication period represented as 2^(n-1) seconds.
@@ -123,8 +123,9 @@ public struct ConfigHeartbeatPublicationSet: AcknowledgedConfigMessage {
     ///   - ttl: TTL to be used when sending Heartbeat messages.
     ///   - networkKey: Network Key that will be used to send Heartbeat messages.
     ///   - features: Node features that trigger Heartbeat messages when changed.
-    public init?(startSendingTwoToThePower countLog: UInt8,
-                 heartbeatMessagesEveryTwoToThePower periodLog: UInt8, secondsTo destination: Address,
+    public init?(startSending countLog: UInt8,
+                 heartbeatMessagesEvery periodLog: UInt8,
+                 secondsTo destination: Address,
                  usingTtl ttl: UInt8, andNetworkKey networkKey: NetworkKey,
                  andEnableHeartbeatMessagesTriggeredByChangeOf features: NodeFeatures = []) {
         guard destination.isUnicast || destination.isGroup else {
@@ -147,7 +148,7 @@ public struct ConfigHeartbeatPublicationSet: AcknowledgedConfigMessage {
             return nil
         }
         self.networkKeyIndex = networkKey.index
-        self.featuresBits = features.rawValue
+        self.features = features
     }
     
     /// Creates Config Heartbeat Publication Set message with given parameters.
@@ -174,7 +175,7 @@ public struct ConfigHeartbeatPublicationSet: AcknowledgedConfigMessage {
             return nil
         }
         self.networkKeyIndex = networkKey.index
-        self.featuresBits = features.rawValue
+        self.features = features
     }
     
     public init?(parameters: Data) {
@@ -185,7 +186,7 @@ public struct ConfigHeartbeatPublicationSet: AcknowledgedConfigMessage {
         self.countLog = parameters.read(fromOffset: 2)
         self.periodLog = parameters.read(fromOffset: 3)
         self.ttl = parameters.read(fromOffset: 4)
-        self.featuresBits = parameters.read(fromOffset: 5)
+        self.features = NodeFeatures(rawValue: parameters.read(fromOffset: 5))
         self.networkKeyIndex = parameters.read(fromOffset: 7)
     }
     

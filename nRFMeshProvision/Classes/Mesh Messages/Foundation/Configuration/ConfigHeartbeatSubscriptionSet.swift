@@ -65,6 +65,11 @@ public struct ConfigHeartbeatSubscriptionSet: AcknowledgedConfigMessage {
     /// - Other values are Prohibited.
     internal let periodLog: UInt8
     
+    /// Returns whether Heartbeat processing will be enabled.
+    public var isEnabled: Bool {
+        return source != .unassignedAddress && destination != .unassignedAddress
+    }
+    
     /// Creates Config Heartbeat Subscription Set message that will disable receiving
     /// and processing Heartbeat messages.
     public init() {
@@ -84,7 +89,7 @@ public struct ConfigHeartbeatSubscriptionSet: AcknowledgedConfigMessage {
     ///
     ///               - 0x00 - Disables publishing periodic Heartbeat messages.
     ///               - 0x01 - 0x11 - Publication period represented as 2^(n-1) seconds.
-    public init?(startProcessingHeartbeatMessagesForTwoToThePower periodLog: UInt8,
+    public init?(startProcessingHeartbeatMessagesFor periodLog: UInt8,
                  secondsSentFrom source: Address, to destination: Address) {
         guard source.isUnicast else {
          return nil

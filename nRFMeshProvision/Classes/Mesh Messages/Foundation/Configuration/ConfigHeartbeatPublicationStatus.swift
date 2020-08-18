@@ -38,7 +38,7 @@ public struct ConfigHeartbeatPublicationStatus: ConfigMessage, ConfigStatusMessa
         data += countLog
         data += periodLog
         data += ttl
-        data += featuresBits
+        data += features.rawValue
         data += networkKeyIndex
         return data
     }
@@ -86,13 +86,9 @@ public struct ConfigHeartbeatPublicationStatus: ConfigMessage, ConfigStatusMessa
     ///
     /// Valid values are in range 0-127.
     public let ttl: UInt8
-    /// Bit field indicating features that trigger Heartbeat messages when changed.
-    internal let featuresBits: UInt16
     /// The Heartbeat Publication Features state determines the features that trigger
     /// sending Heartbeat messages when changed.
-    public var features: NodeFeaturesState {
-        return NodeFeaturesState(rawValue: featuresBits)
-    }
+    public let features: NodeFeatures
     
     /// Returns whether Heartbeat publishing is enabled.
     public var isEnabled: Bool {
@@ -106,15 +102,15 @@ public struct ConfigHeartbeatPublicationStatus: ConfigMessage, ConfigStatusMessa
     
     /// Returns whether feature-trigerred Heartbeat publishing is enabled.
     public var isFeatureTrigerredPublishingEnabled: Bool {
-        return isEnabled && featuresBits != 0
+        return isEnabled && !features.isEmpty
     }
     
-    public init(responseTo request: ConfigHeartbeatPublicationGet, with publication: HeartbeatPublication?) {
+    public init(_ publication: HeartbeatPublication?) {
         self.destination = publication?.address ?? .unassignedAddress
         self.countLog = publication?.state?.countLog ?? 0
         self.periodLog = publication?.periodLog ?? 0
         self.ttl = publication?.ttl ?? 0
-        self.featuresBits = publication?.features.toSet().rawValue ?? 0
+        self.features = publication?.features ?? []
         self.networkKeyIndex = publication?.networkKeyIndex ?? 0
         self.status = .success
     }
@@ -124,7 +120,7 @@ public struct ConfigHeartbeatPublicationStatus: ConfigMessage, ConfigStatusMessa
         self.countLog = request.countLog
         self.periodLog = request.periodLog
         self.ttl = request.ttl
-        self.featuresBits = request.featuresBits
+        self.features = request.features
         self.networkKeyIndex = request.networkKeyIndex
         self.status = status
     }
@@ -145,7 +141,7 @@ public struct ConfigHeartbeatPublicationStatus: ConfigMessage, ConfigStatusMessa
         self.countLog = parameters.read(fromOffset: 3)
         self.periodLog = parameters.read(fromOffset: 4)
         self.ttl = parameters.read(fromOffset: 5)
-        self.featuresBits = parameters.read(fromOffset: 6)
+        self.features = NodeFeatures(rawValue: parameters.read(fromOffset: 6))
         self.networkKeyIndex = parameters.read(fromOffset: 8)
     }
     

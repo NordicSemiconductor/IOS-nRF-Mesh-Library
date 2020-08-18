@@ -231,7 +231,7 @@ public class Node: Codable {
     public internal(set) var heartbeatPublication: HeartbeatPublication?
     /// The Heartbeat Subscription object represents parameters that define
     /// receiving of periodical Heartbeat transport control messages.
-    public internal(set) var heartbeatSubscriptions: [HeartbeatSubscription]?
+    public internal(set) var heartbeatSubscription: HeartbeatSubscription?
     
     /// A constructor needed only for testing.
     internal init(name: String?, unicastAddress: Address, elements: UInt8) {
@@ -460,8 +460,8 @@ public class Node: Codable {
             throw DecodingError.dataCorruptedError(forKey: .heartbeatPublication, in: container,
                                                    debugDescription: "Network Key with index \(heartbeatPublication!.networkKeyIndex) is unknown to node with address 0x\(unicastAddress.hex).")
         }
-        self.heartbeatSubscriptions = try container.decodeIfPresent([HeartbeatSubscription].self,
-                                                                    forKey: .heartbeatSubscription)
+        self.heartbeatSubscription = try container.decodeIfPresent(HeartbeatSubscription.self,
+                                                                   forKey: .heartbeatSubscription)
         
         elements.forEach {
             $0.parentNode = self
@@ -490,7 +490,7 @@ public class Node: Codable {
         try container.encode(elements, forKey: .elements)
         try container.encode(isBlacklisted, forKey: .isBlacklisted)
         try container.encodeIfPresent(heartbeatPublication, forKey: .heartbeatPublication)
-        try container.encodeIfPresent(heartbeatSubscriptions, forKey: .heartbeatSubscription)
+        try container.encodeIfPresent(heartbeatSubscription, forKey: .heartbeatSubscription)
     }
 }
 
