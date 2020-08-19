@@ -48,6 +48,7 @@ class SetPublicationDestinationsViewController: UITableViewController {
     
     /// List of Elements containing Model bound to selected Application Key.
     private var compatibleElements: [Element]!
+    private var groups: [Group]!
     private let specialGroups: [(title: String, address: Address)] = [
         ("All Proxies", Address.allProxies),
         ("All Friends", Address.allFriends),
@@ -61,6 +62,9 @@ class SetPublicationDestinationsViewController: UITableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+
+        let network = MeshNetworkManager.instance.meshNetwork!
+        groups = network.groups
         
         if let key = selectedApplicationKey {
             selectedApplicationKey = nil
@@ -74,6 +78,9 @@ class SetPublicationDestinationsViewController: UITableViewController {
     // MARK: - Table view data source
 
     override func numberOfSections(in tableView: UITableView) -> Int {
+        if groups.isEmpty {
+            return IndexPath.numberOfSections - 1
+        }
         return IndexPath.numberOfSections
     }
 
@@ -84,11 +91,11 @@ class SetPublicationDestinationsViewController: UITableViewController {
         if section == IndexPath.elementsSection {
             return max(compatibleElements.count, 1)
         }
-        if section == IndexPath.groupsSection {
-            let network = MeshNetworkManager.instance.meshNetwork!
-            return network.groups.count
+        if section == IndexPath.groupsSection && !groups.isEmpty {
+            return groups.count
         }
-        if section == IndexPath.specialGroupsSection {
+        if section == IndexPath.specialGroupsSection ||
+          (section == IndexPath.groupsSection && groups.isEmpty) {
             return specialGroups.count
         }
         return 0
@@ -146,9 +153,8 @@ class SetPublicationDestinationsViewController: UITableViewController {
             cell.imageView?.image = #imageLiteral(resourceName: "ic_flag_24pt")
             cell.accessoryType = indexPath == selectedIndexPath ? .checkmark : .none
         }
-        if indexPath.isGroupsSection {
-            let network = MeshNetworkManager.instance.meshNetwork!
-            let group = network.groups[indexPath.row]
+        if indexPath.isGroupsSection && !groups.isEmpty {
+            let group = groups[indexPath.row]
             if let destination = selectedDestination, destination == group.address {
                 selectedIndexPath = indexPath
                 selectedDestination = nil
@@ -157,7 +163,7 @@ class SetPublicationDestinationsViewController: UITableViewController {
             cell.imageView?.image = #imageLiteral(resourceName: "ic_group_24pt")
             cell.accessoryType = indexPath == selectedIndexPath ? .checkmark : .none
         }
-        if indexPath.isSpecialGroupsSection {
+        if indexPath.isSpecialGroupsSection || (indexPath.isGroupsSection && groups.isEmpty) {
             let pair = specialGroups[indexPath.row]
             if let destination = selectedDestination, destination.address == pair.address {
                 selectedIndexPath = indexPath
@@ -247,15 +253,12 @@ private extension SetPublicationDestinationsViewController {
         case IndexPath.elementsSection:
             let element = compatibleElements[indexPath.row]
             delegate?.destinationSelected(MeshAddress(element.unicastAddress))
-        case IndexPath.groupsSection:
-            let meshNetwork = MeshNetworkManager.instance.meshNetwork!
-            let selectedGroup = meshNetwork.groups[indexPath.row]
+        case IndexPath.groupsSection where !groups.isEmpty:
+            let selectedGroup = groups[indexPath.row]
             delegate?.destinationSelected(selectedGroup.address)
-        case IndexPath.specialGroupsSection:
+        default:
             let selectedGroup = specialGroups[indexPath.row]
             delegate?.destinationSelected(MeshAddress(selectedGroup.address))
-        default:
-            break
         }
     }
 }

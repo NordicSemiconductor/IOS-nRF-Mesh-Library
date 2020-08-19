@@ -47,6 +47,7 @@ class SetHeartbeatPublicationDestinationsViewController: UITableViewController {
     
     /// List of all Nodes, except the target one.
     private var nodes: [Node]!
+    private var groups: [Group]!
     private let specialGroups: [(title: String, address: Address)] = [
         ("All Proxies", Address.allProxies),
         ("All Friends", Address.allFriends),
@@ -62,12 +63,18 @@ class SetHeartbeatPublicationDestinationsViewController: UITableViewController {
         super.viewDidLoad()
 
         let network = MeshNetworkManager.instance.meshNetwork!
+        // Exclude the current Node.
         nodes = network.nodes.filter { $0.uuid != target.uuid }
+        // Exclude Virtual Groups, which may not be set as Heartbeat destination.
+        groups = network.groups.filter { $0.address.address.isGroup }
     }
 
     // MARK: - Table view data source
 
     override func numberOfSections(in tableView: UITableView) -> Int {
+        if groups.isEmpty {
+            return IndexPath.numberOfSections - 1
+        }
         return IndexPath.numberOfSections
     }
 
@@ -78,11 +85,11 @@ class SetHeartbeatPublicationDestinationsViewController: UITableViewController {
         if section == IndexPath.nodesSection {
             return max(nodes.count, 1)
         }
-        if section == IndexPath.groupsSection {
-            let network = MeshNetworkManager.instance.meshNetwork!
-            return network.groups.count
+        if section == IndexPath.groupsSection && !groups.isEmpty {
+            return groups.count
         }
-        if section == IndexPath.specialGroupsSection {
+        if section == IndexPath.specialGroupsSection ||
+          (section == IndexPath.groupsSection && groups.isEmpty) {
             return specialGroups.count
         }
         return 0
@@ -126,9 +133,8 @@ class SetHeartbeatPublicationDestinationsViewController: UITableViewController {
             cell.imageView?.image = #imageLiteral(resourceName: "ic_flag_24pt")
             cell.accessoryType = indexPath == selectedIndexPath ? .checkmark : .none
         }
-        if indexPath.isGroupsSection {
-            let network = MeshNetworkManager.instance.meshNetwork!
-            let group = network.groups[indexPath.row]
+        if indexPath.isGroupsSection && !groups.isEmpty {
+            let group = groups[indexPath.row]
             if let destination = selectedDestination, destination == group.address.address {
                 selectedIndexPath = indexPath
                 selectedDestination = nil
@@ -137,7 +143,7 @@ class SetHeartbeatPublicationDestinationsViewController: UITableViewController {
             cell.imageView?.image = #imageLiteral(resourceName: "ic_group_24pt")
             cell.accessoryType = indexPath == selectedIndexPath ? .checkmark : .none
         }
-        if indexPath.isSpecialGroupsSection {
+        if indexPath.isSpecialGroupsSection || (indexPath.isGroupsSection && groups.isEmpty) {
             let pair = specialGroups[indexPath.row]
             if let destination = selectedDestination, destination == pair.address {
                 selectedIndexPath = indexPath
@@ -198,15 +204,12 @@ private extension SetHeartbeatPublicationDestinationsViewController {
         case IndexPath.nodesSection:
             let node = nodes[indexPath.row]
             delegate?.destinationSelected(node.unicastAddress)
-        case IndexPath.groupsSection:
-            let meshNetwork = MeshNetworkManager.instance.meshNetwork!
-            let selectedGroup = meshNetwork.groups[indexPath.row]
+        case IndexPath.groupsSection where !groups.isEmpty:
+            let selectedGroup = groups[indexPath.row]
             delegate?.destinationSelected(selectedGroup.address.address)
-        case IndexPath.specialGroupsSection:
+        default:
             let selectedGroup = specialGroups[indexPath.row]
             delegate?.destinationSelected(selectedGroup.address)
-        default:
-            break
         }
     }
     
