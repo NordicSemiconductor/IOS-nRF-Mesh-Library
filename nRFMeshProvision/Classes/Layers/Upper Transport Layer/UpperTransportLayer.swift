@@ -74,7 +74,7 @@ internal class UpperTransportLayer {
             switch controlMessage.opCode {
             case 0x0A:
                 if let heartbeat = HearbeatMessage(fromControlMessage: controlMessage) {
-                    logger?.i(.upperTransport, "\(heartbeat) received")
+                    logger?.i(.upperTransport, "\(heartbeat) received from \(heartbeat.source.hex)")
                     handle(hearbeat: heartbeat)
                 }
             default:
