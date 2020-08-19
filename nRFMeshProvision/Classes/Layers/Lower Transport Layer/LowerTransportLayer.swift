@@ -291,9 +291,12 @@ private extension LowerTransportLayer {
     /// and unless the message SeqAuth is always greater, the replay attack
     /// is not possible.
     ///
+    /// - important: Messages sent to a Unicast Address assigned to other Nodes
+    ///              than the local one are not checked against reply attacks.
+    ///
     /// - parameter networkPdu: The Network PDU to validate.
     func checkAgainstReplayAttack(_ networkPdu: NetworkPdu) -> Bool {
-        // Don't check messages sent to another Node's Elements.
+        // Don't check messages sent to other Nodes.
         guard !networkPdu.destination.isUnicast ||
               meshNetwork.localProvisioner?.node?.hasAllocatedAddress(networkPdu.destination) ?? false else {
             return true
@@ -316,11 +319,39 @@ private extension LowerTransportLayer {
                 reassemblyInProgress = incompleteSegments[key] != nil ||
                                        acknowledgments[networkPdu.source]?.sequenceZero == sequenceZero
             }
-            guard receivedSeqAuth > localSeqAuth.uint64Value ||
+            
+            // As the messages are processed in a concurrent queue, it may happen that two
+            // messages sent almost immediately were received in the right order, but are
+            // processed in the opposite order. To handle that case, the previous SeqAuth
+            // is stored. If the received message has SeqAuth less than the last one, but
+            // greater than the previous one, it could not be used to replay attack, as no
+            // message with that SeqAuth was ever received.
+            //
+            // Note: Only the single previous SeqAuth is stored, so if 3 or more messages are
+            //       sent one after another, some of them still may be discarded despite being
+            //       received in the correct order. As a workaround, the queue may be set to
+            //       a serial one in MeshNetworkManager initializer.
+            var missed = false
+            if let previousSeqAuth = defaults.object(forKey: "P\(networkPdu.source.hex)") as? NSNumber {
+                missed = receivedSeqAuth < localSeqAuth.uint64Value &&
+                         receivedSeqAuth > previousSeqAuth.uint64Value
+            }
+            
+            // Validate.
+            guard receivedSeqAuth > localSeqAuth.uint64Value || missed ||
                   (reassemblyInProgress && receivedSeqAuth == localSeqAuth.uint64Value) else {
                 // Ignore that message.
                 logger?.w(.lowerTransport, "Discarding packet (seqAuth: \(receivedSeqAuth), expected > \(localSeqAuth))")
                 return false
+            }
+            
+            // The message is valid. Remember the previous SeqAuth.
+            let newPreviousSeqAuth = min(receivedSeqAuth, localSeqAuth.uint64Value)
+            defaults.set(newPreviousSeqAuth, forKey: "P\(networkPdu.source.hex)")
+            
+            // If the message was processed after its successor, don't overwrite the last SeqAuth.
+            if missed {
+                return true
             }
         }
         // SeqAuth is valid, save the new sequence authentication value.

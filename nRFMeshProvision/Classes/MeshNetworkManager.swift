@@ -144,23 +144,31 @@ public class MeshNetworkManager {
     
     // MARK: - Constructors
     
-    /// Initializes the MeshNetworkManager.
+    /// Initializes the Mesh Network Manager.
     ///
     /// If storage is not provided, a local file will be used instead.
     ///
-    /// - important: Aafter the manager has been initialized, the
-    ///              `localElements` property must be set . Otherwise,
-    ///              none of status messages will be parsed correctly
-    ///              and they will be returned to the delegate as
-    ///              `UnknownMessage`s.
+    /// - important: After the manager has been initialized, the `localElements`
+    ///              property must be set . Otherwise, none of status messages will
+    ///              be parsed correctly and they will be returned to the delegate
+    ///              as `UnknownMessage`s.
     ///
     /// - parameters:
     ///   - storage: The storage to use to save the network configuration.
     ///   - queue: The DispatQueue to process reqeusts on. By default
-    ///            the a global background queue will be used.
-    ///   - delegateQueue: The DispatQueue to call delegate methods on.
+    ///            the a global background concurrent queue will be used.
+    ///            Note, that if multiple messages are sent shortly one after another,
+    ///            processing them in a concurrent queue may cause some of them to be
+    ///            discarded despite the fact that they were received in the ascending
+    ///            order of SeqAuth, as one with a greater SeqAuth value may be processed
+    ///            before the previous one, causing the replay protection validation fail
+    ///            for the latter. This library stores 2 last SeqAuth values, so if a
+    ///            message with a unique SeqAuth is processed after its successor, it
+    ///            will be processed correctly.
+    ///   - delegateQueue: The DispatchQueue to call delegate methods on.
     ///                    By default the global main queue will be used.
     /// - seeAlso: `LocalStorage`
+    /// - seeAlso: `LowerTransportLayer.checkAgainstReplayAttack(_:NetworkPdu)`
     public init(using storage: Storage = LocalStorage(),
                 queue: DispatchQueue = DispatchQueue.global(qos: .background),
                 delegateQueue: DispatchQueue = DispatchQueue.main) {
