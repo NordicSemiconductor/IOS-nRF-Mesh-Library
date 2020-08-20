@@ -94,6 +94,10 @@ class ModelViewController: ProgressViewController {
             let viewController = navigationController?.topViewController as! SetHeartbeatPublicationViewController
             viewController.node = model.parentElement!.parentNode!
             viewController.delegate = self
+        case .some("heartbeatSubscription"):
+            let viewController = navigationController?.topViewController as! SetHeartbeatSubscriptionViewController
+            viewController.node = model.parentElement!.parentNode!
+            viewController.delegate = self
         case .some("publish"):
             let viewController = navigationController?.topViewController as! SetPublicationViewController
             viewController.model = model
@@ -234,17 +238,29 @@ class ModelViewController: ProgressViewController {
         }
         // Fourth section is the Subscribe or Heartbeat Subscription section (in case of Configuration Server)
         if indexPath.isSubscribeSection {
-            guard indexPath.row < model.subscriptions.count else {
-                let cell = tableView.dequeueReusableCell(withIdentifier: "action", for: indexPath)
-                cell.textLabel?.text = "Subscribe"
-                cell.textLabel?.isEnabled = localProvisioner?.hasConfigurationCapabilities ?? false
+            if model.isConfigurationServer {
+                guard let subscription = model.parentElement?.parentNode?.heartbeatSubscription else {
+                    let cell = tableView.dequeueReusableCell(withIdentifier: "action", for: indexPath)
+                    cell.textLabel?.text = "Subscribe"
+                    cell.textLabel?.isEnabled = localProvisioner?.hasConfigurationCapabilities ?? false
+                    return cell
+                }
+                let cell = tableView.dequeueReusableCell(withIdentifier: "heartbeatSubscription", for: indexPath) as! HeartbeatSubscriptionCell
+                cell.subscription = subscription
+                return cell
+            } else {
+                guard indexPath.row < model.subscriptions.count else {
+                    let cell = tableView.dequeueReusableCell(withIdentifier: "action", for: indexPath)
+                    cell.textLabel?.text = "Subscribe"
+                    cell.textLabel?.isEnabled = localProvisioner?.hasConfigurationCapabilities ?? false
+                    return cell
+                }
+                let cell = tableView.dequeueReusableCell(withIdentifier: "group", for: indexPath)
+                let group = model.subscriptions[indexPath.row]
+                cell.textLabel?.text = group.name
+                cell.detailTextLabel?.text = nil
                 return cell
             }
-            let cell = tableView.dequeueReusableCell(withIdentifier: "group", for: indexPath)
-            let group = model.subscriptions[indexPath.row]
-            cell.textLabel?.text = group.name
-            cell.detailTextLabel?.text = nil
-            return cell
         }
         // A custom cell for the Model.
         let identifier = model.isBluetoothSIGAssigned ? model.modelIdentifier.hex : "vendor"
@@ -293,8 +309,12 @@ class ModelViewController: ProgressViewController {
             }
         }
         if indexPath.isSubscribeSection {
-            // Only the "Subscribe" row is selectable.
-            performSegue(withIdentifier: "subscribe", sender: indexPath)
+            if model.isConfigurationServer {
+                performSegue(withIdentifier: "heartbeatSubscription", sender: indexPath)
+            } else {
+                // Only the "Subscribe" row is selectable.
+                performSegue(withIdentifier: "subscribe", sender: indexPath)
+            }
         }
     }
     
@@ -681,7 +701,8 @@ extension ModelViewController: MeshNetworkDelegate {
     
 }
 
-extension ModelViewController: BindAppKeyDelegate, PublicationDelegate, SubscriptionDelegate {
+extension ModelViewController: BindAppKeyDelegate, PublicationDelegate,
+                               SubscriptionDelegate, HeartbeatSubscriptionDelegate {
     
     func keyBound() {
         tableView.reloadSections(.bindings, with: .automatic)
@@ -692,6 +713,10 @@ extension ModelViewController: BindAppKeyDelegate, PublicationDelegate, Subscrip
     }
     
     func subscriptionAdded() {
+        tableView.reloadSections(.subscriptions, with: .automatic)
+    }
+    
+    func heartbeatSubscriptionSet() {
         tableView.reloadSections(.subscriptions, with: .automatic)
     }
     

@@ -72,15 +72,15 @@ class SetHeartbeatPublicationViewController: ProgressViewController {
     var node: Node!
     var delegate: PublicationDelegate?
     
-    var destination: Address?
-    var networkKey: NetworkKey?
-    var ttl: UInt8 = 5 {
+    private var destination: Address?
+    private var networkKey: NetworkKey?
+    private var ttl: UInt8 = 5 {
         didSet {
             ttlLabel.text = "\(ttl)"
         }
     }
-    var countLog: UInt8 = 0
-    var periodLog: UInt8 = 0
+    private var countLog: UInt8 = 0
+    private var periodLog: UInt8 = 0
     
     // MARK: - View Controller    
     

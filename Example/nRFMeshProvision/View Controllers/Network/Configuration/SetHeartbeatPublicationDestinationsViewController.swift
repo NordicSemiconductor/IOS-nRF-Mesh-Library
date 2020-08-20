@@ -72,10 +72,7 @@ class SetHeartbeatPublicationDestinationsViewController: UITableViewController {
     // MARK: - Table view data source
 
     override func numberOfSections(in tableView: UITableView) -> Int {
-        if groups.isEmpty {
-            return IndexPath.numberOfSections - 1
-        }
-        return IndexPath.numberOfSections
+        return IndexPath.numberOfSections(for: groups)
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -220,7 +217,11 @@ private extension IndexPath {
     static let nodesSection         = 1
     static let groupsSection        = 2
     static let specialGroupsSection = 3
-    static let numberOfSections     = IndexPath.specialGroupsSection + 1
+    static func numberOfSections(for groups: [Group]) -> Int {
+        return groups.isEmpty ?
+            IndexPath.groupsSection + 1 :
+            IndexPath.specialGroupsSection + 1
+    }
     
     var reuseIdentifier: String {
         if isKeySection {

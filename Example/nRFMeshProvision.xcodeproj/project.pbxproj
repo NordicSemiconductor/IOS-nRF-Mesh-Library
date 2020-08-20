@@ -64,6 +64,7 @@
 		5283528222806D7C0097B949 /* NetworkKeySelectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5283528122806D7C0097B949 /* NetworkKeySelectionViewController.swift */; };
 		528352B42284139F0097B949 /* ProxyProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 528352B32284139F0097B949 /* ProxyProtocol.swift */; };
 		528352BC2285B6150097B949 /* OobSelector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 528352BB2285B6150097B949 /* OobSelector.swift */; };
+		528445C924EEA765002168A1 /* HeartbeatSubscriptionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 528445C824EEA765002168A1 /* HeartbeatSubscriptionCell.swift */; };
 		5288C20423704EF300321ED3 /* ConnectionModeCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5288C20323704EF300321ED3 /* ConnectionModeCell.swift */; };
 		5288C2062370571100321ED3 /* ProxySelectorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5288C2052370571100321ED3 /* ProxySelectorViewController.swift */; };
 		5288C20823705C8D00321ED3 /* ProxyCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5288C20723705C8D00321ED3 /* ProxyCell.swift */; };
@@ -93,6 +94,9 @@
 		52A8EA8B24E6A371004C14C7 /* SetHeartbeatPublication.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 52A8EA8924E6A371004C14C7 /* SetHeartbeatPublication.storyboard */; };
 		52A8EA8D24E6A470004C14C7 /* SetHeartbeatPublicationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52A8EA8C24E6A470004C14C7 /* SetHeartbeatPublicationViewController.swift */; };
 		52A8EA8F24EBF099004C14C7 /* SetHeartbeatPublicationDestinationsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52A8EA8E24EBF099004C14C7 /* SetHeartbeatPublicationDestinationsViewController.swift */; };
+		52A8EA9224ED35F4004C14C7 /* SetHeartbeatSubscription.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 52A8EA9024ED35F4004C14C7 /* SetHeartbeatSubscription.storyboard */; };
+		52A8EA9424EE6D18004C14C7 /* HeartbeatSubscriptionPeriodCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52A8EA9324EE6D18004C14C7 /* HeartbeatSubscriptionPeriodCell.swift */; };
+		52A8EA9624EE704A004C14C7 /* SetHeartbeatSubscriptionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52A8EA9524EE704A004C14C7 /* SetHeartbeatSubscriptionViewController.swift */; };
 		52A9C17D230EB9490036792A /* GenericOnOffViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52A9C17B230EB9490036792A /* GenericOnOffViewCell.swift */; };
 		52A9C17E230EB9490036792A /* GenericOnOff.xib in Resources */ = {isa = PBXBuildFile; fileRef = 52A9C17C230EB9490036792A /* GenericOnOff.xib */; };
 		52A9C1C52313D7D80036792A /* GenericLevelViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52A9C1C32313D7D80036792A /* GenericLevelViewCell.swift */; };
@@ -200,6 +204,7 @@
 		5283528122806D7C0097B949 /* NetworkKeySelectionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkKeySelectionViewController.swift; sourceTree = "<group>"; };
 		528352B32284139F0097B949 /* ProxyProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProxyProtocol.swift; sourceTree = "<group>"; };
 		528352BB2285B6150097B949 /* OobSelector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OobSelector.swift; sourceTree = "<group>"; };
+		528445C824EEA765002168A1 /* HeartbeatSubscriptionCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeartbeatSubscriptionCell.swift; sourceTree = "<group>"; };
 		5288C20323704EF300321ED3 /* ConnectionModeCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionModeCell.swift; sourceTree = "<group>"; };
 		5288C2052370571100321ED3 /* ProxySelectorViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProxySelectorViewController.swift; sourceTree = "<group>"; };
 		5288C20723705C8D00321ED3 /* ProxyCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProxyCell.swift; sourceTree = "<group>"; };
@@ -231,6 +236,9 @@
 		52A8EA8A24E6A371004C14C7 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/SetHeartbeatPublication.storyboard; sourceTree = "<group>"; };
 		52A8EA8C24E6A470004C14C7 /* SetHeartbeatPublicationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetHeartbeatPublicationViewController.swift; sourceTree = "<group>"; };
 		52A8EA8E24EBF099004C14C7 /* SetHeartbeatPublicationDestinationsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetHeartbeatPublicationDestinationsViewController.swift; sourceTree = "<group>"; };
+		52A8EA9124ED35F4004C14C7 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/SetHeartbeatSubscription.storyboard; sourceTree = "<group>"; };
+		52A8EA9324EE6D18004C14C7 /* HeartbeatSubscriptionPeriodCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeartbeatSubscriptionPeriodCell.swift; sourceTree = "<group>"; };
+		52A8EA9524EE704A004C14C7 /* SetHeartbeatSubscriptionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetHeartbeatSubscriptionViewController.swift; sourceTree = "<group>"; };
 		52A9C17B230EB9490036792A /* GenericOnOffViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericOnOffViewCell.swift; sourceTree = "<group>"; };
 		52A9C17C230EB9490036792A /* GenericOnOff.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = GenericOnOff.xib; sourceTree = "<group>"; };
 		52A9C1C32313D7D80036792A /* GenericLevelViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericLevelViewCell.swift; sourceTree = "<group>"; };
@@ -343,6 +351,8 @@
 				523F776322C4EDD90030EA6A /* SwitchCell.swift */,
 				5231401522F460380074325A /* PublicationCell.swift */,
 				52A8EA8724E6946D004C14C7 /* HeartbeatPublicationCell.swift */,
+				528445C824EEA765002168A1 /* HeartbeatSubscriptionCell.swift */,
+				52A8EA9324EE6D18004C14C7 /* HeartbeatSubscriptionPeriodCell.swift */,
 			);
 			path = Cells;
 			sourceTree = "<group>";
@@ -357,6 +367,7 @@
 				52CD0A5C2330C04700A9A181 /* Network.storyboard */,
 				523F778B22CCEA900030EA6A /* SetPublication.storyboard */,
 				52A8EA8924E6A371004C14C7 /* SetHeartbeatPublication.storyboard */,
+				52A8EA9024ED35F4004C14C7 /* SetHeartbeatSubscription.storyboard */,
 				52CD0A562330BDE500A9A181 /* Groups.storyboard */,
 				52CD0A592330BF4800A9A181 /* Proxy.storyboard */,
 				5283524E227887970097B949 /* Settings.storyboard */,
@@ -564,9 +575,10 @@
 				523F777A22CB86A00030EA6A /* ModelBindAppKeyViewController.swift */,
 				523F778622CCDE250030EA6A /* SetPublicationViewController.swift */,
 				523F779622CE2BF60030EA6A /* SetPublicationDestinationsViewController.swift */,
+				52313FED22EAFB090074325A /* SubscribeViewController.swift */,
 				52A8EA8C24E6A470004C14C7 /* SetHeartbeatPublicationViewController.swift */,
 				52A8EA8E24EBF099004C14C7 /* SetHeartbeatPublicationDestinationsViewController.swift */,
-				52313FED22EAFB090074325A /* SubscribeViewController.swift */,
+				52A8EA9524EE704A004C14C7 /* SetHeartbeatSubscriptionViewController.swift */,
 			);
 			path = Configuration;
 			sourceTree = "<group>";
@@ -802,6 +814,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				52A8EA9224ED35F4004C14C7 /* SetHeartbeatSubscription.storyboard in Resources */,
 				52CD0A582330BDE600A9A181 /* Groups.storyboard in Resources */,
 				523F778D22CCEA910030EA6A /* SetPublication.storyboard in Resources */,
 				52A9C17E230EB9490036792A /* GenericOnOff.xib in Resources */,
@@ -947,7 +960,9 @@
 				521215292315290F0059FB3D /* GroupControlViewController.swift in Sources */,
 				52A8EA8824E6946D004C14C7 /* HeartbeatPublicationCell.swift in Sources */,
 				52F6AD7622BA612900F0D7DF /* UIViewController+Toast.swift in Sources */,
+				528445C924EEA765002168A1 /* HeartbeatSubscriptionCell.swift in Sources */,
 				5231403F2301761C0074325A /* ConfigurationServerViewCell.swift in Sources */,
+				52A8EA9624EE704A004C14C7 /* SetHeartbeatSubscriptionViewController.swift in Sources */,
 				52547EFB231800F30002AA7B /* BottomSheetViewController.swift in Sources */,
 				52E54CD42343874000478F05 /* GenericOnOffServerCell.swift in Sources */,
 				52547F24232A3F470002AA7B /* RangeCell.swift in Sources */,
@@ -970,6 +985,7 @@
 				5288C20A2371A89900321ED3 /* SimpleOnOffClientDelegate.swift in Sources */,
 				529B759C2243BA10008F1CE7 /* NetworkKeysViewController.swift in Sources */,
 				52518B3122E0B18400A1FD1E /* GroupsViewController.swift in Sources */,
+				52A8EA9424EE6D18004C14C7 /* HeartbeatSubscriptionPeriodCell.swift in Sources */,
 				5283528222806D7C0097B949 /* NetworkKeySelectionViewController.swift in Sources */,
 				522AFFDE22BBBC6400521EDC /* NodeFeaturesCell.swift in Sources */,
 				523F776E22C63EAD0030EA6A /* NodeAddAppKeyViewController.swift in Sources */,
@@ -1040,6 +1056,14 @@
 				52A8EA8A24E6A371004C14C7 /* Base */,
 			);
 			name = SetHeartbeatPublication.storyboard;
+			sourceTree = "<group>";
+		};
+		52A8EA9024ED35F4004C14C7 /* SetHeartbeatSubscription.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				52A8EA9124ED35F4004C14C7 /* Base */,
+			);
+			name = SetHeartbeatSubscription.storyboard;
 			sourceTree = "<group>";
 		};
 		52CD0A562330BDE500A9A181 /* Groups.storyboard */ = {
