@@ -94,15 +94,23 @@ class SetHeartbeatPublicationViewController: ProgressViewController {
             networkKey = node.networkKeys.first { $0.index == publication.networkKeyIndex }
             ttl = publication.ttl
             countLog = 0 // This is not stored in the database and is reset each time.
-            periodLog = publication.periodLog
+            periodLog = max(publication.periodLog, 1)
             relaySwitch.isOn = publication.features.contains(.relay)
             proxySwitch.isOn = publication.features.contains(.proxy)
             friendSwitch.isOn = publication.features.contains(.friend)
             lowPowerSwitch.isOn = publication.features.contains(.lowPower)
-            periodSlider.value = Float(publication.periodLog)
+            // Period Slider only allows setting values greater than 0.
+            // Disabling periodic Heartbeat messages is done by setting
+            // countSlider to 0.
+            periodSlider.value = Float(periodLog - 1)
         } else {
             networkKey = node.networkKeys.first
         }
+        relaySwitch.isEnabled = node.features?.relay != .notSupported
+        proxySwitch.isEnabled = node.features?.proxy != .notSupported
+        friendSwitch.isEnabled = node.features?.friend != .notSupported
+        lowPowerSwitch.isEnabled = node.features?.friend != .notSupported
+        
         reloadKeyView()
         reloadDestinationView()
     }
@@ -244,9 +252,10 @@ private extension SetHeartbeatPublicationViewController {
             if self.proxySwitch.isOn { features.insert(.proxy) }
             if self.friendSwitch.isOn { features.insert(.friend) }
             if self.lowPowerSwitch.isOn { features.insert(.lowPower) }
+            let periodLog = self.countLog > 0 ? self.periodLog : 0
             let message: ConfigMessage =
                 ConfigHeartbeatPublicationSet(startSending: self.countLog,
-                                              heartbeatMessagesEvery: self.periodLog,
+                                              heartbeatMessagesEvery: periodLog,
                                               secondsTo: destination,
                                               usingTtl: self.ttl, andNetworkKey: networkKey,
                                               andEnableHeartbeatMessagesTriggeredByChangeOf: features)!

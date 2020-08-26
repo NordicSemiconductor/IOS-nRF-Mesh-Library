@@ -56,16 +56,28 @@ public struct ConfigHeartbeatSubscriptionSet: AcknowledgedConfigMessage {
     /// If the Heartbeat Subscription Destination is set to the Unassigned Address, the
     /// Heartbeat messages are not processed.
     public let destination: Address
-    /// Remaining Period for processing Heartbeat messages.
+    /// Period for processing Heartbeat messages.
     ///
-    /// Possible values (See table 4.1.2 in Bluetooth Mesh Specification 1.0.1):
-    /// - 0x00 - Periodic Heartbeat messages are not processed.
-    /// - 0x01 - 0x10 - Remaining period, in 2^(n-1) seconds, for processing Heartbeat messages.
-    /// - 0x11 - 0xFFFF seconds.
+    /// Possible values (See table 4.1 in Bluetooth Mesh Specification 1.0.1):
+    /// - 0x00 - Periodic Heartbeat messages will not be processed.
+    /// - 0x01 - 0x10 - Heartbeat messages will be processed for given period, in 2^(n-1) seconds.
+    /// - 0x11 - Remaining period of 65535 (0xFFFF) seconds.
     /// - Other values are Prohibited.
-    internal let periodLog: UInt8
+    public let periodLog: UInt8
+    /// Period for processing Heartbeat messages, in seconds.
+    ///
+    /// Value 0 means that periodic Heartbeat messages will not be processed.
+    public var period: UInt16 {
+        if periodLog == 0 {
+            return 0x0000 // Periodic Heartbeat messages will not be published.
+        }
+        guard periodLog < 0x11 else {
+            return 0xFFFF // Maximum period.
+        }
+        return UInt16(pow(2.0, Double(periodLog - 1)))
+    }
     
-    /// Returns whether Heartbeat processing will be enabled.
+    /// Returns whether Heartbeat mesasge processing will be enabled.
     public var isEnabled: Bool {
         return source != .unassignedAddress && destination != .unassignedAddress
     }
@@ -79,6 +91,7 @@ public struct ConfigHeartbeatSubscriptionSet: AcknowledgedConfigMessage {
     }
     
     /// Creates Config Heartbeat Subscription Set message with given parameters.
+    ///
     /// - Parameters:
     ///   - source: Source address for Heartbeat messages. The address shall
     ///             be a Unicast Address.
@@ -86,20 +99,19 @@ public struct ConfigHeartbeatSubscriptionSet: AcknowledgedConfigMessage {
     ///                  be a Unicast Address, or a Group Address.
     ///   - periodLog: Duration for processing Heartbeat messages. This field is the interval used
     ///                for sending messages. The value will be calculated as 2^(periodLog-1).
-    ///
-    ///               - 0x00 - Disables publishing periodic Heartbeat messages.
-    ///               - 0x01 - 0x11 - Publication period represented as 2^(n-1) seconds.
+    ///                Allowed values are in range 0x01...0x11. To disable Heartbeat subscriptions
+    ///                use `init()`.
     public init?(startProcessingHeartbeatMessagesFor periodLog: UInt8,
                  secondsSentFrom source: Address, to destination: Address) {
         guard source.isUnicast else {
-         return nil
+            return nil
         }
         self.source = source
         guard destination.isUnicast || destination.isGroup else {
             return nil
         }
         self.destination = destination
-        guard periodLog <= 0x11 else {
+        guard periodLog > 0 && periodLog <= 0x11 else {
             return nil
         }
         self.periodLog = periodLog

@@ -84,7 +84,8 @@ class SetHeartbeatSubscriptionViewController: ProgressViewController {
         groups = network.groups.filter { $0.address.address.isGroup }
         
         if let subscription = node.heartbeatSubscription {
-            periodLog = subscription.periodLog
+            // It is not possible to disable subsctiptions on this view, so minimum value is 1.
+            periodLog = max(subscription.periodLog, 1)
             selectedSource = subscription.source
             selectedDestination = subscription.destination
             // Otherwise Done button is by default disabled in the Storeboard.

@@ -40,6 +40,12 @@ internal struct HearbeatMessage {
     /// Initial TTL used when sending the message.
     let initTtl: UInt8
     /// Currently active features of the Node.
+    ///
+    /// - If the Relay feature is set, the Relay feature of a Node is in use.
+    /// - If the Proxy feature is set, the GATT Proxy feature of a Node is in use.
+    /// - If the Friend feature is set, the Friend feature of a Node is in use.
+    /// - If the Low Power feature is set, the Node has active relationship with a Friend
+    ///   Node.
     let features: NodeFeatures
     /// Number of hops that this message went through.
     var hops: UInt8 {

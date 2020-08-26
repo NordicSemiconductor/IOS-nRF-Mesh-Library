@@ -29,57 +29,25 @@
 */
 
 import UIKit
-import nRFMeshProvision
 
-protocol HeartbeatSubscriptionPeriodDelegate {
-    func periodDidChange(_ periodLog: UInt8)
-}
+class RightActionCell: UITableViewCell {
 
-class HeartbeatSubscriptionPeriodCell: UITableViewCell {
+    @IBOutlet weak var rightActionButton: UIButton!
     
-    // MARK: - Outlets & Actions
-
-    @IBAction func periodDidChange(_ sender: UISlider) {
-        periodSelected(sender.value)
+    @IBAction func rightActionTapped(_ sender: UIButton) {
+        delegate?()
     }
     
-    @IBOutlet weak var periodSlider: UISlider!
-    @IBOutlet weak var periodLabel: UILabel!
-
-    // MARK: - Properties
+    var delegate: (() -> ())?
     
-    // The periodLog propery starts from 1, as 0 would disable subscriptions.
-    var periodLog: UInt8 = 1 {
+    var isEnabled: Bool = true {
         didSet {
-            periodSlider.value = Float(periodLog - 1)
-            periodLabel.text = periodLog.periodString
+            rightActionButton.isEnabled = isEnabled
         }
     }
-    var delegate: HeartbeatSubscriptionPeriodDelegate?
-
-    // MARK: - Implementation
     
-    private func periodSelected(_ value: Float) {
-        periodLog = UInt8(value + 1)
-        delegate?.periodDidChange(periodLog)
-    }
-}
-
-private extension UInt8 {
-    
-    var periodString: String {
-        assert(self > 0)
-        let value = self < 0x11 ? Int(pow(2.0, Double(self - 1))) : 0xFFFF
-        if value / 3600 > 0 {
-            return "\(value / 3600) h \((value % 3600) / 60) min \(value % 60) sec"
-        }
-        if value / 60 > 0 {
-            return "\(value / 60) min \(value % 60) sec"
-        }
-        if value == 1 {
-            return "1 second"
-        }
-        return "\(value) seconds"
+    override var textLabel: UILabel? {
+        return rightActionButton.titleLabel
     }
     
 }

@@ -70,24 +70,65 @@ public struct ConfigHeartbeatPublicationSet: AcknowledgedConfigMessage, ConfigNe
     /// smallest integer n where 2^(n-1) is greater than or equal to the Heartbeat Publication
     /// Count value. For example, if the Heartbeat Publication Count value is 0x0579, then the
     /// Heartbeat Publication Count Log value would be 0x0C.
-    internal let countLog: UInt8
-    /// Period for sending Heartbeat messages.
+    public let countLog: UInt8
+    /// Number of Heartbeat messages remaining to be sent.
+    public var count: RemainingHeartbeatPublicationCount {
+        switch countLog {
+        case 0x00:
+            return .disabled
+        case 0xFF:
+            return .indefinitely
+        case 0x01, 0x02:
+            return .exact(UInt16(countLog))
+        case let valid where valid >= 0x03 && valid <= 0x11:
+            let lowerBound = UInt16(pow(2.0, Double(countLog - 2))) + 1
+            let upperBound = UInt16(pow(2.0, Double(countLog - 1)))
+            return .range(lowerBound...upperBound)
+        default:
+            return .invalid(countLog: countLog)
+        }
+    }
+    /// Period between the publication of two consecutive periodical Heartbeat transport
+    /// control messages, in seconds.
     ///
     /// Possible values:
-    /// - 0x00 - Periodic Heartbeat messages are not published.
-    /// - 0x01 - 0x11 - Publication period represented as 2^(n-1) seconds.
+    /// - 0x00 - Periodic Heartbeat messages will not be published.
+    /// - 0x01 - 0x10 - Publication period represented as 2^(n-1) seconds.
+    /// - 0x11 - Period of 65535 (0xFFFF) seconds.
     /// - Other values are prohibited.
     ///
     /// The value is represented as 2^(n-1) seconds. For example, the value 0x04 would
     /// have a publication period of 8 seconds, and the value 0x07 would have a publication
     /// period of 64 seconds.
-    internal let periodLog: UInt8
+    public let periodLog: UInt8
+    /// Period between the publication of two consecutive periodical Heartbeat transport
+    /// control messages, in seconds.
+    ///
+    /// Value 0 means that periodic Heartbeat messages will not be published.
+    public var period: UInt16 {
+        if periodLog == 0 {
+            return 0x0000 // Periodic Heartbeat messages will not be published.
+        }
+        guard periodLog < 0x11 else {
+            return 0xFFFF // Maximum period.
+        }
+        return UInt16(pow(2.0, Double(periodLog - 1)))
+    }
     /// TTL to be used when sending Heartbeat messages.
     ///
     /// Valid values are in range 0-127.
     public let ttl: UInt8
     /// The Heartbeat Publication Features state determines the features that trigger
     /// sending Heartbeat messages when changed.
+    ///
+    /// - If the Relay feature is set, a triggered Heartbeat message shall be published when
+    ///   the Relay state of a Node changes.
+    /// - If the Proxy feature is set, a triggered Heartbeat message shall be published when
+    ///   the GATT Proxy state of a Node changes.
+    /// - If the Friend feature is set, a triggered Heartbeat message shall be published when
+    ///   the Friend state of a Node changes.
+    /// - If the Low Power feature is set, a triggered Heartbeat message shall be published when
+    ///   the Node establishes or loses Friendship.
     public let features: NodeFeatures
     
     /// Returns whether Heartbeat publishing will be enabled.

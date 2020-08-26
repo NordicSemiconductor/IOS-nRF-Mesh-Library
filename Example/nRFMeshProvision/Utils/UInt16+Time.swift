@@ -28,58 +28,29 @@
 * POSSIBILITY OF SUCH DAMAGE.
 */
 
-import UIKit
-import nRFMeshProvision
+import Foundation
 
-protocol HeartbeatSubscriptionPeriodDelegate {
-    func periodDidChange(_ periodLog: UInt8)
-}
-
-class HeartbeatSubscriptionPeriodCell: UITableViewCell {
+extension UInt16 {
     
-    // MARK: - Outlets & Actions
-
-    @IBAction func periodDidChange(_ sender: UISlider) {
-        periodSelected(sender.value)
-    }
-    
-    @IBOutlet weak var periodSlider: UISlider!
-    @IBOutlet weak var periodLabel: UILabel!
-
-    // MARK: - Properties
-    
-    // The periodLog propery starts from 1, as 0 would disable subscriptions.
-    var periodLog: UInt8 = 1 {
-        didSet {
-            periodSlider.value = Float(periodLog - 1)
-            periodLabel.text = periodLog.periodString
+    func asTime() -> String {
+        if self / 3600 > 0 {
+            return "\(self / 3600) h \((self % 3600) / 60) min \(self % 60) sec"
         }
-    }
-    var delegate: HeartbeatSubscriptionPeriodDelegate?
-
-    // MARK: - Implementation
-    
-    private func periodSelected(_ value: Float) {
-        periodLog = UInt8(value + 1)
-        delegate?.periodDidChange(periodLog)
-    }
-}
-
-private extension UInt8 {
-    
-    var periodString: String {
-        assert(self > 0)
-        let value = self < 0x11 ? Int(pow(2.0, Double(self - 1))) : 0xFFFF
-        if value / 3600 > 0 {
-            return "\(value / 3600) h \((value % 3600) / 60) min \(value % 60) sec"
+        if self / 60 > 0 {
+            return "\(self / 60) min \(self % 60) sec"
         }
-        if value / 60 > 0 {
-            return "\(value / 60) min \(value % 60) sec"
-        }
-        if value == 1 {
+        if self == 1 {
             return "1 second"
         }
-        return "\(value) seconds"
+        return "\(self) seconds"
+    }
+    
+}
+
+extension ClosedRange where Bound == UInt16 {
+    
+    func asTime() -> String {
+        return "\(lowerBound.asTime())...\(upperBound.asTime())"
     }
     
 }

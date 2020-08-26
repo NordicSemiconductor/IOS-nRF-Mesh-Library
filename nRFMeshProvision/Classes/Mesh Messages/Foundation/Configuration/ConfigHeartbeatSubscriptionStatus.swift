@@ -62,15 +62,34 @@ public struct ConfigHeartbeatSubscriptionStatus: ConfigMessage, ConfigStatusMess
     public let destination: Address
     /// Remaining Period for processing Heartbeat messages.
     ///
-    /// Possible values (See table 4.1.2 in Bluetooth Mesh Specification 1.0.1):
+    /// Possible values (See table 4.1 in Bluetooth Mesh Specification 1.0.1):
     /// - 0x00 - Periodic Heartbeat messages are not processed.
     /// - 0x01 - 0x10 - Remaining period, in 2^(n-1) seconds, for processing Heartbeat messages.
-    /// - 0x11 - 0xFFFF seconds.
+    /// - 0x11 - Remaining period of 65535 (0xFFFF) seconds. 
     /// - Other values are Prohibited.
-    internal let periodLog: UInt8
+    public let periodLog: UInt8
+    /// Remaining Period for processing Heartbeat messages.
+    ///
+    /// Value 0 means that periodic Heartbeat messages will not be processed.
+    public var period: RemainingHeartbeatSubscriptionPeriod {
+        switch periodLog {
+        case 0x00:
+            return .disabled
+        case 0x01:
+            return .exact(1)
+        case 0x11:
+            return .exact(0xFFFF)
+        case let valid where valid >= 0x02 && valid < 0x11:
+            let lowerBound = UInt16(pow(2.0, Double(periodLog) - 1))
+            let upperBound = UInt16(pow(2.0, Double(periodLog)) - 1)
+            return .range(lowerBound...upperBound)
+        default:
+            return .invalid(periodLog: periodLog)
+        }
+    }
     /// Number of Heartbeat messages received.
     ///
-    /// Possible values (See table 4.1.2 in Bluetooth Mesh Specification 1.0.1):
+    /// Possible values (See table 4.1 in Bluetooth Mesh Specification 1.0.1):
     /// - 0x00 - 0x10 - Number of Heartbeat messages, 2^(n-1), that were received.
     /// - 0xFF - More than 0xFFFE Hearbeat messages were received.
     /// - Other values are Prohibited.
@@ -81,19 +100,38 @@ public struct ConfigHeartbeatSubscriptionStatus: ConfigMessage, ConfigStatusMess
     /// value of 0xFF is equivalent to the Heartbeat Subscription count value of 0xFFFF.
     /// The Heartbeat Subscription Count Log value between 0x01 and 0x10 shall represent the
     /// Heartbeat Subscription Count value.
-    internal let countLog: UInt8
+    public let countLog: UInt8
+    /// Number of Heartbeat messages received.
+    public var count: HeartbeatSubscriptionCount {
+        switch countLog {
+        case 0x00, 0x01:
+            return .exact(UInt16(countLog))
+        case 0xFF, 0x11:
+            return .reallyALot
+        case let valid where valid >= 0x02 && valid <= 0x10:
+            let lowerBound = UInt16(pow(2.0, Double(countLog) - 1))
+            let upperBound = min(0xFFFE, UInt16(pow(2.0, Double(countLog)) - 1))
+            return .range(lowerBound...upperBound)
+        default:
+            return .invalid(countLog: countLog)
+        }
+    }
     /// The Heartbeat Subscription Min Hops state determines the minimum hops value registered
     /// when receiving Heartbeat messages since receiving the most recent Config Heartbeat
     /// Subscription Set message or reset.
-    internal let minHops: UInt8
+    public let minHops: UInt8
     /// The Heartbeat Subscription Max Hops state determines the maximum hops value registered
     /// when receiving Heartbeat messages since receiving the most recent Config Heartbeat
     /// Subscription Set message or reset
-    internal let maxHops: UInt8
+    public let maxHops: UInt8
     
-    /// Returns whether Heartbeat processing is enabled.
+    /// Returns whether processing of Heartbeat messages is enabled.
     public var isEnabled: Bool {
         return source != .unassignedAddress && destination != .unassignedAddress
+    }
+    /// Returns whether processing of Heartbeat messages has finished.
+    public var isComplete: Bool {
+        return source != .unassignedAddress && destination != .unassignedAddress && periodLog == 0
     }
     
     public init(_ subscription: HeartbeatSubscription?) {

@@ -39,6 +39,9 @@ class ModelViewController: ProgressViewController {
     
     private weak var modelViewCell: ModelViewCell?
     
+    private var heartbeatPublicationCount: RemainingHeartbeatPublicationCount?
+    private var heartbeatSubscriptionStatus: ConfigHeartbeatSubscriptionStatus?
+    
     // MARK: - View Controller
     
     override func viewDidLoad() {
@@ -138,10 +141,18 @@ class ModelViewController: ProgressViewController {
             return 1
         case IndexPath.bindingsSection:
             return model.boundApplicationKeys.count + 1 // Add Action.
+        case IndexPath.publishSection where model.isConfigurationServer:
+            if let _ = model.parentElement?.parentNode?.heartbeatPublication {
+                return 3 // Destination, Remaining Count, Refresh Action.
+            }
+            return 1 // Set Publication Action.
         case IndexPath.publishSection:
             return 1 // Set Publication Action or the Publication.
         case IndexPath.subscribeSection where model.isConfigurationServer:
-            return 1 // Subscription or Set Action (only one Heartbeat Subscription is allowed).
+            if let _ = model.parentElement?.parentNode?.heartbeatSubscription {
+                return 6 // Destination, Remaining Period, Count, Min Hops, Max Hops, Refresh Action.
+            }
+            return 1 // Set Subscription Action.
         case IndexPath.subscribeSection:
             return model.subscriptions.count + 1 // Add Action.
         default:
@@ -221,9 +232,28 @@ class ModelViewController: ProgressViewController {
                     cell.textLabel?.isEnabled = localProvisioner?.hasConfigurationCapabilities ?? false
                     return cell
                 }
-                let cell = tableView.dequeueReusableCell(withIdentifier: "heartbeatPublication", for: indexPath) as! HeartbeatPublicationCell
-                cell.heartbeatPublication = publication
-                return cell
+                if indexPath.isPublishDestination {
+                    let cell = tableView.dequeueReusableCell(withIdentifier: "heartbeatPublication", for: indexPath) as! HeartbeatPublicationCell
+                    cell.heartbeatPublication = publication
+                    return cell
+                }
+                switch indexPath.row {
+                case 1: // Count
+                    let cell = tableView.dequeueReusableCell(withIdentifier: "normal", for: indexPath)
+                    cell.textLabel?.text = "Remaining Count"
+                    cell.detailTextLabel?.text = heartbeatPublicationCount.map { "\($0)" } ?? "Unknown"
+                    return cell
+                case 2: // Refresh action
+                    let cell = tableView.dequeueReusableCell(withIdentifier: "rightAction", for: indexPath) as! RightActionCell
+                    cell.textLabel?.text = "Refresh"
+                    cell.isEnabled = localProvisioner?.hasConfigurationCapabilities ?? false
+                    cell.delegate = {
+                        self.reloadHeartbeatPublication()
+                    }
+                    return cell
+                default:
+                    fatalError("Too many rows in Heartbeat publication section: \(indexPath)")
+                }
             } else {
                 guard let publish = model.publish else {
                     let cell = tableView.dequeueReusableCell(withIdentifier: "action", for: indexPath)
@@ -245,9 +275,51 @@ class ModelViewController: ProgressViewController {
                     cell.textLabel?.isEnabled = localProvisioner?.hasConfigurationCapabilities ?? false
                     return cell
                 }
-                let cell = tableView.dequeueReusableCell(withIdentifier: "heartbeatSubscription", for: indexPath) as! HeartbeatSubscriptionCell
-                cell.subscription = subscription
-                return cell
+                if indexPath.isSubscribeDestination {
+                    let cell = tableView.dequeueReusableCell(withIdentifier: "heartbeatSubscription", for: indexPath) as! HeartbeatSubscriptionCell
+                    cell.subscription = subscription
+                    return cell
+                }
+                switch indexPath.row {
+                case 1: // Remaining Period
+                    let cell = tableView.dequeueReusableCell(withIdentifier: "normal", for: indexPath)
+                    cell.textLabel?.text = "Remaining Period"
+                    if let period = heartbeatSubscriptionStatus?.period {
+                        if case .range(let range) = period {
+                            cell.detailTextLabel?.text = range.asTime()
+                        } else {
+                            cell.detailTextLabel?.text = "\(period)"
+                        }
+                    } else {
+                        cell.detailTextLabel?.text = "Unknown"
+                    }
+                    return cell
+                case 2: // Count
+                    let cell = tableView.dequeueReusableCell(withIdentifier: "normal", for: indexPath)
+                    cell.textLabel?.text = "Count"
+                    cell.detailTextLabel?.text = heartbeatSubscriptionStatus.map { "\($0.count)" } ?? "Unknown"
+                    return cell
+                case 3: // Min Hops
+                    let cell = tableView.dequeueReusableCell(withIdentifier: "normal", for: indexPath)
+                    cell.textLabel?.text = "Min Hops"
+                    cell.detailTextLabel?.text = heartbeatSubscriptionStatus.map { "\($0.minHops)" } ?? "Unknown"
+                    return cell
+                case 4: // Max Hops
+                    let cell = tableView.dequeueReusableCell(withIdentifier: "normal", for: indexPath)
+                    cell.textLabel?.text = "Max Hops"
+                    cell.detailTextLabel?.text = heartbeatSubscriptionStatus.map { "\($0.maxHops)" } ?? "Unknown"
+                    return cell
+                case 5: // Refresh action
+                    let cell = tableView.dequeueReusableCell(withIdentifier: "rightAction", for: indexPath) as! RightActionCell
+                    cell.textLabel?.text = "Refresh"
+                    cell.isEnabled = localProvisioner?.hasConfigurationCapabilities ?? false
+                    cell.delegate = {
+                        self.reloadHeartbeatSubscription()
+                    }
+                    return cell
+                default:
+                    fatalError("Too many rows in Heartbeat publication section: \(indexPath)")
+                }
             } else {
                 guard indexPath.row < model.subscriptions.count else {
                     let cell = tableView.dequeueReusableCell(withIdentifier: "action", for: indexPath)
@@ -281,7 +353,7 @@ class ModelViewController: ProgressViewController {
             return indexPath.row == model.boundApplicationKeys.count
         }
         if indexPath.isPublishSection {
-            return true
+            return indexPath.row == 0
         }
         if indexPath.isSubscribeSection {
             return indexPath.row == model.subscriptions.count
@@ -298,6 +370,7 @@ class ModelViewController: ProgressViewController {
         }
         if indexPath.isPublishSection {
             if model.isConfigurationServer {
+                // Only the first row is selectable.
                 performSegue(withIdentifier: "heartbeatPublication", sender: indexPath)
             } else {
                 guard !model.boundApplicationKeys.isEmpty else {
@@ -324,14 +397,16 @@ class ModelViewController: ProgressViewController {
         }
         if indexPath.isPublishSection {
             if model.isConfigurationServer {
-                return model.parentElement?.parentNode?.heartbeatPublication != nil
+                let publication = model.parentElement?.parentNode?.heartbeatPublication
+                return indexPath.row == 0 && publication != nil
             } else {
                 return indexPath.row == 0 && model.publish != nil
             }
         }
         if indexPath.isSubscribeSection {
             if model.isConfigurationServer {
-                return model.parentElement?.parentNode?.heartbeatSubscription != nil
+                let subscription = model.parentElement?.parentNode?.heartbeatSubscription
+                return indexPath.row == 0 && subscription != nil
             } else {
                 return indexPath.row < model.subscriptions.count
             }
@@ -618,6 +693,7 @@ extension ModelViewController: MeshNetworkDelegate {
         // Heartheat configuration (only for Configuration Server model)
         case let status as ConfigHeartbeatPublicationStatus:
             if status.isSuccess {
+                heartbeatPublicationCount = status.count
                 tableView.reloadSections(.publication, with: .automatic)
                 if isRefreshing {
                     reloadHeartbeatSubscription()
@@ -631,20 +707,21 @@ extension ModelViewController: MeshNetworkDelegate {
                }
             }
             
-       case let status as ConfigHeartbeatSubscriptionStatus:
-           if status.isSuccess {
-               tableView.reloadSections(.subscriptions, with: .automatic)
-               if isRefreshing {
-                _ = modelViewCell?.startRefreshing()
-               } else {
-                   done()
-               }
-           } else {
-              done() {
-                  self.presentAlert(title: "Error", message: status.message)
-                  self.refreshControl?.endRefreshing()
-              }
-          }
+        case let status as ConfigHeartbeatSubscriptionStatus:
+            if status.isSuccess {
+                heartbeatSubscriptionStatus = status
+                tableView.reloadSections(.subscriptions, with: .automatic)
+                if isRefreshing {
+                    _ = modelViewCell?.startRefreshing()
+                } else {
+                    done()
+                }
+            } else {
+                done() {
+                    self.presentAlert(title: "Error", message: status.message)
+                    self.refreshControl?.endRefreshing()
+                }
+            }
             
         // Custom UI
         default:
@@ -776,8 +853,16 @@ private extension IndexPath {
         return section == IndexPath.publishSection
     }
     
+    var isPublishDestination: Bool {
+        return isPublishSection && row == 0
+    }
+    
     var isSubscribeSection: Bool {
         return section == IndexPath.subscribeSection
+    }
+    
+    var isSubscribeDestination: Bool {
+        return isSubscribeSection && row == 0
     }
     
 }
