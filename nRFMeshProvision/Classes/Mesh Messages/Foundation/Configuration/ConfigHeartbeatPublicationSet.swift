@@ -80,7 +80,9 @@ public struct ConfigHeartbeatPublicationSet: AcknowledgedConfigMessage, ConfigNe
             return .indefinitely
         case 0x01, 0x02:
             return .exact(UInt16(countLog))
-        case let valid where valid >= 0x03 && valid <= 0x11:
+        case 0x11:
+            return .range(0x8001...0xFFFE)
+        case let valid where valid >= 0x03 && valid <= 0x10:
             let lowerBound = UInt16(pow(2.0, Double(countLog - 2))) + 1
             let upperBound = UInt16(pow(2.0, Double(countLog - 1)))
             return .range(lowerBound...upperBound)
