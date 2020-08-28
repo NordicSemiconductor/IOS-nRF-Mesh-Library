@@ -299,7 +299,7 @@ internal extension UpperTransportLayer {
                     self.logger?.v(.upperTransport, "Publishing periodic Heartbeat messages finished")
                     return
                 }
-                // Do nothing. Timer till be fired again.
+                // Do nothing. Timer will be fired again.
             }
         }
     }
