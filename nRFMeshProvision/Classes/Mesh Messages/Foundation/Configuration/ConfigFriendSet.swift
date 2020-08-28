@@ -39,7 +39,7 @@ public struct ConfigFriendSet: AcknowledgedConfigMessage {
     }
     
     /// The new Friend state of the Node.
-    public let state: NodeFeaturesState
+    public let state: NodeFeatureState
     
     /// Configures the Friend feature on the Node.
     ///
@@ -52,7 +52,7 @@ public struct ConfigFriendSet: AcknowledgedConfigMessage {
         guard parameters.count == 1 else {
             return nil
         }
-        guard let state = NodeFeaturesState(rawValue: parameters[0]) else {
+        guard let state = NodeFeatureState(rawValue: parameters[0]) else {
             return nil
         }
         self.state = state

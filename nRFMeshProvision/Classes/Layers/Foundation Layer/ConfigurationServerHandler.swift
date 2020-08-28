@@ -76,6 +76,10 @@ internal class ConfigurationServerHandler: ModelDelegate {
             ConfigNetworkTransmitSet.self,
             ConfigNetworkTransmitGet.self,
             ConfigNodeReset.self,
+            ConfigHeartbeatPublicationGet.self,
+            ConfigHeartbeatPublicationSet.self,
+            ConfigHeartbeatSubscriptionGet.self,
+            ConfigHeartbeatSubscriptionSet.self,
         ]
         self.meshNetwork = meshNetwork
         self.messageTypes = types.toMap()
@@ -475,7 +479,7 @@ internal class ConfigurationServerHandler: ModelDelegate {
         // Default TTL
         case let request as ConfigDefaultTtlSet:
             localNode.defaultTTL = request.ttl
-            return ConfigDefaultTtlStatus(ttl: localNode.defaultTTL!)
+            fallthrough
             
         case is ConfigDefaultTtlGet:
             return ConfigDefaultTtlStatus(ttl: localNode.defaultTTL ?? 5) // TODO: networkManager.defaultTtl)
@@ -498,6 +502,7 @@ internal class ConfigurationServerHandler: ModelDelegate {
         // Secure Network Beacon configuration
         case is ConfigBeaconGet, is ConfigBeaconSet:
             // Secure Network Beacon feature is not supported.
+            // TODO: Add support for sending Secure Network Beacons.
             return ConfigBeaconStatus(enabled: false)
             
         // Network Transmit settings
@@ -511,6 +516,65 @@ internal class ConfigurationServerHandler: ModelDelegate {
         // Resetting Node
         case is ConfigNodeReset:
             return ConfigNodeResetStatus()
+            
+        // Heartbeat publication
+        case let request as ConfigHeartbeatPublicationSet:
+            // The Heartbeat Publication Destination shall be the Unassigned Address, a Unicast Address,
+            // or a Group Address, all other values are Prohibited.
+            guard request.destination.isUnassigned ||
+                  request.destination.isUnicast ||
+                  request.destination.isGroup else {
+                return ConfigHeartbeatPublicationStatus(responseTo: request, with: .cannotSet)
+            }
+            // Network Key must be valid and known. To cancel publication any Network Key Index may be used.
+            guard request.networkKeyIndex.isValidKeyIndex &&
+                 (meshNetwork.networkKeys[request.networkKeyIndex] != nil || !request.enablesPublication) else {
+                return ConfigHeartbeatPublicationStatus(responseTo: request, with: .invalidNetKeyIndex)
+            }
+            // TTL must be 0-127, PeriodLog <= 0x11 and CountLog <= 0x11 or 0xFF.
+            guard request.ttl <= 0x7F &&
+                  request.periodLog <= 0x11 &&
+                 (request.countLog <= 0x11 || request.countLog == 0xFF) else {
+                return ConfigHeartbeatPublicationStatus(responseTo: request, with: .cannotSet)
+            }
+            localNode.heartbeatPublication = HeartbeatPublication(request)
+            fallthrough
+            
+        case is ConfigHeartbeatPublicationGet:
+            return ConfigHeartbeatPublicationStatus(localNode.heartbeatPublication)
+                
+        // Heartbeat subscription
+        case let request as ConfigHeartbeatSubscriptionSet:
+            // The Heartbeat Subscription Source shall be the Unassigned Address or a Unicast Address,
+            // all other values are Prohibited.
+            guard request.source.isUnassigned ||
+                  request.source.isUnicast else {
+                return ConfigHeartbeatSubscriptionStatus(responseTo: request, with: .cannotSet)
+            }
+            // The Heartbeat Subscription Destination shall be the Unassigned Address, the primary
+            // Unicast Address of the local Node, or a Group Address, all other values are Prohibited.
+            guard request.destination.isUnassigned ||
+                  request.destination.isGroup ||
+                  request.destination == localNode.unicastAddress else {
+                return ConfigHeartbeatSubscriptionStatus(responseTo: request, with: .cannotSet)
+            }
+            // Values 0x12-0xFF are Prohibited.
+            guard request.periodLog <= 0x11 else {
+                return ConfigHeartbeatSubscriptionStatus(responseTo: request, with: .cannotSet)
+            }
+            // If the Set message disables active Heartbeat subscription,
+            // the returned Status should contain the last Min Hops, Max Hops and CountLog.
+            if !request.enablesSubscription,
+               let currentSubscription = localNode.heartbeatSubscription {
+                localNode.heartbeatSubscription = nil
+                return ConfigHeartbeatSubscriptionStatus(cancel: currentSubscription)
+            }
+               
+            localNode.heartbeatSubscription = HeartbeatSubscription(request)
+            fallthrough
+            
+        case is ConfigHeartbeatSubscriptionGet:
+            return ConfigHeartbeatSubscriptionStatus(localNode.heartbeatSubscription)
             
         default:
             fatalError("Message not handled: \(request)")

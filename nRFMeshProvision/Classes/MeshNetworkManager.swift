@@ -111,17 +111,18 @@ public class MeshNetworkManager {
     /// 50 * segment count. The TTL and segment count dependent parts are added
     /// automatically, and this value shall specify only the constant part.
     public var acknowledgmentMessageInterval: TimeInterval = 2.0
-    /// According to Bluetooth Mesh Profile 1.0.1, section 3.10.5, if the IV Index of the mesh
-    /// network increased by more than 42 since the last connection (which can take at least
-    /// 48 weeks), the Node should be reprovisioned. However, as this library can be used to
-    /// provision other Nodes, it should not be blocked from sending messages to the network
-    /// only because the phone wasn't connected to the network for that time. This flag can
-    /// disable this check, effectively allowing such connection.
+    /// According to Bluetooth Mesh Profile 1.0.1, section 3.10.5, if the IV Index
+    /// of the mesh network increased by more than 42 since the last connection
+    /// (which can take at least 48 weeks), the Node should be reprovisioned.
+    /// However, as this library can be used to provision other Nodes, it should not
+    /// be blocked from sending messages to the network only because the phone wasn't
+    /// connected to the network for that time. This flag can disable this check,
+    /// effectively allowing such connection.
     ///
-    /// The same can be achieved by clearing the app data (uninstalling and reinstalling the
-    /// app) and importing the mesh network. With no "previous" IV Index, the library will
-    /// accept any IV Index received in the Secure Network beacon upon connection to the
-    /// GATT Proxy Node.
+    /// The same can be achieved by clearing the app data (uninstalling and reinstalling
+    /// the app) and importing the mesh network. With no "previous" IV Index, the
+    /// library will accept any IV Index received in the Secure Network beacon upon
+    /// connection to the GATT Proxy Node.
     public var allowIvIndexRecoveryOver42: Bool = false
     /// IV Update Test Mode enables efficient testing of the IV Update procedure.
     /// The IV Update test mode removes the 96-hour limit; all other behavior of the device
@@ -144,23 +145,31 @@ public class MeshNetworkManager {
     
     // MARK: - Constructors
     
-    /// Initializes the MeshNetworkManager.
+    /// Initializes the Mesh Network Manager.
     ///
     /// If storage is not provided, a local file will be used instead.
     ///
-    /// - important: Aafter the manager has been initialized, the
-    ///              `localElements` property must be set . Otherwise,
-    ///              none of status messages will be parsed correctly
-    ///              and they will be returned to the delegate as
-    ///              `UnknownMessage`s.
+    /// - important: After the manager has been initialized, the `localElements`
+    ///              property must be set . Otherwise, none of status messages will
+    ///              be parsed correctly and they will be returned to the delegate
+    ///              as `UnknownMessage`s.
     ///
     /// - parameters:
     ///   - storage: The storage to use to save the network configuration.
     ///   - queue: The DispatQueue to process reqeusts on. By default
-    ///            the a global background queue will be used.
-    ///   - delegateQueue: The DispatQueue to call delegate methods on.
+    ///            the a global background concurrent queue will be used.
+    ///            Note, that if multiple messages are sent shortly one after another,
+    ///            processing them in a concurrent queue may cause some of them to be
+    ///            discarded despite the fact that they were received in the ascending
+    ///            order of SeqAuth, as one with a greater SeqAuth value may be processed
+    ///            before the previous one, causing the replay protection validation fail
+    ///            for the latter. This library stores 2 last SeqAuth values, so if a
+    ///            message with a unique SeqAuth is processed after its successor, it
+    ///            will be processed correctly.
+    ///   - delegateQueue: The DispatchQueue to call delegate methods on.
     ///                    By default the global main queue will be used.
     /// - seeAlso: `LocalStorage`
+    /// - seeAlso: `LowerTransportLayer.checkAgainstReplayAttack(_:NetworkPdu)`
     public init(using storage: Storage = LocalStorage(),
                 queue: DispatchQueue = DispatchQueue.global(qos: .background),
                 delegateQueue: DispatchQueue = DispatchQueue.main) {
@@ -170,7 +179,7 @@ public class MeshNetworkManager {
         self.delegateQueue = delegateQueue
     }
     
-    /// Initializes the MeshNetworkManager. It will use the `LocalStorage`
+    /// Initializes the Mesh Network Manager. It will use the `LocalStorage`
     /// with the given file name.
     ///
     /// - parameter fileName: File name to keep the configuration.

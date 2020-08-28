@@ -211,7 +211,8 @@ internal class LowerTransportLayer {
         let message = AccessMessage(fromUnsegmentedUpperTransportPdu: pdu, usingNetworkKey: networkKey)
         do {
             logger?.i(.lowerTransport, "Sending \(message)")
-            try networkManager.networkLayer.send(lowerTransportPdu: message, ofType: .networkPdu, withTtl: ttl)
+            try networkManager.networkLayer.send(lowerTransportPdu: message, ofType: .networkPdu,
+                                                 withTtl: ttl)
             networkManager.notifyAbout(deliveringMessage: pdu.message!,
                                        from: pdu.localElement!, to: pdu.destination)
         } catch {
@@ -225,11 +226,12 @@ internal class LowerTransportLayer {
     
     /// This method tries to send the Upper Transport Message.
     ///
-    /// - parameter pdu:        The segmented Upper Transport PDU to be sent.
-    /// - parameter initialTtl: The initial TTL (Time To Live) value of the message.
-    ///                         If `nil`, the default Node TTL will be used.
-    /// - parameter networkKey: The Network Key to be used to encrypt the message on
-    ///                         on Network Layer.
+    /// - parameters:
+    ///   - pdu:        The segmented Upper Transport PDU to be sent.
+    ///   - initialTtl: The initial TTL (Time To Live) value of the message.
+    ///                 If `nil`, the default Node TTL will be used.
+    ///   - networkKey: The Network Key to be used to encrypt the message on
+    ///                 on Network Layer.
     func send(segmentedUpperTransportPdu pdu: UpperTransportPdu,
               withTtl initialTtl: UInt8?,
               usingNetworkKey networkKey: NetworkKey) {
@@ -245,10 +247,27 @@ internal class LowerTransportLayer {
         outgoingSegments[sequenceZero] = Array<SegmentedAccessMessage?>(repeating: nil, count: count)
         for i in 0..<count {
             outgoingSegments[sequenceZero]![i] = SegmentedAccessMessage(fromUpperTransportPdu: pdu,
-                                                                        usingNetworkKey: networkKey, offset: UInt8(i))
+                                                                        usingNetworkKey: networkKey,
+                                                                        offset: UInt8(i))
         }
         segmentTtl[sequenceZero] = initialTtl ?? provisionerNode.defaultTTL ?? networkManager.defaultTtl
         sendSegments(for: sequenceZero, limit: networkManager.retransmissionLimit)
+    }
+    
+    /// This method tries to send the Hearbeat Message.
+    ///
+    /// - parameters:
+    ///   - heartbeat: The Heartbeat message to be sent.
+    ///   - networkKey: The Network Key to be used to encrypt the message.
+    func send(heartbeat: HeartbeatMessage, usingNetworkKey networkKey: NetworkKey) {
+        let message = ControlMessage(fromHeartbeatMessage: heartbeat, usingNetworkKey: networkKey)
+        do {
+            logger?.i(.lowerTransport, "Sending \(message)")
+            try networkManager.networkLayer.send(lowerTransportPdu: message, ofType: .networkPdu,
+                                                 withTtl: heartbeat.initialTtl)
+        } catch {
+            logger?.w(.lowerTransport, error)
+        }
     }
     
     /// Cancels sending segmented Upper Transoprt PDU.
@@ -273,7 +292,7 @@ internal class LowerTransportLayer {
     ///            `false` if no packets were received or the message
     ///            was complete before calling this method.
     func isReceivingMessage(from address: Address) -> Bool {
-        return incompleteSegments.contains { (entry) -> Bool in
+        return incompleteSegments.contains { entry -> Bool in
             (entry.key >> 16) & 0xFFFF == UInt32(address)
         }
     }
@@ -291,9 +310,12 @@ private extension LowerTransportLayer {
     /// and unless the message SeqAuth is always greater, the replay attack
     /// is not possible.
     ///
+    /// - important: Messages sent to a Unicast Address assigned to other Nodes
+    ///              than the local one are not checked against reply attacks.
+    ///
     /// - parameter networkPdu: The Network PDU to validate.
     func checkAgainstReplayAttack(_ networkPdu: NetworkPdu) -> Bool {
-        // Don't check messages sent to another Node's Elements.
+        // Don't check messages sent to other Nodes.
         guard !networkPdu.destination.isUnicast ||
               meshNetwork.localProvisioner?.node?.hasAllocatedAddress(networkPdu.destination) ?? false else {
             return true
@@ -316,11 +338,39 @@ private extension LowerTransportLayer {
                 reassemblyInProgress = incompleteSegments[key] != nil ||
                                        acknowledgments[networkPdu.source]?.sequenceZero == sequenceZero
             }
-            guard receivedSeqAuth > localSeqAuth.uint64Value ||
+            
+            // As the messages are processed in a concurrent queue, it may happen that two
+            // messages sent almost immediately were received in the right order, but are
+            // processed in the opposite order. To handle that case, the previous SeqAuth
+            // is stored. If the received message has SeqAuth less than the last one, but
+            // greater than the previous one, it could not be used to replay attack, as no
+            // message with that SeqAuth was ever received.
+            //
+            // Note: Only the single previous SeqAuth is stored, so if 3 or more messages are
+            //       sent one after another, some of them still may be discarded despite being
+            //       received in the correct order. As a workaround, the queue may be set to
+            //       a serial one in MeshNetworkManager initializer.
+            var missed = false
+            if let previousSeqAuth = defaults.object(forKey: "P\(networkPdu.source.hex)") as? NSNumber {
+                missed = receivedSeqAuth < localSeqAuth.uint64Value &&
+                         receivedSeqAuth > previousSeqAuth.uint64Value
+            }
+            
+            // Validate.
+            guard receivedSeqAuth > localSeqAuth.uint64Value || missed ||
                   (reassemblyInProgress && receivedSeqAuth == localSeqAuth.uint64Value) else {
                 // Ignore that message.
                 logger?.w(.lowerTransport, "Discarding packet (seqAuth: \(receivedSeqAuth), expected > \(localSeqAuth))")
                 return false
+            }
+            
+            // The message is valid. Remember the previous SeqAuth.
+            let newPreviousSeqAuth = min(receivedSeqAuth, localSeqAuth.uint64Value)
+            defaults.set(newPreviousSeqAuth, forKey: "P\(networkPdu.source.hex)")
+            
+            // If the message was processed after its successor, don't overwrite the last SeqAuth.
+            if missed {
+                return true
             }
         }
         // SeqAuth is valid, save the new sequence authentication value.
