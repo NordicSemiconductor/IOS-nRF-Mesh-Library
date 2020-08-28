@@ -519,13 +519,25 @@ internal class ConfigurationServerHandler: ModelDelegate {
             
         // Heartbeat publication
         case let request as ConfigHeartbeatPublicationSet:
-            if localNode.heartbeatPublication != nil {
-                // TODO: Stop publication
+            // The Heartbeat Publication Destination shall be the Unassigned Address, a Unicast Address,
+            // or a Group Address, all other values are Prohibited.
+            guard request.destination.isUnassigned ||
+                  request.destination.isUnicast ||
+                  request.destination.isGroup else {
+                return ConfigHeartbeatPublicationStatus(responseTo: request, with: .cannotSet)
+            }
+            // Network Key must be valid and known. To cancel publication any Network Key Index may be used.
+            guard request.networkKeyIndex.isValidKeyIndex &&
+                 (meshNetwork.networkKeys[request.networkKeyIndex] != nil || !request.enablesPublication) else {
+                return ConfigHeartbeatPublicationStatus(responseTo: request, with: .invalidNetKeyIndex)
+            }
+            // TTL must be 0-127, PeriodLog <= 0x11 and CountLog <= 0x11 or 0xFF.
+            guard request.ttl <= 0x7F &&
+                  request.periodLog <= 0x11 &&
+                 (request.countLog <= 0x11 || request.countLog == 0xFF) else {
+                return ConfigHeartbeatPublicationStatus(responseTo: request, with: .cannotSet)
             }
             localNode.heartbeatPublication = HeartbeatPublication(request)
-            if let publication = localNode.heartbeatPublication {
-                // TODO: Start publication
-            }
             fallthrough
             
         case is ConfigHeartbeatPublicationGet:
@@ -533,6 +545,31 @@ internal class ConfigurationServerHandler: ModelDelegate {
                 
         // Heartbeat subscription
         case let request as ConfigHeartbeatSubscriptionSet:
+            // The Heartbeat Subscription Source shall be the Unassigned Address or a Unicast Address,
+            // all other values are Prohibited.
+            guard request.source.isUnassigned ||
+                  request.source.isUnicast else {
+                return ConfigHeartbeatSubscriptionStatus(responseTo: request, with: .cannotSet)
+            }
+            // The Heartbeat Subscription Destination shall be the Unassigned Address, the primary
+            // Unicast Address of the local Node, or a Group Address, all other values are Prohibited.
+            guard request.destination.isUnassigned ||
+                  request.destination.isGroup ||
+                  request.destination == localNode.unicastAddress else {
+                return ConfigHeartbeatSubscriptionStatus(responseTo: request, with: .cannotSet)
+            }
+            // Values 0x12-0xFF are Prohibited.
+            guard request.periodLog <= 0x11 else {
+                return ConfigHeartbeatSubscriptionStatus(responseTo: request, with: .cannotSet)
+            }
+            // If the Set message disables active Heartbeat subscription,
+            // the returned Status should contain the last Min Hops, Max Hops and CountLog.
+            if !request.enablesSubscription,
+               let currentSubscription = localNode.heartbeatSubscription {
+                localNode.heartbeatSubscription = nil
+                return ConfigHeartbeatSubscriptionStatus(cancel: currentSubscription)
+            }
+               
             localNode.heartbeatSubscription = HeartbeatSubscription(request)
             fallthrough
             

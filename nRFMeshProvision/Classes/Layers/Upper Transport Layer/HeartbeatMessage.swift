@@ -30,15 +30,15 @@
 
 import Foundation
 
-internal struct HearbeatMessage {
-    let source: Address
-    let destination: Address
-    let ttl: UInt8
+internal struct HeartbeatMessage {
+    static let opCode: UInt8 = 0x0A
     
     /// Message Op Code.
     let opCode: UInt8
-    /// Initial TTL used when sending the message.
-    let initTtl: UInt8
+    /// The Unicast Address of the originating Node.
+    let source: Address
+    /// The destination Address. This can be either Unicast or Group Address.
+    let destination: Address
     /// Currently active features of the Node.
     ///
     /// - If the Relay feature is set, the Relay feature of a Node is in use.
@@ -47,46 +47,73 @@ internal struct HearbeatMessage {
     /// - If the Low Power feature is set, the Node has active relationship with a Friend
     ///   Node.
     let features: NodeFeatures
+    /// Initial TTL used when sending the message.
+    let initialTtl: UInt8
+    /// TTL value with which the Heartbeat message was received.
+    ///
+    /// This is set to `nil` for outgoing Heartbeat messages.
+    let receivedTtl: UInt8?
+    
+    /// The raw data of Upper Transport Layer PDU.
+    let transportPdu: Data
+    /// The IV Index used to encode this message.
+    let ivIndex: UInt32
+    
     /// Number of hops that this message went through.
     var hops: UInt8 {
-        return initTtl - ttl + 1
+        guard let receivedTtl = receivedTtl else {
+            // Received TTL is nil for outgoing Heartbeat messages.
+            return 0
+        }
+        return initialTtl + 1 - receivedTtl
     }
     
     init?(fromControlMessage message: ControlMessage) {
         opCode = message.opCode
         let data = message.upperTransportPdu
-        guard opCode == 0x0A, data.count == 3 else {
+        guard opCode == HeartbeatMessage.opCode, data.count == 3 else {
             return nil
         }
-        initTtl = data[0] & 0x7F
+        initialTtl = data[0] & 0x7F
         features = NodeFeatures(rawValue: UInt16(data[1] << 8) | UInt16(data[2]))
         
         source = message.source
         destination = message.destination
-        ttl = message.ttl
+        receivedTtl = message.ttl
+        ivIndex = message.ivIndex
+        transportPdu = message.upperTransportPdu
     }
     
     /// Creates a Heartbeat message.
     ///
-    /// - parameter ttl:         Initial TTL used when sending the message.
-    /// - parameter features:    Currently active features of the node.
-    /// - parameter source:      The source address.
-    /// - parameter destination: The destination address.
-    init(withInitialTtl ttl: UInt8, andFeatures features: NodeFeatures,
-         from source: Address, targeting destination: Address) {
-        self.opCode = 0x0A
-        self.initTtl = ttl
-        self.features = features
+    /// - Parameters:
+    ///   - heartbeatPublication: The publication based on which the Heartbeat message
+    ///                           is generated.
+    ///   - source: The originating Unicast Address.
+    ///   - destination: The destination Unicast or Group Address.
+    init(basedOn heartbeatPublication: HeartbeatPublication,
+         from source: Address, targeting destination: Address,
+         usingIvIndex ivIndex: IvIndex) {
+        self.opCode = HeartbeatMessage.opCode
+        self.initialTtl = heartbeatPublication.ttl
+        self.features = [] // nRF Mesh on iOS library does not support any of the features.
         self.source = source
         self.destination = destination
-        self.ttl = ttl + 1 // Max TTL is 0x7F so this will fit in UInt8
+        self.receivedTtl = nil
+        self.ivIndex = ivIndex.transmitIndex
+        self.transportPdu = Data() + (initialTtl & 0x7F) + features.rawValue
     }
 }
 
-extension HearbeatMessage: CustomDebugStringConvertible {
+extension HeartbeatMessage: CustomDebugStringConvertible {
     
     var debugDescription: String {
-        return "Heartbeat Message (initTTL: \(initTtl), ttl: \(ttl), hops: \(initTtl - ttl + 1), features: \(features))"
+        if let receivedTtl = receivedTtl {
+            return "Heartbeat Message (initial TTL: \(initialTtl), received TTL: \(receivedTtl), " +
+                   "hops: \(hops), features: \(features))"
+        } else {
+            return "Heartbeat Message (initial TTL: \(initialTtl), features: \(features))"
+        }
     }
     
 }

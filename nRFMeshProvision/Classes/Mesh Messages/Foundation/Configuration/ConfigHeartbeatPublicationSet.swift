@@ -133,9 +133,19 @@ public struct ConfigHeartbeatPublicationSet: AcknowledgedConfigMessage, ConfigNe
     ///   the Node establishes or loses Friendship.
     public let features: NodeFeatures
     
-    /// Returns whether Heartbeat publishing will be enabled.
-    public var isEnabled: Bool {
+    /// Returns whether Heartbeat publishing shall be enabled.
+    public var enablesPublication: Bool {
         return destination != .unassignedAddress
+    }
+    
+    /// Returns whether periodic Heartbeat publishing shall be enabled.
+    public var enablesPeriodicPublication: Bool {
+        return enablesPublication && periodLog > 0
+    }
+    
+    /// Returns whether feature-trigerred Heartbeat publishing shall be enabled.
+    public var enablesFeatureTrigerredPublication: Bool {
+        return enablesPublication && !features.isEmpty
     }
     
     /// Creates Config Heartbeat Publication Set message that will disable all Heartbeat

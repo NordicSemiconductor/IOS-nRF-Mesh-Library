@@ -40,6 +40,7 @@ class ModelViewController: ProgressViewController {
     private weak var modelViewCell: ModelViewCell?
     
     private var heartbeatPublicationCount: RemainingHeartbeatPublicationCount?
+    private var heartbeatPublicationFeatures: NodeFeatures?
     private var heartbeatSubscriptionStatus: ConfigHeartbeatSubscriptionStatus?
     
     // MARK: - View Controller
@@ -143,7 +144,7 @@ class ModelViewController: ProgressViewController {
             return model.boundApplicationKeys.count + 1 // Add Action.
         case IndexPath.publishSection where model.isConfigurationServer:
             if let _ = model.parentElement?.parentNode?.heartbeatPublication {
-                return 3 // Destination, Remaining Count, Refresh Action.
+                return 4 // Destination, Remaining Count, Features, Refresh Action.
             }
             return 1 // Set Publication Action.
         case IndexPath.publishSection:
@@ -243,7 +244,12 @@ class ModelViewController: ProgressViewController {
                     cell.textLabel?.text = "Remaining Count"
                     cell.detailTextLabel?.text = heartbeatPublicationCount.map { "\($0)" } ?? "Unknown"
                     return cell
-                case 2: // Refresh action
+                case 2: // Count
+                    let cell = tableView.dequeueReusableCell(withIdentifier: "normal", for: indexPath)
+                    cell.textLabel?.text = "Features"
+                    cell.detailTextLabel?.text = heartbeatPublicationFeatures.map { "\($0)" } ?? "Unknown"
+                    return cell
+                case 3: // Refresh action
                     let cell = tableView.dequeueReusableCell(withIdentifier: "rightAction", for: indexPath) as! RightActionCell
                     cell.textLabel?.text = "Refresh"
                     cell.isEnabled = localProvisioner?.hasConfigurationCapabilities ?? false
@@ -694,6 +700,7 @@ extension ModelViewController: MeshNetworkDelegate {
         case let status as ConfigHeartbeatPublicationStatus:
             if status.isSuccess {
                 heartbeatPublicationCount = status.count
+                heartbeatPublicationFeatures = status.features
                 tableView.reloadSections(.publication, with: .automatic)
                 if isRefreshing {
                     reloadHeartbeatSubscription()
@@ -884,6 +891,30 @@ private extension Model {
         return !isBluetoothSIGAssigned   // Vendor Movels.
             || modelIdentifier == 0x1000 // Generic On Off Server.
             || modelIdentifier == 0x1002 // Generic Level Server.
+    }
+    
+}
+
+extension NodeFeatures: CustomStringConvertible {
+    
+    public var description: String {
+        guard !isEmpty else {
+            return "Disabled"
+        }
+        var features: [String] = []
+        if contains(.relay) {
+            features.append("Relay")
+        }
+        if contains(.proxy) {
+            features.append("Proxy")
+        }
+        if contains(.friend) {
+            features.append("Friend")
+        }
+        if contains(.lowPower) {
+            features.append("Low Power")
+        }
+        return features.joined(separator: ", ")
     }
     
 }

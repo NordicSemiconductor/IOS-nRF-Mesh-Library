@@ -137,10 +137,20 @@ public struct ConfigHeartbeatSubscriptionStatus: ConfigMessage, ConfigStatusMess
     public init(_ subscription: HeartbeatSubscription?) {
         self.source = subscription?.source ?? .unassignedAddress
         self.destination = subscription?.destination ?? .unassignedAddress
-        self.periodLog = subscription?.periodLog ?? 0
+        self.periodLog = subscription?.state?.periodLog ?? 0
         self.countLog = subscription?.state?.countLog ?? 0
         self.minHops = subscription?.state?.minHops ?? 0
         self.maxHops = subscription?.state?.maxHops ?? 0
+        self.status = .success
+    }
+    
+    public init(cancel subscription: HeartbeatSubscription) {
+        self.source = .unassignedAddress
+        self.destination = .unassignedAddress
+        self.periodLog = subscription.state?.periodLog ?? 0
+        self.countLog = subscription.state?.countLog ?? 0
+        self.minHops = subscription.state?.minHops ?? 0
+        self.maxHops = subscription.state?.maxHops ?? 0
         self.status = .success
     }
     
@@ -152,10 +162,6 @@ public struct ConfigHeartbeatSubscriptionStatus: ConfigMessage, ConfigStatusMess
         self.minHops = 0x7F
         self.maxHops = 0x00
         self.status = status
-    }
-    
-    public init(confirm request: ConfigHeartbeatSubscriptionSet) {
-        self.init(responseTo: request, with: .success)
     }
     
     public init?(parameters: Data) {

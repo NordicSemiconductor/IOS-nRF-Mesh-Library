@@ -77,9 +77,9 @@ public struct ConfigHeartbeatSubscriptionSet: AcknowledgedConfigMessage {
         return UInt16(pow(2.0, Double(periodLog - 1)))
     }
     
-    /// Returns whether Heartbeat mesasge processing will be enabled.
-    public var isEnabled: Bool {
-        return source != .unassignedAddress && destination != .unassignedAddress
+    /// Returns whether Heartbeat message processing will be enabled.
+    public var enablesSubscription: Bool {
+        return source != .unassignedAddress && destination != .unassignedAddress && periodLog > 0
     }
     
     /// Creates Config Heartbeat Subscription Set message that will disable receiving
@@ -123,7 +123,7 @@ public struct ConfigHeartbeatSubscriptionSet: AcknowledgedConfigMessage {
         }
         self.source = parameters.read(fromOffset: 0)
         self.destination = parameters.read(fromOffset: 2)
-        self.periodLog = parameters.read(fromOffset: 3)
+        self.periodLog = parameters.read(fromOffset: 4)
     }
     
 }

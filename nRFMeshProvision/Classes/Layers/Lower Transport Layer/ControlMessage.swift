@@ -111,6 +111,17 @@ internal struct ControlMessage: LowerTransportPdu {
         self.upperTransportPdu = message.parameters ?? Data()
         self.ttl = 0
     }
+    
+    init(fromHeartbeatMessage heartbeatMessage: HeartbeatMessage,
+         usingNetworkKey networkKey: NetworkKey) {
+        self.opCode = heartbeatMessage.opCode
+        self.source = heartbeatMessage.source
+        self.destination = heartbeatMessage.destination
+        self.ttl = heartbeatMessage.initialTtl
+        self.networkKey = networkKey
+        self.ivIndex = heartbeatMessage.ivIndex
+        self.upperTransportPdu = heartbeatMessage.transportPdu
+    }
 }
 
 extension ControlMessage: CustomDebugStringConvertible {

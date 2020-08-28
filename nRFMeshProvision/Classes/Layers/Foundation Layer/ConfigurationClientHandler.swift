@@ -316,16 +316,18 @@ internal class ConfigurationClientHandler: ModelDelegate {
                 meshNetwork.remove(node: node)
             }
             
-        // Heartbeat pubilcation
+        // Heartbeat publication
         case let status as ConfigHeartbeatPublicationStatus:
-            if let node = meshNetwork.node(withAddress: source) {
+            if let node = meshNetwork.node(withAddress: source),
+               !node.isLocalProvisioner {
                 // This may be set to nil.
                 node.heartbeatPublication = HeartbeatPublication(status)
             }
                 
         // Heartbeat subscription
         case let status as ConfigHeartbeatSubscriptionStatus:
-            if let node = meshNetwork.node(withAddress: source) {
+            if let node = meshNetwork.node(withAddress: source),
+               !node.isLocalProvisioner {
                 // This may be set to nil.
                 node.heartbeatSubscription = HeartbeatSubscription(status)
             }

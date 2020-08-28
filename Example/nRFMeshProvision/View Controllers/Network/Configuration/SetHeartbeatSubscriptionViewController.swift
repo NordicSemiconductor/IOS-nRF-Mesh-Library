@@ -56,7 +56,7 @@ class SetHeartbeatSubscriptionViewController: ProgressViewController {
     
     private var selectedSource: Address?
     private var selectedDestination: Address?
-    private var periodLog: UInt8?
+    private var periodLog: UInt8 = 1 // 0 is not allowed
     
     /// List of all Nodes, except the target one.
     private var nodes: [Node]!
@@ -84,8 +84,6 @@ class SetHeartbeatSubscriptionViewController: ProgressViewController {
         groups = network.groups.filter { $0.address.address.isGroup }
         
         if let subscription = node.heartbeatSubscription {
-            // It is not possible to disable subsctiptions on this view, so minimum value is 1.
-            periodLog = max(subscription.periodLog, 1)
             selectedSource = subscription.source
             selectedDestination = subscription.destination
             // Otherwise Done button is by default disabled in the Storeboard.
@@ -131,7 +129,7 @@ class SetHeartbeatSubscriptionViewController: ProgressViewController {
         if indexPath.isPeriodSection {
             let periodCell = cell as! HeartbeatSubscriptionPeriodCell
             periodCell.delegate = self
-            periodCell.periodLog = periodLog ?? 1 // 0 is not allowed
+            periodCell.periodLog = periodLog
         }
         if indexPath.isSourceSection {
             let otherNode = nodes[indexPath.row]
@@ -223,8 +221,7 @@ private extension SetHeartbeatSubscriptionViewController {
     
     func setSubscription() {
         guard let sourceIndexPath = selectedSourceIndexPath,
-              let destinationIndexPath = selectedDestinationIndexPath,
-              let periodLog = periodLog, periodLog > 0 else {
+              let destinationIndexPath = selectedDestinationIndexPath else {
             return
         }
         start("Setting Heartbeat Subscribtion...") {
@@ -235,6 +232,7 @@ private extension SetHeartbeatSubscriptionViewController {
                 destinationIndexPath.isGroupsSection && !self.groups.isEmpty ?
                     self.groups[destinationIndexPath.row].address.address :
                     self.specialGroups[destinationIndexPath.row].address
+            let periodLog = self.periodLog
             let message: ConfigMessage =
                 ConfigHeartbeatSubscriptionSet(startProcessingHeartbeatMessagesFor: periodLog,
                                                secondsSentFrom: sourceAddress,

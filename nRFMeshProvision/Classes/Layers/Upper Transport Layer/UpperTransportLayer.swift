@@ -35,6 +35,11 @@ internal class UpperTransportLayer {
     private let defaults: UserDefaults
     private let mutex = DispatchQueue(label: "UpperTransportLayerMutex")
     
+    /// This timer is responsible for publishing periodic Heartbeat messages
+    /// if they were requested by a remote provisioner using
+    /// `ConfigHeartbeatPublicationSet` message.
+    private var heartbeatPublisherTimer: BackgroundTimer?
+    
     private var logger: LoggerDelegate? {
         return networkManager.manager.logger
     }
@@ -52,6 +57,10 @@ internal class UpperTransportLayer {
         self.meshNetwork = networkManager.meshNetwork!
         self.defaults = UserDefaults(suiteName: meshNetwork.uuid.uuidString)!
         self.queues = [:]
+    }
+    
+    deinit {
+        heartbeatPublisherTimer?.invalidate()
     }
     
     /// Handles received Lower Transport PDU.
@@ -72,8 +81,8 @@ internal class UpperTransportLayer {
         case .controlMessage:
             let controlMessage = lowerTransportPdu as! ControlMessage
             switch controlMessage.opCode {
-            case 0x0A:
-                if let heartbeat = HearbeatMessage(fromControlMessage: controlMessage) {
+            case HeartbeatMessage.opCode:
+                if let heartbeat = HeartbeatMessage(fromControlMessage: controlMessage) {
                     logger?.i(.upperTransport, "\(heartbeat) received from \(heartbeat.source.hex)")
                     handle(hearbeat: heartbeat)
                 }
@@ -216,10 +225,83 @@ private extension UpperTransportLayer {
     
 }
 
+// MARK: - Handling Heartbeat messages
+
 private extension UpperTransportLayer {
     
-    func handle(hearbeat: HearbeatMessage) {
-        // TODO: Implement handling Heartbeat messages
+    /// Handles received Heartbeat message. If the local Node has active subscription
+    /// matching received Heartbeat, the count value will be incremented.
+    ///
+    /// - parameter hearbeat: Received Heartbeat message.
+    func handle(hearbeat: HeartbeatMessage) {
+        guard let localNode = meshNetwork.localProvisioner?.node,
+              let heartbeatSubscription = localNode.heartbeatSubscription else {
+            return
+        }
+        heartbeatSubscription.updateIfMatches(hearbeat)
+    }
+    
+    /// Tries to sends given Heartbeat message.
+    ///
+    /// - parameters:
+    ///   - heartbeat: The Heartbeat message to be sent.
+    ///   - networkKey: The Network Key to encrypt the message with.
+    func send(heartbeat: HeartbeatMessage, usingNetworkKey networkKey: NetworkKey) {
+        logger?.i(.upperTransport, "Sending \(heartbeat) to \(heartbeat.destination.hex) encrypted using key: \(networkKey)")
+        networkManager.lowerTransportLayer.send(heartbeat: heartbeat, usingNetworkKey: networkKey)
+    }
+    
+}
+
+internal extension UpperTransportLayer {
+    
+    /// Invalidates and optionally restarts the periodic Heartbeat publisher
+    /// if Heartbeat publication has been set.
+    func refreshHeartbeatPublisher() {
+        // Invalidate the old publisher.
+        if let _ = heartbeatPublisherTimer {
+            logger?.v(.upperTransport, "Publishing periodic Heartbeat messages cancelled")
+            heartbeatPublisherTimer?.invalidate()
+            heartbeatPublisherTimer = nil
+        }
+        
+        // If periodic Heartbeat publications were set, start a new timer.
+        if let heartbeatPublication = meshNetwork.localProvisioner?.node?.heartbeatPublication,
+           heartbeatPublication.isPeriodicPublicationEnabled,
+           let _ = heartbeatPublication.state {
+            logger?.v(.upperTransport, "Publishing periodic Heartbeat messages initialized")
+            let interval = TimeInterval(heartbeatPublication.period)
+            heartbeatPublisherTimer = BackgroundTimer.scheduledTimer(withTimeInterval: interval, repeats: true) { [weak self] _ in
+                guard let self = self else { return }
+                // Check if the Local Node and Network Key are still there, and periodic
+                // Heartbeat publishing is enabled.
+                guard let localNode = self.meshNetwork.localProvisioner?.node,
+                      let networkKey = localNode.networkKeys[heartbeatPublication.networkKeyIndex],
+                      heartbeatPublication.isPeriodicPublicationEnabled,
+                      let state = heartbeatPublication.state else {
+                    self.heartbeatPublisherTimer?.invalidate()
+                    self.heartbeatPublisherTimer = nil
+                    self.logger?.v(.upperTransport, "Publishing periodic Heartbeat messages cancelled")
+                    return
+                }
+                
+                // Send the Heartbeat message.
+                let heartbeat = HeartbeatMessage(basedOn: heartbeatPublication,
+                                                from: localNode.unicastAddress,
+                                                targeting: heartbeatPublication.address,
+                                                usingIvIndex: self.meshNetwork.ivIndex)
+                self.send(heartbeat: heartbeat, usingNetworkKey: networkKey)
+                
+                // If the last periodic Heartbeat message has been sent, invalidate the timer.
+                guard state.shouldSendMorePeriodicHeartbeatMessage() else {
+                    self.heartbeatPublisherTimer?.invalidate()
+                    self.heartbeatPublisherTimer = nil
+                    self.logger?.v(.upperTransport, "Publishing periodic Heartbeat messages finished")
+                    return
+                }
+                // Do nothing. Timer till be fired again.
+            }
+        }
     }
     
 }

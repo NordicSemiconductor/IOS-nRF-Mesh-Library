@@ -33,19 +33,41 @@ import Foundation
 public class HeartbeatSubscription: Codable {
     
     internal class State {
+        /// The timestamp at which the subscription was started.
+        private let startDate: Date
+        /// The Heartbeat Subscription Period state controls the duration for processing
+        /// Heartbeat transport control messages. When set to 0x0000, Heartbeat messages
+        /// are not processed. When set to a value greater than or equal to 0x0001,
+        /// Heartbeat messages are processed.
+        private let period: TimeInterval
+        
         /// The Heartbeat Subscription Count state is a 16-bit counter that controls
         /// the number of periodical Heartbeat transport control messages received
         /// since receiving the most recent Config Heartbeat Subscription Set message.
         /// The counter stops counting at 0xFFFF.
-        private(set) var count: UInt16 = 0
+        fileprivate(set) var count: UInt16 = 0
         /// The Heartbeat Subscription Min Hops state determines the minimum hops value
         /// registered when receiving Heartbeat messages since receiving the most recent
         /// Config Heartbeat Subscription Set message.
-        private(set) var minHops: UInt8 = 0x7F
+        fileprivate(set) var minHops: UInt8 = 0x7F
         /// The Heartbeat Subscription Max Hops state determines the maximum hops value
         /// registered when receiving Heartbeat messages since receiving the most recent
         /// Config Heartbeat Subscription Set message.
-        private(set) var maxHops: UInt8 = 0
+        fileprivate(set) var maxHops: UInt8 = 0
+        
+        /// The Heartbeat Subscription Period Log is a representation of the Heartbeat
+        /// Subscription Period state value. The Heartbeat Subscription Period Log and
+        /// Heartbeat Subscription Period with the value 0x00 and 0x0000 are equivalent.
+        /// The Heartbeat Subscription Period Log value between 0x01 and 0x11 shall
+        /// represent the Heartbeat Subscription Period value
+        var periodLog: UInt8 {
+            let timeIntervalSinceSubscriptionStarted = -startDate.timeIntervalSinceNow
+            let remainingPeriod = period - timeIntervalSinceSubscriptionStarted
+            guard remainingPeriod >= 0 else {
+                return 0
+            }
+            return HeartbeatSubscription.period2PeriodLog(remainingPeriod)
+        }
         /// The Heartbeat Subscription Count Log is a representation of the Heartbeat
         /// Subscription Count state value. The Heartbeat Subscription Count Log and
         /// Heartbeat Subscription Count with the value 0x00 and 0x0000 are equivalent.
@@ -57,15 +79,10 @@ public class HeartbeatSubscription: Codable {
         var countLog: UInt8 {
             return HeartbeatSubscription.countToCountLog(count)
         }
-    
-        /// Updates the counter based on received Heartbeat message.
-        /// - Parameter hearbeat: The received Heartbeat message.
-        func update(with hearbeat: HearbeatMessage) {
-            if count < 0xFFFF {
-                count += 1
-            }
-            minHops = min(minHops, hearbeat.hops)
-            maxHops = max(maxHops, hearbeat.hops)
+        
+        fileprivate init(periodLog: UInt8) {
+            self.startDate = Date()
+            self.period = TimeInterval(HeartbeatSubscription.periodLog2Period(periodLog))
         }
     }
     /// The state contains variables used for handling received Heartbeat mesasges
@@ -80,42 +97,63 @@ public class HeartbeatSubscription: Codable {
     ///
     /// It can be either a Group or Unicast Address.
     public let destination: Address
-    ///  The Heartbeat Subscription Period state controls the duration for processing
-    ///  Heartbeat transport control messages. When set to 0x0000, Heartbeat messages
-    ///  are not processed. When set to a value greater than or equal to 0x0001,
-    ///  Heartbeat messages are processed.
-    public let periodLog: UInt8
-    /// A last known value, in seconds, of the period that is used for processing periodic
-    /// Heartbeat messages.
-    public var period: UInt16 {
-        return Self.periodLog2Period(periodLog)
+    
+    /// Returns whether the subscription is enabled, or not.
+    ///
+    /// Subscription gets disabled when the specified period times out.
+    internal var isEnabled: Bool {
+        return state.map { $0.periodLog > 0 } ?? false
+    }
+    
+    /// Returns whether the received Heartbeat message matches subscription parameters.
+    ///
+    /// - parameter heartbeat: The received Heartbeat message.
+    /// - returns: True, if Heartbeat message maches the subscription; false otherwise.
+    internal func matches(_ heartbeat: HeartbeatMessage) -> Bool {
+        return source == heartbeat.source && destination == heartbeat.destination
+    }
+    
+    /// Updates the counter based on received Heartbeat message.
+    ///
+    /// - parameter heartbeat: The received Heartbeat message.
+    internal func updateIfMatches(_ heartbeat: HeartbeatMessage) {
+        guard isEnabled, let state = state, matches(heartbeat) else {
+            return
+        }
+        if state.count < 0xFFFF {
+            state.count += 1
+        }
+        state.minHops = min(state.minHops, heartbeat.hops)
+        state.maxHops = max(state.maxHops, heartbeat.hops)
     }
     
     /// An initializer for remote Nodes' Heartbeat subscription objects.
     ///
-    /// - parameter status: The received status containing current Heartbeat subscription
-    ///                     information.
+    /// - parameter status: The received status containing current Heartbeat
+    ///                     subscription information.
+    /// - returns: The Heartbeat subscription object, or `nil`, it the message
+    ///            defines it as disabled. 
     internal init?(_ status: ConfigHeartbeatSubscriptionStatus) {
         guard status.isEnabled else {
             return nil
         }
         self.source = status.source
         self.destination = status.destination
-        self.periodLog = status.periodLog
     }
     
-    /// An initializer for local Node. This sets the state to the value from the Set
-    /// message.
+    /// An initializer for local Node. This sets the state to the value from the
+    /// Config Heartbeat Subscription Set message.
     ///
     /// - parameter request: The request sent to the local Node.
+    /// - returns: The Heartbeat subscription object, or `nil`, it the message
+    ///            disables it.
     internal init?(_ request: ConfigHeartbeatSubscriptionSet) {
-        guard request.isEnabled else {
+        guard request.enablesSubscription else {
             return nil
         }
         self.source = request.source
         self.destination = request.destination
-        self.periodLog = request.periodLog
-        self.state = State()
+        self.state = State(periodLog: request.periodLog)
     }
     
     // MARK: - Codable
@@ -123,7 +161,6 @@ public class HeartbeatSubscription: Codable {
     private enum CodingKeys: String, CodingKey {
         case source
         case destination
-        case period
     }
     
     public required init(from decoder: Decoder) throws {
@@ -148,12 +185,6 @@ public class HeartbeatSubscription: Codable {
                                                    debugDescription: "\(destinationAsString) is not a unicast or group address.")
         }
         self.destination = destination
-        let period = try container.decode(UInt16.self, forKey: .period)
-        guard let periodLog = Self.period2PeriodLog(period) else {
-            throw DecodingError.dataCorruptedError(forKey: .period, in: container,
-                                                   debugDescription: "Period must be power of 2 or 0xFFFF.")
-        }
-        self.periodLog = periodLog
         self.state = nil
     }
     
@@ -161,7 +192,6 @@ public class HeartbeatSubscription: Codable {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(source.hex, forKey: .source)
         try container.encode(destination.hex, forKey: .destination)
-        try container.encode(period, forKey: .period)
     }
 }
 
@@ -171,8 +201,9 @@ private extension HeartbeatSubscription {
     ///
     /// This method uses algorith compatible to Table 4.1 in Bluetooth Mesh Profile
     /// Specification 1.0.1.
-    /// - Parameter value: The count.
-    /// - Returns: The logritmic value.
+    ///
+    /// - parameter value: The count.
+    /// - returns: The logritmic value.
     static func countToCountLog(_ value: UInt16) -> UInt8 {
         switch value {
         case 0x0000:
@@ -182,34 +213,31 @@ private extension HeartbeatSubscription {
             // Maximum value.
             return 0xFF
         default:
-            return UInt8(log2(Double(value))) + 1
+            return UInt8(log2(Double(value)) + 1)
         }
     }
     
-    /// Converts Subscription Period to PublicSubscriptionation Period Log.
-    /// - Parameter value: The value.
-    /// - Returns: The logaritmic value.
-    static func period2PeriodLog(_ value: UInt16) -> UInt8? {
-        switch value {
-        case 0x0000:
+    /// Converts Subscription Period to Subscription Period Log.
+    ///
+    /// - parameter remainingPeriod: The remaining period, as `TimeInterval`.
+    /// - returns: The logaritmic value.
+    static func period2PeriodLog(_ remainingPeriod: TimeInterval) -> UInt8 {
+        switch remainingPeriod {
+        case 0:
             // Periodic Heartbeat messages are not published.
             return 0x00
-        case 0xFFFF:
+        case let max where max >= 0xFFFF:
             // Maximum value.
             return 0x11
         default:
-            let exponent = UInt8(log2(Double(value) * 2 - 1)) + 1
-            guard pow(2.0, Double(exponent - 1)) == Double(value) else {
-                // Ensure power of 2.
-                return nil
-            }
-            return exponent
+            return UInt8(log2(remainingPeriod) + 1)
         }
     }
     
     /// Converts Subscription Period Log to Subscription Period.
-    /// - Parameter periodLog: The logaritmic value in range 0x00...0x11.
-    /// - Returns: The value.
+    ///
+    /// - parameter periodLog: The logaritmic value in range 0x00...0x11.
+    /// - returns: The value.
     static func periodLog2Period(_ periodLog: UInt8) -> UInt16 {
         switch periodLog {
         case 0x00:

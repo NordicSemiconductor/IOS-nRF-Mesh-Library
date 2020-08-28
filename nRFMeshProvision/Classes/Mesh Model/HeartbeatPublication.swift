@@ -40,32 +40,17 @@ public class HeartbeatPublication: Codable {
         /// periodic Heartbeat messages are disabled.
         ///
         /// Possible values are:
-        /// - 0 - Periodic Heartbeats are disabled.
-        /// - 1 - 0xFFFE - Number of remaining Heartbeat messages to be sent.
+        /// - 0x0000 - Periodic Heartbeats are disabled.
+        /// - 0x0001 - 0xFFFE - Number of remaining Heartbeat messages to be sent.
         /// - 0xFFFF - Periodic Heartbeat messages are published indefinitely.
         private var count: UInt16
         
         /// Number of Heartbeat messages remaining to be sent, represented as 2^(n-1) seconds.
-        internal var countLog: UInt8 {
-            switch count {
-            case 0x00:
-                // Periodic Heartbeats are disabled.
-                return 0x00
-            case 0xFFFF:
-                // Periodic Heartbeat messages are published indefinitely.
-                return 0xFF
-            default:
-                // The Heartbeat Publication Count Log value between 0x01 and 0x11 shall
-                // represent that smallest integer n where 2^(n-1) is greater than or equal
-                // to the Heartbeat Publication Count value.
-                
-                // For example, if the Heartbeat Publication Count value is 0x0579, then
-                // the Heartbeat Publication Count Log value would be 0x0C.
-                return UInt8(log2(Double(count) * 2 - 1)) + 1
-            }
+        var countLog: UInt8 {
+            return HeartbeatPublication.countToCountLog(count)
         }
         
-        init?(_ countLog: UInt8) {
+        fileprivate init?(_ countLog: UInt8) {
             switch countLog {
             case 0x00:
                 // Periodic Heartbeat messages are not published.
@@ -84,10 +69,10 @@ public class HeartbeatPublication: Codable {
             }
         }
         
-        /// Returns whether periodic Heartbeat message should be sent, or not.
-        /// - returns: True, if Heartmeat control message should be sent;
+        /// Returns whether more periodic Heartbeat message should be sent, or not.
+        /// - returns: True, if more Heartmeat control message should be sent;
         ///            false otherwise.
-        func shouldSendPeriodicHeartbeatMessage() -> Bool {
+        func shouldSendMorePeriodicHeartbeatMessage() -> Bool {
             guard count > 0 else {
                 return false
             }
@@ -95,7 +80,7 @@ public class HeartbeatPublication: Codable {
                 return true
             }
             count = count - 1
-            return count == 0
+            return true
         }
     }
     /// The periodic heartbeat state contains variables used for handling sending
@@ -128,6 +113,21 @@ public class HeartbeatPublication: Codable {
     /// Node features that trigger sending Heartbeat messages when changed.
     public let features: NodeFeatures
     
+    /// Returns whether Heartbeat publishing shall be enabled.
+    public var isEnabled: Bool {
+        return address != .unassignedAddress
+    }
+    
+    /// Returns whether periodic Heartbeat publishing shall be enabled.
+    public var isPeriodicPublicationEnabled: Bool {
+        return isEnabled && periodLog > 0
+    }
+    
+    /// Returns whether feature-trigerred Heartbeat publishing shall be enabled.
+    public var isFeatureTrigerredPublishingEnabled: Bool {
+        return isEnabled && !features.isEmpty
+    }
+    
     /// An initializer for remote Nodes' Heartbeat publication objects.
     ///
     /// - parameter status: The received status containing current Heartbeat publication
@@ -148,7 +148,7 @@ public class HeartbeatPublication: Codable {
     ///
     /// - parameter request: The request sent to the local Node.
     internal init?(_ request: ConfigHeartbeatPublicationSet) {
-        guard request.isEnabled else {
+        guard request.enablesPublication else {
             return nil
         }
         self.address = request.destination
@@ -213,9 +213,42 @@ public class HeartbeatPublication: Codable {
 
 private extension HeartbeatPublication {
     
+    /// Converts Publication Count to Publication Count Log.
+    ///
+    /// - parameter count: The count.
+    /// - returns: The logritmic value.
+    static func countToCountLog(_ count: UInt16) -> UInt8 {
+        switch count {
+        case 0x00:
+            // Periodic Heartbeats are disabled.
+            return 0x00
+        case 0xFFFF:
+            // Periodic Heartbeat messages are published indefinitely.
+            return 0xFF
+        default:
+            // The Heartbeat Publication Count Log value between 0x01 and 0x11 shall
+            // represent that smallest integer n where 2^(n-1) is greater than or equal
+            // to the Heartbeat Publication Count value.
+            //
+            // For example, if the Heartbeat Publication Count value is 0x0579, then
+            // the Heartbeat Publication Count Log value would be 0x0C.
+            //
+            // Value  Log
+            // 1      1  because 2^(1-1) = 1, which is >= 1
+            // 2      2  because 2^(2-1) = 2, which is >= 2
+            // 3      3  because 2^(3-1) = 4, which is >= 3 and 2^(2-1) = 2 is < 3
+            // 4      3  because 2^(3-1) = 4, which is >= 4
+            // 5      4  because 2^(4-1) = 8, which is >= 5 and 2^(3-1) = 4 is < 5
+            // 0x0579 12 because 2^(12-1) = 204, which is >= 1401, and 2^(11-1) = 1024 is < 1401*
+            // * 0x0579 = 1401
+            return UInt8(log2(Double(count) * 2 - 1)) + 1
+        }
+    }
+    
     /// Converts Publication Period to Publication Period Log.
-    /// - Parameter value: The value.
-    /// - Returns: The logaritmic value.
+    ///
+    /// - parameter value: The value.
+    /// - returns: The logaritmic value.
     static func period2PeriodLog(_ value: UInt16) -> UInt8? {
         switch value {
         case 0x0000:
@@ -235,8 +268,9 @@ private extension HeartbeatPublication {
     }
     
     /// Converts Publication Period Log to Publicaton Period.
-    /// - Parameter periodLog: The logaritmic value in range 0x00...0x11.
-    /// - Returns: The value.
+    ///
+    /// - parameter periodLog: The logaritmic value in range 0x00...0x11.
+    /// - returns: The value.
     static func periodLog2Period(_ periodLog: UInt8) -> UInt16 {
         switch periodLog {
         case 0x00:
