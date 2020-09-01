@@ -35,6 +35,7 @@ internal struct ControlMessage: LowerTransportPdu {
     let destination: Address
     let networkKey: NetworkKey
     let ivIndex: UInt32
+    let ttl: UInt8
     
     /// Message Op Code.
     let opCode: UInt8
@@ -66,6 +67,7 @@ internal struct ControlMessage: LowerTransportPdu {
         destination = networkPdu.destination
         networkKey = networkPdu.networkKey
         ivIndex = networkPdu.ivIndex
+        ttl = networkPdu.ttl
     }
     
     /// Creates a Control Message object from the given list of segments.
@@ -79,6 +81,7 @@ internal struct ControlMessage: LowerTransportPdu {
         destination = segment.destination
         networkKey = segment.networkKey
         ivIndex = segment.ivIndex
+        ttl = segment.ttl
         
         // Segments are already sorted by `segmentOffset`.
         upperTransportPdu = segments.reduce(Data()) {
@@ -106,6 +109,18 @@ internal struct ControlMessage: LowerTransportPdu {
         self.networkKey = networkKey
         self.ivIndex = ivIndex.transmitIndex
         self.upperTransportPdu = message.parameters ?? Data()
+        self.ttl = 0
+    }
+    
+    init(fromHeartbeatMessage heartbeatMessage: HeartbeatMessage,
+         usingNetworkKey networkKey: NetworkKey) {
+        self.opCode = heartbeatMessage.opCode
+        self.source = heartbeatMessage.source
+        self.destination = heartbeatMessage.destination
+        self.ttl = heartbeatMessage.initialTtl
+        self.networkKey = networkKey
+        self.ivIndex = heartbeatMessage.ivIndex
+        self.upperTransportPdu = heartbeatMessage.transportPdu
     }
 }
 

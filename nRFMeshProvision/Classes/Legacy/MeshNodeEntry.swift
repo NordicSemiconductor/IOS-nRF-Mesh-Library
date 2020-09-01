@@ -83,11 +83,11 @@ internal struct MeshNodeEntry: Codable {
         return replayProtectionCount?.asUInt16
     }
     
-    var features: NodeFeatures? {
+    var features: NodeFeaturesState? {
         guard let featureFlags = featureFlags else {
             return nil
         }
-        return NodeFeatures(rawValue: featureFlags.asUInt16)
+        return NodeFeaturesState(rawValue: featureFlags.asUInt16)
     }
     
     var nodeElements: [Element] {

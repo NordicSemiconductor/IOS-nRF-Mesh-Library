@@ -31,23 +31,22 @@
 import UIKit
 import nRFMeshProvision
 
-protocol DestinationDelegate {
-    func keySelected(_ applicationKey: ApplicationKey)
-    func destinationSelected(_ address: MeshAddress)
-    func destinationCleared()
+protocol HeartbeatDestinationDelegate {
+    func keySelected(_ networkKey: NetworkKey)
+    func destinationSelected(_ address: Address)
 }
 
-class SetPublicationDestinationsViewController: UITableViewController {
+class SetHeartbeatPublicationDestinationsViewController: UITableViewController {
     
     // MARK: - Properties
     
-    var model: Model!
-    var delegate: DestinationDelegate?
-    var selectedApplicationKey: ApplicationKey?
-    var selectedDestination: MeshAddress?
+    var target: Node!
+    var delegate: HeartbeatDestinationDelegate?
+    var selectedNetworkKey: NetworkKey?
+    var selectedDestination: Address?
     
-    /// List of Elements containing Model bound to selected Application Key.
-    private var compatibleElements: [Element]!
+    /// List of all Nodes, except the target one.
+    private var nodes: [Node]!
     private var groups: [Group]!
     private let specialGroups: [(title: String, address: Address)] = [
         ("All Proxies", Address.allProxies),
@@ -64,15 +63,10 @@ class SetPublicationDestinationsViewController: UITableViewController {
         super.viewDidLoad()
 
         let network = MeshNetworkManager.instance.meshNetwork!
-        groups = network.groups
-        
-        if let key = selectedApplicationKey {
-            selectedApplicationKey = nil
-            let index = model.boundApplicationKeys.firstIndex(of: key) ?? 0
-            keySelected(IndexPath(row: index, section: IndexPath.keysSection), initial: true)
-        } else {
-            keySelected(IndexPath(row: 0, section: IndexPath.keysSection), initial: true)
-        }
+        // Exclude the current Node.
+        nodes = network.nodes.filter { $0.uuid != target.uuid }
+        // Exclude Virtual Groups, which may not be set as Heartbeat destination.
+        groups = network.groups.filter { $0.address.address.isGroup }
     }
 
     // MARK: - Table view data source
@@ -83,10 +77,10 @@ class SetPublicationDestinationsViewController: UITableViewController {
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if section == IndexPath.keysSection {
-            return model.boundApplicationKeys.count
+            return target.networkKeys.count
         }
-        if section == IndexPath.elementsSection {
-            return max(compatibleElements.count, 1)
+        if section == IndexPath.nodesSection {
+            return max(nodes.count, 1)
         }
         if section == IndexPath.groupsSection && !groups.isEmpty {
             return groups.count
@@ -101,58 +95,44 @@ class SetPublicationDestinationsViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         switch section {
         case IndexPath.keysSection:
-            return "Application Keys"
-        case IndexPath.elementsSection:
-            return "Elements"
+            return "Network Keys"
+        case IndexPath.nodesSection:
+            return "Nodes"
         case IndexPath.groupsSection:
             return "Groups"
         default:
             return nil
         }
     }
-    
-    override func tableView(_ tableView: UITableView, titleForFooterInSection section: Int) -> String? {
-        switch section {
-        case IndexPath.elementsSection:
-            return "Note: The list above contains elements with compatible models that are bound to the selected key. Bind the key before setting the publication."
-        default:
-            return nil
-        }
-    }
-    
-    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        if indexPath.isElementsSection && compatibleElements.isEmpty {
-            return 56
-        }
-        return UITableView.automaticDimension
-    }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard !indexPath.isElementsSection || compatibleElements.count > 0 else {
+        guard !indexPath.isNodeSection || nodes.count > 0 else {
             return tableView.dequeueReusableCell(withIdentifier: "empty", for: indexPath)
         }
         let cell = tableView.dequeueReusableCell(withIdentifier: indexPath.reuseIdentifier, for: indexPath)
         
         if indexPath.isKeySection {
-            let applicationKey = model.boundApplicationKeys[indexPath.row]
-            cell.textLabel?.text = applicationKey.name
-            cell.detailTextLabel?.text = "Bound to \(applicationKey.boundNetworkKey.name)"
+            let networkKey = target.networkKeys[indexPath.row]
+            if selectedNetworkKey?.index == networkKey.index {
+                selectedKeyIndexPath = indexPath
+                selectedNetworkKey = nil
+            }
+            cell.textLabel?.text = networkKey.name
             cell.accessoryType = indexPath == selectedKeyIndexPath ? .checkmark : .none
         }
-        if indexPath.isElementsSection {
-            let element = compatibleElements[indexPath.row]
-            if let destination = selectedDestination, destination.address == element.unicastAddress {
+        if indexPath.isNodeSection {
+            let node = nodes[indexPath.row]
+            if let destination = selectedDestination, destination == node.unicastAddress {
                 selectedIndexPath = indexPath
                 selectedDestination = nil
             }
-            cell.textLabel?.text = element.name ?? "Element \(indexPath.row + 1)"
-            cell.detailTextLabel?.text = element.parentNode!.name ?? "Unknown Device"
+            cell.textLabel?.text = node.name ?? "Unknown Device"
             cell.imageView?.image = #imageLiteral(resourceName: "ic_flag_24pt")
             cell.accessoryType = indexPath == selectedIndexPath ? .checkmark : .none
         }
         if indexPath.isGroupsSection && !groups.isEmpty {
             let group = groups[indexPath.row]
-            if let destination = selectedDestination, destination == group.address {
+            if let destination = selectedDestination, destination == group.address.address {
                 selectedIndexPath = indexPath
                 selectedDestination = nil
             }
@@ -162,7 +142,7 @@ class SetPublicationDestinationsViewController: UITableViewController {
         }
         if indexPath.isSpecialGroupsSection || (indexPath.isGroupsSection && groups.isEmpty) {
             let pair = specialGroups[indexPath.row]
-            if let destination = selectedDestination, destination.address == pair.address {
+            if let destination = selectedDestination, destination == pair.address {
                 selectedIndexPath = indexPath
                 selectedDestination = nil
             }
@@ -174,95 +154,67 @@ class SetPublicationDestinationsViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        guard !indexPath.isElementsSection || !compatibleElements.isEmpty else {
+        guard !indexPath.isNodeSection || !nodes.isEmpty else {
             return
         }
         
         tableView.deselectRow(at: indexPath, animated: true)
         
         if indexPath.isKeySection {
-            keySelected(indexPath, initial: false)
-            return
+            keySelected(indexPath)
+        } else {
+            destinationSelected(indexPath)
         }
-        
-        var rows: [IndexPath] = []
-        if let previousSelection = selectedIndexPath {
-            rows.append(previousSelection)
-        }
-        rows.append(indexPath)
-        selectedIndexPath = indexPath
-        
-        tableView.reloadRows(at: rows, with: .automatic)
-        
-        destinationSelected(indexPath)
     }
 
 }
 
-private extension SetPublicationDestinationsViewController {
+private extension SetHeartbeatPublicationDestinationsViewController {
     
-    func keySelected(_ indexPath: IndexPath, initial: Bool) {
-        guard indexPath != selectedKeyIndexPath else {
-            return
-        }
-        
+    func keySelected(_ indexPath: IndexPath) {
+        // Refresh previously selected and the new rows.
         var rows: [IndexPath] = []
         if let previousSelection = selectedKeyIndexPath {
             rows.append(previousSelection)
         }
-        rows.append(indexPath)
         selectedKeyIndexPath = indexPath
-        
-        // The list of Elements contains Elements with models, that are bound
-        // to the selected key. Changing the key will cause the Elements list to reload.
-        // If an Element was selected, it may happen that it also is bound to the
-        // new key, or not. We either have to update the selected index path, or
-        // clear the selection.
-        var selectedElementIndex: UInt8?
-        if !initial, let indexPath = selectedIndexPath, indexPath.isElementsSection {
-            selectedElementIndex = compatibleElements[indexPath.row].index
-        }
-        // Refresh the Elements list.
-        let key = model.boundApplicationKeys[indexPath.row]
-        let meshNetwork = MeshNetworkManager.instance.meshNetwork!
-        compatibleElements = meshNetwork.nodes
-            .flatMap({ $0.elements })
-            .filter({ $0.contains(modelBoundTo: key) })
-        
-        if let selectedElementIndex = selectedElementIndex {
-            if let newRow = compatibleElements.firstIndex(where: { $0.index == selectedElementIndex }) {
-                selectedIndexPath = IndexPath(row: newRow, section: IndexPath.elementsSection)
-            } else {
-                selectedIndexPath = nil
-                delegate?.destinationCleared()
-            }
-        }
-        delegate?.keySelected(key)
-        
-        tableView.beginUpdates()
+        rows.append(indexPath)
         tableView.reloadRows(at: rows, with: .automatic)
-        tableView.reloadSections(.elements, with: .automatic)
-        tableView.endUpdates()
+        
+        // Call delegate.
+        let network = MeshNetworkManager.instance.meshNetwork!
+        delegate?.keySelected(network.networkKeys[indexPath.row])
     }
     
     func destinationSelected(_ indexPath: IndexPath) {
+        // Refresh previously selected and the new rows.
+        var rows: [IndexPath] = []
+        if let previousSelection = selectedIndexPath {
+            rows.append(previousSelection)
+        }
+        selectedIndexPath = indexPath
+        rows.append(indexPath)
+        tableView.reloadRows(at: rows, with: .automatic)
+        
+        // Call delegate.
         switch indexPath.section {
-        case IndexPath.elementsSection:
-            let element = compatibleElements[indexPath.row]
-            delegate?.destinationSelected(MeshAddress(element.unicastAddress))
+        case IndexPath.nodesSection:
+            let node = nodes[indexPath.row]
+            delegate?.destinationSelected(node.unicastAddress)
         case IndexPath.groupsSection where !groups.isEmpty:
             let selectedGroup = groups[indexPath.row]
-            delegate?.destinationSelected(selectedGroup.address)
+            delegate?.destinationSelected(selectedGroup.address.address)
         default:
             let selectedGroup = specialGroups[indexPath.row]
-            delegate?.destinationSelected(MeshAddress(selectedGroup.address))
+            delegate?.destinationSelected(selectedGroup.address)
         }
     }
+    
 }
 
 private extension IndexPath {
     static let keysSection          = 0
-    static let elementsSection      = 1
+    static let nodesSection         = 1
     static let groupsSection        = 2
     static let specialGroupsSection = 3
     static func numberOfSections(for groups: [Group]) -> Int {
@@ -275,9 +227,6 @@ private extension IndexPath {
         if isKeySection {
             return "key"
         }
-        if isElementsSection {
-            return "subtitle"
-        }
         return "normal"
     }
     
@@ -285,8 +234,8 @@ private extension IndexPath {
         return section == IndexPath.keysSection
     }
     
-    var isElementsSection: Bool {
-        return section == IndexPath.elementsSection
+    var isNodeSection: Bool {
+        return section == IndexPath.nodesSection
     }
     
     var isGroupsSection: Bool {
@@ -300,6 +249,6 @@ private extension IndexPath {
 
 private extension IndexSet {
     
-    static let elements = IndexSet(integer: IndexPath.elementsSection)
+    static let nodes = IndexSet(integer: IndexPath.nodesSection)
     
 }

@@ -62,7 +62,7 @@ public class MeshNetwork: Codable {
     public internal(set) var applicationKeys: [ApplicationKey]
     /// An array of nodes in the network.
     public internal(set) var nodes: [Node]
-    /// An array of groups in teh network.
+    /// An array of groups in the network.
     public internal(set) var groups: [Group]
     
     /// The IV Index of the mesh network.
@@ -114,7 +114,7 @@ public class MeshNetwork: Codable {
     internal init(name: String, uuid: UUID = UUID()) {
         schema          = "http://json-schema.org/draft-04/schema#"
         id              = "http://www.bluetooth.com/specifications/assigned-numbers/mesh-profile/cdb-schema.json#"
-        version         = "0.8.0" // TODO: Switch to 1.0.0 when final
+        version         = "1.0.0"
         meshUUID        = MeshUUID(uuid)
         meshName        = name
         timestamp       = Date()
@@ -176,6 +176,10 @@ public class MeshNetwork: Codable {
         groups.forEach {
             $0.meshNetwork = self
         }
+        // Heartbeat publications and subscriptions are disabled when mesh
+        // network is loaded.
+        localProvisioner?.node?.heartbeatPublication = nil
+        localProvisioner?.node?.heartbeatSubscription = nil
     }
     
 }

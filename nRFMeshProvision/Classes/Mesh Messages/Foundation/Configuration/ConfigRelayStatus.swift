@@ -38,7 +38,7 @@ public struct ConfigRelayStatus: ConfigMessage {
     }
     
     /// The Relay state for the Node.
-    public let state: NodeFeaturesState
+    public let state: NodeFeatureState
     /// Number of retransmissions on advertising bearer for each Network PDU
     /// relayed by the Node. Possible values are 0...7, which correspond to
     /// 1-8 transmissions in total.
@@ -62,7 +62,7 @@ public struct ConfigRelayStatus: ConfigMessage {
     /// - parameter steps: Number of 10-millisecond steps between retransmissions,
     ///                    decremented by 1. Possible values are 0...31, which
     ///                    corresponds to 10-320 milliseconds intervals.
-    public init(_ state: NodeFeaturesState, count: UInt8, steps: UInt8) {
+    public init(_ state: NodeFeatureState, count: UInt8, steps: UInt8) {
         self.state = state
         self.count = min(7, count)
         self.steps = min(31, steps)
@@ -78,7 +78,7 @@ public struct ConfigRelayStatus: ConfigMessage {
         guard parameters.count == 2 else {
             return nil
         }
-        guard let state = NodeFeaturesState(rawValue: parameters[0]) else {
+        guard let state = NodeFeatureState(rawValue: parameters[0]) else {
             return nil
         }
         self.state = state

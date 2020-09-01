@@ -30,36 +30,27 @@
 
 import Foundation
 
-public struct ConfigGATTProxyStatus: ConfigMessage {
-    public static let opCode: UInt32 = 0x8014
+extension UInt16 {
     
-    public var parameters: Data? {
-        return Data([state.rawValue])
-    }
-    
-    /// The GATT Proxy state of the Node.
-    public let state: NodeFeatureState
-    
-    /// Creates the Config GATT Proxy Status message.
-    ///
-    /// - parameter state: The GATT Proxy state of the Node.
-    public init(_ state: NodeFeatureState) {
-        self.state = state
-    }
-    
-    public init(for node: Node) {
-        self.state = node.features?.proxy ?? .notSupported
-    }
-    
-    public init?(parameters: Data) {
-        guard parameters.count == 1 else {
-            return nil
+    func asTime() -> String {
+        if self / 3600 > 0 {
+            return "\(self / 3600) h \((self % 3600) / 60) min \(self % 60) sec"
         }
-        guard let state = NodeFeatureState(rawValue: parameters[0]) else {
-            return nil
+        if self / 60 > 0 {
+            return "\(self / 60) min \(self % 60) sec"
         }
-        self.state = state
+        if self == 1 {
+            return "1 second"
+        }
+        return "\(self) seconds"
     }
     
 }
 
+extension ClosedRange where Bound == UInt16 {
+    
+    func asTime() -> String {
+        return "\(lowerBound.asTime())...\(upperBound.asTime())"
+    }
+    
+}

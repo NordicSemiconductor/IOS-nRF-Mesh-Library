@@ -64,7 +64,13 @@ class GroupControlViewController: ProgressCollectionViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         collectionView.setEmptyView(title: "No models configured",
-                                    message: "No models are subscribed to this group.",
+                                    message: "No supported models are subscribed to this group.\n\n"
+                                           + "nRF Mesh currently supports the following\n"
+                                           + "models on the Groups tab:\n"
+                                           + "- Generic OnOff Server,\n"
+                                           + "- Generic Level Server.\n\n"
+                                           + "This limitation only applies to the app,\n"
+                                           + "not the underlying mesh library.",
                                     messageImage: #imageLiteral(resourceName: "baseline-groups"))
         collectionView.delegate = self
         

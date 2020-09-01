@@ -325,7 +325,7 @@ internal extension ProxyFilter {
     ///
     /// This method notifies the delegate about changes in the Proxy Filter.
     ///
-    /// If a mismatchis detected between the local list of services and
+    /// If a mismatch is detected between the local list of services and
     /// the list size received, the method will try to clear the remote
     /// filter and send all the addresses again.
     ///
@@ -337,10 +337,10 @@ internal extension ProxyFilter {
         case let status as FilterStatus:
             self.proxy = proxy
             // Handle buffered messages.
-            let bufferEmpty = mutex.sync { buffer.isEmpty }
-            guard bufferEmpty else {
-                let message = mutex.sync { buffer.removeFirst() }
-                try? manager.send(message)
+            if let nextMessage = mutex.sync(execute: {
+                                     buffer.isEmpty ? nil : buffer.removeFirst()
+                                 }) {
+                try? manager.send(nextMessage)
                 return
             }
             mutex.sync {

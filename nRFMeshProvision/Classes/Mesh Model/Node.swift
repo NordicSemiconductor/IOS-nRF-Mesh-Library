@@ -125,14 +125,14 @@ public class Node: Codable {
     /// The level of security for the subnet on which the node has been
     /// originally provisioner.
     public let security: Security
-    /// An array of node network key objects that include information
-    /// about the network keys known to this node.
+    /// An array of Node Network Key objects that include information
+    /// about the Network Keys known to this node.
     internal private(set) var netKeys: [NodeKey]
-    /// An array of node application key objects that include information
-    /// about the application keys known to this node.
+    /// An array of Node Application Key objects that include information
+    /// about the Application Keys known to this node.
     internal private(set) var appKeys: [NodeKey]
     /// The boolean value represents whether the Mesh Manager
-    /// has finished configuring this node. The property is set to `true`
+    /// has finished configuring this Node. The property is set to `true`
     /// once a Mesh Manager is done completing this node's
     /// configuration, otherwise it is set to `false`.
     public var isConfigComplete: Bool = false {
@@ -160,7 +160,7 @@ public class Node: Codable {
     /// data.
     public internal(set) var minimumNumberOfReplayProtectionList: UInt16?
     /// Node's features. See `NodeFeatures` for details.
-    public internal(set) var features: NodeFeatures?
+    public internal(set) var features: NodeFeaturesState?
     /// This flag represents whether or not the node is configured to send
     /// Secure Network messages.
     public internal(set) var secureNetworkBeacon: Bool? {
@@ -226,6 +226,13 @@ public class Node: Codable {
         return meshNetwork?.applicationKeys.knownTo(node: self) ?? []
     }
     
+    /// The Heartbeat Publication object represents parameters that define
+    /// sending of periodic Heartbeat transport control messages.
+    public internal(set) var heartbeatPublication: HeartbeatPublication?
+    /// The Heartbeat Subscription object represents parameters that define
+    /// receiving of periodical Heartbeat transport control messages.
+    public internal(set) var heartbeatSubscription: HeartbeatSubscription?
+    
     /// A constructor needed only for testing.
     internal init(name: String?, unicastAddress: Address, elements: UInt8) {
         self.nodeUuid = MeshUUID()
@@ -261,7 +268,7 @@ public class Node: Codable {
         // a Provisioner's node.
         self.isConfigComplete = true
         // This Provisioner does not support any of those features.
-        self.features = NodeFeatures(relay: .notSupported,
+        self.features = NodeFeaturesState(relay: .notSupported,
                                      proxy: .notSupported,
                                      friend: .notSupported,
                                      lowPower: .notSupported)
@@ -372,6 +379,8 @@ public class Node: Codable {
         case relayRetransmit
         case elements
         case isBlacklisted = "blacklisted"
+        case heartbeatPublication = "heartbeatPub"
+        case heartbeatSubscription = "heartbeatSub"
     }
     
     public required init(from decoder: Decoder) throws {
@@ -433,7 +442,7 @@ public class Node: Codable {
             }
             self.minimumNumberOfReplayProtectionList = crpl
         }
-        self.features = try container.decodeIfPresent(NodeFeatures.self, forKey: .features)
+        self.features = try container.decodeIfPresent(NodeFeaturesState.self, forKey: .features)
         self.secureNetworkBeacon = try container.decodeIfPresent(Bool.self, forKey: .secureNetworkBeacon)
         let ttl = try container.decodeIfPresent(UInt8.self, forKey: .ttl)
         guard ttl == nil || ttl! <= 127 else {
@@ -445,6 +454,14 @@ public class Node: Codable {
         self.relayRetransmit = try container.decodeIfPresent(RelayRetransmit.self, forKey: .relayRetransmit)
         self.elements = try container.decode([Element].self, forKey: .elements)
         self.isBlacklisted = try container.decode(Bool.self, forKey: .isBlacklisted)
+        self.heartbeatPublication = try container.decodeIfPresent(HeartbeatPublication.self,
+                                                                  forKey: .heartbeatPublication)
+        guard heartbeatPublication == nil || netKeys[heartbeatPublication!.networkKeyIndex] != nil else {
+            throw DecodingError.dataCorruptedError(forKey: .heartbeatPublication, in: container,
+                                                   debugDescription: "Network Key with index \(heartbeatPublication!.networkKeyIndex) is unknown to node with address 0x\(unicastAddress.hex).")
+        }
+        self.heartbeatSubscription = try container.decodeIfPresent(HeartbeatSubscription.self,
+                                                                   forKey: .heartbeatSubscription)
         
         elements.forEach {
             $0.parentNode = self
@@ -472,6 +489,8 @@ public class Node: Codable {
         try container.encodeIfPresent(relayRetransmit, forKey: .relayRetransmit)
         try container.encode(elements, forKey: .elements)
         try container.encode(isBlacklisted, forKey: .isBlacklisted)
+        try container.encodeIfPresent(heartbeatPublication, forKey: .heartbeatPublication)
+        try container.encodeIfPresent(heartbeatSubscription, forKey: .heartbeatSubscription)
     }
 }
 
@@ -694,9 +713,9 @@ internal extension Node {
         meshNetwork?.timestamp = Date()
     }
     
-    var ensureFeatures: NodeFeatures {
+    var ensureFeatures: NodeFeaturesState {
         if features == nil {
-            features = NodeFeatures()
+            features = NodeFeaturesState()
         }
         meshNetwork?.timestamp = Date()
         return features!

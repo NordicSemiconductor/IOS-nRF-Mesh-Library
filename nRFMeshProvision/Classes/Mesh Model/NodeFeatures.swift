@@ -30,24 +30,63 @@
 
 import Foundation
 
+/// Node feature.
+public enum NodeFeature: String, Codable {
+    case relay = "relay"
+    case proxy = "proxy"
+    case friend = "friend"
+    case lowPower = "lowPower"
+}
+
+/// A set of currently active features of a Node.
+public struct NodeFeatures: OptionSet {
+    public let rawValue: UInt16
+    
+    public static let relay    = NodeFeatures(rawValue: 1 << 0)
+    public static let proxy    = NodeFeatures(rawValue: 1 << 1)
+    public static let friend   = NodeFeatures(rawValue: 1 << 2)
+    public static let lowPower = NodeFeatures(rawValue: 1 << 3)
+    
+    public init(rawValue: UInt16) {
+        self.rawValue = rawValue
+    }
+    
+    internal func asArray() -> [NodeFeature] {
+        var result: [NodeFeature] = []
+        if contains(.relay) {
+            result.append(.relay)
+        }
+        if contains(.proxy) {
+            result.append(.proxy)
+        }
+        if contains(.friend) {
+            result.append(.friend)
+        }
+        if contains(.lowPower) {
+            result.append(.lowPower)
+        }
+        return result
+    }
+}
+
 /// The state of a feature.
-public enum NodeFeaturesState: UInt8, Codable {
+public enum NodeFeatureState: UInt8, Codable {
     case notEnabled   = 0
     case enabled      = 1
     case notSupported = 2
 }
 
-/// The features object represents the functionality of a mesh node
+/// The features state object represents the functionality of a mesh node
 /// that is determined by the set features that the node supports.
-public class NodeFeatures: Codable {
+public class NodeFeaturesState: Codable {
     /// The state of Relay feature. `nil` if unknown.
-    public internal(set) var relay: NodeFeaturesState?
+    public internal(set) var relay: NodeFeatureState?
     /// The state of Proxy feature. `nil` if unknown.
-    public internal(set) var proxy: NodeFeaturesState?
+    public internal(set) var proxy: NodeFeatureState?
     /// The state of Friend feature. `nil` if unknown.
-    public internal(set) var friend: NodeFeaturesState?
+    public internal(set) var friend: NodeFeatureState?
     /// The state of Low Power feature. `nil` if unknown.
-    public internal(set) var lowPower: NodeFeaturesState?
+    public internal(set) var lowPower: NodeFeatureState?
     
     internal var rawValue: UInt16 {
         var bitField: UInt16 = 0
@@ -67,10 +106,10 @@ public class NodeFeatures: Codable {
         case lowPower
     }
     
-    internal init(relay: NodeFeaturesState?,
-                  proxy: NodeFeaturesState?,
-                  friend: NodeFeaturesState?,
-                  lowPower: NodeFeaturesState?) {
+    internal init(relay: NodeFeatureState?,
+                  proxy: NodeFeatureState?,
+                  friend: NodeFeatureState?,
+                  lowPower: NodeFeatureState?) {
         self.relay    = relay
         self.proxy    = proxy
         self.friend   = friend
@@ -92,7 +131,23 @@ public class NodeFeatures: Codable {
     }
 }
 
-extension NodeFeaturesState: CustomDebugStringConvertible {
+extension NodeFeature: CustomDebugStringConvertible {
+    
+    public var debugDescription: String {
+        return rawValue
+    }
+    
+}
+
+extension NodeFeatures: CustomDebugStringConvertible {
+    
+    public var debugDescription: String {
+        return "\(asArray())"
+    }
+    
+}
+
+extension NodeFeatureState: CustomDebugStringConvertible {
     
     public var debugDescription: String {
         switch self {
@@ -104,7 +159,7 @@ extension NodeFeaturesState: CustomDebugStringConvertible {
     
 }
 
-extension NodeFeatures: CustomDebugStringConvertible {
+extension NodeFeaturesState: CustomDebugStringConvertible {
     
     public var debugDescription: String {
         return """
@@ -113,6 +168,27 @@ extension NodeFeatures: CustomDebugStringConvertible {
         Friend Feature:    \(friend?.debugDescription ?? "Unknown")
         Low Power Feature: \(lowPower?.debugDescription ?? "Unknown")
         """
+    }
+    
+}
+
+internal extension Array where Element == NodeFeature {
+    
+    func asSet() -> NodeFeatures {
+        var set = NodeFeatures()
+        if contains(.relay) {
+            set.insert(.relay)
+        }
+        if contains(.proxy) {
+            set.insert(.proxy)
+        }
+        if contains(.friend) {
+            set.insert(.friend)
+        }
+        if contains(.lowPower) {
+            set.insert(.lowPower)
+        }
+        return set
     }
     
 }

@@ -28,38 +28,58 @@
 * POSSIBILITY OF SUCH DAMAGE.
 */
 
-import Foundation
+import UIKit
+import nRFMeshProvision
 
-public struct ConfigGATTProxyStatus: ConfigMessage {
-    public static let opCode: UInt32 = 0x8014
+protocol HeartbeatSubscriptionPeriodDelegate {
+    func periodDidChange(_ periodLog: UInt8)
+}
+
+class HeartbeatSubscriptionPeriodCell: UITableViewCell {
     
-    public var parameters: Data? {
-        return Data([state.rawValue])
+    // MARK: - Outlets & Actions
+
+    @IBAction func periodDidChange(_ sender: UISlider) {
+        periodSelected(sender.value)
     }
     
-    /// The GATT Proxy state of the Node.
-    public let state: NodeFeatureState
+    @IBOutlet weak var periodSlider: UISlider!
+    @IBOutlet weak var periodLabel: UILabel!
+
+    // MARK: - Properties
     
-    /// Creates the Config GATT Proxy Status message.
-    ///
-    /// - parameter state: The GATT Proxy state of the Node.
-    public init(_ state: NodeFeatureState) {
-        self.state = state
-    }
-    
-    public init(for node: Node) {
-        self.state = node.features?.proxy ?? .notSupported
-    }
-    
-    public init?(parameters: Data) {
-        guard parameters.count == 1 else {
-            return nil
+    // The periodLog propery starts from 1, as 0 would disable subscriptions.
+    var periodLog: UInt8 = 1 {
+        didSet {
+            periodSlider.value = Float(periodLog - 1)
+            periodLabel.text = periodLog.periodString
         }
-        guard let state = NodeFeatureState(rawValue: parameters[0]) else {
-            return nil
+    }
+    var delegate: HeartbeatSubscriptionPeriodDelegate?
+
+    // MARK: - Implementation
+    
+    private func periodSelected(_ value: Float) {
+        periodLog = UInt8(value + 1)
+        delegate?.periodDidChange(periodLog)
+    }
+}
+
+private extension UInt8 {
+    
+    var periodString: String {
+        assert(self > 0)
+        let value = self < 0x11 ? Int(pow(2.0, Double(self - 1))) : 0xFFFF
+        if value / 3600 > 0 {
+            return "\(value / 3600) h \((value % 3600) / 60) min \(value % 60) sec"
         }
-        self.state = state
+        if value / 60 > 0 {
+            return "\(value / 60) min \(value % 60) sec"
+        }
+        if value == 1 {
+            return "1 second"
+        }
+        return "\(value) seconds"
     }
     
 }
-

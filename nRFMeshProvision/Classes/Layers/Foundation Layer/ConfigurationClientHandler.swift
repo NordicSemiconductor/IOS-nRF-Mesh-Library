@@ -56,7 +56,9 @@ internal class ConfigurationClientHandler: ModelDelegate {
             ConfigFriendStatus.self,
             ConfigBeaconStatus.self,
             ConfigNetworkTransmitStatus.self,
-            ConfigNodeResetStatus.self
+            ConfigNodeResetStatus.self,
+            ConfigHeartbeatPublicationStatus.self,
+            ConfigHeartbeatSubscriptionStatus.self
         ]
         self.meshNetwork = meshNetwork
         self.messageTypes = types.toMap()
@@ -312,6 +314,22 @@ internal class ConfigurationClientHandler: ModelDelegate {
         case is ConfigNodeResetStatus:
             if let node = meshNetwork.node(withAddress: source) {
                 meshNetwork.remove(node: node)
+            }
+            
+        // Heartbeat publication
+        case let status as ConfigHeartbeatPublicationStatus:
+            if let node = meshNetwork.node(withAddress: source),
+               !node.isLocalProvisioner {
+                // This may be set to nil.
+                node.heartbeatPublication = HeartbeatPublication(status)
+            }
+                
+        // Heartbeat subscription
+        case let status as ConfigHeartbeatSubscriptionStatus:
+            if let node = meshNetwork.node(withAddress: source),
+               !node.isLocalProvisioner {
+                // This may be set to nil.
+                node.heartbeatSubscription = HeartbeatSubscription(status)
             }
             
         default:

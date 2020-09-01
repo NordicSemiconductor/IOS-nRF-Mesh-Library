@@ -30,36 +30,22 @@
 
 import Foundation
 
-public struct ConfigGATTProxyStatus: ConfigMessage {
-    public static let opCode: UInt32 = 0x8014
+public struct ConfigHeartbeatPublicationGet: AcknowledgedConfigMessage {
+    public static let opCode: UInt32 = 0x8038
+    public static let responseType: StaticMeshMessage.Type = ConfigHeartbeatPublicationStatus.self
     
     public var parameters: Data? {
-        return Data([state.rawValue])
+        return nil
     }
     
-    /// The GATT Proxy state of the Node.
-    public let state: NodeFeatureState
-    
-    /// Creates the Config GATT Proxy Status message.
-    ///
-    /// - parameter state: The GATT Proxy state of the Node.
-    public init(_ state: NodeFeatureState) {
-        self.state = state
-    }
-    
-    public init(for node: Node) {
-        self.state = node.features?.proxy ?? .notSupported
+    public init() {
+        // Empty
     }
     
     public init?(parameters: Data) {
-        guard parameters.count == 1 else {
+        guard parameters.isEmpty else {
             return nil
         }
-        guard let state = NodeFeatureState(rawValue: parameters[0]) else {
-            return nil
-        }
-        self.state = state
     }
     
 }
-

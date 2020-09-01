@@ -396,6 +396,10 @@ private extension AccessLayer {
                                                      asResponseTo: request) {
                         networkManager.reply(toMessageSentTo: accessPdu.destination.address,
                                              with: response, to: accessPdu.source, using: keySet)
+                        // Reload Heartbeat publishing.
+                        if let _ = configMessage as? ConfigHeartbeatPublicationSet {
+                            networkManager.upperTransportLayer.refreshHeartbeatPublisher()
+                        }
                     }
                     _ = networkManager.manager.save()
                 } else {

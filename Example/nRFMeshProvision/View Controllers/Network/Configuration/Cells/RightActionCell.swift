@@ -28,38 +28,26 @@
 * POSSIBILITY OF SUCH DAMAGE.
 */
 
-import Foundation
+import UIKit
 
-public struct ConfigGATTProxyStatus: ConfigMessage {
-    public static let opCode: UInt32 = 0x8014
+class RightActionCell: UITableViewCell {
+
+    @IBOutlet weak var rightActionButton: UIButton!
     
-    public var parameters: Data? {
-        return Data([state.rawValue])
+    @IBAction func rightActionTapped(_ sender: UIButton) {
+        delegate?()
     }
     
-    /// The GATT Proxy state of the Node.
-    public let state: NodeFeatureState
+    var delegate: (() -> ())?
     
-    /// Creates the Config GATT Proxy Status message.
-    ///
-    /// - parameter state: The GATT Proxy state of the Node.
-    public init(_ state: NodeFeatureState) {
-        self.state = state
-    }
-    
-    public init(for node: Node) {
-        self.state = node.features?.proxy ?? .notSupported
-    }
-    
-    public init?(parameters: Data) {
-        guard parameters.count == 1 else {
-            return nil
+    var isEnabled: Bool = true {
+        didSet {
+            rightActionButton.isEnabled = isEnabled
         }
-        guard let state = NodeFeatureState(rawValue: parameters[0]) else {
-            return nil
-        }
-        self.state = state
+    }
+    
+    override var textLabel: UILabel? {
+        return rightActionButton.titleLabel
     }
     
 }
-
