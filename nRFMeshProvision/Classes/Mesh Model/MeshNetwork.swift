@@ -51,20 +51,20 @@ public class MeshNetwork: Codable {
         }
     }
     /// An array of provisioner objects that includes information about known
-    /// Provisioners and ranges of addresses that have been allocated to these
-    /// Provisioners.
+    /// Provisioners and ranges of addresses and scenes that have been allocated
+    /// to these Provisioners.
     public internal(set) var provisioners: [Provisioner]
-    /// An array of network keys that include information about network keys
-    /// used in the network.
+    /// An array that include information about Network Keys used in the
+    /// network.
     public internal(set) var networkKeys: [NetworkKey]
-    /// An array of application keys that include information about application
-    /// keys used in the network.
+    /// An array that include information about Application Keys used in the
+    /// network.
     public internal(set) var applicationKeys: [ApplicationKey]
-    /// An array of nodes in the network.
+    /// An array of Nodes in the network.
     public internal(set) var nodes: [Node]
-    /// An array of groups in the network.
+    /// An array of Groups in the network.
     public internal(set) var groups: [Group]
-    /// An array of senes in the network.
+    /// An array of Senes in the network.
     public internal(set) var scenes: [SceneObject]
     
     /// The IV Index of the mesh network.
