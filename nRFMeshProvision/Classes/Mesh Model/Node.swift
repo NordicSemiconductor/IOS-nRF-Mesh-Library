@@ -658,7 +658,7 @@ internal extension Node {
     /// Removes the Network Key with given index and all Application Keys
     /// bound to it from the Node. This method also removes all Model bindings
     /// that point any of the removed Application Keys and the publications
-    /// that are using this key.
+    /// that are using this key, including Heartbeat publication.
     ///
     /// - parameter networkKeyIndex: The Key Index of Network Key to be removed.
     func remove(networkKeyWithIndex networkKeyIndex: KeyIndex) {
@@ -669,6 +669,10 @@ internal extension Node {
             applicationKeys
                 .filter({ $0.boundNetworkKeyIndex == networkKeyIndex })
                 .forEach { key in remove(applicationKeyWithIndex: key.index) }
+            // Remove Heartbeat publication, if set to use the removed Network Key.
+            if heartbeatPublication?.networkKeyIndex == networkKeyIndex {
+                heartbeatPublication = nil
+            }
             meshNetwork?.timestamp = Date()
         }
     }
