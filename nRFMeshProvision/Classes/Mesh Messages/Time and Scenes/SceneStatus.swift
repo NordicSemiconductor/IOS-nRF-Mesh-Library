@@ -43,16 +43,16 @@ public struct SceneStatus: GenericMessage, SceneStatusMessage, TransitionStatusM
     }
     
     public let status: SceneMessageStatus
-    /// The number of the current scene.
+    /// The number of the current Scene.
     public let scene: Scene
-    /// The number of the target scene.
+    /// The number of the target Scene.
     public let targetScene: Scene?
     
     public let remainingTime: TransitionTime?
     
     /// Creates the Scene Status message.
     ///
-    /// - parameter scene: The number of the current scene.
+    /// - parameter scene: The number of the current Scene.
     public init(report scene: Scene) {
         self.status = .success
         self.scene = scene
@@ -63,8 +63,20 @@ public struct SceneStatus: GenericMessage, SceneStatusMessage, TransitionStatusM
     /// Creates the Scene Status message.
     ///
     /// - parameters:
-    ///   - scene: The number of the current scene.
-    ///   - targetScene: The number of the target scene.
+    ///   - scene: The number of the current Scene.
+    ///   - status: Operation Status.
+    public init(report scene: Scene, with status: SceneMessageStatus) {
+        self.status = status
+        self.scene = scene
+        self.targetScene = nil
+        self.remainingTime = nil
+    }
+    
+    /// Creates the Scene Status message.
+    ///
+    /// - parameters:
+    ///   - scene: The number of the current Scene.
+    ///   - targetScene: The number of the target Scene.
     ///   - remainingTime: The time that an element will take to transition
     ///                    to the target state from the present state.
     public init(report scene: Scene, targetScene: Scene, remainingTime: TransitionTime) {
@@ -77,25 +89,13 @@ public struct SceneStatus: GenericMessage, SceneStatusMessage, TransitionStatusM
     /// Creates the Scene Status message.
     ///
     /// - parameters:
-    ///   - status: Operation status.
-    ///   - scene: The number of the current scene.
-    public init(_ status: SceneMessageStatus, for scene: Scene) {
-        self.status = status
-        self.scene = scene
-        self.targetScene = nil
-        self.remainingTime = nil
-    }
-    
-    /// Creates the Scene Status message.
-    ///
-    /// - parameters:
-    ///   - status: Operation status.
-    ///   - scene: The number of the current scene.
-    ///   - targetScene: The number of the target scene.
+    ///   - scene: The number of the current Scene.
+    ///   - targetScene: The number of the target Scene.
     ///   - remainingTime: The time that an element will take to transition
     ///                    to the target state from the present state.
-    public init(_ status: SceneMessageStatus, for scene: Scene, targetScene: Scene,
-                remainingTime: TransitionTime) {
+    ///   - status: Operation status.                    
+    public init(report scene: Scene, targetScene: Scene,
+                remainingTime: TransitionTime, with status: SceneMessageStatus) {
         self.status = status
         self.scene = scene
         self.targetScene = targetScene

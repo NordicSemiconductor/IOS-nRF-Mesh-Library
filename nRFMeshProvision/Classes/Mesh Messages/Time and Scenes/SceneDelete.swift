@@ -38,12 +38,12 @@ public struct SceneDelete: AcknowledgedGenericMessage {
         return Data() + scene
     }
     
-    /// The number of the scene to be deleted.
+    /// The number of the Scene to be deleted.
     public let scene: Scene
     
     /// Creates the Scene Delete message.
     ///
-    /// - parameter scene: The number of the scene to be deleted.
+    /// - parameter scene: The number of the Scene to be deleted.
     public init(_ scene: Scene) {
         self.scene = scene
     }

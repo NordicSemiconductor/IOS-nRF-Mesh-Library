@@ -43,7 +43,7 @@ public struct SceneRecallUnacknowledged: GenericMessage, TransactionMessage, Tra
         }
     }
     
-    /// The number of the scene to be recalled.
+    /// The number of the Scene to be recalled.
     public let scene: Scene
     
     public let transitionTime: TransitionTime?
@@ -51,7 +51,7 @@ public struct SceneRecallUnacknowledged: GenericMessage, TransactionMessage, Tra
     
     /// Creates the Scene Recall message.
     ///
-    /// - parameter scene: The number of the scene to be recalled.
+    /// - parameter scene: The number of the Scene to be recalled.
     public init(_ scene: Scene) {
         self.scene = scene
         self.transitionTime = nil
@@ -61,8 +61,8 @@ public struct SceneRecallUnacknowledged: GenericMessage, TransactionMessage, Tra
     /// Creates the Scene Recall Unacknowledged message.
     ///
     /// - parameters:
-    ///   - scene: The number of the scene to be recalled.
-    ///   - transitionTime: The time that an element will take to transition
+    ///   - scene: The number of the Scene to be recalled.
+    ///   - transitionTime: The time that an Element will take to transition
     ///                     to the target state from the present state.
     ///   - delay: Message execution delay in 5 millisecond steps.
     public init(_ scene: Scene, transitionTime: TransitionTime, delay: UInt8) {

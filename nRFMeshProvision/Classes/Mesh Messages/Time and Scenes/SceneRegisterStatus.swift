@@ -41,15 +41,21 @@ public struct SceneRegisterStatus: GenericMessage, SceneStatusMessage {
     }
     
     public let status: SceneMessageStatus
-    /// The number of the current scene.
+    /// The number of the current scene, or `Scene.invalid` when no Scene is active.
     public let currentScene: Scene
     /// A list of scenes stored within an Element.
     public let scenes: [Scene]
     
+    /// Whether any Scene is currently active.
+    public var isSceneActive: Bool {
+        return currentScene != .invalid
+    }
+    
     /// Creates the Scene Register Status message.
     ///
-    /// - parameter currentScene: The number of the current scene.
-    /// - parameter scenes: A list of scenes stored within an Element.
+    /// - parameters:
+    ///   - currentScene: The number of the current Scene.
+    ///   - scenes: A list of scenes stored within an Element.
     public init(report currentScene: Scene, and scenes: [Scene]) {
         self.status = .success
         self.currentScene = currentScene
@@ -59,10 +65,10 @@ public struct SceneRegisterStatus: GenericMessage, SceneStatusMessage {
     /// Creates the Scene Register Status message.
     ///
     /// - parameters:
-    ///   - status: Operation status.
-    ///   - currentScene: The number of the current scene.
+    ///   - currentScene: The number of the current Scene.
     ///   - scenes: A list of scenes stored within an Element.
-    public init(_ status: SceneMessageStatus, for currentScene: Scene, and scenes: [Scene]) {
+    ///   - status: Operation status.   
+    public init(report currentScene: Scene, and scenes: [Scene], with status: SceneMessageStatus) {
         self.status = status
         self.currentScene = currentScene
         self.scenes = scenes

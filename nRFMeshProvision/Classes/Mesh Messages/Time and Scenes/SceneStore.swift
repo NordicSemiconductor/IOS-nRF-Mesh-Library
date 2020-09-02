@@ -38,12 +38,12 @@ public struct SceneStore: AcknowledgedGenericMessage {
         return Data() + scene
     }
     
-    /// The number of the scene to be stored.
+    /// The number of the Scene to be stored.
     public let scene: Scene
     
     /// Creates the Scene Store message.
     ///
-    /// - parameter scene: The number of the scene to be stored.
+    /// - parameter scene: The number of the Scene to be stored.
     public init(_ scene: Scene) {
         self.scene = scene
     }
