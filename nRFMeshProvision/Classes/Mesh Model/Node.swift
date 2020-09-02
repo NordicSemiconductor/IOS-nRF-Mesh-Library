@@ -567,7 +567,7 @@ internal extension Node {
     ///
     /// - parameter networkKeys: The Network Keys to set.
     func set(networkKeys: [NetworkKey]) {
-        set(networkKeysWithIndexes: networkKeys.map({ $0.index }))
+        set(networkKeysWithIndexes: networkKeys.map { $0.index })
     }
     
     /// Sets the Network Keys with given indexes to the Node.
@@ -576,7 +576,7 @@ internal extension Node {
     /// - parameter networkKeyIndexes: The Network Key indexes to set.
     func set(networkKeysWithIndexes networkKeyIndexes: [KeyIndex]) {
         netKeys = networkKeyIndexes
-            .map({ Node.NodeKey(index: $0, updated: false) })
+            .map { Node.NodeKey(index: $0, updated: false) }
             .sorted()
         meshNetwork?.timestamp = Date()
     }
@@ -613,7 +613,7 @@ internal extension Node {
     ///
     /// - parameter applicationKeys: The Application Keys to set.
     func set(applicationKeys: [ApplicationKey]) {
-        set(applicationKeysWithIndexes: applicationKeys.map({ $0.index }))
+        set(applicationKeysWithIndexes: applicationKeys.map { $0.index })
     }
     
     /// Sets the Application Keys with given indexes to the Node.
@@ -621,7 +621,7 @@ internal extension Node {
     ///
     /// - parameter applicationKeyIndexes: The Application Key indexes to set.
     func set(applicationKeysWithIndexes applicationKeyIndexes: [KeyIndex]) {
-        appKeys = applicationKeyIndexes.map({ Node.NodeKey(index: $0, updated: false) })
+        appKeys = applicationKeyIndexes.map { Node.NodeKey(index: $0, updated: false) }
         appKeys.sort()
         meshNetwork?.timestamp = Date()
     }
@@ -640,7 +640,7 @@ internal extension Node {
         appKeys = appKeys.filter {
             applicationKeys[$0.index]?.boundNetworkKeyIndex != networkKeyIndex
         }
-        appKeys.append(contentsOf: applicationKeyIndexes.map({ Node.NodeKey(index: $0, updated: false) }))
+        appKeys.append(contentsOf: applicationKeyIndexes.map { Node.NodeKey(index: $0, updated: false) })
         appKeys.sort()
         meshNetwork?.timestamp = Date()
     }
@@ -667,7 +667,7 @@ internal extension Node {
             netKeys.remove(at: index)
             // Remove all Application Keys bound to the removed Network Key.
             applicationKeys
-                .filter({ $0.boundNetworkKeyIndex == networkKeyIndex })
+                .filter { $0.boundNetworkKeyIndex == networkKeyIndex }
                 .forEach { key in remove(applicationKeyWithIndex: key.index) }
             // Remove Heartbeat publication, if set to use the removed Network Key.
             if heartbeatPublication?.networkKeyIndex == networkKeyIndex {
@@ -686,7 +686,7 @@ internal extension Node {
             // Remove the Key Index from 'appKeys'.
             appKeys.remove(at: index)
             // Remove all bindings with given Key Index from all models.
-            elements.flatMap({ $0.models }).forEach { model in
+            elements.flatMap { $0.models }.forEach { model in
                 // Remove the Key Index from bound keys.
                 // This will also clear the publication if it was using
                 // the same Application Key.
