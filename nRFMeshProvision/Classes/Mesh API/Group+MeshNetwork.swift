@@ -35,7 +35,7 @@ public extension Group {
     /// Returns whether the Group is in use in the given mesh network.
     ///
     /// A Group in use may either be a parent of some other Group,
-    /// or set as a publication or subcsription for any Model or any
+    /// or set as a publication or subscription for any Model or any
     /// Element of any Node belonging to this network.
     ///
     /// - returns: Whether the Group is in use in the mesh network.

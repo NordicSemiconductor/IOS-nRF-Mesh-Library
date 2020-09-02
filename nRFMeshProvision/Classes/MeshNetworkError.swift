@@ -62,9 +62,14 @@ public enum MeshNetworkError: Error {
     /// Thrown when a new Group is being added with the same address as one
     /// that is already in the network.
     case groupAlreadyExists
+    /// Thrown when a new Scene is being added with the same number as one
+    /// that is already in the network.
+    case sceneAlreadyExists
     /// Throw when trying to remove a Group that is either a parent of another
     /// Group, or set as publication or subcription address for any Model.
     case groupInUse
+    /// Throw when trying to remove a Scene that is
+    case sceneInUse
     /// Thrown when the given Key Index is not valid.
     case keyIndexOutOfRange
     /// Thrown when Network Key is required to continue with the operation.
@@ -91,7 +96,9 @@ extension MeshNetworkError: LocalizedError {
         case .invalidKey:                      return NSLocalizedString("Invalid key: The key must be 128-bit long.", comment: "")
         case .keyInUse:                        return NSLocalizedString("Cannot remove: Key in use.", comment: "")
         case .groupAlreadyExists:              return NSLocalizedString("Group with the same address already exists in the network.", comment: "")
+        case .sceneAlreadyExists:              return NSLocalizedString("Scene with the same number already exists in the network.", comment: "")
         case .groupInUse:                      return NSLocalizedString("Cannot remove: Group is use.", comment: "")
+        case .sceneInUse:                      return NSLocalizedString("Cannot remove: Scene is use.", comment: "")
         case .keyIndexOutOfRange:              return NSLocalizedString("Key Index out of range.", comment: "")
         case .noNetworkKey:                    return NSLocalizedString("No Network Key.", comment: "")
         case .noApplicationKey:                return NSLocalizedString("No Application Key.", comment: "")

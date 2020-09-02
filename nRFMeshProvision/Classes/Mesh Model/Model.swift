@@ -61,7 +61,7 @@ public class Model: Codable {
     /// Use `isSubscribed(to:)` to check other Groups.
     public var subscriptions: [Group] {
         return parentElement?.parentNode?.meshNetwork?.groups
-            .filter({ subscribe.contains($0._address )}) ?? []
+            .filter { subscribe.contains($0._address ) } ?? []
     }
     /// The configuration of this Model's publication.
     public private(set) var publish: Publish?
@@ -175,6 +175,7 @@ internal extension UInt16 {
     static let configurationClientModelId: UInt16 = 0x0001
     static let healthServerModelId: UInt16 = 0x0002
     static let healthClientModelId: UInt16 = 0x0003
+    static let sceneClientModelId: UInt16 = 0x1205
     
 }
 
@@ -184,6 +185,7 @@ internal extension Model {
     var isConfigurationClient: Bool { return modelId == UInt32(UInt16.configurationClientModelId) }
     var isHealthServer: Bool { return modelId == UInt32(UInt16.healthServerModelId) }
     var isHealthClient: Bool { return modelId == UInt32(UInt16.healthClientModelId) }
+    var isSceneClient: Bool { return modelId == UInt32(UInt16.sceneClientModelId) }
     
 }
 

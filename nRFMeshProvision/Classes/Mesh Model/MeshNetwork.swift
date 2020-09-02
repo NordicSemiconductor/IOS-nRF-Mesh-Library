@@ -64,6 +64,8 @@ public class MeshNetwork: Codable {
     public internal(set) var nodes: [Node]
     /// An array of groups in the network.
     public internal(set) var groups: [Group]
+    /// An array of senes in the network.
+    public internal(set) var scenes: [SceneObject]
     
     /// The IV Index of the mesh network.
     internal var ivIndex: IvIndex
@@ -123,6 +125,7 @@ public class MeshNetwork: Codable {
         applicationKeys = []
         nodes           = []
         groups          = []
+        scenes          = []
         ivIndex         = IvIndex()
         _localElements  = []
         localElements   = [ Element(location: .main) ]
@@ -143,6 +146,7 @@ public class MeshNetwork: Codable {
         case applicationKeys = "appKeys"
         case nodes
         case groups
+        case scenes
     }
     
     public required init(from decoder: Decoder) throws {
@@ -158,6 +162,9 @@ public class MeshNetwork: Codable {
         applicationKeys = try container.decode([ApplicationKey].self, forKey: .applicationKeys)
         nodes = try container.decode([Node].self, forKey: .nodes)
         groups = try container.decode([Group].self, forKey: .groups)
+        // Scenes are mandatory, but previous version of the library did support it,
+        // so JSON files generated with such versions won't have "scenes" tag.
+        scenes = try container.decodeIfPresent([SceneObject].self, forKey: .scenes) ?? []
         // The IV Index is not a shared in the JSON, as it may change.
         // The value will be obtained from the Secure Network beacon moment after
         // connecting to a Proxy node.
@@ -174,6 +181,9 @@ public class MeshNetwork: Codable {
             $0.meshNetwork = self
         }
         groups.forEach {
+            $0.meshNetwork = self
+        }
+        scenes.forEach {
             $0.meshNetwork = self
         }
         // Heartbeat publications and subscriptions are disabled when mesh
@@ -261,6 +271,21 @@ extension MeshNetwork {
            let n = node(for: localProvisioner) {
             n.add(applicationKey: key)
         }
+    }
+    
+    /// Adds a new Scene to the network.
+    ///
+    /// If the mesh network already contains a Scene with the same number,
+    /// this method throws an error.
+    ///
+    /// - parameters
+    ///   - scene: The Scene to be added.
+    /// - throws: This method throws an error if a Scene with the same number
+    ///           already exists in the mesh network.
+    func add(scene: SceneObject) throws {
+        scene.meshNetwork = self
+        scenes.append(scene)
+        timestamp = Date()
     }
     
 }

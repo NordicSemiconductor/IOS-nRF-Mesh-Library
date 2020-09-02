@@ -208,16 +208,19 @@ internal extension Element {
                             delegate: ConfigurationClientHandler(meshNetwork)), at: 1)
         insert(model: Model(sigModelId: .healthServerModelId), at: 2)
         insert(model: Model(sigModelId: .healthClientModelId), at: 3)
+        insert(model: Model(sigModelId: .sceneClientModelId,
+                            delegate: SceneClientHandler(meshNetwork)), at: 4)
     }
     
-    /// Removes the Configuration Server and Client and Health Server
-    /// and Client from the Element.
+    /// Removes the Configuration Server and Client, Health Server
+    /// and Client and Scene Client modelsfrom the Element.
     func removePrimaryElementModels() {
         models = models.filter { model in
             !model.isConfigurationServer &&
             !model.isConfigurationClient &&
             !model.isHealthServer &&
-            !model.isHealthClient
+            !model.isHealthClient &&
+            !model.isSceneClient
         }
     }
     

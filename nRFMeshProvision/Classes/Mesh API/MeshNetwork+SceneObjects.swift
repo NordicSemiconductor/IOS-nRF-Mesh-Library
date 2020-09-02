@@ -32,58 +32,49 @@ import Foundation
 
 public extension MeshNetwork {
     
-    /// Returns the Group with given Address, or 'nil` if no such was found.
+    /// Adds a new Scene to the network.
     ///
-    /// - parameter address: The Group Address.
-    /// - returns: The Group with given Address, or `nil` if no such found.
-    func group(withAddress address: MeshAddress) -> Group? {
-        return groups.first { $0.address == address }
-    }
-    
-    /// Adds a new Group to the network.
-    ///
-    /// If the mesh network already contains a Group with the same address,
+    /// If the mesh network already contains a Scene with the same number,
     /// this method throws an error.
     ///
-    /// - parameter group: The Group to be added.
-    /// - throws: This method throws an error if a Group with the same address
+    /// - parameters:
+    ///   - scene: The Scene number to be added.
+    ///   - name: The human-readable name of the Scene.
+    /// - throws: This method throws an error if a Scene with the same number
     ///           already exists in the mesh network.
-    func add(group: Group) throws {
-        guard !groups.contains(group) else {
-            throw MeshNetworkError.groupAlreadyExists
+    func add(scene: Scene, name: String) throws {
+        guard scenes[scene] == nil else {
+            throw MeshNetworkError.sceneAlreadyExists
         }
-        groups.append(group)
-        group.meshNetwork = self
+        let sceneObject = SceneObject(scene, name: name)
+        sceneObject.meshNetwork = self
+        scenes.append(sceneObject)
         timestamp = Date()
     }
     
-    /// Removes the given Group from the network.
+    /// Removes the given Scene from the network.
     ///
-    /// The Group must not be in use, i.e. it may not be a parent of
-    /// another Group.
+    /// The Scene must not be in use, i.e. no Node must have it in its Scene Register.
     ///
-    /// - parameter group: The Group to be removed.
+    /// - parameter scene: The Scene to be removed.
     /// - throws: This method throws `MeshNetworkError.groupInUse` when the
     //            Group is in use in this mesh network.
-    func remove(group: Group) throws {
-        if group.isUsed {
-            throw MeshNetworkError.groupInUse
-        }
-        if let index = groups.firstIndex(of: group) {
+    func remove(scene: Scene) throws {
+        if let index = scenes.firstIndex(where: { $0.scene == scene }) {
+            if scenes[index].isUsed {
+                throw MeshNetworkError.sceneInUse
+            }
             groups.remove(at: index).meshNetwork = nil
             timestamp = Date()
         }
     }
     
-    /// Returns list of Models belonging to any of the Elements in the
-    /// network that are subscribed to the given Group.
+    /// Returns known Nodes whose Scene Register state contains the given Scene.
     ///
-    /// - parameter group: The Group to look for.
-    /// - returns: List of Models that are subscribed to the given Group.
-    func models(subscribedTo group: Group) -> [Model] {
-        return nodes.flatMap {
-            $0.elements.models(subscribedTo: group)
-        }
+    /// - parameter scene: The scene to look for.
+    /// - returns: List of Nodes whose Scene Register state contains this Scene.
+    func nodes(registeredTo scene: Scene) -> [Node] {
+        return scenes[scene]?.nodes ?? []
     }
     
 }
