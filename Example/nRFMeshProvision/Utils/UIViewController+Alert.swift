@@ -185,7 +185,7 @@ extension UIViewController {
                     case .unicastAddress, .groupAddress,
                          .unicastAddressRequired, .groupAddressRequired:
                         textField.autocapitalizationType = .allCharacters
-                    case .ttlRequired:
+                    case .ttlRequired, .scene, .sceneRequired:
                         textField.keyboardType = .numberPad
                     default:
                         break

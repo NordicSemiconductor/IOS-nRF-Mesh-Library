@@ -160,7 +160,7 @@ class RangeView: UIView {
         context.strokePath()
     }
     
-    /// Returs a CGRect with a region for the given range.
+    /// Returns a CGRect with a region for the given range.
     ///
     /// - parameter range: The range to calculated the CGRect from.
     /// - parameter rect:  The UIView boundaries.

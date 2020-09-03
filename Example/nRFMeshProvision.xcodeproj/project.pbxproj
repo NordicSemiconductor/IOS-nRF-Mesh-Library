@@ -43,6 +43,8 @@
 		523F778722CCDE250030EA6A /* SetPublicationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 523F778622CCDE250030EA6A /* SetPublicationViewController.swift */; };
 		523F778D22CCEA910030EA6A /* SetPublication.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 523F778B22CCEA900030EA6A /* SetPublication.storyboard */; };
 		523F779722CE2BF60030EA6A /* SetPublicationDestinationsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 523F779622CE2BF60030EA6A /* SetPublicationDestinationsViewController.swift */; };
+		5245737B2500E10800CF8500 /* ScenesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5245737A2500E10800CF8500 /* ScenesViewController.swift */; };
+		5245737D2500E12600CF8500 /* EditSceneViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5245737C2500E12600CF8500 /* EditSceneViewController.swift */; };
 		5251498122E0E36600CBF1E3 /* AddGroupViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5251498022E0E36600CBF1E3 /* AddGroupViewController.swift */; };
 		52518B3122E0B18400A1FD1E /* GroupsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52518B3022E0B18400A1FD1E /* GroupsViewController.swift */; };
 		52518B3322E0B43200A1FD1E /* GroupCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52518B3222E0B43200A1FD1E /* GroupCell.swift */; };
@@ -185,6 +187,8 @@
 		523F778622CCDE250030EA6A /* SetPublicationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetPublicationViewController.swift; sourceTree = "<group>"; };
 		523F778C22CCEA900030EA6A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/SetPublication.storyboard; sourceTree = "<group>"; };
 		523F779622CE2BF60030EA6A /* SetPublicationDestinationsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetPublicationDestinationsViewController.swift; sourceTree = "<group>"; };
+		5245737A2500E10800CF8500 /* ScenesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScenesViewController.swift; sourceTree = "<group>"; };
+		5245737C2500E12600CF8500 /* EditSceneViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditSceneViewController.swift; sourceTree = "<group>"; };
 		5251498022E0E36600CBF1E3 /* AddGroupViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddGroupViewController.swift; sourceTree = "<group>"; };
 		52518B3022E0B18400A1FD1E /* GroupsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupsViewController.swift; sourceTree = "<group>"; };
 		52518B3222E0B43200A1FD1E /* GroupCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupCell.swift; sourceTree = "<group>"; };
@@ -479,6 +483,8 @@
 				529B759B2243BA10008F1CE7 /* NetworkKeysViewController.swift */,
 				529B7571223FFC39008F1CE7 /* AppKeysViewController.swift */,
 				5283524722733BCF0097B949 /* EditKeyViewController.swift */,
+				5245737A2500E10800CF8500 /* ScenesViewController.swift */,
+				5245737C2500E12600CF8500 /* EditSceneViewController.swift */,
 			);
 			path = Settings;
 			sourceTree = "<group>";
@@ -951,6 +957,7 @@
 				607FACD61AFB9204008FA782 /* AppDelegate.swift in Sources */,
 				523F776C22C6324A0030EA6A /* ProgressViewController.swift in Sources */,
 				52547F25232A3F470002AA7B /* EditProvisionerViewController.swift in Sources */,
+				5245737D2500E12600CF8500 /* EditSceneViewController.swift in Sources */,
 				5288C2102371B0F700321ED3 /* SimpleOnOffGet.swift in Sources */,
 				529B756D223FE7F1008F1CE7 /* RootViewController.swift in Sources */,
 				52CD0A53232FA79300A9A181 /* FilterTypeCell.swift in Sources */,
@@ -989,6 +996,7 @@
 				52518B3322E0B43200A1FD1E /* GroupCell.swift in Sources */,
 				529B7570223FF1AE008F1CE7 /* SettingsViewController.swift in Sources */,
 				526021F62343660200E88F06 /* ControlViewCell.swift in Sources */,
+				5245737B2500E10800CF8500 /* ScenesViewController.swift in Sources */,
 				52A9C1C52313D7D80036792A /* GenericLevelViewCell.swift in Sources */,
 				5288C20A2371A89900321ED3 /* SimpleOnOffClientDelegate.swift in Sources */,
 				529B759C2243BA10008F1CE7 /* NetworkKeysViewController.swift in Sources */,
