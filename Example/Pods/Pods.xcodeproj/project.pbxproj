@@ -134,7 +134,7 @@
 		4F0F22457533D7279AF11191CDE1813A /* MeshMessageError.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC09084034668EB1211CF503E4664E91 /* MeshMessageError.swift */; };
 		51623E007033703B2BDA7DB8A7DA7235 /* LightCTLSetUnackowledged.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47B2C04429BC1B5E4E6E8AF80FBBBA4D /* LightCTLSetUnackowledged.swift */; };
 		52107BCD24FE68CC00DA19F1 /* SceneObjects.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52107BCC24FE68CC00DA19F1 /* SceneObjects.swift */; };
-		52107BCF24FE6A5D00DA19F1 /* MeshNetwork+SceneObjects.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52107BCE24FE6A5D00DA19F1 /* MeshNetwork+SceneObjects.swift */; };
+		52107BCF24FE6A5D00DA19F1 /* MeshNetwork+Scenes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52107BCE24FE6A5D00DA19F1 /* MeshNetwork+Scenes.swift */; };
 		5260ED2024FE5AEC00C6126F /* SceneObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5260ED1F24FE5AEC00C6126F /* SceneObject.swift */; };
 		5260ED2224FE5D9900C6126F /* SceneObject+Nodes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5260ED2124FE5D9900C6126F /* SceneObject+Nodes.swift */; };
 		5260ED2424FE61D600C6126F /* SceneClientHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5260ED2324FE61D600C6126F /* SceneClientHandler.swift */; };
@@ -522,7 +522,7 @@
 		518BA6F4ACEEF57F1B0586844E0F8252 /* lhash.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = lhash.h; path = ios/include/openssl/lhash.h; sourceTree = "<group>"; };
 		51BBAA3978BFB1C9BAA0B3563DB01A48 /* Pods-nRFMeshProvision_Example-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-nRFMeshProvision_Example-Info.plist"; sourceTree = "<group>"; };
 		52107BCC24FE68CC00DA19F1 /* SceneObjects.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneObjects.swift; sourceTree = "<group>"; };
-		52107BCE24FE6A5D00DA19F1 /* MeshNetwork+SceneObjects.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MeshNetwork+SceneObjects.swift"; sourceTree = "<group>"; };
+		52107BCE24FE6A5D00DA19F1 /* MeshNetwork+Scenes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MeshNetwork+Scenes.swift"; sourceTree = "<group>"; };
 		5260ED1F24FE5AEC00C6126F /* SceneObject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneObject.swift; sourceTree = "<group>"; };
 		5260ED2124FE5D9900C6126F /* SceneObject+Nodes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SceneObject+Nodes.swift"; sourceTree = "<group>"; };
 		5260ED2324FE61D600C6126F /* SceneClientHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneClientHandler.swift; sourceTree = "<group>"; };
@@ -1284,7 +1284,7 @@
 				50E3D64B04CAD991A9D53D79854F7A6F /* MeshNetwork+Nodes.swift */,
 				B5438BAACE142F3554AB28CA47CF1BB0 /* MeshNetwork+Provisioner.swift */,
 				862BA501FB72D70CEA6B69ECBA0056BB /* MeshNetwork+Ranges.swift */,
-				52107BCE24FE6A5D00DA19F1 /* MeshNetwork+SceneObjects.swift */,
+				52107BCE24FE6A5D00DA19F1 /* MeshNetwork+Scenes.swift */,
 				D4C4ABEEA989899065D8A6E85D1D92C6 /* Model+Keys.swift */,
 				0F7EEC370FCA77181BCDBE169C4D5E6C /* Model+Name.swift */,
 				1B5FF462B80E3D42E2AC0D243D1E86B5 /* Models.swift */,
@@ -1890,7 +1890,7 @@
 				0979755825030FD3C747635E25CDDA45 /* LightHSLDefaultSetUnacknowledged.swift in Sources */,
 				61E0AD26F19DB387BBFAD9C7A661CA81 /* LightHSLDefaultStatus.swift in Sources */,
 				F6B70A2EAC667EFA54B8E9BEB0B76DED /* LightHSLGet.swift in Sources */,
-				52107BCF24FE6A5D00DA19F1 /* MeshNetwork+SceneObjects.swift in Sources */,
+				52107BCF24FE6A5D00DA19F1 /* MeshNetwork+Scenes.swift in Sources */,
 				A759743331749A6A3DCD988A6F5CA20C /* LightHSLHueGet.swift in Sources */,
 				458C4E7A41918B439D8CAD23E43FB641 /* LightHSLHueSet.swift in Sources */,
 				E4AACEA948E9B5BF75B562478F9678F7 /* LightHSLHueSetUnacknowledged.swift in Sources */,
