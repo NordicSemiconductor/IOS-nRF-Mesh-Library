@@ -117,10 +117,14 @@ internal extension SceneObject {
     
 }
 
-extension SceneObject: Equatable, Hashable {
+extension SceneObject: Equatable, Comparable, Hashable {
     
     public static func == (lhs: SceneObject, rhs: SceneObject) -> Bool {
         return lhs.scene == rhs.scene
+    }
+    
+    public static func < (lhs: SceneObject, rhs: SceneObject) -> Bool {
+        return lhs.scene < rhs.scene
     }
     
     public func hash(into hasher: inout Hasher) {
