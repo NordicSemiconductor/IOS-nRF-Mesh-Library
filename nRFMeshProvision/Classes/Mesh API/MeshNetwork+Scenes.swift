@@ -46,10 +46,7 @@ public extension MeshNetwork {
         guard scenes[scene] == nil else {
             throw MeshNetworkError.sceneAlreadyExists
         }
-        let sceneObject = SceneObject(scene, name: name)
-        sceneObject.meshNetwork = self
-        scenes.append(sceneObject)
-        timestamp = Date()
+        add(scene: SceneObject(scene, name: name))
     }
     
     /// Removes the given Scene from the network.
@@ -57,14 +54,14 @@ public extension MeshNetwork {
     /// The Scene must not be in use, i.e. no Node must have it in its Scene Register.
     ///
     /// - parameter scene: The Scene to be removed.
-    /// - throws: This method throws `MeshNetworkError.groupInUse` when the
-    //            Group is in use in this mesh network.
+    /// - throws: This method throws `MeshNetworkError.sceneInUse` when the
+    ///           Scene is in use in this mesh network.
     func remove(scene: Scene) throws {
         if let index = scenes.firstIndex(where: { $0.scene == scene }) {
             if scenes[index].isUsed {
                 throw MeshNetworkError.sceneInUse
             }
-            groups.remove(at: index).meshNetwork = nil
+            scenes.remove(at: index).meshNetwork = nil
             timestamp = Date()
         }
     }
@@ -75,6 +72,54 @@ public extension MeshNetwork {
     /// - returns: List of Nodes whose Scene Register state contains this Scene.
     func nodes(registeredTo scene: Scene) -> [Node] {
         return scenes[scene]?.nodes ?? []
+    }
+    
+    /// Returns the next available Scene number from the Provisioner's range
+    /// that can be assigned to a new Scene.
+    ///
+    /// - parameter provisioner: The Provisioner, which range is to be used for address
+    ///                          generation.
+    /// - returns: The next available Scene number that can be assigned to a new Scene,
+    ///            or `nil`, if there are no more available numbers in the allocated range.
+    func nextAvailableScene(for provisioner: Provisioner) -> Scene? {
+        let sortedScenes = scenes.sorted { $0.scene < $1.scene }
+        
+        // Iterate through all scenes just once, while iterating over ranges.
+        var index = 0
+        for range in provisioner.allocatedSceneRange {
+            // Start from the beginning of the current range.
+            var scene = range.firstScene
+            
+            // Iterate through scene objects that weren't checked yet.
+            let currentIndex = index
+            for _ in currentIndex..<sortedScenes.count {
+                let sceneObject = sortedScenes[index]
+                index += 1
+                
+                // Skip scenes with number below the range.
+                if scene > sceneObject.scene {
+                    continue
+                }
+                // If we found a space before the current node, return the scene number.
+                if scene < sceneObject.scene {
+                    return scene
+                }
+                // Else, move the address to the next available address.
+                scene = sceneObject.scene + 1
+                
+                // If the new scene number is outside of the range, go to the next one.
+                if scene > range.lastScene {
+                    break
+                }
+            }
+            
+            // If the range has available space, return the address.
+            if scene <= range.lastScene {
+                return scene
+            }
+        }
+        // No scene number was found :(
+        return nil
     }
     
 }

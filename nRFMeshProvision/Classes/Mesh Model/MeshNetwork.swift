@@ -280,11 +280,10 @@ extension MeshNetwork {
     ///
     /// - parameters
     ///   - scene: The Scene to be added.
-    /// - throws: This method throws an error if a Scene with the same number
-    ///           already exists in the mesh network.
-    func add(scene: SceneObject) throws {
+    func add(scene: SceneObject) {
         scene.meshNetwork = self
         scenes.append(scene)
+        scenes.sort()
         timestamp = Date()
     }
     
