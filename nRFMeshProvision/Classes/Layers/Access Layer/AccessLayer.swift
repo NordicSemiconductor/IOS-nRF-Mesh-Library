@@ -364,18 +364,25 @@ private extension AccessLayer {
                         // Application Key bound to this Model and the message is
                         // targeting this Element, or the Model is subscribed to the
                         // destination address.
-                        if model.isBoundTo(keySet.applicationKey) && (
-                            accessPdu.destination.address == Address.allNodes ||
-                            accessPdu.destination.address == element.unicastAddress ||
-                            model.isSubscribed(to: accessPdu.destination)
-                           ) {
-                               if let response = delegate.model(model, didReceiveMessage: message,
-                                                                sentFrom: accessPdu.source,
-                                                                to: accessPdu.destination,
-                                                                asResponseTo: request) {
-                                networkManager.reply(toMessageSentTo: accessPdu.destination.address,
+                        if accessPdu.destination.address == Address.allNodes ||
+                           accessPdu.destination.address == element.unicastAddress ||
+                           model.isSubscribed(to: accessPdu.destination) {
+                            if model.isBoundTo(keySet.applicationKey) {
+                                if let response = delegate.model(model, didReceiveMessage: message,
+                                                                 sentFrom: accessPdu.source,
+                                                                 to: accessPdu.destination,
+                                                                 asResponseTo: request) {
+                                    networkManager.reply(toMessageSentTo: accessPdu.destination.address,
                                                      with: response, from: element,
                                                      to: accessPdu.source, using: keySet)
+                                }
+                                if delegate is SceneClientHandler {
+                                    _ = networkManager.manager.save()
+                                }
+                            } else {
+                                let modelName = model.name ?? "model"
+                                let element = model.parentElement!
+                                logger?.w(.model, "Local \(modelName) model on \(element) not bound to key: \(keySet.applicationKey)")
                             }
                         }
                     }
