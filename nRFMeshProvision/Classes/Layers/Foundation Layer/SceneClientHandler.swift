@@ -87,7 +87,7 @@ private extension SceneClientHandler {
                     let sceneObject = SceneObject(status.scene,
                                                   name: NSLocalizedString("New Scene", comment: ""))
                     sceneObject.add(node: node)
-                    try? meshNetwork.add(scene: sceneObject)
+                    meshNetwork.add(scene: sceneObject)
                 }
                 
                 // Ensure the target scene, if exists, is updated with the Node address.
@@ -99,7 +99,7 @@ private extension SceneClientHandler {
                         let sceneObject = SceneObject(targetScene,
                                                       name: NSLocalizedString("New Scene", comment: ""))
                         sceneObject.add(node: node)
-                        try? meshNetwork.add(scene: sceneObject)
+                        meshNetwork.add(scene: sceneObject)
                     }
                 }
             }
@@ -118,7 +118,7 @@ private extension SceneClientHandler {
                         let sceneObject = SceneObject(scene,
                                                       name: NSLocalizedString("New Scene", comment: ""))
                         sceneObject.add(node: node)
-                        try? meshNetwork.add(scene: sceneObject)
+                        meshNetwork.add(scene: sceneObject)
                     }
                 }
                 // Remove this Scene from scenes, that it confirmed not to have
