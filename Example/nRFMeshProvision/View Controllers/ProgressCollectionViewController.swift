@@ -44,8 +44,9 @@ class ProgressCollectionViewController: UICollectionViewController {
         super.dismiss(animated: flag, completion: completion)
         
         if #available(iOS 13.0, *) {
-            if let presentationController = self.parent?.presentationController {
-                presentationController.delegate?.presentationControllerDidDismiss?(presentationController)
+            if let presentationController = self.parent?.presentationController,
+               let delegate = presentationController.delegate {
+                delegate.presentationControllerDidDismiss?(presentationController)
             }
         }
     }
@@ -64,27 +65,33 @@ class ProgressCollectionViewController: UICollectionViewController {
                     return
                 }
 
-                if self.alert == nil {
-                    self.alert = UIAlertController(title: "Status", message: message, preferredStyle: .alert)
-                    self.alert!.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { _ in
+                if let alert = self.alert {
+                    alert.message = message
+                } else {
+                    self.alert = UIAlertController(title: "Status",
+                                                   message: message,
+                                                   preferredStyle: .alert)
+                    self.alert!.addAction(UIAlertAction(title: "Cancel", style: .cancel) { _ in
                         self.messageHandle?.cancel()
                         self.alert = nil
-                    }))
+                    })
                     self.present(self.alert!, animated: true)
-                } else {
-                    self.alert?.message = message
                 }
             } catch {
-                let completition: () -> Void = {
-                    self.alert = UIAlertController(title: "Error", message: error.localizedDescription, preferredStyle: .alert)
-                    self.alert!.addAction(UIAlertAction(title: "OK", style: .cancel, handler: { _ in
+                self.messageHandle = nil
+                let completion: () -> Void = {
+                    self.alert = UIAlertController(title: "Error",
+                                                   message: error.localizedDescription,
+                                                   preferredStyle: .alert)
+                    self.alert!.addAction(UIAlertAction(title: "OK", style: .cancel) { _ in
                         self.alert = nil
-                    }))
+                    })
+                    self.present(self.alert!, animated: true)
                 }
-                if self.alert != nil {
-                    self.alert?.dismiss(animated: true, completion: completition)
+                if let alert = self.alert {
+                    alert.dismiss(animated: true, completion: completion)
                 } else {
-                    completition()
+                    completion()
                 }
             }
         }

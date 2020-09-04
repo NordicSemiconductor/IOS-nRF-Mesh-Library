@@ -118,22 +118,28 @@ class NodeNetworkKeysViewController: ProgressViewController, Editable {
         return true
     }
     
-    override func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
+    override func tableView(_ tableView: UITableView,
+                            editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
         return node.networkKeys.count == 1 ? .none : .delete
     }
     
-    override func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
+    override func tableView(_ tableView: UITableView,
+                            editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
         if node.networkKeys.count == 1 {
             return [UITableViewRowAction(style: .normal, title: "Last Key", handler: {_,_ in })]
         }
         return nil
     }
     
-    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+    override func tableView(_ tableView: UITableView,
+                            commit editingStyle: UITableViewCell.EditingStyle,
+                            forRowAt indexPath: IndexPath) {
         let networkKey = node.networkKeys[indexPath.row]
         // Show confirmation dialog only when the key is bound to an Application Key.
         if node.hasApplicationKeyBoundTo(networkKey) {
-            confirm(title: "Remove Key", message: "The selected key is bound to one or more Application Keys in the Node. When removed, those keys will also be removed and all models bound to them will be unbound, which may cause them to stop working.") { _ in
+            confirm(title: "Remove Key", message: "The selected key is bound to one or more " +
+                "Application Keys in the Node. When removed, those keys will also be removed " +
+                "and all models bound to them will be unbound, which may cause them to stop working.") { _ in
                 self.deleteNetworkKey(networkKey)
             }
         } else {
@@ -189,7 +195,8 @@ extension NodeNetworkKeysViewController: MeshNetworkDelegate {
         
         // Handle the message based on its type.
         switch message {
-            
+
+        // Response to Config Net Key Delete.
         case let status as ConfigNetKeyStatus:
             done()
             
@@ -201,12 +208,15 @@ extension NodeNetworkKeysViewController: MeshNetworkDelegate {
             } else {
                 presentAlert(title: "Error", message: "\(status.status)")
             }
-            
+
+        // Response to Config Net Key Get.
         case is ConfigNetKeyList:
             done()
             tableView.reloadData()            
             if node.networkKeys.isEmpty {
                 showEmptyView()
+            } else {
+                hideEmptyView()
             }
             refreshControl?.endRefreshing()
             

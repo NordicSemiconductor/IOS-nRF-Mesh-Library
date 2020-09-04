@@ -106,7 +106,8 @@ class NodeAppKeysViewController: ProgressViewController, Editable {
         return node.applicationKeys.count
     }
     
-    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+    override func tableView(_ tableView: UITableView,
+                            cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let key = node.applicationKeys[indexPath.row]
         
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
@@ -119,16 +120,21 @@ class NodeAppKeysViewController: ProgressViewController, Editable {
         tableView.deselectRow(at: indexPath, animated: true)
     }
     
-    override func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
+    override func tableView(_ tableView: UITableView,
+                            editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
         // This is required to allow swipe to delete action.
         return nil
     }
     
-    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+    override func tableView(_ tableView: UITableView,
+                            commit editingStyle: UITableViewCell.EditingStyle,
+                            forRowAt indexPath: IndexPath) {
         let applicationKey = node.applicationKeys[indexPath.row]
         // Show confirmation dialog only when the key is bound to some Models.
         if node.hasModelBoundTo(applicationKey) {
-            confirm(title: "Remove Key", message: "The selected key is bound to one or more models in the Node. When removed, it will be unbound automatically, and the models may stop working.") { _ in
+            confirm(title: "Remove Key", message: "The selected key is bound to one or more " +
+                "models in the Node. When removed, it will be unbound automatically, and the " +
+                "models may stop working.") { _ in
                 self.delete(applicationKey: applicationKey)
             }
         } else {
@@ -188,6 +194,8 @@ extension NodeAppKeysViewController: MeshNetworkDelegate {
         
         // Handle the message based on its type.
         switch message {
+            
+        // Response to Config App Key Delete.
         case let status as ConfigAppKeyStatus:
             done()
             
@@ -199,7 +207,8 @@ extension NodeAppKeysViewController: MeshNetworkDelegate {
             } else {
                 presentAlert(title: "Error", message: "\(status.status)")
             }
-            
+
+        // Response to Config App Key Get.
         case let list as ConfigAppKeyList:
             if list.isSuccess {
                 let index = node.networkKeys.firstIndex { $0.index == list.networkKeyIndex }
@@ -211,6 +220,8 @@ extension NodeAppKeysViewController: MeshNetworkDelegate {
                     tableView.reloadData()
                     if node.applicationKeys.isEmpty {
                         showEmptyView()
+                    } else {
+                        hideEmptyView()
                     }
                     refreshControl?.endRefreshing()
                 }

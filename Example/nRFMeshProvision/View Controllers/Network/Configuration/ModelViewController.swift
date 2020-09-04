@@ -53,10 +53,14 @@ class ModelViewController: ProgressViewController {
             navigationItem.rightBarButtonItem = editButtonItem
         }
         
-        tableView.register(UINib(nibName: "ConfigurationServer", bundle: nil), forCellReuseIdentifier: "0000")
-        tableView.register(UINib(nibName: "GenericOnOff", bundle: nil), forCellReuseIdentifier: "1000")
-        tableView.register(UINib(nibName: "GenericLevel", bundle: nil), forCellReuseIdentifier: "1002")
-        tableView.register(UINib(nibName: "VendorModel", bundle: nil), forCellReuseIdentifier: "vendor")
+        tableView.register(UINib(nibName: "ConfigurationServer", bundle: nil),
+                           forCellReuseIdentifier: UInt16.configurationServerModelId.hex)
+        tableView.register(UINib(nibName: "GenericOnOff", bundle: nil),
+                           forCellReuseIdentifier: UInt16.genericOnOffServerModelId.hex)
+        tableView.register(UINib(nibName: "GenericLevel", bundle: nil),
+                           forCellReuseIdentifier: UInt16.genericLevelServerModelId.hex)
+        tableView.register(UINib(nibName: "VendorModel", bundle: nil),
+                           forCellReuseIdentifier: "vendor")
     }
     
     override func viewWillAppear(_ animated: Bool) {

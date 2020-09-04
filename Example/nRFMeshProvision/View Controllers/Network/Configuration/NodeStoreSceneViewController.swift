@@ -31,12 +31,12 @@
 import UIKit
 import nRFMeshProvision
 
-protocol AppKeyDelegate {
-    /// This method is called when a new Application Key has been added to the Node.
-    func keyAdded()
+protocol SceneDelegate {
+    /// This method is called when a new Scene has been stored on the Node.
+    func sceneAdded()
 }
 
-class NodeAddAppKeyViewController: ProgressViewController {
+class NodeStoreSceneViewController: ProgressViewController {
     
     // MARK: - Outlets and Actions
     
@@ -49,59 +49,95 @@ class NodeAddAppKeyViewController: ProgressViewController {
         guard let selectedIndexPath = selectedIndexPath else {
             return
         }
-        let selectedAppKey = keys[selectedIndexPath.row]
-        start("Adding Application Key...") {
+        let selectedScene = selectedIndexPath.section == 0 ?
+            newScenes[selectedIndexPath.row] : currentScenes[selectedIndexPath.row]
+        start("Storing Scene...") {
             return try MeshNetworkManager.instance
-                .send(ConfigAppKeyAdd(applicationKey: selectedAppKey), to: self.node)
+                .send(SceneStore(selectedScene.scene), to: self.sceneSetupServerModel)
         }
     }
     
     // MARK: - Properties
     
-    var node: Node!
-    var delegate: AppKeyDelegate?
+    var node: Node! {
+           didSet {
+               if let primaryElement = node.primaryElement {
+                   sceneSetupServerModel = primaryElement.model(withSigModelId: .sceneSetupServerModelId)
+               }
+           }
+       }
+    var delegate: SceneDelegate?
     
-    private var keys: [ApplicationKey]!
+    /// A model that supports Scene Store and Scene Delete messages.
+    private var sceneSetupServerModel: Model!
+    /// Scenes that are not yet stored on the Node.
+    private var newScenes: [SceneObject]!
+    /// Scenes currently present in the Scene Register on the Node.
+    private var currentScenes: [SceneObject]!
+    /// Selected Index Path, or `nil`, if nothing is selected.
     private var selectedIndexPath: IndexPath?
     
     // MARK: - View Controller
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        tableView.setEmptyView(title: "No keys available",
-                               message: "Go to Settings to create a new key,\nor add a bound Network Key first.",
-                               messageImage: #imageLiteral(resourceName: "baseline-key"))
+        tableView.setEmptyView(title: "No scenes",
+                               message: "Go to Settings to create a new scene.",
+                               messageImage: #imageLiteral(resourceName: "baseline-scene"))
         
         MeshNetworkManager.instance.delegate = self
         
         let meshNetwork = MeshNetworkManager.instance.meshNetwork!
-        keys = meshNetwork.applicationKeys.notKnownTo(node: node).filter {
-            node.knows(networkKey: $0.boundNetworkKey)
-        }
-        if keys.isEmpty {
+        currentScenes = node.scenes
+        newScenes = meshNetwork.scenes.filter { !currentScenes.contains($0) }
+        if newScenes.isEmpty && currentScenes.isEmpty {
             tableView.showEmptyView()
         }
-        // Initially, no key is checked.
+        // Initially, no Scene is checked.
         doneButton.isEnabled = false
     }
-    
+
     // MARK: - Table view data source
-    
+
     override func numberOfSections(in tableView: UITableView) -> Int {
-        return 1
+        return (newScenes.isEmpty ? 0 : 1) + (currentScenes.isEmpty ? 0 : 1)
+    }
+
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        if section == 0 && !newScenes.isEmpty {
+            return newScenes.count
+        }
+        return currentScenes.count
     }
     
-    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return keys.count
+    override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        if section == 0 && !newScenes.isEmpty {
+            return "New scenes"
+        }
+        return "Stored"
+    }
+    
+    override func tableView(_ tableView: UITableView, titleForFooterInSection section: Int) -> String? {
+        if section == 1 {
+            return "Selecting a scene from above will overwrite its previously associated state."
+        }
+        if newScenes.isEmpty {
+            return "Selecting a scene from above will overwrite its previously associated state. "
+                  + "Create more scenes in Settings."
+        }
+        return "Each node may store up to 16 scenes."
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let key = keys[indexPath.row]
-        
-        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
-        cell.textLabel?.text = key.name
-        cell.detailTextLabel?.text = "Bound to \(key.boundNetworkKey.name)"
+        let cell = tableView.dequeueReusableCell(withIdentifier: "sceneCell", for: indexPath)
+
+        if indexPath.section == 0 && !newScenes.isEmpty {
+            cell.textLabel?.text = newScenes[indexPath.row].name
+        } else {
+            cell.textLabel?.text = currentScenes[indexPath.row].name
+        }
         cell.accessoryType = indexPath == selectedIndexPath ? .checkmark : .none
+
         return cell
     }
     
@@ -117,9 +153,10 @@ class NodeAddAppKeyViewController: ProgressViewController {
         
         doneButton.isEnabled = true
     }
+
 }
 
-extension NodeAddAppKeyViewController: MeshNetworkDelegate {
+extension NodeStoreSceneViewController: MeshNetworkDelegate {
     
     func meshNetworkManager(_ manager: MeshNetworkManager,
                             didReceiveMessage message: MeshMessage,
@@ -147,11 +184,11 @@ extension NodeAddAppKeyViewController: MeshNetworkDelegate {
         // Handle the message based on its type.
         switch message {
             
-        case let status as ConfigAppKeyStatus:
+        case let status as SceneRegisterStatus:
             done() {
                 if status.status == .success {
                     self.dismiss(animated: true)
-                    self.delegate?.keyAdded()
+                    self.delegate?.sceneAdded()
                 } else {
                     self.presentAlert(title: "Error", message: status.message)
                 }

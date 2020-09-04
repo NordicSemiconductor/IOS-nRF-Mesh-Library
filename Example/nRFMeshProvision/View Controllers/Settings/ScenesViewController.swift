@@ -63,11 +63,13 @@ class ScenesViewController: UITableViewController, Editable {
     // MARK: - Table view data source
 
     override func numberOfSections(in tableView: UITableView) -> Int {
-        return MeshNetworkManager.instance.meshNetwork?.scenes.isEmpty ?? true ? 0 : 1
+        let scenes = MeshNetworkManager.instance.meshNetwork?.scenes ?? []
+        return scenes.isEmpty ? 0 : IndexPath.numberOfSections
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return MeshNetworkManager.instance.meshNetwork?.scenes.count ?? 0
+        let scenes = MeshNetworkManager.instance.meshNetwork?.scenes ?? []
+        return scenes.count
     }
     
     override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
@@ -157,9 +159,9 @@ extension ScenesViewController: EditSceneDelegate {
 
 private extension IndexPath {
     static let scenesSection = 0
+    static let numberOfSections = IndexPath.scenesSection + 1
     
-    /// Returns the Application Key index in mesh network based on the
-    /// IndexPath.
+    /// Returns the Scene index in mesh network based on the IndexPath.
     var sceneIndex: Int {
         return section + row
     }

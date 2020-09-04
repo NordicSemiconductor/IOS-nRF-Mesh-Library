@@ -225,8 +225,8 @@ extension GroupControlViewController: MeshNetworkDelegate {
 private extension Model {
     
     var isSupported: Bool {
-        return modelIdentifier == 0x1000 ||
-               modelIdentifier == 0x1002
+        return modelIdentifier == .genericOnOffServerModelId ||
+               modelIdentifier == .genericLevelServerModelId
     }
     
     var modelId: UInt32 {

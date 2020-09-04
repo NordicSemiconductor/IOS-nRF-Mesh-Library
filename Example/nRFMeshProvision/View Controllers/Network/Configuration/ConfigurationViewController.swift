@@ -101,12 +101,16 @@ class ConfigurationViewController: ProgressViewController {
             let destination = segue.destination as! NodeAppKeysViewController
             destination.node = node
         }
+        if segue.identifier == "showScenes" {
+            let destination = segue.destination as! NodeScenesViewController
+            destination.node = node
+        }
     }
 
     // MARK: - Table view data source
 
     override func numberOfSections(in tableView: UITableView) -> Int {
-        return IndexPath.numberOfSection
+        return IndexPath.numberOfSections
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -122,6 +126,8 @@ class ConfigurationViewController: ProgressViewController {
                 return node.elements.count
             }
             return 1 // "Composition Data not received" message
+        case IndexPath.scenesSection:
+            return IndexPath.scenesTitles.count
         case IndexPath.compositionDataSection:
             return IndexPath.detailsTitles.count
         case IndexPath.switchesSection:
@@ -203,6 +209,30 @@ class ConfigurationViewController: ProgressViewController {
                 break
             }
         }
+        if indexPath.isKeysSection {
+            cell.textLabel?.text = indexPath.title
+            switch indexPath.row {
+            case 0: // Network Keys
+                cell.detailTextLabel?.text = "\(node.networkKeys.count)"
+            default:
+                cell.detailTextLabel?.text = "\(node.applicationKeys.count)"
+            }
+            cell.accessoryType = .disclosureIndicator
+        }
+        if indexPath.isScenesSection {
+            cell.textLabel?.text = indexPath.title
+            if node.isCompositionDataReceived,
+               let primaryElement = node.primaryElement,
+               primaryElement.contains(modelWithSigModelId: .sceneServerModelId) {
+                cell.detailTextLabel?.text = "\(node.scenes.count)"
+                cell.accessoryType = .disclosureIndicator
+                cell.selectionStyle = .default
+            } else {
+                cell.detailTextLabel?.text = "Not supported"
+                cell.accessoryType = .none
+                cell.selectionStyle = .none
+            }
+        }
         if indexPath.isElementsSection {
             if node.isCompositionDataReceived {
                 let element = node.elements[indexPath.row]
@@ -222,16 +252,6 @@ class ConfigurationViewController: ProgressViewController {
                 cell.accessoryType = .none
                 cell.selectionStyle = .none
             }
-        }
-        if indexPath.isKeysSection {
-            cell.textLabel?.text = indexPath.title
-            switch indexPath.row {
-            case 0: // Network Keys
-                cell.detailTextLabel?.text = "\(node.networkKeys.count)"
-            default:
-                cell.detailTextLabel?.text = "\(node.applicationKeys.count)"
-            }
-            cell.accessoryType = .disclosureIndicator
         }
         if indexPath.isSwitchesSection {
             let cell = cell as! SwitchCell
@@ -258,6 +278,9 @@ class ConfigurationViewController: ProgressViewController {
     }
     
     override func tableView(_ tableView: UITableView, shouldHighlightRowAt indexPath: IndexPath) -> Bool {
+        if indexPath.isScenesSection {
+            return node.primaryElement?.contains(modelWithSigModelId: .sceneServerModelId) ?? false
+        }
         return indexPath.isHighlightable
     }
     
@@ -279,6 +302,9 @@ class ConfigurationViewController: ProgressViewController {
         }
         if indexPath.isApplicationKeys {
             performSegue(withIdentifier: "showAppKeys", sender: nil)
+        }
+        if indexPath.isScenesSection {
+            performSegue(withIdentifier: "showScenes", sender: nil)
         }
         if indexPath.isElementsSection && node.isCompositionDataReceived {
             performSegue(withIdentifier: "showElement", sender: indexPath)
@@ -483,11 +509,12 @@ private extension IndexPath {
     static let nameSection = 0
     static let nodeSection = 1
     static let keysSection = 2
-    static let elementsSection = 3
-    static let compositionDataSection = 4
-    static let switchesSection = 5
-    static let actionsSection = 6
-    static let numberOfSection = IndexPath.actionsSection + 1
+    static let scenesSection = 3
+    static let elementsSection = 4
+    static let compositionDataSection = 5
+    static let switchesSection = 6
+    static let actionsSection = 7
+    static let numberOfSections = IndexPath.actionsSection + 1
     
     static let titles = [
         "Name"
@@ -497,6 +524,9 @@ private extension IndexPath {
     ]
     static let keysTitles = [
         "Network Keys", "Application Keys"
+    ]
+    static let scenesTitles = [
+        "Scenes"
     ]
     static let detailsTitles = [
         "Company Identifier", "Product Identifier", "Product Version",
@@ -541,6 +571,9 @@ private extension IndexPath {
         if isKeysSection {
             return IndexPath.keysTitles[row]
         }
+        if isScenesSection {
+            return IndexPath.scenesTitles[row]
+        }
         if isDetailsSection {
             return IndexPath.detailsTitles[row]
         }
@@ -561,7 +594,8 @@ private extension IndexPath {
     }
     
     var isHighlightable: Bool {
-        return isName || isTtl || isDeviceKey || isElementsSection || isKeysSection || isActionsSection
+        return isName || isTtl || isDeviceKey || isKeysSection
+            || isScenesSection || isElementsSection || isActionsSection
     }
     
     var isName: Bool {
@@ -604,12 +638,16 @@ private extension IndexPath {
         return section == IndexPath.nodeSection
     }
     
-    var isElementsSection: Bool {
-        return section == IndexPath.elementsSection
-    }
-    
     var isKeysSection: Bool {
         return section == IndexPath.keysSection
+    }
+    
+    var isScenesSection: Bool {
+        return section == IndexPath.scenesSection
+    }
+    
+    var isElementsSection: Bool {
+        return section == IndexPath.elementsSection
     }
     
     var isDetailsSection: Bool {

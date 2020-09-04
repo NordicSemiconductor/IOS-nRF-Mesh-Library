@@ -209,11 +209,11 @@ extension ControlViewController: MeshNetworkDelegate {
 private extension Model {
     
     var isSupported: Bool {
-        return modelIdentifier == 0x1000 ||
-               modelIdentifier == 0x1001 ||
-               modelIdentifier == 0x1002 ||
-               modelIdentifier == 0x1003 ||
-               (modelIdentifier == 0x0001 && companyIdentifier == 0x0059)
+        return modelIdentifier == .genericOnOffServerModelId ||
+               modelIdentifier == .genericOnOffClientModelId ||
+               modelIdentifier == .genericLevelServerModelId ||
+               modelIdentifier == .genericLevelClientModelId ||
+               isSimpleOnOffClient
     }
     
     var modelId: UInt32 {
@@ -222,7 +222,8 @@ private extension Model {
     }
     
     var isSimpleOnOffClient: Bool {
-        return modelIdentifier == 0x0001 && companyIdentifier == 0x0059
+        return modelIdentifier == .simpleOnOffModelId &&
+               companyIdentifier == .nordicSemiconductorCompanyId
     }
     
 }
