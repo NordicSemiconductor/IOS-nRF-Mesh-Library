@@ -53,6 +53,16 @@ public extension Element {
         }
     }
     
+    /// Returns whether the Element contains a Bluetooth SIG defined Model with
+    /// given Model ID.
+    ///
+    /// - parameter sigModelId: Bluetooth SIG Model ID.
+    /// - returns: `True` if the Element contains a Model with given Model ID,
+    ///            `false` otherwise.
+    func contains(modelWithSigModelId sigModelId: UInt16) -> Bool {
+        return models.contains { $0.isBluetoothSIGAssigned && $0.modelIdentifier == sigModelId }
+    }
+    
     /// Returns the first found Model with given identifier.
     ///
     /// - parameter sigModelId: The 16-bit Model identifier.
@@ -72,16 +82,6 @@ public extension Element {
     ///            `false` otherwise.
     func contains(modelWithId modelId: UInt32) -> Bool {
         return models.contains { $0.modelId == modelId }
-    }
-    
-    /// Returns whether the Element contains a Model with given Model identifier.
-    ///
-    /// - parameter modelIdentifier: Bluetooth SIG or vendor-assigned model
-    ///                              identifier.
-    /// - returns: `True` if the Element contains a Model with given Model
-    ///            identifier, `false` otherwise.
-    func contains(modelWithIdentifier modelIdentifier: UInt16) -> Bool {
-        return models.contains { $0.modelIdentifier == modelIdentifier }
     }
     
     /// Returns whether the Element contains the given Model.
