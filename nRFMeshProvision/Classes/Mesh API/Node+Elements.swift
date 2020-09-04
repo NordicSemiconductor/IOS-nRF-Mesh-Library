@@ -30,7 +30,14 @@
 
 import Foundation
 
-public extension Node {    
+public extension Node {
+    
+    /// The primary Element on the Node.
+    ///
+    /// `nil` is returned if Composition Data has not been received yet.
+    var primaryElement: Element? {
+        return elements.first
+    }
     
     /// Returns the Element that belongs to this Node with the given
     /// Unicast Address, or `nil`, if such does not exist.

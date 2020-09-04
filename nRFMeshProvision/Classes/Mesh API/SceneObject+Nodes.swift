@@ -47,3 +47,13 @@ public extension SceneObject {
     }
     
 }
+
+public extension Node {
+    
+    /// List of Scenes registered in Scene Register on the Node.
+    var scenes: [SceneObject] {
+        return meshNetwork?.scenes
+            .filter { $0.addresses.contains(unicastAddress) } ?? []
+    }
+    
+}
