@@ -82,6 +82,8 @@
 		5292F8A1250137DC00EA0F2A /* NodeScenesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5292F8A0250137DC00EA0F2A /* NodeScenesViewController.swift */; };
 		5292F8A325021B8F00EA0F2A /* ModelIdentifiers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5292F8A225021B8F00EA0F2A /* ModelIdentifiers.swift */; };
 		5292F8A5250237A600EA0F2A /* NodeStoreSceneViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5292F8A4250237A600EA0F2A /* NodeStoreSceneViewController.swift */; };
+		5292F8A7250652BB00EA0F2A /* SceneServerGroupCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5292F8A6250652BB00EA0F2A /* SceneServerGroupCell.swift */; };
+		5292F8A9250654C600EA0F2A /* SceneSetupServerGroupCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5292F8A8250654C600EA0F2A /* SceneSetupServerGroupCell.swift */; };
 		5294DADA22B109810041370E /* Pdus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5294DAD922B109810041370E /* Pdus.swift */; };
 		529B756D223FE7F1008F1CE7 /* RootViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529B756C223FE7F1008F1CE7 /* RootViewController.swift */; };
 		529B7570223FF1AE008F1CE7 /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529B756F223FF1AE008F1CE7 /* SettingsViewController.swift */; };
@@ -229,6 +231,8 @@
 		5292F8A0250137DC00EA0F2A /* NodeScenesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NodeScenesViewController.swift; sourceTree = "<group>"; };
 		5292F8A225021B8F00EA0F2A /* ModelIdentifiers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ModelIdentifiers.swift; path = Utils/ModelIdentifiers.swift; sourceTree = "<group>"; };
 		5292F8A4250237A600EA0F2A /* NodeStoreSceneViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NodeStoreSceneViewController.swift; sourceTree = "<group>"; };
+		5292F8A6250652BB00EA0F2A /* SceneServerGroupCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneServerGroupCell.swift; sourceTree = "<group>"; };
+		5292F8A8250654C600EA0F2A /* SceneSetupServerGroupCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneSetupServerGroupCell.swift; sourceTree = "<group>"; };
 		5294DAD922B109810041370E /* Pdus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Pdus.swift; sourceTree = "<group>"; };
 		529B756C223FE7F1008F1CE7 /* RootViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootViewController.swift; sourceTree = "<group>"; };
 		529B756F223FF1AE008F1CE7 /* SettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
@@ -344,6 +348,8 @@
 				5212152C231545D40059FB3D /* ModelGroupCell.swift */,
 				52121525231528AC0059FB3D /* GenericOnOffGroupCell.swift */,
 				521215302316C36B0059FB3D /* GenericLevelGroupCell.swift */,
+				5292F8A6250652BB00EA0F2A /* SceneServerGroupCell.swift */,
+				5292F8A8250654C600EA0F2A /* SceneSetupServerGroupCell.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -926,6 +932,7 @@
 				5212152F231554190059FB3D /* ProgressCollectionViewController.swift in Sources */,
 				523F776A22C621F50030EA6A /* NodeAddNetworkKeyViewController.swift in Sources */,
 				52E54CE12344974B00478F05 /* GenericLevelClientDelegate.swift in Sources */,
+				5292F8A9250654C600EA0F2A /* SceneSetupServerGroupCell.swift in Sources */,
 				5283528022806C280097B949 /* ProvisioningViewController.swift in Sources */,
 				52CD0A602330D71900A9A181 /* AddAddressViewController.swift in Sources */,
 				52835269227B2BAE0097B949 /* ScannerTableViewController.swift in Sources */,
@@ -978,6 +985,7 @@
 				523F779722CE2BF60030EA6A /* SetPublicationDestinationsViewController.swift in Sources */,
 				52E54CD023437D3D00478F05 /* ModelControlCell.swift in Sources */,
 				523F776422C4EDD90030EA6A /* SwitchCell.swift in Sources */,
+				5292F8A7250652BB00EA0F2A /* SceneServerGroupCell.swift in Sources */,
 				522AFFDC22BBA34900521EDC /* ActionCell.swift in Sources */,
 				52E54CE72345EDA700478F05 /* GenericState.swift in Sources */,
 				52DF5D8A228DA78A00C297C1 /* ConfigurationViewController.swift in Sources */,
@@ -1263,7 +1271,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				LINK_WITH_STANDARD_LIBRARIES = YES;
-				MARKETING_VERSION = 2.2.3;
+				MARKETING_VERSION = 2.3.0;
 				MODULE_NAME = ExampleApp;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
@@ -1297,7 +1305,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				LINK_WITH_STANDARD_LIBRARIES = YES;
-				MARKETING_VERSION = 2.2.3;
+				MARKETING_VERSION = 2.3.0;
 				MODULE_NAME = ExampleApp;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
