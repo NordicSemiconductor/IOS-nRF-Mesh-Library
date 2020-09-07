@@ -310,12 +310,12 @@ extension NodeScenesViewController: MeshNetworkDelegate {
                 } else {
                     self.presentAlert(title: "Error", message: "\(status.status)")
                 }
+                self.refreshControl?.endRefreshing()
             }
-            self.refreshControl?.endRefreshing()
         
         // Response to Scene Delete.
         case let status as SceneRegisterStatus:
-            if !status.isSuccess || !isRefreshing {
+            if !status.isSuccess || status.isEmpty || !isRefreshing {
                 done()
             }
             
@@ -328,12 +328,14 @@ extension NodeScenesViewController: MeshNetworkDelegate {
                 }
                 tableView.reloadData()
 
-                if isRefreshing {
+                if isRefreshing && !status.isEmpty {
                     getCurrentScene()
+                    return
                 }
             } else {
                 presentAlert(title: "Error", message: "\(status.status)")
             }
+            self.refreshControl?.endRefreshing()
             
         default:
             break

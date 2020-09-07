@@ -44,11 +44,17 @@ public struct SceneRegisterStatus: GenericMessage, SceneStatusMessage {
     /// The number of the current scene, or `Scene.invalid` when no Scene is active.
     public let currentScene: Scene
     /// A list of scenes stored within an Element.
+    ///
+    /// This list should also contain the current scene, if it is valid.
     public let scenes: [Scene]
     
     /// Whether any Scene is currently active.
     public var isSceneActive: Bool {
         return currentScene != .invalid
+    }
+    /// Whether the Scene Register contains any stored scenes.
+    public var isEmpty: Bool {
+        return scenes.isEmpty
     }
     
     /// Creates the Scene Register Status message.
