@@ -175,6 +175,8 @@ internal extension UInt16 {
     static let configurationClientModelId: UInt16 = 0x0001
     static let healthServerModelId: UInt16 = 0x0002
     static let healthClientModelId: UInt16 = 0x0003
+    static let sceneServerModelId: UInt16 = 0x1203
+    static let sceneSetupServerModelId: UInt16 = 0x1204
     static let sceneClientModelId: UInt16 = 0x1205
     
 }

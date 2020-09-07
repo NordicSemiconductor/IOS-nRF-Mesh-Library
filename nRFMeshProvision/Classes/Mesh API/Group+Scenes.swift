@@ -30,30 +30,24 @@
 
 import Foundation
 
-public extension SceneObject {
+public extension Group {
     
-    /// Returns whether the Scene is in use in the given mesh network.
-    ///
-    /// - returns: Whether the Scene is in use in the mesh network.
-    var isUsed: Bool {
-        return !addresses.isEmpty
-    }
-    
-    /// Known Nodes whose Scene Register state contains this Scene.
-    var nodes: [Node] {
-        return meshNetwork?.nodes.filter {
-            addresses.contains($0.unicastAddress)
-        } ?? []
-    }
-    
-}
-
-public extension Node {
-    
-    /// List of Scenes registered in Scene Register on the Node.
-    var scenes: [SceneObject] {
-        return meshNetwork?.scenes
-            .filter { $0.addresses.contains(unicastAddress) } ?? []
+    /// Returns list of Scenes registered in Scene Register of any Node,
+    /// which Scene Server model is subscribed to this Group and bound to
+    /// the given Application Key.
+    func scenes(onModelsBoundTo applicationKey: ApplicationKey) -> [SceneObject] {
+        let scenes =
+            // Get all Models subscribed to this Group.
+            meshNetwork?.models(subscribedTo: self)
+            // That are bound to the given Application Key.
+            .filter { $0.isBoundTo(applicationKey) }
+            // Filter for Scene Server models only.
+            .filter { $0.modelIdentifier == .sceneServerModelId && $0.isBluetoothSIGAssigned }
+            // Get all Scenes stored in Scene Registers of parent Nodes.
+            .compactMap { $0.parentElement?.parentNode?.scenes }
+            // Flatten the map.
+            .flatMap { $0 } ?? []
+        return Array(Set(scenes))
     }
     
 }

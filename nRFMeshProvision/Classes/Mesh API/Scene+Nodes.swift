@@ -30,13 +30,13 @@
 
 import Foundation
 
-
-public extension Array where Element == SceneObject {
+public extension SceneObject {
     
-    subscript(scene: Scene) -> SceneObject? {
-        return first {
-            $0.scene == scene
-        }
+    /// Known Nodes whose Scene Register state contains this Scene.
+    var nodes: [Node] {
+        return meshNetwork?.nodes.filter {
+            addresses.contains($0.unicastAddress)
+        } ?? []
     }
     
 }
