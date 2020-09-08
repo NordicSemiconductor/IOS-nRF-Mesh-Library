@@ -33,7 +33,9 @@ import nRFMeshProvision
 
 protocol SceneDelegate {
     /// This method is called when a new Scene has been stored on the Node.
-    func sceneAdded()
+    ///
+    /// - parameter scene: The new scene number.
+    func sceneAdded(_ scene: SceneNumber)
 }
 
 class NodeStoreSceneViewController: ProgressViewController {
@@ -188,7 +190,7 @@ extension NodeStoreSceneViewController: MeshNetworkDelegate {
             done() {
                 if status.status == .success {
                     self.dismiss(animated: true)
-                    self.delegate?.sceneAdded()
+                    self.delegate?.sceneAdded(status.currentScene)
                 } else {
                     self.presentAlert(title: "Error", message: status.message)
                 }

@@ -356,7 +356,8 @@ extension NodeScenesViewController: MeshNetworkDelegate {
 
 extension NodeScenesViewController: SceneDelegate {
     
-    func sceneAdded() {
+    func sceneAdded(_ scene: SceneNumber) {
+        setCurrentScene(scene)
         tableView.reloadData()
         
         if !node.scenes.isEmpty {
