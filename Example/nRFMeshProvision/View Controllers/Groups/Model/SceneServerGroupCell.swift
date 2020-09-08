@@ -81,7 +81,7 @@ private extension SceneServerGroupCell {
         let alert = UIAlertController(title: "Select scene", message: nil, preferredStyle: .actionSheet)
         scenes.forEach { scene in
             alert.addAction(UIAlertAction(title: scene.name, style: .default) { _ in
-                self.sendSceneRecall(scene.scene)
+                self.sendSceneRecall(scene.number)
             })
         }
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
@@ -91,7 +91,7 @@ private extension SceneServerGroupCell {
     /// Sends Scene Recall Unacknowledged message.
     ///
     /// - parameter scene: The Scene number to recall.
-    func sendSceneRecall(_ scene: Scene) {
+    func sendSceneRecall(_ scene: SceneNumber) {
         let label = "Recalling scene..."
         delegate?.send(SceneRecallUnacknowledged(scene,
                                                  transitionTime: TransitionTime(1.0),

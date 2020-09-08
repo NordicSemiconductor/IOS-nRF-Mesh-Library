@@ -155,7 +155,7 @@ class NodeScenesViewController: ProgressViewController, Editable {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         let scene = node.scenes[indexPath.sceneIndex]
-        recallScene(scene.scene)
+        recallScene(scene.number)
     }
     
     override func tableView(_ tableView: UITableView,
@@ -168,7 +168,7 @@ class NodeScenesViewController: ProgressViewController, Editable {
                             commit editingStyle: UITableViewCell.EditingStyle,
                             forRowAt indexPath: IndexPath) {
         let scene = node.scenes[indexPath.sceneIndex]
-        deleteScene(scene.scene)
+        deleteScene(scene.number)
     }
 
 }
@@ -244,7 +244,7 @@ private extension NodeScenesViewController {
         }
     }
     
-    func recallScene(_ scene: Scene) {
+    func recallScene(_ scene: SceneNumber) {
         start("Recalling Scene...") {
             let transitionTime = TransitionTime(steps: 2, stepResolution: .seconds)
             let message = SceneRecall(scene, transitionTime: transitionTime, delay: 0)
@@ -252,20 +252,20 @@ private extension NodeScenesViewController {
         }
     }
     
-    func deleteScene(_ scene: Scene) {
+    func deleteScene(_ scene: SceneNumber) {
         start("Deleting Scene...") {
             let message = SceneDelete(scene)
             return try MeshNetworkManager.instance.send(message, to: self.sceneSetupServerModel)
         }
     }
     
-    @discardableResult func setCurrentScene(_ currentScene: Scene) -> [IndexPath] {
+    @discardableResult func setCurrentScene(_ currentScene: SceneNumber) -> [IndexPath] {
         var rows: [IndexPath] = []
         if let currentSceneIndexPath = currentSceneIndexPath {
             rows.append(currentSceneIndexPath)
         }
-        if currentScene.isValidScene {
-            let index = node.scenes.firstIndex { $0.scene == currentScene }!
+        if currentScene.isValidSceneNumber {
+            let index = node.scenes.firstIndex { $0.number == currentScene }!
             currentSceneIndexPath = IndexPath(row: index, section: 0)
             rows.append(currentSceneIndexPath!)
         } else {

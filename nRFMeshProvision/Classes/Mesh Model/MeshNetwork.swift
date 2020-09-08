@@ -65,7 +65,7 @@ public class MeshNetwork: Codable {
     /// An array of Groups in the network.
     public internal(set) var groups: [Group]
     /// An array of Senes in the network.
-    public internal(set) var scenes: [SceneObject]
+    public internal(set) var scenes: [Scene]
     
     /// The IV Index of the mesh network.
     internal var ivIndex: IvIndex
@@ -164,7 +164,7 @@ public class MeshNetwork: Codable {
         groups = try container.decode([Group].self, forKey: .groups)
         // Scenes are mandatory, but previous version of the library did support it,
         // so JSON files generated with such versions won't have "scenes" tag.
-        scenes = try container.decodeIfPresent([SceneObject].self, forKey: .scenes) ?? []
+        scenes = try container.decodeIfPresent([Scene].self, forKey: .scenes) ?? []
         // The IV Index is not a shared in the JSON, as it may change.
         // The value will be obtained from the Secure Network beacon moment after
         // connecting to a Proxy node.
@@ -280,7 +280,7 @@ extension MeshNetwork {
     ///
     /// - parameters
     ///   - scene: The Scene to be added.
-    func add(scene: SceneObject) {
+    func add(scene: Scene) {
         scene.meshNetwork = self
         scenes.append(scene)
         scenes.sort()

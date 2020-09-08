@@ -35,7 +35,7 @@ public extension Group {
     /// Returns list of Scenes registered in Scene Register of any Node,
     /// which Scene Server model is subscribed to this Group and bound to
     /// the given Application Key.
-    func scenes(onModelsBoundTo applicationKey: ApplicationKey) -> [SceneObject] {
+    func scenes(onModelsBoundTo applicationKey: ApplicationKey) -> [Scene] {
         let scenes =
             // Get all Models subscribed to this Group.
             meshNetwork?.models(subscribedTo: self)

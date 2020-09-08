@@ -33,7 +33,7 @@ import Foundation
 public extension Node {
     
     /// List of Scenes registered in Scene Register on the Node.
-    var scenes: [SceneObject] {
+    var scenes: [Scene] {
         return meshNetwork?.scenes
             .filter { $0.addresses.contains(unicastAddress) } ?? []
     }

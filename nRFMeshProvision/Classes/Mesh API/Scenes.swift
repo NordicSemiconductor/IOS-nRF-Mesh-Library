@@ -30,7 +30,7 @@
 
 import Foundation
 
-public extension SceneObject {
+public extension Scene {
     
     /// Returns whether the Scene is in use in the given mesh network.
     ///
@@ -41,11 +41,11 @@ public extension SceneObject {
     
 }
 
-public extension Array where Element == SceneObject {
+public extension Array where Element == Scene {
     
-    subscript(scene: Scene) -> SceneObject? {
+    subscript(number: SceneNumber) -> Scene? {
         return first {
-            $0.scene == scene
+            $0.number == number
         }
     }
     

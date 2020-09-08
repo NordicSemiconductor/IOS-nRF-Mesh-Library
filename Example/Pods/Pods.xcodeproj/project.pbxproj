@@ -135,7 +135,7 @@
 		51623E007033703B2BDA7DB8A7DA7235 /* LightCTLSetUnackowledged.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47B2C04429BC1B5E4E6E8AF80FBBBA4D /* LightCTLSetUnackowledged.swift */; };
 		52107BCD24FE68CC00DA19F1 /* Scenes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52107BCC24FE68CC00DA19F1 /* Scenes.swift */; };
 		52107BCF24FE6A5D00DA19F1 /* MeshNetwork+Scenes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52107BCE24FE6A5D00DA19F1 /* MeshNetwork+Scenes.swift */; };
-		5260ED2024FE5AEC00C6126F /* SceneObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5260ED1F24FE5AEC00C6126F /* SceneObject.swift */; };
+		5260ED2024FE5AEC00C6126F /* Scene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5260ED1F24FE5AEC00C6126F /* Scene.swift */; };
 		5260ED2224FE5D9900C6126F /* Scene+Nodes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5260ED2124FE5D9900C6126F /* Scene+Nodes.swift */; };
 		5260ED2424FE61D600C6126F /* SceneClientHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5260ED2324FE61D600C6126F /* SceneClientHandler.swift */; };
 		5286A9DE24DD83E50002EE9D /* ConfigHeartbeatPublicationGet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5286A9DD24DD83E50002EE9D /* ConfigHeartbeatPublicationGet.swift */; };
@@ -289,7 +289,7 @@
 		C4B76F5106361A18F29AECD0A7084468 /* BaseGattProxyBearer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A32564BCA26A1AC3CFA2623EAEB0E70 /* BaseGattProxyBearer.swift */; };
 		C7790A33EAD5A3F7E2492440968F250B /* ProvisioningData.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE8DF7D66C473B0DCF571AB14D3A4B86 /* ProvisioningData.swift */; };
 		C88A3C057E2082FE76A8A9F87AB534ED /* MeshData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45941F789BD94EDB9190B84F63FA4A9F /* MeshData.swift */; };
-		CBEC80446DD830AB9E79EA0155F59666 /* Scene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0671F9A5A27248CD09444D00F3E26CE4 /* Scene.swift */; };
+		CBEC80446DD830AB9E79EA0155F59666 /* SceneNumber.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0671F9A5A27248CD09444D00F3E26CE4 /* SceneNumber.swift */; };
 		CCAF1D13346E40FE1A9B143B7CDCCC43 /* ConfigNetKeyGet.swift in Sources */ = {isa = PBXBuildFile; fileRef = F05AE4080979DB2EF426A97A5C5D43CD /* ConfigNetKeyGet.swift */; };
 		CD25F77A375C9E419687B7EDCAA74F78 /* ConfigModelAppBind.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7BA6B8010CF5DAC5D1BF00392EB6E69 /* ConfigModelAppBind.swift */; };
 		CDC4F3B8FE3AB0ED87922292269725BB /* Node+Keys.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DF99819328F1E0444EB6A55E4542F55 /* Node+Keys.swift */; };
@@ -390,7 +390,7 @@
 		019512222742ED36961BC5881981465F /* ConfigNetKeyDelete.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ConfigNetKeyDelete.swift; sourceTree = "<group>"; };
 		03F24D5C39141857DA2B9541863CAD8F /* MeshNetworkError.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = MeshNetworkError.swift; path = nRFMeshProvision/Classes/MeshNetworkError.swift; sourceTree = "<group>"; };
 		05259A0BDB256F91A39213AF8CCAE36A /* libssl.a */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = archive.ar; name = libssl.a; path = ios/lib/libssl.a; sourceTree = "<group>"; };
-		0671F9A5A27248CD09444D00F3E26CE4 /* Scene.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Scene.swift; sourceTree = "<group>"; };
+		0671F9A5A27248CD09444D00F3E26CE4 /* SceneNumber.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SceneNumber.swift; sourceTree = "<group>"; };
 		06B5ECA9A5CB4947408A35D3E27232C5 /* ecdh.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = ecdh.h; path = ios/include/openssl/ecdh.h; sourceTree = "<group>"; };
 		0809184D9B5E35D7E971ABBD653E4959 /* SegmentAcknowledgmentMessage.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SegmentAcknowledgmentMessage.swift; sourceTree = "<group>"; };
 		081EAD623866368C7671D11D9B2658EE /* NetworkLayer.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = NetworkLayer.swift; sourceTree = "<group>"; };
@@ -525,7 +525,7 @@
 		51BBAA3978BFB1C9BAA0B3563DB01A48 /* Pods-nRFMeshProvision_Example-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-nRFMeshProvision_Example-Info.plist"; sourceTree = "<group>"; };
 		52107BCC24FE68CC00DA19F1 /* Scenes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Scenes.swift; sourceTree = "<group>"; };
 		52107BCE24FE6A5D00DA19F1 /* MeshNetwork+Scenes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MeshNetwork+Scenes.swift"; sourceTree = "<group>"; };
-		5260ED1F24FE5AEC00C6126F /* SceneObject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneObject.swift; sourceTree = "<group>"; };
+		5260ED1F24FE5AEC00C6126F /* Scene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Scene.swift; sourceTree = "<group>"; };
 		5260ED2124FE5D9900C6126F /* Scene+Nodes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Scene+Nodes.swift"; sourceTree = "<group>"; };
 		5260ED2324FE61D600C6126F /* SceneClientHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneClientHandler.swift; sourceTree = "<group>"; };
 		5286A9DD24DD83E50002EE9D /* ConfigHeartbeatPublicationGet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigHeartbeatPublicationGet.swift; sourceTree = "<group>"; };
@@ -1216,8 +1216,8 @@
 				3B3EB40AEB868FDD471922FF6753C73E /* Provisioner.swift */,
 				8DF53E8D4B3300108937C4AE498A66B1 /* Publish.swift */,
 				1CB175CE5FD8E4A5A5E758108A4F92AE /* RangeObject.swift */,
-				0671F9A5A27248CD09444D00F3E26CE4 /* Scene.swift */,
-				5260ED1F24FE5AEC00C6126F /* SceneObject.swift */,
+				0671F9A5A27248CD09444D00F3E26CE4 /* SceneNumber.swift */,
+				5260ED1F24FE5AEC00C6126F /* Scene.swift */,
 				EADD335D05EEF7CC0F7200355C039EAE /* SceneRange.swift */,
 				B2BB347089F5440DBF0B3C14C0825396 /* Security.swift */,
 				6B8E92E6E5C22AD1FF4019A14C748B78 /* StepResolution.swift */,
@@ -1852,7 +1852,7 @@
 				246196D6513A7261136B3C04B2BBF402 /* GenericOnPowerUpSet.swift in Sources */,
 				8511AFAE398420BB716A6FFA6F4FCC28 /* GenericOnPowerUpSetUnacknowledged.swift in Sources */,
 				22314FB3C3FBD8EDE92DC7DFD8A2EFC6 /* GenericOnPowerUpStatus.swift in Sources */,
-				5260ED2024FE5AEC00C6126F /* SceneObject.swift in Sources */,
+				5260ED2024FE5AEC00C6126F /* Scene.swift in Sources */,
 				0B239D99C40E0734BC508A961CDC7633 /* GenericPowerDefaultSet.swift in Sources */,
 				D4A7A2FDE9A9B65E4E92C885E647A404 /* GenericPowerDefaultSetUnacknowledged.swift in Sources */,
 				755F950D3D40EFEE6AEF80FA288EBFC1 /* GenericPowerDefaultStatus.swift in Sources */,
@@ -2000,7 +2000,7 @@
 				4BB5A6EC0B6A5355583C1C0F862CCF8B /* RangeObject.swift in Sources */,
 				61EFAF0488525B042DCFCD658B5DAA4E /* Ranges.swift in Sources */,
 				B1F6C013FE96290A8A2F988D58CB42ED /* RemoveAddressesFromFilter.swift in Sources */,
-				CBEC80446DD830AB9E79EA0155F59666 /* Scene.swift in Sources */,
+				CBEC80446DD830AB9E79EA0155F59666 /* SceneNumber.swift in Sources */,
 				32AD0A410DC4B9F6910A917C162EA6EE /* SceneDelete.swift in Sources */,
 				5286A9E424DD84650002EE9D /* ConfigHeartbeatSubscriptionGet.swift in Sources */,
 				5BC28AF264A02DF32AC6A95A0A4AA07E /* SceneDeleteUnacknowledged.swift in Sources */,

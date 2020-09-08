@@ -56,7 +56,7 @@ class ScenesViewController: UITableViewController, Editable {
             let indexPath = tableView.indexPath(for: cell)!
             let network = MeshNetworkManager.instance.meshNetwork!
             viewController.indexPath = indexPath
-            viewController.sceneObject = network.scenes[indexPath.sceneIndex]
+            viewController.scene = network.scenes[indexPath.sceneIndex]
         }
     }
 
@@ -116,7 +116,7 @@ private extension ScenesViewController {
     
     func deleteScene(at indexPath: IndexPath) {
         let network = MeshNetworkManager.instance.meshNetwork!
-        let scene = network.scenes[indexPath.sceneIndex].scene
+        let scene = network.scenes[indexPath.sceneIndex].number
         _ = try! network.remove(scene: scene)
         
         tableView.beginUpdates()

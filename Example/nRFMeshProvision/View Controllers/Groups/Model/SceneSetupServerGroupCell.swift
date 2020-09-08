@@ -79,7 +79,7 @@ private extension SceneSetupServerGroupCell {
         let alert = UIAlertController(title: "Select scene", message: nil, preferredStyle: .actionSheet)
         network.scenes.forEach { scene in
             alert.addAction(UIAlertAction(title: scene.name, style: .default) { _ in
-                self.sendSceneStore(scene.scene)
+                self.sendSceneStore(scene.number)
             })
         }
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
@@ -89,7 +89,7 @@ private extension SceneSetupServerGroupCell {
     /// Sends Scene Store Unacknowledged message.
     ///
     /// - parameter scene: The Scene number to store.
-    func sendSceneStore(_ scene: Scene) {
+    func sendSceneStore(_ scene: SceneNumber) {
         let label = "Storing scene..."
         delegate?.send(SceneStoreUnacknowledged(scene),
                        description: label, using: applicationKey)

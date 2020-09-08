@@ -184,7 +184,7 @@ public extension SceneRange {
     ///
     /// - returns: `True` if the scene range is valid, `false` otherwise.
     var isValid: Bool {
-        return firstScene.isValidScene && lastScene.isValidScene
+        return firstScene.isValidSceneNumber && lastScene.isValidSceneNumber
     }
     
 }
@@ -241,6 +241,6 @@ public extension AddressRange {
 
 public extension SceneRange {
     
-    static let allScenes: SceneRange = SceneRange(Scene.minScene...Scene.maxScene)
+    static let allScenes: SceneRange = SceneRange(SceneNumber.minScene...SceneNumber.maxScene)
     
 }

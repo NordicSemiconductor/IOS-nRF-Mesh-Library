@@ -30,13 +30,26 @@
 
 import Foundation
 
-public extension Scene {
+/// Scene number type. Type alias for UInt16.
+public typealias SceneNumber = UInt16
+
+public extension SceneNumber {
     
-    /// Known Nodes whose Scene Register state contains this Scene.
-    var nodes: [Node] {
-        return meshNetwork?.nodes.filter {
-            addresses.contains($0.unicastAddress)
-        } ?? []
+    static let invalidScene: SceneNumber = 0x0000
+    static let minScene: SceneNumber = 0x0001
+    static let maxScene: SceneNumber = 0xFFFF
+    
+}
+
+// MARK: - Helper methods
+
+public extension SceneNumber {
+    
+    /// Returns `true` if the scene number is valid.
+    ///
+    /// Valid scenes have numbers from `minScene` to `maxScene`.
+    var isValidSceneNumber: Bool {
+        return self != SceneNumber.invalidScene
     }
     
 }

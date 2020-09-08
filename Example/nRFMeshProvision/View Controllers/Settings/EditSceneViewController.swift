@@ -59,13 +59,13 @@ class EditSceneViewController: UITableViewController {
     /// The IndexPath that is modified, or `nil` if a new Scene is being added.
     var indexPath: IndexPath?
     /// The Key to be modified. This is `nil` when a new key is being added.
-    var sceneObject: SceneObject?
+    var scene: Scene?
     /// The delegate will be informed when the Done button is clicked.
     var delegate: EditSceneDelegate?
     
     // MARK: - Private members
     
-    var newScene: Scene!
+    var newScene: SceneNumber!
     
     // MARK: - View Controller
 
@@ -75,10 +75,10 @@ class EditSceneViewController: UITableViewController {
         let action = isNewScene ? "Add" : "Edit"
         title = "\(action) Scene"
         
-        if let sceneObject = sceneObject {
-            nameCell.detailTextLabel?.text = sceneObject.name
-            newScene = sceneObject.scene
-            sceneNumberCell.detailTextLabel?.text = sceneObject.scene.asString()
+        if let scene = scene {
+            nameCell.detailTextLabel?.text = scene.name
+            newScene = scene.number
+            sceneNumberCell.detailTextLabel?.text = scene.number.asString()
             sceneNumberCell.accessoryType = .none
             sceneNumberCell.selectionStyle = .none
         } else {
@@ -126,7 +126,7 @@ class EditSceneViewController: UITableViewController {
 private extension EditSceneViewController {
     
     var isNewScene: Bool {
-        return sceneObject == nil
+        return scene == nil
     }
     
     var isSceneValid: Bool {
@@ -148,7 +148,7 @@ private extension EditSceneViewController {
         presentTextAlert(title: title, message: message,
                          text: newScene?.hex, placeHolder: "Scene number",
                          type: .sceneRequired) { hex in
-                            self.newScene = Scene(hex, radix: 16)!
+                            self.newScene = SceneNumber(hex, radix: 16)!
                             self.sceneNumberCell.detailTextLabel?.text = self.newScene.asString()
         }
     }
@@ -170,8 +170,8 @@ private extension EditSceneViewController {
             return
         }
         
-        if let sceneObject = sceneObject {
-            sceneObject.name = name
+        if let scene = scene {
+            scene.name = name
         } else {
             // Check if no such scene already exist.
             if let existingScene = network.scenes[newScene] {
@@ -180,7 +180,7 @@ private extension EditSceneViewController {
             }
             // Check if the scene is in the local Provisioner's range.
             guard let provisioner = network.localProvisioner,
-                  provisioner.isSceneInAllocatedRange(newScene) else {
+                      provisioner.isSceneInAllocatedRange(newScene) else {
                 presentAlert(title: "Error",
                              message: "Scene is outside of this provisioner scene ranges.")
                 return

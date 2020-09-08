@@ -44,16 +44,16 @@ public struct SceneStatus: GenericMessage, SceneStatusMessage, TransitionStatusM
     
     public let status: SceneMessageStatus
     /// The number of the current Scene.
-    public let scene: Scene
+    public let scene: SceneNumber
     /// The number of the target Scene.
-    public let targetScene: Scene?
+    public let targetScene: SceneNumber?
     
     public let remainingTime: TransitionTime?
     
     /// Creates the Scene Status message.
     ///
     /// - parameter scene: The number of the current Scene.
-    public init(report scene: Scene) {
+    public init(report scene: SceneNumber) {
         self.status = .success
         self.scene = scene
         self.targetScene = nil
@@ -65,7 +65,7 @@ public struct SceneStatus: GenericMessage, SceneStatusMessage, TransitionStatusM
     /// - parameters:
     ///   - scene: The number of the current Scene.
     ///   - status: Operation Status.
-    public init(report scene: Scene, with status: SceneMessageStatus) {
+    public init(report scene: SceneNumber, with status: SceneMessageStatus) {
         self.status = status
         self.scene = scene
         self.targetScene = nil
@@ -79,7 +79,7 @@ public struct SceneStatus: GenericMessage, SceneStatusMessage, TransitionStatusM
     ///   - targetScene: The number of the target Scene.
     ///   - remainingTime: The time that an element will take to transition
     ///                    to the target state from the present state.
-    public init(report scene: Scene, targetScene: Scene, remainingTime: TransitionTime) {
+    public init(report scene: SceneNumber, targetScene: SceneNumber, remainingTime: TransitionTime) {
         self.status = .success
         self.scene = scene
         self.targetScene = targetScene
@@ -94,7 +94,7 @@ public struct SceneStatus: GenericMessage, SceneStatusMessage, TransitionStatusM
     ///   - remainingTime: The time that an element will take to transition
     ///                    to the target state from the present state.
     ///   - status: Operation status.                    
-    public init(report scene: Scene, targetScene: Scene,
+    public init(report scene: SceneNumber, targetScene: SceneNumber,
                 remainingTime: TransitionTime, with status: SceneMessageStatus) {
         self.status = status
         self.scene = scene

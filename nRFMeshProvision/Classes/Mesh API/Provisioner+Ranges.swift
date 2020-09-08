@@ -246,8 +246,8 @@ public extension Provisioner {
     ///
     /// - parameter scene: The scene to be checked.
     /// - returns: `True` if the scene is in allocated ranges, `false` otherwise.
-    func isSceneInAllocatedRange(_ scene: Scene) -> Bool {
-        guard scene.isValidScene else {
+    func isSceneInAllocatedRange(_ scene: SceneNumber) -> Bool {
+        guard scene.isValidSceneNumber else {
             return false
         }
         return allocatedSceneRange.contains(scene)
@@ -255,9 +255,9 @@ public extension Provisioner {
     
     /// List of all Scenes which numbers are in the Provisioner's allocated scene
     /// ranges.
-    var scenes: [SceneObject] {
+    var scenes: [Scene] {
         return meshNetwork?.scenes
-            .filter { allocatedSceneRange.contains($0.scene) } ?? []
+            .filter { allocatedSceneRange.contains($0.number) } ?? []
     }
     
     /// Returns the maximum number of Elements that can be assigned to a Node

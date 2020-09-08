@@ -42,11 +42,11 @@ public extension MeshNetwork {
     ///   - name: The human-readable name of the Scene.
     /// - throws: This method throws an error if a Scene with the same number
     ///           already exists in the mesh network.
-    func add(scene: Scene, name: String) throws {
+    func add(scene: SceneNumber, name: String) throws {
         guard scenes[scene] == nil else {
             throw MeshNetworkError.sceneAlreadyExists
         }
-        add(scene: SceneObject(scene, name: name))
+        add(scene: Scene(scene, name: name))
     }
     
     /// Removes the given Scene from the network.
@@ -56,8 +56,8 @@ public extension MeshNetwork {
     /// - parameter scene: The Scene to be removed.
     /// - throws: This method throws `MeshNetworkError.sceneInUse` when the
     ///           Scene is in use in this mesh network.
-    func remove(scene: Scene) throws {
-        if let index = scenes.firstIndex(where: { $0.scene == scene }) {
+    func remove(scene: SceneNumber) throws {
+        if let index = scenes.firstIndex(where: { $0.number == scene }) {
             if scenes[index].isUsed {
                 throw MeshNetworkError.sceneInUse
             }
@@ -70,7 +70,7 @@ public extension MeshNetwork {
     ///
     /// - parameter scene: The scene to look for.
     /// - returns: List of Nodes whose Scene Register state contains this Scene.
-    func nodes(registeredTo scene: Scene) -> [Node] {
+    func nodes(registeredTo scene: SceneNumber) -> [Node] {
         return scenes[scene]?.nodes ?? []
     }
     
@@ -81,8 +81,8 @@ public extension MeshNetwork {
     ///                          generation.
     /// - returns: The next available Scene number that can be assigned to a new Scene,
     ///            or `nil`, if there are no more available numbers in the allocated range.
-    func nextAvailableScene(for provisioner: Provisioner) -> Scene? {
-        let sortedScenes = scenes.sorted { $0.scene < $1.scene }
+    func nextAvailableScene(for provisioner: Provisioner) -> SceneNumber? {
+        let sortedScenes = scenes.sorted { $0.number < $1.number }
         
         // Iterate through all scenes just once, while iterating over ranges.
         var index = 0
@@ -97,15 +97,15 @@ public extension MeshNetwork {
                 index += 1
                 
                 // Skip scenes with number below the range.
-                if scene > sceneObject.scene {
+                if scene > sceneObject.number {
                     continue
                 }
                 // If we found a space before the current node, return the scene number.
-                if scene < sceneObject.scene {
+                if scene < sceneObject.number {
                     return scene
                 }
                 // Else, move the address to the next available address.
-                scene = sceneObject.scene + 1
+                scene = sceneObject.number + 1
                 
                 // If the new scene number is outside of the range, go to the next one.
                 if scene > range.lastScene {

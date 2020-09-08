@@ -53,7 +53,7 @@ class NodeStoreSceneViewController: ProgressViewController {
             newScenes[selectedIndexPath.row] : currentScenes[selectedIndexPath.row]
         start("Storing Scene...") {
             return try MeshNetworkManager.instance
-                .send(SceneStore(selectedScene.scene), to: self.sceneSetupServerModel)
+                .send(SceneStore(selectedScene.number), to: self.sceneSetupServerModel)
         }
     }
     
@@ -71,9 +71,9 @@ class NodeStoreSceneViewController: ProgressViewController {
     /// A model that supports Scene Store and Scene Delete messages.
     private var sceneSetupServerModel: Model!
     /// Scenes that are not yet stored on the Node.
-    private var newScenes: [SceneObject]!
+    private var newScenes: [Scene]!
     /// Scenes currently present in the Scene Register on the Node.
-    private var currentScenes: [SceneObject]!
+    private var currentScenes: [Scene]!
     /// Selected Index Path, or `nil`, if nothing is selected.
     private var selectedIndexPath: IndexPath?
     
