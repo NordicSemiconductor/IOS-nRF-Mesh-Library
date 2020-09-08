@@ -67,19 +67,22 @@ The Sample App provides additional logic on top of the bearer, which allows to c
 
 ### Local Elements and Models
 
-By default, the local Node (that is the Provisioner's Node) will have one Element with 4 Models:
+By default, the local Node (that is the Provisioner's Node) will have one Element with 5 Models:
 * **Configuration Server**
 * **Configuration Client**
 * **Health Server**
 * **Health Client**
+* **Scene Client**
 
 If you want to send and receive any other messages beside Configuration Messages, you need to define a Model. For example, if you want to allow user to control switching ON and OFF lights in their homes using *Generic OnOff Set* messages, you need to have **Generic OnOff Client** model.
 
-To set local elements, call `manager.localElements = [...]`. The 4 Models mentioned above will be added automatically to the first Element. Each local model must have a `ModelDelegate` that will handle incoming messages and provide mapping for opcodes of messages that such Model supports (receives).
+To set local elements, call `manager.localElements = [...]`. The 5 Models mentioned above will be added automatically to the first Element. Each local model must have a `ModelDelegate` that will handle incoming messages and provide mapping for opcodes of messages that such Model supports (receives).
 
 For example, the **Generic OnOff Client** mentioned above may send *Generic OnOff Get*, *Generic OnOff Set*, *Generic OnOff Set Unacknowledged* and will receive *Generic OnOff Status*. The last, status message must be added to `messageTypes` map of the Model's delegate, so that when a message with its opcode is received, the library knows which message type to instantiate. If you support any Server model, your `ModelDelegate` must also reply to all acknowledged messages it can receive.
 
 Without setting the local Model and specifying the message types, each message would be reported to the manager's delegate as `UnknownMessage`. 
+
+**Important:** Received messages are delivered to the app in 2 ways: using the `MeshNetworkManager.delegate` and to the `ModelDelegate`. However, in order to receive the messages in the model, it needs to bound to the Application Key, and the message needs either target the Element's Unicast Address, a All Nodes (0xFFFF) address, or a Group Address to which that model is subscribed to. 
 
 ```swift
 let nordicCompanyId: UInt16 = 0x0059
@@ -91,6 +94,12 @@ meshNetworkManager.localElements = [element]
 ```
 
 **Important:** Even if you don't have any Models (for example only want to allow Configuration Messages in the app) you have to set the `localElements` property. In that case the Configuration Server and Client Models will not be properly initialized and you will be getting `UnknownMessage` instead of proper Status message.
+
+```swift
+// Configuration when there are no additional models.
+// This will create a single Element with 5 models mentioned above.
+meshNetworkManager.localElements = []
+```
 
 ### Provisioning 
 
