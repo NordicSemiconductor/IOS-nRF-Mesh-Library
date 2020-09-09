@@ -38,16 +38,13 @@ class GenericOnOffServerDelegate: ModelDelegate {
     /// Model state.
     private var state = GenericState<Bool>(false) {
         didSet {
-            if let transition = state.transition {
-                if transition.remainingTime > 0 {
-                    DispatchQueue.main.async {
-                        Timer.scheduledTimer(withTimeInterval: transition.remainingTime, repeats: false) { _ in
-                            // If the state has not change since it was set,
-                            // remove the Transition.
-                            if self.state.transition?.start == transition.start {
-                                self.state = GenericState<Bool>(self.state.transition?.targetValue ?? self.state.value)
-                            }
-                        }
+            if let transition = state.transition, transition.remainingTime > 0 {
+                DispatchQueue.main.asyncAfter(deadline: .now() + transition.remainingTime) { [weak self] in
+                    guard let self = self else { return }
+                    // If the state has not change since it was set,
+                    // remove the Transition.
+                    if self.state.transition?.start == transition.start {
+                        self.state = GenericState<Bool>(self.state.transition?.targetValue ?? self.state.value)
                     }
                 }
             }
@@ -60,7 +57,7 @@ class GenericOnOffServerDelegate: ModelDelegate {
         }
     }
     /// The last transaction details.
-    private var lastTransaction: (source: Address, destination: MeshAddress, tid: UInt8, timestamp: Date)?
+    private let transactionHelper = TransactionHelper()
     /// The state observer.
     private var observer: ((GenericState<Bool>) -> ())?
     
@@ -79,15 +76,11 @@ class GenericOnOffServerDelegate: ModelDelegate {
                from source: Address, sentTo destination: MeshAddress) -> MeshMessage {
         switch request {
         case let request as GenericOnOffSet:
-        // Ignore a repeated request (with the same TID) from the same source
-        // and sent to the same destinatino when it was received within 6 seconds.
-            guard lastTransaction == nil ||
-                  lastTransaction!.source != source || lastTransaction!.destination != destination ||
-                  request.isNewTransaction(previousTid: lastTransaction!.tid, timestamp: lastTransaction!.timestamp) else {
-                    lastTransaction = (source: source, destination: destination, tid: request.tid, timestamp: Date())
+            // Ignore a repeated request (with the same TID) from the same source
+            // and sent to the same destination when it was received within 6 seconds.
+            guard transactionHelper.isNewTransaction(request, from: source, to: destination) else {
                 break
             }
-            lastTransaction = (source: source, destination: destination, tid: request.tid, timestamp: Date())
             
             if let transitionTime = request.transitionTime,
                let delay = request.delay {
@@ -99,8 +92,7 @@ class GenericOnOffServerDelegate: ModelDelegate {
             }
             
         default:
-            // Not possible.
-            break
+            fatalError("Not possible")
         }
         
         // Reply with GenericOnOffStatus.
@@ -118,14 +110,10 @@ class GenericOnOffServerDelegate: ModelDelegate {
         switch message {
         case let request as GenericOnOffSetUnacknowledged:
             // Ignore a repeated request (with the same TID) from the same source
-            // and sent to the same destinatino when it was received within 6 seconds.
-            guard lastTransaction == nil ||
-                  lastTransaction!.source != source || lastTransaction!.destination != destination ||
-                  request.isNewTransaction(previousTid: lastTransaction!.tid, timestamp: lastTransaction!.timestamp) else {
-                lastTransaction = (source: source, destination: destination, tid: request.tid, timestamp: Date())
+            // and sent to the same destination when it was received within 6 seconds.
+            guard transactionHelper.isNewTransaction(request, from: source, to: destination) else {
                 break
             }
-            lastTransaction = (source: source, destination: destination, tid: request.tid, timestamp: Date())
             
             if let transitionTime = request.transitionTime,
                let delay = request.delay {

@@ -92,6 +92,67 @@ public protocol ModelDelegate {
     
 }
 
+/// Transaction helper may be used to deal with Transaction Messages.
+/// Each such message is sent with a Transaction Identifier (TID).
+///
+/// If a received TID is the same as TID of the previously received message
+/// from the same source and targetting the same destination, and no more
+/// than 6 seconds have passed since, the message is assumed to be the
+/// transaction continuation. Otherwise it is a new transaction.
+public class TransactionHelper {
+    
+    private typealias Transaction = (
+        source: Address,
+        destination: MeshAddress,
+        tid: UInt8,
+        timestamp: Date
+    )
+    
+    /// The last transaction details.
+    private var lastTransactions: [UInt32 : Transaction] = [:]
+    
+    public init() {
+        // No op.
+    }
+    
+    /// Returns whether the given Transaction Message was sent as a new
+    /// transaction, or is part of the previously started transaction.
+    ///
+    /// - parameters:
+    ///   - message: The received message.
+    ///   - source: The source Unicast Address.
+    ///   - destination: The destination address.
+    /// - returns: True, if the message starts a new transaction; false otherwise.
+    public func isNewTransaction(_ message: TransactionMessage,
+                                 from source: Address, to destination: MeshAddress) -> Bool {
+        let lastTransaction = lastTransactions[message.opCode]
+        let isNew = lastTransaction == nil ||
+                    lastTransaction!.source != source ||
+                    lastTransaction!.destination != destination ||
+                    message.isNewTransaction(previousTid: lastTransaction!.tid,
+                                             timestamp: lastTransaction!.timestamp)
+        lastTransactions[message.opCode] = (
+            source: source, destination: destination,
+            tid: message.tid, timestamp: Date()
+        )
+        return isNew
+    }
+    
+    /// Returns whether the given Transaction Message was sent as a continuation
+    /// of the last transaction.
+    ///
+    /// - parameters:
+    ///   - message: The received message.
+    ///   - source: The source Unicast Address.
+    ///   - destination: The destination address.
+    /// - returns: True, if the message continues the last transaction; false otherwise.
+    public func isTransactionContinuation(_ message: TransactionMessage,
+                                          from source: Address, to destination: MeshAddress) -> Bool {
+        return !isNewTransaction(message, from: source, to: destination)
+    }
+    
+}
+
 public extension Array where Element == StaticMeshMessage.Type {
     
     /// A helper method that can create a map of message types required
