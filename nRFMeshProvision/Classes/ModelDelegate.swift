@@ -30,6 +30,12 @@
 
 import Foundation
 
+public enum ModelError: Error {
+    /// This error can be returned if the received acknowledged message
+    /// should be discarded due to being invalid.
+    case invalidMessage
+}
+
 public protocol ModelDelegate {
     
     /// A map of mesh message types that the associated Model may receive
@@ -55,8 +61,11 @@ public protocol ModelDelegate {
     ///   - source:  The source Unicast Address.
     ///   - destination: The destination address of the request.
     /// - returns: The response message to be sent to the sender.
+    /// - throws: The method should throw `ModelError.invalidMessage`
+    ///           if the receive message is invalid and no response
+    ///           should be replied.
     func model(_ model: Model, didReceiveAcknowledgedMessage request: AcknowledgedMeshMessage,
-               from source: Address, sentTo destination: MeshAddress) -> MeshMessage
+               from source: Address, sentTo destination: MeshAddress) throws -> MeshMessage
     
     /// This method should handle the received Unacknowledged Message.
     ///

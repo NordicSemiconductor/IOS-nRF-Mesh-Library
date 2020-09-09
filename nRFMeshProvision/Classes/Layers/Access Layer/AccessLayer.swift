@@ -349,13 +349,14 @@ private extension AccessLayer {
             for element in localNode.elements {
                 // For each of the Models...
                 // (except Configuration Server and Client, which use Device Key)
-                for model in element.models
-                    .filter({ !$0.isConfigurationServer && !$0.isConfigurationClient }) {
+                let models = element.models
+                    .filter { !$0.isConfigurationServer && !$0.isConfigurationClient }
+                for model in models {
                     // check, if the delegate is set, and it supports the opcode
                     // specified in the received Access PDU.
                     if let delegate = model.delegate,
                        let message = delegate.decode(accessPdu) {
-                        // Save and log only the first decoded message (see mehtod's comment).
+                        // Save and log only the first decoded message (see method's comment).
                         if newMessage == nil {
                             logger?.i(.model, "\(message) received from: \(accessPdu.source.hex), to: \(accessPdu.destination.hex)")
                             newMessage = message
@@ -492,7 +493,11 @@ private extension ModelDelegate {
             self.model(model, didReceiveResponse: message, toAcknowledgedMessage: request, from: source)
             return nil
         } else if let request = message as? AcknowledgedMeshMessage {
-            return self.model(model, didReceiveAcknowledgedMessage: request, from: source, sentTo: destination)
+            do {
+                return try self.model(model, didReceiveAcknowledgedMessage: request, from: source, sentTo: destination)
+            } catch {
+                return nil
+            }
         } else {
             self.model(model, didReceiveUnacknowledgedMessage: message, from: source, sentTo: destination)
             return nil
