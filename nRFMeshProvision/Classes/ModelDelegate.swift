@@ -36,7 +36,8 @@ public enum ModelError: Error {
     case invalidMessage
 }
 
-public protocol ModelDelegate {
+public protocol ModelDelegate: class {
+    typealias MessageComposer = () -> MeshMessage
     
     /// A map of mesh message types that the associated Model may receive
     /// and handle. It should not contain types of messages that this
@@ -53,11 +54,15 @@ public protocol ModelDelegate {
     /// change was initiated.
     var isSubscriptionSupported: Bool { get }
     
-    /// A flag whether this Model supports publication mechanism.
-    /// When set to 'false', the library will return error
-    /// `ConfigMessageStatus.invalidPublishParameters` whenever
-    /// publication was initiated.
-    var isPublicationSupported: Bool { get }
+    /// The message composer that will be used to create a Mesh Message.
+    ///
+    /// The composer will be used whenever model is about to pubilsh its
+    /// state using the publish information specified in the Model.
+    ///
+    /// When set to `nil`, the library will return error
+    /// `ConfigMessageStatus.invalidPublishParameters` for each Config
+    /// Model Publication Set and Config Model Publication Virtual Address Set.
+    var publicationMessageComposer: MessageComposer? { get }
     
     /// This method should handle the received Acknowledged Message.
     ///
@@ -95,6 +100,38 @@ public protocol ModelDelegate {
     func model(_ model: Model, didReceiveResponse response: MeshMessage,
                toAcknowledgedMessage request: AcknowledgedMeshMessage,
                from source: Address)
+    
+}
+
+public extension ModelDelegate {
+    
+    /// Publishes a single message given as a parameter using the
+    /// Publish information set in the underlying Model.
+    ///
+    /// - parameters:
+    ///   - message: The message to be published.
+    ///   - manager: The manager to be used for publishing.
+    /// - returns: The Message Handler that can be used to cancel sending.
+    @discardableResult
+    func publish(_ message: MeshMessage, using manager: MeshNetworkManager) -> MessageHandle? {
+        return manager.localElements
+            .flatMap { $0.models }
+            .first { $0.delegate === self }
+            .map { manager.publish(message, fromModel: $0) } ?? nil
+    }
+    
+    /// Publishes a single message created by message composer using the
+    /// Publish information set in the underlying Model.
+    ///
+    /// - parameter manager: The manager to be used for publishing.
+    /// - returns: The Message Handler that can be used to cancel sending.
+    @discardableResult
+    func publish(using manager: MeshNetworkManager) -> MessageHandle? {
+        guard let composer = publicationMessageComposer else {
+            return nil
+        }
+        return publish(composer(), using: manager)
+    }
     
 }
 

@@ -125,7 +125,6 @@ class ControlViewController: ProgressCollectionViewController {
         let identifier = String(format: "%08X", model.modelId)
         var cell = collectionView.dequeueReusableCell(withReuseIdentifier: identifier, for: indexPath) as! ModelControlCell
         cell.model = model
-        cell.delegate = self
         return cell as! UICollectionViewCell
     }
     
@@ -156,16 +155,6 @@ class ControlViewController: ProgressCollectionViewController {
         presentAlert(title: name, message: message)
     }
 
-}
-
-extension ControlViewController: ModelControlDelegate {
-    
-    func publish(_ message: MeshMessage, description: String, fromModel model: Model) {
-        start(description) {
-            return MeshNetworkManager.instance.publish(message, fromModel: model)
-        }
-    }
-    
 }
 
 extension ControlViewController: UICollectionViewDelegateFlowLayout {

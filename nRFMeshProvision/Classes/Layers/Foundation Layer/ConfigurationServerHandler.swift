@@ -35,7 +35,7 @@ internal class ConfigurationServerHandler: ModelDelegate {
     
     let messageTypes: [UInt32 : MeshMessage.Type]
     let isSubscriptionSupported: Bool = false
-    var isPublicationSupported: Bool = false
+    let publicationMessageComposer: MessageComposer? = nil
     
     init(_ meshNetwork: MeshNetwork) {
         let types: [ConfigMessage.Type] = [
@@ -265,7 +265,7 @@ internal class ConfigurationServerHandler: ModelDelegate {
             guard let model = element.model(withModelId: request.modelId) else {
                 return ConfigModelPublicationStatus(responseTo: request, with: .invalidModel)
             }
-            guard model.delegate?.isPublicationSupported != false else {
+            guard let _ = model.delegate?.publicationMessageComposer else {
                 return ConfigModelPublicationStatus(responseTo: request, with: .invalidPublishParameters)
             }
             guard request.publish.isCancel || meshNetwork.applicationKeys[request.publish.index] != nil else {
@@ -297,8 +297,8 @@ internal class ConfigurationServerHandler: ModelDelegate {
             guard let model = element.model(withModelId: request.modelId) else {
                 return ConfigModelPublicationStatus(responseTo: request, with: .invalidModel)
             }
-            guard request.publish.isCancel ||
-                  model.delegate?.isPublicationSupported != false else {
+            guard request.publish.isCancel,
+                  let _ = model.delegate?.publicationMessageComposer else {
                 return ConfigModelPublicationStatus(responseTo: request, with: .invalidPublishParameters)
             }
             guard meshNetwork.applicationKeys[request.publish.index] != nil else {

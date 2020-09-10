@@ -34,7 +34,17 @@ import nRFMeshProvision
 class GenericOnOffClientDelegate: ModelDelegate {
     let messageTypes: [UInt32 : MeshMessage.Type]
     let isSubscriptionSupported: Bool = true
-    var isPublicationSupported: Bool = true
+    
+    lazy var publicationMessageComposer: MessageComposer? = { [unowned self] in
+        return GenericOnOffSetUnacknowledged(self.state)
+    }
+    
+    /// The current state of the Generic On Off Client model.
+    var state: Bool = false {
+        didSet {
+            publish(using: MeshNetworkManager.instance)
+        }
+    }
     
     init() {
         let types: [GenericMessage.Type] = [

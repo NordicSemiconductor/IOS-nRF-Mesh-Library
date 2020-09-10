@@ -34,7 +34,17 @@ import nRFMeshProvision
 class GenericLevelServerDelegate: ModelDelegate {
     let messageTypes: [UInt32 : MeshMessage.Type]
     let isSubscriptionSupported: Bool = true
-    var isPublicationSupported: Bool = true
+    
+    lazy var publicationMessageComposer: MessageComposer? = { [unowned self] in
+        // Reply with GenericLevelStatus.
+        if let transition = self.state.transition, transition.remainingTime > 0 {
+            return GenericLevelStatus(level: self.state.value,
+                                      targetLevel: transition.targetValue,
+                                      remainingTime: TransitionTime(transition.remainingTime))
+        } else {
+            return GenericLevelStatus(level: self.state.value)
+        }
+    }
     
     /// Model state.
     private var state = GenericState<Int16>(Int16.min) {

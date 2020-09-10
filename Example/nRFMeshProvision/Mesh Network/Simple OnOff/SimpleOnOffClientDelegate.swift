@@ -49,7 +49,17 @@ import nRFMeshProvision
 class SimpleOnOffClientDelegate: ModelDelegate {
     let messageTypes: [UInt32 : MeshMessage.Type]
     let isSubscriptionSupported: Bool = false
-    var isPublicationSupported: Bool = true
+    
+    lazy var publicationMessageComposer: MessageComposer? = { [unowned self] in
+        return SimpleOnOffSetUnacknowledged(self.state)
+    }
+    
+    /// The current state of the Simple On Off Client model.
+    var state: Bool = false {
+        didSet {
+            publish(using: MeshNetworkManager.instance)
+        }
+    }
     
     private var logger: LoggerDelegate? {
         return MeshNetworkManager.instance.logger

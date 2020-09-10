@@ -34,7 +34,16 @@ import nRFMeshProvision
 class GenericOnOffServerDelegate: ModelDelegate {
     let messageTypes: [UInt32 : MeshMessage.Type]
     let isSubscriptionSupported: Bool = true
-    var isPublicationSupported: Bool = true
+    
+    lazy var publicationMessageComposer: MessageComposer? = { [unowned self] in
+        if let transition = self.state.transition, transition.remainingTime > 0 {
+            return GenericOnOffStatus(self.state.value,
+                                      targetState: transition.targetValue,
+                                      remainingTime: TransitionTime(transition.remainingTime))
+        } else {
+            return GenericOnOffStatus(self.state.value)
+        }
+    }
     
     /// Model state.
     private var state = GenericState<Bool>(false) {

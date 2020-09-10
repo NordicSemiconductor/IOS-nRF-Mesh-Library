@@ -31,13 +31,8 @@
 import UIKit
 import nRFMeshProvision
 
-protocol ModelControlDelegate: class {
-    func publish(_ message: MeshMessage, description: String, fromModel model: Model)
-}
-
 protocol ModelControlCell {
     var model: Model! { set get }
-    var delegate: ModelControlDelegate? { get set }
 }
 
 class BaseModelControlCell<MD: ModelDelegate>: UICollectionViewCell, ModelControlCell {
@@ -52,8 +47,7 @@ class BaseModelControlCell<MD: ModelDelegate>: UICollectionViewCell, ModelContro
         }
     }
     /// The Model delegate.
-    var modelDelegate: MD?
-    weak var delegate: ModelControlDelegate?
+    var modelDelegate: MD!
     
     // MARK: - Private methods
     

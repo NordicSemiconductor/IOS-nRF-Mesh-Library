@@ -35,7 +35,7 @@ internal class ConfigurationClientHandler: ModelDelegate {
     
     let messageTypes: [UInt32 : MeshMessage.Type]
     let isSubscriptionSupported: Bool = false
-    var isPublicationSupported: Bool = false
+    let publicationMessageComposer: MessageComposer? = nil
     
     init(_ meshNetwork: MeshNetwork) {
         let types: [ConfigMessage.Type] = [

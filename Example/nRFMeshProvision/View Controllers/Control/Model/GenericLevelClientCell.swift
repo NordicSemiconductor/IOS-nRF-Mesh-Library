@@ -36,11 +36,11 @@ class GenericLevelClientCell: BaseModelControlCell<GenericLevelClientDelegate> {
     @IBOutlet weak var icon: UIImageView!
     @IBOutlet weak var plusButton: UIButton!
     @IBAction func plusTapped(_ sender: UIButton) {
-        publishGenericDeltaMessage(delta: +8192)
+        modelDelegate.state &+= 8192
     }
     @IBOutlet weak var minusButton: UIButton!
     @IBAction func minusTapped(_ sender: UIButton) {
-        publishGenericDeltaMessage(delta: -8192)
+        modelDelegate.state &-= 8192
     }
     
     override func setup(_ model: GenericLevelClientDelegate?) {
@@ -54,16 +54,4 @@ class GenericLevelClientCell: BaseModelControlCell<GenericLevelClientDelegate> {
         plusButton.isEnabled = isEnabled
         minusButton.isEnabled = isEnabled
     }
-}
-
-private extension GenericLevelClientCell {
-    
-    func publishGenericDeltaMessage(delta: Int32) {
-        let label = delta < 0 ? "Dimming..." : "Brightening..."
-        delegate?.publish(GenericDeltaSetUnacknowledged(delta: delta,
-                                                        transitionTime: TransitionTime(1.0),
-                                                        delay: 20), // 100 ms
-                          description: label, fromModel: model)
-    }
-    
 }
