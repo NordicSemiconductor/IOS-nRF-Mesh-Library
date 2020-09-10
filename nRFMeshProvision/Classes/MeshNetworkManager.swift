@@ -307,6 +307,10 @@ public extension MeshNetworkManager {
     /// This method tries to publish the given message using the
     /// publication information set in the Model.
     ///
+    /// If the retransmission is set to a value greater than 0, and the message
+    /// is unacknowleged, this method will retransmit it number of times
+    /// with the count and interval specified in the retransmission object.
+    ///
     /// - parameters:
     ///   - message:    The message to be sent.
     ///   - model:      The model from which to send the message.
@@ -316,12 +320,43 @@ public extension MeshNetworkManager {
     func publish(_ message: MeshMessage, fromModel model: Model,
                  withTtl initialTtl: UInt8? = nil) -> MessageHandle? {
         guard let publish = model.publish,
-            let localElement = model.parentElement,
-            let applicationKey = meshNetwork?.applicationKeys[publish.index] else {
+              let localElement = model.parentElement,
+              let applicationKey = meshNetwork?.applicationKeys[publish.index] else {
             return nil
         }
-        return try? send(message, from: localElement, to: publish.publicationAddress,
-                         withTtl: initialTtl, using: applicationKey)
+        do {
+            let handler = try send(message, from: localElement, to: publish.publicationAddress,
+                                   withTtl: initialTtl, using: applicationKey)
+        
+            // If retransmission was configured, start the timer that will retransmit.
+            // There is no need to retransmit acknowledged messages, as they have their
+            // own retransmission mechanism.
+            if message is AcknowledgedMeshMessage {
+                var count = publish.retransmit.count
+                if count > 0 {
+                    let interval: TimeInterval = Double(publish.retransmit.interval) / 1000
+                    BackgroundTimer.scheduledTimer(withTimeInterval: interval, repeats: count > 0) { [weak self] timer in
+                        guard let self = self else {
+                            timer.invalidate()
+                            return
+                        }
+                        do {
+                            try self.send(message, from: localElement, to: publish.publicationAddress,
+                                          withTtl: initialTtl, using: applicationKey)
+                            count -= 1
+                            if count == 0 {
+                                timer.invalidate()
+                            }
+                        } catch {
+                            timer.invalidate()
+                        }
+                    }
+                }
+            }
+            return handler
+        } catch {
+            return nil
+        }
     }
     
     /// Encrypts the message with the Application Key and a Network Key
