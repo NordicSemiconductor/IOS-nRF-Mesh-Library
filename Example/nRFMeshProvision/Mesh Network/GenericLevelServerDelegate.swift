@@ -34,6 +34,7 @@ import nRFMeshProvision
 class GenericLevelServerDelegate: ModelDelegate {
     let messageTypes: [UInt32 : MeshMessage.Type]
     let isSubscriptionSupported: Bool = true
+    var isPublicationSupported: Bool = true
     
     /// Model state.
     private var state = GenericState<Int16>(Int16.min) {

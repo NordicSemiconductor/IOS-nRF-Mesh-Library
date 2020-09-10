@@ -35,6 +35,7 @@ internal class SceneClientHandler: ModelDelegate {
     
     let messageTypes: [UInt32 : MeshMessage.Type]
     let isSubscriptionSupported: Bool = true
+    var isPublicationSupported: Bool = true
     
     init(_ meshNetwork: MeshNetwork) {
         let types: [GenericMessage.Type] = [

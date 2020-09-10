@@ -49,6 +49,7 @@ import nRFMeshProvision
 class SimpleOnOffClientDelegate: ModelDelegate {
     let messageTypes: [UInt32 : MeshMessage.Type]
     let isSubscriptionSupported: Bool = false
+    var isPublicationSupported: Bool = true
     
     private var logger: LoggerDelegate? {
         return MeshNetworkManager.instance.logger

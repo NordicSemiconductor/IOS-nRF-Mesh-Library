@@ -53,6 +53,12 @@ public protocol ModelDelegate {
     /// change was initiated.
     var isSubscriptionSupported: Bool { get }
     
+    /// A flag whether this Model supports publication mechanism.
+    /// When set to 'false', the library will return error
+    /// `ConfigMessageStatus.invalidPublishParameters` whenever
+    /// publication was initiated.
+    var isPublicationSupported: Bool { get }
+    
     /// This method should handle the received Acknowledged Message.
     ///
     /// - parameters:
