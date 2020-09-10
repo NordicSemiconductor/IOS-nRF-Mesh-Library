@@ -252,10 +252,7 @@ extension MeshNetwork {
         timestamp = Date()
         
         // Make the local Provisioner aware of the new key.
-        if let localProvisioner = provisioners.first,
-           let n = node(for: localProvisioner) {
-            n.add(networkKey: key)
-        }
+        localProvisioner?.node?.add(networkKey: key)
     }
     
     /// Adds the given Application Key to the network.
@@ -267,10 +264,7 @@ extension MeshNetwork {
         timestamp = Date()
         
         // Make the local Provisioner aware of the new key.
-        if let localProvisioner = provisioners.first,
-           let n = node(for: localProvisioner) {
-            n.add(applicationKey: key)
-        }
+        localProvisioner?.node?.add(applicationKey: key)
     }
     
     /// Adds a new Scene to the network.

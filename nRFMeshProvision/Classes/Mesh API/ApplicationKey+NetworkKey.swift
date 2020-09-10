@@ -77,5 +77,14 @@ public extension Array where Element == ApplicationKey {
         return contains(where: { $0.isBound(to: networkKey) })
     }
     
+    /// Filters the list to contain only those Application Keys, that are
+    /// bound to the given Network Key.
+    ///
+    /// - parameter networkKey: The Network Key of interst.
+    /// - returns: Filtered list of Application Keys.
+    func boundTo(_ networkKey: NetworkKey) -> [ApplicationKey] {
+        return filter { $0.isBound(to: networkKey) }
+    }
+    
 }
 
