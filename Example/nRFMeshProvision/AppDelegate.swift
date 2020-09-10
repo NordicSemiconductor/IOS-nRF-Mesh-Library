@@ -127,14 +127,22 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 extension MeshNetworkManager {
     
     static var instance: MeshNetworkManager {
-        return DispatchQueue.main.sync {
+        if Thread.isMainThread {
             return (UIApplication.shared.delegate as! AppDelegate).meshNetworkManager
+        } else {
+            return DispatchQueue.main.sync {
+                return (UIApplication.shared.delegate as! AppDelegate).meshNetworkManager
+            }
         }
     }
     
     static var bearer: NetworkConnection! {
-        return DispatchQueue.main.sync {
+        if Thread.isMainThread {
             return (UIApplication.shared.delegate as! AppDelegate).connection
+        } else {
+            return DispatchQueue.main.sync {
+                return (UIApplication.shared.delegate as! AppDelegate).connection
+            }
         }
     }
     
