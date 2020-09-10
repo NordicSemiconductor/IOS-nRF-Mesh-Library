@@ -529,7 +529,8 @@ private extension AccessLayer {
         /// The timeout before which the response should be received.
         let timeout = networkManager.acknowledgmentMessageTimeout
         
-        let ack = AcknowledgmentContext(for: request, sentFrom: pdu.source, to: pdu.destination.address,
+        let ack = AcknowledgmentContext(for: request,
+            sentFrom: pdu.source, to: pdu.destination.address,
             repeatAfter: initialDelay, repeatBlock: {
                 if !self.networkManager.upperTransportLayer.isReceivingResponse(from: pdu.destination.address) {
                     self.logger?.d(.access, "Resending \(pdu)")
