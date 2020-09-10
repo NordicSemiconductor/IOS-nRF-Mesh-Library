@@ -36,8 +36,9 @@ internal class BackgroundTimer {
     let interval: TimeInterval
     let repeats: Bool
     
-    /// Chedules a timer that can be started from a background DispatchQueue.
-    @discardableResult static func scheduledTimer(withTimeInterval interval: TimeInterval, repeats: Bool,
+    /// Shedules a timer that can be started from a background DispatchQueue.
+    @discardableResult
+    static func scheduledTimer(withTimeInterval interval: TimeInterval, repeats: Bool,
                                block: @escaping  (BackgroundTimer) -> Void) -> BackgroundTimer {
         return BackgroundTimer(withTimeInterval: interval, repeats: repeats, block: block)
     }
