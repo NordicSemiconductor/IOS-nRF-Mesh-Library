@@ -31,7 +31,7 @@
 import Foundation
 import nRFMeshProvision
 
-class SceneServerDelegate: ModelDelegate, StoredWithSceneStatusDelegate {
+class SceneServerDelegate: SceneServerModelDelegate {
     let messageTypes: [UInt32 : MeshMessage.Type]    
     let isSubscriptionSupported: Bool = true
     
@@ -70,15 +70,12 @@ class SceneServerDelegate: ModelDelegate, StoredWithSceneStatusDelegate {
     private let transactionHelper = TransactionHelper()
     
     private let defaults: UserDefaults
-    private let meshNetwork: MeshNetwork
     
     private var logger: LoggerDelegate? {
         return MeshNetworkManager.instance.logger
     }
     
     init(_ meshNetwork: MeshNetwork) {
-        self.meshNetwork = meshNetwork
-        
         let types: [GenericMessage.Type] = [
             SceneGet.self,
             SceneRegisterGet.self,
@@ -94,7 +91,7 @@ class SceneServerDelegate: ModelDelegate, StoredWithSceneStatusDelegate {
     
     // MARK: - Stored With Scene Status Delegate
     
-    func modelDidExitStoredWithSceneState(_ model: Model) {
+    func networkDidExitStoredWithSceneState() {
         currentScene = .invalidScene
     }
     
@@ -148,12 +145,12 @@ class SceneServerDelegate: ModelDelegate, StoredWithSceneStatusDelegate {
             }
             // Recall that scene on all Models that support Scenes.
             MeshNetworkManager.instance.localElements
-                .flatMap { $0.models }
-                .compactMap { $0.delegate as? StoredWithSceneModelDelegate }
-                .forEach {
-                    $0.recall(request.scene,
-                              transitionTime: request.transitionTime,
-                              delay: request.delay)
+                .flatMap { element in element.models }
+                .compactMap { model in model.delegate as? StoredWithSceneModelDelegate }
+                .forEach { delegate in
+                    delegate.recall(request.scene,
+                                    transitionTime: request.transitionTime,
+                                    delay: request.delay)
                 }
             fallthrough
                 
@@ -208,12 +205,12 @@ class SceneServerDelegate: ModelDelegate, StoredWithSceneStatusDelegate {
             }
             // Recall that scene on all Models that support Scenes.
             MeshNetworkManager.instance.localElements
-                .flatMap { $0.models }
-                .compactMap { $0.delegate as? StoredWithSceneModelDelegate }
-                .forEach {
-                    $0.recall(request.scene,
-                              transitionTime: request.transitionTime,
-                              delay: request.delay)
+                .flatMap { element in element.models }
+                .compactMap { model in model.delegate as? StoredWithSceneModelDelegate }
+                .forEach { delegate in
+                    delegate.recall(request.scene,
+                                    transitionTime: request.transitionTime,
+                                    delay: request.delay)
                 }
                 
         default:

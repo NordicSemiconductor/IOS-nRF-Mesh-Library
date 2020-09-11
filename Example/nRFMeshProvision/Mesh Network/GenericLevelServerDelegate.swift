@@ -31,7 +31,7 @@
 import Foundation
 import nRFMeshProvision
 
-class GenericLevelServerDelegate: ModelDelegate {
+class GenericLevelServerDelegate: StoredWithSceneModelDelegate {
     let messageTypes: [UInt32 : MeshMessage.Type]
     let isSubscriptionSupported: Bool = true
     
@@ -46,8 +46,26 @@ class GenericLevelServerDelegate: ModelDelegate {
         }
     }
     
+    /// States stored with Scenes.
+    ///
+    /// The key is the Scene number as HEX (4-character hexadecimal string).
+    private var storedScenes: [String: Int16]
+    /// User defaults are used to store state with Scenes.
+    private let defaults: UserDefaults
+    /// The key, under which scenes are stored.
+    private let key: String
+    
     /// Model state.
     private var state = GenericState<Int16>(Int16.min) {
+        willSet {
+            // If the state has changed due to a different reason than
+            // recalling a Scene, the Current Scene in Scene Server model
+            // has to be invalidated.
+            if !newValue.storedWithScene,
+               let network = MeshNetworkManager.instance.meshNetwork {
+                networkDidExitStoredWithSceneState(network)
+            }
+        }
         didSet {
             if let transition = state.transition, transition.remainingTime > 0 {
                 DispatchQueue.main.asyncAfter(deadline: .now() + transition.remainingTime) { [weak self] in
@@ -72,7 +90,7 @@ class GenericLevelServerDelegate: ModelDelegate {
     /// The state observer.
     private var observer: ((GenericState<Int16>) -> ())?
     
-    init() {
+    init(_ meshNetwork: MeshNetwork, elementIndex: UInt8) {
         let types: [GenericMessage.Type] = [
             GenericLevelGet.self,
             GenericLevelSet.self,
@@ -83,6 +101,32 @@ class GenericLevelServerDelegate: ModelDelegate {
             GenericMoveSetUnacknowledged.self
         ]
         messageTypes = types.toMap()
+        
+        defaults = UserDefaults(suiteName: meshNetwork.uuid.uuidString)!
+        key = "genericLevelServer_\(elementIndex)_scenes"
+        storedScenes = defaults.dictionary(forKey: key) as? [String: Int16] ?? [:]
+    }
+    
+    // MARK: - Scene hanlders
+    
+    func store(with scene: SceneNumber) {
+        storedScenes[scene.hex] = state.value
+        defaults.set(storedScenes, forKey: key)
+    }
+    
+    func recall(_ scene: SceneNumber, transitionTime: TransitionTime?, delay: UInt8?) {
+        guard let level = storedScenes[scene.hex] else {
+            return
+        }
+        if let transitionTime = transitionTime,
+           let delay = delay {
+            state = GenericState<Int16>(transitionFrom: state, to: level,
+                                       delay: TimeInterval(delay) * 0.005,
+                                       duration: transitionTime.interval,
+                                       storedWithScene: true)
+        } else {
+            state = GenericState<Int16>(level, storedWithScene: true)
+        }
     }
     
     // MARK: - Message handlers

@@ -135,27 +135,18 @@ public extension ModelDelegate {
     
 }
 
-public protocol StoredWithSceneStatusDelegate {
+public protocol SceneServerModelDelegate: ModelDelegate {
     
-    /// This method should be called whenever the State of the Model changes
+    /// This method should be called whenever the State of a Model changes
     /// for any reason other than receiving Scene Recall message.
     ///
     /// The call of this method should be consumed by Scene Server model,
     /// which should clear the Current Scene.
-    ///
-    /// - parameter model: The Model which State has changed.
-    func modelDidExitStoredWithSceneState(_ model: Model)
+    func networkDidExitStoredWithSceneState()
     
 }
 
 public protocol StoredWithSceneModelDelegate: ModelDelegate {
-    
-    /// The delegate object will receive events whenever a state of a Model
-    /// changes for any reason other than receiving Scene Recall message.
-    ///
-    /// This should be the Scene Server Delegate object, which should
-    /// clear the Current Scene.
-    var sceneStatusDelegate: StoredWithSceneStatusDelegate? { get set }
     
     /// This method should store the current States of the Model and
     /// associate them with the given Scene number.
@@ -173,6 +164,23 @@ public protocol StoredWithSceneModelDelegate: ModelDelegate {
     ///                     target state from the present state.
     ///   - delay: Message execution delay in 5 millisecond steps.
     func recall(_ scene: SceneNumber, transitionTime: TransitionTime?, delay: UInt8?)
+    
+}
+
+public extension StoredWithSceneModelDelegate {
+    
+    /// This method should be called whenever the state of a local Model changes
+    /// due to a different action than recalling a Scene.
+    ///
+    /// This method will invalidate the Current Scene state in Scene Server model.
+    ///
+    /// - parameter network: The mesh network this model belong to.
+    func networkDidExitStoredWithSceneState(_ network: MeshNetwork) {
+        network.localElements
+            .flatMap { element in element.models }
+            .compactMap { model in model.delegate as? SceneServerModelDelegate }
+            .forEach { delegate in delegate.networkDidExitStoredWithSceneState() }
+    }
     
 }
 

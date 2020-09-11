@@ -106,8 +106,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             Model(sigModelId: .sceneServerModelId, delegate: sceneServer),
             Model(sigModelId: .sceneSetupServerModelId, delegate: sceneSetupServer),
             // 4 generic models defined by Bluetooth SIG:
-            Model(sigModelId: .genericOnOffServerModelId, delegate: GenericOnOffServerDelegate()),
-            Model(sigModelId: .genericLevelServerModelId, delegate: GenericLevelServerDelegate()),
+            Model(sigModelId: .genericOnOffServerModelId,
+                  delegate: GenericOnOffServerDelegate(meshNetwork, elementIndex: 0)),
+            Model(sigModelId: .genericLevelServerModelId,
+                  delegate: GenericLevelServerDelegate(meshNetwork, elementIndex: 0)),
             Model(sigModelId: .genericOnOffClientModelId, delegate: GenericOnOffClientDelegate()),
             Model(sigModelId: .genericLevelClientModelId, delegate: GenericLevelClientDelegate()),
             // A simple vendor model:
@@ -116,8 +118,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                   delegate: SimpleOnOffClientDelegate())
         ])
         let element1 = Element(name: "Secondary Element", location: .second, models: [
-            Model(sigModelId: .genericOnOffServerModelId, delegate: GenericOnOffServerDelegate()),
-            Model(sigModelId: .genericLevelServerModelId, delegate: GenericLevelServerDelegate()),
+            Model(sigModelId: .genericOnOffServerModelId,
+                  delegate: GenericOnOffServerDelegate(meshNetwork, elementIndex: 1)),
+            Model(sigModelId: .genericLevelServerModelId,
+                  delegate: GenericLevelServerDelegate(meshNetwork, elementIndex: 1)),
             Model(sigModelId: .genericOnOffClientModelId, delegate: GenericOnOffClientDelegate()),
             Model(sigModelId: .genericLevelClientModelId, delegate: GenericLevelClientDelegate())
         ])
