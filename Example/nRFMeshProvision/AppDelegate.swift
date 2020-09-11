@@ -95,9 +95,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         connection?.close()
         
         let meshNetwork = meshNetworkManager.meshNetwork!
+
+        // Scene Server and Scene Setup Server models:
+        let sceneServer = SceneServerDelegate(meshNetwork)
+        let sceneSetupServer = SceneSetupServerDelegate(server: sceneServer)
         
         // Set up local Elements on the phone.
         let element0 = Element(name: "Primary Element", location: .first, models: [
+            // Scene Server and Scene Setup Server models:
+            Model(sigModelId: .sceneServerModelId, delegate: sceneServer),
+            Model(sigModelId: .sceneSetupServerModelId, delegate: sceneSetupServer),
             // 4 generic models defined by Bluetooth SIG:
             Model(sigModelId: .genericOnOffServerModelId, delegate: GenericOnOffServerDelegate()),
             Model(sigModelId: .genericLevelServerModelId, delegate: GenericLevelServerDelegate()),

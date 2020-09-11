@@ -135,6 +135,47 @@ public extension ModelDelegate {
     
 }
 
+public protocol StoredWithSceneStatusDelegate {
+    
+    /// This method should be called whenever the State of the Model changes
+    /// for any reason other than receiving Scene Recall message.
+    ///
+    /// The call of this method should be consumed by Scene Server model,
+    /// which should clear the Current Scene.
+    ///
+    /// - parameter model: The Model which State has changed.
+    func modelDidExitStoredWithSceneState(_ model: Model)
+    
+}
+
+public protocol StoredWithSceneModelDelegate: ModelDelegate {
+    
+    /// The delegate object will receive events whenever a state of a Model
+    /// changes for any reason other than receiving Scene Recall message.
+    ///
+    /// This should be the Scene Server Delegate object, which should
+    /// clear the Current Scene.
+    var sceneStatusDelegate: StoredWithSceneStatusDelegate? { get set }
+    
+    /// This method should store the current States of the Model and
+    /// associate them with the given Scene number.
+    ///
+    /// - parameter scene: The Scene number.
+    func store(with scene: SceneNumber)
+    
+    /// This method should recall the States of the Model associated with
+    /// the given Scene number.
+    ///
+    /// - parameters:
+    ///   - scene: The Scene number.
+    ///   - transitionTime: The Transition Time field identifies the time
+    ///                     that an element will take to transition to the
+    ///                     target state from the present state.
+    ///   - delay: Message execution delay in 5 millisecond steps.
+    func recall(_ scene: SceneNumber, transitionTime: TransitionTime?, delay: UInt8?)
+    
+}
+
 /// Transaction helper may be used to deal with Transaction Messages.
 /// Each such message is sent with a Transaction Identifier (TID).
 ///

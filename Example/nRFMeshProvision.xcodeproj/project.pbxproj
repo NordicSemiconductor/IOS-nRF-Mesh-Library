@@ -13,6 +13,8 @@
 		30208A1D2175DBE900BC3789 /* libcrypto.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 30208A182175DBD900BC3789 /* libcrypto.a */; };
 		3089BCA02099CA4900E30192 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3089BC9E2099CA4900E30192 /* LaunchScreen.storyboard */; };
 		520A7D6724F3E05A00BF370A /* RightActionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 520A7D6624F3E05A00BF370A /* RightActionCell.swift */; };
+		5211EAD5250777E100089FF2 /* SceneServerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5211EAD4250777E100089FF2 /* SceneServerDelegate.swift */; };
+		5211EADB25090DB000089FF2 /* SceneSetupServerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5211EADA25090DB000089FF2 /* SceneSetupServerDelegate.swift */; };
 		52121526231528AC0059FB3D /* GenericOnOffGroupCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52121525231528AC0059FB3D /* GenericOnOffGroupCell.swift */; };
 		521215292315290F0059FB3D /* GroupControlViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 521215282315290F0059FB3D /* GroupControlViewController.swift */; };
 		5212152B23152A450059FB3D /* SectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5212152A23152A450059FB3D /* SectionView.swift */; };
@@ -162,6 +164,8 @@
 		3089BC9F2099CA4900E30192 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		4973E9CDA09CE2398E5C269A /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
 		520A7D6624F3E05A00BF370A /* RightActionCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RightActionCell.swift; sourceTree = "<group>"; };
+		5211EAD4250777E100089FF2 /* SceneServerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneServerDelegate.swift; sourceTree = "<group>"; };
+		5211EADA25090DB000089FF2 /* SceneSetupServerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneSetupServerDelegate.swift; sourceTree = "<group>"; };
 		52121525231528AC0059FB3D /* GenericOnOffGroupCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericOnOffGroupCell.swift; sourceTree = "<group>"; };
 		521215282315290F0059FB3D /* GroupControlViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupControlViewController.swift; sourceTree = "<group>"; };
 		5212152A23152A450059FB3D /* SectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SectionView.swift; sourceTree = "<group>"; };
@@ -615,6 +619,8 @@
 			children = (
 				5288C20B2371A8E000321ED3 /* Simple OnOff */,
 				52DF5D8E229691BD00C297C1 /* NetworkConnection.swift */,
+				5211EAD4250777E100089FF2 /* SceneServerDelegate.swift */,
+				5211EADA25090DB000089FF2 /* SceneSetupServerDelegate.swift */,
 				52E54CDC23438B2E00478F05 /* GenericOnOffClientDelegate.swift */,
 				52E54CDE23438D2600478F05 /* GenericOnOffServerDelegate.swift */,
 				52E54CE02344974B00478F05 /* GenericLevelClientDelegate.swift */,
@@ -971,6 +977,7 @@
 				529B7575224107A5008F1CE7 /* AppInfo.swift in Sources */,
 				52121526231528AC0059FB3D /* GenericOnOffGroupCell.swift in Sources */,
 				523F776622C609D90030EA6A /* NodeNetworkKeysViewController.swift in Sources */,
+				5211EAD5250777E100089FF2 /* SceneServerDelegate.swift in Sources */,
 				607FACD61AFB9204008FA782 /* AppDelegate.swift in Sources */,
 				523F776C22C6324A0030EA6A /* ProgressViewController.swift in Sources */,
 				52547F25232A3F470002AA7B /* EditProvisionerViewController.swift in Sources */,
@@ -1006,6 +1013,7 @@
 				52E54CCD23437B9700478F05 /* ElementSectionView.swift in Sources */,
 				5288C2142371B32200321ED3 /* SimpleOnOffStatus.swift in Sources */,
 				5251498122E0E36600CBF1E3 /* AddGroupViewController.swift in Sources */,
+				5211EADB25090DB000089FF2 /* SceneSetupServerDelegate.swift in Sources */,
 				5292F8A325021B8F00EA0F2A /* ModelIdentifiers.swift in Sources */,
 				52835258227AEDA30097B949 /* DeviceCell.swift in Sources */,
 				52E54CD82343876000478F05 /* GenericLevelServerCell.swift in Sources */,
