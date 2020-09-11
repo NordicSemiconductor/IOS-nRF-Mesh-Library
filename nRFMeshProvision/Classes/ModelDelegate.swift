@@ -115,13 +115,13 @@ public extension ModelDelegate {
     @discardableResult
     func publish(_ message: MeshMessage, using manager: MeshNetworkManager) -> MessageHandle? {
         return manager.localElements
-            .flatMap { $0.models }
-            .first { $0.delegate === self }
-            .map { manager.publish(message, fromModel: $0) } ?? nil
+            .flatMap { element in element.models }
+            .first { model in model.delegate === self }
+            .map { model in manager.publish(message, from: model) } ?? nil
     }
     
-    /// Publishes a single message created by message composer using the
-    /// Publish information set in the underlying Model.
+    /// Publishes a single message created by Model's message composer using
+    /// the Publish information set in the underlying Model.
     ///
     /// - parameter manager: The manager to be used for publishing.
     /// - returns: The Message Handler that can be used to cancel sending.

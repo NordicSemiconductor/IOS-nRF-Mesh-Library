@@ -312,51 +312,21 @@ public extension MeshNetworkManager {
     /// with the count and interval specified in the retransmission object.
     ///
     /// - parameters:
-    ///   - message:    The message to be sent.
-    ///   - model:      The model from which to send the message.
-    ///   - initialTtl: The initial TTL (Time To Live) value of the message.
-    ///                 If `nil`, the default Node TTL will be used.
+    ///   - message: The message to be sent.
+    ///   - model:   The model from which to send the message.
     @discardableResult
-    func publish(_ message: MeshMessage, fromModel model: Model,
-                 withTtl initialTtl: UInt8? = nil) -> MessageHandle? {
-        guard let publish = model.publish,
+    func publish(_ message: MeshMessage, from model: Model) -> MessageHandle? {
+        guard let networkManager = networkManager,
+              let publish = model.publish,
               let localElement = model.parentElement,
-              let applicationKey = meshNetwork?.applicationKeys[publish.index] else {
+              let _ = meshNetwork?.applicationKeys[publish.index] else {
             return nil
         }
-        do {
-            let handler = try send(message, from: localElement, to: publish.publicationAddress,
-                                   withTtl: initialTtl, using: applicationKey)
-        
-            // If retransmission was configured, start the timer that will retransmit.
-            // There is no need to retransmit acknowledged messages, as they have their
-            // own retransmission mechanism.
-            if message is AcknowledgedMeshMessage {
-                var count = publish.retransmit.count
-                if count > 0 {
-                    let interval: TimeInterval = Double(publish.retransmit.interval) / 1000
-                    BackgroundTimer.scheduledTimer(withTimeInterval: interval, repeats: count > 0) { [weak self] timer in
-                        guard let self = self else {
-                            timer.invalidate()
-                            return
-                        }
-                        do {
-                            try self.send(message, from: localElement, to: publish.publicationAddress,
-                                          withTtl: initialTtl, using: applicationKey)
-                            count -= 1
-                            if count == 0 {
-                                timer.invalidate()
-                            }
-                        } catch {
-                            timer.invalidate()
-                        }
-                    }
-                }
-            }
-            return handler
-        } catch {
-            return nil
+        queue.async {
+            networkManager.publish(message, from: model)
         }
+        return MessageHandle(for: message, sentFrom: localElement.unicastAddress,
+                             to: publish.publicationAddress.address, using: self)
     }
     
     /// Encrypts the message with the Application Key and a Network Key

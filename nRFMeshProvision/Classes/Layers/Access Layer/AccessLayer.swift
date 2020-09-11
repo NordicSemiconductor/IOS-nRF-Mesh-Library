@@ -183,9 +183,12 @@ internal class AccessLayer {
     ///   - initialTtl:     The initial TTL (Time To Live) value of the message.
     ///                     If `nil`, the default Node TTL will be used.
     ///   - applicationKey: The Application Key to sign the message with.
+    ///   - retransmit:     Whether the message is a retransmission of the
+    ///                     previously sent message.
     func send(_ message: MeshMessage,
               from element: Element, to destination: MeshAddress,
-              withTtl initialTtl: UInt8?, using applicationKey: ApplicationKey) {
+              withTtl initialTtl: UInt8?, using applicationKey: ApplicationKey,
+              retransmit: Bool) {
         // Should the TID be updated?
         var m = message
         if var tranactionMessage = message as? TransactionMessage, tranactionMessage.tid == nil {
@@ -193,7 +196,7 @@ internal class AccessLayer {
             let k = key(for: element, and: destination)
             transactions[k] = transactions[k] ?? Transaction()
             // Should the last transaction be continued?
-            if tranactionMessage.continueTransaction, transactions[k]!.isActive {
+            if retransmit || tranactionMessage.continueTransaction, transactions[k]!.isActive {
                 tranactionMessage.tid = transactions[k]!.currentTid()
             } else {
                 // If not, start a new transaction by setting a new TID value.

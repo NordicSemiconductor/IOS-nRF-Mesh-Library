@@ -96,6 +96,53 @@ internal class NetworkManager {
     
     // MARK: - Sending messages
     
+    /// Publishes the given message using the Publish information from the
+    /// given Model. If publication is not set, this message does nothing.
+    ///
+    /// If publication retransmission is set, this method will retransmit
+    /// the message specified number of times, keeping the same TID value
+    /// (if applicable).
+    ///
+    /// - parameters:
+    ///   - message: The message to be sent.
+    ///   - model:   The source Model.
+    func publish(_ message: MeshMessage, from model: Model) {
+        guard let publish = model.publish,
+              let localElement = model.parentElement,
+              let applicationKey = meshNetwork?.applicationKeys[publish.index] else {
+            return
+        }
+        // Calculate the TTL to be used.
+        let ttl = publish.ttl != 0xFF ?
+            publish.ttl :
+            localElement.parentNode?.defaultTTL ?? defaultTtl
+        // Send the message.
+        send(message, from: localElement, to: publish.publicationAddress,
+             withTtl: ttl, using: applicationKey)
+        // If retransmission was configured, start the timer that will retransmit.
+        // There is no need to retransmit acknowledged messages, as they have their
+        // own retransmission mechanism.
+        if !(message is AcknowledgedMeshMessage) {
+            var count = publish.retransmit.count
+            if count > 0 {
+                let interval: TimeInterval = Double(publish.retransmit.interval) / 1000
+                BackgroundTimer.scheduledTimer(withTimeInterval: interval,
+                                               repeats: count > 0) { [weak self] timer in
+                    guard let self = self else {
+                        timer.invalidate()
+                        return
+                    }
+                    self.accessLayer.send(message, from: localElement, to: publish.publicationAddress,
+                                          withTtl: ttl, using: applicationKey, retransmit: true)
+                    count -= 1
+                    if count == 0 {
+                        timer.invalidate()
+                    }
+                }
+            }
+        }
+    }
+    
     /// Encrypts the message with the Application Key and a Network Key
     /// bound to it, and sends to the given destination address.
     ///
@@ -117,7 +164,8 @@ internal class NetworkManager {
               withTtl initialTtl: UInt8?,
               using applicationKey: ApplicationKey) {
         accessLayer.send(message, from: element, to: destination,
-                         withTtl: initialTtl, using: applicationKey)
+                         withTtl: initialTtl, using: applicationKey,
+                         retransmit: false)
     }
     
     /// Encrypts the message with the Device Key and the first Network Key
