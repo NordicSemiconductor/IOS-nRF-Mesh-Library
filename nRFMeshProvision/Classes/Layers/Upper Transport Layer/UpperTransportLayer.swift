@@ -247,7 +247,8 @@ private extension UpperTransportLayer {
     ///   - heartbeat: The Heartbeat message to be sent.
     ///   - networkKey: The Network Key to encrypt the message with.
     func send(heartbeat: HeartbeatMessage, usingNetworkKey networkKey: NetworkKey) {
-        logger?.i(.upperTransport, "Sending \(heartbeat) to \(heartbeat.destination.hex) encrypted using key: \(networkKey)")
+        logger?.i(.upperTransport, "Sending \(heartbeat) to \(heartbeat.destination.hex) " +
+                                   "encrypted using key: \(networkKey)")
         networkManager.lowerTransportLayer.send(heartbeat: heartbeat, usingNetworkKey: networkKey)
     }
     

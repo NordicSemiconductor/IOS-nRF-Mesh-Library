@@ -463,7 +463,9 @@ private extension LowerTransportLayer {
                                 marks |= 1 << segment.segmentOffset
                             }
                         }
-                        self.logger?.w(.lowerTransport, "Incomplete message timeout: cancelling message (src: \(Address(key >> 16).hex), seqZero: \(key & 0x1FFF), received segments: 0x\(marks.hex))")
+                        self.logger?.w(.lowerTransport, "Incomplete message timeout: cancelling message " +
+                                                        "(src: \(Address(key >> 16).hex), seqZero: \(key & 0x1FFF), " +
+                                                        "received segments: 0x\(marks.hex))")
                     }
                     self.incompleteTimers.removeValue(forKey: key)?.invalidate()
                     self.acknowledgmentTimers.removeValue(forKey: key)?.invalidate()
@@ -520,7 +522,8 @@ private extension LowerTransportLayer {
             outgoingSegments.removeValue(forKey: ack.sequenceZero)
             networkManager.notifyAbout(deliveringMessage: segment.message!,
                                        from: segment.localElement!, to: segment.destination)
-            networkManager.upperTransportLayer.lowerTransportLayerDidSend(segmentedUpperTransportPduTo: segment.destination)
+            networkManager.upperTransportLayer
+                .lowerTransportLayerDidSend(segmentedUpperTransportPduTo: segment.destination)
         } else {
             // Else, send again all packets that were not acknowledged.
             sendSegments(for: ack.sequenceZero, limit: networkManager.retransmissionLimit)
@@ -554,7 +557,8 @@ private extension LowerTransportLayer {
         DispatchQueue.global(qos: .background).async {
             self.logger?.d(.lowerTransport, "Sending \(ack)")
             do {
-                try self.networkManager.networkLayer.send(lowerTransportPdu: ack, ofType: .networkPdu, withTtl: ttl)
+                try self.networkManager.networkLayer.send(lowerTransportPdu: ack,
+                                                          ofType: .networkPdu, withTtl: ttl)
             } catch {
                 self.logger?.w(.lowerTransport, error)
             }
@@ -584,7 +588,8 @@ private extension LowerTransportLayer {
                         ackExpected = segment.destination.isUnicast
                     }
                     logger?.d(.lowerTransport, "Sending \(segment)")
-                    try networkManager.networkLayer.send(lowerTransportPdu: segment, ofType: .networkPdu, withTtl: ttl)
+                    try networkManager.networkLayer.send(lowerTransportPdu: segment,
+                                                         ofType: .networkPdu, withTtl: ttl)
                 } catch {
                     logger?.w(.lowerTransport, error)
                     // Sending a segment failed.
@@ -595,7 +600,8 @@ private extension LowerTransportLayer {
                             networkManager.notifyAbout(error, duringSendingMessage: segment.message!,
                                                        from: segment.localElement!, to: segment.destination)
                         }
-                        networkManager.upperTransportLayer.lowerTransportLayerDidSend(segmentedUpperTransportPduTo: segment.destination)
+                        networkManager.upperTransportLayer
+                            .lowerTransportLayerDidSend(segmentedUpperTransportPduTo: segment.destination)
                         return
                     }
                 }
@@ -624,7 +630,8 @@ private extension LowerTransportLayer {
                     }
                 }
                 if let destination = destination {
-                    self.networkManager.upperTransportLayer.lowerTransportLayerDidSend(segmentedUpperTransportPduTo: destination)
+                    self.networkManager.upperTransportLayer
+                        .lowerTransportLayerDidSend(segmentedUpperTransportPduTo: destination)
                 }
             }
         }
@@ -645,7 +652,8 @@ private extension LowerTransportLayer {
                                                    duringSendingMessage: segment.message!,
                                                    from: segment.localElement!, to: segment.destination)
                     }
-                    networkManager.upperTransportLayer.lowerTransportLayerDidSend(segmentedUpperTransportPduTo: segment.destination)
+                    networkManager.upperTransportLayer
+                        .lowerTransportLayerDidSend(segmentedUpperTransportPduTo: segment.destination)
                 }
                 outgoingSegments.removeValue(forKey: sequenceZero)
             }

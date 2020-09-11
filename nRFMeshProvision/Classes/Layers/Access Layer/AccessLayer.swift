@@ -517,16 +517,20 @@ private extension ModelDelegate {
                sentFrom source: Address, to destination: MeshAddress,
                asResponseTo request: AcknowledgedMeshMessage?) -> MeshMessage? {
         if let request = request {
-            self.model(model, didReceiveResponse: message, toAcknowledgedMessage: request, from: source)
+            self.model(model, didReceiveResponse: message,
+                       toAcknowledgedMessage: request,
+                       from: source)
             return nil
         } else if let request = message as? AcknowledgedMeshMessage {
             do {
-                return try self.model(model, didReceiveAcknowledgedMessage: request, from: source, sentTo: destination)
+                return try self.model(model, didReceiveAcknowledgedMessage: request,
+                                      from: source, sentTo: destination)
             } catch {
                 return nil
             }
         } else {
-            self.model(model, didReceiveUnacknowledgedMessage: message, from: source, sentTo: destination)
+            self.model(model, didReceiveUnacknowledgedMessage: message,
+                       from: source, sentTo: destination)
             return nil
         }
     }

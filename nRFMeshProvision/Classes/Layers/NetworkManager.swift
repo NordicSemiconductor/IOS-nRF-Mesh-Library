@@ -199,7 +199,8 @@ internal class NetworkManager {
     ///   - message:     The response message to be sent.
     ///   - destination: The destination address. This must be a Unicast Address.
     ///   - keySet:      The keySet that should be used to encrypt the message.
-    func reply(toMessageSentTo origin: Address, with message: MeshMessage, to destination: Address, using keySet: KeySet) {
+    func reply(toMessageSentTo origin: Address, with message: MeshMessage,
+               to destination: Address, using keySet: KeySet) {
         guard let primaryElement = meshNetwork?.localProvisioner?.node?.elements.first else {
             return
         }
@@ -245,7 +246,8 @@ internal class NetworkManager {
     ///   - message: The mesh message that was received.
     ///   - source:  The source Unicast Address.
     ///   - destination: The destination address of the message received.
-    func notifyAbout(newMessage message: MeshMessage, from source: Address, to destination: Address) {
+    func notifyAbout(newMessage message: MeshMessage,
+                     from source: Address, to destination: Address) {
         manager.delegateQueue.async {
             self.manager.delegate?.meshNetworkManager(self.manager, didReceiveMessage: message,
                                                       sentFrom: source, to: destination)
