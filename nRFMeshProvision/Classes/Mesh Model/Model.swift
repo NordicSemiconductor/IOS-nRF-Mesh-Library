@@ -294,7 +294,7 @@ internal extension Model {
     
 }
 
-extension Model: Equatable {
+extension Model: Equatable, Hashable {
     
     public static func == (lhs: Model, rhs: Model) -> Bool {
         return lhs.modelId == rhs.modelId
@@ -302,6 +302,10 @@ extension Model: Equatable {
     
     public static func != (lhs: Model, rhs: Model) -> Bool {
         return lhs.modelId != rhs.modelId
+    }
+    
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(modelId)
     }
     
 }
