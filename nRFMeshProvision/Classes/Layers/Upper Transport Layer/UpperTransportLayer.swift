@@ -38,7 +38,7 @@ internal class UpperTransportLayer {
     /// This timer is responsible for publishing periodic Heartbeat messages
     /// if they were requested by a remote provisioner using
     /// `ConfigHeartbeatPublicationSet` message.
-    private var heartbeatPublisherTimer: BackgroundTimer?
+    private var heartbeatPublisher: BackgroundTimer?
     
     private var logger: LoggerDelegate? {
         return networkManager.manager.logger
@@ -60,7 +60,7 @@ internal class UpperTransportLayer {
     }
     
     deinit {
-        heartbeatPublisherTimer?.invalidate()
+        heartbeatPublisher?.invalidate()
     }
     
     /// Handles received Lower Transport PDU.
@@ -259,10 +259,10 @@ internal extension UpperTransportLayer {
     /// if Heartbeat publication has been set.
     func refreshHeartbeatPublisher() {
         // Invalidate the old publisher.
-        if let _ = heartbeatPublisherTimer {
+        if let _ = heartbeatPublisher {
             logger?.v(.upperTransport, "Publishing periodic Heartbeat messages cancelled")
-            heartbeatPublisherTimer?.invalidate()
-            heartbeatPublisherTimer = nil
+            heartbeatPublisher?.invalidate()
+            heartbeatPublisher = nil
         }
         
         // If periodic Heartbeat publications were set, start a new timer.
@@ -271,7 +271,8 @@ internal extension UpperTransportLayer {
            let _ = heartbeatPublication.state {
             logger?.v(.upperTransport, "Publishing periodic Heartbeat messages initialized")
             let interval = TimeInterval(heartbeatPublication.period)
-            heartbeatPublisherTimer = BackgroundTimer.scheduledTimer(withTimeInterval: interval, repeats: true) { [weak self] _ in
+            heartbeatPublisher = BackgroundTimer.scheduledTimer(withTimeInterval: interval,
+                                                                     repeats: true) { [weak self] _ in
                 guard let self = self else { return }
                 // Check if the Local Node and Network Key are still there, and periodic
                 // Heartbeat publishing is enabled.
@@ -279,8 +280,8 @@ internal extension UpperTransportLayer {
                       let networkKey = localNode.networkKeys[heartbeatPublication.networkKeyIndex],
                       heartbeatPublication.isPeriodicPublicationEnabled,
                       let state = heartbeatPublication.state else {
-                    self.heartbeatPublisherTimer?.invalidate()
-                    self.heartbeatPublisherTimer = nil
+                    self.heartbeatPublisher?.invalidate()
+                    self.heartbeatPublisher = nil
                     self.logger?.v(.upperTransport, "Publishing periodic Heartbeat messages cancelled")
                     return
                 }
@@ -294,8 +295,8 @@ internal extension UpperTransportLayer {
                 
                 // If the last periodic Heartbeat message has been sent, invalidate the timer.
                 guard state.shouldSendMorePeriodicHeartbeatMessage() else {
-                    self.heartbeatPublisherTimer?.invalidate()
-                    self.heartbeatPublisherTimer = nil
+                    self.heartbeatPublisher?.invalidate()
+                    self.heartbeatPublisher = nil
                     self.logger?.v(.upperTransport, "Publishing periodic Heartbeat messages finished")
                     return
                 }
