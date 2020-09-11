@@ -76,8 +76,8 @@ private class AcknowledgmentContext {
         self.request = request
         self.source = source
         self.destination = destination
-        self.timeoutTimer = BackgroundTimer.scheduledTimer(withTimeInterval: timeout, repeats: false) { _ in
-            self.invalidate()
+        self.timeoutTimer = BackgroundTimer.scheduledTimer(withTimeInterval: timeout, repeats: false) { [weak self] _ in
+            self?.invalidate()
             timeoutBlock()
         }
         initializeRetryTimer(withDelay: delay, callback: repeatBlock)
@@ -94,8 +94,8 @@ private class AcknowledgmentContext {
     private func initializeRetryTimer(withDelay delay: TimeInterval,
                                       callback: @escaping () -> Void) {
         retryTimer?.invalidate()
-        retryTimer = BackgroundTimer.scheduledTimer(withTimeInterval: delay, repeats: false) { timer in
-            guard let _ = self.retryTimer else { return }
+        retryTimer = BackgroundTimer.scheduledTimer(withTimeInterval: delay, repeats: false) { [weak self] timer in
+            guard let self = self, let _ = self.retryTimer else { return }
             callback()
             self.initializeRetryTimer(withDelay: timer.interval * 2, callback: callback)
         }
@@ -103,7 +103,7 @@ private class AcknowledgmentContext {
 }
 
 internal class AccessLayer {
-    private let networkManager: NetworkManager
+    private weak var networkManager: NetworkManager!
     private let meshNetwork: MeshNetwork
     private let mutex = DispatchQueue(label: "AccessLayerMutex")
     
@@ -300,7 +300,8 @@ internal class AccessLayer {
             TimeInterval.random(in: 0.020...0.050) :
             TimeInterval.random(in: 0.020...0.500)
         
-        BackgroundTimer.scheduledTimer(withTimeInterval: delay, repeats: false) { _ in
+        BackgroundTimer.scheduledTimer(withTimeInterval: delay, repeats: false) { [weak self] _ in
+            guard let self = self else { return }
             self.logger?.i(.access, "Sending \(pdu)")
             self.networkManager.upperTransportLayer.send(pdu, withTtl: nil, using: keySet)
         }

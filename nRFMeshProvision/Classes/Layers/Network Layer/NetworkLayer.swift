@@ -31,7 +31,7 @@
 import Foundation
 
 internal class NetworkLayer {
-    private let networkManager: NetworkManager
+    private weak var networkManager: NetworkManager!
     private let meshNetwork: MeshNetwork
     private let networkMessageCache: NSCache<NSData, NSNull>
     private let defaults: UserDefaults
@@ -187,7 +187,12 @@ internal class NetworkLayer {
             let networkTransmit = meshNetwork.localProvisioner?.node?.networkTransmit,
             networkTransmit.count > 1 {
             var count = networkTransmit.count
-            BackgroundTimer.scheduledTimer(withTimeInterval: networkTransmit.timeInterval, repeats: true) { timer in
+            BackgroundTimer.scheduledTimer(withTimeInterval: networkTransmit.timeInterval,
+                                           repeats: true) { [weak self] timer in
+                guard let self = self else {
+                    timer.invalidate()
+                    return
+                }
                 try? self.networkManager.transmitter?.send(networkPdu.pdu, ofType: type)
                 count -= 1
                 if count == 0 {

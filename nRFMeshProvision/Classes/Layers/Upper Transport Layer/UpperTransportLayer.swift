@@ -30,7 +30,7 @@
 import Foundation
 
 internal class UpperTransportLayer {
-    private let networkManager: NetworkManager
+    private weak var networkManager: NetworkManager!
     private let meshNetwork: MeshNetwork
     private let defaults: UserDefaults
     private let mutex = DispatchQueue(label: "UpperTransportLayerMutex")

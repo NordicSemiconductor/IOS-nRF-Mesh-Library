@@ -37,7 +37,7 @@ private enum Message {
 }
 
 internal class LowerTransportLayer {
-    private let networkManager: NetworkManager
+    private weak var networkManager: NetworkManager!
     private let meshNetwork: MeshNetwork
     private let mutex = DispatchQueue(label: "LowerTransportLayerMutex")
     
@@ -455,7 +455,10 @@ private extension LowerTransportLayer {
                 // If the Lower Transport Layer receives any segment while the incomplete
                 // timer is active, the timer shall be restarted.
                 incompleteTimers[key]?.invalidate()
-                incompleteTimers[key] = BackgroundTimer.scheduledTimer(withTimeInterval: networkManager.incompleteMessageTimeout, repeats: false) { _ in
+                incompleteTimers[key] = BackgroundTimer.scheduledTimer(
+                                            withTimeInterval: networkManager.incompleteMessageTimeout,
+                                            repeats: false) { [weak self] _ in
+                    guard let self = self else { return }
                     if let segments = self.incompleteSegments.removeValue(forKey: key) {
                         var marks: UInt32 = 0
                         segments.forEach {
@@ -474,7 +477,10 @@ private extension LowerTransportLayer {
                 // timer is inactive, it shall restart the timer. Active timer should not be restarted.
                 if acknowledgmentTimers[key] == nil {
                     let ttl = provisionerNode.defaultTTL ?? networkManager.defaultTtl
-                    acknowledgmentTimers[key] = BackgroundTimer.scheduledTimer(withTimeInterval: networkManager.acknowledgmentTimerInterval(ttl), repeats: false) { _ in
+                    let interval = networkManager.acknowledgmentTimerInterval(ttl)
+                    acknowledgmentTimers[key] = BackgroundTimer.scheduledTimer(withTimeInterval: interval,
+                                                                               repeats: false) { [weak self] _ in
+                        guard let self = self else { return }
                         if let segments = self.incompleteSegments[key] {
                             let ttl = networkPdu.ttl > 0 ? ttl : 0
                             self.sendAck(for: segments, withTtl: ttl)
@@ -613,7 +619,8 @@ private extension LowerTransportLayer {
         // random delay is, so assuming 0.5-1.5 second.
         if !ackExpected! {
             let interval = TimeInterval.random(in: 0.500...1.500)
-            BackgroundTimer.scheduledTimer(withTimeInterval: interval, repeats: false) { _ in
+            BackgroundTimer.scheduledTimer(withTimeInterval: interval, repeats: false) { [weak self] _ in
+                guard let self = self else { return }
                 var destination: Address?
                 for i in 0..<segments.count {
                     if let segment = segments[i] {
@@ -641,8 +648,8 @@ private extension LowerTransportLayer {
             if limit > 0 {
                 let interval = networkManager.transmissionTimerInteral(ttl)
                 segmentTransmissionTimers[sequenceZero] =
-                    BackgroundTimer.scheduledTimer(withTimeInterval: interval, repeats: false) { _ in
-                        self.sendSegments(for: sequenceZero, limit: limit - 1)
+                    BackgroundTimer.scheduledTimer(withTimeInterval: interval, repeats: false) { [weak self] _ in
+                        self?.sendSegments(for: sequenceZero, limit: limit - 1)
                     }
             } else {
                 // A limit has been reached and some segments were not ACK.
