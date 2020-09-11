@@ -251,6 +251,7 @@ public extension MeshNetworkManager {
         }
         set {
             meshNetwork?.localElements = newValue
+            networkManager?.accessLayer.reinitializePublishers()
         }
     }
 }

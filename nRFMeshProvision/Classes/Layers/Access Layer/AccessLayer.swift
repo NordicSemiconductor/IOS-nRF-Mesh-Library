@@ -119,12 +119,17 @@ internal class AccessLayer {
     /// for acknowledged mesh messages that have been sent, and for which
     /// the response has not been received yet.
     private var reliableMessageContexts: [AcknowledgmentContext]
+    /// Publishers responsible for periodic publication from Models.
+    private var publishers: [Model : BackgroundTimer]
     
     init(_ networkManager: NetworkManager) {
         self.networkManager = networkManager
         self.meshNetwork = networkManager.meshNetwork!
         self.transactions = [:]
         self.reliableMessageContexts = []
+        self.publishers = [:]
+        
+        reinitializePublishers()
     }
     
     deinit {
@@ -133,6 +138,17 @@ internal class AccessLayer {
             ack.invalidate()
         }
         reliableMessageContexts.removeAll()
+        publishers.forEach { (_, publisher) in
+            publisher.invalidate()
+        }
+        publishers.removeAll()
+    }
+    
+    /// Initialize periodic publishing from local Models.
+    func reinitializePublishers() {
+        networkManager.manager.localElements
+            .flatMap { element in element.models }
+            .forEach { model in refreshPeriodicPublisher(for: model) }
     }
     
     /// This method handles the Upper Transport PDU and reads the Opcode.
@@ -408,8 +424,16 @@ private extension AccessLayer {
                         networkManager.reply(toMessageSentTo: accessPdu.destination.address,
                                              with: response, to: accessPdu.source, using: keySet)
                         // Reload Heartbeat publishing.
-                        if let _ = configMessage as? ConfigHeartbeatPublicationSet {
+                        if configMessage is ConfigHeartbeatPublicationSet {
                             networkManager.upperTransportLayer.refreshHeartbeatPublisher()
+                        }
+                        // Reload Model publishing.
+                        if configMessage is ConfigModelPublicationSet ||
+                           configMessage is ConfigModelPublicationVirtualAddressSet,
+                           let request = configMessage as? ConfigAnyModelMessage,
+                           let element = localNode.element(withAddress: request.elementAddress),
+                           let model = element.model(withModelId: request.modelId) {
+                            refreshPeriodicPublisher(for: model)
                         }
                     }
                     _ = networkManager.manager.save()
@@ -511,10 +535,28 @@ private extension ModelDelegate {
 
 private extension AccessLayer {
     
+    /// Creates a key for the Acknowledged Context map.
+    ///
+    /// The key consists of source and destination addresses.
+    ///
+    /// - parameters:
+    ///   - element: The source Element.
+    ///   - destination: The destination address.
+    /// - returns: The key to be used in the map.
     func key(for element: Element, and destination: MeshAddress) -> UInt32 {
         return (UInt32(element.unicastAddress) << 16) | UInt32(destination.address)
     }
     
+    /// Creates the context of an Acknowledged message.
+    ///
+    /// The context contains timers responsible for resending the message until
+    /// status is received, and allows the message to be cancelled.
+    ///
+    /// - parameters:
+    ///   - pdu: The PDU of the Acknowledged message.
+    ///   - element: The source Element.
+    ///   - initialTtl: The initial TTL with which the message is to be sent.
+    ///   - keySet: The Key Set used for sending the message.
     func createReliableContext(for pdu: AccessPdu, sentFrom element: Element,
                                withTtl initialTtl: UInt8?, using keySet: KeySet) {
         guard let request = pdu.message as? AcknowledgedMeshMessage else {
@@ -556,6 +598,31 @@ private extension AccessLayer {
         mutex.sync {
             reliableMessageContexts.append(ack)
         }
+    }
+    
+    /// Invalidates the current and optionally creates a new pubilsher
+    /// that will send periodic publications, when they are set up in the
+    /// Model.
+    ///
+    /// - parameter model: The Model for which the publisher is to be refreshed.
+    func refreshPeriodicPublisher(for model: Model) {
+        // Cancel current publication.
+        publishers.removeValue(forKey: model)?.invalidate()
+        // Ensure a new one should start...
+        guard let publish = model.publish, publish.publicationInterval > 0,
+              let composer = model.delegate?.publicationMessageComposer else {
+            return
+        }
+        // ... and start periodic publisher.
+        let publisher = BackgroundTimer.scheduledTimer(withTimeInterval: publish.publicationInterval,
+                                                       repeats: true) { [weak self] timer in
+            guard let manager = self?.networkManager.manager else {
+                timer.invalidate()
+                return
+            }
+            manager.publish(composer(), from: model)
+        }
+        publishers[model] = publisher
     }
     
 }
