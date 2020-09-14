@@ -108,7 +108,7 @@ public struct TransitionTime {
 public extension TransitionTime {
     
     /// Transition is immediate.
-    static let immediate = TransitionTime(0)
+    static let immediate = TransitionTime(steps: 0, stepResolution: .hundredsOfMilliseconds)
     /// Unknown transition time.
     ///
     /// This can not be used as default transition time.
@@ -117,6 +117,11 @@ public extension TransitionTime {
     /// Returns whether the transition time is known.
     var isKnown: Bool {
         return steps < 0x3F
+    }
+    
+    /// Whether the transition is immediate.
+    var isImmediate: Bool {
+        return steps == 0
     }
     
 }
@@ -147,7 +152,7 @@ extension TransitionTime: CustomDebugStringConvertible {
         guard isKnown else {
             return "Unknown"
         }
-        if steps == 0 {
+        if isImmediate {
             return "Immediate"
         }
         
