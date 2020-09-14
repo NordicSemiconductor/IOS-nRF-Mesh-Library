@@ -32,16 +32,26 @@ import Foundation
 import nRFMeshProvision
 
 class GenericOnOffServerDelegate: StoredWithSceneModelDelegate {
+    
+    /// The Generic Default Transtion Time Server model, which this model depends on.
+    let defaultTransitionTimeServer: GenericDefaultTranstionTimeServerDelegate
+    
     let messageTypes: [UInt32 : MeshMessage.Type]
     let isSubscriptionSupported: Bool = true
     
-    lazy var publicationMessageComposer: MessageComposer? = { [unowned self] in
-        if let transition = self.state.transition, transition.remainingTime > 0 {
-            return GenericOnOffStatus(self.state.value,
-                                      targetState: transition.targetValue,
-                                      remainingTime: TransitionTime(transition.remainingTime))
-        } else {
-            return GenericOnOffStatus(self.state.value)
+    var publicationMessageComposer: MessageComposer? {
+        func compose() -> MeshMessage {
+            if let transition = self.state.transition, transition.remainingTime > 0 {
+                return GenericOnOffStatus(self.state.value,
+                                          targetState: transition.targetValue,
+                                          remainingTime: TransitionTime(transition.remainingTime))
+            } else {
+                return GenericOnOffStatus(self.state.value)
+            }
+        }
+        let request = compose()
+        return {
+            return request
         }
     }
     
@@ -89,13 +99,17 @@ class GenericOnOffServerDelegate: StoredWithSceneModelDelegate {
     /// The state observer.
     private var observer: ((GenericState<Bool>) -> ())?
     
-    init(_ meshNetwork: MeshNetwork, elementIndex: UInt8) {
+    init(_ meshNetwork: MeshNetwork,
+         defaultTransitionTimeServer delegate: GenericDefaultTranstionTimeServerDelegate,
+         elementIndex: UInt8) {
         let types: [GenericMessage.Type] = [
             GenericOnOffGet.self,
             GenericOnOffSet.self,
             GenericOnOffSetUnacknowledged.self
         ]
         messageTypes = types.toMap()
+        
+        defaultTransitionTimeServer = delegate
         
         defaults = UserDefaults(suiteName: meshNetwork.uuid.uuidString)!
         key = "genericOnOffServer_\(elementIndex)_scenes"
@@ -136,14 +150,17 @@ class GenericOnOffServerDelegate: StoredWithSceneModelDelegate {
                 break
             }
             
-            if let transitionTime = request.transitionTime,
-               let delay = request.delay {
-                state = GenericState<Bool>(transitionFrom: state, to: request.isOn,
-                                           delay: TimeInterval(delay) * 0.005,
-                                           duration: transitionTime.interval)
-            } else {
-                state = GenericState<Bool>(request.isOn)
-            }
+            /// Message execution delay in 5 millisecond steps. By default 0.
+            let delay = request.delay ?? 0
+            /// The time that an element will take to transition to the target
+            /// state from the present state. If not set, the default transition
+            /// time from Generic Default Transition Time Server model is used.
+            let transitionTime = request.transitionTime
+                .or(defaultTransitionTimeServer.defaultTransitionTime)
+            // Start a new transition.
+            state = GenericState<Bool>(transitionFrom: state, to: request.isOn,
+                                       delay: TimeInterval(delay) * 0.005,
+                                       duration: transitionTime.interval)
             
         default:
             fatalError("Not possible")
@@ -169,14 +186,17 @@ class GenericOnOffServerDelegate: StoredWithSceneModelDelegate {
                 break
             }
             
-            if let transitionTime = request.transitionTime,
-               let delay = request.delay {
-                state = GenericState<Bool>(transitionFrom: state, to: request.isOn,
-                                           delay: TimeInterval(delay) * 0.005,
-                                           duration: transitionTime.interval)
-            } else {
-                state = GenericState<Bool>(request.isOn)
-            }
+            /// Message execution delay in 5 millisecond steps. By default 0.
+            let delay = request.delay ?? 0
+            /// The time that an element will take to transition to the target
+            /// state from the present state. If not set, the default transition
+            /// time from Generic Default Transition Time Server model is used.
+            let transitionTime = request.transitionTime
+                .or(defaultTransitionTimeServer.defaultTransitionTime)
+            // Start a new transition.
+            state = GenericState<Bool>(transitionFrom: state, to: request.isOn,
+                                       delay: TimeInterval(delay) * 0.005,
+                                       duration: transitionTime.interval)
             
         default:
             // Not possible.

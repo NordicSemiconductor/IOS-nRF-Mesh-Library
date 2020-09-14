@@ -35,12 +35,19 @@ class SceneServerDelegate: SceneServerModelDelegate {
     let messageTypes: [UInt32 : MeshMessage.Type]    
     let isSubscriptionSupported: Bool = true
     
-    lazy var publicationMessageComposer: MessageComposer? = { [unowned self] in
-        if let (targetScene, complete) = self.targetScene {
-            let remainingTime = TransitionTime(complete.timeIntervalSinceNow)
-            return SceneStatus(report: targetScene, remainingTime: remainingTime)
+    var publicationMessageComposer: MessageComposer? {
+        func compose() -> MeshMessage {
+            if let (targetScene, complete) = self.targetScene {
+                let remainingTime = TransitionTime(complete.timeIntervalSinceNow)
+                return SceneStatus(report: targetScene, remainingTime: remainingTime)
+            } else {
+                return SceneStatus(report: self.currentScene)
+            }
         }
-        return SceneStatus(report: self.currentScene)
+        let status = compose()
+        return {
+            return status
+        }
     }
     
     /// Stored scenes.

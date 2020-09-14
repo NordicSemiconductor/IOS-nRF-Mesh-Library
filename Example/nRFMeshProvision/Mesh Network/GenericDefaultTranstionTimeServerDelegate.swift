@@ -31,51 +31,80 @@
 import Foundation
 import nRFMeshProvision
 
-class GenericLevelClientDelegate: ModelDelegate {
+class GenericDefaultTranstionTimeServerDelegate: ModelDelegate {
     let messageTypes: [UInt32 : MeshMessage.Type]
     let isSubscriptionSupported: Bool = true
+    let publicationMessageComposer: MessageComposer? = nil
     
-    var publicationMessageComposer: MessageComposer? {
-        func compose() -> MeshMessage {
-            return GenericLevelSetUnacknowledged(level: self.state)
-        }
-        let request = compose()
-        return {
-            return request
-        }
-    }
-    
-    /// The current state of the Generic Level Client model.
-    var state: Int16 = Int16.min {
+    var defaultTransitionTime: TransitionTime {
         didSet {
-            publish(using: MeshNetworkManager.instance)
+            guard defaultTransitionTime.isKnown else {
+                defaultTransitionTime = TransitionTime(0)
+                return
+            }
         }
     }
     
-    init() {
+    private let defaults: UserDefaults
+    
+    init(_ meshNetwork: MeshNetwork) {
         let types: [GenericMessage.Type] = [
-            GenericLevelStatus.self
+            GenericDefaultTransitionTimeGet.self,
+            GenericDefaultTransitionTimeSet.self,
+            GenericDefaultTransitionTimeSetUnacknowledged.self
         ]
         messageTypes = types.toMap()
+        
+        defaults = UserDefaults(suiteName: meshNetwork.uuid.uuidString)!
+        let interval = defaults.double(forKey: "defaultTransitionTime")
+        defaultTransitionTime = TransitionTime(interval)
     }
     
     // MARK: - Message handlers
     
     func model(_ model: Model, didReceiveAcknowledgedMessage request: AcknowledgedMeshMessage,
-               from source: Address, sentTo destination: MeshAddress) -> MeshMessage {
-        fatalError("Not possible")
+               from source: Address, sentTo destination: MeshAddress) throws -> MeshMessage {
+        switch request {
+            
+        case let request as GenericDefaultTransitionTimeSet:
+            // The state cannot be set to Unknown (0x3F) value.
+            guard request.transitionTime.isKnown else {
+                throw ModelError.invalidMessage
+            }
+            defaultTransitionTime = request.transitionTime
+            defaults.set(defaultTransitionTime.interval, forKey: "defaultTransitionTime")
+            fallthrough
+            
+        case is GenericDefaultTransitionTimeGet:
+            return GenericDefaultTransitionTimeStatus(transitionTime: defaultTransitionTime)
+            
+        default:
+            fatalError("Not possible")
+        }
     }
     
     func model(_ model: Model, didReceiveUnacknowledgedMessage message: MeshMessage,
                from source: Address, sentTo destination: MeshAddress) {
-        // The status message may be received here if the Generic Level Server model
-        // has been configured to publish. Ignore this message.
+        switch message {
+            
+        case let request as GenericDefaultTransitionTimeSetUnacknowledged:
+            // The state cannot be set to Unknown (0x3F) value.
+            guard request.transitionTime.isKnown else {
+                return
+            }
+            defaultTransitionTime = request.transitionTime
+            defaults.set(defaultTransitionTime.interval, forKey: "defaultTransitionTime")
+            
+        default:
+            // Not possible.
+            break
+        }
     }
     
     func model(_ model: Model, didReceiveResponse response: MeshMessage,
                toAcknowledgedMessage request: AcknowledgedMeshMessage,
-               from source: Address){
-        // Ignore.
+               from source: Address) {
+        // Not possible.
     }
     
 }

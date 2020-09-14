@@ -31,13 +31,13 @@
 import Foundation
 import nRFMeshProvision
 
-class GenericLevelClientDelegate: ModelDelegate {
+class GenericDefaultTranstionTimeClientDelegate: ModelDelegate {
     let messageTypes: [UInt32 : MeshMessage.Type]
     let isSubscriptionSupported: Bool = true
     
     var publicationMessageComposer: MessageComposer? {
         func compose() -> MeshMessage {
-            return GenericLevelSetUnacknowledged(level: self.state)
+            return GenericDefaultTransitionTimeSetUnacknowledged(transitionTime: self.defaultTransitionTime)
         }
         let request = compose()
         return {
@@ -45,8 +45,7 @@ class GenericLevelClientDelegate: ModelDelegate {
         }
     }
     
-    /// The current state of the Generic Level Client model.
-    var state: Int16 = Int16.min {
+    var defaultTransitionTime: TransitionTime = TransitionTime() {
         didSet {
             publish(using: MeshNetworkManager.instance)
         }
@@ -54,7 +53,7 @@ class GenericLevelClientDelegate: ModelDelegate {
     
     init() {
         let types: [GenericMessage.Type] = [
-            GenericLevelStatus.self
+            GenericDefaultTransitionTimeStatus.self
         ]
         messageTypes = types.toMap()
     }
@@ -62,20 +61,20 @@ class GenericLevelClientDelegate: ModelDelegate {
     // MARK: - Message handlers
     
     func model(_ model: Model, didReceiveAcknowledgedMessage request: AcknowledgedMeshMessage,
-               from source: Address, sentTo destination: MeshAddress) -> MeshMessage {
+               from source: Address, sentTo destination: MeshAddress) throws -> MeshMessage {
         fatalError("Not possible")
     }
     
     func model(_ model: Model, didReceiveUnacknowledgedMessage message: MeshMessage,
                from source: Address, sentTo destination: MeshAddress) {
-        // The status message may be received here if the Generic Level Server model
-        // has been configured to publish. Ignore this message.
+        // The status message may be received here if the Generic Default
+        // Transition Time Server model has been configured to publish.
+        // Ignore this message.
     }
     
     func model(_ model: Model, didReceiveResponse response: MeshMessage,
                toAcknowledgedMessage request: AcknowledgedMeshMessage,
-               from source: Address){
+               from source: Address) {
         // Ignore.
     }
-    
 }

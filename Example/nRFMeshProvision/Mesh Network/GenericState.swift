@@ -83,9 +83,14 @@ struct GenericState<T: Equatable> {
     init(transitionFrom state: GenericState<T>, to targetValue: T,
          delay: TimeInterval, duration: TimeInterval,
          storedWithScene: Bool = false) {
-        self.value = state.value
         self.animation = nil
         self.storedWithScene = storedWithScene
+        guard delay > 0 || duration > 0 else {
+            self.value = targetValue
+            self.transition = nil
+            return
+        }
+        self.value = state.value
         guard state.value != targetValue else {
             self.transition = nil
             return
@@ -98,9 +103,14 @@ struct GenericState<T: Equatable> {
     init(continueTransitionFrom state: GenericState<T>, to targetValue: T,
          delay: TimeInterval, duration: TimeInterval,
          storedWithScene: Bool = false) {
-        self.value = state.value
         self.animation = nil
         self.storedWithScene = storedWithScene
+        guard delay > 0 || duration > 0 else {
+            self.value = targetValue
+            self.transition = nil
+            return
+        }
+        self.value = state.value
         guard state.value != targetValue else {
             self.transition = nil
             return
