@@ -155,7 +155,7 @@ class GenericLevelServerDelegate: StoredWithSceneModelDelegate {
             }
             
             /// Message execution delay in 5 millisecond steps. By default 0.
-            let delay = request.delay ?? 0
+            let delay = TimeInterval(request.delay ?? 0) * 0.005
             /// The time that an element will take to transition to the target
             /// state from the present state. If not set, the default transition
             /// time from Generic Default Transition Time Server model is used.
@@ -163,7 +163,7 @@ class GenericLevelServerDelegate: StoredWithSceneModelDelegate {
                 .or(defaultTransitionTimeServer.defaultTransitionTime)
             // Start a new transition.
             state = GenericState<Int16>(transitionFrom: state, to: request.level,
-                                        delay: TimeInterval(delay) * 0.005,
+                                        delay: delay,
                                         duration: transitionTime.interval)
 
         case let request as GenericDeltaSet:
@@ -173,7 +173,7 @@ class GenericLevelServerDelegate: StoredWithSceneModelDelegate {
             /// (using the same transaction) as the last one.
             let continuation = transactionHelper.isTransactionContinuation(request, from: source, to: destination)
             /// Message execution delay in 5 millisecond steps. By default 0.
-            let delay = request.delay ?? 0
+            let delay = TimeInterval(request.delay ?? 0) * 0.005
             /// The time that an element will take to transition to the target
             /// state from the present state. If not set, the default transition
             /// time from Generic Default Transition Time Server model is used.
@@ -183,12 +183,12 @@ class GenericLevelServerDelegate: StoredWithSceneModelDelegate {
             if continuation, let transition = state.transition, transition.remainingTime > 0 {
                 // Continue the same transition.
                 state = GenericState<Int16>(continueTransitionFrom: state, to: targetLevel,
-                                            delay: TimeInterval(delay) * 0.005,
+                                            delay: delay,
                                             duration: transitionTime.interval)
             } else {
                 // Start a new transition.
                 state = GenericState<Int16>(transitionFrom: state, to: targetLevel,
-                                            delay: TimeInterval(delay) * 0.005,
+                                            delay: delay,
                                             duration: transitionTime.interval)
             }
             
@@ -200,7 +200,7 @@ class GenericLevelServerDelegate: StoredWithSceneModelDelegate {
             }
             
             /// Message execution delay in 5 millisecond steps. By default 0.
-            let delay = request.delay ?? 0
+            let delay = TimeInterval(request.delay ?? 0) * 0.005
             /// The time that an element will take to transition to the target
             /// state from the present state. If not set, the default transition
             /// time from Generic Default Transition Time Server model is used.
@@ -208,7 +208,7 @@ class GenericLevelServerDelegate: StoredWithSceneModelDelegate {
                 .or(defaultTransitionTimeServer.defaultTransitionTime)
             // Start a new transition.
             state = GenericState<Int16>(animateFrom: state, to: request.deltaLevel,
-                                        delay: TimeInterval(delay) * 0.005,
+                                        delay: delay,
                                         duration: transitionTime.interval)
             
         default:
@@ -236,7 +236,7 @@ class GenericLevelServerDelegate: StoredWithSceneModelDelegate {
             }
             
             /// Message execution delay in 5 millisecond steps. By default 0.
-            let delay = request.delay ?? 0
+            let delay = TimeInterval(request.delay ?? 0) * 0.005
             /// The time that an element will take to transition to the target
             /// state from the present state. If not set, the default transition
             /// time from Generic Default Transition Time Server model is used.
@@ -244,7 +244,7 @@ class GenericLevelServerDelegate: StoredWithSceneModelDelegate {
                 .or(defaultTransitionTimeServer.defaultTransitionTime)
             // Start a new transition.
             state = GenericState<Int16>(transitionFrom: state, to: request.level,
-                                        delay: TimeInterval(delay) * 0.005,
+                                        delay: delay,
                                         duration: transitionTime.interval)
 
         case let request as GenericDeltaSetUnacknowledged:
@@ -254,7 +254,7 @@ class GenericLevelServerDelegate: StoredWithSceneModelDelegate {
             /// (using the same transaction) as the last one.
             let continuation = transactionHelper.isTransactionContinuation(request, from: source, to: destination)
             /// Message execution delay in 5 millisecond steps. By default 0.
-            let delay = request.delay ?? 0
+            let delay = TimeInterval(request.delay ?? 0) * 0.005
             /// The time that an element will take to transition to the target
             /// state from the present state. If not set, the default transition
             /// time from Generic Default Transition Time Server model is used.
@@ -264,12 +264,12 @@ class GenericLevelServerDelegate: StoredWithSceneModelDelegate {
             if continuation, let transition = state.transition, transition.remainingTime > 0 {
                 // Continue the same transition.
                 state = GenericState<Int16>(continueTransitionFrom: state, to: targetLevel,
-                                            delay: TimeInterval(delay) * 0.005,
+                                            delay: delay,
                                             duration: transitionTime.interval)
             } else {
                 // Start a new transition.
                 state = GenericState<Int16>(transitionFrom: state, to: targetLevel,
-                                            delay: TimeInterval(delay) * 0.005,
+                                            delay: delay,
                                             duration: transitionTime.interval)
             }
                 
@@ -281,7 +281,7 @@ class GenericLevelServerDelegate: StoredWithSceneModelDelegate {
             }
             
             /// Message execution delay in 5 millisecond steps. By default 0.
-            let delay = request.delay ?? 0
+            let delay = TimeInterval(request.delay ?? 0) * 0.005
             /// The time that an element will take to transition to the target
             /// state from the present state. If not set, the default transition
             /// time from Generic Default Transition Time Server model is used.
@@ -289,7 +289,7 @@ class GenericLevelServerDelegate: StoredWithSceneModelDelegate {
                 .or(defaultTransitionTimeServer.defaultTransitionTime)
             // Start a new transition.
             state = GenericState<Int16>(animateFrom: state, to: request.deltaLevel,
-                                        delay: TimeInterval(delay) * 0.005,
+                                        delay: delay,
                                         duration: transitionTime.interval)
             
         default:

@@ -32,6 +32,10 @@ import Foundation
 import nRFMeshProvision
 
 class SceneServerDelegate: SceneServerModelDelegate {
+    
+    /// The Generic Default Transtion Time Server model, which this model depends on.
+    let defaultTransitionTimeServer: GenericDefaultTranstionTimeServerDelegate
+    
     let messageTypes: [UInt32 : MeshMessage.Type]    
     let isSubscriptionSupported: Bool = true
     
@@ -82,7 +86,8 @@ class SceneServerDelegate: SceneServerModelDelegate {
         return MeshNetworkManager.instance.logger
     }
     
-    init(_ meshNetwork: MeshNetwork) {
+    init(_ meshNetwork: MeshNetwork,
+         defaultTransitionTimeServer delegate: GenericDefaultTranstionTimeServerDelegate) {
         let types: [GenericMessage.Type] = [
             SceneGet.self,
             SceneRegisterGet.self,
@@ -90,6 +95,8 @@ class SceneServerDelegate: SceneServerModelDelegate {
             SceneRecallUnacknowledged.self
         ]
         messageTypes = types.toMap()
+        
+        defaultTransitionTimeServer = delegate
         
         defaults = UserDefaults(suiteName: meshNetwork.uuid.uuidString)!
         storedScenes = defaults.array(forKey: "scenes") as? [SceneNumber] ?? []
@@ -143,12 +150,20 @@ class SceneServerDelegate: SceneServerModelDelegate {
             // perform a Scene Recall operation for a scene memory referred to by the Scene
             // Number and shall respond with a Scene Status message, setting the Status Code
             // field to Success.
-            if let transitionTime = request.transitionTime, let delay = request.delay {
+            
+            /// Message execution delay in 5 millisecond steps. By default 0.
+            let delay = request.delay ?? 0
+            /// The time that an element will take to transition to the target
+            /// state from the present state. If not set, the default transition
+            /// time from Generic Default Transition Time Server model is used.
+            let transitionTime = request.transitionTime
+                .or(defaultTransitionTimeServer.defaultTransitionTime)
+            if transitionTime.isImmediate {
+                currentScene = request.scene
+            } else {
                 let complete = Date(timeIntervalSinceNow: transitionTime.interval + TimeInterval(delay) * 0.005)
                 targetScene = (scene: request.scene, complete: complete)
                 currentScene = .invalidScene
-            } else {
-                currentScene = request.scene
             }
             // Recall that scene on all Models that support Scenes.
             MeshNetworkManager.instance.localElements
@@ -156,8 +171,8 @@ class SceneServerDelegate: SceneServerModelDelegate {
                 .compactMap { model in model.delegate as? StoredWithSceneModelDelegate }
                 .forEach { delegate in
                     delegate.recall(request.scene,
-                                    transitionTime: request.transitionTime,
-                                    delay: request.delay)
+                                    transitionTime: transitionTime,
+                                    delay: delay)
                 }
             fallthrough
                 
@@ -203,12 +218,20 @@ class SceneServerDelegate: SceneServerModelDelegate {
             // Scene Number value that matches a Scene Number stored within the Scene
             // Register state, it shall perform a Scene Recall operation for a scene
             // memory referred to by the Scene Number.
-            if let transitionTime = request.transitionTime, let delay = request.delay {
+            
+            /// Message execution delay in 5 millisecond steps. By default 0.
+            let delay = request.delay ?? 0
+            /// The time that an element will take to transition to the target
+            /// state from the present state. If not set, the default transition
+            /// time from Generic Default Transition Time Server model is used.
+            let transitionTime = request.transitionTime
+                .or(defaultTransitionTimeServer.defaultTransitionTime)
+            if transitionTime.isImmediate {
+                currentScene = request.scene
+            } else {
                 let complete = Date(timeIntervalSinceNow: transitionTime.interval + TimeInterval(delay) * 0.005)
                 targetScene = (scene: request.scene, complete: complete)
                 currentScene = .invalidScene
-            } else {
-                currentScene = request.scene
             }
             // Recall that scene on all Models that support Scenes.
             MeshNetworkManager.instance.localElements
@@ -216,8 +239,8 @@ class SceneServerDelegate: SceneServerModelDelegate {
                 .compactMap { model in model.delegate as? StoredWithSceneModelDelegate }
                 .forEach { delegate in
                     delegate.recall(request.scene,
-                                    transitionTime: request.transitionTime,
-                                    delay: request.delay)
+                                    transitionTime: transitionTime,
+                                    delay: delay)
                 }
                 
         default:

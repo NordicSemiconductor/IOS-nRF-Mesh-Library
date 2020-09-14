@@ -151,7 +151,7 @@ class GenericOnOffServerDelegate: StoredWithSceneModelDelegate {
             }
             
             /// Message execution delay in 5 millisecond steps. By default 0.
-            let delay = request.delay ?? 0
+            let delay = TimeInterval(request.delay ?? 0) * 0.005
             /// The time that an element will take to transition to the target
             /// state from the present state. If not set, the default transition
             /// time from Generic Default Transition Time Server model is used.
@@ -159,7 +159,7 @@ class GenericOnOffServerDelegate: StoredWithSceneModelDelegate {
                 .or(defaultTransitionTimeServer.defaultTransitionTime)
             // Start a new transition.
             state = GenericState<Bool>(transitionFrom: state, to: request.isOn,
-                                       delay: TimeInterval(delay) * 0.005,
+                                       delay: delay,
                                        duration: transitionTime.interval)
             
         default:
@@ -187,7 +187,7 @@ class GenericOnOffServerDelegate: StoredWithSceneModelDelegate {
             }
             
             /// Message execution delay in 5 millisecond steps. By default 0.
-            let delay = request.delay ?? 0
+            let delay = TimeInterval(request.delay ?? 0) * 0.005
             /// The time that an element will take to transition to the target
             /// state from the present state. If not set, the default transition
             /// time from Generic Default Transition Time Server model is used.
@@ -195,7 +195,7 @@ class GenericOnOffServerDelegate: StoredWithSceneModelDelegate {
                 .or(defaultTransitionTimeServer.defaultTransitionTime)
             // Start a new transition.
             state = GenericState<Bool>(transitionFrom: state, to: request.isOn,
-                                       delay: TimeInterval(delay) * 0.005,
+                                       delay: delay,
                                        duration: transitionTime.interval)
             
         default:

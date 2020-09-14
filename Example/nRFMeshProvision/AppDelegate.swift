@@ -99,7 +99,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Generic Default Transition Time Server model:
         let defaultTransitionTimeServerDelegate = GenericDefaultTranstionTimeServerDelegate(meshNetwork)
         // Scene Server and Scene Setup Server models:
-        let sceneServer = SceneServerDelegate(meshNetwork)
+        let sceneServer = SceneServerDelegate(meshNetwork,
+                                              defaultTransitionTimeServer: defaultTransitionTimeServerDelegate)
         let sceneSetupServer = SceneSetupServerDelegate(server: sceneServer)
         
         // Set up local Elements on the phone.
