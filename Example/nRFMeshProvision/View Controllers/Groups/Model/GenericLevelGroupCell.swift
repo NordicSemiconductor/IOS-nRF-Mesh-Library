@@ -73,9 +73,7 @@ private extension GenericLevelGroupCell {
     
     func sendGenericDeltaMessage(delta: Int32) {
         let label = delta < 0 ? "Dimming..." : "Brightening..."
-        delegate?.send(GenericDeltaSetUnacknowledged(delta: delta,
-                                                     transitionTime: TransitionTime(1.0),
-                                                     delay: 20), // 100 ms
+        delegate?.send(GenericDeltaSetUnacknowledged(delta: delta),
                        description: label, using: applicationKey)
     }
     
