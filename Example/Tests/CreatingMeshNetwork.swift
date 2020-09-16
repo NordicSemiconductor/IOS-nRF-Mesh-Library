@@ -93,16 +93,16 @@ class CreatingMeshNetwork: XCTestCase {
         XCTAssertEqual(network.nodes.first?.elements.count, 2)
         XCTAssertEqual(network.nodes.first?.elementsCount, 2)
         // Verify the Primary Element.
-        XCTAssertEqual(network.nodes.first?.elements[0].models.count, 6)
-        XCTAssert(network.nodes.first?.elements[0].contains(modelWithIdentifier: 0x1001) ?? false)
-        XCTAssert(network.nodes.first?.elements[0].contains(modelWithIdentifier: 0x1003) ?? false)
+        XCTAssertEqual(network.nodes.first?.elements[0].models.count, 7)
+        XCTAssert(network.nodes.first?.elements[0].contains(modelWithSigModelId: 0x1001) ?? false)
+        XCTAssert(network.nodes.first?.elements[0].contains(modelWithSigModelId: 0x1003) ?? false)
         // Verify element 1 and 2.
         XCTAssertEqual(network.nodes.first?.elements[1].models.count, 3)
-        XCTAssertFalse(network.nodes.first?.elements[1].contains(modelWithIdentifier: 0x1001) ?? true)
-        XCTAssertFalse(network.nodes.first?.elements[1].contains(modelWithIdentifier: 0x1003) ?? true)
-        XCTAssert(network.nodes.first?.elements[1].contains(modelWithIdentifier: 0x1005) ?? false)
-        XCTAssert(network.nodes.first?.elements[1].contains(modelWithIdentifier: 0x1007) ?? false)
-        XCTAssert(network.nodes.first?.elements[1].contains(modelWithIdentifier: 0x1009) ?? false)
+        XCTAssertFalse(network.nodes.first?.elements[1].contains(modelWithSigModelId: 0x1001) ?? true)
+        XCTAssertFalse(network.nodes.first?.elements[1].contains(modelWithSigModelId: 0x1003) ?? true)
+        XCTAssert(network.nodes.first?.elements[1].contains(modelWithSigModelId: 0x1005) ?? false)
+        XCTAssert(network.nodes.first?.elements[1].contains(modelWithSigModelId: 0x1007) ?? false)
+        XCTAssert(network.nodes.first?.elements[1].contains(modelWithSigModelId: 0x1009) ?? false)
     }
     
     func testNextAvailableUnicastAddress() {
@@ -150,8 +150,8 @@ class CreatingMeshNetwork: XCTestCase {
         element3.add(model: Model(sigModelId: 0x1009)) // Generic Power Level Server
         
         // Define local Elements.
-        // Configuration Server and Client and Health Server and Client
-        // will be added automatically to the first element.
+        // Configuration Server and Client, Health Server and Client,
+        // and Scene Client will be added automatically to the first element.
         // The element 2 will be removed, as it has 0 Models.
         manager.localElements = [element0, element1, element2, element3]
         
@@ -164,13 +164,14 @@ class CreatingMeshNetwork: XCTestCase {
         let cutElements = network.localProvisioner?.node?.elements
         XCTAssertNotNil(cutElements)
         XCTAssertEqual(cutElements!.count, 2) // There were only 2 addreses available.
-        XCTAssertEqual(cutElements![0].models.count, 6)
+        XCTAssertEqual(cutElements![0].models.count, 7)
         XCTAssert(cutElements![0].contains(model: Model(sigModelId: .configurationServerModelId)))
         XCTAssert(cutElements![0].contains(model: Model(sigModelId: .configurationClientModelId)))
         XCTAssert(cutElements![0].contains(model: Model(sigModelId: .healthServerModelId)))
         XCTAssert(cutElements![0].contains(model: Model(sigModelId: .healthClientModelId)))
-        XCTAssertEqual(cutElements![0].models[4].modelIdentifier, 0x1001)
-        XCTAssertEqual(cutElements![0].models[5].modelIdentifier, 0x1003)
+        XCTAssert(cutElements![0].contains(model: Model(sigModelId: .sceneClientModelId)))
+        XCTAssertEqual(cutElements![0].models[5].modelIdentifier, 0x1001)
+        XCTAssertEqual(cutElements![0].models[6].modelIdentifier, 0x1003)
         XCTAssertEqual(cutElements![1].models.count, 3)
         XCTAssertEqual(cutElements![1].models[0].modelIdentifier, 0x1005)
         XCTAssertEqual(cutElements![1].models[1].modelIdentifier, 0x1007)
