@@ -126,6 +126,7 @@
 		52CD0A5E2330C04700A9A181 /* Network.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 52CD0A5C2330C04700A9A181 /* Network.storyboard */; };
 		52CD0A602330D71900A9A181 /* AddAddressViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52CD0A5F2330D71900A9A181 /* AddAddressViewController.swift */; };
 		52CD0A622330DCFF00A9A181 /* CustomAddressCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52CD0A612330DCFF00A9A181 /* CustomAddressCell.swift */; };
+		52D2707E2511F850002F51F3 /* FastSending.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52D2707D2511F850002F51F3 /* FastSending.swift */; };
 		52DA9D7224F6765C0051795B /* UInt16+Time.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52DA9D7124F6765C0051795B /* UInt16+Time.swift */; };
 		52DF5D8A228DA78A00C297C1 /* ConfigurationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52DF5D89228DA78A00C297C1 /* ConfigurationViewController.swift */; };
 		52DF5D8C228DAA0500C297C1 /* NodeViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52DF5D8B228DAA0500C297C1 /* NodeViewCell.swift */; };
@@ -283,6 +284,7 @@
 		52CD0A5D2330C04700A9A181 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Network.storyboard; sourceTree = "<group>"; };
 		52CD0A5F2330D71900A9A181 /* AddAddressViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddAddressViewController.swift; sourceTree = "<group>"; };
 		52CD0A612330DCFF00A9A181 /* CustomAddressCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomAddressCell.swift; sourceTree = "<group>"; };
+		52D2707D2511F850002F51F3 /* FastSending.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FastSending.swift; sourceTree = "<group>"; };
 		52DA9D7124F6765C0051795B /* UInt16+Time.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "UInt16+Time.swift"; path = "Utils/UInt16+Time.swift"; sourceTree = "<group>"; };
 		52DF5D89228DA78A00C297C1 /* ConfigurationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigurationViewController.swift; sourceTree = "<group>"; };
 		52DF5D8B228DAA0500C297C1 /* NodeViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NodeViewCell.swift; sourceTree = "<group>"; };
@@ -713,6 +715,7 @@
 			children = (
 				607FACE91AFB9204008FA782 /* Supporting Files */,
 				5231400122EEF7940074325A /* CreatingMeshNetwork.swift */,
+				52D2707D2511F850002F51F3 /* FastSending.swift */,
 				529B75AA2248E276008F1CE7 /* SceneRanges.swift */,
 				529B75AC22491770008F1CE7 /* AddressRanges.swift */,
 				529B7628224CE481008F1CE7 /* AssigningUnicastAddress.swift */,
@@ -1058,6 +1061,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				52D2707E2511F850002F51F3 /* FastSending.swift in Sources */,
 				52B7F67D229829F200B0A42F /* Addresses.swift in Sources */,
 				5294DADA22B109810041370E /* Pdus.swift in Sources */,
 				5231400022EEE1770074325A /* AssigningGroupAddresses.swift in Sources */,
