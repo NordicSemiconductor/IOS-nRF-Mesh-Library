@@ -32,7 +32,6 @@ import Foundation
 internal class UpperTransportLayer {
     private weak var networkManager: NetworkManager!
     private let meshNetwork: MeshNetwork
-    private let defaults: UserDefaults
     private let mutex = DispatchQueue(label: "UpperTransportLayerMutex")
     
     /// This timer is responsible for publishing periodic Heartbeat messages
@@ -55,7 +54,6 @@ internal class UpperTransportLayer {
     init(_ networkManager: NetworkManager) {
         self.networkManager = networkManager
         self.meshNetwork = networkManager.meshNetwork!
-        self.defaults = UserDefaults(suiteName: meshNetwork.uuid.uuidString)!
         self.queues = [:]
     }
     
@@ -105,8 +103,7 @@ internal class UpperTransportLayer {
     func send(_ accessPdu: AccessPdu, withTtl initialTtl: UInt8?, using keySet: KeySet) {
         // Get the current sequence number for source Element's address.
         let source = accessPdu.localElement!.unicastAddress
-        let sequence = UInt32(defaults.integer(forKey: "S\(source.hex)"))
-        let networkKey = keySet.networkKey
+        let sequence = networkManager.networkLayer.nextSequenceNumber(for: source)
         
         let pdu = UpperTransportPdu(fromAccessPdu: accessPdu,
                                     usingKeySet: keySet, sequence: sequence,
@@ -118,10 +115,11 @@ internal class UpperTransportLayer {
         if isSegmented {
             // Enqueue the PDU. If the queue was empty, the PDU will be sent
             // immediately.
-            enqueue(pdu: pdu, initialTtl: initialTtl, networkKey: networkKey)
+            enqueue(pdu: pdu, initialTtl: initialTtl, networkKey: keySet.networkKey)
         } else {
             networkManager.lowerTransportLayer.send(unsegmentedUpperTransportPdu: pdu,
-                                                    withTtl: initialTtl, usingNetworkKey: networkKey)
+                                                    withTtl: initialTtl,
+                                                    usingNetworkKey: keySet.networkKey)
         }
     }
     
