@@ -65,9 +65,17 @@ class NodeAddAppKeyViewController: ProgressViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        let presentApplicationKeysSettings = UIButtonAction(title: "Settings") { [weak self] in
+            guard let self = self else { return }
+            let tabBarController = self.presentingViewController as? RootTabBarController
+            self.dismiss(animated: true) {
+                tabBarController?.presentApplicationKeysSettings()
+            }
+        }
         tableView.setEmptyView(title: "No keys available",
                                message: "Go to Settings to create a new key,\nor add a bound Network Key first.",
-                               messageImage: #imageLiteral(resourceName: "baseline-key"))
+                               messageImage: #imageLiteral(resourceName: "baseline-key"),
+                               action: presentApplicationKeysSettings)
         
         MeshNetworkManager.instance.delegate = self
         

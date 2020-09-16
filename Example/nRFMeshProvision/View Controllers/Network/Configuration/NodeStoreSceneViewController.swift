@@ -80,9 +80,17 @@ class NodeStoreSceneViewController: ProgressViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        let presentScenesSettings = UIButtonAction(title: "Settings") { [weak self] in
+            guard let self = self else { return }
+            let tabBarController = self.presentingViewController as? RootTabBarController
+            self.dismiss(animated: true) {
+                tabBarController?.presentScenesSettings()
+            }
+        }
         tableView.setEmptyView(title: "No scenes",
                                message: "Go to Settings to create a new scene.",
-                               messageImage: #imageLiteral(resourceName: "baseline-scene"))
+                               messageImage: #imageLiteral(resourceName: "baseline-scene"),
+                               action: presentScenesSettings)
         
         MeshNetworkManager.instance.delegate = self
         
