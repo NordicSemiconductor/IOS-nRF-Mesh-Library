@@ -243,23 +243,27 @@ private extension SetHeartbeatPublicationViewController {
     }
     
     func setPublication() {
-        guard let destination = destination, let networkKey = networkKey else {
+        guard let destination = destination, let networkKey = networkKey,
+              let node = self.node else {
             return
         }
-        start("Setting Heartbeat Publication...") {
-            var features: NodeFeatures = []
-            if self.relaySwitch.isOn { features.insert(.relay) }
-            if self.proxySwitch.isOn { features.insert(.proxy) }
-            if self.friendSwitch.isOn { features.insert(.friend) }
-            if self.lowPowerSwitch.isOn { features.insert(.lowPower) }
-            let periodLog = self.countLog > 0 ? self.periodLog : 0
+        var features: NodeFeatures = []
+        if relaySwitch.isOn { features.insert(.relay) }
+        if proxySwitch.isOn { features.insert(.proxy) }
+        if friendSwitch.isOn { features.insert(.friend) }
+        if lowPowerSwitch.isOn { features.insert(.lowPower) }
+        let periodLog = countLog > 0 ? self.periodLog : 0
+        let countLog = self.countLog
+        let ttl = self.ttl
+        
+        start("Setting Heartbeat Publication...") { [features] in
             let message: ConfigMessage =
-                ConfigHeartbeatPublicationSet(startSending: self.countLog,
+                ConfigHeartbeatPublicationSet(startSending: countLog,
                                               heartbeatMessagesEvery: periodLog,
                                               secondsTo: destination,
-                                              usingTtl: self.ttl, andNetworkKey: networkKey,
+                                              usingTtl: ttl, andNetworkKey: networkKey,
                                               andEnableHeartbeatMessagesTriggeredByChangeOf: features)!
-            return try MeshNetworkManager.instance.send(message, to: self.node)
+            return try MeshNetworkManager.instance.send(message, to: node)
         }
     }
     

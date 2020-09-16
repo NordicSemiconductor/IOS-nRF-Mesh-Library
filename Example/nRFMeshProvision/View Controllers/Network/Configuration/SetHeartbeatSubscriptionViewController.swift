@@ -221,23 +221,25 @@ private extension SetHeartbeatSubscriptionViewController {
     
     func setSubscription() {
         guard let sourceIndexPath = selectedSourceIndexPath,
-              let destinationIndexPath = selectedDestinationIndexPath else {
+              let destinationIndexPath = selectedDestinationIndexPath,
+              let node = self.node else {
             return
         }
+        let sourceAddress = nodes[sourceIndexPath.row].unicastAddress
+        let destinationAddress =
+            destinationIndexPath.isDestinationSection ?
+                node.unicastAddress :
+                destinationIndexPath.isGroupsSection && !groups.isEmpty ?
+                    groups[destinationIndexPath.row].address.address :
+                    specialGroups[destinationIndexPath.row].address
+        let periodLog = self.periodLog
+        
         start("Setting Heartbeat Subscribtion...") {
-            let sourceAddress = self.nodes[sourceIndexPath.row].unicastAddress
-            let destinationAddress =
-                destinationIndexPath.isDestinationSection ?
-                    self.node.unicastAddress :
-                destinationIndexPath.isGroupsSection && !self.groups.isEmpty ?
-                    self.groups[destinationIndexPath.row].address.address :
-                    self.specialGroups[destinationIndexPath.row].address
-            let periodLog = self.periodLog
             let message: ConfigMessage =
                 ConfigHeartbeatSubscriptionSet(startProcessingHeartbeatMessagesFor: periodLog,
                                                secondsSentFrom: sourceAddress,
                                                to: destinationAddress)!
-            return try MeshNetworkManager.instance.send(message, to: self.node)
+            return try MeshNetworkManager.instance.send(message, to: node)
         }
     }
     

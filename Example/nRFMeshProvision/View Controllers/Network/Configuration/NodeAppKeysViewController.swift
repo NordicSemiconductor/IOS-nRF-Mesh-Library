@@ -159,16 +159,22 @@ private extension NodeAppKeysViewController {
     }
     
     func readApplicationKeys(boundTo networkKey: NetworkKey) {
+        guard let node = node else {
+            return
+        }
         start("Reading Application Keys...") {
             let message = ConfigAppKeyGet(networkKey: networkKey)
-            return try MeshNetworkManager.instance.send(message, to: self.node)
+            return try MeshNetworkManager.instance.send(message, to: node)
         }
     }
     
     func delete(applicationKey: ApplicationKey) {
+        guard let node = node else {
+            return
+        }
         start("Deleting Application Key...") {
             let message = ConfigAppKeyDelete(applicationKey: applicationKey)
-            return try MeshNetworkManager.instance.send(message, to: self.node)
+            return try MeshNetworkManager.instance.send(message, to: node)
         }
     }
     

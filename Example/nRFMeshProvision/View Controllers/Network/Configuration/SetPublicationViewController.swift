@@ -343,19 +343,21 @@ private extension SetPublicationViewController {
     }
     
     func setPublication() {
-        guard let destination = destination, let applicationKey = applicationKey else {
+        guard let destination = destination, let applicationKey = applicationKey,
+              let model = model,
+              let node = model.parentElement?.parentNode else {
             return
         }
+        let publish = Publish(to: destination, using: applicationKey,
+                              usingFriendshipMaterial: friendshipCredentialsFlagSwitch.isOn, ttl: ttl,
+                              periodSteps: periodSteps, periodResolution: periodResolution,
+                              retransmit: Publish.Retransmit(publishRetransmitCount: retransmissionCount,
+                                                             intervalSteps: retransmissionIntervalSteps))
         start("Setting Model Publication...") {
-            let publish = Publish(to: destination, using: applicationKey,
-                                  usingFriendshipMaterial: self.friendshipCredentialsFlagSwitch.isOn, ttl: self.ttl,
-                                  periodSteps: self.periodSteps, periodResolution: self.periodResolution,
-                                  retransmit: Publish.Retransmit(publishRetransmitCount: self.retransmissionCount,
-                                                                 intervalSteps: self.retransmissionIntervalSteps))
             let message: ConfigMessage =
-                ConfigModelPublicationSet(publish, to: self.model) ??
-                ConfigModelPublicationVirtualAddressSet(publish, to: self.model)!
-            return try MeshNetworkManager.instance.send(message, to: self.model)
+                ConfigModelPublicationSet(publish, to: model) ??
+                ConfigModelPublicationVirtualAddressSet(publish, to: model)!
+            return try MeshNetworkManager.instance.send(message, to: node)
         }
     }
     

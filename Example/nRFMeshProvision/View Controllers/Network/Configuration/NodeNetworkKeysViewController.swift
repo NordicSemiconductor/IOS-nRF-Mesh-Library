@@ -160,16 +160,22 @@ extension NodeNetworkKeysViewController: UIAdaptivePresentationControllerDelegat
 private extension NodeNetworkKeysViewController {
     
     @objc func readKeys(_ sender: Any) {
+        guard let node = node else {
+            return
+        }
         start("Reading Network Keys...") {
             let message = ConfigNetKeyGet()
-            return try MeshNetworkManager.instance.send(message, to: self.node)
+            return try MeshNetworkManager.instance.send(message, to: node)
         }
     }
     
     func deleteNetworkKey(_ networkKey: NetworkKey) {
+        guard let node = node else {
+            return
+        }
         start("Deleting Network Key...") {
             let message = ConfigNetKeyDelete(networkKey: networkKey)
-            return try MeshNetworkManager.instance.send(message, to: self.node)
+            return try MeshNetworkManager.instance.send(message, to: node)
         }
     }
     

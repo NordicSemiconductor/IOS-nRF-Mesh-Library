@@ -515,14 +515,20 @@ extension ModelViewController: UIAdaptivePresentationControllerDelegate {
 extension ModelViewController: ModelViewCellDelegate {
     
     func send(_ message: MeshMessage, description: String) {
+        guard let model = model else {
+            return
+        }
         start(description) {
-            return try MeshNetworkManager.instance.send(message, to: self.model)
+            return try MeshNetworkManager.instance.send(message, to: model)
         }
     }
     
     func send(_ message: ConfigMessage, description: String) {
+        guard let node = model?.parentElement?.parentNode else {
+            return
+        }
         start(description) {
-            return try MeshNetworkManager.instance.send(message, to: self.model)
+            return try MeshNetworkManager.instance.send(message, to: node)
         }
     }
     

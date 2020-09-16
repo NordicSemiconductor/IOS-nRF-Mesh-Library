@@ -50,10 +50,7 @@ class NodeAddAppKeyViewController: ProgressViewController {
             return
         }
         let selectedAppKey = keys[selectedIndexPath.row]
-        start("Adding Application Key...") {
-            return try MeshNetworkManager.instance
-                .send(ConfigAppKeyAdd(applicationKey: selectedAppKey), to: self.node)
-        }
+        addKey(selectedAppKey)
     }
     
     // MARK: - Properties
@@ -117,6 +114,23 @@ class NodeAddAppKeyViewController: ProgressViewController {
         
         doneButton.isEnabled = true
     }
+}
+
+private extension NodeAddAppKeyViewController {
+    
+    /// Adds the given Application Key to the target Node.
+    ///
+    /// - parameter networkKey: The Application Key to be added.
+    func addKey(_ applicationKey: ApplicationKey) {
+        guard let node = node else {
+            return
+        }
+        start("Adding Application Key...") {
+            let message = ConfigAppKeyAdd(applicationKey: applicationKey)
+            return try MeshNetworkManager.instance.send(message, to: node)
+        }
+    }
+    
 }
 
 extension NodeAddAppKeyViewController: MeshNetworkDelegate {
