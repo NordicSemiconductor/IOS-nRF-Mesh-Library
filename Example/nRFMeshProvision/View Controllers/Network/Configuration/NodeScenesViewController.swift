@@ -60,32 +60,15 @@ class NodeScenesViewController: ProgressViewController, Editable {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        let sceneServerReady = isSceneServerReady
-        let sceneSetupServerReady = isSceneSetupServerReady
-        let sceneClientReady = isSceneClientReady
-        if sceneServerReady && sceneSetupServerReady && sceneClientReady {
-            tableView.setEmptyView(title: "No scenes",
-                                   message: "Pull to refresh, or click + to store a new scene.",
-                                   messageImage: #imageLiteral(resourceName: "baseline-scene"))
-        } else {
-            tableView.setEmptyView(title: "Incomplete setup",
-                                   message: "Before you start setting up scenes,\n"
-                                    + "bind an application key to Scene Server \(sceneServerReady ? "✅" : "❌")\n"
-                                          + "and Scene Setup Server \(sceneSetupServerReady ? "✅" : "❌") models on the Node\n"
-                                          + "and Scene Client \(sceneClientReady ? "✅" : "❌") model on your local node.",
-                                   messageImage: #imageLiteral(resourceName: "baseline-scene"))
-            navigationItem.rightBarButtonItem?.isEnabled = false
-        }
+        tableView.setEmptyView(title: "No scenes",
+                               message: "Pull to refresh, or click + to store a new scene.",
+                               messageImage: #imageLiteral(resourceName: "baseline-scene"))
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        guard isSetupReady else {
-            showEmptyView()
-            refreshControl = nil
-            return
-        }
+        updateEmptyView()
         
         if node.scenes.isEmpty {
             showEmptyView()
@@ -127,7 +110,7 @@ class NodeScenesViewController: ProgressViewController, Editable {
     // MARK: - Table view data source
 
     override func numberOfSections(in tableView: UITableView) -> Int {
-        return !isSetupReady || node.scenes.isEmpty ? 0 : IndexPath.numberOfSections
+        return node.scenes.isEmpty ? 0 : IndexPath.numberOfSections
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -138,7 +121,7 @@ class NodeScenesViewController: ProgressViewController, Editable {
                             titleForFooterInSection section: Int) -> String? {
         return "Tap a scene to recall it. Current scene is marked with a checkmark. "
              + "If no scene is checked, no scene is currently presented, or the current "
-             + "scene is unknown. Pull to read Scene Register."
+             + "scene is unknown. Pull to refresh stored scenes."
     }
     
     override func tableView(_ tableView: UITableView,
@@ -160,15 +143,27 @@ class NodeScenesViewController: ProgressViewController, Editable {
     
     override func tableView(_ tableView: UITableView,
                             editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
-        // This is required to allow swipe to delete action.
+        if !isSceneClientReadyToSetup {
+            return [UITableViewRowAction(style: .normal, title: "Client not ready", handler: {
+                [unowned self] _,_ in
+                _ = self.ensureClientReadyToDelete()
+            })]
+        }
         return nil
+    }
+    
+    override func tableView(_ tableView: UITableView,
+                            editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
+        return isSceneClientReadyToSetup ? .delete : .none
     }
     
     override func tableView(_ tableView: UITableView,
                             commit editingStyle: UITableViewCell.EditingStyle,
                             forRowAt indexPath: IndexPath) {
-        let scene = node.scenes[indexPath.sceneIndex]
-        deleteScene(scene.number)
+        if editingStyle == .delete {
+            let scene = node.scenes[indexPath.sceneIndex]
+            deleteScene(scene.number)
+        }
     }
 
 }
@@ -181,32 +176,32 @@ extension NodeScenesViewController: UIAdaptivePresentationControllerDelegate {
     
 }
 
+// To be able to send messages to Scene Server and Scene Setup Server models
+// both of them need to have an Application Key(s) bound. As the returned
+// Status messages are processed by local Scene Client model, it also need
+// to be bound to the same keys. Otherwise, the response would only be returned
+// to the delegate, but would not be processed by the client model, and therefore
+// not saved in the mesh network database.
 private extension NodeScenesViewController {
     
-    /// Returns whether Scene models are set up correctly.
-    ///
-    /// To be able to send messages to Scene Server and Scene Setup Server models
-    /// both of them need to have an Application Key(s) bound. As the returned
-    /// Status messages are processed by local Scene Client model, it also need
-    /// to be bound to the same keys. Otherwise, the response would only be returned
-    /// to the delegate, but would not be processed by the client model, and therefore
-    /// not saved in the mesh network database.
-    var isSetupReady: Bool {
-        return isSceneClientReady && isSceneServerReady && isSceneSetupServerReady
-    }
-    
+    /// Whether the Scene Server model has at least one Application Key bound
+    /// to it.
     var isSceneServerReady: Bool {
         return !(node.primaryElement?
             .model(withSigModelId: .sceneServerModelId)?
             .boundApplicationKeys.isEmpty ?? true)
     }
     
+    /// Whether the Scene Setup Server model has at least one Application Key
+    /// bound to it.
     var isSceneSetupServerReady: Bool {
         return !(node.primaryElement?
             .model(withSigModelId: .sceneSetupServerModelId)?
             .boundApplicationKeys.isEmpty ?? true)
     }
     
+    /// Whether the local Scene Client model has at least one Application Key
+    /// bound to it, that is also bound to Scene Server model on the target Node.
     var isSceneClientReady: Bool {
         guard let network = MeshNetworkManager.instance.meshNetwork,
               let localNode = network.localProvisioner?.node,
@@ -221,41 +216,207 @@ private extension NodeScenesViewController {
         let sceneServerKey = node.primaryElement?
             .model(withSigModelId: .sceneServerModelId)?
             .boundApplicationKeys.first
+        // If they are set, check if Scene Client is also bound to those keys.
+        return sceneServerKey == nil || sceneClientKeys.contains(sceneServerKey!)
+    }
+    
+    /// Whether the local Scene Client model has at least one Application Key
+    /// bound to it, that is also bound to Scene Setup Server model on the target
+    /// Node.
+    var isSceneClientReadyToSetup: Bool {
+        guard let network = MeshNetworkManager.instance.meshNetwork,
+              let localNode = network.localProvisioner?.node,
+              let primaryElement = localNode.primaryElement,
+              let sceneClientKeys = primaryElement
+                        .model(withSigModelId: .sceneClientModelId)?
+                        .boundApplicationKeys,
+                 !sceneClientKeys.isEmpty else {
+            return false
+        }
+        // Messages will be sent using the first bound Application Key.
         let sceneSetupServerKey = node.primaryElement?
             .model(withSigModelId: .sceneSetupServerModelId)?
             .boundApplicationKeys.first
         // If they are set, check if Scene Client is also bound to those keys.
-        return (sceneServerKey == nil || sceneClientKeys.contains(sceneServerKey!)) &&
-               (sceneSetupServerKey == nil || sceneClientKeys.contains(sceneSetupServerKey!))
+        return sceneSetupServerKey == nil || sceneClientKeys.contains(sceneSetupServerKey!)
     }
     
+    /// Updates the Empty View based on how the models are configured.
+    func updateEmptyView() {
+        let sceneServerReady = isSceneServerReady
+        let sceneSetupServerReady = isSceneSetupServerReady
+        let sceneClientReady = isSceneClientReady
+        let sceneClientReadyToSetup = isSceneClientReadyToSetup
+        if sceneServerReady && sceneClientReady && sceneSetupServerReady && sceneClientReadyToSetup {
+            tableView.updateEmptyView(title: "No scenes",
+                                      message: "Pull to refresh, or click + to store a new scene.")
+            navigationItem.rightBarButtonItem?.isEnabled = true
+        } else if sceneServerReady && sceneClientReady {
+            // When the Scene Setup Server on the Node has an Application Key bound to it,
+            // but the local Scene Client model does not, this action will automatically
+            // fix this by binding the same Application Key to the client model.
+            // If no key is bound to the server model, automatic fix is not possible,
+            // as user may want to select which App Key to use.
+            let fixClient = sceneSetupServerReady ?
+                UIButtonAction(title: "Fix") { [weak self] in
+                    self?.fixClient()
+                } : nil
+            tableView.updateEmptyView(title: "No scenes",
+                                      message: "Pull to refresh stored scenes.\n\n"
+                                             + "Before you start storing or deleting scenes,\n"
+                                             + "bind an application key to Scene Setup Server \(sceneSetupServerReady ? "✅" : "❌")\n"
+                                             + "model on the Node, and Scene Client \(sceneClientReadyToSetup ? "✅" : "❌")\n"
+                                             + "model on your local node.",
+                                      action: fixClient)
+            navigationItem.rightBarButtonItem?.isEnabled = false
+        } else {
+            let fixClient = sceneServerReady ?
+                UIButtonAction(title: "Fix") { [weak self] in
+                    self?.fixClient()
+                } : nil
+            tableView.updateEmptyView(title: "Incomplete setup",
+                                      message: "Before you start setting up scenes,\n"
+                                             + "bind an application key to Scene Server \(sceneServerReady ? "✅" : "❌")\n"
+                                             + "and Scene Setup Server \(sceneSetupServerReady ? "✅" : "❌") models on the Node,\n"
+                                             + "and Scene Client \(sceneClientReady && sceneClientReadyToSetup ? "✅" : "❌") model on your local node.",
+                                      action: fixClient)
+            navigationItem.rightBarButtonItem?.isEnabled = false
+        }
+    }
+    
+}
+
+private extension NodeScenesViewController {
+    
     @objc func getScenes() {
-        // Scene Register Get will return no current Scene it transition is in progress.
+        guard ensureClientReady() else {
+            return
+        }
+        guard let sceneServerModel = sceneServerModel else {
+            return
+        }
+        // Note: Scene Register Get will return no current Scene (invalid scene)
+        //       when transition is in progress, so Scene Get will be sent afterwards.
         start("Reading Scene Register...") {
             let message = SceneRegisterGet()
-            return try MeshNetworkManager.instance.send(message, to: self.sceneServerModel)
+            return try MeshNetworkManager.instance.send(message, to: sceneServerModel)
         }
     }
     
     func getCurrentScene() {
+        guard ensureClientReady() else {
+            return
+        }
+        guard let sceneServerModel = sceneServerModel else {
+            return
+        }
         start("Reading Current Scene...") {
             let message = SceneGet()
-            return try MeshNetworkManager.instance.send(message, to: self.sceneServerModel)
+            return try MeshNetworkManager.instance.send(message, to: sceneServerModel)
         }
     }
     
     func recallScene(_ scene: SceneNumber) {
+        guard ensureClientReady() else {
+            return
+        }
+        guard let sceneServerModel = sceneServerModel else {
+            return
+        }
         start("Recalling Scene...") {
-            let transitionTime = TransitionTime(steps: 2, stepResolution: .seconds)
-            let message = SceneRecall(scene, transitionTime: transitionTime, delay: 0)
-            return try MeshNetworkManager.instance.send(message, to: self.sceneServerModel)
+            let message = SceneRecall(scene)
+            return try MeshNetworkManager.instance.send(message, to: sceneServerModel)
         }
     }
     
     func deleteScene(_ scene: SceneNumber) {
+        guard let sceneSetupServerModel = sceneSetupServerModel else {
+            return
+        }
         start("Deleting Scene...") {
             let message = SceneDelete(scene)
-            return try MeshNetworkManager.instance.send(message, to: self.sceneSetupServerModel)
+            return try MeshNetworkManager.instance.send(message, to: sceneSetupServerModel)
+        }
+    }
+    
+    func ensureClientReady() -> Bool {
+        // Refreshing will only work if there is at least one Application Key bound
+        // to both Scene Server on the target Node, and Scene Client model on the
+        // local Node.
+        guard isSceneServerReady else {
+            presentAlert(title: "Scene Server not ready",
+                         message: "Scene Server model on the node has no Application Keys bound "
+                                + "to it. Configure the model before refreshing scenes.")
+            return false
+        }
+        guard isSceneClientReady else {
+            let action = UIAlertAction(title: "Fix", style: .default) { [unowned self] action in
+                self.fixClient()
+            }
+            presentAlert(title: "Client not ready",
+                         message: "Scene Client model on local node is not bound to any of the "
+                                + "keys bound to Scene Server model on the node.",
+                         option: action)
+            return false
+        }
+        return true
+    }
+    
+    func ensureClientReadyToDelete() -> Bool {
+        // Deleting will only work if there is at least one Application Key bound
+        // to both Scene Setup Server on the target Node, and Scene Client model on the
+        // local Node.
+        guard isSceneSetupServerReady else {
+            presentAlert(title: "Scene Setup Server not ready",
+                         message: "Scene Setup Server model on the node has no Application Keys "
+                                + "bound to it. Configure the model before deleting scenes.")
+            return false
+        }
+        guard isSceneClientReadyToSetup else {
+            let action = UIAlertAction(title: "Fix", style: .default) { [unowned self] action in
+                self.fixClient()
+            }
+            presentAlert(title: "Client not ready",
+                         message: "Scene Client model on local node is not bound to any of the "
+                                + "keys bound to Scene Setup Server model on the node.",
+                         option: action)
+            return false
+        }
+        return true
+    }
+    
+    /// This method tried to bind the Application Keys bound to Scene Server and
+    /// Scene Setup Server on the target Node to the local Scene Client model.
+    func fixClient() {
+        let sceneServerApplicationKey = node.primaryElement?
+            .model(withSigModelId: .sceneServerModelId)?
+            .boundApplicationKeys.first
+        let sceneSetupServerApplicationKey = node.primaryElement?
+            .model(withSigModelId: .sceneSetupServerModelId)?
+            .boundApplicationKeys.first
+        guard sceneServerApplicationKey != nil ||
+              sceneSetupServerApplicationKey != nil else {
+            return
+        }
+        guard let network = MeshNetworkManager.instance.meshNetwork,
+              let localNode = network.localProvisioner?.node,
+              let primaryElement = localNode.primaryElement,
+              let sceneClient = primaryElement.model(withSigModelId: .sceneClientModelId) else {
+            return
+        }
+        start("Binding Application Key...") {
+            var handler: MessageHandle?
+            if let key = sceneServerApplicationKey {
+                let message = ConfigModelAppBind(applicationKey: key,
+                                                 to: sceneClient)!
+                handler = try MeshNetworkManager.instance.sendToLocalNode(message)
+            }
+            if let key = sceneSetupServerApplicationKey {
+                let message = ConfigModelAppBind(applicationKey: key,
+                                                 to: sceneClient)!
+                handler = try MeshNetworkManager.instance.sendToLocalNode(message)
+            }
+            return handler
         }
     }
     
@@ -264,8 +425,8 @@ private extension NodeScenesViewController {
         if let currentSceneIndexPath = currentSceneIndexPath {
             rows.append(currentSceneIndexPath)
         }
-        if currentScene.isValidSceneNumber {
-            let index = node.scenes.firstIndex { $0.number == currentScene }!
+        if currentScene.isValidSceneNumber,
+           let index = node.scenes.firstIndex(where: { $0.number == currentScene }) {
             currentSceneIndexPath = IndexPath(row: index, section: 0)
             rows.append(currentSceneIndexPath!)
         } else {
@@ -293,6 +454,18 @@ extension NodeScenesViewController: MeshNetworkDelegate {
             }
             return
         }
+            
+        if let status = message as? ConfigModelAppStatus {
+            done() {
+                if status.isSuccess {
+                    self.updateEmptyView()
+                    self.tableView.reloadData()
+                } else {
+                    self.presentAlert(title: "Error", message: "\(status.status)")
+                }
+            }
+        }
+        
         // Is the message targeting the current Node?
         guard node.unicastAddress == source else {
             return
@@ -333,9 +506,10 @@ extension NodeScenesViewController: MeshNetworkDelegate {
                     return
                 }
             } else {
+                tableView.reloadData()
                 presentAlert(title: "Error", message: "\(status.status)")
             }
-            self.refreshControl?.endRefreshing()
+            refreshControl?.endRefreshing()
             
         default:
             break

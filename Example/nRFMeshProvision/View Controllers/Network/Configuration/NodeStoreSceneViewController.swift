@@ -53,10 +53,7 @@ class NodeStoreSceneViewController: ProgressViewController {
         }
         let selectedScene = selectedIndexPath.section == 0 ?
             newScenes[selectedIndexPath.row] : currentScenes[selectedIndexPath.row]
-        start("Storing Scene...") {
-            return try MeshNetworkManager.instance
-                .send(SceneStore(selectedScene.number), to: self.sceneSetupServerModel)
-        }
+        storeScene(selectedScene.number)
     }
     
     // MARK: - Properties
@@ -156,6 +153,23 @@ class NodeStoreSceneViewController: ProgressViewController {
         doneButton.isEnabled = true
     }
 
+}
+
+private extension NodeStoreSceneViewController {
+    
+    /// Sends Scene Store message to the target Node.
+    ///
+    /// - parameter sceneNumber: The Scene number to be stored.
+    func storeScene(_ sceneNumber: SceneNumber) {
+        guard let model = sceneSetupServerModel else {
+            return
+        }
+        start("Storing Scene...") {
+            let message = SceneStore(sceneNumber)
+            return try MeshNetworkManager.instance.send(message, to: model)
+        }
+    }
+    
 }
 
 extension NodeStoreSceneViewController: MeshNetworkDelegate {
