@@ -54,7 +54,6 @@ public extension MeshNetwork {
         }
         group.meshNetwork = self
         groups.append(group)
-        groups.sort()
         timestamp = Date()
     }
     

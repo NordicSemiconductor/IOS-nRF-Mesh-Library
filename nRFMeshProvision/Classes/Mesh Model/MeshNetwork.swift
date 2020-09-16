@@ -277,7 +277,6 @@ extension MeshNetwork {
     func add(scene: Scene) {
         scene.meshNetwork = self
         scenes.append(scene)
-        scenes.sort()
         timestamp = Date()
     }
     
