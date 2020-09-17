@@ -211,7 +211,7 @@ public class Node: Codable {
     /// The flag is set to `true` when the Node is in the process of being
     /// deleted and is excluded from the new network key distribution
     /// during the key refresh procedure; otherwise is set to `false`.
-    public var isBlacklisted: Bool = false {
+    public var isExcluded: Bool = false {
          didSet {
              meshNetwork?.timestamp = Date()
          }
@@ -378,9 +378,11 @@ public class Node: Codable {
         case networkTransmit
         case relayRetransmit
         case elements
-        case isBlacklisted = "blacklisted"
+        case isExcluded = "excluded"
         case heartbeatPublication = "heartbeatPub"
         case heartbeatSubscription = "heartbeatSub"
+        // Legacy keys, deprecated in nRF Mesh Provision library in version 3.0.
+        case legacyIsBlacklisted = "blacklisted" // replaced with "excluded"
     }
     
     public required init(from decoder: Decoder) throws {
@@ -453,7 +455,11 @@ public class Node: Codable {
         self.networkTransmit = try container.decodeIfPresent(NetworkTransmit.self, forKey: .networkTransmit)
         self.relayRetransmit = try container.decodeIfPresent(RelayRetransmit.self, forKey: .relayRetransmit)
         self.elements = try container.decode([Element].self, forKey: .elements)
-        self.isBlacklisted = try container.decode(Bool.self, forKey: .isBlacklisted)
+        
+        // "blacklisted" was replaced by "excluded".
+        self.isExcluded = try container.decodeIfPresent(Bool.self, forKey: .isExcluded) ??
+                              container.decode(Bool.self, forKey: .legacyIsBlacklisted)
+        
         self.heartbeatPublication = try container.decodeIfPresent(HeartbeatPublication.self,
                                                                   forKey: .heartbeatPublication)
         guard heartbeatPublication == nil || netKeys[heartbeatPublication!.networkKeyIndex] != nil else {
@@ -488,7 +494,7 @@ public class Node: Codable {
         try container.encodeIfPresent(networkTransmit, forKey: .networkTransmit)
         try container.encodeIfPresent(relayRetransmit, forKey: .relayRetransmit)
         try container.encode(elements, forKey: .elements)
-        try container.encode(isBlacklisted, forKey: .isBlacklisted)
+        try container.encode(isExcluded, forKey: .isExcluded)
         try container.encodeIfPresent(heartbeatPublication, forKey: .heartbeatPublication)
         try container.encodeIfPresent(heartbeatSubscription, forKey: .heartbeatSubscription)
     }

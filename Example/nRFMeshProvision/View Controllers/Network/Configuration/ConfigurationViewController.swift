@@ -263,7 +263,7 @@ class ConfigurationViewController: ProgressViewController {
                 cell.switch.isOn = node.isConfigComplete
                 cell.switch.onTintColor = UIColor.nordicLake
             case 1:
-                cell.switch.isOn = node.isBlacklisted
+                cell.switch.isOn = node.isExcluded
                 cell.switch.onTintColor = UIColor.nordicRed
             default:
                 break
@@ -323,7 +323,10 @@ class ConfigurationViewController: ProgressViewController {
         case 0:
             presentAlert(title: "Info", message: "Mark a node as configured when you finished setting it up.")
         case 1:
-            presentAlert(title: "Info", message: "A blacklisted node will be excluded from key exchange process. When the key refresh procedure is complete, this node will no longer be able to receive or send messages to the mesh network.")
+            presentAlert(title: "Info", message: "If checked, the node will be excluded from key exchange "
+                                               + "process. When the key refresh procedure is complete, this "
+                                               + "node will no longer be able to receive or send messages to "
+                                               + "the mesh network.")
         default:
             break
         }
@@ -399,7 +402,7 @@ private extension ConfigurationViewController {
         case 0:
             node.isConfigComplete = `switch`.isOn
         case 1:
-            node.isBlacklisted = `switch`.isOn
+            node.isExcluded = `switch`.isOn
         default:
             break
         }
@@ -545,7 +548,7 @@ private extension IndexPath {
         "Replay Protection Count", nil // Node Features is using its own cell.
     ]
     static let switchesTitles = [
-        "Configured", "Blacklisted"
+        "Configured", "Excluded"
     ]
     static let actionsTitles = [
         "Reset Node", "Remove Node"
