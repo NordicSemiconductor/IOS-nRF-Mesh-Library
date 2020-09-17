@@ -614,12 +614,12 @@ private extension AccessLayer {
         // Cancel current publication.
         publishers.removeValue(forKey: model)?.invalidate()
         // Ensure a new one should start...
-        guard let publish = model.publish, publish.publicationInterval > 0,
+        guard let publish = model.publish, publish.period.interval > 0,
               let composer = model.delegate?.publicationMessageComposer else {
             return
         }
         // ... and start periodic publisher.
-        let publisher = BackgroundTimer.scheduledTimer(withTimeInterval: publish.publicationInterval,
+        let publisher = BackgroundTimer.scheduledTimer(withTimeInterval: publish.period.interval,
                                                        repeats: true) { [weak self] timer in
             guard let manager = self?.networkManager.manager else {
                 timer.invalidate()
