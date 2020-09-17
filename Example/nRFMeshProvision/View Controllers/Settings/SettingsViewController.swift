@@ -319,7 +319,7 @@ private extension IndexPath {
     
     /// Returns whether the IndexPath points to the IV Update Test Mode switch row.
     var isIvUpdateTestMode: Bool {
-        return section == IndexPath.networkSection && row == 3
+        return section == IndexPath.networkSection && row == 4
     }
     
     /// Returns whether the IndexPath points to the network resetting option.
