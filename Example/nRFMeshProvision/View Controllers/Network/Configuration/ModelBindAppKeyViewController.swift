@@ -34,6 +34,8 @@ import nRFMeshProvision
 protocol BindAppKeyDelegate {
     /// This method is called when a new Application Key has been bound to the Model.
     func keyBound()
+    /// This method will present Node's Application Keys configuration screen.
+    func presentNodeApplicationKeys()
 }
 
 class ModelBindAppKeyViewController: ProgressViewController {
@@ -61,9 +63,15 @@ class ModelBindAppKeyViewController: ProgressViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        let presentNodeApplicationKeys = UIButtonAction(title: "Add key") { [weak self] in
+            self?.dismiss(animated: true) { [weak self] in
+                self?.delegate?.presentNodeApplicationKeys()
+            }
+        }
         tableView.setEmptyView(title: "No keys available",
                                message: "Add a new key to the node first.",
-                               messageImage: #imageLiteral(resourceName: "baseline-key"))
+                               messageImage: #imageLiteral(resourceName: "baseline-key"),
+                               action: presentNodeApplicationKeys)
         
         MeshNetworkManager.instance.delegate = self
         

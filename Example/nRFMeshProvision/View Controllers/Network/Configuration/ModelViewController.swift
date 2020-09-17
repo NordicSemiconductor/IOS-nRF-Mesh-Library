@@ -799,6 +799,14 @@ extension ModelViewController: MeshNetworkDelegate {
 
 extension ModelViewController: BindAppKeyDelegate, PublicationDelegate,
                                SubscriptionDelegate, HeartbeatSubscriptionDelegate {
+                                   
+    func presentNodeApplicationKeys() {
+        if let configurationViewController = navigationController?.viewControllers
+                .first(where: { $0 is ConfigurationViewController }) {
+            navigationController?.popToViewController(configurationViewController, animated: true)
+            configurationViewController.performSegue(withIdentifier: "showAppKeys", sender: nil)
+        }
+    }
     
     func keyBound() {
         tableView.reloadSections(.bindings, with: .automatic)
