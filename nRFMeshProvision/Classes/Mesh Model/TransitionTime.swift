@@ -78,7 +78,7 @@ public struct TransitionTime {
     /// Creates the Transition Time object for the `TimeInterval`.
     public init(_ interval: TimeInterval) {
         switch interval {
-        case let interval where interval < 0:
+        case let interval where interval <= 0:
             steps = 0
             stepResolution = .hundredsOfMilliseconds
         case let interval where interval <= 62 * 0.100:
@@ -107,9 +107,41 @@ public struct TransitionTime {
 
 public extension TransitionTime {
     
+    /// Transition is immediate.
+    static let immediate = TransitionTime(steps: 0, stepResolution: .hundredsOfMilliseconds)
+    /// Unknown transition time.
+    ///
+    /// This can not be used as default transition time.
+    static let unknown = TransitionTime(steps: 0x3F, stepResolution: .tensOfMinutes)
+    
     /// Returns whether the transition time is known.
     var isKnown: Bool {
         return steps < 0x3F
+    }
+    
+    /// Whether the transition is immediate.
+    var isImmediate: Bool {
+        return steps == 0
+    }
+    
+}
+
+public extension Optional where Wrapped == TransitionTime {
+    
+    /// Returns this Transition Time value, if it's known, or
+    /// the default value. If default value is `nil`, instantenous
+    /// transition is returned.
+    ///
+    /// - parameter defaultTransitionTime: The optional default value
+    ///                                    of the transition time.
+    func or(_ defaultTransitionTime: TransitionTime?) -> TransitionTime {
+        switch self {
+        case .some(let transitionTime) where transitionTime.isKnown:
+            return transitionTime
+            
+        default:
+            return defaultTransitionTime ?? .immediate
+        }
     }
     
 }
@@ -120,7 +152,7 @@ extension TransitionTime: CustomDebugStringConvertible {
         guard isKnown else {
             return "Unknown"
         }
-        if steps == 0 {
+        if isImmediate {
             return "Immediate"
         }
         

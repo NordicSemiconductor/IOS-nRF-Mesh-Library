@@ -30,7 +30,14 @@
 
 import Foundation
 
-public protocol ModelDelegate {
+public enum ModelError: Error {
+    /// This error can be returned if the received acknowledged message
+    /// should be discarded due to being invalid.
+    case invalidMessage
+}
+
+public protocol ModelDelegate: class {
+    typealias MessageComposer = () -> MeshMessage
     
     /// A map of mesh message types that the associated Model may receive
     /// and handle. It should not contain types of messages that this
@@ -47,6 +54,16 @@ public protocol ModelDelegate {
     /// change was initiated.
     var isSubscriptionSupported: Bool { get }
     
+    /// The message composer that will be used to create a Mesh Message.
+    ///
+    /// The composer will be used whenever model is about to pubilsh its
+    /// state using the publish information specified in the Model.
+    ///
+    /// When set to `nil`, the library will return error
+    /// `ConfigMessageStatus.invalidPublishParameters` for each Config
+    /// Model Publication Set and Config Model Publication Virtual Address Set.
+    var publicationMessageComposer: MessageComposer? { get }
+    
     /// This method should handle the received Acknowledged Message.
     ///
     /// - parameters:
@@ -55,8 +72,11 @@ public protocol ModelDelegate {
     ///   - source:  The source Unicast Address.
     ///   - destination: The destination address of the request.
     /// - returns: The response message to be sent to the sender.
+    /// - throws: The method should throw `ModelError.invalidMessage`
+    ///           if the receive message is invalid and no response
+    ///           should be replied.
     func model(_ model: Model, didReceiveAcknowledgedMessage request: AcknowledgedMeshMessage,
-               from source: Address, sentTo destination: MeshAddress) -> MeshMessage
+               from source: Address, sentTo destination: MeshAddress) throws -> MeshMessage
     
     /// This method should handle the received Unacknowledged Message.
     ///
@@ -80,6 +100,148 @@ public protocol ModelDelegate {
     func model(_ model: Model, didReceiveResponse response: MeshMessage,
                toAcknowledgedMessage request: AcknowledgedMeshMessage,
                from source: Address)
+    
+}
+
+public extension ModelDelegate {
+    
+    /// Publishes a single message given as a parameter using the
+    /// Publish information set in the underlying Model.
+    ///
+    /// - parameters:
+    ///   - message: The message to be published.
+    ///   - manager: The manager to be used for publishing.
+    /// - returns: The Message Handler that can be used to cancel sending.
+    @discardableResult
+    func publish(_ message: MeshMessage, using manager: MeshNetworkManager) -> MessageHandle? {
+        return manager.localElements
+            .flatMap { element in element.models }
+            .first { model in model.delegate === self }
+            .map { model in manager.publish(message, from: model) } ?? nil
+    }
+    
+    /// Publishes a single message created by Model's message composer using
+    /// the Publish information set in the underlying Model.
+    ///
+    /// - parameter manager: The manager to be used for publishing.
+    /// - returns: The Message Handler that can be used to cancel sending.
+    @discardableResult
+    func publish(using manager: MeshNetworkManager) -> MessageHandle? {
+        guard let composer = publicationMessageComposer else {
+            return nil
+        }
+        return publish(composer(), using: manager)
+    }
+    
+}
+
+public protocol SceneServerModelDelegate: ModelDelegate {
+    
+    /// This method should be called whenever the State of a Model changes
+    /// for any reason other than receiving Scene Recall message.
+    ///
+    /// The call of this method should be consumed by Scene Server model,
+    /// which should clear the Current Scene.
+    func networkDidExitStoredWithSceneState()
+    
+}
+
+public protocol StoredWithSceneModelDelegate: ModelDelegate {
+    
+    /// This method should store the current States of the Model and
+    /// associate them with the given Scene number.
+    ///
+    /// - parameter scene: The Scene number.
+    func store(with scene: SceneNumber)
+    
+    /// This method should recall the States of the Model associated with
+    /// the given Scene number.
+    ///
+    /// - parameters:
+    ///   - scene: The Scene number.
+    ///   - transitionTime: The Transition Time field identifies the time
+    ///                     that an element will take to transition to the
+    ///                     target state from the present state.
+    ///   - delay: Message execution delay in 5 millisecond steps.
+    func recall(_ scene: SceneNumber, transitionTime: TransitionTime?, delay: UInt8?)
+    
+}
+
+public extension StoredWithSceneModelDelegate {
+    
+    /// This method should be called whenever the state of a local Model changes
+    /// due to a different action than recalling a Scene.
+    ///
+    /// This method will invalidate the Current Scene state in Scene Server model.
+    ///
+    /// - parameter network: The mesh network this model belong to.
+    func networkDidExitStoredWithSceneState(_ network: MeshNetwork) {
+        network.localElements
+            .flatMap { element in element.models }
+            .compactMap { model in model.delegate as? SceneServerModelDelegate }
+            .forEach { delegate in delegate.networkDidExitStoredWithSceneState() }
+    }
+    
+}
+
+/// Transaction helper may be used to deal with Transaction Messages.
+/// Each such message is sent with a Transaction Identifier (TID).
+///
+/// If a received TID is the same as TID of the previously received message
+/// from the same source and targetting the same destination, and no more
+/// than 6 seconds have passed since, the message is assumed to be the
+/// transaction continuation. Otherwise it is a new transaction.
+public class TransactionHelper {
+    
+    private typealias Transaction = (
+        source: Address,
+        destination: MeshAddress,
+        tid: UInt8,
+        timestamp: Date
+    )
+    
+    /// The last transaction details.
+    private var lastTransactions: [UInt32 : Transaction] = [:]
+    
+    public init() {
+        // No op.
+    }
+    
+    /// Returns whether the given Transaction Message was sent as a new
+    /// transaction, or is part of the previously started transaction.
+    ///
+    /// - parameters:
+    ///   - message: The received message.
+    ///   - source: The source Unicast Address.
+    ///   - destination: The destination address.
+    /// - returns: True, if the message starts a new transaction; false otherwise.
+    public func isNewTransaction(_ message: TransactionMessage,
+                                 from source: Address, to destination: MeshAddress) -> Bool {
+        let lastTransaction = lastTransactions[message.opCode]
+        let isNew = lastTransaction == nil ||
+                    lastTransaction!.source != source ||
+                    lastTransaction!.destination != destination ||
+                    message.isNewTransaction(previousTid: lastTransaction!.tid,
+                                             timestamp: lastTransaction!.timestamp)
+        lastTransactions[message.opCode] = (
+            source: source, destination: destination,
+            tid: message.tid, timestamp: Date()
+        )
+        return isNew
+    }
+    
+    /// Returns whether the given Transaction Message was sent as a continuation
+    /// of the last transaction.
+    ///
+    /// - parameters:
+    ///   - message: The received message.
+    ///   - source: The source Unicast Address.
+    ///   - destination: The destination address.
+    /// - returns: True, if the message continues the last transaction; false otherwise.
+    public func isTransactionContinuation(_ message: TransactionMessage,
+                                          from source: Address, to destination: MeshAddress) -> Bool {
+        return !isNewTransaction(message, from: source, to: destination)
+    }
     
 }
 

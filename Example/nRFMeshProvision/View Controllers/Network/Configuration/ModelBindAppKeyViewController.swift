@@ -113,15 +113,15 @@ class ModelBindAppKeyViewController: ProgressViewController {
 private extension ModelBindAppKeyViewController {
     
     func bind() {
-        guard let selectedIndexPath = selectedIndexPath else {
+        guard let selectedIndexPath = selectedIndexPath,
+              let model = model,
+              let node = model.parentElement?.parentNode else {
             return
         }
         let selectedAppKey = keys[selectedIndexPath.row]
-        guard let message = ConfigModelAppBind(applicationKey: selectedAppKey, to: self.model) else {
-            return
-        }
         start("Binding Application Key...") {
-            return try MeshNetworkManager.instance.send(message, to: self.model)
+            let message = ConfigModelAppBind(applicationKey: selectedAppKey, to: model)!
+            return try MeshNetworkManager.instance.send(message, to: node)
         }
     }
     

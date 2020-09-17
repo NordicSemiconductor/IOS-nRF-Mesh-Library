@@ -30,15 +30,14 @@
 import Foundation
 
 internal class UpperTransportLayer {
-    private let networkManager: NetworkManager
+    private weak var networkManager: NetworkManager!
     private let meshNetwork: MeshNetwork
-    private let defaults: UserDefaults
     private let mutex = DispatchQueue(label: "UpperTransportLayerMutex")
     
     /// This timer is responsible for publishing periodic Heartbeat messages
     /// if they were requested by a remote provisioner using
     /// `ConfigHeartbeatPublicationSet` message.
-    private var heartbeatPublisherTimer: BackgroundTimer?
+    private var heartbeatPublisher: BackgroundTimer?
     
     private var logger: LoggerDelegate? {
         return networkManager.manager.logger
@@ -55,12 +54,11 @@ internal class UpperTransportLayer {
     init(_ networkManager: NetworkManager) {
         self.networkManager = networkManager
         self.meshNetwork = networkManager.meshNetwork!
-        self.defaults = UserDefaults(suiteName: meshNetwork.uuid.uuidString)!
         self.queues = [:]
     }
     
     deinit {
-        heartbeatPublisherTimer?.invalidate()
+        heartbeatPublisher?.invalidate()
     }
     
     /// Handles received Lower Transport PDU.
@@ -105,8 +103,7 @@ internal class UpperTransportLayer {
     func send(_ accessPdu: AccessPdu, withTtl initialTtl: UInt8?, using keySet: KeySet) {
         // Get the current sequence number for source Element's address.
         let source = accessPdu.localElement!.unicastAddress
-        let sequence = UInt32(defaults.integer(forKey: "S\(source.hex)"))
-        let networkKey = keySet.networkKey
+        let sequence = networkManager.networkLayer.nextSequenceNumber(for: source)
         
         let pdu = UpperTransportPdu(fromAccessPdu: accessPdu,
                                     usingKeySet: keySet, sequence: sequence,
@@ -118,10 +115,11 @@ internal class UpperTransportLayer {
         if isSegmented {
             // Enqueue the PDU. If the queue was empty, the PDU will be sent
             // immediately.
-            enqueue(pdu: pdu, initialTtl: initialTtl, networkKey: networkKey)
+            enqueue(pdu: pdu, initialTtl: initialTtl, networkKey: keySet.networkKey)
         } else {
             networkManager.lowerTransportLayer.send(unsegmentedUpperTransportPdu: pdu,
-                                                    withTtl: initialTtl, usingNetworkKey: networkKey)
+                                                    withTtl: initialTtl,
+                                                    usingNetworkKey: keySet.networkKey)
         }
     }
     
@@ -247,7 +245,8 @@ private extension UpperTransportLayer {
     ///   - heartbeat: The Heartbeat message to be sent.
     ///   - networkKey: The Network Key to encrypt the message with.
     func send(heartbeat: HeartbeatMessage, usingNetworkKey networkKey: NetworkKey) {
-        logger?.i(.upperTransport, "Sending \(heartbeat) to \(heartbeat.destination.hex) encrypted using key: \(networkKey)")
+        logger?.i(.upperTransport, "Sending \(heartbeat) to \(heartbeat.destination.hex) " +
+                                   "encrypted using key: \(networkKey)")
         networkManager.lowerTransportLayer.send(heartbeat: heartbeat, usingNetworkKey: networkKey)
     }
     
@@ -259,10 +258,10 @@ internal extension UpperTransportLayer {
     /// if Heartbeat publication has been set.
     func refreshHeartbeatPublisher() {
         // Invalidate the old publisher.
-        if let _ = heartbeatPublisherTimer {
+        if let _ = heartbeatPublisher {
             logger?.v(.upperTransport, "Publishing periodic Heartbeat messages cancelled")
-            heartbeatPublisherTimer?.invalidate()
-            heartbeatPublisherTimer = nil
+            heartbeatPublisher?.invalidate()
+            heartbeatPublisher = nil
         }
         
         // If periodic Heartbeat publications were set, start a new timer.
@@ -271,7 +270,8 @@ internal extension UpperTransportLayer {
            let _ = heartbeatPublication.state {
             logger?.v(.upperTransport, "Publishing periodic Heartbeat messages initialized")
             let interval = TimeInterval(heartbeatPublication.period)
-            heartbeatPublisherTimer = BackgroundTimer.scheduledTimer(withTimeInterval: interval, repeats: true) { [weak self] _ in
+            heartbeatPublisher = BackgroundTimer.scheduledTimer(withTimeInterval: interval,
+                                                                     repeats: true) { [weak self] _ in
                 guard let self = self else { return }
                 // Check if the Local Node and Network Key are still there, and periodic
                 // Heartbeat publishing is enabled.
@@ -279,8 +279,8 @@ internal extension UpperTransportLayer {
                       let networkKey = localNode.networkKeys[heartbeatPublication.networkKeyIndex],
                       heartbeatPublication.isPeriodicPublicationEnabled,
                       let state = heartbeatPublication.state else {
-                    self.heartbeatPublisherTimer?.invalidate()
-                    self.heartbeatPublisherTimer = nil
+                    self.heartbeatPublisher?.invalidate()
+                    self.heartbeatPublisher = nil
                     self.logger?.v(.upperTransport, "Publishing periodic Heartbeat messages cancelled")
                     return
                 }
@@ -294,8 +294,8 @@ internal extension UpperTransportLayer {
                 
                 // If the last periodic Heartbeat message has been sent, invalidate the timer.
                 guard state.shouldSendMorePeriodicHeartbeatMessage() else {
-                    self.heartbeatPublisherTimer?.invalidate()
-                    self.heartbeatPublisherTimer = nil
+                    self.heartbeatPublisher?.invalidate()
+                    self.heartbeatPublisher = nil
                     self.logger?.v(.upperTransport, "Publishing periodic Heartbeat messages finished")
                     return
                 }

@@ -51,19 +51,21 @@ public class MeshNetwork: Codable {
         }
     }
     /// An array of provisioner objects that includes information about known
-    /// Provisioners and ranges of addresses that have been allocated to these
-    /// Provisioners.
+    /// Provisioners and ranges of addresses and scenes that have been allocated
+    /// to these Provisioners.
     public internal(set) var provisioners: [Provisioner]
-    /// An array of network keys that include information about network keys
-    /// used in the network.
+    /// An array that include information about Network Keys used in the
+    /// network.
     public internal(set) var networkKeys: [NetworkKey]
-    /// An array of application keys that include information about application
-    /// keys used in the network.
+    /// An array that include information about Application Keys used in the
+    /// network.
     public internal(set) var applicationKeys: [ApplicationKey]
-    /// An array of nodes in the network.
+    /// An array of Nodes in the network.
     public internal(set) var nodes: [Node]
-    /// An array of groups in the network.
+    /// An array of Groups in the network.
     public internal(set) var groups: [Group]
+    /// An array of Senes in the network.
+    public internal(set) var scenes: [Scene]
     
     /// The IV Index of the mesh network.
     internal var ivIndex: IvIndex
@@ -123,6 +125,7 @@ public class MeshNetwork: Codable {
         applicationKeys = []
         nodes           = []
         groups          = []
+        scenes          = []
         ivIndex         = IvIndex()
         _localElements  = []
         localElements   = [ Element(location: .main) ]
@@ -143,6 +146,7 @@ public class MeshNetwork: Codable {
         case applicationKeys = "appKeys"
         case nodes
         case groups
+        case scenes
     }
     
     public required init(from decoder: Decoder) throws {
@@ -158,6 +162,9 @@ public class MeshNetwork: Codable {
         applicationKeys = try container.decode([ApplicationKey].self, forKey: .applicationKeys)
         nodes = try container.decode([Node].self, forKey: .nodes)
         groups = try container.decode([Group].self, forKey: .groups)
+        // Scenes are mandatory, but previous version of the library did support it,
+        // so JSON files generated with such versions won't have "scenes" tag.
+        scenes = try container.decodeIfPresent([Scene].self, forKey: .scenes) ?? []
         // The IV Index is not a shared in the JSON, as it may change.
         // The value will be obtained from the Secure Network beacon moment after
         // connecting to a Proxy node.
@@ -174,6 +181,9 @@ public class MeshNetwork: Codable {
             $0.meshNetwork = self
         }
         groups.forEach {
+            $0.meshNetwork = self
+        }
+        scenes.forEach {
             $0.meshNetwork = self
         }
         // Heartbeat publications and subscriptions are disabled when mesh
@@ -242,10 +252,7 @@ extension MeshNetwork {
         timestamp = Date()
         
         // Make the local Provisioner aware of the new key.
-        if let localProvisioner = provisioners.first,
-           let n = node(for: localProvisioner) {
-            n.add(networkKey: key)
-        }
+        localProvisioner?.node?.add(networkKey: key)
     }
     
     /// Adds the given Application Key to the network.
@@ -257,10 +264,20 @@ extension MeshNetwork {
         timestamp = Date()
         
         // Make the local Provisioner aware of the new key.
-        if let localProvisioner = provisioners.first,
-           let n = node(for: localProvisioner) {
-            n.add(applicationKey: key)
-        }
+        localProvisioner?.node?.add(applicationKey: key)
+    }
+    
+    /// Adds a new Scene to the network.
+    ///
+    /// If the mesh network already contains a Scene with the same number,
+    /// this method throws an error.
+    ///
+    /// - parameters
+    ///   - scene: The Scene to be added.
+    func add(scene: Scene) {
+        scene.meshNetwork = self
+        scenes.append(scene)
+        timestamp = Date()
     }
     
 }

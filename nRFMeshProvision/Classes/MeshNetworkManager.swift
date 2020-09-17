@@ -251,6 +251,7 @@ public extension MeshNetworkManager {
         }
         set {
             meshNetwork?.localElements = newValue
+            networkManager?.accessLayer.reinitializePublishers()
         }
     }
 }
@@ -307,20 +308,26 @@ public extension MeshNetworkManager {
     /// This method tries to publish the given message using the
     /// publication information set in the Model.
     ///
+    /// If the retransmission is set to a value greater than 0, and the message
+    /// is unacknowleged, this method will retransmit it number of times
+    /// with the count and interval specified in the retransmission object.
+    ///
     /// - parameters:
-    ///   - message:    The message to be sent.
-    ///   - model:      The model from which to send the message.
-    ///   - initialTtl: The initial TTL (Time To Live) value of the message.
-    ///                 If `nil`, the default Node TTL will be used.
-    func publish(_ message: MeshMessage, fromModel model: Model,
-                 withTtl initialTtl: UInt8? = nil) -> MessageHandle? {
-        guard let publish = model.publish,
-            let localElement = model.parentElement,
-            let applicationKey = meshNetwork?.applicationKeys[publish.index] else {
+    ///   - message: The message to be sent.
+    ///   - model:   The model from which to send the message.
+    @discardableResult
+    func publish(_ message: MeshMessage, from model: Model) -> MessageHandle? {
+        guard let networkManager = networkManager,
+              let publish = model.publish,
+              let localElement = model.parentElement,
+              let _ = meshNetwork?.applicationKeys[publish.index] else {
             return nil
         }
-        return try? send(message, from: localElement, to: publish.publicationAddress,
-                         withTtl: initialTtl, using: applicationKey)
+        queue.async {
+            networkManager.publish(message, from: model)
+        }
+        return MessageHandle(for: message, sentFrom: localElement.unicastAddress,
+                             to: publish.publicationAddress.address, using: self)
     }
     
     /// Encrypts the message with the Application Key and a Network Key
@@ -349,9 +356,11 @@ public extension MeshNetworkManager {
     ///           (no Unicast Address assigned), or the given local Element
     ///           does not belong to the local Node.
     /// - returns: Message handle that can be used to cancel sending.
+    @discardableResult
     func send(_ message: MeshMessage,
               from localElement: Element? = nil, to destination: MeshAddress,
-              withTtl initialTtl: UInt8? = nil, using applicationKey: ApplicationKey) throws -> MessageHandle {
+              withTtl initialTtl: UInt8? = nil,
+              using applicationKey: ApplicationKey) throws -> MessageHandle {
         guard let networkManager = networkManager, let meshNetwork = meshNetwork else {
             print("Error: Mesh Network not created")
             throw MeshNetworkError.noNetwork
@@ -365,7 +374,7 @@ public extension MeshNetworkManager {
             print("Error: The Element does not belong to the local Node")
             throw AccessError.invalidElement
         }
-        guard initialTtl == nil || initialTtl == 0 || (2...127).contains(initialTtl!) else {
+        guard initialTtl == nil || initialTtl! <= 127 else {
             print("Error: TTL value \(initialTtl!) is invalid")
             throw AccessError.invalidTtl
         }
@@ -374,7 +383,7 @@ public extension MeshNetworkManager {
                                 withTtl: initialTtl, using: applicationKey)
         }
         return MessageHandle(for: message, sentFrom: source.unicastAddress,
-                         to: destination.address, using: self)
+                             to: destination.address, using: self)
     }
     
     /// Encrypts the message with the Application Key and a Network Key
@@ -397,9 +406,11 @@ public extension MeshNetworkManager {
     ///           (no Unicast Address assigned), or the given local Element
     ///           does not belong to the local Node.
     /// - returns: Message handle that can be used to cancel sending.
+    @discardableResult
     func send(_ message: MeshMessage,
               from localElement: Element? = nil, to group: Group,
-              withTtl initialTtl: UInt8? = nil, using applicationKey: ApplicationKey) throws -> MessageHandle {
+              withTtl initialTtl: UInt8? = nil,
+              using applicationKey: ApplicationKey) throws -> MessageHandle {
         return try send(message, from: localElement, to: group.address,
                         withTtl: initialTtl, using: applicationKey)
     }
@@ -427,6 +438,7 @@ public extension MeshNetworkManager {
     ///           (no Unicast Address assigned), or the given local Element
     ///           does not belong to the local Node.
     /// - returns: Message handle that can be used to cancel sending.
+    @discardableResult
     func send(_ message: MeshMessage,
               from localElement: Element? = nil, to model: Model,
               withTtl initialTtl: UInt8? = nil) throws -> MessageHandle {
@@ -466,6 +478,7 @@ public extension MeshNetworkManager {
     ///           (no Unicast Address assigned), or the given local Element
     ///           does not belong to the local Node.
     /// - returns: Message handle that can be used to cancel sending.
+    @discardableResult
     func send(_ message: MeshMessage,
               from localModel: Model, to model: Model,
               withTtl initialTtl: UInt8? = nil) throws -> MessageHandle {
@@ -492,7 +505,7 @@ public extension MeshNetworkManager {
     
     /// Sends Configuration Message to the Node with given destination Address.
     /// The `destination` must be a Unicast Address, otherwise the method
-    /// does nothing.
+    /// throws an error.
     ///
     /// A `delegate` method will be called when the message has been sent,
     /// delivered, or fail to be sent.
@@ -509,6 +522,7 @@ public extension MeshNetworkManager {
     ///           Error `AccessError.cannotDelete` is sent when trying to
     ///           delete the last Network Key on the device.
     /// - returns: Message handle that can be used to cancel sending.
+    @discardableResult
     func send(_ message: ConfigMessage, to destination: Address,
               withTtl initialTtl: UInt8? = nil) throws -> MessageHandle {
         guard let networkManager = networkManager, let meshNetwork = meshNetwork else {
@@ -538,7 +552,7 @@ public extension MeshNetworkManager {
                 throw AccessError.cannotDelete
             }
         }
-        guard initialTtl == nil || initialTtl == 0 || (2...127).contains(initialTtl!) else {
+        guard initialTtl == nil || initialTtl! <= 127 else {
             print("Error: TTL value \(initialTtl!) is invalid")
             throw AccessError.invalidTtl
         }
@@ -546,7 +560,7 @@ public extension MeshNetworkManager {
             networkManager.send(message, to: destination, withTtl: initialTtl)
         }
         return MessageHandle(for: message, sentFrom: source,
-                         to: destination, using: self)
+                             to: destination, using: self)
     }
     
     /// Sends Configuration Message to the given Node.
@@ -563,58 +577,44 @@ public extension MeshNetworkManager {
     ///           the local Node does not have configuration capabilities
     ///           (no Unicast Address assigned), or the destination address
     ///           is not a Unicast Address or it belongs to an unknown Node.
+    ///           Error `AccessError.cannotDelete` is sent when trying to
+    ///           delete the last Network Key on the device.
     /// - returns: Message handle that can be used to cancel sending.
+    @discardableResult
     func send(_ message: ConfigMessage, to node: Node,
               withTtl initialTtl: UInt8? = nil) throws -> MessageHandle {
         return try send(message, to: node.unicastAddress, withTtl: initialTtl)
     }
     
-    /// Sends Configuration Message to the given Node.
+    /// Sends Configuration Message to the local Node.
     ///
     /// A `delegate` method will be called when the message has been sent,
     /// delivered, or fail to be sent.
     ///
     /// - parameters:
     ///   - message: The message to be sent.
-    ///   - element: The destination Element.
+    ///   - node:    The destination Node.
     ///   - initialTtl: The initial TTL (Time To Live) value of the message.
     ///                 If `nil`, the default Node TTL will be used.
     /// - throws: This method throws when the mesh network has not been created,
     ///           the local Node does not have configuration capabilities
-    ///           (no Unicast Address assigned), or the target Element does not
-    ///           belong to any known Node.
+    ///           (no Unicast Address assigned), or the destination address
+    ///           is not a Unicast Address or it belongs to an unknown Node.
+    ///           Error `AccessError.cannotDelete` is sent when trying to
+    ///           delete the last Network Key on the device.
     /// - returns: Message handle that can be used to cancel sending.
-    func send(_ message: ConfigMessage, to element: Element,
-              withTtl initialTtl: UInt8? = nil) throws -> MessageHandle {
-        guard let node = element.parentNode else {
-            print("Error: Element does not belong to a Node")
-            throw AccessError.invalidDestination
+    @discardableResult
+    func sendToLocalNode(_ message: ConfigMessage) throws -> MessageHandle {
+        guard let meshNetwork = meshNetwork else {
+            print("Error: Mesh Network not created")
+            throw MeshNetworkError.noNetwork
         }
-        return try send(message, to: node, withTtl: initialTtl)
-    }
-    
-    /// Sends Configuration Message to the given Node.
-    ///
-    /// A `delegate` method will be called when the message has been sent,
-    /// delivered, or fail to be sent.
-    ///
-    /// - parameters:
-    ///   - message: The message to be sent.
-    ///   - model:   The destination Model.
-    ///   - initialTtl: The initial TTL (Time To Live) value of the message.
-    ///                 If `nil`, the default Node TTL will be used.
-    /// - throws: This method throws when the mesh network has not been created,
-    ///           the local Node does not have configuration capabilities
-    ///           (no Unicast Address assigned), or the target Element does
-    ///           not belong to any known Node.
-    /// - returns: Message handle that can be used to cancel sending.
-    func send(_ message: ConfigMessage, to model: Model,
-              withTtl initialTtl: UInt8? = nil) throws -> MessageHandle {
-        guard let element = model.parentElement else {
-            print("Error: Model does not belong to an Element")
-            throw AccessError.invalidDestination
+        guard let localProvisioner = meshNetwork.localProvisioner,
+              let destination = localProvisioner.unicastAddress else {
+            print("Error: Local Provisioner has no Unicast Address assigned")
+            throw AccessError.invalidSource
         }
-        return try send(message, to: element, withTtl: initialTtl)
+        return try send(message, to: destination, withTtl: 1)
     }
     
     /// Sends the Proxy Configuration Message to the connected Proxy Node.

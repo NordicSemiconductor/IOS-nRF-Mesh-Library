@@ -36,11 +36,11 @@ class GenericOnOffClientCell: BaseModelControlCell<GenericOnOffClientDelegate> {
     @IBOutlet weak var icon: UIImageView!
     @IBOutlet weak var onButton: UIButton!
     @IBAction func onTapped(_ sender: UIButton) {
-        publishGenericOnOffMessage(turnOn: true)
+        modelDelegate.state = true
     }
     @IBOutlet weak var offButton: UIButton!
     @IBAction func offTapped(_ sender: UIButton) {
-        publishGenericOnOffMessage(turnOn: false)
+        modelDelegate.state = false
     }
     
     override func setup(_ model: GenericOnOffClientDelegate?) {
@@ -54,16 +54,4 @@ class GenericOnOffClientCell: BaseModelControlCell<GenericOnOffClientDelegate> {
         onButton.isEnabled = isEnabled
         offButton.isEnabled = isEnabled
     }
-}
-
-private extension GenericOnOffClientCell {
-    
-    func publishGenericOnOffMessage(turnOn: Bool) {
-        let label = turnOn ? "Turning ON..." : "Turning OFF..."
-        delegate?.publish(GenericOnOffSetUnacknowledged(turnOn,
-                                                        transitionTime: TransitionTime(1.0),
-                                                        delay: 20), // 100 ms
-                          description: label, fromModel: model)
-    }
-    
 }

@@ -53,10 +53,16 @@ class ModelViewController: ProgressViewController {
             navigationItem.rightBarButtonItem = editButtonItem
         }
         
-        tableView.register(UINib(nibName: "ConfigurationServer", bundle: nil), forCellReuseIdentifier: "0000")
-        tableView.register(UINib(nibName: "GenericOnOff", bundle: nil), forCellReuseIdentifier: "1000")
-        tableView.register(UINib(nibName: "GenericLevel", bundle: nil), forCellReuseIdentifier: "1002")
-        tableView.register(UINib(nibName: "VendorModel", bundle: nil), forCellReuseIdentifier: "vendor")
+        tableView.register(UINib(nibName: "ConfigurationServer", bundle: nil),
+                           forCellReuseIdentifier: UInt16.configurationServerModelId.hex)
+        tableView.register(UINib(nibName: "GenericOnOff", bundle: nil),
+                           forCellReuseIdentifier: UInt16.genericOnOffServerModelId.hex)
+        tableView.register(UINib(nibName: "GenericLevel", bundle: nil),
+                           forCellReuseIdentifier: UInt16.genericLevelServerModelId.hex)
+        tableView.register(UINib(nibName: "GenericDefaultTransitionTime", bundle: nil),
+                           forCellReuseIdentifier: UInt16.genericDefaultTransitionTimeServerModelid.hex)
+        tableView.register(UINib(nibName: "VendorModel", bundle: nil),
+                           forCellReuseIdentifier: "vendor")
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -509,14 +515,20 @@ extension ModelViewController: UIAdaptivePresentationControllerDelegate {
 extension ModelViewController: ModelViewCellDelegate {
     
     func send(_ message: MeshMessage, description: String) {
+        guard let model = model else {
+            return
+        }
         start(description) {
-            return try MeshNetworkManager.instance.send(message, to: self.model)
+            return try MeshNetworkManager.instance.send(message, to: model)
         }
     }
     
     func send(_ message: ConfigMessage, description: String) {
+        guard let node = model?.parentElement?.parentNode else {
+            return
+        }
         start(description) {
-            return try MeshNetworkManager.instance.send(message, to: self.model)
+            return try MeshNetworkManager.instance.send(message, to: node)
         }
     }
     
@@ -889,8 +901,9 @@ private extension Model {
     
     var hasCustomUI: Bool {
         return !isBluetoothSIGAssigned   // Vendor Movels.
-            || modelIdentifier == 0x1000 // Generic On Off Server.
-            || modelIdentifier == 0x1002 // Generic Level Server.
+            || modelIdentifier == .genericOnOffServerModelId
+            || modelIdentifier == .genericLevelServerModelId
+            || modelIdentifier == .genericDefaultTransitionTimeServerModelid
     }
     
 }

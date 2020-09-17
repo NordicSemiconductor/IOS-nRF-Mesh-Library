@@ -165,7 +165,7 @@ class EditProvisionerViewController: UITableViewController {
             case 2: // Scenes
                 destination.title  = "Scenes"
                 destination.type   = .scene
-                destination.bounds = Scene.minScene...Scene.maxScene
+                destination.bounds = SceneNumber.minScene...SceneNumber.maxScene
                 destination.ranges = newSceneRange ?? provisioner.allocatedSceneRange
                 
                 meshNetwork.provisioners.filter({ $0 != provisioner }).forEach { other in

@@ -33,7 +33,24 @@ import nRFMeshProvision
 
 class GenericLevelClientDelegate: ModelDelegate {
     let messageTypes: [UInt32 : MeshMessage.Type]
-    let isSubscriptionSupported: Bool = false
+    let isSubscriptionSupported: Bool = true
+    
+    var publicationMessageComposer: MessageComposer? {
+        func compose() -> MeshMessage {
+            return GenericLevelSetUnacknowledged(level: self.state)
+        }
+        let request = compose()
+        return {
+            return request
+        }
+    }
+    
+    /// The current state of the Generic Level Client model.
+    var state: Int16 = Int16.min {
+        didSet {
+            publish(using: MeshNetworkManager.instance)
+        }
+    }
     
     init() {
         let types: [GenericMessage.Type] = [

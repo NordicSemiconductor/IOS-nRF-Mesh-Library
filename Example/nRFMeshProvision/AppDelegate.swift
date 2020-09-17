@@ -95,22 +95,51 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         connection?.close()
         
         let meshNetwork = meshNetworkManager.meshNetwork!
+
+        // Generic Default Transition Time Server model:
+        let defaultTransitionTimeServerDelegate = GenericDefaultTranstionTimeServerDelegate(meshNetwork)
+        // Scene Server and Scene Setup Server models:
+        let sceneServer = SceneServerDelegate(meshNetwork,
+                                              defaultTransitionTimeServer: defaultTransitionTimeServerDelegate)
+        let sceneSetupServer = SceneSetupServerDelegate(server: sceneServer)
         
         // Set up local Elements on the phone.
         let element0 = Element(name: "Primary Element", location: .first, models: [
+            // Scene Server and Scene Setup Server models (client is added automatically):
+            Model(sigModelId: .sceneServerModelId, delegate: sceneServer),
+            Model(sigModelId: .sceneSetupServerModelId, delegate: sceneSetupServer),
+            // Generic Default Transition Time Server model:
+            Model(sigModelId: .genericDefaultTransitionTimeServerModelid,
+                  delegate: defaultTransitionTimeServerDelegate),
+            Model(sigModelId: .genericDefaultTransitionTimeClientModelid,
+                  delegate: GenericDefaultTranstionTimeClientDelegate()),
             // 4 generic models defined by Bluetooth SIG:
-            Model(sigModelId: 0x1000, delegate: GenericOnOffServerDelegate()),
-            Model(sigModelId: 0x1002, delegate: GenericLevelServerDelegate()),
-            Model(sigModelId: 0x1001, delegate: GenericOnOffClientDelegate()),
-            Model(sigModelId: 0x1003, delegate: GenericLevelClientDelegate()),
+            Model(sigModelId: .genericOnOffServerModelId,
+                  delegate: GenericOnOffServerDelegate(meshNetwork,
+                                                       defaultTransitionTimeServer: defaultTransitionTimeServerDelegate,
+                                                       elementIndex: 0)),
+            Model(sigModelId: .genericLevelServerModelId,
+                  delegate: GenericLevelServerDelegate(meshNetwork,
+                                                       defaultTransitionTimeServer: defaultTransitionTimeServerDelegate,
+                                                       elementIndex: 0)),
+            Model(sigModelId: .genericOnOffClientModelId, delegate: GenericOnOffClientDelegate()),
+            Model(sigModelId: .genericLevelClientModelId, delegate: GenericLevelClientDelegate()),
             // A simple vendor model:
-            Model(vendorModelId: 0x0001, companyId: 0x0059, delegate: SimpleOnOffClientDelegate())
+            Model(vendorModelId: .simpleOnOffModelId,
+                  companyId: .nordicSemiconductorCompanyId,
+                  delegate: SimpleOnOffClientDelegate())
         ])
         let element1 = Element(name: "Secondary Element", location: .second, models: [
-            Model(sigModelId: 0x1000, delegate: GenericOnOffServerDelegate()),
-            Model(sigModelId: 0x1002, delegate: GenericLevelServerDelegate()),
-            Model(sigModelId: 0x1001, delegate: GenericOnOffClientDelegate()),
-            Model(sigModelId: 0x1003, delegate: GenericLevelClientDelegate())
+            Model(sigModelId: .genericOnOffServerModelId,
+                  delegate: GenericOnOffServerDelegate(meshNetwork,
+                                                       defaultTransitionTimeServer: defaultTransitionTimeServerDelegate,
+                                                       elementIndex: 1)),
+            Model(sigModelId: .genericLevelServerModelId,
+                  delegate: GenericLevelServerDelegate(meshNetwork,
+                                                       defaultTransitionTimeServer: defaultTransitionTimeServerDelegate,
+                                                       elementIndex: 1)),
+            Model(sigModelId: .genericOnOffClientModelId, delegate: GenericOnOffClientDelegate()),
+            Model(sigModelId: .genericLevelClientModelId, delegate: GenericLevelClientDelegate())
         ])
         meshNetworkManager.localElements = [element0, element1]
         
@@ -125,11 +154,23 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 extension MeshNetworkManager {
     
     static var instance: MeshNetworkManager {
-        return (UIApplication.shared.delegate as! AppDelegate).meshNetworkManager
+        if Thread.isMainThread {
+            return (UIApplication.shared.delegate as! AppDelegate).meshNetworkManager
+        } else {
+            return DispatchQueue.main.sync {
+                return (UIApplication.shared.delegate as! AppDelegate).meshNetworkManager
+            }
+        }
     }
     
     static var bearer: NetworkConnection! {
-        return (UIApplication.shared.delegate as! AppDelegate).connection
+        if Thread.isMainThread {
+            return (UIApplication.shared.delegate as! AppDelegate).connection
+        } else {
+            return DispatchQueue.main.sync {
+                return (UIApplication.shared.delegate as! AppDelegate).connection
+            }
+        }
     }
     
 }

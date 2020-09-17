@@ -50,8 +50,20 @@ class SimpleOnOffClientDelegate: ModelDelegate {
     let messageTypes: [UInt32 : MeshMessage.Type]
     let isSubscriptionSupported: Bool = false
     
-    let manager: MeshNetworkManager
-    let logger: LoggerDelegate?
+    lazy var publicationMessageComposer: MessageComposer? = { [unowned self] in
+        return SimpleOnOffSetUnacknowledged(self.state)
+    }
+    
+    /// The current state of the Simple On Off Client model.
+    var state: Bool = false {
+        didSet {
+            publish(using: MeshNetworkManager.instance)
+        }
+    }
+    
+    private var logger: LoggerDelegate? {
+        return MeshNetworkManager.instance.logger
+    }
     
     init() {
         // This Model Delegate is able to receive SimpleOnOffStatus messages.
@@ -62,9 +74,6 @@ class SimpleOnOffClientDelegate: ModelDelegate {
             SimpleOnOffStatus.self
         ]
         messageTypes = types.toMap()
-
-        manager = MeshNetworkManager.instance
-        logger = manager.logger
     }
     
     func model(_ model: Model,
@@ -85,6 +94,7 @@ class SimpleOnOffClientDelegate: ModelDelegate {
         
         switch message {
         case let status as SimpleOnOffStatus:
+            let manager = MeshNetworkManager.instance
             let node = manager.meshNetwork?.node(withAddress: source)
             let element = node?.element(withAddress: source)
             let nodeName = node?.name ?? "Unknown Device"
@@ -107,6 +117,7 @@ class SimpleOnOffClientDelegate: ModelDelegate {
         // This is where the status for the requests is delivered.
         switch response {
         case let status as SimpleOnOffStatus:
+            let manager = MeshNetworkManager.instance
             let node = manager.meshNetwork?.node(withAddress: source)
             let element = node?.element(withAddress: source)
             let nodeName = node?.name ?? "Unknown Device"

@@ -89,11 +89,13 @@ class AppKeysViewController: UITableViewController, Editable {
     }
 
     override func numberOfSections(in tableView: UITableView) -> Int {
-        return MeshNetworkManager.instance.meshNetwork?.applicationKeys.isEmpty ?? false ? 0 : 1
+        let applicationKeys = MeshNetworkManager.instance.meshNetwork?.applicationKeys ?? []
+        return applicationKeys.isEmpty ? 0 : IndexPath.numberOfSections
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return MeshNetworkManager.instance.meshNetwork?.applicationKeys.count ?? 0
+        let applicationKeys = MeshNetworkManager.instance.meshNetwork?.applicationKeys ?? []
+        return applicationKeys.count
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -199,6 +201,7 @@ extension AppKeysViewController: EditKeyDelegate {
 
 private extension IndexPath {
     static let keySection = 0
+    static let numberOfSections = IndexPath.keySection + 1
     
     /// Returns the Application Key index in mesh network based on the
     /// IndexPath.

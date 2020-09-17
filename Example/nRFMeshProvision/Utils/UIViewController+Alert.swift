@@ -185,7 +185,7 @@ extension UIViewController {
                     case .unicastAddress, .groupAddress,
                          .unicastAddressRequired, .groupAddressRequired:
                         textField.autocapitalizationType = .allCharacters
-                    case .ttlRequired:
+                    case .ttlRequired, .scene, .sceneRequired:
                         textField.keyboardType = .numberPad
                     default:
                         break
@@ -305,7 +305,7 @@ extension UIViewController {
         
         if let text = textField.text, !text.isEmpty {
             if let scene = UInt16(text, radix: 16) {
-                alert.setValid(scene.isValidScene)
+                alert.setValid(scene.isValidSceneNumber)
             } else {
                 alert.setValid(false)
             }
@@ -356,11 +356,11 @@ extension UIViewController {
     @objc func sceneRequired(_ textField: UITextField) {
         let alert = getAlert(from: textField)
         
-        if validateRange(in: alert, validator: { $0.isValidScene }) {
+        if validateRange(in: alert, validator: { $0.isValidSceneNumber }) {
             return
         }
         if let text = textField.text, let scene = UInt16(text, radix: 16) {
-            alert.setValid(scene.isValidScene)
+            alert.setValid(scene.isValidSceneNumber)
         } else {
             alert.setValid(false)
         }

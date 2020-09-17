@@ -124,7 +124,7 @@ public class Group: Codable {
     }
 }
 
-extension Group: Equatable {
+extension Group: Equatable, Hashable {
     
     public static func == (lhs: Group, rhs: Group) -> Bool {
         return lhs._address == rhs._address
@@ -132,6 +132,10 @@ extension Group: Equatable {
     
     public static func != (lhs: Group, rhs: Group) -> Bool {
         return lhs._address != rhs._address
+    }
+    
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(_address)
     }
     
 }

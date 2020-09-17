@@ -31,10 +31,12 @@
 import Foundation
 
 internal class NetworkLayer {
-    private let networkManager: NetworkManager
+    private weak var networkManager: NetworkManager!
     private let meshNetwork: MeshNetwork
     private let networkMessageCache: NSCache<NSData, NSNull>
     private let defaults: UserDefaults
+    
+    private let mutex = DispatchQueue(label: "NetworkLayerMutex")
     
     private var logger: LoggerDelegate? {
         return networkManager.manager.logger
@@ -150,11 +152,8 @@ internal class NetworkLayer {
         guard let transmitter = networkManager.transmitter else {
             throw BearerError.bearerClosed
         }
-        // Get the current sequence number for local Provisioner's source address.
-        let sequence = UInt32(defaults.integer(forKey: "S\(pdu.source.hex)"))
-        // As the sequnce number was just used, it has to be incremented.
-        defaults.set(sequence + 1, forKey: "S\(pdu.source.hex)")
         
+        let sequence: UInt32 = (pdu as? AccessMessage)?.sequence ?? nextSequenceNumber(for: pdu.source)
         let networkPdu = NetworkPdu(encode: pdu, ofType: type, withSequence: sequence, andTtl: ttl)
         logger?.i(.network, "Sending \(networkPdu) encrypted using \(networkPdu.networkKey)")
         // Loopback interface.
@@ -187,7 +186,12 @@ internal class NetworkLayer {
             let networkTransmit = meshNetwork.localProvisioner?.node?.networkTransmit,
             networkTransmit.count > 1 {
             var count = networkTransmit.count
-            BackgroundTimer.scheduledTimer(withTimeInterval: networkTransmit.timeInterval, repeats: true) { timer in
+            BackgroundTimer.scheduledTimer(withTimeInterval: networkTransmit.timeInterval,
+                                           repeats: true) { [weak self] timer in
+                guard let self = self else {
+                    timer.invalidate()
+                    return
+                }
                 try? self.networkManager.transmitter?.send(networkPdu.pdu, ofType: type)
                 count -= 1
                 if count == 0 {
@@ -227,6 +231,21 @@ internal class NetworkLayer {
                 proxyNetworkKey = nil
             }
             networkManager.manager.proxyFilter?.managerFailedToDeliverMessage(message, error: error)
+        }
+    }
+    
+    /// This method returns the next outgoing Sequence number for the given
+    /// local source Address.
+    ///
+    /// - parameter source: The source Element's Unicast Address.
+    /// - returns: The Sequence number a message can be sent with.
+    func nextSequenceNumber(for source: Address) -> UInt32 {
+        return mutex.sync {
+            // Get the current sequence number for local Provisioner's source address.
+            let sequence = UInt32(defaults.integer(forKey: "S\(source.hex)"))
+            // As the sequnce number was just used, it has to be incremented.
+            defaults.set(sequence + 1, forKey: "S\(source.hex)")
+            return sequence
         }
     }
 }

@@ -50,10 +50,7 @@ class NodeAddNetworkKeyViewController: ProgressViewController {
             return
         }
         let selectedNetworkKey = keys[selectedIndexPath.row]
-        start("Adding Network Key...") {
-            let message = ConfigNetKeyAdd(networkKey: selectedNetworkKey)
-            return try MeshNetworkManager.instance.send(message, to: self.node)
-        }
+        addKey(selectedNetworkKey)
     }
     
     // MARK: - Properties
@@ -114,6 +111,23 @@ class NodeAddNetworkKeyViewController: ProgressViewController {
         
         doneButton.isEnabled = true
     }
+}
+
+private extension NodeAddNetworkKeyViewController {
+    
+    /// Adds the given Network Key to the target Node.
+    ///
+    /// - parameter networkKey: The Network Key to be added.
+    func addKey(_ networkKey: NetworkKey) {
+        guard let node = node else {
+            return
+        }
+        start("Adding Network Key...") {
+            let message = ConfigNetKeyAdd(networkKey: networkKey)
+            return try MeshNetworkManager.instance.send(message, to: node)
+        }
+    }
+    
 }
 
 extension NodeAddNetworkKeyViewController: MeshNetworkDelegate {

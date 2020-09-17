@@ -40,6 +40,7 @@ class SettingsViewController: UITableViewController {
     @IBOutlet weak var provisionersLabel: UILabel!
     @IBOutlet weak var networkKeysLabel: UILabel!
     @IBOutlet weak var appKeysLabel: UILabel!
+    @IBOutlet weak var scenesLabel: UILabel!
     @IBOutlet weak var testModeSwitch: UISwitch!
     @IBAction func testModeDidChange(_ sender: UISwitch) {
         MeshNetworkManager.instance.ivUpdateTestMode = sender.isOn
@@ -76,6 +77,7 @@ class SettingsViewController: UITableViewController {
         provisionersLabel.text = "\(meshNetwork.provisioners.count)"
         networkKeysLabel.text  = "\(meshNetwork.networkKeys.count)"
         appKeysLabel.text      = "\(meshNetwork.applicationKeys.count)"
+        scenesLabel.text       = "\(meshNetwork.scenes.count)"
     }
     
     // MARK: - Table view delegate

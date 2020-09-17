@@ -38,7 +38,7 @@ public extension Provisioner {
     /// must have a Unicast Address assigned, otherwise `nil`
     /// is returned instead.
     var unicastAddress: Address? {
-        return meshNetwork?.node(for: self)?.unicastAddress
+        return node?.unicastAddress
     }
     
     /// The Provisioner's Node, if such exists, otherwise `nil`.

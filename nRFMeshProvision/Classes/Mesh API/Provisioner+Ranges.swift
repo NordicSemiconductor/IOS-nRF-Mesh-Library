@@ -219,13 +219,14 @@ public extension Provisioner {
         allocatedSceneRange -= range
     }
     
-    /// Returns `true` if the count addresses starting from the given one are in
+    /// Returns whether the count addresses starting from the given one are in
     /// the Provisioner's allocated address ranges.
     ///
     /// The address may be a unicast or group address.
     ///
-    /// - parameter address: The first address to be checked.
-    /// - parameter count:   Number of subsequent addresses to be checked.
+    /// - parameters:
+    ///   - address: The first address to be checked.
+    ///   - count:   Number of subsequent addresses to be checked.
     /// - returns: `True` if the address is in allocated ranges, `false` otherwise.
     func isAddressInAllocatedRange(_ address: Address, elementCount count: UInt8) -> Bool {
         guard address.isUnicast || address.isGroup else {
@@ -239,6 +240,24 @@ public extension Provisioner {
             }
         }
         return false
+    }
+    
+    /// Returns whether the Scene is in the Provisioner's allocated scene ranges.
+    ///
+    /// - parameter scene: The scene to be checked.
+    /// - returns: `True` if the scene is in allocated ranges, `false` otherwise.
+    func isSceneInAllocatedRange(_ scene: SceneNumber) -> Bool {
+        guard scene.isValidSceneNumber else {
+            return false
+        }
+        return allocatedSceneRange.contains(scene)
+    }
+    
+    /// List of all Scenes which numbers are in the Provisioner's allocated scene
+    /// ranges.
+    var scenes: [Scene] {
+        return meshNetwork?.scenes
+            .filter { allocatedSceneRange.contains($0.number) } ?? []
     }
     
     /// Returns the maximum number of Elements that can be assigned to a Node

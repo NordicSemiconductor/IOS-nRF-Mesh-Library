@@ -64,6 +64,8 @@ struct GenericState<T: Equatable> {
         }
     }
     
+    /// A flag indicating whether the state was recelled from a stored Scene.
+    let storedWithScene: Bool
     /// The current state.
     let value: T
     /// The transition object.
@@ -71,16 +73,24 @@ struct GenericState<T: Equatable> {
     /// The animation object.
     let animation: Move?
     
-    init(_ state: T) {
+    init(_ state: T, storedWithScene: Bool = false) {
         self.value = state
         self.transition = nil
         self.animation = nil
+        self.storedWithScene = storedWithScene
     }
     
     init(transitionFrom state: GenericState<T>, to targetValue: T,
-         delay: TimeInterval, duration: TimeInterval) {
-        self.value = state.value
+         delay: TimeInterval, duration: TimeInterval,
+         storedWithScene: Bool = false) {
         self.animation = nil
+        self.storedWithScene = storedWithScene
+        guard delay > 0 || duration > 0 else {
+            self.value = targetValue
+            self.transition = nil
+            return
+        }
+        self.value = state.value
         guard state.value != targetValue else {
             self.transition = nil
             return
@@ -91,9 +101,16 @@ struct GenericState<T: Equatable> {
     }
     
     init(continueTransitionFrom state: GenericState<T>, to targetValue: T,
-         delay: TimeInterval, duration: TimeInterval) {
-        self.value = state.value
+         delay: TimeInterval, duration: TimeInterval,
+         storedWithScene: Bool = false) {
         self.animation = nil
+        self.storedWithScene = storedWithScene
+        guard delay > 0 || duration > 0 else {
+            self.value = targetValue
+            self.transition = nil
+            return
+        }
+        self.value = state.value
         guard state.value != targetValue else {
             self.transition = nil
             return
@@ -114,9 +131,11 @@ struct GenericState<T: Equatable> {
 extension GenericState where T: BinaryInteger {
     
     init(animateFrom state: GenericState<T>, to targetValue: T,
-         delay: TimeInterval, duration: TimeInterval) {
+         delay: TimeInterval, duration: TimeInterval,
+         storedWithScene: Bool = false) {
         self.value = state.value
         self.transition = nil
+        self.storedWithScene = storedWithScene
         guard state.value != targetValue, duration > 0 else {
             self.animation = nil
             return

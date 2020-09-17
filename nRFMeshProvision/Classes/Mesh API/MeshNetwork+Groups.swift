@@ -52,8 +52,8 @@ public extension MeshNetwork {
         guard !groups.contains(group) else {
             throw MeshNetworkError.groupAlreadyExists
         }
-        groups.append(group)
         group.meshNetwork = self
+        groups.append(group)
         timestamp = Date()
     }
     
@@ -64,15 +64,15 @@ public extension MeshNetwork {
     ///
     /// - parameter group: The Group to be removed.
     /// - throws: This method throws `MeshNetworkError.groupInUse` when the
-    //            Group is in use in this mesh network.
+    ///           Group is in use in this mesh network.
     func remove(group: Group) throws {
         if group.isUsed {
             throw MeshNetworkError.groupInUse
         }
         if let index = groups.firstIndex(of: group) {
             groups.remove(at: index).meshNetwork = nil
+            timestamp = Date()
         }
-        timestamp = Date()
     }
     
     /// Returns list of Models belonging to any of the Elements in the

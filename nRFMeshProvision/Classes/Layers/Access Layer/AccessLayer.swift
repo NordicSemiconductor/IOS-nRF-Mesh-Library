@@ -76,8 +76,8 @@ private class AcknowledgmentContext {
         self.request = request
         self.source = source
         self.destination = destination
-        self.timeoutTimer = BackgroundTimer.scheduledTimer(withTimeInterval: timeout, repeats: false) { _ in
-            self.invalidate()
+        self.timeoutTimer = BackgroundTimer.scheduledTimer(withTimeInterval: timeout, repeats: false) { [weak self] _ in
+            self?.invalidate()
             timeoutBlock()
         }
         initializeRetryTimer(withDelay: delay, callback: repeatBlock)
@@ -94,8 +94,8 @@ private class AcknowledgmentContext {
     private func initializeRetryTimer(withDelay delay: TimeInterval,
                                       callback: @escaping () -> Void) {
         retryTimer?.invalidate()
-        retryTimer = BackgroundTimer.scheduledTimer(withTimeInterval: delay, repeats: false) { timer in
-            guard let _ = self.retryTimer else { return }
+        retryTimer = BackgroundTimer.scheduledTimer(withTimeInterval: delay, repeats: false) { [weak self] timer in
+            guard let self = self, let _ = self.retryTimer else { return }
             callback()
             self.initializeRetryTimer(withDelay: timer.interval * 2, callback: callback)
         }
@@ -103,7 +103,7 @@ private class AcknowledgmentContext {
 }
 
 internal class AccessLayer {
-    private let networkManager: NetworkManager
+    private weak var networkManager: NetworkManager!
     private let meshNetwork: MeshNetwork
     private let mutex = DispatchQueue(label: "AccessLayerMutex")
     
@@ -119,12 +119,17 @@ internal class AccessLayer {
     /// for acknowledged mesh messages that have been sent, and for which
     /// the response has not been received yet.
     private var reliableMessageContexts: [AcknowledgmentContext]
+    /// Publishers responsible for periodic publication from Models.
+    private var publishers: [Model : BackgroundTimer]
     
     init(_ networkManager: NetworkManager) {
         self.networkManager = networkManager
         self.meshNetwork = networkManager.meshNetwork!
         self.transactions = [:]
         self.reliableMessageContexts = []
+        self.publishers = [:]
+        
+        reinitializePublishers()
     }
     
     deinit {
@@ -133,6 +138,17 @@ internal class AccessLayer {
             ack.invalidate()
         }
         reliableMessageContexts.removeAll()
+        publishers.forEach { (_, publisher) in
+            publisher.invalidate()
+        }
+        publishers.removeAll()
+    }
+    
+    /// Initialize periodic publishing from local Models.
+    func reinitializePublishers() {
+        networkManager.manager.localElements
+            .flatMap { element in element.models }
+            .forEach { model in refreshPeriodicPublisher(for: model) }
     }
     
     /// This method handles the Upper Transport PDU and reads the Opcode.
@@ -183,9 +199,12 @@ internal class AccessLayer {
     ///   - initialTtl:     The initial TTL (Time To Live) value of the message.
     ///                     If `nil`, the default Node TTL will be used.
     ///   - applicationKey: The Application Key to sign the message with.
+    ///   - retransmit:     Whether the message is a retransmission of the
+    ///                     previously sent message.
     func send(_ message: MeshMessage,
               from element: Element, to destination: MeshAddress,
-              withTtl initialTtl: UInt8?, using applicationKey: ApplicationKey) {
+              withTtl initialTtl: UInt8?, using applicationKey: ApplicationKey,
+              retransmit: Bool) {
         // Should the TID be updated?
         var m = message
         if var tranactionMessage = message as? TransactionMessage, tranactionMessage.tid == nil {
@@ -193,7 +212,7 @@ internal class AccessLayer {
             let k = key(for: element, and: destination)
             transactions[k] = transactions[k] ?? Transaction()
             // Should the last transaction be continued?
-            if tranactionMessage.continueTransaction, transactions[k]!.isActive {
+            if retransmit || tranactionMessage.continueTransaction, transactions[k]!.isActive {
                 tranactionMessage.tid = transactions[k]!.currentTid()
             } else {
                 // If not, start a new transaction by setting a new TID value.
@@ -281,7 +300,8 @@ internal class AccessLayer {
             TimeInterval.random(in: 0.020...0.050) :
             TimeInterval.random(in: 0.020...0.500)
         
-        BackgroundTimer.scheduledTimer(withTimeInterval: delay, repeats: false) { _ in
+        BackgroundTimer.scheduledTimer(withTimeInterval: delay, repeats: false) { [weak self] _ in
+            guard let self = self else { return }
             self.logger?.i(.access, "Sending \(pdu)")
             self.networkManager.upperTransportLayer.send(pdu, withTtl: nil, using: keySet)
         }
@@ -349,13 +369,14 @@ private extension AccessLayer {
             for element in localNode.elements {
                 // For each of the Models...
                 // (except Configuration Server and Client, which use Device Key)
-                for model in element.models
-                    .filter({ !$0.isConfigurationServer && !$0.isConfigurationClient }) {
+                let models = element.models
+                    .filter { !$0.isConfigurationServer && !$0.isConfigurationClient }
+                for model in models {
                     // check, if the delegate is set, and it supports the opcode
                     // specified in the received Access PDU.
                     if let delegate = model.delegate,
                        let message = delegate.decode(accessPdu) {
-                        // Save and log only the first decoded message (see mehtod's comment).
+                        // Save and log only the first decoded message (see method's comment).
                         if newMessage == nil {
                             logger?.i(.model, "\(message) received from: \(accessPdu.source.hex), to: \(accessPdu.destination.hex)")
                             newMessage = message
@@ -364,18 +385,25 @@ private extension AccessLayer {
                         // Application Key bound to this Model and the message is
                         // targeting this Element, or the Model is subscribed to the
                         // destination address.
-                        if model.isBoundTo(keySet.applicationKey) && (
-                            accessPdu.destination.address == Address.allNodes ||
-                            accessPdu.destination.address == element.unicastAddress ||
-                            model.isSubscribed(to: accessPdu.destination)
-                           ) {
-                               if let response = delegate.model(model, didReceiveMessage: message,
-                                                                sentFrom: accessPdu.source,
-                                                                to: accessPdu.destination,
-                                                                asResponseTo: request) {
-                                networkManager.reply(toMessageSentTo: accessPdu.destination.address,
+                        if accessPdu.destination.address == Address.allNodes ||
+                           accessPdu.destination.address == element.unicastAddress ||
+                           model.isSubscribed(to: accessPdu.destination) {
+                            if model.isBoundTo(keySet.applicationKey) {
+                                if let response = delegate.model(model, didReceiveMessage: message,
+                                                                 sentFrom: accessPdu.source,
+                                                                 to: accessPdu.destination,
+                                                                 asResponseTo: request) {
+                                    networkManager.reply(toMessageSentTo: accessPdu.destination.address,
                                                      with: response, from: element,
                                                      to: accessPdu.source, using: keySet)
+                                }
+                                if delegate is SceneClientHandler {
+                                    _ = networkManager.manager.save()
+                                }
+                            } else {
+                                let modelName = model.name ?? "model"
+                                let element = model.parentElement!
+                                logger?.w(.model, "Local \(modelName) model on \(element) not bound to key: \(keySet.applicationKey)")
                             }
                         }
                     }
@@ -397,8 +425,16 @@ private extension AccessLayer {
                         networkManager.reply(toMessageSentTo: accessPdu.destination.address,
                                              with: response, to: accessPdu.source, using: keySet)
                         // Reload Heartbeat publishing.
-                        if let _ = configMessage as? ConfigHeartbeatPublicationSet {
+                        if configMessage is ConfigHeartbeatPublicationSet {
                             networkManager.upperTransportLayer.refreshHeartbeatPublisher()
+                        }
+                        // Reload Model publishing.
+                        if configMessage is ConfigModelPublicationSet ||
+                           configMessage is ConfigModelPublicationVirtualAddressSet,
+                           let request = configMessage as? ConfigAnyModelMessage,
+                           let element = localNode.element(withAddress: request.elementAddress),
+                           let model = element.model(withModelId: request.modelId) {
+                            refreshPeriodicPublisher(for: model)
                         }
                     }
                     _ = networkManager.manager.save()
@@ -482,12 +518,20 @@ private extension ModelDelegate {
                sentFrom source: Address, to destination: MeshAddress,
                asResponseTo request: AcknowledgedMeshMessage?) -> MeshMessage? {
         if let request = request {
-            self.model(model, didReceiveResponse: message, toAcknowledgedMessage: request, from: source)
+            self.model(model, didReceiveResponse: message,
+                       toAcknowledgedMessage: request,
+                       from: source)
             return nil
         } else if let request = message as? AcknowledgedMeshMessage {
-            return self.model(model, didReceiveAcknowledgedMessage: request, from: source, sentTo: destination)
+            do {
+                return try self.model(model, didReceiveAcknowledgedMessage: request,
+                                      from: source, sentTo: destination)
+            } catch {
+                return nil
+            }
         } else {
-            self.model(model, didReceiveUnacknowledgedMessage: message, from: source, sentTo: destination)
+            self.model(model, didReceiveUnacknowledgedMessage: message,
+                       from: source, sentTo: destination)
             return nil
         }
     }
@@ -496,10 +540,28 @@ private extension ModelDelegate {
 
 private extension AccessLayer {
     
+    /// Creates a key for the Acknowledged Context map.
+    ///
+    /// The key consists of source and destination addresses.
+    ///
+    /// - parameters:
+    ///   - element: The source Element.
+    ///   - destination: The destination address.
+    /// - returns: The key to be used in the map.
     func key(for element: Element, and destination: MeshAddress) -> UInt32 {
         return (UInt32(element.unicastAddress) << 16) | UInt32(destination.address)
     }
     
+    /// Creates the context of an Acknowledged message.
+    ///
+    /// The context contains timers responsible for resending the message until
+    /// status is received, and allows the message to be cancelled.
+    ///
+    /// - parameters:
+    ///   - pdu: The PDU of the Acknowledged message.
+    ///   - element: The source Element.
+    ///   - initialTtl: The initial TTL with which the message is to be sent.
+    ///   - keySet: The Key Set used for sending the message.
     func createReliableContext(for pdu: AccessPdu, sentFrom element: Element,
                                withTtl initialTtl: UInt8?, using keySet: KeySet) {
         guard let request = pdu.message as? AcknowledgedMeshMessage else {
@@ -517,7 +579,8 @@ private extension AccessLayer {
         /// The timeout before which the response should be received.
         let timeout = networkManager.acknowledgmentMessageTimeout
         
-        let ack = AcknowledgmentContext(for: request, sentFrom: pdu.source, to: pdu.destination.address,
+        let ack = AcknowledgmentContext(for: request,
+            sentFrom: pdu.source, to: pdu.destination.address,
             repeatAfter: initialDelay, repeatBlock: {
                 if !self.networkManager.upperTransportLayer.isReceivingResponse(from: pdu.destination.address) {
                     self.logger?.d(.access, "Resending \(pdu)")
@@ -540,6 +603,31 @@ private extension AccessLayer {
         mutex.sync {
             reliableMessageContexts.append(ack)
         }
+    }
+    
+    /// Invalidates the current and optionally creates a new pubilsher
+    /// that will send periodic publications, when they are set up in the
+    /// Model.
+    ///
+    /// - parameter model: The Model for which the publisher is to be refreshed.
+    func refreshPeriodicPublisher(for model: Model) {
+        // Cancel current publication.
+        publishers.removeValue(forKey: model)?.invalidate()
+        // Ensure a new one should start...
+        guard let publish = model.publish, publish.publicationInterval > 0,
+              let composer = model.delegate?.publicationMessageComposer else {
+            return
+        }
+        // ... and start periodic publisher.
+        let publisher = BackgroundTimer.scheduledTimer(withTimeInterval: publish.publicationInterval,
+                                                       repeats: true) { [weak self] timer in
+            guard let manager = self?.networkManager.manager else {
+                timer.invalidate()
+                return
+            }
+            manager.publish(composer(), from: model)
+        }
+        publishers[model] = publisher
     }
     
 }
