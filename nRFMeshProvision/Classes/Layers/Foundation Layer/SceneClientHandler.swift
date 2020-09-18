@@ -80,15 +80,14 @@ private extension SceneClientHandler {
             
         // Response to Scene Get and Scene Recall.
         case let status as SceneStatus:
-            if let node = meshNetwork.node(withAddress: source),
-               status.scene.isValidSceneNumber {
+            if status.scene.isValidSceneNumber {
                 // Ensure the current scene is updated with the Node address.
                 if let sceneObject = meshNetwork.scenes[status.scene] {
-                    sceneObject.add(node: node)
+                    sceneObject.add(address: source)
                 } else {
                     let sceneObject = Scene(status.scene,
                                                   name: NSLocalizedString("New Scene", comment: ""))
-                    sceneObject.add(node: node)
+                    sceneObject.add(address: source)
                     meshNetwork.add(scene: sceneObject)
                 }
                 
@@ -96,39 +95,36 @@ private extension SceneClientHandler {
                 if let targetScene = status.targetScene,
                    targetScene.isValidSceneNumber {
                     if let sceneObject = meshNetwork.scenes[targetScene] {
-                        sceneObject.add(node: node)
+                        sceneObject.add(address: source)
                     } else {
                         let sceneObject = Scene(targetScene,
                                                       name: NSLocalizedString("New Scene", comment: ""))
-                        sceneObject.add(node: node)
+                        sceneObject.add(address: source)
                         meshNetwork.add(scene: sceneObject)
                     }
                 }
             }
-            break
             
         // Response to Scene Register Get, Scene Store and Scene Delete.
         case let status as SceneRegisterStatus:
-            if let node = meshNetwork.node(withAddress: source) {
-                /// Scenes confirmed to be in the Scene Register on the Node.
-                let confirmedScenes = status.scenes.filter { $0.isValidSceneNumber }
-                // Add the Node to all confirmed scenes.
-                for scene in confirmedScenes {
-                    if let sceneObject = meshNetwork.scenes[scene] {
-                        sceneObject.add(node: node)
-                    } else {
-                        let sceneObject = Scene(scene,
-                                                      name: NSLocalizedString("New Scene", comment: ""))
-                        sceneObject.add(node: node)
-                        meshNetwork.add(scene: sceneObject)
-                    }
+            /// Scenes confirmed to be in the Scene Register on the Node.
+            let confirmedScenes = status.scenes.filter { $0.isValidSceneNumber }
+            // Add the Node to all confirmed scenes.
+            for scene in confirmedScenes {
+                if let sceneObject = meshNetwork.scenes[scene] {
+                    sceneObject.add(address: source)
+                } else {
+                    let sceneObject = Scene(scene,
+                                                  name: NSLocalizedString("New Scene", comment: ""))
+                    sceneObject.add(address: source)
+                    meshNetwork.add(scene: sceneObject)
                 }
-                // Remove this Scene from scenes, that it confirmed not to have
-                // (that is all other that confirmed).
-                meshNetwork.scenes
-                    .filter { !confirmedScenes.contains($0.number) }
-                    .forEach { $0.remove(node: node) }
             }
+            // Remove this Scene from scenes, that it is confirmed not to have
+            // stored (that is all other that confirmed).
+            meshNetwork.scenes
+                .filter { !confirmedScenes.contains($0.number) }
+                .forEach { $0.remove(address: source) }
             
         default:
             break

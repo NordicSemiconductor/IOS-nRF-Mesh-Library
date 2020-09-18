@@ -93,26 +93,46 @@ public class Scene: Codable {
 
 internal extension Scene {
     
-    /// Adds the given Node to the Scene object.
+    /// Adds the Unicast Address to the Scene object.
     ///
-    /// - parameter node: The Node that is confirmed to have the Scene in its Scene Register.
-    func add(node: Node) {
-        guard !addresses.contains(node.unicastAddress) else {
+    /// - parameter address: The Unicast Address that belongs to an Element
+    ///                      with Scene Server model that is confirmed to have
+    ///                      the Scene in its Scene Register.
+    func add(address: Address) {
+        guard address.isUnicast && !addresses.contains(address) else {
             return
         }
-        addresses.append(node.unicastAddress)
+        addresses.append(address)
         addresses.sort()
         meshNetwork?.timestamp = Date()
     }
     
-    /// Removes the given Node from the Scene object.
+    /// Removes the Unicast Address from the Scene object.
     ///
-    /// - parameter node: The Node that is confirmed not to have the Scene in its Scene Register.
-    func remove(node: Node) {
-        if let index = addresses.firstIndex(of: node.unicastAddress) {
-            addresses.remove(at: index)
-            meshNetwork?.timestamp = Date()
+    /// - parameter address: The Unicast Address that belongs to an Element
+    ///                      with Scene Server model that may have the Scene
+    ///                      in its Scene Register.
+    func remove(address: Address) {
+        guard address.isUnicast,
+              let index = addresses.firstIndex(of: address) else {
+            return
         }
+        addresses.remove(at: index)
+        meshNetwork?.timestamp = Date()
+    }
+    
+    /// Removes all Unicast Addresses assigned to the given Node from the
+    /// Scene object.
+    ///
+    /// - parameter node: The Node that is may have the Scene in any of
+    ///                   its Scene Registers.
+    func remove(node: Node) {
+        node.elements.forEach { element in
+            if let index = addresses.firstIndex(of: element.unicastAddress) {
+                addresses.remove(at: index)
+                meshNetwork?.timestamp = Date()
+            }
+        }        
     }
     
 }
