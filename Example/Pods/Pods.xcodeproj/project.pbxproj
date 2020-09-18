@@ -135,6 +135,7 @@
 		51623E007033703B2BDA7DB8A7DA7235 /* LightCTLSetUnackowledged.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47B2C04429BC1B5E4E6E8AF80FBBBA4D /* LightCTLSetUnackowledged.swift */; };
 		52107BCD24FE68CC00DA19F1 /* Scenes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52107BCC24FE68CC00DA19F1 /* Scenes.swift */; };
 		52107BCF24FE6A5D00DA19F1 /* MeshNetwork+Scenes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52107BCE24FE6A5D00DA19F1 /* MeshNetwork+Scenes.swift */; };
+		525A607C2514947900AC394E /* KeyedDecodingContainer+Legacy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 525A607B2514947900AC394E /* KeyedDecodingContainer+Legacy.swift */; };
 		5260ED2024FE5AEC00C6126F /* Scene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5260ED1F24FE5AEC00C6126F /* Scene.swift */; };
 		5260ED2224FE5D9900C6126F /* Scene+Nodes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5260ED2124FE5D9900C6126F /* Scene+Nodes.swift */; };
 		5260ED2424FE61D600C6126F /* SceneClientHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5260ED2324FE61D600C6126F /* SceneClientHandler.swift */; };
@@ -525,6 +526,7 @@
 		51BBAA3978BFB1C9BAA0B3563DB01A48 /* Pods-nRFMeshProvision_Example-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-nRFMeshProvision_Example-Info.plist"; sourceTree = "<group>"; };
 		52107BCC24FE68CC00DA19F1 /* Scenes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Scenes.swift; sourceTree = "<group>"; };
 		52107BCE24FE6A5D00DA19F1 /* MeshNetwork+Scenes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MeshNetwork+Scenes.swift"; sourceTree = "<group>"; };
+		525A607B2514947900AC394E /* KeyedDecodingContainer+Legacy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "KeyedDecodingContainer+Legacy.swift"; sourceTree = "<group>"; };
 		5260ED1F24FE5AEC00C6126F /* Scene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Scene.swift; sourceTree = "<group>"; };
 		5260ED2124FE5D9900C6126F /* Scene+Nodes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Scene+Nodes.swift"; sourceTree = "<group>"; };
 		5260ED2324FE61D600C6126F /* SceneClientHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneClientHandler.swift; sourceTree = "<group>"; };
@@ -926,6 +928,7 @@
 				1BD82F065F0C258600DA938454295140 /* Int+Hex.swift */,
 				E3C934468025D62648CC48351E370E1F /* OptionSet+Data.swift */,
 				C33951985C0BB1C6B4AAAD399735FCCE /* UUID+Hex.swift */,
+				525A607B2514947900AC394E /* KeyedDecodingContainer+Legacy.swift */,
 			);
 			name = "Type Extensions";
 			path = "nRFMeshProvision/Classes/Type Extensions";
@@ -1870,6 +1873,7 @@
 				9B418B27B096735D0CA3DD86B41CAD32 /* Group+MeshNetwork.swift in Sources */,
 				4B2D1FA3A8971CE04D354585A98B1B16 /* Group.swift in Sources */,
 				793BF1CC7F40CAD59E070D3BBC5F6116 /* HeartbeatMessage.swift in Sources */,
+				525A607C2514947900AC394E /* KeyedDecodingContainer+Legacy.swift in Sources */,
 				A434832E8568F3C1CA961BE5157403A4 /* Int+Hex.swift in Sources */,
 				E393F2CA9ADC180B237C0387C7BEE41B /* IvIndex.swift in Sources */,
 				A0A4A586C6A853B6B32C9017E7C75256 /* Key.swift in Sources */,
