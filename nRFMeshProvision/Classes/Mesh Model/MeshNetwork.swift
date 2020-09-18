@@ -229,6 +229,10 @@ extension MeshNetwork {
     func remove(nodeWithUuid uuid: UUID) {
         if let index = nodes.firstIndex(where: { $0.uuid == uuid }) {
             let node = nodes.remove(at: index)
+            // Remove Unicast Addresses of all Node's Elements from Scenes.
+            scenes.forEach { scene in
+                scene.remove(node: node)
+            }
             // TODO: Verify that no Node is publishing to this Node.
             //       If such Node is found, this method should throw, as
             //       the Node is in use.
