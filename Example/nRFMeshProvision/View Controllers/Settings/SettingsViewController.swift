@@ -119,7 +119,7 @@ private extension SettingsViewController {
         let network = MeshNetworkManager.instance.meshNetwork!
         
         presentTextAlert(title: "Network Name", message: nil, text: network.meshName,
-                         placeHolder: "E.g. My House", type: .nameRequired) { name in
+                         placeHolder: "E.g. My House", type: .nameRequired, cancelHandler: nil) { name in
                             network.meshName = name
                             
                             if MeshNetworkManager.instance.save() {

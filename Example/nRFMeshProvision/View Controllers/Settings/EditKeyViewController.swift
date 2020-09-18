@@ -256,7 +256,7 @@ private extension EditKeyViewController {
     func presentNameDialog() {
         presentTextAlert(title: "Edit Key Name", message: nil, text: newName,
                          placeHolder: "E.g. Lights and Switches",
-                         type: .nameRequired) { name in
+                         type: .nameRequired, cancelHandler: nil) { name in
                             self.newName = name
                             self.tableView.reloadRows(at: [.name], with: .fade)
         }

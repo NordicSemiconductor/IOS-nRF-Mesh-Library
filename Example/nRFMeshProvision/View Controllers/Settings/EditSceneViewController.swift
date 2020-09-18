@@ -147,7 +147,7 @@ private extension EditSceneViewController {
         let message = "Enter the scene number as 4-character hexadecimal string.\nValid range: 0x0001 - 0xFFFF."
         presentTextAlert(title: title, message: message,
                          text: newScene?.hex, placeHolder: "Scene number",
-                         type: .sceneRequired) { hex in
+                         type: .sceneRequired, cancelHandler: nil) { hex in
                             self.newScene = SceneNumber(hex, radix: 16)!
                             self.sceneNumberCell.detailTextLabel?.text = self.newScene.asString()
         }
@@ -157,7 +157,7 @@ private extension EditSceneViewController {
         let name = nameCell.detailTextLabel?.text
         presentTextAlert(title: "Edit Scene Name", message: nil, text: name,
                          placeHolder: "E.g. Sunrise",
-                         type: .nameRequired) { name in
+                         type: .nameRequired, cancelHandler: nil) { name in
                             self.nameCell.detailTextLabel?.text = name
         }
     }

@@ -339,7 +339,7 @@ private extension ConfigurationViewController {
     /// Presents a dialog to edit the node name.
     func presentNameDialog() {
         presentTextAlert(title: "Name", message: nil, text: node.name,
-                         placeHolder: "E.g. Bedroom Light", type: .name) { name in
+                         placeHolder: "E.g. Bedroom Light", type: .name, cancelHandler: nil) { name in
                             if name.isEmpty {
                                 self.node.name = nil
                             } else {
@@ -360,7 +360,7 @@ private extension ConfigurationViewController {
         presentTextAlert(title: "Default TTL",
                          message: "TTL = Time To Live\n\nTTL limits the number of times a message can be relayed.\nMax value is 127.",
                          text: node.defaultTTL != nil ? "\(node.defaultTTL!)" : nil,
-                         type: .ttlRequired) { value in
+                         type: .ttlRequired, cancelHandler: nil) { value in
                             let ttl = UInt8(value)!
                             self.setTtl(ttl)
         }

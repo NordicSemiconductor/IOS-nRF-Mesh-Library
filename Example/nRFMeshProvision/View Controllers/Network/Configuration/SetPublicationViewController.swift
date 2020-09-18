@@ -191,9 +191,10 @@ private extension SetPublicationViewController {
                          type: .ttlRequired,
                          option: UIAlertAction(title: "Use Node's default", style: .default, handler: { _ in
                             self.ttl = 0xFF
-                         })) { value in
+                         }),
+                         handler: { value in
                             self.ttl = UInt8(value)!
-        }
+                         })
     }
     
     func periodSelected(_ period: Float) {
