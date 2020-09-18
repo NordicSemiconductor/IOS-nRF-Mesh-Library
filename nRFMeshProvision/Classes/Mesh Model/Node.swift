@@ -113,11 +113,7 @@ public class Node: Codable {
     }
     
     /// Unique Node identifier.
-    internal let nodeUuid: MeshUUID
-    /// Random 128-bit UUID allows differentiation among multiple mesh networks.
-    public var uuid: UUID {
-        return nodeUuid.uuid
-    }
+    public let uuid: UUID
     /// Primary Unicast Address of the Node.
     public internal(set) var unicastAddress: Address
     /// 128-bit device key for this Node.
@@ -235,7 +231,7 @@ public class Node: Codable {
     
     /// A constructor needed only for testing.
     internal init(name: String?, unicastAddress: Address, elements: UInt8) {
-        self.nodeUuid = MeshUUID()
+        self.uuid = UUID()
         self.name = name
         self.unicastAddress = unicastAddress
         self.deviceKey = Data.random128BitKey()
@@ -256,8 +252,8 @@ public class Node: Codable {
     /// - parameter provisioner: The Provisioner for which the node is added.
     /// - parameter address:     The unicast address to be assigned to the Node.
     internal init(for provisioner: Provisioner, withAddress address: Address) {
-        self.nodeUuid = provisioner.provisionerUuid
-        self.name     = provisioner.provisionerName
+        self.uuid = provisioner.uuid
+        self.name = provisioner.provisionerName
         self.unicastAddress = address
         self.deviceKey = Data.random128BitKey()
         self.security = .secure
@@ -305,8 +301,8 @@ public class Node: Codable {
     
     internal init(name: String?, uuid: UUID, deviceKey: Data,
                   andAssignedNetworkKey networkKey: NetworkKey, andAddress address: Address) {
-        self.nodeUuid = MeshUUID(uuid)
-        self.name     = name
+        self.uuid = uuid
+        self.name = name
         self.unicastAddress = address
         self.deviceKey = deviceKey
         self.security  = .secure
@@ -338,8 +334,8 @@ public class Node: Codable {
         guard address.isUnicast else {
             return nil
         }
-        self.nodeUuid = MeshUUID()
-        self.name     = name
+        self.uuid = UUID()
+        self.name = name
         self.unicastAddress = address
         self.deviceKey = deviceKey
         self.security = .insecure
@@ -360,7 +356,7 @@ public class Node: Codable {
     // MARK: - Codable
     
     private enum CodingKeys: String, CodingKey {
-        case nodeUuid = "UUID"
+        case uuid = "UUID"
         case unicastAddress
         case deviceKey
         case security
@@ -401,7 +397,12 @@ public class Node: Codable {
             throw DecodingError.dataCorruptedError(forKey: .deviceKey, in: container,
                                                    debugDescription: "Device Key must be 32-character hexadecimal string.")
         }
-        self.nodeUuid = try container.decode(MeshUUID.self, forKey: .nodeUuid)
+        
+        // In version 3.0 of this library the Node's UUID format has changed
+        // from 32-character hexadecimal String to standard UUID format (RFC 4122).
+        self.uuid = try container.decode(UUID.self, forKey: .uuid,
+                                         orConvert: MeshUUID.self, forKey: .uuid, using: { $0.uuid })
+        
         self.unicastAddress = unicastAddress
         self.deviceKey = keyData
         self.security = try container.decode(Security.self, forKey: .security)
@@ -476,7 +477,7 @@ public class Node: Codable {
     
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(nodeUuid, forKey: .nodeUuid)
+        try container.encode(uuid, forKey: .uuid)
         try container.encode(unicastAddress.hex, forKey: .unicastAddress) // <- HEX value encoded
         try container.encode(deviceKey.hex, forKey: .deviceKey) // <- HEX value encoded
         try container.encode(security, forKey: .security)

@@ -35,13 +35,9 @@ public class MeshNetwork: Codable {
     public let schema: String
     public let id: String
     public let version: String
-    
+
     /// Random 128-bit UUID allows differentiation among multiple mesh networks.
-    internal let meshUUID: MeshUUID
-    /// Random 128-bit UUID allows differentiation among multiple mesh networks.
-    public var uuid: UUID {
-        return meshUUID.uuid
-    }
+    public let uuid: UUID
     /// The last time the Provisioner database has been modified.
     public internal(set) var timestamp: Date
     /// UTF-8 string, which should be human readable name for this mesh network.
@@ -114,21 +110,21 @@ public class MeshNetwork: Codable {
     }
     
     internal init(name: String, uuid: UUID = UUID()) {
-        schema          = "http://json-schema.org/draft-04/schema#"
-        id              = "http://www.bluetooth.com/specifications/assigned-numbers/mesh-profile/cdb-schema.json#"
-        version         = "1.0.0"
-        meshUUID        = MeshUUID(uuid)
-        meshName        = name
-        timestamp       = Date()
-        provisioners    = []
-        networkKeys     = [NetworkKey()]
-        applicationKeys = []
-        nodes           = []
-        groups          = []
-        scenes          = []
-        ivIndex         = IvIndex()
-        _localElements  = []
-        localElements   = [ Element(location: .main) ]
+        self.schema          = "http://json-schema.org/draft-04/schema#"
+        self.id              = "http://www.bluetooth.com/specifications/assigned-numbers/mesh-profile/cdb-schema.json#"
+        self.version         = "1.0.0"
+        self.uuid            = uuid
+        self.meshName        = name
+        self.timestamp       = Date()
+        self.provisioners    = []
+        self.networkKeys     = [NetworkKey()]
+        self.applicationKeys = []
+        self.nodes           = []
+        self.groups          = []
+        self.scenes          = []
+        self.ivIndex         = IvIndex()
+        self._localElements  = []
+        self.localElements   = [ Element(location: .main) ]
     }
     
     // MARK: - Codable
@@ -138,7 +134,7 @@ public class MeshNetwork: Codable {
         case schema          = "$schema"
         case id
         case version
-        case meshUUID
+        case uuid            = "meshUUID"
         case meshName
         case timestamp
         case provisioners
@@ -154,7 +150,12 @@ public class MeshNetwork: Codable {
         schema = try container.decode(String.self, forKey: .schema)
         id = try container.decode(String.self, forKey: .id)
         version = try container.decode(String.self, forKey: .version)
-        meshUUID = try container.decode(MeshUUID.self, forKey: .meshUUID)
+        
+        // In version 3.0 of this library the Mesh UUID format has changed
+        // from 32-character hexadecimal String to standard UUID format (RFC 4122).
+        uuid = try container.decode(UUID.self, forKey: .uuid,
+                                    orConvert: MeshUUID.self, forKey: .uuid, using: { $0.uuid })
+        
         meshName = try container.decode(String.self, forKey: .meshName)
         timestamp = try container.decode(Date.self, forKey: .timestamp)
         provisioners = try container.decode([Provisioner].self, forKey: .provisioners)

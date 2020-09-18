@@ -33,12 +33,9 @@ import Foundation
 public class Provisioner: Codable {
     internal weak var meshNetwork: MeshNetwork?
     
-    /// 128-bit Device UUID.
-    internal let provisionerUuid: MeshUUID
-    /// Random 128-bit UUID allows differentiation among multiple mesh networks.
-    public var uuid: UUID {
-        return provisionerUuid.uuid
-    }
+    /// Provisioner's UUID. If the Provisioner has a corresponding Node,
+    /// the Node's UUID will be equal to this one.
+    public let uuid: UUID
     /// UTF-8 string, which should be a human readable name of the Provisioner.
     public var provisionerName: String {
         didSet {
@@ -60,7 +57,7 @@ public class Provisioner: Codable {
                 allocatedGroupRange:   [AddressRange],
                 allocatedSceneRange:   [SceneRange]) {
         self.provisionerName = name
-        self.provisionerUuid = MeshUUID(uuid)
+        self.uuid = uuid
         self.allocatedUnicastRange = allocatedUnicastRange.merged()
         self.allocatedGroupRange   = allocatedGroupRange.merged()
         self.allocatedSceneRange   = allocatedSceneRange.merged()
@@ -90,7 +87,7 @@ public class Provisioner: Codable {
     // MARK: - Codable
     
     private enum CodingKeys: String, CodingKey {
-        case provisionerUuid = "UUID"
+        case uuid = "UUID"
         case provisionerName
         case allocatedUnicastRange
         case allocatedGroupRange
@@ -100,7 +97,12 @@ public class Provisioner: Codable {
     public required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         provisionerName = try container.decode(String.self, forKey: .provisionerName)
-        provisionerUuid = try container.decode(MeshUUID.self, forKey: .provisionerUuid)
+        
+        // In version 3.0 of this library the Provisioner's UUID format has changed
+        // from 32-character hexadecimal String to standard UUID format (RFC 4122).
+        uuid = try container.decode(UUID.self, forKey: .uuid,
+                                    orConvert: MeshUUID.self, forKey: .uuid, using: { $0.uuid })
+        
         allocatedUnicastRange = try container.decode([AddressRange].self, forKey: .allocatedUnicastRange).merged()
         allocatedGroupRange = try container.decode([AddressRange].self, forKey: .allocatedGroupRange).merged()
         allocatedSceneRange = try container.decode([SceneRange].self, forKey: .allocatedSceneRange).merged()
