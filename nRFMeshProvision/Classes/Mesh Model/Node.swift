@@ -239,7 +239,7 @@ public class Node: Codable {
         self.name = name
         self.unicastAddress = unicastAddress
         self.deviceKey = Data.random128BitKey()
-        self.security = .high
+        self.security = .secure
         // Default values.
         self.netKeys  = [ NodeKey(index: 0, updated: false) ]
         self.appKeys  = []
@@ -260,7 +260,7 @@ public class Node: Codable {
         self.name     = provisioner.provisionerName
         self.unicastAddress = address
         self.deviceKey = Data.random128BitKey()
-        self.security = .high
+        self.security = .secure
         self.ttl = nil
         // iDevice can handle a lot of addresses.
         self.minimumNumberOfReplayProtectionList = Address.maxUnicastAddress
@@ -309,7 +309,7 @@ public class Node: Codable {
         self.name     = name
         self.unicastAddress = address
         self.deviceKey = deviceKey
-        self.security  = .high
+        self.security  = .secure
         // Composition Data were not obtained.
         self.isConfigComplete = false
         
@@ -342,7 +342,7 @@ public class Node: Codable {
         self.name     = name
         self.unicastAddress = address
         self.deviceKey = deviceKey
-        self.security = .low
+        self.security = .insecure
         // Composition Data were not obtained.
         self.isConfigComplete = false
         

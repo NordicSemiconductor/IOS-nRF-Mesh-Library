@@ -131,7 +131,7 @@ public class NetworkKey: Key, Codable {
         self.name        = name
         self.index       = index
         self.key         = key
-        self.minSecurity = .high
+        self.minSecurity = .secure
         self.timestamp   = Date()
         
         regenerateKeyDerivaties()
