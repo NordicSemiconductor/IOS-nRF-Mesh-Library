@@ -37,10 +37,10 @@ public class Provisioner: Codable {
     /// the Node's UUID will be equal to this one.
     public let uuid: UUID
     /// UTF-8 string, which should be a human readable name of the Provisioner.
-    public var provisionerName: String {
+    public var name: String {
         didSet {
             if let network = meshNetwork, let node = network.node(for: self) {
-                node.name = provisionerName
+                node.name = name
             }
         }
     }
@@ -56,7 +56,7 @@ public class Provisioner: Codable {
                 allocatedUnicastRange: [AddressRange],
                 allocatedGroupRange:   [AddressRange],
                 allocatedSceneRange:   [SceneRange]) {
-        self.provisionerName = name
+        self.name = name
         self.uuid = uuid
         self.allocatedUnicastRange = allocatedUnicastRange.merged()
         self.allocatedGroupRange   = allocatedGroupRange.merged()
@@ -88,7 +88,7 @@ public class Provisioner: Codable {
     
     private enum CodingKeys: String, CodingKey {
         case uuid = "UUID"
-        case provisionerName
+        case name = "provisionerName"
         case allocatedUnicastRange
         case allocatedGroupRange
         case allocatedSceneRange
@@ -96,7 +96,7 @@ public class Provisioner: Codable {
     
     public required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        provisionerName = try container.decode(String.self, forKey: .provisionerName)
+        name = try container.decode(String.self, forKey: .name)
         
         // In version 3.0 of this library the Provisioner's UUID format has changed
         // from 32-character hexadecimal String to standard UUID format (RFC 4122).

@@ -109,7 +109,7 @@ class ProvisionersViewController: UITableViewController, Editable {
         let network = MeshNetworkManager.instance.meshNetwork!
         let p = provisioner(at: indexPath)!
         let node = network.node(for: p)
-        cell.textLabel?.text = p.provisionerName
+        cell.textLabel?.text = p.name
         if let node = node {
             cell.detailTextLabel?.text = "Unicast Address: \(node.unicastAddress.asString())"
         } else {

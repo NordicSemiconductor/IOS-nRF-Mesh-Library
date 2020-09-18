@@ -253,7 +253,7 @@ public class Node: Codable {
     /// - parameter address:     The unicast address to be assigned to the Node.
     internal init(for provisioner: Provisioner, withAddress address: Address) {
         self.uuid = provisioner.uuid
-        self.name = provisioner.provisionerName
+        self.name = provisioner.name
         self.unicastAddress = address
         self.deviceKey = Data.random128BitKey()
         self.security = .secure

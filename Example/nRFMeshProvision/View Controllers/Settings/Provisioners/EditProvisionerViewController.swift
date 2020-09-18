@@ -103,7 +103,7 @@ class EditProvisionerViewController: UITableViewController {
         }
         
         // Show Provisioner's parameters.
-        nameLabel.text = provisioner.provisionerName
+        nameLabel.text = provisioner.name
         
         // A Provisioner does not need to have an associated node.
         // A Provisioner without a node can't perform nodes configuration operations.
@@ -217,7 +217,7 @@ private extension EditProvisionerViewController {
     /// Presents a dialog to edit the Provisioner name.
     func presentNameDialog() {
         presentTextAlert(title: "Provisioner name", message: nil,
-                         text: newName ?? provisioner.provisionerName, placeHolder: "Name",
+                         text: newName ?? provisioner.name, placeHolder: "Name",
                          type: .nameRequired, cancelHandler: nil) { newName in
                             self.newName = newName
                             self.nameLabel.text = newName
@@ -322,7 +322,7 @@ private extension EditProvisionerViewController {
             }
             // When we reached that far, changing the name and TTL is just a formality.
             if let newName = newName {
-                provisioner.provisionerName = newName
+                provisioner.name = newName
             }
             if let newTtl = newTtl {
                 provisioner.node?.defaultTTL = newTtl
