@@ -62,9 +62,19 @@ public class MeshNetwork: Codable {
     public internal(set) var groups: [Group]
     /// An array of Senes in the network.
     public internal(set) var scenes: [Scene]
+    /// An array containins Unicast Addresses that cannot be assigned to new Nodes.
+    internal var networkExclusions: [ExclusionList]?
     
     /// The IV Index of the mesh network.
-    internal var ivIndex: IvIndex
+    internal var ivIndex: IvIndex {
+        didSet {
+            // Clean up the network exclusions.
+            networkExclusions?.cleanUp(forIvIndex: ivIndex)
+            if networkExclusions?.isEmpty ?? false {
+                networkExclusions = nil
+            }
+        }
+    }
     
     /// An array of Elements of the local Provisioner.
     private var _localElements: [Element]
@@ -110,21 +120,22 @@ public class MeshNetwork: Codable {
     }
     
     internal init(name: String, uuid: UUID = UUID()) {
-        self.schema          = "http://json-schema.org/draft-04/schema#"
-        self.id              = "http://www.bluetooth.com/specifications/assigned-numbers/mesh-profile/cdb-schema.json#"
-        self.version         = "1.0.0"
-        self.uuid            = uuid
-        self.meshName        = name
-        self.timestamp       = Date()
-        self.provisioners    = []
-        self.networkKeys     = [NetworkKey()]
-        self.applicationKeys = []
-        self.nodes           = []
-        self.groups          = []
-        self.scenes          = []
-        self.ivIndex         = IvIndex()
-        self._localElements  = []
-        self.localElements   = [ Element(location: .main) ]
+        self.schema            = "http://json-schema.org/draft-04/schema#"
+        self.id                = "http://www.bluetooth.com/specifications/assigned-numbers/mesh-profile/cdb-schema.json#"
+        self.version           = "1.0.0"
+        self.uuid              = uuid
+        self.meshName          = name
+        self.timestamp         = Date()
+        self.provisioners      = []
+        self.networkKeys       = [NetworkKey()]
+        self.applicationKeys   = []
+        self.nodes             = []
+        self.groups            = []
+        self.scenes            = []
+        self.networkExclusions = []
+        self.ivIndex           = IvIndex()
+        self._localElements    = []
+        self.localElements     = [Element(location: .main)]
     }
     
     // MARK: - Codable
@@ -143,6 +154,7 @@ public class MeshNetwork: Codable {
         case nodes
         case groups
         case scenes
+        case networkExclusions
     }
     
     public required init(from decoder: Decoder) throws {
@@ -163,6 +175,7 @@ public class MeshNetwork: Codable {
         applicationKeys = try container.decode([ApplicationKey].self, forKey: .applicationKeys)
         nodes = try container.decode([Node].self, forKey: .nodes)
         groups = try container.decode([Group].self, forKey: .groups)
+        networkExclusions = try container.decodeIfPresent([ExclusionList].self, forKey: .networkExclusions)
         // Scenes are mandatory, but previous version of the library did support it,
         // so JSON files generated with such versions won't have "scenes" tag.
         scenes = try container.decodeIfPresent([Scene].self, forKey: .scenes) ?? []
@@ -229,13 +242,23 @@ extension MeshNetwork {
     func remove(nodeWithUuid uuid: UUID) {
         if let index = nodes.firstIndex(where: { $0.uuid == uuid }) {
             let node = nodes.remove(at: index)
+            // TODO: Verify that no Node is publishing to this Node.
+            //       If such Node is found, this method should throw, as
+            //       the Node is in use.
+            
             // Remove Unicast Addresses of all Node's Elements from Scenes.
             scenes.forEach { scene in
                 scene.remove(node: node)
             }
-            // TODO: Verify that no Node is publishing to this Node.
-            //       If such Node is found, this method should throw, as
-            //       the Node is in use.
+            // When a Node is removed from the network, the Unicast Addresses
+            // it used to use cannot be assigned to another Node until the
+            // IV Index is incremented by 2 (which effectively resets all Sequence
+            // number counters on all Nodes).
+            networkExclusions = networkExclusions ?? []
+            networkExclusions!.append(node, forIvIndex: ivIndex)
+            
+            // As the Node is no longer part of the mesh network, remove
+            // the reference to it.
             node.meshNetwork = nil
             timestamp = Date()
             

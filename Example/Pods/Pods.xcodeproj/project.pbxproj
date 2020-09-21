@@ -131,6 +131,7 @@
 		5079F2715F1CD275CF780858BD471A4A /* ConfigVendorModelSubscriptionGet.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDEA9B957FF86C5BC2BD1C662445FBA0 /* ConfigVendorModelSubscriptionGet.swift */; };
 		509221EE1E43B16CBD56BDE45F21A134 /* NetworkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A9168072EDF2AC5B1189ACD2BDCEFEA /* NetworkManager.swift */; };
 		5140CFFF34BA32AC6E01115327938711 /* SceneStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = A88C2DF2F262CEF4FDB2D6AEEE9763FF /* SceneStatus.swift */; };
+		525A60D72514D1EA00AC394E /* ExclusionList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 525A60D62514D1EA00AC394E /* ExclusionList.swift */; };
 		52F4888FD9D5D56FCF086D02ACA31DF9 /* Node+Address.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECA7D05A0C6FBE7450066E19A15B7784 /* Node+Address.swift */; };
 		543DE1773A7DB2311F8E705F4C7CC856 /* ConfigCompositionDataGet.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDD47BFAD501470882EDE8F79E721480 /* ConfigCompositionDataGet.swift */; };
 		55DD6854DFF5F236F74A470B9BEA6B03 /* LightLightnessDefaultGet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D887FA5C614F9A82480EA84246AFF12 /* LightLightnessDefaultGet.swift */; };
@@ -507,6 +508,7 @@
 		51BBAA3978BFB1C9BAA0B3563DB01A48 /* Pods-nRFMeshProvision_Example-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-nRFMeshProvision_Example-Info.plist"; sourceTree = "<group>"; };
 		523E23022FF606345EE02015D949794B /* LowerTransportLayer.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LowerTransportLayer.swift; sourceTree = "<group>"; };
 		52473EF190638F8B70BB7B106E956029 /* pem.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = pem.h; path = ios/include/openssl/pem.h; sourceTree = "<group>"; };
+		525A60D62514D1EA00AC394E /* ExclusionList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExclusionList.swift; sourceTree = "<group>"; };
 		53D298B09F7017B47219AAE86DA41BD0 /* ApplicationKey.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ApplicationKey.swift; sourceTree = "<group>"; };
 		543EDD9BE4C64971300F95848CB2B30E /* MessageHandle.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MessageHandle.swift; sourceTree = "<group>"; };
 		5479A600FCEEA8C4F77A992F601F34D2 /* LightHSLDefaultSet.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LightHSLDefaultSet.swift; sourceTree = "<group>"; };
@@ -1457,6 +1459,7 @@
 				D8A8B46A173212523C294CFD2159EDC7 /* AddressRange.swift */,
 				53D298B09F7017B47219AAE86DA41BD0 /* ApplicationKey.swift */,
 				260DCBB9D65846ECC04F9B71BBC8E4D3 /* Element.swift */,
+				525A60D62514D1EA00AC394E /* ExclusionList.swift */,
 				894B66E3E95628CA0DFC500006835721 /* Group.swift */,
 				6F223093888A43FF6C625D0B4D97F8AC /* HeartbeatPublication.swift */,
 				FA0BD442FBFD0903E0AFFBC7F03E0C92 /* HeartbeatSubscription.swift */,
@@ -1828,6 +1831,7 @@
 				79BC4A58C3BC9373EC54EF160C4083B4 /* GenericPowerLevelGet.swift in Sources */,
 				2798CCBEF348823F80E21BF30BCFEFE1 /* GenericPowerLevelSet.swift in Sources */,
 				82D00161421FF6750220AD4CA1B5C83A /* GenericPowerLevelSetUnacknowledged.swift in Sources */,
+				525A60D72514D1EA00AC394E /* ExclusionList.swift in Sources */,
 				64FE559D9B61580E971997476FCF6C9A /* GenericPowerLevelStatus.swift in Sources */,
 				85BAEC3C11B7F30F10C28F2D9D693936 /* GenericPowerRangeGet.swift in Sources */,
 				4AB862AEEC81B23A9471013639573C27 /* GenericPowerRangeSet.swift in Sources */,

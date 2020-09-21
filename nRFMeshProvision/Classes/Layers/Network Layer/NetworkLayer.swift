@@ -293,8 +293,7 @@ private extension NetworkLayer {
         let isIvRecoveryActive = defaults.bool(forKey: IvIndex.ivRecoveryKey)
         /// The test mode disables the 96h rule, leaving all other behavior unchanged.
         let isIvTestModeActive = networkManager.manager.ivUpdateTestMode
-        // Ensure, that the received Secure Network Beacon can overwrite current
-        // IV Index.
+        // Ensure, that the received Secure Network Beacon can overwrite current IV Index.
         let flag = networkManager.manager.allowIvIndexRecoveryOver42
         if secureNetworkBeacon.canOverwrite(ivIndex: lastIVIndex,
                                             updatedAt: lastTransitionDate,
@@ -345,7 +344,9 @@ private extension NetworkLayer {
             if let date = lastTransitionDate {
                 numberOfHoursSinceDate = "\(Int(-date.timeIntervalSinceNow / 3600))h"
             }
-            logger?.w(.network, "Discarding beacon (\(secureNetworkBeacon.ivIndex), last \(lastIVIndex), changed: \(numberOfHoursSinceDate) ago, test mode: \(networkManager.manager.ivUpdateTestMode)))")
+            logger?.w(.network, "Discarding beacon (\(secureNetworkBeacon.ivIndex), "
+                              + "last \(lastIVIndex), changed: \(numberOfHoursSinceDate) ago, "
+                              + "test mode: \(networkManager.manager.ivUpdateTestMode)))")
             return
         } // else,
         // the Secure Network beacon was sent by a Node with a previous IV Index,
