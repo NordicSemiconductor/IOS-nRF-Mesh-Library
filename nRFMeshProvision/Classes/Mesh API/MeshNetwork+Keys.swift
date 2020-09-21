@@ -65,6 +65,7 @@ public extension MeshNetwork {
     ///           there isn't any Network Key to bind the new key to
     ///           or the assigned Key Index is out of range.
     /// - seeAlso: `nextAvailableApplicationKeyIndex`
+    @discardableResult
     func add(applicationKey: Data, withIndex index: KeyIndex? = nil, name: String) throws -> ApplicationKey {
         guard applicationKey.count == 16 else {
             throw MeshNetworkError.invalidKey
@@ -138,6 +139,7 @@ public extension MeshNetwork {
     /// - throws: This method throws an error if the key is not 128-bit long
     ///           or the assigned Key Index is out of range.
     /// - seeAlso: `nextAvailableNetworkKeyIndex`
+    @discardableResult
     func add(networkKey: Data, withIndex index: KeyIndex? = nil, name: String) throws -> NetworkKey {
         guard networkKey.count == 16 else {
             throw MeshNetworkError.invalidKey
