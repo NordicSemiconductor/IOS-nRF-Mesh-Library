@@ -40,6 +40,9 @@ public class MeshNetwork: Codable {
     public let uuid: UUID
     /// The last time the Provisioner database has been modified.
     public internal(set) var timestamp: Date
+    /// Whether the configuration contains full information about the mesh network,
+    /// or only partial. In partial configuration Nodes' Device Keys can be `nil`.
+    public let isPartial: Bool
     /// UTF-8 string, which should be human readable name for this mesh network.
     public var meshName: String {
         didSet {
@@ -124,6 +127,7 @@ public class MeshNetwork: Codable {
         self.id                = "http://www.bluetooth.com/specifications/assigned-numbers/mesh-profile/cdb-schema.json#"
         self.version           = "1.0.0"
         self.uuid              = uuid
+        self.isPartial         = false
         self.meshName          = name
         self.timestamp         = Date()
         self.provisioners      = []
@@ -146,6 +150,7 @@ public class MeshNetwork: Codable {
         case id
         case version
         case uuid            = "meshUUID"
+        case isPartial       = "partial"
         case meshName
         case timestamp
         case provisioners
@@ -168,12 +173,18 @@ public class MeshNetwork: Codable {
         uuid = try container.decode(UUID.self, forKey: .uuid,
                                     orConvert: MeshUUID.self, forKey: .uuid, using: { $0.uuid })
         
+        isPartial = try container.decodeIfPresent(Bool.self, forKey: .isPartial) ?? false
         meshName = try container.decode(String.self, forKey: .meshName)
         timestamp = try container.decode(Date.self, forKey: .timestamp)
         provisioners = try container.decode([Provisioner].self, forKey: .provisioners)
         networkKeys = try container.decode([NetworkKey].self, forKey: .networkKeys)
         applicationKeys = try container.decode([ApplicationKey].self, forKey: .applicationKeys)
-        nodes = try container.decode([Node].self, forKey: .nodes)
+        let ns = try container.decode([Node].self, forKey: .nodes)
+        guard isPartial || !ns.contains(where: { $0.deviceKey == nil }) else {
+            throw DecodingError.dataCorruptedError(forKey: .isPartial, in: container,
+                                                   debugDescription: "Device Key cannot be empty in non-partial configuration.")
+        }
+        nodes = ns
         groups = try container.decode([Group].self, forKey: .groups)
         networkExclusions = try container.decodeIfPresent([ExclusionList].self, forKey: .networkExclusions)
         // Scenes are mandatory, but previous version of the library did support it,

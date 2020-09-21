@@ -112,7 +112,7 @@ class EditProvisionerViewController: UITableViewController {
             unicastAddressLabel.text = node.unicastAddress.asString()
             ttlCell.detailTextLabel?.text = "\(node.defaultTTL ?? MeshNetworkManager.instance.defaultTtl)"
             ttlCell.accessoryType = .disclosureIndicator
-            deviceKeyCell.detailTextLabel?.text = node.deviceKey.hex
+            deviceKeyCell.detailTextLabel?.text = node.deviceKey?.hex ?? "Unknown Device Key"
             deviceKeyCell.detailTextLabel?.font = .systemFont(ofSize: 14)
         } else {
             ttlCell.detailTextLabel?.text = "N/A"

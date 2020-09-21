@@ -117,7 +117,7 @@ public class Node: Codable {
     /// Primary Unicast Address of the Node.
     public internal(set) var unicastAddress: Address
     /// 128-bit device key for this Node.
-    public let deviceKey: Data
+    public let deviceKey: Data?
     /// The level of security for the subnet on which the node has been
     /// originally provisioner.
     public let security: Security
@@ -392,10 +392,15 @@ public class Node: Codable {
             throw DecodingError.dataCorruptedError(forKey: .unicastAddress, in: container,
                                                    debugDescription: "\(unicastAddressAsString) is not a unicast address.")
         }
-        let keyHex = try container.decode(String.self, forKey: .deviceKey)
-        guard let keyData = Data(hex: keyHex) else {
-            throw DecodingError.dataCorruptedError(forKey: .deviceKey, in: container,
-                                                   debugDescription: "Device Key must be 32-character hexadecimal string.")
+        let keyHex = try container.decodeIfPresent(String.self, forKey: .deviceKey)
+        if let keyHex = keyHex {
+            guard let keyData = Data(hex: keyHex) else {
+                throw DecodingError.dataCorruptedError(forKey: .deviceKey, in: container,
+                                                       debugDescription: "Device Key must be 32-character hexadecimal string.")
+            }
+            self.deviceKey = keyData
+        } else {
+            self.deviceKey = nil
         }
         
         // In version 3.0 of this library the Node's UUID format has changed
@@ -404,7 +409,6 @@ public class Node: Codable {
                                          orConvert: MeshUUID.self, forKey: .uuid, using: { $0.uuid })
         
         self.unicastAddress = unicastAddress
-        self.deviceKey = keyData
         self.security = try container.decode(Security.self, forKey: .security)
         self.netKeys = try container.decode([NodeKey].self, forKey: .netKeys)
         self.appKeys = try container.decode([NodeKey].self, forKey: .appKeys)
@@ -479,7 +483,7 @@ public class Node: Codable {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(uuid, forKey: .uuid)
         try container.encode(unicastAddress.hex, forKey: .unicastAddress) // <- HEX value encoded
-        try container.encode(deviceKey.hex, forKey: .deviceKey) // <- HEX value encoded
+        try container.encodeIfPresent(deviceKey?.hex, forKey: .deviceKey) // <- HEX value encoded
         try container.encode(security, forKey: .security)
         try container.encode(netKeys, forKey: .netKeys)
         try container.encode(appKeys, forKey: .appKeys)

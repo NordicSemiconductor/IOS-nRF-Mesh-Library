@@ -254,14 +254,17 @@ internal class AccessLayer {
         // ConfigNetKeyDelete must not be signed using the key that is being deleted.
         if let netKeyDelete = message as? ConfigNetKeyDelete,
            netKeyDelete.networkKeyIndex == networkKey.index {
+            // Existence of another Network Key was checked in MeshNetworkManager.send(...).
             networkKey = node.networkKeys.last!
+        }
+        guard let keySet = DeviceKeySet(networkKey: networkKey, node: node) else {
+            return
         }
         
         logger?.i(.foundationModel, "Sending \(message) to: \(destination.hex)")
         let pdu = AccessPdu(fromMeshMessage: message, sentFrom: element, to: MeshAddress(destination),
                             userInitiated: true)
         logger?.i(.access, "Sending \(pdu)")
-        let keySet = DeviceKeySet(networkKey: networkKey, node: node)
         
         // Set timers for the acknowledged messages.
         if let _ = message as? AcknowledgedConfigMessage {

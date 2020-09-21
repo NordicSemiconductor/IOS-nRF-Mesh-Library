@@ -169,7 +169,7 @@ class ConfigurationViewController: ProgressViewController {
                 cell.accessoryType = .disclosureIndicator
             }
             if indexPath.isDeviceKey {
-                cell.detailTextLabel?.text = node.deviceKey.hex
+                cell.detailTextLabel?.text = node.deviceKey?.hex ?? "Unknown Device Key"
                 cell.accessoryType = .none
             }
         }
@@ -294,8 +294,12 @@ class ConfigurationViewController: ProgressViewController {
             presentTTLDialog()
         }
         if indexPath.isDeviceKey {
-            UIPasteboard.general.string = node.deviceKey.hex
-            showToast("Device Key copied to Clipboard.", delay: .shortDelay)
+            if let hex = node.deviceKey?.hex {
+                UIPasteboard.general.string = hex
+                showToast("Device Key copied to Clipboard.", delay: .shortDelay)
+            } else {
+                showToast("No key to copy.", delay: .shortDelay)
+            }
         }
         if indexPath.isNetworkKeys {
             performSegue(withIdentifier: "showNetworkKeys", sender: nil)

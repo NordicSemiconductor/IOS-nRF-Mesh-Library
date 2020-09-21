@@ -546,6 +546,10 @@ public extension MeshNetworkManager {
             print("Fatal Error: The target Node does not have Network Key")
             throw AccessError.invalidDestination
         }
+        guard let _ = node.deviceKey else {
+            print("Error: Node's Device Key is unknown")
+            throw AccessError.noDeviceKey
+        }
         if message is ConfigNetKeyDelete {
             guard node.networkKeys.count > 1 else {
                 print("Error: Cannot remove last Network Key")
