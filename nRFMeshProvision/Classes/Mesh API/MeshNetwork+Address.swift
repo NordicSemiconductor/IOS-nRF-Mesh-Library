@@ -73,6 +73,24 @@ public extension MeshNetwork {
                                            elementsUsing: provisioner)
     }
     
+    /// Returns the next available Unicast Address from the local Provisioner's range
+    /// that can be assigned to a new node with given number of elements.
+    /// The 0'th element is identified by the node's Unicast Address.
+    /// Each following element is identified by a subsequent Unicast Address.
+    ///
+    /// - parameters:
+    ///   - offset: Minimum Unicast Address to be assigned.
+    ///   - elementsCount: The number of Node's elements. Each element will be
+    ///                    identified by a subsequent Unicast Address.
+    /// - returns: The next available Unicast Address that can be assigned to a node,
+    ///            or `nil`, if there are no more available addresses in the allocated range.
+    func nextAvailableUnicastAddress(startingFrom offset: Address = Address.minUnicastAddress,
+                                     forElementsCount elementsCount: UInt8) -> Address? {
+        return localProvisioner.map {
+            nextAvailableUnicastAddress(startingFrom: offset, for: elementsCount, elementsUsing: $0)
+        } ?? nil
+    }
+    
     /// Returns the next available Unicast Address from the Provisioner's range
     /// that can be assigned to a new node with given number of elements.
     /// The 0'th element is identified by the node's Unicast Address.
@@ -192,6 +210,15 @@ public extension MeshNetwork {
         }
         // No address was found :(
         return nil
+    }
+    
+    /// Returns the next available Group Address from the local Provisioner's range
+    /// that can be assigned to a new Group.
+    ///
+    /// - returns: The next available Group Address that can be assigned to a new Group,
+    ///            or `nil`, if there are no more available addresses in the allocated range.
+    func nextAvailableGroupAddress() -> Address? {
+        return localProvisioner.map { nextAvailableGroupAddress(for: $0) } ?? nil
     }
     
 }

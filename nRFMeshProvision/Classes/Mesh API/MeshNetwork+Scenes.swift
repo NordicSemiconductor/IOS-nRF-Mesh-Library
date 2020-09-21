@@ -122,4 +122,13 @@ public extension MeshNetwork {
         return nil
     }
     
+    /// Returns the next available Scene number from the local Provisioner's range
+    /// that can be assigned to a new Scene.
+    ///
+    /// - returns: The next available Scene number that can be assigned to a new Scene,
+    ///            or `nil`, if there are no more available numbers in the allocated range.
+    func nextAvailableScene() -> SceneNumber? {
+        return localProvisioner.map { nextAvailableScene(for: $0) } ?? nil
+    }
+    
 }
