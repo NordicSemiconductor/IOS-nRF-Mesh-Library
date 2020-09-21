@@ -35,9 +35,29 @@ class ScenesViewController: UITableViewController, Editable {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        let generate = UIButtonAction(title: "Generate") {
+            self.presentTextAlert(title: "Generate scenes",
+                                  message: "Specify number of scenes to generate (max 20):",
+                                  placeHolder: "E.g. 3", type: .numberRequired,
+                                  cancelHandler: nil) { value in
+                guard let network = MeshNetworkManager.instance.meshNetwork,
+                      let number = Int(value), number > 0 else {
+                    return
+                }
+                for _ in 0..<min(number, 20) {
+                    guard let scene = network.nextAvailableScene() else {
+                        break
+                    }
+                    try? network.add(scene: scene, name: "Scene \(scene)")
+                }
+                self.tableView.reloadData()
+                self.hideEmptyView()
+            }
+        }
         tableView.setEmptyView(title: "No scenes",
                                message: "Click + to add a new scene.",
-                               messageImage: #imageLiteral(resourceName: "baseline-scene"))
+                               messageImage: #imageLiteral(resourceName: "baseline-scene"),
+                               action: generate)
         
         let hasScenes = MeshNetworkManager.instance.meshNetwork?.scenes.count ?? 0 > 0
         if !hasScenes {
