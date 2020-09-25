@@ -67,12 +67,9 @@ internal struct CompositionElement: Codable {
                 model.bind(applicationKeyWithIndex: binding.asUInt16)
                 
                 if let publication = modelPublishAddress[$0] {
-                    model.set(publication: Publish(to: MeshAddress(publication.asUInt16),
-                                                   usingApplicationKeyWithKeyIndex: binding.asUInt16,
-                                                   usingFriendshipMaterial: false, ttl: 0xFF,
-                                                   periodSteps: 0,
-                                                   periodResolution: .hundredsOfMilliseconds,
-                                                   retransmit: Publish.Retransmit()))
+                    model.set(publication:
+                        Publish(to: MeshAddress(publication.asUInt16), withKeyIndex: binding.asUInt16)
+                    )
                 }
             }
             groups(for: $0).forEach { group in model.subscribe(to: group )}

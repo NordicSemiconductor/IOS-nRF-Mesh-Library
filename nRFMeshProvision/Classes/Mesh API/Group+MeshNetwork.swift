@@ -59,7 +59,7 @@ public extension Group {
                         }
                     }
                     // If any Node is subscribed to this Group, return `true`.
-                    if model.subscribe.contains(_address) {
+                    if model.subscribe.contains(groupAddress) {
                         return true
                     }
                 }
@@ -75,7 +75,7 @@ public extension Group {
     /// - returns: `True` if this Group is a child group of the given one,
     ///            otherwise `false`.
     func isDirectChildOf(_ parent: Group) -> Bool {
-        return parent._address == _parentAddress
+        return parent.groupAddress == parentAddress
     }
     
     /// Returns whether this Group is the parent group of the
@@ -122,7 +122,7 @@ public extension Group {
         guard parent != self else {
             return
         }
-        _parentAddress = parent._address
+        parentAddress = parent.groupAddress
         meshNetwork?.timestamp = Date()
     }
     
@@ -133,7 +133,7 @@ public extension Group {
         guard child != self else {
             return
         }
-        child._parentAddress = _address
+        child.parentAddress = groupAddress
         meshNetwork?.timestamp = Date()
     }
     
