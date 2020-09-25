@@ -56,6 +56,16 @@ public extension ApplicationKey {
     func isBound(to networkKey: NetworkKey) -> Bool {
         return boundNetworkKeyIndex == networkKey.index
     }
+    
+    /// Returns whether the Application Key is bound to any of the
+    /// given Network Keys. The Key comparison bases on Key Index property.
+    ///
+    /// - parameter networkKeys: The Network Keys to check.
+    /// - returns: `True`, if the Application Key is bound to any of
+    ///            the given Network Keys.
+    func isBound(toAnyOf networkKeys: [NetworkKey]) -> Bool {
+        return networkKeys.contains { $0.index == boundNetworkKeyIndex }
+    }
 
     /// The Network Key bound to this Application Key.
     var boundNetworkKey: NetworkKey {
@@ -74,7 +84,7 @@ public extension Array where Element == ApplicationKey {
     /// - returns: `True`, if the array contains an Application Key bound to
     ///            the given Network Key, `false` otherwise.
     func contains(keyBoundTo networkKey: NetworkKey) -> Bool {
-        return contains(where: { $0.isBound(to: networkKey) })
+        return contains { $0.isBound(to: networkKey) }
     }
     
     /// Filters the list to contain only those Application Keys, that are
@@ -84,6 +94,15 @@ public extension Array where Element == ApplicationKey {
     /// - returns: Filtered list of Application Keys.
     func boundTo(_ networkKey: NetworkKey) -> [ApplicationKey] {
         return filter { $0.isBound(to: networkKey) }
+    }
+    
+    /// Filters the list to contain only those Application Keys, that are
+    /// bound to the given Network Keys.
+    ///
+    /// - parameter networkKeys: The Network Keys of interst.
+    /// - returns: Filtered list of Application Keys.
+    func boundTo(_ networkKeys: [NetworkKey]) -> [ApplicationKey] {
+        return filter { $0.isBound(toAnyOf: networkKeys) }
     }
     
 }
