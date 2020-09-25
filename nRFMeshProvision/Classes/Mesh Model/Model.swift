@@ -61,7 +61,7 @@ public class Model: Codable {
     /// Use `isSubscribed(to:)` to check other Groups.
     public var subscriptions: [Group] {
         return parentElement?.parentNode?.meshNetwork?.groups
-            .filter { subscribe.contains($0._address ) } ?? []
+            .filter { subscribe.contains($0.groupAddress ) } ?? []
     }
     /// The configuration of this Model's publication.
     public private(set) var publish: Publish?
@@ -80,6 +80,33 @@ public class Model: Codable {
         self.subscribe = []
         self.bind      = []
         self.delegate  = nil
+    }
+    
+    internal init(copy model: Model,
+                  andTruncateTo applicationKeys: [ApplicationKey], nodes: [Node], groups: [Group]) {
+        self.modelId = model.modelId
+        self.bind = model.bind.filter { keyIndex in
+            applicationKeys.contains { $0.index == keyIndex }
+        }
+        self.subscribe = model.subscribe.filter { address in
+            groups.contains { $0.groupAddress == address }
+        }
+        // No need to set the delegate for copying.
+        self.delegate = nil
+        
+        // Copy the Publish object if:
+        // - it exists,
+        // - is configured to use one of the exported Application Keys,
+        // - the destination address is an exported Node, an exported Group, or special group.
+        if let publish = model.publish, applicationKeys.contains(where: { $0.index == publish.index }) {
+            let publishAddress = publish.publicationAddress.address
+            guard publishAddress.isSpecialGroup ||
+                 (publishAddress.isUnicast && nodes.contains(where: { $0.hasAllocatedAddress(publishAddress) })) ||
+                 (publishAddress.isGroup && groups.contains(where: { $0.groupAddress == publish.address })) else {
+                return
+            }
+            self.publish = publish
+        }
     }
     
     internal convenience init(sigModelId: UInt16) {

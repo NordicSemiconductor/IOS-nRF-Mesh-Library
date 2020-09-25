@@ -46,6 +46,13 @@ public class Scene: Codable {
         self.addresses = []
     }
     
+    internal init(copy scene: Scene, andTruncateTo nodes: [Node]) {
+        self.number = scene.number
+        self.name = scene.name
+        self.addresses = scene.addresses
+            .filter { address in nodes.contains { node in node.hasAllocatedAddress(address) } }
+    }
+    
     // MARK: - Codable
     
     private enum CodingKeys: CodingKey {

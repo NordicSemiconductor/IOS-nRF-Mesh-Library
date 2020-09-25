@@ -832,6 +832,33 @@ public extension MeshNetworkManager {
         return try! encoder.encode(meshData.meshNetwork)
     }
     
+    /// Returns the exported Mesh Network configuration as JSON Data.
+    /// The returned Data can be transferred to another application and
+    /// imported. The JSON is compatible with Bluetooth Mesh scheme.
+    ///
+    /// The export configuration lets exporting only a part of the
+    /// network configuration. For example, when sharing the network with
+    /// a guest, a home owner may create a Guest Network Key and Guest
+    /// Application Key bound to it, configure Nodes in the guest room to
+    /// use these keys, define guest Groups and Scenes and then export only
+    /// the related part of the whole configuration. Moreover, the exported
+    /// JSON may exclude all Device Keys, so that the guest cannot reconfigure
+    /// the Nodes (although nothing forbids them from adding new Nodes using
+    /// guest keys). When the guest leaves the room, the guest Network Key may
+    /// be updated, so the guest cannot control devices afterwards.
+    ///
+    /// - parameter configuration: The export configuration that lets to
+    ///                            narrow down what elements of the configuration
+    ///                            should be exported.
+    /// - returns: The mesh network configuration as JSON Data.
+    func export(_ configuration: ExportConfiguration) -> Data {
+        let encoder = JSONEncoder()
+        encoder.dateEncodingStrategy = .iso8601
+        
+        let meshNetwork = meshData.meshNetwork?.copy(using: configuration)
+        return try! encoder.encode(meshNetwork)
+    }
+    
     /// Imports the Mesh Network configuration from the given Data.
     /// The data must contain valid JSON with Bluetooth Mesh scheme.
     ///
