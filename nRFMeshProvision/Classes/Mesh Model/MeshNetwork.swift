@@ -32,10 +32,6 @@ import Foundation
 
 /// The Bluetooth Mesh Network configuration.
 public class MeshNetwork: Codable {
-    public let schema: String
-    public let id: String
-    public let version: String
-
     /// Random 128-bit UUID allows differentiation among multiple mesh networks.
     public let uuid: UUID
     /// The last time the Provisioner database has been modified.
@@ -123,9 +119,6 @@ public class MeshNetwork: Codable {
     }
     
     internal init(name: String, uuid: UUID = UUID()) {
-        self.schema            = "http://json-schema.org/draft-04/schema#"
-        self.id                = "http://www.bluetooth.com/specifications/assigned-numbers/mesh-profile/cdb-schema.json#"
-        self.version           = "1.0.0"
         self.uuid              = uuid
         self.meshName          = name
         self.isPartial         = false
@@ -143,9 +136,6 @@ public class MeshNetwork: Codable {
     }
     
     internal init(copy network: MeshNetwork, using configuration: ExportConfiguration) {
-        self.schema            = "http://json-schema.org/draft-04/schema#"
-        self.id                = "http://www.bluetooth.com/specifications/assigned-numbers/mesh-profile/cdb-schema.json#"
-        self.version           = "1.0.0"
         self.uuid              = network.uuid
         self.meshName          = network.meshName
         self.timestamp         = network.timestamp
@@ -329,9 +319,17 @@ public class MeshNetwork: Codable {
     
     public required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        schema = try container.decode(String.self, forKey: .schema)
-        id = try container.decode(String.self, forKey: .id)
-        version = try container.decode(String.self, forKey: .version)
+        let schema = try container.decode(String.self, forKey: .schema)
+        let id = try container.decode(String.self, forKey: .id)
+        
+        guard schema == "http://json-schema.org/draft-04/schema#" else {
+            throw DecodingError.dataCorruptedError(forKey: .schema, in: container,
+                                                   debugDescription: "Unsupported JSON schema")
+        }
+        guard id == "http://www.bluetooth.com/specifications/assigned-numbers/mesh-profile/cdb-schema.json#" else {
+            throw DecodingError.dataCorruptedError(forKey: .id, in: container,
+                                                   debugDescription: "Unsupported ID")
+        }
         
         // In version 3.0 of this library the Mesh UUID format has changed
         // from 32-character hexadecimal String to standard UUID format (RFC 4122).
@@ -380,6 +378,29 @@ public class MeshNetwork: Codable {
         // network is loaded.
         localProvisioner?.node?.heartbeatPublication = nil
         localProvisioner?.node?.heartbeatSubscription = nil
+    }
+    
+    public func encode(to encoder: Encoder) throws {
+        let schema = "http://json-schema.org/draft-04/schema#"
+        let id = "http://www.bluetooth.com/specifications/assigned-numbers/mesh-profile/cdb-schema.json#"
+        let version = "1.0.0"
+        
+        var container = encoder.container(keyedBy: CodingKeys.self)        
+        try container.encode(schema, forKey: .schema)
+        try container.encode(id, forKey: .id)
+        try container.encode(version, forKey: .version)
+        
+        try container.encode(uuid, forKey: .uuid)
+        try container.encode(isPartial, forKey: .isPartial)
+        try container.encode(meshName, forKey: .meshName)
+        try container.encode(timestamp, forKey: .timestamp)
+        try container.encode(provisioners, forKey: .provisioners)
+        try container.encode(networkKeys, forKey: .networkKeys)
+        try container.encode(applicationKeys, forKey: .applicationKeys)
+        try container.encode(nodes, forKey: .nodes)
+        try container.encode(groups, forKey: .groups)
+        try container.encode(scenes, forKey: .scenes)
+        try container.encode(networkExclusions, forKey: .networkExclusions)
     }
     
 }
