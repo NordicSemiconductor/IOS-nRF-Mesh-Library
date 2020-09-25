@@ -45,7 +45,7 @@ public extension Node {
     /// - parameter address: The Unicast Address of an Element to get.
     /// - returns: The Element found, or `nil`, if no such exist.
     func element(withAddress address: Address) -> Element? {
-        let index = Int(address - unicastAddress)
+        let index = Int(address) - Int(unicastAddress)
         guard index >= 0 && index < elements.count else {
             return nil
         }
