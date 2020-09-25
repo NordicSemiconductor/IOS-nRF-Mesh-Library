@@ -828,6 +828,9 @@ public extension MeshNetworkManager {
     func export() -> Data {
         let encoder = JSONEncoder()
         encoder.dateEncodingStrategy = .iso8601
+        if #available(iOS 11.0, *) {
+            encoder.outputFormatting = .sortedKeys
+        }
         
         return try! encoder.encode(meshData.meshNetwork)
     }
@@ -854,6 +857,9 @@ public extension MeshNetworkManager {
     func export(_ configuration: ExportConfiguration) -> Data {
         let encoder = JSONEncoder()
         encoder.dateEncodingStrategy = .iso8601
+        if #available(iOS 11.0, *) {
+            encoder.outputFormatting = .sortedKeys
+        }
         
         let meshNetwork = meshData.meshNetwork?.copy(using: configuration)
         return try! encoder.encode(meshNetwork)
