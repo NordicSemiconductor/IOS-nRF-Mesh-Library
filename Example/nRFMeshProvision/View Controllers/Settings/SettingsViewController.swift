@@ -106,7 +106,10 @@ class SettingsViewController: UITableViewController {
     override func tableView(_ tableView: UITableView,
                             accessoryButtonTappedForRowWith indexPath: IndexPath) {
         if indexPath.isIvUpdateTestMode {
-            presentAlert(title: "Info", message: "IV Update test mode allows to transition to the subsequent IV Index without having to wait at least 96 hours. The transition will be done upon receving a valid Secure Network beacon.")
+            presentAlert(title: "Info",
+                         message: "IV Update test mode allows to transition to the subsequent "
+                                + "IV Index without having to wait at least 96 hours. The "
+                                + "transition will be done upon receving a valid Secure Network beacon.")
         }
     }
     
@@ -133,7 +136,8 @@ private extension SettingsViewController {
     /// Presents a dialog with resetting confirmation.
     func presentResetConfirmation() {
         let alert = UIAlertController(title: "Reset Network",
-                                      message: "Resetting the network will erase all network data.\nMake sure you exported it first.",
+                                      message: "Resetting the network will erase all network data.\n"
+                                             + "Make sure you exported it first.",
                                       preferredStyle: .actionSheet)
         let resetAction = UIAlertAction(title: "Reset", style: .destructive) { _ in self.resetNetwork() }
         let cancelAction = UIAlertAction(title: "Cancel", style: .cancel)
@@ -146,7 +150,8 @@ private extension SettingsViewController {
     /// Displays the Import / Export action sheet.
     func displayImportExportOptions() {
         let alert = UIAlertController(title: "Organize",
-                                      message: "Importing network will override your existing settings.\nMake sure you exported it first.",
+                                      message: "Importing network will override your existing settings.\n"
+                                             + "Make sure you exported it first.",
                                       preferredStyle: .actionSheet)
         let exportAction = UIAlertAction(title: "Export", style: .default) { _ in self.exportNetwork() }
         let importAction = UIAlertAction(title: "Import", style: .destructive) { _ in self.importNetwork() }
@@ -265,7 +270,12 @@ extension SettingsViewController: UIDocumentPickerDelegate {
                         if provisionerSet {
                             self.presentAlert(title: "Success", message: "Mesh Network configuration imported.")
                         } else {
-                            self.presentAlert(title: "Warning", message: "Mesh Network configuration imported successfully, but the provisioner could not be set. All ranges are already assigned. Go to Settings -> Provisioners and create a new provisioner manually. Until then this device may not be able to send mesh messages.")
+                            self.presentAlert(title: "Warning",
+                                              message: "Mesh Network configuration imported successfully, but the "
+                                                     + "provisioner could not be set. All ranges are already assigned. "
+                                                     + "Go to Settings -> Provisioners and create a new provisioner "
+                                                     + "manually. Until then this device may not be able to send mesh "
+                                                     + "messages.")
                         }
                     }
                 } else {
@@ -275,30 +285,40 @@ extension SettingsViewController: UIDocumentPickerDelegate {
                 let path = context.codingPath.path
                 print("Import failed: \(context.debugDescription) (\(path))")
                 DispatchQueue.main.async {
-                    self.presentAlert(title: "Error", message: "Importing Mesh Network configuration failed.\n\(context.debugDescription)\nPath: \(path).")
+                    self.presentAlert(title: "Error",
+                                      message: "Importing Mesh Network configuration failed.\n"
+                                             + "\(context.debugDescription)\nPath: \(path).")
                 }
             } catch let DecodingError.keyNotFound(key, context) {
                 let path = context.codingPath.path
                 print("Import failed: Key \(key) not found in \(path)")
                 DispatchQueue.main.async {
-                    self.presentAlert(title: "Error", message: "Importing Mesh Network configuration failed.\nNo value associated with key: \(key.stringValue) in: \(path).")
+                    self.presentAlert(title: "Error",
+                                      message: "Importing Mesh Network configuration failed.\n"
+                                             + "No value associated with key: \(key.stringValue) in: \(path).")
                 }
             } catch let DecodingError.valueNotFound(value, context) {
                 let path = context.codingPath.path
                 print("Import failed: Value of type \(value) required in \(path)")
                 DispatchQueue.main.async {
-                    self.presentAlert(title: "Error", message: "Importing Mesh Network configuration failed.\nNo value associated with key: \(path).")
+                    self.presentAlert(title: "Error",
+                                      message: "Importing Mesh Network configuration failed.\n"
+                                             + "No value associated with key: \(path).")
                 }
             } catch let DecodingError.typeMismatch(type, context) {
                 let path = context.codingPath.path
                 print("Import failed: Type mismatch in \(path) (\(type) was required)")
                 DispatchQueue.main.async {
-                    self.presentAlert(title: "Error", message: "Importing Mesh Network configuration failed.\nType mismatch in: \(path). Expected: \(type).")
+                    self.presentAlert(title: "Error",
+                                      message: "Importing Mesh Network configuration failed.\n"
+                                             + "Type mismatch in: \(path). Expected: \(type).")
                 }
             } catch {
                 print("Import failed: \(error)")
                 DispatchQueue.main.async {
-                    self.presentAlert(title: "Error", message: "Importing Mesh Network configuration failed.\nCheck if the file is valid.")
+                    self.presentAlert(title: "Error",
+                                      message: "Importing Mesh Network configuration failed.\n"
+                                             + "Check if the file is valid.")
                 }
             }
         }
