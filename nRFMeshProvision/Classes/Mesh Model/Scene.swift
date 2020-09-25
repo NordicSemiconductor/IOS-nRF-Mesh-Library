@@ -37,7 +37,7 @@ public class Scene: Codable {
     public let number: SceneNumber
     /// UTF-8 human-readable name of the Scene.
     public var name: String
-    /// Addresses of Nodes whose Scene Register state contains this Scene.
+    /// Addresses of Elements whose Scene Register state contains this Scene.
     public internal(set) var addresses: [Address]
     
     internal init(_ number: SceneNumber, name: String) {
