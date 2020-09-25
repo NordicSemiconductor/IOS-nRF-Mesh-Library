@@ -305,7 +305,7 @@ class Pdus: XCTestCase {
         let node = meshNetwork.nodes[1]
         let destination = MeshAddress(node.unicastAddress)
         let sequence: UInt32 = 0x3129AB
-        let keySet = DeviceKeySet(networkKey: networkKey, node: node)
+        let keySet = DeviceKeySet(networkKey: networkKey, node: node)!
         
         // Test begins here
         let message = ConfigAppKeyAdd(applicationKey: meshNetwork.applicationKeys[1])
@@ -387,7 +387,7 @@ class Pdus: XCTestCase {
         let destination = MeshAddress(meshNetwork.localProvisioner!.unicastAddress!)
         XCTAssertNotNil(destination)
         let sequence: UInt32 = 0x000006
-        let keySet = DeviceKeySet(networkKey: networkKey, node: node)
+        let keySet = DeviceKeySet(networkKey: networkKey, node: node)!
         
         // Test begins here
         let message = ConfigAppKeyStatus(confirm: meshNetwork.applicationKeys[1])
@@ -511,7 +511,7 @@ class Pdus: XCTestCase {
         XCTAssertEqual(accessMessage.networkKey, networkKey)
         XCTAssertEqual(accessMessage.upperTransportPdu, Data(hex: "EEE888AA2169326D23F3AFDFCFDC18C52FDEF7720F8AF48F"))
         
-        let pdu = UpperTransportPdu(fromLowerTransportAccessMessage: accessMessage, usingKey: node.deviceKey)
+        let pdu = UpperTransportPdu(fromLowerTransportAccessMessage: accessMessage, usingKey: node.deviceKey!)
         XCTAssertNotNil(pdu)
         XCTAssertEqual(pdu?.source, source)
         XCTAssertEqual(pdu?.destination, destination)
