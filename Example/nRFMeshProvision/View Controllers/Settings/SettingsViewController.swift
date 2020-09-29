@@ -220,37 +220,14 @@ extension SettingsViewController: UIDocumentPickerDelegate {
                 let data = try Data(contentsOf: url)
                 let meshNetwork = try manager.import(from: data)
                 // Try restoring the Provisioner used last time on this device.
-                var provisionerSet = true
                 if !meshNetwork.restoreLocalProvisioner() {
-                    // If it's a new network...
-                    switch meshNetwork.provisioners.count {
-                    case 0:
-                        // ...and no Provisioner exist, try creating a new one.
-                        // This will succeed if available ranges are found.
-                        if let nextAddressRange = meshNetwork.nextAvailableUnicastAddressRange(ofSize: 0x199A),
-                           let nextGroupRange = meshNetwork.nextAvailableGroupAddressRange(ofSize: 0x0C9A),
-                           let nextSceneRange = meshNetwork.nextAvailableSceneRange(ofSize: 0x3334) {
-                            let newProvisioner = Provisioner(name: UIDevice.current.name,
-                                                             allocatedUnicastRange: [nextAddressRange],
-                                                             allocatedGroupRange: [nextGroupRange],
-                                                             allocatedSceneRange: [nextSceneRange])
-                            // Set it a a new local Provisioner.
-                            try? meshNetwork.setLocalProvisioner(newProvisioner)
-                            // And assign a Unicast Address to it.
-                            if let address = meshNetwork.nextAvailableUnicastAddress(for: 2, elementsUsing: newProvisioner) {
-                                try? meshNetwork.assign(unicastAddress: address, for: newProvisioner)
-                            }
-                        } else {
-                            provisionerSet = false
-                        }
-                    case 1:
-                        // Do nothing. The single provisioner will be set as local one.
-                        break
-                    default:
+                    // If it's a new network and has only one Provisioner, just save it.
+                    if meshNetwork.provisioners.count == 1 {
+                        self.save()
+                    } else {
+                        // If more Provisioners are imported, give the user option
+                        // to select one.
                         DispatchQueue.main.async {
-                            // If the network has number of already defines provisioners,
-                            // give the user to select the one to be used, or an option to
-                            // create a new one. Usually, users should not be able to
                             let alert = UIAlertController(title: "Select Provisioner",
                                                           message: "Select Provisioner instance to be used on this device:",
                                                           preferredStyle: .actionSheet)
@@ -259,16 +236,13 @@ extension SettingsViewController: UIDocumentPickerDelegate {
                                     // This will effectively set the Provisioner to be used
                                     // be the library. Provisioner from index 0 is the local one.
                                     meshNetwork.moveProvisioner(provisioner, toIndex: 0)
-                                    self.save(withProvisionerSet: true)
+                                    self.save()
                                 })
                             }
                             self.present(alert, animated: true)
                         }
-                        // Return here, as save will be called when the Provisioner is selected.
-                        return
                     }
                 }
-                self.save(withProvisionerSet: provisionerSet)
             } catch let DecodingError.dataCorrupted(context) {
                 let path = context.codingPath.path
                 print("Import failed: \(context.debugDescription) (\(path))")
@@ -312,21 +286,12 @@ extension SettingsViewController: UIDocumentPickerDelegate {
         }
     }
     
-    func save(withProvisionerSet provisionerSet: Bool) {
+    func save() {
         if MeshNetworkManager.instance.save() {
             DispatchQueue.main.async {
                 (UIApplication.shared.delegate as! AppDelegate).meshNetworkDidChange()
                 self.reload()
-                if provisionerSet {
-                    self.presentAlert(title: "Success", message: "Mesh Network configuration imported.")
-                } else {
-                    self.presentAlert(title: "Warning",
-                                      message: "Mesh Network configuration imported successfully, but the "
-                                             + "provisioner could not be set. All ranges are already assigned. "
-                                             + "Go to Settings -> Provisioners and create a new provisioner "
-                                             + "manually. Until then this device may not be able to send mesh "
-                                             + "messages.")
-                }
+                self.presentAlert(title: "Success", message: "Mesh Network configuration imported.")
             }
         } else {
             self.presentAlert(title: "Error", message: "Mesh configuration could not be saved.")
