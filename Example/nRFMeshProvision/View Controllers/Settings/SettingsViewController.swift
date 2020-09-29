@@ -33,7 +33,7 @@ import nRFMeshProvision
 
 class SettingsViewController: UITableViewController {
     
-    // MARK: - Outlets -
+    // MARK: - Outlets
     @IBOutlet weak var organizeButton: UIBarButtonItem!
     
     @IBOutlet weak var networkNameLabel: UILabel!
@@ -51,7 +51,7 @@ class SettingsViewController: UITableViewController {
     @IBOutlet weak var appVersionLabel: UILabel!
     @IBOutlet weak var appBuildNumberLabel: UILabel!
     
-    // MARK: - IBActions
+    // MARK: - Actions
     
     @IBAction func organizeTapped(_ sender: UIBarButtonItem) {
         displayImportExportOptions()
@@ -179,28 +179,7 @@ private extension SettingsViewController {
     /// Exports Mesh Network configuration and opens UIActivityViewController
     /// which allows user to share it.
     func exportNetwork() {
-        let manager = MeshNetworkManager.instance
-        
-        DispatchQueue.global(qos: .userInitiated).async {
-            let data = manager.export()
-            
-            do {
-                let name = manager.meshNetwork?.meshName ?? "mesh"
-                let fileURL = FileManager.default.temporaryDirectory.appendingPathComponent("\(name).json")
-                try data.write(to: fileURL)
-                
-                DispatchQueue.main.async {
-                    let controller = UIActivityViewController(activityItems: [fileURL], applicationActivities: nil)
-                    controller.popoverPresentationController?.barButtonItem = self.organizeButton
-                    self.present(controller, animated: true)
-                }
-            } catch {
-                print("Export failed: \(error)")
-                DispatchQueue.main.async {
-                    self.presentAlert(title: "Error", message: "Exporting Mesh Network configuration failed.")
-                }
-            }
-        }
+        performSegue(withIdentifier: "export", sender: nil)
     }
     
     /// Opens the Document Picker to select the Mesh Network configuration to import.

@@ -25,6 +25,7 @@
 		5217D2E2250F7639004FDE79 /* GenericDefaultTranstionTimeClientDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5217D2E1250F7639004FDE79 /* GenericDefaultTranstionTimeClientDelegate.swift */; };
 		5217D2E5250F90D8004FDE79 /* GenericDefaultTransitionTimeViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5217D2E3250F90D8004FDE79 /* GenericDefaultTransitionTimeViewCell.swift */; };
 		5217D2E6250F90D8004FDE79 /* GenericDefaultTransitionTime.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5217D2E4250F90D8004FDE79 /* GenericDefaultTransitionTime.xib */; };
+		52248CDC251E21F000B10250 /* ExportViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52248CDB251E21F000B10250 /* ExportViewController.swift */; };
 		522AFFDC22BBA34900521EDC /* ActionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 522AFFDB22BBA34900521EDC /* ActionCell.swift */; };
 		522AFFDE22BBBC6400521EDC /* NodeFeaturesCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 522AFFDD22BBBC6400521EDC /* NodeFeaturesCell.swift */; };
 		522AFFE022C2376C00521EDC /* ElementViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 522AFFDF22C2376C00521EDC /* ElementViewController.swift */; };
@@ -183,6 +184,7 @@
 		5217D2E1250F7639004FDE79 /* GenericDefaultTranstionTimeClientDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericDefaultTranstionTimeClientDelegate.swift; sourceTree = "<group>"; };
 		5217D2E3250F90D8004FDE79 /* GenericDefaultTransitionTimeViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericDefaultTransitionTimeViewCell.swift; sourceTree = "<group>"; };
 		5217D2E4250F90D8004FDE79 /* GenericDefaultTransitionTime.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = GenericDefaultTransitionTime.xib; sourceTree = "<group>"; };
+		52248CDB251E21F000B10250 /* ExportViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExportViewController.swift; sourceTree = "<group>"; };
 		522AFFDB22BBA34900521EDC /* ActionCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionCell.swift; sourceTree = "<group>"; };
 		522AFFDD22BBBC6400521EDC /* NodeFeaturesCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NodeFeaturesCell.swift; sourceTree = "<group>"; };
 		522AFFDF22C2376C00521EDC /* ElementViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ElementViewController.swift; sourceTree = "<group>"; };
@@ -526,6 +528,7 @@
 				5283524722733BCF0097B949 /* EditKeyViewController.swift */,
 				5245737A2500E10800CF8500 /* ScenesViewController.swift */,
 				5245737C2500E12600CF8500 /* EditSceneViewController.swift */,
+				52248CDB251E21F000B10250 /* ExportViewController.swift */,
 			);
 			path = Settings;
 			sourceTree = "<group>";
@@ -1068,6 +1071,7 @@
 				522AFFDE22BBBC6400521EDC /* NodeFeaturesCell.swift in Sources */,
 				523F776E22C63EAD0030EA6A /* NodeAddAppKeyViewController.swift in Sources */,
 				529B7643225222E8008F1CE7 /* Address+String.swift in Sources */,
+				52248CDC251E21F000B10250 /* ExportViewController.swift in Sources */,
 				5288C2062370571100321ED3 /* ProxySelectorViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
