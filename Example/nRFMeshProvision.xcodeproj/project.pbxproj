@@ -381,13 +381,20 @@
 			path = Cells;
 			sourceTree = "<group>";
 		};
+		52248CDF2523369700B10250 /* Common */ = {
+			isa = PBXGroup;
+			children = (
+				522AFFDB22BBA34900521EDC /* ActionCell.swift */,
+				523F776322C4EDD90030EA6A /* SwitchCell.swift */,
+				520A7D6624F3E05A00BF370A /* RightActionCell.swift */,
+			);
+			path = Common;
+			sourceTree = "<group>";
+		};
 		522AFFE122C23B3900521EDC /* Cells */ = {
 			isa = PBXGroup;
 			children = (
 				522AFFDD22BBBC6400521EDC /* NodeFeaturesCell.swift */,
-				522AFFDB22BBA34900521EDC /* ActionCell.swift */,
-				520A7D6624F3E05A00BF370A /* RightActionCell.swift */,
-				523F776322C4EDD90030EA6A /* SwitchCell.swift */,
 				5231401522F460380074325A /* PublicationCell.swift */,
 				52A8EA8724E6946D004C14C7 /* HeartbeatPublicationCell.swift */,
 				528445C824EEA765002168A1 /* HeartbeatSubscriptionCell.swift */,
@@ -499,6 +506,7 @@
 				529B756C223FE7F1008F1CE7 /* RootViewController.swift */,
 				523F776B22C6324A0030EA6A /* ProgressViewController.swift */,
 				5212152E231554190059FB3D /* ProgressCollectionViewController.swift */,
+				52248CDF2523369700B10250 /* Common */,
 				526021F4234365E100E88F06 /* Control */,
 				52835256227AED670097B949 /* Network */,
 				52518B2F22E0B14500A1FD1E /* Groups */,
