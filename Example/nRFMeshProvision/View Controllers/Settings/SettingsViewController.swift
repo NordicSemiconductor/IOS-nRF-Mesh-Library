@@ -234,7 +234,7 @@ extension SettingsViewController: UIDocumentPickerDelegate {
                         // Set it a a new local Provisioner.
                         try? meshNetwork.setLocalProvisioner(newProvisioner)
                         // And assign a Unicast Address to it.
-                        if let address = meshNetwork.nextAvailableUnicastAddress(for: newProvisioner) {
+                        if let address = meshNetwork.nextAvailableUnicastAddress(for: 2, elementsUsing: newProvisioner) {
                             try? meshNetwork.assign(unicastAddress: address, for: newProvisioner)
                         }
                     } else {
