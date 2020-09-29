@@ -69,7 +69,7 @@ public extension MeshNetwork {
     func restoreLocalProvisioner() -> Bool {
         let defaults = UserDefaults(suiteName: uuid.uuidString)!
         
-        if let uuidString = defaults.string(forKey: "provisioner"),
+        if let uuidString = defaults.string(forKey: .localProvisionerUuidKey),
            let uuid = UUID(uuidString: uuidString),
            let provisioner = provisioners.first(where: { $0.uuid == uuid }) {
             try! setLocalProvisioner(provisioner)
@@ -188,7 +188,7 @@ public extension MeshNetwork {
         // When the local Provisioner has been added, save its UUID.
         if provisioners.count == 1 {
             let defaults = UserDefaults(suiteName: uuid.uuidString)!
-            defaults.set(provisioner.uuid.uuidString, forKey: "provisioner")
+            defaults.set(provisioner.uuid.uuidString, forKey: .localProvisionerUuidKey)
         }
     }
     
@@ -206,20 +206,29 @@ public extension MeshNetwork {
         
         // If the old local Provisioner has been removed, and a new one
         // has been set on its plase, it needs the properties to be updated.
-        if localProvisionerRemoved,
-           let n = localProvisioner?.node {
-            n.set(networkKeys: networkKeys)
-            n.set(applicationKeys: applicationKeys)
-            n.companyIdentifier = 0x004C // Apple Inc.
-            n.productIdentifier = nil
-            n.versionIdentifier = nil
-            n.ttl = nil
-            n.minimumNumberOfReplayProtectionList = Address.maxUnicastAddress
-            // The Element adding has to be done this way. Some Elements may get cut
-            // by the property observer when Element addresses overlap other Node's
-            // addresses.
-            let elements = localElements
-            localElements = elements
+        if localProvisionerRemoved {
+            if let n = localProvisioner?.node {
+                n.set(networkKeys: networkKeys)
+                n.set(applicationKeys: applicationKeys)
+                n.companyIdentifier = 0x004C // Apple Inc.
+                n.productIdentifier = nil
+                n.versionIdentifier = nil
+                n.ttl = nil
+                n.minimumNumberOfReplayProtectionList = Address.maxUnicastAddress
+                // The Element adding has to be done this way. Some Elements may get cut
+                // by the property observer when Element addresses overlap other Node's
+                // addresses.
+                let elements = localElements
+                localElements = elements
+            }
+            
+            // When the local Provisioner has changed, save its UUID.
+            let defaults = UserDefaults(suiteName: uuid.uuidString)!
+            if let provisioner = localProvisioner {
+                defaults.set(provisioner.uuid.uuidString, forKey: .localProvisionerUuidKey)
+            } else {
+                defaults.removeObject(forKey: .localProvisionerUuidKey)
+            }
         }
         
         timestamp = Date()
@@ -300,7 +309,7 @@ public extension MeshNetwork {
                 }
                 // Save the UUID of the local Provisioner.
                 let defaults = UserDefaults(suiteName: uuid.uuidString)!
-                defaults.set(localProvisioner!.uuid.uuidString, forKey: "provisioner")
+                defaults.set(localProvisioner!.uuid.uuidString, forKey: .localProvisionerUuidKey)
             }
         }
     }
@@ -392,4 +401,8 @@ public extension MeshNetwork {
         remove(nodeForProvisioner: provisioner)
     }
     
+}
+
+private extension String {
+    static let localProvisionerUuidKey = "provisioner"
 }
