@@ -340,7 +340,15 @@ public class MeshNetwork: Codable {
         meshName = try container.decode(String.self, forKey: .meshName)
         timestamp = try container.decode(Date.self, forKey: .timestamp)
         provisioners = try container.decode([Provisioner].self, forKey: .provisioners)
+        guard !provisioners.isEmpty else {
+            throw DecodingError.dataCorruptedError(forKey: .provisioners, in: container,
+                                                   debugDescription: "At least one provisioner is required.")
+        }
         networkKeys = try container.decode([NetworkKey].self, forKey: .networkKeys)
+        guard !networkKeys.isEmpty else {
+            throw DecodingError.dataCorruptedError(forKey: .networkKeys, in: container,
+                                                   debugDescription: "At least one network key is required.")
+        }
         applicationKeys = try container.decode([ApplicationKey].self, forKey: .applicationKeys)
         let ns = try container.decode([Node].self, forKey: .nodes)
         guard isPartial || !ns.contains(where: { $0.deviceKey == nil }) else {
