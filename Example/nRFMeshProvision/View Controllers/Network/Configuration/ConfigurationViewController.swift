@@ -169,7 +169,7 @@ class ConfigurationViewController: ProgressViewController {
                 cell.accessoryType = .disclosureIndicator
             }
             if indexPath.isDeviceKey {
-                cell.detailTextLabel?.text = node.deviceKey.hex
+                cell.detailTextLabel?.text = node.deviceKey?.hex ?? "Unknown Device Key"
                 cell.accessoryType = .none
             }
         }
@@ -263,7 +263,7 @@ class ConfigurationViewController: ProgressViewController {
                 cell.switch.isOn = node.isConfigComplete
                 cell.switch.onTintColor = UIColor.nordicLake
             case 1:
-                cell.switch.isOn = node.isBlacklisted
+                cell.switch.isOn = node.isExcluded
                 cell.switch.onTintColor = UIColor.nordicRed
             default:
                 break
@@ -294,8 +294,12 @@ class ConfigurationViewController: ProgressViewController {
             presentTTLDialog()
         }
         if indexPath.isDeviceKey {
-            UIPasteboard.general.string = node.deviceKey.hex
-            showToast("Device Key copied to Clipboard.", delay: .shortDelay)
+            if let hex = node.deviceKey?.hex {
+                UIPasteboard.general.string = hex
+                showToast("Device Key copied to Clipboard.", delay: .shortDelay)
+            } else {
+                showToast("No key to copy.", delay: .shortDelay)
+            }
         }
         if indexPath.isNetworkKeys {
             performSegue(withIdentifier: "showNetworkKeys", sender: nil)
@@ -323,7 +327,10 @@ class ConfigurationViewController: ProgressViewController {
         case 0:
             presentAlert(title: "Info", message: "Mark a node as configured when you finished setting it up.")
         case 1:
-            presentAlert(title: "Info", message: "A blacklisted node will be excluded from key exchange process. When the key refresh procedure is complete, this node will no longer be able to receive or send messages to the mesh network.")
+            presentAlert(title: "Info", message: "If checked, the node will be excluded from key exchange "
+                                               + "process. When the key refresh procedure is complete, this "
+                                               + "node will no longer be able to receive or send messages to "
+                                               + "the mesh network.")
         default:
             break
         }
@@ -336,7 +343,7 @@ private extension ConfigurationViewController {
     /// Presents a dialog to edit the node name.
     func presentNameDialog() {
         presentTextAlert(title: "Name", message: nil, text: node.name,
-                         placeHolder: "E.g. Bedroom Light", type: .name) { name in
+                         placeHolder: "E.g. Bedroom Light", type: .name, cancelHandler: nil) { name in
                             if name.isEmpty {
                                 self.node.name = nil
                             } else {
@@ -357,7 +364,7 @@ private extension ConfigurationViewController {
         presentTextAlert(title: "Default TTL",
                          message: "TTL = Time To Live\n\nTTL limits the number of times a message can be relayed.\nMax value is 127.",
                          text: node.defaultTTL != nil ? "\(node.defaultTTL!)" : nil,
-                         type: .ttlRequired) { value in
+                         type: .ttlRequired, cancelHandler: nil) { value in
                             let ttl = UInt8(value)!
                             self.setTtl(ttl)
         }
@@ -399,7 +406,7 @@ private extension ConfigurationViewController {
         case 0:
             node.isConfigComplete = `switch`.isOn
         case 1:
-            node.isBlacklisted = `switch`.isOn
+            node.isExcluded = `switch`.isOn
         default:
             break
         }
@@ -545,7 +552,7 @@ private extension IndexPath {
         "Replay Protection Count", nil // Node Features is using its own cell.
     ]
     static let switchesTitles = [
-        "Configured", "Blacklisted"
+        "Configured", "Excluded"
     ]
     static let actionsTitles = [
         "Reset Node", "Remove Node"

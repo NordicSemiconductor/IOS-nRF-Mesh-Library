@@ -113,15 +113,11 @@ public class Node: Codable {
     }
     
     /// Unique Node identifier.
-    internal let nodeUuid: MeshUUID
-    /// Random 128-bit UUID allows differentiation among multiple mesh networks.
-    public var uuid: UUID {
-        return nodeUuid.uuid
-    }
+    public let uuid: UUID
     /// Primary Unicast Address of the Node.
     public internal(set) var unicastAddress: Address
     /// 128-bit device key for this Node.
-    public let deviceKey: Data
+    public let deviceKey: Data?
     /// The level of security for the subnet on which the node has been
     /// originally provisioner.
     public let security: Security
@@ -211,7 +207,7 @@ public class Node: Codable {
     /// The flag is set to `true` when the Node is in the process of being
     /// deleted and is excluded from the new network key distribution
     /// during the key refresh procedure; otherwise is set to `false`.
-    public var isBlacklisted: Bool = false {
+    public var isExcluded: Bool = false {
          didSet {
              meshNetwork?.timestamp = Date()
          }
@@ -235,11 +231,11 @@ public class Node: Codable {
     
     /// A constructor needed only for testing.
     internal init(name: String?, unicastAddress: Address, elements: UInt8) {
-        self.nodeUuid = MeshUUID()
+        self.uuid = UUID()
         self.name = name
         self.unicastAddress = unicastAddress
         self.deviceKey = Data.random128BitKey()
-        self.security = .high
+        self.security = .secure
         // Default values.
         self.netKeys  = [ NodeKey(index: 0, updated: false) ]
         self.appKeys  = []
@@ -256,11 +252,11 @@ public class Node: Codable {
     /// - parameter provisioner: The Provisioner for which the node is added.
     /// - parameter address:     The unicast address to be assigned to the Node.
     internal init(for provisioner: Provisioner, withAddress address: Address) {
-        self.nodeUuid = provisioner.provisionerUuid
-        self.name     = provisioner.provisionerName
+        self.uuid = provisioner.uuid
+        self.name = provisioner.name
         self.unicastAddress = address
         self.deviceKey = Data.random128BitKey()
-        self.security = .high
+        self.security = .secure
         self.ttl = nil
         // iDevice can handle a lot of addresses.
         self.minimumNumberOfReplayProtectionList = Address.maxUnicastAddress
@@ -305,11 +301,11 @@ public class Node: Codable {
     
     internal init(name: String?, uuid: UUID, deviceKey: Data,
                   andAssignedNetworkKey networkKey: NetworkKey, andAddress address: Address) {
-        self.nodeUuid = MeshUUID(uuid)
-        self.name     = name
+        self.uuid = uuid
+        self.name = name
         self.unicastAddress = address
         self.deviceKey = deviceKey
-        self.security  = .high
+        self.security  = .secure
         // Composition Data were not obtained.
         self.isConfigComplete = false
         
@@ -338,11 +334,11 @@ public class Node: Codable {
         guard address.isUnicast else {
             return nil
         }
-        self.nodeUuid = MeshUUID()
-        self.name     = name
+        self.uuid = UUID()
+        self.name = name
         self.unicastAddress = address
         self.deviceKey = deviceKey
-        self.security = .low
+        self.security = .insecure
         // Composition Data were not obtained.
         self.isConfigComplete = false
         
@@ -360,7 +356,7 @@ public class Node: Codable {
     // MARK: - Codable
     
     private enum CodingKeys: String, CodingKey {
-        case nodeUuid = "UUID"
+        case uuid = "UUID"
         case unicastAddress
         case deviceKey
         case security
@@ -378,9 +374,11 @@ public class Node: Codable {
         case networkTransmit
         case relayRetransmit
         case elements
-        case isBlacklisted = "blacklisted"
+        case isExcluded = "excluded"
         case heartbeatPublication = "heartbeatPub"
         case heartbeatSubscription = "heartbeatSub"
+        // Legacy keys, deprecated in nRF Mesh Provision library in version 3.0.
+        case legacyIsBlacklisted = "blacklisted" // replaced with "excluded"
     }
     
     public required init(from decoder: Decoder) throws {
@@ -394,14 +392,23 @@ public class Node: Codable {
             throw DecodingError.dataCorruptedError(forKey: .unicastAddress, in: container,
                                                    debugDescription: "\(unicastAddressAsString) is not a unicast address.")
         }
-        let keyHex = try container.decode(String.self, forKey: .deviceKey)
-        guard let keyData = Data(hex: keyHex) else {
-            throw DecodingError.dataCorruptedError(forKey: .deviceKey, in: container,
-                                                   debugDescription: "Device Key must be 32-character hexadecimal string.")
+        let keyHex = try container.decodeIfPresent(String.self, forKey: .deviceKey)
+        if let keyHex = keyHex {
+            guard let keyData = Data(hex: keyHex) else {
+                throw DecodingError.dataCorruptedError(forKey: .deviceKey, in: container,
+                                                       debugDescription: "Device Key must be 32-character hexadecimal string.")
+            }
+            self.deviceKey = keyData
+        } else {
+            self.deviceKey = nil
         }
-        self.nodeUuid = try container.decode(MeshUUID.self, forKey: .nodeUuid)
+        
+        // In version 3.0 of this library the Node's UUID format has changed
+        // from 32-character hexadecimal String to standard UUID format (RFC 4122).
+        self.uuid = try container.decode(UUID.self, forKey: .uuid,
+                                         orConvert: MeshUUID.self, forKey: .uuid, using: { $0.uuid })
+        
         self.unicastAddress = unicastAddress
-        self.deviceKey = keyData
         self.security = try container.decode(Security.self, forKey: .security)
         self.netKeys = try container.decode([NodeKey].self, forKey: .netKeys)
         self.appKeys = try container.decode([NodeKey].self, forKey: .appKeys)
@@ -453,12 +460,16 @@ public class Node: Codable {
         self.networkTransmit = try container.decodeIfPresent(NetworkTransmit.self, forKey: .networkTransmit)
         self.relayRetransmit = try container.decodeIfPresent(RelayRetransmit.self, forKey: .relayRetransmit)
         self.elements = try container.decode([Element].self, forKey: .elements)
-        self.isBlacklisted = try container.decode(Bool.self, forKey: .isBlacklisted)
+        
+        // "blacklisted" was replaced by "excluded" in version 3.0.
+        self.isExcluded = try container.decode(Bool.self, forKey: .isExcluded, or: .legacyIsBlacklisted)
+        
         self.heartbeatPublication = try container.decodeIfPresent(HeartbeatPublication.self,
                                                                   forKey: .heartbeatPublication)
         guard heartbeatPublication == nil || netKeys[heartbeatPublication!.networkKeyIndex] != nil else {
             throw DecodingError.dataCorruptedError(forKey: .heartbeatPublication, in: container,
-                                                   debugDescription: "Network Key with index \(heartbeatPublication!.networkKeyIndex) is unknown to node with address 0x\(unicastAddress.hex).")
+                                                   debugDescription: "Network Key with index \(heartbeatPublication!.networkKeyIndex) "
+                                                                   + "is unknown to node with address 0x\(unicastAddress.hex).")
         }
         self.heartbeatSubscription = try container.decodeIfPresent(HeartbeatSubscription.self,
                                                                    forKey: .heartbeatSubscription)
@@ -470,9 +481,9 @@ public class Node: Codable {
     
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(nodeUuid, forKey: .nodeUuid)
+        try container.encode(uuid, forKey: .uuid)
         try container.encode(unicastAddress.hex, forKey: .unicastAddress) // <- HEX value encoded
-        try container.encode(deviceKey.hex, forKey: .deviceKey) // <- HEX value encoded
+        try container.encodeIfPresent(deviceKey?.hex, forKey: .deviceKey) // <- HEX value encoded
         try container.encode(security, forKey: .security)
         try container.encode(netKeys, forKey: .netKeys)
         try container.encode(appKeys, forKey: .appKeys)
@@ -488,7 +499,7 @@ public class Node: Codable {
         try container.encodeIfPresent(networkTransmit, forKey: .networkTransmit)
         try container.encodeIfPresent(relayRetransmit, forKey: .relayRetransmit)
         try container.encode(elements, forKey: .elements)
-        try container.encode(isBlacklisted, forKey: .isBlacklisted)
+        try container.encode(isExcluded, forKey: .isExcluded)
         try container.encodeIfPresent(heartbeatPublication, forKey: .heartbeatPublication)
         try container.encodeIfPresent(heartbeatSubscription, forKey: .heartbeatSubscription)
     }

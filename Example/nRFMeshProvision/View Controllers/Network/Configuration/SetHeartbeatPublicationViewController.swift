@@ -146,8 +146,7 @@ private extension SetHeartbeatPublicationViewController {
                          message: "TTL = Time To Live\n\nTTL to be used when sending Heartbeat messages.\n"
                                 + "Max value is 127. Message with TTL 0 will not be relayed.",
                          text: "5", placeHolder: "Default is 5",
-                         type: .ttlRequired
-                         ) { value in
+                         type: .ttlRequired, cancelHandler: nil) { value in
             self.ttl = UInt8(value)!
         }
     }

@@ -59,7 +59,7 @@ class CreatingMeshNetwork: XCTestCase {
         XCTAssertNotNil(manager.meshNetwork)
         XCTAssertEqual(network.meshName, "Test network")
         XCTAssertEqual(network.provisioners.count, 1)
-        XCTAssertEqual(network.provisioners.first?.provisionerName, "Test Provisioner")
+        XCTAssertEqual(network.provisioners.first?.name, "Test Provisioner")
         XCTAssertEqual(network.networkKeys.count, 1)
         XCTAssertEqual(network.nodes.count, 1)
         XCTAssertEqual(network.nodes.first?.name, "Test Provisioner")

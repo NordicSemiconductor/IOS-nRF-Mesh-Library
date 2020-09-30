@@ -106,16 +106,38 @@ class AssigningUnicastAddress: XCTestCase {
         XCTAssertNoThrow(try meshNetwork.add(node: Node(name: "Node 3", unicastAddress: 30, elements: 9)))
         XCTAssertNoThrow(try meshNetwork.add(node: Node(name: "Node 4", unicastAddress: 103, elements: 5)))
         
+        let oldNode = Node(name: "Node 5", unicastAddress: 110, elements: 2)
+        XCTAssertNoThrow(try meshNetwork.add(node: oldNode))
+        XCTAssertFalse(meshNetwork.isAddressRangeAvailable(111, elementsCount: 2))
+        XCTAssertTrue(meshNetwork.isAddressRangeAvailable(111, elementsCount: 2, for: oldNode))
+        meshNetwork.remove(node: oldNode)
+        
         let provisioner = Provisioner(name: "Test provisioner",
                                       allocatedUnicastRange: [
-                                        AddressRange(100...200)
+                                        AddressRange(100...120)
                                       ],
                                       allocatedGroupRange: [], allocatedSceneRange: [])
         
         let address = meshNetwork.nextAvailableUnicastAddress(for: 6, elementsUsing: provisioner)
         
         XCTAssertNotNil(address)
-        XCTAssertEqual(address!, 108)
+        XCTAssertEqual(address!, 112)
+        
+        // 110 and 111 cannot be assigned until IV Index changes by 2.
+        XCTAssertFalse(meshNetwork.isAddressRangeAvailable(110, elementsCount: 3))
+        XCTAssertTrue(meshNetwork.isAddressRangeAvailable(112, elementsCount: 10))
+        
+        meshNetwork.ivIndex = IvIndex(index: 1, updateActive: true)
+        XCTAssertFalse(meshNetwork.isAddressRangeAvailable(110, elementsCount: 3))
+        
+        meshNetwork.ivIndex = IvIndex(index: 1, updateActive: false)
+        XCTAssertFalse(meshNetwork.isAddressRangeAvailable(110, elementsCount: 3))
+        
+        // When IV Index is incremented by 2 since a Node was removed, the Unicast
+        // Addresses may be reused.
+        meshNetwork.ivIndex = IvIndex(index: 2, updateActive: true)
+        XCTAssertTrue(meshNetwork.isAddressRangeAvailable(110, elementsCount: 3))
+        XCTAssertEqual(meshNetwork.nextAvailableUnicastAddress(for: 6, elementsUsing: provisioner), 108)
     }
 
     func testAssigningUnicastAddress_advanced() {

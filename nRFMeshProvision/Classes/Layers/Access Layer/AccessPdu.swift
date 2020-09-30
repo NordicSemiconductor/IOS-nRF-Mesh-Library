@@ -38,7 +38,7 @@ internal struct AccessPdu {
     /// message was received.
     let localElement: Element?
     /// Whether sending this message has been initiated by the user.
-    /// Status of automatic replies will not be reported to the app.
+    /// Status of automatic retries will not be reported to the app.
     let userInitiated: Bool
     
     /// Source Address.
@@ -133,6 +133,15 @@ internal struct AccessPdu {
         parameters = pdu.accessPdu.subdata(in: 3..<pdu.accessPdu.count)
     }
     
+    /// Creates teh Access PDU that will encapsulate the given Mesh Message.
+    ///
+    /// - parameters:
+    ///   - message: The message to be encapsulated.
+    ///   - localElement: The local Element from which the message will be sent.
+    ///   - destination: The destination address.
+    ///   - userInitiated: Whether sending this message has been initiated by
+    ///                    the user. Status of automatic retries will not be
+    ///                    reported to the app.
     init(fromMeshMessage message: MeshMessage,
          sentFrom localElement: Element, to destination: MeshAddress,
          userInitiated: Bool) {
@@ -155,10 +164,10 @@ internal struct AccessPdu {
             accessPdu = Data([UInt8(0x80 | ((opCode >> 8) & 0x3F)), UInt8(opCode & 0xFF)]) + parameters
         default:
             accessPdu = Data([
-                UInt8(0xC0 | ((opCode >> 16) & 0x3F)),
-                UInt8((opCode >> 8) & 0xFF),
-                UInt8(opCode & 0xFF)
-                ]) + parameters
+                            UInt8(0xC0 | ((opCode >> 16) & 0x3F)),
+                            UInt8((opCode >> 8) & 0xFF),
+                            UInt8(opCode & 0xFF)
+                        ]) + parameters
         }
     }
 }

@@ -64,15 +64,17 @@ internal struct AccessKeySet: KeySet {
 internal struct DeviceKeySet: KeySet {
     let networkKey: NetworkKey
     let node: Node
+    let accessKey: Data
     
     var aid: UInt8? = nil
-    var accessKey: Data {
-        return node.deviceKey
-    }
     
-    init(networkKey: NetworkKey, node: Node) {
+    init?(networkKey: NetworkKey, node: Node) {
+        guard let deviceKey = node.deviceKey else {
+            return nil
+        }
         self.networkKey = networkKey
         self.node = node
+        self.accessKey = deviceKey
     }
 }
 

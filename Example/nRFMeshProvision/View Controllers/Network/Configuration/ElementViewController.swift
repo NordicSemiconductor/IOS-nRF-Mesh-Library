@@ -183,7 +183,7 @@ private extension ElementViewController {
     /// Presents a dialog to edit the Element name.
     func presentNameDialog() {
         presentTextAlert(title: "Network Name", message: nil, text: element.name,
-                         placeHolder: "E.g. My House", type: .name) { name in
+                         placeHolder: "E.g. My House", type: .name, cancelHandler: nil) { name in
                             self.element.name = name.isEmpty ? nil : name
                             
                             if MeshNetworkManager.instance.save() {

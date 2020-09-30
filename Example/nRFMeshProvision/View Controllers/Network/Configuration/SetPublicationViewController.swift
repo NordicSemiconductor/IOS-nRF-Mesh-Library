@@ -115,15 +115,16 @@ class SetPublicationViewController: ProgressViewController {
             // Similar situation is for 10 sec resolution, which starts from 1 minute and 10 seconds (7 steps).
             // The maximum value that can be calculated using resolution 10 sec is 10 min 30 sec, therefore
             // the last resolution starts from step 2 (20 minutes).
-            switch publish.periodResolution {
+            let period = publish.period
+            switch period.resolution {
             case .hundredsOfMilliseconds:
-                periodSlider.value = Float(publish.periodResolution.rawValue * 64 + publish.periodSteps)
+                periodSlider.value = Float(period.resolution.rawValue * 64 + period.numberOfSteps)
             case .seconds:
-                periodSlider.value = Float(publish.periodResolution.rawValue * 64 + publish.periodSteps - 7)
+                periodSlider.value = Float(period.resolution.rawValue * 64 + period.numberOfSteps - 7)
             case .tensOfSeconds:
-                periodSlider.value = Float(publish.periodResolution.rawValue * 64 + publish.periodSteps - 7 - 7)
+                periodSlider.value = Float(period.resolution.rawValue * 64 + period.numberOfSteps - 7 - 7)
             case .tensOfMinutes:
-                periodSlider.value = Float(publish.periodResolution.rawValue * 64 + publish.periodSteps - 7 - 7 - 2)
+                periodSlider.value = Float(period.resolution.rawValue * 64 + period.numberOfSteps - 7 - 7 - 2)
             }
             retransmitCountSlider.value = Float(publish.retransmit.count)
             retransmitIntervalSlider.value = Float(publish.retransmit.steps)
@@ -190,9 +191,10 @@ private extension SetPublicationViewController {
                          type: .ttlRequired,
                          option: UIAlertAction(title: "Use Node's default", style: .default, handler: { _ in
                             self.ttl = 0xFF
-                         })) { value in
+                         }),
+                         handler: { value in
                             self.ttl = UInt8(value)!
-        }
+                         })
     }
     
     func periodSelected(_ period: Float) {

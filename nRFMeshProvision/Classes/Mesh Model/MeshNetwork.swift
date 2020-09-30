@@ -35,15 +35,14 @@ public class MeshNetwork: Codable {
     public let schema: String
     public let id: String
     public let version: String
-    
+
     /// Random 128-bit UUID allows differentiation among multiple mesh networks.
-    internal let meshUUID: MeshUUID
-    /// Random 128-bit UUID allows differentiation among multiple mesh networks.
-    public var uuid: UUID {
-        return meshUUID.uuid
-    }
+    public let uuid: UUID
     /// The last time the Provisioner database has been modified.
     public internal(set) var timestamp: Date
+    /// Whether the configuration contains full information about the mesh network,
+    /// or only partial. In partial configuration Nodes' Device Keys can be `nil`.
+    public let isPartial: Bool
     /// UTF-8 string, which should be human readable name for this mesh network.
     public var meshName: String {
         didSet {
@@ -66,9 +65,19 @@ public class MeshNetwork: Codable {
     public internal(set) var groups: [Group]
     /// An array of Senes in the network.
     public internal(set) var scenes: [Scene]
+    /// An array containins Unicast Addresses that cannot be assigned to new Nodes.
+    internal var networkExclusions: [ExclusionList]?
     
     /// The IV Index of the mesh network.
-    internal var ivIndex: IvIndex
+    internal var ivIndex: IvIndex {
+        didSet {
+            // Clean up the network exclusions.
+            networkExclusions?.cleanUp(forIvIndex: ivIndex)
+            if networkExclusions?.isEmpty ?? false {
+                networkExclusions = nil
+            }
+        }
+    }
     
     /// An array of Elements of the local Provisioner.
     private var _localElements: [Element]
@@ -114,21 +123,23 @@ public class MeshNetwork: Codable {
     }
     
     internal init(name: String, uuid: UUID = UUID()) {
-        schema          = "http://json-schema.org/draft-04/schema#"
-        id              = "http://www.bluetooth.com/specifications/assigned-numbers/mesh-profile/cdb-schema.json#"
-        version         = "1.0.0"
-        meshUUID        = MeshUUID(uuid)
-        meshName        = name
-        timestamp       = Date()
-        provisioners    = []
-        networkKeys     = [NetworkKey()]
-        applicationKeys = []
-        nodes           = []
-        groups          = []
-        scenes          = []
-        ivIndex         = IvIndex()
-        _localElements  = []
-        localElements   = [ Element(location: .main) ]
+        self.schema            = "http://json-schema.org/draft-04/schema#"
+        self.id                = "http://www.bluetooth.com/specifications/assigned-numbers/mesh-profile/cdb-schema.json#"
+        self.version           = "1.0.0"
+        self.uuid              = uuid
+        self.isPartial         = false
+        self.meshName          = name
+        self.timestamp         = Date()
+        self.provisioners      = []
+        self.networkKeys       = [NetworkKey()]
+        self.applicationKeys   = []
+        self.nodes             = []
+        self.groups            = []
+        self.scenes            = []
+        self.networkExclusions = []
+        self.ivIndex           = IvIndex()
+        self._localElements    = []
+        self.localElements     = [Element(location: .main)]
     }
     
     // MARK: - Codable
@@ -138,7 +149,8 @@ public class MeshNetwork: Codable {
         case schema          = "$schema"
         case id
         case version
-        case meshUUID
+        case uuid            = "meshUUID"
+        case isPartial       = "partial"
         case meshName
         case timestamp
         case provisioners
@@ -147,6 +159,7 @@ public class MeshNetwork: Codable {
         case nodes
         case groups
         case scenes
+        case networkExclusions
     }
     
     public required init(from decoder: Decoder) throws {
@@ -154,14 +167,26 @@ public class MeshNetwork: Codable {
         schema = try container.decode(String.self, forKey: .schema)
         id = try container.decode(String.self, forKey: .id)
         version = try container.decode(String.self, forKey: .version)
-        meshUUID = try container.decode(MeshUUID.self, forKey: .meshUUID)
+        
+        // In version 3.0 of this library the Mesh UUID format has changed
+        // from 32-character hexadecimal String to standard UUID format (RFC 4122).
+        uuid = try container.decode(UUID.self, forKey: .uuid,
+                                    orConvert: MeshUUID.self, forKey: .uuid, using: { $0.uuid })
+        
+        isPartial = try container.decodeIfPresent(Bool.self, forKey: .isPartial) ?? false
         meshName = try container.decode(String.self, forKey: .meshName)
         timestamp = try container.decode(Date.self, forKey: .timestamp)
         provisioners = try container.decode([Provisioner].self, forKey: .provisioners)
         networkKeys = try container.decode([NetworkKey].self, forKey: .networkKeys)
         applicationKeys = try container.decode([ApplicationKey].self, forKey: .applicationKeys)
-        nodes = try container.decode([Node].self, forKey: .nodes)
+        let ns = try container.decode([Node].self, forKey: .nodes)
+        guard isPartial || !ns.contains(where: { $0.deviceKey == nil }) else {
+            throw DecodingError.dataCorruptedError(forKey: .isPartial, in: container,
+                                                   debugDescription: "Device Key cannot be empty in non-partial configuration.")
+        }
+        nodes = ns
         groups = try container.decode([Group].self, forKey: .groups)
+        networkExclusions = try container.decodeIfPresent([ExclusionList].self, forKey: .networkExclusions)
         // Scenes are mandatory, but previous version of the library did support it,
         // so JSON files generated with such versions won't have "scenes" tag.
         scenes = try container.decodeIfPresent([Scene].self, forKey: .scenes) ?? []
@@ -231,6 +256,20 @@ extension MeshNetwork {
             // TODO: Verify that no Node is publishing to this Node.
             //       If such Node is found, this method should throw, as
             //       the Node is in use.
+            
+            // Remove Unicast Addresses of all Node's Elements from Scenes.
+            scenes.forEach { scene in
+                scene.remove(node: node)
+            }
+            // When a Node is removed from the network, the Unicast Addresses
+            // it used to use cannot be assigned to another Node until the
+            // IV Index is incremented by 2 (which effectively resets all Sequence
+            // number counters on all Nodes).
+            networkExclusions = networkExclusions ?? []
+            networkExclusions!.append(node, forIvIndex: ivIndex)
+            
+            // As the Node is no longer part of the mesh network, remove
+            // the reference to it.
             node.meshNetwork = nil
             timestamp = Date()
             

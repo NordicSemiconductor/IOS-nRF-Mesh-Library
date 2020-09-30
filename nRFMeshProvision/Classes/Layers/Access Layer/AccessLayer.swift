@@ -254,14 +254,17 @@ internal class AccessLayer {
         // ConfigNetKeyDelete must not be signed using the key that is being deleted.
         if let netKeyDelete = message as? ConfigNetKeyDelete,
            netKeyDelete.networkKeyIndex == networkKey.index {
+            // Existence of another Network Key was checked in MeshNetworkManager.send(...).
             networkKey = node.networkKeys.last!
+        }
+        guard let keySet = DeviceKeySet(networkKey: networkKey, node: node) else {
+            return
         }
         
         logger?.i(.foundationModel, "Sending \(message) to: \(destination.hex)")
         let pdu = AccessPdu(fromMeshMessage: message, sentFrom: element, to: MeshAddress(destination),
                             userInitiated: true)
         logger?.i(.access, "Sending \(pdu)")
-        let keySet = DeviceKeySet(networkKey: networkKey, node: node)
         
         // Set timers for the acknowledged messages.
         if let _ = message as? AcknowledgedConfigMessage {
@@ -614,12 +617,12 @@ private extension AccessLayer {
         // Cancel current publication.
         publishers.removeValue(forKey: model)?.invalidate()
         // Ensure a new one should start...
-        guard let publish = model.publish, publish.publicationInterval > 0,
+        guard let publish = model.publish, publish.period.interval > 0,
               let composer = model.delegate?.publicationMessageComposer else {
             return
         }
         // ... and start periodic publisher.
-        let publisher = BackgroundTimer.scheduledTimer(withTimeInterval: publish.publicationInterval,
+        let publisher = BackgroundTimer.scheduledTimer(withTimeInterval: publish.period.interval,
                                                        repeats: true) { [weak self] timer in
             guard let manager = self?.networkManager.manager else {
                 timer.invalidate()
