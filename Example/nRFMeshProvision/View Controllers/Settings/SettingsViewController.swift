@@ -176,8 +176,7 @@ private extension SettingsViewController {
         }
     }
     
-    /// Exports Mesh Network configuration and opens UIActivityViewController
-    /// which allows user to share it.
+    /// Opens the Export popup with export options.
     func exportNetwork() {
         performSegue(withIdentifier: "export", sender: nil)
     }
@@ -196,6 +195,10 @@ private extension SettingsViewController {
         provisionersLabel.text = "\(meshNetwork.provisioners.count)"
         networkKeysLabel.text  = "\(meshNetwork.networkKeys.count)"
         appKeysLabel.text      = "\(meshNetwork.applicationKeys.count)"
+        scenesLabel.text       = "\(meshNetwork.scenes.count)"
+        
+        // IV Update Test Mode is not persistent and has to be set each time
+        // the app is open or a network is imported.
         MeshNetworkManager.instance.ivUpdateTestMode = false
         testModeSwitch.setOn(false, animated: true)
         
@@ -204,6 +207,19 @@ private extension SettingsViewController {
             if let rootViewController = $0 as? UINavigationController {
                 rootViewController.popToRootViewController(animated: false)
             }
+        }
+    }
+    
+    /// Saves mesh network configuration and reloads network data on success.
+    func saveAndReload() {
+        if MeshNetworkManager.instance.save() {
+            DispatchQueue.main.async {
+                (UIApplication.shared.delegate as! AppDelegate).meshNetworkDidChange()
+                self.reload()
+                self.presentAlert(title: "Success", message: "Mesh Network configuration imported.")
+            }
+        } else {
+            self.presentAlert(title: "Error", message: "Mesh configuration could not be saved.")
         }
     }
 }
@@ -222,27 +238,27 @@ extension SettingsViewController: UIDocumentPickerDelegate {
                 // Try restoring the Provisioner used last time on this device.
                 if !meshNetwork.restoreLocalProvisioner() {
                     // If it's a new network and has only one Provisioner, just save it.
-                    if meshNetwork.provisioners.count == 1 {
-                        self.save()
-                    } else {
-                        // If more Provisioners are imported, give the user option
-                        // to select one.
+                    // Otherwise, give the user option to select one.
+                    if meshNetwork.provisioners.count > 1 {
                         DispatchQueue.main.async {
                             let alert = UIAlertController(title: "Select Provisioner",
                                                           message: "Select Provisioner instance to be used on this device:",
                                                           preferredStyle: .actionSheet)
+                            alert.popoverPresentationController?.barButtonItem = self.organizeButton
                             for provisioner in meshNetwork.provisioners {
                                 alert.addAction(UIAlertAction(title: provisioner.name, style: .default) { action in
                                     // This will effectively set the Provisioner to be used
                                     // be the library. Provisioner from index 0 is the local one.
                                     meshNetwork.moveProvisioner(provisioner, toIndex: 0)
-                                    self.save()
+                                    self.saveAndReload()
                                 })
                             }
                             self.present(alert, animated: true)
                         }
+                        return
                     }
                 }
+                self.saveAndReload()
             } catch let DecodingError.dataCorrupted(context) {
                 let path = context.codingPath.path
                 print("Import failed: \(context.debugDescription) (\(path))")
@@ -283,18 +299,6 @@ extension SettingsViewController: UIDocumentPickerDelegate {
                                              + "Check if the file is valid.")
                 }
             }
-        }
-    }
-    
-    func save() {
-        if MeshNetworkManager.instance.save() {
-            DispatchQueue.main.async {
-                (UIApplication.shared.delegate as! AppDelegate).meshNetworkDidChange()
-                self.reload()
-                self.presentAlert(title: "Success", message: "Mesh Network configuration imported.")
-            }
-        } else {
-            self.presentAlert(title: "Error", message: "Mesh configuration could not be saved.")
         }
     }
     
