@@ -53,6 +53,8 @@ public enum MeshNetworkError: Error {
     case addressNotInAllocatedRange
     /// Thrown when the requested Provisioner is not in the Mesh Network.
     case provisionerNotInNetwork
+    /// Thrown when the object cannot be removed.
+    case cannotRemove
     /// Thrown when the range to be allocated is of invalid type.
     case invalidRange
     /// Thrown when the provided key is not 128-bit long.
@@ -92,6 +94,7 @@ extension MeshNetworkError: LocalizedError {
         case .invalidAddress:                  return NSLocalizedString("Invalid address.", comment: "")
         case .addressNotInAllocatedRange:      return NSLocalizedString("Address outside Provisioner's range.", comment: "")
         case .provisionerNotInNetwork:         return NSLocalizedString("Provisioner does not belong to the network.", comment: "")
+        case .cannotRemove:                    return NSLocalizedString("Object could not be removed.", comment: "")
         case .invalidRange:                    return NSLocalizedString("Invalid range.", comment: "")
         case .invalidKey:                      return NSLocalizedString("Invalid key: The key must be 128-bit long.", comment: "")
         case .keyInUse:                        return NSLocalizedString("Cannot remove: Key in use.", comment: "")
