@@ -355,11 +355,34 @@ private extension EditProvisionerViewController {
             case .invalidRange:
                 presentAlert(title: "Error", message: "At least one of specified ranges is invalid.")
             case .addressNotInAllocatedRange:
-                presentAlert(title: "Error", message: "The Provisioner's address range is outside of its allocated range.")
+                let manager = MeshNetworkManager.instance
+                let count = max(1, UInt8(manager.localElements.count))
+                let next = manager.meshNetwork?.nextAvailableUnicastAddress(for: count, elementsUsing: provisioner)
+                let nextText = next.map { " Next available address is \($0.asString())."} ??
+                    " No available addresses. Extend the unicast address range to assign a new one."
+                let autoAssign = next.map { nextAddress in
+                    UIAlertAction(title: "Assign", style: .default) { _ in
+                        self.newAddress = nextAddress
+                        self.unicastAddressLabel.text = nextAddress.asString()
+                    }
+                }
+                presentAlert(title: "Error",
+                             message: "The Provisioner's address range is outside of its allocated range.\(nextText)",
+                             option: autoAssign)
             case .addressNotAvailable:
-                let count = max(1, MeshNetworkManager.instance.localElements.count)
+                let manager = MeshNetworkManager.instance
+                let count = max(1, UInt8(manager.localElements.count))
                 if count > 1, let address = newAddress {
-                    presentAlert(title: "Error", message: "The address range \(address.asString())...\((address + UInt16(count)  - 1).hex) is already in use or is not valid. A unique unicast address must be assignet to each of the \(count) elements.")
+                    let next = manager.meshNetwork?.nextAvailableUnicastAddress(for: count, elementsUsing: provisioner)
+                    let nextText = next.map { " Next available address is \($0.asString())."} ??
+                        " No available addresses. Extend the unicast address range to assign a new one."
+                    let autoAssign = next.map { nextAddress in
+                        UIAlertAction(title: "Assign", style: .default) { _ in
+                            self.newAddress = nextAddress
+                            self.unicastAddressLabel.text = nextAddress.asString()
+                        }
+                    }
+                    presentAlert(title: "Error", message: "The address range \(address.asString())...\((address + UInt16(count)  - 1).hex) is already in use or is reserved. A unique unicast address must be assigned to each of the \(count) elements.\(nextText)", option: autoAssign)
                 } else {
                     presentAlert(title: "Error", message: "The address is already in use or is not valid.")
                 }

@@ -352,7 +352,7 @@ private extension SetPublicationViewController {
         }
         let publish = Publish(to: destination, using: applicationKey,
                               usingFriendshipMaterial: friendshipCredentialsFlagSwitch.isOn, ttl: ttl,
-                              periodSteps: periodSteps, periodResolution: periodResolution,
+                              period: Publish.Period(steps: periodSteps, resolution: periodResolution),
                               retransmit: Publish.Retransmit(publishRetransmitCount: retransmissionCount,
                                                              intervalSteps: retransmissionIntervalSteps))
         start("Setting Model Publication...") {

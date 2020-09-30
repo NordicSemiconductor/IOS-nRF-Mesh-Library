@@ -127,6 +127,11 @@ class ProvisionersViewController: UITableViewController, Editable {
     }
     
     override func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
+        // It is not possible to remove the last Provisioner. At least 1 is required.
+        let count = MeshNetworkManager.instance.meshNetwork?.provisioners.count ?? 0
+        guard count > 1 else {
+            return [UITableViewRowAction(style: .normal, title: "Last", handler: {_,_ in })]
+        }
         let removeRowAction = UITableViewRowAction(style: .destructive, title: "Delete", handler: { _, indexPath in
             self.removeProvisioner(at: indexPath)
         })
@@ -186,30 +191,30 @@ class ProvisionersViewController: UITableViewController, Editable {
         }
     }
     
-    override func tableView(_ tableView: UITableView, targetIndexPathForMoveFromRowAt sourceIndexPath: IndexPath, toProposedIndexPath
-        // This method ensures that 1 only 1 device can be put to
+    override func tableView(_ tableView: UITableView,
+                            targetIndexPathForMoveFromRowAt sourceIndexPath: IndexPath,
+                            toProposedIndexPath proposedDestinationIndexPath: IndexPath) -> IndexPath {
+        // This method ensures that only 1 device can be put to
         // the first section. It allows placing the Provisioner as a
-        // first item in section 0, or after the fisrt one in the
+        // first item in section 0, or after the first one in the
         // second section.
-        proposedDestinationIndexPath: IndexPath) -> IndexPath {
         if proposedDestinationIndexPath.isThisProvisioner ||
             (sourceIndexPath.isThisProvisioner && proposedDestinationIndexPath.row == 0) {
             return .localProvisioner
         }
         return proposedDestinationIndexPath
     }
+}
+
+// MARK: - Private API
+
+private extension ProvisionersViewController {
     
-    // MARK: - Private API
-    
-    private func provisioner(at indexPath: IndexPath) -> Provisioner? {
+    func provisioner(at indexPath: IndexPath) -> Provisioner? {
         let meshNetwork = MeshNetworkManager.instance.meshNetwork
         // There is one Provisioner in section 0. The rest are in section 1.
         return meshNetwork?.provisioners[indexPath.provisionerIndex]
     }
-    
-}
-
-private extension ProvisionersViewController {
     
     func removeProvisioner(at indexPath: IndexPath) {
         let manager = MeshNetworkManager.instance
@@ -225,7 +230,7 @@ private extension ProvisionersViewController {
         
         // Remove the Provisioner and its Node from the network configuration.
         let index = indexPath.provisionerIndex
-        _ = meshNetwork.remove(provisionerAt: index)
+        _ = try? meshNetwork.remove(provisionerAt: index)
         let provisionerCount = meshNetwork.provisioners.count
         
         // If another Provisioner became the local one, and the current Proxy

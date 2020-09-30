@@ -174,7 +174,7 @@ public extension MeshNetwork {
     /// - returns: The next available Group Address that can be assigned to a new Group,
     ///            or `nil`, if there are no more available addresses in the allocated range.
     func nextAvailableGroupAddress(for provisioner: Provisioner) -> Address? {
-        let sortedGroups = groups.sorted { $0._address < $1._address }
+        let sortedGroups = groups.sorted { $0.groupAddress < $1.groupAddress }
         
         // Iterate through all groups just once, while iterating over ranges.
         var index = 0

@@ -42,7 +42,7 @@ public extension Model {
     /// - returns: `True` if the Model is subscribed to the Group,
     ///            `false` otherwise.
     func isSubscribed(to group: Group) -> Bool {
-        return subscribe.contains(group._address)
+        return subscribe.contains(group.groupAddress)
     }
     
     /// Returns whether the Model is subscribed to the given address.

@@ -25,6 +25,7 @@
 		5217D2E2250F7639004FDE79 /* GenericDefaultTranstionTimeClientDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5217D2E1250F7639004FDE79 /* GenericDefaultTranstionTimeClientDelegate.swift */; };
 		5217D2E5250F90D8004FDE79 /* GenericDefaultTransitionTimeViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5217D2E3250F90D8004FDE79 /* GenericDefaultTransitionTimeViewCell.swift */; };
 		5217D2E6250F90D8004FDE79 /* GenericDefaultTransitionTime.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5217D2E4250F90D8004FDE79 /* GenericDefaultTransitionTime.xib */; };
+		52248CDC251E21F000B10250 /* ExportViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52248CDB251E21F000B10250 /* ExportViewController.swift */; };
 		522AFFDC22BBA34900521EDC /* ActionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 522AFFDB22BBA34900521EDC /* ActionCell.swift */; };
 		522AFFDE22BBBC6400521EDC /* NodeFeaturesCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 522AFFDD22BBBC6400521EDC /* NodeFeaturesCell.swift */; };
 		522AFFE022C2376C00521EDC /* ElementViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 522AFFDF22C2376C00521EDC /* ElementViewController.swift */; };
@@ -92,6 +93,7 @@
 		5292F8A7250652BB00EA0F2A /* SceneServerGroupCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5292F8A6250652BB00EA0F2A /* SceneServerGroupCell.swift */; };
 		5292F8A9250654C600EA0F2A /* SceneSetupServerGroupCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5292F8A8250654C600EA0F2A /* SceneSetupServerGroupCell.swift */; };
 		5294DADA22B109810041370E /* Pdus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5294DAD922B109810041370E /* Pdus.swift */; };
+		529522B6251B850700158AE0 /* Exporting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529522B5251B850700158AE0 /* Exporting.swift */; };
 		529B756D223FE7F1008F1CE7 /* RootViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529B756C223FE7F1008F1CE7 /* RootViewController.swift */; };
 		529B7570223FF1AE008F1CE7 /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529B756F223FF1AE008F1CE7 /* SettingsViewController.swift */; };
 		529B7572223FFC39008F1CE7 /* AppKeysViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529B7571223FFC39008F1CE7 /* AppKeysViewController.swift */; };
@@ -182,6 +184,7 @@
 		5217D2E1250F7639004FDE79 /* GenericDefaultTranstionTimeClientDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericDefaultTranstionTimeClientDelegate.swift; sourceTree = "<group>"; };
 		5217D2E3250F90D8004FDE79 /* GenericDefaultTransitionTimeViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericDefaultTransitionTimeViewCell.swift; sourceTree = "<group>"; };
 		5217D2E4250F90D8004FDE79 /* GenericDefaultTransitionTime.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = GenericDefaultTransitionTime.xib; sourceTree = "<group>"; };
+		52248CDB251E21F000B10250 /* ExportViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExportViewController.swift; sourceTree = "<group>"; };
 		522AFFDB22BBA34900521EDC /* ActionCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionCell.swift; sourceTree = "<group>"; };
 		522AFFDD22BBBC6400521EDC /* NodeFeaturesCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NodeFeaturesCell.swift; sourceTree = "<group>"; };
 		522AFFDF22C2376C00521EDC /* ElementViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ElementViewController.swift; sourceTree = "<group>"; };
@@ -249,6 +252,7 @@
 		5292F8A6250652BB00EA0F2A /* SceneServerGroupCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneServerGroupCell.swift; sourceTree = "<group>"; };
 		5292F8A8250654C600EA0F2A /* SceneSetupServerGroupCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneSetupServerGroupCell.swift; sourceTree = "<group>"; };
 		5294DAD922B109810041370E /* Pdus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Pdus.swift; sourceTree = "<group>"; };
+		529522B5251B850700158AE0 /* Exporting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Exporting.swift; sourceTree = "<group>"; };
 		529B756C223FE7F1008F1CE7 /* RootViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootViewController.swift; sourceTree = "<group>"; };
 		529B756F223FF1AE008F1CE7 /* SettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
 		529B7571223FFC39008F1CE7 /* AppKeysViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppKeysViewController.swift; sourceTree = "<group>"; };
@@ -379,13 +383,20 @@
 			path = Cells;
 			sourceTree = "<group>";
 		};
+		52248CDF2523369700B10250 /* Common */ = {
+			isa = PBXGroup;
+			children = (
+				522AFFDB22BBA34900521EDC /* ActionCell.swift */,
+				523F776322C4EDD90030EA6A /* SwitchCell.swift */,
+				520A7D6624F3E05A00BF370A /* RightActionCell.swift */,
+			);
+			path = Common;
+			sourceTree = "<group>";
+		};
 		522AFFE122C23B3900521EDC /* Cells */ = {
 			isa = PBXGroup;
 			children = (
 				522AFFDD22BBBC6400521EDC /* NodeFeaturesCell.swift */,
-				522AFFDB22BBA34900521EDC /* ActionCell.swift */,
-				520A7D6624F3E05A00BF370A /* RightActionCell.swift */,
-				523F776322C4EDD90030EA6A /* SwitchCell.swift */,
 				5231401522F460380074325A /* PublicationCell.swift */,
 				52A8EA8724E6946D004C14C7 /* HeartbeatPublicationCell.swift */,
 				528445C824EEA765002168A1 /* HeartbeatSubscriptionCell.swift */,
@@ -497,6 +508,7 @@
 				529B756C223FE7F1008F1CE7 /* RootViewController.swift */,
 				523F776B22C6324A0030EA6A /* ProgressViewController.swift */,
 				5212152E231554190059FB3D /* ProgressCollectionViewController.swift */,
+				52248CDF2523369700B10250 /* Common */,
 				526021F4234365E100E88F06 /* Control */,
 				52835256227AED670097B949 /* Network */,
 				52518B2F22E0B14500A1FD1E /* Groups */,
@@ -516,6 +528,7 @@
 				5283524722733BCF0097B949 /* EditKeyViewController.swift */,
 				5245737A2500E10800CF8500 /* ScenesViewController.swift */,
 				5245737C2500E12600CF8500 /* EditSceneViewController.swift */,
+				52248CDB251E21F000B10250 /* ExportViewController.swift */,
 			);
 			path = Settings;
 			sourceTree = "<group>";
@@ -718,6 +731,7 @@
 			children = (
 				607FACE91AFB9204008FA782 /* Supporting Files */,
 				5231400122EEF7940074325A /* CreatingMeshNetwork.swift */,
+				529522B5251B850700158AE0 /* Exporting.swift */,
 				52D2707D2511F850002F51F3 /* FastSending.swift */,
 				529B75AA2248E276008F1CE7 /* SceneRanges.swift */,
 				529B75AC22491770008F1CE7 /* AddressRanges.swift */,
@@ -1057,6 +1071,7 @@
 				522AFFDE22BBBC6400521EDC /* NodeFeaturesCell.swift in Sources */,
 				523F776E22C63EAD0030EA6A /* NodeAddAppKeyViewController.swift in Sources */,
 				529B7643225222E8008F1CE7 /* Address+String.swift in Sources */,
+				52248CDC251E21F000B10250 /* ExportViewController.swift in Sources */,
 				5288C2062370571100321ED3 /* ProxySelectorViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1075,6 +1090,7 @@
 				523F777022C64FD20030EA6A /* ConfigMessages.swift in Sources */,
 				52DF5D93229C009200C297C1 /* NetworkPdus.swift in Sources */,
 				529B7629224CE481008F1CE7 /* AssigningUnicastAddress.swift in Sources */,
+				529522B6251B850700158AE0 /* Exporting.swift in Sources */,
 				528352B42284139F0097B949 /* ProxyProtocol.swift in Sources */,
 				5231400222EEF7940074325A /* CreatingMeshNetwork.swift in Sources */,
 				529B75AD22491770008F1CE7 /* AddressRanges.swift in Sources */,

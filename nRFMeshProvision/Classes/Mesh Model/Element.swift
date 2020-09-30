@@ -122,6 +122,19 @@ public class Element: Codable {
         offset += vendorModelsByteCount
     }
     
+    internal init(copy element: Element,
+                  andTruncateTo applicationKeys: [ApplicationKey], nodes: [Node], groups: [Group]) {
+        self.name = element.name
+        self.index = element.index
+        self.location = element.location
+        self.models = element.models.map {
+            Model(copy: $0, andTruncateTo: applicationKeys, nodes: nodes, groups: groups)
+        }
+        self.models.forEach {
+            $0.parentElement = self
+        }
+    }
+    
     // MARK: - Codable
     
     private enum CodingKeys: CodingKey {

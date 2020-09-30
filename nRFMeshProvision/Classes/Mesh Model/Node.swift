@@ -287,8 +287,9 @@ public class Node: Codable {
     ///   - networkKey: The Network Key.
     ///   - address: The Unicast Address to be assigned to the Node.
     internal convenience init(for unprovisionedDevice: UnprovisionedDevice,
-                  with n: UInt8, elementsDeviceKey deviceKey: Data,
-                  andAssignedNetworkKey networkKey: NetworkKey, andAddress address: Address) {
+                              with n: UInt8, elementsDeviceKey deviceKey: Data,
+                              andAssignedNetworkKey networkKey: NetworkKey,
+                              andAddress address: Address) {
         self.init(name: unprovisionedDevice.name, uuid: unprovisionedDevice.uuid,
                   deviceKey: deviceKey, andAssignedNetworkKey: networkKey,
                   andAddress: address)
@@ -315,6 +316,55 @@ public class Node: Codable {
         self.elements = []
     }
     
+    internal init(copy node: Node, withDeviceKey keepDeviceKey: Bool,
+                  andTruncateTo networkKeys: [NetworkKey],
+                  applicationKeys: [ApplicationKey], nodes: [Node], groups: [Group]) {
+        self.uuid = node.uuid
+        self.name = node.name
+        self.unicastAddress = node.unicastAddress
+        self.deviceKey = keepDeviceKey ? node.deviceKey : nil
+        self.security = node.security
+        self.isConfigComplete = node.isConfigComplete
+        self.isExcluded = node.isExcluded
+        self.networkTransmit = node.networkTransmit
+        self.relayRetransmit = node.relayRetransmit
+        self.companyIdentifier = node.companyIdentifier
+        self.productIdentifier = node.productIdentifier
+        self.versionIdentifier = node.versionIdentifier
+        self.minimumNumberOfReplayProtectionList = node.minimumNumberOfReplayProtectionList
+        self.features = node.features
+        self.ttl = node.ttl
+        self.secureNetworkBeacon = node.secureNetworkBeacon
+        
+        self.netKeys = node.netKeys.filter { nodeKey in
+            networkKeys.contains { nodeKey.index == $0.index }
+        }
+        self.appKeys = node.appKeys.filter { nodeKey in
+            applicationKeys.contains { nodeKey.index == $0.index }
+        }
+        self.elements = node.elements.map {
+            Element(copy: $0, andTruncateTo: applicationKeys, nodes: nodes, groups: groups)
+        }
+        if let heartbeatPublication = node.heartbeatPublication,
+              (heartbeatPublication.address.isUnicast &&
+                nodes.contains(where: { $0.hasAllocatedAddress(heartbeatPublication.address) })) ||
+              (heartbeatPublication.address.isGroup &&
+                groups.contains(where: { $0.address.address == heartbeatPublication.address })) {
+            self.heartbeatPublication = node.heartbeatPublication
+        }
+        if let heartbeatSubscription = node.heartbeatSubscription,
+           nodes.contains(where: { $0.hasAllocatedAddress(heartbeatSubscription.source) }),
+           (heartbeatSubscription.destination.isUnicast &&
+             nodes.contains(where: { $0.hasAllocatedAddress(heartbeatSubscription.destination) })) ||
+           (heartbeatSubscription.destination.isGroup &&
+             groups.contains(where: { $0.address.address == heartbeatSubscription.destination })) {
+            self.heartbeatSubscription = node.heartbeatSubscription
+        }
+        self.elements.forEach {
+            $0.parentNode = self
+        }
+    }
+    
     /// Creates a low security Node with given Device Key, Network Key and Unicast Address.
     /// Usually, a Node is added to a network during provisioning. However, for debug
     /// purposes, or to add an already provisioned Node, one can use this method.
@@ -323,13 +373,14 @@ public class Node: Codable {
     /// Use `meshNetwork.add(node: Node)` to add the Node. Other parameters must be
     /// read from the Node using Configuration messages.
     ///
-    /// - parameter name: Optional Node name.
-    /// - parameter n: Number of Elements. Elements must be read using
-    ///                `ConfigCompositionDataGet` message.
-    /// - parameter deviceKey: The 128-bit Device Key.
-    /// - parameter networkKey: The Network Key known to this device.
-    /// - parameter address: The device Unicast Address.
-    public init?(lowSecurityNode name: String?, with n: UInt, elementsDeviceKey deviceKey: Data,
+    /// - parameters:
+    ///   - name: Optional Node name.
+    ///   - n: Number of Elements. Elements must be read using
+    ///        `ConfigCompositionDataGet` message.
+    ///   - deviceKey: The 128-bit Device Key.
+    ///   - networkKey: The Network Key known to this device.
+    ///   - address: The primary Unicast Address of the Node.
+    public init?(insecureNode name: String?, with n: UInt8, elementsDeviceKey deviceKey: Data,
                 andAssignedNetworkKey networkKey: NetworkKey, andAddress address: Address) {
         guard address.isUnicast else {
             return nil
@@ -375,7 +426,7 @@ public class Node: Codable {
         case relayRetransmit
         case elements
         case isExcluded = "excluded"
-        case heartbeatPublication = "heartbeatPub"
+        case heartbeatPublication  = "heartbeatPub"
         case heartbeatSubscription = "heartbeatSub"
         // Legacy keys, deprecated in nRF Mesh Provision library in version 3.0.
         case legacyIsBlacklisted = "blacklisted" // replaced with "excluded"

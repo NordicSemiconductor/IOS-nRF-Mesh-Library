@@ -32,10 +32,6 @@ import Foundation
 
 /// The Bluetooth Mesh Network configuration.
 public class MeshNetwork: Codable {
-    public let schema: String
-    public let id: String
-    public let version: String
-
     /// Random 128-bit UUID allows differentiation among multiple mesh networks.
     public let uuid: UUID
     /// The last time the Provisioner database has been modified.
@@ -123,12 +119,9 @@ public class MeshNetwork: Codable {
     }
     
     internal init(name: String, uuid: UUID = UUID()) {
-        self.schema            = "http://json-schema.org/draft-04/schema#"
-        self.id                = "http://www.bluetooth.com/specifications/assigned-numbers/mesh-profile/cdb-schema.json#"
-        self.version           = "1.0.0"
         self.uuid              = uuid
-        self.isPartial         = false
         self.meshName          = name
+        self.isPartial         = false
         self.timestamp         = Date()
         self.provisioners      = []
         self.networkKeys       = [NetworkKey()]
@@ -140,6 +133,168 @@ public class MeshNetwork: Codable {
         self.ivIndex           = IvIndex()
         self._localElements    = []
         self.localElements     = [Element(location: .main)]
+    }
+    
+    internal init(copy network: MeshNetwork, using configuration: ExportConfiguration) {
+        self.uuid              = network.uuid
+        self.meshName          = network.meshName
+        self.timestamp         = network.timestamp
+        self.ivIndex           = network.ivIndex
+        self.networkExclusions = network.networkExclusions
+        self._localElements    = []
+        
+        switch configuration {
+        case .full:
+            self.isPartial = false
+            self.provisioners = network.provisioners
+            self.nodes = network.nodes
+            self.networkKeys = network.networkKeys
+            self.applicationKeys = network.applicationKeys
+            self.groups = network.groups
+            self.scenes = network.scenes
+            
+        case let .partial(networkKeysConfiguration,
+                          applicationKeysConfiguration,
+                          provisionersConfiguration,
+                          nodesConfiguration,
+                          groupsConfiguration,
+                          scenesConfiguration):
+            self.isPartial = true
+            
+            // Copy Network Keys.
+            switch networkKeysConfiguration {
+            case .all:
+                self.networkKeys = network.networkKeys
+            case let .some(networkKeys):
+                self.networkKeys = network.networkKeys
+                    .filter { networkKeys.contains($0) }
+            }
+            // Copy Application Keys.
+            switch applicationKeysConfiguration {
+            case .all:
+                self.applicationKeys = network.applicationKeys
+                    .boundTo(self.networkKeys)
+            case let .some(applicationKeys):
+                self.applicationKeys = network.applicationKeys
+                    .filter { applicationKeys.contains($0) }
+                    .boundTo(self.networkKeys)
+            }
+            // Copy Provisioners.
+            switch provisionersConfiguration {
+            case .all:
+                // All Provisioners are copied, but some of the Nodes
+                // belonging to them may get truncated. Provisioners may be
+                // copied to keep the ranges.
+                self.provisioners = network.provisioners
+            case let .one(provisioner):
+                // The exported configuration will contain only one Provisioner
+                // object with the ranges prepared to be used on the importing
+                // device.
+                self.provisioners = [provisioner]
+            case let .some(provisioners):
+                self.provisioners = network.provisioners
+                    .filter { provisioners.contains($0) }
+            }
+            let includedProvisioners = self.provisioners
+            let excludedProvisioners = network.provisioners
+                .filter { !includedProvisioners.contains($0) }
+            // Copy Groups.
+            switch groupsConfiguration {
+            case .related:
+                // Related Groups will be truncated later, after Nodes are chosen.
+                fallthrough
+            case .all:
+                self.groups = network.groups
+            case let .some(groups):
+                self.groups = network.groups
+                    .filter { groups.contains($0) }
+            }
+            // Copy Nodes and limit them to only those that know at least one
+            // exported Network Key. From each exported Node information about
+            // Application Keys, Nodes and Groups that will not be exported
+            // will be cut out.
+            var exportDeviceKeys = true
+            switch nodesConfiguration {
+            case .allWithoutDeviceKey:
+                exportDeviceKeys = false
+                fallthrough
+            case .allWithDeviceKey:
+                let networkKeys = self.networkKeys
+                let applicationKeys = self.applicationKeys
+                let groups = self.groups
+                self.nodes = network.nodes
+                    .filter { node in node.networkKeys.contains { networkKeys.contains($0) } }
+                    .filter { node in !excludedProvisioners.contains { $0.node == node } }
+                    .map {
+                        Node(copy: $0, withDeviceKey: exportDeviceKeys,
+                             andTruncateTo: networkKeys, applicationKeys: applicationKeys,
+                             nodes: network.nodes, groups: groups)
+                    }
+            case let .some(withDeviceKey: full, andSomeWithout: partial):
+                let networkKeys = self.networkKeys
+                let applicationKeys = self.applicationKeys
+                let groups = self.groups
+                let exportedNodes = network.nodes
+                    .filter { full.contains($0) || partial.contains($0) }
+                    .filter { node in node.networkKeys.contains { networkKeys.contains($0) } }
+                    .filter { node in !excludedProvisioners.contains { $0.node == node } }
+                self.nodes = exportedNodes
+                    .filter { full.contains($0) }
+                    .map {
+                        Node(copy: $0, withDeviceKey: true,
+                             andTruncateTo: networkKeys, applicationKeys: applicationKeys,
+                             nodes: exportedNodes, groups: groups)
+                    } + exportedNodes
+                    .filter { partial.contains($0) && !full.contains($0) }
+                    .map {
+                        Node(copy: $0, withDeviceKey: false,
+                             andTruncateTo: networkKeys, applicationKeys: applicationKeys,
+                             nodes: exportedNodes, groups: groups)
+                    }
+            }
+            // Truncate Groups to only those used by exported Nodes.
+            if case .related = groupsConfiguration {
+                let nodes = self.nodes
+                self.groups = self.groups
+                    .filter { group in
+                        nodes
+                            .flatMap { node in node.elements }
+                            .flatMap { element in element.models }
+                            .contains { model in
+                                model.subscribe.contains(group.groupAddress) ||
+                                model.publish?.address == group.groupAddress
+                            }
+                    }
+            }
+            // Copy Scenes.
+            switch scenesConfiguration {
+            case .all:
+                let nodes = self.nodes
+                self.scenes = network.scenes
+                    .map { Scene(copy: $0, andTruncateTo: nodes) }
+            case .related:
+                let nodes = self.nodes
+                self.scenes = network.scenes
+                    .map { Scene(copy: $0, andTruncateTo: nodes) }
+                    .filter { $0.isUsed }
+            case let .some(scenes):
+                let nodes = self.nodes
+                self.scenes = network.scenes
+                    .filter { scenes.contains($0) }
+                    .map { Scene(copy: $0, andTruncateTo: nodes) }
+            }
+            self.nodes.forEach {
+                $0.meshNetwork = self
+            }
+        }
+    }
+    
+    internal func copy(using configuration: ExportConfiguration) -> MeshNetwork {
+        if case .full = configuration {
+            return self
+        } else {
+            return MeshNetwork(copy: self, using: configuration)
+        }
     }
     
     // MARK: - Codable
@@ -164,9 +319,17 @@ public class MeshNetwork: Codable {
     
     public required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        schema = try container.decode(String.self, forKey: .schema)
-        id = try container.decode(String.self, forKey: .id)
-        version = try container.decode(String.self, forKey: .version)
+        let schema = try container.decode(String.self, forKey: .schema)
+        let id = try container.decode(String.self, forKey: .id)
+        
+        guard schema == "http://json-schema.org/draft-04/schema#" else {
+            throw DecodingError.dataCorruptedError(forKey: .schema, in: container,
+                                                   debugDescription: "Unsupported JSON schema")
+        }
+        guard id == "http://www.bluetooth.com/specifications/assigned-numbers/mesh-profile/cdb-schema.json#" else {
+            throw DecodingError.dataCorruptedError(forKey: .id, in: container,
+                                                   debugDescription: "Unsupported ID")
+        }
         
         // In version 3.0 of this library the Mesh UUID format has changed
         // from 32-character hexadecimal String to standard UUID format (RFC 4122).
@@ -177,7 +340,15 @@ public class MeshNetwork: Codable {
         meshName = try container.decode(String.self, forKey: .meshName)
         timestamp = try container.decode(Date.self, forKey: .timestamp)
         provisioners = try container.decode([Provisioner].self, forKey: .provisioners)
+        guard !provisioners.isEmpty else {
+            throw DecodingError.dataCorruptedError(forKey: .provisioners, in: container,
+                                                   debugDescription: "At least one provisioner is required.")
+        }
         networkKeys = try container.decode([NetworkKey].self, forKey: .networkKeys)
+        guard !networkKeys.isEmpty else {
+            throw DecodingError.dataCorruptedError(forKey: .networkKeys, in: container,
+                                                   debugDescription: "At least one network key is required.")
+        }
         applicationKeys = try container.decode([ApplicationKey].self, forKey: .applicationKeys)
         let ns = try container.decode([Node].self, forKey: .nodes)
         guard isPartial || !ns.contains(where: { $0.deviceKey == nil }) else {
@@ -215,6 +386,29 @@ public class MeshNetwork: Codable {
         // network is loaded.
         localProvisioner?.node?.heartbeatPublication = nil
         localProvisioner?.node?.heartbeatSubscription = nil
+    }
+    
+    public func encode(to encoder: Encoder) throws {
+        let schema = "http://json-schema.org/draft-04/schema#"
+        let id = "http://www.bluetooth.com/specifications/assigned-numbers/mesh-profile/cdb-schema.json#"
+        let version = "1.0.0"
+        
+        var container = encoder.container(keyedBy: CodingKeys.self)        
+        try container.encode(schema, forKey: .schema)
+        try container.encode(id, forKey: .id)
+        try container.encode(version, forKey: .version)
+        
+        try container.encode(uuid, forKey: .uuid)
+        try container.encode(isPartial, forKey: .isPartial)
+        try container.encode(meshName, forKey: .meshName)
+        try container.encode(timestamp, forKey: .timestamp)
+        try container.encode(provisioners, forKey: .provisioners)
+        try container.encode(networkKeys, forKey: .networkKeys)
+        try container.encode(applicationKeys, forKey: .applicationKeys)
+        try container.encode(nodes, forKey: .nodes)
+        try container.encode(groups, forKey: .groups)
+        try container.encode(scenes, forKey: .scenes)
+        try container.encode(networkExclusions, forKey: .networkExclusions)
     }
     
 }

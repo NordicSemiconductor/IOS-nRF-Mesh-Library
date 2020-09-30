@@ -33,7 +33,7 @@ import nRFMeshProvision
 
 class SettingsViewController: UITableViewController {
     
-    // MARK: - Outlets -
+    // MARK: - Outlets
     @IBOutlet weak var organizeButton: UIBarButtonItem!
     
     @IBOutlet weak var networkNameLabel: UILabel!
@@ -51,7 +51,7 @@ class SettingsViewController: UITableViewController {
     @IBOutlet weak var appVersionLabel: UILabel!
     @IBOutlet weak var appBuildNumberLabel: UILabel!
     
-    // MARK: - IBActions
+    // MARK: - Actions
     
     @IBAction func organizeTapped(_ sender: UIBarButtonItem) {
         displayImportExportOptions()
@@ -106,7 +106,10 @@ class SettingsViewController: UITableViewController {
     override func tableView(_ tableView: UITableView,
                             accessoryButtonTappedForRowWith indexPath: IndexPath) {
         if indexPath.isIvUpdateTestMode {
-            presentAlert(title: "Info", message: "IV Update test mode allows to transition to the subsequent IV Index without having to wait at least 96 hours. The transition will be done upon receving a valid Secure Network beacon.")
+            presentAlert(title: "Info",
+                         message: "IV Update test mode allows to transition to the subsequent "
+                                + "IV Index without having to wait at least 96 hours. The "
+                                + "transition will be done upon receving a valid Secure Network beacon.")
         }
     }
     
@@ -133,7 +136,8 @@ private extension SettingsViewController {
     /// Presents a dialog with resetting confirmation.
     func presentResetConfirmation() {
         let alert = UIAlertController(title: "Reset Network",
-                                      message: "Resetting the network will erase all network data.\nMake sure you exported it first.",
+                                      message: "Resetting the network will erase all network data.\n"
+                                             + "Make sure you exported it first.",
                                       preferredStyle: .actionSheet)
         let resetAction = UIAlertAction(title: "Reset", style: .destructive) { _ in self.resetNetwork() }
         let cancelAction = UIAlertAction(title: "Cancel", style: .cancel)
@@ -146,7 +150,8 @@ private extension SettingsViewController {
     /// Displays the Import / Export action sheet.
     func displayImportExportOptions() {
         let alert = UIAlertController(title: "Organize",
-                                      message: "Importing network will override your existing settings.\nMake sure you exported it first.",
+                                      message: "Importing network will override your existing settings.\n"
+                                             + "Make sure you exported it first.",
                                       preferredStyle: .actionSheet)
         let exportAction = UIAlertAction(title: "Export", style: .default) { _ in self.exportNetwork() }
         let importAction = UIAlertAction(title: "Import", style: .destructive) { _ in self.importNetwork() }
@@ -171,31 +176,9 @@ private extension SettingsViewController {
         }
     }
     
-    /// Exports Mesh Network configuration and opens UIActivityViewController
-    /// which allows user to share it.
+    /// Opens the Export popup with export options.
     func exportNetwork() {
-        let manager = MeshNetworkManager.instance
-        
-        DispatchQueue.global(qos: .userInitiated).async {
-            let data = manager.export()
-            
-            do {
-                let name = manager.meshNetwork?.meshName ?? "mesh"
-                let fileURL = FileManager.default.temporaryDirectory.appendingPathComponent("\(name).json")
-                try data.write(to: fileURL)
-                
-                DispatchQueue.main.async {
-                    let controller = UIActivityViewController(activityItems: [fileURL], applicationActivities: nil)
-                    controller.popoverPresentationController?.barButtonItem = self.organizeButton
-                    self.present(controller, animated: true)
-                }
-            } catch {
-                print("Export failed: \(error)")
-                DispatchQueue.main.async {
-                    self.presentAlert(title: "Error", message: "Exporting Mesh Network configuration failed.")
-                }
-            }
-        }
+        performSegue(withIdentifier: "export", sender: nil)
     }
     
     /// Opens the Document Picker to select the Mesh Network configuration to import.
@@ -212,6 +195,10 @@ private extension SettingsViewController {
         provisionersLabel.text = "\(meshNetwork.provisioners.count)"
         networkKeysLabel.text  = "\(meshNetwork.networkKeys.count)"
         appKeysLabel.text      = "\(meshNetwork.applicationKeys.count)"
+        scenesLabel.text       = "\(meshNetwork.scenes.count)"
+        
+        // IV Update Test Mode is not persistent and has to be set each time
+        // the app is open or a network is imported.
         MeshNetworkManager.instance.ivUpdateTestMode = false
         testModeSwitch.setOn(false, animated: true)
         
@@ -220,6 +207,19 @@ private extension SettingsViewController {
             if let rootViewController = $0 as? UINavigationController {
                 rootViewController.popToRootViewController(animated: false)
             }
+        }
+    }
+    
+    /// Saves mesh network configuration and reloads network data on success.
+    func saveAndReload() {
+        if MeshNetworkManager.instance.save() {
+            DispatchQueue.main.async {
+                (UIApplication.shared.delegate as! AppDelegate).meshNetworkDidChange()
+                self.reload()
+                self.presentAlert(title: "Success", message: "Mesh Network configuration imported.")
+            }
+        } else {
+            self.presentAlert(title: "Error", message: "Mesh configuration could not be saved.")
         }
     }
 }
@@ -236,69 +236,67 @@ extension SettingsViewController: UIDocumentPickerDelegate {
                 let data = try Data(contentsOf: url)
                 let meshNetwork = try manager.import(from: data)
                 // Try restoring the Provisioner used last time on this device.
-                var provisionerSet = true
                 if !meshNetwork.restoreLocalProvisioner() {
-                    // If it's a new network, try creating a new Provisioner.
-                    // This will succeed if available ranges are found.
-                    if let nextAddressRange = meshNetwork.nextAvailableUnicastAddressRange(ofSize: 0x199A),
-                       let nextGroupRange = meshNetwork.nextAvailableGroupAddressRange(ofSize: 0x0C9A),
-                       let nextSceneRange = meshNetwork.nextAvailableSceneRange(ofSize: 0x3334) {
-                        let newProvisioner = Provisioner(name: UIDevice.current.name,
-                                                         allocatedUnicastRange: [nextAddressRange],
-                                                         allocatedGroupRange: [nextGroupRange],
-                                                         allocatedSceneRange: [nextSceneRange])
-                        // Set it a a new local Provisioner.
-                        try? meshNetwork.setLocalProvisioner(newProvisioner)
-                        // And assign a Unicast Address to it.
-                        if let address = meshNetwork.nextAvailableUnicastAddress(for: newProvisioner) {
-                            try? meshNetwork.assign(unicastAddress: address, for: newProvisioner)
+                    // If it's a new network and has only one Provisioner, just save it.
+                    // Otherwise, give the user option to select one.
+                    if meshNetwork.provisioners.count > 1 {
+                        DispatchQueue.main.async {
+                            let alert = UIAlertController(title: "Select Provisioner",
+                                                          message: "Select Provisioner instance to be used on this device:",
+                                                          preferredStyle: .actionSheet)
+                            alert.popoverPresentationController?.barButtonItem = self.organizeButton
+                            for provisioner in meshNetwork.provisioners {
+                                alert.addAction(UIAlertAction(title: provisioner.name, style: .default) { action in
+                                    // This will effectively set the Provisioner to be used
+                                    // be the library. Provisioner from index 0 is the local one.
+                                    meshNetwork.moveProvisioner(provisioner, toIndex: 0)
+                                    self.saveAndReload()
+                                })
+                            }
+                            self.present(alert, animated: true)
                         }
-                    } else {
-                        provisionerSet = false
+                        return
                     }
                 }
-                
-                if manager.save() {
-                    DispatchQueue.main.async {
-                        (UIApplication.shared.delegate as! AppDelegate).meshNetworkDidChange()
-                        self.reload()
-                        if provisionerSet {
-                            self.presentAlert(title: "Success", message: "Mesh Network configuration imported.")
-                        } else {
-                            self.presentAlert(title: "Warning", message: "Mesh Network configuration imported successfully, but the provisioner could not be set. All ranges are already assigned. Go to Settings -> Provisioners and create a new provisioner manually. Until then this device may not be able to send mesh messages.")
-                        }
-                    }
-                } else {
-                    self.presentAlert(title: "Error", message: "Mesh configuration could not be saved.")
-                }
+                self.saveAndReload()
             } catch let DecodingError.dataCorrupted(context) {
                 let path = context.codingPath.path
                 print("Import failed: \(context.debugDescription) (\(path))")
                 DispatchQueue.main.async {
-                    self.presentAlert(title: "Error", message: "Importing Mesh Network configuration failed.\n\(context.debugDescription)\nPath: \(path).")
+                    self.presentAlert(title: "Error",
+                                      message: "Importing Mesh Network configuration failed.\n"
+                                             + "\(context.debugDescription)\nPath: \(path).")
                 }
             } catch let DecodingError.keyNotFound(key, context) {
                 let path = context.codingPath.path
                 print("Import failed: Key \(key) not found in \(path)")
                 DispatchQueue.main.async {
-                    self.presentAlert(title: "Error", message: "Importing Mesh Network configuration failed.\nNo value associated with key: \(key.stringValue) in: \(path).")
+                    self.presentAlert(title: "Error",
+                                      message: "Importing Mesh Network configuration failed.\n"
+                                             + "No value associated with key: \(key.stringValue) in: \(path).")
                 }
             } catch let DecodingError.valueNotFound(value, context) {
                 let path = context.codingPath.path
                 print("Import failed: Value of type \(value) required in \(path)")
                 DispatchQueue.main.async {
-                    self.presentAlert(title: "Error", message: "Importing Mesh Network configuration failed.\nNo value associated with key: \(path).")
+                    self.presentAlert(title: "Error",
+                                      message: "Importing Mesh Network configuration failed.\n"
+                                             + "No value associated with key: \(path).")
                 }
             } catch let DecodingError.typeMismatch(type, context) {
                 let path = context.codingPath.path
                 print("Import failed: Type mismatch in \(path) (\(type) was required)")
                 DispatchQueue.main.async {
-                    self.presentAlert(title: "Error", message: "Importing Mesh Network configuration failed.\nType mismatch in: \(path). Expected: \(type).")
+                    self.presentAlert(title: "Error",
+                                      message: "Importing Mesh Network configuration failed.\n"
+                                             + "Type mismatch in: \(path). Expected: \(type).")
                 }
             } catch {
                 print("Import failed: \(error)")
                 DispatchQueue.main.async {
-                    self.presentAlert(title: "Error", message: "Importing Mesh Network configuration failed.\nCheck if the file is valid.")
+                    self.presentAlert(title: "Error",
+                                      message: "Importing Mesh Network configuration failed.\n"
+                                             + "Check if the file is valid.")
                 }
             }
         }

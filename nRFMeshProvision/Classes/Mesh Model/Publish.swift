@@ -31,11 +31,19 @@
 import Foundation
 
 public struct Publish: Codable {
+    /// The Model will not publish status messages.
+    ///
+    /// - since: 3.0
+    public static let disabled = Publish()
     
-    /// The object is used to describe the number of times a message is
-    /// published and the interval between retransmissions of the published
-    /// message.
+    /// The object is used to describe the number of times a message is published and
+    /// the interval between retransmissions of the published message.
     public struct Retransmit: Codable {
+        /// Retransmission of published messages is disabled.
+        ///
+        /// - since: 3.0
+        public static let disabled = Retransmit()
+        
         /// Number of retransmissions for network messages.
         /// The value is in range from 0 to 7, where 0 means no retransmissions.
         public let count: UInt8
@@ -46,19 +54,51 @@ public struct Publish: Codable {
             return UInt8((interval / 50) - 1)
         }
         
-        internal init() {
+        /// Creates the Retransmit object when there should be no retransmissions.
+        ///
+        /// - seeAlso: `Retransmit.disabled`.
+        /// - since: 3.0
+        public init() {
             count = 0
             interval = 50
         }
         
+        /// Creates the Retransmit object.
+        ///
+        /// - parameters:
+        ///   - count: Number of retransmissions for network messages. The value is in
+        ///            range from 0 to 7, where 0 means no retransmissions.
+        ///   - interval: The interval (in seconds) between retransmissions, from 0.050
+        ///               second to 1.6 second with 50 milliseconds (0.050 second) step.
+        /// - since: 3.0
+        public init(_ count: UInt8, timesWithInterval interval: TimeInterval) {
+            self.count = min(count, 7)
+            // Interval is in 50 ms steps.
+            self.interval = max(50, min(1600, UInt16(interval / 0.050) * 50))
+        }
+        
+        /// Creates the Retransmit object.
+        ///
+        /// - parameters:
+        ///   - publishRetransmitCount: Publish Retransmit Count value, in range 0...7.
+        ///   - intervalSteps: Retransmission steps, from 0 to 31. Each step adds 50 ms
+        ///                    to initial 50 ms interval.
         public init(publishRetransmitCount: UInt8, intervalSteps: UInt8) {
-            count    = publishRetransmitCount
+            count    = min(publishRetransmitCount, 7)
             // Interval is in 50 ms steps.
             interval = UInt16(intervalSteps + 1) * 50 // ms
         }
     }
     
+    /// The Publish Period state determines the interval at which status messages
+    /// are periodically published by a Model.
+    ///
+    /// - since: 3.0
     public struct Period: Codable {
+        /// Periodic publishing of status messages is disabled.
+        /// - since: 3.0
+        public static let disabled = Period()
+        
         /// The number of steps, in range 0...63.
         public let numberOfSteps: UInt8
         /// The resolution of the number of steps.
@@ -66,13 +106,54 @@ public struct Publish: Codable {
         /// The interval between subsequent publications in seconds.
         public let interval: TimeInterval
         
-        init() {
+        /// Creates the Period object when periodic publication is disabled.
+        ///
+        /// - seeAlso: `Period.disabled`.
+        /// - since: 3.0
+        public init() {
             self.numberOfSteps = 0
             self.resolution = .hundredsOfMilliseconds
             self.interval = 0.0
         }
         
-        init(steps: UInt8, resolution: StepResolution) {
+        /// Creates the Period object.
+        ///
+        /// The given value will be translated to steps and resolution according to
+        /// Bluetooth Mesh Profile 1.0.1 specification, chapter 4.2.2.2.
+        ///
+        /// - parameter interval: The periodic publishing interval, in seconds.
+        /// - since: 3.0
+        public init(_ interval: TimeInterval) {
+            switch interval {
+            case let interval where interval <= 0:
+                numberOfSteps = 0
+                resolution = .hundredsOfMilliseconds
+            case let interval where interval <= 63 * 0.100:
+                numberOfSteps = UInt8(interval * 10)
+                resolution = .hundredsOfMilliseconds
+            case let interval where interval <= 63 * 1.0:
+                numberOfSteps = UInt8(interval)
+                resolution = .seconds
+            case let interval where interval <= 63 * 10.0:
+                numberOfSteps = UInt8(interval / 10.0)
+                resolution = .tensOfSeconds
+            case let interval where interval <= 63 * 10 * 60.0:
+                numberOfSteps = UInt8(interval / (10 * 60.0))
+                resolution = .tensOfMinutes
+            default:
+                numberOfSteps = 0x3F
+                resolution = .tensOfMinutes
+            }
+            self.interval = TimeInterval(resolution.toMilliseconds(steps: numberOfSteps)) / 1000.0
+        }
+        
+        /// Creates the Period object.
+        ///
+        /// - parameters:
+        ///   - steps: The number of steps, in range 0...63.
+        ///   - resolution: The resolution of the number of steps.
+        /// - since: 3.0
+        public init(steps: UInt8, resolution: StepResolution) {
             self.numberOfSteps = steps
             self.resolution = resolution
             self.interval = TimeInterval(resolution.toMilliseconds(steps: steps)) / 1000.0
@@ -112,7 +193,7 @@ public struct Publish: Codable {
     
     /// Publication address for the Model. It's 4 or 32-character long
     /// hexadecimal string.
-    private let address: String
+    internal let address: String
     /// Publication address for the model.
     public var publicationAddress: MeshAddress {
         // Warning: assuming hex address is valid!
@@ -131,7 +212,29 @@ public struct Publish: Codable {
     internal let credentials: Int
     /// The object describes the number of times a message is published and the
     /// interval between retransmissions of the published message.
-    public internal(set) var retransmit: Retransmit
+    public let retransmit: Retransmit
+    
+    /// Creates an instance of Publish object.
+    ///
+    /// - parameters:
+    ///   - destination: The publication address.
+    ///   - applicationKey: The Application Key that will be used to send messages.
+    ///   - friendshipCredentialsFlag: `True`, to use Friendship Security Material,
+    ///                                `false` to use Master Security Material.
+    ///   - ttl: Time to live. Use 0xFF to use Node's default TTL.
+    ///   - period: Periodical publication interval. See `Period` for details.
+    ///   - retransmit: The retransmission data. See `Retransmit` for details.
+    /// - since: 3.0
+    public init(to destination: MeshAddress, using applicationKey: ApplicationKey,
+                usingFriendshipMaterial friendshipCredentialsFlag: Bool, ttl: UInt8,
+                period: Period, retransmit: Retransmit) {
+        self.address = destination.hex
+        self.index = applicationKey.index
+        self.credentials = friendshipCredentialsFlag ? 1 : 0
+        self.ttl = ttl
+        self.period = period
+        self.retransmit = retransmit
+    }
     
     /// Creates an instance of Publish object.
     ///
@@ -148,20 +251,12 @@ public struct Publish: Codable {
     ///                       Use `._100_milliseconds` when periodic publishing is
     ///                       disabled.
     ///   - retransmit: The retransmission data. See `Retransmit` for details.
+    @available(*, deprecated, message: "Use the other constructor")
     public init(to destination: MeshAddress, using applicationKey: ApplicationKey,
                 usingFriendshipMaterial friendshipCredentialsFlag: Bool, ttl: UInt8,
                 periodSteps: UInt8, periodResolution: StepResolution, retransmit: Retransmit) {
-        self.init(to: destination, usingApplicationKeyWithKeyIndex: applicationKey.index,
-                  usingFriendshipMaterial: friendshipCredentialsFlag, ttl: ttl,
-                  periodSteps: periodSteps, periodResolution: periodResolution,
-                  retransmit: retransmit)
-    }
-    
-    internal init(to destination: MeshAddress, usingApplicationKeyWithKeyIndex index: KeyIndex,
-                usingFriendshipMaterial friendshipCredentialsFlag: Bool, ttl: UInt8,
-                periodSteps: UInt8, periodResolution: StepResolution, retransmit: Retransmit) {
         self.address = destination.hex
-        self.index = index
+        self.index = applicationKey.index
         self.credentials = friendshipCredentialsFlag ? 1 : 0
         self.ttl = ttl
         self.period = Period(steps: periodSteps, resolution: periodResolution)
@@ -169,13 +264,22 @@ public struct Publish: Codable {
     }
     
     /// This initializer should be used to remove the publication from a Model.
-    internal init() {
+    ///
+    /// - seeAlso: `Publish.disabled`.
+    /// - since: 3.0
+    public init() {
         self.address = "0000"
         self.index = 0
         self.credentials = 0
         self.ttl = 0
-        self.period = Period()
-        self.retransmit = Retransmit()
+        self.period = .disabled
+        self.retransmit = .disabled
+    }
+    
+    internal init(to destination: MeshAddress, withKeyIndex keyIndex: KeyIndex) {
+        self.init(to: destination.hex, withKeyIndex: keyIndex,
+                  friendshipCredentialsFlag: 0, ttl: 0xFF,
+                  period: .disabled, retransmit: .disabled)
     }
     
     internal init(to destination: String, withKeyIndex keyIndex: KeyIndex,
