@@ -131,8 +131,8 @@
 		5079F2715F1CD275CF780858BD471A4A /* ConfigVendorModelSubscriptionGet.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDEA9B957FF86C5BC2BD1C662445FBA0 /* ConfigVendorModelSubscriptionGet.swift */; };
 		509221EE1E43B16CBD56BDE45F21A134 /* NetworkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A9168072EDF2AC5B1189ACD2BDCEFEA /* NetworkManager.swift */; };
 		5140CFFF34BA32AC6E01115327938711 /* SceneStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = A88C2DF2F262CEF4FDB2D6AEEE9763FF /* SceneStatus.swift */; };
+		522F2B8C2524869600F9B258 /* ExportConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 522F2B8B2524869600F9B258 /* ExportConfiguration.swift */; };
 		525A60D72514D1EA00AC394E /* ExclusionList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 525A60D62514D1EA00AC394E /* ExclusionList.swift */; };
-		525A60FF2518D95400AC394E /* ExportConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 525A60FE2518D95400AC394E /* ExportConfiguration.swift */; };
 		52F4888FD9D5D56FCF086D02ACA31DF9 /* Node+Address.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECA7D05A0C6FBE7450066E19A15B7784 /* Node+Address.swift */; };
 		543DE1773A7DB2311F8E705F4C7CC856 /* ConfigCompositionDataGet.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDD47BFAD501470882EDE8F79E721480 /* ConfigCompositionDataGet.swift */; };
 		55DD6854DFF5F236F74A470B9BEA6B03 /* LightLightnessDefaultGet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D887FA5C614F9A82480EA84246AFF12 /* LightLightnessDefaultGet.swift */; };
@@ -507,10 +507,10 @@
 		4F5261173A82DAC024279C8C81FD8475 /* SegmentedAccessMessage.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SegmentedAccessMessage.swift; sourceTree = "<group>"; };
 		510A7C1B25B9D6FDC2447AB3A9DE45AC /* CompanyIdentifier.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CompanyIdentifier.swift; sourceTree = "<group>"; };
 		51BBAA3978BFB1C9BAA0B3563DB01A48 /* Pods-nRFMeshProvision_Example-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-nRFMeshProvision_Example-Info.plist"; sourceTree = "<group>"; };
+		522F2B8B2524869600F9B258 /* ExportConfiguration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ExportConfiguration.swift; path = nRFMeshProvision/Classes/ExportConfiguration.swift; sourceTree = "<group>"; };
 		523E23022FF606345EE02015D949794B /* LowerTransportLayer.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LowerTransportLayer.swift; sourceTree = "<group>"; };
 		52473EF190638F8B70BB7B106E956029 /* pem.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = pem.h; path = ios/include/openssl/pem.h; sourceTree = "<group>"; };
 		525A60D62514D1EA00AC394E /* ExclusionList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExclusionList.swift; sourceTree = "<group>"; };
-		525A60FE2518D95400AC394E /* ExportConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExportConfiguration.swift; sourceTree = "<group>"; };
 		53D298B09F7017B47219AAE86DA41BD0 /* ApplicationKey.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ApplicationKey.swift; sourceTree = "<group>"; };
 		543EDD9BE4C64971300F95848CB2B30E /* MessageHandle.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MessageHandle.swift; sourceTree = "<group>"; };
 		5479A600FCEEA8C4F77A992F601F34D2 /* LightHSLDefaultSet.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LightHSLDefaultSet.swift; sourceTree = "<group>"; };
@@ -931,7 +931,7 @@
 				859F9E0AE9F4F2F4D3AB14053FFF8827 /* ModelDelegate.swift */,
 				6048A14EE3C5AB91A73797D831EC6704 /* ProxyFilter.swift */,
 				7D22828216896E60183B1C52984535A2 /* Storage.swift */,
-				525A60FE2518D95400AC394E /* ExportConfiguration.swift */,
+				522F2B8B2524869600F9B258 /* ExportConfiguration.swift */,
 				3FF0A46212253CF240E9BE96BC81F16D /* Bearer */,
 				C24A0FFCBE9C637D71E67BAA88B13FF7 /* Layers */,
 				9E5DF8989E90ABCBACA22FC80696CDD8 /* Legacy */,
@@ -1907,7 +1907,7 @@
 				AE9E39DF81E38D909C0A1F315C8A3AB3 /* LightLightnessRangeSetUnacknowledged.swift in Sources */,
 				91766AE704C9C0CF849DC54E501F2173 /* LightLightnessRangeStatus.swift in Sources */,
 				5A45D7A96C61FFA95304191C2B5B4EA2 /* LightLightnessSet.swift in Sources */,
-				525A60FF2518D95400AC394E /* ExportConfiguration.swift in Sources */,
+				522F2B8C2524869600F9B258 /* ExportConfiguration.swift in Sources */,
 				191D54E8D9E58476A2C6FE84A44516FB /* LightLightnessSetUnacknowledged.swift in Sources */,
 				1CDD968F16D297BCB744EF54EA1536A3 /* LightLightnessStatus.swift in Sources */,
 				EE8A7F55DFD738184BD7E871B76E73B6 /* Location.swift in Sources */,
