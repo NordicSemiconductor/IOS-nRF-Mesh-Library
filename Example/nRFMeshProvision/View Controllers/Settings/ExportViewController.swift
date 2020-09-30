@@ -135,6 +135,8 @@ class ExportViewController: UITableViewController {
         case IndexPath.networkKeysSection:
             return "At least one Network Key must be selected. Only Nodes that store selected keys and "
                  + "Application Keys bound to them will be exported."
+        case IndexPath.optionsSection:
+            return "Device Keys allow nodes to be reconfigured or reset (removed from network)."
         default:
             return nil
         }
@@ -158,6 +160,7 @@ class ExportViewController: UITableViewController {
             let provisioner = network.provisioners[indexPath.row]
             cell.textLabel?.text = provisioner.name
             cell.textLabel?.isEnabled = !full
+            cell.imageView?.image = #imageLiteral(resourceName: "ic_security_24pt")
             cell.accessoryType = !full && selectedProvisioners.contains(provisioner) ? .checkmark : .none
             cell.selectionStyle = !full ? .default : .none
             return cell
@@ -172,6 +175,7 @@ class ExportViewController: UITableViewController {
             let networkKey = network.networkKeys[indexPath.row]
             cell.textLabel?.text = networkKey.name
             cell.textLabel?.isEnabled = !full
+            cell.imageView?.image = #imageLiteral(resourceName: "ic_vpn_key_24pt")
             cell.accessoryType = !full && selectedNetworkKeys.contains(networkKey) ? .checkmark : .none
             cell.selectionStyle = !full ? .default : .none
             return cell
@@ -272,12 +276,26 @@ private extension ExportViewController {
                 DispatchQueue.main.async {
                     let controller = UIActivityViewController(activityItems: [fileURL], applicationActivities: nil)
                     controller.popoverPresentationController?.barButtonItem = self.doneButton
+                    controller.completionWithItemsHandler = { type, success, items, error in
+                        if success {
+                            self.dismiss(animated: true)
+                        } else {
+                            if let error = error {
+                                print("Export failed: \(error)")
+                                self.presentAlert(title: "Error",
+                                                  message: "Exporting Mesh Network configuration failed "
+                                                         + "with error \(error.localizedDescription).")
+                            }
+                        }
+                    }
                     self.present(controller, animated: true)
                 }
             } catch {
                 print("Export failed: \(error)")
                 DispatchQueue.main.async {
-                    self.presentAlert(title: "Error", message: "Exporting Mesh Network configuration failed.")
+                    self.presentAlert(title: "Error",
+                                      message: "Exporting Mesh Network configuration failed "
+                                             + "with error \(error.localizedDescription).")
                 }
             }
         }
