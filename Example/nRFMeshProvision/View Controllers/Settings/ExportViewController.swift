@@ -254,6 +254,10 @@ private extension ExportViewController {
         exportDeviceKeys = control.isOn
     }
     
+    /// Exports the mesh network data using the given configuration.
+    ///
+    /// - parameter exportConfiguration: The configuration containing information which
+    ///                                  parameters are to be exported.
     func exportNetwork(using exportConfiguration: ExportConfiguration) {
         let manager = MeshNetworkManager.instance
         
