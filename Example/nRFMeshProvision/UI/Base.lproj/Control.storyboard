@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14868" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="xxw-ay-9Ic">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="17156" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="xxw-ay-9Ic">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14824"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17125"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="collection view cell content view" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -42,7 +43,7 @@
                     <collectionView key="view" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" id="Urm-V3-iEi">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="808"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
+                        <color key="backgroundColor" systemColor="systemGroupedBackgroundColor"/>
                         <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="10" minimumInteritemSpacing="10" id="U0e-mu-hcz">
                             <size key="itemSize" width="130" height="130"/>
                             <size key="headerReferenceSize" width="50" height="50"/>
@@ -61,7 +62,7 @@
                                             <rect key="frame" x="0.0" y="0.0" width="130" height="72"/>
                                             <color key="tintColor" red="0.81568627449999997" green="0.87450980389999999" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                         </imageView>
-                                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="LGq-Zr-OtD">
+                                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="LGq-Zr-OtD">
                                             <rect key="frame" x="0.0" y="82" width="65" height="48"/>
                                             <constraints>
                                                 <constraint firstAttribute="height" constant="48" id="xd6-kl-m7m"/>
@@ -72,7 +73,7 @@
                                                 <action selector="onTapped:" destination="TEP-VO-Bjf" eventType="touchUpInside" id="hW8-tO-pR4"/>
                                             </connections>
                                         </button>
-                                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="xX7-oQ-uFu">
+                                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="xX7-oQ-uFu">
                                             <rect key="frame" x="65" y="82" width="65" height="48"/>
                                             <constraints>
                                                 <constraint firstAttribute="height" constant="48" id="URJ-6p-slB"/>
@@ -84,7 +85,6 @@
                                             </connections>
                                         </button>
                                     </subviews>
-                                    <color key="backgroundColor" cocoaTouchSystemColor="tableCellGroupedBackgroundColor"/>
                                     <constraints>
                                         <constraint firstItem="I2I-f3-Kpz" firstAttribute="leading" secondItem="6Ok-dl-x1h" secondAttribute="leading" id="Afw-gx-RWy"/>
                                         <constraint firstItem="xX7-oQ-uFu" firstAttribute="leading" secondItem="LGq-Zr-OtD" secondAttribute="trailing" id="D9D-DH-RXR"/>
@@ -98,6 +98,7 @@
                                         <constraint firstAttribute="bottom" secondItem="LGq-Zr-OtD" secondAttribute="bottom" id="xb3-hc-M9n"/>
                                     </constraints>
                                 </collectionViewCellContentView>
+                                <color key="backgroundColor" systemColor="secondarySystemGroupedBackgroundColor"/>
                                 <connections>
                                     <outlet property="icon" destination="I2I-f3-Kpz" id="gbs-Bo-hbk"/>
                                     <outlet property="offButton" destination="xX7-oQ-uFu" id="Ha1-3l-4Wd"/>
@@ -116,7 +117,6 @@
                                             <color key="tintColor" white="0.66666666669999997" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         </imageView>
                                     </subviews>
-                                    <color key="backgroundColor" cocoaTouchSystemColor="tableCellGroupedBackgroundColor"/>
                                     <constraints>
                                         <constraint firstAttribute="bottom" secondItem="iL6-2P-Blm" secondAttribute="bottom" id="0PY-Ic-8h7"/>
                                         <constraint firstItem="iL6-2P-Blm" firstAttribute="leading" secondItem="KDx-Nz-DhB" secondAttribute="leading" id="JCu-kR-MaR"/>
@@ -124,6 +124,7 @@
                                         <constraint firstItem="iL6-2P-Blm" firstAttribute="top" secondItem="KDx-Nz-DhB" secondAttribute="top" id="rQo-k1-Vym"/>
                                     </constraints>
                                 </collectionViewCellContentView>
+                                <color key="backgroundColor" systemColor="secondarySystemGroupedBackgroundColor"/>
                                 <connections>
                                     <outlet property="icon" destination="iL6-2P-Blm" id="PxH-Na-WMl"/>
                                 </connections>
@@ -139,7 +140,7 @@
                                             <rect key="frame" x="0.0" y="0.0" width="130" height="80"/>
                                             <color key="tintColor" red="0.96078431369999995" green="0.50980392159999999" blue="0.16078431369999999" alpha="1" colorSpace="calibratedRGB"/>
                                         </imageView>
-                                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="9Xt-K4-EIU">
+                                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="9Xt-K4-EIU">
                                             <rect key="frame" x="65" y="82" width="65" height="48"/>
                                             <constraints>
                                                 <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="48" id="is5-El-fEa"/>
@@ -151,7 +152,7 @@
                                                 <action selector="plusTapped:" destination="Axc-6v-6B2" eventType="touchUpInside" id="0fj-Di-B5m"/>
                                             </connections>
                                         </button>
-                                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Qjv-Hy-YYJ">
+                                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Qjv-Hy-YYJ">
                                             <rect key="frame" x="0.0" y="82" width="65" height="48"/>
                                             <constraints>
                                                 <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="48" id="HpB-rd-gLO"/>
@@ -164,7 +165,6 @@
                                             </connections>
                                         </button>
                                     </subviews>
-                                    <color key="backgroundColor" cocoaTouchSystemColor="tableCellGroupedBackgroundColor"/>
                                     <constraints>
                                         <constraint firstAttribute="trailing" secondItem="KMJ-gl-Mn4" secondAttribute="trailing" id="BXy-pK-BwK"/>
                                         <constraint firstAttribute="bottom" secondItem="KMJ-gl-Mn4" secondAttribute="bottomMargin" multiplier="1.8" id="HrW-ee-JUi"/>
@@ -178,6 +178,7 @@
                                         <constraint firstItem="KMJ-gl-Mn4" firstAttribute="leading" secondItem="T0j-vx-REu" secondAttribute="leading" id="qbs-YG-OLR"/>
                                     </constraints>
                                 </collectionViewCellContentView>
+                                <color key="backgroundColor" systemColor="secondarySystemGroupedBackgroundColor"/>
                                 <connections>
                                     <outlet property="icon" destination="KMJ-gl-Mn4" id="oet-Aa-MUu"/>
                                     <outlet property="minusButton" destination="Qjv-Hy-YYJ" id="atQ-hd-XXV"/>
@@ -201,7 +202,6 @@
                                             <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         </imageView>
                                     </subviews>
-                                    <color key="backgroundColor" cocoaTouchSystemColor="tableCellGroupedBackgroundColor"/>
                                     <constraints>
                                         <constraint firstAttribute="bottom" secondItem="ToJ-Et-z0y" secondAttribute="bottom" id="2VK-Ve-AE4"/>
                                         <constraint firstAttribute="bottom" secondItem="KSw-i1-MGx" secondAttribute="bottom" id="5aQ-Jv-hng"/>
@@ -213,6 +213,7 @@
                                         <constraint firstAttribute="trailing" secondItem="ToJ-Et-z0y" secondAttribute="trailing" id="zKs-9D-AQ4"/>
                                     </constraints>
                                 </collectionViewCellContentView>
+                                <color key="backgroundColor" systemColor="secondarySystemGroupedBackgroundColor"/>
                                 <connections>
                                     <outlet property="fullIcon" destination="ToJ-Et-z0y" id="WfJ-ws-8CY"/>
                                     <outlet property="icon" destination="KSw-i1-MGx" id="iXu-jC-jtn"/>
@@ -229,7 +230,7 @@
                                             <rect key="frame" x="0.0" y="0.0" width="130" height="72"/>
                                             <color key="tintColor" red="0.0" green="0.46666666670000001" blue="0.7843137255" alpha="1" colorSpace="calibratedRGB"/>
                                         </imageView>
-                                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Oib-i6-1MV">
+                                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Oib-i6-1MV">
                                             <rect key="frame" x="0.0" y="82" width="65" height="48"/>
                                             <constraints>
                                                 <constraint firstAttribute="height" constant="48" id="Chc-EM-btV"/>
@@ -240,7 +241,7 @@
                                                 <action selector="onTapped:" destination="XSm-FN-yJm" eventType="touchUpInside" id="YwK-ky-gDG"/>
                                             </connections>
                                         </button>
-                                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Yfd-1S-qki">
+                                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Yfd-1S-qki">
                                             <rect key="frame" x="65" y="82" width="65" height="48"/>
                                             <constraints>
                                                 <constraint firstAttribute="height" constant="48" id="0cz-uc-R2g"/>
@@ -252,7 +253,6 @@
                                             </connections>
                                         </button>
                                     </subviews>
-                                    <color key="backgroundColor" cocoaTouchSystemColor="tableCellGroupedBackgroundColor"/>
                                     <constraints>
                                         <constraint firstAttribute="bottom" secondItem="Oib-i6-1MV" secondAttribute="bottom" id="2wm-ak-vFv"/>
                                         <constraint firstItem="w88-ff-jaJ" firstAttribute="leading" secondItem="WPp-KP-9Qd" secondAttribute="leading" id="8Hl-9r-NDn"/>
@@ -266,6 +266,7 @@
                                         <constraint firstItem="Oib-i6-1MV" firstAttribute="leading" secondItem="WPp-KP-9Qd" secondAttribute="leading" id="z6W-U8-9d9"/>
                                     </constraints>
                                 </collectionViewCellContentView>
+                                <color key="backgroundColor" systemColor="secondarySystemGroupedBackgroundColor"/>
                                 <connections>
                                     <outlet property="icon" destination="w88-ff-jaJ" id="AeB-UF-WWR"/>
                                     <outlet property="offButton" destination="Yfd-1S-qki" id="H6P-SF-yRO"/>
@@ -284,11 +285,11 @@
                                     <nil key="highlightedColor"/>
                                 </label>
                             </subviews>
+                            <viewLayoutGuide key="safeArea" id="mQo-Ye-Jfj"/>
                             <constraints>
                                 <constraint firstAttribute="bottomMargin" secondItem="r5F-dR-kRq" secondAttribute="bottom" id="QJm-KT-6MF"/>
                                 <constraint firstItem="r5F-dR-kRq" firstAttribute="leading" secondItem="mQo-Ye-Jfj" secondAttribute="leading" constant="16" id="mPb-Bv-aQd"/>
                             </constraints>
-                            <viewLayoutGuide key="safeArea" id="mQo-Ye-Jfj"/>
                             <connections>
                                 <outlet property="title" destination="r5F-dR-kRq" id="Z8N-Yn-jC7"/>
                             </connections>
@@ -305,10 +306,16 @@
             <point key="canvasLocation" x="1701.449275362319" y="-237.05357142857142"/>
         </scene>
     </scenes>
+    <color key="tintColor" red="0.0" green="0.46666666670000001" blue="0.7843137255" alpha="1" colorSpace="calibratedRGB"/>
     <resources>
         <image name="groups_generic_level_outline" width="50" height="50"/>
         <image name="groups_generic_onoff_outline" width="50" height="50"/>
         <image name="tab_control_outline_black_24pt" width="24" height="24"/>
+        <systemColor name="secondarySystemGroupedBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+        <systemColor name="systemGroupedBackgroundColor">
+            <color red="0.94901960784313721" green="0.94901960784313721" blue="0.96862745098039216" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </systemColor>
     </resources>
-    <color key="tintColor" red="0.0" green="0.46666666670000001" blue="0.7843137255" alpha="1" colorSpace="calibratedRGB"/>
 </document>
