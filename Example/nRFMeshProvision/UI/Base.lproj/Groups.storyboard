@@ -352,7 +352,7 @@
                         </barButtonItem>
                     </navigationItem>
                     <connections>
-                        <segue destination="Z7x-iD-HmC" kind="custom" identifier="showDetails" customClass="BottomSheetSegue" customModule="nRFMeshProvision_Example" customModuleProvider="target" id="Kyp-WD-PEV"/>
+                        <segue destination="Z7x-iD-HmC" kind="custom" identifier="showDetails" customClass="DialogSegue" customModule="nRFMeshProvision_Example" customModuleProvider="target" id="Kyp-WD-PEV"/>
                     </connections>
                 </collectionViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="qdR-KH-jUW" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -362,7 +362,7 @@
         <!--Targets-->
         <scene sceneID="Gaz-W4-vSH">
             <objects>
-                <tableViewController id="M2D-J7-ZN8" customClass="BottomSheetViewController" customModule="nRFMeshProvision_Example" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController id="M2D-J7-ZN8" customClass="GroupTargetModelsViewController" customModule="nRFMeshProvision_Example" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="vak-nf-flV">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>

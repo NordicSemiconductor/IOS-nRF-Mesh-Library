@@ -122,8 +122,8 @@ class GroupControlViewController: ProgressCollectionViewController {
             viewController.canModifyAddress = sections.isEmpty
         } else if segue.identifier == "showDetails" {
             let destination = segue.destination as! UINavigationController
-            let bottomSheet = destination.topViewController as! BottomSheetViewController
-            bottomSheet.models = sender as? [Model]
+            let dialog = destination.topViewController as! GroupTargetModelsViewController
+            dialog.models = sender as? [Model]
         }
     }
 

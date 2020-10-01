@@ -56,8 +56,8 @@
 		52518B3122E0B18400A1FD1E /* GroupsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52518B3022E0B18400A1FD1E /* GroupsViewController.swift */; };
 		52518B3322E0B43200A1FD1E /* GroupCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52518B3222E0B43200A1FD1E /* GroupCell.swift */; };
 		525242E0225CBFEC0044CECB /* RangeObject+String.swift in Sources */ = {isa = PBXBuildFile; fileRef = 525242DF225CBFEC0044CECB /* RangeObject+String.swift */; };
-		52547EF92317ECA70002AA7B /* BottomSheetSegue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52547EF82317ECA70002AA7B /* BottomSheetSegue.swift */; };
-		52547EFB231800F30002AA7B /* BottomSheetViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52547EFA231800F30002AA7B /* BottomSheetViewController.swift */; };
+		52547EF92317ECA70002AA7B /* DialogSegue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52547EF82317ECA70002AA7B /* DialogSegue.swift */; };
+		52547EFB231800F30002AA7B /* GroupTargetModelsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52547EFA231800F30002AA7B /* GroupTargetModelsViewController.swift */; };
 		52547F24232A3F470002AA7B /* RangeCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52547F1D232A3F470002AA7B /* RangeCell.swift */; };
 		52547F25232A3F470002AA7B /* EditProvisionerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52547F1E232A3F470002AA7B /* EditProvisionerViewController.swift */; };
 		52547F26232A3F470002AA7B /* ProvisionersViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52547F1F232A3F470002AA7B /* ProvisionersViewController.swift */; };
@@ -215,8 +215,8 @@
 		52518B3022E0B18400A1FD1E /* GroupsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupsViewController.swift; sourceTree = "<group>"; };
 		52518B3222E0B43200A1FD1E /* GroupCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupCell.swift; sourceTree = "<group>"; };
 		525242DF225CBFEC0044CECB /* RangeObject+String.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "RangeObject+String.swift"; path = "Utils/RangeObject+String.swift"; sourceTree = "<group>"; };
-		52547EF82317ECA70002AA7B /* BottomSheetSegue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomSheetSegue.swift; sourceTree = "<group>"; };
-		52547EFA231800F30002AA7B /* BottomSheetViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomSheetViewController.swift; sourceTree = "<group>"; };
+		52547EF82317ECA70002AA7B /* DialogSegue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DialogSegue.swift; sourceTree = "<group>"; };
+		52547EFA231800F30002AA7B /* GroupTargetModelsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupTargetModelsViewController.swift; sourceTree = "<group>"; };
 		52547F1D232A3F470002AA7B /* RangeCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RangeCell.swift; sourceTree = "<group>"; };
 		52547F1E232A3F470002AA7B /* EditProvisionerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EditProvisionerViewController.swift; sourceTree = "<group>"; };
 		52547F1F232A3F470002AA7B /* ProvisionersViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProvisionersViewController.swift; sourceTree = "<group>"; };
@@ -456,8 +456,8 @@
 				52518B3022E0B18400A1FD1E /* GroupsViewController.swift */,
 				5251498022E0E36600CBF1E3 /* AddGroupViewController.swift */,
 				521215282315290F0059FB3D /* GroupControlViewController.swift */,
-				52547EF82317ECA70002AA7B /* BottomSheetSegue.swift */,
-				52547EFA231800F30002AA7B /* BottomSheetViewController.swift */,
+				52547EF82317ECA70002AA7B /* DialogSegue.swift */,
+				52547EFA231800F30002AA7B /* GroupTargetModelsViewController.swift */,
 			);
 			path = Groups;
 			sourceTree = "<group>";
@@ -1007,7 +1007,7 @@
 				5292F8A5250237A600EA0F2A /* NodeStoreSceneViewController.swift in Sources */,
 				52E54CD62343875400478F05 /* GenericLevelClientCell.swift in Sources */,
 				529B76492252499E008F1CE7 /* UIColor+Nordic.swift in Sources */,
-				52547EF92317ECA70002AA7B /* BottomSheetSegue.swift in Sources */,
+				52547EF92317ECA70002AA7B /* DialogSegue.swift in Sources */,
 				525242E0225CBFEC0044CECB /* RangeObject+String.swift in Sources */,
 				529B7575224107A5008F1CE7 /* AppInfo.swift in Sources */,
 				52121526231528AC0059FB3D /* GenericOnOffGroupCell.swift in Sources */,
@@ -1038,7 +1038,7 @@
 				528445C924EEA765002168A1 /* HeartbeatSubscriptionCell.swift in Sources */,
 				5231403F2301761C0074325A /* ConfigurationServerViewCell.swift in Sources */,
 				52A8EA9624EE704A004C14C7 /* SetHeartbeatSubscriptionViewController.swift in Sources */,
-				52547EFB231800F30002AA7B /* BottomSheetViewController.swift in Sources */,
+				52547EFB231800F30002AA7B /* GroupTargetModelsViewController.swift in Sources */,
 				5217D2E0250F522A004FDE79 /* GenericDefaultTranstionTimeServerDelegate.swift in Sources */,
 				52E54CD42343874000478F05 /* GenericOnOffServerCell.swift in Sources */,
 				52547F24232A3F470002AA7B /* RangeCell.swift in Sources */,

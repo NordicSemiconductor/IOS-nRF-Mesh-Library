@@ -30,9 +30,9 @@
 
 import UIKit
 
-class BottomSheetSegue: UIStoryboardSegue {
+class DialogSegue: UIStoryboardSegue {
 
-    private var selfRetained: BottomSheetSegue? = nil
+    private var selfRetained: DialogSegue? = nil
     
     override func perform() {
         selfRetained = self
@@ -45,9 +45,11 @@ class BottomSheetSegue: UIStoryboardSegue {
     }
 }
 
-extension BottomSheetSegue: UIViewControllerTransitioningDelegate {
+extension DialogSegue: UIViewControllerTransitioningDelegate {
     
-    public func animationController(forPresented presented: UIViewController, presenting: UIViewController, source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+    public func animationController(forPresented presented: UIViewController,
+                                    presenting: UIViewController,
+                                    source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
         return Presenter()
     }
     
@@ -58,7 +60,7 @@ extension BottomSheetSegue: UIViewControllerTransitioningDelegate {
     
 }
 
-extension BottomSheetSegue {
+extension DialogSegue {
     
     private class Presenter: NSObject, UIViewControllerAnimatedTransitioning {
         
@@ -88,7 +90,7 @@ extension BottomSheetSegue {
                 }
                 
                 if let navigationController = toViewController as? UINavigationController,
-                    let bottomSheet = navigationController.topViewController as? BottomSheetViewController {
+                   let bottomSheet = navigationController.topViewController as? GroupTargetModelsViewController {
                     let navBarHeight = navigationController.navigationBar.frame.height
                     let subtitleCellHeight = 56
                     let itemsCount = min(5, bottomSheet.models.count)
