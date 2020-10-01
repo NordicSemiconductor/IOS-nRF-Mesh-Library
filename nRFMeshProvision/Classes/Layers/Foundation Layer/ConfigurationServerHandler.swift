@@ -297,8 +297,7 @@ internal class ConfigurationServerHandler: ModelDelegate {
             guard let model = element.model(withModelId: request.modelId) else {
                 return ConfigModelPublicationStatus(responseTo: request, with: .invalidModel)
             }
-            guard request.publish.isCancel,
-                  let _ = model.delegate?.publicationMessageComposer else {
+            guard let _ = model.delegate?.publicationMessageComposer else {
                 return ConfigModelPublicationStatus(responseTo: request, with: .invalidPublishParameters)
             }
             guard meshNetwork.applicationKeys[request.publish.index] != nil else {
