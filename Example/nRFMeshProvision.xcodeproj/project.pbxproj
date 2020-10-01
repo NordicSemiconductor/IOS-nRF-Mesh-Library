@@ -119,6 +119,7 @@
 		52A9C1C52313D7D80036792A /* GenericLevelViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52A9C1C32313D7D80036792A /* GenericLevelViewCell.swift */; };
 		52A9C1C62313D7D80036792A /* GenericLevel.xib in Resources */ = {isa = PBXBuildFile; fileRef = 52A9C1C42313D7D80036792A /* GenericLevel.xib */; };
 		52B7F67D229829F200B0A42F /* Addresses.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52B7F67C229829F200B0A42F /* Addresses.swift */; };
+		52B7FD6D2525B40300308673 /* NodeSceneRecallViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52B7FD6C2525B40300308673 /* NodeSceneRecallViewController.swift */; };
 		52BC6F4824507A5400EBEEA4 /* DisconnectCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52BC6F4724507A5400EBEEA4 /* DisconnectCell.swift */; };
 		52BC6F4A2452C4FB00EBEEA4 /* SecureNetworkBeacons.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52BC6F492452C4FB00EBEEA4 /* SecureNetworkBeacons.swift */; };
 		52CD0A50232FA6CD00A9A181 /* ProxyViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52CD0A4F232FA6CD00A9A181 /* ProxyViewController.swift */; };
@@ -280,6 +281,7 @@
 		52A9C1C32313D7D80036792A /* GenericLevelViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericLevelViewCell.swift; sourceTree = "<group>"; };
 		52A9C1C42313D7D80036792A /* GenericLevel.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = GenericLevel.xib; sourceTree = "<group>"; };
 		52B7F67C229829F200B0A42F /* Addresses.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Addresses.swift; sourceTree = "<group>"; };
+		52B7FD6C2525B40300308673 /* NodeSceneRecallViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NodeSceneRecallViewController.swift; sourceTree = "<group>"; };
 		52BC6F4724507A5400EBEEA4 /* DisconnectCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisconnectCell.swift; sourceTree = "<group>"; };
 		52BC6F492452C4FB00EBEEA4 /* SecureNetworkBeacons.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecureNetworkBeacons.swift; sourceTree = "<group>"; };
 		52CD0A4F232FA6CD00A9A181 /* ProxyViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProxyViewController.swift; sourceTree = "<group>"; };
@@ -629,6 +631,7 @@
 				523F776722C615CE0030EA6A /* NodeAppKeysViewController.swift */,
 				523F776D22C63EAD0030EA6A /* NodeAddAppKeyViewController.swift */,
 				5292F8A0250137DC00EA0F2A /* NodeScenesViewController.swift */,
+				52B7FD6C2525B40300308673 /* NodeSceneRecallViewController.swift */,
 				5292F8A4250237A600EA0F2A /* NodeStoreSceneViewController.swift */,
 				523F777822CB57190030EA6A /* ModelViewController.swift */,
 				523F777A22CB86A00030EA6A /* ModelBindAppKeyViewController.swift */,
@@ -984,6 +987,7 @@
 				523F777B22CB86A00030EA6A /* ModelBindAppKeyViewController.swift in Sources */,
 				52DF5D8F229691BD00C297C1 /* NetworkConnection.swift in Sources */,
 				52547F27232A3F470002AA7B /* EditRangesViewController.swift in Sources */,
+				52B7FD6D2525B40300308673 /* NodeSceneRecallViewController.swift in Sources */,
 				521215312316C36B0059FB3D /* GenericLevelGroupCell.swift in Sources */,
 				52E54CDD23438B2E00478F05 /* GenericOnOffClientDelegate.swift in Sources */,
 				52DF5D8C228DAA0500C297C1 /* NodeViewCell.swift in Sources */,

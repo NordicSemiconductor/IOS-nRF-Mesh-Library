@@ -105,6 +105,16 @@ class NodeScenesViewController: ProgressViewController, Editable {
             viewController.node = node
             viewController.delegate = self
         }
+        if segue.identifier == "recall" {
+            let cell = sender! as! UITableViewCell
+            let indexPath = tableView.indexPath(for: cell)!
+            
+            let navigationController = segue.destination as! UINavigationController
+            let viewController = navigationController.topViewController as! NodeSceneRecallViewController
+            let scene = node.scenes[indexPath.sceneIndex]
+            viewController.scene = scene
+            viewController.delegate = self
+        }
     }
 
     // MARK: - Table view data source
@@ -137,8 +147,6 @@ class NodeScenesViewController: ProgressViewController, Editable {
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        let scene = node.scenes[indexPath.sceneIndex]
-        recallScene(scene.number)
     }
     
     override func tableView(_ tableView: UITableView,
@@ -286,6 +294,28 @@ private extension NodeScenesViewController {
     
 }
 
+extension NodeScenesViewController: SceneRecallDelegate {
+    
+    func recallScene(_ scene: SceneNumber, transitionTime: TransitionTime?, delay: UInt8?) {
+        guard ensureClientReady() else {
+            return
+        }
+        guard let sceneServerModel = sceneServerModel else {
+            return
+        }
+        start("Recalling Scene...") {
+            if let transitionTime = transitionTime, let delay = delay {
+                let message = SceneRecall(scene, transitionTime: transitionTime, delay: delay)
+                return try MeshNetworkManager.instance.send(message, to: sceneServerModel)
+            } else {
+                let message = SceneRecall(scene)
+                return try MeshNetworkManager.instance.send(message, to: sceneServerModel)
+            }
+        }
+    }
+    
+}
+
 private extension NodeScenesViewController {
     
     @objc func getScenes() {
@@ -312,19 +342,6 @@ private extension NodeScenesViewController {
         }
         start("Reading Current Scene...") {
             let message = SceneGet()
-            return try MeshNetworkManager.instance.send(message, to: sceneServerModel)
-        }
-    }
-    
-    func recallScene(_ scene: SceneNumber) {
-        guard ensureClientReady() else {
-            return
-        }
-        guard let sceneServerModel = sceneServerModel else {
-            return
-        }
-        start("Recalling Scene...") {
-            let message = SceneRecall(scene)
             return try MeshNetworkManager.instance.send(message, to: sceneServerModel)
         }
     }
