@@ -91,7 +91,7 @@ struct GenericState<T: Equatable> {
             return
         }
         self.value = state.value
-        guard state.value != targetValue else {
+        guard state.transition != nil || state.value != targetValue else {
             self.transition = nil
             return
         }
@@ -111,7 +111,7 @@ struct GenericState<T: Equatable> {
             return
         }
         self.value = state.value
-        guard state.value != targetValue else {
+        guard state.transition != nil || state.value != targetValue else {
             self.transition = nil
             return
         }
