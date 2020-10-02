@@ -32,18 +32,20 @@ The app and the library are released under BSD-3 license. Feel free to modify th
 8. Setting and removing subscriptions to a Model.
 9. Groups, including those with Virtual Addresses.
 10. UI for controlling groups (Generic OnOff and Generic Level (delta) are supported).
-12. Handling Configuration Server message sent by other Provisioner.
+12. Handling Configuration Server messages sent by other Provisioner.
 13. Generic OnOff and Vendor model have dedicated controls in sample app.
 14. Proxy Filter.
 15. IV Index update (handling updates received in Secure Network beacons).
+16. Hearbeats (both as client and server).
+17. Scenes (both as client and server).
+18. Partial export (allows to export only part of the network, for example for a Guest)
 
 ## NOT (yet) supported features
 
 1. Many SIG defined models, except from supported ones.
 2. Key Refresh Procedure, IV Index update (initiation).
 3. Health server messages.
-4. Hearbeats.
-5. Remote Provisioning.
+4. Remote Provisioning.
 
 ## Documentation
 
@@ -51,7 +53,7 @@ The documentation for this library may be found [here](Documentation/README.md).
 
 ## Requirements
 
-* Xcode 11 or newer.
+* Xcode 12 or newer.
 * An iOS 10.0 or newer device with BLE capabilities.
 
 ## Optional
