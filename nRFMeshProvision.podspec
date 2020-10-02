@@ -9,7 +9,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'nRFMeshProvision'
-  s.version          = '3.0'
+  s.version          = '3.0-beta1'
   s.summary          = 'A Bluetooth Mesh library'
   s.description      = <<-DESC
   nRF Mesh is a Bluetooth Mesh compliant library that has many features such as provisioning, configuration and control of Bluetooth Mesh compliant nodes.
