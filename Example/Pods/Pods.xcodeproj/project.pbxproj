@@ -1427,7 +1427,7 @@
 			path = Configuration;
 			sourceTree = "<group>";
 		};
-		ECD182667F0A857E65138075BCB0237B /* Lightning */ = {
+		ECD182667F0A857E65138075BCB0237B /* Lighting */ = {
 			isa = PBXGroup;
 			children = (
 				332DE45AF25C8C86FEE74FF3FD622146 /* LightCTLDefaultGet.swift */,
@@ -1487,8 +1487,7 @@
 				405D4E90C4970117B05FCD4EFA15748A /* LightLightnessSetUnacknowledged.swift */,
 				029253ED59F93631A93793D3A4082837 /* LightLightnessStatus.swift */,
 			);
-			name = Lightning;
-			path = Lightning;
+			path = Lighting;
 			sourceTree = "<group>";
 		};
 		F2A0CD29360AD1A0E801B1AFD03C2BA5 /* Mesh Model */ = {
@@ -1558,7 +1557,7 @@
 				5C176784E5FE8346A3537467F4EE20F9 /* VendorMessage.swift */,
 				D51675765BA437ED2767DD565B9F5E30 /* Foundation */,
 				AD496C53D3865D73BE21DA359E7BA52A /* Generic */,
-				ECD182667F0A857E65138075BCB0237B /* Lightning */,
+				ECD182667F0A857E65138075BCB0237B /* Lighting */,
 				64D8C6BC2241C0C5AFB7E35BC58AF03C /* Proxy Configuration */,
 				8DCF922B4B811A0FCD9D2BFEED0D40A0 /* Time and Scenes */,
 			);
