@@ -408,7 +408,7 @@ private extension LowerTransportLayer {
             logger?.i(.lowerTransport, "\(message) received")
             // A single segment message may immediately be acknowledged.
             if let provisionerNode = meshNetwork.localProvisioner?.node,
-                networkPdu.destination == provisionerNode.unicastAddress {
+               provisionerNode.hasAllocatedAddress(networkPdu.destination) {
                 let ttl = networkPdu.ttl > 0 ? provisionerNode.defaultTTL ?? networkManager.defaultTtl : 0
                 sendAck(for: [segment], withTtl: ttl)
             }
@@ -435,7 +435,7 @@ private extension LowerTransportLayer {
                 logger?.i(.lowerTransport, "\(message) received")
                 // If the access message was targeting directly the local Provisioner...
                 if let provisionerNode = meshNetwork.localProvisioner?.node,
-                    networkPdu.destination == provisionerNode.unicastAddress {
+                   provisionerNode.hasAllocatedAddress(networkPdu.destination) {
                     // ...invalidate timers...
                     incompleteTimers.removeValue(forKey: key)?.invalidate()
                     acknowledgmentTimers.removeValue(forKey: key)?.invalidate()
@@ -449,7 +449,7 @@ private extension LowerTransportLayer {
                 // The Provisioner shall send block acknowledgment only if the message was
                 // send directly to it's Unicast Address.
                 guard let provisionerNode = meshNetwork.localProvisioner?.node,
-                      networkPdu.destination == provisionerNode.unicastAddress else {
+                      provisionerNode.hasAllocatedAddress(networkPdu.destination) else {
                     return nil
                 }
                 // If the Lower Transport Layer receives any segment while the incomplete
