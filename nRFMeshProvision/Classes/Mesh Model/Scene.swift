@@ -56,20 +56,21 @@ public class Scene: Codable {
     // MARK: - Codable
     
     private enum CodingKeys: CodingKey {
-        case scene
+        case scene // 3.0-beta1 was using 'scene' instead of 'number'.
+        case number
         case name
         case addresses
     }
     
     public required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        let sceneNumberString  = try container.decode(String.self, forKey: .scene)
+        let sceneNumberString  = try container.decode(String.self, forKey: .number, or: .scene)
         guard let number = SceneNumber(hex: sceneNumberString) else {
-            throw DecodingError.dataCorruptedError(forKey: .scene, in: container,
-                                                       debugDescription: "Scene must be 4-character hexadecimal string.")
+            throw DecodingError.dataCorruptedError(forKey: .number, in: container,
+                                                   debugDescription: "Scene number must be 4-character hexadecimal string.")
         }
         guard number.isValidSceneNumber else {
-            throw DecodingError.dataCorruptedError(forKey: .scene, in: container,
+            throw DecodingError.dataCorruptedError(forKey: .number, in: container,
                                                    debugDescription: "Invalid scene number.")
         }
         self.number = number
@@ -92,7 +93,7 @@ public class Scene: Codable {
     
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(number.hex, forKey: .scene)
+        try container.encode(number.hex, forKey: .number)
         try container.encode(name, forKey: .name)
         try container.encode(addresses.map { $0.hex }, forKey: .addresses)
     }
@@ -102,9 +103,8 @@ internal extension Scene {
     
     /// Adds the Unicast Address to the Scene object.
     ///
-    /// - parameter address: The Unicast Address that belongs to an Element
-    ///                      with Scene Server model that is confirmed to have
-    ///                      the Scene in its Scene Register.
+    /// - parameter address: The Unicast Address of an Element with Scene Server model
+    ///                      that is confirmed to have the Scene in its Scene Register.
     func add(address: Address) {
         guard address.isUnicast && !addresses.contains(address) else {
             return
@@ -116,9 +116,8 @@ internal extension Scene {
     
     /// Removes the Unicast Address from the Scene object.
     ///
-    /// - parameter address: The Unicast Address that belongs to an Element
-    ///                      with Scene Server model that may have the Scene
-    ///                      in its Scene Register.
+    /// - parameter address: The Unicast Address of an Element with Scene Server model
+    ///                      that may have the Scene in its Scene Register.
     func remove(address: Address) {
         guard address.isUnicast,
               let index = addresses.firstIndex(of: address) else {
