@@ -112,12 +112,12 @@ internal class NetworkLayer {
             
         case .meshBeacon:
             if let beaconPdu = SecureNetworkBeacon.decode(pdu, for: meshNetwork) {
-                logger?.i(.network, "\(beaconPdu) receieved (decrypted using key: \(beaconPdu.networkKey))")
+                logger?.i(.network, "\(beaconPdu) received (decrypted using key: \(beaconPdu.networkKey))")
                 handle(secureNetworkBeacon: beaconPdu)
                 return
             }
             if let beaconPdu = UnprovisionedDeviceBeacon.decode(pdu, for: meshNetwork) {
-                logger?.i(.network, "\(beaconPdu) receieved")
+                logger?.i(.network, "\(beaconPdu) received")
                 handle(unprovisionedDeviceBeacon: beaconPdu)
                 return
             }
@@ -397,7 +397,7 @@ private extension NetworkLayer {
             logger?.w(.network, "Failed to decrypt proxy PDU")
             return
         }
-        logger?.i(.network, "\(controlMessage) receieved (decrypted using key: \(controlMessage.networkKey))")
+        logger?.i(.network, "\(controlMessage) received (decrypted using key: \(controlMessage.networkKey))")
         
         var MessageType: ProxyConfigurationMessage.Type?
         

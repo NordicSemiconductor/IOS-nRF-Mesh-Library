@@ -178,9 +178,9 @@ internal class AccessLayer {
                 request = context.request
                 context.invalidate()
             }
-            logger?.i(.access, "Response \(accessPdu) receieved (decrypted using key: \(keySet))")
+            logger?.i(.access, "Response \(accessPdu) received (decrypted using key: \(keySet))")
         } else {
-            logger?.i(.access, "\(accessPdu) receieved (decrypted using key: \(keySet))")
+            logger?.i(.access, "\(accessPdu) received (decrypted using key: \(keySet))")
         }
         handle(accessPdu: accessPdu, sentWith: keySet, asResponseTo: request)
     }

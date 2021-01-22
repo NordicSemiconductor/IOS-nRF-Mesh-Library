@@ -141,14 +141,14 @@ internal class LowerTransportLayer {
                 switch networkPdu.type {
                 case .accessMessage:
                     if let segment = SegmentedAccessMessage(fromSegmentPdu: networkPdu) {
-                        logger?.d(.lowerTransport, "\(segment) receieved (decrypted using key: \(segment.networkKey))")
+                        logger?.d(.lowerTransport, "\(segment) received (decrypted using key: \(segment.networkKey))")
                         if let pdu = assemble(segment: segment, createdFrom: networkPdu) {
                             return .success(.lowerTransportPdu(pdu))
                         }
                     }
                 case .controlMessage:
                     if let segment = SegmentedControlMessage(fromSegment: networkPdu) {
-                        logger?.d(.lowerTransport, "\(segment) receieved (decrypted using key: \(segment.networkKey))")
+                        logger?.d(.lowerTransport, "\(segment) received (decrypted using key: \(segment.networkKey))")
                         if let pdu = assemble(segment: segment, createdFrom: networkPdu) {
                             return .success(.lowerTransportPdu(pdu))
                         }
@@ -158,7 +158,7 @@ internal class LowerTransportLayer {
                 switch networkPdu.type {
                 case .accessMessage:
                     if let accessMessage = AccessMessage(fromUnsegmentedPdu: networkPdu) {
-                        logger?.i(.lowerTransport, "\(accessMessage) receieved (decrypted using key: \(accessMessage.networkKey))")
+                        logger?.i(.lowerTransport, "\(accessMessage) received (decrypted using key: \(accessMessage.networkKey))")
                         // Unsegmented message is not acknowledged. Just pass it to higher layer.
                         return .success(.lowerTransportPdu(accessMessage))
                     }
@@ -167,12 +167,12 @@ internal class LowerTransportLayer {
                     switch opCode {
                     case 0x00:
                         if let ack = SegmentAcknowledgmentMessage(fromNetworkPdu: networkPdu) {
-                            logger?.d(.lowerTransport, "\(ack) receieved (decrypted using key: \(ack.networkKey))")
+                            logger?.d(.lowerTransport, "\(ack) received (decrypted using key: \(ack.networkKey))")
                             return .success(.acknowledgement(ack))
                         }
                     default:
                         if let controlMessage = ControlMessage(fromNetworkPdu: networkPdu) {
-                            logger?.i(.lowerTransport, "\(controlMessage) receieved (decrypted using key: \(controlMessage.networkKey))")
+                            logger?.i(.lowerTransport, "\(controlMessage) received (decrypted using key: \(controlMessage.networkKey))")
                             // Unsegmented message is not acknowledged. Just pass it to higher layer.
                             return .success(.lowerTransportPdu(controlMessage))
                         }
