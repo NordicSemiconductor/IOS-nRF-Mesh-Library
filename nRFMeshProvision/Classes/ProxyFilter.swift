@@ -31,16 +31,16 @@
 import Foundation
 
 public enum ProxyFilerType: UInt8 {
-    /// A white list filter has an associated white list, which is a list of
-    /// destination addresses that are of interest for the Proxy Client.
-    /// The white list filter blocks all destination addresses except those
-    /// that have been added to the white list.
-    case whitelist = 0x00
-    /// A black list filter has an associated black list, which is a list of
-    /// destination addresses that the Proxy Client does not want to receive.
-    /// The black list filter accepts all destination addresses except those
-    /// that have been added to the black list.
-    case blacklist = 0x01
+    /// An inclusion list filter has an associated inclusion list, which is
+    /// a list of destination addresses that are of interest for the Proxy Client.
+    /// The inclusion list filter blocks all messages except those targetting
+    /// addresses added to the list.
+    case inclusionList = 0x00
+    /// An exclusion list filter has an associated exclusion list, which is
+    /// a list of destination addresses that the Proxy Client does not want to receive.
+    /// The exclusion list filter forwards all messages except those targetting
+    /// addresses added to the list.
+    case exclusionList = 0x01
 }
 
 public protocol ProxyFilterDelegate: class {
@@ -114,8 +114,8 @@ public class ProxyFilter {
     
     /// The active Proxy Filter type.
     ///
-    /// By default the Proxy Filter is set to `.whitelist`.
-    public internal(set) var type: ProxyFilerType = .whitelist
+    /// By default the Proxy Filter is set to `.inclusionList`.
+    public internal(set) var type: ProxyFilerType = .inclusionList
     
     /// The connected Proxy Node. This may be `nil` if the connected Node is unknown
     /// to the provisioner, that is if a Node with the proxy Unicast Address was not found
@@ -142,9 +142,9 @@ public extension ProxyFilter {
         send(SetFilterType(type))
     }
     
-    /// Resets the filter to an empty whitelist filter.
+    /// Resets the filter to an empty inclusion list filter.
     func reset() {
-        send(SetFilterType(.whitelist))
+        send(SetFilterType(.inclusionList))
     }
     
     /// Clears the current filter.
@@ -299,7 +299,7 @@ internal extension ProxyFilter {
     /// Callback called when the manager failed to send the Proxy
     /// Configuration Message.
     ///
-    /// This method clears the local filter and sets it back to `.whitelist`.
+    /// This method clears the local filter and sets it back to `.inclusionList`.
     /// All the messages waiting to be sent are cancelled.
     ///
     /// - parameters:
@@ -307,7 +307,7 @@ internal extension ProxyFilter {
     ///   - error: The error received.
     func managerFailedToDeliverMessage(_ message: ProxyConfigurationMessage, error: Error) {
         mutex.sync {
-            type = .whitelist
+            type = .inclusionList
             addresses.removeAll()
             buffer.removeAll()
             busy = false
@@ -361,12 +361,12 @@ internal extension ProxyFilter {
                 
                 // Some devices support just a single address in Proxy Filter.
                 // After adding 2+ devices they will reply with list size = 1.
-                // In that case we could either switch to black list type of filter
+                // In that case we could either switch to exclusion list type of filter
                 // to get all the traffic, or add only 1 address. By default, this
                 // library will add the 0th Element's Unicast Address to allow
                 // configuration, as this is the most common use case. If you need
                 // to receive messages sent to group addresses or other Elements,
-                // switch to black list filter after this single
+                // switch to exclusion list filter.
                 if status.listSize == 1 {
                     logger?.w(.proxy, "Limited Proxy Filter detected.")
                     reset()
@@ -434,8 +434,8 @@ extension ProxyFilerType: CustomDebugStringConvertible {
     
     public var debugDescription: String {
         switch self {
-        case .whitelist: return "Whitelist"
-        case .blacklist: return "Blacklist"
+        case .inclusionList: return "Inclusion List"
+        case .exclusionList: return "Exclusion List"
         }
     }
     
