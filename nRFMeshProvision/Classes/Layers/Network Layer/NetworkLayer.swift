@@ -241,11 +241,7 @@ internal class NetworkLayer {
     /// - returns: The Sequence number a message can be sent with.
     func nextSequenceNumber(for source: Address) -> UInt32 {
         return mutex.sync {
-            // Get the current sequence number for local Provisioner's source address.
-            let sequence = UInt32(defaults.integer(forKey: "S\(source.hex)"))
-            // As the sequnce number was just used, it has to be incremented.
-            defaults.set(sequence + 1, forKey: "S\(source.hex)")
-            return sequence
+            defaults.nextSequenceNumber(for: source)
         }
     }
 }
@@ -281,7 +277,7 @@ private extension NetworkLayer {
         // Get the last IV Index.
         //
         // Note: Before version 2.2.2 the last IV Index was not stored.
-        //       Instead IV Index was set to 0
+        //       Instead IV Index was set to 0.
         let map = defaults.object(forKey: IvIndex.indexKey) as? [String : Any]
         /// The last used IV Index for this mesh network.
         let lastIVIndex = IvIndex.fromMap(map) ?? IvIndex()
@@ -311,11 +307,10 @@ private extension NetworkLayer {
             //
             // Note: This library keeps seperate sequence numbers for each Element of the
             //       local provisioner (source Unicast Address). All of them need to be reset.
-            if meshNetwork.ivIndex.transmitIndex > lastIVIndex.transmitIndex {
+            if let localNode = meshNetwork.localProvisioner?.node,
+               meshNetwork.ivIndex.transmitIndex > lastIVIndex.transmitIndex {
                 logger?.i(.network, "Resetting local sequence numbers to 0")
-                meshNetwork.localProvisioner?.node?.elements.forEach { element in
-                    defaults.set(0, forKey: "S\(element.unicastAddress.hex)")
-                }
+                defaults.resetSequenceNumbers(of: localNode)
             }
             
             // Store the last IV Index.
