@@ -65,6 +65,13 @@ internal extension UserDefaults {
         }
     }
     
+    /// Removes the SEQ number associated with the given address.
+    ///
+    /// - parameter source: The address to be forgotten.
+    func removeSequenceNumber(for source: Address) {
+        removeObject(forKey: "S\(source.hex)")
+    }
+    
 }
 
 // This extension contains helper methods for handling SeqAuth values
@@ -118,19 +125,17 @@ internal extension UserDefaults {
     /// - parameter node: The remote Node.
     func removeSeqAuthValues(of node: Node) {
         node.elements.forEach { element in
-            removeSeqAuthValues(of: element)
+            removeSeqAuthValues(of: element.unicastAddress)
         }
     }
     
-    /// Removes last known SeqAuth value associated with the address of the
-    /// given Element of remote Node.
+    /// Removes last known SeqAuth value associated with the givem address
+    /// of a remote Node.
     ///
-    /// - parameter element: The removed Element.
-    func removeSeqAuthValues(of element: Element) {
-        // Remove the last and previous values of SeqAuth associated
-        // with the address of the given Element.
-        removeObject(forKey: element.unicastAddress.hex)
-        removeObject(forKey: "P\(element.unicastAddress.hex)")
+    /// - parameter source: The forgotten Address.
+    func removeSeqAuthValues(of source: Address) {
+        removeObject(forKey: source.hex)
+        removeObject(forKey: "P\(source.hex)")
     }
     
 }
