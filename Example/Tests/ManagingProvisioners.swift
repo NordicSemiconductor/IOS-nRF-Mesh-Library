@@ -50,7 +50,7 @@ class ManagingProvisioners: XCTestCase {
         XCTAssertNoThrow(try meshNetwork.add(node: Node(name: "Node 4", unicastAddress: 65, elements: 5)))
         XCTAssertNoThrow(try meshNetwork.add(node: Node(name: "Node 5", unicastAddress: 73, elements: 5)))
         
-        let provisioner = Provisioner(name: "New provisioner",
+        let provisioner = Provisioner(name: "Main provisioner",
                                       allocatedUnicastRange: [
                                         AddressRange(8...38),
                                         AddressRange(50...80)
@@ -67,9 +67,26 @@ class ManagingProvisioners: XCTestCase {
         XCTAssertEqual(meshNetwork.nodes[6].unicastAddress, 11)
         XCTAssertEqual(meshNetwork.nodes[6].lastUnicastAddress, 11)
         
-        meshNetwork.remove(provisioner: provisioner)
-        XCTAssertEqual(meshNetwork.provisioners.count, 0)
-        XCTAssertEqual(meshNetwork.nodes.count, 6)
+        // This will throw, as it's not possible to remove the last Provisioner object.
+        XCTAssertThrowsError(try meshNetwork.remove(provisioner: provisioner))
+        XCTAssertEqual(meshNetwork.provisioners.count, 1)
+        XCTAssertEqual(meshNetwork.nodes.count, 7)
+
+        let otherProvisioner = Provisioner(name: "New provisioner",
+                                           allocatedUnicastRange: [
+                                            AddressRange(100...200)
+                                           ],
+                                           allocatedGroupRange: [],
+                                           allocatedSceneRange: [])
+        XCTAssertNoThrow(try meshNetwork.add(provisioner: otherProvisioner))
+        XCTAssertEqual(meshNetwork.provisioners.count, 2)
+        XCTAssertEqual(meshNetwork.nodes.count, 8)
+        XCTAssertEqual(meshNetwork.nodes[7].unicastAddress, 100)
+        XCTAssertEqual(meshNetwork.nodes[7].lastUnicastAddress, 100)
+        
+        XCTAssertNoThrow(try meshNetwork.remove(provisioner: otherProvisioner))
+        XCTAssertEqual(meshNetwork.provisioners.count, 1)
+        XCTAssertEqual(meshNetwork.nodes.count, 7)
     }
     
     func testAddProvisioner_missingRanges() {

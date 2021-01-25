@@ -112,6 +112,7 @@
 		51DF58B92722EE2CB876F4859B449F54 /* ConfigModelSubscriptionVirtualAddressAdd.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04AB807F1DC543A41014F525360355B2 /* ConfigModelSubscriptionVirtualAddressAdd.swift */; };
 		51F397463EBD18BCD543C64FE1313C67 /* Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = 71E749F10DEF7618DE8B1B122A5D982D /* Model.swift */; };
 		5205603EB13F6ED8D95F47779C169397 /* ConfigNetworkTransmitStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91E287AB63C5554D1EB6D838BE420837 /* ConfigNetworkTransmitStatus.swift */; };
+		52E8FF9825BB5EE90087B2A6 /* UserDefaults+SeqAuth.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52E8FF9725BB5EE90087B2A6 /* UserDefaults+SeqAuth.swift */; };
 		539B7D307CE6DAD58135573C2BD34CF9 /* NetworkKey+MeshNetwork.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D7FD4C6B9026F5AB76D7B586E2CF3AA /* NetworkKey+MeshNetwork.swift */; };
 		5591B4463258E51A0030AA284239437D /* KeySet.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8B4EFEACAC71F2189FC119255429A54 /* KeySet.swift */; };
 		5622C14B59036EBF6FDC69CF7BD7C09E /* LightCTLStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3E2C3EA1ED307F08BF0FC773A8C1616 /* LightCTLStatus.swift */; };
@@ -498,6 +499,7 @@
 		52473EF190638F8B70BB7B106E956029 /* pem.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = pem.h; path = ios/include/openssl/pem.h; sourceTree = "<group>"; };
 		52513CFCF2954BAD169F4ECFE23DE170 /* LightHSLDefaultSet.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LightHSLDefaultSet.swift; sourceTree = "<group>"; };
 		52B112AB6B61A75C4468FE0B87BC2E08 /* GenericLevelStatus.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = GenericLevelStatus.swift; sourceTree = "<group>"; };
+		52E8FF9725BB5EE90087B2A6 /* UserDefaults+SeqAuth.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserDefaults+SeqAuth.swift"; sourceTree = "<group>"; };
 		54B5F2AC51F4BA0659354EDFEA843669 /* ConfigAppKeyList.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ConfigAppKeyList.swift; sourceTree = "<group>"; };
 		54C79392C23E6C6C80BADBB1128D2385 /* MeshNetwork+Address.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "MeshNetwork+Address.swift"; sourceTree = "<group>"; };
 		55E4A9034F3927884CB305A3BD8CACA3 /* ControlMessage.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ControlMessage.swift; sourceTree = "<group>"; };
@@ -946,6 +948,7 @@
 				3BDD5855AC3D43A856F2CEF487F54C9F /* KeyedDecodingContainer+Legacy.swift */,
 				D6583A2A54196CCEE62C0AA2D79064F6 /* OptionSet+Data.swift */,
 				C19F131008A699E10B6178902CED5BFE /* UUID+Hex.swift */,
+				52E8FF9725BB5EE90087B2A6 /* UserDefaults+SeqAuth.swift */,
 			);
 			name = "Type Extensions";
 			path = "nRFMeshProvision/Classes/Type Extensions";
@@ -1723,6 +1726,7 @@
 				6952A0203AA6D28B8C02529B0FC7B6CE /* ApplicationKey.swift in Sources */,
 				7156772C5A4A92D7D75B5EC0A6B0B0B1 /* ApplicationKeys.swift in Sources */,
 				6D2FDE31101DDA0D9D8CFDB5658BFE34 /* BackgroundTimer.swift in Sources */,
+				52E8FF9825BB5EE90087B2A6 /* UserDefaults+SeqAuth.swift in Sources */,
 				3E07C8DB8D1819C260D20103C5CE484E /* BaseGattProxyBearer.swift in Sources */,
 				D98B12DD646C8443EC4FA07E3FEDAD6F /* Beacon.swift in Sources */,
 				FE1EADD583209378FDA194D9CCD6F0B6 /* BeaconPdu.swift in Sources */,

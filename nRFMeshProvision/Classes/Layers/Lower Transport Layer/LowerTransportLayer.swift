@@ -323,7 +323,7 @@ private extension LowerTransportLayer {
         let sequence = networkPdu.messageSequence
         let receivedSeqAuth = (UInt64(networkPdu.ivIndex) << 24) | UInt64(sequence)
         
-        if let localSeqAuth = defaults.object(forKey: networkPdu.source.hex) as? NSNumber {
+        if let localSeqAuth = defaults.lastSeqAuthValue(for: networkPdu.source) {
             // In general, the SeqAuth of the received message must be greater
             // than SeqAuth of any previously received message from the same source.
             // However, for SAR (Segmentation and Reassembly) sessions, it is
@@ -351,22 +351,22 @@ private extension LowerTransportLayer {
             //       received in the correct order. As a workaround, the queue may be set to
             //       a serial one in MeshNetworkManager initializer.
             var missed = false
-            if let previousSeqAuth = defaults.object(forKey: "P\(networkPdu.source.hex)") as? NSNumber {
-                missed = receivedSeqAuth < localSeqAuth.uint64Value &&
-                         receivedSeqAuth > previousSeqAuth.uint64Value
+            if let previousSeqAuth = defaults.previousSeqAuthValue(for: networkPdu.source) {
+                missed = receivedSeqAuth < localSeqAuth &&
+                         receivedSeqAuth > previousSeqAuth
             }
             
             // Validate.
-            guard receivedSeqAuth > localSeqAuth.uint64Value || missed ||
-                  (reassemblyInProgress && receivedSeqAuth == localSeqAuth.uint64Value) else {
+            guard receivedSeqAuth > localSeqAuth || missed ||
+                  (reassemblyInProgress && receivedSeqAuth == localSeqAuth) else {
                 // Ignore that message.
                 logger?.w(.lowerTransport, "Discarding packet (seqAuth: \(receivedSeqAuth), expected > \(localSeqAuth))")
                 return false
             }
             
             // The message is valid. Remember the previous SeqAuth.
-            let newPreviousSeqAuth = min(receivedSeqAuth, localSeqAuth.uint64Value)
-            defaults.set(newPreviousSeqAuth, forKey: "P\(networkPdu.source.hex)")
+            let newPreviousSeqAuth = min(receivedSeqAuth, localSeqAuth)
+            defaults.storePreviousSeqAuthValue(newPreviousSeqAuth, for: networkPdu.source)
             
             // If the message was processed after its successor, don't overwrite the last SeqAuth.
             if missed {
@@ -374,7 +374,7 @@ private extension LowerTransportLayer {
             }
         }
         // SeqAuth is valid, save the new sequence authentication value.
-        defaults.set(NSNumber(value: receivedSeqAuth), forKey: networkPdu.source.hex)
+        defaults.storeLastSeqAuthValue(receivedSeqAuth, for: networkPdu.source)
         return true
     }
     

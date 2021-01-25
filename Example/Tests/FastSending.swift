@@ -363,9 +363,8 @@ class FastSending: XCTestCase, MeshNetworkDelegate {
             }
             if let network = manager.meshNetwork,
                let defaults = UserDefaults(suiteName: network.uuid.uuidString) {
-                defaults.removeObject(forKey: "S0001") // Remove sender's Sequence number
-                defaults.removeObject(forKey: "P0001") // Remove receivers's previous Sequence number
-                defaults.removeObject(forKey: "0001")  // Remove receivers's Sequence number
+                defaults.removeSequenceNumber(for: Address(0001))
+                defaults.removeSeqAuthValues(of: Address(0001))
             }
         } catch {
             print(error)
