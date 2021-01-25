@@ -467,13 +467,15 @@ extension MeshNetwork {
             node.meshNetwork = nil
             timestamp = Date()
             
+            // The stored SeqAuth value cannot be removed, as that could
+            // lead to accepting repeated messages.
+            /*
             // Forget the last sequence number for the device.
             let meshUuid = self.uuid
-            if let defauts = UserDefaults(suiteName: meshUuid.uuidString) {
-                for element in node.elements {
-                    defauts.removeObject(forKey: element.unicastAddress.hex)
-                }
+            if let defaults = UserDefaults(suiteName: meshUuid.uuidString) {
+                defaults.removeSeqAuthValues(of: node)
             }
+            */
         }
     }
     
