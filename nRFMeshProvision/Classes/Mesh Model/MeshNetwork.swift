@@ -507,8 +507,7 @@ extension MeshNetwork {
     /// If the mesh network already contains a Scene with the same number,
     /// this method throws an error.
     ///
-    /// - parameters
-    ///   - scene: The Scene to be added.
+    /// - parameter scene: The Scene to be added.
     func add(scene: Scene) {
         scene.meshNetwork = self
         scenes.append(scene)
