@@ -63,6 +63,8 @@ internal struct IvIndex {
 }
 
 internal extension IvIndex {
+    static let timestampKey  = "IVTimestamp"
+    static let ivRecoveryKey = "IVRecovery"
     static let indexKey = "IVIndex"
     
     /// Returns the IV Index as dictionary.
@@ -94,7 +96,7 @@ extension IvIndex: Comparable {
     
 }
 
-extension IvIndex {
+internal extension IvIndex {
     
     /// The following IV Index, or `nil` if maximum value has been reached.
     var next: IvIndex? {

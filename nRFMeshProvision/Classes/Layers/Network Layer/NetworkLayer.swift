@@ -436,8 +436,3 @@ private extension NetworkLayer {
     }
     
 }
-
-private extension IvIndex {
-    static let timestampKey = "IVTimestamp"
-    static let ivRecoveryKey = "IVRecovery"
-}
