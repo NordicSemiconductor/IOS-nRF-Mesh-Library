@@ -118,8 +118,8 @@ public class NetworkKey: Key, Codable {
     internal private(set) var oldNid: UInt8?
     /// Returns the key set that should be used for encrypting outgoing packets.
     internal var transmitKeys: NetworkKeyDerivaties {
-        if case .distributingKeys = phase {
-            return oldKeys!
+        if case .distributingKeys = phase, let oldKeys = oldKeys {
+            return oldKeys
         }
         return keys
     }
