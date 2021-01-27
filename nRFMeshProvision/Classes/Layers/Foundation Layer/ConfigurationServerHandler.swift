@@ -81,6 +81,8 @@ internal class ConfigurationServerHandler: ModelDelegate {
             ConfigHeartbeatPublicationSet.self,
             ConfigHeartbeatSubscriptionGet.self,
             ConfigHeartbeatSubscriptionSet.self,
+            ConfigKeyRefreshPhaseGet.self,
+            ConfigKeyRefreshPhaseSet.self,
         ]
         self.meshNetwork = meshNetwork
         self.messageTypes = types.toMap()
@@ -635,6 +637,44 @@ internal class ConfigurationServerHandler: ModelDelegate {
             
         case is ConfigHeartbeatSubscriptionGet:
             return ConfigHeartbeatSubscriptionStatus(localNode.heartbeatSubscription)
+            
+        case let request as ConfigKeyRefreshPhaseGet:
+            // If there is no such key, return .invalidNetKeyIndex.
+            guard let networkKey = meshNetwork.networkKeys[request.networkKeyIndex] else {
+                return ConfigKeyRefreshPhaseStatus(responseTo: request, with: .invalidNetKeyIndex)
+            }
+            return ConfigKeyRefreshPhaseStatus(reportPhaseOf: networkKey)
+            
+        case let request as ConfigKeyRefreshPhaseSet:
+            // If there is no such key, return .invalidNetKeyIndex.
+            guard let networkKey = meshNetwork.networkKeys[request.networkKeyIndex] else {
+                return ConfigKeyRefreshPhaseStatus(responseTo: request, with: .invalidNetKeyIndex)
+            }
+            // Check all possible transitions.
+            switch (networkKey.phase, request.transition) {
+            // It is not possible to transition from Phase 0 (Normal Operation) to
+            // Phase 2 (Finalizing).
+            case (.normalOperation, .finalize):
+                return ConfigKeyRefreshPhaseStatus(responseTo: request, with: .cannotSet)
+            // Transitioning from Phase 1 (Distributing Keys) sets the phase to .finalizing.
+            case (.distributingKeys, .finalize):
+                networkKey.phase = .finalizing // This updates the modification Date.
+            // If we already were in Phase 2, no action is needed.
+            case (.finalizing, .finalize):
+                break
+                
+            // Transitioning from Phase 0 to Phase 0 is a NO OP.
+            case (.normalOperation, .revokeOldKeys):
+                break
+            // For the remaining transitions we need to invalidate old keys.
+            case (_, .revokeOldKeys):
+                 // Revoke the old Network Key...
+                 networkKey.oldKey = nil // This will set the phase to .normalOperation.
+                 // ...and old Application Keys bound to it.
+                 meshNetwork.applicationKeys.boundTo(networkKey)
+                     .forEach { $0.oldKey = nil }
+            }
+            return ConfigKeyRefreshPhaseStatus(reportPhaseOf: networkKey)
             
         default:
             fatalError("Message not handled: \(request)")

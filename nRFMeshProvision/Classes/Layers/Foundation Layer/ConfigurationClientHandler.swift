@@ -59,7 +59,8 @@ internal class ConfigurationClientHandler: ModelDelegate {
             ConfigNetworkTransmitStatus.self,
             ConfigNodeResetStatus.self,
             ConfigHeartbeatPublicationStatus.self,
-            ConfigHeartbeatSubscriptionStatus.self
+            ConfigHeartbeatSubscriptionStatus.self,
+            ConfigKeyRefreshPhaseStatus.self,
         ]
         self.meshNetwork = meshNetwork
         self.messageTypes = types.toMap()
@@ -332,6 +333,10 @@ internal class ConfigurationClientHandler: ModelDelegate {
                 // This may be set to nil.
                 node.heartbeatSubscription = HeartbeatSubscription(status)
             }
+            
+        case is ConfigKeyRefreshPhaseStatus:
+            // Do nothing. The model does not need to be updated.
+            break
             
         default:
             break

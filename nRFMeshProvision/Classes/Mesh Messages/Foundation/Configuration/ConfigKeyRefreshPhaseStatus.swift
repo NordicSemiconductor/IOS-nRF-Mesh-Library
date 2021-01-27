@@ -49,7 +49,7 @@ public struct ConfigKeyRefreshPhaseStatus: ConfigNetKeyMessage, ConfigStatusMess
     /// - parameters:
     ///   - request: The request received.
     ///   - error: The error status.
-    public init(responseTo request: ConfigNetKeyMessage, error: ConfigMessageStatus) {
+    public init(responseTo request: ConfigNetKeyMessage, with error: ConfigMessageStatus) {
         self.networkKeyIndex = request.networkKeyIndex
         self.status = error
         self.phase = .normalOperation // = 0x00
