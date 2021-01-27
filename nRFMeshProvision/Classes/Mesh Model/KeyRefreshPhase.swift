@@ -57,6 +57,18 @@ public enum KeyRefreshPhase: Int, Codable {
     }
 }
 
+/// The type represeting Key Refresh phase transition.
+public enum KeyRefreshPhaseTransition: UInt8 {
+    /// The Node will start encoding messages using the new keys,
+    /// but will continue to decode using the old and new keys.
+    /// The Node will only accept beacons secured using the new
+    /// Network Key.
+    case finalize      = 2
+    /// The old keys will be revoked and the Node will go back to
+    /// Normal Operation state for the given Network Key.
+    case revokeOldKeys = 3
+}
+
 extension KeyRefreshPhase: CustomDebugStringConvertible {
     
     public var debugDescription: String {
@@ -64,6 +76,17 @@ extension KeyRefreshPhase: CustomDebugStringConvertible {
         case .normalOperation:  return "Normal operation"
         case .distributingKeys: return "Distributing keys"
         case .finalizing:       return "Finalizing"
+        }
+    }
+    
+}
+
+extension KeyRefreshPhaseTransition: CustomDebugStringConvertible {
+    
+    public var debugDescription: String {
+        switch self {
+        case .finalize:      return "Finalize"
+        case .revokeOldKeys: return "Revoke old keys"
         }
     }
     
