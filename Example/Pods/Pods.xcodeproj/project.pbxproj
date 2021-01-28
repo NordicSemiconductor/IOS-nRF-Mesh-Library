@@ -113,6 +113,9 @@
 		51F397463EBD18BCD543C64FE1313C67 /* Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = 71E749F10DEF7618DE8B1B122A5D982D /* Model.swift */; };
 		5205603EB13F6ED8D95F47779C169397 /* ConfigNetworkTransmitStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91E287AB63C5554D1EB6D838BE420837 /* ConfigNetworkTransmitStatus.swift */; };
 		52A0041125BF267400A24C92 /* MeshNetwork+IvIndex.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52A0041025BF267400A24C92 /* MeshNetwork+IvIndex.swift */; };
+		52A0042525C1733100A24C92 /* ConfigKeyRefreshPhaseGet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52A0042425C1733100A24C92 /* ConfigKeyRefreshPhaseGet.swift */; };
+		52A0042B25C173C100A24C92 /* ConfigKeyRefreshPhaseSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52A0042A25C173C100A24C92 /* ConfigKeyRefreshPhaseSet.swift */; };
+		52A0043125C177AB00A24C92 /* ConfigKeyRefreshPhaseStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52A0043025C177AB00A24C92 /* ConfigKeyRefreshPhaseStatus.swift */; };
 		52E8FF9825BB5EE90087B2A6 /* UserDefaults+SeqAuth.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52E8FF9725BB5EE90087B2A6 /* UserDefaults+SeqAuth.swift */; };
 		539B7D307CE6DAD58135573C2BD34CF9 /* NetworkKey+MeshNetwork.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D7FD4C6B9026F5AB76D7B586E2CF3AA /* NetworkKey+MeshNetwork.swift */; };
 		5591B4463258E51A0030AA284239437D /* KeySet.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8B4EFEACAC71F2189FC119255429A54 /* KeySet.swift */; };
@@ -500,6 +503,9 @@
 		52473EF190638F8B70BB7B106E956029 /* pem.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = pem.h; path = ios/include/openssl/pem.h; sourceTree = "<group>"; };
 		52513CFCF2954BAD169F4ECFE23DE170 /* LightHSLDefaultSet.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LightHSLDefaultSet.swift; sourceTree = "<group>"; };
 		52A0041025BF267400A24C92 /* MeshNetwork+IvIndex.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MeshNetwork+IvIndex.swift"; sourceTree = "<group>"; };
+		52A0042425C1733100A24C92 /* ConfigKeyRefreshPhaseGet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigKeyRefreshPhaseGet.swift; sourceTree = "<group>"; };
+		52A0042A25C173C100A24C92 /* ConfigKeyRefreshPhaseSet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigKeyRefreshPhaseSet.swift; sourceTree = "<group>"; };
+		52A0043025C177AB00A24C92 /* ConfigKeyRefreshPhaseStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigKeyRefreshPhaseStatus.swift; sourceTree = "<group>"; };
 		52B112AB6B61A75C4468FE0B87BC2E08 /* GenericLevelStatus.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = GenericLevelStatus.swift; sourceTree = "<group>"; };
 		52E8FF9725BB5EE90087B2A6 /* UserDefaults+SeqAuth.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserDefaults+SeqAuth.swift"; sourceTree = "<group>"; };
 		54B5F2AC51F4BA0659354EDFEA843669 /* ConfigAppKeyList.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ConfigAppKeyList.swift; sourceTree = "<group>"; };
@@ -1381,6 +1387,9 @@
 				46E0E498EED20AA0B5A6DDB02929C169 /* ConfigHeartbeatSubscriptionGet.swift */,
 				07064A555756D10ED0063E60651DE416 /* ConfigHeartbeatSubscriptionSet.swift */,
 				849317365DD698109002490BB64BEB16 /* ConfigHeartbeatSubscriptionStatus.swift */,
+				52A0042425C1733100A24C92 /* ConfigKeyRefreshPhaseGet.swift */,
+				52A0042A25C173C100A24C92 /* ConfigKeyRefreshPhaseSet.swift */,
+				52A0043025C177AB00A24C92 /* ConfigKeyRefreshPhaseStatus.swift */,
 				76FDA63C6C6B7883B4D6F20D0D4B0BA7 /* ConfigModelAppBind.swift */,
 				F9962F39E0AEEBCA311C60572F3D80B6 /* ConfigModelAppStatus.swift */,
 				D740716793891C802038A10B5151A456 /* ConfigModelAppUnbind.swift */,
@@ -1841,6 +1850,7 @@
 				03BD6CC620C84A1C1E4C212CCCB5C3CD /* GenericOnOffStatus.swift in Sources */,
 				FB072C7A4F990A83D39E096BF890A97B /* GenericOnPowerUpGet.swift in Sources */,
 				DA5761FFD8DEAE04F3F5AC3B7D7FC4C5 /* GenericOnPowerUpSet.swift in Sources */,
+				52A0043125C177AB00A24C92 /* ConfigKeyRefreshPhaseStatus.swift in Sources */,
 				AB84FE344627AD4DB4FB839093573960 /* GenericOnPowerUpSetUnacknowledged.swift in Sources */,
 				73198CE63D2C8C6F1B150B98E53326A1 /* GenericOnPowerUpStatus.swift in Sources */,
 				E3AD1ED26A5417DC0DFBD5F546C62636 /* GenericPowerDefaultSet.swift in Sources */,
@@ -1984,6 +1994,7 @@
 				0E7745E058959B3EEA0065840452EB25 /* ProvisioningManager.swift in Sources */,
 				45E429D472AAA7AE58BEC272A83FA7CB /* ProvisioningPdu.swift in Sources */,
 				6C875993ABBFF73B5D953648EA094627 /* ProvisioningState.swift in Sources */,
+				52A0042B25C173C100A24C92 /* ConfigKeyRefreshPhaseSet.swift in Sources */,
 				7CE4CD148E29C16ADB7899B3F2C1376A /* ProxyConfigurationMessage.swift in Sources */,
 				D46971EB3AADF187134AEAC3B4C9CE54 /* ProxyFilter.swift in Sources */,
 				F203C1E5A7C7591DE481B7D58D8E7B6D /* ProxyProtocolHandler.swift in Sources */,
@@ -2006,6 +2017,7 @@
 				2B8704A8816EBF7B0D02FDBB32C5A2AC /* SceneRegisterStatus.swift in Sources */,
 				9B5197A14828BC76716DC8A7659B00D0 /* Scenes.swift in Sources */,
 				999F5C5004A2C84282C69697787B44CB /* SceneStatus.swift in Sources */,
+				52A0042525C1733100A24C92 /* ConfigKeyRefreshPhaseGet.swift in Sources */,
 				73E28AB21381519736E428EF67D766B5 /* SceneStore.swift in Sources */,
 				6607DEEC1A2767E7E4CBF65384AD9797 /* SceneStoreUnacknowledged.swift in Sources */,
 				A068C7489BA6439282CBB4422DA86B5C /* SecureNetworkBeacon.swift in Sources */,

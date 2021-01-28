@@ -81,6 +81,8 @@ internal class ConfigurationServerHandler: ModelDelegate {
             ConfigHeartbeatPublicationSet.self,
             ConfigHeartbeatSubscriptionGet.self,
             ConfigHeartbeatSubscriptionSet.self,
+            ConfigKeyRefreshPhaseGet.self,
+            ConfigKeyRefreshPhaseSet.self,
         ]
         self.meshNetwork = meshNetwork
         self.messageTypes = types.toMap()
@@ -113,7 +115,7 @@ internal class ConfigurationServerHandler: ModelDelegate {
                                                      name: "Network Key \(keyIndex + 1)")
                 }
                 // Add the Network Key index to the local Node.
-                meshNetwork.localProvisioner?.node?.add(networkKeyWithIndex: keyIndex)
+                localNode.add(networkKeyWithIndex: keyIndex)
                 return ConfigNetKeyStatus(confirm: networkKey!)
             } catch {
                 return ConfigNetKeyStatus(responseTo: request, with: .unspecifiedError)
@@ -125,19 +127,38 @@ internal class ConfigurationServerHandler: ModelDelegate {
             guard let networkKey = meshNetwork.networkKeys[keyIndex] else {
                 return ConfigNetKeyStatus(responseTo: request, with: .invalidNetKeyIndex)
             }
-            // Update the key data (observer will set the `oldKey` automatically).
-            networkKey.key = request.key
-            // And mark the key in the local Node as updated.
-            meshNetwork.localProvisioner?.node?.update(networkKeyWithIndex: keyIndex)
+            // The Network Key can only be changed once if a single Key Refresh Procedure.
+            // Otherwise, return .keyIndexAlreadyStored.
+            guard networkKey.phase == .normalOperation ||
+                 (networkKey.phase == .distributingKeys && networkKey.key == request.key) else {
+                return ConfigNetKeyStatus(responseTo: request, with: .keyIndexAlreadyStored)
+            }
+            if networkKey.phase == .normalOperation {
+                // Update the key data (observer will set the `oldKey` automatically).
+                networkKey.key = request.key
+                // And mark the key in the local Node as updated.
+                localNode.update(networkKeyWithIndex: keyIndex)
+            }
             return ConfigNetKeyStatus(confirm: networkKey)
             
         case let request as ConfigNetKeyDelete:
             let keyIndex = request.networkKeyIndex
+            // When an element receives a Config NetKey Delete message that identifies a
+            // Network Key that is not in the Network Key List, it responds with Success,
+            // because the result of deleting the key that does not exist in the Network Key
+            // List will be the same as if the key was deleted from the List.
+            guard let _ = meshNetwork.networkKeys[keyIndex] else {
+                return ConfigNetKeyStatus(responseTo: request, with: .success)
+            }
+            // It is not possible to remove the last key.
+            guard meshNetwork.networkKeys.count > 1 else {
+                return ConfigNetKeyStatus(responseTo: request, with: .cannotRemove)
+            }
             // Force delete the key from the global configuration.
             try? meshNetwork.remove(networkKeyWithKeyIndex: keyIndex, force: true)
             // Remove the key also from the local Node. This will also remove all
             // Application Keys bound to it.
-            meshNetwork.localProvisioner?.node?.remove(networkKeyWithIndex: keyIndex)
+            localNode.remove(networkKeyWithIndex: keyIndex)
             return ConfigNetKeyStatus(responseTo: request, with: .success)
                     
         case is ConfigNetKeyGet:
@@ -166,7 +187,7 @@ internal class ConfigurationServerHandler: ModelDelegate {
                     applicationKey!.boundNetworkKeyIndex = networkKey.index
                 }
                 // Add the Network Key index to the local Node.
-                meshNetwork.localProvisioner?.node?.add(applicationKeyWithIndex: keyIndex)
+                localNode.add(applicationKeyWithIndex: keyIndex)
                 return ConfigAppKeyStatus(confirm: applicationKey!)
             } catch {
                 return ConfigAppKeyStatus(responseTo: request, with: .unspecifiedError)
@@ -186,23 +207,47 @@ internal class ConfigurationServerHandler: ModelDelegate {
             guard applicationKey.isBound(to: networkKey) else {
                 return ConfigAppKeyStatus(responseTo: request, with: .invalidBinding)
             }
-            // Update the key data (observer will set the `oldKey` automatically).
-            applicationKey.key = request.key
-            // And mark the key in the local Node as updated.
-            meshNetwork.localProvisioner?.node?.update(applicationKeyWithIndex: keyIndex)
+            // Updating Application Key is only possible during Key Refresh Procedure
+            // for the bound Network Key. Otherwise, return .cannotUpdate.
+            guard case .distributingKeys = networkKey.phase else {
+                return ConfigAppKeyStatus(responseTo: request, with: .cannotUpdate)
+            }
+            // The key cannot be changed multiple times in a single Key Refresh Procedure.
+            // Otherwise, return .keyIndexAlreadyStored.
+            guard applicationKey.oldKey == nil || applicationKey.key == request.key else {
+                return ConfigAppKeyStatus(responseTo: request, with: .keyIndexAlreadyStored)
+            }
+            if applicationKey.oldKey == nil {
+                // Update the key data (observer will set the `oldKey` automatically).
+                applicationKey.key = request.key
+                // And mark the key in the local Node as updated.
+                localNode.update(applicationKeyWithIndex: keyIndex)
+            }
             return ConfigAppKeyStatus(confirm: applicationKey)
             
         case let request as ConfigAppKeyDelete:
             // If the Network Key does not exist, return .invalidNetKeyIndex.
-            guard let _ = meshNetwork.networkKeys[request.networkKeyIndex] else {
+            guard let networkKey = meshNetwork.networkKeys[request.networkKeyIndex] else {
                 return ConfigAppKeyStatus(responseTo: request, with: .invalidNetKeyIndex)
             }
             let keyIndex = request.applicationKeyIndex
+            // When an element receives a Config AppKey Delete message that identifies
+            // an Application Key that is not in the Application Key List, it responds
+            // with Success, because the result of deleting the key that does not exist
+            // in the Application Key List will be the same as if the key was deleted
+            // from the AppKey List.
+            guard let applicationKey = meshNetwork.applicationKeys[keyIndex] else {
+                return ConfigAppKeyStatus(responseTo: request, with: .success)
+            }
+            // Check if the binding is correct. Otherwise, reutnr .invalidBinding.
+            guard applicationKey.isBound(to: networkKey) else {
+                return ConfigAppKeyStatus(responseTo: request, with: .invalidBinding)
+            }
             // Force delete the key from the global configuration.
             try? meshNetwork.remove(applicationKeyWithKeyIndex: keyIndex, force: true)
             // Remove the key also from the local Node. This will also remove all
             // Application Keys bound to it.
-            meshNetwork.localProvisioner?.node?.remove(applicationKeyWithIndex: keyIndex)
+            localNode.remove(applicationKeyWithIndex: keyIndex)
             return ConfigAppKeyStatus(responseTo: request, with: .success)
                 
         case let request as ConfigAppKeyGet:
@@ -592,6 +637,44 @@ internal class ConfigurationServerHandler: ModelDelegate {
             
         case is ConfigHeartbeatSubscriptionGet:
             return ConfigHeartbeatSubscriptionStatus(localNode.heartbeatSubscription)
+            
+        case let request as ConfigKeyRefreshPhaseGet:
+            // If there is no such key, return .invalidNetKeyIndex.
+            guard let networkKey = meshNetwork.networkKeys[request.networkKeyIndex] else {
+                return ConfigKeyRefreshPhaseStatus(responseTo: request, with: .invalidNetKeyIndex)
+            }
+            return ConfigKeyRefreshPhaseStatus(reportPhaseOf: networkKey)
+            
+        case let request as ConfigKeyRefreshPhaseSet:
+            // If there is no such key, return .invalidNetKeyIndex.
+            guard let networkKey = meshNetwork.networkKeys[request.networkKeyIndex] else {
+                return ConfigKeyRefreshPhaseStatus(responseTo: request, with: .invalidNetKeyIndex)
+            }
+            // Check all possible transitions.
+            switch (networkKey.phase, request.transition) {
+            // It is not possible to transition from Phase 0 (Normal Operation) to
+            // Phase 2 (Finalizing).
+            case (.normalOperation, .finalize):
+                return ConfigKeyRefreshPhaseStatus(responseTo: request, with: .cannotSet)
+            // Transitioning from Phase 1 (Distributing Keys) sets the phase to .finalizing.
+            case (.distributingKeys, .finalize):
+                networkKey.phase = .finalizing // This updates the modification Date.
+            // If we already were in Phase 2, no action is needed.
+            case (.finalizing, .finalize):
+                break
+                
+            // Transitioning from Phase 0 to Phase 0 is a NO OP.
+            case (.normalOperation, .revokeOldKeys):
+                break
+            // For the remaining transitions we need to invalidate old keys.
+            case (_, .revokeOldKeys):
+                 // Revoke the old Network Key...
+                 networkKey.oldKey = nil // This will set the phase to .normalOperation.
+                 // ...and old Application Keys bound to it.
+                 meshNetwork.applicationKeys.boundTo(networkKey)
+                     .forEach { $0.oldKey = nil }
+            }
+            return ConfigKeyRefreshPhaseStatus(reportPhaseOf: networkKey)
             
         default:
             fatalError("Message not handled: \(request)")

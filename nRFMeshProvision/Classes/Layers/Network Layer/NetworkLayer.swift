@@ -315,8 +315,7 @@ private extension NetworkLayer {
             
             // Store the last IV Index.
             defaults.set(meshNetwork.ivIndex.asMap, forKey: IvIndex.indexKey)
-            if lastIVIndex != meshNetwork.ivIndex ||
-               defaults.object(forKey: IvIndex.timestampKey) == nil {
+            if lastIVIndex != meshNetwork.ivIndex || lastTransitionDate == nil {
                 defaults.set(Date(), forKey: IvIndex.timestampKey)
                 
                 let ivRecovery = meshNetwork.ivIndex.index > lastIVIndex.index + 1 &&
@@ -326,13 +325,21 @@ private extension NetworkLayer {
             
             // If the Key Refresh Procedure is in progress, and the new Network Key
             // has already been set, the key refresh flag indicates switching to phase 2.
-            if case .distributingKeys = networkKey.phase, secureNetworkBeacon.keyRefreshFlag {
+            if case .distributingKeys = networkKey.phase,
+               secureNetworkBeacon.validForKeyRefreshProcedure &&
+               secureNetworkBeacon.keyRefreshFlag == true {
                 networkKey.phase = .finalizing
             }
             // If the Key Refresh Procedure is in phase 2, and the key refresh flag is
             // set to false.
-            if case .finalizing = networkKey.phase, !secureNetworkBeacon.keyRefreshFlag {
+            if case .finalizing = networkKey.phase,
+               secureNetworkBeacon.validForKeyRefreshProcedure &&
+               secureNetworkBeacon.keyRefreshFlag == false {
+                // Revoke the old Network Key...
                 networkKey.oldKey = nil // This will set the phase to .normalOperation.
+                // ...and old Application Keys bound to it.
+                meshNetwork.applicationKeys.boundTo(networkKey)
+                    .forEach { $0.oldKey = nil }
             }
         } else if secureNetworkBeacon.ivIndex != lastIVIndex.previous {
             var numberOfHoursSinceDate = "unknown time"

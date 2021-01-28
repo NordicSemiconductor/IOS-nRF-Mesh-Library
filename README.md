@@ -13,12 +13,14 @@ The library is compatible with version 1.0.1 of the Bluetooth Mesh Profile Speci
 
 This is the second version of the nRF Mesh Provision library for iOS. All  features are tested againt nRF Mesh SDK and Zephyr based mesh devices.
 
-> The first version of this library is no longer maintained. The application available on App Store will eventually be replaced with the new sample application.
+> The version 1.x and 2.x of this library are no longer maintained. Please migrate to 3.x to get new features and bug fixes. For changes and migration details see [#295](https://github.com/NordicSemiconductor/IOS-nRF-Mesh-Library/pull/295).
 
 ## Sample app
 
 The sample application demonstrates how to use the library. It may also be used to configure your Mesh network. Use `pod try` to install and set up the sample app when using CocoaPods.
 The app and the library are released under BSD-3 license. Feel free to modify them as you want.
+
+The app is available on App Store: https://apps.apple.com/us/app/nrf-mesh/id1380726771
 
 ## Supported features
 
@@ -36,14 +38,15 @@ The app and the library are released under BSD-3 license. Feel free to modify th
 13. Generic OnOff and Vendor model have dedicated controls in sample app.
 14. Proxy Filter.
 15. IV Index update (handling updates received in Secure Network beacons).
-16. Hearbeats (both as client and server).
+16. Heartbeats (both as client and server).
 17. Scenes (both as client and server).
-18. Partial export (allows to export only part of the network, for example for a Guest)
+18. Partial export (allows to export only part of the network, for example for a Guest).
+19. [Key Refresh Procedure](https://github.com/NordicSemiconductor/IOS-nRF-Mesh-Library/pull/314) (using *ConfigKeyRefreshPhaseSet* messages, not Secure Network beacon) 
 
 ## NOT (yet) supported features
 
 1. Many SIG defined models, except from supported ones.
-2. Key Refresh Procedure, IV Index update (initiation).
+2. IV Index update (initiation).
 3. Health server messages.
 4. Remote Provisioning.
 

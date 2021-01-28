@@ -20,7 +20,7 @@ The provisioning process assigns a unique Unicast Address and a primary Network 
 
 The first thing you have to do to after provisioning is reading **Composition Data**. Do this by sending *Config Composition Data Get* message with page 0. Composition data contains the information about the Node, and Elements and Models on the new device. The status message will automatically be applied to the Node when received.
 
-The next step is to send other Network Keys, if needed, and Application Keys that this device needs to know. In theory, a key that has once been added can be deleted, but there is no guarantee that the Node will actually remove the key. The proper way of deleting the keys is by dong Key Refresh Procedure (not implemented yet in the library), which will distribute a new, updated key with the same index to all nodes but the one that we want to remove it from, and switch them to use the new key instead. The blacklisted device will not be able to understand messages anymore even if it hasn't deleted the key, as the key has now been replaced and is no longer is use.
+The next step is to send other Network Keys, if needed, and Application Keys that this device needs to know. In theory, a key that has once been added can be deleted, but there is no guarantee that the Node will actually remove the key. The proper way of deleting the keys is by doing [Key Refresh Procedure](https://github.com/NordicSemiconductor/IOS-nRF-Mesh-Library/pull/314), which will distribute a new, updated key with the same index to all nodes except those that we want to remove from the subnetwork, and switch them to use the new key instead. The excluded device(s) will not be able to understand messages anymore even if it hasn't deleted the key, as the key has now been replaced and is no longer is use.
 
 To send a Network Key to a device use `ConfigNetKeyAdd` message and to send an Application Key - `ConfigAppKeyAdd` message.
 
@@ -41,6 +41,12 @@ To set a publication, use `ConfigModelPubilcationSet` or `ConfigModelPubilcation
 These messages may also be sent to local Models. For example, the Sample App contains 2 Elements, each with **Generic OnOff Client** and **Generic OnOff Server** that can be configured to send messages to each other.
 
 After subscribibg a local Model to a group or virtual address you have to add this address to the Proxy Filter.
+
+### Scenes
+
+Scenes may be used to restore a saved state of a device. Scene server models support two operations: storing and recalling a scene. To store a scene, first set the required device state. For example, turn the light on, set desider light color and brightness. Then send `SceneStore` message with a *scene number*. Upon calling `SceneRecall` message with the same *scene number*, the device will restore saved state.
+
+The library natively supports Scene Client model, so it may send `SceneStore`, `SceneRecall` or `SceneDelete` messages. The sample app, additionally, supports Scene Server and Scene Setup Server models, which can be used to test Scene Clients on other devices. Generic OnOff Server and Generic Level Server models on the two Elements on the phone will behave accordingly to received messages. Mind that, on contrary to Configuration Server and Configuration Client, Scene models need to be bound to an App Key (one or more) and will receive only message sent with that App Key.
 
 ### Proxy Filter
 
