@@ -408,7 +408,7 @@ public class MeshNetwork: Codable {
         try container.encode(nodes, forKey: .nodes)
         try container.encode(groups, forKey: .groups)
         try container.encode(scenes, forKey: .scenes)
-        try container.encode(networkExclusions, forKey: .networkExclusions)
+        try container.encodeIfPresent(networkExclusions, forKey: .networkExclusions)
     }
     
 }
