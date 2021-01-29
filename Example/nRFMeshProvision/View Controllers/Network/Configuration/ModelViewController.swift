@@ -747,16 +747,16 @@ extension ModelViewController: MeshNetworkDelegate {
             let isMore = modelViewCell?.meshNetworkManager(manager, didReceiveMessage: message,
                                                            sentFrom: source, to: destination) ?? false
             if !isMore {
-                done()
-                
-                if let status = message as? StatusMessage, !status.isSuccess {
-                    presentAlert(title: "Error", message: status.message)
-                } else {
-                    if model.isConfigurationServer {
-                        tableView.reloadSections(.configurationServer, with: .automatic)
+                done() {
+                    if let status = message as? StatusMessage, !status.isSuccess {
+                        self.presentAlert(title: "Error", message: status.message)
+                    } else {
+                        if self.model.isConfigurationServer {
+                            self.tableView.reloadSections(.configurationServer, with: .automatic)
+                        }
                     }
+                    self.refreshControl?.endRefreshing()
                 }
-                refreshControl?.endRefreshing()
             }
         }
     }
