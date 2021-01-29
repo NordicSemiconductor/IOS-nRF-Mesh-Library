@@ -130,6 +130,52 @@ struct GenericState<T: Equatable> {
 
 extension GenericState where T: BinaryInteger {
     
+    init(transitionFrom state: GenericState<T>, to targetValue: T,
+         delay: TimeInterval, duration: TimeInterval,
+         storedWithScene: Bool = false) {
+        self.animation = nil
+        self.storedWithScene = storedWithScene
+        guard delay > 0 || duration > 0 else {
+            self.value = targetValue
+            self.transition = nil
+            return
+        }
+        self.value = state.currentValue
+        guard state.transition != nil || state.value != targetValue else {
+            self.transition = nil
+            return
+        }
+        self.transition = Self.Transition(targetValue: targetValue,
+                                          start: Date(), delay: delay,
+                                          duration: duration)
+    }
+    
+    init(continueTransitionFrom state: GenericState<T>, to targetValue: T,
+         delay: TimeInterval, duration: TimeInterval,
+         storedWithScene: Bool = false) {
+        self.animation = nil
+        self.storedWithScene = storedWithScene
+        guard delay > 0 || duration > 0 else {
+            self.value = targetValue
+            self.transition = nil
+            return
+        }
+        self.value = state.currentValue
+        guard state.transition != nil || state.value != targetValue else {
+            self.transition = nil
+            return
+        }
+        if let transition = state.transition {
+            self.transition = Self.Transition(targetValue: targetValue,
+                                              start: transition.start, delay: delay,
+                                              duration: duration)
+        } else {
+            self.transition = Self.Transition(targetValue: targetValue,
+                                              start: Date(), delay: delay,
+                                              duration: duration)
+        }
+    }
+    
     init(animateFrom state: GenericState<T>, to targetValue: T,
          delay: TimeInterval, duration: TimeInterval,
          storedWithScene: Bool = false) {
@@ -175,6 +221,5 @@ extension GenericState where T: BinaryInteger {
             return value
         }
     }
+    
 }
-
-
