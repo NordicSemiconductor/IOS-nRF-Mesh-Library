@@ -80,7 +80,7 @@ class SetHeartbeatPublicationViewController: ProgressViewController {
         }
     }
     private var countLog: UInt8 = 0
-    private var periodLog: UInt8 = 0
+    private var periodLog: UInt8 = 1 // The UI does not allow to set periodLog to 0.
     
     // MARK: - View Controller    
     
