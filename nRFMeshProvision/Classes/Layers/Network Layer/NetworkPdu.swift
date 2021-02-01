@@ -86,10 +86,10 @@ internal struct NetworkPdu {
         // If the Key Refresh procedure is in place, the received packet might have been
         // encrypted using an old key. We have to try both.
         var keySets: [NetworkKeyDerivaties] = []
-        if nid == networkKey.nid {
+        if nid == networkKey.keys.nid {
             keySets.append(networkKey.keys)
         }
-        if let oldNid = networkKey.oldNid, nid == oldNid {
+        if let oldNid = networkKey.oldKeys?.nid, nid == oldNid {
             keySets.append(networkKey.oldKeys!)
         }
         guard !keySets.isEmpty else {
@@ -165,10 +165,14 @@ internal struct NetworkPdu {
         guard pduType == .networkPdu || pduType == .proxyConfiguration else {
             fatalError("Only .networkPdu and .configurationPdu may be encoded into a NetworkPdu")
         }
-        self.networkKey = lowerTransportPdu.networkKey
+        // The key set used for encryption depends on the Key Refresh Phase.
+        let networkKey = lowerTransportPdu.networkKey
+        let keys = networkKey.transmitKeys
+        
+        self.networkKey = networkKey
         self.ivIndex = lowerTransportPdu.ivIndex
         self.ivi = UInt8(ivIndex & 0x1)
-        self.nid = networkKey.nid
+        self.nid = keys.nid
         self.type = lowerTransportPdu.type
         self.source = lowerTransportPdu.source
         self.destination = lowerTransportPdu.destination
@@ -185,9 +189,6 @@ internal struct NetworkPdu {
         
         // Data to be encrypted: Destination Address, Transport PDU.
         let decryptedData = Data() + destination.bigEndian + transportPdu
-        
-        // The key set used for encryption depends on the Key Refresh Phase.
-        let keys = networkKey.transmitKeys
         
         let helper = OpenSSLHelper()
         var nonce = Data([pduType.nonceId]) + deobfuscatedData + Data([0x00, 0x00]) + ivIndex.bigEndian
