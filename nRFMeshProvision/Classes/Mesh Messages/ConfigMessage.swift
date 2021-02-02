@@ -180,7 +180,7 @@ internal extension ConfigMessage {
     /// This method ensures that they are packed in compliance to the
     /// Bluetooth Mesh specification.
     ///
-    /// - parameter limit:  Maximim number of Key Indexes to encode.
+    /// - parameter limit:  Maximum number of Key Indexes to encode.
     /// - parameter indexes: An array of 12-bit Key Indexes.
     /// - returns: Key Indexes encoded to a Data.
     func encode(_ limit: Int = 10000, indexes: ArraySlice<KeyIndex>) -> Data {
@@ -188,7 +188,7 @@ internal extension ConfigMessage {
             return Data()
         }
         if limit == 1 || indexes.count == 1 {
-            // Encode a sigle Key Index into 2 bytes.
+            // Encode a single Key Index into 2 bytes.
             return Data() + indexes.first!.littleEndian
         } else {
             // Encode a pair of Key Indexes into 3 bytes.
@@ -213,7 +213,7 @@ internal extension ConfigMessage {
             return []
         }
         if limit == 1 || size == 2 {
-            // Decode a sigle Key Index from 2 bytes.
+            // Decode a single Key Index from 2 bytes.
             let index: KeyIndex = UInt16(data[offset + 1]) << 8 | UInt16(data[offset])
             return [index]
         } else {

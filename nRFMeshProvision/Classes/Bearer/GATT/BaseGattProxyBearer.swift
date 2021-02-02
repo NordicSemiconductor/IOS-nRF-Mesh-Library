@@ -49,7 +49,7 @@ open class BaseGattProxyBearer<Service: MeshService>: NSObject, Bearer, CBCentra
     
     /// The protocol used for segmentation and reassembly.
     private let protocolHandler: ProxyProtocolHandler
-    /// The queue of PDUs to be sent. Used if the perpheral is busy.
+    /// The queue of PDUs to be sent. Used if the peripheral is busy.
     private var queue: [Data] = []
     /// A flag indicating whether `open()` method was called.
     private var isOpened: Bool = false
@@ -86,7 +86,7 @@ open class BaseGattProxyBearer<Service: MeshService>: NSObject, Bearer, CBCentra
     
     /// Creates the Gatt Proxy Bearer object. Call `open()` to open connection to the proxy.
     ///
-    /// - parameter peripheral: The CBPeripheral poiting a Bluetooth LE device with
+    /// - parameter peripheral: The CBPeripheral pointing a Bluetooth LE device with
     ///                         Bluetooth Mesh GATT service (Provisioning or Proxy Service).
     public convenience init(target peripheral: CBPeripheral) {
         self.init(targetWithIdentifier: peripheral.identifier)
@@ -190,7 +190,7 @@ open class BaseGattProxyBearer<Service: MeshService>: NSObject, Bearer, CBCentra
     ///
     /// - parameter service: The service to look for the characteristics in.
     private func discoverCharacteristics(for service: CBService) {
-        logger?.v(.bearer, "Discovering characteristrics...")
+        logger?.v(.bearer, "Discovering characteristics...")
         basePeripheral.discoverCharacteristics([Service.dataInUuid, Service.dataOutUuid], for: service)
     }
     

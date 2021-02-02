@@ -239,7 +239,7 @@ internal class ConfigurationServerHandler: ModelDelegate {
             guard let applicationKey = meshNetwork.applicationKeys[keyIndex] else {
                 return ConfigAppKeyStatus(responseTo: request, with: .success)
             }
-            // Check if the binding is correct. Otherwise, reutnr .invalidBinding.
+            // Check if the binding is correct. Otherwise, returner .invalidBinding.
             guard applicationKey.isBound(to: networkKey) else {
                 return ConfigAppKeyStatus(responseTo: request, with: .invalidBinding)
             }

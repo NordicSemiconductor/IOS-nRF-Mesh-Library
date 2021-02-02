@@ -33,8 +33,8 @@ import nRFMeshProvision
 
 class GenericOnOffServerDelegate: StoredWithSceneModelDelegate {
     
-    /// The Generic Default Transtion Time Server model, which this model depends on.
-    let defaultTransitionTimeServer: GenericDefaultTranstionTimeServerDelegate
+    /// The Generic Default Transition Time Server model, which this model depends on.
+    let defaultTransitionTimeServer: GenericDefaultTransitionTimeServerDelegate
     
     let messageTypes: [UInt32 : MeshMessage.Type]
     let isSubscriptionSupported: Bool = true
@@ -100,7 +100,7 @@ class GenericOnOffServerDelegate: StoredWithSceneModelDelegate {
     private var observer: ((GenericState<Bool>) -> ())?
     
     init(_ meshNetwork: MeshNetwork,
-         defaultTransitionTimeServer delegate: GenericDefaultTranstionTimeServerDelegate,
+         defaultTransitionTimeServer delegate: GenericDefaultTransitionTimeServerDelegate,
          elementIndex: UInt8) {
         let types: [GenericMessage.Type] = [
             GenericOnOffGet.self,
@@ -116,7 +116,7 @@ class GenericOnOffServerDelegate: StoredWithSceneModelDelegate {
         storedScenes = defaults.dictionary(forKey: key) as? [String: Bool] ?? [:]
     }
     
-    // MARK: - Scene hanlders
+    // MARK: - Scene handlers
     
     func store(with scene: SceneNumber) {
         storedScenes[scene.hex] = state.value

@@ -199,7 +199,7 @@ public struct Publish: Codable {
         // Warning: assuming hex address is valid!
         return MeshAddress(hex: address)!
     }
-    /// An Application Key index, indicating which Applicaiton Key to
+    /// An Application Key index, indicating which Application Key to
     /// use for the publication.
     public let index: KeyIndex
     /// An integer from 0 to 127 that represents the Time To Live (TTL)

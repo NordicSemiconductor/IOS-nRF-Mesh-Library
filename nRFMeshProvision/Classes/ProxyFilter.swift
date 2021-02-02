@@ -33,12 +33,12 @@ import Foundation
 public enum ProxyFilerType: UInt8 {
     /// An inclusion list filter has an associated inclusion list, which is
     /// a list of destination addresses that are of interest for the Proxy Client.
-    /// The inclusion list filter blocks all messages except those targetting
+    /// The inclusion list filter blocks all messages except those targeting
     /// addresses added to the list.
     case inclusionList = 0x00
     /// An exclusion list filter has an associated exclusion list, which is
     /// a list of destination addresses that the Proxy Client does not want to receive.
-    /// The exclusion list filter forwards all messages except those targetting
+    /// The exclusion list filter forwards all messages except those targeting
     /// addresses added to the list.
     case exclusionList = 0x01
 }
@@ -51,7 +51,7 @@ public protocol ProxyFilterDelegate: class {
     ///   - addresses: The addresses in the filter.
     func proxyFilterUpdated(type: ProxyFilerType, addresses: Set<Address>)
     
-    /// This method is called when the connceted Proxy device supports
+    /// This method is called when the connected Proxy device supports
     /// only a single address in the Proxy Filter list.
     ///
     /// The delegate can switch to `.blacklist` filter type at that point
@@ -79,7 +79,7 @@ public extension ProxyFilterDelegate {
 /// (All Nodes).
 ///
 /// - important: When a local Model gets subscribed to a new Group, or is
-///              unsubscibed from a Group that no other local Model is
+///              unsubscribed from a Group that no other local Model is
 ///              subscribed to, the proxy filter needs to be modified manually
 ///              by calling proper `add` or `remove` method.
 public class ProxyFilter {
@@ -261,7 +261,7 @@ internal extension ProxyFilter {
     /// beacon contained information about the same Network Key as one
     /// received before. This happens during a reconnection to the same
     /// or a different Proxy on the same subnetwork, but may also happen
-    /// in other sircumstances, for example when the IV Update or Key Refresh
+    /// in other Circumstances, for example when the IV Update or Key Refresh
     /// Procedure is in progress, or a Network Key was removed and added again.
     ///
     /// This method reloads the Proxy Filter for the local Provisioner,
@@ -337,7 +337,7 @@ internal extension ProxyFilter {
     ///
     /// - parameters:
     ///   - message: The message received.
-    ///   - proxy: The connected Proxy Node, or `nil` if the Node is uknown.
+    ///   - proxy: The connected Proxy Node, or `nil` if the Node is unknown.
     func handle(_ message: ProxyConfigurationMessage, sentFrom proxy: Node?) {
         switch message {
         case let status as FilterStatus:

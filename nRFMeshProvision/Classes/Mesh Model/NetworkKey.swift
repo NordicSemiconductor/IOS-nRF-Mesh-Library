@@ -30,7 +30,7 @@
 
 import Foundation
 
-internal struct NetworkKeyDerivaties {
+internal struct NetworkKeyDerivatives {
     /// The Identity Key.
     let identityKey: Data!
     /// The Beacon Key.
@@ -81,7 +81,7 @@ public class NetworkKey: Key, Codable {
         }
         didSet {
             phase = .distributingKeys
-            regenerateKeyDerivaties()
+            regenerateKeyDerivatives()
         }
     }
     /// The old Network Key is present when the phase property has a non-zero
@@ -108,12 +108,12 @@ public class NetworkKey: Key, Codable {
     /// The Network ID derived from the old Network Key. This identifier
     /// is public information. It is set when `oldKey` is set.
     public private(set) var oldNetworkId: Data?
-    /// Network Key derivaties.
-    internal private(set) var keys: NetworkKeyDerivaties!
-    /// Network Key derivaties.
-    internal private(set) var oldKeys: NetworkKeyDerivaties?
+    /// Network Key derivatives.
+    internal private(set) var keys: NetworkKeyDerivatives!
+    /// Network Key derivatives.
+    internal private(set) var oldKeys: NetworkKeyDerivatives?
     /// Returns the key set that should be used for encrypting outgoing packets.
-    internal var transmitKeys: NetworkKeyDerivaties {
+    internal var transmitKeys: NetworkKeyDerivatives {
         if case .distributingKeys = phase, let oldKeys = oldKeys {
             return oldKeys
         }
@@ -130,7 +130,7 @@ public class NetworkKey: Key, Codable {
         self.minSecurity = .secure
         self.timestamp   = Date()
         
-        regenerateKeyDerivaties()
+        regenerateKeyDerivatives()
     }
     
     /// Creates the primary Network Key for a mesh network.
@@ -138,20 +138,20 @@ public class NetworkKey: Key, Codable {
         try! self.init(name: "Primary Network Key", index: 0, key: OpenSSLHelper().generateRandom())
     }
     
-    private func regenerateKeyDerivaties() {
+    private func regenerateKeyDerivatives() {
         let helper = OpenSSLHelper()
         // Calculate Network ID.
         networkId = helper.calculateK3(withN: key)
         // Calculate other keys.
-        keys = NetworkKeyDerivaties(withKey: key, using: helper)
+        keys = NetworkKeyDerivatives(withKey: key, using: helper)
         
-        // When the Network Key is imported from JSON, old key derivaties must
+        // When the Network Key is imported from JSON, old key derivatives must
         // be calculated.
         if let oldKey = oldKey, oldNetworkId == nil {
             // Calculate Network ID.
             oldNetworkId = helper.calculateK3(withN: oldKey)
             // Calculate other keys.
-            oldKeys = NetworkKeyDerivaties(withKey: oldKey, using: helper)
+            oldKeys = NetworkKeyDerivatives(withKey: oldKey, using: helper)
         }
     }
     
@@ -194,7 +194,7 @@ public class NetworkKey: Key, Codable {
         minSecurity = try container.decode(Security.self, forKey: .minSecurity)
         timestamp = try container.decode(Date.self, forKey: .timestamp)
         
-        regenerateKeyDerivaties()
+        regenerateKeyDerivatives()
     }
     
     public func encode(to encoder: Encoder) throws {

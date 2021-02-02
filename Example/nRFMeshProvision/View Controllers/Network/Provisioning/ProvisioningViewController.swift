@@ -303,12 +303,12 @@ extension ProvisioningViewController: GattBearerDelegate {
     
     func bearer(_ bearer: Bearer, didClose error: Error?) {
         guard case .complete = provisioningManager.state else {
-            dismissStatusDialog() {
+            dismissStatusDialog {
                 self.presentAlert(title: "Status", message: "Device disconnected.")
             }
             return
         }
-        dismissStatusDialog() {
+        dismissStatusDialog {
             self.presentAlert(title: "Success", message: "Provisioning complete.") { _ in
                 if MeshNetworkManager.instance.save() {
                     self.dismiss(animated: true) {
@@ -328,7 +328,7 @@ extension ProvisioningViewController: GattBearerDelegate {
 
 extension ProvisioningViewController: ProvisioningDelegate {
     
-    func provisioningState(of unprovisionedDevice: UnprovisionedDevice, didChangeTo state: ProvisionigState) {
+    func provisioningState(of unprovisionedDevice: UnprovisionedDevice, didChangeTo state: ProvisioningState) {
         DispatchQueue.main.async {
             switch state {
                 
@@ -359,7 +359,7 @@ extension ProvisioningViewController: ProvisioningDelegate {
                 
                 let deviceSupported = self.provisioningManager.isDeviceSupported == true
                 
-                self.dismissStatusDialog() {
+                self.dismissStatusDialog {
                     if deviceSupported && addressValid {
                         // If the device got disconnected after the capabilities were received
                         // the first time, the app had to send invitation again.
@@ -382,7 +382,7 @@ extension ProvisioningViewController: ProvisioningDelegate {
                 self.presentStatusDialog(message: "Disconnecting...")
                 
             case let .fail(error):
-                self.dismissStatusDialog() {
+                self.dismissStatusDialog {
                     self.presentAlert(title: "Error", message: error.localizedDescription)
                     self.abort()
                 }
@@ -396,7 +396,7 @@ extension ProvisioningViewController: ProvisioningDelegate {
     func authenticationActionRequired(_ action: AuthAction) {
         switch action {
         case let .provideStaticKey(callback: callback):
-            self.dismissStatusDialog() {
+            self.dismissStatusDialog {
                 let message = "Enter 16-character hexadecimal string."
                 self.presentTextAlert(title: "Static OOB Key", message: message,
                                       type: .keyRequired, cancelHandler: nil) { hex in
@@ -404,7 +404,7 @@ extension ProvisioningViewController: ProvisioningDelegate {
                 }
             }
         case let .provideNumeric(maximumNumberOfDigits: _, outputAction: action, callback: callback):
-            self.dismissStatusDialog() {
+            self.dismissStatusDialog {
                 var message: String
                 switch action {
                 case .blink:
@@ -424,7 +424,7 @@ extension ProvisioningViewController: ProvisioningDelegate {
                 }
             }
         case let .provideAlphanumeric(maximumNumberOfCharacters: _, callback: callback):
-            self.dismissStatusDialog() {
+            self.dismissStatusDialog {
                 let message = "Enter the text displayed on the device."
                 self.presentTextAlert(title: "Authentication", message: message,
                                       type: .nameRequired, cancelHandler: nil) { text in

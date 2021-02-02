@@ -65,8 +65,8 @@ public extension Address {
         return self == Address.unassignedAddress
     }
     
-    /// Returns `true` if the address is an Unicat Address.
-    /// Unicat addresses match 0b00xxxxxxxxxxxxxx (except 0b0000000000000000).
+    /// Returns `true` if the address is an Unicast Address.
+    /// Unicast addresses match 0b00xxxxxxxxxxxxxx (except 0b0000000000000000).
     var isUnicast: Bool {
         return (self & 0x8000) == 0x0000 && !isUnassigned
     }

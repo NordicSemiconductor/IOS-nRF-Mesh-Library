@@ -33,8 +33,8 @@ import nRFMeshProvision
 
 class SceneServerDelegate: SceneServerModelDelegate {
     
-    /// The Generic Default Transtion Time Server model, which this model depends on.
-    let defaultTransitionTimeServer: GenericDefaultTranstionTimeServerDelegate
+    /// The Generic Default Transition Time Server model, which this model depends on.
+    let defaultTransitionTimeServer: GenericDefaultTransitionTimeServerDelegate
     
     let messageTypes: [UInt32 : MeshMessage.Type]    
     let isSubscriptionSupported: Bool = true
@@ -87,7 +87,7 @@ class SceneServerDelegate: SceneServerModelDelegate {
     }
     
     init(_ meshNetwork: MeshNetwork,
-         defaultTransitionTimeServer delegate: GenericDefaultTranstionTimeServerDelegate) {
+         defaultTransitionTimeServer delegate: GenericDefaultTransitionTimeServerDelegate) {
         let types: [GenericMessage.Type] = [
             SceneGet.self,
             SceneRegisterGet.self,

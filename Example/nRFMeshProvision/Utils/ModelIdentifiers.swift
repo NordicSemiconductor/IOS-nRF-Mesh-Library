@@ -42,8 +42,8 @@ extension UInt16 {
     static let genericLevelServerModelId: UInt16 = 0x1002
     static let genericLevelClientModelId: UInt16 = 0x1003
     
-    static let genericDefaultTransitionTimeServerModelid: UInt16 = 0x1004
-    static let genericDefaultTransitionTimeClientModelid: UInt16 = 0x1005
+    static let genericDefaultTransitionTimeServerModelId: UInt16 = 0x1004
+    static let genericDefaultTransitionTimeClientModelId: UInt16 = 0x1005
     
     static let sceneServerModelId: UInt16 = 0x1203
     static let sceneSetupServerModelId: UInt16 = 0x1204

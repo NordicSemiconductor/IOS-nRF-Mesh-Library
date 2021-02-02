@@ -146,7 +146,7 @@ extension NodeAddNetworkKeyViewController: MeshNetworkDelegate {
         // Has the Node been reset remotely.
         guard !(message is ConfigNodeReset) else {
             (UIApplication.shared.delegate as! AppDelegate).meshNetworkDidChange()
-            done() {
+            done {
                 let rootViewControllers = self.presentingViewController?.children
                 self.dismiss(animated: true) {
                     rootViewControllers?.forEach {
@@ -167,7 +167,7 @@ extension NodeAddNetworkKeyViewController: MeshNetworkDelegate {
         switch message {
             
         case let status as ConfigNetKeyStatus:
-            done() {
+            done {
                 if status.status == .success {
                     self.dismiss(animated: true)
                     self.delegate?.keyAdded()
@@ -186,7 +186,7 @@ extension NodeAddNetworkKeyViewController: MeshNetworkDelegate {
                             failedToSendMessage message: MeshMessage,
                             from localElement: Element, to destination: Address,
                             error: Error) {
-        done() {
+        done {
             self.presentAlert(title: "Error", message: error.localizedDescription)
         }
     }

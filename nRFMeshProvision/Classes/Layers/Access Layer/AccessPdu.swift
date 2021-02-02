@@ -50,7 +50,7 @@ internal struct AccessPdu {
     /// The Access Layer PDU data that will be sent.
     let accessPdu: Data
     
-    /// Whether the outgoind message will be sent as segmented, or not.
+    /// Whether the outgoing message will be sent as segmented, or not.
     var isSegmented: Bool {
         guard let message = message else {
             return false
@@ -96,7 +96,7 @@ internal struct AccessPdu {
         }
         let octet0 = pdu.accessPdu[0]
         
-        // Opcode 0b01111111 is reseved for future use.
+        // Opcode 0b01111111 is reserved for future use.
         guard octet0 != 0b01111111 else {
             return nil
         }

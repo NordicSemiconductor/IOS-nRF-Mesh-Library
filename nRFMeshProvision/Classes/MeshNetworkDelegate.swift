@@ -68,7 +68,7 @@ public protocol MeshNetworkDelegate: class {
                             from localElement: Element, to destination: Address)
     
     /// A callback called when a message failed to be sent to the target
-    /// Node, or the respnse for an acknowledged message hasn't been received
+    /// Node, or the response for an acknowledged message hasn't been received
     /// before the time run out.
     ///
     /// For unsegmented unacknowledged messages this callback will be invoked when
@@ -93,7 +93,7 @@ public protocol MeshNetworkDelegate: class {
     /// - `LowerTransportError.busy` - when the target Node is busy and can't
     ///   accept the message.
     /// - `LowerTransportError.timeout` - when the segmented message targeting
-    ///   a Unicast Address was not acknowledgned before the `retransmissionLimit`
+    ///   a Unicast Address was not acknowledged before the `retransmissionLimit`
     ///   was reached (for unacknowledged messages only).
     /// - `AccessError.timeout` - when the response for an acknowledged message
     ///   has not been received before the time run out (for acknowledged messages

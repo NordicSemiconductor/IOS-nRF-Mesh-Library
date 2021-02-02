@@ -125,7 +125,7 @@ internal struct UpperTransportPdu {
     }
     
     /// This method tries to decode the Access Message using a matching Application Key
-    /// or the node's Device Key, based onthe `aid` field value.
+    /// or the node's Device Key, based on the `aid` field value.
     ///
     /// - parameter accessMessage: The Lower Transport Layer Access Message received.
     /// - parameter meshNetwork: The mesh network for which the PDU should be decoded.

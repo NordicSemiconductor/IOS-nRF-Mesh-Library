@@ -205,7 +205,7 @@ internal class NetworkLayer {
     ///
     /// The Proxy Filter object will be informed about the success or a failure.
     ///
-    /// - parameter message: The Proxy Confifuration message to be sent.
+    /// - parameter message: The Proxy Configuration message to be sent.
     func send(proxyConfigurationMessage message: ProxyConfigurationMessage) {
         guard let networkKey = proxyNetworkKey else {
             // The Proxy Network Key is unknown.
@@ -250,7 +250,7 @@ private extension NetworkLayer {
     
     /// This method handles the Unprovisioned Device beacon.
     ///
-    /// The curernt implementation does nothing, as remote provisioning is
+    /// The current implementation does nothing, as remote provisioning is
     /// currently not supported.
     ///
     /// - parameter unprovisionedDeviceBeacon: The Unprovisioned Device beacon received.
@@ -305,7 +305,7 @@ private extension NetworkLayer {
             // If the IV Index used for transmitting messages effectively increased,
             // the Node shall reset the sequence number to 0x000000.
             //
-            // Note: This library keeps seperate sequence numbers for each Element of the
+            // Note: This library keeps separate sequence numbers for each Element of the
             //       local provisioner (source Unicast Address). All of them need to be reset.
             if let localNode = meshNetwork.localProvisioner?.node,
                meshNetwork.ivIndex.transmitIndex > lastIVIndex.transmitIndex {

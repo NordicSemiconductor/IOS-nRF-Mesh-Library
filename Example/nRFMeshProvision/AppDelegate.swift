@@ -45,7 +45,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // configuration values.
         meshNetworkManager = MeshNetworkManager()
         meshNetworkManager.acknowledgmentTimerInterval = 0.150
-        meshNetworkManager.transmissionTimerInteral = 0.600
+        meshNetworkManager.transmissionTimerInterval = 0.600
         meshNetworkManager.incompleteMessageTimeout = 10.0
         meshNetworkManager.retransmissionLimit = 2
         meshNetworkManager.acknowledgmentMessageInterval = 4.2
@@ -97,7 +97,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let meshNetwork = meshNetworkManager.meshNetwork!
 
         // Generic Default Transition Time Server model:
-        let defaultTransitionTimeServerDelegate = GenericDefaultTranstionTimeServerDelegate(meshNetwork)
+        let defaultTransitionTimeServerDelegate = GenericDefaultTransitionTimeServerDelegate(meshNetwork)
         // Scene Server and Scene Setup Server models:
         let sceneServer = SceneServerDelegate(meshNetwork,
                                               defaultTransitionTimeServer: defaultTransitionTimeServerDelegate)
@@ -109,10 +109,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             Model(sigModelId: .sceneServerModelId, delegate: sceneServer),
             Model(sigModelId: .sceneSetupServerModelId, delegate: sceneSetupServer),
             // Generic Default Transition Time Server model:
-            Model(sigModelId: .genericDefaultTransitionTimeServerModelid,
+            Model(sigModelId: .genericDefaultTransitionTimeServerModelId,
                   delegate: defaultTransitionTimeServerDelegate),
-            Model(sigModelId: .genericDefaultTransitionTimeClientModelid,
-                  delegate: GenericDefaultTranstionTimeClientDelegate()),
+            Model(sigModelId: .genericDefaultTransitionTimeClientModelId,
+                  delegate: GenericDefaultTransitionTimeClientDelegate()),
             // 4 generic models defined by Bluetooth SIG:
             Model(sigModelId: .genericOnOffServerModelId,
                   delegate: GenericOnOffServerDelegate(meshNetwork,

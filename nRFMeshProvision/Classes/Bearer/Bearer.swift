@@ -32,7 +32,7 @@ import Foundation
 
 /// The PDU Type identifies the type of the message.
 /// Bearers may use this type to set the proper value in the
-/// payload. For ADV beared it will be a proper AD Type (see Assigned
+/// payload. For ADV bearer it will be a proper AD Type (see Assigned
 /// Numbers / Generic Access Profile), for GATT bearer the correct
 /// Message type in the Proxy PDU.
 ///

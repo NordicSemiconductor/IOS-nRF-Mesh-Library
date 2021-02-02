@@ -88,7 +88,7 @@ public class MeshNetworkManager {
     /// If the bearer is using GATT, it is recommended to set the transmission
     /// interval longer than the connection interval, so that the acknowledgment
     /// had a chance to be received.
-    public var transmissionTimerInteral: TimeInterval = 0.200
+    public var transmissionTimerInterval: TimeInterval = 0.200
     /// Number of times a non-acknowledged segment of a segmented message
     /// will be retransmitted before the message will be cancelled.
     ///
@@ -105,7 +105,7 @@ public class MeshNetworkManager {
     ///
     /// The acknowledged message timeout should be set to a minimum of 30 seconds.
     public var acknowledgmentMessageTimeout: TimeInterval = 30.0
-    /// The base time after which the acknowledgmed message will be repeated.
+    /// The base time after which the acknowledged message will be repeated.
     ///
     /// The repeat timer will be set to the base time + 50 * TTL milliseconds +
     /// 50 * segment count. The TTL and segment count dependent parts are added
@@ -113,7 +113,7 @@ public class MeshNetworkManager {
     public var acknowledgmentMessageInterval: TimeInterval = 2.0
     /// According to Bluetooth Mesh Profile 1.0.1, section 3.10.5, if the IV Index
     /// of the mesh network increased by more than 42 since the last connection
-    /// (which can take at least 48 weeks), the Node should be reprovisioned.
+    /// (which can take at least 48 weeks), the Node should be re-provisioned.
     /// However, as this library can be used to provision other Nodes, it should not
     /// be blocked from sending messages to the network only because the phone wasn't
     /// connected to the network for that time. This flag can disable this check,
@@ -156,7 +156,7 @@ public class MeshNetworkManager {
     ///
     /// - parameters:
     ///   - storage: The storage to use to save the network configuration.
-    ///   - queue: The DispatQueue to process reqeusts on. By default
+    ///   - queue: The DispatchQueue to process requests on. By default
     ///            the a global background concurrent queue will be used.
     ///            Note, that if multiple messages are sent shortly one after another,
     ///            processing them in a concurrent queue may cause some of them to be
@@ -236,7 +236,7 @@ public extension MeshNetworkManager {
     /// Node with additional Elements and Models. For example, you may add an
     /// additional Element with Generic On/Off Client Model if you support this
     /// feature in your app. Make sure there is enough addresses for all the
-    /// Elements created. If a collision is found, the coliding Elements will
+    /// Elements created. If a collision is found, the colliding Elements will
     /// be ignored.
     ///
     /// The Element with all mandatory Models (Configuration Server and Client
@@ -309,7 +309,7 @@ public extension MeshNetworkManager {
     /// publication information set in the Model.
     ///
     /// If the retransmission is set to a value greater than 0, and the message
-    /// is unacknowleged, this method will retransmit it number of times
+    /// is unacknowledged, this method will retransmit it number of times
     /// with the count and interval specified in the retransmission object.
     ///
     /// - parameters:
@@ -336,8 +336,8 @@ public extension MeshNetworkManager {
     /// This method does not send nor return PDUs to be sent. Instead,
     /// for each created segment it calls transmitter's `send(:ofType)`,
     /// which should send the PDU over the air. This is in order to support
-    /// retransmittion in case a packet was lost and needs to be sent again
-    /// after block acknowlegment was received.
+    /// retransmitting in case a packet was lost and needs to be sent again
+    /// after block acknowledgment was received.
     ///
     /// A `delegate` method will be called when the message has been sent,
     /// delivered, or failed to be sent.

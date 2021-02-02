@@ -49,7 +49,7 @@ public struct ConfigHeartbeatSubscriptionStatus: ConfigMessage, ConfigStatusMess
     /// The Heartbeat Subscription Source shall be the Unassigned Address or a Unicast a
     /// Address, all other values are Prohibited.
     ///
-    /// If the Heartbeat Subscription Source is set to the Uunassigned Address,
+    /// If the Heartbeat Subscription Source is set to the Unassigned Address,
     /// the Heartbeat messages are not processed and subscription will be cancelled.
     public let source: Address
     /// Destination address for Heartbeat messages.
@@ -91,7 +91,7 @@ public struct ConfigHeartbeatSubscriptionStatus: ConfigMessage, ConfigStatusMess
     ///
     /// Possible values (See table 4.1 in Bluetooth Mesh Specification 1.0.1):
     /// - 0x00 - 0x10 - Number of Heartbeat messages, 2^(n-1), that were received.
-    /// - 0xFF - More than 0xFFFE Hearbeat messages were received.
+    /// - 0xFF - More than 0xFFFE Heartbeat messages were received.
     /// - Other values are Prohibited.
     ///
     /// The Heartbeat Subscription Count Log is a representation of the Heartbeat Subscription

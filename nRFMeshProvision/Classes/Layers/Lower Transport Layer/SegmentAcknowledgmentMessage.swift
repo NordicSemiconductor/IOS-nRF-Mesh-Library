@@ -102,7 +102,7 @@ internal struct SegmentAcknowledgmentMessage: LowerTransportPdu {
         upperTransportPdu = Data() + blockAck.bigEndian
         
         // Assuming all segments have the same source and destination addresses and network key.
-        // Swaping source with destination. Destination here is guaranteed to be a Unicast Address.
+        // Swapping source with destination. Destination here is guaranteed to be a Unicast Address.
         source = segment.destination
         destination = segment.source
         networkKey = segment.networkKey

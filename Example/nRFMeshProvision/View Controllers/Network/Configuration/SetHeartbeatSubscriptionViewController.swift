@@ -86,7 +86,7 @@ class SetHeartbeatSubscriptionViewController: ProgressViewController {
         if let subscription = node.heartbeatSubscription {
             selectedSource = subscription.source
             selectedDestination = subscription.destination
-            // Otherwise Done button is by default disabled in the Storeboard.
+            // Otherwise Done button is by default disabled in the Storyboard.
             doneButton.isEnabled = true
         }
     }
@@ -234,7 +234,7 @@ private extension SetHeartbeatSubscriptionViewController {
                     specialGroups[destinationIndexPath.row].address
         let periodLog = self.periodLog
         
-        start("Setting Heartbeat Subscribtion...") {
+        start("Setting Heartbeat Subscription...") {
             let message: ConfigMessage =
                 ConfigHeartbeatSubscriptionSet(startProcessingHeartbeatMessagesFor: periodLog,
                                                secondsSentFrom: sourceAddress,
@@ -253,7 +253,7 @@ extension SetHeartbeatSubscriptionViewController: MeshNetworkDelegate {
         // Has the Node been reset remotely.
         guard !(message is ConfigNodeReset) else {
             (UIApplication.shared.delegate as! AppDelegate).meshNetworkDidChange()
-            done() {
+            done {
                 let rootViewControllers = self.presentingViewController?.children
                 self.dismiss(animated: true) {
                     rootViewControllers?.forEach {
@@ -274,7 +274,7 @@ extension SetHeartbeatSubscriptionViewController: MeshNetworkDelegate {
         switch message {
             
         case let status as ConfigHeartbeatSubscriptionStatus:
-            done() {
+            done {
                 if status.status == .success {
                     self.dismiss(animated: true)
                     self.delegate?.heartbeatSubscriptionSet()                    
@@ -292,7 +292,7 @@ extension SetHeartbeatSubscriptionViewController: MeshNetworkDelegate {
                             failedToSendMessage message: MeshMessage,
                             from localElement: Element, to destination: Address,
                             error: Error) {
-        done() {
+        done {
             self.presentAlert(title: "Error", message: error.localizedDescription)
         }
     }

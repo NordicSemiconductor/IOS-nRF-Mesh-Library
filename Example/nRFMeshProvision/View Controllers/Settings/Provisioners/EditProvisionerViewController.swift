@@ -279,7 +279,7 @@ private extension EditProvisionerViewController {
         }
      }
     
-    /// Saves the edited or new Provisioner and pops the view contoller if saving
+    /// Saves the edited or new Provisioner and pops the view controller if saving
     /// succeeded.
     func saveProvisioner() {
         do {

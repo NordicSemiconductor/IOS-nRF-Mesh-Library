@@ -77,7 +77,7 @@ class NetworkConnection: NSObject, Bearer {
     /// them if found.
     private var isStarted: Bool = false
     
-    /// Returns `true` if at least one Proxy is connected, `false` otherwies.
+    /// Returns `true` if at least one Proxy is connected, `false` otherwise.
     var isConnected: Bool {
         return proxies.contains { $0.isOpen }
     }

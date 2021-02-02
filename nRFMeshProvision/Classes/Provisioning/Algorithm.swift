@@ -30,7 +30,7 @@
 
 import Foundation
 
-/// The algorighm used for calculating Device Key.
+/// The algorithm used for calculating Device Key.
 public enum Algorithm {
     /// FIPS P-256 Elliptic Curve algorithm will be used to calculate the
     /// shared secret.
@@ -54,7 +54,7 @@ extension Algorithm: CustomDebugStringConvertible {
     
 }
 
-/// A set of algorighms supported by the Unprovisioned Device.
+/// A set of algorithms supported by the Unprovisioned Device.
 public struct Algorithms: OptionSet {
     public let rawValue: UInt16
     

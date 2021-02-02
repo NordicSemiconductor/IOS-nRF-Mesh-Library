@@ -33,7 +33,7 @@ import nRFMeshProvision
 
 class GenericOnOffViewCell: ModelViewCell {
     
-    // MARK: - Outlets and Actinos
+    // MARK: - Outlets and Actions
 
     @IBOutlet weak var defaultTransitionSettingsSwitch: UISwitch!
     @IBAction func defaultTransitionSettingsDidChange(_ sender: UISwitch) {

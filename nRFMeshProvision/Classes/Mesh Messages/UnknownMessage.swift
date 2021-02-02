@@ -31,7 +31,7 @@
 import Foundation
 
 public struct UnknownMessage: MeshMessage {
-    // The opcode is set when the message is received. Initally it is set
+    // The opcode is set when the message is received. Initially it is set
     // to 0, as the constructor takes only parameters.
     public internal(set) var opCode: UInt32 = 0
     

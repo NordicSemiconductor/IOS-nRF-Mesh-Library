@@ -38,14 +38,14 @@ public enum BatteryPresence: UInt8 {
 }
 
 public enum BatteryIndicator: UInt8 {
-    case critiallyLow  = 0b00
+    case criticallyLow = 0b00
     case low           = 0b01
     case good          = 0b10
     case unknown       = 0b11
 }
 
 public enum BatteryChargingState: UInt8 {
-    case notChargable  = 0b00
+    case notChargeable = 0b00
     case notCharging   = 0b01
     case charging      = 0b10
     case unknown       = 0b11
@@ -69,7 +69,7 @@ public struct GenericBatteryStatus: GenericMessage {
     
     /// Battery level state in percentage. Only values 0...100 and 0xFF are allowed.
     ///
-    /// Vaklue 0xFF means that the battery state is unknown.
+    /// Value 0xFF means that the battery state is unknown.
     public let batteryLevel: UInt8
     /// Time to discharge, in minutes. Value 0xFFFFFF means unknown time.
     public let timeToDischarge: UInt32

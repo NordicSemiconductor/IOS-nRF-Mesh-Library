@@ -31,7 +31,7 @@
 import Foundation
 import nRFMeshProvision
 
-class GenericDefaultTranstionTimeServerDelegate: ModelDelegate {
+class GenericDefaultTransitionTimeServerDelegate: ModelDelegate {
     let messageTypes: [UInt32 : MeshMessage.Type]
     let isSubscriptionSupported: Bool = true
     let publicationMessageComposer: MessageComposer? = nil

@@ -65,7 +65,7 @@ internal class UpperTransportLayer {
     /// Depending on the PDU type, the message will be either propagated to
     /// Access Layer, or handled internally.
     ///
-    /// - parameter lowetTransportPdu: The Lower Trasport PDU received.
+    /// - parameter lowerTransportPdu: The Lower Transport PDU received.
     func handle(lowerTransportPdu: LowerTransportPdu) {
         switch lowerTransportPdu.type {
         case .accessMessage:
@@ -82,7 +82,7 @@ internal class UpperTransportLayer {
             case HeartbeatMessage.opCode:
                 if let heartbeat = HeartbeatMessage(fromControlMessage: controlMessage) {
                     logger?.i(.upperTransport, "\(heartbeat) received from \(heartbeat.source.hex)")
-                    handle(hearbeat: heartbeat)
+                    handle(heartbeat: heartbeat)
                 }
             default:
                 logger?.w(.upperTransport, "Unsupported Control Message received (opCode: \(controlMessage.opCode))")
@@ -129,7 +129,7 @@ internal class UpperTransportLayer {
     /// - parameter handle: The message handle.
     func cancel(_ handle: MessageHandle) {
         var shouldSendNext = false
-        // Check if the message that is currently being sent mathes the
+        // Check if the message that is currently being sent matches the
         // handler data. If so, cancel it.
         if let first = mutex.sync(execute: { queues[handle.destination]?.first }),
            first.pdu.message!.opCode == handle.opCode && first.pdu.source == handle.source {
@@ -140,7 +140,7 @@ internal class UpperTransportLayer {
 
         // Remove all enqueued messages that match the handler.
         mutex.sync {
-            queues[handle.destination]?.removeAll() {
+            queues[handle.destination]?.removeAll {
                 $0.pdu.message!.opCode == handle.opCode &&
                 $0.pdu.source == handle.source &&
                 $0.pdu.destination == handle.destination
@@ -229,13 +229,13 @@ private extension UpperTransportLayer {
     /// Handles received Heartbeat message. If the local Node has active subscription
     /// matching received Heartbeat, the count value will be incremented.
     ///
-    /// - parameter hearbeat: Received Heartbeat message.
-    func handle(hearbeat: HeartbeatMessage) {
+    /// - parameter heartbeat: Received Heartbeat message.
+    func handle(heartbeat: HeartbeatMessage) {
         guard let localNode = meshNetwork.localProvisioner?.node,
               let heartbeatSubscription = localNode.heartbeatSubscription else {
             return
         }
-        heartbeatSubscription.updateIfMatches(hearbeat)
+        heartbeatSubscription.updateIfMatches(heartbeat)
     }
     
     /// Tries to sends given Heartbeat message.

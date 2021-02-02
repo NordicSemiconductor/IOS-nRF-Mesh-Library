@@ -21,8 +21,8 @@
 		5212152D231545D40059FB3D /* ModelGroupCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5212152C231545D40059FB3D /* ModelGroupCell.swift */; };
 		5212152F231554190059FB3D /* ProgressCollectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5212152E231554190059FB3D /* ProgressCollectionViewController.swift */; };
 		521215312316C36B0059FB3D /* GenericLevelGroupCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 521215302316C36B0059FB3D /* GenericLevelGroupCell.swift */; };
-		5217D2E0250F522A004FDE79 /* GenericDefaultTranstionTimeServerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5217D2DF250F522A004FDE79 /* GenericDefaultTranstionTimeServerDelegate.swift */; };
-		5217D2E2250F7639004FDE79 /* GenericDefaultTranstionTimeClientDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5217D2E1250F7639004FDE79 /* GenericDefaultTranstionTimeClientDelegate.swift */; };
+		5217D2E0250F522A004FDE79 /* GenericDefaultTransitionTimeServerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5217D2DF250F522A004FDE79 /* GenericDefaultTransitionTimeServerDelegate.swift */; };
+		5217D2E2250F7639004FDE79 /* GenericDefaultTransitionTimeClientDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5217D2E1250F7639004FDE79 /* GenericDefaultTransitionTimeClientDelegate.swift */; };
 		5217D2E5250F90D8004FDE79 /* GenericDefaultTransitionTimeViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5217D2E3250F90D8004FDE79 /* GenericDefaultTransitionTimeViewCell.swift */; };
 		5217D2E6250F90D8004FDE79 /* GenericDefaultTransitionTime.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5217D2E4250F90D8004FDE79 /* GenericDefaultTransitionTime.xib */; };
 		52248CDC251E21F000B10250 /* ExportViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52248CDB251E21F000B10250 /* ExportViewController.swift */; };
@@ -182,8 +182,8 @@
 		5212152C231545D40059FB3D /* ModelGroupCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelGroupCell.swift; sourceTree = "<group>"; };
 		5212152E231554190059FB3D /* ProgressCollectionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgressCollectionViewController.swift; sourceTree = "<group>"; };
 		521215302316C36B0059FB3D /* GenericLevelGroupCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericLevelGroupCell.swift; sourceTree = "<group>"; };
-		5217D2DF250F522A004FDE79 /* GenericDefaultTranstionTimeServerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericDefaultTranstionTimeServerDelegate.swift; sourceTree = "<group>"; };
-		5217D2E1250F7639004FDE79 /* GenericDefaultTranstionTimeClientDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericDefaultTranstionTimeClientDelegate.swift; sourceTree = "<group>"; };
+		5217D2DF250F522A004FDE79 /* GenericDefaultTransitionTimeServerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericDefaultTransitionTimeServerDelegate.swift; sourceTree = "<group>"; };
+		5217D2E1250F7639004FDE79 /* GenericDefaultTransitionTimeClientDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericDefaultTransitionTimeClientDelegate.swift; sourceTree = "<group>"; };
 		5217D2E3250F90D8004FDE79 /* GenericDefaultTransitionTimeViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericDefaultTransitionTimeViewCell.swift; sourceTree = "<group>"; };
 		5217D2E4250F90D8004FDE79 /* GenericDefaultTransitionTime.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = GenericDefaultTransitionTime.xib; sourceTree = "<group>"; };
 		52248CDB251E21F000B10250 /* ExportViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExportViewController.swift; sourceTree = "<group>"; };
@@ -654,8 +654,8 @@
 				52DF5D8E229691BD00C297C1 /* NetworkConnection.swift */,
 				5211EAD4250777E100089FF2 /* SceneServerDelegate.swift */,
 				5211EADA25090DB000089FF2 /* SceneSetupServerDelegate.swift */,
-				5217D2E1250F7639004FDE79 /* GenericDefaultTranstionTimeClientDelegate.swift */,
-				5217D2DF250F522A004FDE79 /* GenericDefaultTranstionTimeServerDelegate.swift */,
+				5217D2E1250F7639004FDE79 /* GenericDefaultTransitionTimeClientDelegate.swift */,
+				5217D2DF250F522A004FDE79 /* GenericDefaultTransitionTimeServerDelegate.swift */,
 				52E54CDC23438B2E00478F05 /* GenericOnOffClientDelegate.swift */,
 				52E54CDE23438D2600478F05 /* GenericOnOffServerDelegate.swift */,
 				52E54CE02344974B00478F05 /* GenericLevelClientDelegate.swift */,
@@ -984,7 +984,7 @@
 				52835269227B2BAE0097B949 /* ScannerTableViewController.swift in Sources */,
 				528352BC2285B6150097B949 /* OobSelector.swift in Sources */,
 				52E54CDF23438D2600478F05 /* GenericOnOffServerDelegate.swift in Sources */,
-				5217D2E2250F7639004FDE79 /* GenericDefaultTranstionTimeClientDelegate.swift in Sources */,
+				5217D2E2250F7639004FDE79 /* GenericDefaultTransitionTimeClientDelegate.swift in Sources */,
 				5288C20823705C8D00321ED3 /* ProxyCell.swift in Sources */,
 				52BC6F4824507A5400EBEEA4 /* DisconnectCell.swift in Sources */,
 				523F777B22CB86A00030EA6A /* ModelBindAppKeyViewController.swift in Sources */,
@@ -1046,7 +1046,7 @@
 				5231403F2301761C0074325A /* ConfigurationServerViewCell.swift in Sources */,
 				52A8EA9624EE704A004C14C7 /* SetHeartbeatSubscriptionViewController.swift in Sources */,
 				52547EFB231800F30002AA7B /* GroupTargetModelsViewController.swift in Sources */,
-				5217D2E0250F522A004FDE79 /* GenericDefaultTranstionTimeServerDelegate.swift in Sources */,
+				5217D2E0250F522A004FDE79 /* GenericDefaultTransitionTimeServerDelegate.swift in Sources */,
 				52E54CD42343874000478F05 /* GenericOnOffServerCell.swift in Sources */,
 				52547F24232A3F470002AA7B /* RangeCell.swift in Sources */,
 				5231404D230AC4680074325A /* VendorModelViewCell.swift in Sources */,

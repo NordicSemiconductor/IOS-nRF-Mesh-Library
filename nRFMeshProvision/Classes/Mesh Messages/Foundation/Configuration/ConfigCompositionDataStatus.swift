@@ -62,7 +62,7 @@ public struct ConfigCompositionDataStatus: ConfigMessage {
             }
             page = page0
         default:
-            // Other Pages are not supoprted.
+            // Other Pages are not supported.
             return nil
         }
     }

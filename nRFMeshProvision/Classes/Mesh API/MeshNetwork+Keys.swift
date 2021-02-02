@@ -82,7 +82,7 @@ public extension MeshNetwork {
         return key
     }
     
-    /// Removes Applicaiton Key with given Key Index.
+    /// Removes Application Key with given Key Index.
     ///
     /// - parameter index: The Key Index of a key to be removed.
     /// - parameter force: If set to `true`, the key will be deleted even
@@ -96,7 +96,7 @@ public extension MeshNetwork {
         }
     }
     
-    /// Removes Applicaiton Key at the given index.
+    /// Removes Application Key at the given index.
     ///
     /// - parameter index: The position of the element to remove.
     ///                    `index` must be a valid index of the array.

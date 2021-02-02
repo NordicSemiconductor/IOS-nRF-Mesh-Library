@@ -56,7 +56,7 @@ public protocol ModelDelegate: class {
     
     /// The message composer that will be used to create a Mesh Message.
     ///
-    /// The composer will be used whenever model is about to pubilsh its
+    /// The composer will be used whenever model is about to publish its
     /// state using the publish information specified in the Model.
     ///
     /// When set to `nil`, the library will return error
@@ -188,7 +188,7 @@ public extension StoredWithSceneModelDelegate {
 /// Each such message is sent with a Transaction Identifier (TID).
 ///
 /// If a received TID is the same as TID of the previously received message
-/// from the same source and targetting the same destination, and no more
+/// from the same source and targeting the same destination, and no more
 /// than 6 seconds have passed since, the message is assumed to be the
 /// transaction continuation. Otherwise it is a new transaction.
 public class TransactionHelper {

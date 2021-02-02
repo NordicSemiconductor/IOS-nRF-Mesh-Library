@@ -64,7 +64,7 @@ public struct LightHSLSetUnacknowledged: GenericMessage, TransactionMessage, Tra
     /// - 0x0001 - 0xFFFE - the perceived lightness of a light emitted by the element.
     /// - 0xFFFF - the highest perceived lightness of a light emitted by the element.
     ///
-    /// Hue is representing by 16-bit unasigned integer of a 0-360 degree scale
+    /// Hue is representing by 16-bit unsigned integer of a 0-360 degree scale
     /// using the formula:
     ///
     /// H (degrees) = 360 * hue / 65536
@@ -93,7 +93,7 @@ public struct LightHSLSetUnacknowledged: GenericMessage, TransactionMessage, Tra
     /// - 0x0001 - 0xFFFE - the perceived lightness of a light emitted by the element.
     /// - 0xFFFF - the highest perceived lightness of a light emitted by the element.
     ///
-    /// Hue is representing by 16-bit unasigned integer of a 0-360 degree scale
+    /// Hue is representing by 16-bit unsigned integer of a 0-360 degree scale
     /// using the formula:
     ///
     /// H (degrees) = 360 * hue / 65536

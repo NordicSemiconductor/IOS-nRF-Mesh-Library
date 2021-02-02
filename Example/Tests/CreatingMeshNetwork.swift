@@ -163,7 +163,7 @@ class CreatingMeshNetwork: XCTestCase {
         
         let cutElements = network.localProvisioner?.node?.elements
         XCTAssertNotNil(cutElements)
-        XCTAssertEqual(cutElements!.count, 2) // There were only 2 addreses available.
+        XCTAssertEqual(cutElements!.count, 2) // There were only 2 addresses available.
         XCTAssertEqual(cutElements![0].models.count, 7)
         XCTAssert(cutElements![0].contains(model: Model(sigModelId: .configurationServerModelId)))
         XCTAssert(cutElements![0].contains(model: Model(sigModelId: .configurationClientModelId)))

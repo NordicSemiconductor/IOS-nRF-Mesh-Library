@@ -85,7 +85,7 @@ public class HeartbeatSubscription: Codable {
             self.period = TimeInterval(HeartbeatSubscription.periodLog2Period(periodLog))
         }
     }
-    /// The state contains variables used for handling received Heartbeat mesasges
+    /// The state contains variables used for handling Heartbeat messages received
     /// by the local Node.
     internal var state: State?
     
@@ -108,7 +108,7 @@ public class HeartbeatSubscription: Codable {
     /// Returns whether the received Heartbeat message matches subscription parameters.
     ///
     /// - parameter heartbeat: The received Heartbeat message.
-    /// - returns: True, if Heartbeat message maches the subscription; false otherwise.
+    /// - returns: True, if Heartbeat message matches the subscription; false otherwise.
     internal func matches(_ heartbeat: HeartbeatMessage) -> Bool {
         return source == heartbeat.source && destination == heartbeat.destination
     }
@@ -199,11 +199,11 @@ private extension HeartbeatSubscription {
     
     /// Converts Subscription Count to Subscription Count Log.
     ///
-    /// This method uses algorith compatible to Table 4.1 in Bluetooth Mesh Profile
+    /// This method uses algorithm compatible to Table 4.1 in Bluetooth Mesh Profile
     /// Specification 1.0.1.
     ///
     /// - parameter value: The count.
-    /// - returns: The logritmic value.
+    /// - returns: The logarithmic value.
     static func countToCountLog(_ value: UInt16) -> UInt8 {
         switch value {
         case 0x0000:
@@ -220,7 +220,7 @@ private extension HeartbeatSubscription {
     /// Converts Subscription Period to Subscription Period Log.
     ///
     /// - parameter remainingPeriod: The remaining period, as `TimeInterval`.
-    /// - returns: The logaritmic value.
+    /// - returns: The logarithmic value.
     static func period2PeriodLog(_ remainingPeriod: TimeInterval) -> UInt8 {
         switch remainingPeriod {
         case 0:
@@ -236,7 +236,7 @@ private extension HeartbeatSubscription {
     
     /// Converts Subscription Period Log to Subscription Period.
     ///
-    /// - parameter periodLog: The logaritmic value in range 0x00...0x11.
+    /// - parameter periodLog: The logarithmic value in range 0x00...0x11.
     /// - returns: The value.
     static func periodLog2Period(_ periodLog: UInt8) -> UInt16 {
         switch periodLog {

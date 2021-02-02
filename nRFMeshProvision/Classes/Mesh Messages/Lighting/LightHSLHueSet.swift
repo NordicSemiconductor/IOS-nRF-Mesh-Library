@@ -52,7 +52,7 @@ public struct LightHSLHueSet: AcknowledgedGenericMessage, TransactionMessage, Tr
     
     /// Creates the Light HSL Hue Set message.
     ///
-    /// Hue is representing by 16-bit unasigned integer of a 0-360 degree scale
+    /// Hue is representing by 16-bit unsigned integer of a 0-360 degree scale
     /// using the formula:
     ///
     /// H (degrees) = 360 * hue / 65536
@@ -67,7 +67,7 @@ public struct LightHSLHueSet: AcknowledgedGenericMessage, TransactionMessage, Tr
     
     /// Creates the Light HSL Hue Set message.
     ///
-    /// Hue is representing by 16-bit unasigned integer of a 0-360 degree scale
+    /// Hue is representing by 16-bit unsigned integer of a 0-360 degree scale
     /// using the formula:
     ///
     /// H (degrees) = 360 * hue / 65536

@@ -52,7 +52,7 @@ if !loaded {
 
 ### GATT Bearers
 
-To make the most common use case (working with GATT Proxy Bearer) easier, the library contains a default implementation for the GATT Proxy and GATT Provisioning bearers, which handle the Proxy protocol. Use `GattBearer` and `PBGattBearer` respectivly. Set the manager as bearer's `dataDelegate` and the bearer object as manager's `transmitter`. 
+To make the most common use case (working with GATT Proxy Bearer) easier, the library contains a default implementation for the GATT Proxy and GATT Provisioning bearers, which handle the Proxy protocol. Use `GattBearer` and `PBGattBearer` respectively. Set the manager as bearer's `dataDelegate` and the bearer object as manager's `transmitter`. 
 
 ```swift
 let bearer = GattBearer(target: scannedPeripheral)
@@ -103,11 +103,11 @@ meshNetworkManager.localElements = []
 
 ### Provisioning 
 
-Provisioning is a process of sending a Network Key to a new Unprovisioned Device in a more or less secure way. During provisioning, a Provisioner and the new provisioned Node will generate a common secret that will work as Device Key. Using this key the Provisioner may send and data to the Node privately, so that only this device will be able to decode the message. The first data sent to Node are its unique Unicase Address and the Network Key.
+Provisioning is a process of sending a Network Key to a new Unprovisioned Device in a more or less secure way. During provisioning, a Provisioner and the new provisioned Node will generate a common secret that will work as Device Key. Using this key the Provisioner may send and data to the Node privately, so that only this device will be able to decode the message. The first data sent to Node are its unique Unicast Address, and the Network Key.
 
 To provision a device, scan for nearby Unprovisioned Devices (devices advertising with [Service UUID: 0x1827](https://www.bluetooth.com/specifications/gatt/services/)). When a device is found and selected by the user, create `UnprovisionedDevice(advertisingData:)` object and a `ProvisioningBearer` (currently only PB GATT bearer is supported by the library). For default bearer you may use `PBGattBearer` which implements `ProvisioningBearer` protocol. To start provisioning, call `manager.provision(unprovisionedDevice:over)`. This method returns a `ProvisioningManager`, an object that will help you provision the device.
 
-First, call `identify(andAttractFor)` on the new manager to make the device blink or make noise. This will also request device capabilities. Set the Network Key and Unicast Address (the next available address is selected automatically) and, when the right device has been chosen, call `provision(usingAlgorithm:publicKey:authenticationMethod)` to start the provisioning process. A delegate will be informed when provisioning is complete to has failed.
+First, call `identify(andAttractFor)` on the new manager to make the device blink or make noise. This will also request device capabilities. Set the Network Key and Unicast Address (the next available address is selected automatically) and, when the right device has been chosen, call `provision(usingAlgorithm:publicKey:authenticationMethod)` to start the provisioning process. A delegate will be informed when provisioning is complete or has failed.
 
 ```swift
 guard let bearer = PBGattBearer(target: peripheral),
@@ -143,7 +143,7 @@ See `ScannerTableViewController` and `ProvisioniongViewController` in the Sample
 
 ### Sending messages
 
-The manager's API contains number of methods for sending mesh messages, which can be divided into 3 groups. First group allows to send `ConfigMessages` to a **Configuration Server** on a remote or local Node. Configuration messages are always signed using the device key and must be sent to a Unicase Address of the Primary Element of a Node. Second group allows to send other messages from any local Element to any remote or local Element, or a group or virtual address. These messages are signed using Application Key and will be delivered to all models on the Element with target Unicast Address or subscribed to the target group or virtual address, that have this Application Key bound. You may not send `ConfigMessages` using this set of methods. The third group, which contains just a single method `publish(_:fromModel:withTtl)` can be used to send publication from the local model.
+The manager's API contains number of methods for sending mesh messages, which can be divided into 3 groups. First group allows to send `ConfigMessages` to a **Configuration Server** on a remote or local Node. Configuration messages are always signed using the device key and must be sent to a Unicast Address of the Primary Element of a Node. Second group allows to send other messages from any local Element to any remote or local Element, or a group or virtual address. These messages are signed using Application Key and will be delivered to all models on the Element with target Unicast Address or subscribed to the target group or virtual address, that have this Application Key bound. You may not send `ConfigMessages` using this set of methods. The third group, which contains just a single method `publish(_:fromModel:withTtl)` can be used to send publication from the local model.
 
 Remember, that only the Nodes that know the Network Key with which a message is sent may relay the message. It is for example not possible to send a message over a Proxy connection signed with a Network Key not known to this Proxy Node.
 

@@ -477,7 +477,7 @@ extension ConfigurationViewController: MeshNetworkDelegate {
         // Has the Node been reset remotely.
         guard !(message is ConfigNodeReset) else {
             (UIApplication.shared.delegate as! AppDelegate).meshNetworkDidChange()
-            done() {
+            done {
                 self.navigationController?.popToRootViewController(animated: true)
             }
             return
@@ -497,13 +497,13 @@ extension ConfigurationViewController: MeshNetworkDelegate {
             }
             
         case is ConfigDefaultTtlStatus:
-            done() {
+            done {
                 self.tableView.reloadRows(at: [.ttl], with: .automatic)
                 self.refreshControl?.endRefreshing()
             }
             
         case is ConfigNodeResetStatus:
-            done() {
+            done {
                 self.navigationController?.popViewController(animated: true)
             }
             
@@ -516,7 +516,7 @@ extension ConfigurationViewController: MeshNetworkDelegate {
                             failedToSendMessage message: MeshMessage,
                             from localElement: Element, to destination: Address,
                             error: Error) {
-        done() {
+        done {
             self.presentAlert(title: "Error", message: error.localizedDescription)
             self.refreshControl?.endRefreshing()
         }

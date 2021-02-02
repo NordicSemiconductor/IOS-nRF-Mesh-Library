@@ -225,7 +225,7 @@ extension ProxyViewController: ProxyFilterTypeDelegate {
 extension ProxyViewController: ProxyFilterDelegate {
     
     func proxyFilterUpdated(type: ProxyFilerType, addresses: Set<Address>) {
-        done() {
+        done {
             self.tableView.reloadData()
         }
     }

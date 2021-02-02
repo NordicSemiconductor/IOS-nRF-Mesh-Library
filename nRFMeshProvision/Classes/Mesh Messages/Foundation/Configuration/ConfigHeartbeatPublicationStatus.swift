@@ -144,8 +144,8 @@ public struct ConfigHeartbeatPublicationStatus: ConfigMessage, ConfigStatusMessa
         return isEnabled && periodLog > 0
     }
     
-    /// Returns whether feature-trigerred Heartbeat publishing is enabled.
-    public var isFeatureTrigerredPublishingEnabled: Bool {
+    /// Returns whether feature-triggered Heartbeat publishing is enabled.
+    public var isFeatureTriggeredPublishingEnabled: Bool {
         return isEnabled && !features.isEmpty
     }
     

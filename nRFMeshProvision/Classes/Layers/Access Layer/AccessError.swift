@@ -38,7 +38,7 @@ public enum AccessError: Error {
     /// Thrown when trying to send a message using an Element
     /// that does not belong to the local Provisioner's Node.
     case invalidElement
-    /// Throwm when the given TTL is not valid. Valid TTL must
+    /// Thrown when the given TTL is not valid. Valid TTL must
     /// be 0 or in range 2...127.
     case invalidTtl
     /// Thrown when the destination Address is not known and the

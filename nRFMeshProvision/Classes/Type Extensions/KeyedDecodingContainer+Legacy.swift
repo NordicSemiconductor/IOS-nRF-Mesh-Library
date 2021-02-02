@@ -39,7 +39,7 @@ internal extension KeyedDecodingContainer {
     ///   - type: The type to decode.
     ///   - key: The current key to decode from.
     ///   - legacyKey: The legacy key.
-    /// - throws: A `DecodingError` is thrown when the decodeing failed.
+    /// - throws: A `DecodingError` is thrown when the decoding failed.
     /// - returns: The decoded value.
     func decode<T: Decodable>(_ type: T.Type, forKey key: KeyedDecodingContainer<K>.Key,
                               or legacyKey: KeyedDecodingContainer<K>.Key) throws -> T {
@@ -66,11 +66,11 @@ internal extension KeyedDecodingContainer {
     ///   - legacyKey: The legacy key.
     ///   - converter: The converter that will convert the legacy value to the current
     ///                type.
-    /// - throws: A `DecodingError` is thrown when the decodeing failed.
+    /// - throws: A `DecodingError` is thrown when the decoding failed.
     /// - returns: The decoded value. 
     func decode<T: Decodable, L: Decodable>(_ type: T.Type, forKey key: KeyedDecodingContainer<K>.Key,
                                             orConvert legacyType: L.Type, forKey legacyKey: KeyedDecodingContainer<K>.Key,
-                                            using converter: (L) throws -> (T)) throws -> T {
+                                            using converter: (L) throws -> T) throws -> T {
         do {
             return try decode(T.self, forKey: key)
         } catch {

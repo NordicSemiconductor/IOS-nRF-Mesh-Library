@@ -223,7 +223,7 @@ extension GroupControlViewController: MeshNetworkDelegate {
     
     func meshNetworkManager(_ manager: MeshNetworkManager, failedToSendMessage message: MeshMessage,
                             from localElement: Element, to destination: Address, error: Error) {
-        done() {
+        done {
             self.presentAlert(title: "Error", message: error.localizedDescription)
         }
     }

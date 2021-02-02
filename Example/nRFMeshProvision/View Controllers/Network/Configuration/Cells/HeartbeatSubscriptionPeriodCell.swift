@@ -48,7 +48,7 @@ class HeartbeatSubscriptionPeriodCell: UITableViewCell {
 
     // MARK: - Properties
     
-    // The periodLog propery starts from 1, as 0 would disable subscriptions.
+    // The periodLog property starts from 1, as 0 would disable subscriptions.
     var periodLog: UInt8 = 1 {
         didSet {
             periodSlider.value = Float(periodLog - 1)

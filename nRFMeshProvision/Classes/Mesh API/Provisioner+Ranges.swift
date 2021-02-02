@@ -33,7 +33,7 @@ import Foundation
 public extension Provisioner {
     
     /// Returns `true` if all defined ranges are valid.
-    /// Unicase Address range may not be empty, as it needs to assign addresses
+    /// Unicast Address range may not be empty, as it needs to assign addresses
     /// during provisioning.
     var isValid: Bool {
         return allocatedUnicastRange.isUnicastRange
@@ -78,7 +78,7 @@ public extension Provisioner {
         guard ranges.isUnicastRange else {
             throw MeshNetworkError.invalidRange
         }
-        // Check if the ranges don't overlap with other Prvisioners' ranges.
+        // Check if the ranges don't overlap with other Provisioners' ranges.
         if let meshNetwork = meshNetwork {
             for otherProvisioner in meshNetwork.provisioners.filter({ $0 != self }) {
                 guard !otherProvisioner.allocatedUnicastRange.overlaps(ranges) else {
@@ -125,7 +125,7 @@ public extension Provisioner {
         guard ranges.isGroupRange else {
             throw MeshNetworkError.invalidRange
         }
-        // Check if the ranges don't overlap with other Prvisioners' ranges.
+        // Check if the ranges don't overlap with other Provisioners' ranges.
         if let meshNetwork = meshNetwork {
             for otherProvisioner in meshNetwork.provisioners.filter({ $0 != self }) {
                 guard !otherProvisioner.allocatedGroupRange.overlaps(ranges) else {
@@ -172,7 +172,7 @@ public extension Provisioner {
         guard ranges.isValid else {
             throw MeshNetworkError.invalidRange
         }
-        // Check if the ranges don't overlap with other Prvisioners' ranges.
+        // Check if the ranges don't overlap with other Provisioners' ranges.
         if let meshNetwork = meshNetwork {
             for otherProvisioner in meshNetwork.provisioners.filter({ $0 != self }) {
                 guard !otherProvisioner.allocatedSceneRange.overlaps(ranges) else {
@@ -301,7 +301,7 @@ public extension Provisioner {
     /// Returns `true` if at least one range overlaps with the given Provisioner.
     ///
     /// - parameter provisioner: The Provisioner to check ranges with.
-    /// - returns: `True` if this and the given Provisioner have overlaping ranges,
+    /// - returns: `True` if this and the given Provisioner have overlapping ranges,
     ///            `false` otherwise.
     func hasOverlappingRanges(with provisioner: Provisioner) -> Bool {
         return hasOverlappingUnicastRanges(with: provisioner)
@@ -313,7 +313,7 @@ public extension Provisioner {
     /// ranges of the given Provisioner.
     ///
     /// - parameter provisioner: The Provisioner to check ranges with.
-    /// - returns: `True` if this and the given Provisioner have overlaping unicast
+    /// - returns: `True` if this and the given Provisioner have overlapping unicast
     ///            ranges, `false` otherwise.
     func hasOverlappingUnicastRanges(with provisioner: Provisioner) -> Bool {
         // Verify Unicast ranges
@@ -331,7 +331,7 @@ public extension Provisioner {
     /// ranges of the given Provisioner.
     ///
     /// - parameter provisioner: The Provisioner to check ranges with.
-    /// - returns: `True` if this and the given Provisioner have overlaping group
+    /// - returns: `True` if this and the given Provisioner have overlapping group
     ///            ranges, `false` otherwise.
     func hasOverlappingGroupRanges(with provisioner: Provisioner) -> Bool {
         // Verify Group ranges
@@ -349,7 +349,7 @@ public extension Provisioner {
     /// the given Provisioner.
     ///
     /// - parameter provisioner: The Provisioner to check ranges with.
-    /// - returns: `True` if this and the given Provisioner have overlaping scene
+    /// - returns: `True` if this and the given Provisioner have overlapping scene
     ///            ranges, `false` otherwise.
     func hasOverlappingSceneRanges(with provisioner: Provisioner) -> Bool {
         // Verify Scene ranges

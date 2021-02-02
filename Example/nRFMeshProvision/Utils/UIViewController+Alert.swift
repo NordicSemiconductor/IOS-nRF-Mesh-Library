@@ -425,7 +425,7 @@ extension UIViewController {
 private extension UIAlertController {
     
     func setValid(_ valid: Bool) {
-        // Assuming OK butotn as first action!
+        // Assuming OK button as first action!
         actions[0].isEnabled = valid
     }
     

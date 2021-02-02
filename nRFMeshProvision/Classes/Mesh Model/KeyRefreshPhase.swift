@@ -57,7 +57,7 @@ public enum KeyRefreshPhase: Int, Codable {
     }
 }
 
-/// The type represeting Key Refresh phase transition.
+/// The type representing Key Refresh phase transition.
 public enum KeyRefreshPhaseTransition: UInt8 {
     /// The Node will start encoding messages using the new keys,
     /// but will continue to decode using the old and new keys.

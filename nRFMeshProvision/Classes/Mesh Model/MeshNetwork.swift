@@ -59,9 +59,9 @@ public class MeshNetwork: Codable {
     public internal(set) var nodes: [Node]
     /// An array of Groups in the network.
     public internal(set) var groups: [Group]
-    /// An array of Senes in the network.
+    /// An array of Scenes in the network.
     public internal(set) var scenes: [Scene]
-    /// An array containins Unicast Addresses that cannot be assigned to new Nodes.
+    /// An array containing Unicast Addresses that cannot be assigned to new Nodes.
     internal var networkExclusions: [ExclusionList]?
     
     /// The IV Index of the mesh network.

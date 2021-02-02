@@ -56,7 +56,7 @@ class ProgressViewController: UITableViewController {
     ///
     /// - parameter message: Message to be displayed to the user.
     /// - parameter completion: A completion handler.
-    func start(_ message: String, completion: @escaping (() -> Void)) {
+    func start(_ message: String, completion: @escaping () -> Void) {
         DispatchQueue.main.async {
             if let alert = self.alert {
                 alert.message = message
@@ -77,7 +77,7 @@ class ProgressViewController: UITableViewController {
     ///
     /// - parameter message: Message to be displayed to the user.
     /// - parameter completion: A completion handler.
-    func start(_ message: String, completion: @escaping (() throws -> MessageHandle?)) {
+    func start(_ message: String, completion: @escaping () throws -> MessageHandle?) {
         DispatchQueue.main.async {
             do {
                 self.messageHandle = try completion()

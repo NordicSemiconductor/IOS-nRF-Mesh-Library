@@ -59,7 +59,7 @@ public struct ConfigHeartbeatPublicationSet: AcknowledgedConfigMessage, ConfigNe
     /// Possible values:
     /// - 0x00 - Periodic Heartbeat messages are not published.
     /// - 0x01 - 0x11 - Number of Heartbeat messages, 2^(n-1), that remain to be sent.
-    /// - 0xFF - Periodic Heartbeat messages are publishedbeing sent indefinitely.
+    /// - 0xFF - Periodic Heartbeat messages are published indefinitely.
     /// - Other values are prohibited.
     ///
     /// The Heartbeat Publication Count Log is a representation of the Heartbeat Publication
@@ -143,8 +143,8 @@ public struct ConfigHeartbeatPublicationSet: AcknowledgedConfigMessage, ConfigNe
         return enablesPublication && periodLog > 0
     }
     
-    /// Returns whether feature-trigerred Heartbeat publishing shall be enabled.
-    public var enablesFeatureTrigerredPublication: Bool {
+    /// Returns whether feature-triggered Heartbeat publishing shall be enabled.
+    public var enablesFeatureTriggeredPublication: Bool {
         return enablesPublication && !features.isEmpty
     }
     

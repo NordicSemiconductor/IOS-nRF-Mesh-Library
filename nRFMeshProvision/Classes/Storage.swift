@@ -33,7 +33,7 @@ import Foundation
 /// A protocol used to save and restore the Mesh Network configuration.
 /// The configuration saved in the storage should not be shared to another
 /// device, as it contains some local configuration. Instead, use `export()`
-/// method to get the JSON complient with Bluetooth Mesh scheme.
+/// method to get the JSON compliant with Bluetooth Mesh scheme.
 public protocol Storage {
     /// Loads data from the storage.
     ///

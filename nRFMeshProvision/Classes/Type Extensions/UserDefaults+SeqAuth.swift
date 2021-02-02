@@ -48,7 +48,7 @@ internal extension UserDefaults {
     func nextSequenceNumber(for source: Address) -> UInt32 {
         // Get the current sequence number source address.
         let sequence = UInt32(integer(forKey: "S\(source.hex)"))
-        // As the sequnce number was just used, it has to be incremented.
+        // As the sequence number was just used, it has to be incremented.
         set(sequence + 1, forKey: "S\(source.hex)")
         return sequence
     }
@@ -76,7 +76,7 @@ internal extension UserDefaults {
 
 // This extension contains helper methods for handling SeqAuth values
 // of received messages. The local Node must remember the last SeqAuth value
-// received from all Nodes it is communicating with and discard messeges
+// received from all Nodes it is communicating with and discard messages
 // having lower or equal SeqAuth value, as potential replies.
 internal extension UserDefaults {
     
@@ -101,7 +101,7 @@ internal extension UserDefaults {
         set(NSNumber(value: value), forKey: source.hex)
     }
     
-    /// Returns the previousl last SeqAuth value for the given source address, or nil,
+    /// Returns the previous SeqAuth value for the given source address, or nil,
     /// if no more than 1 message has ever been received from that address.
     ///
     /// - parameter source: The source Unicast Address.
@@ -129,7 +129,7 @@ internal extension UserDefaults {
         }
     }
     
-    /// Removes last known SeqAuth value associated with the givem address
+    /// Removes last known SeqAuth value associated with the given address
     /// of a remote Node.
     ///
     /// - parameter source: The forgotten Address.

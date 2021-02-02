@@ -207,18 +207,18 @@ internal class AccessLayer {
               retransmit: Bool) {
         // Should the TID be updated?
         var m = message
-        if var tranactionMessage = message as? TransactionMessage, tranactionMessage.tid == nil {
+        if var transactionMessage = message as? TransactionMessage, transactionMessage.tid == nil {
             // Ensure there is a transaction for our destination.
             let k = key(for: element, and: destination)
             transactions[k] = transactions[k] ?? Transaction()
             // Should the last transaction be continued?
-            if retransmit || tranactionMessage.continueTransaction, transactions[k]!.isActive {
-                tranactionMessage.tid = transactions[k]!.currentTid()
+            if retransmit || transactionMessage.continueTransaction, transactions[k]!.isActive {
+                transactionMessage.tid = transactions[k]!.currentTid()
             } else {
                 // If not, start a new transaction by setting a new TID value.
-                tranactionMessage.tid = transactions[k]!.nextTid()
+                transactionMessage.tid = transactions[k]!.nextTid()
             }
-            m = tranactionMessage
+            m = transactionMessage
         }
         
         logger?.i(.model, "Sending \(m) from: \(element), to: \(destination.hex)")
@@ -357,7 +357,7 @@ private extension AccessLayer {
     /// - parameters:
     ///   - accessPdu: The Access PDU received.
     ///   - keySet:    The set of keys that the message was encrypted with.
-    ///   - request:   The previosly sent request message, that the received
+    ///   - request:   The previously sent request message, that the received
     ///                message responds to, or `nil`, if no request has
     ///                been sent.
     func handle(accessPdu: AccessPdu, sentWith keySet: KeySet,
@@ -611,7 +611,7 @@ private extension AccessLayer {
         }
     }
     
-    /// Invalidates the current and optionally creates a new pubilsher
+    /// Invalidates the current and optionally creates a new publisher
     /// that will send periodic publications, when they are set up in the
     /// Model.
     ///

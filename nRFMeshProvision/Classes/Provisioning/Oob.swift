@@ -36,7 +36,7 @@ public struct OobInformation: OptionSet {
     public let rawValue: UInt16
     
     public static let other          = OobInformation(rawValue: 1 << 0)
-    public static let electornicURI  = OobInformation(rawValue: 1 << 1)
+    public static let electronicURI  = OobInformation(rawValue: 1 << 1)
     public static let qrCode         = OobInformation(rawValue: 1 << 2)
     public static let barCode        = OobInformation(rawValue: 1 << 3)
     public static let nfc            = OobInformation(rawValue: 1 << 4)
@@ -84,7 +84,7 @@ public enum AuthenticationMethod {
 
 /// The output action will be displayed on the device.
 /// For example, the device may use its LED to blink number of times.
-/// The mumber of blinks will then have to be entered to the
+/// The number of blinks will then have to be entered to the
 /// Provisioner Manager.
 public enum OutputAction: UInt8 {
     case blink              = 0
@@ -170,7 +170,7 @@ extension OobInformation: CustomDebugStringConvertible {
         }
         return [
             (.other,          "Other"),
-            (.electornicURI,  "Electornic URI"),
+            (.electronicURI,  "Electronic URI"),
             (.qrCode,         "QR Code"),
             (.barCode,        "Bar Code"),
             (.nfc,            "NFC"),

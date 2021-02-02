@@ -40,7 +40,7 @@ extension UIView {
     
     /// Sets an empty view, initially hidden.
     func setEmptyView(title: String, message: String, messageImage: UIImage,
-                      action: (UIButtonAction)? = nil) {
+                      action: UIButtonAction? = nil) {
         var emptyView: UIView! = subviews.first(where: { $0.tag == 100 })
         
         if emptyView == nil {

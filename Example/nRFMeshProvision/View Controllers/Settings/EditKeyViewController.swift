@@ -154,7 +154,7 @@ class EditKeyViewController: UITableViewController {
         } else if indexPath.isKey {
             cell = tableView.dequeueReusableCell(withIdentifier: "keyCell", for: indexPath)
             cell.detailTextLabel?.text = newKey.hex
-            // Only new or not used keys may be editted.
+            // Only new or not used keys may be edited.
             cell.accessoryType = isNewKey || !isKeyUsed ? .disclosureIndicator : .none
             cell.selectionStyle = .default
         } else if indexPath.isKeyIndex {

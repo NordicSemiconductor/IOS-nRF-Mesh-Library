@@ -65,8 +65,8 @@ internal class NetworkManager {
     func acknowledgmentTimerInterval(_ ttl: UInt8) -> TimeInterval {
         return max(manager.acknowledgmentTimerInterval, 0.150) + Double(ttl) * 0.050
     }
-    func transmissionTimerInteral(_ ttl: UInt8) -> TimeInterval {
-        return max(manager.transmissionTimerInteral, 0.200) + Double(ttl) * 0.050
+    func transmissionTimerInterval(_ ttl: UInt8) -> TimeInterval {
+        return max(manager.transmissionTimerInterval, 0.200) + Double(ttl) * 0.050
     }
     var retransmissionLimit: Int {
         return max(manager.retransmissionLimit, 2)
@@ -149,8 +149,8 @@ internal class NetworkManager {
     /// This method does not send nor return PDUs to be sent. Instead,
     /// for each created segment it calls transmitter's `send(:ofType)`,
     /// which should send the PDU over the air. This is in order to support
-    /// retransmittion in case a packet was lost and needs to be sent again
-    /// after block acknowlegment was received.
+    /// retransmission in case a packet was lost and needs to be sent again
+    /// after block acknowledgment was received.
     ///
     /// - parameters:
     ///   - message:        The message to be sent.
@@ -177,8 +177,8 @@ internal class NetworkManager {
     /// This method does not send nor return PDUs to be sent. Instead,
     /// for each created segment it calls transmitter's `send(:ofType)`,
     /// which should send the PDU over the air. This is in order to support
-    /// retransmittion in case a packet was lost and needs to be sent again
-    /// after block acknowlegment was received.
+    /// retransmitting in case a packet was lost and needs to be sent again
+    /// after block acknowledgment was received.
     ///
     /// - parameters:
     ///   - configMessage: The message to be sent.

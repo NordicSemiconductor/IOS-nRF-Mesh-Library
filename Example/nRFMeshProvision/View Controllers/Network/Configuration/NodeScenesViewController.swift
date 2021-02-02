@@ -466,14 +466,14 @@ extension NodeScenesViewController: MeshNetworkDelegate {
         // Has the Node been reset remotely.
         guard !(message is ConfigNodeReset) else {
             (UIApplication.shared.delegate as! AppDelegate).meshNetworkDidChange()
-            done() {
+            done {
                 self.navigationController?.popToRootViewController(animated: true)
             }
             return
         }
             
         if let status = message as? ConfigModelAppStatus {
-            done() {
+            done {
                 if status.isSuccess {
                     self.updateEmptyView()
                     self.tableView.reloadData()
@@ -493,7 +493,7 @@ extension NodeScenesViewController: MeshNetworkDelegate {
 
         // Response to Scene Recall and Scene Get.
         case let status as SceneStatus:
-            done() {
+            done {
                 if status.isSuccess {
                     let rows = self.setCurrentScene(status.targetScene ?? status.scene)
                     self.tableView.reloadRows(at: rows, with: .automatic)
@@ -537,7 +537,7 @@ extension NodeScenesViewController: MeshNetworkDelegate {
                             failedToSendMessage message: MeshMessage,
                             from localElement: Element, to destination: Address,
                             error: Error) {
-        done() {
+        done {
             self.presentAlert(title: "Error", message: error.localizedDescription)
             self.refreshControl?.endRefreshing()
         }

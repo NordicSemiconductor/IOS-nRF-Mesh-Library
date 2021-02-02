@@ -64,7 +64,7 @@ struct GenericState<T: Equatable> {
         }
     }
     
-    /// A flag indicating whether the state was recelled from a stored Scene.
+    /// A flag indicating whether the state was recalled from a stored Scene.
     let storedWithScene: Bool
     /// The current state.
     let value: T

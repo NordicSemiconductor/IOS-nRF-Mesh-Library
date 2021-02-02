@@ -33,7 +33,7 @@ import nRFMeshProvision
 
 class GenericDefaultTransitionTimeViewCell: ModelViewCell {
         
-    // MARK: - Outlets and Actinos
+    // MARK: - Outlets and Actions
     
     @IBOutlet weak var transitionTimeSlider: UISlider!
     

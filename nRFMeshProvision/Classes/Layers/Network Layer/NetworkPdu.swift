@@ -85,7 +85,7 @@ internal struct NetworkPdu {
         // The NID must match.
         // If the Key Refresh procedure is in place, the received packet might have been
         // encrypted using an old key. We have to try both.
-        var keySets: [NetworkKeyDerivaties] = []
+        var keySets: [NetworkKeyDerivatives] = []
         if nid == networkKey.keys.nid {
             keySets.append(networkKey.keys)
         }
@@ -151,7 +151,7 @@ internal struct NetworkPdu {
         return nil
     }
     
-    /// Creates the Network PDU. This method enctypts and obfuscates data
+    /// Creates the Network PDU. This method encrypts and obfuscates data
     /// that are to be send to the mesh network.
     ///
     /// - parameter lowerTransportPdu: The data received from higher layer.

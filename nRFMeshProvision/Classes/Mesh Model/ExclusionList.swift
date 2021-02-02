@@ -102,7 +102,7 @@ internal extension ExclusionList {
     }
     
     /// Adds all Unicast Addresses of all Elements on the Node to the
-    /// exclusino list.
+    /// exclusion list.
     ///
     /// - parameter node: The removed Node.
     func exclude(_ node: Node) {
@@ -132,7 +132,7 @@ internal extension Array where Element ==  ExclusionList {
     ///
     /// - parameters:
     ///   - node: The removed Node.
-    ///   - ivIndex: The curren IV Index.
+    ///   - ivIndex: The current IV Index.
     mutating func append(_ node: Node, forIvIndex ivIndex: IvIndex) {
         var entry: ExclusionList! = self[ivIndex.index]
         if entry == nil {
@@ -142,7 +142,7 @@ internal extension Array where Element ==  ExclusionList {
         entry.exclude(node)
     }
     
-    /// Removes all exlusion lists that for old values of IV Index.
+    /// Removes all exclusion lists that for old values of IV Index.
     ///
     /// - parameter ivIndex: The current IV Index.
     mutating func cleanUp(forIvIndex ivIndex: IvIndex) {

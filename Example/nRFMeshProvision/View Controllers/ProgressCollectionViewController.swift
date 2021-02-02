@@ -56,7 +56,7 @@ class ProgressCollectionViewController: UICollectionViewController {
     ///
     /// - parameter message: Message to be displayed to the user.
     /// - parameter completion: A completion handler.
-    func start(_ message: String, completion: @escaping (() throws -> MessageHandle?)) {
+    func start(_ message: String, completion: @escaping () throws -> MessageHandle?) {
         DispatchQueue.main.async {
             do {
                 self.messageHandle = try completion()

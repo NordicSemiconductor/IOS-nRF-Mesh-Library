@@ -79,7 +79,7 @@ class SecureNetworkBeacons: XCTestCase {
                                         withIvRecovery: false, testMode: false,
                                         andUnlimitedIvRecoveryAllowed: false)
                                         
-        // When previous IV Index was updated using IV Recovery, 96h requiremend
+        // When previous IV Index was updated using IV Recovery, 96h requirement
         // does not apply. Test should pass.
         let result1 = snb?.canOverwrite(ivIndex: ivIndex, updatedAt: almostNinetySixHoursAgo,
                                         withIvRecovery: true, testMode: false,

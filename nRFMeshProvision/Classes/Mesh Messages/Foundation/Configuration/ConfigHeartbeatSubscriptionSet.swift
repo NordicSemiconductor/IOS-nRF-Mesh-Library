@@ -45,7 +45,7 @@ public struct ConfigHeartbeatSubscriptionSet: AcknowledgedConfigMessage {
     /// The Heartbeat Subscription Source shall be the Unassigned Address or a Unicast a
     /// Address, all other values are Prohibited.
     ///
-    /// If the Heartbeat Subscription Source is set to the Uunassigned Address,
+    /// If the Heartbeat Subscription Source is set to the Unassigned Address,
     /// the Heartbeat messages are not processed and subscription will be cancelled.
     public let source: Address
     /// Destination address for Heartbeat messages.

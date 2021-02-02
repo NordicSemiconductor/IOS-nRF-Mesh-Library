@@ -174,7 +174,7 @@ public extension MeshNetwork {
     ///
     /// - parameter size: The preferred and maximum size of a range to find.
     /// - returns: The range of given size, a smaller one if such is not available
-    ///            or `nil` if all addresses are alread allocated.
+    ///            or `nil` if all addresses are already allocated.
     func nextAvailableUnicastAddressRange(ofSize size: UInt16 = .maxUnicastAddress - .minUnicastAddress + 1) -> AddressRange? {
         let allRangesSorted: [AddressRange] = provisioners
             .reduce([], { ranges, next in ranges + next.allocatedUnicastRange })
@@ -195,7 +195,7 @@ public extension MeshNetwork {
     ///
     /// - parameter size: The preferred and maximum size of a range to find.
     /// - returns: The range of given size, a smaller one if such is not available
-    ///            or `nil` if all addresses are alread allocated.
+    ///            or `nil` if all addresses are already allocated.
     func nextAvailableGroupAddressRange(ofSize size: UInt16 = .maxGroupAddress - .minGroupAddress + 1) -> AddressRange? {
         let allRangesSorted: [AddressRange] = provisioners
             .reduce([], { ranges, next in ranges + next.allocatedGroupRange })
@@ -216,7 +216,7 @@ public extension MeshNetwork {
     ///
     /// - parameter size: The preferred and maximum size of a range to find.
     /// - returns: The range of given size, a smaller one if such is not available
-    ///            or `nil` if all scenes are alread allocated.
+    ///            or `nil` if all scenes are already allocated.
     func nextAvailableSceneRange(ofSize size: UInt16 = .maxScene - .minScene + 1) -> SceneRange? {
         let allRangesSorted: [SceneRange] = provisioners
             .reduce([], { ranges, next in ranges + next.allocatedSceneRange })
@@ -239,7 +239,7 @@ public extension MeshNetwork {
     /// - parameter bounds: Bounds in which the addresses are valid.
     /// - parameter ranges: Already assigned ranges.
     /// - returns: The range of given size, a smaller one if such is not available
-    ///            or `nil` if all addresses are alread allocated.
+    ///            or `nil` if all addresses are already allocated.
     private func nextAvailableRange(ofSize size: UInt16, in bounds: ClosedRange<Address>,
                                     among ranges: [RangeObject]) -> RangeObject? {
         guard size > 0 else {

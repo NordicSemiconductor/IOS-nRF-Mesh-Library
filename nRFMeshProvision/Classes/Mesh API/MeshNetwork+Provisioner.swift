@@ -93,7 +93,7 @@ public extension MeshNetwork {
             && provisioners[0].uuid == provisioner.uuid
     }
     
-    /// Adds the Provisioner and assignes a Unicast Address to it.
+    /// Adds the Provisioner and assigns a Unicast Address to it.
     /// This method does nothing if the Provisioner is already added to the
     /// mesh network.
     ///
@@ -117,7 +117,7 @@ public extension MeshNetwork {
     /// - parameter unicastAddress: The Unicast Address to be used by the Provisioner.
     ///                             A `nil` address means that the Provisioner is not
     ///                             able to perform configuration operations.
-    /// - throws: MeshNetworkError - if Provisioner may not be added beacose it has
+    /// - throws: MeshNetworkError - if Provisioner may not be added because it has
     ///           failed the validation. See possible errors for details.
     func add(provisioner: Provisioner, withAddress unicastAddress: Address?) throws {
         // Already added to another network?
@@ -214,7 +214,7 @@ public extension MeshNetwork {
         provisioner.meshNetwork = nil
         
         // If the old local Provisioner has been removed, and a new one
-        // has been set on its plase, it needs the properties to be updated.
+        // has been set on its place, it needs the properties to be updated.
         if localProvisionerRemoved {
             if let n = localProvisioner?.node {
                 n.set(networkKeys: networkKeys)
@@ -271,7 +271,7 @@ public extension MeshNetwork {
             let oldLocalProvisioner = toIndex == 0 || fromIndex == 0 ? localProvisioner : nil
             let provisioner = provisioners.remove(at: fromIndex)
             
-            // The target index must be modifed if the Provisioner is
+            // The target index must be modified if the Provisioner is
             // being moved below, as it was removed and other Provisioners
             // were already moved to fill the space.
             let newToIndex = toIndex > fromIndex + 1 ? toIndex - 1 : toIndex
@@ -395,7 +395,7 @@ public extension MeshNetwork {
         }
         
         if isLocalProvisioner(provisioner) {
-            // Reassign local elements. This will ensure they are reinitiated with the
+            // Reassign local elements. This will ensure they are re-initiated with the
             // new addresses.
             let elements = localElements
             localElements = elements
@@ -404,7 +404,7 @@ public extension MeshNetwork {
     
     /// Removes the Provisioner's Node. Provisioners without a Node
     /// cannot send mesh messages, in particular, it cannot perform configuration
-    /// operations. This method does nothing if the Provisoner had no associated Node
+    /// operations. This method does nothing if the Provisioner had no associated Node
     /// already.
     ///
     /// Use `assign(address:for provisioner)` to enable configuration capabilities.

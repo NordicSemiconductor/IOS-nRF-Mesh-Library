@@ -129,11 +129,11 @@ public extension TransitionTime {
 public extension Optional where Wrapped == TransitionTime {
     
     /// Returns this Transition Time value, if it's known, or
-    /// the default value. If default value is `nil`, instantenous
+    /// the default value. If default value is `nil`, instantaneous
     /// transition is returned.
     ///
     /// - parameter defaultTransitionTime: The optional default value
-    ///                                    of the transition time.
+    ///                                    of the transition time.
     func or(_ defaultTransitionTime: TransitionTime?) -> TransitionTime {
         switch self {
         case .some(let transitionTime) where transitionTime.isKnown:

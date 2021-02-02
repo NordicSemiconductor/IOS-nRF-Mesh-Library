@@ -81,7 +81,7 @@ class SimpleOnOffClientDelegate: ModelDelegate {
                from source: Address, sentTo destination: MeshAddress) -> MeshMessage {
         // This method will never be called for this Model, as the single message
         // type it supports (defines in `messageTypes`) is unacknowledged.
-        fatalError("What has just happend?")
+        fatalError("What has just happened?")
     }
     
     func model(_ model: Model,

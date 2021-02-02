@@ -70,7 +70,7 @@ public class HeartbeatPublication: Codable {
         }
         
         /// Returns whether more periodic Heartbeat message should be sent, or not.
-        /// - returns: True, if more Heartmeat control message should be sent;
+        /// - returns: True, if more Heartbeat control message should be sent;
         ///            false otherwise.
         func shouldSendMorePeriodicHeartbeatMessage() -> Bool {
             guard count > 0 else {
@@ -84,7 +84,7 @@ public class HeartbeatPublication: Codable {
         }
     }
     /// The periodic heartbeat state contains variables used for handling sending
-    /// periodic Heartbeat mesasges from the local Node.
+    /// periodic Heartbeat messages from the local Node.
     internal var state: PeriodicHeartbeatState?
     
     /// The destination address for the Heartbeat messages.
@@ -123,8 +123,8 @@ public class HeartbeatPublication: Codable {
         return isEnabled && periodLog > 0
     }
     
-    /// Returns whether feature-trigerred Heartbeat publishing shall be enabled.
-    public var isFeatureTrigerredPublishingEnabled: Bool {
+    /// Returns whether feature-triggered Heartbeat publishing shall be enabled.
+    public var isFeatureTriggeredPublishingEnabled: Bool {
         return isEnabled && !features.isEmpty
     }
     
@@ -216,7 +216,7 @@ private extension HeartbeatPublication {
     /// Converts Publication Count to Publication Count Log.
     ///
     /// - parameter count: The count.
-    /// - returns: The logritmic value.
+    /// - returns: The logarithmic value.
     static func countToCountLog(_ count: UInt16) -> UInt8 {
         switch count {
         case 0x00:
@@ -248,7 +248,7 @@ private extension HeartbeatPublication {
     /// Converts Publication Period to Publication Period Log.
     ///
     /// - parameter value: The value.
-    /// - returns: The logaritmic value.
+    /// - returns: The logarithmic value.
     static func period2PeriodLog(_ value: UInt16) -> UInt8? {
         switch value {
         case 0x0000:
@@ -267,9 +267,9 @@ private extension HeartbeatPublication {
         }
     }
     
-    /// Converts Publication Period Log to Publicaton Period.
+    /// Converts Publication Period Log to Publication Period.
     ///
-    /// - parameter periodLog: The logaritmic value in range 0x00...0x11.
+    /// - parameter periodLog: The logarithmic value in range 0x00...0x11.
     /// - returns: The value.
     static func periodLog2Period(_ periodLog: UInt8) -> UInt16 {
         switch periodLog {

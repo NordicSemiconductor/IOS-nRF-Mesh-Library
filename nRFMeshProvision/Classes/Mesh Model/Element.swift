@@ -226,7 +226,7 @@ internal extension Element {
     }
     
     /// Removes the Configuration Server and Client, Health Server
-    /// and Client and Scene Client modelsfrom the Element.
+    /// and Client and Scene Client models from the Element.
     func removePrimaryElementModels() {
         models = models.filter { model in
             !model.isConfigurationServer &&

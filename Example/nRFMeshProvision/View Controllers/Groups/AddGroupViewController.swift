@@ -79,7 +79,7 @@ class AddGroupViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        // Editting a Group?
+        // Editing a Group?
         if let group = group {
             title = "Edit Group"
             name = group.name

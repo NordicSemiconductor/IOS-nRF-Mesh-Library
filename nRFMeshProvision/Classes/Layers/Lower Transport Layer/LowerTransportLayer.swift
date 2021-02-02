@@ -58,13 +58,13 @@ internal class LowerTransportLayer {
     /// and `sequenceZero` field in 13 least significant bits.
     /// See `UInt32(keyFor:sequenceZero)` below.
     private var incompleteSegments: [UInt32 : [SegmentedMessage?]]
-    /// This map contains Segment Acknowlegment Messages of completed messages.
+    /// This map contains Segment Acknowledgment Messages of completed messages.
     /// It is used when a complete Segmented Message has been received and the
     /// ACK has been sent but failed to reach the source Node.
     /// The Node would then resend all non-acknowledged segments and expect a new ACK.
     /// Without this map, this layer would have to complete again all segments in
     /// order to send the ACK. By checking if a segment comes from an already
-    /// acknowledged message, it can immediatelly send the ACK again.
+    /// acknowledged message, it can immediately send the ACK again.
     ///
     /// An item is removed when a next message has been received from the same Node.
     private var acknowledgments: [Address : SegmentAcknowledgmentMessage]
@@ -255,7 +255,7 @@ internal class LowerTransportLayer {
         sendSegments(for: sequenceZero, limit: networkManager.retransmissionLimit)
     }
     
-    /// This method tries to send the Hearbeat Message.
+    /// This method tries to send the Heartbeat Message.
     ///
     /// - parameters:
     ///   - heartbeat: The Heartbeat message to be sent.
@@ -271,7 +271,7 @@ internal class LowerTransportLayer {
         }
     }
     
-    /// Cancels sending segmented Upper Transoprt PDU.
+    /// Cancels sending segmented Upper Transport PDU.
     ///
     /// - parameter pdu: The Upper Transport PDU.
     func cancelSending(segmentedUpperTransportPdu pdu: UpperTransportPdu) {
@@ -474,7 +474,7 @@ private extension LowerTransportLayer {
                     self.incompleteTimers.removeValue(forKey: key)?.invalidate()
                     self.acknowledgmentTimers.removeValue(forKey: key)?.invalidate()
                 }
-                // If the Lower Transport Layer receives any segment while the acknowlegment
+                // If the Lower Transport Layer receives any segment while the acknowledgment
                 // timer is inactive, it shall restart the timer. Active timer should not be restarted.
                 if acknowledgmentTimers[key] == nil {
                     let ttl = provisionerNode.defaultTTL ?? networkManager.defaultTtl
@@ -629,7 +629,7 @@ private extension LowerTransportLayer {
             }
         }
         // It is recommended to send all Lower Transport PDUs that are being sent
-        // to a Group or Virtual Address mutliple times, introducing small random
+        // to a Group or Virtual Address multiple times, introducing small random
         // delays between repetitions. The specification does not say what small
         // random delay is, so assuming 0.5-1.5 second.
         if !ackExpected! {
@@ -661,7 +661,7 @@ private extension LowerTransportLayer {
         segmentTransmissionTimers.removeValue(forKey: sequenceZero)?.invalidate()
         if ackExpected ?? false, let segments = outgoingSegments[sequenceZero], segments.hasMore {
             if limit > 0 {
-                let interval = networkManager.transmissionTimerInteral(ttl)
+                let interval = networkManager.transmissionTimerInterval(ttl)
                 segmentTransmissionTimers[sequenceZero] =
                     BackgroundTimer.scheduledTimer(withTimeInterval: interval, repeats: false) { [weak self] _ in
                         self?.sendSegments(for: sequenceZero, limit: limit - 1)

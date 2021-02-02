@@ -11,7 +11,7 @@ The nRF Mesh Provision library allows to provision and send messages to Bluetoot
 
 The library is compatible with version 1.0.1 of the Bluetooth Mesh Profile Specification.
 
-This is the second version of the nRF Mesh Provision library for iOS. All  features are tested againt nRF Mesh SDK and Zephyr based mesh devices.
+This is the second version of the nRF Mesh Provision library for iOS. All  features are tested against nRF Mesh SDK and Zephyr based mesh devices.
 
 > The version 1.x and 2.x of this library are no longer maintained. Please migrate to 3.x to get new features and bug fixes. For changes and migration details see [#295](https://github.com/NordicSemiconductor/IOS-nRF-Mesh-Library/pull/295).
 
@@ -24,7 +24,7 @@ The app is available on App Store: https://apps.apple.com/us/app/nrf-mesh/id1380
 
 ## Supported features
 
-1. Provisionig with all features that available in Bluetooth Mesh Profile 1.0.1, including OOB Public Key and all types of OOB.
+1. Provisioning with all features that available in Bluetooth Mesh Profile 1.0.1, including OOB Public Key and all types of OOB.
 2. Managing Provisioners, Network Keys, Application Keys, resetting network, etc.
 3. All network layers are working.
 4. Parsing Secure Network beacons.

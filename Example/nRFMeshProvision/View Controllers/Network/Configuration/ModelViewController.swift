@@ -60,7 +60,7 @@ class ModelViewController: ProgressViewController {
         tableView.register(UINib(nibName: "GenericLevel", bundle: nil),
                            forCellReuseIdentifier: UInt16.genericLevelServerModelId.hex)
         tableView.register(UINib(nibName: "GenericDefaultTransitionTime", bundle: nil),
-                           forCellReuseIdentifier: UInt16.genericDefaultTransitionTimeServerModelid.hex)
+                           forCellReuseIdentifier: UInt16.genericDefaultTransitionTimeServerModelId.hex)
         tableView.register(UINib(nibName: "VendorModel", bundle: nil),
                            forCellReuseIdentifier: "vendor")
     }
@@ -125,7 +125,7 @@ class ModelViewController: ProgressViewController {
     
     override func numberOfSections(in tableView: UITableView) -> Int {
         if model.isConfigurationServer {
-            // Details, Configuration Server Cell, Heartbeat Publication, Heartbeat Subsctiption
+            // Details, Configuration Server Cell, Heartbeat Publication, Heartbeat Subscription
             return 4
         }
         if model.isConfigurationClient {
@@ -230,7 +230,7 @@ class ModelViewController: ProgressViewController {
             cell.detailTextLabel?.text = "Bound to \(applicationKey.boundNetworkKey.name)"
             return cell
         }
-        // Third section is the Pubilcation or Heartbeat Publication section (in case of Configuration Server)
+        // Third section is the Publication or Heartbeat Publication section (in case of Configuration Server)
         if indexPath.isPublishSection {
             if model.isConfigurationServer {
                 guard let publication = model.parentElement?.parentNode?.heartbeatPublication else {
@@ -544,7 +544,7 @@ private extension ModelViewController {
         switch model! {
         case let model where model.isConfigurationServer:
             // First, load heartbeat publication, which will trigger reading
-            // heartbeat subescription, which will load custom UI.
+            // heartbeat subscription, which will load custom UI.
             reloadHeartbeatPublication()
         default:
             // Model App Bindings -> Subscriptions -> Publication -> Custom UI.
@@ -634,7 +634,7 @@ extension ModelViewController: MeshNetworkDelegate {
         // Has the Node been reset remotely.
         guard !(message is ConfigNodeReset) else {
             (UIApplication.shared.delegate as! AppDelegate).meshNetworkDidChange()
-            done() {
+            done {
                 self.navigationController?.popToRootViewController(animated: true)
             }
             return
@@ -691,7 +691,7 @@ extension ModelViewController: MeshNetworkDelegate {
                 tableView.reloadSections(.bindingsAndPublication, with: .automatic)
                 reloadSubscriptions()
             } else {
-                done() {
+                done {
                     self.presentAlert(title: "Error", message: list.message)
                     self.refreshControl?.endRefreshing()
                 }
@@ -702,13 +702,13 @@ extension ModelViewController: MeshNetworkDelegate {
                 tableView.reloadSections(.subscriptions, with: .automatic)
                 reloadPublication()
             } else {
-                done() {
+                done {
                     self.presentAlert(title: "Error", message: list.message)
                     self.refreshControl?.endRefreshing()
                 }
             }
         
-        // Heartheat configuration (only for Configuration Server model)
+        // Heartbeat configuration (only for Configuration Server model)
         case let status as ConfigHeartbeatPublicationStatus:
             if status.isSuccess {
                 heartbeatPublicationCount = status.count
@@ -720,7 +720,7 @@ extension ModelViewController: MeshNetworkDelegate {
                     done()
                 }
             } else {
-               done() {
+               done {
                    self.presentAlert(title: "Error", message: status.message)
                    self.refreshControl?.endRefreshing()
                }
@@ -736,7 +736,7 @@ extension ModelViewController: MeshNetworkDelegate {
                     done()
                 }
             } else {
-                done() {
+                done {
                     self.presentAlert(title: "Error", message: status.message)
                     self.refreshControl?.endRefreshing()
                 }
@@ -747,7 +747,7 @@ extension ModelViewController: MeshNetworkDelegate {
             let isMore = modelViewCell?.meshNetworkManager(manager, didReceiveMessage: message,
                                                            sentFrom: source, to: destination) ?? false
             if !isMore {
-                done() {
+                done {
                     if let status = message as? StatusMessage, !status.isSuccess {
                         self.presentAlert(title: "Error", message: status.message)
                     } else {
@@ -789,7 +789,7 @@ extension ModelViewController: MeshNetworkDelegate {
                             failedToSendMessage message: MeshMessage,
                             from localElement: Element, to destination: Address,
                             error: Error) {
-        done() {
+        done {
             self.presentAlert(title: "Error", message: error.localizedDescription)
             self.refreshControl?.endRefreshing()
         }
@@ -908,10 +908,10 @@ private extension IndexSet {
 private extension Model {
     
     var hasCustomUI: Bool {
-        return !isBluetoothSIGAssigned   // Vendor Movels.
+        return !isBluetoothSIGAssigned   // Vendor Models.
             || modelIdentifier == .genericOnOffServerModelId
             || modelIdentifier == .genericLevelServerModelId
-            || modelIdentifier == .genericDefaultTransitionTimeServerModelid
+            || modelIdentifier == .genericDefaultTransitionTimeServerModelId
     }
     
 }

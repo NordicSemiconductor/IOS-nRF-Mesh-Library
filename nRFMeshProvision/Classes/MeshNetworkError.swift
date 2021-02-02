@@ -43,7 +43,7 @@ public enum MeshNetworkError: Error {
     /// Thrown when a node cannot be added due to lack of available
     /// addresses in Provisioner's range.
     case noAddressAvailable
-    /// Thrown when the address cannot be assigne as it is being used by
+    /// Thrown when the address cannot be assigned as it is being used by
     /// another node.
     case addressNotAvailable
     /// Thrown when the address is of a wrong type.
@@ -68,7 +68,7 @@ public enum MeshNetworkError: Error {
     /// that is already in the network.
     case sceneAlreadyExists
     /// Throw when trying to remove a Group that is either a parent of another
-    /// Group, or set as publication or subcription address for any Model.
+    /// Group, or set as publication or subscription address for any Model.
     case groupInUse
     /// Throw when trying to remove a Scene that is
     case sceneInUse

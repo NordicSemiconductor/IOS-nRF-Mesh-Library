@@ -369,7 +369,7 @@ class Exporting: XCTestCase {
         let copy = meshNetwork.copy(using: .full)
         // This test tests implementation detail which may change.
         // In the current version, when copy(using .full) is called, the
-        // same network instance is returned insead of creating an actual
+        // same network instance is returned instead of creating an actual
         // copy. If this test fails, check the implementation and fix the
         // test.
         XCTAssert(copy === meshNetwork)

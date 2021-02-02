@@ -39,7 +39,7 @@ public enum MeshMessageSecurity {
 }
 
 /// The base class of every mesh message. Mesh messages can be sent and
-/// and recieved from the mesh network.
+/// and received from the mesh network.
 public protocol BaseMeshMessage {
     /// Message parameters as Data.
     var parameters: Data? { get }
@@ -52,7 +52,7 @@ public protocol BaseMeshMessage {
 }
 
 /// The base class of every mesh message. Mesh messages can be sent and
-/// and recieved from the mesh network. For messages with the opcode known
+/// and received from the mesh network. For messages with the opcode known
 /// during compilation a `StaticMeshMessage` protocol should be preferred.
 ///
 /// Parameters `security` and `isSegmented` are checked and should be set
@@ -112,7 +112,7 @@ public protocol StatusMessage: MeshMessage {
 /// A message with Transaction Identifier.
 ///
 /// The Transaction Identifier will automatically be set and incremented
-/// each time a message is sent. The counter is reuesed for all types that
+/// each time a message is sent. The counter is reused for all types that
 /// extend this protocol.
 public protocol TransactionMessage: MeshMessage {
     /// Transaction identifier. If not set, this field will automatically

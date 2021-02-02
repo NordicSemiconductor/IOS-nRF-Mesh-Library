@@ -65,7 +65,7 @@ public class Model: Codable {
     }
     /// The configuration of this Model's publication.
     public private(set) var publish: Publish?
-    /// An array of Appliaction Key indexes to which this model is bound.
+    /// An array of Application Key indexes to which this model is bound.
     internal private(set) var bind: [KeyIndex]
     
     /// The model message handler. This is non-`nil` for supported local Models
@@ -313,7 +313,7 @@ internal extension Model {
         }
     }
     
-    /// Removes all subscribtions from this Model.
+    /// Removes all subscriptions from this Model.
     func unsubscribeFromAll() {
         subscribe.removeAll()
         parentElement?.parentNode?.meshNetwork?.timestamp = Date()

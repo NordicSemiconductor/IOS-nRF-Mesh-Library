@@ -144,7 +144,7 @@ extension EditRangesViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, titleForFooterInSection section: Int) -> String? {
-        return "Ovelapping ranges merge automatically."
+        return "Overlapping ranges merge automatically."
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
