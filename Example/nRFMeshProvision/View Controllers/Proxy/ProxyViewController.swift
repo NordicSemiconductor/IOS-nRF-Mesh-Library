@@ -182,6 +182,8 @@ extension ProxyViewController: BearerDelegate {
     
     func bearer(_ bearer: Bearer, didClose error: Error?) {
         addButton.isEnabled = false
+        // Make sure the ProxyFilter is not busy.
+        MeshNetworkManager.instance.proxyFilter?.proxyDidDisconnect()
         // The bearer has closed. Attempt to send a message
         // will fail, but the Proxy Filter will receive .bearerClosed
         // error, upon which it will clear the filter list and notify

@@ -72,6 +72,11 @@ public class Node: Codable {
             return TimeInterval(interval) / 1000.0
         }
         
+        internal init(fix incorrectNetworkTransmit: NetworkTransmit) {
+            self.count = incorrectNetworkTransmit.count
+            self.interval = incorrectNetworkTransmit.interval * 10
+        }
+        
         internal init(_ request: ConfigNetworkTransmitSet) {
             self.count = request.count + 1
             self.interval = UInt16(request.steps + 1) * 10
@@ -99,6 +104,11 @@ public class Node: Codable {
         /// The interval in as `TimeInterval` in seconds.
         public var timeInterval: TimeInterval {
             return TimeInterval(interval) / 1000.0
+        }
+        
+        internal init(fix incorrectRelayRetransmit: RelayRetransmit) {
+            self.count = incorrectRelayRetransmit.count
+            self.interval = incorrectRelayRetransmit.interval * 10
         }
         
         internal init(_ request: ConfigRelaySet) {
@@ -509,7 +519,51 @@ public class Node: Codable {
         }
         self.ttl = ttl
         self.networkTransmit = try container.decodeIfPresent(NetworkTransmit.self, forKey: .networkTransmit)
+        if let networkTransmit = networkTransmit {
+            if networkTransmit.interval == 0 || networkTransmit.count == 0 {
+                self.networkTransmit = nil
+            } else {
+                guard networkTransmit.count >= 1 && networkTransmit.count <= 8 else {
+                    throw DecodingError.dataCorruptedError(forKey: .networkTransmit, in: container,
+                                                           debugDescription: "Network Transmit count must be in range 1-8.")
+                }
+                // Some versions of nRF Mesh lib for Android were exporting interval
+                // as number of steps, not the interval, therefore we can try to fix that.
+                // However, values exported as a multiply of 10 will not be converted as they
+                // match the proper field definition.
+                if networkTransmit.interval % 10 != 0 && networkTransmit.interval <= 32 {
+                    self.networkTransmit = NetworkTransmit(fix: networkTransmit)
+                } else {
+                    guard networkTransmit.interval % 10 == 0 && networkTransmit.interval <= 320 else {
+                        throw DecodingError.dataCorruptedError(forKey: .networkTransmit, in: container,
+                                                               debugDescription: "Network Transmit interval must be in range 10-320 ms with a step of 10 ms.")
+                    }
+                }
+            }
+        }
         self.relayRetransmit = try container.decodeIfPresent(RelayRetransmit.self, forKey: .relayRetransmit)
+        if let relayRetransmit = relayRetransmit {
+            if relayRetransmit.interval == 0 || relayRetransmit.count == 0 {
+                self.relayRetransmit = nil
+            } else {
+                guard relayRetransmit.count >= 1 && relayRetransmit.count <= 8 else {
+                    throw DecodingError.dataCorruptedError(forKey: .relayRetransmit, in: container,
+                                                           debugDescription: "Relay Retransmit count must be in range 1-8.")
+                }
+                // Some versions of nRF Mesh lib for Android were exporting interval
+                // as number of steps, not the interval, therefore we can try to fix that.
+                // However, values exported as a multiply of 10 will not be converted as they
+                // match the proper field definition.
+                if relayRetransmit.interval % 10 != 0 && relayRetransmit.interval <= 32 {
+                    self.relayRetransmit = RelayRetransmit(fix: relayRetransmit)
+                } else {
+                    guard relayRetransmit.interval % 10 == 0 && relayRetransmit.interval <= 320 else {
+                        throw DecodingError.dataCorruptedError(forKey: .relayRetransmit, in: container,
+                                                               debugDescription: "Relay Retransmit interval must be in range 10-320 ms with a step of 10 ms.")
+                    }
+                }
+            }
+        }
         self.elements = try container.decode([Element].self, forKey: .elements)
         
         // "blacklisted" was replaced by "excluded" in version 3.0.

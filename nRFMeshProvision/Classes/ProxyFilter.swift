@@ -237,6 +237,16 @@ public extension ProxyFilter {
         add(addresses: addresses)
     }
     
+    /// Notifies the Proxy Filter that the connection to GATT Proxy is closed.
+    ///
+    /// This method will unset the `busy` flag.
+    func proxyDidDisconnect() {
+        mutex.sync {
+            busy = false
+            proxy = nil
+        }
+    }
+    
 }
 
 // MARK: - Callbacks
@@ -258,12 +268,8 @@ internal extension ProxyFilter {
     /// adding all the addresses the Provisioner is subscribed to, including
     /// its Unicast Addresses and All Nodes address.
     func newProxyDidConnect() {
+        proxyDidDisconnect()
         logger?.i(.proxy, "New Proxy connected")
-        mutex.sync {
-            busy = false
-            // The proxy Node is unknown at the moment.
-            proxy = nil
-        }
         reset()
         if let localProvisioner = manager.meshNetwork?.localProvisioner {
             setup(for: localProvisioner)
