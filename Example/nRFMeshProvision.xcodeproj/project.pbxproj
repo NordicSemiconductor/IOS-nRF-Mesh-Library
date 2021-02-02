@@ -118,6 +118,7 @@
 		52A9C17E230EB9490036792A /* GenericOnOff.xib in Resources */ = {isa = PBXBuildFile; fileRef = 52A9C17C230EB9490036792A /* GenericOnOff.xib */; };
 		52A9C1C52313D7D80036792A /* GenericLevelViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52A9C1C32313D7D80036792A /* GenericLevelViewCell.swift */; };
 		52A9C1C62313D7D80036792A /* GenericLevel.xib in Resources */ = {isa = PBXBuildFile; fileRef = 52A9C1C42313D7D80036792A /* GenericLevel.xib */; };
+		52B492DB25C8A32E0096E75D /* KeyRefreshProcedure.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52B492DA25C8A32E0096E75D /* KeyRefreshProcedure.swift */; };
 		52B7F67D229829F200B0A42F /* Addresses.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52B7F67C229829F200B0A42F /* Addresses.swift */; };
 		52B7FD6D2525B40300308673 /* NodeSceneRecallViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52B7FD6C2525B40300308673 /* NodeSceneRecallViewController.swift */; };
 		52BC6F4824507A5400EBEEA4 /* DisconnectCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52BC6F4724507A5400EBEEA4 /* DisconnectCell.swift */; };
@@ -280,6 +281,7 @@
 		52A9C17C230EB9490036792A /* GenericOnOff.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = GenericOnOff.xib; sourceTree = "<group>"; };
 		52A9C1C32313D7D80036792A /* GenericLevelViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericLevelViewCell.swift; sourceTree = "<group>"; };
 		52A9C1C42313D7D80036792A /* GenericLevel.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = GenericLevel.xib; sourceTree = "<group>"; };
+		52B492DA25C8A32E0096E75D /* KeyRefreshProcedure.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyRefreshProcedure.swift; sourceTree = "<group>"; };
 		52B7F67C229829F200B0A42F /* Addresses.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Addresses.swift; sourceTree = "<group>"; };
 		52B7FD6C2525B40300308673 /* NodeSceneRecallViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NodeSceneRecallViewController.swift; sourceTree = "<group>"; };
 		52BC6F4724507A5400EBEEA4 /* DisconnectCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisconnectCell.swift; sourceTree = "<group>"; };
@@ -742,6 +744,7 @@
 				52313FFF22EEE1770074325A /* AssigningGroupAddresses.swift */,
 				529B764022521075008F1CE7 /* ManagingProvisioners.swift */,
 				528352B32284139F0097B949 /* ProxyProtocol.swift */,
+				52B492DA25C8A32E0096E75D /* KeyRefreshProcedure.swift */,
 				52B7F67C229829F200B0A42F /* Addresses.swift */,
 				52DF5D92229C009200C297C1 /* NetworkPdus.swift */,
 				5294DAD922B109810041370E /* Pdus.swift */,
@@ -1090,6 +1093,7 @@
 				5231400022EEE1770074325A /* AssigningGroupAddresses.swift in Sources */,
 				52BC6F4A2452C4FB00EBEEA4 /* SecureNetworkBeacons.swift in Sources */,
 				52568D4B22DDFAC700B7B236 /* Groups.swift in Sources */,
+				52B492DB25C8A32E0096E75D /* KeyRefreshProcedure.swift in Sources */,
 				52F6AD6C22B78F3000F0D7DF /* CompositionData.swift in Sources */,
 				523F777022C64FD20030EA6A /* ConfigMessages.swift in Sources */,
 				52DF5D93229C009200C297C1 /* NetworkPdus.swift in Sources */,
@@ -1317,7 +1321,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = NO;
 				CODE_SIGN_ENTITLEMENTS = nRFMeshProvision_Example.entitlements;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 5;
 				DEVELOPMENT_TEAM = P3R8YQEV4L;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = nRFMeshProvision/Info.plist;
@@ -1351,7 +1355,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = NO;
 				CODE_SIGN_ENTITLEMENTS = nRFMeshProvision_Example.entitlements;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 5;
 				DEVELOPMENT_TEAM = P3R8YQEV4L;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = nRFMeshProvision/Info.plist;
