@@ -34,9 +34,6 @@ internal struct AccessPdu {
     /// The Mesh Message that is being sent, or `nil`, when the message
     /// was received.
     let message: MeshMessage?
-    /// The local Element that is sending the message, or `nil` when the
-    /// message was received.
-    let localElement: Element?
     /// Whether sending this message has been initiated by the user.
     /// Status of automatic retries will not be reported to the app.
     let userInitiated: Bool
@@ -88,7 +85,6 @@ internal struct AccessPdu {
     
     init?(fromUpperTransportPdu pdu: UpperTransportPdu) {
         message = nil
-        localElement = nil
         userInitiated = false
         source = pdu.source
         destination = MeshAddress(pdu.destination)
@@ -137,18 +133,18 @@ internal struct AccessPdu {
     ///
     /// - parameters:
     ///   - message: The message to be encapsulated.
-    ///   - localElement: The local Element from which the message will be sent.
+    ///   - source: The Unicast Address of the local Element from which the
+    ///             message will be sent.
     ///   - destination: The destination address.
     ///   - userInitiated: Whether sending this message has been initiated by
     ///                    the user. Status of automatic retries will not be
     ///                    reported to the app.
     init(fromMeshMessage message: MeshMessage,
-         sentFrom localElement: Element, to destination: MeshAddress,
+         sentFrom source: Address, to destination: MeshAddress,
          userInitiated: Bool) {
         self.message = message
-        self.localElement = localElement
         self.userInitiated = userInitiated
-        self.source = localElement.unicastAddress
+        self.source = source
         self.destination = destination
         
         self.opCode = message.opCode

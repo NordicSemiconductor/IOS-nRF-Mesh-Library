@@ -203,7 +203,8 @@ internal class LowerTransportLayer {
     func send(unsegmentedUpperTransportPdu pdu: UpperTransportPdu,
               withTtl initialTtl: UInt8?,
               usingNetworkKey networkKey: NetworkKey) {
-        guard let provisionerNode = meshNetwork.localProvisioner?.node else {
+        guard let provisionerNode = meshNetwork.localProvisioner?.node,
+              let localElement = provisionerNode.element(withAddress: pdu.source) else {
             return
         }
         /// The Time To Live value.
@@ -214,12 +215,12 @@ internal class LowerTransportLayer {
             try networkManager.networkLayer.send(lowerTransportPdu: message, ofType: .networkPdu,
                                                  withTtl: ttl)
             networkManager.notifyAbout(deliveringMessage: pdu.message!,
-                                       from: pdu.localElement!, to: pdu.destination)
+                                       from: localElement, to: pdu.destination)
         } catch {
             logger?.w(.lowerTransport, error)
             if !pdu.message!.isAcknowledged {
                 networkManager.notifyAbout(error, duringSendingMessage: pdu.message!,
-                                           from: pdu.localElement!, to: pdu.destination)
+                                           from: localElement, to: pdu.destination)
             }
         }
     }
@@ -505,13 +506,19 @@ private extension LowerTransportLayer {
         // Invalidate transmission timer for this message.
         segmentTransmissionTimers.removeValue(forKey: ack.sequenceZero)?.invalidate()
         
+        // Find the source Element.
+        guard let provisionerNode = meshNetwork.localProvisioner?.node,
+              let element = provisionerNode.element(withAddress: segment.source) else {
+            return
+        }
+        
         // Is the target Node busy?
         guard !ack.isBusy else {
             outgoingSegments.removeValue(forKey: ack.sequenceZero)
             if segment.userInitiated && !segment.message!.isAcknowledged {
                 networkManager.notifyAbout(LowerTransportError.busy,
                                            duringSendingMessage: segment.message!,
-                                           from: segment.localElement!, to: segment.destination)
+                                           from: element, to: segment.destination)
             }
             return
         }
@@ -527,7 +534,7 @@ private extension LowerTransportLayer {
         if outgoingSegments[ack.sequenceZero]?.hasMore == false {
             outgoingSegments.removeValue(forKey: ack.sequenceZero)
             networkManager.notifyAbout(deliveringMessage: segment.message!,
-                                       from: segment.localElement!, to: segment.destination)
+                                       from: element, to: segment.destination)
             networkManager.upperTransportLayer
                 .lowerTransportLayerDidSend(segmentedUpperTransportPduTo: segment.destination)
         } else {
@@ -579,7 +586,15 @@ private extension LowerTransportLayer {
     ///   - limit:        Maximum number of retransmissions.
     func sendSegments(for sequenceZero: UInt16, limit: Int) {
         guard let segments = outgoingSegments[sequenceZero], segments.count > 0,
+              let segment = segments.firstNotAcknowledged,
+              let message = segment.message,
               let ttl = segmentTtl[sequenceZero] else {
+            return
+        }
+        
+        // Find the source Element.
+        guard let provisionerNode = meshNetwork.localProvisioner?.node,
+              let element = provisionerNode.element(withAddress: segment.source) else {
             return
         }
         /// Segment Acknowledgment Message is expected when the message is targeting
@@ -602,9 +617,9 @@ private extension LowerTransportLayer {
                     if !ackExpected! {
                         segmentTransmissionTimers.removeValue(forKey: sequenceZero)?.invalidate()
                         outgoingSegments.removeValue(forKey: sequenceZero)
-                        if segment.userInitiated && !segment.message!.isAcknowledged {
-                            networkManager.notifyAbout(error, duringSendingMessage: segment.message!,
-                                                       from: segment.localElement!, to: segment.destination)
+                        if segment.userInitiated && !message.isAcknowledged {
+                            networkManager.notifyAbout(error, duringSendingMessage: message,
+                                                       from: element, to: segment.destination)
                         }
                         networkManager.upperTransportLayer
                             .lowerTransportLayerDidSend(segmentedUpperTransportPduTo: segment.destination)
@@ -653,23 +668,19 @@ private extension LowerTransportLayer {
                     }
             } else {
                 // A limit has been reached and some segments were not ACK.
-                if let segment = segments.firstNotAcknowledged {
-                    if segment.userInitiated && !segment.message!.isAcknowledged {
-                        networkManager.notifyAbout(LowerTransportError.timeout,
-                                                   duringSendingMessage: segment.message!,
-                                                   from: segment.localElement!, to: segment.destination)
-                    }
-                    networkManager.upperTransportLayer
-                        .lowerTransportLayerDidSend(segmentedUpperTransportPduTo: segment.destination)
+                if segment.userInitiated && !message.isAcknowledged {
+                    networkManager.notifyAbout(LowerTransportError.timeout,
+                                               duringSendingMessage: message,
+                                               from: element, to: segment.destination)
                 }
+                networkManager.upperTransportLayer
+                    .lowerTransportLayerDidSend(segmentedUpperTransportPduTo: segment.destination)
                 outgoingSegments.removeValue(forKey: sequenceZero)
             }
         } else {
             // All segments have been successfully sent to a Group Address.
-            if let segment = segments.firstNotAcknowledged {
-                networkManager.notifyAbout(deliveringMessage: segment.message!,
-                                           from: segment.localElement!, to: segment.destination)
-            }
+            networkManager.notifyAbout(deliveringMessage: message,
+                                       from: element, to: segment.destination)
             outgoingSegments.removeValue(forKey: sequenceZero)
         }
     }

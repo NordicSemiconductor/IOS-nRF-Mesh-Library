@@ -102,8 +102,7 @@ internal class UpperTransportLayer {
     ///   - keySet: The set of keys to encrypt the message with.
     func send(_ accessPdu: AccessPdu, withTtl initialTtl: UInt8?, using keySet: KeySet) {
         // Get the current sequence number for source Element's address.
-        let source = accessPdu.localElement!.unicastAddress
-        let sequence = networkManager.networkLayer.nextSequenceNumber(for: source)
+        let sequence = networkManager.networkLayer.nextSequenceNumber(for: accessPdu.source)
         
         let pdu = UpperTransportPdu(fromAccessPdu: accessPdu,
                                     usingKeySet: keySet, sequence: sequence,

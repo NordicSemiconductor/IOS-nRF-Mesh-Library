@@ -34,9 +34,6 @@ internal struct UpperTransportPdu {
     /// The Mesh Message that is being sent, or `nil`, when the message
     /// was received.
     let message: MeshMessage?
-    /// The local Element that is sending the message, or `nil` when the
-    /// message was received.
-    let localElement: Element?
     /// Whether sending this message has been initiated by the user.
     let userInitiated: Bool
     /// Source Address.
@@ -91,16 +88,14 @@ internal struct UpperTransportPdu {
         sequence = accessMessage.sequence
         ivIndex = accessMessage.ivIndex
         message = nil
-        localElement = nil
         userInitiated = false
     }
     
     init(fromAccessPdu pdu: AccessPdu, usingKeySet keySet: KeySet,
          sequence: UInt32, andIvIndex ivIndex: IvIndex) {
         self.message = pdu.message
-        self.localElement = pdu.localElement
         self.userInitiated = pdu.userInitiated
-        self.source = pdu.localElement!.unicastAddress
+        self.source = pdu.source
         self.destination = pdu.destination.address
         self.sequence = sequence
         self.ivIndex = ivIndex.transmitIndex

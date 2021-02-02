@@ -34,8 +34,6 @@ internal protocol SegmentedMessage: LowerTransportPdu {
     /// The Mesh Message that is being sent, or `nil`, when the message
     /// was received.
     var message: MeshMessage? { get }
-    /// The local Element used to send the message.
-    var localElement: Element? { get }
     /// Whether sending this message has been initiated by the user.
     var userInitiated: Bool { get }
     /// 13 least significant bits of SeqAuth.

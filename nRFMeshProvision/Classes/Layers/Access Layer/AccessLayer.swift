@@ -222,7 +222,8 @@ internal class AccessLayer {
         }
         
         logger?.i(.model, "Sending \(m) from: \(element), to: \(destination.hex)")
-        let pdu = AccessPdu(fromMeshMessage: m, sentFrom: element, to: destination,
+        let pdu = AccessPdu(fromMeshMessage: m,
+                            sentFrom: element.unicastAddress, to: destination,
                             userInitiated: true)
         let keySet = AccessKeySet(applicationKey: applicationKey)
         logger?.i(.access, "Sending \(pdu)")
@@ -262,7 +263,8 @@ internal class AccessLayer {
         }
         
         logger?.i(.foundationModel, "Sending \(message) to: \(destination.hex)")
-        let pdu = AccessPdu(fromMeshMessage: message, sentFrom: element, to: MeshAddress(destination),
+        let pdu = AccessPdu(fromMeshMessage: message,
+                            sentFrom: element.unicastAddress, to: MeshAddress(destination),
                             userInitiated: true)
         logger?.i(.access, "Sending \(pdu)")
         
@@ -288,7 +290,8 @@ internal class AccessLayer {
                using keySet: KeySet) {
         let category: LogCategory = message is ConfigMessage ? .foundationModel : .model
         logger?.i(category, "Replying with \(message) from: \(element), to: \(destination.hex)")
-        let pdu = AccessPdu(fromMeshMessage: message, sentFrom: element, to: MeshAddress(destination),
+        let pdu = AccessPdu(fromMeshMessage: message,
+                            sentFrom: element.unicastAddress, to: MeshAddress(destination),
                             userInitiated: false)
         
         // If the message is sent in response to a received message that was sent to
