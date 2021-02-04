@@ -83,6 +83,7 @@ internal class ConfigurationServerHandler: ModelDelegate {
             ConfigHeartbeatSubscriptionSet.self,
             ConfigKeyRefreshPhaseGet.self,
             ConfigKeyRefreshPhaseSet.self,
+            ConfigLowPowerNodePollTimeoutGet.self,
         ]
         self.meshNetwork = meshNetwork
         self.messageTypes = types.toMap()
@@ -675,6 +676,11 @@ internal class ConfigurationServerHandler: ModelDelegate {
                      .forEach { $0.oldKey = nil }
             }
             return ConfigKeyRefreshPhaseStatus(reportPhaseOf: networkKey)
+        
+        case let request as ConfigLowPowerNodePollTimeoutGet:
+            // The library does not support Friend feature.
+            // The below code will reply with PollTimeout set to 0x000000.
+            return ConfigLowPowerNodePollTimeoutStatus(responseTo: request)
             
         default:
             fatalError("Message not handled: \(request)")
