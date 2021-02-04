@@ -1,9 +1,9 @@
 PODS:
-  - nRFMeshProvision (3.0-beta1):
-    - OpenSSL-Universal (= 1.0.2.19)
-  - OpenSSL-Universal (1.0.2.19):
-    - OpenSSL-Universal/Static (= 1.0.2.19)
-  - OpenSSL-Universal/Static (1.0.2.19)
+  - nRFMeshProvision (3.0):
+    - OpenSSL-Universal (= 1.0.2.20)
+  - OpenSSL-Universal (1.0.2.20):
+    - OpenSSL-Universal/Static (= 1.0.2.20)
+  - OpenSSL-Universal/Static (1.0.2.20)
 
 DEPENDENCIES:
   - nRFMeshProvision (from `../`)
@@ -17,8 +17,8 @@ EXTERNAL SOURCES:
     :path: "../"
 
 SPEC CHECKSUMS:
-  nRFMeshProvision: 9bb8376442af18c2a45a87152c1df67e752b620b
-  OpenSSL-Universal: 8b48cc0d10c1b2923617dfe5c178aa9ed2689355
+  nRFMeshProvision: 3022c7f8626753a1b76d20ead4cbb2888f74e88b
+  OpenSSL-Universal: ff34003318d5e1163e9529b08470708e389ffcdd
 
 PODFILE CHECKSUM: 69a81463322ef34ca0a20b98e90da2701d94e4ec
 
