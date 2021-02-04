@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="17156" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="17701" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17125"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17703"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
-        <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="none" indentationWidth="10" rowHeight="878" id="RhT-zv-Hbx" customClass="ConfigurationServerViewCell" customModule="nRFMeshProvision_Example" customModuleProvider="target">
-            <rect key="frame" x="0.0" y="0.0" width="414" height="876"/>
+        <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="none" indentationWidth="10" rowHeight="908" id="RhT-zv-Hbx" customClass="ConfigurationServerViewCell" customModule="nRFMeshProvision_Example" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="414" height="906"/>
             <autoresizingMask key="autoresizingMask"/>
             <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="RhT-zv-Hbx" id="065-UL-Q8f">
-                <rect key="frame" x="0.0" y="0.0" width="414" height="876"/>
+                <rect key="frame" x="0.0" y="0.0" width="414" height="906"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <slider opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="251" verticalCompressionResistancePriority="751" contentHorizontalAlignment="center" contentVerticalAlignment="center" minValue="0.0" maxValue="7" translatesAutoresizingMaskIntoConstraints="NO" id="tZ4-Df-a3a">
@@ -201,14 +201,14 @@
                             <constraint firstItem="g8n-br-GPO" firstAttribute="top" secondItem="qlO-yr-4Ka" secondAttribute="top" id="nkn-GS-sie"/>
                         </constraints>
                     </view>
-                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" verticalCompressionResistancePriority="749" text="The Secure Network Beacon state determines if a node is periodically broadcasting Secure Network beacon messages." lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="gxD-is-qIK">
-                        <rect key="frame" x="20" y="411.5" width="374" height="44.5"/>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" verticalCompressionResistancePriority="749" text="The Secure Network Beacon state determines if a node is periodically broadcasting Secure Network beacons." lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="gxD-is-qIK">
+                        <rect key="frame" x="20" y="411.5" width="374" height="54"/>
                         <fontDescription key="fontDescription" type="system" pointSize="15"/>
                         <color key="textColor" systemColor="secondaryLabelColor"/>
                         <nil key="highlightedColor"/>
                     </label>
                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="PSn-E0-bIg">
-                        <rect key="frame" x="20" y="464" width="394" height="0.5"/>
+                        <rect key="frame" x="20" y="473.5" width="394" height="0.5"/>
                         <color key="backgroundColor" systemColor="opaqueSeparatorColor"/>
                         <rect key="contentStretch" x="0.0" y="0.0" width="1" height="0.33000000000000002"/>
                         <constraints>
@@ -216,17 +216,17 @@
                         </constraints>
                     </view>
                     <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="cFg-Ds-bZw">
-                        <rect key="frame" x="345" y="472.5" width="51" height="31"/>
+                        <rect key="frame" x="345" y="482" width="51" height="31"/>
                         <color key="onTintColor" red="0.0" green="0.46666666670000001" blue="0.7843137255" alpha="1" colorSpace="calibratedRGB"/>
                         <connections>
                             <action selector="secureNetworkBeaconDidChange:" destination="RhT-zv-Hbx" eventType="valueChanged" id="agy-wL-Uls"/>
                         </connections>
                     </switch>
                     <view contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Cub-nh-IZx" userLabel="Section">
-                        <rect key="frame" x="0.0" y="511.5" width="414" height="56"/>
+                        <rect key="frame" x="0.0" y="521" width="414" height="56"/>
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="arZ-dV-nb4" userLabel="Finishing Line">
-                                <rect key="frame" x="0.0" y="0.0" width="414" height="0.0"/>
+                                <rect key="frame" x="0.0" y="0.0" width="414" height="0.5"/>
                                 <color key="backgroundColor" systemColor="opaqueSeparatorColor"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="0.33000000000000002" id="ASR-vf-IDB"/>
@@ -260,14 +260,14 @@
                         </constraints>
                     </view>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="mpe-Bp-8SZ">
-                        <rect key="frame" x="20" y="575.5" width="374" height="72"/>
+                        <rect key="frame" x="20" y="585" width="374" height="74.5"/>
                         <string key="text">If the Proxy feature is disabled, a GATT client device can connect over GATT to that node for configuration and control. Messages from the GATT bearer are not relayed to the advertising bearer.</string>
                         <fontDescription key="fontDescription" type="system" pointSize="15"/>
                         <color key="textColor" systemColor="secondaryLabelColor"/>
                         <nil key="highlightedColor"/>
                     </label>
                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Sbl-RQ-VgE">
-                        <rect key="frame" x="20" y="655.5" width="394" height="0.0"/>
+                        <rect key="frame" x="20" y="667.5" width="394" height="0.0"/>
                         <color key="backgroundColor" systemColor="opaqueSeparatorColor"/>
                         <rect key="contentStretch" x="0.0" y="0.0" width="1" height="0.33000000000000002"/>
                         <constraints>
@@ -275,7 +275,7 @@
                         </constraints>
                     </view>
                     <view contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" translatesAutoresizingMaskIntoConstraints="NO" id="HoH-je-kKm" userLabel="Section">
-                        <rect key="frame" x="0.0" y="702.5" width="414" height="56"/>
+                        <rect key="frame" x="0.0" y="714.5" width="414" height="56"/>
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="bAf-Dq-Zdv" userLabel="Finishing Line">
                                 <rect key="frame" x="0.0" y="0.0" width="414" height="0.5"/>
@@ -312,14 +312,14 @@
                         </constraints>
                     </view>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="gVr-aU-fD1">
-                        <rect key="frame" x="20" y="766.5" width="374" height="54"/>
-                        <string key="text">The Friend state indicates support for the Friend feature. Disabling this feature will terminate all friend relationships and clear the associated Friend Queue.</string>
+                        <rect key="frame" x="20" y="778.5" width="374" height="72"/>
+                        <string key="text">The Friend Feature state indicates support for the Friend feature. Disabling this feature will terminate all Friend relationships and clear the associated Friend Queue.</string>
                         <fontDescription key="fontDescription" type="system" pointSize="15"/>
                         <color key="textColor" systemColor="secondaryLabelColor"/>
                         <nil key="highlightedColor"/>
                     </label>
                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="D12-ZA-L55">
-                        <rect key="frame" x="20" y="828.5" width="394" height="0.5"/>
+                        <rect key="frame" x="20" y="858.5" width="394" height="0.5"/>
                         <color key="backgroundColor" systemColor="opaqueSeparatorColor"/>
                         <rect key="contentStretch" x="0.0" y="0.0" width="1" height="0.33000000000000002"/>
                         <constraints>
@@ -327,14 +327,14 @@
                         </constraints>
                     </view>
                     <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="ztF-Vw-61s">
-                        <rect key="frame" x="345" y="663.5" width="51" height="31"/>
+                        <rect key="frame" x="345" y="675.5" width="51" height="31"/>
                         <color key="onTintColor" red="0.0" green="0.46666666670000001" blue="0.7843137255" alpha="1" colorSpace="calibratedRGB"/>
                         <connections>
                             <action selector="gattProxyDidChange:" destination="RhT-zv-Hbx" eventType="valueChanged" id="Qb8-Jp-AcR"/>
                         </connections>
                     </switch>
                     <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="plw-fg-Zic">
-                        <rect key="frame" x="345" y="837" width="51" height="31"/>
+                        <rect key="frame" x="345" y="867" width="51" height="31"/>
                         <color key="onTintColor" red="0.0" green="0.46666666670000001" blue="0.7843137255" alpha="1" colorSpace="calibratedRGB"/>
                         <connections>
                             <action selector="friendFeatureDidChange:" destination="RhT-zv-Hbx" eventType="valueChanged" id="7MY-X0-ITr"/>
@@ -433,7 +433,7 @@
                 <outlet property="secureNetworkBeaconSwitch" destination="cFg-Ds-bZw" id="6AA-Qk-0F4"/>
                 <outlet property="setRelayButton" destination="hn1-Xh-LXI" id="0HA-W0-Cc6"/>
             </connections>
-            <point key="canvasLocation" x="-10.144927536231885" y="68.973214285714278"/>
+            <point key="canvasLocation" x="-10.144927536231885" y="79.017857142857139"/>
         </tableViewCell>
     </objects>
     <resources>
