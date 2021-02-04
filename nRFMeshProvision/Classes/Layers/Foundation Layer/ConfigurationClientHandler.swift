@@ -61,6 +61,7 @@ internal class ConfigurationClientHandler: ModelDelegate {
             ConfigHeartbeatPublicationStatus.self,
             ConfigHeartbeatSubscriptionStatus.self,
             ConfigKeyRefreshPhaseStatus.self,
+            ConfigLowPowerNodePollTimeoutStatus.self,
         ]
         self.meshNetwork = meshNetwork
         self.messageTypes = types.toMap()
@@ -335,6 +336,10 @@ internal class ConfigurationClientHandler: ModelDelegate {
             }
             
         case is ConfigKeyRefreshPhaseStatus:
+            // Do nothing. The model does not need to be updated.
+            break
+            
+        case is ConfigLowPowerNodePollTimeoutStatus:
             // Do nothing. The model does not need to be updated.
             break
             

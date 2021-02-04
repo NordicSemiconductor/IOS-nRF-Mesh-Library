@@ -83,6 +83,16 @@ public struct ConfigLowPowerNodePollTimeoutStatus: ConfigMessage {
         self.pollTimeout = pollTimeout
     }
     
+    /// Creates Config Low Power Node PollTimeout Status message
+    /// with the PollTimeout set to 0, indicating that the local
+    /// Node has no friend relationship with the given one.
+    ///
+    /// - parameter request: The request received.
+    public init(responseTo request: ConfigLowPowerNodePollTimeoutGet) {
+        self.lpnAddress = request.lpnAddress
+        self.pollTimeout = 0x000000
+    }
+    
     public init?(parameters: Data) {
         guard parameters.count == 5 else {
             return nil
