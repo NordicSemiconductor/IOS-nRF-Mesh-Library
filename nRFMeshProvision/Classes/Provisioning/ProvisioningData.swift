@@ -149,8 +149,11 @@ internal extension ProvisioningData {
         deviceKey = keys.deviceKey
         
         let flags = Flags(ivIndex: ivIndex, networkKey: networkKey)
-        let data  = networkKey.key + networkKey.index.bigEndian + flags.rawValue + ivIndex.index.bigEndian + unicastAddress.bigEndian
-        return helper.calculateCCM(data, withKey: keys.sessionKey, nonce: keys.sessionNonce, andMICSize: 8, withAdditionalData: nil)
+        let key   = networkKey.phase == .keyDistribution ? networkKey.oldKey! : networkKey.key
+        let data  = key + networkKey.index.bigEndian + flags.rawValue
+                        + ivIndex.index.bigEndian + unicastAddress.bigEndian
+        return helper.calculateCCM(data, withKey: keys.sessionKey, nonce: keys.sessionNonce,
+                                   andMICSize: 8, withAdditionalData: nil)
     }
     
 }
@@ -278,8 +281,8 @@ private extension ProvisioningData {
 private struct Flags: OptionSet {
     let rawValue: UInt8
     
-    static let keyRefreshFinalizing = Flags(rawValue: 1 << 0)
-    static let ivUpdateActive       = Flags(rawValue: 1 << 1)
+    static let useNewKeys     = Flags(rawValue: 1 << 0)
+    static let ivUpdateActive = Flags(rawValue: 1 << 1)
     
     init(rawValue: UInt8) {
         self.rawValue = rawValue
