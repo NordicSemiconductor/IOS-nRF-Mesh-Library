@@ -145,17 +145,17 @@ internal struct UpperTransportPdu {
             } else {
                 matchingGroups = [nil]
             }
-            for applicationKey in meshNetwork.applicationKeys {
+            for applicationKey in meshNetwork.applicationKeys.boundTo(accessMessage.networkKey) {
                 for group in matchingGroups {
                     if aid == applicationKey.aid,
-                        let pdu = UpperTransportPdu(fromLowerTransportAccessMessage: accessMessage,
-                                                    usingKey: applicationKey.key, for: group) {
+                       let pdu = UpperTransportPdu(fromLowerTransportAccessMessage: accessMessage,
+                                                   usingKey: applicationKey.key, for: group) {
                         let keySet = AccessKeySet(applicationKey: applicationKey)
                         return (pdu, keySet)
                     }
-                    if let oldAid = applicationKey.oldAid, oldAid == applicationKey.aid, let key = applicationKey.oldKey,
-                        let pdu = UpperTransportPdu(fromLowerTransportAccessMessage: accessMessage,
-                                                    usingKey: key, for: group) {
+                    if let oldAid = applicationKey.oldAid, aid == oldAid, let key = applicationKey.oldKey,
+                       let pdu = UpperTransportPdu(fromLowerTransportAccessMessage: accessMessage,
+                                                   usingKey: key, for: group) {
                         let keySet = AccessKeySet(applicationKey: applicationKey)
                         return (pdu, keySet)
                     }
