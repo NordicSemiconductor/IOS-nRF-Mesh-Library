@@ -73,7 +73,7 @@ internal struct MeshState: Codable {
     var networkKey: NetworkKey {
         let index: KeyIndex = keyIndex.asUInt16 & 0x0FFF
         let networkKey = try! NetworkKey(name: "Primary Network Key", index: index, key: netKey)
-        networkKey.phase = flags[0] & 0x80 == 0x80 ? .finalizing : .normalOperation
+        networkKey.phase = flags[0] & 0x80 == 0x80 ? .usingNewKeys : .normalOperation
         return networkKey
     }
     

@@ -131,7 +131,7 @@ internal class ConfigurationServerHandler: ModelDelegate {
             // The Network Key can only be changed once if a single Key Refresh Procedure.
             // Otherwise, return .keyIndexAlreadyStored.
             guard networkKey.phase == .normalOperation ||
-                 (networkKey.phase == .distributingKeys && networkKey.key == request.key) else {
+                 (networkKey.phase == .keyDistribution && networkKey.key == request.key) else {
                 return ConfigNetKeyStatus(responseTo: request, with: .keyIndexAlreadyStored)
             }
             if networkKey.phase == .normalOperation {
@@ -210,7 +210,7 @@ internal class ConfigurationServerHandler: ModelDelegate {
             }
             // Updating Application Key is only possible during Key Refresh Procedure
             // for the bound Network Key. Otherwise, return .cannotUpdate.
-            guard case .distributingKeys = networkKey.phase else {
+            guard case .keyDistribution = networkKey.phase else {
                 return ConfigAppKeyStatus(responseTo: request, with: .cannotUpdate)
             }
             // The key cannot be changed multiple times in a single Key Refresh Procedure.
@@ -654,14 +654,14 @@ internal class ConfigurationServerHandler: ModelDelegate {
             // Check all possible transitions.
             switch (networkKey.phase, request.transition) {
             // It is not possible to transition from Phase 0 (Normal Operation) to
-            // Phase 2 (Finalizing).
-            case (.normalOperation, .finalize):
+            // Phase 2 (Using New Keys).
+            case (.normalOperation, .useNewKeys):
                 return ConfigKeyRefreshPhaseStatus(responseTo: request, with: .cannotSet)
-            // Transitioning from Phase 1 (Distributing Keys) sets the phase to .finalizing.
-            case (.distributingKeys, .finalize):
-                networkKey.phase = .finalizing // This updates the modification Date.
+            // Transitioning from Phase 1 (Distributing Keys) sets the phase to .usingNewKeys.
+            case (.keyDistribution, .useNewKeys):
+                networkKey.phase = .usingNewKeys // This updates the modification Date.
             // If we already were in Phase 2, no action is needed.
-            case (.finalizing, .finalize):
+            case (.usingNewKeys, .useNewKeys):
                 break
                 
             // Transitioning from Phase 0 to Phase 0 is a NO OP.

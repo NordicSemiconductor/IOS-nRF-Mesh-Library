@@ -287,7 +287,7 @@ private struct Flags: OptionSet {
     
     init(ivIndex: IvIndex, networkKey: NetworkKey) {
         var value: UInt8 = 0
-        if case .finalizing = networkKey.phase {
+        if case .usingNewKeys = networkKey.phase {
             value |= 1 << 0
         }
         if ivIndex.updateActive {

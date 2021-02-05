@@ -81,7 +81,7 @@ internal struct SecureNetworkBeacon: BeaconPdu {
             }
             self.networkKey = networkKey
             self.validForKeyRefreshProcedure = networkKey.oldKey != nil
-        } else if case .distributingKeys = networkKey.phase, networkId == networkKey.oldNetworkId {
+        } else if case .keyDistribution = networkKey.phase, networkId == networkKey.oldNetworkId {
             let authenticationValue = helper.calculateCMAC(pdu.subdata(in: 1..<14), andKey: networkKey.oldKeys!.beaconKey)!
             guard authenticationValue.subdata(in: 0..<8) == pdu.subdata(in: 14..<22) else {
                 return nil

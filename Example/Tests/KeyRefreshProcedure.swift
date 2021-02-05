@@ -89,7 +89,7 @@ class KeyRefreshProcedure: XCTestCase {
     func testNetworkKey_KeyDistribution() throws {
         networkKey.key = newKey
         
-        XCTAssertEqual(networkKey.phase, .distributingKeys)
+        XCTAssertEqual(networkKey.phase, .keyDistribution)
         XCTAssertEqual(networkKey.index, 0)
         XCTAssertEqual(networkKey.key, newKey)
         XCTAssertEqual(networkKey.oldKey, key)
@@ -129,9 +129,9 @@ class KeyRefreshProcedure: XCTestCase {
     
     func testNetworkKey_Finalizing() throws {
         networkKey.key = newKey
-        networkKey.phase = .finalizing
+        networkKey.phase = .usingNewKeys
         
-        XCTAssertEqual(networkKey.phase, .finalizing)
+        XCTAssertEqual(networkKey.phase, .usingNewKeys)
         XCTAssertEqual(networkKey.index, 0)
         XCTAssertEqual(networkKey.key, newKey)
         XCTAssertEqual(networkKey.oldKey, key)
@@ -171,7 +171,7 @@ class KeyRefreshProcedure: XCTestCase {
     
     func testNetworkKey_KeysRevoked() throws {
         networkKey.key = newKey
-        networkKey.phase = .finalizing
+        networkKey.phase = .usingNewKeys
         networkKey.oldKey = nil
         
         XCTAssertEqual(networkKey.phase, .normalOperation)

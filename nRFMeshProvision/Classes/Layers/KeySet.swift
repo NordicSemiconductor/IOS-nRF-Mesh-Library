@@ -47,14 +47,14 @@ internal struct AccessKeySet: KeySet {
     }
     
     var accessKey: Data {
-        if case .distributingKeys = networkKey.phase {
+        if case .keyDistribution = networkKey.phase {
             return applicationKey.oldKey ?? applicationKey.key
         }
         return applicationKey.key
     }
     
     var aid: UInt8? {
-        if case .distributingKeys = networkKey.phase {
+        if case .keyDistribution = networkKey.phase {
             return applicationKey.oldAid ?? applicationKey.aid
         }
         return applicationKey.aid

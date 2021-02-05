@@ -324,15 +324,15 @@ private extension NetworkLayer {
             }
             
             // If the Key Refresh Procedure is in progress, and the new Network Key
-            // has already been set, the key refresh flag indicates switching to phase 2.
-            if case .distributingKeys = networkKey.phase,
+            // has already been set, the key refresh flag indicates switching to Phase 2.
+            if case .keyDistribution = networkKey.phase,
                secureNetworkBeacon.validForKeyRefreshProcedure &&
                secureNetworkBeacon.keyRefreshFlag == true {
-                networkKey.phase = .finalizing
+                networkKey.phase = .usingNewKeys
             }
-            // If the Key Refresh Procedure is in phase 2, and the key refresh flag is
+            // If the Key Refresh Procedure is in Phase 2, and the key refresh flag is
             // set to false.
-            if case .finalizing = networkKey.phase,
+            if case .usingNewKeys = networkKey.phase,
                secureNetworkBeacon.validForKeyRefreshProcedure &&
                secureNetworkBeacon.keyRefreshFlag == false {
                 // Revoke the old Network Key...

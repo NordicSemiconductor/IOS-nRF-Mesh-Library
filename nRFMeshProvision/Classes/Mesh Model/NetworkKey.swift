@@ -80,7 +80,7 @@ public class NetworkKey: Key, Codable {
             oldKeys = keys
         }
         didSet {
-            phase = .distributingKeys
+            phase = .keyDistribution
             regenerateKeyDerivatives()
         }
     }
@@ -114,7 +114,7 @@ public class NetworkKey: Key, Codable {
     internal private(set) var oldKeys: NetworkKeyDerivatives?
     /// Returns the key set that should be used for encrypting outgoing packets.
     internal var transmitKeys: NetworkKeyDerivatives {
-        if case .distributingKeys = phase, let oldKeys = oldKeys {
+        if case .keyDistribution = phase, let oldKeys = oldKeys {
             return oldKeys
         }
         return keys
