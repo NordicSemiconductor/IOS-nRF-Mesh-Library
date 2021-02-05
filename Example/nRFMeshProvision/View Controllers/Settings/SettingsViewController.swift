@@ -42,6 +42,7 @@ class SettingsViewController: UITableViewController {
     @IBOutlet weak var appKeysLabel: UILabel!
     @IBOutlet weak var scenesLabel: UILabel!
     @IBOutlet weak var testModeSwitch: UISwitch!
+    @IBOutlet weak var lastModifiedLabel: UILabel!
     @IBAction func testModeDidChange(_ sender: UISwitch) {
         MeshNetworkManager.instance.ivUpdateTestMode = sender.isOn
     }
@@ -57,10 +58,17 @@ class SettingsViewController: UITableViewController {
         displayImportExportOptions()
     }
     
+    // MARK: - Private members
+    
+    private let dateFormatter = DateFormatter()
+    
     // MARK: - View Controller
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        dateFormatter.dateStyle = .medium
+        dateFormatter.timeStyle = .medium
         
         // Load versions.
         appVersionLabel.text = AppInfo.version
@@ -78,6 +86,7 @@ class SettingsViewController: UITableViewController {
         networkKeysLabel.text  = "\(meshNetwork.networkKeys.count)"
         appKeysLabel.text      = "\(meshNetwork.applicationKeys.count)"
         scenesLabel.text       = "\(meshNetwork.scenes.count)"
+        lastModifiedLabel.text = dateFormatter.string(from: meshNetwork.timestamp)
     }
     
     // MARK: - Table view delegate
@@ -307,8 +316,9 @@ extension SettingsViewController: UIDocumentPickerDelegate {
 private extension IndexPath {
     static let nameSection    = 0
     static let networkSection = 1
-    static let actionsSection = 2
-    static let aboutSection   = 3
+    static let dateSection    = 2
+    static let actionsSection = 3
+    static let aboutSection   = 4
     
     /// Returns whether the IndexPath points to the mesh network name row.
     var isNetworkName: Bool {
