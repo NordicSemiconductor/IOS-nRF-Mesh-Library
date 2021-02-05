@@ -303,8 +303,8 @@ public class Node: Codable {
         self.init(name: unprovisionedDevice.name, uuid: unprovisionedDevice.uuid,
                   deviceKey: deviceKey, andAssignedNetworkKey: networkKey,
                   andAddress: address)
-        // Elements will be queried with Composition Data. Let's just add
-        // n empty Elements to reserve addresses.
+        // Elements will be queried with Composition Data.
+        // Let's just add n empty Elements to reserve addresses.
         for _ in 0..<n {
             add(element: Element(location: .unknown))
         }
@@ -320,8 +320,10 @@ public class Node: Codable {
         // Composition Data were not obtained.
         self.isConfigComplete = false
         
-        // The node has to have at least one Network Key.
-        self.netKeys  = [NodeKey(index: networkKey.index, updated: false)]
+        // The updated flag is set to true if the Node was provisioned using
+        // a Network Key in Phase 2 (Using New Keys).
+        let updated = networkKey.phase == .usingNewKeys
+        self.netKeys  = [NodeKey(index: networkKey.index, updated: updated)]
         self.appKeys  = []
         self.elements = []
     }
