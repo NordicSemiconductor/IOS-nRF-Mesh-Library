@@ -125,7 +125,7 @@ internal struct UpperTransportPdu {
     }
     
     /// This method tries to decode the Access Message using a matching Application Key
-    /// or the node's Device Key, based on the `aid` field value.
+    /// based on the `aid` field value, or the Device Key of the local or source Node.
     ///
     /// - parameter accessMessage: The Lower Transport Layer Access Message received.
     /// - parameter meshNetwork: The mesh network for which the PDU should be decoded.
@@ -143,17 +143,25 @@ internal struct UpperTransportPdu {
                     $0.address.address == accessMessage.destination
                 }
             } else {
+                // If the message was not sent to a Virtual Address, just add nil to the
+                // matching groups. That way it will be decoded once with group = nil.
                 matchingGroups = [nil]
             }
+            // Go through all the Application Keys bound to the Network Key that the message
+            // was decoded with.
             for applicationKey in meshNetwork.applicationKeys.boundTo(accessMessage.networkKey) {
+                // The matchingGroups contains either a list of Virtual Groups, or a single nil.
                 for group in matchingGroups {
+                    // Each time try decoding using the new, or the old key (if such exist)
+                    // when the generated aid matches the one sent in the message.
                     if aid == applicationKey.aid,
                        let pdu = UpperTransportPdu(fromLowerTransportAccessMessage: accessMessage,
                                                    usingKey: applicationKey.key, for: group) {
                         let keySet = AccessKeySet(applicationKey: applicationKey)
                         return (pdu, keySet)
                     }
-                    if let oldAid = applicationKey.oldAid, aid == oldAid, let key = applicationKey.oldKey,
+                    if let oldAid = applicationKey.oldAid, aid == oldAid,
+                       let key = applicationKey.oldKey,
                        let pdu = UpperTransportPdu(fromLowerTransportAccessMessage: accessMessage,
                                                    usingKey: key, for: group) {
                         let keySet = AccessKeySet(applicationKey: applicationKey)
