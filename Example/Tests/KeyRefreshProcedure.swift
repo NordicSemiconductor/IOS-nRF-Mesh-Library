@@ -127,7 +127,7 @@ class KeyRefreshProcedure: XCTestCase {
         XCTAssertNotNil(decodedUsingNewKey)
     }
     
-    func testNetworkKey_Finalizing() throws {
+    func testNetworkKey_UsingNewKeys() throws {
         networkKey.key = newKey
         networkKey.phase = .usingNewKeys
         
@@ -152,7 +152,7 @@ class KeyRefreshProcedure: XCTestCase {
         XCTAssertEqual(networkKey.oldKeys!.privacyKey,    Data(hex: "33F2DDDEFD05965A2FF862DDCBF8298C"))
         XCTAssertEqual(networkKey.oldNetworkId,           Data(hex: "1FBD2C61A4B6E5A4"))
         
-        // In Finalizing phase the new key should be used.
+        // In Using New Keys phase the new key should be used.
         XCTAssertEqual(networkKey.keys.encryptionKey, networkKey.transmitKeys.encryptionKey)
         
         // Test whether a message is using the right key.
