@@ -47,7 +47,7 @@ public protocol ProvisioningDelegate: class {
     ///
     /// - parameter unprovisionedDevice: The device which state has changed.
     /// - parameter state:               The completed provisioning state.
-    func provisioningState(of unprovisionedDevice: UnprovisionedDevice, didChangeTo state: ProvisionigState)
+    func provisioningState(of unprovisionedDevice: UnprovisionedDevice, didChangeTo state: ProvisioningState)
     
 }
 
@@ -73,7 +73,7 @@ public class ProvisioningManager {
     public private(set) var provisioningCapabilities: ProvisioningCapabilities?
     
     /// The Unicast Address that will be assigned to the device.
-    /// After device capabilies are received, the address is automatically set to
+    /// After device capabilities are received, the address is automatically set to
     /// the first available unicast address from Provisioner's range.
     public var unicastAddress: Address?
     
@@ -84,7 +84,7 @@ public class ProvisioningManager {
     public private(set) var suggestedUnicastAddress: Address?
     
     /// The Network Key to be sent to the device during provisioning.
-    /// Setting this proeprty is mandatory before calling
+    /// Setting this property is mandatory before calling
     /// `provision(usingAlgorithm:publicKey:authenticationMethod)`.
     public var networkKey: NetworkKey?
     
@@ -97,7 +97,7 @@ public class ProvisioningManager {
     public weak var logger: LoggerDelegate?
     
     /// The current state of the provisioning process.
-    public private(set) var state: ProvisionigState = .ready {
+    public private(set) var state: ProvisioningState = .ready {
         didSet {
             if case .fail = state {
                 logger?.e(.provisioning, "\(state)")
@@ -111,7 +111,7 @@ public class ProvisioningManager {
     // MARK: - Computed properties
     
     /// Returns whether the Unicast Address can be used to provision the device.
-    /// The Provisioning Capabilities must be obtained proir to using this property,
+    /// The Provisioning Capabilities must be obtained prior to using this property,
     /// otherwise the number of device's elements is unknown. Also, the mesh
     /// network must have the local Provisioner set.
     public var isUnicastAddressValid: Bool? {
@@ -443,7 +443,7 @@ private extension ProvisioningManager {
             let authValue = Data(count: 16)
             authValueReceived(authValue)
             
-        // For Static OOB, the AuthValue is the Key enetered by the user.
+        // For Static OOB, the AuthValue is the Key entered by the user.
         // The key must be 16 bytes long.
         case .staticOob:
             delegate?.authenticationActionRequired(.provideStaticKey(callback: { key in

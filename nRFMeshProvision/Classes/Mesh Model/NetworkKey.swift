@@ -30,7 +30,7 @@
 
 import Foundation
 
-internal struct NetworkKeyDerivaties {
+internal struct NetworkKeyDerivatives {
     /// The Identity Key.
     let identityKey: Data!
     /// The Beacon Key.
@@ -39,6 +39,8 @@ internal struct NetworkKeyDerivaties {
     let encryptionKey: Data!
     /// The Privacy Key.
     let privacyKey: Data!
+    /// Network identifier.
+    let nid: UInt8!
     
     init(withKey key: Data, using helper: OpenSSLHelper) {
         // Calculate Identity Key and Beacon Key.
@@ -47,9 +49,9 @@ internal struct NetworkKeyDerivaties {
         identityKey = helper.calculateK1(withN: key, salt: saltIK, andP: P)
         let saltBK = helper.calculateSalt("nkbk".data(using: .ascii)!)!
         beaconKey = helper.calculateK1(withN: key, salt: saltBK, andP: P)
-        // Calculate Encryption Key and Privacy Key.
+        // Calculate NID, Encryption Key and Privacy Key.
         let hash = helper.calculateK2(withN: key, andP: Data([0x00]))!
-        // NID was already generated in Network Key below and is ignored here.
+        nid = hash[0] & 0x7F
         encryptionKey = hash.subdata(in: 1..<17)
         privacyKey = hash.subdata(in: 17..<33)
     }
@@ -75,12 +77,11 @@ public class NetworkKey: Key, Codable {
         willSet {
             oldKey = key
             oldNetworkId = networkId
-            oldNid = nid
             oldKeys = keys
         }
         didSet {
-            phase = .distributingKeys
-            regenerateKeyDerivaties()
+            phase = .keyDistribution
+            regenerateKeyDerivatives()
         }
     }
     /// The old Network Key is present when the phase property has a non-zero
@@ -89,7 +90,6 @@ public class NetworkKey: Key, Codable {
         didSet {
             if oldKey == nil {
                 oldNetworkId = nil
-                oldNid = nil
                 oldKeys = nil
                 phase = .normalOperation
             }
@@ -108,18 +108,14 @@ public class NetworkKey: Key, Codable {
     /// The Network ID derived from the old Network Key. This identifier
     /// is public information. It is set when `oldKey` is set.
     public private(set) var oldNetworkId: Data?
-    /// Network Key derivaties.
-    internal private(set) var keys: NetworkKeyDerivaties!
-    /// Network Key derivaties.
-    internal private(set) var oldKeys: NetworkKeyDerivaties?
-    /// Network identifier.
-    internal private(set) var nid: UInt8!
-    /// Network identifier derived from the old key.
-    internal private(set) var oldNid: UInt8?
+    /// Network Key derivatives.
+    internal private(set) var keys: NetworkKeyDerivatives!
+    /// Network Key derivatives.
+    internal private(set) var oldKeys: NetworkKeyDerivatives?
     /// Returns the key set that should be used for encrypting outgoing packets.
-    internal var transmitKeys: NetworkKeyDerivaties {
-        if case .distributingKeys = phase {
-            return oldKeys!
+    internal var transmitKeys: NetworkKeyDerivatives {
+        if case .keyDistribution = phase, let oldKeys = oldKeys {
+            return oldKeys
         }
         return keys
     }
@@ -131,10 +127,10 @@ public class NetworkKey: Key, Codable {
         self.name        = name
         self.index       = index
         self.key         = key
-        self.minSecurity = .high
+        self.minSecurity = .secure
         self.timestamp   = Date()
         
-        regenerateKeyDerivaties()
+        regenerateKeyDerivatives()
     }
     
     /// Creates the primary Network Key for a mesh network.
@@ -142,26 +138,20 @@ public class NetworkKey: Key, Codable {
         try! self.init(name: "Primary Network Key", index: 0, key: OpenSSLHelper().generateRandom())
     }
     
-    private func regenerateKeyDerivaties() {
+    private func regenerateKeyDerivatives() {
         let helper = OpenSSLHelper()
         // Calculate Network ID.
         networkId = helper.calculateK3(withN: key)
-        // Calculate NID.
-        let hash = helper.calculateK2(withN: key, andP: Data([0x00]))!
-        nid = hash[0] & 0x7F
         // Calculate other keys.
-        keys = NetworkKeyDerivaties(withKey: key, using: helper)
+        keys = NetworkKeyDerivatives(withKey: key, using: helper)
         
-        // When the Network Key is imported from JSON, old key derivaties must
+        // When the Network Key is imported from JSON, old key derivatives must
         // be calculated.
-        if let oldKey = oldKey, oldNid == nil {
+        if let oldKey = oldKey, oldNetworkId == nil {
             // Calculate Network ID.
             oldNetworkId = helper.calculateK3(withN: oldKey)
-            // Calculate NID.
-            let hash = helper.calculateK2(withN: oldKey, andP: Data([0x00]))!
-            oldNid = hash[0] & 0x7F
             // Calculate other keys.
-            oldKeys = NetworkKeyDerivaties(withKey: oldKey, using: helper)
+            oldKeys = NetworkKeyDerivatives(withKey: oldKey, using: helper)
         }
     }
     
@@ -182,17 +172,21 @@ public class NetworkKey: Key, Codable {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         name = try container.decode(String.self, forKey: .name)
         index = try container.decode(KeyIndex.self, forKey: .index)
+        guard index.isValidKeyIndex else {
+            throw DecodingError.dataCorruptedError(forKey: .index, in: container,
+                                                   debugDescription: "Key Index must be in range 0-4095.")
+        }
         let keyHex = try container.decode(String.self, forKey: .key)
         guard let keyData = Data(hex: keyHex) else {
             throw DecodingError.dataCorruptedError(forKey: .key, in: container,
-                                                   debugDescription: "Key must be 32-character hexadecimal string")
+                                                   debugDescription: "Key must be 32-character hexadecimal string.")
         }
         key = keyData
         networkId = OpenSSLHelper().calculateK3(withN: key)
         if let oldKeyHex = try container.decodeIfPresent(String.self, forKey: .oldKey) {
             guard let oldKeyData = Data(hex: oldKeyHex) else {
                 throw DecodingError.dataCorruptedError(forKey: .oldKey, in: container,
-                                                       debugDescription: "Old key must be 32-character hexadecimal string")
+                                                       debugDescription: "Old key must be 32-character hexadecimal string.")
             }
             oldKey = oldKeyData
         }
@@ -200,7 +194,7 @@ public class NetworkKey: Key, Codable {
         minSecurity = try container.decode(Security.self, forKey: .minSecurity)
         timestamp = try container.decode(Date.self, forKey: .timestamp)
         
-        regenerateKeyDerivaties()
+        regenerateKeyDerivatives()
     }
     
     public func encode(to encoder: Encoder) throws {

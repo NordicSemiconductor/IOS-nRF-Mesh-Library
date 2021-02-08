@@ -30,10 +30,10 @@
 
 import Foundation
 
-public enum ProvisionigState {
+public enum ProvisioningState {
     /// Provisioning Manager is ready to start.
     case ready
-    /// The manager is requesting Provisioioning Capabilities from the device.
+    /// The manager is requesting Provisioning Capabilities from the device.
     case requestingCapabilities
     /// Provisioning Capabilities were received.
     case capabilitiesReceived(_ capabilities: ProvisioningCapabilities)
@@ -50,11 +50,11 @@ public enum ProvisioningError: Error {
     case invalidState
     /// The received PDU is invalid.
     case invalidPdu
-    /// Thrown when an unsupported algorighm has been selected for provisioning.
+    /// Thrown when an unsupported algorithm has been selected for provisioning.
     case unsupportedAlgorithm
     /// Thrown when the Unprovisioned Device is not supported by the manager.
     case unsupportedDevice
-    /// Thrown when the provided alphanumberic value could not be converted into
+    /// Thrown when the provided alphanumeric value could not be converted into
     /// bytes using ASCII encoding.
     case invalidOobValueFormat
     /// Thrown when no available Unicast Address was found in the Provisioner's
@@ -91,7 +91,7 @@ public enum RemoteProvisioningError: UInt8 {
     /// An unexpected error occurred that may not be recoverable.
     case unexpectedError = 7
     /// The device cannot assign consecutive unicast addresses to all elements.
-    case cannotAcssignAddresses = 8
+    case cannotAssignAddresses = 8
 }
 
 public enum AuthAction {
@@ -110,7 +110,7 @@ public enum AuthAction {
     case displayAlphanumeric(_ text: String)
 }
 
-extension ProvisionigState: CustomDebugStringConvertible {
+extension ProvisioningState: CustomDebugStringConvertible {
     
     public var debugDescription: String {
         switch self {
@@ -140,7 +140,7 @@ extension ProvisioningError: LocalizedError {
         case .invalidPdu:
             return NSLocalizedString("Invalid PDU", comment: "provisioning")
         case .unsupportedAlgorithm:
-            return NSLocalizedString("Unsupported algorighm", comment: "provisioning")
+            return NSLocalizedString("Unsupported algorithm", comment: "provisioning")
         case .unsupportedDevice:
             return NSLocalizedString("Unsupported device", comment: "provisioning")
         case .invalidOobValueFormat:
@@ -162,7 +162,7 @@ extension ProvisioningError: LocalizedError {
             case .outOfResources:          return NSLocalizedString("Out of resources", comment: "provisioning")
             case .decryptionFailed:        return NSLocalizedString("Decryption failed", comment: "provisioning")
             case .unexpectedError:         return NSLocalizedString("Unexpected error", comment: "provisioning")
-            case .cannotAcssignAddresses:  return NSLocalizedString("Cannot assign addresses", comment: "provisioning")
+            case .cannotAssignAddresses:  return NSLocalizedString("Cannot assign addresses", comment: "provisioning")
             }
         case let .keyGenerationFailed(status):
             return NSLocalizedString("Key generation failed with status \(status)", comment: "provisioning")
@@ -189,7 +189,7 @@ extension RemoteProvisioningError: CustomDebugStringConvertible {
             return "Decryption failed"
         case .unexpectedError:
             return "Unexpected error"
-        case .cannotAcssignAddresses:
+        case .cannotAssignAddresses:
             return "Cannot assign addresses"
         }
     }

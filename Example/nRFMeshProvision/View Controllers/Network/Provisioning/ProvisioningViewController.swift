@@ -150,7 +150,7 @@ private extension ProvisioningViewController {
     func presentNameDialog() {
         presentTextAlert(title: "Device name", message: nil,
                          text: unprovisionedDevice.name, placeHolder: "Name",
-                         type: .nameRequired) { newName in
+                         type: .nameRequired, cancelHandler: nil) { newName in
                             self.unprovisionedDevice.name = newName
                             self.nameLabel.text = newName
         }
@@ -168,7 +168,7 @@ private extension ProvisioningViewController {
         }
         presentTextAlert(title: "Unicast address", message: "Hexadecimal value in Provisioner's range.",
                          text: manager.unicastAddress?.hex, placeHolder: "Address", type: .unicastAddressRequired,
-                         option: action) { text in
+                         option: action, cancelHandler: nil) { text in
                             manager.unicastAddress = Address(text, radix: 16)
                             self.unicastAddressLabel.text = manager.unicastAddress!.asString()
                             let deviceSupported = manager.isDeviceSupported == true
@@ -303,12 +303,12 @@ extension ProvisioningViewController: GattBearerDelegate {
     
     func bearer(_ bearer: Bearer, didClose error: Error?) {
         guard case .complete = provisioningManager.state else {
-            dismissStatusDialog() {
+            dismissStatusDialog {
                 self.presentAlert(title: "Status", message: "Device disconnected.")
             }
             return
         }
-        dismissStatusDialog() {
+        dismissStatusDialog {
             self.presentAlert(title: "Success", message: "Provisioning complete.") { _ in
                 if MeshNetworkManager.instance.save() {
                     self.dismiss(animated: true) {
@@ -328,7 +328,7 @@ extension ProvisioningViewController: GattBearerDelegate {
 
 extension ProvisioningViewController: ProvisioningDelegate {
     
-    func provisioningState(of unprovisionedDevice: UnprovisionedDevice, didChangeTo state: ProvisionigState) {
+    func provisioningState(of unprovisionedDevice: UnprovisionedDevice, didChangeTo state: ProvisioningState) {
         DispatchQueue.main.async {
             switch state {
                 
@@ -359,7 +359,7 @@ extension ProvisioningViewController: ProvisioningDelegate {
                 
                 let deviceSupported = self.provisioningManager.isDeviceSupported == true
                 
-                self.dismissStatusDialog() {
+                self.dismissStatusDialog {
                     if deviceSupported && addressValid {
                         // If the device got disconnected after the capabilities were received
                         // the first time, the app had to send invitation again.
@@ -382,7 +382,7 @@ extension ProvisioningViewController: ProvisioningDelegate {
                 self.presentStatusDialog(message: "Disconnecting...")
                 
             case let .fail(error):
-                self.dismissStatusDialog() {
+                self.dismissStatusDialog {
                     self.presentAlert(title: "Error", message: error.localizedDescription)
                     self.abort()
                 }
@@ -396,14 +396,15 @@ extension ProvisioningViewController: ProvisioningDelegate {
     func authenticationActionRequired(_ action: AuthAction) {
         switch action {
         case let .provideStaticKey(callback: callback):
-            self.dismissStatusDialog() {
+            self.dismissStatusDialog {
                 let message = "Enter 16-character hexadecimal string."
-                self.presentTextAlert(title: "Static OOB Key", message: message, type: .keyRequired) { hex in
+                self.presentTextAlert(title: "Static OOB Key", message: message,
+                                      type: .keyRequired, cancelHandler: nil) { hex in
                     callback(Data(hex: hex)!)
                 }
             }
         case let .provideNumeric(maximumNumberOfDigits: _, outputAction: action, callback: callback):
-            self.dismissStatusDialog() {
+            self.dismissStatusDialog {
                 var message: String
                 switch action {
                 case .blink:
@@ -417,14 +418,16 @@ extension ProvisioningViewController: ProvisioningDelegate {
                 default:
                     message = "Action \(action) is not supported."
                 }
-                self.presentTextAlert(title: "Authentication", message: message, type: .unsignedNumberRequired) { text in
+                self.presentTextAlert(title: "Authentication", message: message,
+                                      type: .unsignedNumberRequired, cancelHandler: nil) { text in
                     callback(UInt(text)!)
                 }
             }
         case let .provideAlphanumeric(maximumNumberOfCharacters: _, callback: callback):
-            self.dismissStatusDialog() {
+            self.dismissStatusDialog {
                 let message = "Enter the text displayed on the device."
-                self.presentTextAlert(title: "Authentication", message: message, type: .nameRequired) { text in
+                self.presentTextAlert(title: "Authentication", message: message,
+                                      type: .nameRequired, cancelHandler: nil) { text in
                     callback(text)
                 }
             }

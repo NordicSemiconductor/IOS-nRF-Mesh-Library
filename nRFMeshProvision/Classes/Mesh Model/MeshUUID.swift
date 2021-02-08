@@ -67,7 +67,8 @@ internal class MeshUUID: Codable {
             return
         }
         
-        throw DecodingError.dataCorruptedError(in: container, debugDescription: "Invalid UUID: \(value)")
+        throw DecodingError.dataCorruptedError(in: container,
+                                               debugDescription: "Invalid UUID: \(value).")
     }
     
     public func encode(to encoder: Encoder) throws {

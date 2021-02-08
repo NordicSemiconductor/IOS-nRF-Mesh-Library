@@ -122,6 +122,19 @@ public class Element: Codable {
         offset += vendorModelsByteCount
     }
     
+    internal init(copy element: Element,
+                  andTruncateTo applicationKeys: [ApplicationKey], nodes: [Node], groups: [Group]) {
+        self.name = element.name
+        self.index = element.index
+        self.location = element.location
+        self.models = element.models.map {
+            Model(copy: $0, andTruncateTo: applicationKeys, nodes: nodes, groups: groups)
+        }
+        self.models.forEach {
+            $0.parentElement = self
+        }
+    }
+    
     // MARK: - Codable
     
     private enum CodingKeys: CodingKey {
@@ -138,11 +151,11 @@ public class Element: Codable {
         let locationAsString = try container.decode(String.self, forKey: .location)
         guard let rawValue = UInt16(hex: locationAsString) else {
             throw DecodingError.dataCorruptedError(forKey: .location, in: container,
-                                                   debugDescription: "Location must be 4-character hexadecimal string")
+                                                   debugDescription: "Location must be 4-character hexadecimal string.")
         }
         guard let loc = Location(rawValue: rawValue) else {
             throw DecodingError.dataCorruptedError(forKey: .location, in: container,
-                                                   debugDescription: "Unknown location: 0x\(locationAsString)")
+                                                   debugDescription: "Unknown location: 0x\(locationAsString).")
         }
         location = loc
         models = try container.decode([Model].self, forKey: .models)
@@ -208,16 +221,19 @@ internal extension Element {
                             delegate: ConfigurationClientHandler(meshNetwork)), at: 1)
         insert(model: Model(sigModelId: .healthServerModelId), at: 2)
         insert(model: Model(sigModelId: .healthClientModelId), at: 3)
+        insert(model: Model(sigModelId: .sceneClientModelId,
+                            delegate: SceneClientHandler(meshNetwork)), at: 4)
     }
     
-    /// Removes the Configuration Server and Client and Health Server
-    /// and Client from the Element.
+    /// Removes the Configuration Server and Client, Health Server
+    /// and Client and Scene Client models from the Element.
     func removePrimaryElementModels() {
         models = models.filter { model in
             !model.isConfigurationServer &&
             !model.isConfigurationClient &&
             !model.isHealthServer &&
-            !model.isHealthClient
+            !model.isHealthClient &&
+            !model.isSceneClient
         }
     }
     

@@ -198,7 +198,7 @@ private extension AddAddressViewController {
 extension AddAddressViewController: ProxyFilterDelegate {
     
     func proxyFilterUpdated(type: ProxyFilerType, addresses: Set<Address>) {
-        done() {
+        done {
             self.dismiss(animated: true)
         }
     }

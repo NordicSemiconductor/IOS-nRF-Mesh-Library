@@ -94,10 +94,10 @@ class ProxyViewController: ProgressViewController, Editable {
     
     override func tableView(_ tableView: UITableView, titleForFooterInSection section: Int) -> String? {
         if section == IndexPath.proxyTypeSection {
-            if MeshNetworkManager.instance.proxyFilter?.type == .blacklist {
-                return "The black list filter accepts all destination addresses except those that have been added to the black list."
+            if MeshNetworkManager.instance.proxyFilter?.type == .exclusionList {
+                return "The exclusion list filter accepts all destination addresses except those that have been added to the list."
             } else {
-                return "The white list filter blocks all destination addresses except those that have been added to the white list."
+                return "The inclusion list filter blocks all destination addresses except those that have been added to the list."
             }
         }
         return nil
@@ -182,6 +182,8 @@ extension ProxyViewController: BearerDelegate {
     
     func bearer(_ bearer: Bearer, didClose error: Error?) {
         addButton.isEnabled = false
+        // Make sure the ProxyFilter is not busy.
+        MeshNetworkManager.instance.proxyFilter?.proxyDidDisconnect()
         // The bearer has closed. Attempt to send a message
         // will fail, but the Proxy Filter will receive .bearerClosed
         // error, upon which it will clear the filter list and notify
@@ -207,10 +209,10 @@ extension ProxyViewController: ProxyFilterTypeDelegate {
         }
         let footer = tableView.footerView(forSection: 0)?.textLabel
         switch type {
-        case .blacklist:
-            footer?.text = "The black list filter accepts all destination addresses except those that have been added to the black list."
+        case .exclusionList:
+            footer?.text = "The exclusion list filter accepts all destination addresses except those that have been added to the list."
         default:
-            footer?.text = "The white list filter blocks all destination addresses except those that have been added to the white list."
+            footer?.text = "The inclusion list filter blocks all destination addresses except those that have been added to the list."
         }
         footer?.sizeToFit()
         start("Setting proxy filter...") {
@@ -223,7 +225,7 @@ extension ProxyViewController: ProxyFilterTypeDelegate {
 extension ProxyViewController: ProxyFilterDelegate {
     
     func proxyFilterUpdated(type: ProxyFilerType, addresses: Set<Address>) {
-        done() {
+        done {
             self.tableView.reloadData()
         }
     }

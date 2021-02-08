@@ -35,7 +35,10 @@ public extension NetworkKey {
     /// Returns whether the Network Key is the Primary Network Key.
     /// The Primary key is the one which Key Index is equal to 0.
     ///
-    /// A Primary Network Key may not be removed from the mesh network.
+    /// A Primary Network Key may not be removed from the mesh network,
+    /// but can be removed from any Node using Config Net Key Delete
+    /// messages encrypted using an Application Key bound to a different
+    /// Network Key.
     var isPrimary: Bool {
         return index == 0
     }
@@ -63,7 +66,7 @@ public extension NetworkKey {
             (
                 // Network Key known by at least one node (except the local Provisioner).
                 meshNetwork.nodes
-                    .filter({ $0.uuid != localProvisioner?.uuid })
+                    .filter { $0.uuid != localProvisioner?.uuid }
                     .knows(networkKey: self) ||
                 // Network Key bound to an Application Key.
                 meshNetwork.applicationKeys.contains(keyBoundTo: self)

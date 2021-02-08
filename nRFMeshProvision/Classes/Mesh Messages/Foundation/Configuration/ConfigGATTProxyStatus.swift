@@ -38,12 +38,12 @@ public struct ConfigGATTProxyStatus: ConfigMessage {
     }
     
     /// The GATT Proxy state of the Node.
-    public let state: NodeFeaturesState
+    public let state: NodeFeatureState
     
     /// Creates the Config GATT Proxy Status message.
     ///
     /// - parameter state: The GATT Proxy state of the Node.
-    public init(_ state: NodeFeaturesState) {
+    public init(_ state: NodeFeatureState) {
         self.state = state
     }
     
@@ -55,7 +55,7 @@ public struct ConfigGATTProxyStatus: ConfigMessage {
         guard parameters.count == 1 else {
             return nil
         }
-        guard let state = NodeFeaturesState(rawValue: parameters[0]) else {
+        guard let state = NodeFeatureState(rawValue: parameters[0]) else {
             return nil
         }
         self.state = state

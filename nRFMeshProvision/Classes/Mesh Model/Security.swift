@@ -33,16 +33,33 @@ import Foundation
 /// The type representing Security level for the subnet on which a
 /// node has been originally provisioned.
 public enum Security: String, Codable {
-    case low    = "low"
-    case high   = "high"
+    case insecure = "insecure"
+    case secure   = "secure"
+    
+    // In version 3.0 of the library the string security values changed
+    // from "high" and "low" to "secure" and "insecure".
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.singleValueContainer()
+        let value = try container.decode(String.self)
+        
+        switch value {
+        case "secure", "high":
+            self = .secure
+        case "insecure", "low":
+            self = .insecure
+        default:
+            throw DecodingError.dataCorruptedError(in: container,
+                                                   debugDescription: "Security must be 'secure' or 'insecure'.")
+        }
+    }
 }
 
 extension Security: CustomDebugStringConvertible {
     
     public var debugDescription: String {
         switch self {
-        case .low:  return "Low"
-        case .high: return "High"
+        case .insecure: return "Insecure"
+        case .secure:   return "Secure"
         }
     }
     

@@ -39,6 +39,21 @@ public enum StepResolution: UInt8 {
 
 internal extension StepResolution {
     
+    init?(from resolution: Int) {
+        switch resolution {
+        case 100:
+            self = .hundredsOfMilliseconds
+        case 1000:
+            self = .seconds
+        case 10000:
+            self = .tensOfSeconds
+        case 600000:
+            self = .tensOfMinutes
+        default:
+            return nil
+        }
+    }
+    
     /// Converts the steps to milliseconds using the step resolution.
     func toMilliseconds(steps: UInt8) -> Int {
         switch self {

@@ -38,7 +38,7 @@ public enum AccessError: Error {
     /// Thrown when trying to send a message using an Element
     /// that does not belong to the local Provisioner's Node.
     case invalidElement
-    /// Throwm when the given TTL is not valid. Valid TTL must
+    /// Thrown when the given TTL is not valid. Valid TTL must
     /// be 0 or in range 2...127.
     case invalidTtl
     /// Thrown when the destination Address is not known and the
@@ -47,6 +47,9 @@ public enum AccessError: Error {
     /// Thrown when trying to send a message from a Model that
     /// does not have any Application Key bound to it.
     case modelNotBoundToAppKey
+    /// Thrown when trying to send a config message to a Node of
+    /// which the Device Key is not known.
+    case noDeviceKey
     /// Error thrown when the Provisioner is trying to delete
     /// the last Network Key from the Node.
     case cannotDelete
@@ -64,6 +67,7 @@ extension AccessError: LocalizedError {
         case .invalidTtl:            return NSLocalizedString("Invalid TTL", comment: "access")
         case .invalidDestination:    return NSLocalizedString("The destination address is unknown.", comment: "access")
         case .modelNotBoundToAppKey: return NSLocalizedString("No Application Key bound to the given Model.", comment: "access")
+        case .noDeviceKey:           return NSLocalizedString("Unknown Device Key", comment: "access")
         case .cannotDelete:          return NSLocalizedString("Cannot delete the last Network Key.", comment: "access")
         case .timeout:               return NSLocalizedString("Request timed out.", comment: "access")
         }

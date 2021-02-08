@@ -52,7 +52,7 @@ public class Model: Codable {
     public var isBluetoothSIGAssigned: Bool {
         return modelId <= 0xFFFF
     }
-    /// The array of Unicast or Group Addresses (4-character hexadecimal value),
+    /// The array of Group Addresses (4-character hexadecimal string),
     /// or Virtual Label UUIDs (32-character hexadecimal string).
     internal private(set) var subscribe: [String]
     /// Returns the list of known Groups that this Model is subscribed to.
@@ -61,11 +61,11 @@ public class Model: Codable {
     /// Use `isSubscribed(to:)` to check other Groups.
     public var subscriptions: [Group] {
         return parentElement?.parentNode?.meshNetwork?.groups
-            .filter({ subscribe.contains($0._address )}) ?? []
+            .filter { subscribe.contains($0.groupAddress ) } ?? []
     }
     /// The configuration of this Model's publication.
     public private(set) var publish: Publish?
-    /// An array of Appliaction Key indexes to which this model is bound.
+    /// An array of Application Key indexes to which this model is bound.
     internal private(set) var bind: [KeyIndex]
     
     /// The model message handler. This is non-`nil` for supported local Models
@@ -80,6 +80,33 @@ public class Model: Codable {
         self.subscribe = []
         self.bind      = []
         self.delegate  = nil
+    }
+    
+    internal init(copy model: Model,
+                  andTruncateTo applicationKeys: [ApplicationKey], nodes: [Node], groups: [Group]) {
+        self.modelId = model.modelId
+        self.bind = model.bind.filter { keyIndex in
+            applicationKeys.contains { $0.index == keyIndex }
+        }
+        self.subscribe = model.subscribe.filter { address in
+            groups.contains { $0.groupAddress == address }
+        }
+        // No need to set the delegate for copying.
+        self.delegate = nil
+        
+        // Copy the Publish object if:
+        // - it exists,
+        // - is configured to use one of the exported Application Keys,
+        // - the destination address is an exported Node, an exported Group, or special group.
+        if let publish = model.publish, applicationKeys.contains(where: { $0.index == publish.index }) {
+            let publishAddress = publish.publicationAddress.address
+            guard publishAddress.isSpecialGroup ||
+                 (publishAddress.isUnicast && nodes.contains(where: { $0.hasAllocatedAddress(publishAddress) })) ||
+                 (publishAddress.isGroup && groups.contains(where: { $0.groupAddress == publish.address })) else {
+                return
+            }
+            self.publish = publish
+        }
     }
     
     internal convenience init(sigModelId: UInt16) {
@@ -122,21 +149,37 @@ public class Model: Codable {
         if modelIdString.count == 4 {
             guard let modelId = UInt16(hex: modelIdString) else {
                 throw DecodingError.dataCorruptedError(forKey: .modelId, in: container,
-                                                       debugDescription: "Model ID must be 4-character hexadecimal string")
+                                                       debugDescription: "Model ID must be 4-character hexadecimal string.")
             }
             self.modelId = UInt32(modelId)
         } else {
             guard let modelId = UInt32(hex: modelIdString) else {
                 throw DecodingError.dataCorruptedError(forKey: .modelId, in: container,
-                                                       debugDescription: "Vendor Model ID must be 8-character hexadecimal string")
+                                                       debugDescription: "Vendor Model ID must be 8-character hexadecimal string.")
             }
             self.modelId = modelId
         }
         self.subscribe = try container.decode([String].self, forKey: .subscribe)
+        try subscribe.forEach {
+            guard let meshAddress = MeshAddress(hex: $0) else {
+                throw DecodingError.dataCorruptedError(forKey: .subscribe, in: container,
+                                                       debugDescription: "Address must be 4-character hexadecimal string or UUID.")
+            }
+            guard meshAddress.address.isGroup || meshAddress.address.isVirtual else {
+                throw DecodingError.dataCorruptedError(forKey: .subscribe, in: container,
+                                                       debugDescription: "Address must be of group or virtual type.")
+            }
+        }
         if let publish = try container.decodeIfPresent(Publish.self, forKey: .publish) {
             self.publish = publish
         }
         self.bind = try container.decode([KeyIndex].self, forKey: .bind)
+        try bind.forEach {
+            guard $0.isValidKeyIndex else {
+                throw DecodingError.dataCorruptedError(forKey: .bind, in: container,
+                                                       debugDescription: "Key Index must be in range 0-4095.")
+            }
+        }
         self.delegate = nil
     }
     
@@ -159,6 +202,9 @@ internal extension UInt16 {
     static let configurationClientModelId: UInt16 = 0x0001
     static let healthServerModelId: UInt16 = 0x0002
     static let healthClientModelId: UInt16 = 0x0003
+    static let sceneServerModelId: UInt16 = 0x1203
+    static let sceneSetupServerModelId: UInt16 = 0x1204
+    static let sceneClientModelId: UInt16 = 0x1205
     
 }
 
@@ -168,6 +214,7 @@ internal extension Model {
     var isConfigurationClient: Bool { return modelId == UInt32(UInt16.configurationClientModelId) }
     var isHealthServer: Bool { return modelId == UInt32(UInt16.healthServerModelId) }
     var isHealthClient: Bool { return modelId == UInt32(UInt16.healthClientModelId) }
+    var isSceneClient: Bool { return modelId == UInt32(UInt16.sceneClientModelId) }
     
 }
 
@@ -266,7 +313,7 @@ internal extension Model {
         }
     }
     
-    /// Removes all subscribtions from this Model.
+    /// Removes all subscriptions from this Model.
     func unsubscribeFromAll() {
         subscribe.removeAll()
         parentElement?.parentNode?.meshNetwork?.timestamp = Date()
@@ -274,7 +321,7 @@ internal extension Model {
     
 }
 
-extension Model: Equatable {
+extension Model: Equatable, Hashable {
     
     public static func == (lhs: Model, rhs: Model) -> Bool {
         return lhs.modelId == rhs.modelId
@@ -282,6 +329,10 @@ extension Model: Equatable {
     
     public static func != (lhs: Model, rhs: Model) -> Bool {
         return lhs.modelId != rhs.modelId
+    }
+    
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(modelId)
     }
     
 }

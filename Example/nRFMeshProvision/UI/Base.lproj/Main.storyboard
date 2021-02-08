@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14868" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BYb-mK-mH5">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="16097.3" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BYb-mK-mH5">
     <device id="retina5_9" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14824"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="16087"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
         <!--Tab Bar Controller-->
         <scene sceneID="zJB-dB-C0K">
             <objects>
-                <tabBarController title="Tab Bar Controller" id="BYb-mK-mH5" sceneMemberID="viewController">
+                <tabBarController title="Tab Bar Controller" id="BYb-mK-mH5" customClass="RootTabBarController" customModule="nRFMeshProvision_Example" customModuleProvider="target" sceneMemberID="viewController">
                     <navigationItem key="navigationItem" id="uit-TO-OCn"/>
                     <tabBar key="tabBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="ig6-ap-aTu">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="49"/>
@@ -50,7 +50,7 @@
             </objects>
             <point key="canvasLocation" x="134" y="-65"/>
         </scene>
-        <!--ProxyFilter-->
+        <!--Proxy-->
         <scene sceneID="hTx-iH-lEi">
             <objects>
                 <viewControllerPlaceholder storyboardName="Proxy" id="z61-cg-pzs" sceneMemberID="viewController">
@@ -81,6 +81,7 @@
             <point key="canvasLocation" x="169" y="-256"/>
         </scene>
     </scenes>
+    <color key="tintColor" red="0.0" green="0.46666666670000001" blue="0.7843137255" alpha="1" colorSpace="calibratedRGB"/>
     <resources>
         <image name="tab_control_outline_black_24pt" width="24" height="24"/>
         <image name="tab_filter_outline_black_24pt" width="24" height="24"/>
@@ -88,5 +89,4 @@
         <image name="tab_network_outline_black_24pt" width="24" height="24"/>
         <image name="tab_settings_outline_black_24pt" width="24" height="24"/>
     </resources>
-    <color key="tintColor" red="0.0" green="0.46666666670000001" blue="0.7843137255" alpha="1" colorSpace="calibratedRGB"/>
 </document>

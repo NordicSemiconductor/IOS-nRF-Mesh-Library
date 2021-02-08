@@ -34,6 +34,8 @@ import nRFMeshProvision
 protocol BindAppKeyDelegate {
     /// This method is called when a new Application Key has been bound to the Model.
     func keyBound()
+    /// This method will present Node's Application Keys configuration screen.
+    func presentNodeApplicationKeys()
 }
 
 class ModelBindAppKeyViewController: ProgressViewController {
@@ -61,9 +63,15 @@ class ModelBindAppKeyViewController: ProgressViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        let presentNodeApplicationKeys = UIButtonAction(title: "Add key") { [weak self] in
+            self?.dismiss(animated: true) { [weak self] in
+                self?.delegate?.presentNodeApplicationKeys()
+            }
+        }
         tableView.setEmptyView(title: "No keys available",
                                message: "Add a new key to the node first.",
-                               messageImage: #imageLiteral(resourceName: "baseline-key"))
+                               messageImage: #imageLiteral(resourceName: "baseline-key"),
+                               action: presentNodeApplicationKeys)
         
         MeshNetworkManager.instance.delegate = self
         
@@ -113,15 +121,15 @@ class ModelBindAppKeyViewController: ProgressViewController {
 private extension ModelBindAppKeyViewController {
     
     func bind() {
-        guard let selectedIndexPath = selectedIndexPath else {
+        guard let selectedIndexPath = selectedIndexPath,
+              let model = model,
+              let node = model.parentElement?.parentNode else {
             return
         }
         let selectedAppKey = keys[selectedIndexPath.row]
-        guard let message = ConfigModelAppBind(applicationKey: selectedAppKey, to: self.model) else {
-            return
-        }
         start("Binding Application Key...") {
-            return try MeshNetworkManager.instance.send(message, to: self.model)
+            let message = ConfigModelAppBind(applicationKey: selectedAppKey, to: model)!
+            return try MeshNetworkManager.instance.send(message, to: node)
         }
     }
     
@@ -135,7 +143,7 @@ extension ModelBindAppKeyViewController: MeshNetworkDelegate {
         // Has the Node been reset remotely.
         guard !(message is ConfigNodeReset) else {
             (UIApplication.shared.delegate as! AppDelegate).meshNetworkDidChange()
-            done() {
+            done {
                 let rootViewControllers = self.presentingViewController?.children
                 self.dismiss(animated: true) {
                     rootViewControllers?.forEach {
@@ -156,7 +164,7 @@ extension ModelBindAppKeyViewController: MeshNetworkDelegate {
         switch message {
             
         case let status as ConfigModelAppStatus:
-            done() {
+            done {
                 if status.status == .success {
                     self.dismiss(animated: true)
                     self.delegate?.keyBound()
@@ -175,7 +183,7 @@ extension ModelBindAppKeyViewController: MeshNetworkDelegate {
                             failedToSendMessage message: MeshMessage,
                             from localElement: Element, to destination: Address,
                             error: Error) {
-        done() {
+        done {
             self.presentAlert(title: "Error", message: error.localizedDescription)
         }
     }

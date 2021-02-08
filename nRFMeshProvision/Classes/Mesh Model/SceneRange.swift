@@ -32,11 +32,11 @@ import Foundation
 
 public class SceneRange: RangeObject, Codable {
     
-    public var firstScene: Address {
+    public var firstScene: SceneNumber {
         return range.lowerBound
     }
     
-    public var lastScene: Address {
+    public var lastScene: SceneNumber {
         return range.upperBound
     }
     
@@ -52,13 +52,13 @@ public class SceneRange: RangeObject, Codable {
         let firstSceneAsString = try container.decode(String.self, forKey: .firstScene)
         let lastSceneAsString  = try container.decode(String.self, forKey: .lastScene)
         
-        guard let firstScene = Scene(hex: firstSceneAsString) else {
+        guard let firstScene = SceneNumber(hex: firstSceneAsString) else {
             throw DecodingError.dataCorruptedError(forKey: .firstScene, in: container,
-                                                   debugDescription: "Scene must be 4-character hexadecimal string")
+                                                   debugDescription: "Scene must be 4-character hexadecimal string.")
         }
-        guard let lastScene = Scene(hex: lastSceneAsString) else {
+        guard let lastScene = SceneNumber(hex: lastSceneAsString) else {
             throw DecodingError.dataCorruptedError(forKey: .lastScene, in: container,
-                                                   debugDescription: "Scene must be 4-character hexadecimal string")
+                                                   debugDescription: "Scene must be 4-character hexadecimal string.")
         }
         self.init(from: firstScene, to: lastScene)
     }

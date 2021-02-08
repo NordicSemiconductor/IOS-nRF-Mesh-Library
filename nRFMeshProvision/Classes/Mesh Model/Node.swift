@@ -72,6 +72,11 @@ public class Node: Codable {
             return TimeInterval(interval) / 1000.0
         }
         
+        internal init(fix incorrectNetworkTransmit: NetworkTransmit) {
+            self.count = incorrectNetworkTransmit.count
+            self.interval = incorrectNetworkTransmit.interval * 10
+        }
+        
         internal init(_ request: ConfigNetworkTransmitSet) {
             self.count = request.count + 1
             self.interval = UInt16(request.steps + 1) * 10
@@ -101,6 +106,11 @@ public class Node: Codable {
             return TimeInterval(interval) / 1000.0
         }
         
+        internal init(fix incorrectRelayRetransmit: RelayRetransmit) {
+            self.count = incorrectRelayRetransmit.count
+            self.interval = incorrectRelayRetransmit.interval * 10
+        }
+        
         internal init(_ request: ConfigRelaySet) {
             self.count = request.count + 1
             self.interval = UInt16(request.steps + 1) * 10
@@ -113,26 +123,22 @@ public class Node: Codable {
     }
     
     /// Unique Node identifier.
-    internal let nodeUuid: MeshUUID
-    /// Random 128-bit UUID allows differentiation among multiple mesh networks.
-    public var uuid: UUID {
-        return nodeUuid.uuid
-    }
+    public let uuid: UUID
     /// Primary Unicast Address of the Node.
     public internal(set) var unicastAddress: Address
     /// 128-bit device key for this Node.
-    public let deviceKey: Data
+    public let deviceKey: Data?
     /// The level of security for the subnet on which the node has been
     /// originally provisioner.
     public let security: Security
-    /// An array of node network key objects that include information
-    /// about the network keys known to this node.
+    /// An array of Node Network Key objects that include information
+    /// about the Network Keys known to this node.
     internal private(set) var netKeys: [NodeKey]
-    /// An array of node application key objects that include information
-    /// about the application keys known to this node.
+    /// An array of Node Application Key objects that include information
+    /// about the Application Keys known to this node.
     internal private(set) var appKeys: [NodeKey]
     /// The boolean value represents whether the Mesh Manager
-    /// has finished configuring this node. The property is set to `true`
+    /// has finished configuring this Node. The property is set to `true`
     /// once a Mesh Manager is done completing this node's
     /// configuration, otherwise it is set to `false`.
     public var isConfigComplete: Bool = false {
@@ -160,7 +166,7 @@ public class Node: Codable {
     /// data.
     public internal(set) var minimumNumberOfReplayProtectionList: UInt16?
     /// Node's features. See `NodeFeatures` for details.
-    public internal(set) var features: NodeFeatures?
+    public internal(set) var features: NodeFeaturesState?
     /// This flag represents whether or not the node is configured to send
     /// Secure Network messages.
     public internal(set) var secureNetworkBeacon: Bool? {
@@ -211,7 +217,7 @@ public class Node: Codable {
     /// The flag is set to `true` when the Node is in the process of being
     /// deleted and is excluded from the new network key distribution
     /// during the key refresh procedure; otherwise is set to `false`.
-    public var isBlacklisted: Bool = false {
+    public var isExcluded: Bool = false {
          didSet {
              meshNetwork?.timestamp = Date()
          }
@@ -226,13 +232,20 @@ public class Node: Codable {
         return meshNetwork?.applicationKeys.knownTo(node: self) ?? []
     }
     
+    /// The Heartbeat Publication object represents parameters that define
+    /// sending of periodic Heartbeat transport control messages.
+    public internal(set) var heartbeatPublication: HeartbeatPublication?
+    /// The Heartbeat Subscription object represents parameters that define
+    /// receiving of periodical Heartbeat transport control messages.
+    public internal(set) var heartbeatSubscription: HeartbeatSubscription?
+    
     /// A constructor needed only for testing.
     internal init(name: String?, unicastAddress: Address, elements: UInt8) {
-        self.nodeUuid = MeshUUID()
+        self.uuid = UUID()
         self.name = name
         self.unicastAddress = unicastAddress
         self.deviceKey = Data.random128BitKey()
-        self.security = .high
+        self.security = .secure
         // Default values.
         self.netKeys  = [ NodeKey(index: 0, updated: false) ]
         self.appKeys  = []
@@ -249,11 +262,11 @@ public class Node: Codable {
     /// - parameter provisioner: The Provisioner for which the node is added.
     /// - parameter address:     The unicast address to be assigned to the Node.
     internal init(for provisioner: Provisioner, withAddress address: Address) {
-        self.nodeUuid = provisioner.provisionerUuid
-        self.name     = provisioner.provisionerName
+        self.uuid = provisioner.uuid
+        self.name = provisioner.name
         self.unicastAddress = address
         self.deviceKey = Data.random128BitKey()
-        self.security = .high
+        self.security = .secure
         self.ttl = nil
         // iDevice can handle a lot of addresses.
         self.minimumNumberOfReplayProtectionList = Address.maxUnicastAddress
@@ -261,7 +274,7 @@ public class Node: Codable {
         // a Provisioner's node.
         self.isConfigComplete = true
         // This Provisioner does not support any of those features.
-        self.features = NodeFeatures(relay: .notSupported,
+        self.features = NodeFeaturesState(relay: .notSupported,
                                      proxy: .notSupported,
                                      friend: .notSupported,
                                      lowPower: .notSupported)
@@ -284,13 +297,14 @@ public class Node: Codable {
     ///   - networkKey: The Network Key.
     ///   - address: The Unicast Address to be assigned to the Node.
     internal convenience init(for unprovisionedDevice: UnprovisionedDevice,
-                  with n: UInt8, elementsDeviceKey deviceKey: Data,
-                  andAssignedNetworkKey networkKey: NetworkKey, andAddress address: Address) {
+                              with n: UInt8, elementsDeviceKey deviceKey: Data,
+                              andAssignedNetworkKey networkKey: NetworkKey,
+                              andAddress address: Address) {
         self.init(name: unprovisionedDevice.name, uuid: unprovisionedDevice.uuid,
                   deviceKey: deviceKey, andAssignedNetworkKey: networkKey,
                   andAddress: address)
-        // Elements will be queried with Composition Data. Let's just add
-        // n empty Elements to reserve addresses.
+        // Elements will be queried with Composition Data.
+        // Let's just add n empty Elements to reserve addresses.
         for _ in 0..<n {
             add(element: Element(location: .unknown))
         }
@@ -298,18 +312,69 @@ public class Node: Codable {
     
     internal init(name: String?, uuid: UUID, deviceKey: Data,
                   andAssignedNetworkKey networkKey: NetworkKey, andAddress address: Address) {
-        self.nodeUuid = MeshUUID(uuid)
-        self.name     = name
+        self.uuid = uuid
+        self.name = name
         self.unicastAddress = address
         self.deviceKey = deviceKey
-        self.security  = .high
+        self.security  = .secure
         // Composition Data were not obtained.
         self.isConfigComplete = false
         
-        // The node has to have at least one Network Key.
-        self.netKeys  = [NodeKey(index: networkKey.index, updated: false)]
+        // The updated flag is set to true if the Node was provisioned using
+        // a Network Key in Phase 2 (Using New Keys).
+        let updated = networkKey.phase == .usingNewKeys
+        self.netKeys  = [NodeKey(index: networkKey.index, updated: updated)]
         self.appKeys  = []
         self.elements = []
+    }
+    
+    internal init(copy node: Node, withDeviceKey keepDeviceKey: Bool,
+                  andTruncateTo networkKeys: [NetworkKey],
+                  applicationKeys: [ApplicationKey], nodes: [Node], groups: [Group]) {
+        self.uuid = node.uuid
+        self.name = node.name
+        self.unicastAddress = node.unicastAddress
+        self.deviceKey = keepDeviceKey ? node.deviceKey : nil
+        self.security = node.security
+        self.isConfigComplete = node.isConfigComplete
+        self.isExcluded = node.isExcluded
+        self.networkTransmit = node.networkTransmit
+        self.relayRetransmit = node.relayRetransmit
+        self.companyIdentifier = node.companyIdentifier
+        self.productIdentifier = node.productIdentifier
+        self.versionIdentifier = node.versionIdentifier
+        self.minimumNumberOfReplayProtectionList = node.minimumNumberOfReplayProtectionList
+        self.features = node.features
+        self.ttl = node.ttl
+        self.secureNetworkBeacon = node.secureNetworkBeacon
+        
+        self.netKeys = node.netKeys.filter { nodeKey in
+            networkKeys.contains { nodeKey.index == $0.index }
+        }
+        self.appKeys = node.appKeys.filter { nodeKey in
+            applicationKeys.contains { nodeKey.index == $0.index }
+        }
+        self.elements = node.elements.map {
+            Element(copy: $0, andTruncateTo: applicationKeys, nodes: nodes, groups: groups)
+        }
+        if let heartbeatPublication = node.heartbeatPublication,
+              (heartbeatPublication.address.isUnicast &&
+                nodes.contains(where: { $0.hasAllocatedAddress(heartbeatPublication.address) })) ||
+              (heartbeatPublication.address.isGroup &&
+                groups.contains(where: { $0.address.address == heartbeatPublication.address })) {
+            self.heartbeatPublication = node.heartbeatPublication
+        }
+        if let heartbeatSubscription = node.heartbeatSubscription,
+           nodes.contains(where: { $0.hasAllocatedAddress(heartbeatSubscription.source) }),
+           (heartbeatSubscription.destination.isUnicast &&
+             nodes.contains(where: { $0.hasAllocatedAddress(heartbeatSubscription.destination) })) ||
+           (heartbeatSubscription.destination.isGroup &&
+             groups.contains(where: { $0.address.address == heartbeatSubscription.destination })) {
+            self.heartbeatSubscription = node.heartbeatSubscription
+        }
+        self.elements.forEach {
+            $0.parentNode = self
+        }
     }
     
     /// Creates a low security Node with given Device Key, Network Key and Unicast Address.
@@ -320,22 +385,23 @@ public class Node: Codable {
     /// Use `meshNetwork.add(node: Node)` to add the Node. Other parameters must be
     /// read from the Node using Configuration messages.
     ///
-    /// - parameter name: Optional Node name.
-    /// - parameter n: Number of Elements. Elements must be read using
-    ///                `ConfigCompositionDataGet` message.
-    /// - parameter deviceKey: The 128-bit Device Key.
-    /// - parameter networkKey: The Network Key known to this device.
-    /// - parameter address: The device Unicast Address.
-    public init?(lowSecurityNode name: String?, with n: UInt, elementsDeviceKey deviceKey: Data,
+    /// - parameters:
+    ///   - name: Optional Node name.
+    ///   - n: Number of Elements. Elements must be read using
+    ///        `ConfigCompositionDataGet` message.
+    ///   - deviceKey: The 128-bit Device Key.
+    ///   - networkKey: The Network Key known to this device.
+    ///   - address: The primary Unicast Address of the Node.
+    public init?(insecureNode name: String?, with n: UInt8, elementsDeviceKey deviceKey: Data,
                 andAssignedNetworkKey networkKey: NetworkKey, andAddress address: Address) {
         guard address.isUnicast else {
             return nil
         }
-        self.nodeUuid = MeshUUID()
-        self.name     = name
+        self.uuid = UUID()
+        self.name = name
         self.unicastAddress = address
         self.deviceKey = deviceKey
-        self.security = .low
+        self.security = .insecure
         // Composition Data were not obtained.
         self.isConfigComplete = false
         
@@ -353,7 +419,7 @@ public class Node: Codable {
     // MARK: - Codable
     
     private enum CodingKeys: String, CodingKey {
-        case nodeUuid = "UUID"
+        case uuid = "UUID"
         case unicastAddress
         case deviceKey
         case security
@@ -371,7 +437,11 @@ public class Node: Codable {
         case networkTransmit
         case relayRetransmit
         case elements
-        case isBlacklisted = "blacklisted"
+        case isExcluded = "excluded"
+        case heartbeatPublication  = "heartbeatPub"
+        case heartbeatSubscription = "heartbeatSub"
+        // Legacy keys, deprecated in nRF Mesh Provision library in version 3.0.
+        case legacyIsBlacklisted = "blacklisted" // replaced with "excluded"
     }
     
     public required init(from decoder: Decoder) throws {
@@ -379,16 +449,29 @@ public class Node: Codable {
         let unicastAddressAsString = try container.decode(String.self, forKey: .unicastAddress)
         guard let unicastAddress = Address(hex: unicastAddressAsString) else {
             throw DecodingError.dataCorruptedError(forKey: .unicastAddress, in: container,
-                                                   debugDescription: "Address must be 4-character hexadecimal string")
+                                                   debugDescription: "Address must be 4-character hexadecimal string.")
         }
-        let keyHex = try container.decode(String.self, forKey: .deviceKey)
-        guard let keyData = Data(hex: keyHex) else {
-            throw DecodingError.dataCorruptedError(forKey: .deviceKey, in: container,
-                                                   debugDescription: "Device Key must be 32-character hexadecimal string")
+        guard unicastAddress.isUnicast else {
+            throw DecodingError.dataCorruptedError(forKey: .unicastAddress, in: container,
+                                                   debugDescription: "\(unicastAddressAsString) is not a unicast address.")
         }
-        self.nodeUuid = try container.decode(MeshUUID.self, forKey: .nodeUuid)
+        let keyHex = try container.decodeIfPresent(String.self, forKey: .deviceKey)
+        if let keyHex = keyHex {
+            guard let keyData = Data(hex: keyHex) else {
+                throw DecodingError.dataCorruptedError(forKey: .deviceKey, in: container,
+                                                       debugDescription: "Device Key must be 32-character hexadecimal string.")
+            }
+            self.deviceKey = keyData
+        } else {
+            self.deviceKey = nil
+        }
+        
+        // In version 3.0 of this library the Node's UUID format has changed
+        // from 32-character hexadecimal String to standard UUID format (RFC 4122).
+        self.uuid = try container.decode(UUID.self, forKey: .uuid,
+                                         orConvert: MeshUUID.self, forKey: .uuid, using: { $0.uuid })
+        
         self.unicastAddress = unicastAddress
-        self.deviceKey = keyData
         self.security = try container.decode(Security.self, forKey: .security)
         self.netKeys = try container.decode([NodeKey].self, forKey: .netKeys)
         self.appKeys = try container.decode([NodeKey].self, forKey: .appKeys)
@@ -397,45 +480,106 @@ public class Node: Codable {
         if let companyIdentifierAsString = try container.decodeIfPresent(String.self, forKey: .companyIdentifier) {
             guard let companyIdentifier = UInt16(hex: companyIdentifierAsString) else {
                 throw DecodingError.dataCorruptedError(forKey: .companyIdentifier, in: container,
-                                                       debugDescription: "Company Identifier must be 4-character hexadecimal string")
+                                                       debugDescription: "Company Identifier must be 4-character hexadecimal string.")
             }
             self.companyIdentifier = companyIdentifier
         }
         if let companyIdentifierAsString = try container.decodeIfPresent(String.self, forKey: .companyIdentifier) {
             guard let companyIdentifier = UInt16(hex: companyIdentifierAsString) else {
                 throw DecodingError.dataCorruptedError(forKey: .companyIdentifier, in: container,
-                                                       debugDescription: "Company Identifier must be 4-character hexadecimal string")
+                                                       debugDescription: "Company Identifier must be 4-character hexadecimal string.")
             }
             self.companyIdentifier = companyIdentifier
         }
         if let productIdentifierAsString = try container.decodeIfPresent(String.self, forKey: .productIdentifier) {
             guard let productIdentifier = UInt16(hex: productIdentifierAsString) else {
                 throw DecodingError.dataCorruptedError(forKey: .productIdentifier, in: container,
-                                                       debugDescription: "Product Identifier must be 4-character hexadecimal string")
+                                                       debugDescription: "Product Identifier must be 4-character hexadecimal string.")
             }
             self.productIdentifier = productIdentifier
         }
         if let versionIdentifierAsString = try container.decodeIfPresent(String.self, forKey: .versionIdentifier) {
             guard let versionIdentifier = UInt16(hex: versionIdentifierAsString) else {
                 throw DecodingError.dataCorruptedError(forKey: .versionIdentifier, in: container,
-                                                       debugDescription: "Version Identifier must be 4-character hexadecimal string")
+                                                       debugDescription: "Version Identifier must be 4-character hexadecimal string.")
             }
             self.versionIdentifier = versionIdentifier
         }
         if let crplAsString = try container.decodeIfPresent(String.self, forKey: .minimumNumberOfReplayProtectionList) {
             guard let crpl = UInt16(hex: crplAsString) else {
                 throw DecodingError.dataCorruptedError(forKey: .minimumNumberOfReplayProtectionList, in: container,
-                                                       debugDescription: "CRPL must be 4-character hexadecimal string")
+                                                       debugDescription: "CRPL must be 4-character hexadecimal string.")
             }
             self.minimumNumberOfReplayProtectionList = crpl
         }
-        self.features = try container.decodeIfPresent(NodeFeatures.self, forKey: .features)
+        self.features = try container.decodeIfPresent(NodeFeaturesState.self, forKey: .features)
         self.secureNetworkBeacon = try container.decodeIfPresent(Bool.self, forKey: .secureNetworkBeacon)
-        self.ttl = try container.decodeIfPresent(UInt8.self, forKey: .ttl)
+        let ttl = try container.decodeIfPresent(UInt8.self, forKey: .ttl)
+        guard ttl == nil || ttl! <= 127 else {
+            throw DecodingError.dataCorruptedError(forKey: .ttl, in: container,
+                                                   debugDescription: "Default TTL must be in range 0-127.")
+        }
+        self.ttl = ttl
         self.networkTransmit = try container.decodeIfPresent(NetworkTransmit.self, forKey: .networkTransmit)
+        if let networkTransmit = networkTransmit {
+            if networkTransmit.interval == 0 || networkTransmit.count == 0 {
+                self.networkTransmit = nil
+            } else {
+                guard networkTransmit.count >= 1 && networkTransmit.count <= 8 else {
+                    throw DecodingError.dataCorruptedError(forKey: .networkTransmit, in: container,
+                                                           debugDescription: "Network Transmit count must be in range 1-8.")
+                }
+                // Some versions of nRF Mesh lib for Android were exporting interval
+                // as number of steps, not the interval, therefore we can try to fix that.
+                // However, values exported as a multiply of 10 will not be converted as they
+                // match the proper field definition.
+                if networkTransmit.interval % 10 != 0 && networkTransmit.interval <= 32 {
+                    self.networkTransmit = NetworkTransmit(fix: networkTransmit)
+                } else {
+                    guard networkTransmit.interval % 10 == 0 && networkTransmit.interval <= 320 else {
+                        throw DecodingError.dataCorruptedError(forKey: .networkTransmit, in: container,
+                                                               debugDescription: "Network Transmit interval must be in range 10-320 ms with a step of 10 ms.")
+                    }
+                }
+            }
+        }
         self.relayRetransmit = try container.decodeIfPresent(RelayRetransmit.self, forKey: .relayRetransmit)
+        if let relayRetransmit = relayRetransmit {
+            if relayRetransmit.interval == 0 || relayRetransmit.count == 0 {
+                self.relayRetransmit = nil
+            } else {
+                guard relayRetransmit.count >= 1 && relayRetransmit.count <= 8 else {
+                    throw DecodingError.dataCorruptedError(forKey: .relayRetransmit, in: container,
+                                                           debugDescription: "Relay Retransmit count must be in range 1-8.")
+                }
+                // Some versions of nRF Mesh lib for Android were exporting interval
+                // as number of steps, not the interval, therefore we can try to fix that.
+                // However, values exported as a multiply of 10 will not be converted as they
+                // match the proper field definition.
+                if relayRetransmit.interval % 10 != 0 && relayRetransmit.interval <= 32 {
+                    self.relayRetransmit = RelayRetransmit(fix: relayRetransmit)
+                } else {
+                    guard relayRetransmit.interval % 10 == 0 && relayRetransmit.interval <= 320 else {
+                        throw DecodingError.dataCorruptedError(forKey: .relayRetransmit, in: container,
+                                                               debugDescription: "Relay Retransmit interval must be in range 10-320 ms with a step of 10 ms.")
+                    }
+                }
+            }
+        }
         self.elements = try container.decode([Element].self, forKey: .elements)
-        self.isBlacklisted = try container.decode(Bool.self, forKey: .isBlacklisted)
+        
+        // "blacklisted" was replaced by "excluded" in version 3.0.
+        self.isExcluded = try container.decode(Bool.self, forKey: .isExcluded, or: .legacyIsBlacklisted)
+        
+        self.heartbeatPublication = try container.decodeIfPresent(HeartbeatPublication.self,
+                                                                  forKey: .heartbeatPublication)
+        guard heartbeatPublication == nil || netKeys[heartbeatPublication!.networkKeyIndex] != nil else {
+            throw DecodingError.dataCorruptedError(forKey: .heartbeatPublication, in: container,
+                                                   debugDescription: "Network Key with index \(heartbeatPublication!.networkKeyIndex) "
+                                                                   + "is unknown to node with address 0x\(unicastAddress.hex).")
+        }
+        self.heartbeatSubscription = try container.decodeIfPresent(HeartbeatSubscription.self,
+                                                                   forKey: .heartbeatSubscription)
         
         elements.forEach {
             $0.parentNode = self
@@ -444,9 +588,9 @@ public class Node: Codable {
     
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(nodeUuid, forKey: .nodeUuid)
+        try container.encode(uuid, forKey: .uuid)
         try container.encode(unicastAddress.hex, forKey: .unicastAddress) // <- HEX value encoded
-        try container.encode(deviceKey.hex, forKey: .deviceKey) // <- HEX value encoded
+        try container.encodeIfPresent(deviceKey?.hex, forKey: .deviceKey) // <- HEX value encoded
         try container.encode(security, forKey: .security)
         try container.encode(netKeys, forKey: .netKeys)
         try container.encode(appKeys, forKey: .appKeys)
@@ -462,7 +606,9 @@ public class Node: Codable {
         try container.encodeIfPresent(networkTransmit, forKey: .networkTransmit)
         try container.encodeIfPresent(relayRetransmit, forKey: .relayRetransmit)
         try container.encode(elements, forKey: .elements)
-        try container.encode(isBlacklisted, forKey: .isBlacklisted)
+        try container.encode(isExcluded, forKey: .isExcluded)
+        try container.encodeIfPresent(heartbeatPublication, forKey: .heartbeatPublication)
+        try container.encodeIfPresent(heartbeatSubscription, forKey: .heartbeatSubscription)
     }
 }
 
@@ -539,7 +685,7 @@ internal extension Node {
     ///
     /// - parameter networkKeys: The Network Keys to set.
     func set(networkKeys: [NetworkKey]) {
-        set(networkKeysWithIndexes: networkKeys.map({ $0.index }))
+        set(networkKeysWithIndexes: networkKeys.map { $0.index })
     }
     
     /// Sets the Network Keys with given indexes to the Node.
@@ -548,7 +694,7 @@ internal extension Node {
     /// - parameter networkKeyIndexes: The Network Key indexes to set.
     func set(networkKeysWithIndexes networkKeyIndexes: [KeyIndex]) {
         netKeys = networkKeyIndexes
-            .map({ Node.NodeKey(index: $0, updated: false) })
+            .map { Node.NodeKey(index: $0, updated: false) }
             .sorted()
         meshNetwork?.timestamp = Date()
     }
@@ -585,7 +731,7 @@ internal extension Node {
     ///
     /// - parameter applicationKeys: The Application Keys to set.
     func set(applicationKeys: [ApplicationKey]) {
-        set(applicationKeysWithIndexes: applicationKeys.map({ $0.index }))
+        set(applicationKeysWithIndexes: applicationKeys.map { $0.index })
     }
     
     /// Sets the Application Keys with given indexes to the Node.
@@ -593,7 +739,7 @@ internal extension Node {
     ///
     /// - parameter applicationKeyIndexes: The Application Key indexes to set.
     func set(applicationKeysWithIndexes applicationKeyIndexes: [KeyIndex]) {
-        appKeys = applicationKeyIndexes.map({ Node.NodeKey(index: $0, updated: false) })
+        appKeys = applicationKeyIndexes.map { Node.NodeKey(index: $0, updated: false) }
         appKeys.sort()
         meshNetwork?.timestamp = Date()
     }
@@ -612,7 +758,7 @@ internal extension Node {
         appKeys = appKeys.filter {
             applicationKeys[$0.index]?.boundNetworkKeyIndex != networkKeyIndex
         }
-        appKeys.append(contentsOf: applicationKeyIndexes.map({ Node.NodeKey(index: $0, updated: false) }))
+        appKeys.append(contentsOf: applicationKeyIndexes.map { Node.NodeKey(index: $0, updated: false) })
         appKeys.sort()
         meshNetwork?.timestamp = Date()
     }
@@ -630,7 +776,7 @@ internal extension Node {
     /// Removes the Network Key with given index and all Application Keys
     /// bound to it from the Node. This method also removes all Model bindings
     /// that point any of the removed Application Keys and the publications
-    /// that are using this key.
+    /// that are using this key, including Heartbeat publication.
     ///
     /// - parameter networkKeyIndex: The Key Index of Network Key to be removed.
     func remove(networkKeyWithIndex networkKeyIndex: KeyIndex) {
@@ -639,8 +785,12 @@ internal extension Node {
             netKeys.remove(at: index)
             // Remove all Application Keys bound to the removed Network Key.
             applicationKeys
-                .filter({ $0.boundNetworkKeyIndex == networkKeyIndex })
+                .filter { $0.boundNetworkKeyIndex == networkKeyIndex }
                 .forEach { key in remove(applicationKeyWithIndex: key.index) }
+            // Remove Heartbeat publication, if set to use the removed Network Key.
+            if heartbeatPublication?.networkKeyIndex == networkKeyIndex {
+                heartbeatPublication = nil
+            }
             meshNetwork?.timestamp = Date()
         }
     }
@@ -654,7 +804,7 @@ internal extension Node {
             // Remove the Key Index from 'appKeys'.
             appKeys.remove(at: index)
             // Remove all bindings with given Key Index from all models.
-            elements.flatMap({ $0.models }).forEach { model in
+            elements.flatMap { $0.models }.forEach { model in
                 // Remove the Key Index from bound keys.
                 // This will also clear the publication if it was using
                 // the same Application Key.
@@ -685,9 +835,9 @@ internal extension Node {
         meshNetwork?.timestamp = Date()
     }
     
-    var ensureFeatures: NodeFeatures {
+    var ensureFeatures: NodeFeaturesState {
         if features == nil {
-            features = NodeFeatures()
+            features = NodeFeaturesState()
         }
         meshNetwork?.timestamp = Date()
         return features!

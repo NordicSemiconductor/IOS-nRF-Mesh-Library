@@ -31,7 +31,7 @@
 import Foundation
 import CoreBluetooth
 
-// MARK: - Mesh service identifires
+// MARK: - Mesh service identifiers
 
 public protocol MeshService {
     static var uuid: CBUUID { get }

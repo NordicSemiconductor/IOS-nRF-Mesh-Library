@@ -65,8 +65,8 @@ internal class NetworkManager {
     func acknowledgmentTimerInterval(_ ttl: UInt8) -> TimeInterval {
         return max(manager.acknowledgmentTimerInterval, 0.150) + Double(ttl) * 0.050
     }
-    func transmissionTimerInteral(_ ttl: UInt8) -> TimeInterval {
-        return max(manager.transmissionTimerInteral, 0.200) + Double(ttl) * 0.050
+    func transmissionTimerInterval(_ ttl: UInt8) -> TimeInterval {
+        return max(manager.transmissionTimerInterval, 0.200) + Double(ttl) * 0.050
     }
     var retransmissionLimit: Int {
         return max(manager.retransmissionLimit, 2)
@@ -96,14 +96,61 @@ internal class NetworkManager {
     
     // MARK: - Sending messages
     
+    /// Publishes the given message using the Publish information from the
+    /// given Model. If publication is not set, this message does nothing.
+    ///
+    /// If publication retransmission is set, this method will retransmit
+    /// the message specified number of times, keeping the same TID value
+    /// (if applicable).
+    ///
+    /// - parameters:
+    ///   - message: The message to be sent.
+    ///   - model:   The source Model.
+    func publish(_ message: MeshMessage, from model: Model) {
+        guard let publish = model.publish,
+              let localElement = model.parentElement,
+              let applicationKey = meshNetwork?.applicationKeys[publish.index] else {
+            return
+        }
+        // Calculate the TTL to be used.
+        let ttl = publish.ttl != 0xFF ?
+            publish.ttl :
+            localElement.parentNode?.defaultTTL ?? defaultTtl
+        // Send the message.
+        send(message, from: localElement, to: publish.publicationAddress,
+             withTtl: ttl, using: applicationKey)
+        // If retransmission was configured, start the timer that will retransmit.
+        // There is no need to retransmit acknowledged messages, as they have their
+        // own retransmission mechanism.
+        if !(message is AcknowledgedMeshMessage) {
+            var count = publish.retransmit.count
+            if count > 0 {
+                let interval: TimeInterval = Double(publish.retransmit.interval) / 1000
+                BackgroundTimer.scheduledTimer(withTimeInterval: interval,
+                                               repeats: count > 0) { [weak self] timer in
+                    guard let self = self else {
+                        timer.invalidate()
+                        return
+                    }
+                    self.accessLayer.send(message, from: localElement, to: publish.publicationAddress,
+                                          withTtl: ttl, using: applicationKey, retransmit: true)
+                    count -= 1
+                    if count == 0 {
+                        timer.invalidate()
+                    }
+                }
+            }
+        }
+    }
+    
     /// Encrypts the message with the Application Key and a Network Key
     /// bound to it, and sends to the given destination address.
     ///
     /// This method does not send nor return PDUs to be sent. Instead,
     /// for each created segment it calls transmitter's `send(:ofType)`,
     /// which should send the PDU over the air. This is in order to support
-    /// retransmittion in case a packet was lost and needs to be sent again
-    /// after block acknowlegment was received.
+    /// retransmission in case a packet was lost and needs to be sent again
+    /// after block acknowledgment was received.
     ///
     /// - parameters:
     ///   - message:        The message to be sent.
@@ -117,7 +164,8 @@ internal class NetworkManager {
               withTtl initialTtl: UInt8?,
               using applicationKey: ApplicationKey) {
         accessLayer.send(message, from: element, to: destination,
-                         withTtl: initialTtl, using: applicationKey)
+                         withTtl: initialTtl, using: applicationKey,
+                         retransmit: false)
     }
     
     /// Encrypts the message with the Device Key and the first Network Key
@@ -129,8 +177,8 @@ internal class NetworkManager {
     /// This method does not send nor return PDUs to be sent. Instead,
     /// for each created segment it calls transmitter's `send(:ofType)`,
     /// which should send the PDU over the air. This is in order to support
-    /// retransmittion in case a packet was lost and needs to be sent again
-    /// after block acknowlegment was received.
+    /// retransmitting in case a packet was lost and needs to be sent again
+    /// after block acknowledgment was received.
     ///
     /// - parameters:
     ///   - configMessage: The message to be sent.
@@ -151,7 +199,8 @@ internal class NetworkManager {
     ///   - message:     The response message to be sent.
     ///   - destination: The destination address. This must be a Unicast Address.
     ///   - keySet:      The keySet that should be used to encrypt the message.
-    func reply(toMessageSentTo origin: Address, with message: MeshMessage, to destination: Address, using keySet: KeySet) {
+    func reply(toMessageSentTo origin: Address, with message: MeshMessage,
+               to destination: Address, using keySet: KeySet) {
         guard let primaryElement = meshNetwork?.localProvisioner?.node?.elements.first else {
             return
         }
@@ -197,7 +246,8 @@ internal class NetworkManager {
     ///   - message: The mesh message that was received.
     ///   - source:  The source Unicast Address.
     ///   - destination: The destination address of the message received.
-    func notifyAbout(newMessage message: MeshMessage, from source: Address, to destination: Address) {
+    func notifyAbout(newMessage message: MeshMessage,
+                     from source: Address, to destination: Address) {
         manager.delegateQueue.async {
             self.manager.delegate?.meshNetworkManager(self.manager, didReceiveMessage: message,
                                                       sentFrom: source, to: destination)

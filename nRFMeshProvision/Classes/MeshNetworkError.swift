@@ -43,7 +43,7 @@ public enum MeshNetworkError: Error {
     /// Thrown when a node cannot be added due to lack of available
     /// addresses in Provisioner's range.
     case noAddressAvailable
-    /// Thrown when the address cannot be assigne as it is being used by
+    /// Thrown when the address cannot be assigned as it is being used by
     /// another node.
     case addressNotAvailable
     /// Thrown when the address is of a wrong type.
@@ -53,6 +53,8 @@ public enum MeshNetworkError: Error {
     case addressNotInAllocatedRange
     /// Thrown when the requested Provisioner is not in the Mesh Network.
     case provisionerNotInNetwork
+    /// Thrown when the object cannot be removed.
+    case cannotRemove
     /// Thrown when the range to be allocated is of invalid type.
     case invalidRange
     /// Thrown when the provided key is not 128-bit long.
@@ -62,9 +64,14 @@ public enum MeshNetworkError: Error {
     /// Thrown when a new Group is being added with the same address as one
     /// that is already in the network.
     case groupAlreadyExists
+    /// Thrown when a new Scene is being added with the same number as one
+    /// that is already in the network.
+    case sceneAlreadyExists
     /// Throw when trying to remove a Group that is either a parent of another
-    /// Group, or set as publication or subcription address for any Model.
+    /// Group, or set as publication or subscription address for any Model.
     case groupInUse
+    /// Throw when trying to remove a Scene that is
+    case sceneInUse
     /// Thrown when the given Key Index is not valid.
     case keyIndexOutOfRange
     /// Thrown when Network Key is required to continue with the operation.
@@ -73,6 +80,9 @@ public enum MeshNetworkError: Error {
     case noApplicationKey
     /// Thrown when trying to send a mesh message before setting up the mesh network.
     case noNetwork
+    /// Thrown when setting too small IV Index. The new IV Index must be greater
+    /// or equal to the previous one.
+    case ivIndexTooSmall
 }
 
 extension MeshNetworkError: LocalizedError {
@@ -87,15 +97,19 @@ extension MeshNetworkError: LocalizedError {
         case .invalidAddress:                  return NSLocalizedString("Invalid address.", comment: "")
         case .addressNotInAllocatedRange:      return NSLocalizedString("Address outside Provisioner's range.", comment: "")
         case .provisionerNotInNetwork:         return NSLocalizedString("Provisioner does not belong to the network.", comment: "")
+        case .cannotRemove:                    return NSLocalizedString("Object could not be removed.", comment: "")
         case .invalidRange:                    return NSLocalizedString("Invalid range.", comment: "")
         case .invalidKey:                      return NSLocalizedString("Invalid key: The key must be 128-bit long.", comment: "")
         case .keyInUse:                        return NSLocalizedString("Cannot remove: Key in use.", comment: "")
         case .groupAlreadyExists:              return NSLocalizedString("Group with the same address already exists in the network.", comment: "")
+        case .sceneAlreadyExists:              return NSLocalizedString("Scene with the same number already exists in the network.", comment: "")
         case .groupInUse:                      return NSLocalizedString("Cannot remove: Group is use.", comment: "")
+        case .sceneInUse:                      return NSLocalizedString("Cannot remove: Scene is use.", comment: "")
         case .keyIndexOutOfRange:              return NSLocalizedString("Key Index out of range.", comment: "")
         case .noNetworkKey:                    return NSLocalizedString("No Network Key.", comment: "")
         case .noApplicationKey:                return NSLocalizedString("No Application Key.", comment: "")
         case .noNetwork:                       return NSLocalizedString("Mesh Network not created.", comment: "")
+        case .ivIndexTooSmall:                 return NSLocalizedString("IV Index too small", comment: "")
         }
     }
     

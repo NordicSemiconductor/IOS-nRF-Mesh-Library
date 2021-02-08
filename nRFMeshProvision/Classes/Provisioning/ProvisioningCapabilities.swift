@@ -37,15 +37,15 @@ public struct ProvisioningCapabilities {
     public let algorithms:       Algorithms
     /// Supported public key types.
     public let publicKeyType:    PublicKeyType
-    /// Supported statuc OOB Types.
+    /// Supported static OOB Types.
     public let staticOobType:    StaticOobType
     /// Maximum size of Output OOB supported.
     public let outputOobSize:    UInt8
-    /// Supoprted Output OOB Actions.
+    /// Supported Output OOB Actions.
     public let outputOobActions: OutputOobActions
     /// Maximum size of Input OOB supported.
     public let inputOobSize:     UInt8
-    /// Supoprted Input OOB Actions.
+    /// Supported Input OOB Actions.
     public let inputOobActions:  InputOobActions
     
     init?(_ data: Data) {

@@ -79,7 +79,7 @@ class AddGroupViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        // Editting a Group?
+        // Editing a Group?
         if let group = group {
             title = "Edit Group"
             name = group.name
@@ -135,7 +135,7 @@ private extension AddGroupViewController {
     /// Presents a dialog to edit the Group name.
     func presentNameDialog() {
         presentTextAlert(title: "Group name", message: "E.g. Lights", text: name,
-                         type: .nameRequired) { name in
+                         type: .nameRequired, cancelHandler: nil) { name in
                             self.name = name
         }
     }
@@ -147,7 +147,7 @@ private extension AddGroupViewController {
         }
         presentTextAlert(title: "Group address", message: "Hexadecimal value in range\nC000 - FEFF.",
                          text: address?.hex, placeHolder: "Address", type: .groupAddressRequired,
-                         option: action) { text in
+                         option: action, cancelHandler: nil) { text in
                             self.address = MeshAddress(hex: text)
         }
     }

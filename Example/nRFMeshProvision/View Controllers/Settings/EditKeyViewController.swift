@@ -74,10 +74,15 @@ class EditKeyViewController: UITableViewController {
             keyIndex = key?.index ?? (isApplicationKey ?
                 network.nextAvailableApplicationKeyIndex :
                 network.nextAvailableNetworkKeyIndex)
-            if isApplicationKey {
-                newBoundNetworkKeyIndex = (key as? ApplicationKey)?.boundNetworkKeyIndex ?? 0
-            } else {
+            switch key {
+            case let applicationKey as ApplicationKey:
+                newBoundNetworkKeyIndex = applicationKey.boundNetworkKeyIndex
+                oldKey = applicationKey.oldKey
+            case let networkKey as NetworkKey:
                 newBoundNetworkKeyIndex = nil
+                oldKey = networkKey.oldKey
+            default:
+                break
             }
         }
     }
@@ -86,8 +91,11 @@ class EditKeyViewController: UITableViewController {
     
     // MARK: - Private members
     
+    private let dateFormatter = DateFormatter()
+    
     private var newName: String!
     private var newKey: Data! = Data.random128BitKey()
+    private var oldKey: Data?
     private var keyIndex: KeyIndex!
     private var newBoundNetworkKeyIndex: KeyIndex?
     
@@ -95,6 +103,9 @@ class EditKeyViewController: UITableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        dateFormatter.dateStyle = .medium
+        dateFormatter.timeStyle = .medium
         
         let action = isNewKey ? "Add" : "Edit"
         let type   = isApplicationKey ? "App" : "Network"
@@ -113,8 +124,10 @@ class EditKeyViewController: UITableViewController {
         switch section {
         case IndexPath.nameSection:
             return 1 // Name
+        case IndexPath.keySection where isApplicationKey:
+            return 3 // Key, Old Key, Key Index
         case IndexPath.keySection:
-            return 2 // Key, Key Index
+            return 5 // Key, Old Key, Key Index, Phase, Last modified
         case IndexPath.boundKeySection:
             let network = MeshNetworkManager.instance.meshNetwork!
             return network.networkKeys.count
@@ -153,14 +166,33 @@ class EditKeyViewController: UITableViewController {
             cell.selectionStyle = .default
         } else if indexPath.isKey {
             cell = tableView.dequeueReusableCell(withIdentifier: "keyCell", for: indexPath)
+            cell.textLabel?.text = "Key"
             cell.detailTextLabel?.text = newKey.hex
-            // Only new or not used keys may be editted.
+            // Only new or not used keys may be edited.
             cell.accessoryType = isNewKey || !isKeyUsed ? .disclosureIndicator : .none
             cell.selectionStyle = .default
+        } else if indexPath.isOldKey {
+            cell = tableView.dequeueReusableCell(withIdentifier: "keyCell", for: indexPath)
+            cell.textLabel?.text = "Old Key"
+            cell.detailTextLabel?.text = oldKey?.hex ?? "N/A"
+            cell.accessoryType = .none
+            cell.selectionStyle = oldKey == nil ? .none : .default
         } else if indexPath.isKeyIndex {
             cell = tableView.dequeueReusableCell(withIdentifier: "detailCell", for: indexPath)
             cell.textLabel?.text = "Key Index"
             cell.detailTextLabel?.text = "\(keyIndex!)"
+            cell.selectionStyle = .none
+        } else if indexPath.isPhase {
+            cell = tableView.dequeueReusableCell(withIdentifier: "detailCell", for: indexPath)
+            cell.textLabel?.text = "Phase"
+            let phase = (key as? NetworkKey)?.phase ?? KeyRefreshPhase.normalOperation
+            cell.detailTextLabel?.text = "\(phase)"
+            cell.selectionStyle = .none
+        } else if indexPath.isLastModified {
+            cell = tableView.dequeueReusableCell(withIdentifier: "detailCell", for: indexPath)
+            cell.textLabel?.text = "Last Modified"
+            let timestamp = (key as! NetworkKey).timestamp
+            cell.detailTextLabel?.text = dateFormatter.string(from: timestamp)
             cell.selectionStyle = .none
         } else {
             let networkKey = network.networkKeys[indexPath.row]
@@ -198,11 +230,17 @@ class EditKeyViewController: UITableViewController {
             presentNameDialog()
         }
         if indexPath.isKey {
-            if isNewKey {
+            if isNewKey || !isKeyUsed {
                 presentKeyDialog()
             } else {
                 UIPasteboard.general.string = newKey.hex
                 showToast("Key copied to Clipboard.")
+            }
+        }
+        if indexPath.isOldKey {
+            if let oldKey = oldKey {
+                UIPasteboard.general.string = oldKey.hex
+                showToast("Old Key copied to Clipboard.")
             }
         }
         if indexPath.isBoundKeyIndex && !isKeyUsed {
@@ -256,7 +294,7 @@ private extension EditKeyViewController {
     func presentNameDialog() {
         presentTextAlert(title: "Edit Key Name", message: nil, text: newName,
                          placeHolder: "E.g. Lights and Switches",
-                         type: .nameRequired) { name in
+                         type: .nameRequired, cancelHandler: nil) { name in
                             self.newName = name
                             self.tableView.reloadRows(at: [.name], with: .fade)
         }
@@ -310,17 +348,32 @@ private extension IndexPath {
         return section == IndexPath.nameSection && row == 0
     }
     
-    /// Returns whether the IndexPath point to the 128-bit Network Key.
+    /// Returns whether the IndexPath points to the 128-bit Network Key.
     var isKey: Bool {
         return section == IndexPath.keySection && row == 0
     }
     
-    /// Returns whether the IndexPath point to Key Index.
-    var isKeyIndex: Bool {
+    /// Returns whether the IndexPath points to the old 128-bit Network Key.
+    var isOldKey: Bool {
         return section == IndexPath.keySection && row == 1
     }
     
-    /// Returns whether the IndexPath point to Key Index.
+    /// Returns whether the IndexPath points to Key Index.
+    var isKeyIndex: Bool {
+        return section == IndexPath.keySection && row == 2
+    }
+    
+    /// Returns whether the IndexPath points to Network Key phase.
+    var isPhase: Bool {
+        return section == IndexPath.keySection && row == 3
+    }
+    
+    /// Returns whether the IndexPath points to Network Key last modified timestamp.
+    var isLastModified: Bool {
+        return section == IndexPath.keySection && row == 4
+    }
+    
+    /// Returns whether the IndexPath points to Bound Network Key Index.
     var isBoundKeyIndex: Bool {
         return section == IndexPath.boundKeySection
     }

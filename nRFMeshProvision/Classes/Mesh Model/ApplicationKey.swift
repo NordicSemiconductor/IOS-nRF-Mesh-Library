@@ -51,7 +51,7 @@ public class ApplicationKey: Key, Codable {
             oldAid = aid
         }
         didSet {
-            regenerateKeyDerivaties()
+            regenerateKeyDerivatives()
         }
     }
     /// Previous 128-bit application key, if Key Update procedure is in progress.
@@ -77,14 +77,14 @@ public class ApplicationKey: Key, Codable {
         self.key = key
         self.boundNetworkKeyIndex = networkKey.index
         
-        regenerateKeyDerivaties()
+        regenerateKeyDerivatives()
     }
     
-    private func regenerateKeyDerivaties() {
+    private func regenerateKeyDerivatives() {
         let helper = OpenSSLHelper()
         aid = helper.calculateK4(withN: key)
         
-        // When the Application Key is imported from JSON, old key derivaties must
+        // When the Application Key is imported from JSON, old key derivatives must
         // be calculated.
         if let oldKey = oldKey, oldAid == nil {
             oldAid = helper.calculateK4(withN: oldKey)
@@ -109,19 +109,19 @@ public class ApplicationKey: Key, Codable {
         let keyHex = try container.decode(String.self, forKey: .key)
         guard let keyData = Data(hex: keyHex) else {
             throw DecodingError.dataCorruptedError(forKey: .key, in: container,
-                                                   debugDescription: "Key must be 32-character hexadecimal string")
+                                                   debugDescription: "Key must be 32-character hexadecimal string.")
         }
         key = keyData
         if let oldKeyHex = try container.decodeIfPresent(String.self, forKey: .oldKey) {
             guard let oldKeyData = Data(hex: oldKeyHex) else {
                 throw DecodingError.dataCorruptedError(forKey: .oldKey, in: container,
-                                                       debugDescription: "Old key must be 32-character hexadecimal string")
+                                                       debugDescription: "Old key must be 32-character hexadecimal string.")
             }
             oldKey = oldKeyData
         }
         boundNetworkKeyIndex = try container.decode(KeyIndex.self, forKey: .boundNetworkKeyIndex)
         
-        regenerateKeyDerivaties()
+        regenerateKeyDerivatives()
     }
     
     public func encode(to encoder: Encoder) throws {

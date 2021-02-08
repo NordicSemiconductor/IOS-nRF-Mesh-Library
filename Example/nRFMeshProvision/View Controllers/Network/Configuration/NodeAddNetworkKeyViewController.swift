@@ -50,10 +50,7 @@ class NodeAddNetworkKeyViewController: ProgressViewController {
             return
         }
         let selectedNetworkKey = keys[selectedIndexPath.row]
-        start("Adding Network Key...") {
-            let message = ConfigNetKeyAdd(networkKey: selectedNetworkKey)
-            return try MeshNetworkManager.instance.send(message, to: self.node)
-        }
+        addKey(selectedNetworkKey)
     }
     
     // MARK: - Properties
@@ -68,9 +65,17 @@ class NodeAddNetworkKeyViewController: ProgressViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        let presentNetworkKeysSettings = UIButtonAction(title: "Settings") { [weak self] in
+            guard let self = self else { return }
+            let tabBarController = self.presentingViewController as? RootTabBarController
+            self.dismiss(animated: true) {
+                tabBarController?.presentNetworkKeysSettings()
+            }
+        }
         tableView.setEmptyView(title: "No keys available",
                                message: "Go to Settings to create a new key.",
-                               messageImage: #imageLiteral(resourceName: "baseline-key"))
+                               messageImage: #imageLiteral(resourceName: "baseline-key"),
+                               action: presentNetworkKeysSettings)
         
         MeshNetworkManager.instance.delegate = self
         
@@ -116,6 +121,23 @@ class NodeAddNetworkKeyViewController: ProgressViewController {
     }
 }
 
+private extension NodeAddNetworkKeyViewController {
+    
+    /// Adds the given Network Key to the target Node.
+    ///
+    /// - parameter networkKey: The Network Key to be added.
+    func addKey(_ networkKey: NetworkKey) {
+        guard let node = node else {
+            return
+        }
+        start("Adding Network Key...") {
+            let message = ConfigNetKeyAdd(networkKey: networkKey)
+            return try MeshNetworkManager.instance.send(message, to: node)
+        }
+    }
+    
+}
+
 extension NodeAddNetworkKeyViewController: MeshNetworkDelegate {
     
     func meshNetworkManager(_ manager: MeshNetworkManager,
@@ -124,7 +146,7 @@ extension NodeAddNetworkKeyViewController: MeshNetworkDelegate {
         // Has the Node been reset remotely.
         guard !(message is ConfigNodeReset) else {
             (UIApplication.shared.delegate as! AppDelegate).meshNetworkDidChange()
-            done() {
+            done {
                 let rootViewControllers = self.presentingViewController?.children
                 self.dismiss(animated: true) {
                     rootViewControllers?.forEach {
@@ -145,7 +167,7 @@ extension NodeAddNetworkKeyViewController: MeshNetworkDelegate {
         switch message {
             
         case let status as ConfigNetKeyStatus:
-            done() {
+            done {
                 if status.status == .success {
                     self.dismiss(animated: true)
                     self.delegate?.keyAdded()
@@ -164,7 +186,7 @@ extension NodeAddNetworkKeyViewController: MeshNetworkDelegate {
                             failedToSendMessage message: MeshMessage,
                             from localElement: Element, to destination: Address,
                             error: Error) {
-        done() {
+        done {
             self.presentAlert(title: "Error", message: error.localizedDescription)
         }
     }

@@ -174,13 +174,14 @@ public extension MeshNetwork {
     ///
     /// - parameter size: The preferred and maximum size of a range to find.
     /// - returns: The range of given size, a smaller one if such is not available
-    ///            or `nil` if all addresses are alread allocated.
-    func nextAvailableUnicastAddressRange(ofSize size: UInt16 = Address.maxUnicastAddress - Address.minUnicastAddress + 1) -> AddressRange? {
+    ///            or `nil` if all addresses are already allocated.
+    func nextAvailableUnicastAddressRange(ofSize size: UInt16 = .maxUnicastAddress - .minUnicastAddress + 1) -> AddressRange? {
         let allRangesSorted: [AddressRange] = provisioners
             .reduce([], { ranges, next in ranges + next.allocatedUnicastRange })
             .sorted { $0.lowerBound < $1.lowerBound }
         
-        guard let range = nextAvailableRange(ofSize: size, in: Address.minUnicastAddress...Address.maxUnicastAddress,
+        guard let range = nextAvailableRange(ofSize: size,
+                                             in: Address.minUnicastAddress...Address.maxUnicastAddress,
                                              among: allRangesSorted) else {
             return nil
         }
@@ -194,13 +195,14 @@ public extension MeshNetwork {
     ///
     /// - parameter size: The preferred and maximum size of a range to find.
     /// - returns: The range of given size, a smaller one if such is not available
-    ///            or `nil` if all addresses are alread allocated.
-    func nextAvailableGroupAddressRange(ofSize size: UInt16 = Address.maxGroupAddress - Address.minGroupAddress + 1) -> AddressRange? {
+    ///            or `nil` if all addresses are already allocated.
+    func nextAvailableGroupAddressRange(ofSize size: UInt16 = .maxGroupAddress - .minGroupAddress + 1) -> AddressRange? {
         let allRangesSorted: [AddressRange] = provisioners
             .reduce([], { ranges, next in ranges + next.allocatedGroupRange })
             .sorted { $0.lowerBound < $1.lowerBound }
         
-        guard let range = nextAvailableRange(ofSize: size, in: Address.minGroupAddress...Address.maxGroupAddress,
+        guard let range = nextAvailableRange(ofSize: size,
+                                             in: Address.minGroupAddress...Address.maxGroupAddress,
                                              among: allRangesSorted) else {
             return nil
         }
@@ -214,13 +216,14 @@ public extension MeshNetwork {
     ///
     /// - parameter size: The preferred and maximum size of a range to find.
     /// - returns: The range of given size, a smaller one if such is not available
-    ///            or `nil` if all scenes are alread allocated.
-    func nextAvailableSceneRange(ofSize size: UInt16 = Scene.maxScene - Scene.minScene + 1) -> SceneRange? {
+    ///            or `nil` if all scenes are already allocated.
+    func nextAvailableSceneRange(ofSize size: UInt16 = .maxScene - .minScene + 1) -> SceneRange? {
         let allRangesSorted: [SceneRange] = provisioners
             .reduce([], { ranges, next in ranges + next.allocatedSceneRange })
             .sorted { $0.lowerBound < $1.lowerBound }
         
-        guard let range = nextAvailableRange(ofSize: size, in: Scene.minScene...Scene.maxScene,
+        guard let range = nextAvailableRange(ofSize: size,
+                                             in: SceneNumber.minScene...SceneNumber.maxScene,
                                              among: allRangesSorted) else {
             return nil
         }
@@ -236,7 +239,7 @@ public extension MeshNetwork {
     /// - parameter bounds: Bounds in which the addresses are valid.
     /// - parameter ranges: Already assigned ranges.
     /// - returns: The range of given size, a smaller one if such is not available
-    ///            or `nil` if all addresses are alread allocated.
+    ///            or `nil` if all addresses are already allocated.
     private func nextAvailableRange(ofSize size: UInt16, in bounds: ClosedRange<Address>,
                                     among ranges: [RangeObject]) -> RangeObject? {
         guard size > 0 else {

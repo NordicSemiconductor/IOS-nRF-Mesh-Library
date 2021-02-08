@@ -130,7 +130,7 @@ public func +<T: RangeObject>(array: [T], other: T) -> [T] {
     return result
 }
 
-// This mehtod is not called when 2 arrays are added. It's split
+// This method is not called when 2 arrays are added. It's split
 // into 2 below.
 /*
 public func +<T: RangeObject>(array: [T], otherArray: [T]) -> [T] {
@@ -169,7 +169,7 @@ public func +=<T: RangeObject>(array: inout [T], other: T) {
     array.merge()
 }
 
-// This mehtod is not called when 2 arrays are added. It's split
+// This method is not called when 2 arrays are added. It's split
 // into 2 below.
 /*
 public func +=<T: RangeObject>(array: inout [T], otherArray: [T]) {

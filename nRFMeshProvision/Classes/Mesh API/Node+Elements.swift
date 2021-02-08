@@ -30,7 +30,14 @@
 
 import Foundation
 
-public extension Node {    
+public extension Node {
+    
+    /// The primary Element on the Node.
+    ///
+    /// `nil` is returned if Composition Data has not been received yet.
+    var primaryElement: Element? {
+        return elements.first
+    }
     
     /// Returns the Element that belongs to this Node with the given
     /// Unicast Address, or `nil`, if such does not exist.
@@ -38,7 +45,7 @@ public extension Node {
     /// - parameter address: The Unicast Address of an Element to get.
     /// - returns: The Element found, or `nil`, if no such exist.
     func element(withAddress address: Address) -> Element? {
-        let index = Int(address - unicastAddress)
+        let index = Int(address) - Int(unicastAddress)
         guard index >= 0 && index < elements.count else {
             return nil
         }

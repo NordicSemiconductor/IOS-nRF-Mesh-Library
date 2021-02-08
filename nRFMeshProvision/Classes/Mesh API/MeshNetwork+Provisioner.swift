@@ -66,10 +66,11 @@ public extension MeshNetwork {
     ///            `false` when the network is new to this device.
     ///            In this case, a new Provisioner should be created
     ///            and set as a local one.
+    @discardableResult
     func restoreLocalProvisioner() -> Bool {
         let defaults = UserDefaults(suiteName: uuid.uuidString)!
         
-        if let uuidString = defaults.string(forKey: "provisioner"),
+        if let uuidString = defaults.string(forKey: .localProvisionerUuidKey),
            let uuid = UUID(uuidString: uuidString),
            let provisioner = provisioners.first(where: { $0.uuid == uuid }) {
             try! setLocalProvisioner(provisioner)
@@ -92,7 +93,7 @@ public extension MeshNetwork {
             && provisioners[0].uuid == provisioner.uuid
     }
     
-    /// Adds the Provisioner and assignes a Unicast Address to it.
+    /// Adds the Provisioner and assigns a Unicast Address to it.
     /// This method does nothing if the Provisioner is already added to the
     /// mesh network.
     ///
@@ -116,7 +117,7 @@ public extension MeshNetwork {
     /// - parameter unicastAddress: The Unicast Address to be used by the Provisioner.
     ///                             A `nil` address means that the Provisioner is not
     ///                             able to perform configuration operations.
-    /// - throws: MeshNetworkError - if Provisioner may not be added beacose it has
+    /// - throws: MeshNetworkError - if Provisioner may not be added because it has
     ///           failed the validation. See possible errors for details.
     func add(provisioner: Provisioner, withAddress unicastAddress: Address?) throws {
         // Already added to another network?
@@ -188,16 +189,24 @@ public extension MeshNetwork {
         // When the local Provisioner has been added, save its UUID.
         if provisioners.count == 1 {
             let defaults = UserDefaults(suiteName: uuid.uuidString)!
-            defaults.set(provisioner.uuid.uuidString, forKey: "provisioner")
+            defaults.set(provisioner.uuid.uuidString, forKey: .localProvisionerUuidKey)
         }
     }
     
     /// Removes Provisioner at the given index.
     ///
+    /// - important: It is not possible to remove the last Provisioner.
     /// - parameter index: The position of the element to remove.
     ///                    `index` must be a valid index of the array.
     /// - returns: The removed Provisioner.
-    func remove(provisionerAt index: Int) -> Provisioner {
+    /// - throws: When trying to remove the last Provisioner.
+    @discardableResult
+    func remove(provisionerAt index: Int) throws -> Provisioner {
+        // At least one Provisioner object is required in the mesh network.
+        guard provisioners.count > 1 else {
+            throw MeshNetworkError.cannotRemove
+        }
+        
         let localProvisionerRemoved = index == 0
         
         let provisioner = provisioners.remove(at: index)
@@ -205,21 +214,28 @@ public extension MeshNetwork {
         provisioner.meshNetwork = nil
         
         // If the old local Provisioner has been removed, and a new one
-        // has been set on its plase, it needs the properties to be updated.
-        if localProvisionerRemoved,
-           let n = localProvisioner?.node {
-            n.set(networkKeys: networkKeys)
-            n.set(applicationKeys: applicationKeys)
-            n.companyIdentifier = 0x004C // Apple Inc.
-            n.productIdentifier = nil
-            n.versionIdentifier = nil
-            n.ttl = nil
-            n.minimumNumberOfReplayProtectionList = Address.maxUnicastAddress
-            // The Element adding has to be done this way. Some Elements may get cut
-            // by the property observer when Element addresses overlap other Node's
-            // addresses.
-            let elements = localElements
-            localElements = elements
+        // has been set on its place, it needs the properties to be updated.
+        if localProvisionerRemoved {
+            if let n = localProvisioner?.node {
+                n.set(networkKeys: networkKeys)
+                n.set(applicationKeys: applicationKeys)
+                n.companyIdentifier = 0x004C // Apple Inc.
+                n.productIdentifier = nil
+                n.versionIdentifier = nil
+                n.ttl = nil
+                n.minimumNumberOfReplayProtectionList = Address.maxUnicastAddress
+                // The Element adding has to be done this way. Some Elements may get cut
+                // by the property observer when Element addresses overlap other Node's
+                // addresses.
+                let elements = localElements
+                localElements = elements
+            }
+            
+            // When the local Provisioner has changed, save its UUID.
+            let defaults = UserDefaults(suiteName: uuid.uuidString)!
+            if let provisioner = localProvisioner {
+                defaults.set(provisioner.uuid.uuidString, forKey: .localProvisionerUuidKey)
+            }
         }
         
         timestamp = Date()
@@ -229,10 +245,12 @@ public extension MeshNetwork {
     /// Removes the given Provisioner. This method does nothing if the
     /// Provisioner was not added to the Mesh Network before.
     ///
+    /// - important: It is not possible to remove the last Provisioner.
     /// - parameter provisioner: Provisioner to be removed.
-    func remove(provisioner: Provisioner) {
+    /// - throws: When trying to remove the last Provisioner.
+    func remove(provisioner: Provisioner) throws {
         if let index = provisioners.firstIndex(of: provisioner) {
-            _ = remove(provisionerAt: index)
+            try remove(provisionerAt: index)
         }
     }
     
@@ -243,8 +261,9 @@ public extension MeshNetwork {
     ///
     /// The Provisioner at index 0 will be used as local Provisioner.
     ///
-    /// - parameter fromIndex: The index of the Provisioner to move.
-    /// - parameter toIndex: The destination index of the Provisioner.
+    /// - parameters:
+    ///   - fromIndex: The index of the Provisioner to move.
+    ///   - toIndex:   The destination index of the Provisioner.
     func moveProvisioner(fromIndex: Int, toIndex: Int) {
         if fromIndex >= 0 && fromIndex < provisioners.count &&
            toIndex >= 0 && toIndex <= provisioners.count &&
@@ -252,7 +271,7 @@ public extension MeshNetwork {
             let oldLocalProvisioner = toIndex == 0 || fromIndex == 0 ? localProvisioner : nil
             let provisioner = provisioners.remove(at: fromIndex)
             
-            // The target index must be modifed if the Provisioner is
+            // The target index must be modified if the Provisioner is
             // being moved below, as it was removed and other Provisioners
             // were already moved to fill the space.
             let newToIndex = toIndex > fromIndex + 1 ? toIndex - 1 : toIndex
@@ -300,7 +319,7 @@ public extension MeshNetwork {
                 }
                 // Save the UUID of the local Provisioner.
                 let defaults = UserDefaults(suiteName: uuid.uuidString)!
-                defaults.set(localProvisioner!.uuid.uuidString, forKey: "provisioner")
+                defaults.set(localProvisioner!.uuid.uuidString, forKey: .localProvisionerUuidKey)
             }
         }
     }
@@ -309,8 +328,9 @@ public extension MeshNetwork {
     ///
     /// The Provisioner at index 0 will be used as local Provisioner.
     ///
-    /// - parameter provisioner: The Provisioner to be moved.
-    /// - parameter toIndex: The destination index of the Provisioner.
+    /// - parameters:
+    ///   - provisioner: The Provisioner to be moved.
+    ///   - toIndex:     The destination index of the Provisioner.
     func moveProvisioner(_ provisioner: Provisioner, toIndex: Int) {
         if let fromIndex = provisioners.firstIndex(of: provisioner) {
             moveProvisioner(fromIndex: fromIndex, toIndex: toIndex)
@@ -322,8 +342,9 @@ public extension MeshNetwork {
     /// will create a Node with given the address. This will enable configuration
     /// capabilities for the Provisioner. The Provisioner must be in the mesh network.
     ///
-    /// - parameter address:     The new Unicast Address of the Provisioner.
-    /// - parameter provisioner: The Provisioner to be modified.
+    /// - parameters:
+    ///   - address:     The new Unicast Address of the Provisioner.
+    ///   - provisioner: The Provisioner to be modified.
     /// - throws: An error if the address is not in Provisioner's range,
     ///           or is already used by some other Node in the mesh network.
     func assign(unicastAddress address: Address, for provisioner: Provisioner) throws {
@@ -374,7 +395,7 @@ public extension MeshNetwork {
         }
         
         if isLocalProvisioner(provisioner) {
-            // Reassign local elements. This will ensure they are reinitiated with the
+            // Reassign local elements. This will ensure they are re-initiated with the
             // new addresses.
             let elements = localElements
             localElements = elements
@@ -382,8 +403,9 @@ public extension MeshNetwork {
     }
     
     /// Removes the Provisioner's Node. Provisioners without a Node
-    /// may not perform configuration operations. This method does nothing
-    /// if the Provisoner already didn't have a Node.
+    /// cannot send mesh messages, in particular, it cannot perform configuration
+    /// operations. This method does nothing if the Provisioner had no associated Node
+    /// already.
     ///
     /// Use `assign(address:for provisioner)` to enable configuration capabilities.
     ///
@@ -392,4 +414,16 @@ public extension MeshNetwork {
         remove(nodeForProvisioner: provisioner)
     }
     
+}
+
+private extension String {
+    /// The key used in `UserDefaults` to store the UUID of the local Provisioner for
+    /// each loaded mesh network. The intent is to restore the same instance (move to
+    /// index 0) whenever the same mesh network configuration is imported.
+    ///
+    /// Local Provisioner UUID is saved whenever a new Provisioner is added or moved
+    /// to index 0 in the `provisioners` array in mesh network object.
+    ///
+    /// Use `restoreLocalProvisioner()` to restore the Provisioner instance.
+    static let localProvisionerUuidKey = "provisioner"
 }

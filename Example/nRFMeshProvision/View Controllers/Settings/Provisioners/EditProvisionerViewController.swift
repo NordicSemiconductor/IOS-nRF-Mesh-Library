@@ -103,7 +103,7 @@ class EditProvisionerViewController: UITableViewController {
         }
         
         // Show Provisioner's parameters.
-        nameLabel.text = provisioner.provisionerName
+        nameLabel.text = provisioner.name
         
         // A Provisioner does not need to have an associated node.
         // A Provisioner without a node can't perform nodes configuration operations.
@@ -112,7 +112,7 @@ class EditProvisionerViewController: UITableViewController {
             unicastAddressLabel.text = node.unicastAddress.asString()
             ttlCell.detailTextLabel?.text = "\(node.defaultTTL ?? MeshNetworkManager.instance.defaultTtl)"
             ttlCell.accessoryType = .disclosureIndicator
-            deviceKeyCell.detailTextLabel?.text = node.deviceKey.hex
+            deviceKeyCell.detailTextLabel?.text = node.deviceKey?.hex ?? "Unknown Device Key"
             deviceKeyCell.detailTextLabel?.font = .systemFont(ofSize: 14)
         } else {
             ttlCell.detailTextLabel?.text = "N/A"
@@ -165,7 +165,7 @@ class EditProvisionerViewController: UITableViewController {
             case 2: // Scenes
                 destination.title  = "Scenes"
                 destination.type   = .scene
-                destination.bounds = Scene.minScene...Scene.maxScene
+                destination.bounds = SceneNumber.minScene...SceneNumber.maxScene
                 destination.ranges = newSceneRange ?? provisioner.allocatedSceneRange
                 
                 meshNetwork.provisioners.filter({ $0 != provisioner }).forEach { other in
@@ -217,8 +217,8 @@ private extension EditProvisionerViewController {
     /// Presents a dialog to edit the Provisioner name.
     func presentNameDialog() {
         presentTextAlert(title: "Provisioner name", message: nil,
-                         text: newName ?? provisioner.provisionerName, placeHolder: "Name",
-                         type: .nameRequired) { newName in
+                         text: newName ?? provisioner.name, placeHolder: "Name",
+                         type: .nameRequired, cancelHandler: nil) { newName in
                             self.newName = newName
                             self.nameLabel.text = newName
         }
@@ -246,7 +246,7 @@ private extension EditProvisionerViewController {
         }
         presentTextAlert(title: "Unicast address", message: "Hexadecimal value in range\n0001 - 7FFF.",
                          text: address, placeHolder: "Address", type: .unicastAddressRequired,
-                         option: action) { text in
+                         option: action, cancelHandler: nil) { text in
                             let address = Address(text, radix: 16)
                             self.unicastAddressLabel.text = address!.asString()
                             self.disableConfigCapabilities = false
@@ -272,14 +272,14 @@ private extension EditProvisionerViewController {
         presentTextAlert(title: "Default TTL",
                          message: "TTL = Time To Live\n\nTTL limits the number of times a message can be relayed.\nMax value is 127.",
                          text: "\(node?.defaultTTL ?? 5)", placeHolder: "Default is 5",
-                         type: .ttlRequired) { value in
+                         type: .ttlRequired, cancelHandler: nil) { value in
                             let ttl = UInt8(value)!
                             self.newTtl = ttl
                             self.ttlCell.detailTextLabel?.text = "\(ttl)"
         }
      }
     
-    /// Saves the edited or new Provisioner and pops the view contoller if saving
+    /// Saves the edited or new Provisioner and pops the view controller if saving
     /// succeeded.
     func saveProvisioner() {
         do {
@@ -322,7 +322,7 @@ private extension EditProvisionerViewController {
             }
             // When we reached that far, changing the name and TTL is just a formality.
             if let newName = newName {
-                provisioner.provisionerName = newName
+                provisioner.name = newName
             }
             if let newTtl = newTtl {
                 provisioner.node?.defaultTTL = newTtl
@@ -355,11 +355,34 @@ private extension EditProvisionerViewController {
             case .invalidRange:
                 presentAlert(title: "Error", message: "At least one of specified ranges is invalid.")
             case .addressNotInAllocatedRange:
-                presentAlert(title: "Error", message: "The Provisioner's address range is outside of its allocated range.")
+                let manager = MeshNetworkManager.instance
+                let count = max(1, UInt8(manager.localElements.count))
+                let next = manager.meshNetwork?.nextAvailableUnicastAddress(for: count, elementsUsing: provisioner)
+                let nextText = next.map { " Next available address is \($0.asString())."} ??
+                    " No available addresses. Extend the unicast address range to assign a new one."
+                let autoAssign = next.map { nextAddress in
+                    UIAlertAction(title: "Assign", style: .default) { _ in
+                        self.newAddress = nextAddress
+                        self.unicastAddressLabel.text = nextAddress.asString()
+                    }
+                }
+                presentAlert(title: "Error",
+                             message: "The Provisioner's address range is outside of its allocated range.\(nextText)",
+                             option: autoAssign)
             case .addressNotAvailable:
-                let count = max(1, MeshNetworkManager.instance.localElements.count)
+                let manager = MeshNetworkManager.instance
+                let count = max(1, UInt8(manager.localElements.count))
                 if count > 1, let address = newAddress {
-                    presentAlert(title: "Error", message: "The address range \(address.asString())...\((address + UInt16(count)  - 1).hex) is already in use or is not valid. A unique unicast address must be assignet to each of the \(count) elements.")
+                    let next = manager.meshNetwork?.nextAvailableUnicastAddress(for: count, elementsUsing: provisioner)
+                    let nextText = next.map { " Next available address is \($0.asString())."} ??
+                        " No available addresses. Extend the unicast address range to assign a new one."
+                    let autoAssign = next.map { nextAddress in
+                        UIAlertAction(title: "Assign", style: .default) { _ in
+                            self.newAddress = nextAddress
+                            self.unicastAddressLabel.text = nextAddress.asString()
+                        }
+                    }
+                    presentAlert(title: "Error", message: "The address range \(address.asString())...\((address + UInt16(count)  - 1).hex) is already in use or is reserved. A unique unicast address must be assigned to each of the \(count) elements.\(nextText)", option: autoAssign)
                 } else {
                     presentAlert(title: "Error", message: "The address is already in use or is not valid.")
                 }

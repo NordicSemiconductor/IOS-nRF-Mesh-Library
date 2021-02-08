@@ -27,7 +27,7 @@
     - Improved switching from provisioning to node configuration.
     - Support for Proxies with proxy filter capacity limited to 1.
     - Bugfix: Several potential crashes fixed, including #208.
-    - Spelling: Targetting -> targeting.
+    - Spelling: Targeting -> targeting.
 
 - **2.1.0**:
     - Option to select connected proxy manually (disable Automatic Connection on Proxy screen).
@@ -44,18 +44,18 @@
 - **1.0.4**:
     - Adds ability to control GenericOnOff parameters, `TransitionDelay` and `TransitionTime` (some testing needed).
     - Adds ability to control GenericLevel models, additionally `TransitionDelay` and `TransitionTime` (some testing needed).
-    - Bugfix: Fixed an issue causign the provisioning to halt at 91% intermittently due to block acknowledgements not working as it should, a 2 second delay is restored to workaround this.
+    - Bugfix: Fixed an issue causing the provisioning to halt at 91% intermittently due to block acknowledgements not working as it should, a 2-second delay is restored to workaround this.
 
 - **1.0.1**:
     - Adds minor improvements to the copy on some UI components within the application.
-    - Bugfix: Performance improvement due to removing an intended 2 second delay when switching between Composition Data Get state and AppKeyAdd state due to an earlier bug.
-    - Bugfix: fixed an issue with block acknowledgements that caused longer messages that needs multiple acknowledgment to fail.
+    - Bugfix: Performance improvement due to removing an intended 2-second delay when switching between Composition Data Get state and AppKeyAdd state due to an earlier bug.
+    - Bugfix: fixed an issue with block acknowledgements that caused longer messages that needs multiple acknowledgement to fail.
     - Bugfix: fixed an issue in the GenericOnOff control view, this bug caused loss of control over the node when it's added then removed from a subscription group.
     - Bugfix: fixed an issue that caused the navigation bar not to reflect the scanner state when directly tapping the `Add Node` button instead of using the tab bar button.
 
 - **1.0**:
     - Adds a better approach for GenericOnOffSet messages to be sent to all subscribed addresses on the target element. If no subscriptions are present, messages will be sent to the element's unicast.
-    - Adds element unicast address within the node view to allow easier configuration.
+    - Adds an element unicast address within the node view to allow easier configuration.
     - Adds Application Version and build numbers in the settings view.
     - Adds a more descriptive title depending on OOB type in the user input view.
     - Fixes some typos and misplaced text in the bundled application.
@@ -67,7 +67,7 @@
     - Adds GenericOnOffServer control.
     - Adds UI improvement in Element view, now subscription,publication and both states are shown on the cell.
     - Adds UI improvement for GenericOnOff control to disable the feature if an AppKey is not bound to the model.
-    - Bugfix: Access messages no longer use DeviceKey and DeviceNonce in cases where Appkey should be used.
+    - Bugfix: Access messages no longer use DeviceKey and DeviceNonce in cases where AppKey should be used.
     - Bugfix: Sequence number's first octet was not calculated properly, causing it to always be 0x00.
     - Bugfix: Fixed Typo in scanner view "Discovery" -> "Discover".
 
@@ -80,39 +80,39 @@
     - Adds ability to parse network identity packets to allow reconnecting to the same node (Cryptographically safe).
     - Adds MeshManager class that manages the proxy node, network state and related mesh network data through API calls.
     - Adds ability to abort node provisioning.
-    - Adds Improved provisioning view with progressbar indicaton.
+    - Adds Improved provisioning view with progressbar indication.
     - Bugfix: AppKeyIndex values above 1 caused a failure to bind models to app keys due to a hardcoded value.
     - Bugfix: NetKeyIndex and AppKeyIndex values were swapped in the AppKeyStatus message.
     - Bugfix: Mesh connection button was too slow and sometimes malfunctioned.
-    - Bugfix: Scanner views were someimes untapabble and scrolling was erratic when nodes advertise with low intervals.
-    - Bugfix: Main network view crashed intermittently after network has been reset.
+    - Bugfix: Scanner views were sometimes untapabble and scrolling was erratic when nodes advertise with low intervals.
+    - Bugfix: Main network view crashed intermittently after the network has been reset.
     - Bugfix: Some input views where parsing freetext as hex, causing a crash.
-    - Input views can now rubustly handle hex input format starting with `0x`.
+    - Input views can now robustly handle hex input format starting with `0x`.
     - Subscription address types are now shown beside the subscription address.
     - Empty scanner views will now have an empty state to avoid blank screens.
     - Provisioning logs moved to a separate view.
-    - Improved UI and interaction accross all views.
+    - An improved UI and interaction across all views.
 
 - **0.2**:
-    - TestFligt Release.
+    - TestFlight Release.
     - Bundled sample firmwares for Light Server and Light client to ease the testing process.
     - Minor fixes for copy in the model configuration view, Detail labels where left blank, now they show more information on what happens on selection.
     - Added empty scanner view (Not yet implemented in UI).
     - Added mesh save when mesh state is reset to fix the crash caused by mesh state not being present on main network view.
     - Reset network text will now be red to alert the user of destructive action.
-    - Settings view copy improvemetns: capitalization fixes and better naming of rows.
+    - Settings view copy improvements: capitalization fixes and better naming of rows.
     - CBUUID log in the provisioner will now show the hex value instead of data size.
-    - Title on provisioner will use the friendly name instead of BLE name.
+    - Title on a provisioner will use the friendly name instead of BLE name.
     - Display node name and unicast in the node's cell title label.
-    - Fixed bug causing node friendly name to be forced into a hex value.
+    - Fixed a bug causing node friendly name to be forced into a hex value.
     - Fixed a bug causing node friendly name not to be stored and used.
     - Minor tweak to the node cell UI.
     - Shortened company name/company id label text.
     - removed 0x from placeholder input to avoid confusion.
     - Fixed Bug causing key binding, pub/sub addresses to overlap on models with same identifier.
-    - Minor refactor to the compositionelement model to allow storing model related data within the element instead of the root object.
+    - Minor refactor to the composition element model to allow storing model related data within the element instead of the root object.
     - Added activity indicator in the provisioning view to emphasise the progress, it stops at completion or any failures.
-    - Minor cleanup in log messages during node identity verification, all lowercased.
+    - Minor cleanup in log messages during node identity verification, all lowercase.
     - Used CBUUID as a node identifier to avoid duplication and to avoid the mistake of using advertisement data as it's not a node identifier.
     - Minor log fixes to avoid double logging of disconnection, etc..
     - Disconnecting of current proxy when provisioning a new node, this is to avoid having multiple proxies connected simultaneously.
@@ -128,15 +128,15 @@
     - Renamed Display name to nRF Mesh.
     - Updated LaunchScreen Storyboard.
     - Added missing image assets.
-    - Added 1 second delay after provisioning succeeds to allow the user to see the message.
+    - Added 1-second delay after provisioning succeeds to allow the user to see the message.
     - Provisioning view will set the main tab to the network view instead of the scanner view before popping to root view, to give a better context.
     - Renamed Product Vendor Identifier to Product Version as it was incorrect.
-    - Updated Composition status struct and NodeEntry struct to reflect the VenrodId->ProductVersion change.
-    - Added an improved settings icon.
-    - Fixed borken icon in node conviguration view.
+    - Updated Composition status struct and NodeEntry struct to reflect the VendorId->ProductVersion change.
+    - Added an improved settings' icon.
+    - Fixed a broken icon in the node configuration view.
     - Added Settings icon to settings tab bar item instead of the list icon.
-    - Added an improved icon to the add tabbar.
-    - Added option to reset the mesh database, this is a destructive/non reversible action and regenerate new NetKey and mesh state.
+    - Added an improved icon to the add tab bar.
+    - Added option to reset the mesh database, this is a destructive/non-reversible action and regenerate new NetKey and mesh state.
     - Added Mesh rejoin functionality to connect to a proxy node.
     - Reconnection to Proxy node functional, also displaying advertisement data on the scanner view with RSSI.
     - Enabled Mesh disconnection form the main view.
@@ -148,19 +148,19 @@
     - Display Provisioning advertisement data when present.
     - Added a network icon to cells.
     - Extracted status code alerts to clean up code duplication.
-    - Added hex parsign validation to address value inputs.
+    - Added hex parsing validation to address value inputs.
     - Fixed Default TTL Configuration message implementation.
     - Default TTL status message is now implemented and callbacks are forwarded to it's designated delegate.
     - Added subscription lists support for the Example application's UI.
     - Added Subscription Add message operation, Subscription status operation and dependencies.
     - iOS10 data compatibility and Segmentation / Acknowledgement messages bugs resolved.
-    - Fixes related to segmentation and reassembly, This fixes the acknowlegement messages failing when they're longer than MTU size and are not segmented.
+    - Fixes related to segmentation and reassembly, This fixes the acknowledgement messages failing when they're longer than MTU size and are not segmented.
     - This also adds Default TTL Get message support (Not accessible currently, but functional).
     - Fixes a bug that caused an invalid state when a segmented message arrives over only one segment I.E: SegN=0x00 and SegO=0x00 causing the ack timer to have an unknown state.
     - Re-enabled app key state switch after composition data is received.
     - Copy Data objects to preserve 0 indices on iOS versions <= 10.
     - Added GATT Bearer SAR checks to assure that segments that are out of order are dropped.
-    - Added segment caching to assure that incomind lower transport segments are not appended to the the current segment being Reassembled upon retransmission.
+    - An added segment caching to assure that incomind lower transport segments are not appended to the current segment being Reassembled upon retransmission.
 
 - **0.1**:
 	- Initial release.

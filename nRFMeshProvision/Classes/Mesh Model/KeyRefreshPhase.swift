@@ -33,37 +33,59 @@ import Foundation
 /// The type representing Key Refresh phase.
 public enum KeyRefreshPhase: Int, Codable {
     /// Phase 0: Normal Operation.
-    case normalOperation  = 0
+    case normalOperation = 0
     /// Phase 1: Distributing new keys to all nodes. Nodes will transmit using
     /// old keys, but can receive using old and new keys.
-    case distributingKeys = 1
-    /// Phase 2: Transmitting a Secure Network beacon that signals to the network
-    /// that all nodes have the new keys. The nodes will then transmit using
-    /// the new keys but can receive using the old or new keys, and shall only
+    case keyDistribution = 1
+    /// Phase 2: Nodes will use the new keys when encrypting messages
+    /// but will still receive using the old or new keys. Nodes shall only
     /// receive Secure Network beacons secured using the new Network Key.
-    case finalizing       = 2
+    case usingNewKeys    = 2
     
     internal static func from(_ value: Int) -> KeyRefreshPhase? {
         switch value {
         case 0:
             return .normalOperation
         case 1:
-            return .distributingKeys
+            return .keyDistribution
         case 2:
-            return .finalizing
+            return .usingNewKeys
         default:
             return nil
         }
     }
 }
 
+/// The type representing Key Refresh phase transition.
+public enum KeyRefreshPhaseTransition: UInt8 {
+    /// The Node will start encoding messages using the new keys,
+    /// but will continue to decode using the old and new keys.
+    /// The Node will only accept beacons secured using the new
+    /// Network Key.
+    case useNewKeys    = 2
+    /// The old keys will be revoked and the Node will go back to
+    /// Normal Operation state for the given Network Key.
+    case revokeOldKeys = 3
+}
+
 extension KeyRefreshPhase: CustomDebugStringConvertible {
     
     public var debugDescription: String {
         switch self {
-        case .normalOperation:  return "Normal operation"
-        case .distributingKeys: return "Distributing keys"
-        case .finalizing:       return "Finalizing"
+        case .normalOperation: return "Normal Operation"
+        case .keyDistribution: return "Key Distribution"
+        case .usingNewKeys:    return "Using New Keys"
+        }
+    }
+    
+}
+
+extension KeyRefreshPhaseTransition: CustomDebugStringConvertible {
+    
+    public var debugDescription: String {
+        switch self {
+        case .useNewKeys:    return "Use New Keys"
+        case .revokeOldKeys: return "Revoke Old Keys"
         }
     }
     

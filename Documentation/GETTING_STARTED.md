@@ -52,7 +52,7 @@ if !loaded {
 
 ### GATT Bearers
 
-To make the most common use case (working with GATT Proxy Bearer) easier, the library contains a default implementation for the GATT Proxy and GATT Provisioning bearers, which handle the Proxy protocol. Use `GattBearer` and `PBGattBearer` respectivly. Set the manager as bearer's `dataDelegate` and the bearer object as manager's `transmitter`. 
+To make the most common use case (working with GATT Proxy Bearer) easier, the library contains a default implementation for the GATT Proxy and GATT Provisioning bearers, which handle the Proxy protocol. Use `GattBearer` and `PBGattBearer` respectively. Set the manager as bearer's `dataDelegate` and the bearer object as manager's `transmitter`. 
 
 ```swift
 let bearer = GattBearer(target: scannedPeripheral)
@@ -67,19 +67,22 @@ The Sample App provides additional logic on top of the bearer, which allows to c
 
 ### Local Elements and Models
 
-By default, the local Node (that is the Provisioner's Node) will have one Element with 4 Models:
+By default, the local Node (that is the Provisioner's Node) will have one Element with 5 Models:
 * **Configuration Server**
 * **Configuration Client**
 * **Health Server**
 * **Health Client**
+* **Scene Client**
 
 If you want to send and receive any other messages beside Configuration Messages, you need to define a Model. For example, if you want to allow user to control switching ON and OFF lights in their homes using *Generic OnOff Set* messages, you need to have **Generic OnOff Client** model.
 
-To set local elements, call `manager.localElements = [...]`. The 4 Models mentioned above will be added automatically to the first Element. Each local model must have a `ModelDelegate` that will handle incoming messages and provide mapping for opcodes of messages that such Model supports (receives).
+To set local elements, call `manager.localElements = [...]`. The 5 Models mentioned above will be added automatically to the first Element. Each local model must have a `ModelDelegate` that will handle incoming messages and provide mapping for opcodes of messages that such Model supports (receives).
 
 For example, the **Generic OnOff Client** mentioned above may send *Generic OnOff Get*, *Generic OnOff Set*, *Generic OnOff Set Unacknowledged* and will receive *Generic OnOff Status*. The last, status message must be added to `messageTypes` map of the Model's delegate, so that when a message with its opcode is received, the library knows which message type to instantiate. If you support any Server model, your `ModelDelegate` must also reply to all acknowledged messages it can receive.
 
 Without setting the local Model and specifying the message types, each message would be reported to the manager's delegate as `UnknownMessage`. 
+
+**Important:** Received messages are delivered to the app in 2 ways: using the `MeshNetworkManager.delegate` and to the `ModelDelegate`. However, in order to receive the messages in the model, it needs to bound to the Application Key, and the message needs either target the Element's Unicast Address, a All Nodes (0xFFFF) address, or a Group Address to which that model is subscribed to. 
 
 ```swift
 let nordicCompanyId: UInt16 = 0x0059
@@ -92,13 +95,19 @@ meshNetworkManager.localElements = [element]
 
 **Important:** Even if you don't have any Models (for example only want to allow Configuration Messages in the app) you have to set the `localElements` property. In that case the Configuration Server and Client Models will not be properly initialized and you will be getting `UnknownMessage` instead of proper Status message.
 
+```swift
+// Configuration when there are no additional models.
+// This will create a single Element with 5 models mentioned above.
+meshNetworkManager.localElements = []
+```
+
 ### Provisioning 
 
-Provisioning is a process of sending a Network Key to a new Unprovisioned Device in a more or less secure way. During provisioning, a Provisioner and the new provisioned Node will generate a common secret that will work as Device Key. Using this key the Provisioner may send and data to the Node privately, so that only this device will be able to decode the message. The first data sent to Node are its unique Unicase Address and the Network Key.
+Provisioning is a process of sending a Network Key to a new Unprovisioned Device in a more or less secure way. During provisioning, a Provisioner and the new provisioned Node will generate a common secret that will work as Device Key. Using this key the Provisioner may send and data to the Node privately, so that only this device will be able to decode the message. The first data sent to Node are its unique Unicast Address, and the Network Key.
 
 To provision a device, scan for nearby Unprovisioned Devices (devices advertising with [Service UUID: 0x1827](https://www.bluetooth.com/specifications/gatt/services/)). When a device is found and selected by the user, create `UnprovisionedDevice(advertisingData:)` object and a `ProvisioningBearer` (currently only PB GATT bearer is supported by the library). For default bearer you may use `PBGattBearer` which implements `ProvisioningBearer` protocol. To start provisioning, call `manager.provision(unprovisionedDevice:over)`. This method returns a `ProvisioningManager`, an object that will help you provision the device.
 
-First, call `identify(andAttractFor)` on the new manager to make the device blink or make noise. This will also request device capabilities. Set the Network Key and Unicast Address (the next available address is selected automatically) and, when the right device has been chosen, call `provision(usingAlgorithm:publicKey:authenticationMethod)` to start the provisioning process. A delegate will be informed when provisioning is complete to has failed.
+First, call `identify(andAttractFor)` on the new manager to make the device blink or make noise. This will also request device capabilities. Set the Network Key and Unicast Address (the next available address is selected automatically) and, when the right device has been chosen, call `provision(usingAlgorithm:publicKey:authenticationMethod)` to start the provisioning process. A delegate will be informed when provisioning is complete or has failed.
 
 ```swift
 guard let bearer = PBGattBearer(target: peripheral),
@@ -134,7 +143,7 @@ See `ScannerTableViewController` and `ProvisioniongViewController` in the Sample
 
 ### Sending messages
 
-The manager's API contains number of methods for sending mesh messages, which can be divided into 3 groups. First group allows to send `ConfigMessages` to a **Configuration Server** on a remote or local Node. Configuration messages are always signed using the device key and must be sent to a Unicase Address of the Primary Element of a Node. Second group allows to send other messages from any local Element to any remote or local Element, or a group or virtual address. These messages are signed using Application Key and will be delivered to all models on the Element with target Unicast Address or subscribed to the target group or virtual address, that have this Application Key bound. You may not send `ConfigMessages` using this set of methods. The third group, which contains just a single method `publish(_:fromModel:withTtl)` can be used to send publication from the local model.
+The manager's API contains number of methods for sending mesh messages, which can be divided into 3 groups. First group allows to send `ConfigMessages` to a **Configuration Server** on a remote or local Node. Configuration messages are always signed using the device key and must be sent to a Unicast Address of the Primary Element of a Node. Second group allows to send other messages from any local Element to any remote or local Element, or a group or virtual address. These messages are signed using Application Key and will be delivered to all models on the Element with target Unicast Address or subscribed to the target group or virtual address, that have this Application Key bound. You may not send `ConfigMessages` using this set of methods. The third group, which contains just a single method `publish(_:fromModel:withTtl)` can be used to send publication from the local model.
 
 Remember, that only the Nodes that know the Network Key with which a message is sent may relay the message. It is for example not possible to send a message over a Proxy connection signed with a Network Key not known to this Proxy Node.
 

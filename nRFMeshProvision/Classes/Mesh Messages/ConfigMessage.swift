@@ -126,6 +126,53 @@ public protocol ConfigModelSubscriptionList: ConfigStatusMessage, ConfigModelMes
     var addresses: [Address] { get }
 }
 
+/// This enum represents number of periodic Heartbeat messages remaining to be sent.
+@frozen public enum RemainingHeartbeatPublicationCount {
+    /// Periodic Heartbeat messages are not published.
+    case disabled
+    /// Periodic Heartbeat messages are published indefinitely.
+    case indefinitely
+    /// Exact remaining count of periodic Heartbeat messages.
+    ///
+    /// Exact count is only available when the count goes down to 2 and 1;
+    /// otherwise a range is returned.
+    case exact(_ value: UInt16)
+    /// Remaining count of periodic Heartbeat messages represented as range.
+    case range(_ range: ClosedRange<UInt16>)
+    /// Unsupported CountLog value sent.
+    case invalid(countLog: UInt8)
+}
+
+/// This enum represents remaining period for processing Heartbeat messages, in seconds.
+@frozen public enum RemainingHeartbeatSubscriptionPeriod {
+    /// Heartbeat messages are not processed.
+    case disabled
+    /// Exact remaining period for processing Heartbeat messages, in seconds.
+    ///
+    /// Exact period is only available when the count goes down to 1 or when is maximum;
+    /// otherwise a range is returned.
+    case exact(_ value: UInt16)
+    /// Remaining period for processing Heartbeat messages as range, in seconds.
+    case range(_ range: ClosedRange<UInt16>)
+    /// Unsupported PeriodLog value sent.
+    case invalid(periodLog: UInt8)
+}
+
+/// This enum represents the number of Heartbeat messages received.
+@frozen public enum HeartbeatSubscriptionCount {
+    /// Number of Heartbeat messages received.
+    ///
+    /// Exact count is only available when there was none, or only one Heartbeat message
+    /// received.
+    case exact(_ value: UInt16)
+    /// Number of Heartbeat messages received as range.
+    case range(_ range: ClosedRange<UInt16>)
+    /// More than 0xFFFE messages have been received.
+    case reallyALot
+    /// Unsupported CountLog value sent.
+    case invalid(countLog: UInt8)
+}
+
 internal extension ConfigMessage {
     
     /// Encodes given list of Key Indexes into a Data.
@@ -133,7 +180,7 @@ internal extension ConfigMessage {
     /// This method ensures that they are packed in compliance to the
     /// Bluetooth Mesh specification.
     ///
-    /// - parameter limit:  Maximim number of Key Indexes to encode.
+    /// - parameter limit:  Maximum number of Key Indexes to encode.
     /// - parameter indexes: An array of 12-bit Key Indexes.
     /// - returns: Key Indexes encoded to a Data.
     func encode(_ limit: Int = 10000, indexes: ArraySlice<KeyIndex>) -> Data {
@@ -141,7 +188,7 @@ internal extension ConfigMessage {
             return Data()
         }
         if limit == 1 || indexes.count == 1 {
-            // Encode a sigle Key Index into 2 bytes.
+            // Encode a single Key Index into 2 bytes.
             return Data() + indexes.first!.littleEndian
         } else {
             // Encode a pair of Key Indexes into 3 bytes.
@@ -166,7 +213,7 @@ internal extension ConfigMessage {
             return []
         }
         if limit == 1 || size == 2 {
-            // Decode a sigle Key Index from 2 bytes.
+            // Decode a single Key Index from 2 bytes.
             let index: KeyIndex = UInt16(data[offset + 1]) << 8 | UInt16(data[offset])
             return [index]
         } else {
@@ -308,6 +355,59 @@ extension ConfigMessageStatus: CustomDebugStringConvertible {
         case .cannotSet:                      return "Cannot set"
         case .unspecifiedError:               return "Unspecified error"
         case .invalidBinding:                 return "Invalid binding"
+        }
+    }
+    
+}
+
+extension RemainingHeartbeatPublicationCount: CustomDebugStringConvertible {
+    
+    public var debugDescription: String {
+        switch self {
+        case .disabled:
+            return "Disabled"
+        case .indefinitely:
+            return "Indefinitely"
+        case .invalid(let value):
+            return "Invalid: \(value.hex)"
+        case .range(let range):
+            return range.description
+        case .exact(let value):
+            return "\(value)"
+        }
+    }
+    
+}
+
+extension RemainingHeartbeatSubscriptionPeriod: CustomDebugStringConvertible {
+    
+    public var debugDescription: String {
+        switch self {
+        case .disabled:
+            return "Disabled"
+        case .invalid(let value):
+            return "Invalid: \(value.hex)"
+        case .range(let range):
+            return "\(range.description) sec"
+        case .exact(let value):
+            return "\(value) sec"
+        }
+    }
+    
+}
+
+extension HeartbeatSubscriptionCount: CustomDebugStringConvertible {
+    
+    public var debugDescription: String {
+        switch self {
+        case .invalid(let value):
+            return "Invalid: \(value.hex)"
+        case .range(let range):
+            return range.description
+        case .exact(let value):
+            return "\(value)"
+        case .reallyALot:
+            return "More than 65534"
         }
     }
     

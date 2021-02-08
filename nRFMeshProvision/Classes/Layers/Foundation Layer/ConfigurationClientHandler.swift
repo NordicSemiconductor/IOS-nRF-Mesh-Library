@@ -35,6 +35,7 @@ internal class ConfigurationClientHandler: ModelDelegate {
     
     let messageTypes: [UInt32 : MeshMessage.Type]
     let isSubscriptionSupported: Bool = false
+    let publicationMessageComposer: MessageComposer? = nil
     
     init(_ meshNetwork: MeshNetwork) {
         let types: [ConfigMessage.Type] = [
@@ -56,7 +57,11 @@ internal class ConfigurationClientHandler: ModelDelegate {
             ConfigFriendStatus.self,
             ConfigBeaconStatus.self,
             ConfigNetworkTransmitStatus.self,
-            ConfigNodeResetStatus.self
+            ConfigNodeResetStatus.self,
+            ConfigHeartbeatPublicationStatus.self,
+            ConfigHeartbeatSubscriptionStatus.self,
+            ConfigKeyRefreshPhaseStatus.self,
+            ConfigLowPowerNodePollTimeoutStatus.self,
         ]
         self.meshNetwork = meshNetwork
         self.messageTypes = types.toMap()
@@ -313,6 +318,30 @@ internal class ConfigurationClientHandler: ModelDelegate {
             if let node = meshNetwork.node(withAddress: source) {
                 meshNetwork.remove(node: node)
             }
+            
+        // Heartbeat publication
+        case let status as ConfigHeartbeatPublicationStatus:
+            if let node = meshNetwork.node(withAddress: source),
+               !node.isLocalProvisioner {
+                // This may be set to nil.
+                node.heartbeatPublication = HeartbeatPublication(status)
+            }
+                
+        // Heartbeat subscription
+        case let status as ConfigHeartbeatSubscriptionStatus:
+            if let node = meshNetwork.node(withAddress: source),
+               !node.isLocalProvisioner {
+                // This may be set to nil.
+                node.heartbeatSubscription = HeartbeatSubscription(status)
+            }
+            
+        case is ConfigKeyRefreshPhaseStatus:
+            // Do nothing. The model does not need to be updated.
+            break
+            
+        case is ConfigLowPowerNodePollTimeoutStatus:
+            // Do nothing. The model does not need to be updated.
+            break
             
         default:
             break

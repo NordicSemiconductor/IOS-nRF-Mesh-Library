@@ -50,9 +50,7 @@ class NodeAddAppKeyViewController: ProgressViewController {
             return
         }
         let selectedAppKey = keys[selectedIndexPath.row]
-        start("Adding Application Key...") {
-            return try MeshNetworkManager.instance.send(ConfigAppKeyAdd(applicationKey: selectedAppKey), to: self.node)
-        }
+        addKey(selectedAppKey)
     }
     
     // MARK: - Properties
@@ -67,9 +65,17 @@ class NodeAddAppKeyViewController: ProgressViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        let presentApplicationKeysSettings = UIButtonAction(title: "Settings") { [weak self] in
+            guard let self = self else { return }
+            let tabBarController = self.presentingViewController as? RootTabBarController
+            self.dismiss(animated: true) {
+                tabBarController?.presentApplicationKeysSettings()
+            }
+        }
         tableView.setEmptyView(title: "No keys available",
                                message: "Go to Settings to create a new key,\nor add a bound Network Key first.",
-                               messageImage: #imageLiteral(resourceName: "baseline-key"))
+                               messageImage: #imageLiteral(resourceName: "baseline-key"),
+                               action: presentApplicationKeysSettings)
         
         MeshNetworkManager.instance.delegate = self
         
@@ -118,6 +124,23 @@ class NodeAddAppKeyViewController: ProgressViewController {
     }
 }
 
+private extension NodeAddAppKeyViewController {
+    
+    /// Adds the given Application Key to the target Node.
+    ///
+    /// - parameter networkKey: The Application Key to be added.
+    func addKey(_ applicationKey: ApplicationKey) {
+        guard let node = node else {
+            return
+        }
+        start("Adding Application Key...") {
+            let message = ConfigAppKeyAdd(applicationKey: applicationKey)
+            return try MeshNetworkManager.instance.send(message, to: node)
+        }
+    }
+    
+}
+
 extension NodeAddAppKeyViewController: MeshNetworkDelegate {
     
     func meshNetworkManager(_ manager: MeshNetworkManager,
@@ -126,7 +149,7 @@ extension NodeAddAppKeyViewController: MeshNetworkDelegate {
         // Has the Node been reset remotely.
         guard !(message is ConfigNodeReset) else {
             (UIApplication.shared.delegate as! AppDelegate).meshNetworkDidChange()
-            done() {
+            done {
                 let rootViewControllers = self.presentingViewController?.children
                 self.dismiss(animated: true) {
                     rootViewControllers?.forEach {
@@ -147,7 +170,7 @@ extension NodeAddAppKeyViewController: MeshNetworkDelegate {
         switch message {
             
         case let status as ConfigAppKeyStatus:
-            done() {
+            done {
                 if status.status == .success {
                     self.dismiss(animated: true)
                     self.delegate?.keyAdded()
@@ -166,7 +189,7 @@ extension NodeAddAppKeyViewController: MeshNetworkDelegate {
                             failedToSendMessage message: MeshMessage,
                             from localElement: Element, to destination: Address,
                             error: Error) {
-        done() {
+        done {
             self.presentAlert(title: "Error", message: error.localizedDescription)
         }
     }

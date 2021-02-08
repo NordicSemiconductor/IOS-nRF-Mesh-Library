@@ -34,9 +34,6 @@ internal struct UpperTransportPdu {
     /// The Mesh Message that is being sent, or `nil`, when the message
     /// was received.
     let message: MeshMessage?
-    /// The local Element that is sending the message, or `nil` when the
-    /// message was received.
-    let localElement: Element?
     /// Whether sending this message has been initiated by the user.
     let userInitiated: Bool
     /// Source Address.
@@ -91,16 +88,14 @@ internal struct UpperTransportPdu {
         sequence = accessMessage.sequence
         ivIndex = accessMessage.ivIndex
         message = nil
-        localElement = nil
         userInitiated = false
     }
     
     init(fromAccessPdu pdu: AccessPdu, usingKeySet keySet: KeySet,
          sequence: UInt32, andIvIndex ivIndex: IvIndex) {
         self.message = pdu.message
-        self.localElement = pdu.localElement
         self.userInitiated = pdu.userInitiated
-        self.source = pdu.localElement!.unicastAddress
+        self.source = pdu.source
         self.destination = pdu.destination.address
         self.sequence = sequence
         self.ivIndex = ivIndex.transmitIndex
@@ -130,7 +125,7 @@ internal struct UpperTransportPdu {
     }
     
     /// This method tries to decode the Access Message using a matching Application Key
-    /// or the node's Device Key, based onthe `aid` field value.
+    /// based on the `aid` field value, or the Device Key of the local or source Node.
     ///
     /// - parameter accessMessage: The Lower Transport Layer Access Message received.
     /// - parameter meshNetwork: The mesh network for which the PDU should be decoded.
@@ -148,19 +143,27 @@ internal struct UpperTransportPdu {
                     $0.address.address == accessMessage.destination
                 }
             } else {
+                // If the message was not sent to a Virtual Address, just add nil to the
+                // matching groups. That way it will be decoded once with group = nil.
                 matchingGroups = [nil]
             }
-            for applicationKey in meshNetwork.applicationKeys {
+            // Go through all the Application Keys bound to the Network Key that the message
+            // was decoded with.
+            for applicationKey in meshNetwork.applicationKeys.boundTo(accessMessage.networkKey) {
+                // The matchingGroups contains either a list of Virtual Groups, or a single nil.
                 for group in matchingGroups {
+                    // Each time try decoding using the new, or the old key (if such exist)
+                    // when the generated aid matches the one sent in the message.
                     if aid == applicationKey.aid,
-                        let pdu = UpperTransportPdu(fromLowerTransportAccessMessage: accessMessage,
-                                                    usingKey: applicationKey.key, for: group) {
+                       let pdu = UpperTransportPdu(fromLowerTransportAccessMessage: accessMessage,
+                                                   usingKey: applicationKey.key, for: group) {
                         let keySet = AccessKeySet(applicationKey: applicationKey)
                         return (pdu, keySet)
                     }
-                    if let oldAid = applicationKey.oldAid, oldAid == applicationKey.aid, let key = applicationKey.oldKey,
-                        let pdu = UpperTransportPdu(fromLowerTransportAccessMessage: accessMessage,
-                                                    usingKey: key, for: group) {
+                    if let oldAid = applicationKey.oldAid, aid == oldAid,
+                       let key = applicationKey.oldKey,
+                       let pdu = UpperTransportPdu(fromLowerTransportAccessMessage: accessMessage,
+                                                   usingKey: key, for: group) {
                         let keySet = AccessKeySet(applicationKey: applicationKey)
                         return (pdu, keySet)
                     }
@@ -170,17 +173,19 @@ internal struct UpperTransportPdu {
             // Try decoding using source's Node Device Key. This should work if a status
             // message was sent as a response to a Config Message sent by this Provisioner.
             if let node = meshNetwork.node(withAddress: accessMessage.source),
+               let deviceKey = node.deviceKey,
                let pdu = UpperTransportPdu(fromLowerTransportAccessMessage: accessMessage,
-                                           usingKey: node.deviceKey) {
-                let keySet = DeviceKeySet(networkKey: accessMessage.networkKey, node: node)
+                                           usingKey: deviceKey),
+               let keySet = DeviceKeySet(networkKey: accessMessage.networkKey, node: node) {
                 return (pdu, keySet)
             }
             // On the other hand, if another Provisioner is sending Config Messages,
             // they will be signed using the target Node Device Key instead.
             if let node = meshNetwork.node(withAddress: accessMessage.destination),
+               let deviceKey = node.deviceKey,
                let pdu = UpperTransportPdu(fromLowerTransportAccessMessage: accessMessage,
-                                           usingKey: node.deviceKey) {
-                let keySet = DeviceKeySet(networkKey: accessMessage.networkKey, node: node)
+                                           usingKey: deviceKey),
+               let keySet = DeviceKeySet(networkKey: accessMessage.networkKey, node: node) {
                 return (pdu, keySet)
             }
         }

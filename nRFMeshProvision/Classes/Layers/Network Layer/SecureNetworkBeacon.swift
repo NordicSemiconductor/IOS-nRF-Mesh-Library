@@ -36,6 +36,9 @@ internal struct SecureNetworkBeacon: BeaconPdu {
     
     /// The Network Key related to this Secure Network beacon.
     let networkKey: NetworkKey
+    /// A flag indicating whether the Secure Network beacon has been
+    /// secured using the new Network Key during Key Refresh Procedure.
+    let validForKeyRefreshProcedure: Bool
     /// Key Refresh flag value.
     ///
     /// When this flag is active, the Node shall set the Key Refresh
@@ -52,8 +55,9 @@ internal struct SecureNetworkBeacon: BeaconPdu {
     
     /// Creates Secure Network beacon PDU object from received PDU.
     ///
-    /// - parameter pdu: The data received from mesh network.
-    /// - parameter networkKey: The Network Key to validate the beacon.
+    /// - parameters:
+    ///   - pdu: The data received from mesh network.
+    ///   - networkKey: The Network Key to validate the beacon.
     /// - returns: The beacon object, or `nil` if the data are invalid.
     init?(decode pdu: Data, usingNetworkKey networkKey: NetworkKey) {
         self.pdu = pdu
@@ -67,6 +71,8 @@ internal struct SecureNetworkBeacon: BeaconPdu {
         ivIndex = IvIndex(index: index, updateActive: updateActive)
         
         // Authenticate beacon using given Network Key.
+        // During Key Refresh Procedure when in Phase 1 (key distribution) the
+        // Secure Network beacon may be decoded using the old Network Key.
         let helper = OpenSSLHelper()
         if networkId == networkKey.networkId {
             let authenticationValue = helper.calculateCMAC(pdu.subdata(in: 1..<14), andKey: networkKey.keys.beaconKey)!
@@ -74,12 +80,14 @@ internal struct SecureNetworkBeacon: BeaconPdu {
                 return nil
             }
             self.networkKey = networkKey
-        } else if let oldNetworkId = networkKey.oldNetworkId, networkId == oldNetworkId {
+            self.validForKeyRefreshProcedure = networkKey.oldKey != nil
+        } else if case .keyDistribution = networkKey.phase, networkId == networkKey.oldNetworkId {
             let authenticationValue = helper.calculateCMAC(pdu.subdata(in: 1..<14), andKey: networkKey.oldKeys!.beaconKey)!
             guard authenticationValue.subdata(in: 0..<8) == pdu.subdata(in: 14..<22) else {
                 return nil
             }
             self.networkKey = networkKey
+            self.validForKeyRefreshProcedure = false
         } else {
             return nil
         }
@@ -125,9 +133,9 @@ internal extension SecureNetworkBeacon {
         // The new index must not be greater than the current one + 42,
         // unless this rule is disabled.
         guard (ivIndex.index > target.index &&
-            (ivRecoveryOver42Allowed || ivIndex.index <= target.index + 42)
+                (ivRecoveryOver42Allowed || ivIndex.index <= target.index + 42)
               ) ||
-            (ivIndex.index == target.index &&
+              (ivIndex.index == target.index &&
                 (target.updateActive || !ivIndex.updateActive)
               ) else {
             return false
@@ -179,16 +187,16 @@ internal extension SecureNetworkBeacon {
     /// This method goes over all Network Keys in the mesh network and tries
     /// to parse the beacon.
     ///
-    /// - parameter pdu:         The received PDU.
-    /// - parameter meshNetwork: The mesh network for which the PDU should be decoded.
+    /// - parameters:
+    ///   - pdu:         The received PDU.
+    ///   - meshNetwork: The mesh network for which the PDU should be decoded.
     /// - returns: The beacon object.
     static func decode(_ pdu: Data, for meshNetwork: MeshNetwork) -> SecureNetworkBeacon? {
-        guard pdu.count > 1 else {
+        guard pdu.count > 1, let beaconType = BeaconType(rawValue: pdu[0]) else {
             return nil
         }
-        let beaconType = BeaconType(rawValue: pdu[0])
         switch beaconType {
-        case .some(.secureNetwork):
+        case .secureNetwork:
             for networkKey in meshNetwork.networkKeys {
                 if let beacon = SecureNetworkBeacon(decode: pdu, usingNetworkKey: networkKey) {
                     return beacon

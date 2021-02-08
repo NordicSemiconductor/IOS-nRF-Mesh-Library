@@ -33,7 +33,7 @@ import Foundation
 public extension Element {
     
     /// Returns whether any of the Element's Models are bound to the
-    /// guven Application Key.
+    /// given Application Key.
     ///
     /// - parameter applicationKey: The Application Key to check bindings.
     /// - returns: `True` if there is at least one Model bound to the given

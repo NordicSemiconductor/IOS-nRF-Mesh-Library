@@ -36,11 +36,11 @@ class SimpleOnOffClientCell: BaseModelControlCell<SimpleOnOffClientDelegate> {
     @IBOutlet weak var icon: UIImageView!
     @IBOutlet weak var onButton: UIButton!
     @IBAction func onTapped(_ sender: UIButton) {
-        publishSimpleOnOffMessage(turnOn: true)
+        modelDelegate.state = true
     }
     @IBOutlet weak var offButton: UIButton!
     @IBAction func offTapped(_ sender: UIButton) {
-        publishSimpleOnOffMessage(turnOn: false)
+        modelDelegate.state = false
     }
     
     override func setup(_ model: SimpleOnOffClientDelegate?) {
@@ -54,14 +54,4 @@ class SimpleOnOffClientCell: BaseModelControlCell<SimpleOnOffClientDelegate> {
         onButton.isEnabled = isEnabled
         offButton.isEnabled = isEnabled
     }
-}
-
-private extension SimpleOnOffClientCell {
-    
-    func publishSimpleOnOffMessage(turnOn: Bool) {
-        let label = turnOn ? "Turning ON..." : "Turning OFF..."
-        delegate?.publish(SimpleOnOffSetUnacknowledged(turnOn),
-                          description: label, fromModel: model)
-    }
-    
 }

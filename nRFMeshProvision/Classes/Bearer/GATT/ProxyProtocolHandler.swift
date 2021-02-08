@@ -75,7 +75,7 @@ public class ProxyProtocolHandler {
     /// specification.
     ///
     /// - parameters:
-    ///   - data:        The data to be semgneted.
+    ///   - data:        The data to be segmented.
     ///   - messageType: The data type.
     ///   - mtu:         The maximum size of a packet to be sent.
     public func segment(_ data: Data, ofType messageType: PduType, toMtu mtu: Int) -> [Data] {
@@ -103,7 +103,7 @@ public class ProxyProtocolHandler {
     }
     
     /// This method consumes the given data. If the data were segmented,
-    /// they are buffored until the last segment is received.
+    /// they are buffered until the last segment is received.
     /// This method returns the message and its type when the last segment
     /// (or the only one) has been received, otherwise it returns `nil`.
     ///

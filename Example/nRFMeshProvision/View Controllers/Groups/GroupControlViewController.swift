@@ -64,7 +64,15 @@ class GroupControlViewController: ProgressCollectionViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         collectionView.setEmptyView(title: "No models configured",
-                                    message: "No models are subscribed to this group.",
+                                    message: "No supported models are subscribed to this group.\n\n"
+                                           + "nRF Mesh currently supports the following\n"
+                                           + "models on the Groups tab:\n"
+                                           + "- Generic OnOff Server,\n"
+                                           + "- Generic Level Server,\n"
+                                           + "- Scene Server,\n"
+                                           + "- Scene Setup Server.\n\n"
+                                           + "This limitation only applies to the app,\n"
+                                           + "not the underlying mesh library.",
                                     messageImage: #imageLiteral(resourceName: "baseline-groups"))
         collectionView.delegate = self
         
@@ -114,8 +122,8 @@ class GroupControlViewController: ProgressCollectionViewController {
             viewController.canModifyAddress = sections.isEmpty
         } else if segue.identifier == "showDetails" {
             let destination = segue.destination as! UINavigationController
-            let bottomSheet = destination.topViewController as! BottomSheetViewController
-            bottomSheet.models = sender as? [Model]
+            let dialog = destination.topViewController as! GroupTargetModelsViewController
+            dialog.models = sender as? [Model]
         }
     }
 
@@ -125,18 +133,22 @@ class GroupControlViewController: ProgressCollectionViewController {
         return sections.count
     }
 
-    override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+    override func collectionView(_ collectionView: UICollectionView,
+                                 numberOfItemsInSection section: Int) -> Int {
         let section = sections[section]
         return section.items.count
     }
     
-    override func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
+    override func collectionView(_ collectionView: UICollectionView,
+                                 viewForSupplementaryElementOfKind kind: String,
+                                 at indexPath: IndexPath) -> UICollectionReusableView {
         let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: "key", for: indexPath) as! SectionView
         header.title.text = sections[indexPath.section].applicationKey.name.uppercased()
         return header
     }
 
-    override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+    override func collectionView(_ collectionView: UICollectionView,
+                                 cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let section = sections[indexPath.section]
         let item = section.items[indexPath.row]
         let identifier = String(format: "%08X", item.modelId)
@@ -148,7 +160,8 @@ class GroupControlViewController: ProgressCollectionViewController {
         return cell
     }
     
-    override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+    override func collectionView(_ collectionView: UICollectionView,
+                                 didSelectItemAt indexPath: IndexPath) {
         let section = sections[indexPath.section]
         let models = section.items[indexPath.row].models
         performSegue(withIdentifier: "showDetails", sender: models)
@@ -210,7 +223,7 @@ extension GroupControlViewController: MeshNetworkDelegate {
     
     func meshNetworkManager(_ manager: MeshNetworkManager, failedToSendMessage message: MeshMessage,
                             from localElement: Element, to destination: Address, error: Error) {
-        done() {
+        done {
             self.presentAlert(title: "Error", message: error.localizedDescription)
         }
     }
@@ -219,8 +232,10 @@ extension GroupControlViewController: MeshNetworkDelegate {
 private extension Model {
     
     var isSupported: Bool {
-        return modelIdentifier == 0x1000 ||
-               modelIdentifier == 0x1002
+        return modelIdentifier == .genericOnOffServerModelId ||
+               modelIdentifier == .genericLevelServerModelId ||
+               modelIdentifier == .sceneServerModelId ||
+               modelIdentifier == .sceneSetupServerModelId
     }
     
     var modelId: UInt32 {

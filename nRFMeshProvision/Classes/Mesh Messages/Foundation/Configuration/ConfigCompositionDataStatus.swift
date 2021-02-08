@@ -62,7 +62,7 @@ public struct ConfigCompositionDataStatus: ConfigMessage {
             }
             page = page0
         default:
-            // Other Pages are not supoprted.
+            // Other Pages are not supported.
             return nil
         }
     }
@@ -86,7 +86,7 @@ public struct Page0: CompositionDataPage {
     /// data.
     public let minimumNumberOfReplayProtectionList: UInt16
     /// Node's features. See `NodeFeatures` for details.
-    public let features: NodeFeatures
+    public let features: NodeFeaturesState
     /// An array of node's elements.
     public let elements: [Element]
     
@@ -111,7 +111,7 @@ public struct Page0: CompositionDataPage {
         productIdentifier = node.productIdentifier ?? 0
         versionIdentifier = node.versionIdentifier ?? 0
         minimumNumberOfReplayProtectionList = node.minimumNumberOfReplayProtectionList ?? 0
-        features = node.features ?? NodeFeatures()
+        features = node.features ?? NodeFeaturesState()
         elements = node.elements
     }
     
@@ -128,7 +128,7 @@ public struct Page0: CompositionDataPage {
         productIdentifier = parameters.read(fromOffset: 3)
         versionIdentifier = parameters.read(fromOffset: 5)
         minimumNumberOfReplayProtectionList = parameters.read(fromOffset: 7)
-        features = NodeFeatures(rawValue: parameters.read(fromOffset: 9))
+        features = NodeFeaturesState(rawValue: parameters.read(fromOffset: 9))
         
         var readElements: [Element] = []
         var offset = 11

@@ -30,26 +30,127 @@
 
 import Foundation
 
-/// Scene number type. Type alias for UInt16.
-public typealias Scene = UInt16
-
-public extension Scene {
+public class Scene: Codable {
+    internal weak var meshNetwork: MeshNetwork?
     
-    static let invalid:  Scene = 0x0000
-    static let minScene: Scene = 0x0001
-    static let maxScene: Scene = 0xFFFF
+    /// Scene number.
+    public let number: SceneNumber
+    /// UTF-8 human-readable name of the Scene.
+    public var name: String
+    /// Addresses of Elements whose Scene Register state contains this Scene.
+    public internal(set) var addresses: [Address]
+    
+    internal init(_ number: SceneNumber, name: String) {
+        self.number = number
+        self.name = name
+        self.addresses = []
+    }
+    
+    internal init(copy scene: Scene, andTruncateTo nodes: [Node]) {
+        self.number = scene.number
+        self.name = scene.name
+        self.addresses = scene.addresses
+            .filter { address in nodes.contains { node in node.hasAllocatedAddress(address) } }
+    }
+    
+    // MARK: - Codable
+    
+    private enum CodingKeys: CodingKey {
+        case scene // 3.0-beta1 was using 'scene' instead of 'number'.
+        case number
+        case name
+        case addresses
+    }
+    
+    public required init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        let sceneNumberString  = try container.decode(String.self, forKey: .number, or: .scene)
+        guard let number = SceneNumber(hex: sceneNumberString) else {
+            throw DecodingError.dataCorruptedError(forKey: .number, in: container,
+                                                   debugDescription: "Scene number must be 4-character hexadecimal string.")
+        }
+        guard number.isValidSceneNumber else {
+            throw DecodingError.dataCorruptedError(forKey: .number, in: container,
+                                                   debugDescription: "Invalid scene number.")
+        }
+        self.number = number
+        self.name = try container.decode(String.self, forKey: .name)
+        self.addresses = []
+        let addressesStrings = try container.decode([String].self, forKey: .addresses)
+        try addressesStrings.forEach {
+            guard let address = Address(hex: $0) else {
+                throw DecodingError.dataCorruptedError(forKey: .addresses, in: container,
+                                                       debugDescription: "Address must be 4-character hexadecimal.")
+            }
+            guard address.isUnicast else {
+                throw DecodingError.dataCorruptedError(forKey: .addresses, in: container,
+                                                       debugDescription: "Address must be of unicast type.")
+            }
+            self.addresses.append(address)
+        }
+        self.addresses.sort()
+    }
+    
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(number.hex, forKey: .number)
+        try container.encode(name, forKey: .name)
+        try container.encode(addresses.map { $0.hex }, forKey: .addresses)
+    }
+}
+
+internal extension Scene {
+    
+    /// Adds the Unicast Address to the Scene object.
+    ///
+    /// - parameter address: The Unicast Address of an Element with Scene Server model
+    ///                      that is confirmed to have the Scene in its Scene Register.
+    func add(address: Address) {
+        guard address.isUnicast && !addresses.contains(address) else {
+            return
+        }
+        addresses.append(address)
+        addresses.sort()
+        meshNetwork?.timestamp = Date()
+    }
+    
+    /// Removes the Unicast Address from the Scene object.
+    ///
+    /// - parameter address: The Unicast Address of an Element with Scene Server model
+    ///                      that may have the Scene in its Scene Register.
+    func remove(address: Address) {
+        guard address.isUnicast,
+              let index = addresses.firstIndex(of: address) else {
+            return
+        }
+        addresses.remove(at: index)
+        meshNetwork?.timestamp = Date()
+    }
+    
+    /// Removes all Unicast Addresses assigned to the given Node from the
+    /// Scene object.
+    ///
+    /// - parameter node: The Node that is may have the Scene in any of
+    ///                   its Scene Registers.
+    func remove(node: Node) {
+        node.elements.forEach { element in
+            if let index = addresses.firstIndex(of: element.unicastAddress) {
+                addresses.remove(at: index)
+                meshNetwork?.timestamp = Date()
+            }
+        }        
+    }
     
 }
 
-// MARK: - Helper methods
-
-public extension Scene {
+extension Scene: Equatable, Hashable {
     
-    /// Returns `true` if the scene number is valid.
-    ///
-    /// Valid scenes have numbers from `minScene` to `maxScene`.
-    var isValidScene: Bool {
-        return self != Scene.invalid
+    public static func == (lhs: Scene, rhs: Scene) -> Bool {
+        return lhs.number == rhs.number
+    }
+    
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(number)
     }
     
 }

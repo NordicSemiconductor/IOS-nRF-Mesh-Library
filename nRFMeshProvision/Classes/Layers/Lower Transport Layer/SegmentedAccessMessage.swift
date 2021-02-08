@@ -32,7 +32,6 @@ import Foundation
 
 internal struct SegmentedAccessMessage: SegmentedMessage {
     let message: MeshMessage?
-    let localElement: Element?
     let userInitiated: Bool
     let source: Address
     let destination: Address
@@ -102,7 +101,6 @@ internal struct SegmentedAccessMessage: SegmentedMessage {
         networkKey = networkPdu.networkKey
         ivIndex = networkPdu.ivIndex
         message = nil
-        localElement = nil
         userInitiated = false
     }
 
@@ -114,7 +112,6 @@ internal struct SegmentedAccessMessage: SegmentedMessage {
     /// - parameter offset: The segment offset.
     init(fromUpperTransportPdu pdu: UpperTransportPdu, usingNetworkKey networkKey: NetworkKey, offset: UInt8) {
         self.message = pdu.message
-        self.localElement = pdu.localElement
         self.aid = pdu.aid
         self.source = pdu.source
         self.destination = pdu.destination

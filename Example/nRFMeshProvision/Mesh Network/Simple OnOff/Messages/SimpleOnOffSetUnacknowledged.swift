@@ -32,7 +32,7 @@ import Foundation
 import nRFMeshProvision
 
 struct SimpleOnOffSetUnacknowledged: StaticVendorMessage {
-    // The Op Code cosists of:
+    // The Op Code consists of:
     // 0xC0-0000 - Vendor Op Code bitmask
     // 0x03-0000 - The Op Code defined by...
     // 0x00-5900 - Nordic Semiconductor ASA company ID (in Little Endian) as defined here:

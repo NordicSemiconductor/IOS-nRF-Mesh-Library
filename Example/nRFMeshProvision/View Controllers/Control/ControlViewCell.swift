@@ -125,7 +125,6 @@ class ControlViewController: ProgressCollectionViewController {
         let identifier = String(format: "%08X", model.modelId)
         var cell = collectionView.dequeueReusableCell(withReuseIdentifier: identifier, for: indexPath) as! ModelControlCell
         cell.model = model
-        cell.delegate = self
         return cell as! UICollectionViewCell
     }
     
@@ -156,16 +155,6 @@ class ControlViewController: ProgressCollectionViewController {
         presentAlert(title: name, message: message)
     }
 
-}
-
-extension ControlViewController: ModelControlDelegate {
-    
-    func publish(_ message: MeshMessage, description: String, fromModel model: Model) {
-        start(description) {
-            return MeshNetworkManager.instance.publish(message, fromModel: model)
-        }
-    }
-    
 }
 
 extension ControlViewController: UICollectionViewDelegateFlowLayout {
@@ -200,7 +189,7 @@ extension ControlViewController: MeshNetworkDelegate {
     
     func meshNetworkManager(_ manager: MeshNetworkManager, failedToSendMessage message: MeshMessage,
                             from localElement: Element, to destination: Address, error: Error) {
-        done() {
+        done {
             self.presentAlert(title: "Error", message: error.localizedDescription)
         }
     }
@@ -209,11 +198,11 @@ extension ControlViewController: MeshNetworkDelegate {
 private extension Model {
     
     var isSupported: Bool {
-        return modelIdentifier == 0x1000 ||
-               modelIdentifier == 0x1001 ||
-               modelIdentifier == 0x1002 ||
-               modelIdentifier == 0x1003 ||
-               (modelIdentifier == 0x0001 && companyIdentifier == 0x0059)
+        return modelIdentifier == .genericOnOffServerModelId ||
+               modelIdentifier == .genericOnOffClientModelId ||
+               modelIdentifier == .genericLevelServerModelId ||
+               modelIdentifier == .genericLevelClientModelId ||
+               isSimpleOnOffClient
     }
     
     var modelId: UInt32 {
@@ -222,7 +211,8 @@ private extension Model {
     }
     
     var isSimpleOnOffClient: Bool {
-        return modelIdentifier == 0x0001 && companyIdentifier == 0x0059
+        return modelIdentifier == .simpleOnOffModelId &&
+               companyIdentifier == .nordicSemiconductorCompanyId
     }
     
 }

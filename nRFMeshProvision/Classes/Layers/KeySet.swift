@@ -47,14 +47,14 @@ internal struct AccessKeySet: KeySet {
     }
     
     var accessKey: Data {
-        if case .distributingKeys = networkKey.phase {
+        if case .keyDistribution = networkKey.phase {
             return applicationKey.oldKey ?? applicationKey.key
         }
         return applicationKey.key
     }
     
     var aid: UInt8? {
-        if case .distributingKeys = networkKey.phase {
+        if case .keyDistribution = networkKey.phase {
             return applicationKey.oldAid ?? applicationKey.aid
         }
         return applicationKey.aid
@@ -64,15 +64,17 @@ internal struct AccessKeySet: KeySet {
 internal struct DeviceKeySet: KeySet {
     let networkKey: NetworkKey
     let node: Node
+    let accessKey: Data
     
     var aid: UInt8? = nil
-    var accessKey: Data {
-        return node.deviceKey
-    }
     
-    init(networkKey: NetworkKey, node: Node) {
+    init?(networkKey: NetworkKey, node: Node) {
+        guard let deviceKey = node.deviceKey else {
+            return nil
+        }
         self.networkKey = networkKey
         self.node = node
+        self.accessKey = deviceKey
     }
 }
 

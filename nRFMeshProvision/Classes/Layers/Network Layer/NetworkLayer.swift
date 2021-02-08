@@ -31,10 +31,12 @@
 import Foundation
 
 internal class NetworkLayer {
-    private let networkManager: NetworkManager
+    private weak var networkManager: NetworkManager!
     private let meshNetwork: MeshNetwork
     private let networkMessageCache: NSCache<NSData, NSNull>
     private let defaults: UserDefaults
+    
+    private let mutex = DispatchQueue(label: "NetworkLayerMutex")
     
     private var logger: LoggerDelegate? {
         return networkManager.manager.logger
@@ -110,12 +112,12 @@ internal class NetworkLayer {
             
         case .meshBeacon:
             if let beaconPdu = SecureNetworkBeacon.decode(pdu, for: meshNetwork) {
-                logger?.i(.network, "\(beaconPdu) receieved (decrypted using key: \(beaconPdu.networkKey))")
+                logger?.i(.network, "\(beaconPdu) received (decrypted using key: \(beaconPdu.networkKey))")
                 handle(secureNetworkBeacon: beaconPdu)
                 return
             }
             if let beaconPdu = UnprovisionedDeviceBeacon.decode(pdu, for: meshNetwork) {
-                logger?.i(.network, "\(beaconPdu) receieved")
+                logger?.i(.network, "\(beaconPdu) received")
                 handle(unprovisionedDeviceBeacon: beaconPdu)
                 return
             }
@@ -150,17 +152,15 @@ internal class NetworkLayer {
         guard let transmitter = networkManager.transmitter else {
             throw BearerError.bearerClosed
         }
-        // Get the current sequence number for local Provisioner's source address.
-        let sequence = UInt32(defaults.integer(forKey: "S\(pdu.source.hex)"))
-        // As the sequnce number was just used, it has to be incremented.
-        defaults.set(sequence + 1, forKey: "S\(pdu.source.hex)")
         
+        let sequence: UInt32 = (pdu as? AccessMessage)?.sequence ?? nextSequenceNumber(for: pdu.source)
         let networkPdu = NetworkPdu(encode: pdu, ofType: type, withSequence: sequence, andTtl: ttl)
         logger?.i(.network, "Sending \(networkPdu) encrypted using \(networkPdu.networkKey)")
         // Loopback interface.
         if shouldLoopback(networkPdu) {
             handle(incomingPdu: networkPdu.pdu, ofType: type)
-            
+            // Messages sent with TTL = 1 will only be sent locally.
+            guard ttl != 1 else { return }
             if isLocalUnicastAddress(networkPdu.destination) {
                 // No need to send messages targeting local Unicast Addresses.
                 return
@@ -168,6 +168,8 @@ internal class NetworkLayer {
             // If the message was sent locally, don't report Bearer closer error.
             try? transmitter.send(networkPdu.pdu, ofType: type)
         } else {
+            // Messages sent with TTL = 1 may only be sent locally.
+            guard ttl != 1 else { return }
             do {
                 try transmitter.send(networkPdu.pdu, ofType: type)
             } catch {
@@ -184,7 +186,12 @@ internal class NetworkLayer {
             let networkTransmit = meshNetwork.localProvisioner?.node?.networkTransmit,
             networkTransmit.count > 1 {
             var count = networkTransmit.count
-            BackgroundTimer.scheduledTimer(withTimeInterval: networkTransmit.timeInterval, repeats: true) { timer in
+            BackgroundTimer.scheduledTimer(withTimeInterval: networkTransmit.timeInterval,
+                                           repeats: true) { [weak self] timer in
+                guard let self = self else {
+                    timer.invalidate()
+                    return
+                }
                 try? self.networkManager.transmitter?.send(networkPdu.pdu, ofType: type)
                 count -= 1
                 if count == 0 {
@@ -198,7 +205,7 @@ internal class NetworkLayer {
     ///
     /// The Proxy Filter object will be informed about the success or a failure.
     ///
-    /// - parameter message: The Proxy Confifuration message to be sent.
+    /// - parameter message: The Proxy Configuration message to be sent.
     func send(proxyConfigurationMessage message: ProxyConfigurationMessage) {
         guard let networkKey = proxyNetworkKey else {
             // The Proxy Network Key is unknown.
@@ -217,7 +224,7 @@ internal class NetworkLayer {
                                  andIvIndex: meshNetwork.ivIndex)
         logger?.i(.network, "Sending \(pdu)")
         do {
-            try send(lowerTransportPdu: pdu, ofType: .proxyConfiguration, withTtl: 0)
+            try send(lowerTransportPdu: pdu, ofType: .proxyConfiguration, withTtl: pdu.ttl)
             networkManager.manager.proxyFilter?.managerDidDeliverMessage(message)
         } catch {
             if case BearerError.bearerClosed = error {
@@ -226,13 +233,24 @@ internal class NetworkLayer {
             networkManager.manager.proxyFilter?.managerFailedToDeliverMessage(message, error: error)
         }
     }
+    
+    /// This method returns the next outgoing Sequence number for the given
+    /// local source Address.
+    ///
+    /// - parameter source: The source Element's Unicast Address.
+    /// - returns: The Sequence number a message can be sent with.
+    func nextSequenceNumber(for source: Address) -> UInt32 {
+        return mutex.sync {
+            defaults.nextSequenceNumber(for: source)
+        }
+    }
 }
 
 private extension NetworkLayer {
     
     /// This method handles the Unprovisioned Device beacon.
     ///
-    /// The curernt implementation does nothing, as remote provisioning is
+    /// The current implementation does nothing, as remote provisioning is
     /// currently not supported.
     ///
     /// - parameter unprovisionedDeviceBeacon: The Unprovisioned Device beacon received.
@@ -259,7 +277,7 @@ private extension NetworkLayer {
         // Get the last IV Index.
         //
         // Note: Before version 2.2.2 the last IV Index was not stored.
-        //       Instead IV Index was set to 0
+        //       Instead IV Index was set to 0.
         let map = defaults.object(forKey: IvIndex.indexKey) as? [String : Any]
         /// The last used IV Index for this mesh network.
         let lastIVIndex = IvIndex.fromMap(map) ?? IvIndex()
@@ -271,8 +289,7 @@ private extension NetworkLayer {
         let isIvRecoveryActive = defaults.bool(forKey: IvIndex.ivRecoveryKey)
         /// The test mode disables the 96h rule, leaving all other behavior unchanged.
         let isIvTestModeActive = networkManager.manager.ivUpdateTestMode
-        // Ensure, that the received Secure Network Beacon can overwrite current
-        // IV Index.
+        // Ensure, that the received Secure Network Beacon can overwrite current IV Index.
         let flag = networkManager.manager.allowIvIndexRecoveryOver42
         if secureNetworkBeacon.canOverwrite(ivIndex: lastIVIndex,
                                             updatedAt: lastTransitionDate,
@@ -288,19 +305,17 @@ private extension NetworkLayer {
             // If the IV Index used for transmitting messages effectively increased,
             // the Node shall reset the sequence number to 0x000000.
             //
-            // Note: This library keeps seperate sequence numbers for each Element of the
+            // Note: This library keeps separate sequence numbers for each Element of the
             //       local provisioner (source Unicast Address). All of them need to be reset.
-            if meshNetwork.ivIndex.transmitIndex > lastIVIndex.transmitIndex {
+            if let localNode = meshNetwork.localProvisioner?.node,
+               meshNetwork.ivIndex.transmitIndex > lastIVIndex.transmitIndex {
                 logger?.i(.network, "Resetting local sequence numbers to 0")
-                meshNetwork.localProvisioner?.node?.elements.forEach { element in
-                    defaults.set(0, forKey: "S\(element.unicastAddress.hex)")
-                }
+                defaults.resetSequenceNumbers(of: localNode)
             }
             
             // Store the last IV Index.
             defaults.set(meshNetwork.ivIndex.asMap, forKey: IvIndex.indexKey)
-            if lastIVIndex != meshNetwork.ivIndex ||
-               defaults.object(forKey: IvIndex.timestampKey) == nil {
+            if lastIVIndex != meshNetwork.ivIndex || lastTransitionDate == nil {
                 defaults.set(Date(), forKey: IvIndex.timestampKey)
                 
                 let ivRecovery = meshNetwork.ivIndex.index > lastIVIndex.index + 1 &&
@@ -309,21 +324,31 @@ private extension NetworkLayer {
             }
             
             // If the Key Refresh Procedure is in progress, and the new Network Key
-            // has already been set, the key refresh flag indicates switching to phase 2.
-            if case .distributingKeys = networkKey.phase, secureNetworkBeacon.keyRefreshFlag {
-                networkKey.phase = .finalizing
+            // has already been set, the key refresh flag indicates switching to Phase 2.
+            if case .keyDistribution = networkKey.phase,
+               secureNetworkBeacon.validForKeyRefreshProcedure &&
+               secureNetworkBeacon.keyRefreshFlag == true {
+                networkKey.phase = .usingNewKeys
             }
-            // If the Key Refresh Procedure is in phase 2, and the key refresh flag is
+            // If the Key Refresh Procedure is in Phase 2, and the key refresh flag is
             // set to false.
-            if case .finalizing = networkKey.phase, !secureNetworkBeacon.keyRefreshFlag {
+            if case .usingNewKeys = networkKey.phase,
+               secureNetworkBeacon.validForKeyRefreshProcedure &&
+               secureNetworkBeacon.keyRefreshFlag == false {
+                // Revoke the old Network Key...
                 networkKey.oldKey = nil // This will set the phase to .normalOperation.
+                // ...and old Application Keys bound to it.
+                meshNetwork.applicationKeys.boundTo(networkKey)
+                    .forEach { $0.oldKey = nil }
             }
         } else if secureNetworkBeacon.ivIndex != lastIVIndex.previous {
             var numberOfHoursSinceDate = "unknown time"
             if let date = lastTransitionDate {
                 numberOfHoursSinceDate = "\(Int(-date.timeIntervalSinceNow / 3600))h"
             }
-            logger?.w(.network, "Discarding beacon (\(secureNetworkBeacon.ivIndex), last \(lastIVIndex), changed: \(numberOfHoursSinceDate) ago, test mode: \(networkManager.manager.ivUpdateTestMode)))")
+            logger?.w(.network, "Discarding beacon (\(secureNetworkBeacon.ivIndex), "
+                              + "last \(lastIVIndex), changed: \(numberOfHoursSinceDate) ago, "
+                              + "test mode: \(networkManager.manager.ivUpdateTestMode)))")
             return
         } // else,
         // the Secure Network beacon was sent by a Node with a previous IV Index,
@@ -374,7 +399,7 @@ private extension NetworkLayer {
             logger?.w(.network, "Failed to decrypt proxy PDU")
             return
         }
-        logger?.i(.network, "\(controlMessage) receieved (decrypted using key: \(controlMessage.networkKey))")
+        logger?.i(.network, "\(controlMessage) received (decrypted using key: \(controlMessage.networkKey))")
         
         var MessageType: ProxyConfigurationMessage.Type?
         
@@ -417,9 +442,4 @@ private extension NetworkLayer {
         return address.isGroup || address.isVirtual || isLocalUnicastAddress(address)
     }
     
-}
-
-private extension IvIndex {
-    static let timestampKey = "IVTimestamp"
-    static let ivRecoveryKey = "IVRecovery"
 }

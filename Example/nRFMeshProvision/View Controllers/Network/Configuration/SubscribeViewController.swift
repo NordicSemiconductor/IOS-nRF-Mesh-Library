@@ -46,7 +46,11 @@ class SubscribeViewController: ProgressViewController {
         dismiss(animated: true)
     }
     @IBAction func doneTapped(_ sender: UIBarButtonItem) {
-        addSubscription()
+        guard let selectedIndexPath = selectedIndexPath else {
+            return
+        }
+        let group = groups[selectedIndexPath.row]
+        addSubscription(to: group)
     }
     
     // MARK: - Properties
@@ -59,9 +63,17 @@ class SubscribeViewController: ProgressViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        let presentGroups = UIButtonAction(title: "Groups") { [weak self] in
+            guard let self = self else { return }
+            let tabBarController = self.presentingViewController as? RootTabBarController
+            self.dismiss(animated: true) {
+                tabBarController?.presentGroups()
+            }
+        }
         tableView.setEmptyView(title: "No groups",
                                message: "Go to Groups to create a group.",
-                               messageImage: #imageLiteral(resourceName: "baseline-groups"))
+                               messageImage: #imageLiteral(resourceName: "baseline-groups"),
+                               action: presentGroups)
         
         MeshNetworkManager.instance.delegate = self
         
@@ -112,16 +124,16 @@ class SubscribeViewController: ProgressViewController {
 
 private extension SubscribeViewController {
     
-    func addSubscription() {
-        guard let selectedIndexPath = selectedIndexPath else {
+    func addSubscription(to group: Group) {
+        guard let model = model,
+              let node = model.parentElement?.parentNode else {
             return
         }
-        let group = groups[selectedIndexPath.row]
         start("Subscribing...") {
             let message: ConfigMessage =
-                ConfigModelSubscriptionAdd(group: group, to: self.model) ??
-                ConfigModelSubscriptionVirtualAddressAdd(group: group, to: self.model)!
-            return try MeshNetworkManager.instance.send(message, to: self.model)
+                ConfigModelSubscriptionAdd(group: group, to: model) ??
+                ConfigModelSubscriptionVirtualAddressAdd(group: group, to: model)!
+            return try MeshNetworkManager.instance.send(message, to: node)
         }
     }
     
@@ -135,7 +147,7 @@ extension SubscribeViewController: MeshNetworkDelegate {
         // Has the Node been reset remotely.
         guard !(message is ConfigNodeReset) else {
             (UIApplication.shared.delegate as! AppDelegate).meshNetworkDidChange()
-            done() {
+            done {
                 let rootViewControllers = self.presentingViewController?.children
                 self.dismiss(animated: true) {
                     rootViewControllers?.forEach {
@@ -156,7 +168,7 @@ extension SubscribeViewController: MeshNetworkDelegate {
         switch message {
             
         case let status as ConfigModelSubscriptionStatus:
-            done() {
+            done {
                 if status.status == .success {
                     self.dismiss(animated: true)
                     self.delegate?.subscriptionAdded()
@@ -174,7 +186,7 @@ extension SubscribeViewController: MeshNetworkDelegate {
                             failedToSendMessage message: MeshMessage,
                             from localElement: Element, to destination: Address,
                             error: Error) {
-        done() {
+        done {
             self.presentAlert(title: "Error", message: error.localizedDescription)
         }
     }

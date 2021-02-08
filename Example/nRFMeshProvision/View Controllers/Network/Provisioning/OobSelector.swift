@@ -46,7 +46,8 @@ extension OobSelector where Self: UIViewController {
         let skipAction = UIAlertAction(title: "Skip", style: .destructive) { _ in
             callback(.noOobPublicKey)
         }
-        presentTextAlert(title: "Public Key", message: message, type: .publicKeyRequired, option: skipAction) { hex in
+        presentTextAlert(title: "Public Key", message: message,
+                         type: .publicKeyRequired, option: skipAction, cancelHandler: nil) { hex in
             if let key = Data(hex: hex) {
                 callback(.oobPublicKey(key: key))
             }

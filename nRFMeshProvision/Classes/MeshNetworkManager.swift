@@ -88,7 +88,7 @@ public class MeshNetworkManager {
     /// If the bearer is using GATT, it is recommended to set the transmission
     /// interval longer than the connection interval, so that the acknowledgment
     /// had a chance to be received.
-    public var transmissionTimerInteral: TimeInterval = 0.200
+    public var transmissionTimerInterval: TimeInterval = 0.200
     /// Number of times a non-acknowledged segment of a segmented message
     /// will be retransmitted before the message will be cancelled.
     ///
@@ -105,23 +105,24 @@ public class MeshNetworkManager {
     ///
     /// The acknowledged message timeout should be set to a minimum of 30 seconds.
     public var acknowledgmentMessageTimeout: TimeInterval = 30.0
-    /// The base time after which the acknowledgmed message will be repeated.
+    /// The base time after which the acknowledged message will be repeated.
     ///
     /// The repeat timer will be set to the base time + 50 * TTL milliseconds +
     /// 50 * segment count. The TTL and segment count dependent parts are added
     /// automatically, and this value shall specify only the constant part.
     public var acknowledgmentMessageInterval: TimeInterval = 2.0
-    /// According to Bluetooth Mesh Profile 1.0.1, section 3.10.5, if the IV Index of the mesh
-    /// network increased by more than 42 since the last connection (which can take at least
-    /// 48 weeks), the Node should be reprovisioned. However, as this library can be used to
-    /// provision other Nodes, it should not be blocked from sending messages to the network
-    /// only because the phone wasn't connected to the network for that time. This flag can
-    /// disable this check, effectively allowing such connection.
+    /// According to Bluetooth Mesh Profile 1.0.1, section 3.10.5, if the IV Index
+    /// of the mesh network increased by more than 42 since the last connection
+    /// (which can take at least 48 weeks), the Node should be re-provisioned.
+    /// However, as this library can be used to provision other Nodes, it should not
+    /// be blocked from sending messages to the network only because the phone wasn't
+    /// connected to the network for that time. This flag can disable this check,
+    /// effectively allowing such connection.
     ///
-    /// The same can be achieved by clearing the app data (uninstalling and reinstalling the
-    /// app) and importing the mesh network. With no "previous" IV Index, the library will
-    /// accept any IV Index received in the Secure Network beacon upon connection to the
-    /// GATT Proxy Node.
+    /// The same can be achieved by clearing the app data (uninstalling and reinstalling
+    /// the app) and importing the mesh network. With no "previous" IV Index, the
+    /// library will accept any IV Index received in the Secure Network beacon upon
+    /// connection to the GATT Proxy Node.
     public var allowIvIndexRecoveryOver42: Bool = false
     /// IV Update Test Mode enables efficient testing of the IV Update procedure.
     /// The IV Update test mode removes the 96-hour limit; all other behavior of the device
@@ -144,23 +145,31 @@ public class MeshNetworkManager {
     
     // MARK: - Constructors
     
-    /// Initializes the MeshNetworkManager.
+    /// Initializes the Mesh Network Manager.
     ///
     /// If storage is not provided, a local file will be used instead.
     ///
-    /// - important: Aafter the manager has been initialized, the
-    ///              `localElements` property must be set . Otherwise,
-    ///              none of status messages will be parsed correctly
-    ///              and they will be returned to the delegate as
-    ///              `UnknownMessage`s.
+    /// - important: After the manager has been initialized, the `localElements`
+    ///              property must be set . Otherwise, none of status messages will
+    ///              be parsed correctly and they will be returned to the delegate
+    ///              as `UnknownMessage`s.
     ///
     /// - parameters:
     ///   - storage: The storage to use to save the network configuration.
-    ///   - queue: The DispatQueue to process reqeusts on. By default
-    ///            the a global background queue will be used.
-    ///   - delegateQueue: The DispatQueue to call delegate methods on.
+    ///   - queue: The DispatchQueue to process requests on. By default
+    ///            the a global background concurrent queue will be used.
+    ///            Note, that if multiple messages are sent shortly one after another,
+    ///            processing them in a concurrent queue may cause some of them to be
+    ///            discarded despite the fact that they were received in the ascending
+    ///            order of SeqAuth, as one with a greater SeqAuth value may be processed
+    ///            before the previous one, causing the replay protection validation fail
+    ///            for the latter. This library stores 2 last SeqAuth values, so if a
+    ///            message with a unique SeqAuth is processed after its successor, it
+    ///            will be processed correctly.
+    ///   - delegateQueue: The DispatchQueue to call delegate methods on.
     ///                    By default the global main queue will be used.
     /// - seeAlso: `LocalStorage`
+    /// - seeAlso: `LowerTransportLayer.checkAgainstReplayAttack(_:NetworkPdu)`
     public init(using storage: Storage = LocalStorage(),
                 queue: DispatchQueue = DispatchQueue.global(qos: .background),
                 delegateQueue: DispatchQueue = DispatchQueue.main) {
@@ -170,7 +179,7 @@ public class MeshNetworkManager {
         self.delegateQueue = delegateQueue
     }
     
-    /// Initializes the MeshNetworkManager. It will use the `LocalStorage`
+    /// Initializes the Mesh Network Manager. It will use the `LocalStorage`
     /// with the given file name.
     ///
     /// - parameter fileName: File name to keep the configuration.
@@ -227,7 +236,7 @@ public extension MeshNetworkManager {
     /// Node with additional Elements and Models. For example, you may add an
     /// additional Element with Generic On/Off Client Model if you support this
     /// feature in your app. Make sure there is enough addresses for all the
-    /// Elements created. If a collision is found, the coliding Elements will
+    /// Elements created. If a collision is found, the colliding Elements will
     /// be ignored.
     ///
     /// The Element with all mandatory Models (Configuration Server and Client
@@ -242,6 +251,7 @@ public extension MeshNetworkManager {
         }
         set {
             meshNetwork?.localElements = newValue
+            networkManager?.accessLayer.reinitializePublishers()
         }
     }
 }
@@ -298,20 +308,26 @@ public extension MeshNetworkManager {
     /// This method tries to publish the given message using the
     /// publication information set in the Model.
     ///
+    /// If the retransmission is set to a value greater than 0, and the message
+    /// is unacknowledged, this method will retransmit it number of times
+    /// with the count and interval specified in the retransmission object.
+    ///
     /// - parameters:
-    ///   - message:    The message to be sent.
-    ///   - model:      The model from which to send the message.
-    ///   - initialTtl: The initial TTL (Time To Live) value of the message.
-    ///                 If `nil`, the default Node TTL will be used.
-    func publish(_ message: MeshMessage, fromModel model: Model,
-                 withTtl initialTtl: UInt8? = nil) -> MessageHandle? {
-        guard let publish = model.publish,
-            let localElement = model.parentElement,
-            let applicationKey = meshNetwork?.applicationKeys[publish.index] else {
+    ///   - message: The message to be sent.
+    ///   - model:   The model from which to send the message.
+    @discardableResult
+    func publish(_ message: MeshMessage, from model: Model) -> MessageHandle? {
+        guard let networkManager = networkManager,
+              let publish = model.publish,
+              let localElement = model.parentElement,
+              let _ = meshNetwork?.applicationKeys[publish.index] else {
             return nil
         }
-        return try? send(message, from: localElement, to: publish.publicationAddress,
-                         withTtl: initialTtl, using: applicationKey)
+        queue.async {
+            networkManager.publish(message, from: model)
+        }
+        return MessageHandle(for: message, sentFrom: localElement.unicastAddress,
+                             to: publish.publicationAddress.address, using: self)
     }
     
     /// Encrypts the message with the Application Key and a Network Key
@@ -320,8 +336,8 @@ public extension MeshNetworkManager {
     /// This method does not send nor return PDUs to be sent. Instead,
     /// for each created segment it calls transmitter's `send(:ofType)`,
     /// which should send the PDU over the air. This is in order to support
-    /// retransmittion in case a packet was lost and needs to be sent again
-    /// after block acknowlegment was received.
+    /// retransmitting in case a packet was lost and needs to be sent again
+    /// after block acknowledgment was received.
     ///
     /// A `delegate` method will be called when the message has been sent,
     /// delivered, or failed to be sent.
@@ -340,9 +356,11 @@ public extension MeshNetworkManager {
     ///           (no Unicast Address assigned), or the given local Element
     ///           does not belong to the local Node.
     /// - returns: Message handle that can be used to cancel sending.
+    @discardableResult
     func send(_ message: MeshMessage,
               from localElement: Element? = nil, to destination: MeshAddress,
-              withTtl initialTtl: UInt8? = nil, using applicationKey: ApplicationKey) throws -> MessageHandle {
+              withTtl initialTtl: UInt8? = nil,
+              using applicationKey: ApplicationKey) throws -> MessageHandle {
         guard let networkManager = networkManager, let meshNetwork = meshNetwork else {
             print("Error: Mesh Network not created")
             throw MeshNetworkError.noNetwork
@@ -356,7 +374,7 @@ public extension MeshNetworkManager {
             print("Error: The Element does not belong to the local Node")
             throw AccessError.invalidElement
         }
-        guard initialTtl == nil || initialTtl == 0 || (2...127).contains(initialTtl!) else {
+        guard initialTtl == nil || initialTtl! <= 127 else {
             print("Error: TTL value \(initialTtl!) is invalid")
             throw AccessError.invalidTtl
         }
@@ -365,7 +383,7 @@ public extension MeshNetworkManager {
                                 withTtl: initialTtl, using: applicationKey)
         }
         return MessageHandle(for: message, sentFrom: source.unicastAddress,
-                         to: destination.address, using: self)
+                             to: destination.address, using: self)
     }
     
     /// Encrypts the message with the Application Key and a Network Key
@@ -388,9 +406,11 @@ public extension MeshNetworkManager {
     ///           (no Unicast Address assigned), or the given local Element
     ///           does not belong to the local Node.
     /// - returns: Message handle that can be used to cancel sending.
+    @discardableResult
     func send(_ message: MeshMessage,
               from localElement: Element? = nil, to group: Group,
-              withTtl initialTtl: UInt8? = nil, using applicationKey: ApplicationKey) throws -> MessageHandle {
+              withTtl initialTtl: UInt8? = nil,
+              using applicationKey: ApplicationKey) throws -> MessageHandle {
         return try send(message, from: localElement, to: group.address,
                         withTtl: initialTtl, using: applicationKey)
     }
@@ -418,6 +438,7 @@ public extension MeshNetworkManager {
     ///           (no Unicast Address assigned), or the given local Element
     ///           does not belong to the local Node.
     /// - returns: Message handle that can be used to cancel sending.
+    @discardableResult
     func send(_ message: MeshMessage,
               from localElement: Element? = nil, to model: Model,
               withTtl initialTtl: UInt8? = nil) throws -> MessageHandle {
@@ -457,6 +478,7 @@ public extension MeshNetworkManager {
     ///           (no Unicast Address assigned), or the given local Element
     ///           does not belong to the local Node.
     /// - returns: Message handle that can be used to cancel sending.
+    @discardableResult
     func send(_ message: MeshMessage,
               from localModel: Model, to model: Model,
               withTtl initialTtl: UInt8? = nil) throws -> MessageHandle {
@@ -483,7 +505,7 @@ public extension MeshNetworkManager {
     
     /// Sends Configuration Message to the Node with given destination Address.
     /// The `destination` must be a Unicast Address, otherwise the method
-    /// does nothing.
+    /// throws an error.
     ///
     /// A `delegate` method will be called when the message has been sent,
     /// delivered, or fail to be sent.
@@ -500,6 +522,7 @@ public extension MeshNetworkManager {
     ///           Error `AccessError.cannotDelete` is sent when trying to
     ///           delete the last Network Key on the device.
     /// - returns: Message handle that can be used to cancel sending.
+    @discardableResult
     func send(_ message: ConfigMessage, to destination: Address,
               withTtl initialTtl: UInt8? = nil) throws -> MessageHandle {
         guard let networkManager = networkManager, let meshNetwork = meshNetwork else {
@@ -523,13 +546,17 @@ public extension MeshNetworkManager {
             print("Fatal Error: The target Node does not have Network Key")
             throw AccessError.invalidDestination
         }
+        guard let _ = node.deviceKey else {
+            print("Error: Node's Device Key is unknown")
+            throw AccessError.noDeviceKey
+        }
         if message is ConfigNetKeyDelete {
             guard node.networkKeys.count > 1 else {
                 print("Error: Cannot remove last Network Key")
                 throw AccessError.cannotDelete
             }
         }
-        guard initialTtl == nil || initialTtl == 0 || (2...127).contains(initialTtl!) else {
+        guard initialTtl == nil || initialTtl! <= 127 else {
             print("Error: TTL value \(initialTtl!) is invalid")
             throw AccessError.invalidTtl
         }
@@ -537,7 +564,7 @@ public extension MeshNetworkManager {
             networkManager.send(message, to: destination, withTtl: initialTtl)
         }
         return MessageHandle(for: message, sentFrom: source,
-                         to: destination, using: self)
+                             to: destination, using: self)
     }
     
     /// Sends Configuration Message to the given Node.
@@ -554,58 +581,44 @@ public extension MeshNetworkManager {
     ///           the local Node does not have configuration capabilities
     ///           (no Unicast Address assigned), or the destination address
     ///           is not a Unicast Address or it belongs to an unknown Node.
+    ///           Error `AccessError.cannotDelete` is sent when trying to
+    ///           delete the last Network Key on the device.
     /// - returns: Message handle that can be used to cancel sending.
+    @discardableResult
     func send(_ message: ConfigMessage, to node: Node,
               withTtl initialTtl: UInt8? = nil) throws -> MessageHandle {
         return try send(message, to: node.unicastAddress, withTtl: initialTtl)
     }
     
-    /// Sends Configuration Message to the given Node.
+    /// Sends Configuration Message to the local Node.
     ///
     /// A `delegate` method will be called when the message has been sent,
     /// delivered, or fail to be sent.
     ///
     /// - parameters:
     ///   - message: The message to be sent.
-    ///   - element: The destination Element.
+    ///   - node:    The destination Node.
     ///   - initialTtl: The initial TTL (Time To Live) value of the message.
     ///                 If `nil`, the default Node TTL will be used.
     /// - throws: This method throws when the mesh network has not been created,
     ///           the local Node does not have configuration capabilities
-    ///           (no Unicast Address assigned), or the target Element does not
-    ///           belong to any known Node.
+    ///           (no Unicast Address assigned), or the destination address
+    ///           is not a Unicast Address or it belongs to an unknown Node.
+    ///           Error `AccessError.cannotDelete` is sent when trying to
+    ///           delete the last Network Key on the device.
     /// - returns: Message handle that can be used to cancel sending.
-    func send(_ message: ConfigMessage, to element: Element,
-              withTtl initialTtl: UInt8? = nil) throws -> MessageHandle {
-        guard let node = element.parentNode else {
-            print("Error: Element does not belong to a Node")
-            throw AccessError.invalidDestination
+    @discardableResult
+    func sendToLocalNode(_ message: ConfigMessage) throws -> MessageHandle {
+        guard let meshNetwork = meshNetwork else {
+            print("Error: Mesh Network not created")
+            throw MeshNetworkError.noNetwork
         }
-        return try send(message, to: node, withTtl: initialTtl)
-    }
-    
-    /// Sends Configuration Message to the given Node.
-    ///
-    /// A `delegate` method will be called when the message has been sent,
-    /// delivered, or fail to be sent.
-    ///
-    /// - parameters:
-    ///   - message: The message to be sent.
-    ///   - model:   The destination Model.
-    ///   - initialTtl: The initial TTL (Time To Live) value of the message.
-    ///                 If `nil`, the default Node TTL will be used.
-    /// - throws: This method throws when the mesh network has not been created,
-    ///           the local Node does not have configuration capabilities
-    ///           (no Unicast Address assigned), or the target Element does
-    ///           not belong to any known Node.
-    /// - returns: Message handle that can be used to cancel sending.
-    func send(_ message: ConfigMessage, to model: Model,
-              withTtl initialTtl: UInt8? = nil) throws -> MessageHandle {
-        guard let element = model.parentElement else {
-            print("Error: Model does not belong to an Element")
-            throw AccessError.invalidDestination
+        guard let localProvisioner = meshNetwork.localProvisioner,
+              let destination = localProvisioner.unicastAddress else {
+            print("Error: Local Provisioner has no Unicast Address assigned")
+            throw AccessError.invalidSource
         }
-        return try send(message, to: element, withTtl: initialTtl)
+        return try send(message, to: destination, withTtl: 1)
     }
     
     /// Sends the Proxy Configuration Message to the connected Proxy Node.
@@ -815,8 +828,41 @@ public extension MeshNetworkManager {
     func export() -> Data {
         let encoder = JSONEncoder()
         encoder.dateEncodingStrategy = .iso8601
+        if #available(iOS 11.0, *) {
+            encoder.outputFormatting = .sortedKeys
+        }
         
         return try! encoder.encode(meshData.meshNetwork)
+    }
+    
+    /// Returns the exported Mesh Network configuration as JSON Data.
+    /// The returned Data can be transferred to another application and
+    /// imported. The JSON is compatible with Bluetooth Mesh scheme.
+    ///
+    /// The export configuration lets exporting only a part of the
+    /// network configuration. For example, when sharing the network with
+    /// a guest, a home owner may create a Guest Network Key and Guest
+    /// Application Key bound to it, configure Nodes in the guest room to
+    /// use these keys, define guest Groups and Scenes and then export only
+    /// the related part of the whole configuration. Moreover, the exported
+    /// JSON may exclude all Device Keys, so that the guest cannot reconfigure
+    /// the Nodes (although nothing forbids them from adding new Nodes using
+    /// guest keys). When the guest leaves the room, the guest Network Key may
+    /// be updated, so the guest cannot control devices afterwards.
+    ///
+    /// - parameter configuration: The export configuration that lets to
+    ///                            narrow down what elements of the configuration
+    ///                            should be exported.
+    /// - returns: The mesh network configuration as JSON Data.
+    func export(_ configuration: ExportConfiguration) -> Data {
+        let encoder = JSONEncoder()
+        encoder.dateEncodingStrategy = .iso8601
+        if #available(iOS 11.0, *) {
+            encoder.outputFormatting = .sortedKeys
+        }
+        
+        let meshNetwork = meshData.meshNetwork?.copy(using: configuration)
+        return try! encoder.encode(meshNetwork)
     }
     
     /// Imports the Mesh Network configuration from the given Data.

@@ -38,7 +38,7 @@ Using CocoaPods:
     ```
 
 - Carthage will build the **nRFMeshProvision.framework** files in **Carthage/Build/**, 
-you may now copy all those files to your project and use the library, additionally, carthade also builds **\*.dsym** files 
+you may now copy all those files to your project and use the library, additionally, carthage also builds **\*.dsym** files 
 if you need to resymbolicate crash logs. you may want to keep those files bundled with your builds for future use.
 
 **For Swift Package Manager:**

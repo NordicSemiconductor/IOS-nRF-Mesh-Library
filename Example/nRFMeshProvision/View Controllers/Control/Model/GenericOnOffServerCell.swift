@@ -40,16 +40,25 @@ class GenericOnOffServerCell: BaseModelControlCell<GenericOnOffServerDelegate> {
         
         model?.observe { [weak self] state in
             guard let self = self else { return }
-            self.icon.tintAdjustmentMode = state.value ? .normal : .dimmed
             if let transition = state.transition {
-                let delay = max(transition.startTime.timeIntervalSinceNow, 0.0)
                 self.icon.layer.removeAllAnimations()
-                UIView.animate(withDuration: transition.remainingTime - delay,
-                               delay: delay,
-                               animations: { [weak self] in
-                    guard let self = self else { return }
-                    self.icon.tintAdjustmentMode = transition.targetValue ? .normal : .dimmed
-                })
+                // Bluetooth Mesh Model spec, in 3.1.1.1 (Binary state transition) specifies:
+                //
+                // Because binary states cannot support transitions, when changing to 0x01 (On),
+                // the Generic OnOff state shall change immediately when the transition starts,
+                // and when changing to 0x00, the state shall change when the transition finishes.
+                if transition.targetValue {
+                    self.icon.tintAdjustmentMode = .normal
+                } else {
+                    let delay = max(transition.startTime.timeIntervalSinceNow, 0.0)
+                    UIView.animate(withDuration: 0.1,
+                                   delay: transition.remainingTime + delay,
+                                   animations: { [weak self] in
+                        self?.icon.tintAdjustmentMode = .dimmed
+                    })
+                }
+            } else {
+                self.icon.tintAdjustmentMode = state.value ? .normal : .dimmed
             }
         }
     }

@@ -51,9 +51,27 @@ class AppKeysViewController: UITableViewController, Editable {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        let generate = UIButtonAction(title: "Generate") {
+            self.presentTextAlert(title: "Generate keys",
+                                  message: "Specify number of application keys to generate (max 5):",
+                                  placeHolder: "E.g. 3", type: .numberRequired,
+                                  cancelHandler: nil) { value in
+                guard let network = MeshNetworkManager.instance.meshNetwork,
+                      let number = Int(value), number > 0 else {
+                    return
+                }
+                for i in 0..<min(number, 5) {
+                    let key = Data.random128BitKey()
+                    _ = try? network.add(applicationKey: key, name: "App Key \(i + 1)")
+                }
+                self.tableView.reloadData()
+                self.hideEmptyView()
+            }
+        }
         tableView.setEmptyView(title: "No keys",
                                message: "Click + to add a new key.",
-                               messageImage: #imageLiteral(resourceName: "baseline-key"))
+                               messageImage: #imageLiteral(resourceName: "baseline-key"),
+                               action: generate)
         
         let hasAppKeys = MeshNetworkManager.instance.meshNetwork?.applicationKeys.count ?? 0 > 0
         if !hasAppKeys {
@@ -89,11 +107,13 @@ class AppKeysViewController: UITableViewController, Editable {
     }
 
     override func numberOfSections(in tableView: UITableView) -> Int {
-        return MeshNetworkManager.instance.meshNetwork?.applicationKeys.isEmpty ?? false ? 0 : 1
+        let applicationKeys = MeshNetworkManager.instance.meshNetwork?.applicationKeys ?? []
+        return applicationKeys.isEmpty ? 0 : IndexPath.numberOfSections
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return MeshNetworkManager.instance.meshNetwork?.applicationKeys.count ?? 0
+        let applicationKeys = MeshNetworkManager.instance.meshNetwork?.applicationKeys ?? []
+        return applicationKeys.count
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -199,6 +219,7 @@ extension AppKeysViewController: EditKeyDelegate {
 
 private extension IndexPath {
     static let keySection = 0
+    static let numberOfSections = IndexPath.keySection + 1
     
     /// Returns the Application Key index in mesh network based on the
     /// IndexPath.

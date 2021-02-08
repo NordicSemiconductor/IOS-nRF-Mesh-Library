@@ -31,11 +31,19 @@
 import Foundation
 
 public struct Publish: Codable {
+    /// The Model will not publish status messages.
+    ///
+    /// - since: 3.0
+    public static let disabled = Publish()
     
-    /// The object is used to describe the number of times a message is
-    /// published and the interval between retransmissions of the published
-    /// message.
+    /// The object is used to describe the number of times a message is published and
+    /// the interval between retransmissions of the published message.
     public struct Retransmit: Codable {
+        /// Retransmission of published messages is disabled.
+        ///
+        /// - since: 3.0
+        public static let disabled = Retransmit()
+        
         /// Number of retransmissions for network messages.
         /// The value is in range from 0 to 7, where 0 means no retransmissions.
         public let count: UInt8
@@ -46,48 +54,187 @@ public struct Publish: Codable {
             return UInt8((interval / 50) - 1)
         }
         
-        internal init() {
+        /// Creates the Retransmit object when there should be no retransmissions.
+        ///
+        /// - seeAlso: `Retransmit.disabled`.
+        /// - since: 3.0
+        public init() {
             count = 0
             interval = 50
         }
         
+        /// Creates the Retransmit object.
+        ///
+        /// - parameters:
+        ///   - count: Number of retransmissions for network messages. The value is in
+        ///            range from 0 to 7, where 0 means no retransmissions.
+        ///   - interval: The interval (in seconds) between retransmissions, from 0.050
+        ///               second to 1.6 second with 50 milliseconds (0.050 second) step.
+        /// - since: 3.0
+        public init(_ count: UInt8, timesWithInterval interval: TimeInterval) {
+            self.count = min(count, 7)
+            // Interval is in 50 ms steps.
+            self.interval = max(50, min(1600, UInt16(interval / 0.050) * 50))
+        }
+        
+        /// Creates the Retransmit object.
+        ///
+        /// - parameters:
+        ///   - publishRetransmitCount: Publish Retransmit Count value, in range 0...7.
+        ///   - intervalSteps: Retransmission steps, from 0 to 31. Each step adds 50 ms
+        ///                    to initial 50 ms interval.
         public init(publishRetransmitCount: UInt8, intervalSteps: UInt8) {
-            count    = publishRetransmitCount
+            count    = min(publishRetransmitCount, 7)
             // Interval is in 50 ms steps.
             interval = UInt16(intervalSteps + 1) * 50 // ms
         }
     }
     
+    /// The Publish Period state determines the interval at which status messages
+    /// are periodically published by a Model.
+    ///
+    /// - since: 3.0
+    public struct Period: Codable {
+        /// Periodic publishing of status messages is disabled.
+        /// - since: 3.0
+        public static let disabled = Period()
+        
+        /// The number of steps, in range 0...63.
+        public let numberOfSteps: UInt8
+        /// The resolution of the number of steps.
+        public let resolution: StepResolution
+        /// The interval between subsequent publications in seconds.
+        public let interval: TimeInterval
+        
+        /// Creates the Period object when periodic publication is disabled.
+        ///
+        /// - seeAlso: `Period.disabled`.
+        /// - since: 3.0
+        public init() {
+            self.numberOfSteps = 0
+            self.resolution = .hundredsOfMilliseconds
+            self.interval = 0.0
+        }
+        
+        /// Creates the Period object.
+        ///
+        /// The given value will be translated to steps and resolution according to
+        /// Bluetooth Mesh Profile 1.0.1 specification, chapter 4.2.2.2.
+        ///
+        /// - parameter interval: The periodic publishing interval, in seconds.
+        /// - since: 3.0
+        public init(_ interval: TimeInterval) {
+            switch interval {
+            case let interval where interval <= 0:
+                numberOfSteps = 0
+                resolution = .hundredsOfMilliseconds
+            case let interval where interval <= 63 * 0.100:
+                numberOfSteps = UInt8(interval * 10)
+                resolution = .hundredsOfMilliseconds
+            case let interval where interval <= 63 * 1.0:
+                numberOfSteps = UInt8(interval)
+                resolution = .seconds
+            case let interval where interval <= 63 * 10.0:
+                numberOfSteps = UInt8(interval / 10.0)
+                resolution = .tensOfSeconds
+            case let interval where interval <= 63 * 10 * 60.0:
+                numberOfSteps = UInt8(interval / (10 * 60.0))
+                resolution = .tensOfMinutes
+            default:
+                numberOfSteps = 0x3F
+                resolution = .tensOfMinutes
+            }
+            self.interval = TimeInterval(resolution.toMilliseconds(steps: numberOfSteps)) / 1000.0
+        }
+        
+        /// Creates the Period object.
+        ///
+        /// - parameters:
+        ///   - steps: The number of steps, in range 0...63.
+        ///   - resolution: The resolution of the number of steps.
+        /// - since: 3.0
+        public init(steps: UInt8, resolution: StepResolution) {
+            self.numberOfSteps = steps
+            self.resolution = resolution
+            self.interval = TimeInterval(resolution.toMilliseconds(steps: steps)) / 1000.0
+        }
+        
+        // MARK: - Codable
+        
+        private enum CodingKeys: String, CodingKey {
+            case numberOfSteps
+            case resolution
+        }
+
+        public init(from decoder: Decoder) throws {
+            let container = try decoder.container(keyedBy: CodingKeys.self)
+            let steps = try container.decode(UInt8.self, forKey: .numberOfSteps)
+            guard steps <= 63 else {
+                throw DecodingError.dataCorruptedError(forKey: .numberOfSteps, in: container,
+                                                       debugDescription: "Number of steps must be in range 0 to 63.")
+            }
+            let milliseconds = try container.decode(Int.self, forKey: .resolution)
+            guard let resolution = StepResolution(from: milliseconds) else {
+                throw DecodingError.dataCorruptedError(forKey: .resolution, in: container,
+                                                       debugDescription: "Unsupported resolution value: \(milliseconds). "
+                                                                       + "The allowed values are: 100, 1000, 10000, and 600000.")
+            }
+            self.numberOfSteps = steps
+            self.resolution = resolution
+            self.interval = TimeInterval(resolution.toMilliseconds(steps: steps)) / 1000.0
+        }
+
+        public func encode(to encoder: Encoder) throws {
+            var container = encoder.container(keyedBy: CodingKeys.self)
+            try container.encode(numberOfSteps, forKey: .numberOfSteps)
+            try container.encode(resolution.toMilliseconds(steps: 1), forKey: .resolution)
+        }
+    }
+    
     /// Publication address for the Model. It's 4 or 32-character long
     /// hexadecimal string.
-    private let address: String
+    internal let address: String
     /// Publication address for the model.
     public var publicationAddress: MeshAddress {
         // Warning: assuming hex address is valid!
         return MeshAddress(hex: address)!
     }
-    /// An Application Key index, indicating which Applicaiton Key to
+    /// An Application Key index, indicating which Application Key to
     /// use for the publication.
     public let index: KeyIndex
     /// An integer from 0 to 127 that represents the Time To Live (TTL)
     /// value for the outgoing publish message. 255 means default TTL value.
     public let ttl: UInt8
-    /// The interval (in milliseconds) between subsequent publications.
-    internal let period: Int
-    /// The number of steps, in range 0...63.
-    public let periodSteps: UInt8
-    /// The resolution of the number of steps.
-    public let periodResolution: StepResolution
-    /// Returns the interval between subsequent publications in seconds.
-    public var publicationInterval: TimeInterval {
-        return TimeInterval(period) / 1000.0
-    }
+    /// The interval between subsequent publications.
+    public let period: Period
     /// An integer 0 o 1 that represents whether master security
     /// (0) materials or friendship security material (1) are used.
     internal let credentials: Int
     /// The object describes the number of times a message is published and the
     /// interval between retransmissions of the published message.
-    public internal(set) var retransmit: Retransmit
+    public let retransmit: Retransmit
+    
+    /// Creates an instance of Publish object.
+    ///
+    /// - parameters:
+    ///   - destination: The publication address.
+    ///   - applicationKey: The Application Key that will be used to send messages.
+    ///   - friendshipCredentialsFlag: `True`, to use Friendship Security Material,
+    ///                                `false` to use Master Security Material.
+    ///   - ttl: Time to live. Use 0xFF to use Node's default TTL.
+    ///   - period: Periodical publication interval. See `Period` for details.
+    ///   - retransmit: The retransmission data. See `Retransmit` for details.
+    /// - since: 3.0
+    public init(to destination: MeshAddress, using applicationKey: ApplicationKey,
+                usingFriendshipMaterial friendshipCredentialsFlag: Bool, ttl: UInt8,
+                period: Period, retransmit: Retransmit) {
+        self.address = destination.hex
+        self.index = applicationKey.index
+        self.credentials = friendshipCredentialsFlag ? 1 : 0
+        self.ttl = ttl
+        self.period = period
+        self.retransmit = retransmit
+    }
     
     /// Creates an instance of Publish object.
     ///
@@ -104,50 +251,45 @@ public struct Publish: Codable {
     ///                       Use `._100_milliseconds` when periodic publishing is
     ///                       disabled.
     ///   - retransmit: The retransmission data. See `Retransmit` for details.
+    @available(*, deprecated, message: "Use the other constructor")
     public init(to destination: MeshAddress, using applicationKey: ApplicationKey,
                 usingFriendshipMaterial friendshipCredentialsFlag: Bool, ttl: UInt8,
                 periodSteps: UInt8, periodResolution: StepResolution, retransmit: Retransmit) {
-        self.init(to: destination, usingApplicationKeyWithKeyIndex: applicationKey.index,
-                  usingFriendshipMaterial: friendshipCredentialsFlag, ttl: ttl,
-                  periodSteps: periodSteps, periodResolution: periodResolution,
-                  retransmit: retransmit)
-    }
-    
-    internal init(to destination: MeshAddress, usingApplicationKeyWithKeyIndex index: KeyIndex,
-                usingFriendshipMaterial friendshipCredentialsFlag: Bool, ttl: UInt8,
-                periodSteps: UInt8, periodResolution: StepResolution, retransmit: Retransmit) {
         self.address = destination.hex
-        self.index = index
+        self.index = applicationKey.index
         self.credentials = friendshipCredentialsFlag ? 1 : 0
         self.ttl = ttl
-        self.periodSteps = periodSteps
-        self.periodResolution = periodResolution
-        self.period = periodResolution.toMilliseconds(steps: periodSteps)
+        self.period = Period(steps: periodSteps, resolution: periodResolution)
         self.retransmit = retransmit
     }
     
     /// This initializer should be used to remove the publication from a Model.
-    internal init() {
+    ///
+    /// - seeAlso: `Publish.disabled`.
+    /// - since: 3.0
+    public init() {
         self.address = "0000"
         self.index = 0
         self.credentials = 0
         self.ttl = 0
-        self.periodSteps = 0
-        self.periodResolution = .hundredsOfMilliseconds
-        self.period = 0
-        self.retransmit = Retransmit(publishRetransmitCount: 0, intervalSteps: 0)
+        self.period = .disabled
+        self.retransmit = .disabled
+    }
+    
+    internal init(to destination: MeshAddress, withKeyIndex keyIndex: KeyIndex) {
+        self.init(to: destination.hex, withKeyIndex: keyIndex,
+                  friendshipCredentialsFlag: 0, ttl: 0xFF,
+                  period: .disabled, retransmit: .disabled)
     }
     
     internal init(to destination: String, withKeyIndex keyIndex: KeyIndex,
                   friendshipCredentialsFlag: Int, ttl: UInt8,
-                  periodSteps: UInt8, periodResolution: StepResolution, retransmit: Retransmit) {
+                  period: Period, retransmit: Retransmit) {
         self.address = destination
         self.index = keyIndex
         self.credentials = friendshipCredentialsFlag
         self.ttl = ttl
-        self.periodSteps = periodSteps
-        self.periodResolution = periodResolution
-        self.period = periodResolution.toMilliseconds(steps: periodSteps)
+        self.period = period
         self.retransmit = retransmit
     }
     
@@ -164,31 +306,82 @@ public struct Publish: Codable {
     
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        address = try container.decode(String.self, forKey: .address)
-        index = try container.decode(KeyIndex.self, forKey: .index)
-        ttl = try container.decode(UInt8.self, forKey: .ttl)
-        period = try container.decode(Int.self, forKey: .period)
-        switch period {
-        case let period where period % 600000 == 0:
-            periodResolution = .tensOfMinutes
-            periodSteps = UInt8(period / 600000)
-        case let period where period % 10000 == 0:
-            periodResolution = .tensOfSeconds
-            periodSteps = UInt8(period / 10000)
-        case let period where period % 1000 == 0:
-            periodResolution = .seconds
-            periodSteps = UInt8(period / 1000)
-        default:
-            periodResolution = .hundredsOfMilliseconds
-            periodSteps = UInt8(period / 100)
+        let publishAddressAsString = try container.decode(String.self, forKey: .address)
+        guard let _ = MeshAddress(hex: publishAddressAsString) else {
+            throw DecodingError.dataCorruptedError(forKey: .address, in: container,
+                                                   debugDescription: "Address must be 4-character hexadecimal string or UUID.")
         }
+        self.address = publishAddressAsString
+        self.index = try container.decode(KeyIndex.self, forKey: .index)
+        let ttl = try container.decode(UInt8.self, forKey: .ttl)
+        guard ttl <= 127 || ttl == 255 else {
+            throw DecodingError.dataCorruptedError(forKey: .ttl, in: container,
+                                                   debugDescription: "TTL must be in range 0-127 or 255.")
+        }
+        self.ttl = ttl
+        
+        // Period has changed from number of milliseconds, to an object
+        // containing number of steps and the resolution in version 3.0.
+        let millisecondsToPeriodConverter: (Int) throws -> Period = { milliseconds in
+            switch milliseconds {
+            case let value where value % 600000 == 0:
+                return Period(steps: UInt8(value / 600000), resolution: .tensOfMinutes)
+            case let value where value % 10000 == 0:
+                return Period(steps: UInt8(value / 10000), resolution: .tensOfSeconds)
+            case let value where value % 1000 == 0:
+                return Period(steps: UInt8(value / 1000), resolution: .seconds)
+            case let value where value % 100 == 0:
+                return Period(steps: UInt8(value / 100), resolution: .hundredsOfMilliseconds)
+            default:
+                throw DecodingError.dataCorruptedError(forKey: .period, in: container,
+                                                       debugDescription: "Unsupported period value: \(milliseconds).")
+            }
+        }
+        self.period = try container.decode(Period.self, forKey: .period,
+                                           orConvert: Int.self, forKey: .period,
+                                           using: millisecondsToPeriodConverter)
+        
         let flag = try container.decode(Int.self, forKey: .credentials)
         guard flag == 0 || flag == 1 else {
             throw DecodingError.dataCorruptedError(forKey: .credentials, in: container,
-                                                   debugDescription: "Credentials must be 0 or 1")
+                                                   debugDescription: "Credentials must be 0 or 1.")
         }
-        credentials = flag
-        retransmit = try container.decode(Retransmit.self, forKey: .retransmit)
+        self.credentials = flag
+        self.retransmit = try container.decode(Retransmit.self, forKey: .retransmit)
+        guard retransmit.count <= 7 else {
+            throw DecodingError.dataCorruptedError(forKey: .retransmit, in: container,
+                                                   debugDescription: "Retransmit count must be in range 0-7.")
+        }
+        guard retransmit.interval >= 50 &&
+              retransmit.interval <= 1600 &&
+            (retransmit.interval % 50) == 0 else {
+            throw DecodingError.dataCorruptedError(forKey: .retransmit, in: container,
+                                                   debugDescription: "Retransmit interval must be in range 50-1600 ms in 50 ms steps.")
+        }
+    }
+    
+    /// This method tries to decode the publication period using the legacy schema,
+    /// where it was stored as number of milliseconds, instead of steps and resolution
+    /// separately.
+    ///
+    /// - parameter container: The decoding container to read from.
+    /// - returns: The Period object.
+    /// - throws: Data Corrupted Error when the decoded value is invalid.
+    private static func legacyDecodePeriod(from container: KeyedDecodingContainer<CodingKeys>) throws -> Period {
+        let period = try container.decode(Int.self, forKey: .period)
+        switch period {
+        case let period where period % 600000 == 0:
+            return Period(steps: UInt8(period / 600000), resolution: .tensOfMinutes)
+        case let period where period % 10000 == 0:
+            return Period(steps: UInt8(period / 10000), resolution: .tensOfSeconds)
+        case let period where period % 1000 == 0:
+            return Period(steps: UInt8(period / 1000), resolution: .seconds)
+        case let period where period % 100 == 0:
+            return Period(steps: UInt8(period / 100), resolution: .hundredsOfMilliseconds)
+        default:
+            throw DecodingError.dataCorruptedError(forKey: .period, in: container,
+                                                   debugDescription: "Unsupported period value: \(period).")
+        }
     }
 }
 
@@ -219,7 +412,7 @@ internal extension Publish {
     func withAddress(address: MeshAddress) -> Publish {
         return Publish(to: address.hex, withKeyIndex: index,
                        friendshipCredentialsFlag: credentials, ttl: ttl,
-                       periodSteps: periodSteps, periodResolution: periodResolution,
+                       period: period,
                        retransmit: retransmit)
     }
     
@@ -231,7 +424,7 @@ extension Publish: CustomDebugStringConvertible {
         if address == "0000" {
             return "Disabled"
         }
-        return "\(publicationAddress) using App Key Index: \(index), ttl: \(ttl), flag: \(isUsingFriendshipSecurityMaterial), period: \(publicationInterval) sec, retransmit: \(retransmit)"
+        return "\(publicationAddress) using App Key Index: \(index), ttl: \(ttl), flag: \(isUsingFriendshipSecurityMaterial), period: \(period), retransmit: \(retransmit)"
     }
     
 }
@@ -243,6 +436,48 @@ extension Publish.Retransmit: CustomDebugStringConvertible {
             return "Disabled"
         }
         return "\(count) times every \(interval) ms"
+    }
+    
+}
+
+extension Publish.Period: CustomDebugStringConvertible {
+    
+    public var debugDescription: String {
+        if numberOfSteps == 0 {
+            return "Disabled"
+        }
+        
+        let value = Int(numberOfSteps)
+        
+        switch resolution {
+        case .hundredsOfMilliseconds where numberOfSteps < 10:
+            return "\(value * 100) ms"
+        case .hundredsOfMilliseconds where numberOfSteps == 10:
+            return "1 sec"
+        case .hundredsOfMilliseconds:
+            return "\(value / 10).\(value % 10) sec"
+            
+        case .seconds where numberOfSteps < 60:
+            return "\(value) sec"
+        case .seconds where numberOfSteps == 60:
+            return "1 min"
+        case .seconds:
+            return "1 min \(value - 60) sec"
+            
+        case .tensOfSeconds where numberOfSteps < 6:
+            return "\(value * 10) sec"
+        case .tensOfSeconds where numberOfSteps % 6 == 0:
+            return "\(value / 6) min"
+        case .tensOfSeconds:
+            return "\(value / 6) min \(value % 6 * 10) sec"
+            
+        case .tensOfMinutes where numberOfSteps < 6:
+            return "\(value * 10) min"
+        case .tensOfMinutes where numberOfSteps % 6 == 0:
+            return "\(value / 6) h"
+        case .tensOfMinutes:
+            return "\(value / 6) h \(value % 6 * 10) min"
+        }
     }
     
 }

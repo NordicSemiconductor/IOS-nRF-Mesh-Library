@@ -44,8 +44,8 @@ class Groups: XCTestCase {
         XCTAssertEqual(meshNetwork.groups[0].name, "Group 1")
         XCTAssertNotNil(meshNetwork.groups[0].meshNetwork)
         XCTAssertNil(meshNetwork.groups[0].parent)
-        XCTAssertEqual(meshNetwork.groups[0]._parentAddress, "0000")
-        XCTAssertEqual(meshNetwork.groups[0]._address, "C000")
+        XCTAssertEqual(meshNetwork.groups[0].parentAddress, "0000")
+        XCTAssertEqual(meshNetwork.groups[0].groupAddress, "C000")
         XCTAssert(meshNetwork.groups[0].meshNetwork === meshNetwork)
     }
     

@@ -136,7 +136,7 @@ public extension MeshNetwork {
     ///           the Node does not have a Network Key, or the Network Key does
     ///           not belong to the mesh network.
     func add(node: Node) throws {
-        // Verify if the address range is avaialble for the new Node.
+        // Verify if the address range is available for the new Node.
         guard isAddressRangeAvailable(node.unicastAddress, elementsCount: node.elementsCount) else {
             throw MeshNetworkError.addressNotAvailable
         }

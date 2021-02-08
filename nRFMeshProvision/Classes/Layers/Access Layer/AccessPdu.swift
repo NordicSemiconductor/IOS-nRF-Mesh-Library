@@ -34,11 +34,8 @@ internal struct AccessPdu {
     /// The Mesh Message that is being sent, or `nil`, when the message
     /// was received.
     let message: MeshMessage?
-    /// The local Element that is sending the message, or `nil` when the
-    /// message was received.
-    let localElement: Element?
     /// Whether sending this message has been initiated by the user.
-    /// Status of automatic replies will not be reported to the app.
+    /// Status of automatic retries will not be reported to the app.
     let userInitiated: Bool
     
     /// Source Address.
@@ -53,7 +50,7 @@ internal struct AccessPdu {
     /// The Access Layer PDU data that will be sent.
     let accessPdu: Data
     
-    /// Whether the outgoind message will be sent as segmented, or not.
+    /// Whether the outgoing message will be sent as segmented, or not.
     var isSegmented: Bool {
         guard let message = message else {
             return false
@@ -88,7 +85,6 @@ internal struct AccessPdu {
     
     init?(fromUpperTransportPdu pdu: UpperTransportPdu) {
         message = nil
-        localElement = nil
         userInitiated = false
         source = pdu.source
         destination = MeshAddress(pdu.destination)
@@ -100,7 +96,7 @@ internal struct AccessPdu {
         }
         let octet0 = pdu.accessPdu[0]
         
-        // Opcode 0b01111111 is reseved for future use.
+        // Opcode 0b01111111 is reserved for future use.
         guard octet0 != 0b01111111 else {
             return nil
         }
@@ -133,13 +129,22 @@ internal struct AccessPdu {
         parameters = pdu.accessPdu.subdata(in: 3..<pdu.accessPdu.count)
     }
     
+    /// Creates teh Access PDU that will encapsulate the given Mesh Message.
+    ///
+    /// - parameters:
+    ///   - message: The message to be encapsulated.
+    ///   - source: The Unicast Address of the local Element from which the
+    ///             message will be sent.
+    ///   - destination: The destination address.
+    ///   - userInitiated: Whether sending this message has been initiated by
+    ///                    the user. Status of automatic retries will not be
+    ///                    reported to the app.
     init(fromMeshMessage message: MeshMessage,
-         sentFrom localElement: Element, to destination: MeshAddress,
+         sentFrom source: Address, to destination: MeshAddress,
          userInitiated: Bool) {
         self.message = message
-        self.localElement = localElement
         self.userInitiated = userInitiated
-        self.source = localElement.unicastAddress
+        self.source = source
         self.destination = destination
         
         self.opCode = message.opCode
@@ -155,10 +160,10 @@ internal struct AccessPdu {
             accessPdu = Data([UInt8(0x80 | ((opCode >> 8) & 0x3F)), UInt8(opCode & 0xFF)]) + parameters
         default:
             accessPdu = Data([
-                UInt8(0xC0 | ((opCode >> 16) & 0x3F)),
-                UInt8((opCode >> 8) & 0xFF),
-                UInt8(opCode & 0xFF)
-                ]) + parameters
+                            UInt8(0xC0 | ((opCode >> 16) & 0x3F)),
+                            UInt8((opCode >> 8) & 0xFF),
+                            UInt8(opCode & 0xFF)
+                        ]) + parameters
         }
     }
 }

@@ -33,21 +33,17 @@ import Foundation
 public extension Array where Element == NetworkKey {
     
     subscript(networkId: Data) -> NetworkKey? {
-        return first {
-            $0.networkId == networkId
-        }
+        return first { $0.networkId == networkId }
     }
     
     subscript(keyIndex: KeyIndex) -> NetworkKey? {
-        return first {
-            $0.index == keyIndex
-        }
+        return first { $0.index == keyIndex }
     }
     
     /// The primary Network Key, that is the one with key index 0.
     /// If the primary Network Key is not known, it's set to `nil`.
     var primaryKey: NetworkKey? {
-        return self[0]
+        return first { $0.index == 0 }
     }
     
     /// Returns a new list of Network Keys containing all the Network Keys

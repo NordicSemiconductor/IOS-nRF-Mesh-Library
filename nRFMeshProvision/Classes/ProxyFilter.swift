@@ -31,16 +31,16 @@
 import Foundation
 
 public enum ProxyFilerType: UInt8 {
-    /// A white list filter has an associated white list, which is a list of
-    /// destination addresses that are of interest for the Proxy Client.
-    /// The white list filter blocks all destination addresses except those
-    /// that have been added to the white list.
-    case whitelist = 0x00
-    /// A black list filter has an associated black list, which is a list of
-    /// destination addresses that the Proxy Client does not want to receive.
-    /// The black list filter accepts all destination addresses except those
-    /// that have been added to the black list.
-    case blacklist = 0x01
+    /// An inclusion list filter has an associated inclusion list, which is
+    /// a list of destination addresses that are of interest for the Proxy Client.
+    /// The inclusion list filter blocks all messages except those targeting
+    /// addresses added to the list.
+    case inclusionList = 0x00
+    /// An exclusion list filter has an associated exclusion list, which is
+    /// a list of destination addresses that the Proxy Client does not want to receive.
+    /// The exclusion list filter forwards all messages except those targeting
+    /// addresses added to the list.
+    case exclusionList = 0x01
 }
 
 public protocol ProxyFilterDelegate: class {
@@ -51,7 +51,7 @@ public protocol ProxyFilterDelegate: class {
     ///   - addresses: The addresses in the filter.
     func proxyFilterUpdated(type: ProxyFilerType, addresses: Set<Address>)
     
-    /// This method is called when the connceted Proxy device supports
+    /// This method is called when the connected Proxy device supports
     /// only a single address in the Proxy Filter list.
     ///
     /// The delegate can switch to `.blacklist` filter type at that point
@@ -79,7 +79,7 @@ public extension ProxyFilterDelegate {
 /// (All Nodes).
 ///
 /// - important: When a local Model gets subscribed to a new Group, or is
-///              unsubscibed from a Group that no other local Model is
+///              unsubscribed from a Group that no other local Model is
 ///              subscribed to, the proxy filter needs to be modified manually
 ///              by calling proper `add` or `remove` method.
 public class ProxyFilter {
@@ -114,8 +114,8 @@ public class ProxyFilter {
     
     /// The active Proxy Filter type.
     ///
-    /// By default the Proxy Filter is set to `.whitelist`.
-    public internal(set) var type: ProxyFilerType = .whitelist
+    /// By default the Proxy Filter is set to `.inclusionList`.
+    public internal(set) var type: ProxyFilerType = .inclusionList
     
     /// The connected Proxy Node. This may be `nil` if the connected Node is unknown
     /// to the provisioner, that is if a Node with the proxy Unicast Address was not found
@@ -142,9 +142,9 @@ public extension ProxyFilter {
         send(SetFilterType(type))
     }
     
-    /// Resets the filter to an empty whitelist filter.
+    /// Resets the filter to an empty inclusion list filter.
     func reset() {
-        send(SetFilterType(.whitelist))
+        send(SetFilterType(.inclusionList))
     }
     
     /// Clears the current filter.
@@ -237,6 +237,16 @@ public extension ProxyFilter {
         add(addresses: addresses)
     }
     
+    /// Notifies the Proxy Filter that the connection to GATT Proxy is closed.
+    ///
+    /// This method will unset the `busy` flag.
+    func proxyDidDisconnect() {
+        mutex.sync {
+            busy = false
+            proxy = nil
+        }
+    }
+    
 }
 
 // MARK: - Callbacks
@@ -251,19 +261,15 @@ internal extension ProxyFilter {
     /// beacon contained information about the same Network Key as one
     /// received before. This happens during a reconnection to the same
     /// or a different Proxy on the same subnetwork, but may also happen
-    /// in other sircumstances, for example when the IV Update or Key Refresh
+    /// in other Circumstances, for example when the IV Update or Key Refresh
     /// Procedure is in progress, or a Network Key was removed and added again.
     ///
     /// This method reloads the Proxy Filter for the local Provisioner,
     /// adding all the addresses the Provisioner is subscribed to, including
     /// its Unicast Addresses and All Nodes address.
     func newProxyDidConnect() {
+        proxyDidDisconnect()
         logger?.i(.proxy, "New Proxy connected")
-        mutex.sync {
-            busy = false
-            // The proxy Node is unknown at the moment.
-            proxy = nil
-        }
         reset()
         if let localProvisioner = manager.meshNetwork?.localProvisioner {
             setup(for: localProvisioner)
@@ -299,7 +305,7 @@ internal extension ProxyFilter {
     /// Callback called when the manager failed to send the Proxy
     /// Configuration Message.
     ///
-    /// This method clears the local filter and sets it back to `.whitelist`.
+    /// This method clears the local filter and sets it back to `.inclusionList`.
     /// All the messages waiting to be sent are cancelled.
     ///
     /// - parameters:
@@ -307,7 +313,7 @@ internal extension ProxyFilter {
     ///   - error: The error received.
     func managerFailedToDeliverMessage(_ message: ProxyConfigurationMessage, error: Error) {
         mutex.sync {
-            type = .whitelist
+            type = .inclusionList
             addresses.removeAll()
             buffer.removeAll()
             busy = false
@@ -325,22 +331,22 @@ internal extension ProxyFilter {
     ///
     /// This method notifies the delegate about changes in the Proxy Filter.
     ///
-    /// If a mismatchis detected between the local list of services and
+    /// If a mismatch is detected between the local list of services and
     /// the list size received, the method will try to clear the remote
     /// filter and send all the addresses again.
     ///
     /// - parameters:
     ///   - message: The message received.
-    ///   - proxy: The connected Proxy Node, or `nil` if the Node is uknown.
+    ///   - proxy: The connected Proxy Node, or `nil` if the Node is unknown.
     func handle(_ message: ProxyConfigurationMessage, sentFrom proxy: Node?) {
         switch message {
         case let status as FilterStatus:
             self.proxy = proxy
             // Handle buffered messages.
-            let bufferEmpty = mutex.sync { buffer.isEmpty }
-            guard bufferEmpty else {
-                let message = mutex.sync { buffer.removeFirst() }
-                try? manager.send(message)
+            if let nextMessage = mutex.sync(execute: {
+                                     buffer.isEmpty ? nil : buffer.removeFirst()
+                                 }) {
+                try? manager.send(nextMessage)
                 return
             }
             mutex.sync {
@@ -361,12 +367,12 @@ internal extension ProxyFilter {
                 
                 // Some devices support just a single address in Proxy Filter.
                 // After adding 2+ devices they will reply with list size = 1.
-                // In that case we could either switch to black list type of filter
+                // In that case we could either switch to exclusion list type of filter
                 // to get all the traffic, or add only 1 address. By default, this
                 // library will add the 0th Element's Unicast Address to allow
                 // configuration, as this is the most common use case. If you need
                 // to receive messages sent to group addresses or other Elements,
-                // switch to black list filter after this single
+                // switch to exclusion list filter.
                 if status.listSize == 1 {
                     logger?.w(.proxy, "Limited Proxy Filter detected.")
                     reset()
@@ -434,8 +440,8 @@ extension ProxyFilerType: CustomDebugStringConvertible {
     
     public var debugDescription: String {
         switch self {
-        case .whitelist: return "Whitelist"
-        case .blacklist: return "Blacklist"
+        case .inclusionList: return "Inclusion List"
+        case .exclusionList: return "Exclusion List"
         }
     }
     

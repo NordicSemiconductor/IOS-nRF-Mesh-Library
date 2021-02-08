@@ -115,15 +115,16 @@ class SetPublicationViewController: ProgressViewController {
             // Similar situation is for 10 sec resolution, which starts from 1 minute and 10 seconds (7 steps).
             // The maximum value that can be calculated using resolution 10 sec is 10 min 30 sec, therefore
             // the last resolution starts from step 2 (20 minutes).
-            switch publish.periodResolution {
+            let period = publish.period
+            switch period.resolution {
             case .hundredsOfMilliseconds:
-                periodSlider.value = Float(publish.periodResolution.rawValue * 64 + publish.periodSteps)
+                periodSlider.value = Float(period.resolution.rawValue * 64 + period.numberOfSteps)
             case .seconds:
-                periodSlider.value = Float(publish.periodResolution.rawValue * 64 + publish.periodSteps - 7)
+                periodSlider.value = Float(period.resolution.rawValue * 64 + period.numberOfSteps - 7)
             case .tensOfSeconds:
-                periodSlider.value = Float(publish.periodResolution.rawValue * 64 + publish.periodSteps - 7 - 7)
+                periodSlider.value = Float(period.resolution.rawValue * 64 + period.numberOfSteps - 7 - 7)
             case .tensOfMinutes:
-                periodSlider.value = Float(publish.periodResolution.rawValue * 64 + publish.periodSteps - 7 - 7 - 2)
+                periodSlider.value = Float(period.resolution.rawValue * 64 + period.numberOfSteps - 7 - 7 - 2)
             }
             retransmitCountSlider.value = Float(publish.retransmit.count)
             retransmitIntervalSlider.value = Float(publish.retransmit.steps)
@@ -190,9 +191,10 @@ private extension SetPublicationViewController {
                          type: .ttlRequired,
                          option: UIAlertAction(title: "Use Node's default", style: .default, handler: { _ in
                             self.ttl = 0xFF
-                         })) { value in
+                         }),
+                         handler: { value in
                             self.ttl = UInt8(value)!
-        }
+                         })
     }
     
     func periodSelected(_ period: Float) {
@@ -343,19 +345,21 @@ private extension SetPublicationViewController {
     }
     
     func setPublication() {
-        guard let destination = destination, let applicationKey = applicationKey else {
+        guard let destination = destination, let applicationKey = applicationKey,
+              let model = model,
+              let node = model.parentElement?.parentNode else {
             return
         }
+        let publish = Publish(to: destination, using: applicationKey,
+                              usingFriendshipMaterial: friendshipCredentialsFlagSwitch.isOn, ttl: ttl,
+                              period: Publish.Period(steps: periodSteps, resolution: periodResolution),
+                              retransmit: Publish.Retransmit(publishRetransmitCount: retransmissionCount,
+                                                             intervalSteps: retransmissionIntervalSteps))
         start("Setting Model Publication...") {
-            let publish = Publish(to: destination, using: applicationKey,
-                                  usingFriendshipMaterial: self.friendshipCredentialsFlagSwitch.isOn, ttl: self.ttl,
-                                  periodSteps: self.periodSteps, periodResolution: self.periodResolution,
-                                  retransmit: Publish.Retransmit(publishRetransmitCount: self.retransmissionCount,
-                                                                 intervalSteps: self.retransmissionIntervalSteps))
             let message: ConfigMessage =
-                ConfigModelPublicationSet(publish, to: self.model) ??
-                ConfigModelPublicationVirtualAddressSet(publish, to: self.model)!
-            return try MeshNetworkManager.instance.send(message, to: self.model)
+                ConfigModelPublicationSet(publish, to: model) ??
+                ConfigModelPublicationVirtualAddressSet(publish, to: model)!
+            return try MeshNetworkManager.instance.send(message, to: node)
         }
     }
     
@@ -388,7 +392,7 @@ extension SetPublicationViewController: MeshNetworkDelegate {
         // Has the Node been reset remotely.
         guard !(message is ConfigNodeReset) else {
             (UIApplication.shared.delegate as! AppDelegate).meshNetworkDidChange()
-            done() {
+            done {
                 let rootViewControllers = self.presentingViewController?.children
                 self.dismiss(animated: true) {
                     rootViewControllers?.forEach {
@@ -409,7 +413,7 @@ extension SetPublicationViewController: MeshNetworkDelegate {
         switch message {
             
         case let status as ConfigModelPublicationStatus:
-            done() {
+            done {
                 if status.status == .success {
                     self.dismiss(animated: true)
                     self.delegate?.publicationChanged()
@@ -427,7 +431,7 @@ extension SetPublicationViewController: MeshNetworkDelegate {
                             failedToSendMessage message: MeshMessage,
                             from localElement: Element, to destination: Address,
                             error: Error) {
-        done() {
+        done {
             self.presentAlert(title: "Error", message: error.localizedDescription)
         }
     }

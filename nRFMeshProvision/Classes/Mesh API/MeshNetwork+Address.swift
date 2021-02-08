@@ -32,7 +32,7 @@ import Foundation
 
 public extension MeshNetwork {
     
-    /// Returns whether the given number of unicast addresses starting
+    /// Returns whether the given number of Unicast Addresses starting
     /// from the given one are valid, that is they are all in Unicast
     /// Address range.
     ///
@@ -54,7 +54,8 @@ public extension MeshNetwork {
     func isAddressRangeAvailable(_ address: Address, elementsCount count: UInt8, for node: Node? = nil) -> Bool {
         let otherNodes = nodes.filter { $0 != node }
         return isAddressRangeValid(address, elementsCount: count) &&
-            !otherNodes.contains { $0.overlapsWithAddress(address, elementsCount: count) }
+            !otherNodes.contains { $0.overlapsWithAddress(address, elementsCount: count) } &&
+            !(networkExclusions?.contains(address, elementCount: count, forIvIndex: ivIndex) ?? false)
     }
     
     /// Returns the next available Unicast Address from the Provisioner's range
@@ -73,6 +74,24 @@ public extension MeshNetwork {
                                            elementsUsing: provisioner)
     }
     
+    /// Returns the next available Unicast Address from the local Provisioner's range
+    /// that can be assigned to a new node with given number of elements.
+    /// The 0'th element is identified by the node's Unicast Address.
+    /// Each following element is identified by a subsequent Unicast Address.
+    ///
+    /// - parameters:
+    ///   - offset: Minimum Unicast Address to be assigned.
+    ///   - elementsCount: The number of Node's elements. Each element will be
+    ///                    identified by a subsequent Unicast Address.
+    /// - returns: The next available Unicast Address that can be assigned to a node,
+    ///            or `nil`, if there are no more available addresses in the allocated range.
+    func nextAvailableUnicastAddress(startingFrom offset: Address = Address.minUnicastAddress,
+                                     forElementsCount elementsCount: UInt8) -> Address? {
+        return localProvisioner.map {
+            nextAvailableUnicastAddress(startingFrom: offset, for: elementsCount, elementsUsing: $0)
+        } ?? nil
+    }
+    
     /// Returns the next available Unicast Address from the Provisioner's range
     /// that can be assigned to a new node with given number of elements.
     /// The 0'th element is identified by the node's Unicast Address.
@@ -89,10 +108,13 @@ public extension MeshNetwork {
     func nextAvailableUnicastAddress(startingFrom offset: Address = Address.minUnicastAddress,
                                      for elementsCount: UInt8,
                                      elementsUsing provisioner: Provisioner) -> Address? {
-        let sortedNodes = nodes.sorted { $0.unicastAddress < $1.unicastAddress }
+        let exclusions = networkExclusions?.excludedAddresses(forIvIndex: ivIndex).sorted() ?? []
+        let usedAddresses = (exclusions + nodes
+            .flatMap { node in node.elements }
+            .map { element in element.unicastAddress })
+            .sorted()
         
-        // Iterate through all nodes just once, while iterating over ranges.
-        var index = 0
+        // Iterate through all addresses just once, while iterating over ranges.
         for range in provisioner.allocatedUnicastRange {
             // Start from the beginning of the current range.
             var address = range.lowAddress
@@ -101,22 +123,20 @@ public extension MeshNetwork {
                 address = offset
             }
             
-            // Iterate through nodes that weren't checked yet.
-            let currentIndex = index
-            for _ in currentIndex..<sortedNodes.count {
-                let node = sortedNodes[index]
-                index += 1
+            // Iterate through addresses that weren't checked yet.
+            for index in 0..<usedAddresses.count {
+                let usedAddress = usedAddresses[index]
                 
-                // Skip nodes with addresses below the range.
-                if address > node.lastUnicastAddress {
+                // Skip addresses below the range.
+                if address > usedAddress {
                     continue
                 }
-                // If we found a space before the current node, return the address.
-                if address + UInt16(elementsCount) - 1 < node.unicastAddress {
+                
+                if address + UInt16(elementsCount) - 1 < usedAddress {
                     return address
                 }
-                // Else, move the address to the next available address.
-                address = node.lastUnicastAddress + 1
+                
+                address = usedAddress + 1
                 
                 // If the new address is outside of the range, go to the next one.
                 if address + UInt16(elementsCount) - 1 > range.highAddress {
@@ -154,7 +174,7 @@ public extension MeshNetwork {
     /// - returns: The next available Group Address that can be assigned to a new Group,
     ///            or `nil`, if there are no more available addresses in the allocated range.
     func nextAvailableGroupAddress(for provisioner: Provisioner) -> Address? {
-        let sortedGroups = groups.sorted { $0._address < $1._address }
+        let sortedGroups = groups.sorted { $0.groupAddress < $1.groupAddress }
         
         // Iterate through all groups just once, while iterating over ranges.
         var index = 0
@@ -192,6 +212,15 @@ public extension MeshNetwork {
         }
         // No address was found :(
         return nil
+    }
+    
+    /// Returns the next available Group Address from the local Provisioner's range
+    /// that can be assigned to a new Group.
+    ///
+    /// - returns: The next available Group Address that can be assigned to a new Group,
+    ///            or `nil`, if there are no more available addresses in the allocated range.
+    func nextAvailableGroupAddress() -> Address? {
+        return localProvisioner.map { nextAvailableGroupAddress(for: $0) } ?? nil
     }
     
 }

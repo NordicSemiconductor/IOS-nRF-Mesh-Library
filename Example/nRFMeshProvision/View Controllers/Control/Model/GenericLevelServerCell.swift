@@ -63,9 +63,8 @@ class GenericLevelServerCell: BaseModelControlCell<GenericLevelServerDelegate> {
                 UIView.animate(withDuration: transition.remainingTime - delay,
                                delay: delay,
                                options: .curveLinear, animations: { [weak self] in
-                    guard let self = self else { return }
-                    self.progress.frame = CGRect(x: 0, y: height - targetHeight,
-                                                 width: width, height: targetHeight)
+                    self?.progress.frame = CGRect(x: 0, y: height - targetHeight,
+                                                  width: width, height: targetHeight)
                 })
             } else if let animation = state.animation {
                 let targetValue: Int16 = animation.speed > 0 ? Int16.max : Int16.min
@@ -81,9 +80,8 @@ class GenericLevelServerCell: BaseModelControlCell<GenericLevelServerDelegate> {
                                              width: width, height: currentHeight)
                 UIView.animate(withDuration: duration, delay: delay,
                                options: .curveLinear, animations: { [weak self] in
-                    guard let self = self else { return }
-                    self.progress.frame = CGRect(x: 0, y: height - targetHeight,
-                                                 width: width, height: targetHeight)
+                    self?.progress.frame = CGRect(x: 0, y: height - targetHeight,
+                                                  width: width, height: targetHeight)
                 }, completion: { completed in
                     if completed {
                         self.animateMove(speed: animation.speed)

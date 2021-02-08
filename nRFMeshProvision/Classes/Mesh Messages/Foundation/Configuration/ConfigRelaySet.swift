@@ -39,7 +39,7 @@ public struct ConfigRelaySet: AcknowledgedConfigMessage {
     }
     
     /// The new Relay state for the Node.
-    public let state: NodeFeaturesState
+    public let state: NodeFeatureState
     /// Number of retransmissions on advertising bearer for each Network PDU
     /// relayed by the Node. Possible values are 0...7, which correspond to
     /// 1-8 transmissions in total.
@@ -79,7 +79,7 @@ public struct ConfigRelaySet: AcknowledgedConfigMessage {
         guard parameters.count == 2 else {
             return nil
         }
-        guard let state = NodeFeaturesState(rawValue: parameters[0]) else {
+        guard let state = NodeFeatureState(rawValue: parameters[0]) else {
             return nil
         }
         self.state = state
