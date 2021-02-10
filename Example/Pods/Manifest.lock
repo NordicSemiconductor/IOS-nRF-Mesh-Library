@@ -2,8 +2,6 @@ PODS:
   - CryptoSwift (1.3.8)
   - nRFMeshProvision (3.0):
     - CryptoSwift (= 1.3.8)
-    - OpenSSL-Universal (= 1.1.180)
-  - OpenSSL-Universal (1.1.180)
 
 DEPENDENCIES:
   - nRFMeshProvision (from `../`)
@@ -11,7 +9,6 @@ DEPENDENCIES:
 SPEC REPOS:
   trunk:
     - CryptoSwift
-    - OpenSSL-Universal
 
 EXTERNAL SOURCES:
   nRFMeshProvision:
@@ -19,8 +16,7 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   CryptoSwift: 01b0f0cba1d5c212e5a335ff6c054fb75a204f00
-  nRFMeshProvision: a413789d3dbf791d9e3dcfb86f9adc4dcec46f36
-  OpenSSL-Universal: 1aa4f6a6ee7256b83db99ec1ccdaa80d10f9af9b
+  nRFMeshProvision: 6a9b3ab691389ea21c9a6a6d502cc2fb8a48366e
 
 PODFILE CHECKSUM: 69a81463322ef34ca0a20b98e90da2701d94e4ec
 
