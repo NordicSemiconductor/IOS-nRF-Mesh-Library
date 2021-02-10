@@ -35,7 +35,7 @@ class CryptoTest: XCTestCase {
     let data     = Data(hex: "00112233445566778899AABBCCDDEEFF")
     let key      = Data(hex: "0123456789ABCDEF0123456789ABCDEF")
     let nonce    = Data(hex: "00112233445566778899AABBCC")
-    let aad      = UUID(uuidString: "12345678-1234-1234-1234-12345678ABCD")!.data
+    let label    = UUID(uuidString: "12345678-1234-1234-1234-12345678ABCD")!
 
     func testRandom() throws {
         let random = Crypto.generateRandom()
@@ -44,7 +44,6 @@ class CryptoTest: XCTestCase {
     }
 
     func testVirtualLabel() throws {
-        let label = UUID(uuidString: "12345678-1234-1234-1234-12345678ABCD")!
         let expected = Address(0xADD5)
         
         let result = Crypto.calculateVirtualAddress(from: label)
@@ -88,14 +87,14 @@ class CryptoTest: XCTestCase {
         
         // Encode
         let result = Crypto.encrypt(data, withEncryptionKey: key, nonce: nonce, andMICSize: 4,
-                                    withAdditionalData: aad)
+                                    withAdditionalData: label.data)
         XCTAssertEqual(result, expected)
         
         // Decode
         let encrypted = result.subdata(in: 0..<data.count)
         let mic       = result.subdata(in: data.count..<result.count)
         let test = Crypto.decrypt(encrypted, withEncryptionKey: key, nonce: nonce,
-                                  andMIC: mic, withAdditionalData: aad)
+                                  andMIC: mic, withAdditionalData: label.data)
         XCTAssertEqual(test, data)
     }
     
@@ -104,14 +103,14 @@ class CryptoTest: XCTestCase {
         
         // Encode
         let result = Crypto.encrypt(data, withEncryptionKey: key, nonce: nonce, andMICSize: 8,
-                                    withAdditionalData: aad)
+                                    withAdditionalData: label.data)
         XCTAssertEqual(result, expected)
         
         // Decode
         let encrypted = result.subdata(in: 0..<data.count)
         let mic       = result.subdata(in: data.count..<result.count)
         let test = Crypto.decrypt(encrypted, withEncryptionKey: key, nonce: nonce,
-                                  andMIC: mic, withAdditionalData: aad)
+                                  andMIC: mic, withAdditionalData: label.data)
         XCTAssertEqual(test, data)
     }
     
