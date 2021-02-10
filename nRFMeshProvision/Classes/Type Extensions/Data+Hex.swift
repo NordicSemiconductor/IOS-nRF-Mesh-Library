@@ -31,7 +31,7 @@
 import Foundation
 
 public extension Data {
-    
+    /*
     /// Hex string to Data representation
     /// Inspired by https://stackoverflow.com/questions/26501276/converting-hex-string-to-nsdata-in-swift
     init?(hex: String) {
@@ -53,10 +53,10 @@ public extension Data {
         }
         self = data
     }
+    */
     
     /// Hexadecimal string representation of `Data` object.
     var hex: String {
         return map { String(format: "%02X", $0) }.joined()
     }
-    
 }

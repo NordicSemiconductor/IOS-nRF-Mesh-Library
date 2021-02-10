@@ -131,7 +131,7 @@ class CreatingMeshNetwork: XCTestCase {
         let network = manager.createNewMeshNetwork(withName: "Test network", by: "Test Provisioner")
         
         let node = Node(insecureNode: "Test Node", with: 3,
-                        elementsDeviceKey: OpenSSLHelper().generateRandom(),
+                        elementsDeviceKey: Data.random128BitKey(),
                         andAssignedNetworkKey: network.networkKeys.first!, andAddress: 0x0003)
         XCTAssertNotNil(node)
         XCTAssertNoThrow(try network.add(node: node!))

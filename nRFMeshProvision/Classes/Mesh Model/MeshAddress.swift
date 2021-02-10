@@ -62,15 +62,7 @@ public struct MeshAddress {
     /// Creates a Mesh Address based on the virtual label.
     public init(_ virtualLabel: UUID) {
         self.virtualLabel = virtualLabel
-        
-        // Calculate the 16-bit virtual address based on the 128-bit label.
-        let helper = OpenSSLHelper()
-        let salt = helper.calculateSalt("vtad".data(using: .ascii)!)!
-        let hash = helper.calculateCMAC(Data(hex: virtualLabel.hex), andKey: salt)!
-        var address = UInt16(data: hash.dropFirst(14)).bigEndian
-        address |= 0x8000
-        address &= 0xBFFF
-        self.address = address
+        self.address = Crypto.calculateVirtualAddress(from: virtualLabel)
     }
 }
 

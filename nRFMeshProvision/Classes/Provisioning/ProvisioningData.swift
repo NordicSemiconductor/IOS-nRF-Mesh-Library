@@ -30,9 +30,7 @@
 
 import Foundation
 
-internal class ProvisioningData {
-    private let helper = OpenSSLHelper()
-    
+internal class ProvisioningData {    
     private(set) var networkKey: NetworkKey!
     private(set) var ivIndex: IvIndex!
     private(set) var unicastAddress: Address!
@@ -61,13 +59,13 @@ internal class ProvisioningData {
     
     func generateKeys(usingAlgorithm algorithm: Algorithm) throws {
         // Generate Private and Public Keys.
-        let (sk, pk) = try generateKeyPair(using: algorithm)
+        let (sk, pk) = try Crypto.generateKeyPair(using: algorithm)
         privateKey = sk
         publicKey  = pk
         try provisionerPublicKey = pk.toData()
         
         // Generate Provisioner Random.
-        provisionerRandom = helper.generateRandom()
+        provisionerRandom = Crypto.generateRandom()
     }
     
 }
@@ -98,7 +96,7 @@ internal extension ProvisioningData {
         guard let _ = privateKey else {
             throw ProvisioningError.invalidState
         }
-        sharedSecret = try calculateSharedSecret(publicKey: key)
+        sharedSecret = try Crypto.calculateSharedSecret(privateKey: privateKey, publicKey: key)
     }
     
     /// Call this method when the Auth Value has been obtained.
@@ -125,10 +123,14 @@ internal extension ProvisioningData {
     /// - throws: The method throws when the validation failed, or
     ///           it was called before all data were ready.
     func validateConfirmation() throws {
-        guard let deviceRandom = deviceRandom, let authValue = authValue, let _ = sharedSecret else {
+        guard let deviceRandom = deviceRandom,
+              let authValue = authValue,
+              let sharedSecret = sharedSecret else {
             throw ProvisioningError.invalidState
         }
-        let confirmation = calculateConfirmation(random: deviceRandom, authValue: authValue)
+        let confirmation = Crypto.calculateConfirmation(confirmationInputs: confirmationInputs,
+                                                        sharedSecret: sharedSecret,
+                                                        random: deviceRandom, authValue: authValue)
         guard deviceConfirmation == confirmation else {
             throw ProvisioningError.confirmationFailed
         }
@@ -137,7 +139,9 @@ internal extension ProvisioningData {
     /// Returns the Provisioner Confirmation value. The Auth Value
     /// must be set prior to calling this method.
     var provisionerConfirmation: Data {
-        return calculateConfirmation(random: provisionerRandom, authValue: authValue)
+        return Crypto.calculateConfirmation(confirmationInputs: confirmationInputs,
+                                            sharedSecret: sharedSecret!,
+                                            random: provisionerRandom, authValue: authValue)
     }
     
     /// Returns the encrypted Provisioning Data together with MIC.
@@ -145,138 +149,23 @@ internal extension ProvisioningData {
     /// For that, all properties should be set when this method is called.
     /// Returned value is 25 + 8 bytes long, where the MIC is the last 8 bytes.
     var encryptedProvisioningDataWithMic: Data {
-        let keys = calculateKeys()
+        let keys = Crypto.calculateKeys(confirmationInputs: confirmationInputs,
+                                        sharedSecret: sharedSecret!,
+                                        provisionerRandom: provisionerRandom,
+                                        deviceRandom: deviceRandom)
         deviceKey = keys.deviceKey
         
         let flags = Flags(ivIndex: ivIndex, networkKey: networkKey)
         let key   = networkKey.phase == .keyDistribution ? networkKey.oldKey! : networkKey.key
         let data  = key + networkKey.index.bigEndian + flags.rawValue
                         + ivIndex.index.bigEndian + unicastAddress.bigEndian
-        return helper.calculateCCM(data, withKey: keys.sessionKey, nonce: keys.sessionNonce,
-                                   andMICSize: 8, withAdditionalData: nil)
+        return Crypto.encrypt(provisioningData: data,
+                              usingSessionKey: keys.sessionKey, andNonce: keys.sessionNonce)
     }
     
 }
 
 // MARK: - Helper methods
-
-private extension ProvisioningData {
-    
-    /// Generates a pair of Private and Public Keys using P256 Elliptic Curve
-    /// algorithm.
-    ///
-    /// - parameter algorithm: The algorithm for key pair generation.
-    /// - returns: The Private and Public Key pair.
-    /// - throws: This method throws an error if the key pair generation has failed
-    ///           or the given algorithm is not supported.
-    func generateKeyPair(using algorithm: Algorithm) throws -> (privateKey: SecKey, publicKey: SecKey) {
-        guard case .fipsP256EllipticCurve = algorithm else {
-            throw ProvisioningError.unsupportedAlgorithm
-        }
-        
-        // Private key parameters.
-        let privateKeyParams = [kSecAttrIsPermanent : false] as CFDictionary
-        
-        // Public key parameters.
-        let publicKeyParams = [kSecAttrIsPermanent : false] as CFDictionary
-        
-        // Global parameters.
-        let parameters = [kSecAttrKeyType : kSecAttrKeyTypeECSECPrimeRandom,
-                          kSecAttrKeySizeInBits : 256,
-                          kSecPublicKeyAttrs : publicKeyParams,
-                          kSecPrivateKeyAttrs : privateKeyParams] as CFDictionary
-        
-        var publicKey, privateKey: SecKey?
-        let status = SecKeyGeneratePair(parameters as CFDictionary, &publicKey, &privateKey)
-        
-        guard status == errSecSuccess else {
-            throw ProvisioningError.keyGenerationFailed(status)
-        }
-        return (privateKey!, publicKey!)
-    }
-    
-    /// Calculates the Shared Secret based on the given Public Key
-    /// and the local Private Key.
-    ///
-    /// - parameter publicKey: The device's Public Key as bytes.
-    /// - returns: The ECDH Shared Secret.
-    func calculateSharedSecret(publicKey: Data) throws -> Data {
-        // First byte has to be 0x04 to indicate uncompressed representation.
-        var devicePublicKeyData = Data([0x04])
-        devicePublicKeyData.append(contentsOf: publicKey)
-        
-        let pubKeyParameters = [kSecAttrKeyType : kSecAttrKeyTypeECSECPrimeRandom,
-                                kSecAttrKeyClass: kSecAttrKeyClassPublic] as CFDictionary
-        
-        var error: Unmanaged<CFError>?
-        let devicePublicKey = SecKeyCreateWithData(devicePublicKeyData as CFData,
-                                                   pubKeyParameters, &error)
-        guard error == nil else {
-            throw error!.takeRetainedValue()
-        }
-        
-        let exchangeResultParams = [SecKeyKeyExchangeParameter.requestedSize: 32] as CFDictionary
-        
-        let ssk = SecKeyCopyKeyExchangeResult(privateKey,
-                                              SecKeyAlgorithm.ecdhKeyExchangeStandard,
-                                              devicePublicKey!, exchangeResultParams, &error)
-        guard error == nil else {
-            throw error!.takeRetainedValue()
-        }
-        
-        return ssk! as Data
-    }
-    
-    /// This method calculates the Provisioning Confirmation based on the
-    /// Confirmation Inputs, 16-byte Random and 16-byte AuthValue.
-    ///
-    /// - parameter random:    An array of 16 random bytes.
-    /// - parameter authValue: The Auth Value calculated based on the Authentication Method.
-    /// - returns: The Provisioning Confirmation value.
-    func calculateConfirmation(random: Data, authValue: Data) -> Data {
-        // Calculate the Confirmation Salt = s1(confirmationInputs).
-        let confirmationSalt = helper.calculateSalt(confirmationInputs)!
-        
-        // Calculate the Confirmation Key = k1(ECDH Secret, confirmationSalt, 'prck')
-        let confirmationKey  = helper.calculateK1(withN: sharedSecret!,
-                                                  salt: confirmationSalt,
-                                                  andP: "prck".data(using: .ascii)!)!
-        
-        // Calculate the Confirmation Provisioner using CMAC(random + authValue)
-        let confirmationData = random + authValue
-        return helper.calculateCMAC(confirmationData, andKey: confirmationKey)!
-    }
-    
-    /// This method calculates the Session Key, Session Nonce and the Device Key based
-    /// on the Confirmation Inputs, 16-byte Provisioner Random and 16-byte device Random.
-    ///
-    /// - returns: The Session Key, Session Nonce and the Device Key.
-    func calculateKeys() -> (sessionKey: Data, sessionNonce: Data, deviceKey: Data) {
-        // Calculate the Confirmation Salt = s1(confirmationInputs).
-        let confirmationSalt = helper.calculateSalt(confirmationInputs)!
-        
-        // Calculate the Provisioning Salt = s1(confirmationSalt + provisionerRandom + deviceRandom)
-        let provisioningSalt = helper.calculateSalt(confirmationSalt + provisionerRandom! + deviceRandom!)!
-        
-        // The Session Key is derived as k1(ECDH Shared Secret, provisioningSalt, "prsk")
-        let sessionKey = helper.calculateK1(withN: sharedSecret!,
-                                            salt: provisioningSalt,
-                                            andP: "prsk".data(using: .ascii)!)!
-        
-        // The Session Nonce is derived as k1(ECDH Shared Secret, provisioningSalt, "prsn")
-        // Only 13 least significant bits of the calculated value are used.
-        let sessionNonce = helper.calculateK1(withN: sharedSecret!,
-                                              salt: provisioningSalt,
-                                              andP: "prsn".data(using: .ascii)!)!.dropFirst(3)
-        
-        // The Device Key is derived as k1(ECDH Shared Secret, provisioningSalt, "prdk")
-        let deviceKey = helper.calculateK1(withN: sharedSecret!,
-                                           salt: provisioningSalt,
-                                           andP: "prdk".data(using: .ascii)!)!
-        return (sessionKey: sessionKey, sessionNonce: sessionNonce, deviceKey: deviceKey)
-    }
-    
-}
 
 private struct Flags: OptionSet {
     let rawValue: UInt8

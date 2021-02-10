@@ -29,6 +29,9 @@
 */
 
 import Foundation
+#if os(iOS)
+import UIKit
+#endif
 
 /// This is a legacy class from nRF Mesh Provision 1.0.x library.
 /// The only purpose of this class here is to allow to migrate from

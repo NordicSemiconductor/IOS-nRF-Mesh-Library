@@ -261,7 +261,7 @@ private extension ProvisioningViewController {
         
         if provisioningManager.networkKey == nil {
             let network = MeshNetworkManager.instance.meshNetwork!
-            let networkKey = try! network.add(networkKey: OpenSSLHelper().generateRandom(), name: "Primary Network Key")
+            let networkKey = try! network.add(networkKey: Data.random128BitKey(), name: "Primary Network Key")
             provisioningManager.networkKey = networkKey
         }
         
@@ -400,7 +400,7 @@ extension ProvisioningViewController: ProvisioningDelegate {
                 let message = "Enter 16-character hexadecimal string."
                 self.presentTextAlert(title: "Static OOB Key", message: message,
                                       type: .keyRequired, cancelHandler: nil) { hex in
-                    callback(Data(hex: hex)!)
+                    callback(Data(hex: hex))
                 }
             }
         case let .provideNumeric(maximumNumberOfDigits: _, outputAction: action, callback: callback):

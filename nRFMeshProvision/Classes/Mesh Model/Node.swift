@@ -457,11 +457,11 @@ public class Node: Codable {
         }
         let keyHex = try container.decodeIfPresent(String.self, forKey: .deviceKey)
         if let keyHex = keyHex {
-            guard let keyData = Data(hex: keyHex) else {
+            deviceKey = Data(hex: keyHex)
+            guard !deviceKey!.isEmpty else {
                 throw DecodingError.dataCorruptedError(forKey: .deviceKey, in: container,
                                                        debugDescription: "Device Key must be 32-character hexadecimal string.")
             }
-            self.deviceKey = keyData
         } else {
             self.deviceKey = nil
         }

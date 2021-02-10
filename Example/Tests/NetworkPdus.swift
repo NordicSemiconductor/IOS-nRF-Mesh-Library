@@ -43,9 +43,9 @@ class NetworkPdus: XCTestCase {
     
     func testDecodingAccessMessage() {
         let networkKey = try! NetworkKey(name: "Test Key", index: 0,
-                                         key: Data(hex: "7dd7364cd842ad18c17c2b820c84c3d6")!)
+                                         key: Data(hex: "7dd7364cd842ad18c17c2b820c84c3d6"))
         let ivIndex = IvIndex(index: 0x12345678, updateActive: false)
-        let data = Data(hex: "68cab5c5348a230afba8c63d4e686364979deaf4fd40961145939cda0e")!
+        let data = Data(hex: "68cab5c5348a230afba8c63d4e686364979deaf4fd40961145939cda0e")
         
         let networkPdu = NetworkPdu(decode: data, ofType: .networkPdu,
                                     usingNetworkKey: networkKey, andIvIndex: ivIndex)
@@ -57,14 +57,14 @@ class NetworkPdus: XCTestCase {
         XCTAssertEqual(networkPdu!.sequence, 0x3129AB)
         XCTAssertEqual(networkPdu!.source, 0x003)
         XCTAssertEqual(networkPdu!.destination, 0x1201)
-        XCTAssertEqual(networkPdu!.transportPdu, Data(hex: "8026ac01ee9dddfd2169326d23f3afdf")!)
+        XCTAssertEqual(networkPdu!.transportPdu, Data(hex: "8026ac01ee9dddfd2169326d23f3afdf"))
     }
 
     func testDecodingControlMessage() {
         let networkKey = try! NetworkKey(name: "Test Key", index: 0,
-                                         key: Data(hex: "7dd7364cd842ad18c17c2b820c84c3d6")!)
+                                         key: Data(hex: "7dd7364cd842ad18c17c2b820c84c3d6"))
         let ivIndex = IvIndex(index: 0x12345678, updateActive: false)
-        let data = Data(hex: "68eca487516765b5e5bfdacbaf6cb7fb6bff871f035444ce83a670df")!
+        let data = Data(hex: "68eca487516765b5e5bfdacbaf6cb7fb6bff871f035444ce83a670df")
         
         let networkPdu = NetworkPdu(decode: data, ofType: .networkPdu,
                                     usingNetworkKey: networkKey, andIvIndex: ivIndex)
@@ -76,15 +76,15 @@ class NetworkPdus: XCTestCase {
         XCTAssertEqual(networkPdu!.sequence, 1)
         XCTAssertEqual(networkPdu!.source, 0x1201)
         XCTAssertEqual(networkPdu!.destination, 0xFFFD)
-        XCTAssertEqual(networkPdu!.transportPdu, Data(hex: "034b50057e400000010000")!)
+        XCTAssertEqual(networkPdu!.transportPdu, Data(hex: "034b50057e400000010000"))
     }
     
     func testDecodingControlMessageUsingOldKey() {
         let networkKey = try! NetworkKey(name: "Test Key", index: 0,
-                                         key: Data(hex: "7dd7364cd842ad18c17c2b820c84c3d6")!)
-        networkKey.key = Data(hex: "7d01D01D01D01D01D01D01D01D01D01D")!
+                                         key: Data(hex: "7dd7364cd842ad18c17c2b820c84c3d6"))
+        networkKey.key = Data(hex: "7d01D01D01D01D01D01D01D01D01D01D")
         let ivIndex = IvIndex(index: 0x12345678, updateActive: false)
-        let data = Data(hex: "68eca487516765b5e5bfdacbaf6cb7fb6bff871f035444ce83a670df")!
+        let data = Data(hex: "68eca487516765b5e5bfdacbaf6cb7fb6bff871f035444ce83a670df")
         
         let networkPdu = NetworkPdu(decode: data, ofType: .networkPdu,
                                     usingNetworkKey: networkKey, andIvIndex: ivIndex)
@@ -96,14 +96,14 @@ class NetworkPdus: XCTestCase {
         XCTAssertEqual(networkPdu!.sequence, 1)
         XCTAssertEqual(networkPdu!.source, 0x1201)
         XCTAssertEqual(networkPdu!.destination, 0xFFFD)
-        XCTAssertEqual(networkPdu!.transportPdu, Data(hex: "034b50057e400000010000")!)
+        XCTAssertEqual(networkPdu!.transportPdu, Data(hex: "034b50057e400000010000"))
     }
     
     func testDecodingControlMessageWithIVUpdateActive() {
         let networkKey = try! NetworkKey(name: "Test Key", index: 0,
-                                         key: Data(hex: "7dd7364cd842ad18c17c2b820c84c3d6")!)
+                                         key: Data(hex: "7dd7364cd842ad18c17c2b820c84c3d6"))
         let ivIndex = IvIndex(index: 0x12345679, updateActive: true)
-        let data = Data(hex: "68eca487516765b5e5bfdacbaf6cb7fb6bff871f035444ce83a670df")!
+        let data = Data(hex: "68eca487516765b5e5bfdacbaf6cb7fb6bff871f035444ce83a670df")
         
         let networkPdu = NetworkPdu(decode: data, ofType: .networkPdu, usingNetworkKey: networkKey, andIvIndex: ivIndex)
         XCTAssertNotNil(networkPdu)
@@ -113,14 +113,14 @@ class NetworkPdus: XCTestCase {
         XCTAssertEqual(networkPdu!.sequence, 1)
         XCTAssertEqual(networkPdu!.source, 0x1201)
         XCTAssertEqual(networkPdu!.destination, 0xFFFD)
-        XCTAssertEqual(networkPdu!.transportPdu, Data(hex: "034b50057e400000010000")!)
+        XCTAssertEqual(networkPdu!.transportPdu, Data(hex: "034b50057e400000010000"))
     }
     
     func testDecodingControlMessageWithNextIvIndex() {
         let networkKey = try! NetworkKey(name: "Test Key", index: 0,
-                                         key: Data(hex: "7dd7364cd842ad18c17c2b820c84c3d6")!)
+                                         key: Data(hex: "7dd7364cd842ad18c17c2b820c84c3d6"))
         let ivIndex = IvIndex(index: 0x12345679, updateActive: false)
-        let data = Data(hex: "68eca487516765b5e5bfdacbaf6cb7fb6bff871f035444ce83a670df")!
+        let data = Data(hex: "68eca487516765b5e5bfdacbaf6cb7fb6bff871f035444ce83a670df")
         
         let networkPdu = NetworkPdu(decode: data, ofType: .networkPdu,
                                     usingNetworkKey: networkKey, andIvIndex: ivIndex)
@@ -131,14 +131,14 @@ class NetworkPdus: XCTestCase {
         XCTAssertEqual(networkPdu!.sequence, 1)
         XCTAssertEqual(networkPdu!.source, 0x1201)
         XCTAssertEqual(networkPdu!.destination, 0xFFFD)
-        XCTAssertEqual(networkPdu!.transportPdu, Data(hex: "034b50057e400000010000")!)
+        XCTAssertEqual(networkPdu!.transportPdu, Data(hex: "034b50057e400000010000"))
     }
     
     func testDecodingControlMessageWithWrongIvIndex_TooLarge() {
         let networkKey = try! NetworkKey(name: "Test Key", index: 0,
-                                         key: Data(hex: "7dd7364cd842ad18c17c2b820c84c3d6")!)
+                                         key: Data(hex: "7dd7364cd842ad18c17c2b820c84c3d6"))
         let ivIndex = IvIndex(index: 0x12345680, updateActive: false)
-        let data = Data(hex: "68eca487516765b5e5bfdacbaf6cb7fb6bff871f035444ce83a670df")!
+        let data = Data(hex: "68eca487516765b5e5bfdacbaf6cb7fb6bff871f035444ce83a670df")
         
         let networkPdu = NetworkPdu(decode: data, ofType: .networkPdu,
                                     usingNetworkKey: networkKey, andIvIndex: ivIndex)
@@ -147,9 +147,9 @@ class NetworkPdus: XCTestCase {
     
     func testDecodingControlMessageWithWrongIvIndex_TooSmall() {
         let networkKey = try! NetworkKey(name: "Test Key", index: 0,
-                                         key: Data(hex: "7dd7364cd842ad18c17c2b820c84c3d6")!)
+                                         key: Data(hex: "7dd7364cd842ad18c17c2b820c84c3d6"))
         let ivIndex = IvIndex(index: 0x12345677, updateActive: false)
-        let data = Data(hex: "68eca487516765b5e5bfdacbaf6cb7fb6bff871f035444ce83a670df")!
+        let data = Data(hex: "68eca487516765b5e5bfdacbaf6cb7fb6bff871f035444ce83a670df")
         
         let networkPdu = NetworkPdu(decode: data, ofType: .networkPdu,
                                     usingNetworkKey: networkKey, andIvIndex: ivIndex)
@@ -158,9 +158,9 @@ class NetworkPdus: XCTestCase {
     
     func testDecodingControlMessageWithWrongKey() {
         let networkKey = try! NetworkKey(name: "Other Key", index: 0,
-                                         key: Data(hex: "8dd7364cd842ad18c17c2b820c84c3d6")!)
+                                         key: Data(hex: "8dd7364cd842ad18c17c2b820c84c3d6"))
         let ivIndex = IvIndex(index: 0x12345678, updateActive: false)
-        let data = Data(hex: "68eca487516765b5e5bfdacbaf6cb7fb6bff871f035444ce83a670df")!
+        let data = Data(hex: "68eca487516765b5e5bfdacbaf6cb7fb6bff871f035444ce83a670df")
         
         let networkPdu = NetworkPdu(decode: data, ofType: .networkPdu,
                                     usingNetworkKey: networkKey, andIvIndex: ivIndex)
@@ -169,9 +169,9 @@ class NetworkPdus: XCTestCase {
     
     func testDecodingControlMessageWithWrongKey2() {
         let networkKey = try! NetworkKey(name: "Test Key", index: 0,
-                                         key: Data(hex: "7dd7364cd842ad18c17c2b820c84c3d6")!)
+                                         key: Data(hex: "7dd7364cd842ad18c17c2b820c84c3d6"))
         let ivIndex = IvIndex(index: 0x12345678, updateActive: false)
-        let otherData = Data(hex: "68eca487516765b5e5bfdacbaf6cb7fb7bff871f035444ce83a670df")!
+        let otherData = Data(hex: "68eca487516765b5e5bfdacbaf6cb7fb7bff871f035444ce83a670df")
         
         let networkPdu = NetworkPdu(decode: otherData, ofType: .networkPdu,
                                     usingNetworkKey: networkKey, andIvIndex: ivIndex)
@@ -180,9 +180,9 @@ class NetworkPdus: XCTestCase {
     
     func testDecodingControlMessageWithWrongNid() {
         let networkKey = try! NetworkKey(name: "Test Key", index: 0,
-                                         key: Data(hex: "7dd7364cd842ad18c17c2b820c84c3d6")!)
+                                         key: Data(hex: "7dd7364cd842ad18c17c2b820c84c3d6"))
         let ivIndex = IvIndex(index: 0x12345678, updateActive: false)
-        let data = Data(hex: "69eca487516765b5e5bfdacbaf6cb7fb6bff871f035444ce83a670df")!
+        let data = Data(hex: "69eca487516765b5e5bfdacbaf6cb7fb6bff871f035444ce83a670df")
         
         let networkPdu = NetworkPdu(decode: data, ofType: .networkPdu,
                                     usingNetworkKey: networkKey, andIvIndex: ivIndex)

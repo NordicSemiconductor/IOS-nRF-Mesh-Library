@@ -102,11 +102,12 @@ internal struct NetworkPdu {
         // See: Bluetooth Mesh Profile 1.0.1 Specification, chapter: 3.10.5.
         self.ivIndex = ivIndex.index(for: ivi)
         
-        let helper = OpenSSLHelper()
         for keys in keySets {
             // Deobfuscate CTL, TTL, SEQ and SRC.
-            let deobfuscatedData = helper.deobfuscate(pdu, ivIndex: self.ivIndex,
-                                                      privacyKey: keys.privacyKey)!
+            let obfuscatedData = pdu.subdata(in: 1..<7) // 6 bytes following IVI
+            let random = pdu.subdata(in: 7..<14)        // 7 bytes of encrypted data
+            let deobfuscatedData = Crypto.obfuscate(obfuscatedData, usingPrivacyRandom: random,
+                                                    ivIndex: self.ivIndex, andPrivacyKey: keys.privacyKey)
             
             // First validation: Control Messages have NetMIC of size 64 bits.
             let ctl = deobfuscatedData[0] >> 7
@@ -134,10 +135,10 @@ internal struct NetworkPdu {
             if case .proxyConfiguration = pduType {
                 nonce[1] = 0x00 // Pad
             }
-            guard let decryptedData = helper.calculateDecryptedCCM(destAndTransportPdu,
-                                                                   withKey: keys.encryptionKey,
-                                                                   nonce: nonce, andMIC: mic,
-                                                                   withAdditionalData: nil) else { continue }
+            guard let decryptedData = Crypto.decrypt(destAndTransportPdu,
+                                                     withEncryptionKey: keys.encryptionKey,
+                                                     nonce: nonce, andMIC: mic,
+                                                     withAdditionalData: nil) else { continue }
             
             self.networkKey = networkKey
             self.type = type
@@ -190,20 +191,19 @@ internal struct NetworkPdu {
         // Data to be encrypted: Destination Address, Transport PDU.
         let decryptedData = Data() + destination.bigEndian + transportPdu
         
-        let helper = OpenSSLHelper()
         var nonce = Data([pduType.nonceId]) + deobfuscatedData + Data([0x00, 0x00]) + ivIndex.bigEndian
         if case .proxyConfiguration = pduType {
             nonce[1] = 0x00 // Pad
         }
-        let encryptedData = helper.calculateCCM(decryptedData,
-                                                withKey: keys.encryptionKey,
-                                                nonce: nonce,
-                                                andMICSize: type.netMicSize,
-                                                withAdditionalData: nil)!
-        let obfuscatedData = helper.obfuscate(deobfuscatedData,
+        let encryptedData = Crypto.encrypt(decryptedData,
+                                           withEncryptionKey: keys.encryptionKey,
+                                           nonce: nonce,
+                                           andMICSize: type.netMicSize,
+                                           withAdditionalData: nil)
+        let obfuscatedData = Crypto.obfuscate(deobfuscatedData,
                                               usingPrivacyRandom: encryptedData,
                                               ivIndex: ivIndex,
-                                              andPrivacyKey: keys.privacyKey)!
+                                              andPrivacyKey: keys.privacyKey)
         
         self.pdu = Data() + iviNid + obfuscatedData + encryptedData
     }

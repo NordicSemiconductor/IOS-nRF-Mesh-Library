@@ -81,13 +81,12 @@ public class ApplicationKey: Key, Codable {
     }
     
     private func regenerateKeyDerivatives() {
-        let helper = OpenSSLHelper()
-        aid = helper.calculateK4(withN: key)
+        aid = Crypto.calculateAid(from: key)
         
         // When the Application Key is imported from JSON, old key derivatives must
         // be calculated.
         if let oldKey = oldKey, oldAid == nil {
-            oldAid = helper.calculateK4(withN: oldKey)
+            oldAid = Crypto.calculateAid(from: oldKey)
         }
     }
     
@@ -107,17 +106,17 @@ public class ApplicationKey: Key, Codable {
         name = try container.decode(String.self, forKey: .name)
         index = try container.decode(KeyIndex.self, forKey: .index)
         let keyHex = try container.decode(String.self, forKey: .key)
-        guard let keyData = Data(hex: keyHex) else {
+        key = Data(hex: keyHex)
+        guard !key.isEmpty else {
             throw DecodingError.dataCorruptedError(forKey: .key, in: container,
                                                    debugDescription: "Key must be 32-character hexadecimal string.")
         }
-        key = keyData
         if let oldKeyHex = try container.decodeIfPresent(String.self, forKey: .oldKey) {
-            guard let oldKeyData = Data(hex: oldKeyHex) else {
+            oldKey = Data(hex: oldKeyHex)
+            guard !oldKey!.isEmpty else {
                 throw DecodingError.dataCorruptedError(forKey: .oldKey, in: container,
                                                        debugDescription: "Old key must be 32-character hexadecimal string.")
             }
-            oldKey = oldKeyData
         }
         boundNetworkKeyIndex = try container.decode(KeyIndex.self, forKey: .boundNetworkKeyIndex)
         

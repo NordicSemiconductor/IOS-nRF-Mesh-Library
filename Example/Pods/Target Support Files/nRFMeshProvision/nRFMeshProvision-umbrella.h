@@ -10,7 +10,6 @@
 #endif
 #endif
 
-#import "OpenSSLHelper.h"
 
 FOUNDATION_EXPORT double nRFMeshProvisionVersionNumber;
 FOUNDATION_EXPORT const unsigned char nRFMeshProvisionVersionString[];
