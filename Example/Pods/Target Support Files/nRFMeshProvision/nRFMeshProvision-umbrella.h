@@ -10,6 +10,7 @@
 #endif
 #endif
 
+
 FOUNDATION_EXPORT double nRFMeshProvisionVersionNumber;
 FOUNDATION_EXPORT const unsigned char nRFMeshProvisionVersionString[];
 
