@@ -447,7 +447,7 @@ class Pdus: XCTestCase {
         let sequence: UInt32 = 0x3129AB
         
         // Test begins here
-        let networkPdu0 = NetworkPdu(decode: Data(hex: "68CAB5C5348A230AFBA8C63D4E681631C09DEAF4FD409611459A3D6C3E")!,
+        let networkPdu0 = NetworkPdu(decode: Data(hex: "68CAB5C5348A230AFBA8C63D4E681631C09DEAF4FD409611459A3D6C3E"),
                                      ofType: .networkPdu,
                                      usingNetworkKey: networkKey, andIvIndex: ivIndex)
         XCTAssertNotNil(networkPdu0)
@@ -460,7 +460,7 @@ class Pdus: XCTestCase {
         XCTAssertEqual(networkPdu0?.transportPdu, Data(hex: "8026AC01EEE888AA2169326D23F3AFDF"))
         XCTAssertEqual(networkPdu0?.pdu, Data(hex: "68CAB5C5348A230AFBA8C63D4E681631C09DEAF4FD409611459A3D6C3E"))
         
-        let networkPdu1 = NetworkPdu(decode: Data(hex: "681615B5DD4A846CAE0C032BF0746F44F1B8CC8CE502AEF9D2393E5B93")!,
+        let networkPdu1 = NetworkPdu(decode: Data(hex: "681615B5DD4A846CAE0C032BF0746F44F1B8CC8CE502AEF9D2393E5B93"),
                                      ofType: .networkPdu,
                                      usingNetworkKey: networkKey, andIvIndex: ivIndex)
         XCTAssertNotNil(networkPdu1)
@@ -556,7 +556,7 @@ class Pdus: XCTestCase {
             }
         }
         
-        let message = TestVendorMessage(parameters: Data(hex: "48656C6C6F")!)
+        let message = TestVendorMessage(parameters: Data(hex: "48656C6C6F"))
         XCTAssertNotNil(message)
         
         let accessPdu = AccessPdu(fromMeshMessage: message!,

@@ -48,6 +48,7 @@
 		523F779722CE2BF60030EA6A /* SetPublicationDestinationsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 523F779622CE2BF60030EA6A /* SetPublicationDestinationsViewController.swift */; };
 		5245737B2500E10800CF8500 /* ScenesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5245737A2500E10800CF8500 /* ScenesViewController.swift */; };
 		5245737D2500E12600CF8500 /* EditSceneViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5245737C2500E12600CF8500 /* EditSceneViewController.swift */; };
+		524A8FDA25D281A200ABEFB7 /* CryptoTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 524A8FD925D281A200ABEFB7 /* CryptoTest.swift */; };
 		5251498122E0E36600CBF1E3 /* AddGroupViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5251498022E0E36600CBF1E3 /* AddGroupViewController.swift */; };
 		52518B3122E0B18400A1FD1E /* GroupsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52518B3022E0B18400A1FD1E /* GroupsViewController.swift */; };
 		52518B3322E0B43200A1FD1E /* GroupCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52518B3222E0B43200A1FD1E /* GroupCell.swift */; };
@@ -209,6 +210,7 @@
 		523F779622CE2BF60030EA6A /* SetPublicationDestinationsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetPublicationDestinationsViewController.swift; sourceTree = "<group>"; };
 		5245737A2500E10800CF8500 /* ScenesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScenesViewController.swift; sourceTree = "<group>"; };
 		5245737C2500E12600CF8500 /* EditSceneViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditSceneViewController.swift; sourceTree = "<group>"; };
+		524A8FD925D281A200ABEFB7 /* CryptoTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CryptoTest.swift; sourceTree = "<group>"; };
 		5251498022E0E36600CBF1E3 /* AddGroupViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddGroupViewController.swift; sourceTree = "<group>"; };
 		52518B3022E0B18400A1FD1E /* GroupsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupsViewController.swift; sourceTree = "<group>"; };
 		52518B3222E0B43200A1FD1E /* GroupCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupCell.swift; sourceTree = "<group>"; };
@@ -735,6 +737,7 @@
 			children = (
 				607FACE91AFB9204008FA782 /* Supporting Files */,
 				5231400122EEF7940074325A /* CreatingMeshNetwork.swift */,
+				524A8FD925D281A200ABEFB7 /* CryptoTest.swift */,
 				529522B5251B850700158AE0 /* Exporting.swift */,
 				52D2707D2511F850002F51F3 /* FastSending.swift */,
 				529B75AA2248E276008F1CE7 /* SceneRanges.swift */,
@@ -910,10 +913,12 @@
 			);
 			inputPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-nRFMeshProvision_Example/Pods-nRFMeshProvision_Example-frameworks.sh",
+				"${BUILT_PRODUCTS_DIR}/CryptoSwift/CryptoSwift.framework",
 				"${PODS_XCFRAMEWORKS_BUILD_DIR}/OpenSSL/OpenSSL.framework/OpenSSL",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/CryptoSwift.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/OpenSSL.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1102,6 +1107,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				524A8FDA25D281A200ABEFB7 /* CryptoTest.swift in Sources */,
 				52D2707E2511F850002F51F3 /* FastSending.swift in Sources */,
 				52B7F67D229829F200B0A42F /* Addresses.swift in Sources */,
 				5294DADA22B109810041370E /* Pdus.swift in Sources */,

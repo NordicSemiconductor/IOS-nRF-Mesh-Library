@@ -95,27 +95,28 @@ public extension MeshNetwork {
     /// Returns whether any of the Nodes in the mesh network matches
     /// given Hash and Random. This is used to match the Node Identity beacon.
     ///
-    /// - parameter hash:   The Hash value.
-    /// - parameter random: The Random value.
-    /// - returns: `True` if the given parameters match any node of this
-    ///            mesh network.
+    /// - parameters:
+    ///   - hash:   The Hash value.
+    ///   - random: The Random value.
+    /// - returns: `True` if the given parameters match any Node of this
+    ///            mesh network; `false` otherwise.
     func matches(hash: Data, random: Data) -> Bool {
-        let helper = OpenSSLHelper()
-        
         for node in nodes {
             // Data are: 48 bits of Padding (0s), 64 bit Random and Unicast Address.
             let data = Data(repeating: 0, count: 6) + random + node.unicastAddress.bigEndian
             
             for networkKey in node.networkKeys {
-                let encryptedData = helper.calculateEvalue(with: data, andKey: networkKey.keys.identityKey)!
-                if encryptedData.dropFirst(8) == hash {
+                let calculatedHash = Crypto.calculateHash(from: data,
+                                                          usingIdentityKey: networkKey.keys.identityKey)
+                if calculatedHash == hash {
                     return true
                 }
-                // If the Key refresh procedure is in place, the identity might have been
+                // If the Key Refresh Procedure is in place, the identity might have been
                 // generated with the old key.
                 if let oldIdentityKey = networkKey.oldKeys?.identityKey {
-                    let encryptedData = helper.calculateEvalue(with: data, andKey: oldIdentityKey)!
-                    if encryptedData.dropFirst(8) == hash {
+                    let calculatedHash = Crypto.calculateHash(from: data,
+                                                              usingIdentityKey: oldIdentityKey)
+                    if calculatedHash == hash {
                         return true
                     }
                 }

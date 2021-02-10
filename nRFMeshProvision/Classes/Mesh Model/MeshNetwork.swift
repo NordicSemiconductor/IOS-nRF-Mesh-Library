@@ -326,7 +326,8 @@ public class MeshNetwork: Codable {
             throw DecodingError.dataCorruptedError(forKey: .schema, in: container,
                                                    debugDescription: "Unsupported JSON schema")
         }
-        guard id == "http://www.bluetooth.com/specifications/assigned-numbers/mesh-profile/cdb-schema.json#" else {
+        guard id == "http://www.bluetooth.com/specifications/assigned-numbers/mesh-profile/cdb-schema.json#" ||
+              id == "TBD" else {
             throw DecodingError.dataCorruptedError(forKey: .id, in: container,
                                                    debugDescription: "Unsupported ID")
         }
