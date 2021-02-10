@@ -34,7 +34,7 @@ public extension Data {
     
     /// Returns a random 128-bit long key.
     static func random128BitKey() -> Data {
-        return OpenSSLHelper().generateRandom()
+        return Crypto.generateRandom()
     }
     
 }

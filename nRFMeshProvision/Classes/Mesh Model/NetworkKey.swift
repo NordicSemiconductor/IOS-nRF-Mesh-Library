@@ -42,18 +42,9 @@ internal struct NetworkKeyDerivatives {
     /// Network identifier.
     let nid: UInt8!
     
-    init(withKey key: Data, using helper: OpenSSLHelper) {
-        // Calculate Identity Key and Beacon Key.
-        let P = Data([0x69, 0x64, 0x31, 0x32, 0x38, 0x01]) // "id128" || 0x01
-        let saltIK = helper.calculateSalt("nkik".data(using: .ascii)!)!
-        identityKey = helper.calculateK1(withN: key, salt: saltIK, andP: P)
-        let saltBK = helper.calculateSalt("nkbk".data(using: .ascii)!)!
-        beaconKey = helper.calculateK1(withN: key, salt: saltBK, andP: P)
-        // Calculate NID, Encryption Key and Privacy Key.
-        let hash = helper.calculateK2(withN: key, andP: Data([0x00]))!
-        nid = hash[0] & 0x7F
-        encryptionKey = hash.subdata(in: 1..<17)
-        privacyKey = hash.subdata(in: 17..<33)
+    init(withKey key: Data) {
+        (nid, encryptionKey, privacyKey, identityKey, beaconKey) =
+            Crypto.calculateKeyDerivatives(from: key)
     }
 }
 
@@ -135,23 +126,22 @@ public class NetworkKey: Key, Codable {
     
     /// Creates the primary Network Key for a mesh network.
     internal convenience init() {
-        try! self.init(name: "Primary Network Key", index: 0, key: OpenSSLHelper().generateRandom())
+        try! self.init(name: "Primary Network Key", index: 0, key: Crypto.generateRandom())
     }
     
     private func regenerateKeyDerivatives() {
-        let helper = OpenSSLHelper()
         // Calculate Network ID.
-        networkId = helper.calculateK3(withN: key)
+        networkId = Crypto.calculateNetworkId(from: key)
         // Calculate other keys.
-        keys = NetworkKeyDerivatives(withKey: key, using: helper)
+        keys = NetworkKeyDerivatives(withKey: key)
         
         // When the Network Key is imported from JSON, old key derivatives must
         // be calculated.
         if let oldKey = oldKey, oldNetworkId == nil {
             // Calculate Network ID.
-            oldNetworkId = helper.calculateK3(withN: oldKey)
+            oldNetworkId = Crypto.calculateNetworkId(from: oldKey)
             // Calculate other keys.
-            oldKeys = NetworkKeyDerivatives(withKey: oldKey, using: helper)
+            oldKeys = NetworkKeyDerivatives(withKey: oldKey)
         }
     }
     
@@ -177,18 +167,18 @@ public class NetworkKey: Key, Codable {
                                                    debugDescription: "Key Index must be in range 0-4095.")
         }
         let keyHex = try container.decode(String.self, forKey: .key)
-        guard let keyData = Data(hex: keyHex) else {
+        key = Data(hex: keyHex)
+        guard !key.isEmpty else {
             throw DecodingError.dataCorruptedError(forKey: .key, in: container,
                                                    debugDescription: "Key must be 32-character hexadecimal string.")
         }
-        key = keyData
-        networkId = OpenSSLHelper().calculateK3(withN: key)
+        networkId = Crypto.calculateNetworkId(from: key)
         if let oldKeyHex = try container.decodeIfPresent(String.self, forKey: .oldKey) {
-            guard let oldKeyData = Data(hex: oldKeyHex) else {
+            oldKey = Data(hex: oldKeyHex)
+            guard !oldKey!.isEmpty else {
                 throw DecodingError.dataCorruptedError(forKey: .oldKey, in: container,
                                                        debugDescription: "Old key must be 32-character hexadecimal string.")
             }
-            oldKey = oldKeyData
         }
         phase = try container.decode(KeyRefreshPhase.self, forKey: .phase)
         minSecurity = try container.decode(Security.self, forKey: .minSecurity)

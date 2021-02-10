@@ -48,9 +48,7 @@ extension OobSelector where Self: UIViewController {
         }
         presentTextAlert(title: "Public Key", message: message,
                          type: .publicKeyRequired, option: skipAction, cancelHandler: nil) { hex in
-            if let key = Data(hex: hex) {
-                callback(.oobPublicKey(key: key))
-            }
+            callback(.oobPublicKey(key: Data(hex: hex)))
         }
     }
     

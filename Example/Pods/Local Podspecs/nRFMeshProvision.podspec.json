@@ -30,16 +30,10 @@
   ],
   "source_files": "nRFMeshProvision/Classes/**/*",
   "dependencies": {
-    "OpenSSL-Universal": [
-      "= 1.0.2.20"
+    "CryptoSwift": [
+      "= 1.3.8"
     ]
   },
   "frameworks": "CoreBluetooth",
-  "pod_target_xcconfig": {
-    "EXCLUDED_ARCHS[sdk=iphonesimulator*]": "arm64"
-  },
-  "user_target_xcconfig": {
-    "EXCLUDED_ARCHS[sdk=iphonesimulator*]": "arm64"
-  },
   "swift_version": "5.3"
 }

@@ -232,9 +232,12 @@ extension UIViewController {
                 textField.addTarget(self, action: .keyRequired, for: .editingDidBegin)
             }
             alert!.addAction(UIAlertAction(title: "OK", style: .default) { _ in
-               if let hex = alert?.textFields![0].text,
-                  let key = Data(hex: hex) {
-                    handler?(key)
+                if let handler = handler,
+                   let hex = alert?.textFields![0].text {
+                    let data = Data(hex: hex)
+                    if !data.isEmpty {
+                        handler(data)
+                    }
                 }
                 alert = nil
             })
@@ -387,9 +390,9 @@ extension UIViewController {
     @objc func keyRequired(_ textField: UITextField) {
         let alert = getAlert(from: textField)
         
-        if let text = textField.text, let data = Data(hex: text) {
+        if let text = textField.text {
             // A valid key is 16 bytes long (128-bit).
-            alert.setValid(data.count == 16)
+            alert.setValid(Data(hex: text).count == 16)
         } else {
             alert.setValid(false)
         }
@@ -398,9 +401,9 @@ extension UIViewController {
     @objc func publicKeyRequired(_ textField: UITextField) {
         let alert = getAlert(from: textField)
         
-        if let text = textField.text, let data = Data(hex: text) {
+        if let text = textField.text {
             // A valid key is 2 * 32 bytes long.
-            alert.setValid(data.count == 64)
+            alert.setValid(Data(hex: text).count == 64)
         } else {
             alert.setValid(false)
         }

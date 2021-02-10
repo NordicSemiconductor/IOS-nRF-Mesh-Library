@@ -67,7 +67,7 @@ class VendorModelViewCell: ModelViewCell, UITextFieldDelegate {
     
     @IBAction func valueDidChange(_ sender: UITextField) {
         if let opCode = UInt8(opCodeField.text!, radix: 16), opCode <= 0x3F,
-            let _ = Data(hex: parametersField.text!) {
+           !Data(hex: parametersField.text!).isEmpty {
             sendButton.isEnabled = true
         } else {
             sendButton.isEnabled = false

@@ -42,7 +42,7 @@ internal struct SecureNetworkBeacon: BeaconPdu {
     /// Key Refresh flag value.
     ///
     /// When this flag is active, the Node shall set the Key Refresh
-    /// Phase for this Network Key to `.finalizing`. When in this phase,
+    /// Phase for this Network Key to `.usingNewKeys`. When in this phase,
     /// the Node shall only transmit messages and Secure Network beacons
     /// using the new keys, shall receive messages using the old keys
     /// and the new keys, and shall only receive Secure Network beacons
@@ -73,17 +73,18 @@ internal struct SecureNetworkBeacon: BeaconPdu {
         // Authenticate beacon using given Network Key.
         // During Key Refresh Procedure when in Phase 1 (key distribution) the
         // Secure Network beacon may be decoded using the old Network Key.
-        let helper = OpenSSLHelper()
         if networkId == networkKey.networkId {
-            let authenticationValue = helper.calculateCMAC(pdu.subdata(in: 1..<14), andKey: networkKey.keys.beaconKey)!
-            guard authenticationValue.subdata(in: 0..<8) == pdu.subdata(in: 14..<22) else {
+            guard Crypto.authenticate(secureNetworkBeaconPdu: pdu,
+                                      usingBeaconKey: networkKey.keys.beaconKey) else {
                 return nil
             }
             self.networkKey = networkKey
             self.validForKeyRefreshProcedure = networkKey.oldKey != nil
-        } else if case .keyDistribution = networkKey.phase, networkId == networkKey.oldNetworkId {
-            let authenticationValue = helper.calculateCMAC(pdu.subdata(in: 1..<14), andKey: networkKey.oldKeys!.beaconKey)!
-            guard authenticationValue.subdata(in: 0..<8) == pdu.subdata(in: 14..<22) else {
+        } else if case .keyDistribution = networkKey.phase,
+                  networkId == networkKey.oldNetworkId,
+                  let oldKeys = networkKey.oldKeys {
+            guard Crypto.authenticate(secureNetworkBeaconPdu: pdu,
+                                      usingBeaconKey: oldKeys.beaconKey) else {
                 return nil
             }
             self.networkKey = networkKey

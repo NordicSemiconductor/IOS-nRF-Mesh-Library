@@ -24,9 +24,9 @@ Pod::Spec.new do |s|
   s.static_framework = true
   s.swift_versions   = ['4.2', '5.0', '5.1', '5.2', '5.3']
   s.source_files = 'nRFMeshProvision/Classes/**/*'
-  s.dependency 'OpenSSL-Universal', '= 1.0.2.20'
+  s.dependency 'CryptoSwift', '= 1.3.8'
   s.frameworks = 'CoreBluetooth'
   # Regarding the lines below see: https://stackoverflow.com/a/63955114/2115352
-  s.pod_target_xcconfig = { 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'arm64' }
-  s.user_target_xcconfig = { 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'arm64' }
+  # s.pod_target_xcconfig = { 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'arm64' }
+  # s.user_target_xcconfig = { 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'arm64' }
 end

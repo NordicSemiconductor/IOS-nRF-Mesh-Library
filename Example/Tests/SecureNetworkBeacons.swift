@@ -34,10 +34,10 @@ import XCTest
 class SecureNetworkBeacons: XCTestCase {
     private let networkKey =
         try! NetworkKey(name: "Primary Network Key", index: 0,
-                        key: Data(hex: "8D65C0771C83FAC39E256F697EA3AAE1")!)
+                        key: Data(hex: "8D65C0771C83FAC39E256F697EA3AAE1"))
 
     func testDecodingSecureNordicBeacon() throws {
-        let data = Data(hex: "0102EE6C0EFF5298ECFF000000025E5AA7B268B5E044")!
+        let data = Data(hex: "0102EE6C0EFF5298ECFF000000025E5AA7B268B5E044")
         let snb = SecureNetworkBeacon(decode: data, usingNetworkKey: networkKey)
         
         XCTAssertNotNil(snb)
@@ -53,7 +53,7 @@ class SecureNetworkBeacons: XCTestCase {
     }
     
     func testOverwritingWithTheSameIvIndex() {
-        let data = Data(hex: "0102EE6C0EFF5298ECFF000000025E5AA7B268B5E044")!
+        let data = Data(hex: "0102EE6C0EFF5298ECFF000000025E5AA7B268B5E044")
         let snb = SecureNetworkBeacon(decode: data, usingNetworkKey: networkKey)
         let ivIndex = IvIndex(index: 2, updateActive: true)
         
@@ -66,7 +66,7 @@ class SecureNetworkBeacons: XCTestCase {
     }
     
     func testOverwritingWithNextIvIndex() {
-        let data = Data(hex: "0102EE6C0EFF5298ECFF000000025E5AA7B268B5E044")!
+        let data = Data(hex: "0102EE6C0EFF5298ECFF000000025E5AA7B268B5E044")
         let snb = SecureNetworkBeacon(decode: data, usingNetworkKey: networkKey)
         let ivIndex = IvIndex(index: 1, updateActive: false)
         
@@ -102,7 +102,7 @@ class SecureNetworkBeacons: XCTestCase {
     }
     
     func testOverwritingWithNextIvIndexInTestMode() {
-        let data = Data(hex: "0102EE6C0EFF5298ECFF000000025E5AA7B268B5E044")!
+        let data = Data(hex: "0102EE6C0EFF5298ECFF000000025E5AA7B268B5E044")
         let snb = SecureNetworkBeacon(decode: data, usingNetworkKey: networkKey)
         let ivIndex = IvIndex(index: 1, updateActive: false)
         
@@ -129,7 +129,7 @@ class SecureNetworkBeacons: XCTestCase {
     }
     
     func testOverwritingWithFarIvIndex() {
-        let data = Data(hex: "0102EE6C0EFF5298ECFF000000025E5AA7B268B5E044")!
+        let data = Data(hex: "0102EE6C0EFF5298ECFF000000025E5AA7B268B5E044")
         let snb = SecureNetworkBeacon(decode: data, usingNetworkKey: networkKey)
         let ivIndex = IvIndex(index: 0, updateActive: false)
         
@@ -183,7 +183,7 @@ class SecureNetworkBeacons: XCTestCase {
     }
     
     func testOverwritingWithFarIvIndexInTestMode() {
-        let data = Data(hex: "0102EE6C0EFF5298ECFF000000025E5AA7B268B5E044")!
+        let data = Data(hex: "0102EE6C0EFF5298ECFF000000025E5AA7B268B5E044")
         let snb = SecureNetworkBeacon(decode: data, usingNetworkKey: networkKey)
         let ivIndex = IvIndex(index: 0, updateActive: false)
         
@@ -213,7 +213,7 @@ class SecureNetworkBeacons: XCTestCase {
     
     func testOverwritingWithVeryFarIvIndex() {
         // This Secure Network Beacon has IV Index 52 (update active).
-        let data = Data(hex: "0102EE6C0EFF5298ECFF00000034A53312BF9198C86F")!
+        let data = Data(hex: "0102EE6C0EFF5298ECFF00000034A53312BF9198C86F")
         let snb = SecureNetworkBeacon(decode: data, usingNetworkKey: networkKey)
         let ivIndex = IvIndex(index: 9, updateActive: false)
         

@@ -29,7 +29,6 @@
 */
 
 import Foundation
-import Security
 
 public protocol ProvisioningDelegate: class {
     
@@ -51,9 +50,7 @@ public protocol ProvisioningDelegate: class {
     
 }
 
-public class ProvisioningManager {
-    private let helper = OpenSSLHelper()
-    
+public class ProvisioningManager {    
     private let unprovisionedDevice: UnprovisionedDevice
     private let bearer: ProvisioningBearer
     private let meshNetwork: MeshNetwork
@@ -121,8 +118,10 @@ public class ProvisioningManager {
                 // Unknown.
                 return nil
         }
-        return meshNetwork.isAddressRangeAvailable(unicastAddress, elementsCount: capabilities.numberOfElements) &&
-               provisioner.isAddressInAllocatedRange(unicastAddress, elementCount: capabilities.numberOfElements)
+        return meshNetwork.isAddressRangeAvailable(unicastAddress,
+                                                   elementsCount: capabilities.numberOfElements) &&
+               provisioner.isAddressInAllocatedRange(unicastAddress,
+                                                     elementCount: capabilities.numberOfElements)
     }
     
     /// Returns whether the Unprovisioned Device can be provisioned using this

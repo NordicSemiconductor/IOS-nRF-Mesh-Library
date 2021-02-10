@@ -32,8 +32,8 @@ import XCTest
 @testable import nRFMeshProvision
 
 class KeyRefreshProcedure: XCTestCase {
-    let key     = Data(hex: "00112233445566778899AABBCCDDEEFF")!
-    let newKey  = Data(hex: "FFEEDDCCBBAA99887766554433221100")!
+    let key     = Data(hex: "00112233445566778899AABBCCDDEEFF")
+    let newKey  = Data(hex: "FFEEDDCCBBAA99887766554433221100")
     let ivIndex = IvIndex(index: 2, updateActive: false)
     let seq     = UInt32(123)
     let ttl     = UInt8(5)
@@ -41,8 +41,8 @@ class KeyRefreshProcedure: XCTestCase {
     var networkKey: NetworkKey!
     var controlMessage: ControlMessage!
     
-    let pduEncodedUsingOldKey = Data(hex: "1E33F32EA453EAAB346A44BBC3E761667272FD")!
-    let pduEncodedUsingNewKey = Data(hex: "582B063460750280DF9244AA90E637A345E3C3")!
+    let pduEncodedUsingOldKey = Data(hex: "1E33F32EA453EAAB346A44BBC3E761667272FD")
+    let pduEncodedUsingNewKey = Data(hex: "582B063460750280DF9244AA90E637A345E3C3")
     
     override func setUpWithError() throws {
         networkKey = try NetworkKey(name: "Test Key", index: 0, key: key)

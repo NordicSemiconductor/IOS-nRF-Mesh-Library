@@ -74,9 +74,9 @@ internal struct UpperTransportPdu {
             + accessMessage.destination.bigEndian
             + accessMessage.ivIndex.bigEndian
         
-        guard let decryptedData = OpenSSLHelper().calculateDecryptedCCM(encryptedData,
-                  withKey: key, nonce: nonce, andMIC: mic,
-                  withAdditionalData: virtualGroup?.address.virtualLabel?.data) else {
+        guard let decryptedData = Crypto.decrypt(encryptedData,
+                                                 withEncryptionKey: key, nonce: nonce, andMIC: mic,
+                                                 withAdditionalData: virtualGroup?.address.virtualLabel?.data) else {
              return nil
         }
         source = accessMessage.source
@@ -119,16 +119,17 @@ internal struct UpperTransportPdu {
             + self.ivIndex.bigEndian
         
         self.transportMicSize = aszmic == 0 ? 4 : 8
-        self.transportPdu = OpenSSLHelper().calculateCCM(accessPdu, withKey: keySet.accessKey, nonce: nonce,
-                                                         andMICSize: transportMicSize,
-                                                         withAdditionalData: pdu.destination.virtualLabel?.data)
+        self.transportPdu = Crypto.encrypt(accessPdu, withEncryptionKey: keySet.accessKey,
+                                           nonce: nonce, andMICSize: transportMicSize,
+                                           withAdditionalData: pdu.destination.virtualLabel?.data)
     }
     
     /// This method tries to decode the Access Message using a matching Application Key
     /// based on the `aid` field value, or the Device Key of the local or source Node.
     ///
-    /// - parameter accessMessage: The Lower Transport Layer Access Message received.
-    /// - parameter meshNetwork: The mesh network for which the PDU should be decoded.
+    /// - parameters:
+    ///   - accessMessage: The Lower Transport Layer Access Message received.
+    ///   - meshNetwork: The mesh network for which the PDU should be decoded.
     /// - returns: The Upper Transport Layer PDU, of `nil` if none of the keys worked.
     static func decode(_ accessMessage: AccessMessage, for meshNetwork: MeshNetwork)
         -> (pdu: UpperTransportPdu, keySet: KeySet)? {

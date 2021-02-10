@@ -34,7 +34,7 @@ import XCTest
 class CompositionData: XCTestCase {
 
     func testParsing() {
-        let data = Data(hex: "0034127856CDAB05000A000601020100000100785634120801000221436587AABBCCDD")!
+        let data = Data(hex: "0034127856CDAB05000A000601020100000100785634120801000221436587AABBCCDD")
         let compositionData = ConfigCompositionDataStatus(parameters: data)
         
         XCTAssertNotNil(compositionData)
