@@ -1,7 +1,8 @@
 # nRF Mesh for iOS
-
+[![GitHub license](https://img.shields.io/github/license/NordicSemiconductor/IOS-nRF-Mesh-Library)](https://github.com/NordicSemiconductor/IOS-nRF-Mesh-Library/blob/master/LICENSE)
 [![Version](http://img.shields.io/cocoapods/v/nRFMeshProvision.svg)](http://cocoapods.org/pods/nRFMeshProvision)
 [![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
+[![SwiftPM Compatible](https://img.shields.io/badge/SwiftPM-compatible-brightgreen)](https://swift.org/package-manager/)
 
 ## About
 
