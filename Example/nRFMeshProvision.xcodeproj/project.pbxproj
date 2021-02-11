@@ -1348,7 +1348,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				LINK_WITH_STANDARD_LIBRARIES = YES;
-				MARKETING_VERSION = 3.0.1;
+				MARKETING_VERSION = 3.0.2;
 				MODULE_NAME = ExampleApp;
 				OTHER_LDFLAGS = "$(inherited)";
 				PRODUCT_BUNDLE_IDENTIFIER = com.nordicsemi.nRFProvisioner;
@@ -1375,7 +1375,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				LINK_WITH_STANDARD_LIBRARIES = YES;
-				MARKETING_VERSION = 3.0.1;
+				MARKETING_VERSION = 3.0.2;
 				MODULE_NAME = ExampleApp;
 				OTHER_LDFLAGS = "$(inherited)";
 				PRODUCT_BUNDLE_IDENTIFIER = com.nordicsemi.nRFProvisioner;
