@@ -174,7 +174,8 @@ public struct Publish: Codable {
                                                        debugDescription: "Number of steps must be in range 0 to 63.")
             }
             let milliseconds = try container.decode(Int.self, forKey: .resolution)
-            guard let resolution = StepResolution(from: milliseconds) else {
+            let fixedMilliseconds = Period.fix(milliseconds, using: steps)
+            guard let resolution = StepResolution(from: fixedMilliseconds) else {
                 throw DecodingError.dataCorruptedError(forKey: .resolution, in: container,
                                                        debugDescription: "Unsupported resolution value: \(milliseconds). "
                                                                        + "The allowed values are: 100, 1000, 10000, and 600000.")
@@ -359,30 +360,6 @@ public struct Publish: Codable {
                                                    debugDescription: "Retransmit interval must be in range 50-1600 ms in 50 ms steps.")
         }
     }
-    
-    /// This method tries to decode the publication period using the legacy schema,
-    /// where it was stored as number of milliseconds, instead of steps and resolution
-    /// separately.
-    ///
-    /// - parameter container: The decoding container to read from.
-    /// - returns: The Period object.
-    /// - throws: Data Corrupted Error when the decoded value is invalid.
-    private static func legacyDecodePeriod(from container: KeyedDecodingContainer<CodingKeys>) throws -> Period {
-        let period = try container.decode(Int.self, forKey: .period)
-        switch period {
-        case let period where period % 600000 == 0:
-            return Period(steps: UInt8(period / 600000), resolution: .tensOfMinutes)
-        case let period where period % 10000 == 0:
-            return Period(steps: UInt8(period / 10000), resolution: .tensOfSeconds)
-        case let period where period % 1000 == 0:
-            return Period(steps: UInt8(period / 1000), resolution: .seconds)
-        case let period where period % 100 == 0:
-            return Period(steps: UInt8(period / 100), resolution: .hundredsOfMilliseconds)
-        default:
-            throw DecodingError.dataCorruptedError(forKey: .period, in: container,
-                                                   debugDescription: "Unsupported period value: \(period).")
-        }
-    }
 }
 
 public extension Publish {
@@ -477,6 +454,42 @@ extension Publish.Period: CustomDebugStringConvertible {
             return "\(value / 6) h"
         case .tensOfMinutes:
             return "\(value / 6) h \(value % 6 * 10) min"
+        }
+    }
+    
+}
+
+private extension Publish.Period {
+    
+    /// This method implements a workaround for importing publish resolution
+    /// exported from nRF Mesh in version 3.0.1 or older, where it was multipled
+    /// by the number of steps.
+    ///
+    /// E.g. 40 seconds would be exported as:
+    /// ```
+    /// "period": {
+    ///    "numberOfSteps": 40,
+    ///    "resolution": 40000 // instead of 1000
+    /// }
+    /// ```
+    static func fix(_ milliseconds: Int, using steps: UInt8) -> Int {
+        switch milliseconds {
+        case 0,
+             _ where steps == 0:
+            // If resolution or steps were set to 0, set resolution to
+            // hundreds of milliseconds.
+            return 100
+        case 100, 1000, 10000, 60000:
+            // Those are the valid values. Keep it as it is.
+            return milliseconds
+        case _ where milliseconds % Int(steps) == 0:
+            // If the imported value is a multiplication of steps, divide it.
+            // Steps are no longer 0 at this point, so it's safe.
+            return milliseconds / Int(steps)
+        default:
+            // An invalid value was imported, that cannot be converted.
+            // Setting it to 0 will generate an error below.
+            return 0
         }
     }
     
