@@ -174,7 +174,8 @@ public struct Publish: Codable {
                                                        debugDescription: "Number of steps must be in range 0 to 63.")
             }
             let milliseconds = try container.decode(Int.self, forKey: .resolution)
-            guard let resolution = StepResolution(from: milliseconds) else {
+            let fixedMilliseconds = Period.fix(milliseconds, using: steps)
+            guard let resolution = StepResolution(from: fixedMilliseconds) else {
                 throw DecodingError.dataCorruptedError(forKey: .resolution, in: container,
                                                        debugDescription: "Unsupported resolution value: \(milliseconds). "
                                                                        + "The allowed values are: 100, 1000, 10000, and 600000.")
@@ -453,6 +454,42 @@ extension Publish.Period: CustomDebugStringConvertible {
             return "\(value / 6) h"
         case .tensOfMinutes:
             return "\(value / 6) h \(value % 6 * 10) min"
+        }
+    }
+    
+}
+
+private extension Publish.Period {
+    
+    /// This method implements a workaround for importing publish resolution
+    /// exported from nRF Mesh in version 3.0.1 or older, where it was multipled
+    /// by the number of steps.
+    ///
+    /// E.g. 40 seconds would be exported as:
+    /// ```
+    /// "period": {
+    ///    "numberOfSteps": 40,
+    ///    "resolution": 40000 // instead of 1000
+    /// }
+    /// ```
+    static func fix(_ milliseconds: Int, using steps: UInt8) -> Int {
+        switch milliseconds {
+        case 0,
+             _ where steps == 0:
+            // If resolution or steps were set to 0, set resolution to
+            // hundreds of milliseconds.
+            return 100
+        case 100, 1000, 10000, 60000:
+            // Those are the valid values. Keep it as it is.
+            return milliseconds
+        case _ where milliseconds % Int(steps) == 0:
+            // If the imported value is a multiplication of steps, divide it.
+            // Steps are no longer 0 at this point, so it's safe.
+            return milliseconds / Int(steps)
+        default:
+            // An invalid value was imported, that cannot be converted.
+            // Setting it to 0 will generate an error below.
+            return 0
         }
     }
     
