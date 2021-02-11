@@ -1,4 +1,17 @@
 ## Changelog
+- **3.0.2**:
+   - Bugfix: Fixed issues with importing a JSON file exported with an older version of the app (#321).
+   
+- **3.0.1**:
+   - Scene support.
+   - Heartbeat support.
+   - Key Refresh Procedure support.
+   - Partial export.
+   - UI improvements.
+   - JSON schema modified.
+   - Bugs fixed.
+   - For more see #295 and #323.
+
 - **2.2.3**:
    - A connected Proxy Node, if known, can now we obtained from the `ProxyFilter`.
    - Displaying Proxy Node name on Proxy screen in the sample app.
