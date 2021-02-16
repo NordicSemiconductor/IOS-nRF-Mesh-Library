@@ -48,5 +48,4 @@ public struct LightHSLTargetGet: AcknowledgedGenericMessage {
         }
     }
     
-    
 }
