@@ -53,10 +53,7 @@ public struct LightLCModeSet: AcknowledgedGenericMessage {
         guard parameters.count == 1 else {
             return nil
         }
-        guard parameters[0] == 0 || parameters[0] == 1 else {
-            return nil
-        }
-        self.controllerStatus == parameters[0] == 1
+        self.controllerStatus = parameters[0] == 0x01
     }
     
 }

@@ -45,17 +45,14 @@ public struct LightLCOccupancyModeSetUnacknowledged: GenericMessage {
     ///
     /// - parameter mode: The present value of the Light LC Occupancy Mode state.
     public init(_ mode: Bool) {
-        self.occupancyMode = status
+        self.occupancyMode = mode
     }
     
     public init?(parameters: Data) {
         guard parameters.count == 1 else {
             return nil
         }
-        guard parameters[0] == 0 || parameters[0] == 1 else {
-            return nil
-        }
-        self.occupancyMode == parameters[0] == 1
+        self.occupancyMode = parameters[0] == 0x01
     }
     
 }
