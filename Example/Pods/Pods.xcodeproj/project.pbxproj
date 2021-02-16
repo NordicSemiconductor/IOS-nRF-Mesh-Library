@@ -160,6 +160,10 @@
 		52B4930425DC57BA0096E75D /* LightLCModeStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52B4930325DC57BA0096E75D /* LightLCModeStatus.swift */; };
 		52B4930A25DC5AE30096E75D /* LightLCModeSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52B4930925DC5AE30096E75D /* LightLCModeSet.swift */; };
 		52B4931025DC5B380096E75D /* LightLCModeSetUnacknowledged.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52B4930F25DC5B380096E75D /* LightLCModeSetUnacknowledged.swift */; };
+		52B4931625DC5D420096E75D /* LightLCOccupancyModeGet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52B4931525DC5D420096E75D /* LightLCOccupancyModeGet.swift */; };
+		52B4931C25DC5D8E0096E75D /* LightLCOccupancyModeStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52B4931B25DC5D8E0096E75D /* LightLCOccupancyModeStatus.swift */; };
+		52B4932225DC5E350096E75D /* LightLCOccupancyModeSetUnacknowledged.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52B4932125DC5E350096E75D /* LightLCOccupancyModeSetUnacknowledged.swift */; };
+		52B4932825DC5E7A0096E75D /* LightLCOccupancyModeSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52B4932725DC5E7A0096E75D /* LightLCOccupancyModeSet.swift */; };
 		5419D23A75236616FD9003BFEAB0A196 /* Digest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C21C8E900A0E68E2325ECFEC2E7B92 /* Digest.swift */; };
 		543740C6C31D3637343F37FA099E11BD /* AEADChaCha20Poly1305.swift in Sources */ = {isa = PBXBuildFile; fileRef = C30CC9F96E86F25A65521BCC123D5014 /* AEADChaCha20Poly1305.swift */; };
 		54CA4CC2D9DDD32F559FEFE36DB31914 /* NoPadding.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC17DD2135B8E43A2EBE41EE0F6DDB19 /* NoPadding.swift */; };
@@ -627,6 +631,10 @@
 		52B4930325DC57BA0096E75D /* LightLCModeStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LightLCModeStatus.swift; sourceTree = "<group>"; };
 		52B4930925DC5AE30096E75D /* LightLCModeSet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LightLCModeSet.swift; sourceTree = "<group>"; };
 		52B4930F25DC5B380096E75D /* LightLCModeSetUnacknowledged.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LightLCModeSetUnacknowledged.swift; sourceTree = "<group>"; };
+		52B4931525DC5D420096E75D /* LightLCOccupancyModeGet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LightLCOccupancyModeGet.swift; sourceTree = "<group>"; };
+		52B4931B25DC5D8E0096E75D /* LightLCOccupancyModeStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LightLCOccupancyModeStatus.swift; sourceTree = "<group>"; };
+		52B4932125DC5E350096E75D /* LightLCOccupancyModeSetUnacknowledged.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LightLCOccupancyModeSetUnacknowledged.swift; sourceTree = "<group>"; };
+		52B4932725DC5E7A0096E75D /* LightLCOccupancyModeSet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LightLCOccupancyModeSet.swift; sourceTree = "<group>"; };
 		531B9F2EF263CE4EA7065194384BE25F /* MeshStateManager.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MeshStateManager.swift; sourceTree = "<group>"; };
 		538806EF44671C282F414D17398F37EA /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		544BD2258E957BEB4A4E579D0107AF32 /* Provisioner+Node.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "Provisioner+Node.swift"; sourceTree = "<group>"; };
@@ -1562,6 +1570,10 @@
 				52B4930925DC5AE30096E75D /* LightLCModeSet.swift */,
 				52B4930F25DC5B380096E75D /* LightLCModeSetUnacknowledged.swift */,
 				52B4930325DC57BA0096E75D /* LightLCModeStatus.swift */,
+				52B4931525DC5D420096E75D /* LightLCOccupancyModeGet.swift */,
+				52B4932725DC5E7A0096E75D /* LightLCOccupancyModeSet.swift */,
+				52B4932125DC5E350096E75D /* LightLCOccupancyModeSetUnacknowledged.swift */,
+				52B4931B25DC5D8E0096E75D /* LightLCOccupancyModeStatus.swift */,
 				D4D05ECB7CCB14F810CDEA019EBF4CB9 /* LightLightnessDefaultGet.swift */,
 				CF1EBD6989C65FAEB9EECE42CB3CFAB3 /* LightLightnessDefaultSet.swift */,
 				4C73DC3777C8924006546A7F137543A5 /* LightLightnessDefaultSetUnacknowledged.swift */,
@@ -2030,6 +2042,7 @@
 				712EBB5A12D22A4E3079DAFA47AA97C5 /* ConfigAppKeyStatus.swift in Sources */,
 				EDD4133A69733BFED864045E8F676ED2 /* ConfigAppKeyUpdate.swift in Sources */,
 				8C39914FB15478177B14C77292347208 /* ConfigBeaconGet.swift in Sources */,
+				52B4932825DC5E7A0096E75D /* LightLCOccupancyModeSet.swift in Sources */,
 				92D7431A641D2C4B1CC9C3FA784637BE /* ConfigBeaconSet.swift in Sources */,
 				FD89C155913EB4EDBF3D8C8AB5895CBA /* ConfigBeaconStatus.swift in Sources */,
 				E3A43416097967B662BC47359A808130 /* ConfigCompositionDataGet.swift in Sources */,
@@ -2083,6 +2096,7 @@
 				9DEF80A4241154D351B47407613E1BF4 /* ConfigNetworkTransmitStatus.swift in Sources */,
 				1071184185D982146FEE23EE2C902FEB /* ConfigNodeReset.swift in Sources */,
 				1D42799FCC93289CF4ADF30FB7428487 /* ConfigNodeResetStatus.swift in Sources */,
+				52B4931625DC5D420096E75D /* LightLCOccupancyModeGet.swift in Sources */,
 				B87ABDACBAB99DCC68CFFB4412F932A2 /* ConfigRelayGet.swift in Sources */,
 				3B7F683A14E3D9D1BEDA42A297184DB9 /* ConfigRelaySet.swift in Sources */,
 				747485C5F4D61A9854A00A5F30654591 /* ConfigRelayStatus.swift in Sources */,
@@ -2233,6 +2247,7 @@
 				913CBDE1C8359E0105D76F5669111792 /* MeshAddress.swift in Sources */,
 				1D90159FC5314F32FD15AA5962D68FB4 /* MeshConstants.swift in Sources */,
 				48D082B0B45CD77470355F90C7FF0D46 /* MeshData.swift in Sources */,
+				52B4931C25DC5D8E0096E75D /* LightLCOccupancyModeStatus.swift in Sources */,
 				31AF3FF3B0DF76DD7731AB32721CFFB4 /* MeshLoggerDelegate.swift in Sources */,
 				42E8000E0351046FCB1F6B85F9F89DF1 /* MeshMessage.swift in Sources */,
 				A4ADDBCC9ADE956382C5277E9145C5D9 /* MeshMessageError.swift in Sources */,
@@ -2267,6 +2282,7 @@
 				47F90A54905C73CD1FB109B916EDFAD4 /* NetworkLayer.swift in Sources */,
 				6A76FC33139BE4124E22F194D766AC14 /* NetworkManager.swift in Sources */,
 				B40670E717FBFB105D096BFE94BF4916 /* NetworkPdu.swift in Sources */,
+				52B4932225DC5E350096E75D /* LightLCOccupancyModeSetUnacknowledged.swift in Sources */,
 				6A37EB9E6D6D408AF027679529C6DB5A /* Node+Address.swift in Sources */,
 				29CB61A8AC54E225F98C04A49B965349 /* Node+Elements.swift in Sources */,
 				47DC6C225774AF8E91B163DAF64BC3BA /* Node+Keys.swift in Sources */,
