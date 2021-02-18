@@ -138,6 +138,8 @@
 		5215992525DA99CD00F602FA /* SensorCadenceGet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5215992425DA99CD00F602FA /* SensorCadenceGet.swift */; };
 		5215992B25DA9B7C00F602FA /* SensorCadenceStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5215992A25DA9B7C00F602FA /* SensorCadenceStatus.swift */; };
 		5215993125DE70BC00F602FA /* DeviceProperty.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5215993025DE70BC00F602FA /* DeviceProperty.swift */; };
+		5215994125DE96A700F602FA /* SensorSettingsGet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5215994025DE96A700F602FA /* SensorSettingsGet.swift */; };
+		5215994925DE96EB00F602FA /* SensorSettingsStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5215994825DE96EB00F602FA /* SensorSettingsStatus.swift */; };
 		523C6B1F33DB2E96993439A057BDF4D8 /* ConfigAppKeyAdd.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD9ED7E9A1A76137851290A8E7D4B828 /* ConfigAppKeyAdd.swift */; };
 		52DE3A9E25D5640900268D7D /* SensorDescriptorGet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52DE3A9425D563F100268D7D /* SensorDescriptorGet.swift */; };
 		52DE3AA425D5649400268D7D /* SensorMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52DE3AA325D5649400268D7D /* SensorMessage.swift */; };
@@ -588,6 +590,8 @@
 		5215992425DA99CD00F602FA /* SensorCadenceGet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SensorCadenceGet.swift; sourceTree = "<group>"; };
 		5215992A25DA9B7C00F602FA /* SensorCadenceStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SensorCadenceStatus.swift; sourceTree = "<group>"; };
 		5215993025DE70BC00F602FA /* DeviceProperty.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceProperty.swift; sourceTree = "<group>"; };
+		5215994025DE96A700F602FA /* SensorSettingsGet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SensorSettingsGet.swift; sourceTree = "<group>"; };
+		5215994825DE96EB00F602FA /* SensorSettingsStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SensorSettingsStatus.swift; sourceTree = "<group>"; };
 		52DE3A9425D563F100268D7D /* SensorDescriptorGet.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SensorDescriptorGet.swift; sourceTree = "<group>"; };
 		52DE3AA325D5649400268D7D /* SensorMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SensorMessage.swift; sourceTree = "<group>"; };
 		52DE3AA925D6A2CA00268D7D /* SensorDescriptorStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SensorDescriptorStatus.swift; sourceTree = "<group>"; };
@@ -1116,6 +1120,8 @@
 				52DE3AA925D6A2CA00268D7D /* SensorDescriptorStatus.swift */,
 				5215992425DA99CD00F602FA /* SensorCadenceGet.swift */,
 				5215992A25DA9B7C00F602FA /* SensorCadenceStatus.swift */,
+				5215994025DE96A700F602FA /* SensorSettingsGet.swift */,
+				5215994825DE96EB00F602FA /* SensorSettingsStatus.swift */,
 			);
 			path = Sensors;
 			sourceTree = "<group>";
@@ -2055,6 +2061,7 @@
 				A85AD97788323F6980E69F855FD375C6 /* GattBearerDelegate.swift in Sources */,
 				4E2B1128D4B69C183F9D8CFAD53E0352 /* GattBearerError.swift in Sources */,
 				ED4A457E11C9172F50CAD9A829DD9982 /* GenericBatteryGet.swift in Sources */,
+				5215994925DE96EB00F602FA /* SensorSettingsStatus.swift in Sources */,
 				715BF39B0C141A786D6FA5A1581068B7 /* GenericBatteryStatus.swift in Sources */,
 				13E06DB209DF660D73D04526E3661564 /* GenericDefaultTransitionTimeGet.swift in Sources */,
 				5FFFE4BBD45A8E56D142E36863880FC3 /* GenericDefaultTransitionTimeSet.swift in Sources */,
@@ -2178,6 +2185,7 @@
 				491F99B9328D6AE6583CB0B2478342BC /* MeshNetwork+Nodes.swift in Sources */,
 				A9CBBAED5EF08321C9A7D2D6CFDE3362 /* MeshNetwork+Provisioner.swift in Sources */,
 				52DE3AAA25D6A2CA00268D7D /* SensorDescriptorStatus.swift in Sources */,
+				5215994125DE96A700F602FA /* SensorSettingsGet.swift in Sources */,
 				23A99A060C5888E472138226C21E7DCA /* MeshNetwork+Ranges.swift in Sources */,
 				5C7FA345C4F4A3C7A5753E27F29A2F96 /* MeshNetwork+Scenes.swift in Sources */,
 				C71AF6E6373A791020F1C2A86891370E /* MeshNetwork.swift in Sources */,

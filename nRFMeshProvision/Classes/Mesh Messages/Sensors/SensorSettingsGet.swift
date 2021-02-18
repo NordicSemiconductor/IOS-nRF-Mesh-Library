@@ -29,51 +29,33 @@
 */
 
 import Foundation
-import nRFMeshProvision
 
-class SensorClientDelegate: ModelDelegate {
+public struct SensorSettingsGet: AcknowledgedSensorPropertyMessage {
+    public static let opCode: UInt32 = 0x8235
+    public static let responseType: StaticMeshMessage.Type = SensorSettingsStatus.self
     
-    let messageTypes: [UInt32 : MeshMessage.Type]
-    let isSubscriptionSupported: Bool = true
+    public let property: DeviceProperty
     
-    // TODO: Implement Sensor Client publications.
-    let publicationMessageComposer: MessageComposer? = nil
-    
-    init() {
-        let types: [SensorMessage.Type] = [
-            SensorDescriptorStatus.self,
-            SensorCadenceStatus.self,
-            SensorSettingsStatus.self,
-        ]
-        messageTypes = types.toMap()
+    public var parameters: Data? {
+        return Data() + property.rawValue
     }
     
-    func model(_ model: Model, didReceiveAcknowledgedMessage request: AcknowledgedMeshMessage,
-               from source: Address, sentTo destination: MeshAddress) throws -> MeshMessage {
-        switch request {
-            // No acknowledged message supported by this Model.
-        default:
-            fatalError("Message not supported: \(request)")
+    /// Creates the Sensor Settings Get message.
+    ///
+    /// - parameter property: The property to get settings of.
+    public init(of property: DeviceProperty) {
+        self.property = property
+    }
+    
+    public init?(parameters: Data) {
+        guard parameters.count == 2 else {
+            return nil
         }
-    }
-    
-    func model(_ model: Model, didReceiveUnacknowledgedMessage message: MeshMessage,
-               from source: Address, sentTo destination: MeshAddress) {
-        handle(message, sentFrom: source)
-    }
-    
-    func model(_ model: Model, didReceiveResponse response: MeshMessage,
-               toAcknowledgedMessage request: AcknowledgedMeshMessage,
-               from source: Address) {
-        handle(response, sentFrom: source)
-    }
-    
-}
-
-private extension SensorClientDelegate {
-    
-    func handle(_ message: MeshMessage, sentFrom source: Address) {
-        // Ignore.
+        let propertyId: UInt16 = parameters.read(fromOffset: 0)
+        guard let property = DeviceProperty(rawValue: propertyId) else {
+            return nil
+        }
+        self.property = property
     }
     
 }
