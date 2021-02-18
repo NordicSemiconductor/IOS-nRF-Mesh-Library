@@ -49,10 +49,15 @@ extension Data {
         #endif
     }
     
+    func readUInt24(fromOffset offset: Int = 0) -> UInt32 {
+        return UInt32(self[offset]) | UInt32(self[offset + 1]) << 8 | UInt32(self[offset + 2]) << 16
+    }
+    
     func readBigEndian<R: FixedWidthInteger>(fromOffset offset: Int = 0) -> R {
         let r: R = read(fromOffset: offset)
         return r.bigEndian
     }
+    
 }
 
 // Source: http://stackoverflow.com/a/42241894/2115352
