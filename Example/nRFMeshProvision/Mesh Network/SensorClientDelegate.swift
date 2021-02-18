@@ -1,5 +1,5 @@
 /*
-* Copyright (c) 2019, Nordic Semiconductor
+* Copyright (c) 2021, Nordic Semiconductor
 * All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification,
@@ -31,30 +31,47 @@
 import Foundation
 import nRFMeshProvision
 
-extension UInt16 {
+class SensorClientDelegate: ModelDelegate {
     
-    // Bluetooth SIG Models
-    static let configurationServerModelId: UInt16 = 0x0000
-    static let configurationClientModelId: UInt16 = 0x0001
+    let messageTypes: [UInt32 : MeshMessage.Type]
+    let isSubscriptionSupported: Bool = true
     
-    static let genericOnOffServerModelId: UInt16 = 0x1000
-    static let genericOnOffClientModelId: UInt16 = 0x1001
-    static let genericLevelServerModelId: UInt16 = 0x1002
-    static let genericLevelClientModelId: UInt16 = 0x1003
+    // TODO: Implement Sensor Client publications.
+    let publicationMessageComposer: MessageComposer? = nil
     
-    static let genericDefaultTransitionTimeServerModelId: UInt16 = 0x1004
-    static let genericDefaultTransitionTimeClientModelId: UInt16 = 0x1005
+    init() {
+        let types: [SensorMessage.Type] = [
+            SensorDescriptorStatus.self,
+            SensorCadenceStatus.self
+        ]
+        messageTypes = types.toMap()
+    }
     
-    static let sceneServerModelId: UInt16 = 0x1203
-    static let sceneSetupServerModelId: UInt16 = 0x1204
-    static let sceneClientModelId: UInt16 = 0x1205
+    func model(_ model: Model, didReceiveAcknowledgedMessage request: AcknowledgedMeshMessage, from source: Address, sentTo destination: MeshAddress) throws -> MeshMessage {
+        switch request {
+            // No acknowledged message supported by this Model.
+        default:
+            fatalError("Message not supported: \(request)")
+        }
+    }
     
-    static let sensorServerModelId: UInt16 = 0x1100
-    static let sensorServerSetupModelId: UInt16 = 0x1101
-    static let sensorClientModelId: UInt16 = 0x1102
+    func model(_ model: Model, didReceiveUnacknowledgedMessage message: MeshMessage,
+               from source: Address, sentTo destination: MeshAddress) {
+        handle(message, sentFrom: source)
+    }
     
-    // Supported vendor models
-    static let simpleOnOffModelId: UInt16 = 0x0001
-    static let nordicSemiconductorCompanyId: UInt16 = 0x0059
+    func model(_ model: Model, didReceiveResponse response: MeshMessage,
+               toAcknowledgedMessage request: AcknowledgedMeshMessage,
+               from source: Address) {
+        handle(response, sentFrom: source)
+    }
+    
+}
+
+private extension SensorClientDelegate {
+    
+    func handle(_ message: MeshMessage, sentFrom source: Address) {
+        
+    }
     
 }

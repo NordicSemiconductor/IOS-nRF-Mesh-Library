@@ -108,6 +108,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             // Scene Server and Scene Setup Server models (client is added automatically):
             Model(sigModelId: .sceneServerModelId, delegate: sceneServer),
             Model(sigModelId: .sceneSetupServerModelId, delegate: sceneSetupServer),
+            // Sensor Client model:
+            Model(sigModelId: .sensorClientModelId, delegate: SensorClientDelegate()),
             // Generic Default Transition Time Server model:
             Model(sigModelId: .genericDefaultTransitionTimeServerModelId,
                   delegate: defaultTransitionTimeServerDelegate),
