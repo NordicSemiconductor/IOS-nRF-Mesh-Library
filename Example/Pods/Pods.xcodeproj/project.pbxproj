@@ -140,6 +140,10 @@
 		5215993125DE70BC00F602FA /* DeviceProperty.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5215993025DE70BC00F602FA /* DeviceProperty.swift */; };
 		5215994125DE96A700F602FA /* SensorSettingsGet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5215994025DE96A700F602FA /* SensorSettingsGet.swift */; };
 		5215994925DE96EB00F602FA /* SensorSettingsStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5215994825DE96EB00F602FA /* SensorSettingsStatus.swift */; };
+		5215994F25DFB8E800F602FA /* SensorSettingGet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5215994E25DFB8E800F602FA /* SensorSettingGet.swift */; };
+		5215995525DFBA5200F602FA /* SensorSettingStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5215995425DFBA5200F602FA /* SensorSettingStatus.swift */; };
+		5215995B25DFD2D800F602FA /* SensorSettingSetUnacknowledged.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5215995A25DFD2D800F602FA /* SensorSettingSetUnacknowledged.swift */; };
+		5215996125DFD44800F602FA /* SensorSettingSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5215996025DFD44800F602FA /* SensorSettingSet.swift */; };
 		523C6B1F33DB2E96993439A057BDF4D8 /* ConfigAppKeyAdd.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD9ED7E9A1A76137851290A8E7D4B828 /* ConfigAppKeyAdd.swift */; };
 		52DE3A9E25D5640900268D7D /* SensorDescriptorGet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52DE3A9425D563F100268D7D /* SensorDescriptorGet.swift */; };
 		52DE3AA425D5649400268D7D /* SensorMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52DE3AA325D5649400268D7D /* SensorMessage.swift */; };
@@ -592,6 +596,10 @@
 		5215993025DE70BC00F602FA /* DeviceProperty.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceProperty.swift; sourceTree = "<group>"; };
 		5215994025DE96A700F602FA /* SensorSettingsGet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SensorSettingsGet.swift; sourceTree = "<group>"; };
 		5215994825DE96EB00F602FA /* SensorSettingsStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SensorSettingsStatus.swift; sourceTree = "<group>"; };
+		5215994E25DFB8E800F602FA /* SensorSettingGet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SensorSettingGet.swift; sourceTree = "<group>"; };
+		5215995425DFBA5200F602FA /* SensorSettingStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SensorSettingStatus.swift; sourceTree = "<group>"; };
+		5215995A25DFD2D800F602FA /* SensorSettingSetUnacknowledged.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SensorSettingSetUnacknowledged.swift; sourceTree = "<group>"; };
+		5215996025DFD44800F602FA /* SensorSettingSet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SensorSettingSet.swift; sourceTree = "<group>"; };
 		52DE3A9425D563F100268D7D /* SensorDescriptorGet.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SensorDescriptorGet.swift; sourceTree = "<group>"; };
 		52DE3AA325D5649400268D7D /* SensorMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SensorMessage.swift; sourceTree = "<group>"; };
 		52DE3AA925D6A2CA00268D7D /* SensorDescriptorStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SensorDescriptorStatus.swift; sourceTree = "<group>"; };
@@ -1122,6 +1130,10 @@
 				5215992A25DA9B7C00F602FA /* SensorCadenceStatus.swift */,
 				5215994025DE96A700F602FA /* SensorSettingsGet.swift */,
 				5215994825DE96EB00F602FA /* SensorSettingsStatus.swift */,
+				5215994E25DFB8E800F602FA /* SensorSettingGet.swift */,
+				5215996025DFD44800F602FA /* SensorSettingSet.swift */,
+				5215995A25DFD2D800F602FA /* SensorSettingSetUnacknowledged.swift */,
+				5215995425DFBA5200F602FA /* SensorSettingStatus.swift */,
 			);
 			path = Sensors;
 			sourceTree = "<group>";
@@ -2146,6 +2158,7 @@
 				DEE86FC955EFAA1B7F0665670B3E757F /* LightHSLSaturationSetUnacknowledged.swift in Sources */,
 				48A62F13CA72FD5ECF55D807501D679E /* LightHSLSaturationStatus.swift in Sources */,
 				F953E6BA48BFB85B0C42877AB70FB592 /* LightHSLSet.swift in Sources */,
+				5215996125DFD44800F602FA /* SensorSettingSet.swift in Sources */,
 				819DC8256A89524D9CAC1F4ED3B3CBAB /* LightHSLSetUnackowledged.swift in Sources */,
 				7B725D69D0FD04CA637A5E48A4B1BB7D /* LightHSLStatus.swift in Sources */,
 				DF34413B3E26F1CE8C163D421A5D150E /* LightHSLTargetGet.swift in Sources */,
@@ -2154,6 +2167,7 @@
 				E9C07D36EF99C54022E52EA2E8E2800A /* LightLightnessDefaultSet.swift in Sources */,
 				B0631254516BB821ABD87674AA001CD9 /* LightLightnessDefaultSetUnacknowledged.swift in Sources */,
 				561D6EBBC0C06FAE63B50A2AEC353311 /* LightLightnessDefaultStatus.swift in Sources */,
+				5215995B25DFD2D800F602FA /* SensorSettingSetUnacknowledged.swift in Sources */,
 				E440419447C210C4ECB029D8929E9227 /* LightLightnessGet.swift in Sources */,
 				388F695C32D5BE7E6789DBF275ACCD1E /* LightLightnessLastGet.swift in Sources */,
 				C150DF9D61051FD8F3237217FF9AB561 /* LightLightnessLastStatus.swift in Sources */,
@@ -2213,6 +2227,7 @@
 				47DC6C225774AF8E91B163DAF64BC3BA /* Node+Keys.swift in Sources */,
 				BBF37D56C318D5E2A3AD820D55970D27 /* Node+Provisioner.swift in Sources */,
 				A1A1A3018449FD88B6715F5D994CE2BA /* Node+Scenes.swift in Sources */,
+				5215994F25DFB8E800F602FA /* SensorSettingGet.swift in Sources */,
 				1C78ADADA3BA88528FF131A612CFE469 /* Node.swift in Sources */,
 				C24016BF65126810C30128D72E970552 /* NodeFeatures.swift in Sources */,
 				23B432F6947E9309177AA280DCC3AED7 /* nRFMeshProvision-dummy.m in Sources */,
@@ -2266,6 +2281,7 @@
 				19A5DD8043D0A928C9DE4EB017B2F2E1 /* TransitionTime.swift in Sources */,
 				655AE1E9664A5F7DD28EED421204BAEA /* UnknownMessage.swift in Sources */,
 				86B729303B82A13D9FC10526A85CBD11 /* UnprovisionedDevice.swift in Sources */,
+				5215995525DFBA5200F602FA /* SensorSettingStatus.swift in Sources */,
 				213E79650FD83191444A654DA9C46188 /* UnprovisionedDeviceBeacon.swift in Sources */,
 				21EA09D153579FEF3A0931D2D87702DC /* UpperTransportLayer.swift in Sources */,
 				E5DADCCFCA9EE5FF4664C00D54C39CAA /* UpperTransportPdu.swift in Sources */,
