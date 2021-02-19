@@ -30,30 +30,31 @@
 
 import Foundation
 
-public struct SensorCadenceStatus: SensorPropertyMessage {
-    public static let opCode: UInt32 = 0x57
+public struct SensorCadenceSet: AcknowledgedSensorPropertyMessage {
+    public static let opCode: UInt32 = 0x55
+    public static let responseType: StaticMeshMessage.Type = SensorCadenceStatus.self
     
     public let property: DeviceProperty
     
-    /// The current status cadence.
-    public let cadence: SensorCadence?
+    /// The new status cadence.
+    public let cadence: SensorCadence
     
     public var parameters: Data? {
-        return Data() + property.rawValue + cadence?.data
+        return Data() + property.rawValue + cadence.data
     }
     
-    /// Creates the Sensor Cadence Status message.
+    /// Creates the Sensor Cadence Set message.
     ///
     /// - parameters:
     ///   - property: The device property.
-    ///   - cadence:  The cadence to be returned.
-    public init(of property: DeviceProperty, cadence: SensorCadence?) {
+    ///   - cadence:  The cadence to set.
+    public init(of property: DeviceProperty, to cadence: SensorCadence) {
         self.property = property
         self.cadence = cadence
     }
     
     public init?(parameters: Data) {
-        guard parameters.count == 2 || parameters.count >= 8 else {
+        guard parameters.count >= 8 else {
             return nil
         }
         let propertyId: UInt16 = parameters.read(fromOffset: 0)
@@ -61,14 +62,11 @@ public struct SensorCadenceStatus: SensorPropertyMessage {
             return nil
         }
         self.property = property
-        if parameters.count != 2 {
-            guard let cadence = SensorCadence(of: property, from: parameters, at: 2) else {
-                return nil
-            }
-            self.cadence = cadence
-        } else {
-            self.cadence = nil
+        
+        guard let cadence = SensorCadence(of: property, from: parameters, at: 2) else {
+            return nil
         }
+        self.cadence = cadence
     }
     
 }
