@@ -51,7 +51,7 @@ public extension Array where Element == SensorMessage.Type {
 }
 
 public protocol SensorPropertyMessage: SensorMessage {
-    /// Property ID for the sensor.
+    /// Property for the sensor.
     var property: DeviceProperty { get }
 }
 
