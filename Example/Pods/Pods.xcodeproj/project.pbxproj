@@ -146,6 +146,8 @@
 		5215996125DFD44800F602FA /* SensorSettingSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5215996025DFD44800F602FA /* SensorSettingSet.swift */; };
 		5215996725DFD4E900F602FA /* SensorCadenceSetUnacknowledged.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5215996625DFD4E900F602FA /* SensorCadenceSetUnacknowledged.swift */; };
 		5215996D25DFD61400F602FA /* SensorCadenceSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5215996C25DFD61400F602FA /* SensorCadenceSet.swift */; };
+		5215997725DFE3A100F602FA /* SensorGet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5215997625DFE3A100F602FA /* SensorGet.swift */; };
+		5215997D25DFE56300F602FA /* SensorStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5215997C25DFE56300F602FA /* SensorStatus.swift */; };
 		523C6B1F33DB2E96993439A057BDF4D8 /* ConfigAppKeyAdd.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD9ED7E9A1A76137851290A8E7D4B828 /* ConfigAppKeyAdd.swift */; };
 		52DE3A9E25D5640900268D7D /* SensorDescriptorGet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52DE3A9425D563F100268D7D /* SensorDescriptorGet.swift */; };
 		52DE3AA425D5649400268D7D /* SensorMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52DE3AA325D5649400268D7D /* SensorMessage.swift */; };
@@ -604,6 +606,8 @@
 		5215996025DFD44800F602FA /* SensorSettingSet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SensorSettingSet.swift; sourceTree = "<group>"; };
 		5215996625DFD4E900F602FA /* SensorCadenceSetUnacknowledged.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SensorCadenceSetUnacknowledged.swift; sourceTree = "<group>"; };
 		5215996C25DFD61400F602FA /* SensorCadenceSet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SensorCadenceSet.swift; sourceTree = "<group>"; };
+		5215997625DFE3A100F602FA /* SensorGet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SensorGet.swift; sourceTree = "<group>"; };
+		5215997C25DFE56300F602FA /* SensorStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SensorStatus.swift; sourceTree = "<group>"; };
 		52DE3A9425D563F100268D7D /* SensorDescriptorGet.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SensorDescriptorGet.swift; sourceTree = "<group>"; };
 		52DE3AA325D5649400268D7D /* SensorMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SensorMessage.swift; sourceTree = "<group>"; };
 		52DE3AA925D6A2CA00268D7D /* SensorDescriptorStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SensorDescriptorStatus.swift; sourceTree = "<group>"; };
@@ -1140,6 +1144,8 @@
 				5215996025DFD44800F602FA /* SensorSettingSet.swift */,
 				5215995A25DFD2D800F602FA /* SensorSettingSetUnacknowledged.swift */,
 				5215995425DFBA5200F602FA /* SensorSettingStatus.swift */,
+				5215997625DFE3A100F602FA /* SensorGet.swift */,
+				5215997C25DFE56300F602FA /* SensorStatus.swift */,
 			);
 			path = Sensors;
 			sourceTree = "<group>";
@@ -2014,6 +2020,7 @@
 				E93DE2BE52864CDBCC4FFAA35D3A4C62 /* ConfigGATTProxySet.swift in Sources */,
 				EE64C3628F97E7B8EA7F4641B0710F7A /* ConfigGATTProxyStatus.swift in Sources */,
 				E80FE6A7999C5E97C536C8653BE27436 /* ConfigHeartbeatPublicationGet.swift in Sources */,
+				5215997725DFE3A100F602FA /* SensorGet.swift in Sources */,
 				DF80134B5A11603DD6C4298483CA6C40 /* ConfigHeartbeatPublicationSet.swift in Sources */,
 				BC275BA1B61602362E50F60898C5CC87 /* ConfigHeartbeatPublicationStatus.swift in Sources */,
 				99F1EE9FA57FE8934A89E30456282776 /* ConfigHeartbeatSubscriptionGet.swift in Sources */,
@@ -2155,6 +2162,7 @@
 				9177F8D65A43973BED1D09A7F277ACB1 /* LightHSLGet.swift in Sources */,
 				B137530D805670B32E29958A801E9570 /* LightHSLHueGet.swift in Sources */,
 				607DAF8CF8D0E3B8FB2D1AF2A227F080 /* LightHSLHueSet.swift in Sources */,
+				5215997D25DFE56300F602FA /* SensorStatus.swift in Sources */,
 				5E0EF4E83830EBD8E00DF0C63A401ADD /* LightHSLHueSetUnacknowledged.swift in Sources */,
 				9CD977A21F5C81A123893262E84D5988 /* LightHSLHueStatus.swift in Sources */,
 				6F94E386932B9DABE49C0B47FC345A1F /* LightHSLRangeGet.swift in Sources */,

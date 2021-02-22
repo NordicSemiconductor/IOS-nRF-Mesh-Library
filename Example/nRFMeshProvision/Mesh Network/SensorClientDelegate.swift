@@ -45,6 +45,7 @@ class SensorClientDelegate: ModelDelegate {
             SensorCadenceStatus.self,
             SensorSettingsStatus.self,
             SensorSettingStatus.self,
+            SensorStatus.self,
         ]
         messageTypes = types.toMap()
     }
