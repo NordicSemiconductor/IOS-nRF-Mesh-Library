@@ -94,7 +94,7 @@ public struct SensorSettingStatus: SensorPropertyMessage {
     }
     
     public init?(parameters: Data) {
-        guard parameters.count == 4 || parameters.count >= 6 else {
+        guard parameters.count >= 4 else {
             return nil
         }
         let propertyId: UInt16 = parameters.read(fromOffset: 0)
@@ -114,6 +114,14 @@ public struct SensorSettingStatus: SensorPropertyMessage {
             return nil
         }
         self.settingAccess = access
+        
+        // If Sensor Setting Set message was sent, and the sensor value is read-only,
+        // the Status should have the Access state field set to `SensorSettingAccess.readonly`
+        // and the value field shall be omitted.
+        if parameters.count == 5 {
+            self.settingValue = nil
+            return
+        }
         self.settingValue = settingProperty.read(from: parameters, at: 5, length: parameters.count - 5)
     }
     
