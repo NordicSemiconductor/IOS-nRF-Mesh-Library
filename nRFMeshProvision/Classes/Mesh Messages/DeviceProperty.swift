@@ -35,191 +35,558 @@ import Foundation
 /// - note: Each property has a corresponding `DevicePropertyCharacteristic`.
 ///         However, currently not all values are implemented in this library.
 ///         For those, `.other` should be used until they are implemented.
-public enum DeviceProperty: UInt16 {
-    case averageAmbientTemperatureInAPeriodOfDay = 0x0001
-    case averageInputCurrent = 0x0002
-    case averageInputVoltage = 0x0003
-    case averageOutputCurrent = 0x0004
-    case averageOutputVoltage = 0x0005
-    case centerBeamIntensityAtFullPower = 0x0006
-    case chromaticityTolerance = 0x0007
-    case colorRenderingIndexR9 = 0x0008
-    case colorRenderingIndexRa = 0x0009
-    case deviceAppearance = 0x000A
-    case deviceCountryOfOrigin = 0x000B
-    case deviceDateOfManufacture = 0x000C
-    case deviceEnergyUseSinceTurnOn = 0x000D
-    case deviceFirmwareRevision = 0x000E
-    case deviceGlobalTradeItemNumber = 0x000F
-    case deviceHardwareRevision = 0x0010
-    case deviceManufacturerName = 0x0011
-    case deviceModelNumber = 0x0012
-    case deviceOperatingTemperatureRangeSpecification = 0x0013
-    case deviceOperatingTemperatureStatisticalValues = 0x0014
-    case deviceOverTemperatureEventStatistics = 0x0015
-    case devicePowerRangeSpecification = 0x0016
-    case deviceRuntimeSinceTurnOn = 0x0017
-    case deviceRuntimeWarranty = 0x0018
-    case deviceSerialNumber = 0x0019
-    case deviceSoftwareRevision = 0x001A
-    case deviceUnderTemperatureEventStatistics = 0x001B
-    case indoorAmbientTemperatureStatisticalValues = 0x001C
-    case initialCIE1931ChromaticityCoordinates = 0x001D
-    case initialCorrelatedColorTemperature = 0x001E
-    case initialLuminousFlux = 0x001F
-    case initialPlanckianDistance = 0x0020
-    case inputCurrentRangeSpecification = 0x0021
-    case inputCurrentStatistics = 0x0022
-    case inputOverCurrentEventStatistics = 0x0023
-    case inputOverRippleVoltageEventStatistics = 0x0024
-    case inputOverVoltageEventStatistics = 0x0025
-    case inputUnderCurrentEventStatistics = 0x0026
-    case inputUnderVoltageEventStatistics = 0x0027
-    case inputVoltageRangeSpecification = 0x0028
-    case inputVoltageRippleSpecification = 0x0029
-    case inputVoltageStatistics = 0x002A
-    case lightControlAmbientLuxLevelOn = 0x002B
-    case lightControlAmbientLuxLevelProlong = 0x002C
-    case lightControlAmbientLuxLevelStandby = 0x002D
-    case lightControlLightnessOn = 0x002E
-    case lightControlLightnessProlong = 0x002F
-    case lightControlLightnessStandby = 0x0030
-    case lightControlRegulatorAccuracy = 0x0031
-    case lightControlRegulatorKid = 0x0032
-    case lightControlRegulatorKiu = 0x0033
-    case lightControlRegulatorKpd = 0x0034
-    case lightControlRegulatorKpu = 0x0035
-    case lightControlTimeFade = 0x0036
-    case lightControlTimeFadeOn = 0x0037
-    case lightControlTimeFadeStandbyAuto = 0x0038
-    case lightControlTimeFadeStandbyManual = 0x0039
-    case lightControlTimeOccupancyDelay = 0x003A
-    case lightControlTimeProlong = 0x003B
-    case lightControlTimeRunOn = 0x003C
-    case lumenMaintenanceFactor = 0x003D
-    case luminousEfficacy = 0x003E
-    case luminousEnergySinceTurnOn = 0x003F
-    case luminousExposure = 0x0040
-    case luminousFluxRange = 0x0041
-    case motionSensed = 0x0042
-    case motionThreshold = 0x0043
-    case openCircuitEventStatistics = 0x0044
-    case outdoorStatisticalValues = 0x0045
-    case outputCurrentRange = 0x0046
-    case outputCurrentStatistics = 0x0047
-    case outputRippleVoltageSpecification = 0x0048
-    case outputVoltageRange = 0x0049
-    case outputVoltageStatistics = 0x004A
-    case overOutputRippleVoltageEventStatistics = 0x004B
-    case peopleCount = 0x004C
-    case presenceDetected = 0x004D
-    case presentAmbientLightLevel = 0x004E
-    case presentAmbientTemperature = 0x004F
-    case presentCIE1931ChromaticityCoordinates = 0x0050
-    case presentCorrelatedColorTemperature = 0x0051
-    case presentDeviceInputPower = 0x0052
-    case presentDeviceOperatingEfficiency = 0x0053
-    case presentDeviceOperatingTemperature = 0x0054
-    case presentIlluminance = 0x0055
-    case presentIndoorAmbientTemperature = 0x0056
-    case presentInputCurrent = 0x0057
-    case presentInputRippleVoltage = 0x0058
-    case presentInputVoltage = 0x0059
-    case presentLuminousFlux = 0x005A
-    case presentOutdoorAmbientTemperature = 0x005B
-    case presentOutputCurrent = 0x005C
-    case presentOutputVoltage = 0x005D
-    case presentPlanckianDistance = 0x005E
-    case presentRelativeOutputRippleVoltage = 0x005F
-    case relativeDeviceEnergyUseInAPeriodOfDay = 0x0060
-    case relativeDeviceRuntimeInAGenericLevelRange = 0x0061
-    case relativeExposureTimeInAnIlluminanceRange = 0x0062
-    case relativeRuntimeInACorrelatedColorTemperatureRange = 0x0063
-    case relativeRuntimeInADeviceOperatingTemperatureRange = 0x0064
-    case relativeRuntimeInAnInputCurrentRange = 0x0065
-    case relativeRuntimeInAnInputVoltageRange = 0x0066
-    case shortCircuitEventStatistics = 0x0067
-    case timeSinceMotionSensed = 0x0068
-    case timeSincePresenceDetected = 0x0069
-    case totalDeviceEnergyUse = 0x006A
-    case totalDeviceOffOnCycles = 0x006B
-    case totalDevicePowerOnCycles = 0x006C
-    case totalDevicePowerOnTime = 0x006D
-    case totalDeviceRuntime = 0x006E
-    case totalLightExposureTime = 0x006F
-    case totalLuminousEnergy = 0x0070
-    case desiredAmbientTemperature = 0x0071
-    case preciseTotalDeviceEnergyUse = 0x0072
-    case powerFactor = 0x0073
-    case sensorGain = 0x0074
-    case precisePresentAmbientTemperature = 0x0075
-    case presentAmbientRelativeHumidity = 0x0076
-    case presentAmbientCarbonDioxideConcentration = 0x0077
-    case presentAmbientVolatileOrganicCompoundsConcentration = 0x0078
-    case presentAmbientNoise = 0x0079
- // case these are undefined in Mesh Device Properties v2 = 0x007A
- // case these are undefined in Mesh Device Properties v2 = 0x007B
- // case these are undefined in Mesh Device Properties v2 = 0x007C
- // case these are undefined in Mesh Device Properties v2 = 0x007D
- // case these are undefined in Mesh Device Properties v2 = 0x007E
- // case these are undefined in Mesh Device Properties v2 = 0x007F
-    case activeEnergyLoadside = 0x0080
-    case activePowerLoadside = 0x0081
-    case airPressure = 0x0082
-    case apparentEnergy = 0x0083
-    case apparentPower = 0x0084
-    case apparentWindDirection = 0x0085
-    case apparentWindSpeed = 0x0086
-    case dewPoint = 0x0087
-    case externalSupplyVoltage = 0x0088
-    case externalSupplyVoltageFrequency = 0x0089
-    case gustFactor = 0x008A
-    case heatIndex = 0x008B
-    case lightDistribution = 0x008C
-    case lightSourceCurrent = 0x008D
-    case lightSourceOnTimeNotResettable = 0x008E
-    case lightSourceOnTimeResettable = 0x008F
-    case lightSourceOpenCircuitStatistics = 0x0090
-    case lightSourceOverallFailuresStatistics = 0x0091
-    case lightSourceShortCircuitStatistics = 0x0092
-    case lightSourceStartCounterResettable = 0x0093
-    case lightSourceTemperature = 0x0094
-    case lightSourceThermalDeratingStatistics = 0x0095
-    case lightSourceThermalShutdownStatistics = 0x0096
-    case lightSourceTotalPowerOnCycles = 0x0097
-    case lightSourceVoltage = 0x0098
-    case luminaireColor = 0x0099
-    case luminaireIdentificationNumber = 0x009A
-    case luminaireManufacturerGTIN = 0x009B
-    case luminaireNominalInputPower = 0x009C
-    case luminaireNominalMaximumACMainsVoltage = 0x009D
-    case luminaireNominalMinimumACMainsVoltage = 0x009E
-    case luminairePowerAtMinimumDimLevel = 0x009F
-    case luminaireTimeOfManufacture = 0x00A0
-    case magneticDeclination = 0x00A1
-    case magneticFluxDensity2D = 0x00A2
-    case magneticFluxDensity3D = 0x00A3
-    case nominalLightOutput = 0x00A4
-    case overallFailureCondition = 0x00A5
-    case pollenConcentration = 0x00A6
-    case presentIndoorRelativeHumidity = 0x00A7
-    case presentOutdoorRelativeHumidity = 0x00A8
-    case pressure = 0x00A9
-    case rainfall = 0x00AA
-    case ratedMedianUsefulLifeOfLuminaire = 0x00AB
-    case ratedMedianUsefulLightSourceStarts = 0x00AC
-    case referenceTemperature = 0x00AD
-    case totalDeviceStarts = 0x00AE
-    case trueWindDirection = 0x00AF
-    case trueWindSpeed = 0x00B0
-    case uVIndex = 0x00B1
-    case windChill = 0x00B2
-    case lightSourceType = 0x00B3
-    case luminaireIdentificationString = 0x00B4
-    case outputPowerLimitation = 0x00B5
-    case thermalDerating = 0x00B6
-    case outputCurrentPercent = 0x00B7
+public enum DeviceProperty {
+    case averageAmbientTemperatureInAPeriodOfDay
+    case averageInputCurrent
+    case averageInputVoltage
+    case averageOutputCurrent
+    case averageOutputVoltage
+    case centerBeamIntensityAtFullPower
+    case chromaticityTolerance
+    case colorRenderingIndexR9
+    case colorRenderingIndexRa
+    case deviceAppearance
+    case deviceCountryOfOrigin
+    case deviceDateOfManufacture
+    case deviceEnergyUseSinceTurnOn
+    case deviceFirmwareRevision
+    case deviceGlobalTradeItemNumber
+    case deviceHardwareRevision
+    case deviceManufacturerName
+    case deviceModelNumber
+    case deviceOperatingTemperatureRangeSpecification
+    case deviceOperatingTemperatureStatisticalValues
+    case deviceOverTemperatureEventStatistics
+    case devicePowerRangeSpecification
+    case deviceRuntimeSinceTurnOn
+    case deviceRuntimeWarranty
+    case deviceSerialNumber
+    case deviceSoftwareRevision
+    case deviceUnderTemperatureEventStatistics
+    case indoorAmbientTemperatureStatisticalValues
+    case initialCIE1931ChromaticityCoordinates
+    case initialCorrelatedColorTemperature
+    case initialLuminousFlux
+    case initialPlanckianDistance
+    case inputCurrentRangeSpecification
+    case inputCurrentStatistics
+    case inputOverCurrentEventStatistics
+    case inputOverRippleVoltageEventStatistics
+    case inputOverVoltageEventStatistics
+    case inputUnderCurrentEventStatistics
+    case inputUnderVoltageEventStatistics
+    case inputVoltageRangeSpecification
+    case inputVoltageRippleSpecification
+    case inputVoltageStatistics
+    case lightControlAmbientLuxLevelOn
+    case lightControlAmbientLuxLevelProlong
+    case lightControlAmbientLuxLevelStandby
+    case lightControlLightnessOn
+    case lightControlLightnessProlong
+    case lightControlLightnessStandby
+    case lightControlRegulatorAccuracy
+    case lightControlRegulatorKid
+    case lightControlRegulatorKiu
+    case lightControlRegulatorKpd
+    case lightControlRegulatorKpu
+    case lightControlTimeFade
+    case lightControlTimeFadeOn
+    case lightControlTimeFadeStandbyAuto
+    case lightControlTimeFadeStandbyManual
+    case lightControlTimeOccupancyDelay
+    case lightControlTimeProlong
+    case lightControlTimeRunOn
+    case lumenMaintenanceFactor
+    case luminousEfficacy
+    case luminousEnergySinceTurnOn
+    case luminousExposure
+    case luminousFluxRange
+    case motionSensed
+    case motionThreshold
+    case openCircuitEventStatistics
+    case outdoorStatisticalValues
+    case outputCurrentRange
+    case outputCurrentStatistics
+    case outputRippleVoltageSpecification
+    case outputVoltageRange
+    case outputVoltageStatistics
+    case overOutputRippleVoltageEventStatistics
+    case peopleCount
+    case presenceDetected
+    case presentAmbientLightLevel
+    case presentAmbientTemperature
+    case presentCIE1931ChromaticityCoordinates
+    case presentCorrelatedColorTemperature
+    case presentDeviceInputPower
+    case presentDeviceOperatingEfficiency
+    case presentDeviceOperatingTemperature
+    case presentIlluminance
+    case presentIndoorAmbientTemperature
+    case presentInputCurrent
+    case presentInputRippleVoltage
+    case presentInputVoltage
+    case presentLuminousFlux
+    case presentOutdoorAmbientTemperature
+    case presentOutputCurrent
+    case presentOutputVoltage
+    case presentPlanckianDistance
+    case presentRelativeOutputRippleVoltage
+    case relativeDeviceEnergyUseInAPeriodOfDay
+    case relativeDeviceRuntimeInAGenericLevelRange
+    case relativeExposureTimeInAnIlluminanceRange
+    case relativeRuntimeInACorrelatedColorTemperatureRange
+    case relativeRuntimeInADeviceOperatingTemperatureRange
+    case relativeRuntimeInAnInputCurrentRange
+    case relativeRuntimeInAnInputVoltageRange
+    case shortCircuitEventStatistics
+    case timeSinceMotionSensed
+    case timeSincePresenceDetected
+    case totalDeviceEnergyUse
+    case totalDeviceOffOnCycles
+    case totalDevicePowerOnCycles
+    case totalDevicePowerOnTime
+    case totalDeviceRuntime
+    case totalLightExposureTime
+    case totalLuminousEnergy
+    case desiredAmbientTemperature
+    case preciseTotalDeviceEnergyUse
+    case powerFactor
+    case sensorGain
+    case precisePresentAmbientTemperature
+    case presentAmbientRelativeHumidity
+    case presentAmbientCarbonDioxideConcentration
+    case presentAmbientVolatileOrganicCompoundsConcentration
+    case presentAmbientNoise
+    case activeEnergyLoadside
+    case activePowerLoadside
+    case airPressure
+    case apparentEnergy
+    case apparentPower
+    case apparentWindDirection
+    case apparentWindSpeed
+    case dewPoint
+    case externalSupplyVoltage
+    case externalSupplyVoltageFrequency
+    case gustFactor
+    case heatIndex
+    case lightDistribution
+    case lightSourceCurrent
+    case lightSourceOnTimeNotResettable
+    case lightSourceOnTimeResettable
+    case lightSourceOpenCircuitStatistics
+    case lightSourceOverallFailuresStatistics
+    case lightSourceShortCircuitStatistics
+    case lightSourceStartCounterResettable
+    case lightSourceTemperature
+    case lightSourceThermalDeratingStatistics
+    case lightSourceThermalShutdownStatistics
+    case lightSourceTotalPowerOnCycles
+    case lightSourceVoltage
+    case luminaireColor
+    case luminaireIdentificationNumber
+    case luminaireManufacturerGTIN
+    case luminaireNominalInputPower
+    case luminaireNominalMaximumACMainsVoltage
+    case luminaireNominalMinimumACMainsVoltage
+    case luminairePowerAtMinimumDimLevel
+    case luminaireTimeOfManufacture
+    case magneticDeclination
+    case magneticFluxDensity2D
+    case magneticFluxDensity3D
+    case nominalLightOutput
+    case overallFailureCondition
+    case pollenConcentration
+    case presentIndoorRelativeHumidity
+    case presentOutdoorRelativeHumidity
+    case pressure
+    case rainfall
+    case ratedMedianUsefulLifeOfLuminaire
+    case ratedMedianUsefulLightSourceStarts
+    case referenceTemperature
+    case totalDeviceStarts
+    case trueWindDirection
+    case trueWindSpeed
+    case uVIndex
+    case windChill
+    case lightSourceType
+    case luminaireIdentificationString
+    case outputPowerLimitation
+    case thermalDerating
+    case outputCurrentPercent
+    case unknown(UInt16)
     
+    init(_ id: UInt16) {
+        switch id {
+        case 0x0001: self = .averageAmbientTemperatureInAPeriodOfDay
+        case 0x0002: self = .averageInputCurrent
+        case 0x0003: self = .averageInputVoltage
+        case 0x0004: self = .averageOutputCurrent
+        case 0x0005: self = .averageOutputVoltage
+        case 0x0006: self = .centerBeamIntensityAtFullPower
+        case 0x0007: self = .chromaticityTolerance
+        case 0x0008: self = .colorRenderingIndexR9
+        case 0x0009: self = .colorRenderingIndexRa
+        case 0x000A: self = .deviceAppearance
+        case 0x000B: self = .deviceCountryOfOrigin
+        case 0x000C: self = .deviceDateOfManufacture
+        case 0x000D: self = .deviceEnergyUseSinceTurnOn
+        case 0x000E: self = .deviceFirmwareRevision
+        case 0x000F: self = .deviceGlobalTradeItemNumber
+        case 0x0010: self = .deviceHardwareRevision
+        case 0x0011: self = .deviceManufacturerName
+        case 0x0012: self = .deviceModelNumber
+        case 0x0013: self = .deviceOperatingTemperatureRangeSpecification
+        case 0x0014: self = .deviceOperatingTemperatureStatisticalValues
+        case 0x0015: self = .deviceOverTemperatureEventStatistics
+        case 0x0016: self = .devicePowerRangeSpecification
+        case 0x0017: self = .deviceRuntimeSinceTurnOn
+        case 0x0018: self = .deviceRuntimeWarranty
+        case 0x0019: self = .deviceSerialNumber
+        case 0x001A: self = .deviceSoftwareRevision
+        case 0x001B: self = .deviceUnderTemperatureEventStatistics
+        case 0x001C: self = .indoorAmbientTemperatureStatisticalValues
+        case 0x001D: self = .initialCIE1931ChromaticityCoordinates
+        case 0x001E: self = .initialCorrelatedColorTemperature
+        case 0x001F: self = .initialLuminousFlux
+        case 0x0020: self = .initialPlanckianDistance
+        case 0x0021: self = .inputCurrentRangeSpecification
+        case 0x0022: self = .inputCurrentStatistics
+        case 0x0023: self = .inputOverCurrentEventStatistics
+        case 0x0024: self = .inputOverRippleVoltageEventStatistics
+        case 0x0025: self = .inputOverVoltageEventStatistics
+        case 0x0026: self = .inputUnderCurrentEventStatistics
+        case 0x0027: self = .inputUnderVoltageEventStatistics
+        case 0x0028: self = .inputVoltageRangeSpecification
+        case 0x0029: self = .inputVoltageRippleSpecification
+        case 0x002A: self = .inputVoltageStatistics
+        case 0x002B: self = .lightControlAmbientLuxLevelOn
+        case 0x002C: self = .lightControlAmbientLuxLevelProlong
+        case 0x002D: self = .lightControlAmbientLuxLevelStandby
+        case 0x002E: self = .lightControlLightnessOn
+        case 0x002F: self = .lightControlLightnessProlong
+        case 0x0030: self = .lightControlLightnessStandby
+        case 0x0031: self = .lightControlRegulatorAccuracy
+        case 0x0032: self = .lightControlRegulatorKid
+        case 0x0033: self = .lightControlRegulatorKiu
+        case 0x0034: self = .lightControlRegulatorKpd
+        case 0x0035: self = .lightControlRegulatorKpu
+        case 0x0036: self = .lightControlTimeFade
+        case 0x0037: self = .lightControlTimeFadeOn
+        case 0x0038: self = .lightControlTimeFadeStandbyAuto
+        case 0x0039: self = .lightControlTimeFadeStandbyManual
+        case 0x003A: self = .lightControlTimeOccupancyDelay
+        case 0x003B: self = .lightControlTimeProlong
+        case 0x003C: self = .lightControlTimeRunOn
+        case 0x003D: self = .lumenMaintenanceFactor
+        case 0x003E: self = .luminousEfficacy
+        case 0x003F: self = .luminousEnergySinceTurnOn
+        case 0x0040: self = .luminousExposure
+        case 0x0041: self = .luminousFluxRange
+        case 0x0042: self = .motionSensed
+        case 0x0043: self = .motionThreshold
+        case 0x0044: self = .openCircuitEventStatistics
+        case 0x0045: self = .outdoorStatisticalValues
+        case 0x0046: self = .outputCurrentRange
+        case 0x0047: self = .outputCurrentStatistics
+        case 0x0048: self = .outputRippleVoltageSpecification
+        case 0x0049: self = .outputVoltageRange
+        case 0x004A: self = .outputVoltageStatistics
+        case 0x004B: self = .overOutputRippleVoltageEventStatistics
+        case 0x004C: self = .peopleCount
+        case 0x004D: self = .presenceDetected
+        case 0x004E: self = .presentAmbientLightLevel
+        case 0x004F: self = .presentAmbientTemperature
+        case 0x0050: self = .presentCIE1931ChromaticityCoordinates
+        case 0x0051: self = .presentCorrelatedColorTemperature
+        case 0x0052: self = .presentDeviceInputPower
+        case 0x0053: self = .presentDeviceOperatingEfficiency
+        case 0x0054: self = .presentDeviceOperatingTemperature
+        case 0x0055: self = .presentIlluminance
+        case 0x0056: self = .presentIndoorAmbientTemperature
+        case 0x0057: self = .presentInputCurrent
+        case 0x0058: self = .presentInputRippleVoltage
+        case 0x0059: self = .presentInputVoltage
+        case 0x005A: self = .presentLuminousFlux
+        case 0x005B: self = .presentOutdoorAmbientTemperature
+        case 0x005C: self = .presentOutputCurrent
+        case 0x005D: self = .presentOutputVoltage
+        case 0x005E: self = .presentPlanckianDistance
+        case 0x005F: self = .presentRelativeOutputRippleVoltage
+        case 0x0060: self = .relativeDeviceEnergyUseInAPeriodOfDay
+        case 0x0061: self = .relativeDeviceRuntimeInAGenericLevelRange
+        case 0x0062: self = .relativeExposureTimeInAnIlluminanceRange
+        case 0x0063: self = .relativeRuntimeInACorrelatedColorTemperatureRange
+        case 0x0064: self = .relativeRuntimeInADeviceOperatingTemperatureRange
+        case 0x0065: self = .relativeRuntimeInAnInputCurrentRange
+        case 0x0066: self = .relativeRuntimeInAnInputVoltageRange
+        case 0x0067: self = .shortCircuitEventStatistics
+        case 0x0068: self = .timeSinceMotionSensed
+        case 0x0069: self = .timeSincePresenceDetected
+        case 0x006A: self = .totalDeviceEnergyUse
+        case 0x006B: self = .totalDeviceOffOnCycles
+        case 0x006C: self = .totalDevicePowerOnCycles
+        case 0x006D: self = .totalDevicePowerOnTime
+        case 0x006E: self = .totalDeviceRuntime
+        case 0x006F: self = .totalLightExposureTime
+        case 0x0070: self = .totalLuminousEnergy
+        case 0x0071: self = .desiredAmbientTemperature
+        case 0x0072: self = .preciseTotalDeviceEnergyUse
+        case 0x0073: self = .powerFactor
+        case 0x0074: self = .sensorGain
+        case 0x0075: self = .precisePresentAmbientTemperature
+        case 0x0076: self = .presentAmbientRelativeHumidity
+        case 0x0077: self = .presentAmbientCarbonDioxideConcentration
+        case 0x0078: self = .presentAmbientVolatileOrganicCompoundsConcentration
+        case 0x0079: self = .presentAmbientNoise
+        case 0x0080: self = .activeEnergyLoadside
+        case 0x0081: self = .activePowerLoadside
+        case 0x0082: self = .airPressure
+        case 0x0083: self = .apparentEnergy
+        case 0x0084: self = .apparentPower
+        case 0x0085: self = .apparentWindDirection
+        case 0x0086: self = .apparentWindSpeed
+        case 0x0087: self = .dewPoint
+        case 0x0088: self = .externalSupplyVoltage
+        case 0x0089: self = .externalSupplyVoltageFrequency
+        case 0x008A: self = .gustFactor
+        case 0x008B: self = .heatIndex
+        case 0x008C: self = .lightDistribution
+        case 0x008D: self = .lightSourceCurrent
+        case 0x008E: self = .lightSourceOnTimeNotResettable
+        case 0x008F: self = .lightSourceOnTimeResettable
+        case 0x0090: self = .lightSourceOpenCircuitStatistics
+        case 0x0091: self = .lightSourceOverallFailuresStatistics
+        case 0x0092: self = .lightSourceShortCircuitStatistics
+        case 0x0093: self = .lightSourceStartCounterResettable
+        case 0x0094: self = .lightSourceTemperature
+        case 0x0095: self = .lightSourceThermalDeratingStatistics
+        case 0x0096: self = .lightSourceThermalShutdownStatistics
+        case 0x0097: self = .lightSourceTotalPowerOnCycles
+        case 0x0098: self = .lightSourceVoltage
+        case 0x0099: self = .luminaireColor
+        case 0x009A: self = .luminaireIdentificationNumber
+        case 0x009B: self = .luminaireManufacturerGTIN
+        case 0x009C: self = .luminaireNominalInputPower
+        case 0x009D: self = .luminaireNominalMaximumACMainsVoltage
+        case 0x009E: self = .luminaireNominalMinimumACMainsVoltage
+        case 0x009F: self = .luminairePowerAtMinimumDimLevel
+        case 0x00A0: self = .luminaireTimeOfManufacture
+        case 0x00A1: self = .magneticDeclination
+        case 0x00A2: self = .magneticFluxDensity2D
+        case 0x00A3: self = .magneticFluxDensity3D
+        case 0x00A4: self = .nominalLightOutput
+        case 0x00A5: self = .overallFailureCondition
+        case 0x00A6: self = .pollenConcentration
+        case 0x00A7: self = .presentIndoorRelativeHumidity
+        case 0x00A8: self = .presentOutdoorRelativeHumidity
+        case 0x00A9: self = .pressure
+        case 0x00AA: self = .rainfall
+        case 0x00AB: self = .ratedMedianUsefulLifeOfLuminaire
+        case 0x00AC: self = .ratedMedianUsefulLightSourceStarts
+        case 0x00AD: self = .referenceTemperature
+        case 0x00AE: self = .totalDeviceStarts
+        case 0x00AF: self = .trueWindDirection
+        case 0x00B0: self = .trueWindSpeed
+        case 0x00B1: self = .uVIndex
+        case 0x00B2: self = .windChill
+        case 0x00B3: self = .lightSourceType
+        case 0x00B4: self = .luminaireIdentificationString
+        case 0x00B5: self = .outputPowerLimitation
+        case 0x00B6: self = .thermalDerating
+        case 0x00B7: self = .outputCurrentPercent
+        default:     self = .unknown(id)
+        }
+    }
+    
+    /// The Property ID.
+    public var id: UInt16 {
+        switch self {
+        case .averageAmbientTemperatureInAPeriodOfDay: return 0x0001
+        case .averageInputCurrent: return 0x0002
+        case .averageInputVoltage: return 0x0003
+        case .averageOutputCurrent: return 0x0004
+        case .averageOutputVoltage: return 0x0005
+        case .centerBeamIntensityAtFullPower: return 0x0006
+        case .chromaticityTolerance: return 0x0007
+        case .colorRenderingIndexR9: return 0x0008
+        case .colorRenderingIndexRa: return 0x0009
+        case .deviceAppearance: return 0x000A
+        case .deviceCountryOfOrigin: return 0x000B
+        case .deviceDateOfManufacture: return 0x000C
+        case .deviceEnergyUseSinceTurnOn: return 0x000D
+        case .deviceFirmwareRevision: return 0x000E
+        case .deviceGlobalTradeItemNumber: return 0x000F
+        case .deviceHardwareRevision: return 0x0010
+        case .deviceManufacturerName: return 0x0011
+        case .deviceModelNumber: return 0x0012
+        case .deviceOperatingTemperatureRangeSpecification: return 0x0013
+        case .deviceOperatingTemperatureStatisticalValues: return 0x0014
+        case .deviceOverTemperatureEventStatistics: return 0x0015
+        case .devicePowerRangeSpecification: return 0x0016
+        case .deviceRuntimeSinceTurnOn: return 0x0017
+        case .deviceRuntimeWarranty: return 0x0018
+        case .deviceSerialNumber: return 0x0019
+        case .deviceSoftwareRevision: return 0x001A
+        case .deviceUnderTemperatureEventStatistics: return 0x001B
+        case .indoorAmbientTemperatureStatisticalValues: return 0x001C
+        case .initialCIE1931ChromaticityCoordinates: return 0x001D
+        case .initialCorrelatedColorTemperature: return 0x001E
+        case .initialLuminousFlux: return 0x001F
+        case .initialPlanckianDistance: return 0x0020
+        case .inputCurrentRangeSpecification: return 0x0021
+        case .inputCurrentStatistics: return 0x0022
+        case .inputOverCurrentEventStatistics: return 0x0023
+        case .inputOverRippleVoltageEventStatistics: return 0x0024
+        case .inputOverVoltageEventStatistics: return 0x0025
+        case .inputUnderCurrentEventStatistics: return 0x0026
+        case .inputUnderVoltageEventStatistics: return 0x0027
+        case .inputVoltageRangeSpecification: return 0x0028
+        case .inputVoltageRippleSpecification: return 0x0029
+        case .inputVoltageStatistics: return 0x002A
+        case .lightControlAmbientLuxLevelOn: return 0x002B
+        case .lightControlAmbientLuxLevelProlong: return 0x002C
+        case .lightControlAmbientLuxLevelStandby: return 0x002D
+        case .lightControlLightnessOn: return 0x002E
+        case .lightControlLightnessProlong: return 0x002F
+        case .lightControlLightnessStandby: return 0x0030
+        case .lightControlRegulatorAccuracy: return 0x0031
+        case .lightControlRegulatorKid: return 0x0032
+        case .lightControlRegulatorKiu: return 0x0033
+        case .lightControlRegulatorKpd: return 0x0034
+        case .lightControlRegulatorKpu: return 0x0035
+        case .lightControlTimeFade: return 0x0036
+        case .lightControlTimeFadeOn: return 0x0037
+        case .lightControlTimeFadeStandbyAuto: return 0x0038
+        case .lightControlTimeFadeStandbyManual: return 0x0039
+        case .lightControlTimeOccupancyDelay: return 0x003A
+        case .lightControlTimeProlong: return 0x003B
+        case .lightControlTimeRunOn: return 0x003C
+        case .lumenMaintenanceFactor: return 0x003D
+        case .luminousEfficacy: return 0x003E
+        case .luminousEnergySinceTurnOn: return 0x003F
+        case .luminousExposure: return 0x0040
+        case .luminousFluxRange: return 0x0041
+        case .motionSensed: return 0x0042
+        case .motionThreshold: return 0x0043
+        case .openCircuitEventStatistics: return 0x0044
+        case .outdoorStatisticalValues: return 0x0045
+        case .outputCurrentRange: return 0x0046
+        case .outputCurrentStatistics: return 0x0047
+        case .outputRippleVoltageSpecification: return 0x0048
+        case .outputVoltageRange: return 0x0049
+        case .outputVoltageStatistics: return 0x004A
+        case .overOutputRippleVoltageEventStatistics: return 0x004B
+        case .peopleCount: return 0x004C
+        case .presenceDetected: return 0x004D
+        case .presentAmbientLightLevel: return 0x004E
+        case .presentAmbientTemperature: return 0x004F
+        case .presentCIE1931ChromaticityCoordinates: return 0x0050
+        case .presentCorrelatedColorTemperature: return 0x0051
+        case .presentDeviceInputPower: return 0x0052
+        case .presentDeviceOperatingEfficiency: return 0x0053
+        case .presentDeviceOperatingTemperature: return 0x0054
+        case .presentIlluminance: return 0x0055
+        case .presentIndoorAmbientTemperature: return 0x0056
+        case .presentInputCurrent: return 0x0057
+        case .presentInputRippleVoltage: return 0x0058
+        case .presentInputVoltage: return 0x0059
+        case .presentLuminousFlux: return 0x005A
+        case .presentOutdoorAmbientTemperature: return 0x005B
+        case .presentOutputCurrent: return 0x005C
+        case .presentOutputVoltage: return 0x005D
+        case .presentPlanckianDistance: return 0x005E
+        case .presentRelativeOutputRippleVoltage: return 0x005F
+        case .relativeDeviceEnergyUseInAPeriodOfDay: return 0x0060
+        case .relativeDeviceRuntimeInAGenericLevelRange: return 0x0061
+        case .relativeExposureTimeInAnIlluminanceRange: return 0x0062
+        case .relativeRuntimeInACorrelatedColorTemperatureRange: return 0x0063
+        case .relativeRuntimeInADeviceOperatingTemperatureRange: return 0x0064
+        case .relativeRuntimeInAnInputCurrentRange: return 0x0065
+        case .relativeRuntimeInAnInputVoltageRange: return 0x0066
+        case .shortCircuitEventStatistics: return 0x0067
+        case .timeSinceMotionSensed: return 0x0068
+        case .timeSincePresenceDetected: return 0x0069
+        case .totalDeviceEnergyUse: return 0x006A
+        case .totalDeviceOffOnCycles: return 0x006B
+        case .totalDevicePowerOnCycles: return 0x006C
+        case .totalDevicePowerOnTime: return 0x006D
+        case .totalDeviceRuntime: return 0x006E
+        case .totalLightExposureTime: return 0x006F
+        case .totalLuminousEnergy: return 0x0070
+        case .desiredAmbientTemperature: return 0x0071
+        case .preciseTotalDeviceEnergyUse: return 0x0072
+        case .powerFactor: return 0x0073
+        case .sensorGain: return 0x0074
+        case .precisePresentAmbientTemperature: return 0x0075
+        case .presentAmbientRelativeHumidity: return 0x0076
+        case .presentAmbientCarbonDioxideConcentration: return 0x0077
+        case .presentAmbientVolatileOrganicCompoundsConcentration: return 0x0078
+        case .presentAmbientNoise: return 0x0079
+     // case these are undefined in Mesh Device Properties v2 = 0x007A
+     // case these are undefined in Mesh Device Properties v2 = 0x007B
+     // case these are undefined in Mesh Device Properties v2 = 0x007C
+     // case these are undefined in Mesh Device Properties v2 = 0x007D
+     // case these are undefined in Mesh Device Properties v2 = 0x007E
+     // case these are undefined in Mesh Device Properties v2 = 0x007F
+        case .activeEnergyLoadside: return 0x0080
+        case .activePowerLoadside: return 0x0081
+        case .airPressure: return 0x0082
+        case .apparentEnergy: return 0x0083
+        case .apparentPower: return 0x0084
+        case .apparentWindDirection: return 0x0085
+        case .apparentWindSpeed: return 0x0086
+        case .dewPoint: return 0x0087
+        case .externalSupplyVoltage: return 0x0088
+        case .externalSupplyVoltageFrequency: return 0x0089
+        case .gustFactor: return 0x008A
+        case .heatIndex: return 0x008B
+        case .lightDistribution: return 0x008C
+        case .lightSourceCurrent: return 0x008D
+        case .lightSourceOnTimeNotResettable: return 0x008E
+        case .lightSourceOnTimeResettable: return 0x008F
+        case .lightSourceOpenCircuitStatistics: return 0x0090
+        case .lightSourceOverallFailuresStatistics: return 0x0091
+        case .lightSourceShortCircuitStatistics: return 0x0092
+        case .lightSourceStartCounterResettable: return 0x0093
+        case .lightSourceTemperature: return 0x0094
+        case .lightSourceThermalDeratingStatistics: return 0x0095
+        case .lightSourceThermalShutdownStatistics: return 0x0096
+        case .lightSourceTotalPowerOnCycles: return 0x0097
+        case .lightSourceVoltage: return 0x0098
+        case .luminaireColor: return 0x0099
+        case .luminaireIdentificationNumber: return 0x009A
+        case .luminaireManufacturerGTIN: return 0x009B
+        case .luminaireNominalInputPower: return 0x009C
+        case .luminaireNominalMaximumACMainsVoltage: return 0x009D
+        case .luminaireNominalMinimumACMainsVoltage: return 0x009E
+        case .luminairePowerAtMinimumDimLevel: return 0x009F
+        case .luminaireTimeOfManufacture: return 0x00A0
+        case .magneticDeclination: return 0x00A1
+        case .magneticFluxDensity2D: return 0x00A2
+        case .magneticFluxDensity3D: return 0x00A3
+        case .nominalLightOutput: return 0x00A4
+        case .overallFailureCondition: return 0x00A5
+        case .pollenConcentration: return 0x00A6
+        case .presentIndoorRelativeHumidity: return 0x00A7
+        case .presentOutdoorRelativeHumidity: return 0x00A8
+        case .pressure: return 0x00A9
+        case .rainfall: return 0x00AA
+        case .ratedMedianUsefulLifeOfLuminaire: return 0x00AB
+        case .ratedMedianUsefulLightSourceStarts: return 0x00AC
+        case .referenceTemperature: return 0x00AD
+        case .totalDeviceStarts: return 0x00AE
+        case .trueWindDirection: return 0x00AF
+        case .trueWindSpeed: return 0x00B0
+        case .uVIndex: return 0x00B1
+        case .windChill: return 0x00B2
+        case .lightSourceType: return 0x00B3
+        case .luminaireIdentificationString: return 0x00B4
+        case .outputPowerLimitation: return 0x00B5
+        case .thermalDerating: return 0x00B6
+        case .outputCurrentPercent: return 0x00B7
+        case .unknown(let id): return id
+        }
+    }
 }
 
 internal extension DeviceProperty {
@@ -253,6 +620,8 @@ internal extension DeviceProperty {
              .presentAmbientRelativeHumidity,
              .presentIndoorRelativeHumidity,
              .presentOutdoorRelativeHumidity,
+             .presentDeviceOperatingTemperature,
+             .precisePresentAmbientTemperature,
              .timeSinceMotionSensed,
              .timeSincePresenceDetected:
             return 2
@@ -316,17 +685,22 @@ internal extension DeviceProperty {
     
     /// Parses the characteristic from given data.
     ///
+    /// If the given length is 0, the returned characterisitc will be returned with default
+    /// value (false, 0, etc.).
+    ///
     /// - important: This method does not ensure that the length of data is sufficient.
     ///
     /// - parameters:
     ///   - data:   The data to be read from.
     ///   - offset: The offset.
-    ///   - length: Expected length of the data.
+    ///   - length: Expected length of the data. If 0, the characteristic will be returned
+    ///             with default value.
     /// - returns: The characteristic value.
     func read(from data: Data, at offset: Int, length: Int) -> DevicePropertyCharacteristic {
         switch self {
         // Bool:
         case .presenceDetected:
+            guard length == valueLength else { return .bool(false) }
             return .bool(data[offset] != 0x00)
         
         // UInt8:
@@ -340,6 +714,7 @@ internal extension DeviceProperty {
              .presentDeviceOperatingEfficiency,
              .presentRelativeOutputRippleVoltage,
              .presentInputRippleVoltage:
+            guard length == valueLength else { return .percentage8(0) }
             return .percentage8(data[offset])
             
         // Int8:
@@ -347,22 +722,33 @@ internal extension DeviceProperty {
              .presentAmbientTemperature,
              .presentIndoorAmbientTemperature,
              .presentOutdoorAmbientTemperature:
+            guard length == valueLength else { return .temperature8(0) }
             return .temperature8(Int8(bitPattern: data[offset]))
             
         // UInt16:
         case .peopleCount:
+            guard length == valueLength else { return .count16(0) }
             return .count16(data.read(fromOffset: offset))
         case .presentAmbientRelativeHumidity,
              .presentIndoorRelativeHumidity,
              .presentOutdoorRelativeHumidity:
+            guard length == valueLength else { return .humidity(0) }
             return .humidity(data.read(fromOffset: offset))
         case .lightControlLightnessOn,
              .lightControlLightnessProlong,
              .lightControlLightnessStandby:
+            guard length == valueLength else { return .perceivedLightness(0) }
             return .perceivedLightness(data.read(fromOffset: offset))
         case .timeSinceMotionSensed,
              .timeSincePresenceDetected:
+            guard length == valueLength else { return .timeSecond16(0) }
             return .timeSecond16(data.read(fromOffset: offset))
+            
+        // Int16:
+        case .precisePresentAmbientTemperature,
+             .presentDeviceOperatingTemperature:
+            guard length == valueLength else { return .temperature(0) }
+            return .temperature(data.read(fromOffset: offset))
             
         // UInt24:
         case .lightSourceStartCounterResettable,
@@ -371,12 +757,14 @@ internal extension DeviceProperty {
              .totalDeviceOffOnCycles,
              .totalDevicePowerOnCycles,
              .totalDeviceStarts:
+            guard length == valueLength else { return .count24(0) }
             return .count24(data.readUInt24(fromOffset: offset))
         case .lightControlAmbientLuxLevelOn,
              .lightControlAmbientLuxLevelProlong,
              .lightControlAmbientLuxLevelStandby,
              .presentAmbientLightLevel,
              .presentIlluminance:
+            guard length == valueLength else { return .illuminance(0) }
             return .illuminance(data.readUInt24(fromOffset: offset))
         case .deviceRuntimeSinceTurnOn,
              .deviceRuntimeWarranty,
@@ -384,6 +772,7 @@ internal extension DeviceProperty {
              .totalDevicePowerOnTime,
              .totalDeviceRuntime,
              .totalLightExposureTime:
+            guard length == valueLength else { return .timeHour24(0) }
             return .timeHour24(data.readUInt24(fromOffset: offset))
         case .lightControlTimeFade,
              .lightControlTimeFadeOn,
@@ -392,9 +781,11 @@ internal extension DeviceProperty {
              .lightControlTimeOccupancyDelay,
              .lightControlTimeProlong,
              .lightControlTimeRunOn:
+            guard length == valueLength else { return .timeMillisecond24(0) }
             return .timeMillisecond24(data.readUInt24(fromOffset: offset))
         case .deviceDateOfManufacture,
              .luminaireTimeOfManufacture:
+            guard length == valueLength else { return .dateUTC(Date(timeIntervalSince1970: 0)) }
             let numberOfDays = data.readUInt24(fromOffset: offset)
             let timeInterval = TimeInterval(numberOfDays) * 86400.0
             return .dateUTC(Date(timeIntervalSince1970: timeInterval))
@@ -402,6 +793,7 @@ internal extension DeviceProperty {
         // UInt32:
         case .pressure,
              .airPressure:
+            guard length == valueLength else { return .pressure(0) }
             return .pressure(data.read(fromOffset: offset))
             
         // Float32 (IEEE 754):
@@ -410,23 +802,29 @@ internal extension DeviceProperty {
              .lightControlRegulatorKpd,
              .lightControlRegulatorKpu,
              .sensorGain:
+            guard length == valueLength else { return .coefficient(0.0) }
             let asInt32: UInt32 = data.read(fromOffset: offset)
             return .coefficient(Float(bitPattern: asInt32))
             
         // String:
         case .deviceFirmwareRevision,
              .deviceSoftwareRevision:
+            guard length == valueLength else { return .fixedString8(String(repeating: " ", count: 8)) }
             return .fixedString8(String(data: data.subdata(in: offset..<offset + 8), encoding: .utf8)!)
         case .deviceHardwareRevision,
              .deviceSerialNumber:
+            guard length == valueLength else { return .fixedString16(String(repeating: " ", count: 16)) }
             return .fixedString16(String(data: data.subdata(in: offset..<offset + 16), encoding: .utf8)!)
         case .deviceModelNumber,
              .luminaireColor,
              .luminaireIdentificationNumber:
+            guard length == valueLength else { return .fixedString24(String(repeating: " ", count: 24)) }
             return .fixedString24(String(data: data.subdata(in: offset..<offset + 24), encoding: .utf8)!)
         case .deviceManufacturerName:
+            guard length == valueLength else { return .fixedString36(String(repeating: " ", count: 36)) }
             return .fixedString36(String(data: data.subdata(in: offset..<offset + 36), encoding: .utf8)!)
         case .luminaireIdentificationString:
+            guard length == valueLength else { return .fixedString64(String(repeating: " ", count: 64)) }
             return .fixedString64(String(data: data.subdata(in: offset..<offset + 64), encoding: .utf8)!)
             
         // Other:
@@ -488,6 +886,13 @@ public enum DevicePropertyCharacteristic {
     ///
     /// Unit is in pascals with a resolution of 0.1 Pa.
     case pressure(UInt32)
+    /// The Temperature characteristic is used to represent a temperature is degrees
+    /// Celsius with a resolution of 0.01 degrees Celsius.
+    ///
+    /// Allowed range is: -273.15 to 327.67.
+    ///
+    /// A value of 0x8000 represents ‘value is not known’.
+    case temperature(Int16)
     /// The Temperature 8 characteristic is used to represent a measure of
     /// temperature with a unit of 0.5 degree Celsius.
     ///
@@ -539,6 +944,10 @@ internal extension DevicePropertyCharacteristic {
              .humidity(let value),
              .timeSecond16(let value),
              .perceivedLightness(let value):
+            return Data() + value
+            
+        // Int16:
+        case .temperature(let value):
             return Data() + value
             
         // UInt24:
@@ -625,6 +1034,15 @@ extension DevicePropertyCharacteristic: CustomDebugStringConvertible {
                 return "Value is not known"
             default:
                 return "\(count) seconds"
+            }
+            
+        // Int16:
+        case .temperature(let temp):
+            switch temp {
+            case Int16.min:
+                return "Value is not known"
+            default:
+                return String(format: "%.2f°C", Float(temp) / 100.0)
             }
             
         // UInt24:
@@ -884,6 +1302,7 @@ extension DeviceProperty: CustomDebugStringConvertible {
         case .outputPowerLimitation: return "Output Power Limitation"
         case .thermalDerating: return "Thermal Derating"
         case .outputCurrentPercent: return "Output Current Percent"
+        case .unknown(let id): return "Unknown (Property ID: \(id))"
         }
     }
     

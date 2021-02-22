@@ -51,11 +51,12 @@ public struct SensorSettingStatus: SensorPropertyMessage {
     public let settingAccess: SensorSettingAccess?
     /// The value of the setting.
     ///
-    /// This property is `nil` when requested setting property was not found.
+    /// This property is `nil` when requested setting property was not found,
+    /// or the setting is read-only and was tried to be set.
     public let settingValue: DevicePropertyCharacteristic?
     
     public var parameters: Data? {
-        let data = Data() + property.rawValue + settingProperty.rawValue
+        let data = Data() + property.id + settingProperty.id
         if let access = settingAccess,
            let setting = settingValue {
             return data + access.rawValue + setting.data
@@ -97,16 +98,10 @@ public struct SensorSettingStatus: SensorPropertyMessage {
             return nil
         }
         let propertyId: UInt16 = parameters.read(fromOffset: 0)
-        guard let property = DeviceProperty(rawValue: propertyId) else {
-            return nil
-        }
-        self.property = property
+        self.property = DeviceProperty(propertyId)
         
         let settingPropertyId: UInt16 = parameters.read(fromOffset: 2)
-        guard let settingProperty = DeviceProperty(rawValue: settingPropertyId) else {
-            return nil
-        }
-        self.settingProperty = settingProperty
+        self.settingProperty = DeviceProperty(settingPropertyId)
         
         // Sensor Setting Access and Setting Raw are optional.
         if parameters.count == 4 {
@@ -114,7 +109,6 @@ public struct SensorSettingStatus: SensorPropertyMessage {
             self.settingValue = nil
             return
         }
-        
         let accessId: UInt8 = parameters[4]
         guard let access = SensorSettingAccess(rawValue: accessId) else {
             return nil

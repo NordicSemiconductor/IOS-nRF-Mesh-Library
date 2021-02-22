@@ -40,8 +40,8 @@ public struct SensorSettingsStatus: SensorPropertyMessage {
     
     public var parameters: Data? {
         return settingsProperties?
-            .reduce(Data() + property.rawValue) { $0 + $1.rawValue } ??
-            Data() + property.rawValue
+            .reduce(Data() + property.id) { $0 + $1.id } ??
+            Data() + property.id
     }
     
     /// Creates the Sensor Settings Status message.
@@ -62,19 +62,14 @@ public struct SensorSettingsStatus: SensorPropertyMessage {
             return nil
         }
         let propertyId: UInt16 = parameters.read(fromOffset: 0)
-        guard let property = DeviceProperty(rawValue: propertyId) else {
-            return nil
-        }
-        self.property = property
+        self.property = DeviceProperty(propertyId)
         if parameters.count == 2 {
             self.settingsProperties = nil
         } else {
             var settingsProperties: [DeviceProperty] = []
             for i in stride(from: 2, to: parameters.count, by: 2) {
                 let propertyId: UInt16 = parameters.read(fromOffset: i)
-                guard let property = DeviceProperty(rawValue: propertyId) else {
-                    return nil
-                }
+                let property = DeviceProperty(propertyId)
                 settingsProperties.append(property)
             }
             self.settingsProperties = settingsProperties

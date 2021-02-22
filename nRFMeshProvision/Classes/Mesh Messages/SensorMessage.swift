@@ -152,7 +152,7 @@ public struct SensorDescriptor {
         // Encode two 12-bit tolerance values in 2 bytes.
         let tolerances: UInt32 = UInt32(negativeTolerance) << 12 | UInt32(positiveTolerance)
         
-        var data = Data() + property.rawValue
+        var data = Data() + property.id
         data += (Data() + tolerances.littleEndian).dropLast()
         data += samplingFunction.rawValue
         data += measurementPeriodValue
@@ -206,10 +206,7 @@ public struct SensorDescriptor {
             return nil
         }
         let propertyId: UInt16 = parameters.read(fromOffset: offset)
-        guard let property = DeviceProperty(rawValue: propertyId) else {
-            return nil
-        }
-        self.property = property
+        self.property = DeviceProperty(propertyId)
         // Decode two 12-bit tolerace values from 2 bytes.
         self.positiveTolerance = UInt16(parameters[offset + 3] & 0x0F) << 8 | UInt16(parameters[offset + 2])
         self.negativeTolerance = UInt16(parameters[offset + 4]) << 4 | UInt16(parameters[offset + 3] >> 4)

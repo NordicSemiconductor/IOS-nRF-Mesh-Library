@@ -41,7 +41,7 @@ public struct SensorDescriptorGet: AcknowledgedSensorMessage {
     
     public var parameters: Data? {
         if let property = property {
-            return Data() + property.rawValue
+            return Data() + property.id
         }
         return nil
     }
@@ -60,10 +60,7 @@ public struct SensorDescriptorGet: AcknowledgedSensorMessage {
             self.property = nil
         case 2:
             let propertyId: UInt16 = parameters.read(fromOffset: 0)
-            guard let property = DeviceProperty(rawValue: propertyId) else {
-                return nil
-            }
-            self.property = property
+            self.property = DeviceProperty(propertyId)
         default:
             return nil
         }

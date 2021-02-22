@@ -39,7 +39,7 @@ public struct SensorCadenceStatus: SensorPropertyMessage {
     public let cadence: SensorCadence?
     
     public var parameters: Data? {
-        return Data() + property.rawValue + cadence?.data
+        return Data() + property.id + cadence?.data
     }
     
     /// Creates the Sensor Cadence Status message.
@@ -57,10 +57,7 @@ public struct SensorCadenceStatus: SensorPropertyMessage {
             return nil
         }
         let propertyId: UInt16 = parameters.read(fromOffset: 0)
-        guard let property = DeviceProperty(rawValue: propertyId) else {
-            return nil
-        }
-        self.property = property
+        self.property = DeviceProperty(propertyId)
         if parameters.count != 2 {
             guard let cadence = SensorCadence(of: property, from: parameters, at: 2) else {
                 return nil

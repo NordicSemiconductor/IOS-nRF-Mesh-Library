@@ -40,7 +40,7 @@ public struct SensorSettingSetUnacknowledged: SensorPropertyMessage {
     public let settingValue: DevicePropertyCharacteristic
     
     public var parameters: Data? {
-        return Data() + property.rawValue + settingProperty.rawValue + settingValue.data
+        return Data() + property.id + settingProperty.id + settingValue.data
     }
     
     /// Creates the Sensor Setting Set Unacknowledged message.
@@ -61,16 +61,10 @@ public struct SensorSettingSetUnacknowledged: SensorPropertyMessage {
             return nil
         }
         let propertyId: UInt16 = parameters.read(fromOffset: 0)
-        guard let property = DeviceProperty(rawValue: propertyId) else {
-            return nil
-        }
-        self.property = property
+        self.property = DeviceProperty(propertyId)
         
         let settingPropertyId: UInt16 = parameters.read(fromOffset: 2)
-        guard let settingProperty = DeviceProperty(rawValue: settingPropertyId) else {
-            return nil
-        }
-        self.settingProperty = settingProperty
+        self.settingProperty = DeviceProperty(settingPropertyId)
         
         // For known properties, make sure we have enough of data to parse value from.
         if let expectedValueLength = settingProperty.valueLength {

@@ -40,7 +40,7 @@ public struct SensorCadenceSet: AcknowledgedSensorPropertyMessage {
     public let cadence: SensorCadence
     
     public var parameters: Data? {
-        return Data() + property.rawValue + cadence.data
+        return Data() + property.id + cadence.data
     }
     
     /// Creates the Sensor Cadence Set message.
@@ -58,10 +58,7 @@ public struct SensorCadenceSet: AcknowledgedSensorPropertyMessage {
             return nil
         }
         let propertyId: UInt16 = parameters.read(fromOffset: 0)
-        guard let property = DeviceProperty(rawValue: propertyId) else {
-            return nil
-        }
-        self.property = property
+        self.property = DeviceProperty(propertyId)
         
         guard let cadence = SensorCadence(of: property, from: parameters, at: 2) else {
             return nil

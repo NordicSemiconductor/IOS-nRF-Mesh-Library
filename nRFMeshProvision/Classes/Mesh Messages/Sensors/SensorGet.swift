@@ -30,37 +30,40 @@
 
 import Foundation
 
-public struct SensorSettingGet: AcknowledgedSensorPropertyMessage {
-    public static let opCode: UInt32 = 0x8236
-    public static let responseType: StaticMeshMessage.Type = SensorSettingStatus.self
+public struct SensorGet: AcknowledgedSensorMessage {
+    public static let opCode: UInt32 = 0x8231
+    public static let responseType: StaticMeshMessage.Type = SensorStatus.self
     
-    public let property: DeviceProperty
-    /// Setting Property identifying a setting within a sensor.
-    public let settingProperty: DeviceProperty
+    /// The sensor property to get the value of.
+    ///
+    /// If set to `nil`, all sensor values found on the Element will be returned.
+    public let property: DeviceProperty?
     
     public var parameters: Data? {
-        return Data() + property.id + settingProperty.id
+        if let property = property {
+            return Data() + property.id
+        }
+        return nil
     }
     
-    /// Creates the Sensor Setting Get message.
+    /// Creates the Sensor Get message.
     ///
-    /// - parameters:
-    ///   - setting:  Setting Property identifying a setting within a sensor.
-    ///   - property: Property identifying a sensor.
-    public init(_ setting: DeviceProperty, of property: DeviceProperty) {
+    /// - parameter property: An optional property parameter to request only the
+    ///                       value of the given property.
+    public init(_ property: DeviceProperty? = nil) {
         self.property = property
-        self.settingProperty = setting
     }
     
     public init?(parameters: Data) {
-        guard parameters.count == 4 else {
+        switch parameters.count {
+        case 0:
+            self.property = nil
+        case 2:
+            let propertyId: UInt16 = parameters.read(fromOffset: 0)
+            self.property = DeviceProperty(propertyId)
+        default:
             return nil
         }
-        let propertyId: UInt16 = parameters.read(fromOffset: 0)
-        self.property = DeviceProperty(propertyId)
-        
-        let settingPropertyId: UInt16 = parameters.read(fromOffset: 2)
-        self.settingProperty = DeviceProperty(settingPropertyId)
     }
     
 }

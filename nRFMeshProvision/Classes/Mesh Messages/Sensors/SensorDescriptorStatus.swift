@@ -55,7 +55,7 @@ public struct SensorDescriptorStatus: SensorMessage {
     public var parameters: Data? {
         switch result {
         case let .propertyNotFound(property):
-            return Data() + property.rawValue
+            return Data() + property.id
         case let .descriptors(descriptors):
             return descriptors.reduce(Data()) { $0 + $1.data }
         }
@@ -82,9 +82,7 @@ public struct SensorDescriptorStatus: SensorMessage {
         switch parameters.count {
         case 2:
             let propertyId: UInt16 = parameters.read(fromOffset: 0)
-            guard let property = DeviceProperty(rawValue: propertyId) else {
-                return nil
-            }
+            let property = DeviceProperty(propertyId)
             result = .propertyNotFound(property)
         case let count where count % 8 == 0:
             var descriptors: [SensorDescriptor] = []
