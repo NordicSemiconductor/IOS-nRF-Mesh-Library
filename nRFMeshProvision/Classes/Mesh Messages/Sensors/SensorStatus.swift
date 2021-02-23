@@ -81,7 +81,7 @@ private extension SensorStatus {
         if value.property.id < 2048 && length >= 1 && length <= 16 {
             // Format A
             let len = length - 1
-            let octet0 = 0b00 | (len << 1) | UInt8(value.property.id << 5)
+            let octet0 = 0b00 | (len << 1) | UInt8((value.property.id & 0x07) << 5)
             let octet1 = UInt8(value.property.id >> 3)
             return Data([octet0, octet1]) + data
         } else {
