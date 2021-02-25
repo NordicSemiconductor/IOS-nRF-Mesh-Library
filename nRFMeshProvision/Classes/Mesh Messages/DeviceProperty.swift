@@ -1203,34 +1203,42 @@ extension DevicePropertyCharacteristic: CustomDebugStringConvertible {
         case .bool(let value):
             return value ? "True" : "False"
             
-        // UInt8?:
+        // Decimal:
+        case .pressure(let pressure):
+            let float = NSDecimalNumber(decimal: pressure).floatValue
+            return String(format: "%.1f°C", max(0, min(Float(UInt32.max / 10), float)))
+            
+        // Decimal?:
         case .percentage8(let percent):
             guard let percent = percent else {
                 return DevicePropertyCharacteristic.unknown
             }
-            return percent.description // String(format: "%.1f%%", max(0.0, min(100.0, percent)))
-            
-        // Float?:
+            let float = NSDecimalNumber(decimal: percent).floatValue
+            return String(format: "%.1f%%", max(0.0, min(100.0, float)))
         case .temperature8(let temp):
             guard let temp = temp else {
                 return DevicePropertyCharacteristic.unknown
             }
-            return temp.description // String(format: "%.1f°C", max(-64.0, min(63.0, temp)))
+            let float = NSDecimalNumber(decimal: temp).floatValue
+            return String(format: "%.1f°C", max(-64.0, min(63.0, float)))
         case .humidity(let percent):
             guard let percent = percent else {
                 return DevicePropertyCharacteristic.unknown
             }
-            return percent.description // String(format: "%.2f%%", max(0.0, min(100.0, percent)))
+            let float = NSDecimalNumber(decimal: percent).floatValue
+            return String(format: "%.2f%%", max(0.0, min(100.0, float)))
         case .illuminance(let millilux):
             guard let millilux = millilux else {
                 return DevicePropertyCharacteristic.unknown
             }
-            return millilux.description // String(format: "%.2f lux", millilux)
+            let float = NSDecimalNumber(decimal: millilux).floatValue
+            return String(format: "%.2f lux", float)
         case .temperature(let temp):
             guard let temp = temp else {
                 return DevicePropertyCharacteristic.unknown
             }
-            return temp.description // String(format: "%.2f°C", max(-273.15, min(327.67, temp)))
+            let float = NSDecimalNumber(decimal: temp).floatValue
+            return String(format: "%.2f°C", max(-273.15, min(327.67, float)))
             
         // UInt16:
         case .perceivedLightness(let count):
@@ -1258,16 +1266,12 @@ extension DevicePropertyCharacteristic: CustomDebugStringConvertible {
             guard let numberOfHours = numberOfHours else {
                 return DevicePropertyCharacteristic.unknown
             }
-            return "\(numberOfHours) hours"
+            return "\(min(numberOfHours, 0xFFFFFE)) hours"
         case .timeMillisecond24(let numberOfMilliseconds):
             guard let numberOfMilliseconds = numberOfMilliseconds else {
                 return DevicePropertyCharacteristic.unknown
             }
-            return "\(numberOfMilliseconds) ms"
-            
-        // UInt32:
-        case .pressure(let pressure):
-            return pressure.description
+            return "\(min(numberOfMilliseconds, 0xFFFFFE)) ms"
             
         // UInt32?:
         case .timeSecond32(let numberOfSeconds):
