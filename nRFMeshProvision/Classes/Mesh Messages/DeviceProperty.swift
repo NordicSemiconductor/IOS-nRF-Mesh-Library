@@ -698,12 +698,12 @@ internal extension DeviceProperty {
     /// - returns: The characteristic value.
     func read(from data: Data, at offset: Int, length: Int) -> DevicePropertyCharacteristic {
         switch self {
-        // Bool:
+        // UInt8 -> Bool:
         case .presenceDetected:
             guard length == valueLength else { return .bool(false) }
-            return .bool(data[offset] != 0x00)
+            return .bool(data[offset].toBool())
         
-        // UInt8:
+        // UInt8 -> Float?:
         case .lightControlRegulatorAccuracy,
              .outputRippleVoltageSpecification,
              .inputVoltageRippleSpecification,
@@ -714,66 +714,80 @@ internal extension DeviceProperty {
              .presentDeviceOperatingEfficiency,
              .presentRelativeOutputRippleVoltage,
              .presentInputRippleVoltage:
-            guard length == valueLength else { return .percentage8(0) }
-            return .percentage8(data[offset])
+            guard length == valueLength else { return .percentage8(nil) }
+            return .percentage8(data[offset].toDecimal(withRange: 0...100, withResolution: 0.5, withUnknownValue: 0xFF))
             
-        // Int8:
+        // Int8 -> Float?
         case .desiredAmbientTemperature,
              .presentAmbientTemperature,
              .presentIndoorAmbientTemperature,
              .presentOutdoorAmbientTemperature:
-            guard length == valueLength else { return .temperature8(0) }
-            return .temperature8(Int8(bitPattern: data[offset]))
+            guard length == valueLength else { return .temperature8(nil) }
+            let value: Int8 = Int8(bitPattern: data[offset])
+            return .temperature8(value.toDecimal(withRange: -64.0...63.0, withResolution: 0.5, withUnknownValue: 0x7F))
             
-        // UInt16:
-        case .peopleCount:
-            guard length == valueLength else { return .count16(0) }
-            return .count16(data.read(fromOffset: offset))
-        case .presentAmbientRelativeHumidity,
-             .presentIndoorRelativeHumidity,
-             .presentOutdoorRelativeHumidity:
-            guard length == valueLength else { return .humidity(0) }
-            return .humidity(data.read(fromOffset: offset))
+        // UInt16 -> UInt16
         case .lightControlLightnessOn,
              .lightControlLightnessProlong,
              .lightControlLightnessStandby:
             guard length == valueLength else { return .perceivedLightness(0) }
             return .perceivedLightness(data.read(fromOffset: offset))
+            
+        // UInt16 -> UInt16?:
+        case .peopleCount:
+            guard length == valueLength else { return .count16(nil) }
+            let count: UInt16 = data.read(fromOffset: offset)
+            return .count16(count.withUnknownValue(0xFFFF))
         case .timeSinceMotionSensed,
              .timeSincePresenceDetected:
-            guard length == valueLength else { return .timeSecond16(0) }
-            return .timeSecond16(data.read(fromOffset: offset))
+            guard length == valueLength else { return .timeSecond16(nil) }
+            let value: UInt16 = data.read(fromOffset: offset)
+            return .timeSecond16(value.withUnknownValue(0xFFFF))
+        
+        // UInt16 -> Float?
+        case .presentAmbientRelativeHumidity,
+             .presentIndoorRelativeHumidity,
+             .presentOutdoorRelativeHumidity:
+            guard length == valueLength else { return .humidity(nil) }
+            let value: UInt16 = data.read(fromOffset: offset)
+            return .humidity(value.toDecimal(withRange: 0.0...100.0, withResolution: 0.01, withUnknownValue: 0xFFFF))
             
-        // Int16:
+        // Int16 -> Float?
         case .precisePresentAmbientTemperature,
              .presentDeviceOperatingTemperature:
-            guard length == valueLength else { return .temperature(0) }
-            return .temperature(data.read(fromOffset: offset))
+            guard length == valueLength else { return .temperature(nil) }
+            let value: Int16 = data.read(fromOffset: offset)
+            return .temperature(value.toDecimal(withRange: -273.15...327.67, withResolution: 0.01, withUnknownValue: -32768))
             
-        // UInt24:
+        // UInt24 -> Float?
+        case .lightControlAmbientLuxLevelOn,
+             .lightControlAmbientLuxLevelProlong,
+             .lightControlAmbientLuxLevelStandby,
+             .presentAmbientLightLevel,
+             .presentIlluminance:
+            guard length == valueLength else { return .illuminance(nil) }
+            let value: UInt32 = data.readUInt24(fromOffset: offset)
+            return .illuminance(value.toDecimal(withResolution: 0.01, withUnknownValue: 0xFFFFFF))
+            
+        // UInt24 -> UInt24?:
         case .lightSourceStartCounterResettable,
              .lightSourceTotalPowerOnCycles,
              .ratedMedianUsefulLightSourceStarts,
              .totalDeviceOffOnCycles,
              .totalDevicePowerOnCycles,
              .totalDeviceStarts:
-            guard length == valueLength else { return .count24(0) }
-            return .count24(data.readUInt24(fromOffset: offset))
-        case .lightControlAmbientLuxLevelOn,
-             .lightControlAmbientLuxLevelProlong,
-             .lightControlAmbientLuxLevelStandby,
-             .presentAmbientLightLevel,
-             .presentIlluminance:
-            guard length == valueLength else { return .illuminance(0) }
-            return .illuminance(data.readUInt24(fromOffset: offset))
+            guard length == valueLength else { return .count24(nil) }
+            let value: UInt32 = data.readUInt24(fromOffset: offset)
+            return .count24(value.withUnknownValue(0xFFFFFF))
         case .deviceRuntimeSinceTurnOn,
              .deviceRuntimeWarranty,
              .ratedMedianUsefulLifeOfLuminaire,
              .totalDevicePowerOnTime,
              .totalDeviceRuntime,
              .totalLightExposureTime:
-            guard length == valueLength else { return .timeHour24(0) }
-            return .timeHour24(data.readUInt24(fromOffset: offset))
+            guard length == valueLength else { return .timeHour24(nil) }
+            let value: UInt32 = data.readUInt24(fromOffset: offset)
+            return .timeHour24(value.withUnknownValue(0xFFFFFF))
         case .lightControlTimeFade,
              .lightControlTimeFadeOn,
              .lightControlTimeFadeStandbyAuto,
@@ -781,20 +795,25 @@ internal extension DeviceProperty {
              .lightControlTimeOccupancyDelay,
              .lightControlTimeProlong,
              .lightControlTimeRunOn:
-            guard length == valueLength else { return .timeMillisecond24(0) }
-            return .timeMillisecond24(data.readUInt24(fromOffset: offset))
+            guard length == valueLength else { return .timeMillisecond24(nil) }
+            let value: UInt32 = data.readUInt24(fromOffset: offset)
+            return .timeMillisecond24(value.withUnknownValue(0xFFFFFF))
+            
+        // UInt24 -> Date?
         case .deviceDateOfManufacture,
              .luminaireTimeOfManufacture:
-            guard length == valueLength else { return .dateUTC(Date(timeIntervalSince1970: 0)) }
+            guard length == valueLength else { return .dateUTC(nil) }
             let numberOfDays = data.readUInt24(fromOffset: offset)
+            guard numberOfDays != 0 else { return .dateUTC(nil) }
             let timeInterval = TimeInterval(numberOfDays) * 86400.0
             return .dateUTC(Date(timeIntervalSince1970: timeInterval))
             
-        // UInt32:
+        // UInt32 -> Float:
         case .pressure,
              .airPressure:
             guard length == valueLength else { return .pressure(0) }
-            return .pressure(data.read(fromOffset: offset))
+            let value: UInt32 = data.read(fromOffset: offset)
+            return .pressure(value.toDecimal(withResolution: 0.1))
             
         // Float32 (IEEE 754):
         case .lightControlRegulatorKid,
@@ -835,25 +854,19 @@ internal extension DeviceProperty {
     
 }
 
-/// A representation of a property charactersitic.
-public enum DevicePropertyCharacteristic {
+/// A representation of a property characteristic.
+public enum DevicePropertyCharacteristic: Equatable {
     /// True or false.
     case bool(Bool)
     /// The Count 16 characteristic is used to represent a general count value.
-    ///
-    /// A value of 0xFFFF represents 'value is not known'.
-    case count16(UInt16)
+    case count16(UInt16?)
     /// The Count 24 characteristic is used to represent a general count value.
-    ///
-    /// A value of 0xFFFFFF represents 'value is not known'.
-    case count24(UInt32)
+    case count24(UInt32?)
     /// The Coefficient characteristic is used to represent a general coefficient value.
     case coefficient(Float32)
     /// Date as days elapsed since the Epoch (Jan 1, 1970) in the Coordinated Universal
     /// Time (UTC) time zone.
-    ///
-    /// A value of 0x000000 (Jan 1, 1970) represents 'value is not known'.
-    case dateUTC(Date)
+    case dateUTC(Date?)
     /// The Fixed String 8 characteristic represents an 8-octet UTF-8 string.
     case fixedString8(String)
     /// The Fixed String 16 characteristic represents a 16-octet UTF-8 string.
@@ -866,60 +879,44 @@ public enum DevicePropertyCharacteristic {
     case fixedString64(String)
     /// The Humidity characteristic is used to represent humidity value in
     /// percent with a resolution of 0.01 percent.
-    case humidity(UInt16)
+    case humidity(Decimal?)
     /// The Illuminance characteristic is used to represent a measure of illuminance
     /// in units of lux with resolution 0.01 lux.
-    ///
-    /// A value of 0xFFFFFF represents 'value is not known'.
-    case illuminance(UInt32)
+    case illuminance(Decimal?)
     /// The Percentage 8 characteristic is used to represent a measure of percentage.
     ///
-    /// Unit is a percentage with a resolution of 0.5.
-    ///
-    /// A value of 0xFF represents 'value is not known'.
-    /// Values 201..254 are Prohibited.
-    case percentage8(UInt8)
+    /// Unit is a percentage with resolution 0.5, with allowed range 0..100.
+    case percentage8(Decimal?)
     /// The Perceived Lightness characteristic is used to represent the perceived
     /// lightness of a light.
+    ///
+    /// Unit is unitless with a resolution of 1.
     case perceivedLightness(UInt16)
     /// The Pressure characteristic is used to represent a pressure value.
     ///
     /// Unit is in pascals with a resolution of 0.1 Pa.
-    case pressure(UInt32)
+    case pressure(Decimal)
     /// The Temperature characteristic is used to represent a temperature is degrees
     /// Celsius with a resolution of 0.01 degrees Celsius.
     ///
-    /// Allowed range is: -273.15 to 327.67.
-    ///
-    /// A value of 0x8000 represents ‘value is not known’.
-    case temperature(Int16)
+    /// Allowed range is: -273.15 to 327.67 degrees Celsius.
+    case temperature(Decimal?)
     /// The Temperature 8 characteristic is used to represent a measure of
     /// temperature with a unit of 0.5 degree Celsius.
-    ///
-    /// A value of 0x7F represents 'value is not known'.
-    case temperature8(Int8)
+    case temperature8(Decimal?)
     /// The Time Hour 24 characteristic is used to represent a period of time in hours.
-    ///
-    /// A value of 0xFFFFFF represents 'value is not known'.
-    case timeHour24(UInt32)
+    case timeHour24(UInt32?)
     /// The Time Millisecond 24 characteristic is used to represent a period of time
     /// with a resolution of 1 millisecond.
-    ///
-    /// A value of 0xFFFFFF represents 'value is not known'.
-    case timeMillisecond24(UInt32)
+    case timeMillisecond24(UInt32?)
     /// The Time Second 16 characteristic is used to represent a period of time with
     /// a unit of 1 second.
-    ///
-    /// A value of 0xFFFF represents 'value is not known'.
-    case timeSecond16(UInt16)
+    case timeSecond16(UInt16?)
     /// The Time Second 32 characteristic is used to represent a period of time with
     /// a unit of 1 second.
-    ///
-    /// A value of 0xFFFFFF represents 'value is not known'.
-    case timeSecond32(UInt32)
+    case timeSecond32(UInt32?)
     /// Generic data type for other characteristics.
     case other(Data)
-    
 }
 
 internal extension DevicePropertyCharacteristic {
@@ -929,42 +926,58 @@ internal extension DevicePropertyCharacteristic {
         switch self {
         // Bool:
         case .bool(let value):
-            return Data([value ? 0x01 : 0x00])
+            return value.toData()
             
-        // UInt8:
+        // Float as UInt8 with 0xFF as unknown:
         case .percentage8(let value):
-            return Data([value])
+            return value.toData(ofLength: 1, withRange: 0.0...100.0, withResolution: 0.5, withUnknownValue: 0xFF)
             
-        // Int8:
+        // Float as Int8 with 0x7F as unknown (see Errata 15863):
         case .temperature8(let value):
-            return Data([UInt8(bitPattern: value)])
+            return value.toData(ofLength: 1, withRange: -64.0...63.0, withResolution: 0.5, withUnknownValue: 0x7F)
+            
+        // UInt16 with 0xFFFF as unknown:
+        case .count16(let value),
+             .timeSecond16(let value):
+            return value.toData(withUnknownValue: 0xFFFF)
             
         // UInt16:
-        case .count16(let value),
-             .humidity(let value),
-             .timeSecond16(let value),
-             .perceivedLightness(let value):
-            return Data() + value
+        case .perceivedLightness(let value):
+            return value.toData()
             
-        // Int16:
+        // Float as UInt16 with 0xFFFF as unknown:
+        case .humidity(let value):
+            return value.toData(ofLength: 2, withRange: 0.0...100.0, withResolution: 0.01, withUnknownValue: 0xFFFF)
+            
+        // Float as Int16 with 0x8000 as unknown:
         case .temperature(let value):
-            return Data() + value
+            return value.toData(ofLength: 2, withRange: -273.15...327.67, withResolution: 0.01, withUnknownValue: 0x8000)
             
-        // UInt24:
+        // UInt32 as UInt24 with 0xFFFFFF as unknown:
         case .count24(let value),
-             .illuminance(let value),
              .timeHour24(let value),
              .timeMillisecond24(let value):
-            return (Data() + value).dropLast()
+            return value.toData(ofLength: 3, withUnknownValue: 0xFFFFFF)
             
+        // Float as UInt24 with 0xFFFFFF as unknown:
+        case .illuminance(let value):
+            return value.toData(ofLength: 3, withRange: 0...167772.14, withResolution: 0.01, withUnknownValue: 0xFFFFFF)
+            
+        // Date as UInt24 with 0x000000 as unknown:
         case .dateUTC(let date):
+            guard let date = date else {
+                return Data([0x00, 0x00, 0x00])
+            }
             let numberOfDays = UInt32(date.timeIntervalSince1970 / 86400.0) // convert to days
             return (Data() + numberOfDays).dropLast()
         
-        // UInt32:
-        case .pressure(let value),
-             .timeSecond32(let value):
-            return Data() + value
+        // Float as UInt32:
+        case .pressure(let value):
+            return value.toData(ofLength: 4, withRange: 0...Decimal(UInt32.max))
+            
+        // UInt32 with 0xFFFFFFFF as unknown:
+        case .timeSecond32(let value):
+            return value.toData(ofLength: 4, withUnknownValue: 0xFFFFFFFF)
         
         // Float32 (IEEE 754):
         case .coefficient(let value):
@@ -990,116 +1003,96 @@ internal extension DevicePropertyCharacteristic {
 }
 
 extension DevicePropertyCharacteristic: CustomDebugStringConvertible {
+    private static let unknown = "Value is not known"
     
     public var debugDescription: String {
         switch self {
         // Bool:
         case .bool(let value):
-            // There's only one Boolean property: .presenceDetected.
-            return value ? "Presence Detected" : "Presence Not Detected"
+            return value ? "True" : "False"
             
-        // UInt8:
+        // UInt8?:
         case .percentage8(let percent):
-            switch percent {
-            case 0xFF:
-                return "Value is not known"
-            case let percent where percent >= 0 && percent <= 200:
-                return String(format: "%.1f%%", Float(percent) / 2.0)
-            default:
-                return "Prohibited (\(percent))"
+            guard let percent = percent else {
+                return DevicePropertyCharacteristic.unknown
             }
+            return percent.description // String(format: "%.1f%%", max(0.0, min(100.0, percent)))
             
-        // Int8:
+        // Float?:
         case .temperature8(let temp):
-            switch temp {
-            case 0x7F:
-                return "Value is not known"
-            default:
-                return String(format: "%.1f°C", Float(temp) / 2.0)
+            guard let temp = temp else {
+                return DevicePropertyCharacteristic.unknown
             }
+            return temp.description // String(format: "%.1f°C", max(-64.0, min(63.0, temp)))
+        case .humidity(let percent):
+            guard let percent = percent else {
+                return DevicePropertyCharacteristic.unknown
+            }
+            return percent.description // String(format: "%.2f%%", max(0.0, min(100.0, percent)))
+        case .illuminance(let millilux):
+            guard let millilux = millilux else {
+                return DevicePropertyCharacteristic.unknown
+            }
+            return millilux.description // String(format: "%.2f lux", millilux)
+        case .temperature(let temp):
+            guard let temp = temp else {
+                return DevicePropertyCharacteristic.unknown
+            }
+            return temp.description // String(format: "%.2f°C", max(-273.15, min(327.67, temp)))
             
         // UInt16:
-        case .count16(let count):
-            switch count {
-            case 0xFFFF:
-                return "Value is not known"
-            default:
-                return "\(count)" // unitless
-            }
         case .perceivedLightness(let count):
             return "\(count)"
-        case .timeSecond16(let count):
-            switch count {
-            case 0xFFFF:
-                return "Value is not known"
-            default:
-                return "\(count) seconds"
-            }
             
-        // Int16:
-        case .temperature(let temp):
-            switch temp {
-            case Int16.min:
-                return "Value is not known"
-            default:
-                return String(format: "%.2f°C", Float(temp) / 100.0)
+        // UInt16?:
+        case .count16(let count):
+            guard let count = count else {
+                return DevicePropertyCharacteristic.unknown
             }
+            return "\(count)" // unitless
+        case .timeSecond16(let numberOfSeconds):
+            guard let numberOfSeconds = numberOfSeconds else {
+                return DevicePropertyCharacteristic.unknown
+            }
+            return "\(numberOfSeconds) seconds"
             
-        // UInt24:
+        // UInt32? as UInt24?:
         case .count24(let count):
-            switch count {
-            case 0xFFFFFF:
-                return "Value is not known"
-            default:
-                return "\(count)" // unitless
+            guard let count = count else {
+                return DevicePropertyCharacteristic.unknown
             }
-        case .humidity(let percent):
-            switch percent {
-            case let percent where percent <= 10000:
-                return String(format: "%.2f%%", Float(percent) / 100.0)
-            default:
-                return "Prohibited (\(percent))"
+            return "\(min(count, 0xFFFFFE))" // unitless
+        case .timeHour24(let numberOfHours):
+            guard let numberOfHours = numberOfHours else {
+                return DevicePropertyCharacteristic.unknown
             }
-        case .illuminance(let millilux):
-            switch millilux {
-            case 0xFFFFFF:
-                return "Value is not known"
-            default:
-                return String(format: "%.2f lux", Float(millilux) / 100.0)
+            return "\(numberOfHours) hours"
+        case .timeMillisecond24(let numberOfMilliseconds):
+            guard let numberOfMilliseconds = numberOfMilliseconds else {
+                return DevicePropertyCharacteristic.unknown
             }
-        case .timeHour24(let count):
-            switch count {
-            case let count where count >= 0xFFFFFF:
-                return "Value is not known"
-            default:
-                return "\(count) hours"
+            return "\(numberOfMilliseconds) ms"
+            
+        // UInt32:
+        case .pressure(let pressure):
+            return pressure.description
+            
+        // UInt32?:
+        case .timeSecond32(let numberOfSeconds):
+            guard let numberOfSeconds = numberOfSeconds else {
+                return DevicePropertyCharacteristic.unknown
             }
-        case .timeMillisecond24(let count):
-            switch count {
-            case let invalid where invalid >= 0xFFFFFF:
-                return "Value is not known"
-            default:
-                return "\(count) ms"
-            }
+            return "\(numberOfSeconds) seconds"
+            
+        // Date?:
         case .dateUTC(let date):
-            if date.timeIntervalSince1970 < 86400 {
-                return "Value is not known"
+            guard let date = date else {
+                return DevicePropertyCharacteristic.unknown
             }
             let dateFormatter = DateFormatter()
             dateFormatter.dateStyle = .medium
             dateFormatter.timeStyle = .none
             return dateFormatter.string(from: date)
-            
-        // UInt32:
-        case .pressure(let pressure):
-            return String(format: "%.1f Pa", Double(pressure) / 10.0)
-        case .timeSecond32(let count):
-            switch count {
-            case 0xFFFFFFFF:
-                return "Value is not known"
-            default:
-                return "\(count) seconds"
-            }
             
         // Float32 (IEEE 754):
         case .coefficient(let coefficient):
@@ -1304,6 +1297,144 @@ extension DeviceProperty: CustomDebugStringConvertible {
         case .outputCurrentPercent: return "Output Current Percent"
         case .unknown(let id): return "Unknown (Property ID: \(id))"
         }
+    }
+    
+}
+
+private extension BinaryInteger {
+    
+    /// Converts value to Bool.
+    ///
+    /// 0 is translated to `false`, anything else to`true`.
+    ///
+    /// - returns: Value as Bool.
+    func toBool() -> Bool {
+        return self != 0x00
+    }
+    
+    /// Converts the value to Float.
+    ///
+    /// - parameters:
+    ///   - range: The range the value is to be located in.
+    ///   - resolution: The convertion resolution.
+    /// - returns: The value as Float.
+    func toDecimal(withRange range: ClosedRange<Decimal>? = nil,
+                   withResolution resolution: Decimal = 1.0) -> Decimal {
+        let value = Decimal(integerLiteral: Int(self)) * resolution
+        return range.map { Swift.max($0.lowerBound, Swift.min($0.upperBound, value)) } ?? value
+    }
+    
+    /// Converts the value to Float.
+    ///
+    /// - parameters:
+    ///   - range: The range the value is to be located in.
+    ///   - resolution: The convertion resolution.
+    ///   - unknownValue: The unknown value.
+    /// - returns: The value as Float, or `nil` if it matches the unknown value.
+    func toDecimal<T: FixedWidthInteger>(withRange range: ClosedRange<Decimal>? = nil,
+                                         withResolution resolution: Decimal = 1.0,
+                                         withUnknownValue unknownValue: T) -> Decimal? {
+        guard self != unknownValue else { return nil }
+        return toDecimal(withRange: range, withResolution: resolution)
+    }
+    
+    /// Returns the value, or `nil`, if it's equal to the given value.
+    ///
+    /// - parameter unknownValue: The unknown value.
+    /// - returns: The value, or `nil` if it matches the unknown value.
+    func withUnknownValue<T: FixedWidthInteger>(_ unknownValue: T) -> T? {
+        guard self != unknownValue else { return nil }
+        return self as? T
+    }
+    
+}
+
+private extension Optional where Wrapped: DataConvertible & FixedWidthInteger {
+    
+    /// Returns the value as Data. If the value is `nil`, the given
+    /// unknown value converted to Data is returned.
+    ///
+    /// - parameters:
+    ///   - numberOfBytes: Resulting number of bytes.
+    ///   - range: The range the value is to be located in.
+    ///   - unknownValue: The value to be returned when the value is unknown.
+    /// - returns: The Data.
+    func toData(ofLength numberOfBytes: Int = MemoryLayout<Wrapped>.size,
+                withRange range: ClosedRange<Wrapped>? = nil,
+                withUnknownValue unknownValue: Wrapped) -> Data {
+        guard let self = self else {
+            return unknownValue.toData(ofLength: numberOfBytes, withRange: range)
+        }
+        return self.toData(ofLength: numberOfBytes, withRange: range)
+    }
+    
+}
+
+private extension DataConvertible where Self: Comparable {
+    
+    /// Returns the value as Data.
+    ///
+    /// - parameters:
+    ///   - numberOfBytes: Resulting number of bytes.
+    ///   - range: The range the value is to be located in.
+    /// - returns: The Data.
+    func toData(ofLength numberOfBytes: Int = MemoryLayout<Self>.size,
+                withRange range: ClosedRange<Self>? = nil) -> Data {
+        let truncated = range.map { Swift.max($0.lowerBound, Swift.min($0.upperBound, self)) } ?? self
+        return (Data() + truncated).subdata(in: 0..<numberOfBytes)
+    }
+    
+}
+
+private extension Optional where Wrapped == Decimal {
+    
+    /// Returns the value as Data.
+    ///
+    /// - parameters:
+    ///   - numberOfBytes: Resulting number of bytes.
+    ///   - range: The range the value is to be located in.
+    ///   - resolution: The convertion resolution.
+    ///   - unknownValue: The unknown value.
+    /// - returns: The Data.
+    func toData(ofLength numberOfBytes: Int,
+                withRange range: ClosedRange<Decimal>? = nil,
+                withResolution resolution: Decimal = 1.0,
+                withUnknownValue unknownValue: Int64) -> Data {
+        guard let self = self else {
+            return unknownValue.toData(ofLength: numberOfBytes)
+        }
+        return self.toData(ofLength: numberOfBytes, withRange: range, withResolution: resolution)
+    }
+    
+}
+
+private extension Decimal {
+    
+    /// Returns the value as Data.
+    ///
+    /// - parameters:
+    ///   - numberOfBytes: Resulting number of bytes.
+    ///   - range: The range the value is to be located in.
+    ///   - resolution: The convertion resolution.
+    /// - returns: The Data.
+    func toData(ofLength numberOfBytes: Int,
+                withRange range: ClosedRange<Decimal>? = nil,
+                withResolution resolution: Decimal = 1.0) -> Data {
+        let truncated = range.map { max($0.lowerBound, min($0.upperBound, self)) } ?? self
+        let rescaled = truncated / resolution
+        let rescaledAsInt = NSDecimalNumber(decimal: rescaled).int64Value
+        return rescaledAsInt.toData(ofLength: numberOfBytes)
+    }
+    
+}
+
+private extension Bool {
+    
+    /// Returns the value as 1-octed Data.
+    ///
+    /// - returns: The Data representation of Bool.
+    func toData() -> Data {
+        return Data([self ? 0x01 : 0x00])
     }
     
 }
