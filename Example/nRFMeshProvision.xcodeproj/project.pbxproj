@@ -17,6 +17,7 @@
 		5212152D231545D40059FB3D /* ModelGroupCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5212152C231545D40059FB3D /* ModelGroupCell.swift */; };
 		5212152F231554190059FB3D /* ProgressCollectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5212152E231554190059FB3D /* ProgressCollectionViewController.swift */; };
 		521215312316C36B0059FB3D /* GenericLevelGroupCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 521215302316C36B0059FB3D /* GenericLevelGroupCell.swift */; };
+		5215998325E6703C00F602FA /* DeviceProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5215998225E6703C00F602FA /* DeviceProperties.swift */; };
 		5217D2E0250F522A004FDE79 /* GenericDefaultTransitionTimeServerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5217D2DF250F522A004FDE79 /* GenericDefaultTransitionTimeServerDelegate.swift */; };
 		5217D2E2250F7639004FDE79 /* GenericDefaultTransitionTimeClientDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5217D2E1250F7639004FDE79 /* GenericDefaultTransitionTimeClientDelegate.swift */; };
 		5217D2E5250F90D8004FDE79 /* GenericDefaultTransitionTimeViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5217D2E3250F90D8004FDE79 /* GenericDefaultTransitionTimeViewCell.swift */; };
@@ -180,6 +181,7 @@
 		5212152C231545D40059FB3D /* ModelGroupCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelGroupCell.swift; sourceTree = "<group>"; };
 		5212152E231554190059FB3D /* ProgressCollectionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgressCollectionViewController.swift; sourceTree = "<group>"; };
 		521215302316C36B0059FB3D /* GenericLevelGroupCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericLevelGroupCell.swift; sourceTree = "<group>"; };
+		5215998225E6703C00F602FA /* DeviceProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceProperties.swift; sourceTree = "<group>"; };
 		5217D2DF250F522A004FDE79 /* GenericDefaultTransitionTimeServerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericDefaultTransitionTimeServerDelegate.swift; sourceTree = "<group>"; };
 		5217D2E1250F7639004FDE79 /* GenericDefaultTransitionTimeClientDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericDefaultTransitionTimeClientDelegate.swift; sourceTree = "<group>"; };
 		5217D2E3250F90D8004FDE79 /* GenericDefaultTransitionTimeViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericDefaultTransitionTimeViewCell.swift; sourceTree = "<group>"; };
@@ -741,6 +743,7 @@
 				607FACE91AFB9204008FA782 /* Supporting Files */,
 				5231400122EEF7940074325A /* CreatingMeshNetwork.swift */,
 				524A8FD925D281A200ABEFB7 /* CryptoTest.swift */,
+				5215998225E6703C00F602FA /* DeviceProperties.swift */,
 				529522B5251B850700158AE0 /* Exporting.swift */,
 				52D2707D2511F850002F51F3 /* FastSending.swift */,
 				529B75AA2248E276008F1CE7 /* SceneRanges.swift */,
@@ -1116,6 +1119,7 @@
 				5231400022EEE1770074325A /* AssigningGroupAddresses.swift in Sources */,
 				52BC6F4A2452C4FB00EBEEA4 /* SecureNetworkBeacons.swift in Sources */,
 				52568D4B22DDFAC700B7B236 /* Groups.swift in Sources */,
+				5215998325E6703C00F602FA /* DeviceProperties.swift in Sources */,
 				52B492DB25C8A32E0096E75D /* KeyRefreshProcedure.swift in Sources */,
 				52F6AD6C22B78F3000F0D7DF /* CompositionData.swift in Sources */,
 				523F777022C64FD20030EA6A /* ConfigMessages.swift in Sources */,
