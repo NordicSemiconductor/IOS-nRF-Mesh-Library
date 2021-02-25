@@ -30,6 +30,8 @@
 
 import Foundation
 
+// MARK: - DeviceProperty
+
 /// The device property.
 ///
 /// - note: Each property has a corresponding `DevicePropertyCharacteristic`.
@@ -589,6 +591,193 @@ public enum DeviceProperty {
     }
 }
 
+extension DeviceProperty: CustomDebugStringConvertible {
+    
+    public var debugDescription: String {
+        switch self {
+        case .averageAmbientTemperatureInAPeriodOfDay: return "Average Ambient Temperature In A Period Of Day"
+        case .averageInputCurrent: return "Average Input Current"
+        case .averageInputVoltage: return "Average Input Voltage"
+        case .averageOutputCurrent: return "Average Output Current"
+        case .averageOutputVoltage: return "Average Output Voltage"
+        case .centerBeamIntensityAtFullPower: return "Center Beam Intensity At Full Power"
+        case .chromaticityTolerance: return "Chromaticity T olerance"
+        case .colorRenderingIndexR9: return "Color Rendering Index R9"
+        case .colorRenderingIndexRa: return "Color Rendering Index Ra"
+        case .deviceAppearance: return "Device Appearance"
+        case .deviceCountryOfOrigin: return "Device Country Of Origin"
+        case .deviceDateOfManufacture: return "Device Date Of Manufacture"
+        case .deviceEnergyUseSinceTurnOn: return "Device Energy Use Since Turn On"
+        case .deviceFirmwareRevision: return "Device Firmware Revision"
+        case .deviceGlobalTradeItemNumber: return "Device Global Trade Item Number"
+        case .deviceHardwareRevision: return "Device Hardware Revision"
+        case .deviceManufacturerName: return "Device Manufacturer Name"
+        case .deviceModelNumber: return "Device Model Number"
+        case .deviceOperatingTemperatureRangeSpecification: return "Device Operating Temperature Range Specification"
+        case .deviceOperatingTemperatureStatisticalValues: return "Device Operating Temperature Statistical Values"
+        case .deviceOverTemperatureEventStatistics: return "Device Over Temperature Event Statistics"
+        case .devicePowerRangeSpecification: return "Device Power Range Specification"
+        case .deviceRuntimeSinceTurnOn: return "Device Runtime Since Turn On"
+        case .deviceRuntimeWarranty: return "Device Runtime Warranty"
+        case .deviceSerialNumber: return "Device Serial Number"
+        case .deviceSoftwareRevision: return "Device Software Revision"
+        case .deviceUnderTemperatureEventStatistics: return "Device Under Temperature Event Statistics"
+        case .indoorAmbientTemperatureStatisticalValues: return "Indoor Ambient Temperature Statistical Values"
+        case .initialCIE1931ChromaticityCoordinates: return "Initial CIE 1931 Chromaticity Coordinates"
+        case .initialCorrelatedColorTemperature: return "Initial Correlated Color Temperature"
+        case .initialLuminousFlux: return "Initial Luminous Flux"
+        case .initialPlanckianDistance: return "Initial Planckian Distance"
+        case .inputCurrentRangeSpecification: return "Input Current Range Specification"
+        case .inputCurrentStatistics: return "Input Current Statistics"
+        case .inputOverCurrentEventStatistics: return "Input Over Current Event Statistics"
+        case .inputOverRippleVoltageEventStatistics: return "Input Over Ripple Voltage Event Statistics"
+        case .inputOverVoltageEventStatistics: return "Input Over Voltage Event Statistics"
+        case .inputUnderCurrentEventStatistics: return "Input Under Current Event Statistics"
+        case .inputUnderVoltageEventStatistics: return "Input Under Voltage Event Statistics"
+        case .inputVoltageRangeSpecification: return "Input Voltage Range Specification"
+        case .inputVoltageRippleSpecification: return "Input Voltage Ripple Specification"
+        case .inputVoltageStatistics: return "Input Voltage Statistics"
+        case .lightControlAmbientLuxLevelOn: return "Light Control Ambient LuxLevel On"
+        case .lightControlAmbientLuxLevelProlong: return "Light Control Ambient LuxLevel Prolong"
+        case .lightControlAmbientLuxLevelStandby: return "Light Control Ambient LuxLevel Standby"
+        case .lightControlLightnessOn: return "Light Control Lightness On"
+        case .lightControlLightnessProlong: return "Light Control Lightness Prolong"
+        case .lightControlLightnessStandby: return "Light Control Lightness Standby"
+        case .lightControlRegulatorAccuracy: return "Light Control Regulator Accuracy"
+        case .lightControlRegulatorKid: return "Light Control Regulator Kid"
+        case .lightControlRegulatorKiu: return "Light Control Regulator Kiu"
+        case .lightControlRegulatorKpd: return "Light Control Regulator Kpd"
+        case .lightControlRegulatorKpu: return "Light Control Regulator Kpu"
+        case .lightControlTimeFade: return "Light Control Time Fade"
+        case .lightControlTimeFadeOn: return "Light Control Time Fade On"
+        case .lightControlTimeFadeStandbyAuto: return "Light Control Time Fade Standby Auto"
+        case .lightControlTimeFadeStandbyManual: return "Light Control Time Fade Standby Manual"
+        case .lightControlTimeOccupancyDelay: return "Light Control Time Occupancy Delay"
+        case .lightControlTimeProlong: return "Light Control Time Prolong"
+        case .lightControlTimeRunOn: return "Light Control Time Run On"
+        case .lumenMaintenanceFactor: return "Lumen Maintenance Factor"
+        case .luminousEfficacy: return "Luminous Efficacy"
+        case .luminousEnergySinceTurnOn: return "Luminous Energy Since Turn On"
+        case .luminousExposure: return "Luminous Exposure"
+        case .luminousFluxRange: return "Luminous Flux Range"
+        case .motionSensed: return "Motion Sensed"
+        case .motionThreshold: return "Motion Threshold"
+        case .openCircuitEventStatistics: return "Open Circuit Event Statistics"
+        case .outdoorStatisticalValues: return "Outdoor Statistical Values"
+        case .outputCurrentRange: return "Output Current Range"
+        case .outputCurrentStatistics: return "Output Current Statistics"
+        case .outputRippleVoltageSpecification: return "Output Ripple Voltage Specification"
+        case .outputVoltageRange: return "Output Voltage Range"
+        case .outputVoltageStatistics: return "Output Voltage Statistics"
+        case .overOutputRippleVoltageEventStatistics: return "Over Output Ripple Voltage Event Statistics"
+        case .peopleCount: return "People Count"
+        case .presenceDetected: return "Presence Detected"
+        case .presentAmbientLightLevel: return "Present Ambient Light Level"
+        case .presentAmbientTemperature: return "Present Ambient Temperature"
+        case .presentCIE1931ChromaticityCoordinates: return "Present CIE 1931 Chromaticity Coordinates"
+        case .presentCorrelatedColorTemperature: return "Present Correlated Color Temperature"
+        case .presentDeviceInputPower: return "Present Device Input Power"
+        case .presentDeviceOperatingEfficiency: return "Present Device Operating Efficiency"
+        case .presentDeviceOperatingTemperature: return "Present Device Operating Temperature"
+        case .presentIlluminance: return "Present Illuminance"
+        case .presentIndoorAmbientTemperature: return "Present Indoor Ambient Temperature"
+        case .presentInputCurrent: return "Present Input Current"
+        case .presentInputRippleVoltage: return "Present Input Ripple Voltage"
+        case .presentInputVoltage: return "Present Input Voltage"
+        case .presentLuminousFlux: return "Present Luminous Flux"
+        case .presentOutdoorAmbientTemperature: return "Present Outdoor Ambient Temperature"
+        case .presentOutputCurrent: return "Present Output Current"
+        case .presentOutputVoltage: return "Present Output Voltage"
+        case .presentPlanckianDistance: return "Present Planckian Distance"
+        case .presentRelativeOutputRippleVoltage: return "Present Relative Output Ripple Voltage"
+        case .relativeDeviceEnergyUseInAPeriodOfDay: return "Relative Device Energy Use In A Period Of Day"
+        case .relativeDeviceRuntimeInAGenericLevelRange: return "Relative Device Runtime In A Generic Level Range"
+        case .relativeExposureTimeInAnIlluminanceRange: return "Relative Exposure Time In An Illuminance Range"
+        case .relativeRuntimeInACorrelatedColorTemperatureRange: return "Relative Runtime In A Correlated Color Temperature Range"
+        case .relativeRuntimeInADeviceOperatingTemperatureRange: return "Relative Runtime In A Device Operating Temperature Range"
+        case .relativeRuntimeInAnInputCurrentRange: return "Relative Runtime In An Input Current Range"
+        case .relativeRuntimeInAnInputVoltageRange: return "Relative Runtime In An Input Voltage Range"
+        case .shortCircuitEventStatistics: return "Short Circuit Event Statistics"
+        case .timeSinceMotionSensed: return "Time Since Motion Sensed"
+        case .timeSincePresenceDetected: return "Time Since Presence Detected"
+        case .totalDeviceEnergyUse: return "Total Device Energy Use"
+        case .totalDeviceOffOnCycles: return "Total Device Off On Cycles"
+        case .totalDevicePowerOnCycles: return "Total Device Power On Cycles"
+        case .totalDevicePowerOnTime: return "Total Device Power On Time"
+        case .totalDeviceRuntime: return "Total Device Runtime"
+        case .totalLightExposureTime: return "Total Light Exposure Time"
+        case .totalLuminousEnergy: return "Total Luminous Energy"
+        case .desiredAmbientTemperature: return "Desired Ambient Temperature"
+        case .preciseTotalDeviceEnergyUse: return "Precise Total Device Energy Use"
+        case .powerFactor: return "Power Factor"
+        case .sensorGain: return "Sensor Gain"
+        case .precisePresentAmbientTemperature: return "Precise Present Ambient Temperature"
+        case .presentAmbientRelativeHumidity: return "Present Ambient Relative Humidity"
+        case .presentAmbientCarbonDioxideConcentration: return "Present Ambient Carbon Dioxide Concentration"
+        case .presentAmbientVolatileOrganicCompoundsConcentration: return "Present Ambient Volatile Organic Compounds Concentration"
+        case .presentAmbientNoise: return "Present Ambient Noise"
+        case .activeEnergyLoadside: return "Active Energy Loadside"
+        case .activePowerLoadside: return "Active Power Loadside"
+        case .airPressure: return "Air Pressure"
+        case .apparentEnergy: return "Apparent Energy"
+        case .apparentPower: return "Apparent Power"
+        case .apparentWindDirection: return "Apparent Wind Direction"
+        case .apparentWindSpeed: return "Apparent Wind Speed"
+        case .dewPoint: return "Dew Point"
+        case .externalSupplyVoltage: return "External Supply Voltage"
+        case .externalSupplyVoltageFrequency: return "External Supply Voltage Frequency"
+        case .gustFactor: return "Gust Factor"
+        case .heatIndex: return "Heat Index"
+        case .lightDistribution: return "Light Distribution"
+        case .lightSourceCurrent: return "Light Source Current"
+        case .lightSourceOnTimeNotResettable: return "Light Source On Time Not Resettable"
+        case .lightSourceOnTimeResettable: return "Light Source On Time Resettable"
+        case .lightSourceOpenCircuitStatistics: return "Light Source Open Circuit Statistics"
+        case .lightSourceOverallFailuresStatistics: return "Light Source Overall Failures Statistics"
+        case .lightSourceShortCircuitStatistics: return "Light Source Short Circuit Statistics"
+        case .lightSourceStartCounterResettable: return "Light Source Start Counter Resettable"
+        case .lightSourceTemperature: return "Light Source Temperature"
+        case .lightSourceThermalDeratingStatistics: return "Light Source Thermal Derating Statistics"
+        case .lightSourceThermalShutdownStatistics: return "Light Source Thermal Shutdown Statistics"
+        case .lightSourceTotalPowerOnCycles: return "Light Source Total Power On Cycles"
+        case .lightSourceVoltage: return "Light Source Voltage"
+        case .luminaireColor: return "Luminaire Color"
+        case .luminaireIdentificationNumber: return "Luminaire Identification Number"
+        case .luminaireManufacturerGTIN: return "Luminaire Manufacturer GTIN"
+        case .luminaireNominalInputPower: return "Luminaire Nominal Input Power"
+        case .luminaireNominalMaximumACMainsVoltage: return "Luminaire Nominal Maximum AC Mains Voltage"
+        case .luminaireNominalMinimumACMainsVoltage: return "Luminaire Nominal Minimum AC Mains Voltage"
+        case .luminairePowerAtMinimumDimLevel: return "Luminaire Power At Minimum Dim Level"
+        case .luminaireTimeOfManufacture: return "Luminaire Time Of Manufacture"
+        case .magneticDeclination: return "Magnetic Declination"
+        case .magneticFluxDensity2D: return "Magnetic Flux Density - 2D"
+        case .magneticFluxDensity3D: return "Magnetic Flux Density - 3D"
+        case .nominalLightOutput: return "Nominal Light Output"
+        case .overallFailureCondition: return "Overall Failure Condition"
+        case .pollenConcentration: return "Pollen Concentration"
+        case .presentIndoorRelativeHumidity: return "Present Indoor Relative Humidity"
+        case .presentOutdoorRelativeHumidity: return "Present Outdoor Relative Humidity"
+        case .pressure: return "Pressure"
+        case .rainfall: return "Rainfall"
+        case .ratedMedianUsefulLifeOfLuminaire: return "Rated Median Useful Life Of Luminaire"
+        case .ratedMedianUsefulLightSourceStarts: return "Rated Median Useful Light Source Starts"
+        case .referenceTemperature: return "Reference Temperature"
+        case .totalDeviceStarts: return "Total Device Starts"
+        case .trueWindDirection: return "True Wind Direction"
+        case .trueWindSpeed: return "True Wind Speed"
+        case .uVIndex: return "UV Index"
+        case .windChill: return "Wind Chill"
+        case .lightSourceType: return "Light Source Type"
+        case .luminaireIdentificationString: return "Luminaire Identification String"
+        case .outputPowerLimitation: return "Output Power Limitation"
+        case .thermalDerating: return "Thermal Derating"
+        case .outputCurrentPercent: return "Output Current Percent"
+        case .unknown(let id): return "Unknown (Property ID: \(id))"
+        }
+    }
+    
+}
+
 internal extension DeviceProperty {
     
     /// Lenght of the characteristic value in bytes.
@@ -854,6 +1043,8 @@ internal extension DeviceProperty {
     
 }
 
+// MARK: - DevicePropertyCharacteristic
+
 /// A representation of a property characteristic.
 public enum DevicePropertyCharacteristic: Equatable {
     /// True or false.
@@ -1003,6 +1194,7 @@ internal extension DevicePropertyCharacteristic {
 }
 
 extension DevicePropertyCharacteristic: CustomDebugStringConvertible {
+    /// Text printed when the characteristic value is unknown.
     private static let unknown = "Value is not known"
     
     public var debugDescription: String {
@@ -1114,192 +1306,7 @@ extension DevicePropertyCharacteristic: CustomDebugStringConvertible {
     
 }
 
-extension DeviceProperty: CustomDebugStringConvertible {
-    
-    public var debugDescription: String {
-        switch self {
-        case .averageAmbientTemperatureInAPeriodOfDay: return "Average Ambient Temperature In A Period Of Day"
-        case .averageInputCurrent: return "Average Input Current"
-        case .averageInputVoltage: return "Average Input Voltage"
-        case .averageOutputCurrent: return "Average Output Current"
-        case .averageOutputVoltage: return "Average Output Voltage"
-        case .centerBeamIntensityAtFullPower: return "Center Beam Intensity At Full Power"
-        case .chromaticityTolerance: return "Chromaticity T olerance"
-        case .colorRenderingIndexR9: return "Color Rendering Index R9"
-        case .colorRenderingIndexRa: return "Color Rendering Index Ra"
-        case .deviceAppearance: return "Device Appearance"
-        case .deviceCountryOfOrigin: return "Device Country Of Origin"
-        case .deviceDateOfManufacture: return "Device Date Of Manufacture"
-        case .deviceEnergyUseSinceTurnOn: return "Device Energy Use Since Turn On"
-        case .deviceFirmwareRevision: return "Device Firmware Revision"
-        case .deviceGlobalTradeItemNumber: return "Device Global Trade Item Number"
-        case .deviceHardwareRevision: return "Device Hardware Revision"
-        case .deviceManufacturerName: return "Device Manufacturer Name"
-        case .deviceModelNumber: return "Device Model Number"
-        case .deviceOperatingTemperatureRangeSpecification: return "Device Operating Temperature Range Specification"
-        case .deviceOperatingTemperatureStatisticalValues: return "Device Operating Temperature Statistical Values"
-        case .deviceOverTemperatureEventStatistics: return "Device Over Temperature Event Statistics"
-        case .devicePowerRangeSpecification: return "Device Power Range Specification"
-        case .deviceRuntimeSinceTurnOn: return "Device Runtime Since Turn On"
-        case .deviceRuntimeWarranty: return "Device Runtime Warranty"
-        case .deviceSerialNumber: return "Device Serial Number"
-        case .deviceSoftwareRevision: return "Device Software Revision"
-        case .deviceUnderTemperatureEventStatistics: return "Device Under Temperature Event Statistics"
-        case .indoorAmbientTemperatureStatisticalValues: return "Indoor Ambient Temperature Statistical Values"
-        case .initialCIE1931ChromaticityCoordinates: return "Initial CIE 1931 Chromaticity Coordinates"
-        case .initialCorrelatedColorTemperature: return "Initial Correlated Color Temperature"
-        case .initialLuminousFlux: return "Initial Luminous Flux"
-        case .initialPlanckianDistance: return "Initial Planckian Distance"
-        case .inputCurrentRangeSpecification: return "Input Current Range Specification"
-        case .inputCurrentStatistics: return "Input Current Statistics"
-        case .inputOverCurrentEventStatistics: return "Input Over Current Event Statistics"
-        case .inputOverRippleVoltageEventStatistics: return "Input Over Ripple Voltage Event Statistics"
-        case .inputOverVoltageEventStatistics: return "Input Over Voltage Event Statistics"
-        case .inputUnderCurrentEventStatistics: return "Input Under Current Event Statistics"
-        case .inputUnderVoltageEventStatistics: return "Input Under Voltage Event Statistics"
-        case .inputVoltageRangeSpecification: return "Input Voltage Range Specification"
-        case .inputVoltageRippleSpecification: return "Input Voltage Ripple Specification"
-        case .inputVoltageStatistics: return "Input Voltage Statistics"
-        case .lightControlAmbientLuxLevelOn: return "Light Control Ambient LuxLevel On"
-        case .lightControlAmbientLuxLevelProlong: return "Light Control Ambient LuxLevel Prolong"
-        case .lightControlAmbientLuxLevelStandby: return "Light Control Ambient LuxLevel Standby"
-        case .lightControlLightnessOn: return "Light Control Lightness On"
-        case .lightControlLightnessProlong: return "Light Control Lightness Prolong"
-        case .lightControlLightnessStandby: return "Light Control Lightness Standby"
-        case .lightControlRegulatorAccuracy: return "Light Control Regulator Accuracy"
-        case .lightControlRegulatorKid: return "Light Control Regulator Kid"
-        case .lightControlRegulatorKiu: return "Light Control Regulator Kiu"
-        case .lightControlRegulatorKpd: return "Light Control Regulator Kpd"
-        case .lightControlRegulatorKpu: return "Light Control Regulator Kpu"
-        case .lightControlTimeFade: return "Light Control Time Fade"
-        case .lightControlTimeFadeOn: return "Light Control Time Fade On"
-        case .lightControlTimeFadeStandbyAuto: return "Light Control Time Fade Standby Auto"
-        case .lightControlTimeFadeStandbyManual: return "Light Control Time Fade Standby Manual"
-        case .lightControlTimeOccupancyDelay: return "Light Control Time Occupancy Delay"
-        case .lightControlTimeProlong: return "Light Control Time Prolong"
-        case .lightControlTimeRunOn: return "Light Control Time Run On"
-        case .lumenMaintenanceFactor: return "Lumen Maintenance Factor"
-        case .luminousEfficacy: return "Luminous Efficacy"
-        case .luminousEnergySinceTurnOn: return "Luminous Energy Since Turn On"
-        case .luminousExposure: return "Luminous Exposure"
-        case .luminousFluxRange: return "Luminous Flux Range"
-        case .motionSensed: return "Motion Sensed"
-        case .motionThreshold: return "Motion Threshold"
-        case .openCircuitEventStatistics: return "Open Circuit Event Statistics"
-        case .outdoorStatisticalValues: return "Outdoor Statistical Values"
-        case .outputCurrentRange: return "Output Current Range"
-        case .outputCurrentStatistics: return "Output Current Statistics"
-        case .outputRippleVoltageSpecification: return "Output Ripple Voltage Specification"
-        case .outputVoltageRange: return "Output Voltage Range"
-        case .outputVoltageStatistics: return "Output Voltage Statistics"
-        case .overOutputRippleVoltageEventStatistics: return "Over Output Ripple Voltage Event Statistics"
-        case .peopleCount: return "People Count"
-        case .presenceDetected: return "Presence Detected"
-        case .presentAmbientLightLevel: return "Present Ambient Light Level"
-        case .presentAmbientTemperature: return "Present Ambient Temperature"
-        case .presentCIE1931ChromaticityCoordinates: return "Present CIE 1931 Chromaticity Coordinates"
-        case .presentCorrelatedColorTemperature: return "Present Correlated Color Temperature"
-        case .presentDeviceInputPower: return "Present Device Input Power"
-        case .presentDeviceOperatingEfficiency: return "Present Device Operating Efficiency"
-        case .presentDeviceOperatingTemperature: return "Present Device Operating Temperature"
-        case .presentIlluminance: return "Present Illuminance"
-        case .presentIndoorAmbientTemperature: return "Present Indoor Ambient Temperature"
-        case .presentInputCurrent: return "Present Input Current"
-        case .presentInputRippleVoltage: return "Present Input Ripple Voltage"
-        case .presentInputVoltage: return "Present Input Voltage"
-        case .presentLuminousFlux: return "Present Luminous Flux"
-        case .presentOutdoorAmbientTemperature: return "Present Outdoor Ambient Temperature"
-        case .presentOutputCurrent: return "Present Output Current"
-        case .presentOutputVoltage: return "Present Output Voltage"
-        case .presentPlanckianDistance: return "Present Planckian Distance"
-        case .presentRelativeOutputRippleVoltage: return "Present Relative Output Ripple Voltage"
-        case .relativeDeviceEnergyUseInAPeriodOfDay: return "Relative Device Energy Use In A Period Of Day"
-        case .relativeDeviceRuntimeInAGenericLevelRange: return "Relative Device Runtime In A Generic Level Range"
-        case .relativeExposureTimeInAnIlluminanceRange: return "Relative Exposure Time In An Illuminance Range"
-        case .relativeRuntimeInACorrelatedColorTemperatureRange: return "Relative Runtime In A Correlated Color Temperature Range"
-        case .relativeRuntimeInADeviceOperatingTemperatureRange: return "Relative Runtime In A Device Operating Temperature Range"
-        case .relativeRuntimeInAnInputCurrentRange: return "Relative Runtime In An Input Current Range"
-        case .relativeRuntimeInAnInputVoltageRange: return "Relative Runtime In An Input Voltage Range"
-        case .shortCircuitEventStatistics: return "Short Circuit Event Statistics"
-        case .timeSinceMotionSensed: return "Time Since Motion Sensed"
-        case .timeSincePresenceDetected: return "Time Since Presence Detected"
-        case .totalDeviceEnergyUse: return "Total Device Energy Use"
-        case .totalDeviceOffOnCycles: return "Total Device Off On Cycles"
-        case .totalDevicePowerOnCycles: return "Total Device Power On Cycles"
-        case .totalDevicePowerOnTime: return "Total Device Power On Time"
-        case .totalDeviceRuntime: return "Total Device Runtime"
-        case .totalLightExposureTime: return "Total Light Exposure Time"
-        case .totalLuminousEnergy: return "Total Luminous Energy"
-        case .desiredAmbientTemperature: return "Desired Ambient Temperature"
-        case .preciseTotalDeviceEnergyUse: return "Precise Total Device Energy Use"
-        case .powerFactor: return "Power Factor"
-        case .sensorGain: return "Sensor Gain"
-        case .precisePresentAmbientTemperature: return "Precise Present Ambient Temperature"
-        case .presentAmbientRelativeHumidity: return "Present Ambient Relative Humidity"
-        case .presentAmbientCarbonDioxideConcentration: return "Present Ambient Carbon Dioxide Concentration"
-        case .presentAmbientVolatileOrganicCompoundsConcentration: return "Present Ambient Volatile Organic Compounds Concentration"
-        case .presentAmbientNoise: return "Present Ambient Noise"
-        case .activeEnergyLoadside: return "Active Energy Loadside"
-        case .activePowerLoadside: return "Active Power Loadside"
-        case .airPressure: return "Air Pressure"
-        case .apparentEnergy: return "Apparent Energy"
-        case .apparentPower: return "Apparent Power"
-        case .apparentWindDirection: return "Apparent Wind Direction"
-        case .apparentWindSpeed: return "Apparent Wind Speed"
-        case .dewPoint: return "Dew Point"
-        case .externalSupplyVoltage: return "External Supply Voltage"
-        case .externalSupplyVoltageFrequency: return "External Supply Voltage Frequency"
-        case .gustFactor: return "Gust Factor"
-        case .heatIndex: return "Heat Index"
-        case .lightDistribution: return "Light Distribution"
-        case .lightSourceCurrent: return "Light Source Current"
-        case .lightSourceOnTimeNotResettable: return "Light Source On Time Not Resettable"
-        case .lightSourceOnTimeResettable: return "Light Source On Time Resettable"
-        case .lightSourceOpenCircuitStatistics: return "Light Source Open Circuit Statistics"
-        case .lightSourceOverallFailuresStatistics: return "Light Source Overall Failures Statistics"
-        case .lightSourceShortCircuitStatistics: return "Light Source Short Circuit Statistics"
-        case .lightSourceStartCounterResettable: return "Light Source Start Counter Resettable"
-        case .lightSourceTemperature: return "Light Source Temperature"
-        case .lightSourceThermalDeratingStatistics: return "Light Source Thermal Derating Statistics"
-        case .lightSourceThermalShutdownStatistics: return "Light Source Thermal Shutdown Statistics"
-        case .lightSourceTotalPowerOnCycles: return "Light Source Total Power On Cycles"
-        case .lightSourceVoltage: return "Light Source Voltage"
-        case .luminaireColor: return "Luminaire Color"
-        case .luminaireIdentificationNumber: return "Luminaire Identification Number"
-        case .luminaireManufacturerGTIN: return "Luminaire Manufacturer GTIN"
-        case .luminaireNominalInputPower: return "Luminaire Nominal Input Power"
-        case .luminaireNominalMaximumACMainsVoltage: return "Luminaire Nominal Maximum AC Mains Voltage"
-        case .luminaireNominalMinimumACMainsVoltage: return "Luminaire Nominal Minimum AC Mains Voltage"
-        case .luminairePowerAtMinimumDimLevel: return "Luminaire Power At Minimum Dim Level"
-        case .luminaireTimeOfManufacture: return "Luminaire Time Of Manufacture"
-        case .magneticDeclination: return "Magnetic Declination"
-        case .magneticFluxDensity2D: return "Magnetic Flux Density - 2D"
-        case .magneticFluxDensity3D: return "Magnetic Flux Density - 3D"
-        case .nominalLightOutput: return "Nominal Light Output"
-        case .overallFailureCondition: return "Overall Failure Condition"
-        case .pollenConcentration: return "Pollen Concentration"
-        case .presentIndoorRelativeHumidity: return "Present Indoor Relative Humidity"
-        case .presentOutdoorRelativeHumidity: return "Present Outdoor Relative Humidity"
-        case .pressure: return "Pressure"
-        case .rainfall: return "Rainfall"
-        case .ratedMedianUsefulLifeOfLuminaire: return "Rated Median Useful Life Of Luminaire"
-        case .ratedMedianUsefulLightSourceStarts: return "Rated Median Useful Light Source Starts"
-        case .referenceTemperature: return "Reference Temperature"
-        case .totalDeviceStarts: return "Total Device Starts"
-        case .trueWindDirection: return "True Wind Direction"
-        case .trueWindSpeed: return "True Wind Speed"
-        case .uVIndex: return "UV Index"
-        case .windChill: return "Wind Chill"
-        case .lightSourceType: return "Light Source Type"
-        case .luminaireIdentificationString: return "Luminaire Identification String"
-        case .outputPowerLimitation: return "Output Power Limitation"
-        case .thermalDerating: return "Thermal Derating"
-        case .outputCurrentPercent: return "Output Current Percent"
-        case .unknown(let id): return "Unknown (Property ID: \(id))"
-        }
-    }
-    
-}
+// MARK: - Helper extenstions - decoding
 
 private extension BinaryInteger {
     
@@ -1349,23 +1356,15 @@ private extension BinaryInteger {
     
 }
 
-private extension Optional where Wrapped: DataConvertible & FixedWidthInteger {
+// MARK: - Helper extenstions - encoding
+
+private extension Bool {
     
-    /// Returns the value as Data. If the value is `nil`, the given
-    /// unknown value converted to Data is returned.
+    /// Returns the value as 1-octed Data.
     ///
-    /// - parameters:
-    ///   - numberOfBytes: Resulting number of bytes.
-    ///   - range: The range the value is to be located in.
-    ///   - unknownValue: The value to be returned when the value is unknown.
-    /// - returns: The Data.
-    func toData(ofLength numberOfBytes: Int = MemoryLayout<Wrapped>.size,
-                withRange range: ClosedRange<Wrapped>? = nil,
-                withUnknownValue unknownValue: Wrapped) -> Data {
-        guard let self = self else {
-            return unknownValue.toData(ofLength: numberOfBytes, withRange: range)
-        }
-        return self.toData(ofLength: numberOfBytes, withRange: range)
+    /// - returns: The Data representation of Bool.
+    func toData() -> Data {
+        return Data([self ? 0x01 : 0x00])
     }
     
 }
@@ -1386,24 +1385,23 @@ private extension DataConvertible where Self: Comparable {
     
 }
 
-private extension Optional where Wrapped == Decimal {
+private extension Optional where Wrapped: DataConvertible & FixedWidthInteger {
     
-    /// Returns the value as Data.
+    /// Returns the value as Data. If the value is `nil`, the given
+    /// unknown value converted to Data is returned.
     ///
     /// - parameters:
     ///   - numberOfBytes: Resulting number of bytes.
     ///   - range: The range the value is to be located in.
-    ///   - resolution: The convertion resolution.
-    ///   - unknownValue: The unknown value.
+    ///   - unknownValue: The value to be returned when the value is unknown.
     /// - returns: The Data.
-    func toData(ofLength numberOfBytes: Int,
-                withRange range: ClosedRange<Decimal>? = nil,
-                withResolution resolution: Decimal = 1.0,
-                withUnknownValue unknownValue: Int64) -> Data {
+    func toData(ofLength numberOfBytes: Int = MemoryLayout<Wrapped>.size,
+                withRange range: ClosedRange<Wrapped>? = nil,
+                withUnknownValue unknownValue: Wrapped) -> Data {
         guard let self = self else {
-            return unknownValue.toData(ofLength: numberOfBytes)
+            return unknownValue.toData(ofLength: numberOfBytes, withRange: range)
         }
-        return self.toData(ofLength: numberOfBytes, withRange: range, withResolution: resolution)
+        return self.toData(ofLength: numberOfBytes, withRange: range)
     }
     
 }
@@ -1428,13 +1426,24 @@ private extension Decimal {
     
 }
 
-private extension Bool {
+private extension Optional where Wrapped == Decimal {
     
-    /// Returns the value as 1-octed Data.
+    /// Returns the value as Data.
     ///
-    /// - returns: The Data representation of Bool.
-    func toData() -> Data {
-        return Data([self ? 0x01 : 0x00])
+    /// - parameters:
+    ///   - numberOfBytes: Resulting number of bytes.
+    ///   - range: The range the value is to be located in.
+    ///   - resolution: The convertion resolution.
+    ///   - unknownValue: The unknown value.
+    /// - returns: The Data.
+    func toData(ofLength numberOfBytes: Int,
+                withRange range: ClosedRange<Decimal>? = nil,
+                withResolution resolution: Decimal = 1.0,
+                withUnknownValue unknownValue: Int64) -> Data {
+        guard let self = self else {
+            return unknownValue.toData(ofLength: numberOfBytes)
+        }
+        return self.toData(ofLength: numberOfBytes, withRange: range, withResolution: resolution)
     }
     
 }
