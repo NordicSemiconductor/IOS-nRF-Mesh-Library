@@ -148,6 +148,10 @@
 		5215996D25DFD61400F602FA /* SensorCadenceSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5215996C25DFD61400F602FA /* SensorCadenceSet.swift */; };
 		5215997725DFE3A100F602FA /* SensorGet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5215997625DFE3A100F602FA /* SensorGet.swift */; };
 		5215997D25DFE56300F602FA /* SensorStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5215997C25DFE56300F602FA /* SensorStatus.swift */; };
+		5215998725E8E74C00F602FA /* SensorColumnGet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5215998625E8E74C00F602FA /* SensorColumnGet.swift */; };
+		5215998D25E8E85100F602FA /* SensorColumnStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5215998C25E8E85100F602FA /* SensorColumnStatus.swift */; };
+		5215999325E8EC8F00F602FA /* SensorSeriesGet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5215999225E8EC8F00F602FA /* SensorSeriesGet.swift */; };
+		5215999925E8EDA800F602FA /* SensorSeriesStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5215999825E8EDA800F602FA /* SensorSeriesStatus.swift */; };
 		523C6B1F33DB2E96993439A057BDF4D8 /* ConfigAppKeyAdd.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD9ED7E9A1A76137851290A8E7D4B828 /* ConfigAppKeyAdd.swift */; };
 		52DE3A9E25D5640900268D7D /* SensorDescriptorGet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52DE3A9425D563F100268D7D /* SensorDescriptorGet.swift */; };
 		52DE3AA425D5649400268D7D /* SensorMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52DE3AA325D5649400268D7D /* SensorMessage.swift */; };
@@ -608,6 +612,10 @@
 		5215996C25DFD61400F602FA /* SensorCadenceSet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SensorCadenceSet.swift; sourceTree = "<group>"; };
 		5215997625DFE3A100F602FA /* SensorGet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SensorGet.swift; sourceTree = "<group>"; };
 		5215997C25DFE56300F602FA /* SensorStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SensorStatus.swift; sourceTree = "<group>"; };
+		5215998625E8E74C00F602FA /* SensorColumnGet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SensorColumnGet.swift; sourceTree = "<group>"; };
+		5215998C25E8E85100F602FA /* SensorColumnStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SensorColumnStatus.swift; sourceTree = "<group>"; };
+		5215999225E8EC8F00F602FA /* SensorSeriesGet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SensorSeriesGet.swift; sourceTree = "<group>"; };
+		5215999825E8EDA800F602FA /* SensorSeriesStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SensorSeriesStatus.swift; sourceTree = "<group>"; };
 		52DE3A9425D563F100268D7D /* SensorDescriptorGet.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SensorDescriptorGet.swift; sourceTree = "<group>"; };
 		52DE3AA325D5649400268D7D /* SensorMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SensorMessage.swift; sourceTree = "<group>"; };
 		52DE3AA925D6A2CA00268D7D /* SensorDescriptorStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SensorDescriptorStatus.swift; sourceTree = "<group>"; };
@@ -1146,6 +1154,10 @@
 				5215995425DFBA5200F602FA /* SensorSettingStatus.swift */,
 				5215997625DFE3A100F602FA /* SensorGet.swift */,
 				5215997C25DFE56300F602FA /* SensorStatus.swift */,
+				5215998625E8E74C00F602FA /* SensorColumnGet.swift */,
+				5215998C25E8E85100F602FA /* SensorColumnStatus.swift */,
+				5215999225E8EC8F00F602FA /* SensorSeriesGet.swift */,
+				5215999825E8EDA800F602FA /* SensorSeriesStatus.swift */,
 			);
 			path = Sensors;
 			sourceTree = "<group>";
@@ -1978,6 +1990,7 @@
 				98A00DE31C5EB5755992F9C4A1A51540 /* AccessError.swift in Sources */,
 				A27FFC722DB3B1FC2F750BE053D6945B /* AccessLayer.swift in Sources */,
 				7AE8C7BE4F001012CB6A31DA86BED193 /* AccessMessage.swift in Sources */,
+				5215998D25E8E85100F602FA /* SensorColumnStatus.swift in Sources */,
 				DDA1D2EECB0EAD1A9C7CD3686AB18C8B /* AccessPdu.swift in Sources */,
 				CF125A3824D47922B77B432D3FD84120 /* AddAddressesToFilter.swift in Sources */,
 				F9248E93149C3FC50AF451649D69BD76 /* Address.swift in Sources */,
@@ -2180,6 +2193,7 @@
 				DF34413B3E26F1CE8C163D421A5D150E /* LightHSLTargetGet.swift in Sources */,
 				BEA3977905525C9BEFA2742C7395F65B /* LightHSLTargetStatus.swift in Sources */,
 				EB5F31060C22DEED763E25770BB0FD15 /* LightLightnessDefaultGet.swift in Sources */,
+				5215999325E8EC8F00F602FA /* SensorSeriesGet.swift in Sources */,
 				E9C07D36EF99C54022E52EA2E8E2800A /* LightLightnessDefaultSet.swift in Sources */,
 				B0631254516BB821ABD87674AA001CD9 /* LightLightnessDefaultSetUnacknowledged.swift in Sources */,
 				561D6EBBC0C06FAE63B50A2AEC353311 /* LightLightnessDefaultStatus.swift in Sources */,
@@ -2241,6 +2255,7 @@
 				6A37EB9E6D6D408AF027679529C6DB5A /* Node+Address.swift in Sources */,
 				29CB61A8AC54E225F98C04A49B965349 /* Node+Elements.swift in Sources */,
 				47DC6C225774AF8E91B163DAF64BC3BA /* Node+Keys.swift in Sources */,
+				5215999925E8EDA800F602FA /* SensorSeriesStatus.swift in Sources */,
 				BBF37D56C318D5E2A3AD820D55970D27 /* Node+Provisioner.swift in Sources */,
 				A1A1A3018449FD88B6715F5D994CE2BA /* Node+Scenes.swift in Sources */,
 				5215994F25DFB8E800F602FA /* SensorSettingGet.swift in Sources */,
@@ -2303,6 +2318,7 @@
 				E5DADCCFCA9EE5FF4664C00D54C39CAA /* UpperTransportPdu.swift in Sources */,
 				92D58AE55790BD5913D9B219646C3FD1 /* UserDefaults+SeqAuth.swift in Sources */,
 				52DE3AA425D5649400268D7D /* SensorMessage.swift in Sources */,
+				5215998725E8E74C00F602FA /* SensorColumnGet.swift in Sources */,
 				18BF0F783B88F11F18D2583C8C8EAA87 /* UUID+Hex.swift in Sources */,
 				3DA44FB727F740F61B5A549DBF1F8F41 /* VendorMessage.swift in Sources */,
 			);
