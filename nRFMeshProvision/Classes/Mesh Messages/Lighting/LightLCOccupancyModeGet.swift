@@ -1,5 +1,5 @@
 /*
-* Copyright (c) 2019, Nordic Semiconductor
+* Copyright (c) 2021, Nordic Semiconductor
 * All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification,
@@ -30,9 +30,9 @@
 
 import Foundation
 
-public struct LightHSLTargetGet: AcknowledgedGenericMessage {
-    public static let opCode: UInt32 = 0x8279
-    public static let responseType: StaticMeshMessage.Type = LightHSLTargetStatus.self
+public struct LightLCOccupancyModeGet: AcknowledgedGenericMessage {
+    public static let opCode: UInt32 = 0x8295
+    public static let responseType: StaticMeshMessage.Type = LightLCOccupancyModeStatus.self
     
     public var parameters: Data? {
         return nil

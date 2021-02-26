@@ -152,7 +152,23 @@
 		5215998D25E8E85100F602FA /* SensorColumnStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5215998C25E8E85100F602FA /* SensorColumnStatus.swift */; };
 		5215999325E8EC8F00F602FA /* SensorSeriesGet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5215999225E8EC8F00F602FA /* SensorSeriesGet.swift */; };
 		5215999925E8EDA800F602FA /* SensorSeriesStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5215999825E8EDA800F602FA /* SensorSeriesStatus.swift */; };
+		521599B925E8FD3100F602FA /* LightLCPropertyGet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 521599B825E8FD3100F602FA /* LightLCPropertyGet.swift */; };
+		521599BF25E8FDE400F602FA /* LightLCPropertyStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 521599BE25E8FDE400F602FA /* LightLCPropertyStatus.swift */; };
+		521599C525E8FF4700F602FA /* LightLCPropertySetUnacknowledged.swift in Sources */ = {isa = PBXBuildFile; fileRef = 521599C425E8FF4700F602FA /* LightLCPropertySetUnacknowledged.swift */; };
+		521599CB25E8FF9D00F602FA /* LightLCPropertySet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 521599CA25E8FF9D00F602FA /* LightLCPropertySet.swift */; };
 		523C6B1F33DB2E96993439A057BDF4D8 /* ConfigAppKeyAdd.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD9ED7E9A1A76137851290A8E7D4B828 /* ConfigAppKeyAdd.swift */; };
+		52B492FE25DC56130096E75D /* LightLCModeGet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52B492FD25DC56130096E75D /* LightLCModeGet.swift */; };
+		52B4930425DC57BA0096E75D /* LightLCModeStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52B4930325DC57BA0096E75D /* LightLCModeStatus.swift */; };
+		52B4930A25DC5AE30096E75D /* LightLCModeSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52B4930925DC5AE30096E75D /* LightLCModeSet.swift */; };
+		52B4931025DC5B380096E75D /* LightLCModeSetUnacknowledged.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52B4930F25DC5B380096E75D /* LightLCModeSetUnacknowledged.swift */; };
+		52B4931625DC5D420096E75D /* LightLCOccupancyModeGet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52B4931525DC5D420096E75D /* LightLCOccupancyModeGet.swift */; };
+		52B4931C25DC5D8E0096E75D /* LightLCOccupancyModeStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52B4931B25DC5D8E0096E75D /* LightLCOccupancyModeStatus.swift */; };
+		52B4932225DC5E350096E75D /* LightLCOccupancyModeSetUnacknowledged.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52B4932125DC5E350096E75D /* LightLCOccupancyModeSetUnacknowledged.swift */; };
+		52B4932825DC5E7A0096E75D /* LightLCOccupancyModeSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52B4932725DC5E7A0096E75D /* LightLCOccupancyModeSet.swift */; };
+		52B4932E25DC5F5F0096E75D /* LightLCLightOnOffGet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52B4932D25DC5F5F0096E75D /* LightLCLightOnOffGet.swift */; };
+		52B4933425DC60060096E75D /* LightLCLightOnOffStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52B4933325DC60060096E75D /* LightLCLightOnOffStatus.swift */; };
+		52B4933A25DC60F70096E75D /* LightLCLightOnOffSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52B4933925DC60F70096E75D /* LightLCLightOnOffSet.swift */; };
+		52B4934025DC61720096E75D /* LightLCLightOnOffSetUnacknowledged.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52B4933F25DC61720096E75D /* LightLCLightOnOffSetUnacknowledged.swift */; };
 		52DE3A9E25D5640900268D7D /* SensorDescriptorGet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52DE3A9425D563F100268D7D /* SensorDescriptorGet.swift */; };
 		52DE3AA425D5649400268D7D /* SensorMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52DE3AA325D5649400268D7D /* SensorMessage.swift */; };
 		52DE3AAA25D6A2CA00268D7D /* SensorDescriptorStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52DE3AA925D6A2CA00268D7D /* SensorDescriptorStatus.swift */; };
@@ -616,6 +632,22 @@
 		5215998C25E8E85100F602FA /* SensorColumnStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SensorColumnStatus.swift; sourceTree = "<group>"; };
 		5215999225E8EC8F00F602FA /* SensorSeriesGet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SensorSeriesGet.swift; sourceTree = "<group>"; };
 		5215999825E8EDA800F602FA /* SensorSeriesStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SensorSeriesStatus.swift; sourceTree = "<group>"; };
+		521599B825E8FD3100F602FA /* LightLCPropertyGet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LightLCPropertyGet.swift; sourceTree = "<group>"; };
+		521599BE25E8FDE400F602FA /* LightLCPropertyStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LightLCPropertyStatus.swift; sourceTree = "<group>"; };
+		521599C425E8FF4700F602FA /* LightLCPropertySetUnacknowledged.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LightLCPropertySetUnacknowledged.swift; sourceTree = "<group>"; };
+		521599CA25E8FF9D00F602FA /* LightLCPropertySet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LightLCPropertySet.swift; sourceTree = "<group>"; };
+		52B492FD25DC56130096E75D /* LightLCModeGet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LightLCModeGet.swift; sourceTree = "<group>"; };
+		52B4930325DC57BA0096E75D /* LightLCModeStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LightLCModeStatus.swift; sourceTree = "<group>"; };
+		52B4930925DC5AE30096E75D /* LightLCModeSet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LightLCModeSet.swift; sourceTree = "<group>"; };
+		52B4930F25DC5B380096E75D /* LightLCModeSetUnacknowledged.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LightLCModeSetUnacknowledged.swift; sourceTree = "<group>"; };
+		52B4931525DC5D420096E75D /* LightLCOccupancyModeGet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LightLCOccupancyModeGet.swift; sourceTree = "<group>"; };
+		52B4931B25DC5D8E0096E75D /* LightLCOccupancyModeStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LightLCOccupancyModeStatus.swift; sourceTree = "<group>"; };
+		52B4932125DC5E350096E75D /* LightLCOccupancyModeSetUnacknowledged.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LightLCOccupancyModeSetUnacknowledged.swift; sourceTree = "<group>"; };
+		52B4932725DC5E7A0096E75D /* LightLCOccupancyModeSet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LightLCOccupancyModeSet.swift; sourceTree = "<group>"; };
+		52B4932D25DC5F5F0096E75D /* LightLCLightOnOffGet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LightLCLightOnOffGet.swift; sourceTree = "<group>"; };
+		52B4933325DC60060096E75D /* LightLCLightOnOffStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LightLCLightOnOffStatus.swift; sourceTree = "<group>"; };
+		52B4933925DC60F70096E75D /* LightLCLightOnOffSet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LightLCLightOnOffSet.swift; sourceTree = "<group>"; };
+		52B4933F25DC61720096E75D /* LightLCLightOnOffSetUnacknowledged.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LightLCLightOnOffSetUnacknowledged.swift; sourceTree = "<group>"; };
 		52DE3A9425D563F100268D7D /* SensorDescriptorGet.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SensorDescriptorGet.swift; sourceTree = "<group>"; };
 		52DE3AA325D5649400268D7D /* SensorMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SensorMessage.swift; sourceTree = "<group>"; };
 		52DE3AA925D6A2CA00268D7D /* SensorDescriptorStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SensorDescriptorStatus.swift; sourceTree = "<group>"; };
@@ -1550,6 +1582,22 @@
 				BC9D7E94DDDEF59CDEFF831AA3A5C3BD /* LightHSLStatus.swift */,
 				D94C5284E6D9EA6752785852ABBB1A12 /* LightHSLTargetGet.swift */,
 				3A912DE5CF9125EFB8CC259380FCB405 /* LightHSLTargetStatus.swift */,
+				52B492FD25DC56130096E75D /* LightLCModeGet.swift */,
+				52B4930925DC5AE30096E75D /* LightLCModeSet.swift */,
+				52B4930F25DC5B380096E75D /* LightLCModeSetUnacknowledged.swift */,
+				52B4930325DC57BA0096E75D /* LightLCModeStatus.swift */,
+				52B4931525DC5D420096E75D /* LightLCOccupancyModeGet.swift */,
+				52B4932725DC5E7A0096E75D /* LightLCOccupancyModeSet.swift */,
+				52B4932125DC5E350096E75D /* LightLCOccupancyModeSetUnacknowledged.swift */,
+				52B4931B25DC5D8E0096E75D /* LightLCOccupancyModeStatus.swift */,
+				52B4932D25DC5F5F0096E75D /* LightLCLightOnOffGet.swift */,
+				52B4933925DC60F70096E75D /* LightLCLightOnOffSet.swift */,
+				52B4933F25DC61720096E75D /* LightLCLightOnOffSetUnacknowledged.swift */,
+				52B4933325DC60060096E75D /* LightLCLightOnOffStatus.swift */,
+				521599B825E8FD3100F602FA /* LightLCPropertyGet.swift */,
+				521599CA25E8FF9D00F602FA /* LightLCPropertySet.swift */,
+				521599C425E8FF4700F602FA /* LightLCPropertySetUnacknowledged.swift */,
+				521599BE25E8FDE400F602FA /* LightLCPropertyStatus.swift */,
 				D4D05ECB7CCB14F810CDEA019EBF4CB9 /* LightLightnessDefaultGet.swift */,
 				CF1EBD6989C65FAEB9EECE42CB3CFAB3 /* LightLightnessDefaultSet.swift */,
 				4C73DC3777C8924006546A7F137543A5 /* LightLightnessDefaultSetUnacknowledged.swift */,
@@ -2018,6 +2066,7 @@
 				712EBB5A12D22A4E3079DAFA47AA97C5 /* ConfigAppKeyStatus.swift in Sources */,
 				EDD4133A69733BFED864045E8F676ED2 /* ConfigAppKeyUpdate.swift in Sources */,
 				8C39914FB15478177B14C77292347208 /* ConfigBeaconGet.swift in Sources */,
+				52B4932825DC5E7A0096E75D /* LightLCOccupancyModeSet.swift in Sources */,
 				92D7431A641D2C4B1CC9C3FA784637BE /* ConfigBeaconSet.swift in Sources */,
 				FD89C155913EB4EDBF3D8C8AB5895CBA /* ConfigBeaconStatus.swift in Sources */,
 				E3A43416097967B662BC47359A808130 /* ConfigCompositionDataGet.swift in Sources */,
@@ -2035,6 +2084,7 @@
 				E80FE6A7999C5E97C536C8653BE27436 /* ConfigHeartbeatPublicationGet.swift in Sources */,
 				5215997725DFE3A100F602FA /* SensorGet.swift in Sources */,
 				DF80134B5A11603DD6C4298483CA6C40 /* ConfigHeartbeatPublicationSet.swift in Sources */,
+				52B4933A25DC60F70096E75D /* LightLCLightOnOffSet.swift in Sources */,
 				BC275BA1B61602362E50F60898C5CC87 /* ConfigHeartbeatPublicationStatus.swift in Sources */,
 				99F1EE9FA57FE8934A89E30456282776 /* ConfigHeartbeatSubscriptionGet.swift in Sources */,
 				16AA9FD5BD8419E48F98FDDB1BC07F07 /* ConfigHeartbeatSubscriptionSet.swift in Sources */,
@@ -2047,6 +2097,7 @@
 				B322F146E726A5491AB8FDA3D4B3BF15 /* ConfigMessage.swift in Sources */,
 				DE237F0CD1431F6FECE87B1A80D90FEA /* ConfigModelAppBind.swift in Sources */,
 				A51FE64406C9A5113F5B60E1473C1DBC /* ConfigModelAppStatus.swift in Sources */,
+				52B4932E25DC5F5F0096E75D /* LightLCLightOnOffGet.swift in Sources */,
 				20A7584DC938A871377EF1EF542E21EC /* ConfigModelAppUnbind.swift in Sources */,
 				D2B666C3EB1E7191F4E07C25ACCD8855 /* ConfigModelPublicationGet.swift in Sources */,
 				27343F8DB81BE4D55C58B1F669E204BC /* ConfigModelPublicationSet.swift in Sources */,
@@ -2071,6 +2122,7 @@
 				9DEF80A4241154D351B47407613E1BF4 /* ConfigNetworkTransmitStatus.swift in Sources */,
 				1071184185D982146FEE23EE2C902FEB /* ConfigNodeReset.swift in Sources */,
 				1D42799FCC93289CF4ADF30FB7428487 /* ConfigNodeResetStatus.swift in Sources */,
+				52B4931625DC5D420096E75D /* LightLCOccupancyModeGet.swift in Sources */,
 				B87ABDACBAB99DCC68CFFB4412F932A2 /* ConfigRelayGet.swift in Sources */,
 				3B7F683A14E3D9D1BEDA42A297184DB9 /* ConfigRelaySet.swift in Sources */,
 				747485C5F4D61A9854A00A5F30654591 /* ConfigRelayStatus.swift in Sources */,
@@ -2079,6 +2131,7 @@
 				8C4ABACB9815728B43FEBE9EB58D0CA1 /* ConfigSIGModelSubscriptionGet.swift in Sources */,
 				6268480314CBF6A9661177DB5295FADB /* ConfigSIGModelSubscriptionList.swift in Sources */,
 				8BF9154CCE75155314503EB126764497 /* ConfigurationClientHandler.swift in Sources */,
+				52B4933425DC60060096E75D /* LightLCLightOnOffStatus.swift in Sources */,
 				951549D6E57553A1253BC5BA0660D22B /* ConfigurationServerHandler.swift in Sources */,
 				92DB23AAAE46942FD21674EF054B2329 /* ConfigVendorModelAppGet.swift in Sources */,
 				55CE8FA0F27FF2DF90E4AA61EA842C55 /* ConfigVendorModelAppList.swift in Sources */,
@@ -2099,6 +2152,7 @@
 				A0F95080F5D38BA628A4E20F5A3859E4 /* GattBearer.swift in Sources */,
 				A85AD97788323F6980E69F855FD375C6 /* GattBearerDelegate.swift in Sources */,
 				4E2B1128D4B69C183F9D8CFAD53E0352 /* GattBearerError.swift in Sources */,
+				52B4934025DC61720096E75D /* LightLCLightOnOffSetUnacknowledged.swift in Sources */,
 				ED4A457E11C9172F50CAD9A829DD9982 /* GenericBatteryGet.swift in Sources */,
 				5215994925DE96EB00F602FA /* SensorSettingsStatus.swift in Sources */,
 				715BF39B0C141A786D6FA5A1581068B7 /* GenericBatteryStatus.swift in Sources */,
@@ -2118,6 +2172,7 @@
 				25C53DED41C66A4C7F0B1EA616A177CF /* GenericOnOffGet.swift in Sources */,
 				F4246095247A200CD046E4F870B9F2FE /* GenericOnOffSet.swift in Sources */,
 				E7038DB76E7E116D4087010E175709F4 /* GenericOnOffSetUnacknowledged.swift in Sources */,
+				52B492FE25DC56130096E75D /* LightLCModeGet.swift in Sources */,
 				DE2CDD9360AD4BEC8D4D81A71355951E /* GenericOnOffStatus.swift in Sources */,
 				CC4E565C2ADB9F9991C11055F48C3893 /* GenericOnPowerUpGet.swift in Sources */,
 				783B4600D0619E3C51F213F67F1A950C /* GenericOnPowerUpSet.swift in Sources */,
@@ -2196,6 +2251,7 @@
 				5215999325E8EC8F00F602FA /* SensorSeriesGet.swift in Sources */,
 				E9C07D36EF99C54022E52EA2E8E2800A /* LightLightnessDefaultSet.swift in Sources */,
 				B0631254516BB821ABD87674AA001CD9 /* LightLightnessDefaultSetUnacknowledged.swift in Sources */,
+				52B4931025DC5B380096E75D /* LightLCModeSetUnacknowledged.swift in Sources */,
 				561D6EBBC0C06FAE63B50A2AEC353311 /* LightLightnessDefaultStatus.swift in Sources */,
 				5215995B25DFD2D800F602FA /* SensorSettingSetUnacknowledged.swift in Sources */,
 				E440419447C210C4ECB029D8929E9227 /* LightLightnessGet.swift in Sources */,
@@ -2219,6 +2275,7 @@
 				913CBDE1C8359E0105D76F5669111792 /* MeshAddress.swift in Sources */,
 				1D90159FC5314F32FD15AA5962D68FB4 /* MeshConstants.swift in Sources */,
 				48D082B0B45CD77470355F90C7FF0D46 /* MeshData.swift in Sources */,
+				52B4931C25DC5D8E0096E75D /* LightLCOccupancyModeStatus.swift in Sources */,
 				31AF3FF3B0DF76DD7731AB32721CFFB4 /* MeshLoggerDelegate.swift in Sources */,
 				42E8000E0351046FCB1F6B85F9F89DF1 /* MeshMessage.swift in Sources */,
 				A4ADDBCC9ADE956382C5277E9145C5D9 /* MeshMessageError.swift in Sources */,
@@ -2234,6 +2291,7 @@
 				5C7FA345C4F4A3C7A5753E27F29A2F96 /* MeshNetwork+Scenes.swift in Sources */,
 				C71AF6E6373A791020F1C2A86891370E /* MeshNetwork.swift in Sources */,
 				6E15FB31D53D45258BCA2AB6FE2F0617 /* MeshNetworkDelegate.swift in Sources */,
+				521599C525E8FF4700F602FA /* LightLCPropertySetUnacknowledged.swift in Sources */,
 				C4E0B4FA88E6DF5BB57B7E0AF8E7006D /* MeshNetworkError.swift in Sources */,
 				F2DE17B8EB7880679E34405066FA0426 /* MeshNetworkManager.swift in Sources */,
 				8E85B694EDCFE904A3D9F79776A1C826 /* MeshNodeEntry.swift in Sources */,
@@ -2245,13 +2303,16 @@
 				5E41762BB0DDDDACD39E28EDD2A37469 /* Model+Name.swift in Sources */,
 				16E1B268BF2C664E88016F6254576406 /* Model.swift in Sources */,
 				C06226B02D760ECB67F8A433725D367C /* ModelDelegate.swift in Sources */,
+				52B4930425DC57BA0096E75D /* LightLCModeStatus.swift in Sources */,
 				3F2E21E0DBFBF8F577236EFDCF134795 /* Models.swift in Sources */,
 				95C027BBBEBE1059A1B68A0DC0166CB3 /* NetworkKey+MeshNetwork.swift in Sources */,
+				521599BF25E8FDE400F602FA /* LightLCPropertyStatus.swift in Sources */,
 				656982986010F987C5938616EA2AB546 /* NetworkKey.swift in Sources */,
 				C3711CCE75C0EBB72934DFA9D5FE6B76 /* NetworkKeys.swift in Sources */,
 				47F90A54905C73CD1FB109B916EDFAD4 /* NetworkLayer.swift in Sources */,
 				6A76FC33139BE4124E22F194D766AC14 /* NetworkManager.swift in Sources */,
 				B40670E717FBFB105D096BFE94BF4916 /* NetworkPdu.swift in Sources */,
+				52B4932225DC5E350096E75D /* LightLCOccupancyModeSetUnacknowledged.swift in Sources */,
 				6A37EB9E6D6D408AF027679529C6DB5A /* Node+Address.swift in Sources */,
 				29CB61A8AC54E225F98C04A49B965349 /* Node+Elements.swift in Sources */,
 				47DC6C225774AF8E91B163DAF64BC3BA /* Node+Keys.swift in Sources */,
@@ -2265,6 +2326,7 @@
 				A48D6A829A7E784AF51EFE0C42C1E1ED /* OnPowerUp.swift in Sources */,
 				ED738CDD3E4F2E9F720EB1C47D692117 /* Oob.swift in Sources */,
 				3A49FCF5D38399C1DF412CCEE1E0DDD1 /* OptionSet+Data.swift in Sources */,
+				521599CB25E8FF9D00F602FA /* LightLCPropertySet.swift in Sources */,
 				766C89EBE0BFFCB03EAA3B6E3EC25A91 /* PBGattBearer.swift in Sources */,
 				5E3FF4C65D9E740D044B817043731E4A /* Provisioner+Node.swift in Sources */,
 				CD41B5A67A7F8D15DADED37DF6BB52EF /* Provisioner+Ranges.swift in Sources */,
@@ -2298,6 +2360,7 @@
 				DA57BB74261C0D63A3C0CF20FB139268 /* SceneRegisterStatus.swift in Sources */,
 				EF49235553B6EF2084258BD63DAAE137 /* Scenes.swift in Sources */,
 				F87EFDBBD04E6AF0F707B3C0F2F45630 /* SceneStatus.swift in Sources */,
+				52B4930A25DC5AE30096E75D /* LightLCModeSet.swift in Sources */,
 				26CE300177DB045792646F6E2BD58C1C /* SceneStore.swift in Sources */,
 				A2773248FCA9320E089F0D2B2C7E872F /* SceneStoreUnacknowledged.swift in Sources */,
 				D5C1560CE9D61908C87419B6CC6C74FC /* SecureNetworkBeacon.swift in Sources */,
@@ -2307,6 +2370,7 @@
 				1ECE9A8535C61217B9152DF0213E7E8F /* SegmentedControlMessage.swift in Sources */,
 				328E57F14D3517AC451DAB9E311E098B /* SegmentedMessage.swift in Sources */,
 				68964BB1E2A9B9D6BFF0C94F2893AA7E /* SetFilterType.swift in Sources */,
+				521599B925E8FD3100F602FA /* LightLCPropertyGet.swift in Sources */,
 				7667056B878D1639F066D663211420AF /* StepResolution.swift in Sources */,
 				97568653B92D163EA7A18B64585FBD17 /* Storage.swift in Sources */,
 				19A5DD8043D0A928C9DE4EB017B2F2E1 /* TransitionTime.swift in Sources */,

@@ -1,5 +1,5 @@
 /*
-* Copyright (c) 2019, Nordic Semiconductor
+* Copyright (c) 2021, Nordic Semiconductor
 * All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification,
@@ -30,22 +30,30 @@
 
 import Foundation
 
-public struct LightHSLTargetGet: AcknowledgedGenericMessage {
-    public static let opCode: UInt32 = 0x8279
-    public static let responseType: StaticMeshMessage.Type = LightHSLTargetStatus.self
+public struct LightLCOccupancyModeSet: AcknowledgedGenericMessage {
+    public static let opCode: UInt32 = 0x8296
+    public static let responseType: StaticMeshMessage.Type = LightLCOccupancyModeStatus.self
+    
+    /// Whether the controller may transition from a standby state when occupancy
+    /// is reported.
+    let occupancyMode: Bool
     
     public var parameters: Data? {
-        return nil
+        return Data() + occupancyMode
     }
     
-    public init() {
-        // Empty
+    /// Creates the Light LC Occupancy Mode Set Unacknowledged message.
+    ///
+    /// - parameter mode: The present value of the Light LC Occupancy Mode state.
+    public init(_ mode: Bool) {
+        self.occupancyMode = mode
     }
     
     public init?(parameters: Data) {
-        guard parameters.isEmpty else {
+        guard parameters.count == 1 else {
             return nil
         }
+        self.occupancyMode = parameters[0] == 0x01
     }
     
 }

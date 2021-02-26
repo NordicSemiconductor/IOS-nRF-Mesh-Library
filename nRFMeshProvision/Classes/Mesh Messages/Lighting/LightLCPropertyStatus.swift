@@ -1,5 +1,5 @@
 /*
-* Copyright (c) 2019, Nordic Semiconductor
+* Copyright (c) 2021, Nordic Semiconductor
 * All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification,
@@ -30,22 +30,34 @@
 
 import Foundation
 
-public struct LightHSLTargetGet: AcknowledgedGenericMessage {
-    public static let opCode: UInt32 = 0x8279
-    public static let responseType: StaticMeshMessage.Type = LightHSLTargetStatus.self
+public struct LightLCPropertyStatus: SensorPropertyMessage {
+    public static let opCode: UInt32 = 0x64
+    
+    public let property: DeviceProperty
+    /// Value of the Light LC Property.
+    public let propertyValue: DevicePropertyCharacteristic
     
     public var parameters: Data? {
-        return nil
+        return Data() + property.id + propertyValue.data
     }
     
-    public init() {
-        // Empty
+    /// Creates a Light LC Property Status message.
+    ///
+    /// - parameters:
+    ///   - property: The Light LC Property.
+    ///   - value: The value of the property.
+    public init(of property: DeviceProperty, value: DevicePropertyCharacteristic) {
+        self.property = property
+        self.propertyValue = value
     }
     
     public init?(parameters: Data) {
-        guard parameters.isEmpty else {
+        guard parameters.count >= 2 else {
             return nil
         }
+        let propertyId: UInt16 = parameters.read(fromOffset: 0)
+        self.property = DeviceProperty(propertyId)
+        self.propertyValue = property.read(from: parameters, at: 2, length: parameters.count - 2)
     }
     
 }

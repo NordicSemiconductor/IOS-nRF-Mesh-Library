@@ -1,5 +1,5 @@
 /*
-* Copyright (c) 2019, Nordic Semiconductor
+* Copyright (c) 2021, Nordic Semiconductor
 * All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification,
@@ -30,22 +30,29 @@
 
 import Foundation
 
-public struct LightHSLTargetGet: AcknowledgedGenericMessage {
-    public static let opCode: UInt32 = 0x8279
-    public static let responseType: StaticMeshMessage.Type = LightHSLTargetStatus.self
+public struct LightLCModeStatus: GenericMessage {
+    public static let opCode: UInt32 = 0x8294
+    
+    /// Whether the controller is turned on and the binding with the Light Lightness
+    /// state is enabled.
+    let controllerStatus: Bool
     
     public var parameters: Data? {
-        return nil
+        return Data() + controllerStatus
     }
     
-    public init() {
-        // Empty
+    /// Creates the Light LC Mode Status message.
+    ///
+    /// - parameter status: The present value of the Light LC Mode state.
+    public init(_ status: Bool) {
+        self.controllerStatus = status
     }
     
     public init?(parameters: Data) {
-        guard parameters.isEmpty else {
+        guard parameters.count == 1 else {
             return nil
         }
+        self.controllerStatus = parameters[0] == 0x01
     }
     
 }
