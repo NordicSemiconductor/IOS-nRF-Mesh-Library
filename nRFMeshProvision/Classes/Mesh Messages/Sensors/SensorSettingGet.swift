@@ -1,5 +1,5 @@
 /*
-* Copyright (c) 2019, Nordic Semiconductor
+* Copyright (c) 2021, Nordic Semiconductor
 * All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification,
@@ -29,32 +29,38 @@
 */
 
 import Foundation
-import nRFMeshProvision
 
-extension UInt16 {
+public struct SensorSettingGet: AcknowledgedSensorPropertyMessage {
+    public static let opCode: UInt32 = 0x8236
+    public static let responseType: StaticMeshMessage.Type = SensorSettingStatus.self
     
-    // Bluetooth SIG Models
-    static let configurationServerModelId: UInt16 = 0x0000
-    static let configurationClientModelId: UInt16 = 0x0001
+    public let property: DeviceProperty
+    /// Setting Property identifying a setting within a sensor.
+    public let settingProperty: DeviceProperty
     
-    static let genericOnOffServerModelId: UInt16 = 0x1000
-    static let genericOnOffClientModelId: UInt16 = 0x1001
-    static let genericLevelServerModelId: UInt16 = 0x1002
-    static let genericLevelClientModelId: UInt16 = 0x1003
+    public var parameters: Data? {
+        return Data() + property.id + settingProperty.id
+    }
     
-    static let genericDefaultTransitionTimeServerModelId: UInt16 = 0x1004
-    static let genericDefaultTransitionTimeClientModelId: UInt16 = 0x1005
+    /// Creates the Sensor Setting Get message.
+    ///
+    /// - parameters:
+    ///   - setting:  Setting Property identifying a setting within a sensor.
+    ///   - property: Property identifying a sensor.
+    public init(_ setting: DeviceProperty, of property: DeviceProperty) {
+        self.property = property
+        self.settingProperty = setting
+    }
     
-    static let sceneServerModelId: UInt16 = 0x1203
-    static let sceneSetupServerModelId: UInt16 = 0x1204
-    static let sceneClientModelId: UInt16 = 0x1205
-    
-    static let sensorServerModelId: UInt16 = 0x1100
-    static let sensorServerSetupModelId: UInt16 = 0x1101
-    static let sensorClientModelId: UInt16 = 0x1102
-    
-    // Supported vendor models
-    static let simpleOnOffModelId: UInt16 = 0x0001
-    static let nordicSemiconductorCompanyId: UInt16 = 0x0059
+    public init?(parameters: Data) {
+        guard parameters.count == 4 else {
+            return nil
+        }
+        let propertyId: UInt16 = parameters.read(fromOffset: 0)
+        self.property = DeviceProperty(propertyId)
+        
+        let settingPropertyId: UInt16 = parameters.read(fromOffset: 2)
+        self.settingProperty = DeviceProperty(settingPropertyId)
+    }
     
 }

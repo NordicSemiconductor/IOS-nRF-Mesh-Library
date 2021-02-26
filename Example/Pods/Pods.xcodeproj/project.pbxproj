@@ -135,7 +135,27 @@
 		4FA255D265621A76C42167EB5BAA3811 /* GenericLevelSetUnacknowledged.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12B1362ABB8AF89E7C5F1F4BD352E094 /* GenericLevelSetUnacknowledged.swift */; };
 		4FE3E75FEF292E403FB8D13B64906F41 /* SHA3.swift in Sources */ = {isa = PBXBuildFile; fileRef = 434F5E7450DADC05E75995EA79284AF8 /* SHA3.swift */; };
 		51213504F55CD20C4E3F03E4911059B2 /* ECB.swift in Sources */ = {isa = PBXBuildFile; fileRef = 643A88054A4FDB58A6101472ADA8B721 /* ECB.swift */; };
+		5215992525DA99CD00F602FA /* SensorCadenceGet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5215992425DA99CD00F602FA /* SensorCadenceGet.swift */; };
+		5215992B25DA9B7C00F602FA /* SensorCadenceStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5215992A25DA9B7C00F602FA /* SensorCadenceStatus.swift */; };
+		5215993125DE70BC00F602FA /* DeviceProperty.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5215993025DE70BC00F602FA /* DeviceProperty.swift */; };
+		5215994125DE96A700F602FA /* SensorSettingsGet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5215994025DE96A700F602FA /* SensorSettingsGet.swift */; };
+		5215994925DE96EB00F602FA /* SensorSettingsStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5215994825DE96EB00F602FA /* SensorSettingsStatus.swift */; };
+		5215994F25DFB8E800F602FA /* SensorSettingGet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5215994E25DFB8E800F602FA /* SensorSettingGet.swift */; };
+		5215995525DFBA5200F602FA /* SensorSettingStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5215995425DFBA5200F602FA /* SensorSettingStatus.swift */; };
+		5215995B25DFD2D800F602FA /* SensorSettingSetUnacknowledged.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5215995A25DFD2D800F602FA /* SensorSettingSetUnacknowledged.swift */; };
+		5215996125DFD44800F602FA /* SensorSettingSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5215996025DFD44800F602FA /* SensorSettingSet.swift */; };
+		5215996725DFD4E900F602FA /* SensorCadenceSetUnacknowledged.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5215996625DFD4E900F602FA /* SensorCadenceSetUnacknowledged.swift */; };
+		5215996D25DFD61400F602FA /* SensorCadenceSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5215996C25DFD61400F602FA /* SensorCadenceSet.swift */; };
+		5215997725DFE3A100F602FA /* SensorGet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5215997625DFE3A100F602FA /* SensorGet.swift */; };
+		5215997D25DFE56300F602FA /* SensorStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5215997C25DFE56300F602FA /* SensorStatus.swift */; };
+		5215998725E8E74C00F602FA /* SensorColumnGet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5215998625E8E74C00F602FA /* SensorColumnGet.swift */; };
+		5215998D25E8E85100F602FA /* SensorColumnStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5215998C25E8E85100F602FA /* SensorColumnStatus.swift */; };
+		5215999325E8EC8F00F602FA /* SensorSeriesGet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5215999225E8EC8F00F602FA /* SensorSeriesGet.swift */; };
+		5215999925E8EDA800F602FA /* SensorSeriesStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5215999825E8EDA800F602FA /* SensorSeriesStatus.swift */; };
 		523C6B1F33DB2E96993439A057BDF4D8 /* ConfigAppKeyAdd.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD9ED7E9A1A76137851290A8E7D4B828 /* ConfigAppKeyAdd.swift */; };
+		52DE3A9E25D5640900268D7D /* SensorDescriptorGet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52DE3A9425D563F100268D7D /* SensorDescriptorGet.swift */; };
+		52DE3AA425D5649400268D7D /* SensorMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52DE3AA325D5649400268D7D /* SensorMessage.swift */; };
+		52DE3AAA25D6A2CA00268D7D /* SensorDescriptorStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52DE3AA925D6A2CA00268D7D /* SensorDescriptorStatus.swift */; };
 		5419D23A75236616FD9003BFEAB0A196 /* Digest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C21C8E900A0E68E2325ECFEC2E7B92 /* Digest.swift */; };
 		543740C6C31D3637343F37FA099E11BD /* AEADChaCha20Poly1305.swift in Sources */ = {isa = PBXBuildFile; fileRef = C30CC9F96E86F25A65521BCC123D5014 /* AEADChaCha20Poly1305.swift */; };
 		54CA4CC2D9DDD32F559FEFE36DB31914 /* NoPadding.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC17DD2135B8E43A2EBE41EE0F6DDB19 /* NoPadding.swift */; };
@@ -503,7 +523,7 @@
 		24EC78F1692CE788901B9F2C60E79ED1 /* LightCTLDefaultStatus.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LightCTLDefaultStatus.swift; sourceTree = "<group>"; };
 		26C5F36638F91B47AF71E709DFC40669 /* Key.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Key.swift; sourceTree = "<group>"; };
 		279D789664CC436C3F4D4A21CBC5CCD1 /* UInt64+Extension.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = "UInt64+Extension.swift"; path = "Sources/CryptoSwift/UInt64+Extension.swift"; sourceTree = "<group>"; };
-		27DEA8C693FDB8927FC5D6F5EF714930 /* SceneStoreUnacknowledged.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SceneStoreUnacknowledged.swift; sourceTree = "<group>"; };
+		27DEA8C693FDB8927FC5D6F5EF714930 /* SceneStoreUnacknowledged.swift */ = {isa = PBXFileReference; fileEncoding = 4; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SceneStoreUnacknowledged.swift; sourceTree = "<group>"; };
 		283A6E25ABA315359A802BBBB4390288 /* ConfigNetworkTransmitSet.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ConfigNetworkTransmitSet.swift; sourceTree = "<group>"; };
 		28A6344F02F9B61FE6A28745533BF75F /* UInt32+Extension.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = "UInt32+Extension.swift"; path = "Sources/CryptoSwift/UInt32+Extension.swift"; sourceTree = "<group>"; };
 		28C7C7B3242CA745C28C0ABCFED614D8 /* ClosedRange.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ClosedRange.swift; sourceTree = "<group>"; };
@@ -515,8 +535,8 @@
 		2B7633252BEF6DC6B39C28821917F5A8 /* IvIndex.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = IvIndex.swift; sourceTree = "<group>"; };
 		2B93E2D7F149DB2C366055BEEDB66A66 /* ConfigModelPublicationVirtualAddressSet.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ConfigModelPublicationVirtualAddressSet.swift; sourceTree = "<group>"; };
 		2C14C06AB4607CC125AFC5656016997E /* ConfigAppKeyList.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ConfigAppKeyList.swift; sourceTree = "<group>"; };
-		2C1637BBCADF930540CD740A57A7D516 /* SceneRecall.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SceneRecall.swift; sourceTree = "<group>"; };
-		2C65D73CCDA224902B0BC1B7174424EE /* SceneRegisterStatus.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SceneRegisterStatus.swift; sourceTree = "<group>"; };
+		2C1637BBCADF930540CD740A57A7D516 /* SceneRecall.swift */ = {isa = PBXFileReference; fileEncoding = 4; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SceneRecall.swift; sourceTree = "<group>"; };
+		2C65D73CCDA224902B0BC1B7174424EE /* SceneRegisterStatus.swift */ = {isa = PBXFileReference; fileEncoding = 4; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SceneRegisterStatus.swift; sourceTree = "<group>"; };
 		2CA58286CB52FE4799BDB7CFD525D84C /* MeshLoggerDelegate.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MeshLoggerDelegate.swift; sourceTree = "<group>"; };
 		2CABA57E99AF45E1AECFCEA02E08C7A4 /* PBGattBearer.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = PBGattBearer.swift; sourceTree = "<group>"; };
 		2D6BCC1E5E70E1A45D22FB142D7E829D /* PublicKey.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = PublicKey.swift; sourceTree = "<group>"; };
@@ -579,6 +599,26 @@
 		4EB8A376EB18FE8DA60ABC32DFA535EF /* Data.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Data.swift; sourceTree = "<group>"; };
 		4F65B787817450BEAC96EBA741561A63 /* LowerTransportError.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LowerTransportError.swift; sourceTree = "<group>"; };
 		52084737DEB046D97BB00FBE5F20B82D /* MeshState.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MeshState.swift; sourceTree = "<group>"; };
+		5215992425DA99CD00F602FA /* SensorCadenceGet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SensorCadenceGet.swift; sourceTree = "<group>"; };
+		5215992A25DA9B7C00F602FA /* SensorCadenceStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SensorCadenceStatus.swift; sourceTree = "<group>"; };
+		5215993025DE70BC00F602FA /* DeviceProperty.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceProperty.swift; sourceTree = "<group>"; };
+		5215994025DE96A700F602FA /* SensorSettingsGet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SensorSettingsGet.swift; sourceTree = "<group>"; };
+		5215994825DE96EB00F602FA /* SensorSettingsStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SensorSettingsStatus.swift; sourceTree = "<group>"; };
+		5215994E25DFB8E800F602FA /* SensorSettingGet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SensorSettingGet.swift; sourceTree = "<group>"; };
+		5215995425DFBA5200F602FA /* SensorSettingStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SensorSettingStatus.swift; sourceTree = "<group>"; };
+		5215995A25DFD2D800F602FA /* SensorSettingSetUnacknowledged.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SensorSettingSetUnacknowledged.swift; sourceTree = "<group>"; };
+		5215996025DFD44800F602FA /* SensorSettingSet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SensorSettingSet.swift; sourceTree = "<group>"; };
+		5215996625DFD4E900F602FA /* SensorCadenceSetUnacknowledged.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SensorCadenceSetUnacknowledged.swift; sourceTree = "<group>"; };
+		5215996C25DFD61400F602FA /* SensorCadenceSet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SensorCadenceSet.swift; sourceTree = "<group>"; };
+		5215997625DFE3A100F602FA /* SensorGet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SensorGet.swift; sourceTree = "<group>"; };
+		5215997C25DFE56300F602FA /* SensorStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SensorStatus.swift; sourceTree = "<group>"; };
+		5215998625E8E74C00F602FA /* SensorColumnGet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SensorColumnGet.swift; sourceTree = "<group>"; };
+		5215998C25E8E85100F602FA /* SensorColumnStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SensorColumnStatus.swift; sourceTree = "<group>"; };
+		5215999225E8EC8F00F602FA /* SensorSeriesGet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SensorSeriesGet.swift; sourceTree = "<group>"; };
+		5215999825E8EDA800F602FA /* SensorSeriesStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SensorSeriesStatus.swift; sourceTree = "<group>"; };
+		52DE3A9425D563F100268D7D /* SensorDescriptorGet.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SensorDescriptorGet.swift; sourceTree = "<group>"; };
+		52DE3AA325D5649400268D7D /* SensorMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SensorMessage.swift; sourceTree = "<group>"; };
+		52DE3AA925D6A2CA00268D7D /* SensorDescriptorStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SensorDescriptorStatus.swift; sourceTree = "<group>"; };
 		531B9F2EF263CE4EA7065194384BE25F /* MeshStateManager.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MeshStateManager.swift; sourceTree = "<group>"; };
 		538806EF44671C282F414D17398F37EA /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		544BD2258E957BEB4A4E579D0107AF32 /* Provisioner+Node.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "Provisioner+Node.swift"; sourceTree = "<group>"; };
@@ -640,7 +680,7 @@
 		777BC8CEF53516FF5AD98E30C2E24977 /* UnknownMessage.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = UnknownMessage.swift; sourceTree = "<group>"; };
 		7835F1DD59380ED95A8BA1F1171ADD5E /* GenericOnPowerUpSet.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = GenericOnPowerUpSet.swift; sourceTree = "<group>"; };
 		7864C635FB1327C8EFCB4A311C201DC7 /* MeshNetworkManager.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = MeshNetworkManager.swift; path = nRFMeshProvision/Classes/MeshNetworkManager.swift; sourceTree = "<group>"; };
-		7944FACD4E313437B3A88907FCD5DE68 /* SceneDeleteUnacknowledged.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SceneDeleteUnacknowledged.swift; sourceTree = "<group>"; };
+		7944FACD4E313437B3A88907FCD5DE68 /* SceneDeleteUnacknowledged.swift */ = {isa = PBXFileReference; fileEncoding = 4; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SceneDeleteUnacknowledged.swift; sourceTree = "<group>"; };
 		79564C40077AEB1DB1E0763FCCE5185A /* GenericOnOffGet.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = GenericOnOffGet.swift; sourceTree = "<group>"; };
 		79D146A7496F5732D2CA4017BDB21B63 /* Node+Address.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "Node+Address.swift"; sourceTree = "<group>"; };
 		7B13D00AD5032722E2DA831A0E470221 /* ConfigModelSubscriptionVirtualAddressAdd.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ConfigModelSubscriptionVirtualAddressAdd.swift; sourceTree = "<group>"; };
@@ -705,7 +745,7 @@
 		99F0DE343C5900845DA05BC37FAC82E5 /* FilterStatus.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = FilterStatus.swift; sourceTree = "<group>"; };
 		9AEB012E6EC185485B22AE30D8A07F0A /* GenericPowerLevelSet.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = GenericPowerLevelSet.swift; sourceTree = "<group>"; };
 		9B75FAE6885CC2FB549E2DB112228BB4 /* Pods-nRFMeshProvision_Tests-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-nRFMeshProvision_Tests-Info.plist"; sourceTree = "<group>"; };
-		9C094E599DC4B9257DB01B099C9D92B6 /* SceneStatus.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SceneStatus.swift; sourceTree = "<group>"; };
+		9C094E599DC4B9257DB01B099C9D92B6 /* SceneStatus.swift */ = {isa = PBXFileReference; fileEncoding = 4; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SceneStatus.swift; sourceTree = "<group>"; };
 		9CA8F8CC284F53E034E56B19D2EABA85 /* LightHSLSetUnackowledged.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LightHSLSetUnackowledged.swift; sourceTree = "<group>"; };
 		9D16351BA202AEF3960D964B7A2FC51E /* LightLightnessRangeStatus.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LightLightnessRangeStatus.swift; sourceTree = "<group>"; };
 		9D3C73A04846CB47FB0F7E6533996E68 /* LightHSLHueStatus.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LightHSLHueStatus.swift; sourceTree = "<group>"; };
@@ -719,7 +759,7 @@
 		A1FD9EFFF210FDE10629A511B1957F98 /* CryptoSwift-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "CryptoSwift-umbrella.h"; sourceTree = "<group>"; };
 		A310E0C60D9BE281F07B1E43E190065C /* GenericPowerLastStatus.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = GenericPowerLastStatus.swift; sourceTree = "<group>"; };
 		A311D77D81FE1F5349A806E59B9AE092 /* Scene.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Scene.swift; sourceTree = "<group>"; };
-		A34F3B863AA0756D755A4E80386787AA /* SceneStore.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SceneStore.swift; sourceTree = "<group>"; };
+		A34F3B863AA0756D755A4E80386787AA /* SceneStore.swift */ = {isa = PBXFileReference; fileEncoding = 4; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SceneStore.swift; sourceTree = "<group>"; };
 		A3B03D1D0A6470D0D7FC7269BA25068E /* AES+Foundation.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = "AES+Foundation.swift"; path = "Sources/CryptoSwift/Foundation/AES+Foundation.swift"; sourceTree = "<group>"; };
 		A421192576A8E503AE97BBA464BDB881 /* Pods-nRFMeshProvision_Example.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-nRFMeshProvision_Example.debug.xcconfig"; sourceTree = "<group>"; };
 		A5FC765AE940CEDCEE9D2CFA66331EA3 /* OptionSet+Data.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "OptionSet+Data.swift"; sourceTree = "<group>"; };
@@ -751,7 +791,7 @@
 		B5E2B6D8204EAA1400D236CD6A50AF43 /* Address.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Address.swift; sourceTree = "<group>"; };
 		B681335B81957A049873C2D7435F1ED6 /* GattBearerDelegate.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = GattBearerDelegate.swift; sourceTree = "<group>"; };
 		B6A4B750CD0512CF43F4771040C75677 /* GenericLevelSet.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = GenericLevelSet.swift; sourceTree = "<group>"; };
-		B6A4C754FE7F4DD81A6659FE2060114A /* SceneRegisterGet.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SceneRegisterGet.swift; sourceTree = "<group>"; };
+		B6A4C754FE7F4DD81A6659FE2060114A /* SceneRegisterGet.swift */ = {isa = PBXFileReference; fileEncoding = 4; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SceneRegisterGet.swift; sourceTree = "<group>"; };
 		B6D4773D76A7168631B479638794872E /* LightCTLGet.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LightCTLGet.swift; sourceTree = "<group>"; };
 		B7710B4FB8FF484D1B19E19EF1893125 /* Generics.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Generics.swift; path = Sources/CryptoSwift/Generics.swift; sourceTree = "<group>"; };
 		B7D63D5372DE43F425AB81AAEE906535 /* GenericBatteryStatus.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = GenericBatteryStatus.swift; sourceTree = "<group>"; };
@@ -769,14 +809,14 @@
 		C00ED4E395D689600DB67B37CE4096C5 /* GenericPowerRangeStatus.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = GenericPowerRangeStatus.swift; sourceTree = "<group>"; };
 		C184F8C183B5800FB936B6D079F66B1F /* Pods-nRFMeshProvision_Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-nRFMeshProvision_Tests.release.xcconfig"; sourceTree = "<group>"; };
 		C30CC9F96E86F25A65521BCC123D5014 /* AEADChaCha20Poly1305.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = AEADChaCha20Poly1305.swift; path = Sources/CryptoSwift/AEAD/AEADChaCha20Poly1305.swift; sourceTree = "<group>"; };
-		C31699E373407774BDB78BE99C602127 /* SceneRecallUnacknowledged.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SceneRecallUnacknowledged.swift; sourceTree = "<group>"; };
+		C31699E373407774BDB78BE99C602127 /* SceneRecallUnacknowledged.swift */ = {isa = PBXFileReference; fileEncoding = 4; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SceneRecallUnacknowledged.swift; sourceTree = "<group>"; };
 		C5B0746FD8D7FA9F1B29CD76F1B22E4E /* LightCTLDefaultSetUnacknowledged.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LightCTLDefaultSetUnacknowledged.swift; sourceTree = "<group>"; };
 		C6625596D92D53C80B85E66FDDB1E060 /* Collection+Extension.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = "Collection+Extension.swift"; path = "Sources/CryptoSwift/Collection+Extension.swift"; sourceTree = "<group>"; };
 		C70E3B1B769D9314CFE3C3C9CB846A3B /* LightHSLSaturationSetUnacknowledged.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LightHSLSaturationSetUnacknowledged.swift; sourceTree = "<group>"; };
 		C7234FD2AA9C4FF86407994212554BB7 /* LightHSLRangeGet.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LightHSLRangeGet.swift; sourceTree = "<group>"; };
 		C76D8435DEA308F0A11BCEB773C87B96 /* BlockModeOptions.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = BlockModeOptions.swift; path = Sources/CryptoSwift/BlockMode/BlockModeOptions.swift; sourceTree = "<group>"; };
 		C7FB66B64BF69DB84A9EB0B9F9743992 /* Int+Hex.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "Int+Hex.swift"; sourceTree = "<group>"; };
-		C8053B756CCA4A3B0E83D25871A53028 /* SceneGet.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SceneGet.swift; sourceTree = "<group>"; };
+		C8053B756CCA4A3B0E83D25871A53028 /* SceneGet.swift */ = {isa = PBXFileReference; fileEncoding = 4; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SceneGet.swift; sourceTree = "<group>"; };
 		C86C992475272AAE65364AD37C8832D8 /* CBC.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = CBC.swift; path = Sources/CryptoSwift/BlockMode/CBC.swift; sourceTree = "<group>"; };
 		CABBCBFB8207CAF6F05B980964B75993 /* BlockEncryptor.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = BlockEncryptor.swift; path = Sources/CryptoSwift/BlockEncryptor.swift; sourceTree = "<group>"; };
 		CAE5A48AAD5094E64BC06ACC5E80B27F /* StreamEncryptor.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = StreamEncryptor.swift; path = Sources/CryptoSwift/StreamEncryptor.swift; sourceTree = "<group>"; };
@@ -867,7 +907,7 @@
 		FBD0F2C216F862FA00F732873CD2F4DD /* LightHSLSaturationSet.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LightHSLSaturationSet.swift; sourceTree = "<group>"; };
 		FC01F5DE571A85F45B4FD53095F78BBE /* Storage.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Storage.swift; path = nRFMeshProvision/Classes/Storage.swift; sourceTree = "<group>"; };
 		FC06DADE90DF0FC1A3411D92B38C9BB2 /* ConfigSIGModelSubscriptionList.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ConfigSIGModelSubscriptionList.swift; sourceTree = "<group>"; };
-		FC2B4880DD4BC5353F1373AC1DBD575F /* SceneDelete.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SceneDelete.swift; sourceTree = "<group>"; };
+		FC2B4880DD4BC5353F1373AC1DBD575F /* SceneDelete.swift */ = {isa = PBXFileReference; fileEncoding = 4; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SceneDelete.swift; sourceTree = "<group>"; };
 		FDC424460CDE7579385B7FA31CF02197 /* LightCTLTemperatureRangeSetUnacknowledged.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LightCTLTemperatureRangeSetUnacknowledged.swift; sourceTree = "<group>"; };
 		FDD9C50B778C15FB416FB0CD97B0A8F6 /* ConfigAppKeyDelete.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ConfigAppKeyDelete.swift; sourceTree = "<group>"; };
 		FECC5F42DFA6578EDAAF7856876C65B5 /* KeyRefreshPhase.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = KeyRefreshPhase.swift; sourceTree = "<group>"; };
@@ -1095,6 +1135,31 @@
 			);
 			name = "Support Files";
 			path = "Example/Pods/Target Support Files/nRFMeshProvision";
+			sourceTree = "<group>";
+		};
+		52DE3A9325D563BF00268D7D /* Sensors */ = {
+			isa = PBXGroup;
+			children = (
+				52DE3A9425D563F100268D7D /* SensorDescriptorGet.swift */,
+				52DE3AA925D6A2CA00268D7D /* SensorDescriptorStatus.swift */,
+				5215992425DA99CD00F602FA /* SensorCadenceGet.swift */,
+				5215996C25DFD61400F602FA /* SensorCadenceSet.swift */,
+				5215996625DFD4E900F602FA /* SensorCadenceSetUnacknowledged.swift */,
+				5215992A25DA9B7C00F602FA /* SensorCadenceStatus.swift */,
+				5215994025DE96A700F602FA /* SensorSettingsGet.swift */,
+				5215994825DE96EB00F602FA /* SensorSettingsStatus.swift */,
+				5215994E25DFB8E800F602FA /* SensorSettingGet.swift */,
+				5215996025DFD44800F602FA /* SensorSettingSet.swift */,
+				5215995A25DFD2D800F602FA /* SensorSettingSetUnacknowledged.swift */,
+				5215995425DFBA5200F602FA /* SensorSettingStatus.swift */,
+				5215997625DFE3A100F602FA /* SensorGet.swift */,
+				5215997C25DFE56300F602FA /* SensorStatus.swift */,
+				5215998625E8E74C00F602FA /* SensorColumnGet.swift */,
+				5215998C25E8E85100F602FA /* SensorColumnStatus.swift */,
+				5215999225E8EC8F00F602FA /* SensorSeriesGet.swift */,
+				5215999825E8EDA800F602FA /* SensorSeriesStatus.swift */,
+			);
+			path = Sensors;
 			sourceTree = "<group>";
 		};
 		578452D2E740E91742655AC8F1636D1F /* iOS */ = {
@@ -1332,10 +1397,12 @@
 		7CA1E1EC135D3778786E090DE76291C7 /* Mesh Messages */ = {
 			isa = PBXGroup;
 			children = (
+				5215993025DE70BC00F602FA /* DeviceProperty.swift */,
 				DAC7D8C779300D2702FE0DA5E7F45573 /* ConfigMessage.swift */,
 				F9DBD80605BF0B6D9CD247A11B98C853 /* GenericMessage.swift */,
 				F7BE07A8B977F0B1E777A574E71A97BA /* MeshMessage.swift */,
 				F5BA8C719898DC3B38100C9AAD8119B4 /* MeshMessageError.swift */,
+				52DE3AA325D5649400268D7D /* SensorMessage.swift */,
 				777BC8CEF53516FF5AD98E30C2E24977 /* UnknownMessage.swift */,
 				D7A04757CC2ED4012DF4B7CCED05DC86 /* VendorMessage.swift */,
 				A5407D3004105A0D45D822F19F489891 /* Foundation */,
@@ -1343,6 +1410,7 @@
 				BADBA6BD04939DC867D95EFB89FD2F05 /* Lighting */,
 				6D01510E6447A28D39F2036DA8CDB3EB /* Proxy Configuration */,
 				328B0B94718E15EC8BF4D872D1F6346A /* Time and Scenes */,
+				52DE3A9325D563BF00268D7D /* Sensors */,
 			);
 			name = "Mesh Messages";
 			path = "nRFMeshProvision/Classes/Mesh Messages";
@@ -1922,11 +1990,13 @@
 				98A00DE31C5EB5755992F9C4A1A51540 /* AccessError.swift in Sources */,
 				A27FFC722DB3B1FC2F750BE053D6945B /* AccessLayer.swift in Sources */,
 				7AE8C7BE4F001012CB6A31DA86BED193 /* AccessMessage.swift in Sources */,
+				5215998D25E8E85100F602FA /* SensorColumnStatus.swift in Sources */,
 				DDA1D2EECB0EAD1A9C7CD3686AB18C8B /* AccessPdu.swift in Sources */,
 				CF125A3824D47922B77B432D3FD84120 /* AddAddressesToFilter.swift in Sources */,
 				F9248E93149C3FC50AF451649D69BD76 /* Address.swift in Sources */,
 				A4D85CB50CF5205A26F643F66B409412 /* AddressRange.swift in Sources */,
 				EDB849C95E31074BC2FDBD2877B2D229 /* Algorithm.swift in Sources */,
+				5215992525DA99CD00F602FA /* SensorCadenceGet.swift in Sources */,
 				25DE3326A8476A0DD321AAA990C98938 /* ApplicationKey+MeshNetwork.swift in Sources */,
 				C439AFBBD5F3E84BD5C2132FB27BE53C /* ApplicationKey+NetworkKey.swift in Sources */,
 				17683E5A4D5E2AFB5579259B668B4783 /* ApplicationKey.swift in Sources */,
@@ -1954,6 +2024,7 @@
 				DD0B02FF82BC3F52F6E4872D75192BF4 /* ConfigCompositionDataStatus.swift in Sources */,
 				BFEC502D3C41E506A4FEE85624CE5E38 /* ConfigDefaultTtlGet.swift in Sources */,
 				FD66294191AFAD8D8F482325D05E090D /* ConfigDefaultTtlSet.swift in Sources */,
+				5215996D25DFD61400F602FA /* SensorCadenceSet.swift in Sources */,
 				D32007EE9E25652BC27DDFDEB5DF56A4 /* ConfigDefaultTtlStatus.swift in Sources */,
 				7105EE8BFE0FAAB20076BD5E3BABB568 /* ConfigFriendGet.swift in Sources */,
 				31300FD03036D8DABE2F70D96E78FEDC /* ConfigFriendSet.swift in Sources */,
@@ -1962,6 +2033,7 @@
 				E93DE2BE52864CDBCC4FFAA35D3A4C62 /* ConfigGATTProxySet.swift in Sources */,
 				EE64C3628F97E7B8EA7F4641B0710F7A /* ConfigGATTProxyStatus.swift in Sources */,
 				E80FE6A7999C5E97C536C8653BE27436 /* ConfigHeartbeatPublicationGet.swift in Sources */,
+				5215997725DFE3A100F602FA /* SensorGet.swift in Sources */,
 				DF80134B5A11603DD6C4298483CA6C40 /* ConfigHeartbeatPublicationSet.swift in Sources */,
 				BC275BA1B61602362E50F60898C5CC87 /* ConfigHeartbeatPublicationStatus.swift in Sources */,
 				99F1EE9FA57FE8934A89E30456282776 /* ConfigHeartbeatSubscriptionGet.swift in Sources */,
@@ -2028,6 +2100,7 @@
 				A85AD97788323F6980E69F855FD375C6 /* GattBearerDelegate.swift in Sources */,
 				4E2B1128D4B69C183F9D8CFAD53E0352 /* GattBearerError.swift in Sources */,
 				ED4A457E11C9172F50CAD9A829DD9982 /* GenericBatteryGet.swift in Sources */,
+				5215994925DE96EB00F602FA /* SensorSettingsStatus.swift in Sources */,
 				715BF39B0C141A786D6FA5A1581068B7 /* GenericBatteryStatus.swift in Sources */,
 				13E06DB209DF660D73D04526E3661564 /* GenericDefaultTransitionTimeGet.swift in Sources */,
 				5FFFE4BBD45A8E56D142E36863880FC3 /* GenericDefaultTransitionTimeSet.swift in Sources */,
@@ -2050,6 +2123,7 @@
 				783B4600D0619E3C51F213F67F1A950C /* GenericOnPowerUpSet.swift in Sources */,
 				7469FCDFDC5330AAC0A4C0952E01AAD0 /* GenericOnPowerUpSetUnacknowledged.swift in Sources */,
 				92A0EB8D35B90C98C15D58D177EC6803 /* GenericOnPowerUpStatus.swift in Sources */,
+				5215992B25DA9B7C00F602FA /* SensorCadenceStatus.swift in Sources */,
 				C39C7C5295C2BC5DA31C185F7A87B1D9 /* GenericPowerDefaultSet.swift in Sources */,
 				31ACB4B4F7385BF1465A9B2FFE8F3922 /* GenericPowerDefaultSetUnacknowledged.swift in Sources */,
 				EBAD47E8DB455AF7A01283652D0E42E3 /* GenericPowerDefaultStatus.swift in Sources */,
@@ -2093,6 +2167,7 @@
 				99A1DB5121226C7D4345FCE6241FE17B /* LightCTLTemperatureSet.swift in Sources */,
 				F28F78FB0744144D3D935DA7709805B7 /* LightCTLTemperatureSetUnacknowledged.swift in Sources */,
 				27E3E127D5AFB97ACFF5017C77A14C0E /* LightCTLTemperatureStatus.swift in Sources */,
+				5215996725DFD4E900F602FA /* SensorCadenceSetUnacknowledged.swift in Sources */,
 				65B3D4B60D0B054CC2795DDDDCFC25DA /* LightHSLDefaultGet.swift in Sources */,
 				BB8BEC2CB24707D1308436B034305DDB /* LightHSLDefaultSet.swift in Sources */,
 				6FB894C6BE86D074F0B9F801C49D4C3E /* LightHSLDefaultSetUnacknowledged.swift in Sources */,
@@ -2100,6 +2175,7 @@
 				9177F8D65A43973BED1D09A7F277ACB1 /* LightHSLGet.swift in Sources */,
 				B137530D805670B32E29958A801E9570 /* LightHSLHueGet.swift in Sources */,
 				607DAF8CF8D0E3B8FB2D1AF2A227F080 /* LightHSLHueSet.swift in Sources */,
+				5215997D25DFE56300F602FA /* SensorStatus.swift in Sources */,
 				5E0EF4E83830EBD8E00DF0C63A401ADD /* LightHSLHueSetUnacknowledged.swift in Sources */,
 				9CD977A21F5C81A123893262E84D5988 /* LightHSLHueStatus.swift in Sources */,
 				6F94E386932B9DABE49C0B47FC345A1F /* LightHSLRangeGet.swift in Sources */,
@@ -2111,14 +2187,17 @@
 				DEE86FC955EFAA1B7F0665670B3E757F /* LightHSLSaturationSetUnacknowledged.swift in Sources */,
 				48A62F13CA72FD5ECF55D807501D679E /* LightHSLSaturationStatus.swift in Sources */,
 				F953E6BA48BFB85B0C42877AB70FB592 /* LightHSLSet.swift in Sources */,
+				5215996125DFD44800F602FA /* SensorSettingSet.swift in Sources */,
 				819DC8256A89524D9CAC1F4ED3B3CBAB /* LightHSLSetUnackowledged.swift in Sources */,
 				7B725D69D0FD04CA637A5E48A4B1BB7D /* LightHSLStatus.swift in Sources */,
 				DF34413B3E26F1CE8C163D421A5D150E /* LightHSLTargetGet.swift in Sources */,
 				BEA3977905525C9BEFA2742C7395F65B /* LightHSLTargetStatus.swift in Sources */,
 				EB5F31060C22DEED763E25770BB0FD15 /* LightLightnessDefaultGet.swift in Sources */,
+				5215999325E8EC8F00F602FA /* SensorSeriesGet.swift in Sources */,
 				E9C07D36EF99C54022E52EA2E8E2800A /* LightLightnessDefaultSet.swift in Sources */,
 				B0631254516BB821ABD87674AA001CD9 /* LightLightnessDefaultSetUnacknowledged.swift in Sources */,
 				561D6EBBC0C06FAE63B50A2AEC353311 /* LightLightnessDefaultStatus.swift in Sources */,
+				5215995B25DFD2D800F602FA /* SensorSettingSetUnacknowledged.swift in Sources */,
 				E440419447C210C4ECB029D8929E9227 /* LightLightnessGet.swift in Sources */,
 				388F695C32D5BE7E6789DBF275ACCD1E /* LightLightnessLastGet.swift in Sources */,
 				C150DF9D61051FD8F3237217FF9AB561 /* LightLightnessLastStatus.swift in Sources */,
@@ -2149,6 +2228,8 @@
 				F5A0E86B8175C1D7F6DA5F9EF9AAAFB8 /* MeshNetwork+Keys.swift in Sources */,
 				491F99B9328D6AE6583CB0B2478342BC /* MeshNetwork+Nodes.swift in Sources */,
 				A9CBBAED5EF08321C9A7D2D6CFDE3362 /* MeshNetwork+Provisioner.swift in Sources */,
+				52DE3AAA25D6A2CA00268D7D /* SensorDescriptorStatus.swift in Sources */,
+				5215994125DE96A700F602FA /* SensorSettingsGet.swift in Sources */,
 				23A99A060C5888E472138226C21E7DCA /* MeshNetwork+Ranges.swift in Sources */,
 				5C7FA345C4F4A3C7A5753E27F29A2F96 /* MeshNetwork+Scenes.swift in Sources */,
 				C71AF6E6373A791020F1C2A86891370E /* MeshNetwork.swift in Sources */,
@@ -2174,8 +2255,10 @@
 				6A37EB9E6D6D408AF027679529C6DB5A /* Node+Address.swift in Sources */,
 				29CB61A8AC54E225F98C04A49B965349 /* Node+Elements.swift in Sources */,
 				47DC6C225774AF8E91B163DAF64BC3BA /* Node+Keys.swift in Sources */,
+				5215999925E8EDA800F602FA /* SensorSeriesStatus.swift in Sources */,
 				BBF37D56C318D5E2A3AD820D55970D27 /* Node+Provisioner.swift in Sources */,
 				A1A1A3018449FD88B6715F5D994CE2BA /* Node+Scenes.swift in Sources */,
+				5215994F25DFB8E800F602FA /* SensorSettingGet.swift in Sources */,
 				1C78ADADA3BA88528FF131A612CFE469 /* Node.swift in Sources */,
 				C24016BF65126810C30128D72E970552 /* NodeFeatures.swift in Sources */,
 				23B432F6947E9309177AA280DCC3AED7 /* nRFMeshProvision-dummy.m in Sources */,
@@ -2197,6 +2280,7 @@
 				F47A7C38A7526D429BEC4773D75B8D71 /* PublicKey.swift in Sources */,
 				79E13E28012A3C058FFB485303EEDEDD /* Publish.swift in Sources */,
 				04DB928D0B9CDAC59D68C44B8B9C1B0A /* RangeObject.swift in Sources */,
+				52DE3A9E25D5640900268D7D /* SensorDescriptorGet.swift in Sources */,
 				4DF689E80F237AB0CBDE4E49A160F61F /* Ranges.swift in Sources */,
 				01E124862C05C8FA75CA3BE4211038D8 /* RemoveAddressesFromFilter.swift in Sources */,
 				FEB181CDA68C5CB186AC20A8631EB510 /* Scene+Nodes.swift in Sources */,
@@ -2207,6 +2291,7 @@
 				FD52DAD16DFA59D01A863F4AA1550481 /* SceneGet.swift in Sources */,
 				70FD7369E7AAF84DE2EF8AF9900E6D9A /* SceneNumber.swift in Sources */,
 				C89A9DB641A25D0BBBA38434F52AFA64 /* SceneRange.swift in Sources */,
+				5215993125DE70BC00F602FA /* DeviceProperty.swift in Sources */,
 				FA8F20AED3626FBEE85067F539C8E70D /* SceneRecall.swift in Sources */,
 				7CCD67CADDED5B0A7A6AD827B9A39538 /* SceneRecallUnacknowledged.swift in Sources */,
 				DE556FB495AD82B29E37C0809E7D6D7F /* SceneRegisterGet.swift in Sources */,
@@ -2227,10 +2312,13 @@
 				19A5DD8043D0A928C9DE4EB017B2F2E1 /* TransitionTime.swift in Sources */,
 				655AE1E9664A5F7DD28EED421204BAEA /* UnknownMessage.swift in Sources */,
 				86B729303B82A13D9FC10526A85CBD11 /* UnprovisionedDevice.swift in Sources */,
+				5215995525DFBA5200F602FA /* SensorSettingStatus.swift in Sources */,
 				213E79650FD83191444A654DA9C46188 /* UnprovisionedDeviceBeacon.swift in Sources */,
 				21EA09D153579FEF3A0931D2D87702DC /* UpperTransportLayer.swift in Sources */,
 				E5DADCCFCA9EE5FF4664C00D54C39CAA /* UpperTransportPdu.swift in Sources */,
 				92D58AE55790BD5913D9B219646C3FD1 /* UserDefaults+SeqAuth.swift in Sources */,
+				52DE3AA425D5649400268D7D /* SensorMessage.swift in Sources */,
+				5215998725E8E74C00F602FA /* SensorColumnGet.swift in Sources */,
 				18BF0F783B88F11F18D2583C8C8EAA87 /* UUID+Hex.swift in Sources */,
 				3DA44FB727F740F61B5A549DBF1F8F41 /* VendorMessage.swift in Sources */,
 			);
