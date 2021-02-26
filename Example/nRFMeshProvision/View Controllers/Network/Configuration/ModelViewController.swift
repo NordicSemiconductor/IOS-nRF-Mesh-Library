@@ -43,6 +43,10 @@ class ModelViewController: ProgressViewController {
     private var heartbeatPublicationFeatures: NodeFeatures?
     private var heartbeatSubscriptionStatus: ConfigHeartbeatSubscriptionStatus?
     
+    /// Sensor values are defined only for Sensor Server model,
+    /// and only when the value has been read.
+    private var sensorValues: [SensorValue]?
+    
     // MARK: - View Controller
     
     override func viewDidLoad() {
@@ -162,6 +166,8 @@ class ModelViewController: ProgressViewController {
             return 1 // Set Subscription Action.
         case IndexPath.subscribeSection:
             return model.subscriptions.count + 1 // Add Action.
+        case IndexPath.customSection where model.isSensorServer:
+            return (sensorValues?.count ?? 0) + 1 // Get Action.
         default:
             // If we went that far, there has to be a supported UI for the Model.
             return 1
@@ -182,6 +188,8 @@ class ModelViewController: ProgressViewController {
             return "Publication"
         case IndexPath.subscribeSection:
             return "Subscriptions"
+        case IndexPath.customSection where model.isSensorServer:
+            return "Sensor Values"
         default:
             return "Controls"
         }
@@ -346,6 +354,17 @@ class ModelViewController: ProgressViewController {
                 return cell
             }
         }
+        if indexPath.isCustomSection && model.isSensorServer {
+            guard let sensorValues = sensorValues, indexPath.row < sensorValues.count else {
+                let cell = tableView.dequeueReusableCell(withIdentifier: "action", for: indexPath)
+                cell.textLabel?.text = "Get"
+                cell.textLabel?.isEnabled = localProvisioner?.hasConfigurationCapabilities ?? false
+                return cell
+            }
+            let cell = tableView.dequeueReusableCell(withIdentifier: "value", for: indexPath) as! SensorValueCell
+            cell.value = sensorValues[indexPath.row]
+            return cell
+        }
         // A custom cell for the Model.
         let identifier = model.isBluetoothSIGAssigned ? model.modelIdentifier.hex : "vendor"
         let cell = tableView.dequeueReusableCell(withIdentifier: identifier, for: indexPath) as! ModelViewCell
@@ -369,6 +388,9 @@ class ModelViewController: ProgressViewController {
         }
         if indexPath.isSubscribeSection {
             return indexPath.row == model.subscriptions.count
+        }
+        if indexPath.isCustomSection && model.isSensorServer {
+            return indexPath.row == sensorValues?.count ?? 0
         }
         return false
     }
@@ -400,6 +422,9 @@ class ModelViewController: ProgressViewController {
                 // Only the "Subscribe" row is selectable.
                 performSegue(withIdentifier: "subscribe", sender: indexPath)
             }
+        }
+        if indexPath.isCustomSection && model.isSensorServer {
+            readSensorValues()
         }
     }
     
@@ -624,6 +649,11 @@ private extension ModelViewController {
         send(message, description: "Cancelling Heartbeat Subscription...")
     }
     
+    func readSensorValues() {
+        let message = SensorGet()
+        send(message, description: "Reading Values...")
+    }
+    
 }
 
 extension ModelViewController: MeshNetworkDelegate {
@@ -742,6 +772,13 @@ extension ModelViewController: MeshNetworkDelegate {
                 }
             }
             
+        // Sensor Server
+        case let status as SensorStatus:
+            sensorValues = status.values
+            done {
+                self.tableView.reloadSections(.custom, with: .automatic)
+            }
+            
         // Custom UI
         default:
             let isMore = modelViewCell?.meshNetworkManager(manager, didReceiveMessage: message,
@@ -829,11 +866,15 @@ extension ModelViewController: BindAppKeyDelegate, PublicationDelegate,
 private extension Model {
     
     var isConfigurationServer: Bool {
-        return isBluetoothSIGAssigned && modelIdentifier == 0x0000
+        return isBluetoothSIGAssigned && modelIdentifier == .configurationServerModelId
     }
     
     var isConfigurationClient: Bool {
-        return isBluetoothSIGAssigned && modelIdentifier == 0x0001
+        return isBluetoothSIGAssigned && modelIdentifier == .configurationClientModelId
+    }
+    
+    var isSensorServer: Bool {
+        return isBluetoothSIGAssigned && modelIdentifier == .sensorServerModelId
     }
     
 }
@@ -844,6 +885,7 @@ private extension IndexPath {
     static let configurationServerSection = 1
     static let publishSection   = 2
     static let subscribeSection = 3
+    static let customSection    = 4
     
     static let detailsTitles = [
         "Model ID", "Company"
@@ -892,6 +934,10 @@ private extension IndexPath {
         return isSubscribeSection && row == 0
     }
     
+    var isCustomSection: Bool {
+        return section == IndexPath.customSection
+    }
+    
 }
 
 private extension IndexSet {
@@ -901,7 +947,7 @@ private extension IndexSet {
     static let subscriptions = IndexSet(integer: IndexPath.subscribeSection)
     static let bindingsAndPublication = IndexSet([IndexPath.bindingsSection, IndexPath.publishSection])
     static let configurationServer = IndexSet(integer: IndexPath.configurationServerSection)
-    static let custom = IndexSet(integer: IndexPath.subscribeSection + 1)
+    static let custom = IndexSet(integer: IndexPath.customSection)
     
 }
 
@@ -912,6 +958,7 @@ private extension Model {
             || modelIdentifier == .genericOnOffServerModelId
             || modelIdentifier == .genericLevelServerModelId
             || modelIdentifier == .genericDefaultTransitionTimeServerModelId
+            || modelIdentifier == .sensorServerModelId
     }
     
 }

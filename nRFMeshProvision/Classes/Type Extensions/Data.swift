@@ -49,10 +49,15 @@ extension Data {
         #endif
     }
     
+    func readUInt24(fromOffset offset: Int = 0) -> UInt32 {
+        return UInt32(self[offset]) | UInt32(self[offset + 1]) << 8 | UInt32(self[offset + 2]) << 16
+    }
+    
     func readBigEndian<R: FixedWidthInteger>(fromOffset offset: Int = 0) -> R {
         let r: R = read(fromOffset: offset)
         return r.bigEndian
     }
+    
 }
 
 // Source: http://stackoverflow.com/a/42241894/2115352
@@ -81,9 +86,11 @@ extension DataConvertible {
 extension UInt8  : DataConvertible { }
 extension UInt16 : DataConvertible { }
 extension UInt32 : DataConvertible { }
+extension UInt64 : DataConvertible { }
 extension Int8   : DataConvertible { }
 extension Int16  : DataConvertible { }
 extension Int32  : DataConvertible { }
+extension Int64  : DataConvertible { }
 
 extension Int    : DataConvertible { }
 extension UInt   : DataConvertible { }
@@ -118,6 +125,18 @@ extension Data : DataConvertible {
         data.append(rhs)
         
         return data
+    }
+    
+}
+
+extension Bool : DataConvertible {
+    
+    static func + (lhs: Data, rhs: Bool) -> Data {
+        if rhs {
+            return lhs + UInt8(0x01)
+        } else {
+            return lhs + UInt8(0x00)
+        }
     }
     
 }

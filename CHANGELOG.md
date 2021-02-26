@@ -1,4 +1,9 @@
 ## Changelog
+
+- **3.1.0**:
+   - Sensor messages + simple UI for reading sensor values (#327).
+   - Light LC messages (#328).
+   
 - **3.0.2**:
    - Bugfix: Fixed issues with importing a JSON file exported with an older version of the app (#321).
    

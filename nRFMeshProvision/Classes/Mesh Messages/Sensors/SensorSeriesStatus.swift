@@ -1,5 +1,5 @@
 /*
-* Copyright (c) 2019, Nordic Semiconductor
+* Copyright (c) 2021, Nordic Semiconductor
 * All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification,
@@ -30,21 +30,48 @@
 
 import Foundation
 
-public struct LightHSLTargetGet: AcknowledgedGenericMessage {
-    public static let opCode: UInt32 = 0x8279
-    public static let responseType: StaticMeshMessage.Type = LightHSLTargetStatus.self
+public struct SensorSeriesStatus: SensorPropertyMessage {
+    public static let opCode: UInt32 = 0x54
+    
+    public let property: DeviceProperty
+    /// A sequence of Sensor Series Column states.
+    ///
+    /// Each serie consists of:
+    ///  - Raw Value X,
+    ///  - Column Width,
+    ///  - Raw Value Y
+    ///
+    /// The series are returned as a single `Data` object, as their lenghts
+    /// and types may differ depending on the sensor implementation.
+    public let seriesRawData: Data?
     
     public var parameters: Data? {
-        return nil
+        return Data() + property.id + seriesRawData
     }
     
-    public init() {
-        // Empty
+    /// Creates the Sensor Series Status message.
+    ///
+    /// - parameters:
+    ///   - property: Property identifying a sensor and the Y axis.
+    ///   - seriesRawData: Series of Raw Value X, Column Width and Raw Value Y
+    ///                    marshalled into a single `Data` object.
+    ///                    Little Endian should be used for marshalling
+    ///                    multi-octed values.
+    public init(of property: DeviceProperty, seriesRawData: Data?) {
+        self.property = property
+        self.seriesRawData = seriesRawData
     }
     
     public init?(parameters: Data) {
-        guard parameters.isEmpty else {
+        guard parameters.count >= 2 else {
             return nil
+        }
+        let propertyId: UInt16 = parameters.read(fromOffset: 0)
+        self.property = DeviceProperty(propertyId)
+        if parameters.count > 2 {
+            self.seriesRawData = parameters.dropFirst(2)
+        } else {
+            self.seriesRawData = nil
         }
     }
     
