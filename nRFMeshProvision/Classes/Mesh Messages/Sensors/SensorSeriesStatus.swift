@@ -52,7 +52,7 @@ public struct SensorSeriesStatus: SensorPropertyMessage {
     /// Creates the Sensor Series Status message.
     ///
     /// - parameters:
-    ///   - property: Property identifying a sensor.
+    ///   - property: Property identifying a sensor and the Y axis.
     ///   - seriesRawData: Series of Raw Value X, Column Width and Raw Value Y
     ///                    marshalled into a single `Data` object.
     ///                    Little Endian should be used for marshalling
