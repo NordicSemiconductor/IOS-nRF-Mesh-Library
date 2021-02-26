@@ -32,7 +32,6 @@ import Foundation
 import nRFMeshProvision
 
 class SensorClientDelegate: ModelDelegate {
-    
     let messageTypes: [UInt32 : MeshMessage.Type]
     let isSubscriptionSupported: Bool = true
     
@@ -46,6 +45,8 @@ class SensorClientDelegate: ModelDelegate {
             SensorSettingsStatus.self,
             SensorSettingStatus.self,
             SensorStatus.self,
+            SensorColumnStatus.self,
+            SensorSeriesStatus.self,
         ]
         messageTypes = types.toMap()
     }
