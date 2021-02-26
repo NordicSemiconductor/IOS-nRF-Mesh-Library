@@ -18,6 +18,7 @@
 		5212152F231554190059FB3D /* ProgressCollectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5212152E231554190059FB3D /* ProgressCollectionViewController.swift */; };
 		521215312316C36B0059FB3D /* GenericLevelGroupCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 521215302316C36B0059FB3D /* GenericLevelGroupCell.swift */; };
 		5215998325E6703C00F602FA /* DeviceProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5215998225E6703C00F602FA /* DeviceProperties.swift */; };
+		521599D525E91F9300F602FA /* SensorValueCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 521599D425E91F9300F602FA /* SensorValueCell.swift */; };
 		5217D2E0250F522A004FDE79 /* GenericDefaultTransitionTimeServerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5217D2DF250F522A004FDE79 /* GenericDefaultTransitionTimeServerDelegate.swift */; };
 		5217D2E2250F7639004FDE79 /* GenericDefaultTransitionTimeClientDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5217D2E1250F7639004FDE79 /* GenericDefaultTransitionTimeClientDelegate.swift */; };
 		5217D2E5250F90D8004FDE79 /* GenericDefaultTransitionTimeViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5217D2E3250F90D8004FDE79 /* GenericDefaultTransitionTimeViewCell.swift */; };
@@ -182,6 +183,7 @@
 		5212152E231554190059FB3D /* ProgressCollectionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgressCollectionViewController.swift; sourceTree = "<group>"; };
 		521215302316C36B0059FB3D /* GenericLevelGroupCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericLevelGroupCell.swift; sourceTree = "<group>"; };
 		5215998225E6703C00F602FA /* DeviceProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceProperties.swift; sourceTree = "<group>"; };
+		521599D425E91F9300F602FA /* SensorValueCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SensorValueCell.swift; sourceTree = "<group>"; };
 		5217D2DF250F522A004FDE79 /* GenericDefaultTransitionTimeServerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericDefaultTransitionTimeServerDelegate.swift; sourceTree = "<group>"; };
 		5217D2E1250F7639004FDE79 /* GenericDefaultTransitionTimeClientDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericDefaultTransitionTimeClientDelegate.swift; sourceTree = "<group>"; };
 		5217D2E3250F90D8004FDE79 /* GenericDefaultTransitionTimeViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericDefaultTransitionTimeViewCell.swift; sourceTree = "<group>"; };
@@ -410,6 +412,7 @@
 				52A8EA8724E6946D004C14C7 /* HeartbeatPublicationCell.swift */,
 				528445C824EEA765002168A1 /* HeartbeatSubscriptionCell.swift */,
 				52A8EA9324EE6D18004C14C7 /* HeartbeatSubscriptionPeriodCell.swift */,
+				521599D425E91F9300F602FA /* SensorValueCell.swift */,
 			);
 			path = Cells;
 			sourceTree = "<group>";
@@ -1097,6 +1100,7 @@
 				52A9C1C52313D7D80036792A /* GenericLevelViewCell.swift in Sources */,
 				5288C20A2371A89900321ED3 /* SimpleOnOffClientDelegate.swift in Sources */,
 				529B759C2243BA10008F1CE7 /* NetworkKeysViewController.swift in Sources */,
+				521599D525E91F9300F602FA /* SensorValueCell.swift in Sources */,
 				52518B3122E0B18400A1FD1E /* GroupsViewController.swift in Sources */,
 				52A8EA9424EE6D18004C14C7 /* HeartbeatSubscriptionPeriodCell.swift in Sources */,
 				5283528222806D7C0097B949 /* NetworkKeySelectionViewController.swift in Sources */,
