@@ -1254,7 +1254,11 @@ extension DevicePropertyCharacteristic: CustomDebugStringConvertible {
             guard let numberOfSeconds = numberOfSeconds else {
                 return DevicePropertyCharacteristic.unknown
             }
-            return "\(numberOfSeconds) seconds"
+            let interval = TimeInterval(numberOfSeconds)
+            let formatter = DateComponentsFormatter()
+            formatter.allowedUnits = [.day, .hour, .minute, .second]
+            formatter.unitsStyle = .short
+            return formatter.string(from: interval)!
             
         // UInt32? as UInt24?:
         case .count24(let count):
@@ -1266,19 +1270,31 @@ extension DevicePropertyCharacteristic: CustomDebugStringConvertible {
             guard let numberOfHours = numberOfHours else {
                 return DevicePropertyCharacteristic.unknown
             }
-            return "\(min(numberOfHours, 0xFFFFFE)) hours"
+            let interval = TimeInterval(min(numberOfHours, 0xFFFFFE)) * 86400.0
+            let formatter = DateComponentsFormatter()
+            formatter.allowedUnits = [.month, .day, .hour]
+            formatter.unitsStyle = .short
+            return formatter.string(from: interval)!
         case .timeMillisecond24(let numberOfMilliseconds):
             guard let numberOfMilliseconds = numberOfMilliseconds else {
                 return DevicePropertyCharacteristic.unknown
             }
-            return "\(min(numberOfMilliseconds, 0xFFFFFE)) ms"
+            let interval = TimeInterval(min(numberOfMilliseconds, 0xFFFFFE)) / 1000.0
+            let formatter = DateComponentsFormatter()
+            formatter.allowedUnits = [.hour, .minute, .second]
+            formatter.unitsStyle = .short
+            return formatter.string(from: interval)!
             
         // UInt32?:
         case .timeSecond32(let numberOfSeconds):
             guard let numberOfSeconds = numberOfSeconds else {
                 return DevicePropertyCharacteristic.unknown
             }
-            return "\(numberOfSeconds) seconds"
+            let interval = TimeInterval(numberOfSeconds)
+            let formatter = DateComponentsFormatter()
+            formatter.allowedUnits = [.year, .month, .day, .hour, .minute, .second]
+            formatter.unitsStyle = .short
+            return formatter.string(from: interval)!
             
         // Date?:
         case .dateUTC(let date):
