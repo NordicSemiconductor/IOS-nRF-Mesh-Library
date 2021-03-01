@@ -60,8 +60,8 @@ class EditKeyViewController: UITableViewController {
         didSet {
             if let key = key {
                 newKey = key.key
+                isApplicationKey = key is ApplicationKey
             }
-            isApplicationKey = key is ApplicationKey
         }
     }
     /// A flag containing `true` if the key is an Application Key, or `false`
@@ -306,12 +306,24 @@ private extension EditKeyViewController {
         // Those 2 must be saved before setting the key.
         let index = newBoundNetworkKeyIndex
         let adding = isNewKey
-        
+        // It is not possible to modify the key without doing Key Refresh Procedure.
+        // Instead, we'll remove the old key and create a new one with the same key
+        // Index and new data.
+        let keyIndex = key?.index
+        if let oldKey = key, oldKey.key != newKey {
+            if let key = oldKey as? ApplicationKey {
+                try! network.remove(applicationKey: key, force: true)
+            } else if let key = oldKey as? NetworkKey {
+                try! network.remove(networkKey: key, force: true)
+            }
+            key = nil
+        }
+        // If a new key was added, or the old one removed, create new keys.
         if key == nil {
             if isApplicationKey {
-                key = try! network.add(applicationKey: newKey, name: newName)
+                key = try! network.add(applicationKey: newKey, withIndex: keyIndex, name: newName)
             } else {
-                key = try! network.add(networkKey: newKey, name: newName)
+                key = try! network.add(networkKey: newKey, withIndex: keyIndex, name: newName)
             }
         }
         key!.name = newName
