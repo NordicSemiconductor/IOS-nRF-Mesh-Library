@@ -127,7 +127,7 @@ class EditKeyViewController: UITableViewController {
         case IndexPath.keySection where isApplicationKey:
             return 3 // Key, Old Key, Key Index
         case IndexPath.keySection:
-            return 5 // Key, Old Key, Key Index, Phase, Last modified
+            return isNewKey ? 3 : 5 // Key, Old Key, Key Index [, Phase, Last modified ]
         case IndexPath.boundKeySection:
             let network = MeshNetworkManager.instance.meshNetwork!
             return network.networkKeys.count
@@ -191,8 +191,8 @@ class EditKeyViewController: UITableViewController {
         } else if indexPath.isLastModified {
             cell = tableView.dequeueReusableCell(withIdentifier: "detailCell", for: indexPath)
             cell.textLabel?.text = "Last Modified"
-            let timestamp = (key as! NetworkKey).timestamp
-            cell.detailTextLabel?.text = dateFormatter.string(from: timestamp)
+            let timestamp = (key as? NetworkKey)?.timestamp
+            cell.detailTextLabel?.text = timestamp.map { dateFormatter.string(from: $0) } ?? "N/A"
             cell.selectionStyle = .none
         } else {
             let networkKey = network.networkKeys[indexPath.row]
