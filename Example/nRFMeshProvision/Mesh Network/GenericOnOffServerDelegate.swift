@@ -162,6 +162,9 @@ class GenericOnOffServerDelegate: StoredWithSceneModelDelegate {
                                        delay: delay,
                                        duration: transitionTime.interval)
             
+        case is GenericOnOffGet:
+            break
+            
         default:
             fatalError("Not possible")
         }

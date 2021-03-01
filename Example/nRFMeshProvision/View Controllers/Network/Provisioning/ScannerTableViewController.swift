@@ -116,10 +116,10 @@ class ScannerTableViewController: UITableViewController {
         selectedDevice = discoveredPeripherals[indexPath.row].device
         
         alert = UIAlertController(title: "Status", message: "Connecting...", preferredStyle: .alert)
-        alert!.addAction(UIAlertAction(title: "Cancel", style: .cancel) { action in
+        alert!.addAction(UIAlertAction(title: "Cancel", style: .cancel) { [weak self, bearer] action in
             action.isEnabled = false
-            self.alert!.title   = "Aborting"
-            self.alert!.message = "Cancelling connection..."
+            self?.alert?.title   = "Aborting"
+            self?.alert?.message = "Cancelling connection..."
             bearer.close()
         })
         present(alert!, animated: true) {

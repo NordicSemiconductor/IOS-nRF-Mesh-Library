@@ -183,9 +183,10 @@ extension UIViewController {
                         textField.autocapitalizationType = .words
                         break
                     case .unicastAddress, .groupAddress,
-                         .unicastAddressRequired, .groupAddressRequired:
+                         .unicastAddressRequired, .groupAddressRequired,
+                         .scene, .sceneRequired:
                         textField.autocapitalizationType = .allCharacters
-                    case .ttlRequired, .scene, .sceneRequired:
+                    case .ttlRequired:
                         textField.keyboardType = .numberPad
                     default:
                         break

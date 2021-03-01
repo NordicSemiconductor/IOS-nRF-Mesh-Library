@@ -73,14 +73,16 @@ class GenericDefaultTransitionTimeServerDelegate: ModelDelegate {
             }
             defaultTransitionTime = request.transitionTime
             defaults.set(defaultTransitionTime.interval, forKey: "defaultTransitionTime")
-            fallthrough
             
         case is GenericDefaultTransitionTimeGet:
-            return GenericDefaultTransitionTimeStatus(transitionTime: defaultTransitionTime)
+            break
             
         default:
             fatalError("Not possible")
         }
+        
+        // Reply with GenericDefaultTransitionTimeStatus.
+        return GenericDefaultTransitionTimeStatus(transitionTime: defaultTransitionTime)
     }
     
     func model(_ model: Model, didReceiveUnacknowledgedMessage message: MeshMessage,
