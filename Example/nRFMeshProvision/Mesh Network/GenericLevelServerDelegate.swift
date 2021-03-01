@@ -211,6 +211,9 @@ class GenericLevelServerDelegate: StoredWithSceneModelDelegate {
                                         delay: delay,
                                         duration: transitionTime.interval)
             
+        case is GenericLevelGet:
+            break
+            
         default:
             fatalError("Not possible")
         }

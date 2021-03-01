@@ -174,15 +174,20 @@ class SceneServerDelegate: SceneServerModelDelegate {
                                     transitionTime: transitionTime,
                                     delay: delay)
                 }
-            fallthrough
+            
+        case is SceneGet:
+            break
                 
         default:
-            if let (targetScene, complete) = targetScene {
-                let remainingTime = TransitionTime(complete.timeIntervalSinceNow)
-                return SceneStatus(report: targetScene, remainingTime: remainingTime)
-            }
-            return SceneStatus(report: currentScene)
+            fatalError("Not possible")
         }
+        
+        // Reply with SceneStatus.
+        if let (targetScene, complete) = targetScene {
+            let remainingTime = TransitionTime(complete.timeIntervalSinceNow)
+            return SceneStatus(report: targetScene, remainingTime: remainingTime)
+        }
+        return SceneStatus(report: currentScene)
     }
     
     func model(_ model: Model, didReceiveUnacknowledgedMessage message: MeshMessage,
