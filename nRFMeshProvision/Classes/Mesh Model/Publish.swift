@@ -479,7 +479,7 @@ private extension Publish.Period {
             // If resolution or steps were set to 0, set resolution to
             // hundreds of milliseconds.
             return 100
-        case 100, 1000, 10000, 60000:
+        case 100, 1000, 10000, 600000:
             // Those are the valid values. Keep it as it is.
             return milliseconds
         case _ where milliseconds % Int(steps) == 0:
