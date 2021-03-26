@@ -1,5 +1,9 @@
 ## Changelog
 
+- **3.1.1**:
+   - Bugfix: `SegmentedAccessMessage` overflow crash (#339).
+   - Bugfix: Validation failure if database contains 10m publish resolution (#338).
+   
 - **3.1.0**:
    - Sensor messages + simple UI for reading sensor values (#327).
    - Light LC messages (#328).
