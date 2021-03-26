@@ -122,7 +122,7 @@ internal struct SegmentedAccessMessage: SegmentedMessage {
         self.sequenceZero = UInt16(pdu.sequence & 0x1FFF)
         self.segmentOffset = offset
         
-        let lowerBound = Int(offset * 12)
+        let lowerBound = Int(offset) * 12
         let upperBound = min(pdu.transportPdu.count, Int(offset + 1) * 12)
         let segment = pdu.transportPdu.subdata(in: lowerBound..<upperBound)
         self.lastSegmentNumber = UInt8((pdu.transportPdu.count + 11) / 12) - 1
