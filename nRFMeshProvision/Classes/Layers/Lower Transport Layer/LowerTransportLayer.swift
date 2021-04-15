@@ -704,13 +704,20 @@ private extension NetworkPdu {
         return transportPdu[0] & 0x80 > 1
     }
     
-    /// The 24-bit Seq Auth used to transmit the first segment of a
-    /// segmented message, or the 24-bit sequence number of an unsegmented
-    /// message.
+    /// The 24-bit message sequence number used to transmit the first segment
+    /// of a segmented message, or the 24-bit sequence number of an unsegmented
+    /// message. This should be prefixed with 32-bit IV Index to get Seeq Auth.
+    ///
+    /// If the Seq is 0x647262 and SeqZero is 0x1849, the message sequence
+    /// should be 0x6451849. See Bluetooth Mesh Profile 1.0.1 chapter 3.5.3.1.
     var messageSequence: UInt32 {
         if isSegmented {
             let sequenceZero = (UInt16(transportPdu[1] & 0x7F) << 6) | UInt16(transportPdu[2] >> 2)
-            return (sequence & 0xFFE000) | UInt32(sequenceZero)
+            if (sequence & 0x1FFF < sequenceZero) {
+                return (sequence & 0xFFE000) + UInt32(sequenceZero) - (0x1FFF + 1)
+            } else {
+                return (sequence & 0xFFE000) + UInt32(sequenceZero)
+            }
         } else {
             return sequence
         }
