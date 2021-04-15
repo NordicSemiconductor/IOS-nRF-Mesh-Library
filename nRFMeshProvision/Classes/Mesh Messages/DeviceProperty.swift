@@ -1164,7 +1164,7 @@ internal extension DevicePropertyCharacteristic {
         
         // Float as UInt32:
         case .pressure(let value):
-            return value.toData(ofLength: 4, withRange: 0...Decimal(UInt32.max))
+            return value.toData(ofLength: 4, withRange: 0...Decimal(UInt32.max), withResolution: 0.1)
             
         // UInt32 with 0xFFFFFFFF as unknown:
         case .timeSecond32(let value):

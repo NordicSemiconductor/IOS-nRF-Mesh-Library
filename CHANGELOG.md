@@ -1,4 +1,7 @@
 ## Changelog
+- **3.1.2**:
+   - Bugfix: Fixed DevicePropertyCharacteristic.pressure with missing resolution when converting to Data (#344).
+   - Bugfix: Fixed calculating message sequence when Seq > 8191 (#345).
 
 - **3.1.1**:
    - Bugfix: `SegmentedAccessMessage` overflow crash (#339).
