@@ -210,13 +210,15 @@ internal class AccessLayer {
         if var transactionMessage = message as? TransactionMessage, transactionMessage.tid == nil {
             // Ensure there is a transaction for our destination.
             let k = key(for: element, and: destination)
-            transactions[k] = transactions[k] ?? Transaction()
-            // Should the last transaction be continued?
-            if retransmit || transactionMessage.continueTransaction, transactions[k]!.isActive {
-                transactionMessage.tid = transactions[k]!.currentTid()
-            } else {
-                // If not, start a new transaction by setting a new TID value.
-                transactionMessage.tid = transactions[k]!.nextTid()
+            mutex.sync {
+                transactions[k] = transactions[k] ?? Transaction()
+                // Should the last transaction be continued?
+                if retransmit || transactionMessage.continueTransaction, transactions[k]!.isActive {
+                    transactionMessage.tid = transactions[k]!.currentTid()
+                } else {
+                    // If not, start a new transaction by setting a new TID value.
+                    transactionMessage.tid = transactions[k]!.nextTid()
+                }
             }
             m = transactionMessage
         }
