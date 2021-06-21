@@ -24,6 +24,7 @@ public struct OFB: BlockMode {
 
   public let options: BlockModeOption = [.initializationVectorRequired, .useEncryptToDecrypt]
   private let iv: Array<UInt8>
+  public let customBlockSize: Int? = nil
 
   public init(iv: Array<UInt8>) {
     self.iv = iv
@@ -51,6 +52,7 @@ struct OFBModeWorker: BlockModeWorker {
     self.cipherOperation = cipherOperation
   }
 
+  @inlinable
   mutating func encrypt(block plaintext: ArraySlice<UInt8>) -> Array<UInt8> {
     guard let ciphertext = cipherOperation(prev ?? iv) else {
       return Array(plaintext)
@@ -59,6 +61,7 @@ struct OFBModeWorker: BlockModeWorker {
     return xor(plaintext, ciphertext)
   }
 
+  @inlinable
   mutating func decrypt(block ciphertext: ArraySlice<UInt8>) -> Array<UInt8> {
     guard let decrypted = cipherOperation(prev ?? iv) else {
       return Array(ciphertext)

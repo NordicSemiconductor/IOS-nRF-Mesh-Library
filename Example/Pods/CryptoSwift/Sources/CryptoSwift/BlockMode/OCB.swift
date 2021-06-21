@@ -36,6 +36,7 @@ public final class OCB: BlockMode {
   private let N: Array<UInt8>
   private let additionalAuthenticatedData: Array<UInt8>?
   private let mode: Mode
+  public let customBlockSize: Int? = nil
 
   /// Length of authentication tag, in bytes.
   /// For encryption, the value is given as init parameter.
@@ -56,6 +57,7 @@ public final class OCB: BlockMode {
   }
 
   // decrypt
+  @inlinable
   public convenience init(nonce N: Array<UInt8>, authenticationTag: Array<UInt8>, additionalAuthenticatedData: Array<UInt8>? = nil, mode: Mode = .detached) {
     self.init(nonce: N, additionalAuthenticatedData: additionalAuthenticatedData, tagLength: authenticationTag.count, mode: mode)
     self.authenticationTag = authenticationTag
