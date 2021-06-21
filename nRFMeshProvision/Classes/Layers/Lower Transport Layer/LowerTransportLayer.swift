@@ -457,8 +457,8 @@ private extension LowerTransportLayer {
                 // timer is active, the timer shall be restarted.
                 incompleteTimers[key]?.invalidate()
                 incompleteTimers[key] = BackgroundTimer.scheduledTimer(
-                                            withTimeInterval: networkManager.incompleteMessageTimeout,
-                                            repeats: false) { [weak self] _ in
+                    withTimeInterval: networkManager.incompleteMessageTimeout, repeats: false, queue: self.mutex
+                ) { [weak self] _ in
                     guard let self = self else { return }
                     if let segments = self.incompleteSegments.removeValue(forKey: key) {
                         var marks: UInt32 = 0
@@ -479,8 +479,9 @@ private extension LowerTransportLayer {
                 if acknowledgmentTimers[key] == nil {
                     let ttl = provisionerNode.defaultTTL ?? networkManager.defaultTtl
                     let interval = networkManager.acknowledgmentTimerInterval(ttl)
-                    acknowledgmentTimers[key] = BackgroundTimer.scheduledTimer(withTimeInterval: interval,
-                                                                               repeats: false) { [weak self] _ in
+                    acknowledgmentTimers[key] = BackgroundTimer.scheduledTimer(
+                        withTimeInterval: interval, repeats: false, queue: self.mutex
+                    ) { [weak self] _ in
                         guard let self = self else { return }
                         if let segments = self.incompleteSegments[key] {
                             let ttl = networkPdu.ttl > 0 ? ttl : 0

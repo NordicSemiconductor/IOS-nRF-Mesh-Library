@@ -39,16 +39,17 @@ internal class BackgroundTimer {
     /// Schedules a timer that can be started from a background DispatchQueue.
     @discardableResult
     static func scheduledTimer(withTimeInterval interval: TimeInterval, repeats: Bool,
+                               queue: DispatchQueue = DispatchQueue.global(qos: .background),
                                block: @escaping  (BackgroundTimer) -> Void) -> BackgroundTimer {
-        return BackgroundTimer(withTimeInterval: interval, repeats: repeats, block: block)
+        return BackgroundTimer(withTimeInterval: interval, repeats: repeats, queue: queue, block: block)
     }
     
     private init(withTimeInterval interval: TimeInterval, repeats: Bool,
-                 block: @escaping  (BackgroundTimer) -> Void) {
+                 queue: DispatchQueue, block: @escaping  (BackgroundTimer) -> Void) {
         self.interval = interval
         self.repeats = repeats
         
-        timer = DispatchSource.makeTimerSource(queue: DispatchQueue.global(qos: .background))
+        timer = DispatchSource.makeTimerSource(queue: queue)
         timer.setEventHandler {
             block(self)
             if !repeats {
