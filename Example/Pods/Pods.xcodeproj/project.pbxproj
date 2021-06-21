@@ -502,7 +502,7 @@
 		0A280880F4C8F13FD6499E8F8E164DDD /* LightLightnessDefaultGet.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LightLightnessDefaultGet.swift; sourceTree = "<group>"; };
 		0CBC0B6FAD4B8E1DF73631988515F121 /* Model.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Model.swift; sourceTree = "<group>"; };
 		0D39AC6D86ECF0A5FD49EB88D65DFB07 /* ConfigAppKeyDelete.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ConfigAppKeyDelete.swift; sourceTree = "<group>"; };
-		0D52291E7D8F400A8478B5A3E5457BC7 /* Pods_nRFMeshProvision_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = Pods_nRFMeshProvision_Example.framework; path = "Pods-nRFMeshProvision_Example.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
+		0D52291E7D8F400A8478B5A3E5457BC7 /* Pods_nRFMeshProvision_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_nRFMeshProvision_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		0DC909DB1A2E28D37C9C0945586D03D3 /* Utils+Foundation.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = "Utils+Foundation.swift"; path = "Sources/CryptoSwift/Foundation/Utils+Foundation.swift"; sourceTree = "<group>"; };
 		0E52D68D447E085C5D0A5E943CD85CE2 /* BlockCipher.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = BlockCipher.swift; path = Sources/CryptoSwift/BlockCipher.swift; sourceTree = "<group>"; };
 		0E91713FD0822BF4627823FA36D644E4 /* GenericDefaultTransitionTimeStatus.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = GenericDefaultTransitionTimeStatus.swift; sourceTree = "<group>"; };
@@ -528,7 +528,7 @@
 		1925AF83EF4194C1CBE862B1C56898F4 /* CFB.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = CFB.swift; path = Sources/CryptoSwift/BlockMode/CFB.swift; sourceTree = "<group>"; };
 		19556D416A0355C706C41B5045F5CAFC /* LightCTLTemperatureRangeSet.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LightCTLTemperatureRangeSet.swift; sourceTree = "<group>"; };
 		19F45708B71522762B7C5554D8AE2614 /* OCB.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = OCB.swift; path = Sources/CryptoSwift/BlockMode/OCB.swift; sourceTree = "<group>"; };
-		1A90E5F0A2A984ABB870904459A08AB6 /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; path = LICENSE; sourceTree = "<group>"; };
+		1A90E5F0A2A984ABB870904459A08AB6 /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
 		1A9C5C05255D9CA2E310D0B8C201CE26 /* LightHSLGet.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LightHSLGet.swift; sourceTree = "<group>"; };
 		1B38F707FDFEFFB30B88DE895C1CAD3B /* LightHSLStatus.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LightHSLStatus.swift; sourceTree = "<group>"; };
 		1BE90CE31DAA2C7235D34F77D0D1EB83 /* Blowfish.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Blowfish.swift; path = Sources/CryptoSwift/Blowfish.swift; sourceTree = "<group>"; };
@@ -640,7 +640,7 @@
 		5A7958FA7CBB28B1A1F7C3E244C15C58 /* BlockDecryptor.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = BlockDecryptor.swift; path = Sources/CryptoSwift/BlockDecryptor.swift; sourceTree = "<group>"; };
 		5AA0C0DFB4FB17BEEC1D1C7B96F6516A /* MeshState.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MeshState.swift; sourceTree = "<group>"; };
 		5AA1F177C3E873466F41E59F93BB88FF /* ApplicationKeys.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ApplicationKeys.swift; sourceTree = "<group>"; };
-		5D1064AE7769CE96C69DAF830939B26B /* Pods_nRFMeshProvision_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = Pods_nRFMeshProvision_Tests.framework; path = "Pods-nRFMeshProvision_Tests.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
+		5D1064AE7769CE96C69DAF830939B26B /* Pods_nRFMeshProvision_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_nRFMeshProvision_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		5D33BC06271B0627425B6283515933B5 /* FilterStatus.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = FilterStatus.swift; sourceTree = "<group>"; };
 		5D6ECF9361E78107F7181C4B0110ED32 /* BlockMode.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = BlockMode.swift; path = Sources/CryptoSwift/BlockMode/BlockMode.swift; sourceTree = "<group>"; };
 		5E3277879E1C4AACB8B75D547B1A6475 /* HMAC+Foundation.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = "HMAC+Foundation.swift"; path = "Sources/CryptoSwift/Foundation/HMAC+Foundation.swift"; sourceTree = "<group>"; };
@@ -668,7 +668,7 @@
 		6BB823594546C634C25D825F551CCA09 /* nRFMeshProvision-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "nRFMeshProvision-dummy.m"; sourceTree = "<group>"; };
 		6BD040CEFF2532EF00F1704479DCE886 /* ProvisioningPdu.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ProvisioningPdu.swift; sourceTree = "<group>"; };
 		6CC28DE7DA9728ADE379577F363F51E4 /* GenericDeltaSetUnacknowledged.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = GenericDeltaSetUnacknowledged.swift; sourceTree = "<group>"; };
-		6DBF43F1EEBD7609DA20C9A60E24017B /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; path = README.md; sourceTree = "<group>"; };
+		6DBF43F1EEBD7609DA20C9A60E24017B /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		6E63A7555352674B611858ED34F196F2 /* ConfigVendorModelSubscriptionList.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ConfigVendorModelSubscriptionList.swift; sourceTree = "<group>"; };
 		702C82E54C0DDDACA392BC8811C9EE0C /* SensorSettingGet.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SensorSettingGet.swift; sourceTree = "<group>"; };
 		715D8AD06FC0C8F2A36261047C33499F /* ConfigRelaySet.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ConfigRelaySet.swift; sourceTree = "<group>"; };
@@ -751,7 +751,7 @@
 		9B75FAE6885CC2FB549E2DB112228BB4 /* Pods-nRFMeshProvision_Tests-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-nRFMeshProvision_Tests-Info.plist"; sourceTree = "<group>"; };
 		9BD9AEA5931F6114937E2C4D0A575C6B /* ConfigNodeResetStatus.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ConfigNodeResetStatus.swift; sourceTree = "<group>"; };
 		9CEAC8E82D74B2348CE17FA8B5C6FCE8 /* LightHSLSaturationStatus.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LightHSLSaturationStatus.swift; sourceTree = "<group>"; };
-		9D940727FF8FB9C785EB98E56350EF41 /* Podfile */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; indentWidth = 2; lastKnownFileType = text; name = Podfile; path = ../Podfile; sourceTree = SOURCE_ROOT; tabWidth = 2; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
+		9D940727FF8FB9C785EB98E56350EF41 /* Podfile */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; indentWidth = 2; name = Podfile; path = ../Podfile; sourceTree = SOURCE_ROOT; tabWidth = 2; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		9E3CB4CB8F6F3D29500CCE4AE205CDB8 /* LightHSLRangeSet.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LightHSLRangeSet.swift; sourceTree = "<group>"; };
 		9EDC31B03B673A037487105C9421FCD1 /* LightLightnessLinearSetUnacknowledged.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LightLightnessLinearSetUnacknowledged.swift; sourceTree = "<group>"; };
 		9F7A47D94B25624D05EE4B282B46F9B7 /* String+Extension.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = "String+Extension.swift"; path = "Sources/CryptoSwift/String+Extension.swift"; sourceTree = "<group>"; };
@@ -766,7 +766,7 @@
 		A421192576A8E503AE97BBA464BDB881 /* Pods-nRFMeshProvision_Example.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-nRFMeshProvision_Example.debug.xcconfig"; sourceTree = "<group>"; };
 		A4CDE54F3779A5167BC6E7E513AA966B /* SceneRecallUnacknowledged.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SceneRecallUnacknowledged.swift; sourceTree = "<group>"; };
 		A54D40C74BA67B9D7BDCFEFCD0F9819C /* PublicKey.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = PublicKey.swift; sourceTree = "<group>"; };
-		A57A5A9193043D3B0479CD9130D65056 /* nRFMeshProvision.podspec */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; indentWidth = 2; lastKnownFileType = text; path = nRFMeshProvision.podspec; sourceTree = "<group>"; tabWidth = 2; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
+		A57A5A9193043D3B0479CD9130D65056 /* nRFMeshProvision.podspec */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; indentWidth = 2; path = nRFMeshProvision.podspec; sourceTree = "<group>"; tabWidth = 2; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		A60A27C9335D1C9D0E020FE6DF6493F1 /* SceneRecall.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SceneRecall.swift; sourceTree = "<group>"; };
 		A6557382692D764A45D7A7ED21B0C48E /* CryptoSwift.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = CryptoSwift.debug.xcconfig; sourceTree = "<group>"; };
 		A6EB0E8A83F911C7974BA3CBB99B12D6 /* SegmentedAccessMessage.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SegmentedAccessMessage.swift; sourceTree = "<group>"; };
@@ -803,7 +803,7 @@
 		B2E080FB4E261AF321DEC0CC7886DEE3 /* SensorDescriptorGet.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SensorDescriptorGet.swift; sourceTree = "<group>"; };
 		B3BC8620DD369A284BD6DB68A66EF7DC /* LightLCModeStatus.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LightLCModeStatus.swift; sourceTree = "<group>"; };
 		B4406258A2D04D5A32173F1D61F4690A /* LightHSLDefaultSet.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LightHSLDefaultSet.swift; sourceTree = "<group>"; };
-		B4C001B7D2FB9649EC19C565872AF0D8 /* nRFMeshProvision.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = nRFMeshProvision.framework; path = nRFMeshProvision.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B4C001B7D2FB9649EC19C565872AF0D8 /* nRFMeshProvision.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = nRFMeshProvision.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B7710B4FB8FF484D1B19E19EF1893125 /* Generics.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Generics.swift; path = Sources/CryptoSwift/Generics.swift; sourceTree = "<group>"; };
 		B77B735255D891A4AF589C37CBCBB586 /* MeshAddress.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MeshAddress.swift; sourceTree = "<group>"; };
 		B82517944BC054091FC54F1D356BD4B6 /* Updatable.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Updatable.swift; path = Sources/CryptoSwift/Updatable.swift; sourceTree = "<group>"; };
@@ -930,7 +930,7 @@
 		F5FE05A89FD5E0D6A9AEF06F58F33EE6 /* GenericPowerDefaultSetUnacknowledged.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = GenericPowerDefaultSetUnacknowledged.swift; sourceTree = "<group>"; };
 		F7A4DFB59F383D801346E4714FB7F7D2 /* MeshConstants.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MeshConstants.swift; sourceTree = "<group>"; };
 		F7B2887C11CC9A6C0576F802E19509CD /* MeshNetwork+Nodes.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "MeshNetwork+Nodes.swift"; sourceTree = "<group>"; };
-		F81274EDB681F11E7CB05F7DCA2BB33C /* CryptoSwift.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = CryptoSwift.framework; path = CryptoSwift.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		F81274EDB681F11E7CB05F7DCA2BB33C /* CryptoSwift.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = CryptoSwift.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		F8E270517B0521B9EC6632CE69A78936 /* Ranges.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Ranges.swift; sourceTree = "<group>"; };
 		F9D0F84B7C410BECD23D4FE4DE4692D9 /* Pods-nRFMeshProvision_Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-nRFMeshProvision_Tests.debug.xcconfig"; sourceTree = "<group>"; };
 		F9E43448247F28E1FB9732AB9BCE2CD2 /* Security.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Security.swift; sourceTree = "<group>"; };
@@ -988,7 +988,6 @@
 				E47D1451BBFE1BB7F2F0F7C2870F6B1C /* AccessLayer.swift */,
 				D96A866F77D83D35F04A775F286CCB0C /* AccessPdu.swift */,
 			);
-			name = "Access Layer";
 			path = "Access Layer";
 			sourceTree = "<group>";
 		};
@@ -1071,7 +1070,6 @@
 				3BFAEE717DF64771979446BD91333CA7 /* GenericPowerRangeSetUnacknowledged.swift */,
 				8ADB7316D69FCAC06A4BAA020192697A /* GenericPowerRangeStatus.swift */,
 			);
-			name = Generic;
 			path = Generic;
 			sourceTree = "<group>";
 		};
@@ -1101,7 +1099,6 @@
 				D949DA3598A09A99D22E0D575EACFF7D /* RemoveAddressesFromFilter.swift */,
 				B0B03F3FA2C5F8CE8A34FC2C028C7112 /* SetFilterType.swift */,
 			);
-			name = "Proxy Configuration";
 			path = "Proxy Configuration";
 			sourceTree = "<group>";
 		};
@@ -1126,7 +1123,6 @@
 			children = (
 				54A6AF9B50857DEC0B7DFA970571F572 /* Configuration */,
 			);
-			name = Foundation;
 			path = Foundation;
 			sourceTree = "<group>";
 		};
@@ -1139,7 +1135,6 @@
 				1208BE6CEF065864052CCD90C59E1AFF /* SecureNetworkBeacon.swift */,
 				7A2C48D8FCD8C36F32B7F785E195D2CA /* UnprovisionedDeviceBeacon.swift */,
 			);
-			name = "Network Layer";
 			path = "Network Layer";
 			sourceTree = "<group>";
 		};
@@ -1172,7 +1167,6 @@
 				130110570FF1EFE2B7B0160E380B4E0E /* SceneStore.swift */,
 				14324ED03CF7604C541B084FB776C626 /* SceneStoreUnacknowledged.swift */,
 			);
-			name = "Time and Scenes";
 			path = "Time and Scenes";
 			sourceTree = "<group>";
 		};
@@ -1257,7 +1251,6 @@
 				DE21841074A1A9716F8FF24C9050AC63 /* ConfigVendorModelSubscriptionGet.swift */,
 				6E63A7555352674B611858ED34F196F2 /* ConfigVendorModelSubscriptionList.swift */,
 			);
-			name = Configuration;
 			path = Configuration;
 			sourceTree = "<group>";
 		};
@@ -1283,7 +1276,6 @@
 				37AEA57F76C0D9A61679D8A0A04A44CF /* SensorSettingStatus.swift */,
 				2CE39D27F59D5CD022E4F055B9C0D59E /* SensorStatus.swift */,
 			);
-			name = Sensors;
 			path = Sensors;
 			sourceTree = "<group>";
 		};
@@ -1376,7 +1368,6 @@
 				9798622457A7AF72CFFC22B53447164D /* ZeroPadding.swift */,
 				34E45C5349815E0E82D3E88DB3A77A3B /* Support Files */,
 			);
-			name = CryptoSwift;
 			path = CryptoSwift;
 			sourceTree = "<group>";
 		};
@@ -1483,7 +1474,6 @@
 				E59928D0944FF9ED19CA230C6BC5612F /* LightLightnessSetUnacknowledged.swift */,
 				406CA1C650A51A141AE2137F92C64C26 /* LightLightnessStatus.swift */,
 			);
-			name = Lighting;
 			path = Lighting;
 			sourceTree = "<group>";
 		};
@@ -1509,7 +1499,6 @@
 				0EED16CD1A96C8F33B6C1A994DA63774 /* PBGattBearer.swift */,
 				595C7C63FD3F71CC3D20903C6F93D98A /* ProxyProtocolHandler.swift */,
 			);
-			name = GATT;
 			path = GATT;
 			sourceTree = "<group>";
 		};
@@ -1659,7 +1648,6 @@
 				FC276ED020333356AEC069617C80F818 /* ConfigurationServerHandler.swift */,
 				13C0460255311F410E3D996363C8ADEF /* SceneClientHandler.swift */,
 			);
-			name = "Foundation Layer";
 			path = "Foundation Layer";
 			sourceTree = "<group>";
 		};
@@ -1718,7 +1706,6 @@
 				0F225033375F94424AA4EC45BCDD8439 /* UpperTransportLayer.swift */,
 				ED308E4D61768C5BEB268E1D208170DD /* UpperTransportPdu.swift */,
 			);
-			name = "Upper Transport Layer";
 			path = "Upper Transport Layer";
 			sourceTree = "<group>";
 		};
@@ -1765,7 +1752,6 @@
 				5379B0AD59C1F2452490E18D2865BCC3 /* SegmentedControlMessage.swift */,
 				A9E2600F363DFC17475231F6F3132B75 /* SegmentedMessage.swift */,
 			);
-			name = "Lower Transport Layer";
 			path = "Lower Transport Layer";
 			sourceTree = "<group>";
 		};
@@ -1890,7 +1876,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 1100;
-				LastUpgradeCheck = 1100;
+				LastUpgradeCheck = 1250;
 			};
 			buildConfigurationList = 4821239608C13582E20E6DA73FD5F1F9 /* Build configuration list for PBXProject "Pods" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -2652,8 +2638,7 @@
 				MTL_FAST_MATH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRIP_INSTALLED_PRODUCT = NO;
-				SWIFT_COMPILATION_MODE = wholemodule;
-				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
 				SWIFT_VERSION = 5.0;
 				SYMROOT = "${SRCROOT}/../build";
 			};
