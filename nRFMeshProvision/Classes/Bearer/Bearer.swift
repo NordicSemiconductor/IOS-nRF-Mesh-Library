@@ -73,7 +73,7 @@ public struct PduTypes: OptionSet {
     
 }
 
-public protocol Transmitter: class {
+public protocol Transmitter: AnyObject {
     
     /// This method sends the given data over the bearer.
     /// Data longer than MTU will automatically be segmented

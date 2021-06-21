@@ -30,7 +30,7 @@
 
 import Foundation
 
-public protocol BearerDataDelegate: class {
+public protocol BearerDataDelegate: AnyObject {
     
     /// Callback called when a packet has been received using the Bearer.
     /// Data longer than MTU will automatically be reassembled
@@ -44,7 +44,7 @@ public protocol BearerDataDelegate: class {
     
 }
 
-public protocol BearerDelegate: class {
+public protocol BearerDelegate: AnyObject {
     
     /// Callback called when the Bearer is ready for use.
     ///

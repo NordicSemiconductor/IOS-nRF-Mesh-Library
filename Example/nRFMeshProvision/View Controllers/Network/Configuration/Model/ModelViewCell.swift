@@ -31,7 +31,7 @@
 import UIKit
 import nRFMeshProvision
 
-protocol ModelViewCellDelegate: class {
+protocol ModelViewCellDelegate: AnyObject {
     /// Encrypts the message with the first Application Key bound to the given
     /// Model and a Network Key bound to it, and sends it to the Node
     /// to which the Model belongs to.

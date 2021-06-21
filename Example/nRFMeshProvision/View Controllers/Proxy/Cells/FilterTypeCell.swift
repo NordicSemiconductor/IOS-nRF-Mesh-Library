@@ -31,7 +31,7 @@
 import UIKit
 import nRFMeshProvision
 
-protocol ProxyFilterTypeDelegate: class {
+protocol ProxyFilterTypeDelegate: AnyObject {
     func filterTypeDidChange(_ type: ProxyFilerType)
 }
 

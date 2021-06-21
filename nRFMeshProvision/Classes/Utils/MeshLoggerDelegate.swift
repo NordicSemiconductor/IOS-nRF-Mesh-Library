@@ -75,7 +75,7 @@ public enum LogCategory: String {
 }
 
 /// The Logger delegate.
-public protocol LoggerDelegate: class {
+public protocol LoggerDelegate: AnyObject {
     
     /// This method is called whenever a new log entry is to be saved.
     /// The logger implementation should save this or present it to the user.

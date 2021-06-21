@@ -36,7 +36,7 @@ public enum ModelError: Error {
     case invalidMessage
 }
 
-public protocol ModelDelegate: class {
+public protocol ModelDelegate: AnyObject {
     typealias MessageComposer = () -> MeshMessage
     
     /// A map of mesh message types that the associated Model may receive

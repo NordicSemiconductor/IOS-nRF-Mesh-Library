@@ -31,7 +31,7 @@
 import Foundation
 import nRFMeshProvision
 
-protocol ProvisioningViewDelegate: class {
+protocol ProvisioningViewDelegate: AnyObject {
     
     /// Callback called when a new device has been provisioned.
     func provisionerDidProvisionNewDevice(_ node: Node)
