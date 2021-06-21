@@ -212,6 +212,11 @@ internal class AccessLayer {
             let k = key(for: element, and: destination)
             mutex.sync {
                 transactions[k] = transactions[k] ?? Transaction()
+                
+                // NOTE: The code below MUST use "transactions[k]!...." (instead of a temporary let
+                //       as Transaction is a struct and creating temporary variable would make a copy
+                //       of it instead of modifying the original object. The methods below are mutable.
+                
                 // Should the last transaction be continued?
                 if retransmit || transactionMessage.continueTransaction, transactions[k]!.isActive {
                     transactionMessage.tid = transactions[k]!.currentTid()
