@@ -31,7 +31,7 @@
 import UIKit
 import nRFMeshProvision
 
-protocol ModelGroupViewCellDelegate: class {
+protocol ModelGroupViewCellDelegate: AnyObject {
     /// Encrypts the message with the given Application Key and a Network Key
     /// bound to it, and sends it to the Group.
     ///
