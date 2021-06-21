@@ -210,13 +210,20 @@ internal class AccessLayer {
         if var transactionMessage = message as? TransactionMessage, transactionMessage.tid == nil {
             // Ensure there is a transaction for our destination.
             let k = key(for: element, and: destination)
-            transactions[k] = transactions[k] ?? Transaction()
-            // Should the last transaction be continued?
-            if retransmit || transactionMessage.continueTransaction, transactions[k]!.isActive {
-                transactionMessage.tid = transactions[k]!.currentTid()
-            } else {
-                // If not, start a new transaction by setting a new TID value.
-                transactionMessage.tid = transactions[k]!.nextTid()
+            mutex.sync {
+                transactions[k] = transactions[k] ?? Transaction()
+                
+                // NOTE: The code below MUST use "transactions[k]!...." (instead of a temporary let
+                //       as Transaction is a struct and creating temporary variable would make a copy
+                //       of it instead of modifying the original object. The methods below are mutable.
+                
+                // Should the last transaction be continued?
+                if retransmit || transactionMessage.continueTransaction, transactions[k]!.isActive {
+                    transactionMessage.tid = transactions[k]!.currentTid()
+                } else {
+                    // If not, start a new transaction by setting a new TID value.
+                    transactionMessage.tid = transactions[k]!.nextTid()
+                }
             }
             m = transactionMessage
         }

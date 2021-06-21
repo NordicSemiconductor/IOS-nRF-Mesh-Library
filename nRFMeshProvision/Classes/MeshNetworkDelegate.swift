@@ -30,7 +30,7 @@
 
 import Foundation
 
-public protocol MeshNetworkDelegate: class {
+public protocol MeshNetworkDelegate: AnyObject {
     
     /// A callback called whenever a Mesh Message has been received
     /// from the mesh network.

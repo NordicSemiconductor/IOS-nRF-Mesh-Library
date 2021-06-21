@@ -31,7 +31,7 @@
 import UIKit
 import nRFMeshProvision
 
-protocol ConnectionModeDelegate: class {
+protocol ConnectionModeDelegate: AnyObject {
     func connectionModeDidChange(automatic: Bool)
 }
 

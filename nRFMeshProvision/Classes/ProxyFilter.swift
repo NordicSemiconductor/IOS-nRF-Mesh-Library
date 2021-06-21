@@ -43,7 +43,7 @@ public enum ProxyFilerType: UInt8 {
     case exclusionList = 0x01
 }
 
-public protocol ProxyFilterDelegate: class {
+public protocol ProxyFilterDelegate: AnyObject {
     /// Method called when the Proxy Filter has been updated.
     ///
     /// - parameters:

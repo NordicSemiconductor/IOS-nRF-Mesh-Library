@@ -30,7 +30,7 @@
 
 import Foundation
 
-public protocol ProvisioningDelegate: class {
+public protocol ProvisioningDelegate: AnyObject {
     
     /// Callback called when an authentication action is required
     /// from the user.

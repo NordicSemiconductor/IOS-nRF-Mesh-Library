@@ -1,4 +1,10 @@
 ## Changelog
+- **3.1.3**:
+   - Improvement: Migration to Xcode 12.5.
+   * Improvement: CryptoSwift updated from 1.3.8 to 1.4.0 (https://github.com/krzyzanowskim/CryptoSwift/releases/tag/1.4.0).
+   * Bugfix: Two threading issues fixed (#350 with #351 and #352 with #353).
+   * Bugfix: Refreshing Last Modified date after importing new mesh network configuration (https://github.com/NordicSemiconductor/IOS-nRF-Mesh-Library/commit/f60f3b25111bae1b1dcc1b5ffcf62e2a09615cf7).
+   
 - **3.1.2**:
    - Bugfix: Fixed DevicePropertyCharacteristic.pressure with missing resolution when converting to Data (#344).
    - Bugfix: Fixed calculating message sequence when Seq > 8191 (#345).

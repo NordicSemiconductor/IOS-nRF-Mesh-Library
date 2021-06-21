@@ -31,7 +31,7 @@
 import UIKit
 import nRFMeshProvision
 
-protocol CustomAddressDelegate: class {
+protocol CustomAddressDelegate: AnyObject {
     func customAddressEditingDidBegin()
     func customAddressDidChange(_ address: Address?)
 }
