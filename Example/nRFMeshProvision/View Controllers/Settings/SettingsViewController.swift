@@ -205,6 +205,7 @@ private extension SettingsViewController {
         networkKeysLabel.text  = "\(meshNetwork.networkKeys.count)"
         appKeysLabel.text      = "\(meshNetwork.applicationKeys.count)"
         scenesLabel.text       = "\(meshNetwork.scenes.count)"
+        lastModifiedLabel.text = dateFormatter.string(from: meshNetwork.timestamp)
         
         // IV Update Test Mode is not persistent and has to be set each time
         // the app is open or a network is imported.
