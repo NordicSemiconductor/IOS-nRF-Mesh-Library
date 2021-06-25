@@ -148,7 +148,7 @@ private extension SettingsViewController {
                                       message: "Resetting the network will erase all network data.\n"
                                              + "Make sure you exported it first.",
                                       preferredStyle: .actionSheet)
-        let resetAction = UIAlertAction(title: "Reset", style: .destructive) { _ in self.resetNetwork() }
+        let resetAction = UIAlertAction(title: "Reset", style: .destructive) { [weak self] _ in self?.resetNetwork() }
         let cancelAction = UIAlertAction(title: "Cancel", style: .cancel)
         alert.addAction(resetAction)
         alert.addAction(cancelAction)
@@ -162,8 +162,8 @@ private extension SettingsViewController {
                                       message: "Importing network will override your existing settings.\n"
                                              + "Make sure you exported it first.",
                                       preferredStyle: .actionSheet)
-        let exportAction = UIAlertAction(title: "Export", style: .default) { _ in self.exportNetwork() }
-        let importAction = UIAlertAction(title: "Import", style: .destructive) { _ in self.importNetwork() }
+        let exportAction = UIAlertAction(title: "Export", style: .default) { [weak self] _ in self?.exportNetwork() }
+        let importAction = UIAlertAction(title: "Import", style: .destructive) { [weak self] _ in self?.importNetwork() }
         let cancelAction = UIAlertAction(title: "Cancel", style: .cancel)
         alert.addAction(exportAction)
         alert.addAction(importAction)
@@ -223,7 +223,8 @@ private extension SettingsViewController {
     /// Saves mesh network configuration and reloads network data on success.
     func saveAndReload() {
         if MeshNetworkManager.instance.save() {
-            DispatchQueue.main.async {
+            DispatchQueue.main.async { [weak self] in
+                guard let self = self else { return }
                 (UIApplication.shared.delegate as! AppDelegate).meshNetworkDidChange()
                 self.reload()
                 self.presentAlert(title: "Success", message: "Mesh Network configuration imported.")
@@ -241,7 +242,8 @@ extension SettingsViewController: UIDocumentPickerDelegate {
     func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentAt url: URL) {
         let manager = MeshNetworkManager.instance
         
-        DispatchQueue.global(qos: .userInitiated).async {
+        DispatchQueue.global(qos: .userInitiated).async { [weak self] in
+            guard let self = self else { return }
             do {
                 let data = try Data(contentsOf: url)
                 let meshNetwork = try manager.import(from: data)
@@ -250,17 +252,18 @@ extension SettingsViewController: UIDocumentPickerDelegate {
                     // If it's a new network and has only one Provisioner, just save it.
                     // Otherwise, give the user option to select one.
                     if meshNetwork.provisioners.count > 1 {
-                        DispatchQueue.main.async {
+                        DispatchQueue.main.async { [weak self] in
+                            guard let self = self else { return }
                             let alert = UIAlertController(title: "Select Provisioner",
                                                           message: "Select Provisioner instance to be used on this device:",
                                                           preferredStyle: .actionSheet)
                             alert.popoverPresentationController?.barButtonItem = self.organizeButton
                             for provisioner in meshNetwork.provisioners {
-                                alert.addAction(UIAlertAction(title: provisioner.name, style: .default) { action in
+                                alert.addAction(UIAlertAction(title: provisioner.name, style: .default) { [weak self] action in
                                     // This will effectively set the Provisioner to be used
                                     // be the library. Provisioner from index 0 is the local one.
                                     meshNetwork.moveProvisioner(provisioner, toIndex: 0)
-                                    self.saveAndReload()
+                                    self?.saveAndReload()
                                 })
                             }
                             self.present(alert, animated: true)
@@ -272,41 +275,41 @@ extension SettingsViewController: UIDocumentPickerDelegate {
             } catch let DecodingError.dataCorrupted(context) {
                 let path = context.codingPath.path
                 print("Import failed: \(context.debugDescription) (\(path))")
-                DispatchQueue.main.async {
-                    self.presentAlert(title: "Error",
-                                      message: "Importing Mesh Network configuration failed.\n"
-                                             + "\(context.debugDescription)\nPath: \(path).")
+                DispatchQueue.main.async { [weak self] in
+                    self?.presentAlert(title: "Error",
+                                       message: "Importing Mesh Network configuration failed.\n"
+                                              + "\(context.debugDescription)\nPath: \(path).")
                 }
             } catch let DecodingError.keyNotFound(key, context) {
                 let path = context.codingPath.path
                 print("Import failed: Key \(key) not found in \(path)")
-                DispatchQueue.main.async {
-                    self.presentAlert(title: "Error",
-                                      message: "Importing Mesh Network configuration failed.\n"
-                                             + "No value associated with key: \(key.stringValue) in: \(path).")
+                DispatchQueue.main.async { [weak self] in
+                    self?.presentAlert(title: "Error",
+                                       message: "Importing Mesh Network configuration failed.\n"
+                                              + "No value associated with key: \(key.stringValue) in: \(path).")
                 }
             } catch let DecodingError.valueNotFound(value, context) {
                 let path = context.codingPath.path
                 print("Import failed: Value of type \(value) required in \(path)")
-                DispatchQueue.main.async {
-                    self.presentAlert(title: "Error",
-                                      message: "Importing Mesh Network configuration failed.\n"
-                                             + "No value associated with key: \(path).")
+                DispatchQueue.main.async { [weak self] in
+                    self?.presentAlert(title: "Error",
+                                       message: "Importing Mesh Network configuration failed.\n"
+                                              + "No value associated with key: \(path).")
                 }
             } catch let DecodingError.typeMismatch(type, context) {
                 let path = context.codingPath.path
                 print("Import failed: Type mismatch in \(path) (\(type) was required)")
-                DispatchQueue.main.async {
-                    self.presentAlert(title: "Error",
-                                      message: "Importing Mesh Network configuration failed.\n"
-                                             + "Type mismatch in: \(path). Expected: \(type).")
+                DispatchQueue.main.async { [weak self] in
+                    self?.presentAlert(title: "Error",
+                                       message: "Importing Mesh Network configuration failed.\n"
+                                              + "Type mismatch in: \(path). Expected: \(type).")
                 }
             } catch {
                 print("Import failed: \(error)")
-                DispatchQueue.main.async {
-                    self.presentAlert(title: "Error",
-                                      message: "Importing Mesh Network configuration failed.\n"
-                                             + "Check if the file is valid.")
+                DispatchQueue.main.async { [weak self] in
+                    self?.presentAlert(title: "Error",
+                                       message: "Importing Mesh Network configuration failed.\n"
+                                              + "Check if the file is valid.")
                 }
             }
         }

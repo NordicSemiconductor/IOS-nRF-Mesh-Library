@@ -367,8 +367,8 @@ private extension NodeScenesViewController {
             return false
         }
         guard isSceneClientReady else {
-            let action = UIAlertAction(title: "Fix", style: .default) { [unowned self] action in
-                self.fixClient()
+            let action = UIAlertAction(title: "Fix", style: .default) { [weak self] action in
+                self?.fixClient()
             }
             presentAlert(title: "Client not ready",
                          message: "Scene Client model on local node is not bound to any of the "
@@ -390,8 +390,8 @@ private extension NodeScenesViewController {
             return false
         }
         guard isSceneClientReadyToSetup else {
-            let action = UIAlertAction(title: "Fix", style: .default) { [unowned self] action in
-                self.fixClient()
+            let action = UIAlertAction(title: "Fix", style: .default) { [weak self] action in
+                self?.fixClient()
             }
             presentAlert(title: "Client not ready",
                          message: "Scene Client model on local node is not bound to any of the "

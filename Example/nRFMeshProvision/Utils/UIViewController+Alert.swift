@@ -63,7 +63,8 @@ extension UIViewController {
         // TODO: Should only iPad be handled differently? How about carPlay or Apple TV?
         let ipad = UIDevice.current.userInterfaceIdiom == .pad
         let style: UIAlertController.Style = ipad ? .alert : .actionSheet
-        DispatchQueue.main.async {
+        DispatchQueue.main.async { [weak self] in
+            guard let self = self else { return }
             let alert = UIAlertController(title: title, message: message, preferredStyle: style)
             alert.addAction(UIAlertAction(title: "Confirm", style: .destructive, handler: handler))
             alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
@@ -84,7 +85,8 @@ extension UIViewController {
     func presentAlert(title: String?, message: String?, cancelable: Bool = false,
                       option action: UIAlertAction? = nil,
                       handler: ((UIAlertAction) -> Void)? = nil) {
-        DispatchQueue.main.async {
+        DispatchQueue.main.async { [weak self] in
+            guard let self = self else { return }
             let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
             alert.addAction(UIAlertAction(title: cancelable ? "Cancel" : "OK", style: .cancel, handler: handler))
             if let action = action {
@@ -107,7 +109,8 @@ extension UIViewController {
     func presentRangeAlert(title: String?, message: String?, range: RangeObject? = nil,
                            type selector: Selector? = nil,
                            handler: ((ClosedRange<UInt16>) -> Void)? = nil) {
-        DispatchQueue.main.async {
+        DispatchQueue.main.async { [weak self] in
+            guard let self = self else { return }
             var alert: UIAlertController? = UIAlertController(title: title, message: message, preferredStyle: .alert)
             alert!.addTextField { textField in
                 textField.text                   = range?.lowerBound.hex
@@ -165,7 +168,8 @@ extension UIViewController {
     func presentTextAlert(title: String?, message: String?, text: String? = "", placeHolder: String? = "",
                           type selector: Selector? = nil, option action: UIAlertAction? = nil,
                           cancelHandler: (() -> Void)? = nil, handler: ((String) -> Void)? = nil) {
-        DispatchQueue.main.async {
+        DispatchQueue.main.async { [weak self] in
+            guard let self = self else { return }
             var alert: UIAlertController? = UIAlertController(title: title, message: message, preferredStyle: .alert)
             alert!.addTextField { textField in
                 textField.text                   = text
@@ -219,7 +223,8 @@ extension UIViewController {
     ///   - handler:     The OK or Generate button handler.
     func presentKeyDialog(title: String?, message: String?, key: Data? = nil,
                           handler: ((Data) -> Void)? = nil) {
-        DispatchQueue.main.async {
+        DispatchQueue.main.async { [weak self] in
+            guard let self = self else { return }
             var alert: UIAlertController? = UIAlertController(title: title, message: message, preferredStyle: .alert)
             alert!.addTextField { textField in
                 textField.text                   = key?.hex ?? Data.random128BitKey().hex

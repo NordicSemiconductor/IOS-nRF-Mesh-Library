@@ -233,7 +233,8 @@ private extension EditProvisionerViewController {
         let nodeAssigned = newAddress != nil || (node != nil && !disableConfigCapabilities)
         let action = !nodeAssigned ? nil : UIAlertAction(title: "Unassign", style: .destructive) { action in
             self.confirm(title: "Disable configuration capabilities",
-                         message: "A Provisioner without the unicast address assigned is not able to perform configuration operations.") { _ in
+                         message: "A Provisioner without the unicast address assigned is not able to perform configuration operations.") { [weak self] _ in
+                            guard let self = self else { return }
                             self.disableConfigCapabilities = true
                             self.newAddress = nil
                             self.unicastAddressLabel.text = "Not assigned"
@@ -246,7 +247,8 @@ private extension EditProvisionerViewController {
         }
         presentTextAlert(title: "Unicast address", message: "Hexadecimal value in range\n0001 - 7FFF.",
                          text: address, placeHolder: "Address", type: .unicastAddressRequired,
-                         option: action, cancelHandler: nil) { text in
+                         option: action, cancelHandler: nil) { [weak self] text in
+                            guard let self = self else { return }
                             let address = Address(text, radix: 16)
                             self.unicastAddressLabel.text = address!.asString()
                             self.disableConfigCapabilities = false
@@ -272,7 +274,8 @@ private extension EditProvisionerViewController {
         presentTextAlert(title: "Default TTL",
                          message: "TTL = Time To Live\n\nTTL limits the number of times a message can be relayed.\nMax value is 127.",
                          text: "\(node?.defaultTTL ?? 5)", placeHolder: "Default is 5",
-                         type: .ttlRequired, cancelHandler: nil) { value in
+                         type: .ttlRequired, cancelHandler: nil) { [weak self] value in
+                            guard let self = self else { return }
                             let ttl = UInt8(value)!
                             self.newTtl = ttl
                             self.ttlCell.detailTextLabel?.text = "\(ttl)"
@@ -361,9 +364,9 @@ private extension EditProvisionerViewController {
                 let nextText = next.map { " Next available address is \($0.asString())."} ??
                     " No available addresses. Extend the unicast address range to assign a new one."
                 let autoAssign = next.map { nextAddress in
-                    UIAlertAction(title: "Assign", style: .default) { _ in
-                        self.newAddress = nextAddress
-                        self.unicastAddressLabel.text = nextAddress.asString()
+                    UIAlertAction(title: "Assign", style: .default) { [weak self] _ in
+                        self?.newAddress = nextAddress
+                        self?.unicastAddressLabel.text = nextAddress.asString()
                     }
                 }
                 presentAlert(title: "Error",
@@ -377,9 +380,9 @@ private extension EditProvisionerViewController {
                     let nextText = next.map { " Next available address is \($0.asString())."} ??
                         " No available addresses. Extend the unicast address range to assign a new one."
                     let autoAssign = next.map { nextAddress in
-                        UIAlertAction(title: "Assign", style: .default) { _ in
-                            self.newAddress = nextAddress
-                            self.unicastAddressLabel.text = nextAddress.asString()
+                        UIAlertAction(title: "Assign", style: .default) { [weak self] _ in
+                            self?.newAddress = nextAddress
+                            self?.unicastAddressLabel.text = nextAddress.asString()
                         }
                     }
                     presentAlert(title: "Error", message: "The address range \(address.asString())...\((address + UInt16(count)  - 1).hex) is already in use or is reserved. A unique unicast address must be assigned to each of the \(count) elements.\(nextText)", option: autoAssign)

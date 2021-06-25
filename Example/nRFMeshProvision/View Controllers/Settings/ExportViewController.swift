@@ -265,7 +265,8 @@ private extension ExportViewController {
     func exportNetwork(using exportConfiguration: ExportConfiguration) {
         let manager = MeshNetworkManager.instance
         
-        DispatchQueue.global(qos: .userInitiated).async {
+        DispatchQueue.global(qos: .userInitiated).async { [weak self] in
+            guard let self = self else { return }
             let data = manager.export(exportConfiguration)
             
             do {
@@ -273,10 +274,12 @@ private extension ExportViewController {
                 let fileURL = FileManager.default.temporaryDirectory.appendingPathComponent("\(name).json")
                 try data.write(to: fileURL)
                 
-                DispatchQueue.main.async {
+                DispatchQueue.main.async { [weak self] in
+                    guard let self = self else { return }
                     let controller = UIActivityViewController(activityItems: [fileURL], applicationActivities: nil)
                     controller.popoverPresentationController?.barButtonItem = self.doneButton
-                    controller.completionWithItemsHandler = { type, success, items, error in
+                    controller.completionWithItemsHandler = { [weak self] type, success, items, error in
+                        guard let self = self else { return }
                         if success {
                             self.dismiss(animated: true)
                         } else {
@@ -292,10 +295,10 @@ private extension ExportViewController {
                 }
             } catch {
                 print("Export failed: \(error)")
-                DispatchQueue.main.async {
-                    self.presentAlert(title: "Error",
-                                      message: "Exporting Mesh Network configuration failed "
-                                             + "with error \(error.localizedDescription).")
+                DispatchQueue.main.async { [weak self] in
+                    self?.presentAlert(title: "Error",
+                                       message: "Exporting Mesh Network configuration failed "
+                                              + "with error \(error.localizedDescription).")
                 }
             }
         }

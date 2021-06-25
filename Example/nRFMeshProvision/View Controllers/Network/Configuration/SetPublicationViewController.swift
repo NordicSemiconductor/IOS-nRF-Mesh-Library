@@ -189,12 +189,13 @@ private extension SetPublicationViewController {
                          message: "TTL = Time To Live\n\nTTL limits the number of times a message can be relayed.\nMax value is 127. Message with TTL 0 will not be relayed.",
                          text: "5", placeHolder: "Default is 5",
                          type: .ttlRequired,
-                         option: UIAlertAction(title: "Use Node's default", style: .default, handler: { _ in
+                         option: UIAlertAction(title: "Use Node's default", style: .default) { _ in
                             self.ttl = 0xFF
-                         }),
+                         },
                          handler: { value in
                             self.ttl = UInt8(value)!
-                         })
+                         }
+        )
     }
     
     func periodSelected(_ period: Float) {

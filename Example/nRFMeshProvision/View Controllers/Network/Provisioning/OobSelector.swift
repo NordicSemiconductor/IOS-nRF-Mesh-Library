@@ -60,23 +60,23 @@ extension OobSelector where Self: UIViewController {
         }
         
         let alert = UIAlertController(title: "Select OOB Type", message: nil, preferredStyle: .actionSheet)
-        alert.addAction(UIAlertAction(title: "No OOB", style: .destructive, handler: { _ in
+        alert.addAction(UIAlertAction(title: "No OOB", style: .destructive) { _ in
             callback(.noOob)
-        }))
+        })
         if capabilities.staticOobType.contains(.staticOobInformationAvailable) {
-            alert.addAction(UIAlertAction(title: "Static OOB", style: .default, handler: { _ in
+            alert.addAction(UIAlertAction(title: "Static OOB", style: .default) { _ in
                 callback(.staticOob)
-            }))
+            })
         }
         if !capabilities.outputOobActions.isEmpty {
-            alert.addAction(UIAlertAction(title: "Output OOB", style: .default, handler: { _ in
+            alert.addAction(UIAlertAction(title: "Output OOB", style: .default) { _ in
                 self.presentOutputOobOptionsDialog(for: provisioningManager, from: item, callback: callback)
-            }))
+            })
         }
         if !capabilities.inputOobActions.isEmpty {
-            alert.addAction(UIAlertAction(title: "Input OOB", style: .default, handler: { _ in
+            alert.addAction(UIAlertAction(title: "Input OOB", style: .default) { _ in
                 self.presentInputOobOptionsDialog(for: provisioningManager, from: item, callback: callback)
-            }))
+            })
         }
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
         alert.popoverPresentationController?.barButtonItem = item

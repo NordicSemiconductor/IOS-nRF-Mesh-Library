@@ -57,7 +57,8 @@ class ProgressCollectionViewController: UICollectionViewController {
     /// - parameter message: Message to be displayed to the user.
     /// - parameter completion: A completion handler.
     func start(_ message: String, completion: @escaping () throws -> MessageHandle?) {
-        DispatchQueue.main.async {
+        DispatchQueue.main.async { [weak self] in
+            guard let self = self else { return }
             do {
                 self.messageHandle = try completion()
                 guard let _ = self.messageHandle else {
@@ -71,9 +72,9 @@ class ProgressCollectionViewController: UICollectionViewController {
                     self.alert = UIAlertController(title: "Status",
                                                    message: message,
                                                    preferredStyle: .alert)
-                    self.alert!.addAction(UIAlertAction(title: "Cancel", style: .cancel) { _ in
-                        self.messageHandle?.cancel()
-                        self.alert = nil
+                    self.alert!.addAction(UIAlertAction(title: "Cancel", style: .cancel) { [weak self] _ in
+                        self?.messageHandle?.cancel()
+                        self?.alert = nil
                     })
                     self.present(self.alert!, animated: true)
                 }
@@ -83,8 +84,8 @@ class ProgressCollectionViewController: UICollectionViewController {
                     self.alert = UIAlertController(title: "Error",
                                                    message: error.localizedDescription,
                                                    preferredStyle: .alert)
-                    self.alert!.addAction(UIAlertAction(title: "OK", style: .cancel) { _ in
-                        self.alert = nil
+                    self.alert!.addAction(UIAlertAction(title: "OK", style: .cancel) { [weak self] _ in
+                        self?.alert = nil
                     })
                     self.present(self.alert!, animated: true)
                 }
