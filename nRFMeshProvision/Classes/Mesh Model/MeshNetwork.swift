@@ -357,7 +357,9 @@ public class MeshNetwork: Codable {
                                                    debugDescription: "Device Key cannot be empty in non-partial configuration.")
         }
         nodes = ns
-        groups = try container.decode([Group].self, forKey: .groups)
+        // Groups are mandatory, but one of the Android versions didn't export empty
+        // list to JSON, so it may happen that Groups are `nil`.
+        groups = try container.decodeIfPresent([Group].self, forKey: .groups) ?? []
         networkExclusions = try container.decodeIfPresent([ExclusionList].self, forKey: .networkExclusions)
         // Scenes are mandatory, but previous version of the library did support it,
         // so JSON files generated with such versions won't have "scenes" tag.
