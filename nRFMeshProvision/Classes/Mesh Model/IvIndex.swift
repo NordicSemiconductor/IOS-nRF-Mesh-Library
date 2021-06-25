@@ -58,7 +58,7 @@ internal struct IvIndex {
     /// - parameter ivi: The IVI bit of the received Network PDU.
     /// - returns: The IV Index to be used to decrypt the message.
     func index(for ivi: UInt8) -> UInt32 {
-        return ivi == index & 1 ? index : index - 1
+        return ivi == index & 1 ? index : max(1, index) - 1
     }
 }
 
