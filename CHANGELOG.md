@@ -1,4 +1,9 @@
 ## Changelog
+- **3.1.4**:
+   - Bugfix: Possible crash fixed when IVI was 1 and IV Index 0 (#358).
+   - Bugfix: Multiple `self` weakened (#356).
+   - Allowing groups to be null when importing (#348, #357).
+   
 - **3.1.3**:
    - Improvement: Migration to Xcode 12.5.
    * Improvement: CryptoSwift updated from 1.3.8 to 1.4.0 (https://github.com/krzyzanowskim/CryptoSwift/releases/tag/1.4.0).
