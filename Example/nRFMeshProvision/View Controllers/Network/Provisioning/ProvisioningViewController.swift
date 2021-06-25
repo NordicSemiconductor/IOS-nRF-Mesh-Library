@@ -159,7 +159,8 @@ private extension ProvisioningViewController {
     /// Presents a dialog to edit or unbind the Provisioner Unicast Address.
     func presentUnicastAddressDialog() {
         let manager = self.provisioningManager!
-        let action = UIAlertAction(title: "Automatic", style: .default) { _ in
+        let action = UIAlertAction(title: "Automatic", style: .default) { [weak self] _ in
+            guard let self = self else { return }
             manager.unicastAddress = manager.suggestedUnicastAddress
             self.unicastAddressLabel.text = manager.unicastAddress?.asString() ?? "Automatic"
             let deviceSupported = manager.isDeviceSupported == true
@@ -168,7 +169,8 @@ private extension ProvisioningViewController {
         }
         presentTextAlert(title: "Unicast address", message: "Hexadecimal value in Provisioner's range.",
                          text: manager.unicastAddress?.hex, placeHolder: "Address", type: .unicastAddressRequired,
-                         option: action, cancelHandler: nil) { text in
+                         option: action, cancelHandler: nil) { [weak self] text in
+                            guard let self = self else { return }
                             manager.unicastAddress = Address(text, radix: 16)
                             self.unicastAddressLabel.text = manager.unicastAddress!.asString()
                             let deviceSupported = manager.isDeviceSupported == true
@@ -181,7 +183,8 @@ private extension ProvisioningViewController {
     }
     
     func presentStatusDialog(message: String, animated flag: Bool = true, completion: (() -> Void)? = nil) {
-        DispatchQueue.main.async {
+        DispatchQueue.main.async { [weak self] in
+            guard let self = self else { return }
             if let alert = self.alert {
                 alert.message = message
                 completion?()
@@ -197,7 +200,8 @@ private extension ProvisioningViewController {
     }
     
     func dismissStatusDialog(completion: (() -> Void)? = nil) {
-        DispatchQueue.main.async {
+        DispatchQueue.main.async { [weak self] in
+            guard let self = self else { return }
             if let alert = self.alert {
                 alert.dismiss(animated: true, completion: completion)
             } else {
@@ -208,7 +212,8 @@ private extension ProvisioningViewController {
     }
     
     func abort() {
-        DispatchQueue.main.async {
+        DispatchQueue.main.async { [weak self] in
+            guard let self = self else { return }
             self.alert?.title   = "Aborting"
             self.alert?.message = "Cancelling connection..."
             self.bearer.close()
@@ -248,7 +253,8 @@ private extension ProvisioningViewController {
         let outputOobNotSupported = capabilities.outputOobActions.isEmpty
         let inputOobNotSupported  = capabilities.inputOobActions.isEmpty
         guard (staticOobNotSupported && outputOobNotSupported && inputOobNotSupported) || authenticationMethod != nil else {
-            presentOobOptionsDialog(for: provisioningManager, from: provisionButton) { method in
+            presentOobOptionsDialog(for: provisioningManager, from: provisionButton) { [weak self] method in
+                guard let self = self else { return }
                 self.authenticationMethod = method
                 self.startProvisioning()
             }
@@ -291,7 +297,8 @@ extension ProvisioningViewController: GattBearerDelegate {
     }
     
     func bearerDidOpen(_ bearer: Bearer) {
-        presentStatusDialog(message: "Identifying...") {
+        presentStatusDialog(message: "Identifying...") { [weak self] in
+            guard let self = self else { return }
             do {
                 try self.provisioningManager!.identify(andAttractFor: ProvisioningViewController.attentionTimer)
             } catch {
@@ -303,15 +310,17 @@ extension ProvisioningViewController: GattBearerDelegate {
     
     func bearer(_ bearer: Bearer, didClose error: Error?) {
         guard case .complete = provisioningManager.state else {
-            dismissStatusDialog {
-                self.presentAlert(title: "Status", message: "Device disconnected.")
+            dismissStatusDialog { [weak self] in
+                self?.presentAlert(title: "Status", message: "Device disconnected.")
             }
             return
         }
         dismissStatusDialog {
-            self.presentAlert(title: "Success", message: "Provisioning complete.") { _ in
+            self.presentAlert(title: "Success", message: "Provisioning complete.") { [weak self] _ in
+                guard let self = self else { return }
                 if MeshNetworkManager.instance.save() {
-                    self.dismiss(animated: true) {
+                    self.dismiss(animated: true) { [weak self] in
+                        guard let self = self else { return }
                         let network = MeshNetworkManager.instance.meshNetwork!
                         if let node = network.node(for: self.unprovisionedDevice) {
                             self.delegate?.provisionerDidProvisionNewDevice(node)
@@ -329,7 +338,8 @@ extension ProvisioningViewController: GattBearerDelegate {
 extension ProvisioningViewController: ProvisioningDelegate {
     
     func provisioningState(of unprovisionedDevice: UnprovisionedDevice, didChangeTo state: ProvisioningState) {
-        DispatchQueue.main.async {
+        DispatchQueue.main.async { [weak self] in
+            guard let self = self else { return }
             switch state {
                 
             case .requestingCapabilities:

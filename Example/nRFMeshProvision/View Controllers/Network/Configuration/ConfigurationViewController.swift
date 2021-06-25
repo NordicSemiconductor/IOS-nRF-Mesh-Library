@@ -375,7 +375,7 @@ private extension ConfigurationViewController {
         let alert = UIAlertController(title: "Reset Node",
                                       message: "Resetting the node will change its state back to unprovisioned state and remove it from the local database.",
                                       preferredStyle: .actionSheet)
-        let resetAction = UIAlertAction(title: "Reset", style: .destructive) { _ in self.resetNode() }
+        let resetAction = UIAlertAction(title: "Reset", style: .destructive) { [weak self] _ in self?.resetNode() }
         let cancelAction = UIAlertAction(title: "Cancel", style: .cancel)
         alert.addAction(resetAction)
         alert.addAction(cancelAction)
@@ -390,7 +390,7 @@ private extension ConfigurationViewController {
         let alert = UIAlertController(title: "Remove Node",
                                       message: "The node will only be removed from the local database. It will still be able to send and receive messages from the network. Remove the node only if the device is no longer available.",
                                       preferredStyle: .actionSheet)
-        let resetAction = UIAlertAction(title: "Remove", style: .destructive) { _ in self.removeNode() }
+        let resetAction = UIAlertAction(title: "Remove", style: .destructive) { [weak self] _ in self?.removeNode() }
         let cancelAction = UIAlertAction(title: "Cancel", style: .cancel)
         alert.addAction(resetAction)
         alert.addAction(cancelAction)

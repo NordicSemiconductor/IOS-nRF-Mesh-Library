@@ -41,9 +41,10 @@ class AppKeysViewController: UITableViewController, Editable {
         } else {
             presentAlert(title: "Error",
                          message: "No Network Key found.\n\nCreate a Network Key prior to creating an Application Key.",
-                         option: UIAlertAction(title: "Create", style: .default, handler: { action in
-                            self.performSegue(withIdentifier: "networkKeys", sender: nil)
-                         }))
+                         option: UIAlertAction(title: "Create", style: .default) { [weak self] action in
+                            self?.performSegue(withIdentifier: "networkKeys", sender: nil)
+                         }
+            )
         }
     }
     
@@ -55,7 +56,8 @@ class AppKeysViewController: UITableViewController, Editable {
             self.presentTextAlert(title: "Generate keys",
                                   message: "Specify number of application keys to generate (max 5):",
                                   placeHolder: "E.g. 3", type: .numberRequired,
-                                  cancelHandler: nil) { value in
+                                  cancelHandler: nil) { [weak self] value in
+                guard let self = self else { return }
                 guard let network = MeshNetworkManager.instance.meshNetwork,
                       let number = Int(value), number > 0 else {
                     return
