@@ -78,8 +78,8 @@ private extension SceneSetupServerGroupCell {
         }
         let alert = UIAlertController(title: "Select scene", message: nil, preferredStyle: .actionSheet)
         network.scenes.forEach { scene in
-            alert.addAction(UIAlertAction(title: scene.name, style: .default) { _ in
-                self.sendSceneStore(scene.number)
+            alert.addAction(UIAlertAction(title: scene.name, style: .default) { [weak self] _ in
+                self?.sendSceneStore(scene.number)
             })
         }
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))

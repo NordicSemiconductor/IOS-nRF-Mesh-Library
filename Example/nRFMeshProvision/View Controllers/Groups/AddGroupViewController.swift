@@ -147,8 +147,8 @@ private extension AddGroupViewController {
         }
         presentTextAlert(title: "Group address", message: "Hexadecimal value in range\nC000 - FEFF.",
                          text: address?.hex, placeHolder: "Address", type: .groupAddressRequired,
-                         option: action, cancelHandler: nil) { text in
-                            self.address = MeshAddress(hex: text)
+                         option: action, cancelHandler: nil) { [weak self] text in
+                            self?.address = MeshAddress(hex: text)
         }
     }
     

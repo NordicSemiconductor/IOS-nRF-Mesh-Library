@@ -103,10 +103,10 @@ class ProxySelectorViewController: UITableViewController {
         selectedDevice = bearer
         
         alert = UIAlertController(title: "Status", message: "Connecting...", preferredStyle: .alert)
-        alert!.addAction(UIAlertAction(title: "Cancel", style: .cancel) { action in
+        alert!.addAction(UIAlertAction(title: "Cancel", style: .cancel) { [weak self] action in
             action.isEnabled = false
-            self.alert!.title   = "Aborting"
-            self.alert!.message = "Cancelling connection..."
+            self?.alert?.title   = "Aborting"
+            self?.alert?.message = "Cancelling connection..."
             bearer.close()
         })
         present(alert!, animated: true) {
@@ -176,29 +176,30 @@ extension ProxySelectorViewController: CBCentralManagerDelegate {
 extension ProxySelectorViewController: GattBearerDelegate {
     
     func bearerDidConnect(_ bearer: Bearer) {
-        DispatchQueue.main.async {
-            self.alert?.message = "Discovering services..."
+        DispatchQueue.main.async { [weak self] in
+            self?.alert?.message = "Discovering services..."
         }
     }
     
     func bearerDidDiscoverServices(_ bearer: Bearer) {
-        DispatchQueue.main.async {
-            self.alert?.message = "Initializing..."
+        DispatchQueue.main.async { [weak self] in
+            self?.alert?.message = "Initializing..."
         }
     }
         
     func bearerDidOpen(_ bearer: Bearer) {
         MeshNetworkManager.bearer.use(proxy: bearer as! GattBearer)
-        DispatchQueue.main.async {
-            self.alert?.dismiss(animated: true) {
-                self.dismiss(animated: true)
+        DispatchQueue.main.async { [weak self] in
+            self?.alert?.dismiss(animated: true) { [weak self] in
+                self?.dismiss(animated: true)
             }
-            self.alert = nil            
+            self?.alert = nil
         }
     }
     
     func bearer(_ bearer: Bearer, didClose error: Error?) {
-        DispatchQueue.main.async {
+        DispatchQueue.main.async { [weak self] in
+            guard let self = self else { return }
             self.alert?.message = "Device disconnected"
             self.alert?.dismiss(animated: true)
             self.alert = nil
