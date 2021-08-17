@@ -170,7 +170,8 @@ internal class AccessLayer {
            let index = mutex.sync(execute: {
                            reliableMessageContexts.firstIndex(where: {
                                $0.source == upperTransportPdu.destination &&
-                               $0.request.responseOpCode == accessPdu.opCode
+                               $0.request.responseOpCode == accessPdu.opCode &&
+                               $0.destination == upperTransportPdu.source
                            })
                        }) {
             mutex.sync {
