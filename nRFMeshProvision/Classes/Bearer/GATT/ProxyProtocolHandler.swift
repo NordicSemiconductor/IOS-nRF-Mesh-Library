@@ -29,6 +29,7 @@
 */
 
 import Foundation
+import UIKit
 
 private enum SAR: UInt8 {
     case completeMessage = 0b00
@@ -66,6 +67,10 @@ private extension PduType {
 public class ProxyProtocolHandler {
     private var buffer: Data?
     private var bufferType: PduType?
+    
+    public init() {
+        // Empty public init.
+    }
     
     /// Segments the given data with given message type to 1+ messages
     /// where all but the last one are of the MTU size and the last one
