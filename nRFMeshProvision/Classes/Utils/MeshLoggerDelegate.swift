@@ -90,32 +90,32 @@ public protocol LoggerDelegate: AnyObject {
 
 internal extension LoggerDelegate {
     
-    func d(_ category: LogCategory, _ message: String) {
-        log(message: message, ofCategory: category, withLevel: .debug)
+    func d(_ category: LogCategory, _ message: @autoclosure () -> String) {
+        log(message: message(), ofCategory: category, withLevel: .debug)
     }
     
-    func v(_ category: LogCategory, _ message: String) {
-        log(message: message, ofCategory: category, withLevel: .verbose)
+    func v(_ category: LogCategory, _ message: @autoclosure () -> String) {
+        log(message: message(), ofCategory: category, withLevel: .verbose)
     }
     
-    func i(_ category: LogCategory, _ message: String) {
-        log(message: message, ofCategory: category, withLevel: .info)
+    func i(_ category: LogCategory, _ message: @autoclosure () -> String) {
+        log(message: message(), ofCategory: category, withLevel: .info)
     }
     
-    func a(_ category: LogCategory, _ message: String) {
-        log(message: message, ofCategory: category, withLevel: .application)
+    func a(_ category: LogCategory, _ message: @autoclosure () -> String) {
+        log(message: message(), ofCategory: category, withLevel: .application)
     }
     
-    func w(_ category: LogCategory, _ message: String) {
-        log(message: message, ofCategory: category, withLevel: .warning)
+    func w(_ category: LogCategory, _ message: @autoclosure () -> String) {
+        log(message: message(), ofCategory: category, withLevel: .warning)
     }
     
     func w(_ category: LogCategory, _ error: Error) {
         log(message: error.localizedDescription, ofCategory: category, withLevel: .warning)
     }
     
-    func e(_ category: LogCategory, _ message: String) {
-        log(message: message, ofCategory: category, withLevel: .error)
+    func e(_ category: LogCategory, _ message: @autoclosure () -> String) {
+        log(message: message(), ofCategory: category, withLevel: .error)
     }
     
     func e(_ category: LogCategory, _ error: Error) {
