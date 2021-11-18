@@ -29,7 +29,6 @@
 */
 
 import Foundation
-import UIKit
 
 private enum SAR: UInt8 {
     case completeMessage = 0b00
