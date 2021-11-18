@@ -1,8 +1,8 @@
 {
   "name": "nRFMeshProvision",
-  "version": "3.1.4",
+  "version": "3.1.5",
   "summary": "A Bluetooth Mesh library",
-  "description": "nRF Mesh is a Bluetooth Mesh compliant library that has many features such as provisioning, configuration and control of Bluetooth Mesh compliant nodes.",
+  "description": "nRF Mesh is a Bluetooth mesh compliant library supporting features such as provisioning, configuration and control of Bluetooth mesh nodes.",
   "homepage": "https://github.com/NordicSemiconductor/IOS-nRF-Mesh-Library",
   "license": {
     "type": "BSD-3-Clause",
@@ -13,7 +13,7 @@
   },
   "source": {
     "git": "https://github.com/NordicSemiconductor/IOS-nRF-Mesh-Library.git",
-    "tag": "3.1.4"
+    "tag": "3.1.5"
   },
   "social_media_url": "https://twitter.com/nordictweets",
   "platforms": {
@@ -26,7 +26,9 @@
     "5.0",
     "5.1",
     "5.2",
-    "5.3"
+    "5.3",
+    "5.4",
+    "5.5"
   ],
   "source_files": "nRFMeshProvision/Classes/**/*",
   "dependencies": {
@@ -35,5 +37,5 @@
     ]
   },
   "frameworks": "CoreBluetooth",
-  "swift_version": "5.3"
+  "swift_version": "5.5"
 }
