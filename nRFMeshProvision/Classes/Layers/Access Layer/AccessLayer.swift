@@ -170,7 +170,8 @@ internal class AccessLayer {
            let index = mutex.sync(execute: {
                            reliableMessageContexts.firstIndex(where: {
                                $0.source == upperTransportPdu.destination &&
-                               $0.request.responseOpCode == accessPdu.opCode
+                               $0.request.responseOpCode == accessPdu.opCode &&
+                               $0.destination == upperTransportPdu.source
                            })
                        }) {
             mutex.sync {
@@ -594,12 +595,14 @@ private extension AccessLayer {
         
         let ack = AcknowledgmentContext(for: request,
             sentFrom: pdu.source, to: pdu.destination.address,
-            repeatAfter: initialDelay, repeatBlock: {
+            repeatAfter: initialDelay, repeatBlock: { [weak self] in
+                guard let self = self else { return }
                 if !self.networkManager.upperTransportLayer.isReceivingResponse(from: pdu.destination.address) {
                     self.logger?.d(.access, "Resending \(pdu)")
                     self.networkManager.upperTransportLayer.send(pdu, withTtl: initialTtl, using: keySet)
                 }
-            }, timeout: timeout, timeoutBlock: {
+            }, timeout: timeout, timeoutBlock: { [weak self] in
+                guard let self = self else { return }
                 self.logger?.w(.access, "Response to \(pdu) not received (timeout)")
                 let category: LogCategory = request is AcknowledgedConfigMessage ? .foundationModel : .model
                 self.logger?.w(category, "\(request) sent from: \(pdu.source.hex), to: \(pdu.destination.hex) timed out")

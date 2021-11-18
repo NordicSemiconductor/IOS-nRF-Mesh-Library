@@ -41,10 +41,11 @@ import Foundation
 /// The handle contains information about the message that was sent:
 /// its opcode, source and destination addresses.
 public struct MessageHandle {
-    let opCode: UInt32
-    let source: Address
-    let destination: Address
     weak var manager: MeshNetworkManager?
+
+    public let opCode: UInt32
+    public let source: Address
+    public let destination: Address
     
     init(for message: MeshMessage,
          sentFrom source: Address, to destination: Address,
