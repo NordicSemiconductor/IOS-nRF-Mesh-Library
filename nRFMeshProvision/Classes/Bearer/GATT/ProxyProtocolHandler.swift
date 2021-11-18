@@ -67,6 +67,10 @@ public class ProxyProtocolHandler {
     private var buffer: Data?
     private var bufferType: PduType?
     
+    public init() {
+        // Empty public init.
+    }
+    
     /// Segments the given data with given message type to 1+ messages
     /// where all but the last one are of the MTU size and the last one
     /// is MTU size or smaller.
