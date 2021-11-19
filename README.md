@@ -1,39 +1,31 @@
-# nRF Mesh for iOS
 [![GitHub license](https://img.shields.io/github/license/NordicSemiconductor/IOS-nRF-Mesh-Library)](https://github.com/NordicSemiconductor/IOS-nRF-Mesh-Library/blob/master/LICENSE)
 [![Version](http://img.shields.io/cocoapods/v/nRFMeshProvision.svg)](http://cocoapods.org/pods/nRFMeshProvision)
 [![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
 [![SwiftPM Compatible](https://img.shields.io/badge/SwiftPM-compatible-brightgreen)](https://swift.org/package-manager/)
 
-The nRF Mesh Provision library allows to provision and exchange messages to Bluetooth mesh devices. 
+# Bluetooth mesh library for iOS
 
-> Bluetooth mesh specifications may be found [here](https://www.bluetooth.com/specifications/specs/?status=active&show_latest_version=0&show_latest_version=1&keyword=mesh&filter=).
+The nRF Mesh library allows to provision Bluetooth mesh devices, configure and exchange messages.
+
+It is written in Swift, and can be easily added to a 3rd part project using CocoaPods, SPM or Carthage.
+
+See [documentation](Documentation/README.md) for more information.
+
+## Features
 
 The library is compatible with 
-- **Bluetooth Mesh Profile 1.0.1**, 
+- **Mesh Profile 1.0.1**, 
 - **Mesh Model 1.0.1**, 
 - **Mesh Device Properties 2**.
 
-The mesh network configuration (JSON) is compatible with 
+The mesh network configuration (JSON schema) is compatible with 
 - **Mesh Configuration Database Profile 1.0**.
 
-All features are tested against *nRF5 SDK for Mesh* and *nRF Connect SDK* based mesh devices.
+Bluetooth mesh specifications are available at [Bluetooth.com](https://www.bluetooth.com/specifications/specs/?status=active&show_latest_version=1&keyword=mesh).
 
-> The version 1.x and 2.x of this library are no longer maintained. Please migrate to 3.x to get new features and bug fixes. 
-For changes and migration details see [#295](https://github.com/NordicSemiconductor/IOS-nRF-Mesh-Library/pull/295).
+### Supported features
 
-## Sample app
-
-The sample application demonstrates how to use the library. It may also be used to configure your Mesh network. 
-Use `pod try` to install and set up the sample app when using CocoaPods.
-The app and the library are released under BSD-3 license. Feel free to modify them as you want.
-
-The app is available on App Store: https://apps.apple.com/us/app/nrf-mesh/id1380726771
-
-## Supported features
-
-The library supports great majority of features from Bluetooth Mesh 1.0.1 specification:
-
-1. Provisioning with all features available in Bluetooth Mesh Profile 1.0.1, including OOB Public Key 
+1. Provisioning with all features available in Mesh Profile 1.0.1, including OOB Public Key 
    and all types of OOB, using GATT bearer.
 2. Configuration, including managing keys, publications, subscription, and hearbeats (both as client and server).
 3. Support for client and server models.
@@ -49,7 +41,25 @@ The library supports great majority of features from Bluetooth Mesh 1.0.1 specif
     including partial export.
 11. Option to use own transport layer with default GATT Bearer implementation available.
 
-Most of the features are demonstrated in the sample app nRF Mesh:
+### NOT (yet) supported features
+
+The following features are not (yet) supported:
+
+1. The rest of models defined by Bluetooth SIG - *PRs are welcome!**
+2. IV Index update (initiation) - *not a top priority, as other nodes may initiate the update.*
+3. Health server messages - *in our TODO list.*
+4. Remote provisioning - *in our TODO list.*
+5. Device Firmware Update (DFU) - *in our TODO list.*
+
+## nRF Mesh sample app
+
+Most of the features listed above are demonstrated in nRF Mesh sample application.
+
+Use `pod try` to install and set up the sample app when using CocoaPods.
+
+The app is available on [App Store](https://apps.apple.com/us/app/nrf-mesh/id1380726771).
+
+### Supported features
 
 1. Provisioning with all available features.
 2. Configuration of local and remote nodes. 
@@ -67,32 +77,25 @@ Most of the features are demonstrated in the sample app nRF Mesh:
 8. Scenes, both as client and server.
 9. Automatic connection to nearby nodes and automatic proxy filter management.
 
-## NOT (yet) supported features
+## Testing
 
-The following features are not (yet) supported:
-
-1. The rest of models defined by Bluetooth SIG - PRs are welcome!
-2. IV Index update (initiation) - not a top priority, as other nodes may initiate the update.
-3. Health server messages - in our TODO list.
-4. Remote provisioning - in our TODO list.
-5. Device Firmware Update (DFU) - in our TODO list.
-
-## Documentation
-
-The documentation for this library may be found [here](Documentation/README.md).
+All features are tested against [nRF5 SDK for Mesh](https://www.nordicsemi.com/Products/Development-software/nRF5-SDK-for-Mesh) and [nRF Connect SDK](https://www.nordicsemi.com/Products/Development-software/nRF-Connect-SDK) based mesh devices.
 
 ## Requirements
 
 * Xcode 12 or newer.
 * An iOS 10.0 or newer device with BLE capabilities.
 
-## Optional
+### Optional
 
-* nrf5 based Development Kit(s) to test the sample firmwares.
+* [nRF5 Development Kit(s)](https://www.nordicsemi.com/Products/Bluetooth-mesh/Development-hardware) for developing and testing firmware.
 
 ## Feedback
 
 Any feedback is more than welcome. Please, test the app, test the library and check out the API.
+
+Use [Issues](https://github.com/NordicSemiconductor/IOS-nRF-Mesh-Library/issues) to report a bug, or ask a question. We also encourage to submit 
+[Pull Requests](https://github.com/NordicSemiconductor/IOS-nRF-Mesh-Library/pulls) with new features or bug fixes.
 
 ## License
 
