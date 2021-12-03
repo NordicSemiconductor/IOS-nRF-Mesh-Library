@@ -70,17 +70,21 @@ open class DefaultProxyFilter: ProxyFilter {
     public weak var delegate: ProxyFilterDelegate?
 
     /// List of addresses currently added to the Proxy Filter.
-    public internal(set) var addresses: Set<Address> = []
+    public private(set) var addresses: Set<Address> = []
+
+    /// `ProxyFilerType` to use for resets.
+    open var defaultProxyFilterType: ProxyFilerType { .inclusionList }
 
     /// The active Proxy Filter type.
     ///
-    /// By default the Proxy Filter is set to `.inclusionList`.
-    public internal(set) var type: ProxyFilerType = .inclusionList
+    /// According to Bluetooth Mesh Profile 1.0.1, section 6.6,
+    /// by default the Proxy Filter is set to `.inclusionList`.
+    public private(set) var type: ProxyFilerType = .inclusionList
 
     /// The connected Proxy Node. This may be `nil` if the connected Node is unknown
     /// to the provisioner, that is if a Node with the proxy Unicast Address was not found
     /// in the local mesh network database. It is also `nil` if no proxy is connected.
-    public internal(set) var proxy: Node?
+    public private(set) var proxy: Node?
 
     // MARK: - Implementation
 
@@ -88,12 +92,31 @@ open class DefaultProxyFilter: ProxyFilter {
         self.manager = manager
         self.delegateQueue = manager.delegateQueue
     }
+
+    // MARK: - Open ProxyFilter API
+
+    /// Adds all the addresses the Provisioner is subscribed to to the
+    /// Proxy Filter.
+    open func setup(for provisioner: Provisioner) {
+        guard let node = provisioner.node else {
+            return
+        }
+        var addresses: Set<Address> = []
+        // Add Unicast Addresses of all Elements of the Provisioner's Node.
+        addresses.formUnion(node.elements.map({ $0.unicastAddress }))
+        // Add all addresses that the Node's Models are subscribed to.
+        let models = node.elements.flatMap { $0.models }
+        let subscriptions = models.flatMap { $0.subscriptions }
+        addresses.formUnion(subscriptions.map({ $0.address.address }))
+        // Add All Nodes group address.
+        addresses.insert(Address.allNodes)
+        // Submit.
+        add(addresses: addresses)
+    }
 }
 
-// MARK: - Public API
-
+// MARK: - Public ProxyFilter API
 public extension DefaultProxyFilter {
-
     /// Sets the Filter Type on the connected GATT Proxy Node.
     /// The filter will be emptied.
     ///
@@ -102,9 +125,9 @@ public extension DefaultProxyFilter {
         send(SetFilterType(type))
     }
 
-    /// Resets the filter to an empty inclusion list filter.
+    /// Resets the filter to an empty list filter. Type is defined by `defaultProxyFilterType`.
     func reset() {
-        send(SetFilterType(.inclusionList))
+        send(SetFilterType(defaultProxyFilterType))
     }
 
     /// Clears the current filter.
@@ -148,25 +171,6 @@ public extension DefaultProxyFilter {
         }
     }
 
-    /// Adds all the addresses the Provisioner is subscribed to to the
-    /// Proxy Filter.
-    func setup(for provisioner: Provisioner) {
-        guard let node = provisioner.node else {
-            return
-        }
-        var addresses: Set<Address> = []
-        // Add Unicast Addresses of all Elements of the Provisioner's Node.
-        addresses.formUnion(node.elements.map({ $0.unicastAddress }))
-        // Add all addresses that the Node's Models are subscribed to.
-        let models = node.elements.flatMap { $0.models }
-        let subscriptions = models.flatMap { $0.subscriptions }
-        addresses.formUnion(subscriptions.map({ $0.address.address }))
-        // Add All Nodes group address.
-        addresses.insert(Address.allNodes)
-        // Submit.
-        add(addresses: addresses)
-    }
-
     /// Notifies the Proxy Filter that the connection to GATT Proxy is closed.
     ///
     /// This method will unset the `busy` flag.
@@ -176,7 +180,6 @@ public extension DefaultProxyFilter {
             proxy = nil
         }
     }
-
 }
 
 // MARK: - Callbacks
