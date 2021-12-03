@@ -37,6 +37,8 @@ public class MeshNetworkManager {
     private var networkManager: NetworkManager?
     /// Storage to keep the app data.
     private let storage: Storage
+    /// ProxyFilter implementation to use
+    private let proxyFilterFactory: (MeshNetworkManager) -> (ProxyFilter & NetworkLayerProxyDelegate)?
     
     /// A queue to handle incoming and outgoing messages.
     internal let queue: DispatchQueue
@@ -44,7 +46,9 @@ public class MeshNetworkManager {
     internal let delegateQueue: DispatchQueue
     
     /// The Proxy Filter state.
-    public internal(set) var proxyFilter: ProxyFilter?
+    internal var proxyFilterAndDelegate: (ProxyFilter & NetworkLayerProxyDelegate)?
+
+    public var proxyFilter: ProxyFilter? { proxyFilterAndDelegate }
     
     /// The logger delegate will be called whenever a new log entry is created.
     public weak var logger: LoggerDelegate?
@@ -150,7 +154,7 @@ public class MeshNetworkManager {
     /// If storage is not provided, a local file will be used instead.
     ///
     /// - important: After the manager has been initialized, the `localElements`
-    ///              property must be set . Otherwise, none of status messages will
+    ///              property must be set. Otherwise, none of status messages will
     ///              be parsed correctly and they will be returned to the delegate
     ///              as `UnknownMessage`s.
     ///
@@ -168,17 +172,24 @@ public class MeshNetworkManager {
     ///            will be processed correctly.
     ///   - delegateQueue: The DispatchQueue to call delegate methods on.
     ///                    By default the global main queue will be used.
+    ///   - proxyFilterFactory: Optional factory for initialization of ProxyFilters.
+    ///                         If none is provided, a factory creating instances of `DefaultProxyFilter`
+    ///                         will be used.
+    ///                         To use no ProxyFilter at all, provide factory always returning `nil`.
     /// - seeAlso: `LocalStorage`
     /// - seeAlso: `LowerTransportLayer.checkAgainstReplayAttack(_:NetworkPdu)`
     public init(using storage: Storage = LocalStorage(),
                 queue: DispatchQueue = DispatchQueue.global(qos: .background),
-                delegateQueue: DispatchQueue = DispatchQueue.main) {
+                delegateQueue: DispatchQueue = DispatchQueue.main,
+                proxyFilterFactory: @escaping ((MeshNetworkManager) -> (ProxyFilter & NetworkLayerProxyDelegate)?) =
+                { meshNetworkManager in DefaultProxyFilter(meshNetworkManager) }) {
         self.storage = storage
         self.meshData = MeshData()
         self.queue = queue
         self.delegateQueue = delegateQueue
+        self.proxyFilterFactory = proxyFilterFactory
     }
-    
+   
     /// Initializes the Mesh Network Manager. It will use the `LocalStorage`
     /// with the given file name.
     ///
@@ -226,7 +237,7 @@ public extension MeshNetworkManager {
         
         meshData.meshNetwork = network
         networkManager = NetworkManager(self)
-        proxyFilter = ProxyFilter(self)
+        proxyFilterAndDelegate = proxyFilterFactory(self)
         return network
     }
     
@@ -757,7 +768,7 @@ public extension MeshNetworkManager {
             }
             
             networkManager = NetworkManager(self)
-            proxyFilter = ProxyFilter(self)
+            proxyFilterAndDelegate = proxyFilterFactory(self)
             return true
         } else if let legacyState = MeshStateManager.load() {
             // The app has been updated from version 1.0.x to 2.0.
@@ -796,7 +807,7 @@ public extension MeshNetworkManager {
             
             meshData.meshNetwork = network
             networkManager = NetworkManager(self)
-            proxyFilter = ProxyFilter(self)
+            proxyFilterAndDelegate = proxyFilterFactory(self)
             return save()
         }
         return false
@@ -888,7 +899,7 @@ public extension MeshNetworkManager {
         }
         
         networkManager = NetworkManager(self)
-        proxyFilter = ProxyFilter(self)
+        proxyFilterAndDelegate = proxyFilterFactory(self)
         return meshNetwork
     }
     

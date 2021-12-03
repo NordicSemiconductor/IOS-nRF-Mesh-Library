@@ -70,6 +70,84 @@ public extension ProxyFilterDelegate {
     
 }
 
+public protocol ProxyFilter {
+    init(_ manager: MeshNetworkManager)
+
+    /// Sets the Filter Type on the connected GATT Proxy Node.
+    /// The filter will be emptied.
+    ///
+    /// - parameter type: The new proxy filter type.
+    func setType(_ type: ProxyFilerType)
+
+    /// Resets the filter to an empty inclusion list filter.
+    func reset()
+
+    /// Clears the current filter.
+    func clear()
+
+    /// Adds the given Address to the active filter.
+    ///
+    /// - parameter address: The address to add to the filter.
+    func add(address: Address)
+
+    /// Adds the given Addresses to the active filter.
+    ///
+    /// - parameter addresses: The addresses to add to the filter.
+    func add(addresses: Set<Address>)
+
+    /// Removes the given Address from the active filter.
+    ///
+    /// - parameter address: The address to remove from the filter.
+    func remove(address: Address)
+
+    /// Removes the given Addresses from the active filter.
+    ///
+    /// - parameter addresses: The addresses to remove from the filter.
+    func remove(addresses: Set<Address>)
+
+    /// Adds all the addresses the Provisioner is subscribed to to the
+    /// Proxy Filter.
+    func setup(for provisioner: Provisioner)
+
+    /// Notifies the Proxy Filter that the connection to GATT Proxy is closed.
+    ///
+    /// This method will unset the `busy` flag.
+    func proxyDidDisconnect()
+}
+
+public extension ProxyFilter {
+    /// Adds the given Addresses to the active filter.
+    ///
+    /// - parameter addresses: The addresses to add to the filter.
+    func add(addresses: [Address]) {
+        add(addresses: Set(addresses))
+    }
+
+    /// Adds the given Groups to the active filter.
+    ///
+    /// - parameter groups: The groups to add to the filter.
+    func add(groups: [Group]) {
+        let addresses = groups.map { $0.address.address }
+        add(addresses: addresses)
+    }
+
+    /// Removes the given Addresses from the active filter.
+    ///
+    /// - parameter addresses: The addresses to remove from the filter.
+    func remove(addresses: [Address]) {
+        remove(addresses: Set(addresses))
+    }
+
+    /// Removes the given Groups from the active filter.
+    ///
+    /// - parameter groups: The groups to remove from the filter.
+    func remove(groups: [Group]) {
+        let addresses = groups.map { $0.address.address }
+        remove(addresses: addresses)
+    }
+}
+
+
 /// The Proxy Filter class allows modification of the proxy filter on the
 /// connected Proxy Node.
 ///
@@ -82,7 +160,7 @@ public extension ProxyFilterDelegate {
 ///              unsubscribed from a Group that no other local Model is
 ///              subscribed to, the proxy filter needs to be modified manually
 ///              by calling proper `add` or `remove` method.
-public class ProxyFilter {
+open class DefaultProxyFilter: ProxyFilter {
     internal var manager: MeshNetworkManager
     
     private let mutex = DispatchQueue(label: "ProxyFilterMutex")
@@ -124,7 +202,7 @@ public class ProxyFilter {
     
     // MARK: - Implementation
     
-    internal init(_ manager: MeshNetworkManager) {
+    public required init(_ manager: MeshNetworkManager) {
         self.manager = manager
         self.delegateQueue = manager.delegateQueue
     }
@@ -132,7 +210,7 @@ public class ProxyFilter {
 
 // MARK: - Public API
 
-public extension ProxyFilter {
+public extension DefaultProxyFilter {
     
     /// Sets the Filter Type on the connected GATT Proxy Node.
     /// The filter will be emptied.
@@ -251,7 +329,7 @@ public extension ProxyFilter {
 
 // MARK: - Callbacks
 
-internal extension ProxyFilter {
+extension DefaultProxyFilter: NetworkLayerProxyDelegate {
     
     /// Callback called when a possible change of Proxy Node have been discovered.
     ///
@@ -267,7 +345,7 @@ internal extension ProxyFilter {
     /// This method reloads the Proxy Filter for the local Provisioner,
     /// adding all the addresses the Provisioner is subscribed to, including
     /// its Unicast Addresses and All Nodes address.
-    func newProxyDidConnect() {
+    public func newProxyDidConnect() {
         proxyDidDisconnect()
         logger?.i(.proxy, "New Proxy connected")
         reset()
@@ -281,7 +359,7 @@ internal extension ProxyFilter {
     /// This method refreshes the local type and list of addresses.
     ///
     /// - parameter message: The message sent.
-    func managerDidDeliverMessage(_ message: ProxyConfigurationMessage) {
+    public func managerDidDeliverMessage(_ message: ProxyConfigurationMessage) {
         mutex.sync {
             switch message {
             case let request as AddAddressesToFilter:
@@ -311,7 +389,7 @@ internal extension ProxyFilter {
     /// - parameters:
     ///   - message: The message that has not been sent.
     ///   - error: The error received.
-    func managerFailedToDeliverMessage(_ message: ProxyConfigurationMessage, error: Error) {
+    public func managerFailedToDeliverMessage(_ message: ProxyConfigurationMessage, error: Error) {
         mutex.sync {
             type = .inclusionList
             addresses.removeAll()
@@ -338,7 +416,7 @@ internal extension ProxyFilter {
     /// - parameters:
     ///   - message: The message received.
     ///   - proxy: The connected Proxy Node, or `nil` if the Node is unknown.
-    func handle(_ message: ProxyConfigurationMessage, sentFrom proxy: Node?) {
+    public func handle(_ message: ProxyConfigurationMessage, sentFrom proxy: Node?) {
         switch message {
         case let status as FilterStatus:
             self.proxy = proxy
@@ -404,7 +482,7 @@ internal extension ProxyFilter {
 
 // MARK: - Helper methods
 
-private extension ProxyFilter {
+private extension DefaultProxyFilter {
     
     /// Sends the given message to the Proxy Server. If a previous message
     /// is still waiting for status, this will buffer the message and send

@@ -209,7 +209,7 @@ internal class NetworkLayer {
     func send(proxyConfigurationMessage message: ProxyConfigurationMessage) {
         guard let networkKey = proxyNetworkKey else {
             // The Proxy Network Key is unknown.
-            networkManager.manager.proxyFilter?
+            networkManager.manager.proxyFilterAndDelegate?
                 .managerFailedToDeliverMessage(message, error: BearerError.bearerClosed)
             return
         }
@@ -225,12 +225,12 @@ internal class NetworkLayer {
         logger?.i(.network, "Sending \(pdu)")
         do {
             try send(lowerTransportPdu: pdu, ofType: .proxyConfiguration, withTtl: pdu.ttl)
-            networkManager.manager.proxyFilter?.managerDidDeliverMessage(message)
+            networkManager.manager.proxyFilterAndDelegate?.managerDidDeliverMessage(message)
         } catch {
             if case BearerError.bearerClosed = error {
                 proxyNetworkKey = nil
             }
-            networkManager.manager.proxyFilter?.managerFailedToDeliverMessage(message, error: error)
+            networkManager.manager.proxyFilterAndDelegate?.managerFailedToDeliverMessage(message, error: error)
         }
     }
     
@@ -379,7 +379,7 @@ private extension NetworkLayer {
         proxyNetworkKey = networkKey
         
         if justConnected || !ivIndexChanged {
-            networkManager.manager.proxyFilter?.newProxyDidConnect()
+            networkManager.manager.proxyFilterAndDelegate?.newProxyDidConnect()
         }
     }
     
@@ -415,7 +415,7 @@ private extension NetworkLayer {
             logger?.i(.proxy, "\(message) received from: \(proxyPdu.source.hex) to: \(proxyPdu.destination.hex)")
             // Look for the proxy Node.
             let proxyNode = meshNetwork.node(withAddress: proxyPdu.source)
-            networkManager.manager.proxyFilter?.handle(message, sentFrom: proxyNode)
+            networkManager.manager.proxyFilterAndDelegate?.handle(message, sentFrom: proxyNode)
         } else {
             logger?.w(.proxy, "Unsupported proxy configuration message (opcode: \(controlMessage.opCode))")
         }
@@ -442,4 +442,11 @@ private extension NetworkLayer {
         return address.isGroup || address.isVirtual || isLocalUnicastAddress(address)
     }
     
+}
+
+public protocol NetworkLayerProxyDelegate {
+    func newProxyDidConnect()
+    func managerDidDeliverMessage(_ message: ProxyConfigurationMessage)
+    func managerFailedToDeliverMessage(_ message: ProxyConfigurationMessage, error: Error)
+    func handle(_ message: ProxyConfigurationMessage, sentFrom proxy: Node?)
 }
