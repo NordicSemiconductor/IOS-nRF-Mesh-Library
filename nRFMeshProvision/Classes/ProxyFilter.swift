@@ -329,7 +329,7 @@ public extension DefaultProxyFilter {
 
 // MARK: - Callbacks
 
-extension DefaultProxyFilter: NetworkLayerProxyDelegate {
+extension DefaultProxyFilter: NetworkLayerProxyFilterDelegate {
     
     /// Callback called when a possible change of Proxy Node have been discovered.
     ///

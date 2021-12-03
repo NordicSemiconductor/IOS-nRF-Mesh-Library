@@ -38,7 +38,7 @@ public class MeshNetworkManager {
     /// Storage to keep the app data.
     private let storage: Storage
     /// ProxyFilter implementation to use
-    private let proxyFilterFactory: (MeshNetworkManager) -> (ProxyFilter & NetworkLayerProxyDelegate)?
+    private let proxyFilterFactory: (MeshNetworkManager) -> (ProxyFilter & NetworkLayerProxyFilterDelegate)?
     
     /// A queue to handle incoming and outgoing messages.
     internal let queue: DispatchQueue
@@ -46,7 +46,7 @@ public class MeshNetworkManager {
     internal let delegateQueue: DispatchQueue
     
     /// The Proxy Filter state.
-    internal var proxyFilterAndDelegate: (ProxyFilter & NetworkLayerProxyDelegate)?
+    internal var proxyFilterAndDelegate: (ProxyFilter & NetworkLayerProxyFilterDelegate)?
 
     public var proxyFilter: ProxyFilter? { proxyFilterAndDelegate }
     
@@ -181,7 +181,7 @@ public class MeshNetworkManager {
     public init(using storage: Storage = LocalStorage(),
                 queue: DispatchQueue = DispatchQueue.global(qos: .background),
                 delegateQueue: DispatchQueue = DispatchQueue.main,
-                proxyFilterFactory: @escaping ((MeshNetworkManager) -> (ProxyFilter & NetworkLayerProxyDelegate)?) =
+                proxyFilterFactory: @escaping ((MeshNetworkManager) -> (ProxyFilter & NetworkLayerProxyFilterDelegate)?) =
                 { meshNetworkManager in DefaultProxyFilter(meshNetworkManager) }) {
         self.storage = storage
         self.meshData = MeshData()

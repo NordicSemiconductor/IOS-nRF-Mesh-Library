@@ -444,7 +444,8 @@ private extension NetworkLayer {
     
 }
 
-public protocol NetworkLayerProxyDelegate {
+/// NetworkLayer passes network events for proxy settings directly to delegate.
+public protocol NetworkLayerProxyFilterDelegate {
     func newProxyDidConnect()
     func managerDidDeliverMessage(_ message: ProxyConfigurationMessage)
     func managerFailedToDeliverMessage(_ message: ProxyConfigurationMessage, error: Error)
