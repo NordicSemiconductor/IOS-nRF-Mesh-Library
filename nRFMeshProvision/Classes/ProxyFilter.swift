@@ -71,8 +71,6 @@ public extension ProxyFilterDelegate {
 }
 
 public protocol ProxyFilter {
-    init(_ manager: MeshNetworkManager)
-
     /// Sets the Filter Type on the connected GATT Proxy Node.
     /// The filter will be emptied.
     ///
