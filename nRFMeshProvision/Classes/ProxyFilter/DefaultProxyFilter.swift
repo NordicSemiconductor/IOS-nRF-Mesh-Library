@@ -286,6 +286,8 @@ extension DefaultProxyFilter: NetworkLayerProxyFilterDelegate {
                 busy = false
             }
 
+            let type = type
+            let addresses = addresses
             // Ensure the current information about the filter is up to date.
             guard type == status.filterType && addresses.count == status.listSize else {
                 // The counter is used to prevent from refreshing the
@@ -294,6 +296,7 @@ extension DefaultProxyFilter: NetworkLayerProxyFilterDelegate {
                 guard counter == 0 else {
                     logger?.e(.proxy, "Proxy Filter lost track of devices")
                     counter = 0
+                    self.delegate?.filterSettingsUpdatedOnProxy(type: type, addresses: addresses)
                     return
                 }
                 counter += 1
@@ -310,8 +313,9 @@ extension DefaultProxyFilter: NetworkLayerProxyFilterDelegate {
                     logger?.w(.proxy, "Limited Proxy Filter detected.")
                     setType(.inclusionList)
                     if let address = manager.meshNetwork?.localProvisioner?.unicastAddress {
+                        let addresses: Set<Address> = [address]
                         mutex.sync {
-                            addresses = [address]
+                            self.addresses = addresses
                         }
                         add(addresses: addresses)
                     }
@@ -327,6 +331,7 @@ extension DefaultProxyFilter: NetworkLayerProxyFilterDelegate {
                 return
             }
             counter = 0
+            self.delegate?.filterSettingsUpdatedOnProxy(type: type, addresses: addresses)
         default:
             // Ignore.
             break

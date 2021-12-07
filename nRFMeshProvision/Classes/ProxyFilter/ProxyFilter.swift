@@ -60,6 +60,10 @@ public protocol ProxyFilterDelegate: AnyObject {
     ///
     /// - parameter maxSize: The maximum Proxy Filter list size.
     func limitedProxyFilterDetected(maxSize: Int)
+
+    /// This method is called when the connected Proxy device has been
+    /// configured successfully.
+    func filterSettingsUpdatedOnProxy(type: ProxyFilerType, addresses: Set<Address>)
 }
 
 public extension ProxyFilterDelegate {
