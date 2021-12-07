@@ -71,6 +71,27 @@ public extension ProxyFilterDelegate {
 }
 
 public protocol ProxyFilter {
+    // MARK: - Proxy Filter properties
+    
+    /// The delegate to be informed about Proxy Filter changes.
+    var delegate: ProxyFilterDelegate? { get set }
+
+    /// List of addresses currently added to the Proxy Filter.
+    var addresses: Set<Address> { get }
+
+    /// The active Proxy Filter type.
+    ///
+    /// According to Bluetooth Mesh Profile 1.0.1, section 6.6,
+    /// by default the Proxy Filter is set to `.inclusionList`.
+    var type: ProxyFilerType { get }
+
+    /// The connected Proxy Node. This may be `nil` if the connected Node is unknown
+    /// to the provisioner, that is if a Node with the proxy Unicast Address was not found
+    /// in the local mesh network database. It is also `nil` if no proxy is connected.
+    var proxy: Node? { get }
+
+    // MARK: - Proxy Filter functions
+
     /// Sets the Filter Type on the connected GATT Proxy Node.
     /// The filter will be emptied.
     ///
