@@ -43,7 +43,7 @@ import Foundation
 ///              subscribed to, the proxy filter needs to be modified manually
 ///              by calling proper `add` or `remove` method.
 open class DefaultProxyFilter: ProxyFilter {
-    internal var manager: MeshNetworkManager
+    internal let manager: MeshNetworkManager
     
     private let mutex = DispatchQueue(label: "ProxyFilterMutex")
     /// The counter is used to prevent from refreshing the filter in a loop when the Proxy Server
