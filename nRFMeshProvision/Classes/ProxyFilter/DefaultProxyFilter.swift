@@ -308,7 +308,7 @@ extension DefaultProxyFilter: NetworkLayerProxyFilterDelegate {
                 // switch to exclusion list filter.
                 if status.listSize == 1 {
                     logger?.w(.proxy, "Limited Proxy Filter detected.")
-                    reset()
+                    setType(.inclusionList)
                     if let address = manager.meshNetwork?.localProvisioner?.unicastAddress {
                         mutex.sync {
                             addresses = [address]
