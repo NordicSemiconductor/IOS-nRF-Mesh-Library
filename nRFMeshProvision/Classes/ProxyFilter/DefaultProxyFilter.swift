@@ -88,7 +88,7 @@ open class DefaultProxyFilter: ProxyFilter {
 
     // MARK: - Implementation
 
-    public required init(_ manager: MeshNetworkManager) {
+    public init(_ manager: MeshNetworkManager) {
         self.manager = manager
         self.delegateQueue = manager.delegateQueue
     }
