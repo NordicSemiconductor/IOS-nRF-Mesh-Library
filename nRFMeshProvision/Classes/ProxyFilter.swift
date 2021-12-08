@@ -115,11 +115,7 @@ public class ProxyFilter {
     /// The active Proxy Filter type.
     ///
     /// By default the Proxy Filter is set to `.inclusionList`.
-	public internal(set) var type: ProxyFilerType = .exclusionList {
-		didSet {
-			print("DidSet: \(type)")
-		}
-	}
+	public internal(set) var type: ProxyFilerType = .exclusionList
     
     /// The connected Proxy Node. This may be `nil` if the connected Node is unknown
     /// to the provisioner, that is if a Node with the proxy Unicast Address was not found
@@ -276,7 +272,7 @@ internal extension ProxyFilter {
     func newProxyDidConnect() {
         proxyDidDisconnect()
         logger?.i(.proxy, "New Proxy connected")
-        reset()
+        clear()
         if let localProvisioner = manager.meshNetwork?.localProvisioner {
             setup(for: localProvisioner)
         }
