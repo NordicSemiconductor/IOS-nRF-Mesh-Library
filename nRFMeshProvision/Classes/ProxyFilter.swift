@@ -143,7 +143,7 @@ public extension ProxyFilter {
     }
     
     /// Resets the filter to an empty inclusion list filter.
-    func reset() {
+    func resetIfInclusionList() {
 			if type == .inclusionList {
 				send(SetFilterType(.inclusionList))
 			}
@@ -377,7 +377,7 @@ internal extension ProxyFilter {
                 // switch to exclusion list filter.
                 if status.listSize == 1 {
                     logger?.w(.proxy, "Limited Proxy Filter detected.")
-                    reset()
+										resetIfInclusionList()
                     if let address = manager.meshNetwork?.localProvisioner?.unicastAddress {
                         mutex.sync {
                             addresses = [address]
@@ -390,7 +390,7 @@ internal extension ProxyFilter {
                 } else {
                     logger?.w(.proxy, "Refreshing Proxy Filter...")
                     let addresses = self.addresses // reset() will erase addresses, store it.
-                    reset()
+										resetIfInclusionList()
                     add(addresses: addresses)
                 }
                 return

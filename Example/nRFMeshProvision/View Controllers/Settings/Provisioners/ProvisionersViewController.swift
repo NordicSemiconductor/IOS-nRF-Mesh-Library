@@ -156,7 +156,7 @@ class ProvisionersViewController: UITableViewController, Editable {
             let previousLocalProvisioner = network.localProvisioner,
             previousLocalProvisioner.hasConfigurationCapabilities &&
             manager.proxyFilter?.type == .inclusionList {
-                manager.proxyFilter?.reset()
+                manager.proxyFilter?.resetIfInclusionList()
         }
         // Make the required change in the data source.
         network.moveProvisioner(fromIndex: fromIndex, toIndex: toIndex)
@@ -225,7 +225,7 @@ private extension ProvisionersViewController {
         // Exclusion filter must have been set up by the user, so don't
         // modify it.
         if indexPath.isThisProvisioner && manager.proxyFilter?.type == .inclusionList {
-            manager.proxyFilter?.reset()
+            manager.proxyFilter?.resetIfInclusionList()
         }
         
         // Remove the Provisioner and its Node from the network configuration.
