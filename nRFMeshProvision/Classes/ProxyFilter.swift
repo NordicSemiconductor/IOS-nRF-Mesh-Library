@@ -144,7 +144,9 @@ public extension ProxyFilter {
     
     /// Resets the filter to an empty inclusion list filter.
     func reset() {
-        send(SetFilterType(.inclusionList))
+			if type == .inclusionList {
+				send(SetFilterType(.inclusionList))
+			}
     }
     
     /// Clears the current filter.
