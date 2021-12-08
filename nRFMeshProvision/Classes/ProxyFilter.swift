@@ -115,7 +115,11 @@ public class ProxyFilter {
     /// The active Proxy Filter type.
     ///
     /// By default the Proxy Filter is set to `.inclusionList`.
-		public internal(set) var type: ProxyFilerType = .exclusionList
+	public internal(set) var type: ProxyFilerType = .exclusionList {
+		didSet {
+			print("DidSet: \(type)")
+		}
+	}
     
     /// The connected Proxy Node. This may be `nil` if the connected Node is unknown
     /// to the provisioner, that is if a Node with the proxy Unicast Address was not found
