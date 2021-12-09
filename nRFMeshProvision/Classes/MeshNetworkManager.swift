@@ -45,6 +45,7 @@ public class MeshNetworkManager {
     
     /// The Proxy Filter state.
     public internal(set) var proxyFilter: ProxyFilter?
+    public internal(set) var proxyFilterType: ProxyFilerType
     
     /// The logger delegate will be called whenever a new log entry is created.
     public weak var logger: LoggerDelegate?
@@ -172,11 +173,13 @@ public class MeshNetworkManager {
     /// - seeAlso: `LowerTransportLayer.checkAgainstReplayAttack(_:NetworkPdu)`
     public init(using storage: Storage = LocalStorage(),
                 queue: DispatchQueue = DispatchQueue.global(qos: .background),
-                delegateQueue: DispatchQueue = DispatchQueue.main) {
+                delegateQueue: DispatchQueue = DispatchQueue.main,
+								proxyFilterType: ProxyFilerType = .inclusionList) {
         self.storage = storage
         self.meshData = MeshData()
         self.queue = queue
         self.delegateQueue = delegateQueue
+        self.proxyFilterType = proxyFilterType
     }
     
     /// Initializes the Mesh Network Manager. It will use the `LocalStorage`
@@ -218,7 +221,8 @@ public extension MeshNetworkManager {
     /// - parameters:
     ///   - name:      The user given network name.
     ///   - provisioner: The default Provisioner.
-    func createNewMeshNetwork(withName name: String, by provisioner: Provisioner) -> MeshNetwork {
+	func createNewMeshNetwork(withName name: String,
+												    by provisioner: Provisioner) -> MeshNetwork {
         let network = MeshNetwork(name: name)
         
         // Add a new default provisioner.

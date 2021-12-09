@@ -115,7 +115,11 @@ public class ProxyFilter {
     /// The active Proxy Filter type.
     ///
     /// By default the Proxy Filter is set to `.inclusionList`.
-	public internal(set) var type: ProxyFilerType = .exclusionList
+		public internal(set) var type: ProxyFilerType {
+			didSet {
+				manager.proxyFilterType = type
+			}
+		}
     
     /// The connected Proxy Node. This may be `nil` if the connected Node is unknown
     /// to the provisioner, that is if a Node with the proxy Unicast Address was not found
@@ -127,6 +131,7 @@ public class ProxyFilter {
     internal init(_ manager: MeshNetworkManager) {
         self.manager = manager
         self.delegateQueue = manager.delegateQueue
+				self.type = manager.proxyFilterType
     }
 }
 
@@ -221,22 +226,24 @@ public extension ProxyFilter {
     }
     
     /// Adds all the addresses the Provisioner is subscribed to to the
-    /// Proxy Filter.
+    /// Proxy Filter if the Proxy Filter is an inclusion list.
     func setup(for provisioner: Provisioner) {
         guard let node = provisioner.node else {
             return
         }
-        var addresses: Set<Address> = []
-        // Add Unicast Addresses of all Elements of the Provisioner's Node.
-        addresses.formUnion(node.elements.map({ $0.unicastAddress }))
-        // Add all addresses that the Node's Models are subscribed to.
-        let models = node.elements.flatMap { $0.models }
-        let subscriptions = models.flatMap { $0.subscriptions }
-        addresses.formUnion(subscriptions.map({ $0.address.address }))
-        // Add All Nodes group address.
-        addresses.insert(Address.allNodes)
-        // Submit.
-        add(addresses: addresses)
+				if type == .inclusionList {
+					var addresses: Set<Address> = []
+					// Add Unicast Addresses of all Elements of the Provisioner's Node.
+					addresses.formUnion(node.elements.map({ $0.unicastAddress }))
+					// Add all addresses that the Node's Models are subscribed to.
+					let models = node.elements.flatMap { $0.models }
+					let subscriptions = models.flatMap { $0.subscriptions }
+					addresses.formUnion(subscriptions.map({ $0.address.address }))
+					// Add All Nodes group address.
+					addresses.insert(Address.allNodes)
+					// Submit.
+					add(addresses: addresses)
+				}
     }
     
     /// Notifies the Proxy Filter that the connection to GATT Proxy is closed.
