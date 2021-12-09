@@ -238,4 +238,35 @@ class DeviceProperties: XCTestCase {
         }
     }
 
+    func testElectricCurrent() throws {
+        let samples: [(Data, Decimal?, Data)] = [
+            (Data([0x00, 0x00]), Decimal(string:      "0"), Data([0x00, 0x00])), // min
+            (Data([0x01, 0x00]), Decimal(string:   "0.01"), Data([0x01, 0x00])), // basic
+            (Data([0xFF, 0x7F]), Decimal(string: "327.67"), Data([0xFF, 0x7F])), // middle
+            (Data([0xFE, 0xFF]), Decimal(string: "655.34"), Data([0xFE, 0xFF])), // max
+            (Data([0xFF, 0xFF]), nil,                       Data([0xFF, 0xFF])), // unknown
+        ]
+        
+        let deviceProperties: [DeviceProperty] = [
+            .presentOutputCurrent,
+            .presentInputCurrent,
+        ]
+
+        for (sample, result, encoded) in samples {
+            for deviceProperty in deviceProperties {
+                let characteristic = deviceProperty.read(from: sample, at: 0, length: 2)
+                switch characteristic {
+                case .electricCurrent(let current):
+                    XCTAssertEqual(current, result, "Failed to parse \(sample.hex) into \(String(describing: result))")
+                default:
+                    XCTFail("Failed to parse \(deviceProperty) \(sample.hex) into .electricCurrent")
+                }
+                
+                let test = DevicePropertyCharacteristic.electricCurrent(result)
+                XCTAssertEqual(test, characteristic)
+                XCTAssertEqual(characteristic.data, encoded, "\(characteristic.data.hex) != \(encoded.hex)")
+            }
+        }
+    }
+    
 }

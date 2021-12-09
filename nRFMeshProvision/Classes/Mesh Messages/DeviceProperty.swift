@@ -808,7 +808,9 @@ internal extension DeviceProperty {
              .peopleCount,
              .presentAmbientRelativeHumidity,
              .presentIndoorRelativeHumidity,
+             .presentInputCurrent,
              .presentOutdoorRelativeHumidity,
+             .presentOutputCurrent,
              .presentDeviceOperatingTemperature,
              .precisePresentAmbientTemperature,
              .timeSinceMotionSensed,
@@ -941,6 +943,13 @@ internal extension DeviceProperty {
             let value: UInt16 = data.read(fromOffset: offset)
             return .humidity(value.toDecimal(withRange: 0.0...100.0, withResolution: 0.01, withUnknownValue: 0xFFFF))
             
+        // UInt16 -> Float?
+        case .presentOutputCurrent,
+             .presentInputCurrent:
+            guard length == valueLength else { return .electricCurrent(nil) }
+            let value: UInt16 = data.read(fromOffset: offset)
+            return .electricCurrent(value.toDecimal(withRange: 0.0...655.34, withResolution: 0.01, withUnknownValue: 0xFFFF))
+            
         // Int16 -> Float?
         case .precisePresentAmbientTemperature,
              .presentDeviceOperatingTemperature:
@@ -1058,6 +1067,10 @@ public enum DevicePropertyCharacteristic: Equatable {
     /// Date as days elapsed since the Epoch (Jan 1, 1970) in the Coordinated Universal
     /// Time (UTC) time zone.
     case dateUTC(Date?)
+    /// The Electric Current characteristic is used to represent an electric current value.
+    ///
+    /// Unit is ampere with a resolution of 0.01 A.
+    case electricCurrent(Decimal?)
     /// The Fixed String 8 characteristic represents an 8-octet UTF-8 string.
     case fixedString8(String)
     /// The Fixed String 16 characteristic represents a 16-octet UTF-8 string.
@@ -1139,6 +1152,10 @@ internal extension DevicePropertyCharacteristic {
         // Float as UInt16 with 0xFFFF as unknown:
         case .humidity(let value):
             return value.toData(ofLength: 2, withRange: 0.0...100.0, withResolution: 0.01, withUnknownValue: 0xFFFF)
+        
+        // Float as UInt16 with 0xFFFF as unknown:
+        case .electricCurrent(let value):
+            return value.toData(ofLength: 2, withRange: 0...655.34, withResolution: 0.01, withUnknownValue: 0xFFFF)
             
         // Float as Int16 with 0x8000 as unknown:
         case .temperature(let value):
@@ -1227,6 +1244,12 @@ extension DevicePropertyCharacteristic: CustomDebugStringConvertible {
             }
             let float = NSDecimalNumber(decimal: percent).floatValue
             return String(format: "%.2f%%", max(0.0, min(100.0, float)))
+        case .electricCurrent(let current):
+            guard let current = current else {
+                return DevicePropertyCharacteristic.unknown
+            }
+            let float = NSDecimalNumber(decimal: current).floatValue
+            return String(format: "%.2f A", max(0.0, min(655.34, float)))
         case .illuminance(let millilux):
             guard let millilux = millilux else {
                 return DevicePropertyCharacteristic.unknown
