@@ -280,6 +280,7 @@ internal extension ProxyFilter {
         proxyDidDisconnect()
         logger?.i(.proxy, "New Proxy connected")
         clear()
+				resetIfInclusionList()
         if let localProvisioner = manager.meshNetwork?.localProvisioner {
             setup(for: localProvisioner)
         }
