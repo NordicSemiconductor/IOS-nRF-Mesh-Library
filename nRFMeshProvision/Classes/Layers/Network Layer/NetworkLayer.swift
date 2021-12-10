@@ -446,8 +446,35 @@ private extension NetworkLayer {
 
 /// NetworkLayer passes network events for proxy settings directly to delegate.
 public protocol NetworkLayerProxyFilterDelegate {
+    /// Callback called when a possible change of Proxy Node have been discovered.
+    ///
+    /// This method is called in two cases: when the first Secure Network
+    /// beacon was received (which indicates the first successful connection
+    /// to a Proxy since app was started) or when the received Secure Network
+    /// beacon contained information about the same Network Key as one
+    /// received before. This happens during a reconnection to the same
+    /// or a different Proxy on the same subnetwork, but may also happen
+    /// in other Circumstances, for example when the IV Update or Key Refresh
+    /// Procedure is in progress, or a Network Key was removed and added again.
     func newProxyDidConnect()
+
+    /// Callback called when a Proxy Configuration Message has been sent.
+    ///
+    /// - parameter message: The message sent.
     func managerDidDeliverMessage(_ message: ProxyConfigurationMessage)
+
+    /// Callback called when the manager failed to send the Proxy
+    /// Configuration Message.
+    ///
+    /// - parameters:
+    ///   - message: The message that has not been sent.
+    ///   - error: The error received.
     func managerFailedToDeliverMessage(_ message: ProxyConfigurationMessage, error: Error)
+
+    /// Handler for the received Proxy Configuration Messages.
+    ///
+    /// - parameters:
+    ///   - message: The message received.
+    ///   - proxy: The connected Proxy Node, or `nil` if the Node is unknown.
     func handle(_ message: ProxyConfigurationMessage, sentFrom proxy: Node?)
 }
