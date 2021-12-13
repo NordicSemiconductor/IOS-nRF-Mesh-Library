@@ -817,7 +817,8 @@ internal extension DeviceProperty {
              .timeSincePresenceDetected:
             return 2
             
-        case .deviceDateOfManufacture,
+        case .activePowerLoadside,
+             .deviceDateOfManufacture,
              .deviceRuntimeSinceTurnOn,
              .deviceRuntimeWarranty,
              .totalDeviceStarts,
@@ -838,8 +839,11 @@ internal extension DeviceProperty {
              .lightControlAmbientLuxLevelStandby,
              .lightSourceStartCounterResettable,
              .lightSourceTotalPowerOnCycles,
+             .luminaireNominalInputPower,
+             .luminairePowerAtMinimumDimLevel,
              .luminaireTimeOfManufacture,
              .presentAmbientLightLevel,
+             .presentDeviceInputPower,
              .presentIlluminance,
              .ratedMedianUsefulLightSourceStarts,
              .ratedMedianUsefulLifeOfLuminaire:
@@ -966,7 +970,16 @@ internal extension DeviceProperty {
             guard length == valueLength else { return .illuminance(nil) }
             let value: UInt32 = data.readUInt24(fromOffset: offset)
             return .illuminance(value.toDecimal(withResolution: 0.01, withUnknownValue: 0xFFFFFF))
-            
+
+        // UInt24 -> Float?
+        case .activePowerLoadside,
+             .luminaireNominalInputPower,
+             .luminairePowerAtMinimumDimLevel,
+             .presentDeviceInputPower:
+          guard length == valueLength else { return .power(nil) }
+          let value: UInt32 = data.readUInt24(fromOffset: offset)
+          return .power(value.toDecimal(withResolution: 0.1, withUnknownValue: 0xFFFFFF))
+
         // UInt24 -> UInt24?:
         case .lightSourceStartCounterResettable,
              .lightSourceTotalPowerOnCycles,
@@ -1096,6 +1109,10 @@ public enum DevicePropertyCharacteristic: Equatable {
     ///
     /// Unit is unitless with a resolution of 1.
     case perceivedLightness(UInt16)
+    /// The Power characteristic is used to represent a power value.
+    ///
+    /// Unit is in watt with a resolution of 0.1 W.
+    case power(Decimal?)
     /// The Pressure characteristic is used to represent a pressure value.
     ///
     /// Unit is in pascals with a resolution of 0.1 Pa.
@@ -1170,7 +1187,11 @@ internal extension DevicePropertyCharacteristic {
         // Float as UInt24 with 0xFFFFFF as unknown:
         case .illuminance(let value):
             return value.toData(ofLength: 3, withRange: 0...167772.14, withResolution: 0.01, withUnknownValue: 0xFFFFFF)
-            
+
+        // Float as UInt24 with 0xFFFFFF as unknown:
+        case .power(let value):
+          return value.toData(ofLength: 3, withRange: 0...1677721.4, withResolution: 0.1, withUnknownValue: 0xFFFFFF)
+
         // Date as UInt24 with 0x000000 as unknown:
         case .dateUTC(let date):
             guard let date = date else {
@@ -1256,6 +1277,12 @@ extension DevicePropertyCharacteristic: CustomDebugStringConvertible {
             }
             let float = NSDecimalNumber(decimal: millilux).floatValue
             return String(format: "%.2f lux", float)
+        case .power(let power):
+          guard let power = power else {
+            return DevicePropertyCharacteristic.unknown
+          }
+          let float = NSDecimalNumber(decimal: power).floatValue
+          return String(format: "%.1f W", max(0.0, min(1677721.4, float)))
         case .temperature(let temp):
             guard let temp = temp else {
                 return DevicePropertyCharacteristic.unknown

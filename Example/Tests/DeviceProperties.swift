@@ -269,4 +269,37 @@ class DeviceProperties: XCTestCase {
         }
     }
     
+    func testPower() throws {
+        let samples: [(Data, Decimal?, Data)] = [
+            (Data([0x00, 0x00, 0x00]), Decimal(string:         "0"), Data([0x00, 0x00, 0x00])), // min
+            (Data([0x01, 0x00, 0x00]), Decimal(string:       "0.1"), Data([0x01, 0x00, 0x00])), // basic
+            (Data([0xFF, 0xFF, 0x7F]), Decimal(string: " 838860.7"), Data([0xFF, 0xFF, 0x7F])), // middle
+            (Data([0xFE, 0xFF, 0xFF]), Decimal(string: "1677721.4"), Data([0xFE, 0xFF, 0xFF])), // max
+            (Data([0xFF, 0xFF, 0xFF]), nil,                          Data([0xFF, 0xFF, 0xFF])), // unknown
+        ]
+        
+        let deviceProperties: [DeviceProperty] = [
+            .activePowerLoadside,
+            .luminaireNominalInputPower,
+            .luminairePowerAtMinimumDimLevel,
+            .presentDeviceInputPower
+        ]
+        
+        for (sample, result, encoded) in samples {
+            for deviceProperty in deviceProperties {
+                let characteristic = deviceProperty.read(from: sample, at: 0, length: 3)
+                switch characteristic {
+                case .power(let power):
+                    XCTAssertEqual(power, result, "Failed to parse \(sample.hex) into \(String(describing: result))")
+                default:
+                    XCTFail("Failed to parse \(deviceProperty) \(sample.hex) into .power")
+                }
+                
+                let test = DevicePropertyCharacteristic.power(result)
+                XCTAssertEqual(test, characteristic)
+                XCTAssertEqual(characteristic.data, encoded, "\(characteristic.data.hex) != \(encoded.hex)")
+            }
+        }
+    }
+    
 }
