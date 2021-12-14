@@ -849,7 +849,9 @@ internal extension DeviceProperty {
              .ratedMedianUsefulLifeOfLuminaire:
             return 3
             
-        case .airPressure,
+        case .activeEnergyLoadside,
+             .airPressure,
+             .preciseTotalDeviceEnergyUse,
              .pressure,
              .lightControlRegulatorKid,
              .lightControlRegulatorKiu,
@@ -1025,7 +1027,17 @@ internal extension DeviceProperty {
             guard length == valueLength else { return .pressure(0) }
             let value: UInt32 = data.read(fromOffset: offset)
             return .pressure(value.toDecimal(withResolution: 0.1))
-            
+
+        // UInt32 -> Float:
+        case .preciseTotalDeviceEnergyUse,
+             .activeEnergyLoadside:
+            guard length == valueLength else { return .energy32(nil) }
+            let value: UInt32 = data.read(fromOffset: offset)
+            // Custom conversion of Energy32 since it defines two special values (not known and not valid)
+            // and value.toDecimal(...) doesn't support that:
+            guard value != UInt32(0xFFFFFFFF), value != UInt32(0xFFFFFFFE) else { return .energy32(nil) }
+            return .energy32(Decimal(sign: .plus, exponent: -3, significand: Decimal(value)))
+
         // Float32 (IEEE 754):
         case .lightControlRegulatorKid,
              .lightControlRegulatorKiu,
@@ -1084,6 +1096,10 @@ public enum DevicePropertyCharacteristic: Equatable {
     ///
     /// Unit is ampere with a resolution of 0.01 A.
     case electricCurrent(Decimal?)
+    /// The Energy32 characteristic is used to represent a energy value.
+    ///
+    /// Unit is Kilowatt-hour with a resolution of 1 Watt-hour.
+    case energy32(Decimal?)
     /// The Fixed String 8 characteristic represents an 8-octet UTF-8 string.
     case fixedString8(String)
     /// The Fixed String 16 characteristic represents a 16-octet UTF-8 string.
@@ -1203,7 +1219,12 @@ internal extension DevicePropertyCharacteristic {
         // Float as UInt32:
         case .pressure(let value):
             return value.toData(ofLength: 4, withRange: 0...Decimal(UInt32.max), withResolution: 0.1)
-            
+
+        // Float as UInt32 with 0xFFFFFFFF as unknown:
+        case .energy32(let value):
+            let range = 0...Decimal(sign: .plus, exponent: -3, significand: Decimal(UInt32(4294967293)))
+            return value.toData(ofLength: 4, withRange: range, withResolution: 0.001, withUnknownValue: 0xFFFFFFFF)
+
         // UInt32 with 0xFFFFFFFF as unknown:
         case .timeSecond32(let value):
             return value.toData(ofLength: 4, withUnknownValue: 0xFFFFFFFF)
@@ -1271,6 +1292,12 @@ extension DevicePropertyCharacteristic: CustomDebugStringConvertible {
             }
             let float = NSDecimalNumber(decimal: current).floatValue
             return String(format: "%.2f A", max(0.0, min(655.34, float)))
+        case .energy32(let energy):
+            guard let energy = energy else {
+                return DevicePropertyCharacteristic.unknown
+            }            
+            let double = NSDecimalNumber(decimal: energy).doubleValue
+            return String(format: "%.3f kWh", double)
         case .illuminance(let millilux):
             guard let millilux = millilux else {
                 return DevicePropertyCharacteristic.unknown
