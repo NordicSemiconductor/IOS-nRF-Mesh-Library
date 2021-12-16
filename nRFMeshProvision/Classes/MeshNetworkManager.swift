@@ -44,7 +44,7 @@ public class MeshNetworkManager {
     internal let delegateQueue: DispatchQueue
     
     /// The Proxy Filter state.
-    public internal(set) var proxyFilter: ProxyFilter?
+    public internal(set) var proxyFilter: ProxyFilter
     
     /// The logger delegate will be called whenever a new log entry is created.
     public weak var logger: LoggerDelegate?
@@ -177,6 +177,9 @@ public class MeshNetworkManager {
         self.meshData = MeshData()
         self.queue = queue
         self.delegateQueue = delegateQueue
+        self.proxyFilter = ProxyFilter(delegateQueue)
+        // Only now self can be used.
+        self.proxyFilter.use(with: self)
     }
     
     /// Initializes the Mesh Network Manager. It will use the `LocalStorage`
@@ -226,7 +229,6 @@ public extension MeshNetworkManager {
         
         meshData.meshNetwork = network
         networkManager = NetworkManager(self)
-        proxyFilter = ProxyFilter(self)
         return network
     }
     
@@ -757,7 +759,7 @@ public extension MeshNetworkManager {
             }
             
             networkManager = NetworkManager(self)
-            proxyFilter = ProxyFilter(self)
+            proxyFilter.newNetworkCreated()
             return true
         } else if let legacyState = MeshStateManager.load() {
             // The app has been updated from version 1.0.x to 2.0.
@@ -796,7 +798,7 @@ public extension MeshNetworkManager {
             
             meshData.meshNetwork = network
             networkManager = NetworkManager(self)
-            proxyFilter = ProxyFilter(self)
+            proxyFilter.newNetworkCreated()
             return save()
         }
         return false
@@ -888,7 +890,7 @@ public extension MeshNetworkManager {
         }
         
         networkManager = NetworkManager(self)
-        proxyFilter = ProxyFilter(self)
+        proxyFilter.newNetworkCreated()
         return meshNetwork
     }
     
