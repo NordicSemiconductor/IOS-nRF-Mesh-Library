@@ -54,9 +54,9 @@ public protocol ProxyFilterDelegate: AnyObject {
     /// This method is called when the connected Proxy device supports
     /// only a single address in the Proxy Filter list.
     ///
-    /// The delegate can switch to `.blacklist` filter type at that point
-    /// to receive messages sent to other addresses than 0th Element
-    /// Unicast Address.
+    /// The delegate can switch to `.exclusionList` filter type at that point
+    /// to receive messages sent to addresses other than those that were
+    /// added successfully.
     ///
     /// - parameter maxSize: The maximum Proxy Filter list size.
     func limitedProxyFilterDetected(maxSize: Int)
@@ -68,6 +68,24 @@ public extension ProxyFilterDelegate {
         // Do nothing.
     }
     
+}
+
+public enum ProxyFilterSetup {
+    /// In automatic Proxy Filter setup the filter will be set to
+    /// `.inclusionList` with Unicast Addresses of all local Elements,
+    /// all Group Addresses with at least one local Model subscribed
+    /// and the All Nodes (0xFFFF) address.
+    ///
+    /// This is the default configuration.
+    case automatic
+    
+    /// The Proxy Filter on each connected Proxy Node will be set to
+    /// `.inclusionList` with given set of addresses.
+    case inclusionList(addresses: Set<Address>)
+    
+    /// The Proxy Filter on each connected Proxy Node will be set to
+    /// `.exclusionList` with given set of addresses.
+    case exclusionList(addresses: Set<Address>)
 }
 
 /// The Proxy Filter class allows modification of the proxy filter on the
@@ -83,9 +101,17 @@ public extension ProxyFilterDelegate {
 ///              subscribed to, the proxy filter needs to be modified manually
 ///              by calling proper `add` or `remove` method.
 public class ProxyFilter {
-    internal var manager: MeshNetworkManager
+    /// The owner manager instance.
+    ///
+    /// The reference is weak to avoid cyclic reference.
+    internal weak var manager: MeshNetworkManager?
     
+    /// A mutex object for internal synchronization.
     private let mutex = DispatchQueue(label: "ProxyFilterMutex")
+    /// A queue to call delegate methods on.
+    ///
+    /// The value is set in the `MeshNetworkManager` initializer.
+    private let delegateQueue: DispatchQueue
     /// The counter is used to prevent from refreshing the filter in a loop when the Proxy Server
     /// responds with an unexpected list size.
     private var counter = 0
@@ -96,37 +122,39 @@ public class ProxyFilter {
     private var buffer: [ProxyConfigurationMessage] = []
     /// A shortcut to the manager's logger.
     private var logger: LoggerDelegate? {
-        return manager.logger
+        return manager?.logger
     }
     
     // MARK: - Proxy Filter properties
     
-    /// A queue to call delegate methods on.
-    ///
-    /// The value is set in the `MeshNetworkManager` initializer.
-    internal let delegateQueue: DispatchQueue
-    
     /// The delegate to be informed about Proxy Filter changes.
     public weak var delegate: ProxyFilterDelegate?
     
+    /// Initial configuration of the Proxy Filter for each new
+    /// connection to a Proxy Node.
+    public var initialState: ProxyFilterSetup = .automatic
+    
     /// List of addresses currently added to the Proxy Filter.
-    public internal(set) var addresses: Set<Address> = []
+    public private(set) var addresses: Set<Address> = []
     
     /// The active Proxy Filter type.
     ///
     /// By default the Proxy Filter is set to `.inclusionList`.
-    public internal(set) var type: ProxyFilerType = .inclusionList
+    public private(set) var type: ProxyFilerType = .inclusionList
     
     /// The connected Proxy Node. This may be `nil` if the connected Node is unknown
     /// to the provisioner, that is if a Node with the proxy Unicast Address was not found
     /// in the local mesh network database. It is also `nil` if no proxy is connected.
-    public internal(set) var proxy: Node?
+    public private(set) var proxy: Node?
     
     // MARK: - Implementation
     
-    internal init(_ manager: MeshNetworkManager) {
+    internal init(_ delegateQueue: DispatchQueue) {
+        self.delegateQueue = delegateQueue
+    }
+    
+    internal func use(with manager: MeshNetworkManager) {
         self.manager = manager
-        self.delegateQueue = manager.delegateQueue
     }
 }
 
@@ -218,7 +246,7 @@ public extension ProxyFilter {
         remove(addresses: addresses)
     }
     
-    /// Adds all the addresses the Provisioner is subscribed to to the
+    /// Adds all the addresses the Provisioner is subscribed to the
     /// Proxy Filter.
     func setup(for provisioner: Provisioner) {
         guard let node = provisioner.node else {
@@ -253,6 +281,16 @@ public extension ProxyFilter {
 
 internal extension ProxyFilter {
     
+    /// Clears the current Proxy Filter state.
+    func newNetworkCreated() {
+        type = .inclusionList
+        addresses.removeAll()
+        buffer.removeAll()
+        busy = false
+        counter = 0
+        proxy = nil
+    }
+    
     /// Callback called when a possible change of Proxy Node have been discovered.
     ///
     /// This method is called in two cases: when the first Secure Network
@@ -268,11 +306,20 @@ internal extension ProxyFilter {
     /// adding all the addresses the Provisioner is subscribed to, including
     /// its Unicast Addresses and All Nodes address.
     func newProxyDidConnect() {
+        guard let manager = manager else { return }
+        
         proxyDidDisconnect()
         logger?.i(.proxy, "New Proxy connected")
-        reset()
         if let localProvisioner = manager.meshNetwork?.localProvisioner {
-            setup(for: localProvisioner)
+            switch initialState {
+            case .automatic:
+                setup(for: localProvisioner)
+            case .exclusionList(addresses: let addresses):
+                setType(.exclusionList)
+                fallthrough
+            case .inclusionList(addresses: let addresses):
+                add(addresses: addresses)
+            }
         }
     }
     
@@ -339,6 +386,8 @@ internal extension ProxyFilter {
     ///   - message: The message received.
     ///   - proxy: The connected Proxy Node, or `nil` if the Node is unknown.
     func handle(_ message: ProxyConfigurationMessage, sentFrom proxy: Node?) {
+        guard let manager = manager else { return }
+        
         switch message {
         case let status as FilterStatus:
             self.proxy = proxy
@@ -412,6 +461,8 @@ private extension ProxyFilter {
     ///
     /// - parameter message: The message to be sent.
     func send(_ message: ProxyConfigurationMessage) {
+        guard let manager = manager else { return }
+        
         let wasBusy = mutex.sync { return busy }
         guard !wasBusy else {
             mutex.sync {
