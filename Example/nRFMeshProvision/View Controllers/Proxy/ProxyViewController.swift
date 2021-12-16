@@ -48,10 +48,10 @@ class ProxyViewController: ProgressViewController, Editable {
         super.viewDidAppear(animated)
         tableView.reloadData()
         
-        MeshNetworkManager.instance.proxyFilter?.delegate = self
+        MeshNetworkManager.instance.proxyFilter.delegate = self
         addButton.isEnabled = MeshNetworkManager.bearer.isOpen
         
-        if MeshNetworkManager.instance.proxyFilter?.addresses.isEmpty == false {
+        if MeshNetworkManager.instance.proxyFilter.addresses.isEmpty == false {
             hideEmptyView()
         }
     }
@@ -81,7 +81,7 @@ class ProxyViewController: ProgressViewController, Editable {
         case IndexPath.proxyTypeSection:
             return 1
         default:
-            return MeshNetworkManager.instance.proxyFilter?.addresses.count ?? 0
+            return MeshNetworkManager.instance.proxyFilter.addresses.count
         }
     }
     
@@ -94,7 +94,7 @@ class ProxyViewController: ProgressViewController, Editable {
     
     override func tableView(_ tableView: UITableView, titleForFooterInSection section: Int) -> String? {
         if section == IndexPath.proxyTypeSection {
-            if MeshNetworkManager.instance.proxyFilter?.type == .exclusionList {
+            if MeshNetworkManager.instance.proxyFilter.type == .exclusionList {
                 return "The exclusion list filter accepts all destination addresses except those that have been added to the list."
             } else {
                 return "The inclusion list filter blocks all destination addresses except those that have been added to the list."
@@ -105,7 +105,7 @@ class ProxyViewController: ProgressViewController, Editable {
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let manager = MeshNetworkManager.instance
-        let proxyFilter = manager.proxyFilter!
+        let proxyFilter = manager.proxyFilter
         
         if indexPath == .mode {
             let cell = tableView.dequeueReusableCell(withIdentifier: "mode", for: indexPath) as! ConnectionModeCell
@@ -157,7 +157,7 @@ class ProxyViewController: ProgressViewController, Editable {
     override func tableView(_ tableView: UITableView,
                             commit editingStyle: UITableViewCell.EditingStyle,
                             forRowAt indexPath: IndexPath) {
-        let proxyFilter = MeshNetworkManager.instance.proxyFilter!
+        let proxyFilter = MeshNetworkManager.instance.proxyFilter
         let address = proxyFilter.addresses.sorted()[indexPath.row]
         deleteAddress(address)
     }
@@ -167,7 +167,7 @@ class ProxyViewController: ProgressViewController, Editable {
 extension ProxyViewController: UIAdaptivePresentationControllerDelegate {
     
     func presentationControllerDidDismiss(_ presentationController: UIPresentationController) {
-        MeshNetworkManager.instance.proxyFilter?.delegate = self
+        MeshNetworkManager.instance.proxyFilter.delegate = self
         tableView.reloadSections(.addresses, with: .automatic)
     }
     
@@ -183,12 +183,12 @@ extension ProxyViewController: BearerDelegate {
     func bearer(_ bearer: Bearer, didClose error: Error?) {
         addButton.isEnabled = false
         // Make sure the ProxyFilter is not busy.
-        MeshNetworkManager.instance.proxyFilter?.proxyDidDisconnect()
+        MeshNetworkManager.instance.proxyFilter.proxyDidDisconnect()
         // The bearer has closed. Attempt to send a message
         // will fail, but the Proxy Filter will receive .bearerClosed
         // error, upon which it will clear the filter list and notify
         // the delegate.
-        MeshNetworkManager.instance.proxyFilter?.clear()
+        MeshNetworkManager.instance.proxyFilter.clear()
     }
     
 }
@@ -204,9 +204,6 @@ extension ProxyViewController: ConnectionModeDelegate {
 extension ProxyViewController: ProxyFilterTypeDelegate {
     
     func filterTypeDidChange(_ type: ProxyFilerType) {
-        guard let proxyFilter = MeshNetworkManager.instance.proxyFilter else {
-            return
-        }
         let footer = tableView.footerView(forSection: 0)?.textLabel
         switch type {
         case .exclusionList:
@@ -216,7 +213,7 @@ extension ProxyViewController: ProxyFilterTypeDelegate {
         }
         footer?.sizeToFit()
         start("Setting proxy filter...") {
-            proxyFilter.setType(type)
+            MeshNetworkManager.instance.proxyFilter.setType(type)
         }
     }
     
@@ -238,8 +235,8 @@ private extension ProxyViewController {
     ///
     /// - parameter address: The address to delete.
     func deleteAddress(_ address: Address) {
-        guard let proxyFilter = MeshNetworkManager.instance.proxyFilter,
-                  proxyFilter.addresses.contains(address) else {
+        let proxyFilter = MeshNetworkManager.instance.proxyFilter
+        guard proxyFilter.addresses.contains(address) else {
             return
         }
         start("Deleting address...") {

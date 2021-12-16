@@ -70,10 +70,10 @@ class AddAddressViewController: ProgressViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        MeshNetworkManager.instance.proxyFilter?.delegate = self
+        MeshNetworkManager.instance.proxyFilter.delegate = self
         
         let network = MeshNetworkManager.instance.meshNetwork!
-        let proxyFilter = MeshNetworkManager.instance.proxyFilter!
+        let proxyFilter = MeshNetworkManager.instance.proxyFilter
         
         elements = network.nodes.flatMap {
             $0.elements.filter({ !proxyFilter.addresses.contains($0.unicastAddress) })
@@ -185,11 +185,8 @@ class AddAddressViewController: ProgressViewController {
 private extension AddAddressViewController {
     
     func addAddress(_ addresses: Set<Address>) {
-        guard let proxyFilter = MeshNetworkManager.instance.proxyFilter else {
-            return
-        }
         start("Adding addresses...") {
-            proxyFilter.add(addresses: addresses)
+            MeshNetworkManager.instance.proxyFilter.add(addresses: addresses)
         }
     }
     
