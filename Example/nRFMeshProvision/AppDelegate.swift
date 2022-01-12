@@ -110,6 +110,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             Model(sigModelId: .sceneSetupServerModelId, delegate: sceneSetupServer),
             // Sensor Client model:
             Model(sigModelId: .sensorClientModelId, delegate: SensorClientDelegate()),
+            // Generic Power OnOff Client model:
+            Model(sigModelId: .genericPowerOnOffClientModelId, delegate: GenericPowerOnOffClientDelegate()),
             // Generic Default Transition Time Server model:
             Model(sigModelId: .genericDefaultTransitionTimeServerModelId,
                   delegate: defaultTransitionTimeServerDelegate),
