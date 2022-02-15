@@ -171,7 +171,7 @@
                                                     <color key="textColor" systemColor="secondaryLabelColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <slider opaque="NO" contentMode="scaleToFill" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" minValue="0.0" maxValue="17" translatesAutoresizingMaskIntoConstraints="NO" id="Q2X-gb-9si">
+                                                <slider opaque="NO" contentMode="scaleToFill" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" minValue="0.0" maxValue="16" translatesAutoresizingMaskIntoConstraints="NO" id="Q2X-gb-9si">
                                                     <rect key="frame" x="18" y="7" width="222" height="31"/>
                                                     <connections>
                                                         <action selector="periodDidChange:" destination="P5E-F8-IIM" eventType="valueChanged" id="XdU-GD-Vvd"/>
