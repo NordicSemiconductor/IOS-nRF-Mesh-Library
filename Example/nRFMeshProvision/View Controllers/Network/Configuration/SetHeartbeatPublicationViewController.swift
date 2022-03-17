@@ -152,7 +152,7 @@ private extension SetHeartbeatPublicationViewController {
     }
     
     func countSelected(_ value: Float) {
-        countLog = value <= 18 ? UInt8(value) : 0xFF
+        countLog = value < 18 ? UInt8(value) : 0xFF
         countLabel.text = countLog.countString
         
         // Update Period slider.
