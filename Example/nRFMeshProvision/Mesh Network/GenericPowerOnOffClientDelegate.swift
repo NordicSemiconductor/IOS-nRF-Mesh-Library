@@ -1,3 +1,4 @@
+//
 /*
 * Copyright (c) 2019, Nordic Semiconductor
 * All rights reserved.
@@ -31,34 +32,29 @@
 import Foundation
 import nRFMeshProvision
 
-extension UInt16 {
+class GenericPowerOnOffClientDelegate: ModelDelegate {
     
-    // Bluetooth SIG Models
-    static let configurationServerModelId: UInt16 = 0x0000
-    static let configurationClientModelId: UInt16 = 0x0001
+    let messageTypes: [UInt32 : MeshMessage.Type]
+    let isSubscriptionSupported: Bool = true
     
-    static let genericOnOffServerModelId: UInt16 = 0x1000
-    static let genericOnOffClientModelId: UInt16 = 0x1001
-    static let genericLevelServerModelId: UInt16 = 0x1002
-    static let genericLevelClientModelId: UInt16 = 0x1003
+    // TODO: Implement Generic Power OnOff Client publications.
+    let publicationMessageComposer: MessageComposer? = nil
     
-    static let genericDefaultTransitionTimeServerModelId: UInt16 = 0x1004
-    static let genericDefaultTransitionTimeClientModelId: UInt16 = 0x1005
+    init() {
+        messageTypes = [GenericOnPowerUpStatus.self].toMap()
+    }
     
-    static let genericPowerOnOffServerModelId: UInt16 = 0x1006
-    static let genericPowerOnOffSetupServerModelId: UInt16 = 0x1007
-    static let genericPowerOnOffClientModelId: UInt16 = 0x1008
+    func model(_ model: Model, didReceiveAcknowledgedMessage request: AcknowledgedMeshMessage,
+               from source: Address, sentTo destination: MeshAddress) -> MeshMessage {
+        fatalError("Message not supported: \(request)")
+    }
     
-    static let sceneServerModelId: UInt16 = 0x1203
-    static let sceneSetupServerModelId: UInt16 = 0x1204
-    static let sceneClientModelId: UInt16 = 0x1205
+    func model(_ model: Model, didReceiveUnacknowledgedMessage message: MeshMessage,
+               from source: Address, sentTo destination: MeshAddress) {
+    }
     
-    static let sensorServerModelId: UInt16 = 0x1100
-    static let sensorServerSetupModelId: UInt16 = 0x1101
-    static let sensorClientModelId: UInt16 = 0x1102
-    
-    // Supported vendor models
-    static let simpleOnOffModelId: UInt16 = 0x0001
-    static let nordicSemiconductorCompanyId: UInt16 = 0x0059
-    
+    func model(_ model: Model, didReceiveResponse response: MeshMessage,
+               toAcknowledgedMessage request: AcknowledgedMeshMessage,
+               from source: Address) {
+    }
 }

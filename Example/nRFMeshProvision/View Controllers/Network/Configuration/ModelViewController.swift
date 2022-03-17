@@ -65,6 +65,10 @@ class ModelViewController: ProgressViewController {
                            forCellReuseIdentifier: UInt16.genericLevelServerModelId.hex)
         tableView.register(UINib(nibName: "GenericDefaultTransitionTime", bundle: nil),
                            forCellReuseIdentifier: UInt16.genericDefaultTransitionTimeServerModelId.hex)
+        tableView.register(UINib(nibName: "GenericPowerOnOff", bundle: nil),
+                           forCellReuseIdentifier: UInt16.genericPowerOnOffServerModelId.hex)
+        tableView.register(UINib(nibName: "GenericPowerOnOffSetup", bundle: nil),
+                           forCellReuseIdentifier: UInt16.genericPowerOnOffSetupServerModelId.hex)
         tableView.register(UINib(nibName: "VendorModel", bundle: nil),
                            forCellReuseIdentifier: "vendor")
     }
@@ -956,6 +960,8 @@ private extension Model {
     var hasCustomUI: Bool {
         return !isBluetoothSIGAssigned   // Vendor Models.
             || modelIdentifier == .genericOnOffServerModelId
+            || modelIdentifier == .genericPowerOnOffServerModelId
+            || modelIdentifier == .genericPowerOnOffSetupServerModelId
             || modelIdentifier == .genericLevelServerModelId
             || modelIdentifier == .genericDefaultTransitionTimeServerModelId
             || modelIdentifier == .sensorServerModelId
