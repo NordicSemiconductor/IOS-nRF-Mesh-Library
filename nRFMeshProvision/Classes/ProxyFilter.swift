@@ -44,12 +44,19 @@ public enum ProxyFilerType: UInt8 {
 }
 
 public protocol ProxyFilterDelegate: AnyObject {
-    /// Method called when the Proxy Filter has been updated.
+    /// Method called when the Proxy Filter has been sent to proxy.
     ///
     /// - parameters:
     ///   - type: The current Proxy Filter type.
     ///   - addresses: The addresses in the filter.
     func proxyFilterUpdated(type: ProxyFilerType, addresses: Set<Address>)
+
+    /// Method called when the Proxy Filter has been acknowledged by proxy.
+    ///
+    /// - parameters:
+    ///   - type: The current Proxy Filter type.
+    ///   - addresses: The addresses in the filter.
+    func proxyFilterUpdateAcknowledged(type: ProxyFilerType, addresses: Set<Address>)
     
     /// This method is called when the connected Proxy device supports
     /// only a single address in the Proxy Filter list.
@@ -410,6 +417,7 @@ internal extension ProxyFilter {
                 guard counter == 0 else {
                     logger?.e(.proxy, "Proxy Filter lost track of devices")
                     counter = 0
+                    callProxyFilterUpdateAcknowledged(type: status.filterType, addresses: addresses)
                     return
                 }
                 counter += 1
@@ -443,12 +451,21 @@ internal extension ProxyFilter {
                 return
             }
             counter = 0
+            callProxyFilterUpdateAcknowledged(type: status.filterType, addresses: addresses)
         default:
             // Ignore.
             break
         }
     }
-    
+
+    private func callProxyFilterUpdateAcknowledged(
+        type: ProxyFilerType,
+        addresses: Set<Address>
+    ) {
+        delegateQueue.async { [delegate] in
+            delegate?.proxyFilterUpdateAcknowledged(type: type, addresses: addresses)
+        }
+    }
 }
 
 // MARK: - Helper methods
