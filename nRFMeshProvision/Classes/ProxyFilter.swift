@@ -55,8 +55,8 @@ public protocol ProxyFilterDelegate: AnyObject {
     ///
     /// - parameters:
     ///   - type: The current Proxy Filter type.
-    ///   - addresses: The addresses in the filter.
-    func proxyFilterUpdateAcknowledged(type: ProxyFilerType, addresses: Set<Address>)
+    ///   - listSize: The addresses list's size in the filter
+    func proxyFilterUpdateAcknowledged(type: ProxyFilerType, listSize: UInt16)
     
     /// This method is called when the connected Proxy device supports
     /// only a single address in the Proxy Filter list.
@@ -417,7 +417,6 @@ internal extension ProxyFilter {
                 guard counter == 0 else {
                     logger?.e(.proxy, "Proxy Filter lost track of devices")
                     counter = 0
-                    callProxyFilterUpdateAcknowledged(type: status.filterType, addresses: addresses)
                     return
                 }
                 counter += 1
@@ -451,19 +450,12 @@ internal extension ProxyFilter {
                 return
             }
             counter = 0
-            callProxyFilterUpdateAcknowledged(type: status.filterType, addresses: addresses)
+            delegateQueue.async { [delegate] in
+                delegate?.proxyFilterUpdateAcknowledged(type: status.filterType, listSize: status.listSize)
+            }
         default:
             // Ignore.
             break
-        }
-    }
-
-    private func callProxyFilterUpdateAcknowledged(
-        type: ProxyFilerType,
-        addresses: Set<Address>
-    ) {
-        delegateQueue.async { [delegate] in
-            delegate?.proxyFilterUpdateAcknowledged(type: type, addresses: addresses)
         }
     }
 }
