@@ -399,7 +399,14 @@ private extension AccessLayer {
                         // Application Key bound to this Model and the message is
                         // targeting this Element, or the Model is subscribed to the
                         // destination address.
-                        if accessPdu.destination.address == Address.allNodes ||
+                        //
+                        // Note:   Messages sent to .allNodes address shall be processed
+                        //         only by Models on the Primary Element.
+                        //         See Bluetooth Mesh Profile 1.0.1, chapter 3.4.2.4.
+                        // Note 2: As the iOS implementation does not support Relay, Proxy or Friend
+                        //         Features, the messages sent to those addresses shall only be
+                        //         processed if the Model is explicitly subscribed to these addresses.
+                        if(accessPdu.destination.address == Address.allNodes && element.isPrimary) ||
                            accessPdu.destination.address == element.unicastAddress ||
                            model.isSubscribed(to: accessPdu.destination) {
                             if model.isBoundTo(keySet.applicationKey) {
@@ -423,15 +430,15 @@ private extension AccessLayer {
                     }
                 }
             }
-        } else if let firstElement = localNode.elements.first {
+        } else if let primaryElement = localNode.primaryElement {
             // Check Configuration Server Model.
-            if let configurationServerModel = firstElement.models
+            if let configurationServerModel = primaryElement.models
                    .first(where: { $0.isConfigurationServer }),
                let delegate = configurationServerModel.delegate,
                let configMessage = delegate.decode(accessPdu) {
                 newMessage = configMessage
                 // Is this message targeting the local Node?
-                if accessPdu.destination.address == firstElement.unicastAddress {
+                if accessPdu.destination.address == primaryElement.unicastAddress {
                     logger?.i(.foundationModel, "\(configMessage) received from: \(accessPdu.source.hex)")
                     if let response = delegate.model(configurationServerModel, didReceiveMessage: configMessage,
                                                      sentFrom: accessPdu.source, to: accessPdu.destination,
@@ -456,13 +463,13 @@ private extension AccessLayer {
                     // If not, it was received by adding another Node's address to the Proxy Filter.
                     logger?.i(.foundationModel, "\(configMessage) received from: \(accessPdu.source.hex), to: \(accessPdu.destination.hex)")
                 }
-            } else if let configurationClientModel = firstElement.models
+            } else if let configurationClientModel = primaryElement.models
                           .first(where: { $0.isConfigurationClient }),
                       let delegate = configurationClientModel.delegate,
                       let configMessage = delegate.decode(accessPdu) {
                 newMessage = configMessage
                 // Is this message targeting the local Node?
-                if accessPdu.destination.address == firstElement.unicastAddress {
+                if accessPdu.destination.address == primaryElement.unicastAddress {
                     logger?.i(.foundationModel, "\(configMessage) received from: \(accessPdu.source.hex)")
                     if let response = delegate.model(configurationClientModel, didReceiveMessage: configMessage,
                                                      sentFrom: accessPdu.source, to: accessPdu.destination,
