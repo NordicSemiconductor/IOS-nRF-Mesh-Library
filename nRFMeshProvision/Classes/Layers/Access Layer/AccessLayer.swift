@@ -436,7 +436,9 @@ private extension AccessLayer {
                 }
             }
         } else if let primaryElement = localNode.primaryElement {
-            // Check Configuration Server Model.
+            // .. otherwise, the Device Key was used.
+            //
+            // Check Configuration Server Model, or Configration Client Model.
             if let configurationServerModel = primaryElement.models
                    .first(where: { $0.isConfigurationServer }),
                let delegate = configurationServerModel.delegate,
