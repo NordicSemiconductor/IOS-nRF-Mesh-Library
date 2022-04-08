@@ -91,6 +91,13 @@ public class Group: Codable {
         try self.init(name: name, address: MeshAddress(address))
     }
     
+    private init(name: String, specialGroup: Address) {
+        self.name = name
+        self.groupAddress = specialGroup.hex
+        self.address = MeshAddress(specialGroup)
+        self.parentAddress = "0000"
+    }
+    
     // MARK: - Codable
     
     private enum CodingKeys: String, CodingKey {
@@ -138,6 +145,35 @@ extension Group: Equatable, Hashable {
     
     public func hash(into hasher: inout Hasher) {
         hasher.combine(groupAddress)
+    }
+    
+}
+
+public extension Group {
+    /// A message sent to the All Nodes address shall be processed by the primary Element
+    /// of all nodes.
+    static let allNodes   = Group(name: NSLocalizedString("All Nodes", comment: ""),   specialGroup: .allNodes)
+    /// A message sent to the All Relays address shall be processed by the primary Element
+    /// of all nodes that have the relay functionality enabled, or by any Model subscribed
+    /// to it.
+    static let allRelays  = Group(name: NSLocalizedString("All Relays", comment: ""),  specialGroup: .allRelays)
+    /// A message sent to the All Friends address shall be processed by the primary Element
+    /// of all nodes that have the friend functionality enabled, or by any Model subscribed
+    /// to it.
+    static let allFriends = Group(name: NSLocalizedString("All Friends", comment: ""), specialGroup: .allFriends)
+    /// A message sent to the All Proxies address shall be processed by the primary Element
+    /// of all nodes that have the proxy functionality enabled, or by any Model subscribed
+    /// to it.
+    static let allProxies = Group(name: NSLocalizedString("All Proxies", comment: ""), specialGroup: .allProxies)
+    /// Returns all special Groups supported by this version of the mesh library.
+    static let specialGroups: [Group] = [.allRelays, .allFriends, .allProxies, .allNodes]
+    /// Returns a special Group with the given address, or nil.
+    static func specialGroup(withAddress address: Address) -> Group? {
+        return specialGroups.first { $0.address.address == address }
+    }
+    /// Returns a special Group with the given address, or nil.
+    static func specialGroup(withAddress address: MeshAddress) -> Group? {
+        return specialGroup(withAddress: address.address)
     }
     
 }

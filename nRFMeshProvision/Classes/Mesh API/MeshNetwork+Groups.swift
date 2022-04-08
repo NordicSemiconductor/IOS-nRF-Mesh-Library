@@ -37,7 +37,15 @@ public extension MeshNetwork {
     /// - parameter address: The Group Address.
     /// - returns: The Group with given Address, or `nil` if no such found.
     func group(withAddress address: MeshAddress) -> Group? {
-        return groups.first { $0.address == address }
+        return group(withAddress: address.address)
+    }
+    
+    /// Returns the Group with given Address, or 'nil` if no such was found.
+    ///
+    /// - parameter address: The Group Address.
+    /// - returns: The Group with given Address, or `nil` if no such found.
+    func group(withAddress address: Address) -> Group? {
+        return groups.first { $0.address.address == address }
     }
     
     /// Adds a new Group to the network.
@@ -45,10 +53,16 @@ public extension MeshNetwork {
     /// If the mesh network already contains a Group with the same address,
     /// this method throws an error.
     ///
+    /// Groups with predefined addresses (i.e. All Nodes) cannot be added as
+    /// custom groups.
+    ///
     /// - parameter group: The Group to be added.
     /// - throws: This method throws an error if a Group with the same address
-    ///           already exists in the mesh network.
+    ///           already exists in the mesh network, or it is a Special Group.
     func add(group: Group) throws {
+        guard !group.address.address.isSpecialGroup else {
+            throw MeshNetworkError.invalidAddress
+        }
         guard !groups.contains(group) else {
             throw MeshNetworkError.groupAlreadyExists
         }

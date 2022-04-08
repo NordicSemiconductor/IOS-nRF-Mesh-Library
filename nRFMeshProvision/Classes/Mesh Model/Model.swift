@@ -60,8 +60,13 @@ public class Model: Codable {
     /// not known to the local database, and those are not returned.
     /// Use `isSubscribed(to:)` to check other Groups.
     public var subscriptions: [Group] {
-        return parentElement?.parentNode?.meshNetwork?.groups
-            .filter { subscribe.contains($0.groupAddress ) } ?? []
+        // A model may be additionally subscribed to any special address
+        // except from All Nodes.
+        let subscribableSpecialgroups = Group.specialGroups
+            .filter { $0 != .allNodes }
+        return (subscribableSpecialgroups +
+               (parentElement?.parentNode?.meshNetwork?.groups ?? []))
+            .filter { subscribe.contains($0.groupAddress) }
     }
     /// The configuration of this Model's publication.
     public private(set) var publish: Publish?
