@@ -227,6 +227,10 @@ extension ProxyViewController: ProxyFilterDelegate {
         }
     }
     
+    func proxyFilterUpdateAcknowledged(type: ProxyFilerType, listSize: UInt16) {
+        // TODO: dismiss here?
+    }
+    
 }
 
 private extension ProxyViewController {

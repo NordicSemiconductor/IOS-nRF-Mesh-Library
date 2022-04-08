@@ -200,6 +200,10 @@ extension AddAddressViewController: ProxyFilterDelegate {
         }
     }
     
+    func proxyFilterUpdateAcknowledged(type: ProxyFilerType, listSize: UInt16) {
+        // TODO: dismiss here?
+    }
+    
 }
 
 extension AddAddressViewController: CustomAddressDelegate {
