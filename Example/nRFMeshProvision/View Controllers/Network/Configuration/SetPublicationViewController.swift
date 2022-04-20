@@ -292,6 +292,7 @@ private extension SetPublicationViewController {
         } else {
             destinationLabel.textColor = .darkText
         }
+        let meshNetwork = MeshNetworkManager.instance.meshNetwork!
         if address.address.isUnicast {
             let meshNetwork = MeshNetworkManager.instance.meshNetwork!
             let node = meshNetwork.node(withAddress: address.address)
@@ -312,27 +313,15 @@ private extension SetPublicationViewController {
             destinationIcon.tintColor = .nordicLake
             destinationIcon.image = #imageLiteral(resourceName: "ic_flag_24pt")
             doneButton.isEnabled = true
-        } else if address.address.isGroup || address.address.isVirtual {
-            switch address.address {
-            case .allProxies:
-                destinationLabel.text = "All Proxies"
-                destinationSubtitleLabel.text = nil
-            case .allFriends:
-                destinationLabel.text = "All Friends"
-                destinationSubtitleLabel.text = nil
-            case .allRelays:
-                destinationLabel.text = "All Relays"
-                destinationSubtitleLabel.text = nil
-            case .allNodes:
-                destinationLabel.text = "All Nodes"
-                destinationSubtitleLabel.text = nil
-            default:
-                let meshNetwork = MeshNetworkManager.instance.meshNetwork!
-                if let group = meshNetwork.group(withAddress: address) {
-                    destinationLabel.text = group.name
-                    destinationSubtitleLabel.text = nil
-                }
-            }
+        } else if let group = Group.specialGroup(withAddress: address) {
+            destinationLabel.text = group.name
+            destinationSubtitleLabel.text = nil
+            destinationIcon.image = #imageLiteral(resourceName: "ic_group_24pt")
+            destinationIcon.tintColor = .nordicLake
+            doneButton.isEnabled = true
+        } else if let group = meshNetwork.group(withAddress: address) {
+            destinationLabel.text = group.name
+            destinationSubtitleLabel.text = nil
             destinationIcon.image = #imageLiteral(resourceName: "ic_group_24pt")
             destinationIcon.tintColor = .nordicLake
             doneButton.isEnabled = true
