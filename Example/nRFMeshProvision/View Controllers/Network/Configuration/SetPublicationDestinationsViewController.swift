@@ -49,12 +49,6 @@ class SetPublicationDestinationsViewController: UITableViewController {
     /// List of Elements containing Model bound to selected Application Key.
     private var compatibleElements: [Element]!
     private var groups: [Group]!
-    private let specialGroups: [(title: String, address: Address)] = [
-        ("All Proxies", Address.allProxies),
-        ("All Friends", Address.allFriends),
-        ("All Relays", Address.allRelays),
-        ("All Nodes", Address.allNodes)
-    ]
     private var selectedKeyIndexPath: IndexPath?
     private var selectedIndexPath: IndexPath?
     
@@ -93,7 +87,7 @@ class SetPublicationDestinationsViewController: UITableViewController {
         }
         if section == IndexPath.specialGroupsSection ||
           (section == IndexPath.groupsSection && groups.isEmpty) {
-            return specialGroups.count
+            return Group.specialGroups.count
         }
         return 0
     }
@@ -161,12 +155,12 @@ class SetPublicationDestinationsViewController: UITableViewController {
             cell.accessoryType = indexPath == selectedIndexPath ? .checkmark : .none
         }
         if indexPath.isSpecialGroupsSection || (indexPath.isGroupsSection && groups.isEmpty) {
-            let pair = specialGroups[indexPath.row]
-            if let destination = selectedDestination, destination.address == pair.address {
+            let group = Group.specialGroups[indexPath.row]
+            if let destination = selectedDestination, destination == group.address {
                 selectedIndexPath = indexPath
                 selectedDestination = nil
             }
-            cell.textLabel?.text = pair.title
+            cell.textLabel?.text = group.name
             cell.imageView?.image = #imageLiteral(resourceName: "ic_group_24pt")
             cell.accessoryType = indexPath == selectedIndexPath ? .checkmark : .none
         }
@@ -254,8 +248,8 @@ private extension SetPublicationDestinationsViewController {
             let selectedGroup = groups[indexPath.row]
             delegate?.destinationSelected(selectedGroup.address)
         default:
-            let selectedGroup = specialGroups[indexPath.row]
-            delegate?.destinationSelected(MeshAddress(selectedGroup.address))
+            let selectedGroup = Group.specialGroups[indexPath.row]
+            delegate?.destinationSelected(selectedGroup.address)
         }
     }
 }
