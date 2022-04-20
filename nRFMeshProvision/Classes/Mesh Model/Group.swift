@@ -33,8 +33,18 @@ import Foundation
 public class Group: Codable {
     internal weak var meshNetwork: MeshNetwork?
     
+    private var groupName: String
     /// UTF-8 human-readable name of the Group.
-    public var name: String
+    public var name: String {
+        get {
+            return groupName
+        }
+        set {
+            if !address.address.isSpecialGroup {
+                groupName = newValue
+            }
+        }
+    }
     /// The address of the group.
     public let address: MeshAddress
     
@@ -81,7 +91,7 @@ public class Group: Codable {
               address.address.isVirtual else {
             throw MeshNetworkError.invalidAddress
         }
-        self.name = name
+        self.groupName = name
         self.groupAddress = address.hex
         self.address = address
         self.parentAddress = "0000"
@@ -92,7 +102,7 @@ public class Group: Codable {
     }
     
     private init(name: String, specialGroup: Address) {
-        self.name = name
+        self.groupName = name
         self.groupAddress = specialGroup.hex
         self.address = MeshAddress(specialGroup)
         self.parentAddress = "0000"
@@ -101,14 +111,14 @@ public class Group: Codable {
     // MARK: - Codable
     
     private enum CodingKeys: String, CodingKey {
-        case name
+        case groupName     = "name"
         case groupAddress  = "address"
         case parentAddress = "parentAddress"
     }
     
     public required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        self.name = try container.decode(String.self, forKey: .name)
+        self.groupName = try container.decode(String.self, forKey: .groupName)
         self.groupAddress = try container.decode(String.self, forKey: .groupAddress)
         guard let address = MeshAddress(hex: groupAddress) else {
             throw DecodingError.dataCorruptedError(forKey: .groupAddress, in: container,
@@ -117,6 +127,10 @@ public class Group: Codable {
         guard address.address.isGroup || address.address.isVirtual else {
             throw DecodingError.dataCorruptedError(forKey: .groupAddress, in: container,
                                                    debugDescription: "Not a Group address: \(groupAddress).")
+        }
+        guard !address.address.isSpecialGroup else {
+            throw DecodingError.dataCorruptedError(forKey: .groupAddress, in: container,
+                                                   debugDescription: "Illegal Group address: \(groupAddress).")
         }
         self.address = address
         self.parentAddress = try container.decode(String.self, forKey: .parentAddress)
@@ -129,6 +143,10 @@ public class Group: Codable {
               parentAddress.address.isVirtual else {
             throw DecodingError.dataCorruptedError(forKey: .parentAddress, in: container,
                                                    debugDescription: "Invalid Parent Group address: \(parentAddress).")
+        }
+        guard !parentAddress.address.isSpecialGroup else {
+            throw DecodingError.dataCorruptedError(forKey: .parentAddress, in: container,
+                                                   debugDescription: "Illegal Parent Group address: \(groupAddress).")
         }
     }
 }
