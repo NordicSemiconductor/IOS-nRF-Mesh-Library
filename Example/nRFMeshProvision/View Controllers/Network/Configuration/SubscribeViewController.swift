@@ -131,7 +131,8 @@ class SubscribeViewController: ProgressViewController {
         }
         let cell = tableView.dequeueReusableCell(withIdentifier: "group", for: indexPath)
         let groupSet = indexPath.section == 0 ? groups! : specialGroups!
-        cell.textLabel?.text = groupSet[indexPath.row].name
+        let group = groupSet[indexPath.row]
+        cell.textLabel?.text = group.name
         cell.accessoryType = indexPath == selectedIndexPath ? .checkmark : .none
         return cell
     }
