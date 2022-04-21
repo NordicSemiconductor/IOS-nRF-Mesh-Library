@@ -34,27 +34,32 @@ import UIKit
 
 extension UITableViewCell {
     
-    func setEnabled(_ enabled: Bool) {
-        isUserInteractionEnabled = enabled
-        if enabled {
-            if #available(iOS 13.0, *) {
-                textLabel?.textColor = .label
-                detailTextLabel?.textColor = .label
-                imageView?.tintColor = .nordicLake
+    var isEnabled: Bool {
+        get {
+            return isUserInteractionEnabled
+        }
+        set(enabled) {
+            isUserInteractionEnabled = enabled
+            if enabled {
+                if #available(iOS 13.0, *) {
+                    textLabel?.textColor = .label
+                    detailTextLabel?.textColor = .label
+                    imageView?.tintColor = .nordicLake
+                } else {
+                    textLabel?.textColor = .darkText
+                    detailTextLabel?.textColor = .darkText
+                    imageView?.tintColor = .nordicLake
+                }
             } else {
-                textLabel?.textColor = .darkText
-                detailTextLabel?.textColor = .darkText
-                imageView?.tintColor = .nordicLake
-            }
-        } else {
-            if #available(iOS 13.0, *) {
-                textLabel?.textColor = .secondaryLabel
-                detailTextLabel?.textColor = .secondaryLabel
-                imageView?.tintColor = .secondaryLabel
-            } else {
-                textLabel?.textColor = .lightGray
-                detailTextLabel?.textColor = .lightGray
-                imageView?.tintColor = .lightGray
+                if #available(iOS 13.0, *) {
+                    textLabel?.textColor = .secondaryLabel
+                    detailTextLabel?.textColor = .secondaryLabel
+                    imageView?.tintColor = .secondaryLabel
+                } else {
+                    textLabel?.textColor = .lightGray
+                    detailTextLabel?.textColor = .lightGray
+                    imageView?.tintColor = .lightGray
+                }
             }
         }
     }

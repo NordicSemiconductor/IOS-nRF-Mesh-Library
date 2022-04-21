@@ -121,7 +121,7 @@ class SetHeartbeatPublicationDestinationsViewController: UITableViewController {
             }
             cell.textLabel?.text = networkKey.name
             cell.accessoryType = indexPath == selectedKeyIndexPath ? .checkmark : .none
-            cell.setEnabled(true)
+            cell.isEnabled = true
         }
         if indexPath.isNodeSection {
             let node = nodes[indexPath.row]
@@ -132,7 +132,7 @@ class SetHeartbeatPublicationDestinationsViewController: UITableViewController {
             cell.textLabel?.text = node.name ?? "Unknown Device"
             cell.imageView?.image = #imageLiteral(resourceName: "ic_flag_24pt")
             cell.accessoryType = indexPath == selectedIndexPath ? .checkmark : .none
-            cell.setEnabled(true)
+            cell.isEnabled = true
         }
         if indexPath.isGroupsSection {
             let group = groups[indexPath.row]
@@ -143,7 +143,7 @@ class SetHeartbeatPublicationDestinationsViewController: UITableViewController {
             cell.textLabel?.text = group.name
             cell.imageView?.image = #imageLiteral(resourceName: "ic_group_24pt")
             cell.accessoryType = indexPath == selectedIndexPath ? .checkmark : .none
-            cell.setEnabled(!group.address.address.isVirtual)
+            cell.isEnabled = !group.address.address.isVirtual
         }
         if indexPath.isSpecialGroupsSection {
             let group = Group.specialGroups[indexPath.row]
@@ -154,7 +154,7 @@ class SetHeartbeatPublicationDestinationsViewController: UITableViewController {
             cell.textLabel?.text = group.name
             cell.imageView?.image = #imageLiteral(resourceName: "ic_group_24pt")
             cell.accessoryType = indexPath == selectedIndexPath ? .checkmark : .none
-            cell.setEnabled(true)
+            cell.isEnabled = true
         }
         return cell
     }

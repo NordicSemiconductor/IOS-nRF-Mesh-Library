@@ -141,7 +141,7 @@ class SetHeartbeatSubscriptionViewController: ProgressViewController {
             }
             cell.textLabel?.text = otherNode.name ?? "Unknown Device"
             cell.accessoryType = indexPath == selectedSourceIndexPath ? .checkmark : .none
-            cell.setEnabled(true)
+            cell.isEnabled = true
         }
         if indexPath.isDestinationSection {
             if let destination = selectedDestination, destination == node.unicastAddress {
@@ -150,7 +150,7 @@ class SetHeartbeatSubscriptionViewController: ProgressViewController {
             }
             cell.textLabel?.text = node.name ?? "Unknown Device"
             cell.accessoryType = indexPath == selectedDestinationIndexPath ? .checkmark : .none
-            cell.setEnabled(true)
+            cell.isEnabled = true
         }
         if indexPath.isGroupsSection {
             let group = groups[indexPath.row]
@@ -160,7 +160,7 @@ class SetHeartbeatSubscriptionViewController: ProgressViewController {
             }
             cell.textLabel?.text = group.name
             cell.accessoryType = indexPath == selectedDestinationIndexPath ? .checkmark : .none
-            cell.setEnabled(!group.address.address.isVirtual)
+            cell.isEnabled = !group.address.address.isVirtual
         }
         if indexPath.isSpecialGroupsSection {
             let group = Group.specialGroups[indexPath.row]
@@ -170,7 +170,7 @@ class SetHeartbeatSubscriptionViewController: ProgressViewController {
             }
             cell.textLabel?.text = group.name
             cell.accessoryType = indexPath == selectedDestinationIndexPath ? .checkmark : .none
-            cell.setEnabled(true)
+            cell.isEnabled = true
         }
         return cell
     }
