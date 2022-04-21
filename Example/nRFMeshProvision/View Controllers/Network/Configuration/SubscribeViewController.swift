@@ -141,7 +141,7 @@ class SubscribeViewController: ProgressViewController {
         tableView.deselectRow(at: indexPath, animated: true)
         
         // Add Group clicked.
-        guard indexPath.section != 0 || indexPath.row < groups.count else {
+        if indexPath.section == 0 && indexPath.row == groups.count {
             let tabBarController = presentingViewController as? RootTabBarController
             dismiss(animated: true) {
                 tabBarController?.presentGroups()

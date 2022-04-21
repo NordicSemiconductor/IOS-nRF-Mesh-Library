@@ -77,11 +77,10 @@ class SetHeartbeatPublicationDestinationsViewController: UITableViewController {
         if section == IndexPath.nodesSection {
             return max(nodes.count, 1)
         }
-        if section == IndexPath.groupsSection && !groups.isEmpty {
-            return groups.count
+        if section == IndexPath.groupsSection {
+            return groups.count + 1 // Add Group
         }
-        if section == IndexPath.specialGroupsSection ||
-          (section == IndexPath.groupsSection && groups.isEmpty) {
+        if section == IndexPath.specialGroupsSection {
             return Group.specialGroups.count
         }
         return 0
@@ -109,6 +108,9 @@ class SetHeartbeatPublicationDestinationsViewController: UITableViewController {
         guard !indexPath.isNodeSection || nodes.count > 0 else {
             return tableView.dequeueReusableCell(withIdentifier: "empty", for: indexPath)
         }
+        guard !indexPath.isGroupsSection || indexPath.row < groups.count else {
+            return tableView.dequeueReusableCell(withIdentifier: "action", for: indexPath)
+        }
         let cell = tableView.dequeueReusableCell(withIdentifier: indexPath.reuseIdentifier, for: indexPath)
         
         if indexPath.isKeySection {
@@ -132,7 +134,7 @@ class SetHeartbeatPublicationDestinationsViewController: UITableViewController {
             cell.accessoryType = indexPath == selectedIndexPath ? .checkmark : .none
             cell.setEnabled(true)
         }
-        if indexPath.isGroupsSection && !groups.isEmpty {
+        if indexPath.isGroupsSection {
             let group = groups[indexPath.row]
             if let destination = selectedDestination, destination == group.address.address {
                 selectedIndexPath = indexPath
@@ -143,7 +145,7 @@ class SetHeartbeatPublicationDestinationsViewController: UITableViewController {
             cell.accessoryType = indexPath == selectedIndexPath ? .checkmark : .none
             cell.setEnabled(!group.address.address.isVirtual)
         }
-        if indexPath.isSpecialGroupsSection || (indexPath.isGroupsSection && groups.isEmpty) {
+        if indexPath.isSpecialGroupsSection {
             let group = Group.specialGroups[indexPath.row]
             if let destination = selectedDestination, destination == group.address.address {
                 selectedIndexPath = indexPath
@@ -163,6 +165,15 @@ class SetHeartbeatPublicationDestinationsViewController: UITableViewController {
         }
         
         tableView.deselectRow(at: indexPath, animated: true)
+        
+        // Add Group clicked.
+        if indexPath.isGroupsSection && indexPath.row == groups.count {
+            let tabBarController = presentingViewController as? RootTabBarController
+            dismiss(animated: true) {
+                tabBarController?.presentGroups()
+            }
+            return
+        }
         
         if indexPath.isKeySection {
             keySelected(indexPath)
