@@ -267,7 +267,7 @@ public extension ProxyFilter {
         let subscriptions = models.flatMap { $0.subscriptions }
         addresses.formUnion(subscriptions.map({ $0.address.address }))
         // Add All Nodes group address.
-        addresses.insert(Address.allNodes)
+        addresses.insert(.allNodes)
         // Submit.
         add(addresses: addresses)
     }
