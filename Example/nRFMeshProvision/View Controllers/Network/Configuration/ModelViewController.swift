@@ -449,7 +449,8 @@ class ModelViewController: ProgressViewController {
                 let subscription = model.parentElement?.parentNode?.heartbeatSubscription
                 return indexPath.row == 0 && subscription != nil
             } else {
-                return indexPath.row < model.subscriptions.count
+                return indexPath.row < model.subscriptions.count &&
+                       model.subscriptions[indexPath.row].address.address != .allNodes
             }
         }
         return false
