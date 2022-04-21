@@ -59,8 +59,9 @@ class SetHeartbeatPublicationDestinationsViewController: UITableViewController {
         let network = MeshNetworkManager.instance.meshNetwork!
         // Exclude the current Node.
         nodes = network.nodes.filter { $0.uuid != target.uuid }
-        // Exclude Virtual Groups, which may not be set as Heartbeat destination.
-        groups = network.groups.filter { $0.address.address.isGroup }
+        // Virtual Groups may not be set as Heartbeat destination.
+        // They will be shown as disabled.
+        groups = network.groups
     }
 
     // MARK: - Table view data source
@@ -91,12 +92,17 @@ class SetHeartbeatPublicationDestinationsViewController: UITableViewController {
         case IndexPath.keysSection:
             return "Network Keys"
         case IndexPath.nodesSection:
-            return "Nodes"
-        case IndexPath.groupsSection:
-            return "Groups"
+            return "Destination"
         default:
             return nil
         }
+    }
+    
+    override func tableView(_ tableView: UITableView, titleForFooterInSection section: Int) -> String? {
+        if section == IndexPath.groupsSection && groups.contains(where: { $0.address.address.isVirtual }) {
+            return "Note: Heartbeat messages cannot be sent to Virtual Groups."
+        }
+        return nil
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -113,6 +119,7 @@ class SetHeartbeatPublicationDestinationsViewController: UITableViewController {
             }
             cell.textLabel?.text = networkKey.name
             cell.accessoryType = indexPath == selectedKeyIndexPath ? .checkmark : .none
+            cell.setEnabled(true)
         }
         if indexPath.isNodeSection {
             let node = nodes[indexPath.row]
@@ -123,6 +130,7 @@ class SetHeartbeatPublicationDestinationsViewController: UITableViewController {
             cell.textLabel?.text = node.name ?? "Unknown Device"
             cell.imageView?.image = #imageLiteral(resourceName: "ic_flag_24pt")
             cell.accessoryType = indexPath == selectedIndexPath ? .checkmark : .none
+            cell.setEnabled(true)
         }
         if indexPath.isGroupsSection && !groups.isEmpty {
             let group = groups[indexPath.row]
@@ -133,6 +141,7 @@ class SetHeartbeatPublicationDestinationsViewController: UITableViewController {
             cell.textLabel?.text = group.name
             cell.imageView?.image = #imageLiteral(resourceName: "ic_group_24pt")
             cell.accessoryType = indexPath == selectedIndexPath ? .checkmark : .none
+            cell.setEnabled(!group.address.address.isVirtual)
         }
         if indexPath.isSpecialGroupsSection || (indexPath.isGroupsSection && groups.isEmpty) {
             let group = Group.specialGroups[indexPath.row]
@@ -143,6 +152,7 @@ class SetHeartbeatPublicationDestinationsViewController: UITableViewController {
             cell.textLabel?.text = group.name
             cell.imageView?.image = #imageLiteral(resourceName: "ic_group_24pt")
             cell.accessoryType = indexPath == selectedIndexPath ? .checkmark : .none
+            cell.setEnabled(true)
         }
         return cell
     }
