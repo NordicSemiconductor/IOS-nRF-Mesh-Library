@@ -35,6 +35,8 @@ public typealias Address = UInt16
 
 public extension Address {
     
+    /// An Unassigned Address is an address in which the Element of a Node
+    /// has not been configured yet or no address has been allocated.
     static let unassignedAddress: Address = 0x0000
     static let minUnicastAddress: Address = 0x0001
     static let maxUnicastAddress: Address = 0x7FFF
@@ -43,9 +45,40 @@ public extension Address {
     static let minGroupAddress:   Address = 0xC000
     static let maxGroupAddress:   Address = 0xFEFF
     
+    /// A message sent to the all-proxies address will be processed by the
+    /// Primary Element of all nodes that have the friend functionality enabled.
+    ///
+    /// That means, that Models on the Primary Element of all the Nodes are
+    /// automatically subscribed to all-proxies address if the Node has
+    /// Proxy functionality enabled. Models on the Primary and other Elements
+    /// of a Node may subscribe to this address to receive messages no matter
+    /// what the feature state is.
     static let allProxies:        Address = 0xFFFC
+    /// A message sent to the all-friends address will be processed by the
+    /// Primary Element of all nodes that have the friend functionality enabled.
+    ///
+    /// That means, that Models on the Primary Element of all the Nodes are
+    /// automatically subscribed to all-friends address if the Node has
+    /// Friend functionality enabled. Models on the Primary and other Elements
+    /// of a Node may subscribe to this address to receive messages no matter
+    /// what the feature state is.
     static let allFriends:        Address = 0xFFFD
+    /// A message sent to the all-relays address will be processed by the
+    /// Primary Element of all nodes that have the relay functionality enabled.
+    ///
+    /// That means, that Models on the Primary Element of all the Nodes are
+    /// automatically subscribed to all-relays address if the Node has
+    /// Relay functionality enabled. Models on the Primary and other Elements
+    /// of a Node may subscribe to this address to receive messages no matter
+    /// what the feature state is.
     static let allRelays:         Address = 0xFFFE
+    /// A message sent to the all-nodes address will be processed by the
+    /// Primary Element of all nodes.
+    ///
+    /// That means, that all Models on the Primary Element of all the Nodes
+    /// are automatically subscibed to all-nodes address. It is not possible
+    /// for Models on other Elements to receive messages sent to All Nodes address,
+    /// as they cannot subscribe to this address.
     static let allNodes:          Address = 0xFFFF
     
 }
