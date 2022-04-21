@@ -61,12 +61,6 @@ class SetHeartbeatSubscriptionViewController: ProgressViewController {
     /// List of all Nodes, except the target one.
     private var nodes: [Node]!
     private var groups: [Group]!
-    private let specialGroups: [(title: String, address: Address)] = [
-        ("All Proxies", Address.allProxies),
-        ("All Friends", Address.allFriends),
-        ("All Relays", Address.allRelays),
-        ("All Nodes", Address.allNodes)
-    ]
     private var selectedSourceIndexPath: IndexPath?
     private var selectedDestinationIndexPath: IndexPath?
     
@@ -106,7 +100,7 @@ class SetHeartbeatSubscriptionViewController: ProgressViewController {
         case IndexPath.destinationGroupsSection where !groups.isEmpty:
             return groups.count
         default:
-            return specialGroups.count
+            return Group.specialGroups.count
         }
     }
     
@@ -158,12 +152,12 @@ class SetHeartbeatSubscriptionViewController: ProgressViewController {
             cell.accessoryType = indexPath == selectedDestinationIndexPath ? .checkmark : .none
         }
         if indexPath.isSpecialGroupsSection {
-            let group = specialGroups[indexPath.row]
-            if let destination = selectedDestination, destination == group.address {
+            let group = Group.specialGroups[indexPath.row]
+            if let destination = selectedDestination, destination == group.address.address {
                 selectedDestinationIndexPath = indexPath
                 selectedDestination = nil
             }
-            cell.textLabel?.text = group.title
+            cell.textLabel?.text = group.name
             cell.accessoryType = indexPath == selectedDestinationIndexPath ? .checkmark : .none
         }
         return cell
@@ -231,7 +225,7 @@ private extension SetHeartbeatSubscriptionViewController {
                 node.unicastAddress :
                 destinationIndexPath.isGroupsSection && !groups.isEmpty ?
                     groups[destinationIndexPath.row].address.address :
-                    specialGroups[destinationIndexPath.row].address
+                    Group.specialGroups[destinationIndexPath.row].address.address
         let periodLog = self.periodLog
         
         start("Setting Heartbeat Subscription...") {

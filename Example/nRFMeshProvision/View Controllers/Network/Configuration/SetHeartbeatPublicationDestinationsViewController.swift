@@ -48,12 +48,6 @@ class SetHeartbeatPublicationDestinationsViewController: UITableViewController {
     /// List of all Nodes, except the target one.
     private var nodes: [Node]!
     private var groups: [Group]!
-    private let specialGroups: [(title: String, address: Address)] = [
-        ("All Proxies", Address.allProxies),
-        ("All Friends", Address.allFriends),
-        ("All Relays", Address.allRelays),
-        ("All Nodes", Address.allNodes)
-    ]
     private var selectedKeyIndexPath: IndexPath?
     private var selectedIndexPath: IndexPath?
     
@@ -87,7 +81,7 @@ class SetHeartbeatPublicationDestinationsViewController: UITableViewController {
         }
         if section == IndexPath.specialGroupsSection ||
           (section == IndexPath.groupsSection && groups.isEmpty) {
-            return specialGroups.count
+            return Group.specialGroups.count
         }
         return 0
     }
@@ -141,12 +135,12 @@ class SetHeartbeatPublicationDestinationsViewController: UITableViewController {
             cell.accessoryType = indexPath == selectedIndexPath ? .checkmark : .none
         }
         if indexPath.isSpecialGroupsSection || (indexPath.isGroupsSection && groups.isEmpty) {
-            let pair = specialGroups[indexPath.row]
-            if let destination = selectedDestination, destination == pair.address {
+            let group = Group.specialGroups[indexPath.row]
+            if let destination = selectedDestination, destination == group.address.address {
                 selectedIndexPath = indexPath
                 selectedDestination = nil
             }
-            cell.textLabel?.text = pair.title
+            cell.textLabel?.text = group.name
             cell.imageView?.image = #imageLiteral(resourceName: "ic_group_24pt")
             cell.accessoryType = indexPath == selectedIndexPath ? .checkmark : .none
         }
@@ -205,8 +199,8 @@ private extension SetHeartbeatPublicationDestinationsViewController {
             let selectedGroup = groups[indexPath.row]
             delegate?.destinationSelected(selectedGroup.address.address)
         default:
-            let selectedGroup = specialGroups[indexPath.row]
-            delegate?.destinationSelected(selectedGroup.address)
+            let selectedGroup = Group.specialGroups[indexPath.row]
+            delegate?.destinationSelected(selectedGroup.address.address)
         }
     }
     

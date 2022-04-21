@@ -41,37 +41,21 @@ class HeartbeatPublicationCell: UITableViewCell {
     
     var heartbeatPublication: HeartbeatPublication! {
         didSet {
+            let meshNetwork = MeshNetworkManager.instance.meshNetwork!
             let address = heartbeatPublication.address
             if address.isUnicast {
-                let meshNetwork = MeshNetworkManager.instance.meshNetwork!
                 let node = meshNetwork.node(withAddress: address)
                 destinationLabel.text = node?.name ?? "Unknown Device"
                 destinationSubtitleLabel.text = nil
                 destinationIcon.tintColor = .nordicLake
                 destinationIcon.image = #imageLiteral(resourceName: "ic_flag_24pt")
             } else if address.isGroup {
-                switch address {
-                case .allProxies:
-                    destinationLabel.text = "All Proxies"
+                if let group = meshNetwork.group(withAddress: address) ?? Group.specialGroup(withAddress: address) {
+                    destinationLabel.text = group.name
                     destinationSubtitleLabel.text = nil
-                case .allFriends:
-                    destinationLabel.text = "All Friends"
-                    destinationSubtitleLabel.text = nil
-                case .allRelays:
-                    destinationLabel.text = "All Relays"
-                    destinationSubtitleLabel.text = nil
-                case .allNodes:
-                    destinationLabel.text = "All Nodes"
-                    destinationSubtitleLabel.text = nil
-                default:
-                    let meshNetwork = MeshNetworkManager.instance.meshNetwork!
-                    if let group = meshNetwork.group(withAddress: MeshAddress(address)) {
-                        destinationLabel.text = group.name
-                        destinationSubtitleLabel.text = nil
-                    } else {
-                        destinationLabel.text = "Unknown group"
-                        destinationSubtitleLabel.text = address.asString()
-                    }
+                } else {
+                    destinationLabel.text = "Unknown group"
+                    destinationSubtitleLabel.text = address.asString()
                 }
                 destinationIcon.image = #imageLiteral(resourceName: "tab_groups_outline_black_24pt")
                 destinationIcon.tintColor = .nordicLake
@@ -82,7 +66,6 @@ class HeartbeatPublicationCell: UITableViewCell {
                 destinationIcon.image = #imageLiteral(resourceName: "ic_flag_24pt")
             }
             
-            let meshNetwork = MeshNetworkManager.instance.meshNetwork!
             if let networkKey = meshNetwork.networkKeys[heartbeatPublication.networkKeyIndex] {
                 keyIcon.tintColor = .nordicLake
                 keyLabel.text = networkKey.name

@@ -44,31 +44,23 @@ class AddressCell: UITableViewCell {
             switch address! {
                 
             case let address where address.isUnicast:
-                let elements = meshNetwork.nodes.flatMap { $0.elements }
-                let targetElement = elements.first { $0.unicastAddress == address }
+                let node = meshNetwork.node(withAddress: address)
+                let targetElement = node?.element(withAddress: address)
                 
                 title.text = targetElement != nil ?
                     targetElement!.name ?? "Element \(targetElement!.index + 1)" : "Unknown Element"
-                subtitle.text = targetElement?.parentNode?.name ?? "Unknown device"
+                subtitle.text = node?.name ?? "Unknown device"
                 icon.image = #imageLiteral(resourceName: "ic_flag_24pt")
                 tintColor = .nordicLake
                 
-            case let address where address.isSpecialGroup:
-                icon.image = #imageLiteral(resourceName: "ic_group_24pt")
-                subtitle.text = nil
-                switch address {
-                case Address.allProxies: title.text = "All Proxies"
-                case Address.allRelays:  title.text = "All Relays"
-                case Address.allFriends: title.text = "All Friends"
-                default:                 title.text = "All Nodes"
-                }
-                tintColor = .nordicLake
-                
             case let address where address.isGroup || address.isVirtual:
-                let group = meshNetwork.groups.first { $0.address.address == address }
-                
-                title.text = group?.name ?? "Unknown group"
-                subtitle.text = group?.address.virtualLabel?.uuidString
+                if let group = meshNetwork.group(withAddress: address) ?? Group.specialGroup(withAddress: address) {
+                    title.text = group.name
+                    subtitle.text = group.address.virtualLabel?.uuidString
+                } else {
+                    title.text = "Unknown Group"
+                    subtitle.text = address.asString()
+                }                
                 icon.image = #imageLiteral(resourceName: "ic_group_24pt")
                 tintColor = .nordicLake
                 

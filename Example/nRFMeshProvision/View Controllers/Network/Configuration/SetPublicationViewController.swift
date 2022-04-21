@@ -313,16 +313,15 @@ private extension SetPublicationViewController {
             destinationIcon.tintColor = .nordicLake
             destinationIcon.image = #imageLiteral(resourceName: "ic_flag_24pt")
             doneButton.isEnabled = true
-        } else if let group = Group.specialGroup(withAddress: address) {
-            destinationLabel.text = group.name
-            destinationSubtitleLabel.text = nil
-            destinationIcon.image = #imageLiteral(resourceName: "ic_group_24pt")
-            destinationIcon.tintColor = .nordicLake
-            doneButton.isEnabled = true
-        } else if let group = meshNetwork.group(withAddress: address) {
-            destinationLabel.text = group.name
-            destinationSubtitleLabel.text = nil
-            destinationIcon.image = #imageLiteral(resourceName: "ic_group_24pt")
+        } else if address.address.isGroup || address.address.isVirtual {
+            if let group = meshNetwork.group(withAddress: address) ?? Group.specialGroup(withAddress: address) {
+                destinationLabel.text = group.name
+                destinationSubtitleLabel.text = nil
+            } else {
+                destinationLabel.text = "Unknown group"
+                destinationSubtitleLabel.text = address.asString()
+            }
+            destinationIcon.image = #imageLiteral(resourceName: "tab_groups_outline_black_24pt")
             destinationIcon.tintColor = .nordicLake
             doneButton.isEnabled = true
         } else {
