@@ -391,7 +391,11 @@ class ModelViewController: ProgressViewController {
             return indexPath.row == 0
         }
         if indexPath.isSubscribeSection {
-            return indexPath.row == model.subscriptions.count
+            if model.isConfigurationServer {
+                return indexPath.row == 0
+            } else {
+                return indexPath.row == model.subscriptions.count
+            }
         }
         if indexPath.isCustomSection && model.isSensorServer {
             return indexPath.row == sensorValues?.count ?? 0
