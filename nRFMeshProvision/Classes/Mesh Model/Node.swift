@@ -834,7 +834,10 @@ internal extension Node {
         productIdentifier = page0.productIdentifier
         versionIdentifier = page0.versionIdentifier
         minimumNumberOfReplayProtectionList = page0.minimumNumberOfReplayProtectionList
-        features = page0.features
+        // Don't override features if they already were known.
+        // Accurate features states could have been acquired by reading each feature state,
+        // while the Page 0 of the Composition Data contains only Supported / Not Supported.
+        features = features ?? page0.features
         // And set the Elements received.
         set(elements: page0.elements)
         meshNetwork?.timestamp = Date()
