@@ -61,7 +61,8 @@ class SetHeartbeatPublicationDestinationsViewController: UITableViewController {
         nodes = network.nodes.filter { $0.uuid != target.uuid }
         // Virtual Groups may not be set as Heartbeat destination.
         // They will be shown as disabled.
-        groups = network.groups
+        // Sort the groups, so the Virtual Groups are at the end.
+        groups = network.groups.sorted { $1.address.address.isVirtual }
     }
 
     // MARK: - Table view data source

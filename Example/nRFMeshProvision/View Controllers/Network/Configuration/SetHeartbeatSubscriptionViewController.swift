@@ -76,7 +76,8 @@ class SetHeartbeatSubscriptionViewController: ProgressViewController {
         nodes = network.nodes.filter { $0.uuid != node.uuid }
         // Virtual Groups may not be set as Heartbeat destination.
         // They will be shown as disabled.
-        groups = network.groups
+        // Sort the groups, so the Virtual Groups are at the end.
+        groups = network.groups.sorted { $1.address.address.isVirtual }
         
         if let subscription = node.heartbeatSubscription {
             selectedSource = subscription.source
