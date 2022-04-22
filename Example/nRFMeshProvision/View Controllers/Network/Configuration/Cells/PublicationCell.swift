@@ -42,6 +42,7 @@ class PublicationCell: UITableViewCell {
     
     var publish: Publish! {
         didSet {
+            let meshNetwork = MeshNetworkManager.instance.meshNetwork!
             let address = publish.publicationAddress
             if address.address.isUnicast {
                 let meshNetwork = MeshNetworkManager.instance.meshNetwork!
@@ -63,28 +64,12 @@ class PublicationCell: UITableViewCell {
                 destinationIcon.tintColor = .nordicLake
                 destinationIcon.image = #imageLiteral(resourceName: "ic_flag_24pt")
             } else if address.address.isGroup || address.address.isVirtual {
-                switch address.address {
-                case .allProxies:
-                    destinationLabel.text = "All Proxies"
+                if let group = meshNetwork.group(withAddress: address) ?? Group.specialGroup(withAddress: address) {
+                    destinationLabel.text = group.name
                     destinationSubtitleLabel.text = nil
-                case .allFriends:
-                    destinationLabel.text = "All Friends"
-                    destinationSubtitleLabel.text = nil
-                case .allRelays:
-                    destinationLabel.text = "All Relays"
-                    destinationSubtitleLabel.text = nil
-                case .allNodes:
-                    destinationLabel.text = "All Nodes"
-                    destinationSubtitleLabel.text = nil
-                default:
-                    let meshNetwork = MeshNetworkManager.instance.meshNetwork!
-                    if let group = meshNetwork.group(withAddress: address) {
-                        destinationLabel.text = group.name
-                        destinationSubtitleLabel.text = nil
-                    } else {
-                        destinationLabel.text = "Unknown group"
-                        destinationSubtitleLabel.text = address.asString()
-                    }
+                } else {
+                    destinationLabel.text = "Unknown group"
+                    destinationSubtitleLabel.text = address.asString()
                 }
                 destinationIcon.image = #imageLiteral(resourceName: "tab_groups_outline_black_24pt")
                 destinationIcon.tintColor = .nordicLake
@@ -95,7 +80,6 @@ class PublicationCell: UITableViewCell {
                 destinationIcon.image = #imageLiteral(resourceName: "ic_flag_24pt")
             }
             
-            let meshNetwork = MeshNetworkManager.instance.meshNetwork!
             if let applicationKey = meshNetwork.applicationKeys[publish.index] {
                 keyIcon.tintColor = .nordicLake
                 keyLabel.text = applicationKey.name

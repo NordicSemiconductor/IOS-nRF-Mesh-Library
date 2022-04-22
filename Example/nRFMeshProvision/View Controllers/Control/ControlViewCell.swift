@@ -135,20 +135,20 @@ class ControlViewController: ProgressCollectionViewController {
         let name = model.isSimpleOnOffClient ? "Simple OnOff Client" : model.name ?? "Unknown Model"
         var message: String?
         if !model.subscriptions.isEmpty {
-            let groups = model.subscriptions.map({ $0.name }).joined(separator: ", ")
+            let groups = model.subscriptions.map { $0.name }.joined(separator: ", ")
             message = "This model is subscribed to the following groups: \(groups)."
             
             if let publish = model.publish {
                 let network = MeshNetworkManager.instance.meshNetwork!
                 let applicationKey = network.applicationKeys[publish.index]
-                let group = network.group(withAddress: publish.publicationAddress)
-                message! += " It is also set up to publish to \(group?.name ?? publish.publicationAddress.asString()) using \(applicationKey?.name ?? "unknown Application Key")."
+                let group = network.group(withAddress: publish.publicationAddress) ?? Group.specialGroup(withAddress: publish.publicationAddress)
+                message! += " It is also set up to publish to \(group?.name ?? publish.publicationAddress.asString()) using \(applicationKey?.name ?? "an unknown Application Key")."
             }
         } else if let publish = model.publish {
             let network = MeshNetworkManager.instance.meshNetwork!
             let applicationKey = network.applicationKeys[publish.index]
-            let group = network.group(withAddress: publish.publicationAddress)
-            message = "This model is set up to publish to \(group?.name ?? publish.publicationAddress.asString()) using \(applicationKey?.name ?? "unknown Application Key")."
+            let group = network.group(withAddress: publish.publicationAddress) ?? Group.specialGroup(withAddress: publish.publicationAddress)
+            message = "This model is set up to publish to \(group?.name ?? publish.publicationAddress.asString()) using \(applicationKey?.name ?? "an unknown Application Key")."
         } else {
             message = "This model does not have subscription or publication set. Go to Network tab, find the local provisioner and configure the \(name) on \(element.name ?? "Element \(element.index + 1)")."
         }

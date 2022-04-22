@@ -1,3 +1,4 @@
+//
 /*
 * Copyright (c) 2019, Nordic Semiconductor
 * All rights reserved.
@@ -28,20 +29,39 @@
 * POSSIBILITY OF SUCH DAMAGE.
 */
 
+import Foundation
 import UIKit
 
-class RightActionCell: UITableViewCell {
-
-    @IBOutlet weak var rightActionButton: UIButton!
+extension UITableViewCell {
     
-    @IBAction func rightActionTapped(_ sender: UIButton) {
-        delegate?()
-    }
-    
-    var delegate: (() -> ())?
-    
-    override var textLabel: UILabel? {
-        return rightActionButton.titleLabel
+    var isEnabled: Bool {
+        get {
+            return isUserInteractionEnabled
+        }
+        set(enabled) {
+            isUserInteractionEnabled = enabled
+            if enabled {
+                if #available(iOS 13.0, *) {
+                    textLabel?.textColor = .label
+                    detailTextLabel?.textColor = .label
+                    imageView?.tintColor = .nordicLake
+                } else {
+                    textLabel?.textColor = .darkText
+                    detailTextLabel?.textColor = .darkText
+                    imageView?.tintColor = .nordicLake
+                }
+            } else {
+                if #available(iOS 13.0, *) {
+                    textLabel?.textColor = .secondaryLabel
+                    detailTextLabel?.textColor = .secondaryLabel
+                    imageView?.tintColor = .secondaryLabel
+                } else {
+                    textLabel?.textColor = .lightGray
+                    detailTextLabel?.textColor = .lightGray
+                    imageView?.tintColor = .lightGray
+                }
+            }
+        }
     }
     
 }

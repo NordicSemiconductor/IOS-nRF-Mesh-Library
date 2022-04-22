@@ -93,14 +93,14 @@ public struct ConfigHeartbeatSubscriptionSet: AcknowledgedConfigMessage {
     /// Creates Config Heartbeat Subscription Set message with given parameters.
     ///
     /// - Parameters:
-    ///   - source: Source address for Heartbeat messages. The address shall
-    ///             be a Unicast Address.
-    ///   - destination: Destination address for Heartbeat messages. The address shall
-    ///                  be a Unicast Address, or a Group Address.
     ///   - periodLog: Duration for processing Heartbeat messages. This field is the interval used
     ///                for sending messages. The value will be calculated as 2^(periodLog-1).
     ///                Allowed values are in range 0x01...0x11. To disable Heartbeat subscriptions
     ///                use `init()`.
+    ///   - source: Source address for Heartbeat messages. The address shall
+    ///             be a Unicast Address.
+    ///   - destination: Destination address for Heartbeat messages. The address shall
+    ///                  be a Unicast Address, or a Group Address.
     public init?(startProcessingHeartbeatMessagesFor periodLog: UInt8,
                  secondsSentFrom source: Address, to destination: Address) {
         guard source.isUnicast else {

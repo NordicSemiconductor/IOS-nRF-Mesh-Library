@@ -70,7 +70,7 @@ public enum MeshNetworkError: Error {
     /// Throw when trying to remove a Group that is either a parent of another
     /// Group, or set as publication or subscription address for any Model.
     case groupInUse
-    /// Throw when trying to remove a Scene that is
+    /// Throw when trying to remove a Scene stored by at least one Scene Register.
     case sceneInUse
     /// Thrown when the given Key Index is not valid.
     case keyIndexOutOfRange

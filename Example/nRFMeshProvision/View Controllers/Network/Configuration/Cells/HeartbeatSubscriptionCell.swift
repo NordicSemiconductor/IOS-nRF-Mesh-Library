@@ -40,26 +40,18 @@ class HeartbeatSubscriptionCell: UITableViewCell {
     @IBOutlet weak var destinationIcon: UIImageView!
     @IBOutlet weak var destinationSubtitle: UILabel!
     
-    private let specialGroups: [Address: String] = [
-        Address.allProxies : "All Proxies",
-        Address.allFriends : "All Friends",
-        Address.allRelays : "All Relays",
-        Address.allNodes : "All Nodes"
-    ]
-    
     var subscription: HeartbeatSubscription! {
         didSet {
             let network = MeshNetworkManager.instance.meshNetwork!
-            sourceLabel.text = network.nodes
-                .first { $0.unicastAddress == subscription.source }?
+            sourceLabel.text = network.node(withAddress: subscription.source)?
                 .name ?? "Unknown Device"
             switch subscription.destination {
             case let unicastAddress where unicastAddress.isUnicast:
-                destinationLabel.text = network.nodes.first { $0.unicastAddress == unicastAddress }?.name ?? "Unknown Device"
+                destinationLabel.text = network.node(withAddress: unicastAddress)?.name ?? "Unknown Device"
                 destinationSubtitle.text = nil
                 destinationIcon.image = #imageLiteral(resourceName: "ic_flag_24pt")
-            case let groupAddress where !groupAddress.isSpecialGroup:
-                if let group = network.groups.first(where: { $0.address.address == groupAddress }) {
+            case let groupAddress where groupAddress.isGroup || groupAddress.isVirtual:
+                if let group = network.group(withAddress: groupAddress) ?? Group.specialGroup(withAddress: groupAddress) {
                     destinationLabel.text = group.name
                     destinationSubtitle.text = nil
                 } else {
@@ -68,14 +60,9 @@ class HeartbeatSubscriptionCell: UITableViewCell {
                 }
                 destinationIcon.image = #imageLiteral(resourceName: "ic_group_24pt")
             default:
-                if let specialGroup = specialGroups[subscription.destination] {
-                    destinationLabel.text = specialGroup
-                    destinationSubtitle.text = nil
-                } else {
-                    destinationLabel.text = "Unknown Group"
-                    destinationSubtitle.text = subscription.destination.asString()
-                }
-                destinationIcon.image = #imageLiteral(resourceName: "ic_group_24pt")
+                destinationLabel.text = "Unknown Address"
+                destinationSubtitle.text = subscription.destination.asString()
+                destinationIcon.image = #imageLiteral(resourceName: "ic_flag_24pt")
             }
         }
     }
