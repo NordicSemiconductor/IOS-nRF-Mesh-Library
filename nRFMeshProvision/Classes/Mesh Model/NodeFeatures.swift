@@ -131,13 +131,13 @@ public class NodeFeaturesState: Codable {
     ///              chosen in this implementation. This does not mean, that
     ///              the feature is actually not enabled. To get the actual
     ///              value, use Config ... Get messages.
-    /// - parameter rawValue: Features field from the Page 0 of the Compositon Page.
+    /// - parameter mask: Features field from the Page 0 of the Compositon Page.
     /// - seeAlso:   https://github.com/NordicSemiconductor/IOS-nRF-Mesh-Library/pull/414
-    internal init(rawValue: UInt16) {
-        self.relay    = rawValue & 0x01 == 0 ? .notSupported : .notEnabled
-        self.proxy    = rawValue & 0x02 == 0 ? .notSupported : .notEnabled
-        self.friend   = rawValue & 0x04 == 0 ? .notSupported : .notEnabled
-        self.lowPower = rawValue & 0x08 == 0 ? .notSupported : .notEnabled
+    internal init(mask: UInt16) {
+        self.relay    = mask & 0x01 == 0 ? .notSupported : .notEnabled
+        self.proxy    = mask & 0x02 == 0 ? .notSupported : .notEnabled
+        self.friend   = mask & 0x04 == 0 ? .notSupported : .notEnabled
+        self.lowPower = mask & 0x08 == 0 ? .notSupported : .notEnabled
     }
 }
 

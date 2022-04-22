@@ -87,7 +87,7 @@ internal struct MeshNodeEntry: Codable {
         guard let featureFlags = featureFlags else {
             return nil
         }
-        return NodeFeaturesState(rawValue: featureFlags.asUInt16)
+        return NodeFeaturesState(mask: featureFlags.asUInt16)
     }
     
     var nodeElements: [Element] {
