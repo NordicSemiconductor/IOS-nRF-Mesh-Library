@@ -128,7 +128,7 @@ public struct Page0: CompositionDataPage {
         productIdentifier = parameters.read(fromOffset: 3)
         versionIdentifier = parameters.read(fromOffset: 5)
         minimumNumberOfReplayProtectionList = parameters.read(fromOffset: 7)
-        features = NodeFeaturesState(rawValue: parameters.read(fromOffset: 9))
+        features = NodeFeaturesState(mask: parameters.read(fromOffset: 9))
         
         var readElements: [Element] = []
         var offset = 11

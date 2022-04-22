@@ -144,7 +144,7 @@ class ConfigurationViewController: ProgressViewController {
         case IndexPath.elementsSection:
             return "Elements"
         case IndexPath.compositionDataSection:
-            return "Composition Data"
+            return "Node information"
         default:
             return nil
         }

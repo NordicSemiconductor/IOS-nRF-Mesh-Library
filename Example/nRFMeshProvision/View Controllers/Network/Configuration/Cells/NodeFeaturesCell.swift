@@ -39,10 +39,25 @@ class NodeFeaturesCell: UITableViewCell {
     
     var node: Node! {
         didSet {
-            relayLabel.text = node.features?.relay?.debugDescription ?? "Unknown"
-            proxyLabel.text = node.features?.proxy?.debugDescription ?? "Unknown"
-            friendLabel.text = node.features?.friend?.debugDescription ?? "Unknown"
-            lowPowerLabel.text = node.features?.lowPower?.debugDescription ?? "Unknown"
+            // The Page 0 of the Composition Data contains only "supported" / "not supported" info for Node features.
+            // The accurate "enabled" / "not enabled" information is obtained by sending a Config ... Get messages
+            // for given feature, which may also return "not supported".
+            // nRF Mesh app sends those messages from the Configuration Server Model screen, together with
+            // Config Network Transmit Get. That means, that if Network Transmit object is not nil, that means that
+            // the features status was requested.
+            if let _ = node.networkTransmit {
+                relayLabel.text = node.features?.relay?.debugDescription ?? "Unknown"
+                proxyLabel.text = node.features?.proxy?.debugDescription ?? "Unknown"
+                friendLabel.text = node.features?.friend?.debugDescription ?? "Unknown"
+                lowPowerLabel.text = node.features?.lowPower?.debugDescription ?? "Unknown"
+            } else {
+                // Otherwise, the "not enabled" does not mean that the feature is actually disabled, but that
+                // its "enabled" / "not enabled" state is unknown. The only certain state is "not supported".
+                relayLabel.text = node.features?.relay == .notSupported ? node.features?.relay?.debugDescription : "Unknown"
+                proxyLabel.text = node.features?.proxy == .notSupported ? node.features?.proxy?.debugDescription : "Unknown"
+                friendLabel.text = node.features?.friend == .notSupported ? node.features?.friend?.debugDescription : "Unknown"
+                lowPowerLabel.text = node.features?.lowPower == .notSupported ? node.features?.lowPower?.debugDescription : "Unknown"
+            }
         }
     }
     
