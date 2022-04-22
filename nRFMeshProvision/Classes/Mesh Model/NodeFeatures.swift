@@ -123,6 +123,16 @@ public class NodeFeaturesState: Codable {
         self.lowPower = nil
     }
     
+    /// This method creates the Node Features State object based on the
+    /// feature bit-field from the Page 0 of the Composition Data.
+    ///
+    /// - important: Mind, that it has to convert "supported" state into
+    ///              either "not enabled" or "enabled". The "not enabled" is
+    ///              chosen in this implementation. This does not mean, that
+    ///              the feature is actually not enabled. To get the actual
+    ///              value, use Config ... Get messages.
+    /// - parameter rawValue: Features field from the Page 0 of the Compositon Page.
+    /// - seeAlso:   https://github.com/NordicSemiconductor/IOS-nRF-Mesh-Library/pull/414
     internal init(rawValue: UInt16) {
         self.relay    = rawValue & 0x01 == 0 ? .notSupported : .notEnabled
         self.proxy    = rawValue & 0x02 == 0 ? .notSupported : .notEnabled
