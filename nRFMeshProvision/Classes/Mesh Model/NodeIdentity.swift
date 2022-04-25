@@ -41,3 +41,15 @@ public enum NodeIdentity: UInt8 {
     /// Advertising with Node Identity is not supported
     case notSupported = 0x02
 }
+
+extension NodeIdentity: CustomDebugStringConvertible {
+    
+    public var debugDescription: String {
+        switch self {
+        case .stopped:      return NSLocalizedString("Stopped", comment: "")
+        case .running:      return NSLocalizedString("Running", comment: "")
+        case .notSupported: return NSLocalizedString("Not Supported", comment: "")
+        }
+    }
+    
+}
