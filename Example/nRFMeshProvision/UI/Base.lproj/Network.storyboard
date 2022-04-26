@@ -841,6 +841,41 @@
                                     <outlet property="rightActionButton" destination="SAT-fQ-1mT" id="gEn-fg-MTI"/>
                                 </connections>
                             </tableViewCell>
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="switch" id="ukA-iV-k75" customClass="SwitchCell" customModule="nRFMeshProvision_Example" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="680" width="414" height="43.5"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="ukA-iV-k75" id="q0I-rL-LSs">
+                                    <rect key="frame" x="0.0" y="0.0" width="414" height="43.5"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                    <subviews>
+                                        <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="P1w-ws-FGk">
+                                            <rect key="frame" x="345" y="6.5" width="51" height="31"/>
+                                            <color key="onTintColor" red="0.0" green="0.46666666670000001" blue="0.7843137255" alpha="1" colorSpace="calibratedRGB"/>
+                                            <connections>
+                                                <action selector="switchDidChange:" destination="ukA-iV-k75" eventType="valueChanged" id="PJe-b6-sbf"/>
+                                            </connections>
+                                        </switch>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Title" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="pqx-lg-qPZ">
+                                            <rect key="frame" x="20" y="11" width="33" height="21.5"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                            <nil key="textColor"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                    </subviews>
+                                    <constraints>
+                                        <constraint firstItem="P1w-ws-FGk" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="pqx-lg-qPZ" secondAttribute="trailing" constant="8" id="6z1-Ex-fNK"/>
+                                        <constraint firstAttribute="trailingMargin" secondItem="P1w-ws-FGk" secondAttribute="trailing" id="Hjl-Cf-j5l"/>
+                                        <constraint firstAttribute="bottomMargin" secondItem="pqx-lg-qPZ" secondAttribute="bottom" id="MJF-K0-Vwr"/>
+                                        <constraint firstItem="P1w-ws-FGk" firstAttribute="centerY" secondItem="pqx-lg-qPZ" secondAttribute="centerY" id="Q9V-Es-lVs"/>
+                                        <constraint firstItem="pqx-lg-qPZ" firstAttribute="leading" secondItem="q0I-rL-LSs" secondAttribute="leadingMargin" id="VEy-CM-Czk"/>
+                                        <constraint firstItem="pqx-lg-qPZ" firstAttribute="top" secondItem="q0I-rL-LSs" secondAttribute="topMargin" id="qGc-K8-Tbd"/>
+                                    </constraints>
+                                </tableViewCellContentView>
+                                <connections>
+                                    <outlet property="switch" destination="P1w-ws-FGk" id="PGw-eW-Ytf"/>
+                                    <outlet property="title" destination="pqx-lg-qPZ" id="d6j-lZ-Zao"/>
+                                </connections>
+                            </tableViewCell>
                         </prototypes>
                         <connections>
                             <outlet property="dataSource" destination="veF-nS-gn0" id="cDP-zl-VqJ"/>
