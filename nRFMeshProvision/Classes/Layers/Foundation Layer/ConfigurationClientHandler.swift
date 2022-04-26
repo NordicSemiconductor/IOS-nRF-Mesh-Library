@@ -57,6 +57,7 @@ internal class ConfigurationClientHandler: ModelDelegate {
             ConfigFriendStatus.self,
             ConfigBeaconStatus.self,
             ConfigNetworkTransmitStatus.self,
+            ConfigNodeIdentityStatus.self,
             ConfigNodeResetStatus.self,
             ConfigHeartbeatPublicationStatus.self,
             ConfigHeartbeatSubscriptionStatus.self,
@@ -339,6 +340,11 @@ internal class ConfigurationClientHandler: ModelDelegate {
                 // This may be set to nil.
                 node.heartbeatSubscription = HeartbeatSubscription(status)
             }
+            
+        // Node Identity
+        case is ConfigNodeIdentityStatus:
+            // Do nothing. The model does not need to be updated.
+            break
             
         case is ConfigKeyRefreshPhaseStatus:
             // Do nothing. The model does not need to be updated.

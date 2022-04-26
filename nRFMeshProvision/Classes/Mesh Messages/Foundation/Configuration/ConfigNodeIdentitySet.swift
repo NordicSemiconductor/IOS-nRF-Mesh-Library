@@ -28,16 +28,37 @@
 * POSSIBILITY OF SUCH DAMAGE.
 */
 
-import UIKit
+import Foundation
 
-class SwitchCell: UITableViewCell {
+public struct ConfigNodeIdentitySet: AcknowledgedConfigMessage, ConfigNetKeyMessage {
+    public static let opCode: UInt32 = 0x8047
+    public static let responseType: StaticMeshMessage.Type = ConfigNodeIdentityStatus.self
     
-    @IBOutlet weak var title: UILabel!
-    @IBOutlet weak var `switch`: UISwitch!
-    
-    @IBAction func switchDidChange(_ sender: UISwitch) {
-        delegate?(sender.isOn)
+    public var parameters: Data? {
+        return encodeNetKeyIndex() + identity.rawValue
     }
     
-    var delegate: ((Bool) -> ())?
+    public let networkKeyIndex: KeyIndex
+    /// The Node Identity state determines if a node is advertising with Node Identity
+    /// messages on a subnet.
+    public let identity: NodeIdentity
+    
+    /// Creates the Config Node Identity Set message.
+    ///
+    /// - parameters:
+    ///   - networkKey: The Network Key index for requested subnet.
+    ///   - identity:   The Node Identity state determines if a node is advertising with
+    ///                 Node Identity messages on a subnet.
+    public init(networkKey: NetworkKey, identity: NodeIdentity) {
+        self.networkKeyIndex = networkKey.index
+        self.identity = identity
+    }
+    
+    public init?(parameters: Data) {
+        guard parameters.count == 3 else {
+            return nil
+        }
+        networkKeyIndex = Self.decodeNetKeyIndex(from: parameters, at: 0)
+        identity = NodeIdentity(rawValue: parameters[2]) ?? .notSupported
+    }
 }

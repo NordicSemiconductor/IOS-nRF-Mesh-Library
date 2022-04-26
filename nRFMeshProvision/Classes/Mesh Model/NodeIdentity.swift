@@ -28,16 +28,28 @@
 * POSSIBILITY OF SUCH DAMAGE.
 */
 
-import UIKit
+import Foundation
 
-class SwitchCell: UITableViewCell {
+/// The Node Identity state determines if a node is advertising with Node Identity
+/// messages on a subnet. If the Mesh Proxy Service is exposed, the node can be
+/// configured to advertise with Node Identity on a subnet.
+public enum NodeIdentity: UInt8 {
+    /// Advertising with Node Identity for a subnet is stopped.
+    case stopped      = 0x00
+    /// Advertising with Node Identity for a subnet is running.
+    case running      = 0x01
+    /// Advertising with Node Identity is not supported
+    case notSupported = 0x02
+}
+
+extension NodeIdentity: CustomDebugStringConvertible {
     
-    @IBOutlet weak var title: UILabel!
-    @IBOutlet weak var `switch`: UISwitch!
-    
-    @IBAction func switchDidChange(_ sender: UISwitch) {
-        delegate?(sender.isOn)
+    public var debugDescription: String {
+        switch self {
+        case .stopped:      return NSLocalizedString("Stopped", comment: "")
+        case .running:      return NSLocalizedString("Running", comment: "")
+        case .notSupported: return NSLocalizedString("Not Supported", comment: "")
+        }
     }
     
-    var delegate: ((Bool) -> ())?
 }

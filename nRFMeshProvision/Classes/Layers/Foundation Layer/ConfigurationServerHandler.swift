@@ -76,6 +76,8 @@ internal class ConfigurationServerHandler: ModelDelegate {
             ConfigBeaconSet.self,
             ConfigNetworkTransmitSet.self,
             ConfigNetworkTransmitGet.self,
+            ConfigNodeIdentityGet.self,
+            ConfigNodeIdentitySet.self,
             ConfigNodeReset.self,
             ConfigHeartbeatPublicationGet.self,
             ConfigHeartbeatPublicationSet.self,
@@ -563,6 +565,13 @@ internal class ConfigurationServerHandler: ModelDelegate {
             
         case is ConfigNetworkTransmitGet:
             return ConfigNetworkTransmitStatus(for: localNode)
+            
+        // Node Identity
+        case let request as ConfigNodeIdentityGet:
+            return ConfigNodeIdentityStatus(responseTo: request)
+            
+        case let request as ConfigNodeIdentitySet:
+            return ConfigNodeIdentityStatus(responseTo: request)
                 
         // Resetting Node
         case is ConfigNodeReset:

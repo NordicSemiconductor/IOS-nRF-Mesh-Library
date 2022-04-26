@@ -46,6 +46,13 @@ class ModelViewController: ProgressViewController {
     /// Sensor values are defined only for Sensor Server model,
     /// and only when the value has been read.
     private var sensorValues: [SensorValue]?
+    /// Node Identity values per Network Key. Pull to Refresh current states.
+    private var nodeIdentityStates: [(key: NetworkKey, state: NodeIdentity?)]!
+    /// This is a helper counter to iterate over Node Identity states while
+    /// loading them from the Node. It is reinitialized to 0 on Pull To Refresh
+    /// and incremented with every status received until all identity states are
+    /// received.
+    private var identityIndex = 0
     
     // MARK: - View Controller
     
@@ -53,6 +60,9 @@ class ModelViewController: ProgressViewController {
         super.viewDidLoad()
         
         title = model.name ?? "Model"
+        if model.isConfigurationServer {
+            nodeIdentityStates = model.parentElement?.parentNode?.networkKeys.map { ($0, nil) } ?? []
+        }
         if !model.isConfigurationClient {
             navigationItem.rightBarButtonItem = editButtonItem
         }
@@ -153,7 +163,8 @@ class ModelViewController: ProgressViewController {
         case IndexPath.detailsSection:
             return IndexPath.detailsTitles.count
         case IndexPath.configurationServerSection where model.isConfigurationServer:
-            return 1
+            return 1 /* Config Server Cell with all other settings and the Node Identity header */
+                 + nodeIdentityStates.count /* Network Keys for Node Identity view */
         case IndexPath.bindingsSection:
             return model.boundApplicationKeys.count + 1 // Add Action.
         case IndexPath.publishSection where model.isConfigurationServer:
@@ -240,6 +251,22 @@ class ModelViewController: ProgressViewController {
             let cell = tableView.dequeueReusableCell(withIdentifier: "key", for: indexPath)
             cell.textLabel?.text = applicationKey.name
             cell.detailTextLabel?.text = "Bound to \(applicationKey.boundNetworkKey.name)"
+            return cell
+        }
+        // For Configuration Server, the first row is a ConfigurationServerViewCell.
+        // The last item in this cell is the header for Node Identity, which requires listing all
+        // Network Keys. Let's list them here:
+        if indexPath.isBindingsSection && model.isConfigurationServer && indexPath.row > 0 {
+            let cell = tableView.dequeueReusableCell(withIdentifier: "switch", for: indexPath) as! SwitchCell
+            let identity = nodeIdentityStates[indexPath.row - 1]
+            cell.title.text = identity.key.name
+            cell.switch.isOn = identity.state == .running
+            cell.switch.isEnabled = identity.state != nil && identity.state != .notSupported
+            cell.title.isEnabled = identity.state != nil && identity.state != .notSupported
+            cell.delegate = { [weak self] newState in
+                self?.identityIndex = indexPath.row - 1
+                self?.setNodeIdentityStatus(for: identity.key, enable: newState)
+            }
             return cell
         }
         // Third section is the Publication or Heartbeat Publication section (in case of Configuration Server)
@@ -577,9 +604,12 @@ private extension ModelViewController {
     @objc func reload(_ sender: Any) {
         switch model! {
         case let model where model.isConfigurationServer:
-            // First, load heartbeat publication, which will trigger reading
-            // heartbeat subscription, which will load custom UI.
-            reloadHeartbeatPublication()
+            // First, load the states of Node Identity for all Network Keys.
+            // Start with the first one. At least one Network Key is required.
+            identityIndex = 0
+            nodeIdentityStates.first.map { key, _ in
+                readNodeIdentityStatus(for: key)
+            }
         default:
             // Model App Bindings -> Subscriptions -> Publication -> Custom UI.
             reloadBindings()
@@ -663,6 +693,17 @@ private extension ModelViewController {
         send(message, description: "Reading Values...")
     }
     
+    func readNodeIdentityStatus(for networkKey: NetworkKey) {
+        send(ConfigNodeIdentityGet(networkKey: networkKey),
+             description: "Reading Node Identity status for \(networkKey)...")
+    }
+        
+    func setNodeIdentityStatus(for networkKey: NetworkKey, enable: Bool) {
+        let message = "\(enable ? "Enabling" : "Disabling") Node Identity for \(networkKey)..."
+        send(ConfigNodeIdentitySet(networkKey: networkKey, identity: enable ? .running : .stopped),
+             description: message)
+    }
+    
 }
 
 extension ModelViewController: MeshNetworkDelegate {
@@ -743,6 +784,29 @@ extension ModelViewController: MeshNetworkDelegate {
             } else {
                 done {
                     self.presentAlert(title: "Error", message: list.message)
+                    self.refreshControl?.endRefreshing()
+                }
+            }
+            
+        // Node Identity (only for Configuration Server model)
+        case let status as ConfigNodeIdentityStatus:
+            if status.isSuccess {
+                nodeIdentityStates[identityIndex].state = status.identity
+                if isRefreshing {
+                    identityIndex += 1
+                    if identityIndex < nodeIdentityStates.count {
+                        readNodeIdentityStatus(for: nodeIdentityStates[identityIndex].key)
+                    } else {
+                        // Load heartbeat publication, which will trigger reading
+                        // heartbeat subscription, which will load custom UI.
+                        reloadHeartbeatPublication()
+                    }
+                } else {
+                    done()
+                }
+            } else {
+                done {
+                    self.presentAlert(title: "Error", message: status.message)
                     self.refreshControl?.endRefreshing()
                 }
             }

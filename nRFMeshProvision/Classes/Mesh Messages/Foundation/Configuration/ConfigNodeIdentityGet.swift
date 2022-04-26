@@ -28,16 +28,26 @@
 * POSSIBILITY OF SUCH DAMAGE.
 */
 
-import UIKit
+import Foundation
 
-class SwitchCell: UITableViewCell {
+public struct ConfigNodeIdentityGet: AcknowledgedConfigMessage, ConfigNetKeyMessage {
+    public static let opCode: UInt32 = 0x8046
+    public static let responseType: StaticMeshMessage.Type = ConfigNodeIdentityStatus.self
     
-    @IBOutlet weak var title: UILabel!
-    @IBOutlet weak var `switch`: UISwitch!
-    
-    @IBAction func switchDidChange(_ sender: UISwitch) {
-        delegate?(sender.isOn)
+    public var parameters: Data? {
+        return encodeNetKeyIndex()
     }
     
-    var delegate: ((Bool) -> ())?
+    public let networkKeyIndex: KeyIndex
+    
+    public init(networkKey: NetworkKey) {
+        self.networkKeyIndex = networkKey.index
+    }
+    
+    public init?(parameters: Data) {
+        guard parameters.count == 2 else {
+            return nil
+        }
+        networkKeyIndex = Self.decodeNetKeyIndex(from: parameters, at: 0)
+    }
 }
