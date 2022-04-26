@@ -806,6 +806,8 @@ extension ModelViewController: MeshNetworkDelegate {
                 }
             } else {
                 done {
+                    self.nodeIdentityStates[self.identityIndex].state = .notSupported
+                    self.tableView.reloadSections(.bindings, with: .automatic)
                     self.presentAlert(title: "Error", message: status.message)
                     self.refreshControl?.endRefreshing()
                 }
