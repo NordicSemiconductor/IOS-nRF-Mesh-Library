@@ -385,7 +385,7 @@
                     </view>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="TT2-fb-RHp">
                         <rect key="frame" x="20" y="936.5" width="374" height="125.5"/>
-                        <mutableString key="text">The Node Identity state determines if a node is advertising with Node Identity messages on a subnet. If the Mesh Proxy Service is exposed, the node can be configured to advertise with Node Identity on a subnet.  Pull the list down to read and change states.</mutableString>
+                        <mutableString key="text">The Node Identity state determines if a node is advertising with Node Identity messages on a subnet. If the Mesh Proxy Service is exposed, the node can be configured to advertise with Node Identity on a subnet.  Pull the list down to read and change the states.</mutableString>
                         <fontDescription key="fontDescription" type="system" pointSize="15"/>
                         <color key="textColor" systemColor="secondaryLabelColor"/>
                         <nil key="highlightedColor"/>
