@@ -80,6 +80,38 @@ public extension MeshNetwork {
         }
     }
     
+    /// Returns a Node that matches given Hash and Random, or `nil`.
+    /// This is used to match the Node Identity beacon.
+    ///
+    /// - parameters:
+    ///   - hash:   The Hash value.
+    ///   - random: The Random value.
+    /// - returns: A Node that matches given hash and random; or `nil` otherwise.
+    func node(matchingHash hash: Data, random: Data) -> Node? {
+        for node in nodes {
+            // Data are: 48 bits of Padding (0s), 64 bit Random and Unicast Address.
+            let data = Data(repeating: 0, count: 6) + random + node.unicastAddress.bigEndian
+            
+            for networkKey in node.networkKeys {
+                let calculatedHash = Crypto.calculateHash(from: data,
+                                                          usingIdentityKey: networkKey.keys.identityKey)
+                if calculatedHash == hash {
+                    return node
+                }
+                // If the Key Refresh Procedure is in place, the identity might have been
+                // generated with the old key.
+                if let oldIdentityKey = networkKey.oldKeys?.identityKey {
+                    let calculatedHash = Crypto.calculateHash(from: data,
+                                                              usingIdentityKey: oldIdentityKey)
+                    if calculatedHash == hash {
+                        return node
+                    }
+                }
+            }
+        }
+        return nil
+    }
+    
     /// Returns whether any of the Network Keys in the mesh network
     /// matches the given Network ID.
     ///
@@ -101,28 +133,7 @@ public extension MeshNetwork {
     /// - returns: `True` if the given parameters match any Node of this
     ///            mesh network; `false` otherwise.
     func matches(hash: Data, random: Data) -> Bool {
-        for node in nodes {
-            // Data are: 48 bits of Padding (0s), 64 bit Random and Unicast Address.
-            let data = Data(repeating: 0, count: 6) + random + node.unicastAddress.bigEndian
-            
-            for networkKey in node.networkKeys {
-                let calculatedHash = Crypto.calculateHash(from: data,
-                                                          usingIdentityKey: networkKey.keys.identityKey)
-                if calculatedHash == hash {
-                    return true
-                }
-                // If the Key Refresh Procedure is in place, the identity might have been
-                // generated with the old key.
-                if let oldIdentityKey = networkKey.oldKeys?.identityKey {
-                    let calculatedHash = Crypto.calculateHash(from: data,
-                                                              usingIdentityKey: oldIdentityKey)
-                    if calculatedHash == hash {
-                        return true
-                    }
-                }
-            }
-        }
-        return false
+        return node(matchingHash: hash, random: random) != nil
     }
     
     /// Adds the Node to the mesh network. If a node with the same UUID
