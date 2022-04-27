@@ -1,7 +1,7 @@
 PODS:
-  - CryptoSwift (1.4.0)
+  - CryptoSwift (1.5.1)
   - nRFMeshProvision (3.1.5):
-    - CryptoSwift (= 1.4.0)
+    - CryptoSwift (= 1.5.1)
 
 DEPENDENCIES:
   - nRFMeshProvision (from `../`)
@@ -15,9 +15,9 @@ EXTERNAL SOURCES:
     :path: "../"
 
 SPEC CHECKSUMS:
-  CryptoSwift: 7cc902df1784de3b389a387756c7d710f197730c
-  nRFMeshProvision: 8d93e5827501f166f1511c89a5540a610844ccf2
+  CryptoSwift: c4f2debceb38bf44c80659afe009f71e23e4a082
+  nRFMeshProvision: fd278d36d1a5c1abafc654694dfd85a288be2fca
 
 PODFILE CHECKSUM: 69a81463322ef34ca0a20b98e90da2701d94e4ec
 
-COCOAPODS: 1.10.2
+COCOAPODS: 1.11.3

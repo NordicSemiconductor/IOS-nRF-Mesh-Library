@@ -1,7 +1,7 @@
 //
 //  CryptoSwift
 //
-//  Copyright (C) 2014-2017 Marcin Krzyżanowski <marcin@krzyzanowskim.com>
+//  Copyright (C) 2014-2021 Marcin Krzyżanowski <marcin@krzyzanowskim.com>
 //  This software is provided 'as-is', without any express or implied warranty.
 //
 //  In no event will the authors be held liable for any damages arising from the use of this software.
@@ -19,7 +19,7 @@ public protocol PaddingProtocol {
 }
 
 public enum Padding: PaddingProtocol {
-  case noPadding, zeroPadding, pkcs7, pkcs5, iso78164
+  case noPadding, zeroPadding, pkcs7, pkcs5, iso78164, iso10126
 
   public func add(to: Array<UInt8>, blockSize: Int) -> Array<UInt8> {
     switch self {
@@ -33,6 +33,8 @@ public enum Padding: PaddingProtocol {
         return PKCS5.Padding().add(to: to, blockSize: blockSize)
       case .iso78164:
         return ISO78164Padding().add(to: to, blockSize: blockSize)
+      case .iso10126:
+        return ISO10126Padding().add(to: to, blockSize: blockSize)
     }
   }
 
@@ -48,6 +50,8 @@ public enum Padding: PaddingProtocol {
         return PKCS5.Padding().remove(from: from, blockSize: blockSize)
       case .iso78164:
         return ISO78164Padding().remove(from: from, blockSize: blockSize)
+      case .iso10126:
+        return ISO10126Padding().remove(from: from, blockSize: blockSize)
     }
   }
 }
