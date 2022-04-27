@@ -651,7 +651,7 @@
 		4B332B82E76BFC13A67CE2A00BCC56A1 /* AES.Cryptors.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = AES.Cryptors.swift; path = Sources/CryptoSwift/AES.Cryptors.swift; sourceTree = "<group>"; };
 		4C2AABE8F4F98C670AA27CEDD5EC1060 /* Bit.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Bit.swift; path = Sources/CryptoSwift/Bit.swift; sourceTree = "<group>"; };
 		4D9EBB58AAB19F60303F55FE9AC9CE05 /* Pods-nRFMeshProvision_Tests-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "Pods-nRFMeshProvision_Tests-dummy.m"; sourceTree = "<group>"; };
-		4E2380D38B4AC5709B559AF9D9970DB9 /* nRFMeshProvision.podspec */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; indentWidth = 2; lastKnownFileType = text; path = nRFMeshProvision.podspec; sourceTree = "<group>"; tabWidth = 2; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
+		4E2380D38B4AC5709B559AF9D9970DB9 /* nRFMeshProvision.podspec */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; indentWidth = 2; path = nRFMeshProvision.podspec; sourceTree = "<group>"; tabWidth = 2; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		4E268DA268CF8733C9182F22EA28AE82 /* CryptoSwift.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = CryptoSwift.release.xcconfig; sourceTree = "<group>"; };
 		4E77938B5605365F775507D690A77242 /* ConfigAppKeyAdd.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ConfigAppKeyAdd.swift; sourceTree = "<group>"; };
 		4F15F2F8E81E9C123F06ED7F8C2689FB /* ConfigModelPublicationStatus.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ConfigModelPublicationStatus.swift; sourceTree = "<group>"; };
@@ -801,7 +801,7 @@
 		9B32BC2BEE93AB1D0FBD3140B3F71F3E /* SetFilterType.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SetFilterType.swift; sourceTree = "<group>"; };
 		9B75FAE6885CC2FB549E2DB112228BB4 /* Pods-nRFMeshProvision_Tests-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-nRFMeshProvision_Tests-Info.plist"; sourceTree = "<group>"; };
 		9D4B53E1E50C0DF75CC3387C02C879F6 /* nRFMeshProvision.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = nRFMeshProvision.debug.xcconfig; sourceTree = "<group>"; };
-		9D940727FF8FB9C785EB98E56350EF41 /* Podfile */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; indentWidth = 2; lastKnownFileType = text; name = Podfile; path = ../Podfile; sourceTree = SOURCE_ROOT; tabWidth = 2; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
+		9D940727FF8FB9C785EB98E56350EF41 /* Podfile */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; indentWidth = 2; name = Podfile; path = ../Podfile; sourceTree = SOURCE_ROOT; tabWidth = 2; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		9DD216622117D08F31D54107772AE6F3 /* RSA.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = RSA.swift; path = Sources/CryptoSwift/RSA.swift; sourceTree = "<group>"; };
 		9F620FE67145BE0E0BADE22C91709A3D /* BlockMode.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = BlockMode.swift; path = Sources/CryptoSwift/BlockMode/BlockMode.swift; sourceTree = "<group>"; };
 		9F783D0615B2AA67C9517903217598D3 /* OCB.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = OCB.swift; path = Sources/CryptoSwift/BlockMode/OCB.swift; sourceTree = "<group>"; };
@@ -842,7 +842,7 @@
 		AC3893A2BE180348052C3D242768589E /* UpperTransportPdu.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = UpperTransportPdu.swift; sourceTree = "<group>"; };
 		ACC81F676EA369634459437B4EFB9276 /* Location.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Location.swift; sourceTree = "<group>"; };
 		ACC881B8C93240675D976CF20B83443E /* ConfigNodeResetStatus.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ConfigNodeResetStatus.swift; sourceTree = "<group>"; };
-		AD2E75679CC9310F49A6A29CD6A45C97 /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; path = README.md; sourceTree = "<group>"; };
+		AD2E75679CC9310F49A6A29CD6A45C97 /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		ADA368E2D8FB0B9AD3BB8415083A5978 /* GenericPowerDefaultSetUnacknowledged.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = GenericPowerDefaultSetUnacknowledged.swift; sourceTree = "<group>"; };
 		ADA9EE3AF04EE465BA0CC207C42E919C /* MeshNetwork+Scenes.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "MeshNetwork+Scenes.swift"; sourceTree = "<group>"; };
 		AE806137489CB4E2DF4E4A64657B74BE /* LightLightnessRangeSetUnacknowledged.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LightLightnessRangeSetUnacknowledged.swift; sourceTree = "<group>"; };
@@ -949,7 +949,7 @@
 		E39D742C254ABB001EA1D1D4EBCE6540 /* ConfigModelAppUnbind.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ConfigModelAppUnbind.swift; sourceTree = "<group>"; };
 		E4A527A18EEBAD1F4F4B22BDD1F0571F /* ConfigModelSubscriptionOverwrite.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ConfigModelSubscriptionOverwrite.swift; sourceTree = "<group>"; };
 		E4F1C8EA3B3D44DB113B334D45A96BA8 /* LightHSLDefaultSet.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LightHSLDefaultSet.swift; sourceTree = "<group>"; };
-		E62692D335B0748B9EAB8DA1EF96F76E /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; path = LICENSE; sourceTree = "<group>"; };
+		E62692D335B0748B9EAB8DA1EF96F76E /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
 		E6B98780C2550907F2030A701C103D9B /* Pods-nRFMeshProvision_Example-frameworks.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "Pods-nRFMeshProvision_Example-frameworks.sh"; sourceTree = "<group>"; };
 		E6CB51F2C6DDE28E7A2928682E67DA82 /* Pods-nRFMeshProvision_Tests-acknowledgements.markdown */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; path = "Pods-nRFMeshProvision_Tests-acknowledgements.markdown"; sourceTree = "<group>"; };
 		E7E30A3DD15001D8DD1325F874A43258 /* ExclusionList.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ExclusionList.swift; sourceTree = "<group>"; };
@@ -1109,7 +1109,6 @@
 				21FEC0BEBBF61C676210AB786232FBF3 /* SensorSettingStatus.swift */,
 				586064B347ACB487E02342A49936007D /* SensorStatus.swift */,
 			);
-			name = Sensors;
 			path = Sensors;
 			sourceTree = "<group>";
 		};
@@ -1247,7 +1246,6 @@
 				728456424B5480CC3CFC2E0DC3509D24 /* ZeroPadding.swift */,
 				47DB14FE47EAD4DABCC84F8286D59350 /* Support Files */,
 			);
-			name = CryptoSwift;
 			path = CryptoSwift;
 			sourceTree = "<group>";
 		};
@@ -1271,7 +1269,6 @@
 			children = (
 				488537774D1B8A1DEB25BFEDD2D8A508 /* Configuration */,
 			);
-			name = Foundation;
 			path = Foundation;
 			sourceTree = "<group>";
 		};
@@ -1304,7 +1301,6 @@
 				21840CED6194B4F3D7A6E7EA557DB39F /* UpperTransportLayer.swift */,
 				AC3893A2BE180348052C3D242768589E /* UpperTransportPdu.swift */,
 			);
-			name = "Upper Transport Layer";
 			path = "Upper Transport Layer";
 			sourceTree = "<group>";
 		};
@@ -1411,7 +1407,6 @@
 				3D7300BE6A09D09305BC952F0B0DAD0F /* ConfigVendorModelSubscriptionGet.swift */,
 				7AEA3DFD46031F9C23092D30D6230570 /* ConfigVendorModelSubscriptionList.swift */,
 			);
-			name = Configuration;
 			path = Configuration;
 			sourceTree = "<group>";
 		};
@@ -1432,7 +1427,6 @@
 				957EE18C8EEFAA763D9F1A46074D0727 /* SecureNetworkBeacon.swift */,
 				A1814F6185D410689EF151DA0AC621C7 /* UnprovisionedDeviceBeacon.swift */,
 			);
-			name = "Network Layer";
 			path = "Network Layer";
 			sourceTree = "<group>";
 		};
@@ -1443,7 +1437,6 @@
 				116A4931E77DBED9454F503B140F5092 /* ConfigurationServerHandler.swift */,
 				C0119103A1CB96EBF1B72F0190CFFDFB /* SceneClientHandler.swift */,
 			);
-			name = "Foundation Layer";
 			path = "Foundation Layer";
 			sourceTree = "<group>";
 		};
@@ -1460,7 +1453,6 @@
 				12E958F7217AEE36CB05749A8DEA47C9 /* SegmentedControlMessage.swift */,
 				02EDCFBBA3C5352851C02228CBF6D58C /* SegmentedMessage.swift */,
 			);
-			name = "Lower Transport Layer";
 			path = "Lower Transport Layer";
 			sourceTree = "<group>";
 		};
@@ -1490,7 +1482,6 @@
 				90BBB93BC2B67CD764C3546AF5FD002D /* SceneStore.swift */,
 				2553CDAC69494C6435CB2A5C30BCF14F /* SceneStoreUnacknowledged.swift */,
 			);
-			name = "Time and Scenes";
 			path = "Time and Scenes";
 			sourceTree = "<group>";
 		};
@@ -1519,7 +1510,6 @@
 				D86458247DB1D636293E35E6EA6B68A3 /* RemoveAddressesFromFilter.swift */,
 				9B32BC2BEE93AB1D0FBD3140B3F71F3E /* SetFilterType.swift */,
 			);
-			name = "Proxy Configuration";
 			path = "Proxy Configuration";
 			sourceTree = "<group>";
 		};
@@ -1580,7 +1570,6 @@
 				86EECD67478299959EB8BE3BA5BD9FBA /* GenericPowerRangeSetUnacknowledged.swift */,
 				0C6BE8A4E73A9AD79F575358AB2BF5E2 /* GenericPowerRangeStatus.swift */,
 			);
-			name = Generic;
 			path = Generic;
 			sourceTree = "<group>";
 		};
@@ -1651,7 +1640,6 @@
 				FE5A853A1B155CD15D59660F60EF6F9A /* PBGattBearer.swift */,
 				99BFEF859604989B4488FF3866566A7B /* ProxyProtocolHandler.swift */,
 			);
-			name = GATT;
 			path = GATT;
 			sourceTree = "<group>";
 		};
@@ -1820,7 +1808,6 @@
 				F78FCB3CF06B90CE64CA2DED3BEC1579 /* LightLightnessSetUnacknowledged.swift */,
 				0C2DCDE3305BB8F8D26C91969CD746F1 /* LightLightnessStatus.swift */,
 			);
-			name = Lighting;
 			path = Lighting;
 			sourceTree = "<group>";
 		};
@@ -1831,7 +1818,6 @@
 				5C9FC235DEA4306693BA0A45E8E76047 /* AccessLayer.swift */,
 				C65633FA124F0CD7BEBA46CF25C70726 /* AccessPdu.swift */,
 			);
-			name = "Access Layer";
 			path = "Access Layer";
 			sourceTree = "<group>";
 		};
@@ -1977,7 +1963,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 1240;
-				LastUpgradeCheck = 1240;
+				LastUpgradeCheck = 1330;
 			};
 			buildConfigurationList = 4821239608C13582E20E6DA73FD5F1F9 /* Build configuration list for PBXProject "Pods" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -2770,8 +2756,7 @@
 				MTL_FAST_MATH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRIP_INSTALLED_PRODUCT = NO;
-				SWIFT_COMPILATION_MODE = wholemodule;
-				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
 				SWIFT_VERSION = 5.0;
 				SYMROOT = "${SRCROOT}/../build";
 			};
