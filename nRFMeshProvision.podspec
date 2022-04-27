@@ -3,13 +3,13 @@
 # valid spec before submitting.
 #
 # Any lines starting with a # are optional, but their use is encouraged
-# To learn more about a Podspec see http://guides.cocoapods.org/syntax/podspec.html
+# To learn more about a Podspec see http://guides.coļcoapods.org/syntax/podspec.html
 #
 
 
 Pod::Spec.new do |s|
   s.name             = 'nRFMeshProvision'
-  s.version          = '3.1.5'
+  s.version          = '3.2.0'
   s.summary          = 'A Bluetooth Mesh library'
   s.description      = <<-DESC
   nRF Mesh is a Bluetooth mesh compliant library supporting features such as provisioning, configuration and control of Bluetooth mesh nodes.
@@ -22,7 +22,7 @@ Pod::Spec.new do |s|
   s.ios.deployment_target  = '10.0'
   s.osx.deployment_target  = '10.15'  
   s.static_framework = true
-  s.swift_versions   = ['4.2', '5.0', '5.1', '5.2', '5.3', '5.4', '5.5']
+  s.swift_versions   = ['4.2', '5.0', '5.1', '5.2', '5.3', '5.4', '5.5', '5.6']
   s.source_files = 'nRFMeshProvision/Classes/**/*'
   s.dependency 'CryptoSwift', '= 1.5.1'
   s.frameworks = 'CoreBluetooth'
