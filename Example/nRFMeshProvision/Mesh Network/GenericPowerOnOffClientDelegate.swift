@@ -1,4 +1,3 @@
-//
 /*
 * Copyright (c) 2019, Nordic Semiconductor
 * All rights reserved.
@@ -33,16 +32,34 @@ import Foundation
 import nRFMeshProvision
 
 class GenericPowerOnOffClientDelegate: ModelDelegate {
-    
     let messageTypes: [UInt32 : MeshMessage.Type]
     let isSubscriptionSupported: Bool = true
     
-    // TODO: Implement Generic Power OnOff Client publications.
-    let publicationMessageComposer: MessageComposer? = nil
+    var publicationMessageComposer: MessageComposer? {
+        func compose() -> MeshMessage {
+            return GenericOnPowerUpSetUnacknowledged(state: self.state)
+        }
+        let request = compose()
+        return {
+            return request
+        }
+    }
+    
+    /// The current value of the Generic On Power Up state.
+    var state: OnPowerUp = .default {
+        didSet {
+            publish(using: MeshNetworkManager.instance)
+        }
+    }
     
     init() {
-        messageTypes = [GenericOnPowerUpStatus.self].toMap()
+        let types: [GenericMessage.Type] = [
+            GenericOnPowerUpStatus.self
+        ]
+        messageTypes = types.toMap()
     }
+    
+    // MARK: - Message handlers
     
     func model(_ model: Model, didReceiveAcknowledgedMessage request: AcknowledgedMeshMessage,
                from source: Address, sentTo destination: MeshAddress) -> MeshMessage {
@@ -51,10 +68,13 @@ class GenericPowerOnOffClientDelegate: ModelDelegate {
     
     func model(_ model: Model, didReceiveUnacknowledgedMessage message: MeshMessage,
                from source: Address, sentTo destination: MeshAddress) {
+        // The status message may be received here if the Generic Power OnOff Server model
+        // has been configured to publish. Ignore this message.
     }
     
     func model(_ model: Model, didReceiveResponse response: MeshMessage,
                toAcknowledgedMessage request: AcknowledgedMeshMessage,
                from source: Address) {
+        // Ignore.
     }
 }
