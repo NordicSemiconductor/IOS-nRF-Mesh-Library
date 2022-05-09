@@ -169,6 +169,7 @@
 		52025F119511F4D58FE3172F581DF974 /* MeshNetworkDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11BC6C154C64593643FECEB349AADBE2 /* MeshNetworkDelegate.swift */; };
 		52597F4ED19305B572BB21ADE8BB2EF4 /* ConfigLowPowerNodePollTimeoutStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 485132F71CF85F1E49BD4E7F4F54B1B1 /* ConfigLowPowerNodePollTimeoutStatus.swift */; };
 		5276B02028252D7100DE8D81 /* Element+Scenes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5276B01E2825210D00DE8D81 /* Element+Scenes.swift */; };
+		5276B02228292C2400DE8D81 /* Publish+Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5276B02128292C2400DE8D81 /* Publish+Utils.swift */; };
 		5298C00B6C7DA3382FA31FB3B0EF2826 /* PKCS5.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6529BEEF734D4D9F2920046F56965C4 /* PKCS5.swift */; };
 		53262A2E3B02C354159A2D803DA85BA2 /* ConfigSIGModelAppList.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8AF1DBE021AA5761D43A135EFF0E6F4 /* ConfigSIGModelAppList.swift */; };
 		53296ECEF9847EC0863E129EB2162B04 /* ConfigVendorModelSubscriptionGet.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF31170B82AB893E9FA1AB258A4BD071 /* ConfigVendorModelSubscriptionGet.swift */; };
@@ -703,6 +704,7 @@
 		51546F12A683A01A9AD6EBADD449AB11 /* Cryptor.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Cryptor.swift; path = Sources/CryptoSwift/Cryptor.swift; sourceTree = "<group>"; };
 		51A25B918AEEB0BBFF8E9F7A62B3DDA1 /* KeyRefreshPhase.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = KeyRefreshPhase.swift; sourceTree = "<group>"; };
 		5276B01E2825210D00DE8D81 /* Element+Scenes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Element+Scenes.swift"; sourceTree = "<group>"; };
+		5276B02128292C2400DE8D81 /* Publish+Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Publish+Utils.swift"; sourceTree = "<group>"; };
 		542C190AF758A80D73ECDA24856253D2 /* SensorGet.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SensorGet.swift; sourceTree = "<group>"; };
 		545763176EBF4A09A3A0E89B6C7DD023 /* Updatable.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Updatable.swift; path = Sources/CryptoSwift/Updatable.swift; sourceTree = "<group>"; };
 		54D134AB94F8FEC24FDF8EA52792F7C7 /* Address.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Address.swift; sourceTree = "<group>"; };
@@ -1113,6 +1115,7 @@
 				9FCC7CB51DE34749C33CA805097E5EDB /* Node+Scenes.swift */,
 				93230EA621ABD847E38426989F369375 /* Provisioner+Node.swift */,
 				34BE09CC79E5EC90A08F2D59C16F881B /* Provisioner+Ranges.swift */,
+				5276B02128292C2400DE8D81 /* Publish+Utils.swift */,
 				1D21997A1CEA527084C3B76647E45B07 /* Ranges.swift */,
 				024332BC89B80D8A154BEE3D375AA14F /* Scene+Nodes.swift */,
 				DF874982FDC69D3F5FC27F8B142805AF /* Scenes.swift */,
@@ -2794,6 +2797,7 @@
 				1DF8415AA1B90AFFD45C001035695913 /* LightHSLHueStatus.swift in Sources */,
 				81FEBB4051B051CC4B55C8CC37999AE9 /* LightHSLRangeGet.swift in Sources */,
 				42D56E73D0C7CC2E89D180BE339DD60C /* LightHSLRangeSet.swift in Sources */,
+				5276B02228292C2400DE8D81 /* Publish+Utils.swift in Sources */,
 				0E432E0903A053B95100F66854DEDF34 /* LightHSLRangeSetUnacknowledged.swift in Sources */,
 				584348C5E899AF427E2ED6CB59FB150C /* LightHSLRangeStatus.swift in Sources */,
 				FAC8F82AB6DB2858CF6183473EDEADA0 /* LightHSLSaturationGet.swift in Sources */,
