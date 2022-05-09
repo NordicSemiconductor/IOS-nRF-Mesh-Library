@@ -37,34 +37,63 @@ public extension Node {
         return UInt8(elements.count)
     }
     
+    /// The Unicast Address range assigned to all Elements of the Node.
+    ///
+    /// The address range is continous and starts with ``primaryUnicastAddress``
+    /// and ends with ``lastUnicastAddress``.
+    var unicastAddressRange: AddressRange {
+        return AddressRange(from: primaryUnicastAddress, elementsCount: elementsCount)
+    }
+    
     /// The last Unicast Address allocated to this Node. Each Node's Element
     /// uses its own subsequent Unicast Address. The first (0th) Element is identified
     /// by the Node's Unicast Address.
     var lastUnicastAddress: Address {
-        let allocatedAddresses = Address(elementsCount > 0 ? elementsCount : 1)
-        return unicastAddress + allocatedAddresses - 1
+        return unicastAddressRange.highAddress
     }
     
-    /// Returns whether the address uses the given Unicast Address for one
+    /// Returns whether the Node has the given Unicast Address assigned to one
     /// of its Elements.
     ///
     /// - parameter address: Address to check.
     /// - returns: `True` if any of node's elements (or the node itself) was assigned
     ///            the given address, `false` otherwise.
-    func hasAllocatedAddress(_ address: Address) -> Bool {
-        return address >= unicastAddress && address <= lastUnicastAddress
+    func contains(elementWithAddress address: Address) -> Bool {
+        return unicastAddressRange.contains(address)
     }
     
-    /// Returns whether the node address range overlaps with the given
-    /// address range.
+    /// Returns whether any of the Node's Elements has a Unicast Address from the given
+    /// range.
     ///
-    /// - parameter address: Address to check.
-    /// - parameter count:   Number of following addresses to check.
+    /// - parameter range: Address range to check.
     /// - returns: `True`, if the node address range overlaps with the given
     ///            range, `false` otherwise.
+    func contains(elementsWithAddressesOverlapping range: AddressRange) -> Bool {
+        return unicastAddressRange.overlaps(range)
+    }
+    
+    /// Returns whether the Node has the given Unicast Address assigned to one
+    /// of its Elements.
+    ///
+    /// - parameter address: Address to check.
+    /// - returns: `True` if any of node's elements (or the node itself) was assigned
+    ///            the given address, `false` otherwise.
+    @available(*, deprecated, renamed: "contains(elementWithAddress:)")
+    func hasAllocatedAddress(_ address: Address) -> Bool {
+        return contains(elementWithAddress: address)
+    }
+    
+    /// Returns whether any of the Node's Elements has a Unicast Address from the given
+    /// range.
+    ///
+    /// - parameters:
+    ///   - address: Address to check.
+    ///   - count:   Number of following addresses to check.
+    /// - returns: `True`, if the node address range overlaps with the given
+    ///            range, `false` otherwise.
+    @available(*, deprecated, renamed: "contains(elementsWithAddressesOverlapping:)")
     func overlapsWithAddress(_ address: Address, elementsCount count: UInt8) -> Bool {
-        return !(unicastAddress + UInt16(elementsCount) - 1 < address
-              || unicastAddress > address + UInt16(count) - 1)
+        return contains(elementsWithAddressesOverlapping: AddressRange(from: address, elementsCount: count))
     }
     
 }

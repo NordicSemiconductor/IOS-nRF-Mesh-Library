@@ -50,7 +50,7 @@ public class Scene: Codable {
         self.number = scene.number
         self.name = scene.name
         self.addresses = scene.addresses
-            .filter { address in nodes.contains { node in node.hasAllocatedAddress(address) } }
+            .filter { address in nodes.contains { node in node.contains(elementWithAddress: address) } }
     }
     
     // MARK: - Codable

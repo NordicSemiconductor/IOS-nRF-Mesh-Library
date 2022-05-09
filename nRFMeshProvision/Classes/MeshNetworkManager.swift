@@ -532,7 +532,7 @@ public extension MeshNetworkManager {
             throw MeshNetworkError.noNetwork
         }
         guard let localProvisioner = meshNetwork.localProvisioner,
-              let source = localProvisioner.unicastAddress else {
+              let source = localProvisioner.primaryUnicastAddress else {
             print("Error: Local Provisioner has no Unicast Address assigned")
             throw AccessError.invalidSource
         }
@@ -589,7 +589,7 @@ public extension MeshNetworkManager {
     @discardableResult
     func send(_ message: ConfigMessage, to node: Node,
               withTtl initialTtl: UInt8? = nil) throws -> MessageHandle {
-        return try send(message, to: node.unicastAddress, withTtl: initialTtl)
+        return try send(message, to: node.primaryUnicastAddress, withTtl: initialTtl)
     }
     
     /// Sends Configuration Message to the local Node.
@@ -616,7 +616,7 @@ public extension MeshNetworkManager {
             throw MeshNetworkError.noNetwork
         }
         guard let localProvisioner = meshNetwork.localProvisioner,
-              let destination = localProvisioner.unicastAddress else {
+              let destination = localProvisioner.primaryUnicastAddress else {
             print("Error: Local Provisioner has no Unicast Address assigned")
             throw AccessError.invalidSource
         }

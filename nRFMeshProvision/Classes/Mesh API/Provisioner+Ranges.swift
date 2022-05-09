@@ -225,9 +225,27 @@ public extension Provisioner {
     /// The address may be a unicast or group address.
     ///
     /// - parameters:
+    ///   - range: The address range to be checked.
+    /// - returns: `True` if the address is in allocated ranges, `false` otherwise.
+    func isAddressRangeAllocated(_ range: AddressRange) -> Bool {
+        guard range.isUnicastRange || range.isGroupRange else {
+            return false
+        }
+        
+        let ranges = range.isUnicastRange ? allocatedUnicastRange : allocatedGroupRange
+        return ranges.overlaps(range)
+    }
+    
+    /// Returns whether the count addresses starting from the given one are in
+    /// the Provisioner's allocated address ranges.
+    ///
+    /// The address may be a unicast or group address.
+    ///
+    /// - parameters:
     ///   - address: The first address to be checked.
     ///   - count:   Number of subsequent addresses to be checked.
     /// - returns: `True` if the address is in allocated ranges, `false` otherwise.
+    @available(*, deprecated, renamed: "isAddressRangeAllocated")
     func isAddressInAllocatedRange(_ address: Address, elementCount count: UInt8) -> Bool {
         guard address.isUnicast || address.isGroup else {
             return false
@@ -289,9 +307,11 @@ public extension Provisioner {
         }
         // If the Provisioner is added to a network,
         if let meshNetwork = meshNetwork {
-            for node in meshNetwork.nodes.filter({ $0.unicastAddress != address }) {
-                if node.overlapsWithAddress(address, elementsCount: UInt8(count)) {
-                    count = Int(node.unicastAddress - address)
+            let otherNodes = meshNetwork.nodes.filter { $0.primaryUnicastAddress != address }
+            let range = AddressRange(from: address, elementsCount: UInt8(count))
+            for node in otherNodes {
+                if node.contains(elementsWithAddressesOverlapping: range) {
+                    count = Int(node.primaryUnicastAddress - address)
                 }
             }
         }

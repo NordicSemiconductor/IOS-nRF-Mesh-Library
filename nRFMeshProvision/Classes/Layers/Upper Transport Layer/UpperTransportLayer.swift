@@ -286,7 +286,7 @@ internal extension UpperTransportLayer {
                 
                 // Send the Heartbeat message.
                 let heartbeat = HeartbeatMessage(basedOn: heartbeatPublication,
-                                                from: localNode.unicastAddress,
+                                                from: localNode.primaryUnicastAddress,
                                                 targeting: heartbeatPublication.address,
                                                 usingIvIndex: self.meshNetwork.ivIndex)
                 self.send(heartbeat: heartbeat, usingNetworkKey: networkKey)

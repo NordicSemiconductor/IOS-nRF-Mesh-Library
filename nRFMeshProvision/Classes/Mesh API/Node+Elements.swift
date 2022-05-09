@@ -36,6 +36,11 @@ public extension Node {
     ///
     /// `nil` is returned if Composition Data has not been received yet.
     var primaryElement: Element? {
+        // Check whether the Composition Data has been received.
+        // The Page 0, among other, contains the Company ID.
+        guard let _ = companyIdentifier else {
+            return nil
+        }
         return elements.first
     }
     
@@ -45,7 +50,7 @@ public extension Node {
     /// - parameter address: The Unicast Address of an Element to get.
     /// - returns: The Element found, or `nil`, if no such exist.
     func element(withAddress address: Address) -> Element? {
-        let index = Int(address) - Int(unicastAddress)
+        let index = Int(address) - Int(primaryUnicastAddress)
         guard index >= 0 && index < elements.count else {
             return nil
         }

@@ -161,7 +161,7 @@ class ConfigurationViewController: ProgressViewController {
         if indexPath.isNodeSection {
             cell.textLabel?.text = indexPath.title
             if indexPath.isUnicastAddress {
-                cell.detailTextLabel?.text = node.unicastAddress.asString()
+                cell.detailTextLabel?.text = node.primaryUnicastAddress.asString()
                 cell.accessoryType = .none
             }
             if indexPath.isTtl {
@@ -483,7 +483,7 @@ extension ConfigurationViewController: MeshNetworkDelegate {
             return
         }
         // Is the message targeting the current Node?
-        guard node.unicastAddress == source else {
+        guard node.primaryUnicastAddress == source else {
             return
         }
         

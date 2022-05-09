@@ -201,7 +201,7 @@ extension NodeStoreSceneViewController: MeshNetworkDelegate {
             return
         }
         // Is the message targeting the current Node?
-        guard node.unicastAddress == source else {
+        guard node.primaryUnicastAddress == source else {
             return
         }
         

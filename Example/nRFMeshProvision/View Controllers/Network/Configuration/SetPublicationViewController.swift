@@ -394,7 +394,7 @@ extension SetPublicationViewController: MeshNetworkDelegate {
             return
         }
         // Is the message targeting the current Node?
-        guard model.parentElement?.parentNode?.unicastAddress == source else {
+        guard model.parentElement?.parentNode?.primaryUnicastAddress == source else {
             return
         }
         

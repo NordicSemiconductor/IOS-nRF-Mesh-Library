@@ -109,7 +109,7 @@ class EditProvisionerViewController: UITableViewController {
         // A Provisioner without a node can't perform nodes configuration operations.
         let node = meshNetwork.node(for: provisioner)
         if let node = node {
-            unicastAddressLabel.text = node.unicastAddress.asString()
+            unicastAddressLabel.text = node.primaryUnicastAddress.asString()
             ttlCell.detailTextLabel?.text = "\(node.defaultTTL ?? MeshNetworkManager.instance.defaultTtl)"
             ttlCell.accessoryType = .disclosureIndicator
             deviceKeyCell.detailTextLabel?.text = node.deviceKey?.hex ?? "Unknown Device Key"
@@ -227,7 +227,7 @@ private extension EditProvisionerViewController {
     /// Presents a dialog to edit or unbind the Provisioner Unicast Address.
     func presentUnicastAddressDialog() {
         let node = provisioner.node
-        let address = newAddress?.hex ?? node?.unicastAddress.hex ?? ""
+        let address = newAddress?.hex ?? node?.primaryUnicastAddress.hex ?? ""
         
         // If node has been assigned, add the option to unbind the node.
         let nodeAssigned = newAddress != nil || (node != nil && !disableConfigCapabilities)
@@ -448,7 +448,7 @@ private extension EditProvisionerViewController {
     }
     
     /// Checks whether the new address is within Provisioner's range
-    /// and is not already taken by any node.
+    /// and is not already taken by any Node.
     ///
     /// - parameter provisioner: The Provisioner for which the address
     ///                          will be checked.
@@ -466,10 +466,14 @@ private extension EditProvisionerViewController {
             }
             
             // Check whether the new address is available.
-            guard meshNetwork.isAddressRangeAvailable(newAddress,
-                                                      elementsCount: UInt8(manager.localElements.count),
-                                                      for: provisioner.node) else {
-                throw MeshNetworkError.addressNotAvailable
+            if let node = provisioner.node {
+                guard meshNetwork.isAddress(newAddress, availableFor: node) else {
+                    throw MeshNetworkError.addressNotAvailable
+                }
+            } else {
+                guard meshNetwork.isAddress(newAddress, availableForElementsCount: UInt8(manager.localElements.count)) else {
+                    throw MeshNetworkError.addressNotAvailable
+                }
             }
         }
     }

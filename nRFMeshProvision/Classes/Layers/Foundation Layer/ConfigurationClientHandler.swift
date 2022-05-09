@@ -95,7 +95,7 @@ internal class ConfigurationClientHandler: ModelDelegate {
         // Composition Data
         case let compositionData as ConfigCompositionDataStatus:
             // Do not override your own elements.
-            guard meshNetwork.localProvisioner?.unicastAddress != source else {
+            guard meshNetwork.localProvisioner?.primaryUnicastAddress != source else {
                 break
             }
             if let node = meshNetwork.node(withAddress: source) {

@@ -125,7 +125,17 @@ public class Node: Codable {
     /// Unique Node identifier.
     public let uuid: UUID
     /// Primary Unicast Address of the Node.
-    public internal(set) var unicastAddress: Address
+    ///
+    /// - since: 3.3.0
+    public internal(set) var primaryUnicastAddress: Address
+    /// Primary Unicast Address of the Node.
+    ///
+    /// - important: This property will be made internal.
+    ///              Use ``primaryUnicastAddress`` instead.
+    @available(*, deprecated, renamed: "primaryUnicastAddress")
+    public var unicastAddress: Address {
+        return primaryUnicastAddress
+    }
     /// 128-bit device key for this Node.
     public let deviceKey: Data?
     /// The level of security for the subnet on which the node has been
@@ -243,7 +253,7 @@ public class Node: Codable {
     internal init(name: String?, unicastAddress: Address, elements: UInt8) {
         self.uuid = UUID()
         self.name = name
-        self.unicastAddress = unicastAddress
+        self.primaryUnicastAddress = unicastAddress
         self.deviceKey = Data.random128BitKey()
         self.security = .secure
         // Default values.
@@ -264,7 +274,7 @@ public class Node: Codable {
     internal init(for provisioner: Provisioner, withAddress address: Address) {
         self.uuid = provisioner.uuid
         self.name = provisioner.name
-        self.unicastAddress = address
+        self.primaryUnicastAddress = address
         self.deviceKey = Data.random128BitKey()
         self.security = .secure
         self.ttl = nil
@@ -314,7 +324,7 @@ public class Node: Codable {
                   andAssignedNetworkKey networkKey: NetworkKey, andAddress address: Address) {
         self.uuid = uuid
         self.name = name
-        self.unicastAddress = address
+        self.primaryUnicastAddress = address
         self.deviceKey = deviceKey
         self.security  = .secure
         // Composition Data were not obtained.
@@ -333,7 +343,7 @@ public class Node: Codable {
                   applicationKeys: [ApplicationKey], nodes: [Node], groups: [Group]) {
         self.uuid = node.uuid
         self.name = node.name
-        self.unicastAddress = node.unicastAddress
+        self.primaryUnicastAddress = node.primaryUnicastAddress
         self.deviceKey = keepDeviceKey ? node.deviceKey : nil
         self.security = node.security
         self.isConfigComplete = node.isConfigComplete
@@ -359,15 +369,15 @@ public class Node: Codable {
         }
         if let heartbeatPublication = node.heartbeatPublication,
               (heartbeatPublication.address.isUnicast &&
-                nodes.contains(where: { $0.hasAllocatedAddress(heartbeatPublication.address) })) ||
+                nodes.contains(where: { $0.contains(elementWithAddress: heartbeatPublication.address) })) ||
               (heartbeatPublication.address.isGroup &&
                 groups.contains(where: { $0.address.address == heartbeatPublication.address })) {
             self.heartbeatPublication = node.heartbeatPublication
         }
         if let heartbeatSubscription = node.heartbeatSubscription,
-           nodes.contains(where: { $0.hasAllocatedAddress(heartbeatSubscription.source) }),
+           nodes.contains(where: { $0.contains(elementWithAddress: heartbeatSubscription.source) }),
            (heartbeatSubscription.destination.isUnicast &&
-             nodes.contains(where: { $0.hasAllocatedAddress(heartbeatSubscription.destination) })) ||
+             nodes.contains(where: { $0.contains(elementWithAddress: heartbeatSubscription.destination) })) ||
            (heartbeatSubscription.destination.isGroup &&
              groups.contains(where: { $0.address.address == heartbeatSubscription.destination })) {
             self.heartbeatSubscription = node.heartbeatSubscription
@@ -399,7 +409,7 @@ public class Node: Codable {
         }
         self.uuid = UUID()
         self.name = name
-        self.unicastAddress = address
+        self.primaryUnicastAddress = address
         self.deviceKey = deviceKey
         self.security = .insecure
         // Composition Data were not obtained.
@@ -420,7 +430,7 @@ public class Node: Codable {
     
     private enum CodingKeys: String, CodingKey {
         case uuid = "UUID"
-        case unicastAddress
+        case primaryUnicastAddress = "unicastAddress"
         case deviceKey
         case security
         case netKeys
@@ -446,13 +456,13 @@ public class Node: Codable {
     
     public required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        let unicastAddressAsString = try container.decode(String.self, forKey: .unicastAddress)
+        let unicastAddressAsString = try container.decode(String.self, forKey: .primaryUnicastAddress)
         guard let unicastAddress = Address(hex: unicastAddressAsString) else {
-            throw DecodingError.dataCorruptedError(forKey: .unicastAddress, in: container,
+            throw DecodingError.dataCorruptedError(forKey: .primaryUnicastAddress, in: container,
                                                    debugDescription: "Address must be 4-character hexadecimal string.")
         }
         guard unicastAddress.isUnicast else {
-            throw DecodingError.dataCorruptedError(forKey: .unicastAddress, in: container,
+            throw DecodingError.dataCorruptedError(forKey: .primaryUnicastAddress, in: container,
                                                    debugDescription: "\(unicastAddressAsString) is not a unicast address.")
         }
         let keyHex = try container.decodeIfPresent(String.self, forKey: .deviceKey)
@@ -471,7 +481,7 @@ public class Node: Codable {
         self.uuid = try container.decode(UUID.self, forKey: .uuid,
                                          orConvert: MeshUUID.self, forKey: .uuid, using: { $0.uuid })
         
-        self.unicastAddress = unicastAddress
+        self.primaryUnicastAddress = unicastAddress
         self.security = try container.decode(Security.self, forKey: .security)
         self.netKeys = try container.decode([NodeKey].self, forKey: .netKeys)
         self.appKeys = try container.decode([NodeKey].self, forKey: .appKeys)
@@ -589,7 +599,7 @@ public class Node: Codable {
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(uuid, forKey: .uuid)
-        try container.encode(unicastAddress.hex, forKey: .unicastAddress) // <- HEX value encoded
+        try container.encode(primaryUnicastAddress.hex, forKey: .primaryUnicastAddress) // <- HEX value encoded
         try container.encodeIfPresent(deviceKey?.hex, forKey: .deviceKey) // <- HEX value encoded
         try container.encode(security, forKey: .security)
         try container.encode(netKeys, forKey: .netKeys)

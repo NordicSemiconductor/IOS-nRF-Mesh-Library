@@ -126,7 +126,7 @@ class SetHeartbeatPublicationDestinationsViewController: UITableViewController {
         }
         if indexPath.isNodeSection {
             let node = nodes[indexPath.row]
-            if let destination = selectedDestination, destination == node.unicastAddress {
+            if let destination = selectedDestination, destination == node.primaryUnicastAddress {
                 selectedIndexPath = indexPath
                 selectedDestination = nil
             }
@@ -216,7 +216,7 @@ private extension SetHeartbeatPublicationDestinationsViewController {
         switch indexPath.section {
         case IndexPath.nodesSection:
             let node = nodes[indexPath.row]
-            delegate?.destinationSelected(node.unicastAddress)
+            delegate?.destinationSelected(node.primaryUnicastAddress)
         case IndexPath.groupsSection where !groups.isEmpty:
             let selectedGroup = groups[indexPath.row]
             delegate?.destinationSelected(selectedGroup.address.address)

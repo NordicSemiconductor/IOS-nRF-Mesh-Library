@@ -108,7 +108,7 @@ public class MeshNetwork: Codable {
             // address range. If required, cut the Elements array.
             if let provisioner = localProvisioner, let node = provisioner.node {
                 var availableElements = elements
-                let availableElementsCount = provisioner.maxElementCount(for: node.unicastAddress)
+                let availableElementsCount = provisioner.maxElementCount(for: node.primaryUnicastAddress)
                 if availableElementsCount < elements.count {
                     availableElements = elements.dropLast(elements.count - availableElementsCount)
                 }

@@ -318,7 +318,7 @@ private extension LowerTransportLayer {
     func checkAgainstReplayAttack(_ networkPdu: NetworkPdu) -> Bool {
         // Don't check messages sent to other Nodes.
         guard !networkPdu.destination.isUnicast ||
-              meshNetwork.localProvisioner?.node?.hasAllocatedAddress(networkPdu.destination) ?? false else {
+              meshNetwork.localProvisioner?.node?.contains(elementWithAddress: networkPdu.destination) ?? false else {
             return true
         }
         let sequence = networkPdu.messageSequence
@@ -409,7 +409,7 @@ private extension LowerTransportLayer {
             logger?.i(.lowerTransport, "\(message) received")
             // A single segment message may immediately be acknowledged.
             if let provisionerNode = meshNetwork.localProvisioner?.node,
-               provisionerNode.hasAllocatedAddress(networkPdu.destination) {
+               provisionerNode.contains(elementWithAddress: networkPdu.destination) {
                 let ttl = networkPdu.ttl > 0 ? provisionerNode.defaultTTL ?? networkManager.defaultTtl : 0
                 sendAck(for: [segment], withTtl: ttl)
             }
@@ -436,7 +436,7 @@ private extension LowerTransportLayer {
                 logger?.i(.lowerTransport, "\(message) received")
                 // If the access message was targeting directly the local Provisioner...
                 if let provisionerNode = meshNetwork.localProvisioner?.node,
-                   provisionerNode.hasAllocatedAddress(networkPdu.destination) {
+                   provisionerNode.contains(elementWithAddress: networkPdu.destination) {
                     // ...invalidate timers...
                     incompleteTimers.removeValue(forKey: key)?.invalidate()
                     acknowledgmentTimers.removeValue(forKey: key)?.invalidate()
@@ -450,7 +450,7 @@ private extension LowerTransportLayer {
                 // The Provisioner shall send block acknowledgment only if the message was
                 // send directly to it's Unicast Address.
                 guard let provisionerNode = meshNetwork.localProvisioner?.node,
-                      provisionerNode.hasAllocatedAddress(networkPdu.destination) else {
+                      provisionerNode.contains(elementWithAddress: networkPdu.destination) else {
                     return nil
                 }
                 // If the Lower Transport Layer receives any segment while the incomplete

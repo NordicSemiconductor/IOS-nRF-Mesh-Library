@@ -76,7 +76,7 @@ public extension MeshNetwork {
             return nil
         }
         return nodes.first {
-            $0.hasAllocatedAddress(address)
+            $0.contains(elementWithAddress: address)
         }
     }
     
@@ -90,7 +90,7 @@ public extension MeshNetwork {
     func node(matchingHash hash: Data, random: Data) -> Node? {
         for node in nodes {
             // Data are: 48 bits of Padding (0s), 64 bit Random and Unicast Address.
-            let data = Data(repeating: 0, count: 6) + random + node.unicastAddress.bigEndian
+            let data = Data(repeating: 0, count: 6) + random + node.primaryUnicastAddress.bigEndian
             
             for networkKey in node.networkKeys {
                 let calculatedHash = Crypto.calculateHash(from: data,
@@ -149,7 +149,7 @@ public extension MeshNetwork {
     ///           not belong to the mesh network.
     func add(node: Node) throws {
         // Verify if the address range is available for the new Node.
-        guard isAddressRangeAvailable(node.unicastAddress, elementsCount: node.elementsCount) else {
+        guard isAddress(node.primaryUnicastAddress, availableFor: node) else {
             throw MeshNetworkError.addressNotAvailable
         }
         // Ensure the Network Key exists.

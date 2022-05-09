@@ -217,7 +217,7 @@ internal class NetworkLayer {
         // If the Provisioner does not have a Unicast Address, just use a fake one
         // to configure the Proxy Server. This allows sniffing the network without
         // an option to send messages.
-        let source = meshNetwork.localProvisioner?.node?.unicastAddress ?? Address.maxUnicastAddress
+        let source = meshNetwork.localProvisioner?.node?.primaryUnicastAddress ?? Address.maxUnicastAddress
         logger?.i(.proxy, "Sending \(message) from: \(source.hex) to: 0000")
         let pdu = ControlMessage(fromProxyConfigurationMessage: message,
                                  sentFrom: source, usingNetworkKey: networkKey,
@@ -431,7 +431,7 @@ private extension NetworkLayer {
     /// - returns: `True` if the address is a Unicast Address and belongs to
     ///            one of the local Node's elements; `false` otherwise.
     func isLocalUnicastAddress(_ address: Address) -> Bool {
-        return meshNetwork.localProvisioner?.node?.hasAllocatedAddress(address) ?? false
+        return meshNetwork.localProvisioner?.node?.contains(elementWithAddress: address) ?? false
     }
     
     /// Returns whether the PDU should loop back for local processing.

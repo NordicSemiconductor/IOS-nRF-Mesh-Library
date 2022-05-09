@@ -32,10 +32,20 @@ import Foundation
 
 public extension Scene {
     
-    /// Known Nodes whose Scene Register state contains this Scene.
+    /// Known Nodes whose Scene Registers contains this Scene.
+    ///
+    /// Starting from version 3.3.0, all Scene Registers are checked, not only
+    /// the one on the Primary Element.
     var nodes: [Node] {
-        return meshNetwork?.nodes.filter {
-            addresses.contains($0.unicastAddress)
+        return elements.compactMap { $0.parentNode }
+    }
+    
+    /// Known Elements whose Scene Register state contains this Scene.
+    var elements: [Element] {
+        return meshNetwork?.nodes.flatMap { node in
+            node.elements.filter { element in
+                addresses.contains(element.unicastAddress)
+            }
         } ?? []
     }
     

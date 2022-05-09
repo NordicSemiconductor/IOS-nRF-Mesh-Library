@@ -89,8 +89,7 @@ public extension MeshNetwork {
     /// - returns: `True` if the given Provisioner is set up to be the
     ///            main one, `false` otherwise.
     func isLocalProvisioner(_ provisioner: Provisioner) -> Bool {
-        return !provisioners.isEmpty
-            && provisioners[0].uuid == provisioner.uuid
+        return provisioners.first?.uuid == provisioner.uuid
     }
     
     /// Adds the Provisioner and assigns a Unicast Address to it.
@@ -144,7 +143,7 @@ public extension MeshNetwork {
             }
             
             // No other node uses the same address?
-            guard !nodes.contains(where: { $0.hasAllocatedAddress(address) }) else {
+            guard !nodes.contains(where: { $0.contains(elementWithAddress: address) }) else {
                 throw MeshNetworkError.addressNotAvailable
             }
         }
@@ -377,12 +376,13 @@ public extension MeshNetwork {
         }
         
         // Is it in Provisioner's range?
-        guard provisioner.isAddressInAllocatedRange(address, elementCount: provisionerNode.elementsCount) else {
+        let newRange = AddressRange(from: address, elementsCount: provisionerNode.elementsCount)
+        guard provisioner.isAddressRangeAllocated(newRange) else {
             throw MeshNetworkError.addressNotInAllocatedRange
         }
         
         // No other node uses the same address?
-        guard isAddressRangeAvailable(address, elementsCount: provisionerNode.elementsCount, for: provisionerNode) else {
+        guard isAddress(address, availableFor: provisionerNode) else {
             throw MeshNetworkError.addressNotAvailable
         }
         
@@ -391,7 +391,7 @@ public extension MeshNetwork {
             try add(node: provisionerNode)
         } else {
             // For a Node that was in the network, it's now safe to update the Address.
-            provisionerNode.unicastAddress = address
+            provisionerNode.primaryUnicastAddress = address
         }
         
         if isLocalProvisioner(provisioner) {
