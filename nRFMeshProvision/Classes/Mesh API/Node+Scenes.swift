@@ -35,7 +35,7 @@ public extension Node {
     /// List of Scenes registered in Scene Register on the Node.
     var scenes: [Scene] {
         return meshNetwork?.scenes
-            .filter { $0.addresses.contains(unicastAddress) } ?? []
+            .filter { $0.addresses.contains(primaryUnicastAddress) } ?? []
     }
     
 }
