@@ -404,16 +404,16 @@ private extension EditProvisionerViewController {
     ///           another Provisioner's range.
     func allocateNewRanges(to provisioner: Provisioner) throws {
         if let newUnicastAddressRange = newUnicastAddressRange {
-            provisioner.deallocateUnicastAddressRange(AddressRange.allUnicastAddresses)
-            try provisioner.allocateUnicastAddressRanges(newUnicastAddressRange)
+            provisioner.deallocate(unicastAddressRange: AddressRange.allUnicastAddresses)
+            try provisioner.allocate(unicastAddressRanges: newUnicastAddressRange)
         }
         if let newGroupAddressRange = newGroupAddressRange {
-            provisioner.deallocateGroupAddressRange(AddressRange.allGroupAddresses)
-            try provisioner.allocateGroupAddressRanges(newGroupAddressRange)
+            provisioner.deallocate(groupAddressRange: AddressRange.allGroupAddresses)
+            try provisioner.allocate(groupAddressRanges: newGroupAddressRange)
         }
         if let newSceneRange = newSceneRange {
-            provisioner.deallocateSceneRange(SceneRange.allScenes)
-            try provisioner.allocateSceneRanges(newSceneRange)
+            provisioner.deallocate(sceneRange: SceneRange.allScenes)
+            try provisioner.allocate(sceneRanges: newSceneRange)
         }
     }
     

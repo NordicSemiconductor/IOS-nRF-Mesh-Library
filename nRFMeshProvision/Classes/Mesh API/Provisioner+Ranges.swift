@@ -49,7 +49,7 @@ public extension Provisioner {
     /// - throws: The method throws an error when the Provisioner is added
     ///           to the mesh network and the new range overlaps any of
     ///           other Provisioners' ranges, or the range is of invalid type.
-    func allocateUnicastAddressRange(_ range: AddressRange) throws {
+    func allocate(unicastAddressRange range: AddressRange) throws {
         // Validate range type.
         guard range.isUnicastRange else {
             throw MeshNetworkError.invalidRange
@@ -66,6 +66,18 @@ public extension Provisioner {
         allocatedUnicastRange += range
     }
     
+    /// Allocates Unicast Address range for the Provisioner. This method
+    /// will automatically merge ranges if they overlap.
+    ///
+    /// - parameter range: The new unicast range to allocate.
+    /// - throws: The method throws an error when the Provisioner is added
+    ///           to the mesh network and the new range overlaps any of
+    ///           other Provisioners' ranges, or the range is of invalid type.
+    @available(*, deprecated, renamed: "allocate(unicastAddressRange:)")
+    func allocateUnicastAddressRange(_ range: AddressRange) throws {
+        try allocate(unicastAddressRange: range)
+    }
+    
     /// Allocates the given Unicast Address ranges for the Provisioner.
     /// This method will automatically merge ranges if they overlap.
     ///
@@ -73,7 +85,7 @@ public extension Provisioner {
     /// - throws: The method throws an error when the Provisioner is added
     ///           to the mesh network and at least one new range overlaps any of
     ///           other Provisioners' ranges, or the range is of invalid type.
-    func allocateUnicastAddressRanges(_ ranges: [AddressRange]) throws {
+    func allocate(unicastAddressRanges ranges: [AddressRange]) throws {
         // Validate ranges type.
         guard ranges.isUnicastRange else {
             throw MeshNetworkError.invalidRange
@@ -89,6 +101,18 @@ public extension Provisioner {
         allocatedUnicastRange += ranges
     }
     
+    /// Allocates the given Unicast Address ranges for the Provisioner.
+    /// This method will automatically merge ranges if they overlap.
+    ///
+    /// - parameter range: The new unicast ranges to allocate.
+    /// - throws: The method throws an error when the Provisioner is added
+    ///           to the mesh network and at least one new range overlaps any of
+    ///           other Provisioners' ranges, or the range is of invalid type.
+    @available(*, deprecated, renamed: "allocate(unicastAddressRanges:)")
+    func allocateUnicastAddressRanges(_ ranges: [AddressRange]) throws {
+        try allocate(unicastAddressRanges: ranges)
+    }
+    
     /// Allocates Group Address range for the Provisioner. This method
     /// will automatically merge ranges if they overlap.
     ///
@@ -96,7 +120,7 @@ public extension Provisioner {
     /// - throws: The method throws an error when the Provisioner is added
     ///           to the mesh network and the new range overlaps any of
     ///           other Provisioners' ranges, or the range is of invalid type.
-    func allocateGroupAddressRange(_ range: AddressRange) throws {
+    func allocate(groupAddressRange range: AddressRange) throws {
         // Validate range type.
         guard range.isGroupRange else {
             throw MeshNetworkError.invalidRange
@@ -113,6 +137,18 @@ public extension Provisioner {
         allocatedGroupRange += range
     }
     
+    /// Allocates Group Address range for the Provisioner. This method
+    /// will automatically merge ranges if they overlap.
+    ///
+    /// - parameter range: The new group range to allocate.
+    /// - throws: The method throws an error when the Provisioner is added
+    ///           to the mesh network and the new range overlaps any of
+    ///           other Provisioners' ranges, or the range is of invalid type.
+    @available(*, deprecated, renamed: "allocate(groupAddressRange:)")
+    func allocateGroupAddressRange(_ range: AddressRange) throws {
+        try allocate(groupAddressRange: range)
+    }
+    
     /// Allocates the given Group Address ranges for the Provisioner.
     /// This method will automatically merge ranges if they overlap.
     ///
@@ -120,7 +156,7 @@ public extension Provisioner {
     /// - throws: The method throws an error when the Provisioner is added
     ///           to the mesh network and at least one new range overlaps any of
     ///           other Provisioners' ranges, or the range is of invalid type.
-    func allocateGroupAddressRanges(_ ranges: [AddressRange]) throws {
+    func allocate(groupAddressRanges ranges: [AddressRange]) throws {
         // Validate ranges type.
         guard ranges.isGroupRange else {
             throw MeshNetworkError.invalidRange
@@ -136,6 +172,18 @@ public extension Provisioner {
         allocatedGroupRange += ranges
     }
     
+    /// Allocates the given Group Address ranges for the Provisioner.
+    /// This method will automatically merge ranges if they overlap.
+    ///
+    /// - parameter range: The new group ranges to allocate.
+    /// - throws: The method throws an error when the Provisioner is added
+    ///           to the mesh network and at least one new range overlaps any of
+    ///           other Provisioners' ranges, or the range is of invalid type.
+    @available(*, deprecated, renamed: "allocate(groupAddressRanges:)")
+    func allocateGroupAddressRanges(_ ranges: [AddressRange]) throws {
+        try allocate(groupAddressRanges: ranges)
+    }
+    
     /// Allocates Scene range for the Provisioned. This method will
     /// automatically merge ranges if they overlap.
     ///
@@ -143,7 +191,7 @@ public extension Provisioner {
     /// - throws: The method throws an error when the Provisioner is added
     ///           to the mesh network and the new range overlaps any of
     ///           other Provisioners' ranges, or the range is of invalid type.
-    func allocateSceneRange(_ range: SceneRange) throws {
+    func allocate(sceneRange range: SceneRange) throws {
         // Validate range type.
         guard range.isValid else {
             throw MeshNetworkError.invalidRange
@@ -160,6 +208,18 @@ public extension Provisioner {
         allocatedSceneRange += range
     }
     
+    /// Allocates Scene range for the Provisioned. This method will
+    /// automatically merge ranges if they overlap.
+    ///
+    /// - parameter range: The new scene range to allocate.
+    /// - throws: The method throws an error when the Provisioner is added
+    ///           to the mesh network and the new range overlaps any of
+    ///           other Provisioners' ranges, or the range is of invalid type.
+    @available(*, deprecated, renamed: "allocate(sceneRange:)")
+    func allocateSceneRange(_ range: SceneRange) throws {
+        try allocate(sceneRange: range)
+    }
+    
     /// Allocates the given Scene ranges for the Provisioner.
     /// This method will automatically merge ranges if they overlap.
     ///
@@ -167,7 +227,7 @@ public extension Provisioner {
     /// - throws: The method throws an error when the Provisioner is added
     ///           to the mesh network and at least one new range overlaps any of
     ///           other Provisioners' ranges, or the range is of invalid type.
-    func allocateSceneRanges(_ ranges: [SceneRange]) throws {
+    func allocate(sceneRanges ranges: [SceneRange]) throws {
         // Validate ranges type.
         guard ranges.isValid else {
             throw MeshNetworkError.invalidRange
@@ -183,6 +243,18 @@ public extension Provisioner {
         allocatedSceneRange += ranges
     }
     
+    /// Allocates the given Scene ranges for the Provisioner.
+    /// This method will automatically merge ranges if they overlap.
+    ///
+    /// - parameter range: The new scene ranges to allocate.
+    /// - throws: The method throws an error when the Provisioner is added
+    ///           to the mesh network and at least one new range overlaps any of
+    ///           other Provisioners' ranges, or the range is of invalid type.
+    @available(*, deprecated, renamed: "allocate(sceneRanges:)")
+    func allocateSceneRanges(_ ranges: [SceneRange]) throws {
+        try allocate(sceneRanges: ranges)
+    }
+    
     /// Deallocates the given range from Unicast Address ranges of the
     /// Provisioner. This method does not remove the range instance,
     /// but is able to cut the given range from the allocated ranges.
@@ -191,20 +263,8 @@ public extension Provisioner {
     /// parameter set to `AddressRange.allUnicastAddresses`.
     ///
     /// - parameter range: The range to be deallocated.
-    func deallocateUnicastAddressRange(_ range: AddressRange) {
+    func deallocate(unicastAddressRange range: AddressRange) {
         allocatedUnicastRange -= range
-    }
-    
-    /// Deallocates the given range from Group Address ranges of the
-    /// Provisioner. This method does not remove the range instance,
-    /// but is able to cut the given range from the allocated ranges.
-    ///
-    /// To remove all ranges, call this method with
-    /// parameter set to `AddressRange.allGroupAddresses`.
-    ///
-    /// - parameter range: The range to be deallocated.
-    func deallocateGroupAddressRange(_ range: AddressRange) {
-        allocatedGroupRange -= range
     }
     
     /// Deallocates the given range from Unicast Address ranges of the
@@ -212,11 +272,62 @@ public extension Provisioner {
     /// but is able to cut the given range from the allocated ranges.
     ///
     /// To remove all ranges, call this method with
-    /// parameter set to `SceneRange.allScenes`.
+    /// parameter set to ``AddressRange/allUnicastAddresses``.
     ///
     /// - parameter range: The range to be deallocated.
-    func deallocateSceneRange(_ range: SceneRange) {
+    @available(*, deprecated, renamed: "deallocate(unicastAddressRange:)")
+    func deallocateUnicastAddressRange(_ range: AddressRange) {
+        deallocate(unicastAddressRange: range)
+    }
+    
+    /// Deallocates the given range from Group Address ranges of the
+    /// Provisioner. This method does not remove the range instance,
+    /// but is able to cut the given range from the allocated ranges.
+    ///
+    /// To remove all ranges, call this method with
+    /// parameter set to ``AddressRange/allGroupAddresses``.
+    ///
+    /// - parameter range: The range to be deallocated.
+    func deallocate(groupAddressRange range: AddressRange) {
+        allocatedGroupRange -= range
+    }
+    
+    /// Deallocates the given range from Group Address ranges of the
+    /// Provisioner. This method does not remove the range instance,
+    /// but is able to cut the given range from the allocated ranges.
+    ///
+    /// To remove all ranges, call this method with
+    /// parameter set to ``AddressRange/allGroupAddresses``.
+    ///
+    /// - parameter range: The range to be deallocated.
+    @available(*, deprecated, renamed: "deallocate(groupAddressRange:)")
+    func deallocateGroupAddressRange(_ range: AddressRange) {
+        deallocate(groupAddressRange: range)
+    }
+    
+    /// Deallocates the given range from Unicast Address ranges of the
+    /// Provisioner. This method does not remove the range instance,
+    /// but is able to cut the given range from the allocated ranges.
+    ///
+    /// To remove all ranges, call this method with
+    /// parameter set to ``SceneRange/allScenes``.
+    ///
+    /// - parameter range: The range to be deallocated.
+    func deallocate(sceneRange range: SceneRange) {
         allocatedSceneRange -= range
+    }
+    
+    /// Deallocates the given range from Unicast Address ranges of the
+    /// Provisioner. This method does not remove the range instance,
+    /// but is able to cut the given range from the allocated ranges.
+    ///
+    /// To remove all ranges, call this method with
+    /// parameter set to ``SceneRange/allScenes``.
+    ///
+    /// - parameter range: The range to be deallocated.
+    @available(*, deprecated, renamed: "deallocate(sceneRange:)")
+    func deallocateSceneRange(_ range: SceneRange) {
+        deallocate(sceneRange: range)
     }
     
     /// Returns whether the count addresses starting from the given one are in
