@@ -35,11 +35,12 @@ public extension MeshNetwork {
     /// Returns Provisioner's Node object, if such exist and the Provisioner
     /// is in the mesh network.
     ///
-    /// - parameter provisioner: The provisioner which node is to be returned.
-    ///                          The provisioner must be added to the network
+    /// - parameter provisioner: The Provisioner which Node is to be returned.
+    ///                          The Provisioner must be added to the network
     ///                          before calling this method, otherwise `nil` will
-    ///                          be returned. Provisioners without a node assigned
-    ///                          do not support configuration operations.
+    ///                          be returned. Provisioners without a Node assigned
+    ///                          cannot send mesh messages (i.e. cannot configure nodes),
+    ///                          but still can provision new devices.
     /// - returns: The Provisioner's node object, or `nil`.
     func node(for provisioner: Provisioner) -> Node? {
         guard hasProvisioner(provisioner) else {
@@ -81,7 +82,8 @@ public extension MeshNetwork {
     }
     
     /// Returns a Node that matches given Hash and Random, or `nil`.
-    /// This is used to match the Node Identity beacon.
+    ///
+    /// This method may be used to match the Node Identity beacon.
     ///
     /// - parameters:
     ///   - hash:   The Hash value.
@@ -136,11 +138,12 @@ public extension MeshNetwork {
         return node(matchingHash: hash, random: random) != nil
     }
     
-    /// Adds the Node to the mesh network.
+    /// Adds the Node to the local database.
     ///
-    /// This method should only be used to add debug Nodes, or Nodes
-    /// that have already been provisioned. Use `provision(unprovisionedDevice:over)`
-    /// to provision and add a Node.
+    /// - important: This method should only be used to add debug Nodes, or Nodes
+    ///              that have already been provisioned.
+    ///              Use ``MeshNetworkManager/provision(unprovisionedDevice:over:)``
+    ///              to provision a Node to the mesh network.
     ///
     /// - parameter node: A Node to be added.
     /// - throws: This method throws if the Node's address is not available,
@@ -170,7 +173,19 @@ public extension MeshNetwork {
         timestamp = Date()
     }
     
-    /// Removes the Node from the mesh network.
+    /// Removes the Node from the local database.
+    ///
+    /// This method only removes the Node from the local database.
+    /// Instead, send a ``ConfigNodeReset`` message to reset the remote Node.
+    /// It will be removed from the local database automatically when
+    /// ``ConfigNodeResetStatus`` message is received.
+    ///
+    /// Mind, that sending this message also does not guarantee that the Node
+    /// won't be able to communicate with the network. To make sure the Node
+    /// gets blocked from the network, all the Network Keys known by the Node
+    /// needs to be updated using Key Refresh Procedure.
+    ///
+    /// See Bluetooth Mesh Profile 1.0.1, chapter: 3.10.7 Node Removal procedure.
     ///
     /// - parameter node: The Node to be removed.
     func remove(node: Node) {

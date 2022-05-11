@@ -30,6 +30,15 @@
 
 import Foundation
 
+/// The mesh network delegate notifies about received messages and statuses of
+/// sent messages.
+///
+/// The delegate is the global object that will receive all traffic information.
+/// Beside this delegate, the messages are also delivered to Models' delegates
+/// supporting given messages. Due to the fact, that the Configuration Server
+/// Model and Configuration Client Model, as well as Scene Client Model are
+/// supported by the library, this delegate is the only place to get messages
+/// handled by those models.
 public protocol MeshNetworkDelegate: AnyObject {
     
     /// A callback called whenever a Mesh Message has been received
@@ -72,8 +81,8 @@ public protocol MeshNetworkDelegate: AnyObject {
     /// before the time run out.
     ///
     /// For unsegmented unacknowledged messages this callback will be invoked when
-    /// the `transmitter` was set to `nil`, or has thrown an exception from
-    /// `send(data:ofType)`.
+    /// the ``MeshNetworkManager/transmitter`` was set to `nil`, or has thrown an
+    /// exception from ``Transmitter/send(_:ofType:)`.
     ///
     /// For segmented unacknowledged messages targeting a Unicast Address,
     /// besides that, it may also be called when sending timed out before all of
@@ -81,7 +90,7 @@ public protocol MeshNetworkDelegate: AnyObject {
     /// Node is busy and not able to proceed the message at the moment.
     ///
     /// For acknowledged messages the callback will be called when the response
-    /// has not been received before the time set by `acknowledgmentMessageTimeout`
+    /// has not been received before the time set by ``MeshNetworkManager/acknowledgmentMessageTimeout``
     /// run out. The message might have been retransmitted multiple times
     /// and might have been received by the target Node. For acknowledged messages
     /// sent to a Group or Virtual Address this will be called when the response

@@ -84,7 +84,7 @@ open class BaseGattProxyBearer<Service: MeshService>: NSObject, Bearer, CBCentra
     
     // MARK: - Public API
     
-    /// Creates the Gatt Proxy Bearer object. Call `open()` to open connection to the proxy.
+    /// Creates the Gatt Proxy Bearer object. Call ``open()`` to open connection to the proxy.
     ///
     /// - parameter peripheral: The CBPeripheral pointing a Bluetooth LE device with
     ///                         Bluetooth Mesh GATT service (Provisioning or Proxy Service).
@@ -92,7 +92,7 @@ open class BaseGattProxyBearer<Service: MeshService>: NSObject, Bearer, CBCentra
         self.init(targetWithIdentifier: peripheral.identifier)
     }
     
-    /// Creates the Gatt Proxy Bearer object. Call `open()` to open connection to the proxy.
+    /// Creates the Gatt Proxy Bearer object. Call ``open()`` to open connection to the proxy.
     ///
     /// - parameter uuid: The UUID associated with the peer.
     public init(targetWithIdentifier uuid: UUID) {

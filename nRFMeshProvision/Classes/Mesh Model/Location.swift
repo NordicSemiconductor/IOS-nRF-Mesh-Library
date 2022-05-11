@@ -31,6 +31,7 @@
 import Foundation
 
 /// Locations defined by Bluetooth SIG.
+///
 /// Imported from: https://www.bluetooth.com/specifications/assigned-numbers/gatt-namespace-descriptors
 public enum Location: UInt16, Codable {
     case auxiliary                    = 0x0108

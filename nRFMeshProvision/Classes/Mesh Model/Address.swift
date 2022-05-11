@@ -30,7 +30,14 @@
 
 import Foundation
 
-/// Bluetooth Mesh address type. Type alias for UInt16.
+/// Bluetooth Mesh address type. Type alias for `UInt16`.
+///
+/// In Bluetooth mesh addresses are devided into several categories:
+/// - Unassigned Address - address 0x0000.
+/// - Unicast Addresses - a unique address of an ``Element``.
+/// - Group Address - a group address allows sending messages to multiple receivers.
+/// - Virtual Group Address - each virtual address is a hash of a Virtual Label (UUID).
+/// - Fixed Group Addresses - set of predefined group addresses.
 public typealias Address = UInt16
 
 public extension Address {

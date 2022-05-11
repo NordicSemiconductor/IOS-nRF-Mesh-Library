@@ -30,9 +30,10 @@
 
 import Foundation
 
+/// A set of generic mesh errors.
 public enum MeshNetworkError: Error {
     /// Thrown when any allocated range of the new Provisioner overlaps
-    /// with existing one.
+    /// with an existing one.
     case overlappingProvisionerRanges
     /// Thrown when trying to add a Provisioner that is already a part
     /// of another mesh network.
@@ -59,7 +60,7 @@ public enum MeshNetworkError: Error {
     case invalidRange
     /// Thrown when the provided key is not 128-bit long.
     case invalidKey
-    /// Thrown when trying to remove a key that is being used by some node.
+    /// Thrown when trying to remove a key that is being used by another Node.
     case keyInUse
     /// Thrown when a new Group is being added with the same address as one
     /// that is already in the network.
@@ -67,10 +68,10 @@ public enum MeshNetworkError: Error {
     /// Thrown when a new Scene is being added with the same number as one
     /// that is already in the network.
     case sceneAlreadyExists
-    /// Throw when trying to remove a Group that is either a parent of another
-    /// Group, or set as publication or subscription address for any Model.
+    /// Thrown when trying to remove a Group that is either a parent of another
+    /// Group, or set as publication or subscription address for a Model.
     case groupInUse
-    /// Throw when trying to remove a Scene stored by at least one Scene Register.
+    /// Thrown when trying to remove a Scene stored by at least one Scene Register.
     case sceneInUse
     /// Thrown when the given Key Index is not valid.
     case keyIndexOutOfRange
@@ -80,7 +81,7 @@ public enum MeshNetworkError: Error {
     case noApplicationKey
     /// Thrown when trying to send a mesh message before setting up the mesh network.
     case noNetwork
-    /// Thrown when setting too small IV Index. The new IV Index must be greater
+    /// Thrown when setting too small IV Index. The new IV Index must be greater than
     /// or equal to the previous one.
     case ivIndexTooSmall
 }

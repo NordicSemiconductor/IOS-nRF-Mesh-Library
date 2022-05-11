@@ -30,6 +30,7 @@
 
 import Foundation
 
+/// The mesh address.
 public struct MeshAddress {
     /// 16-bit address.
     public let address: Address

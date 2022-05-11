@@ -30,25 +30,22 @@
 
 import Foundation
 
-/// Log level.
-///
-/// Logger application may filter log entries based on their level.
-/// Levels allow to ignore less important messages.
-///
-/// - Debug       - Lowest priority. Usually names of called methods or callbacks received.
-/// - Verbose     - Low priority messages what the service is doing.
-/// - Info        - Messages about completed tasks.
-/// - Application - Messages about application level events, in this case DFU messages in human-readable form.
-/// - Warning     - Important messages.
-/// - Error       - Highest priority messages with errors.
+/// Log level, which allows filtering logs by importance.
 public enum LogLevel: Int {
+    /// Lowest priority. Usually names of called methods or callbacks received.
     case debug       = 0
+    /// Low priority messages what the service is doing.
     case verbose     = 1
+    /// Messages about completed tasks.
     case info        = 5
+    /// Messages about application level events, in this case DFU messages in human-readable form.
     case application = 10
+    /// Important messages.
     case warning     = 15
+    /// Highest priority messages with errors.
     case error       = 20
     
+    /// A shortened abbreviation of the log level.
     public var name: String {
         switch self {
         case .debug:       return "D"
@@ -63,14 +60,23 @@ public enum LogLevel: Int {
 
 /// The log category indicates the component that created the log entry.
 public enum LogCategory: String {
+    /// Log created by the Bearer component.
     case bearer          = "Bearer"
+    /// Log created by the Proxy component.
     case proxy           = "Proxy"
+    /// Log created by the Network layer.
     case network         = "Network"
+    /// Log created by the Lower Transport layer.
     case lowerTransport  = "LowerTransport"
+    /// Log created by the Upper Transport layer.
     case upperTransport  = "UpperTransport"
+    /// Log created by the Access layer.
     case access          = "Access"
+    /// Log created by the Foundation layer models.
     case foundationModel = "FoundationModel"
+    /// Log created by the Access layer model.
     case model           = "Model"
+    /// Log created by the Provisioning component.
     case provisioning    = "Provisioning"
 }
 
@@ -78,13 +84,14 @@ public enum LogCategory: String {
 public protocol LoggerDelegate: AnyObject {
     
     /// This method is called whenever a new log entry is to be saved.
-    /// The logger implementation should save this or present it to the user.
     ///
-    /// It is NOT safe to update any UI from this method as multiple threads may log.
+    /// - Important: It is NOT safe to update the UI from this method as multiple
+    ///              threads may log.
     ///
-    /// - parameter message:  The message.
-    /// - parameter category: The message category.
-    /// - parameter level:    The log level.
+    /// - parameters:
+    ///   - message:  The message.
+    ///   - category: The message category.
+    ///   - level:    The log level.
     func log(message: String, ofCategory category: LogCategory, withLevel level: LogLevel)
 }
 

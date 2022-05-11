@@ -30,12 +30,15 @@
 
 import Foundation
 
+/// The range of addresses of Unicast or Group type.
 public class AddressRange: RangeObject, Codable {
     
+    /// The lower bound of the range.
     public var lowAddress: Address {
         return range.lowerBound
     }
     
+    /// The upper bound of the range.
     public var highAddress: Address {
         return range.upperBound
     }

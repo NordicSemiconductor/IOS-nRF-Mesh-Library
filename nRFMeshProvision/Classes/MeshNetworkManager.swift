@@ -30,6 +30,7 @@
 
 import Foundation
 
+/// The main object responsible for managing the mesh network.
 public class MeshNetworkManager {
     /// Mesh Network data.
     private var meshData: MeshData
@@ -79,7 +80,7 @@ public class MeshNetworkManager {
     /// The time within which a Segment Acknowledgment message is
     /// expected to be received after a segment of a segmented message has
     /// been sent. When the timer is fired, the non-acknowledged segments
-    /// are repeated, at most `retransmissionLimit` times.
+    /// are repeated, at most ``retransmissionLimit`` times.
     ///
     /// The transmission timer shall be set to a minimum of
     /// 200 + 50 * TTL milliseconds. The TTL dependent part is added
@@ -92,7 +93,7 @@ public class MeshNetworkManager {
     /// Number of times a non-acknowledged segment of a segmented message
     /// will be retransmitted before the message will be cancelled.
     ///
-    /// The limit may be decreased with increasing of `transmissionTimerInterval`
+    /// The limit may be decreased with increasing of ``transmissionTimerInterval``
     /// as the target Node has more time to reply with the Segment
     /// Acknowledgment message.
     public var retransmissionLimit: Int = 5
@@ -100,7 +101,7 @@ public class MeshNetworkManager {
     /// as the acknowledged message timeout, then the Element may consider the
     /// message has not been delivered, without sending any additional messages.
     ///
-    /// The `meshNetworkManager(_:failedToSendMessage:from:to:error)`
+    /// The ``MeshNetworkDelegate/meshNetworkManager(_:failedToSendMessage:from:to:error:)-ogo4``
     /// callback will be called on timeout.
     ///
     /// The acknowledged message timeout should be set to a minimum of 30 seconds.
@@ -133,12 +134,12 @@ public class MeshNetworkManager {
     
     // MARK: - Computed properties
     
-    /// Returns the MeshNetwork object.
+    /// The `MeshNetwork` object, or `nil`, if the network has not been loaded yet.
     public var meshNetwork: MeshNetwork? {
         return meshData.meshNetwork
     }
     
-    /// Returns `true` if Mesh Network has been created, `false` otherwise.
+    /// Whether the Mesh Network has been created, or not.
     public var isNetworkCreated: Bool {
         return meshData.meshNetwork != nil
     }
@@ -149,27 +150,27 @@ public class MeshNetworkManager {
     ///
     /// If storage is not provided, a local file will be used instead.
     ///
-    /// - important: After the manager has been initialized, the `localElements`
+    /// - important: After the manager has been initialized, the ``localElements``
     ///              property must be set . Otherwise, none of status messages will
     ///              be parsed correctly and they will be returned to the delegate
-    ///              as `UnknownMessage`s.
+    ///              as ``UnknownMessage``s.
     ///
     /// - parameters:
     ///   - storage: The storage to use to save the network configuration.
-    ///   - queue: The DispatchQueue to process requests on. By default
-    ///            the a global background concurrent queue will be used.
-    ///            Note, that if multiple messages are sent shortly one after another,
-    ///            processing them in a concurrent queue may cause some of them to be
-    ///            discarded despite the fact that they were received in the ascending
-    ///            order of SeqAuth, as one with a greater SeqAuth value may be processed
-    ///            before the previous one, causing the replay protection validation fail
-    ///            for the latter. This library stores 2 last SeqAuth values, so if a
-    ///            message with a unique SeqAuth is processed after its successor, it
-    ///            will be processed correctly.
-    ///   - delegateQueue: The DispatchQueue to call delegate methods on.
+    ///   - queue:   The `DispatchQueue` to process requests on. By default, the a global
+    ///              background concurrent queue will be used.
+    ///              Note, that if multiple messages are sent shortly one after another,
+    ///              processing them in a concurrent queue may cause some of them to be
+    ///              discarded despite the fact that they were received in the ascending
+    ///              order of SeqAuth, as one with a greater SeqAuth value may be processed
+    ///              before the previous one, causing the replay protection validation fail
+    ///              for the latter. This library stores 2 last SeqAuth values, so if a
+    ///              message with a unique SeqAuth is processed after its successor, it
+    ///              will be processed correctly.
+    ///   - delegateQueue: The `DispatchQueue` to call delegate methods on.
     ///                    By default the global main queue will be used.
-    /// - seeAlso: `LocalStorage`
-    /// - seeAlso: `LowerTransportLayer.checkAgainstReplayAttack(_:NetworkPdu)`
+    /// - seeAlso: ``LocalStorage``
+    /// - seeAlso: ``LowerTransportLayer.checkAgainstReplayAttack(_:NetworkPdu)``
     public init(using storage: Storage = LocalStorage(),
                 queue: DispatchQueue = DispatchQueue.global(qos: .background),
                 delegateQueue: DispatchQueue = DispatchQueue.main) {
@@ -182,13 +183,36 @@ public class MeshNetworkManager {
         self.proxyFilter.use(with: self)
     }
     
-    /// Initializes the Mesh Network Manager. It will use the `LocalStorage`
-    /// with the given file name.
+    /// Initializes the Mesh Network Manager. It will use the ``LocalStorage`` with the given
+    /// file name.
     ///
-    /// - parameter fileName: File name to keep the configuration.
-    /// - seeAlso: `LocalStorage`
-    public convenience init(using fileName: String) {
-        self.init(using: LocalStorage(fileName: fileName))
+    /// - important: After the manager has been initialized, the ``localElements``
+    ///              property must be set . Otherwise, none of status messages will
+    ///              be parsed correctly and they will be returned to the delegate
+    ///              as ``UnknownMessage``s.
+    ///
+    /// - parameters:
+    ///   - fileName: File name to keep the configuration.
+    ///   - queue:    The `DispatchQueue` to process requests on. By default, the a global
+    ///               background concurrent queue will be used.
+    ///               Note, that if multiple messages are sent shortly one after another,
+    ///               processing them in a concurrent queue may cause some of them to be
+    ///               discarded despite the fact that they were received in the ascending
+    ///               order of SeqAuth, as one with a greater SeqAuth value may be processed
+    ///               before the previous one, causing the replay protection validation fail
+    ///               for the latter. This library stores 2 last SeqAuth values, so if a
+    ///               message with a unique SeqAuth is processed after its successor, it
+    ///               will be processed correctly.
+    ///   - delegateQueue: The `DispatchQueue` to call delegate methods on.
+    ///                    By default the global main queue will be used.
+    ///
+    /// - seeAlso: ``LocalStorage``
+    public convenience init(using fileName: String,
+                            queue: DispatchQueue = DispatchQueue.global(qos: .background),
+                            delegateQueue: DispatchQueue = DispatchQueue.main) {
+        self.init(using: LocalStorage(fileName: fileName),
+                  queue: queue,
+                  delegateQueue: delegateQueue)
     }
     
 }
@@ -729,14 +753,15 @@ public extension MeshNetworkManager {
 
 public extension MeshNetworkManager {
     
-    /// Loads the Mesh Network configuration from the storage.
-    /// If storage is not given, a local file will be used.
+    /// Loads the Mesh Network configuration from the ``Storage`` set in the initiator
+    /// of the manager.
     ///
-    /// If the storage is empty, this method tries to migrate the
-    /// database from the nRF Mesh 1.0.x to the new format. This
-    /// is useful when the library or the Sample App has been updated.
-    /// For fresh installs, when the storage is empty and the
-    /// legacy version was not found this method returns `false`.
+    /// If the storage was not specified, the default local file will be used.
+    ///
+    /// If the storage is empty, this method tries to migrate the database from the
+    /// nRF Mesh 1.0.x to the new format. This is useful when the library or the app
+    /// has been updated. For fresh installs, when the storage is empty and the legacy
+    /// version was not found this method returns `false`.
     ///
     /// - returns: `True` if the network settings were loaded,
     ///            `false` otherwise.
@@ -804,8 +829,10 @@ public extension MeshNetworkManager {
         return false
     }
     
-    /// Saves the Mesh Network configuration in the storage.
-    /// If storage is not given, a local file will be used.
+    /// Saves the Mesh Network configuration in the ``Storage`` given in the initiator
+    /// of the manager.
+    ///
+    /// If storage was not specified, the local file will be used.
     ///
     /// - returns: `True` if the network settings was saved, `false` otherwise.
     func save() -> Bool {
@@ -824,7 +851,7 @@ public extension MeshNetworkManager {
     
     /// Returns the exported Mesh Network configuration as JSON Data.
     /// The returned Data can be transferred to another application and
-    /// imported. The JSON is compatible with Bluetooth Mesh scheme.
+    /// imported. The JSON is compatible with Bluetooth Mesh Configuration Database 1.0.1 scheme.
     ///
     /// - returns: The mesh network configuration as JSON Data.
     func export() -> Data {
@@ -868,7 +895,7 @@ public extension MeshNetworkManager {
     }
     
     /// Imports the Mesh Network configuration from the given Data.
-    /// The data must contain valid JSON with Bluetooth Mesh scheme.
+    /// The data must contain valid JSON with Bluetooth Mesh Configuration Database 1.0.1 scheme.
     ///
     /// - parameter data: JSON as Data.
     /// - returns: The imported mesh network.

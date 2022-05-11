@@ -30,8 +30,17 @@
 
 import Foundation
 
+/// The Publish object defines the publication configuration for a Model.
+///
+/// When a Model is configured for publishing, it will sent messages whenever a state
+/// of the Model has changed, or periodically. The Publish object defines the destination
+/// address and the Application Key to encrypt the messages, together with other settings.
+///
+/// To set the publication on a Model, send the ``ConfigModelPublicationSet`` or
+/// ``ConfigModelPublicationVirtualAddressSet`` messages to the Configuration Server model
+/// on the Node. The *Set* messages are confirmed with a ``ConfigModelPublicationStatus``.
 public struct Publish: Codable {
-    /// The Model will not publish status messages.
+    /// The configuration for disabling publication.
     ///
     /// - since: 3.0
     public static let disabled = Publish()
@@ -56,7 +65,7 @@ public struct Publish: Codable {
         
         /// Creates the Retransmit object when there should be no retransmissions.
         ///
-        /// - seeAlso: `Retransmit.disabled`.
+        /// - seeAlso: ``Publish/Retransmit/disabled``.
         /// - since: 3.0
         public init() {
             count = 0
@@ -219,12 +228,17 @@ public struct Publish: Codable {
     ///
     /// - parameters:
     ///   - destination: The publication address.
-    ///   - applicationKey: The Application Key that will be used to send messages.
+    ///   - applicationKey: The Application Key to encrypt messages with.
     ///   - friendshipCredentialsFlag: `True`, to use Friendship Security Material,
-    ///                                `false` to use Master Security Material.
-    ///   - ttl: Time to live. Use 0xFF to use Node's default TTL.
-    ///   - period: Periodical publication interval. See `Period` for details.
-    ///   - retransmit: The retransmission data. See `Retransmit` for details.
+    ///                                `false` to use Master Security Material (default).
+    ///   - ttl: Time To Live. The TTL is decremented every time the message is relayed,
+    ///          until it reaches 1, after which the message is not relayed furhter.
+    ///          Messages with TTL set to 0 are not relayed, and only sent to Nodes in
+    ///          direct proximity. Use 0xFF to use Node's default TTL.
+    ///   - period: Periodical publication interval. See ``Publish/Period-swift.struct``
+    ///             for details.
+    ///   - retransmit: The retransmission data. See ``Publish/Retransmit-swift.struct``
+    ///                 for details.
     /// - since: 3.0
     public init(to destination: MeshAddress, using applicationKey: ApplicationKey,
                 usingFriendshipMaterial friendshipCredentialsFlag: Bool, ttl: UInt8,
@@ -241,18 +255,22 @@ public struct Publish: Codable {
     ///
     /// - parameters:
     ///   - destination: The publication address.
-    ///   - applicationKey: The Application Key that will be used to send messages.
+    ///   - applicationKey: The Application Key to encrypt messages with.
     ///   - friendshipCredentialsFlag: `True`, to use Friendship Security Material,
-    ///                                `false` to use Master Security Material.
-    ///   - ttl: Time to live. Use 0xFF to use Node's default TTL.
-    ///   - periodSteps: Period steps, together with `periodResolution` are used to
-    ///                  calculate period interval. Value can be in range 0...63.
+    ///                                `false` to use Master Security Material (default).
+    ///   - ttl: Time To Live. The TTL is decremented every time the message is relayed,
+    ///          until it reaches 1, after which the message is not relayed furhter.
+    ///          Messages with TTL set to 0 are not relayed, and only sent to Nodes in
+    ///          direct proximity. Use 0xFF to use Node's default TTL.
+    ///   - periodSteps: Period steps, together with the period resolution are used to
+    ///                  calculate the period interval. Value can be in range 0...63.
     ///                  Value 0 disables periodic publishing.
     ///   - periodResolution: The period resolution, used to calculate interval.
-    ///                       Use `._100_milliseconds` when periodic publishing is
-    ///                       disabled.
-    ///   - retransmit: The retransmission data. See `Retransmit` for details.
-    @available(*, deprecated, message: "Use the other constructor")
+    ///                       Use ``StepResolution/hundredsOfMilliseconds`` when periodic
+    ///                       publishing is disabled.
+    ///   - retransmit: The retransmission data. See ``Publish/Retransmit-swift.struct``
+    ///                 for details.
+    @available(*, deprecated, message: "Use the constructor with 'period' parameter instead.")
     public init(to destination: MeshAddress, using applicationKey: ApplicationKey,
                 usingFriendshipMaterial friendshipCredentialsFlag: Bool, ttl: UInt8,
                 periodSteps: UInt8, periodResolution: StepResolution, retransmit: Retransmit) {
@@ -264,9 +282,9 @@ public struct Publish: Codable {
         self.retransmit = retransmit
     }
     
-    /// This initializer should be used to remove the publication from a Model.
+    /// This initializer for disabling publication from a Model.
     ///
-    /// - seeAlso: `Publish.disabled`.
+    /// - seeAlso: ``Publish/disabled``.
     /// - since: 3.0
     public init() {
         self.address = "0000"

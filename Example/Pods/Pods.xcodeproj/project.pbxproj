@@ -172,6 +172,7 @@
 		4D327834BFE390FB227D8804899F7735 /* KeyedDecodingContainer+Legacy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48D8B66DECAC5B356997587619972866 /* KeyedDecodingContainer+Legacy.swift */; };
 		4D393B9E006D459B08C23D0D865B0676 /* LightCTLDefaultGet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0559A1FE06FF437DA26CF7D680881A02 /* LightCTLDefaultGet.swift */; };
 		4F2F6A50B8616EC593458D962DECDE0F /* ApplicationKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = A66D84D388D5398C475465C34DCB53AC /* ApplicationKey.swift */; };
+		5276B01D281C017600DE8D81 /* Documentation.docc in Sources */ = {isa = PBXBuildFile; fileRef = 5276B01C281C017600DE8D81 /* Documentation.docc */; };
 		4F41A81DAE6ACA08CA98C9F0F9532050 /* String+FoundationExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA464A9A50BADCB332245C1238E5F0CB /* String+FoundationExtension.swift */; };
 		5204D26757066D8C6B6C6696A07DF5DE /* MeshNodeEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C761AB3A924F8FA31079749C9DD606C /* MeshNodeEntry.swift */; };
 		5298C00B6C7DA3382FA31FB3B0EF2826 /* PKCS5.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6529BEEF734D4D9F2920046F56965C4 /* PKCS5.swift */; };
@@ -663,6 +664,7 @@
 		3D590A95C8742E460B6BDCB671726668 /* SceneDelete.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SceneDelete.swift; sourceTree = "<group>"; };
 		3DF067307E0DE87554312A46030268FF /* UnknownMessage.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = UnknownMessage.swift; sourceTree = "<group>"; };
 		3E1CB805517756C217823B5596C743D8 /* Pods-nRFMeshProvision_Tests-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Pods-nRFMeshProvision_Tests-umbrella.h"; sourceTree = "<group>"; };
+		5276B01C281C017600DE8D81 /* Documentation.docc */ = {isa = PBXFileReference; lastKnownFileType = folder.documentationcatalog; path = Documentation.docc; sourceTree = "<group>"; };
 		3F0FE80B6F4F018594ED8801463963A5 /* LightHSLRangeGet.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LightHSLRangeGet.swift; sourceTree = "<group>"; };
 		3F25FDE6F08DB17150FE99E03B63E5EC /* Data+Keys.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "Data+Keys.swift"; sourceTree = "<group>"; };
 		3F44CB842C4E3CC787CE11E1CA28E4EF /* SchedulerMessage.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SchedulerMessage.swift; sourceTree = "<group>"; };
@@ -1706,6 +1708,7 @@
 				46D81D67E78116C91635BB852B27E0AC /* Support Files */,
 				F3E4A0F887FC098F70B0E874D137E8E1 /* Type Extensions */,
 				E44C23B9B47838A7D75F6FF704DC26B4 /* Utils */,
+				5276B01C281C017600DE8D81 /* Documentation.docc */,
 			);
 			name = nRFMeshProvision;
 			path = ../..;

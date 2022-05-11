@@ -32,7 +32,7 @@ import Foundation
 
 public extension Node {
     
-    /// The primary Element on the Node.
+    /// The Primary Element of the Node.
     ///
     /// `nil` is returned if Composition Data has not been received yet.
     var primaryElement: Element? {
