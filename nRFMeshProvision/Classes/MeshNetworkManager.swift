@@ -286,10 +286,10 @@ public extension MeshNetworkManager {
 
 public extension MeshNetworkManager {
     
-    /// This method returns the Provisioning Manager that can be used
+    /// This method returns the ``ProvisioningManager`` that can be used
     /// to provision the given device.
     ///
-    /// - parameter unprovisionedDevice: The device to be added to mes network.
+    /// - parameter unprovisionedDevice: The device to be added to mesh network.
     /// - parameter bearer: The Provisioning Bearer to be used for sending
     ///                     provisioning PDUs.
     /// - returns: The Provisioning manager that should be used to continue
@@ -310,14 +310,15 @@ public extension MeshNetworkManager {
 
 public extension MeshNetworkManager {
     
-    /// This method should be called whenever a PDU has been received
-    /// from the mesh network using any bearer.
-    /// When a complete Mesh Message is received and reassembled, the
-    /// delegate's `meshNetwork(:didDeliverMessage:from)` will be called.
+    /// This method should be called whenever a PDU has been received from the mesh
+    /// network using any bearer.
     ///
-    /// For easier integration with Bearers use
-    /// `bearer(didDeliverData:ofType)` instead, and set the manager
-    /// as Bearer's `dataDelegate`.
+    /// When a complete Mesh Message is received and reassembled, the delegate's
+    /// ``MeshNetworkDelegate/meshNetworkManager(_:didReceiveMessage:sentFrom:to:)``
+    /// will be called.
+    ///
+    /// For easier integration with ``GattBearer``, instead of calling this method,
+    /// set the manager as Bearer's ``Bearer/dataDelegate``.
     ///
     /// - parameters:
     ///   - data: The PDU received.
@@ -415,7 +416,7 @@ public extension MeshNetworkManager {
     /// Encrypts the message with the Application Key and a Network Key
     /// bound to it, and sends to the given Group.
     ///
-    /// A `delegate` method will be called when the message has been sent,
+    /// A ``delegate`` method will be called when the message has been sent,
     /// or failed to be sent.
     ///
     /// - parameters:
@@ -445,7 +446,7 @@ public extension MeshNetworkManager {
     /// Model and a Network Key bound to it, and sends it to the Node
     /// to which the Model belongs to.
     ///
-    /// A `delegate` method will be called when the message has been sent,
+    /// A ``delegate`` method will be called when the message has been sent,
     /// delivered, or fail to be sent.
     ///
     /// - parameters:
@@ -486,7 +487,7 @@ public extension MeshNetworkManager {
     /// Models and a Network Key bound to it, and sends it to the Node
     /// to which the target Model belongs to.
     ///
-    /// A `delegate` method will be called when the message has been sent,
+    /// A ``delegate`` method will be called when the message has been sent,
     /// delivered, or fail to be sent.
     ///
     /// - parameters:
@@ -533,7 +534,7 @@ public extension MeshNetworkManager {
     /// The `destination` must be a Unicast Address, otherwise the method
     /// throws an error.
     ///
-    /// A `delegate` method will be called when the message has been sent,
+    /// A ``delegate`` method will be called when the message has been sent,
     /// delivered, or fail to be sent.
     ///
     /// - parameters:
@@ -545,7 +546,7 @@ public extension MeshNetworkManager {
     ///           the local Node does not have configuration capabilities
     ///           (no Unicast Address assigned), or the destination address
     ///           is not a Unicast Address or it belongs to an unknown Node.
-    ///           Error `AccessError.cannotDelete` is sent when trying to
+    ///           Error ``AccessError/cannotDelete`` is sent when trying to
     ///           delete the last Network Key on the device.
     /// - returns: Message handle that can be used to cancel sending.
     @discardableResult
@@ -595,7 +596,7 @@ public extension MeshNetworkManager {
     
     /// Sends Configuration Message to the given Node.
     ///
-    /// A `delegate` method will be called when the message has been sent,
+    /// A ``delegate`` method will be called when the message has been sent,
     /// delivered, or fail to be sent.
     ///
     /// - parameters:
@@ -607,7 +608,7 @@ public extension MeshNetworkManager {
     ///           the local Node does not have configuration capabilities
     ///           (no Unicast Address assigned), or the destination address
     ///           is not a Unicast Address or it belongs to an unknown Node.
-    ///           Error `AccessError.cannotDelete` is sent when trying to
+    ///           Error ``AccessError/cannotDelete`` is sent when trying to
     ///           delete the last Network Key on the device.
     /// - returns: Message handle that can be used to cancel sending.
     @discardableResult
@@ -618,7 +619,7 @@ public extension MeshNetworkManager {
     
     /// Sends Configuration Message to the local Node.
     ///
-    /// A `delegate` method will be called when the message has been sent,
+    /// A ``delegate`` method will be called when the message has been sent,
     /// delivered, or fail to be sent.
     ///
     /// - parameters:
@@ -630,7 +631,7 @@ public extension MeshNetworkManager {
     ///           the local Node does not have configuration capabilities
     ///           (no Unicast Address assigned), or the destination address
     ///           is not a Unicast Address or it belongs to an unknown Node.
-    ///           Error `AccessError.cannotDelete` is sent when trying to
+    ///           Error ``AccessError/cannotDelete`` is sent when trying to
     ///           delete the last Network Key on the device.
     /// - returns: Message handle that can be used to cancel sending.
     @discardableResult
@@ -650,7 +651,7 @@ public extension MeshNetworkManager {
     /// Sends the Proxy Configuration Message to the connected Proxy Node.
     ///
     /// This method will only work if the bearer uses is GATT Proxy.
-    /// The message will be encrypted and sent to the `transported`, which
+    /// The message will be encrypted and sent to the ``transmitter``, which
     /// should deliver the PDU to the connected Node.
     ///
     /// - parameters:
