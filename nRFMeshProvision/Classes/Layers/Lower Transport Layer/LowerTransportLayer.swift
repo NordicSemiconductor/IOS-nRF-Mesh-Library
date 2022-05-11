@@ -36,6 +36,13 @@ private enum Message {
     case none
 }
 
+private enum SecurityError: Error {
+    /// Thrown internally when a possible replay attack was detected.
+    /// This error is not propagated to higher levels, the packet is
+    /// being discarded.
+    case replayAttack
+}
+
 internal class LowerTransportLayer {
     private weak var networkManager: NetworkManager!
     private let meshNetwork: MeshNetwork
@@ -130,7 +137,7 @@ internal class LowerTransportLayer {
         // Segmented messages must be validated and assembled in thread safe way.
         let result: Result<Message, Error> = mutex.sync {
             guard checkAgainstReplayAttack(networkPdu) else {
-                return .failure(LowerTransportError.replayAttack)
+                return .failure(SecurityError.replayAttack)
             }
 
             // Lower Transport Messages can be Unsegmented or Segmented.
