@@ -30,14 +30,20 @@
 
 import Foundation
 
-/// The mesh network delegate notifies about received messages and statuses of
-/// sent messages.
+/// The mesh network delegate notifies about all received messages as well as
+/// statuses of sent messages.
 ///
-/// The delegate is the global object that will receive all traffic information.
-/// Beside this delegate, the messages are also delivered to Models' delegates
-/// supporting given messages. Due to the fact, that the Configuration Server
-/// Model and Configuration Client Model, as well as Scene Client Model are
-/// supported by the library, this delegate is the only place to get messages
+/// The delegate is a single object that receives all traffic information, including
+/// messages with Op Codes not supported by any of the local Models Such messages
+/// are delivered as ``UnknownMessage``.
+///
+/// Messages targeting the Models on a local Node are also delivered to a corresponding
+/// ``ModelDelegate`` if the Model has been bound to the Application Key used
+/// to encrypt the message and subscribed to its destination address.
+///
+/// Due to the fact, that the *Configuration Server* model and *Configuration
+/// Client* model, as well as the *Scene Client* model are supported natively
+/// by the library, this delegate is the only place to receive messages
 /// handled by those models.
 public protocol MeshNetworkDelegate: AnyObject {
     
@@ -64,7 +70,7 @@ public protocol MeshNetworkDelegate: AnyObject {
                             sentFrom source: Address, to destination: Address)
     
     /// A callback called when an unsegmented message was sent to the
-    /// `transmitter`, or when all segments of a segmented message targeting
+    /// ``Transmitter``, or when all segments of a segmented message targeting
     /// a Unicast Address were acknowledged by the target Node.
     ///
     /// - parameters:
@@ -97,14 +103,15 @@ public protocol MeshNetworkDelegate: AnyObject {
     /// has not been received from any Node.
     ///
     /// Possible errors are:
-    /// - Any error thrown by the `transmitter`.
-    /// - `BearerError.bearerClosed` - when the `transmitter` object was net set.
-    /// - `LowerTransportError.busy` - when the target Node is busy and can't
+    /// - Any error thrown by the ``Transmitter``.
+    /// - ``BearerError/bearerClosed`` - when the `transmitter` object was net set.
+    /// - ``LowerTransportError/busy`` - when the target Node is busy and can't
     ///   accept the message.
-    /// - `LowerTransportError.timeout` - when the segmented message targeting
-    ///   a Unicast Address was not acknowledged before the `retransmissionLimit`
-    ///   was reached (for unacknowledged messages only).
-    /// - `AccessError.timeout` - when the response for an acknowledged message
+    /// - ``LowerTransportError/timeout`` - when the segmented message targeting
+    ///   a Unicast Address was not acknowledged before the
+    ///   ``MeshNetworkManager/retransmissionLimit`` was reached
+    ///   (for unacknowledged messages only).
+    /// - ``AccessError/timeout`` - when the response for an acknowledged message
     ///   has not been received before the time run out (for acknowledged messages
     ///   only).
     ///

@@ -222,11 +222,10 @@ public class MeshNetworkManager {
 public extension MeshNetworkManager {
     
     /// Generates a new Mesh Network configuration with default values.
-    /// This method will override the existing configuration, if such exists.
-    /// The mesh network will contain one Provisioner with given name.
     ///
-    /// Network Keys and Application Keys must be added manually
-    /// using `add(networkKey:name)` and `add(applicationKey:name)`.
+    /// This method will override the existing configuration, if such exists.
+    /// The mesh network will contain one ``Provisioner`` with the given name
+    /// and randomly generated Primary Network Key.
     ///
     /// - parameters:
     ///   - name:            The user given network name.
@@ -236,11 +235,10 @@ public extension MeshNetworkManager {
     }
     
     /// Generates a new Mesh Network configuration with default values.
-    /// This method will override the existing configuration, if such exists.
-    /// The mesh network will contain one Provisioner with given name.
     ///
-    /// Network Keys and Application Keys must be added manually
-    /// using `add(networkKey:name)` and `add(applicationKey:name)`.
+    /// This method will override the existing configuration, if such exists.
+    /// The mesh network will contain the given ``Provisioner``
+    /// and randomly generated Primary Network Key.
     ///
     /// - parameters:
     ///   - name:      The user given network name.
@@ -265,12 +263,16 @@ public extension MeshNetworkManager {
     /// Elements created. If a collision is found, the colliding Elements will
     /// be ignored.
     ///
-    /// The Element with all mandatory Models (Configuration Server and Client
-    /// and Health Server and Client) will be added automatically at index 0,
-    /// and should be skipped when setting.
+    /// The mandatory Models (Configuration Server and Client and Health Server
+    /// and Client) will be added automatically to the Primary Element,
+    /// and should not be added explicitly.
     ///
     /// The mesh network must be created or loaded before setting this field,
     /// otherwise it has no effect.
+    ///
+    /// - important: This property has to be set even if no custom Models are
+    ///              defined as the set operation initializes the mandatory Models.
+    ///              It can be set to an empty array.
     var localElements: [Element] {
         get {
             return meshNetwork?.localElements ?? []
@@ -339,6 +341,9 @@ public extension MeshNetworkManager {
     /// is unacknowledged, this method will retransmit it number of times
     /// with the count and interval specified in the retransmission object.
     ///
+    /// If the publication is not configured for the given Model, this method
+    /// does nothing.
+    ///
     /// - parameters:
     ///   - message: The message to be sent.
     ///   - model:   The model from which to send the message.
@@ -361,13 +366,13 @@ public extension MeshNetworkManager {
     /// bound to it, and sends to the given destination address.
     ///
     /// This method does not send nor return PDUs to be sent. Instead,
-    /// for each created segment it calls transmitter's `send(:ofType)`,
-    /// which should send the PDU over the air. This is in order to support
+    /// for each created segment it calls transmitter's ``Transmitter/send(_:ofType:)``
+    /// method, which should send the PDU over the air. This is in order to support
     /// retransmitting in case a packet was lost and needs to be sent again
     /// after block acknowledgment was received.
     ///
-    /// A `delegate` method will be called when the message has been sent,
-    /// delivered, or failed to be sent.
+    /// An appropriate callback of the ``MeshNetworkDelegate`` will be called when
+    /// the message has been sent successfully or a problem occured.
     ///
     /// - parameters:
     ///   - message:        The message to be sent.
@@ -416,8 +421,8 @@ public extension MeshNetworkManager {
     /// Encrypts the message with the Application Key and a Network Key
     /// bound to it, and sends to the given Group.
     ///
-    /// A ``delegate`` method will be called when the message has been sent,
-    /// or failed to be sent.
+    /// An appropriate callback of the ``MeshNetworkDelegate`` will be called when
+    /// the message has been sent successfully or a problem occured.
     ///
     /// - parameters:
     ///   - message:        The message to be sent.
@@ -446,8 +451,8 @@ public extension MeshNetworkManager {
     /// Model and a Network Key bound to it, and sends it to the Node
     /// to which the Model belongs to.
     ///
-    /// A ``delegate`` method will be called when the message has been sent,
-    /// delivered, or fail to be sent.
+    /// An appropriate callback of the ``MeshNetworkDelegate`` will be called when
+    /// the message has been sent successfully or a problem occured.
     ///
     /// - parameters:
     ///   - message:       The message to be sent.
@@ -487,8 +492,8 @@ public extension MeshNetworkManager {
     /// Models and a Network Key bound to it, and sends it to the Node
     /// to which the target Model belongs to.
     ///
-    /// A ``delegate`` method will be called when the message has been sent,
-    /// delivered, or fail to be sent.
+    /// An appropriate callback of the ``MeshNetworkDelegate`` will be called when
+    /// the message has been sent successfully or a problem occured.
     ///
     /// - parameters:
     ///   - message:      The message to be sent.
@@ -534,8 +539,8 @@ public extension MeshNetworkManager {
     /// The `destination` must be a Unicast Address, otherwise the method
     /// throws an error.
     ///
-    /// A ``delegate`` method will be called when the message has been sent,
-    /// delivered, or fail to be sent.
+    /// An appropriate callback of the ``MeshNetworkDelegate`` will be called when
+    /// the message has been sent successfully or a problem occured.
     ///
     /// - parameters:
     ///   - message:     The message to be sent.
@@ -596,8 +601,8 @@ public extension MeshNetworkManager {
     
     /// Sends Configuration Message to the given Node.
     ///
-    /// A ``delegate`` method will be called when the message has been sent,
-    /// delivered, or fail to be sent.
+    /// An appropriate callback of the ``MeshNetworkDelegate`` will be called when
+    /// the message has been sent successfully or a problem occured.
     ///
     /// - parameters:
     ///   - message: The message to be sent.
@@ -619,8 +624,8 @@ public extension MeshNetworkManager {
     
     /// Sends Configuration Message to the local Node.
     ///
-    /// A ``delegate`` method will be called when the message has been sent,
-    /// delivered, or fail to be sent.
+    /// An appropriate callback of the ``MeshNetworkDelegate`` will be called when
+    /// the message has been sent successfully or a problem occured.
     ///
     /// - parameters:
     ///   - message: The message to be sent.
@@ -651,7 +656,7 @@ public extension MeshNetworkManager {
     /// Sends the Proxy Configuration Message to the connected Proxy Node.
     ///
     /// This method will only work if the bearer uses is GATT Proxy.
-    /// The message will be encrypted and sent to the ``transmitter``, which
+    /// The message will be encrypted and sent to the ``Transmitter``, which
     /// should deliver the PDU to the connected Node.
     ///
     /// - parameters:

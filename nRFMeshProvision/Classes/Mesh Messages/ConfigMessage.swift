@@ -30,33 +30,60 @@
 
 import Foundation
 
-
+/// A base class for all Configuration messages.
+///
+/// Configuration messages are used to configure Nodes. They are sent between
+/// Configuration Client model on the Configuration Manager and Configuration Server
+/// model on the device, which is being configured. All Config messages are encrypted
+/// using target Node's Device Key.
 public protocol ConfigMessage: StaticMeshMessage {
     // No additional fields.
 }
+
+/// A base class for acknowledged Configuration messages.
+///
+/// Acknowledged messages will be responded with a status message.
 public protocol AcknowledgedConfigMessage: ConfigMessage, StaticAcknowledgedMeshMessage {
     // No additional fields.
 }
 
 /// The status of a Config operation.
 public enum ConfigMessageStatus: UInt8 {
+    /// Success.
     case success                        = 0x00
+    /// Invalid Address.
     case invalidAddress                 = 0x01
+    // Invalid Model.
     case invalidModel                   = 0x02
+    // Invalid AppKey Index.
     case invalidAppKeyIndex             = 0x03
+    // Invalid NetKey Index.
     case invalidNetKeyIndex             = 0x04
+    // Insufficient Resources.
     case insufficientResources          = 0x05
+    // Key Index Already Stored.
     case keyIndexAlreadyStored          = 0x06
+    // Invalid Publish Parameters.
     case invalidPublishParameters       = 0x07
+    // Not a Subscribe Model.
     case notASubscribeModel             = 0x08
+    // Storage Failure.
     case storageFailure                 = 0x09
+    // Feature Not Supported.
     case featureNotSupported            = 0x0A
+    // Cannot Update.
     case cannotUpdate                   = 0x0B
+    // Cannot Remove.
     case cannotRemove                   = 0x0C
+    // Cannot Bind.
     case cannotBind                     = 0x0D
+    // Temporarily Unable to Change State.
     case temporarilyUnableToChangeState = 0x0E
+    // Cannot Set.
     case cannotSet                      = 0x0F
+    // Unspecified Error.
     case unspecifiedError               = 0x10
+    // Invalid Binding.
     case invalidBinding                 = 0x11
 }
 

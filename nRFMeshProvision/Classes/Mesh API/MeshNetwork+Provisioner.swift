@@ -344,7 +344,7 @@ public extension MeshNetwork {
     
     /// Changes the Unicast Address used by the given Provisioner.
     /// If the Provisioner didn't have a Unicast Address specified, the method
-    /// will create a Node with given the address. This will enable configuration
+    /// will create a Node with the given address. This will enable configuration
     /// capabilities for the Provisioner. The Provisioner must be in the mesh network.
     ///
     /// - parameters:
@@ -408,10 +408,10 @@ public extension MeshNetwork {
         }
     }
     
-    /// Removes the Provisioner's Node. Provisioners without a Node
-    /// cannot send mesh messages, in particular, it cannot perform configuration
-    /// operations. This method does nothing if the Provisioner had no associated Node
-    /// already.
+    /// Disables the configuration capabilities by un-assigning Provisioner's address.
+    /// Un-assigning an address will delete the Provisioner's Node. This results in the
+    /// Provisioner not being able to send or receive mesh messages in the mesh network.
+    /// However, the provisioner will still retain it's provisioning capabilities.
     ///
     /// Use ``assign(unicastAddress:for:)`` to enable configuration capabilities.
     ///
@@ -428,7 +428,7 @@ private extension String {
     /// index 0) whenever the same mesh network configuration is imported.
     ///
     /// Local Provisioner UUID is saved whenever a new Provisioner is added or moved
-    /// to index 0 in the ``provisioners`` array in mesh network object.
+    /// to index 0 in the ``MeshNetwork/provisioners`` array in mesh network object.
     ///
     /// Use ``MeshNetwork/restoreLocalProvisioner()`` to restore the Provisioner instance.
     static let localProvisionerUuidKey = "provisioner"

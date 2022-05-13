@@ -147,8 +147,8 @@ internal class NetworkManager {
     /// bound to it, and sends to the given destination address.
     ///
     /// This method does not send nor return PDUs to be sent. Instead,
-    /// for each created segment it calls transmitter's `send(:ofType)`,
-    /// which should send the PDU over the air. This is in order to support
+    /// for each created segment it calls transmitter's ``Transmitter/send(_:ofType:)``
+    /// method, which should send the PDU over the air. This is in order to support
     /// retransmission in case a packet was lost and needs to be sent again
     /// after block acknowledgment was received.
     ///
@@ -171,14 +171,14 @@ internal class NetworkManager {
     /// Encrypts the message with the Device Key and the first Network Key
     /// known to the target device, and sends to the given destination address.
     ///
-    /// The `ConfigNetKeyDelete` will be signed with a different Network Key
+    /// The ``ConfigNetKeyDelete`` will be signed with a different Network Key
     /// that is being removed.
     ///
     /// This method does not send nor return PDUs to be sent. Instead,
-    /// for each created segment it calls transmitter's `send(:ofType)`,
-    /// which should send the PDU over the air. This is in order to support
-    /// retransmitting in case a packet was lost and needs to be sent again
-    /// after block acknowledgment was received.
+    /// for each created segment it calls transmitter's ``Transmitter/send(_:ofType:)``
+    /// method, which should send the PDU over the air. This is in order to support
+    /// retransmission in case a packet was lost and needs to be sent again
+    /// after block acknowledgment was received. 
     ///
     /// - parameters:
     ///   - configMessage: The message to be sent.

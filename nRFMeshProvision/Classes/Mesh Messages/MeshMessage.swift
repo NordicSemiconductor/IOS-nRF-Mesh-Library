@@ -96,6 +96,13 @@ public protocol StaticMeshMessage: MeshMessage {
     static var opCode: UInt32 { get }
 }
 
+/// A base class for acknowledged messages.
+///
+/// Acknowledged messages are expected to be replied with a status message
+/// with a message of type set as `responseType`.
+///
+/// Access Layer timer will wait for
+/// ``MeshNetworkManager/acknowledgmentMessageTimeout`` seconds
 public protocol StaticAcknowledgedMeshMessage: AcknowledgedMeshMessage, StaticMeshMessage {
     /// The Type of the response message.
     static var responseType: StaticMeshMessage.Type { get }
