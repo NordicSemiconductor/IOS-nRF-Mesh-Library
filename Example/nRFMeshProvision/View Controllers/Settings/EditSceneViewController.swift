@@ -180,7 +180,7 @@ private extension EditSceneViewController {
             }
             // Check if the scene is in the local Provisioner's range.
             guard let provisioner = network.localProvisioner,
-                      provisioner.isSceneInAllocatedRange(newScene) else {
+                      provisioner.hasAllocated(sceneNumber: newScene) else {
                 presentAlert(title: "Error",
                              message: "Scene is outside of this provisioner scene ranges.")
                 return

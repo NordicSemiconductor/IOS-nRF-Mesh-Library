@@ -120,7 +120,7 @@ public class ProvisioningManager {
         }
         let range = AddressRange(from: unicastAddress, elementsCount: capabilities.numberOfElements)
         return meshNetwork.isAddressRangeAvailable(range) &&
-               provisioner.isAddressRangeAllocated(range)
+               provisioner.hasAllocated(addressRange: range)
     }
     
     /// Returns whether the Unprovisioned Device can be provisioned using this

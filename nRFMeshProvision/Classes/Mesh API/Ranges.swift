@@ -40,6 +40,14 @@ public extension RangeObject {
         return range.contains(value)
     }
     
+    /// Returns whether the given range is within the range.
+    ///
+    /// - parameter range: The range to be checked.
+    /// - returns: `True` if the range is within the range, `false` otherwise.
+    func contains(_ range: RangeObject) -> Bool {
+        return contains(range.lowerBound) && contains(range.upperBound)
+    }
+    
     /// Returns a Boolean value indicating whether the sequence contains an
     /// element that satisfies the given predicate.
     ///
@@ -154,6 +162,14 @@ public extension Array where Element: RangeObject {
     /// - returns: `True` if the value is inside the range array, `false` otherwise.
     func contains(_ value: UInt16) -> Bool {
         return contains { $0.contains(value) }
+    }
+    
+    /// Returns whether the range is within any of the ranges in this array.
+    ///
+    /// - parameter range: The range to be checked.
+    /// - returns: `True` if the range is within the range array, `false` otherwise.
+    func contains(_ range: RangeObject) -> Bool {
+        return contains { $0.contains(range) }
     }
     
     /// Returns a Boolean value indicating whether any of the ranges in the array

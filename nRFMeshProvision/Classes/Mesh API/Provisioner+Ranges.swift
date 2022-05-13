@@ -330,21 +330,32 @@ public extension Provisioner {
         deallocate(sceneRange: range)
     }
     
-    /// Returns whether the count addresses starting from the given one are in
-    /// the Provisioner's allocated address ranges.
+    /// Returns whether given address range is within any of the ranges allocated
+    /// to the Provisioner.
     ///
-    /// The address may be a unicast or group address.
+    /// The address may be a Unicast or a Group Address range.
     ///
     /// - parameters:
     ///   - range: The address range to be checked.
     /// - returns: `True` if the address is in allocated ranges, `false` otherwise.
-    func isAddressRangeAllocated(_ range: AddressRange) -> Bool {
+    func hasAllocated(addressRange range: AddressRange) -> Bool {
         guard range.isUnicastRange || range.isGroupRange else {
             return false
         }
         
         let ranges = range.isUnicastRange ? allocatedUnicastRange : allocatedGroupRange
-        return ranges.overlaps(range)
+        return ranges.contains(range)
+    }
+    
+    /// Returns whether the Scene is in the Provisioner's allocated scene ranges.
+    ///
+    /// - parameter scene: The scene to be checked.
+    /// - returns: `True` if the scene is in allocated ranges, `false` otherwise.
+    func hasAllocated(sceneNumber scene: SceneNumber) -> Bool {
+        guard scene.isValidSceneNumber else {
+            return false
+        }
+        return allocatedSceneRange.contains(scene)
     }
     
     /// Returns whether the count addresses starting from the given one are in
@@ -356,25 +367,17 @@ public extension Provisioner {
     ///   - address: The first address to be checked.
     ///   - count:   Number of subsequent addresses to be checked.
     /// - returns: `True` if the address is in allocated ranges, `false` otherwise.
-    @available(*, deprecated, renamed: "isAddressRangeAllocated")
+    @available(*, deprecated, renamed: "hasAllocated(addressRange:)")
     func isAddressInAllocatedRange(_ address: Address, elementCount count: UInt8) -> Bool {
-        guard address.isUnicast || address.isGroup else {
-            return false
-        }
-        
-        let ranges = address.isUnicast ? allocatedUnicastRange : allocatedGroupRange
-        for range in ranges {
-            if range.contains(address) && range.contains(address + UInt16(count) - 1) {
-                return true
-            }
-        }
-        return false
+        let range = AddressRange(from: address, elementsCount: count)
+        return hasAllocated(addressRange: range)
     }
     
     /// Returns whether the Scene is in the Provisioner's allocated scene ranges.
     ///
     /// - parameter scene: The scene to be checked.
     /// - returns: `True` if the scene is in allocated ranges, `false` otherwise.
+    @available(*, deprecated, renamed: "hasAllocated(sceneNumber:)")
     func isSceneInAllocatedRange(_ scene: SceneNumber) -> Bool {
         guard scene.isValidSceneNumber else {
             return false
