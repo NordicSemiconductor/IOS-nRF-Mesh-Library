@@ -57,10 +57,8 @@ public extension Provisioner {
         // If the Provisioner is added to the mesh network, check if
         // the new range does not overlap with other Provisioner's ranges.
         if let meshNetwork = meshNetwork {
-            for otherProvisioner in meshNetwork.provisioners.filter({ $0 != self }) {
-                guard !otherProvisioner.allocatedUnicastRange.overlaps(range) else {
-                    throw MeshNetworkError.overlappingProvisionerRanges
-                }
+            guard meshNetwork.isRange(range, availableForAllocationTo: self) else {
+                throw MeshNetworkError.overlappingProvisionerRanges
             }
         }
         allocatedUnicastRange += range
@@ -92,10 +90,8 @@ public extension Provisioner {
         }
         // Check if the ranges don't overlap with other Provisioners' ranges.
         if let meshNetwork = meshNetwork {
-            for otherProvisioner in meshNetwork.provisioners.filter({ $0 != self }) {
-                guard !otherProvisioner.allocatedUnicastRange.overlaps(ranges) else {
-                    throw MeshNetworkError.overlappingProvisionerRanges
-                }
+            guard meshNetwork.areRanges(ranges, availableForAllocationTo: self) else {
+                throw MeshNetworkError.overlappingProvisionerRanges
             }
         }
         allocatedUnicastRange += ranges
@@ -128,10 +124,8 @@ public extension Provisioner {
         // If the Provisioner is added to the mesh network, check if
         // the new range does not overlap with other Provisioner's ranges.
         if let meshNetwork = meshNetwork {
-            for otherProvisioner in meshNetwork.provisioners.filter({ $0 != self }) {
-                guard !otherProvisioner.allocatedGroupRange.overlaps(range) else {
-                    throw MeshNetworkError.overlappingProvisionerRanges
-                }
+            guard meshNetwork.isRange(range, availableForAllocationTo: self) else {
+                throw MeshNetworkError.overlappingProvisionerRanges
             }
         }
         allocatedGroupRange += range
@@ -163,10 +157,8 @@ public extension Provisioner {
         }
         // Check if the ranges don't overlap with other Provisioners' ranges.
         if let meshNetwork = meshNetwork {
-            for otherProvisioner in meshNetwork.provisioners.filter({ $0 != self }) {
-                guard !otherProvisioner.allocatedGroupRange.overlaps(ranges) else {
-                    throw MeshNetworkError.overlappingProvisionerRanges
-                }
+            guard meshNetwork.areRanges(ranges, availableForAllocationTo: self) else {
+                throw MeshNetworkError.overlappingProvisionerRanges
             }
         }
         allocatedGroupRange += ranges
@@ -199,10 +191,8 @@ public extension Provisioner {
         // If the Provisioner is added to the mesh network, check if
         // the new range does not overlap with other Provisioner's ranges.
         if let meshNetwork = meshNetwork {
-            for otherProvisioner in meshNetwork.provisioners.filter({ $0 != self }) {
-                guard !otherProvisioner.allocatedSceneRange.overlaps(range) else {
-                    throw MeshNetworkError.overlappingProvisionerRanges
-                }
+            guard meshNetwork.isRange(range, availableForAllocationTo: self) else {
+                throw MeshNetworkError.overlappingProvisionerRanges
             }
         }
         allocatedSceneRange += range
@@ -234,10 +224,8 @@ public extension Provisioner {
         }
         // Check if the ranges don't overlap with other Provisioners' ranges.
         if let meshNetwork = meshNetwork {
-            for otherProvisioner in meshNetwork.provisioners.filter({ $0 != self }) {
-                guard !otherProvisioner.allocatedSceneRange.overlaps(ranges) else {
-                    throw MeshNetworkError.overlappingProvisionerRanges
-                }
+            guard meshNetwork.areRanges(ranges, availableForAllocationTo: self) else {
+                throw MeshNetworkError.overlappingProvisionerRanges
             }
         }
         allocatedSceneRange += ranges
