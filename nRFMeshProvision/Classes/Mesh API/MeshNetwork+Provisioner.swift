@@ -377,7 +377,7 @@ public extension MeshNetwork {
         
         // Is it in Provisioner's range?
         let newRange = AddressRange(from: address, elementsCount: provisionerNode.elementsCount)
-        guard provisioner.isAddressRangeAllocated(newRange) else {
+        guard provisioner.hasAllocated(addressRange: newRange) else {
             throw MeshNetworkError.addressNotInAllocatedRange
         }
         
