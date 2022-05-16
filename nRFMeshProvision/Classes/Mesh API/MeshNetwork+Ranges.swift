@@ -101,19 +101,17 @@ public extension MeshNetwork {
     ///            range already allocated by any other Provisioner added to the mesh
     ///            network; `false` otherwise.
     func isRange(_ range: AddressRange, availableForAllocationTo provisioner: Provisioner) -> Bool {
-        if hasProvisioner(provisioner) {
-            if range.isUnicastRange {
-                return !provisioners
-                    .filter({ $0 != provisioner })
-                    .contains { $0.allocatedUnicastRange.overlaps(range) }
-            }
-            if range.isGroupRange {
-                return !provisioners
-                    .filter({ $0 != provisioner })
-                    .contains { $0.allocatedGroupRange.overlaps(range) }
-            }
+        if range.isUnicastRange {
+            return !provisioners
+                .filter { $0 != provisioner }
+                .contains { $0.allocatedUnicastRange.overlaps(range) }
         }
-        return range.isValid
+        if range.isGroupRange {
+            return !provisioners
+                .filter { $0 != provisioner }
+                .contains { $0.allocatedGroupRange.overlaps(range) }
+        }
+        return false
     }
     
     /// Checks whether the given ranges are available for allocation to the given
@@ -124,19 +122,17 @@ public extension MeshNetwork {
     ///            range already allocated by any other Provisioner added to the mesh
     ///            network; `false` otherwise.
     func areRanges(_ ranges: [AddressRange], availableForAllocationTo provisioner: Provisioner) -> Bool {
-        if hasProvisioner(provisioner) {
-            if ranges.isUnicastRange {
-                return !provisioners
-                    .filter({ $0 != provisioner })
-                    .contains { $0.allocatedUnicastRange.overlaps(ranges) }
-            }
-            if ranges.isGroupRange {
-                return !provisioners
-                    .filter({ $0 != provisioner })
-                    .contains { $0.allocatedGroupRange.overlaps(ranges) }
-            }
+        if ranges.isUnicastRange {
+            return !provisioners
+                .filter { $0 != provisioner }
+                .contains { $0.allocatedUnicastRange.overlaps(ranges) }
         }
-        return ranges.isValid
+        if ranges.isGroupRange {
+            return !provisioners
+                .filter { $0 != provisioner }
+                .contains { $0.allocatedGroupRange.overlaps(ranges) }
+        }
+        return false
     }
     
     /// Checks whether the given range is available for allocation to a new
@@ -147,10 +143,12 @@ public extension MeshNetwork {
     ///            range already allocated by any other Provisioner added to the mesh
     ///            network; `false` otherwise.
     func isRange(_ range: SceneRange, availableForAllocationTo provisioner: Provisioner) -> Bool {
-        return range.isValid &&
-            !provisioners
-                .filter({ $0 != provisioner })
+        if range.isValid {
+            return !provisioners
+                .filter { $0 != provisioner }
                 .contains { $0.allocatedSceneRange.overlaps(range) }
+        }
+        return false
     }
     
     /// Checks whether the given ranges are available for allocation to a new
@@ -161,10 +159,12 @@ public extension MeshNetwork {
     ///            range already allocated by any other Provisioner added to the mesh
     ///            network; `false` otherwise.
     func areRanges(_ ranges: [SceneRange], availableForAllocationTo provisioner: Provisioner) -> Bool {
-        return ranges.isValid &&
-            !provisioners
-                .filter({ $0 != provisioner })
+        if ranges.isValid {
+            return !provisioners
+                .filter { $0 != provisioner }
                 .contains { $0.allocatedSceneRange.overlaps(ranges) }
+        }
+        return false
     }
     
     /// Returns the next available Unicast Address range of given size that is
@@ -177,7 +177,7 @@ public extension MeshNetwork {
     ///            or `nil` if all addresses are already allocated.
     func nextAvailableUnicastAddressRange(ofSize size: UInt16 = .maxUnicastAddress - .minUnicastAddress + 1) -> AddressRange? {
         let allRangesSorted: [AddressRange] = provisioners
-            .reduce([], { ranges, next in ranges + next.allocatedUnicastRange })
+            .reduce([]) { ranges, next in ranges + next.allocatedUnicastRange }
             .sorted { $0.lowerBound < $1.lowerBound }
         
         guard let range = nextAvailableRange(ofSize: size,
@@ -198,7 +198,7 @@ public extension MeshNetwork {
     ///            or `nil` if all addresses are already allocated.
     func nextAvailableGroupAddressRange(ofSize size: UInt16 = .maxGroupAddress - .minGroupAddress + 1) -> AddressRange? {
         let allRangesSorted: [AddressRange] = provisioners
-            .reduce([], { ranges, next in ranges + next.allocatedGroupRange })
+            .reduce([]) { ranges, next in ranges + next.allocatedGroupRange }
             .sorted { $0.lowerBound < $1.lowerBound }
         
         guard let range = nextAvailableRange(ofSize: size,
@@ -219,7 +219,7 @@ public extension MeshNetwork {
     ///            or `nil` if all scenes are already allocated.
     func nextAvailableSceneRange(ofSize size: UInt16 = .maxScene - .minScene + 1) -> SceneRange? {
         let allRangesSorted: [SceneRange] = provisioners
-            .reduce([], { ranges, next in ranges + next.allocatedSceneRange })
+            .reduce([]) { ranges, next in ranges + next.allocatedSceneRange }
             .sorted { $0.lowerBound < $1.lowerBound }
         
         guard let range = nextAvailableRange(ofSize: size,
