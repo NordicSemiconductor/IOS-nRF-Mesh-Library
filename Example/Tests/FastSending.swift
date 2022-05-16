@@ -383,8 +383,8 @@ class FastSending: XCTestCase, MeshNetworkDelegate {
         
         XCTAssertNotNil(meshNetwork.localProvisioner)
         XCTAssertNotNil(meshNetwork.localProvisioner!.meshNetwork)
-        XCTAssertNotNil(meshNetwork.localProvisioner!.unicastAddress)
-        XCTAssertEqual(meshNetwork.localProvisioner!.unicastAddress, 0x0001)
+        XCTAssertNotNil(meshNetwork.localProvisioner!.primaryUnicastAddress)
+        XCTAssertEqual(meshNetwork.localProvisioner!.primaryUnicastAddress, 0x0001)
         
         XCTAssertEqual(meshNetwork.networkKeys.count, 2)
         XCTAssertEqual(meshNetwork.applicationKeys.count, 3)
