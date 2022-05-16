@@ -64,6 +64,12 @@ public extension MeshNetwork {
     /// this method returns `false`. In that case a new Provisioner
     /// object should be created and set a local Provisioner.
     ///
+    /// - important: This library always uses the Provisioner at index 0
+    ///              as the local Provisioner. When this method returns
+    ///              `false` it does not mean, that there is no local Provisioner
+    ///              set, rather that restoring the old one has failed and
+    ///              the local one is set to one one that has been already at
+    ///              index 0.
     /// - returns: `True`, if the Provisioner has been restored, or
     ///            `false` when the network is new to this device.
     ///            In this case, a new Provisioner should be created
@@ -260,12 +266,11 @@ public extension MeshNetwork {
     
     /// Moves the Provisioner at given index to the new index.
     ///
-    /// Both parameters must be valid indices of the collection.
-    /// Calling ``moveProvisioner(fromIndex:toIndex:)`` with the same index as both
-    /// `fromIndex` and `toIndex` has no effect.
+    /// Both parameters must be valid indices of the collection that are
+    /// not equal to `endIndex`. Calling this method with the same index as
+    /// both `fromIndex` and `toIndex` has no effect.
     ///
-    /// The Provisioner at index 0 will be used as local Provisioner.
-    ///
+    /// - important: The Provisioner at index 0 is used as local Provisioner.
     /// - parameters:
     ///   - fromIndex: The index of the Provisioner to move.
     ///   - toIndex:   The destination index of the Provisioner.
@@ -331,8 +336,7 @@ public extension MeshNetwork {
     
     /// Moves the given Provisioner to the new index.
     ///
-    /// The Provisioner at index 0 will be used as local Provisioner.
-    ///
+    /// - important: The Provisioner at index 0 will be used as local Provisioner.
     /// - parameters:
     ///   - provisioner: The Provisioner to be moved.
     ///   - toIndex:     The destination index of the Provisioner.
@@ -343,9 +347,12 @@ public extension MeshNetwork {
     }
     
     /// Changes the Unicast Address used by the given Provisioner.
+    ///
     /// If the Provisioner didn't have a Unicast Address specified, the method
-    /// will create a Node with the given address. This will enable configuration
-    /// capabilities for the Provisioner. The Provisioner must be in the mesh network.
+    /// will create a Node with given the address. This will enable configuration
+    /// capabilities for the Provisioner.
+    ///
+    /// The Provisioner must be in the mesh network, otherwise an error is thrown.
     ///
     /// - parameters:
     ///   - address:     The new Unicast Address of the Provisioner.
@@ -413,7 +420,7 @@ public extension MeshNetwork {
     /// Provisioner not being able to send or receive mesh messages in the mesh network.
     /// However, the provisioner will still retain it's provisioning capabilities.
     ///
-    /// Use ``assign(unicastAddress:for:)`` to enable configuration capabilities.
+    /// Use ``MeshNetwork/assign(unicastAddress:for:)`` to enable configuration capabilities.
     ///
     /// - parameter provisioner: The Provisioner to be modified.
     func disableConfigurationCapabilities(for provisioner: Provisioner) {

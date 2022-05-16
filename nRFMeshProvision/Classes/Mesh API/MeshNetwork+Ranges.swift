@@ -96,7 +96,9 @@ public extension MeshNetwork {
     /// Checks whether the given range is available for allocation to the given
     /// Provisioner.
     ///
-    /// - parameter range: The range to be checked.
+    /// - parameters:
+    ///   - ranges:      The range to be checked.
+    ///   - provisioner: The Provisioner to check the allocation for.   
     /// - returns: `True`, if the range does not overlap with any address
     ///            range already allocated by any other Provisioner added to the mesh
     ///            network; `false` otherwise.
@@ -117,7 +119,9 @@ public extension MeshNetwork {
     /// Checks whether the given ranges are available for allocation to the given
     /// Provisioner.
     ///
-    /// - parameter ranges: The array of ranges to be checked.
+    /// - parameters:
+    ///   - ranges:      The array of ranges to be checked.
+    ///   - provisioner: The Provisioner to check the allocation for.
     /// - returns: `True`, if none of the ranges overlap with any address
     ///            range already allocated by any other Provisioner added to the mesh
     ///            network; `false` otherwise.
@@ -138,7 +142,9 @@ public extension MeshNetwork {
     /// Checks whether the given range is available for allocation to a new
     /// Provisioner.
     ///
-    /// - parameter range: The range to be checked.
+    /// - parameters:
+    ///   - ranges:      The range to be checked.
+    ///   - provisioner: The Provisioner to check the allocation for.
     /// - returns: `True`, if the range does not overlap with any scene
     ///            range already allocated by any other Provisioner added to the mesh
     ///            network; `false` otherwise.
@@ -154,7 +160,9 @@ public extension MeshNetwork {
     /// Checks whether the given ranges are available for allocation to a new
     /// Provisioner.
     ///
-    /// - parameter range: The array of ranges to be checked.
+    /// - parameters:
+    ///   - ranges:      The array of ranges to be checked.
+    ///   - provisioner: The Provisioner to check the allocation for.
     /// - returns: `True`, if the none of the ranges overlap with any scene
     ///            range already allocated by any other Provisioner added to the mesh
     ///            network; `false` otherwise.

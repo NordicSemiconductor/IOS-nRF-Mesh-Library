@@ -33,15 +33,14 @@ import Foundation
 public extension MeshNetwork {
     
     /// Returns Provisioner's Node object, if such exist and the Provisioner
-    /// is in the mesh network.
+    /// is in the mesh network; `nil` otherwise.
     ///
-    /// The Provisioner must be added to the network before calling this method,
-    /// otherwise `nil` will be returned.
+    /// The provisioner must be added to the network before calling this method,
+    /// otherwise `nil` is returned.
     ///
-    /// Provisioners without a Node assigned cannot send mesh messages (i.e. cannot
-    /// configure nodes), but still can provision new devices.
-    ///
-    /// - parameter provisioner: The Provisioner whose Node is to be returned.
+    /// - important: Provisioners without a Node assigned cannot send mesh messages
+    ///              (i.e. cannot configure nodes), but still can provision new devices.
+    /// - parameter provisioner: The provisioner which node is to be returned.
     /// - returns: The Provisioner's node object, or `nil`.
     func node(for provisioner: Provisioner) -> Node? {
         guard hasProvisioner(provisioner) else {

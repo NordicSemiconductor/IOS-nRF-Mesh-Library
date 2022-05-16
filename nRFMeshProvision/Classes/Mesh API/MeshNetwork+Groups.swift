@@ -32,18 +32,18 @@ import Foundation
 
 public extension MeshNetwork {
     
-    /// Returns the Group with given Address, or 'nil` if no such was found.
+    /// Returns the Group with the given Address, or `nil` if no such was found.
     ///
     /// - parameter address: The Group Address.
-    /// - returns: The Group with given Address, or `nil` if no such found.
+    /// - returns: The Group with the given Address, or `nil` if no such found.
     func group(withAddress address: MeshAddress) -> Group? {
         return group(withAddress: address.address)
     }
     
-    /// Returns the Group with given Address, or 'nil` if no such was found.
+    /// Returns the Group with the given Address, or `nil` if no such was found.
     ///
     /// - parameter address: The Group Address.
-    /// - returns: The Group with given Address, or `nil` if no such found.
+    /// - returns: The Group with the given Address, or `nil` if no such found.
     func group(withAddress address: Address) -> Group? {
         return groups.first { $0.address.address == address }
     }
@@ -77,7 +77,7 @@ public extension MeshNetwork {
     /// another Group.
     ///
     /// - parameter group: The Group to be removed.
-    /// - throws: This method throws `MeshNetworkError.groupInUse` when the
+    /// - throws: This method throws ``MeshNetworkError/groupInUse`` when the
     ///           Group is in use in this mesh network.
     func remove(group: Group) throws {
         if group.isUsed {
@@ -95,9 +95,7 @@ public extension MeshNetwork {
     /// - parameter group: The Group to look for.
     /// - returns: List of Models that are subscribed to the given Group.
     func models(subscribedTo group: Group) -> [Model] {
-        return nodes.flatMap {
-            $0.elements.models(subscribedTo: group)
-        }
+        return nodes.flatMap { $0.elements.models(subscribedTo: group) }
     }
     
 }
