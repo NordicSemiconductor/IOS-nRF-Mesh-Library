@@ -427,7 +427,7 @@ public extension Provisioner {
     ///            `false` otherwise.
     func hasOverlappingRanges(with provisioner: Provisioner) -> Bool {
         return hasOverlappingUnicastRanges(with: provisioner)
-            || hasOverlappingGroupRanges(with:provisioner)
+            || hasOverlappingGroupRanges(with: provisioner)
             || hasOverlappingSceneRanges(with: provisioner)
     }
     
