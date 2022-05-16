@@ -46,7 +46,9 @@ public extension ApplicationKey {
         let localProvisioner = meshNetwork.localProvisioner
         return meshNetwork.applicationKeys.contains(self) &&
                // Application Key known by at least one node.
-               meshNetwork.nodes.filter({ $0.uuid != localProvisioner?.uuid }).knows(applicationKey: self)
+               meshNetwork.nodes
+                    .filter { $0.uuid != localProvisioner?.uuid }
+                    .knows(applicationKey: self)
     }
     
 }
