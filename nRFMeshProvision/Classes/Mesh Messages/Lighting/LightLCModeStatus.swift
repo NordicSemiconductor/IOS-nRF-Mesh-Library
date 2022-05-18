@@ -35,7 +35,7 @@ public struct LightLCModeStatus: GenericMessage {
     
     /// Whether the controller is turned on and the binding with the Light Lightness
     /// state is enabled.
-    let controllerStatus: Bool
+    public let controllerStatus: Bool
     
     public var parameters: Data? {
         return Data() + controllerStatus

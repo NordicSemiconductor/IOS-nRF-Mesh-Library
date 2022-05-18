@@ -35,7 +35,7 @@ public struct LightLCOccupancyModeStatus: GenericMessage {
     
     /// Whether the controller may transition from a standby state when occupancy
     /// is reported.
-    let occupancyMode: Bool
+    public let occupancyMode: Bool
     
     public var parameters: Data? {
         return Data() + occupancyMode
