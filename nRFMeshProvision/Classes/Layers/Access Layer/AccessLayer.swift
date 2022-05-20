@@ -237,7 +237,9 @@ internal class AccessLayer {
         logger?.i(.access, "Sending \(pdu)")
         
         // Set timers for the acknowledged messages.
-        if let _ = message as? AcknowledgedMeshMessage {
+        // Acknowledged messages sent to a Group address won't await a Status.
+        if message is AcknowledgedMeshMessage,
+           destination.address.isUnicast {
             createReliableContext(for: pdu, sentFrom: element, withTtl: initialTtl, using: keySet)
         }
         
@@ -277,7 +279,7 @@ internal class AccessLayer {
         logger?.i(.access, "Sending \(pdu)")
         
         // Set timers for the acknowledged messages.
-        if let _ = message as? AcknowledgedConfigMessage {
+        if message is AcknowledgedConfigMessage {
             createReliableContext(for: pdu, sentFrom: element, withTtl: initialTtl, using: keySet)
         }
         
@@ -585,6 +587,9 @@ private extension AccessLayer {
     /// The context contains timers responsible for resending the message until
     /// status is received, and allows the message to be cancelled.
     ///
+    /// - important: The message must be of an Acknowledged type and must be
+    ///              targetting a Unicast Address; otherwise this method does nothing.
+    ///
     /// - parameters:
     ///   - pdu: The PDU of the Acknowledged message.
     ///   - element: The source Element.
@@ -592,7 +597,8 @@ private extension AccessLayer {
     ///   - keySet: The Key Set used for sending the message.
     func createReliableContext(for pdu: AccessPdu, sentFrom element: Element,
                                withTtl initialTtl: UInt8?, using keySet: KeySet) {
-        guard let request = pdu.message as? AcknowledgedMeshMessage else {
+        guard let request = pdu.message as? AcknowledgedMeshMessage,
+              pdu.destination.address.isUnicast else {
             return
         }
         
@@ -602,8 +608,7 @@ private extension AccessLayer {
         /// request. When the response isn't received after the first retry,
         /// it will try again every time doubling the last delay until the
         /// time goes out.
-        let initialDelay: TimeInterval =
-            networkManager.acknowledgmentMessageInterval(ttl, pdu.segmentsCount)
+        let initialDelay = networkManager.acknowledgmentMessageInterval(ttl, pdu.segmentsCount)
         /// The timeout before which the response should be received.
         let timeout = networkManager.acknowledgmentMessageTimeout
         
@@ -615,7 +620,8 @@ private extension AccessLayer {
                     self.logger?.d(.access, "Resending \(pdu)")
                     self.networkManager.upperTransportLayer.send(pdu, withTtl: initialTtl, using: keySet)
                 }
-            }, timeout: timeout, timeoutBlock: { [weak self] in
+            },
+            timeout: timeout, timeoutBlock: { [weak self] in
                 guard let self = self else { return }
                 self.logger?.w(.access, "Response to \(pdu) not received (timeout)")
                 let category: LogCategory = request is AcknowledgedConfigMessage ? .foundationModel : .model
@@ -624,12 +630,13 @@ private extension AccessLayer {
                                           sentFrom: pdu.source, to: pdu.destination.address,
                                           using: self.networkManager.manager))
                 self.mutex.sync {
-                    self.reliableMessageContexts.removeAll(where: { $0.timeoutTimer == nil })
+                    self.reliableMessageContexts.removeAll { $0.timeoutTimer == nil }
                 }
                 self.networkManager.notifyAbout(AccessError.timeout,
                                                 duringSendingMessage: request,
                                                 from: element, to: pdu.destination.address)
-            })
+            }
+        )
         mutex.sync {
             reliableMessageContexts.append(ack)
         }
