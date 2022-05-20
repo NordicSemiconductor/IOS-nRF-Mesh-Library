@@ -942,6 +942,14 @@ internal extension DeviceProperty {
             guard length == valueLength else { return .timeSecond16(nil) }
             let value: UInt16 = data.read(fromOffset: offset)
             return .timeSecond16(value.withUnknownValue(0xFFFF))
+        case .presentAmbientCarbonDioxideConcentration:
+            guard length == valueLength else { return .co2Concentration(nil) }
+            let value: UInt16 = data.read(fromOffset: offset)
+            return .co2Concentration(value.withUnknownValue(0xFFFF))
+        case .presentAmbientVolatileOrganicCompoundsConcentration:
+            guard length == valueLength else { return .vodConcentration(nil) }
+            let value: UInt16 = data.read(fromOffset: offset)
+            return .vodConcentration(value.withUnknownValue(0xFFFF))
         
         // UInt16 -> Float?
         case .presentAmbientRelativeHumidity,
