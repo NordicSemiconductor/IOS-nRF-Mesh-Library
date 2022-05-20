@@ -608,8 +608,7 @@ private extension AccessLayer {
         /// request. When the response isn't received after the first retry,
         /// it will try again every time doubling the last delay until the
         /// time goes out.
-        let initialDelay: TimeInterval =
-            networkManager.acknowledgmentMessageInterval(ttl, pdu.segmentsCount)
+        let initialDelay = networkManager.acknowledgmentMessageInterval(ttl, pdu.segmentsCount)
         /// The timeout before which the response should be received.
         let timeout = networkManager.acknowledgmentMessageTimeout
         
@@ -621,7 +620,8 @@ private extension AccessLayer {
                     self.logger?.d(.access, "Resending \(pdu)")
                     self.networkManager.upperTransportLayer.send(pdu, withTtl: initialTtl, using: keySet)
                 }
-            }, timeout: timeout, timeoutBlock: { [weak self] in
+            },
+            timeout: timeout, timeoutBlock: { [weak self] in
                 guard let self = self else { return }
                 self.logger?.w(.access, "Response to \(pdu) not received (timeout)")
                 let category: LogCategory = request is AcknowledgedConfigMessage ? .foundationModel : .model
@@ -630,12 +630,13 @@ private extension AccessLayer {
                                           sentFrom: pdu.source, to: pdu.destination.address,
                                           using: self.networkManager.manager))
                 self.mutex.sync {
-                    self.reliableMessageContexts.removeAll(where: { $0.timeoutTimer == nil })
+                    self.reliableMessageContexts.removeAll { $0.timeoutTimer == nil }
                 }
                 self.networkManager.notifyAbout(AccessError.timeout,
                                                 duringSendingMessage: request,
                                                 from: element, to: pdu.destination.address)
-            })
+            }
+        )
         mutex.sync {
             reliableMessageContexts.append(ack)
         }
