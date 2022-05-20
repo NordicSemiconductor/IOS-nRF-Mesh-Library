@@ -806,7 +806,9 @@ internal extension DeviceProperty {
              .lightControlLightnessProlong,
              .lightControlLightnessStandby,
              .peopleCount,
+             .presentAmbientCarbonDioxideConcentration,
              .presentAmbientRelativeHumidity,
+             .presentAmbientVolatileOrganicCompoundsConcentration,
              .presentIndoorRelativeHumidity,
              .presentInputCurrent,
              .presentOutdoorRelativeHumidity,
@@ -940,6 +942,14 @@ internal extension DeviceProperty {
             guard length == valueLength else { return .timeSecond16(nil) }
             let value: UInt16 = data.read(fromOffset: offset)
             return .timeSecond16(value.withUnknownValue(0xFFFF))
+        case .presentAmbientCarbonDioxideConcentration:
+            guard length == valueLength else { return .co2Concentration(nil) }
+            let value: UInt16 = data.read(fromOffset: offset)
+            return .co2Concentration(value.withUnknownValue(0xFFFF))
+        case .presentAmbientVolatileOrganicCompoundsConcentration:
+            guard length == valueLength else { return .vocConcentration(nil) }
+            let value: UInt16 = data.read(fromOffset: offset)
+            return .vocConcentration(value.withUnknownValue(0xFFFF))
         
         // UInt16 -> Float?
         case .presentAmbientRelativeHumidity,
@@ -1165,7 +1175,7 @@ public enum DevicePropertyCharacteristic: Equatable {
     /// Unit is parts per billion (ppb) with a resolution of 1.
     ///
     /// A value of 0xFFFE represents ‘value is 65534 or greater’.
-    case vodConcentration(UInt16?)
+    case vocConcentration(UInt16?)
     /// Generic data type for other characteristics.
     case other(Data)
 }
@@ -1192,7 +1202,7 @@ internal extension DevicePropertyCharacteristic {
              .timeSecond16(let value),
             // and 0xFFFE as greater than 65534:
              .co2Concentration(let value),
-             .vodConcentration(let value):
+             .vocConcentration(let value):
             return value.toData(withUnknownValue: 0xFFFF)
             
         // UInt16:
@@ -1354,7 +1364,7 @@ extension DevicePropertyCharacteristic: CustomDebugStringConvertible {
             formatter.unitsStyle = .short
             return formatter.string(from: interval)!
         case .co2Concentration(let concentration),
-             .vodConcentration(let concentration):
+             .vocConcentration(let concentration):
             guard let concentration = concentration else {
                 return DevicePropertyCharacteristic.unknown
             }
