@@ -237,7 +237,9 @@ internal class AccessLayer {
         logger?.i(.access, "Sending \(pdu)")
         
         // Set timers for the acknowledged messages.
-        if let _ = message as? AcknowledgedMeshMessage {
+        // Acknowledged messages sent to a Group address won't await a Status.
+        if message is AcknowledgedMeshMessage,
+           destination.address.isUnicast {
             createReliableContext(for: pdu, sentFrom: element, withTtl: initialTtl, using: keySet)
         }
         
@@ -277,7 +279,7 @@ internal class AccessLayer {
         logger?.i(.access, "Sending \(pdu)")
         
         // Set timers for the acknowledged messages.
-        if let _ = message as? AcknowledgedConfigMessage {
+        if message is AcknowledgedConfigMessage {
             createReliableContext(for: pdu, sentFrom: element, withTtl: initialTtl, using: keySet)
         }
         
@@ -585,6 +587,9 @@ private extension AccessLayer {
     /// The context contains timers responsible for resending the message until
     /// status is received, and allows the message to be cancelled.
     ///
+    /// - important: The message must be of an Acknowledged type and must be
+    ///              targetting a Unicast Address; otherwise this method does nothing.
+    ///
     /// - parameters:
     ///   - pdu: The PDU of the Acknowledged message.
     ///   - element: The source Element.
@@ -592,7 +597,8 @@ private extension AccessLayer {
     ///   - keySet: The Key Set used for sending the message.
     func createReliableContext(for pdu: AccessPdu, sentFrom element: Element,
                                withTtl initialTtl: UInt8?, using keySet: KeySet) {
-        guard let request = pdu.message as? AcknowledgedMeshMessage else {
+        guard let request = pdu.message as? AcknowledgedMeshMessage,
+              pdu.destination.address.isUnicast else {
             return
         }
         
