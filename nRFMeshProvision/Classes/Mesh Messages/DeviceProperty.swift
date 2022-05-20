@@ -1089,6 +1089,13 @@ public enum DevicePropertyCharacteristic: Equatable {
     case count24(UInt32?)
     /// The Coefficient characteristic is used to represent a general coefficient value.
     case coefficient(Float32)
+    /// The CO2 Concentration characteristic is used to represent a measure of carbon dioxide
+    /// concentration in units of parts per million.
+    ///
+    /// Unit is parts per million (ppm) with a resolution of 1.
+    ///
+    /// A value of 0xFFFE represents ‘value is 65534 or greater’.
+    case co2Concentration(UInt16?)
     /// Date as days elapsed since the Epoch (Jan 1, 1970) in the Coordinated Universal
     /// Time (UTC) time zone.
     case dateUTC(Date?)
@@ -1152,6 +1159,13 @@ public enum DevicePropertyCharacteristic: Equatable {
     /// The Time Second 32 characteristic is used to represent a period of time with
     /// a unit of 1 second.
     case timeSecond32(UInt32?)
+    /// The VOC Concentration characteristic is used to represent a measure of volatile
+    /// organic compounds concentration in units of parts per billion.
+    ///
+    /// Unit is parts per billion (ppb) with a resolution of 1.
+    ///
+    /// A value of 0xFFFE represents ‘value is 65534 or greater’.
+    case vodConcentration(UInt16?)
     /// Generic data type for other characteristics.
     case other(Data)
 }
@@ -1175,7 +1189,10 @@ internal extension DevicePropertyCharacteristic {
             
         // UInt16 with 0xFFFF as unknown:
         case .count16(let value),
-             .timeSecond16(let value):
+             .timeSecond16(let value),
+            // and 0xFFFE as greater than 65534:
+             .co2Concentration(let value),
+             .vodConcentration(let value):
             return value.toData(withUnknownValue: 0xFFFF)
             
         // UInt16:
@@ -1336,6 +1353,15 @@ extension DevicePropertyCharacteristic: CustomDebugStringConvertible {
             formatter.allowedUnits = [.day, .hour, .minute, .second]
             formatter.unitsStyle = .short
             return formatter.string(from: interval)!
+        case .co2Concentration(let concentration),
+             .vodConcentration(let concentration):
+            guard let concentration = concentration else {
+                return DevicePropertyCharacteristic.unknown
+            }
+            if concentration == 0xFFFE {
+                return "65534 ppm or more"
+            }
+            return "\(concentration) ppm"
             
         // UInt32? as UInt24?:
         case .count24(let count):
