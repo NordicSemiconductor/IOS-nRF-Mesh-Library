@@ -50,7 +50,9 @@ public protocol ProvisioningDelegate: AnyObject {
     
 }
 
-public class ProvisioningManager {    
+
+
+open class ProvisioningManager {
     private let unprovisionedDevice: UnprovisionedDevice
     private let bearer: ProvisioningBearer
     private let meshNetwork: MeshNetwork
@@ -273,6 +275,14 @@ public class ProvisioningManager {
             provisioningData.accumulate(pdu: key)
             obtainAuthValue()
         }
+    }
+    
+    open func generateOobString(size: UInt) -> String {
+        return String.randomAlphanumeric(length: UInt(size))
+    }
+    
+    open func generateOobInt(size: UInt) -> UInt {
+        return UInt.random(length: UInt(size))
     }
 }
 
@@ -501,11 +511,9 @@ private extension ProvisioningManager {
         case let .inputOob(action: action, size: size):
             switch action {
             case .inputAlphanumeric:
-                let random = randomString(length: UInt(size))
-                authAction = .displayAlphanumeric(random)
+                authAction = .displayAlphanumeric(generateOobString(size: UInt(size)))
             case .push, .twist, .inputNumeric:
-                let random = randomInt(length: UInt(size))
-                authAction = .displayNumber(random, inputAction: action)
+                authAction = .displayNumber(generateOobInt(size: UInt(size)), inputAction: action)
             }
             delegate?.authenticationActionRequired(authAction!)
         }
@@ -540,19 +548,19 @@ private extension ProvisioningManager {
 
 // MARK: - Helper methods
 
-private extension ProvisioningManager {
-    
+private extension String {
     /// Generates a random string of numerics and capital English letters
     /// with given length.
-    func randomString(length: UInt) -> String {
+    static func randomAlphanumeric(length: UInt) -> Self {
         let letters = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-        return String((0..<length).map{ _ in letters.randomElement()! })
+        return Self((0..<length).lazy.map{ _ in letters.randomElement()! })
     }
-    
-    /// Generates a random integer with at most `length` digits.
-    func randomInt(length: UInt) -> UInt {
-        let upperbound = UInt(pow(10.0, Double(length)))
-        return UInt.random(in: 1..<upperbound)
-    }
+}
 
+private extension UInt {
+    /// Generates a random integer with at most `length` digits.
+    static func random(length digits: UInt) -> UInt {
+        let upperbound = UInt(pow(10.0, Double(digits)))
+        return Self.random(in: 1..<upperbound)
+    }
 }
