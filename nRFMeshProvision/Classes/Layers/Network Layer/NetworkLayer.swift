@@ -315,7 +315,7 @@ private extension NetworkLayer {
             
             // Store the last IV Index.
             defaults.set(meshNetwork.ivIndex.asMap, forKey: IvIndex.indexKey)
-            if lastIVIndex != meshNetwork.ivIndex || lastTransitionDate == nil {
+            if lastIVIndex != meshNetwork.ivIndex {
                 defaults.set(Date(), forKey: IvIndex.timestampKey)
                 
                 let ivRecovery = meshNetwork.ivIndex.index > lastIVIndex.index + 1 &&
