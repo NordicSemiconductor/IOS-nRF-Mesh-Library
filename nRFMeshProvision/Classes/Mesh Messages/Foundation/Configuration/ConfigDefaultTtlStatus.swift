@@ -30,7 +30,7 @@
 
 import Foundation
 
-public struct ConfigDefaultTtlStatus: ConfigMessage {
+public struct ConfigDefaultTtlStatus: ConfigStatusMessage {
     public static let opCode: UInt32 = 0x800E
     
     public var parameters: Data? {

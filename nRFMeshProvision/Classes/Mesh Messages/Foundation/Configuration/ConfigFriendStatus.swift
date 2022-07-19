@@ -30,7 +30,7 @@
 
 import Foundation
 
-public struct ConfigFriendStatus: ConfigMessage {
+public struct ConfigFriendStatus: ConfigStatusMessage {
     public static let opCode: UInt32 = 0x8011
     
     public var parameters: Data? {
