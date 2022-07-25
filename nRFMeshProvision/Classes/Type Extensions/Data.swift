@@ -53,6 +53,16 @@ extension Data {
         return UInt32(self[offset]) | UInt32(self[offset + 1]) << 8 | UInt32(self[offset + 2]) << 16
     }
     
+    func read(numBytes bytes: Int, fromOffset offset: Int = 0) -> UInt64 {
+        var res: UInt64 = 0
+
+        for i in 0...bytes-1 {
+            res += UInt64(self[offset + i]) << (i * 8)
+        }
+        
+        return res
+    }
+    
     func readBigEndian<R: FixedWidthInteger>(fromOffset offset: Int = 0) -> R {
         let r: R = read(fromOffset: offset)
         return r.bigEndian
