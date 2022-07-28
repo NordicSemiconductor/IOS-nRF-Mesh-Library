@@ -49,11 +49,11 @@ class TimeMessages: XCTestCase {
         XCTAssertEqual(time.uncertainty, 120)
         XCTAssertEqual(time.authority, true)
         XCTAssertEqual(time.taiDelta, 28672)
-        XCTAssertEqual(time.tzOffset, 2.5)
+        XCTAssertEqual(time.tzOffset.secondsFromGMT(), 9000)
     }
 
     func testOutgoingTaiTime() {
-        let time = TaiTime.marshal(TaiTime(seconds: 305419896, subSecond: 50, uncertainty: 120, authority: true, taiDelta: 28672, tzOffset: 2.5))
+        let time = TaiTime.marshal(TaiTime(seconds: 305419896, subSecond: 50, uncertainty: 120, authority: true, taiDelta: 28672, tzOffset: TimeZone(secondsFromGMT: 9000)!))
         
         XCTAssertEqual(time, Data([120, 86, 52, 18, 0, 50, 120, 255, 225, 74]))
     }
@@ -61,13 +61,13 @@ class TimeMessages: XCTestCase {
     func testIncomingTimeZoneStatus() {
         let msg = TimeZoneStatus(parameters: Data([68, 60, 213, 106, 129, 45, 0]))
         
-        XCTAssertEqual(msg?.currentTzOffset, 1)
-        XCTAssertEqual(msg?.nextTzOffset, -1)
+        XCTAssertEqual(msg?.currentTzOffset.secondsFromGMT(), 3600)
+        XCTAssertEqual(msg?.nextTzOffset.secondsFromGMT(), -3600)
         XCTAssertEqual(msg?.taiSeconds, 763456213)
     }
 
     func testOutgoingTimeZoneStatus() {
-        let msg = TimeZoneStatus(currentTzOffset: 1.5, nextTzOffset: -1.25, taiSeconds: 763456213)
+        let msg = TimeZoneStatus(currentTzOffset: TimeZone(secondsFromGMT: 5400)!, nextTzOffset: TimeZone(secondsFromGMT: -4500)!, taiSeconds: 763456213)
         
         XCTAssertEqual(msg.parameters, Data([70, 59, 213, 106, 129, 45, 0]))
     }
@@ -75,12 +75,12 @@ class TimeMessages: XCTestCase {
     func testIncomingTimeZoneSet() {
         let msg = TimeZoneSet(parameters: Data([90, 213, 106, 129, 45, 0]))
         
-        XCTAssertEqual(msg?.tzOffset, 6.5)
+        XCTAssertEqual(msg?.tzOffset.secondsFromGMT(), 23400)
         XCTAssertEqual(msg?.taiSeconds, 763456213)
     }
 
     func testOutgoingTimeZoneSet() {
-        let msg = TimeZoneSet(tzOffset: -6.5, taiSeconds: 763456213)
+        let msg = TimeZoneSet(tzOffset: TimeZone(secondsFromGMT: -23400)!, taiSeconds: 763456213)
         
         XCTAssertEqual(msg.parameters, Data([38, 213, 106, 129, 45, 0]))
     }

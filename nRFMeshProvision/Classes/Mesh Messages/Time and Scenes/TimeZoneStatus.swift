@@ -34,15 +34,19 @@ public struct TimeZoneStatus: GenericMessage {
     public static let opCode: UInt32 = 0x823D
     
     public var parameters: Data? {
-        let data =  Data() + currentTzOffset.encodeToTzOffset() + nextTzOffset.encodeToTzOffset()
-        
-        return data + Data([taiSeconds.getByte(at: 0), taiSeconds.getByte(at: 1), taiSeconds.getByte(at: 2), taiSeconds.getByte(at: 3), taiSeconds.getByte(at: 4)])
+        var data =  Data(count: 7)
+
+        data.writeBits(value: currentTzOffset.encodeToTzOffset(), numBits: 8, atOffset: 0)
+        data.writeBits(value: nextTzOffset.encodeToTzOffset(), numBits: 8, atOffset: 8)
+        data.writeBits(value: taiSeconds, numBits: 40, atOffset: 16)
+
+        return data
     }
     
     /// The corrent local time zone offset.
-    public let currentTzOffset: Double
+    public let currentTzOffset: TimeZone
     /// The upcoming local time zone offset.
-    public let nextTzOffset: Double
+    public let nextTzOffset: TimeZone
     /// The TAI seconds time when the new offset should be applied.
     public let taiSeconds: UInt64
 
@@ -52,7 +56,7 @@ public struct TimeZoneStatus: GenericMessage {
     ///   - currentTzOffset: the current offset.
     ///   - nextTzOffset: the new offset.
     ///   - taiSeconds: the time in TAI seconds when the new offset should be applied.
-    public init(currentTzOffset: Double, nextTzOffset: Double, taiSeconds: UInt64) {
+    public init(currentTzOffset: TimeZone, nextTzOffset: TimeZone, taiSeconds: UInt64) {
         self.currentTzOffset = currentTzOffset
         self.nextTzOffset = nextTzOffset
         self.taiSeconds = taiSeconds
@@ -63,11 +67,9 @@ public struct TimeZoneStatus: GenericMessage {
             return nil
         }
 
-        let currentMeshOffset: UInt8 = parameters.read()
-        currentTzOffset = currentMeshOffset.decodeFromTzOffset()
-        let newMeshOffset: UInt8 = parameters.read(fromOffset: 1)
-        nextTzOffset = newMeshOffset.decodeFromTzOffset()
-        taiSeconds = parameters.read(numBytes: 5, fromOffset: 2)
+        currentTzOffset = UInt8(parameters.readBits(8, fromOffset: 0)).decodeFromTzOffset()
+        nextTzOffset = UInt8(parameters.readBits(8, fromOffset: 8)).decodeFromTzOffset()
+        taiSeconds = parameters.readBits(40, fromOffset: 16)
     }
     
 }

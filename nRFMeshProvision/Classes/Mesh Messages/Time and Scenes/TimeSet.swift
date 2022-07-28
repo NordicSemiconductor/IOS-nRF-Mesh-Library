@@ -40,12 +40,6 @@ public struct TimeSet: TimeMessage {
 
     public let time: TaiTime
 
-    /// Creates an empty Time Set message.
-    ///
-    public init() {
-        self.time = TaiTime()
-    }
-
     /// Creates the Time Set message.
     public init(time: TaiTime) {
         self.time = time

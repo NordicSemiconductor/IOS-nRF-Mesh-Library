@@ -35,12 +35,16 @@ public struct TimeZoneSet: AcknowledgedGenericMessage {
     public static let responseType: StaticMeshMessage.Type = TimeZoneStatus.self
     
     public var parameters: Data? {
-        let data = Data() + tzOffset.encodeToTzOffset()
-        return data + Data([taiSeconds.getByte(at: 0), taiSeconds.getByte(at: 1), taiSeconds.getByte(at: 2), taiSeconds.getByte(at: 3), taiSeconds.getByte(at: 4)])
+        var data = Data(count: 6)
+        
+        data.writeBits(value: tzOffset.encodeToTzOffset(), numBits: 8, atOffset: 0)
+        data.writeBits(value: taiSeconds, numBits: 40, atOffset: 8)
+
+        return data
     }
     
     /// The upcoming local time zone offset.
-    public let tzOffset: Double
+    public let tzOffset: TimeZone
     /// The TAI seconds time when the new offset should be applied.
     public let taiSeconds: UInt64
     
@@ -49,7 +53,7 @@ public struct TimeZoneSet: AcknowledgedGenericMessage {
     /// - parameters:
     ///   - tzOffset: the new offset.
     ///   - taiSeconds: the time in TAI seconds when the new offset should be applied.
-    public init(tzOffset: Double, taiSeconds: UInt64) {
+    public init(tzOffset: TimeZone, taiSeconds: UInt64) {
         self.tzOffset = tzOffset
         self.taiSeconds = taiSeconds
     }
@@ -59,9 +63,8 @@ public struct TimeZoneSet: AcknowledgedGenericMessage {
             return nil
         }
 
-        let meshOffset: UInt8 = parameters.read()
-        tzOffset = meshOffset.decodeFromTzOffset()
-        taiSeconds = parameters.read(numBytes: 5, fromOffset: 1)
+        tzOffset = UInt8(parameters.readBits(8, fromOffset: 0)).decodeFromTzOffset()
+        taiSeconds = parameters.readBits(40, fromOffset: 8)
     }
     
 }

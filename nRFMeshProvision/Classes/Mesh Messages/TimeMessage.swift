@@ -47,7 +47,7 @@ public struct TaiTime {
     /// Current difference between TAI and UTC in seconds (range -255 to 32512).
     public let taiDelta: Int16
     /// The Local time zone offset.
-    public let tzOffset: Double
+    public let tzOffset: TimeZone
     
     public init() {
         self.seconds = 0
@@ -55,10 +55,10 @@ public struct TaiTime {
         self.uncertainty = 0
         self.authority = false
         self.taiDelta = 0
-        self.tzOffset = 0
+        self.tzOffset = TimeZone.current
     }
     
-    public init(seconds: UInt64, subSecond: UInt8, uncertainty: UInt8, authority: Bool, taiDelta: Int16, tzOffset: Double) {
+    public init(seconds: UInt64, subSecond: UInt8, uncertainty: UInt8, authority: Bool, taiDelta: Int16, tzOffset: TimeZone) {
         self.seconds = seconds
         self.subSecond = subSecond
         self.uncertainty = uncertainty
@@ -68,61 +68,46 @@ public struct TaiTime {
     }
 }
 
-// MARK: - Extensions for encoding and decoding parameters in time messages.
-extension UInt64 {
-    public func getByte(at offset: Int) -> UInt8 {
-        return UInt8(self >> (8 * offset) & 0xFF)
-    }
-}
+// MARK: - Constants for encoding and decoding parameters in time messages.
+let TZ_SECONDS_PER_STEP = 3600 / 4
+let TZ_START_RANGE: UInt8 = 0x40
+let TAI_DELTA_START_RANGE: Int16 = 0xFF
 
-extension Double {
+// MARK: - Extensions for encoding and decoding parameters in time messages.
+extension TimeZone {
     public func encodeToTzOffset() -> UInt8 {
-        return UInt8(max(-127, min(128, Int(self * 4) + Int(TZ_START_RANGE))))
+        return UInt8(max(-127, min(128, (self.secondsFromGMT() / TZ_SECONDS_PER_STEP) + Int(TZ_START_RANGE))))
     }
 }
 
 extension UInt8 {
-    public func decodeFromTzOffset() -> Double {
-        return Double(Int(self) - Int(TZ_START_RANGE)) / 4;
+    public func decodeFromTzOffset() -> TimeZone {
+        return TimeZone(secondsFromGMT: (Int(self) - Int(TZ_START_RANGE)) * TZ_SECONDS_PER_STEP)!
     }
 }
-
-// MARK: - Constants for encoding and decoding parameters in time messages.
-let TZ_START_RANGE: UInt8 = 0x40
-let TAI_DELTA_START_RANGE: Int16 = 0xFF
 
 // MARK: - Extensions for encoding and decoding TAI time objects.
 extension TaiTime {
     public static func unmarshal(_ parameters: Data) -> TaiTime {
-        let seconds = parameters.read(numBytes: 5)
-        let subSecond: UInt8 = parameters.read(fromOffset: 5)
-        let uncertainty: UInt8 = parameters.read(fromOffset: 6)
-        let authorityAndTaiDelta: UInt16 = parameters.read(fromOffset: 7)
-        let tzOffset: UInt8 = parameters.read(fromOffset: 9)
-
-        let authority = (authorityAndTaiDelta & 0x0001) == 0x0001 ? true : false
-        let taiDelta = Int16(authorityAndTaiDelta >> 1)
+        let seconds = parameters.readBits(40, fromOffset: 0)
+        let subSecond = UInt8(parameters.readBits(8, fromOffset: 40))
+        let uncertainty = UInt8(parameters.readBits(8, fromOffset: 48))
+        let authority = parameters.readBits(1, fromOffset: 56) == 1 ? true : false
+        let taiDelta = Int16(parameters.readBits(15, fromOffset: 57))
+        let tzOffset = UInt8(parameters.readBits(8, fromOffset: 72))
 
         return TaiTime(seconds: seconds, subSecond: subSecond, uncertainty: uncertainty, authority: authority, taiDelta: taiDelta - TAI_DELTA_START_RANGE, tzOffset: tzOffset.decodeFromTzOffset())
     }
     
     public static func marshal(_ time: TaiTime) -> Data {
-        var data = Data()
+        var data = Data(count: 10)
 
-        //  Protocol only supports 40 bits of time, strip the rest of the 64-bit value.
-        data.append(contentsOf: [time.seconds.getByte(at: 0), time.seconds.getByte(at: 1), time.seconds.getByte(at: 2), time.seconds.getByte(at: 3), time.seconds.getByte(at: 4)])
-
-        data.append(time.subSecond)
-        data.append(time.uncertainty)
-
-        // Time authority offset the bytes by one bit, so do some
-        // twiddling until we're back in sync.
-        let meshDelta = time.taiDelta + TAI_DELTA_START_RANGE
-        let octet1: UInt8 = (time.authority ? 0x80 : 0x00) | UInt8(meshDelta & 0x7F)
-        let octet2: UInt8 = UInt8((meshDelta >> 7) & 0xFF)
-
-        data.append(contentsOf: [octet1, octet2])
-        data.append(time.tzOffset.encodeToTzOffset())
+        data.writeBits(value: time.seconds, numBits: 40, atOffset: 0)
+        data.writeBits(value: time.subSecond, numBits: 8, atOffset: 40)
+        data.writeBits(value: time.uncertainty, numBits: 8, atOffset: 48)
+        data.writeBits(value: UInt64(time.authority ? 1 : 0), numBits: 1, atOffset: 56)
+        data.writeBits(value: UInt16(time.taiDelta + TAI_DELTA_START_RANGE), numBits: 15, atOffset: 57)
+        data.writeBits(value: time.tzOffset.encodeToTzOffset(), numBits: 8, atOffset: 72)
         
         return data
     }
