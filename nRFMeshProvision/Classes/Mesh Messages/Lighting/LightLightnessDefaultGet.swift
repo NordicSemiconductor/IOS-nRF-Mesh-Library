@@ -31,7 +31,7 @@
 import Foundation
 
 public struct LightLightnessDefaultGet: AcknowledgedGenericMessage {
-    public static let opCode: UInt32 = 0x8254
+    public static let opCode: UInt32 = 0x8255
     public static let responseType: StaticMeshMessage.Type = LightLightnessDefaultStatus.self
     
     public var parameters: Data? {
