@@ -635,8 +635,13 @@ internal extension Node {
     
     /// Sets given list of Elements to the Node.
     ///
+    /// Apart from simply replacing the Elements, this method copies properties of matching
+    /// models from the old model to the new one. If at least one Model in the new Element
+    /// was found in the new Element, the name of the Element is also copied.
+    ///
     /// - parameter element: The new list of Elements to be added.
     func set(elements: [Element]) {
+        // Look for matching Models. A matching model has the same Element index and Model id.
         for e in 0..<min(self.elements.count, elements.count) {
             let oldElement = self.elements[e]
             let newElement = elements[e]
@@ -653,14 +658,14 @@ internal extension Node {
                 }
             }
         }
+        // Remove the old Elements.
         self.elements.forEach {
             $0.parentNode = nil
             $0.index = 0
         }
         self.elements.removeAll()
-        elements.forEach {
-            add(element: $0)
-        }
+        // And add new ones.
+        add(elements: elements)
     }
     
     /// Adds the Network Key to the Node.
@@ -829,7 +834,10 @@ internal extension Node {
         productIdentifier = page0.productIdentifier
         versionIdentifier = page0.versionIdentifier
         minimumNumberOfReplayProtectionList = page0.minimumNumberOfReplayProtectionList
-        features = page0.features
+        // Don't override features if they already were known.
+        // Accurate features states could have been acquired by reading each feature state,
+        // while the Page 0 of the Composition Data contains only Supported / Not Supported.
+        features = features ?? page0.features
         // And set the Elements received.
         set(elements: page0.elements)
         meshNetwork?.timestamp = Date()

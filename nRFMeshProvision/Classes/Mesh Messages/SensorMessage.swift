@@ -426,7 +426,7 @@ public struct SensorCadence {
     /// The sensor cadence object encoded as Data.
     internal var data: Data {
         var data = Data([(fastCadencePeriodDivisor << 1) | statusTriggerType])
-        data += statusTriggerDelta.data + statusMinInterval
+        data += statusTriggerDelta.data + statusMinIntervalValue
         data += fastCadenceLow.data + fastCadenceHigh.data
         return data
     }

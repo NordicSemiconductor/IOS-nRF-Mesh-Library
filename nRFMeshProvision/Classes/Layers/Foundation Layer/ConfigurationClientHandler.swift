@@ -57,6 +57,7 @@ internal class ConfigurationClientHandler: ModelDelegate {
             ConfigFriendStatus.self,
             ConfigBeaconStatus.self,
             ConfigNetworkTransmitStatus.self,
+            ConfigNodeIdentityStatus.self,
             ConfigNodeResetStatus.self,
             ConfigHeartbeatPublicationStatus.self,
             ConfigHeartbeatSubscriptionStatus.self,
@@ -227,7 +228,9 @@ internal class ConfigurationClientHandler: ModelDelegate {
                     break
                 }
                 // Here it should be safe to search for the group.
-                guard let group = meshNetwork.group(withAddress: address) else {
+                guard let group = Group.specialGroup(withAddress: address) ??
+                                  meshNetwork.group(withAddress: address),
+                          group != .allNodes else {
                     break
                 }
                 switch request {
@@ -250,8 +253,11 @@ internal class ConfigurationClientHandler: ModelDelegate {
                let model = element.model(withModelId: list.modelId) {
                 model.unsubscribeFromAll()
                 for address in list.addresses {
-                    if let group = meshNetwork.groups.first(where: { $0.address.address == address }) {
-                        model.subscribe(to: group)
+                    if let group = Group.specialGroup(withAddress: address) ??
+                                   meshNetwork.group(withAddress: address) {
+                        if group != .allNodes {
+                            model.subscribe(to: group)
+                        }
                     } else {
                         if address.isGroup && !address.isSpecialGroup {
                             do {
@@ -264,8 +270,8 @@ internal class ConfigurationClientHandler: ModelDelegate {
                                 continue
                             }
                         } else {
-                            // Unknown Virtual Group. The Virtual Label is unknown,
-                            // so we can't create it here.
+                            // Unknown Virtual Group, or a special group.
+                            // The Virtual Label is unknown, so we can't create it here.
                             continue
                         }
                     }
@@ -334,6 +340,11 @@ internal class ConfigurationClientHandler: ModelDelegate {
                 // This may be set to nil.
                 node.heartbeatSubscription = HeartbeatSubscription(status)
             }
+            
+        // Node Identity
+        case is ConfigNodeIdentityStatus:
+            // Do nothing. The model does not need to be updated.
+            break
             
         case is ConfigKeyRefreshPhaseStatus:
             // Do nothing. The model does not need to be updated.

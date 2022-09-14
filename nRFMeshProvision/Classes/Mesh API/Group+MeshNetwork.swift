@@ -43,6 +43,10 @@ public extension Group {
         guard let meshNetwork = meshNetwork else {
             return false
         }
+        guard !address.address.isSpecialGroup else {
+            // Special groups are considered as used by design.
+            return true
+        }
         for group in meshNetwork.groups {
             // If the Group is a parent of some other Group, return `true`.
             if isDirectParentOf(group) {
@@ -117,9 +121,15 @@ public extension Group {
     
     /// Sets the parent-child relationship between this and the given Group.
     ///
+    /// Neigher the Group, or the parent Group can be a Special Group.
+    ///
     /// - parameter parent: The parent Group.
     func setAsChildOf(_ parent: Group) {
         guard parent != self else {
+            return
+        }
+        guard !address.address.isSpecialGroup &&
+              !parent.address.address.isSpecialGroup else {
             return
         }
         parentAddress = parent.groupAddress
@@ -128,9 +138,15 @@ public extension Group {
     
     /// Sets the parent-child relationship between this and the given Group.
     ///
+    /// Neigher the Group, or the child Group can be a Special Group.
+    ///
     /// - parameter child: The child Group.
     func setAsParentOf(_ child: Group) {
         guard child != self else {
+            return
+        }
+        guard !address.address.isSpecialGroup &&
+              !child.address.address.isSpecialGroup else {
             return
         }
         child.parentAddress = groupAddress

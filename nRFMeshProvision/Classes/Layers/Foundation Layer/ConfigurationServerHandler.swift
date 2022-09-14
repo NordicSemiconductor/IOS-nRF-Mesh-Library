@@ -76,6 +76,8 @@ internal class ConfigurationServerHandler: ModelDelegate {
             ConfigBeaconSet.self,
             ConfigNetworkTransmitSet.self,
             ConfigNetworkTransmitGet.self,
+            ConfigNodeIdentityGet.self,
+            ConfigNodeIdentitySet.self,
             ConfigNodeReset.self,
             ConfigHeartbeatPublicationGet.self,
             ConfigHeartbeatPublicationSet.self,
@@ -324,7 +326,7 @@ internal class ConfigurationServerHandler: ModelDelegate {
             if !request.publish.isCancel {
                 // A new Group?
                 let address = request.publish.publicationAddress.address
-                if address.isGroup && address < 0xFF00 &&
+                if address.isGroup && !address.isSpecialGroup &&
                    meshNetwork.group(withAddress: request.publish.publicationAddress) == nil {
                     let group = try! Group(name: NSLocalizedString("New Group", comment: ""),
                                            address: address)
@@ -386,20 +388,20 @@ internal class ConfigurationServerHandler: ModelDelegate {
             guard model.delegate?.isSubscriptionSupported != false else {
                 return ConfigModelSubscriptionStatus(responseTo: request, with: .notASubscribeModel)
             }
-            var group = meshNetwork.group(withAddress: MeshAddress(request.address))
-            if let group = group {
-                model.subscribe(to: group)
-            } else {
-                do {
-                    group = try Group(name: NSLocalizedString("New Group", comment: ""),
-                                      address: request.address)
-                    try meshNetwork.add(group: group!)
-                    model.subscribe(to: group!)
-                } catch {
-                    return ConfigModelSubscriptionStatus(responseTo: request, with: .invalidAddress)
+            do {
+                let address = MeshAddress(request.address)
+                // A Model can be subscribed to any Group except from All nodes.
+                let group = try Group.specialGroup(withAddress: address) ??
+                                meshNetwork.group(withAddress: address) ??
+                                createGroup(withAddress: address)
+                guard group != .allNodes else {
+                    throw MeshNetworkError.invalidAddress
                 }
+                model.subscribe(to: group)
+                return ConfigModelSubscriptionStatus(confirmAdding: group, to: model)!
+            } catch {
+                return ConfigModelSubscriptionStatus(responseTo: request, with: .invalidAddress)
             }
-            return ConfigModelSubscriptionStatus(confirmAdding: group!, to: model)!
             
         case let request as ConfigModelSubscriptionOverwrite:
             guard let element = localNode.element(withAddress: request.elementAddress) else {
@@ -414,22 +416,21 @@ internal class ConfigurationServerHandler: ModelDelegate {
             guard model.delegate?.isSubscriptionSupported != false else {
                 return ConfigModelSubscriptionStatus(responseTo: request, with: .notASubscribeModel)
             }
-            var group = meshNetwork.group(withAddress: MeshAddress(request.address))
-            if let group = group {
+            do {
+                let address = MeshAddress(request.address)
+                // A Model can be subscribed to any Group except from All nodes.
+                let group = try Group.specialGroup(withAddress: address) ??
+                                meshNetwork.group(withAddress: address) ??
+                                createGroup(withAddress: address)
+                guard group != .allNodes else {
+                    throw MeshNetworkError.invalidAddress
+                }
                 model.unsubscribeFromAll()
                 model.subscribe(to: group)
-            } else {
-                do {
-                    group = try Group(name: NSLocalizedString("New Group", comment: ""),
-                                      address: request.address)
-                    try meshNetwork.add(group: group!)
-                    model.unsubscribeFromAll()
-                    model.subscribe(to: group!)
-                } catch {
-                    return ConfigModelSubscriptionStatus(responseTo: request, with: .invalidAddress)
-                }
+                return ConfigModelSubscriptionStatus(confirmAdding: group, to: model)!
+            } catch {
+                return ConfigModelSubscriptionStatus(responseTo: request, with: .invalidAddress)
             }
-            return ConfigModelSubscriptionStatus(confirmAdding: group!, to: model)!
             
         case let request as ConfigModelSubscriptionDelete:
             guard let element = localNode.element(withAddress: request.elementAddress) else {
@@ -454,20 +455,15 @@ internal class ConfigurationServerHandler: ModelDelegate {
             guard model.delegate?.isSubscriptionSupported != false else {
                 return ConfigModelSubscriptionStatus(responseTo: request, with: .notASubscribeModel)
             }
-            var group = meshNetwork.group(withAddress: MeshAddress(request.virtualLabel))
-            if group != nil {
-                model.subscribe(to: group!)
-            } else {
-                do {
-                    group = try Group(name: NSLocalizedString("New Group", comment: ""),
-                                      address: MeshAddress(request.virtualLabel))
-                    try meshNetwork.add(group: group!)
-                    model.subscribe(to: group!)
-                } catch {
-                    return ConfigModelSubscriptionStatus(responseTo: request, with: .invalidAddress)
-                }
+            do {
+                let address = MeshAddress(request.virtualLabel)
+                let group = try meshNetwork.group(withAddress: address) ??
+                                createGroup(withAddress: address)
+                model.subscribe(to: group)
+                return ConfigModelSubscriptionStatus(confirmAdding: group, to: model)!
+            } catch {
+                return ConfigModelSubscriptionStatus(responseTo: request, with: .invalidAddress)
             }
-            return ConfigModelSubscriptionStatus(confirmAdding: group!, to: model)!
             
         case let request as ConfigModelSubscriptionVirtualAddressOverwrite:
             guard let element = localNode.element(withAddress: request.elementAddress) else {
@@ -479,22 +475,16 @@ internal class ConfigurationServerHandler: ModelDelegate {
             guard model.delegate?.isSubscriptionSupported != false else {
                 return ConfigModelSubscriptionStatus(responseTo: request, with: .notASubscribeModel)
             }
-            var group = meshNetwork.group(withAddress: MeshAddress(request.virtualLabel))
-            if group != nil {
+            do {
+                let address = MeshAddress(request.virtualLabel)
+                let group = try meshNetwork.group(withAddress: address) ??
+                                createGroup(withAddress: address)
                 model.unsubscribeFromAll()
-                model.subscribe(to: group!)
-            } else {
-                do {
-                    group = try Group(name: NSLocalizedString("New Group", comment: ""),
-                                      address: MeshAddress(request.virtualLabel))
-                    try meshNetwork.add(group: group!)
-                    model.unsubscribeFromAll()
-                    model.subscribe(to: group!)
-                } catch {
-                    return ConfigModelSubscriptionStatus(responseTo: request, with: .invalidAddress)
-                }
+                model.subscribe(to: group)
+                return ConfigModelSubscriptionStatus(confirmAdding: group, to: model)!
+            } catch {
+                return ConfigModelSubscriptionStatus(responseTo: request, with: .invalidAddress)
             }
-            return ConfigModelSubscriptionStatus(confirmAdding: group!, to: model)!
             
         case let request as ConfigModelSubscriptionVirtualAddressDelete:
             guard let element = localNode.element(withAddress: request.elementAddress) else {
@@ -575,6 +565,13 @@ internal class ConfigurationServerHandler: ModelDelegate {
             
         case is ConfigNetworkTransmitGet:
             return ConfigNetworkTransmitStatus(for: localNode)
+            
+        // Node Identity
+        case let request as ConfigNodeIdentityGet:
+            return ConfigNodeIdentityStatus(responseTo: request)
+            
+        case let request as ConfigNodeIdentitySet:
+            return ConfigNodeIdentityStatus(responseTo: request)
                 
         // Resetting Node
         case is ConfigNodeReset:
@@ -706,6 +703,17 @@ internal class ConfigurationServerHandler: ModelDelegate {
         }
     }
         
+}
+
+private extension ConfigurationServerHandler {
+    
+    private func createGroup(withAddress address: MeshAddress) throws -> Group {
+        let group = try Group(name: NSLocalizedString("New Group", comment: ""),
+                              address: address)
+        try meshNetwork.add(group: group)
+        return group
+    }
+    
 }
 
 

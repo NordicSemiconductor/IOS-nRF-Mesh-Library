@@ -49,7 +49,8 @@ class SubscribeViewController: ProgressViewController {
         guard let selectedIndexPath = selectedIndexPath else {
             return
         }
-        let group = groups[selectedIndexPath.row]
+        let groupSet: [Group] = selectedIndexPath.section == 0 ? groups : specialGroups
+        let group = groupSet[selectedIndexPath.row]
         addSubscription(to: group)
     }
     
@@ -59,32 +60,21 @@ class SubscribeViewController: ProgressViewController {
     var delegate: SubscriptionDelegate?
     
     private var groups: [Group]!
+    private var specialGroups: [Group]!
     private var selectedIndexPath: IndexPath?
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        let presentGroups = UIButtonAction(title: "Groups") { [weak self] in
-            guard let self = self else { return }
-            let tabBarController = self.presentingViewController as? RootTabBarController
-            self.dismiss(animated: true) {
-                tabBarController?.presentGroups()
-            }
-        }
-        tableView.setEmptyView(title: "No groups",
-                               message: "Go to Groups to create a group.",
-                               messageImage: #imageLiteral(resourceName: "baseline-groups"),
-                               action: presentGroups)
         
         MeshNetworkManager.instance.delegate = self
         
         let network = MeshNetworkManager.instance.meshNetwork!
         let alreadySubscribedGroups = model.subscriptions
-        groups = network.groups.filter {
-            !alreadySubscribedGroups.contains($0)
-        }
-        if groups.isEmpty {
-            tableView.showEmptyView()
-        }
+        groups = network.groups
+            .filter { !alreadySubscribedGroups.contains($0) }
+        specialGroups = Group.specialGroups
+            .filter { $0 != .allNodes }
+            .filter { !alreadySubscribedGroups.contains($0) }
         // Initially, no group is checked.
         doneButton.isEnabled = false
     }
@@ -92,16 +82,57 @@ class SubscribeViewController: ProgressViewController {
     // MARK: - Table view data source
 
     override func numberOfSections(in tableView: UITableView) -> Int {
+        if !specialGroups.isEmpty {
+            return 2
+        }
         return 1
+    }
+    
+    override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        if section == 0 {
+            return "Groups"
+        }
+        return nil
+    }
+    
+    override func tableView(_ tableView: UITableView, titleForFooterInSection section: Int) -> String? {
+        if section == 1 && !specialGroups.isEmpty {
+            if model.parentElement?.isPrimary ?? false {
+                return """
+                       All models on the primary Element are automatically subscribed to the All\u{00a0}Nodes \
+                       address and those of the groups listed above which have the corresponding feature \
+                       enabled on the node.
+                                       
+                       Subscribing to any of the groups will bypass the feature check so that the model \
+                       will always receive messages sent to that group.
+                       """
+            } else {
+                return """
+                       Models on a non-primary Element may be subscribed to any of the above-listed groups, \
+                       but the corresponding feature will not be checked.
+                       
+                       It is not possible to subscribe any model to the All\u{00a0}Nodes address.
+                       """
+            }
+        }
+        return nil
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return groups.count
+        if section == 1 {
+            return specialGroups.count
+        }
+        return groups.count + 1 // 1 for Add Group button
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        guard indexPath.section != 0 || indexPath.row < groups.count else {
+            return tableView.dequeueReusableCell(withIdentifier: "action", for: indexPath)
+        }
         let cell = tableView.dequeueReusableCell(withIdentifier: "group", for: indexPath)
-        cell.textLabel?.text = groups[indexPath.row].name
+        let groupSet = indexPath.section == 0 ? groups! : specialGroups!
+        let group = groupSet[indexPath.row]
+        cell.textLabel?.text = group.name
         cell.accessoryType = indexPath == selectedIndexPath ? .checkmark : .none
         return cell
     }
@@ -109,6 +140,16 @@ class SubscribeViewController: ProgressViewController {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         
+        // Add Group clicked.
+        if indexPath.section == 0 && indexPath.row == groups.count {
+            let tabBarController = presentingViewController as? RootTabBarController
+            dismiss(animated: true) {
+                tabBarController?.presentGroups()
+            }
+            return
+        }
+
+        // A group clicked.
         var rows: [IndexPath] = []
         if let previousSelection = selectedIndexPath {
             rows.append(previousSelection)

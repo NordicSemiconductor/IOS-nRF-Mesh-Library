@@ -33,8 +33,18 @@ import Foundation
 public class Group: Codable {
     internal weak var meshNetwork: MeshNetwork?
     
+    private var groupName: String
     /// UTF-8 human-readable name of the Group.
-    public var name: String
+    public var name: String {
+        get {
+            return groupName
+        }
+        set {
+            if !address.address.isSpecialGroup {
+                groupName = newValue
+            }
+        }
+    }
     /// The address of the group.
     public let address: MeshAddress
     
@@ -81,7 +91,7 @@ public class Group: Codable {
               address.address.isVirtual else {
             throw MeshNetworkError.invalidAddress
         }
-        self.name = name
+        self.groupName = name
         self.groupAddress = address.hex
         self.address = address
         self.parentAddress = "0000"
@@ -91,17 +101,24 @@ public class Group: Codable {
         try self.init(name: name, address: MeshAddress(address))
     }
     
+    private init(name: String, specialGroup: Address) {
+        self.groupName = name
+        self.groupAddress = specialGroup.hex
+        self.address = MeshAddress(specialGroup)
+        self.parentAddress = "0000"
+    }
+    
     // MARK: - Codable
     
     private enum CodingKeys: String, CodingKey {
-        case name
+        case groupName     = "name"
         case groupAddress  = "address"
         case parentAddress = "parentAddress"
     }
     
     public required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        self.name = try container.decode(String.self, forKey: .name)
+        self.groupName = try container.decode(String.self, forKey: .groupName)
         self.groupAddress = try container.decode(String.self, forKey: .groupAddress)
         guard let address = MeshAddress(hex: groupAddress) else {
             throw DecodingError.dataCorruptedError(forKey: .groupAddress, in: container,
@@ -110,6 +127,10 @@ public class Group: Codable {
         guard address.address.isGroup || address.address.isVirtual else {
             throw DecodingError.dataCorruptedError(forKey: .groupAddress, in: container,
                                                    debugDescription: "Not a Group address: \(groupAddress).")
+        }
+        guard !address.address.isSpecialGroup else {
+            throw DecodingError.dataCorruptedError(forKey: .groupAddress, in: container,
+                                                   debugDescription: "Illegal Group address: \(groupAddress).")
         }
         self.address = address
         self.parentAddress = try container.decode(String.self, forKey: .parentAddress)
@@ -122,6 +143,10 @@ public class Group: Codable {
               parentAddress.address.isVirtual else {
             throw DecodingError.dataCorruptedError(forKey: .parentAddress, in: container,
                                                    debugDescription: "Invalid Parent Group address: \(parentAddress).")
+        }
+        guard !parentAddress.address.isSpecialGroup else {
+            throw DecodingError.dataCorruptedError(forKey: .parentAddress, in: container,
+                                                   debugDescription: "Illegal Parent Group address: \(groupAddress).")
         }
     }
 }
@@ -138,6 +163,35 @@ extension Group: Equatable, Hashable {
     
     public func hash(into hasher: inout Hasher) {
         hasher.combine(groupAddress)
+    }
+    
+}
+
+public extension Group {
+    /// A message sent to the All Nodes address shall be processed by the primary Element
+    /// of all nodes.
+    static let allNodes   = Group(name: NSLocalizedString("All Nodes", comment: ""),   specialGroup: .allNodes)
+    /// A message sent to the All Relays address shall be processed by the primary Element
+    /// of all nodes that have the relay functionality enabled, or by any Model subscribed
+    /// to it.
+    static let allRelays  = Group(name: NSLocalizedString("All Relays", comment: ""),  specialGroup: .allRelays)
+    /// A message sent to the All Friends address shall be processed by the primary Element
+    /// of all nodes that have the friend functionality enabled, or by any Model subscribed
+    /// to it.
+    static let allFriends = Group(name: NSLocalizedString("All Friends", comment: ""), specialGroup: .allFriends)
+    /// A message sent to the All Proxies address shall be processed by the primary Element
+    /// of all nodes that have the proxy functionality enabled, or by any Model subscribed
+    /// to it.
+    static let allProxies = Group(name: NSLocalizedString("All Proxies", comment: ""), specialGroup: .allProxies)
+    /// Returns all special Groups supported by this version of the mesh library.
+    static let specialGroups: [Group] = [.allRelays, .allFriends, .allProxies, .allNodes]
+    /// Returns a special Group with the given address, or nil.
+    static func specialGroup(withAddress address: Address) -> Group? {
+        return specialGroups.first { $0.address.address == address }
+    }
+    /// Returns a special Group with the given address, or nil.
+    static func specialGroup(withAddress address: MeshAddress) -> Group? {
+        return specialGroup(withAddress: address.address)
     }
     
 }

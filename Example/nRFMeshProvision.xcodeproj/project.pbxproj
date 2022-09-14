@@ -119,6 +119,7 @@
 		52A9C1C52313D7D80036792A /* GenericLevelViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52A9C1C32313D7D80036792A /* GenericLevelViewCell.swift */; };
 		52A9C1C62313D7D80036792A /* GenericLevel.xib in Resources */ = {isa = PBXBuildFile; fileRef = 52A9C1C42313D7D80036792A /* GenericLevel.xib */; };
 		52B492DB25C8A32E0096E75D /* KeyRefreshProcedure.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52B492DA25C8A32E0096E75D /* KeyRefreshProcedure.swift */; };
+		52B6C50F2811712D00F6E0F3 /* UITableViewCell+Disabled.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52B6C50E2811712D00F6E0F3 /* UITableViewCell+Disabled.swift */; };
 		52B7F67D229829F200B0A42F /* Addresses.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52B7F67C229829F200B0A42F /* Addresses.swift */; };
 		52B7FD6D2525B40300308673 /* NodeSceneRecallViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52B7FD6C2525B40300308673 /* NodeSceneRecallViewController.swift */; };
 		52BC6F4824507A5400EBEEA4 /* DisconnectCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52BC6F4724507A5400EBEEA4 /* DisconnectCell.swift */; };
@@ -156,6 +157,11 @@
 		607FACD61AFB9204008FA782 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACD51AFB9204008FA782 /* AppDelegate.swift */; };
 		607FACDB1AFB9204008FA782 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 607FACD91AFB9204008FA782 /* Main.storyboard */; };
 		607FACDD1AFB9204008FA782 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 607FACDC1AFB9204008FA782 /* Images.xcassets */; };
+		A7A59BD5277225A70045A8ED /* GenericPowerOnOff.xib in Resources */ = {isa = PBXBuildFile; fileRef = A7A59BD4277225A70045A8ED /* GenericPowerOnOff.xib */; };
+		A7A59BD7277225E70045A8ED /* GenericPowerOnOffViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7A59BD6277225E70045A8ED /* GenericPowerOnOffViewCell.swift */; };
+		A7A59BD92773218C0045A8ED /* GenericPowerOnOffClientDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7A59BD82773218C0045A8ED /* GenericPowerOnOffClientDelegate.swift */; };
+		A7B526A7277B210000F5C60D /* GenericPowerOnOffSetupViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7B526A5277B210000F5C60D /* GenericPowerOnOffSetupViewCell.swift */; };
+		A7B526A8277B210000F5C60D /* GenericPowerOnOffSetup.xib in Resources */ = {isa = PBXBuildFile; fileRef = A7B526A6277B210000F5C60D /* GenericPowerOnOffSetup.xib */; };
 		D484C4C6036F7130DAF9210C /* Pods_nRFMeshProvision_Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 082BD0C5AF731FACD704C290 /* Pods_nRFMeshProvision_Tests.framework */; };
 /* End PBXBuildFile section */
 
@@ -287,6 +293,7 @@
 		52A9C1C32313D7D80036792A /* GenericLevelViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericLevelViewCell.swift; sourceTree = "<group>"; };
 		52A9C1C42313D7D80036792A /* GenericLevel.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = GenericLevel.xib; sourceTree = "<group>"; };
 		52B492DA25C8A32E0096E75D /* KeyRefreshProcedure.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyRefreshProcedure.swift; sourceTree = "<group>"; };
+		52B6C50E2811712D00F6E0F3 /* UITableViewCell+Disabled.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UITableViewCell+Disabled.swift"; sourceTree = "<group>"; };
 		52B7F67C229829F200B0A42F /* Addresses.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Addresses.swift; sourceTree = "<group>"; };
 		52B7FD6C2525B40300308673 /* NodeSceneRecallViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NodeSceneRecallViewController.swift; sourceTree = "<group>"; };
 		52BC6F4724507A5400EBEEA4 /* DisconnectCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisconnectCell.swift; sourceTree = "<group>"; };
@@ -330,6 +337,11 @@
 		607FACEA1AFB9204008FA782 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8BA6080D6D64DF472887CC10 /* Pods-nRFMeshProvision_Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-nRFMeshProvision_Tests.release.xcconfig"; path = "Target Support Files/Pods-nRFMeshProvision_Tests/Pods-nRFMeshProvision_Tests.release.xcconfig"; sourceTree = "<group>"; };
 		95314CBBCE25A1396EF93139 /* Pods-nRFMeshProvision_Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-nRFMeshProvision_Example.release.xcconfig"; path = "Target Support Files/Pods-nRFMeshProvision_Example/Pods-nRFMeshProvision_Example.release.xcconfig"; sourceTree = "<group>"; };
+		A7A59BD4277225A70045A8ED /* GenericPowerOnOff.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = GenericPowerOnOff.xib; sourceTree = "<group>"; };
+		A7A59BD6277225E70045A8ED /* GenericPowerOnOffViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GenericPowerOnOffViewCell.swift; sourceTree = "<group>"; };
+		A7A59BD82773218C0045A8ED /* GenericPowerOnOffClientDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericPowerOnOffClientDelegate.swift; sourceTree = "<group>"; };
+		A7B526A5277B210000F5C60D /* GenericPowerOnOffSetupViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericPowerOnOffSetupViewCell.swift; sourceTree = "<group>"; };
+		A7B526A6277B210000F5C60D /* GenericPowerOnOffSetup.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = GenericPowerOnOffSetup.xib; sourceTree = "<group>"; };
 		C775BBAAAC42952ED786BABF /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
 		E7CB7DCE18F6E38D2240310F /* nRFMeshProvision.podspec */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = nRFMeshProvision.podspec; path = ../nRFMeshProvision.podspec; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		EA733BBB45B56B4142103F0F /* Pods-nRFMeshProvision_Example.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-nRFMeshProvision_Example.debug.xcconfig"; path = "Target Support Files/Pods-nRFMeshProvision_Example/Pods-nRFMeshProvision_Example.debug.xcconfig"; sourceTree = "<group>"; };
@@ -442,6 +454,8 @@
 			children = (
 				5231403B22FDA8670074325A /* ConfigurationServer.xib */,
 				52A9C17C230EB9490036792A /* GenericOnOff.xib */,
+				A7A59BD4277225A70045A8ED /* GenericPowerOnOff.xib */,
+				A7B526A6277B210000F5C60D /* GenericPowerOnOffSetup.xib */,
 				52A9C1C42313D7D80036792A /* GenericLevel.xib */,
 				5217D2E4250F90D8004FDE79 /* GenericDefaultTransitionTime.xib */,
 				5231404C230AC4680074325A /* VendorModel.xib */,
@@ -455,6 +469,8 @@
 				52314040230192C50074325A /* ModelViewCell.swift */,
 				5231403E2301761C0074325A /* ConfigurationServerViewCell.swift */,
 				52A9C17B230EB9490036792A /* GenericOnOffViewCell.swift */,
+				A7A59BD6277225E70045A8ED /* GenericPowerOnOffViewCell.swift */,
+				A7B526A5277B210000F5C60D /* GenericPowerOnOffSetupViewCell.swift */,
 				52A9C1C32313D7D80036792A /* GenericLevelViewCell.swift */,
 				5217D2E3250F90D8004FDE79 /* GenericDefaultTransitionTimeViewCell.swift */,
 				5231404B230AC4680074325A /* VendorModelViewCell.swift */,
@@ -603,6 +619,7 @@
 				525242DF225CBFEC0044CECB /* RangeObject+String.swift */,
 				52DA9D7124F6765C0051795B /* UInt16+Time.swift */,
 				5292F8A225021B8F00EA0F2A /* ModelIdentifiers.swift */,
+				52B6C50E2811712D00F6E0F3 /* UITableViewCell+Disabled.swift */,
 			);
 			name = Utils;
 			sourceTree = "<group>";
@@ -672,6 +689,7 @@
 				52E54CE02344974B00478F05 /* GenericLevelClientDelegate.swift */,
 				52E54CE22344978300478F05 /* GenericLevelServerDelegate.swift */,
 				52E54CE62345EDA700478F05 /* GenericState.swift */,
+				A7A59BD82773218C0045A8ED /* GenericPowerOnOffClientDelegate.swift */,
 			);
 			path = "Mesh Network";
 			sourceTree = "<group>";
@@ -838,7 +856,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0830;
-				LastUpgradeCheck = 1310;
+				LastUpgradeCheck = 1330;
 				ORGANIZATIONNAME = CocoaPods;
 				TargetAttributes = {
 					607FACCF1AFB9204008FA782 = {
@@ -895,10 +913,12 @@
 				523F778D22CCEA910030EA6A /* SetPublication.storyboard in Resources */,
 				52A9C17E230EB9490036792A /* GenericOnOff.xib in Resources */,
 				52CD0A5E2330C04700A9A181 /* Network.storyboard in Resources */,
+				A7A59BD5277225A70045A8ED /* GenericPowerOnOff.xib in Resources */,
 				52E54CDB2343878B00478F05 /* Control.storyboard in Resources */,
 				3089BCA02099CA4900E30192 /* LaunchScreen.storyboard in Resources */,
 				52CD0A5B2330BF4800A9A181 /* Proxy.storyboard in Resources */,
 				607FACDB1AFB9204008FA782 /* Main.storyboard in Resources */,
+				A7B526A8277B210000F5C60D /* GenericPowerOnOffSetup.xib in Resources */,
 				52A9C1C62313D7D80036792A /* GenericLevel.xib in Resources */,
 				5231404E230AC4680074325A /* VendorModel.xib in Resources */,
 				5231403C22FDA8670074325A /* ConfigurationServer.xib in Resources */,
@@ -1050,6 +1070,7 @@
 				525242E0225CBFEC0044CECB /* RangeObject+String.swift in Sources */,
 				529B7575224107A5008F1CE7 /* AppInfo.swift in Sources */,
 				52121526231528AC0059FB3D /* GenericOnOffGroupCell.swift in Sources */,
+				A7A59BD92773218C0045A8ED /* GenericPowerOnOffClientDelegate.swift in Sources */,
 				523F776622C609D90030EA6A /* NodeNetworkKeysViewController.swift in Sources */,
 				5211EAD5250777E100089FF2 /* SceneServerDelegate.swift in Sources */,
 				607FACD61AFB9204008FA782 /* AppDelegate.swift in Sources */,
@@ -1069,6 +1090,7 @@
 				5292F8A7250652BB00EA0F2A /* SceneServerGroupCell.swift in Sources */,
 				522AFFDC22BBA34900521EDC /* ActionCell.swift in Sources */,
 				52E54CE72345EDA700478F05 /* GenericState.swift in Sources */,
+				52B6C50F2811712D00F6E0F3 /* UITableViewCell+Disabled.swift in Sources */,
 				52DF5D8A228DA78A00C297C1 /* ConfigurationViewController.swift in Sources */,
 				521215292315290F0059FB3D /* GroupControlViewController.swift in Sources */,
 				52A8EA8824E6946D004C14C7 /* HeartbeatPublicationCell.swift in Sources */,
@@ -1093,8 +1115,10 @@
 				5292F8A325021B8F00EA0F2A /* ModelIdentifiers.swift in Sources */,
 				52835258227AEDA30097B949 /* DeviceCell.swift in Sources */,
 				52E54CD82343876000478F05 /* GenericLevelServerCell.swift in Sources */,
+				A7B526A7277B210000F5C60D /* GenericPowerOnOffSetupViewCell.swift in Sources */,
 				5212152D231545D40059FB3D /* ModelGroupCell.swift in Sources */,
 				52A8EA8D24E6A470004C14C7 /* SetHeartbeatPublicationViewController.swift in Sources */,
+				A7A59BD7277225E70045A8ED /* GenericPowerOnOffViewCell.swift in Sources */,
 				52547F26232A3F470002AA7B /* ProvisionersViewController.swift in Sources */,
 				52518B3322E0B43200A1FD1E /* GroupCell.swift in Sources */,
 				529B7570223FF1AE008F1CE7 /* SettingsViewController.swift in Sources */,
@@ -1364,7 +1388,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				LINK_WITH_STANDARD_LIBRARIES = YES;
-				MARKETING_VERSION = 3.1.4;
+				MARKETING_VERSION = 3.2.0;
 				MODULE_NAME = ExampleApp;
 				OTHER_LDFLAGS = "$(inherited)";
 				PRODUCT_BUNDLE_IDENTIFIER = com.nordicsemi.nRFProvisioner;
@@ -1391,7 +1415,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				LINK_WITH_STANDARD_LIBRARIES = YES;
-				MARKETING_VERSION = 3.1.4;
+				MARKETING_VERSION = 3.2.0;
 				MODULE_NAME = ExampleApp;
 				OTHER_LDFLAGS = "$(inherited)";
 				PRODUCT_BUNDLE_IDENTIFIER = com.nordicsemi.nRFProvisioner;

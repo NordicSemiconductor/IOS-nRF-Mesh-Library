@@ -45,6 +45,10 @@ extension UInt16 {
     static let genericDefaultTransitionTimeServerModelId: UInt16 = 0x1004
     static let genericDefaultTransitionTimeClientModelId: UInt16 = 0x1005
     
+    static let genericPowerOnOffServerModelId: UInt16 = 0x1006
+    static let genericPowerOnOffSetupServerModelId: UInt16 = 0x1007
+    static let genericPowerOnOffClientModelId: UInt16 = 0x1008
+    
     static let sceneServerModelId: UInt16 = 0x1203
     static let sceneSetupServerModelId: UInt16 = 0x1204
     static let sceneClientModelId: UInt16 = 0x1205

@@ -193,6 +193,8 @@ public extension StoredWithSceneModelDelegate {
 /// transaction continuation. Otherwise it is a new transaction.
 public class TransactionHelper {
     
+    private var mutex: DispatchQueue = .init(label: "NewTransactionMutex")
+    
     private typealias Transaction = (
         source: Address,
         destination: MeshAddress,
@@ -217,17 +219,20 @@ public class TransactionHelper {
     /// - returns: True, if the message starts a new transaction; false otherwise.
     public func isNewTransaction(_ message: TransactionMessage,
                                  from source: Address, to destination: MeshAddress) -> Bool {
-        let lastTransaction = lastTransactions[message.opCode]
-        let isNew = lastTransaction == nil ||
-                    lastTransaction!.source != source ||
-                    lastTransaction!.destination != destination ||
-                    message.isNewTransaction(previousTid: lastTransaction!.tid,
-                                             timestamp: lastTransaction!.timestamp)
-        lastTransactions[message.opCode] = (
-            source: source, destination: destination,
-            tid: message.tid, timestamp: Date()
-        )
-        return isNew
+        return mutex.sync {
+            let lastTransaction = self.lastTransactions[message.opCode]
+            let isNew = lastTransaction == nil ||
+            lastTransaction!.source != source ||
+            lastTransaction!.destination != destination ||
+            message.isNewTransaction(previousTid: lastTransaction!.tid,
+                                     timestamp: lastTransaction!.timestamp)
+            
+            self.lastTransactions[message.opCode] = (
+                source: source, destination: destination,
+                tid: message.tid, timestamp: Date()
+            )
+            return isNew
+        }
     }
     
     /// Returns whether the given Transaction Message was sent as a continuation

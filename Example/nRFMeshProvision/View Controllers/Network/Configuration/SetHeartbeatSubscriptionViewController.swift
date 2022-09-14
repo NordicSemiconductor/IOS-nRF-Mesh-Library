@@ -61,12 +61,6 @@ class SetHeartbeatSubscriptionViewController: ProgressViewController {
     /// List of all Nodes, except the target one.
     private var nodes: [Node]!
     private var groups: [Group]!
-    private let specialGroups: [(title: String, address: Address)] = [
-        ("All Proxies", Address.allProxies),
-        ("All Friends", Address.allFriends),
-        ("All Relays", Address.allRelays),
-        ("All Nodes", Address.allNodes)
-    ]
     private var selectedSourceIndexPath: IndexPath?
     private var selectedDestinationIndexPath: IndexPath?
     
@@ -80,8 +74,10 @@ class SetHeartbeatSubscriptionViewController: ProgressViewController {
         let network = MeshNetworkManager.instance.meshNetwork!
         // Exclude the current Node.
         nodes = network.nodes.filter { $0.uuid != node.uuid }
-        // Exclude Virtual Groups, which may not be set as Heartbeat destination.
-        groups = network.groups.filter { $0.address.address.isGroup }
+        // Virtual Groups may not be set as Heartbeat destination.
+        // They will be shown as disabled.
+        // Sort the groups, so the Virtual Groups are at the end.
+        groups = network.groups.sorted { $1.address.address.isVirtual }
         
         if let subscription = node.heartbeatSubscription {
             selectedSource = subscription.source
@@ -106,7 +102,7 @@ class SetHeartbeatSubscriptionViewController: ProgressViewController {
         case IndexPath.destinationGroupsSection where !groups.isEmpty:
             return groups.count
         default:
-            return specialGroups.count
+            return Group.specialGroups.count
         }
     }
     
@@ -121,6 +117,13 @@ class SetHeartbeatSubscriptionViewController: ProgressViewController {
         default:
             return nil
         }
+    }
+    
+    override func tableView(_ tableView: UITableView, titleForFooterInSection section: Int) -> String? {
+        if section == IndexPath.destinationGroupsSection && groups.contains(where: { $0.address.address.isVirtual }) {
+            return "Note: Heartbeat messages cannot be sent to Virtual Groups."
+        }
+        return nil
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -139,6 +142,7 @@ class SetHeartbeatSubscriptionViewController: ProgressViewController {
             }
             cell.textLabel?.text = otherNode.name ?? "Unknown Device"
             cell.accessoryType = indexPath == selectedSourceIndexPath ? .checkmark : .none
+            cell.isEnabled = true
         }
         if indexPath.isDestinationSection {
             if let destination = selectedDestination, destination == node.unicastAddress {
@@ -147,6 +151,7 @@ class SetHeartbeatSubscriptionViewController: ProgressViewController {
             }
             cell.textLabel?.text = node.name ?? "Unknown Device"
             cell.accessoryType = indexPath == selectedDestinationIndexPath ? .checkmark : .none
+            cell.isEnabled = true
         }
         if indexPath.isGroupsSection {
             let group = groups[indexPath.row]
@@ -156,15 +161,17 @@ class SetHeartbeatSubscriptionViewController: ProgressViewController {
             }
             cell.textLabel?.text = group.name
             cell.accessoryType = indexPath == selectedDestinationIndexPath ? .checkmark : .none
+            cell.isEnabled = !group.address.address.isVirtual
         }
         if indexPath.isSpecialGroupsSection {
-            let group = specialGroups[indexPath.row]
-            if let destination = selectedDestination, destination == group.address {
+            let group = Group.specialGroups[indexPath.row]
+            if let destination = selectedDestination, destination == group.address.address {
                 selectedDestinationIndexPath = indexPath
                 selectedDestination = nil
             }
-            cell.textLabel?.text = group.title
+            cell.textLabel?.text = group.name
             cell.accessoryType = indexPath == selectedDestinationIndexPath ? .checkmark : .none
+            cell.isEnabled = true
         }
         return cell
     }
@@ -231,7 +238,7 @@ private extension SetHeartbeatSubscriptionViewController {
                 node.unicastAddress :
                 destinationIndexPath.isGroupsSection && !groups.isEmpty ?
                     groups[destinationIndexPath.row].address.address :
-                    specialGroups[destinationIndexPath.row].address
+                    Group.specialGroups[destinationIndexPath.row].address.address
         let periodLog = self.periodLog
         
         start("Setting Heartbeat Subscription...") {

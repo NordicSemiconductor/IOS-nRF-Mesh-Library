@@ -35,4 +35,9 @@ class SwitchCell: UITableViewCell {
     @IBOutlet weak var title: UILabel!
     @IBOutlet weak var `switch`: UISwitch!
     
+    @IBAction func switchDidChange(_ sender: UISwitch) {
+        delegate?(sender.isOn)
+    }
+    
+    var delegate: ((Bool) -> ())?
 }

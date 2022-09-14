@@ -40,12 +40,6 @@ class RightActionCell: UITableViewCell {
     
     var delegate: (() -> ())?
     
-    var isEnabled: Bool = true {
-        didSet {
-            rightActionButton.isEnabled = isEnabled
-        }
-    }
-    
     override var textLabel: UILabel? {
         return rightActionButton.titleLabel
     }

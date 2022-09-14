@@ -49,12 +49,6 @@ class SetPublicationDestinationsViewController: UITableViewController {
     /// List of Elements containing Model bound to selected Application Key.
     private var compatibleElements: [Element]!
     private var groups: [Group]!
-    private let specialGroups: [(title: String, address: Address)] = [
-        ("All Proxies", Address.allProxies),
-        ("All Friends", Address.allFriends),
-        ("All Relays", Address.allRelays),
-        ("All Nodes", Address.allNodes)
-    ]
     private var selectedKeyIndexPath: IndexPath?
     private var selectedIndexPath: IndexPath?
     
@@ -88,12 +82,11 @@ class SetPublicationDestinationsViewController: UITableViewController {
         if section == IndexPath.elementsSection {
             return max(compatibleElements.count, 1)
         }
-        if section == IndexPath.groupsSection && !groups.isEmpty {
-            return groups.count
+        if section == IndexPath.groupsSection {
+            return groups.count + 1 // Add Group
         }
-        if section == IndexPath.specialGroupsSection ||
-          (section == IndexPath.groupsSection && groups.isEmpty) {
-            return specialGroups.count
+        if section == IndexPath.specialGroupsSection {
+            return Group.specialGroups.count
         }
         return 0
     }
@@ -131,6 +124,9 @@ class SetPublicationDestinationsViewController: UITableViewController {
         guard !indexPath.isElementsSection || compatibleElements.count > 0 else {
             return tableView.dequeueReusableCell(withIdentifier: "empty", for: indexPath)
         }
+        guard !indexPath.isGroupsSection || indexPath.row < groups.count else {
+            return tableView.dequeueReusableCell(withIdentifier: "action", for: indexPath)
+        }
         let cell = tableView.dequeueReusableCell(withIdentifier: indexPath.reuseIdentifier, for: indexPath)
         
         if indexPath.isKeySection {
@@ -150,7 +146,7 @@ class SetPublicationDestinationsViewController: UITableViewController {
             cell.imageView?.image = #imageLiteral(resourceName: "ic_flag_24pt")
             cell.accessoryType = indexPath == selectedIndexPath ? .checkmark : .none
         }
-        if indexPath.isGroupsSection && !groups.isEmpty {
+        if indexPath.isGroupsSection {
             let group = groups[indexPath.row]
             if let destination = selectedDestination, destination == group.address {
                 selectedIndexPath = indexPath
@@ -160,13 +156,13 @@ class SetPublicationDestinationsViewController: UITableViewController {
             cell.imageView?.image = #imageLiteral(resourceName: "ic_group_24pt")
             cell.accessoryType = indexPath == selectedIndexPath ? .checkmark : .none
         }
-        if indexPath.isSpecialGroupsSection || (indexPath.isGroupsSection && groups.isEmpty) {
-            let pair = specialGroups[indexPath.row]
-            if let destination = selectedDestination, destination.address == pair.address {
+        if indexPath.isSpecialGroupsSection {
+            let group = Group.specialGroups[indexPath.row]
+            if let destination = selectedDestination, destination == group.address {
                 selectedIndexPath = indexPath
                 selectedDestination = nil
             }
-            cell.textLabel?.text = pair.title
+            cell.textLabel?.text = group.name
             cell.imageView?.image = #imageLiteral(resourceName: "ic_group_24pt")
             cell.accessoryType = indexPath == selectedIndexPath ? .checkmark : .none
         }
@@ -179,6 +175,15 @@ class SetPublicationDestinationsViewController: UITableViewController {
         }
         
         tableView.deselectRow(at: indexPath, animated: true)
+        
+        // Add Group clicked.
+        if indexPath.isGroupsSection && indexPath.row == groups.count {
+            let tabBarController = presentingViewController as? RootTabBarController
+            dismiss(animated: true) {
+                tabBarController?.presentGroups()
+            }
+            return
+        }
         
         if indexPath.isKeySection {
             keySelected(indexPath, initial: false)
@@ -254,8 +259,8 @@ private extension SetPublicationDestinationsViewController {
             let selectedGroup = groups[indexPath.row]
             delegate?.destinationSelected(selectedGroup.address)
         default:
-            let selectedGroup = specialGroups[indexPath.row]
-            delegate?.destinationSelected(MeshAddress(selectedGroup.address))
+            let selectedGroup = Group.specialGroups[indexPath.row]
+            delegate?.destinationSelected(selectedGroup.address)
         }
     }
 }

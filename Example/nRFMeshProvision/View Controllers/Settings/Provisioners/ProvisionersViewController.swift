@@ -153,10 +153,10 @@ class ProvisionersViewController: UITableViewController, Editable {
         // If the local Provisioner is changing, and the Proxy Filter was set to a whitelist,
         // reset the filter.
         if sourceIndexPath.isThisProvisioner || destinationIndexPath.isThisProvisioner,
-            let previousLocalProvisioner = network.localProvisioner,
-            previousLocalProvisioner.hasConfigurationCapabilities &&
-            manager.proxyFilter?.type == .inclusionList {
-                manager.proxyFilter?.reset()
+           let previousLocalProvisioner = network.localProvisioner,
+           previousLocalProvisioner.hasConfigurationCapabilities &&
+           manager.proxyFilter.type == .inclusionList {
+            manager.proxyFilter.reset()
         }
         // Make the required change in the data source.
         network.moveProvisioner(fromIndex: fromIndex, toIndex: toIndex)
@@ -185,9 +185,9 @@ class ProvisionersViewController: UITableViewController, Editable {
         
         // Update the Proxy Filter after the local Provisioner has changed.
         if sourceIndexPath.isThisProvisioner || destinationIndexPath.isThisProvisioner,
-            let newLocalProvisioner = network.localProvisioner,
-            manager.proxyFilter?.type == .inclusionList {
-                manager.proxyFilter?.setup(for: newLocalProvisioner)
+           let newLocalProvisioner = network.localProvisioner,
+           manager.proxyFilter.type == .inclusionList {
+            manager.proxyFilter.setup(for: newLocalProvisioner)
         }
     }
     
@@ -224,8 +224,8 @@ private extension ProvisionersViewController {
         // type was `.inclusionList`, clear the Proxy Filter.
         // Exclusion filter must have been set up by the user, so don't
         // modify it.
-        if indexPath.isThisProvisioner && manager.proxyFilter?.type == .inclusionList {
-            manager.proxyFilter?.reset()
+        if indexPath.isThisProvisioner && manager.proxyFilter.type == .inclusionList {
+            manager.proxyFilter.reset()
         }
         
         // Remove the Provisioner and its Node from the network configuration.
@@ -237,9 +237,9 @@ private extension ProvisionersViewController {
         // Filter type is a whitelist, set up the Proxy Filter with all
         // addresses the new Provisioner is subscribed to.
         if indexPath.isThisProvisioner,
-            let newLocalProvisioner = meshNetwork.localProvisioner,
-            manager.proxyFilter?.type == .inclusionList {
-            manager.proxyFilter?.setup(for: newLocalProvisioner)
+           let newLocalProvisioner = meshNetwork.localProvisioner,
+           manager.proxyFilter.type == .inclusionList {
+            manager.proxyFilter.setup(for: newLocalProvisioner)
         }
         
         tableView.beginUpdates()

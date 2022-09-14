@@ -806,16 +806,21 @@ internal extension DeviceProperty {
              .lightControlLightnessProlong,
              .lightControlLightnessStandby,
              .peopleCount,
+             .presentAmbientCarbonDioxideConcentration,
              .presentAmbientRelativeHumidity,
+             .presentAmbientVolatileOrganicCompoundsConcentration,
              .presentIndoorRelativeHumidity,
+             .presentInputCurrent,
              .presentOutdoorRelativeHumidity,
+             .presentOutputCurrent,
              .presentDeviceOperatingTemperature,
              .precisePresentAmbientTemperature,
              .timeSinceMotionSensed,
              .timeSincePresenceDetected:
             return 2
             
-        case .deviceDateOfManufacture,
+        case .activePowerLoadside,
+             .deviceDateOfManufacture,
              .deviceRuntimeSinceTurnOn,
              .deviceRuntimeWarranty,
              .totalDeviceStarts,
@@ -836,14 +841,19 @@ internal extension DeviceProperty {
              .lightControlAmbientLuxLevelStandby,
              .lightSourceStartCounterResettable,
              .lightSourceTotalPowerOnCycles,
+             .luminaireNominalInputPower,
+             .luminairePowerAtMinimumDimLevel,
              .luminaireTimeOfManufacture,
              .presentAmbientLightLevel,
+             .presentDeviceInputPower,
              .presentIlluminance,
              .ratedMedianUsefulLightSourceStarts,
              .ratedMedianUsefulLifeOfLuminaire:
             return 3
             
-        case .airPressure,
+        case .activeEnergyLoadside,
+             .airPressure,
+             .preciseTotalDeviceEnergyUse,
              .pressure,
              .lightControlRegulatorKid,
              .lightControlRegulatorKiu,
@@ -932,6 +942,14 @@ internal extension DeviceProperty {
             guard length == valueLength else { return .timeSecond16(nil) }
             let value: UInt16 = data.read(fromOffset: offset)
             return .timeSecond16(value.withUnknownValue(0xFFFF))
+        case .presentAmbientCarbonDioxideConcentration:
+            guard length == valueLength else { return .co2Concentration(nil) }
+            let value: UInt16 = data.read(fromOffset: offset)
+            return .co2Concentration(value.withUnknownValue(0xFFFF))
+        case .presentAmbientVolatileOrganicCompoundsConcentration:
+            guard length == valueLength else { return .vocConcentration(nil) }
+            let value: UInt16 = data.read(fromOffset: offset)
+            return .vocConcentration(value.withUnknownValue(0xFFFF))
         
         // UInt16 -> Float?
         case .presentAmbientRelativeHumidity,
@@ -940,6 +958,13 @@ internal extension DeviceProperty {
             guard length == valueLength else { return .humidity(nil) }
             let value: UInt16 = data.read(fromOffset: offset)
             return .humidity(value.toDecimal(withRange: 0.0...100.0, withResolution: 0.01, withUnknownValue: 0xFFFF))
+            
+        // UInt16 -> Float?
+        case .presentOutputCurrent,
+             .presentInputCurrent:
+            guard length == valueLength else { return .electricCurrent(nil) }
+            let value: UInt16 = data.read(fromOffset: offset)
+            return .electricCurrent(value.toDecimal(withRange: 0.0...655.34, withResolution: 0.01, withUnknownValue: 0xFFFF))
             
         // Int16 -> Float?
         case .precisePresentAmbientTemperature,
@@ -957,7 +982,16 @@ internal extension DeviceProperty {
             guard length == valueLength else { return .illuminance(nil) }
             let value: UInt32 = data.readUInt24(fromOffset: offset)
             return .illuminance(value.toDecimal(withResolution: 0.01, withUnknownValue: 0xFFFFFF))
-            
+
+        // UInt24 -> Float?
+        case .activePowerLoadside,
+             .luminaireNominalInputPower,
+             .luminairePowerAtMinimumDimLevel,
+             .presentDeviceInputPower:
+          guard length == valueLength else { return .power(nil) }
+          let value: UInt32 = data.readUInt24(fromOffset: offset)
+          return .power(value.toDecimal(withResolution: 0.1, withUnknownValue: 0xFFFFFF))
+
         // UInt24 -> UInt24?:
         case .lightSourceStartCounterResettable,
              .lightSourceTotalPowerOnCycles,
@@ -1003,7 +1037,17 @@ internal extension DeviceProperty {
             guard length == valueLength else { return .pressure(0) }
             let value: UInt32 = data.read(fromOffset: offset)
             return .pressure(value.toDecimal(withResolution: 0.1))
-            
+
+        // UInt32 -> Float:
+        case .preciseTotalDeviceEnergyUse,
+             .activeEnergyLoadside:
+            guard length == valueLength else { return .energy32(nil) }
+            let value: UInt32 = data.read(fromOffset: offset)
+            // Custom conversion of Energy32 since it defines two special values (not known and not valid)
+            // and value.toDecimal(...) doesn't support that:
+            guard value != UInt32(0xFFFFFFFF), value != UInt32(0xFFFFFFFE) else { return .energy32(nil) }
+            return .energy32(Decimal(sign: .plus, exponent: -3, significand: Decimal(value)))
+
         // Float32 (IEEE 754):
         case .lightControlRegulatorKid,
              .lightControlRegulatorKiu,
@@ -1055,9 +1099,24 @@ public enum DevicePropertyCharacteristic: Equatable {
     case count24(UInt32?)
     /// The Coefficient characteristic is used to represent a general coefficient value.
     case coefficient(Float32)
+    /// The CO2 Concentration characteristic is used to represent a measure of carbon dioxide
+    /// concentration in units of parts per million.
+    ///
+    /// Unit is parts per million (ppm) with a resolution of 1.
+    ///
+    /// A value of 0xFFFE represents ‘value is 65534 or greater’.
+    case co2Concentration(UInt16?)
     /// Date as days elapsed since the Epoch (Jan 1, 1970) in the Coordinated Universal
     /// Time (UTC) time zone.
     case dateUTC(Date?)
+    /// The Electric Current characteristic is used to represent an electric current value.
+    ///
+    /// Unit is ampere with a resolution of 0.01 A.
+    case electricCurrent(Decimal?)
+    /// The Energy32 characteristic is used to represent a energy value.
+    ///
+    /// Unit is Kilowatt-hour with a resolution of 1 Watt-hour.
+    case energy32(Decimal?)
     /// The Fixed String 8 characteristic represents an 8-octet UTF-8 string.
     case fixedString8(String)
     /// The Fixed String 16 characteristic represents a 16-octet UTF-8 string.
@@ -1083,6 +1142,10 @@ public enum DevicePropertyCharacteristic: Equatable {
     ///
     /// Unit is unitless with a resolution of 1.
     case perceivedLightness(UInt16)
+    /// The Power characteristic is used to represent a power value.
+    ///
+    /// Unit is in watt with a resolution of 0.1 W.
+    case power(Decimal?)
     /// The Pressure characteristic is used to represent a pressure value.
     ///
     /// Unit is in pascals with a resolution of 0.1 Pa.
@@ -1106,6 +1169,13 @@ public enum DevicePropertyCharacteristic: Equatable {
     /// The Time Second 32 characteristic is used to represent a period of time with
     /// a unit of 1 second.
     case timeSecond32(UInt32?)
+    /// The VOC Concentration characteristic is used to represent a measure of volatile
+    /// organic compounds concentration in units of parts per billion.
+    ///
+    /// Unit is parts per billion (ppb) with a resolution of 1.
+    ///
+    /// A value of 0xFFFE represents ‘value is 65534 or greater’.
+    case vocConcentration(UInt16?)
     /// Generic data type for other characteristics.
     case other(Data)
 }
@@ -1129,7 +1199,10 @@ internal extension DevicePropertyCharacteristic {
             
         // UInt16 with 0xFFFF as unknown:
         case .count16(let value),
-             .timeSecond16(let value):
+             .timeSecond16(let value),
+            // and 0xFFFE as greater than 65534:
+             .co2Concentration(let value),
+             .vocConcentration(let value):
             return value.toData(withUnknownValue: 0xFFFF)
             
         // UInt16:
@@ -1139,6 +1212,10 @@ internal extension DevicePropertyCharacteristic {
         // Float as UInt16 with 0xFFFF as unknown:
         case .humidity(let value):
             return value.toData(ofLength: 2, withRange: 0.0...100.0, withResolution: 0.01, withUnknownValue: 0xFFFF)
+        
+        // Float as UInt16 with 0xFFFF as unknown:
+        case .electricCurrent(let value):
+            return value.toData(ofLength: 2, withRange: 0...655.34, withResolution: 0.01, withUnknownValue: 0xFFFF)
             
         // Float as Int16 with 0x8000 as unknown:
         case .temperature(let value):
@@ -1153,7 +1230,11 @@ internal extension DevicePropertyCharacteristic {
         // Float as UInt24 with 0xFFFFFF as unknown:
         case .illuminance(let value):
             return value.toData(ofLength: 3, withRange: 0...167772.14, withResolution: 0.01, withUnknownValue: 0xFFFFFF)
-            
+
+        // Float as UInt24 with 0xFFFFFF as unknown:
+        case .power(let value):
+          return value.toData(ofLength: 3, withRange: 0...1677721.4, withResolution: 0.1, withUnknownValue: 0xFFFFFF)
+
         // Date as UInt24 with 0x000000 as unknown:
         case .dateUTC(let date):
             guard let date = date else {
@@ -1165,7 +1246,12 @@ internal extension DevicePropertyCharacteristic {
         // Float as UInt32:
         case .pressure(let value):
             return value.toData(ofLength: 4, withRange: 0...Decimal(UInt32.max), withResolution: 0.1)
-            
+
+        // Float as UInt32 with 0xFFFFFFFF as unknown:
+        case .energy32(let value):
+            let range = 0...Decimal(sign: .plus, exponent: -3, significand: Decimal(UInt32(4294967293)))
+            return value.toData(ofLength: 4, withRange: range, withResolution: 0.001, withUnknownValue: 0xFFFFFFFF)
+
         // UInt32 with 0xFFFFFFFF as unknown:
         case .timeSecond32(let value):
             return value.toData(ofLength: 4, withUnknownValue: 0xFFFFFFFF)
@@ -1227,12 +1313,30 @@ extension DevicePropertyCharacteristic: CustomDebugStringConvertible {
             }
             let float = NSDecimalNumber(decimal: percent).floatValue
             return String(format: "%.2f%%", max(0.0, min(100.0, float)))
+        case .electricCurrent(let current):
+            guard let current = current else {
+                return DevicePropertyCharacteristic.unknown
+            }
+            let float = NSDecimalNumber(decimal: current).floatValue
+            return String(format: "%.2f A", max(0.0, min(655.34, float)))
+        case .energy32(let energy):
+            guard let energy = energy else {
+                return DevicePropertyCharacteristic.unknown
+            }            
+            let double = NSDecimalNumber(decimal: energy).doubleValue
+            return String(format: "%.3f kWh", double)
         case .illuminance(let millilux):
             guard let millilux = millilux else {
                 return DevicePropertyCharacteristic.unknown
             }
             let float = NSDecimalNumber(decimal: millilux).floatValue
             return String(format: "%.2f lux", float)
+        case .power(let power):
+          guard let power = power else {
+            return DevicePropertyCharacteristic.unknown
+          }
+          let float = NSDecimalNumber(decimal: power).floatValue
+          return String(format: "%.1f W", max(0.0, min(1677721.4, float)))
         case .temperature(let temp):
             guard let temp = temp else {
                 return DevicePropertyCharacteristic.unknown
@@ -1259,6 +1363,15 @@ extension DevicePropertyCharacteristic: CustomDebugStringConvertible {
             formatter.allowedUnits = [.day, .hour, .minute, .second]
             formatter.unitsStyle = .short
             return formatter.string(from: interval)!
+        case .co2Concentration(let concentration),
+             .vocConcentration(let concentration):
+            guard let concentration = concentration else {
+                return DevicePropertyCharacteristic.unknown
+            }
+            if concentration == 0xFFFE {
+                return "65534 ppm or more"
+            }
+            return "\(concentration) ppm"
             
         // UInt32? as UInt24?:
         case .count24(let count):

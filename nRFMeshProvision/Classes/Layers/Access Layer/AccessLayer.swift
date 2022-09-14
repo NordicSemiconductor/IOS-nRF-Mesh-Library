@@ -237,7 +237,9 @@ internal class AccessLayer {
         logger?.i(.access, "Sending \(pdu)")
         
         // Set timers for the acknowledged messages.
-        if let _ = message as? AcknowledgedMeshMessage {
+        // Acknowledged messages sent to a Group address won't await a Status.
+        if message is AcknowledgedMeshMessage,
+           destination.address.isUnicast {
             createReliableContext(for: pdu, sentFrom: element, withTtl: initialTtl, using: keySet)
         }
         
@@ -277,7 +279,7 @@ internal class AccessLayer {
         logger?.i(.access, "Sending \(pdu)")
         
         // Set timers for the acknowledged messages.
-        if let _ = message as? AcknowledgedConfigMessage {
+        if message is AcknowledgedConfigMessage {
             createReliableContext(for: pdu, sentFrom: element, withTtl: initialTtl, using: keySet)
         }
         
@@ -394,12 +396,24 @@ private extension AccessLayer {
                         if newMessage == nil {
                             logger?.i(.model, "\(message) received from: \(accessPdu.source.hex), to: \(accessPdu.destination.hex)")
                             newMessage = message
+                        } else if type(of: message) != type(of: newMessage) {
+                            // If another model's delegate decoded the same message to a different
+                            // type, log this with a warning. This other type will be delivered
+                            // to the delegate, but not to the global network delegate.
+                            logger?.w(.model, "\(message) already decoded as \(newMessage!)")
                         }
                         // Deliver the message to the Model if it was signed with an
                         // Application Key bound to this Model and the message is
                         // targeting this Element, or the Model is subscribed to the
                         // destination address.
-                        if accessPdu.destination.address == Address.allNodes ||
+                        //
+                        // Note:   Messages sent to .allNodes address shall be processed
+                        //         only by Models on the Primary Element.
+                        //         See Bluetooth Mesh Profile 1.0.1, chapter 3.4.2.4.
+                        // Note 2: As the iOS implementation does not support Relay, Proxy or Friend
+                        //         Features, the messages sent to those addresses shall only be
+                        //         processed if the Model is explicitly subscribed to these addresses.
+                        if(accessPdu.destination.address == Address.allNodes && element.isPrimary) ||
                            accessPdu.destination.address == element.unicastAddress ||
                            model.isSubscribed(to: accessPdu.destination) {
                             if model.isBoundTo(keySet.applicationKey) {
@@ -423,15 +437,17 @@ private extension AccessLayer {
                     }
                 }
             }
-        } else if let firstElement = localNode.elements.first {
-            // Check Configuration Server Model.
-            if let configurationServerModel = firstElement.models
+        } else if let primaryElement = localNode.primaryElement {
+            // .. otherwise, the Device Key was used.
+            //
+            // Check Configuration Server Model, or Configration Client Model.
+            if let configurationServerModel = primaryElement.models
                    .first(where: { $0.isConfigurationServer }),
                let delegate = configurationServerModel.delegate,
                let configMessage = delegate.decode(accessPdu) {
                 newMessage = configMessage
                 // Is this message targeting the local Node?
-                if accessPdu.destination.address == firstElement.unicastAddress {
+                if accessPdu.destination.address == primaryElement.unicastAddress {
                     logger?.i(.foundationModel, "\(configMessage) received from: \(accessPdu.source.hex)")
                     if let response = delegate.model(configurationServerModel, didReceiveMessage: configMessage,
                                                      sentFrom: accessPdu.source, to: accessPdu.destination,
@@ -456,13 +472,13 @@ private extension AccessLayer {
                     // If not, it was received by adding another Node's address to the Proxy Filter.
                     logger?.i(.foundationModel, "\(configMessage) received from: \(accessPdu.source.hex), to: \(accessPdu.destination.hex)")
                 }
-            } else if let configurationClientModel = firstElement.models
+            } else if let configurationClientModel = primaryElement.models
                           .first(where: { $0.isConfigurationClient }),
                       let delegate = configurationClientModel.delegate,
                       let configMessage = delegate.decode(accessPdu) {
                 newMessage = configMessage
                 // Is this message targeting the local Node?
-                if accessPdu.destination.address == firstElement.unicastAddress {
+                if accessPdu.destination.address == primaryElement.unicastAddress {
                     logger?.i(.foundationModel, "\(configMessage) received from: \(accessPdu.source.hex)")
                     if let response = delegate.model(configurationClientModel, didReceiveMessage: configMessage,
                                                      sentFrom: accessPdu.source, to: accessPdu.destination,
@@ -571,6 +587,9 @@ private extension AccessLayer {
     /// The context contains timers responsible for resending the message until
     /// status is received, and allows the message to be cancelled.
     ///
+    /// - important: The message must be of an Acknowledged type and must be
+    ///              targetting a Unicast Address; otherwise this method does nothing.
+    ///
     /// - parameters:
     ///   - pdu: The PDU of the Acknowledged message.
     ///   - element: The source Element.
@@ -578,7 +597,8 @@ private extension AccessLayer {
     ///   - keySet: The Key Set used for sending the message.
     func createReliableContext(for pdu: AccessPdu, sentFrom element: Element,
                                withTtl initialTtl: UInt8?, using keySet: KeySet) {
-        guard let request = pdu.message as? AcknowledgedMeshMessage else {
+        guard let request = pdu.message as? AcknowledgedMeshMessage,
+              pdu.destination.address.isUnicast else {
             return
         }
         
@@ -588,8 +608,7 @@ private extension AccessLayer {
         /// request. When the response isn't received after the first retry,
         /// it will try again every time doubling the last delay until the
         /// time goes out.
-        let initialDelay: TimeInterval =
-            networkManager.acknowledgmentMessageInterval(ttl, pdu.segmentsCount)
+        let initialDelay = networkManager.acknowledgmentMessageInterval(ttl, pdu.segmentsCount)
         /// The timeout before which the response should be received.
         let timeout = networkManager.acknowledgmentMessageTimeout
         
@@ -601,7 +620,8 @@ private extension AccessLayer {
                     self.logger?.d(.access, "Resending \(pdu)")
                     self.networkManager.upperTransportLayer.send(pdu, withTtl: initialTtl, using: keySet)
                 }
-            }, timeout: timeout, timeoutBlock: { [weak self] in
+            },
+            timeout: timeout, timeoutBlock: { [weak self] in
                 guard let self = self else { return }
                 self.logger?.w(.access, "Response to \(pdu) not received (timeout)")
                 let category: LogCategory = request is AcknowledgedConfigMessage ? .foundationModel : .model
@@ -610,12 +630,13 @@ private extension AccessLayer {
                                           sentFrom: pdu.source, to: pdu.destination.address,
                                           using: self.networkManager.manager))
                 self.mutex.sync {
-                    self.reliableMessageContexts.removeAll(where: { $0.timeoutTimer == nil })
+                    self.reliableMessageContexts.removeAll { $0.timeoutTimer == nil }
                 }
                 self.networkManager.notifyAbout(AccessError.timeout,
                                                 duringSendingMessage: request,
                                                 from: element, to: pdu.destination.address)
-            })
+            }
+        )
         mutex.sync {
             reliableMessageContexts.append(ack)
         }

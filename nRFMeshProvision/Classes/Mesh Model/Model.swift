@@ -56,12 +56,23 @@ public class Model: Codable {
     /// or Virtual Label UUIDs (32-character hexadecimal string).
     internal private(set) var subscribe: [String]
     /// Returns the list of known Groups that this Model is subscribed to.
+    /// Models on the Primary Element are also subscribed to the All Nodes address.
+    ///
     /// It may be that the Model is subscribed to some other Groups, which are
     /// not known to the local database, and those are not returned.
+    ///
     /// Use `isSubscribed(to:)` to check other Groups.
     public var subscriptions: [Group] {
-        return parentElement?.parentNode?.meshNetwork?.groups
-            .filter { subscribe.contains($0.groupAddress ) } ?? []
+        // A model may be additionally subscribed to any special address
+        // except from All Nodes.
+        let subscribableSpecialGroups = Group.specialGroups
+            .filter { $0 != .allNodes }
+        let groups = parentElement?.parentNode?.meshNetwork?.groups ?? []
+        let result = (groups + subscribableSpecialGroups)
+            .filter { subscribe.contains($0.groupAddress) }
+        // Models on the primary Element are always subscribed to the All Nodes
+        // address.
+        return (parentElement?.isPrimary ?? false) ? result + [.allNodes] : result
     }
     /// The configuration of this Model's publication.
     public private(set) var publish: Publish?

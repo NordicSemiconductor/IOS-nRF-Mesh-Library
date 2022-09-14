@@ -79,7 +79,7 @@ public enum ExportConfiguration {
         /// exported. Nodes belonging to excluded Provisioners will not be
         /// exported.
         case allWithDeviceKey
-        /// The same as `.all`, but device keys will not be exported.
+        /// The same as `.allWithDeviceKey`, but device keys will not be exported.
         case allWithoutDeviceKey
         /// The given Nodes will be exported. This allows to export Nodes with
         /// Device Key (full) or without Device Key (partial). The device on which

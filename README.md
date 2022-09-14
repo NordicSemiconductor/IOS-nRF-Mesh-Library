@@ -73,6 +73,7 @@ The app is available on [App Store](https://apps.apple.com/us/app/nrf-mesh/id138
 7. Support for some server models:
    - Generic OnOff,
    - Generic Level,
+   - Generic Power OnOff,
    - Vendor models.
 8. Scenes, both as client and server.
 9. Automatic connection to nearby nodes and automatic proxy filter management.

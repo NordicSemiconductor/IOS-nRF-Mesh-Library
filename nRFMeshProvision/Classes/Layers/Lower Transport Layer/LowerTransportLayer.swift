@@ -293,7 +293,7 @@ internal class LowerTransportLayer {
     ///            `false` if no packets were received or the message
     ///            was complete before calling this method.
     func isReceivingMessage(from address: Address) -> Bool {
-        return incompleteSegments.contains { entry -> Bool in
+        return incompleteSegments.contains { entry in
             (entry.key >> 16) & 0xFFFF == UInt32(address)
         }
     }

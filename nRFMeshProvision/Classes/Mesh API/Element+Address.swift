@@ -39,4 +39,10 @@ public extension Element {
         return (parentNode?.unicastAddress ?? 0) + Address(index)
     }
     
+    /// Returns whether the Element is a Primary Element on the Node,
+    /// that is its index is equal to 0.
+    var isPrimary: Bool {
+        return index == 0
+    }
+    
 }
