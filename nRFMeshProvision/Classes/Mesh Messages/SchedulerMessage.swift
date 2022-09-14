@@ -40,7 +40,7 @@ public struct SchedulerRegistryEntry {
     public let dayOfWeek: SchedulerDayOfWeek
     public let action: SchedulerAction
     public let transitionTime: TransitionTime
-    public let sceneNumber: UInt16
+    public let sceneNumber: SceneNumber
     
     public init() {
         year = SchedulerYear.any()
@@ -55,7 +55,10 @@ public struct SchedulerRegistryEntry {
         sceneNumber = 0
     }
     
-    public init(year: SchedulerYear, month: SchedulerMonth, day: SchedulerDay, hour: SchedulerHour, minute: SchedulerMinute, second: SchedulerSecond, dayOfWeek: SchedulerDayOfWeek, action: SchedulerAction, transitionTime: TransitionTime, sceneNumber: UInt16) {
+    public init(year: SchedulerYear, month: SchedulerMonth, day: SchedulerDay,
+                hour: SchedulerHour, minute: SchedulerMinute, second: SchedulerSecond,
+                dayOfWeek: SchedulerDayOfWeek, action: SchedulerAction,
+                transitionTime: TransitionTime, sceneNumber: SceneNumber) {
         self.year = year
         self.month = month
         self.day = day
@@ -235,9 +238,16 @@ extension SchedulerRegistryEntry {
         let dayOfWeek = UInt8(parameters.readBits(7, fromOffset: 45))
         let action = UInt8(parameters.readBits(4, fromOffset: 52))
         let transitionTime = TransitionTime(rawValue: parameters[7])
-        let sceneNumber: UInt16 = parameters.read(fromOffset: 8)
+        let sceneNumber: SceneNumber = parameters.read(fromOffset: 8)
         
-        return (index, SchedulerRegistryEntry(year: SchedulerYear(value: year), month: SchedulerMonth(value: month), day: SchedulerDay(value: day), hour: SchedulerHour(value: hour), minute: SchedulerMinute(value: minute), second: SchedulerSecond(value: second), dayOfWeek: SchedulerDayOfWeek(value: dayOfWeek), action: SchedulerAction(rawValue: action)!, transitionTime: transitionTime, sceneNumber: sceneNumber))
+        return (index, SchedulerRegistryEntry(
+            year: SchedulerYear(value: year), month: SchedulerMonth(value: month),
+            day: SchedulerDay(value: day), hour: SchedulerHour(value: hour),
+            minute: SchedulerMinute(value: minute),
+            second: SchedulerSecond(value: second),
+            dayOfWeek: SchedulerDayOfWeek(value: dayOfWeek),
+            action: SchedulerAction(rawValue: action)!,
+            transitionTime: transitionTime, sceneNumber: sceneNumber))
     }
     
     public static func marshal(index: UInt8, entry: SchedulerRegistryEntry) -> Data {
