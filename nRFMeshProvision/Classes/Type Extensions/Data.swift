@@ -40,7 +40,7 @@ extension UInt8 {
     }
 }
 
-extension Data {
+public extension Data {
 
     // Inspired by: https://stackoverflow.com/a/38024025/2115352
 
@@ -167,14 +167,14 @@ extension Data {
 
 // Source: http://stackoverflow.com/a/42241894/2115352
 
-protocol DataConvertible {
+public protocol DataConvertible {
     static func + (lhs: Data, rhs: Self) -> Data
     static func += (lhs: inout Data, rhs: Self)
 }
 
 extension DataConvertible {
     
-    static func + (lhs: Data, rhs: Self) -> Data {
+    public static func + (lhs: Data, rhs: Self) -> Data {
         var value = rhs
         let data = withUnsafePointer(to: &value) { pointer -> Data in
             return Data(buffer: UnsafeBufferPointer(start: pointer, count: 1))
@@ -182,7 +182,7 @@ extension DataConvertible {
         return lhs + data
     }
     
-    static func += (lhs: inout Data, rhs: Self) {
+    public static func += (lhs: inout Data, rhs: Self) {
         lhs = lhs + rhs
     }
     
@@ -204,7 +204,7 @@ extension Double : DataConvertible { }
 
 extension String : DataConvertible {
     
-    static func + (lhs: Data, rhs: String) -> Data {
+    public static func + (lhs: Data, rhs: String) -> Data {
         guard let data = rhs.data(using: .utf8) else { return lhs }
         return lhs + data
     }
@@ -213,7 +213,7 @@ extension String : DataConvertible {
 
 extension Data : DataConvertible {
     
-    static func + (lhs: Data, rhs: Data) -> Data {
+    public static func + (lhs: Data, rhs: Data) -> Data {
         var data = Data()
         data.append(lhs)
         data.append(rhs)
@@ -221,7 +221,7 @@ extension Data : DataConvertible {
         return data
     }
     
-    static func + (lhs: Data, rhs: Data?) -> Data {
+    public static func + (lhs: Data, rhs: Data?) -> Data {
         guard let rhs = rhs else {
             return lhs
         }
@@ -236,7 +236,7 @@ extension Data : DataConvertible {
 
 extension Bool : DataConvertible {
     
-    static func + (lhs: Data, rhs: Bool) -> Data {
+    public static func + (lhs: Data, rhs: Bool) -> Data {
         if rhs {
             return lhs + UInt8(0x01)
         } else {
