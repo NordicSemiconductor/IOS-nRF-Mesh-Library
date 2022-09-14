@@ -51,7 +51,8 @@ public struct TransitionTime {
         return TimeInterval(milliseconds) / 1000.0
     }
     
-    internal var rawValue: UInt8 {
+    /// The raw representation of the transition in a mesh message.
+    public var rawValue: UInt8 {
         return (steps & 0x3F) | (stepResolution.rawValue << 6)
     }
     
@@ -99,7 +100,7 @@ public struct TransitionTime {
         }
     }
     
-    internal init(rawValue: UInt8) {
+    public init(rawValue: UInt8) {
         self.steps = rawValue & 0x3F
         self.stepResolution = StepResolution(rawValue: rawValue >> 6)!
     }
