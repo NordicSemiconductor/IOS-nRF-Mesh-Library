@@ -29,7 +29,6 @@
 */
 
 import Foundation
-import AppKit
 
 public struct GenericLocationGlobalStatus: GenericMessage, LocationStatusMessage {
     public static var opCode: UInt32 = 0x40
