@@ -250,8 +250,8 @@ After the guest moves out, the keys can be changed or removed from the devices.
 
 ### Mesh Network Manager
 
-Mesh network manager is the main entry point for the mesh network. It manages the network,
-is responsible for sending and processing messages to and from bearers and initializes 
+Mesh network manager is the main entry point for the mesh network. It manages the network, 
+allows sending and processing messages to and from bearers and initializes 
 provisioning procedure.
 
 - ``MeshNetworkManager``
@@ -272,11 +272,11 @@ provisioning procedure.
 
 ### Bearers
 
-- ``Transmitter``
 - ``Bearer``
+- ``BearerError``
 - ``BearerDelegate``
 - ``BearerDataDelegate``
-- ``BearerError``
+- ``Transmitter``
 - ``MeshBearer``
 - ``ProvisioningBearer``
 - ``PduType``
@@ -284,17 +284,17 @@ provisioning procedure.
 
 ### GATT Bearers
 
-- ``BaseGattProxyBearer``
-- ``GattBearerDelegate``
-- ``GattBearerError``
 - ``GattBearer``
 - ``PBGattBearer``
+- ``GattBearerDelegate``
+- ``GattBearerError``
+- ``BaseGattProxyBearer``
+
+- ``ProxyProtocolHandler``
 
 - ``MeshService``
 - ``MeshProvisioningService``
 - ``MeshProxyService``
-
-- ``ProxyProtocolHandler``
 
 ### Provisioning
 

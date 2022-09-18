@@ -85,6 +85,7 @@ public struct PduTypes: OptionSet {
     
 }
 
+/// A transmitter is responsible for delivering messages to the mesh network.
 public protocol Transmitter: AnyObject {
     
     /// This method sends the given data over the bearer.

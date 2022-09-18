@@ -30,7 +30,7 @@
 
 import Foundation
 
-/// Information that points to out-of-band (OOB) information
+/// Information that points to Out-Of-Band (OOB) information
 /// needed for provisioning.
 public struct OobInformation: OptionSet {
     public let rawValue: UInt16
@@ -104,7 +104,7 @@ public enum InputAction: UInt8 {
     case inputAlphanumeric  = 3
 }
 
-/// A set of supported Static Out-of-band types.
+/// A set of supported Static Out-Of-Band types.
 public struct StaticOobType: OptionSet {
     public let rawValue: UInt8
     

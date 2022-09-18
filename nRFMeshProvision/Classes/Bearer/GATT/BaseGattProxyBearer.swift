@@ -39,8 +39,18 @@ import CoreBluetooth
 open class BaseGattProxyBearer<Service: MeshService>: NSObject, Bearer, CBCentralManagerDelegate, CBPeripheralDelegate {
     
     // MARK: - Properties
+    /// Bearer delegate receives events when connection to a Proxy Node
+    /// becomes ready, or when the device has disconnected.
     public weak var delegate: BearerDelegate?
+    /// The data delegate receives events whenever new mesh message is
+    /// received from the bearer.
+    ///
+    /// In case of the GATT bearer, the data delegate is guaranteed ti receive
+    /// complete mesh messages, possibly composed of several Bluetooth LE
+    /// notifications using the Proxy Protocol.
     public weak var dataDelegate: BearerDataDelegate?
+    /// The logger receives logs sent from the bearer. The logs will contain
+    /// raw data of sent and received packets, as well as connection events.
     public weak var logger: LoggerDelegate?
     
     private let centralManager: CBCentralManager
