@@ -30,19 +30,24 @@
 
 import Foundation
 
+/// A base class for an address or scene range.
+///
+/// Ranges are assigned to ``Provisioner`` instances.
 public class RangeObject {
     
     public private(set) var range: ClosedRange<UInt16>
     
+    /// Lower bound of the range.
     public var lowerBound: UInt16 {
         return range.lowerBound
     }
     
+    /// Upper bound of the range.
     public var upperBound: UInt16 {
         return range.upperBound
     }
     
-    // Number of elements in the range.
+    /// Number of elements in the range.
     public var count: Int {
         return range.count
     }

@@ -30,6 +30,9 @@
 
 import Foundation
 
+/// A Model defines the basic functionality of a ``Node``. A Node
+/// may include multiple models. A model defines the required states,
+/// the messages that act upon those states, and any associated behavior.
 public class Model: Codable {
     /// Bluetooth SIG-defined model identifier, of a vendor-defined model
     /// identifier. In the latter case, the first 4 bytes correspond to

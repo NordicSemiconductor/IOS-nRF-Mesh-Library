@@ -30,7 +30,9 @@
 
 import Foundation
 
-/// Locations defined by Bluetooth SIG.
+/// Element locations.
+///
+/// The possible values are defined by Bluetooth SIG.
 ///
 /// Imported from: https://www.bluetooth.com/specifications/assigned-numbers/gatt-namespace-descriptors
 public enum Location: UInt16, Codable {
