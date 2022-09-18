@@ -115,10 +115,6 @@ public struct StaticOobType: OptionSet {
         self.rawValue = rawValue
     }
     
-    public var count: Int {
-        return rawValue.nonzeroBitCount & 0b1
-    }
-    
 }
 
 /// A set of supported Output Out-of-band actions.
@@ -135,10 +131,6 @@ public struct OutputOobActions: OptionSet {
         self.rawValue = rawValue
     }
     
-    public var count: Int {
-        return rawValue.nonzeroBitCount & 0b11111
-    }
-    
 }
 
 /// A set of supported Input Out-of-band actions.
@@ -152,10 +144,6 @@ public struct InputOobActions: OptionSet {
     
     public init(rawValue: UInt16) {
         self.rawValue = rawValue
-    }
-    
-    public var count: Int {
-        return rawValue.nonzeroBitCount & 0b1111
     }
     
 }
