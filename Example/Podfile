@@ -2,9 +2,9 @@ use_frameworks!
 
 platform :ios, '12.0'
 
-target 'nRFMeshProvision_Example' do
+target 'nRF Mesh' do
   pod 'nRFMeshProvision', :path => '../'
-  target 'nRFMeshProvision_Tests' do
+  target 'nRF Mesh Tests' do
     inherit! :search_paths
   end
 end

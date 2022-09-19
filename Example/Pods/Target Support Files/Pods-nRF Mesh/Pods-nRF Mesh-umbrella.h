@@ -11,6 +11,6 @@
 #endif
 
 
-FOUNDATION_EXPORT double Pods_nRFMeshProvision_ExampleVersionNumber;
-FOUNDATION_EXPORT const unsigned char Pods_nRFMeshProvision_ExampleVersionString[];
+FOUNDATION_EXPORT double Pods_nRF_MeshVersionNumber;
+FOUNDATION_EXPORT const unsigned char Pods_nRF_MeshVersionString[];
 
