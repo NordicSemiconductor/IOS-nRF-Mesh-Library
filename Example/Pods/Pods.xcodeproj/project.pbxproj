@@ -469,6 +469,7 @@
 		EDC9CE9A4C3F5931540CFD4D58598481 /* String Conversion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 692D1EC047A1DE0CF09A65F37F570AA4 /* String Conversion.swift */; };
 		EE2E8C944B6BC296F7697C50DDF2669E /* Provisioner.swift in Sources */ = {isa = PBXBuildFile; fileRef = FEC37D4B2AC79FD72299452C85669A2D /* Provisioner.swift */; };
 		EFEC7D3012E608336D9BD3563DFCEFE9 /* ConfigRelayStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F0EBFE12B307EBE72B9B69D6D55F7CC /* ConfigRelayStatus.swift */; };
+		F0C3660B28D8FF910017F22E /* Documentation.docc in Sources */ = {isa = PBXBuildFile; fileRef = F0C3660A28D8FF910017F22E /* Documentation.docc */; };
 		F0FD71263E69F31C310C2594A8402E86 /* ConfigModelAppStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D31946D8C70F98A3B12CCC0F147376C /* ConfigModelAppStatus.swift */; };
 		F3469F1B9BE6D193EA4A4C5D9E52F10D /* MeshConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D7142EB111A7480EB29540FBF16494D /* MeshConstants.swift */; };
 		F42297DA82E86D5440A3854851160DD6 /* SceneRegisterGet.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE97BE77EA799B9150105B1D58257380 /* SceneRegisterGet.swift */; };
@@ -650,7 +651,7 @@
 		34D3F6AA57C18155AF121F6EE688C1DC /* CryptoSwift-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "CryptoSwift-umbrella.h"; sourceTree = "<group>"; };
 		350046A530CAC1B9CFF66AE985C50D46 /* LightHSLTargetGet.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LightHSLTargetGet.swift; sourceTree = "<group>"; };
 		352CC421C3954061B0B2A121F16BAB20 /* SceneRegisterStatus.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SceneRegisterStatus.swift; sourceTree = "<group>"; };
-		35DD3A67B3469BFBFFEABA3FDC419322 /* nRFMeshProvision.podspec */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; indentWidth = 2; lastKnownFileType = text; path = nRFMeshProvision.podspec; sourceTree = "<group>"; tabWidth = 2; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
+		35DD3A67B3469BFBFFEABA3FDC419322 /* nRFMeshProvision.podspec */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; indentWidth = 2; path = nRFMeshProvision.podspec; sourceTree = "<group>"; tabWidth = 2; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		360E0ECE27E8E7393A2004A7ADA978E0 /* Operators.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Operators.swift; path = Sources/CryptoSwift/Operators.swift; sourceTree = "<group>"; };
 		38489DEDDEAA9D2C381A7965E59B5D0C /* Scene+Nodes.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "Scene+Nodes.swift"; sourceTree = "<group>"; };
 		3A2E005E06E249DFA87B1CB04A6CA14D /* ConfigNodeIdentitySet.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ConfigNodeIdentitySet.swift; sourceTree = "<group>"; };
@@ -711,7 +712,7 @@
 		52E161FE177AF095BA55247B132B8C2D /* Oob.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Oob.swift; sourceTree = "<group>"; };
 		5309874A90AA23CE4DBDB5BE48808F97 /* CompositionElement.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CompositionElement.swift; sourceTree = "<group>"; };
 		5427BFDA8338A7437D8154638B5B99DD /* LightCTLTemperatureRangeStatus.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LightCTLTemperatureRangeStatus.swift; sourceTree = "<group>"; };
-		542BC79854CFC750900442B76DCA653E /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; path = README.md; sourceTree = "<group>"; };
+		542BC79854CFC750900442B76DCA653E /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		545763176EBF4A09A3A0E89B6C7DD023 /* Updatable.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Updatable.swift; path = Sources/CryptoSwift/Updatable.swift; sourceTree = "<group>"; };
 		55BA018402734351A9DC6D5B09616730 /* GenericPowerDefaultSetUnacknowledged.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = GenericPowerDefaultSetUnacknowledged.swift; sourceTree = "<group>"; };
 		55C6B59DE29DAE5445FC2C0EFE0E52F8 /* ProvisioningCapabilities.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ProvisioningCapabilities.swift; sourceTree = "<group>"; };
@@ -742,7 +743,7 @@
 		64A74A9764E2EB065D3D267B4B890A52 /* GenericBatteryGet.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = GenericBatteryGet.swift; sourceTree = "<group>"; };
 		64CFB82FA5949585043581A8E9076F97 /* ConfigGATTProxySet.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ConfigGATTProxySet.swift; sourceTree = "<group>"; };
 		653A4D0382CB8A127588154A4660F965 /* BlockEncryptor.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = BlockEncryptor.swift; path = Sources/CryptoSwift/BlockEncryptor.swift; sourceTree = "<group>"; };
-		656781D89E3CC3074E3955E3CE474BC6 /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; path = LICENSE; sourceTree = "<group>"; };
+		656781D89E3CC3074E3955E3CE474BC6 /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
 		67064AFED9698C32D7AF7C7CEA99B9FC /* GenericLevelSet.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = GenericLevelSet.swift; sourceTree = "<group>"; };
 		6726AB6C4B439BB36BA0DF8B1EAA4DB5 /* SegmentedControlMessage.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SegmentedControlMessage.swift; sourceTree = "<group>"; };
 		6814F943FE0A55B91373C6E1D590B327 /* ApplicationKey+MeshNetwork.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "ApplicationKey+MeshNetwork.swift"; sourceTree = "<group>"; };
@@ -840,7 +841,7 @@
 		9C65DCFF3E393E102EABD4DA0B97DE6A /* LightCTLTemperatureRangeGet.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LightCTLTemperatureRangeGet.swift; sourceTree = "<group>"; };
 		9D4FB51E9B26625D260E19B406B75266 /* GenericOnOffStatus.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = GenericOnOffStatus.swift; sourceTree = "<group>"; };
 		9D7142EB111A7480EB29540FBF16494D /* MeshConstants.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MeshConstants.swift; sourceTree = "<group>"; };
-		9D940727FF8FB9C785EB98E56350EF41 /* Podfile */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; indentWidth = 2; lastKnownFileType = text; name = Podfile; path = ../Podfile; sourceTree = SOURCE_ROOT; tabWidth = 2; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
+		9D940727FF8FB9C785EB98E56350EF41 /* Podfile */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; indentWidth = 2; name = Podfile; path = ../Podfile; sourceTree = SOURCE_ROOT; tabWidth = 2; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		9DD216622117D08F31D54107772AE6F3 /* RSA.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = RSA.swift; path = Sources/CryptoSwift/RSA.swift; sourceTree = "<group>"; };
 		9E8D3FD307E30DEE930738201658764C /* Node+Address.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "Node+Address.swift"; sourceTree = "<group>"; };
 		9F620FE67145BE0E0BADE22C91709A3D /* BlockMode.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = BlockMode.swift; path = Sources/CryptoSwift/BlockMode/BlockMode.swift; sourceTree = "<group>"; };
@@ -1010,6 +1011,7 @@
 		EE85A051003338DEEFC47D56271705C3 /* MeshNetwork+Scenes.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "MeshNetwork+Scenes.swift"; sourceTree = "<group>"; };
 		EE97BE77EA799B9150105B1D58257380 /* SceneRegisterGet.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SceneRegisterGet.swift; sourceTree = "<group>"; };
 		F00BDBCD0D3166FDBFF9DA168EC7EE71 /* ConfigKeyRefreshPhaseSet.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ConfigKeyRefreshPhaseSet.swift; sourceTree = "<group>"; };
+		F0C3660A28D8FF910017F22E /* Documentation.docc */ = {isa = PBXFileReference; lastKnownFileType = folder.documentationcatalog; path = Documentation.docc; sourceTree = "<group>"; };
 		F141ABC372814AD7C3B42351BCC012F0 /* Data.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Data.swift; sourceTree = "<group>"; };
 		F1B92E125B44E1EBDBC14DC54EC22AF5 /* NetworkLayer.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = NetworkLayer.swift; sourceTree = "<group>"; };
 		F1C39B6EEA8CDE552EC86F930A882B02 /* LightLightnessLinearSetUnacknowledged.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LightLightnessLinearSetUnacknowledged.swift; sourceTree = "<group>"; };
@@ -1107,7 +1109,6 @@
 				9663B7D73B1AB4F6447961B25E2CE5FA /* TimeZoneSet.swift */,
 				EBEAE61FE979FF94F0D5D5CC4DE81C5D /* TimeZoneStatus.swift */,
 			);
-			name = "Time and Scenes";
 			path = "Time and Scenes";
 			sourceTree = "<group>";
 		};
@@ -1155,7 +1156,6 @@
 				346F24667A6CCDFC0CA4F40772B92AC8 /* GenericPowerRangeSetUnacknowledged.swift */,
 				C479B34D954C85D75111FBB01D92F294 /* GenericPowerRangeStatus.swift */,
 			);
-			name = Generic;
 			path = Generic;
 			sourceTree = "<group>";
 		};
@@ -1234,7 +1234,6 @@
 				DF856EC9F1D8D6F65901155C2B61B2DE /* ConfigVendorModelSubscriptionGet.swift */,
 				151B9049FFF6BD10DA42F7301A408A75 /* ConfigVendorModelSubscriptionList.swift */,
 			);
-			name = Configuration;
 			path = Configuration;
 			sourceTree = "<group>";
 		};
@@ -1370,7 +1369,6 @@
 				728456424B5480CC3CFC2E0DC3509D24 /* ZeroPadding.swift */,
 				47DB14FE47EAD4DABCC84F8286D59350 /* Support Files */,
 			);
-			name = CryptoSwift;
 			path = CryptoSwift;
 			sourceTree = "<group>";
 		};
@@ -1381,7 +1379,6 @@
 				5835E571CDA6AFCC801CCE006C17A114 /* ConfigurationServerHandler.swift */,
 				C95498E1BA850D33D6CA5127131BCB87 /* SceneClientHandler.swift */,
 			);
-			name = "Foundation Layer";
 			path = "Foundation Layer";
 			sourceTree = "<group>";
 		};
@@ -1398,7 +1395,6 @@
 				6726AB6C4B439BB36BA0DF8B1EAA4DB5 /* SegmentedControlMessage.swift */,
 				AEB43EA744C6E4DB38F7C97930C5A7C1 /* SegmentedMessage.swift */,
 			);
-			name = "Lower Transport Layer";
 			path = "Lower Transport Layer";
 			sourceTree = "<group>";
 		};
@@ -1442,7 +1438,6 @@
 				B85BDB5F30D123B45CAF9C06994EF3C3 /* PBGattBearer.swift */,
 				CCF9F06BBB8A4DF7724B8E021874D2CE /* ProxyProtocolHandler.swift */,
 			);
-			name = GATT;
 			path = GATT;
 			sourceTree = "<group>";
 		};
@@ -1520,7 +1515,6 @@
 				85F9E8B3A90C8305F7AC7357B2D696E4 /* SensorSettingStatus.swift */,
 				D07795BD494248985A6D5E65DF3BFB15 /* SensorStatus.swift */,
 			);
-			name = Sensors;
 			path = Sensors;
 			sourceTree = "<group>";
 		};
@@ -1537,7 +1531,6 @@
 			children = (
 				1B16B99EFED5A9FA6B2C416B441BD2E4 /* Configuration */,
 			);
-			name = Foundation;
 			path = Foundation;
 			sourceTree = "<group>";
 		};
@@ -1626,7 +1619,6 @@
 				25FC9E13E7ECD1DD1547F237B2354A50 /* LightLightnessSetUnacknowledged.swift */,
 				8355AFFE0B9201E914F595BEE6DBE6E3 /* LightLightnessStatus.swift */,
 			);
-			name = Lighting;
 			path = Lighting;
 			sourceTree = "<group>";
 		};
@@ -1639,7 +1631,6 @@
 				02CCB373620F516C453F665485B9B72E /* RemoveAddressesFromFilter.swift */,
 				8EB4816D4C86A33BA9FF79BC3ECEB742 /* SetFilterType.swift */,
 			);
-			name = "Proxy Configuration";
 			path = "Proxy Configuration";
 			sourceTree = "<group>";
 		};
@@ -1650,7 +1641,6 @@
 				99262613050C43D9174D08F80961AB7F /* UpperTransportLayer.swift */,
 				79F8728605931A322D93EAC16AD4C3D2 /* UpperTransportPdu.swift */,
 			);
-			name = "Upper Transport Layer";
 			path = "Upper Transport Layer";
 			sourceTree = "<group>";
 		};
@@ -1737,6 +1727,7 @@
 				46D81D67E78116C91635BB852B27E0AC /* Support Files */,
 				F3E4A0F887FC098F70B0E874D137E8E1 /* Type Extensions */,
 				E44C23B9B47838A7D75F6FF704DC26B4 /* Utils */,
+				F0C3660A28D8FF910017F22E /* Documentation.docc */,
 			);
 			name = nRFMeshProvision;
 			path = ../..;
@@ -1766,7 +1757,6 @@
 				3CE040BDECDE9954B66DCCEE684148BC /* AccessLayer.swift */,
 				5E4797A41839DC6F5EA269E965CABE3B /* AccessPdu.swift */,
 			);
-			name = "Access Layer";
 			path = "Access Layer";
 			sourceTree = "<group>";
 		};
@@ -1915,7 +1905,6 @@
 				B57552A55608AF68809C8A77EF370E55 /* SecureNetworkBeacon.swift */,
 				95840766EF5C4A1C78F17FF11AECDDE7 /* UnprovisionedDeviceBeacon.swift */,
 			);
-			name = "Network Layer";
 			path = "Network Layer";
 			sourceTree = "<group>";
 		};
@@ -2235,6 +2224,7 @@
 				3B255CA12A14BDF5E43EE4A33CC61733 /* Bearer.swift in Sources */,
 				5BA83954F81D54B9CE00F318A21BF244 /* BearerDelegate.swift in Sources */,
 				9AF644F267543ECEFDDD141E4143BE1E /* BearerError.swift in Sources */,
+				F0C3660B28D8FF910017F22E /* Documentation.docc in Sources */,
 				99F43469AE5EA6AD673C20F4E8DFEBCF /* ClosedRange.swift in Sources */,
 				2F272FB6E49789904E41AEC3B31A15D4 /* CompanyIdentifier.swift in Sources */,
 				E32A3C614DB0752924443BC8ACC03E66 /* CompositionElement.swift in Sources */,
@@ -2819,8 +2809,7 @@
 				MTL_FAST_MATH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRIP_INSTALLED_PRODUCT = NO;
-				SWIFT_COMPILATION_MODE = wholemodule;
-				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
 				SWIFT_VERSION = 5.0;
 				SYMROOT = "${SRCROOT}/../build";
 			};
