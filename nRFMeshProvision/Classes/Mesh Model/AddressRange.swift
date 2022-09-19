@@ -40,6 +40,14 @@ public class AddressRange: RangeObject, Codable {
         return range.upperBound
     }
     
+    public convenience init(from address: Address, elementsCount: UInt8) {
+        self.init(from: address, to: address + UInt16(elementsCount) - 1)
+    }
+    
+    public convenience init(of node: Node) {
+        self.init(node.unicastAddressRange.range)
+    }
+    
     // MARK: - Codable
     
     private enum CodingKeys: String, CodingKey {

@@ -432,7 +432,7 @@ internal extension ProxyFilter {
                 if status.listSize == 1 {
                     logger?.w(.proxy, "Limited Proxy Filter detected.")
                     reset()
-                    if let address = manager.meshNetwork?.localProvisioner?.unicastAddress {
+                    if let address = manager.meshNetwork?.localProvisioner?.primaryUnicastAddress {
                         mutex.sync {
                             addresses = [address]
                         }

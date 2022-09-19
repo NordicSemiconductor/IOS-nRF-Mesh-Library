@@ -136,7 +136,7 @@ class SetHeartbeatSubscriptionViewController: ProgressViewController {
         }
         if indexPath.isSourceSection {
             let otherNode = nodes[indexPath.row]
-            if let source = selectedSource, source == otherNode.unicastAddress {
+            if let source = selectedSource, source == otherNode.primaryUnicastAddress {
                 selectedSourceIndexPath = indexPath
                 selectedSource = nil
             }
@@ -145,7 +145,7 @@ class SetHeartbeatSubscriptionViewController: ProgressViewController {
             cell.isEnabled = true
         }
         if indexPath.isDestinationSection {
-            if let destination = selectedDestination, destination == node.unicastAddress {
+            if let destination = selectedDestination, destination == node.primaryUnicastAddress {
                 selectedDestinationIndexPath = indexPath
                 selectedDestination = nil
             }
@@ -232,10 +232,10 @@ private extension SetHeartbeatSubscriptionViewController {
               let node = self.node else {
             return
         }
-        let sourceAddress = nodes[sourceIndexPath.row].unicastAddress
+        let sourceAddress = nodes[sourceIndexPath.row].primaryUnicastAddress
         let destinationAddress =
             destinationIndexPath.isDestinationSection ?
-                node.unicastAddress :
+                node.primaryUnicastAddress :
                 destinationIndexPath.isGroupsSection && !groups.isEmpty ?
                     groups[destinationIndexPath.row].address.address :
                     Group.specialGroups[destinationIndexPath.row].address.address
@@ -273,7 +273,7 @@ extension SetHeartbeatSubscriptionViewController: MeshNetworkDelegate {
             return
         }
         // Is the message targeting the current Node?
-        guard node.unicastAddress == source else {
+        guard node.primaryUnicastAddress == source else {
             return
         }
         

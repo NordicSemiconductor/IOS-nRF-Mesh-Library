@@ -278,8 +278,8 @@ class Pdus: XCTestCase {
         
         XCTAssertNotNil(meshNetwork.localProvisioner)
         XCTAssertNotNil(meshNetwork.localProvisioner!.meshNetwork)
-        XCTAssertNotNil(meshNetwork.localProvisioner!.unicastAddress)
-        XCTAssertEqual(meshNetwork.localProvisioner!.unicastAddress, 0x0003)
+        XCTAssertNotNil(meshNetwork.localProvisioner!.primaryUnicastAddress)
+        XCTAssertEqual(meshNetwork.localProvisioner!.primaryUnicastAddress, 0x0003)
         
         XCTAssertEqual(meshNetwork.networkKeys.count, 1)
         XCTAssertEqual(meshNetwork.applicationKeys.count, 2)
@@ -303,7 +303,7 @@ class Pdus: XCTestCase {
         let source = meshNetwork.localProvisioner?.node?.elements.first?.unicastAddress
         XCTAssertNotNil(source)
         let node = meshNetwork.nodes[1]
-        let destination = MeshAddress(node.unicastAddress)
+        let destination = MeshAddress(node.primaryUnicastAddress)
         let sequence: UInt32 = 0x3129AB
         let keySet = DeviceKeySet(networkKey: networkKey, node: node)!
         
@@ -383,7 +383,7 @@ class Pdus: XCTestCase {
         let ivIndex = IvIndex(index: 0x12345678, updateActive: false)
         let node = meshNetwork.nodes[1]
         let source = node.elements.first?.unicastAddress
-        let destination = MeshAddress(meshNetwork.localProvisioner!.unicastAddress!)
+        let destination = MeshAddress(meshNetwork.localProvisioner!.primaryUnicastAddress!)
         XCTAssertNotNil(destination)
         let sequence: UInt32 = 0x000006
         let keySet = DeviceKeySet(networkKey: networkKey, node: node)!
@@ -441,9 +441,9 @@ class Pdus: XCTestCase {
         let meshNetwork = manager.meshNetwork!
         let networkKey = meshNetwork.networkKeys.first!
         let ivIndex = IvIndex(index: 0x12345678, updateActive: false)
-        let source = meshNetwork.localProvisioner?.unicastAddress
+        let source = meshNetwork.localProvisioner?.primaryUnicastAddress
         let node = meshNetwork.nodes[1]
-        let destination = node.unicastAddress
+        let destination = node.primaryUnicastAddress
         let sequence: UInt32 = 0x3129AB
         
         // Test begins here

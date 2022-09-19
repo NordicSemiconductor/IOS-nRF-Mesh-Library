@@ -40,6 +40,25 @@ public extension RangeObject {
         return range.contains(value)
     }
     
+    /// Returns whether the given range is within the range.
+    ///
+    /// - parameter range: The range to be checked.
+    /// - returns: `True` if the range is within the range, `false` otherwise.
+    func contains(_ range: RangeObject) -> Bool {
+        return contains(range.lowerBound) && contains(range.upperBound)
+    }
+    
+    /// Returns a Boolean value indicating whether the sequence contains an
+    /// element that satisfies the given predicate.
+    ///
+    /// - parameter predicate: A closure that takes an element of the range as its
+    ///                        argument and returns a Boolean value that indicates
+    ///                        whether the passed element represents a match.
+    /// - returns: `True` if the value is inside the range, `false` otherwise.
+    func contains(where predicate: (UInt16) -> Bool) -> Bool {
+        return range.contains { predicate($0) }
+    }
+    
     /// Returns a Boolean value indicating whether this range and the given
     /// range contain an element in common.
     ///
@@ -48,6 +67,16 @@ public extension RangeObject {
     ///            common; otherwise, `false`.
     func overlaps(_ other: RangeObject) -> Bool {
         return range.overlaps(other.range)
+    }
+    
+    /// Returns a Boolean value indicating whether this range and the given
+    /// array of ranges contain a common element.
+    ///
+    /// - parameter other: A range to check for elements in common.
+    /// - returns: `True` if this range and other have at least one element in
+    ///            common; otherwise, `false`.
+    func overlaps(_ otherRanges: [RangeObject]) -> Bool {
+        return otherRanges.contains { overlaps($0) }
     }
     
     /// Returns the closest distance between this and the given range.
@@ -135,6 +164,14 @@ public extension Array where Element: RangeObject {
         return contains { $0.contains(value) }
     }
     
+    /// Returns whether the range is within any of the ranges in this array.
+    ///
+    /// - parameter range: The range to be checked.
+    /// - returns: `True` if the range is within the range array, `false` otherwise.
+    func contains(_ range: RangeObject) -> Bool {
+        return contains { $0.contains(range) }
+    }
+    
     /// Returns a Boolean value indicating whether any of the ranges in the array
     /// and the given range contain an element in common.
     ///
@@ -142,12 +179,7 @@ public extension Array where Element: RangeObject {
     /// - returns: `True` if this range and other have at least one element in
     ///            common; otherwise, `false`.
     func overlaps(_ other: RangeObject) -> Bool {
-        for range in self {
-            if range.overlaps(other) {
-                return true
-            }
-        }
-        return false
+        return contains { $0.overlaps(other) }
     }
     
     /// Returns a Boolean value indicating whether any of the ranges in the array
@@ -160,14 +192,7 @@ public extension Array where Element: RangeObject {
     /// - returns: `True` if any of the ranges has at least one element in common;
     ///            with any of ranges from the given array; otherwise, `false`.
     func overlaps(_ otherRanges: [RangeObject]) -> Bool {
-        for range in self {
-            for other in otherRanges {
-                if range.overlaps(other) {
-                    return true
-                }
-            }
-        }
-        return false
+        return contains { $0.overlaps(otherRanges) }
     }
     
 }

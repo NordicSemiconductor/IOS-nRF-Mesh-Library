@@ -36,7 +36,7 @@ public extension Element {
     /// For Elements not added to Node this returns the Element index
     /// value as `Address`.
     var unicastAddress: Address {
-        return (parentNode?.unicastAddress ?? 0) + Address(index)
+        return (parentNode?.primaryUnicastAddress ?? 0) + Address(index)
     }
     
     /// Returns whether the Element is a Primary Element on the Node,

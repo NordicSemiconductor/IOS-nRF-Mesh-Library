@@ -64,7 +64,7 @@ class ManagingProvisioners: XCTestCase {
         XCTAssertNoThrow(try meshNetwork.add(provisioner: provisioner))
         XCTAssertEqual(meshNetwork.provisioners.count, 1)
         XCTAssertEqual(meshNetwork.nodes.count, 7)
-        XCTAssertEqual(meshNetwork.nodes[6].unicastAddress, 11)
+        XCTAssertEqual(meshNetwork.nodes[6].primaryUnicastAddress, 11)
         XCTAssertEqual(meshNetwork.nodes[6].lastUnicastAddress, 11)
         
         // This will throw, as it's not possible to remove the last Provisioner object.
@@ -81,7 +81,7 @@ class ManagingProvisioners: XCTestCase {
         XCTAssertNoThrow(try meshNetwork.add(provisioner: otherProvisioner))
         XCTAssertEqual(meshNetwork.provisioners.count, 2)
         XCTAssertEqual(meshNetwork.nodes.count, 8)
-        XCTAssertEqual(meshNetwork.nodes[7].unicastAddress, 100)
+        XCTAssertEqual(meshNetwork.nodes[7].primaryUnicastAddress, 100)
         XCTAssertEqual(meshNetwork.nodes[7].lastUnicastAddress, 100)
         
         XCTAssertNoThrow(try meshNetwork.remove(provisioner: otherProvisioner))
@@ -105,7 +105,7 @@ class ManagingProvisioners: XCTestCase {
                                       ],
                                       allocatedGroupRange: [],
                                       allocatedSceneRange: [])
-        XCTAssertNoThrow(try provisioner.allocateSceneRange(SceneRange.allScenes))
+        XCTAssertNoThrow(try provisioner.allocate(sceneRange: SceneRange.allScenes))
         // Group ranges not allocated, but that's OK. They are not required.
         XCTAssertNoThrow(try meshNetwork.add(provisioner: provisioner))
     }

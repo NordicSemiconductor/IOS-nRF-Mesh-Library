@@ -362,25 +362,6 @@ public struct Publish: Codable {
     }
 }
 
-public extension Publish {
-    
-    /// Whether the publication should be cancelled.
-    var isCancel: Bool {
-        return address == "0000"
-    }
-    
-    /// Returns whether master security materials are used.
-    var isUsingMasterSecurityMaterial: Bool {
-        return credentials == 0
-    }
-    
-    /// Returns whether friendship security materials are used.
-    var isUsingFriendshipSecurityMaterial: Bool {
-        return credentials == 1
-    }
-    
-}
-
 internal extension Publish {
     
     /// Creates a copy of the Publish object, but replaces the address

@@ -615,7 +615,7 @@ internal class ConfigurationServerHandler: ModelDelegate {
             // Unicast Address of the local Node, or a Group Address, all other values are Prohibited.
             guard request.destination.isUnassigned ||
                   request.destination.isGroup ||
-                  request.destination == localNode.unicastAddress else {
+                  request.destination == localNode.primaryUnicastAddress else {
                 return ConfigHeartbeatSubscriptionStatus(responseTo: request, with: .cannotSet)
             }
             // Values 0x12-0xFF are Prohibited.

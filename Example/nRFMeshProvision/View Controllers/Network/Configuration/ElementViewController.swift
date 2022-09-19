@@ -106,7 +106,7 @@ class ElementViewController: UITableViewController {
             
             switch indexPath.row {
             case 0: // Unicast Address
-                let address = element.parentNode!.unicastAddress
+                let address = element.parentNode!.primaryUnicastAddress
                 cell.detailTextLabel?.text = "\((address + UInt16(element.index)).asString())"
             case 1: // Location
                 cell.detailTextLabel?.text = "\(element.location)"

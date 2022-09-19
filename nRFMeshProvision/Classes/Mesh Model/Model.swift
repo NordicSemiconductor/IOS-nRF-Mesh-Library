@@ -112,7 +112,7 @@ public class Model: Codable {
         if let publish = model.publish, applicationKeys.contains(where: { $0.index == publish.index }) {
             let publishAddress = publish.publicationAddress.address
             guard publishAddress.isSpecialGroup ||
-                 (publishAddress.isUnicast && nodes.contains(where: { $0.hasAllocatedAddress(publishAddress) })) ||
+                 (publishAddress.isUnicast && nodes.contains(where: { $0.contains(elementWithAddress: publishAddress) })) ||
                  (publishAddress.isGroup && groups.contains(where: { $0.groupAddress == publish.address })) else {
                 return
             }

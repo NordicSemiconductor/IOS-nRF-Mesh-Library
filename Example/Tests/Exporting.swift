@@ -99,65 +99,73 @@ class Exporting: XCTestCase {
                                            allocatedSceneRange: [])
         XCTAssertNoThrow(try meshNetwork.add(provisioner: guestProvisioner, withAddress: 0x1000))
         XCTAssertNotNil(guestProvisioner.node)
-        XCTAssertGreaterThanOrEqual(guestProvisioner.node?.elementsCount ?? 0, 1)
-        XCTAssertEqual(guestProvisioner.node?.primaryElement?.models.count, 4)
-        let guestGenericOnOffClientModel = Model(sigModelId: .genericOnOffClientModelId)
-        guestProvisioner.node?.primaryElement?.add(model: guestGenericOnOffClientModel)
-        XCTAssertEqual(guestProvisioner.node?.primaryElement?.models.count, 5)
+        
+        // As the Composition Data have not been obtained from the Guest Provisioner's Node, the
+        // Primary Element is unknown.
+        XCTAssertNil(guestProvisioner.node?.primaryElement)
+        
+        let data = Data(hex: "004600CDAB0001FFFFFFFF01000300000002000110")
+        guestProvisioner.node?.apply(compositionData: ConfigCompositionDataStatus(parameters: data)!)
+        
+        // As the Composition Data have been obtained, now the Primary Element should be available.
+        XCTAssertNotNil(guestProvisioner.node?.primaryElement)
+        
+        let guestGenericOnOffClientModel = guestProvisioner.node?.primaryElement?
+            .model(withSigModelId: .genericOnOffClientModelId)
+        XCTAssertNotNil(guestGenericOnOffClientModel)
         guestKey.map { key in
-            guestGenericOnOffClientModel.bind(applicationKeyWithIndex: key.index)
+            guestGenericOnOffClientModel!.bind(applicationKeyWithIndex: key.index)
             guestRoomLights.map { group in
-                guestGenericOnOffClientModel.set(publication: Publish(to: group.address, using: key,
-                                                                      usingFriendshipMaterial: false, ttl: 5,
-                                                                      period: .disabled, retransmit: .disabled))
-            }
-        }
-        let guestSceneClientModel = Model(sigModelId: .sceneClientModelId)
-        guestProvisioner.node?.primaryElement?.add(model: guestSceneClientModel)
-        XCTAssertEqual(guestProvisioner.node?.primaryElement?.models.count, 6)
-        guestKey.map { key in
-            guestSceneClientModel.bind(applicationKeyWithIndex: key.index)
-            guestRoomLights.map { group in
-                guestSceneClientModel.set(publication: Publish(to: group.address, using: key,
-                                                               usingFriendshipMaterial: false, ttl: 5,
-                                                               period: .disabled, retransmit: .disabled))
+                guestGenericOnOffClientModel!.set(publication: Publish(to: group.address, using: key,
+                                                                       usingFriendshipMaterial: false, ttl: 5,
+                                                                       period: .disabled, retransmit: .disabled))
             }
         }
         
         // Setup Nodes in the kitchen.
         let kitchenLightSwitch = Node(name: "Kitchen Light Switch", uuid: UUID(), deviceKey: Data.random128BitKey(),
                                       andAssignedNetworkKey: primaryNetworkKey!, andAddress: 0x0002)
-        kitchenLightSwitch.add(elements: [Element(name: "Left button", location: .left,
-                                                  models: [
-                                                    Model(sigModelId: .configurationServerModelId),
-                                                    Model(sigModelId: .healthServerModelId),
-                                                    Model(sigModelId: .genericOnOffClientModelId)
-                                                  ]),
-                                          Element(name: "Right button", location: .right,
-                                                  models: [
-                                                    Model(sigModelId: .genericOnOffClientModelId)
-                                                  ])])
+        kitchenLightSwitch.add(elements: [
+            Element(name: "Left button", location: .left,
+                    models: [
+                        Model(sigModelId: .configurationServerModelId),
+                        Model(sigModelId: .healthServerModelId),
+                        Model(sigModelId: .genericOnOffClientModelId)
+                    ]
+            ),
+            Element(name: "Right button", location: .right,
+                    models: [
+                        Model(sigModelId: .genericOnOffClientModelId)
+                    ]
+            )
+        ])
         
         let kitchenLight = Node(name: "Kitchen Light", uuid: UUID(), deviceKey: Data.random128BitKey(),
                                 andAssignedNetworkKey: primaryNetworkKey!, andAddress: 0x0004)
-        kitchenLight.add(element: Element(name: "Main Element", location: .left,
-                                          models: [
-                                            Model(sigModelId: .configurationServerModelId),
-                                            Model(sigModelId: .healthServerModelId),
-                                            Model(sigModelId: .sceneServerModelId),
-                                            Model(sigModelId: .sceneSetupServerModelId),
-                                            Model(sigModelId: .genericOnOffServerModelId)
-                                          ]))
+        kitchenLight.add(element:
+            Element(name: "Main Element", location: .left,
+                    models: [
+                        Model(sigModelId: .configurationServerModelId),
+                        Model(sigModelId: .healthServerModelId),
+                        Model(sigModelId: .sceneServerModelId),
+                        Model(sigModelId: .sceneSetupServerModelId),
+                        Model(sigModelId: .genericOnOffServerModelId)
+                    ]
+            )
+        )
         let led = Node(name: "LED", uuid: UUID(), deviceKey: Data.random128BitKey(),
                        andAssignedNetworkKey: primaryNetworkKey!, andAddress: 0x0005)
-        led.add(element: Element(name: "Main Element", location: .left,
-                                 models: [
-                                    Model(sigModelId: .configurationServerModelId),
-                                    Model(sigModelId: .healthServerModelId),
-                                    Model(sigModelId: .genericOnOffServerModelId),
-                                    Model(sigModelId: .sceneServerModelId),
-                                    Model(sigModelId: .sceneSetupServerModelId)
-                                 ]))
+        led.add(element:
+            Element(name: "Main Element", location: .left,
+                    models: [
+                        Model(sigModelId: .configurationServerModelId),
+                        Model(sigModelId: .healthServerModelId),
+                        Model(sigModelId: .genericOnOffServerModelId),
+                        Model(sigModelId: .sceneServerModelId),
+                        Model(sigModelId: .sceneSetupServerModelId)
+                    ]
+            )
+        )
         
         XCTAssertNoThrow(try meshNetwork.add(node: kitchenLightSwitch))
         XCTAssertNoThrow(try meshNetwork.add(node: kitchenLight))
@@ -187,7 +195,7 @@ class Exporting: XCTestCase {
         XCTAssertNotNil(rightButtonModel)
         lightsKey.map { key in
             rightButtonModel?.bind(applicationKeyWithIndex: key.index)
-            rightButtonModel?.set(publication: Publish(to: MeshAddress(led.unicastAddress), using: key,
+            rightButtonModel?.set(publication: Publish(to: MeshAddress(led.primaryUnicastAddress), using: key,
                                                        usingFriendshipMaterial: false, ttl: 5,
                                                        period: .disabled, retransmit: .disabled))
         }
@@ -210,11 +218,11 @@ class Exporting: XCTestCase {
             XCTAssert(kitchenLightModel?.subscriptions.contains(group) ?? false)
         }
         // Simulate that the Kitchen Light Scene Register was set to use the following scenes:
-        meshNetwork.scenes[Scene.allOff]?.add(address: kitchenLight.unicastAddress)
+        meshNetwork.scenes[Scene.allOff]?.add(address: kitchenLight.primaryUnicastAddress)
         XCTAssertFalse(meshNetwork.scenes[Scene.allOff]?.nodes.isEmpty ?? true)
-        meshNetwork.scenes[Scene.kitchenOn]?.add(address: kitchenLight.unicastAddress)
+        meshNetwork.scenes[Scene.kitchenOn]?.add(address: kitchenLight.primaryUnicastAddress)
         XCTAssertFalse(meshNetwork.scenes[Scene.kitchenOn]?.nodes.isEmpty ?? true)
-        meshNetwork.scenes[Scene.kitchenOff]?.add(address: kitchenLight.unicastAddress)
+        meshNetwork.scenes[Scene.kitchenOff]?.add(address: kitchenLight.primaryUnicastAddress)
         XCTAssertFalse(meshNetwork.scenes[Scene.kitchenOff]?.nodes.isEmpty ?? true)
         XCTAssertTrue(meshNetwork.scenes.contains(where: { $0.isUsed }))
         
@@ -230,11 +238,11 @@ class Exporting: XCTestCase {
             ledModel?.bind(applicationKeyWithIndex: key.index)
         }
         // Simulate that the LED Scene Register was set to use the following scenes:
-        meshNetwork.scenes[Scene.allOff]?.add(address: led.unicastAddress)
+        meshNetwork.scenes[Scene.allOff]?.add(address: led.primaryUnicastAddress)
         XCTAssertTrue(meshNetwork.scenes[Scene.allOff]?.nodes.contains(led) ?? false)
-        meshNetwork.scenes[Scene.kitchenOn]?.add(address: led.unicastAddress)
+        meshNetwork.scenes[Scene.kitchenOn]?.add(address: led.primaryUnicastAddress)
         XCTAssertTrue(meshNetwork.scenes[Scene.kitchenOn]?.nodes.contains(led) ?? false)
-        meshNetwork.scenes[Scene.kitchenOff]?.add(address: led.unicastAddress)
+        meshNetwork.scenes[Scene.kitchenOff]?.add(address: led.primaryUnicastAddress)
         XCTAssertTrue(meshNetwork.scenes[Scene.kitchenOff]?.nodes.contains(led) ?? false)
         
         // Configure Lock.
@@ -264,7 +272,7 @@ class Exporting: XCTestCase {
             XCTAssert(lockModel?.subscriptions.contains(group) ?? false)
         }
         // Simulate that the Lock's Scene Register was set to use the following scene:
-        meshNetwork.scenes[Scene.allOff]?.add(address: lock.unicastAddress)
+        meshNetwork.scenes[Scene.allOff]?.add(address: lock.primaryUnicastAddress)
         XCTAssertTrue(meshNetwork.scenes[Scene.allOff]?.nodes.contains(lock) ?? false)
         
         // Setup Nodes in the guest room.
@@ -337,9 +345,9 @@ class Exporting: XCTestCase {
             XCTAssert(guestLightModel?.subscriptions.contains(group) ?? false)
         }
         // Simulate that the Lock's Scene Register was set to use the following scene:
-        meshNetwork.scenes[Scene.cozyGuestRoom]?.add(address: guestLight.unicastAddress)
+        meshNetwork.scenes[Scene.cozyGuestRoom]?.add(address: guestLight.primaryUnicastAddress)
         XCTAssertTrue(meshNetwork.scenes[Scene.cozyGuestRoom]?.nodes.contains(guestLight) ?? false)
-        meshNetwork.scenes[Scene.allOff]?.add(address: guestLight.unicastAddress)
+        meshNetwork.scenes[Scene.allOff]?.add(address: guestLight.primaryUnicastAddress)
         XCTAssertTrue(meshNetwork.scenes[Scene.allOff]?.nodes.contains(guestLight) ?? false)
         
         // Add and remove a Node.
@@ -513,6 +521,14 @@ class Exporting: XCTestCase {
         XCTAssertEqual(copy.networkKeys.count, 1)
         XCTAssertEqual(copy.applicationKeys.count, 1)
         XCTAssertEqual(copy.provisioners.count, 1)
+        XCTAssertNotNil(copy.localProvisioner)
+        XCTAssertNotNil(copy.localProvisioner?.node)
+        XCTAssertNotNil(copy.localProvisioner?.node?.primaryElement)
+        let guestGenericOnOffClientModel = copy.localProvisioner?.node?.primaryElement?
+            .model(withSigModelId: .genericOnOffClientModelId)
+        XCTAssertNotNil(guestGenericOnOffClientModel)
+        XCTAssertNotNil(guestGenericOnOffClientModel?.publish)
+        XCTAssertEqual(guestGenericOnOffClientModel?.publish?.publicationAddress, MeshAddress(0xD001))
         XCTAssertEqual(copy.nodes.count, 3)
         copy.nodes.forEach {
             XCTAssertNil($0.deviceKey)

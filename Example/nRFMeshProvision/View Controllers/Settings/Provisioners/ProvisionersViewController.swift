@@ -111,7 +111,7 @@ class ProvisionersViewController: UITableViewController, Editable {
         let node = network.node(for: p)
         cell.textLabel?.text = p.name
         if let node = node {
-            cell.detailTextLabel?.text = "Unicast Address: \(node.unicastAddress.asString())"
+            cell.detailTextLabel?.text = "Unicast Address: \(node.primaryUnicastAddress.asString())"
         } else {
             cell.detailTextLabel?.text = "Configuration capabilities disabled"
         }

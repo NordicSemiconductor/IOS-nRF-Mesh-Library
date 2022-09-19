@@ -32,13 +32,25 @@ import Foundation
 
 public extension Provisioner {
     
-    /// The Unicast Address of the Provisioner.
+    /// The Primary Unicast Address of the Provisioner.
     ///
     /// The Provisioner must be added to a mesh network and
     /// must have a Unicast Address assigned, otherwise `nil`
     /// is returned instead.
+    @available(*, deprecated, renamed: "primaryUnicastAddress")
     var unicastAddress: Address? {
-        return node?.unicastAddress
+        return node?.primaryUnicastAddress
+    }
+    
+    /// The Primary Unicast Address of the Provisioner.
+    ///
+    /// The Provisioner must be added to a mesh network and
+    /// must have a Unicast Address assigned, otherwise `nil`
+    /// is returned instead.
+    ///
+    /// - since: 3.3.0
+    var primaryUnicastAddress: Address? {
+        return node?.primaryUnicastAddress
     }
     
     /// The Provisioner's Node, if such exists, otherwise `nil`.

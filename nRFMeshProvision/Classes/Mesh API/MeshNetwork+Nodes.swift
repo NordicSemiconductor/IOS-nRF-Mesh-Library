@@ -76,7 +76,7 @@ public extension MeshNetwork {
             return nil
         }
         return nodes.first {
-            $0.hasAllocatedAddress(address)
+            $0.contains(elementWithAddress: address)
         }
     }
     
@@ -90,7 +90,7 @@ public extension MeshNetwork {
     func node(matchingHash hash: Data, random: Data) -> Node? {
         for node in nodes {
             // Data are: 48 bits of Padding (0s), 64 bit Random and Unicast Address.
-            let data = Data(repeating: 0, count: 6) + random + node.unicastAddress.bigEndian
+            let data = Data(repeating: 0, count: 6) + random + node.primaryUnicastAddress.bigEndian
             
             for networkKey in node.networkKeys {
                 let calculatedHash = Crypto.calculateHash(from: data,
@@ -136,8 +136,7 @@ public extension MeshNetwork {
         return node(matchingHash: hash, random: random) != nil
     }
     
-    /// Adds the Node to the mesh network. If a node with the same UUID
-    /// was already in the mesh network, it will be replaced.
+    /// Adds the Node to the mesh network.
     ///
     /// This method should only be used to add debug Nodes, or Nodes
     /// that have already been provisioned. Use `provision(unprovisionedDevice:over)`
@@ -145,11 +144,16 @@ public extension MeshNetwork {
     ///
     /// - parameter node: A Node to be added.
     /// - throws: This method throws if the Node's address is not available,
-    ///           the Node does not have a Network Key, or the Network Key does
-    ///           not belong to the mesh network.
+    ///           the Node does not have a Network Key, the Network Key does
+    ///           not belong to the mesh network, or a Node with the same UUID
+    ///           already exists in the network.
     func add(node: Node) throws {
+        // Make sure the Node does not exist already.
+        guard self.node(withUuid: node.uuid) == nil else {
+            throw MeshNetworkError.nodeAlreadyExist
+        }
         // Verify if the address range is available for the new Node.
-        guard isAddressRangeAvailable(node.unicastAddress, elementsCount: node.elementsCount) else {
+        guard isAddress(node.primaryUnicastAddress, availableFor: node) else {
             throw MeshNetworkError.addressNotAvailable
         }
         // Ensure the Network Key exists.
@@ -160,7 +164,6 @@ public extension MeshNetwork {
         guard networkKeys.contains(where: { $0.index == netKeyIndex }) else {
             throw MeshNetworkError.invalidKey
         }
-        remove(nodeWithUuid: node.uuid)
         
         node.meshNetwork = self
         nodes.append(node)

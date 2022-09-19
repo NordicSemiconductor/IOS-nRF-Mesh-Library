@@ -36,26 +36,74 @@ public extension MeshNetwork {
     /// from the given one are valid, that is they are all in Unicast
     /// Address range.
     ///
-    /// - parameter address: The first address to check.
-    /// - parameter count:   Number of addresses to check.
+    /// - parameters:
+    ///   - address: The first address to check.
+    ///   - count:   Number of addresses to check.
     /// - returns: `True`, if the address range is valid, `false` otherwise.
     func isAddressRangeValid(_ address: Address, elementsCount count: UInt8) -> Bool {
-        return address.isUnicast && (address + UInt16(count) - 1).isUnicast
+        return AddressRange(from: address, elementsCount: count).isUnicastRange
+    }
+    
+    /// Returns whether the given address range can be assigned to a new Node.
+    ///
+    /// This method does not check if the range is allocated to the current Provisioner.
+    /// For that, use ``Provisioner/isAddressRangeAllocated(_:)``.
+    ///
+    /// - parameters:
+    ///   - range: The address range to check.
+    /// - returns: `True`, if the address is available, `false` otherwise.
+    func isAddressRangeAvailable(_ range: AddressRange) -> Bool {
+        return range.isUnicastRange &&
+               !nodes.contains { $0.contains(elementsWithAddressesOverlapping: range) } &&
+               !(networkExclusions?.contains(range, forIvIndex: ivIndex) ?? false)
+    }
+    
+    /// Returns whether the given address can be assigned to a Node with given number of
+    /// Elements.
+    ///
+    /// - parameters:
+    ///   - address: The first address to check.
+    ///   - count:   Number of addresses to check.
+    /// - returns: `True`, if the address is available, `false` otherwise.
+    func isAddress(_ address: Address, availableForElementsCount count: UInt8) -> Bool {
+        let range = AddressRange(from: address, elementsCount: count)
+        return isAddressRangeAvailable(range)
+    }
+    
+    /// Returns whether the given address can be reassigned to the given Node.
+    ///
+    /// The Unicast Addresses assigned to the given Node are excluded from checking
+    /// address collisions.
+    ///
+    /// - parameters:
+    ///   - address: The first address to check.
+    ///   - node:    The Node, which address is to change. It will be excluded
+    ///              from checking address collisions.
+    /// - returns: `True`, if the address is available, `false` otherwise.
+    func isAddress(_ address: Address, availableFor node: Node) -> Bool {
+        let range = AddressRange(from: address, elementsCount: node.elementsCount)
+        let otherNodes = nodes.filter { $0 != node }
+        return range.isUnicastRange &&
+               !otherNodes.contains { $0.contains(elementsWithAddressesOverlapping: range) } &&
+               !(networkExclusions?.contains(range, forIvIndex: ivIndex) ?? false)
     }
     
     /// Returns whether the given address can be assigned to a new Node
     /// with given number of Elements.
     ///
-    /// - parameter address: The first address to check.
-    /// - parameter count:   Number of addresses to check.
-    /// - parameter node:    The Node, which address is to change. It will be excluded
-    ///                      from checking address collisions.
+    /// - parameters:
+    ///   - address: The first address to check.
+    ///   - count:   Number of addresses to check.
+    ///   - node:    The Node, which address is to change. It will be excluded
+    ///              from checking address collisions.
     /// - returns: `True`, if the address range is available, `false` otherwise.
+    @available(*, deprecated, message: "Use isAddress(_:availableFor:) or isAddress(_:availableForElementsCount:) instead")
     func isAddressRangeAvailable(_ address: Address, elementsCount count: UInt8, for node: Node? = nil) -> Bool {
+        let range = AddressRange(from: address, elementsCount: count)
         let otherNodes = nodes.filter { $0 != node }
-        return isAddressRangeValid(address, elementsCount: count) &&
-            !otherNodes.contains { $0.overlapsWithAddress(address, elementsCount: count) } &&
-            !(networkExclusions?.contains(address, elementCount: count, forIvIndex: ivIndex) ?? false)
+        return range.isUnicastRange &&
+               !otherNodes.contains { $0.contains(elementsWithAddressesOverlapping: range) } &&
+               !(networkExclusions?.contains(range, forIvIndex: ivIndex) ?? false)
     }
     
     /// Returns the next available Unicast Address from the Provisioner's range
