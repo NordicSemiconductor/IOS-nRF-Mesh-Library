@@ -30,6 +30,7 @@
 
 import Foundation
 
+/// The main object responsible for managing the mesh network.
 public class MeshNetworkManager {
     /// Mesh Network data.
     private var meshData: MeshData
@@ -79,7 +80,7 @@ public class MeshNetworkManager {
     /// The time within which a Segment Acknowledgment message is
     /// expected to be received after a segment of a segmented message has
     /// been sent. When the timer is fired, the non-acknowledged segments
-    /// are repeated, at most `retransmissionLimit` times.
+    /// are repeated, at most ``retransmissionLimit`` times.
     ///
     /// The transmission timer shall be set to a minimum of
     /// 200 + 50 * TTL milliseconds. The TTL dependent part is added
@@ -92,7 +93,7 @@ public class MeshNetworkManager {
     /// Number of times a non-acknowledged segment of a segmented message
     /// will be retransmitted before the message will be cancelled.
     ///
-    /// The limit may be decreased with increasing of `transmissionTimerInterval`
+    /// The limit may be decreased with increasing of ``transmissionTimerInterval``
     /// as the target Node has more time to reply with the Segment
     /// Acknowledgment message.
     public var retransmissionLimit: Int = 5
@@ -100,7 +101,7 @@ public class MeshNetworkManager {
     /// as the acknowledged message timeout, then the Element may consider the
     /// message has not been delivered, without sending any additional messages.
     ///
-    /// The `meshNetworkManager(_:failedToSendMessage:from:to:error)`
+    /// The ``MeshNetworkDelegate/meshNetworkManager(_:failedToSendMessage:from:to:error:)-ogo4``
     /// callback will be called on timeout.
     ///
     /// The acknowledged message timeout should be set to a minimum of 30 seconds.
@@ -133,12 +134,12 @@ public class MeshNetworkManager {
     
     // MARK: - Computed properties
     
-    /// Returns the MeshNetwork object.
+    /// The `MeshNetwork` object, or `nil`, if the network has not been loaded yet.
     public var meshNetwork: MeshNetwork? {
         return meshData.meshNetwork
     }
     
-    /// Returns `true` if Mesh Network has been created, `false` otherwise.
+    /// Whether the Mesh Network has been created, or not.
     public var isNetworkCreated: Bool {
         return meshData.meshNetwork != nil
     }
@@ -149,27 +150,27 @@ public class MeshNetworkManager {
     ///
     /// If storage is not provided, a local file will be used instead.
     ///
-    /// - important: After the manager has been initialized, the `localElements`
+    /// - important: After the manager has been initialized, the ``localElements``
     ///              property must be set . Otherwise, none of status messages will
     ///              be parsed correctly and they will be returned to the delegate
-    ///              as `UnknownMessage`s.
+    ///              as ``UnknownMessage``s.
     ///
     /// - parameters:
     ///   - storage: The storage to use to save the network configuration.
-    ///   - queue: The DispatchQueue to process requests on. By default
-    ///            the a global background concurrent queue will be used.
-    ///            Note, that if multiple messages are sent shortly one after another,
-    ///            processing them in a concurrent queue may cause some of them to be
-    ///            discarded despite the fact that they were received in the ascending
-    ///            order of SeqAuth, as one with a greater SeqAuth value may be processed
-    ///            before the previous one, causing the replay protection validation fail
-    ///            for the latter. This library stores 2 last SeqAuth values, so if a
-    ///            message with a unique SeqAuth is processed after its successor, it
-    ///            will be processed correctly.
-    ///   - delegateQueue: The DispatchQueue to call delegate methods on.
+    ///   - queue:   The `DispatchQueue` to process requests on. By default, the a global
+    ///              background concurrent queue will be used.
+    ///              Note, that if multiple messages are sent shortly one after another,
+    ///              processing them in a concurrent queue may cause some of them to be
+    ///              discarded despite the fact that they were received in the ascending
+    ///              order of SeqAuth, as one with a greater SeqAuth value may be processed
+    ///              before the previous one, causing the replay protection validation fail
+    ///              for the latter. This library stores 2 last SeqAuth values, so if a
+    ///              message with a unique SeqAuth is processed after its successor, it
+    ///              will be processed correctly.
+    ///   - delegateQueue: The `DispatchQueue` to call delegate methods on.
     ///                    By default the global main queue will be used.
-    /// - seeAlso: `LocalStorage`
-    /// - seeAlso: `LowerTransportLayer.checkAgainstReplayAttack(_:NetworkPdu)`
+    /// - seeAlso: ``LocalStorage``
+    /// - seeAlso: ``LowerTransportLayer.checkAgainstReplayAttack(_:NetworkPdu)``
     public init(using storage: Storage = LocalStorage(),
                 queue: DispatchQueue = DispatchQueue.global(qos: .background),
                 delegateQueue: DispatchQueue = DispatchQueue.main) {
@@ -182,13 +183,36 @@ public class MeshNetworkManager {
         self.proxyFilter.use(with: self)
     }
     
-    /// Initializes the Mesh Network Manager. It will use the `LocalStorage`
-    /// with the given file name.
+    /// Initializes the Mesh Network Manager. It will use the ``LocalStorage`` with the given
+    /// file name.
     ///
-    /// - parameter fileName: File name to keep the configuration.
-    /// - seeAlso: `LocalStorage`
-    public convenience init(using fileName: String) {
-        self.init(using: LocalStorage(fileName: fileName))
+    /// - important: After the manager has been initialized, the ``localElements``
+    ///              property must be set . Otherwise, none of status messages will
+    ///              be parsed correctly and they will be returned to the delegate
+    ///              as ``UnknownMessage``s.
+    ///
+    /// - parameters:
+    ///   - fileName: File name to keep the configuration.
+    ///   - queue:    The `DispatchQueue` to process requests on. By default, the a global
+    ///               background concurrent queue will be used.
+    ///               Note, that if multiple messages are sent shortly one after another,
+    ///               processing them in a concurrent queue may cause some of them to be
+    ///               discarded despite the fact that they were received in the ascending
+    ///               order of SeqAuth, as one with a greater SeqAuth value may be processed
+    ///               before the previous one, causing the replay protection validation fail
+    ///               for the latter. This library stores 2 last SeqAuth values, so if a
+    ///               message with a unique SeqAuth is processed after its successor, it
+    ///               will be processed correctly.
+    ///   - delegateQueue: The `DispatchQueue` to call delegate methods on.
+    ///                    By default the global main queue will be used.
+    ///
+    /// - seeAlso: ``LocalStorage``
+    public convenience init(using fileName: String,
+                            queue: DispatchQueue = DispatchQueue.global(qos: .background),
+                            delegateQueue: DispatchQueue = DispatchQueue.main) {
+        self.init(using: LocalStorage(fileName: fileName),
+                  queue: queue,
+                  delegateQueue: delegateQueue)
     }
     
 }
@@ -198,11 +222,10 @@ public class MeshNetworkManager {
 public extension MeshNetworkManager {
     
     /// Generates a new Mesh Network configuration with default values.
-    /// This method will override the existing configuration, if such exists.
-    /// The mesh network will contain one Provisioner with given name.
     ///
-    /// Network Keys and Application Keys must be added manually
-    /// using `add(networkKey:name)` and `add(applicationKey:name)`.
+    /// This method will override the existing configuration, if such exists.
+    /// The mesh network will contain one ``Provisioner`` with the given name
+    /// and randomly generated Primary Network Key.
     ///
     /// - parameters:
     ///   - name:            The user given network name.
@@ -212,11 +235,10 @@ public extension MeshNetworkManager {
     }
     
     /// Generates a new Mesh Network configuration with default values.
-    /// This method will override the existing configuration, if such exists.
-    /// The mesh network will contain one Provisioner with given name.
     ///
-    /// Network Keys and Application Keys must be added manually
-    /// using `add(networkKey:name)` and `add(applicationKey:name)`.
+    /// This method will override the existing configuration, if such exists.
+    /// The mesh network will contain the given ``Provisioner``
+    /// and randomly generated Primary Network Key.
     ///
     /// - parameters:
     ///   - name:      The user given network name.
@@ -241,12 +263,16 @@ public extension MeshNetworkManager {
     /// Elements created. If a collision is found, the colliding Elements will
     /// be ignored.
     ///
-    /// The Element with all mandatory Models (Configuration Server and Client
-    /// and Health Server and Client) will be added automatically at index 0,
-    /// and should be skipped when setting.
+    /// The mandatory Models (Configuration Server and Client and Health Server
+    /// and Client) will be added automatically to the Primary Element,
+    /// and should not be added explicitly.
     ///
     /// The mesh network must be created or loaded before setting this field,
     /// otherwise it has no effect.
+    ///
+    /// - important: This property has to be set even if no custom Models are
+    ///              defined as the set operation initializes the mandatory Models.
+    ///              It can be set to an empty array.
     var localElements: [Element] {
         get {
             return meshNetwork?.localElements ?? []
@@ -262,10 +288,10 @@ public extension MeshNetworkManager {
 
 public extension MeshNetworkManager {
     
-    /// This method returns the Provisioning Manager that can be used
+    /// This method returns the ``ProvisioningManager`` that can be used
     /// to provision the given device.
     ///
-    /// - parameter unprovisionedDevice: The device to be added to mes network.
+    /// - parameter unprovisionedDevice: The device to be added to mesh network.
     /// - parameter bearer: The Provisioning Bearer to be used for sending
     ///                     provisioning PDUs.
     /// - returns: The Provisioning manager that should be used to continue
@@ -286,14 +312,15 @@ public extension MeshNetworkManager {
 
 public extension MeshNetworkManager {
     
-    /// This method should be called whenever a PDU has been received
-    /// from the mesh network using any bearer.
-    /// When a complete Mesh Message is received and reassembled, the
-    /// delegate's `meshNetwork(:didDeliverMessage:from)` will be called.
+    /// This method should be called whenever a PDU has been received from the mesh
+    /// network using any bearer.
     ///
-    /// For easier integration with Bearers use
-    /// `bearer(didDeliverData:ofType)` instead, and set the manager
-    /// as Bearer's `dataDelegate`.
+    /// When a complete Mesh Message is received and reassembled, the delegate's
+    /// ``MeshNetworkDelegate/meshNetworkManager(_:didReceiveMessage:sentFrom:to:)``
+    /// will be called.
+    ///
+    /// For easier integration with ``GattBearer``, instead of calling this method,
+    /// set the manager as Bearer's ``Bearer/dataDelegate``.
     ///
     /// - parameters:
     ///   - data: The PDU received.
@@ -313,6 +340,9 @@ public extension MeshNetworkManager {
     /// If the retransmission is set to a value greater than 0, and the message
     /// is unacknowledged, this method will retransmit it number of times
     /// with the count and interval specified in the retransmission object.
+    ///
+    /// If the publication is not configured for the given Model, this method
+    /// does nothing.
     ///
     /// - parameters:
     ///   - message: The message to be sent.
@@ -336,13 +366,13 @@ public extension MeshNetworkManager {
     /// bound to it, and sends to the given destination address.
     ///
     /// This method does not send nor return PDUs to be sent. Instead,
-    /// for each created segment it calls transmitter's `send(:ofType)`,
-    /// which should send the PDU over the air. This is in order to support
+    /// for each created segment it calls transmitter's ``Transmitter/send(_:ofType:)``
+    /// method, which should send the PDU over the air. This is in order to support
     /// retransmitting in case a packet was lost and needs to be sent again
     /// after block acknowledgment was received.
     ///
-    /// A `delegate` method will be called when the message has been sent,
-    /// delivered, or failed to be sent.
+    /// An appropriate callback of the ``MeshNetworkDelegate`` will be called when
+    /// the message has been sent successfully or a problem occured.
     ///
     /// - parameters:
     ///   - message:        The message to be sent.
@@ -391,8 +421,8 @@ public extension MeshNetworkManager {
     /// Encrypts the message with the Application Key and a Network Key
     /// bound to it, and sends to the given Group.
     ///
-    /// A `delegate` method will be called when the message has been sent,
-    /// or failed to be sent.
+    /// An appropriate callback of the ``MeshNetworkDelegate`` will be called when
+    /// the message has been sent successfully or a problem occured.
     ///
     /// - parameters:
     ///   - message:        The message to be sent.
@@ -421,8 +451,8 @@ public extension MeshNetworkManager {
     /// Model and a Network Key bound to it, and sends it to the Node
     /// to which the Model belongs to.
     ///
-    /// A `delegate` method will be called when the message has been sent,
-    /// delivered, or fail to be sent.
+    /// An appropriate callback of the ``MeshNetworkDelegate`` will be called when
+    /// the message has been sent successfully or a problem occured.
     ///
     /// - parameters:
     ///   - message:       The message to be sent.
@@ -462,8 +492,8 @@ public extension MeshNetworkManager {
     /// Models and a Network Key bound to it, and sends it to the Node
     /// to which the target Model belongs to.
     ///
-    /// A `delegate` method will be called when the message has been sent,
-    /// delivered, or fail to be sent.
+    /// An appropriate callback of the ``MeshNetworkDelegate`` will be called when
+    /// the message has been sent successfully or a problem occured.
     ///
     /// - parameters:
     ///   - message:      The message to be sent.
@@ -509,8 +539,8 @@ public extension MeshNetworkManager {
     /// The `destination` must be a Unicast Address, otherwise the method
     /// throws an error.
     ///
-    /// A `delegate` method will be called when the message has been sent,
-    /// delivered, or fail to be sent.
+    /// An appropriate callback of the ``MeshNetworkDelegate`` will be called when
+    /// the message has been sent successfully or a problem occured.
     ///
     /// - parameters:
     ///   - message:     The message to be sent.
@@ -521,7 +551,7 @@ public extension MeshNetworkManager {
     ///           the local Node does not have configuration capabilities
     ///           (no Unicast Address assigned), or the destination address
     ///           is not a Unicast Address or it belongs to an unknown Node.
-    ///           Error `AccessError.cannotDelete` is sent when trying to
+    ///           Error ``AccessError/cannotDelete`` is sent when trying to
     ///           delete the last Network Key on the device.
     /// - returns: Message handle that can be used to cancel sending.
     @discardableResult
@@ -571,8 +601,8 @@ public extension MeshNetworkManager {
     
     /// Sends Configuration Message to the given Node.
     ///
-    /// A `delegate` method will be called when the message has been sent,
-    /// delivered, or fail to be sent.
+    /// An appropriate callback of the ``MeshNetworkDelegate`` will be called when
+    /// the message has been sent successfully or a problem occured.
     ///
     /// - parameters:
     ///   - message: The message to be sent.
@@ -583,7 +613,7 @@ public extension MeshNetworkManager {
     ///           the local Node does not have configuration capabilities
     ///           (no Unicast Address assigned), or the destination address
     ///           is not a Unicast Address or it belongs to an unknown Node.
-    ///           Error `AccessError.cannotDelete` is sent when trying to
+    ///           Error ``AccessError/cannotDelete`` is sent when trying to
     ///           delete the last Network Key on the device.
     /// - returns: Message handle that can be used to cancel sending.
     @discardableResult
@@ -594,8 +624,8 @@ public extension MeshNetworkManager {
     
     /// Sends Configuration Message to the local Node.
     ///
-    /// A `delegate` method will be called when the message has been sent,
-    /// delivered, or fail to be sent.
+    /// An appropriate callback of the ``MeshNetworkDelegate`` will be called when
+    /// the message has been sent successfully or a problem occured.
     ///
     /// - parameters:
     ///   - message: The message to be sent.
@@ -606,7 +636,7 @@ public extension MeshNetworkManager {
     ///           the local Node does not have configuration capabilities
     ///           (no Unicast Address assigned), or the destination address
     ///           is not a Unicast Address or it belongs to an unknown Node.
-    ///           Error `AccessError.cannotDelete` is sent when trying to
+    ///           Error ``AccessError/cannotDelete`` is sent when trying to
     ///           delete the last Network Key on the device.
     /// - returns: Message handle that can be used to cancel sending.
     @discardableResult
@@ -626,7 +656,7 @@ public extension MeshNetworkManager {
     /// Sends the Proxy Configuration Message to the connected Proxy Node.
     ///
     /// This method will only work if the bearer uses is GATT Proxy.
-    /// The message will be encrypted and sent to the `transported`, which
+    /// The message will be encrypted and sent to the ``Transmitter``, which
     /// should deliver the PDU to the connected Node.
     ///
     /// - parameters:
@@ -729,14 +759,15 @@ public extension MeshNetworkManager {
 
 public extension MeshNetworkManager {
     
-    /// Loads the Mesh Network configuration from the storage.
-    /// If storage is not given, a local file will be used.
+    /// Loads the Mesh Network configuration from the ``Storage`` set in the initiator
+    /// of the manager.
     ///
-    /// If the storage is empty, this method tries to migrate the
-    /// database from the nRF Mesh 1.0.x to the new format. This
-    /// is useful when the library or the Sample App has been updated.
-    /// For fresh installs, when the storage is empty and the
-    /// legacy version was not found this method returns `false`.
+    /// If the storage was not specified, the default local file will be used.
+    ///
+    /// If the storage is empty, this method tries to migrate the database from the
+    /// nRF Mesh 1.0.x to the new format. This is useful when the library or the app
+    /// has been updated. For fresh installs, when the storage is empty and the legacy
+    /// version was not found this method returns `false`.
     ///
     /// - returns: `True` if the network settings were loaded,
     ///            `false` otherwise.
@@ -804,8 +835,10 @@ public extension MeshNetworkManager {
         return false
     }
     
-    /// Saves the Mesh Network configuration in the storage.
-    /// If storage is not given, a local file will be used.
+    /// Saves the Mesh Network configuration in the ``Storage`` given in the initiator
+    /// of the manager.
+    ///
+    /// If storage was not specified, the local file will be used.
     ///
     /// - returns: `True` if the network settings was saved, `false` otherwise.
     func save() -> Bool {
@@ -824,7 +857,7 @@ public extension MeshNetworkManager {
     
     /// Returns the exported Mesh Network configuration as JSON Data.
     /// The returned Data can be transferred to another application and
-    /// imported. The JSON is compatible with Bluetooth Mesh scheme.
+    /// imported. The JSON is compatible with Bluetooth Mesh Configuration Database 1.0.1 scheme.
     ///
     /// - returns: The mesh network configuration as JSON Data.
     func export() -> Data {
@@ -868,7 +901,7 @@ public extension MeshNetworkManager {
     }
     
     /// Imports the Mesh Network configuration from the given Data.
-    /// The data must contain valid JSON with Bluetooth Mesh scheme.
+    /// The data must contain valid JSON with Bluetooth Mesh Configuration Database 1.0.1 scheme.
     ///
     /// - parameter data: JSON as Data.
     /// - returns: The imported mesh network.

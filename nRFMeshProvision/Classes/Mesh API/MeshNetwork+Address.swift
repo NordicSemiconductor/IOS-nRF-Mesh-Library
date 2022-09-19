@@ -47,7 +47,7 @@ public extension MeshNetwork {
     /// Returns whether the given address range can be assigned to a new Node.
     ///
     /// This method does not check if the range is allocated to the current Provisioner.
-    /// For that, use ``Provisioner/isAddressRangeAllocated(_:)``.
+    /// For that, use ``Provisioner/isAddressInAllocatedRange(_:elementCount:)``.
     ///
     /// - parameters:
     ///   - range: The address range to check.

@@ -30,6 +30,8 @@
 
 import Foundation
 
+/// The device sends this PDU to indicate its supported provisioning
+/// capabilities to a Provisioner.
 public struct ProvisioningCapabilities {
     /// Number of elements supported by the device.
     public let numberOfElements: UInt8

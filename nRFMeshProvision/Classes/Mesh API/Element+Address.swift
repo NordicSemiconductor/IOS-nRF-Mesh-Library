@@ -33,8 +33,9 @@ import Foundation
 public extension Element {
     
     /// Returns the Unicast Address of the Element.
+    ///
     /// For Elements not added to Node this returns the Element index
-    /// value as `Address`.
+    /// value as ``Address``.
     var unicastAddress: Address {
         return (parentNode?.primaryUnicastAddress ?? 0) + Address(index)
     }

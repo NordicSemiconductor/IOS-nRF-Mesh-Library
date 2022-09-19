@@ -60,7 +60,7 @@ public extension RangeObject {
     }
     
     /// Returns a Boolean value indicating whether this range and the given
-    /// range contain an element in common.
+    /// range contain a common element.
     ///
     /// - parameter other: A range to check for elements in common.
     /// - returns: `True` if this range and other have at least one element in
@@ -116,11 +116,11 @@ public extension Array where Element: RangeObject {
         
         var result: [Element] = []
         
-        var accumulator = RangeType.init(0...0)
+        var accumulator: Element!
         
         for range in sorted(by: { $0.range.lowerBound < $1.range.lowerBound }) {
             // Analyzing first range? Set it as the accumulator.
-            if accumulator == 0...0 {
+            if accumulator == nil {
                 accumulator = range
             }
             
@@ -144,7 +144,7 @@ public extension Array where Element: RangeObject {
         }
         
         // Add the last accumulator if it was set above.
-        if accumulator != 0...0 {
+        if accumulator != nil {
             result.append(accumulator)
         }
         
@@ -173,7 +173,7 @@ public extension Array where Element: RangeObject {
     }
     
     /// Returns a Boolean value indicating whether any of the ranges in the array
-    /// and the given range contain an element in common.
+    /// and the given range contain a common element.
     ///
     /// - parameter other: A range to check for elements in common.
     /// - returns: `True` if this range and other have at least one element in
@@ -183,7 +183,7 @@ public extension Array where Element: RangeObject {
     }
     
     /// Returns a Boolean value indicating whether any of the ranges in the array
-    /// and the given array contain an element in common.
+    /// and the given array contain a common element.
     ///
     /// The method does not look for common elements among ranges in the array,
     /// or in the given array, only the cross sections.
@@ -280,15 +280,19 @@ public extension Array where Element == SceneRange {
 // MARK: - Defaults
 
 public extension AddressRange {
-    
+
+    /// A range containing all valid Unicast Addresses.
     static let allUnicastAddresses = AddressRange(Address.minUnicastAddress...Address.maxUnicastAddress)
-    
+    /// A range containing all Group Addresses.
+    ///
+    /// This range does not exclude Fixed Group Addresses or Virtual Addresses.
     static let allGroupAddresses = AddressRange(Address.minGroupAddress...Address.maxGroupAddress)
     
 }
 
 public extension SceneRange {
     
+    /// A range containing all valid Scene Numbers.
     static let allScenes: SceneRange = SceneRange(SceneNumber.minScene...SceneNumber.maxScene)
     
 }

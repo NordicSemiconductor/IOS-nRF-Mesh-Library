@@ -33,7 +33,8 @@ import Foundation
 public extension Provisioner {
     
     /// Returns `true` if all defined ranges are valid.
-    /// Unicast Address range may not be empty, as it needs to assign addresses
+    ///
+    /// The Unicast Address range may not be empty, as it needs to assign addresses
     /// during provisioning.
     var isValid: Bool {
         return allocatedUnicastRange.isUnicastRange
@@ -248,7 +249,7 @@ public extension Provisioner {
     /// but is able to cut the given range from the allocated ranges.
     ///
     /// To remove all ranges, call this method with
-    /// parameter set to `AddressRange.allUnicastAddresses`.
+    /// parameter set to ``AddressRange/allUnicastAddresses``.
     ///
     /// - parameter range: The range to be deallocated.
     func deallocate(unicastAddressRange range: AddressRange) {

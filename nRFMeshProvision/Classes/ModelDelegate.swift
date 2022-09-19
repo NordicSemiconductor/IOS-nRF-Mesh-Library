@@ -50,7 +50,7 @@ public protocol ModelDelegate: AnyObject {
     
     /// A flag whether this Model supports subscription mechanism.
     /// When set to `false`, the library will return error
-    /// `ConfigMessageStatus.notASubscribeModel` whenever subscription
+    /// ``ConfigMessageStatus/notASubscribeModel`` whenever subscription
     /// change was initiated.
     var isSubscriptionSupported: Bool { get }
     
@@ -60,7 +60,7 @@ public protocol ModelDelegate: AnyObject {
     /// state using the publish information specified in the Model.
     ///
     /// When set to `nil`, the library will return error
-    /// `ConfigMessageStatus.invalidPublishParameters` for each Config
+    /// ``ConfigMessageStatus/invalidPublishParameters`` for each Config
     /// Model Publication Set and Config Model Publication Virtual Address Set.
     var publicationMessageComposer: MessageComposer? { get }
     

@@ -30,6 +30,7 @@
 
 import Foundation
 
+/// Representation of a single Node belonging to the mesh network.
 public class Node: Codable {
     internal weak var meshNetwork: MeshNetwork?
 

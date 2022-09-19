@@ -33,13 +33,14 @@ import Foundation
 public extension MeshNetwork {
     
     /// Returns Provisioner's Node object, if such exist and the Provisioner
-    /// is in the mesh network.
+    /// is in the mesh network; `nil` otherwise.
     ///
+    /// The provisioner must be added to the network before calling this method,
+    /// otherwise `nil` is returned.
+    ///
+    /// - important: Provisioners without a Node assigned cannot send mesh messages
+    ///              (i.e. cannot configure nodes), but still can provision new devices.
     /// - parameter provisioner: The provisioner which node is to be returned.
-    ///                          The provisioner must be added to the network
-    ///                          before calling this method, otherwise `nil` will
-    ///                          be returned. Provisioners without a node assigned
-    ///                          do not support configuration operations.
     /// - returns: The Provisioner's node object, or `nil`.
     func node(for provisioner: Provisioner) -> Node? {
         guard hasProvisioner(provisioner) else {
@@ -66,7 +67,7 @@ public extension MeshNetwork {
         }
     }
     
-    /// Returns the Node with given Unicast Address. The address may
+    /// Returns the Node with the given Unicast Address. The address may
     /// be belong to any of the Node's Elements.
     ///
     /// - parameter address: A Unicast Address to look for.
@@ -80,13 +81,14 @@ public extension MeshNetwork {
         }
     }
     
-    /// Returns a Node that matches given Hash and Random, or `nil`.
-    /// This is used to match the Node Identity beacon.
+    /// Returns a Node that matches the given Hash and Random, or `nil`.
+    ///
+    /// This method may be used to match the Node Identity beacon.
     ///
     /// - parameters:
     ///   - hash:   The Hash value.
     ///   - random: The Random value.
-    /// - returns: A Node that matches given hash and random; or `nil` otherwise.
+    /// - returns: A Node that matches the given Hash and Random; or `nil` otherwise.
     func node(matchingHash hash: Data, random: Data) -> Node? {
         for node in nodes {
             // Data are: 48 bits of Padding (0s), 64 bit Random and Unicast Address.
@@ -125,7 +127,7 @@ public extension MeshNetwork {
     }
     
     /// Returns whether any of the Nodes in the mesh network matches
-    /// given Hash and Random. This is used to match the Node Identity beacon.
+    /// the given Hash and Random. This is used to match the Node Identity beacon.
     ///
     /// - parameters:
     ///   - hash:   The Hash value.
@@ -136,11 +138,12 @@ public extension MeshNetwork {
         return node(matchingHash: hash, random: random) != nil
     }
     
-    /// Adds the Node to the mesh network.
+    /// Adds the Node to the local database.
     ///
-    /// This method should only be used to add debug Nodes, or Nodes
-    /// that have already been provisioned. Use `provision(unprovisionedDevice:over)`
-    /// to provision and add a Node.
+    /// - important: This method should only be used to add debug Nodes, or Nodes
+    ///              that have already been provisioned.
+    ///              Use ``MeshNetworkManager/provision(unprovisionedDevice:over:)``
+    ///              to provision a Node to the mesh network.
     ///
     /// - parameter node: A Node to be added.
     /// - throws: This method throws if the Node's address is not available,
@@ -170,7 +173,22 @@ public extension MeshNetwork {
         timestamp = Date()
     }
     
-    /// Removes the Node from the mesh network.
+    /// Removes the Node from the local database.
+    ///
+    /// This method only removes the Node from the local database, but the Node
+    /// may still be able to interact with the network. To reset the Node
+    /// send a ``ConfigNodeReset`` message to the remote Node.
+    /// It will be removed from the local database automatically when
+    /// ``ConfigNodeResetStatus`` message is received.
+    ///
+    /// - important: Sending Config Node Reset message does not guarantee that the
+    ///              Node won't be able to communicate with the network. To make sure
+    ///              that the Node will not be able to send and receive messages from
+    ///              the network all the Network Keys (and optionaly Application Keys)
+    ///              known by the Node must to be updated using Key Refresh Procedure,
+    ///              or removed from other Nodes.
+    ///              See Bluetooth Mesh Profile 1.0.1, chapter: 3.10.7 Node Removal
+    ///              procedure.
     ///
     /// - parameter node: The Node to be removed.
     func remove(node: Node) {

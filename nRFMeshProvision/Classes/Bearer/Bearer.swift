@@ -41,16 +41,23 @@ import Foundation
 /// Provisioning Bearer (PB type of bearer).
 public enum PduType: UInt8 {
     /// The message is a Network PDU.
+    ///
     /// See: Section 3.4.4 of Bluetooth Mesh Specification 1.0.1.
     case networkPdu         = 0
+    /// The message is a mesh beacon.
+    ///
     /// See: Section 3.9 of Bluetooth Mesh Specification 1.0.1.
     case meshBeacon         = 1
     /// The message is a proxy configuration message.
+    ///
     /// This message type may be used only for GATT Bearer.
+    ///
     /// See: Section 6.5 of Bluetooth Mesh Specification 1.0.1.
     case proxyConfiguration = 2
     /// The message is a Provisioning PDU.
+    ///
     /// This message type may be used only in Provisioning Bearers (PB).
+    ///
     /// See: Section 5.4.1 of Bluetooth Mesh Specification 1.0.1.
     case provisioningPdu    = 3
     
@@ -59,12 +66,17 @@ public enum PduType: UInt8 {
     }
 }
 
+/// A set of supported PDU types by the bearer object.
 public struct PduTypes: OptionSet {    
     public let rawValue: UInt8
         
+    /// Set, if the bearer supports Network PDUs.
     public static let networkPdu         = PduTypes(rawValue: 1 << 0)
+    /// Set, if the bearer supports Mesh Beacons.
     public static let meshBeacon         = PduTypes(rawValue: 1 << 1)
+    /// Set, if the bearer supports proxy filter configuration.
     public static let proxyConfiguration = PduTypes(rawValue: 1 << 2)
+    /// Set, if the bearer supports Provisioning PDUs.
     public static let provisioningPdu    = PduTypes(rawValue: 1 << 3)
     
     public init(rawValue: UInt8) {
@@ -73,6 +85,7 @@ public struct PduTypes: OptionSet {
     
 }
 
+/// A transmitter is responsible for delivering messages to the mesh network.
 public protocol Transmitter: AnyObject {
     
     /// This method sends the given data over the bearer.
@@ -120,10 +133,13 @@ public extension Bearer {
     
 }
 
+/// A mesh bearer is used to send mesh messages to provisioned nodes.
 public protocol MeshBearer: Bearer {
     // Empty.
 }
 
+/// A provisioning bearer is used to send provisioning PDUs to unprovisioned
+/// devices.
 public protocol ProvisioningBearer: Bearer {
     // Empty.
 }

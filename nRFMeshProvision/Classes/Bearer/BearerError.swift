@@ -30,6 +30,7 @@
 
 import Foundation
 
+/// Set of errors that may be thrown from the bearer.
 public enum BearerError: Error {
     /// Thrown when the Central Manager is not in ON state.
     case centralManagerNotPoweredOn
@@ -44,9 +45,9 @@ extension BearerError: LocalizedError {
     
     public var errorDescription: String? {
         switch self {
-        case .centralManagerNotPoweredOn: return NSLocalizedString("Central Manager not powered on.", comment: "")
-        case .pduTypeNotSupported:        return NSLocalizedString("PDU type not supported.", comment: "")
-        case .bearerClosed:               return NSLocalizedString("The bearer is closed.", comment: "")
+        case .centralManagerNotPoweredOn: return NSLocalizedString("Central Manager not powered on.", comment: "bearer")
+        case .pduTypeNotSupported:        return NSLocalizedString("PDU type not supported.", comment: "bearer")
+        case .bearerClosed:               return NSLocalizedString("The bearer is closed.", comment: "bearer")
         }
     }
     

@@ -33,7 +33,9 @@ import Foundation
 /// This object contains list of excluded Unicast Addresses for particular IV Index.
 ///
 /// The excluded addresses cannot be assigned to new Nodes until the current IV Index
-/// is greater by 2 or more to the given one.
+/// is greater by 2 or more to the given one. At that point, the Seq Auth value
+/// (IV Index + Sequence number) is always greater than the value used by the deleted
+/// Node.
 ///
 /// - seeAlso: IvIndex
 internal class ExclusionList: Codable {

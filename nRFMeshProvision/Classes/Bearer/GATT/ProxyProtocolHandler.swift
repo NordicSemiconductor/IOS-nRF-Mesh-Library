@@ -63,10 +63,13 @@ private extension PduType {
     
 }
 
+/// This helper class allows segmentation and reassembly (SAR) using
+/// the Proxy Protocol defined in Bluetooth Mesh Profile 1.0.1.
 public class ProxyProtocolHandler {
     private var buffer: Data?
     private var bufferType: PduType?
     
+    /// Default constructor.
     public init() {
         // Empty public init.
     }

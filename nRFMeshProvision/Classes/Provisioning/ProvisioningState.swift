@@ -30,6 +30,7 @@
 
 import Foundation
 
+/// The enum defines possible state of provisioning process.
 public enum ProvisioningState {
     /// Provisioning Manager is ready to start.
     case ready
@@ -45,6 +46,7 @@ public enum ProvisioningState {
     case fail(_ error: Error)
 }
 
+/// Set of errors which may be thrown during provisioning a device.
 public enum ProvisioningError: Error {
     /// Thrown when the ProvisioningManager is in invalid state.
     case invalidState
@@ -73,6 +75,8 @@ public enum ProvisioningError: Error {
     case keyGenerationFailed(_ error: OSStatus)
 }
 
+/// Set of errors which may be reported by an unprovisioned device
+/// during provisioning process.
 public enum RemoteProvisioningError: UInt8 {
     /// The provisioning protocol PDU is not recognized by the device.
     case invalidPdu = 1
@@ -94,6 +98,8 @@ public enum RemoteProvisioningError: UInt8 {
     case cannotAssignAddresses = 8
 }
 
+/// A set of authentication actions aiming to strengthen device provisioniong
+/// security.
 public enum AuthAction {
     /// The user shall provide 16 byte OOB Static Key.
     case provideStaticKey(callback: (Data) -> Void)

@@ -30,8 +30,7 @@
 
 import Foundation
 
-/// The export configuration allows to narrow down the exported configuration
-/// to required minimum.
+/// Allows to narrow down the exported configuration to a required minimum.
 ///
 /// For example, when sharing mesh network configuration with a guest, a separate
 /// Network Key and Application Key should be created to be used by the guest.

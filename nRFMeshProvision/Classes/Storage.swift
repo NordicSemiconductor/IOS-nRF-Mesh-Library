@@ -31,8 +31,9 @@
 import Foundation
 
 /// A protocol used to save and restore the Mesh Network configuration.
-/// The configuration saved in the storage should not be shared to another
-/// device, as it contains some local configuration. Instead, use `export()`
+///
+/// The configuration saved in the storage should not be shared to another device,
+/// as it contains some local configuration. Instead, use ``MeshNetworkManager/export()``
 /// method to get the JSON compliant with Bluetooth Mesh scheme.
 public protocol Storage {
     /// Loads data from the storage.
@@ -47,8 +48,8 @@ public protocol Storage {
 }
 
 /// A Storage implementation which will save the data in a local file
-/// with given name. The file is stored in app's document directory in
-/// user domain.
+/// with the given name. The file is stored in app's document directory in
+/// the user domain.
 open class LocalStorage: Storage {
     private let path: String
     

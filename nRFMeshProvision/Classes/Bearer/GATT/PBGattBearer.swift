@@ -31,6 +31,8 @@
 import Foundation
 import CoreBluetooth
 
+/// The PB GATT bearer is responsible for sending and receiving mesh
+/// provisioning messages to and from the GATT Proxy Node.
 open class PBGattBearer: BaseGattProxyBearer<MeshProvisioningService>, ProvisioningBearer {
     
     public override var supportedPduTypes: PduTypes {

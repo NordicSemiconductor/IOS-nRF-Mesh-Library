@@ -54,7 +54,7 @@ public extension MeshNetwork {
     /// The Scene must not be in use, i.e. no Node must have it in its Scene Register.
     ///
     /// - parameter scene: The Scene to be removed.
-    /// - throws: This method throws `MeshNetworkError.sceneInUse` when the
+    /// - throws: This method throws ``MeshNetworkError/sceneInUse`` when the
     ///           Scene is in use in this mesh network.
     func remove(scene: SceneNumber) throws {
         if let index = scenes.firstIndex(where: { $0.number == scene }) {
@@ -66,10 +66,14 @@ public extension MeshNetwork {
         }
     }
     
-    /// Returns known Nodes whose Scene Register state contains the given Scene.
+    /// Returns known Nodes containing at least one Element with Scene Register
+    /// storing the given Scene.
+    ///
+    /// Starting from version 3.3.0, this method returns also Nodes with more than one
+    /// Scene Register, of which at least one has the given Scene stored.
     ///
     /// - parameter scene: The scene to look for.
-    /// - returns: List of Nodes whose Scene Register state contains this Scene.
+    /// - returns: List of Nodes with at least one Scene Register storing the given Scene.
     func nodes(registeredTo scene: SceneNumber) -> [Node] {
         return scenes[scene]?.nodes ?? []
     }

@@ -30,6 +30,7 @@
 
 import Foundation
 
+/// A set of errors originating from the access layer.
 public enum AccessError: Error {
     /// Error thrown when the local Provisioner does not have
     /// a Unicast Address specified and is not able to send

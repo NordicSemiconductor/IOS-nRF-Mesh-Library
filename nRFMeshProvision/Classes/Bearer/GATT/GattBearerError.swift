@@ -30,6 +30,7 @@
 
 import Foundation
 
+/// Set of errors that may be thrown from the GATT bearer.
 public enum GattBearerError: Error {
     /// The connected device does not have services required
     /// by the Bearer.

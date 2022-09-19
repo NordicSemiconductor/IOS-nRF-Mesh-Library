@@ -30,6 +30,23 @@
 
 import Foundation
 
+/// Representation of a Provisioner in the mesh network.
+///
+/// A Provisioner is an entity that is able to provision other device to
+/// the mesh network by assigning them Unicast Addresses and providing
+/// a Network Key in a secure way. A Provisioner with a Unicast Address
+/// assigned may also configure devices and becomes a Node of a network
+/// on its own.
+///
+/// Each Provisioner has assigned 3 ranges:
+/// * Unicast Address range - set of Unicast Addresses which may assign to new
+///   Nodes during provisioning,
+/// * Group Address range - set of Group Addresses which the Provisioner may use
+///   to define new groups.
+/// * Scene range - set of Scene numbers which it may use to define new scenes.
+///
+/// The Provisioner should not assign addresses from outside of its ranges to avoid
+/// conflicts with other Provisioners.
 public class Provisioner: Codable {
     internal weak var meshNetwork: MeshNetwork?
     

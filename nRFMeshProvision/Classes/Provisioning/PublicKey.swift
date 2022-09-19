@@ -59,7 +59,7 @@ extension PublicKey: CustomDebugStringConvertible {
     
 }
 
-
+/// The type of Public Key information.
 public struct PublicKeyType: OptionSet {
     public let rawValue: UInt8
     

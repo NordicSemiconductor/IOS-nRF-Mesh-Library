@@ -33,6 +33,9 @@ import Foundation
 public extension MeshNetwork {
     
     /// Next available Key Index that can be assigned to a new Application Key.
+    ///
+    /// - note: This method does not look for gaps in key indexes. It returns the
+    ///         next available Key Index after the last Key Index used.
     var nextAvailableApplicationKeyIndex: KeyIndex? {
         if applicationKeys.isEmpty {
             return 0
@@ -44,6 +47,9 @@ public extension MeshNetwork {
     }
     
     /// Next available Key Index that can be assigned to a new Network Key.
+    ///
+    /// - note: This method does not look for gaps in key indexes. It returns the
+    ///         next available Key Index after the last Key Index used.
     var nextAvailableNetworkKeyIndex: KeyIndex? {
         if networkKeys.isEmpty {
             return 0
@@ -64,7 +70,6 @@ public extension MeshNetwork {
     /// - throws: This method throws an error if the key is not 128-bit long,
     ///           there isn't any Network Key to bind the new key to
     ///           or the assigned Key Index is out of range.
-    /// - seeAlso: `nextAvailableApplicationKeyIndex`
     @discardableResult
     func add(applicationKey: Data, withIndex index: KeyIndex? = nil, name: String) throws -> ApplicationKey {
         guard applicationKey.count == 16 else {

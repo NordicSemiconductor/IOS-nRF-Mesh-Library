@@ -38,34 +38,35 @@ public enum MeshMessageSecurity {
     case high
 }
 
-/// The base class of every mesh message. Mesh messages can be sent and
-/// and received from the mesh network.
+/// The base class of every mesh message. Mesh messages can be sent to and
+/// received from a mesh network.
 public protocol BaseMeshMessage {
-    /// Message parameters as Data.
+    /// Access Layer payload, including the Op Code.
     var parameters: Data? { get }
     
     /// This initializer should construct the message based on the received
     /// parameters.
     ///
-    /// - parameter parameters: The Access Layer parameters.
+    /// - parameter parameters: Received Access Layer parameters.
     init?(parameters: Data)
 }
 
-/// The base class of every mesh message. Mesh messages can be sent and
-/// and received from the mesh network. For messages with the opcode known
-/// during compilation a `StaticMeshMessage` protocol should be preferred.
+/// The base class of every mesh message. Mesh messages can be sent to and
+/// received from the mesh network. For messages with the Op Code known
+/// during compilation a ``StaticMeshMessage`` protocol should be preferred.
 ///
-/// Parameters `security` and `isSegmented` are checked and should be set
-/// only for outgoing messages.
+/// Parameters ``MeshMessage/security-5qcg9`` and ``MeshMessage/isSegmented-3lss6``
+/// are checked and should be set only for outgoing messages.
 public protocol MeshMessage: BaseMeshMessage {
     /// The message Op Code.
     var opCode: UInt32 { get }
     /// Returns whether the message should be sent or has been sent using
-    /// 32-bit or 64-bit TransMIC value. By default `.low` is returned.
+    /// 32-bit or 64-bit TransMIC value. By default ``MeshMessageSecurity/low``
+    /// is returned.
     ///
     /// Only Segmented Access Messages can use 64-bit MIC. If the payload
     /// is shorter than 11 bytes, make sure you return `true` from
-    /// `isSegmented`, otherwise this field will be ignored.
+    /// ``MeshMessage/isSegmented-3lss6``, otherwise this field will be ignored.
     var security: MeshMessageSecurity { get }
     /// Returns whether the message should be sent or was sent as
     /// Segmented Access Message. By default, this parameter returns
@@ -95,6 +96,13 @@ public protocol StaticMeshMessage: MeshMessage {
     static var opCode: UInt32 { get }
 }
 
+/// A base class for acknowledged messages.
+///
+/// Acknowledged messages are expected to be replied with a status message
+/// with a message of type set as `responseType`.
+///
+/// Access Layer timer will wait for
+/// ``MeshNetworkManager/acknowledgmentMessageTimeout`` seconds
 public protocol StaticAcknowledgedMeshMessage: AcknowledgedMeshMessage, StaticMeshMessage {
     /// The Type of the response message.
     static var responseType: StaticMeshMessage.Type { get }

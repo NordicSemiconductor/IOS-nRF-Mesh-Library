@@ -30,6 +30,8 @@
 
 import Foundation
 
+/// This protocol extends ``BearerDelegate`` and adds GATT specific
+/// event handlers.
 public protocol GattBearerDelegate: BearerDelegate {
     
     /// Callback called when the GATT device has connected.

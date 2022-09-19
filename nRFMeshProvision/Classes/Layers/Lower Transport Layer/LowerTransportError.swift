@@ -30,6 +30,7 @@
 
 import Foundation
 
+/// A set of errors thrown from the transport layer.
 public enum LowerTransportError: Error {
     /// The segmented message has not been acknowledged before the timeout occurred.
     case timeout

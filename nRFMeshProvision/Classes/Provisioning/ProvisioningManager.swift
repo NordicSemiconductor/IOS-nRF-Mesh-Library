@@ -30,6 +30,10 @@
 
 import Foundation
 
+/// The delegate for receiving provisioning events.
+///
+/// The delegate must also provide user input during the provisioning process
+/// related to Input or Output OOB.
 public protocol ProvisioningDelegate: AnyObject {
     
     /// Callback called when an authentication action is required
@@ -50,6 +54,7 @@ public protocol ProvisioningDelegate: AnyObject {
     
 }
 
+/// The main manager responsible for provisioning new devices into the mesh network.
 public class ProvisioningManager {    
     private let unprovisionedDevice: UnprovisionedDevice
     private let bearer: ProvisioningBearer
@@ -82,12 +87,12 @@ public class ProvisioningManager {
     
     /// The Network Key to be sent to the device during provisioning.
     /// Setting this property is mandatory before calling
-    /// `provision(usingAlgorithm:publicKey:authenticationMethod)`.
+    /// ``provision(usingAlgorithm:publicKey:authenticationMethod:)``.
     public var networkKey: NetworkKey?
     
     /// The provisioning delegate will receive provisioning state updates.
     /// It is required if the authentication method is set to other value
-    /// than `.noOob`.
+    /// than ``AuthenticationMethod/noOob``.
     public weak var delegate: ProvisioningDelegate?
     
     /// The logger delegate will be called whenever a new log entry is created.
@@ -125,6 +130,12 @@ public class ProvisioningManager {
     
     /// Returns whether the Unprovisioned Device can be provisioned using this
     /// Provisioner Manager.
+    ///
+    /// If ``identify(andAttractFor:)`` has not been called, and the Provisioning
+    /// Capabilities are not known, this property returns `nil`.
+    /// - returns: Whether the device can be provisioned by this manager, that is
+    ///            whether the manager supports at least one of the provisioniong
+    ///            algorithms supported by the device.
     public var isDeviceSupported: Bool? {
         guard let capabilities = provisioningCapabilities else {
             return nil
@@ -137,9 +148,10 @@ public class ProvisioningManager {
     /// Creates the Provisioning Manager that will handle provisioning of the
     /// Unprovisioned Device over the given Provisioning Bearer.
     ///
-    /// - parameter unprovisionedDevice: The device to provision into the network.
-    /// - parameter bearer:              The Bearer used for sending Provisioning PDUs.
-    /// - parameter meshNetwork:         The mesh network to provision the device to.
+    /// - parameters:
+    ///   - unprovisionedDevice: The device to provision into the network.
+    ///   - bearer:              The Bearer used for sending Provisioning PDUs.
+    ///   - meshNetwork:         The mesh network to provision the device to.
     public init(for unprovisionedDevice: UnprovisionedDevice,
                 over bearer: ProvisioningBearer, in meshNetwork: MeshNetwork) {
         self.unprovisionedDevice = unprovisionedDevice
@@ -154,7 +166,7 @@ public class ProvisioningManager {
     ///                     the device shall remain attracting human's attention by
     ///                     blinking, flashing, buzzing, etc.
     ///                     The value 0 disables Attention Timer.
-    /// - throws: This method throws if the Bearer is not ready.
+    /// - throws: A ``ProvisioningError`` can be thrown in case of an error.
     public func identify(andAttractFor attentionTimer: UInt8) throws {
         // Does the Bearer support provisioning?
         guard bearer.supports(.provisioningPdu) else {
@@ -196,8 +208,10 @@ public class ProvisioningManager {
     }
     
     /// This method starts the provisioning of the device.
-    /// `identify(andAttractFor:)` has to be called prior to this to receive
+    ///
+    /// ``identify(andAttractFor:)`` has to be called prior to this to receive
     /// the device capabilities.
+    /// - throws: A ``ProvisioningError`` can be thrown in case of an error.
     public func provision(usingAlgorithm algorithm: Algorithm,
                           publicKey: PublicKey,
                           authenticationMethod: AuthenticationMethod) throws {

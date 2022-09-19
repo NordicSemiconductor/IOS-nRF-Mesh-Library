@@ -34,6 +34,8 @@ public extension MeshNetwork {
     
     /// Returns the local Provisioner, or `nil` if the mesh network
     /// does not have any.
+    ///
+    /// - seeAlso: ``setLocalProvisioner(_:)``
     var localProvisioner: Provisioner? {
         return provisioners.first
     }
@@ -62,6 +64,12 @@ public extension MeshNetwork {
     /// this method returns `false`. In that case a new Provisioner
     /// object should be created and set a local Provisioner.
     ///
+    /// - important: This library always uses the Provisioner at index 0
+    ///              as the local Provisioner. When this method returns
+    ///              `false` it does not mean, that there is no local Provisioner
+    ///              set, rather that restoring the old one has failed and
+    ///              the local one is set to one one that has been already at
+    ///              index 0.
     /// - returns: `True`, if the Provisioner has been restored, or
     ///            `false` when the network is new to this device.
     ///            In this case, a new Provisioner should be created
@@ -97,7 +105,7 @@ public extension MeshNetwork {
     /// mesh network.
     ///
     /// - parameter provisioner: The Provisioner to be added.
-    /// - throws: MeshNetworkError - if provisioner has allocated invalid ranges
+    /// - throws: ``MeshNetworkError`` - if provisioner has allocated invalid ranges
     ///           or ranges overlapping with an existing Provisioner.
     func add(provisioner: Provisioner) throws {
         // Find the Unicast Address to be assigned.
@@ -108,7 +116,8 @@ public extension MeshNetwork {
         try add(provisioner: provisioner, withAddress: address)
     }
     
-    /// Adds the Provisioner and assign the given unicast address to it.
+    /// Adds the Provisioner and assigns the given Unicast Address to it.
+    ///
     /// This method does nothing if the Provisioner is already added to the
     /// mesh network.
     ///
@@ -192,9 +201,10 @@ public extension MeshNetwork {
         }
     }
     
-    /// Removes Provisioner at the given index.
+    /// Removes a Provisioner at the given index.
     ///
     /// - important: It is not possible to remove the last Provisioner.
+    ///              At least one Provisioner is required.
     /// - parameter index: The position of the element to remove.
     ///                    `index` must be a valid index of the array.
     /// - returns: The removed Provisioner.
@@ -245,6 +255,7 @@ public extension MeshNetwork {
     /// Provisioner was not added to the Mesh Network before.
     ///
     /// - important: It is not possible to remove the last Provisioner.
+    ///              At least one Provisioner is required.
     /// - parameter provisioner: Provisioner to be removed.
     /// - throws: When trying to remove the last Provisioner.
     func remove(provisioner: Provisioner) throws {
@@ -254,12 +265,12 @@ public extension MeshNetwork {
     }
     
     /// Moves the Provisioner at given index to the new index.
+    ///
     /// Both parameters must be valid indices of the collection that are
-    /// not equal to `endIndex`. Calling `moveProvisioner(fromIndex:toIndex:)`
-    /// with the same index as both `fromIndex` and `toIndex` has no effect.
+    /// not equal to `endIndex`. Calling this method with the same index as
+    /// both `fromIndex` and `toIndex` has no effect.
     ///
-    /// The Provisioner at index 0 will be used as local Provisioner.
-    ///
+    /// - important: The Provisioner at index 0 is used as local Provisioner.
     /// - parameters:
     ///   - fromIndex: The index of the Provisioner to move.
     ///   - toIndex:   The destination index of the Provisioner.
@@ -325,8 +336,7 @@ public extension MeshNetwork {
     
     /// Moves the given Provisioner to the new index.
     ///
-    /// The Provisioner at index 0 will be used as local Provisioner.
-    ///
+    /// - important: The Provisioner at index 0 will be used as local Provisioner.
     /// - parameters:
     ///   - provisioner: The Provisioner to be moved.
     ///   - toIndex:     The destination index of the Provisioner.
@@ -337,9 +347,12 @@ public extension MeshNetwork {
     }
     
     /// Changes the Unicast Address used by the given Provisioner.
+    ///
     /// If the Provisioner didn't have a Unicast Address specified, the method
     /// will create a Node with given the address. This will enable configuration
-    /// capabilities for the Provisioner. The Provisioner must be in the mesh network.
+    /// capabilities for the Provisioner.
+    ///
+    /// The Provisioner must be in the mesh network, otherwise an error is thrown.
     ///
     /// - parameters:
     ///   - address:     The new Unicast Address of the Provisioner.
@@ -402,12 +415,12 @@ public extension MeshNetwork {
         }
     }
     
-    /// Removes the Provisioner's Node. Provisioners without a Node
-    /// cannot send mesh messages, in particular, it cannot perform configuration
-    /// operations. This method does nothing if the Provisioner had no associated Node
-    /// already.
+    /// Disables the configuration capabilities by un-assigning Provisioner's address.
+    /// Un-assigning an address will delete the Provisioner's Node. This results in the
+    /// Provisioner not being able to send or receive mesh messages in the mesh network.
+    /// However, the provisioner will still retain it's provisioning capabilities.
     ///
-    /// Use `assign(address:for provisioner)` to enable configuration capabilities.
+    /// Use ``MeshNetwork/assign(unicastAddress:for:)`` to enable configuration capabilities.
     ///
     /// - parameter provisioner: The Provisioner to be modified.
     func disableConfigurationCapabilities(for provisioner: Provisioner) {
@@ -422,8 +435,8 @@ private extension String {
     /// index 0) whenever the same mesh network configuration is imported.
     ///
     /// Local Provisioner UUID is saved whenever a new Provisioner is added or moved
-    /// to index 0 in the `provisioners` array in mesh network object.
+    /// to index 0 in the ``MeshNetwork/provisioners`` array in mesh network object.
     ///
-    /// Use `restoreLocalProvisioner()` to restore the Provisioner instance.
+    /// Use ``MeshNetwork/restoreLocalProvisioner()`` to restore the Provisioner instance.
     static let localProvisionerUuidKey = "provisioner"
 }

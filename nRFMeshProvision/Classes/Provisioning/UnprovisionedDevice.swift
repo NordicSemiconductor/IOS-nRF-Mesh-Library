@@ -30,6 +30,7 @@
 
 import Foundation
 
+/// A class representing an unprovisioned device.
 public class UnprovisionedDevice: NSObject {
     /// Returns the human-readable name of the device.
     public var name: String?
