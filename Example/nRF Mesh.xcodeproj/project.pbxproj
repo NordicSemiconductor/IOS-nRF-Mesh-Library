@@ -756,8 +756,7 @@
 				607FACDC1AFB9204008FA782 /* Images.xcassets */,
 				607FACD31AFB9204008FA782 /* Supporting Files */,
 			);
-			name = Source;
-			path = nRFMeshProvision;
+			path = Source;
 			sourceTree = "<group>";
 		};
 		607FACD31AFB9204008FA782 /* Supporting Files */ = {
@@ -1391,7 +1390,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = P3R8YQEV4L;
 				ENABLE_BITCODE = NO;
-				INFOPLIST_FILE = nRFMeshProvision/Info.plist;
+				INFOPLIST_FILE = Source/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
@@ -1418,7 +1417,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = P3R8YQEV4L;
 				ENABLE_BITCODE = NO;
-				INFOPLIST_FILE = nRFMeshProvision/Info.plist;
+				INFOPLIST_FILE = Source/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
