@@ -31,6 +31,12 @@
 import Foundation
 
 /// The mesh address.
+///
+/// An address in Mesh may be of type:
+/// * Unassigned Address
+/// * Unicast Address
+/// * Group Address
+/// * Virtual Label - a 16-byte UUID
 public struct MeshAddress {
     /// 16-bit address.
     public let address: Address
@@ -50,11 +56,11 @@ public struct MeshAddress {
     }
     
     /// Creates a Mesh Address. For virtual addresses use
-    /// `init(_ virtualAddress:UUID)` instead.
+    /// other init instead.
     ///
     /// This method will be used for Virtual Address
     /// if the Virtual Label is not known, that is in
-    /// `ConfigModelPublicationStatus`.
+    /// ``ConfigModelPublicationStatus``.
     public init(_ address: Address) {
         self.address = address
         self.virtualLabel = nil

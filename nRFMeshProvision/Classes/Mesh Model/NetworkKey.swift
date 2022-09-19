@@ -48,6 +48,30 @@ internal struct NetworkKeyDerivatives {
     }
 }
 
+/// The Network Keys are used to encrypt mesh messages on the Network Layer.
+///
+/// A Network Key defines a subnet within the mesh network. Knowing the Network Key
+/// is required to decrypt the message, handle it, or relay. Messages can only be relayed
+/// within the subnet.
+///
+/// Each key is identified by a ``KeyIndex``. There can be up to 4095 subnets in a
+/// mesh network.
+///
+/// The key is 128-bit long. Cryptographic algorithms are used to derive a Network ID, the NID
+/// and a set of keys used for for encrypting different types of messages:
+/// * Identity Key
+/// * Beacon Key
+/// * Encryption Key
+/// * Privacy Key
+///
+/// The key can be change. Changing the Network Key is a secure way of removing
+/// Nodes from a mesh network. The procedure of changing a Network Key is called
+/// Key Refresh Procedure (KRP). Nodes that are not part of KRP are effectively
+/// excluded from the mesh network and may no longer send messages on given subnet.
+///
+/// A key may be either secure or insecure. A key is considered secure if all Nodes
+/// that know this key have been provisioned in a secure way, that is using Out-Of-Band
+/// Public Key. Any other way of provisioning devices makes the Network Key insecure.
 public class NetworkKey: Key, Codable {
     /// The timestamp represents the last time the phase property has been
     /// updated.
@@ -87,10 +111,12 @@ public class NetworkKey: Key, Codable {
         }
     }
     /// Minimum security level for a subnet associated with this Network Key.
-    /// If all nodes on the subnet associated with this network key have been
-    /// provisioned using network the Secure Provisioning procedure, then
-    /// the value of this property for the subnet is set to .high; otherwise
-    /// the value is set to `.low` and the subnet is considered less secure.
+    ///
+    /// If all Nodes on the subnet associated with this network key have been
+    /// provisioned using the Secure Provisioning procedure, then
+    /// the value of this property for the subnet is set to ``Security/secure``;
+    /// otherwise the value is set to ``Security/insecure`` and the subnet
+    /// is considered less secure.
     public private(set) var minSecurity: Security
     
     /// The Network ID derived from this Network Key. This identifier

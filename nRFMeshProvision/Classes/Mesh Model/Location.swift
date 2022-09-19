@@ -30,11 +30,12 @@
 
 import Foundation
 
-/// Element locations.
+/// An enum defining options for a location of an ``Element``.
 ///
-/// The possible values are defined by Bluetooth SIG.
+/// The values are defined by Bluetooth SIG.
 ///
-/// Imported from: https://www.bluetooth.com/specifications/assigned-numbers/gatt-namespace-descriptors
+/// Imported from:
+/// https://www.bluetooth.com/specifications/assigned-numbers -> GATT Namespace Descriptors
 public enum Location: UInt16, Codable {
     case auxiliary                    = 0x0108
     case back                         = 0x0101

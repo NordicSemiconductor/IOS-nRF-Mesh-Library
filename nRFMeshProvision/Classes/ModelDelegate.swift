@@ -30,12 +30,31 @@
 
 import Foundation
 
+/// Set of errors that may be thrown for a ``ModelDelegate`` during
+/// handing a reveived acknowledged message.
 public enum ModelError: Error {
     /// This error can be returned if the received acknowledged message
     /// should be discarded due to being invalid.
     case invalidMessage
 }
 
+/// Model delegate defines the functionality of a ``Model`` on the
+/// Local Node.
+///
+/// Model Delegates are assigned to the Models during setting up
+/// the ``MeshNetworkManager/localElements``.
+///
+/// The Model Delegate must declare a map of mesh message type
+/// supported by this Model. Whenever a mesh message matching any
+/// of the declared Op Codes is received, and the Model instance is bound
+/// to the Application Key used to encrypt the message, one of the message
+/// handlers will be called:
+/// * ``ModelDelegate/model(_:didReceiveUnacknowledgedMessage:from:sentTo:)``
+/// * ``ModelDelegate/model(_:didReceiveAcknowledgedMessage:from:sentTo:)``
+/// * ``ModelDelegate/model(_:didReceiveResponse:toAcknowledgedMessage:from:)``
+///
+/// The Model Dlegate also specifies should the Model support subscription
+/// and defines publication composer for automatic publications.
 public protocol ModelDelegate: AnyObject {
     typealias MessageComposer = () -> MeshMessage
     
@@ -72,7 +91,7 @@ public protocol ModelDelegate: AnyObject {
     ///   - source:  The source Unicast Address.
     ///   - destination: The destination address of the request.
     /// - returns: The response message to be sent to the sender.
-    /// - throws: The method should throw `ModelError.invalidMessage`
+    /// - throws: The method should throw ``ModelError``
     ///           if the receive message is invalid and no response
     ///           should be replied.
     func model(_ model: Model, didReceiveAcknowledgedMessage request: AcknowledgedMeshMessage,
@@ -135,6 +154,13 @@ public extension ModelDelegate {
     
 }
 
+/// The Model Delegate which should be used when defining Scene Server
+/// model.
+///
+/// In addition to handling messages, the Scene Server delegate
+/// should also clear the Current Scene whenever
+/// ``SceneServerModelDelegate/networkDidExitStoredWithSceneState()``
+/// call is received.
 public protocol SceneServerModelDelegate: ModelDelegate {
     
     /// This method should be called whenever the State of a Model changes
@@ -146,6 +172,19 @@ public protocol SceneServerModelDelegate: ModelDelegate {
     
 }
 
+/// The Model Delegate which should be used for Models that allow storing
+/// the state with a Scene.
+///
+/// In addition to handling messages, the Model Delegate should also
+/// store and recall the current state whenever
+/// ``StoredWithSceneModelDelegate/store(with:)``
+/// and ``StoredWithSceneModelDelegate/recall(_:transitionTime:delay:)``
+/// calls are received.
+///
+/// Whenever the state changes due to any other reason than receiving
+/// a Scene Recall message, the delegate should call
+/// ``StoredWithSceneModelDelegate/networkDidExitStoredWithSceneState(_:)``
+/// to clear the Current State in the Scene Server model.
 public protocol StoredWithSceneModelDelegate: ModelDelegate {
     
     /// This method should store the current States of the Model and
@@ -185,7 +224,8 @@ public extension StoredWithSceneModelDelegate {
 }
 
 /// Transaction helper may be used to deal with Transaction Messages.
-/// Each such message is sent with a Transaction Identifier (TID).
+///
+/// Transaction Messages are sent with a Transaction Identifier (TID).
 ///
 /// If a received TID is the same as TID of the previously received message
 /// from the same source and targeting the same destination, and no more
@@ -253,7 +293,7 @@ public class TransactionHelper {
 public extension Array where Element == StaticMeshMessage.Type {
     
     /// A helper method that can create a map of message types required
-    /// by the `ModelDelegate` from a list of `StaticMeshMessage`s.
+    /// by the ``ModelDelegate`` from a list of ``StaticMeshMessage``s.
     ///
     /// - returns: A map of message types.
     func toMap() -> [UInt32 : MeshMessage.Type] {
