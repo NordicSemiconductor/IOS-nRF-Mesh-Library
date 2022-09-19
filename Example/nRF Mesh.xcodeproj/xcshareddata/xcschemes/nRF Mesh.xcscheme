@@ -15,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "607FACCF1AFB9204008FA782"
-               BuildableName = "nRFMeshProvision_Example.app"
-               BlueprintName = "nRFMeshProvision_Example"
-               ReferencedContainer = "container:nRFMeshProvision.xcodeproj">
+               BuildableName = "nRF Mesh.app"
+               BlueprintName = "nRF Mesh"
+               ReferencedContainer = "container:nRF Mesh.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -31,9 +31,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "607FACCF1AFB9204008FA782"
-            BuildableName = "nRFMeshProvision_Example.app"
-            BlueprintName = "nRFMeshProvision_Example"
-            ReferencedContainer = "container:nRFMeshProvision.xcodeproj">
+            BuildableName = "nRF Mesh.app"
+            BlueprintName = "nRF Mesh"
+            ReferencedContainer = "container:nRF Mesh.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
       <Testables>
@@ -42,9 +42,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "607FACE41AFB9204008FA782"
-               BuildableName = "nRFMeshProvision_Tests.xctest"
-               BlueprintName = "nRFMeshProvision_Tests"
-               ReferencedContainer = "container:nRFMeshProvision.xcodeproj">
+               BuildableName = "nRF Mesh Tests.xctest"
+               BlueprintName = "nRF Mesh Tests"
+               ReferencedContainer = "container:nRF Mesh.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -64,9 +64,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "607FACCF1AFB9204008FA782"
-            BuildableName = "nRFMeshProvision_Example.app"
-            BlueprintName = "nRFMeshProvision_Example"
-            ReferencedContainer = "container:nRFMeshProvision.xcodeproj">
+            BuildableName = "nRF Mesh.app"
+            BlueprintName = "nRF Mesh"
+            ReferencedContainer = "container:nRF Mesh.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -81,9 +81,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "607FACCF1AFB9204008FA782"
-            BuildableName = "nRFMeshProvision_Example.app"
-            BlueprintName = "nRFMeshProvision_Example"
-            ReferencedContainer = "container:nRFMeshProvision.xcodeproj">
+            BuildableName = "nRF Mesh.app"
+            BlueprintName = "nRF Mesh"
+            ReferencedContainer = "container:nRF Mesh.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>
