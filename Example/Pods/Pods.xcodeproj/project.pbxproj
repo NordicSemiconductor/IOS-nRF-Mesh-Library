@@ -328,7 +328,6 @@
 		9FDA15DCAC3B3F7C05D9D8CACCD59F8C /* GenericPowerLevelStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = F76A6064FB22304C99D327F587674727 /* GenericPowerLevelStatus.swift */; };
 		A00DA7C0A594803F2045D682471ED51E /* ProvisioningCapabilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55C6B59DE29DAE5445FC2C0EFE0E52F8 /* ProvisioningCapabilities.swift */; };
 		A0E48AAEE499250D7522F98AE4A6ADE8 /* LightLCModeSetUnacknowledged.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B4B3A7C5F89581D499D0F0A469946D0 /* LightLCModeSetUnacknowledged.swift */; };
-		A0F6F3250E3781C2042AF3F43C6AFDA0 /* MeshMessageError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01BF08132F511B55019446D363A7B21D /* MeshMessageError.swift */; };
 		A175A89372D833FF709F5D64E95F6E4D /* GenericOnOffStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D4FB51E9B26625D260E19B406B75266 /* GenericOnOffStatus.swift */; };
 		A17B0668EF338953CEE12145450AB407 /* OCB.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F783D0615B2AA67C9517903217598D3 /* OCB.swift */; };
 		A1BD15454C205929BE555BDE463A5001 /* Cryptor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51546F12A683A01A9AD6EBADD449AB11 /* Cryptor.swift */; };
@@ -535,7 +534,6 @@
 		0146FA0F754B6FF976BF3CD106A99D4E /* Pods-nRF Mesh Tests-acknowledgements.markdown */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; path = "Pods-nRF Mesh Tests-acknowledgements.markdown"; sourceTree = "<group>"; };
 		0169A873B215447FF1681ECC645A4EAD /* CryptoSwift-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "CryptoSwift-dummy.m"; sourceTree = "<group>"; };
 		0178A9D7474FB8005FE39FF561780F35 /* ConfigNetKeyList.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ConfigNetKeyList.swift; sourceTree = "<group>"; };
-		01BF08132F511B55019446D363A7B21D /* MeshMessageError.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MeshMessageError.swift; sourceTree = "<group>"; };
 		01E60958770DBC377DDCF249541BB3A1 /* Model+Keys.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "Model+Keys.swift"; sourceTree = "<group>"; };
 		01ED7A1130C9556464253FE70E5EE6F9 /* ApplicationKeys.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ApplicationKeys.swift; sourceTree = "<group>"; };
 		023CE5D880B7199A96474A3D8A9C2EFC /* LightLightnessLinearGet.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LightLightnessLinearGet.swift; sourceTree = "<group>"; };
@@ -1669,7 +1667,6 @@
 				1CD720B53A500A8A93131BE0DBAB0859 /* GenericMessage.swift */,
 				09B82130545F79B06CFB9494EBE95357 /* LocationMessage.swift */,
 				4AB4163131712A64D1E6357581C5EBFB /* MeshMessage.swift */,
-				01BF08132F511B55019446D363A7B21D /* MeshMessageError.swift */,
 				3F44CB842C4E3CC787CE11E1CA28E4EF /* SchedulerMessage.swift */,
 				DE204D6C2216E4297F70166C6CA8A328 /* SensorMessage.swift */,
 				61FB5E01E51AE3B34A41DAEBC8B8E6D8 /* TimeMessage.swift */,
@@ -2455,7 +2452,6 @@
 				C9DC6A10063F69E935A1FD83E5377383 /* MeshData.swift in Sources */,
 				611EE516D84FE4B632E149D6BD00EFC9 /* MeshLoggerDelegate.swift in Sources */,
 				63F6FCBDF0671835C632496D58340486 /* MeshMessage.swift in Sources */,
-				A0F6F3250E3781C2042AF3F43C6AFDA0 /* MeshMessageError.swift in Sources */,
 				C26C3925C3F508FE8E16263153904CE5 /* MeshNetwork.swift in Sources */,
 				59000D14CB70695ABEBB5417E1FE2D5B /* MeshNetwork+Address.swift in Sources */,
 				EC0F155286E278ECBCA616E745ADF110 /* MeshNetwork+Groups.swift in Sources */,

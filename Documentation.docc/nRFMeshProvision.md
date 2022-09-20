@@ -371,7 +371,6 @@ provisioning procedure.
 
 - ``BaseMeshMessage``
 
-- ``MeshMessageError``
 - ``MeshMessageSecurity``
 
 - ``MeshMessage``
