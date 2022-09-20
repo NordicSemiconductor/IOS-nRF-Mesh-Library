@@ -30,7 +30,7 @@
 
 import Foundation
 
-/// A base class for all Configuration messages.
+/// A base protocol for all Configuration messages.
 ///
 /// Configuration messages are used to configure Nodes. They are sent between
 /// Configuration Client model on the Configuration Manager and Configuration Server
@@ -40,7 +40,7 @@ public protocol ConfigMessage: StaticMeshMessage {
     // No additional fields.
 }
 
-/// A base class for acknowledged Configuration messages.
+/// A base protocol for acknowledged Configuration messages.
 ///
 /// Acknowledged messages will be responded with a status message.
 public protocol AcknowledgedConfigMessage: ConfigMessage, StaticAcknowledgedMeshMessage {
@@ -87,30 +87,36 @@ public enum ConfigMessageStatus: UInt8 {
     case invalidBinding                 = 0x11
 }
 
+/// A base protocol for config status messages.
 public protocol ConfigStatusMessage: ConfigMessage, StatusMessage {
     /// Operation status.
     var status: ConfigMessageStatus { get }
 }
 
+/// A base protocol for config messages related to Network Keys.
 public protocol ConfigNetKeyMessage: ConfigMessage {
     /// The Network Key Index.
     var networkKeyIndex: KeyIndex { get }
 }
 
+/// A base protocol for config messages related to Application Keys.
 public protocol ConfigAppKeyMessage: ConfigMessage {
     /// Application Key Index.
     var applicationKeyIndex: KeyIndex { get }
 }
 
+/// A base protocol for config messages related to Network Key and Application Key.
 public protocol ConfigNetAndAppKeyMessage: ConfigNetKeyMessage, ConfigAppKeyMessage {
     // No additional fields.
 }
 
+/// A base protocol for config messages related to Elements.
 public protocol ConfigElementMessage: ConfigMessage {
     /// The Unicast Address of the Model's parent Element.
     var elementAddress: Address { get }
 }
 
+/// A base protocol for config messages related to Models.
 public protocol ConfigModelMessage: ConfigElementMessage {
     /// The 16-bit Model identifier.
     var modelIdentifier: UInt16 { get }
@@ -118,6 +124,8 @@ public protocol ConfigModelMessage: ConfigElementMessage {
     var modelId: UInt32 { get }
 }
 
+/// A base protocol for config messages related to Models, where the Model can be
+/// a vendor model.
 public protocol ConfigAnyModelMessage: ConfigModelMessage {
     /// The Company identified, as defined in Assigned Numbers, or `nil`,
     /// if the Model is defined in Bluetooth Mesh Model Specification.
@@ -126,6 +134,7 @@ public protocol ConfigAnyModelMessage: ConfigModelMessage {
     var companyIdentifier: UInt16? { get }
 }
 
+/// A base protocol for config messages related to vendor Models.
 public protocol ConfigVendorModelMessage: ConfigModelMessage {
     /// The Company identified, as defined in Assigned Numbers.
     ///
@@ -133,21 +142,25 @@ public protocol ConfigVendorModelMessage: ConfigModelMessage {
     var companyIdentifier: UInt16 { get }
 }
 
+/// A base protocol for config messages with an Address property.
 public protocol ConfigAddressMessage: ConfigMessage {
     /// Value of the Address.
     var address: Address { get }
 }
 
+/// A base protocol for config messages with Virtual Label property.
 public protocol ConfigVirtualLabelMessage: ConfigMessage {
     /// Value of the 128-bt Virtual Label UUID.
     var virtualLabel: UUID { get }
 }
 
+/// A base protocol for config messages with list of Application Keys.
 public protocol ConfigModelAppList: ConfigStatusMessage, ConfigModelMessage {
     /// Application Key Indexes bound to the Model.
     var applicationKeyIndexes: [KeyIndex] { get }
 }
 
+/// A base protocol for config messages with list of Model subscription addresses.
 public protocol ConfigModelSubscriptionList: ConfigStatusMessage, ConfigModelMessage {
     /// A list of Addresses.
     var addresses: [Address] { get }
@@ -255,10 +268,12 @@ internal extension ConfigMessage {
 
 public extension ConfigStatusMessage {
     
+    /// Whether the operation was successful or not.
     var isSuccess: Bool {
         return status == .success
     }
     
+    /// String representation of the status.
     var message: String {
         return "\(status)"
     }
@@ -351,7 +366,7 @@ public extension ConfigVendorModelMessage {
 public extension Array where Element == ConfigMessage.Type {
     
     /// A helper method that can create a map of message types required
-    /// by the `ModelDelegate` from a list of `ConfigMessage`s.
+    /// by the ``ModelDelegate`` from a list of ``ConfigMessage``s.
     ///
     /// - returns: A map of message types.
     func toMap() -> [UInt32 : MeshMessage.Type] {

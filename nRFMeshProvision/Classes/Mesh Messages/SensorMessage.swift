@@ -30,10 +30,12 @@
 
 import Foundation
 
+/// A base protocol for sensor messages.
 public protocol SensorMessage: StaticMeshMessage {
     // No additional fields.
 }
 
+/// A base protocol for acknowledged sensor messages.
 public protocol AcknowledgedSensorMessage: SensorMessage, StaticAcknowledgedMeshMessage {
     // No additional fields.
 }
@@ -41,7 +43,7 @@ public protocol AcknowledgedSensorMessage: SensorMessage, StaticAcknowledgedMesh
 public extension Array where Element == SensorMessage.Type {
     
     /// A helper method that can create a map of message types required
-    /// by the `ModelDelegate` from a list of `SensorMessage`s.
+    /// by the ``ModelDelegate`` from a list of ``SensorMessage``s.
     ///
     /// - returns: A map of message types.
     func toMap() -> [UInt32 : MeshMessage.Type] {
@@ -50,11 +52,13 @@ public extension Array where Element == SensorMessage.Type {
     
 }
 
+/// A base protocol for sensor property messages.
 public protocol SensorPropertyMessage: SensorMessage {
     /// Property for the sensor.
     var property: DeviceProperty { get }
 }
 
+/// A base protocol for acknowledged sensor property messages.
 public protocol AcknowledgedSensorPropertyMessage: SensorPropertyMessage, StaticAcknowledgedMeshMessage {
     // No additional fields.
 }
@@ -102,7 +106,7 @@ public struct SensorDescriptor {
     /// For those cases where a value for the measurement period is not
     /// available or is not applicable, a special number has been assigned
     /// to indicate Not Applicable equal to 0.
-    /// - seeAlso: `measurementPeriod`
+    /// - seeAlso: ``SensorDescriptor/measurementPeriod``
     internal let measurementPeriodValue: UInt8
     /// The measurement reported by a sensor is internally refreshed at
     /// the frequency indicated in the Sensor Update Interval field
@@ -116,7 +120,7 @@ public struct SensorDescriptor {
     /// For those cases where a value for the Sensor Update Interval is
     /// not available or is not applicable, a special number has been assigned
     /// to indicate Not Applicable equal to 0.
-    /// - seeAlso: `updateInteval
+    /// - seeAlso: ``SensorDescriptor/updateInteval``
     internal let updateIntervalValue: UInt8
     
     /// Whether the positive tolerance is specified.
@@ -219,6 +223,7 @@ public struct SensorDescriptor {
     }
 }
 
+/// Enumeration of sensor sampling functions.
 public enum SensorSamplingFunction: UInt8 {
     /// Sampling function is not made available.
     case unspecified    = 0x00
@@ -249,6 +254,7 @@ public enum SensorSamplingFunction: UInt8 {
     case count          = 0x07
 }
 
+/// The structure of sensor cadence.
 public struct SensorCadence {
     
     /// The Status Trigger Delta controls the positive and negative

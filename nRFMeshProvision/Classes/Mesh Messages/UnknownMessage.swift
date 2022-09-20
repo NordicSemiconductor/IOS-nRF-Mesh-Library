@@ -30,6 +30,15 @@
 
 import Foundation
 
+/// The unknown message is returned if no local Model defines
+/// a message type for the received Op Code.
+///
+/// The Op Code and raw parameters can be read directly.
+///
+/// In order to have the Unknown Message parsed, a ``Model`` has to
+/// be defined in ``MeshNetworkManager/localElements`` with
+/// a ``ModelDelegate`` defining a type for the given Op Code in
+/// ``ModelDelegate/messageTypes``.
 public struct UnknownMessage: MeshMessage {
     // The opcode is set when the message is received. Initially it is set
     // to 0, as the constructor takes only parameters.
