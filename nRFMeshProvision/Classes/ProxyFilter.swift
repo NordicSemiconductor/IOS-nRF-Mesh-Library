@@ -30,19 +30,23 @@
 
 import Foundation
 
+/// A type of the Proxy Filter.
 public enum ProxyFilerType: UInt8 {
     /// An inclusion list filter has an associated inclusion list, which is
     /// a list of destination addresses that are of interest for the Proxy Client.
+    ///
     /// The inclusion list filter blocks all messages except those targeting
     /// addresses added to the list.
     case inclusionList = 0x00
     /// An exclusion list filter has an associated exclusion list, which is
     /// a list of destination addresses that the Proxy Client does not want to receive.
+    ///
     /// The exclusion list filter forwards all messages except those targeting
     /// addresses added to the list.
     case exclusionList = 0x01
 }
 
+/// The delegate that will be notified about changes of the Proxy Filter.
 public protocol ProxyFilterDelegate: AnyObject {
     /// Method called when the Proxy Filter has been sent to proxy.
     ///
@@ -77,21 +81,22 @@ public extension ProxyFilterDelegate {
     
 }
 
+/// An enumeration for different initial configurations of the Proxy Filter.
 public enum ProxyFilterSetup {
     /// In automatic Proxy Filter setup the filter will be set to
-    /// `.inclusionList` with Unicast Addresses of all local Elements,
-    /// all Group Addresses with at least one local Model subscribed
-    /// and the All Nodes (0xFFFF) address.
+    /// ``ProxyFilerType/inclusion`` with Unicast Addresses of all
+    /// local Elements, all Group Addresses with at least one local Model
+    /// subscribed and the All Nodes (0xFFFF) address.
     ///
     /// This is the default configuration.
     case automatic
     
     /// The Proxy Filter on each connected Proxy Node will be set to
-    /// `.inclusionList` with given set of addresses.
+    /// ``ProxyFilerType/inclusion`` with given set of addresses.
     case inclusionList(addresses: Set<Address>)
     
     /// The Proxy Filter on each connected Proxy Node will be set to
-    /// `.exclusionList` with given set of addresses.
+    /// ``ProxyFilerType/exclusionList`` with given set of addresses.
     case exclusionList(addresses: Set<Address>)
 }
 
@@ -106,7 +111,8 @@ public enum ProxyFilterSetup {
 /// - important: When a local Model gets subscribed to a new Group, or is
 ///              unsubscribed from a Group that no other local Model is
 ///              subscribed to, the proxy filter needs to be modified manually
-///              by calling proper `add` or `remove` method.
+///              by calling proper ``ProxyFilter/add(address:)``
+///              or ``ProxyFilter/remove(address:)`` method.
 public class ProxyFilter {
     /// The owner manager instance.
     ///

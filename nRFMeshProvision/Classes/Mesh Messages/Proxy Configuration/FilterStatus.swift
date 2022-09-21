@@ -30,6 +30,8 @@
 
 import Foundation
 
+/// The Filter Status message is sent by a Proxy Server to report the status of
+/// the Proxy Filter.
 public struct FilterStatus: StaticProxyConfigurationMessage {
     public static let opCode: UInt8 = 0x03
     

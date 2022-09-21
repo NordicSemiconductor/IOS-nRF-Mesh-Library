@@ -30,10 +30,8 @@
 
 import Foundation
 
-/// The Group object represents a user-defined group, identified by
-/// Group Address or Virtual Label.
-///
-/// Groups may be used to send mesh messages to multiple Nodes.
+/// The Group object represents a user-defined group of Nodes,
+/// identified by Group Address or Virtual Label.
 ///
 /// A group may be given a human-readable name.
 ///

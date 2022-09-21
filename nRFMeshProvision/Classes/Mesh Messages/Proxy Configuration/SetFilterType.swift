@@ -30,6 +30,8 @@
 
 import Foundation
 
+/// The Set Filter Type message can be sent by a Proxy Client to
+/// change the proxy filter type and clear the proxy filter list.
 public struct SetFilterType: StaticAcknowledgedProxyConfigurationMessage {
     public static let opCode: UInt8 = 0x00
     public static let responseType: StaticProxyConfigurationMessage.Type = FilterStatus.self

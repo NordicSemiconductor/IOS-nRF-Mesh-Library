@@ -30,6 +30,8 @@
 
 import Foundation
 
+/// The Add Addresses to Filter message is sent by a Proxy Client
+/// to add destination addresses to the proxy filter list.
 public struct AddAddressesToFilter: StaticAcknowledgedProxyConfigurationMessage {
     public static let opCode: UInt8 = 0x01
     public static let responseType: StaticProxyConfigurationMessage.Type = FilterStatus.self

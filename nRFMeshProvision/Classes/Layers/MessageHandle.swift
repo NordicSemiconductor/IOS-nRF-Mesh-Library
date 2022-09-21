@@ -43,8 +43,13 @@ import Foundation
 public struct MessageHandle {
     weak var manager: MeshNetworkManager?
 
+    /// The Op Code of the message.
     public let opCode: UInt32
+    /// The source Unicast Address.
     public let source: Address
+    /// The destination Address.
+    ///
+    /// This can be any type of Address.
     public let destination: Address
     
     init(for message: MeshMessage,
@@ -59,6 +64,7 @@ public struct MessageHandle {
     /// Cancels sending the message.
     ///
     /// Only segmented or acknowledged messages may be cancelled.
+    /// 
     /// Unsegmented unacknowledged messages are sent almost instantaneously
     /// (depending on the connection interval and message size)
     /// and therefore cannot be cancelled.

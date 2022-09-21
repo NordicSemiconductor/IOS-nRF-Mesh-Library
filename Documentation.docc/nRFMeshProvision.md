@@ -260,6 +260,7 @@ provisioning procedure.
 - ``LocalStorage``
 - ``ExportConfiguration``
 - ``MessageHandle``
+
 - ``MeshNetworkError``
 - ``LowerTransportError``
 - ``AccessError``
@@ -328,6 +329,7 @@ provisioning procedure.
 - ``Location``
 - ``Provisioner``
 - ``RangeObject``
+- ``Publish``
 
 ### Models
 
@@ -386,7 +388,6 @@ provisioning procedure.
 - ``VendorStatusMessage``
 
 - ``UnknownMessage``
-- ``StepResolution``
 
 ### Configuration Message Types
 
@@ -486,8 +487,6 @@ provisioning procedure.
 
 ### Configuration - Publication Messages
 
-- ``Publish``
-
 - ``ConfigModelPublicationGet``
 - ``ConfigModelPublicationSet``
 - ``ConfigModelPublicationVirtualAddressSet``
@@ -530,6 +529,7 @@ provisioning procedure.
 - ``TransitionMessage``
 - ``TransitionStatusMessage``
 - ``TransitionTime``
+- ``StepResolution``
 
 ### Generic Messages
 
@@ -705,6 +705,60 @@ provisioning procedure.
 - ``SensorSettingsStatus``
 - ``SensorStatus``
 
+### Location Types
+
+- ``Latitude``
+- ``Longitude``
+- ``Altitude``
+
+- ``LocationMessage``
+- ``AcknowledgedLocationMessage``
+- ``LocationStatusMessage``
+
+### Location Messages
+
+- ``GenericLocationGlobalGet``
+- ``GenericLocationGlobalSet``
+- ``GenericLocationGlobalSetUnacknowledged``
+- ``GenericLocationGlobalStatus``
+
+### Time Types
+
+- ``TaiTime``
+- ``TimeMessage``
+
+### Time Messages
+
+- ``TimeGet``
+- ``TimeSet``
+- ``TimeStatus``
+- ``TimeZoneGet``
+- ``TimeZoneSet``
+- ``TimeZoneStatus``
+
+### Scheduler Types
+
+- ``SchedulerRegistryEntry``
+- ``SchedulerAction``
+- ``SchedulerYear``
+- ``SchedulerMonth``
+- ``SchedulerDay``
+- ``SchedulerDayOfWeek``
+- ``SchedulerHour``
+- ``SchedulerMinute``
+- ``SchedulerSecond``
+- ``Month``
+- ``WeekDay``
+
+### Scheduler Messages
+
+- ``SchedulerGet``
+- ``SchedulerStatus``
+- ``SchedulerActionGet``
+- ``SchedulerActionSet``
+- ``SchedulerActionSetUnacknowledged``
+- ``SchedulerActionStatus``
+
 ### Proxy Filter
 
 In order to reduce the number of Network PDUs exchanged between a Proxy Client and a 
@@ -728,3 +782,7 @@ Proxy Server, a proxy filter can be used.
 - ``RemoveAddressesFromFilter``
 - ``SetFilterType``
 - ``FilterStatus``
+
+### Other
+
+- ``DataConvertible``
