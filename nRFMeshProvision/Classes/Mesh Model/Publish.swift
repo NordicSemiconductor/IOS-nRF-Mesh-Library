@@ -105,6 +105,7 @@ public struct Publish: Codable {
     /// - since: 3.0
     public struct Period: Codable {
         /// Periodic publishing of status messages is disabled.
+        ///
         /// - since: 3.0
         public static let disabled = Period()
         
@@ -117,7 +118,7 @@ public struct Publish: Codable {
         
         /// Creates the Period object when periodic publication is disabled.
         ///
-        /// - seeAlso: `Period.disabled`.
+        /// - seeAlso: ``Publish/Period-swift.struct/disabled``.
         /// - since: 3.0
         public init() {
             self.numberOfSteps = 0

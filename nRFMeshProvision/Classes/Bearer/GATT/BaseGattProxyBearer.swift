@@ -32,13 +32,10 @@ import Foundation
 import CoreBluetooth
 
 /// Base implementation for GATT Proxy bearer.
-///
-/// This object is not required to be used with nRF Mesh Provisioning library.
-/// Bearers are separate from the mesh networking part and the data must be
-/// passed to and from by the application.
 open class BaseGattProxyBearer<Service: MeshService>: NSObject, Bearer, CBCentralManagerDelegate, CBPeripheralDelegate {
     
     // MARK: - Properties
+    
     /// Bearer delegate receives events when connection to a Proxy Node
     /// becomes ready, or when the device has disconnected.
     public weak var delegate: BearerDelegate?
@@ -61,7 +58,7 @@ open class BaseGattProxyBearer<Service: MeshService>: NSObject, Bearer, CBCentra
     private let protocolHandler: ProxyProtocolHandler
     /// The queue of PDUs to be sent. Used if the peripheral is busy.
     private var queue: [Data] = []
-    /// A flag indicating whether `open()` method was called.
+    /// A flag indicating whether ``BaseGattProxyBearer/open()`` method was called.
     private var isOpened: Bool = false
     
     // MARK: - Computed properties
@@ -94,7 +91,8 @@ open class BaseGattProxyBearer<Service: MeshService>: NSObject, Bearer, CBCentra
     
     // MARK: - Public API
     
-    /// Creates the Gatt Proxy Bearer object. Call ``open()`` to open connection to the proxy.
+    /// Creates the Gatt Proxy Bearer object. Call ``BaseGattProxyBearer/open()``
+    /// to open connection to the proxy.
     ///
     /// - parameter peripheral: The CBPeripheral pointing a Bluetooth LE device with
     ///                         Bluetooth Mesh GATT service (Provisioning or Proxy Service).
@@ -102,7 +100,8 @@ open class BaseGattProxyBearer<Service: MeshService>: NSObject, Bearer, CBCentra
         self.init(targetWithIdentifier: peripheral.identifier)
     }
     
-    /// Creates the Gatt Proxy Bearer object. Call ``open()`` to open connection to the proxy.
+    /// Creates the Gatt Proxy Bearer object. Call ``BaseGattProxyBearer/open()``
+    /// to open connection to the proxy.
     ///
     /// - parameter uuid: The UUID associated with the peer.
     public init(targetWithIdentifier uuid: UUID) {
@@ -180,7 +179,7 @@ open class BaseGattProxyBearer<Service: MeshService>: NSObject, Bearer, CBCentra
     /// Retrieves the current RSSI value for the peripheral while it is connected
     /// to the central manager.
     ///
-    /// The result will be returned using `bearer(_:didReadRSSI)` callback.
+    /// The result will be returned using ``GattBearerDelegate/bearer(_:didReadRSSI:)-4fgoz`` callback.
     open func readRSSI() {
         guard basePeripheral.state == .connected else {
             return

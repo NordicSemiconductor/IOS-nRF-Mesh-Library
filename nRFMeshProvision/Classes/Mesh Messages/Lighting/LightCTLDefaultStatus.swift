@@ -65,7 +65,7 @@ public struct LightCTLDefaultStatus: GenericMessage {
     /// This is a 16-bit signed integer representation of a -1 to +1 scale using
     /// the formula:
     ///
-    /// Represented Delta UV = `deltaUV` / 32768
+    /// Represented Delta UV = ``LightCTLDefaultStatus/deltaUV`` / 32768
     ///
     /// - parameters:
     ///   - lightness: The target value of the Light CTL Lightness state.

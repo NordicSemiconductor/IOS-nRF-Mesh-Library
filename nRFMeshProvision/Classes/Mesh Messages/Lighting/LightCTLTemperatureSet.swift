@@ -72,7 +72,7 @@ public struct LightCTLTemperatureSet: AcknowledgedGenericMessage, TransactionMes
     /// This is a 16-bit signed integer representation of a -1 to +1 scale using
     /// the formula:
     ///
-    /// Represented Delta UV = `deltaUV` / 32768
+    /// Represented Delta UV = ``LightCTLTemperatureSet/deltaUV`` / 32768
     ///
     /// - parameters:
     ///   - temperature: The target value of the Light CTL Temperature state.
@@ -97,7 +97,7 @@ public struct LightCTLTemperatureSet: AcknowledgedGenericMessage, TransactionMes
     /// This is a 16-bit signed integer representation of a -1 to +1 scale using
     /// the formula:
     ///
-    /// Represented Delta UV = `deltaUV` / 32768
+    /// Represented Delta UV = ``LightCTLTemperatureSet/deltaUV`` / 32768
     ///
     /// - parameters:
     ///   - temperature: The target value of the Light CTL Temperature state.

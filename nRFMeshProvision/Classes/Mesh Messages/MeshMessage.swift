@@ -113,10 +113,11 @@ public protocol StaticMeshMessage: MeshMessage {
 /// A base class for acknowledged messages.
 ///
 /// Acknowledged messages are expected to be replied with a status message
-/// with a message of type set as `responseType`.
+/// with a message of type set as ``StaticAcknowledgedMeshMessage/responseType``.
 ///
 /// Access Layer timer will wait for
 /// ``MeshNetworkManager/acknowledgmentMessageTimeout`` seconds
+/// before throwing a timeout.
 public protocol StaticAcknowledgedMeshMessage: AcknowledgedMeshMessage, StaticMeshMessage {
     /// The Type of the response message.
     static var responseType: StaticMeshMessage.Type { get }

@@ -134,7 +134,7 @@ public class MeshNetworkManager {
     
     // MARK: - Computed properties
     
-    /// The `MeshNetwork` object, or `nil`, if the network has not been loaded yet.
+    /// The ``MeshNetwork`` object, or `nil`, if the network has not been loaded yet.
     public var meshNetwork: MeshNetwork? {
         return meshData.meshNetwork
     }

@@ -36,7 +36,7 @@ internal class UpperTransportLayer {
     
     /// This timer is responsible for publishing periodic Heartbeat messages
     /// if they were requested by a remote provisioner using
-    /// `ConfigHeartbeatPublicationSet` message.
+    /// ``ConfigHeartbeatPublicationSet`` message.
     private var heartbeatPublisher: BackgroundTimer?
     
     private var logger: LoggerDelegate? {

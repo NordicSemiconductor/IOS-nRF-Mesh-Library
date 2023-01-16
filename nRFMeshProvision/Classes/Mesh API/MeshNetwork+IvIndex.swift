@@ -57,7 +57,7 @@ public extension MeshNetwork {
     /// - parameters:
     ///   - index: The new value of IV Index.
     ///   - updateActive: IV Update Active flag.
-    /// - throws: `MeshNetworkError.ivIndexTooSmall` when the new IV Index is
+    /// - throws: ``MeshNetworkError/ivIndexTooSmall`` when the new IV Index is
     ///           lower than the current one.
     func setIvIndex(_ index: UInt32, updateActive: Bool) throws {
         let newIvIndex = IvIndex(index: index, updateActive: updateActive)

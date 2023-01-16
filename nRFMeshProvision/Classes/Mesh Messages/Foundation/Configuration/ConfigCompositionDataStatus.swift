@@ -73,19 +73,23 @@ public struct Page0: CompositionDataPage {
     public let page: UInt8
     
     /// The 16-bit Company Identifier (CID) assigned by the Bluetooth SIG.
-    /// The value of this property is obtained from node composition data.
+    ///
+    /// Company Identifiers are published in
+    /// [Assigned Numbers](https://www.bluetooth.com/specifications/assigned-numbers/).
     public let companyIdentifier: UInt16
     /// The 16-bit vendor-assigned Product Identifier (PID).
-    /// The value of this property is obtained from node composition data.
     public let productIdentifier: UInt16
     /// The 16-bit vendor-assigned Version Identifier (VID).
-    /// The value of this property is obtained from node composition data.
     public let versionIdentifier: UInt16
     /// The minimum number of Replay Protection List (RPL) entries for this
-    /// node. The value of this property is obtained from node composition
-    /// data.
+    /// node.
     public let minimumNumberOfReplayProtectionList: UInt16
-    /// Node's features. See `NodeFeatures` for details.
+    /// Node's features.
+    ///
+    /// The Page 0 of the Composition Data does not provide information
+    /// whether a feture is enabled or disabled, just whether it is supported
+    /// or not. Read the state of each feature using corresponding Config
+    /// message.
     public let features: NodeFeaturesState
     /// An array of node's elements.
     public let elements: [Element]
@@ -95,10 +99,6 @@ public struct Page0: CompositionDataPage {
             + companyIdentifier + productIdentifier + versionIdentifier
             + minimumNumberOfReplayProtectionList
         return data + features.rawValue + elements.data
-    }
-    
-    public var isSegmented: Bool {
-        return true
     }
     
     /// This initializer constructs the Page 0 of Composition Data from

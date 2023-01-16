@@ -40,6 +40,7 @@ public extension Dictionary where Key == String, Value == Any {
     }
     
     /// Returns the Unprovisioned Device's UUID or `nil` if such value not be parsed.
+    ///
     /// This value is taken from the Service Data with Mesh Provisioning Service
     /// UUID. The first 16 bytes are the converted to CBUUID.
     var unprovisionedDeviceUUID: CBUUID? {
@@ -56,8 +57,9 @@ public extension Dictionary where Key == String, Value == Any {
     
     /// Returns the Unprovisioned Device's OOB information or `nil` if such
     /// value not be parsed.
+    ///
     /// This value is taken from the Service Data with Mesh Provisioning Service
-    /// UUID. The last 2 bytes are parsed and returned as `OobInformation`.
+    /// UUID. The last 2 bytes are parsed and returned as ``OobInformation``.
     var oobInformation: OobInformation? {
         guard let serviceData = self[CBAdvertisementDataServiceDataKey] as? [CBUUID : Data],
               let data = serviceData[MeshProvisioningService.uuid] else {
@@ -84,6 +86,8 @@ public extension Dictionary where Key == String, Value == Any {
         return data.subdata(in: 1..<9)
     }
     
+    /// Returns the Hash and Random fields from the Node Identity beacon data
+    /// or `nil` if such value was not parsed.
     var nodeIdentity: (hash: Data, random: Data)? {
         guard let serviceData = self[CBAdvertisementDataServiceDataKey] as? [CBUUID : Data],
             let data = serviceData[MeshProxyService.uuid] else {

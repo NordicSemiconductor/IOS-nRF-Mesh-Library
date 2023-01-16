@@ -88,7 +88,7 @@ public protocol MeshNetworkDelegate: AnyObject {
     ///
     /// For unsegmented unacknowledged messages this callback will be invoked when
     /// the ``MeshNetworkManager/transmitter`` was set to `nil`, or has thrown an
-    /// exception from ``Transmitter/send(_:ofType:)`.
+    /// exception from ``Transmitter/send(_:ofType:)``.
     ///
     /// For segmented unacknowledged messages targeting a Unicast Address,
     /// besides that, it may also be called when sending timed out before all of
@@ -104,7 +104,8 @@ public protocol MeshNetworkDelegate: AnyObject {
     ///
     /// Possible errors are:
     /// - Any error thrown by the ``Transmitter``.
-    /// - ``BearerError/bearerClosed`` - when the `transmitter` object was net set.
+    /// - ``BearerError/bearerClosed`` - when the ``MeshNetworkManager/transmitter``
+    ///   object was not set.
     /// - ``LowerTransportError/busy`` - when the target Node is busy and can't
     ///   accept the message.
     /// - ``LowerTransportError/timeout`` - when the segmented message targeting

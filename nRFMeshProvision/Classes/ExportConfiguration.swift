@@ -51,8 +51,9 @@ public enum ExportConfiguration {
         /// Only given Network Keys will be exported.
         ///
         /// Nodes that do not know the given Network Keys will be excluded
-        /// (even when nodes are exported with `.all` option). Excluded keys
-        /// will also be excluded from Model binding on exported Nodes.
+        /// (even when nodes are exported with
+        /// ``ExportConfiguration/NetworkKeysConfiguration/all`` option).
+        /// Excluded keys will also be excluded from Model binding on exported Nodes.
         case some([NetworkKey])
     }
     
@@ -86,7 +87,8 @@ public enum ExportConfiguration {
         /// exported. Nodes belonging to excluded Provisioners will not be
         /// exported.
         case allWithDeviceKey
-        /// The same as `.allWithDeviceKey`, but device keys will not be exported.
+        /// The same as ``ExportConfiguration/NodesConfiguration/allWithDeviceKey``,
+        /// but device keys will not be exported.
         case allWithoutDeviceKey
         /// The given Nodes will be exported. This allows to export Nodes with
         /// Device Key (full) or without Device Key (partial). The device on which

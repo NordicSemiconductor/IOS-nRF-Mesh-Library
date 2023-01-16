@@ -60,7 +60,7 @@ public class Element: Codable {
     public internal(set) weak var parentNode: Node?
     
     /// This initiator should be used to create Elements that will
-    /// be set as local elements using `MeshNetworkManager.localElements`.
+    /// be set as local elements using ``MeshNetworkManager/localElements``.
     ///
     /// - parameter name:     The optional Element name.
     /// - parameter location: The Element location, by default set to `.unknown`.

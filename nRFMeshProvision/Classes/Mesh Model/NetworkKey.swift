@@ -123,7 +123,7 @@ public class NetworkKey: Key, Codable {
     /// is public information.
     public private(set) var networkId: Data!
     /// The Network ID derived from the old Network Key. This identifier
-    /// is public information. It is set when `oldKey` is set.
+    /// is public information. It is set when ``NetworkKey/oldKey`` is set.
     public private(set) var oldNetworkId: Data?
     /// Network Key derivatives.
     internal private(set) var keys: NetworkKeyDerivatives!

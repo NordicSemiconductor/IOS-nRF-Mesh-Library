@@ -143,7 +143,7 @@ public extension MeshNetwork {
     /// - parameter name:       The human readable name.
     /// - throws: This method throws an error if the key is not 128-bit long
     ///           or the assigned Key Index is out of range.
-    /// - seeAlso: `nextAvailableNetworkKeyIndex`
+    /// - seeAlso: ``MeshNetwork/nextAvailableNetworkKeyIndex``
     @discardableResult
     func add(networkKey: Data, withIndex index: KeyIndex? = nil, name: String) throws -> NetworkKey {
         guard networkKey.count == 16 else {

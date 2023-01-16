@@ -32,11 +32,15 @@ import Foundation
 
 // MARK: - DeviceProperty
 
-/// The device property.
+/// Enumeration of Device Properties specified in
+/// [Mesh Device Properties 2](https://www.bluetooth.com/specifications/specs/mesh-device-properties-2/).
 ///
-/// - note: Each property has a corresponding `DevicePropertyCharacteristic`.
-///         However, currently not all values are implemented in this library.
-///         For those, `.other` should be used until they are implemented.
+/// Each property has a corresponding ``DevicePropertyCharacteristic``.
+///
+/// - note: Not all properties have their corresponding characteristics currently
+///         implemented in this library. For those,
+///         ``DevicePropertyCharacteristic/other(_:)`` should be used
+///         until they are implemented.
 public enum DeviceProperty {
     case averageAmbientTemperatureInAPeriodOfDay
     case averageInputCurrent

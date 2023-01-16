@@ -123,7 +123,7 @@ public class ProxyFilter {
     private let mutex = DispatchQueue(label: "ProxyFilterMutex")
     /// A queue to call delegate methods on.
     ///
-    /// The value is set in the `MeshNetworkManager` initializer.
+    /// The value is set in the ``MeshNetworkManager`` initializer.
     private let delegateQueue: DispatchQueue
     /// The counter is used to prevent from refreshing the filter in a loop when the Proxy Server
     /// responds with an unexpected list size.

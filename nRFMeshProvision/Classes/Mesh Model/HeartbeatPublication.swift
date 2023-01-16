@@ -108,7 +108,7 @@ public class HeartbeatPublication: Codable {
     /// indicating which network key to use for the Heartbeat publication.
     ///
     /// The Network Key Index corresponds to the index value of one of the Network Key
-    /// entries in Node `networkKeys` array.
+    /// entries in Node ``Node/networkKeys`` array.
     public let networkKeyIndex: KeyIndex
     /// Node features that trigger sending Heartbeat messages when changed.
     public let features: NodeFeatures
