@@ -265,6 +265,9 @@ public class ProvisioningManager {
         // If the device's Public Key was obtained OOB, we are now ready to
         // calculate the device's Shared Secret.
         if case let .oobPublicKey(key: key) = publicKey {
+            // The OOB Public Key is for sure different than the one randomy generated
+            // moment ago. Even if not, it trully has been randomly generated, so it's not
+            // an attack.
             do {
                 try provisioningData.provisionerDidObtain(devicePublicKey: key)
             } catch {
@@ -377,6 +380,12 @@ extension ProvisioningManager: BearerDelegate, BearerDataDelegate {
         // Device Public Key has been received.
         case (.provisioning, .publicKey):
             let publicKey = response.publicKey!
+            // Errata E16350 added an extera check whether the received Public Key is different
+            // than Provisioner's Public Key.
+            guard publicKey != provisioningData.provisionerPublicKey else {
+                state = .fail(ProvisioningError.invalidPublicKey)
+                return
+            }
             provisioningData.accumulate(pdu: data.dropFirst())
             do {
                 try provisioningData.provisionerDidObtain(devicePublicKey: publicKey)

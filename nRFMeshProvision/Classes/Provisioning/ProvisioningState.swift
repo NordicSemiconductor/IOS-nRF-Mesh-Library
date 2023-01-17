@@ -52,6 +52,8 @@ public enum ProvisioningError: Error {
     case invalidState
     /// The received PDU is invalid.
     case invalidPdu
+    /// The received Public Key is invalid or equal to Provisioner's Public Key.
+    case invalidPublicKey
     /// Thrown when an unsupported algorithm has been selected for provisioning.
     case unsupportedAlgorithm
     /// Thrown when the Unprovisioned Device is not supported by the manager.
@@ -145,6 +147,8 @@ extension ProvisioningError: LocalizedError {
             return NSLocalizedString("Invalid state", comment: "provisioning")
         case .invalidPdu:
             return NSLocalizedString("Invalid PDU", comment: "provisioning")
+        case .invalidPublicKey:
+            return NSLocalizedString("Invalid or equal Public Key", comment: "provisioning")
         case .unsupportedAlgorithm:
             return NSLocalizedString("Unsupported algorithm", comment: "provisioning")
         case .unsupportedDevice:

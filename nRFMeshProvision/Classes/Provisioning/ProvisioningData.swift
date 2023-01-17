@@ -96,7 +96,11 @@ internal extension ProvisioningData {
         guard let _ = privateKey else {
             throw ProvisioningError.invalidState
         }
-        sharedSecret = try Crypto.calculateSharedSecret(privateKey: privateKey, publicKey: key)
+        do {
+            sharedSecret = try Crypto.calculateSharedSecret(privateKey: privateKey, publicKey: key)
+        } catch {
+            throw ProvisioningError.invalidPublicKey
+        }
     }
     
     /// Call this method when the Auth Value has been obtained.
