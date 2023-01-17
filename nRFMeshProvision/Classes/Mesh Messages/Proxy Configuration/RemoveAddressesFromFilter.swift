@@ -30,6 +30,8 @@
 
 import Foundation
 
+/// The Remove Addresses from Filter message is sent by a Proxy Client
+/// to remove destination addresses from the proxy filter list.
 public struct RemoveAddressesFromFilter: StaticAcknowledgedProxyConfigurationMessage {
     public static let opCode: UInt8 = 0x02
     public static let responseType: StaticProxyConfigurationMessage.Type = FilterStatus.self

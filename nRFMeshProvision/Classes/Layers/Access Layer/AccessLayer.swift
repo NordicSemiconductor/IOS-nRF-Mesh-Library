@@ -31,7 +31,7 @@
 import Foundation
 
 /// The transaction object is used for Transaction Messages,
-/// for example `GenericLevelSet`.
+/// for example ``GenericLevelSet``.
 private struct Transaction {
     /// Last used Transaction Identifier.
     private var lastTid = UInt8.random(in: UInt8.min...UInt8.max)
@@ -190,7 +190,7 @@ internal class AccessLayer {
     /// using given Application Key and a Network Key bound to it.
     ///
     /// Before sending, this method updates the transaction identifier (TID)
-    /// for message extending `TransactionMessage`.
+    /// for message extending ``TransactionMessage``.
     ///
     /// - parameters:
     ///   - message:        The Mesh Message to send.
@@ -361,8 +361,9 @@ private extension AccessLayer {
     /// some "Message X" type.
     ///
     /// This method will make sure that each Model will receive a message
-    /// decoded to the type specified in `messageTypes` in its `ModelDelegate`,
-    /// but the manager's delegate will be notified with the first message only.
+    /// decoded to the type specified in ``ModelDelegate/messageTypes`` in its
+    /// ``ModelDelegate``, but the manager's delegate will be notified with
+    /// the first message only.
     ///
     /// - parameters:
     ///   - accessPdu: The Access PDU received.

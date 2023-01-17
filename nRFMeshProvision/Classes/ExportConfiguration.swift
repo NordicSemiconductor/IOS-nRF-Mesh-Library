@@ -30,28 +30,34 @@
 
 import Foundation
 
-/// Allows to narrow down the exported configuration to a required minimum.
+/// Export configuration allows to narrow down the exported configuration to a
+/// required minimum.
 ///
-/// For example, when sharing mesh network configuration with a guest, a separate
-/// Network Key and Application Key should be created to be used by the guest.
-/// Then, Nodes that the guest should be able to control should be configured to
-/// use it. The guest can receive only configuration related to the guest Network
-/// Key, with all other data excluded. Also, as may not be allowed to reconfigure
-/// Nodes, only partial Nodes configuration can be shared with them, which excludes
-/// the Device Keys of those Nodes.
+/// When sharing a mesh network configuration a care must be taken not to
+/// share sensitive information to prevent unauthorized use.
+///
+/// When sharing a configuration with a guest, a separate Network Key and
+/// set of Application Keys should be created. The Nodes given to the guest under
+/// control should be configured to use the keys. The guest can be fgiven only
+/// the part of the network related to the guest Network Key, with all other data
+/// excluded. Also, to prevent reconfiguration of the Nodes, only partial Nodes
+/// configuration can be shared, which excludes the Device Keys of those Nodes.
 public enum ExportConfiguration {
     
+    /// Network Keys configuration.
     public enum NetworkKeysConfiguration {
         /// All Network Keys will be exported.
         case all
         /// Only given Network Keys will be exported.
         ///
         /// Nodes that do not know the given Network Keys will be excluded
-        /// (even when nodes are exported with `.all` option). Excluded keys
-        /// will also be excluded from Model binding on exported Nodes.
+        /// (even when nodes are exported with
+        /// ``ExportConfiguration/NetworkKeysConfiguration/all`` option).
+        /// Excluded keys will also be excluded from Model binding on exported Nodes.
         case some([NetworkKey])
     }
     
+    /// Application Keys configuration.
     public enum ApplicationKeysConfiguration {
         /// All Application Keys will be exported.
         case all
@@ -61,6 +67,7 @@ public enum ExportConfiguration {
         case some([ApplicationKey])
     }
     
+    /// Export configuration related to ``Provisioner``s.
     public enum ProvisionersConfiguration {
         /// All Provisioner objects will be exported.
         case all
@@ -73,12 +80,15 @@ public enum ExportConfiguration {
         case some([Provisioner])
     }
     
+    /// Export configuration related to Nodes. This allows exporting
+    /// a subset of Nodes or excluding the Device Keys.
     public enum NodesConfiguration {
         /// All Nodes that match Network Keys and Application Keys filter will be
         /// exported. Nodes belonging to excluded Provisioners will not be
         /// exported.
         case allWithDeviceKey
-        /// The same as `.allWithDeviceKey`, but device keys will not be exported.
+        /// The same as ``ExportConfiguration/NodesConfiguration/allWithDeviceKey``,
+        /// but device keys will not be exported.
         case allWithoutDeviceKey
         /// The given Nodes will be exported. This allows to export Nodes with
         /// Device Key (full) or without Device Key (partial). The device on which
@@ -87,6 +97,7 @@ public enum ExportConfiguration {
         case some(withDeviceKey: [Node], andSomeWithout: [Node])
     }
     
+    /// Export configuration related to user-defined Groups.
     public enum GroupsConfiguration {
         /// All Groups will be exported, also those that none of the Models is
         /// subscribed to.
@@ -100,6 +111,7 @@ public enum ExportConfiguration {
         case some([Group])
     }
     
+    /// Export configuration related to user-defined Scenes.
     public enum ScenesConfiguration {
         /// All Scenes will be exported. The scenes will not contain addresses of
         /// excluded Nodes.

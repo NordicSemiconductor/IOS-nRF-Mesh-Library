@@ -30,12 +30,15 @@
 
 import Foundation
 
+/// The range of ``SceneNumber``s assigned to a ``Provisioner``.
 public class SceneRange: RangeObject, Codable {
     
+    /// The first Scene Number of the range.
     public var firstScene: SceneNumber {
         return range.lowerBound
     }
     
+    /// The last Scene Number of the range.
     public var lastScene: SceneNumber {
         return range.upperBound
     }

@@ -58,7 +58,7 @@ public struct ConfigNodeIdentityStatus: ConfigNetKeyMessage, ConfigStatusMessage
     /// Creates a response to the given request.
     ///
     /// - parameter request: The request has to be of type
-    ///                      `ConfigNodeIdentityGet` or `ConfigNodeIdentitySet`.
+    ///                      ``ConfigNodeIdentityGet`` or ``ConfigNodeIdentitySet``.
     public init(responseTo request: ConfigNetKeyMessage) {
         self.networkKeyIndex = request.networkKeyIndex
         // iOS does not support advertising with Node Identity.

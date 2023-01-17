@@ -30,6 +30,18 @@
 
 import Foundation
 
+/// Application Keys are used to encrypt mesh messages on Access Layer.
+///
+/// The Application Key is 128-bit long and is bound to a single Network Key.
+/// To use the Application Key, the bound Network Key must be used to encrypt
+/// the message on Network Layer.
+///
+/// Each key is identified by a ``KeyIndex``. There can be up to 4095
+/// Application Keys in a mesh network.
+///
+/// AID (Application Key identifier) is derived from the Application Key.
+///
+/// The key can be change using Key Refresh Procedure (KRP).
 public class ApplicationKey: Key, Codable {
     internal weak var meshNetwork: MeshNetwork?
     

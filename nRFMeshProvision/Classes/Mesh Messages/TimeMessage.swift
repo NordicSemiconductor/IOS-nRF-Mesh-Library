@@ -30,11 +30,12 @@
 
 import Foundation
 
-
+/// A base protocol for time messages.
 public protocol TimeMessage: StaticMeshMessage {
     var time: TaiTime { get }
 }
 
+/// Structure representing time in TAI format.
 public struct TaiTime {
     /// The current TAI time in seconds.
     public let seconds: UInt64
@@ -58,7 +59,9 @@ public struct TaiTime {
         self.tzOffset = TimeZone.current
     }
     
-    public init(seconds: UInt64, subSecond: UInt8, uncertainty: UInt8, authority: Bool, taiDelta: Int16, tzOffset: TimeZone) {
+    public init(seconds: UInt64, subSecond: UInt8,
+                uncertainty: UInt8, authority: Bool,
+                taiDelta: Int16, tzOffset: TimeZone) {
         self.seconds = seconds
         self.subSecond = subSecond
         self.uncertainty = uncertainty
@@ -69,25 +72,41 @@ public struct TaiTime {
 }
 
 // MARK: - Constants for encoding and decoding parameters in time messages.
-let TZ_SECONDS_PER_STEP = 3600 / 4
-let TZ_START_RANGE: UInt8 = 0x40
-let TAI_DELTA_START_RANGE: Int16 = 0xFF
+
+private let TZ_SECONDS_PER_STEP = 3600 / 4
+private let TZ_START_RANGE: UInt8 = 0x40
+private let TAI_DELTA_START_RANGE: Int16 = 0xFF
 
 // MARK: - Extensions for encoding and decoding parameters in time messages.
+
 extension TimeZone {
+    
+    /// Encodes the Time Zone as `UInt8` offset.
     public func encodeToTzOffset() -> UInt8 {
         return UInt8(max(-127, min(128, (self.secondsFromGMT() / TZ_SECONDS_PER_STEP) + Int(TZ_START_RANGE))))
     }
+    
 }
 
 extension UInt8 {
+    
+    /// Decodes the Time Zone offset as Time Zone.
     public func decodeFromTzOffset() -> TimeZone {
         return TimeZone(secondsFromGMT: (Int(self) - Int(TZ_START_RANGE)) * TZ_SECONDS_PER_STEP)!
     }
+    
 }
 
 // MARK: - Extensions for encoding and decoding TAI time objects.
+
 extension TaiTime {
+    
+    /// Unmarshals the TAI Time from raw data from offset 0.
+    ///
+    /// 10 bytes of data are expected. The length is not checked.
+    ///
+    /// - parameter parameters: The raw data of time message.
+    /// - returns: The TAI time representation.
     public static func unmarshal(_ parameters: Data) -> TaiTime {
         let seconds = parameters.readBits(40, fromOffset: 0)
         let subSecond = UInt8(parameters.readBits(8, fromOffset: 40))
@@ -96,9 +115,16 @@ extension TaiTime {
         let taiDelta = Int16(parameters.readBits(15, fromOffset: 57))
         let tzOffset = UInt8(parameters.readBits(8, fromOffset: 72))
 
-        return TaiTime(seconds: seconds, subSecond: subSecond, uncertainty: uncertainty, authority: authority, taiDelta: taiDelta - TAI_DELTA_START_RANGE, tzOffset: tzOffset.decodeFromTzOffset())
+        return TaiTime(seconds: seconds, subSecond: subSecond,
+                       uncertainty: uncertainty, authority: authority,
+                       taiDelta: taiDelta - TAI_DELTA_START_RANGE,
+                       tzOffset: tzOffset.decodeFromTzOffset())
     }
     
+    /// Marshals the TAI Time to raw bytes.
+    ///
+    /// - parameter time: The TAI time to marshall.
+    /// - returns: The raw bytes of length 10.
     public static func marshal(_ time: TaiTime) -> Data {
         var data = Data(count: 10)
 
@@ -111,4 +137,5 @@ extension TaiTime {
         
         return data
     }
+    
 }

@@ -30,6 +30,7 @@
 
 import Foundation
 
+/// A base class for Proxy configuration messages.
 public protocol ProxyConfigurationMessage: BaseMeshMessage {
     /// The message Op Code.
     var opCode: UInt8 { get }
@@ -42,7 +43,7 @@ public protocol StaticProxyConfigurationMessage: ProxyConfigurationMessage {
     static var opCode: UInt8 { get }
 }
 
-/// The base class for acknowledged messages.
+/// A base class for acknowledged proxy configuration messages.
 ///
 /// An acknowledged message is transmitted and acknowledged by each
 /// receiving element by responding to that message. The response is
@@ -54,6 +55,7 @@ public protocol AcknowledgedProxyConfigurationMessage: ProxyConfigurationMessage
     var responseOpCode: UInt8 { get }
 }
 
+/// A base class static acknowledged proxy configuration messages.
 public protocol StaticAcknowledgedProxyConfigurationMessage:
     AcknowledgedProxyConfigurationMessage, StaticProxyConfigurationMessage {
     /// The Type of the response message.

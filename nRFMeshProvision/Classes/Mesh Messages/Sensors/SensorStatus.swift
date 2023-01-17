@@ -30,6 +30,7 @@
 
 import Foundation
 
+/// A Device Property with corresponding characteristic.
 public typealias SensorValue = (property: DeviceProperty, value: DevicePropertyCharacteristic)
 
 public struct SensorStatus: SensorMessage {

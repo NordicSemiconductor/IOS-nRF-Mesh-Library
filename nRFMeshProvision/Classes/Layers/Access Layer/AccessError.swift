@@ -66,7 +66,7 @@ extension AccessError: LocalizedError {
         case .invalidSource:         return NSLocalizedString("Local Provisioner does not have Unicast Address specified.", comment: "access")
         case .invalidElement:        return NSLocalizedString("Element does not belong to the local Node.", comment: "access")
         case .invalidTtl:            return NSLocalizedString("Invalid TTL", comment: "access")
-        case .invalidDestination:    return NSLocalizedString("The destination address is unknown.", comment: "access")
+        case .invalidDestination:    return NSLocalizedString("The destination address is invalid.", comment: "access")
         case .modelNotBoundToAppKey: return NSLocalizedString("No Application Key bound to the given Model.", comment: "access")
         case .noDeviceKey:           return NSLocalizedString("Unknown Device Key", comment: "access")
         case .cannotDelete:          return NSLocalizedString("Cannot delete the last Network Key.", comment: "access")

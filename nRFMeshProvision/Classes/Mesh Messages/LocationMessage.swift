@@ -30,6 +30,7 @@
 
 import Foundation
 
+/// A base protocol for location status messages.
 public protocol LocationStatusMessage: GenericMessage {
     /// Latitude
     var latitude: Latitude { get }
@@ -39,14 +40,17 @@ public protocol LocationStatusMessage: GenericMessage {
     var altitude: Altitude { get }
 }
 
+/// A base protocol for location messafges.
 public protocol LocationMessage: StaticMeshMessage {
     // No additional fields.
 }
 
+/// A base protocol for acknowledged location messafges.
 public protocol AcknowledgedLocationMessage: LocationMessage, StaticAcknowledgedMeshMessage {
     // No additional fields.
 }
 
+/// The representation of latitide coordinate.
 public enum Latitude {
     init(raw parameter: Int32) {
         if (parameter == -1) {
@@ -58,8 +62,7 @@ public enum Latitude {
 
     /// Creates an instance of a Latitude object.
     ///
-    /// - parameters:
-    ///   - position: The WGS84 coordinate longitude. Valid values are between -180 and 180.
+    /// - parameter position: The WGS84 coordinate longitude. Valid values are between -180 and 180.
     init?(position: Double) {
         if (position < -90 || position > 90) {
             return nil
@@ -68,6 +71,7 @@ public enum Latitude {
         self = .coordinate(max(Int32.min + 1, min(Int32.max - 1, Int32(floor((position / 90) * (pow(2, 31) - 1))))))
     }
     
+    /// Encodes the Latitude object to Int32.
     func encode() -> Int32 {
         switch self {
         case .coordinate(let parameter):
@@ -86,10 +90,13 @@ public enum Latitude {
         }
     }
     
+    /// A specific latitude coordinate.
     case coordinate(Int32)
+    /// Latitude is not configured.
     case notConfigured
 }
 
+/// The representation of longitude coordinate.
 public enum Longitude {
     init(raw parameter: Int32) {
         if (parameter == -1) {
@@ -101,8 +108,7 @@ public enum Longitude {
 
     /// Creates an instance of a Longitude object.
     ///
-    /// - parameters:
-    ///   - position: The WGS84 coordinate longitude. Valid values are between -180 and 180.
+    /// - parameter position: The WGS84 coordinate longitude. Valid values are between -180 and 180.
     init?(position: Double) {
         if (position < -180 || position > 180) {
             return nil
@@ -110,7 +116,8 @@ public enum Longitude {
 
         self = .coordinate(max(Int32.min + 1, min(Int32.max - 1, Int32(floor((position / 180) * (pow(2, 31) - 1))))))
     }
-
+    
+    /// Encodes the Longitude object to Int32.
     func encode() -> Int32 {
         switch self {
         case .coordinate(let parameter):
@@ -128,11 +135,14 @@ public enum Longitude {
             return nil
         }
     }
-
+    
+    /// A specific longitude coordinate.
     case coordinate(Int32)
+    /// Longitude is not configured.
     case notConfigured
 }
 
+/// The representation of altitude above see level.
 public enum Altitude : Equatable {
     init(raw parameter: Int16) {
         if (parameter == 0x7FFF) {
@@ -143,7 +153,10 @@ public enum Altitude : Equatable {
             self = .altitude(parameter)
         }
     }
-
+    
+    /// Encodes the Longitude object to Int16.
+    ///
+    /// Values 0x7FFE and 0x7FFF have special meaning.
     func encode() -> Int16 {
         switch self {
         case .altitude(let position):
@@ -155,6 +168,7 @@ public enum Altitude : Equatable {
         }
     }
 
+    /// The altitude, or `nil` if not unknown.
     func altitude() -> Int16? {
         switch self {
         case .altitude(let parameter):
@@ -166,7 +180,10 @@ public enum Altitude : Equatable {
         }
     }
     
+    /// A specific altitude.
     case altitude(Int16)
+    /// The altitude is too large to fit Int16.
     case tooLarge
+    /// The altitude is not configured.
     case notConfigured
 }

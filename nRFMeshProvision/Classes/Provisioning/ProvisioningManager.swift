@@ -445,7 +445,10 @@ private extension ProvisioningManager {
     
     /// This method asks the user to provide a OOB value based on the
     /// authentication method specified in the provisioning process.
-    /// For `.noOob` case, the value is automatically set to 0s.
+    ///
+    /// For ``AuthenticationMethod/noOob`` case, the value is automatically
+    /// set to 0s.
+    ///
     /// This method will call `authValueReceived(:)` when the value
     /// has been obtained.
     func obtainAuthValue() {

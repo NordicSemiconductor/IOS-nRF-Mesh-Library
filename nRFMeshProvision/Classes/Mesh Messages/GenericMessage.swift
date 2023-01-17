@@ -30,10 +30,12 @@
 
 import Foundation
 
+/// A base protocol for generic messages.
 public protocol GenericMessage: StaticMeshMessage {
     // No additional fields.
 }
 
+/// A base protocol for acknowledged generic messages.
 public protocol AcknowledgedGenericMessage: GenericMessage, StaticAcknowledgedMeshMessage {
     // No additional fields.
 }
@@ -41,7 +43,7 @@ public protocol AcknowledgedGenericMessage: GenericMessage, StaticAcknowledgedMe
 public extension Array where Element == GenericMessage.Type {
     
     /// A helper method that can create a map of message types required
-    /// by the `ModelDelegate` from a list of `GenericMessage`s.
+    /// by the ``ModelDelegate`` from a list of ``GenericMessage``s.
     ///
     /// - returns: A map of message types.
     func toMap() -> [UInt32 : MeshMessage.Type] {
@@ -52,12 +54,17 @@ public extension Array where Element == GenericMessage.Type {
 
 // MARK: - GenericMessageStatus
 
+/// Enumeration of available statuses of a generic message.
 public enum GenericMessageStatus: UInt8 {
+    /// The operation was successful.
     case success           = 0x00
+    /// The operation failed. Min range cannot be set.
     case cannotSetRangeMin = 0x01
+    /// The operation failed. Max range cannot be set.
     case cannotSetRangeMax = 0x02
 }
 
+/// A base protocol for generic status messages.
 public protocol GenericStatusMessage: GenericMessage, StatusMessage {
     /// Operation status.
     var status: GenericMessageStatus { get }
@@ -65,10 +72,12 @@ public protocol GenericStatusMessage: GenericMessage, StatusMessage {
 
 public extension GenericStatusMessage {
     
+    /// Whether the operation was successful.
     var isSuccess: Bool {
         return status == .success
     }
     
+    /// String representation of the status property.
     var message: String {
         return "\(status)"
     }
@@ -92,12 +101,17 @@ extension GenericMessageStatus: CustomDebugStringConvertible {
 
 // MARK: - SceneMessageStatus
 
+/// Enumeration of available statuses of a scene message.
 public enum SceneMessageStatus: UInt8 {
+    /// The operation was successful.
     case success           = 0x00
+    /// The scene register is full and cannot store any mode scenes.
     case sceneRegisterFull = 0x01
+    /// A scene cannot be recalled, as it has not been found.
     case sceneNotFound     = 0x02
 }
 
+/// a base protocol for scene status messages.
 public protocol SceneStatusMessage: GenericMessage, StatusMessage {
     /// Operation status.
     var status: SceneMessageStatus { get }
@@ -105,10 +119,12 @@ public protocol SceneStatusMessage: GenericMessage, StatusMessage {
 
 public extension SceneStatusMessage {
     
+    /// Whether the operation was successful.
     var isSuccess: Bool {
         return status == .success
     }
     
+    /// String representation of the status property.
     var message: String {
         return "\(status)"
     }

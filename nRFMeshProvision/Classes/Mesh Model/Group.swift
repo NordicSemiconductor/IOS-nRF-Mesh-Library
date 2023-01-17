@@ -30,6 +30,14 @@
 
 import Foundation
 
+/// The Group object represents a user-defined group of Nodes,
+/// identified by Group Address or Virtual Label.
+///
+/// A group may be given a human-readable name.
+///
+/// In Mesh Configuration Database a Group may have a parent Group,
+/// but this is not reflected in the Mesh Profile specification. Groups
+/// cannot form circle relationships.
 public class Group: Codable {
     internal weak var meshNetwork: MeshNetwork?
     

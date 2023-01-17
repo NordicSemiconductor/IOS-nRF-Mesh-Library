@@ -30,6 +30,7 @@
 
 import Foundation
 
+/// Base protocol for Network and Application Keys.
 public protocol Key {
     /// UTF-8 string, which should be a human readable name of this key.
     var name: String { get set }

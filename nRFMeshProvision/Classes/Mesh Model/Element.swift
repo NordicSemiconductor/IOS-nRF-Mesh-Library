@@ -33,10 +33,11 @@ import Foundation
 /// An alias for the Element type.
 public typealias MeshElement = Element
 
-/// An Element is an addressable entity within a ``Node``. Each Node has at
-/// least one element, the Primary Element, and may have one or more
-/// additional secondary elements. The number and structure of elements
-/// is static and does not change throughout the lifetime of a node
+/// An Element is an addressable entity within a ``Node``.
+///
+/// Each Node has at least one element, the Primary Element, and may have
+/// one or more additional secondary elements. The number and structure of
+/// elements is static and does not change throughout the lifetime of a node
 /// (that is, as long as the node is part of a network).
 ///
 /// The Primary Element is addressed using the first Unicast Address
@@ -59,7 +60,7 @@ public class Element: Codable {
     public internal(set) weak var parentNode: Node?
     
     /// This initiator should be used to create Elements that will
-    /// be set as local elements using `MeshNetworkManager.localElements`.
+    /// be set as local elements using ``MeshNetworkManager/localElements``.
     ///
     /// - parameter name:     The optional Element name.
     /// - parameter location: The Element location, by default set to `.unknown`.

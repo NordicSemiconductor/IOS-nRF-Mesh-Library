@@ -32,9 +32,25 @@ import Foundation
 
 /// Node feature.
 public enum NodeFeature: String, Codable {
+    /// The Relay feature is used to relay/forward Network PDUs received by a node
+    /// over the advertising bearer.
+    ///
+    /// This feature is optional and if supported can be enabled and disabled.
     case relay = "relay"
+    /// The Proxy feature is used to relay/forward Network PDUs received by a node
+    /// between GATT and advertising bearers.
+    ///
+    /// This feature is optional and if supported can be enabled and disabled.
     case proxy = "proxy"
+    /// The Friend feature is used to establish friendship with a Low Power node.
+    ///
+    /// This feature is optional and if supported can be enabled and disabled.
     case friend = "friend"
+    /// The Low Power feature specifies that the node can work as a Low Power device.
+    ///
+    /// This feature is optional but cannot be disabled if supported. A Low Power
+    /// node can have friendship established or not, but this flag only says if
+    /// the feature is enabled, not the status of the friendship.
     case lowPower = "lowPower"
 }
 
@@ -42,9 +58,13 @@ public enum NodeFeature: String, Codable {
 public struct NodeFeatures: OptionSet {
     public let rawValue: UInt16
     
+    /// If present, the ``NodeFeatures/relay`` feature is enabled on the Node.
     public static let relay    = NodeFeatures(rawValue: 1 << 0)
+    /// If present, the ``NodeFeatures/proxy`` feature is enabled on the Node.
     public static let proxy    = NodeFeatures(rawValue: 1 << 1)
+    /// If present, the ``NodeFeatures/friend`` feature is enabled on the Node.
     public static let friend   = NodeFeatures(rawValue: 1 << 2)
+    /// If present, the ``NodeFeatures/lowPower`` feature is enabled on the Node.
     public static let lowPower = NodeFeatures(rawValue: 1 << 3)
     
     public init(rawValue: UInt16) {
@@ -71,21 +91,24 @@ public struct NodeFeatures: OptionSet {
 
 /// The state of a feature.
 public enum NodeFeatureState: UInt8, Codable {
+    /// The feature is disabled.
     case notEnabled   = 0
+    /// The feature is enabled.
     case enabled      = 1
+    /// The feature is not supported by the Node.
     case notSupported = 2
 }
 
 /// The features state object represents the functionality of a mesh node
 /// that is determined by the set features that the node supports.
 public class NodeFeaturesState: Codable {
-    /// The state of Relay feature. `nil` if unknown.
+    /// The state of Relay feature or `nil` if unknown.
     public internal(set) var relay: NodeFeatureState?
-    /// The state of Proxy feature. `nil` if unknown.
+    /// The state of Proxy feature or `nil` if unknown.
     public internal(set) var proxy: NodeFeatureState?
-    /// The state of Friend feature. `nil` if unknown.
+    /// The state of Friend feature or `nil` if unknown.
     public internal(set) var friend: NodeFeatureState?
-    /// The state of Low Power feature. `nil` if unknown.
+    /// The state of Low Power feature or `nil` if unknown.
     public internal(set) var lowPower: NodeFeatureState?
     
     internal var rawValue: UInt16 {

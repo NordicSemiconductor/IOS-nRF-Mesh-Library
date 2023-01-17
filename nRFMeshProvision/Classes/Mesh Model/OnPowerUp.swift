@@ -30,6 +30,7 @@
 
 import Foundation
 
+/// The enumeration for different actions for On Power Up state.
 public enum OnPowerUp: UInt8 {
     case off       = 0x00
     case `default` = 0x01

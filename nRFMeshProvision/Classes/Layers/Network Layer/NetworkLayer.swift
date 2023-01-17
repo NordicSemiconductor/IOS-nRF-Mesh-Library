@@ -145,8 +145,8 @@ internal class NetworkLayer {
     ///   - pdu:  The Lower Transport PDU to be sent.
     ///   - type: The PDU type.
     ///   - ttl:  The initial TTL (Time To Live) value of the message.
-    /// - throws: This method may throw when the `transmitter` is not set, or has
-    ///           failed to send the PDU.
+    /// - throws: This method may throw when the ``MeshNetworkManager/transmitter``
+    ///           is not set, or has failed to send the PDU.
     func send(lowerTransportPdu pdu: LowerTransportPdu, ofType type: PduType,
               withTtl ttl: UInt8) throws {
         guard let transmitter = networkManager.transmitter else {
@@ -364,7 +364,7 @@ private extension NetworkLayer {
     /// decoded by the connected Proxy.
     ///
     /// This method also initiates the Proxy Filter with local Provisioner's Unicast Address and
-    /// the `Address.allNodes` group address if a new connection has been found.
+    /// the `Address.allNodes`` group address if a new connection has been found.
     ///
     /// - parameters:
     ///   - networkKey: The Network Key known to the connected Proxy.
@@ -386,7 +386,7 @@ private extension NetworkLayer {
     /// Handles the received Proxy Configuration PDU.
     ///
     /// This method parses the payload and instantiates a message class.
-    /// The message is passed to the `ProxyFilter` for processing.
+    /// The message is passed to the ``ProxyFilter`` for processing.
     ///
     /// - parameter proxyPdu: The received Proxy Configuration PDU.
     func handle(proxyConfigurationPdu proxyPdu: NetworkPdu) {

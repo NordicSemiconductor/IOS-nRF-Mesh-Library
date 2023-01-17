@@ -37,15 +37,16 @@ public struct SensorDescriptorStatus: SensorMessage {
     public enum Result {
         /// List of sensor descriptors returned in the response.
         ///
-        /// If Sensor Descriptor Get was sent with the `property` parameter set
-        /// to `nil`, the result will contain a list of all sensor descriptors
+        /// If Sensor Descriptor Get was sent with the ``SensorDescriptorGet/property``
+        /// parameter set to `nil`, the result will contain a list of all sensor descriptors
         /// found on the target Element. Otherwise, in case the requested property
         /// was found, this list will contain only the requested descriptor.
         case descriptors([SensorDescriptor])
         /// The Propery was not found on the Element.
         ///
         /// This result is returned when a Sensor Descriptor Get was sent with
-        /// a `property` parameter that does not exist on the target Element.
+        /// a ``SensorDescriptorGet/property`` parameter that does not exist on the
+        /// target Element.
         case propertyNotFound(DeviceProperty)
     }
     

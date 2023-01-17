@@ -30,6 +30,14 @@
 
 import Foundation
 
+/// The key index is a 12-bit unsigend integer identifyind a Network
+/// or an Application Key.
+///
+/// The key indexes within Network Keys and Application Keys must
+/// be distinct.
+///
+/// This type is an alias for `UInt16`. To check the range, use
+/// `isValidKeyIndex`.
 public typealias KeyIndex = UInt16
 
 public extension KeyIndex {

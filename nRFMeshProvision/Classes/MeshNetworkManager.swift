@@ -134,7 +134,7 @@ public class MeshNetworkManager {
     
     // MARK: - Computed properties
     
-    /// The `MeshNetwork` object, or `nil`, if the network has not been loaded yet.
+    /// The ``MeshNetwork`` object, or `nil`, if the network has not been loaded yet.
     public var meshNetwork: MeshNetwork? {
         return meshData.meshNetwork
     }
@@ -568,7 +568,7 @@ public extension MeshNetworkManager {
         }
         guard destination.isUnicast else {
             print("Error: Address: 0x\(destination.hex) is not a Unicast Address")
-            throw MeshMessageError.invalidAddress
+            throw AccessError.invalidDestination
         }
         guard let node = meshNetwork.node(withAddress: destination) else {
             print("Error: Unknown destination Node")
@@ -593,10 +593,10 @@ public extension MeshNetworkManager {
             throw AccessError.invalidTtl
         }
         queue.async {
-            networkManager.send(message, to: destination, withTtl: initialTtl)
+            networkManager.send(message, to: node.primaryUnicastAddress, withTtl: initialTtl)
         }
         return MessageHandle(for: message, sentFrom: source,
-                             to: destination, using: self)
+                             to: node.primaryUnicastAddress, using: self)
     }
     
     /// Sends Configuration Message to the given Node.

@@ -5,12 +5,15 @@ Use it to create, load or import a Bluetooth mesh network and send messages.
 
 ## Topics
 
-### Mesh Network
+### Local Elements
 
 - ``localElements``
+
+### Mesh Network
+
+- ``meshNetwork``
 - ``createNewMeshNetwork(withName:by:)-97wsf``
 - ``createNewMeshNetwork(withName:by:)-2fqd1``
-- ``meshNetwork``
 - ``isNetworkCreated``
 - ``load()``
 - ``save()``

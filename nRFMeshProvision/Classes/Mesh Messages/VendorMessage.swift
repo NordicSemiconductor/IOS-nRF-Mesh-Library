@@ -30,22 +30,32 @@
 
 import Foundation
 
+/// A base protocol for vendor messages.
+///
+/// Vendor messages have 24-bit long Op Code,
+/// of which 16 least significant bits contains the Company ID
+/// and 6 least significant bits of the most significant byte
+/// are the vendor Op Code.
 public protocol VendorMessage: MeshMessage {
     // No additional fields.
 }
 
+/// A base protocol for acknowledged vendor message.
 public protocol AcknowledgedVendorMessage: VendorMessage, AcknowledgedMeshMessage {
     // No additional fields.
 }
 
+/// A base protocol for static vendor message.
 public protocol StaticVendorMessage: VendorMessage, StaticMeshMessage {
     // No additional fields.
 }
 
+/// A base protocol for static acknowledged vendor message.
 public protocol AcknowledgedStaticVendorMessage: StaticVendorMessage, StaticAcknowledgedMeshMessage {
     // No additional fields.
 }
 
+/// A base protocol for vendor status message.
 public protocol VendorStatusMessage: StatusMessage {
     // No additional fields.
 }
@@ -54,16 +64,16 @@ public extension VendorMessage {
     
     /// The Op Code as defined by the company.
     ///
-    /// There are 64 3-octet opcodes available per company identifier.
+    /// There are 64 3-octet Op Codes available per company identifier.
     /// Op Code is encoded in the 6 least significant
-    /// bits of the first octet of the message Op Code.
-    var opCode: UInt8 {
+    /// bits of the most significant octet of the message Op Code.
+    var vendorOpCode: UInt8 {
         return UInt8(opCode >> 16) & 0x3F
     }
     
     /// The Company Identifiers are 16-bit values defined by the
     /// Bluetooth SIG and are coded into the second and third octets
-    /// of the 3-octet opcodes
+    /// of the 3-octet Op Code.
     var companyIdentifier: UInt16 {
         return UInt16(opCode & 0xFFFF).bigEndian
     }
@@ -73,7 +83,7 @@ public extension VendorMessage {
 public extension Array where Element == StaticVendorMessage.Type {
     
     /// A helper method that can create a map of message types required
-    /// by the `ModelDelegate` from a list of `StaticVendorMessage`s.
+    /// by the ``ModelDelegate`` from a list of ``StaticVendorMessage``s.
     ///
     /// - returns: A map of message types.
     func toMap() -> [UInt32 : MeshMessage.Type] {

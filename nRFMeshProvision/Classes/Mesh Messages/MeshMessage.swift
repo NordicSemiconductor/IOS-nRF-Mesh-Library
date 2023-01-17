@@ -30,10 +30,24 @@
 
 import Foundation
 
+/// The mesh message security enum determines authentication level
+/// which shall be used when encrypting a segmented mesh message.
+///
+/// This filed is used to determine the TransMIC.
+///
+/// The Message Integrity Check for Transport (TransMIC) is a 32-bit or 64-bit
+/// field that authenticates that the Access payload has not been changed.
+///
+/// For a segmented message, where SEG is set to 1, the size of the TransMIC
+/// is determined by the value of the SZMIC field in the Lower Transport PDU.
+/// For unsegmented messages, the size of the TransMIC is 32 bits for data messages.
+///
+/// Control messages do not have a TransMIC.
 public enum MeshMessageSecurity {
     /// Message will be sent with 32-bit Transport MIC.
     case low
     /// Message will be sent with 64-bit Transport MIC.
+    ///
     /// Unsegmented messages cannot be sent with this option.
     case high
 }
@@ -99,10 +113,11 @@ public protocol StaticMeshMessage: MeshMessage {
 /// A base class for acknowledged messages.
 ///
 /// Acknowledged messages are expected to be replied with a status message
-/// with a message of type set as `responseType`.
+/// with a message of type set as ``StaticAcknowledgedMeshMessage/responseType``.
 ///
 /// Access Layer timer will wait for
 /// ``MeshNetworkManager/acknowledgmentMessageTimeout`` seconds
+/// before throwing a timeout.
 public protocol StaticAcknowledgedMeshMessage: AcknowledgedMeshMessage, StaticMeshMessage {
     /// The Type of the response message.
     static var responseType: StaticMeshMessage.Type { get }
@@ -143,14 +158,30 @@ public protocol TransactionMessage: MeshMessage {
     var continueTransaction: Bool { get }
 }
 
+/// A base protocol for a message that can initiate a non-immediate
+/// state transition.
 public protocol TransitionMessage: MeshMessage {
-    /// The Transition Time field identifies the time that an element will
+    /// The Transition Time field identifies the time that an Element will
     /// take to transition to the target state from the present state.
     var transitionTime: TransitionTime? { get }
     /// Message execution delay in 5 millisecond steps.
+    ///
+    /// The purpose of this field is to synchronize transitions initiated
+    /// by sending the same message multiple times with a short delay.
+    /// For example, a Node would want to send a Generic On Off Set
+    /// Unacknowledged message to a Group Address. In order to increase
+    /// changes of successful delivery, such message can be repeated.
+    /// The first message could be sent with longer ``TransitionMessage/delay``
+    /// and each following with a shorter one, so when different Nodes
+    /// receive different messages, the action they take seems more
+    /// syncchronized.
+    ///
+    /// This filed has to be set together with ``TransitionMessage/transitionTime``.
     var delay: UInt8? { get }
 }
 
+/// A base protocol for messages sent as responses to
+/// ``TransitionMessage``s.
 public protocol TransitionStatusMessage: MeshMessage {
     /// The Remaining Time field identifies the time that an element will
     /// take to transition to the target state from the present state.
@@ -228,7 +259,7 @@ internal extension MeshMessage {
 
 // MARK: - Other
 
-extension MeshMessageSecurity {
+internal extension MeshMessageSecurity {
     
     /// Returns the Transport MIC size in bytes: 4 for 32-bit
     /// or 8 for 64-bit size.

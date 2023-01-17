@@ -32,7 +32,12 @@ import Foundation
 
 /// A base class for an address or scene range.
 ///
-/// Ranges are assigned to ``Provisioner`` instances.
+/// Ranges are assigned to ``Provisioner`` objects. Each Provisioner
+/// may provision new Nodes, create Groups and Scenes using only values
+/// from assigned ranges. The assigned ranges may not overlap with the ranges
+/// of other Provisioners, otherwise different instances could reuse the same
+/// values leading to collisions.
+/// .
 public class RangeObject {
     
     public private(set) var range: ClosedRange<UInt16>

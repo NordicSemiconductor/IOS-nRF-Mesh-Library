@@ -30,6 +30,18 @@
 
 import Foundation
 
+/// A Scene represents a set of states stored with a Scene Number.
+///
+/// A Scene is identified by a ``SceneNumber`` and may have a
+/// human-reaadable name associated.
+///
+/// A Node having a Scene Server model can store the states of other
+/// models and restore them on demand.
+///
+/// A Node with a Scene Client can recall Scenes on other Nodes.
+///
+/// Use ``Scene/elements`` to get list of ``Element``s with
+/// the given Scene in their Scene Register.
 public class Scene: Codable {
     internal weak var meshNetwork: MeshNetwork?
     

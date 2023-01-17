@@ -68,7 +68,7 @@ public struct LightCTLTemperatureStatus: GenericMessage, TransitionStatusMessage
     /// This is a 16-bit signed integer representation of a -1 to +1 scale using
     /// the formula:
     ///
-    /// Represented Delta UV = `deltaUV` / 32768
+    /// Represented Delta UV = ``LightCTLTemperatureStatus/deltaUV`` / 32768
     ///
     /// - parameters:
     ///   - temperature: The present value of the Light CTL Temperature state.
@@ -94,7 +94,7 @@ public struct LightCTLTemperatureStatus: GenericMessage, TransitionStatusMessage
     /// This is a 16-bit signed integer representation of a -1 to +1 scale using
     /// the formula:
     ///
-    /// Represented Delta UV = `deltaUV` / 32768
+    /// Represented Delta UV = ``LightCTLTemperatureStatus/deltaUV`` / 32768
     ///
     /// - parameters:
     ///   - temperature: The present value of the Light CTL Temperature state.

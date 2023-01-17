@@ -30,10 +30,15 @@
 
 import Foundation
 
+/// The Step Resolution field enumerates the resolution of the Number of Steps field,
 public enum StepResolution: UInt8 {
+    /// The Step Resolution is 100 milliseconds.
     case hundredsOfMilliseconds = 0b00
+    /// The Step Resolution is 1 second.
     case seconds                = 0b01
+    /// The Step Resolution is 10 seconds.
     case tensOfSeconds          = 0b10
+    /// The Step Resolution is 10 minutes.
     case tensOfMinutes          = 0b11
 }
 

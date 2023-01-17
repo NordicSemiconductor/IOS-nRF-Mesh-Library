@@ -176,7 +176,7 @@ public class Node: Codable {
     /// node. The value of this property is obtained from node composition
     /// data.
     public internal(set) var minimumNumberOfReplayProtectionList: UInt16?
-    /// Node's features. See `NodeFeatures` for details.
+    /// Node's features.
     public internal(set) var features: NodeFeaturesState?
     /// This flag represents whether or not the node is configured to send
     /// Secure Network messages.
@@ -195,8 +195,8 @@ public class Node: Codable {
     /// The TTL may only be set for a Provisioner's Node, or for a Node
     /// that has not been added to a mesh network.
     ///
-    /// Use `ConfigDefaultTtlGet` and `ConfigDefaultTtlSet` messages to read
-    /// or set the default TTL value of a remote Node.
+    /// Use ``ConfigDefaultTtlGet`` and ``ConfigDefaultTtlSet`` messages to
+    /// read or set the default TTL value of a remote Node.
     public var defaultTTL: UInt8? {
         set {
             guard meshNetwork == nil || isProvisioner else {
