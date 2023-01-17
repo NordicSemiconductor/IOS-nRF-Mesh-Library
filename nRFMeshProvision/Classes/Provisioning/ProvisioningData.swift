@@ -47,8 +47,13 @@ internal class ProvisioningData {
     private(set) var provisionerPublicKey: Data!
     
     /// The Confirmation Inputs is built over the provisioning process.
-    /// It is composed for: Provisioning Invite PDU, Provisioning Capabilities PDU,
-    /// Provisioning Start PDU, Provisioner's Public Key and device's Public Key.
+    ///
+    /// It is composed of (in that order):
+    /// - Provisioning Invite PDU,
+    /// - Provisioning Capabilities PDU,
+    /// - Provisioning Start PDU,
+    /// - Provisioner's Public Key,
+    /// - device's Public Key.
     private var confirmationInputs: Data = Data(capacity: 1 + 11 + 5 + 64 + 64)
     
     func prepare(for network: MeshNetwork, networkKey: NetworkKey, unicastAddress: Address) {
@@ -87,7 +92,9 @@ internal extension ProvisioningData {
     }
     
     /// Call this method when the device Public Key has been
-    /// obtained. This must be called after generating keys.
+    /// obtained.
+    ///
+    /// This must be called after generating keys.
     ///
     /// - parameter key: The device Public Key.
     /// - throws: This method throws when generating ECDH Secure
