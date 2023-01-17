@@ -85,6 +85,15 @@ public class ProvisioningManager {
     /// the Provisioning Capabilities have been received and such address was found.
     public private(set) var suggestedUnicastAddress: Address?
     
+    /// This generator will be used for Input Actions to generate a random
+    /// alphanumeric or integer value, depending on the chosen action.
+    ///
+    /// The default implementation is sufficient for most cases. Use your own
+    /// implementation if you need to know the value beforehand.
+    /// - since: 3.3.0
+    /// - seeAlso: https://github.com/NordicSemiconductor/IOS-nRF-Mesh-Library/pull/435
+    public var inputActionValueGenerator: InputActionValueGenerator = InputActionValueGenerator()
+    
     /// The Network Key to be sent to the device during provisioning.
     /// Setting this property is mandatory before calling
     /// ``provision(usingAlgorithm:publicKey:authenticationMethod:)``.
@@ -517,10 +526,10 @@ private extension ProvisioningManager {
         case let .inputOob(action: action, size: size):
             switch action {
             case .inputAlphanumeric:
-                let random = randomString(length: UInt(size))
+                let random = inputActionValueGenerator.randomAlphanumeric(size: size)
                 authAction = .displayAlphanumeric(random)
             case .push, .twist, .inputNumeric:
-                let random = randomInt(length: UInt(size))
+                let random = inputActionValueGenerator.randomInt(size: size)
                 authAction = .displayNumber(random, inputAction: action)
             }
             delegate?.authenticationActionRequired(authAction!)
@@ -552,23 +561,4 @@ private extension ProvisioningManager {
         state = .ready
     }
     
-}
-
-// MARK: - Helper methods
-
-private extension ProvisioningManager {
-    
-    /// Generates a random string of numerics and capital English letters
-    /// with given length.
-    func randomString(length: UInt) -> String {
-        let letters = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-        return String((0..<length).map{ _ in letters.randomElement()! })
-    }
-    
-    /// Generates a random integer with at most `length` digits.
-    func randomInt(length: UInt) -> UInt {
-        let upperbound = UInt(pow(10.0, Double(length)))
-        return UInt.random(in: 1..<upperbound)
-    }
-
 }

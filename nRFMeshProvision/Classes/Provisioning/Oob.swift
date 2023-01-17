@@ -95,13 +95,41 @@ public enum OutputAction: UInt8 {
 }
 
 /// The user will have to enter the input action on the device.
-/// For example, if the device supports `.push`, user will be asked to
+/// For example, if the device supports ``InputAction/push``, user will be asked to
 /// press a button on the device required number of times.
 public enum InputAction: UInt8 {
     case push               = 0
     case twist              = 1
     case inputNumeric       = 2
     case inputAlphanumeric  = 3
+}
+
+/// This object should generate a random alphanumeric or a random number of given sizes.
+///
+/// The value generator is used in Provisioning with an Input Action used as OOB.
+///
+/// The default implementation provides random values. It should only be overriden
+/// if you need to know the values in advance, for example for testing.
+open class InputActionValueGenerator {
+    /// This method should generate a random alphanumeric capitalize string of given size.
+    ///
+    /// For example, for `size` equal to 3 the output can be "3Z8".
+    ///
+    /// - parameter size: Required length of the returned String.
+    /// - returns: The random alphanumeric String.
+    func randomAlphanumeric(size: UInt8) -> String {
+        return String.random(length: size)
+    }
+    
+    /// This method should generate a random integer of at most given length.
+    ///
+    /// For example, for the `size` equal to 2 the maximum returned value is 99.
+    ///
+    /// - parameter size: The maximum supported length of the integer.
+    /// - returns: A random integer of maximum given length.
+    func randomInt(size: UInt8) -> UInt {
+        return UInt.random(length: size)
+    }
 }
 
 /// A set of supported Static Out-Of-Band types.
@@ -264,4 +292,25 @@ extension InputOobActions: CustomDebugStringConvertible {
             .joined(separator: ", ")
     }
     
+}
+
+private extension String {
+    
+    /// Generates a random string of numerics and capital English letters
+    /// with given length.
+    static func random(length: UInt8) -> String {
+        let letters = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+        return String((0..<length).map { _ in letters.randomElement()! })
+    }
+    
+}
+
+private extension UInt {
+    
+    /// Generates a random integer with at most `length` digits.
+    static func random(length digits: UInt8) -> UInt {
+        let upperbound = UInt(pow(10.0, Double(digits)))
+        return UInt.random(in: 1..<upperbound)
+    }
+
 }
