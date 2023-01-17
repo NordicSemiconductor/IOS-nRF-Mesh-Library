@@ -316,6 +316,7 @@ provisioning procedure.
 - ``OutputAction``
 - ``OutputOobActions``
 - ``InputAction``
+- ``InputActionValueGenerator``
 - ``InputOobActions``
 - ``StaticOobType``
 
