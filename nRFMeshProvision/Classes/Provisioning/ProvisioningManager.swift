@@ -413,7 +413,14 @@ extension ProvisioningManager: BearerDelegate, BearerDataDelegate {
         
         // The Provisioning Confirmation value has been received.
         case (.provisioning, .confirmation):
-            provisioningData.provisionerDidObtain(deviceConfirmation: response.confirmation!)
+            // Errata E16350 added an extra validation whether the received Confirmation
+            // is different than Provisioner's one.
+            guard let confirmation = response.confirmation,
+                  confirmation != provisioningData.provisionerConfirmation else {
+                state = .fail(ProvisioningError.confirmationFailed)
+                return
+            }
+            provisioningData.provisionerDidObtain(deviceConfirmation: confirmation)
             do {
                 let provisioningRandom = ProvisioningRequest.random(provisioningData.provisionerRandom)
                 logger?.v(.provisioning, "Sending \(provisioningRandom)")
