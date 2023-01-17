@@ -379,10 +379,10 @@ extension ProvisioningManager: BearerDelegate, BearerDataDelegate {
             
         // Device Public Key has been received.
         case (.provisioning, .publicKey):
-            let publicKey = response.publicKey!
-            // Errata E16350 added an extera check whether the received Public Key is different
-            // than Provisioner's Public Key.
-            guard publicKey != provisioningData.provisionerPublicKey else {
+            // Errata E16350 added an extra validation whether the received Public Key
+            // is different than Provisioner's one.
+            guard let publicKey = response.publicKey,
+                  publicKey != provisioningData.provisionerPublicKey else {
                 state = .fail(ProvisioningError.invalidPublicKey)
                 return
             }
