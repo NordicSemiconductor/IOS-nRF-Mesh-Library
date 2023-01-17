@@ -32,14 +32,14 @@ import Foundation
 
 /// A type of the Proxy Filter.
 public enum ProxyFilerType: UInt8 {
-    /// An inclusion list filter has an associated inclusion list, which is
-    /// a list of destination addresses that are of interest for the Proxy Client.
+    /// An inclusion list filter has an associated inclusion list containing
+    /// destination addresses that are of interest for the Proxy Client.
     ///
     /// The inclusion list filter blocks all messages except those targeting
     /// addresses added to the list.
     case inclusionList = 0x00
-    /// An exclusion list filter has an associated exclusion list, which is
-    /// a list of destination addresses that the Proxy Client does not want to receive.
+    /// An exclusion list filter has an associated exclusion listcontaining
+    /// destination addresses that are NOT of the Proxy Client interest.
     ///
     /// The exclusion list filter forwards all messages except those targeting
     /// addresses added to the list.
@@ -84,7 +84,7 @@ public extension ProxyFilterDelegate {
 /// An enumeration for different initial configurations of the Proxy Filter.
 public enum ProxyFilterSetup {
     /// In automatic Proxy Filter setup the filter will be set to
-    /// ``ProxyFilerType/inclusion`` with Unicast Addresses of all
+    /// ``ProxyFilerType/inclusionList`` with Unicast Addresses of all
     /// local Elements, all Group Addresses with at least one local Model
     /// subscribed and the All Nodes (0xFFFF) address.
     ///
@@ -92,7 +92,7 @@ public enum ProxyFilterSetup {
     case automatic
     
     /// The Proxy Filter on each connected Proxy Node will be set to
-    /// ``ProxyFilerType/inclusion`` with given set of addresses.
+    /// ``ProxyFilerType/inclusionList`` with given set of addresses.
     case inclusionList(addresses: Set<Address>)
     
     /// The Proxy Filter on each connected Proxy Node will be set to
