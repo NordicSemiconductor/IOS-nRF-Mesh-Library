@@ -329,15 +329,9 @@ public class MeshNetwork: Codable {
         let schema = try container.decode(String.self, forKey: .schema)
         let id = try container.decode(String.self, forKey: .id)
         
-        guard schema == "http://json-schema.org/draft-04/schema#" else {
-            throw DecodingError.dataCorruptedError(forKey: .schema, in: container,
-                                                   debugDescription: "Unsupported JSON schema")
-        }
-        guard id == "http://www.bluetooth.com/specifications/assigned-numbers/mesh-profile/cdb-schema.json#" ||
-              id == "TBD" else {
-            throw DecodingError.dataCorruptedError(forKey: .id, in: container,
-                                                   debugDescription: "Unsupported ID")
-        }
+        // Schema, ID and version are not validated.
+        // JSON parsing will fail if the imported file is not valid.
+        // Future versions should be backwards compatible.
         
         // In version 3.0 of this library the Mesh UUID format has changed
         // from 32-character hexadecimal String to standard UUID format (RFC 4122).
@@ -400,8 +394,8 @@ public class MeshNetwork: Codable {
     
     public func encode(to encoder: Encoder) throws {
         let schema = "http://json-schema.org/draft-04/schema#"
-        let id = "http://www.bluetooth.com/specifications/assigned-numbers/mesh-profile/cdb-schema.json#"
-        let version = "1.0.0"
+        let id = "https://www.bluetooth.com/specifications/specs/mesh-cdb-1-0-1-schema.json#"
+        let version = "1.0.1"
         
         var container = encoder.container(keyedBy: CodingKeys.self)        
         try container.encode(schema, forKey: .schema)
