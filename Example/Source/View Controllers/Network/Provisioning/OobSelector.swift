@@ -60,10 +60,12 @@ extension OobSelector where Self: UIViewController {
         }
         
         let alert = UIAlertController(title: "Select OOB Type", message: nil, preferredStyle: .actionSheet)
-        alert.addAction(UIAlertAction(title: "No OOB", style: .destructive) { _ in
-            callback(.noOob)
-        })
-        if capabilities.staticOobType.contains(.staticOobInformationAvailable) {
+        if !capabilities.oobType.contains(.onlyOobAuthenticatedProvisioningSupported) {
+            alert.addAction(UIAlertAction(title: "No OOB", style: .destructive) { _ in
+                callback(.noOob)
+            })
+        }
+        if capabilities.oobType.contains(.staticOobInformationAvailable) {
             alert.addAction(UIAlertAction(title: "Static OOB", style: .default) { _ in
                 callback(.staticOob)
             })

@@ -318,7 +318,7 @@ provisioning procedure.
 - ``InputAction``
 - ``InputActionValueGenerator``
 - ``InputOobActions``
-- ``StaticOobType``
+- ``OobType``
 
 ### Mesh Network
 

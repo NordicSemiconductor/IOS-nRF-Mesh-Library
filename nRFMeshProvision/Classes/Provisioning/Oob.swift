@@ -132,12 +132,16 @@ open class InputActionValueGenerator {
     }
 }
 
-/// A set of supported Static Out-Of-Band types.
-public struct StaticOobType: OptionSet {
+/// A set of supported Out-Of-Band types.
+public struct OobType: OptionSet {
     public let rawValue: UInt8
     
     /// Static OOB Information is available.
-    public static let staticOobInformationAvailable = StaticOobType(rawValue: 1 << 0)
+    public static let staticOobInformationAvailable = OobType(rawValue: 1 << 0)
+    /// Only OOB authenticated provisioning supported.
+    ///
+    /// - since: Mesh Protocol 1.1.
+    public static let onlyOobAuthenticatedProvisioningSupported = OobType(rawValue: 1 << 1)
     
     public init(rawValue: UInt8) {
         self.rawValue = rawValue
@@ -244,14 +248,17 @@ extension InputAction: CustomDebugStringConvertible {
     
 }
 
-extension StaticOobType: CustomDebugStringConvertible {
+extension OobType: CustomDebugStringConvertible {
     
     public var debugDescription: String {
         if rawValue == 0 {
             return "None"
         }
-        return [(.staticOobInformationAvailable, "Static OOB Information Available")]
-            .compactMap { (option, name) in contains(option) ? name : nil }
+        return [
+            (.staticOobInformationAvailable, "Static OOB Information Available"),
+            (.onlyOobAuthenticatedProvisioningSupported, "Only OOB Authenticated Provisioning Supported")
+            ]
+            .compactMap { option, name in contains(option) ? name : nil }
             .joined(separator: ", ")
     }
     
