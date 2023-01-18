@@ -718,7 +718,8 @@ internal extension Node {
     }
     
     /// Sets the Network Keys to the Node.
-    /// This will overwrite the previous keys.
+    ///
+    /// This method overwrites previous keys.
     ///
     /// - parameter networkKeys: The Network Keys to set.
     func set(networkKeys: [NetworkKey]) {
@@ -726,7 +727,8 @@ internal extension Node {
     }
     
     /// Sets the Network Keys with given indexes to the Node.
-    /// This will overwrite the previous keys.
+    ///
+    /// This method overwrites previous keys.
     ///
     /// - parameter networkKeyIndexes: The Network Key indexes to set.
     func set(networkKeysWithIndexes networkKeyIndexes: [KeyIndex]) {
@@ -779,7 +781,8 @@ internal extension Node {
     }
     
     /// Sets the Application Keys with given indexes to the Node.
-    /// This will overwrite the previous keys.
+    ///
+    /// This method overwrites previous keys.
     ///
     /// - parameter applicationKeyIndexes: The Application Key indexes to set.
     func set(applicationKeysWithIndexes applicationKeyIndexes: [KeyIndex]) {
@@ -789,6 +792,7 @@ internal extension Node {
     }
     
     /// Sets the Application Keys with given indexes to the Node.
+    ///
     /// This will overwrite the previous keys bound to the given
     /// Network Key.
     ///
