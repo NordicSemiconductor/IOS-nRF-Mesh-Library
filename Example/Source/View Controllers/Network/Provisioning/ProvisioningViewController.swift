@@ -240,7 +240,8 @@ private extension ProvisioningViewController {
         // If the device's Public Key is available OOB, it should be read.
         let publicKeyNotAvailable = capabilities.publicKeyType.isEmpty
         guard publicKeyNotAvailable || publicKey != nil else {
-            presentOobPublicKeyDialog(for: unprovisionedDevice) { publicKey in
+            presentOobPublicKeyDialog(for: unprovisionedDevice) { [weak self] publicKey in
+                guard let self = self else { return }
                 self.publicKey = publicKey
                 self.startProvisioning()
             }
@@ -273,7 +274,8 @@ private extension ProvisioningViewController {
         }
         
         // Start provisioning.
-        presentStatusDialog(message: "Provisioning...") {
+        presentStatusDialog(message: "Provisioning...") { [weak self] in
+            guard let self = self else { return }
             do {
                 try self.provisioningManager.provision(usingAlgorithm:       capabilities.algorithms.best,
                                                        publicKey:            self.publicKey!,
