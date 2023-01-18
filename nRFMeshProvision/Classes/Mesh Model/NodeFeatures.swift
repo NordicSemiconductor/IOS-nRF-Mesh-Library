@@ -113,10 +113,10 @@ public class NodeFeaturesState: Codable {
     
     internal var rawValue: UInt16 {
         var bitField: UInt16 = 0
-        if relay    == nil || relay!    == .notSupported {} else { bitField |= 0x01 }
-        if proxy    == nil || proxy!    == .notSupported {} else { bitField |= 0x02 }
-        if friend   == nil || friend!   == .notSupported {} else { bitField |= 0x04 }
-        if lowPower == nil || lowPower! == .notSupported {} else { bitField |= 0x08 }
+        if relay    == .notSupported {} else { bitField |= 0x01 }
+        if proxy    == .notSupported {} else { bitField |= 0x02 }
+        if friend   == .notSupported {} else { bitField |= 0x04 }
+        if lowPower == .notSupported {} else { bitField |= 0x08 }
         return bitField
     }
     

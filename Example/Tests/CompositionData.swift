@@ -47,9 +47,9 @@ class CompositionData: XCTestCase {
         XCTAssertEqual(page0?.versionIdentifier, 0xABCD)
         XCTAssertEqual(page0?.minimumNumberOfReplayProtectionList, 0x0005)
         XCTAssertEqual(page0?.features.relay, .notSupported)
-        XCTAssertEqual(page0?.features.proxy, .notEnabled)
+        XCTAssertEqual(page0?.features.proxy, nil)
         XCTAssertEqual(page0?.features.friend, .notSupported)
-        XCTAssertEqual(page0?.features.lowPower, .notEnabled)
+        XCTAssertEqual(page0?.features.lowPower, .enabled)
         XCTAssertEqual(page0?.elements.count, 2)
         
         let element0 = page0?.elements[0]
