@@ -267,7 +267,8 @@ public class Node: Codable {
         }
     }
     
-    /// Initializes the Provisioner's node.
+    /// Initializes the Provisioner's Node.
+    ///
     /// The Provisioner's node has the same name and node UUID as the Provisioner.
     ///
     /// - parameter provisioner: The Provisioner for which the node is added.
@@ -298,6 +299,7 @@ public class Node: Codable {
     }
     
     /// Initializes a Node for given unprovisioned device.
+    ///
     /// The Node will have the same UUID as the device in the advertising
     /// packet.
     ///
@@ -391,18 +393,19 @@ public class Node: Codable {
         }
     }
     
-    /// Creates a low security Node with given Device Key, Network Key and Unicast Address.
+    /// Creates an insecure Node with given Device Key, Network Key and Unicast Address.
+    ///
     /// Usually, a Node is added to a network during provisioning. However, for debug
     /// purposes, or to add an already provisioned Node, one can use this method.
-    /// A Node created this way will have security set to `.low`.
+    /// A Node created this way will have security set to ``Security/insecure``.
     ///
-    /// Use `meshNetwork.add(node: Node)` to add the Node. Other parameters must be
+    /// Use ``MeshNetwork/add(node:)`` to add the Node. Other parameters must be
     /// read from the Node using Configuration messages.
     ///
     /// - parameters:
     ///   - name: Optional Node name.
     ///   - n: Number of Elements. Elements must be read using
-    ///        `ConfigCompositionDataGet` message.
+    ///        ``ConfigCompositionDataGet`` message.
     ///   - deviceKey: The 128-bit Device Key.
     ///   - networkKey: The Network Key known to this device.
     ///   - address: The primary Unicast Address of the Node.
