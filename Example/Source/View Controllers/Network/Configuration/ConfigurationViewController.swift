@@ -205,6 +205,8 @@ class ConfigurationViewController: ProgressViewController {
                 if let featuresCell = cell as? NodeFeaturesCell {
                    featuresCell.node = node
                 }
+            case 5:
+                cell.detailTextLabel?.text = "\(node.security)"
             default:
                 break
             }
@@ -549,7 +551,8 @@ private extension IndexPath {
     ]
     static let detailsTitles = [
         "Company Identifier", "Product Identifier", "Product Version",
-        "Replay Protection Count", nil // Node Features is using its own cell.
+        "Replay Protection Count", nil, // Node Features is using its own cell.
+        "Security"
     ]
     static let switchesTitles = [
         "Configured", "Excluded"
