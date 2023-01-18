@@ -275,7 +275,7 @@ private extension ProvisioningViewController {
         // Start provisioning.
         presentStatusDialog(message: "Provisioning...") {
             do {
-                try self.provisioningManager.provision(usingAlgorithm:       .fipsP256EllipticCurve,
+                try self.provisioningManager.provision(usingAlgorithm:       capabilities.algorithms.best,
                                                        publicKey:            self.publicKey!,
                                                        authenticationMethod: self.authenticationMethod!)
             } catch {
