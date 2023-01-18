@@ -36,12 +36,12 @@ public enum Algorithm {
     /// shared secret.
     ///
     /// This has been replaced with ``Algorithm/BTM_ECDH_P256_CMAC_AES128_AES_CCM``.
-    @available(*, renamed: "BTM_ECDH_P256_CMAC_AES128_AES_CCM")
+    @available(*, deprecated, renamed: "BTM_ECDH_P256_CMAC_AES128_AES_CCM")
     case fipsP256EllipticCurve
-    /// BTM ECDH P256_CMAC_AES128_AES_CCM algorithm will be used to calculate the
+    /// BTM ECDH P256 CMAC AES128 AES CCM algorithm will be used to calculate the
     /// shared secret.
     case BTM_ECDH_P256_CMAC_AES128_AES_CCM
-    /// BTM ECDH BTM_ECDH_P256_HMAC_SHA256_AES_CCM algorithm will be used to calculate the
+    /// BTM ECDH P256 HMAC SHA256 AES CCM algorithm will be used to calculate the
     /// shared secret.
     ///
     /// This algorithm must be supported by devices claming support with Mesh Protocol 1.1.
@@ -79,7 +79,7 @@ public struct Algorithms: OptionSet {
     public let rawValue: UInt16
     
     /// BTM_ECDH_P256_CMAC_AES128_AES_CCM algorithm is supported.
-    @available(*, renamed: "BTM_ECDH_P256_CMAC_AES128_AES_CCM")
+    @available(*, deprecated, renamed: "BTM_ECDH_P256_CMAC_AES128_AES_CCM")
     public static let fipsP256EllipticCurve = Algorithms(rawValue: 1 << 0)
     /// BTM_ECDH_P256_CMAC_AES128_AES_CCM algorithm is supported.
     public static let BTM_ECDH_P256_CMAC_AES128_AES_CCM = Algorithms(rawValue: 1 << 0)
