@@ -144,6 +144,8 @@ public class NetworkKey: Key, Codable {
         self.name        = name
         self.index       = index
         self.key         = key
+        // Initially, a Network Key is consideded secure, as there are no Nodes
+        // that know it other than the Provisioner's one.
         self.minSecurity = .secure
         self.timestamp   = Date()
         
@@ -223,6 +225,19 @@ public class NetworkKey: Key, Codable {
         try container.encode(minSecurity, forKey: .minSecurity)
         try container.encode(timestamp, forKey: .timestamp)
     }
+}
+
+public extension NetworkKey {
+    
+    /// This method lowers the minimum security level of the Network Key to
+    /// ``Security/insecure``.
+    ///
+    /// - seeAlso: ``Security``
+    /// - seeAlso: ``NetworkKey/minSecurity``
+    func lowerSecurity() {
+        minSecurity = .insecure
+    }
+    
 }
 
 // MARK: - Operators

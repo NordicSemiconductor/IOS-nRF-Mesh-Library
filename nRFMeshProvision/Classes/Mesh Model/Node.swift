@@ -342,6 +342,12 @@ public class Node: Codable {
         self.netKeys  = [NodeKey(index: networkKey.index, updated: updated)]
         self.appKeys  = []
         self.elements = []
+        
+        // If the Node as provisioned in an insecure way, lower the minimum security
+        // of the Network Key.
+        if security == .insecure {
+            networkKey.lowerSecurity()
+        }
     }
     
     internal init(copy node: Node, withDeviceKey keepDeviceKey: Bool,
@@ -431,6 +437,10 @@ public class Node: Codable {
         for _ in 0..<n {
             add(element: Element(location: .unknown))
         }
+        
+        // As the Node as not provisioned in a secure way, lower the minimum security
+        // of the Network Key.
+        networkKey.lowerSecurity()
     }
     
     // MARK: - Codable
@@ -698,6 +708,11 @@ internal extension Node {
     func add(networkKeyWithIndex networkKeyIndex: KeyIndex) {
         if netKeys[networkKeyIndex] == nil {
             netKeys.append(NodeKey(index: networkKeyIndex, updated: false))
+            // If an insecure Node received a Network Key, make sure to lower
+            // the minSecurity field of that key.
+            if security == .insecure {
+                meshNetwork?.networkKeys[networkKeyIndex]?.lowerSecurity()
+            }
             meshNetwork?.timestamp = Date()
         }
     }
@@ -718,6 +733,13 @@ internal extension Node {
         netKeys = networkKeyIndexes
             .map { Node.NodeKey(index: $0, updated: false) }
             .sorted()
+        // If an insecure Node received a Network Key, make sure to lower
+        // the minSecurity field of all the keys it .
+        if security == .insecure {
+            networkKeys.forEach {
+                $0.lowerSecurity()
+            }
+        }
         meshNetwork?.timestamp = Date()
     }
     
