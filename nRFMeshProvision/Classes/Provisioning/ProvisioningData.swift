@@ -41,14 +41,20 @@ internal class ProvisioningData {
     private var authValue: Data!
     private var deviceConfirmation: Data!
     private var deviceRandom: Data!
+    private var oobPublicKey: Bool!
     
     private(set) var deviceKey: Data!
     private(set) var provisionerRandom: Data!
     private(set) var provisionerPublicKey: Data!
     
     /// The Confirmation Inputs is built over the provisioning process.
-    /// It is composed for: Provisioning Invite PDU, Provisioning Capabilities PDU,
-    /// Provisioning Start PDU, Provisioner's Public Key and device's Public Key.
+    ///
+    /// It is composed of (in that order):
+    /// - Provisioning Invite PDU,
+    /// - Provisioning Capabilities PDU,
+    /// - Provisioning Start PDU,
+    /// - Provisioner's Public Key,
+    /// - device's Public Key.
     private var confirmationInputs: Data = Data(capacity: 1 + 11 + 5 + 64 + 64)
     
     func prepare(for network: MeshNetwork, networkKey: NetworkKey, unicastAddress: Address) {
@@ -87,16 +93,25 @@ internal extension ProvisioningData {
     }
     
     /// Call this method when the device Public Key has been
-    /// obtained. This must be called after generating keys.
+    /// obtained.
     ///
-    /// - parameter key: The device Public Key.
+    /// This must be called after generating keys.
+    ///
+    /// - parameters:
+    ///   - key: The device Public Key.
+    ///   - oob: A flag indicating whether the Public Key was obtained Out-Of-Band.
     /// - throws: This method throws when generating ECDH Secure
     ///           Secret failed.
-    func provisionerDidObtain(devicePublicKey key: Data) throws {
+    func provisionerDidObtain(devicePublicKey key: Data, usingOob oob: Bool) throws {
         guard let _ = privateKey else {
             throw ProvisioningError.invalidState
         }
-        sharedSecret = try Crypto.calculateSharedSecret(privateKey: privateKey, publicKey: key)
+        do {
+            sharedSecret = try Crypto.calculateSharedSecret(privateKey: privateKey, publicKey: key)
+            oobPublicKey = oob
+        } catch {
+            throw ProvisioningError.invalidPublicKey
+        }
     }
     
     /// Call this method when the Auth Value has been obtained.
@@ -161,6 +176,11 @@ internal extension ProvisioningData {
                         + ivIndex.index.bigEndian + unicastAddress.bigEndian
         return Crypto.encrypt(provisioningData: data,
                               usingSessionKey: keys.sessionKey, andNonce: keys.sessionNonce)
+    }
+    
+    /// Returns the Node's security level based on the provisioning method.
+    var security: Security {
+        return oobPublicKey ? .secure : .insecure
     }
     
 }

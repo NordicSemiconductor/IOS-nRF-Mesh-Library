@@ -77,6 +77,9 @@ internal struct MeshState: Codable {
         let index: KeyIndex = keyIndex.asUInt16 & 0x0FFF
         let networkKey = try! NetworkKey(name: "Primary Network Key", index: index, key: netKey)
         networkKey.phase = flags[0] & 0x80 == 0x80 ? .usingNewKeys : .normalOperation
+        // The Key's minimum security cannot be guaranteed for legacy network
+        // as Nodes' security level was not stored.
+        networkKey.lowerSecurity()
         return networkKey
     }
     
@@ -104,6 +107,7 @@ internal struct MeshState: Codable {
             if old.isValid {
                 let node = Node(name: old.nodeName, uuid: old.uuid,
                                 deviceKey: old.deviceKey,
+                                security: .insecure,
                                 andAssignedNetworkKey: networkKey,
                                 andAddress: old.unicastAddress)
                 node.companyIdentifier = old.cid

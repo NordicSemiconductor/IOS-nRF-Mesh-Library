@@ -124,6 +124,7 @@ class Exporting: XCTestCase {
         
         // Setup Nodes in the kitchen.
         let kitchenLightSwitch = Node(name: "Kitchen Light Switch", uuid: UUID(), deviceKey: Data.random128BitKey(),
+                                      security: .secure,
                                       andAssignedNetworkKey: primaryNetworkKey!, andAddress: 0x0002)
         kitchenLightSwitch.add(elements: [
             Element(name: "Left button", location: .left,
@@ -141,6 +142,7 @@ class Exporting: XCTestCase {
         ])
         
         let kitchenLight = Node(name: "Kitchen Light", uuid: UUID(), deviceKey: Data.random128BitKey(),
+                                security: .secure,
                                 andAssignedNetworkKey: primaryNetworkKey!, andAddress: 0x0004)
         kitchenLight.add(element:
             Element(name: "Main Element", location: .left,
@@ -154,6 +156,7 @@ class Exporting: XCTestCase {
             )
         )
         let led = Node(name: "LED", uuid: UUID(), deviceKey: Data.random128BitKey(),
+                       security: .secure,
                        andAssignedNetworkKey: primaryNetworkKey!, andAddress: 0x0005)
         led.add(element:
             Element(name: "Main Element", location: .left,
@@ -247,6 +250,7 @@ class Exporting: XCTestCase {
         
         // Configure Lock.
         let lock = Node(name: "Door Lock", uuid: UUID(), deviceKey: Data.random128BitKey(),
+                        security: .insecure,
                         andAssignedNetworkKey: primaryNetworkKey!, andAddress: 0x0010)
         lock.add(element: Element(name: "Main Element", location: .main,
                                   models: [
@@ -277,6 +281,7 @@ class Exporting: XCTestCase {
         
         // Setup Nodes in the guest room.
         let guestSwitch = Node(name: "Guest Room Switch", uuid: UUID(), deviceKey: Data.random128BitKey(),
+                               security: .insecure,
                                andAssignedNetworkKey: primaryNetworkKey!, andAddress: 0x0100)
         guestSwitch.add(element: Element(name: "Toggle Button", location: .main,
                                          models: [
@@ -286,6 +291,7 @@ class Exporting: XCTestCase {
                                          ]))
         
         let guestLight = Node(name: "Guest Light", uuid: UUID(), deviceKey: Data.random128BitKey(),
+                              security: .insecure,
                               andAssignedNetworkKey: primaryNetworkKey!, andAddress: 0x0101)
         guestLight.add(element: Element(name: "Main Element", location: .unknown,
                        models: [

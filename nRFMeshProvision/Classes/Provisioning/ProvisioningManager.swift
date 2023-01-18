@@ -265,8 +265,11 @@ public class ProvisioningManager {
         // If the device's Public Key was obtained OOB, we are now ready to
         // calculate the device's Shared Secret.
         if case let .oobPublicKey(key: key) = publicKey {
+            // The OOB Public Key is for sure different than the one randomy generated
+            // moment ago. Even if not, it trully has been randomly generated, so it's not
+            // an attack.
             do {
-                try provisioningData.provisionerDidObtain(devicePublicKey: key)
+                try provisioningData.provisionerDidObtain(devicePublicKey: key, usingOob: true)
             } catch {
                 state = .fail(error)
                 return
@@ -376,10 +379,16 @@ extension ProvisioningManager: BearerDelegate, BearerDataDelegate {
             
         // Device Public Key has been received.
         case (.provisioning, .publicKey):
-            let publicKey = response.publicKey!
+            // Errata E16350 added an extra validation whether the received Public Key
+            // is different than Provisioner's one.
+            guard let publicKey = response.publicKey,
+                  publicKey != provisioningData.provisionerPublicKey else {
+                state = .fail(ProvisioningError.invalidPublicKey)
+                return
+            }
             provisioningData.accumulate(pdu: data.dropFirst())
             do {
-                try provisioningData.provisionerDidObtain(devicePublicKey: publicKey)
+                try provisioningData.provisionerDidObtain(devicePublicKey: publicKey, usingOob: false)
                 obtainAuthValue()
             } catch {
                 state = .fail(error)
@@ -404,7 +413,14 @@ extension ProvisioningManager: BearerDelegate, BearerDataDelegate {
         
         // The Provisioning Confirmation value has been received.
         case (.provisioning, .confirmation):
-            provisioningData.provisionerDidObtain(deviceConfirmation: response.confirmation!)
+            // Errata E16350 added an extra validation whether the received Confirmation
+            // is different than Provisioner's one.
+            guard let confirmation = response.confirmation,
+                  confirmation != provisioningData.provisionerConfirmation else {
+                state = .fail(ProvisioningError.confirmationFailed)
+                return
+            }
+            provisioningData.provisionerDidObtain(deviceConfirmation: confirmation)
             do {
                 let provisioningRandom = ProvisioningRequest.random(provisioningData.provisionerRandom)
                 logger?.v(.provisioning, "Sending \(provisioningRandom)")
@@ -427,9 +443,11 @@ extension ProvisioningManager: BearerDelegate, BearerDataDelegate {
             
         // The provisioning process is complete.
         case (.provisioning, .complete):
+            let security = provisioningData.security
             let deviceKey = provisioningData.deviceKey!
             let n = provisioningCapabilities!.numberOfElements
             let node = Node(for: unprovisionedDevice, with: n, elementsDeviceKey: deviceKey,
+                            security: security,
                             andAssignedNetworkKey: provisioningData.networkKey,
                             andAddress: provisioningData.unicastAddress)
             do {

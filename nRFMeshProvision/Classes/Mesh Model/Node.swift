@@ -267,7 +267,8 @@ public class Node: Codable {
         }
     }
     
-    /// Initializes the Provisioner's node.
+    /// Initializes the Provisioner's Node.
+    ///
     /// The Provisioner's node has the same name and node UUID as the Provisioner.
     ///
     /// - parameter provisioner: The Provisioner for which the node is added.
@@ -298,6 +299,7 @@ public class Node: Codable {
     }
     
     /// Initializes a Node for given unprovisioned device.
+    ///
     /// The Node will have the same UUID as the device in the advertising
     /// packet.
     ///
@@ -305,15 +307,18 @@ public class Node: Codable {
     ///   - unprovisionedDevice: The newly provisioned device.
     ///   - n: Number of Elements on the new Node.
     ///   - deviceKey: The Device Key.
+    ///   - security: The Node's security. A Node is considered secure if it was
+    ///               provisioned using a OOB Public Key.
     ///   - networkKey: The Network Key.
     ///   - address: The Unicast Address to be assigned to the Node.
     internal convenience init(for unprovisionedDevice: UnprovisionedDevice,
                               with n: UInt8, elementsDeviceKey deviceKey: Data,
+                              security: Security,
                               andAssignedNetworkKey networkKey: NetworkKey,
                               andAddress address: Address) {
         self.init(name: unprovisionedDevice.name, uuid: unprovisionedDevice.uuid,
-                  deviceKey: deviceKey, andAssignedNetworkKey: networkKey,
-                  andAddress: address)
+                  deviceKey: deviceKey, security: security,
+                  andAssignedNetworkKey: networkKey, andAddress: address)
         // Elements will be queried with Composition Data.
         // Let's just add n empty Elements to reserve addresses.
         for _ in 0..<n {
@@ -321,13 +326,13 @@ public class Node: Codable {
         }
     }
     
-    internal init(name: String?, uuid: UUID, deviceKey: Data,
+    internal init(name: String?, uuid: UUID, deviceKey: Data, security: Security,
                   andAssignedNetworkKey networkKey: NetworkKey, andAddress address: Address) {
         self.uuid = uuid
         self.name = name
         self.primaryUnicastAddress = address
         self.deviceKey = deviceKey
-        self.security  = .secure
+        self.security  = security
         // Composition Data were not obtained.
         self.isConfigComplete = false
         
@@ -337,6 +342,12 @@ public class Node: Codable {
         self.netKeys  = [NodeKey(index: networkKey.index, updated: updated)]
         self.appKeys  = []
         self.elements = []
+        
+        // If the Node as provisioned in an insecure way, lower the minimum security
+        // of the Network Key.
+        if security == .insecure {
+            networkKey.lowerSecurity()
+        }
     }
     
     internal init(copy node: Node, withDeviceKey keepDeviceKey: Bool,
@@ -388,18 +399,19 @@ public class Node: Codable {
         }
     }
     
-    /// Creates a low security Node with given Device Key, Network Key and Unicast Address.
+    /// Creates an insecure Node with given Device Key, Network Key and Unicast Address.
+    ///
     /// Usually, a Node is added to a network during provisioning. However, for debug
     /// purposes, or to add an already provisioned Node, one can use this method.
-    /// A Node created this way will have security set to `.low`.
+    /// A Node created this way will have security set to ``Security/insecure``.
     ///
-    /// Use `meshNetwork.add(node: Node)` to add the Node. Other parameters must be
+    /// Use ``MeshNetwork/add(node:)`` to add the Node. Other parameters must be
     /// read from the Node using Configuration messages.
     ///
     /// - parameters:
     ///   - name: Optional Node name.
     ///   - n: Number of Elements. Elements must be read using
-    ///        `ConfigCompositionDataGet` message.
+    ///        ``ConfigCompositionDataGet`` message.
     ///   - deviceKey: The 128-bit Device Key.
     ///   - networkKey: The Network Key known to this device.
     ///   - address: The primary Unicast Address of the Node.
@@ -425,6 +437,10 @@ public class Node: Codable {
         for _ in 0..<n {
             add(element: Element(location: .unknown))
         }
+        
+        // As the Node as not provisioned in a secure way, lower the minimum security
+        // of the Network Key.
+        networkKey.lowerSecurity()
     }
     
     // MARK: - Codable
@@ -692,12 +708,18 @@ internal extension Node {
     func add(networkKeyWithIndex networkKeyIndex: KeyIndex) {
         if netKeys[networkKeyIndex] == nil {
             netKeys.append(NodeKey(index: networkKeyIndex, updated: false))
+            // If an insecure Node received a Network Key, make sure to lower
+            // the minSecurity field of that key.
+            if security == .insecure {
+                meshNetwork?.networkKeys[networkKeyIndex]?.lowerSecurity()
+            }
             meshNetwork?.timestamp = Date()
         }
     }
     
     /// Sets the Network Keys to the Node.
-    /// This will overwrite the previous keys.
+    ///
+    /// This method overwrites previous keys.
     ///
     /// - parameter networkKeys: The Network Keys to set.
     func set(networkKeys: [NetworkKey]) {
@@ -705,13 +727,21 @@ internal extension Node {
     }
     
     /// Sets the Network Keys with given indexes to the Node.
-    /// This will overwrite the previous keys.
+    ///
+    /// This method overwrites previous keys.
     ///
     /// - parameter networkKeyIndexes: The Network Key indexes to set.
     func set(networkKeysWithIndexes networkKeyIndexes: [KeyIndex]) {
         netKeys = networkKeyIndexes
             .map { Node.NodeKey(index: $0, updated: false) }
             .sorted()
+        // If an insecure Node received a Network Key, make sure to lower
+        // the minSecurity field of all the keys it .
+        if security == .insecure {
+            networkKeys.forEach {
+                $0.lowerSecurity()
+            }
+        }
         meshNetwork?.timestamp = Date()
     }
     
@@ -751,7 +781,8 @@ internal extension Node {
     }
     
     /// Sets the Application Keys with given indexes to the Node.
-    /// This will overwrite the previous keys.
+    ///
+    /// This method overwrites previous keys.
     ///
     /// - parameter applicationKeyIndexes: The Application Key indexes to set.
     func set(applicationKeysWithIndexes applicationKeyIndexes: [KeyIndex]) {
@@ -761,6 +792,7 @@ internal extension Node {
     }
     
     /// Sets the Application Keys with given indexes to the Node.
+    ///
     /// This will overwrite the previous keys bound to the given
     /// Network Key.
     ///

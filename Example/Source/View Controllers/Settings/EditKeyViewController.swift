@@ -127,7 +127,7 @@ class EditKeyViewController: UITableViewController {
         case IndexPath.keySection where isApplicationKey:
             return 3 // Key, Old Key, Key Index
         case IndexPath.keySection:
-            return isNewKey ? 3 : 5 // Key, Old Key, Key Index [, Phase, Last modified ]
+            return isNewKey ? 3 : 6 // Key, Old Key, Key Index [, Phase, Min Security, Last modified ]
         case IndexPath.boundKeySection:
             let network = MeshNetworkManager.instance.meshNetwork!
             return network.networkKeys.count
@@ -187,6 +187,12 @@ class EditKeyViewController: UITableViewController {
             cell.textLabel?.text = "Phase"
             let phase = (key as? NetworkKey)?.phase ?? KeyRefreshPhase.normalOperation
             cell.detailTextLabel?.text = "\(phase)"
+            cell.selectionStyle = .none
+        } else if indexPath.isMinSecurity {
+            cell = tableView.dequeueReusableCell(withIdentifier: "detailCell", for: indexPath)
+            cell.textLabel?.text = "Minimum Security"
+            let minSecurity = (key as? NetworkKey)?.minSecurity ?? .secure
+            cell.detailTextLabel?.text = "\(minSecurity)"
             cell.selectionStyle = .none
         } else if indexPath.isLastModified {
             cell = tableView.dequeueReusableCell(withIdentifier: "detailCell", for: indexPath)
@@ -380,9 +386,14 @@ private extension IndexPath {
         return section == IndexPath.keySection && row == 3
     }
     
+    /// Returns whether the IndexPath points to Network Key min security.
+    var isMinSecurity: Bool {
+        return section == IndexPath.keySection && row == 4
+    }
+    
     /// Returns whether the IndexPath points to Network Key last modified timestamp.
     var isLastModified: Bool {
-        return section == IndexPath.keySection && row == 4
+        return section == IndexPath.keySection && row == 5
     }
     
     /// Returns whether the IndexPath points to Bound Network Key Index.
