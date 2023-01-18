@@ -98,6 +98,9 @@ public enum RemoteProvisioningError: UInt8 {
     case unexpectedError = 7
     /// The device cannot assign consecutive unicast addresses to all elements.
     case cannotAssignAddresses = 8
+    /// The Data block contains values that cannot be accepted because of
+    /// general constraints.
+    case invalidData = 9
 }
 
 /// A set of authentication actions aiming to strengthen device provisioniong
@@ -164,16 +167,7 @@ extension ProvisioningError: LocalizedError {
         case .confirmationFailed:
             return NSLocalizedString("Confirmation failed", comment: "provisioning")
         case let .remoteError(error):
-            switch error {
-            case .invalidPdu:              return NSLocalizedString("Invalid PDU", comment: "provisioning")
-            case .invalidFormat:           return NSLocalizedString("Invalid format", comment: "provisioning")
-            case .unexpectedPdu:           return NSLocalizedString("Unexpected PDU", comment: "provisioning")
-            case .confirmationFailed:      return NSLocalizedString("Confirmation failed", comment: "provisioning")
-            case .outOfResources:          return NSLocalizedString("Out of resources", comment: "provisioning")
-            case .decryptionFailed:        return NSLocalizedString("Decryption failed", comment: "provisioning")
-            case .unexpectedError:         return NSLocalizedString("Unexpected error", comment: "provisioning")
-            case .cannotAssignAddresses:  return NSLocalizedString("Cannot assign addresses", comment: "provisioning")
-            }
+            return NSLocalizedString(error.debugDescription, comment: "provisioning")
         case let .keyGenerationFailed(status):
             return NSLocalizedString("Key generation failed with status \(status)", comment: "provisioning")
         }
@@ -201,6 +195,8 @@ extension RemoteProvisioningError: CustomDebugStringConvertible {
             return "Unexpected error"
         case .cannotAssignAddresses:
             return "Cannot assign addresses"
+        case .invalidData:
+            return "Invalid data"
         }
     }
     
