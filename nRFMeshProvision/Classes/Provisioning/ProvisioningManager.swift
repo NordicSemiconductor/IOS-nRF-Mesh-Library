@@ -269,7 +269,7 @@ public class ProvisioningManager {
             // moment ago. Even if not, it trully has been randomly generated, so it's not
             // an attack.
             do {
-                try provisioningData.provisionerDidObtain(devicePublicKey: key)
+                try provisioningData.provisionerDidObtain(devicePublicKey: key, usingOob: true)
             } catch {
                 state = .fail(error)
                 return
@@ -388,7 +388,7 @@ extension ProvisioningManager: BearerDelegate, BearerDataDelegate {
             }
             provisioningData.accumulate(pdu: data.dropFirst())
             do {
-                try provisioningData.provisionerDidObtain(devicePublicKey: publicKey)
+                try provisioningData.provisionerDidObtain(devicePublicKey: publicKey, usingOob: false)
                 obtainAuthValue()
             } catch {
                 state = .fail(error)
@@ -443,9 +443,11 @@ extension ProvisioningManager: BearerDelegate, BearerDataDelegate {
             
         // The provisioning process is complete.
         case (.provisioning, .complete):
+            let security = provisioningData.security
             let deviceKey = provisioningData.deviceKey!
             let n = provisioningCapabilities!.numberOfElements
             let node = Node(for: unprovisionedDevice, with: n, elementsDeviceKey: deviceKey,
+                            security: security,
                             andAssignedNetworkKey: provisioningData.networkKey,
                             andAddress: provisioningData.unicastAddress)
             do {

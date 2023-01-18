@@ -305,15 +305,18 @@ public class Node: Codable {
     ///   - unprovisionedDevice: The newly provisioned device.
     ///   - n: Number of Elements on the new Node.
     ///   - deviceKey: The Device Key.
+    ///   - security: The Node's security. A Node is considered secure if it was
+    ///               provisioned using a OOB Public Key.
     ///   - networkKey: The Network Key.
     ///   - address: The Unicast Address to be assigned to the Node.
     internal convenience init(for unprovisionedDevice: UnprovisionedDevice,
                               with n: UInt8, elementsDeviceKey deviceKey: Data,
+                              security: Security,
                               andAssignedNetworkKey networkKey: NetworkKey,
                               andAddress address: Address) {
         self.init(name: unprovisionedDevice.name, uuid: unprovisionedDevice.uuid,
-                  deviceKey: deviceKey, andAssignedNetworkKey: networkKey,
-                  andAddress: address)
+                  deviceKey: deviceKey, security: security,
+                  andAssignedNetworkKey: networkKey, andAddress: address)
         // Elements will be queried with Composition Data.
         // Let's just add n empty Elements to reserve addresses.
         for _ in 0..<n {
@@ -321,13 +324,13 @@ public class Node: Codable {
         }
     }
     
-    internal init(name: String?, uuid: UUID, deviceKey: Data,
+    internal init(name: String?, uuid: UUID, deviceKey: Data, security: Security,
                   andAssignedNetworkKey networkKey: NetworkKey, andAddress address: Address) {
         self.uuid = uuid
         self.name = name
         self.primaryUnicastAddress = address
         self.deviceKey = deviceKey
-        self.security  = .secure
+        self.security  = security
         // Composition Data were not obtained.
         self.isConfigComplete = false
         

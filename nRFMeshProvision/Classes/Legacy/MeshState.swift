@@ -104,6 +104,7 @@ internal struct MeshState: Codable {
             if old.isValid {
                 let node = Node(name: old.nodeName, uuid: old.uuid,
                                 deviceKey: old.deviceKey,
+                                security: .insecure,
                                 andAssignedNetworkKey: networkKey,
                                 andAddress: old.unicastAddress)
                 node.companyIdentifier = old.cid
