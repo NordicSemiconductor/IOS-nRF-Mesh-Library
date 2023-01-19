@@ -91,7 +91,7 @@ public struct Algorithms: OptionSet {
     }
     
     /// Returns the strongest provisioning algorithm supported by the device.
-    public var best: Algorithm {
+    public var strongest: Algorithm {
         if contains(.BTM_ECDH_P256_HMAC_SHA256_AES_CCM) {
             return .BTM_ECDH_P256_HMAC_SHA256_AES_CCM
         }

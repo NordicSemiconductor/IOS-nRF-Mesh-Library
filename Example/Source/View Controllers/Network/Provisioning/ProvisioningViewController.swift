@@ -277,7 +277,7 @@ private extension ProvisioningViewController {
         presentStatusDialog(message: "Provisioning...") { [weak self] in
             guard let self = self else { return }
             do {
-                try self.provisioningManager.provision(usingAlgorithm:       capabilities.algorithms.best,
+                try self.provisioningManager.provision(usingAlgorithm:       capabilities.algorithms.strongest,
                                                        publicKey:            self.publicKey!,
                                                        authenticationMethod: self.authenticationMethod!)
             } catch {
