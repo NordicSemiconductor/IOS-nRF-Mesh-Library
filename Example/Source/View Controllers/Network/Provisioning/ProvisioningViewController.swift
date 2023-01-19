@@ -350,14 +350,17 @@ extension ProvisioningViewController: ProvisioningDelegate {
                 
             case .capabilitiesReceived(let capabilities):
                 self.elementsCountLabel.text = "\(capabilities.numberOfElements)"
-                self.supportedAlgorithmsLabel.text = "\(capabilities.algorithms)"
+                self.supportedAlgorithmsLabel.text = "\(capabilities.algorithms)".toLines
                 self.publicKeyTypeLabel.text = "\(capabilities.publicKeyType)"
-                self.oobTypeLabel.text = "\(capabilities.oobType)"
+                self.oobTypeLabel.text = "\(capabilities.oobType)".toLines
                 self.outputOobSizeLabel.text = "\(capabilities.outputOobSize)"
                 self.supportedOutputOobActionsLabel.text = "\(capabilities.outputOobActions)"
                 self.inputOobSizeLabel.text = "\(capabilities.inputOobSize)"
                 self.supportedInputOobActionsLabel.text = "\(capabilities.inputOobActions)"
                 
+                // This is needed to refresh constraints after filling new values.
+                self.tableView.reloadData()
+    		            
                 // If the Unicast Address was set to automatic (nil), it should be
                 // set to the correct value by now, as we know the number of elements.
                 let addressValid = self.provisioningManager.isUnicastAddressValid == true
@@ -476,6 +479,18 @@ private extension IndexPath {
     /// Returns whether the IndexPath point to the Unicast Address settings.
     var isUnicastAddress: Bool {
         return section == 1 && row == 0
+    }
+    
+}
+
+private extension String {
+    
+    // Replaces ", " to new line.
+    //
+    // The `debugDescription` in the library returns values separated
+    // with commas.
+    var toLines: String {
+        return replacingOccurrences(of: ", ", with: "\n")
     }
     
 }
