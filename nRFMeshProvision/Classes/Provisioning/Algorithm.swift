@@ -34,11 +34,38 @@ import Foundation
 public enum Algorithm {
     /// FIPS P-256 Elliptic Curve algorithm will be used to calculate the
     /// shared secret.
+    ///
+    /// This has been replaced with ``Algorithm/BTM_ECDH_P256_CMAC_AES128_AES_CCM``.
+    @available(*, deprecated, renamed: "BTM_ECDH_P256_CMAC_AES128_AES_CCM")
     case fipsP256EllipticCurve
+    /// BTM ECDH P256 CMAC AES128 AES CCM algorithm will be used to calculate the
+    /// shared secret.
+    case BTM_ECDH_P256_CMAC_AES128_AES_CCM
+    /// BTM ECDH P256 HMAC SHA256 AES CCM algorithm will be used to calculate the
+    /// shared secret.
+    ///
+    /// This algorithm must be supported by devices claming support with Mesh Protocol 1.1.
+    ///
+    /// - since: Mesh Protocol 1.1.
+    case BTM_ECDH_P256_HMAC_SHA256_AES_CCM
     
     var value: Data {
         switch self {
-        case .fipsP256EllipticCurve: return Data([0])
+        case .fipsP256EllipticCurve,
+             .BTM_ECDH_P256_CMAC_AES128_AES_CCM:
+            return Data([0])
+        case .BTM_ECDH_P256_HMAC_SHA256_AES_CCM:
+            return Data([1])
+        }
+    }
+    
+    var length: Int {
+        switch self {
+        case .fipsP256EllipticCurve,
+             .BTM_ECDH_P256_CMAC_AES128_AES_CCM:
+            return 128
+        case .BTM_ECDH_P256_HMAC_SHA256_AES_CCM:
+            return 256
         }
     }
 }
@@ -47,8 +74,11 @@ extension Algorithm: CustomDebugStringConvertible {
     
     public var debugDescription: String {
         switch self {
-        case .fipsP256EllipticCurve:
-            return "FIPS P-256 Elliptic Curve"
+        case .fipsP256EllipticCurve,
+             .BTM_ECDH_P256_CMAC_AES128_AES_CCM:
+            return "BTM ECDH P256 CMAC AES128 AES CCM"
+        case .BTM_ECDH_P256_HMAC_SHA256_AES_CCM:
+            return "BTM ECDH P256 HMAC SHA256 AES CCM"
         }
     }
     
@@ -58,13 +88,25 @@ extension Algorithm: CustomDebugStringConvertible {
 public struct Algorithms: OptionSet {
     public let rawValue: UInt16
     
-    /// FIPS P-256 Elliptic Curve algorithm is supported.
+    /// BTM_ECDH_P256_CMAC_AES128_AES_CCM algorithm is supported.
+    @available(*, deprecated, renamed: "BTM_ECDH_P256_CMAC_AES128_AES_CCM")
     public static let fipsP256EllipticCurve = Algorithms(rawValue: 1 << 0)
+    /// BTM_ECDH_P256_CMAC_AES128_AES_CCM algorithm is supported.
+    public static let BTM_ECDH_P256_CMAC_AES128_AES_CCM = Algorithms(rawValue: 1 << 0)
+    /// BTM_ECDH_P256_HMAC_SHA256_AES_CCM algorithm is supported.
+    public static let BTM_ECDH_P256_HMAC_SHA256_AES_CCM = Algorithms(rawValue: 1 << 1)
     
     public init(rawValue: UInt16) {
         self.rawValue = rawValue
     }
     
+    /// Returns the strongest provisioning algorithm supported by the device.
+    public var strongest: Algorithm {
+        if contains(.BTM_ECDH_P256_HMAC_SHA256_AES_CCM) {
+            return .BTM_ECDH_P256_HMAC_SHA256_AES_CCM
+        }
+        return .BTM_ECDH_P256_CMAC_AES128_AES_CCM
+    }
 }
 
 extension Algorithms: CustomDebugStringConvertible {
@@ -73,7 +115,10 @@ extension Algorithms: CustomDebugStringConvertible {
         if rawValue == 0 {
             return "None"
         }
-        return [(.fipsP256EllipticCurve, "FIPS P-256 Elliptic Curve")]
+        return [
+            (.BTM_ECDH_P256_CMAC_AES128_AES_CCM, "BTM ECDH P256 CMAC AES128 AES CCM"),
+            (.BTM_ECDH_P256_HMAC_SHA256_AES_CCM, "BTM ECDH P256 HMAC SHA256 AES CCM")
+            ]
             .compactMap { (option, name) in contains(option) ? name : nil }
             .joined(separator: ", ")
     }

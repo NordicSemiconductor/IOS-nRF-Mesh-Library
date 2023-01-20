@@ -40,7 +40,7 @@ public struct ProvisioningCapabilities {
     /// Supported public key types.
     public let publicKeyType:    PublicKeyType
     /// Supported static OOB Types.
-    public let staticOobType:    StaticOobType
+    public let oobType:          OobType
     /// Maximum size of Output OOB supported.
     public let outputOobSize:    UInt8
     /// Supported Output OOB Actions.
@@ -57,7 +57,7 @@ public struct ProvisioningCapabilities {
         numberOfElements = data.read(fromOffset: 1)
         algorithms       = Algorithms(data: data, offset: 2)
         publicKeyType    = PublicKeyType(data: data, offset: 4)
-        staticOobType    = StaticOobType(data: data, offset: 5)
+        oobType          = OobType(data: data, offset: 5)
         outputOobSize    = data.read(fromOffset: 6)
         outputOobActions = OutputOobActions(data: data, offset: 7)
         inputOobSize     = data.read(fromOffset: 9)
@@ -72,7 +72,7 @@ extension ProvisioningCapabilities: CustomDebugStringConvertible {
         Number of elements: \(numberOfElements)
         Algorithms: \(algorithms)
         Public Key Type: \(publicKeyType)
-        Static OOB Type: \(staticOobType)
+        OOB Type: \(oobType)
         Output OOB Size: \(outputOobSize)
         Output OOB Actions: \(outputOobActions)
         Input OOB Size: \(inputOobSize)

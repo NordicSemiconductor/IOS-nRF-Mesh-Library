@@ -45,7 +45,7 @@ class ProvisioningViewController: UITableViewController {
     @IBOutlet weak var elementsCountLabel: UILabel!
     @IBOutlet weak var supportedAlgorithmsLabel: UILabel!
     @IBOutlet weak var publicKeyTypeLabel: UILabel!
-    @IBOutlet weak var staticOobTypeLabel: UILabel!
+    @IBOutlet weak var oobTypeLabel: UILabel!
     @IBOutlet weak var outputOobSizeLabel: UILabel!
     @IBOutlet weak var supportedOutputOobActionsLabel: UILabel!
     @IBOutlet weak var inputOobSizeLabel: UILabel!
@@ -240,7 +240,8 @@ private extension ProvisioningViewController {
         // If the device's Public Key is available OOB, it should be read.
         let publicKeyNotAvailable = capabilities.publicKeyType.isEmpty
         guard publicKeyNotAvailable || publicKey != nil else {
-            presentOobPublicKeyDialog(for: unprovisionedDevice) { publicKey in
+            presentOobPublicKeyDialog(for: unprovisionedDevice) { [weak self] publicKey in
+                guard let self = self else { return }
                 self.publicKey = publicKey
                 self.startProvisioning()
             }
@@ -248,11 +249,12 @@ private extension ProvisioningViewController {
         }
         publicKey = publicKey ?? .noOobPublicKey
         
-        // If any of OOB methods is supported, if should be chosen.
-        let staticOobNotSupported = capabilities.staticOobType.isEmpty
-        let outputOobNotSupported = capabilities.outputOobActions.isEmpty
-        let inputOobNotSupported  = capabilities.inputOobActions.isEmpty
-        guard (staticOobNotSupported && outputOobNotSupported && inputOobNotSupported) || authenticationMethod != nil else {
+        // If any of OOB methods is supported, it should be chosen.
+        let staticOobSupported = capabilities.oobType.contains(.staticOobInformationAvailable)
+        let outputOobSupported = !capabilities.outputOobActions.isEmpty
+        let inputOobSupported  = !capabilities.inputOobActions.isEmpty
+        let anyOobSupported = staticOobSupported || outputOobSupported || inputOobSupported
+        guard !anyOobSupported || authenticationMethod != nil else {
             presentOobOptionsDialog(for: provisioningManager, from: provisionButton) { [weak self] method in
                 guard let self = self else { return }
                 self.authenticationMethod = method
@@ -272,9 +274,10 @@ private extension ProvisioningViewController {
         }
         
         // Start provisioning.
-        presentStatusDialog(message: "Provisioning...") {
+        presentStatusDialog(message: "Provisioning...") { [weak self] in
+            guard let self = self else { return }
             do {
-                try self.provisioningManager.provision(usingAlgorithm:       .fipsP256EllipticCurve,
+                try self.provisioningManager.provision(usingAlgorithm:       capabilities.algorithms.strongest,
                                                        publicKey:            self.publicKey!,
                                                        authenticationMethod: self.authenticationMethod!)
             } catch {
@@ -347,14 +350,17 @@ extension ProvisioningViewController: ProvisioningDelegate {
                 
             case .capabilitiesReceived(let capabilities):
                 self.elementsCountLabel.text = "\(capabilities.numberOfElements)"
-                self.supportedAlgorithmsLabel.text = "\(capabilities.algorithms)"
+                self.supportedAlgorithmsLabel.text = "\(capabilities.algorithms)".toLines
                 self.publicKeyTypeLabel.text = "\(capabilities.publicKeyType)"
-                self.staticOobTypeLabel.text = "\(capabilities.staticOobType)"
+                self.oobTypeLabel.text = "\(capabilities.oobType)".toLines
                 self.outputOobSizeLabel.text = "\(capabilities.outputOobSize)"
                 self.supportedOutputOobActionsLabel.text = "\(capabilities.outputOobActions)"
                 self.inputOobSizeLabel.text = "\(capabilities.inputOobSize)"
                 self.supportedInputOobActionsLabel.text = "\(capabilities.inputOobActions)"
                 
+                // This is needed to refresh constraints after filling new values.
+                self.tableView.reloadData()
+    		            
                 // If the Unicast Address was set to automatic (nil), it should be
                 // set to the correct value by now, as we know the number of elements.
                 let addressValid = self.provisioningManager.isUnicastAddressValid == true
@@ -406,10 +412,18 @@ extension ProvisioningViewController: ProvisioningDelegate {
     func authenticationActionRequired(_ action: AuthAction) {
         switch action {
         case let .provideStaticKey(callback: callback):
+            guard let capabilities = provisioningManager.provisioningCapabilities else {
+                return
+            }
+            let algorithm = capabilities.algorithms.strongest
+            
             self.dismissStatusDialog {
-                let message = "Enter 16-character hexadecimal string."
+                let requiredSize = algorithm == .BTM_ECDH_P256_HMAC_SHA256_AES_CCM ? 32 : 16
+                let type: Selector = algorithm == .BTM_ECDH_P256_HMAC_SHA256_AES_CCM ? .key32Required : .key16Required
+                
+                let message = "Enter \(requiredSize)-character hexadecimal string."
                 self.presentTextAlert(title: "Static OOB Key", message: message,
-                                      type: .keyRequired, cancelHandler: nil) { hex in
+                                      type: type, cancelHandler: nil) { hex in
                     callback(Data(hex: hex))
                 }
             }
@@ -473,6 +487,18 @@ private extension IndexPath {
     /// Returns whether the IndexPath point to the Unicast Address settings.
     var isUnicastAddress: Bool {
         return section == 1 && row == 0
+    }
+    
+}
+
+private extension String {
+    
+    // Replaces ", " to new line.
+    //
+    // The `debugDescription` in the library returns values separated
+    // with commas.
+    var toLines: String {
+        return replacingOccurrences(of: ", ", with: "\n")
     }
     
 }

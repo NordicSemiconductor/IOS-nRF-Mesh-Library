@@ -44,7 +44,8 @@ extension Selector {
     static let groupAddressRequired = #selector(UIViewController.groupAddressRequired(_:))
     static let scene = #selector(UIViewController.sceneOptional(_:))
     static let sceneRequired = #selector(UIViewController.sceneRequired(_:))
-    static let keyRequired = #selector(UIViewController.keyRequired(_:))
+    static let key16Required = #selector(UIViewController.key16Required(_:))
+    static let key32Required = #selector(UIViewController.key32Required(_:))
     static let publicKeyRequired = #selector(UIViewController.publicKeyRequired(_:))
     static let ttlRequired = #selector(UIViewController.ttlRequired(_:))
     
@@ -234,8 +235,8 @@ extension UIViewController {
                 textField.keyboardType           = .alphabet
                 textField.autocapitalizationType = .allCharacters
                 
-                textField.addTarget(self, action: .keyRequired, for: .editingChanged)
-                textField.addTarget(self, action: .keyRequired, for: .editingDidBegin)
+                textField.addTarget(self, action: .key16Required, for: .editingChanged)
+                textField.addTarget(self, action: .key16Required, for: .editingDidBegin)
             }
             alert!.addAction(UIAlertAction(title: "OK", style: .default) { _ in
                 if let handler = handler,
@@ -393,12 +394,23 @@ extension UIViewController {
         return false
     }
     
-    @objc func keyRequired(_ textField: UITextField) {
+    @objc func key16Required(_ textField: UITextField) {
         let alert = getAlert(from: textField)
         
         if let text = textField.text {
             // A valid key is 16 bytes long (128-bit).
-            alert.setValid(Data(hex: text).count == 16)
+            alert.setValid(text.count == 32 && Data(hex: text).count == 16)
+        } else {
+            alert.setValid(false)
+        }
+    }
+    
+    @objc func key32Required(_ textField: UITextField) {
+        let alert = getAlert(from: textField)
+        
+        if let text = textField.text {
+            // A valid key is 32 bytes long (256-bit).
+            alert.setValid(text.count == 64 && Data(hex: text).count == 32)
         } else {
             alert.setValid(false)
         }
@@ -409,7 +421,7 @@ extension UIViewController {
         
         if let text = textField.text {
             // A valid key is 2 * 32 bytes long.
-            alert.setValid(Data(hex: text).count == 64)
+            alert.setValid(text.count == 128 && Data(hex: text).count == 64)
         } else {
             alert.setValid(false)
         }

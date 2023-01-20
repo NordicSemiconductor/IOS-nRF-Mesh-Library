@@ -34,7 +34,12 @@ public extension Data {
     
     /// Returns a random 128-bit long key.
     static func random128BitKey() -> Data {
-        return Crypto.generateRandom()
+        return Crypto.generateRandom(sizeInBits: 128)
+    }
+    
+    /// Returns a random 256-bit long key.
+    static func random256BitKey() -> Data {
+        return Crypto.generateRandom(sizeInBits: 256)
     }
     
 }
