@@ -35,18 +35,23 @@ import CryptoSwift
 /// A helper class for handling cryptography.
 ///
 /// Method implementation is based on Security toolbox and other parts from the
-/// Bluetooth Mesh Profile 1.0.1.
+/// Bluetooth Mesh Protocol 1.1.
+///
+/// It is backwards compatible with older versions of the specification.
 internal class Crypto {
     
     private init() { }
     
-    /// Generates 128-bit random data.
+    /// Generates random data of given length, given in bits.
     ///
-    /// To generate a key outside of this library, use `Data.random128BitKey()`.
+    /// To generate a key outside of this library, use `Data.random128BitKey()`
+    /// or `Data.random256BitKey()`.
     ///
-    /// - returns: 128-bit key generated using the default random number generator.
-    static func generateRandom() -> Data {
-        var buffer = [UInt8](repeating: 0, count: 16)
+    /// - parameter sizeInBits: Required size of the random data, in bits.
+    /// - returns: An array generated using the default random number generator.
+    static func generateRandom(sizeInBits: Int) -> Data {
+        let sizeInBytes = sizeInBits >> 3
+        var buffer = [UInt8](repeating: 0, count: sizeInBytes)
         let status = SecRandomCopyBytes(kSecRandomDefault, buffer.count, &buffer)
         guard status == errSecSuccess else {
             fatalError("Could not generate random, SecRandomCopyBytes returned: \(status)")
@@ -83,7 +88,7 @@ internal class Crypto {
     /// - returns: 16-bit hash, known as Virtual Address.
     static func calculateVirtualAddress(from virtualLabel: UUID) -> Address {
         let vtad = "vtad".data(using: .utf8)!
-        let salt = calculateSalt(vtad)
+        let salt = calculateS1(vtad)
         let hash = calculateCMAC(Data(hex: virtualLabel.hex), andKey: salt)
         var address = UInt16(data: hash.dropFirst(14)).bigEndian
         address |= 0x8000
@@ -99,9 +104,9 @@ internal class Crypto {
     static func calculateKeyDerivatives(from key: Data)
                 -> (nid: UInt8, encryptionKey: Data, privacyKey: Data, identityKey: Data, beaconKey: Data) {
         let P = Data([0x69, 0x64, 0x31, 0x32, 0x38, 0x01]) // "id128" || 0x01
-        let saltIK = calculateSalt("nkik".data(using: .utf8)!)
+        let saltIK = calculateS1("nkik".data(using: .utf8)!)
         let identityKey = calculateK1(withN: key, salt: saltIK, andP: P)
-        let saltBK = calculateSalt("nkbk".data(using: .utf8)!)
+        let saltBK = calculateS1("nkbk".data(using: .utf8)!)
         let beaconKey = calculateK1(withN: key, salt: saltBK, andP: P)
         
         let (nid, encryptionKey, privacyKey) = calculateK2(withN: key, andP: Data([0x00]))
@@ -190,29 +195,30 @@ internal class Crypto {
     /// - throws: This method throws an error if the key pair generation has failed
     ///           or the given algorithm is not supported.
     static func generateKeyPair(using algorithm: Algorithm) throws -> (privateKey: SecKey, publicKey: SecKey) {
-        guard case .fipsP256EllipticCurve = algorithm else {
-            throw ProvisioningError.unsupportedAlgorithm
-        }
-        
-        // Private key parameters.
-        let privateKeyParams = [kSecAttrIsPermanent : false] as CFDictionary
-        
-        // Public key parameters.
-        let publicKeyParams = [kSecAttrIsPermanent : false] as CFDictionary
-        
-        // Global parameters.
-        let parameters = [kSecAttrKeyType : kSecAttrKeyTypeECSECPrimeRandom,
-                          kSecAttrKeySizeInBits : 256,
-                          kSecPublicKeyAttrs : publicKeyParams,
+        switch algorithm {
+        case .fipsP256EllipticCurve,
+             .BTM_ECDH_P256_CMAC_AES128_AES_CCM,
+             .BTM_ECDH_P256_HMAC_SHA256_AES_CCM:
+            // Private key parameters.
+            let privateKeyParams = [kSecAttrIsPermanent : false] as CFDictionary
+            
+            // Public key parameters.
+            let publicKeyParams = [kSecAttrIsPermanent : false] as CFDictionary
+            
+            // Global parameters.
+            let parameters = [kSecAttrKeyType : kSecAttrKeyTypeECSECPrimeRandom,
+                        kSecAttrKeySizeInBits : 256,
+                           kSecPublicKeyAttrs : publicKeyParams,
                           kSecPrivateKeyAttrs : privateKeyParams] as CFDictionary
-        
-        var publicKey, privateKey: SecKey?
-        let status = SecKeyGeneratePair(parameters as CFDictionary, &publicKey, &privateKey)
-        
-        guard status == errSecSuccess else {
-            throw ProvisioningError.keyGenerationFailed(status)
+            
+            var publicKey, privateKey: SecKey?
+            let status = SecKeyGeneratePair(parameters as CFDictionary, &publicKey, &privateKey)
+            
+            guard status == errSecSuccess else {
+                throw ProvisioningError.keyGenerationFailed(status)
+            }
+            return (privateKey!, publicKey!)
         }
-        return (privateKey!, publicKey!)
     }
     
     /// Calculates the Shared Secret based on the given Public Key
@@ -250,48 +256,75 @@ internal class Crypto {
     }
     
     /// This method calculates the Provisioning Confirmation based on the
-    /// Confirmation Inputs, 16-byte Random and 16-byte AuthValue.
+    /// Confirmation Inputs, 16 or 32-byte Random and 16 or 32-byte AuthValue.
     ///
     /// - parameters:
     ///   - confirmationInputs: The Confirmation Inputs is built over the provisioning
     ///                         process.
     ///   - sharedSecret: Shared secret obtained in the previous step.
-    ///   - random: An array of 16 random bytes.
+    ///   - random: An array of 16 or 32 bytes random bytes, depending on the algorithm.
     ///   - authValue: The Auth Value calculated based on the Authentication Method.
+    ///   - algorithm: The algorithm to be used.
     /// - returns: The Provisioning Confirmation value.
     static func calculateConfirmation(confirmationInputs: Data, sharedSecret: Data,
-                                      random: Data, authValue: Data) -> Data {
-        // Calculate the Confirmation Salt = s1(confirmationInputs).
-        let confirmationSalt = Crypto.calculateSalt(confirmationInputs)
-        
-        // Calculate the Confirmation Key = k1(ECDH Secret, confirmationSalt, 'prck')
-        let confirmationKey  = Crypto.calculateK1(withN: sharedSecret,
-                                                  salt: confirmationSalt,
-                                                  andP: "prck".data(using: .utf8)!)
-        
-        // Calculate the Confirmation Provisioner using CMAC(random + authValue)
-        let confirmationData = random + authValue
-        return Crypto.calculateCMAC(confirmationData, andKey: confirmationKey)
+                                      random: Data, authValue: Data,
+                                      using algorithm: Algorithm) -> Data {
+        switch algorithm {
+        case .fipsP256EllipticCurve,
+             .BTM_ECDH_P256_CMAC_AES128_AES_CCM:
+            // Calculate the Confirmation Salt = s1(confirmationInputs).
+            let confirmationSalt = Crypto.calculateS1(confirmationInputs)
+            
+            // Calculate the Confirmation Key = k1(ECDH Secret, confirmationSalt, 'prck')
+            let confirmationKey  = Crypto.calculateK1(withN: sharedSecret,
+                                                      salt: confirmationSalt,
+                                                      andP: "prck".data(using: .utf8)!)
+            
+            // Calculate the Confirmation Provisioner using CMAC(random + authValue)
+            return Crypto.calculateCMAC(random + authValue, andKey: confirmationKey)
+        case .BTM_ECDH_P256_HMAC_SHA256_AES_CCM:
+            // Calculate the Confirmation Salt = s2(confirmationInputs).
+            let confirmationSalt = Crypto.calculateS2(confirmationInputs)
+            
+            // Calculate the Confirmation Key = k5(ECDH Secret + authValue, confirmationSalt, 'prck256')
+            let confirmationKey  = Crypto.calculateK5(withN: sharedSecret + authValue,
+                                                      salt: confirmationSalt,
+                                                      andP: "prck256".data(using: .utf8)!)
+            
+            // Calculate the Confirmation Provisioner using HMAC-SHA-256(random)
+            return Crypto.calculateHMAC_SHA256(random, andKey: confirmationKey)
+        }
     }
     
     /// This method calculates the Session Key, Session Nonce and the Device Key based
-    /// on the Confirmation Inputs, 16-byte Provisioner Random and 16-byte device Random.
+    /// on the Confirmation Inputs, 16 or 32-byte Provisioner Random and 16 or 32-byte
+    /// device Random.
     ///
     /// - parameters:
     ///   - confirmationInputs: The Confirmation Inputs is built over the provisioning
     ///                         process.
     ///   - sharedSecret: Shared secret obtained in the previous step.
-    ///   - provisionerRandom: An array of 16 random bytes.
-    ///   - deviceRandom: An array of 16 random bytes received from the Device.
+    ///   - provisionerRandom: An array of 16 or 32 random bytes.
+    ///   - deviceRandom: An array of 16 or 32 random bytes received from the Device.
+    ///   - algorithm: The algorithm to be used.
     /// - returns: The Session Key, Session Nonce and the Device Key.
     static func calculateKeys(confirmationInputs: Data, sharedSecret: Data,
-                              provisionerRandom: Data, deviceRandom: Data) ->
+                              provisionerRandom: Data, deviceRandom: Data,
+                              using algorithm: Algorithm) ->
             (sessionKey: Data, sessionNonce: Data, deviceKey: Data) {
-        // Calculate the Confirmation Salt = s1(confirmationInputs).
-        let confirmationSalt = Crypto.calculateSalt(confirmationInputs)
+        var confirmationSalt: Data!
+        switch algorithm {
+        case .fipsP256EllipticCurve,
+             .BTM_ECDH_P256_CMAC_AES128_AES_CCM:
+            // Calculate the Confirmation Salt = s1(confirmationInputs).
+            confirmationSalt = Crypto.calculateS1(confirmationInputs)
+        case .BTM_ECDH_P256_HMAC_SHA256_AES_CCM:
+            // Calculate the Confirmation Salt = s2(confirmationInputs).
+            confirmationSalt = Crypto.calculateS2(confirmationInputs)
+        }
         
         // Calculate the Provisioning Salt = s1(confirmationSalt + provisionerRandom + deviceRandom)
-        let provisioningSalt = Crypto.calculateSalt(confirmationSalt + provisionerRandom + deviceRandom)
+        let provisioningSalt = Crypto.calculateS1(confirmationSalt + provisionerRandom + deviceRandom)
         
         // The Session Key is derived as k1(ECDH Shared Secret, provisioningSalt, "prsk")
         let sessionKey = Crypto.calculateK1(withN: sharedSecret,
@@ -331,9 +364,17 @@ private extension Crypto {
     /// Calculates salt over given data.
     ///
     /// - parameter data: A non-zero length octet array or ASCII encoded string.
-    static func calculateSalt(_ data: Data) -> Data {
+    static func calculateS1(_ data: Data) -> Data {
         let key = Data(repeating: 0, count: 16)
         return calculateCMAC(data, andKey: key)
+    }
+    
+    /// Calculates salt over given data.
+    ///
+    /// - parameter data: A non-zero length octet array or ASCII encoded string.
+    static func calculateS2(_ data: Data) -> Data {
+        let key = Data(repeating: 0, count: 32)
+        return calculateHMAC_SHA256(data, andKey: key)
     }
     
     /// Calculates Cipher-based Message Authentication Code (CMAC) that uses
@@ -349,6 +390,26 @@ private extension Crypto {
             return Data(array)
         } catch {
             fatalError("Failed to calculate CMAC: \(error)")
+        }
+    }
+    
+    /// RFC 2104 defines HMAC, a mechanism for message authentication using
+    /// cryptographic hash functions. FIPS 180-4 defines the SHA-256 secure
+    /// hash algorithm.
+    ///
+    /// The SHA-256 algorithm is used as a hash function for the HMAC mechanism
+    /// for the HMAC-SHA-256 function.
+    ///
+    /// - parameters:
+    ///   - data: Data to be authenticated.
+    ///   - key:  The 256-bit key.
+    /// - returns: The 128-bit authentication code (MAC).
+    static func calculateHMAC_SHA256(_ data: Data, andKey key: Data) -> Data {
+        do {
+            let array = try HMAC(key: key.bytes, variant: .sha2(.sha256)).authenticate(data.bytes)
+            return Data(array)
+        } catch {
+            fatalError("Failed to calculate HMAC-SHA-256: \(error)")
         }
     }
     
@@ -453,7 +514,7 @@ private extension Crypto {
     static func calculateK2(withN N: Data, andP P: Data)
                 -> (nid: UInt8, encryptionKey: Data, privacyKey: Data) {
         let smk2 = Data([0x73, 0x6D, 0x6B, 0x32]) // "smk2" as Data
-        let s1 = calculateSalt(smk2)
+        let s1 = calculateS1(smk2)
         let T  = calculateCMAC(N, andKey: s1)
         let T0 = Data()
         let T1 = calculateCMAC(T0 + P + Data([0x01]), andKey: T)
@@ -474,7 +535,7 @@ private extension Crypto {
     /// - returns: 64 bits of a public value derived from the key.
     static func calculateK3(withN N: Data) -> Data {
         let smk3 = Data([0x73, 0x6D, 0x6B, 0x33]) // "smk3" as Data
-        let s1 = calculateSalt(smk3)
+        let s1 = calculateS1(smk3)
         let T  = calculateCMAC(N, andKey: s1)
         let id64_0x01 = Data([0x69, 0x64, 0x36, 0x34, 0x01]) // "id64" || 0x01
         let result = calculateCMAC(id64_0x01, andKey: T)
@@ -491,11 +552,28 @@ private extension Crypto {
     /// - returns: UInt8 with 6 LSB bits of a public value derived from the key.
     static func calculateK4(withN N: Data) -> UInt8 {
         let smk4 = Data([0x73, 0x6D, 0x6B, 0x34]) // "smk4" as Data
-        let s1 = calculateSalt(smk4)
+        let s1 = calculateS1(smk4)
         let T  = calculateCMAC(N, andKey: s1)
         let id6_0x01 = Data([0x69, 0x64, 0x36, 0x01]) // "id6" || 0x01
         let result = calculateCMAC(id6_0x01, andKey: T)
         return result[15] & 0x3F
+    }
+    
+    /// The provisioning material derivation function k5 is used to generate
+    /// the 256-bit key used in provisioning using ``Algorithm/BTM_ECDH_P256_HMAC_SHA256_AES_CCM``
+    /// algorithm.
+    ///
+    /// The definition of this derivation function makes use of the MAC
+    /// function HMAC-SHA-256 with a 256-bit key T.
+    ///
+    /// - parameters:
+    ///   - N: 32 or more octets.
+    ///   - salt: 256 bit salt.
+    ///   - P: 1 or more octets.
+    /// - returns: 256-bit key.
+    static func calculateK5(withN N: Data, salt: Data, andP P: Data) -> Data {
+        let T = calculateHMAC_SHA256(N, andKey: salt)
+        return calculateHMAC_SHA256(P, andKey: T)
     }
     
 }

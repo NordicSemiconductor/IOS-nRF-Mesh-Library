@@ -58,6 +58,16 @@ public enum Algorithm {
             return Data([1])
         }
     }
+    
+    var length: Int {
+        switch self {
+        case .fipsP256EllipticCurve,
+             .BTM_ECDH_P256_CMAC_AES128_AES_CCM:
+            return 128
+        case .BTM_ECDH_P256_HMAC_SHA256_AES_CCM:
+            return 256
+        }
+    }
 }
 
 extension Algorithm: CustomDebugStringConvertible {

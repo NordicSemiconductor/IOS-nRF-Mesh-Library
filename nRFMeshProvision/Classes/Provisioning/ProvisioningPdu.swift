@@ -149,7 +149,7 @@ internal struct ProvisioningResponse {
         }
     }
     
-    var isValid: Bool {
+    func isValid(forAlgorithm algorithm: Algorithm?) -> Bool {
         switch type {
         case .capabilities:
             return capabilities != nil
@@ -158,9 +158,13 @@ internal struct ProvisioningResponse {
         case .inputComplete, .complete:
             return true
         case .confirmation:
-            return confirmation != nil && confirmation!.count == 16
+            guard let algorithm = algorithm else { return false }
+            let sizeInBytes = algorithm.length >> 3
+            return confirmation != nil && confirmation!.count == sizeInBytes
         case .random:
-            return random != nil && random!.count == 16
+            guard let algorithm = algorithm else { return false }
+            let sizeInBytes = algorithm.length >> 3
+            return random != nil && random!.count == sizeInBytes
         case .failed:
             return error != nil
         default:
@@ -211,7 +215,8 @@ extension ProvisioningRequest: CustomDebugStringConvertible {
 extension ProvisioningResponse: CustomDebugStringConvertible {
     
     var debugDescription: String {
-        guard isValid else {
+        guard isValid(forAlgorithm: .BTM_ECDH_P256_CMAC_AES128_AES_CCM) ||
+              isValid(forAlgorithm: .BTM_ECDH_P256_HMAC_SHA256_AES_CCM) else {
             return "Invalid response of type: \(type)"
         }
         switch type {

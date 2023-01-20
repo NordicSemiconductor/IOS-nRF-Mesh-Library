@@ -43,6 +43,7 @@ internal class ProvisioningData {
     private var deviceRandom: Data!
     private var oobPublicKey: Bool!
     
+    private(set) var algorithm: Algorithm!
     private(set) var deviceKey: Data!
     private(set) var provisionerRandom: Data!
     private(set) var provisionerPublicKey: Data!
@@ -54,7 +55,7 @@ internal class ProvisioningData {
     /// - Provisioning Capabilities PDU,
     /// - Provisioning Start PDU,
     /// - Provisioner's Public Key,
-    /// - device's Public Key.
+    /// - Provisionee's Public Key.
     private var confirmationInputs: Data = Data(capacity: 1 + 11 + 5 + 64 + 64)
     
     func prepare(for network: MeshNetwork, networkKey: NetworkKey, unicastAddress: Address) {
@@ -70,8 +71,10 @@ internal class ProvisioningData {
         publicKey  = pk
         try provisionerPublicKey = pk.toData()
         
+        self.algorithm = algorithm
+        
         // Generate Provisioner Random.
-        provisionerRandom = Crypto.generateRandom()
+        provisionerRandom = Crypto.generateRandom(sizeInBits: algorithm.length)
     }
     
 }
@@ -83,22 +86,22 @@ internal extension ProvisioningData {
     /// and the Unprovisioned Device.
     ///
     /// This method must be called (in order) for:
-    /// * Provisioning Invite
-    /// * Provisioning Capabilities
-    /// * Provisioning Start
-    /// * Provisioner Public Key
-    /// * Device Public Key
+    /// * Provisioning Invite,
+    /// * Provisioning Capabilities,
+    /// * Provisioning Start,
+    /// * Provisioner's Public Key,
+    /// * Provisionee's Public Key.
     func accumulate(pdu: Data) {
         confirmationInputs += pdu
     }
     
-    /// Call this method when the device Public Key has been
+    /// Call this method when the Provisionee's Public Key has been
     /// obtained.
     ///
     /// This must be called after generating keys.
     ///
     /// - parameters:
-    ///   - key: The device Public Key.
+    ///   - key: The Provisionee's Public Key.
     ///   - oob: A flag indicating whether the Public Key was obtained Out-Of-Band.
     /// - throws: This method throws when generating ECDH Secure
     ///           Secret failed.
@@ -145,21 +148,25 @@ internal extension ProvisioningData {
         }
         let confirmation = Crypto.calculateConfirmation(confirmationInputs: confirmationInputs,
                                                         sharedSecret: sharedSecret,
-                                                        random: deviceRandom, authValue: authValue)
+                                                        random: deviceRandom, authValue: authValue,
+                                                        using: algorithm)
         guard deviceConfirmation == confirmation else {
             throw ProvisioningError.confirmationFailed
         }
     }
     
-    /// Returns the Provisioner Confirmation value. The Auth Value
-    /// must be set prior to calling this method.
+    /// Returns the Provisioner Confirmation value.
+    ///
+    /// The Auth Value must be set prior to calling this method.
     var provisionerConfirmation: Data {
         return Crypto.calculateConfirmation(confirmationInputs: confirmationInputs,
                                             sharedSecret: sharedSecret!,
-                                            random: provisionerRandom, authValue: authValue)
+                                            random: provisionerRandom, authValue: authValue,
+                                            using: algorithm)
     }
     
     /// Returns the encrypted Provisioning Data together with MIC.
+    ///
     /// Data will be encrypted using Session Key and Session Nonce.
     /// For that, all properties should be set when this method is called.
     /// Returned value is 25 + 8 bytes long, where the MIC is the last 8 bytes.
@@ -167,7 +174,8 @@ internal extension ProvisioningData {
         let keys = Crypto.calculateKeys(confirmationInputs: confirmationInputs,
                                         sharedSecret: sharedSecret!,
                                         provisionerRandom: provisionerRandom,
-                                        deviceRandom: deviceRandom)
+                                        deviceRandom: deviceRandom,
+                                        using: algorithm)
         deviceKey = keys.deviceKey
         
         let flags = Flags(ivIndex: ivIndex, networkKey: networkKey)

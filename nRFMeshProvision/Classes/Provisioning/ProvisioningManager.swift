@@ -142,6 +142,7 @@ public class ProvisioningManager {
     ///
     /// If ``identify(andAttractFor:)`` has not been called, and the Provisioning
     /// Capabilities are not known, this property returns `nil`.
+    /// 
     /// - returns: Whether the device can be provisioned by this manager, that is
     ///            whether the manager supports at least one of the provisioniong
     ///            algorithms supported by the device.
@@ -149,7 +150,11 @@ public class ProvisioningManager {
         guard let capabilities = provisioningCapabilities else {
             return nil
         }
-        return capabilities.algorithms.contains(.fipsP256EllipticCurve)
+        let supportedAlgorithms: Algorithms = [
+            .BTM_ECDH_P256_CMAC_AES128_AES_CCM,
+            .BTM_ECDH_P256_HMAC_SHA256_AES_CCM
+        ]
+        return !capabilities.algorithms.isDisjoint(with: supportedAlgorithms)
     }
     
     // MARK: - Implementation
@@ -350,7 +355,7 @@ extension ProvisioningManager: BearerDelegate, BearerDataDelegate {
             return
         }
         
-        guard response.isValid else {
+        guard response.isValid(forAlgorithm: provisioningData.algorithm) else {
             state = .fail(ProvisioningError.invalidPdu)
             return
         }
@@ -397,14 +402,16 @@ extension ProvisioningManager: BearerDelegate, BearerDataDelegate {
         // The user has performed the Input Action on the device.
         case (.provisioning, .inputComplete):
             delegate?.inputComplete()
+            let sizeInBytes = provisioningData.algorithm.length >> 3
+            
             switch authAction! {
             case let .displayNumber(value, inputAction: _):
-                var authValue = Data(count: 16 - MemoryLayout.size(ofValue: value))
+                var authValue = Data(count: max(0, sizeInBytes - MemoryLayout.size(ofValue: value)))
                 authValue += value.bigEndian
                 authValueReceived(authValue)
             case let .displayAlphanumeric(text):
                 var authValue = text.data(using: .ascii)!
-                authValue += Data(count: 16 - authValue.count)
+                authValue += Data(count: max(0, sizeInBytes - authValue.count))
                 authValueReceived(authValue)
             default:
                 // The Input Complete should not be received for other actions.
@@ -479,14 +486,16 @@ private extension ProvisioningManager {
     /// This method will call `authValueReceived(:)` when the value
     /// has been obtained.
     func obtainAuthValue() {
+        // The AuthValue is 16 or 32 bytes long, depending on the selected algorithm.
+        let sizeInBytes = provisioningData.algorithm.length >> 3
+        
         switch self.authenticationMethod! {
-        // For No OOB, the AuthValue is just 16 byte array filled with 0.
+        // For No OOB, the AuthValue is just the byte array filled with 0s.
         case .noOob:
-            let authValue = Data(count: 16)
+            let authValue = Data(count: sizeInBytes)
             authValueReceived(authValue)
             
         // For Static OOB, the AuthValue is the Key entered by the user.
-        // The key must be 16 bytes long.
         case .staticOob:
             delegate?.authenticationActionRequired(.provideStaticKey(callback: { key in
                 guard self.bearer.isOpen else {
@@ -495,6 +504,10 @@ private extension ProvisioningManager {
                 }
                 guard case .provisioning = self.state, let _ = self.provisioningData else {
                     self.state = .fail(ProvisioningError.invalidState)
+                    return
+                }
+                guard key.count == sizeInBytes else {
+                    self.state = .fail(ProvisioningError.invalidOobValueFormat)
                     return
                 }
                 self.delegate?.inputComplete()
@@ -520,9 +533,9 @@ private extension ProvisioningManager {
                         self.state = .fail(ProvisioningError.invalidState)
                         return
                     }
-                    authValue += Data(count: 16 - authValue.count)
+                    authValue += Data(count: max(0, sizeInBytes - authValue.count))
                     self.delegate?.inputComplete()
-                    self.authValueReceived(authValue)
+                    self.authValueReceived(authValue.prefix(sizeInBytes))
                 }))
             case .blink, .beep, .vibrate, .outputNumeric:
                 delegate?.authenticationActionRequired(.provideNumeric(maximumNumberOfDigits: size, outputAction: action, callback: { value in
@@ -534,7 +547,7 @@ private extension ProvisioningManager {
                         self.state = .fail(ProvisioningError.invalidState)
                         return
                     }
-                    var authValue = Data(count: 16 - MemoryLayout.size(ofValue: value))
+                    var authValue = Data(count: sizeInBytes - MemoryLayout.size(ofValue: value))
                     authValue += value.bigEndian
                     self.delegate?.inputComplete()
                     self.authValueReceived(authValue)
@@ -556,9 +569,11 @@ private extension ProvisioningManager {
 
     /// This method should be called when the OOB value has been received
     /// and Auth Value has been calculated.
+    ///
     /// It computes and sends the Provisioner Confirmation to the device.
     ///
-    /// - parameter value: The 16 byte long Auth Value.
+    /// - parameter value: The 16 or 32 byte long Auth Value, depending on the
+    ///                    selected algorithm.
     func authValueReceived(_ value: Data) {
         authAction = nil
         provisioningData.provisionerDidObtain(authValue: value)

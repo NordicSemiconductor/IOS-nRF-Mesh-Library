@@ -154,7 +154,7 @@ public class NetworkKey: Key, Codable {
     
     /// Creates the primary Network Key for a mesh network.
     internal convenience init() {
-        try! self.init(name: "Primary Network Key", index: 0, key: Crypto.generateRandom())
+        try! self.init(name: "Primary Network Key", index: 0, key: Data.random128BitKey())
     }
     
     private func regenerateKeyDerivatives() {
