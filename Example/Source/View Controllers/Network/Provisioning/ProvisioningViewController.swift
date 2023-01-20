@@ -412,10 +412,18 @@ extension ProvisioningViewController: ProvisioningDelegate {
     func authenticationActionRequired(_ action: AuthAction) {
         switch action {
         case let .provideStaticKey(callback: callback):
+            guard let capabilities = provisioningManager.provisioningCapabilities else {
+                return
+            }
+            let algorithm = capabilities.algorithms.strongest
+            
             self.dismissStatusDialog {
-                let message = "Enter 16-character hexadecimal string."
+                let requiredSize = algorithm == .BTM_ECDH_P256_HMAC_SHA256_AES_CCM ? 32 : 16
+                let type: Selector = algorithm == .BTM_ECDH_P256_HMAC_SHA256_AES_CCM ? .key32Required : .key16Required
+                
+                let message = "Enter \(requiredSize)-character hexadecimal string."
                 self.presentTextAlert(title: "Static OOB Key", message: message,
-                                      type: .keyRequired, cancelHandler: nil) { hex in
+                                      type: type, cancelHandler: nil) { hex in
                     callback(Data(hex: hex))
                 }
             }
