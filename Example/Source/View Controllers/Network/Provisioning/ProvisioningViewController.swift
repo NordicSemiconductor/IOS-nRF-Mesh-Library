@@ -411,6 +411,7 @@ extension ProvisioningViewController: ProvisioningDelegate {
     
     func authenticationActionRequired(_ action: AuthAction) {
         switch action {
+            
         case let .provideStaticKey(callback: callback):
             guard let capabilities = provisioningManager.provisioningCapabilities else {
                 return
@@ -427,6 +428,7 @@ extension ProvisioningViewController: ProvisioningDelegate {
                     callback(Data(hex: hex))
                 }
             }
+            
         case let .provideNumeric(maximumNumberOfDigits: _, outputAction: action, callback: callback):
             self.dismissStatusDialog {
                 var message: String
@@ -447,6 +449,7 @@ extension ProvisioningViewController: ProvisioningDelegate {
                     callback(UInt(text)!)
                 }
             }
+            
         case let .provideAlphanumeric(maximumNumberOfCharacters: _, callback: callback):
             self.dismissStatusDialog {
                 let message = "Enter the text displayed on the device."
@@ -455,8 +458,10 @@ extension ProvisioningViewController: ProvisioningDelegate {
                     callback(text)
                 }
             }
+            
         case let .displayAlphanumeric(text):
             self.presentStatusDialog(message: "Enter the following text on your device:\n\n\(text)")
+            
         case let .displayNumber(value, inputAction: action):
             self.presentStatusDialog(message: "Perform \(action) \(value) times on your device.")
         }
