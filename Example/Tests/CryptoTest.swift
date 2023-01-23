@@ -198,6 +198,17 @@ class CryptoTest: XCTestCase {
         XCTAssertEqual(privateBeaconData?.ivIndex.index, 0x00000000)
     }
     
+    // Test based on Provisioning Sample Data 8.4.6.2 from Mesh Profile 1.1, with modified Authentication Tag.
+    func testPrivateBeacon_Invalid() throws {
+        let privateBeaconPdu = Data(hex: "021b998f82927535ea6f3076f422ce827408ab0123456789ABCDEF")
+        let key = Data(hex: "ca478cdac626b7a8522d7272dd124f26")
+        
+        // Deobfuscate and authenticate the Private beacon.
+        let privateBeaconData = Crypto.decodeAndAuthenticate(privateBeacon: privateBeaconPdu, usingPrivateBeaconKey: key)
+        
+        XCTAssertNil(privateBeaconData)
+    }
+    
     // Test based on Provisioning Sample Data 8.17.1 and 8.17.2 from Mesh Profile 1.1.
     func testCalculatingSharedSecret() throws {
         // Received Public Key (X + Y)
