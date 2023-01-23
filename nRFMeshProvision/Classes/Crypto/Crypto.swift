@@ -163,6 +163,41 @@ internal class Crypto {
         return authenticationValue == hash
     }
     
+    static func decodeAndAuthenticate(privateBeacon pdu: Data, usingPrivateBeaconKey key: Data) -> (keyRefreshFlag: Bool, ivIndex: IvIndex)? {
+        // Byte 0 of the PDU is the Beacon Type (0x02).
+        let random = pdu.subdata(in: 1..<14)
+        let obfuscatedData = pdu.subdata(in: 14..<19)
+        let authenticationTag = pdu.subdata(in: 19..<27)
+        
+        // Deobfuscate Private Beacon Data.
+        let C1 = Data([0x01]) + random + Data([0x00, 0x01])
+        let S = calculateECB(C1, andKey: key)
+        let privateBeaconData = S.subdata(in: 0..<5) ^ obfuscatedData
+        
+        // Authenticate the Beacon.
+        let B0 = Data([0x19]) + random + Data([0x00, 0x05])
+        let C0 = Data([0x01]) + random + Data([0x00, 0x00])
+        let P = privateBeaconData + Data(repeating: 0x00, count: 11)
+        let T0 = calculateECB(B0, andKey: key)
+        let T1 = calculateECB(T0 ^ P, andKey: key)
+        let T2 = T1 ^ calculateECB(C0, andKey: key)
+        let calculatedAuthenticationTag = T2.subdata(in: 0..<8)
+        
+        // Authentication tags must match for the beacon to be valid.
+        guard authenticationTag == calculatedAuthenticationTag else {
+            return nil
+        }
+        
+        // Decode Private Beacon Data.
+        let flags = privateBeaconData[0]
+        let keyRefreshFlag = (flags & 0x01) != 0
+        let updateActive   = (flags & 0x02) != 0
+        let index: UInt32 = privateBeaconData.read(fromOffset: 1)
+        let ivIndex = IvIndex(index: index.bigEndian, updateActive: updateActive)
+        
+        return (keyRefreshFlag, ivIndex)
+    }
+    
     /// Encrypts given data using the Encryption Key, Nonce and adds MIC
     /// (Message Integrity Check) of given size to the end of the returned ciphertext.
     ///
