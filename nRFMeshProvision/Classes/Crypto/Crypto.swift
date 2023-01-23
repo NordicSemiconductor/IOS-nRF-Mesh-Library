@@ -98,19 +98,28 @@ internal class Crypto {
     
     /// Calculates key derivatives from the given Network Key.
     ///
+    /// The derivatives are:
+    /// - NID (LSB, 7 bits),
+    /// - Encryption Key (128 bits),
+    /// - Privacy Key (128 bits),
+    /// - Identity Key (128 bits),
+    /// - Beacon Key (128 bits)
+    /// - Private Beacon Key (128 bits).
+    ///
     /// - parameter key: The Network Key.
-    /// - returns: NID (7 bits), Encryption Key (128 bits) and Privacy Key (128 bits),
-    ///            Identity Key (128 bits) and Beacon Key (128 bits).
+    /// - returns: Key derivatives.
     static func calculateKeyDerivatives(from key: Data)
-                -> (nid: UInt8, encryptionKey: Data, privacyKey: Data, identityKey: Data, beaconKey: Data) {
+                -> (nid: UInt8, encryptionKey: Data, privacyKey: Data, identityKey: Data, beaconKey: Data, privateBeaconKey: Data) {
         let P = Data([0x69, 0x64, 0x31, 0x32, 0x38, 0x01]) // "id128" || 0x01
         let saltIK = calculateS1("nkik".data(using: .utf8)!)
         let identityKey = calculateK1(withN: key, salt: saltIK, andP: P)
         let saltBK = calculateS1("nkbk".data(using: .utf8)!)
         let beaconKey = calculateK1(withN: key, salt: saltBK, andP: P)
+        let saltPK = calculateS1("nkpk".data(using: .utf8)!)
+        let privateBeaconKey = calculateK1(withN: key, salt: saltPK, andP: P)
         
         let (nid, encryptionKey, privacyKey) = calculateK2(withN: key, andP: Data([0x00]))
-        return (nid, encryptionKey, privacyKey, identityKey, beaconKey)
+        return (nid, encryptionKey, privacyKey, identityKey, beaconKey, privateBeaconKey)
     }
     
     /// Generates the Network ID based on the given 128-bit key.

@@ -35,6 +35,8 @@ internal struct NetworkKeyDerivatives {
     let identityKey: Data!
     /// The Beacon Key.
     let beaconKey: Data!
+    /// The Private Beacon Key.
+    let privateBeaconKey: Data!
     /// The Encryption Key.
     let encryptionKey: Data!
     /// The Privacy Key.
@@ -43,7 +45,7 @@ internal struct NetworkKeyDerivatives {
     let nid: UInt8!
     
     init(withKey key: Data) {
-        (nid, encryptionKey, privacyKey, identityKey, beaconKey) =
+        (nid, encryptionKey, privacyKey, identityKey, beaconKey, privateBeaconKey) =
             Crypto.calculateKeyDerivatives(from: key)
     }
 }
@@ -61,10 +63,11 @@ internal struct NetworkKeyDerivatives {
 /// and a set of keys used for for encrypting different types of messages:
 /// * Identity Key
 /// * Beacon Key
+/// * Private Beacon Key
 /// * Encryption Key
 /// * Privacy Key
 ///
-/// The key can be change. Changing the Network Key is a secure way of removing
+/// The key can be changed. Changing the Network Key is a secure way of removing
 /// Nodes from a mesh network. The procedure of changing a Network Key is called
 /// Key Refresh Procedure (KRP). Nodes that are not part of KRP are effectively
 /// excluded from the mesh network and may no longer send messages on given subnet.

@@ -136,18 +136,20 @@ class CryptoTest: XCTestCase {
     func testKeyDerivatives() throws {
         let key = Data(hex: "f7a2a44f8e8a8029064f173ddc1e2b00")
         
-        let expectedNID           = UInt8(0x7F)
-        let expectedEncryptionKey = Data(hex: "9f589181a0f50de73c8070c7a6d27f46")
-        let expectedPrivacyKey    = Data(hex: "4c715bd4a64b938f99b453351653124f")
-        let expectedIdentityKey   = Data(hex: "877DE1A131C87A8C6767E655061963A7")
-        let expectedBeaconKey     = Data(hex: "CCAE3C53A3BB6FAB728EE94A390DC91F")
+        let expectedNID              = UInt8(0x7F)
+        let expectedEncryptionKey    = Data(hex: "9f589181a0f50de73c8070c7a6d27f46")
+        let expectedPrivacyKey       = Data(hex: "4c715bd4a64b938f99b453351653124f")
+        let expectedIdentityKey      = Data(hex: "877DE1A131C87A8C6767E655061963A7")
+        let expectedBeaconKey        = Data(hex: "CCAE3C53A3BB6FAB728EE94A390DC91F")
+        let expectedPrivateBeaconKey = Data(hex: "6be76842460b2d3a5850d4698409f1bb")
         
-        let (n, e, p, i, b) = Crypto.calculateKeyDerivatives(from: key)
-        XCTAssertEqual(n, expectedNID)
-        XCTAssertEqual(e, expectedEncryptionKey)
-        XCTAssertEqual(p, expectedPrivacyKey)
-        XCTAssertEqual(i, expectedIdentityKey)
-        XCTAssertEqual(b, expectedBeaconKey)
+        let (nid, ek, pk, ik, bk, pbk) = Crypto.calculateKeyDerivatives(from: key)
+        XCTAssertEqual(nid, expectedNID)
+        XCTAssertEqual(ek,  expectedEncryptionKey)
+        XCTAssertEqual(pk,  expectedPrivacyKey)
+        XCTAssertEqual(ik,  expectedIdentityKey)
+        XCTAssertEqual(bk,  expectedBeaconKey)
+        XCTAssertEqual(pbk, expectedPrivateBeaconKey)
     }
     
     func testNetworkId() throws {
