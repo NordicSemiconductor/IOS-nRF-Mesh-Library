@@ -42,11 +42,11 @@ internal struct SecureNetworkBeacon: BeaconPdu {
     /// Key Refresh flag value.
     ///
     /// When this flag is active, the Node shall set the Key Refresh
-    /// Phase for this Network Key to `.usingNewKeys`. When in this phase,
-    /// the Node shall only transmit messages and Secure Network beacons
-    /// using the new keys, shall receive messages using the old keys
-    /// and the new keys, and shall only receive Secure Network beacons
-    /// secured using the new Network Key.
+    /// Phase for this Network Key to ``KeyRefreshPhase/usingNewKeys``.
+    /// When in this phase, the Node shall only transmit messages and
+    /// Secure Network beacons using the new keys, shall receive messages
+    /// using the old keys and the new keys, and shall only receive
+    /// Secure Network beacons secured using the new Network Key.
     let keyRefreshFlag: Bool
     /// The IV Index carried by this Secure Network beacon.
     let ivIndex: IvIndex
