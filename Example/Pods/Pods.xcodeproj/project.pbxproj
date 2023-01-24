@@ -177,6 +177,7 @@
 		5204D26757066D8C6B6C6696A07DF5DE /* MeshNodeEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C761AB3A924F8FA31079749C9DD606C /* MeshNodeEntry.swift */; };
 		5298C00B6C7DA3382FA31FB3B0EF2826 /* PKCS5.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6529BEEF734D4D9F2920046F56965C4 /* PKCS5.swift */; };
 		52C1CE59297EAD310024DB92 /* PrivateBeacon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52C1CE58297EAD310024DB92 /* PrivateBeacon.swift */; };
+		52C1CE5B298000720024DB92 /* NetworkBeaconPdu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52C1CE5A298000720024DB92 /* NetworkBeaconPdu.swift */; };
 		5338E50DC8D7B6977F90D5375B7A82D1 /* ConfigNodeResetStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32019C109C91B2F3A7C7820712D2A348 /* ConfigNodeResetStatus.swift */; };
 		535FA970A49C4AC40847416AD23D6C0E /* SensorDescriptorStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EC5FEC3B624A649D72085D0F629E364 /* SensorDescriptorStatus.swift */; };
 		54C7B0CFF20B468743131E1077152526 /* RemoveAddressesFromFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02CCB373620F516C453F665485B9B72E /* RemoveAddressesFromFilter.swift */; };
@@ -709,6 +710,7 @@
 		51B542A657751A6647ED0C2B1E331F3F /* ConfigVendorModelAppList.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ConfigVendorModelAppList.swift; sourceTree = "<group>"; };
 		52C0F063AB492BB2D1FE84FCAE53164D /* LightCTLTemperatureRangeSet.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LightCTLTemperatureRangeSet.swift; sourceTree = "<group>"; };
 		52C1CE58297EAD310024DB92 /* PrivateBeacon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrivateBeacon.swift; sourceTree = "<group>"; };
+		52C1CE5A298000720024DB92 /* NetworkBeaconPdu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkBeaconPdu.swift; sourceTree = "<group>"; };
 		52E161FE177AF095BA55247B132B8C2D /* Oob.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Oob.swift; sourceTree = "<group>"; };
 		5309874A90AA23CE4DBDB5BE48808F97 /* CompositionElement.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CompositionElement.swift; sourceTree = "<group>"; };
 		5427BFDA8338A7437D8154638B5B99DD /* LightCTLTemperatureRangeStatus.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LightCTLTemperatureRangeStatus.swift; sourceTree = "<group>"; };
@@ -1901,9 +1903,10 @@
 				63DAAED4125D5ECC3038006DA7CB1606 /* BeaconPdu.swift */,
 				F1B92E125B44E1EBDBC14DC54EC22AF5 /* NetworkLayer.swift */,
 				E463522203E906B7BEDE0DBF8F6663D7 /* NetworkPdu.swift */,
+				52C1CE5A298000720024DB92 /* NetworkBeaconPdu.swift */,
 				B57552A55608AF68809C8A77EF370E55 /* SecureNetworkBeacon.swift */,
-				95840766EF5C4A1C78F17FF11AECDDE7 /* UnprovisionedDeviceBeacon.swift */,
 				52C1CE58297EAD310024DB92 /* PrivateBeacon.swift */,
+				95840766EF5C4A1C78F17FF11AECDDE7 /* UnprovisionedDeviceBeacon.swift */,
 			);
 			path = "Network Layer";
 			sourceTree = "<group>";
@@ -2441,6 +2444,7 @@
 				6A4E9DDD5E0243A3F1828A3D416D43A1 /* LightLightnessLinearStatus.swift in Sources */,
 				12957916BFDA8E96C3E4D9AF0A45C606 /* LightLightnessRangeGet.swift in Sources */,
 				C72A9E6527A979445CCD82A06CE03FDA /* LightLightnessRangeSet.swift in Sources */,
+				52C1CE5B298000720024DB92 /* NetworkBeaconPdu.swift in Sources */,
 				82F498EBCCFB4FAC6E76977BA2AF9FEE /* LightLightnessRangeSetUnacknowledged.swift in Sources */,
 				9211DBF5A16FEF6C1121343A44AF3753 /* LightLightnessRangeStatus.swift in Sources */,
 				A414BDEBE265752BD618D18D14AD9DE8 /* LightLightnessSet.swift in Sources */,

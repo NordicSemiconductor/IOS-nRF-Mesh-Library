@@ -30,25 +30,12 @@
 
 import Foundation
 
-internal struct PrivateBeacon: BeaconPdu {
+internal struct PrivateBeacon: NetworkBeaconPdu {
     let pdu: Data
     let beaconType: BeaconType = .privateBeacon
-    
-    /// The Network Key related to this Secure Network beacon.
     let networkKey: NetworkKey
-    /// A flag indicating whether the Secure Network beacon has been
-    /// secured using the new Network Key during Key Refresh Procedure.
     let validForKeyRefreshProcedure: Bool
-    /// Key Refresh flag value.
-    ///
-    /// When this flag is active, the Node shall set the Key Refresh
-    /// Phase for this Network Key to ``KeyRefreshPhase/usingNewKeys``.
-    /// When in this phase, the Node shall only transmit messages and
-    /// Secure Network beacons using the new keys, shall receive messages
-    /// using the old keys and the new keys, and shall only receive
-    /// Secure Network beacons secured using the new Network Key.
     let keyRefreshFlag: Bool
-    /// The IV Index carried by this Private beacon.
     let ivIndex: IvIndex
     
     /// Creates Private beacon PDU object from received PDU.
@@ -70,6 +57,8 @@ internal struct PrivateBeacon: BeaconPdu {
         )
         
         // If the beacon failed to be authenticated, and the old key exists, use that one.
+        // During Key Refresh Procedure when in Phase 1 (key distribution) the
+        // Private beacon may be decoded using the old Network Key.
         if privateBeaconData == nil,
            case .keyDistribution = networkKey.phase,
            let oldKeys = networkKey.oldKeys {
@@ -90,4 +79,12 @@ internal struct PrivateBeacon: BeaconPdu {
         self.ivIndex = privateBeaconData.ivIndex
         self.validForKeyRefreshProcedure = networkKey.oldKey != nil
     }
+}
+
+extension PrivateBeacon: CustomDebugStringConvertible {
+    
+    var debugDescription: String {
+        return "Private Beacon beacon (Network ID: \(networkKey.networkId.hex), \(ivIndex), Key Refresh Flag: \(keyRefreshFlag))"
+    }
+    
 }

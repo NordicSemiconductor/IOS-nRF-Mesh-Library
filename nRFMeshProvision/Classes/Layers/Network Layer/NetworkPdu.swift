@@ -61,7 +61,7 @@ internal struct NetworkPdu {
     ///
     /// - parameters:
     ///   - pdu:        The data received from mesh network.
-    ///   - pduType:    The type of the PDU: `.networkPdu` of `.proxyConfiguration`.
+    ///   - pduType:    The type of the PDU: ``PduType/networkPdu`` or ``PduType/proxyConfiguration``.
     ///   - networkKey: The Network Key to decrypt the PDU.
     ///   - ivIndex:    The current IV Index.
     /// - returns: The deobfuscated and decided Network PDU object, or `nil`,
@@ -155,11 +155,12 @@ internal struct NetworkPdu {
     /// Creates the Network PDU. This method encrypts and obfuscates data
     /// that are to be send to the mesh network.
     ///
-    /// - parameter lowerTransportPdu: The data received from higher layer.
-    /// - parameter pduType:  The type of the PDU: `.networkPdu` of `.proxyConfiguration`.
-    /// - parameter sequence: The SEQ number of the PDU. Each PDU between the source
+    /// - parameters:
+    ///   - lowerTransportPdu: The data received from higher layer.
+    ///   - pduType: The type of the PDU: ``PduType/networkPdu`` or ``PduType/proxyConfiguration``.
+    ///   - sequence: The SEQ number of the PDU. Each PDU between the source
     ///                       and destination must have strictly increasing sequence number.
-    /// - parameter ttl: Time To Live.
+    ///   - ttl: Time To Live.
     /// - returns: The Network PDU object.
     init(encode lowerTransportPdu: LowerTransportPdu, ofType pduType: PduType,
          withSequence sequence: UInt32, andTtl ttl: UInt8) {
@@ -207,26 +208,6 @@ internal struct NetworkPdu {
         
         self.pdu = Data() + iviNid + obfuscatedData + encryptedData
     }
-    
-    /// This method goes over all Network Keys in the mesh network and tries
-    /// to deobfuscate and decode the network PDU.
-    ///
-    /// - parameters:
-    ///   - pdu:         The received PDU.
-    ///   - type:        The type of the PDU: `.networkPdu` of `.proxyConfiguration`.
-    ///   - meshNetwork: The mesh network for which the PDU should be decoded.
-    /// - returns: The deobfuscated and decoded Network PDU, or `nil` if the PDU was not
-    ///            signed with any of the Network Keys, the IV Index was not valid, or the
-    ///            PDU was invalid.
-    static func decode(_ pdu: Data, ofType type: PduType, for meshNetwork: MeshNetwork) -> NetworkPdu? {
-        for networkKey in meshNetwork.networkKeys {
-            if let networkPdu = NetworkPdu(decode: pdu, ofType: type,
-                                           usingNetworkKey: networkKey, andIvIndex: meshNetwork.ivIndex) {
-                return networkPdu
-            }
-        }
-        return nil
-    }
 }
 
 private extension PduType {
@@ -251,6 +232,31 @@ private extension LowerTransportPduType {
         case .accessMessage:  return 4 // 32 bits
         case .controlMessage: return 8 // 64 bits
         }
+    }
+    
+}
+
+internal struct NetworkPduDecoder {
+    private init() {}
+    
+    /// This method goes over all Network Keys in the mesh network and tries
+    /// to deobfuscate and decode the network PDU.
+    ///
+    /// - parameters:
+    ///   - pdu:         The received PDU.
+    ///   - type:        The type of the PDU: ``PduType/networkPdu`` or ``PduType/proxyConfiguration``.
+    ///   - meshNetwork: The mesh network for which the PDU should be decoded.
+    /// - returns: The deobfuscated and decoded Network PDU, or `nil` if the PDU was not
+    ///            signed with any of the Network Keys, the IV Index was not valid, or the
+    ///            PDU was invalid.
+    static func decode(_ pdu: Data, ofType type: PduType, for meshNetwork: MeshNetwork) -> NetworkPdu? {
+        for networkKey in meshNetwork.networkKeys {
+            if let networkPdu = NetworkPdu(decode: pdu, ofType: type,
+                                           usingNetworkKey: networkKey, andIvIndex: meshNetwork.ivIndex) {
+                return networkPdu
+            }
+        }
+        return nil
     }
     
 }
