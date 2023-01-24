@@ -163,7 +163,15 @@ internal class Crypto {
         return authenticationValue == hash
     }
     
-    static func decodeAndAuthenticate(privateBeacon pdu: Data, usingPrivateBeaconKey key: Data) -> (keyRefreshFlag: Bool, ivIndex: IvIndex)? {
+    /// Decodes and authenticates the received Private beacon using the given Private
+    /// Beacon Key.
+    ///
+    /// - parameters:
+    ///   - pdu: The received PDU.
+    ///   - key: The Private Beacon Key generated from a Network Key.
+    /// - returns: Network information obtained from the beacon.
+    static func decodeAndAuthenticate(privateBeacon pdu: Data,
+                                      usingPrivateBeaconKey key: Data) -> (keyRefreshFlag: Bool, ivIndex: IvIndex)? {
         // Byte 0 of the PDU is the Beacon Type (0x02).
         let random = pdu.subdata(in: 1..<14)
         let obfuscatedData = pdu.subdata(in: 14..<19)
