@@ -64,16 +64,22 @@ internal struct PrivateBeacon: BeaconPdu {
         }
         
         // Try to decode and authentice the Private beacon using current Private Beacon Key.
-        var privateBeaconData = Crypto.decodeAndAuthenticate(privateBeacon: pdu, usingPrivateBeaconKey: networkKey.keys.privateBeaconKey)
+        var privateBeaconData = Crypto.decodeAndAuthenticate(
+            privateBeacon: pdu,
+            usingPrivateBeaconKey: networkKey.keys.privateBeaconKey
+        )
         
         // If the beacon failed to be authenticated, and the old key exists, use that one.
         if privateBeaconData == nil,
            case .keyDistribution = networkKey.phase,
            let oldKeys = networkKey.oldKeys {
-            privateBeaconData = Crypto.decodeAndAuthenticate(privateBeacon: pdu, usingPrivateBeaconKey: oldKeys.privateBeaconKey)
+            privateBeaconData = Crypto.decodeAndAuthenticate(
+                privateBeacon: pdu,
+                usingPrivateBeaconKey: oldKeys.privateBeaconKey
+            )
         }
         
-        // If the beacon stil failed to be authenticated, discard it.
+        // If the beacon still failed to be authenticated, discard it.
         guard let privateBeaconData = privateBeaconData else {
             return nil
         }
