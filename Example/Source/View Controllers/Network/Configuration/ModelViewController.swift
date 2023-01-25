@@ -47,7 +47,7 @@ class ModelViewController: ProgressViewController {
     /// and only when the value has been read.
     private var sensorValues: [SensorValue]?
     /// Node Identity values per Network Key. Pull to Refresh current states.
-    private var nodeIdentityStates: [(key: NetworkKey, state: NodeIdentity?)]!
+    private var nodeIdentityStates: [(key: NetworkKey, state: NodeIdentityState?)]!
     /// This is a helper counter to iterate over Node Identity states while
     /// loading them from the Node. It is reinitialized to 0 on Pull To Refresh
     /// and incremented with every status received until all identity states are

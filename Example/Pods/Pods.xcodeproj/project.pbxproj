@@ -224,7 +224,7 @@
 		6ACB53DAF666C83ECC18167C1118C711 /* SetFilterType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EB4816D4C86A33BA9FF79BC3ECEB742 /* SetFilterType.swift */; };
 		6AEEE97FB85D82A5F0D0C8B5C7D36471 /* LightLCOccupancyModeSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2012322013CAB14E5B6F5472E53A136 /* LightLCOccupancyModeSet.swift */; };
 		6BD1BE5FD32860B18195389D92C6DBF0 /* PKCS7Padding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4412314BE5386EC383D083237F9B961B /* PKCS7Padding.swift */; };
-		6C192BAB9B6A271C80CCFC025D2DE569 /* NodeIdentity.swift in Sources */ = {isa = PBXBuildFile; fileRef = D49CB0CB9737D07B8B13469FB83B6074 /* NodeIdentity.swift */; };
+		6C192BAB9B6A271C80CCFC025D2DE569 /* NodeIdentityState.swift in Sources */ = {isa = PBXBuildFile; fileRef = D49CB0CB9737D07B8B13469FB83B6074 /* NodeIdentityState.swift */; };
 		6C1F80FE4F1DA06C6AAFB8A1B1641732 /* LightHSLTargetGet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 350046A530CAC1B9CFF66AE985C50D46 /* LightHSLTargetGet.swift */; };
 		6C2906432D097D3331ACA54CAEB0BEE0 /* ExportConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09832A57DF98892C3530EC998483EC07 /* ExportConfiguration.swift */; };
 		6C8331341F87B3DF78B6FA1D658559A7 /* GenericOnPowerUpSetUnacknowledged.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F8C5BB4AEE974A7181980D8A3F54C7A /* GenericOnPowerUpSetUnacknowledged.swift */; };
@@ -957,7 +957,7 @@
 		D3D5CAA885ED32421F91FFA572970F60 /* CTR.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = CTR.swift; path = Sources/CryptoSwift/BlockMode/CTR.swift; sourceTree = "<group>"; };
 		D4746AF53668A76C8E9C8C22550CBE4D /* ConfigCompositionDataStatus.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ConfigCompositionDataStatus.swift; sourceTree = "<group>"; };
 		D4845C49D32E3FF467B089BEA990D42A /* LightLightnessRangeSetUnacknowledged.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LightLightnessRangeSetUnacknowledged.swift; sourceTree = "<group>"; };
-		D49CB0CB9737D07B8B13469FB83B6074 /* NodeIdentity.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = NodeIdentity.swift; sourceTree = "<group>"; };
+		D49CB0CB9737D07B8B13469FB83B6074 /* NodeIdentityState.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = NodeIdentityState.swift; sourceTree = "<group>"; };
 		D4EFD804DDFEF2EE9090DB4F36E39E25 /* GenericOnOffGet.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = GenericOnOffGet.swift; sourceTree = "<group>"; };
 		D4F9AD85F8B56CBA9D7547DB16351AA3 /* Pods-nRF Mesh.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-nRF Mesh.debug.xcconfig"; sourceTree = "<group>"; };
 		D584212530DD07DED49CF9E0E09A3A38 /* ApplicationKey+NetworkKey.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "ApplicationKey+NetworkKey.swift"; sourceTree = "<group>"; };
@@ -1467,7 +1467,7 @@
 				B359891752BA5B1C0E3FA2EE6D1D2A29 /* NetworkKey.swift */,
 				5857DDF47AB5DFBD3D2031E728F5E876 /* Node.swift */,
 				4133D14BA9E43DA5738AD64C30503EC1 /* NodeFeatures.swift */,
-				D49CB0CB9737D07B8B13469FB83B6074 /* NodeIdentity.swift */,
+				D49CB0CB9737D07B8B13469FB83B6074 /* NodeIdentityState.swift */,
 				1FF644C417FDD4558C922B9660D025D2 /* OnPowerUp.swift */,
 				FEC37D4B2AC79FD72299452C85669A2D /* Provisioner.swift */,
 				343A754B6B1F884829945DCD3AF2EE81 /* Publish.swift */,
@@ -2495,7 +2495,7 @@
 				2F944E7529BC52AE92FC09065E6FD1DE /* Node+Provisioner.swift in Sources */,
 				36310EB8EC72F27543439F25F4AAEDAA /* Node+Scenes.swift in Sources */,
 				ACB1B28A6F5B23ABAE198366E219B846 /* NodeFeatures.swift in Sources */,
-				6C192BAB9B6A271C80CCFC025D2DE569 /* NodeIdentity.swift in Sources */,
+				6C192BAB9B6A271C80CCFC025D2DE569 /* NodeIdentityState.swift in Sources */,
 				E1ABA618DBE02AC3505204BC932CE54A /* nRFMeshProvision-dummy.m in Sources */,
 				7D1EE75BE6B93CE5540BA927F5A4FC98 /* OnPowerUp.swift in Sources */,
 				19F6D942EA9BE04CF6A65782109579ED /* Oob.swift in Sources */,

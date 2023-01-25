@@ -38,7 +38,7 @@ public struct ConfigNodeIdentityStatus: ConfigNetKeyMessage, ConfigStatusMessage
     }
     
     public let networkKeyIndex: KeyIndex
-    public let identity: NodeIdentity
+    public let identity: NodeIdentityState
     public let status: ConfigMessageStatus
     
     /// Creates a Config Node Identity Status object.
@@ -47,7 +47,7 @@ public struct ConfigNodeIdentityStatus: ConfigNetKeyMessage, ConfigStatusMessage
     ///   - identity: The Node Identity state.
     ///   - networkKey: The Network Key.
     ///   - status: The status.
-    public init(report identity: NodeIdentity,
+    public init(report identity: NodeIdentityState,
                 for networkKey: NetworkKey,
                 with status: ConfigMessageStatus) {
         self.networkKeyIndex = networkKey.index
@@ -75,7 +75,7 @@ public struct ConfigNodeIdentityStatus: ConfigNetKeyMessage, ConfigStatusMessage
         }
         self.status = status
         networkKeyIndex = Self.decodeNetKeyIndex(from: parameters, at: 1)
-        identity = NodeIdentity(rawValue: parameters[3]) ?? .notSupported
+        identity = NodeIdentityState(rawValue: parameters[3]) ?? .notSupported
     }
     
 }
