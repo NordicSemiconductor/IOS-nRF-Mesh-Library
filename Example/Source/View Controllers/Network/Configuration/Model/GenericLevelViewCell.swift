@@ -140,8 +140,8 @@ class GenericLevelViewCell: ModelViewCell {
             currentStatusLabel.text = "\(Int(level))%"
             if let targetLevel = status.targetLevel, let remainingTime = status.remainingTime {
                 let level = floorf(0.1 + (Float(targetLevel) + 32768.0) / 655.35)
-                if remainingTime.isKnown {
-                    targetStatusLabel.text = "\(Int(level))% in \(remainingTime.interval) sec"
+                if let interval = remainingTime.interval {
+                    targetStatusLabel.text = "\(Int(level))% in \(interval) sec"
                 } else {
                     targetStatusLabel.text = "\(Int(level))% in unknown time"
                 }

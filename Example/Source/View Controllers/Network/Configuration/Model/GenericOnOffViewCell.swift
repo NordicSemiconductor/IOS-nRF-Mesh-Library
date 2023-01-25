@@ -105,8 +105,8 @@ class GenericOnOffViewCell: ModelViewCell {
         case let status as GenericOnOffStatus:
             currentStatusLabel.text = status.isOn ? "ON" : "OFF"
             if let targetStatus = status.targetState, let remainingTime = status.remainingTime {
-                if remainingTime.isKnown {
-                    targetStatusLabel.text = "\(targetStatus ? "ON" : "OFF") in \(remainingTime.interval) sec"
+                if let interval = remainingTime.interval {
+                    targetStatusLabel.text = "\(targetStatus ? "ON" : "OFF") in \(interval) sec"
                 } else {
                     targetStatusLabel.text = "\(targetStatus ? "ON" : "OFF") in unknown time"
                 }

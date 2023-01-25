@@ -161,7 +161,7 @@ class SceneServerDelegate: SceneServerModelDelegate {
             if transitionTime.isImmediate {
                 currentScene = request.scene
             } else {
-                let complete = Date(timeIntervalSinceNow: transitionTime.interval + TimeInterval(delay) * 0.005)
+                let complete = Date(timeIntervalSinceNow: transitionTime.interval! + TimeInterval(delay) * 0.005)
                 targetScene = (scene: request.scene, complete: complete)
                 currentScene = .invalidScene
             }
@@ -234,7 +234,7 @@ class SceneServerDelegate: SceneServerModelDelegate {
             if transitionTime.isImmediate {
                 currentScene = request.scene
             } else {
-                let complete = Date(timeIntervalSinceNow: transitionTime.interval + TimeInterval(delay) * 0.005)
+                let complete = Date(timeIntervalSinceNow: transitionTime.interval! + TimeInterval(delay) * 0.005)
                 targetScene = (scene: request.scene, complete: complete)
                 currentScene = .invalidScene
             }

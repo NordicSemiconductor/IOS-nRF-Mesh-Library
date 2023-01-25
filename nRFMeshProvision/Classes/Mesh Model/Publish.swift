@@ -58,7 +58,8 @@ public struct Publish: Codable {
         public let count: UInt8
         /// The interval (in milliseconds) between retransmissions (50...1600 with step 50).
         public let interval: UInt16
-        /// Retransmission steps, from 0 to 31. Use `interval` to get the interval in ms.
+        /// Retransmission steps, from 0 to 31. Use ``Publish/Retransmit-swift.struct/interval``
+        /// to get the interval in ms.
         public var steps: UInt8 {
             return UInt8((interval / 50) - 1)
         }

@@ -45,6 +45,12 @@ class GenericDefaultTransitionTimeClientDelegate: ModelDelegate {
         }
     }
     
+    /// This property represents the Default Transition Time State.
+    ///
+    /// Setting the value will publish a Generic Default Transition Time Set Unacknowleged
+    /// message if publication was set for the model.
+    ///
+    /// Initially, the value is "unknown time".
     var defaultTransitionTime: TransitionTime = TransitionTime() {
         didSet {
             publish(using: MeshNetworkManager.instance)
