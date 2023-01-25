@@ -1,5 +1,5 @@
 /*
-* Copyright (c) 2019, Nordic Semiconductor
+* Copyright (c) 2023, Nordic Semiconductor
 * All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification,
@@ -29,27 +29,142 @@
 */
 
 import Foundation
+import CoreBluetooth
 
-/// The Node Identity state determines if a node is advertising with Node Identity
-/// messages on a subnet. If the Mesh Proxy Service is exposed, the node can be
-/// configured to advertise with Node Identity on a subnet.
-public enum NodeIdentity: UInt8 {
-    /// Advertising with Node Identity for a subnet is stopped.
-    case stopped      = 0x00
-    /// Advertising with Node Identity for a subnet is running.
-    case running      = 0x01
-    /// Advertising with Node Identity is not supported
-    case notSupported = 0x02
+/// The Node Identity structure contains information from Node Identity or
+/// Private Node Identity beacon.
+///
+/// It can be used to match advertising device to a specific ``Node`` in the network.
+///
+/// - since: 3.3.0
+public protocol NodeIdentity {
+    /// Returns whether the identity matches given ``Node``.
+    ///
+    /// - parameter node: The Node to check.
+    /// - returns: True, if the identity matches the Node; false otherwise.
+    func matches(node: Node) -> Bool
 }
 
-extension NodeIdentity: CustomDebugStringConvertible {
+/// Representation of Node Identity advertising packet.
+public struct PublicNodeIdentity: NodeIdentity {
+    /// Function of the included random number and identity information.
+    public let hash: Data
+    /// 64-bit random number.
+    public let random: Data
+    
+    /// Creates the Node Identity object from Hash and Random values.
+    /// - parameters:
+    ///   - hash: Function of the included random number and identity information.
+    ///   - random: 64-bit random number.
+    public init(hash: Data, random: Data) {
+        self.hash = hash
+        self.random = random
+    }
+    
+    /// Creates the Node Identity object from the received advertisement data.
+    ///
+    /// - parameter advertisementData: Received advertisement data.
+    public init?(advertisementData: [String : Any]) {
+        guard let serviceData = advertisementData[CBAdvertisementDataServiceDataKey] as? [CBUUID : Data],
+              let data = serviceData[MeshProxyService.uuid] else {
+            return nil
+        }
+        guard data.count == 17, data[0] == 0x01 else {
+            return nil
+        }
+        self.init(hash: data.subdata(in: 1..<9), random: data.subdata(in: 9..<17))
+    }
+    
+    public func matches(node: Node) -> Bool {
+        // Data are: 48 bits of Padding (0s), 64 bit Random and Unicast Address.
+        let data = Data(repeating: 0, count: 6) + random + node.primaryUnicastAddress.bigEndian
+        
+        for networkKey in node.networkKeys {
+            let calculatedHash = Crypto.calculateHash(from: data,
+                                                      usingIdentityKey: networkKey.keys.identityKey)
+            if calculatedHash == hash {
+                return true
+            }
+            // If the Key Refresh Procedure is in place, the identity might have been
+            // generated with the old key.
+            if let oldIdentityKey = networkKey.oldKeys?.identityKey {
+                let calculatedHash = Crypto.calculateHash(from: data,
+                                                          usingIdentityKey: oldIdentityKey)
+                if calculatedHash == hash {
+                    return true
+                }
+            }
+        }
+        return false
+    }
+}
+
+/// Representation of Private Node Identity advertising packet.
+public struct PrivateNodeIdentity: NodeIdentity {
+    /// Function of the included random number and identity information.
+    public let hash: Data
+    /// 64-bit random number.
+    public let random: Data
+    
+    /// Creates the Private Node Identity object from Hash and Random values.
+    /// - parameters:
+    ///   - hash: Function of the included random number and identity information.
+    ///   - random: 64-bit random number.
+    public init(hash: Data, random: Data) {
+        self.hash = hash
+        self.random = random
+    }
+    
+    /// Creates the Private Node Identity object from the received advertisement data.
+    ///
+    /// - parameter advertisementData: Received advertisement data.
+    public init?(advertisementData: [String : Any]) {
+        guard let serviceData = advertisementData[CBAdvertisementDataServiceDataKey] as? [CBUUID : Data],
+              let data = serviceData[MeshProxyService.uuid] else {
+            return nil
+        }
+        guard data.count == 17, data[0] == 0x03 else {
+            return nil
+        }
+        self.init(hash: data.subdata(in: 1..<9), random: data.subdata(in: 9..<17))
+    }
+    
+    public func matches(node: Node) -> Bool {
+        // Data are: 40 bits of Padding (0s), 0x03, 64 bit Random and Unicast Address.
+        let data = Data(repeating: 0, count: 5) + Data([0x03]) + random + node.primaryUnicastAddress.bigEndian
+        
+        for networkKey in node.networkKeys {
+            let calculatedHash = Crypto.calculateHash(from: data,
+                                                      usingIdentityKey: networkKey.keys.identityKey)
+            if calculatedHash == hash {
+                return true
+            }
+            // If the Key Refresh Procedure is in place, the identity might have been
+            // generated with the old key.
+            if let oldIdentityKey = networkKey.oldKeys?.identityKey {
+                let calculatedHash = Crypto.calculateHash(from: data,
+                                                          usingIdentityKey: oldIdentityKey)
+                if calculatedHash == hash {
+                    return true
+                }
+            }
+        }
+        return false
+    }
+}
+
+extension PublicNodeIdentity: CustomDebugStringConvertible {
     
     public var debugDescription: String {
-        switch self {
-        case .stopped:      return NSLocalizedString("Stopped", comment: "")
-        case .running:      return NSLocalizedString("Running", comment: "")
-        case .notSupported: return NSLocalizedString("Not Supported", comment: "")
-        }
+        return "Node Identity (hash: 0x\(hash.hex), 0xrandom: \(random.hex))"
+    }
+    
+}
+
+extension PrivateNodeIdentity: CustomDebugStringConvertible {
+    
+    public var debugDescription: String {
+        return "Private Node Identity (hash: 0x\(hash.hex), random: 0x\(random.hex))"
     }
     
 }

@@ -136,18 +136,20 @@ class CryptoTest: XCTestCase {
     func testKeyDerivatives() throws {
         let key = Data(hex: "f7a2a44f8e8a8029064f173ddc1e2b00")
         
-        let expectedNID           = UInt8(0x7F)
-        let expectedEncryptionKey = Data(hex: "9f589181a0f50de73c8070c7a6d27f46")
-        let expectedPrivacyKey    = Data(hex: "4c715bd4a64b938f99b453351653124f")
-        let expectedIdentityKey   = Data(hex: "877DE1A131C87A8C6767E655061963A7")
-        let expectedBeaconKey     = Data(hex: "CCAE3C53A3BB6FAB728EE94A390DC91F")
+        let expectedNID              = UInt8(0x7F)
+        let expectedEncryptionKey    = Data(hex: "9f589181a0f50de73c8070c7a6d27f46")
+        let expectedPrivacyKey       = Data(hex: "4c715bd4a64b938f99b453351653124f")
+        let expectedIdentityKey      = Data(hex: "877DE1A131C87A8C6767E655061963A7")
+        let expectedBeaconKey        = Data(hex: "CCAE3C53A3BB6FAB728EE94A390DC91F")
+        let expectedPrivateBeaconKey = Data(hex: "6be76842460b2d3a5850d4698409f1bb")
         
-        let (n, e, p, i, b) = Crypto.calculateKeyDerivatives(from: key)
-        XCTAssertEqual(n, expectedNID)
-        XCTAssertEqual(e, expectedEncryptionKey)
-        XCTAssertEqual(p, expectedPrivacyKey)
-        XCTAssertEqual(i, expectedIdentityKey)
-        XCTAssertEqual(b, expectedBeaconKey)
+        let (nid, ek, pk, ik, bk, pbk) = Crypto.calculateKeyDerivatives(from: key)
+        XCTAssertEqual(nid, expectedNID)
+        XCTAssertEqual(ek,  expectedEncryptionKey)
+        XCTAssertEqual(pk,  expectedPrivacyKey)
+        XCTAssertEqual(ik,  expectedIdentityKey)
+        XCTAssertEqual(bk,  expectedBeaconKey)
+        XCTAssertEqual(pbk, expectedPrivateBeaconKey)
     }
     
     func testNetworkId() throws {
@@ -166,6 +168,45 @@ class CryptoTest: XCTestCase {
         
         let k4 = Crypto.calculateAid(from: key)
         XCTAssertEqual(k4, expectedAID)
+    }
+    
+    // Test based on Provisioning Sample Data 8.4.6.1 from Mesh Profile 1.1.
+    func testPrivateBeacon_IVUpdateInProgress() throws {
+        let privateBeaconPdu = Data(hex: "02435f18f85cf78a3121f58478a561e488e7cbf3174f022a514741")
+        let key = Data(hex: "6be76842460b2d3a5850d4698409f1bb")
+        
+        // Deobfuscate and authenticate the Private beacon.
+        let privateBeaconData = Crypto.decodeAndAuthenticate(privateBeacon: privateBeaconPdu, usingPrivateBeaconKey: key)
+        
+        XCTAssertNotNil(privateBeaconData)
+        XCTAssertEqual(privateBeaconData?.keyRefreshFlag, false)
+        XCTAssertEqual(privateBeaconData?.ivIndex.updateActive, true)
+        XCTAssertEqual(privateBeaconData?.ivIndex.index, 0x1010abcd)
+    }
+    
+    // Test based on Provisioning Sample Data 8.4.6.2 from Mesh Profile 1.1.
+    func testPrivateBeacon_IVUpdateComplete() throws {
+        let privateBeaconPdu = Data(hex: "021b998f82927535ea6f3076f422ce827408ab2f0ffb94cf97f881")
+        let key = Data(hex: "ca478cdac626b7a8522d7272dd124f26")
+        
+        // Deobfuscate and authenticate the Private beacon.
+        let privateBeaconData = Crypto.decodeAndAuthenticate(privateBeacon: privateBeaconPdu, usingPrivateBeaconKey: key)
+        
+        XCTAssertNotNil(privateBeaconData)
+        XCTAssertEqual(privateBeaconData?.keyRefreshFlag, false)
+        XCTAssertEqual(privateBeaconData?.ivIndex.updateActive, false)
+        XCTAssertEqual(privateBeaconData?.ivIndex.index, 0x00000000)
+    }
+    
+    // Test based on Provisioning Sample Data 8.4.6.2 from Mesh Profile 1.1, with modified Authentication Tag.
+    func testPrivateBeacon_Invalid() throws {
+        let privateBeaconPdu = Data(hex: "021b998f82927535ea6f3076f422ce827408ab0123456789ABCDEF")
+        let key = Data(hex: "ca478cdac626b7a8522d7272dd124f26")
+        
+        // Deobfuscate and authenticate the Private beacon.
+        let privateBeaconData = Crypto.decodeAndAuthenticate(privateBeacon: privateBeaconPdu, usingPrivateBeaconKey: key)
+        
+        XCTAssertNil(privateBeaconData)
     }
     
     // Test based on Provisioning Sample Data 8.17.1 and 8.17.2 from Mesh Profile 1.1.

@@ -81,37 +81,69 @@ public extension MeshNetwork {
         }
     }
     
+    /// Returns a Node that matches the Node Identity, or `nil`.
+    ///
+    /// This method may be used to match the Node Identity or Private Node Identity beacons.
+    ///
+    /// - parameter nodeIdentity: Node Identity obtained from the advertising packet.
+    /// - returns: A Node that matches the given Node Identity; or `nil` otherwise.
+    func node(matchingNodeIdentity nodeIdentity: NodeIdentity) -> Node? {
+        return nodes.first { nodeIdentity.matches(node: $0) }
+    }
+    
     /// Returns a Node that matches the given Hash and Random, or `nil`.
     ///
     /// This method may be used to match the Node Identity beacon.
     ///
+    /// - warning: This method was deprecated in favor of a new
+    ///            ``MeshNetwork/node(matchingNodeIdentity:)``,
+    ///            which also supports Private Node Identity beacons added in
+    ///            Mesh Protocol 1.1.
     /// - parameters:
     ///   - hash:   The Hash value.
     ///   - random: The Random value.
     /// - returns: A Node that matches the given Hash and Random; or `nil` otherwise.
+    @available(*, deprecated, message: "Use node(matchingNodeIdentity:) instead.")
     func node(matchingHash hash: Data, random: Data) -> Node? {
-        for node in nodes {
-            // Data are: 48 bits of Padding (0s), 64 bit Random and Unicast Address.
-            let data = Data(repeating: 0, count: 6) + random + node.primaryUnicastAddress.bigEndian
-            
-            for networkKey in node.networkKeys {
-                let calculatedHash = Crypto.calculateHash(from: data,
-                                                          usingIdentityKey: networkKey.keys.identityKey)
-                if calculatedHash == hash {
-                    return node
-                }
-                // If the Key Refresh Procedure is in place, the identity might have been
-                // generated with the old key.
-                if let oldIdentityKey = networkKey.oldKeys?.identityKey {
-                    let calculatedHash = Crypto.calculateHash(from: data,
-                                                              usingIdentityKey: oldIdentityKey)
-                    if calculatedHash == hash {
-                        return node
-                    }
-                }
-            }
+        let nodeIdentity = PublicNodeIdentity(hash: hash, random: random)
+        return node(matchingNodeIdentity: nodeIdentity)
+    }
+    
+    /// Returns whether any of the Nodes in the mesh network matches
+    /// the given Node Identity.
+    ///
+    /// This method may be used to match the Node Identity or Private Node Identity beacons.
+    ///
+    /// - parameter nodeIdentity: Node Identity obtained from the advertising packet.
+    /// - returns: `True` if the given Node Identity match any Node of this
+    ///            mesh network; `false` otherwise.
+    func matches(nodeIdentity: NodeIdentity) -> Bool {
+        return node(matchingNodeIdentity: nodeIdentity) != nil
+    }
+    
+    /// Returns whether any of the Nodes in the mesh network matches
+    /// the given Hash and Random. This is used to match the Node Identity beacon.
+    ///
+    /// - parameters:
+    ///   - hash:   The Hash value.
+    ///   - random: The Random value.
+    /// - returns: `True` if the given parameters match any Node of this
+    ///            mesh network; `false` otherwise.
+    @available(*, deprecated, message: "Use matches(nodeIdentity:) instead.")
+    func matches(hash: Data, random: Data) -> Bool {
+        return node(matchingHash: hash, random: random) != nil
+    }
+    
+    /// Returns whether any of the Network Keys in the mesh network
+    /// matches the given Network Identity.
+    ///
+    /// - parameter networkId: The Network Identity.
+    /// - returns: `True` if the Network ID matches any subnetwork of
+    ///            this mesh network, `false` otherwise.
+    func matches(networkIdentity: NetworkIdentity) -> Bool {
+        return networkKeys.contains { key in
+            networkIdentity.matches(networkKey: key)
         }
-        return nil
     }
     
     /// Returns whether any of the Network Keys in the mesh network
@@ -124,18 +156,6 @@ public extension MeshNetwork {
         return networkKeys.contains {
             $0.networkId == networkId || $0.oldNetworkId == networkId
         }
-    }
-    
-    /// Returns whether any of the Nodes in the mesh network matches
-    /// the given Hash and Random. This is used to match the Node Identity beacon.
-    ///
-    /// - parameters:
-    ///   - hash:   The Hash value.
-    ///   - random: The Random value.
-    /// - returns: `True` if the given parameters match any Node of this
-    ///            mesh network; `false` otherwise.
-    func matches(hash: Data, random: Data) -> Bool {
-        return node(matchingHash: hash, random: random) != nil
     }
     
     /// Adds the Node to the local database.

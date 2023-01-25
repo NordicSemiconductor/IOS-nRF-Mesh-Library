@@ -41,7 +41,7 @@ public struct ConfigNodeIdentitySet: AcknowledgedConfigMessage, ConfigNetKeyMess
     public let networkKeyIndex: KeyIndex
     /// The Node Identity state determines if a node is advertising with Node Identity
     /// messages on a subnet.
-    public let identity: NodeIdentity
+    public let identity: NodeIdentityState
     
     /// Creates the Config Node Identity Set message.
     ///
@@ -49,7 +49,7 @@ public struct ConfigNodeIdentitySet: AcknowledgedConfigMessage, ConfigNetKeyMess
     ///   - networkKey: The Network Key index for requested subnet.
     ///   - identity:   The Node Identity state determines if a node is advertising with
     ///                 Node Identity messages on a subnet.
-    public init(networkKey: NetworkKey, identity: NodeIdentity) {
+    public init(networkKey: NetworkKey, identity: NodeIdentityState) {
         self.networkKeyIndex = networkKey.index
         self.identity = identity
     }
@@ -59,6 +59,6 @@ public struct ConfigNodeIdentitySet: AcknowledgedConfigMessage, ConfigNetKeyMess
             return nil
         }
         networkKeyIndex = Self.decodeNetKeyIndex(from: parameters, at: 0)
-        identity = NodeIdentity(rawValue: parameters[2]) ?? .notSupported
+        identity = NodeIdentityState(rawValue: parameters[2]) ?? .notSupported
     }
 }

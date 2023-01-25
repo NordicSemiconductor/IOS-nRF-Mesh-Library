@@ -98,19 +98,28 @@ internal class Crypto {
     
     /// Calculates key derivatives from the given Network Key.
     ///
+    /// The derivatives are:
+    /// - NID (LSB, 7 bits),
+    /// - Encryption Key (128 bits),
+    /// - Privacy Key (128 bits),
+    /// - Identity Key (128 bits),
+    /// - Beacon Key (128 bits)
+    /// - Private Beacon Key (128 bits).
+    ///
     /// - parameter key: The Network Key.
-    /// - returns: NID (7 bits), Encryption Key (128 bits) and Privacy Key (128 bits),
-    ///            Identity Key (128 bits) and Beacon Key (128 bits).
+    /// - returns: Key derivatives.
     static func calculateKeyDerivatives(from key: Data)
-                -> (nid: UInt8, encryptionKey: Data, privacyKey: Data, identityKey: Data, beaconKey: Data) {
+                -> (nid: UInt8, encryptionKey: Data, privacyKey: Data, identityKey: Data, beaconKey: Data, privateBeaconKey: Data) {
         let P = Data([0x69, 0x64, 0x31, 0x32, 0x38, 0x01]) // "id128" || 0x01
         let saltIK = calculateS1("nkik".data(using: .utf8)!)
         let identityKey = calculateK1(withN: key, salt: saltIK, andP: P)
         let saltBK = calculateS1("nkbk".data(using: .utf8)!)
         let beaconKey = calculateK1(withN: key, salt: saltBK, andP: P)
+        let saltPK = calculateS1("nkpk".data(using: .utf8)!)
+        let privateBeaconKey = calculateK1(withN: key, salt: saltPK, andP: P)
         
         let (nid, encryptionKey, privacyKey) = calculateK2(withN: key, andP: Data([0x00]))
-        return (nid, encryptionKey, privacyKey, identityKey, beaconKey)
+        return (nid, encryptionKey, privacyKey, identityKey, beaconKey, privateBeaconKey)
     }
     
     /// Generates the Network ID based on the given 128-bit key.
@@ -152,6 +161,49 @@ internal class Crypto {
         let authenticationValue = pdu.subdata(in: 14..<22)
         let hash = calculateCMAC(flagsNetworkIdAndIVIndex, andKey: key).subdata(in: 0..<8)
         return authenticationValue == hash
+    }
+    
+    /// Decodes and authenticates the received Private beacon using the given Private
+    /// Beacon Key.
+    ///
+    /// - parameters:
+    ///   - pdu: The received PDU.
+    ///   - key: The Private Beacon Key generated from a Network Key.
+    /// - returns: Network information obtained from the beacon.
+    static func decodeAndAuthenticate(privateBeacon pdu: Data,
+                                      usingPrivateBeaconKey key: Data) -> (keyRefreshFlag: Bool, ivIndex: IvIndex)? {
+        // Byte 0 of the PDU is the Beacon Type (0x02).
+        let random = pdu.subdata(in: 1..<14)
+        let obfuscatedData = pdu.subdata(in: 14..<19)
+        let authenticationTag = pdu.subdata(in: 19..<27)
+        
+        // Deobfuscate Private Beacon Data.
+        let C1 = Data([0x01]) + random + Data([0x00, 0x01])
+        let S = calculateECB(C1, andKey: key)
+        let privateBeaconData = S.subdata(in: 0..<5) ^ obfuscatedData
+        
+        // Authenticate the Beacon.
+        let B0 = Data([0x19]) + random + Data([0x00, 0x05])
+        let C0 = Data([0x01]) + random + Data([0x00, 0x00])
+        let P = privateBeaconData + Data(repeating: 0x00, count: 11)
+        let T0 = calculateECB(B0, andKey: key)
+        let T1 = calculateECB(T0 ^ P, andKey: key)
+        let T2 = T1 ^ calculateECB(C0, andKey: key)
+        let calculatedAuthenticationTag = T2.subdata(in: 0..<8)
+        
+        // Authentication tags must match for the beacon to be valid.
+        guard authenticationTag == calculatedAuthenticationTag else {
+            return nil
+        }
+        
+        // Decode Private Beacon Data.
+        let flags = privateBeaconData[0]
+        let keyRefreshFlag = (flags & 0x01) != 0
+        let updateActive   = (flags & 0x02) != 0
+        let index: UInt32 = privateBeaconData.read(fromOffset: 1)
+        let ivIndex = IvIndex(index: index.bigEndian, updateActive: updateActive)
+        
+        return (keyRefreshFlag, ivIndex)
     }
     
     /// Encrypts given data using the Encryption Key, Nonce and adds MIC

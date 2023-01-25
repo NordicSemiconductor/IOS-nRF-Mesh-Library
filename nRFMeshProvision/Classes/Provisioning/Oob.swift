@@ -29,6 +29,7 @@
 */
 
 import Foundation
+import CoreBluetooth
 
 /// Information that points to Out-Of-Band (OOB) information
 /// needed for provisioning.
@@ -49,8 +50,24 @@ public struct OobInformation: OptionSet {
     public static let insideManual   = OobInformation(rawValue: 1 << 14)
     public static let onDevice       = OobInformation(rawValue: 1 << 15)
     
+    /// Creates the object from the raw data.
     public init(rawValue: UInt16) {
         self.rawValue = rawValue
+    }
+    
+    /// Creates the object from the advertisement data.
+    ///
+    /// - parameter advertisementData: Received advertisement data.
+    public init?(advertisementData: [String : Any]) {
+        guard let serviceData = advertisementData[CBAdvertisementDataServiceDataKey] as? [CBUUID : Data],
+              let data = serviceData[MeshProvisioningService.uuid] else {
+                return nil
+        }
+        guard data.count == 18 else {
+            return nil
+        }
+        
+        rawValue = data.read(fromOffset: 16)
     }
     
 }

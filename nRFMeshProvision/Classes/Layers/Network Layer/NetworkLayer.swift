@@ -103,34 +103,33 @@ internal class NetworkLayer {
         // Try decoding the PDU.
         switch type {
         case .networkPdu:
-            guard let networkPdu = NetworkPdu.decode(pdu, ofType: type, for: meshNetwork) else {
-                logger?.w(.network, "Failed to decrypt PDU")
+            if let networkPdu = NetworkPduDecoder.decode(pdu, ofType: type, for: meshNetwork) {
+                logger?.i(.network, "\(networkPdu) received")
+                networkManager.lowerTransportLayer.handle(networkPdu: networkPdu)
                 return
             }
-            logger?.i(.network, "\(networkPdu) received")
-            networkManager.lowerTransportLayer.handle(networkPdu: networkPdu)
+            logger?.w(.network, "Failed to decrypt PDU")
             
         case .meshBeacon:
-            if let beaconPdu = SecureNetworkBeacon.decode(pdu, for: meshNetwork) {
+            if let beaconPdu = NetworkBeaconDecoder.decode(pdu, for: meshNetwork) {
                 logger?.i(.network, "\(beaconPdu) received (decrypted using key: \(beaconPdu.networkKey))")
-                handle(secureNetworkBeacon: beaconPdu)
+                handle(networkBeacon: beaconPdu)
                 return
             }
-            if let beaconPdu = UnprovisionedDeviceBeacon.decode(pdu, for: meshNetwork) {
+            if let beaconPdu = UnprovisionedDeviceBeaconDecoder.decode(pdu, for: meshNetwork) {
                 logger?.i(.network, "\(beaconPdu) received")
                 handle(unprovisionedDeviceBeacon: beaconPdu)
                 return
             }
             logger?.w(.network, "Failed to decrypt mesh beacon PDU")
-            // else: Invalid or unsupported beacon type.
             
         case .proxyConfiguration:
-            guard let proxyPdu = NetworkPdu.decode(pdu, ofType: type, for: meshNetwork) else {
-                logger?.w(.network, "Failed to decrypt proxy PDU")
+            if let proxyPdu = NetworkPduDecoder.decode(pdu, ofType: type, for: meshNetwork) {
+                logger?.i(.network, "\(proxyPdu) received")
+                handle(proxyConfigurationPdu: proxyPdu)
                 return
             }
-            logger?.i(.network, "\(proxyPdu) received")
-            handle(proxyConfigurationPdu: proxyPdu)
+            logger?.w(.network, "Failed to decrypt proxy PDU")
             
         default:
             return
@@ -258,14 +257,17 @@ private extension NetworkLayer {
         // TODO: Handle Unprovisioned Device beacon.
     }
     
-    /// This method handles the Secure Network beacon.
+    /// This method handles PDUs containing network state.
+    ///
+    /// As of Mesh Protocol 1.1 these are the Secure Network beacons and Private beacons.
+    ///
     /// It will set the IV Index and IV Update Active flag and change the Key Refresh Phase based on the
     /// information specified in the beacon.
     ///
-    /// - parameter secureNetworkBeacon: The Secure Network beacon received.
-    func handle(secureNetworkBeacon: SecureNetworkBeacon) {
+    /// - parameter networkStateBeacon: The Secure Network beacon received.
+    func handle(networkBeacon: NetworkBeaconPdu) {
         /// The Network Key the Secure Network Beacon was encrypted with.
-        let networkKey = secureNetworkBeacon.networkKey
+        let networkKey = networkBeacon.networkKey
         // The library does not retransmit Secure Network Beacon.
         // If this node is a member of a primary subnet and receives a Secure Network
         // beacon on a secondary subnet, it will disregard it.
@@ -291,13 +293,13 @@ private extension NetworkLayer {
         let isIvTestModeActive = networkManager.manager.ivUpdateTestMode
         // Ensure, that the received Secure Network Beacon can overwrite current IV Index.
         let flag = networkManager.manager.allowIvIndexRecoveryOver42
-        if secureNetworkBeacon.canOverwrite(ivIndex: lastIVIndex,
+        if networkBeacon.canOverwrite(ivIndex: lastIVIndex,
                                             updatedAt: lastTransitionDate,
                                             withIvRecovery: isIvRecoveryActive,
                                             testMode: isIvTestModeActive,
                                             andUnlimitedIvRecoveryAllowed: flag) {
             // Update the IV Index based on the information from the Secure Network Beacon.
-            meshNetwork.ivIndex = secureNetworkBeacon.ivIndex
+            meshNetwork.ivIndex = networkBeacon.ivIndex
             
             if meshNetwork.ivIndex > lastIVIndex {
                 logger?.i(.network, "Applying \(meshNetwork.ivIndex)")
@@ -319,34 +321,34 @@ private extension NetworkLayer {
                 defaults.set(Date(), forKey: IvIndex.timestampKey)
                 
                 let ivRecovery = meshNetwork.ivIndex.index > lastIVIndex.index + 1 &&
-                                 secureNetworkBeacon.ivIndex.updateActive == false
+                                 networkBeacon.ivIndex.updateActive == false
                 defaults.set(ivRecovery, forKey: IvIndex.ivRecoveryKey)
             }
             
             // If the Key Refresh Procedure is in progress, and the new Network Key
             // has already been set, the key refresh flag indicates switching to Phase 2.
             if case .keyDistribution = networkKey.phase,
-               secureNetworkBeacon.validForKeyRefreshProcedure &&
-               secureNetworkBeacon.keyRefreshFlag == true {
+               networkBeacon.validForKeyRefreshProcedure &&
+               networkBeacon.keyRefreshFlag == true {
                 networkKey.phase = .usingNewKeys
             }
             // If the Key Refresh Procedure is in Phase 2, and the key refresh flag is
             // set to false.
             if case .usingNewKeys = networkKey.phase,
-               secureNetworkBeacon.validForKeyRefreshProcedure &&
-               secureNetworkBeacon.keyRefreshFlag == false {
+               networkBeacon.validForKeyRefreshProcedure &&
+               networkBeacon.keyRefreshFlag == false {
                 // Revoke the old Network Key...
                 networkKey.oldKey = nil // This will set the phase to .normalOperation.
                 // ...and old Application Keys bound to it.
                 meshNetwork.applicationKeys.boundTo(networkKey)
                     .forEach { $0.oldKey = nil }
             }
-        } else if secureNetworkBeacon.ivIndex != lastIVIndex.previous {
+        } else if networkBeacon.ivIndex != lastIVIndex.previous {
             var numberOfHoursSinceDate = "unknown time"
             if let date = lastTransitionDate {
                 numberOfHoursSinceDate = "\(Int(-date.timeIntervalSinceNow / 3600))h"
             }
-            logger?.w(.network, "Discarding beacon (\(secureNetworkBeacon.ivIndex), "
+            logger?.w(.network, "Discarding beacon (\(networkBeacon.ivIndex), "
                               + "last \(lastIVIndex), changed: \(numberOfHoursSinceDate) ago, "
                               + "test mode: \(networkManager.manager.ivUpdateTestMode)))")
             return

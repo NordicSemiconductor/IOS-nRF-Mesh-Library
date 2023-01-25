@@ -30,15 +30,26 @@
 
 import Foundation
 
-internal enum BeaconType: UInt8 {
-    case unprovisionedDevice = 0
-    case secureNetwork       = 1
-    case privateBeacon       = 2
+/// The Node Identity state determines if a node is advertising with Node Identity
+/// messages on a subnet. If the Mesh Proxy Service is exposed, the node can be
+/// configured to advertise with Node Identity on a subnet.
+public enum NodeIdentityState: UInt8 {
+    /// Advertising with Node Identity for a subnet is stopped.
+    case stopped      = 0x00
+    /// Advertising with Node Identity for a subnet is running.
+    case running      = 0x01
+    /// Advertising with Node Identity is not supported
+    case notSupported = 0x02
 }
 
-internal protocol BeaconPdu {
-    /// Raw PDU data.
-    var pdu: Data { get }
-    /// The beacon type.
-    var beaconType: BeaconType { get }
+extension NodeIdentityState: CustomDebugStringConvertible {
+    
+    public var debugDescription: String {
+        switch self {
+        case .stopped:      return NSLocalizedString("Stopped", comment: "")
+        case .running:      return NSLocalizedString("Running", comment: "")
+        case .notSupported: return NSLocalizedString("Not Supported", comment: "")
+        }
+    }
+    
 }

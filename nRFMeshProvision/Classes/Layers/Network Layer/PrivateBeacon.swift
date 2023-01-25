@@ -1,5 +1,5 @@
 /*
-* Copyright (c) 2019, Nordic Semiconductor
+* Copyright (c) 2023, Nordic Semiconductor
 * All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification,
@@ -30,15 +30,15 @@
 
 import Foundation
 
-internal struct SecureNetworkBeacon: NetworkBeaconPdu {
+internal struct PrivateBeacon: NetworkBeaconPdu {
     let pdu: Data
-    let beaconType: BeaconType = .secureNetwork
+    let beaconType: BeaconType = .privateBeacon
     let networkKey: NetworkKey
     let validForKeyRefreshProcedure: Bool
     let keyRefreshFlag: Bool
     let ivIndex: IvIndex
     
-    /// Creates Secure Network beacon PDU object from received PDU.
+    /// Creates Private beacon PDU object from received PDU.
     ///
     /// - parameters:
     ///   - pdu: The data received from mesh network.
@@ -46,44 +46,45 @@ internal struct SecureNetworkBeacon: NetworkBeaconPdu {
     /// - returns: The beacon object, or `nil` if the data are invalid.
     init?(decode pdu: Data, usingNetworkKey networkKey: NetworkKey) {
         self.pdu = pdu
-        guard pdu.count == 22, pdu[0] == 1 else {
+        guard pdu.count == 27, pdu[0] == 2 else {
             return nil
         }
-        keyRefreshFlag = pdu[1] & 0x01 != 0
-        let updateActive = pdu[1] & 0x02 != 0
-        let networkId = pdu.subdata(in: 2..<10)
-        let index: UInt32 = pdu.read(fromOffset: 10)
-        ivIndex = IvIndex(index: index.bigEndian, updateActive: updateActive)
         
-        // Authenticate beacon using given Network Key.
+        // Try to decode and authentice the Private beacon using current Private Beacon Key.
+        var privateBeaconData = Crypto.decodeAndAuthenticate(
+            privateBeacon: pdu,
+            usingPrivateBeaconKey: networkKey.keys.privateBeaconKey
+        )
+        
+        // If the beacon failed to be authenticated, and the old key exists, use that one.
         // During Key Refresh Procedure when in Phase 1 (key distribution) the
-        // Secure Network beacon may be decoded using the old Network Key.
-        if networkId == networkKey.networkId {
-            guard Crypto.authenticate(secureNetworkBeaconPdu: pdu,
-                                      usingBeaconKey: networkKey.keys.beaconKey) else {
-                return nil
-            }
-            self.networkKey = networkKey
-            self.validForKeyRefreshProcedure = networkKey.oldKey != nil
-        } else if case .keyDistribution = networkKey.phase,
-                  networkId == networkKey.oldNetworkId,
-                  let oldKeys = networkKey.oldKeys {
-            guard Crypto.authenticate(secureNetworkBeaconPdu: pdu,
-                                      usingBeaconKey: oldKeys.beaconKey) else {
-                return nil
-            }
-            self.networkKey = networkKey
-            self.validForKeyRefreshProcedure = false
-        } else {
+        // Private beacon may be decoded using the old Network Key.
+        if privateBeaconData == nil,
+           case .keyDistribution = networkKey.phase,
+           let oldKeys = networkKey.oldKeys {
+            privateBeaconData = Crypto.decodeAndAuthenticate(
+                privateBeacon: pdu,
+                usingPrivateBeaconKey: oldKeys.privateBeaconKey
+            )
+        }
+        
+        // If the beacon still failed to be authenticated, discard it.
+        guard let privateBeaconData = privateBeaconData else {
             return nil
         }
+        
+        // The beacon is authenticated.
+        self.networkKey = networkKey
+        self.keyRefreshFlag = privateBeaconData.keyRefreshFlag
+        self.ivIndex = privateBeaconData.ivIndex
+        self.validForKeyRefreshProcedure = networkKey.oldKey != nil
     }
 }
 
-extension SecureNetworkBeacon: CustomDebugStringConvertible {
+extension PrivateBeacon: CustomDebugStringConvertible {
     
     var debugDescription: String {
-        return "Secure Network beacon (Network ID: \(networkKey.networkId.hex), \(ivIndex), Key Refresh Flag: \(keyRefreshFlag))"
+        return "Private Beacon beacon (Network ID: \(networkKey.networkId.hex), \(ivIndex), Key Refresh Flag: \(keyRefreshFlag))"
     }
     
 }
