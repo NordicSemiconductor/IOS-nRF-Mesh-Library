@@ -43,11 +43,21 @@ public struct TransitionTime {
     public let stepResolution: StepResolution
     
     /// The transition time in milliseconds.
-    public var milliseconds: Int {
+    ///
+    /// `nil` value represents an unknown time.
+    public var milliseconds: Int? {
+        guard steps != 0x3F else {
+            return nil
+        }
         return stepResolution.toMilliseconds(steps: steps & 0x3F)
     }
     /// The transition time as `TimeInterval` in seconds.
-    public var interval: TimeInterval {
+    ///
+    /// `nil` value represents an unknown time.
+    public var interval: TimeInterval? {
+        guard let milliseconds = milliseconds else {
+            return nil
+        }
         return TimeInterval(milliseconds) / 1000.0
     }
     

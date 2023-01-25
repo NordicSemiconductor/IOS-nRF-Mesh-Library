@@ -81,11 +81,12 @@ struct GenericState<T: Equatable> {
     }
     
     init(transitionFrom state: GenericState<T>, to targetValue: T,
-         delay: TimeInterval, duration: TimeInterval,
+         delay: TimeInterval, duration: TimeInterval?,
          storedWithScene: Bool = false) {
         self.animation = nil
         self.storedWithScene = storedWithScene
-        guard delay > 0 || duration > 0 else {
+        guard let duration = duration,
+              delay > 0 || duration > 0 else {
             self.value = targetValue
             self.transition = nil
             return
@@ -101,11 +102,12 @@ struct GenericState<T: Equatable> {
     }
     
     init(continueTransitionFrom state: GenericState<T>, to targetValue: T,
-         delay: TimeInterval, duration: TimeInterval,
+         delay: TimeInterval, duration: TimeInterval?,
          storedWithScene: Bool = false) {
         self.animation = nil
         self.storedWithScene = storedWithScene
-        guard delay > 0 || duration > 0 else {
+        guard let duration = duration,
+              delay > 0 || duration > 0 else {
             self.value = targetValue
             self.transition = nil
             return
@@ -131,11 +133,12 @@ struct GenericState<T: Equatable> {
 extension GenericState where T: BinaryInteger {
     
     init(transitionFrom state: GenericState<T>, to targetValue: T,
-         delay: TimeInterval, duration: TimeInterval,
+         delay: TimeInterval, duration: TimeInterval?,
          storedWithScene: Bool = false) {
         self.animation = nil
         self.storedWithScene = storedWithScene
-        guard delay > 0 || duration > 0 else {
+        guard let duration = duration,
+              delay > 0 || duration > 0 else {
             self.value = targetValue
             self.transition = nil
             return
@@ -151,11 +154,12 @@ extension GenericState where T: BinaryInteger {
     }
     
     init(continueTransitionFrom state: GenericState<T>, to targetValue: T,
-         delay: TimeInterval, duration: TimeInterval,
+         delay: TimeInterval, duration: TimeInterval?,
          storedWithScene: Bool = false) {
         self.animation = nil
         self.storedWithScene = storedWithScene
-        guard delay > 0 || duration > 0 else {
+        guard let duration = duration,
+              delay > 0 || duration > 0 else {
             self.value = targetValue
             self.transition = nil
             return
@@ -177,12 +181,13 @@ extension GenericState where T: BinaryInteger {
     }
     
     init(animateFrom state: GenericState<T>, to targetValue: T,
-         delay: TimeInterval, duration: TimeInterval,
+         delay: TimeInterval, duration: TimeInterval?,
          storedWithScene: Bool = false) {
         self.value = state.value
         self.transition = nil
         self.storedWithScene = storedWithScene
-        guard state.value != targetValue, duration > 0 else {
+        guard let duration = duration,
+              state.value != targetValue, duration > 0 else {
             self.animation = nil
             return
         }
