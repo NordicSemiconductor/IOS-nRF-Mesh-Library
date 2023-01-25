@@ -113,7 +113,7 @@ public extension TransitionTime {
     /// Unknown transition time.
     ///
     /// This can not be used as default transition time.
-    static let unknown = TransitionTime(steps: 0x3F, stepResolution: .tensOfMinutes)
+    static let unknown = TransitionTime()
     
     /// Returns whether the transition time is known.
     var isKnown: Bool {
