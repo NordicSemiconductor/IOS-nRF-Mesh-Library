@@ -30,7 +30,8 @@
 
 import Foundation
 
-/// The Step Resolution field enumerates the resolution of the Number of Steps field,
+/// The Step Resolution field enumerates the resolution of the Number of Steps field
+/// in ``TransitionTime`` or ``Publish/Period-swift.struct``.
 public enum StepResolution: UInt8 {
     /// The Step Resolution is 100 milliseconds.
     case hundredsOfMilliseconds = 0b00
