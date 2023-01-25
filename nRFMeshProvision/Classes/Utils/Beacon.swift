@@ -61,16 +61,7 @@ public extension Dictionary where Key == String, Value == Any {
     /// This value is taken from the Service Data with Mesh Provisioning Service
     /// UUID. The last 2 bytes are parsed and returned as ``OobInformation``.
     var oobInformation: OobInformation? {
-        guard let serviceData = self[CBAdvertisementDataServiceDataKey] as? [CBUUID : Data],
-              let data = serviceData[MeshProvisioningService.uuid] else {
-                return nil
-        }
-        guard data.count == 18 else {
-            return nil
-        }
-        
-        let rawValue: UInt16 = data.read(fromOffset: 16)
-        return OobInformation(rawValue: rawValue)
+        return OobInformation(advertisementData: self)
     }
     
     /// Returns the Network ID from a packet of a provisioned Node
