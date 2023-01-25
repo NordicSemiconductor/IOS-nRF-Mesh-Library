@@ -136,16 +136,16 @@ extension ProxySelectorViewController: CBCentralManagerDelegate {
                         advertisementData: [String : Any], rssi RSSI: NSNumber) {
         guard let meshNetwork = meshNetwork else { return }
         
-        // Is it a Network ID beacon?
-        if let networkId = advertisementData.networkId {
-            guard meshNetwork.matches(networkId: networkId) else {
+        // Is it a Network ID or Private Network Identity beacon?
+        if let networkIdentity = advertisementData.networkIdentity {
+            guard meshNetwork.matches(networkIdentity: networkIdentity) else {
                 // A Node from another mesh network.
                 return
             }
         } else {
-            // Is it a Node Identity beacon?
+            // Is it a Node Identity or Private Node Identity beacon?
             guard let nodeIdentity = advertisementData.nodeIdentity,
-                meshNetwork.matches(hash: nodeIdentity.hash, random: nodeIdentity.random) else {
+                  meshNetwork.matches(nodeIdentity: nodeIdentity) else {
                 // A Node from another mesh network.
                 return
             }

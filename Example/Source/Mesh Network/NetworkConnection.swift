@@ -182,9 +182,9 @@ extension NetworkConnection: CBCentralManagerDelegate {
     
     func centralManager(_ central: CBCentralManager, didDiscover peripheral: CBPeripheral,
                         advertisementData: [String : Any], rssi RSSI: NSNumber) {
-        // Is it a Network ID beacon?
-        if let networkId = advertisementData.networkId {
-            guard meshNetwork.matches(networkId: networkId) else {
+        // Is it a Network ID or Private Network Identity beacon?
+        if let networkIdentity = advertisementData.networkIdentity {
+            guard meshNetwork.matches(networkIdentity: networkIdentity) else {
                 // A Node from another mesh network.
                 return
             }

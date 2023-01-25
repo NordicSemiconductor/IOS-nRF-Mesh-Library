@@ -75,10 +75,27 @@ public extension Dictionary where Key == String, Value == Any {
     
     /// Returns the Network ID from a packet of a provisioned Node
     /// with Proxy capabilities, or `nil` if such value not be parsed.
+    ///
+    /// - note: Before version 3.3.0 this property returned Data object.
+    ///         The API changed was made due to introduction of Private Network Identity
+    ///         advertising packets, which don't contain the Network ID directly,
+    ///         but still can identify a network cryptographicaly.
+    /// - seeAlso: ``NetworkIdentity/matches(networkKey:)``
+    /// - seeAlso: ``MeshNetwork/matches(networkIdentity:)``
+    /// - since: 3.3.0
+    var networkIdentity: NetworkIdentity? {
+        return PublicNetworkIdentity(advertisementData: self) ?? PrivateNetworkIdentity(advertisementData: self)
+    }
+    
+    /// Returns the Network ID from a packet of a provisioned Node
+    /// with Proxy capabilities, or `nil` if such value not be parsed.
+    ///
+    /// - seeAlso: ``MeshNetwork/matches(networkId:)``
+    @available(*, deprecated, renamed: "networkIdentity")
     var networkId: Data? {
         guard let serviceData = self[CBAdvertisementDataServiceDataKey] as? [CBUUID : Data],
               let data = serviceData[MeshProxyService.uuid] else {
-                return nil
+            return nil
         }
         guard data.count == 9, data[0] == 0x00 else {
             return nil
@@ -86,17 +103,14 @@ public extension Dictionary where Key == String, Value == Any {
         return data.subdata(in: 1..<9)
     }
     
-    /// Returns the Hash and Random fields from the Node Identity beacon data
-    /// or `nil` if such value was not parsed.
-    var nodeIdentity: (hash: Data, random: Data)? {
-        guard let serviceData = self[CBAdvertisementDataServiceDataKey] as? [CBUUID : Data],
-            let data = serviceData[MeshProxyService.uuid] else {
-                return nil
-        }
-        guard data.count == 17, data[0] == 0x01 else {
-            return nil
-        }
-        return (hash: data.subdata(in: 1..<9), random: data.subdata(in: 9..<17))
+    /// Returns the Node Identity beacon data or `nil` if such value was not parsed.
+    ///
+    /// - note: Before version 3.3.0 this property returned Hash and Random pair.
+    /// - seeAlso: ``NodeIdentity/matches(node:)``
+    /// - seeAlso: ``MeshNetwork/node(matchingNodeIdentity:)``
+    /// - since: 3.3.0
+    var nodeIdentity: NodeIdentity? {
+        return PublicNodeIdentity(advertisementData: self) ?? PrivateNodeIdentity(advertisementData: self)
     }
 }
 

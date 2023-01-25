@@ -178,6 +178,8 @@
 		5298C00B6C7DA3382FA31FB3B0EF2826 /* PKCS5.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6529BEEF734D4D9F2920046F56965C4 /* PKCS5.swift */; };
 		52C1CE59297EAD310024DB92 /* PrivateBeacon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52C1CE58297EAD310024DB92 /* PrivateBeacon.swift */; };
 		52C1CE5B298000720024DB92 /* NetworkBeaconPdu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52C1CE5A298000720024DB92 /* NetworkBeaconPdu.swift */; };
+		52C1CE5D2980205D0024DB92 /* NodeIdentity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52C1CE5C2980205D0024DB92 /* NodeIdentity.swift */; };
+		52C1CE5F2980207A0024DB92 /* NetworkIdentity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52C1CE5E2980207A0024DB92 /* NetworkIdentity.swift */; };
 		5338E50DC8D7B6977F90D5375B7A82D1 /* ConfigNodeResetStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32019C109C91B2F3A7C7820712D2A348 /* ConfigNodeResetStatus.swift */; };
 		535FA970A49C4AC40847416AD23D6C0E /* SensorDescriptorStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EC5FEC3B624A649D72085D0F629E364 /* SensorDescriptorStatus.swift */; };
 		54C7B0CFF20B468743131E1077152526 /* RemoveAddressesFromFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02CCB373620F516C453F665485B9B72E /* RemoveAddressesFromFilter.swift */; };
@@ -711,6 +713,8 @@
 		52C0F063AB492BB2D1FE84FCAE53164D /* LightCTLTemperatureRangeSet.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LightCTLTemperatureRangeSet.swift; sourceTree = "<group>"; };
 		52C1CE58297EAD310024DB92 /* PrivateBeacon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrivateBeacon.swift; sourceTree = "<group>"; };
 		52C1CE5A298000720024DB92 /* NetworkBeaconPdu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkBeaconPdu.swift; sourceTree = "<group>"; };
+		52C1CE5C2980205D0024DB92 /* NodeIdentity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NodeIdentity.swift; sourceTree = "<group>"; };
+		52C1CE5E2980207A0024DB92 /* NetworkIdentity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkIdentity.swift; sourceTree = "<group>"; };
 		52E161FE177AF095BA55247B132B8C2D /* Oob.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Oob.swift; sourceTree = "<group>"; };
 		5309874A90AA23CE4DBDB5BE48808F97 /* CompositionElement.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CompositionElement.swift; sourceTree = "<group>"; };
 		5427BFDA8338A7437D8154638B5B99DD /* LightCTLTemperatureRangeStatus.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LightCTLTemperatureRangeStatus.swift; sourceTree = "<group>"; };
@@ -1464,6 +1468,8 @@
 				1B310809A4BD83750BE730606B53A6C9 /* MeshNetwork.swift */,
 				B24CAE7B505771A6D2964A6C658C9796 /* MeshUUID.swift */,
 				24BC18965C93D738F5E69DBB04F17F2F /* Model.swift */,
+				52C1CE5E2980207A0024DB92 /* NetworkIdentity.swift */,
+                52C1CE5C2980205D0024DB92 /* NodeIdentity.swift */,
 				B359891752BA5B1C0E3FA2EE6D1D2A29 /* NetworkKey.swift */,
 				5857DDF47AB5DFBD3D2031E728F5E876 /* Node.swift */,
 				4133D14BA9E43DA5738AD64C30503EC1 /* NodeFeatures.swift */,
@@ -2443,6 +2449,7 @@
 				09AB5463B2777E6299912AFC5D2A06B9 /* LightLightnessLinearSetUnacknowledged.swift in Sources */,
 				6A4E9DDD5E0243A3F1828A3D416D43A1 /* LightLightnessLinearStatus.swift in Sources */,
 				12957916BFDA8E96C3E4D9AF0A45C606 /* LightLightnessRangeGet.swift in Sources */,
+				52C1CE5F2980207A0024DB92 /* NetworkIdentity.swift in Sources */,
 				C72A9E6527A979445CCD82A06CE03FDA /* LightLightnessRangeSet.swift in Sources */,
 				52C1CE5B298000720024DB92 /* NetworkBeaconPdu.swift in Sources */,
 				82F498EBCCFB4FAC6E76977BA2AF9FEE /* LightLightnessRangeSetUnacknowledged.swift in Sources */,
@@ -2535,6 +2542,7 @@
 				5FB95C9360B06E97E0D505211E8F4612 /* SceneStore.swift in Sources */,
 				038142185D9048FFA7871E59BF380E8E /* SceneStoreUnacknowledged.swift in Sources */,
 				B61ED07E42C3A05C737F79715A66ECFD /* SchedulerActionGet.swift in Sources */,
+				52C1CE5D2980205D0024DB92 /* NodeIdentity.swift in Sources */,
 				5D09F10DE19101759EB703049D7014C4 /* SchedulerActionSet.swift in Sources */,
 				9294E26BF6AE7F494C113D886C5DAA73 /* SchedulerActionSetUnacknowledged.swift in Sources */,
 				0DFE7461C54031872560F198C6768DE1 /* SchedulerActionStatus.swift in Sources */,
