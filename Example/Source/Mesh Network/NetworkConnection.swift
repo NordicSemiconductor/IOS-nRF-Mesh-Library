@@ -189,9 +189,9 @@ extension NetworkConnection: CBCentralManagerDelegate {
                 return
             }
         } else {
-            // Is it a Node Identity beacon?
+            // Is it a Node Identity or Private Node Identity beacon?
             guard let nodeIdentity = advertisementData.nodeIdentity,
-                meshNetwork.matches(hash: nodeIdentity.hash, random: nodeIdentity.random) else {
+                  meshNetwork.matches(nodeIdentity: nodeIdentity) else {
                 // A Node from another mesh network.
                 return
             }
