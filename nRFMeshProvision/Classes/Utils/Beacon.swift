@@ -84,14 +84,7 @@ public extension Dictionary where Key == String, Value == Any {
     /// - seeAlso: ``MeshNetwork/matches(networkId:)``
     @available(*, deprecated, renamed: "networkIdentity")
     var networkId: Data? {
-        guard let serviceData = self[CBAdvertisementDataServiceDataKey] as? [CBUUID : Data],
-              let data = serviceData[MeshProxyService.uuid] else {
-            return nil
-        }
-        guard data.count == 9, data[0] == 0x00 else {
-            return nil
-        }
-        return data.subdata(in: 1..<9)
+        return PublicNetworkIdentity(advertisementData: self)?.networkId
     }
     
     /// Returns the Node Identity beacon data or `nil` if such value was not parsed.
