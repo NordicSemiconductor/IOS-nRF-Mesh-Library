@@ -30,8 +30,8 @@
 
 import Foundation
 
-// Source: https://www.bluetooth.com/specifications/assigned-numbers/company-identifiers/
-// Last update date: 19 August 2020
+// Source: https://www.bluetooth.com/specifications/assigned-numbers/
+// Last update date: 26 January 2023
 public struct CompanyIdentifier {
     
     private init() {
