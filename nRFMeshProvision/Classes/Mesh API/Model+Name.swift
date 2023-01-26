@@ -38,11 +38,30 @@ public extension Model {
             return "Vendor Model"
         }
         switch modelIdentifier {
-        // Foundation
+        // Foundation, from Mesh Profile 1.0.1
         case 0x0000: return "Configuration Server"
         case 0x0001: return "Configuration Client"
         case 0x0002: return "Health Server"
         case 0x0003: return "Health Client"
+        // Foundation, added in Mesh Protocol 1.1
+        case 0x0004: return "Remote Provisioning Server"
+        case 0x0005: return "Remote Provisioning Client"
+        case 0x0006: return "Directed Forwarding Configuration Server"
+        case 0x0007: return "Directed Forwarding Configuration Client"
+        case 0x0008: return "Bridge Configuration Server"
+        case 0x0009: return "Bridge Configuration Client"
+        case 0x000A: return "Mesh Private Beacon Server"
+        case 0x000B: return "Mesh Private Beacon Client"
+        case 0x000C: return "On-­Demand Private Proxy Server"
+        case 0x000D: return "On-­Demand Private Proxy Client"
+        case 0x000E: return "SAR Configuration Server"
+        case 0x000F: return "SAR Configuration Client"
+        case 0x0010: return "Opcodes Aggregator Server"
+        case 0x0011: return "Opcodes Aggregator Client"
+        case 0x0012: return "Large Composition Data Server"
+        case 0x0013: return "Large Composition Data Client"
+        case 0x0014: return "Solicitation PDU RPL Configuration Server"
+        case 0x0015: return "Solicitation PDU RPL Configuration Client"
         // Generic
         case 0x1000: return "Generic OnOff Server"
         case 0x1001: return "Generic OnOff Client"
@@ -99,6 +118,15 @@ public extension Model {
         case 0x130F: return "Light LC Server"
         case 0x1310: return "Light LC Setup Server"
         case 0x1311: return "Light LC Client"
+        // Added in Mesh Protocol 1.1
+        case 0x1312: return "IEC 62386­-104 Model"
+        // Device Firmware Update (DFU), added in Mesh Protocol 1.1
+        case 0x1400: return "BLOB Transfer Server"
+        case 0x1401: return "BLOB Transfer Client"
+        case 0x1402: return "Firmware Update Server"
+        case 0x1403: return "Firmware Update Client"
+        case 0x1404: return "Firmware Distribution Server"
+        case 0x1405: return "Firmware Distribution Client"
             
         default: return nil
         }
