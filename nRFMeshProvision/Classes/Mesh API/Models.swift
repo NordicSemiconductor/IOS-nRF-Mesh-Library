@@ -390,6 +390,14 @@ public extension Model {
         // Check Models on the same Element.
         if model.parentElement == parentElement {
             switch modelIdentifier {
+            // Configuration models added in Mesh Protocol 1.1
+            case .directedForwardingConfigurationServerModelId,
+                 .bridgeConfigurationServerModelId,
+                 .privateBeaconServerModelId,
+                 .largeCompositionDataServerModelId:
+                return model.modelIdentifier == .configurationServerModelId
+            case .onDemandPrivateProxyServerModelId:
+                return model.modelIdentifier == .privateBeaconServerModelId
             // Generics
             case .genericPowerOnOffServerModelId:
                 return model.modelIdentifier == .genericOnOffServerModelId
@@ -480,6 +488,25 @@ public extension UInt16 {
     static let configurationClientModelId: UInt16 = 0x0001
     static let healthServerModelId: UInt16 = 0x0002
     static let healthClientModelId: UInt16 = 0x0003
+    // Configuration models added in Mesh Protocol 1.1
+    static let remoteProvisioningServerModelId: UInt16 = 0x0004
+    static let remoteProvisioningClientModelId: UInt16 = 0x0005
+    static let directedForwardingConfigurationServerModelId: UInt16 = 0x0006
+    static let directedForwardingConfigurationClientModelId: UInt16 = 0x0007
+    static let bridgeConfigurationServerModelId: UInt16 = 0x0008
+    static let bridgeConfigurationClientModelId: UInt16 = 0x0009
+    static let privateBeaconServerModelId: UInt16 = 0x000A
+    static let privateBeaconClientModelId: UInt16 = 0x000B
+    static let onDemandPrivateProxyServerModelId: UInt16 = 0x000C
+    static let onDemandPrivateProxyClientModelId: UInt16 = 0x000D
+    static let sarConfigurationServerModelId: UInt16 = 0x000E
+    static let sarConfigurationClientModelId: UInt16 = 0x000F
+    static let opcodesAggregatorServerModelId: UInt16 = 0x0010
+    static let opcodesAggregatorClientModelId: UInt16 = 0x0011
+    static let largeCompositionDataServerModelId: UInt16 = 0x0012
+    static let largeCompositionDataClientModelId: UInt16 = 0x0013
+    static let solicitationPduRplConfigurationServerModelId: UInt16 = 0x0014
+    static let solicitationPduRplConfigurationClientModelId: UInt16 = 0x0015
     // Generic
     static let genericOnOffServerModelId: UInt16 = 0x1000
     static let genericOnOffClientModelId: UInt16 = 0x1001

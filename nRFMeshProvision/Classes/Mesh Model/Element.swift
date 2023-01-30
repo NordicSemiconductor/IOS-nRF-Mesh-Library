@@ -237,19 +237,23 @@ internal extension Element {
                             delegate: ConfigurationClientHandler(meshNetwork)), at: 1)
         insert(model: Model(sigModelId: .healthServerModelId), at: 2)
         insert(model: Model(sigModelId: .healthClientModelId), at: 3)
+        insert(model: Model(sigModelId: .privateBeaconClientModelId,
+                            delegate: PrivateBeaconClientHandler(meshNetwork)), at: 4)
         insert(model: Model(sigModelId: .sceneClientModelId,
-                            delegate: SceneClientHandler(meshNetwork)), at: 4)
+                            delegate: SceneClientHandler(meshNetwork)), at: 5)
     }
     
-    /// Removes the Configuration Server and Client, Health Server
-    /// and Client and Scene Client models from the Element.
+    /// Removes the models that are or should be supported natively.
     func removePrimaryElementModels() {
         models = models.filter { model in
-            !model.isConfigurationServer &&
-            !model.isConfigurationClient &&
+            // Health models are not yet supported.
             !model.isHealthServer &&
             !model.isHealthClient &&
-            !model.isSceneClient
+            // The library supports Scene Client model natively.
+            !model.isSceneClient &&
+            // The models that require Device Key should not be managed by users.
+            // Some of them are supported natively in the library.
+            !model.requiresDeviceKey
         }
     }
     
