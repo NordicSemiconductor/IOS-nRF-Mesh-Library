@@ -40,8 +40,8 @@ import Foundation
 /// a ``ModelDelegate`` defining a type for the given Op Code in
 /// ``ModelDelegate/messageTypes``.
 public struct UnknownMessage: MeshMessage {
-    // The opcode is set when the message is received. Initially it is set
-    // to 0, as the constructor takes only parameters.
+    /// The opcode is set when the message is received. Initially it is set
+    /// to 0, as the constructor takes only parameters.
     public internal(set) var opCode: UInt32 = 0
     
     public let parameters: Data?
