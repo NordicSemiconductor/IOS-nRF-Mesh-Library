@@ -63,7 +63,7 @@ public struct OobInformation: OptionSet {
               let data = serviceData[MeshProvisioningService.uuid] else {
                 return nil
         }
-        guard data.count == 18 else {
+        guard data.count == 18 || data.count == 22 else {
             return nil
         }
         
