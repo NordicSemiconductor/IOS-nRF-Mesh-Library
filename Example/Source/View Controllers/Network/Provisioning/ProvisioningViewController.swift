@@ -397,7 +397,7 @@ extension ProvisioningViewController: ProvisioningDelegate {
                 self.bearer.close()
                 self.presentStatusDialog(message: "Disconnecting...")
                 
-            case let .fail(error):
+            case let .failed(error):
                 self.dismissStatusDialog {
                     self.presentAlert(title: "Error", message: error.localizedDescription)
                     self.abort()

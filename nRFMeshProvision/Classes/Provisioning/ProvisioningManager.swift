@@ -110,7 +110,7 @@ public class ProvisioningManager {
     /// The current state of the provisioning process.
     public private(set) var state: ProvisioningState = .ready {
         didSet {
-            if case .fail = state {
+            if case .failed = state {
                 logger?.e(.provisioning, "\(state)")
             } else {
                 logger?.i(.provisioning, "\(state)")
@@ -189,7 +189,7 @@ public class ProvisioningManager {
         }
         
         // Has the provisioning been restarted?
-        if case .fail = state {
+        if case .failed = state {
             reset()
         }
         
@@ -276,7 +276,7 @@ public class ProvisioningManager {
             do {
                 try provisioningData.provisionerDidObtain(devicePublicKey: key, usingOob: true)
             } catch {
-                state = .fail(error)
+                state = .failed(error)
                 return
             }
         }
@@ -286,7 +286,7 @@ public class ProvisioningManager {
         provisioningData.prepare(for: meshNetwork,
                                  networkKey: networkKey,
                                  unicastAddress: unicastAddress)
-        let provisioningStart = ProvisioningRequest.start(algorithm: algorithm, publicKey: publicKey,
+        let provisioningStart = ProvisioningRequest.start(algorithm: algorithm, publicKey: publicKey.method,
                                                           authenticationMethod: authenticationMethod)
         logger?.v(.provisioning, "Sending \(provisioningStart)")
         try send(provisioningStart, andAccumulateTo: provisioningData)
@@ -351,22 +351,17 @@ extension ProvisioningManager: BearerDelegate, BearerDataDelegate {
         bearerDataDelegate?.bearer(bearer, didDeliverData: data, ofType: type)
         
         // Try parsing the response.
-        guard let response = ProvisioningResponse(data) else {
-            return
-        }
-        
-        guard response.isValid(forAlgorithm: provisioningData.algorithm) else {
-            state = .fail(ProvisioningError.invalidPdu)
+        guard let response = try? ProvisioningResponse(from: data) else {
+            state = .failed(ProvisioningError.invalidPdu)
             return
         }
         logger?.v(.provisioning, "\(response) received")
         
         // Act depending on the current state and the response received.
-        switch (state, response.type) {
+        switch (state, response) {
             
         // Provisioning Capabilities have been received.
-        case (.requestingCapabilities, .capabilities):
-            let capabilities = response.capabilities!
+        case (.requestingCapabilities, .capabilities(let capabilities)):
             provisioningCapabilities = capabilities
             provisioningData.accumulate(pdu: data.dropFirst())
             
@@ -379,16 +374,15 @@ extension ProvisioningManager: BearerDelegate, BearerDataDelegate {
             }
             state = .capabilitiesReceived(capabilities)
             if unicastAddress == nil {
-                state = .fail(ProvisioningError.noAddressAvailable)
+                state = .failed(ProvisioningError.noAddressAvailable)
             }
             
         // Device Public Key has been received.
-        case (.provisioning, .publicKey):
+        case (.provisioning, .publicKey(let publicKey)):
             // Errata E16350 added an extra validation whether the received Public Key
             // is different than Provisioner's one.
-            guard let publicKey = response.publicKey,
-                  publicKey != provisioningData.provisionerPublicKey else {
-                state = .fail(ProvisioningError.invalidPublicKey)
+            guard publicKey != provisioningData.provisionerPublicKey else {
+                state = .failed(ProvisioningError.invalidPublicKey)
                 return
             }
             provisioningData.accumulate(pdu: data.dropFirst())
@@ -396,7 +390,7 @@ extension ProvisioningManager: BearerDelegate, BearerDataDelegate {
                 try provisioningData.provisionerDidObtain(devicePublicKey: publicKey, usingOob: false)
                 obtainAuthValue()
             } catch {
-                state = .fail(error)
+                state = .failed(error)
             }
             
         // The user has performed the Input Action on the device.
@@ -419,12 +413,11 @@ extension ProvisioningManager: BearerDelegate, BearerDataDelegate {
             }
         
         // The Provisioning Confirmation value has been received.
-        case (.provisioning, .confirmation):
+        case (.provisioning, .confirmation(let confirmation)):
             // Errata E16350 added an extra validation whether the received Confirmation
             // is different than Provisioner's one.
-            guard let confirmation = response.confirmation,
-                  confirmation != provisioningData.provisionerConfirmation else {
-                state = .fail(ProvisioningError.confirmationFailed)
+            guard confirmation != provisioningData.provisionerConfirmation else {
+                state = .failed(ProvisioningError.confirmationFailed)
                 return
             }
             provisioningData.provisionerDidObtain(deviceConfirmation: confirmation)
@@ -433,19 +426,19 @@ extension ProvisioningManager: BearerDelegate, BearerDataDelegate {
                 logger?.v(.provisioning, "Sending \(provisioningRandom)")
                 try send(provisioningRandom)
             } catch {
-                state = .fail(error)
+                state = .failed(error)
             }
             
         // The device Random value has been received. We may now authenticate the device.
-        case (.provisioning, .random):
-            provisioningData.provisionerDidObtain(deviceRandom: response.random!)
+        case (.provisioning, .random(let random)):
+            provisioningData.provisionerDidObtain(deviceRandom: random)
             do {
                 try provisioningData.validateConfirmation()
                 let encryptedData = ProvisioningRequest.data(provisioningData.encryptedProvisioningDataWithMic)
                 logger?.v(.provisioning, "Sending \(encryptedData)")
                 try send(encryptedData)
             } catch {
-                state = .fail(error)
+                state = .failed(error)
             }
             
         // The provisioning process is complete.
@@ -461,15 +454,15 @@ extension ProvisioningManager: BearerDelegate, BearerDataDelegate {
                 try meshNetwork.add(node: node)
                 state = .complete
             } catch {
-                state = .fail(error)
+                state = .failed(error)
             }
             
         // The provisioned device sent an error.
-        case (_, .failed):
-            state = .fail(ProvisioningError.remoteError(response.error!))
+        case (_, .failed(let error)):
+            state = .failed(ProvisioningError.remoteError(error))
             
         default:
-            state = .fail(ProvisioningError.invalidState)
+            state = .failed(ProvisioningError.invalidState)
         }
     }
     
@@ -499,15 +492,15 @@ private extension ProvisioningManager {
         case .staticOob:
             delegate?.authenticationActionRequired(.provideStaticKey(callback: { key in
                 guard self.bearer.isOpen else {
-                    self.state = .fail(BearerError.bearerClosed)
+                    self.state = .failed(BearerError.bearerClosed)
                     return
                 }
                 guard case .provisioning = self.state, let _ = self.provisioningData else {
-                    self.state = .fail(ProvisioningError.invalidState)
+                    self.state = .failed(ProvisioningError.invalidState)
                     return
                 }
                 guard key.count == sizeInBytes else {
-                    self.state = .fail(ProvisioningError.invalidOobValueFormat)
+                    self.state = .failed(ProvisioningError.invalidOobValueFormat)
                     return
                 }
                 self.delegate?.inputComplete()
@@ -522,15 +515,15 @@ private extension ProvisioningManager {
             case .outputAlphanumeric:
                 delegate?.authenticationActionRequired(.provideAlphanumeric(maximumNumberOfCharacters: size, callback: { text in
                     guard var authValue = text.data(using: .ascii) else {
-                        self.state = .fail(ProvisioningError.invalidOobValueFormat)
+                        self.state = .failed(ProvisioningError.invalidOobValueFormat)
                         return
                     }
                     guard self.bearer.isOpen else {
-                        self.state = .fail(BearerError.bearerClosed)
+                        self.state = .failed(BearerError.bearerClosed)
                         return
                     }
                     guard case .provisioning = self.state, let _ = self.provisioningData else {
-                        self.state = .fail(ProvisioningError.invalidState)
+                        self.state = .failed(ProvisioningError.invalidState)
                         return
                     }
                     authValue += Data(count: max(0, sizeInBytes - authValue.count))
@@ -540,11 +533,11 @@ private extension ProvisioningManager {
             case .blink, .beep, .vibrate, .outputNumeric:
                 delegate?.authenticationActionRequired(.provideNumeric(maximumNumberOfDigits: size, outputAction: action, callback: { value in
                     guard self.bearer.isOpen else {
-                        self.state = .fail(BearerError.bearerClosed)
+                        self.state = .failed(BearerError.bearerClosed)
                         return
                     }
                     guard case .provisioning = self.state, let _ = self.provisioningData else {
-                        self.state = .fail(ProvisioningError.invalidState)
+                        self.state = .failed(ProvisioningError.invalidState)
                         return
                     }
                     var authValue = Data(count: sizeInBytes - MemoryLayout.size(ofValue: value))
@@ -582,7 +575,7 @@ private extension ProvisioningManager {
             logger?.v(.provisioning, "Sending \(provisioningConfirmation)")
             try send(provisioningConfirmation)
         } catch {
-            state = .fail(error)
+            state = .failed(error)
         }
     }
     

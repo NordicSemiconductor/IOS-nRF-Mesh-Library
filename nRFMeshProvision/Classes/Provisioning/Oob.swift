@@ -84,19 +84,6 @@ public enum AuthenticationMethod {
     /// Input OOB authentication is used.
     /// Size must be in range 1...8.
     case inputOob(action: InputAction, size: UInt8)
-    
-    var value: Data {
-        switch self {
-        case .noOob:
-            return Data([0, 0, 0])
-        case .staticOob:
-            return Data([1, 0, 0])
-        case let .outputOob(action: action, size: size):
-            return Data([2, action.rawValue, size])
-        case let .inputOob(action: action, size: size):
-            return Data([3, action.rawValue, size])
-        }
-    }
 }
 
 /// The output action will be displayed on the device.

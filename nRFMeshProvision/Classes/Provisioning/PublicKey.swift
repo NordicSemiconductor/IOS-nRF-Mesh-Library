@@ -31,17 +31,23 @@
 import Foundation
 
 /// The type of Device Public key to be used.
+///
+/// This enumeration is used to specify the Public Key type during provisioning
+/// in ``ProvisioningManager/provision(usingAlgorithm:publicKey:authenticationMethod:)``.
 public enum PublicKey {
     /// No OOB Public Key is used.
     case noOobPublicKey
     /// OOB Public Key is used. The key must contain the full value of the Public Key,
     /// depending on the chosen algorithm.
+    ///
+    /// - parameter key: The Public Key consists of 256-bit X and 256-bit Y of a point Q
+    ///                  on P256 curve.
     case oobPublicKey(key: Data)
     
-    var value: Data {
+    var method: PublicKeyMethod {
         switch self {
-        case .noOobPublicKey:       return Data([0])
-        case .oobPublicKey(key: _): return Data([1])
+        case .noOobPublicKey:       return .noOobPublicKey
+        case .oobPublicKey(key: _): return .oobPublicKey
         }
     }
 }
@@ -53,6 +59,31 @@ extension PublicKey: CustomDebugStringConvertible {
         case .noOobPublicKey:
             return "No OOB Public Key"
         case .oobPublicKey(key: _):
+            return "OOB Public Key"
+        }
+    }
+    
+}
+
+/// The type of Device Public key to be used.
+///
+/// This enumeration is used in ``ProvisioningRequest/start(algorithm:publicKey:authenticationMethod:)``
+/// to encode the selected Public Key type.
+public enum PublicKeyMethod {
+    /// No OOB Public Key is used.
+    case noOobPublicKey
+    /// OOB Public Key is used. The key must contain the full value of the Public Key,
+    /// depending on the chosen algorithm.
+    case oobPublicKey
+}
+
+extension PublicKeyMethod: CustomDebugStringConvertible {
+    
+    public var debugDescription: String {
+        switch self {
+        case .noOobPublicKey:
+            return "No OOB Public Key"
+        case .oobPublicKey:
             return "OOB Public Key"
         }
     }
