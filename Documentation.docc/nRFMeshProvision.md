@@ -303,11 +303,14 @@ provisioning procedure.
 - ``ProvisioningManager``
 - ``ProvisioningDelegate``
 - ``ProvisioningState``
+- ``ProvisioningRequest``
+- ``ProvisioningResponse``
 - ``ProvisioningCapabilities``
 - ``ProvisioningError``
 - ``RemoteProvisioningError``
 - ``AuthAction``
 - ``PublicKey``
+- ``PublicKeyMethod``
 - ``PublicKeyType``
 - ``Algorithm``
 - ``Algorithms``
@@ -369,6 +372,15 @@ provisioning procedure.
 - ``NodeFeatureState``
 - ``NodeFeatures``
 - ``NodeFeaturesState``
+
+### Beacons
+
+- ``NodeIdentity``
+- ``PublicNodeIdentity``
+- ``PrivateNodeIdentity``
+- ``NetworkIdentity``
+- ``PublicNetworkIdentity``
+- ``PrivateNetworkIdentity``
 
 ### Message Types
 
@@ -447,7 +459,7 @@ provisioning procedure.
 - ``ConfigNodeIdentityGet``
 - ``ConfigNodeIdentitySet``
 - ``ConfigNodeIdentityStatus``
-- ``NodeIdentity``
+- ``NodeIdentityState``
 
 - ``ConfigNodeReset``
 - ``ConfigNodeResetStatus``
@@ -519,6 +531,18 @@ provisioning procedure.
 - ``ConfigHeartbeatSubscriptionGet``
 - ``ConfigHeartbeatSubscriptionSet``
 - ``ConfigHeartbeatSubscriptionStatus``
+
+### Configuration - Private Beacons
+
+- ``PrivateBeaconGet``
+- ``PrivateBeaconSet``
+- ``PrivateBeaconStatus``
+- ``PrivateGATTProxyGet``
+- ``PrivateGATTProxySet``
+- ``PrivateGATTProxyStatus``
+- ``PrivateNodeIdentityGet``
+- ``PrivateNodeIdentitySet``
+- ``PrivateNodeIdentityStatus``
 
 ### Generic Message Types
 

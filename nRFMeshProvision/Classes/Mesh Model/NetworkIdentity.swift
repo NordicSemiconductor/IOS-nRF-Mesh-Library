@@ -31,6 +31,12 @@
 import Foundation
 import CoreBluetooth
 
+/// The Network Identity contains information from Network Identity or Private Network
+/// Identity beacon.
+///
+/// Network Identities can be matched to Network Keys in the network.
+///
+/// - since: 3.3.0
 public protocol NetworkIdentity {
     /// Returns whether the identity matches given ``NetworkKey``.
     ///
