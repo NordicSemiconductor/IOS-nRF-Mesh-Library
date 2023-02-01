@@ -237,7 +237,7 @@ internal extension Model {
     
     /// Returns whether the access layer security on the Model shall use the Device Key.
     var requiresDeviceKey: Bool {
-        return isConfigurationServer                   || isConfigurationServer                   ||
+        return isConfigurationServer                   || isConfigurationClient                   ||
                isRemoteProvisioningServer              || isRemoteProvisioningClient              ||
                isDirectedForwardingConfigurationServer || isDirectedForwardingConfigurationClient ||
                isBridgeConfigurationServer             || isBridgeConfigurationClient             ||
