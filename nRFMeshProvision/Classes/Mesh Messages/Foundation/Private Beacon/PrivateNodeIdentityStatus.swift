@@ -41,7 +41,7 @@ public struct PrivateNodeIdentityStatus: ConfigNetKeyMessage, ConfigStatusMessag
     public let state: NodeFeatureState
     
     public var parameters: Data? {
-        return encodeNetKeyIndex() + Data([state.rawValue])
+        return encodeNetKeyIndex() + state.rawValue
     }
     
     public init(report state: NodeFeatureState, for networkKey: NetworkKey, with status: ConfigMessageStatus) {

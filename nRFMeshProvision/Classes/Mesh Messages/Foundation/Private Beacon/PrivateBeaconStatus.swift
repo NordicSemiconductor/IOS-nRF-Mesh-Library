@@ -50,7 +50,7 @@ public struct PrivateBeaconStatus: ConfigMessage {
     }
     
     public var parameters: Data? {
-        return Data([enabled ? 0x01 : 0x00, steps])
+        return Data() + enabled + steps
     }
     
     /// Creates a Private Beacon Status message with the Random Update Inteval State

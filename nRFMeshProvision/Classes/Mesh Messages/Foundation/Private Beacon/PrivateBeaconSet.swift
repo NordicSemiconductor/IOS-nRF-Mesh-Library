@@ -54,9 +54,9 @@ public struct PrivateBeaconSet: AcknowledgedConfigMessage {
     
     public var parameters: Data? {
         if let steps = steps {
-            return Data([enabled ? 0x01 : 0x00, steps])
+            return Data() + enabled + steps
         }
-        return Data([enabled ? 0x01 : 0x00])
+        return Data() + enabled
     }
     
     /// Creates a Private Beacon Set message to enable or disable Private Beacons.

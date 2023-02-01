@@ -41,7 +41,7 @@ public struct PrivateNodeIdentitySet: AcknowledgedConfigMessage, ConfigNetKeyMes
     public let enabled: Bool
     
     public var parameters: Data? {
-        return encodeNetKeyIndex() + Data([enabled ? 0x01 : 0x00])
+        return encodeNetKeyIndex() + enabled
     }
     
     public init(enabled: Bool, for networkKey: NetworkKey) {

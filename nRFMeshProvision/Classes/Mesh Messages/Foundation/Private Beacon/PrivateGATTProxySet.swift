@@ -40,7 +40,7 @@ public struct PrivateGATTProxySet: AcknowledgedConfigMessage {
     public let enabled: Bool
     
     public var parameters: Data? {
-        return Data([enabled ? 0x01 : 0x00])
+        return Data() + enabled
     }
     
     /// Creates a Private GATT Proxy Set message to enable or disable
