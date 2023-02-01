@@ -55,6 +55,25 @@ public extension Dictionary where Key == String, Value == Any {
         return CBUUID(data: data.subdata(in: 0 ..< 16))
     }
     
+    /// Hash of the associated URI advertised with the URI AD Type.
+    ///
+    /// The URI Hash is calculated as:
+    /// ```swift
+    /// s1(URI Data)[0-3]
+    /// ```
+    /// The URI Data is a buffer containing the URI data type, as defined in Core Bluetooth
+    /// Supplement (CSS) Version 6 or later.
+    var uriHash: Data? {
+        guard let serviceData = self[CBAdvertisementDataServiceDataKey] as? [CBUUID : Data],
+              let data = serviceData[MeshProvisioningService.uuid] else {
+                return nil
+        }
+        guard data.count == 22 else {
+            return nil
+        }
+        return data.subdata(in: 19 ..< 23)
+    }
+    
     /// Returns the Unprovisioned Device's OOB information or `nil` if such
     /// value not be parsed.
     ///
