@@ -57,6 +57,12 @@ public extension Dictionary where Key == String, Value == Any {
     
     /// Hash of the associated URI advertised with the URI AD Type.
     ///
+    /// Along with the Unprovisioned Device beacon, the unprovisioned device may also
+    /// advertise a separate non-connectable advertising packet with a URI data type
+    /// that points to OOB information such as a Public Key. To allow the association
+    /// of the advertised URI with the Unprovisioned Device beacon, the beacon may
+    /// contain an optional 4-octet URI Hash field.
+    ///
     /// The URI Hash is calculated as:
     /// ```swift
     /// s1(URI Data)[0-3]
