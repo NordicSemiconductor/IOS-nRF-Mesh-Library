@@ -43,7 +43,10 @@ public struct OobInformation: OptionSet {
     public static let nfc            = OobInformation(rawValue: 1 << 4)
     public static let number         = OobInformation(rawValue: 1 << 5)
     public static let string         = OobInformation(rawValue: 1 << 6)
-    // Bits 7-10 are reserved for future use.
+    // New flags from Mesh Protocol 1.1
+    public static let supportForCertificateBasedProvisioning = OobInformation(rawValue: 1 << 7)
+    public static let supportForProvisioningRecords          = OobInformation(rawValue: 1 << 8)
+    // Bits 9-10 are reserved for future use.
     public static let onBox          = OobInformation(rawValue: 1 << 11)
     public static let insideBox      = OobInformation(rawValue: 1 << 12)
     public static let onPieceOfPaper = OobInformation(rawValue: 1 << 13)
@@ -200,6 +203,8 @@ extension OobInformation: CustomDebugStringConvertible {
             (.nfc,            "NFC"),
             (.number,         "Number"),
             (.string,         "String"),
+            (.supportForCertificateBasedProvisioning, "Support for certificate-based provisioning"),
+            (.supportForProvisioningRecords,          "Support for provisioning records"),
             (.onBox,          "On Box"),
             (.insideBox,      "Inside Box"),
             (.onPieceOfPaper, "On Piece Of Paper"),
