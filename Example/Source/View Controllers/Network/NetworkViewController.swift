@@ -50,6 +50,7 @@ private enum SectionType {
 private struct Section {
     let type: SectionType
     let nodes: [Node]
+  
     
     init(type: SectionType, nodes: [Node]) {
         self.type = type
@@ -67,26 +68,70 @@ private struct Section {
     }
 }
 
-class NetworkViewController: UITableViewController {
+class NetworkViewController: UITableViewController , UISearchBarDelegate{
+    
+    
     private var sections: [Section] = []
     
+    // MARK: - search bar
+    private let searchController = UISearchController(searchResultsController: nil)
+    private var filteredSections: [Section] = []
+    
+    private func createSearchBar(){
+        navigationItem.searchController = searchController
+        searchController.searchBar.placeholder = "Search by Node name, Unicast Address"
+        searchController.searchBar.delegate = self
+        searchController.searchBar.isTranslucent = false
+    
+    }
     // MARK: - Implementation
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        filteredSections = sections
+        createSearchBar()
         tableView.setEmptyView(title: "No Nodes",
                                message: "Click + to provision a new device.",
                                messageImage: #imageLiteral(resourceName: "baseline-network"))
+        reloadData()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         tableView.reloadData()
-        
         MeshNetworkManager.instance.delegate = self
-        
+        filteredSections = sections
         reloadData()
     }
+    
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+    
+        if searchText.isEmpty {
+            filteredSections = sections
+          
+        } else {
+            filteredSections = sections.map { section in
+                let filteredNodes = section.nodes.filter { node in
+                  
+                    return node.name!.lowercased().contains(searchText.lowercased()) ||
+                    String(node.primaryUnicastAddress.asString()).lowercased().contains(searchText.lowercased())
+                }
+                
+               
+                return Section(type: section.type, nodes: filteredNodes)
+            }.filter { !$0.nodes.isEmpty }
+        }
+        tableView.reloadData()
+    }
+
+    
+    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        searchBar.text = ""
+        filteredSections = sections
+        tableView.reloadData()
+    }
+    
+    
     
     override func shouldPerformSegue(withIdentifier identifier: String, sender: Any?) -> Bool {
         if identifier == "provision" {
@@ -133,19 +178,19 @@ class NetworkViewController: UITableViewController {
     // MARK: - Table view data source
 
     override func numberOfSections(in tableView: UITableView) -> Int {
-        return sections.count
+        return filteredSections.count
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return sections[section].nodes.count
+        return filteredSections[section].nodes.count
     }
     
     override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        return sections[section].title
+        return filteredSections[section].title
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        return sections[indexPath.section].tableView(tableView, cellForRowAt: indexPath)
+        return filteredSections[indexPath.section].tableView(tableView, cellForRowAt: indexPath)
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -175,9 +220,10 @@ private extension NetworkViewController {
                 sections.append(Section(type: .thisProvisioner, nodes: [thisProvisionerNode]))
             }
         }
+        filteredSections = sections
         tableView.reloadData()
         
-        if sections.isEmpty {
+        if filteredSections.isEmpty {
             tableView.showEmptyView()
         } else {
             tableView.hideEmptyView()
