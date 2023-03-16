@@ -31,7 +31,7 @@
 import UIKit
 import nRFMeshProvision
 
-class ConfigurationViewController: ProgressViewController {
+class NodeViewController: ProgressViewController {
     
     // MARK: - Public properties
     
@@ -103,6 +103,11 @@ class ConfigurationViewController: ProgressViewController {
         }
         if segue.identifier == "showScenes" {
             let destination = segue.destination as! NodeScenesViewController
+            destination.node = node
+        }
+        if segue.identifier == "configure" {
+            let navigationController = segue.destination as! UINavigationController
+            let destination = navigationController.topViewController as! IntroViewController
             destination.node = node
         }
     }
@@ -340,7 +345,7 @@ class ConfigurationViewController: ProgressViewController {
     
 }
 
-private extension ConfigurationViewController {
+private extension NodeViewController {
 
     /// Presents a dialog to edit the node name.
     func presentNameDialog() {
@@ -471,7 +476,7 @@ private extension ConfigurationViewController {
     
 }
 
-extension ConfigurationViewController: MeshNetworkDelegate {
+extension NodeViewController: MeshNetworkDelegate {
     
     func meshNetworkManager(_ manager: MeshNetworkManager,
                             didReceiveMessage message: MeshMessage,

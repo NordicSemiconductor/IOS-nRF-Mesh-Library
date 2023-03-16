@@ -136,7 +136,7 @@
 		52D2707E2511F850002F51F3 /* FastSending.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52D2707D2511F850002F51F3 /* FastSending.swift */; };
 		52DA9D7224F6765C0051795B /* UInt16+Time.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52DA9D7124F6765C0051795B /* UInt16+Time.swift */; };
 		52DE3ABA25DA871800268D7D /* SensorClientDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52DE3AB925DA871800268D7D /* SensorClientDelegate.swift */; };
-		52DF5D8A228DA78A00C297C1 /* ConfigurationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52DF5D89228DA78A00C297C1 /* ConfigurationViewController.swift */; };
+		52DF5D8A228DA78A00C297C1 /* NodeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52DF5D89228DA78A00C297C1 /* NodeViewController.swift */; };
 		52DF5D8C228DAA0500C297C1 /* NodeViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52DF5D8B228DAA0500C297C1 /* NodeViewCell.swift */; };
 		52DF5D8F229691BD00C297C1 /* NetworkConnection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52DF5D8E229691BD00C297C1 /* NetworkConnection.swift */; };
 		52DF5D93229C009200C297C1 /* NetworkPdus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52DF5D92229C009200C297C1 /* NetworkPdus.swift */; };
@@ -165,6 +165,8 @@
 		F085C9FD29CB26B000C2DF89 /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = F085C9FC29CB26B000C2DF89 /* Models.swift */; };
 		F085CA0229D1E0B900C2DF89 /* Subscribe.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F085CA0029D1E0B900C2DF89 /* Subscribe.storyboard */; };
 		F085CA0429D1E2B000C2DF89 /* RelatedModelsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F085CA0329D1E2B000C2DF89 /* RelatedModelsViewController.swift */; };
+		F063C01A29C2774300A445A9 /* SelectKeysViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F063C01929C2774300A445A9 /* SelectKeysViewController.swift */; };
+		F063C01D29C27EAB00A445A9 /* IntroViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F063C01C29C27EAB00A445A9 /* IntroViewController.swift */; };
 		F0A79242F997F08105E46FF6 /* Pods_nRF_Mesh_Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0DAC1677AA94583D28A5867E /* Pods_nRF_Mesh_Tests.framework */; };
 /* End PBXBuildFile section */
 
@@ -314,7 +316,7 @@
 		52D2707D2511F850002F51F3 /* FastSending.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FastSending.swift; sourceTree = "<group>"; };
 		52DA9D7124F6765C0051795B /* UInt16+Time.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "UInt16+Time.swift"; path = "Utils/UInt16+Time.swift"; sourceTree = "<group>"; };
 		52DE3AB925DA871800268D7D /* SensorClientDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SensorClientDelegate.swift; sourceTree = "<group>"; };
-		52DF5D89228DA78A00C297C1 /* ConfigurationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigurationViewController.swift; sourceTree = "<group>"; };
+		52DF5D89228DA78A00C297C1 /* NodeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NodeViewController.swift; sourceTree = "<group>"; };
 		52DF5D8B228DAA0500C297C1 /* NodeViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NodeViewCell.swift; sourceTree = "<group>"; };
 		52DF5D8E229691BD00C297C1 /* NetworkConnection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkConnection.swift; sourceTree = "<group>"; };
 		52DF5D92229C009200C297C1 /* NetworkPdus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkPdus.swift; sourceTree = "<group>"; };
@@ -355,6 +357,8 @@
 		F085C9FC29CB26B000C2DF89 /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
 		F085CA0129D1E0B900C2DF89 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Subscribe.storyboard; sourceTree = "<group>"; };
 		F085CA0329D1E2B000C2DF89 /* RelatedModelsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RelatedModelsViewController.swift; sourceTree = "<group>"; };
+		F063C01929C2774300A445A9 /* SelectKeysViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectKeysViewController.swift; sourceTree = "<group>"; };
+		F063C01C29C27EAB00A445A9 /* IntroViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntroViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -666,9 +670,10 @@
 		52DF5D88228DA75F00C297C1 /* Configuration */ = {
 			isa = PBXGroup;
 			children = (
+				F063C01B29C27E8500A445A9 /* Automation */,
 				5231403D230175F30074325A /* Model */,
 				522AFFE122C23B3900521EDC /* Cells */,
-				52DF5D89228DA78A00C297C1 /* ConfigurationViewController.swift */,
+				52DF5D89228DA78A00C297C1 /* NodeViewController.swift */,
 				522AFFDF22C2376C00521EDC /* ElementViewController.swift */,
 				523F776522C609D90030EA6A /* NodeNetworkKeysViewController.swift */,
 				523F776922C621F50030EA6A /* NodeAddNetworkKeyViewController.swift */,
@@ -821,6 +826,15 @@
 				4973E9CDA09CE2398E5C269A /* LICENSE */,
 			);
 			name = "Podspec Metadata";
+			sourceTree = "<group>";
+		};
+		F063C01B29C27E8500A445A9 /* Automation */ = {
+			isa = PBXGroup;
+			children = (
+				F063C01C29C27EAB00A445A9 /* IntroViewController.swift */,
+				F063C01929C2774300A445A9 /* SelectKeysViewController.swift */,
+			);
+			path = Automation;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -1109,7 +1123,7 @@
 				522AFFDC22BBA34900521EDC /* ActionCell.swift in Sources */,
 				52E54CE72345EDA700478F05 /* GenericState.swift in Sources */,
 				52B6C50F2811712D00F6E0F3 /* UITableViewCell+Disabled.swift in Sources */,
-				52DF5D8A228DA78A00C297C1 /* ConfigurationViewController.swift in Sources */,
+				52DF5D8A228DA78A00C297C1 /* NodeViewController.swift in Sources */,
 				521215292315290F0059FB3D /* GroupControlViewController.swift in Sources */,
 				52A8EA8824E6946D004C14C7 /* HeartbeatPublicationCell.swift in Sources */,
 				52F6AD7622BA612900F0D7DF /* UIViewController+Toast.swift in Sources */,
@@ -1130,10 +1144,12 @@
 				5288C2142371B32200321ED3 /* SimpleOnOffStatus.swift in Sources */,
 				5251498122E0E36600CBF1E3 /* AddGroupViewController.swift in Sources */,
 				5211EADB25090DB000089FF2 /* SceneSetupServerDelegate.swift in Sources */,
+				F063C01D29C27EAB00A445A9 /* IntroViewController.swift in Sources */,
 				5292F8A325021B8F00EA0F2A /* ModelIdentifiers.swift in Sources */,
 				52835258227AEDA30097B949 /* DeviceCell.swift in Sources */,
 				52E54CD82343876000478F05 /* GenericLevelServerCell.swift in Sources */,
 				A7B526A7277B210000F5C60D /* GenericPowerOnOffSetupViewCell.swift in Sources */,
+				F063C01A29C2774300A445A9 /* SelectKeysViewController.swift in Sources */,
 				5212152D231545D40059FB3D /* ModelGroupCell.swift in Sources */,
 				52A8EA8D24E6A470004C14C7 /* SetHeartbeatPublicationViewController.swift in Sources */,
 				A7A59BD7277225E70045A8ED /* GenericPowerOnOffViewCell.swift in Sources */,

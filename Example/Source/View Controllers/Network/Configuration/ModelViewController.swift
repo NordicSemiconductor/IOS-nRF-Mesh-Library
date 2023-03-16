@@ -972,7 +972,7 @@ extension ModelViewController: BindAppKeyDelegate,
                                    
     func presentNodeApplicationKeys() {
         if let configurationViewController = navigationController?.viewControllers
-                .first(where: { $0 is ConfigurationViewController }) {
+                .first(where: { $0 is NodeViewController }) {
             navigationController?.popToViewController(configurationViewController, animated: true)
             configurationViewController.performSegue(withIdentifier: "showAppKeys", sender: nil)
         }
