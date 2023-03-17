@@ -167,6 +167,7 @@
 		F085CA0429D1E2B000C2DF89 /* RelatedModelsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F085CA0329D1E2B000C2DF89 /* RelatedModelsViewController.swift */; };
 		F063C01A29C2774300A445A9 /* SelectKeysViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F063C01929C2774300A445A9 /* SelectKeysViewController.swift */; };
 		F063C01D29C27EAB00A445A9 /* IntroViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F063C01C29C27EAB00A445A9 /* IntroViewController.swift */; };
+		F085C9FB29C496AB00C2DF89 /* SelectModelsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F085C9FA29C496AB00C2DF89 /* SelectModelsViewController.swift */; };
 		F0A79242F997F08105E46FF6 /* Pods_nRF_Mesh_Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0DAC1677AA94583D28A5867E /* Pods_nRF_Mesh_Tests.framework */; };
 /* End PBXBuildFile section */
 
@@ -359,6 +360,7 @@
 		F085CA0329D1E2B000C2DF89 /* RelatedModelsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RelatedModelsViewController.swift; sourceTree = "<group>"; };
 		F063C01929C2774300A445A9 /* SelectKeysViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectKeysViewController.swift; sourceTree = "<group>"; };
 		F063C01C29C27EAB00A445A9 /* IntroViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntroViewController.swift; sourceTree = "<group>"; };
+		F085C9FA29C496AB00C2DF89 /* SelectModelsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectModelsViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -833,6 +835,7 @@
 			children = (
 				F063C01C29C27EAB00A445A9 /* IntroViewController.swift */,
 				F063C01929C2774300A445A9 /* SelectKeysViewController.swift */,
+				F085C9FA29C496AB00C2DF89 /* SelectModelsViewController.swift */,
 			);
 			path = Automation;
 			sourceTree = "<group>";
@@ -1159,6 +1162,7 @@
 				5292F8A1250137DC00EA0F2A /* NodeScenesViewController.swift in Sources */,
 				526021F62343660200E88F06 /* ControlViewCell.swift in Sources */,
 				5245737B2500E10800CF8500 /* ScenesViewController.swift in Sources */,
+				F085C9FB29C496AB00C2DF89 /* SelectModelsViewController.swift in Sources */,
 				52A9C1C52313D7D80036792A /* GenericLevelViewCell.swift in Sources */,
 				5288C20A2371A89900321ED3 /* SimpleOnOffClientDelegate.swift in Sources */,
 				529B759C2243BA10008F1CE7 /* NetworkKeysViewController.swift in Sources */,

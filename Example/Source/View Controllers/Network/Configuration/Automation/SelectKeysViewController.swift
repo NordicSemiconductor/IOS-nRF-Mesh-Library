@@ -37,6 +37,10 @@ class SelectKeysViewController: UITableViewController {
     
     var node: Node!
     
+    // MARK: - Outlets
+    
+    @IBOutlet weak var nextButton: UIBarButtonItem!
+    
     // MARK: - Private properties
     
     private var knownKeys: [ApplicationKey]!
@@ -53,6 +57,17 @@ class SelectKeysViewController: UITableViewController {
         let allKeys = manager.meshNetwork?.applicationKeys
         missingKeys = allKeys?.notKnownTo(node: node) ?? []
         knownKeys = allKeys?.knownTo(node: node) ?? []
+        
+        // If no App Keys are selected, the step can be skipped.
+        nextButton.title = "Skip"
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "next" {
+            let destination = segue.destination as! SelectModelsViewController
+            destination.node = node
+            destination.selectedKeys = selectedKeys
+        }
     }
 
     // MARK: - Table view data source
@@ -88,8 +103,8 @@ class SelectKeysViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, titleForFooterInSection section: Int) -> String? {
-        if section == .unknownKeysSection {
-            return "Bound Network Keys of selected Application Keys will be sent automatically."
+        if section == numberOfSections(in: tableView) - 1 {
+            return "Missing Application Keys and bound Network Keys will be sent automatically."
         }
         return nil
     }
@@ -99,7 +114,6 @@ class SelectKeysViewController: UITableViewController {
         if indexPath.isUnknownKeysSection {
             if indexPath.row < missingKeys.count {
                 let cell = tableView.dequeueReusableCell(withIdentifier: "key", for: indexPath)
-                cell.isEnabled = true
                 let key = missingKeys[indexPath .row]
                 cell.textLabel?.text = key.name
                 cell.detailTextLabel?.text = key.boundNetworkKey.name
@@ -113,11 +127,10 @@ class SelectKeysViewController: UITableViewController {
         }
         if indexPath.isKnownKeysSection {
             let cell = tableView.dequeueReusableCell(withIdentifier: "key", for: indexPath)
-            cell.isEnabled = false
             let key = knownKeys[indexPath.row]
             cell.textLabel?.text = key.name
             cell.detailTextLabel?.text = key.boundNetworkKey.name
-            cell.accessoryType = .none
+            cell.accessoryType = selectedKeys.contains(key) ? .checkmark : .none
             return cell
         }
         fatalError()
@@ -128,6 +141,7 @@ class SelectKeysViewController: UITableViewController {
         
         if indexPath.isUnknownKeysSection {
             if indexPath.row < missingKeys.count {
+                // A key that is not known to the Node was selected.
                 let key = missingKeys[indexPath.row]
                 if let index = selectedKeys.firstIndex(of: key) {
                     selectedKeys.remove(at: index)
@@ -153,11 +167,22 @@ class SelectKeysViewController: UITableViewController {
                         tableView.endUpdates()
                     } else {
                         missingKeys.append(newKey)
+                        selectedKeys.append(newKey)
                         tableView.insertRows(at: [IndexPath(row: missingKeys.count - 1, section: .unknownKeysSection)], with: .automatic)
                     }
                 }
             }
+        } else {
+            // A key that was sent before is selected.
+            let key = knownKeys[indexPath.row]
+            if let index = selectedKeys.firstIndex(of: key) {
+                selectedKeys.remove(at: index)
+            } else {
+                selectedKeys.append(key)
+            }
+            tableView.reloadRows(at: [indexPath], with: .automatic)
         }
+        nextButton.title = selectedKeys.isEmpty ? "Skip" : "Next"
     }
 
 }

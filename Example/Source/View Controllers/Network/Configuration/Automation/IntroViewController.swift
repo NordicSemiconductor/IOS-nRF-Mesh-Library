@@ -58,7 +58,15 @@ class IntroViewController: UIViewController {
         // The 'view' property includes the Navigation Bar.
         content.setEmptyView(
             title: "Quick Configuration",
-            message: "Configure multiple models on the node\nwith just few clicks.",
+            message: """
+Configure the node with just few clicks.
+
+1. Add Application Keys with bound
+   Network Keys.
+2. Bind Application Keys to Models.
+3. Subscribe Models to Groups.
+4. Read node properties.
+""",
             messageImage: #imageLiteral(resourceName: "auto_fix"),
             action: start
         )

@@ -37,6 +37,10 @@ class NodeViewController: ProgressViewController {
     
     var node: Node!
     
+    // MARK: - Outlets
+    
+    @IBOutlet weak var configureButton: UIBarButtonItem!
+    
     // MARK: - Implementation
     
     override func viewDidLoad() {
@@ -84,6 +88,8 @@ class NodeViewController: ProgressViewController {
             getCompositionData()
         } else if node.defaultTTL == nil {
             getTtl()
+        } else {
+            configureButton.isEnabled = true
         }
     }
     
@@ -507,6 +513,7 @@ extension NodeViewController: MeshNetworkDelegate {
             done {
                 self.tableView.reloadRows(at: [.ttl], with: .automatic)
                 self.refreshControl?.endRefreshing()
+                self.configureButton.isEnabled = true
             }
             
         case is ConfigNodeResetStatus:
