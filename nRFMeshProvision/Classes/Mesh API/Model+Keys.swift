@@ -38,7 +38,7 @@ public extension Model {
     /// to this Model, possibly bound by other Provisioner.
     var boundApplicationKeys: [ApplicationKey] {
         return parentElement?.parentNode?.applicationKeys
-            .filter({ bind.contains($0.index) }) ?? []
+            .filter { bind.contains($0.index) } ?? []
     }
     
     /// Whether the given Application Key is bound to this Model.
@@ -48,6 +48,16 @@ public extension Model {
     ///            otherwise `false`.
     func isBoundTo(_ applicationKey: ApplicationKey) -> Bool {
         return bind.contains(applicationKey.index)
+    }
+    
+    /// Whether the model supports App Key binding.
+    ///
+    /// Models that do not support App Key binding use Device Key on access layer security.
+    var supportsApplicationKeyBinding: Bool {
+        if isConfigurationServer || isConfigurationClient {
+            return false
+        }
+        return true
     }
     
 }
