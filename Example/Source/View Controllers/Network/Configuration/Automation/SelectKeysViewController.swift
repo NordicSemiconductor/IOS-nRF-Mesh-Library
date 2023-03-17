@@ -33,13 +33,13 @@ import nRFMeshProvision
 
 class SelectKeysViewController: UITableViewController {
     
-    // MARK: - Public properties
-    
-    var node: Node!
-    
     // MARK: - Outlets
     
     @IBOutlet weak var nextButton: UIBarButtonItem!
+    
+    // MARK: - Public properties
+    
+    var node: Node!
     
     // MARK: - Private properties
     
@@ -74,16 +74,18 @@ class SelectKeysViewController: UITableViewController {
 
     override func numberOfSections(in tableView: UITableView) -> Int {
         if knownKeys.isEmpty {
-            return 1
+            return 2
         }
-        return 2
+        return 3
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch section {
-        case .unknownKeysSection:
+        case IndexPath.infoSection:
+            return 0
+        case IndexPath.unknownKeysSection:
             return missingKeys.count + 1 // One to Add New Key
-        case .knownKeysSection:
+        case IndexPath.knownKeysSection:
             return knownKeys.count
         default: fatalError()
         }
@@ -96,15 +98,15 @@ class SelectKeysViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        if section == .knownKeysSection {
+        if section == IndexPath.knownKeysSection {
             return "Existing Keys"
         }
         return nil
     }
     
     override func tableView(_ tableView: UITableView, titleForFooterInSection section: Int) -> String? {
-        if section == numberOfSections(in: tableView) - 1 {
-            return "Missing Application Keys and bound Network Keys will be sent automatically."
+        if section == IndexPath.infoSection {
+            return "ⓘ Select Application Keys to bind to Models. Missing keys, together with bound Network Keys, will be sent automatically."
         }
         return nil
     }
@@ -161,14 +163,14 @@ class SelectKeysViewController: UITableViewController {
                         tableView.beginUpdates()
                         // For the first key we need to add a section as well.
                         if knownKeys.count == 1 {
-                            tableView.insertSections(IndexSet(integer: .knownKeysSection), with: .automatic)
+                            tableView.insertSections(IndexSet(integer: IndexPath.knownKeysSection), with: .automatic)
                         }
-                        tableView.insertRows(at: [IndexPath(row: knownKeys.count - 1, section: .knownKeysSection)], with: .automatic)
+                        tableView.insertRows(at: [IndexPath(row: knownKeys.count - 1, section: IndexPath.knownKeysSection)], with: .automatic)
                         tableView.endUpdates()
                     } else {
                         missingKeys.append(newKey)
                         selectedKeys.append(newKey)
-                        tableView.insertRows(at: [IndexPath(row: missingKeys.count - 1, section: .unknownKeysSection)], with: .automatic)
+                        tableView.insertRows(at: [IndexPath(row: missingKeys.count - 1, section: IndexPath.unknownKeysSection)], with: .automatic)
                     }
                 }
             }
@@ -187,19 +189,18 @@ class SelectKeysViewController: UITableViewController {
 
 }
 
-private extension Int {
-    static let unknownKeysSection = 0
-    static let knownKeysSection = 1
-}
-
 private extension IndexPath {
+    static let infoSection        = 0
+    static let unknownKeysSection = 1
+    static let knownKeysSection   = 2
+    static let numberOfSection    = IndexPath.knownKeysSection + 1
     
     var isUnknownKeysSection: Bool {
-        return section == .unknownKeysSection
+        return section == IndexPath.unknownKeysSection
     }
     
     var isKnownKeysSection: Bool {
-        return section == .knownKeysSection
+        return section == IndexPath.knownKeysSection
     }
     
 }

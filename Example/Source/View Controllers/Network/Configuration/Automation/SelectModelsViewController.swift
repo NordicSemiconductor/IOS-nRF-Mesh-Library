@@ -33,22 +33,23 @@ import nRFMeshProvision
 
 class SelectModelsViewController: UITableViewController {
     
+    // MARK: - Outlets
+    
+    @IBOutlet weak var nextButton: UIBarButtonItem!
+    
     // MARK: - Public properties
     
     var node: Node!
     var selectedKeys: [ApplicationKey]!
     
-    // MARK: - Outlets
+    // MARK: - Private properties
     
-    @IBOutlet weak var nextButton: UIBarButtonItem!
+    private var selectedModels: [Model] = []
     
     // MARK: - View Controller
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        let manager = MeshNetworkManager.instance
-        // TODO: impl
         
         // If no App Keys are selected, the step can be skipped.
         nextButton.title = "Skip"
@@ -57,66 +58,67 @@ class SelectModelsViewController: UITableViewController {
     // MARK: - Table view data source
 
     override func numberOfSections(in tableView: UITableView) -> Int {
-        return node.elements.count
+        return node.elements.count + 1 // Info
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 0
+        if section == IndexPath.infoSection {
+            return 0
+        }
+        return node.elements[section - 1].models.count
     }
-
-    /*
+    
+    override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        if section > 0 {
+            return node.elements[section - 1].name ?? "Element \(section)"
+        }
+        return nil
+    }
+    
+    override func tableView(_ tableView: UITableView, titleForFooterInSection section: Int) -> String? {
+        if section == IndexPath.infoSection {
+            return "ⓘ Select Models to bind the Application Keys to.\n\nⓘ Skip to only transfer "
+        }
+        return nil
+    }
+    
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "reuseIdentifier", for: indexPath)
-
-        // Configure the cell...
-
+        let model = node.elements[indexPath.section - 1].models[indexPath.row]
+        let cell = tableView.dequeueReusableCell(withIdentifier: "model", for: indexPath)
+        cell.textLabel?.text = model.name
+        if model.isBluetoothSIGAssigned {
+            cell.textLabel?.text = model.name ?? "Unknown Model ID: \(model.modelIdentifier.asString())"
+            cell.detailTextLabel?.text = "Bluetooth SIG"
+        } else {
+            cell.textLabel?.text = "Vendor Model ID: \(model.modelIdentifier.asString())"
+            if let companyId = model.companyIdentifier {
+                if let companyName = CompanyIdentifier.name(for: companyId) {
+                    cell.detailTextLabel?.text = companyName
+                } else {
+                    cell.detailTextLabel?.text = "Unknown Company ID (\(companyId.asString()))"
+                }
+            } else {
+                cell.detailTextLabel?.text = "Unknown Company ID"
+            }
+        }
+        cell.accessoryType = selectedModels.contains(model) ? .checkmark : .none
         return cell
     }
-    */
-
-    /*
-    // Override to support conditional editing of the table view.
-    override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-        // Return false if you do not want the specified item to be editable.
-        return true
+    
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
+        
+        let model = node.elements[indexPath.section - 1].models[indexPath.row]
+        if let index = selectedModels.firstIndex(of: model) {
+            selectedModels.remove(at: index)
+        } else {
+            selectedModels.append(model)
+        }
+        tableView.reloadRows(at: [indexPath], with: .automatic)
     }
-    */
 
-    /*
-    // Override to support editing the table view.
-    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-        if editingStyle == .delete {
-            // Delete the row from the data source
-            tableView.deleteRows(at: [indexPath], with: .fade)
-        } else if editingStyle == .insert {
-            // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-        }    
-    }
-    */
+}
 
-    /*
-    // Override to support rearranging the table view.
-    override func tableView(_ tableView: UITableView, moveRowAt fromIndexPath: IndexPath, to: IndexPath) {
-
-    }
-    */
-
-    /*
-    // Override to support conditional rearranging of the table view.
-    override func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
-        // Return false if you do not want the item to be re-orderable.
-        return true
-    }
-    */
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
-    }
-    */
-
+private extension IndexPath {
+    static let infoSection = 0
 }
