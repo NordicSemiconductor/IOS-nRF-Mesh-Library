@@ -1018,6 +1018,7 @@
 		EE85A051003338DEEFC47D56271705C3 /* MeshNetwork+Scenes.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "MeshNetwork+Scenes.swift"; sourceTree = "<group>"; };
 		EE97BE77EA799B9150105B1D58257380 /* SceneRegisterGet.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SceneRegisterGet.swift; sourceTree = "<group>"; };
 		F00BDBCD0D3166FDBFF9DA168EC7EE71 /* ConfigKeyRefreshPhaseSet.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ConfigKeyRefreshPhaseSet.swift; sourceTree = "<group>"; };
+		F085C9FE29CC748100C2DF89 /* Unique.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Unique.swift; sourceTree = "<group>"; };
 		F0C3660A28D8FF910017F22E /* Documentation.docc */ = {isa = PBXFileReference; lastKnownFileType = folder.documentationcatalog; path = Documentation.docc; sourceTree = "<group>"; };
 		F141ABC372814AD7C3B42351BCC012F0 /* Data.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Data.swift; sourceTree = "<group>"; };
 		F1B92E125B44E1EBDBC14DC54EC22AF5 /* NetworkLayer.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = NetworkLayer.swift; sourceTree = "<group>"; };
