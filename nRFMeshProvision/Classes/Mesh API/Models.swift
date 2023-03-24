@@ -263,7 +263,20 @@ public extension Model {
     ///
     /// The list does not include the Model on which it is being called.
     var relatedModels: [Model] {
-        return extendedModels + extendingModels
+        // Find all Models that extend this one.
+        let extendingModels = extendingModels
+        // If there are no such, just return Models that this Model extend.
+        if extendingModels.isEmpty {
+            return extendedModels
+        }
+        // Otherwise, for all such Models
+        return extendingModels
+            // create a list of extended Models,
+            .flatMap { [$0] + $0.extendedModels }
+            // make it unique.
+            .uniqued()
+            // and remove the Node in question.
+            .filter { $0 != self }
     }
     
     /// Returns whether that Model extends the given ``Model`` directly or indirectly.
