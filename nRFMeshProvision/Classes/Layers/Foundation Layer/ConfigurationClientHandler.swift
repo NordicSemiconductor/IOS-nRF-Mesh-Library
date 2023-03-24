@@ -219,15 +219,18 @@ internal class ConfigurationClientHandler: ModelDelegate {
                let node = meshNetwork.node(withAddress: source),
                let element = node.element(withAddress: status.elementAddress),
                let model = element.model(withModelId: status.modelId) {
-                let address = MeshAddress(status.address)
-                
+                // When a Subscription List is modified on a Node, it affects all
+                // Models with bound state on the same Element.
+                let models = [model] + model.relatedModels
+                    .filter { $0.parentElement == model.parentElement }
                 // The status for Delete All request has an invalid address.
                 // Handle it differently here.
                 if let _ = request as? ConfigModelSubscriptionDeleteAll {
-                    model.unsubscribeFromAll()
+                    models.forEach { $0.unsubscribeFromAll() }
                     break
                 }
                 // Here it should be safe to search for the group.
+                let address = MeshAddress(status.address)
                 guard let group = Group.specialGroup(withAddress: address) ??
                                   meshNetwork.group(withAddress: address),
                           group != .allNodes else {
@@ -235,12 +238,12 @@ internal class ConfigurationClientHandler: ModelDelegate {
                 }
                 switch request {
                 case is ConfigModelSubscriptionOverwrite, is ConfigModelSubscriptionVirtualAddressOverwrite:
-                    model.unsubscribeFromAll()
+                    models.forEach { $0.unsubscribeFromAll() }
                     fallthrough
                 case is ConfigModelSubscriptionAdd, is ConfigModelSubscriptionVirtualAddressAdd:
-                    model.subscribe(to: group)
+                    models.forEach { $0.subscribe(to: group) }
                 case is ConfigModelSubscriptionDelete, is ConfigModelSubscriptionVirtualAddressDelete:
-                    model.unsubscribe(from: group)
+                    models.forEach { $0.unsubscribe(from: group) }
                 default:
                     break
                 }
@@ -251,20 +254,32 @@ internal class ConfigurationClientHandler: ModelDelegate {
                let node = meshNetwork.node(withAddress: source),
                let element = node.element(withAddress: list.elementAddress),
                let model = element.model(withModelId: list.modelId) {
-                model.unsubscribeFromAll()
+                // When a Subscription List is modified on a Node, it affects all
+                // Models with bound state on the same Element.
+                let models = [model] + model.relatedModels
+                    .filter { $0.parentElement == model.parentElement }
+                // A new list will be set. Remove existing items.
+                models.forEach { $0.unsubscribeFromAll() }
+                // For each new address...
                 for address in list.addresses {
+                    // ...look for an existing Group.
                     if let group = Group.specialGroup(withAddress: address) ??
                                    meshNetwork.group(withAddress: address) {
+                        // When found, and the Group isn't "all Nodes"...
                         if group != .allNodes {
-                            model.subscribe(to: group)
+                            // ...subscribe all models to it.
+                            models.forEach { $0.subscribe(to: group) }
                         }
                     } else {
+                        // When the Group was not found, but it is a regular one, not a Virtual Group,...
                         if address.isGroup && !address.isSpecialGroup {
                             do {
+                                // ...create a New Group with default name.
                                 let group = try Group(name: NSLocalizedString("New Group", comment: ""),
                                                       address: MeshAddress(address))
+                                // Add the Group to the Network and subscribe the Models.
                                 try meshNetwork.add(group: group)
-                                model.subscribe(to: group)
+                                models.forEach { $0.subscribe(to: group) }
                             } catch {
                                 // This should never happen.
                                 continue
