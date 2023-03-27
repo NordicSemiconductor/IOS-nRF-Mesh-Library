@@ -240,18 +240,18 @@ public extension Model {
               let node = parentElement.parentNode else {
             return []
         }
-        // Get all direct base models of this Model.
+        // Get all models directly extending this Model.
         let directlyExtendingModels = node.elements
             // Look only on that and next Elements.
-            // Models can't be exgtended by other Models on Elements with lower index.
+            // Models can't be extended by Models on Elements with lower index.
             .filter { $0.index >= parentElement.index }
             // Get a list of all models.
             .flatMap { $0.models }
             // Remove duplicates.
             .uniqued()
-            // Get all direct base models of this Model.
+            // Get all models directly extending this Model.
             .filter { $0.extendsDirectly(self) }
-        // Return the direct base Models and all models that they are extending.
+        // Return the extending Models and all models that they extend.
         return directlyExtendingModels + directlyExtendingModels.flatMap { $0.extendingModels }
     }
     
@@ -263,20 +263,32 @@ public extension Model {
     ///
     /// The list does not include the Model on which it is being called.
     var relatedModels: [Model] {
-        // Find all Models that extend this one.
-        let extendingModels = extendingModels
-        // If there are no such, just return Models that this Model extend.
-        if extendingModels.isEmpty {
-            return extendedModels
+        // The Model must be on an Element on a Node.
+        guard let parentElement = parentElement,
+              let node = parentElement.parentNode else {
+            return []
         }
-        // Otherwise, for all such Models
-        return extendingModels
-            // create a list of extended Models,
-            .flatMap { [$0] + $0.extendedModels }
-            // make it unique.
-            .uniqued()
-            // and remove the Node in question.
-            .filter { $0 != self }
+        // Get a list of all models on the Node.
+        let models = node.elements
+            .flatMap { $0.models }
+        
+        var result = [Model]()
+        var queue = [self]
+        
+        while !queue.isEmpty {
+            let currentModel = queue.removeFirst()
+            if !result.contains(currentModel) {
+                if currentModel != self {
+                    result.append(currentModel)
+                }
+                let directlyExtendedModels = models.filter { $0.extendsDirectly(currentModel) }
+                queue.append(contentsOf: directlyExtendedModels)
+                let extendedByModels = models.filter { currentModel.extendsDirectly($0) }
+                queue.append(contentsOf: extendedByModels)
+            }
+        }
+        
+        return result
     }
     
     /// Returns whether that Model extends the given ``Model`` directly or indirectly.
