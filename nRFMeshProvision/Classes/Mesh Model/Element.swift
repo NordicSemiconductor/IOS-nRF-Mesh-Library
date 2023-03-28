@@ -188,7 +188,7 @@ public class Element: Codable {
 
 // MARK: - Operators
 
-extension Element: Equatable {
+extension Element: Equatable, Hashable {
     
     public static func == (lhs: Element, rhs: Element) -> Bool {
         return lhs.parentNode === rhs.parentNode && lhs.index == rhs.index
@@ -196,6 +196,10 @@ extension Element: Equatable {
     
     public static func != (lhs: Element, rhs: Element) -> Bool {
         return lhs.parentNode !== rhs.parentNode || lhs.index != rhs.index
+    }
+    
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(unicastAddress)
     }
     
 }
