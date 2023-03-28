@@ -339,19 +339,3 @@ extension Model: Equatable, Hashable {
     }
     
 }
-
-extension Model: CustomDebugStringConvertible {
-    
-    public var debugDescription: String {
-        guard let parentElement = parentElement else {
-            return "Model not added to a Node"
-        }
-        let element = parentElement.name ?? "Element \(parentElement.index)"
-        if let companyIdentifier = companyIdentifier {
-            return "Vendor Model \(modelIdentifier.hex) by Company \(companyIdentifier.hex) on \(element)"
-        } else {
-            return "Model \(modelIdentifier.hex) on \(element)"
-        }
-    }
-    
-}
