@@ -200,19 +200,22 @@ public extension Model {
         }
     }
     
-    /// A list of ``Model``s extended by this Model.
+    /// A list of direct base ``Model``s to the Model.
     ///
     /// The *Extend* relationship is explained in Mesh Profile 1.0.1, chapter 2.3.6.
     ///
     /// - note: Models that operate on bound states share a single instance of a Subscription List per Element.
-    var extendedModels: [Model] {
+    ///
+    /// - note: Model extension is only defined for SIG Models. Currently it is not possible to
+    ///         get relationships between Vendor Models, and for those this method returns an empty list.  
+    var directBaseModels: [Model] {
         // The Model must be on an Element on a Node.
         guard let parentElement = parentElement,
               let node = parentElement.parentNode else {
             return []
         }
         // Get all direct base models of this Model.
-        let directBaseModels = node.elements
+        return node.elements
             // Look only on that and previous Elements.
             // Models can't extend Models on Elements with higher index.
             .filter { $0.index <= parentElement.index }
@@ -225,43 +228,71 @@ public extension Model {
             .uniqued()
             // Get all direct base models of this Model.
             .filter { extendsDirectly($0) }
-        // Return the direct base Models and all models that they extend.
-        return directBaseModels + directBaseModels.flatMap { $0.extendedModels }
     }
     
-    /// A list of ``Model``s extending this Model.
+    /// A list of all ``Model``s extended by this Model, directly or indirectly.
     ///
     /// The *Extend* relationship is explained in Mesh Profile 1.0.1, chapter 2.3.6.
     ///
     /// - note: Models that operate on bound states share a single instance of a Subscription List per Element.
-    var extendingModels: [Model] {
+    ///
+    /// - note: Model extension is only defined for SIG Models. Currently it is not possible to
+    ///         get relationships between Vendor Models, and for those this method returns an empty list.
+    var baseModels: [Model] {
+        let models = directBaseModels
+        // Return the direct base Models and all models that they extend.
+        return models + models.flatMap { $0.baseModels }
+    }
+    
+    /// A list of ``Model``s directly extending this Model.
+    ///
+    /// The *Extend* relationship is explained in Mesh Profile 1.0.1, chapter 2.3.6.
+    ///
+    /// - note: Models that operate on bound states share a single instance of a Subscription List per Element.
+    ///
+    /// - note: Model extension is only defined for SIG Models. Currently it is not possible to
+    ///         get relationships between Vendor Models, and for those this method returns an empty list.
+    var directExtendingModels: [Model] {
         // The Model must be on an Element on a Node.
         guard let parentElement = parentElement,
               let node = parentElement.parentNode else {
             return []
         }
         // Get all models directly extending this Model.
-        let directlyExtendingModels = node.elements
-            // Look only on that and next Elements.
-            // Models can't be extended by Models on Elements with lower index.
+        return node.elements
+        // Look only on that and next Elements.
+        // Models can't be extended by Models on Elements with lower index.
             .filter { $0.index >= parentElement.index }
-            // Get a list of all models.
+        // Get a list of all models.
             .flatMap { $0.models }
-            // Remove duplicates.
+        // Remove duplicates.
             .uniqued()
-            // Get all models directly extending this Model.
+        // Get all models directly extending this Model.
             .filter { $0.extendsDirectly(self) }
+    }
+    
+    /// A list of all ``Model``s extending this Model, directly and indirectly
+    ///
+    /// The *Extend* relationship is explained in Mesh Profile 1.0.1, chapter 2.3.6.
+    ///
+    /// - note: Models that operate on bound states share a single instance of a Subscription List per Element.
+    ///
+    /// - note: Model extension is only defined for SIG Models. Currently it is not possible to
+    ///         get relationships between Vendor Models, and for those this method returns an empty list.
+    var extendingModels: [Model] {
+        let models = directExtendingModels
         // Return the extending Models and all models that they extend.
-        return directlyExtendingModels + directlyExtendingModels.flatMap { $0.extendingModels }
+        return models + models.flatMap { $0.extendingModels }
     }
     
     /// Returns all ``Model`` instances that are in a hierarchy of *Extend* relationship with this Model.
     ///
-    /// The list includes Models that extend the one and those are extended by it, directly or indirectly.
-    ///
     /// The *Extend* relationship is explained in Mesh Profile 1.0.1, chapter 2.3.6.
     ///
-    /// The list does not include the Model on which it is being called.
+    /// - note: Models that operate on bound states share a single instance of a Subscription List per Element.
+    ///
+    /// - note: Model extension is only defined for SIG Models. Currently it is not possible to
+    ///         get relationships between Vendor Models, and for those this method returns an empty list.
     var relatedModels: [Model] {
         // The Model must be on an Element on a Node.
         guard let parentElement = parentElement,
@@ -315,7 +346,7 @@ public extension Model {
               node === otherNode else {
             return false
         }
-        return extendedModels.contains(model)
+        return baseModels.contains(model)
     }
     
     /// Returns whether that Model directly extends the given ``Model``.
