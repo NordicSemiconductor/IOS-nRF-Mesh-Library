@@ -110,27 +110,32 @@ class ModelViewController: ProgressViewController {
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "related" {
+            let destination = segue.destination as! RelatedModelsViewController
+            destination.model = model
+            return
+        }
         let navigationController = segue.destination as? UINavigationController
         navigationController?.presentationController?.delegate = self
         
         switch segue.identifier {
-        case .some("bind"):
+        case "bind":
             let viewController = navigationController?.topViewController as! ModelBindAppKeyViewController
             viewController.model = model
             viewController.delegate = self
-        case .some("heartbeatPublication"):
+        case "heartbeatPublication":
             let viewController = navigationController?.topViewController as! SetHeartbeatPublicationViewController
             viewController.node = model.parentElement!.parentNode!
             viewController.delegate = self
-        case .some("heartbeatSubscription"):
+        case "heartbeatSubscription":
             let viewController = navigationController?.topViewController as! SetHeartbeatSubscriptionViewController
             viewController.node = model.parentElement!.parentNode!
             viewController.delegate = self
-        case .some("publish"):
+        case "publish":
             let viewController = navigationController?.topViewController as! SetPublicationViewController
             viewController.model = model
             viewController.delegate = self
-        case .some("subscribe"):
+        case "subscribe":
             let viewController = navigationController?.topViewController as! SubscribeViewController
             viewController.model = model
             viewController.delegate = self
@@ -219,6 +224,7 @@ class ModelViewController: ProgressViewController {
             cell.textLabel?.text = indexPath.title
             if indexPath.isModelId {
                 cell.detailTextLabel?.text = model.modelIdentifier.asString()
+                cell.accessoryType = .none
             }
             if indexPath.isCompany {
                 if model.isBluetoothSIGAssigned {
@@ -234,6 +240,12 @@ class ModelViewController: ProgressViewController {
                         cell.detailTextLabel?.text = "Unknown Company ID"
                     }
                 }
+                cell.accessoryType = .none
+            }
+            if indexPath.isRelatedModels {
+                let relatedModelsCount = model.relatedModels.count
+                cell.detailTextLabel?.text = "\(relatedModelsCount)"
+                cell.accessoryType = .disclosureIndicator
             }
             return cell
         }
@@ -411,6 +423,9 @@ class ModelViewController: ProgressViewController {
             return false
         }
         
+        if indexPath.isDetailsSection {
+            return indexPath.isRelatedModels
+        }
         if indexPath.isBindingsSection && !model.isConfigurationServer {
             return indexPath.row == model.boundApplicationKeys.count
         }
@@ -433,6 +448,9 @@ class ModelViewController: ProgressViewController {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         
+        if indexPath.isRelatedModels {
+            performSegue(withIdentifier: "related", sender: indexPath)
+        }
         if indexPath.isBindingsSection {
             // Only the "Bind" row is selectable.
             performSegue(withIdentifier: "bind", sender: indexPath)
@@ -963,7 +981,7 @@ private extension IndexPath {
     static let customSection    = 4
     
     static let detailsTitles = [
-        "Model ID", "Company"
+        "Model ID", "Company", "Related Models"
     ]
     
     var title: String? {
@@ -979,6 +997,10 @@ private extension IndexPath {
     
     var isCompany: Bool {
         return isDetailsSection && row == 1
+    }
+    
+    var isRelatedModels: Bool {
+        return isDetailsSection && row == 2
     }
     
     var isDetailsSection: Bool {

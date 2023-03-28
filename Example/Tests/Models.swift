@@ -131,7 +131,7 @@ class Models: XCTestCase {
         let lightLCServer = node.elements[3].model(withSigModelId: .lightLCServerModelId)
         XCTAssertNotNil(lightLCServer)
         
-        let extendedModels = lightLCServer!.extendedModels
+        let extendedModels = lightLCServer!.baseModels
         XCTAssertEqual(extendedModels.count, 5)
         
         let extendingModels = lightLCServer!.extendingModels
@@ -143,7 +143,7 @@ class Models: XCTestCase {
             .model(withSigModelId: .lightLightnessServerModelId)
         XCTAssertNotNil(lightLightnessServer)
         
-        let extendedModels = lightLightnessServer!.extendedModels
+        let extendedModels = lightLightnessServer!.baseModels
         XCTAssertEqual(extendedModels.count, 3)
         
         let extendingModels = lightLightnessServer!.extendingModels
