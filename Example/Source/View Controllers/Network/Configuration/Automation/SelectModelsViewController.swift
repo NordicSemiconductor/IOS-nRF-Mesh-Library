@@ -35,7 +35,19 @@ class SelectModelsViewController: UITableViewController {
     
     // MARK: - Outlets
     
+    @IBOutlet weak var selectAction: UIBarButtonItem!
     @IBOutlet weak var nextButton: UIBarButtonItem!
+    
+    @IBAction func selectActionTapped(_ sender: UIBarButtonItem) {
+        if selectedModels.count == allModels.count {
+            selectedModels.removeAll()
+            selectAction.title = "Select All"
+        } else {
+            selectedModels = allModels
+            selectAction.title = "Select None"
+        }
+        tableView.reloadData()
+    }
     
     // MARK: - Public properties
     
@@ -45,45 +57,59 @@ class SelectModelsViewController: UITableViewController {
     // MARK: - Private properties
     
     private var selectedModels: [Model] = []
+    private var allModels: [Model]!
     
     // MARK: - View Controller
 
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        // If no App Keys are selected, the step can be skipped.
-        nextButton.title = "Skip"
+        allModels = node.elements
+            .flatMap { $0.models }
+            .filter { $0.supportsApplicationKeyBinding }
     }
+    
 
     // MARK: - Table view data source
 
     override func numberOfSections(in tableView: UITableView) -> Int {
-        return node.elements.count + 1 // Info
+        return IndexPath.numberOfFixedSection + node.elements.count
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if section == IndexPath.infoSection {
+        switch section {
+        case IndexPath.infoSection:
             return 0
+        default:
+            return node
+                .elements[section.elementIndex]
+                .models.count
         }
-        return node.elements[section - 1].models.count
     }
     
     override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        if section > 0 {
-            return node.elements[section - 1].name ?? "Element \(section)"
+        switch section {
+        case IndexPath.infoSection:
+            return nil
+        default:
+            return node.elements[section.elementIndex].name ?? "Element \(section)"
         }
-        return nil
     }
     
     override func tableView(_ tableView: UITableView, titleForFooterInSection section: Int) -> String? {
-        if section == IndexPath.infoSection {
-            return "ⓘ Select Models to bind the Application Keys to.\n\nⓘ Skip to only transfer "
+        switch section {
+        case IndexPath.infoSection:
+            return "Select Models to bind the Application Keys to."
+        default:
+            return nil
         }
-        return nil
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let model = node.elements[indexPath.section - 1].models[indexPath.row]
+        let model = node
+            .elements[indexPath.section.elementIndex]
+            .models[indexPath.row]
+        
         let cell = tableView.dequeueReusableCell(withIdentifier: "model", for: indexPath)
         cell.textLabel?.text = model.name
         if model.isBluetoothSIGAssigned {
@@ -102,23 +128,39 @@ class SelectModelsViewController: UITableViewController {
             }
         }
         cell.accessoryType = selectedModels.contains(model) ? .checkmark : .none
+        cell.isEnabled = model.supportsApplicationKeyBinding
         return cell
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         
-        let model = node.elements[indexPath.section - 1].models[indexPath.row]
+        let model = node.elements[indexPath.section.elementIndex].models[indexPath.row]
         if let index = selectedModels.firstIndex(of: model) {
             selectedModels.remove(at: index)
         } else {
             selectedModels.append(model)
         }
         tableView.reloadRows(at: [indexPath], with: .automatic)
+        
+        if selectedModels.count == allModels.count {
+            selectAction.title = "Select None"
+        } else {
+            selectAction.title = "Select All"
+        }
     }
 
 }
 
 private extension IndexPath {
     static let infoSection = 0
+    static let numberOfFixedSection =  Self.infoSection + 1
+}
+
+private extension Int {
+    
+    var elementIndex: Int {
+        return self - IndexPath.numberOfFixedSection
+    }
+    
 }

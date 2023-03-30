@@ -58,8 +58,10 @@ class SelectKeysViewController: UITableViewController {
         missingKeys = allKeys?.notKnownTo(node: node) ?? []
         knownKeys = allKeys?.knownTo(node: node) ?? []
         
-        // If no App Keys are selected, the step can be skipped.
-        nextButton.title = "Skip"
+        if let first = knownKeys.first {
+            selectedKeys.append(first)
+        }
+        nextButton.isEnabled = !selectedKeys.isEmpty
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -91,28 +93,29 @@ class SelectKeysViewController: UITableViewController {
         }
     }
     
-    override func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
-        // This is needed for the footer to be displayed correctly on iOS 16.
-        // Otherwise it's drawn on top of the last row. Looks like iOS bug?
-        return UITableView.automaticDimension
-    }
-    
     override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        if section == IndexPath.knownKeysSection {
+        switch section {
+        case IndexPath.unknownKeysSection:
+            return "New Keys"
+        case IndexPath.knownKeysSection:
             return "Existing Keys"
+        default:
+            return nil
         }
-        return nil
     }
     
     override func tableView(_ tableView: UITableView, titleForFooterInSection section: Int) -> String? {
-        if section == IndexPath.infoSection {
-            return "ⓘ Select Application Keys to bind to Models. Missing keys, together with bound Network Keys, will be sent automatically."
+        switch section {
+        case IndexPath.infoSection:
+            return "Select Application Keys to bind to Models."
+        case IndexPath.unknownKeysSection:
+            return "Selected keys will be added automatically."
+        default:
+            return nil
         }
-        return nil
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        
         if indexPath.isUnknownKeysSection {
             if indexPath.row < missingKeys.count {
                 let cell = tableView.dequeueReusableCell(withIdentifier: "key", for: indexPath)
@@ -184,7 +187,7 @@ class SelectKeysViewController: UITableViewController {
             }
             tableView.reloadRows(at: [indexPath], with: .automatic)
         }
-        nextButton.title = selectedKeys.isEmpty ? "Skip" : "Next"
+        nextButton.isEnabled = !selectedKeys.isEmpty
     }
 
 }
