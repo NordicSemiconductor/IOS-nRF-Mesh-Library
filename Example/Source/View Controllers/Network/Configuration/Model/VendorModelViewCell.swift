@@ -119,6 +119,10 @@ class VendorModelViewCell: ModelViewCell, UITextFieldDelegate {
         return true
     }
     
+    override func supports(_ messageType: MeshMessage.Type) -> Bool {
+        return messageType == UnknownMessage.self
+    }
+    
     override func meshNetworkManager(_ manager: MeshNetworkManager,
                                      didReceiveMessage message: MeshMessage,
                                      sentFrom source: Address, to destination: Address) -> Bool {
@@ -128,10 +132,11 @@ class VendorModelViewCell: ModelViewCell, UITextFieldDelegate {
             responseOpCodeLabel.text = String(format: "0x%02X", (message.opCode >> 16) & 0x3F)
             responseParametersLabel.text = message.parameters != nil && !message.parameters!.isEmpty ?
                 "0x\(message.parameters!.hex)" : "Empty"
+            return false
+            
         default:
-            break
+            fatalError()
         }
-        return false
     }
     
     override func meshNetworkManager(_ manager: MeshNetworkManager,

@@ -98,6 +98,18 @@ class GenericOnOffViewCell: ModelViewCell {
         readButton.isEnabled = isEnabled
     }
     
+    override func startRefreshing() -> Bool {
+        if !model.boundApplicationKeys.isEmpty {
+            readGenericOnOffState()
+            return true
+        }
+        return false
+    }
+    
+    override func supports(_ messageType: MeshMessage.Type) -> Bool {
+        return messageType == GenericOnOffStatus.self
+    }
+    
     override func meshNetworkManager(_ manager: MeshNetworkManager,
                                      didReceiveMessage message: MeshMessage,
                                      sentFrom source: Address, to destination: Address) -> Bool {
@@ -113,11 +125,11 @@ class GenericOnOffViewCell: ModelViewCell {
             } else {
                 targetStatusLabel.text = "N/A"
             }
+            return false
             
         default:
-            break
+            fatalError()
         }
-        return false
     }
     
     override func meshNetworkManager(_ manager: MeshNetworkManager,

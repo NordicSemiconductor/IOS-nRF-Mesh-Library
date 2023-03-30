@@ -146,6 +146,14 @@ class ConfigurationServerViewCell: ModelViewCell {
         return true
     }
     
+    override func supports(_ messageType: MeshMessage.Type) -> Bool {
+        return messageType == ConfigRelayStatus.self
+            || messageType == ConfigNetworkTransmitStatus.self
+            || messageType == ConfigBeaconStatus.self
+            || messageType == ConfigGATTProxyStatus.self
+            || messageType == ConfigFriendStatus.self
+    }
+    
     override func meshNetworkManager(_ manager: MeshNetworkManager,
                                      didReceiveMessage message: MeshMessage,
                                      sentFrom source: Address, to destination: Address) -> Bool {
@@ -192,7 +200,7 @@ class ConfigurationServerViewCell: ModelViewCell {
             return false
             
         default:
-            return delegate?.isRefreshing ?? false
+            fatalError()
         }
     }
 
