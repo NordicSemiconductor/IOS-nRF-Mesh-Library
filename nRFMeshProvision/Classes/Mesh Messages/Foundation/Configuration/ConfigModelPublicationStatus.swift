@@ -55,7 +55,7 @@ public struct ConfigModelPublicationStatus: ConfigAnyModelMessage, ConfigStatusM
     public let status: ConfigMessageStatus
     
     public init(responseTo request: ConfigAnyModelMessage, with publish: Publish?) {
-        self.publish = publish ?? Publish()
+        self.publish = publish ?? Publish.disabled
         self.elementAddress = request.elementAddress
         self.modelIdentifier = request.modelIdentifier
         self.companyIdentifier = request.companyIdentifier
@@ -63,7 +63,7 @@ public struct ConfigModelPublicationStatus: ConfigAnyModelMessage, ConfigStatusM
     }
     
     public init(responseTo request: ConfigAnyModelMessage, with status: ConfigMessageStatus) {
-        self.publish = Publish()
+        self.publish = Publish.disabled
         self.elementAddress = request.elementAddress
         self.modelIdentifier = request.modelIdentifier
         self.companyIdentifier = request.companyIdentifier
