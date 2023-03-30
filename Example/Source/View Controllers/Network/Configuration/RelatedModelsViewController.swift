@@ -172,7 +172,7 @@ class RelatedModelsViewController: UITableViewController {
 
 private extension Array where Element == Model {
     
-    var groupedByElement: [MeshElement: [Model]] {
+    var groupedByElement: [(element: MeshElement, models: [Model])] {
         var map: [MeshElement: [Model]] = [:]
         
         forEach { model in
@@ -184,8 +184,11 @@ private extension Array where Element == Model {
                 }
             }
         }
-        
         return map
+            // Map from a dictionary to an array of touples.
+            .map { ($0, $1) }
+            // Sort by Element index.
+            .sorted { $0.element.index < $1.element.index }
     }
     
 }

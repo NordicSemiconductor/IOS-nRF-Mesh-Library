@@ -260,14 +260,14 @@ public extension Model {
         }
         // Get all models directly extending this Model.
         return node.elements
-        // Look only on that and next Elements.
-        // Models can't be extended by Models on Elements with lower index.
+            // Look only on that and next Elements.
+            // Models can't be extended by Models on Elements with lower index.
             .filter { $0.index >= parentElement.index }
-        // Get a list of all models.
+            // Get a list of all models.
             .flatMap { $0.models }
-        // Remove duplicates.
+            // Remove duplicates.
             .uniqued()
-        // Get all models directly extending this Model.
+            // Get all models directly extending this Model.
             .filter { $0.extendsDirectly(self) }
     }
     
@@ -319,7 +319,12 @@ public extension Model {
             }
         }
         
-        return result
+        return result.sorted {
+            if $0.parentElement!.index != $1.parentElement!.index {
+                return $0.parentElement!.index < $1.parentElement!.index
+            }
+            return $0.modelId < $1.modelId
+        }
     }
     
     /// Returns whether that Model extends the given ``Model`` directly or indirectly.
