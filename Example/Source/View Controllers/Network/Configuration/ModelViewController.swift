@@ -923,12 +923,6 @@ extension ModelViewController: MeshNetworkDelegate {
                 done {
                     if let status = message as? StatusMessage, !status.isSuccess {
                         self.presentAlert(title: "Error", message: status.message)
-                    } else {
-                        if self.model.isConfigurationServer {
-                            self.reloadSections(.configurationServer, with: .automatic)
-                        } else {
-                            self.reloadSections(.custom, with: .automatic)
-                        }
                     }
                     self.refreshControl?.endRefreshing()
                 }
