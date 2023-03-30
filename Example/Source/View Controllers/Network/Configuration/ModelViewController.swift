@@ -584,6 +584,20 @@ class ModelViewController: ProgressViewController {
 
 }
 
+private extension ModelViewController {
+    
+    func reloadSections(_ sections: [Section], with animation: UITableView.RowAnimation) {
+        let indexes = sections.compactMap { self.sections.firstIndex(of: $0) }
+        let indexSet = IndexSet(indexes)
+        tableView.reloadSections(indexSet, with: animation)
+    }
+    
+    func reloadSections(_ section: Section, with animation: UITableView.RowAnimation) {
+        reloadSections([section], with: animation)
+    }
+    
+}
+
 extension ModelViewController: UIAdaptivePresentationControllerDelegate {
     
     func presentationControllerDidDismiss(_ presentationController: UIPresentationController) {
@@ -723,16 +737,6 @@ private extension ModelViewController {
              description: message)
     }
     
-    func reloadSections(_ sections: [Section], with animation: UITableView.RowAnimation) {
-        let indexes = sections.compactMap { self.sections.firstIndex(of: $0) }
-        let indexSet = IndexSet(indexes)
-        tableView.reloadSections(indexSet, with: animation)
-    }
-    
-    func reloadSections(_ section: Section, with animation: UITableView.RowAnimation) {
-        reloadSections([section], with: animation)
-    }
-    
 }
 
 extension ModelViewController: MeshNetworkDelegate {
@@ -771,30 +775,28 @@ extension ModelViewController: MeshNetworkDelegate {
         case let list as ConfigModelAppList:
             if list.isSuccess {
                 reloadSections([.appKeyBinding, .publication], with: .automatic)
-                reloadSubscriptions()
+                if model.supportsModelSubscriptions ?? true {
+                    reloadSubscriptions()
+                    break
+                }
+                if model.supportsModelPublication ?? true {
+                    reloadPublication()
+                    break
+                }
+                // If both Publications and Subscriptions are not supported,
+                // try refreshing custom view.
+                if let cell = modelViewCell, isRefreshing, cell.startRefreshing() {
+                    break
+                }
+                done() {
+                    self.refreshControl?.endRefreshing()
+                }
             } else {
                 done {
                     self.presentAlert(title: "Error", message: list.message)
                     self.refreshControl?.endRefreshing()
                 }
             }
-            
-        case let status as ConfigModelPublicationStatus:
-            // If the Model is being refreshed, the Bindings, Subscriptions
-            // and Publication has been read. If the Model has custom UI,
-            // try refreshing it as well.
-            if let cell = modelViewCell, isRefreshing, cell.startRefreshing() {
-                break
-            }
-            done()
-        
-            if status.isSuccess {
-                reloadSections(.publication, with: .automatic)
-                setEditing(false, animated: true)
-            } else {
-                presentAlert(title: "Error", message: status.message)
-            }
-            refreshControl?.endRefreshing()
             
         case let status as ConfigModelSubscriptionStatus:
             done()
@@ -809,12 +811,39 @@ extension ModelViewController: MeshNetworkDelegate {
         case let list as ConfigModelSubscriptionList:
             if list.isSuccess {
                 reloadSections(.subscriptions, with: .automatic)
-                reloadPublication()
+                if model.supportsModelPublication ?? true {
+                    reloadPublication()
+                    break
+                }
+                // If Publications are not supported, try refreshing custom view.
+                if let cell = modelViewCell, isRefreshing, cell.startRefreshing() {
+                    break
+                }
+                done() {
+                    self.refreshControl?.endRefreshing()
+                }
             } else {
                 done {
                     self.presentAlert(title: "Error", message: list.message)
                     self.refreshControl?.endRefreshing()
                 }
+            }
+            
+        case let status as ConfigModelPublicationStatus:
+            // If the Model is being refreshed, the Bindings, Subscriptions
+            // and Publication has been read. If the Model has custom UI,
+            // try refreshing it as well.
+            if let cell = modelViewCell, isRefreshing, cell.startRefreshing() {
+                break
+            }
+            done() {
+                if status.isSuccess {
+                    self.reloadSections(.publication, with: .automatic)
+                    self.setEditing(false, animated: true)
+                } else {
+                    self.presentAlert(title: "Error", message: status.message)
+                }
+                self.refreshControl?.endRefreshing()
             }
             
         // Node Identity (only for Configuration Server model)
@@ -885,8 +914,11 @@ extension ModelViewController: MeshNetworkDelegate {
             
         // Custom UI
         default:
-            let isMore = modelViewCell?.meshNetworkManager(manager, didReceiveMessage: message,
-                                                           sentFrom: source, to: destination) ?? false
+            guard let cell = modelViewCell, cell.supports(type(of: message)) else {
+                break
+            }
+            let isMore = cell.meshNetworkManager(manager, didReceiveMessage: message,
+                                                 sentFrom: source, to: destination)
             if !isMore {
                 done {
                     if let status = message as? StatusMessage, !status.isSuccess {

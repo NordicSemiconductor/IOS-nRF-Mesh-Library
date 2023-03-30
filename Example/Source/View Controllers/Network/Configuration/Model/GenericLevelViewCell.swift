@@ -131,6 +131,18 @@ class GenericLevelViewCell: ModelViewCell {
         readButton.isEnabled = isEnabled
     }
     
+    override func startRefreshing() -> Bool {
+        if !model.boundApplicationKeys.isEmpty {
+            readGenericLevelState()
+            return true
+        }
+        return false
+    }
+    
+    override func supports(_ messageType: MeshMessage.Type) -> Bool {
+        return messageType == GenericLevelStatus.self
+    }
+    
     override func meshNetworkManager(_ manager: MeshNetworkManager,
                                      didReceiveMessage message: MeshMessage,
                                      sentFrom source: Address, to destination: Address) -> Bool {
@@ -148,11 +160,11 @@ class GenericLevelViewCell: ModelViewCell {
             } else {
                 targetStatusLabel.text = "N/A"
             }
+            return false
             
         default:
-            break
+            fatalError()
         }
-        return false
     }
     
     override func meshNetworkManager(_ manager: MeshNetworkManager,

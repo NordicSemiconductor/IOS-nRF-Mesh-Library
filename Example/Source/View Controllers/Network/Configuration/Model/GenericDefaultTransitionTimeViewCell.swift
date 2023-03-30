@@ -72,17 +72,29 @@ class GenericDefaultTransitionTimeViewCell: ModelViewCell {
         readButton.isEnabled = isEnabled
     }
     
+    override func startRefreshing() -> Bool {
+        if !model.boundApplicationKeys.isEmpty {
+            readGenericDefaultTransitionTimeState()
+            return true
+        }
+        return false
+    }
+    
+    override func supports(_ messageType: MeshMessage.Type) -> Bool {
+        return messageType == GenericDefaultTransitionTimeStatus.self
+    }
+    
     override func meshNetworkManager(_ manager: MeshNetworkManager,
                                      didReceiveMessage message: MeshMessage,
                                      sentFrom source: Address, to destination: Address) -> Bool {
         switch message {
         case let status as GenericDefaultTransitionTimeStatus:
             currentStatusLabel.text = "\(status.transitionTime)"
+            return false
             
         default:
-            break
+            fatalError()
         }
-        return false
     }
     
     override func meshNetworkManager(_ manager: MeshNetworkManager,
