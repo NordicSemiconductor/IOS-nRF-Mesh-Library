@@ -135,7 +135,12 @@ class SelectModelsViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         
-        let model = node.elements[indexPath.section.elementIndex].models[indexPath.row]
+        // Find the Model under the selected row.
+        let model = node
+            .elements[indexPath.section.elementIndex]
+            .models[indexPath.row]
+        
+        // Toggle the selection.
         if let index = selectedModels.firstIndex(of: model) {
             selectedModels.remove(at: index)
         } else {
@@ -143,6 +148,7 @@ class SelectModelsViewController: UITableViewController {
         }
         tableView.reloadRows(at: [indexPath], with: .automatic)
         
+        // If all Models were selected, change the button to Select None.
         if selectedModels.count == allModels.count {
             selectAction.title = "Select None"
         } else {
@@ -153,8 +159,10 @@ class SelectModelsViewController: UITableViewController {
 }
 
 private extension IndexPath {
+    
     static let infoSection = 0
     static let numberOfFixedSection =  Self.infoSection + 1
+    
 }
 
 private extension Int {
