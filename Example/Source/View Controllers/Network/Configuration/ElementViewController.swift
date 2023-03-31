@@ -116,22 +116,8 @@ class ElementViewController: UITableViewController {
         }
         if indexPath.isModelsSection {
             let model = element.models[indexPath.row]
-            
-            if model.isBluetoothSIGAssigned {
-                cell.textLabel?.text = model.name ?? "Unknown Model ID: \(model.modelIdentifier.asString())"
-                cell.detailTextLabel?.text = "Bluetooth SIG"
-            } else {
-                cell.textLabel?.text = "Vendor Model ID: \(model.modelIdentifier.asString())"
-                if let companyId = model.companyIdentifier {
-                    if let companyName = CompanyIdentifier.name(for: companyId) {
-                        cell.detailTextLabel?.text = companyName
-                    } else {
-                        cell.detailTextLabel?.text = "Unknown Company ID (\(companyId.asString()))"
-                    }
-                } else {
-                    cell.detailTextLabel?.text = "Unknown Company ID"
-                }
-            }
+            cell.textLabel?.text = model.modelName
+            cell.detailTextLabel?.text = model.companyName
         }
         return cell
     }

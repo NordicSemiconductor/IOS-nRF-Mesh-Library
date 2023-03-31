@@ -69,6 +69,13 @@ class SelectModelsViewController: UITableViewController {
             .filter { $0.supportsApplicationKeyBinding }
     }
     
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "start" {
+            let destination = segue.destination as! ConfigurationViewController
+            destination.node = node
+            destination.bind(applicationKeys: selectedKeys, to: selectedModels)
+        }
+    }
 
     // MARK: - Table view data source
 
@@ -111,22 +118,8 @@ class SelectModelsViewController: UITableViewController {
             .models[indexPath.row]
         
         let cell = tableView.dequeueReusableCell(withIdentifier: "model", for: indexPath)
-        cell.textLabel?.text = model.name
-        if model.isBluetoothSIGAssigned {
-            cell.textLabel?.text = model.name ?? "Unknown Model ID: \(model.modelIdentifier.asString())"
-            cell.detailTextLabel?.text = "Bluetooth SIG"
-        } else {
-            cell.textLabel?.text = "Vendor Model ID: \(model.modelIdentifier.asString())"
-            if let companyId = model.companyIdentifier {
-                if let companyName = CompanyIdentifier.name(for: companyId) {
-                    cell.detailTextLabel?.text = companyName
-                } else {
-                    cell.detailTextLabel?.text = "Unknown Company ID (\(companyId.asString()))"
-                }
-            } else {
-                cell.detailTextLabel?.text = "Unknown Company ID"
-            }
-        }
+        cell.textLabel?.text = model.modelName
+        cell.detailTextLabel?.text = model.companyName
         cell.accessoryType = selectedModels.contains(model) ? .checkmark : .none
         cell.isEnabled = model.supportsApplicationKeyBinding
         return cell

@@ -89,7 +89,7 @@ class NodeViewController: ProgressViewController {
         } else if node.defaultTTL == nil {
             getTtl()
         } else {
-            configureButton.isEnabled = true
+            configureButton.isEnabled = node.deviceKey != nil
         }
     }
     

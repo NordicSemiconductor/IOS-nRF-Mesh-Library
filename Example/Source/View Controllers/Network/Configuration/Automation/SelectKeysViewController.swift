@@ -68,7 +68,7 @@ class SelectKeysViewController: UITableViewController {
         if segue.identifier == "next" {
             let destination = segue.destination as! SelectModelsViewController
             destination.node = node
-            destination.selectedKeys = selectedKeys
+            destination.selectedKeys = selectedKeys.sorted { $0.index < $1.index }
         }
     }
 
@@ -160,6 +160,8 @@ class SelectKeysViewController: UITableViewController {
                 if let network = manager.meshNetwork,
                    let newKey = try? network.add(applicationKey: .random128BitKey(), name: "App Key \(network.applicationKeys.count + 1)") {
                     _ = manager.save()
+                    selectedKeys.append(newKey
+                    )
                     // Local Provisioner immediately knows all keys.
                     if node.isLocalProvisioner {
                         knownKeys.append(newKey)

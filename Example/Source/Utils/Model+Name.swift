@@ -28,13 +28,32 @@
 * POSSIBILITY OF SUCH DAMAGE.
 */
 
-import Foundation
 import nRFMeshProvision
 
-extension UInt16 {
+extension Model: CustomDebugStringConvertible {
     
-    // Supported vendor models
-    static let simpleOnOffModelId: UInt16 = 0x0001
-    static let nordicSemiconductorCompanyId: UInt16 = 0x0059
+    public var debugDescription: String {
+        return modelName
+    }
+    
+    public var modelName: String {
+        if isBluetoothSIGAssigned {
+            return name ?? "Unknown Model ID: \(modelIdentifier.asString())"
+        } else {
+            return "Vendor Model ID: \(modelIdentifier.asString())"
+        }
+    }
+    
+    public var companyName: String {
+        if isBluetoothSIGAssigned {
+            return "Bluetooth SIG"
+        }
+        if let companyId = companyIdentifier {
+            return CompanyIdentifier.name(for: companyId) ??
+                   "Unknown Company ID (\(companyId.asString()))"
+        } else {
+            return "Unknown Company ID"
+        }
+    }
     
 }

@@ -41,7 +41,7 @@ extension UIView {
     /// Sets an empty view, initially hidden.
     func setEmptyView(title: String, message: String, messageImage: UIImage,
                       action: UIButtonAction? = nil) {
-        var emptyView: UIView! = subviews.first(where: { $0.tag == 100 })
+        var emptyView: UIView! = subviews.first { $0.tag == 100 }
         
         if emptyView == nil {
             emptyView = UIView(frame: CGRect(x: 0, y: 0, width: 300, height: 340))
@@ -121,6 +121,7 @@ extension UIView {
         }
         titleLabel.text = title
         messageLabel.text = message
+        emptyView.isUserInteractionEnabled = action != nil
         
         guard let actionButton = emptyView.subviews.first(where: { $0.tag == .action }) as? UIButton else {
             guard let action = action else { return }
@@ -128,6 +129,7 @@ extension UIView {
             let actionButton = UIButton(type: .custom)
             actionButton.setTitle(action.title, for: .normal)
             actionButton.setTitleColor(.white, for: .normal)
+            actionButton.setTitleColor(.almostWhite, for: .highlighted)
             actionButton.backgroundColor = .dynamicColor(light: .nordicLake, dark: .nordicBlue)
             actionButton.layer.cornerRadius = 4
             actionButton.layer.masksToBounds = true

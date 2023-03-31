@@ -162,12 +162,14 @@
 		A7A59BD92773218C0045A8ED /* GenericPowerOnOffClientDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7A59BD82773218C0045A8ED /* GenericPowerOnOffClientDelegate.swift */; };
 		A7B526A7277B210000F5C60D /* GenericPowerOnOffSetupViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7B526A5277B210000F5C60D /* GenericPowerOnOffSetupViewCell.swift */; };
 		A7B526A8277B210000F5C60D /* GenericPowerOnOffSetup.xib in Resources */ = {isa = PBXBuildFile; fileRef = A7B526A6277B210000F5C60D /* GenericPowerOnOffSetup.xib */; };
-		F085C9FD29CB26B000C2DF89 /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = F085C9FC29CB26B000C2DF89 /* Models.swift */; };
-		F085CA0229D1E0B900C2DF89 /* Subscribe.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F085CA0029D1E0B900C2DF89 /* Subscribe.storyboard */; };
-		F085CA0429D1E2B000C2DF89 /* RelatedModelsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F085CA0329D1E2B000C2DF89 /* RelatedModelsViewController.swift */; };
 		F063C01A29C2774300A445A9 /* SelectKeysViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F063C01929C2774300A445A9 /* SelectKeysViewController.swift */; };
 		F063C01D29C27EAB00A445A9 /* IntroViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F063C01C29C27EAB00A445A9 /* IntroViewController.swift */; };
 		F085C9FB29C496AB00C2DF89 /* SelectModelsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F085C9FA29C496AB00C2DF89 /* SelectModelsViewController.swift */; };
+		F085C9FD29CB26B000C2DF89 /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = F085C9FC29CB26B000C2DF89 /* Models.swift */; };
+		F085CA0229D1E0B900C2DF89 /* Subscribe.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F085CA0029D1E0B900C2DF89 /* Subscribe.storyboard */; };
+		F085CA0429D1E2B000C2DF89 /* RelatedModelsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F085CA0329D1E2B000C2DF89 /* RelatedModelsViewController.swift */; };
+		F085CA0829D70ACB00C2DF89 /* ConfigurationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F085CA0729D70ACB00C2DF89 /* ConfigurationViewController.swift */; };
+		F09DE4C729D771F20073969A /* Model+Name.swift in Sources */ = {isa = PBXBuildFile; fileRef = F09DE4C629D771F20073969A /* Model+Name.swift */; };
 		F0A79242F997F08105E46FF6 /* Pods_nRF_Mesh_Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0DAC1677AA94583D28A5867E /* Pods_nRF_Mesh_Tests.framework */; };
 /* End PBXBuildFile section */
 
@@ -355,12 +357,14 @@
 		C775BBAAAC42952ED786BABF /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
 		E7CB7DCE18F6E38D2240310F /* nRFMeshProvision.podspec */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = nRFMeshProvision.podspec; path = ../nRFMeshProvision.podspec; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		EA733BBB45B56B4142103F0F /* Pods-nRFMeshProvision_Example.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-nRFMeshProvision_Example.debug.xcconfig"; path = "Target Support Files/Pods-nRFMeshProvision_Example/Pods-nRFMeshProvision_Example.debug.xcconfig"; sourceTree = "<group>"; };
-		F085C9FC29CB26B000C2DF89 /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
-		F085CA0129D1E0B900C2DF89 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Subscribe.storyboard; sourceTree = "<group>"; };
-		F085CA0329D1E2B000C2DF89 /* RelatedModelsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RelatedModelsViewController.swift; sourceTree = "<group>"; };
 		F063C01929C2774300A445A9 /* SelectKeysViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectKeysViewController.swift; sourceTree = "<group>"; };
 		F063C01C29C27EAB00A445A9 /* IntroViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntroViewController.swift; sourceTree = "<group>"; };
 		F085C9FA29C496AB00C2DF89 /* SelectModelsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectModelsViewController.swift; sourceTree = "<group>"; };
+		F085C9FC29CB26B000C2DF89 /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
+		F085CA0129D1E0B900C2DF89 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Subscribe.storyboard; sourceTree = "<group>"; };
+		F085CA0329D1E2B000C2DF89 /* RelatedModelsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RelatedModelsViewController.swift; sourceTree = "<group>"; };
+		F085CA0729D70ACB00C2DF89 /* ConfigurationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigurationViewController.swift; sourceTree = "<group>"; };
+		F09DE4C629D771F20073969A /* Model+Name.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "Model+Name.swift"; path = "Utils/Model+Name.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -632,6 +636,7 @@
 			isa = PBXGroup;
 			children = (
 				529B7574224107A5008F1CE7 /* AppInfo.swift */,
+				F09DE4C629D771F20073969A /* Model+Name.swift */,
 				529B758522428A45008F1CE7 /* UIViewController+Alert.swift */,
 				52F6AD7522BA612900F0D7DF /* UIViewController+Toast.swift */,
 				529B7642225222E8008F1CE7 /* Address+String.swift */,
@@ -836,6 +841,7 @@
 				F063C01C29C27EAB00A445A9 /* IntroViewController.swift */,
 				F063C01929C2774300A445A9 /* SelectKeysViewController.swift */,
 				F085C9FA29C496AB00C2DF89 /* SelectModelsViewController.swift */,
+				F085CA0729D70ACB00C2DF89 /* ConfigurationViewController.swift */,
 			);
 			path = Automation;
 			sourceTree = "<group>";
@@ -1136,6 +1142,7 @@
 				52A8EA9624EE704A004C14C7 /* SetHeartbeatSubscriptionViewController.swift in Sources */,
 				52547EFB231800F30002AA7B /* GroupTargetModelsViewController.swift in Sources */,
 				5217D2E0250F522A004FDE79 /* GenericDefaultTransitionTimeServerDelegate.swift in Sources */,
+				F09DE4C729D771F20073969A /* Model+Name.swift in Sources */,
 				52E54CD42343874000478F05 /* GenericOnOffServerCell.swift in Sources */,
 				52547F24232A3F470002AA7B /* RangeCell.swift in Sources */,
 				5231404D230AC4680074325A /* VendorModelViewCell.swift in Sources */,
@@ -1156,6 +1163,7 @@
 				5212152D231545D40059FB3D /* ModelGroupCell.swift in Sources */,
 				52A8EA8D24E6A470004C14C7 /* SetHeartbeatPublicationViewController.swift in Sources */,
 				A7A59BD7277225E70045A8ED /* GenericPowerOnOffViewCell.swift in Sources */,
+				F085CA0829D70ACB00C2DF89 /* ConfigurationViewController.swift in Sources */,
 				52547F26232A3F470002AA7B /* ProvisionersViewController.swift in Sources */,
 				52518B3322E0B43200A1FD1E /* GroupCell.swift in Sources */,
 				529B7570223FF1AE008F1CE7 /* SettingsViewController.swift in Sources */,
