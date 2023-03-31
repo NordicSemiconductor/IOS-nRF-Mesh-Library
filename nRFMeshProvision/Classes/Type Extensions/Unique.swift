@@ -28,36 +28,17 @@
 * POSSIBILITY OF SUCH DAMAGE.
 */
 
-import Foundation
-
-public extension Model {
+internal extension Array where Element: Hashable {
     
-    /// List of Application Keys bound to this Model.
-    ///
-    /// The list will not contain unknown Application Keys bound
-    /// to this Model, possibly bound by other Provisioner.
-    var boundApplicationKeys: [ApplicationKey] {
-        return parentElement?.parentNode?.applicationKeys
-            .filter { bind.contains($0.index) } ?? []
-    }
-    
-    /// Whether the given Application Key is bound to this Model.
-    ///
-    /// - parameter applicationKey: The key to check.
-    /// - returns: `True` if the key is bound to this Model,
-    ///            otherwise `false`.
-    func isBoundTo(_ applicationKey: ApplicationKey) -> Bool {
-        return bind.contains(applicationKey.index)
-    }
-    
-    /// Whether the model supports App Key binding.
-    ///
-    /// Models that do not support App Key binding use Device Key on access layer security.
-    var supportsApplicationKeyBinding: Bool {
-        if isConfigurationServer || isConfigurationClient {
-            return false
+    func uniqued() -> [Element] {
+        var seen: Set<Element> = []
+        var result: [Element] = []
+        for element in self {
+            if seen.insert(element).inserted {
+                result.append(element)
+            }
         }
-        return true
+        return result
     }
-    
+
 }

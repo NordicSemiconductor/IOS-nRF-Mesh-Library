@@ -69,16 +69,21 @@ class GenericPowerOnOffSetupViewCell: ModelViewCell {
         sendButton.isEnabled = isEnabled
     }
     
+    override func supports(_ messageType: MeshMessage.Type) -> Bool {
+        return messageType == GenericOnPowerUpStatus.self
+    }
+    
     override func meshNetworkManager(_ manager: MeshNetworkManager,
                                      didReceiveMessage message: MeshMessage,
                                      sentFrom source: Address, to destination: Address) -> Bool {
         switch message {
         case let status as GenericOnPowerUpStatus:
             acknowledgedStateLabel.text = status.state.debugDescription
+            return false
+            
         default:
-            break
+            fatalError()
         }
-        return false
     }
     
     override func meshNetworkManager(_ manager: MeshNetworkManager,

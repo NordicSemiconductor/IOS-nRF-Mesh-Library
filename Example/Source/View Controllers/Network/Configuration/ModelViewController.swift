@@ -31,6 +31,22 @@
 import UIKit
 import nRFMeshProvision
 
+private enum Section: String {
+    case details = "Model Information"
+    case configurationServer = "Relay Count & Interval"
+    case appKeyBinding = "Bound Application Keys"
+    case publication = "Publication"
+    case subscriptions = "Subscriptions"
+    case heartbeatPublication = "Heartbeat Publication"
+    case heartbeatSubscription = "Heartbeat Subscriptions"
+    case sensors = "Sensor Values"
+    case custom = "Control"
+    
+    var title: String {
+        return rawValue
+    }
+}
+
 class ModelViewController: ProgressViewController {
 
     // MARK: - Properties
@@ -54,19 +70,47 @@ class ModelViewController: ProgressViewController {
     /// received.
     private var identityIndex = 0
     
+    private var sections: [Section] = []
+    
     // MARK: - View Controller
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         title = model.name ?? "Model"
-        if model.isConfigurationServer {
-            nodeIdentityStates = model.parentElement?.parentNode?.networkKeys.map { ($0, nil) } ?? []
+        
+        // Details section is always visible.
+        sections.append(.details)
+        // Add additional sections, based on the Model.
+        if model.supportsApplicationKeyBinding {
+            sections.append(.appKeyBinding)
         }
+        if model.supportsModelPublication ?? true {
+            sections.append(.publication)
+        }
+        if model.supportsModelSubscriptions ?? true {
+            sections.append(.subscriptions)
+        }
+        if model.isSensorServer {
+            sections.append(.sensors)
+        }
+        if model.hasCustomUI {
+            sections.append(.custom)
+        }
+        if model.isConfigurationServer {
+            sections.append(.configurationServer)
+            sections.append(.heartbeatPublication)
+            sections.append(.heartbeatSubscription)
+            
+            // Pull to Refresh will refresh states of the Node Identities per Network Key.
+            nodeIdentityStates = model.parentElement?.parentNode?.networkKeys
+                .map { networkKey in (networkKey, nil) } ?? []
+        }
+        // Configuration Client has nothing to Edit.
         if !model.isConfigurationClient {
             navigationItem.rightBarButtonItem = editButtonItem
         }
-        
+        // Registed Nibs for Custom UI.
         tableView.register(UINib(nibName: "ConfigurationServer", bundle: nil),
                            forCellReuseIdentifier: UInt16.configurationServerModelId.hex)
         tableView.register(UINib(nibName: "GenericOnOff", bundle: nil),
@@ -110,27 +154,32 @@ class ModelViewController: ProgressViewController {
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "related" {
+            let destination = segue.destination as! RelatedModelsViewController
+            destination.model = model
+            return
+        }
         let navigationController = segue.destination as? UINavigationController
         navigationController?.presentationController?.delegate = self
         
         switch segue.identifier {
-        case .some("bind"):
+        case "bind":
             let viewController = navigationController?.topViewController as! ModelBindAppKeyViewController
             viewController.model = model
             viewController.delegate = self
-        case .some("heartbeatPublication"):
+        case "heartbeatPublication":
             let viewController = navigationController?.topViewController as! SetHeartbeatPublicationViewController
             viewController.node = model.parentElement!.parentNode!
             viewController.delegate = self
-        case .some("heartbeatSubscription"):
+        case "heartbeatSubscription":
             let viewController = navigationController?.topViewController as! SetHeartbeatSubscriptionViewController
             viewController.node = model.parentElement!.parentNode!
             viewController.delegate = self
-        case .some("publish"):
+        case "publish":
             let viewController = navigationController?.topViewController as! SetPublicationViewController
             viewController.model = model
             viewController.delegate = self
-        case .some("subscribe"):
+        case "subscribe":
             let viewController = navigationController?.topViewController as! SubscribeViewController
             viewController.model = model
             viewController.delegate = self
@@ -142,85 +191,57 @@ class ModelViewController: ProgressViewController {
     // MARK: - Table View Controller
     
     override func numberOfSections(in tableView: UITableView) -> Int {
-        if model.isConfigurationServer {
-            // Details, Configuration Server Cell, Heartbeat Publication, Heartbeat Subscription
-            return 4
-        }
-        if model.isConfigurationClient {
-            // Details only
-            return 1
-        }
-        if model.hasCustomUI {
-            // Details, Bind App Key, Publish, Subscribe, Custom UI
-            return 5
-        }
-        // Details, Bind App Key, Publish, Subscribe
-        return 4
+        return sections.count
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        let section = sections[section]
         switch section {
-        case IndexPath.detailsSection:
-            return IndexPath.detailsTitles.count
-        case IndexPath.configurationServerSection where model.isConfigurationServer:
-            return 1 /* Config Server Cell with all other settings and the Node Identity header */
-                 + nodeIdentityStates.count /* Network Keys for Node Identity view */
-        case IndexPath.bindingsSection:
+        case .details:
+            return 3
+        case .configurationServer:
+            return 1 + nodeIdentityStates.count /* Network Keys for Node Identity view */
+        case .appKeyBinding:
             return model.boundApplicationKeys.count + 1 // Add Action.
-        case IndexPath.publishSection where model.isConfigurationServer:
+        case .heartbeatPublication:
             if let _ = model.parentElement?.parentNode?.heartbeatPublication {
                 return 4 // Destination, Remaining Count, Features, Refresh Action.
             }
             return 1 // Set Publication Action.
-        case IndexPath.publishSection:
+        case .publication:
             return 1 // Set Publication Action or the Publication.
-        case IndexPath.subscribeSection where model.isConfigurationServer:
+        case .heartbeatSubscription:
             if let _ = model.parentElement?.parentNode?.heartbeatSubscription {
                 return 6 // Destination, Remaining Period, Count, Min Hops, Max Hops, Refresh Action.
             }
             return 1 // Set Subscription Action.
-        case IndexPath.subscribeSection:
+        case .subscriptions:
             return model.subscriptions.count + 1 // Add Action.
-        case IndexPath.customSection where model.isSensorServer:
+        case .sensors:
             return (sensorValues?.count ?? 0) + 1 // Get Action.
-        default:
-            // If we went that far, there has to be a supported UI for the Model.
+        case .custom:
             return 1
         }
     }
     
     override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        switch section {
-        case IndexPath.configurationServerSection where model.isConfigurationServer:
-            return "Relay Count & Interval"
-        case IndexPath.bindingsSection:
-            return "Bound Application Keys"
-        case IndexPath.publishSection where model.isConfigurationServer:
-            return "Heartbeat Publication"
-        case IndexPath.subscribeSection where model.isConfigurationServer:
-            return "Heartbeat Subscription"
-        case IndexPath.publishSection:
-            return "Publication"
-        case IndexPath.subscribeSection:
-            return "Subscriptions"
-        case IndexPath.customSection where model.isSensorServer:
-            return "Sensor Values"
-        default:
-            return "Controls"
-        }
+        return sections[section].title
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let localProvisioner = MeshNetworkManager.instance.meshNetwork?.localProvisioner
         
-        // All models have the Details section.
-        if indexPath.isDetailsSection {
+        let section = sections[indexPath.section]
+        switch section {
+        case .details:
             let cell = tableView.dequeueReusableCell(withIdentifier: "normal", for: indexPath)
-            cell.textLabel?.text = indexPath.title
-            if indexPath.isModelId {
+            switch indexPath.row {
+            case 0: // Model ID
+                cell.textLabel?.text = "Model ID"
                 cell.detailTextLabel?.text = model.modelIdentifier.asString()
-            }
-            if indexPath.isCompany {
+                cell.accessoryType = .none
+            case 1: // Company
+                cell.textLabel?.text = "Company"
                 if model.isBluetoothSIGAssigned {
                     cell.detailTextLabel?.text = "Bluetooth SIG"
                 } else {
@@ -234,12 +255,16 @@ class ModelViewController: ProgressViewController {
                         cell.detailTextLabel?.text = "Unknown Company ID"
                     }
                 }
+                cell.accessoryType = .none
+            case 2: // Related Models
+                cell.textLabel?.text = "Related Models"
+                cell.detailTextLabel?.text = "\(model.relatedModels.count)"
+                cell.accessoryType = .disclosureIndicator
+            default:
+                fatalError()
             }
             return cell
-        }
-        // The second section may either be App Key Binding (for all Models, except Configuration Server)
-        // or Configuration Server Cell.
-        if indexPath.isBindingsSection && !model.isConfigurationServer {
+        case .appKeyBinding:
             guard indexPath.row < model.boundApplicationKeys.count else {
                 let cell = tableView.dequeueReusableCell(withIdentifier: "action", for: indexPath)
                 cell.textLabel?.text = "Bind Application Key"
@@ -252,157 +277,156 @@ class ModelViewController: ProgressViewController {
             cell.textLabel?.text = applicationKey.name
             cell.detailTextLabel?.text = "Bound to \(applicationKey.boundNetworkKey.name)"
             return cell
-        }
-        // For Configuration Server, the first row is a ConfigurationServerViewCell.
-        // The last item in this cell is the header for Node Identity, which requires listing all
-        // Network Keys. Let's list them here:
-        if indexPath.isBindingsSection && model.isConfigurationServer && indexPath.row > 0 {
-            let cell = tableView.dequeueReusableCell(withIdentifier: "switch", for: indexPath) as! SwitchCell
-            let identity = nodeIdentityStates[indexPath.row - 1]
-            cell.title.text = identity.key.name
-            cell.switch.isOn = identity.state == .running
-            cell.switch.isEnabled = identity.state != nil && identity.state != .notSupported
-            cell.title.isEnabled = identity.state != nil && identity.state != .notSupported
-            cell.delegate = { [weak self] newState in
-                self?.identityIndex = indexPath.row - 1
-                self?.setNodeIdentityStatus(for: identity.key, enable: newState)
+        case .configurationServer:
+            // For Configuration Server, the first row is a ConfigurationServerViewCell.
+            // The last item in this cell is the header for Node Identity,
+            // which requires listing all Network Keys. Let's list them here:
+            if indexPath.row > 0 {
+                let cell = tableView.dequeueReusableCell(withIdentifier: "switch", for: indexPath) as! SwitchCell
+                let identity = nodeIdentityStates[indexPath.row - 1]
+                cell.title.text = identity.key.name
+                cell.switch.isOn = identity.state == .running
+                cell.switch.isEnabled = identity.state != nil && identity.state != .notSupported
+                cell.title.isEnabled = identity.state != nil && identity.state != .notSupported
+                cell.delegate = { [weak self] newState in
+                    self?.identityIndex = indexPath.row - 1
+                    self?.setNodeIdentityStatus(for: identity.key, enable: newState)
+                }
+                return cell
             }
+            // The first row of the section is rendered as a Custom section.
+            fallthrough
+        case .custom:
+            // A custom cell for the Model.
+            let identifier = model.isBluetoothSIGAssigned ? model.modelIdentifier.hex : "vendor"
+            let cell = tableView.dequeueReusableCell(withIdentifier: identifier, for: indexPath) as! ModelViewCell
+            cell.delegate = self
+            cell.model    = model
+            modelViewCell = cell
             return cell
-        }
-        // Third section is the Publication or Heartbeat Publication section (in case of Configuration Server)
-        if indexPath.isPublishSection {
-            if model.isConfigurationServer {
-                guard let publication = model.parentElement?.parentNode?.heartbeatPublication else {
-                    let cell = tableView.dequeueReusableCell(withIdentifier: "action", for: indexPath)
-                    cell.textLabel?.text = "Set Publication"
-                    cell.textLabel?.isEnabled = localProvisioner?.hasConfigurationCapabilities ?? false
-                    return cell
-                }
-                if indexPath.isPublishDestination {
-                    let cell = tableView.dequeueReusableCell(withIdentifier: "heartbeatPublication", for: indexPath) as! HeartbeatPublicationCell
-                    cell.heartbeatPublication = publication
-                    return cell
-                }
-                switch indexPath.row {
-                case 1: // Count
-                    let cell = tableView.dequeueReusableCell(withIdentifier: "normal", for: indexPath)
-                    cell.textLabel?.text = "Remaining Count"
-                    cell.detailTextLabel?.text = heartbeatPublicationCount.map { "\($0)" } ?? "Unknown"
-                    return cell
-                case 2: // Count
-                    let cell = tableView.dequeueReusableCell(withIdentifier: "normal", for: indexPath)
-                    cell.textLabel?.text = "Features"
-                    cell.detailTextLabel?.text = heartbeatPublicationFeatures.map { "\($0)" } ?? "Unknown"
-                    return cell
-                case 3: // Refresh action
-                    let cell = tableView.dequeueReusableCell(withIdentifier: "rightAction", for: indexPath) as! RightActionCell
-                    cell.textLabel?.text = "Refresh"
-                    cell.isEnabled = localProvisioner?.hasConfigurationCapabilities ?? false
-                    cell.delegate = {
-                        self.reloadHeartbeatPublication()
-                    }
-                    return cell
-                default:
-                    fatalError("Too many rows in Heartbeat publication section: \(indexPath)")
-                }
-            } else {
-                guard let publish = model.publish else {
-                    let cell = tableView.dequeueReusableCell(withIdentifier: "action", for: indexPath)
-                    cell.textLabel?.text = "Set Publication"
-                    cell.textLabel?.isEnabled = localProvisioner?.hasConfigurationCapabilities ?? false
-                    return cell
-                }
-                let cell = tableView.dequeueReusableCell(withIdentifier: "destination", for: indexPath) as! PublicationCell
-                cell.publish = publish
+        case .heartbeatPublication:
+            guard let publication = model.parentElement?.parentNode?.heartbeatPublication else {
+                let cell = tableView.dequeueReusableCell(withIdentifier: "action", for: indexPath)
+                cell.textLabel?.text = "Set Publication"
+                cell.textLabel?.isEnabled = localProvisioner?.hasConfigurationCapabilities ?? false
                 return cell
             }
-        }
-        // Fourth section is the Subscribe or Heartbeat Subscription section (in case of Configuration Server)
-        if indexPath.isSubscribeSection {
-            if model.isConfigurationServer {
-                guard let subscription = model.parentElement?.parentNode?.heartbeatSubscription else {
-                    let cell = tableView.dequeueReusableCell(withIdentifier: "action", for: indexPath)
-                    cell.textLabel?.text = "Subscribe"
-                    cell.textLabel?.isEnabled = localProvisioner?.hasConfigurationCapabilities ?? false
-                    return cell
+            switch indexPath.row {
+            case 0: // Publication
+                let cell = tableView.dequeueReusableCell(withIdentifier: "heartbeatPublication", for: indexPath) as! HeartbeatPublicationCell
+                cell.heartbeatPublication = publication
+                return cell
+            case 1: // Count
+                let cell = tableView.dequeueReusableCell(withIdentifier: "normal", for: indexPath)
+                cell.textLabel?.text = "Remaining Count"
+                cell.detailTextLabel?.text = heartbeatPublicationCount.map { "\($0)" } ?? "Unknown"
+                cell.accessoryType = .none
+                return cell
+            case 2: // Count
+                let cell = tableView.dequeueReusableCell(withIdentifier: "normal", for: indexPath)
+                cell.textLabel?.text = "Features"
+                cell.detailTextLabel?.text = heartbeatPublicationFeatures.map { "\($0)" } ?? "Unknown"
+                cell.accessoryType = .none
+                return cell
+            case 3: // Refresh action
+                let cell = tableView.dequeueReusableCell(withIdentifier: "rightAction", for: indexPath) as! RightActionCell
+                cell.textLabel?.text = "Refresh"
+                cell.isEnabled = localProvisioner?.hasConfigurationCapabilities ?? false
+                cell.delegate = {
+                    self.reloadHeartbeatPublication()
                 }
-                if indexPath.isSubscribeDestination {
-                    let cell = tableView.dequeueReusableCell(withIdentifier: "heartbeatSubscription", for: indexPath) as! HeartbeatSubscriptionCell
-                    cell.subscription = subscription
-                    return cell
-                }
-                switch indexPath.row {
-                case 1: // Remaining Period
-                    let cell = tableView.dequeueReusableCell(withIdentifier: "normal", for: indexPath)
-                    cell.textLabel?.text = "Remaining Period"
-                    if let period = heartbeatSubscriptionStatus?.period {
-                        if case .range(let range) = period {
-                            cell.detailTextLabel?.text = range.asTime()
-                        } else {
-                            cell.detailTextLabel?.text = "\(period)"
-                        }
+                return cell
+            default:
+                fatalError()
+            }
+        case .heartbeatSubscription:
+            guard let subscription = model.parentElement?.parentNode?.heartbeatSubscription else {
+                let cell = tableView.dequeueReusableCell(withIdentifier: "action", for: indexPath)
+                cell.textLabel?.text = "Subscribe"
+                cell.textLabel?.isEnabled = localProvisioner?.hasConfigurationCapabilities ?? false
+                return cell
+            }
+            switch indexPath.row {
+            case 0: // Subscription
+                let cell = tableView.dequeueReusableCell(withIdentifier: "heartbeatSubscription", for: indexPath) as! HeartbeatSubscriptionCell
+                cell.subscription = subscription
+                return cell
+            case 1: // Remaining Period
+                let cell = tableView.dequeueReusableCell(withIdentifier: "normal", for: indexPath)
+                cell.textLabel?.text = "Remaining Period"
+                if let period = heartbeatSubscriptionStatus?.period {
+                    if case .range(let range) = period {
+                        cell.detailTextLabel?.text = range.asTime()
                     } else {
-                        cell.detailTextLabel?.text = "Unknown"
+                        cell.detailTextLabel?.text = "\(period)"
                     }
-                    return cell
-                case 2: // Count
-                    let cell = tableView.dequeueReusableCell(withIdentifier: "normal", for: indexPath)
-                    cell.textLabel?.text = "Count"
-                    cell.detailTextLabel?.text = heartbeatSubscriptionStatus.map { "\($0.count)" } ?? "Unknown"
-                    return cell
-                case 3: // Min Hops
-                    let cell = tableView.dequeueReusableCell(withIdentifier: "normal", for: indexPath)
-                    cell.textLabel?.text = "Min Hops"
-                    cell.detailTextLabel?.text = heartbeatSubscriptionStatus.map { "\($0.minHops)" } ?? "Unknown"
-                    return cell
-                case 4: // Max Hops
-                    let cell = tableView.dequeueReusableCell(withIdentifier: "normal", for: indexPath)
-                    cell.textLabel?.text = "Max Hops"
-                    cell.detailTextLabel?.text = heartbeatSubscriptionStatus.map { "\($0.maxHops)" } ?? "Unknown"
-                    return cell
-                case 5: // Refresh action
-                    let cell = tableView.dequeueReusableCell(withIdentifier: "rightAction", for: indexPath) as! RightActionCell
-                    cell.textLabel?.text = "Refresh"
-                    cell.isEnabled = localProvisioner?.hasConfigurationCapabilities ?? false
-                    cell.delegate = {
-                        self.reloadHeartbeatSubscription()
-                    }
-                    return cell
-                default:
-                    fatalError("Too many rows in Heartbeat publication section: \(indexPath)")
+                } else {
+                    cell.detailTextLabel?.text = "Unknown"
                 }
-            } else {
-                guard indexPath.row < model.subscriptions.count else {
-                    let cell = tableView.dequeueReusableCell(withIdentifier: "action", for: indexPath)
-                    cell.textLabel?.text = "Subscribe"
-                    cell.textLabel?.isEnabled = localProvisioner?.hasConfigurationCapabilities ?? false
-                    return cell
+                cell.accessoryType = .none
+                return cell
+            case 2: // Count
+                let cell = tableView.dequeueReusableCell(withIdentifier: "normal", for: indexPath)
+                cell.textLabel?.text = "Count"
+                cell.detailTextLabel?.text = heartbeatSubscriptionStatus.map { "\($0.count)" } ?? "Unknown"
+                cell.accessoryType = .none
+                return cell
+            case 3: // Min Hops
+                let cell = tableView.dequeueReusableCell(withIdentifier: "normal", for: indexPath)
+                cell.textLabel?.text = "Min Hops"
+                cell.detailTextLabel?.text = heartbeatSubscriptionStatus.map { "\($0.minHops)" } ?? "Unknown"
+                cell.accessoryType = .none
+                return cell
+            case 4: // Max Hops
+                let cell = tableView.dequeueReusableCell(withIdentifier: "normal", for: indexPath)
+                cell.textLabel?.text = "Max Hops"
+                cell.detailTextLabel?.text = heartbeatSubscriptionStatus.map { "\($0.maxHops)" } ?? "Unknown"
+                cell.accessoryType = .none
+                return cell
+            case 5: // Refresh action
+                let cell = tableView.dequeueReusableCell(withIdentifier: "rightAction", for: indexPath) as! RightActionCell
+                cell.textLabel?.text = "Refresh"
+                cell.isEnabled = localProvisioner?.hasConfigurationCapabilities ?? false
+                cell.delegate = {
+                    self.reloadHeartbeatSubscription()
                 }
-                let cell = tableView.dequeueReusableCell(withIdentifier: "group", for: indexPath)
-                let group = model.subscriptions[indexPath.row]
-                cell.textLabel?.text = group.name
-                cell.detailTextLabel?.text = nil
+                return cell
+            default:
+                fatalError("Too many rows in Heartbeat publication section: \(indexPath)")
+            }
+        case .publication:
+            guard let publish = model.publish else {
+                let cell = tableView.dequeueReusableCell(withIdentifier: "action", for: indexPath)
+                cell.textLabel?.text = "Set Publication"
+                cell.textLabel?.isEnabled = localProvisioner?.hasConfigurationCapabilities ?? false
                 return cell
             }
-        }
-        if indexPath.isCustomSection && model.isSensorServer {
-            guard let sensorValues = sensorValues, indexPath.row < sensorValues.count else {
+            let cell = tableView.dequeueReusableCell(withIdentifier: "destination", for: indexPath) as! PublicationCell
+            cell.publish = publish
+            return cell
+        case .subscriptions:
+            guard indexPath.row < model.subscriptions.count else {
+                let cell = tableView.dequeueReusableCell(withIdentifier: "action", for: indexPath)
+                cell.textLabel?.text = "Subscribe"
+                cell.textLabel?.isEnabled = localProvisioner?.hasConfigurationCapabilities ?? false
+                return cell
+            }
+            let cell = tableView.dequeueReusableCell(withIdentifier: "group", for: indexPath)
+            let group = model.subscriptions[indexPath.row]
+            cell.textLabel?.text = group.name
+            cell.detailTextLabel?.text = nil
+            return cell
+        case .sensors:
+            guard indexPath.row < sensorValues!.count else {
                 let cell = tableView.dequeueReusableCell(withIdentifier: "action", for: indexPath)
                 cell.textLabel?.text = "Get"
                 cell.textLabel?.isEnabled = localProvisioner?.hasConfigurationCapabilities ?? false
                 return cell
             }
             let cell = tableView.dequeueReusableCell(withIdentifier: "value", for: indexPath) as! SensorValueCell
-            cell.value = sensorValues[indexPath.row]
+            cell.value = sensorValues![indexPath.row]
             return cell
         }
-        // A custom cell for the Model.
-        let identifier = model.isBluetoothSIGAssigned ? model.modelIdentifier.hex : "vendor"
-        let cell = tableView.dequeueReusableCell(withIdentifier: identifier, for: indexPath) as! ModelViewCell
-        cell.delegate = self
-        cell.model    = model
-        modelViewCell = cell
-        return cell
     }
     
     override func tableView(_ tableView: UITableView, shouldHighlightRowAt indexPath: IndexPath) -> Bool {
@@ -411,84 +435,79 @@ class ModelViewController: ProgressViewController {
             return false
         }
         
-        if indexPath.isBindingsSection && !model.isConfigurationServer {
+        let section = sections[indexPath.section]
+        switch section {
+        case .details:
+            return indexPath.row == 2 // Related Models
+        case .appKeyBinding:
             return indexPath.row == model.boundApplicationKeys.count
-        }
-        if indexPath.isPublishSection {
+        case .heartbeatPublication, .publication:
             return indexPath.row == 0
-        }
-        if indexPath.isSubscribeSection {
-            if model.isConfigurationServer {
-                return indexPath.row == 0
-            } else {
-                return indexPath.row == model.subscriptions.count
-            }
-        }
-        if indexPath.isCustomSection && model.isSensorServer {
+        case .heartbeatSubscription:
+            return indexPath.row == 0
+        case .subscriptions:
+            return indexPath.row == model.subscriptions.count
+        case .sensors:
             return indexPath.row == sensorValues?.count ?? 0
+        case .custom, .configurationServer:
+            return false
         }
-        return false
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         
-        if indexPath.isBindingsSection {
-            // Only the "Bind" row is selectable.
+        let section = sections[indexPath.section]
+        switch section {
+        case .details:
+            performSegue(withIdentifier: "related", sender: indexPath)
+        case .appKeyBinding:
             performSegue(withIdentifier: "bind", sender: indexPath)
-        }
-        if indexPath.isPublishSection {
-            if model.isConfigurationServer {
-                // Only the first row is selectable.
-                performSegue(withIdentifier: "heartbeatPublication", sender: indexPath)
-            } else {
-                guard !model.boundApplicationKeys.isEmpty else {
-                    presentAlert(title: "Application Key required",
-                                 message: "Bind at least one Application Key before setting the publication.")
-                    return
-                }
-                performSegue(withIdentifier: "publish", sender: indexPath)
+        case .heartbeatPublication:
+            performSegue(withIdentifier: "heartbeatPublication", sender: indexPath)
+        case .publication:
+            guard !model.boundApplicationKeys.isEmpty else {
+                presentAlert(title: "Application Key required",
+                             message: "Bind at least one Application Key before setting the publication.")
+                return
             }
-        }
-        if indexPath.isSubscribeSection {
-            if model.isConfigurationServer {
-                performSegue(withIdentifier: "heartbeatSubscription", sender: indexPath)
-            } else {
-                // Only the "Subscribe" row is selectable.
-                performSegue(withIdentifier: "subscribe", sender: indexPath)
-            }
-        }
-        if indexPath.isCustomSection && model.isSensorServer {
+            performSegue(withIdentifier: "publish", sender: indexPath)
+        case .heartbeatSubscription:
+            performSegue(withIdentifier: "heartbeatSubscription", sender: indexPath)
+        case .subscriptions:
+            performSegue(withIdentifier: "subscribe", sender: indexPath)
+        case .sensors:
             readSensorValues()
+        default:
+            break
         }
     }
     
     override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-        if indexPath.isBindingsSection {
+        let section = sections[indexPath.section]
+        switch section {
+        case .appKeyBinding:
             return indexPath.row < model.boundApplicationKeys.count
+        case .heartbeatPublication:
+            let publication = model.parentElement?.parentNode?.heartbeatPublication
+            return indexPath.row == 0 && publication != nil
+        case .publication:
+            return indexPath.row == 0 && model.publish != nil
+        case .heartbeatSubscription:
+            let subscription = model.parentElement?.parentNode?.heartbeatSubscription
+            return indexPath.row == 0 && subscription != nil
+        case .subscriptions:
+            return indexPath.row < model.subscriptions.count &&
+                   model.subscriptions[indexPath.row].address.address != .allNodes
+        default:
+            return false
         }
-        if indexPath.isPublishSection {
-            if model.isConfigurationServer {
-                let publication = model.parentElement?.parentNode?.heartbeatPublication
-                return indexPath.row == 0 && publication != nil
-            } else {
-                return indexPath.row == 0 && model.publish != nil
-            }
-        }
-        if indexPath.isSubscribeSection {
-            if model.isConfigurationServer {
-                let subscription = model.parentElement?.parentNode?.heartbeatSubscription
-                return indexPath.row == 0 && subscription != nil
-            } else {
-                return indexPath.row < model.subscriptions.count &&
-                       model.subscriptions[indexPath.row].address.address != .allNodes
-            }
-        }
-        return false
     }
     
     override func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
-        if indexPath.isBindingsSection {
+        let section = sections[indexPath.section]
+        switch section {
+        case .appKeyBinding:
             return [UITableViewRowAction(style: .destructive, title: "Unbind", handler: { _, indexPath in
                 guard indexPath.row < self.model.boundApplicationKeys.count else {
                         return
@@ -539,30 +558,44 @@ class ModelViewController: ProgressViewController {
                     self.unbindApplicationKey(applicationKey)
                 }
             })]
+        default:
+            return nil
         }
-        return nil
     }
     
     override func tableView(_ tableView: UITableView,
                             commit editingStyle: UITableViewCell.EditingStyle,
                             forRowAt indexPath: IndexPath) {
-        if indexPath.isPublishSection {
-            if model.isConfigurationServer {
-                removeHeartbeatPublication()
-            } else {
-                removePublication()
-            }
-        }
-        if indexPath.isSubscribeSection {
-            if model.isConfigurationServer {
-                removeHeartbeatSubscription()
-            } else {
-                let group = model.subscriptions[indexPath.row]
-                unsubscribe(from: group)
-            }
+        let section = sections[indexPath.section]
+        switch section {
+        case .heartbeatPublication:
+            removeHeartbeatPublication()
+        case .publication:
+            removePublication()
+        case .heartbeatSubscription:
+            removeHeartbeatSubscription()
+        case .subscriptions:
+            let group = model.subscriptions[indexPath.row]
+            unsubscribe(from: group)
+        default:
+            break
         }
     }
 
+}
+
+private extension ModelViewController {
+    
+    func reloadSections(_ sections: [Section], with animation: UITableView.RowAnimation) {
+        let indexes = sections.compactMap { self.sections.firstIndex(of: $0) }
+        let indexSet = IndexSet(indexes)
+        tableView.reloadSections(indexSet, with: animation)
+    }
+    
+    func reloadSections(_ section: Section, with animation: UITableView.RowAnimation) {
+        reloadSections([section], with: animation)
+    }
+    
 }
 
 extension ModelViewController: UIAdaptivePresentationControllerDelegate {
@@ -733,10 +766,67 @@ extension ModelViewController: MeshNetworkDelegate {
             done()
             
             if status.isSuccess {
-                tableView.reloadSections(.bindingsAndPublication, with: .automatic)
+                reloadSections([.appKeyBinding, .publication], with: .automatic)
                 setEditing(false, animated: true)
             } else {
                 presentAlert(title: "Error", message: status.message)
+            }
+            
+        case let list as ConfigModelAppList:
+            if list.isSuccess {
+                reloadSections([.appKeyBinding, .publication], with: .automatic)
+                if model.supportsModelSubscriptions ?? true {
+                    reloadSubscriptions()
+                    break
+                }
+                if model.supportsModelPublication ?? true {
+                    reloadPublication()
+                    break
+                }
+                // If both Publications and Subscriptions are not supported,
+                // try refreshing custom view.
+                if let cell = modelViewCell, isRefreshing, cell.startRefreshing() {
+                    break
+                }
+                done() {
+                    self.refreshControl?.endRefreshing()
+                }
+            } else {
+                done {
+                    self.presentAlert(title: "Error", message: list.message)
+                    self.refreshControl?.endRefreshing()
+                }
+            }
+            
+        case let status as ConfigModelSubscriptionStatus:
+            done()
+            
+            if status.isSuccess {
+                reloadSections(.subscriptions, with: .automatic)
+                setEditing(false, animated: true)
+            } else {
+                presentAlert(title: "Error", message: status.message)
+            }
+            
+        case let list as ConfigModelSubscriptionList:
+            if list.isSuccess {
+                reloadSections(.subscriptions, with: .automatic)
+                if model.supportsModelPublication ?? true {
+                    reloadPublication()
+                    break
+                }
+                // If Publications are not supported, try refreshing custom view.
+                if let cell = modelViewCell, isRefreshing, cell.startRefreshing() {
+                    break
+                }
+                done() {
+                    self.refreshControl?.endRefreshing()
+                }
+            } else {
+                done {
+                    self.presentAlert(title: "Error", message: list.message)
+                    self.refreshControl?.endRefreshing()
+                }
             }
             
         case let status as ConfigModelPublicationStatus:
@@ -746,46 +836,14 @@ extension ModelViewController: MeshNetworkDelegate {
             if let cell = modelViewCell, isRefreshing, cell.startRefreshing() {
                 break
             }
-            done()
-        
-            if status.isSuccess {
-                tableView.reloadSections(.publication, with: .automatic)
-                setEditing(false, animated: true)
-            } else {
-                presentAlert(title: "Error", message: status.message)
-            }
-            refreshControl?.endRefreshing()
-            
-        case let status as ConfigModelSubscriptionStatus:
-            done()
-            
-            if status.isSuccess {
-                tableView.reloadSections(.subscriptions, with: .automatic)
-                setEditing(false, animated: true)
-            } else {
-                presentAlert(title: "Error", message: status.message)
-            }
-            
-        case let list as ConfigModelAppList:
-            if list.isSuccess {
-                tableView.reloadSections(.bindingsAndPublication, with: .automatic)
-                reloadSubscriptions()
-            } else {
-                done {
-                    self.presentAlert(title: "Error", message: list.message)
-                    self.refreshControl?.endRefreshing()
+            done() {
+                if status.isSuccess {
+                    self.reloadSections(.publication, with: .automatic)
+                    self.setEditing(false, animated: true)
+                } else {
+                    self.presentAlert(title: "Error", message: status.message)
                 }
-            }
-            
-        case let list as ConfigModelSubscriptionList:
-            if list.isSuccess {
-                tableView.reloadSections(.subscriptions, with: .automatic)
-                reloadPublication()
-            } else {
-                done {
-                    self.presentAlert(title: "Error", message: list.message)
-                    self.refreshControl?.endRefreshing()
-                }
+                self.refreshControl?.endRefreshing()
             }
             
         // Node Identity (only for Configuration Server model)
@@ -807,7 +865,7 @@ extension ModelViewController: MeshNetworkDelegate {
             } else {
                 done {
                     self.nodeIdentityStates[self.identityIndex].state = .notSupported
-                    self.tableView.reloadSections(.bindings, with: .automatic)
+                    self.reloadSections(.configurationServer, with: .automatic)
                     self.presentAlert(title: "Error", message: status.message)
                     self.refreshControl?.endRefreshing()
                 }
@@ -818,7 +876,7 @@ extension ModelViewController: MeshNetworkDelegate {
             if status.isSuccess {
                 heartbeatPublicationCount = status.count
                 heartbeatPublicationFeatures = status.features
-                tableView.reloadSections(.publication, with: .automatic)
+                reloadSections(.heartbeatPublication, with: .automatic)
                 if isRefreshing {
                     reloadHeartbeatSubscription()
                 } else {
@@ -834,7 +892,7 @@ extension ModelViewController: MeshNetworkDelegate {
         case let status as ConfigHeartbeatSubscriptionStatus:
             if status.isSuccess {
                 heartbeatSubscriptionStatus = status
-                tableView.reloadSections(.subscriptions, with: .automatic)
+                reloadSections(.heartbeatSubscription, with: .automatic)
                 if isRefreshing {
                     _ = modelViewCell?.startRefreshing()
                 } else {
@@ -851,21 +909,20 @@ extension ModelViewController: MeshNetworkDelegate {
         case let status as SensorStatus:
             sensorValues = status.values
             done {
-                self.tableView.reloadSections(.custom, with: .automatic)
+                self.reloadSections(.sensors, with: .automatic)
             }
             
         // Custom UI
         default:
-            let isMore = modelViewCell?.meshNetworkManager(manager, didReceiveMessage: message,
-                                                           sentFrom: source, to: destination) ?? false
+            guard let cell = modelViewCell, cell.supports(type(of: message)) else {
+                break
+            }
+            let isMore = cell.meshNetworkManager(manager, didReceiveMessage: message,
+                                                 sentFrom: source, to: destination)
             if !isMore {
                 done {
                     if let status = message as? StatusMessage, !status.isSuccess {
                         self.presentAlert(title: "Error", message: status.message)
-                    } else {
-                        if self.model.isConfigurationServer {
-                            self.tableView.reloadSections(.configurationServer, with: .automatic)
-                        }
                     }
                     self.refreshControl?.endRefreshing()
                 }
@@ -909,7 +966,8 @@ extension ModelViewController: MeshNetworkDelegate {
     
 }
 
-extension ModelViewController: BindAppKeyDelegate, PublicationDelegate,
+extension ModelViewController: BindAppKeyDelegate,
+                               PublicationDelegate, HeartbeatPublicationDelegate,
                                SubscriptionDelegate, HeartbeatSubscriptionDelegate {
                                    
     func presentNodeApplicationKeys() {
@@ -921,19 +979,23 @@ extension ModelViewController: BindAppKeyDelegate, PublicationDelegate,
     }
     
     func keyBound() {
-        tableView.reloadSections(.bindings, with: .automatic)
+        reloadSections(.appKeyBinding, with: .automatic)
     }
     
     func publicationChanged() {
-        tableView.reloadSections(.publication, with: .automatic)
+        reloadSections(.publication, with: .automatic)
+    }
+    
+    func heartbeatPublicationChanged() {
+        reloadSections(.heartbeatPublication, with: .automatic)
     }
     
     func subscriptionAdded() {
-        tableView.reloadSections(.subscriptions, with: .automatic)
+        reloadSections(.subscriptions, with: .automatic)
     }
     
     func heartbeatSubscriptionSet() {
-        tableView.reloadSections(.subscriptions, with: .automatic)
+        reloadSections(.heartbeatSubscription, with: .automatic)
     }
     
 }
@@ -951,78 +1013,6 @@ private extension Model {
     var isSensorServer: Bool {
         return isBluetoothSIGAssigned && modelIdentifier == .sensorServerModelId
     }
-    
-}
-
-private extension IndexPath {
-    static let detailsSection   = 0
-    static let bindingsSection  = 1
-    static let configurationServerSection = 1
-    static let publishSection   = 2
-    static let subscribeSection = 3
-    static let customSection    = 4
-    
-    static let detailsTitles = [
-        "Model ID", "Company"
-    ]
-    
-    var title: String? {
-        if isDetailsSection {
-            return IndexPath.detailsTitles[row]
-        }
-        return nil
-    }
-    
-    var isModelId: Bool {
-        return isDetailsSection && row == 0
-    }
-    
-    var isCompany: Bool {
-        return isDetailsSection && row == 1
-    }
-    
-    var isDetailsSection: Bool {
-        return section == IndexPath.detailsSection
-    }
-    
-    var isBindingsSection: Bool {
-        return section == IndexPath.bindingsSection
-    }
-    
-    var isConfigurationServer: Bool {
-        return section == IndexPath.configurationServerSection
-    }
-    
-    var isPublishSection: Bool {
-        return section == IndexPath.publishSection
-    }
-    
-    var isPublishDestination: Bool {
-        return isPublishSection && row == 0
-    }
-    
-    var isSubscribeSection: Bool {
-        return section == IndexPath.subscribeSection
-    }
-    
-    var isSubscribeDestination: Bool {
-        return isSubscribeSection && row == 0
-    }
-    
-    var isCustomSection: Bool {
-        return section == IndexPath.customSection
-    }
-    
-}
-
-private extension IndexSet {
-    
-    static let bindings = IndexSet(integer: IndexPath.bindingsSection)
-    static let publication = IndexSet(integer: IndexPath.publishSection)
-    static let subscriptions = IndexSet(integer: IndexPath.subscribeSection)
-    static let bindingsAndPublication = IndexSet([IndexPath.bindingsSection, IndexPath.publishSection])
-    static let configurationServer = IndexSet(integer: IndexPath.configurationServerSection)
-    static let custom = IndexSet(integer: IndexPath.customSection)
     
 }
 

@@ -211,18 +211,6 @@ public class Model: Codable {
     }
 }
 
-internal extension UInt16 {
-    
-    static let configurationServerModelId: UInt16 = 0x0000
-    static let configurationClientModelId: UInt16 = 0x0001
-    static let healthServerModelId: UInt16 = 0x0002
-    static let healthClientModelId: UInt16 = 0x0003
-    static let sceneServerModelId: UInt16 = 0x1203
-    static let sceneSetupServerModelId: UInt16 = 0x1204
-    static let sceneClientModelId: UInt16 = 0x1205
-    
-}
-
 internal extension Model {
     
     var isConfigurationServer: Bool { return modelId == UInt32(UInt16.configurationServerModelId) }
@@ -339,11 +327,11 @@ internal extension Model {
 extension Model: Equatable, Hashable {
     
     public static func == (lhs: Model, rhs: Model) -> Bool {
-        return lhs.modelId == rhs.modelId
+        return lhs.modelId == rhs.modelId && lhs.parentElement == rhs.parentElement
     }
     
     public static func != (lhs: Model, rhs: Model) -> Bool {
-        return lhs.modelId != rhs.modelId
+        return lhs.modelId != rhs.modelId || lhs.parentElement != rhs.parentElement
     }
     
     public func hash(into hasher: inout Hasher) {

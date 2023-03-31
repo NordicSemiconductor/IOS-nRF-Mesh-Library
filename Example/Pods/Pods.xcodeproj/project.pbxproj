@@ -472,6 +472,7 @@
 		EDC9CE9A4C3F5931540CFD4D58598481 /* String Conversion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 692D1EC047A1DE0CF09A65F37F570AA4 /* String Conversion.swift */; };
 		EE2E8C944B6BC296F7697C50DDF2669E /* Provisioner.swift in Sources */ = {isa = PBXBuildFile; fileRef = FEC37D4B2AC79FD72299452C85669A2D /* Provisioner.swift */; };
 		EFEC7D3012E608336D9BD3563DFCEFE9 /* ConfigRelayStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F0EBFE12B307EBE72B9B69D6D55F7CC /* ConfigRelayStatus.swift */; };
+		F085C9FF29CC748100C2DF89 /* Unique.swift in Sources */ = {isa = PBXBuildFile; fileRef = F085C9FE29CC748100C2DF89 /* Unique.swift */; };
 		F0C3660B28D8FF910017F22E /* Documentation.docc in Sources */ = {isa = PBXBuildFile; fileRef = F0C3660A28D8FF910017F22E /* Documentation.docc */; };
 		F0FD71263E69F31C310C2594A8402E86 /* ConfigModelAppStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D31946D8C70F98A3B12CCC0F147376C /* ConfigModelAppStatus.swift */; };
 		F3469F1B9BE6D193EA4A4C5D9E52F10D /* MeshConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D7142EB111A7480EB29540FBF16494D /* MeshConstants.swift */; };
@@ -1017,6 +1018,7 @@
 		EE85A051003338DEEFC47D56271705C3 /* MeshNetwork+Scenes.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "MeshNetwork+Scenes.swift"; sourceTree = "<group>"; };
 		EE97BE77EA799B9150105B1D58257380 /* SceneRegisterGet.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SceneRegisterGet.swift; sourceTree = "<group>"; };
 		F00BDBCD0D3166FDBFF9DA168EC7EE71 /* ConfigKeyRefreshPhaseSet.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ConfigKeyRefreshPhaseSet.swift; sourceTree = "<group>"; };
+		F085C9FE29CC748100C2DF89 /* Unique.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Unique.swift; sourceTree = "<group>"; };
 		F0C3660A28D8FF910017F22E /* Documentation.docc */ = {isa = PBXFileReference; lastKnownFileType = folder.documentationcatalog; path = Documentation.docc; sourceTree = "<group>"; };
 		F141ABC372814AD7C3B42351BCC012F0 /* Data.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Data.swift; sourceTree = "<group>"; };
 		F1B92E125B44E1EBDBC14DC54EC22AF5 /* NetworkLayer.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = NetworkLayer.swift; sourceTree = "<group>"; };
@@ -1890,6 +1892,7 @@
 			isa = PBXGroup;
 			children = (
 				E4E77EBBA8A0B719CCD42C6A401CC8FF /* ClosedRange.swift */,
+				F085C9FE29CC748100C2DF89 /* Unique.swift */,
 				F141ABC372814AD7C3B42351BCC012F0 /* Data.swift */,
 				DB94A37AAAC21871A5BF2DFE75F01E64 /* Data+Hex.swift */,
 				3F25FDE6F08DB17150FE99E03B63E5EC /* Data+Keys.swift */,
@@ -2356,6 +2359,7 @@
 				6C8331341F87B3DF78B6FA1D658559A7 /* GenericOnPowerUpSetUnacknowledged.swift in Sources */,
 				6E831781ABE7247F7F2C18E72F981F37 /* GenericOnPowerUpStatus.swift in Sources */,
 				56FDB25A923E91295EF015CB90553653 /* GenericPowerDefaultSet.swift in Sources */,
+				F085C9FF29CC748100C2DF89 /* Unique.swift in Sources */,
 				85F2019A0117BF1F546496F6CBAC2E3B /* GenericPowerDefaultSetUnacknowledged.swift in Sources */,
 				B540DD4A8ECFAAA3C01623E493FCAD6C /* GenericPowerDefaultStatus.swift in Sources */,
 				7D0A3D875B01A1D62672F7097023077A /* GenericPowerDefautGet.swift in Sources */,

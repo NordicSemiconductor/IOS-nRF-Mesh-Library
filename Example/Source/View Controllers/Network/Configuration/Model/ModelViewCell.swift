@@ -79,6 +79,12 @@ class ModelViewCell: UITableViewCell {
         return false
     }
     
+    /// This method should return whether the given type is supported by the model cell
+    /// implementation.
+    func supports(_ messageType: MeshMessage.Type) -> Bool {
+        return false
+    }
+    
     /// A callback called whenever a Mesh Message has been received
     /// from the mesh network.
     ///

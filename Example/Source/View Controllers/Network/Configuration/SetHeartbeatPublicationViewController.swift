@@ -31,6 +31,11 @@
 import UIKit
 import nRFMeshProvision
 
+protocol HeartbeatPublicationDelegate {
+    /// This method is called when the publication has changed.
+    func heartbeatPublicationChanged()
+}
+
 class SetHeartbeatPublicationViewController: ProgressViewController {
     
     // MARK: - Outlets & Actions
@@ -70,7 +75,7 @@ class SetHeartbeatPublicationViewController: ProgressViewController {
     // MARK: - Properties
     
     var node: Node!
-    var delegate: PublicationDelegate?
+    var delegate: HeartbeatPublicationDelegate?
     
     private var destination: Address?
     private var networkKey: NetworkKey?
@@ -301,7 +306,7 @@ extension SetHeartbeatPublicationViewController: MeshNetworkDelegate {
             done {
                 if status.status == .success {
                     self.dismiss(animated: true)
-                    self.delegate?.publicationChanged()
+                    self.delegate?.heartbeatPublicationChanged()
                 } else {
                     self.presentAlert(title: "Error", message: status.message)
                 }
