@@ -143,6 +143,9 @@
                                         </constraints>
                                         <state key="normal" title="Button"/>
                                         <buttonConfiguration key="configuration" style="plain" title="Automatic"/>
+                                        <connections>
+                                            <segue destination="qtl-iA-aYC" kind="show" identifier="auto" id="SBa-zf-ZwU"/>
+                                        </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="PTn-XU-iSR">
                                         <rect key="frame" x="107" y="394.5" width="200" height="35"/>
@@ -2570,6 +2573,7 @@
     <inferredMetricsTieBreakers>
         <segue reference="mtt-Te-nBR"/>
         <segue reference="ThO-5P-90Y"/>
+        <segue reference="SBa-zf-ZwU"/>
     </inferredMetricsTieBreakers>
     <color key="tintColor" red="0.0" green="0.46666666670000001" blue="0.7843137255" alpha="1" colorSpace="calibratedRGB"/>
     <resources>

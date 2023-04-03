@@ -75,6 +75,10 @@ class IntroViewController: UIViewController {
     // MARK: - Navigation
 
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "auto" {
+            let destination = segue.destination as! ConfigurationViewController
+            destination.configure(node)
+        }
         if segue.identifier == "bind" {
             let destination = segue.destination as! SelectKeysViewController
             destination.node = node

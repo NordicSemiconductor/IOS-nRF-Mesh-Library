@@ -72,7 +72,6 @@ class SelectModelsViewController: UITableViewController {
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "start" {
             let destination = segue.destination as! ConfigurationViewController
-            destination.node = node
             destination.bind(applicationKeys: selectedKeys, to: selectedModels)
         }
     }
