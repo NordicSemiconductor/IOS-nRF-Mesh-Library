@@ -65,7 +65,7 @@ public struct ConfigModelSubscriptionVirtualAddressAdd: AcknowledgedConfigMessag
     }
     
     public init?(parameters: Data) {
-        guard parameters.count == 20 || parameters.count == 24 else {
+        guard parameters.count == 20 || parameters.count == 22 else {
             return nil
         }
         elementAddress = parameters.read(fromOffset: 0)
