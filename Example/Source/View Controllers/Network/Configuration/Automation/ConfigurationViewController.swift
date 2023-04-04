@@ -109,7 +109,35 @@ private enum Task {
     }
 }
 
-class ConfigurationViewController: UITableViewController, UIAdaptivePresentationControllerDelegate {
+class ConfigurationViewController: UIViewController,
+                                   UIAdaptivePresentationControllerDelegate {
+    
+    // MARK: - Outlets
+    
+    @IBOutlet weak var doneButton: UIButton!
+    @IBOutlet weak var detailsButton: UIButton!
+    @IBOutlet weak var cancelButton: UIButton!
+    @IBOutlet weak var statusView: UILabel!
+    @IBOutlet weak var progress: MulticolorProgressView!
+    
+    @IBOutlet weak var remainingTime: UILabel!
+    @IBOutlet weak var time: UILabel!
+    @IBAction func doneTapped(_ sender: UIButton) {
+        navigationController?.dismiss(animated: true)
+    }
+    @IBAction func cancelTapped(_ sender: UIButton) {
+        if let handler = handler {
+            inProgress = false
+            cancelButton.titleLabel?.text = "Cancelling..."
+            cancelButton.isEnabled = false
+            handler.cancel()
+            return
+        }
+        navigationController?.dismiss(animated: true)
+    }
+    
+    @IBAction func detailsTapped(_ sender: UIButton) {
+    }
     
     // MARK: - Public properties
     
@@ -166,6 +194,7 @@ class ConfigurationViewController: UITableViewController, UIAdaptivePresentation
                     }
                 }
             }
+        
     }
     
     func bind(applicationKeys: [ApplicationKey], to models: [Model]) {
@@ -204,17 +233,32 @@ class ConfigurationViewController: UITableViewController, UIAdaptivePresentation
     
     private var node: Node!
     private var tasks: [Task] = []
+    private var handler: MessageHandle?
     private var inProgress: Bool = false
     private var current: Int = -1
     private var responseOpCode: UInt32?
+    private var failed: Int = 0
+    private var timer: Timer!
+    private var startDate: Date!
+    
+    private var timeFormatter: DateFormatter!
     
     // MARK: - View Controller
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
         // Make the dialog modal (non-dismissable).
         navigationController?.presentationController?.delegate = self
+        
+        statusView.text = ""
+        progress.setMax(tasks.count)
+        
+        makeBlue(doneButton)
+        makeOrange(cancelButton)
+        
+        timeFormatter = DateFormatter()
+        timeFormatter.dateFormat = "mm:ss"
     }
     
     func presentationControllerShouldDismiss(_ presentationController: UIPresentationController) -> Bool {
@@ -222,77 +266,79 @@ class ConfigurationViewController: UITableViewController, UIAdaptivePresentation
         return !inProgress
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        doneButton.isHidden = !tasks.isEmpty
+        cancelButton.isHidden = tasks.isEmpty
+        progress.isHidden = tasks.isEmpty
+        time.isHidden = tasks.isEmpty
+        remainingTime.isHidden = tasks.isEmpty
+        
+        if tasks.isEmpty {
+            statusView.text = "The node is already configured."
+        }
+    }
+    
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
-        if tasks.isEmpty {
-            presentAlert(title: "Completed", message: "The node is already configured.") { _ in
-                self.navigationController?.dismiss(animated: true)
+        if !tasks.isEmpty {
+            startDate = Date()
+            timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] timer in
+                guard let self = self else {
+                    timer.invalidate()
+                    return
+                }
+                if !self.inProgress {
+                    timer.invalidate()
+                    return
+                }
+                let elapsedTime = Date().timeIntervalSince(self.startDate)
+                let minutes = floor(elapsedTime / 60)
+                let seconds = floor(elapsedTime - minutes * 60)
+                
+                let avgTime = elapsedTime / Double(self.current)
+                let eta = Double(self.tasks.count) * avgTime - elapsedTime
+                let remainingMinutes = floor(eta / 60)
+                let remainingSeconds = floor(eta - remainingMinutes * 60)
+                
+                DispatchQueue.main.async {
+                    self.time.text = String(format: "%02d:%02d", Int(minutes), Int(seconds))
+                    self.remainingTime.text = String(format: "-%02d:%02d", Int(remainingMinutes), Int(remainingSeconds))
+                }
             }
+            MeshNetworkManager.instance.delegate = self
+            inProgress = true
+            executeNext()
         }
         
-        MeshNetworkManager.instance.delegate = self
-        executeNext()
     }
-
-    // MARK: - Table view data source
-
-    override func numberOfSections(in tableView: UITableView) -> Int {
-        return 1
-    }
-
-    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return tasks.count
-    }
-
-    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let task = tasks[indexPath.row]
-        
-        let cell = tableView.dequeueReusableCell(withIdentifier: "task", for: indexPath)
-        cell.textLabel?.text = "\(indexPath.row + 1). \(task.title)"
-        
-        if indexPath.row < current {
-            cell.accessoryType = .checkmark
-            cell.accessoryView = nil
-        } else if indexPath.row > current || !inProgress {
-            cell.accessoryType = .none
-            cell.accessoryView = nil
-        } else {
-            let i = UIActivityIndicatorView(style: .gray)
-            i.startAnimating()
-            cell.accessoryView = i
-        }
-        
-        return cell
-    }
-
+    
 }
 
 private extension ConfigurationViewController {
     
     func executeNext() {
-        inProgress = true
         current += 1
         
-        // Refresh table.
-        DispatchQueue.main.async {
-            // Refresh previous and new rows.
-            var rows: [IndexPath] = []
-            if self.current > 0 {
-                rows.append(IndexPath(row: self.current - 1, section: 0))
+        if !tasks.isEmpty {
+            DispatchQueue.main.async { [weak self] in
+                guard let self = self else { return }
+                if self.current < self.tasks.count {
+                    self.statusView.text = self.tasks[self.current].title
+                }
             }
-            if self.current < self.tasks.count {
-                rows.append(IndexPath(row: self.current, section: 0))
-            }
-            self.tableView.reloadRows(at: rows, with: .automatic)
         }
         
         // Are we done?
-        if current >= tasks.count {
+        if current >= tasks.count || !inProgress {
+            handler = nil
             inProgress = false
             
-            presentAlert(title: "Completed", message: "\(tasks.count) tasks completed successfully.") { _ in
-                self.navigationController?.dismiss(animated: true)
+            DispatchQueue.main.async {
+                self.statusView.text = "\(self.current) tasks completed (\(self.failed) failed)."
+                self.doneButton.isHidden = false
+                self.cancelButton.isHidden = true
+                self.remainingTime.isHidden = true
             }
             return
         }
@@ -304,12 +350,31 @@ private extension ConfigurationViewController {
         
         let manager = MeshNetworkManager.instance
         do {
-            try manager.send(message, to: node.primaryUnicastAddress)
+            handler = try manager.send(message, to: node.primaryUnicastAddress)
         } catch {
-            presentAlert(title: "Error", message: error.localizedDescription) { _ in
-                self.navigationController?.dismiss(animated: true)
+            DispatchQueue.main.async {
+                self.statusView.text = error.localizedDescription
+                self.doneButton.isHidden = false
+                self.cancelButton.isHidden = true
+                self.remainingTime.isHidden = true
             }
         }
+    }
+    
+    func makeBlue(_ button: UIButton) {
+        button.setTitleColor(.white, for: .normal)
+        button.setTitleColor(.almostWhite, for: .highlighted)
+        button.backgroundColor = .dynamicColor(light: .nordicLake, dark: .nordicBlue)
+        button.layer.cornerRadius = 4
+        button.layer.masksToBounds = true
+    }
+    
+    func makeOrange(_ button: UIButton) {
+        button.setTitleColor(.white, for: .normal)
+        button.setTitleColor(.almostWhite, for: .highlighted)
+        button.backgroundColor = .nordicFall
+        button.layer.cornerRadius = 4
+        button.layer.masksToBounds = true
     }
     
 }
@@ -321,6 +386,17 @@ extension ConfigurationViewController: MeshNetworkDelegate {
                             sentFrom source: Address,
                             to destination: Address) {
         if current >= 0 && current < tasks.count && message.opCode == responseOpCode {
+            if let status = message as? ConfigStatusMessage,
+               !status.isSuccess {
+                failed += 1
+                DispatchQueue.main.async {
+                    self.progress.addFail()
+                }
+            } else {
+                DispatchQueue.main.async {
+                    self.progress.addSuccess()
+                }
+            }
             executeNext()
         }
     }
@@ -331,10 +407,10 @@ extension ConfigurationViewController: MeshNetworkDelegate {
                             to destination: Address,
                             error: Error) {
         inProgress = false
-        tableView.reloadRows(at: [IndexPath(row: current, section: 0)], with: .automatic)
-        presentAlert(title: "Error", message: error.localizedDescription) { _ in
-            self.navigationController?.dismiss(animated: true)
-        }
+        statusView.text = error.localizedDescription
+        doneButton.isHidden = false
+        cancelButton.isHidden = true
+        remainingTime.isHidden = true
     }
     
 }

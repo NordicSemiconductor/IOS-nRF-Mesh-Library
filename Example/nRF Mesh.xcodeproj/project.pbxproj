@@ -170,6 +170,7 @@
 		F085CA0429D1E2B000C2DF89 /* RelatedModelsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F085CA0329D1E2B000C2DF89 /* RelatedModelsViewController.swift */; };
 		F085CA0829D70ACB00C2DF89 /* ConfigurationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F085CA0729D70ACB00C2DF89 /* ConfigurationViewController.swift */; };
 		F09DE4C729D771F20073969A /* Model+Name.swift in Sources */ = {isa = PBXBuildFile; fileRef = F09DE4C629D771F20073969A /* Model+Name.swift */; };
+		F09DE4CA29DC68900073969A /* MulticolorProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F09DE4C929DC68900073969A /* MulticolorProgressView.swift */; };
 		F0A79242F997F08105E46FF6 /* Pods_nRF_Mesh_Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0DAC1677AA94583D28A5867E /* Pods_nRF_Mesh_Tests.framework */; };
 /* End PBXBuildFile section */
 
@@ -365,6 +366,7 @@
 		F085CA0329D1E2B000C2DF89 /* RelatedModelsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RelatedModelsViewController.swift; sourceTree = "<group>"; };
 		F085CA0729D70ACB00C2DF89 /* ConfigurationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigurationViewController.swift; sourceTree = "<group>"; };
 		F09DE4C629D771F20073969A /* Model+Name.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "Model+Name.swift"; path = "Utils/Model+Name.swift"; sourceTree = "<group>"; };
+		F09DE4C929DC68900073969A /* MulticolorProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MulticolorProgressView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -838,12 +840,21 @@
 		F063C01B29C27E8500A445A9 /* Automation */ = {
 			isa = PBXGroup;
 			children = (
+				F09DE4C829DC68620073969A /* Views */,
 				F063C01C29C27EAB00A445A9 /* IntroViewController.swift */,
 				F063C01929C2774300A445A9 /* SelectKeysViewController.swift */,
 				F085C9FA29C496AB00C2DF89 /* SelectModelsViewController.swift */,
 				F085CA0729D70ACB00C2DF89 /* ConfigurationViewController.swift */,
 			);
 			path = Automation;
+			sourceTree = "<group>";
+		};
+		F09DE4C829DC68620073969A /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				F09DE4C929DC68900073969A /* MulticolorProgressView.swift */,
+			);
+			path = Views;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -1161,6 +1172,7 @@
 				A7B526A7277B210000F5C60D /* GenericPowerOnOffSetupViewCell.swift in Sources */,
 				F063C01A29C2774300A445A9 /* SelectKeysViewController.swift in Sources */,
 				5212152D231545D40059FB3D /* ModelGroupCell.swift in Sources */,
+				F09DE4CA29DC68900073969A /* MulticolorProgressView.swift in Sources */,
 				52A8EA8D24E6A470004C14C7 /* SetHeartbeatPublicationViewController.swift in Sources */,
 				A7A59BD7277225E70045A8ED /* GenericPowerOnOffViewCell.swift in Sources */,
 				F085CA0829D70ACB00C2DF89 /* ConfigurationViewController.swift in Sources */,
