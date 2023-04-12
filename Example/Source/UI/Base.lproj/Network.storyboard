@@ -450,13 +450,22 @@
                                     </tableViewCell>
                                 </prototypes>
                             </tableView>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="sI2-Ws-GYN" userLabel="Separator">
+                                <rect key="frame" x="0.0" y="209" width="414" height="1"/>
+                                <color key="backgroundColor" systemColor="separatorColor"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="1" id="TCD-bM-r1I"/>
+                                </constraints>
+                            </view>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="FCf-Qv-SUp"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
                             <constraint firstItem="CoU-ib-8MC" firstAttribute="leading" secondItem="FCf-Qv-SUp" secondAttribute="leading" constant="16" id="6H9-St-DLi"/>
                             <constraint firstItem="FCf-Qv-SUp" firstAttribute="trailing" secondItem="CoU-ib-8MC" secondAttribute="trailing" constant="16" id="9pN-uH-4Ll"/>
+                            <constraint firstItem="sI2-Ws-GYN" firstAttribute="leading" secondItem="D9M-4s-Szl" secondAttribute="leading" id="A5z-qR-fCJ"/>
                             <constraint firstItem="YDf-pN-CWf" firstAttribute="trailing" secondItem="CoU-ib-8MC" secondAttribute="trailing" id="CMr-BI-1g6"/>
+                            <constraint firstItem="sI2-Ws-GYN" firstAttribute="trailing" secondItem="FCf-Qv-SUp" secondAttribute="trailing" id="KbY-u4-XbT"/>
                             <constraint firstItem="oAZ-cx-5Gc" firstAttribute="top" secondItem="CoU-ib-8MC" secondAttribute="bottom" constant="48" id="L0q-bS-brb"/>
                             <constraint firstItem="oAZ-cx-5Gc" firstAttribute="leading" secondItem="FCf-Qv-SUp" secondAttribute="leading" id="Pfl-Am-kwY"/>
                             <constraint firstItem="YDf-pN-CWf" firstAttribute="top" secondItem="CoU-ib-8MC" secondAttribute="bottom" constant="3" id="SlS-bO-gh1"/>
@@ -464,6 +473,7 @@
                             <constraint firstItem="CoU-ib-8MC" firstAttribute="top" secondItem="FCf-Qv-SUp" secondAttribute="top" constant="48" id="gF5-bi-ra2"/>
                             <constraint firstItem="p8K-BF-eMI" firstAttribute="trailing" secondItem="CoU-ib-8MC" secondAttribute="trailing" id="mB8-5k-JFx"/>
                             <constraint firstItem="qoV-NQ-7wm" firstAttribute="top" secondItem="CoU-ib-8MC" secondAttribute="bottom" constant="3" id="oas-9D-cVj"/>
+                            <constraint firstItem="sI2-Ws-GYN" firstAttribute="top" secondItem="CoU-ib-8MC" secondAttribute="bottom" constant="48" id="reC-f9-7jG"/>
                             <constraint firstItem="qoV-NQ-7wm" firstAttribute="leading" secondItem="CoU-ib-8MC" secondAttribute="leading" id="vI2-t8-Jfx"/>
                             <constraint firstItem="oAZ-cx-5Gc" firstAttribute="bottom" secondItem="D9M-4s-Szl" secondAttribute="bottom" id="vJj-ko-H14"/>
                             <constraint firstItem="oAZ-cx-5Gc" firstAttribute="trailing" secondItem="FCf-Qv-SUp" secondAttribute="trailing" id="vjR-cS-Z1O"/>
@@ -2668,6 +2678,9 @@
         </systemColor>
         <systemColor name="secondarySystemGroupedBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+        <systemColor name="separatorColor">
+            <color red="0.23529411764705882" green="0.23529411764705882" blue="0.2627450980392157" alpha="0.28999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
