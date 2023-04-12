@@ -33,12 +33,14 @@ import UIKit
 @IBDesignable
 class MulticolorProgressView: UIView {
     
-    @IBInspectable var successColor: UIColor = .nordicLake
+    @IBInspectable var successColor: UIColor = .green
     @IBInspectable var failColor: UIColor = .nordicRed
+    @IBInspectable var skippedColor: UIColor = .nordicFall
     
     private var max: Int = 0
     private var success: Int = 0
     private var fail: Int = 0
+    private var skipped: Int = 0
     
     func setMax(_ max: Int) {
         self.max = max
@@ -53,23 +55,35 @@ class MulticolorProgressView: UIView {
         self.fail += 1
         setNeedsDisplay()
     }
+    
+    func addSkipped() {
+        self.skipped += 1
+        setNeedsDisplay()
+    }
 
     override func draw(_ rect: CGRect) {
         guard let context = UIGraphicsGetCurrentContext() else {
             return
         }
         
-        // Draw background
+        // Draw background.
         context.setFillColor(backgroundColor?.cgColor ?? UIColor.nordicLightGray.cgColor)
         context.fill(bounds)
         
+        // Draw successes.
         let successWidth = bounds.width * CGFloat(success) / CGFloat(max)
         context.setFillColor(successColor.cgColor)
         context.fill(CGRect(x: bounds.minX, y: bounds.minY, width: successWidth, height: bounds.height))
         
+        // Draw failures.
         let failWidth = bounds.width * CGFloat(fail) / CGFloat(max)
         context.setFillColor(failColor.cgColor)
         context.fill(CGRect(x: successWidth, y: bounds.minY, width: failWidth, height: bounds.height))
+        
+        // Draw skipped.
+        let skippedWidth = bounds.width * CGFloat(skipped) / CGFloat(max)
+        context.setFillColor(skippedColor.cgColor)
+        context.fill(CGRect(x: successWidth + failWidth, y: bounds.minY, width: skippedWidth, height: bounds.height))
     }
 
 }

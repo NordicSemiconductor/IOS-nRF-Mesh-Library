@@ -31,112 +31,30 @@
 import UIKit
 import nRFMeshProvision
 
-private enum Task {
-    case readRelayStatus
-    case readNetworkTransitStatus
-    case readBeaconStatus
-    case readGATTProxyStatus
-    case readFriendStatus
-    case readNodeIdentityStatus(_ networkKey: NetworkKey)
-    case readHeartbeatPublication
-    case readHeartbeatSubscription
-    
-    case sendNetworkKey(_ networkKey: NetworkKey)
-    case sendApplicationKey(_ applicationKey: ApplicationKey)
-    case bind(_ applicationKey: ApplicationKey, to: Model)
-    case subscribe(_ model: Model, to: Group)
-    
-    var title: String {
-        switch self {
-        case .readRelayStatus:
-            return "Read Relay Status"
-        case .readNetworkTransitStatus:
-            return "Read Network Transit Status"
-        case .readBeaconStatus:
-            return "Read Beacon Status"
-        case .readGATTProxyStatus:
-            return "Read GATT Proxy Status"
-        case .readFriendStatus:
-            return "Read Friend Status"
-        case .readNodeIdentityStatus(let key):
-            return "Read Node Identity Status for \(key.name)"
-        case .readHeartbeatPublication:
-            return "Read Heartbeat Publication"
-        case .readHeartbeatSubscription:
-            return "Read Heartbeat Subscription"
-        case .sendNetworkKey(let key):
-            return "Send \(key.name)"
-        case .sendApplicationKey(let key):
-            return "Send \(key.name)"
-        case .bind(let key, to: let model):
-            return "Bind \(key.name) to \(model)"
-        case .subscribe(let model, to: let group):
-            return "Subscribe \(model) to \(group.name)"
-        }
-    }
-    
-    var message: AcknowledgedConfigMessage {
-        switch self {
-        case .readRelayStatus:
-            return ConfigRelayGet()
-        case .readNetworkTransitStatus:
-            return ConfigNetworkTransmitGet()
-        case .readBeaconStatus:
-            return ConfigBeaconGet()
-        case .readGATTProxyStatus:
-            return ConfigGATTProxyGet()
-        case .readFriendStatus:
-            return ConfigFriendGet()
-        case .readNodeIdentityStatus(let key):
-            return ConfigNodeIdentityGet(networkKey: key)
-        case .readHeartbeatPublication:
-            return ConfigHeartbeatPublicationGet()
-        case .readHeartbeatSubscription:
-            return ConfigHeartbeatSubscriptionGet()
-        case .sendNetworkKey(let key):
-            return ConfigNetKeyAdd(networkKey: key)
-        case .sendApplicationKey(let key):
-            return ConfigAppKeyAdd(applicationKey: key)
-        case .bind(let key, to: let model):
-            return ConfigModelAppBind(applicationKey: key, to: model)!
-        case .subscribe(let model, to: let group):
-            if let message = ConfigModelSubscriptionAdd(group: group, to: model) {
-                return message
-            } else {
-                return ConfigModelSubscriptionVirtualAddressAdd(group: group, to: model)!
-            }
-        }
-    }
-}
-
 class ConfigurationViewController: UIViewController,
                                    UIAdaptivePresentationControllerDelegate {
     
     // MARK: - Outlets
     
-    @IBOutlet weak var doneButton: UIButton!
-    @IBOutlet weak var detailsButton: UIButton!
-    @IBOutlet weak var cancelButton: UIButton!
+    @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var statusView: UILabel!
     @IBOutlet weak var progress: MulticolorProgressView!
     
     @IBOutlet weak var remainingTime: UILabel!
     @IBOutlet weak var time: UILabel!
-    @IBAction func doneTapped(_ sender: UIButton) {
+    @IBAction func doneTapped(_ sender: UIBarButtonItem) {
         navigationController?.dismiss(animated: true)
     }
-    @IBAction func cancelTapped(_ sender: UIButton) {
+    @IBAction func cancelTapped(_ sender: UIBarButtonItem) {
         if let handler = handler {
-            inProgress = false
-            cancelButton.titleLabel?.text = "Cancelling..."
-            cancelButton.isEnabled = false
+            // Mark all not started tasks as cancelled.
+            for i in current + 1..<statuses.count {
+                statuses[i] = .cancelled
+            }
             handler.cancel()
             return
         }
         navigationController?.dismiss(animated: true)
-    }
-    
-    @IBAction func detailsTapped(_ sender: UIButton) {
     }
     
     // MARK: - Public properties
@@ -160,9 +78,16 @@ class ConfigurationViewController: UIViewController,
         // If there's no Application Keys, create one.
         let network = MeshNetworkManager.instance.meshNetwork!
         if network.applicationKeys.isEmpty {
-            try! network.add(applicationKey: .random128BitKey(), name: "App Key 1")
+            let newApplicationKey = try! network.add(applicationKey: .random128BitKey(), name: "App Key 1")
+            if let networkKey = node.networkKeys.first {
+                try! newApplicationKey.bind(to: networkKey)
+            }
         }
         network.applicationKeys.forEach { applicationKey in
+            let networkKey = applicationKey.boundNetworkKey
+            if !node.knows(networkKey: networkKey) {
+                tasks.append(.sendNetworkKey(networkKey))
+            }
             if !node.knows(applicationKey: applicationKey) {
                 tasks.append(.sendApplicationKey(applicationKey))
             }
@@ -233,15 +158,15 @@ class ConfigurationViewController: UIViewController,
     
     private var node: Node!
     private var tasks: [Task] = []
+    private var statuses: [TaskStatus]!
     private var handler: MessageHandle?
-    private var inProgress: Bool = false
+    private var inProgress: Bool = true
     private var current: Int = -1
-    private var responseOpCode: UInt32?
-    private var failed: Int = 0
-    private var timer: Timer!
-    private var startDate: Date!
     
-    private var timeFormatter: DateFormatter!
+    /// The timer firest every second and refreshes the time and remaining time.
+    private var timer: Timer!
+    /// The timestamp when the configuration has started.
+    private var startDate: Date!
     
     // MARK: - View Controller
     
@@ -251,14 +176,11 @@ class ConfigurationViewController: UIViewController,
         // Make the dialog modal (non-dismissable).
         navigationController?.presentationController?.delegate = self
         
-        statusView.text = ""
-        progress.setMax(tasks.count)
+        tableView.delegate = self
+        tableView.dataSource = self
         
-        makeBlue(doneButton)
-        makeOrange(cancelButton)
-        
-        timeFormatter = DateFormatter()
-        timeFormatter.dateFormat = "mm:ss"
+        // Initially, set all statuses to "pending".
+        statuses = tasks.map { _ in .pending }
     }
     
     func presentationControllerShouldDismiss(_ presentationController: UIPresentationController) -> Bool {
@@ -267,9 +189,10 @@ class ConfigurationViewController: UIViewController,
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        doneButton.isHidden = !tasks.isEmpty
-        cancelButton.isHidden = tasks.isEmpty
+        navigationItem.rightBarButtonItem?.isEnabled = tasks.isEmpty
+        navigationItem.leftBarButtonItem?.isEnabled = !tasks.isEmpty
         progress.isHidden = tasks.isEmpty
+        progress.setMax(tasks.count)
         time.isHidden = tasks.isEmpty
         remainingTime.isHidden = tasks.isEmpty
         
@@ -284,19 +207,19 @@ class ConfigurationViewController: UIViewController,
         if !tasks.isEmpty {
             startDate = Date()
             timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] timer in
-                guard let self = self else {
+                guard let self = self, self.inProgress else {
                     timer.invalidate()
                     return
                 }
-                if !self.inProgress {
-                    timer.invalidate()
+                let current = self.current
+                guard current > 0 else {
                     return
                 }
                 let elapsedTime = Date().timeIntervalSince(self.startDate)
                 let minutes = floor(elapsedTime / 60)
                 let seconds = floor(elapsedTime - minutes * 60)
                 
-                let avgTime = elapsedTime / Double(self.current)
+                let avgTime = elapsedTime / Double(current)
                 let eta = Double(self.tasks.count) * avgTime - elapsedTime
                 let remainingMinutes = floor(eta / 60)
                 let remainingSeconds = floor(eta - remainingMinutes * 60)
@@ -307,10 +230,47 @@ class ConfigurationViewController: UIViewController,
                 }
             }
             MeshNetworkManager.instance.delegate = self
-            inProgress = true
             executeNext()
         }
         
+    }
+    
+}
+
+extension ConfigurationViewController: UITableViewDelegate {
+    
+}
+
+extension ConfigurationViewController: UITableViewDataSource {
+    
+    func numberOfSections(in tableView: UITableView) -> Int {
+        return 1
+    }
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return tasks.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "task", for: indexPath)
+        cell.textLabel?.text = tasks[indexPath.row].title
+        let status = statuses[indexPath.row]
+        cell.detailTextLabel?.text = status.description
+        cell.detailTextLabel?.textColor = status.color
+        if case .inProgress = status {
+            if #available(iOS 13.0, *) {
+                let indicator = UIActivityIndicatorView(style: .medium)
+                indicator.startAnimating()
+                cell.accessoryView = indicator
+            } else {
+                let indicator = UIActivityIndicatorView(style: .gray)
+                indicator.startAnimating()
+                cell.accessoryView = indicator
+            }
+        } else {
+            cell.accessoryView = nil
+        }
+        return cell
     }
     
 }
@@ -320,61 +280,71 @@ private extension ConfigurationViewController {
     func executeNext() {
         current += 1
         
-        if !tasks.isEmpty {
-            DispatchQueue.main.async { [weak self] in
-                guard let self = self else { return }
-                if self.current < self.tasks.count {
-                    self.statusView.text = self.tasks[self.current].title
-                }
-            }
-        }
+        let current = current
         
         // Are we done?
         if current >= tasks.count || !inProgress {
             handler = nil
             inProgress = false
-            
-            DispatchQueue.main.async {
-                self.statusView.text = "\(self.current) tasks completed (\(self.failed) failed)."
-                self.doneButton.isHidden = false
-                self.cancelButton.isHidden = true
-                self.remainingTime.isHidden = true
-            }
+            completed()
             return
         }
         
+        // Display the title of the current task.
+        reload(taskAt: current, with: .inProgress)
+        
         // Pop new task and execute.
         let task = tasks[current]
-        let message = task.message
-        responseOpCode = message.responseOpCode
         
-        let manager = MeshNetworkManager.instance
-        do {
-            handler = try manager.send(message, to: node.primaryUnicastAddress)
-        } catch {
-            DispatchQueue.main.async {
-                self.statusView.text = error.localizedDescription
-                self.doneButton.isHidden = false
-                self.cancelButton.isHidden = true
-                self.remainingTime.isHidden = true
+        // Skip messages with Application Keys bound to Network Keys
+        // that aren't known to the Node.
+        if let message = task.message as? ConfigNetAndAppKeyMessage {
+            if !node.knows(networkKeyIndex: message.networkKeyIndex) {
+                reload(taskAt: current, with: .skipped)
+                DispatchQueue.main.async {
+                    self.progress.addSkipped()
+                }
+                executeNext()
+                return
             }
+        }
+        // Skip binding models to Application Keys not known to the Node.
+        if let message = task.message as? ConfigModelAppBind {
+            if !node.knows(applicationKeyIndex: message.applicationKeyIndex) {
+                reload(taskAt: current, with: .skipped)
+                DispatchQueue.main.async {
+                    self.progress.addSkipped()
+                }
+                executeNext()
+                return
+            }
+        }
+        
+        // Send the message.
+        do {
+            let manager = MeshNetworkManager.instance
+            handler = try manager.send(task.message, to: node.primaryUnicastAddress)
+        } catch {
+            reload(taskAt: current, with: .failed(error))
         }
     }
     
-    func makeBlue(_ button: UIButton) {
-        button.setTitleColor(.white, for: .normal)
-        button.setTitleColor(.almostWhite, for: .highlighted)
-        button.backgroundColor = .dynamicColor(light: .nordicLake, dark: .nordicBlue)
-        button.layer.cornerRadius = 4
-        button.layer.masksToBounds = true
+    func reload(taskAt index: Int, with status: TaskStatus) {
+        DispatchQueue.main.async {
+            self.statusView.text = self.tasks[index].title
+            self.statuses[index] = status
+            self.tableView.reloadRows(at: [IndexPath(row: index, section: 0)], with: .automatic)
+        }
     }
     
-    func makeOrange(_ button: UIButton) {
-        button.setTitleColor(.white, for: .normal)
-        button.setTitleColor(.almostWhite, for: .highlighted)
-        button.backgroundColor = .nordicFall
-        button.layer.cornerRadius = 4
-        button.layer.masksToBounds = true
+    func completed() {
+        DispatchQueue.main.async {
+            self.tableView.reloadData()
+            self.statusView.text = "Configuration complete."
+            self.navigationItem.rightBarButtonItem?.isEnabled = true
+            self.navigationItem.leftBarButtonItem?.isEnabled = false
+            self.remainingTime.isHidden = true
+        }
     }
     
 }
@@ -385,18 +355,20 @@ extension ConfigurationViewController: MeshNetworkDelegate {
                             didReceiveMessage message: MeshMessage,
                             sentFrom source: Address,
                             to destination: Address) {
-        if current >= 0 && current < tasks.count && message.opCode == responseOpCode {
-            if let status = message as? ConfigStatusMessage,
-               !status.isSuccess {
-                failed += 1
-                DispatchQueue.main.async {
+        let current = current
+        if current >= 0 && current < tasks.count &&
+           message.opCode == tasks[current].message.responseOpCode,
+           let status = message as? ConfigStatusMessage {
+            reload(taskAt: current, with: .resultOf(status))
+            
+            DispatchQueue.main.async {
+                if status.isSuccess {
+                    self.progress.addSuccess()
+                } else {
                     self.progress.addFail()
                 }
-            } else {
-                DispatchQueue.main.async {
-                    self.progress.addSuccess()
-                }
             }
+            
             executeNext()
         }
     }
@@ -407,10 +379,8 @@ extension ConfigurationViewController: MeshNetworkDelegate {
                             to destination: Address,
                             error: Error) {
         inProgress = false
-        statusView.text = error.localizedDescription
-        doneButton.isHidden = false
-        cancelButton.isHidden = true
-        remainingTime.isHidden = true
+        reload(taskAt: current, with: .failed(error))
+        completed()
     }
     
 }
