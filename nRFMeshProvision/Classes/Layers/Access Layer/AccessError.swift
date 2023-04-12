@@ -57,6 +57,8 @@ public enum AccessError: Error {
     /// Thrown, when the acknowledgment has not been received until
     /// the time run out.
     case timeout
+    /// Thrown when senting the message was cancelled.
+    case cancelled
 }
 
 extension AccessError: LocalizedError {
@@ -71,6 +73,7 @@ extension AccessError: LocalizedError {
         case .noDeviceKey:           return NSLocalizedString("Unknown Device Key", comment: "access")
         case .cannotDelete:          return NSLocalizedString("Cannot delete the last Network Key.", comment: "access")
         case .timeout:               return NSLocalizedString("Request timed out.", comment: "access")
+        case .cancelled:             return NSLocalizedString("Message cancelled.", comment: "access")
         }
     }
     
