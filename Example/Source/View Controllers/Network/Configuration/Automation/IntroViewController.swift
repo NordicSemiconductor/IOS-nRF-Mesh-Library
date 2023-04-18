@@ -107,18 +107,14 @@ private extension IntroViewController {
             presentAlert(
                 title: "Automatic Configuration",
                 message: """
-1. Reading the configuration of a node.
-2. Adding all Application Keys¹.
-3. Binding all Models to all Application Keys.
-4. Subscribing every Model to all Groups².
-⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
-¹ A random Application Key will be created if none exist.
-² Two groups, a normal one and a virtual one, will be created if none exist.
+Bind all Models to all Application Keys and subscribe them to all Groups.
+
+If there are no keys, a random one bound to the first Network Key will be created. In case there are no groups, a normal and a virtual group will be created.
 """)
         case 2:
             presentAlert(
                 title: "Bind Application Keys",
-                message: "Bind Application Keys to selected Models. The keys and bound Network keys will be sent automatically.")
+                message: "Bind Application Keys to selected Models. The keys (and bound Network Keys) will be sent automatically.")
         case 3:
             presentAlert(
                 title: "Subscribe",

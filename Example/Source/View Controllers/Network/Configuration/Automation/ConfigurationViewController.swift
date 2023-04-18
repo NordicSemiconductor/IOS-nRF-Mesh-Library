@@ -63,18 +63,39 @@ class ConfigurationViewController: UIViewController,
         self.node = node
         // If the Node's configuration hasn't been read, it's
         // a good time to do that.
-        if node.features == nil {
+        if node.relayRetransmit == nil {
             tasks.append(.readRelayStatus)
+        }
+        if node.networkTransmit == nil {
             tasks.append(.readNetworkTransitStatus)
+        }
+        if node.secureNetworkBeacon == nil {
             tasks.append(.readBeaconStatus)
+        }
+        if node.features?.proxy == nil {
             tasks.append(.readGATTProxyStatus)
+        }
+        if node.features?.friend == nil {
             tasks.append(.readFriendStatus)
-            node.networkKeys.forEach { networkKey in
-                tasks.append(.readNodeIdentityStatus(networkKey))
-            }
+        }
+        // The result of reading Heartbeat publication and subscription
+        // would not be shown, so skip it.
+        // In order to read the current state use Pull to Refresh on
+        // Configuration Server model screen.
+        /*
+        if node.heartbeatPublication == nil {
             tasks.append(.readHeartbeatPublication)
+        }
+        if node.heartbeatSubscription == nil {
             tasks.append(.readHeartbeatSubscription)
         }
+        */
+        // The state of Node Identity is not preserved, no need to read it.
+        /*
+        node.networkKeys.forEach { networkKey in
+            tasks.append(.readNodeIdentityStatus(networkKey))
+        }
+        */
         // If there's no Application Keys, create one.
         let network = MeshNetworkManager.instance.meshNetwork!
         if network.applicationKeys.isEmpty {
@@ -379,15 +400,20 @@ extension ConfigurationViewController: MeshNetworkDelegate {
                             to destination: Address) {
         let current = current
         if current >= 0 && current < tasks.count &&
-           message.opCode == tasks[current].message.responseOpCode,
-           let status = message as? ConfigStatusMessage {
-            reload(taskAt: current, with: .resultOf(status))
-            
-            DispatchQueue.main.async {
-                if status.isSuccess {
+           message.opCode == tasks[current].message.responseOpCode {
+            if let status = message as? ConfigStatusMessage {
+                reload(taskAt: current, with: .resultOf(status))
+                DispatchQueue.main.async {
+                    if status.isSuccess {
+                        self.progress.addSuccess()
+                    } else {
+                        self.progress.addFail()
+                    }
+                }
+            } else {
+                self.reload(taskAt: current, with: .success)
+                DispatchQueue.main.async {
                     self.progress.addSuccess()
-                } else {
-                    self.progress.addFail()
                 }
             }
             
