@@ -67,6 +67,8 @@ class SelectModelsViewController: UITableViewController {
         allModels = node.elements
             .flatMap { $0.models }
             .filter { $0.supportsApplicationKeyBinding }
+        // Initially, no Models are selected.
+        nextButton.isEnabled = false
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -139,6 +141,7 @@ class SelectModelsViewController: UITableViewController {
             selectedModels.append(model)
         }
         tableView.reloadRows(at: [indexPath], with: .automatic)
+        nextButton.isEnabled = !selectedModels.isEmpty
         
         // If all Models were selected, change the button to Select None.
         if selectedModels.count == allModels.count {

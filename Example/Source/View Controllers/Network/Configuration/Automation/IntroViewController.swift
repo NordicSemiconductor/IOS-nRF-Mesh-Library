@@ -83,6 +83,10 @@ class IntroViewController: UIViewController {
             let destination = segue.destination as! SelectKeysViewController
             destination.node = node
         }
+        if segue.identifier == "subscribe" {
+            let destination = segue.destination as! SelectGroupsViewController
+            destination.node = node
+        }
     }
 
 }
@@ -103,23 +107,22 @@ private extension IntroViewController {
             presentAlert(
                 title: "Automatic Configuration",
                 message: """
-1. Reading Node's configuration.
-2. Sending an Application Key¹.
-3. Binding it to all Models.
-4. Subscribing all Models to a normal and virtual group².
+1. Reading the configuration of a node.
+2. Adding all Application Keys¹.
+3. Binding all Models to all Application Keys.
+4. Subscribing every Model to all Groups².
 ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
 ¹ A random Application Key will be created if none exist.
-² The first found groups will be used in step 4. If none exist,
-they will be created.
+² Two groups, a normal one and a virtual one, will be created if none exist.
 """)
         case 2:
             presentAlert(
                 title: "Bind Application Keys",
-                message: "Bind specified Application Keys to selected Models.")
+                message: "Bind Application Keys to selected Models. The keys and bound Network keys will be sent automatically.")
         case 3:
             presentAlert(
                 title: "Subscribe",
-                message: "Subscribe specified Models to selected Groups.")
+                message: "Subscribe Models to selected Groups.")
         default:
             fatalError()
         }

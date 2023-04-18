@@ -98,7 +98,7 @@ class SelectKeysViewController: UITableViewController {
         case IndexPath.unknownKeysSection:
             return "New Keys"
         case IndexPath.knownKeysSection:
-            return "Existing Keys"
+            return "Application Key List"
         default:
             return nil
         }
@@ -160,8 +160,7 @@ class SelectKeysViewController: UITableViewController {
                 if let network = manager.meshNetwork,
                    let newKey = try? network.add(applicationKey: .random128BitKey(), name: "App Key \(network.applicationKeys.count + 1)") {
                     _ = manager.save()
-                    selectedKeys.append(newKey
-                    )
+                    selectedKeys.append(newKey)
                     // Local Provisioner immediately knows all keys.
                     if node.isLocalProvisioner {
                         knownKeys.append(newKey)
@@ -174,7 +173,6 @@ class SelectKeysViewController: UITableViewController {
                         tableView.endUpdates()
                     } else {
                         missingKeys.append(newKey)
-                        selectedKeys.append(newKey)
                         tableView.insertRows(at: [IndexPath(row: missingKeys.count - 1, section: IndexPath.unknownKeysSection)], with: .automatic)
                     }
                 }

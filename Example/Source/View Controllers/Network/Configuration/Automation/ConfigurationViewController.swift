@@ -83,12 +83,20 @@ class ConfigurationViewController: UIViewController,
                 try! newApplicationKey.bind(to: networkKey)
             }
         }
+        // Missing Application Keys must be sent first.
+        var networkKeys: [NetworkKey] = []
         network.applicationKeys.forEach { applicationKey in
-            let networkKey = applicationKey.boundNetworkKey
-            if !node.knows(networkKey: networkKey) {
-                tasks.append(.sendNetworkKey(networkKey))
-            }
+            // If a new Application Key is found...
             if !node.knows(applicationKey: applicationKey) {
+                // ...check whether the device knows the bound Network Key.
+                let networkKey = applicationKey.boundNetworkKey
+                if !networkKeys.contains(networkKey) && !node.knows(networkKey: networkKey) {
+                    // If not, first send the Network Key.
+                    tasks.append(.sendNetworkKey(networkKey))
+                    // Do it only once per Network Key.
+                    networkKeys.append(networkKey)
+                }
+                // After the bound Network Key is sent, send the App Key.
                 tasks.append(.sendApplicationKey(applicationKey))
             }
         }
@@ -127,7 +135,7 @@ class ConfigurationViewController: UIViewController,
             return
         }
         self.node = node
-        // First missing Application Keys must be sent.
+        // Missing Application Keys must be sent first.
         var networkKeys: [NetworkKey] = []
         applicationKeys.forEach { applicationKey in
             // If a new Application Key is found...
@@ -149,6 +157,20 @@ class ConfigurationViewController: UIViewController,
             applicationKeys.forEach { applicationKey in
                 if !model.isBoundTo(applicationKey) {
                     tasks.append(.bind(applicationKey, to: model))
+                }
+            }
+        }
+    }
+    
+    func subscribe(models: [Model], to groups: [Group]) {
+        guard let node = models.first?.parentElement?.parentNode else {
+            return
+        }
+        self.node = node
+        models.forEach { model in
+            groups.forEach { group in
+                if !model.isSubscribed(to: group) {
+                    tasks.append(.subscribe(model, to: group))
                 }
             }
         }

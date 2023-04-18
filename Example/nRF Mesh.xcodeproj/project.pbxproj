@@ -173,6 +173,8 @@
 		F09DE4CA29DC68900073969A /* MulticolorProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F09DE4C929DC68900073969A /* MulticolorProgressView.swift */; };
 		F09DE4CF29E5A0BF0073969A /* Task.swift in Sources */ = {isa = PBXBuildFile; fileRef = F09DE4CE29E5A0BF0073969A /* Task.swift */; };
 		F09DE4D129E5A2180073969A /* TaskStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = F09DE4D029E5A2180073969A /* TaskStatus.swift */; };
+		F09DE4D329E99A360073969A /* SelectGroupsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F09DE4D229E99A360073969A /* SelectGroupsViewController.swift */; };
+		F09DE4D729EEBEAD0073969A /* SelectModelsForSubscriptionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F09DE4D629EEBEAD0073969A /* SelectModelsForSubscriptionViewController.swift */; };
 		F0A79242F997F08105E46FF6 /* Pods_nRF_Mesh_Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0DAC1677AA94583D28A5867E /* Pods_nRF_Mesh_Tests.framework */; };
 /* End PBXBuildFile section */
 
@@ -371,6 +373,8 @@
 		F09DE4C929DC68900073969A /* MulticolorProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MulticolorProgressView.swift; sourceTree = "<group>"; };
 		F09DE4CE29E5A0BF0073969A /* Task.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Task.swift; sourceTree = "<group>"; };
 		F09DE4D029E5A2180073969A /* TaskStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskStatus.swift; sourceTree = "<group>"; };
+		F09DE4D229E99A360073969A /* SelectGroupsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectGroupsViewController.swift; sourceTree = "<group>"; };
+		F09DE4D629EEBEAD0073969A /* SelectModelsForSubscriptionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectModelsForSubscriptionViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -846,9 +850,9 @@
 			children = (
 				F09DE4CD29E5A0A50073969A /* Tasks */,
 				F09DE4C829DC68620073969A /* Views */,
+				F09DE4D429EEBE320073969A /* Binding */,
+				F09DE4D529EEBE480073969A /* Subscription */,
 				F063C01C29C27EAB00A445A9 /* IntroViewController.swift */,
-				F063C01929C2774300A445A9 /* SelectKeysViewController.swift */,
-				F085C9FA29C496AB00C2DF89 /* SelectModelsViewController.swift */,
 				F085CA0729D70ACB00C2DF89 /* ConfigurationViewController.swift */,
 			);
 			path = Automation;
@@ -869,6 +873,24 @@
 				F09DE4D029E5A2180073969A /* TaskStatus.swift */,
 			);
 			path = Tasks;
+			sourceTree = "<group>";
+		};
+		F09DE4D429EEBE320073969A /* Binding */ = {
+			isa = PBXGroup;
+			children = (
+				F063C01929C2774300A445A9 /* SelectKeysViewController.swift */,
+				F085C9FA29C496AB00C2DF89 /* SelectModelsViewController.swift */,
+			);
+			path = Binding;
+			sourceTree = "<group>";
+		};
+		F09DE4D529EEBE480073969A /* Subscription */ = {
+			isa = PBXGroup;
+			children = (
+				F09DE4D229E99A360073969A /* SelectGroupsViewController.swift */,
+				F09DE4D629EEBEAD0073969A /* SelectModelsForSubscriptionViewController.swift */,
+			);
+			path = Subscription;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -1129,6 +1151,7 @@
 				52A8EA8F24EBF099004C14C7 /* SetHeartbeatPublicationDestinationsViewController.swift in Sources */,
 				5288C2122371B16500321ED3 /* SimpleOnOffSetUnacknowledged.swift in Sources */,
 				52547F29232A3F470002AA7B /* FabView.swift in Sources */,
+				F09DE4D729EEBEAD0073969A /* SelectModelsForSubscriptionViewController.swift in Sources */,
 				52A9C17D230EB9490036792A /* GenericOnOffViewCell.swift in Sources */,
 				5292F8A5250237A600EA0F2A /* NodeStoreSceneViewController.swift in Sources */,
 				52E54CD62343875400478F05 /* GenericLevelClientCell.swift in Sources */,
@@ -1180,6 +1203,7 @@
 				52E54CCD23437B9700478F05 /* ElementSectionView.swift in Sources */,
 				5288C2142371B32200321ED3 /* SimpleOnOffStatus.swift in Sources */,
 				5251498122E0E36600CBF1E3 /* AddGroupViewController.swift in Sources */,
+				F09DE4D329E99A360073969A /* SelectGroupsViewController.swift in Sources */,
 				5211EADB25090DB000089FF2 /* SceneSetupServerDelegate.swift in Sources */,
 				F063C01D29C27EAB00A445A9 /* IntroViewController.swift in Sources */,
 				5292F8A325021B8F00EA0F2A /* ModelIdentifiers.swift in Sources */,
