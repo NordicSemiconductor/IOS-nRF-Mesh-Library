@@ -128,7 +128,7 @@ private extension NodeAddAppKeyViewController {
     
     /// Adds the given Application Key to the target Node.
     ///
-    /// - parameter networkKey: The Application Key to be added.
+    /// - parameter applicationKey: The Application Key to be added.
     func addKey(_ applicationKey: ApplicationKey) {
         guard let node = node else {
             return

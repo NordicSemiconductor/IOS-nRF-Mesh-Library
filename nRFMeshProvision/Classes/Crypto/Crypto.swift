@@ -458,7 +458,7 @@ private extension Crypto {
     /// - returns: The 128-bit authentication code (MAC).
     static func calculateHMAC_SHA256(_ data: Data, andKey key: Data) -> Data {
         do {
-            let array = try HMAC(key: key.bytes, variant: .sha2(.sha256)).authenticate(data.bytes)
+            let array = try HMAC(key: key.bytes, variant: .sha256).authenticate(data.bytes)
             return Data(array)
         } catch {
             fatalError("Failed to calculate HMAC-SHA-256: \(error)")
