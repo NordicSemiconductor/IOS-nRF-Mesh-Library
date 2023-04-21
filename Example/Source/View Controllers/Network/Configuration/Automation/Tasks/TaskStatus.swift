@@ -1,5 +1,5 @@
 /*
-* Copyright (c) 2019, Nordic Semiconductor
+* Copyright (c) 2023, Nordic Semiconductor
 * All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification,
@@ -28,26 +28,64 @@
 * POSSIBILITY OF SUCH DAMAGE.
 */
 
-import Foundation
+import nRFMeshProvision
 
-public extension Group {
+enum TaskStatus {
+    case pending
+    case inProgress
+    case skipped
+    case success
+    case failed(String)
+    case cancelled
     
-    /// Returns list of Scenes registered in Scene Register of any Node,
-    /// which Scene Server model is subscribed to this Group and bound to
-    /// the given Application Key.
-    func scenes(onModelsBoundTo applicationKey: ApplicationKey) -> [Scene] {
-        let scenes =
-            // Get all Models subscribed to this Group.
-            meshNetwork?.models(subscribedTo: self)
-            // That are bound to the given Application Key.
-            .filter { $0.isBoundTo(applicationKey) }
-            // Filter for Scene Server models only.
-            .filter { $0.modelIdentifier == .sceneServerModelId && $0.isBluetoothSIGAssigned }
-            // Get all Scenes stored in Scene Registers of parent Nodes.
-            .compactMap { $0.parentElement?.parentNode?.scenes }
-            // Flatten the map.
-            .flatMap { $0 } ?? []
-        return scenes.uniqued()
+    static func failed(_ error: Error) -> TaskStatus {
+        return .failed(error.localizedDescription)
+    }
+    
+    static func resultOf(_ status: ConfigStatusMessage) -> TaskStatus {
+        if status.isSuccess {
+            return .success
+        }
+        return .failed("\(status.status)")
+    }
+}
+
+extension TaskStatus: CustomStringConvertible {
+    
+    var description: String {
+        switch self {
+        case .pending:
+            return "Pending"
+        case .inProgress:
+            return "In Progress..."
+        case .skipped:
+            return "Skipped"
+        case .success:
+            return "Success"
+        case .failed(let status):
+            return status
+        case .cancelled:
+            return "Cancelled"
+        }
+    }
+    
+    var color: UIColor {
+        switch self {
+        case .pending:
+            if #available(iOS 13.0, *) {
+                return .secondaryLabel
+            } else {
+                return .lightGray
+            }
+        case .inProgress:
+            return .dynamicColor(light: .nordicLake, dark: .nordicBlue)
+        case .success:
+            return .green
+        case .cancelled, .skipped:
+            return .nordicFall
+        case .failed:
+            return .nordicRed
+        }
     }
     
 }

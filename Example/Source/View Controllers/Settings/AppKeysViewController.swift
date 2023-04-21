@@ -74,12 +74,16 @@ class AppKeysViewController: UITableViewController, Editable {
                                message: "Click + to add a new key.",
                                messageImage: #imageLiteral(resourceName: "baseline-key"),
                                action: generate)
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
         
         let hasAppKeys = MeshNetworkManager.instance.meshNetwork?.applicationKeys.count ?? 0 > 0
         if !hasAppKeys {
             showEmptyView()
         } else {
-            hideEmptyView()
+            hideEmptyView(false)
         }
     }
     

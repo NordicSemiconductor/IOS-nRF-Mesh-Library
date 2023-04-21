@@ -31,11 +31,15 @@
 import UIKit
 import nRFMeshProvision
 
-class ConfigurationViewController: ProgressViewController {
+class NodeViewController: ProgressViewController {
     
     // MARK: - Public properties
     
     var node: Node!
+    
+    // MARK: - Outlets
+    
+    @IBOutlet weak var configureButton: UIBarButtonItem!
     
     // MARK: - Implementation
     
@@ -84,6 +88,8 @@ class ConfigurationViewController: ProgressViewController {
             getCompositionData()
         } else if node.defaultTTL == nil {
             getTtl()
+        } else {
+            configureButton.isEnabled = node.deviceKey != nil
         }
     }
     
@@ -103,6 +109,11 @@ class ConfigurationViewController: ProgressViewController {
         }
         if segue.identifier == "showScenes" {
             let destination = segue.destination as! NodeScenesViewController
+            destination.node = node
+        }
+        if segue.identifier == "configure" {
+            let navigationController = segue.destination as! UINavigationController
+            let destination = navigationController.topViewController as! IntroViewController
             destination.node = node
         }
     }
@@ -340,7 +351,7 @@ class ConfigurationViewController: ProgressViewController {
     
 }
 
-private extension ConfigurationViewController {
+private extension NodeViewController {
 
     /// Presents a dialog to edit the node name.
     func presentNameDialog() {
@@ -471,7 +482,7 @@ private extension ConfigurationViewController {
     
 }
 
-extension ConfigurationViewController: MeshNetworkDelegate {
+extension NodeViewController: MeshNetworkDelegate {
     
     func meshNetworkManager(_ manager: MeshNetworkManager,
                             didReceiveMessage message: MeshMessage,
@@ -502,6 +513,7 @@ extension ConfigurationViewController: MeshNetworkDelegate {
             done {
                 self.tableView.reloadRows(at: [.ttl], with: .automatic)
                 self.refreshControl?.endRefreshing()
+                self.configureButton.isEnabled = true
             }
             
         case is ConfigNodeResetStatus:

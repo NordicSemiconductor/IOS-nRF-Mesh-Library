@@ -138,8 +138,21 @@ internal class UpperTransportLayer {
                shouldSendNext = true
         }
 
-        // Remove all enqueued messages that match the handler.
         mutex.sync {
+            // Notify user about the cancellation of the messages.
+            if let localNode = networkManager.meshNetwork?.localProvisioner?.node,
+               let element = localNode.element(withAddress: handle.source) {
+                queues[handle.destination]?
+                    .filter {
+                        $0.pdu.message!.opCode == handle.opCode &&
+                        $0.pdu.source == handle.source &&
+                        $0.pdu.destination == handle.destination
+                    }
+                    .forEach {
+                        networkManager.notifyAbout(LowerTransportError.cancelled, duringSendingMessage: $0.pdu.message!, from: element, to: handle.destination)
+                    }
+            }
+            // Remove all enqueued messages that match the handler.
             queues[handle.destination]?.removeAll {
                 $0.pdu.message!.opCode == handle.opCode &&
                 $0.pdu.source == handle.source &&
