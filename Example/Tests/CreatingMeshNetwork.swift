@@ -68,9 +68,9 @@ class CreatingMeshNetwork: XCTestCase {
         // By default only the Primary Element is added
         XCTAssertEqual(network.nodes.first?.elements.count, 1)
         XCTAssertEqual(network.nodes.first?.elementsCount, 1)
-        XCTAssert(network.nodes.first?.elements.contains(model: Model(sigModelId: .configurationServerModelId)) ?? false)
-        XCTAssert(network.nodes.first?.elements.contains(model: Model(sigModelId: .configurationClientModelId)) ?? false)
-        XCTAssert(network.nodes.first?.elements.contains(model: Model(sigModelId: .healthServerModelId)) ?? false)
+        XCTAssert(network.nodes.first?.elements.contains(modelWithSigModelId: .configurationServerModelId) ?? false)
+        XCTAssert(network.nodes.first?.elements.contains(modelWithSigModelId: .configurationClientModelId) ?? false)
+        XCTAssert(network.nodes.first?.elements.contains(modelWithSigModelId: .healthServerModelId) ?? false)
     }
     
     func testCreateMeshNetwork_withLocalElements() {
@@ -165,11 +165,11 @@ class CreatingMeshNetwork: XCTestCase {
         XCTAssertNotNil(cutElements)
         XCTAssertEqual(cutElements!.count, 2) // There were only 2 addresses available.
         XCTAssertEqual(cutElements![0].models.count, 7)
-        XCTAssert(cutElements![0].contains(model: Model(sigModelId: .configurationServerModelId)))
-        XCTAssert(cutElements![0].contains(model: Model(sigModelId: .configurationClientModelId)))
-        XCTAssert(cutElements![0].contains(model: Model(sigModelId: .healthServerModelId)))
-        XCTAssert(cutElements![0].contains(model: Model(sigModelId: .healthClientModelId)))
-        XCTAssert(cutElements![0].contains(model: Model(sigModelId: .sceneClientModelId)))
+        XCTAssert(cutElements![0].contains(modelWithSigModelId:  .configurationServerModelId))
+        XCTAssert(cutElements![0].contains(modelWithSigModelId: .configurationClientModelId))
+        XCTAssert(cutElements![0].contains(modelWithSigModelId: .healthServerModelId))
+        XCTAssert(cutElements![0].contains(modelWithSigModelId: .healthClientModelId))
+        XCTAssert(cutElements![0].contains(modelWithSigModelId: .sceneClientModelId))
         XCTAssertEqual(cutElements![0].models[5].modelIdentifier, 0x1001)
         XCTAssertEqual(cutElements![0].models[6].modelIdentifier, 0x1003)
         XCTAssertEqual(cutElements![1].models.count, 3)
