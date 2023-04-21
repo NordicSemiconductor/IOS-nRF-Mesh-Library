@@ -334,7 +334,14 @@ internal class AccessLayer {
                                $0.source == handle.source &&
                                $0.destination == handle.destination
                            }) {
-                reliableMessageContexts.remove(at: index).invalidate()
+                let context = reliableMessageContexts.remove(at: index)
+                context.invalidate()
+                if let localNode = networkManager.meshNetwork?.localProvisioner?.node,
+                   let element = localNode.element(withAddress: handle.source) {
+                    networkManager.notifyAbout(AccessError.cancelled,
+                                               duringSendingMessage: context.request,
+                                               from: element, to: handle.destination)
+                }
             }
         }
         networkManager.upperTransportLayer.cancel(handle)

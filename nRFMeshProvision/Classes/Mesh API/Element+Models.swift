@@ -32,6 +32,16 @@ import Foundation
 
 public extension Element {
     
+    /// Returns the first found Model with given identifier.
+    ///
+    /// - parameter sigModelId: The 32-bit Model identifier.
+    /// - returns: The Model found, or `nil` if no such exist.
+    func model(withModelId modelId: UInt32) -> Model? {
+        return models.first {
+            $0.modelId == modelId
+        }
+    }
+    
     /// Returns the first found Bluetooth SIG defined Model with given identifier.
     ///
     /// - parameter sigModelId: The 16-bit Model identifier as defined in the
@@ -45,34 +55,34 @@ public extension Element {
     
     /// Returns the first found Model with given identifier.
     ///
-    /// - parameter sigModelId: The 32-bit Model identifier.
-    /// - returns: The Model found, or `nil` if no such exist.
-    func model(withModelId modelId: UInt32) -> Model? {
-        return models.first {
-            $0.modelId == modelId
-        }
-    }
-    
-    /// Returns whether the Element contains a Bluetooth SIG defined Model with
-    /// given Model ID.
-    ///
-    /// - parameter sigModelId: Bluetooth SIG Model ID.
-    /// - returns: `True` if the Element contains a Model with given Model ID,
-    ///            `false` otherwise.
-    func contains(modelWithSigModelId sigModelId: UInt16) -> Bool {
-        return models.contains { $0.isBluetoothSIGAssigned && $0.modelIdentifier == sigModelId }
-    }
-    
-    /// Returns the first found Model with given identifier.
-    ///
-    /// - parameter sigModelId: The 16-bit Model identifier.
-    /// - parameter companyId:  The company identifier as defined in Assigned Numbers.
+    /// - parameter modelId:   The 16-bit Model identifier.
+    /// - parameter companyId: The company identifier as defined in Assigned Numbers.
     /// - returns: The Model found, or `nil` if no such exist.
     /// - seeAlso: https://www.bluetooth.com/specifications/assigned-numbers/company-identifiers/
     func model(withModelId modelId: UInt16, definedBy companyId: UInt16) -> Model? {
         return models.first {
             $0.companyIdentifier == companyId && $0.modelIdentifier == modelId
         }
+    }
+    
+    /// Returns list of Models belonging to this Element bound to the
+    /// given Application Key.
+    ///
+    /// - parameter applicationKey: The Application Key which the Models
+    ///                             must be bound to.
+    /// - returns: List of Models belonging to this Element bound to the
+    ///            given Application Key.
+    func models(boundTo applicationKey: ApplicationKey) -> [Model] {
+        return models.filter { $0.bind.contains(applicationKey.index) }
+    }
+    
+    /// Returns list of Models belonging to this Element that are
+    /// subscribed to the given Group.
+    ///
+    /// - parameter group: The Group to look for.
+    /// - returns: List of Models that are subscribed to the given Group.
+    func models(subscribedTo group: Group) -> [Model] {
+        return models.filter { $0.subscriptions.contains(group) }
     }
     
     /// Returns whether the Element contains a Model with given Model ID.
@@ -82,6 +92,31 @@ public extension Element {
     ///            `false` otherwise.
     func contains(modelWithId modelId: UInt32) -> Bool {
         return models.contains { $0.modelId == modelId }
+    }
+    
+    /// Returns whether the Element contains a Bluetooth SIG defined Model with
+    /// given Model ID.
+    ///
+    /// - parameter sigModelId: Bluetooth SIG Model ID.
+    /// - returns: `True` if the Element contains a Model with given Model ID,
+    ///            `false` otherwise.
+    func contains(modelWithSigModelId sigModelId: UInt16) -> Bool {
+        return models.contains {
+            $0.isBluetoothSIGAssigned && $0.modelIdentifier == sigModelId
+        }
+    }
+    
+    /// Returns whether the Element contains a Model with given identifier.
+    ///
+    /// - parameter modelId:   The 16-bit Model identifier.
+    /// - parameter companyId: The company identifier as defined in Assigned Numbers.
+    /// - returns: `True` if the Element contains a Model with given Model ID,
+    ///            `false` otherwise.
+    /// - seeAlso: https://www.bluetooth.com/specifications/assigned-numbers/company-identifiers/
+    func contains(modelWithModelId modelId: UInt16, definedBy companyId: UInt16) -> Bool {
+        return models.contains {
+            $0.companyIdentifier == companyId && $0.modelIdentifier == modelId
+        }
     }
     
     /// Returns whether the Element contains the given Model.
@@ -112,15 +147,6 @@ public extension Element {
         return models.contains { $0.subscriptions.contains(group) }
     }
     
-    /// Returns list of Models belonging to this Element that are
-    /// subscribed to the given Group.
-    ///
-    /// - parameter group: The Group to look for.
-    /// - returns: List of Models that are subscribed to the given Group.
-    func models(subscribedTo group: Group) -> [Model] {
-        return models.filter { $0.subscriptions.contains(group) }
-    }
-    
 }
 
 public extension Array where Element == MeshElement {
@@ -133,7 +159,32 @@ public extension Array where Element == MeshElement {
     ///            given Model ID, `false` otherwise.
     func contains(modelWithId modelId: UInt32) -> Bool {
         return contains {
-            $0.models.contains(where: { $0.modelId == modelId })
+            $0.contains(modelWithId: modelId)
+        }
+    }
+    
+    /// Returns whether any of Elements in the array contains a Model with given
+    /// Model identifier.
+    ///
+    /// - parameter sigModelId: Bluetooth SIG model identifier.
+    /// - returns: `True` if the array contains an Element with a Model with
+    ///            given Model identifier, `false` otherwise.
+    func contains(modelWithSigModelId sigModelId: UInt16) -> Bool {
+        return contains {
+            $0.contains(modelWithSigModelId: sigModelId)
+        }
+    }
+    
+    /// Returns the first found Model with given identifier.
+    ///
+    /// - parameter modelId:   The 16-bit Model identifier.
+    /// - parameter companyId: The company identifier as defined in Assigned Numbers.
+    /// - returns: `True` if the array contains an Element with a Model with
+    ///            given Model identifier, `false` otherwise.
+    /// - seeAlso: https://www.bluetooth.com/specifications/assigned-numbers/company-identifiers/
+    func contains(modelWithModelId modelId: UInt16, definedBy companyId: UInt16) -> Bool {
+        return contains {
+            $0.contains(modelWithModelId: modelId, definedBy: companyId)
         }
     }
     
@@ -144,15 +195,16 @@ public extension Array where Element == MeshElement {
     ///                              identifier.
     /// - returns: `True` if the array contains an Element with a Model with
     ///            given Model identifier, `false` otherwise.
+    @available(*, deprecated, renamed: "contains(modelWithModelId:definedBy:)")
     func contains(modelWithIdentifier modelIdentifier: UInt16) -> Bool {
         return contains {
-            $0.models.contains(where: { $0.modelIdentifier == modelIdentifier })
+            $0.models.contains { $0.modelIdentifier == modelIdentifier }
         }
     }
     
     /// Returns whether the Element contains the given Model.
     ///
-    /// - parameter modelId: The Model to look for.
+    /// - parameter model: The Model to look for.
     /// - returns: `True` if the Element contains the given Model, `false` otherwise.
     func contains(model: Model) -> Bool {
         return contains {

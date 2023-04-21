@@ -47,7 +47,7 @@ public extension Group {
             .compactMap { $0.parentElement?.parentNode?.scenes }
             // Flatten the map.
             .flatMap { $0 } ?? []
-        return Array(Set(scenes))
+        return scenes.uniqued()
     }
     
 }

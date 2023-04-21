@@ -34,6 +34,8 @@ import Foundation
 public enum LowerTransportError: Error {
     /// The segmented message has not been acknowledged before the timeout occurred.
     case timeout
+    /// Sending segmented messages was cancelled.
+    case cancelled
     /// The target device is busy at the moment and could not accept the message.
     case busy
 }
@@ -43,6 +45,7 @@ extension LowerTransportError: LocalizedError {
     public var errorDescription: String? {
         switch self {
         case .timeout: return NSLocalizedString("Request timed out.", comment: "lowerTransport")
+        case .cancelled: return NSLocalizedString("Message cancelled.", comment: "lowerTransport")
         case .busy:    return NSLocalizedString("Node is busy. Try later.", comment: "lowerTransport")
         }
     }

@@ -101,3 +101,7 @@ Use [Issues](https://github.com/NordicSemiconductor/IOS-nRF-Mesh-Library/issues)
 ## License
 
 BSD 3-Clause License.
+
+## Acknowledgments
+
+This product depends on [CryptoSwift](https://github.com/krzyzanowskim/CryptoSwift) software developed by "Marcin Krzyzanowski" (http://krzyzanowskim.com/).
