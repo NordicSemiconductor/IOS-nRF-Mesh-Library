@@ -42,7 +42,20 @@ class SchedulerMessages: XCTestCase {
     }
 
     func testSchedulerEntryMarshalling() throws {
-        let data = SchedulerRegistryEntry.marshal(index: 3, entry: SchedulerRegistryEntry(year: SchedulerYear.specific(year: 35), month: SchedulerMonth.any(of: [Month.April]), day: SchedulerDay.specific(day: 12), hour: SchedulerHour.specific(hour: 5), minute: SchedulerMinute.every15(), second: SchedulerSecond.random(), dayOfWeek: SchedulerDayOfWeek.any(of: [WeekDay.Saturday]), action: SchedulerAction.sceneRecall, transitionTime: TransitionTime.init(steps: 5, stepResolution: StepResolution.seconds), sceneNumber: 10))
+        let data = SchedulerRegistryEntry.marshal(
+            index: 3,
+            entry: SchedulerRegistryEntry(
+                year: SchedulerYear.specific(year: 35),
+                month: SchedulerMonth.any(of: [Month.April]),
+                day: SchedulerDay.specific(day: 12),
+                hour: SchedulerHour.specific(hour: 5),
+                minute: SchedulerMinute.every15(),
+                second: SchedulerSecond.random(),
+                dayOfWeek: SchedulerDayOfWeek.any(of: [WeekDay.Saturday]),
+                action: SchedulerAction.sceneRecall,
+                transitionTime: TransitionTime(steps: 5, stepResolution: StepResolution.seconds),
+                sceneNumber: 10)
+        )
         
         XCTAssertEqual(data, Data([51, 66, 0, 86, 250, 31, 36, 69, 10, 0]))
     }
