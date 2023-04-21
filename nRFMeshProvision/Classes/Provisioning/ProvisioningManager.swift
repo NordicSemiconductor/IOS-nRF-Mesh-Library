@@ -162,6 +162,9 @@ public class ProvisioningManager {
     /// Creates the Provisioning Manager that will handle provisioning of the
     /// Unprovisioned Device over the given Provisioning Bearer.
     ///
+    /// To initiate provisioning process ``ProvisioningManager/identify(andAttractFor:)``
+    /// method shall be called.
+    ///
     /// - parameters:
     ///   - unprovisionedDevice: The device to provision into the network.
     ///   - bearer:              The Bearer used for sending Provisioning PDUs.
@@ -175,6 +178,11 @@ public class ProvisioningManager {
     }
     
     /// This method initializes the provisioning of the device.
+    ///
+    /// As a result of this method ``ProvisioningDelegate/provisioningState(of:didChangeTo:)``
+    /// method will be called with the state ``ProvisioningState/capabilitiesReceived(_:)``.
+    /// If the device is supported, ``ProvisioningManager/provision(usingAlgorithm:publicKey:authenticationMethod:)``
+    /// shall be called to continue provisioning.
     ///
     /// - parameter attentionTimer: This value determines for how long (in seconds)
     ///                     the device shall remain attracting human's attention by
@@ -221,10 +229,30 @@ public class ProvisioningManager {
         try send(provisioningInvite, andAccumulateTo: provisioningData)
     }
     
-    /// This method starts the provisioning of the device.
+    /// This method starts the provisioning of the Unprovisioned Device.
     ///
-    /// ``identify(andAttractFor:)`` has to be called prior to this to receive
-    /// the device capabilities.
+    /// ``identify(andAttractFor:)`` has to be invoked prior to calling this method to receive
+    /// the ``ProvisioningCapabilities``, which include information regarding supported algorithms,
+    /// public key method and authentication method.
+    ///
+    /// For the provisioning process to be considered ``Security/secure``, it is required that
+    /// the Provisionee's Public Key is provided Out-of-Band using ``PublicKey/oobPublicKey(key:)``.
+    /// The Public Key information should be available in the Unprovisioned Device beacon.
+    /// If the device does not provide OOB Public Key, ``PublicKey/noOobPublicKey`` shall
+    /// be used and the provisioned Node and the Netwok Key will be considered ``Security/insecure``.
+    ///
+    /// If a different authentication method than ``AuthenticationMethod/noOob`` is
+    /// chosen a ``ProvisioningDelegate/authenticationActionRequired(_:)`` callback
+    /// will be called during provisioning to provide the Out-of-Band value in case of
+    /// ``AuthenticationMethod/staticOob`` or ``AuthenticationMethod/outputOob(action:size:)``
+    /// or display it to the user for providing it on the Provisionee in case of
+    /// ``AuthenticationMethod/inputOob(action:size:)``. In the latter case, an additional
+    /// ``ProvisioningDelegate/inputComplete()`` callback will be called when user has finished
+    /// providing the value.
+    ///
+    /// - note: Mesh Protocol 1.1 introduced a new, stronger provisioning algorithm
+    ///         ``Algorithm/BTM_ECDH_P256_HMAC_SHA256_AES_CCM``. It is recommended for
+    ///         devices which support it.
     /// - throws: A ``ProvisioningError`` can be thrown in case of an error.
     public func provision(usingAlgorithm algorithm: Algorithm,
                           publicKey: PublicKey,

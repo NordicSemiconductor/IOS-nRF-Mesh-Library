@@ -70,6 +70,7 @@ public struct OobInformation: OptionSet {
             return nil
         }
         
+        // OOB Information is using Little Endian in the Advertsing Data.
         rawValue = data.read(fromOffset: 16)
     }
     
@@ -77,22 +78,48 @@ public struct OobInformation: OptionSet {
 
 /// The authentication method chosen for provisioning.
 public enum AuthenticationMethod {
-    /// No OOB authentication is used.
+    /// No OOB authentication.
+    ///
+    /// - warning: This method is considered not secure.
     case noOob
-    /// Static OOB authentication is used.
+    /// Static OOB authentication.
+    ///
+    /// User will be asked to provide 16 or 32 byte hexadecimal value.
+    /// The value can be read from the device, QR code, website, etc.
+    /// See ``UnprovisionedDevice/oobInformation`` for location.
     case staticOob
-    /// Output OOB authentication is used.
-    /// Size must be in range 1...8.
+    /// Output OOB authentication.
+    ///
+    /// The Provisionee will signal a random value using specified method.
+    /// The value should be provided during provisioning using
+    /// ``ProvisioningDelegate/authenticationActionRequired(_:)``.
+    ///
+    /// - parameters:
+    ///   - action: The chosen action.
+    ///   - size: Number of digits or letters that can be output
+    ///           (e.g., displayed or spoken). Size must be in range 1...8.
     case outputOob(action: OutputAction, size: UInt8)
-    /// Input OOB authentication is used.
-    /// Size must be in range 1...8.
+    /// Input OOB authentication.
+    ///
+    /// User need to input a value displayed on the Provisioner's screen on the
+    /// Unprovisioned Device. The value to display to the user will be given using
+    /// ``ProvisioningDelegate/authenticationActionRequired(_:)``.
+    ///
+    /// When user completes entering the value ``ProvisioningDelegate/inputComplete()``
+    /// will be called.
+    ///
+    /// - parameters:
+    ///   - action: The chosen input action.
+    ///   - size: Number of digits or letters that can be entered.
+    ///           Size must be in range 1...8.
     case inputOob(action: InputAction, size: UInt8)
 }
 
-/// The output action will be displayed on the device.
-/// For example, the device may use its LED to blink number of times.
-/// The number of blinks will then have to be entered to the
-/// Provisioner Manager.
+/// Available output actions to be performed during provisioning.
+///
+/// For example,if the Unprovisioned Device is a light, then it would blink random
+/// number of times. That number should be provided to
+/// ``ProvisioningDelegate/authenticationActionRequired(_:)``.
 public enum OutputAction: UInt8 {
     case blink              = 0
     case beep               = 1
@@ -101,9 +128,12 @@ public enum OutputAction: UInt8 {
     case outputAlphanumeric = 4
 }
 
-/// The user will have to enter the input action on the device.
-/// For example, if the device supports ``InputAction/push``, user will be asked to
-/// press a button on the device required number of times.
+/// Available input actions to be performed during provisioning.
+///
+/// For example, if the unprovisioned device is a light switch, then it would allow
+/// the user to input the random number by pressing a button an appropriate number
+/// of times. When the action is complete, ``ProvisioningDelegate/inputComplete()``
+/// will be called.
 public enum InputAction: UInt8 {
     case push               = 0
     case twist              = 1
