@@ -326,12 +326,13 @@ public class MeshNetwork: Codable {
     
     public required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        let schema = try container.decode(String.self, forKey: .schema)
-        let id = try container.decode(String.self, forKey: .id)
         
         // Schema, ID and version are not validated.
         // JSON parsing will fail if the imported file is not valid.
         // Future versions should be backwards compatible.
+        //
+        // let schema = try container.decode(String.self, forKey: .schema)
+        // let id = try container.decode(String.self, forKey: .id)
         
         // In version 3.0 of this library the Mesh UUID format has changed
         // from 32-character hexadecimal String to standard UUID format (RFC 4122).
