@@ -261,7 +261,7 @@ internal class Crypto {
             let parameters = [kSecAttrKeyType : kSecAttrKeyTypeECSECPrimeRandom,
                         kSecAttrKeySizeInBits : 256,
                            kSecPublicKeyAttrs : publicKeyParams,
-                          kSecPrivateKeyAttrs : privateKeyParams] as CFDictionary
+                          kSecPrivateKeyAttrs : privateKeyParams] as [CFString : Any]
             
             var publicKey, privateKey: SecKey?
             let status = SecKeyGeneratePair(parameters as CFDictionary, &publicKey, &privateKey)
