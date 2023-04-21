@@ -17,7 +17,7 @@ let package = Package(
   dependencies: [
     .package(
       url: "https://github.com/krzyzanowskim/CryptoSwift", 
-      .upToNextMinor(from: "1.3.8")
+      .upToNextMinor(from: "1.7.0")
     )
   ],
   targets: [

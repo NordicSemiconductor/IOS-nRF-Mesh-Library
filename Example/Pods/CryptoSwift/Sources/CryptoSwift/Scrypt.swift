@@ -1,7 +1,7 @@
 //
 //  CryptoSwift
 //
-//  Copyright (C) 2014-2021 Marcin Krzyżanowski <marcin@krzyzanowskim.com>
+//  Copyright (C) 2014-2022 Marcin Krzyżanowski <marcin@krzyzanowskim.com>
 //  This software is provided 'as-is', without any express or implied warranty.
 //
 //  In no event will the authors be held liable for any damages arising from the use of this software.
@@ -101,6 +101,11 @@ public final class Scrypt {
     let block = [UInt8](bufferPointer)
     return try PKCS5.PBKDF2(password: Array(self.password), salt: block, iterations: 1, keyLength: self.dkLen, variant: .sha2(.sha256)).calculate()
   }
+
+  public func callAsFunction() throws -> Array<UInt8> {
+    try calculate()
+  }
+
 }
 
 private extension Scrypt {
