@@ -42,8 +42,8 @@ class SecureNetworkBeacons: XCTestCase {
         
         XCTAssertNotNil(snb)
         XCTAssertEqual(snb?.beaconType, BeaconType.secureNetwork)
-        XCTAssertEqual(snb?.networkKey.networkId, Data(hex: "EE6C0EFF5298ECFF"))
         XCTAssertEqual(snb?.networkKey, networkKey)
+        XCTAssertEqual(snb?.networkKey.networkId, Data(hex: "EE6C0EFF5298ECFF"))
         XCTAssertEqual(snb?.ivIndex.index, 2)
         XCTAssertEqual(snb?.ivIndex.updateActive, true)
         XCTAssertEqual(snb?.ivIndex.transmitIndex, 1)
