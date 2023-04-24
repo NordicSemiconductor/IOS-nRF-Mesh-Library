@@ -153,7 +153,7 @@ class SetHeartbeatSubscriptionViewController: ProgressViewController {
             cell.accessoryType = indexPath == selectedDestinationIndexPath ? .checkmark : .none
             cell.isEnabled = true
         }
-        if indexPath.isGroupsSection {
+        if indexPath.isGroupsSection && !groups.isEmpty {
             let group = groups[indexPath.row]
             if let destination = selectedDestination, destination == group.address.address {
                 selectedDestinationIndexPath = indexPath
@@ -163,7 +163,7 @@ class SetHeartbeatSubscriptionViewController: ProgressViewController {
             cell.accessoryType = indexPath == selectedDestinationIndexPath ? .checkmark : .none
             cell.isEnabled = !group.address.address.isVirtual
         }
-        if indexPath.isSpecialGroupsSection {
+        if indexPath.isSpecialGroupsSection || (indexPath.isGroupsSection && groups.isEmpty) {
             let group = Group.specialGroups[indexPath.row]
             if let destination = selectedDestination, destination == group.address.address {
                 selectedDestinationIndexPath = indexPath
@@ -312,6 +312,7 @@ private extension IndexPath {
     static let destinationNodeSection = 2
     static let destinationGroupsSection = 3
     static let destinationSpecialGroupsSection = 4
+    
     static func numberOfSections(for groups: [Group]) -> Int {
         return groups.isEmpty ?
             IndexPath.destinationGroupsSection + 1 :
