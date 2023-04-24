@@ -41,7 +41,7 @@ extension OptionSet where RawValue == UInt8 {
 extension OptionSet where RawValue == UInt16 {
     
     init(data: Data, offset: Int) {
-        self.init(rawValue: CFSwapInt16BigToHost(data.read(fromOffset: offset)))
+        self.init(rawValue: data.readBigEndian(fromOffset: offset))
     }
     
 }

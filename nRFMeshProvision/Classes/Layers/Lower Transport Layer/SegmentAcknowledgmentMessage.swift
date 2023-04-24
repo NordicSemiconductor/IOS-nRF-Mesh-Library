@@ -73,7 +73,7 @@ internal struct SegmentAcknowledgmentMessage: LowerTransportPdu {
         }
         isOnBehalfOfLowPowerNode = (data[1] & 0x80) != 0
         sequenceZero = (UInt16(data[1] & 0x7F) << 6) | UInt16(data[2] >> 2)
-        blockAck = CFSwapInt32BigToHost(data.read(fromOffset: 3))
+        blockAck = data.readBigEndian(fromOffset: 3)
         upperTransportPdu = Data() + blockAck.bigEndian
         
         source = networkPdu.source
