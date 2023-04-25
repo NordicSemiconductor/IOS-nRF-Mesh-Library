@@ -442,7 +442,7 @@ class FastSending: XCTestCase, MeshNetworkDelegate {
         XCTAssertNotNil(bindLastAppKey)
         XCTAssertNoThrow(try manager.sendToLocalNode(bindLastAppKey!))
         
-        wait(for: [messageSent, keyBound, statusSent, statusReceived], timeout: 4)
+        wait(for: [messageSent, keyBound, statusSent, statusReceived], timeout: 2)
     }
     
     func meshNetworkManager(_ manager: MeshNetworkManager,
@@ -466,6 +466,7 @@ class FastSending: XCTestCase, MeshNetworkDelegate {
     func meshNetworkManager(_ manager: MeshNetworkManager, didSendMessage message: MeshMessage,
                             from localElement: Element, to destination: Address) {
         if message is ConfigModelAppBind {
+            print("AAAA")
             messageSent.fulfill()
         }
         if message is ConfigModelAppStatus {

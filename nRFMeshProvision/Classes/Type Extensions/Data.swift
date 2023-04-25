@@ -29,6 +29,7 @@
 */
 
 import Foundation
+import CoreBluetooth
 
 extension UInt8 {
     public func mask(bits: Int) -> UInt8 {
@@ -242,6 +243,14 @@ extension Bool : DataConvertible {
         } else {
             return lhs + UInt8(0x00)
         }
+    }
+    
+}
+
+extension CBUUID {
+    
+    convenience init(dataLittleEndian data: Data) {
+        self.init(data: Data(data.reversed()))
     }
     
 }

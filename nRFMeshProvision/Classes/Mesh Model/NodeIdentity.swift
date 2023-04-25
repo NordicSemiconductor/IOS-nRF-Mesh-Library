@@ -31,8 +31,8 @@
 import Foundation
 import CoreBluetooth
 
-/// The Node Identity structure contains information from Node Identity or
-/// Private Node Identity beacon.
+/// The Node Identity contains information from Node Identity or Private Node Identity
+/// beacon.
 ///
 /// It can be used to match advertising device to a specific ``Node`` in the network.
 ///

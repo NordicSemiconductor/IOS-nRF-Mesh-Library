@@ -1,5 +1,5 @@
 /*
-* Copyright (c) 2019, Nordic Semiconductor
+* Copyright (c) 2023, Nordic Semiconductor
 * All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification,
@@ -30,35 +30,36 @@
 
 import Foundation
 
-public struct ConfigGATTProxySet: AcknowledgedConfigMessage {
-    public static let opCode: UInt32 = 0x8013
-    public static let responseType: StaticMeshMessage.Type = ConfigGATTProxyStatus.self
+/// A Remote Provisioning Link Get message is an acknowledged message used by the
+/// Remote Provisioning Client to get the Remote Provisioning Link state of a
+/// Remote Provisioning Server model.
+public struct RemoteProvisioningLinkClose: AcknowledgedRemoteProvisioningMessage {
+    public static let opCode: UInt32 = 0x805A
+    public static let responseType: StaticMeshMessage.Type = RemoteProvisioningLinkStatus.self
+    
+    /// Provisioning bearer link close reason.
+    public let reason: RemoteProvisioningLinkCloseReason
     
     public var parameters: Data? {
-        return Data([state.rawValue])
+        return Data([reason.rawValue])
     }
     
-    /// The new GATT Proxy state of the Node.
-    public let state: NodeFeatureState
-    
-    /// Configures the GATT Proxy on the Node.
+    /// Creates Remote Provisioning Link Get message.
     ///
-    /// When disabled, the Node will no longer be able to work as a GATT Proxy
-    /// until enabled again.
-    ///
-    /// - parameter enable: `True` to enable GATT Proxy feature, `false` to disable.
-    public init(enable: Bool) {
-        self.state = enable ? .enabled : .notEnabled
+    /// - parameter reason: Provisioning bearer link close reason.
+    ///                     This value cannot be ``RemoteProvisioningLinkCloseReason/unrecognized``. 
+    public init(reason: RemoteProvisioningLinkCloseReason) {
+        self.reason = reason == .unrecognized ? .fail : reason
     }
     
     public init?(parameters: Data) {
         guard parameters.count == 1 else {
             return nil
         }
-        guard let state = NodeFeatureState(rawValue: parameters[0]) else {
-            return nil
+        guard let reason = RemoteProvisioningLinkCloseReason(rawValue: parameters[0]) else {
+            self.reason = .unrecognized
+            return
         }
-        self.state = state
+        self.reason = reason
     }
-    
 }

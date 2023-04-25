@@ -48,11 +48,36 @@ public extension Dictionary where Key == String, Value == Any {
               let data = serviceData[MeshProvisioningService.uuid] else {
                 return nil
         }
-        guard data.count == 18 else {
+        guard data.count == 18 || data.count == 22 else {
             return nil
         }
         
         return CBUUID(data: data.subdata(in: 0 ..< 16))
+    }
+    
+    /// Hash of the associated URI advertised with the URI AD Type.
+    ///
+    /// Along with the Unprovisioned Device beacon, the unprovisioned device may also
+    /// advertise a separate non-connectable advertising packet with a URI data type
+    /// that points to OOB information such as a Public Key. To allow the association
+    /// of the advertised URI with the Unprovisioned Device beacon, the beacon may
+    /// contain an optional 4-octet URI Hash field.
+    ///
+    /// The URI Hash is calculated as:
+    /// ```swift
+    /// s1(URI Data)[0-3]
+    /// ```
+    /// The URI Data is a buffer containing the URI data type, as defined in Core Bluetooth
+    /// Supplement (CSS) Version 6 or later.
+    var uriHash: Data? {
+        guard let serviceData = self[CBAdvertisementDataServiceDataKey] as? [CBUUID : Data],
+              let data = serviceData[MeshProvisioningService.uuid] else {
+                return nil
+        }
+        guard data.count == 22 else {
+            return nil
+        }
+        return data.subdata(in: 19 ..< 23)
     }
     
     /// Returns the Unprovisioned Device's OOB information or `nil` if such

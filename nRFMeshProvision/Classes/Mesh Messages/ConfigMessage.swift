@@ -213,6 +213,21 @@ public protocol ConfigModelSubscriptionList: ConfigStatusMessage, ConfigModelMes
     case invalid(countLog: UInt8)
 }
 
+/// The Random Update Interval Steps state determines the cadence of updates to the
+/// Random field in the Mesh Private beacon.
+///
+/// The Random Update Interval Steps are defined in units of 10 seconds, with an
+/// approximate maximum value of 42 minutes.
+///
+/// The default value of this state shall be ``RandomUpdateIntervalSteps/interval(n:)``
+/// with value n = 60 (0x3C) (i.e., 10 minutes).
+@frozen public enum RandomUpdateIntervalSteps {
+    /// Random field is updated for every Mesh Private beacon.
+    case everyTime
+    /// Random field is updated at an interval (in 10 seconds steps).
+    case interval(n: UInt8)
+}
+
 internal extension ConfigMessage {
     
     /// Encodes given list of Key Indexes into a Data.
@@ -450,6 +465,19 @@ extension HeartbeatSubscriptionCount: CustomDebugStringConvertible {
             return "\(value)"
         case .reallyALot:
             return "More than 65534"
+        }
+    }
+    
+}
+
+extension RandomUpdateIntervalSteps: CustomDebugStringConvertible {
+    
+    public var debugDescription: String {
+        switch self {
+        case .everyTime:
+            return "Random field is updated for every Mesh Private beacon"
+        case .interval(n: let n):
+            return "Random field is updated every \(n * 10) sec."
         }
     }
     

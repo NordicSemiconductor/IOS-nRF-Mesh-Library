@@ -91,7 +91,7 @@ public class MeshNetwork: Codable {
         }
         set {
             var elements = newValue
-            // Configuration and Health Models will be added automatically.
+            // Some models, which are supported by the library, will be added automatically.
             // Let's make sure they are not in the array.
             elements.forEach { element in
                 element.removePrimaryElementModels()

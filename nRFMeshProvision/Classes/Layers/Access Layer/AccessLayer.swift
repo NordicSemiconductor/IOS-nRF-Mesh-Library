@@ -391,10 +391,8 @@ private extension AccessLayer {
         if let keySet = keySet as? AccessKeySet {
             // ..iterate through all the Elements of the local Node.
             for element in localNode.elements {
-                // For each of the Models...
-                // (except Configuration Server and Client, which use Device Key)
-                let models = element.models
-                    .filter { !$0.isConfigurationServer && !$0.isConfigurationClient }
+                // For each of the Models (except those that require Device Key)...
+                let models = element.models.filter { !$0.requiresDeviceKey }
                 for model in models {
                     // check, if the delegate is set, and it supports the opcode
                     // specified in the received Access PDU.
@@ -447,69 +445,38 @@ private extension AccessLayer {
             }
         } else if let primaryElement = localNode.primaryElement {
             // .. otherwise, the Device Key was used.
-            //
-            // Check Configuration Server Model, or Configration Client Model.
-            if let configurationServerModel = primaryElement.models
-                   .first(where: { $0.isConfigurationServer }),
-               let delegate = configurationServerModel.delegate,
-               let configMessage = delegate.decode(accessPdu) {
-                newMessage = configMessage
-                // Is this message targeting the local Node?
-                if accessPdu.destination.address == primaryElement.unicastAddress {
-                    logger?.i(.foundationModel, "\(configMessage) received from: \(accessPdu.source.hex)")
-                    if let response = delegate.model(configurationServerModel, didReceiveMessage: configMessage,
-                                                     sentFrom: accessPdu.source, to: accessPdu.destination,
-                                                     asResponseTo: request) {
-                        networkManager.reply(toMessageSentTo: accessPdu.destination.address,
-                                             with: response, to: accessPdu.source, using: keySet)
-                        // Reload Heartbeat publishing.
-                        if configMessage is ConfigHeartbeatPublicationSet {
-                            networkManager.upperTransportLayer.refreshHeartbeatPublisher()
+            let models = primaryElement.models.filter { $0.supportsDeviceKey }
+            for model in models {
+                // Check, if the delegate is set, and it supports the opcode
+                // specified in the received Access PDU.
+                if let delegate = model.delegate,
+                   let message = delegate.decode(accessPdu) {
+                    newMessage = message
+                    // Is this message targeting the local Node?
+                    if accessPdu.destination.address == primaryElement.unicastAddress {
+                        logger?.i(.foundationModel, "\(message) received from: \(accessPdu.source.hex)")
+                        if let response = delegate.model(model, didReceiveMessage: message,
+                                                         sentFrom: accessPdu.source, to: accessPdu.destination,
+                                                         asResponseTo: request) {
+                            networkManager.reply(toMessageSentTo: accessPdu.destination.address,
+                                                 with: response, to: accessPdu.source, using: keySet)
+                            
+                            // Some Config Messages require special handling.
+                            handle(message)
                         }
-                        // Reload Model publishing.
-                        if configMessage is ConfigModelPublicationSet ||
-                           configMessage is ConfigModelPublicationVirtualAddressSet,
-                           let request = configMessage as? ConfigAnyModelMessage,
-                           let element = localNode.element(withAddress: request.elementAddress),
-                           let model = element.model(withModelId: request.modelId) {
-                            refreshPeriodicPublisher(for: model)
-                        }
+                        _ = networkManager.manager.save()
+                    } else {
+                        // If not, it was received by adding another Node's address to the Proxy Filter.
+                        logger?.i(.foundationModel, "\(message) received from: \(accessPdu.source.hex), to: \(accessPdu.destination.hex)")
                     }
-                    _ = networkManager.manager.save()
-                } else {
-                    // If not, it was received by adding another Node's address to the Proxy Filter.
-                    logger?.i(.foundationModel, "\(configMessage) received from: \(accessPdu.source.hex), to: \(accessPdu.destination.hex)")
-                }
-            } else if let configurationClientModel = primaryElement.models
-                          .first(where: { $0.isConfigurationClient }),
-                      let delegate = configurationClientModel.delegate,
-                      let configMessage = delegate.decode(accessPdu) {
-                newMessage = configMessage
-                // Is this message targeting the local Node?
-                if accessPdu.destination.address == primaryElement.unicastAddress {
-                    logger?.i(.foundationModel, "\(configMessage) received from: \(accessPdu.source.hex)")
-                    if let response = delegate.model(configurationClientModel, didReceiveMessage: configMessage,
-                                                     sentFrom: accessPdu.source, to: accessPdu.destination,
-                                                     asResponseTo: request) {
-                        networkManager.reply(toMessageSentTo: accessPdu.destination.address,
-                                             with: response, to: accessPdu.source, using: keySet)
-                    }
-                    // Handle a case when a remote Node resets the local one.
-                    // The ConfigResetStatus has already been sent.
-                    if configMessage is ConfigNodeReset {
-                        let localElements = meshNetwork.localElements
-                        let provisioner = networkManager.manager.meshNetwork!.localProvisioner!
-                        provisioner.meshNetwork = nil
-                        _ = networkManager.manager.createNewMeshNetwork(withName: meshNetwork.meshName, by: provisioner)
-                        networkManager.manager.localElements = localElements
-                    }
-                    _ = networkManager.manager.save()
-                } else {
-                    // If not, it was received by adding another Node's address to the Proxy Filter.
-                    logger?.i(.foundationModel, "\(configMessage) received from: \(accessPdu.source.hex), to: \(accessPdu.destination.hex)")
+                    // A message can only be handled by a single Model, so we can break here.
+                    break
                 }
             }
         }
+        // If the message has not been decoded and handled by any Model Delegate,
+        // return it to the user as an Unknown Message.
+        // To support it, create a Model Delegate and add it to local elements.
         if newMessage == nil {
             var unknownMessage = UnknownMessage(parameters: accessPdu.parameters)!
             unknownMessage.opCode = accessPdu.opCode
@@ -517,6 +484,32 @@ private extension AccessLayer {
         }
         networkManager.notifyAbout(newMessage: newMessage,
                                    from: accessPdu.source, to: accessPdu.destination.address)
+    }
+    
+    /// This method handles selected config messages in a special way.
+    func handle(_ message: MeshMessage) {
+        // Reload Heartbeat publishing.
+        if message is ConfigHeartbeatPublicationSet {
+            networkManager.upperTransportLayer.refreshHeartbeatPublisher()
+        }
+        // Reload Model publishing.
+        if message is ConfigModelPublicationSet ||
+           message is ConfigModelPublicationVirtualAddressSet,
+           let request = message as? ConfigAnyModelMessage,
+           let localNode = meshNetwork.localProvisioner?.node,
+           let element = localNode.element(withAddress: request.elementAddress),
+           let model = element.model(withModelId: request.modelId) {
+            refreshPeriodicPublisher(for: model)
+        }
+        // Handle a case when a remote Node resets the local one.
+        // The ConfigResetStatus has already been sent.
+        if message is ConfigNodeReset {
+            let localElements = meshNetwork.localElements
+            let provisioner = networkManager.manager.meshNetwork!.localProvisioner!
+            provisioner.meshNetwork = nil
+            _ = networkManager.manager.createNewMeshNetwork(withName: meshNetwork.meshName, by: provisioner)
+            networkManager.manager.localElements = localElements
+        }
     }
     
 }
@@ -573,7 +566,6 @@ private extension ModelDelegate {
             return nil
         }
     }
-    
 }
 
 private extension AccessLayer {

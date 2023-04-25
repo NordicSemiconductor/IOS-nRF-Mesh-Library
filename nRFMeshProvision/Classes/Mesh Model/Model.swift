@@ -218,6 +218,39 @@ internal extension Model {
     var isHealthServer: Bool { return modelId == UInt32(UInt16.healthServerModelId) }
     var isHealthClient: Bool { return modelId == UInt32(UInt16.healthClientModelId) }
     var isSceneClient: Bool { return modelId == UInt32(UInt16.sceneClientModelId) }
+    var isRemoteProvisioningServer: Bool { return modelId == UInt32(UInt16.remoteProvisioningServerModelId) }
+    var isRemoteProvisioningClient: Bool { return modelId == UInt32(UInt16.remoteProvisioningClientModelId) }
+    var isDirectedForwardingConfigurationServer: Bool { return modelId == UInt32(UInt16.directedForwardingConfigurationServerModelId) }
+    var isDirectedForwardingConfigurationClient: Bool { return modelId == UInt32(UInt16.directedForwardingConfigurationClientModelId) }
+    var isBridgeConfigurationServer: Bool { return modelId == UInt32(UInt16.bridgeConfigurationServerModelId) }
+    var isBridgeConfigurationClient: Bool { return modelId == UInt32(UInt16.bridgeConfigurationClientModelId) }
+    var isPrivateBeaconServer: Bool { return modelId == UInt32(UInt16.privateBeaconServerModelId) }
+    var isPrivateBeaconClient: Bool { return modelId == UInt32(UInt16.privateBeaconServerModelId) }
+    var isOnDemandPrivateProxyServer: Bool { return modelId == UInt32(UInt16.onDemandPrivateProxyServerModelId) }
+    var isOnDemandPrivateProxyClient: Bool { return modelId == UInt32(UInt16.onDemandPrivateProxyClientModelId) }
+    var isSarConfigurationServer: Bool { return modelId == UInt32(UInt16.sarConfigurationServerModelId) }
+    var isSarConfigurationClient: Bool { return modelId == UInt32(UInt16.sarConfigurationClientModelId) }
+    var isOpcodesAggregatorServer: Bool { return modelId == UInt32(UInt16.opcodesAggregatorServerModelId) }
+    var isOpcodesAggregatorClient: Bool { return modelId == UInt32(UInt16.opcodesAggregatorClientModelId) }
+    var isLargeCompositionDataServer: Bool { return modelId == UInt32(UInt16.largeCompositionDataServerModelId) }
+    var isLargeCompositionDataClient: Bool { return modelId == UInt32(UInt16.largeCompositionDataClientModelId) }
+    
+    /// Returns whether the access layer security on the Model shall use the Device Key.
+    var requiresDeviceKey: Bool {
+        return isConfigurationServer                   || isConfigurationClient                   ||
+               isRemoteProvisioningServer              || isRemoteProvisioningClient              ||
+               isDirectedForwardingConfigurationServer || isDirectedForwardingConfigurationClient ||
+               isBridgeConfigurationServer             || isBridgeConfigurationClient             ||
+               isPrivateBeaconServer                   || isPrivateBeaconClient                   ||
+               isOnDemandPrivateProxyServer            || isOnDemandPrivateProxyClient            ||
+               isSarConfigurationServer                || isSarConfigurationClient                ||
+               isLargeCompositionDataServer            || isLargeCompositionDataClient
+    }
+    
+    /// Returns whether the access layer security on the Model can use the Device Key.
+    var supportsDeviceKey: Bool {
+        return requiresDeviceKey || isOpcodesAggregatorServer || isOpcodesAggregatorClient
+    }
     
 }
 

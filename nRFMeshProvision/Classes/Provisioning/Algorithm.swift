@@ -49,16 +49,6 @@ public enum Algorithm {
     /// - since: Mesh Protocol 1.1.
     case BTM_ECDH_P256_HMAC_SHA256_AES_CCM
     
-    var value: Data {
-        switch self {
-        case .fipsP256EllipticCurve,
-             .BTM_ECDH_P256_CMAC_AES128_AES_CCM:
-            return Data([0])
-        case .BTM_ECDH_P256_HMAC_SHA256_AES_CCM:
-            return Data([1])
-        }
-    }
-    
     var length: Int {
         switch self {
         case .fipsP256EllipticCurve,

@@ -43,7 +43,7 @@ public enum ProvisioningState {
     /// The provisioning process is complete.
     case complete
     /// The provisioning has failed because of a local error.
-    case fail(_ error: Error)
+    case failed(_ error: Error)
 }
 
 /// Set of errors which may be thrown during provisioning a device.
@@ -81,26 +81,26 @@ public enum ProvisioningError: Error {
 /// during provisioning process.
 public enum RemoteProvisioningError: UInt8 {
     /// The provisioning protocol PDU is not recognized by the device.
-    case invalidPdu = 1
+    case invalidPdu            = 1
     /// The arguments of the protocol PDUs are outside expected values
     /// or the length of the PDU is different than expected.
-    case invalidFormat = 2
+    case invalidFormat         = 2
     /// The PDU received was not expected at this moment of the procedure.
-    case unexpectedPdu = 3
+    case unexpectedPdu         = 3
     /// The computed confirmation value was not successfully verified.
-    case confirmationFailed = 4
+    case confirmationFailed    = 4
     /// The provisioning protocol cannot be continued due to insufficient
     /// resources in the device.
-    case outOfResources = 5
+    case outOfResources        = 5
     /// The Data block was not successfully decrypted.
-    case decryptionFailed = 6
+    case decryptionFailed      = 6
     /// An unexpected error occurred that may not be recoverable.
-    case unexpectedError = 7
+    case unexpectedError       = 7
     /// The device cannot assign consecutive unicast addresses to all elements.
     case cannotAssignAddresses = 8
     /// The Data block contains values that cannot be accepted because of
     /// general constraints.
-    case invalidData = 9
+    case invalidData           = 9
 }
 
 /// A set of authentication actions aiming to strengthen device provisioniong
@@ -135,7 +135,7 @@ extension ProvisioningState: CustomDebugStringConvertible {
             return "Provisioning started"
         case .complete:
             return "Provisioning complete"
-        case let .fail(error):
+        case let .failed(error):
             return "Provisioning failed: \(error.localizedDescription)"
         }
     }

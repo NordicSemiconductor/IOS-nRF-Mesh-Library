@@ -1,5 +1,5 @@
 /*
-* Copyright (c) 2019, Nordic Semiconductor
+* Copyright (c) 2023, Nordic Semiconductor
 * All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification,
@@ -30,35 +30,30 @@
 
 import Foundation
 
-public struct ConfigGATTProxySet: AcknowledgedConfigMessage {
-    public static let opCode: UInt32 = 0x8013
-    public static let responseType: StaticMeshMessage.Type = ConfigGATTProxyStatus.self
+/// A Private GATT Proxy Set message is an acknowledged message used to set the
+/// Private GATT Proxy state of a Node.
+public struct PrivateGATTProxySet: AcknowledgedConfigMessage {
+    public static let opCode: UInt32 = 0x8064
+    public static let responseType: StaticMeshMessage.Type = PrivateGATTProxyStatus.self
+    
+    /// New Private GATT Proxy state.
+    public let enabled: Bool
     
     public var parameters: Data? {
-        return Data([state.rawValue])
+        return Data() + enabled
     }
     
-    /// The new GATT Proxy state of the Node.
-    public let state: NodeFeatureState
-    
-    /// Configures the GATT Proxy on the Node.
-    ///
-    /// When disabled, the Node will no longer be able to work as a GATT Proxy
-    /// until enabled again.
-    ///
-    /// - parameter enable: `True` to enable GATT Proxy feature, `false` to disable.
-    public init(enable: Bool) {
-        self.state = enable ? .enabled : .notEnabled
+    /// Creates a Private GATT Proxy Set message to enable or disable
+    /// Private GATT Proxy state if a Node.
+    public init(enabled: Bool) {
+        self.enabled = enabled
     }
     
     public init?(parameters: Data) {
-        guard parameters.count == 1 else {
+        guard parameters.count == 1,
+              parameters[0] <= 1 else {
             return nil
         }
-        guard let state = NodeFeatureState(rawValue: parameters[0]) else {
-            return nil
-        }
-        self.state = state
+        self.enabled = parameters[0] == 0x01
     }
-    
 }

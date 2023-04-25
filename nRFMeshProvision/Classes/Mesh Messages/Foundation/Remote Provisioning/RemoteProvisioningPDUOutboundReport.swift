@@ -1,5 +1,5 @@
 /*
-* Copyright (c) 2019, Nordic Semiconductor
+* Copyright (c) 2023, Nordic Semiconductor
 * All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification,
@@ -30,35 +30,33 @@
 
 import Foundation
 
-public struct ConfigGATTProxySet: AcknowledgedConfigMessage {
-    public static let opCode: UInt32 = 0x8013
-    public static let responseType: StaticMeshMessage.Type = ConfigGATTProxyStatus.self
+/// A Remote Provisioning PDU Outbound Report message is an unacknowledged message
+/// used by the Remote Provisioning Server to report completion of the delivery
+/// of the Provisioning PDUs that the Remote Provisioning Server either sends to
+/// a device that is being provisioned or processes locally during the
+/// Device Key Refresh procedure, the Node Address Refresh procedure,
+/// or the Node Composition Refresh procedure.
+public struct RemoteProvisioningPDUOutboundReport: RemoteProvisioningMessage {
+    public static let opCode: UInt32 = 0x805E
+    
+    /// Remote Provisioning Outbound PDU Count state.
+    public let outboundPduNumber: UInt8
     
     public var parameters: Data? {
-        return Data([state.rawValue])
+        return Data([outboundPduNumber])
     }
     
-    /// The new GATT Proxy state of the Node.
-    public let state: NodeFeatureState
-    
-    /// Configures the GATT Proxy on the Node.
+    /// Creates a Remote Provisioning PDU Outbound Report.
     ///
-    /// When disabled, the Node will no longer be able to work as a GATT Proxy
-    /// until enabled again.
-    ///
-    /// - parameter enable: `True` to enable GATT Proxy feature, `false` to disable.
-    public init(enable: Bool) {
-        self.state = enable ? .enabled : .notEnabled
+    /// - parameter outboundPduNumber: Remote Provisioning Outbound PDU Count state.
+    public init(outboundPduNumber: UInt8) {
+        self.outboundPduNumber = outboundPduNumber
     }
     
     public init?(parameters: Data) {
         guard parameters.count == 1 else {
             return nil
         }
-        guard let state = NodeFeatureState(rawValue: parameters[0]) else {
-            return nil
-        }
-        self.state = state
+        self.outboundPduNumber = parameters[0]
     }
-    
 }

@@ -1,5 +1,5 @@
 /*
-* Copyright (c) 2019, Nordic Semiconductor
+* Copyright (c) 2023, Nordic Semiconductor
 * All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification,
@@ -30,35 +30,48 @@
 
 import Foundation
 
-public struct ConfigGATTProxySet: AcknowledgedConfigMessage {
-    public static let opCode: UInt32 = 0x8013
-    public static let responseType: StaticMeshMessage.Type = ConfigGATTProxyStatus.self
+/// A Remote Provisioning Scan Capabilities Status message is an unacknowledged
+/// message used by the Remote Provisioning Server to report the current value of
+/// the Remote Provisioning Scan Capabilities state of a Remote Provisioning Server.
+public struct RemoteProvisioningScanCapabilitiesStatus: RemoteProvisioningMessage {
+    public static let opCode: UInt32 = 0x8050
+    
+    /// The maximum number of UUIDs that can be reported during scanning.
+    ///
+    /// The minimum value of the state is 4. The maximum value of the state is 255.
+    public let maxScannedItems: UInt8
+    /// Indication if active scan is supported.
+    public let activeScanSupported: Bool
     
     public var parameters: Data? {
-        return Data([state.rawValue])
+        return Data([maxScannedItems]) + activeScanSupported
     }
     
-    /// The new GATT Proxy state of the Node.
-    public let state: NodeFeatureState
-    
-    /// Configures the GATT Proxy on the Node.
+    /// Creates a Remote Provisioning Scan Capabilities Status message.
     ///
-    /// When disabled, the Node will no longer be able to work as a GATT Proxy
-    /// until enabled again.
-    ///
-    /// - parameter enable: `True` to enable GATT Proxy feature, `false` to disable.
-    public init(enable: Bool) {
-        self.state = enable ? .enabled : .notEnabled
+    /// - parameters:
+    ///   - maxScannerItems: The maximum number of UUIDs that can be reported during
+    ///                      scanning. The minimum value of the state is 4.
+    ///                      The maximum value of the state is 255.
+    ///   - activeScanSupported: Whether the Remote Provisioning Server supports
+    ///                          active scanning.
+    public init?(maxScannedItems: UInt8, activeScanSupported: Bool) {
+        guard maxScannedItems >= 4 else {
+            return nil
+        }
+        self.maxScannedItems = maxScannedItems
+        self.activeScanSupported = activeScanSupported
     }
     
     public init?(parameters: Data) {
-        guard parameters.count == 1 else {
+        guard parameters.count == 2 else {
             return nil
         }
-        guard let state = NodeFeatureState(rawValue: parameters[0]) else {
+        let count = parameters[0]
+        guard count >= 4 else {
             return nil
         }
-        self.state = state
+        maxScannedItems = count
+        activeScanSupported = parameters[1] == 0x01
     }
-    
 }

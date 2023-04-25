@@ -1,5 +1,5 @@
 /*
-* Copyright (c) 2019, Nordic Semiconductor
+* Copyright (c) 2023, Nordic Semiconductor
 * All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification,
@@ -30,35 +30,37 @@
 
 import Foundation
 
-public struct ConfigGATTProxySet: AcknowledgedConfigMessage {
-    public static let opCode: UInt32 = 0x8013
-    public static let responseType: StaticMeshMessage.Type = ConfigGATTProxyStatus.self
+/// A Remote Provisioning Link Status message is an unacknowledged message used by
+/// the Remote Provisioning Server to acknowledge a Remote Provisioning Link Get
+/// message, a Remote Provisioning Link Open message, or a Remote Provisioning
+/// Link Close message.
+public struct RemoteProvisioningLinkStatus: RemoteProvisioningMessage, RemoteProvisioningStatusMessage {
+    public static let opCode: UInt32 = 0x805B
+    
+    public let status: RemoteProvisioningMessageStatus
+    /// Remote Provisioning Link state.
+    public let linkState: RemoteProvisioningLinkState
     
     public var parameters: Data? {
-        return Data([state.rawValue])
+        return Data([status.rawValue, linkState.rawValue])
     }
     
-    /// The new GATT Proxy state of the Node.
-    public let state: NodeFeatureState
-    
-    /// Configures the GATT Proxy on the Node.
-    ///
-    /// When disabled, the Node will no longer be able to work as a GATT Proxy
-    /// until enabled again.
-    ///
-    /// - parameter enable: `True` to enable GATT Proxy feature, `false` to disable.
-    public init(enable: Bool) {
-        self.state = enable ? .enabled : .notEnabled
+    public init(status: RemoteProvisioningMessageStatus, linkState: RemoteProvisioningLinkState) {
+        self.status = status
+        self.linkState = linkState
     }
     
     public init?(parameters: Data) {
-        guard parameters.count == 1 else {
+        guard parameters.count == 2 else {
             return nil
         }
-        guard let state = NodeFeatureState(rawValue: parameters[0]) else {
+        guard let status = RemoteProvisioningMessageStatus(rawValue: parameters[0]) else {
             return nil
         }
-        self.state = state
+        self.status = status
+        guard let linkState = RemoteProvisioningLinkState(rawValue: parameters[1]) else {
+            return nil
+        }
+        self.linkState = linkState
     }
-    
 }

@@ -1,5 +1,5 @@
 /*
-* Copyright (c) 2019, Nordic Semiconductor
+* Copyright (c) 2023, Nordic Semiconductor
 * All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification,
@@ -30,35 +30,50 @@
 
 import Foundation
 
-public struct ConfigGATTProxySet: AcknowledgedConfigMessage {
-    public static let opCode: UInt32 = 0x8013
-    public static let responseType: StaticMeshMessage.Type = ConfigGATTProxyStatus.self
+/// A Private Node Identity Status message is an unacknowledged message used to
+/// report the current Private Node Identity state for a subnet.
+public struct PrivateNodeIdentityStatus: ConfigNetKeyMessage, ConfigStatusMessage {
+    public static let opCode: UInt32 = 0x8068
     
-    public var parameters: Data? {
-        return Data([state.rawValue])
-    }
-    
-    /// The new GATT Proxy state of the Node.
+    public let status: ConfigMessageStatus
+    public let networkKeyIndex: KeyIndex
+    /// Current Private Node Identity state.
     public let state: NodeFeatureState
     
-    /// Configures the GATT Proxy on the Node.
-    ///
-    /// When disabled, the Node will no longer be able to work as a GATT Proxy
-    /// until enabled again.
-    ///
-    /// - parameter enable: `True` to enable GATT Proxy feature, `false` to disable.
-    public init(enable: Bool) {
-        self.state = enable ? .enabled : .notEnabled
+    public var parameters: Data? {
+        return encodeNetKeyIndex() + state.rawValue
+    }
+    
+    public init(report state: NodeFeatureState, for networkKey: NetworkKey, with status: ConfigMessageStatus) {
+        self.status = status
+        self.networkKeyIndex = networkKey.index
+        self.state = state
+    }
+    
+    public init(reject request: PrivateNodeIdentityGet) {
+        self.status = .success
+        self.networkKeyIndex = request.networkKeyIndex
+        self.state = .notSupported
+    }
+    
+    public init(reject request: PrivateNodeIdentitySet) {
+        self.status = .success
+        self.networkKeyIndex = request.networkKeyIndex
+        self.state = .notSupported
     }
     
     public init?(parameters: Data) {
-        guard parameters.count == 1 else {
+        guard parameters.count == 4 else {
             return nil
         }
-        guard let state = NodeFeatureState(rawValue: parameters[0]) else {
+        guard let status = ConfigMessageStatus(rawValue: parameters[0]) else {
+            return nil
+        }
+        self.status = status
+        self.networkKeyIndex = PrivateNodeIdentityGet.decodeNetKeyIndex(from: parameters, at: 1)
+        guard let state = NodeFeatureState(rawValue: parameters[3]) else {
             return nil
         }
         self.state = state
     }
-    
 }

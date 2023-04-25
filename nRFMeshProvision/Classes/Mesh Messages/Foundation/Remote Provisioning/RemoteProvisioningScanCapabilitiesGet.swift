@@ -1,5 +1,5 @@
 /*
-* Copyright (c) 2019, Nordic Semiconductor
+* Copyright (c) 2023, Nordic Semiconductor
 * All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification,
@@ -30,35 +30,24 @@
 
 import Foundation
 
-public struct ConfigGATTProxySet: AcknowledgedConfigMessage {
-    public static let opCode: UInt32 = 0x8013
-    public static let responseType: StaticMeshMessage.Type = ConfigGATTProxyStatus.self
+/// A Remote Provisioning Scan Capabilities Get message is an acknowledged message
+/// used by the Remote Provisioning Client to get the value of the Remote Provisioning
+/// Scan Capabilities state.
+public struct RemoteProvisioningScanCapabilitiesGet: AcknowledgedRemoteProvisioningMessage {
+    public static let opCode: UInt32 = 0x804F
+    public static let responseType: StaticMeshMessage.Type = RemoteProvisioningScanCapabilitiesStatus.self
     
     public var parameters: Data? {
-        return Data([state.rawValue])
+        return nil
     }
     
-    /// The new GATT Proxy state of the Node.
-    public let state: NodeFeatureState
-    
-    /// Configures the GATT Proxy on the Node.
-    ///
-    /// When disabled, the Node will no longer be able to work as a GATT Proxy
-    /// until enabled again.
-    ///
-    /// - parameter enable: `True` to enable GATT Proxy feature, `false` to disable.
-    public init(enable: Bool) {
-        self.state = enable ? .enabled : .notEnabled
+    public init() {
+        // Empty
     }
     
     public init?(parameters: Data) {
-        guard parameters.count == 1 else {
+        guard parameters.isEmpty else {
             return nil
         }
-        guard let state = NodeFeatureState(rawValue: parameters[0]) else {
-            return nil
-        }
-        self.state = state
     }
-    
 }
