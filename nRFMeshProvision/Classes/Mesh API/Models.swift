@@ -454,6 +454,10 @@ public extension Model {
                 return model.modelIdentifier == .genericOnOffServerModelId
             case .lightLCSetupServerModelId:
                 return model.modelIdentifier == .lightLCServerModelId
+            // Device Firmware Update
+            case .firmwareUpdateServer,
+                 .firmwareDistributionServer:
+                return model.modelIdentifier == .blobTransferServer
             default:
                 return false
             }
@@ -563,4 +567,12 @@ public extension UInt16 {
     static let lightLCServerModelId: UInt16 = 0x130F
     static let lightLCSetupServerModelId: UInt16 = 0x1310
     static let lightLCClientModelId: UInt16 = 0x1311
+    // BLOB Transfer
+    static let blobTransferServer: UInt16 = 0x1400
+    static let blonTransferClient: UInt16 = 0x1401
+    // Device Firmware Update
+    static let firmwareUpdateServer: UInt16 = 0x1402
+    static let firmwareUpdateClient: UInt16 = 0x1403
+    static let firmwareDistributionServer: UInt16 = 0x1404
+    static let firmwareDistributionClient: UInt16 = 0x1405
 }
