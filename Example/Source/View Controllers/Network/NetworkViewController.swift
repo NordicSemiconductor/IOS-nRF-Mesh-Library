@@ -50,7 +50,6 @@ private enum SectionType {
 private struct Section {
     let type: SectionType
     let nodes: [Node]
-  
     
     init(type: SectionType, nodes: [Node]) {
         self.type = type
@@ -68,70 +67,29 @@ private struct Section {
     }
 }
 
-class NetworkViewController: UITableViewController , UISearchBarDelegate{
-    
-    
+class NetworkViewController: UITableViewController, UISearchBarDelegate {
     private var sections: [Section] = []
     
-    // MARK: - search bar
-    private let searchController = UISearchController(searchResultsController: nil)
+    // MARK: - Search Bar
+    
+    private var searchController: UISearchController!
     private var filteredSections: [Section] = []
     
-    private func createSearchBar(){
-        navigationItem.searchController = searchController
-        searchController.searchBar.placeholder = "Search by Node name, Unicast Address"
-        searchController.searchBar.delegate = self
-        searchController.searchBar.isTranslucent = false
-    
-    }
     // MARK: - Implementation
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        filteredSections = sections
-        createSearchBar()
         tableView.setEmptyView(title: "No Nodes",
                                message: "Click + to provision a new device.",
                                messageImage: #imageLiteral(resourceName: "baseline-network"))
-        reloadData()
+        createSearchBar()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        tableView.reloadData()
         MeshNetworkManager.instance.delegate = self
-        filteredSections = sections
         reloadData()
     }
-    
-    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-    
-        if searchText.isEmpty {
-            filteredSections = sections
-          
-        } else {
-            filteredSections = sections.map { section in
-                let filteredNodes = section.nodes.filter { node in
-                  
-                    return node.name!.lowercased().contains(searchText.lowercased()) ||
-                    String(node.primaryUnicastAddress.asString()).lowercased().contains(searchText.lowercased())
-                }
-                
-               
-                return Section(type: section.type, nodes: filteredNodes)
-            }.filter { !$0.nodes.isEmpty }
-        }
-        tableView.reloadData()
-    }
-
-    
-    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
-        searchBar.text = ""
-        filteredSections = sections
-        tableView.reloadData()
-    }
-    
-    
     
     override func shouldPerformSegue(withIdentifier identifier: String, sender: Any?) -> Bool {
         if identifier == "provision" {
@@ -174,6 +132,17 @@ class NetworkViewController: UITableViewController , UISearchBarDelegate{
             break
         }
     }
+    
+    // MARK: - Search Bar Delegate
+    
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        applyFilter(searchText)
+    }
+
+    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        searchBar.text = ""
+        applyFilter("")
+    }
 
     // MARK: - Table view data source
 
@@ -200,12 +169,47 @@ class NetworkViewController: UITableViewController , UISearchBarDelegate{
 
 private extension NetworkViewController {
     
+    func createSearchBar() {
+        searchController = UISearchController(searchResultsController: nil)
+        searchController.searchBar.placeholder = "Name, Unicast Address"
+        searchController.searchBar.delegate = self
+        searchController.searchBar.isTranslucent = false
+        if #available(iOS 13.0, *) {
+            searchController.searchBar.searchTextField.tintColor = .label
+            searchController.searchBar.searchTextField.backgroundColor = .systemBackground
+        }
+        navigationItem.searchController = searchController
+    }
+    
+    func applyFilter(_ searchText: String) {
+        if searchText.isEmpty {
+            filteredSections = sections
+        } else {
+            filteredSections = sections
+                .map { section in
+                    let filteredNodes = section.nodes.filter {
+                        $0.name?.lowercased().contains(searchText.lowercased()) ?? false ||
+                        $0.primaryUnicastAddress.asString().lowercased().contains(searchText.lowercased())
+                    }
+                    return Section(type: section.type, nodes: filteredNodes)
+                }
+                .filter { !$0.nodes.isEmpty }
+        }
+        tableView.reloadData()
+        
+        if filteredSections.isEmpty {
+            tableView.showEmptyView()
+        } else {
+            tableView.hideEmptyView()
+        }
+    }
+    
     func reloadData() {
         sections.removeAll()
         if let network = MeshNetworkManager.instance.meshNetwork {
-            let notConfiguredNodes = network.nodes.filter({ !$0.isConfigComplete && !$0.isProvisioner })
-            let configuredNodes    = network.nodes.filter({ $0.isConfigComplete && !$0.isProvisioner })
-            let provisionersNodes  = network.nodes.filter({ $0.isProvisioner && !$0.isLocalProvisioner })
+            let notConfiguredNodes = network.nodes.filter { !$0.isConfigComplete && !$0.isProvisioner }
+            let configuredNodes    = network.nodes.filter { $0.isConfigComplete && !$0.isProvisioner }
+            let provisionersNodes  = network.nodes.filter { $0.isProvisioner && !$0.isLocalProvisioner }
             
             if !notConfiguredNodes.isEmpty {
                 sections.append(Section(type: .notConfiguredNodes, nodes: notConfiguredNodes))
@@ -220,14 +224,7 @@ private extension NetworkViewController {
                 sections.append(Section(type: .thisProvisioner, nodes: [thisProvisionerNode]))
             }
         }
-        filteredSections = sections
-        tableView.reloadData()
-        
-        if filteredSections.isEmpty {
-            tableView.showEmptyView()
-        } else {
-            tableView.hideEmptyView()
-        }
+        applyFilter(searchController.searchBar.text ?? "")
     }
     
 }

@@ -31,58 +31,27 @@
 import UIKit
 import nRFMeshProvision
 
-class GroupsViewController: UITableViewController, Editable , UISearchResultsUpdating{
+class GroupsViewController: UITableViewController, Editable, UISearchBarDelegate {
+    private var groups: [Group] = []
+        
+    // MARK: - Search Bar
     
-    // MARK: - search sunc
-    func updateSearchResults(for searchController: UISearchController) {
-        let searchText = searchController.searchBar.text ?? ""
-        if !searchText.isEmpty {
-            filteredGroups = MeshNetworkManager.instance.meshNetwork!.groups.filter {
-                $0.name.lowercased().contains(searchText.lowercased()) ||
-                $0.address.asString().lowercased().contains(searchText.lowercased())
-            }
-        } else {
-            filteredGroups = nil
-        }
-        tableView.reloadData()
-    }
-    
-    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
-        searchBar.text = ""
-        let network = MeshNetworkManager.instance.meshNetwork!
-        filteredGroups = network.groups
-        tableView.reloadData()
-    }
-    
-    let searchController = UISearchController(searchResultsController: nil)
-    var filteredGroups: [Group]?
-    
+    private var searchController: UISearchController!
+    private var filteredGroups: [Group] = []
     
     // MARK: - Implementation
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        searchController.searchResultsUpdater = self
-        searchController.obscuresBackgroundDuringPresentation = false
-        searchController.searchBar.placeholder = "Search by Group name, Group address"
-        navigationItem.searchController = searchController
-        definesPresentationContext = true
         tableView.setEmptyView(title: "No Groups",
                                message: "Click + to create one.",
                                messageImage: #imageLiteral(resourceName: "baseline-groups"))
+        createSearchBar()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        tableView.reloadData()
-        
-        let network = MeshNetworkManager.instance.meshNetwork
-        let hasGroups = network?.groups.count ?? 0 > 0
-        if !hasGroups {
-            showEmptyView()
-        } else {
-            hideEmptyView()
-        }
+        reloadData()
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -97,6 +66,17 @@ class GroupsViewController: UITableViewController, Editable , UISearchResultsUpd
         }
     }
     
+    // MARK: - Search Bar Delegate
+    
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        applyFilter(searchText)
+    }
+
+    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        searchBar.text = ""
+        applyFilter("")
+    }
+    
     
     // MARK: - Table view data source
     
@@ -105,22 +85,13 @@ class GroupsViewController: UITableViewController, Editable , UISearchResultsUpd
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        let meshNetwork = MeshNetworkManager.instance.meshNetwork
-           if let filteredGroups = filteredGroups {
-               return filteredGroups.count
-           } else {
-               return meshNetwork?.groups.count ?? 0
-           }
+        return filteredGroups.count
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "group", for: indexPath) as! GroupCell
-           if let filteredGroups = filteredGroups {
-               cell.group = filteredGroups[indexPath.row]
-           } else {
-               cell.group = MeshNetworkManager.instance.meshNetwork!.groups[indexPath.row]
-           }
-           return cell
+        cell.group = filteredGroups[indexPath.row]
+        return cell
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -128,14 +99,12 @@ class GroupsViewController: UITableViewController, Editable , UISearchResultsUpd
     }
     
     override func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
-        let network = MeshNetworkManager.instance.meshNetwork!
-        let group = network.groups[indexPath.row]
+        let group = filteredGroups[indexPath.row]
         return group.isUsed ? .none : .delete
     }
     
     override func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
-        let network = MeshNetworkManager.instance.meshNetwork!
-        let group = network.groups[indexPath.row]
+        let group = filteredGroups[indexPath.row]
         if group.isUsed {
             return [UITableViewRowAction(style: .normal, title: "In Use", handler: { _,_ in })]
         }
@@ -144,16 +113,19 @@ class GroupsViewController: UITableViewController, Editable , UISearchResultsUpd
     
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         let network = MeshNetworkManager.instance.meshNetwork!
-        let group = network.groups[indexPath.row]
+        let group = filteredGroups[indexPath.row]
         do {
             try network.remove(group: group)
+            if let index = groups.firstIndex(of: group) {
+                groups.remove(at: index)
+            }
+            filteredGroups.remove(at: indexPath.row)
+            tableView.deleteRows(at: [indexPath], with: .fade)
+            if filteredGroups.isEmpty {
+                showEmptyView()
+            }
             
-            if MeshNetworkManager.instance.save() {
-                tableView.deleteRows(at: [indexPath], with: .fade)
-                if network.groups.isEmpty {
-                    showEmptyView()
-                }
-            } else {
+            if !MeshNetworkManager.instance.save() {
                 presentAlert(title: "Error", message: "Mesh configuration could not be saved.")
             }
         } catch {
@@ -163,12 +135,55 @@ class GroupsViewController: UITableViewController, Editable , UISearchResultsUpd
     
 }
 
+private extension GroupsViewController {
+    
+    func createSearchBar() {
+        searchController = UISearchController(searchResultsController: nil)
+        searchController.searchBar.placeholder = "Name, Group Address"
+        searchController.searchBar.delegate = self
+        searchController.searchBar.isTranslucent = false
+        if #available(iOS 13.0, *) {
+            searchController.searchBar.searchTextField.tintColor = .label
+            searchController.searchBar.searchTextField.backgroundColor = .systemBackground
+        }
+        navigationItem.searchController = searchController
+    }
+    
+    func applyFilter(_ searchText: String) {
+        if searchText.isEmpty {
+            filteredGroups = groups
+        } else {
+            filteredGroups = groups.filter {
+                $0.name.lowercased().contains(searchText.lowercased()) ||
+                $0.address.asString().lowercased().contains(searchText.lowercased())
+            }
+        }
+        tableView.reloadData()
+        
+        if filteredGroups.isEmpty {
+            showEmptyView()
+        } else {
+            hideEmptyView()
+        }
+    }
+    
+    func reloadData() {
+        if let network = MeshNetworkManager.instance.meshNetwork {
+            groups = network.groups
+        }
+        applyFilter(searchController.searchBar.text ?? "")
+    }
+    
+}
+
 extension GroupsViewController: GroupDelegate {
     
     func groupChanged(_ group: Group) {
-        let meshNetwork = MeshNetworkManager.instance.meshNetwork!
-        tableView.insertRows(at: [IndexPath(row: meshNetwork.groups.count - 1, section: 0)], with: .automatic)
+        groups.append(group)
+        filteredGroups.append(group)
+        tableView.insertRows(at: [IndexPath(row: groups.count - 1, section: 0)], with: .automatic)
         hideEmptyView()
     }
     
 }
+
