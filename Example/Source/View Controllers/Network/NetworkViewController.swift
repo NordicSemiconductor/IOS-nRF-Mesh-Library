@@ -67,8 +67,13 @@ private struct Section {
     }
 }
 
-class NetworkViewController: UITableViewController {
+class NetworkViewController: UITableViewController, UISearchBarDelegate {
     private var sections: [Section] = []
+    
+    // MARK: - Search Bar
+    
+    private var searchController: UISearchController!
+    private var filteredSections: [Section] = []
     
     // MARK: - Implementation
     
@@ -77,14 +82,12 @@ class NetworkViewController: UITableViewController {
         tableView.setEmptyView(title: "No Nodes",
                                message: "Click + to provision a new device.",
                                messageImage: #imageLiteral(resourceName: "baseline-network"))
+        createSearchBar()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        tableView.reloadData()
-        
         MeshNetworkManager.instance.delegate = self
-        
         reloadData()
     }
     
@@ -129,23 +132,34 @@ class NetworkViewController: UITableViewController {
             break
         }
     }
+    
+    // MARK: - Search Bar Delegate
+    
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        applyFilter(searchText)
+    }
+
+    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        searchBar.text = ""
+        applyFilter("")
+    }
 
     // MARK: - Table view data source
 
     override func numberOfSections(in tableView: UITableView) -> Int {
-        return sections.count
+        return filteredSections.count
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return sections[section].nodes.count
+        return filteredSections[section].nodes.count
     }
     
     override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        return sections[section].title
+        return filteredSections[section].title
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        return sections[indexPath.section].tableView(tableView, cellForRowAt: indexPath)
+        return filteredSections[indexPath.section].tableView(tableView, cellForRowAt: indexPath)
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -155,12 +169,47 @@ class NetworkViewController: UITableViewController {
 
 private extension NetworkViewController {
     
+    func createSearchBar() {
+        searchController = UISearchController(searchResultsController: nil)
+        searchController.searchBar.placeholder = "Name, Unicast Address"
+        searchController.searchBar.delegate = self
+        searchController.searchBar.isTranslucent = false
+        if #available(iOS 13.0, *) {
+            searchController.searchBar.searchTextField.tintColor = .label
+            searchController.searchBar.searchTextField.backgroundColor = .systemBackground
+        }
+        navigationItem.searchController = searchController
+    }
+    
+    func applyFilter(_ searchText: String) {
+        if searchText.isEmpty {
+            filteredSections = sections
+        } else {
+            filteredSections = sections
+                .map { section in
+                    let filteredNodes = section.nodes.filter {
+                        $0.name?.lowercased().contains(searchText.lowercased()) ?? false ||
+                        $0.primaryUnicastAddress.asString().lowercased().contains(searchText.lowercased())
+                    }
+                    return Section(type: section.type, nodes: filteredNodes)
+                }
+                .filter { !$0.nodes.isEmpty }
+        }
+        tableView.reloadData()
+        
+        if filteredSections.isEmpty {
+            tableView.showEmptyView()
+        } else {
+            tableView.hideEmptyView()
+        }
+    }
+    
     func reloadData() {
         sections.removeAll()
         if let network = MeshNetworkManager.instance.meshNetwork {
-            let notConfiguredNodes = network.nodes.filter({ !$0.isConfigComplete && !$0.isProvisioner })
-            let configuredNodes    = network.nodes.filter({ $0.isConfigComplete && !$0.isProvisioner })
-            let provisionersNodes  = network.nodes.filter({ $0.isProvisioner && !$0.isLocalProvisioner })
+            let notConfiguredNodes = network.nodes.filter { !$0.isConfigComplete && !$0.isProvisioner }
+            let configuredNodes    = network.nodes.filter { $0.isConfigComplete && !$0.isProvisioner }
+            let provisionersNodes  = network.nodes.filter { $0.isProvisioner && !$0.isLocalProvisioner }
             
             if !notConfiguredNodes.isEmpty {
                 sections.append(Section(type: .notConfiguredNodes, nodes: notConfiguredNodes))
@@ -175,13 +224,7 @@ private extension NetworkViewController {
                 sections.append(Section(type: .thisProvisioner, nodes: [thisProvisionerNode]))
             }
         }
-        tableView.reloadData()
-        
-        if sections.isEmpty {
-            tableView.showEmptyView()
-        } else {
-            tableView.hideEmptyView()
-        }
+        applyFilter(searchController.searchBar.text ?? "")
     }
     
 }
