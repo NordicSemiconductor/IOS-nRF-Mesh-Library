@@ -8,6 +8,7 @@ Use it to create, load or import a Bluetooth mesh network and send messages.
 ### Local Elements
 
 - ``localElements``
+- <doc:LocalNode>
 
 ### Mesh Network
 
@@ -20,6 +21,7 @@ Use it to create, load or import a Bluetooth mesh network and send messages.
 - ``import(from:)``
 - ``export()``
 - ``export(_:)``
+- <doc:Exporting>
 
 ### Delegates
 
