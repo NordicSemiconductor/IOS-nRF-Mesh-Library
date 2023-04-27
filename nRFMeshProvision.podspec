@@ -23,7 +23,7 @@ Pod::Spec.new do |s|
   s.osx.deployment_target  = '10.15'  
   s.static_framework = true
   s.swift_versions   = ['4.2', '5.0', '5.1', '5.2', '5.3', '5.4', '5.5', '5.6', '5.7']
-  s.source_files = 'nRFMeshProvision/Classes/**/*'
+  s.source_files = 'nRFMeshProvision/**/*'
   s.dependency 'CryptoSwift', '= 1.7.0'
   s.frameworks = 'CoreBluetooth'
 end

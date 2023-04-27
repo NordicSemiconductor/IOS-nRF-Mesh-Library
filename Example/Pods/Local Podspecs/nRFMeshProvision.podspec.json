@@ -32,7 +32,7 @@
     "5.6",
     "5.7"
   ],
-  "source_files": "nRFMeshProvision/Classes/**/*",
+  "source_files": "nRFMeshProvision/**/*",
   "dependencies": {
     "CryptoSwift": [
       "= 1.7.0"

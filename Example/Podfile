@@ -8,16 +8,3 @@ target 'nRF Mesh' do
     inherit! :search_paths
   end
 end
-
-post_install do |installer|
-  installer.pods_project.targets.each do |target|
-    target.build_configurations.each do |config|
-      # Removes "target overrides architecture settings" warnings
-      config.build_settings.delete 'ARCHS'
-      # Removes warning about min deployment target for CryptoSwift
-      if target.name == 'CryptoSwift'
-          config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '12.0'
-      end
-    end
-  end
-end
