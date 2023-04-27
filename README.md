@@ -53,6 +53,10 @@ The following features are not (yet) supported:
 4. Remote provisioning - *in our TODO list.*
 5. Device Firmware Update (DFU) - *in our TODO list.*
 
+## How to start
+
+The library is available using CocoaPods, SPM and Carthage. For details, check out [Setting up the library](SETTING_UP.md).
+
 ## nRF Mesh sample app
 
 Most of the features listed above are demonstrated in nRF Mesh sample application.
