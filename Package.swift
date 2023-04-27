@@ -1,4 +1,4 @@
-// swift-tools-version:5.3
+// swift-tools-version:5.6
 //
 // The `swift-tools-version` declares the minimum version of Swift required to
 // build this package. Do not remove it.
@@ -18,13 +18,14 @@ let package = Package(
     .package(
       url: "https://github.com/krzyzanowskim/CryptoSwift", 
       .upToNextMinor(from: "1.7.0")
-    )
+    ),
+    .package(url: "https://github.com/apple/swift-docc-plugin", from: "1.0.0"),
   ],
   targets: [
     .target(
       name: "nRFMeshProvision",
       dependencies: ["CryptoSwift"],
-      path: "nRFMeshProvision/Classes/"
+      path: "nRFMeshProvision/"
     ),
     .testTarget(
       name: "NordicMeshTests",

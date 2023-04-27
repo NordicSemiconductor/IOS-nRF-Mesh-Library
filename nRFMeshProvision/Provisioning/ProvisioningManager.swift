@@ -54,7 +54,20 @@ public protocol ProvisioningDelegate: AnyObject {
     
 }
 
-/// The main manager responsible for provisioning new devices into the mesh network.
+/// The manager responsible for provisioning a new device into the mesh network.
+///
+/// To create an instance of a `ProvisioningManager` use ``MeshNetworkManager/provision(unprovisionedDevice:over:)``.
+///
+/// Provisioning is initiated by calling ``identify(andAttractFor:)``. This method will make the
+/// provisioned device to blink, make sound or attract in any supported way, so that the user could
+/// verify which device is being provisioned. The target device will return ``ProvisioningCapabilities``,
+/// returned to ``delegate`` as ``ProvisioningState/capabilitiesReceived(_:)``.
+///
+/// User needs to set the ``unicastAddress`` (by default set to ``suggestedUnicastAddress``), ``networkKey``
+/// and call ``provision(usingAlgorithm:publicKey:authenticationMethod:)``. If user interaction is required
+/// during provisioning process corresponding delegate callbacks will be invoked.
+///
+/// The provisioning is completed when ``ProvisioningState/complete`` state is returned.
 public class ProvisioningManager {    
     private let unprovisionedDevice: UnprovisionedDevice
     private let bearer: ProvisioningBearer

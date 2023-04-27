@@ -8,10 +8,10 @@ The nRF Mesh library allows to provision Bluetooth mesh devices into a mesh netw
 them and send and receive messages.
 
 The library is compatible with the following [Bluetooth specifications](https://www.bluetooth.com/specifications/specs/?status=active&show_latest_version=0&show_latest_version=1&keyword=mesh&filter=):
-- Mesh Profile 1.0.1
-- Mesh Model 1.0.1
-- Mesh Device Properties 2
-- Configuration Database Profile 1.0.0
+- **Mesh Profile 1.0.1** (with experimental support for **Mesh Protocol 1.1**)
+- **Mesh Model 1.0.1**
+- **Mesh Device Properties 2**
+- **Configuration Database Profile 1.0.1**
 
 > Important: Implementing ADV Bearer on iOS is not possible due to API limitations. 
   The library is using GATT Proxy protocol, specified in the Bluetooth Mesh Profile 1.0.1,
@@ -44,7 +44,12 @@ meshNetworkManager.ivUpdateTestMode = ...
 meshNetworkManager.logger = ...
 ```
 
-The mesh configuration may be loaded from the ``Storage``, provided in the manager constructor.
+The next step is to define the behavior of the manager. The behavoir is determined by set of
+``Model``s existing on the Node. For more information, read <doc:LocalNode>.
+
+### Loading mesh configuration
+
+The mesh configuration may be loaded from the ``Storage``, provided in the manager's initializer.
 ```swift
 let loaded = try meshNetworkManager.load()
 ```
@@ -58,6 +63,8 @@ _ = meshNetworkManager.createNewMeshNetwork(
 // Make sure to save the network in the Storage.
 _ = meshNetworkManager.save()
 ```
+
+### Connecting to mesh network using GATT Proxy
 
 The manager is transport agnostic. In order to send messages, the ``MeshNetworkManager/transmitter`` 
 property needs to be set to a ``Bearer`` instance. The bearer is responsible for sending the messages
@@ -83,170 +90,15 @@ bearer.logger = ...
 bearer.open()
 ```
 
-## Local Node
-
-The mobile application using nRF Mesh library itself is a mesh node, called the local node.
-The library automatically supports the following models: 
-- *Configuration Server* (required for all nodes)
-- *Configuration Client* (for configuring nodes)
-- *Health Server* (required for all nodes)
-- *Health Client*
-- *Scene Client* (for controlling scenes)
-
-and may be extended to support user defined models.
-
-The elements on the local node must be configured using ``MeshNetworkManager/localElements`` property.
-Each model declared in this array must have a ``ModelDelegate`` implemented, which maps the
-Op Codes of supported messages to their types, and defines the behavior of the model. 
-For example, a model delegate can specify that it can handle messages with an Op Code *0x8204*, 
-which should be decoded to ``GenericOnOffStatus`` type.
-
-```swift
-// Mind, that the first Element will contain the models mentioned above.
-let primaryElement = Element(name: "Primary Element", location: .first, 
-        models: [
-            // Generic OnOff Client model:
-            Model(sigModelId: .genericOnOffClientModelId, 
-                  delegate: GenericOnOffClientDelegate()),
-            // A simple vendor model:
-            Model(vendorModelId: .simpleOnOffModelId,
-                  companyId: .nordicSemiconductorCompanyId,
-                  delegate: SimpleOnOffClientDelegate())
-        ]
-)
-meshNetworkManager.localElements = [primaryElement]
-```
-
-> Important: Even if your implementation does not add any models to the default set, it is required to
-  set the ``MeshNetworkManager/localElements``. It can be set to an empty array.
-
-The model delegate is notified when a message targetting the model is received if, and only if, the model 
-is bound to the Application Key used to encrypt the message and is subscribed to its destination 
-address.
-
-> Tip: The ``MeshNetworkDelegate``, set in the manager, is notified about every message 
-  received. This includes messages targeting models that are not configured to receive messages, 
-  i.e. not bound to any key, or not subscribed to the address set as destination address of the 
-  message. If a received message cannot be mapped to any message type (i.e. no local model 
-  supports the op code of received message), it will be decoded as ``UnknownMessage``.
-
-> See `Example/nRFMeshProvision/AppDelegate.swift` in "nRF Mesh" sample app for an example.
-
-## Configuration
-
-Use ``MeshNetworkManager/sendToLocalNode(_:)`` to configure the local node. The ``ConfigMessage``s
-will be handled by the *Configuration Server* model automaticaly by the library.
-
-To configure the remote nodes, use ``MeshNetworkManager/send(_:to:withTtl:)-77r3r``. 
-The bearer needs to be configured in the network manager, like described in the `Usage` section.
-
-Status messages for configuration messages are delivered using
-``MeshNetworkDelegate/meshNetworkManager(_:didReceiveMessage:sentFrom:to:)`` to the 
-``MeshNetworkManager/delegate``.
-
-The updated state of the mesh network is automaticaly saved in the ``Storage``. 
-
-> Important: As the nRF Mesh library supports *Configuration Server* model, it also allows 
-             other provisioners to remotely reconfigure the local node when it is connected to a Proxy node.
-             For example, the phone can be remotely removed from network. To avoid it being removed, do not 
-             share the Device Key of the local node when exporting network configuration.
-
-## Sending messages
-
-The nRF Mesh library supports sending messages in two ways:
-1. From models on the local node, that are configured for publishing.
-2. Directly.
-
-The first method closely follows Bluetooth Mesh Profile specification, but is quite complex.
-A model needs to be bound to an Application Key using ``ConfigModelAppBind`` message
-and have a publication set using ``ConfigModelPublicationSet`` or 
-``ConfigModelPublicationVirtualAddressSet``. With that set, calling 
-``ModelDelegate/publish(using:)`` or ``ModelDelegate/publish(_:using:)`` will trigger a publication
-from the model to a destination specified in the ``Publish`` object. Responses will be delivered
-to ``ModelDelegate/model(_:didReceiveResponse:toAcknowledgedMessage:from:)`` of the model delegate.
-
-The second method does not require setting up local models. 
-Use ``MeshNetworkManager/send(_:from:to:withTtl:using:)-2qajr`` or other variants of this method to send 
-a message to the desired destination.
-
-> All methods used for sending messages in the ``MeshNetworkManager`` are asynchronous.
-
-## Provisioning
-
-Provisioning is the process of adding an unprovisioned device to a mesh network. The provisioner,
-in a secure way, assigns a Unicast Address and sends the Network Key to the device.
-Knowing the key, the new device, now called a node, can exchange config messages with other nodes.
-
-> To provision a new device, the provisioner does not need to have an address assigned. Having a
-  Unicast Address makes the provisioner a node.
-
-A provisioner with a Unicast Address assigned may also configure nodes after they have been
-provisioned. Configuration messages are sent between *Configuration Client* model on the provisioner 
-and *Configuration Server* model on the target device, and, on the Upper Transport layer, are encrypted 
-using the node's Device Key, generated during provisioning.
-
-To provision a new device, use ``MeshNetworkManager/provision(unprovisionedDevice:over:)``.
-```swift
-let provisioningManager = try meshNetworkManager.provision(
-    unprovisionedDevice: unprovisionedDevice, 
-    over: bearer
-)
-provisioningManager.delegate = ...
-provisioningManager.logger = ...
-```
-
-The ``UnprovisionedDevice`` and ``PBGattBearer`` instances may be created from the 
-Bluetooth LE scan result. 
-```swift
-func centralManager(_ central: CBCentralManager, 
-                    didDiscover peripheral: CBPeripheral,
-                    advertisementData: [String : Any], rssi RSSI: NSNumber) {
-    if let unprovisionedDevice = UnprovisionedDevice(advertisementData: advertisementData) {
-        let bearer = PBGattBearer(target: peripheral)
-        bearer.logger = ...
-        bearer.delegate = ...
-        bearer.open()
-    }
-}
-```
-
-> Important: Provisioning of new devices using the current version of the nRF Mesh library 
-  supports only with the use of GATT PB Bearer, i.e. remote provisioning is not supported. 
-  New devices must support GATT PB Bearer in order to be provisioned using a mobile device.
-  This also applies to the nRF Mesh library for Android.
-
-Provisioning process is initiated by calling ``ProvisioningManager/identify(andAttractFor:)``
-```swift
-try provisioningManager.identify(andAttractFor: 2 /* seconds */)
-```
-followed by ``ProvisioningManager/provision(usingAlgorithm:publicKey:authenticationMethod:)``.
-```swift
-// Optional:
-provisioningManager.address = ...    // Defaults to the next available address.
-provisioningManager.networkKey = ... // Defaults to the Primary Network Key.
-// Start:
-try provisioningManager.provision(usingAlgorithm:       .fipsP256EllipticCurve,
-                                  publicKey:            ...,
-                                  authenticationMethod: ...)
-```
-The ``ProvisioningDelegate`` should be used to provide OOB (Out Of Band) information.
-
-## Exporting network configuration
-
-The mesh network configuration can be exported using ``MeshNetworkManager/export(_:)`` to
-a JSON file, complient with 
- [Bluetooth Mesh Configuration Database specification](https://www.bluetooth.com/specifications/specs/mesh-configuration-database-profile-1-0/). 
-The ``ExportConfiguration`` allows exporting partial configuration.
-
-For example, in the typical Guest scenario, a house owner may only want to share set of
-devices without their Device Keys, preventing them from being reconfigured. In order to do
-that, a new Guest Network Key and set of Application Keys bound to it can be created
-and exported to the guest. The keys should be sent to the desired nodes.
-Before exporting, the owner may create a new ``Provisioner`` object with limited allocated 
-ranges, disallowing the guest to provision more devices.
-After the guest moves out, the keys can be changed or removed from the devices.
-
 ## Topics
+
+### Articles
+
+- <doc:LocalNode>
+- <doc:Exporting>
+- <doc:Provisioning>
+- <doc:Configuration>
+- <doc:SendingMessages>
 
 ### Mesh Network Manager
 
@@ -273,6 +125,10 @@ provisioning procedure.
 
 ### Bearers
 
+Bearers are objects resopnsible for delivering PDUs to remote nodes. Bluetooth mesh, among others. defines 
+ADV Bearer and GATT Bearer. Due to API limitations on iOS the ADV Bearer is not available. An iPhone
+can be connected to the mesh network using a GATT connection to a node with GATT Proxy feature. 
+
 - ``Bearer``
 - ``BearerError``
 - ``BearerDelegate``
@@ -284,6 +140,10 @@ provisioning procedure.
 - ``PduTypes``
 
 ### GATT Bearers
+
+GATT Bearer is used when connecting to a node with GATT Proxy feature. It uses a GATT connection 
+instead of Bluetooth advertising. Messages sent over that bearer need to be proxied to the network
+using ADV Bearer by the GATT Proxy node.
 
 - ``GattBearer``
 - ``PBGattBearer``
@@ -298,6 +158,8 @@ provisioning procedure.
 - ``MeshProxyService``
 
 ### Provisioning
+
+Provisioning is the process of adding an unprovisioned device to a mesh network in a secure way. 
 
 - ``UnprovisionedDevice``
 - ``ProvisioningManager``
@@ -534,6 +396,8 @@ provisioning procedure.
 
 ### Configuration - Private Beacons
 
+- ``RandomUpdateIntervalSteps``
+
 - ``PrivateBeaconGet``
 - ``PrivateBeaconSet``
 - ``PrivateBeaconStatus``
@@ -543,6 +407,40 @@ provisioning procedure.
 - ``PrivateNodeIdentityGet``
 - ``PrivateNodeIdentitySet``
 - ``PrivateNodeIdentityStatus``
+
+### Remote Provisioning Message Types
+
+- ``RemoteProvisioningMessage``
+- ``AcknowledgedRemoteProvisioningMessage``
+- ``RemoteProvisioningStatusMessage``
+- ``RemoteProvisioningMessageStatus``
+- ``RemoteProvisioningError``
+- ``RemoteProvisioningScanState``
+- ``RemoteProvisioningLinkState``
+- ``RemoteProvisioningLinkCloseReason``
+- ``AdTypes``
+- ``AdStructure``
+- ``NodeProvisioningProtocolInterfaceProcedure``
+
+### Remote Provisioning Messages
+
+- ``RemoteProvisioningScanGet``
+- ``RemoteProvisioningScanStatus``
+- ``RemoteProvisioningScanReport``
+- ``RemoteProvisioningScanStart``
+- ``RemoteProvisioningScanStop``
+- ``RemoteProvisioningExtendedScanStart``
+- ``RemoteProvisioningExtendedScanReport``
+- ``RemoteProvisioningScanCapabilitiesGet``
+- ``RemoteProvisioningScanCapabilitiesStatus``
+- ``RemoteProvisioningLinkGet``
+- ``RemoteProvisioningLinkStatus``
+- ``RemoteProvisioningLinkReport``
+- ``RemoteProvisioningLinkOpen``
+- ``RemoteProvisioningLinkClose``
+- ``RemoteProvisioningPDUSend``
+- ``RemoteProvisioningPDUReport``
+- ``RemoteProvisioningPDUOutboundReport``
 
 ### Generic Message Types
 

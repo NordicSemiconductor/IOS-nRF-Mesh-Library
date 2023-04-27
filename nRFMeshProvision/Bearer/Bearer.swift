@@ -90,8 +90,9 @@ public struct PduTypes: OptionSet {
 public protocol Transmitter: AnyObject {
     
     /// This method sends the given data over the bearer.
-    /// Data longer than MTU will automatically be segmented
-    /// using the bearer protocol if bearer implements segmentation.
+    ///
+    /// Data longer than MTU will automatically be segmented if bearer
+    /// implements segmentation.
     ///
     /// - parameter data: The data to be sent over the Bearer.
     /// - parameter type: The PDU type.
@@ -148,8 +149,9 @@ public protocol ProvisioningBearer: Bearer {
 extension ProvisioningBearer {
     
     /// This method sends the given Provisioning Request over the bearer.
-    /// Data longer than MTU will automatically be segmented
-    /// using the bearer protocol if bearer implements segmentation.
+    ///
+    /// Data longer than MTU will automatically be segmented if bearer
+    /// implements segmentation.
     ///
     /// - parameter request: The Provisioning request to be sent over
     ///                      the Bearer.

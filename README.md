@@ -5,29 +5,29 @@
 
 # Bluetooth mesh library for iOS
 
-The nRF Mesh library allows to provision Bluetooth mesh devices, configure and exchange messages.
+The nRF Mesh library allows to provision Bluetooth mesh devices into a mesh network, configure them and send and receive messages.
 
-It is written in Swift, and can be easily added to a 3rd part project using CocoaPods, SPM or Carthage.
+The library is compatible with the following [Bluetooth specifications](https://www.bluetooth.com/specifications/specs/?status=active&show_latest_version=1&keyword=mesh):
+- Mesh Profile 1.0.1 (with experimental support for Mesh Profile 1.1)
+- Mesh Model 1.0.1
+- Mesh Device Properties 2
+- Configuration Database Profile 1.0.1
 
-See [documentation](Documentation/README.md) for more information.
+See [documentation](https://nordicsemiconductor.github.io/IOS-nRF-Mesh-Library/documentation/nrfmeshprovision) for more information.
 
-## Features
+> **Note**
+>
+> Implementing ADV Bearer on iOS is not possible due to API limitations. The library is using *GATT Proxy protocol*, 
+  specified in the Bluetooth Mesh Profile 1.0.1, and requires a Node with Proxy functionality to relay messages to the mesh network.
 
-The library is compatible with 
-- **Mesh Profile 1.0.1**, 
-- **Mesh Model 1.0.1**, 
-- **Mesh Device Properties 2**.
+## Supported features
 
-The mesh network configuration (JSON schema) is compatible with 
-- **Mesh Configuration Database Profile 1.0**.
-
-Bluetooth mesh specifications are available at [Bluetooth.com](https://www.bluetooth.com/specifications/specs/?status=active&show_latest_version=1&keyword=mesh).
-
-### Supported features
-
-1. Provisioning with all features available in Mesh Profile 1.0.1, including OOB Public Key 
-   and all types of OOB, using GATT bearer.
-2. Configuration, including managing keys, publications, subscription, and hearbeats (both as client and server).
+1. Provisioning with:
+   - OOB[^1] Public Key (most secure)
+   - Input and Output OOB
+   - No OOB (insecure)
+   - Experimental support for enhanced security added in Mesh Protocol 1.1.
+2. Configuration, including managing keys, publications, subscription, and heartbeats (both as client and server).
 3. Support for client and server models.
 4. Groups, including those with virtual labels.
 5. Scenes (both as client and server).
@@ -35,11 +35,13 @@ Bluetooth mesh specifications are available at [Bluetooth.com](https://www.bluet
 7. IV Index update (handled by Secure Network beacons).
 8. [Key Refresh Procedure](https://github.com/NordicSemiconductor/IOS-nRF-Mesh-Library/pull/314) 
    (using *ConfigKeyRefreshPhaseSet* messages, not Secure Network beacon). 
-9. Hearbeats (both as client and server).
+9. Heartbeats (both as client and server).
 10. Exporting network state with format compatible to 
-    [Configuration Database Profile 1.0](https://www.bluetooth.com/specifications/specs/mesh-configuration-database-profile-1-0/), 
+    [Configuration Database Profile 1.0.1](https://www.bluetooth.com/specifications/specs/mesh-configuration-database-profile-1-0-1/), 
     including partial export.
 11. Option to use own transport layer with default GATT Bearer implementation available.
+
+[^1]: OOB - Out Of Band
 
 ### NOT (yet) supported features
 
@@ -50,6 +52,10 @@ The following features are not (yet) supported:
 3. Health server messages - *in our TODO list.*
 4. Remote provisioning - *in our TODO list.*
 5. Device Firmware Update (DFU) - *in our TODO list.*
+
+## How to start
+
+The library is available using CocoaPods, SPM and Carthage. For details, check out [Setting up the library](SETTING_UP.md).
 
 ## nRF Mesh sample app
 
@@ -74,13 +80,15 @@ The app is available on [App Store](https://apps.apple.com/us/app/nrf-mesh/id138
    - Generic OnOff,
    - Generic Level,
    - Generic Power OnOff,
+   - Generic Default Transition Time,
    - Vendor models.
 8. Scenes, both as client and server.
 9. Automatic connection to nearby nodes and automatic proxy filter management.
 
 ## Testing
 
-All features are tested against [nRF5 SDK for Mesh](https://www.nordicsemi.com/Products/Development-software/nRF5-SDK-for-Mesh) and [nRF Connect SDK](https://www.nordicsemi.com/Products/Development-software/nRF-Connect-SDK) based mesh devices.
+All features are tested against [nRF5 SDK for Mesh](https://www.nordicsemi.com/Products/Development-software/nRF5-SDK-for-Mesh) 
+and [nRF Connect SDK](https://www.nordicsemi.com/Products/Development-software/nRF-Connect-SDK) based mesh devices.
 
 ## Requirements
 
