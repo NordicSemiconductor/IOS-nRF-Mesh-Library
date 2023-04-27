@@ -896,8 +896,8 @@
 		977B1312F8FE9E931D9FF8018C2C7820 /* LightHSLSaturationStatus.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LightHSLSaturationStatus.swift; sourceTree = "<group>"; };
 		9820368D031573F06B550D96A82EA775 /* Digest.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Digest.swift; path = Sources/CryptoSwift/Digest.swift; sourceTree = "<group>"; };
 		986915C19101D76CAAC80E041AAFC76D /* LightHSLSaturationSetUnacknowledged.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LightHSLSaturationSetUnacknowledged.swift; sourceTree = "<group>"; };
-		9880AACE368D7EDE8D44BA281E1FD6AD /* Documentation.docc */ = {isa = PBXFileReference; includeInIndex = 1; name = Documentation.docc; path = nRFMeshProvision/Documentation.docc; sourceTree = "<group>"; };
-		99F4A9428724D15042D10C670D973833 /* Pods-nRF Mesh */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = "Pods-nRF Mesh"; path = Pods_nRF_Mesh.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		9880AACE368D7EDE8D44BA281E1FD6AD /* Documentation.docc */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = folder.documentationcatalog; name = Documentation.docc; path = nRFMeshProvision/Documentation.docc; sourceTree = "<group>"; };
+		99F4A9428724D15042D10C670D973833 /* Pods_nRF_Mesh.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_nRF_Mesh.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		9A59D936060CA2FF5D0FB49AB833C38A /* LightHSLHueSetUnacknowledged.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LightHSLHueSetUnacknowledged.swift; sourceTree = "<group>"; };
 		9AF04E90D87F0C8F2E7A6D3AD919E91A /* BlockModeOptions.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = BlockModeOptions.swift; path = Sources/CryptoSwift/BlockMode/BlockModeOptions.swift; sourceTree = "<group>"; };
 		9B21FBF64035CAD181C8B470087C15DF /* LightLCOccupancyModeStatus.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LightLCOccupancyModeStatus.swift; sourceTree = "<group>"; };
@@ -905,7 +905,7 @@
 		9B72F989074262D8602B67073AE02491 /* Bit.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Bit.swift; path = Sources/CryptoSwift/Bit.swift; sourceTree = "<group>"; };
 		9C4A846D724EF0F9C43E7D82BEE663A8 /* ConfigNetKeyAdd.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ConfigNetKeyAdd.swift; sourceTree = "<group>"; };
 		9D08634301E6D84D84955F53FA95C861 /* ConfigurationServerHandler.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ConfigurationServerHandler.swift; sourceTree = "<group>"; };
-		9D940727FF8FB9C785EB98E56350EF41 /* Podfile */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; indentWidth = 2; lastKnownFileType = text; name = Podfile; path = ../Podfile; sourceTree = SOURCE_ROOT; tabWidth = 2; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
+		9D940727FF8FB9C785EB98E56350EF41 /* Podfile */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; indentWidth = 2; name = Podfile; path = ../Podfile; sourceTree = SOURCE_ROOT; tabWidth = 2; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		9E55F050B0FA737C250F4E01A11E9C94 /* UInt8+Extension.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = "UInt8+Extension.swift"; path = "Sources/CryptoSwift/UInt8+Extension.swift"; sourceTree = "<group>"; };
 		9E9D7532528A76CAFC9A114E9C655239 /* NodeFeatures.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = NodeFeatures.swift; sourceTree = "<group>"; };
 		9EB5274D9CDBE7C49A9106EE5E1BE676 /* CS.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = CS.swift; path = Sources/CryptoSwift/CS_BigInt/CS.swift; sourceTree = "<group>"; };
@@ -933,13 +933,13 @@
 		A8B6BF6EB27061773F960B6E8BA5F2CA /* SensorCadenceSetUnacknowledged.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SensorCadenceSetUnacknowledged.swift; sourceTree = "<group>"; };
 		A8C24FD9C99F52280F0E7FAE725C2F7B /* LightLCPropertyGet.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LightLCPropertyGet.swift; sourceTree = "<group>"; };
 		A99CCA33FDB82D2DA27A4B4F1D958604 /* LightLCOccupancyModeSetUnacknowledged.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LightLCOccupancyModeSetUnacknowledged.swift; sourceTree = "<group>"; };
-		AA1CF5A6FFD17081D401AE568F3F1F80 /* nRFMeshProvision.podspec */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; indentWidth = 2; lastKnownFileType = text; path = nRFMeshProvision.podspec; sourceTree = "<group>"; tabWidth = 2; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
+		AA1CF5A6FFD17081D401AE568F3F1F80 /* nRFMeshProvision.podspec */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; indentWidth = 2; path = nRFMeshProvision.podspec; sourceTree = "<group>"; tabWidth = 2; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		AB0A49EE3D9AE982197063146FEA5D60 /* GattBearerDelegate.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = GattBearerDelegate.swift; sourceTree = "<group>"; };
 		AB65F427192BDB6D0BA9FB90EF20C557 /* ConfigAppKeyList.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ConfigAppKeyList.swift; sourceTree = "<group>"; };
 		AB734AEB76A9A13B791161924C930F99 /* UnknownMessage.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = UnknownMessage.swift; sourceTree = "<group>"; };
 		ABC22F86E44C865902960887D40F25D5 /* Data.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Data.swift; sourceTree = "<group>"; };
 		AC25B59901D4AD7C363DE34897DC2DBC /* MeshState.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MeshState.swift; sourceTree = "<group>"; };
-		ACC6756AF31F25CD5A9C9F139EABBD7B /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; path = README.md; sourceTree = "<group>"; };
+		ACC6756AF31F25CD5A9C9F139EABBD7B /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		AD93A59528068EF859CFB769EA8A6B21 /* StreamEncryptor.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = StreamEncryptor.swift; path = Sources/CryptoSwift/StreamEncryptor.swift; sourceTree = "<group>"; };
 		ADB6E7E3E684A67142B3C9B05932A111 /* SchedulerActionStatus.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SchedulerActionStatus.swift; sourceTree = "<group>"; };
 		AE9EA384CA84DA00859213076C156601 /* Rabbit+Foundation.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = "Rabbit+Foundation.swift"; path = "Sources/CryptoSwift/Foundation/Rabbit+Foundation.swift"; sourceTree = "<group>"; };
@@ -961,7 +961,7 @@
 		B4190E33292A68FD34FE52C6E5F07C60 /* AEAD.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = AEAD.swift; path = Sources/CryptoSwift/AEAD/AEAD.swift; sourceTree = "<group>"; };
 		B47CDBDF4363A743486C528DA6BFD032 /* GenericMessage.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = GenericMessage.swift; sourceTree = "<group>"; };
 		B4923F4A1FBE1C2993A3B0C79A78DE75 /* GenericLocationGlobalSetUnacknowledged.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = GenericLocationGlobalSetUnacknowledged.swift; sourceTree = "<group>"; };
-		B4C001B7D2FB9649EC19C565872AF0D8 /* nRFMeshProvision */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = nRFMeshProvision; path = nRFMeshProvision.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B4C001B7D2FB9649EC19C565872AF0D8 /* nRFMeshProvision.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = nRFMeshProvision.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B522CC5C3D7A5FC238CA526AB03F16E6 /* ConfigSIGModelAppList.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ConfigSIGModelAppList.swift; sourceTree = "<group>"; };
 		B545AAC98F3D0CFF56A52C91E8406815 /* LightCTLTemperatureGet.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LightCTLTemperatureGet.swift; sourceTree = "<group>"; };
 		B59C7604432A02ED3B02EAD7B7F5A874 /* MessageHandle.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MessageHandle.swift; sourceTree = "<group>"; };
@@ -997,7 +997,7 @@
 		C38A4324A470C5585A01FF30D07C9DF4 /* Data Conversion.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = "Data Conversion.swift"; path = "Sources/CryptoSwift/CS_BigInt/Data Conversion.swift"; sourceTree = "<group>"; };
 		C3D50E92BF2CBF4A9B65921871BDF2FF /* ASN1Scanner.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ASN1Scanner.swift; path = Sources/CryptoSwift/ASN1/ASN1Scanner.swift; sourceTree = "<group>"; };
 		C463CBBE4FF2CE81925C0BA25CE78BEE /* ApplicationKey+MeshNetwork.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "ApplicationKey+MeshNetwork.swift"; sourceTree = "<group>"; };
-		C571293A367C233BA020FC4EFFBC618B /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; path = LICENSE; sourceTree = "<group>"; };
+		C571293A367C233BA020FC4EFFBC618B /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
 		C5934F866D69172CDE52FA14B18742A2 /* MeshNetwork+Nodes.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "MeshNetwork+Nodes.swift"; sourceTree = "<group>"; };
 		C59386E677F3C2947ED6CA3703AC0236 /* SegmentedMessage.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SegmentedMessage.swift; sourceTree = "<group>"; };
 		C6EFE115641738A695A48B6EBDDE046C /* LightCTLDefaultSetUnacknowledged.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LightCTLDefaultSetUnacknowledged.swift; sourceTree = "<group>"; };
@@ -1007,7 +1007,7 @@
 		C9470825774E03D1188DF46B63A2ECD2 /* RemoteProvisioningLinkGet.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = RemoteProvisioningLinkGet.swift; sourceTree = "<group>"; };
 		C952F86DAF44272DD29F95D5CB22A67D /* ConfigBeaconStatus.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ConfigBeaconStatus.swift; sourceTree = "<group>"; };
 		C9760C994858DD2ABCE3A0A5AD4EC4C1 /* LightHSLRangeGet.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LightHSLRangeGet.swift; sourceTree = "<group>"; };
-		CA80C0D59F7A865DBC76AA728C8C3E0F /* Pods-nRF Mesh Tests */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = "Pods-nRF Mesh Tests"; path = Pods_nRF_Mesh_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		CA80C0D59F7A865DBC76AA728C8C3E0F /* Pods_nRF_Mesh_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_nRF_Mesh_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CADE17136298D9347E75B57A98CE25CF /* ExportConfiguration.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExportConfiguration.swift; path = nRFMeshProvision/ExportConfiguration.swift; sourceTree = "<group>"; };
 		CAEB77556E6226657C46461C06509250 /* Element+Keys.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "Element+Keys.swift"; sourceTree = "<group>"; };
 		CC7647672B69AD2396B3B8BA60929FE5 /* GenericOnOffSetUnacknowledged.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = GenericOnOffSetUnacknowledged.swift; sourceTree = "<group>"; };
@@ -1110,7 +1110,7 @@
 		F71942A452F5A3644E31A860412867C1 /* ConfigRelayGet.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ConfigRelayGet.swift; sourceTree = "<group>"; };
 		F7202C526200AAE3065CAE829C61211C /* SceneClientHandler.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SceneClientHandler.swift; sourceTree = "<group>"; };
 		F7BEA969E20B85A6E2979725C7CF168F /* SchedulerStatus.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SchedulerStatus.swift; sourceTree = "<group>"; };
-		F81274EDB681F11E7CB05F7DCA2BB33C /* CryptoSwift */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = CryptoSwift; path = CryptoSwift.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		F81274EDB681F11E7CB05F7DCA2BB33C /* CryptoSwift.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = CryptoSwift.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		F8B46405ADC6BC62181B9BC33FF7EABF /* ConfigVendorModelSubscriptionList.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ConfigVendorModelSubscriptionList.swift; sourceTree = "<group>"; };
 		F8CA73E849A4CD9BBAD7EC3C68822A4D /* GenericOnOffStatus.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = GenericOnOffStatus.swift; sourceTree = "<group>"; };
 		F92F716FEE6E5E31EC35C86A89C99936 /* ConfigModelSubscriptionVirtualAddressOverwrite.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ConfigModelSubscriptionVirtualAddressOverwrite.swift; sourceTree = "<group>"; };
@@ -1184,7 +1184,6 @@
 				7BBA9A3297FD38E604964D1DEB089F0A /* Private Beacon */,
 				FF1E22F1031DFEA1A10677AE20C81863 /* Remote Provisioning */,
 			);
-			name = Foundation;
 			path = Foundation;
 			sourceTree = "<group>";
 		};
@@ -1263,7 +1262,6 @@
 				27D41082E3D94605387D1B91D2617A08 /* ConfigVendorModelSubscriptionGet.swift */,
 				F8B46405ADC6BC62181B9BC33FF7EABF /* ConfigVendorModelSubscriptionList.swift */,
 			);
-			name = Configuration;
 			path = Configuration;
 			sourceTree = "<group>";
 		};
@@ -1321,7 +1319,6 @@
 				0557DC18BDEDB2E57C11704D7B30395C /* PBGattBearer.swift */,
 				33690F92F59FB0BE633AB22829CA8BD9 /* ProxyProtocolHandler.swift */,
 			);
-			name = GATT;
 			path = GATT;
 			sourceTree = "<group>";
 		};
@@ -1366,7 +1363,6 @@
 				4ECD38221C5C3552A025B816D4C9F425 /* UpperTransportLayer.swift */,
 				6381BD3AAE3EBA32EC20E370D8BCBCC6 /* UpperTransportPdu.swift */,
 			);
-			name = "Upper Transport Layer";
 			path = "Upper Transport Layer";
 			sourceTree = "<group>";
 		};
@@ -1472,7 +1468,6 @@
 				93879FB0ECD424CDCE81DB5DB6F4B40F /* AccessLayer.swift */,
 				E6434221E62448A6D69C018B080EF9D8 /* AccessPdu.swift */,
 			);
-			name = "Access Layer";
 			path = "Access Layer";
 			sourceTree = "<group>";
 		};
@@ -1498,7 +1493,6 @@
 				A6EEC70614516B07DB792854D5DE1A3E /* SensorSettingStatus.swift */,
 				4619084A36724F1C8C83DD38243BA223 /* SensorStatus.swift */,
 			);
-			name = Sensors;
 			path = Sensors;
 			sourceTree = "<group>";
 		};
@@ -1521,7 +1515,6 @@
 				03C37B0C358C4CA026436D1A99440D35 /* SecureNetworkBeacon.swift */,
 				625C8F160128487B57A8FBB5FF3DAC41 /* UnprovisionedDeviceBeacon.swift */,
 			);
-			name = "Network Layer";
 			path = "Network Layer";
 			sourceTree = "<group>";
 		};
@@ -1575,7 +1568,6 @@
 				315A17A2ECAAFA28D99EC716B0771E79 /* TimeZoneSet.swift */,
 				7DCF0458BF583BB5EA37D7B5D8D24FEB /* TimeZoneStatus.swift */,
 			);
-			name = "Time and Scenes";
 			path = "Time and Scenes";
 			sourceTree = "<group>";
 		};
@@ -1655,7 +1647,6 @@
 				EC48F605C9333411E7616A1C60C4B562 /* LightLightnessSetUnacknowledged.swift */,
 				5D9DE55348E73809B536730B0170DDD9 /* LightLightnessStatus.swift */,
 			);
-			name = Lighting;
 			path = Lighting;
 			sourceTree = "<group>";
 		};
@@ -1672,7 +1663,6 @@
 				360A54AFD981F0C1BE743B6C28AD9630 /* SegmentedControlMessage.swift */,
 				C59386E677F3C2947ED6CA3703AC0236 /* SegmentedMessage.swift */,
 			);
-			name = "Lower Transport Layer";
 			path = "Lower Transport Layer";
 			sourceTree = "<group>";
 		};
@@ -1706,7 +1696,6 @@
 				92EFBC8FDBE02A6D278C945E4BE31EEB /* PrivateNodeIdentitySet.swift */,
 				B35E89A5CF307268C8CF1FEC40D0E823 /* PrivateNodeIdentityStatus.swift */,
 			);
-			name = "Private Beacon";
 			path = "Private Beacon";
 			sourceTree = "<group>";
 		};
@@ -1719,7 +1708,6 @@
 				89E16DDE1107A0BDA3632040F7BD0C36 /* RemoveAddressesFromFilter.swift */,
 				816BEEC7FF5F9CEA80C01280C452693E /* SetFilterType.swift */,
 			);
-			name = "Proxy Configuration";
 			path = "Proxy Configuration";
 			sourceTree = "<group>";
 		};
@@ -1838,17 +1826,16 @@
 				BA40B51A627278CB13C358186114CC93 /* ZeroPadding.swift */,
 				E9E61B37C0B4F06FB4820B121A729EA0 /* Support Files */,
 			);
-			name = CryptoSwift;
 			path = CryptoSwift;
 			sourceTree = "<group>";
 		};
 		930299966CA047501B4FDAE38A72E109 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				F81274EDB681F11E7CB05F7DCA2BB33C /* CryptoSwift */,
-				B4C001B7D2FB9649EC19C565872AF0D8 /* nRFMeshProvision */,
-				99F4A9428724D15042D10C670D973833 /* Pods-nRF Mesh */,
-				CA80C0D59F7A865DBC76AA728C8C3E0F /* Pods-nRF Mesh Tests */,
+				F81274EDB681F11E7CB05F7DCA2BB33C /* CryptoSwift.framework */,
+				B4C001B7D2FB9649EC19C565872AF0D8 /* nRFMeshProvision.framework */,
+				99F4A9428724D15042D10C670D973833 /* Pods_nRF_Mesh.framework */,
+				CA80C0D59F7A865DBC76AA728C8C3E0F /* Pods_nRF_Mesh_Tests.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1938,7 +1925,6 @@
 				8A5002A8F60EBA2BF2516B12275D85B3 /* PrivateBeaconClientHandler.swift */,
 				F7202C526200AAE3065CAE829C61211C /* SceneClientHandler.swift */,
 			);
-			name = "Foundation Layer";
 			path = "Foundation Layer";
 			sourceTree = "<group>";
 		};
@@ -2009,7 +1995,6 @@
 				633604CC07DABAF68956FEBC0904196E /* GenericPowerRangeSetUnacknowledged.swift */,
 				C23944D0210E46720A3F52486FFBC130 /* GenericPowerRangeStatus.swift */,
 			);
-			name = Generic;
 			path = Generic;
 			sourceTree = "<group>";
 		};
@@ -2059,7 +2044,6 @@
 				E8CCDCE11C58A2D4DD657F0DDB0FF829 /* RemoteProvisioningScanStatus.swift */,
 				7D15B704F211EE2C0C7657B6D01A44C1 /* RemoteProvisioningScanStop.swift */,
 			);
-			name = "Remote Provisioning";
 			path = "Remote Provisioning";
 			sourceTree = "<group>";
 		};
@@ -2116,7 +2100,7 @@
 			);
 			name = CryptoSwift;
 			productName = CryptoSwift;
-			productReference = F81274EDB681F11E7CB05F7DCA2BB33C /* CryptoSwift */;
+			productReference = F81274EDB681F11E7CB05F7DCA2BB33C /* CryptoSwift.framework */;
 			productType = "com.apple.product-type.framework";
 		};
 		C55C8C96A59EE76A4638D61F44E12DF6 /* Pods-nRF Mesh Tests */ = {
@@ -2135,7 +2119,7 @@
 			);
 			name = "Pods-nRF Mesh Tests";
 			productName = Pods_nRF_Mesh_Tests;
-			productReference = CA80C0D59F7A865DBC76AA728C8C3E0F /* Pods-nRF Mesh Tests */;
+			productReference = CA80C0D59F7A865DBC76AA728C8C3E0F /* Pods_nRF_Mesh_Tests.framework */;
 			productType = "com.apple.product-type.framework";
 		};
 		DBF639A39D1896128BCA040EDD84174E /* nRFMeshProvision */ = {
@@ -2154,7 +2138,7 @@
 			);
 			name = nRFMeshProvision;
 			productName = nRFMeshProvision;
-			productReference = B4C001B7D2FB9649EC19C565872AF0D8 /* nRFMeshProvision */;
+			productReference = B4C001B7D2FB9649EC19C565872AF0D8 /* nRFMeshProvision.framework */;
 			productType = "com.apple.product-type.framework";
 		};
 		FE9A7A7292F5AFCEEC420BFA81C650C0 /* Pods-nRF Mesh */ = {
@@ -2174,7 +2158,7 @@
 			);
 			name = "Pods-nRF Mesh";
 			productName = Pods_nRF_Mesh;
-			productReference = 99F4A9428724D15042D10C670D973833 /* Pods-nRF Mesh */;
+			productReference = 99F4A9428724D15042D10C670D973833 /* Pods_nRF_Mesh.framework */;
 			productType = "com.apple.product-type.framework";
 		};
 /* End PBXNativeTarget section */
@@ -2183,8 +2167,9 @@
 		BFDFE7DC352907FC980B868725387E98 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				BuildIndependentTargetsInParallel = YES;
 				LastSwiftUpdateCheck = 1240;
-				LastUpgradeCheck = 1240;
+				LastUpgradeCheck = 1430;
 			};
 			buildConfigurationList = 4821239608C13582E20E6DA73FD5F1F9 /* Build configuration list for PBXProject "Pods" */;
 			compatibilityVersion = "Xcode 11.4";
@@ -2823,14 +2808,13 @@
 			baseConfigurationReference = 5A366394B0F22C53CFDC71FAC697FFE5 /* nRFMeshProvision.release.xcconfig */;
 			buildSettings = {
 				CLANG_ENABLE_OBJC_WEAK = NO;
-				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CODE_SIGN_IDENTITY = "";
 				CURRENT_PROJECT_VERSION = 1;
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_MODULE_VERIFIER = YES;
 				GCC_PREFIX_HEADER = "Target Support Files/nRFMeshProvision/nRFMeshProvision-prefix.pch";
 				INFOPLIST_FILE = "Target Support Files/nRFMeshProvision/nRFMeshProvision-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
@@ -2842,6 +2826,8 @@
 				);
 				MACH_O_TYPE = staticlib;
 				MODULEMAP_FILE = "Target Support Files/nRFMeshProvision/nRFMeshProvision.modulemap";
+				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu11 gnu++14";
 				PRODUCT_MODULE_NAME = nRFMeshProvision;
 				PRODUCT_NAME = nRFMeshProvision;
 				SDKROOT = iphoneos;
@@ -2890,6 +2876,7 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
@@ -2913,7 +2900,6 @@
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				STRIP_INSTALLED_PRODUCT = NO;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
@@ -2927,14 +2913,13 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
 				CLANG_ENABLE_OBJC_WEAK = NO;
-				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CODE_SIGN_IDENTITY = "";
 				CURRENT_PROJECT_VERSION = 1;
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_MODULE_VERIFIER = YES;
 				INFOPLIST_FILE = "Target Support Files/Pods-nRF Mesh Tests/Pods-nRF Mesh Tests-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
@@ -2945,6 +2930,8 @@
 				);
 				MACH_O_TYPE = staticlib;
 				MODULEMAP_FILE = "Target Support Files/Pods-nRF Mesh Tests/Pods-nRF Mesh Tests.modulemap";
+				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu11 gnu++14";
 				OTHER_LDFLAGS = "";
 				OTHER_LIBTOOLFLAGS = "";
 				PODS_ROOT = "$(SRCROOT)";
@@ -2964,14 +2951,13 @@
 			baseConfigurationReference = 1C5732A96CD4AA2A534F0887522F1C39 /* CryptoSwift.debug.xcconfig */;
 			buildSettings = {
 				CLANG_ENABLE_OBJC_WEAK = NO;
-				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CODE_SIGN_IDENTITY = "";
 				CURRENT_PROJECT_VERSION = 1;
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_MODULE_VERIFIER = YES;
 				GCC_PREFIX_HEADER = "Target Support Files/CryptoSwift/CryptoSwift-prefix.pch";
 				INFOPLIST_FILE = "Target Support Files/CryptoSwift/CryptoSwift-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
@@ -2982,6 +2968,8 @@
 					"@loader_path/Frameworks",
 				);
 				MODULEMAP_FILE = "Target Support Files/CryptoSwift/CryptoSwift.modulemap";
+				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu11 gnu++14";
 				PRODUCT_MODULE_NAME = CryptoSwift;
 				PRODUCT_NAME = CryptoSwift;
 				SDKROOT = iphoneos;
@@ -3029,6 +3017,7 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -3048,7 +3037,6 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				STRIP_INSTALLED_PRODUCT = NO;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				SWIFT_VERSION = 5.0;
@@ -3062,14 +3050,13 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
 				CLANG_ENABLE_OBJC_WEAK = NO;
-				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CODE_SIGN_IDENTITY = "";
 				CURRENT_PROJECT_VERSION = 1;
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_MODULE_VERIFIER = YES;
 				INFOPLIST_FILE = "Target Support Files/Pods-nRF Mesh/Pods-nRF Mesh-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
@@ -3080,6 +3067,8 @@
 				);
 				MACH_O_TYPE = staticlib;
 				MODULEMAP_FILE = "Target Support Files/Pods-nRF Mesh/Pods-nRF Mesh.modulemap";
+				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu11 gnu++14";
 				OTHER_LDFLAGS = "";
 				OTHER_LIBTOOLFLAGS = "";
 				PODS_ROOT = "$(SRCROOT)";
@@ -3099,14 +3088,13 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
 				CLANG_ENABLE_OBJC_WEAK = NO;
-				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CODE_SIGN_IDENTITY = "";
 				CURRENT_PROJECT_VERSION = 1;
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_MODULE_VERIFIER = YES;
 				INFOPLIST_FILE = "Target Support Files/Pods-nRF Mesh Tests/Pods-nRF Mesh Tests-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
@@ -3117,6 +3105,8 @@
 				);
 				MACH_O_TYPE = staticlib;
 				MODULEMAP_FILE = "Target Support Files/Pods-nRF Mesh Tests/Pods-nRF Mesh Tests.modulemap";
+				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu11 gnu++14";
 				OTHER_LDFLAGS = "";
 				OTHER_LIBTOOLFLAGS = "";
 				PODS_ROOT = "$(SRCROOT)";
@@ -3136,14 +3126,13 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
 				CLANG_ENABLE_OBJC_WEAK = NO;
-				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CODE_SIGN_IDENTITY = "";
 				CURRENT_PROJECT_VERSION = 1;
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_MODULE_VERIFIER = YES;
 				INFOPLIST_FILE = "Target Support Files/Pods-nRF Mesh/Pods-nRF Mesh-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
@@ -3154,6 +3143,8 @@
 				);
 				MACH_O_TYPE = staticlib;
 				MODULEMAP_FILE = "Target Support Files/Pods-nRF Mesh/Pods-nRF Mesh.modulemap";
+				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu11 gnu++14";
 				OTHER_LDFLAGS = "";
 				OTHER_LIBTOOLFLAGS = "";
 				PODS_ROOT = "$(SRCROOT)";
@@ -3173,14 +3164,13 @@
 			baseConfigurationReference = 5E828917FF2AA3CC6B23ECF8A598B684 /* CryptoSwift.release.xcconfig */;
 			buildSettings = {
 				CLANG_ENABLE_OBJC_WEAK = NO;
-				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CODE_SIGN_IDENTITY = "";
 				CURRENT_PROJECT_VERSION = 1;
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_MODULE_VERIFIER = YES;
 				GCC_PREFIX_HEADER = "Target Support Files/CryptoSwift/CryptoSwift-prefix.pch";
 				INFOPLIST_FILE = "Target Support Files/CryptoSwift/CryptoSwift-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
@@ -3191,6 +3181,8 @@
 					"@loader_path/Frameworks",
 				);
 				MODULEMAP_FILE = "Target Support Files/CryptoSwift/CryptoSwift.modulemap";
+				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu11 gnu++14";
 				PRODUCT_MODULE_NAME = CryptoSwift;
 				PRODUCT_NAME = CryptoSwift;
 				SDKROOT = iphoneos;
@@ -3209,14 +3201,13 @@
 			baseConfigurationReference = 93E6492A8FA133833AF10F3033DA7894 /* nRFMeshProvision.debug.xcconfig */;
 			buildSettings = {
 				CLANG_ENABLE_OBJC_WEAK = NO;
-				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CODE_SIGN_IDENTITY = "";
 				CURRENT_PROJECT_VERSION = 1;
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_MODULE_VERIFIER = YES;
 				GCC_PREFIX_HEADER = "Target Support Files/nRFMeshProvision/nRFMeshProvision-prefix.pch";
 				INFOPLIST_FILE = "Target Support Files/nRFMeshProvision/nRFMeshProvision-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
@@ -3228,6 +3219,8 @@
 				);
 				MACH_O_TYPE = staticlib;
 				MODULEMAP_FILE = "Target Support Files/nRFMeshProvision/nRFMeshProvision.modulemap";
+				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu11 gnu++14";
 				PRODUCT_MODULE_NAME = nRFMeshProvision;
 				PRODUCT_NAME = nRFMeshProvision;
 				SDKROOT = iphoneos;
