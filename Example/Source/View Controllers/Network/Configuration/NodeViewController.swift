@@ -65,7 +65,7 @@ class NodeViewController: ProgressViewController {
         
         if refreshControl == nil {
             refreshControl = UIRefreshControl()
-            refreshControl!.tintColor = UIColor.white
+            refreshControl!.tintColor = .white
             refreshControl!.addTarget(self, action: #selector(getCompositionData), for: .valueChanged)
         }
     }
@@ -218,6 +218,7 @@ class NodeViewController: ProgressViewController {
                 }
             case 5:
                 cell.detailTextLabel?.text = "\(node.security)"
+                cell.accessoryType = .detailButton
             default:
                 break
             }
@@ -274,10 +275,10 @@ class NodeViewController: ProgressViewController {
             switch indexPath.row {
             case 0:
                 cell.switch.isOn = node.isConfigComplete
-                cell.switch.onTintColor = UIColor.nordicLake
+                cell.switch.onTintColor = .nordicLake
             case 1:
                 cell.switch.isOn = node.isExcluded
-                cell.switch.onTintColor = UIColor.nordicRed
+                cell.switch.onTintColor = .nordicRed
             default:
                 break
             }
@@ -336,10 +337,12 @@ class NodeViewController: ProgressViewController {
     
     override func tableView(_ tableView: UITableView,
                             accessoryButtonTappedForRowWith indexPath: IndexPath) {
-        switch indexPath.row {
-        case 0:
+        switch (indexPath.section, indexPath.row) {
+        case (IndexPath.compositionDataSection, 5):
+            presentAlert(title: "Info", message: "A node is considered secure when it has been provisioned using Out-Of-Band (OOB) Public Key.")
+        case (IndexPath.switchesSection, 0):
             presentAlert(title: "Info", message: "Mark a node as configured when you finished setting it up.")
-        case 1:
+        case (IndexPath.switchesSection, 1):
             presentAlert(title: "Info", message: "If checked, the node will be excluded from key exchange "
                                                + "process. When the key refresh procedure is complete, this "
                                                + "node will no longer be able to receive or send messages to "
