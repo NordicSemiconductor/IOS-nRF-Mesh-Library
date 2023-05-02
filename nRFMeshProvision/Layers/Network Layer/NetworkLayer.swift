@@ -264,7 +264,7 @@ private extension NetworkLayer {
     /// It will set the IV Index and IV Update Active flag and change the Key Refresh Phase based on the
     /// information specified in the beacon.
     ///
-    /// - parameter networkStateBeacon: The Secure Network beacon received.
+    /// - parameter networkBeacon: The Secure Network beacon received.
     func handle(networkBeacon: NetworkBeaconPdu) {
         /// The Network Key the Secure Network Beacon was encrypted with.
         let networkKey = networkBeacon.networkKey
@@ -273,6 +273,12 @@ private extension NetworkLayer {
         // beacon on a secondary subnet, it will disregard it.
         if let _ = meshNetwork.networkKeys.primaryKey, networkKey.isSecondary {
             logger?.w(.network, "Discarding beacon for secondary network (key index: \(networkKey.index))")
+            
+            // If we've connected to a Proxy Node that doesn't know the Primary Network
+            // we should still notify the user about a new Proxy.
+            if proxyNetworkKey == nil {
+                updateProxyFilter(usingNetworkKey: networkKey)
+            }
             return
         }
         
@@ -357,22 +363,19 @@ private extension NetworkLayer {
         // that has not yet transitioned to the one local Node has. Such IV Index
         // is still valid, at least for some time.
         
-        updateProxyFilter(usingNetworkKey: networkKey,
-                          afterIvIndexChanged: lastIVIndex != meshNetwork.ivIndex)
+        updateProxyFilter(usingNetworkKey: networkKey)
     }
     
     /// Updates the information about the Network Key known to the current Proxy Server.
+    ///
     /// The Network Key is required to send Proxy Configuration Messages that can be
     /// decoded by the connected Proxy.
     ///
-    /// This method also initiates the Proxy Filter with local Provisioner's Unicast Address and
-    /// the `Address.allNodes`` group address if a new connection has been found.
+    /// For new Proxy connections this method also initiates the Proxy Filter with
+    /// preset ``ProxyFilter/initialState``.
     ///
-    /// - parameters:
-    ///   - networkKey: The Network Key known to the connected Proxy.
-    ///   - ivIndexChanged: True, if IV Index has changed, false otherwise.
-    func updateProxyFilter(usingNetworkKey networkKey: NetworkKey,
-                           afterIvIndexChanged ivIndexChanged: Bool) {
+    /// - parameter networkKey: The Network Key known to the connected Proxy.
+    func updateProxyFilter(usingNetworkKey networkKey: NetworkKey) {
         let justConnected = proxyNetworkKey == nil
         
         // Keep the primary Network Key or the most recently received one from the connected
@@ -380,7 +383,7 @@ private extension NetworkLayer {
         // are sent encrypted with a key known to this Node.
         proxyNetworkKey = networkKey
         
-        if justConnected || !ivIndexChanged {
+        if justConnected {
             networkManager.manager.proxyFilter.newProxyDidConnect()
         }
     }
