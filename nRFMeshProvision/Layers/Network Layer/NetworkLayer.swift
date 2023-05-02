@@ -264,7 +264,7 @@ private extension NetworkLayer {
     /// It will set the IV Index and IV Update Active flag and change the Key Refresh Phase based on the
     /// information specified in the beacon.
     ///
-    /// - parameter networkStateBeacon: The Secure Network beacon received.
+    /// - parameter networkBeacon: The Secure Network beacon received.
     func handle(networkBeacon: NetworkBeaconPdu) {
         /// The Network Key the Secure Network Beacon was encrypted with.
         let networkKey = networkBeacon.networkKey
@@ -273,6 +273,11 @@ private extension NetworkLayer {
         // beacon on a secondary subnet, it will disregard it.
         if let _ = meshNetwork.networkKeys.primaryKey, networkKey.isSecondary {
             logger?.w(.network, "Discarding beacon for secondary network (key index: \(networkKey.index))")
+            // However, if we're connected to a Proxy Node that doesn't know the Primary Network Key,
+            // we should store it and notify the app that a new connection was made.
+            if proxyNetworkKey == nil {
+                updateProxyFilter(usingNetworkKey: networkKey, afterIvIndexChanged: false)
+            }
             return
         }
         
@@ -365,8 +370,8 @@ private extension NetworkLayer {
     /// The Network Key is required to send Proxy Configuration Messages that can be
     /// decoded by the connected Proxy.
     ///
-    /// This method also initiates the Proxy Filter with local Provisioner's Unicast Address and
-    /// the `Address.allNodes`` group address if a new connection has been found.
+    /// This method also initiates the Proxy Filter with local Provisioner's Unicast Address
+    /// and the `Address.allNodes` group address if a new connection has been found.
     ///
     /// - parameters:
     ///   - networkKey: The Network Key known to the connected Proxy.
