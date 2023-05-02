@@ -126,7 +126,7 @@ class SelectKeysViewController: UITableViewController {
                 return cell
             } else {
                 let cell = tableView.dequeueReusableCell(withIdentifier: "action", for: indexPath)
-                cell.detailTextLabel?.text = "Bound to \(node.networkKeys.primaryKey!.name)"
+                cell.detailTextLabel?.text = "Bound to \(node.networkKeys.first!.name)"
                 return cell
             }
         }
