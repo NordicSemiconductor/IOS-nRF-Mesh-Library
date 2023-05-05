@@ -18,6 +18,7 @@
 		5212152D231545D40059FB3D /* ModelGroupCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5212152C231545D40059FB3D /* ModelGroupCell.swift */; };
 		5212152F231554190059FB3D /* ProgressCollectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5212152E231554190059FB3D /* ProgressCollectionViewController.swift */; };
 		521215312316C36B0059FB3D /* GenericLevelGroupCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 521215302316C36B0059FB3D /* GenericLevelGroupCell.swift */; };
+		5215600929FBFD230048B2D2 /* WizardViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5215600829FBFD230048B2D2 /* WizardViewController.swift */; };
 		5215998325E6703C00F602FA /* DeviceProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5215998225E6703C00F602FA /* DeviceProperties.swift */; };
 		521599D525E91F9300F602FA /* SensorValueCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 521599D425E91F9300F602FA /* SensorValueCell.swift */; };
 		521599DB25E9306300F602FA /* CHANGELOG.md in Resources */ = {isa = PBXBuildFile; fileRef = 521599DA25E9306300F602FA /* CHANGELOG.md */; };
@@ -66,6 +67,7 @@
 		52547F28232A3F470002AA7B /* RangeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52547F22232A3F470002AA7B /* RangeView.swift */; };
 		52547F29232A3F470002AA7B /* FabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52547F23232A3F470002AA7B /* FabView.swift */; };
 		52568D4B22DDFAC700B7B236 /* Groups.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52568D4A22DDFAC700B7B236 /* Groups.swift */; };
+		5267FDCD2A02937E00ECD38B /* CustomConfigCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5267FDCC2A02937E00ECD38B /* CustomConfigCell.swift */; };
 		526021F62343660200E88F06 /* ControlViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 526021F52343660200E88F06 /* ControlViewController.swift */; };
 		5283524822733BCF0097B949 /* EditKeyViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5283524722733BCF0097B949 /* EditKeyViewController.swift */; };
 		52835250227887970097B949 /* Settings.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5283524E227887970097B949 /* Settings.storyboard */; };
@@ -203,6 +205,7 @@
 		5212152C231545D40059FB3D /* ModelGroupCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelGroupCell.swift; sourceTree = "<group>"; };
 		5212152E231554190059FB3D /* ProgressCollectionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgressCollectionViewController.swift; sourceTree = "<group>"; };
 		521215302316C36B0059FB3D /* GenericLevelGroupCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericLevelGroupCell.swift; sourceTree = "<group>"; };
+		5215600829FBFD230048B2D2 /* WizardViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WizardViewController.swift; sourceTree = "<group>"; };
 		5215998225E6703C00F602FA /* DeviceProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceProperties.swift; sourceTree = "<group>"; };
 		521599D425E91F9300F602FA /* SensorValueCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SensorValueCell.swift; sourceTree = "<group>"; };
 		521599DA25E9306300F602FA /* CHANGELOG.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; name = CHANGELOG.md; path = ../CHANGELOG.md; sourceTree = "<group>"; };
@@ -252,6 +255,7 @@
 		52547F23232A3F470002AA7B /* FabView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FabView.swift; sourceTree = "<group>"; };
 		52568D4A22DDFAC700B7B236 /* Groups.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Groups.swift; sourceTree = "<group>"; };
 		526021F52343660200E88F06 /* ControlViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ControlViewController.swift; sourceTree = "<group>"; };
+		5267FDCC2A02937E00ECD38B /* CustomConfigCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomConfigCell.swift; sourceTree = "<group>"; };
 		5283524722733BCF0097B949 /* EditKeyViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditKeyViewController.swift; sourceTree = "<group>"; };
 		5283524F227887970097B949 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Settings.storyboard; sourceTree = "<group>"; };
 		52835257227AEDA30097B949 /* DeviceCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceCell.swift; sourceTree = "<group>"; };
@@ -553,6 +557,15 @@
 			path = Control;
 			sourceTree = "<group>";
 		};
+		5267FDCB2A02935D00ECD38B /* Wizard */ = {
+			isa = PBXGroup;
+			children = (
+				5215600829FBFD230048B2D2 /* WizardViewController.swift */,
+				5267FDCC2A02937E00ECD38B /* CustomConfigCell.swift */,
+			);
+			path = Wizard;
+			sourceTree = "<group>";
+		};
 		52835253227AEC8C0097B949 /* View Controllers */ = {
 			isa = PBXGroup;
 			children = (
@@ -573,6 +586,7 @@
 		52835255227AED0A0097B949 /* Settings */ = {
 			isa = PBXGroup;
 			children = (
+				5267FDCB2A02935D00ECD38B /* Wizard */,
 				52547F1B232A3F470002AA7B /* Provisioners */,
 				529B756F223FF1AE008F1CE7 /* SettingsViewController.swift */,
 				529B759B2243BA10008F1CE7 /* NetworkKeysViewController.swift */,
@@ -1144,6 +1158,7 @@
 				52DA9D7224F6765C0051795B /* UInt16+Time.swift in Sources */,
 				5231401622F460380074325A /* PublicationCell.swift in Sources */,
 				52E54CE32344978300478F05 /* GenericLevelServerDelegate.swift in Sources */,
+				5215600929FBFD230048B2D2 /* WizardViewController.swift in Sources */,
 				528AB9F8228D847C000BE9DC /* NetworkViewController.swift in Sources */,
 				523F778722CCDE250030EA6A /* SetPublicationViewController.swift in Sources */,
 				52CD0A622330DCFF00A9A181 /* CustomAddressCell.swift in Sources */,
@@ -1216,6 +1231,7 @@
 				A7A59BD7277225E70045A8ED /* GenericPowerOnOffViewCell.swift in Sources */,
 				F085CA0829D70ACB00C2DF89 /* ConfigurationViewController.swift in Sources */,
 				52547F26232A3F470002AA7B /* ProvisionersViewController.swift in Sources */,
+				5267FDCD2A02937E00ECD38B /* CustomConfigCell.swift in Sources */,
 				52518B3322E0B43200A1FD1E /* GroupCell.swift in Sources */,
 				529B7570223FF1AE008F1CE7 /* SettingsViewController.swift in Sources */,
 				5292F8A1250137DC00EA0F2A /* NodeScenesViewController.swift in Sources */,

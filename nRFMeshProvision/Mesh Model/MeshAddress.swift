@@ -55,18 +55,24 @@ public struct MeshAddress {
         }
     }
     
-    /// Creates a Mesh Address. For virtual addresses use
-    /// other init instead.
+    /// Creates a Mesh Address. For virtual addresses use the other init instead.
     ///
-    /// This method will be used for Virtual Address
-    /// if the Virtual Label is not known, that is in
-    /// ``ConfigModelPublicationStatus``.
+    /// To get a next available Group Address for the local Provisioner, use
+    /// ``MeshNetwork/nextAvailableGroupAddress()``.
+    ///
+    /// This method will be used for Virtual Address if the Virtual Label is not known,
+    /// for example ``ConfigModelPublicationStatus`` message is received.
+    ///
+    /// - parameter address: The Group Address assigned to the Group.
+    ///                      Group addresses are in range 0xC000..0xFEFF.
     public init(_ address: Address) {
         self.address = address
         self.virtualLabel = nil
     }
     
-    /// Creates a Mesh Address based on the virtual label.
+    /// Creates a Mesh Address based on the Virtual Label.
+    ///
+    /// - parameter virtualLabel: The UUID associated with the Group.
     public init(_ virtualLabel: UUID) {
         self.virtualLabel = virtualLabel
         self.address = Crypto.calculateVirtualAddress(from: virtualLabel)

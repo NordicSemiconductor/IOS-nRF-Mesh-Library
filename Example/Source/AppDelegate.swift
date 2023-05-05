@@ -59,37 +59,35 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Try loading the saved configuration.
         var loaded = false
         do {
-            loaded = try meshNetworkManager.load()
+            if try meshNetworkManager.load() {
+                meshNetworkDidChange()
+            }
         } catch {
             print(error)
-            // ignore
-        }
-        
-        // If load failed, create a new MeshNetwork.
-        if !loaded {
-            createNewMeshNetwork()
-        } else {
-            meshNetworkDidChange()
         }
         
         return true
     }
     
     /// This method creates a new mesh network with a default name and a
-    /// single Provisioner. When done, if calls `meshNetworkDidChange()`.
-    func createNewMeshNetwork() {
-        // TODO: Implement creator
+    /// single Provisioner.
+    ///
+    /// When done, calls ``AppDelegate/meshNetworkDidChange()``.
+    ///
+    /// - returns: The newly created mesh network.
+    func createNewMeshNetwork() -> MeshNetwork {
         let provisioner = Provisioner(name: UIDevice.current.name,
                                       allocatedUnicastRange: [AddressRange(0x0001...0x199A)],
                                       allocatedGroupRange:   [AddressRange(0xC000...0xCC9A)],
                                       allocatedSceneRange:   [SceneRange(0x0001...0x3333)])
-        _ = meshNetworkManager.createNewMeshNetwork(withName: "nRF Mesh Network", by: provisioner)
+        let network = meshNetworkManager.createNewMeshNetwork(withName: "nRF Mesh Network", by: provisioner)
         _ = meshNetworkManager.save()
         
         meshNetworkDidChange()
+        return network
     }
     
-    /// Sets up the local Elements and reinitializes the `NetworkConnection`
+    /// Sets up the local Elements and reinitializes the ``NetworkConnection``
     /// so that it starts scanning for devices advertising the new Network ID.
     func meshNetworkDidChange() {
         connection?.close()
