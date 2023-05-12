@@ -74,7 +74,7 @@ public enum ProvisioningError: Error {
     /// Thrown when the remove device sent a failure indication.
     case remoteError(_ error: RemoteProvisioningError)
     /// Thrown when the key pair generation has failed.
-    case keyGenerationFailed(_ error: OSStatus)
+    case keyGenerationFailed(_ error: Error)
 }
 
 /// Set of errors which may be reported by an unprovisioned device
@@ -168,8 +168,8 @@ extension ProvisioningError: LocalizedError {
             return NSLocalizedString("Confirmation failed", comment: "provisioning")
         case let .remoteError(error):
             return NSLocalizedString(error.debugDescription, comment: "provisioning")
-        case let .keyGenerationFailed(status):
-            return NSLocalizedString("Key generation failed with status \(status)", comment: "provisioning")
+        case let .keyGenerationFailed(error):
+            return NSLocalizedString("Key generation failed: \(error)", comment: "provisioning")
         }
     }
     

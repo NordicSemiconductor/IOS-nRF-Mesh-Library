@@ -258,18 +258,18 @@ internal class Crypto {
             let publicKeyParams = [kSecAttrIsPermanent : false] as CFDictionary
             
             // Global parameters.
+            var error: Unmanaged<CFError>?
             let parameters = [kSecAttrKeyType : kSecAttrKeyTypeECSECPrimeRandom,
                         kSecAttrKeySizeInBits : 256,
                            kSecPublicKeyAttrs : publicKeyParams,
                           kSecPrivateKeyAttrs : privateKeyParams] as [CFString : Any]
             
-            var publicKey, privateKey: SecKey?
-            let status = SecKeyGeneratePair(parameters as CFDictionary, &publicKey, &privateKey)
-            
-            guard status == errSecSuccess else {
-                throw ProvisioningError.keyGenerationFailed(status)
+            guard let privateKey = SecKeyCreateRandomKey(parameters as CFDictionary, &error),
+                  let publicKey = SecKeyCopyPublicKey(privateKey) else {
+                throw ProvisioningError.keyGenerationFailed(error!.takeRetainedValue() as Error)
             }
-            return (privateKey!, publicKey!)
+            
+            return (privateKey, publicKey)
         }
     }
     
