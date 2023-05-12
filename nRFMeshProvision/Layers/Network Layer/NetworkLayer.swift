@@ -356,7 +356,7 @@ private extension NetworkLayer {
             }
             logger?.w(.network, "Discarding beacon (\(networkBeacon.ivIndex), "
                               + "last \(lastIVIndex), changed: \(numberOfHoursSinceDate) ago, "
-                              + "test mode: \(networkManager.manager.ivUpdateTestMode)))")
+                              + "test mode: \(networkManager.manager.ivUpdateTestMode))")
             return
         } // else,
         // the Secure Network beacon was sent by a Node with a previous IV Index,
