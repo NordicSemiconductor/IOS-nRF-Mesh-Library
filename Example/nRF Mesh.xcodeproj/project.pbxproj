@@ -66,7 +66,7 @@
 		52547F28232A3F470002AA7B /* RangeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52547F22232A3F470002AA7B /* RangeView.swift */; };
 		52547F29232A3F470002AA7B /* FabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52547F23232A3F470002AA7B /* FabView.swift */; };
 		52568D4B22DDFAC700B7B236 /* Groups.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52568D4A22DDFAC700B7B236 /* Groups.swift */; };
-		526021F62343660200E88F06 /* ControlViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 526021F52343660200E88F06 /* ControlViewCell.swift */; };
+		526021F62343660200E88F06 /* ControlViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 526021F52343660200E88F06 /* ControlViewController.swift */; };
 		5283524822733BCF0097B949 /* EditKeyViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5283524722733BCF0097B949 /* EditKeyViewController.swift */; };
 		52835250227887970097B949 /* Settings.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5283524E227887970097B949 /* Settings.storyboard */; };
 		52835258227AEDA30097B949 /* DeviceCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52835257227AEDA30097B949 /* DeviceCell.swift */; };
@@ -251,7 +251,7 @@
 		52547F22232A3F470002AA7B /* RangeView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RangeView.swift; sourceTree = "<group>"; };
 		52547F23232A3F470002AA7B /* FabView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FabView.swift; sourceTree = "<group>"; };
 		52568D4A22DDFAC700B7B236 /* Groups.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Groups.swift; sourceTree = "<group>"; };
-		526021F52343660200E88F06 /* ControlViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ControlViewCell.swift; sourceTree = "<group>"; };
+		526021F52343660200E88F06 /* ControlViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ControlViewController.swift; sourceTree = "<group>"; };
 		5283524722733BCF0097B949 /* EditKeyViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditKeyViewController.swift; sourceTree = "<group>"; };
 		5283524F227887970097B949 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Settings.storyboard; sourceTree = "<group>"; };
 		52835257227AEDA30097B949 /* DeviceCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceCell.swift; sourceTree = "<group>"; };
@@ -548,7 +548,7 @@
 			children = (
 				52E54CCE23437D1200478F05 /* Model */,
 				52E54CCB23437B6700478F05 /* Cells */,
-				526021F52343660200E88F06 /* ControlViewCell.swift */,
+				526021F52343660200E88F06 /* ControlViewController.swift */,
 			);
 			path = Control;
 			sourceTree = "<group>";
@@ -1219,7 +1219,7 @@
 				52518B3322E0B43200A1FD1E /* GroupCell.swift in Sources */,
 				529B7570223FF1AE008F1CE7 /* SettingsViewController.swift in Sources */,
 				5292F8A1250137DC00EA0F2A /* NodeScenesViewController.swift in Sources */,
-				526021F62343660200E88F06 /* ControlViewCell.swift in Sources */,
+				526021F62343660200E88F06 /* ControlViewController.swift in Sources */,
 				5245737B2500E10800CF8500 /* ScenesViewController.swift in Sources */,
 				F085C9FB29C496AB00C2DF89 /* SelectModelsViewController.swift in Sources */,
 				52A9C1C52313D7D80036792A /* GenericLevelViewCell.swift in Sources */,
