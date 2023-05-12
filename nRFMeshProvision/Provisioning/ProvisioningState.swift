@@ -74,7 +74,7 @@ public enum ProvisioningError: Error {
     /// Thrown when the remove device sent a failure indication.
     case remoteError(_ error: RemoteProvisioningError)
     /// Thrown when the key pair generation has failed.
-    case keyGenerationFailed(_ error: OSStatus)
+    case keyGenerationFailed(_ error: Error)
 }
 
 /// Set of errors which may be reported by an unprovisioned device
