@@ -31,21 +31,23 @@
 import Foundation
 
 internal protocol NetworkBeaconPdu: BeaconPdu {
-    /// The Network Key related to this Secure Network beacon.
+    /// The Network Key related to this beacon.
     var networkKey: NetworkKey { get }
-    /// A flag indicating whether the Secure Network beacon has been
-    /// secured using the new Network Key during Key Refresh Procedure.
+    /// A flag indicating whether the beacon has been secured using the
+    /// new Network Key during Key Refresh Procedure.
     var validForKeyRefreshProcedure: Bool { get }
     /// Key Refresh flag value.
     ///
     /// When this flag is active, the Node shall set the Key Refresh
     /// Phase for this Network Key to ``KeyRefreshPhase/usingNewKeys``.
-    /// When in this phase, the Node shall only transmit messages and
-    /// Secure Network beacons using the new keys, shall receive messages
-    /// using the old keys and the new keys, and shall only receive
-    /// Secure Network beacons secured using the new Network Key.
+    ///
+    /// When in this phase:
+    /// * the Node shall only transmit messages and beacons using the new keys,
+    /// * shall receive messages using the old keys and the new keys,
+    /// * shall only receive Secure Network and Private beacons secured using
+    ///   the new Network Key.
     var keyRefreshFlag: Bool { get }
-    /// The IV Index carried by this Secure Network beacon.
+    /// The IV Index carried by this beacon.
     var ivIndex: IvIndex { get }
     
     /// Creates beacon PDU object from received PDU.
@@ -167,7 +169,7 @@ internal struct NetworkBeaconDecoder {
                 }
             }
             return nil
-        case .privateBeacon:
+        case .private:
             for networkKey in meshNetwork.networkKeys {
                 if let beacon = PrivateBeacon(decode: pdu, usingNetworkKey: networkKey) {
                     return beacon

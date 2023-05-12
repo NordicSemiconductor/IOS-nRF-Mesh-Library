@@ -32,7 +32,7 @@ import Foundation
 
 internal struct PrivateBeacon: NetworkBeaconPdu {
     let pdu: Data
-    let beaconType: BeaconType = .privateBeacon
+    let beaconType: BeaconType = .private
     let networkKey: NetworkKey
     let validForKeyRefreshProcedure: Bool
     let keyRefreshFlag: Bool
@@ -84,7 +84,7 @@ internal struct PrivateBeacon: NetworkBeaconPdu {
 extension PrivateBeacon: CustomDebugStringConvertible {
     
     var debugDescription: String {
-        return "Private Beacon beacon (Network ID: \(networkKey.networkId.hex), \(ivIndex), Key Refresh Flag: \(keyRefreshFlag))"
+        return "Private beacon (Network ID: \(networkKey.networkId.hex), \(ivIndex), Key Refresh Flag: \(keyRefreshFlag))"
     }
     
 }

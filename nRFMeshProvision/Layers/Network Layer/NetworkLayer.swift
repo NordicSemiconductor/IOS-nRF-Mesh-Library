@@ -112,7 +112,7 @@ internal class NetworkLayer {
             
         case .meshBeacon:
             if let beaconPdu = NetworkBeaconDecoder.decode(pdu, for: meshNetwork) {
-                logger?.i(.network, "\(beaconPdu) received (decrypted using key: \(beaconPdu.networkKey))")
+                logger?.i(.network, "\(beaconPdu) received (authenticated using key: \(beaconPdu.networkKey))")
                 handle(networkBeacon: beaconPdu)
                 return
             }
@@ -264,13 +264,13 @@ private extension NetworkLayer {
     /// It will set the IV Index and IV Update Active flag and change the Key Refresh Phase based on the
     /// information specified in the beacon.
     ///
-    /// - parameter networkBeacon: The Secure Network beacon received.
+    /// - parameter networkBeacon: The Secure Network or Private beacon received.
     func handle(networkBeacon: NetworkBeaconPdu) {
-        /// The Network Key the Secure Network Beacon was encrypted with.
+        /// The Network Key the beacon was authenticated with.
         let networkKey = networkBeacon.networkKey
-        // The library does not retransmit Secure Network Beacon.
-        // If this node is a member of a primary subnet and receives a Secure Network
-        // beacon on a secondary subnet, it will disregard it.
+        // As of now, the library does not retransmit beacons.
+        // If this node is a member of the primary subnet and the received beacon for a secondary subnet,
+        // it shall disregard it.
         if let _ = meshNetwork.networkKeys.primaryKey, networkKey.isSecondary {
             logger?.w(.network, "Discarding beacon for secondary network (key index: \(networkKey.index))")
             
@@ -297,14 +297,14 @@ private extension NetworkLayer {
         let isIvRecoveryActive = defaults.bool(forKey: IvIndex.ivRecoveryKey)
         /// The test mode disables the 96h rule, leaving all other behavior unchanged.
         let isIvTestModeActive = networkManager.manager.ivUpdateTestMode
-        // Ensure, that the received Secure Network Beacon can overwrite current IV Index.
+        // Ensure, that the received beacon can overwrite current IV Index.
         let flag = networkManager.manager.allowIvIndexRecoveryOver42
         if networkBeacon.canOverwrite(ivIndex: lastIVIndex,
                                             updatedAt: lastTransitionDate,
                                             withIvRecovery: isIvRecoveryActive,
                                             testMode: isIvTestModeActive,
                                             andUnlimitedIvRecoveryAllowed: flag) {
-            // Update the IV Index based on the information from the Secure Network Beacon.
+            // Update the IV Index based on the information from the beacon.
             meshNetwork.ivIndex = networkBeacon.ivIndex
             
             if meshNetwork.ivIndex > lastIVIndex {
@@ -359,7 +359,7 @@ private extension NetworkLayer {
                               + "test mode: \(networkManager.manager.ivUpdateTestMode))")
             return
         } // else,
-        // the Secure Network beacon was sent by a Node with a previous IV Index,
+        // the beacon was sent by a Node with a previous IV Index,
         // that has not yet transitioned to the one local Node has. Such IV Index
         // is still valid, at least for some time.
         

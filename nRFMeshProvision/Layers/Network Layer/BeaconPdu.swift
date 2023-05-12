@@ -33,7 +33,7 @@ import Foundation
 internal enum BeaconType: UInt8 {
     case unprovisionedDevice = 0
     case secureNetwork       = 1
-    case privateBeacon       = 2
+    case `private`           = 2
 }
 
 internal protocol BeaconPdu {
