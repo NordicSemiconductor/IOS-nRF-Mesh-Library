@@ -141,7 +141,7 @@ class SetPublicationDestinationsViewController: UITableViewController {
                 selectedIndexPath = indexPath
                 selectedDestination = nil
             }
-            cell.textLabel?.text = element.name ?? "Element \(indexPath.row + 1)"
+            cell.textLabel?.text = element.name ?? "Element \(element.index + 1)"
             cell.detailTextLabel?.text = element.parentNode!.name ?? "Unknown Device"
             cell.imageView?.image = #imageLiteral(resourceName: "ic_flag_24pt")
             cell.accessoryType = indexPath == selectedIndexPath ? .checkmark : .none
@@ -231,8 +231,8 @@ private extension SetPublicationDestinationsViewController {
         let key = model.boundApplicationKeys[indexPath.row]
         let meshNetwork = MeshNetworkManager.instance.meshNetwork!
         compatibleElements = meshNetwork.nodes
-            .flatMap({ $0.elements })
-            .filter({ $0.contains(modelBoundTo: key) })
+            .flatMap { $0.elements }
+            .filter { $0.contains(modelBoundTo: key) }
         
         if let selectedElementIndex = selectedElementIndex {
             if let newRow = compatibleElements.firstIndex(where: { $0.index == selectedElementIndex }) {
