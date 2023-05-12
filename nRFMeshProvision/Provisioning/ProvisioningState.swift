@@ -168,8 +168,8 @@ extension ProvisioningError: LocalizedError {
             return NSLocalizedString("Confirmation failed", comment: "provisioning")
         case let .remoteError(error):
             return NSLocalizedString(error.debugDescription, comment: "provisioning")
-        case let .keyGenerationFailed(status):
-            return NSLocalizedString("Key generation failed with status \(status)", comment: "provisioning")
+        case let .keyGenerationFailed(error):
+            return NSLocalizedString("Key generation failed: \(error)", comment: "provisioning")
         }
     }
     
