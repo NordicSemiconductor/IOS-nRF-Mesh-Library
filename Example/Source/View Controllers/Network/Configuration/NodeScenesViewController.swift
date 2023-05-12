@@ -537,6 +537,14 @@ extension NodeScenesViewController: MeshNetworkDelegate {
                             failedToSendMessage message: MeshMessage,
                             from localElement: Element, to destination: Address,
                             error: Error) {
+        // Ignore messages sent using model publication.
+        guard message is ConfigMessage ||
+              message is SceneRecall ||
+              message is SceneGet ||
+              message is SceneRegisterGet ||
+              message is SceneDelete else {
+            return
+        }
         done {
             self.presentAlert(title: "Error", message: error.localizedDescription)
             self.refreshControl?.endRefreshing()

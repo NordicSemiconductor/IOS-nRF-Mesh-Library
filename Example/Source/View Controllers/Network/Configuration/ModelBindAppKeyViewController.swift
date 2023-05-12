@@ -183,6 +183,10 @@ extension ModelBindAppKeyViewController: MeshNetworkDelegate {
                             failedToSendMessage message: MeshMessage,
                             from localElement: Element, to destination: Address,
                             error: Error) {
+        // Ignore messages sent from model publication.
+        guard message is ConfigMessage else {
+            return
+        }
         done {
             self.presentAlert(title: "Error", message: error.localizedDescription)
         }

@@ -228,6 +228,10 @@ extension NodeStoreSceneViewController: MeshNetworkDelegate {
                             failedToSendMessage message: MeshMessage,
                             from localElement: Element, to destination: Address,
                             error: Error) {
+        // Ignore messages sent using model publication.
+        guard message is SceneStore else {
+            return
+        }
         done {
             self.presentAlert(title: "Error", message: error.localizedDescription)
         }

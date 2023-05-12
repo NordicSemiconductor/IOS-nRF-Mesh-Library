@@ -163,6 +163,11 @@ class NodeViewController: ProgressViewController {
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: indexPath.cellIdentifier, for: indexPath)
+        if #available(iOS 13.0, *) {
+            cell.textLabel?.textColor = .label
+        } else {
+            cell.textLabel?.textColor = .darkText
+        }
         
         if indexPath.isName {
             cell.textLabel?.text = indexPath.title
@@ -251,11 +256,6 @@ class NodeViewController: ProgressViewController {
             if node.isCompositionDataReceived {
                 let element = node.elements[indexPath.row]
                 cell.textLabel?.text = element.name ?? "Element \(element.index + 1)"
-                if #available(iOS 13.0, *) {
-                    cell.textLabel?.textColor = .label
-                } else {
-                    cell.textLabel?.textColor = .darkText
-                }
                 cell.detailTextLabel?.text = "\(element.models.count) models"
                 cell.accessoryType = .disclosureIndicator
                 cell.selectionStyle = .default
@@ -533,6 +533,10 @@ extension NodeViewController: MeshNetworkDelegate {
                             failedToSendMessage message: MeshMessage,
                             from localElement: Element, to destination: Address,
                             error: Error) {
+        // Ignore messages sent using model publication.
+        guard message is ConfigMessage else {
+            return
+        }
         done {
             self.presentAlert(title: "Error", message: error.localizedDescription)
             self.refreshControl?.endRefreshing()

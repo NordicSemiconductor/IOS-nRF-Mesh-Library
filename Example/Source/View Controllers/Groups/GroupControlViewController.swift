@@ -58,6 +58,7 @@ class GroupControlViewController: ProgressCollectionViewController {
     var group: Group!
     
     private var sections: [Section] = []
+    private var messageInProgress: MeshMessage?
     
     // MARK: - Implementation
     
@@ -196,6 +197,10 @@ extension GroupControlViewController: GroupDelegate {
 extension GroupControlViewController: ModelGroupViewCellDelegate {
     
     func send(_ message: MeshMessage, description: String, using applicationKey: ApplicationKey) {
+        guard messageInProgress == nil else {
+            return
+        }
+        messageInProgress = message
         start(description) {
             return try MeshNetworkManager.instance.send(message, to: self.group, using: applicationKey)
         }
@@ -218,13 +223,19 @@ extension GroupControlViewController: MeshNetworkDelegate {
     
     func meshNetworkManager(_ manager: MeshNetworkManager, didSendMessage message: MeshMessage,
                             from localElement: Element, to destination: Address) {
-        done()
+        if messageInProgress != nil {
+            messageInProgress = nil
+            done()
+        }
     }
     
     func meshNetworkManager(_ manager: MeshNetworkManager, failedToSendMessage message: MeshMessage,
                             from localElement: Element, to destination: Address, error: Error) {
-        done {
-            self.presentAlert(title: "Error", message: error.localizedDescription)
+        if messageInProgress != nil {
+            messageInProgress = nil
+            done {
+                self.presentAlert(title: "Error", message: error.localizedDescription)
+            }
         }
     }
 }
