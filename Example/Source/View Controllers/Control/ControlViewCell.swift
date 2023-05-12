@@ -184,14 +184,12 @@ extension ControlViewController: MeshNetworkDelegate {
     
     func meshNetworkManager(_ manager: MeshNetworkManager, didSendMessage message: MeshMessage,
                             from localElement: Element, to destination: Address) {
-        done()
+        // Ignore.
     }
     
     func meshNetworkManager(_ manager: MeshNetworkManager, failedToSendMessage message: MeshMessage,
                             from localElement: Element, to destination: Address, error: Error) {
-        done {
-            self.presentAlert(title: "Error", message: error.localizedDescription)
-        }
+        // Ignore.
     }
 }
 
