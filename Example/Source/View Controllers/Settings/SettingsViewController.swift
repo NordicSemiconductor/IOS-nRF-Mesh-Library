@@ -77,16 +77,23 @@ class SettingsViewController: UITableViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
-        let manager = MeshNetworkManager.instance
-        
-        let meshNetwork = manager.meshNetwork!
-        networkNameLabel.text  = meshNetwork.meshName
-        provisionersLabel.text = "\(meshNetwork.provisioners.count)"
-        networkKeysLabel.text  = "\(meshNetwork.networkKeys.count)"
-        appKeysLabel.text      = "\(meshNetwork.applicationKeys.count)"
-        scenesLabel.text       = "\(meshNetwork.scenes.count)"
-        lastModifiedLabel.text = dateFormatter.string(from: meshNetwork.timestamp)
+        reload()
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        // If the network has not been created, open a New Network Wizard.
+        guard MeshNetworkManager.instance.isNetworkCreated else {
+            openNewNetworkWizard()
+            return
+        }
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "wizard" {
+            let nc = segue.destination as! UINavigationController
+            let wizard = nc.topViewController as! WizardViewController
+            wizard.delegate = self
+        }
     }
     
     // MARK: - Table view delegate
@@ -124,6 +131,67 @@ class SettingsViewController: UITableViewController {
     
 }
 
+extension SettingsViewController: WizardDelegate {
+    
+    /// Opens the Document Picker to select the Mesh Network configuration to import.
+    func importNetwork() {
+        let picker = UIDocumentPickerViewController(documentTypes: ["public.data", "public.content"], in: .import)
+        picker.delegate = self
+        present(picker, animated: true, completion: nil)
+    }
+    
+    func createNetwork(withFixedKeys fixed: Bool,
+                       networkKeys: Int, applicationKeys: Int,
+                       groups: Int, virtualGroups: Int, scenes: Int) {
+        let network = (UIApplication.shared.delegate as! AppDelegate).createNewMeshNetwork()
+        
+        var index: UInt8 = 1
+        // In debug mode, with fixed keys, the primary network key added by default has to be
+        // removed and replaced with a one with fixed value.
+        if fixed {
+            try? network.remove(networkKeyWithKeyIndex: 0, force: true)
+            let key = Data(repeating: 0, count: 15) + index
+            index += 1
+            _ = try? network.add(networkKey: key, name: "Primary Network Key")
+        }
+        // Add random or fixed key Network and Application Keys.
+        for i in 1..<networkKeys {
+            guard index < UInt8.max else { break }
+            let key = fixed ? Data(repeating: 0, count: 15) + index : Data.random128BitKey()
+            index += 1
+            _ = try? network.add(networkKey: key, name: "Network Key \(i + 1)")
+        }
+        for i in 0..<applicationKeys {
+            guard index < UInt8.max else { break }
+            let key = fixed ? Data(repeating: 0, count: 15) + index : Data.random128BitKey()
+            index += 1
+            _ = try? network.add(applicationKey: key, name: "Application Key \(i + 1)")
+        }
+        // Add groups and scenes.
+        for i in 0..<groups {
+            if let address = network.nextAvailableGroupAddress() {
+                _ = try? network.add(group: Group(name: "Group \(i + 1)", address: address))
+            }
+        }
+        for i in 0..<virtualGroups {
+            _ = try? network.add(group: Group(name: "Virtual Group \(i + 1)", address: MeshAddress(UUID())))
+        }
+        for i in 0..<scenes {
+            if let sceneNumber = network.nextAvailableScene() {
+                _ = try? network.add(scene: sceneNumber, name: "Scene \(i + 1)")
+            }
+        }
+        
+        if MeshNetworkManager.instance.save() {
+            reload()
+            resetViews()
+        } else {
+            presentAlert(title: "Error", message: "Mesh configuration could not be saved.")
+        }
+    }
+    
+}
+
 private extension SettingsViewController {
     
     /// Presents a dialog to edit the network name.
@@ -148,7 +216,10 @@ private extension SettingsViewController {
                                       message: "Resetting the network will erase all network data.\n"
                                              + "Make sure you exported it first.",
                                       preferredStyle: .actionSheet)
-        let resetAction = UIAlertAction(title: "Reset", style: .destructive) { [weak self] _ in self?.resetNetwork() }
+        let resetAction = UIAlertAction(title: "Reset", style: .destructive) { [weak self] _ in
+            _ = MeshNetworkManager.instance.clear()
+            self?.openNewNetworkWizard()
+        }
         let cancelAction = UIAlertAction(title: "Cancel", style: .cancel)
         alert.addAction(resetAction)
         alert.addAction(cancelAction)
@@ -172,52 +243,39 @@ private extension SettingsViewController {
         present(alert, animated: true)
     }
     
-    /// Resets all network settings to default values.
-    func resetNetwork() {
-        (UIApplication.shared.delegate as! AppDelegate).createNewMeshNetwork()
-        MeshNetworkManager.instance.ivUpdateTestMode = false
-        testModeSwitch.setOn(false, animated: true)
-        
-        if MeshNetworkManager.instance.save() {
-            reload()
-        } else {
-            presentAlert(title: "Error", message: "Mesh configuration could not be saved.")
-        }
-    }
-    
     /// Opens the Export popup with export options.
     func exportNetwork() {
         performSegue(withIdentifier: "export", sender: nil)
     }
     
-    /// Opens the Document Picker to select the Mesh Network configuration to import.
-    func importNetwork() {
-        let picker = UIDocumentPickerViewController(documentTypes: ["public.data", "public.content"], in: .import)
-        picker.delegate = self
-        present(picker, animated: true, completion: nil)
+    func openNewNetworkWizard() {
+        performSegue(withIdentifier: "wizard", sender: nil)
     }
     
     /// Reloads network data.
     func reload() {
-        let meshNetwork = MeshNetworkManager.instance.meshNetwork!
+        guard let meshNetwork = MeshNetworkManager.instance.meshNetwork else {
+            return
+        }
         networkNameLabel.text  = meshNetwork.meshName
         provisionersLabel.text = "\(meshNetwork.provisioners.count)"
         networkKeysLabel.text  = "\(meshNetwork.networkKeys.count)"
         appKeysLabel.text      = "\(meshNetwork.applicationKeys.count)"
         scenesLabel.text       = "\(meshNetwork.scenes.count)"
         lastModifiedLabel.text = dateFormatter.string(from: meshNetwork.timestamp)
-        
+        tableView.reloadData()
+    }
+     
+    func resetViews() {
         // IV Update Test Mode is not persistent and has to be set each time
         // the app is open or a network is imported.
         MeshNetworkManager.instance.ivUpdateTestMode = false
         testModeSwitch.setOn(false, animated: true)
         
         // All tabs should be reset to the root view controller.
-        parent?.parent?.children.forEach {
-            if let rootViewController = $0 as? UINavigationController {
-                rootViewController.popToRootViewController(animated: false)
-            }
-        }
+        parent?.parent?.children
+            .compactMap { $0 as? UINavigationController }
+            .forEach { $0.popToRootViewController(animated: false) }
     }
     
     /// Saves mesh network configuration and reloads network data on success.
@@ -227,6 +285,7 @@ private extension SettingsViewController {
                 guard let self = self else { return }
                 (UIApplication.shared.delegate as! AppDelegate).meshNetworkDidChange()
                 self.reload()
+                self.resetViews()
                 self.presentAlert(title: "Success", message: "Mesh Network configuration imported.")
             }
         } else {
@@ -312,6 +371,16 @@ extension SettingsViewController: UIDocumentPickerDelegate {
                                               + "Check if the file is valid.")
                 }
             }
+        }
+    }
+    
+    func documentPickerWasCancelled(_ controller: UIDocumentPickerViewController) {
+        // If importing new network was cancelled and there is no previous network, open
+        // the Wizard.
+        let manager = MeshNetworkManager.instance
+        guard let _ = manager.meshNetwork else {
+            openNewNetworkWizard()
+            return
         }
     }
     

@@ -849,6 +849,18 @@ public extension MeshNetworkManager {
         return storage.save(data)
     }
     
+    /// Forgets the currently loaded network and saves the state.
+    ///
+    /// The manager gets to the state as if no ``load()`` or ``createNewMeshNetwork(withName:by:)-97wsf``
+    /// was called.
+    ///
+    /// - returns: `True` if the network settings was saved, `false` otherwise.
+    func clear() -> Bool {
+        meshData.meshNetwork = nil
+        networkManager = nil
+        return save()
+    }
+    
 }
 
 // MARK: - Export / Import

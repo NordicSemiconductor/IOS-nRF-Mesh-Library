@@ -30,8 +30,19 @@
 */
 
 import UIKit
+import nRFMeshProvision
 
 class RootTabBarController: UITabBarController {
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        // If the network has not been loaded (first run), open the New Network Wizard.
+        let manager = MeshNetworkManager.instance
+        if !manager.isNetworkCreated {
+            presentNewNetworkWizard()
+        }
+    }
     
     func presentGroups() {
         selectedIndex = .groupsTabIndex
@@ -110,6 +121,11 @@ class RootTabBarController: UITabBarController {
                 }
             }
         }
+    }
+    
+    func presentNewNetworkWizard() {
+        selectedIndex = .settingsTabIndex
+        // The wizard will be opened from Settings View Controller.
     }
 
 }
