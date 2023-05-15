@@ -39,7 +39,7 @@ private struct Config {
 
 protocol WizardDelegate: AnyObject {
     func importNetwork()
-    func createNetwork(networkKeys: Int, applicationKeys: Int, groups: Int, virtualGroups: Int, scenes: Int)
+    func createNetwork(withFixedKeys fixed: Bool, networkKeys: Int, applicationKeys: Int, groups: Int, virtualGroups: Int, scenes: Int)
 }
 
 class WizardViewController: UIViewController,
@@ -53,7 +53,7 @@ class WizardViewController: UIViewController,
     @IBAction func optionDidChange(_ sender: UISegmentedControl) {
         table.reloadData()
         
-        if sender.selectedSegmentIndex == 2 {
+        if sender.selectedSegmentIndex == 3 {
             dismiss(animated: true) { [weak self] in
                 self?.delegate?.importNetwork()
             }
@@ -62,9 +62,15 @@ class WizardViewController: UIViewController,
     
     @IBAction func doneTapped(_ sender: UIBarButtonItem) {
         if option.selectedSegmentIndex == 0 {
-            delegate?.createNetwork(networkKeys: 1, applicationKeys: 0, groups: 0, virtualGroups: 0, scenes: 0)
+            delegate?.createNetwork(withFixedKeys: false,
+                networkKeys: 1,
+                applicationKeys: 0,
+                groups: 0,
+                virtualGroups: 0,
+                scenes: 0)
         } else {
             delegate?.createNetwork(
+                withFixedKeys: option.selectedSegmentIndex == 2,
                 networkKeys: customValues[0],
                 applicationKeys: customValues[1],
                 groups: customValues[2],
@@ -81,7 +87,7 @@ class WizardViewController: UIViewController,
     // MARK: - Private variables
     
     private var presets: [Config]!
-    private var customValues: [Int] = [2, 3, 1, 1, 2]
+    private var customValues: [Int] = [1, 1, 3, 1, 4]
     
     
     // MARK: - Implementation
@@ -119,14 +125,14 @@ class WizardViewController: UIViewController,
 extension WizardViewController: UITableViewDelegate, UITableViewDataSource {
     
     func numberOfSections(in tableView: UITableView) -> Int {
-        guard option.selectedSegmentIndex < 2 else {
+        guard option.selectedSegmentIndex < 3 else {
             return 0
         }
         return 1
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        guard option.selectedSegmentIndex < 2 else {
+        guard option.selectedSegmentIndex < 3 else {
             return 0
         }
         return presets.count
@@ -134,25 +140,26 @@ extension WizardViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let preset = presets[indexPath.row]
-        switch option.selectedSegmentIndex {
-        case 0:
+        
+        if option.selectedSegmentIndex == 0 {
             let cell = tableView.dequeueReusableCell(withIdentifier: "right", for: indexPath)
             cell.textLabel?.text = preset.name
             cell.detailTextLabel?.text = "\(preset.minValue)"
             cell.imageView?.image = UIImage(named: preset.icon)
             return cell
-        case 1:
-            let cell = tableView.dequeueReusableCell(withIdentifier: "custom", for: indexPath) as! CustomConfigCell
-            cell.icon = preset.icon
-            cell.label = preset.name
-            cell.minValue = preset.minValue
-            cell.value = customValues[indexPath.row]
-            cell.delegate = self
-            cell.tag = indexPath.row
-            return cell
-        default:
-            fatalError()
         }
+        let cellIdentifier = indexPath.row < 2 ? "customKey" : "custom"
+        let cell = tableView.dequeueReusableCell(withIdentifier: cellIdentifier, for: indexPath) as! CustomConfigCell
+        cell.icon = preset.icon
+        cell.label = preset.name
+        if indexPath.row < 2 {
+            cell.detailText = option.selectedSegmentIndex == 1 ? "Random" : "Fixed"
+        }
+        cell.minValue = preset.minValue
+        cell.value = customValues[indexPath.row]
+        cell.delegate = self
+        cell.tag = indexPath.row
+        return cell
     }
     
 }

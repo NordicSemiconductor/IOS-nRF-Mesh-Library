@@ -141,15 +141,34 @@ extension SettingsViewController: WizardDelegate {
         present(picker, animated: true, completion: nil)
     }
     
-    func createNetwork(networkKeys: Int, applicationKeys: Int, groups: Int, virtualGroups: Int, scenes: Int) {
+    func createNetwork(withFixedKeys fixed: Bool,
+                       networkKeys: Int, applicationKeys: Int,
+                       groups: Int, virtualGroups: Int, scenes: Int) {
         let network = (UIApplication.shared.delegate as! AppDelegate).createNewMeshNetwork()
         
+        var index: UInt8 = 1
+        // In debug mode, with fixed keys, the primary network key added by default has to be
+        // removed and replaced with a one with fixed value.
+        if fixed {
+            try? network.remove(networkKeyWithKeyIndex: 0, force: true)
+            let key = Data(repeating: 0, count: 15) + index
+            index += 1
+            _ = try? network.add(networkKey: key, name: "Primary Network Key")
+        }
+        // Add random or fixed key Network and Application Keys.
         for i in 1..<networkKeys {
-            _ = try? network.add(networkKey: Data.random128BitKey(), name: "Network Key \(i + 1)")
+            guard index < UInt8.max else { break }
+            let key = fixed ? Data(repeating: 0, count: 15) + index : Data.random128BitKey()
+            index += 1
+            _ = try? network.add(networkKey: key, name: "Network Key \(i + 1)")
         }
         for i in 0..<applicationKeys {
-            _ = try? network.add(applicationKey: Data.random128BitKey(), name: "Application Key \(i + 1)")
+            guard index < UInt8.max else { break }
+            let key = fixed ? Data(repeating: 0, count: 15) + index : Data.random128BitKey()
+            index += 1
+            _ = try? network.add(applicationKey: key, name: "Application Key \(i + 1)")
         }
+        // Add groups and scenes.
         for i in 0..<groups {
             if let address = network.nextAvailableGroupAddress() {
                 _ = try? network.add(group: Group(name: "Group \(i + 1)", address: address))

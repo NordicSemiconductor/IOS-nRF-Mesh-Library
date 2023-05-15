@@ -48,6 +48,11 @@ class CustomConfigCell: UITableViewCell {
             labelView.text = label
         }
     }
+    var detailText: String! {
+        didSet {
+            detailLabelView.text = detailText
+        }
+    }
     var value: Int {
         set {
             stepper.value = Double(newValue)
@@ -68,6 +73,7 @@ class CustomConfigCell: UITableViewCell {
     @IBOutlet weak var stepper: UIStepper!
     @IBOutlet weak var iconView: UIImageView!
     @IBOutlet weak var labelView: UILabel!
+    @IBOutlet weak var detailLabelView: UILabel!
     @IBOutlet weak var valueView: UILabel!
     
     @IBAction func valueDidChange(_ sender: UIStepper) {
