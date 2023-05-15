@@ -57,11 +57,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         meshNetworkManager.logger = self
         
         // Try loading the saved configuration.
-        var loaded = false
         do {
             if try meshNetworkManager.load() {
                 meshNetworkDidChange()
             }
+            // else {
+            //    A New Network Wizard will be shown.
+            // }
         } catch {
             print(error)
         }
