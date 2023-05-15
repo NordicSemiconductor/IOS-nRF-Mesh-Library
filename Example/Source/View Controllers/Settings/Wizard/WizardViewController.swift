@@ -89,7 +89,6 @@ class WizardViewController: UIViewController,
     private var presets: [Config]!
     private var customValues: [Int] = [1, 1, 3, 1, 4]
     
-    
     // MARK: - Implementation
     
     override func viewDidLoad() {

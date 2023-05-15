@@ -82,8 +82,7 @@ class SettingsViewController: UITableViewController {
     
     override func viewDidAppear(_ animated: Bool) {
         // If the network has not been created, open a New Network Wizard.
-        let manager = MeshNetworkManager.instance
-        guard let _ = manager.meshNetwork else {
+        guard MeshNetworkManager.instance.isNetworkCreated else {
             openNewNetworkWizard()
             return
         }
@@ -218,7 +217,7 @@ private extension SettingsViewController {
                                              + "Make sure you exported it first.",
                                       preferredStyle: .actionSheet)
         let resetAction = UIAlertAction(title: "Reset", style: .destructive) { [weak self] _ in
-            // TODO: Forget the old network
+            _ = MeshNetworkManager.instance.clear()
             self?.openNewNetworkWizard()
         }
         let cancelAction = UIAlertAction(title: "Cancel", style: .cancel)
