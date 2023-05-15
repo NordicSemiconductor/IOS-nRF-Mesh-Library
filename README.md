@@ -8,7 +8,7 @@
 The nRF Mesh library allows to provision Bluetooth mesh devices into a mesh network, configure them and send and receive messages.
 
 The library is compatible with the following [Bluetooth specifications](https://www.bluetooth.com/specifications/specs/?status=active&show_latest_version=1&keyword=mesh):
-- Mesh Profile 1.0.1 (with experimental support for Mesh Profile 1.1)
+- Mesh Profile 1.0.1 (with experimental support for Mesh Protocol 1.1)
 - Mesh Model 1.0.1
 - Mesh Device Properties 2
 - Configuration Database Profile 1.0.1
