@@ -138,13 +138,6 @@ class VendorModelViewCell: ModelViewCell, UITextFieldDelegate {
             fatalError()
         }
     }
-    
-    override func meshNetworkManager(_ manager: MeshNetworkManager,
-                                     didSendMessage message: MeshMessage,
-                                     from localElement: Element, to destination: Address) -> Bool {
-        // For acknowledged messages wait for the Acknowledgement Message.
-        return acknowledgmentSwitch.isOn
-    }
 }
 
 private extension VendorModelViewCell {

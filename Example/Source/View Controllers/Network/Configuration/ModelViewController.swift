@@ -54,6 +54,7 @@ class ModelViewController: ProgressViewController {
     var model: Model!
     
     private weak var modelViewCell: ModelViewCell?
+    private var currentMessage: MeshMessage?
     
     private var heartbeatPublicationCount: RemainingHeartbeatPublicationCount?
     private var heartbeatPublicationFeatures: NodeFeatures?
@@ -612,6 +613,7 @@ extension ModelViewController: ModelViewCellDelegate {
         guard let model = model else {
             return
         }
+        currentMessage = message
         start(description) {
             return try MeshNetworkManager.instance.send(message, to: model)
         }
@@ -621,6 +623,7 @@ extension ModelViewController: ModelViewCellDelegate {
         guard let node = model?.parentElement?.parentNode else {
             return
         }
+        currentMessage = message
         start(description) {
             return try MeshNetworkManager.instance.send(message, to: node)
         }
@@ -933,19 +936,13 @@ extension ModelViewController: MeshNetworkDelegate {
     func meshNetworkManager(_ manager: MeshNetworkManager,
                             didSendMessage message: MeshMessage,
                             from localElement: Element, to destination: Address) {
-        // Has the Node been reset remotely.
-        guard !(message is ConfigNodeReset) else {
-            (UIApplication.shared.delegate as! AppDelegate).meshNetworkDidChange()
-            navigationController?.popToRootViewController(animated: true)
+        guard message.opCode == currentMessage?.opCode else {
             return
         }
-        // Ignore messages sent from model publication.
-        guard message is ConfigMessage else {
-            return
-        }
-        let isMore = modelViewCell?.meshNetworkManager(manager, didSendMessage: message,
-                                                       from: localElement, to: destination) ?? false
-        if !isMore {
+        currentMessage = nil
+        // If an unacknowledged message was sent, we're done.
+        let isAckExpected = message is AcknowledgedMeshMessage
+        if !isAckExpected {
             done()
         }
     }
@@ -955,9 +952,10 @@ extension ModelViewController: MeshNetworkDelegate {
                             from localElement: Element, to destination: Address,
                             error: Error) {
         // Ignore messages sent from model publication.
-        guard message is ConfigMessage else {
+        guard message.opCode == currentMessage?.opCode else {
             return
         }
+        currentMessage = nil
         done {
             self.presentAlert(title: "Error", message: error.localizedDescription)
             self.refreshControl?.endRefreshing()

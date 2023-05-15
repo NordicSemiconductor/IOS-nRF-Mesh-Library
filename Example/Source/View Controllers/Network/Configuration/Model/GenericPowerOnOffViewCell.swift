@@ -74,13 +74,6 @@ class GenericPowerOnOffViewCell: ModelViewCell {
             fatalError()
         }
     }
-    
-    override func meshNetworkManager(_ manager: MeshNetworkManager,
-                                     didSendMessage message: MeshMessage,
-                                     from localElement: Element, to destination: Address) -> Bool {
-        // For acknowledged messages wait for the Acknowledgement Message.
-        return message is AcknowledgedMeshMessage
-    }
 }
 
 private extension GenericPowerOnOffViewCell {
