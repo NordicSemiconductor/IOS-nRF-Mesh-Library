@@ -176,12 +176,15 @@ class SelectPublicationDestinationsViewController: UITableViewController {
             return
         }
         
+        // Select a new key.
         if indexPath.isKeySection {
+            // Was Add Key clicked?
             if indexPath.row == network.applicationKeys.count {
                 let index = network.applicationKeys.count + 1
                 try! network.add(applicationKey: Data.random128BitKey(), name: "Application Key \(index)")
                 _ = manager.save()
                 tableView.insertRows(at: [indexPath], with: .automatic)
+                // Continue to select the new key.
             }
             keySelected(indexPath)
             return
