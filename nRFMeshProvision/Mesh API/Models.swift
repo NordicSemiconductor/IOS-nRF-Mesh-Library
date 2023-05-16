@@ -65,6 +65,25 @@ public extension Model {
         case .configurationClientModelId: return false
         case .healthServerModelId: return true
         case .healthClientModelId: return true
+        // Configuration models added in Mesh Protocol 1.1
+        case .remoteProvisioningServerModelId: return false
+        case .remoteProvisioningClientModelId: return false
+        case .directedForwardingConfigurationServerModelId: return false
+        case .directedForwardingConfigurationClientModelId: return false
+        case .bridgeConfigurationServerModelId: return false
+        case .bridgeConfigurationClientModelId: return false
+        case .privateBeaconServerModelId: return false
+        case .privateBeaconClientModelId: return false
+        case .onDemandPrivateProxyServerModelId: return false
+        case .onDemandPrivateProxyClientModelId: return false
+        case .sarConfigurationServerModelId: return false
+        case .sarConfigurationClientModelId: return false
+        case .opcodesAggregatorServerModelId: return false
+        case .opcodesAggregatorClientModelId: return false
+        case .largeCompositionDataServerModelId: return false
+        case .largeCompositionDataClientModelId: return false
+        case .solicitationPduRplConfigurationServerModelId: return false
+        case .solicitationPduRplConfigurationClientModelId: return false
         // Generic
         case .genericOnOffServerModelId: return true
         case .genericOnOffClientModelId: return true
@@ -140,6 +159,25 @@ public extension Model {
         case .configurationClientModelId: return false
         case .healthServerModelId: return true
         case .healthClientModelId: return true
+        // Configuration models added in Mesh Protocol 1.1
+        case .remoteProvisioningServerModelId: return false
+        case .remoteProvisioningClientModelId: return false
+        case .directedForwardingConfigurationServerModelId: return false
+        case .directedForwardingConfigurationClientModelId: return false
+        case .bridgeConfigurationServerModelId: return false
+        case .bridgeConfigurationClientModelId: return false
+        case .privateBeaconServerModelId: return false
+        case .privateBeaconClientModelId: return false
+        case .onDemandPrivateProxyServerModelId: return false
+        case .onDemandPrivateProxyClientModelId: return false
+        case .sarConfigurationServerModelId: return false
+        case .sarConfigurationClientModelId: return false
+        case .opcodesAggregatorServerModelId: return false
+        case .opcodesAggregatorClientModelId: return false
+        case .largeCompositionDataServerModelId: return false
+        case .largeCompositionDataClientModelId: return false
+        case .solicitationPduRplConfigurationServerModelId: return false
+        case .solicitationPduRplConfigurationClientModelId: return false
         // Generic
         case .genericOnOffServerModelId: return true
         case .genericOnOffClientModelId: return true
