@@ -31,46 +31,59 @@
 import UIKit
 import nRFMeshProvision
 
-class SelectGroupsViewController: UITableViewController {
+class SelectModelsForPublicationViewController: UITableViewController {
     
     // MARK: - Outlets
     
+    @IBOutlet weak var selectAction: UIBarButtonItem!
     @IBOutlet weak var nextButton: UIBarButtonItem!
+    
+    @IBAction func selectActionTapped(_ sender: UIBarButtonItem) {
+        if selectedModels.count == allModels.count {
+            selectedModels.removeAll()
+            selectAction.title = "Select All"
+            nextButton.isEnabled = false
+        } else {
+            selectedModels = allModels
+            selectAction.title = "Select None"
+            nextButton.isEnabled = true
+        }
+        tableView.reloadData()
+    }
     
     // MARK: - Public properties
     
     var node: Node!
+    var publish: Publish!
     
     // MARK: - Private properties
     
-    private var selectedGroups: [Group] = []
+    private var selectedModels: [Model] = []
+    private var allModels: [Model]!
     
     // MARK: - View Controller
 
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        let manager = MeshNetworkManager.instance
-        let allGroups = manager.meshNetwork?.groups
-        
-        if let first = allGroups?.first {
-            selectedGroups.append(first)
-        }
-        nextButton.isEnabled = !selectedGroups.isEmpty
+        allModels = node.elements
+            .flatMap { $0.models }
+            .filter { $0.supportsModelPublication ?? true }
+        // Initially, no Models are selected.
+        nextButton.isEnabled = false
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.identifier == "next" {
-            let destination = segue.destination as! SelectModelsForSubscriptionViewController
-            destination.node = node
-            destination.selectedGroups = selectedGroups.sorted { $0.address.address < $1.address.address }
+        if segue.identifier == "start" {
+            let destination = segue.destination as! ConfigurationViewController
+            destination.set(publication: publish, to: selectedModels)
         }
     }
 
     // MARK: - Table view data source
 
     override func numberOfSections(in tableView: UITableView) -> Int {
-        return IndexPath.numberOfSection
+        return IndexPath.numberOfFixedSection + node.elements.count
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -78,78 +91,81 @@ class SelectGroupsViewController: UITableViewController {
         case IndexPath.infoSection:
             return 0
         default:
-            let manager = MeshNetworkManager.instance
-            let network = manager.meshNetwork!
-            return network.groups.count + 1 // Add Group
+            return node
+                .elements[section.elementIndex]
+                .models.count
         }
     }
     
     override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         switch section {
-        case IndexPath.groupsSection:
-            return "Groups"
-        default:
+        case IndexPath.infoSection:
             return nil
+        default:
+            return node.elements[section.elementIndex].name ?? "Element \(section)"
         }
     }
     
     override func tableView(_ tableView: UITableView, titleForFooterInSection section: Int) -> String? {
         switch section {
         case IndexPath.infoSection:
-            return "Select Groups to subscribe Models to."
+            return "Select Models for setting Publication."
         default:
             return nil
         }
     }
-
+    
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let manager = MeshNetworkManager.instance
-        let network = manager.meshNetwork!
-        let groups = network.groups
+        let model = node
+            .elements[indexPath.section.elementIndex]
+            .models[indexPath.row]
         
-        if indexPath.row < groups.count {
-            let group = groups[indexPath.row]
-            let cell = tableView.dequeueReusableCell(withIdentifier: "group", for: indexPath)
-            cell.textLabel?.text = group.name
-            cell.accessoryType = selectedGroups.contains(group) ? .checkmark : .none
-            return cell
-        } else {
-            return tableView.dequeueReusableCell(withIdentifier: "action", for: indexPath)
-        }
+        let cell = tableView.dequeueReusableCell(withIdentifier: "model", for: indexPath)
+        cell.textLabel?.text = model.modelName
+        cell.detailTextLabel?.text = model.companyName
+        cell.accessoryType = selectedModels.contains(model) ? .checkmark : .none
+        cell.isEnabled = model.supportsApplicationKeyBinding
+        return cell
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         
-        let manager = MeshNetworkManager.instance
-        let network = manager.meshNetwork!
-        let groups = network.groups
+        // Find the Model under the selected row.
+        let model = node
+            .elements[indexPath.section.elementIndex]
+            .models[indexPath.row]
         
-        if indexPath.row < groups.count {
-            let selectedGroup = groups[indexPath.row]
-            if let index = selectedGroups.firstIndex(of: selectedGroup) {
-                selectedGroups.remove(at: index)
-            } else {
-                selectedGroups.append(selectedGroup)
-            }
-            tableView.reloadRows(at: [indexPath], with: .automatic)
+        // Toggle the selection.
+        if let index = selectedModels.firstIndex(of: model) {
+            selectedModels.remove(at: index)
         } else {
-            let index = network.groups.count + 1
-            if let address = network.nextAvailableGroupAddress(),
-               let newGroup = try? Group(name: "Group \(index)", address: address) {
-                try! network.add(group: newGroup)
-                _ = manager.save()
-                selectedGroups.append(newGroup)
-                tableView.insertRows(at: [indexPath], with: .automatic)
-            }
+            selectedModels.append(model)
         }
-        nextButton.isEnabled = !selectedGroups.isEmpty
+        tableView.reloadRows(at: [indexPath], with: .automatic)
+        nextButton.isEnabled = !selectedModels.isEmpty
+        
+        // If all Models were selected, change the button to Select None.
+        if selectedModels.count == allModels.count {
+            selectAction.title = "Select None"
+        } else {
+            selectAction.title = "Select All"
+        }
     }
 
 }
 
 private extension IndexPath {
-    static let infoSection     = 0
-    static let groupsSection   = 1
-    static let numberOfSection = IndexPath.groupsSection + 1
+    
+    static let infoSection = 0
+    static let numberOfFixedSection =  Self.infoSection + 1
+    
+}
+
+private extension Int {
+    
+    var elementIndex: Int {
+        return self - IndexPath.numberOfFixedSection
+    }
+    
 }

@@ -31,7 +31,7 @@
 import UIKit
 import nRFMeshProvision
 
-class SelectModelsViewController: UITableViewController {
+class SelectModelsForBindingViewController: UITableViewController {
     
     // MARK: - Outlets
     
@@ -42,9 +42,11 @@ class SelectModelsViewController: UITableViewController {
         if selectedModels.count == allModels.count {
             selectedModels.removeAll()
             selectAction.title = "Select All"
+            nextButton.isEnabled = false
         } else {
             selectedModels = allModels
             selectAction.title = "Select None"
+            nextButton.isEnabled = true
         }
         tableView.reloadData()
     }

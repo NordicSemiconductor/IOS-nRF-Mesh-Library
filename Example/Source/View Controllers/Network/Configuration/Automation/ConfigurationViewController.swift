@@ -59,98 +59,6 @@ class ConfigurationViewController: UIViewController,
     
     // MARK: - Public properties
     
-    func configure(_ node: Node) {
-        self.node = node
-        // If the Node's configuration hasn't been read, it's
-        // a good time to do that.
-        if node.relayRetransmit == nil {
-            tasks.append(.readRelayStatus)
-        }
-        if node.networkTransmit == nil {
-            tasks.append(.readNetworkTransitStatus)
-        }
-        if node.secureNetworkBeacon == nil {
-            tasks.append(.readBeaconStatus)
-        }
-        if node.features?.proxy == nil {
-            tasks.append(.readGATTProxyStatus)
-        }
-        if node.features?.friend == nil {
-            tasks.append(.readFriendStatus)
-        }
-        // The result of reading Heartbeat publication and subscription
-        // would not be shown, so skip it.
-        // In order to read the current state use Pull to Refresh on
-        // Configuration Server model screen.
-        /*
-        if node.heartbeatPublication == nil {
-            tasks.append(.readHeartbeatPublication)
-        }
-        if node.heartbeatSubscription == nil {
-            tasks.append(.readHeartbeatSubscription)
-        }
-        */
-        // The state of Node Identity is not preserved, no need to read it.
-        /*
-        node.networkKeys.forEach { networkKey in
-            tasks.append(.readNodeIdentityStatus(networkKey))
-        }
-        */
-        // If there's no Application Keys, create one.
-        let network = MeshNetworkManager.instance.meshNetwork!
-        if network.applicationKeys.isEmpty {
-            let newApplicationKey = try! network.add(applicationKey: .random128BitKey(), name: "App Key 1")
-            if let networkKey = node.networkKeys.first {
-                try! newApplicationKey.bind(to: networkKey)
-            }
-        }
-        // Missing Application Keys must be sent first.
-        var networkKeys: [NetworkKey] = []
-        network.applicationKeys.forEach { applicationKey in
-            // If a new Application Key is found...
-            if !node.knows(applicationKey: applicationKey) {
-                // ...check whether the device knows the bound Network Key.
-                let networkKey = applicationKey.boundNetworkKey
-                if !networkKeys.contains(networkKey) && !node.knows(networkKey: networkKey) {
-                    // If not, first send the Network Key.
-                    tasks.append(.sendNetworkKey(networkKey))
-                    // Do it only once per Network Key.
-                    networkKeys.append(networkKey)
-                }
-                // After the bound Network Key is sent, send the App Key.
-                tasks.append(.sendApplicationKey(applicationKey))
-            }
-        }
-        // Bind all Application Keys to all Models.
-        let allModels = node.elements
-            .flatMap { $0.models }
-        allModels
-            .filter { $0.supportsApplicationKeyBinding }
-            .forEach { model in
-                network.applicationKeys.forEach { applicationKey in
-                    if !model.isBoundTo(applicationKey) {
-                        tasks.append(.bind(applicationKey, to: model))
-                    }
-                }
-            }
-        // If there are no Groups, create a normal one, and a virtual one.
-        if network.groups.isEmpty {
-            try! network.add(group: Group(name: "Normal Group", address: network.nextAvailableGroupAddress()!))
-            try! network.add(group: Group(name: "Virtual Group", address: MeshAddress(UUID())))
-        }
-        // Subscribe all Models to all Groups.
-        allModels
-            .filter { $0.supportsModelSubscriptions ?? true }
-            .forEach { model in
-                network.groups.forEach { group in
-                    if !model.isSubscribed(to: group) {
-                        tasks.append(.subscribe(model, to: group))
-                    }
-                }
-            }
-        
-    }
-    
     func bind(applicationKeys: [ApplicationKey], to models: [Model]) {
         guard let node = models.first?.parentElement?.parentNode else {
             return
@@ -194,6 +102,38 @@ class ConfigurationViewController: UIViewController,
                     tasks.append(.subscribe(model, to: group))
                 }
             }
+        }
+    }
+    
+    func set(publication publish: Publish, to models: [Model]) {
+        guard let node = models.first?.parentElement?.parentNode else {
+            return
+        }
+        guard let network = MeshNetworkManager.instance.meshNetwork,
+              let applicationKey = network.applicationKeys[publish.index] else {
+            // Abort.
+            return
+        }
+        self.node = node
+        
+        // Does the Node know the selected Application Key?
+        if !node.knows(applicationKey: applicationKey) {
+            // At least the Network Key?
+            if !node.knows(networkKeyIndex: applicationKey.boundNetworkKeyIndex),
+               let networkKey = network.networkKeys[applicationKey.boundNetworkKeyIndex] {
+                tasks.append(.sendNetworkKey(networkKey))
+            }
+            tasks.append(.sendApplicationKey(applicationKey))
+        }
+        // For each selected Model...
+        models.forEach { model in
+            // ...check if it is bound to that Application Key.
+            if !model.isBoundTo(applicationKey) {
+                // If not, bind it.
+                tasks.append(.bind(applicationKey, to: model))
+            }
+            // and send the Publication.
+            tasks.append(.setPublication(publish, to: model))
         }
     }
     
@@ -339,28 +279,28 @@ private extension ConfigurationViewController {
         // Pop new task and execute.
         let task = tasks[current]
         
-        // Skip messages with Application Keys bound to Network Keys
-        // that aren't known to the Node.
-        if let message = task.message as? ConfigNetAndAppKeyMessage {
-            if !node.knows(networkKeyIndex: message.networkKeyIndex) {
-                reload(taskAt: current, with: .skipped)
-                DispatchQueue.main.async {
-                    self.progress.addSkipped()
-                }
-                executeNext()
-                return
-            }
-        }
+        var skipped: Bool!
+        switch task {
+        // Skip application keys if a network key was not sent.
+        case .sendApplicationKey(let applicationKey):
+            skipped = !node.knows(networkKey: applicationKey.boundNetworkKey)
         // Skip binding models to Application Keys not known to the Node.
-        if let message = task.message as? ConfigModelAppBind {
-            if !node.knows(applicationKeyIndex: message.applicationKeyIndex) {
-                reload(taskAt: current, with: .skipped)
-                DispatchQueue.main.async {
-                    self.progress.addSkipped()
-                }
-                executeNext()
-                return
-            }
+        case .bind(let applicationKey, to: _):
+            skipped = !node.knows(applicationKey: applicationKey)
+        // Skip publication with keys that failed to be sent.
+        case .setPublication(let publish, to: _):
+            skipped = !node.knows(applicationKeyIndex: publish.index)
+        default:
+            skipped = false
+        }
+        
+        guard !skipped else {
+           reload(taskAt: current, with: .skipped)
+           DispatchQueue.main.async {
+               self.progress.addSkipped()
+           }
+           executeNext()
+           return
         }
         
         // Send the message.

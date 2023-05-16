@@ -31,23 +31,12 @@
 import UIKit
 import nRFMeshProvision
 
-protocol PublicationDelegate {
-    /// This method is called when the publication has changed.
-    func publicationChanged()
-}
-
-class SetPublicationViewController: ProgressViewController {
+class SelectPublicationViewController: ProgressViewController {
     
     // MARK: - Outlets & Actions
     
-    @IBOutlet weak var doneButton: UIBarButtonItem!
+    @IBOutlet weak var nextButton: UIBarButtonItem!
     
-    @IBAction func cancelTapped(_ sender: UIBarButtonItem) {
-        dismiss(animated: true)
-    }
-    @IBAction func doneTapped(_ sender: UIBarButtonItem) {
-        setPublication()
-    }
     @IBAction func periodDidChange(_ sender: UISlider) {
         periodSelected(sender.value)
     }
@@ -76,8 +65,7 @@ class SetPublicationViewController: ProgressViewController {
         
     // MARK: - Properties
     
-    var model: Model!
-    var delegate: PublicationDelegate?
+    var node: Node!
     
     private var destination: MeshAddress?
     private var applicationKey: ApplicationKey?
@@ -100,41 +88,9 @@ class SetPublicationViewController: ProgressViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        MeshNetworkManager.instance.delegate = self
-        
-        if let publish = model.publish {
-            destination = publish.publicationAddress
-            applicationKey = model.boundApplicationKeys.first { $0.index == publish.index }
-            ttl = publish.ttl
-            friendshipCredentialsFlagSwitch.isOn = publish.isUsingFriendshipSecurityMaterial
-            // The Period Slider displays all 4 resolutions.
-            // There are 63 values for resolution 100 ms: 0 - 6.3 sec.
-            // For resolution 1 sec there are 7 options less, as, as it is possible to set 1 sec as 1 step of
-            // resolution 1 sec, the slider will use 10 steps of 100 ms instead. 1 sec resolution is only
-            // used from 7 sec until 1 minute 3 sec.
-            // Similar situation is for 10 sec resolution, which starts from 1 minute and 10 seconds (7 steps).
-            // The maximum value that can be calculated using resolution 10 sec is 10 min 30 sec, therefore
-            // the last resolution starts from step 2 (20 minutes).
-            let period = publish.period
-            switch period.resolution {
-            case .hundredsOfMilliseconds:
-                periodSlider.value = Float(period.resolution.rawValue * 64 + period.numberOfSteps)
-            case .seconds:
-                periodSlider.value = Float(period.resolution.rawValue * 64 + period.numberOfSteps - 7)
-            case .tensOfSeconds:
-                periodSlider.value = Float(period.resolution.rawValue * 64 + period.numberOfSteps - 7 - 7)
-            case .tensOfMinutes:
-                periodSlider.value = Float(period.resolution.rawValue * 64 + period.numberOfSteps - 7 - 7 - 2)
-            }
-            retransmitCountSlider.value = Float(publish.retransmit.count)
-            retransmitIntervalSlider.value = Float(publish.retransmit.steps)
-            periodDidChange(periodSlider)
-            // The following 2 methods must be called in order: interval, count.
-            retransmissionIntervalDidChange(retransmitIntervalSlider)
-            retransmissionCountDidChange(retransmitCountSlider)
-        } else {
-            applicationKey = model.boundApplicationKeys.first
-        }
+        let meshNetwork = MeshNetworkManager.instance.meshNetwork!
+        applicationKey = node.applicationKeys.first ?? meshNetwork.applicationKeys.first
+        destination = meshNetwork.groups.first?.address
         reloadKeyView()
         reloadDestinationView()
     }
@@ -142,11 +98,20 @@ class SetPublicationViewController: ProgressViewController {
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         switch segue.identifier {
         case "setDestination":
-            let viewController = segue.destination as! SetPublicationDestinationsViewController
-            viewController.model = model
+            let viewController = segue.destination as! SelectPublicationDestinationsViewController
+            viewController.node = node
             viewController.selectedApplicationKey = applicationKey
             viewController.selectedDestination = destination
             viewController.delegate = self
+        case "next":
+            let publish = Publish(to: destination!, using: applicationKey!,
+                                  usingFriendshipMaterial: friendshipCredentialsFlagSwitch.isOn, ttl: ttl,
+                                  period: Publish.Period(steps: periodSteps, resolution: periodResolution),
+                                  retransmit: Publish.Retransmit(publishRetransmitCount: retransmissionCount,
+                                                                 intervalSteps: retransmissionIntervalSteps))
+            let viewController = segue.destination as! SelectModelsForPublicationViewController
+            viewController.node = node
+            viewController.publish = publish
         default:
             break
         }
@@ -174,7 +139,7 @@ class SetPublicationViewController: ProgressViewController {
 
 }
 
-private extension SetPublicationViewController {
+private extension SelectPublicationViewController {
     
     /// Presents a dialog to edit the Publish TTL.
     func presentTTLDialog() {
@@ -277,7 +242,7 @@ private extension SetPublicationViewController {
                 destinationIcon.tintColor = .lightGray
             }
             destinationSubtitleLabel.text = nil
-            doneButton.isEnabled = false
+            nextButton.isEnabled = false
             return
         }
         if #available(iOS 13.0, *) {
@@ -305,7 +270,7 @@ private extension SetPublicationViewController {
             }
             destinationIcon.tintColor = .nordicLake
             destinationIcon.image = #imageLiteral(resourceName: "ic_flag_24pt")
-            doneButton.isEnabled = true
+            nextButton.isEnabled = true
         } else if address.address.isGroup || address.address.isVirtual {
             if let group = meshNetwork.group(withAddress: address) ?? Group.specialGroup(withAddress: address) {
                 destinationLabel.text = group.name
@@ -316,38 +281,19 @@ private extension SetPublicationViewController {
             }
             destinationIcon.image = #imageLiteral(resourceName: "tab_groups_outline_black_24pt")
             destinationIcon.tintColor = .nordicLake
-            doneButton.isEnabled = true
+            nextButton.isEnabled = true
         } else {
             destinationLabel.text = "Invalid address"
             destinationSubtitleLabel.text = nil
             destinationIcon.tintColor = .nordicRed
             destinationIcon.image = #imageLiteral(resourceName: "ic_flag_24pt")
-            doneButton.isEnabled = false
-        }
-    }
-    
-    func setPublication() {
-        guard let destination = destination, let applicationKey = applicationKey,
-              let model = model,
-              let node = model.parentElement?.parentNode else {
-            return
-        }
-        let publish = Publish(to: destination, using: applicationKey,
-                              usingFriendshipMaterial: friendshipCredentialsFlagSwitch.isOn, ttl: ttl,
-                              period: Publish.Period(steps: periodSteps, resolution: periodResolution),
-                              retransmit: Publish.Retransmit(publishRetransmitCount: retransmissionCount,
-                                                             intervalSteps: retransmissionIntervalSteps))
-        start("Setting Model Publication...") {
-            let message: ConfigMessage =
-                ConfigModelPublicationSet(publish, to: model) ??
-                ConfigModelPublicationVirtualAddressSet(publish, to: model)!
-            return try MeshNetworkManager.instance.send(message, to: node)
+            nextButton.isEnabled = false
         }
     }
     
 }
 
-extension SetPublicationViewController: DestinationDelegate {
+extension SelectPublicationViewController: DestinationDelegate {
     
     func keySelected(_ key: ApplicationKey) {
         applicationKey = key
@@ -362,64 +308,6 @@ extension SetPublicationViewController: DestinationDelegate {
     func destinationCleared() {
         destination = nil
         reloadDestinationView()
-    }
-    
-}
-
-extension SetPublicationViewController: MeshNetworkDelegate {
-    
-    func meshNetworkManager(_ manager: MeshNetworkManager,
-                            didReceiveMessage message: MeshMessage,
-                            sentFrom source: Address, to destination: Address) {
-        // Has the Node been reset remotely.
-        guard !(message is ConfigNodeReset) else {
-            (UIApplication.shared.delegate as! AppDelegate).meshNetworkDidChange()
-            done {
-                let rootViewControllers = self.presentingViewController?.children
-                self.dismiss(animated: true) {
-                    rootViewControllers?.forEach {
-                        if let navigationController = $0 as? UINavigationController {
-                            navigationController.popToRootViewController(animated: true)
-                        }
-                    }
-                }
-            }
-            return
-        }
-        // Is the message targeting the current Node?
-        guard model.parentElement?.parentNode?.primaryUnicastAddress == source else {
-            return
-        }
-        
-        // Handle the message based on its type.
-        switch message {
-            
-        case let status as ConfigModelPublicationStatus:
-            done {
-                if status.status == .success {
-                    self.dismiss(animated: true)
-                    self.delegate?.publicationChanged()
-                } else {
-                    self.presentAlert(title: "Error", message: status.message)
-                }
-            }
-            
-        default:
-            break
-        }
-    }
-    
-    func meshNetworkManager(_ manager: MeshNetworkManager,
-                            failedToSendMessage message: MeshMessage,
-                            from localElement: Element, to destination: Address,
-                            error: Error) {
-        // Ignore messages sent from model publication.
-        guard message is ConfigMessage else {
-            return
-        }
-        done {
-            self.presentAlert(title: "Error", message: error.localizedDescription)
-        }
     }
     
 }
