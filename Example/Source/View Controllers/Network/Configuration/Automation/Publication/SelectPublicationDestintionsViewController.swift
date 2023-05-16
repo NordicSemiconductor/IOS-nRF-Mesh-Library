@@ -55,12 +55,15 @@ class SelectPublicationDestinationsViewController: UITableViewController {
             .filter { $0 != node }
             .flatMap { $0.elements }
         
+        var index: Int? = nil
         if let key = selectedApplicationKey {
             selectedApplicationKey = nil
-            let index = network.applicationKeys.firstIndex(of: key) ?? 0
-            keySelected(IndexPath(row: index, section: IndexPath.keysSection), initial: true)
+            index = network.applicationKeys.firstIndex(of: key)
         } else {
-            keySelected(IndexPath(row: 0, section: IndexPath.keysSection), initial: true)
+            index = network.applicationKeys.isEmpty ? nil : 0
+        }
+        if let index = index {
+            keySelected(IndexPath(row: index, section: IndexPath.keysSection))
         }
     }
 
@@ -73,7 +76,7 @@ class SelectPublicationDestinationsViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         let network = MeshNetworkManager.instance.meshNetwork!
         if section == IndexPath.keysSection {
-            return network.applicationKeys.count
+            return network.applicationKeys.count + 1 // Add Key
         }
         if section == IndexPath.elementsSection {
             return max(compatibleElements.count, 1)
@@ -110,11 +113,14 @@ class SelectPublicationDestinationsViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let network = MeshNetworkManager.instance.meshNetwork!
         
-        guard !indexPath.isElementsSection || compatibleElements.count > 0 else {
+        guard !indexPath.isKeySection || indexPath.row < network.applicationKeys.count else {
+            return tableView.dequeueReusableCell(withIdentifier: "addKey", for: indexPath)
+        }
+        guard !indexPath.isElementsSection || !compatibleElements.isEmpty else {
             return tableView.dequeueReusableCell(withIdentifier: "empty", for: indexPath)
         }
         guard !indexPath.isGroupsSection || indexPath.row < network.groups.count else {
-            return tableView.dequeueReusableCell(withIdentifier: "action", for: indexPath)
+            return tableView.dequeueReusableCell(withIdentifier: "addGroup", for: indexPath)
         }
         let cell = tableView.dequeueReusableCell(withIdentifier: indexPath.reuseIdentifier, for: indexPath)
         
@@ -165,15 +171,24 @@ class SelectPublicationDestinationsViewController: UITableViewController {
         
         tableView.deselectRow(at: indexPath, animated: true)
         
+        let manager = MeshNetworkManager.instance
+        guard let network = manager.meshNetwork else {
+            return
+        }
+        
         if indexPath.isKeySection {
-            keySelected(indexPath, initial: false)
+            if indexPath.row == network.applicationKeys.count {
+                let index = network.applicationKeys.count + 1
+                try! network.add(applicationKey: Data.random128BitKey(), name: "Application Key \(index)")
+                _ = manager.save()
+                tableView.insertRows(at: [indexPath], with: .automatic)
+            }
+            keySelected(indexPath)
             return
         }
         
         // Add Group clicked.
-        let manager = MeshNetworkManager.instance
-        if let network = manager.meshNetwork,
-           indexPath.isGroupsSection && indexPath.row == network.groups.count {
+        if indexPath.isGroupsSection && indexPath.row == network.groups.count {
             let number = network.groups.count + 1
             if let address = network.nextAvailableGroupAddress(),
                let newGroup = try? Group(name: "Group \(number)", address: address) {
@@ -181,6 +196,7 @@ class SelectPublicationDestinationsViewController: UITableViewController {
                 _ = manager.save()
                 tableView.insertRows(at: [indexPath], with: .automatic)
             }
+            // Continue to select the new group.
         }
         
         var rows: [IndexPath] = []
@@ -199,7 +215,7 @@ class SelectPublicationDestinationsViewController: UITableViewController {
 
 private extension SelectPublicationDestinationsViewController {
     
-    func keySelected(_ indexPath: IndexPath, initial: Bool) {
+    func keySelected(_ indexPath: IndexPath) {
         guard indexPath != selectedKeyIndexPath else {
             return
         }
