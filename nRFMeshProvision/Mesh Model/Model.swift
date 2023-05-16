@@ -225,7 +225,7 @@ internal extension Model {
     var isBridgeConfigurationServer: Bool { return modelId == UInt32(UInt16.bridgeConfigurationServerModelId) }
     var isBridgeConfigurationClient: Bool { return modelId == UInt32(UInt16.bridgeConfigurationClientModelId) }
     var isPrivateBeaconServer: Bool { return modelId == UInt32(UInt16.privateBeaconServerModelId) }
-    var isPrivateBeaconClient: Bool { return modelId == UInt32(UInt16.privateBeaconServerModelId) }
+    var isPrivateBeaconClient: Bool { return modelId == UInt32(UInt16.privateBeaconClientModelId) }
     var isOnDemandPrivateProxyServer: Bool { return modelId == UInt32(UInt16.onDemandPrivateProxyServerModelId) }
     var isOnDemandPrivateProxyClient: Bool { return modelId == UInt32(UInt16.onDemandPrivateProxyClientModelId) }
     var isSarConfigurationServer: Bool { return modelId == UInt32(UInt16.sarConfigurationServerModelId) }
