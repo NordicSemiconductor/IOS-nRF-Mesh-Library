@@ -139,16 +139,9 @@ class SetPublicationViewController: ProgressViewController {
         reloadDestinationView()
     }
     
-    override func shouldPerformSegue(withIdentifier identifier: String, sender: Any?) -> Bool {
-        if identifier == "selectKey" {
-            return model.boundApplicationKeys.count > 1
-        }
-        return true
-    }
-    
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         switch segue.identifier {
-        case .some("setDestination"):
+        case "setDestination":
             let viewController = segue.destination as! SetPublicationDestinationsViewController
             viewController.model = model
             viewController.selectedApplicationKey = applicationKey

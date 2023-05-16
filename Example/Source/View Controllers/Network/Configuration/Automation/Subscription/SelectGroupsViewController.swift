@@ -134,9 +134,11 @@ class SelectGroupsViewController: UITableViewController {
             }
             tableView.reloadRows(at: [indexPath], with: .automatic)
         } else {
-            if let address = network.nextAvailableGroupAddress() {
-                let newGroup = try! Group(name: "New Group", address: address)
+            let index = network.groups.count + 1
+            if let address = network.nextAvailableGroupAddress(),
+               let newGroup = try? Group(name: "Group \(index)", address: address) {
                 try! network.add(group: newGroup)
+                _ = manager.save()
                 selectedGroups.append(newGroup)
                 tableView.insertRows(at: [indexPath], with: .automatic)
             }
