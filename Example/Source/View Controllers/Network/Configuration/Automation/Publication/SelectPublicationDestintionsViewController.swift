@@ -103,6 +103,15 @@ class SelectPublicationDestinationsViewController: UITableViewController {
         }
     }
     
+    override func tableView(_ tableView: UITableView, titleForFooterInSection section: Int) -> String? {
+        switch section {
+        case IndexPath.elementsSection:
+            return "Note: The list above does not contain elements from the configured node."
+        default:
+            return nil
+        }
+    }
+    
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         if indexPath.isElementsSection && compatibleElements.isEmpty {
             return 56
