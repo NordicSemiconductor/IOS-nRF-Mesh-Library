@@ -66,7 +66,7 @@ class SelectKeysViewController: UITableViewController {
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "next" {
-            let destination = segue.destination as! SelectModelsViewController
+            let destination = segue.destination as! SelectModelsForBindingViewController
             destination.node = node
             destination.selectedKeys = selectedKeys.sorted { $0.index < $1.index }
         }

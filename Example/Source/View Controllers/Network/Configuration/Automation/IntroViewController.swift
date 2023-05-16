@@ -40,9 +40,9 @@ class IntroViewController: UIViewController {
     // MARK: - Outlets
     
     @IBOutlet weak var content: UIView!
-    @IBOutlet weak var automaticConfigButton: UIButton!
     @IBOutlet weak var customAppKeyBindings: UIButton!
     @IBOutlet weak var customSubscriptions: UIButton!
+    @IBOutlet weak var customPublication: UIButton!
     
     @IBAction func cancelDidTap(_ sender: UIBarButtonItem) {
         navigationController?.dismiss(animated: true)
@@ -67,24 +67,24 @@ class IntroViewController: UIViewController {
         )
         content.showEmptyView()
         
-        makeBlue(automaticConfigButton)
         makeBlue(customAppKeyBindings)
         makeBlue(customSubscriptions)
+        makeBlue(customPublication)
     }
     
     // MARK: - Navigation
 
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.identifier == "auto" {
-            let destination = segue.destination as! ConfigurationViewController
-            destination.configure(node)
-        }
         if segue.identifier == "bind" {
             let destination = segue.destination as! SelectKeysViewController
             destination.node = node
         }
         if segue.identifier == "subscribe" {
             let destination = segue.destination as! SelectGroupsViewController
+            destination.node = node
+        }
+        if segue.identifier == "publish" {
+            let destination = segue.destination as! SelectPublicationViewController
             destination.node = node
         }
     }
@@ -105,20 +105,16 @@ private extension IntroViewController {
         switch button.tag {
         case 1:
             presentAlert(
-                title: "Automatic Configuration",
-                message: """
-Bind all Models to all Application Keys and subscribe them to all Groups.
-
-If there are no keys, a random one bound to the first Network Key will be created. In case there are no groups, a normal and a virtual group will be created.
-""")
-        case 2:
-            presentAlert(
                 title: "Bind Application Keys",
                 message: "Bind Application Keys to selected Models. The keys (and bound Network Keys) will be sent automatically.")
-        case 3:
+        case 2:
             presentAlert(
                 title: "Subscribe",
                 message: "Subscribe Models to selected Groups.")
+        case 3:
+            presentAlert(
+                title: "Set Publication",
+                message: "Set Publication to selected Models. The keys (and bound Network Keys) will be sent automatically.")
         default:
             fatalError()
         }

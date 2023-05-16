@@ -31,7 +31,7 @@
 import UIKit
 import nRFMeshProvision
 
-class SelectModelsViewController: UITableViewController {
+class SelectModelsForBindingViewController: UITableViewController {
     
     // MARK: - Outlets
     

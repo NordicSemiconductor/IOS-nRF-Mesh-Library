@@ -44,6 +44,7 @@ enum Task {
     case sendApplicationKey(_ applicationKey: ApplicationKey)
     case bind(_ applicationKey: ApplicationKey, to: Model)
     case subscribe(_ model: Model, to: Group)
+    case setPublication(_ publish: Publish, to: Model)
     
     var title: String {
         switch self {
@@ -71,6 +72,8 @@ enum Task {
             return "Bind \(key.name) to \(model)"
         case .subscribe(let model, to: let group):
             return "Subscribe \(model) to \(group.name)"
+        case .setPublication(_, let model):
+            return "Set Publication to \(model)"
         }
     }
     
@@ -103,6 +106,12 @@ enum Task {
                 return message
             } else {
                 return ConfigModelSubscriptionVirtualAddressAdd(group: group, to: model)!
+            }
+        case .setPublication(let publish, let model):
+            if let message = ConfigModelPublicationSet(publish, to: model) {
+                return message
+            } else {
+                return ConfigModelPublicationVirtualAddressSet(publish, to: model)!
             }
         }
     }

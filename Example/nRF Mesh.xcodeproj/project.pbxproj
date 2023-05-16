@@ -67,8 +67,11 @@
 		52547F28232A3F470002AA7B /* RangeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52547F22232A3F470002AA7B /* RangeView.swift */; };
 		52547F29232A3F470002AA7B /* FabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52547F23232A3F470002AA7B /* FabView.swift */; };
 		52568D4B22DDFAC700B7B236 /* Groups.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52568D4A22DDFAC700B7B236 /* Groups.swift */; };
-		5267FDCD2A02937E00ECD38B /* CustomConfigCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5267FDCC2A02937E00ECD38B /* CustomConfigCell.swift */; };
 		526021F62343660200E88F06 /* ControlViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 526021F52343660200E88F06 /* ControlViewController.swift */; };
+		5267FDCD2A02937E00ECD38B /* CustomConfigCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5267FDCC2A02937E00ECD38B /* CustomConfigCell.swift */; };
+		5275962E2A138D9700B04C6F /* SelectPublicationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5275962D2A138D9700B04C6F /* SelectPublicationViewController.swift */; };
+		527596302A138ECC00B04C6F /* SelectPublicationDestintionsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5275962F2A138ECC00B04C6F /* SelectPublicationDestintionsViewController.swift */; };
+		527596322A138F0600B04C6F /* SelectModelsForPublicationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 527596312A138F0600B04C6F /* SelectModelsForPublicationViewController.swift */; };
 		5283524822733BCF0097B949 /* EditKeyViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5283524722733BCF0097B949 /* EditKeyViewController.swift */; };
 		52835250227887970097B949 /* Settings.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5283524E227887970097B949 /* Settings.storyboard */; };
 		52835258227AEDA30097B949 /* DeviceCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52835257227AEDA30097B949 /* DeviceCell.swift */; };
@@ -168,7 +171,7 @@
 		AC5A9FC38EB1C99D980D3ED7 /* Pods_nRF_Mesh_Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EAAB799DCE923512B43B7AB0 /* Pods_nRF_Mesh_Tests.framework */; };
 		F063C01A29C2774300A445A9 /* SelectKeysViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F063C01929C2774300A445A9 /* SelectKeysViewController.swift */; };
 		F063C01D29C27EAB00A445A9 /* IntroViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F063C01C29C27EAB00A445A9 /* IntroViewController.swift */; };
-		F085C9FB29C496AB00C2DF89 /* SelectModelsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F085C9FA29C496AB00C2DF89 /* SelectModelsViewController.swift */; };
+		F085C9FB29C496AB00C2DF89 /* SelectModelsForBindingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F085C9FA29C496AB00C2DF89 /* SelectModelsForBindingViewController.swift */; };
 		F085C9FD29CB26B000C2DF89 /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = F085C9FC29CB26B000C2DF89 /* Models.swift */; };
 		F085CA0229D1E0B900C2DF89 /* Subscribe.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F085CA0029D1E0B900C2DF89 /* Subscribe.storyboard */; };
 		F085CA0429D1E2B000C2DF89 /* RelatedModelsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F085CA0329D1E2B000C2DF89 /* RelatedModelsViewController.swift */; };
@@ -256,6 +259,9 @@
 		52568D4A22DDFAC700B7B236 /* Groups.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Groups.swift; sourceTree = "<group>"; };
 		526021F52343660200E88F06 /* ControlViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ControlViewController.swift; sourceTree = "<group>"; };
 		5267FDCC2A02937E00ECD38B /* CustomConfigCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomConfigCell.swift; sourceTree = "<group>"; };
+		5275962D2A138D9700B04C6F /* SelectPublicationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectPublicationViewController.swift; sourceTree = "<group>"; };
+		5275962F2A138ECC00B04C6F /* SelectPublicationDestintionsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectPublicationDestintionsViewController.swift; sourceTree = "<group>"; };
+		527596312A138F0600B04C6F /* SelectModelsForPublicationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectModelsForPublicationViewController.swift; sourceTree = "<group>"; };
 		5283524722733BCF0097B949 /* EditKeyViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditKeyViewController.swift; sourceTree = "<group>"; };
 		5283524F227887970097B949 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Settings.storyboard; sourceTree = "<group>"; };
 		52835257227AEDA30097B949 /* DeviceCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceCell.swift; sourceTree = "<group>"; };
@@ -366,7 +372,7 @@
 		EAAB799DCE923512B43B7AB0 /* Pods_nRF_Mesh_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_nRF_Mesh_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		F063C01929C2774300A445A9 /* SelectKeysViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectKeysViewController.swift; sourceTree = "<group>"; };
 		F063C01C29C27EAB00A445A9 /* IntroViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntroViewController.swift; sourceTree = "<group>"; };
-		F085C9FA29C496AB00C2DF89 /* SelectModelsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectModelsViewController.swift; sourceTree = "<group>"; };
+		F085C9FA29C496AB00C2DF89 /* SelectModelsForBindingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectModelsForBindingViewController.swift; sourceTree = "<group>"; };
 		F085C9FC29CB26B000C2DF89 /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
 		F085CA0129D1E0B900C2DF89 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Subscribe.storyboard; sourceTree = "<group>"; };
 		F085CA0329D1E2B000C2DF89 /* RelatedModelsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RelatedModelsViewController.swift; sourceTree = "<group>"; };
@@ -564,6 +570,16 @@
 				5267FDCC2A02937E00ECD38B /* CustomConfigCell.swift */,
 			);
 			path = Wizard;
+			sourceTree = "<group>";
+		};
+		5275962C2A138C4700B04C6F /* Publication */ = {
+			isa = PBXGroup;
+			children = (
+				5275962D2A138D9700B04C6F /* SelectPublicationViewController.swift */,
+				5275962F2A138ECC00B04C6F /* SelectPublicationDestintionsViewController.swift */,
+				527596312A138F0600B04C6F /* SelectModelsForPublicationViewController.swift */,
+			);
+			path = Publication;
 			sourceTree = "<group>";
 		};
 		52835253227AEC8C0097B949 /* View Controllers */ = {
@@ -864,6 +880,7 @@
 				F09DE4C829DC68620073969A /* Views */,
 				F09DE4D429EEBE320073969A /* Binding */,
 				F09DE4D529EEBE480073969A /* Subscription */,
+				5275962C2A138C4700B04C6F /* Publication */,
 				F063C01C29C27EAB00A445A9 /* IntroViewController.swift */,
 				F085CA0729D70ACB00C2DF89 /* ConfigurationViewController.swift */,
 			);
@@ -891,7 +908,7 @@
 			isa = PBXGroup;
 			children = (
 				F063C01929C2774300A445A9 /* SelectKeysViewController.swift */,
-				F085C9FA29C496AB00C2DF89 /* SelectModelsViewController.swift */,
+				F085C9FA29C496AB00C2DF89 /* SelectModelsForBindingViewController.swift */,
 			);
 			path = Binding;
 			sourceTree = "<group>";
@@ -1122,6 +1139,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				52DE3ABA25DA871800268D7D /* SensorClientDelegate.swift in Sources */,
+				5275962E2A138D9700B04C6F /* SelectPublicationViewController.swift in Sources */,
 				529B764722522D37008F1CE7 /* UITableView+EmptyView.swift in Sources */,
 				5288153D25125AB600484AF0 /* RootTabBarController.swift in Sources */,
 				52CD0A55232FC11700A9A181 /* AddressCell.swift in Sources */,
@@ -1154,6 +1172,7 @@
 				5288C20423704EF300321ED3 /* ConnectionModeCell.swift in Sources */,
 				52547F28232A3F470002AA7B /* RangeView.swift in Sources */,
 				52314041230192C50074325A /* ModelViewCell.swift in Sources */,
+				527596302A138ECC00B04C6F /* SelectPublicationDestintionsViewController.swift in Sources */,
 				5283524822733BCF0097B949 /* EditKeyViewController.swift in Sources */,
 				52DA9D7224F6765C0051795B /* UInt16+Time.swift in Sources */,
 				5231401622F460380074325A /* PublicationCell.swift in Sources */,
@@ -1174,6 +1193,7 @@
 				525242E0225CBFEC0044CECB /* RangeObject+String.swift in Sources */,
 				529B7575224107A5008F1CE7 /* AppInfo.swift in Sources */,
 				52121526231528AC0059FB3D /* GenericOnOffGroupCell.swift in Sources */,
+				527596322A138F0600B04C6F /* SelectModelsForPublicationViewController.swift in Sources */,
 				A7A59BD92773218C0045A8ED /* GenericPowerOnOffClientDelegate.swift in Sources */,
 				523F776622C609D90030EA6A /* NodeNetworkKeysViewController.swift in Sources */,
 				5211EAD5250777E100089FF2 /* SceneServerDelegate.swift in Sources */,
@@ -1237,7 +1257,7 @@
 				5292F8A1250137DC00EA0F2A /* NodeScenesViewController.swift in Sources */,
 				526021F62343660200E88F06 /* ControlViewController.swift in Sources */,
 				5245737B2500E10800CF8500 /* ScenesViewController.swift in Sources */,
-				F085C9FB29C496AB00C2DF89 /* SelectModelsViewController.swift in Sources */,
+				F085C9FB29C496AB00C2DF89 /* SelectModelsForBindingViewController.swift in Sources */,
 				52A9C1C52313D7D80036792A /* GenericLevelViewCell.swift in Sources */,
 				5288C20A2371A89900321ED3 /* SimpleOnOffClientDelegate.swift in Sources */,
 				529B759C2243BA10008F1CE7 /* NetworkKeysViewController.swift in Sources */,
