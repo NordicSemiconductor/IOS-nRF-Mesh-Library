@@ -418,14 +418,15 @@ class ModelViewController: ProgressViewController {
             cell.detailTextLabel?.text = nil
             return cell
         case .sensors:
-            guard indexPath.row < sensorValues!.count else {
+            guard let sensorValues = sensorValues,
+                  indexPath.row < sensorValues.count else {
                 let cell = tableView.dequeueReusableCell(withIdentifier: "action", for: indexPath)
                 cell.textLabel?.text = "Get"
                 cell.textLabel?.isEnabled = localProvisioner?.hasConfigurationCapabilities ?? false
                 return cell
             }
             let cell = tableView.dequeueReusableCell(withIdentifier: "value", for: indexPath) as! SensorValueCell
-            cell.value = sensorValues![indexPath.row]
+            cell.value = sensorValues[indexPath.row]
             return cell
         }
     }
@@ -1023,7 +1024,6 @@ private extension Model {
             || modelIdentifier == .genericPowerOnOffSetupServerModelId
             || modelIdentifier == .genericLevelServerModelId
             || modelIdentifier == .genericDefaultTransitionTimeServerModelId
-            || modelIdentifier == .sensorServerModelId
     }
     
 }
