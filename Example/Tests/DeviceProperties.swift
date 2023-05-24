@@ -303,13 +303,13 @@ class DeviceProperties: XCTestCase {
     }
     
     func testEnergy32() throws {
-        let samples: [(Data, Decimal?, Data)] = [
-            (Data([0x00, 0x00, 0x00, 0x00]), Decimal(string: "          0"), Data([0x00, 0x00, 0x00, 0x00])), // min
-            (Data([0x01, 0x00, 0x00, 0x00]), Decimal(string: "      0.001"), Data([0x01, 0x00, 0x00, 0x00])), // basic
-            (Data([0xFE, 0xFF, 0xFF, 0x7F]), Decimal(string: "2147483.646"), Data([0xFE, 0xFF, 0xFF, 0x7F])), // middle
-            (Data([0xFD, 0xFF, 0xFF, 0xFF]), Decimal(string: "4294967.293"), Data([0xFD, 0xFF, 0xFF, 0xFF])), // max
-            (Data([0xFE, 0xFF, 0xFF, 0xFF]), nil,                            Data([0xFF, 0xFF, 0xFF, 0xFF])), // not valid
-            (Data([0xFF, 0xFF, 0xFF, 0xFF]), nil,                            Data([0xFF, 0xFF, 0xFF, 0xFF])), // unknown
+        let samples: [(Data, ValidDecimal?)] = [
+            (Data([0x00, 0x00, 0x00, 0x00]), .valid(Decimal(string: "          0")!)), // min
+            (Data([0x01, 0x00, 0x00, 0x00]), .valid(Decimal(string: "      0.001")!)), // basic
+            (Data([0xFE, 0xFF, 0xFF, 0x7F]), .valid(Decimal(string: "2147483.646")!)), // middle
+            (Data([0xFD, 0xFF, 0xFF, 0xFF]), .valid(Decimal(string: "4294967.293")!)), // max
+            (Data([0xFE, 0xFF, 0xFF, 0xFF]), .invalid                               ), // not valid
+            (Data([0xFF, 0xFF, 0xFF, 0xFF]), nil                                    ), // unknown
         ]
         
         let deviceProperties: [DeviceProperty] = [
@@ -317,7 +317,7 @@ class DeviceProperties: XCTestCase {
             .activeEnergyLoadside
         ]
         
-        for (sample, result, encoded) in samples {
+        for (sample, result) in samples {
             for deviceProperty in deviceProperties {
                 let characteristic = deviceProperty.read(from: sample, at: 0, length: 4)
                 switch characteristic {
@@ -328,7 +328,7 @@ class DeviceProperties: XCTestCase {
                 }
                 let test = DevicePropertyCharacteristic.energy32(result)
                 XCTAssertEqual(test, characteristic)
-                XCTAssertEqual(characteristic.data, encoded, "\(characteristic.data.hex) != \(encoded.hex)")
+                XCTAssertEqual(characteristic.data, sample, "\(characteristic.data.hex) != \(sample.hex)")
             }
         }
     }

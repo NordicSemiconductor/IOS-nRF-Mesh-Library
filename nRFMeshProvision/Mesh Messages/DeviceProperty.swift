@@ -1047,10 +1047,10 @@ internal extension DeviceProperty {
              .activeEnergyLoadside:
             guard length == valueLength else { return .energy32(nil) }
             let value: UInt32 = data.read(fromOffset: offset)
-            // Custom conversion of Energy32 since it defines two special values (not known and not valid)
-            // and value.toDecimal(...) doesn't support that:
-            guard value != UInt32(0xFFFFFFFF), value != UInt32(0xFFFFFFFE) else { return .energy32(nil) }
-            return .energy32(Decimal(sign: .plus, exponent: -3, significand: Decimal(value)))
+            
+            guard value != UInt32(0xFFFFFFFF) else { return .energy32(nil) }
+            guard value != UInt32(0xFFFFFFFE) else { return .energy32(.invalid) }
+            return .energy32(.valid(Decimal(sign: .plus, exponent: -3, significand: Decimal(value))))
 
         // Float32 (IEEE 754):
         case .lightControlRegulatorKid,
@@ -1093,6 +1093,14 @@ internal extension DeviceProperty {
 
 // MARK: - DevicePropertyCharacteristic
 
+/// An enum representing valid or invalid decimal values.
+public enum ValidDecimal: Equatable {
+    /// The value is valid.
+    case valid(Decimal)
+    /// The value is invalid.
+    case invalid
+}
+
 /// A representation of a property characteristic.
 public enum DevicePropertyCharacteristic: Equatable {
     /// True or false.
@@ -1120,7 +1128,7 @@ public enum DevicePropertyCharacteristic: Equatable {
     /// The Energy32 characteristic is used to represent a energy value.
     ///
     /// Unit is Kilowatt-hour with a resolution of 1 Watt-hour.
-    case energy32(Decimal?)
+    case energy32(ValidDecimal?)
     /// The Fixed String 8 characteristic represents an 8-octet UTF-8 string.
     case fixedString8(String)
     /// The Fixed String 16 characteristic represents a 16-octet UTF-8 string.
@@ -1251,10 +1259,11 @@ internal extension DevicePropertyCharacteristic {
         case .pressure(let value):
             return value.toData(ofLength: 4, withRange: 0...Decimal(UInt32.max), withResolution: 0.1)
 
-        // Float as UInt32 with 0xFFFFFFFF as unknown:
+        // Float as UInt32 with 0xFFFFFFFE as invalid and 0xFFFFFFFF as unknown:
         case .energy32(let value):
             let range = 0...Decimal(sign: .plus, exponent: -3, significand: Decimal(UInt32(4294967293)))
-            return value.toData(ofLength: 4, withRange: range, withResolution: 0.001, withUnknownValue: 0xFFFFFFFF)
+            return value.toData(ofLength: 4, withRange: range, withResolution: 0.001,
+                                withInvalidValue: 0xFFFFFFFE, andUnknownValue: 0xFFFFFFFF)
 
         // UInt32 with 0xFFFFFFFF as unknown:
         case .timeSecond32(let value):
@@ -1295,6 +1304,8 @@ extension DevicePropertyCharacteristic: CustomDebugStringConvertible {
     }
     /// Text printed when the characteristic value is unknown.
     private static let unknown = "Value is not known"
+    /// Text printed when the characteristic value is not valid.
+    private static let invalid = "Value is not valid"
     
     public var debugDescription: String {
         switch self {
@@ -1327,7 +1338,12 @@ extension DevicePropertyCharacteristic: CustomDebugStringConvertible {
             guard let energy = energy else {
                 return DevicePropertyCharacteristic.unknown
             }
-            return DevicePropertyCharacteristic.formatter.string(from: energy, withRange: 0...Decimal(UInt32.max), andUnit: " kWh")
+            switch energy {
+            case .invalid:
+                return DevicePropertyCharacteristic.invalid
+            case .valid(let energy):
+                return DevicePropertyCharacteristic.formatter.string(from: energy, withRange: 0...Decimal(UInt32.max), andUnit: " kWh")
+            }
         case .illuminance(let millilux):
             guard let millilux = millilux else {
                 return DevicePropertyCharacteristic.unknown
@@ -1595,6 +1611,34 @@ private extension Optional where Wrapped == Decimal {
             return unknownValue.toData(ofLength: numberOfBytes)
         }
         return self.toData(ofLength: numberOfBytes, withRange: range, withResolution: resolution)
+    }
+    
+}
+
+private extension Optional where Wrapped == ValidDecimal {
+    
+    /// Returns the value as Data.
+    ///
+    /// - parameters:
+    ///   - numberOfBytes: Resulting number of bytes.
+    ///   - range: The range the value is to be located in.
+    ///   - resolution: The convertion resolution.
+    ///   - invalidValue: The invalid value.
+    ///   - unknownValue: The unknown value.
+    /// - returns: The Data.
+    func toData(ofLength numberOfBytes: Int,
+                withRange range: ClosedRange<Decimal>? = nil,
+                withResolution resolution: Decimal = 1.0,
+                withInvalidValue invalidValue: Int64,
+                andUnknownValue unknownValue: Int64) -> Data {
+        switch self {
+        case .none:
+            return unknownValue.toData(ofLength: numberOfBytes)
+        case .invalid:
+            return invalidValue.toData(ofLength: numberOfBytes)
+        case .valid(let value):
+            return value.toData(ofLength: numberOfBytes, withRange: range, withResolution: resolution)
+        }
     }
     
 }
