@@ -1296,7 +1296,7 @@ extension DevicePropertyCharacteristic: CustomDebugStringConvertible {
         // Decimal:
         case .pressure(let pressure):
             let float = NSDecimalNumber(decimal: pressure).floatValue
-            return String(format: "%.1f°C", max(0, min(Float(UInt32.max / 10), float)))
+            return String(format: "%.1f hPa", max(0, min(Float(UInt32.max / 10), float)))
             
         // Decimal?:
         case .percentage8(let percent):
