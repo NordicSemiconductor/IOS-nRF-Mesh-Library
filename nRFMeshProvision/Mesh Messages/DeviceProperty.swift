@@ -1284,6 +1284,15 @@ internal extension DevicePropertyCharacteristic {
 }
 
 extension DevicePropertyCharacteristic: CustomDebugStringConvertible {
+    /// Value formatter, with max 3 fraction digits.
+    private static var formatter: NumberFormatter {
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .decimal
+        formatter.minimumFractionDigits = 1
+        formatter.maximumFractionDigits = 3
+        formatter.locale = Locale.current
+        return formatter
+    }
     /// Text printed when the characteristic value is unknown.
     private static let unknown = "Value is not known"
     
@@ -1295,58 +1304,45 @@ extension DevicePropertyCharacteristic: CustomDebugStringConvertible {
             
         // Decimal:
         case .pressure(let pressure):
-            let float = NSDecimalNumber(decimal: pressure).floatValue
-            return String(format: "%.1f hPa", max(0, min(Float(UInt32.max / 10), float)))
+            return DevicePropertyCharacteristic.formatter.string(from: pressure, withRange: 0...Decimal(UInt32.max / 10), andUnit: " hPa")
             
         // Decimal?:
-        case .percentage8(let percent):
+        case .percentage8(let percent),
+             .humidity(let percent):
             guard let percent = percent else {
                 return DevicePropertyCharacteristic.unknown
             }
-            let float = NSDecimalNumber(decimal: percent).floatValue
-            return String(format: "%.1f%%", max(0.0, min(100.0, float)))
+            return DevicePropertyCharacteristic.formatter.string(from: percent, withRange: 0...100, andUnit: "%%")
         case .temperature8(let temp):
             guard let temp = temp else {
                 return DevicePropertyCharacteristic.unknown
             }
-            let float = NSDecimalNumber(decimal: temp).floatValue
-            return String(format: "%.1f°C", max(-64.0, min(63.0, float)))
-        case .humidity(let percent):
-            guard let percent = percent else {
-                return DevicePropertyCharacteristic.unknown
-            }
-            let float = NSDecimalNumber(decimal: percent).floatValue
-            return String(format: "%.2f%%", max(0.0, min(100.0, float)))
+            return DevicePropertyCharacteristic.formatter.string(from: temp, withRange: -64...63, andUnit: "°C")
         case .electricCurrent(let current):
             guard let current = current else {
                 return DevicePropertyCharacteristic.unknown
             }
-            let float = NSDecimalNumber(decimal: current).floatValue
-            return String(format: "%.2f A", max(0.0, min(655.34, float)))
+            return DevicePropertyCharacteristic.formatter.string(from: current, withRange: 0...655.34, andUnit: " A")
         case .energy32(let energy):
             guard let energy = energy else {
                 return DevicePropertyCharacteristic.unknown
-            }            
-            let double = NSDecimalNumber(decimal: energy).doubleValue
-            return String(format: "%.3f kWh", double)
+            }
+            return DevicePropertyCharacteristic.formatter.string(from: energy, withRange: 0...Decimal(UInt32.max), andUnit: " kWh")
         case .illuminance(let millilux):
             guard let millilux = millilux else {
                 return DevicePropertyCharacteristic.unknown
             }
-            let float = NSDecimalNumber(decimal: millilux).floatValue
-            return String(format: "%.2f lux", float)
+            return DevicePropertyCharacteristic.formatter.string(from: millilux, withRange: 0...167772.13, andUnit: " lux")
         case .power(let power):
-          guard let power = power else {
-            return DevicePropertyCharacteristic.unknown
-          }
-          let float = NSDecimalNumber(decimal: power).floatValue
-          return String(format: "%.1f W", max(0.0, min(1677721.4, float)))
+            guard let power = power else {
+                return DevicePropertyCharacteristic.unknown
+            }
+            return DevicePropertyCharacteristic.formatter.string(from: power, withRange: 0...1677721.4, andUnit: " W")
         case .temperature(let temp):
             guard let temp = temp else {
                 return DevicePropertyCharacteristic.unknown
             }
-            let float = NSDecimalNumber(decimal: temp).floatValue
-            return String(format: "%.2f°C", max(-273.15, min(327.67, float)))
+            return DevicePropertyCharacteristic.formatter.string(from: temp, withRange: -273.15...327.67, andUnit: "°C")
             
         // UInt16:
         case .perceivedLightness(let count):
@@ -1444,6 +1440,24 @@ extension DevicePropertyCharacteristic: CustomDebugStringConvertible {
 }
 
 // MARK: - Helper extenstions - decoding
+
+private extension NumberFormatter {
+    
+    func string(from decimal: Decimal, withRange range: ClosedRange<Decimal>, andUnit unit: String?) -> String {
+        let valueInRange = max(range.lowerBound, min(range.upperBound, decimal))
+        if let stringRepresentation = string(from: valueInRange as NSDecimalNumber) {
+            if let unit = unit {
+                return stringRepresentation + unit
+            }
+            return stringRepresentation
+        }
+        if let unit = unit {
+            return decimal.description + unit
+        }
+        return decimal.description
+    }
+    
+}
 
 private extension BinaryInteger {
     
