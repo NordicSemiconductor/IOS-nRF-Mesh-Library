@@ -1064,12 +1064,12 @@ internal extension DeviceProperty {
             return .energy32(.valid(Decimal(sign: .plus, exponent: -3, significand: Decimal(value))))
             
         case .apparentEnergy:
-            guard length == valueLength else { return .aparentEnergy32(nil) }
+            guard length == valueLength else { return .apparentEnergy32(nil) }
             let value: UInt32 = data.read(fromOffset: offset)
             
-            guard value != UInt32(0xFFFFFFFF) else { return .aparentEnergy32(nil) }
-            guard value != UInt32(0xFFFFFFFE) else { return .aparentEnergy32(.invalid) }
-            return .aparentEnergy32(.valid(Decimal(sign: .plus, exponent: -3, significand: Decimal(value))))
+            guard value != UInt32(0xFFFFFFFF) else { return .apparentEnergy32(nil) }
+            guard value != UInt32(0xFFFFFFFE) else { return .apparentEnergy32(.invalid) }
+            return .apparentEnergy32(.valid(Decimal(sign: .plus, exponent: -3, significand: Decimal(value))))
 
         // Float32 (IEEE 754)
         case .lightControlRegulatorKid,
@@ -1126,7 +1126,7 @@ public enum DevicePropertyCharacteristic: Equatable {
     /// represented in units of kVAh (kilo-volt-ampere-hour).
     ///
     /// Unit is kilo-volt-ampere-hour with resolution of 1 volt-ampere-hour.
-    case aparentEnergy32(ValidDecimal?)
+    case apparentEnergy32(ValidDecimal?)
     /// Apparent power is the product of the quadratic mean values of voltage and current.
     ///
     /// It is needed for designing and operating power systems, because although the current
@@ -1297,7 +1297,7 @@ internal extension DevicePropertyCharacteristic {
 
         // ValidDecimal? as UInt32 with 0xFFFFFFFE as invalid and 0xFFFFFFFF as unknown:
         case .energy32(let value),
-             .aparentEnergy32(let value):
+             .apparentEnergy32(let value):
             return value.toData(ofLength: 4, withRange: 0...4294967.293, withResolution: 0.001,
                                 withInvalidValue: 0xFFFFFFFE, andUnknownValue: 0xFFFFFFFF)
             
@@ -1453,7 +1453,7 @@ extension DevicePropertyCharacteristic: CustomDebugStringConvertible {
         
         // ValidDecimal?:
         case .energy32(let value),
-             .aparentEnergy32(let value),
+             .apparentEnergy32(let value),
              .apparentPower(let value):
             guard let value = value else {
                 return DevicePropertyCharacteristic.unknown
@@ -1465,7 +1465,7 @@ extension DevicePropertyCharacteristic: CustomDebugStringConvertible {
                 switch self {
                 case .energy32:
                     return DevicePropertyCharacteristic.formatter.string(from: value, withRange: 0...Decimal(UInt32.max), andUnit: " kWh")
-                case .aparentEnergy32:
+                case .apparentEnergy32:
                     return DevicePropertyCharacteristic.formatter.string(from: value, withRange: 0...Decimal(UInt32.max), andUnit: " kWAh")
                 case .apparentPower:
                     return DevicePropertyCharacteristic.formatter.string(from: value, withRange: 0...1677721.3, andUnit: " VA")
