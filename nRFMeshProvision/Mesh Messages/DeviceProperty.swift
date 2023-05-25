@@ -856,6 +856,7 @@ internal extension DeviceProperty {
             return 3
             
         case .activeEnergyLoadside,
+             .apparentEnergy,
              .airPressure,
              .preciseTotalDeviceEnergyUse,
              .pressure,
@@ -1051,6 +1052,14 @@ internal extension DeviceProperty {
             guard value != UInt32(0xFFFFFFFF) else { return .energy32(nil) }
             guard value != UInt32(0xFFFFFFFE) else { return .energy32(.invalid) }
             return .energy32(.valid(Decimal(sign: .plus, exponent: -3, significand: Decimal(value))))
+            
+        case .apparentEnergy:
+            guard length == valueLength else { return .aparentEnergy32(nil) }
+            let value: UInt32 = data.read(fromOffset: offset)
+            
+            guard value != UInt32(0xFFFFFFFF) else { return .aparentEnergy32(nil) }
+            guard value != UInt32(0xFFFFFFFE) else { return .aparentEnergy32(.invalid) }
+            return .aparentEnergy32(.valid(Decimal(sign: .plus, exponent: -3, significand: Decimal(value))))
 
         // Float32 (IEEE 754):
         case .lightControlRegulatorKid,
@@ -1103,6 +1112,11 @@ public enum ValidDecimal: Equatable {
 
 /// A representation of a property characteristic.
 public enum DevicePropertyCharacteristic: Equatable {
+    /// The integral of Apparent Power over a time interval,
+    /// represented in units of kVAh (kilo-volt-ampere-hour).
+    ///
+    /// Unit is kilo-volt-ampere-hour with resolution of 1 volt-ampere-hour.
+    case aparentEnergy32(ValidDecimal?)
     /// True or false.
     case bool(Bool)
     /// The Count 16 characteristic is used to represent a general count value.
@@ -1259,8 +1273,9 @@ internal extension DevicePropertyCharacteristic {
         case .pressure(let value):
             return value.toData(ofLength: 4, withRange: 0...Decimal(UInt32.max), withResolution: 0.1)
 
-        // Float as UInt32 with 0xFFFFFFFE as invalid and 0xFFFFFFFF as unknown:
-        case .energy32(let value):
+        // ValidDecimal as UInt32 with 0xFFFFFFFE as invalid and 0xFFFFFFFF as unknown:
+        case .energy32(let value),
+             .aparentEnergy32(let value):
             let range = 0...Decimal(sign: .plus, exponent: -3, significand: Decimal(UInt32(4294967293)))
             return value.toData(ofLength: 4, withRange: range, withResolution: 0.001,
                                 withInvalidValue: 0xFFFFFFFE, andUnknownValue: 0xFFFFFFFF)
@@ -1334,16 +1349,6 @@ extension DevicePropertyCharacteristic: CustomDebugStringConvertible {
                 return DevicePropertyCharacteristic.unknown
             }
             return DevicePropertyCharacteristic.formatter.string(from: current, withRange: 0...655.34, andUnit: " A")
-        case .energy32(let energy):
-            guard let energy = energy else {
-                return DevicePropertyCharacteristic.unknown
-            }
-            switch energy {
-            case .invalid:
-                return DevicePropertyCharacteristic.invalid
-            case .valid(let energy):
-                return DevicePropertyCharacteristic.formatter.string(from: energy, withRange: 0...Decimal(UInt32.max), andUnit: " kWh")
-            }
         case .illuminance(let millilux):
             guard let millilux = millilux else {
                 return DevicePropertyCharacteristic.unknown
@@ -1424,6 +1429,26 @@ extension DevicePropertyCharacteristic: CustomDebugStringConvertible {
             formatter.allowedUnits = [.year, .month, .day, .hour, .minute, .second]
             formatter.unitsStyle = .short
             return formatter.string(from: interval)!
+        
+        // ValidDecimal?:
+        case .energy32(let energy),
+             .aparentEnergy32(let energy):
+            guard let energy = energy else {
+                return DevicePropertyCharacteristic.unknown
+            }
+            switch energy {
+            case .invalid:
+                return DevicePropertyCharacteristic.invalid
+            case .valid(let energy):
+                switch self {
+                case .energy32:
+                    return DevicePropertyCharacteristic.formatter.string(from: energy, withRange: 0...Decimal(UInt32.max), andUnit: " kWh")
+                case .aparentEnergy32:
+                    return DevicePropertyCharacteristic.formatter.string(from: energy, withRange: 0...Decimal(UInt32.max), andUnit: " kWAh")
+                default:
+                    fatalError()
+                }
+            }
             
         // Date?:
         case .dateUTC(let date):
