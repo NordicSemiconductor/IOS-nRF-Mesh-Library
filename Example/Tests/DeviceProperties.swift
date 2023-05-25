@@ -179,6 +179,31 @@ class DeviceProperties: XCTestCase {
         }
     }
     
+    func testPressure() throws {
+        // Presure values are in Pascals. Data is encoded in hPa.
+        let samples: [(Data, Decimal, Data)] = [
+            (Data([0x00, 0x00, 0x00, 0x00]), Decimal(string:         "0.0" /* Pa */)!, Data([0x00, 0x00, 0x00, 0x00])),     // zero
+            (Data([0x01, 0x00, 0x00, 0x00]), Decimal(string:         "0.1" /* Pa */)!, Data([0x01, 0x00, 0x00, 0x00])),    // min
+            (Data([0x0A, 0x00, 0x00, 0x00]), Decimal(string:         "1.0" /* Pa */)!, Data([0x0A, 0x00, 0x00, 0x00])),   // basic
+            (Data([0xD2, 0x04, 0x00, 0x00]), Decimal(string:       "123.4" /* Pa */)!, Data([0xD2, 0x04, 0x00, 0x00])),  // middle
+            (Data([0xFF, 0xFF, 0xFF, 0xFF]), Decimal(string: "429496729.5" /* Pa */)!, Data([0xFF, 0xFF, 0xFF, 0xFF])), // max
+        ]
+        
+        for (sample, result, encoded) in samples {
+            let characteristic = DeviceProperty.pressure.read(from: sample, at: 0, length: 4)
+            switch characteristic {
+            case .pressure(let pressure):
+                XCTAssertEqual(pressure, result, "Failed to parse \(sample.hex) into \(String(describing: result))")
+            default:
+                XCTFail("Failed to parse \(sample.hex) into .pressure")
+            }
+            
+            let test = DevicePropertyCharacteristic.pressure(pascals: result)
+            XCTAssertEqual(test, characteristic)
+            XCTAssertEqual(characteristic.data, encoded, "\(characteristic.data.hex) != \(encoded.hex)")
+        }
+    }
+    
     func testCoefficient() throws {
         let samples: [(Data, Float, Data)] = [
             (Data([0xA4, 0x70, 0x45, 0x41]), 12.34,      Data([0xA4, 0x70, 0x45, 0x41])),       // basic
@@ -303,13 +328,13 @@ class DeviceProperties: XCTestCase {
     }
     
     func testEnergy32() throws {
-        let samples: [(Data, ValidDecimal?)] = [
-            (Data([0x00, 0x00, 0x00, 0x00]), .valid(Decimal(string: "          0")!)), // min
-            (Data([0x01, 0x00, 0x00, 0x00]), .valid(Decimal(string: "      0.001")!)), // basic
-            (Data([0xFE, 0xFF, 0xFF, 0x7F]), .valid(Decimal(string: "2147483.646")!)), // middle
-            (Data([0xFD, 0xFF, 0xFF, 0xFF]), .valid(Decimal(string: "4294967.293")!)), // max
-            (Data([0xFE, 0xFF, 0xFF, 0xFF]), .invalid                               ), // not valid
-            (Data([0xFF, 0xFF, 0xFF, 0xFF]), nil                                    ), // unknown
+        let samples: [(Data, ValidDecimal?, Data)] = [
+            (Data([0x00, 0x00, 0x00, 0x00]), .valid(Decimal(string: "          0")!), Data([0x00, 0x00, 0x00, 0x00])), // min
+            (Data([0x01, 0x00, 0x00, 0x00]), .valid(Decimal(string: "      0.001")!), Data([0x01, 0x00, 0x00, 0x00])), // basic
+            (Data([0xFE, 0xFF, 0xFF, 0x7F]), .valid(Decimal(string: "2147483.646")!), Data([0xFE, 0xFF, 0xFF, 0x7F])), // middle
+            (Data([0xFD, 0xFF, 0xFF, 0xFF]), .valid(Decimal(string: "4294967.293")!), Data([0xFD, 0xFF, 0xFF, 0xFF])), // max
+            (Data([0xFE, 0xFF, 0xFF, 0xFF]), .invalid                               , Data([0xFE, 0xFF, 0xFF, 0xFF])), // not valid
+            (Data([0xFF, 0xFF, 0xFF, 0xFF]), nil                                    , Data([0xFF, 0xFF, 0xFF, 0xFF])), // unknown
         ]
         
         let deviceProperties: [DeviceProperty] = [
@@ -317,7 +342,7 @@ class DeviceProperties: XCTestCase {
             .activeEnergyLoadside
         ]
         
-        for (sample, result) in samples {
+        for (sample, result, encoded) in samples {
             for deviceProperty in deviceProperties {
                 let characteristic = deviceProperty.read(from: sample, at: 0, length: 4)
                 switch characteristic {
@@ -328,7 +353,7 @@ class DeviceProperties: XCTestCase {
                 }
                 let test = DevicePropertyCharacteristic.energy32(result)
                 XCTAssertEqual(test, characteristic)
-                XCTAssertEqual(characteristic.data, sample, "\(characteristic.data.hex) != \(sample.hex)")
+                XCTAssertEqual(characteristic.data, encoded, "\(characteristic.data.hex) != \(encoded.hex)")
             }
         }
     }
