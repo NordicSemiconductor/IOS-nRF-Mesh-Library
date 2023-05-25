@@ -1292,13 +1292,15 @@ internal extension DevicePropertyCharacteristic {
             
         // ValidDecimal? as UInt24 with 0xxFFFFFE as invalid and 0xFFFFFF as unknown:
         case .apparentPower(let value):
-            return value.toData(ofLength: 3, withRange: 0...1677721.3, withResolution: 0.1,
+            let range = 0...Decimal(sign: .plus, exponent: -1, significand: 16777213)
+            return value.toData(ofLength: 3, withRange: range, withResolution: 0.1,
                                 withInvalidValue: 0xFFFFFE, andUnknownValue: 0xFFFFFF)
 
         // ValidDecimal? as UInt32 with 0xFFFFFFFE as invalid and 0xFFFFFFFF as unknown:
         case .energy32(let value),
              .apparentEnergy32(let value):
-            return value.toData(ofLength: 4, withRange: 0...4294967.293, withResolution: 0.001,
+            let range = 0...Decimal(sign: .plus, exponent: -3, significand: 4294967293)
+            return value.toData(ofLength: 4, withRange: range, withResolution: 0.001,
                                 withInvalidValue: 0xFFFFFFFE, andUnknownValue: 0xFFFFFFFF)
             
         // UInt32? with 0xFFFFFFFF as unknown:

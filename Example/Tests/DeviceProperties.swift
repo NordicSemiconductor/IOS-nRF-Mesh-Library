@@ -58,6 +58,21 @@ class DeviceProperties: XCTestCase {
         }
     }
     
+    func testTooHighPercentage8() throws {
+        let characteristic = DevicePropertyCharacteristic.percentage8(123.456)
+        // This test may fail if a non-US Locale is set.
+        XCTAssertEqual(characteristic.debugDescription, "100,0%")
+        XCTAssertEqual(characteristic.data, Data([0xC8]), "\(characteristic.data.hex) != 0xC8")
+    }
+    
+    func testTooLowPercentage8() throws {
+        let characteristic = DevicePropertyCharacteristic.percentage8(-123.456)
+        // This test may fail if a non-US Locale is set.
+        // This test may fail if a non-US Locale is set.
+        XCTAssertEqual(characteristic.debugDescription, "0,0%")
+        XCTAssertEqual(characteristic.data, Data([0x00]), "\(characteristic.data.hex) != 0x00")
+    }
+    
     func testTemperature8() throws {
         let samples: [(Data, Decimal?, Data)] = [
             (Data([0x80]), -64.0, Data([0x80])),     // min
@@ -198,7 +213,7 @@ class DeviceProperties: XCTestCase {
                 XCTFail("Failed to parse \(sample.hex) into .pressure")
             }
             
-            let test = DevicePropertyCharacteristic.pressure(pascals: result)
+            let test = DevicePropertyCharacteristic.pressure(result)
             XCTAssertEqual(test, characteristic)
             XCTAssertEqual(characteristic.data, encoded, "\(characteristic.data.hex) != \(encoded.hex)")
         }
