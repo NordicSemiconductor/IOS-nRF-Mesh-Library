@@ -955,7 +955,7 @@ internal extension DeviceProperty {
             let value: UInt16 = data.read(fromOffset: offset)
             return .vocConcentration(value.withUnknownValue(0xFFFF))
         
-        // UInt16 -> Float?
+        // UInt16 -> Decimal?
         case .presentAmbientRelativeHumidity,
              .presentIndoorRelativeHumidity,
              .presentOutdoorRelativeHumidity:
@@ -963,21 +963,21 @@ internal extension DeviceProperty {
             let value: UInt16 = data.read(fromOffset: offset)
             return .humidity(value.toDecimal(withRange: 0.0...100.0, withResolution: 0.01, withUnknownValue: 0xFFFF))
             
-        // UInt16 -> Float?
+        // UInt16 -> Decimal?
         case .presentOutputCurrent,
              .presentInputCurrent:
             guard length == valueLength else { return .electricCurrent(nil) }
             let value: UInt16 = data.read(fromOffset: offset)
             return .electricCurrent(value.toDecimal(withRange: 0.0...655.34, withResolution: 0.01, withUnknownValue: 0xFFFF))
             
-        // Int16 -> Float?
+        // Int16 -> Decimal?
         case .precisePresentAmbientTemperature,
              .presentDeviceOperatingTemperature:
             guard length == valueLength else { return .temperature(nil) }
             let value: Int16 = data.read(fromOffset: offset)
             return .temperature(value.toDecimal(withRange: -273.15...327.67, withResolution: 0.01, withUnknownValue: -32768))
             
-        // UInt24 -> Float?
+        // UInt24 -> Decimal?
         case .lightControlAmbientLuxLevelOn,
              .lightControlAmbientLuxLevelProlong,
              .lightControlAmbientLuxLevelStandby,
@@ -987,7 +987,7 @@ internal extension DeviceProperty {
             let value: UInt32 = data.readUInt24(fromOffset: offset)
             return .illuminance(value.toDecimal(withResolution: 0.01, withUnknownValue: 0xFFFFFF))
 
-        // UInt24 -> Float?
+        // UInt24 -> Decimal?
         case .activePowerLoadside,
              .luminaireNominalInputPower,
              .luminairePowerAtMinimumDimLevel,
@@ -1035,14 +1035,14 @@ internal extension DeviceProperty {
             let timeInterval = TimeInterval(numberOfDays) * 86400.0
             return .dateUTC(Date(timeIntervalSince1970: timeInterval))
             
-        // UInt32 -> Float:
+        // UInt32 -> Decimal:
         case .pressure,
              .airPressure:
             guard length == valueLength else { return .pressure(0) }
             let value: UInt32 = data.read(fromOffset: offset)
             return .pressure(value.toDecimal(withResolution: 0.1))
 
-        // UInt32 -> Float:
+        // UInt32 -> ValidDecimal?:
         case .preciseTotalDeviceEnergyUse,
              .activeEnergyLoadside:
             guard length == valueLength else { return .energy32(nil) }
@@ -1201,15 +1201,15 @@ internal extension DevicePropertyCharacteristic {
         case .bool(let value):
             return value.toData()
             
-        // Float as UInt8 with 0xFF as unknown:
+        // Decimal? as UInt8 with 0xFF as unknown:
         case .percentage8(let value):
             return value.toData(ofLength: 1, withRange: 0.0...100.0, withResolution: 0.5, withUnknownValue: 0xFF)
             
-        // Float as Int8 with 0x7F as unknown (see Errata 15863):
+        // Decimal? as Int8 with 0x7F as unknown (see Errata 15863):
         case .temperature8(let value):
             return value.toData(ofLength: 1, withRange: -64.0...63.0, withResolution: 0.5, withUnknownValue: 0x7F)
             
-        // UInt16 with 0xFFFF as unknown:
+        // UInt16? with 0xFFFF as unknown:
         case .count16(let value),
              .timeSecond16(let value),
             // and 0xFFFE as greater than 65534:
@@ -1221,29 +1221,29 @@ internal extension DevicePropertyCharacteristic {
         case .perceivedLightness(let value):
             return value.toData()
             
-        // Float as UInt16 with 0xFFFF as unknown:
+        // Decimal? as UInt16 with 0xFFFF as unknown:
         case .humidity(let value):
             return value.toData(ofLength: 2, withRange: 0.0...100.0, withResolution: 0.01, withUnknownValue: 0xFFFF)
         
-        // Float as UInt16 with 0xFFFF as unknown:
+        // Decimal? as UInt16 with 0xFFFF as unknown:
         case .electricCurrent(let value):
             return value.toData(ofLength: 2, withRange: 0...655.34, withResolution: 0.01, withUnknownValue: 0xFFFF)
             
-        // Float as Int16 with 0x8000 as unknown:
+        // Decimal? as Int16 with 0x8000 as unknown:
         case .temperature(let value):
             return value.toData(ofLength: 2, withRange: -273.15...327.67, withResolution: 0.01, withUnknownValue: 0x8000)
             
-        // UInt32 as UInt24 with 0xFFFFFF as unknown:
+        // UInt32? as UInt24 with 0xFFFFFF as unknown:
         case .count24(let value),
              .timeHour24(let value),
              .timeMillisecond24(let value):
             return value.toData(ofLength: 3, withUnknownValue: 0xFFFFFF)
             
-        // Float as UInt24 with 0xFFFFFF as unknown:
+        // Decimal? as UInt24 with 0xFFFFFF as unknown:
         case .illuminance(let value):
             return value.toData(ofLength: 3, withRange: 0...167772.14, withResolution: 0.01, withUnknownValue: 0xFFFFFF)
 
-        // Float as UInt24 with 0xFFFFFF as unknown:
+        // Decimal? as UInt24 with 0xFFFFFF as unknown:
         case .power(let value):
           return value.toData(ofLength: 3, withRange: 0...1677721.4, withResolution: 0.1, withUnknownValue: 0xFFFFFF)
 
@@ -1255,7 +1255,7 @@ internal extension DevicePropertyCharacteristic {
             let numberOfDays = UInt32(date.timeIntervalSince1970 / 86400.0) // convert to days
             return (Data() + numberOfDays).dropLast()
         
-        // Float as UInt32:
+        // Decimal as UInt32:
         case .pressure(let value):
             return value.toData(ofLength: 4, withRange: 0...Decimal(UInt32.max), withResolution: 0.1)
 
@@ -1264,8 +1264,8 @@ internal extension DevicePropertyCharacteristic {
             let range = 0...Decimal(sign: .plus, exponent: -3, significand: Decimal(UInt32(4294967293)))
             return value.toData(ofLength: 4, withRange: range, withResolution: 0.001,
                                 withInvalidValue: 0xFFFFFFFE, andUnknownValue: 0xFFFFFFFF)
-
-        // UInt32 with 0xFFFFFFFF as unknown:
+            
+        // UInt32? with 0xFFFFFFFF as unknown:
         case .timeSecond32(let value):
             return value.toData(ofLength: 4, withUnknownValue: 0xFFFFFFFF)
         
