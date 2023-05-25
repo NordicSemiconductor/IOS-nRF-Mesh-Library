@@ -903,12 +903,12 @@ internal extension DeviceProperty {
     /// - returns: The characteristic value.
     func read(from data: Data, at offset: Int, length: Int) -> DevicePropertyCharacteristic {
         switch self {
-        // UInt8 -> Bool:
+        // UInt8 -> Bool
         case .presenceDetected:
             guard length == valueLength else { return .bool(false) }
             return .bool(data[offset].toBool())
         
-        // UInt8 -> Float?:
+        // UInt8 -> Float?
         case .lightControlRegulatorAccuracy,
              .outputRippleVoltageSpecification,
              .inputVoltageRippleSpecification,
@@ -938,7 +938,7 @@ internal extension DeviceProperty {
             guard length == valueLength else { return .perceivedLightness(0) }
             return .perceivedLightness(data.read(fromOffset: offset))
             
-        // UInt16 -> UInt16?:
+        // UInt16 -> UInt16?
         case .peopleCount:
             guard length == valueLength else { return .count16(nil) }
             let count: UInt16 = data.read(fromOffset: offset)
@@ -998,7 +998,7 @@ internal extension DeviceProperty {
           let value: UInt32 = data.readUInt24(fromOffset: offset)
           return .power(value.toDecimal(withResolution: 0.1, withUnknownValue: 0xFFFFFF))
 
-        // UInt24 -> UInt24?:
+        // UInt24 -> UInt24?
         case .lightSourceStartCounterResettable,
              .lightSourceTotalPowerOnCycles,
              .ratedMedianUsefulLightSourceStarts,
@@ -1037,7 +1037,7 @@ internal extension DeviceProperty {
             let timeInterval = TimeInterval(numberOfDays) * 86400.0
             return .dateUTC(Date(timeIntervalSince1970: timeInterval))
             
-        // UInt32 -> Decimal:
+        // UInt32 -> Decimal
         case .pressure,
              .airPressure:
             guard length == valueLength else { return .pressure(0) }
@@ -1071,7 +1071,7 @@ internal extension DeviceProperty {
             guard value != UInt32(0xFFFFFFFE) else { return .aparentEnergy32(.invalid) }
             return .aparentEnergy32(.valid(Decimal(sign: .plus, exponent: -3, significand: Decimal(value))))
 
-        // Float32 (IEEE 754):
+        // Float32 (IEEE 754)
         case .lightControlRegulatorKid,
              .lightControlRegulatorKiu,
              .lightControlRegulatorKpd,
@@ -1081,7 +1081,7 @@ internal extension DeviceProperty {
             let asInt32: UInt32 = data.read(fromOffset: offset)
             return .coefficient(Float(bitPattern: asInt32))
             
-        // String:
+        // String
         case .deviceFirmwareRevision,
              .deviceSoftwareRevision:
             guard length == valueLength else { return .fixedString8(String(repeating: " ", count: 8)) }
@@ -1102,7 +1102,7 @@ internal extension DeviceProperty {
             guard length == valueLength else { return .fixedString64(String(repeating: " ", count: 64)) }
             return .fixedString64(String(data: data.subdata(in: offset..<offset + 64), encoding: .utf8)!)
             
-        // Other:
+        // Other
         default:
             return .other(data.subdata(in: offset..<offset + length))
         }
