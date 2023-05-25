@@ -1361,7 +1361,7 @@ extension DevicePropertyCharacteristic: CustomDebugStringConvertible {
             guard let percent = percent else {
                 return DevicePropertyCharacteristic.unknown
             }
-            return DevicePropertyCharacteristic.formatter.string(from: percent, withRange: 0...100, andUnit: "%%")
+            return DevicePropertyCharacteristic.formatter.string(from: percent, withRange: 0...100, andUnit: "%")
         case .temperature8(let temp):
             guard let temp = temp else {
                 return DevicePropertyCharacteristic.unknown
