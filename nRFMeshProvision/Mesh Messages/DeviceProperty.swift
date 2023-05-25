@@ -824,6 +824,7 @@ internal extension DeviceProperty {
             return 2
             
         case .activePowerLoadside,
+             .apparentPower,
              .deviceDateOfManufacture,
              .deviceRuntimeSinceTurnOn,
              .deviceRuntimeWarranty,
@@ -1042,8 +1043,17 @@ internal extension DeviceProperty {
             guard length == valueLength else { return .pressure(0) }
             let value: UInt32 = data.read(fromOffset: offset)
             return .pressure(value.toDecimal(withResolution: 0.1))
+            
+        // UInt24 -> ValidDecimal?
+        case .apparentPower:
+            guard length == valueLength else { return .apparentPower(nil) }
+            let value: UInt32 = data.readUInt24(fromOffset: offset)
+            
+            guard value != UInt32(0xFFFFFF) else { return .apparentPower(nil) }
+            guard value != UInt32(0xFFFFFE) else { return .apparentPower(.invalid) }
+            return .apparentPower(.valid(Decimal(sign: .plus, exponent: -1, significand: Decimal(value))))
 
-        // UInt32 -> ValidDecimal?:
+        // UInt32 -> ValidDecimal?
         case .preciseTotalDeviceEnergyUse,
              .activeEnergyLoadside:
             guard length == valueLength else { return .energy32(nil) }
@@ -1117,6 +1127,13 @@ public enum DevicePropertyCharacteristic: Equatable {
     ///
     /// Unit is kilo-volt-ampere-hour with resolution of 1 volt-ampere-hour.
     case aparentEnergy32(ValidDecimal?)
+    /// Apparent power is the product of the quadratic mean values of voltage and current.
+    ///
+    /// It is needed for designing and operating power systems, because although the current
+    /// associated with reactive power does not work at the load, it is still supplied by the
+    /// power source. Apparent power is expressed in volt-amperes (VA) since it is the product
+    /// of quadratic mean voltage and quadratic mean current.
+    case apparentPower(ValidDecimal?)
     /// True or false.
     case bool(Bool)
     /// The Count 16 characteristic is used to represent a general count value.
@@ -1272,12 +1289,16 @@ internal extension DevicePropertyCharacteristic {
         // Decimal as UInt32:
         case .pressure(let value):
             return value.toData(ofLength: 4, withRange: 0...Decimal(UInt32.max), withResolution: 0.1)
+            
+        // ValidDecimal? as UInt24 with 0xxFFFFFE as invalid and 0xFFFFFF as unknown:
+        case .apparentPower(let value):
+            return value.toData(ofLength: 3, withRange: 0...1677721.3, withResolution: 0.1,
+                                withInvalidValue: 0xFFFFFE, andUnknownValue: 0xFFFFFF)
 
-        // ValidDecimal as UInt32 with 0xFFFFFFFE as invalid and 0xFFFFFFFF as unknown:
+        // ValidDecimal? as UInt32 with 0xFFFFFFFE as invalid and 0xFFFFFFFF as unknown:
         case .energy32(let value),
              .aparentEnergy32(let value):
-            let range = 0...Decimal(sign: .plus, exponent: -3, significand: Decimal(UInt32(4294967293)))
-            return value.toData(ofLength: 4, withRange: range, withResolution: 0.001,
+            return value.toData(ofLength: 4, withRange: 0...4294967.293, withResolution: 0.001,
                                 withInvalidValue: 0xFFFFFFFE, andUnknownValue: 0xFFFFFFFF)
             
         // UInt32? with 0xFFFFFFFF as unknown:
@@ -1431,20 +1452,23 @@ extension DevicePropertyCharacteristic: CustomDebugStringConvertible {
             return formatter.string(from: interval)!
         
         // ValidDecimal?:
-        case .energy32(let energy),
-             .aparentEnergy32(let energy):
-            guard let energy = energy else {
+        case .energy32(let value),
+             .aparentEnergy32(let value),
+             .apparentPower(let value):
+            guard let value = value else {
                 return DevicePropertyCharacteristic.unknown
             }
-            switch energy {
+            switch value {
             case .invalid:
                 return DevicePropertyCharacteristic.invalid
-            case .valid(let energy):
+            case .valid(let value):
                 switch self {
                 case .energy32:
-                    return DevicePropertyCharacteristic.formatter.string(from: energy, withRange: 0...Decimal(UInt32.max), andUnit: " kWh")
+                    return DevicePropertyCharacteristic.formatter.string(from: value, withRange: 0...Decimal(UInt32.max), andUnit: " kWh")
                 case .aparentEnergy32:
-                    return DevicePropertyCharacteristic.formatter.string(from: energy, withRange: 0...Decimal(UInt32.max), andUnit: " kWAh")
+                    return DevicePropertyCharacteristic.formatter.string(from: value, withRange: 0...Decimal(UInt32.max), andUnit: " kWAh")
+                case .apparentPower:
+                    return DevicePropertyCharacteristic.formatter.string(from: value, withRange: 0...1677721.3, andUnit: " VA")
                 default:
                     fatalError()
                 }
