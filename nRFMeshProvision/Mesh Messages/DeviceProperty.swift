@@ -1315,7 +1315,7 @@ extension DevicePropertyCharacteristic: CustomDebugStringConvertible {
             
         // Decimal:
         case .pressure(let pressure):
-            return DevicePropertyCharacteristic.formatter.string(from: pressure, withRange: 0...Decimal(UInt32.max / 10), andUnit: " hPa")
+            return DevicePropertyCharacteristic.formatter.string(from: pressure, withRange: 0...Decimal(UInt32.max / 10), andUnit: " Pa")
             
         // Decimal?:
         case .percentage8(let percent),
