@@ -968,8 +968,6 @@ internal extension DeviceProperty {
             guard length == valueLength else { return .humidity(nil) }
             let value: UInt16 = data.read(fromOffset: offset)
             return .humidity(value.toDecimal(withRange: 0.0...100.0, withResolution: 0.01, withUnknownValue: 0xFFFF))
-            
-        // UInt16 -> Decimal?
         case .presentOutputCurrent,
              .presentInputCurrent:
             guard length == valueLength else { return .electricCurrent(nil) }
@@ -1000,8 +998,6 @@ internal extension DeviceProperty {
             guard length == valueLength else { return .illuminance(nil) }
             let value: UInt32 = data.readUInt24(fromOffset: offset)
             return .illuminance(value.toDecimal(withResolution: 0.01, withUnknownValue: 0xFFFFFF))
-
-        // UInt24 -> Decimal?
         case .activePowerLoadside,
              .luminaireNominalInputPower,
              .luminairePowerAtMinimumDimLevel,
