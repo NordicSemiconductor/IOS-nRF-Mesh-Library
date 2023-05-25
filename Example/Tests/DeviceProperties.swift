@@ -372,5 +372,38 @@ class DeviceProperties: XCTestCase {
             }
         }
     }
+        
+    func testVoltage() throws {
+        let samples: [(Data, Decimal?, Data)] = [
+            (Data([0x00, 0x00]), Decimal(string:        "0"), Data([0x00, 0x00])), // min
+            (Data([0x01, 0x00]), Decimal(string: "0.015625"), Data([0x01, 0x00])), // basic
+            (Data([0x40, 0x00]), Decimal(string:      "1.0"), Data([0x40, 0x00])), // middle
+            (Data([0x80, 0xFF]), Decimal(string:     "1022"), Data([0x80, 0xFF])), // max
+            (Data([0xFE, 0xFF]), Decimal(string:     "1022"), Data([0x80, 0xFF])), // truncated
+            (Data([0xFF, 0xFF]), nil                        , Data([0xFF, 0xFF])), // unknown
+        ]
+        
+        let deviceProperties: [DeviceProperty] = [
+            .luminaireNominalMaximumACMainsVoltage,
+            .luminaireNominalMinimumACMainsVoltage,
+            .presentInputVoltage,
+            .presentOutputVoltage
+        ]
+        
+        for (sample, result, encoded) in samples {
+            for deviceProperty in deviceProperties {
+                let characteristic = deviceProperty.read(from: sample, at: 0, length: 2)
+                switch characteristic {
+                case .voltage(let voltage):
+                    XCTAssertEqual(voltage, result, "Failed to parse \(sample.hex) into \(String(describing: result))")
+                default:
+                    XCTFail("Failed to parse \(deviceProperty) \(sample.hex) into .voltage")
+                }
+                let test = DevicePropertyCharacteristic.voltage(result)
+                XCTAssertEqual(test, characteristic)
+                XCTAssertEqual(characteristic.data, encoded, "\(characteristic.data.hex) != \(encoded.hex)")
+            }
+        }
+    }
 
 }

@@ -820,7 +820,11 @@ internal extension DeviceProperty {
              .presentDeviceOperatingTemperature,
              .precisePresentAmbientTemperature,
              .timeSinceMotionSensed,
-             .timeSincePresenceDetected:
+             .timeSincePresenceDetected,
+             .luminaireNominalMaximumACMainsVoltage,
+             .luminaireNominalMinimumACMainsVoltage,
+             .presentInputVoltage,
+             .presentOutputVoltage:
             return 2
             
         case .activePowerLoadside,
@@ -971,6 +975,14 @@ internal extension DeviceProperty {
             guard length == valueLength else { return .electricCurrent(nil) }
             let value: UInt16 = data.read(fromOffset: offset)
             return .electricCurrent(value.toDecimal(withRange: 0.0...655.34, withResolution: 0.01, withUnknownValue: 0xFFFF))
+        case .luminaireNominalMaximumACMainsVoltage,
+             .luminaireNominalMinimumACMainsVoltage,
+             .presentInputVoltage,
+             .presentOutputVoltage:
+            guard length == valueLength else { return .voltage(nil) }
+            let value: UInt16 = data.read(fromOffset: offset)
+            let resolution = Decimal(sign: .plus, exponent: -6, significand: 15625)
+            return .voltage(value.toDecimal(withRange: 0.0...1022.0, withResolution: resolution, withUnknownValue: 0xFFFF))
             
         // Int16 -> Decimal?
         case .precisePresentAmbientTemperature,
@@ -1219,6 +1231,9 @@ public enum DevicePropertyCharacteristic: Equatable {
     ///
     /// A value of 0xFFFE represents ‘value is 65534 or greater’.
     case vocConcentration(UInt16?)
+    /// The Voltage characteristic is used to represent a measure of positive electric
+    /// potential difference in units of volts with 1/64 V resolution.
+    case voltage(Decimal?)
     /// Generic data type for other characteristics.
     case other(Data)
 }
@@ -1259,6 +1274,11 @@ internal extension DevicePropertyCharacteristic {
         // Decimal? as UInt16 with 0xFFFF as unknown:
         case .electricCurrent(let value):
             return value.toData(ofLength: 2, withRange: 0...655.34, withResolution: 0.01, withUnknownValue: 0xFFFF)
+            
+        // Decimal? as UInt16 with 0xFFFF as unknown:
+        case .voltage(let value):
+            let resolution = Decimal(sign: .plus, exponent: -6, significand: 15625)
+            return value.toData(ofLength: 2, withRange: 0...1022, withResolution: resolution, withUnknownValue: 0xFFFF)
             
         // Decimal? as Int16 with 0x8000 as unknown:
         case .temperature(let value):
@@ -1387,6 +1407,18 @@ extension DevicePropertyCharacteristic: CustomDebugStringConvertible {
                 return DevicePropertyCharacteristic.unknown
             }
             return DevicePropertyCharacteristic.formatter.string(from: temp, withRange: -273.15...327.67, andUnit: "°C")
+        case .voltage(let voltage):
+            guard let voltage = voltage else {
+                return DevicePropertyCharacteristic.unknown
+            }
+            switch voltage {
+            case 0:
+                return "0 V or lower"
+            case 1022:
+                return "1022 V or higher"
+            default:
+                return DevicePropertyCharacteristic.formatter.string(from: voltage, withRange: 0...1022, andUnit: " V")
+            }
             
         // UInt16:
         case .perceivedLightness(let count):
