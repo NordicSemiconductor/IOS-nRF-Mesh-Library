@@ -829,6 +829,8 @@ internal extension DeviceProperty {
             
         case .activePowerLoadside,
              .apparentPower,
+             .averageInputCurrent,
+             .averageOutputCurrent,
              .deviceDateOfManufacture,
              .deviceRuntimeSinceTurnOn,
              .deviceRuntimeWarranty,
@@ -848,6 +850,7 @@ internal extension DeviceProperty {
              .lightControlAmbientLuxLevelOn,
              .lightControlAmbientLuxLevelProlong,
              .lightControlAmbientLuxLevelStandby,
+             .lightSourceCurrent,
              .lightSourceStartCounterResettable,
              .lightSourceTotalPowerOnCycles,
              .luminaireNominalInputPower,
@@ -973,6 +976,16 @@ internal extension DeviceProperty {
             guard length == valueLength else { return .electricCurrent(nil) }
             let value: UInt16 = data.read(fromOffset: offset)
             return .electricCurrent(value.toDecimal(withRange: 0.0...655.34, withResolution: 0.01, withUnknownValue: 0xFFFF))
+        case .averageInputCurrent,
+             .averageOutputCurrent,
+             .lightSourceCurrent:
+            guard length == valueLength else { return .averageCurrent(nil, nil) }
+            let value: UInt16 = data.read(fromOffset: offset)
+            let n: UInt8 = data[offset + 2]
+            return .averageCurrent(
+                value.toDecimal(withRange: 0.0...655.34, withResolution: 0.01, withUnknownValue: 0xFFFF),
+                TimeExponential.from(rawValue: n))
+            
         case .luminaireNominalMaximumACMainsVoltage,
              .luminaireNominalMinimumACMainsVoltage,
              .presentInputVoltage,
@@ -1128,6 +1141,69 @@ public enum ValidDecimal: Equatable {
     case invalid
 }
 
+/// The time is represented by the value `1.1^(N–64)` in seconds, with `N` being the raw 8-bit value.
+public enum TimeExponential: Equatable {
+    /// Creates a ``TimeExponential`` object based on the given time.
+    ///
+    /// As the time is represented as `1.1^(N-64)` it will be ronded to the nearest possible value.
+    ///
+    /// - parameter seconds: The time in seconds as `TimeInterval`.
+    static func interval(_ seconds: TimeInterval) -> TimeExponential {
+        switch seconds {
+        case 0:
+            return .rawValue(0)
+        case let s where s > 66560641:
+            return .rawValue(0xFD)
+        default:
+            let x = Int(log(seconds) / log(1.1) + 64)
+            guard x > 0 else { return .rawValue(0) }
+            return .rawValue(UInt8(x))
+        }
+    }
+    /// Approximate value of the time in seconds.
+    ///
+    /// As the time is represented as `1.1^(N-64)`, the value will be rounded to nearest lower value.
+    case rawValue(UInt8)
+    /// The total lifetime of the device.
+    case deviceLifetime
+    /// Approximate time interval calculated from the raw value.
+    ///
+    /// - warning: The returned time may differ from the time used to create the object, as the value
+    ///            is encoded as `1.1^(N-64)`.
+    var interval: TimeInterval? {
+        // Special case for "unknown time".
+        guard case .rawValue(let n) = self else {
+            return nil
+        }
+        // Special case for 0 seconds.
+        if n == 0 {
+            return 0.0
+        }
+        // iOS fails to calculate power with high negative exponent: 1.1^(-49) -> NaN
+        // Instead, we calculate inverse of positive power: 1 / 1.1^49, which gives the correct result.
+        let number = Decimal(sign: .plus, exponent: -1, significand: 11) // 1.1
+        let exponent = Int(n) - 64
+        if exponent < 0 {
+            let result = pow(number, -exponent)
+            return 1.0 / NSDecimalNumber(decimal: result).doubleValue
+        } else {
+            let result = pow(number, exponent)
+            return NSDecimalNumber(decimal: result).doubleValue
+        }
+    }
+    
+    fileprivate static func from(rawValue: UInt8) -> TimeExponential? {
+        switch rawValue {
+        case 0xFE:
+            return .deviceLifetime
+        case 0xFF:
+            return nil
+        default:
+            return .rawValue(rawValue)
+        }
+    }
+}
+
 /// A representation of a property characteristic.
 public enum DevicePropertyCharacteristic: Equatable {
     /// The integral of Apparent Power over a time interval,
@@ -1142,6 +1218,11 @@ public enum DevicePropertyCharacteristic: Equatable {
     /// power source. Apparent power is expressed in volt-amperes (VA) since it is the product
     /// of quadratic mean voltage and quadratic mean current.
     case apparentPower(ValidDecimal?)
+    /// This characteristic represents the average Electric Current and the time over which it
+    /// was measured.
+    ///
+    /// Unit of Electric Current is ampere with a resolution of 0.01 A.
+    case averageCurrent(Decimal?, TimeExponential?)
     /// True or false.
     case bool(Bool)
     /// The Count 16 characteristic is used to represent a general count value.
@@ -1270,6 +1351,8 @@ internal extension DevicePropertyCharacteristic {
         // Decimal? as UInt16 with 0xFFFF as unknown:
         case .electricCurrent(let value):
             return value.toData(ofLength: 2, withRange: 0...655.34, withResolution: 0.01, withUnknownValue: 0xFFFF)
+        case .averageCurrent(let current, let time):
+            return current.toData(ofLength: 2, withRange: 0...655.34, withResolution: 0.01, withUnknownValue: 0xFFFF) + time.toData()
             
         // Decimal? as UInt16 with 0xFFFF as unknown:
         case .voltage(let value):
@@ -1388,6 +1471,11 @@ extension DevicePropertyCharacteristic: CustomDebugStringConvertible {
                 return DevicePropertyCharacteristic.unknown
             }
             return DevicePropertyCharacteristic.formatter.string(from: current, withRange: 0...655.34, andUnit: " A")
+        case .averageCurrent(let current, let time):
+            guard let current = current else {
+                return DevicePropertyCharacteristic.unknown
+            }
+            return DevicePropertyCharacteristic.formatter.string(from: current, withRange: 0...655.34, andUnit: " A over \(time?.description ?? " an unknown time")")
         case .illuminance(let millilux):
             guard let millilux = millilux else {
                 return DevicePropertyCharacteristic.unknown
@@ -1611,6 +1699,36 @@ private extension Bool {
     /// - returns: The Data representation of Bool.
     func toData() -> Data {
         return Data([self ? 0x01 : 0x00])
+    }
+    
+}
+
+private extension Optional where Wrapped == TimeExponential {
+    
+    /// Converts the optional ``TimeExponential`` to Data.
+    func toData() -> Data {
+        switch self {
+        case .none:
+            return Data([0xFF])
+        case .deviceLifetime:
+            return Data([0xFE])
+        case .rawValue(let raw):
+            return Data([raw])
+        }
+    }
+    
+}
+
+extension TimeExponential: CustomStringConvertible {
+    
+    public var description: String {
+        guard let interval = interval else {
+            return "Total device lifetime"
+        }
+        let formatter = DateComponentsFormatter()
+        formatter.allowedUnits = [.year, .month, .day, .hour, .minute, .second]
+        formatter.unitsStyle = .short
+        return formatter.string(from: interval)!
     }
     
 }

@@ -405,5 +405,46 @@ class DeviceProperties: XCTestCase {
             }
         }
     }
+    
+    func testTimeExponential() throws {
+        let fmt = NumberFormatter()
+        fmt.numberStyle = .decimal
+        fmt.maximumSignificantDigits = 5
+        
+        let zero = TimeExponential.interval(0)
+        XCTAssertEqual(zero, .rawValue(0))
+        XCTAssertEqual(zero.interval, 0)
+        
+        let second = TimeExponential.interval(1.0)
+        XCTAssertEqual(second, .rawValue(64))
+        XCTAssertEqual(second.interval, 1.0)
+        
+        let secondAndOne = TimeExponential.interval(1.1)
+        XCTAssertEqual(secondAndOne, .rawValue(65))
+        XCTAssertEqual(secondAndOne.interval, 1.1)
+        
+        let twoSeconds = TimeExponential.interval(2.0)
+        XCTAssertEqual(twoSeconds, .rawValue(71))
+        XCTAssertEqual(twoSeconds.interval, 1.9487171000000003)
+        
+        let tenMilliseconds = TimeExponential.interval(0.01)
+        XCTAssertEqual(tenMilliseconds, .rawValue(15))
+        XCTAssertEqual(tenMilliseconds.interval, 0.009370406407450708)
+        
+        let tenSeconds = TimeExponential.interval(10.0)
+        XCTAssertEqual(tenSeconds, .rawValue(88))
+        XCTAssertEqual(tenSeconds.interval, 9.849732675807612)
+        
+        let max = TimeExponential.interval(66560641)
+        XCTAssertEqual(max, .rawValue(253))
+        XCTAssertEqual(max.interval, 66560640.878719166)
+        
+        let evenMore = TimeExponential.interval(665606410)
+        XCTAssertEqual(evenMore, .rawValue(253))
+        XCTAssertEqual(evenMore.interval, 66560640.878719166)
+        
+        let lifetime = TimeExponential.deviceLifetime
+        XCTAssertEqual(lifetime, .deviceLifetime)
+    }
 
 }
