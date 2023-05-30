@@ -492,5 +492,35 @@ class DeviceProperties: XCTestCase {
         let trueValue: DevicePropertyCharacteristic = .averageVoltage(3.296875, sensingDuration: .rawValue(0x63))
         XCTAssertEqual(trueValue, result)
     }
+    
+    func testEventStatistics() throws {
+        // Test encoding.
+        let characteristic: DevicePropertyCharacteristic = .eventStatistics(1234,
+                                                                            averageEventDuration: 10,
+                                                                            timeElapsedSinceLastEvent: .interval(10),
+                                                                            sensingDuration: .interval(60 * 60))
+        let expectedValue = Data(hex: "D2040A005895")
+        XCTAssertEqual(characteristic.data, expectedValue, "\(characteristic.data.hex) != \(expectedValue.hex)")
+        
+        // Test decoding.
+        let property: DeviceProperty = .openCircuitEventStatistics
+        let result = property.read(from: expectedValue, at: 0, length: 6)
+        XCTAssertEqual(result.data, expectedValue, "\(result.data.hex) != \(expectedValue.hex)")
+        guard case .eventStatistics(let count, let averageEventDuration, let timeElapsedSinceLastEvent, let sensingDuration) = result else {
+            XCTFail("Failed to parse: \(property) \(expectedValue.hex) into .eventStatistics")
+            return
+        }
+        XCTAssertEqual(count, 1234)
+        XCTAssertEqual(averageEventDuration, 10)
+        XCTAssertEqual(timeElapsedSinceLastEvent, .rawValue(0x58))
+        XCTAssertEqual(sensingDuration, .rawValue(0x95))
+        
+        // Test comparison.
+        let trueValue: DevicePropertyCharacteristic = .eventStatistics(1234,
+                                                                       averageEventDuration: 10,
+                                                                       timeElapsedSinceLastEvent: .rawValue(0x58),
+                                                                       sensingDuration: .rawValue(0x95))
+        XCTAssertEqual(trueValue, result)
+    }
 
 }

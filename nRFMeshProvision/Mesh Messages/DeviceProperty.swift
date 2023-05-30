@@ -880,6 +880,26 @@ internal extension DeviceProperty {
              .sensorGain:
             return 4
             
+        case .deviceOverTemperatureEventStatistics,
+             .deviceUnderTemperatureEventStatistics,
+             .inputOverCurrentEventStatistics,
+             .inputOverRippleVoltageEventStatistics,
+             .inputOverVoltageEventStatistics,
+             .inputUnderCurrentEventStatistics,
+             .inputUnderVoltageEventStatistics,
+             .lightSourceOpenCircuitStatistics,
+             .lightSourceOverallFailuresStatistics,
+             .lightSourceShortCircuitStatistics,
+             .lightSourceThermalDeratingStatistics,
+             .lightSourceThermalShutdownStatistics,
+             .openCircuitEventStatistics,
+             .outputPowerLimitation,
+             .overOutputRippleVoltageEventStatistics,
+             .overallFailureCondition,
+             .shortCircuitEventStatistics,
+             .thermalDerating:
+            return 6
+            
         case .deviceFirmwareRevision,
              .deviceSoftwareRevision:
             return 8
@@ -920,6 +940,35 @@ internal extension DeviceProperty {
             guard length == valueLength else { return .bool(false) }
             return .bool(data[offset].toBool())
         
+        // 2 x UInt16 + 2 x UInt8 -> Event Statistics
+        case .deviceOverTemperatureEventStatistics,
+             .deviceUnderTemperatureEventStatistics,
+             .inputOverCurrentEventStatistics,
+             .inputOverRippleVoltageEventStatistics,
+             .inputOverVoltageEventStatistics,
+             .inputUnderCurrentEventStatistics,
+             .inputUnderVoltageEventStatistics,
+             .lightSourceOpenCircuitStatistics,
+             .lightSourceOverallFailuresStatistics,
+             .lightSourceShortCircuitStatistics,
+             .lightSourceThermalDeratingStatistics,
+             .lightSourceThermalShutdownStatistics,
+             .openCircuitEventStatistics,
+             .outputPowerLimitation,
+             .overOutputRippleVoltageEventStatistics,
+             .overallFailureCondition,
+             .shortCircuitEventStatistics,
+             .thermalDerating:
+            guard length == valueLength else { return .eventStatistics(nil, averageEventDuration: nil, timeElapsedSinceLastEvent: nil, sensingDuration: nil) }
+            let count: UInt16? = (data.read(fromOffset: offset) as UInt16).withUnknownValue(0xFFFF)
+            let averageEventDuration: UInt16? = (data.read(fromOffset: offset + 2) as UInt16).withUnknownValue(0xFFFF)
+            let timeElapsedSinceLastEvent: TimeExponential = .rawValue(data[offset + 4])
+            let sensingDuration: TimeExponential = .rawValue(data[offset + 5])
+            return .eventStatistics(count,
+                                    averageEventDuration: averageEventDuration,
+                                    timeElapsedSinceLastEvent: timeElapsedSinceLastEvent,
+                                    sensingDuration: sensingDuration)
+            
         // UInt8 -> Float?
         case .lightControlRegulatorAccuracy,
              .outputRippleVoltageSpecification,
@@ -1296,6 +1345,14 @@ public enum DevicePropertyCharacteristic: Equatable {
     ///
     /// Unit is Kilowatt-hour with a resolution of 1 Watt-hour.
     case energy32(ValidDecimal?)
+    /// The Event Statistics characteristic is used to represent statistical values of events.
+    ///
+    /// The value represents number of events with average event duration (in seconds),
+    /// time elapsed since the last event and sensing duration.
+    case eventStatistics(UInt16?,
+                         averageEventDuration: UInt16?,
+                         timeElapsedSinceLastEvent: TimeExponential?,
+                         sensingDuration: TimeExponential?)
     /// The Fixed String 8 characteristic represents an 8-octet UTF-8 string.
     case fixedString8(String)
     /// The Fixed String 16 characteristic represents a 16-octet UTF-8 string.
@@ -1370,6 +1427,17 @@ internal extension DevicePropertyCharacteristic {
         // Bool:
         case .bool(let value):
             return value.toData()
+            
+        // Event Statistics:
+        case .eventStatistics(let count,
+                              averageEventDuration: let averageEventDuration,
+                              timeElapsedSinceLastEvent: let timeElapsedSinceLastEvent,
+                              sensingDuration: let sensingDuration):
+            let countCharacteristic: DevicePropertyCharacteristic = .count16(count)
+            let averageEventDurationCharacteristic: DevicePropertyCharacteristic = .timeSecond16(averageEventDuration)
+            return countCharacteristic.data +
+                   averageEventDurationCharacteristic.data +
+                   timeElapsedSinceLastEvent.toData() + sensingDuration.toData()
             
         // Decimal? as UInt8 with 0xFF as unknown:
         case .percentage8(let value):
@@ -1501,6 +1569,15 @@ extension DevicePropertyCharacteristic: CustomDebugStringConvertible {
         // Bool:
         case .bool(let value):
             return value ? "True" : "False"
+            
+        // Event Statistics:
+        case .eventStatistics(let count,
+                              averageEventDuration: let averageEventDuration,
+                              timeElapsedSinceLastEvent: let timeElapsedSinceLastEvent,
+                              sensingDuration: let sensingDuration):
+            let countCharacteristic: DevicePropertyCharacteristic = .count16(count)
+            let averageEventDurationCharacteristic: DevicePropertyCharacteristic = .timeSecond16(averageEventDuration)
+            return "\(countCharacteristic) events, avg. event duration: \(averageEventDurationCharacteristic), time elapsed since last event: \(timeElapsedSinceLastEvent?.description ?? "unknown"), sensing duration: \(sensingDuration?.description ?? "unknown")"
             
         // Decimal:
         case .pressure(let pressure):
