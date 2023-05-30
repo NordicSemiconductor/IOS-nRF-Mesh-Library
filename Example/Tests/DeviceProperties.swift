@@ -446,5 +446,29 @@ class DeviceProperties: XCTestCase {
         let lifetime = TimeExponential.deviceLifetime
         XCTAssertEqual(lifetime, .deviceLifetime)
     }
+    
+    func testElectricCurrentValue() throws {
+        let characteristic: DevicePropertyCharacteristic = .electricCurrent(12.34)
+        let roundedCharacteristic: DevicePropertyCharacteristic = .electricCurrent(12.345)
+        let expectedValue = Data(hex: "D204")
+        // Test encoding.
+        XCTAssertEqual(characteristic.data, expectedValue, "\(characteristic.data.hex) != \(expectedValue.hex)")
+        XCTAssertEqual(roundedCharacteristic.data, expectedValue, "\(roundedCharacteristic.data.hex) != \(expectedValue.hex)")
+        
+        let property: DeviceProperty = .presentInputCurrent
+        let result = property.read(from: expectedValue, at: 0, length: 2)
+        // Test decoding.
+        XCTAssertEqual(result.data, expectedValue)
+        guard case .electricCurrent(let current) = result else {
+            XCTFail("Failed to parse: \(property) \(expectedValue.hex) into .electicCurrent")
+            return
+        }
+        XCTAssertEqual(current, 12.34)
+        
+        // 12.34 == 12.34
+        XCTAssertEqual(characteristic, result)
+        // 12.345 != 12.34
+        XCTAssertNotEqual(roundedCharacteristic, result)
+    }
 
 }
