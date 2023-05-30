@@ -834,6 +834,7 @@ internal extension DeviceProperty {
              .averageOutputCurrent,
              .averageOutputVoltage,
              .deviceDateOfManufacture,
+             .deviceEnergyUseSinceTurnOn,
              .deviceRuntimeSinceTurnOn,
              .deviceRuntimeWarranty,
              .totalDeviceStarts,
@@ -863,7 +864,8 @@ internal extension DeviceProperty {
              .presentDeviceInputPower,
              .presentIlluminance,
              .ratedMedianUsefulLightSourceStarts,
-             .ratedMedianUsefulLifeOfLuminaire:
+             .ratedMedianUsefulLifeOfLuminaire,
+             .totalDeviceEnergyUse:
             return 3
             
         case .activeEnergyLoadside,
@@ -1061,6 +1063,11 @@ internal extension DeviceProperty {
             guard length == valueLength else { return .timeMillisecond24(nil) }
             let value: UInt32 = data.readUInt24(fromOffset: offset)
             return .timeMillisecond24(value.withUnknownValue(0xFFFFFF))
+        case .deviceEnergyUseSinceTurnOn,
+             .totalDeviceEnergyUse:
+            guard length == valueLength else { return .energy(nil) }
+            let value: UInt32 = data.readUInt24(fromOffset: offset)
+            return .energy(value.withUnknownValue(0xFFFFFF))
             
         // UInt24 -> Date?
         case .deviceDateOfManufacture,
@@ -1281,6 +1288,10 @@ public enum DevicePropertyCharacteristic: Equatable {
     ///
     /// Unit is ampere with a resolution of 0.01 A.
     case electricCurrent(Decimal?)
+    /// The Energy characteristic is used to represent a measure of energy in units of kilowatt hours.
+    ///
+    /// Unit is Kilowatt-hour (kWh) with a resolution of 1.
+    case energy(UInt32?)
     /// The Energy32 characteristic is used to represent a energy value.
     ///
     /// Unit is Kilowatt-hour with a resolution of 1 Watt-hour.
@@ -1411,6 +1422,8 @@ internal extension DevicePropertyCharacteristic {
         // Decimal? as UInt24 with 0xFFFFFF as unknown:
         case .illuminance(let value):
             return value.toData(ofLength: 3, withRange: 0...167772.14, withResolution: 0.01, withUnknownValue: 0xFFFFFF)
+        case .energy(let value):
+            return value.toData(ofLength: 3, withRange: 0...16777214, withUnknownValue: 0xFFFFFF)
 
         // Decimal? as UInt24 with 0xFFFFFF as unknown:
         case .power(let value):
@@ -1603,6 +1616,11 @@ extension DevicePropertyCharacteristic: CustomDebugStringConvertible {
             formatter.allowedUnits = [.hour, .minute, .second]
             formatter.unitsStyle = .short
             return formatter.string(from: interval)!
+        case .energy(let value):
+            guard let value = value else {
+                return DevicePropertyCharacteristic.unknown
+            }
+            return "\(min(value, 0xFFFFFE))) kWh"
             
         // UInt32?:
         case .timeSecond32(let numberOfSeconds):
