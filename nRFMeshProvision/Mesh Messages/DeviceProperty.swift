@@ -824,7 +824,8 @@ internal extension DeviceProperty {
              .luminaireNominalMaximumACMainsVoltage,
              .luminaireNominalMinimumACMainsVoltage,
              .presentInputVoltage,
-             .presentOutputVoltage:
+             .presentOutputVoltage,
+             .rainfall:
             return 2
             
         case .activePowerLoadside,
@@ -998,6 +999,9 @@ internal extension DeviceProperty {
              .lightControlLightnessStandby:
             guard length == valueLength else { return .perceivedLightness(0) }
             return .perceivedLightness(data.read(fromOffset: offset))
+        case .rainfall:
+            guard length == valueLength else { return .rainfall(0) }
+            return .rainfall(data.read(fromOffset: offset))
             
         // UInt16 -> UInt16?
         case .peopleCount:
@@ -1386,6 +1390,13 @@ public enum DevicePropertyCharacteristic: Equatable {
     ///
     /// Unit is in pascals with a resolution of 0.1 Pa.
     case pressure(Decimal)
+    /// The Rainfall characteristic is used to represent the amount of rain that has fallen.
+    ///
+    /// Unit is in millimeters.
+    /// - note: In Bluetooth Mesh Device Properties 2 this characteristic is encoded as meters
+    ///         with resolution of 0.01 mm. For simplification, in this library use millimeters
+    ///         directly.
+    case rainfall(UInt16)
     /// The Temperature characteristic is used to represent a temperature is degrees
     /// Celsius with a resolution of 0.01 degrees Celsius.
     ///
@@ -1457,6 +1468,8 @@ internal extension DevicePropertyCharacteristic {
             
         // UInt16:
         case .perceivedLightness(let value):
+            return value.toData()
+        case .rainfall(let value):
             return value.toData()
             
         // Decimal? as UInt16 with 0xFFFF as unknown:
@@ -1643,6 +1656,8 @@ extension DevicePropertyCharacteristic: CustomDebugStringConvertible {
         // UInt16:
         case .perceivedLightness(let count):
             return "\(count)"
+        case .rainfall(let height):
+            return "\(height) mm"
             
         // UInt16?:
         case .count16(let count):
