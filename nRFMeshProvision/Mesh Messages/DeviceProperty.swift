@@ -1205,6 +1205,24 @@ public enum TimeExponential: Equatable {
 }
 
 /// A representation of a property characteristic.
+///
+/// The unit of a characteristic is specified in the comment.
+///
+/// For example, ``DevicePropertyCharacteristic/electricCurrent(_:)`` unit is Ampere
+/// with resulution of 0.01 A.
+///
+/// #### Encoding sample
+/// ```swift
+/// // The value of the characteristic will be encoded as 0xD204 (12.34).
+/// let characteristic: DevicePropertyCharacteristic = .electricCurrent(12.345)
+/// ```
+/// #### Decoding sample
+/// ```swift
+/// guard case .electricCurrent(let current) = characteristic else {
+///    return
+/// }
+/// print(current) // -> "12.34 A"
+/// ```
 public enum DevicePropertyCharacteristic: Equatable {
     /// The integral of Apparent Power over a time interval,
     /// represented in units of kVAh (kilo-volt-ampere-hour).
