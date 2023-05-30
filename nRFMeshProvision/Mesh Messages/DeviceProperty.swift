@@ -803,7 +803,8 @@ internal extension DeviceProperty {
              .desiredAmbientTemperature,
              .presentAmbientTemperature,
              .presentIndoorAmbientTemperature,
-             .presentOutdoorAmbientTemperature:
+             .presentOutdoorAmbientTemperature,
+             .uVIndex:
             return 1
             
         case .lightControlLightnessOn,
@@ -936,6 +937,11 @@ internal extension DeviceProperty {
     /// - returns: The characteristic value.
     func read(from data: Data, at offset: Int, length: Int) -> DevicePropertyCharacteristic {
         switch self {
+        // UInt8 -> UInt8
+        case .uVIndex:
+            guard length == valueLength else { return .uvIndex(0) }
+            return .uvIndex(data[offset])
+            
         // UInt8 -> Bool
         case .presenceDetected:
             guard length == valueLength else { return .bool(false) }
@@ -1416,6 +1422,10 @@ public enum DevicePropertyCharacteristic: Equatable {
     /// The Time Second 32 characteristic is used to represent a period of time with
     /// a unit of 1 second.
     case timeSecond32(UInt32?)
+    /// The UV Index characteristic is used to represent the UV Index.
+    ///
+    /// The value is unitless.
+    case uvIndex(UInt8)
     /// The VOC Concentration characteristic is used to represent a measure of volatile
     /// organic compounds concentration in units of parts per billion.
     ///
@@ -1438,6 +1448,9 @@ internal extension DevicePropertyCharacteristic {
         // Bool:
         case .bool(let value):
             return value.toData()
+            
+        case .uvIndex(let index):
+            return Data([index])
             
         // Event Statistics:
         case .eventStatistics(let count,
@@ -1582,6 +1595,9 @@ extension DevicePropertyCharacteristic: CustomDebugStringConvertible {
         // Bool:
         case .bool(let value):
             return value ? "True" : "False"
+            
+        case .uvIndex(let index):
+            return "\(index)"
             
         // Event Statistics:
         case .eventStatistics(let count,
