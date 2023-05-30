@@ -296,12 +296,16 @@ public extension MeshNetworkManager {
     ///                     provisioning PDUs.
     /// - returns: The Provisioning manager that should be used to continue
     ///            provisioning process after identification.
-    /// - throws: This method throws when the mesh network has not been created.
+    /// - throws: This method throws when the mesh network has not been created,
+    ///           or a Node with the same UUID already exist in the network.
     func provision(unprovisionedDevice: UnprovisionedDevice,
                    over bearer: ProvisioningBearer) throws -> ProvisioningManager {
         guard let meshNetwork = meshNetwork else {
             print("Error: Mesh Network not created")
             throw MeshNetworkError.noNetwork
+        }
+        guard meshNetwork.node(withUuid: unprovisionedDevice.uuid) == nil else {
+            throw MeshNetworkError.nodeAlreadyExist
         }
         return ProvisioningManager(for: unprovisionedDevice, over: bearer, in: meshNetwork)
     }
