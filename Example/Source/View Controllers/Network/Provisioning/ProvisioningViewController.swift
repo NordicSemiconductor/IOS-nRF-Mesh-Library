@@ -85,7 +85,21 @@ class ProvisioningViewController: UITableViewController {
         nameLabel.text = unprovisionedDevice.name
         
         // Obtain the Provisioning Manager instance for the Unprovisioned Device.
-        provisioningManager = try! manager.provision(unprovisionedDevice: unprovisionedDevice, over: bearer)
+        do {
+            provisioningManager = try manager.provision(unprovisionedDevice: unprovisionedDevice, over: bearer)
+        } catch {
+            switch error {
+            case MeshNetworkError.nodeAlreadyExist:
+                presentAlert(title: "Node already exist", message: "A node with the same UUID already exist in the network. Remove it before reprovisioning.") { _ in
+                    self.dismiss(animated: true)
+                }
+            default:
+                presentAlert(title: "Error", message: "A error occured: \(error.localizedDescription)") { _ in
+                    self.dismiss(animated: true)
+                }
+            }
+            return
+        }
         provisioningManager.delegate = self
         provisioningManager.logger = MeshNetworkManager.instance.logger
         bearer.delegate = self
