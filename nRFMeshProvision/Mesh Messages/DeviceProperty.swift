@@ -979,12 +979,12 @@ internal extension DeviceProperty {
         case .averageInputCurrent,
              .averageOutputCurrent,
              .lightSourceCurrent:
-            guard length == valueLength else { return .averageCurrent(nil, nil) }
+            guard length == valueLength else { return .averageCurrent(nil, sensingDuration: nil) }
             let value: UInt16 = data.read(fromOffset: offset)
             let n: UInt8 = data[offset + 2]
             return .averageCurrent(
                 value.toDecimal(withRange: 0.0...655.34, withResolution: 0.01, withUnknownValue: 0xFFFF),
-                TimeExponential.from(rawValue: n))
+                sensingDuration: TimeExponential.from(rawValue: n))
             
         case .luminaireNominalMaximumACMainsVoltage,
              .luminaireNominalMinimumACMainsVoltage,
@@ -1240,7 +1240,7 @@ public enum DevicePropertyCharacteristic: Equatable {
     /// was measured.
     ///
     /// Unit of Electric Current is ampere with a resolution of 0.01 A.
-    case averageCurrent(Decimal?, TimeExponential?)
+    case averageCurrent(Decimal?, sensingDuration: TimeExponential?)
     /// True or false.
     case bool(Bool)
     /// The Count 16 characteristic is used to represent a general count value.
