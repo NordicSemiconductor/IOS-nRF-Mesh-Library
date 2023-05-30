@@ -830,7 +830,9 @@ internal extension DeviceProperty {
         case .activePowerLoadside,
              .apparentPower,
              .averageInputCurrent,
+             .averageInputVoltage,
              .averageOutputCurrent,
+             .averageOutputVoltage,
              .deviceDateOfManufacture,
              .deviceRuntimeSinceTurnOn,
              .deviceRuntimeWarranty,
@@ -851,6 +853,7 @@ internal extension DeviceProperty {
              .lightControlAmbientLuxLevelProlong,
              .lightControlAmbientLuxLevelStandby,
              .lightSourceCurrent,
+             .lightSourceVoltage,
              .lightSourceStartCounterResettable,
              .lightSourceTotalPowerOnCycles,
              .luminaireNominalInputPower,
@@ -994,6 +997,16 @@ internal extension DeviceProperty {
             let value: UInt16 = data.read(fromOffset: offset)
             let resolution = Decimal(sign: .plus, exponent: -6, significand: 15625)
             return .voltage(value.toDecimal(withRange: 0.0...1022.0, withResolution: resolution, withUnknownValue: 0xFFFF))
+        case .averageInputVoltage,
+             .averageOutputVoltage,
+             .lightSourceVoltage:
+            guard length == valueLength else { return .averageVoltage(nil, sensingDuration: nil) }
+            let value: UInt16 = data.read(fromOffset: offset)
+            let n: UInt8 = data[offset + 2]
+            let resolution = Decimal(sign: .plus, exponent: -6, significand: 15625)
+            return .averageVoltage(
+                value.toDecimal(withRange: 0.0...1022.0, withResolution: resolution, withUnknownValue: 0xFFFF),
+                sensingDuration: TimeExponential.from(rawValue: n))
             
         // Int16 -> Decimal?
         case .precisePresentAmbientTemperature,
@@ -1241,6 +1254,11 @@ public enum DevicePropertyCharacteristic: Equatable {
     ///
     /// Unit of Electric Current is ampere with a resolution of 0.01 A.
     case averageCurrent(Decimal?, sensingDuration: TimeExponential?)
+    /// This characteristic represents the average Voltage and the time over which it
+    /// was measured.
+    ///
+    /// Unit of Voltage is volt with a resolution of 1/64 V.
+    case averageVoltage(Decimal?, sensingDuration: TimeExponential?)
     /// True or false.
     case bool(Bool)
     /// The Count 16 characteristic is used to represent a general count value.
@@ -1376,6 +1394,9 @@ internal extension DevicePropertyCharacteristic {
         case .voltage(let value):
             let resolution = Decimal(sign: .plus, exponent: -6, significand: 15625)
             return value.toData(ofLength: 2, withRange: 0...1022, withResolution: resolution, withUnknownValue: 0xFFFF)
+        case .averageVoltage(let voltage, let time):
+            let resolution = Decimal(sign: .plus, exponent: -6, significand: 15625)
+            return voltage.toData(ofLength: 2, withRange: 0...1022, withResolution: resolution, withUnknownValue: 0xFFFF) + time.toData()
             
         // Decimal? as Int16 with 0x8000 as unknown:
         case .temperature(let value):
@@ -1493,7 +1514,8 @@ extension DevicePropertyCharacteristic: CustomDebugStringConvertible {
             guard let current = current else {
                 return DevicePropertyCharacteristic.unknown
             }
-            return DevicePropertyCharacteristic.formatter.string(from: current, withRange: 0...655.34, andUnit: " A over \(time?.description ?? " an unknown time")")
+            let characteristic = DevicePropertyCharacteristic.electricCurrent(current)
+            return "\(characteristic) over \(time?.description ?? " an unknown time")"
         case .illuminance(let millilux):
             guard let millilux = millilux else {
                 return DevicePropertyCharacteristic.unknown
@@ -1521,6 +1543,12 @@ extension DevicePropertyCharacteristic: CustomDebugStringConvertible {
             default:
                 return DevicePropertyCharacteristic.formatter.string(from: voltage, withRange: 0...1022, andUnit: " V")
             }
+        case .averageVoltage(let voltage, let time):
+            guard let voltage = voltage else {
+                return DevicePropertyCharacteristic.unknown
+            }
+            let characteristic = DevicePropertyCharacteristic.voltage(voltage)
+            return "\(characteristic) over \(time?.description ?? " an unknown time")"
             
         // UInt16:
         case .perceivedLightness(let count):

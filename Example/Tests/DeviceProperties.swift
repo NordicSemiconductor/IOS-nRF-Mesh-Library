@@ -443,17 +443,17 @@ class DeviceProperties: XCTestCase {
     }
     
     func testElectricCurrentValue() throws {
+        // Test encoding.
         let characteristic: DevicePropertyCharacteristic = .electricCurrent(12.34)
         let roundedCharacteristic: DevicePropertyCharacteristic = .electricCurrent(12.345)
         let expectedValue = Data(hex: "D204")
-        // Test encoding.
         XCTAssertEqual(characteristic.data, expectedValue, "\(characteristic.data.hex) != \(expectedValue.hex)")
         XCTAssertEqual(roundedCharacteristic.data, expectedValue, "\(roundedCharacteristic.data.hex) != \(expectedValue.hex)")
         
+        // Test decoding.
         let property: DeviceProperty = .presentInputCurrent
         let result = property.read(from: expectedValue, at: 0, length: 2)
-        // Test decoding.
-        XCTAssertEqual(result.data, expectedValue)
+        XCTAssertEqual(result.data, expectedValue, "\(result.data.hex) != \(expectedValue.hex)")
         guard case .electricCurrent(let current) = result else {
             XCTFail("Failed to parse: \(property) \(expectedValue.hex) into .electicCurrent")
             return
@@ -464,6 +464,33 @@ class DeviceProperties: XCTestCase {
         XCTAssertEqual(characteristic, result)
         // 12.345 != 12.34
         XCTAssertNotEqual(roundedCharacteristic, result)
+    }
+    
+    func testAverageVoltageValue() throws {
+        // Test encoding.
+        
+        // 3.3 V will be rounded down to nearest value with resolution 1/64 V, that is: 1/64 * 211 = 3.296875 V.
+        // The interval of 30 seconds is roudned down to nearest value that can be encoded as 1.1^(N-46),
+        // that is: 1.1^(99-64) = 28.102(...) seconds. 99 is 0x63 in hexadecimal.
+        // Value 100 (0x64) would give 30.912(...) seconds, which is greater than 30 seconds.
+        let characteristic: DevicePropertyCharacteristic = .averageVoltage(3.3, sensingDuration: .interval(30))
+        let expectedValue = Data(hex: "D30063")
+        XCTAssertEqual(characteristic.data, expectedValue, "\(characteristic.data.hex) != \(expectedValue.hex)")
+        
+        // Test decoding.
+        let property: DeviceProperty = .averageInputVoltage
+        let result = property.read(from: expectedValue, at: 0, length: 3)
+        XCTAssertEqual(result.data, expectedValue, "\(result.data.hex) != \(expectedValue.hex)")
+        guard case .averageVoltage(let voltage, let sensingDuration) = result else {
+            XCTFail("Failed to parse: \(property) \(expectedValue.hex) into .averageVoltage")
+            return
+        }
+        XCTAssertEqual(voltage, 3.296875)
+        XCTAssertEqual(sensingDuration, .rawValue(0x63))
+        
+        // Test comparison.
+        let trueValue: DevicePropertyCharacteristic = .averageVoltage(3.296875, sensingDuration: .rawValue(0x63))
+        XCTAssertEqual(trueValue, result)
     }
 
 }
