@@ -220,7 +220,7 @@ class CryptoTest: XCTestCase {
         // Convert Provisionee Private key from Data to SecKey.
         let parameters = [kSecAttrKeyType : kSecAttrKeyTypeECSECPrimeRandom,
                     kSecAttrKeySizeInBits : 256,
-                          kSecAttrKeyClass: kSecAttrKeyClassPrivate] as CFDictionary
+                          kSecAttrKeyClass: kSecAttrKeyClassPrivate] as [CFString : Any] as CFDictionary
         
         var error: Unmanaged<CFError>?
         let secKey = SecKeyCreateWithData(Data([0x04]) + provisioneePublicKey + provisioneePrivateKey as CFData, parameters, &error)

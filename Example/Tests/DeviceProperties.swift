@@ -58,6 +58,16 @@ class DeviceProperties: XCTestCase {
         }
     }
     
+    func testTooHighPercentage8() throws {
+        let characteristic = DevicePropertyCharacteristic.percentage8(123.456)
+        XCTAssertEqual(characteristic.data, Data([0xC8]), "\(characteristic.data.hex) != 0xC8")
+    }
+    
+    func testTooLowPercentage8() throws {
+        let characteristic = DevicePropertyCharacteristic.percentage8(-123.456)
+        XCTAssertEqual(characteristic.data, Data([0x00]), "\(characteristic.data.hex) != 0x00")
+    }
+    
     func testTemperature8() throws {
         let samples: [(Data, Decimal?, Data)] = [
             (Data([0x80]), -64.0, Data([0x80])),     // min
@@ -198,7 +208,7 @@ class DeviceProperties: XCTestCase {
                 XCTFail("Failed to parse \(sample.hex) into .pressure")
             }
             
-            let test = DevicePropertyCharacteristic.pressure(pascals: result)
+            let test = DevicePropertyCharacteristic.pressure(result)
             XCTAssertEqual(test, characteristic)
             XCTAssertEqual(characteristic.data, encoded, "\(characteristic.data.hex) != \(encoded.hex)")
         }
@@ -265,10 +275,10 @@ class DeviceProperties: XCTestCase {
 
     func testElectricCurrent() throws {
         let samples: [(Data, Decimal?, Data)] = [
-            (Data([0x00, 0x00]), Decimal(string:      "0"), Data([0x00, 0x00])), // min
-            (Data([0x01, 0x00]), Decimal(string:   "0.01"), Data([0x01, 0x00])), // basic
-            (Data([0xFF, 0x7F]), Decimal(string: "327.67"), Data([0xFF, 0x7F])), // middle
-            (Data([0xFE, 0xFF]), Decimal(string: "655.34"), Data([0xFE, 0xFF])), // max
+            (Data([0x00, 0x00]), Decimal(string:      "0"), Data([0x00, 0x00])),     // min
+            (Data([0x01, 0x00]), Decimal(string:   "0.01"), Data([0x01, 0x00])),    // basic
+            (Data([0xFF, 0x7F]), Decimal(string: "327.67"), Data([0xFF, 0x7F])),   // middle
+            (Data([0xFE, 0xFF]), Decimal(string: "655.34"), Data([0xFE, 0xFF])),  // max
             (Data([0xFF, 0xFF]), nil,                       Data([0xFF, 0xFF])), // unknown
         ]
         
@@ -296,10 +306,10 @@ class DeviceProperties: XCTestCase {
     
     func testPower() throws {
         let samples: [(Data, Decimal?, Data)] = [
-            (Data([0x00, 0x00, 0x00]), Decimal(string:         "0"), Data([0x00, 0x00, 0x00])), // min
-            (Data([0x01, 0x00, 0x00]), Decimal(string:       "0.1"), Data([0x01, 0x00, 0x00])), // basic
-            (Data([0xFF, 0xFF, 0x7F]), Decimal(string: " 838860.7"), Data([0xFF, 0xFF, 0x7F])), // middle
-            (Data([0xFE, 0xFF, 0xFF]), Decimal(string: "1677721.4"), Data([0xFE, 0xFF, 0xFF])), // max
+            (Data([0x00, 0x00, 0x00]), Decimal(string:         "0"), Data([0x00, 0x00, 0x00])),     // min
+            (Data([0x01, 0x00, 0x00]), Decimal(string:       "0.1"), Data([0x01, 0x00, 0x00])),    // basic
+            (Data([0xFF, 0xFF, 0x7F]), Decimal(string: " 838860.7"), Data([0xFF, 0xFF, 0x7F])),   // middle
+            (Data([0xFE, 0xFF, 0xFF]), Decimal(string: "1677721.4"), Data([0xFE, 0xFF, 0xFF])),  // max
             (Data([0xFF, 0xFF, 0xFF]), nil,                          Data([0xFF, 0xFF, 0xFF])), // unknown
         ]
         
@@ -329,11 +339,11 @@ class DeviceProperties: XCTestCase {
     
     func testEnergy32() throws {
         let samples: [(Data, ValidDecimal?, Data)] = [
-            (Data([0x00, 0x00, 0x00, 0x00]), .valid(Decimal(string: "          0")!), Data([0x00, 0x00, 0x00, 0x00])), // min
-            (Data([0x01, 0x00, 0x00, 0x00]), .valid(Decimal(string: "      0.001")!), Data([0x01, 0x00, 0x00, 0x00])), // basic
-            (Data([0xFE, 0xFF, 0xFF, 0x7F]), .valid(Decimal(string: "2147483.646")!), Data([0xFE, 0xFF, 0xFF, 0x7F])), // middle
-            (Data([0xFD, 0xFF, 0xFF, 0xFF]), .valid(Decimal(string: "4294967.293")!), Data([0xFD, 0xFF, 0xFF, 0xFF])), // max
-            (Data([0xFE, 0xFF, 0xFF, 0xFF]), .invalid                               , Data([0xFE, 0xFF, 0xFF, 0xFF])), // not valid
+            (Data([0x00, 0x00, 0x00, 0x00]), .valid(Decimal(string: "          0")!), Data([0x00, 0x00, 0x00, 0x00])),      // min
+            (Data([0x01, 0x00, 0x00, 0x00]), .valid(Decimal(string: "      0.001")!), Data([0x01, 0x00, 0x00, 0x00])),     // basic
+            (Data([0xFE, 0xFF, 0xFF, 0x7F]), .valid(Decimal(string: "2147483.646")!), Data([0xFE, 0xFF, 0xFF, 0x7F])),    // middle
+            (Data([0xFD, 0xFF, 0xFF, 0xFF]), .valid(Decimal(string: "4294967.293")!), Data([0xFD, 0xFF, 0xFF, 0xFF])),   // max
+            (Data([0xFE, 0xFF, 0xFF, 0xFF]), .invalid                               , Data([0xFE, 0xFF, 0xFF, 0xFF])),  // not valid
             (Data([0xFF, 0xFF, 0xFF, 0xFF]), nil                                    , Data([0xFF, 0xFF, 0xFF, 0xFF])), // unknown
         ]
         
@@ -356,6 +366,161 @@ class DeviceProperties: XCTestCase {
                 XCTAssertEqual(characteristic.data, encoded, "\(characteristic.data.hex) != \(encoded.hex)")
             }
         }
+    }
+        
+    func testVoltage() throws {
+        let samples: [(Data, Decimal?, Data)] = [
+            (Data([0x00, 0x00]), Decimal(string:        "0"), Data([0x00, 0x00])),      // min
+            (Data([0x01, 0x00]), Decimal(string: "0.015625"), Data([0x01, 0x00])),     // basic
+            (Data([0x40, 0x00]), Decimal(string:      "1.0"), Data([0x40, 0x00])),    // middle
+            (Data([0x80, 0xFF]), Decimal(string:     "1022"), Data([0x80, 0xFF])),   // max
+            (Data([0xFE, 0xFF]), Decimal(string:     "1022"), Data([0x80, 0xFF])),  // truncated
+            (Data([0xFF, 0xFF]), nil                        , Data([0xFF, 0xFF])), // unknown
+        ]
+        
+        let deviceProperties: [DeviceProperty] = [
+            .luminaireNominalMaximumACMainsVoltage,
+            .luminaireNominalMinimumACMainsVoltage,
+            .presentInputVoltage,
+            .presentOutputVoltage
+        ]
+        
+        for (sample, result, encoded) in samples {
+            for deviceProperty in deviceProperties {
+                let characteristic = deviceProperty.read(from: sample, at: 0, length: 2)
+                switch characteristic {
+                case .voltage(let voltage):
+                    XCTAssertEqual(voltage, result, "Failed to parse \(sample.hex) into \(String(describing: result))")
+                default:
+                    XCTFail("Failed to parse \(deviceProperty) \(sample.hex) into .voltage")
+                }
+                let test = DevicePropertyCharacteristic.voltage(result)
+                XCTAssertEqual(test, characteristic)
+                XCTAssertEqual(characteristic.data, encoded, "\(characteristic.data.hex) != \(encoded.hex)")
+            }
+        }
+    }
+    
+    func testTimeExponential() throws {
+        let fmt = NumberFormatter()
+        fmt.numberStyle = .decimal
+        fmt.maximumSignificantDigits = 5
+        
+        let zero = TimeExponential.interval(0)
+        XCTAssertEqual(zero, .rawValue(0))
+        XCTAssertEqual(zero.interval, 0)
+        
+        let second = TimeExponential.interval(1.0)
+        XCTAssertEqual(second, .rawValue(64))
+        XCTAssertEqual(second.interval, 1.0)
+        
+        let secondAndOne = TimeExponential.interval(1.1)
+        XCTAssertEqual(secondAndOne, .rawValue(65))
+        XCTAssertEqual(secondAndOne.interval, 1.1)
+        
+        let twoSeconds = TimeExponential.interval(2.0)
+        XCTAssertEqual(twoSeconds, .rawValue(71))
+        XCTAssertEqual(twoSeconds.interval, 1.9487171000000003)
+        
+        let tenMilliseconds = TimeExponential.interval(0.01)
+        XCTAssertEqual(tenMilliseconds, .rawValue(15))
+        XCTAssertEqual(tenMilliseconds.interval, 0.009370406407450708)
+        
+        let tenSeconds = TimeExponential.interval(10.0)
+        XCTAssertEqual(tenSeconds, .rawValue(88))
+        XCTAssertEqual(tenSeconds.interval, 9.849732675807612)
+        
+        let max = TimeExponential.interval(66560641)
+        XCTAssertEqual(max, .rawValue(253))
+        XCTAssertEqual(max.interval, 66560640.878719166)
+        
+        let evenMore = TimeExponential.interval(665606410)
+        XCTAssertEqual(evenMore, .rawValue(253))
+        XCTAssertEqual(evenMore.interval, 66560640.878719166)
+        
+        let lifetime = TimeExponential.deviceLifetime
+        XCTAssertEqual(lifetime, .deviceLifetime)
+    }
+    
+    func testElectricCurrentValue() throws {
+        // Test encoding.
+        let characteristic: DevicePropertyCharacteristic = .electricCurrent(12.34)
+        let roundedCharacteristic: DevicePropertyCharacteristic = .electricCurrent(12.345)
+        let expectedValue = Data(hex: "D204")
+        XCTAssertEqual(characteristic.data, expectedValue, "\(characteristic.data.hex) != \(expectedValue.hex)")
+        XCTAssertEqual(roundedCharacteristic.data, expectedValue, "\(roundedCharacteristic.data.hex) != \(expectedValue.hex)")
+        
+        // Test decoding.
+        let property: DeviceProperty = .presentInputCurrent
+        let result = property.read(from: expectedValue, at: 0, length: 2)
+        XCTAssertEqual(result.data, expectedValue, "\(result.data.hex) != \(expectedValue.hex)")
+        guard case .electricCurrent(let current) = result else {
+            XCTFail("Failed to parse: \(property) \(expectedValue.hex) into .electicCurrent")
+            return
+        }
+        XCTAssertEqual(current, 12.34)
+        
+        // 12.34 == 12.34
+        XCTAssertEqual(characteristic, result)
+        // 12.345 != 12.34
+        XCTAssertNotEqual(roundedCharacteristic, result)
+    }
+    
+    func testAverageVoltageValue() throws {
+        // Test encoding.
+        
+        // 3.3 V will be rounded down to nearest value with resolution 1/64 V, that is: 1/64 * 211 = 3.296875 V.
+        // The interval of 30 seconds is roudned down to nearest value that can be encoded as 1.1^(N-46),
+        // that is: 1.1^(99-64) = 28.102(...) seconds. 99 is 0x63 in hexadecimal.
+        // Value 100 (0x64) would give 30.912(...) seconds, which is greater than 30 seconds.
+        let characteristic: DevicePropertyCharacteristic = .averageVoltage(3.3, sensingDuration: .interval(30))
+        let expectedValue = Data(hex: "D30063")
+        XCTAssertEqual(characteristic.data, expectedValue, "\(characteristic.data.hex) != \(expectedValue.hex)")
+        
+        // Test decoding.
+        let property: DeviceProperty = .averageInputVoltage
+        let result = property.read(from: expectedValue, at: 0, length: 3)
+        XCTAssertEqual(result.data, expectedValue, "\(result.data.hex) != \(expectedValue.hex)")
+        guard case .averageVoltage(let voltage, let sensingDuration) = result else {
+            XCTFail("Failed to parse: \(property) \(expectedValue.hex) into .averageVoltage")
+            return
+        }
+        XCTAssertEqual(voltage, 3.296875)
+        XCTAssertEqual(sensingDuration, .rawValue(0x63))
+        
+        // Test comparison.
+        let trueValue: DevicePropertyCharacteristic = .averageVoltage(3.296875, sensingDuration: .rawValue(0x63))
+        XCTAssertEqual(trueValue, result)
+    }
+    
+    func testEventStatistics() throws {
+        // Test encoding.
+        let characteristic: DevicePropertyCharacteristic = .eventStatistics(1234,
+                                                                            averageEventDuration: 10,
+                                                                            timeElapsedSinceLastEvent: .interval(10),
+                                                                            sensingDuration: .interval(60 * 60))
+        let expectedValue = Data(hex: "D2040A005895")
+        XCTAssertEqual(characteristic.data, expectedValue, "\(characteristic.data.hex) != \(expectedValue.hex)")
+        
+        // Test decoding.
+        let property: DeviceProperty = .openCircuitEventStatistics
+        let result = property.read(from: expectedValue, at: 0, length: 6)
+        XCTAssertEqual(result.data, expectedValue, "\(result.data.hex) != \(expectedValue.hex)")
+        guard case .eventStatistics(let count, let averageEventDuration, let timeElapsedSinceLastEvent, let sensingDuration) = result else {
+            XCTFail("Failed to parse: \(property) \(expectedValue.hex) into .eventStatistics")
+            return
+        }
+        XCTAssertEqual(count, 1234)
+        XCTAssertEqual(averageEventDuration, 10)
+        XCTAssertEqual(timeElapsedSinceLastEvent, .rawValue(0x58))
+        XCTAssertEqual(sensingDuration, .rawValue(0x95))
+        
+        // Test comparison.
+        let trueValue: DevicePropertyCharacteristic = .eventStatistics(1234,
+                                                                       averageEventDuration: 10,
+                                                                       timeElapsedSinceLastEvent: .rawValue(0x58),
+                                                                       sensingDuration: .rawValue(0x95))
+        XCTAssertEqual(trueValue, result)
     }
 
 }

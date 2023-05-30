@@ -803,7 +803,8 @@ internal extension DeviceProperty {
              .desiredAmbientTemperature,
              .presentAmbientTemperature,
              .presentIndoorAmbientTemperature,
-             .presentOutdoorAmbientTemperature:
+             .presentOutdoorAmbientTemperature,
+             .uVIndex:
             return 1
             
         case .lightControlLightnessOn,
@@ -820,11 +821,22 @@ internal extension DeviceProperty {
              .presentDeviceOperatingTemperature,
              .precisePresentAmbientTemperature,
              .timeSinceMotionSensed,
-             .timeSincePresenceDetected:
+             .timeSincePresenceDetected,
+             .luminaireNominalMaximumACMainsVoltage,
+             .luminaireNominalMinimumACMainsVoltage,
+             .presentInputVoltage,
+             .presentOutputVoltage,
+             .rainfall:
             return 2
             
         case .activePowerLoadside,
+             .apparentPower,
+             .averageInputCurrent,
+             .averageInputVoltage,
+             .averageOutputCurrent,
+             .averageOutputVoltage,
              .deviceDateOfManufacture,
+             .deviceEnergyUseSinceTurnOn,
              .deviceRuntimeSinceTurnOn,
              .deviceRuntimeWarranty,
              .totalDeviceStarts,
@@ -843,6 +855,8 @@ internal extension DeviceProperty {
              .lightControlAmbientLuxLevelOn,
              .lightControlAmbientLuxLevelProlong,
              .lightControlAmbientLuxLevelStandby,
+             .lightSourceCurrent,
+             .lightSourceVoltage,
              .lightSourceStartCounterResettable,
              .lightSourceTotalPowerOnCycles,
              .luminaireNominalInputPower,
@@ -852,10 +866,12 @@ internal extension DeviceProperty {
              .presentDeviceInputPower,
              .presentIlluminance,
              .ratedMedianUsefulLightSourceStarts,
-             .ratedMedianUsefulLifeOfLuminaire:
+             .ratedMedianUsefulLifeOfLuminaire,
+             .totalDeviceEnergyUse:
             return 3
             
         case .activeEnergyLoadside,
+             .apparentEnergy,
              .airPressure,
              .preciseTotalDeviceEnergyUse,
              .pressure,
@@ -865,6 +881,26 @@ internal extension DeviceProperty {
              .lightControlRegulatorKpu,
              .sensorGain:
             return 4
+            
+        case .deviceOverTemperatureEventStatistics,
+             .deviceUnderTemperatureEventStatistics,
+             .inputOverCurrentEventStatistics,
+             .inputOverRippleVoltageEventStatistics,
+             .inputOverVoltageEventStatistics,
+             .inputUnderCurrentEventStatistics,
+             .inputUnderVoltageEventStatistics,
+             .lightSourceOpenCircuitStatistics,
+             .lightSourceOverallFailuresStatistics,
+             .lightSourceShortCircuitStatistics,
+             .lightSourceThermalDeratingStatistics,
+             .lightSourceThermalShutdownStatistics,
+             .openCircuitEventStatistics,
+             .outputPowerLimitation,
+             .overOutputRippleVoltageEventStatistics,
+             .overallFailureCondition,
+             .shortCircuitEventStatistics,
+             .thermalDerating:
+            return 6
             
         case .deviceFirmwareRevision,
              .deviceSoftwareRevision:
@@ -901,12 +937,46 @@ internal extension DeviceProperty {
     /// - returns: The characteristic value.
     func read(from data: Data, at offset: Int, length: Int) -> DevicePropertyCharacteristic {
         switch self {
-        // UInt8 -> Bool:
+        // UInt8 -> UInt8
+        case .uVIndex:
+            guard length == valueLength else { return .uvIndex(0) }
+            return .uvIndex(data[offset])
+            
+        // UInt8 -> Bool
         case .presenceDetected:
             guard length == valueLength else { return .bool(false) }
             return .bool(data[offset].toBool())
         
-        // UInt8 -> Float?:
+        // 2 x UInt16 + 2 x UInt8 -> Event Statistics
+        case .deviceOverTemperatureEventStatistics,
+             .deviceUnderTemperatureEventStatistics,
+             .inputOverCurrentEventStatistics,
+             .inputOverRippleVoltageEventStatistics,
+             .inputOverVoltageEventStatistics,
+             .inputUnderCurrentEventStatistics,
+             .inputUnderVoltageEventStatistics,
+             .lightSourceOpenCircuitStatistics,
+             .lightSourceOverallFailuresStatistics,
+             .lightSourceShortCircuitStatistics,
+             .lightSourceThermalDeratingStatistics,
+             .lightSourceThermalShutdownStatistics,
+             .openCircuitEventStatistics,
+             .outputPowerLimitation,
+             .overOutputRippleVoltageEventStatistics,
+             .overallFailureCondition,
+             .shortCircuitEventStatistics,
+             .thermalDerating:
+            guard length == valueLength else { return .eventStatistics(nil, averageEventDuration: nil, timeElapsedSinceLastEvent: nil, sensingDuration: nil) }
+            let count: UInt16? = (data.read(fromOffset: offset) as UInt16).withUnknownValue(0xFFFF)
+            let averageEventDuration: UInt16? = (data.read(fromOffset: offset + 2) as UInt16).withUnknownValue(0xFFFF)
+            let timeElapsedSinceLastEvent: TimeExponential = .rawValue(data[offset + 4])
+            let sensingDuration: TimeExponential = .rawValue(data[offset + 5])
+            return .eventStatistics(count,
+                                    averageEventDuration: averageEventDuration,
+                                    timeElapsedSinceLastEvent: timeElapsedSinceLastEvent,
+                                    sensingDuration: sensingDuration)
+            
+        // UInt8 -> Float?
         case .lightControlRegulatorAccuracy,
              .outputRippleVoltageSpecification,
              .inputVoltageRippleSpecification,
@@ -935,8 +1005,11 @@ internal extension DeviceProperty {
              .lightControlLightnessStandby:
             guard length == valueLength else { return .perceivedLightness(0) }
             return .perceivedLightness(data.read(fromOffset: offset))
+        case .rainfall:
+            guard length == valueLength else { return .rainfall(0) }
+            return .rainfall(data.read(fromOffset: offset))
             
-        // UInt16 -> UInt16?:
+        // UInt16 -> UInt16?
         case .peopleCount:
             guard length == valueLength else { return .count16(nil) }
             let count: UInt16 = data.read(fromOffset: offset)
@@ -955,29 +1028,55 @@ internal extension DeviceProperty {
             let value: UInt16 = data.read(fromOffset: offset)
             return .vocConcentration(value.withUnknownValue(0xFFFF))
         
-        // UInt16 -> Float?
+        // UInt16 -> Decimal?
         case .presentAmbientRelativeHumidity,
              .presentIndoorRelativeHumidity,
              .presentOutdoorRelativeHumidity:
             guard length == valueLength else { return .humidity(nil) }
             let value: UInt16 = data.read(fromOffset: offset)
             return .humidity(value.toDecimal(withRange: 0.0...100.0, withResolution: 0.01, withUnknownValue: 0xFFFF))
-            
-        // UInt16 -> Float?
         case .presentOutputCurrent,
              .presentInputCurrent:
             guard length == valueLength else { return .electricCurrent(nil) }
             let value: UInt16 = data.read(fromOffset: offset)
             return .electricCurrent(value.toDecimal(withRange: 0.0...655.34, withResolution: 0.01, withUnknownValue: 0xFFFF))
+        case .averageInputCurrent,
+             .averageOutputCurrent,
+             .lightSourceCurrent:
+            guard length == valueLength else { return .averageCurrent(nil, sensingDuration: nil) }
+            let value: UInt16 = data.read(fromOffset: offset)
+            let n: UInt8 = data[offset + 2]
+            return .averageCurrent(
+                value.toDecimal(withRange: 0.0...655.34, withResolution: 0.01, withUnknownValue: 0xFFFF),
+                sensingDuration: TimeExponential.from(rawValue: n))
             
-        // Int16 -> Float?
+        case .luminaireNominalMaximumACMainsVoltage,
+             .luminaireNominalMinimumACMainsVoltage,
+             .presentInputVoltage,
+             .presentOutputVoltage:
+            guard length == valueLength else { return .voltage(nil) }
+            let value: UInt16 = data.read(fromOffset: offset)
+            let resolution = Decimal(sign: .plus, exponent: -6, significand: 15625)
+            return .voltage(value.toDecimal(withRange: 0.0...1022.0, withResolution: resolution, withUnknownValue: 0xFFFF))
+        case .averageInputVoltage,
+             .averageOutputVoltage,
+             .lightSourceVoltage:
+            guard length == valueLength else { return .averageVoltage(nil, sensingDuration: nil) }
+            let value: UInt16 = data.read(fromOffset: offset)
+            let n: UInt8 = data[offset + 2]
+            let resolution = Decimal(sign: .plus, exponent: -6, significand: 15625)
+            return .averageVoltage(
+                value.toDecimal(withRange: 0.0...1022.0, withResolution: resolution, withUnknownValue: 0xFFFF),
+                sensingDuration: TimeExponential.from(rawValue: n))
+            
+        // Int16 -> Decimal?
         case .precisePresentAmbientTemperature,
              .presentDeviceOperatingTemperature:
             guard length == valueLength else { return .temperature(nil) }
             let value: Int16 = data.read(fromOffset: offset)
             return .temperature(value.toDecimal(withRange: -273.15...327.67, withResolution: 0.01, withUnknownValue: -32768))
             
-        // UInt24 -> Float?
+        // UInt24 -> Decimal?
         case .lightControlAmbientLuxLevelOn,
              .lightControlAmbientLuxLevelProlong,
              .lightControlAmbientLuxLevelStandby,
@@ -986,8 +1085,6 @@ internal extension DeviceProperty {
             guard length == valueLength else { return .illuminance(nil) }
             let value: UInt32 = data.readUInt24(fromOffset: offset)
             return .illuminance(value.toDecimal(withResolution: 0.01, withUnknownValue: 0xFFFFFF))
-
-        // UInt24 -> Float?
         case .activePowerLoadside,
              .luminaireNominalInputPower,
              .luminairePowerAtMinimumDimLevel,
@@ -996,7 +1093,7 @@ internal extension DeviceProperty {
           let value: UInt32 = data.readUInt24(fromOffset: offset)
           return .power(value.toDecimal(withResolution: 0.1, withUnknownValue: 0xFFFFFF))
 
-        // UInt24 -> UInt24?:
+        // UInt24 -> UInt24?
         case .lightSourceStartCounterResettable,
              .lightSourceTotalPowerOnCycles,
              .ratedMedianUsefulLightSourceStarts,
@@ -1025,6 +1122,11 @@ internal extension DeviceProperty {
             guard length == valueLength else { return .timeMillisecond24(nil) }
             let value: UInt32 = data.readUInt24(fromOffset: offset)
             return .timeMillisecond24(value.withUnknownValue(0xFFFFFF))
+        case .deviceEnergyUseSinceTurnOn,
+             .totalDeviceEnergyUse:
+            guard length == valueLength else { return .energy(nil) }
+            let value: UInt32 = data.readUInt24(fromOffset: offset)
+            return .energy(value.withUnknownValue(0xFFFFFF))
             
         // UInt24 -> Date?
         case .deviceDateOfManufacture,
@@ -1035,14 +1137,23 @@ internal extension DeviceProperty {
             let timeInterval = TimeInterval(numberOfDays) * 86400.0
             return .dateUTC(Date(timeIntervalSince1970: timeInterval))
             
-        // UInt32 -> Float:
+        // UInt32 -> Decimal
         case .pressure,
              .airPressure:
             guard length == valueLength else { return .pressure(0) }
             let value: UInt32 = data.read(fromOffset: offset)
             return .pressure(value.toDecimal(withResolution: 0.1))
+            
+        // UInt24 -> ValidDecimal?
+        case .apparentPower:
+            guard length == valueLength else { return .apparentPower(nil) }
+            let value: UInt32 = data.readUInt24(fromOffset: offset)
+            
+            guard value != UInt32(0xFFFFFF) else { return .apparentPower(nil) }
+            guard value != UInt32(0xFFFFFE) else { return .apparentPower(.invalid) }
+            return .apparentPower(.valid(Decimal(sign: .plus, exponent: -1, significand: Decimal(value))))
 
-        // UInt32 -> Float:
+        // UInt32 -> ValidDecimal?
         case .preciseTotalDeviceEnergyUse,
              .activeEnergyLoadside:
             guard length == valueLength else { return .energy32(nil) }
@@ -1051,8 +1162,16 @@ internal extension DeviceProperty {
             guard value != UInt32(0xFFFFFFFF) else { return .energy32(nil) }
             guard value != UInt32(0xFFFFFFFE) else { return .energy32(.invalid) }
             return .energy32(.valid(Decimal(sign: .plus, exponent: -3, significand: Decimal(value))))
+            
+        case .apparentEnergy:
+            guard length == valueLength else { return .apparentEnergy32(nil) }
+            let value: UInt32 = data.read(fromOffset: offset)
+            
+            guard value != UInt32(0xFFFFFFFF) else { return .apparentEnergy32(nil) }
+            guard value != UInt32(0xFFFFFFFE) else { return .apparentEnergy32(.invalid) }
+            return .apparentEnergy32(.valid(Decimal(sign: .plus, exponent: -3, significand: Decimal(value))))
 
-        // Float32 (IEEE 754):
+        // Float32 (IEEE 754)
         case .lightControlRegulatorKid,
              .lightControlRegulatorKiu,
              .lightControlRegulatorKpd,
@@ -1062,7 +1181,7 @@ internal extension DeviceProperty {
             let asInt32: UInt32 = data.read(fromOffset: offset)
             return .coefficient(Float(bitPattern: asInt32))
             
-        // String:
+        // String
         case .deviceFirmwareRevision,
              .deviceSoftwareRevision:
             guard length == valueLength else { return .fixedString8(String(repeating: " ", count: 8)) }
@@ -1083,7 +1202,7 @@ internal extension DeviceProperty {
             guard length == valueLength else { return .fixedString64(String(repeating: " ", count: 64)) }
             return .fixedString64(String(data: data.subdata(in: offset..<offset + 64), encoding: .utf8)!)
             
-        // Other:
+        // Other
         default:
             return .other(data.subdata(in: offset..<offset + length))
         }
@@ -1101,8 +1220,111 @@ public enum ValidDecimal: Equatable {
     case invalid
 }
 
+/// The time is represented by the value `1.1^(N–64)` in seconds, with `N` being the raw 8-bit value.
+public enum TimeExponential: Equatable {
+    /// Creates a ``TimeExponential`` object based on the given time.
+    ///
+    /// As the time is represented as `1.1^(N-64)` it will be ronded to the nearest possible value.
+    ///
+    /// - parameter seconds: The time in seconds as `TimeInterval`.
+    static func interval(_ seconds: TimeInterval) -> TimeExponential {
+        switch seconds {
+        case 0:
+            return .rawValue(0)
+        case let s where s > 66560641:
+            return .rawValue(0xFD)
+        default:
+            let x = Int(log(seconds) / log(1.1) + 64)
+            guard x > 0 else { return .rawValue(0) }
+            return .rawValue(UInt8(x))
+        }
+    }
+    /// Approximate value of the time in seconds.
+    ///
+    /// As the time is represented as `1.1^(N-64)`, the value will be rounded to nearest lower value.
+    case rawValue(UInt8)
+    /// The total lifetime of the device.
+    case deviceLifetime
+    /// Approximate time interval calculated from the raw value.
+    ///
+    /// - warning: The returned time may differ from the time used to create the object, as the value
+    ///            is encoded as `1.1^(N-64)`.
+    var interval: TimeInterval? {
+        // Special case for "unknown time".
+        guard case .rawValue(let n) = self else {
+            return nil
+        }
+        // Special case for 0 seconds.
+        if n == 0 {
+            return 0.0
+        }
+        // iOS fails to calculate power with high negative exponent: 1.1^(-49) -> NaN
+        // Instead, we calculate inverse of positive power: 1 / 1.1^49, which gives the correct result.
+        let number = Decimal(sign: .plus, exponent: -1, significand: 11) // 1.1
+        let exponent = Int(n) - 64
+        if exponent < 0 {
+            let result = pow(number, -exponent)
+            return 1.0 / NSDecimalNumber(decimal: result).doubleValue
+        } else {
+            let result = pow(number, exponent)
+            return NSDecimalNumber(decimal: result).doubleValue
+        }
+    }
+    
+    fileprivate static func from(rawValue: UInt8) -> TimeExponential? {
+        switch rawValue {
+        case 0xFE:
+            return .deviceLifetime
+        case 0xFF:
+            return nil
+        default:
+            return .rawValue(rawValue)
+        }
+    }
+}
+
 /// A representation of a property characteristic.
+///
+/// The unit of a characteristic is specified in the comment.
+///
+/// For example, ``DevicePropertyCharacteristic/electricCurrent(_:)`` unit is Ampere
+/// with resulution of 0.01 A.
+///
+/// #### Encoding sample
+/// ```swift
+/// // The value of the characteristic will be encoded as 0xD204 (12.34).
+/// let characteristic: DevicePropertyCharacteristic = .electricCurrent(12.345)
+/// ```
+/// #### Decoding sample
+/// ```swift
+/// guard case .electricCurrent(let current) = characteristic else {
+///    return
+/// }
+/// print(current) // -> "12.34 A"
+/// ```
 public enum DevicePropertyCharacteristic: Equatable {
+    /// The integral of Apparent Power over a time interval,
+    /// represented in units of kVAh (kilo-volt-ampere-hour).
+    ///
+    /// Unit is kilo-volt-ampere-hour with resolution of 1 volt-ampere-hour.
+    case apparentEnergy32(ValidDecimal?)
+    /// Apparent power is the product of the quadratic mean values of voltage and current.
+    ///
+    /// It is needed for designing and operating power systems, because although the current
+    /// associated with reactive power does not work at the load, it is still supplied by the
+    /// power source. Apparent power is expressed in volt-amperes (VA) since it is the product
+    /// of quadratic mean voltage and quadratic mean current.
+    case apparentPower(ValidDecimal?)
+    /// This characteristic represents the average Electric Current and the time over which it
+    /// was measured.
+    ///
+    /// Unit of Electric Current is ampere with a resolution of 0.01 A.
+    case averageCurrent(Decimal?, sensingDuration: TimeExponential?)
+    /// This characteristic represents the average Voltage and the time over which it
+    /// was measured.
+    ///
+    /// Unit of Voltage is volt with a resolution of 1/64 V.
+    case averageVoltage(Decimal?, sensingDuration: TimeExponential?)
     /// True or false.
     case bool(Bool)
     /// The Count 16 characteristic is used to represent a general count value.
@@ -1125,10 +1347,22 @@ public enum DevicePropertyCharacteristic: Equatable {
     ///
     /// Unit is ampere with a resolution of 0.01 A.
     case electricCurrent(Decimal?)
+    /// The Energy characteristic is used to represent a measure of energy in units of kilowatt hours.
+    ///
+    /// Unit is Kilowatt-hour (kWh) with a resolution of 1.
+    case energy(UInt32?)
     /// The Energy32 characteristic is used to represent a energy value.
     ///
     /// Unit is Kilowatt-hour with a resolution of 1 Watt-hour.
     case energy32(ValidDecimal?)
+    /// The Event Statistics characteristic is used to represent statistical values of events.
+    ///
+    /// The value represents number of events with average event duration (in seconds),
+    /// time elapsed since the last event and sensing duration.
+    case eventStatistics(UInt16?,
+                         averageEventDuration: UInt16?,
+                         timeElapsedSinceLastEvent: TimeExponential?,
+                         sensingDuration: TimeExponential?)
     /// The Fixed String 8 characteristic represents an 8-octet UTF-8 string.
     case fixedString8(String)
     /// The Fixed String 16 characteristic represents a 16-octet UTF-8 string.
@@ -1162,6 +1396,13 @@ public enum DevicePropertyCharacteristic: Equatable {
     ///
     /// Unit is in pascals with a resolution of 0.1 Pa.
     case pressure(Decimal)
+    /// The Rainfall characteristic is used to represent the amount of rain that has fallen.
+    ///
+    /// Unit is in millimeters.
+    /// - note: In Bluetooth Mesh Device Properties 2 this characteristic is encoded as meters
+    ///         with resolution of 0.01 mm. For simplification, in this library use millimeters
+    ///         directly.
+    case rainfall(UInt16)
     /// The Temperature characteristic is used to represent a temperature is degrees
     /// Celsius with a resolution of 0.01 degrees Celsius.
     ///
@@ -1181,6 +1422,10 @@ public enum DevicePropertyCharacteristic: Equatable {
     /// The Time Second 32 characteristic is used to represent a period of time with
     /// a unit of 1 second.
     case timeSecond32(UInt32?)
+    /// The UV Index characteristic is used to represent the UV Index.
+    ///
+    /// The value is unitless.
+    case uvIndex(UInt8)
     /// The VOC Concentration characteristic is used to represent a measure of volatile
     /// organic compounds concentration in units of parts per billion.
     ///
@@ -1188,6 +1433,9 @@ public enum DevicePropertyCharacteristic: Equatable {
     ///
     /// A value of 0xFFFE represents ‘value is 65534 or greater’.
     case vocConcentration(UInt16?)
+    /// The Voltage characteristic is used to represent a measure of positive electric
+    /// potential difference in units of volts with 1/64 V resolution.
+    case voltage(Decimal?)
     /// Generic data type for other characteristics.
     case other(Data)
 }
@@ -1201,15 +1449,29 @@ internal extension DevicePropertyCharacteristic {
         case .bool(let value):
             return value.toData()
             
-        // Float as UInt8 with 0xFF as unknown:
+        case .uvIndex(let index):
+            return Data([index])
+            
+        // Event Statistics:
+        case .eventStatistics(let count,
+                              averageEventDuration: let averageEventDuration,
+                              timeElapsedSinceLastEvent: let timeElapsedSinceLastEvent,
+                              sensingDuration: let sensingDuration):
+            let countCharacteristic: DevicePropertyCharacteristic = .count16(count)
+            let averageEventDurationCharacteristic: DevicePropertyCharacteristic = .timeSecond16(averageEventDuration)
+            return countCharacteristic.data +
+                   averageEventDurationCharacteristic.data +
+                   timeElapsedSinceLastEvent.toData() + sensingDuration.toData()
+            
+        // Decimal? as UInt8 with 0xFF as unknown:
         case .percentage8(let value):
             return value.toData(ofLength: 1, withRange: 0.0...100.0, withResolution: 0.5, withUnknownValue: 0xFF)
             
-        // Float as Int8 with 0x7F as unknown (see Errata 15863):
+        // Decimal? as Int8 with 0x7F as unknown (see Errata 15863):
         case .temperature8(let value):
             return value.toData(ofLength: 1, withRange: -64.0...63.0, withResolution: 0.5, withUnknownValue: 0x7F)
             
-        // UInt16 with 0xFFFF as unknown:
+        // UInt16? with 0xFFFF as unknown:
         case .count16(let value),
              .timeSecond16(let value),
             // and 0xFFFE as greater than 65534:
@@ -1220,30 +1482,44 @@ internal extension DevicePropertyCharacteristic {
         // UInt16:
         case .perceivedLightness(let value):
             return value.toData()
+        case .rainfall(let value):
+            return value.toData()
             
-        // Float as UInt16 with 0xFFFF as unknown:
+        // Decimal? as UInt16 with 0xFFFF as unknown:
         case .humidity(let value):
             return value.toData(ofLength: 2, withRange: 0.0...100.0, withResolution: 0.01, withUnknownValue: 0xFFFF)
         
-        // Float as UInt16 with 0xFFFF as unknown:
+        // Decimal? as UInt16 with 0xFFFF as unknown:
         case .electricCurrent(let value):
             return value.toData(ofLength: 2, withRange: 0...655.34, withResolution: 0.01, withUnknownValue: 0xFFFF)
+        case .averageCurrent(let current, let time):
+            return current.toData(ofLength: 2, withRange: 0...655.34, withResolution: 0.01, withUnknownValue: 0xFFFF) + time.toData()
             
-        // Float as Int16 with 0x8000 as unknown:
+        // Decimal? as UInt16 with 0xFFFF as unknown:
+        case .voltage(let value):
+            let resolution = Decimal(sign: .plus, exponent: -6, significand: 15625)
+            return value.toData(ofLength: 2, withRange: 0...1022, withResolution: resolution, withUnknownValue: 0xFFFF)
+        case .averageVoltage(let voltage, let time):
+            let resolution = Decimal(sign: .plus, exponent: -6, significand: 15625)
+            return voltage.toData(ofLength: 2, withRange: 0...1022, withResolution: resolution, withUnknownValue: 0xFFFF) + time.toData()
+            
+        // Decimal? as Int16 with 0x8000 as unknown:
         case .temperature(let value):
             return value.toData(ofLength: 2, withRange: -273.15...327.67, withResolution: 0.01, withUnknownValue: 0x8000)
             
-        // UInt32 as UInt24 with 0xFFFFFF as unknown:
+        // UInt32? as UInt24 with 0xFFFFFF as unknown:
         case .count24(let value),
              .timeHour24(let value),
              .timeMillisecond24(let value):
             return value.toData(ofLength: 3, withUnknownValue: 0xFFFFFF)
             
-        // Float as UInt24 with 0xFFFFFF as unknown:
+        // Decimal? as UInt24 with 0xFFFFFF as unknown:
         case .illuminance(let value):
             return value.toData(ofLength: 3, withRange: 0...167772.14, withResolution: 0.01, withUnknownValue: 0xFFFFFF)
+        case .energy(let value):
+            return value.toData(ofLength: 3, withRange: 0...16777214, withUnknownValue: 0xFFFFFF)
 
-        // Float as UInt24 with 0xFFFFFF as unknown:
+        // Decimal? as UInt24 with 0xFFFFFF as unknown:
         case .power(let value):
           return value.toData(ofLength: 3, withRange: 0...1677721.4, withResolution: 0.1, withUnknownValue: 0xFFFFFF)
 
@@ -1255,17 +1531,24 @@ internal extension DevicePropertyCharacteristic {
             let numberOfDays = UInt32(date.timeIntervalSince1970 / 86400.0) // convert to days
             return (Data() + numberOfDays).dropLast()
         
-        // Float as UInt32:
+        // Decimal as UInt32:
         case .pressure(let value):
             return value.toData(ofLength: 4, withRange: 0...Decimal(UInt32.max), withResolution: 0.1)
+            
+        // ValidDecimal? as UInt24 with 0xxFFFFFE as invalid and 0xFFFFFF as unknown:
+        case .apparentPower(let value):
+            let range = 0...Decimal(sign: .plus, exponent: -1, significand: 16777213)
+            return value.toData(ofLength: 3, withRange: range, withResolution: 0.1,
+                                withInvalidValue: 0xFFFFFE, andUnknownValue: 0xFFFFFF)
 
-        // Float as UInt32 with 0xFFFFFFFE as invalid and 0xFFFFFFFF as unknown:
-        case .energy32(let value):
-            let range = 0...Decimal(sign: .plus, exponent: -3, significand: Decimal(UInt32(4294967293)))
+        // ValidDecimal? as UInt32 with 0xFFFFFFFE as invalid and 0xFFFFFFFF as unknown:
+        case .energy32(let value),
+             .apparentEnergy32(let value):
+            let range = 0...Decimal(sign: .plus, exponent: -3, significand: 4294967293)
             return value.toData(ofLength: 4, withRange: range, withResolution: 0.001,
                                 withInvalidValue: 0xFFFFFFFE, andUnknownValue: 0xFFFFFFFF)
-
-        // UInt32 with 0xFFFFFFFF as unknown:
+            
+        // UInt32? with 0xFFFFFFFF as unknown:
         case .timeSecond32(let value):
             return value.toData(ofLength: 4, withUnknownValue: 0xFFFFFFFF)
         
@@ -1313,6 +1596,18 @@ extension DevicePropertyCharacteristic: CustomDebugStringConvertible {
         case .bool(let value):
             return value ? "True" : "False"
             
+        case .uvIndex(let index):
+            return "\(index)"
+            
+        // Event Statistics:
+        case .eventStatistics(let count,
+                              averageEventDuration: let averageEventDuration,
+                              timeElapsedSinceLastEvent: let timeElapsedSinceLastEvent,
+                              sensingDuration: let sensingDuration):
+            let countCharacteristic: DevicePropertyCharacteristic = .count16(count)
+            let averageEventDurationCharacteristic: DevicePropertyCharacteristic = .timeSecond16(averageEventDuration)
+            return "\(countCharacteristic) events, avg. event duration: \(averageEventDurationCharacteristic), time elapsed since last event: \(timeElapsedSinceLastEvent?.description ?? "unknown"), sensing duration: \(sensingDuration?.description ?? "unknown")"
+            
         // Decimal:
         case .pressure(let pressure):
             return DevicePropertyCharacteristic.formatter.string(from: pressure, withRange: 0...Decimal(UInt32.max / 10), andUnit: " Pa")
@@ -1323,7 +1618,7 @@ extension DevicePropertyCharacteristic: CustomDebugStringConvertible {
             guard let percent = percent else {
                 return DevicePropertyCharacteristic.unknown
             }
-            return DevicePropertyCharacteristic.formatter.string(from: percent, withRange: 0...100, andUnit: "%%")
+            return DevicePropertyCharacteristic.formatter.string(from: percent, withRange: 0...100, andUnit: "%")
         case .temperature8(let temp):
             guard let temp = temp else {
                 return DevicePropertyCharacteristic.unknown
@@ -1334,16 +1629,12 @@ extension DevicePropertyCharacteristic: CustomDebugStringConvertible {
                 return DevicePropertyCharacteristic.unknown
             }
             return DevicePropertyCharacteristic.formatter.string(from: current, withRange: 0...655.34, andUnit: " A")
-        case .energy32(let energy):
-            guard let energy = energy else {
+        case .averageCurrent(let current, let time):
+            guard let current = current else {
                 return DevicePropertyCharacteristic.unknown
             }
-            switch energy {
-            case .invalid:
-                return DevicePropertyCharacteristic.invalid
-            case .valid(let energy):
-                return DevicePropertyCharacteristic.formatter.string(from: energy, withRange: 0...Decimal(UInt32.max), andUnit: " kWh")
-            }
+            let characteristic = DevicePropertyCharacteristic.electricCurrent(current)
+            return "\(characteristic) over \(time?.description ?? " an unknown time")"
         case .illuminance(let millilux):
             guard let millilux = millilux else {
                 return DevicePropertyCharacteristic.unknown
@@ -1359,10 +1650,30 @@ extension DevicePropertyCharacteristic: CustomDebugStringConvertible {
                 return DevicePropertyCharacteristic.unknown
             }
             return DevicePropertyCharacteristic.formatter.string(from: temp, withRange: -273.15...327.67, andUnit: "°C")
+        case .voltage(let voltage):
+            guard let voltage = voltage else {
+                return DevicePropertyCharacteristic.unknown
+            }
+            switch voltage {
+            case 0:
+                return "0 V or lower"
+            case 1022:
+                return "1022 V or higher"
+            default:
+                return DevicePropertyCharacteristic.formatter.string(from: voltage, withRange: 0...1022, andUnit: " V")
+            }
+        case .averageVoltage(let voltage, let time):
+            guard let voltage = voltage else {
+                return DevicePropertyCharacteristic.unknown
+            }
+            let characteristic = DevicePropertyCharacteristic.voltage(voltage)
+            return "\(characteristic) over \(time?.description ?? " an unknown time")"
             
         // UInt16:
         case .perceivedLightness(let count):
             return "\(count)"
+        case .rainfall(let height):
+            return "\(height) mm"
             
         // UInt16?:
         case .count16(let count):
@@ -1413,6 +1724,11 @@ extension DevicePropertyCharacteristic: CustomDebugStringConvertible {
             formatter.allowedUnits = [.hour, .minute, .second]
             formatter.unitsStyle = .short
             return formatter.string(from: interval)!
+        case .energy(let value):
+            guard let value = value else {
+                return DevicePropertyCharacteristic.unknown
+            }
+            return "\(min(value, 0xFFFFFE))) kWh"
             
         // UInt32?:
         case .timeSecond32(let numberOfSeconds):
@@ -1424,6 +1740,29 @@ extension DevicePropertyCharacteristic: CustomDebugStringConvertible {
             formatter.allowedUnits = [.year, .month, .day, .hour, .minute, .second]
             formatter.unitsStyle = .short
             return formatter.string(from: interval)!
+        
+        // ValidDecimal?:
+        case .energy32(let value),
+             .apparentEnergy32(let value),
+             .apparentPower(let value):
+            guard let value = value else {
+                return DevicePropertyCharacteristic.unknown
+            }
+            switch value {
+            case .invalid:
+                return DevicePropertyCharacteristic.invalid
+            case .valid(let value):
+                switch self {
+                case .energy32:
+                    return DevicePropertyCharacteristic.formatter.string(from: value, withRange: 0...Decimal(UInt32.max), andUnit: " kWh")
+                case .apparentEnergy32:
+                    return DevicePropertyCharacteristic.formatter.string(from: value, withRange: 0...Decimal(UInt32.max), andUnit: " kWAh")
+                case .apparentPower:
+                    return DevicePropertyCharacteristic.formatter.string(from: value, withRange: 0...1677721.3, andUnit: " VA")
+                default:
+                    fatalError()
+                }
+            }
             
         // Date?:
         case .dateUTC(let date):
@@ -1532,6 +1871,36 @@ private extension Bool {
     /// - returns: The Data representation of Bool.
     func toData() -> Data {
         return Data([self ? 0x01 : 0x00])
+    }
+    
+}
+
+private extension Optional where Wrapped == TimeExponential {
+    
+    /// Converts the optional ``TimeExponential`` to Data.
+    func toData() -> Data {
+        switch self {
+        case .none:
+            return Data([0xFF])
+        case .deviceLifetime:
+            return Data([0xFE])
+        case .rawValue(let raw):
+            return Data([raw])
+        }
+    }
+    
+}
+
+extension TimeExponential: CustomStringConvertible {
+    
+    public var description: String {
+        guard let interval = interval else {
+            return "Total device lifetime"
+        }
+        let formatter = DateComponentsFormatter()
+        formatter.allowedUnits = [.year, .month, .day, .hour, .minute, .second]
+        formatter.unitsStyle = .short
+        return formatter.string(from: interval)!
     }
     
 }
