@@ -60,16 +60,11 @@ class DeviceProperties: XCTestCase {
     
     func testTooHighPercentage8() throws {
         let characteristic = DevicePropertyCharacteristic.percentage8(123.456)
-        // This test may fail if a non-US Locale is set.
-        XCTAssertEqual(characteristic.debugDescription, "100,0%")
         XCTAssertEqual(characteristic.data, Data([0xC8]), "\(characteristic.data.hex) != 0xC8")
     }
     
     func testTooLowPercentage8() throws {
         let characteristic = DevicePropertyCharacteristic.percentage8(-123.456)
-        // This test may fail if a non-US Locale is set.
-        // This test may fail if a non-US Locale is set.
-        XCTAssertEqual(characteristic.debugDescription, "0,0%")
         XCTAssertEqual(characteristic.data, Data([0x00]), "\(characteristic.data.hex) != 0x00")
     }
     
@@ -280,10 +275,10 @@ class DeviceProperties: XCTestCase {
 
     func testElectricCurrent() throws {
         let samples: [(Data, Decimal?, Data)] = [
-            (Data([0x00, 0x00]), Decimal(string:      "0"), Data([0x00, 0x00])), // min
-            (Data([0x01, 0x00]), Decimal(string:   "0.01"), Data([0x01, 0x00])), // basic
-            (Data([0xFF, 0x7F]), Decimal(string: "327.67"), Data([0xFF, 0x7F])), // middle
-            (Data([0xFE, 0xFF]), Decimal(string: "655.34"), Data([0xFE, 0xFF])), // max
+            (Data([0x00, 0x00]), Decimal(string:      "0"), Data([0x00, 0x00])),     // min
+            (Data([0x01, 0x00]), Decimal(string:   "0.01"), Data([0x01, 0x00])),    // basic
+            (Data([0xFF, 0x7F]), Decimal(string: "327.67"), Data([0xFF, 0x7F])),   // middle
+            (Data([0xFE, 0xFF]), Decimal(string: "655.34"), Data([0xFE, 0xFF])),  // max
             (Data([0xFF, 0xFF]), nil,                       Data([0xFF, 0xFF])), // unknown
         ]
         
@@ -311,10 +306,10 @@ class DeviceProperties: XCTestCase {
     
     func testPower() throws {
         let samples: [(Data, Decimal?, Data)] = [
-            (Data([0x00, 0x00, 0x00]), Decimal(string:         "0"), Data([0x00, 0x00, 0x00])), // min
-            (Data([0x01, 0x00, 0x00]), Decimal(string:       "0.1"), Data([0x01, 0x00, 0x00])), // basic
-            (Data([0xFF, 0xFF, 0x7F]), Decimal(string: " 838860.7"), Data([0xFF, 0xFF, 0x7F])), // middle
-            (Data([0xFE, 0xFF, 0xFF]), Decimal(string: "1677721.4"), Data([0xFE, 0xFF, 0xFF])), // max
+            (Data([0x00, 0x00, 0x00]), Decimal(string:         "0"), Data([0x00, 0x00, 0x00])),     // min
+            (Data([0x01, 0x00, 0x00]), Decimal(string:       "0.1"), Data([0x01, 0x00, 0x00])),    // basic
+            (Data([0xFF, 0xFF, 0x7F]), Decimal(string: " 838860.7"), Data([0xFF, 0xFF, 0x7F])),   // middle
+            (Data([0xFE, 0xFF, 0xFF]), Decimal(string: "1677721.4"), Data([0xFE, 0xFF, 0xFF])),  // max
             (Data([0xFF, 0xFF, 0xFF]), nil,                          Data([0xFF, 0xFF, 0xFF])), // unknown
         ]
         
@@ -344,11 +339,11 @@ class DeviceProperties: XCTestCase {
     
     func testEnergy32() throws {
         let samples: [(Data, ValidDecimal?, Data)] = [
-            (Data([0x00, 0x00, 0x00, 0x00]), .valid(Decimal(string: "          0")!), Data([0x00, 0x00, 0x00, 0x00])), // min
-            (Data([0x01, 0x00, 0x00, 0x00]), .valid(Decimal(string: "      0.001")!), Data([0x01, 0x00, 0x00, 0x00])), // basic
-            (Data([0xFE, 0xFF, 0xFF, 0x7F]), .valid(Decimal(string: "2147483.646")!), Data([0xFE, 0xFF, 0xFF, 0x7F])), // middle
-            (Data([0xFD, 0xFF, 0xFF, 0xFF]), .valid(Decimal(string: "4294967.293")!), Data([0xFD, 0xFF, 0xFF, 0xFF])), // max
-            (Data([0xFE, 0xFF, 0xFF, 0xFF]), .invalid                               , Data([0xFE, 0xFF, 0xFF, 0xFF])), // not valid
+            (Data([0x00, 0x00, 0x00, 0x00]), .valid(Decimal(string: "          0")!), Data([0x00, 0x00, 0x00, 0x00])),      // min
+            (Data([0x01, 0x00, 0x00, 0x00]), .valid(Decimal(string: "      0.001")!), Data([0x01, 0x00, 0x00, 0x00])),     // basic
+            (Data([0xFE, 0xFF, 0xFF, 0x7F]), .valid(Decimal(string: "2147483.646")!), Data([0xFE, 0xFF, 0xFF, 0x7F])),    // middle
+            (Data([0xFD, 0xFF, 0xFF, 0xFF]), .valid(Decimal(string: "4294967.293")!), Data([0xFD, 0xFF, 0xFF, 0xFF])),   // max
+            (Data([0xFE, 0xFF, 0xFF, 0xFF]), .invalid                               , Data([0xFE, 0xFF, 0xFF, 0xFF])),  // not valid
             (Data([0xFF, 0xFF, 0xFF, 0xFF]), nil                                    , Data([0xFF, 0xFF, 0xFF, 0xFF])), // unknown
         ]
         
@@ -375,11 +370,11 @@ class DeviceProperties: XCTestCase {
         
     func testVoltage() throws {
         let samples: [(Data, Decimal?, Data)] = [
-            (Data([0x00, 0x00]), Decimal(string:        "0"), Data([0x00, 0x00])), // min
-            (Data([0x01, 0x00]), Decimal(string: "0.015625"), Data([0x01, 0x00])), // basic
-            (Data([0x40, 0x00]), Decimal(string:      "1.0"), Data([0x40, 0x00])), // middle
-            (Data([0x80, 0xFF]), Decimal(string:     "1022"), Data([0x80, 0xFF])), // max
-            (Data([0xFE, 0xFF]), Decimal(string:     "1022"), Data([0x80, 0xFF])), // truncated
+            (Data([0x00, 0x00]), Decimal(string:        "0"), Data([0x00, 0x00])),      // min
+            (Data([0x01, 0x00]), Decimal(string: "0.015625"), Data([0x01, 0x00])),     // basic
+            (Data([0x40, 0x00]), Decimal(string:      "1.0"), Data([0x40, 0x00])),    // middle
+            (Data([0x80, 0xFF]), Decimal(string:     "1022"), Data([0x80, 0xFF])),   // max
+            (Data([0xFE, 0xFF]), Decimal(string:     "1022"), Data([0x80, 0xFF])),  // truncated
             (Data([0xFF, 0xFF]), nil                        , Data([0xFF, 0xFF])), // unknown
         ]
         
