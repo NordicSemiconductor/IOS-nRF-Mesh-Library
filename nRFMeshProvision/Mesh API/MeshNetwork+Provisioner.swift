@@ -32,6 +32,23 @@ import Foundation
 
 public extension MeshNetwork {
     
+    /// Returns whether the Provisioner is in the mesh network.
+    ///
+    /// - parameter provisioner: The Provisioner to look for.
+    /// - returns: `True` if the Provisioner was found, `false` otherwise.
+    func contains(provisioner: Provisioner) -> Bool {
+        return provisioners.contains(provisioner)
+    }
+    
+    /// Returns whether the Provisioner with given UUID is in the
+    /// mesh network.
+    ///
+    /// - parameter uuid: The Provisioner's UUID to look for.
+    /// - returns: `True` if the Provisioner was found, `false` otherwise.
+    func contains(provisionerWithUuid uuid: UUID) -> Bool {
+        return provisioners.contains { $0.uuid == uuid }
+    }
+    
     /// Returns the local Provisioner, or `nil` if the mesh network
     /// does not have any.
     ///
@@ -52,7 +69,7 @@ public extension MeshNetwork {
     /// - parameter provisioner: The Provisioner to be used for provisioning.
     /// - throws: An error if adding the Provisioner failed.
     func setLocalProvisioner(_ provisioner: Provisioner) throws {
-        if !hasProvisioner(provisioner) {
+        if !contains(provisioner: provisioner) {
             try add(provisioner: provisioner)
         }
         
@@ -158,7 +175,7 @@ public extension MeshNetwork {
         }
         
         // Is it already added?
-        guard !hasProvisioner(provisioner) else {
+        guard !contains(provisioner: provisioner) else {
             return
         }
         
@@ -361,7 +378,7 @@ public extension MeshNetwork {
     ///           or is already used by some other Node in the mesh network.
     func assign(unicastAddress address: Address, for provisioner: Provisioner) throws {
         // Is the Provisioner in the network?
-        guard hasProvisioner(provisioner) else {
+        guard contains(provisioner: provisioner) else {
             throw MeshNetworkError.provisionerNotInNetwork
         }
         

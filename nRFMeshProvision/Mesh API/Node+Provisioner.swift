@@ -40,7 +40,7 @@ public extension Node {
     /// Returns whether the Node belongs to one of the Provisioners
     /// of the mesh network.
     var isProvisioner: Bool {
-        return meshNetwork?.hasProvisioner(with: uuid) ?? false
+        return meshNetwork?.contains(provisionerWithUuid: uuid) ?? false
     }
     
     /// Returns whether the Node belongs to the main Provisioner.

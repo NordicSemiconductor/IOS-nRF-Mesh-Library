@@ -422,23 +422,6 @@ public class MeshNetwork: Codable {
 
 extension MeshNetwork {
     
-    /// Returns whether the Provisioner is in the mesh network.
-    ///
-    /// - parameter provisioner: The Provisioner to look for.
-    /// - returns: `True` if the Provisioner was found, `false` otherwise.
-    func hasProvisioner(_ provisioner: Provisioner) -> Bool {
-        return provisioners.contains(provisioner)
-    }
-    
-    /// Returns whether the Provisioner with given UUID is in the
-    /// mesh network.
-    ///
-    /// - parameter uuid: The Provisioner's UUID to look for.
-    /// - returns: `True` if the Provisioner was found, `false` otherwise.
-    func hasProvisioner(with uuid: UUID) -> Bool {
-        return provisioners.contains { $0.uuid == uuid }
-    }
-    
     /// Removes the Provisioner's Node from the mesh network.
     ///
     /// - parameter provisioner: Provisioner, which Node should be removed.
