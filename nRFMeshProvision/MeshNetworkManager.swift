@@ -304,8 +304,8 @@ public extension MeshNetworkManager {
             print("Error: Mesh Network not created")
             throw MeshNetworkError.noNetwork
         }
-        guard meshNetwork.node(withUuid: unprovisionedDevice.uuid) == nil &&
-              !meshNetwork.provisioners.contains(where: { $0.uuid == unprovisionedDevice.uuid }) else {
+        guard !meshNetwork.contains(nodeWithUuid: unprovisionedDevice.uuid) &&
+              !meshNetwork.contains(provisionerWithUuid: unprovisionedDevice.uuid) else {
             throw MeshNetworkError.nodeAlreadyExist
         }
         return ProvisioningManager(for: unprovisionedDevice, over: bearer, in: meshNetwork)

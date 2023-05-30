@@ -32,6 +32,23 @@ import Foundation
 
 public extension MeshNetwork {
     
+    /// Returns whether the given Node is in the mesh network.
+    ///
+    /// - parameter node: The Node to look for.
+    /// - returns: `True` if the Node was found, `false` otherwise.
+    func contains(node: Node) -> Bool {
+        return nodes.contains(node)
+    }
+    
+    /// Returns whether the Node with given UUID is in the
+    /// mesh network.
+    ///
+    /// - parameter uuid: The Node's UUID to look for.
+    /// - returns: `True` if the Node was found, `false` otherwise.
+    func contains(nodeWithUuid uuid: UUID) -> Bool {
+        return node(withUuid: uuid) != nil
+    }
+    
     /// Returns Provisioner's Node object, if such exist and the Provisioner
     /// is in the mesh network; `nil` otherwise.
     ///
@@ -43,7 +60,7 @@ public extension MeshNetwork {
     /// - parameter provisioner: The provisioner which node is to be returned.
     /// - returns: The Provisioner's node object, or `nil`.
     func node(for provisioner: Provisioner) -> Node? {
-        guard hasProvisioner(provisioner) else {
+        guard contains(provisioner: provisioner) else {
             return nil
         }
         return node(withUuid: provisioner.uuid)
