@@ -102,8 +102,9 @@ public class NetworkKey: Key, Codable {
             regenerateKeyDerivatives()
         }
     }
-    /// The old Network Key is present when the phase property has a non-zero
-    /// value, such as when a Key Refresh procedure is in progress.
+    /// The old Network Key is present when the phase property has a different
+    /// value than ``KeyRefreshPhase/normalOperation``, such as when a Key Refresh
+    /// procedure is in progress.
     public internal(set) var oldKey: Data? {
         didSet {
             if oldKey == nil {
