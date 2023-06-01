@@ -51,9 +51,17 @@ public struct ConfigNetKeyUpdate: AcknowledgedConfigMessage, ConfigNetKeyMessage
     /// The 128-bit Application Key data.
     public let key: Data
     
-    public init(networkKey: NetworkKey) {
+    /// Creates a ``ConfigNetKeyUpdate`` message.
+    ///
+    /// - parameters:
+    ///   - networkKey: The Network Key to be updated.
+    ///   - newKey: The new value of the key. The key must be 128-bit long.
+    public init(networkKey: NetworkKey, with newKey: Data) throws {
+        guard newKey.count == 16 else {
+            throw MeshNetworkError.invalidKey
+        }
         self.networkKeyIndex = networkKey.index
-        self.key = networkKey.key
+        self.key = newKey
     }
     
     public init?(parameters: Data) {

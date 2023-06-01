@@ -52,10 +52,15 @@ public struct ConfigAppKeyUpdate: AcknowledgedConfigMessage, ConfigNetAndAppKeyM
     /// The 128-bit Application Key data.
     public let key: Data
     
-    public init(applicationKey: ApplicationKey) {
+    /// Creates a ``ConfigAppKeyUpdate`` message.
+    /// 
+    /// - parameters:
+    ///   - applicationKey: The Application Key to be updated.
+    ///   - newKey: The new value of the key. The key must be 128-bit long.
+    public init(applicationKey: ApplicationKey, with newKey: Data) throws {
         self.applicationKeyIndex = applicationKey.index
         self.networkKeyIndex = applicationKey.boundNetworkKey.index
-        self.key = applicationKey.key
+        self.key = newKey
     }
     
     public init?(parameters: Data) {
