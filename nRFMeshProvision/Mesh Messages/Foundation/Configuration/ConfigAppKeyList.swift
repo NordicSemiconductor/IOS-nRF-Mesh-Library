@@ -30,6 +30,8 @@
 
 import Foundation
 
+/// A `ConfigAppKeyList` is an unacknowledged message reporting all ``ApplicationKey``s
+/// bound to requested ``NetworkKey`` that are known to the Node.
 public struct ConfigAppKeyList: ConfigStatusMessage, ConfigNetKeyMessage {
     public static let opCode: UInt32 = 0x8002
     
@@ -43,12 +45,22 @@ public struct ConfigAppKeyList: ConfigStatusMessage, ConfigNetKeyMessage {
     /// Application Key Indexes bound to the Network Key known to the Node.
     public let applicationKeyIndexes: [KeyIndex]
     
+    /// Creates a ``ConfigAppKeyList`` message.
+    ///
+    /// - parameters:
+    ///   - request: The request, for which this message is to be sent.
+    ///   - applicationKeys: The list of Application Keys.
     public init(responseTo request: ConfigAppKeyGet, with applicationKeys: [ApplicationKey]) {
         self.networkKeyIndex = request.networkKeyIndex
         self.applicationKeyIndexes = applicationKeys.map { return $0.index }
         self.status = .success
     }
     
+    /// Creates a ``ConfigAppKeyList`` message in case the request has failed.
+    ///
+    /// - parameters:
+    ///   - request: The request, for which this message is to be sent.
+    ///   - status: The response status.
     public init(responseTo request: ConfigAppKeyGet, with status: ConfigMessageStatus) {
         self.networkKeyIndex = request.networkKeyIndex
         self.applicationKeyIndexes = []

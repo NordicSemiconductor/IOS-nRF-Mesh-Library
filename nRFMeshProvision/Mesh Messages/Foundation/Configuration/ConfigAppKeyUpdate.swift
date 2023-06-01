@@ -30,6 +30,15 @@
 
 import Foundation
 
+/// A `ConfigAppKeyUpdate` is an acknowledged message used to update an ``ApplicationKey``
+/// value on the AppKey List on a Node.
+///
+/// This message initiates a Key Refresh Procedure. The message can be sent to
+/// remote nodes which are not scheduled for exclusion (see ``Node/isExcluded``).
+///
+/// To update the key on the local Node use  ``MeshNetworkManager/sendToLocalNode(_:)``.
+///
+/// To transition to the next phases of the Key Refresh Procedure use ``ConfigKeyRefreshPhaseSet``.
 public struct ConfigAppKeyUpdate: AcknowledgedConfigMessage, ConfigNetAndAppKeyMessage {
     public static let opCode: UInt32 = 0x01
     public static let responseType: StaticMeshMessage.Type = ConfigAppKeyStatus.self

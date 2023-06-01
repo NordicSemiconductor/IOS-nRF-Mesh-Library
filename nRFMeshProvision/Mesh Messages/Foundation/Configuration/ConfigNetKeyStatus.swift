@@ -30,6 +30,8 @@
 
 import Foundation
 
+/// A `ConfigNetKeyStatus` is an unacknowledged message used to report the status of
+/// the operation on the NetKey List.
 public struct ConfigNetKeyStatus: ConfigNetKeyMessage, ConfigStatusMessage {
     public static let opCode: UInt32 = 0x8044
     
@@ -40,11 +42,19 @@ public struct ConfigNetKeyStatus: ConfigNetKeyMessage, ConfigStatusMessage {
     public let networkKeyIndex: KeyIndex
     public let status: ConfigMessageStatus
     
+    /// Creates a ``ConfigNetKeyStatus`` message confirming the request.
+    ///
+    /// - parameter networkKey: The Network Key to confirm.
     public init(confirm networkKey: NetworkKey) {
         self.networkKeyIndex = networkKey.index
         self.status = .success
     }
     
+    /// Creates a ``ConfigNetKeyStatus`` message in case of a failure.
+    ///
+    /// - parameters:
+    ///   - request: The request, for which this message is to be sent.
+    ///   - status: The response status.
     public init(responseTo request: ConfigNetKeyMessage, with status: ConfigMessageStatus) {
         self.networkKeyIndex = request.networkKeyIndex
         self.status = status

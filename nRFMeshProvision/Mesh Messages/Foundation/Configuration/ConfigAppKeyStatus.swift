@@ -30,6 +30,10 @@
 
 import Foundation
 
+/// A `ConfigAppKeyStatus` is an unacknowledged message used to report a status for
+/// the requesting message, based on the ``NetworkKey/index`` identifying the
+/// ``NetworkKey`` on the NetKey List and on the ``ApplicationKey/index`` identifying
+/// the ``ApplicationKey`` on the AppKey List.
 public struct ConfigAppKeyStatus: ConfigNetAndAppKeyMessage, ConfigStatusMessage {
     public static let opCode: UInt32 = 0x8003  
     
@@ -41,12 +45,20 @@ public struct ConfigAppKeyStatus: ConfigNetAndAppKeyMessage, ConfigStatusMessage
     public let applicationKeyIndex: KeyIndex
     public let status: ConfigMessageStatus
     
+    /// Creates a ``ConfigAppKeyStatus`` message confirming the request.
+    ///
+    /// - parameter applicationKey: The Application Key to confirm.
     public init(confirm applicationKey: ApplicationKey) {
         self.applicationKeyIndex = applicationKey.index
         self.networkKeyIndex = applicationKey.boundNetworkKey.index
         self.status = .success
     }
     
+    /// Creates a ``ConfigAppKeyStatus`` message in case of a failure.
+    ///
+    /// - parameters:
+    ///   - request: The request, for which this message is to be sent.
+    ///   - status: The response status.
     public init(responseTo request: ConfigNetAndAppKeyMessage, with status: ConfigMessageStatus) {
         self.applicationKeyIndex = request.applicationKeyIndex
         self.networkKeyIndex = request.networkKeyIndex
