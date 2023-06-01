@@ -81,7 +81,7 @@ class ScannerTableViewController: UITableViewController {
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "identify" {
             let destination = segue.destination as! ProvisioningViewController
-            destination.unprovisionedDevice = self.selectedDevice
+            destination.unprovisionedDevice = selectedDevice
             destination.bearer = sender as? ProvisioningBearer
             destination.delegate = delegate
             selectedDevice = nil
@@ -107,24 +107,14 @@ class ScannerTableViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
+        stopScanning()
         
-        let bearer = PBGattBearer(target: discoveredPeripherals[indexPath.row].peripheral)
+        let selectedPeripheral = discoveredPeripherals[indexPath.row]
+        selectedDevice = selectedPeripheral.device
+        
+        let bearer = PBGattBearer(target: selectedPeripheral.peripheral)
         bearer.logger = MeshNetworkManager.instance.logger
-        bearer.delegate = self
-        
-        stopScanning()        
-        selectedDevice = discoveredPeripherals[indexPath.row].device
-        
-        alert = UIAlertController(title: "Status", message: "Connecting...", preferredStyle: .alert)
-        alert!.addAction(UIAlertAction(title: "Cancel", style: .cancel) { [weak self] action in
-            action.isEnabled = false
-            self?.alert?.title   = "Aborting"
-            self?.alert?.message = "Cancelling connection..."
-            bearer.close()
-        })
-        present(alert!, animated: true) {
-            bearer.open()
-        }
+        open(bearer: bearer)
     }
 
 }
@@ -173,6 +163,21 @@ extension ScannerTableViewController: CBCentralManagerDelegate {
 }
 
 extension ScannerTableViewController: GattBearerDelegate {
+    
+    private func open(bearer: PBGattBearer) {
+        bearer.delegate = self
+        
+        alert = UIAlertController(title: "Status", message: "Connecting...", preferredStyle: .alert)
+        alert!.addAction(UIAlertAction(title: "Cancel", style: .cancel) { [weak self] action in
+            action.isEnabled = false
+            self?.alert?.title   = "Aborting"
+            self?.alert?.message = "Cancelling connection..."
+            bearer.close()
+        })
+        present(alert!, animated: true) {
+            bearer.open()
+        }
+    }
     
     func bearerDidConnect(_ bearer: Bearer) {
         DispatchQueue.main.async {
