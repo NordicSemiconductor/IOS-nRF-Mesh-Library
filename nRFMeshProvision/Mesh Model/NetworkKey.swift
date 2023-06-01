@@ -142,6 +142,9 @@ public class NetworkKey: Key, Codable {
     }
     
     internal init(name: String, index: KeyIndex, key: Data) throws {
+        guard key.count == 16 else {
+            throw MeshNetworkError.invalidKey
+        }
         guard index.isValidKeyIndex else {
             throw MeshNetworkError.keyIndexOutOfRange
         }

@@ -81,6 +81,9 @@ public class ApplicationKey: Key, Codable {
     internal var oldAid: UInt8?
     
     internal init(name: String, index: KeyIndex, key: Data, boundTo networkKey: NetworkKey) throws {
+        guard key.count == 16 else {
+            throw MeshNetworkError.invalidKey
+        }
         guard index.isValidKeyIndex else {
             throw MeshNetworkError.keyIndexOutOfRange
         }

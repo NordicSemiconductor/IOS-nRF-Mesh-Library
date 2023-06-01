@@ -72,13 +72,10 @@ public extension MeshNetwork {
     ///           or the assigned Key Index is out of range.
     @discardableResult
     func add(applicationKey: Data, withIndex index: KeyIndex? = nil, name: String) throws -> ApplicationKey {
-        guard applicationKey.count == 16 else {
-            throw MeshNetworkError.invalidKey
-        }
         guard let defaultNetworkKey = networkKeys.first else {
             throw MeshNetworkError.noNetworkKey
         }
-        guard let nextIndex = index ?? nextAvailableApplicationKeyIndex, nextIndex.isValidKeyIndex else {
+        guard let nextIndex = index ?? nextAvailableApplicationKeyIndex else {
             throw MeshNetworkError.keyIndexOutOfRange
         }
         let key = try ApplicationKey(name: name, index: nextIndex,
@@ -146,10 +143,7 @@ public extension MeshNetwork {
     /// - seeAlso: ``MeshNetwork/nextAvailableNetworkKeyIndex``
     @discardableResult
     func add(networkKey: Data, withIndex index: KeyIndex? = nil, name: String) throws -> NetworkKey {
-        guard networkKey.count == 16 else {
-            throw MeshNetworkError.invalidKey
-        }
-        guard let nextIndex = index ?? nextAvailableNetworkKeyIndex, nextIndex.isValidKeyIndex else {
+        guard let nextIndex = index ?? nextAvailableNetworkKeyIndex else {
             throw MeshNetworkError.keyIndexOutOfRange
         }
         let key = try NetworkKey(name: name, index: nextIndex, key: networkKey)
