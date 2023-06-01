@@ -32,21 +32,23 @@ import Foundation
 import CoreBluetooth
 import nRFMeshProvision
 
-/// The Network Connection object maintains connections to Bluetooth
+/// The `NetworkConnection` object maintains connections to Bluetooth
 /// mesh proxies. It scans in the background and connects to nodes that
 /// advertise with Network ID or Node Identity beacon.
 ///
 /// The maximum number of simultaneous connections is defined by
-/// `maxConnections`. By connecting to more than one device, this
+/// ``NetworkConnection/maxConnections``. By connecting to more than one device, this
 /// object allows quick switching to another proxy in case link
 /// to one of the devices is lost. Only the first device will
-/// receive outgoing messages. However, the `dataDelegate` will be
+/// receive outgoing messages. However, the ``NetworkConnection/dataDelegate`` will be
 /// notified about messages received from any of the connected proxies.
 class NetworkConnection: NSObject, Bearer {
     private let connectionModeKey = "connectionMode"
     
-    /// Maximum number of connections that `NetworkConnection` can
-    /// handle.
+    /// Maximum number of connections that ``NetworkConnection`` can handle.
+    ///
+    /// - note: In nRF Mesh app this value is set to 1 due to UI limitations.
+    ///         When applying in 3rd party app, higher values should work.
     static let maxConnections = 1
     /// The Bluetooth Central Manager instance that will scan and
     /// connect to proxies.
@@ -81,9 +83,9 @@ class NetworkConnection: NSObject, Bearer {
     var isConnected: Bool {
         return proxies.contains { $0.isOpen }
     }
-    /// Returns the name of the connected Proxy.
+    /// Returns the name of the first connected Proxy.
     var name: String? {
-        return proxies.first(where: { $0.isOpen })?.name
+        return proxies.first { $0.isOpen }?.name
     }
     /// Whether the connection to mesh network should be managed automatically,
     /// or manually.
@@ -93,7 +95,8 @@ class NetworkConnection: NSObject, Bearer {
         }
         set {
             UserDefaults.standard.set(newValue, forKey: connectionModeKey)
-            if newValue && isStarted && centralManager.state == .poweredOn {
+            if newValue && isStarted && centralManager.state == .poweredOn &&
+               proxies.count < NetworkConnection.maxConnections {
                 centralManager.scanForPeripherals(withServices: [MeshProxyService.uuid], options: nil)
             }
         }
@@ -110,8 +113,7 @@ class NetworkConnection: NSObject, Bearer {
     }
     
     func open() {
-        if !isStarted && isConnectionModeAutomatic &&
-           centralManager.state == .poweredOn {
+        if !isStarted && isConnectionModeAutomatic && centralManager.state == .poweredOn {
             centralManager.scanForPeripherals(withServices: [MeshProxyService.uuid], options: nil)
         }
         isStarted = true
@@ -124,40 +126,57 @@ class NetworkConnection: NSObject, Bearer {
         isStarted = false
     }
     
-    func disconnectCurrent() {
-        proxies.first?.close()
+    func disconnect() {
+        proxies.forEach { $0.close() }
     }
     
     func send(_ data: Data, ofType type: PduType) throws {
-        guard supports(type) else {
-            throw BearerError.pduTypeNotSupported
+        // Send the message to all open GATT Proxy nodes.
+        var success = false
+        var e: Error = BearerError.bearerClosed
+        proxies.filter { $0.isOpen }.forEach {
+            do {
+                try $0.send(data, ofType: type)
+                success = true
+            } catch {
+                e = error
+            }
         }
-        // Find the first connected proxy. This may be modified to find
-        // the closes one, or, if needed, the message can be sent to all
-        // connected nodes.
-        guard let proxy = proxies.first(where: { $0.isOpen }) else {
-            throw BearerError.bearerClosed
+        if !success {
+            throw e
         }
-        try proxy.send(data, ofType: type)
     }
     
-    /// If manual connection mode is enabled, this method may set the
-    /// proxy that will be used by the mesh network.
+    /// Switches connection to the given GATT Bearer.
+    ///
+    /// If the limit of ``NetworkConnection/maxConnections`` connections is reached,
+    /// the olders one will be closed.
     ///
     /// - parameter bearer: The GATT Bearer proxy to use.
     func use(proxy bearer: GattBearer) {
-        guard !isConnectionModeAutomatic else {
+        // Make sure we're not adding a duplicate.
+        guard !proxies.contains(where: { $0.identifier == bearer.identifier }) else {
             return
         }
-        
+        // If we reached the limit, disconnect the one added as a first.
+        if proxies.count >= NetworkConnection.maxConnections {
+            proxies.last?.close()
+        }
+        // Add new proxy.
         bearer.delegate = self
         bearer.dataDelegate = self
         bearer.logger = logger
-        
-        proxies.filter { bearer.identifier != $0.identifier }.forEach { $0.close() }
         proxies.append(bearer)
+        
+        // Open the bearer or notify a delegate that the connection is open.
         if bearer.isOpen {
             bearerDidOpen(self)
+        } else {
+            bearer.open()
+        }
+        // Is the limit reached?
+        if proxies.count >= NetworkConnection.maxConnections {
+            centralManager.stopScan()
         }
     }
     
@@ -196,29 +215,15 @@ extension NetworkConnection: CBCentralManagerDelegate {
                 return
             }
         }
-        
-        guard !proxies.contains(where: { $0.identifier == peripheral.identifier }) else {
-            return
-        }
-        let bearer = GattBearer(target: peripheral)
-        proxies.append(bearer)
-        bearer.delegate = self
-        bearer.dataDelegate = self
-        bearer.logger = logger
-        // Is the limit reached?
-        if proxies.count >= NetworkConnection.maxConnections {
-            central.stopScan()
-        }
-        bearer.open()
+        // Add a new bearer.
+        use(proxy: GattBearer(target: peripheral))
     }
 }
 
 extension NetworkConnection: GattBearerDelegate, BearerDataDelegate {
     
     func bearerDidOpen(_ bearer: Bearer) {
-        guard !isOpen else {
-            return
-        }
+        guard !isOpen else { return }
         isOpen = true
         delegate?.bearerDidOpen(self)
     }

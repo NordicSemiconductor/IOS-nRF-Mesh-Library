@@ -36,6 +36,6 @@ class DisconnectCell: UITableViewCell {
     @IBOutlet weak var disconnectButton: UIButton!
     
     @IBAction func disconnectDidTapped(_ sender: UIButton) {
-        MeshNetworkManager.bearer.disconnectCurrent()
+        MeshNetworkManager.bearer.disconnect()
     }
 }

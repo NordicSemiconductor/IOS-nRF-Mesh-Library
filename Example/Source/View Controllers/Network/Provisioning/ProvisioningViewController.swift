@@ -332,20 +332,52 @@ extension ProvisioningViewController: GattBearerDelegate {
             }
             return
         }
-        dismissStatusDialog {
-            self.presentAlert(title: "Success", message: "Provisioning complete.") { [weak self] _ in
-                guard let self = self else { return }
-                if MeshNetworkManager.instance.save() {
+        dismissStatusDialog { [weak self] in
+            guard let self = self else { return }
+            let manager = MeshNetworkManager.instance
+            if manager.save() {
+                let connection = MeshNetworkManager.bearer!
+                func done(reconnect: Bool) {
+                    if reconnect, let pbGattBearer = self.bearer as? PBGattBearer {
+                        connection.disconnect()
+                        // The bearer has closed. Attempt to send a message
+                        // will fail, but the Proxy Filter will receive .bearerClosed
+                        // error, upon which it will clear the filter list and notify
+                        // the delegate.
+                        manager.proxyFilter.proxyDidDisconnect()
+                        manager.proxyFilter.clear()
+                        
+                        let gattBearer = GattBearer(targetWithIdentifier: pbGattBearer.identifier)
+                        connection.use(proxy: gattBearer)
+                    }
                     self.dismiss(animated: true) { [weak self] in
-                        guard let self = self else { return }
-                        let network = MeshNetworkManager.instance.meshNetwork!
+                        guard let self = self,
+                              let network = manager.meshNetwork else {
+                            return
+                        }
                         if let node = network.node(for: self.unprovisionedDevice) {
                             self.delegate?.provisionerDidProvisionNewDevice(node)
                         }
                     }
-                } else {
-                    self.presentAlert(title: "Error", message: "Mesh configuration could not be saved.")
                 }
+                let reconnectAction = UIAlertAction(title: "Yes", style: .default) { _ in
+                    done(reconnect: true)
+                }
+                let continueAction = UIAlertAction(title: "No", style: .cancel) { _ in
+                    done(reconnect: false)
+                }
+                if connection.isConnected {
+                    self.presentAlert(title: "Success",
+                                      message: "Provisioning complete.\n\nDo you want to connect to the new Node over GATT bearer?",
+                                      options: [reconnectAction, continueAction])
+                } else {
+                    self.presentAlert(title: "Success",
+                                      message: "Provisioning complete.") { _ in
+                        done(reconnect: true)
+                    }
+                }
+            } else {
+                self.presentAlert(title: "Error", message: "Mesh configuration could not be saved.")
             }
         }
     }
