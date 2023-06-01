@@ -30,6 +30,16 @@
 
 import Foundation
 
+/// A `ConfigAppKeyDelete` is an acknowledged message used to delete an ``ApplicationKey``
+/// from the AppKey List on a Node.
+///
+/// To remove the key from the local Node you may use ``MeshNetwork/remove(applicationKey:force:)``.
+///
+/// - warning: It is not guaranteed, that the target Node will remove the key from its
+///            AppKey List. To make sure the Node gets excluded, use ``ConfigAppKeyUpdate``
+///            to update the value of the key and skip the Node when distributing the new
+///            value. After the Key Refresh Procedure is complete, the target Node will
+///            effectively be excluded from the mesh network.
 public struct ConfigAppKeyDelete: AcknowledgedConfigMessage, ConfigNetAndAppKeyMessage {
     public static let opCode: UInt32 = 0x8000
     public static let responseType: StaticMeshMessage.Type = ConfigAppKeyStatus.self
@@ -41,6 +51,9 @@ public struct ConfigAppKeyDelete: AcknowledgedConfigMessage, ConfigNetAndAppKeyM
     public let networkKeyIndex: KeyIndex
     public let applicationKeyIndex: KeyIndex
     
+    /// Creates a ``ConfigAppKeyDelete`` message.
+    ///
+    /// - Parameter applicationKey: The Application Key to be removed.
     public init(applicationKey: ApplicationKey) {
         self.applicationKeyIndex = applicationKey.index
         self.networkKeyIndex = applicationKey.boundNetworkKey.index

@@ -30,6 +30,11 @@
 
 import Foundation
 
+/// A `ConfigNetKeyAdd` is an acknowledged message used to add an ``NetworkKey``
+/// to the NetKey List on a Node.
+///
+/// The Network Key is used to authenticate and decrypt messages it receives,
+/// as well as authenticate and encrypt messages it sends.
 public struct ConfigNetKeyAdd: AcknowledgedConfigMessage, ConfigNetKeyMessage {
     public static let opCode: UInt32 = 0x8040
     public static let responseType: StaticMeshMessage.Type = ConfigNetKeyStatus.self
@@ -42,6 +47,11 @@ public struct ConfigNetKeyAdd: AcknowledgedConfigMessage, ConfigNetKeyMessage {
     /// The 128-bit Application Key data.
     public let key: Data
     
+    /// Creates a ``ConfigNetKeyAdd`` message.
+    ///
+    /// Use ``MeshNetwork/add(networkKey:withIndex:name:)`` to create a new ``NetworkKey``.
+    ///
+    /// - parameter networkKey: The new Network Key.
     public init(networkKey: NetworkKey) {
         self.networkKeyIndex = networkKey.index
         self.key = networkKey.key

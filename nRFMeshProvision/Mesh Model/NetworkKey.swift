@@ -102,8 +102,9 @@ public class NetworkKey: Key, Codable {
             regenerateKeyDerivatives()
         }
     }
-    /// The old Network Key is present when the phase property has a non-zero
-    /// value, such as when a Key Refresh procedure is in progress.
+    /// The old Network Key is present when the phase property has a different
+    /// value than ``KeyRefreshPhase/normalOperation``, such as when a Key Refresh
+    /// procedure is in progress.
     public internal(set) var oldKey: Data? {
         didSet {
             if oldKey == nil {
@@ -141,6 +142,9 @@ public class NetworkKey: Key, Codable {
     }
     
     internal init(name: String, index: KeyIndex, key: Data) throws {
+        guard key.count == 16 else {
+            throw MeshNetworkError.invalidKey
+        }
         guard index.isValidKeyIndex else {
             throw MeshNetworkError.keyIndexOutOfRange
         }

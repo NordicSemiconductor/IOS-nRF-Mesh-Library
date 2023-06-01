@@ -30,6 +30,15 @@
 
 import Foundation
 
+/// A `ConfigNetKeyUpdate` is an acknowledged message used to update a ``NetworkKey`` on
+/// a Node.
+///
+/// This message initiates a Key Refresh Procedure. The message can be sent to
+/// remote nodes which are not scheduled for exclusion (see ``Node/isExcluded``).
+///
+/// To update the key on the local Node use  ``MeshNetworkManager/sendToLocalNode(_:)``.
+///
+/// To transition to the next phases of the Key Refresh Procedure use ``ConfigKeyRefreshPhaseSet``.
 public struct ConfigNetKeyUpdate: AcknowledgedConfigMessage, ConfigNetKeyMessage {
     public static let opCode: UInt32 = 0x8045
     public static let responseType: StaticMeshMessage.Type = ConfigNetKeyStatus.self
@@ -42,9 +51,17 @@ public struct ConfigNetKeyUpdate: AcknowledgedConfigMessage, ConfigNetKeyMessage
     /// The 128-bit Application Key data.
     public let key: Data
     
-    public init(networkKey: NetworkKey) {
+    /// Creates a ``ConfigNetKeyUpdate`` message.
+    ///
+    /// - parameters:
+    ///   - networkKey: The Network Key to be updated.
+    ///   - newKey: The new value of the key. The key must be 128-bit long.
+    public init(networkKey: NetworkKey, with newKey: Data) throws {
+        guard newKey.count == 16 else {
+            throw MeshNetworkError.invalidKey
+        }
         self.networkKeyIndex = networkKey.index
-        self.key = networkKey.key
+        self.key = newKey
     }
     
     public init?(parameters: Data) {

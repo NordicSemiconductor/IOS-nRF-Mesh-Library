@@ -30,6 +30,15 @@
 
 import Foundation
 
+/// A `ConfigAppKeyAdd` is an acknowledged message used to add an ``ApplicationKey``
+/// to the AppKey List on a Node and bind it to the ``NetworkKey`` identified by
+/// ``NetworkKey/index``.
+///
+/// The added Application Key can be used by the Node only as a pair with the specified
+/// Network Key.
+///
+/// The Application Key is used to authenticate and decrypt messages it receives,
+/// as well as authenticate and encrypt messages it sends.
 public struct ConfigAppKeyAdd: AcknowledgedConfigMessage, ConfigNetAndAppKeyMessage {
     public static let opCode: UInt32 = 0x00
     public static let responseType: StaticMeshMessage.Type = ConfigAppKeyStatus.self
@@ -43,6 +52,13 @@ public struct ConfigAppKeyAdd: AcknowledgedConfigMessage, ConfigNetAndAppKeyMess
     /// The 128-bit Application Key data.
     public let key: Data
     
+    /// Creates a ``ConfigAppKeyAdd`` message.
+    ///
+    /// Use ``MeshNetwork/add(applicationKey:withIndex:name:)`` to create a new
+    /// ``ApplicationKey`` and bind it to selected ``NetworkKey`` using
+    /// ``ApplicationKey/bind(to:)``.
+    ///
+    /// - parameter applicationKey: The Application Key to be added.
     public init(applicationKey: ApplicationKey) {
         self.applicationKeyIndex = applicationKey.index
         self.networkKeyIndex = applicationKey.boundNetworkKey.index

@@ -30,6 +30,10 @@
 
 import Foundation
 
+/// A `ConfigNetKeyGet` is an acknowledged message used to report all ``NetworkKey``s
+/// known to the Node.
+///
+/// The response to this message is a ``ConfigNetKeyList`` message.
 public struct ConfigNetKeyGet: AcknowledgedConfigMessage {
     public static let opCode: UInt32 = 0x8042
     public static let responseType: StaticMeshMessage.Type = ConfigNetKeyList.self
@@ -38,6 +42,7 @@ public struct ConfigNetKeyGet: AcknowledgedConfigMessage {
         return nil
     }
     
+    /// Creates a ``ConfigNetKeyGet`` message.
     public init() {
         // Empty
     }

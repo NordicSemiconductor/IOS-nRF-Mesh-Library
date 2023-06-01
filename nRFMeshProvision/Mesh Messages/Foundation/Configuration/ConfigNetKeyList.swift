@@ -30,6 +30,8 @@
 
 import Foundation
 
+/// A `ConfigNetKeyList` is an unacknowledged message reporting all ``NetworkKey``s
+/// known to the Node.
 public struct ConfigNetKeyList: ConfigMessage {
     public static let opCode: UInt32 = 0x8043
     
@@ -40,6 +42,10 @@ public struct ConfigNetKeyList: ConfigMessage {
     /// Network Key Indexes known to the Node.
     public let networkKeyIndexes: [KeyIndex]
     
+    /// Creates a ``ConfigNetKeyList`` message.
+    ///
+    /// - parameter networkKeys: The list of Network Keys bound to the requested
+    ///                          ``ApplicationKey`` that are known to the Node.
     public init(networkKeys: [NetworkKey]) {
         self.networkKeyIndexes = networkKeys.map { return $0.index }
     }

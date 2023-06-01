@@ -30,6 +30,10 @@
 
 import Foundation
 
+/// A `ConfigAppKeyGet` is an acknowledged message used to report all ``ApplicationKey``s
+/// known to the Node that are bound to the given ``NetworkKey``.
+///
+/// The response to this message is a ``ConfigNetKeyList`` message.
 public struct ConfigAppKeyGet: AcknowledgedConfigMessage, ConfigNetKeyMessage {
     public static let opCode: UInt32 = 0x8001
     public static let responseType: StaticMeshMessage.Type = ConfigAppKeyList.self
@@ -40,6 +44,9 @@ public struct ConfigAppKeyGet: AcknowledgedConfigMessage, ConfigNetKeyMessage {
     
     public let networkKeyIndex: KeyIndex
     
+    /// Creates a ``ConfigAppKeyGet`` message.
+    ///
+    /// - parameter networkKey: The Network Key for which Application Keys are requested.
     public init(networkKey: NetworkKey) {
         self.networkKeyIndex = networkKey.index
     }
