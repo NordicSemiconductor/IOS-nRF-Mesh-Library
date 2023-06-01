@@ -98,6 +98,22 @@ extension UIViewController {
     }
     
     /// Displays an alert dialog with given title and message.
+    ///
+    /// - parameters:
+    ///   - title:      The alert title.
+    ///   - message:    The message below the title.
+    ///   - actions:    Alert actions.
+    func presentAlert(title: String?, message: String?,
+                      options actions: [UIAlertAction]) {
+        DispatchQueue.main.async { [weak self] in
+            guard let self = self else { return }
+            let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+            actions.forEach { alert.addAction($0) }
+            self.present(alert, animated: true)
+        }
+    }
+    
+    /// Displays an alert dialog with given title and message.
     /// The alert dialog will contain two Text Fields allowing to
     /// specify a Range.
     ///
