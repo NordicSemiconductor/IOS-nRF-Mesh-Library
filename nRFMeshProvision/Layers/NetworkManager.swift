@@ -31,7 +31,7 @@
 import Foundation
 
 internal class NetworkManager {
-    let manager: MeshNetworkManager
+    weak var manager: MeshNetworkManager!
     
     // MARK: - Layers
     
