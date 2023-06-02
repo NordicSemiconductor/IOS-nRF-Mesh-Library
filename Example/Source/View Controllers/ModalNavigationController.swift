@@ -30,7 +30,7 @@
 
 import UIKit
 
-protocol ModalNavigationControllerDelegate: NSObject {
+protocol ModalNavigationControllerDelegate: AnyObject {
     /// This method is called when the modal view controller is about to be dismissed.
     func modalWillDismiss()
 }
