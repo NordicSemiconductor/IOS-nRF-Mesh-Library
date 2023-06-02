@@ -31,6 +31,8 @@
 import nRFMeshProvision
 
 enum Task {
+    case getCompositionData(page: UInt8)
+    case getDefaultTtl
     case readRelayStatus
     case readNetworkTransitStatus
     case readBeaconStatus
@@ -48,6 +50,10 @@ enum Task {
     
     var title: String {
         switch self {
+        case .getCompositionData(page: let page):
+            return "Get Composition Page \(page)"
+        case .getDefaultTtl:
+            return "Read default TTL"
         case .readRelayStatus:
             return "Read Relay Status"
         case .readNetworkTransitStatus:
@@ -79,6 +85,10 @@ enum Task {
     
     var message: AcknowledgedConfigMessage {
         switch self {
+        case .getCompositionData(page: let page):
+            return ConfigCompositionDataGet(page: page)
+        case .getDefaultTtl:
+            return ConfigDefaultTtlGet()
         case .readRelayStatus:
             return ConfigRelayGet()
         case .readNetworkTransitStatus:
