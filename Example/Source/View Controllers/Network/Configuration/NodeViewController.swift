@@ -112,7 +112,8 @@ class NodeViewController: ProgressViewController {
             destination.node = node
         }
         if segue.identifier == "configure" {
-            let navigationController = segue.destination as! UINavigationController
+            let navigationController = segue.destination as! ModalNavigationController
+            navigationController.modalDelegate = self
             let destination = navigationController.topViewController as! IntroViewController
             destination.node = node
         }
@@ -541,6 +542,14 @@ extension NodeViewController: MeshNetworkDelegate {
             self.presentAlert(title: "Error", message: error.localizedDescription)
             self.refreshControl?.endRefreshing()
         }
+    }
+    
+}
+
+extension NodeViewController: ModalNavigationControllerDelegate {
+    
+    func modalWillDismiss() {
+        tableView.reloadData()
     }
     
 }

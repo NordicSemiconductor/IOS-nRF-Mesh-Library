@@ -101,10 +101,10 @@
             </objects>
             <point key="canvasLocation" x="3036" y="-6546"/>
         </scene>
-        <!--Navigation Controller-->
+        <!--Modal Navigation Controller-->
         <scene sceneID="FWj-7H-vQv">
             <objects>
-                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="qIn-YT-MK7" sceneMemberID="viewController">
+                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="qIn-YT-MK7" customClass="ModalNavigationController" customModule="nRF_Mesh" customModuleProvider="target" sceneMemberID="viewController">
                     <navigationBar key="navigationBar" contentMode="scaleToFill" largeTitles="YES" id="SrW-aj-b9L">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="108"/>
                         <autoresizingMask key="autoresizingMask"/>
