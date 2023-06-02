@@ -33,9 +33,14 @@ import nRFMeshProvision
 enum Task {
     case getCompositionData(page: UInt8)
     case getDefaultTtl
+    case setDefaultTtl(_ ttl: UInt8)
     case readRelayStatus
+    case setRelaySettings(_ relayRetransmit: Node.RelayRetransmit)
+    case disableRelayFeature
     case readNetworkTransitStatus
+    case setNetworkTransit(_ networkTransmit: Node.NetworkTransmit)
     case readBeaconStatus
+    case setBeacon(_ enabled: Bool)
     case readGATTProxyStatus
     case readFriendStatus
     case readNodeIdentityStatus(_ networkKey: NetworkKey)
@@ -54,12 +59,22 @@ enum Task {
             return "Get Composition Page \(page)"
         case .getDefaultTtl:
             return "Read default TTL"
+        case .setDefaultTtl(let ttl):
+            return "Set Default TTL to \(ttl)"
         case .readRelayStatus:
             return "Read Relay Status"
+        case .setRelaySettings(let relayRetransmit):
+            return "Set Relay to \(relayRetransmit)"
+        case .disableRelayFeature:
+            return "Disabling Relay Retransmition"
         case .readNetworkTransitStatus:
             return "Read Network Transit Status"
+        case .setNetworkTransit(let networkTransmit):
+            return "Set Network Transmit to \(networkTransmit)"
         case .readBeaconStatus:
             return "Read Beacon Status"
+        case .setBeacon(let enable):
+            return "\(enable ? "Enable" : "Disable") Secure Network Beacons"
         case .readGATTProxyStatus:
             return "Read GATT Proxy Status"
         case .readFriendStatus:
@@ -89,12 +104,22 @@ enum Task {
             return ConfigCompositionDataGet(page: page)
         case .getDefaultTtl:
             return ConfigDefaultTtlGet()
+        case .setDefaultTtl(let ttl):
+            return ConfigDefaultTtlSet(ttl: ttl)
         case .readRelayStatus:
             return ConfigRelayGet()
+        case .setRelaySettings(let relayRetransmit):
+            return ConfigRelaySet(relayRetransmit)
+        case .disableRelayFeature:
+            return ConfigRelaySet()
         case .readNetworkTransitStatus:
             return ConfigNetworkTransmitGet()
+        case .setNetworkTransit(let networkTransmit):
+            return ConfigNetworkTransmitSet(networkTransmit)
         case .readBeaconStatus:
             return ConfigBeaconGet()
+        case .setBeacon(let enable):
+            return ConfigBeaconSet(enable: enable)
         case .readGATTProxyStatus:
             return ConfigGATTProxyGet()
         case .readFriendStatus:
