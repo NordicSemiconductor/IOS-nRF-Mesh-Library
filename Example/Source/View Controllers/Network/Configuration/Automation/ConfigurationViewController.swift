@@ -59,6 +59,43 @@ class ConfigurationViewController: UIViewController,
     
     // MARK: - Public properties
     
+    func configure(node: Node, basedOn originalNode: Node) {
+        self.node = node
+        
+        if let ttl = originalNode.defaultTTL {
+            tasks.append(.setDefaultTtl(ttl))
+        }
+        if let secureNetworkBeacon = originalNode.secureNetworkBeacon {
+            tasks.append(.setBeacon(secureNetworkBeacon))
+        }
+        if let networkTransmit = originalNode.networkTransmit {
+            tasks.append(.setNetworkTransit(networkTransmit))
+        }
+        switch originalNode.features?.relay {
+        case .enabled:
+            if let relayRetransmit = originalNode.relayRetransmit {
+                tasks.append(.setRelaySettings(relayRetransmit))
+            }
+        case .notEnabled:
+            tasks.append(.disableRelayFeature)
+        default:
+            break
+        }
+        originalNode.networkKeys.forEach { networkKey in
+            if !node.knows(networkKey: networkKey) {
+                tasks.append(.sendNetworkKey(networkKey))
+            }
+        }
+        originalNode.applicationKeys.forEach { applicationKey in
+            if !node.knows(applicationKey: applicationKey) {
+                tasks.append(.sendApplicationKey(applicationKey))
+            }
+        }
+        // State of Node Identity for Network Keys is dynamic and unknown.
+        // It is not saved in the Configuration Database.
+        // TODO: More
+    }
+    
     func bind(applicationKeys: [ApplicationKey], to models: [Model]) {
         guard let node = models.first?.parentElement?.parentNode else {
             return

@@ -67,6 +67,7 @@ class ProvisioningViewController: UITableViewController {
     weak var delegate: ProvisioningViewDelegate?
     var unprovisionedDevice: UnprovisionedDevice!
     var bearer: ProvisioningBearer!
+    var previousNode: Node?
     
     private var publicKey: PublicKey?
     private var authenticationMethod: AuthenticationMethod?
@@ -356,7 +357,7 @@ extension ProvisioningViewController: GattBearerDelegate {
                             return
                         }
                         if let node = network.node(for: self.unprovisionedDevice) {
-                            self.delegate?.provisionerDidProvisionNewDevice(node)
+                            self.delegate?.provisionerDidProvisionNewDevice(node, whichReplaced: previousNode)
                         }
                     }
                 }

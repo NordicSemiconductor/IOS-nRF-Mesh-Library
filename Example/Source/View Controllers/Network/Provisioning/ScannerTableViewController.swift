@@ -56,6 +56,7 @@ class ScannerTableViewController: UITableViewController {
 
     private var alert: UIAlertController?
     private var selectedDevice: UnprovisionedDevice?
+    private var previousNode: Node?
     
     // MARK: - UIViewController
     
@@ -83,8 +84,10 @@ class ScannerTableViewController: UITableViewController {
             let destination = segue.destination as! ProvisioningViewController
             destination.unprovisionedDevice = selectedDevice
             destination.bearer = sender as? ProvisioningBearer
+            destination.previousNode = previousNode
             destination.delegate = delegate
             selectedDevice = nil
+            previousNode = nil
         }
     }
     
@@ -110,11 +113,35 @@ class ScannerTableViewController: UITableViewController {
         stopScanning()
         
         let selectedPeripheral = discoveredPeripherals[indexPath.row]
-        selectedDevice = selectedPeripheral.device
+        let unprovisionedDevice = selectedPeripheral.device
+        selectedDevice = unprovisionedDevice
         
-        let bearer = PBGattBearer(target: selectedPeripheral.peripheral)
-        bearer.logger = MeshNetworkManager.instance.logger
-        open(bearer: bearer)
+        func start() {
+            let bearer = PBGattBearer(target: selectedPeripheral.peripheral)
+            bearer.logger = MeshNetworkManager.instance.logger
+            open(bearer: bearer)
+        }
+        
+        // Check if there is no conflicting Node already in the network.
+        let network = MeshNetworkManager.instance.meshNetwork!
+        if let oldNode = network.node(withUuid: unprovisionedDevice.uuid) {
+            let removeAction = UIAlertAction(title: "Just reprovision", style: .default) { _ in
+                network.remove(node: oldNode)
+                start()
+            }
+            let reconfigureAction = UIAlertAction(title: "Reprovision and reconfigure", style: .default) { _ in
+                self.previousNode = oldNode
+                network.remove(node: oldNode)
+                start()
+            }
+            let cancelAction = UIAlertAction(title: "Cancel", style: .cancel)
+            presentAlert(title: "Warning",
+                         message: "A node with the same UUID already exists in the network and will be removed.\n\nDo you want to reprovision it and try to apply the same configuration?\n\nNote that the device will be assigned a new unicast address. Other nodes will not get updated to accomodate for that change.",
+                         options: [removeAction, reconfigureAction, cancelAction])
+        } else {
+            // If not, just continue.
+            start()
+        }
     }
 
 }
