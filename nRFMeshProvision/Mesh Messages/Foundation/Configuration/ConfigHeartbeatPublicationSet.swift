@@ -160,7 +160,8 @@ public struct ConfigHeartbeatPublicationSet: AcknowledgedConfigMessage, ConfigNe
     }
     
     /// Creates Config Heartbeat Publication Set message with given parameters.
-    /// - Parameters:
+    ///
+    /// - parameters:
     ///   - countLog: Number of Heartbeat messages to be sent:
     ///
     ///               - 0x00 - Disables publishing periodic Heartbeat messages.
@@ -205,7 +206,8 @@ public struct ConfigHeartbeatPublicationSet: AcknowledgedConfigMessage, ConfigNe
     }
     
     /// Creates Config Heartbeat Publication Set message with given parameters.
-    /// - Parameters:
+    ///
+    /// - parameters:
     ///   - destination: Destination address for Heartbeat messages. The address shall
     ///                  be a Unicast Address, or a Group Address.
     ///   - ttl: TTL to be used when sending Heartbeat messages.

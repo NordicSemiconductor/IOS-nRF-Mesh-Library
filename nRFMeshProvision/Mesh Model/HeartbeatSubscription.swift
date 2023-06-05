@@ -139,6 +139,11 @@ public class HeartbeatSubscription: Codable {
         }
         self.source = status.source
         self.destination = status.destination
+        // The current state of the heartbeat subscription is not set for 2 reasons:
+        // - it is dynamic - the device is listening for heartbeat messages for some time only,
+        // - it is not saved in the Configuration Database.
+        //
+        // self.state = State(periodLog: status.periodLog)
     }
     
     /// An initializer for local Node. This sets the state to the value from the
@@ -153,6 +158,10 @@ public class HeartbeatSubscription: Codable {
         }
         self.source = request.source
         self.destination = request.destination
+        // Here, the state is stored for purpose of subscription.
+        // This method is called only for the local Node.
+        // The value is not persistent and subscription will stop when the app
+        // gets restarted.
         self.state = State(periodLog: request.periodLog)
     }
     

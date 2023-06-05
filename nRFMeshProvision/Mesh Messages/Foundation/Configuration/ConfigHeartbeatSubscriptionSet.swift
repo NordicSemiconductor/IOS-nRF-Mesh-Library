@@ -50,8 +50,9 @@ public struct ConfigHeartbeatSubscriptionSet: AcknowledgedConfigMessage {
     public let source: Address
     /// Destination address for Heartbeat messages.
     ///
-    /// The Heartbeat Subscription Destination shall be the Unassigned Address, a Unicast
-    /// Address, or a Group Address, all other values are Prohibited.
+    /// The Heartbeat Subscription Destination shall be the Unassigned Address, the Primary
+    /// Unicast Address of the Node to which the message is to be sent, or a Group Address.
+    /// All other values are Prohibited.
     ///
     /// If the Heartbeat Subscription Destination is set to the Unassigned Address, the
     /// Heartbeat messages are not processed.
@@ -94,14 +95,15 @@ public struct ConfigHeartbeatSubscriptionSet: AcknowledgedConfigMessage {
     ///
     /// To disable Heartbeat subscriptions use ``ConfigHeartbeatSubscriptionSet/init()``.
     ///
-    /// - Parameters:
+    /// - parameters:
     ///   - periodLog: Duration for processing Heartbeat messages. This field is the interval used
     ///                for sending messages. The value will be calculated as 2^(periodLog-1).
     ///                Allowed values are in range 0x01...0x11.
-    ///   - source: Source address for Heartbeat messages. The address shall
-    ///             be a Unicast Address.
+    ///   - source:    Source address for Heartbeat messages. The address shall
+    ///                be a Unicast Address.
     ///   - destination: Destination address for Heartbeat messages. The address shall
-    ///                  be a Unicast Address, or a Group Address.
+    ///                  be the Primary Unicast Address of the Node that is being configured,
+    ///                  or a Group Address.
     public init?(startProcessingHeartbeatMessagesFor periodLog: UInt8,
                  secondsSentFrom source: Address, to destination: Address) {
         guard source.isUnicast else {

@@ -141,6 +141,11 @@ public class HeartbeatPublication: Codable {
         self.ttl = status.ttl
         self.networkKeyIndex = status.networkKeyIndex
         self.features = status.features
+        // The current state of the heartbeat publication is not set for 2 reasons:
+        // - it is dynamic - the device is sending heartbeat messages and the count goes down
+        // - it is not saved in the Configuration Database.
+        //
+        // self.state = PeriodicHeartbeatState(status.countLog)
     }
     
     /// An initializer for local Node. This sets the count to the value from the Set
@@ -156,6 +161,10 @@ public class HeartbeatPublication: Codable {
         self.ttl = request.ttl
         self.networkKeyIndex = request.networkKeyIndex
         self.features = request.features
+        // Here, the state is stored for purpose of publication.
+        // This method is called only for the local Node.
+        // The value is not persistent and publications will stop when the app
+        // gets restarted.
         self.state = PeriodicHeartbeatState(request.countLog)
     }
     
