@@ -62,38 +62,89 @@ class ConfigurationViewController: UIViewController,
     func configure(node: Node, basedOn originalNode: Node) {
         self.node = node
         
+        // If the Default TLL was known for the original node, set the same value.
         if let ttl = originalNode.defaultTTL {
             tasks.append(.setDefaultTtl(ttl))
         }
+        // Do the same for Secure Network beacons, ...
         if let secureNetworkBeacon = originalNode.secureNetworkBeacon {
-            tasks.append(.setBeacon(secureNetworkBeacon))
+            tasks.append(.setBeacon(enabled: secureNetworkBeacon))
         }
+        // ...Network Transmit, ...
         if let networkTransmit = originalNode.networkTransmit {
             tasks.append(.setNetworkTransit(networkTransmit))
         }
+        // ... and the node features:
         switch originalNode.features?.relay {
         case .enabled:
             if let relayRetransmit = originalNode.relayRetransmit {
-                tasks.append(.setRelaySettings(relayRetransmit))
+                tasks.append(.setRelay(relayRetransmit))
             }
         case .notEnabled:
             tasks.append(.disableRelayFeature)
         default:
             break
         }
-        originalNode.networkKeys.forEach { networkKey in
+        
+        switch originalNode.features?.proxy {
+        case .enabled:
+            tasks.append(.setGATTProxy(enabled: true))
+        case .notEnabled:
+            tasks.append(.setGATTProxy(enabled: false))
+        default:
+            break
+        }
+        
+        switch originalNode.features?.friend {
+        case .enabled:
+            tasks.append(.setFriend(enabled: true))
+        case .notEnabled:
+            tasks.append(.setFriend(enabled: false))
+        default:
+            break
+        }
+        
+        // Here we can't use `originalNode.networkKeys` or `originalNode.applicationKeys`,
+        // as the node was already removed from the network. However, we can check which keys
+        // of the network were known to that node using the API that those properties use
+        // internally.
+        let meshNetwork = MeshNetworkManager.instance.meshNetwork!
+        meshNetwork.networkKeys.knownTo(node: originalNode).forEach { networkKey in
             if !node.knows(networkKey: networkKey) {
                 tasks.append(.sendNetworkKey(networkKey))
             }
         }
-        originalNode.applicationKeys.forEach { applicationKey in
+        meshNetwork.applicationKeys.knownTo(node: originalNode).forEach { applicationKey in
             if !node.knows(applicationKey: applicationKey) {
                 tasks.append(.sendApplicationKey(applicationKey))
             }
         }
-        // State of Node Identity for Network Keys is dynamic and unknown.
-        // It is not saved in the Configuration Database.
-        // TODO: More
+        
+        // With the Network Keys sent we could set the Node Identity state for each of the
+        // subnetworks, but the state of Node Identity for Network Keys is dynamic and not
+        // stored in the Configuration Database. Therefore, we skip this configuration.
+    
+        // Set Heartbeat Publication. Only the feature-triggered settings will be applied.
+        if let publication = originalNode.heartbeatPublication,
+           let networkKey = meshNetwork.networkKeys[publication.networkKeyIndex] {
+            tasks.append(.setHeartbeatPublication(
+                // Current periodic publication data are not known. Periodic heartbeats will be disabled.
+                countLog: 0, periodLog: 0,
+                // Set the remaining fields to match the Heartbeat publication of the old node.
+                destination: publication.address, ttl: publication.ttl,
+                networkKey: networkKey, triggerFeatures: publication.features))
+        }
+        // Don't set Heartbeat Subscription as the current subscription period of the old Node
+        // is not known.
+        /*
+        if let subscription = originalNode.heartbeatSubscription {
+            tasks.append(.setHeartbeatSubscription(
+                source: subscription.source, destination: subscription.destination,
+                // The period for Heartbeat subscriptions is not known.
+                periodLog: 0))
+        }
+        */
+        
     }
     
     func bind(applicationKeys: [ApplicationKey], to models: [Model]) {
