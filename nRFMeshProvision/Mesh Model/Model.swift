@@ -32,14 +32,30 @@ import Foundation
 
 /// A Model defines the basic functionality of a ``Node``.
 ///
-/// A Node may include multiple models. A model defines the required states,
-/// the messages that act upon those states, and any associated behavior.
+/// A Node may include one or more ``Element``, each with one or mode models.
+/// A model defines the required states, the messages that act upon those states,
+/// and any associated behavior.
+///
+/// Two Models with the same ``Model/modelId`` cannot be located on the same Element.
+///
+/// A Model may extend another Model. Models in Extend relationship may share states.
+/// A Model which does not extend any other Model is called a *base* Model.
+///
+/// Models in Extend relationship located on the same Element share the Subsctiption List.
 public class Model: Codable {
-    /// Bluetooth SIG-defined model identifier, of a vendor-defined model
-    /// identifier. In the latter case, the first 4 bytes correspond to
-    /// a Bluetooth-assigned Company Identifier, and the 4 least significant
-    /// bytes a vendor-assigned model identifier.
-    internal let modelId: UInt32
+    /// Bluetooth SIG or vendor-assigned model identifier.
+    ///
+    /// In case of vendor models the 2 most significant bytes of this property are
+    /// the Company Identifier, as registersd in Bluetooth SIG Assigned Numbers database.
+    ///
+    /// For Bluetooth SIG defined models these 2 bytes are `0x0000`.
+    ///
+    /// Use ``Model/modelIdentifier`` to get the 16-bit model identifier and
+    /// ``Model/companyIdentifier`` to obtain the Company Identifier.
+    ///
+    /// Use ``Model/isBluetoothSIGAssigned`` to check whether the Model is defined by
+    /// Bluetooth SIG.
+    public let modelId: UInt32
     /// Bluetooth SIG or vendor-assigned model identifier.
     public var modelIdentifier: UInt16 {
         return UInt16(modelId & 0x0000FFFF)
