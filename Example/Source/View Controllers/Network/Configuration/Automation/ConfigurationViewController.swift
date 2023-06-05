@@ -145,6 +145,22 @@ class ConfigurationViewController: UIViewController,
         }
         */
         
+        // Walk through all of the Elements of the old Node and copy key bindings.
+        for i in 0..<min(originalNode.elements.count, node.elements.count) {
+            let originalElement = originalNode.elements[i]
+            let targetElement = node.elements[i]
+            
+            originalElement.models.forEach { originalModel in
+                if originalModel.supportsApplicationKeyBinding,
+                   let targetModel = targetElement.model(withModelId: originalModel.modelId) {
+                    let boundApplicationKeys = meshNetwork.applicationKeys
+                        .filter { originalModel.isBoundTo($0) }
+                    boundApplicationKeys.forEach { applicationKey in
+                        tasks.append(.bind(applicationKey, to: targetModel))
+                    }
+                }
+            }
+        }
     }
     
     func bind(applicationKeys: [ApplicationKey], to models: [Model]) {
