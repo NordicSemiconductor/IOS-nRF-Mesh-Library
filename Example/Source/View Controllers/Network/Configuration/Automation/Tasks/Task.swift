@@ -35,18 +35,25 @@ enum Task {
     case getDefaultTtl
     case setDefaultTtl(_ ttl: UInt8)
     case readRelayStatus
-    case setRelaySettings(_ relayRetransmit: Node.RelayRetransmit)
+    case setRelay(_ relayRetransmit: Node.RelayRetransmit)
     case disableRelayFeature
     case readNetworkTransitStatus
     case setNetworkTransit(_ networkTransmit: Node.NetworkTransmit)
     case readBeaconStatus
-    case setBeacon(_ enabled: Bool)
+    case setBeacon(enabled: Bool)
     case readGATTProxyStatus
+    case setGATTProxy(enabled: Bool)
     case readFriendStatus
+    case setFriend(enabled: Bool)
     case readNodeIdentityStatus(_ networkKey: NetworkKey)
     case readHeartbeatPublication
+    case setHeartbeatPublication(countLog: UInt8,
+                                 periodLog: UInt8,
+                                 destination: Address,
+                                 ttl: UInt8, networkKey: NetworkKey,
+                                 triggerFeatures: NodeFeatures)
     case readHeartbeatSubscription
-    
+    case setHeartbeatSubscription(source: Address, destination: Address, periodLog: UInt8)
     case sendNetworkKey(_ networkKey: NetworkKey)
     case sendApplicationKey(_ applicationKey: ApplicationKey)
     case bind(_ applicationKey: ApplicationKey, to: Model)
@@ -63,7 +70,7 @@ enum Task {
             return "Set Default TTL to \(ttl)"
         case .readRelayStatus:
             return "Read Relay Status"
-        case .setRelaySettings(let relayRetransmit):
+        case .setRelay(let relayRetransmit):
             return "Set Relay to \(relayRetransmit)"
         case .disableRelayFeature:
             return "Disabling Relay Retransmition"
@@ -77,14 +84,22 @@ enum Task {
             return "\(enable ? "Enable" : "Disable") Secure Network Beacons"
         case .readGATTProxyStatus:
             return "Read GATT Proxy Status"
+        case .setGATTProxy(enabled: let enable):
+            return "\(enable ? "Enable" : "Disable") GATT Proxy Feature"
         case .readFriendStatus:
             return "Read Friend Status"
+        case .setFriend(enabled: let enable):
+            return "\(enable ? "Enable" : "Disable") Friend Feature"
         case .readNodeIdentityStatus(let key):
             return "Read Node Identity Status for \(key.name)"
         case .readHeartbeatPublication:
             return "Read Heartbeat Publication"
+        case .setHeartbeatPublication:
+            return "Set Heartbeat Publication"
         case .readHeartbeatSubscription:
             return "Read Heartbeat Subscription"
+        case .setHeartbeatSubscription:
+            return "Set Heartbeat Subscription"
         case .sendNetworkKey(let key):
             return "Send \(key.name)"
         case .sendApplicationKey(let key):
@@ -108,7 +123,7 @@ enum Task {
             return ConfigDefaultTtlSet(ttl: ttl)
         case .readRelayStatus:
             return ConfigRelayGet()
-        case .setRelaySettings(let relayRetransmit):
+        case .setRelay(let relayRetransmit):
             return ConfigRelaySet(relayRetransmit)
         case .disableRelayFeature:
             return ConfigRelaySet()
@@ -118,18 +133,37 @@ enum Task {
             return ConfigNetworkTransmitSet(networkTransmit)
         case .readBeaconStatus:
             return ConfigBeaconGet()
-        case .setBeacon(let enable):
+        case .setBeacon(enabled: let enable):
             return ConfigBeaconSet(enable: enable)
         case .readGATTProxyStatus:
             return ConfigGATTProxyGet()
+        case .setGATTProxy(enabled: let enable):
+            return ConfigGATTProxySet(enable: enable)
         case .readFriendStatus:
             return ConfigFriendGet()
+        case .setFriend(enabled: let enable):
+            return ConfigFriendSet(enable: enable)
         case .readNodeIdentityStatus(let key):
             return ConfigNodeIdentityGet(networkKey: key)
         case .readHeartbeatPublication:
             return ConfigHeartbeatPublicationGet()
+        case .setHeartbeatPublication(countLog: let countLog,
+                                      periodLog: let periodLog,
+                                      destination: let destinatination,
+                                      ttl: let ttl,
+                                      networkKey: let networkKey,
+                                      triggerFeatures: let features):
+            return ConfigHeartbeatPublicationSet(startSending: countLog, heartbeatMessagesEvery: periodLog,
+                                                 secondsTo: destinatination,
+                                                 usingTtl: ttl, andNetworkKey: networkKey,
+                                                 andEnableHeartbeatMessagesTriggeredByChangeOf: features)
+                ?? ConfigHeartbeatPublicationSet()
         case .readHeartbeatSubscription:
             return ConfigHeartbeatSubscriptionGet()
+        case .setHeartbeatSubscription(source: let source, destination: let destination, periodLog: let periodLog):
+            return ConfigHeartbeatSubscriptionSet(startProcessingHeartbeatMessagesFor: periodLog,
+                                                  secondsSentFrom: source, to: destination)
+                ?? ConfigHeartbeatSubscriptionSet()
         case .sendNetworkKey(let key):
             return ConfigNetKeyAdd(networkKey: key)
         case .sendApplicationKey(let key):
