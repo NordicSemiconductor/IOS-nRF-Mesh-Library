@@ -364,6 +364,7 @@ extension ConfigurationViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "task", for: indexPath)
         cell.textLabel?.text = tasks[indexPath.row].title
+        cell.imageView?.image = tasks[indexPath.row].icon
         let status = statuses[indexPath.row]
         cell.detailTextLabel?.text = status.description
         cell.detailTextLabel?.textColor = status.color

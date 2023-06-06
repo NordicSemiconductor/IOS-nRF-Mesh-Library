@@ -113,6 +113,44 @@ enum Task {
         }
     }
     
+    var icon: UIImage {
+        switch self {
+        case .getCompositionData,
+             .getDefaultTtl,
+             .setDefaultTtl,
+             .readNodeIdentityStatus:
+            return #imageLiteral(resourceName: "ic_settings_24pt")
+        case .readBeaconStatus,
+             .setBeacon:
+            return #imageLiteral(resourceName: "ic_beacon_24pt")
+        case .readFriendStatus,
+             .setFriend:
+            return #imageLiteral(resourceName: "ic_friend_24pt")
+        case .readRelayStatus,
+             .setRelay,
+             .disableRelayFeature,
+             .readGATTProxyStatus,
+             .setGATTProxy,
+             .readNetworkTransitStatus,
+             .setNetworkTransit:
+            return #imageLiteral(resourceName: "ic_transfer_24pt")
+        case .sendNetworkKey,
+             .sendApplicationKey:
+            return #imageLiteral(resourceName: "ic_vpn_key_24pt")
+        case .bind:
+            return #imageLiteral(resourceName: "ic_bind_24pt")
+        case .subscribe:
+            return #imageLiteral(resourceName: "ic_group_24pt")
+        case .setPublication:
+            return #imageLiteral(resourceName: "ic_broadcast_24pt")
+        case .readHeartbeatSubscription,
+             .setHeartbeatSubscription,
+             .readHeartbeatPublication,
+             .setHeartbeatPublication:
+            return #imageLiteral(resourceName: "ic_heartbeat_24pt")
+        }
+    }
+    
     var message: AcknowledgedConfigMessage {
         switch self {
         case .getCompositionData(page: let page):
