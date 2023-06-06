@@ -80,7 +80,7 @@ extension TaskStatus: CustomStringConvertible {
         case .inProgress:
             return .dynamicColor(light: .nordicLake, dark: .nordicBlue)
         case .success:
-            return .green
+            return .systemGreen
         case .cancelled, .skipped:
             return .nordicFall
         case .failed:
