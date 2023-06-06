@@ -427,7 +427,7 @@ private extension ConfigurationViewController {
     func completed() {
         DispatchQueue.main.async {
             self.tableView.reloadData()
-            self.statusView.text = "Configuration complete."
+            self.statusView.text = "Configuration complete"
             self.navigationItem.rightBarButtonItem?.isEnabled = true
             self.navigationItem.leftBarButtonItem?.isEnabled = false
             self.remainingTime.isHidden = true

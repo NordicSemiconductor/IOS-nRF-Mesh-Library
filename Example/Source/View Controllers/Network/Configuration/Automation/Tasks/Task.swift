@@ -70,14 +70,14 @@ enum Task {
             return "Set Default TTL to \(ttl)"
         case .readRelayStatus:
             return "Read Relay Status"
-        case .setRelay(let relayRetransmit):
-            return "Set Relay to \(relayRetransmit)"
+        case .setRelay:
+            return "Set Relay"
         case .disableRelayFeature:
             return "Disabling Relay Retransmition"
         case .readNetworkTransitStatus:
             return "Read Network Transit Status"
-        case .setNetworkTransit(let networkTransmit):
-            return "Set Network Transmit to \(networkTransmit)"
+        case .setNetworkTransit:
+            return "Set Network Transmit"
         case .readBeaconStatus:
             return "Read Beacon Status"
         case .setBeacon(let enable):
@@ -101,9 +101,9 @@ enum Task {
         case .setHeartbeatSubscription:
             return "Set Heartbeat Subscription"
         case .sendNetworkKey(let key):
-            return "Send \(key.name)"
+            return "Add \(key.name)"
         case .sendApplicationKey(let key):
-            return "Send \(key.name)"
+            return "Add \(key.name)"
         case .bind(let key, to: let model):
             return "Bind \(key.name) to \(model)"
         case .subscribe(let model, to: let group):
