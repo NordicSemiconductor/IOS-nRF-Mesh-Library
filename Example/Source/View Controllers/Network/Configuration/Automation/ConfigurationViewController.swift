@@ -145,7 +145,7 @@ class ConfigurationViewController: UIViewController,
         }
         */
         
-        // Walk through all of the Elements of the old Node and copy key bindings.
+        // Key bindings.
         for i in 0..<min(originalNode.elements.count, node.elements.count) {
             let originalElement = originalNode.elements[i]
             let targetElement = node.elements[i]
@@ -158,6 +158,29 @@ class ConfigurationViewController: UIViewController,
                     boundApplicationKeys.forEach { applicationKey in
                         tasks.append(.bind(applicationKey, to: targetModel))
                     }
+                }
+            }
+        }
+        
+        // Model Publications.
+        for i in 0..<min(originalNode.elements.count, node.elements.count) {
+            let originalElement = originalNode.elements[i]
+            let targetElement = node.elements[i]
+            
+            originalElement.models.forEach { originalModel in
+                if originalModel.supportsModelPublication ?? true,
+                   let publication = originalModel.publish,
+                   let targetModel = targetElement.model(withModelId: originalModel.modelId),
+                   let applicationKey = meshNetwork.applicationKeys[publication.index] {
+                    // If the Node was publishing to its own Unicast Address, translate it to the new address.
+                    let destination = translate(address: publication.publicationAddress, from: originalNode, to: node)
+                    let newPublication = Publish(to: destination,
+                                                 using: applicationKey,
+                                                 usingFriendshipMaterial: publication.isUsingFriendshipSecurityMaterial,
+                                                 ttl: publication.ttl,
+                                                 period: publication.period,
+                                                 retransmit: publication.retransmit)
+                    tasks.append(.setPublication(newPublication, to: targetModel))
                 }
             }
         }
@@ -363,6 +386,23 @@ extension ConfigurationViewController: UITableViewDataSource {
 }
 
 private extension ConfigurationViewController {
+    
+    /// Translates the address of an Element on the old Node to the same Element on the new Node.
+    ///
+    /// If the address is not an address of an Element on the old Node, this method returns it
+    /// without modification.
+    ///
+    /// - parameters:
+    ///   - address: The address to translate.
+    ///   - oldNode: The old Node instance.
+    ///   - newNode: The new Node instance.
+    /// - returns: The translated mesh address.
+    func translate(address: MeshAddress, from oldNode: Node, to newNode: Node) -> MeshAddress {
+        if oldNode.contains(elementWithAddress: address.address) {
+            return MeshAddress(newNode.primaryUnicastAddress + address.address - oldNode.primaryUnicastAddress)
+        }
+        return address
+    }
     
     func executeNext() {
         current += 1
