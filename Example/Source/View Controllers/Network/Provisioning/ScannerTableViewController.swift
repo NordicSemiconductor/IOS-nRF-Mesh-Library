@@ -136,7 +136,7 @@ class ScannerTableViewController: UITableViewController {
             }
             let cancelAction = UIAlertAction(title: "Cancel", style: .cancel)
             presentAlert(title: "Warning",
-                         message: "A node with the same UUID already exists in the network and will be removed.\n\nDo you want to reprovision it and try to apply the same configuration?\n\nNote that the device will be assigned a new unicast address. Other nodes will not get updated to accomodate for that change.",
+                         message: "A node with the same UUID already exists in the network and will be removed.\n\nDo you want to reprovision it and try to apply the same configuration?\n\nNote that the device will be assigned a new unicast address. Any node publishing to the old addresses will be reconfigured.",
                          options: [removeAction, reconfigureAction, cancelAction])
         } else {
             // If not, just continue.

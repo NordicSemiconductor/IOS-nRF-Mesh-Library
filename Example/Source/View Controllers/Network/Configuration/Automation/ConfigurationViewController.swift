@@ -205,6 +205,31 @@ class ConfigurationViewController: UIViewController,
                 }
             }
         }
+        
+        // Reconfigure other Nodes that may be publishing to the previous address of the Node.
+        let modelsForReconfiguration = meshNetwork.nodes
+            .filter { $0 != node }
+            .flatMap { $0.elements }
+            .flatMap { $0.models }
+            .filter { model in
+                if let publicationAddress = model.publish?.publicationAddress.address {
+                    return originalNode.contains(elementWithAddress: publicationAddress)
+                }
+                return false
+            }
+        modelsForReconfiguration.forEach { model in
+            if let publication = model.publish,
+               let applicationKey = meshNetwork.applicationKeys[publication.index] {
+                let destination = translate(address: publication.publicationAddress, from: originalNode, to: node)
+                let newPublication = Publish(to: destination,
+                                             using: applicationKey,
+                                             usingFriendshipMaterial: publication.isUsingFriendshipSecurityMaterial,
+                                             ttl: publication.ttl,
+                                             period: publication.period,
+                                             retransmit: publication.retransmit)
+                tasks.append(.setPublication(newPublication, to: model))
+            }
+        }
     }
     
     func bind(applicationKeys: [ApplicationKey], to models: [Model]) {
@@ -472,7 +497,16 @@ private extension ConfigurationViewController {
         // Send the message.
         do {
             let manager = MeshNetworkManager.instance
-            handler = try manager.send(task.message, to: node.primaryUnicastAddress)
+            switch task {
+            // Publication Set message can be sent to a different node in some cases.
+            case .setPublication(_, to: let model):
+                guard let address = model.parentElement?.parentNode?.primaryUnicastAddress else {
+                    fallthrough
+                }
+                handler = try manager.send(task.message, to: address)
+            default:
+                handler = try manager.send(task.message, to: node.primaryUnicastAddress)
+            }
         } catch {
             reload(taskAt: current, with: .failed(error))
         }
