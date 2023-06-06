@@ -38,7 +38,7 @@ public extension Model {
     /// - returns: `True` if the Model is subscribed to the Group,
     ///            `false` otherwise.
     func isSubscribed(to group: Group) -> Bool {
-        return subscriptions.contains(group)
+        return isSubscribed(to: group.address)
     }
     
     /// Returns whether the Model is subscribed to the given ``MeshAddress``.
@@ -47,7 +47,7 @@ public extension Model {
     /// - returns: `True` if the Model is subscribed to a ``Group`` with given,
     ///            address, `false` otherwise.
     func isSubscribed(to address: MeshAddress) -> Bool {
-        return subscriptions.contains { $0.address == address }
+        return subscribe.contains(address.hex)
     }
     
     /// Whether the Model supports model publication defined in Section 4.2.3 in
