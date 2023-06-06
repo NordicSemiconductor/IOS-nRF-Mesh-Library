@@ -184,6 +184,27 @@ class ConfigurationViewController: UIViewController,
                 }
             }
         }
+        
+        // Subscriptions.
+        let subscribableGroups = meshNetwork.groups + Group.specialGroups
+            .filter { $0 != .allNodes }
+        for i in 0..<min(originalNode.elements.count, node.elements.count) {
+            let originalElement = originalNode.elements[i]
+            let targetElement = node.elements[i]
+            
+            originalElement.models.forEach { originalModel in
+                if originalModel.supportsModelSubscriptions ?? true,
+                   let targetModel = targetElement.model(withModelId: originalModel.modelId) {
+                    // We can't use `originalModel.subscriptions` as the original node is no longer
+                    // a part of the network. Instead, let's filter the groups.
+                    subscribableGroups
+                        .filter { group in originalModel.isSubscribed(to: group) }
+                        .forEach { group in
+                            tasks.append(.subscribe(targetModel, to: group))
+                        }
+                }
+            }
+        }
     }
     
     func bind(applicationKeys: [ApplicationKey], to models: [Model]) {
