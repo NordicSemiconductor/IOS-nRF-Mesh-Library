@@ -146,21 +146,42 @@ class ScannerTableViewController: UITableViewController {
 
 }
 
-// MARK: - CBCentralManagerDelegate
+// MARK: - Implementation
 
-extension ScannerTableViewController: CBCentralManagerDelegate {
+private extension ScannerTableViewController {
     
-    private func startScanning() {
+    func startScanning() {
         activityIndicator.startAnimating()
         centralManager.delegate = self
         centralManager.scanForPeripherals(withServices: [MeshProvisioningService.uuid],
                                           options: [CBCentralManagerScanOptionAllowDuplicatesKey : true])
     }
     
-    private func stopScanning() {
+    func stopScanning() {
         activityIndicator.stopAnimating()
         centralManager.stopScan()
     }
+    
+    func open(bearer: PBGattBearer) {
+        bearer.delegate = self
+        
+        alert = UIAlertController(title: "Status", message: "Connecting...", preferredStyle: .alert)
+        alert!.addAction(UIAlertAction(title: "Cancel", style: .cancel) { [weak self] action in
+            action.isEnabled = false
+            self?.alert?.title   = "Aborting"
+            self?.alert?.message = "Cancelling connection..."
+            bearer.close()
+        })
+        present(alert!, animated: true) {
+            bearer.open()
+        }
+    }
+    
+}
+
+// MARK: - CBCentralManagerDelegate
+
+extension ScannerTableViewController: CBCentralManagerDelegate {
     
     func centralManager(_ central: CBCentralManager, didDiscover peripheral: CBPeripheral,
                         advertisementData: [String : Any], rssi RSSI: NSNumber) {
@@ -189,22 +210,9 @@ extension ScannerTableViewController: CBCentralManagerDelegate {
     
 }
 
+// MARK: - GattBearerDelegate
+
 extension ScannerTableViewController: GattBearerDelegate {
-    
-    private func open(bearer: PBGattBearer) {
-        bearer.delegate = self
-        
-        alert = UIAlertController(title: "Status", message: "Connecting...", preferredStyle: .alert)
-        alert!.addAction(UIAlertAction(title: "Cancel", style: .cancel) { [weak self] action in
-            action.isEnabled = false
-            self?.alert?.title   = "Aborting"
-            self?.alert?.message = "Cancelling connection..."
-            bearer.close()
-        })
-        present(alert!, animated: true) {
-            bearer.open()
-        }
-    }
     
     func bearerDidConnect(_ bearer: Bearer) {
         DispatchQueue.main.async {
