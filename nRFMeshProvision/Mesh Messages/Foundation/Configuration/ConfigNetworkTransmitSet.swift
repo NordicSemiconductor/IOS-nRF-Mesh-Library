@@ -64,6 +64,14 @@ public struct ConfigNetworkTransmitSet: AcknowledgedConfigMessage {
         self.steps = min(31, steps)
     }
     
+    /// Sets the Network Transmit property of the Node.
+    ///
+    /// - parameter networkTranismit: The Network Transmit value.
+    public init(_ networkTransmit: Node.NetworkTransmit) {
+        self.count = networkTransmit.count - 1
+        self.steps = networkTransmit.steps
+    }
+    
     public init?(parameters: Data) {
         guard parameters.count == 1 else {
             return nil

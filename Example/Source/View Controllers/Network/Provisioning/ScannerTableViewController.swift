@@ -56,6 +56,7 @@ class ScannerTableViewController: UITableViewController {
 
     private var alert: UIAlertController?
     private var selectedDevice: UnprovisionedDevice?
+    private var previousNode: Node?
     
     // MARK: - UIViewController
     
@@ -81,10 +82,12 @@ class ScannerTableViewController: UITableViewController {
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "identify" {
             let destination = segue.destination as! ProvisioningViewController
-            destination.unprovisionedDevice = self.selectedDevice
+            destination.unprovisionedDevice = selectedDevice
             destination.bearer = sender as? ProvisioningBearer
+            destination.previousNode = previousNode
             destination.delegate = delegate
             selectedDevice = nil
+            previousNode = nil
         }
     }
     
@@ -107,23 +110,37 @@ class ScannerTableViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
+        stopScanning()
         
-        let bearer = PBGattBearer(target: discoveredPeripherals[indexPath.row].peripheral)
-        bearer.logger = MeshNetworkManager.instance.logger
-        bearer.delegate = self
+        let selectedPeripheral = discoveredPeripherals[indexPath.row]
+        let unprovisionedDevice = selectedPeripheral.device
+        selectedDevice = unprovisionedDevice
         
-        stopScanning()        
-        selectedDevice = discoveredPeripherals[indexPath.row].device
+        func start() {
+            let bearer = PBGattBearer(target: selectedPeripheral.peripheral)
+            bearer.logger = MeshNetworkManager.instance.logger
+            open(bearer: bearer)
+        }
         
-        alert = UIAlertController(title: "Status", message: "Connecting...", preferredStyle: .alert)
-        alert!.addAction(UIAlertAction(title: "Cancel", style: .cancel) { [weak self] action in
-            action.isEnabled = false
-            self?.alert?.title   = "Aborting"
-            self?.alert?.message = "Cancelling connection..."
-            bearer.close()
-        })
-        present(alert!, animated: true) {
-            bearer.open()
+        // Check if there is no conflicting Node already in the network.
+        let network = MeshNetworkManager.instance.meshNetwork!
+        if let oldNode = network.node(withUuid: unprovisionedDevice.uuid) {
+            let removeAction = UIAlertAction(title: "Just reprovision", style: .default) { _ in
+                network.remove(node: oldNode)
+                start()
+            }
+            let reconfigureAction = UIAlertAction(title: "Reprovision and reconfigure", style: .default) { _ in
+                self.previousNode = oldNode
+                network.remove(node: oldNode)
+                start()
+            }
+            let cancelAction = UIAlertAction(title: "Cancel", style: .cancel)
+            presentAlert(title: "Warning",
+                         message: "A node with the same UUID already exists in the network and will be removed.\n\nDo you want to reprovision it and apply the same configuration?\n\nNote that the node will be provisioned with a new unicast address. All nodes that were configured to publish to any of the unicast addresses assigned to the old node will be reconfigured.",
+                         options: [removeAction, reconfigureAction, cancelAction])
+        } else {
+            // If not, just continue.
+            start()
         }
     }
 
@@ -173,6 +190,21 @@ extension ScannerTableViewController: CBCentralManagerDelegate {
 }
 
 extension ScannerTableViewController: GattBearerDelegate {
+    
+    private func open(bearer: PBGattBearer) {
+        bearer.delegate = self
+        
+        alert = UIAlertController(title: "Status", message: "Connecting...", preferredStyle: .alert)
+        alert!.addAction(UIAlertAction(title: "Cancel", style: .cancel) { [weak self] action in
+            action.isEnabled = false
+            self?.alert?.title   = "Aborting"
+            self?.alert?.message = "Cancelling connection..."
+            bearer.close()
+        })
+        present(alert!, animated: true) {
+            bearer.open()
+        }
+    }
     
     func bearerDidConnect(_ bearer: Bearer) {
         DispatchQueue.main.async {

@@ -36,6 +36,11 @@ class NodeViewController: ProgressViewController {
     // MARK: - Public properties
     
     var node: Node!
+    /// If this object is set, the app will try to reconfigure the `node` to match the configuration
+    /// of this original Node.
+    ///
+    /// The original Node is set when provisioning replaces a Node that already exists in the network.
+    var originalNode: Node?
     
     // MARK: - Outlets
     
@@ -86,6 +91,7 @@ class NodeViewController: ProgressViewController {
         if !node.isCompositionDataReceived {
             // This will request Composition Data when the bearer is open.
             getCompositionData()
+            // performSegue(withIdentifier: "reconfigure", sender: nil)
         } else if node.defaultTTL == nil {
             getTtl()
         } else {
@@ -112,9 +118,16 @@ class NodeViewController: ProgressViewController {
             destination.node = node
         }
         if segue.identifier == "configure" {
-            let navigationController = segue.destination as! UINavigationController
+            let navigationController = segue.destination as! ModalNavigationController
+            navigationController.modalDelegate = self
             let destination = navigationController.topViewController as! IntroViewController
             destination.node = node
+        }
+        if segue.identifier == "reconfigure" {
+            let navigationController = segue.destination as! ModalNavigationController
+            navigationController.modalDelegate = self
+            let destination = navigationController.topViewController as! ConfigurationViewController
+            destination.configure(node: node, basedOn: sender as! Node)
         }
     }
 
@@ -507,6 +520,19 @@ extension NodeViewController: MeshNetworkDelegate {
         switch message {
             
         case is ConfigCompositionDataStatus:
+            // When the Composition Data are known, we can try to reconfigure the Node based on
+            // how it was configured before.
+            if let originalNode = self.originalNode {
+                done {
+                    self.tableView.reloadData()
+                    self.refreshControl?.endRefreshing()
+                    self.configureButton.isEnabled = true
+                    
+                    self.performSegue(withIdentifier: "reconfigure", sender: originalNode)
+                    self.originalNode = nil
+                }
+                return
+            }
             self.getTtl()
             DispatchQueue.main.async {
                 self.tableView.reloadData()
@@ -541,6 +567,14 @@ extension NodeViewController: MeshNetworkDelegate {
             self.presentAlert(title: "Error", message: error.localizedDescription)
             self.refreshControl?.endRefreshing()
         }
+    }
+    
+}
+
+extension NodeViewController: ModalNavigationControllerDelegate {
+    
+    func modalWillDismiss() {
+        tableView.reloadData()
     }
     
 }

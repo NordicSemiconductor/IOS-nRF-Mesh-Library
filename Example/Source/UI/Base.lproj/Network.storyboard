@@ -101,10 +101,10 @@
             </objects>
             <point key="canvasLocation" x="3036" y="-6546"/>
         </scene>
-        <!--Navigation Controller-->
+        <!--Modal Navigation Controller-->
         <scene sceneID="FWj-7H-vQv">
             <objects>
-                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="qIn-YT-MK7" sceneMemberID="viewController">
+                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="qIn-YT-MK7" customClass="ModalNavigationController" customModule="nRF_Mesh" customModuleProvider="target" sceneMemberID="viewController">
                     <navigationBar key="navigationBar" contentMode="scaleToFill" largeTitles="YES" id="SrW-aj-b9L">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="108"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -636,6 +636,29 @@
             </objects>
             <point key="canvasLocation" x="6900" y="-4931"/>
         </scene>
+        <!--Modal Navigation Controller-->
+        <scene sceneID="hrV-FU-hiU">
+            <objects>
+                <navigationController id="idM-z8-atp" customClass="ModalNavigationController" customModule="nRF_Mesh" customModuleProvider="target" sceneMemberID="viewController">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" largeTitles="YES" id="sD2-Hd-TG8">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="108"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <color key="tintColor" red="0.0" green="0.66274509800000003" blue="0.80784313730000001" alpha="1" colorSpace="calibratedRGB"/>
+                        <textAttributes key="titleTextAttributes">
+                            <color key="textColor" red="0.0" green="0.66274509800000003" blue="0.80784313730000001" alpha="1" colorSpace="calibratedRGB"/>
+                        </textAttributes>
+                        <textAttributes key="largeTitleTextAttributes">
+                            <color key="textColor" red="0.0" green="0.66274509800000003" blue="0.80784313730000001" alpha="1" colorSpace="calibratedRGB"/>
+                        </textAttributes>
+                    </navigationBar>
+                    <connections>
+                        <segue destination="H71-0C-Q4X" kind="relationship" relationship="rootViewController" id="D9f-sQ-QMb"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="acs-o1-M0P" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="7996" y="-4931"/>
+        </scene>
         <!--Device Name-->
         <scene sceneID="lXM-vc-FyC">
             <objects>
@@ -855,18 +878,18 @@
                                 </connections>
                             </tableViewCell>
                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" accessoryType="detailButton" indentationWidth="10" reuseIdentifier="switch" id="2HO-VY-kvg" customClass="SwitchCell" customModule="nRF_Mesh" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="324" width="414" height="43.5"/>
+                                <rect key="frame" x="0.0" y="324" width="414" height="43"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="2HO-VY-kvg" id="jOf-kh-Gdy">
-                                    <rect key="frame" x="0.0" y="0.0" width="370" height="43.5"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="370" height="43"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="0bP-aX-r7S">
-                                            <rect key="frame" x="313" y="6.5" width="51" height="31"/>
+                                            <rect key="frame" x="313" y="6" width="51" height="31"/>
                                             <color key="onTintColor" systemColor="tintColor"/>
                                         </switch>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Title" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Mg0-0v-t3c">
-                                            <rect key="frame" x="20" y="11" width="33" height="21.5"/>
+                                            <rect key="frame" x="20" y="11" width="33" height="21"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                             <nil key="textColor"/>
                                             <nil key="highlightedColor"/>
@@ -906,6 +929,7 @@
                         <segue destination="LqZ-nU-tB4" kind="show" identifier="showNetworkKeys" id="HeG-0V-N7l"/>
                         <segue destination="Sjk-ZU-4jx" kind="show" identifier="showAppKeys" id="zqk-vS-7T1"/>
                         <segue destination="iFA-vA-bir" kind="show" identifier="showScenes" id="Qfh-ES-6Bm"/>
+                        <segue destination="idM-z8-atp" kind="presentation" identifier="reconfigure" id="b5c-91-Dn9"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dMs-Vw-1Ac" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -1376,21 +1400,21 @@
                                 </connections>
                             </tableViewCell>
                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="switch" id="ukA-iV-k75" customClass="SwitchCell" customModule="nRF_Mesh" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="703.5" width="414" height="43"/>
+                                <rect key="frame" x="0.0" y="703.5" width="414" height="43.5"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="ukA-iV-k75" id="q0I-rL-LSs">
-                                    <rect key="frame" x="0.0" y="0.0" width="414" height="43"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="414" height="43.5"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="P1w-ws-FGk">
-                                            <rect key="frame" x="345" y="6" width="51" height="31"/>
+                                            <rect key="frame" x="345" y="6.5" width="51" height="31"/>
                                             <color key="onTintColor" systemColor="tintColor"/>
                                             <connections>
                                                 <action selector="switchDidChange:" destination="ukA-iV-k75" eventType="valueChanged" id="PJe-b6-sbf"/>
                                             </connections>
                                         </switch>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Title" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="pqx-lg-qPZ">
-                                            <rect key="frame" x="20" y="11" width="33" height="21"/>
+                                            <rect key="frame" x="20" y="11" width="33" height="21.5"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                             <nil key="textColor"/>
                                             <nil key="highlightedColor"/>
@@ -3290,7 +3314,7 @@
     <inferredMetricsTieBreakers>
         <segue reference="mtt-Te-nBR"/>
         <segue reference="ThO-5P-90Y"/>
-        <segue reference="b7f-Yp-7iq"/>
+        <segue reference="D9f-sQ-QMb"/>
     </inferredMetricsTieBreakers>
     <color key="tintColor" red="0.0" green="0.46666666670000001" blue="0.7843137255" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
     <resources>

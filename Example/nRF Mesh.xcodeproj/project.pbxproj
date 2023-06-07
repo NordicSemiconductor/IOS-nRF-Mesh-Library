@@ -113,6 +113,7 @@
 		529B7643225222E8008F1CE7 /* Address+String.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529B7642225222E8008F1CE7 /* Address+String.swift */; };
 		529B764722522D37008F1CE7 /* UITableView+EmptyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529B764622522D37008F1CE7 /* UITableView+EmptyView.swift */; };
 		529B76492252499E008F1CE7 /* UIColor+Nordic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529B76482252499E008F1CE7 /* UIColor+Nordic.swift */; };
+		529EC8D62A29F7A10056BB48 /* ModalNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529EC8D52A29F7A10056BB48 /* ModalNavigationController.swift */; };
 		52A8EA8824E6946D004C14C7 /* HeartbeatPublicationCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52A8EA8724E6946D004C14C7 /* HeartbeatPublicationCell.swift */; };
 		52A8EA8B24E6A371004C14C7 /* SetHeartbeatPublication.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 52A8EA8924E6A371004C14C7 /* SetHeartbeatPublication.storyboard */; };
 		52A8EA8D24E6A470004C14C7 /* SetHeartbeatPublicationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52A8EA8C24E6A470004C14C7 /* SetHeartbeatPublicationViewController.swift */; };
@@ -305,6 +306,7 @@
 		529B7642225222E8008F1CE7 /* Address+String.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "Address+String.swift"; path = "Utils/Address+String.swift"; sourceTree = "<group>"; };
 		529B764622522D37008F1CE7 /* UITableView+EmptyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "UITableView+EmptyView.swift"; path = "Utils/UITableView+EmptyView.swift"; sourceTree = "<group>"; };
 		529B76482252499E008F1CE7 /* UIColor+Nordic.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "UIColor+Nordic.swift"; path = "Utils/UIColor+Nordic.swift"; sourceTree = "<group>"; };
+		529EC8D52A29F7A10056BB48 /* ModalNavigationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModalNavigationController.swift; sourceTree = "<group>"; };
 		52A8EA8724E6946D004C14C7 /* HeartbeatPublicationCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeartbeatPublicationCell.swift; sourceTree = "<group>"; };
 		52A8EA8A24E6A371004C14C7 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/SetHeartbeatPublication.storyboard; sourceTree = "<group>"; };
 		52A8EA8C24E6A470004C14C7 /* SetHeartbeatPublicationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetHeartbeatPublicationViewController.swift; sourceTree = "<group>"; };
@@ -585,6 +587,7 @@
 		52835253227AEC8C0097B949 /* View Controllers */ = {
 			isa = PBXGroup;
 			children = (
+				529EC8D52A29F7A10056BB48 /* ModalNavigationController.swift */,
 				5288153C25125AB600484AF0 /* RootTabBarController.swift */,
 				529B756C223FE7F1008F1CE7 /* RootViewController.swift */,
 				523F776B22C6324A0030EA6A /* ProgressViewController.swift */,
@@ -1174,6 +1177,7 @@
 				52314041230192C50074325A /* ModelViewCell.swift in Sources */,
 				527596302A138ECC00B04C6F /* SelectPublicationDestintionsViewController.swift in Sources */,
 				5283524822733BCF0097B949 /* EditKeyViewController.swift in Sources */,
+				529EC8D62A29F7A10056BB48 /* ModalNavigationController.swift in Sources */,
 				52DA9D7224F6765C0051795B /* UInt16+Time.swift in Sources */,
 				5231401622F460380074325A /* PublicationCell.swift in Sources */,
 				52E54CE32344978300478F05 /* GenericLevelServerDelegate.swift in Sources */,

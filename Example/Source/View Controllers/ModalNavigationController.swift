@@ -28,64 +28,18 @@
 * POSSIBILITY OF SUCH DAMAGE.
 */
 
-import nRFMeshProvision
+import UIKit
 
-enum TaskStatus {
-    case pending
-    case inProgress
-    case skipped
-    case success
-    case failed(String)
-    case cancelled
-    
-    static func failed(_ error: Error) -> TaskStatus {
-        return .failed(error.localizedDescription)
-    }
-    
-    static func resultOf(_ status: ConfigStatusMessage) -> TaskStatus {
-        if status.isSuccess {
-            return .success
-        }
-        return .failed("\(status.status)")
-    }
+protocol ModalNavigationControllerDelegate: AnyObject {
+    /// This method is called when the modal view controller is about to be dismissed.
+    func modalWillDismiss()
 }
 
-extension TaskStatus: CustomStringConvertible {
+class ModalNavigationController: UINavigationController {
+    weak var modalDelegate: ModalNavigationControllerDelegate?
     
-    var description: String {
-        switch self {
-        case .pending:
-            return "Pending"
-        case .inProgress:
-            return "In Progress..."
-        case .skipped:
-            return "Skipped"
-        case .success:
-            return "Success"
-        case .failed(let status):
-            return status
-        case .cancelled:
-            return "Cancelled"
-        }
+    override func dismiss(animated flag: Bool, completion: (() -> Void)? = nil) {
+        modalDelegate?.modalWillDismiss()
+        super.dismiss(animated: flag, completion: completion)
     }
-    
-    var color: UIColor {
-        switch self {
-        case .pending:
-            if #available(iOS 13.0, *) {
-                return .secondaryLabel
-            } else {
-                return .lightGray
-            }
-        case .inProgress:
-            return .dynamicColor(light: .nordicLake, dark: .nordicBlue)
-        case .success:
-            return .systemGreen
-        case .cancelled, .skipped:
-            return .nordicFall
-        case .failed:
-            return .nordicRed
-        }
-    }
-    
 }

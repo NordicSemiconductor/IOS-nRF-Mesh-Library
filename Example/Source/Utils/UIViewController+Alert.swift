@@ -103,11 +103,13 @@ extension UIViewController {
     ///   - title:      The alert title.
     ///   - message:    The message below the title.
     ///   - actions:    Alert actions.
+    ///   - preferredStype: The style to use when presenting the alert controller.
     func presentAlert(title: String?, message: String?,
-                      options actions: [UIAlertAction]) {
+                      options actions: [UIAlertAction],
+                      preferredStyle: UIAlertController.Style = .alert) {
         DispatchQueue.main.async { [weak self] in
             guard let self = self else { return }
-            let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+            let alert = UIAlertController(title: title, message: message, preferredStyle: preferredStyle)
             actions.forEach { alert.addAction($0) }
             self.present(alert, animated: true)
         }

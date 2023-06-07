@@ -36,12 +36,17 @@ public extension Model {
     ///
     /// The list will not contain unknown Application Keys bound
     /// to this Model, possibly bound by other Provisioner.
+    ///
+    /// If the Node does not belong to any mesh network, this method returns an empty array.
+    /// In that case use ``Model/isBoundTo(_:)`` instead.
     var boundApplicationKeys: [ApplicationKey] {
         return parentElement?.parentNode?.applicationKeys
-            .filter { bind.contains($0.index) } ?? []
+            .filter { isBoundTo($0) } ?? []
     }
     
     /// Whether the given Application Key is bound to this Model.
+    ///
+    /// - note: Only the Key Index is used for key comparison.
     ///
     /// - parameter applicationKey: The key to check.
     /// - returns: `True` if the key is bound to this Model,

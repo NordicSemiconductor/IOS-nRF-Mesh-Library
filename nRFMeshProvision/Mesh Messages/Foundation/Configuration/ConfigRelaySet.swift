@@ -75,6 +75,15 @@ public struct ConfigRelaySet: AcknowledgedConfigMessage {
         self.steps = min(31, steps)
     }
     
+    /// Enables and sets the Relay settings on the Node.
+    ///
+    /// - parameter relayRetransmit: The Relay Retranmission settings.
+    public init(_ relayRetransmit: Node.RelayRetransmit) {
+        self.state = .enabled
+        self.count = relayRetransmit.count - 1
+        self.steps = relayRetransmit.steps
+    }
+    
     public init?(parameters: Data) {
         guard parameters.count == 2 else {
             return nil

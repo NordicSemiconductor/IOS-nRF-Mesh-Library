@@ -854,6 +854,7 @@ extension ModelViewController: MeshNetworkDelegate {
         case let status as ConfigNodeIdentityStatus:
             if status.isSuccess {
                 nodeIdentityStates[identityIndex].state = status.identity
+                reloadSections(.configurationServer, with: .automatic)
                 if isRefreshing {
                     identityIndex += 1
                     if identityIndex < nodeIdentityStates.count {

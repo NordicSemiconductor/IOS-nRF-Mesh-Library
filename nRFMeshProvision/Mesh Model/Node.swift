@@ -235,10 +235,16 @@ public class Node: Codable {
      }
     
     /// Returns list of Network Keys known to this Node.
+    ///
+    /// - note: If the Node has been removed from the mesh network this
+    ///         property returns an empty array.
     public var networkKeys: [NetworkKey] {
         return meshNetwork?.networkKeys.knownTo(node: self) ?? []
     }
     /// Returns list of Application Keys known to this Node.
+    ///
+    /// - note: If the Node has been removed from the mesh network this
+    ///         property returns an empty array. 
     public var applicationKeys: [ApplicationKey] {
         return meshNetwork?.applicationKeys.knownTo(node: self) ?? []
     }

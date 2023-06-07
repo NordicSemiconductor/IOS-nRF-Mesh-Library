@@ -59,6 +59,179 @@ class ConfigurationViewController: UIViewController,
     
     // MARK: - Public properties
     
+    func configure(node: Node, basedOn originalNode: Node) {
+        self.node = node
+        
+        // If the Default TLL was known for the original node, set the same value.
+        if let ttl = originalNode.defaultTTL {
+            tasks.append(.setDefaultTtl(ttl))
+        }
+        // Do the same for Secure Network beacons, ...
+        if let secureNetworkBeacon = originalNode.secureNetworkBeacon {
+            tasks.append(.setBeacon(enabled: secureNetworkBeacon))
+        }
+        // ...Network Transmit, ...
+        if let networkTransmit = originalNode.networkTransmit {
+            tasks.append(.setNetworkTransit(networkTransmit))
+        }
+        // ... and the node features:
+        switch originalNode.features?.relay {
+        case .enabled:
+            if let relayRetransmit = originalNode.relayRetransmit {
+                tasks.append(.setRelay(relayRetransmit))
+            }
+        case .notEnabled:
+            tasks.append(.disableRelayFeature)
+        default:
+            break
+        }
+        
+        switch originalNode.features?.proxy {
+        case .enabled:
+            tasks.append(.setGATTProxy(enabled: true))
+        case .notEnabled:
+            tasks.append(.setGATTProxy(enabled: false))
+        default:
+            break
+        }
+        
+        switch originalNode.features?.friend {
+        case .enabled:
+            tasks.append(.setFriend(enabled: true))
+        case .notEnabled:
+            tasks.append(.setFriend(enabled: false))
+        default:
+            break
+        }
+        
+        // Here we can't use `originalNode.networkKeys` or `originalNode.applicationKeys`,
+        // as the node was already removed from the network. However, we can check which keys
+        // of the network were known to that node using the API that those properties use
+        // internally.
+        let meshNetwork = MeshNetworkManager.instance.meshNetwork!
+        meshNetwork.networkKeys.knownTo(node: originalNode).forEach { networkKey in
+            if !node.knows(networkKey: networkKey) {
+                tasks.append(.sendNetworkKey(networkKey))
+            }
+        }
+        meshNetwork.applicationKeys.knownTo(node: originalNode).forEach { applicationKey in
+            if !node.knows(applicationKey: applicationKey) {
+                tasks.append(.sendApplicationKey(applicationKey))
+            }
+        }
+        
+        // With the Network Keys sent we could set the Node Identity state for each of the
+        // subnetworks, but the state of Node Identity for Network Keys is dynamic and not
+        // stored in the Configuration Database. Therefore, we skip this configuration.
+    
+        // Set Heartbeat Publication. Only the feature-triggered settings will be applied.
+        if let publication = originalNode.heartbeatPublication,
+           let networkKey = meshNetwork.networkKeys[publication.networkKeyIndex] {
+            tasks.append(.setHeartbeatPublication(
+                // Current periodic publication data are not known. Periodic heartbeats will be disabled.
+                countLog: 0, periodLog: 0,
+                // Set the remaining fields to match the Heartbeat publication of the old node.
+                destination: publication.address, ttl: publication.ttl,
+                networkKey: networkKey, triggerFeatures: publication.features))
+        }
+        // Don't set Heartbeat Subscription as the current subscription period of the old Node
+        // is not known.
+        /*
+        if let subscription = originalNode.heartbeatSubscription {
+            tasks.append(.setHeartbeatSubscription(
+                source: subscription.source, destination: subscription.destination,
+                // The period for Heartbeat subscriptions is not known.
+                periodLog: 0))
+        }
+        */
+        
+        // Key bindings.
+        for i in 0..<min(originalNode.elements.count, node.elements.count) {
+            let originalElement = originalNode.elements[i]
+            let targetElement = node.elements[i]
+            
+            originalElement.models.forEach { originalModel in
+                if originalModel.supportsApplicationKeyBinding,
+                   let targetModel = targetElement.model(withModelId: originalModel.modelId) {
+                    let boundApplicationKeys = meshNetwork.applicationKeys
+                        .filter { originalModel.isBoundTo($0) }
+                    boundApplicationKeys.forEach { applicationKey in
+                        tasks.append(.bind(applicationKey, to: targetModel))
+                    }
+                }
+            }
+        }
+        
+        // Model Publications.
+        for i in 0..<min(originalNode.elements.count, node.elements.count) {
+            let originalElement = originalNode.elements[i]
+            let targetElement = node.elements[i]
+            
+            originalElement.models.forEach { originalModel in
+                if originalModel.supportsModelPublication ?? true,
+                   let publication = originalModel.publish,
+                   let targetModel = targetElement.model(withModelId: originalModel.modelId),
+                   let applicationKey = meshNetwork.applicationKeys[publication.index] {
+                    // If the Node was publishing to its own Unicast Address, translate it to the new address.
+                    let destination = translate(address: publication.publicationAddress, from: originalNode, to: node)
+                    let newPublication = Publish(to: destination,
+                                                 using: applicationKey,
+                                                 usingFriendshipMaterial: publication.isUsingFriendshipSecurityMaterial,
+                                                 ttl: publication.ttl,
+                                                 period: publication.period,
+                                                 retransmit: publication.retransmit)
+                    tasks.append(.setPublication(newPublication, to: targetModel))
+                }
+            }
+        }
+        
+        // Subscriptions.
+        let subscribableGroups = meshNetwork.groups + Group.specialGroups
+            .filter { $0 != .allNodes }
+        for i in 0..<min(originalNode.elements.count, node.elements.count) {
+            let originalElement = originalNode.elements[i]
+            let targetElement = node.elements[i]
+            
+            originalElement.models.forEach { originalModel in
+                if originalModel.supportsModelSubscriptions ?? true,
+                   let targetModel = targetElement.model(withModelId: originalModel.modelId) {
+                    // We can't use `originalModel.subscriptions` as the original node is no longer
+                    // a part of the network. Instead, let's filter the groups.
+                    subscribableGroups
+                        .filter { group in originalModel.isSubscribed(to: group) }
+                        .forEach { group in
+                            tasks.append(.subscribe(targetModel, to: group))
+                        }
+                }
+            }
+        }
+        
+        // Reconfigure other Nodes that may be publishing to the previous address of the Node.
+        let modelsForReconfiguration = meshNetwork.nodes
+            .filter { $0 != node }
+            .flatMap { $0.elements }
+            .flatMap { $0.models }
+            .filter { model in
+                if let publicationAddress = model.publish?.publicationAddress.address {
+                    return originalNode.contains(elementWithAddress: publicationAddress)
+                }
+                return false
+            }
+        modelsForReconfiguration.forEach { model in
+            if let publication = model.publish,
+               let applicationKey = meshNetwork.applicationKeys[publication.index] {
+                let destination = translate(address: publication.publicationAddress, from: originalNode, to: node)
+                let newPublication = Publish(to: destination,
+                                             using: applicationKey,
+                                             usingFriendshipMaterial: publication.isUsingFriendshipSecurityMaterial,
+                                             ttl: publication.ttl,
+                                             period: publication.period,
+                                             retransmit: publication.retransmit)
+                tasks.append(.setPublication(newPublication, to: model))
+            }
+        }
+    }
+    
     func bind(applicationKeys: [ApplicationKey], to models: [Model]) {
         guard let node = models.first?.parentElement?.parentNode else {
             return
@@ -237,6 +410,7 @@ extension ConfigurationViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "task", for: indexPath)
         cell.textLabel?.text = tasks[indexPath.row].title
+        cell.imageView?.image = tasks[indexPath.row].icon
         let status = statuses[indexPath.row]
         cell.detailTextLabel?.text = status.description
         cell.detailTextLabel?.textColor = status.color
@@ -259,6 +433,23 @@ extension ConfigurationViewController: UITableViewDataSource {
 }
 
 private extension ConfigurationViewController {
+    
+    /// Translates the address of an Element on the old Node to the same Element on the new Node.
+    ///
+    /// If the address is not an address of an Element on the old Node, this method returns it
+    /// without modification.
+    ///
+    /// - parameters:
+    ///   - address: The address to translate.
+    ///   - oldNode: The old Node instance.
+    ///   - newNode: The new Node instance.
+    /// - returns: The translated mesh address.
+    func translate(address: MeshAddress, from oldNode: Node, to newNode: Node) -> MeshAddress {
+        if oldNode.contains(elementWithAddress: address.address) {
+            return MeshAddress(newNode.primaryUnicastAddress + address.address - oldNode.primaryUnicastAddress)
+        }
+        return address
+    }
     
     func executeNext() {
         current += 1
@@ -306,7 +497,16 @@ private extension ConfigurationViewController {
         // Send the message.
         do {
             let manager = MeshNetworkManager.instance
-            handler = try manager.send(task.message, to: node.primaryUnicastAddress)
+            switch task {
+            // Publication Set message can be sent to a different node in some cases.
+            case .setPublication(_, to: let model):
+                guard let address = model.parentElement?.parentNode?.primaryUnicastAddress else {
+                    fallthrough
+                }
+                handler = try manager.send(task.message, to: address)
+            default:
+                handler = try manager.send(task.message, to: node.primaryUnicastAddress)
+            }
         } catch {
             reload(taskAt: current, with: .failed(error))
         }
@@ -323,7 +523,7 @@ private extension ConfigurationViewController {
     func completed() {
         DispatchQueue.main.async {
             self.tableView.reloadData()
-            self.statusView.text = "Configuration complete."
+            self.statusView.text = "Configuration complete"
             self.navigationItem.rightBarButtonItem?.isEnabled = true
             self.navigationItem.leftBarButtonItem?.isEnabled = false
             self.remainingTime.isHidden = true

@@ -123,7 +123,9 @@ class NetworkViewController: UITableViewController, UISearchBarDelegate {
             scannerViewController.delegate = self
         case "configure":
             let destination = segue.destination as! NodeViewController
-            destination.node = sender as? Node
+            let (node, originalNode) = sender as! (Node, Node?)
+            destination.node = node
+            destination.originalNode = originalNode
         case "open":
             let cell = sender as! NodeViewCell
             let destination = segue.destination as! NodeViewController
@@ -231,8 +233,8 @@ private extension NetworkViewController {
 
 extension NetworkViewController: ProvisioningViewDelegate {
     
-    func provisionerDidProvisionNewDevice(_ node: Node) {
-        performSegue(withIdentifier: "configure", sender: node)
+    func provisionerDidProvisionNewDevice(_ node: Node, whichReplaced previousNode: Node?) {
+        performSegue(withIdentifier: "configure", sender: (node, previousNode))
     }
     
 }
