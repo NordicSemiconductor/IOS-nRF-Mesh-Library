@@ -164,7 +164,6 @@
 		55617D033586843FDB091FCE706131CD /* ChaCha20.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBE77F01DBCA6B4CBDAFEFFF91FD51E2 /* ChaCha20.swift */; };
 		559F040069E6374DF17C6A8E253D91CE /* BlockEncryptor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 322DD78557BFE4B398A18CBAA3C8A353 /* BlockEncryptor.swift */; };
 		56087F0BA086E660A41E7407CF6F1219 /* LightHSLDefaultSetUnacknowledged.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6260FDA748C14129BA84335FC4707FF /* LightHSLDefaultSetUnacknowledged.swift */; };
-		5633FE2F3328D63FB41B6B368ACDE004 /* CompanyIdentifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82064641241EA611E96C18CAD2F941E3 /* CompanyIdentifier.swift */; };
 		564F09F53CE60C9D4DDFE3FF2B7630D8 /* AES+Foundation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 466CB280E8CD811A98491B57B02D1B46 /* AES+Foundation.swift */; };
 		56A2957ADEAE71EDC895C8AFD4A7EA0D /* ConfigCompositionDataStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46BD16B8C4AFA97AE43892AF0235A9EA /* ConfigCompositionDataStatus.swift */; };
 		56C661C9497EC19EE532EA8E1580C073 /* ChaCha20+Foundation.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBCFEA3C88E1F6CD86C88C84A6979B86 /* ChaCha20+Foundation.swift */; };
@@ -850,7 +849,6 @@
 		81D2FB25DBF42D2920A513F69261CEFE /* ConfigBeaconGet.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ConfigBeaconGet.swift; sourceTree = "<group>"; };
 		81DB71390CAA7209061290CAB352DAE2 /* ConfigNodeIdentityStatus.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ConfigNodeIdentityStatus.swift; sourceTree = "<group>"; };
 		81E469A719F1F3BD0D050C24FD3FE20D /* RemoteProvisioningMessage.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = RemoteProvisioningMessage.swift; sourceTree = "<group>"; };
-		82064641241EA611E96C18CAD2F941E3 /* CompanyIdentifier.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CompanyIdentifier.swift; sourceTree = "<group>"; };
 		82E21560551522E26DA29FC2711C8B79 /* UInt64+Extension.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = "UInt64+Extension.swift"; path = "Sources/CryptoSwift/UInt64+Extension.swift"; sourceTree = "<group>"; };
 		833E592DA0A2EB4A778B2AE25083DEF5 /* Location.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Location.swift; sourceTree = "<group>"; };
 		8401ED14FF39BBF39217A88493885CA8 /* BlockDecryptor.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = BlockDecryptor.swift; path = Sources/CryptoSwift/BlockDecryptor.swift; sourceTree = "<group>"; };
@@ -1889,7 +1887,6 @@
 			children = (
 				B78C98DAABF865DDF6CEFF8D0191EED0 /* BackgroundTimer.swift */,
 				1FA6C8234F93BFB0774C324FB05605E3 /* Beacon.swift */,
-				82064641241EA611E96C18CAD2F941E3 /* CompanyIdentifier.swift */,
 				1E5028D8C8870229C60FAEE14CC526A4 /* MeshConstants.swift */,
 				ED3FD0E355116E51D6E48E8C7CFD44A9 /* MeshLoggerDelegate.swift */,
 			);
@@ -2248,7 +2245,6 @@
 				7A25171C38EAADCD33A0290D9381A55A /* BearerDelegate.swift in Sources */,
 				B6B44B6548C883FFE59447110BEE8498 /* BearerError.swift in Sources */,
 				87204181B2FC9996B72D37B33C38662F /* ClosedRange.swift in Sources */,
-				5633FE2F3328D63FB41B6B368ACDE004 /* CompanyIdentifier.swift in Sources */,
 				385AE1632287EADF53264C56D26FB80C /* CompositionElement.swift in Sources */,
 				AE4824014936202416DAB25440004E70 /* ConfigAppKeyAdd.swift in Sources */,
 				7663F344C38F6883A3C0A634B5EED35A /* ConfigAppKeyDelete.swift in Sources */,

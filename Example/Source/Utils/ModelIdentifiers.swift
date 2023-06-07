@@ -34,7 +34,15 @@ import nRFMeshProvision
 extension UInt16 {
     
     // Supported vendor models
-    static let simpleOnOffModelId: UInt16 = 0x0001
+    static let simpleOnOffServerModelId: UInt16 = 0x0000
+    static let simpleOnOffClientModelId: UInt16 = 0x0001
+    static let rssiServer: UInt16 = 0x0005
+    static let rssiClient: UInt16 = 0x0006
+    static let rssiUtil: UInt16 = 0x0007
+    static let thingy52Server: UInt16 = 0x0008
+    static let thingy52Client: UInt16 = 0x0009
+    static let chatClient: UInt16 = 0x000A
+    
     static let nordicSemiconductorCompanyId: UInt16 = 0x0059
     
 }

@@ -37,22 +37,29 @@ extension Model: CustomDebugStringConvertible {
     }
     
     public var modelName: String {
-        if isBluetoothSIGAssigned {
-            return name ?? "Unknown Model ID: \(modelIdentifier.asString())"
-        } else {
-            return "Vendor Model ID: \(modelIdentifier.asString())"
+        if let companyIdentifier = companyIdentifier {
+            switch (companyIdentifier, modelIdentifier) {
+            case (.nordicSemiconductorCompanyId, .simpleOnOffServerModelId): return "Simple OnOff Server"
+            case (.nordicSemiconductorCompanyId, .simpleOnOffClientModelId): return "Simple OnOff Client"
+            case (.nordicSemiconductorCompanyId, .rssiServer):               return "Rssi Server"
+            case (.nordicSemiconductorCompanyId, .rssiClient):               return "Rssi Client"
+            case (.nordicSemiconductorCompanyId, .rssiUtil):                 return "Rssi Util"
+            case (.nordicSemiconductorCompanyId, .thingy52Server):           return "Thingy52 Server"
+            case (.nordicSemiconductorCompanyId, .thingy52Client):           return "Thingy52 Client"
+            case (.nordicSemiconductorCompanyId, .chatClient):               return "Chat Client"
+            default:
+                return "Vendor Model ID: \(modelIdentifier.asString())"
+            }
         }
+        return name ?? "Unknown Model ID: \(modelIdentifier.asString())"
     }
     
     public var companyName: String {
-        if isBluetoothSIGAssigned {
-            return "Bluetooth SIG"
-        }
         if let companyId = companyIdentifier {
             return CompanyIdentifier.name(for: companyId) ??
                    "Unknown Company ID (\(companyId.asString()))"
         } else {
-            return "Unknown Company ID"
+            return "Bluetooth SIG"
         }
     }
     
