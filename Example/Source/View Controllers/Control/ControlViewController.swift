@@ -203,11 +203,6 @@ private extension Model {
                isSimpleOnOffClient
     }
     
-    var modelId: UInt32 {
-        let companyId = isBluetoothSIGAssigned ? 0 : companyIdentifier!
-        return (UInt32(companyId) << 16) | UInt32(modelIdentifier)
-    }
-    
     var isSimpleOnOffClient: Bool {
         return modelIdentifier == .simpleOnOffClientModelId &&
                companyIdentifier == .nordicSemiconductorCompanyId
