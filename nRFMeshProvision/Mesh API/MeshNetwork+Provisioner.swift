@@ -36,6 +36,7 @@ public extension MeshNetwork {
     ///
     /// - parameter provisioner: The Provisioner to look for.
     /// - returns: `True` if the Provisioner was found, `false` otherwise.
+    /// - since: 4.0.0
     func contains(provisioner: Provisioner) -> Bool {
         return provisioners.contains(provisioner)
     }
@@ -45,6 +46,7 @@ public extension MeshNetwork {
     ///
     /// - parameter uuid: The Provisioner's UUID to look for.
     /// - returns: `True` if the Provisioner was found, `false` otherwise.
+    /// - since: 4.0.0 
     func contains(provisionerWithUuid uuid: UUID) -> Bool {
         return provisioners.contains { $0.uuid == uuid }
     }

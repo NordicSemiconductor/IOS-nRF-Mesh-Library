@@ -48,7 +48,7 @@ public extension Provisioner {
     /// must have a Unicast Address assigned, otherwise `nil`
     /// is returned instead.
     ///
-    /// - since: 3.3.0
+    /// - since: 4.0.0
     var primaryUnicastAddress: Address? {
         return node?.primaryUnicastAddress
     }

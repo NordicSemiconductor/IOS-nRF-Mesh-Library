@@ -1213,6 +1213,8 @@ internal extension DeviceProperty {
 // MARK: - DevicePropertyCharacteristic
 
 /// An enum representing valid or invalid decimal values.
+///
+/// - since: 4.0.0
 public enum ValidDecimal: Equatable {
     /// The value is valid.
     case valid(Decimal)
@@ -1221,6 +1223,8 @@ public enum ValidDecimal: Equatable {
 }
 
 /// The time is represented by the value `1.1^(N–64)` in seconds, with `N` being the raw 8-bit value.
+///
+/// - since: 4.0.0
 public enum TimeExponential: Equatable {
     /// Creates a ``TimeExponential`` object based on the given time.
     ///

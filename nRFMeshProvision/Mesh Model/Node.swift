@@ -127,7 +127,7 @@ public class Node: Codable {
     public let uuid: UUID
     /// Primary Unicast Address of the Node.
     ///
-    /// - since: 3.3.0
+    /// - since: 4.0.0
     public internal(set) var primaryUnicastAddress: Address
     /// Primary Unicast Address of the Node.
     ///

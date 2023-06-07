@@ -55,6 +55,7 @@ public extension Model {
     ///
     /// - returns: `true` if the model supports model publication, `false` ir it doesn't
     ///            or `nil` if unknown.
+    /// - since: 4.0.0
     var supportsModelPublication: Bool? {
         if !isBluetoothSIGAssigned {
             return nil
@@ -149,6 +150,7 @@ public extension Model {
     ///
     /// - returns: `true` if the model supports model subscription, `false` ir it doesn't
     ///            or `nil` if unknown.
+    /// - since: 4.0.0
     var supportsModelSubscriptions: Bool? {
         if !isBluetoothSIGAssigned {
             return nil
@@ -245,7 +247,8 @@ public extension Model {
     /// - note: Models that operate on bound states share a single instance of a Subscription List per Element.
     ///
     /// - note: Model extension is only defined for SIG Models. Currently it is not possible to
-    ///         get relationships between Vendor Models, and for those this method returns an empty list.  
+    ///         get relationships between Vendor Models, and for those this method returns an empty list.
+    /// - since: 4.0.0
     var directBaseModels: [Model] {
         // The Model must be on an Element on a Node.
         guard let parentElement = parentElement,
@@ -276,6 +279,7 @@ public extension Model {
     ///
     /// - note: Model extension is only defined for SIG Models. Currently it is not possible to
     ///         get relationships between Vendor Models, and for those this method returns an empty list.
+    /// - since: 4.0.0
     var baseModels: [Model] {
         let models = directBaseModels
         // Return the direct base Models and all models that they extend.
@@ -290,6 +294,7 @@ public extension Model {
     ///
     /// - note: Model extension is only defined for SIG Models. Currently it is not possible to
     ///         get relationships between Vendor Models, and for those this method returns an empty list.
+    /// - since: 4.0.0
     var directExtendingModels: [Model] {
         // The Model must be on an Element on a Node.
         guard let parentElement = parentElement,
@@ -317,6 +322,7 @@ public extension Model {
     ///
     /// - note: Model extension is only defined for SIG Models. Currently it is not possible to
     ///         get relationships between Vendor Models, and for those this method returns an empty list.
+    /// - since: 4.0.0
     var extendingModels: [Model] {
         let models = directExtendingModels
         // Return the extending Models and all models that they extend.
@@ -331,6 +337,7 @@ public extension Model {
     ///
     /// - note: Model extension is only defined for SIG Models. Currently it is not possible to
     ///         get relationships between Vendor Models, and for those this method returns an empty list.
+    /// - since: 4.0.0
     var relatedModels: [Model] {
         // The Model must be on an Element on a Node.
         guard let parentElement = parentElement,
@@ -380,6 +387,7 @@ public extension Model {
     /// - parameter model: A Model to be checked.
     /// - returns: `True` if the given Model is a direct or indirect *base* Model of that one,
     ///            `false` otherwise.
+    /// - since: 4.0.0
     func extends(_ model: Model) -> Bool {
         // The Models must be on the same Node.
         guard let parentElement = parentElement,
@@ -408,6 +416,7 @@ public extension Model {
     /// - parameter model: A Model to be checked.
     /// - returns: `True` if the given Model is a *base* Model of that one,
     ///            `false` otherwise.
+    /// - since: 4.0.0            
     func extendsDirectly(_ model: Model) -> Bool {
         // The Models must be on the same Node.
         guard let parentElement = parentElement,

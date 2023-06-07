@@ -55,6 +55,8 @@ public class Model: Codable {
     ///
     /// Use ``Model/isBluetoothSIGAssigned`` to check whether the Model is defined by
     /// Bluetooth SIG.
+    /// 
+    /// - since: 4.0.0
     public let modelId: UInt32
     /// Bluetooth SIG or vendor-assigned model identifier.
     public var modelIdentifier: UInt16 {

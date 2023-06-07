@@ -36,7 +36,7 @@ import CoreBluetooth
 ///
 /// Network Identities can be matched to Network Keys in the network.
 ///
-/// - since: 3.3.0
+/// - since: 4.0.0
 public protocol NetworkIdentity {
     /// Returns whether the identity matches given ``NetworkKey``.
     ///

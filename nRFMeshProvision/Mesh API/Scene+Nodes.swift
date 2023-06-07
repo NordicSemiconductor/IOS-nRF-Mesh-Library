@@ -34,7 +34,7 @@ public extension Scene {
     
     /// Known Nodes whose Scene Registers contains this Scene.
     ///
-    /// Starting from version 3.3.0, all Scene Registers are checked, not only
+    /// Starting from version 4.0.0, all Scene Registers are checked, not only
     /// the one on the Primary Element.
     var nodes: [Node] {
         return elements.compactMap { $0.parentNode }

@@ -36,6 +36,7 @@ public extension MeshNetwork {
     ///
     /// - parameter node: The Node to look for.
     /// - returns: `True` if the Node was found, `false` otherwise.
+    /// - since: 4.0.0
     func contains(node: Node) -> Bool {
         return nodes.contains(node)
     }
@@ -45,6 +46,7 @@ public extension MeshNetwork {
     ///
     /// - parameter uuid: The Node's UUID to look for.
     /// - returns: `True` if the Node was found, `false` otherwise.
+    /// - since: 4.0.0 
     func contains(nodeWithUuid uuid: UUID) -> Bool {
         return node(withUuid: uuid) != nil
     }

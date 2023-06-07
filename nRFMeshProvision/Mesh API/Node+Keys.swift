@@ -125,7 +125,7 @@ public extension Array where Element == Node {
     /// - returns: `True` if any of the Nodes have knowledge about the
     ///            Application Key Index, `false` otherwise.
     func knows(applicationKeyIndex: KeyIndex) -> Bool {
-        return contains(where: { $0.knows(applicationKeyIndex: applicationKeyIndex) })
+        return contains { $0.knows(applicationKeyIndex: applicationKeyIndex) }
     }
     
     /// Returns whether any of elements of this array is using the given
@@ -146,7 +146,7 @@ public extension Array where Element == Node {
     /// - returns: `True` if any of the Nodes have knowledge about the
     ///            Network Key Index, `false` otherwise.
     func knows(networkKeyIndex: KeyIndex) -> Bool {
-        return contains(where: { $0.knows(networkKeyIndex: networkKeyIndex) })
+        return contains { $0.knows(networkKeyIndex: networkKeyIndex) }
     }
     
 }
