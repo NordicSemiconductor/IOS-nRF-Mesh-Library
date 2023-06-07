@@ -63,4 +63,22 @@ public extension Node {
         return elements.contains(model: model)
     }
     
+    /// Returns list of Models from any Element of the Node matching the given Model ID.
+    ///
+    /// - parameter sigModelId: Bluetooth SIG Model ID.
+    /// - returns: List of Models with the given Model identifier.
+    func models(withSigModelId sigModelId: UInt16) -> [Model] {
+        return elements.compactMap { $0.model(withSigModelId: sigModelId) }
+    }
+    
+    /// Returns list of Models from any Element of the Node matching the given Model ID.
+    ///
+    /// - parameter modelId:   The 16-bit Model identifier.
+    /// - parameter companyId: The company identifier as defined in Assigned Numbers.
+    /// - returns: List of Models with the given Model identifier.
+    /// - seeAlso: https://www.bluetooth.com/specifications/assigned-numbers/company-identifiers/
+    func models(withModelId modelId: UInt16, definedBy companyId: UInt16) -> [Model] {
+        return elements.compactMap { $0.model(withModelId: modelId, definedBy: companyId) }
+    }
+    
 }
