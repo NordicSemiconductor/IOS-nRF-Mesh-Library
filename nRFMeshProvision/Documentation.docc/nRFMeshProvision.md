@@ -15,12 +15,13 @@ The library is compatible with the following [Bluetooth specifications](https://
 
 > Important: Implementing ADV Bearer on iOS is not possible due to API limitations. 
   The library is using GATT Proxy protocol, specified in the Bluetooth Mesh Profile 1.0.1,
-  and requires a Node with Proxy functionality to relay messages to the mesh network.
+  and requires a Node with GATT Proxy functionality to relay messages to the mesh network.
 
 ## Usage
 
 The ``MeshNetworkManager`` is the main entry point for interacting with the mesh network.
-Use it to create, load or import a Bluetooth mesh network and send messages. 
+It can be used to create, load or import a Bluetooth mesh network configuration and send 
+and receive messages. 
 
 The snippet below demostrates how to start.
 

@@ -860,6 +860,7 @@ public extension MeshNetworkManager {
     /// was called.
     ///
     /// - returns: `True` if the network settings was saved, `false` otherwise.
+    /// - since: 4.0.0
     func clear() -> Bool {
         meshData.meshNetwork = nil
         networkManager = nil

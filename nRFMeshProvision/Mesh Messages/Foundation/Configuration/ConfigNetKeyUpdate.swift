@@ -56,6 +56,7 @@ public struct ConfigNetKeyUpdate: AcknowledgedConfigMessage, ConfigNetKeyMessage
     /// - parameters:
     ///   - networkKey: The Network Key to be updated.
     ///   - newKey: The new value of the key. The key must be 128-bit long.
+    /// - since: 4.0.0
     public init(networkKey: NetworkKey, with newKey: Data) throws {
         guard newKey.count == 16 else {
             throw MeshNetworkError.invalidKey

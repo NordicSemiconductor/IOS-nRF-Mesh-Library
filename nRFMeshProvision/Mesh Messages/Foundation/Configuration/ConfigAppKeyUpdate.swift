@@ -57,6 +57,7 @@ public struct ConfigAppKeyUpdate: AcknowledgedConfigMessage, ConfigNetAndAppKeyM
     /// - parameters:
     ///   - applicationKey: The Application Key to be updated.
     ///   - newKey: The new value of the key. The key must be 128-bit long.
+    /// - since: 4.0.0   
     public init(applicationKey: ApplicationKey, with newKey: Data) throws {
         self.applicationKeyIndex = applicationKey.index
         self.networkKeyIndex = applicationKey.boundNetworkKey.index
