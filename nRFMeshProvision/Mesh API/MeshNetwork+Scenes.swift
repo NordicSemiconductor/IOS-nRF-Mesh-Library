@@ -69,7 +69,7 @@ public extension MeshNetwork {
     /// Returns known Nodes containing at least one Element with Scene Register
     /// storing the given Scene.
     ///
-    /// Starting from version 3.3.0, this method returns also Nodes with more than one
+    /// Starting from version 4.0.0, this method returns also Nodes with more than one
     /// Scene Register, of which at least one has the given Scene stored.
     ///
     /// - parameter scene: The scene to look for.

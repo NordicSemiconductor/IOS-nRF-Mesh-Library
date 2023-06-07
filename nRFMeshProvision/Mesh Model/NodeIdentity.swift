@@ -36,7 +36,7 @@ import CoreBluetooth
 ///
 /// It can be used to match advertising device to a specific ``Node`` in the network.
 ///
-/// - since: 3.3.0
+/// - since: 4.0.0
 public protocol NodeIdentity {
     /// Returns whether the identity matches given ``Node``.
     ///

@@ -58,6 +58,7 @@ public extension Model {
     /// Whether the model supports App Key binding.
     ///
     /// Models that do not support App Key binding use Device Key on access layer security.
+    /// - since: 4.0.0 
     var supportsApplicationKeyBinding: Bool {
         return !requiresDeviceKey
     }

@@ -103,7 +103,7 @@ public class ProvisioningManager {
     ///
     /// The default implementation is sufficient for most cases. Use your own
     /// implementation if you need to know the value beforehand.
-    /// - since: 3.3.0
+    /// - since: 4.0.0
     /// - seeAlso: https://github.com/NordicSemiconductor/IOS-nRF-Mesh-Library/pull/435
     public var inputActionValueGenerator: InputActionValueGenerator = InputActionValueGenerator()
     

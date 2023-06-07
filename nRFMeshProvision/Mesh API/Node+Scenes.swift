@@ -34,7 +34,7 @@ public extension Node {
     
     /// List of Scenes registered in Scene Register on the Node.
     ///
-    /// Starting from version 3.3.0, this method returns Scenes registered
+    /// Starting from version 4.0.0, this method returns Scenes registered
     /// on Scene Register on any Node's Elements.
     var scenes: [Scene] {
         return meshNetwork?.scenes.filter { scene in
