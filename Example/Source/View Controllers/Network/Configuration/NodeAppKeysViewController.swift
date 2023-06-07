@@ -131,7 +131,7 @@ class NodeAppKeysViewController: ProgressViewController, Editable {
                             forRowAt indexPath: IndexPath) {
         let applicationKey = node.applicationKeys[indexPath.row]
         // Show confirmation dialog only when the key is bound to some Models.
-        if node.hasModelBoundTo(applicationKey) {
+        if node.contains(modelBoundToApplicationKey: applicationKey) {
             confirm(title: "Remove Key", message: "The selected key is bound to one or more " +
                 "models in the Node. When removed, it will be unbound automatically, and the " +
                 "models may stop working.") { _ in
