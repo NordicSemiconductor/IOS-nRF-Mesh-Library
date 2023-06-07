@@ -129,7 +129,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             Model(sigModelId: .genericOnOffClientModelId, delegate: GenericOnOffClientDelegate()),
             Model(sigModelId: .genericLevelClientModelId, delegate: GenericLevelClientDelegate()),
             // A simple vendor model:
-            Model(vendorModelId: .simpleOnOffModelId,
+            Model(vendorModelId: .simpleOnOffClientModelId,
                   companyId: .nordicSemiconductorCompanyId,
                   delegate: SimpleOnOffClientDelegate())
         ])

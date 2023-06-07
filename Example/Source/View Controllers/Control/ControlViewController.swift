@@ -209,7 +209,7 @@ private extension Model {
     }
     
     var isSimpleOnOffClient: Bool {
-        return modelIdentifier == .simpleOnOffModelId &&
+        return modelIdentifier == .simpleOnOffClientModelId &&
                companyIdentifier == .nordicSemiconductorCompanyId
     }
     
