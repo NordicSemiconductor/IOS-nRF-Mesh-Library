@@ -67,11 +67,15 @@ public struct RemoteProvisioningScanStart: AcknowledgedRemoteProvisioningMessage
     ///
     /// - parameters:
     ///   - scannedItemsLimit: Maximum number of scanned items to be reported. Value 0
-    ///                        indicates no limit.
+    ///                        (default) indicates no limit.
     ///   - timeout: Time limit for a scan (in seconds). The value will be rounded down
-    ///              to whole seconds.
+    ///              to whole seconds. The value of the Timeout field shall not be 0,
+    ///              otherwise `nil` is returned.
     ///   - uuid: Optional UUID to start a Single Device Scanning procedure.
-    public init(scannedItemsLimit: UInt8 = 0, timeout: TimeInterval = 0, uuid: CBUUID? = nil) {
+    public init?(scannedItemsLimit: UInt8 = 0, timeout: TimeInterval, uuid: UUID? = nil) {
+        guard timeout > 0 else {
+            return nil
+        }
         self.scannedItemsLimit = scannedItemsLimit
         self.timeout = timeout
         self.uuid = uuid
