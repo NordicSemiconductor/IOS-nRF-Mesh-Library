@@ -297,3 +297,53 @@ extension RemoteProvisioningMessageStatus: CustomDebugStringConvertible {
     }
     
 }
+
+extension RemoteProvisioningScanState: CustomDebugStringConvertible {
+    
+    public var debugDescription: String {
+        switch self {
+        case .idle:               return "Idle"
+        case .multipleDeviceScan: return "Multiple Device Scan"
+        case .singleDeviceScan:   return "Sindle Device Scan"
+        }
+    }
+    
+}
+
+extension RemoteProvisioningLinkCloseReason: CustomDebugStringConvertible {
+    
+    public var debugDescription: String {
+        switch self {
+        case .success:      return "Success"
+        case .fail:         return "Fail"
+        case .unrecognized: return "Unrecognized"
+        }
+    }
+    
+}
+
+extension RemoteProvisioningLinkState: CustomDebugStringConvertible {
+    
+    public var debugDescription: String {
+        switch self {
+        case .idle: return "Idle"
+        case .linkOpening: return "Link Opening"
+        case .linkActive: return "Link Active"
+        case .outboundPacketTransfer: return "Outbound Packet Transfer"
+        case .linkClosing: return "Link Closing"
+        }
+    }
+    
+}
+
+extension NodeProvisioningProtocolInterfaceProcedure: CustomDebugStringConvertible {
+    
+    public var debugDescription: String {
+        switch self {
+        case .deviceKeyRefresh: return "Device Key Refresh"
+        case .nodeAddressRefresh: return "Node Address Refresh"
+        case .nodeCompositionRefresh: return "Node Composition Refresh"
+        }
+    }
+    
+}
