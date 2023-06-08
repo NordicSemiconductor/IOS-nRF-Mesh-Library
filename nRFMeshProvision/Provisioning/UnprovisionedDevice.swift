@@ -68,4 +68,14 @@ public class UnprovisionedDevice: NSObject {
         self.oobInformation = oobInfo
     }
     
+    /// Creates the Unprovisioned Device object based on the Remote
+    /// Provisioning Scan Report message.
+    ///
+    /// - parameter scanReport: The scan report received during Remote Scan
+    ///                         operation.
+    public init(scanReport: RemoteProvisioningScanReport) {
+        self.uuid = scanReport.uuid
+        self.oobInformation = scanReport.oobInformation
+    }
+    
 }
