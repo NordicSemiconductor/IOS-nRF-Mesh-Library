@@ -42,7 +42,7 @@ open class BaseGattProxyBearer<Service: MeshService>: NSObject, Bearer, CBCentra
     /// The data delegate receives events whenever new mesh message is
     /// received from the bearer.
     ///
-    /// In case of the GATT bearer, the data delegate is guaranteed ti receive
+    /// In case of the GATT bearer, the data delegate is guaranteed to receive
     /// complete mesh messages, possibly composed of several Bluetooth LE
     /// notifications using the Proxy Protocol.
     public weak var dataDelegate: BearerDataDelegate?

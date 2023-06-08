@@ -223,8 +223,7 @@ internal extension Element {
         model.parentElement = self
     }
     
-    /// Adds Configuration Server and Client and Health Server and Client
-    /// to the Element.
+    /// This methods adds the natively supported Models to the Element.
     ///
     /// This method should only be called for the primary Element of the
     /// local Node.
