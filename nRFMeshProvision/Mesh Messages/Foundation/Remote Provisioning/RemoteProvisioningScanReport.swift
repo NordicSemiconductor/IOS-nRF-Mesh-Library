@@ -29,7 +29,6 @@
 */
 
 import Foundation
-import CoreBluetooth
 
 /// A Remote Provisioning Scan Report message is an unacknowledged message used by
 /// the Remote Provisioning Server to report the scanned Device UUID of an
@@ -45,7 +44,7 @@ public struct RemoteProvisioningScanReport: UnacknowledgedRemoteProvisioningMess
     /// measured in dBm.
     public let rssi: NSNumber
     /// Device UUID.
-    public let uuid: CBUUID
+    public let uuid: UUID
     /// Out-Of-Band Information of the unprovisioned device.
     public let oobInformation: OobInformation
     /// If present, the URI Hash field identifies the URI Hash of the unprovisioned device.
@@ -69,7 +68,7 @@ public struct RemoteProvisioningScanReport: UnacknowledgedRemoteProvisioningMess
     ///   - uuid: Device UUID.
     ///   - oobInformation: OOB Information of the unprovisioned device.
     ///   - uriHash: Optional URI Hash information.
-    public init(rssi: NSNumber, uuid: CBUUID, oobInformation: OobInformation, uriHash: Data? = nil) {
+    public init(rssi: NSNumber, uuid: UUID, oobInformation: OobInformation, uriHash: Data? = nil) {
         self.rssi = rssi
         self.uuid = uuid
         self.oobInformation = oobInformation
@@ -87,7 +86,7 @@ public struct RemoteProvisioningScanReport: UnacknowledgedRemoteProvisioningMess
             return nil
         }
         self.rssi = rssi
-        self.uuid = uuid
+        self.uuid = uuid.uuid
         self.oobInformation = oobInformation
         self.uriHash = advertisementData.uriHash
     }
@@ -97,7 +96,10 @@ public struct RemoteProvisioningScanReport: UnacknowledgedRemoteProvisioningMess
             return nil
         }
         rssi = NSNumber(value: Int8(bitPattern: parameters[0]))
-        uuid = CBUUID(data: parameters.subdata(in: 1 ..< 17))
+        guard let uuid = UUID(data: parameters.subdata(in: 1 ..< 17)) else {
+            return nil
+        }
+        self.uuid = uuid
         oobInformation = OobInformation(data: parameters, offset: 17)
         if parameters.count == 23 {
             uriHash = parameters.subdata(in: 19..<23)

@@ -29,7 +29,6 @@
 */
 
 import Foundation
-import CoreBluetooth
 
 /// A Remote Provisioning Extended Scan Start message is an unacknowledged message
 /// that is used by the Remote Provisioning Client to request additional information
@@ -57,7 +56,7 @@ public struct RemoteProvisioningExtendedScanStart: UnacknowledgedRemoteProvision
     /// If present, the UUID field identifies the Device UUID of the unprovisioned
     /// device for which additional information is requested. If the UUID field
     /// is `nil`, the request retrieves information about the Remote Provisioning Server.
-    public let uuid: CBUUID?
+    public let uuid: UUID?
     /// Time limit for a scan (in seconds) in range from 1 to 21 (0x15).
     ///
     /// The value will be rounded down to whole seconds.
@@ -94,7 +93,7 @@ public struct RemoteProvisioningExtendedScanStart: UnacknowledgedRemoteProvision
     ///           information is requested.
     ///   - timeout: Time limit for a scan (in seconds). The value will be rounded down
     ///              to whole seconds.
-    public init?(filter: [UInt8], uuid: CBUUID, timeout: TimeInterval) {
+    public init?(filter: [UInt8], uuid: UUID, timeout: TimeInterval) {
         // Remove duplicates and prohibited values.
         var set = Set<UInt8>()
         let filter = filter
@@ -168,7 +167,7 @@ public struct RemoteProvisioningExtendedScanStart: UnacknowledgedRemoteProvision
     ///           information is requested.
     ///   - timeout: Time limit for a scan (in seconds). The value will be rounded down
     ///              to whole seconds.
-    public init(filter: AdTypes, uuid: CBUUID, timeout: TimeInterval) {
+    public init(filter: AdTypes, uuid: UUID, timeout: TimeInterval) {
         self.init(filter: [filter], uuid: uuid, timeout: timeout)
     }
     
@@ -186,7 +185,7 @@ public struct RemoteProvisioningExtendedScanStart: UnacknowledgedRemoteProvision
     ///           information is requested.
     ///   - timeout: Time limit for a scan (in seconds). The value will be rounded down
     ///              to whole seconds.
-    public init(filter: [AdTypes], uuid: CBUUID, timeout: TimeInterval) {
+    public init(filter: [AdTypes], uuid: UUID, timeout: TimeInterval) {
         let types = filter.flatMap { $0.adTypes }
         self.adTypeFilterCount = UInt8(types.count)
         self.adTypeFilter = types.map { $0.rawValue }
@@ -235,7 +234,7 @@ public struct RemoteProvisioningExtendedScanStart: UnacknowledgedRemoteProvision
         adTypeFilterCount = parameters[0]
         adTypeFilter = parameters.subdata(in: 1..<1 + count).map { $0 }
         if parameters.count > 1 + count {
-            uuid = CBUUID(data: parameters.subdata(in: 1 + count ..< 1 + count + 16))
+            uuid = UUID(data: parameters.subdata(in: 1 + count ..< 1 + count + 16))
             timeout = TimeInterval(parameters[1 + count + 16])
         } else {
             uuid = nil

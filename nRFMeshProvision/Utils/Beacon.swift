@@ -131,3 +131,24 @@ extension CBUUID {
     }
     
 }
+
+extension UUID {
+    
+    /// Converts the Data to foundation UUID.
+    init?(data: Data) {
+        guard data.count == 16 else {
+            return nil
+        }
+        self = data.withUnsafeBytes { UUID(uuid: $0.load(as: uuid_t.self)) }
+    }
+    
+    /// Converts the Data to foundation UUID using Little Endian notation.
+    init?(dataLittleEndian data: Data) {
+        guard data.count == 16 else {
+            return nil
+        }
+        let reversed = Data(data.reversed())
+        self = reversed.withUnsafeBytes { UUID(uuid: $0.load(as: uuid_t.self)) }
+    }
+    
+}

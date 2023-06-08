@@ -29,7 +29,6 @@
 */
 
 import Foundation
-import CoreBluetooth
 
 /// A Remote Provisioning Scan Start message is an acknowledged message that is
 /// used by the Remote Provisioning Client to start the Remote Provisioning Scan
@@ -54,7 +53,7 @@ public struct RemoteProvisioningScanStart: AcknowledgedRemoteProvisioningMessage
     /// device identified by the value of the UUID field). If the UUID field is absent,
     /// the Remote Provisioning Client is requesting a scan for all unprovisioned
     /// devices within immediate radio range (a Multiple Devices Scanning).
-    public let uuid: CBUUID?
+    public let uuid: UUID?
     
     public var parameters: Data? {
         let data = Data([scannedItemsLimit, UInt8(timeout)])
@@ -85,7 +84,7 @@ public struct RemoteProvisioningScanStart: AcknowledgedRemoteProvisioningMessage
         scannedItemsLimit = parameters[0]
         timeout = TimeInterval(parameters[1])
         if parameters.count == 18 {
-            uuid = CBUUID(data: parameters.subdata(in: 2 ..< 18))
+            uuid = UUID(data: parameters.subdata(in: 2 ..< 18))!
         } else {
             uuid = nil
         }

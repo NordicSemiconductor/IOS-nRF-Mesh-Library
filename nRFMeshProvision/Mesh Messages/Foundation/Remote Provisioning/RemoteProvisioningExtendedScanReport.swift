@@ -39,7 +39,7 @@ public struct RemoteProvisioningExtendedScanReport: RemoteProvisioningStatusMess
     
     public let status: RemoteProvisioningMessageStatus
     /// Device UUID.
-    public let uuid: CBUUID
+    public let uuid: UUID
     /// Out-Of-Band Information of the unprovisioned device.
     public let oobInformation: OobInformation?
     /// Concatenated list of AD Structures that match the AD Types requested by the
@@ -69,7 +69,10 @@ public struct RemoteProvisioningExtendedScanReport: RemoteProvisioningStatusMess
             return nil
         }
         self.status = status
-        self.uuid = CBUUID(data: parameters.subdata(in: 1..<17))
+        guard let uuid = UUID(data: parameters.subdata(in: 1..<17)) else {
+            return nil
+        }
+        self.uuid = uuid
         if parameters.count > 17 {
             self.oobInformation = OobInformation(data: parameters, offset: 17)
             
