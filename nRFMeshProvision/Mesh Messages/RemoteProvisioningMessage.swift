@@ -31,7 +31,7 @@
 import Foundation
 
 /// A base protocol for all Remote Provisioning messages.
-public protocol RemoteProvisioningMessage: StaticMeshMessage {
+public protocol RemoteProvisioningMessage: ConfigMessage {
     // No additional fields.
 }
 
