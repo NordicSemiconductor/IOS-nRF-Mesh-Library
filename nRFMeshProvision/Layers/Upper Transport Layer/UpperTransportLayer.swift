@@ -40,7 +40,7 @@ internal class UpperTransportLayer {
     private var heartbeatPublisher: BackgroundTimer?
     
     private var logger: LoggerDelegate? {
-        return networkManager.manager.logger
+        return networkManager.logger
     }
     
     /// The upper transport layer shall not transmit a new segmented
@@ -53,7 +53,7 @@ internal class UpperTransportLayer {
     
     init(_ networkManager: NetworkManager) {
         self.networkManager = networkManager
-        self.meshNetwork = networkManager.meshNetwork!
+        self.meshNetwork = networkManager.meshNetwork
         self.queues = [:]
     }
     
@@ -140,7 +140,7 @@ internal class UpperTransportLayer {
 
         mutex.sync {
             // Notify user about the cancellation of the messages.
-            if let localNode = networkManager.meshNetwork?.localProvisioner?.node,
+            if let localNode = networkManager.meshNetwork.localProvisioner?.node,
                let element = localNode.element(withAddress: handle.source) {
                 queues[handle.destination]?
                     .filter {
@@ -149,7 +149,7 @@ internal class UpperTransportLayer {
                         $0.pdu.destination == handle.destination
                     }
                     .forEach {
-                        networkManager.notifyAbout(LowerTransportError.cancelled, duringSendingMessage: $0.pdu.message!, from: element, to: handle.destination)
+                        networkManager.notifyAbout(error: LowerTransportError.cancelled, duringSendingMessage: $0.pdu.message!, from: element, to: handle.destination)
                     }
             }
             // Remove all enqueued messages that match the handler.

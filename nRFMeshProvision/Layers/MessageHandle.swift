@@ -41,7 +41,7 @@ import Foundation
 /// The handle contains information about the message that was sent:
 /// its opcode, source and destination addresses.
 public struct MessageHandle {
-    weak var manager: MeshNetworkManager?
+    weak var manager: NetworkManager?
 
     /// The Op Code of the message.
     public let opCode: UInt32
@@ -54,7 +54,7 @@ public struct MessageHandle {
     
     init(for message: MeshMessage,
          sentFrom source: Address, to destination: Address,
-         using manager: MeshNetworkManager) {
+         using manager: NetworkManager) {
         self.opCode = message.opCode
         self.source = source
         self.destination = destination
@@ -69,7 +69,7 @@ public struct MessageHandle {
     /// (depending on the connection interval and message size)
     /// and therefore cannot be cancelled.
     public func cancel() {
-        try? manager?.cancel(self)
+        manager?.cancel(self)
     }
     
 }

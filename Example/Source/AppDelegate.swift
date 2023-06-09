@@ -44,16 +44,18 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Create the main MeshNetworkManager instance and customize
         // configuration values.
         meshNetworkManager = MeshNetworkManager()
-        meshNetworkManager.acknowledgmentTimerInterval = 0.150
-        meshNetworkManager.transmissionTimerInterval = 0.600
-        meshNetworkManager.incompleteMessageTimeout = 10.0
-        meshNetworkManager.retransmissionLimit = 2
-        meshNetworkManager.acknowledgmentMessageInterval = 4.2
-        // As the interval has been increased, the timeout can be adjusted.
-        // The acknowledged message will be repeated after 4.2 seconds,
-        // 12.6 seconds (4.2 + 4.2 * 2), and 29.4 seconds (4.2 + 4.2 * 2 + 4.2 * 4).
-        // Then, leave 10 seconds for until the incomplete message times out.
-        meshNetworkManager.acknowledgmentMessageTimeout = 40.0
+        meshNetworkManager.networkParameters = .build { builder in
+            builder.acknowledgmentTimerInterval = 0.150
+            builder.transmissionTimerInterval = 0.600
+            builder.incompleteMessageTimeout = 10.0
+            builder.retransmissionLimit = 2
+            builder.acknowledgmentMessageInterval = 4.2
+            // As the interval has been increased, the timeout can be adjusted.
+            // The acknowledged message will be repeated after 4.2 seconds,
+            // 12.6 seconds (4.2 + 4.2 * 2), and 29.4 seconds (4.2 + 4.2 * 2 + 4.2 * 4).
+            // Then, leave 10 seconds for until the incomplete message times out.
+            builder.acknowledgmentMessageTimeout = 40.0
+        }
         meshNetworkManager.logger = self
         
         // Try loading the saved configuration.
