@@ -152,7 +152,7 @@ public class ProxyFilter {
     
     /// The active Proxy Filter type.
     ///
-    /// By default the Proxy Filter is set to `.inclusionList`.
+    /// By default the Proxy Filter is set to ``ProxyFilerType/inclusionList``.
     public private(set) var type: ProxyFilerType = .inclusionList
     
     /// The connected Proxy Node. This may be `nil` if the connected Node is unknown
@@ -292,17 +292,10 @@ public extension ProxyFilter {
 
 // MARK: - Callbacks
 
-internal extension ProxyFilter {
-    
+internal protocol ProxyFilterEventHandler: AnyObject {
+        
     /// Clears the current Proxy Filter state.
-    func newNetworkCreated() {
-        type = .inclusionList
-        addresses.removeAll()
-        buffer.removeAll()
-        busy = false
-        counter = 0
-        proxy = nil
-    }
+    func newNetworkCreated()
     
     /// Callback called when a possible change of Proxy Node have been discovered.
     ///
@@ -318,6 +311,51 @@ internal extension ProxyFilter {
     /// This method reloads the Proxy Filter for the local Provisioner,
     /// adding all the addresses the Provisioner is subscribed to, including
     /// its Unicast Addresses and All Nodes address.
+    func newProxyDidConnect()
+    
+    /// Callback called when a Proxy Configuration Message has been sent.
+    ///
+    /// This method refreshes the local type and list of addresses.
+    ///
+    /// - parameter message: The message sent.
+    func managerDidDeliverMessage(_ message: ProxyConfigurationMessage)
+    
+    /// Callback called when the manager failed to send the Proxy
+    /// Configuration Message.
+    ///
+    /// This method clears the local filter and sets it back to ``ProxyFilerType/inclusionList``.
+    /// All the messages waiting to be sent are cancelled.
+    ///
+    /// - parameters:
+    ///   - message: The message that has not been sent.
+    ///   - error: The error received.
+    func managerFailedToDeliverMessage(_ message: ProxyConfigurationMessage, error: Error)
+    
+    /// Handler for the received Proxy Configuration Messages.
+    ///
+    /// This method notifies the delegate about changes in the Proxy Filter.
+    ///
+    /// If a mismatch is detected between the local list of services and
+    /// the list size received, the method will try to clear the remote
+    /// filter and send all the addresses again.
+    ///
+    /// - parameters:
+    ///   - message: The message received.
+    ///   - proxy: The connected Proxy Node, or `nil` if the Node is unknown.
+    func handle(_ message: ProxyConfigurationMessage, sentFrom proxy: Node?)
+}
+
+extension ProxyFilter: ProxyFilterEventHandler {
+    
+    func newNetworkCreated() {
+        type = .inclusionList
+        addresses.removeAll()
+        buffer.removeAll()
+        busy = false
+        counter = 0
+        proxy = nil
+    }
+    
     func newProxyDidConnect() {
         guard let manager = manager else { return }
         
@@ -336,11 +374,6 @@ internal extension ProxyFilter {
         }
     }
     
-    /// Callback called when a Proxy Configuration Message has been sent.
-    ///
-    /// This method refreshes the local type and list of addresses.
-    ///
-    /// - parameter message: The message sent.
     func managerDidDeliverMessage(_ message: ProxyConfigurationMessage) {
         mutex.sync {
             switch message {
@@ -362,15 +395,6 @@ internal extension ProxyFilter {
         }
     }
     
-    /// Callback called when the manager failed to send the Proxy
-    /// Configuration Message.
-    ///
-    /// This method clears the local filter and sets it back to `.inclusionList`.
-    /// All the messages waiting to be sent are cancelled.
-    ///
-    /// - parameters:
-    ///   - message: The message that has not been sent.
-    ///   - error: The error received.
     func managerFailedToDeliverMessage(_ message: ProxyConfigurationMessage, error: Error) {
         mutex.sync {
             type = .inclusionList
@@ -387,17 +411,6 @@ internal extension ProxyFilter {
         }
     }
     
-    /// Handler for the received Proxy Configuration Messages.
-    ///
-    /// This method notifies the delegate about changes in the Proxy Filter.
-    ///
-    /// If a mismatch is detected between the local list of services and
-    /// the list size received, the method will try to clear the remote
-    /// filter and send all the addresses again.
-    ///
-    /// - parameters:
-    ///   - message: The message received.
-    ///   - proxy: The connected Proxy Node, or `nil` if the Node is unknown.
     func handle(_ message: ProxyConfigurationMessage, sentFrom proxy: Node?) {
         guard let manager = manager else { return }
         
