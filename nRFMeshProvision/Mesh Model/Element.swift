@@ -231,6 +231,7 @@ internal extension Element {
     ///
     /// - parameter meshNetwork: The mesh network object.
     func addPrimaryElementModels(_ meshNetwork: MeshNetwork) {
+        guard isPrimary else { return }
         insert(model: Model(sigModelId: .configurationServerModelId,
                             delegate: ConfigurationServerHandler(meshNetwork)), at: 0)
         insert(model: Model(sigModelId: .configurationClientModelId,
