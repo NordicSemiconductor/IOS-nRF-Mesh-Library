@@ -158,7 +158,7 @@ public struct NetworkParameters {
     
     // MARK: - Initializers
     
-    public static func build(_ with: Builder) -> NetworkParameters {
+    public static func custom(_ with: Builder) -> NetworkParameters {
         var provider = NetworkParameters()
         with(&provider)
         return provider

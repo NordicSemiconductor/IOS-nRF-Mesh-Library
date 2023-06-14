@@ -44,7 +44,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Create the main MeshNetworkManager instance and customize
         // configuration values.
         meshNetworkManager = MeshNetworkManager()
-        meshNetworkManager.networkParameters = .build { builder in
+        meshNetworkManager.networkParameters = .custom { builder in
             builder.acknowledgmentTimerInterval = 0.150
             builder.transmissionTimerInterval = 0.600
             builder.incompleteMessageTimeout = 10.0
