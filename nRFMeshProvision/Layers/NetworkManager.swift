@@ -31,7 +31,11 @@
 import Foundation
 
 internal class NetworkManager {
-    weak var manager: MeshNetworkManager!
+    weak var networkParametersProvider: NetworkParametersProvider?
+    weak var proxy: ProxyFilterEventHandler?
+    weak var delegate: NetworkManagerDelegate?
+    weak var logger: LoggerDelegate?
+    weak var transmitter: Transmitter?
     
     // MARK: - Layers
     
@@ -40,47 +44,35 @@ internal class NetworkManager {
     var upperTransportLayer : UpperTransportLayer!
     var accessLayer         : AccessLayer!
     
+    // MARK: - Properties
+    
+    let meshNetwork: MeshNetwork
+    
     // MARK: - Computed properties
     
-    var transmitter: Transmitter? {
-        return manager.transmitter
-    }
-    var meshNetwork: MeshNetwork? {
-        return manager.meshNetwork
-    }
-    var defaultTtl: UInt8 {
-        return max(min(manager.defaultTtl, 127), 2)
-    }
-    var incompleteMessageTimeout: TimeInterval {
-        return max(manager.incompleteMessageTimeout, 10.0)
-    }
-    var acknowledgmentMessageTimeout: TimeInterval {
-        return max(manager.acknowledgmentMessageTimeout, 30.0)
-    }
-    func acknowledgmentMessageInterval(_ ttl: UInt8, _ segmentCount: Int) -> TimeInterval {
-        return max(manager.acknowledgmentMessageInterval, 2.0)
-            + Double(ttl) * 0.050
-            + Double(segmentCount) * 0.050
-    }
-    func acknowledgmentTimerInterval(_ ttl: UInt8) -> TimeInterval {
-        return max(manager.acknowledgmentTimerInterval, 0.150) + Double(ttl) * 0.050
-    }
-    func transmissionTimerInterval(_ ttl: UInt8) -> TimeInterval {
-        return max(manager.transmissionTimerInterval, 0.200) + Double(ttl) * 0.050
-    }
-    var retransmissionLimit: Int {
-        return max(manager.retransmissionLimit, 2)
+    var networkParameters: NetworkParameters {
+        return networkParametersProvider?.networkParameters ?? .default
     }
     
     // MARK: - Implementation
     
-    init(_ meshNetworkManager: MeshNetworkManager) {
-        manager = meshNetworkManager
+    init(_ network: MeshNetwork) {
+        meshNetwork = network
         
         networkLayer = NetworkLayer(self)
         lowerTransportLayer = LowerTransportLayer(self)
         upperTransportLayer = UpperTransportLayer(self)
         accessLayer = AccessLayer(self)
+    }
+    
+    convenience init(_ manager: MeshNetworkManager) {
+        self.init(manager.meshNetwork!)
+        
+        delegate = manager
+        networkParametersProvider = manager
+        proxy = manager.proxyFilter
+        transmitter = manager.transmitter
+        logger = manager.logger
     }
     
     // MARK: - Receiving messages
@@ -109,13 +101,13 @@ internal class NetworkManager {
     func publish(_ message: MeshMessage, from model: Model) {
         guard let publish = model.publish,
               let localElement = model.parentElement,
-              let applicationKey = meshNetwork?.applicationKeys[publish.index] else {
+              let applicationKey = meshNetwork.applicationKeys[publish.index] else {
             return
         }
         // Calculate the TTL to be used.
         let ttl = publish.ttl != 0xFF ?
             publish.ttl :
-            localElement.parentNode?.defaultTTL ?? defaultTtl
+            localElement.parentNode?.defaultTTL ?? networkParameters.defaultTtl
         // Send the message.
         send(message, from: localElement, to: publish.publicationAddress,
              withTtl: ttl, using: applicationKey)
@@ -201,7 +193,7 @@ internal class NetworkManager {
     ///   - keySet:      The keySet that should be used to encrypt the message.
     func reply(toMessageSentTo origin: Address, with message: MeshMessage,
                to destination: Address, using keySet: KeySet) {
-        guard let primaryElement = meshNetwork?.localProvisioner?.node?.elements.first else {
+        guard let primaryElement = meshNetwork.localProvisioner?.node?.elements.first else {
             return
         }
         accessLayer.reply(toMessageSentTo: origin, with: message,
@@ -248,10 +240,8 @@ internal class NetworkManager {
     ///   - destination: The destination address of the message received.
     func notifyAbout(newMessage message: MeshMessage,
                      from source: Address, to destination: Address) {
-        manager.delegateQueue.async {
-            self.manager.delegate?.meshNetworkManager(self.manager, didReceiveMessage: message,
-                                                      sentFrom: source, to: destination)
-        }
+        delegate?.networkManager(self, didReceiveMessage: message,
+                                 sentFrom: source, to: destination)
     }
     
     /// Notifies the delegate about delivering the mesh message to the given
@@ -263,10 +253,8 @@ internal class NetworkManager {
     ///   - destination:  The destination address.
     func notifyAbout(deliveringMessage message: MeshMessage,
                      from localElement: Element, to destination: Address) {
-        manager.delegateQueue.async {
-            self.manager.delegate?.meshNetworkManager(self.manager, didSendMessage: message,
-                                                      from: localElement, to: destination)
-        }
+        delegate?.networkManager(self, didSendMessage: message,
+                                 from: localElement, to: destination)
     }
     
     /// Notifies the delegate about an error during sending the mesh message
@@ -277,12 +265,10 @@ internal class NetworkManager {
     ///   - message: The mesh message that failed to be sent.
     ///   - localElement: The local element used to send the message.
     ///   - destination:  The destination address.
-    func notifyAbout(_ error: Error, duringSendingMessage message: MeshMessage,
+    func notifyAbout(error: Error, duringSendingMessage message: MeshMessage,
                      from localElement: Element, to destination: Address) {
-        manager.delegateQueue.async {
-            self.manager.delegate?.meshNetworkManager(self.manager, failedToSendMessage: message,
-                                                      from: localElement, to: destination, error: error)
-        }
+        delegate?.networkManager(self, failedToSendMessage: message,
+                                 from: localElement, to: destination, error: error)
     }
     
 }

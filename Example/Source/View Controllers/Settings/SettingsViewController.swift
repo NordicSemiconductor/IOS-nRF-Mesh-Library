@@ -44,7 +44,7 @@ class SettingsViewController: UITableViewController {
     @IBOutlet weak var testModeSwitch: UISwitch!
     @IBOutlet weak var lastModifiedLabel: UILabel!
     @IBAction func testModeDidChange(_ sender: UISwitch) {
-        MeshNetworkManager.instance.ivUpdateTestMode = sender.isOn
+        MeshNetworkManager.instance.networkParameters.ivUpdateTestMode = sender.isOn
     }
     
     @IBOutlet weak var resetNetworkButton: UIButton!
@@ -269,7 +269,7 @@ private extension SettingsViewController {
     func resetViews() {
         // IV Update Test Mode is not persistent and has to be set each time
         // the app is open or a network is imported.
-        MeshNetworkManager.instance.ivUpdateTestMode = false
+        MeshNetworkManager.instance.networkParameters.ivUpdateTestMode = false
         testModeSwitch.setOn(false, animated: true)
         
         // All tabs should be reset to the root view controller.

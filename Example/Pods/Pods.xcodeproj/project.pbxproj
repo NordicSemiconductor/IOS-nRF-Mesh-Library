@@ -155,7 +155,10 @@
 		519C000C7EE53FB5E0710E527AFADDB9 /* ProvisioningManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56B392DEA144B2228E5059762BFFDC37 /* ProvisioningManager.swift */; };
 		51D3C81D7C95AAAB1CA41C971B476813 /* ISO78164Padding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6793D5A483FC322067B570388A6B3706 /* ISO78164Padding.swift */; };
 		52069D025C55D850DC8CC61CB9AD0FA9 /* GenericPowerLevelStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46E865BA7B2152536B88F28180E79235 /* GenericPowerLevelStatus.swift */; };
+		5208862D2A330B9A00C9CE95 /* NetworkParameters.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5208862C2A330B9A00C9CE95 /* NetworkParameters.swift */; };
+		5208862F2A331BDB00C9CE95 /* NetworkManagerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5208862E2A331BDB00C9CE95 /* NetworkManagerDelegate.swift */; };
 		526F24F05DAEE7F5230D97CA1C11C259 /* MeshNetwork+Scenes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CE9EBCC249319B11F4761DF3113408D /* MeshNetwork+Scenes.swift */; };
+		529EC8DC2A30B1AA0056BB48 /* Node+Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529EC8DB2A30B1AA0056BB48 /* Node+Models.swift */; };
 		52E7064F091D1CB785E5377B2234B59F /* BlockCipher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A57B68075D5163750469D071E976128 /* BlockCipher.swift */; };
 		53E9BA2772FA42D76347BC4FFF9E56B0 /* TimeGet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 691F340608BECECEFC8011175343E0C0 /* TimeGet.swift */; };
 		5448E248B079A5152728A16DF657BD92 /* LightLightnessGet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84638DA95D164A52334C2435B9C0250E /* LightLightnessGet.swift */; };
@@ -731,6 +734,9 @@
 		509807D0716EE91C7FBA1267F44FC084 /* ConfigHeartbeatSubscriptionGet.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ConfigHeartbeatSubscriptionGet.swift; sourceTree = "<group>"; };
 		50CC36A2DD46E4E4141CD80DC0EB616E /* LightLightnessRangeSetUnacknowledged.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LightLightnessRangeSetUnacknowledged.swift; sourceTree = "<group>"; };
 		51A5495D2067D83F1B7534B3B79861F3 /* LowerTransportLayer.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LowerTransportLayer.swift; sourceTree = "<group>"; };
+		5208862C2A330B9A00C9CE95 /* NetworkParameters.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkParameters.swift; sourceTree = "<group>"; };
+		5208862E2A331BDB00C9CE95 /* NetworkManagerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkManagerDelegate.swift; sourceTree = "<group>"; };
+		529EC8DB2A30B1AA0056BB48 /* Node+Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Node+Models.swift"; sourceTree = "<group>"; };
 		52F30C30F9FB2AF2D589FBCDA08C46A7 /* NetworkBeaconPdu.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = NetworkBeaconPdu.swift; sourceTree = "<group>"; };
 		532748DBB74703B56C6DCEECB478DB9A /* GenericPowerLastStatus.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = GenericPowerLastStatus.swift; sourceTree = "<group>"; };
 		534D99468407BC28DCE93FABFC3F774E /* NetworkLayer.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = NetworkLayer.swift; sourceTree = "<group>"; };
@@ -1326,6 +1332,8 @@
 				774D25D166ACDB581CB6E7E67DAEF802 /* KeySet.swift */,
 				B59C7604432A02ED3B02EAD7B7F5A874 /* MessageHandle.swift */,
 				878C0AABF31D687E5911C80323EE7486 /* NetworkManager.swift */,
+				5208862E2A331BDB00C9CE95 /* NetworkManagerDelegate.swift */,
+				5208862C2A330B9A00C9CE95 /* NetworkParameters.swift */,
 				4FC5F9F4BAFEFE09EF309C2EF57A709D /* Access Layer */,
 				D8815D4050B7ACB9CDADE12B435BE09E /* Foundation Layer */,
 				78E2B294C15B59323911D04D14625B85 /* Lower Transport Layer */,
@@ -1393,6 +1401,7 @@
 				4CBD7D30622BA904EFB7B36B0B23465F /* Node+Elements.swift */,
 				6DF0CF198D60560BDE2D338E4086577F /* Node+Keys.swift */,
 				11F35CB3A17D8C431EC202CAFB18F6B1 /* Node+Provisioner.swift */,
+				529EC8DB2A30B1AA0056BB48 /* Node+Models.swift */,
 				5DBB6B9CCAE1587131EA4AD595CDFF63 /* Node+Scenes.swift */,
 				27ABBCD5DA989EDF66C7688F6E69E885 /* Provisioner+Node.swift */,
 				D32363D9E590800485E99254007F8AAD /* Provisioner+Ranges.swift */,
@@ -2322,6 +2331,7 @@
 				B7F1D1968E58B6CA3F6520B7576DDB4B /* ConfigVendorModelSubscriptionList.swift in Sources */,
 				502B84D4A8A7CD1DDB5BC6BD27E9F4A0 /* ControlMessage.swift in Sources */,
 				B72F82979CB0420C0CA4F5443BBE59A7 /* Crypto.swift in Sources */,
+				529EC8DC2A30B1AA0056BB48 /* Node+Models.swift in Sources */,
 				4EE764AC933407F8CD74947F5451C417 /* Data.swift in Sources */,
 				E8737B6F7F70F776800422D75861C4B1 /* Data+Hex.swift in Sources */,
 				D90AC52BAF119104650B674DDD33A465 /* Data+Keys.swift in Sources */,
@@ -2362,6 +2372,7 @@
 				DDE896C099AA184D3352F855EE617733 /* GenericOnOffSetUnacknowledged.swift in Sources */,
 				997A82F271A17D7277C4F38EE1523578 /* GenericOnOffStatus.swift in Sources */,
 				063F1E5FDD75DF86405B7F370E10A996 /* GenericOnPowerUpGet.swift in Sources */,
+				5208862F2A331BDB00C9CE95 /* NetworkManagerDelegate.swift in Sources */,
 				147AEC1D509E8883A0B286297131172B /* GenericOnPowerUpSet.swift in Sources */,
 				F7A97696A74B3656A8CC9AD629FD1A87 /* GenericOnPowerUpSetUnacknowledged.swift in Sources */,
 				EBF04EA778FC0CBBBE1824817A5CC63D /* GenericOnPowerUpStatus.swift in Sources */,
@@ -2512,6 +2523,7 @@
 				826DFE1BDE188AAC3E97DA4F98F37F74 /* Node+Scenes.swift in Sources */,
 				D135D36D533C09BF22367D488114D096 /* NodeFeatures.swift in Sources */,
 				67BBD341F037CE3662F9004226267132 /* NodeIdentity.swift in Sources */,
+				5208862D2A330B9A00C9CE95 /* NetworkParameters.swift in Sources */,
 				73C26BE35A8E6E810465A8A6B8B7A813 /* NodeIdentityState.swift in Sources */,
 				F71FF4343D1DB5C41A57A19E5EB9BD5F /* nRFMeshProvision-dummy.m in Sources */,
 				FD679EA7F8FDE0797704178842F9F63B /* OnPowerUp.swift in Sources */,

@@ -78,6 +78,18 @@ public extension Node {
     /// - parameter applicationKey: The Application Key to check bindings.
     /// - returns: `True` if there is at least one Model bound to the given
     ///            Application Key, `false` otherwise.
+    func contains(modelBoundToApplicationKey applicationKey: ApplicationKey) -> Bool {
+        return elements.contains { $0.hasModelBoundTo(applicationKey) }
+    }
+    
+    /// Returns whether any of the Element's Models are bound to the
+    /// given Application Key.
+    ///
+    /// - parameter applicationKey: The Application Key to check bindings.
+    /// - returns: `True` if there is at least one Model bound to the given
+    ///            Application Key, `false` otherwise.
+    ///
+    @available(*, deprecated, renamed: "contains(modelBoundToApplicationKey:)")
     func hasModelBoundTo(_ applicationKey: ApplicationKey) -> Bool {
         return elements.contains { $0.hasModelBoundTo(applicationKey) }
     }
@@ -88,6 +100,17 @@ public extension Node {
     /// - parameter networkKey: The Network Key to check binding.
     /// - returns: `True` if at least one Application Key known to this Node
     ///            is bound to the given Network Key.
+    func contains(applicationKeyBoundToNetworkKey networkKey: NetworkKey) -> Bool {
+        return applicationKeys.contains(keyBoundTo: networkKey)
+    }
+    
+    /// Returns whether the Node has at least one Application Key bound
+    /// to the given Network Key.
+    ///
+    /// - parameter networkKey: The Network Key to check binding.
+    /// - returns: `True` if at least one Application Key known to this Node
+    ///            is bound to the given Network Key.
+    @available(*, deprecated, renamed: "contains(applicationKeyBoundToNetworkKey:)")
     func hasApplicationKeyBoundTo(_ networkKey: NetworkKey) -> Bool {
         return applicationKeys.contains(keyBoundTo: networkKey)
     }
@@ -97,6 +120,18 @@ public extension Node {
     ///
     /// - parameter model: The Model which keys will be excluded.
     /// - returns: List of Application Keys that may be bound to the given Model.
+    func applicationKeys(availableForModel model: Model) -> [ApplicationKey] {
+        return applicationKeys.filter {
+            !model.boundApplicationKeys.contains($0)
+        }
+    }
+    
+    /// Returns a list of Application Keys known to the Node, that are not
+    /// bound to the given Model, and therefore can be bound to it.
+    ///
+    /// - parameter model: The Model which keys will be excluded.
+    /// - returns: List of Application Keys that may be bound to the given Model.
+    @available(*, deprecated, renamed: "applicationKeys(availableForModel:)")
     func applicationKeysAvailableFor(_ model: Model) -> [ApplicationKey] {
         return applicationKeys.filter {
             !model.boundApplicationKeys.contains($0)

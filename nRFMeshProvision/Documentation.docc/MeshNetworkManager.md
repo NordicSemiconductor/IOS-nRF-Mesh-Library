@@ -56,19 +56,11 @@ Use it to create, load or import a Bluetooth mesh network and send messages.
 
 - ``proxyFilter``
 
-### Configuration
+### Mesh Network Parameters
 
-- ``defaultTtl``
-- ``incompleteMessageTimeout``
-- ``acknowledgmentTimerInterval``
-- ``transmissionTimerInterval``
-- ``retransmissionLimit``
-- ``acknowledgmentMessageTimeout``
-- ``acknowledgmentMessageInterval``
+- ``networkParameters``
 
 ### Advanced Configuration
 
-- ``allowIvIndexRecoveryOver42``
-- ``ivUpdateTestMode``
 - ``setSequenceNumber(_:forLocalElement:)``
 - ``getSequenceNumber(ofLocalElement:)``

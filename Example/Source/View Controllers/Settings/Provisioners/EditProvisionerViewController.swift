@@ -110,7 +110,7 @@ class EditProvisionerViewController: UITableViewController {
         let node = meshNetwork.node(for: provisioner)
         if let node = node {
             unicastAddressLabel.text = node.primaryUnicastAddress.asString()
-            ttlCell.detailTextLabel?.text = "\(node.defaultTTL ?? MeshNetworkManager.instance.defaultTtl)"
+            ttlCell.detailTextLabel?.text = "\(node.defaultTTL ?? MeshNetworkManager.instance.networkParameters.defaultTtl)"
             ttlCell.accessoryType = .disclosureIndicator
             deviceKeyCell.detailTextLabel?.text = node.deviceKey?.hex ?? "Unknown Device Key"
             deviceKeyCell.detailTextLabel?.font = .systemFont(ofSize: 14)
@@ -253,7 +253,7 @@ private extension EditProvisionerViewController {
                             self.unicastAddressLabel.text = address!.asString()
                             self.disableConfigCapabilities = false
                             self.newAddress = address
-                            self.ttlCell.detailTextLabel?.text = "\(self.newTtl ?? self.provisioner.node?.defaultTTL ?? MeshNetworkManager.instance.defaultTtl)"
+            self.ttlCell.detailTextLabel?.text = "\(self.newTtl ?? self.provisioner.node?.defaultTTL ?? MeshNetworkManager.instance.networkParameters.defaultTtl)"
                             self.ttlCell.accessoryType = .disclosureIndicator
                             // If the Node does not exist yet, the key will be generated later,
                             // after the Provisioner is saved. For the time being print Unknown.
@@ -330,7 +330,7 @@ private extension EditProvisionerViewController {
             if let newTtl = newTtl {
                 provisioner.node?.defaultTTL = newTtl
             } else if let node = provisioner.node, node.defaultTTL == nil {
-                node.defaultTTL = MeshNetworkManager.instance.defaultTtl
+                node.defaultTTL = MeshNetworkManager.instance.networkParameters.defaultTtl
             }
             
             if manager.save() {

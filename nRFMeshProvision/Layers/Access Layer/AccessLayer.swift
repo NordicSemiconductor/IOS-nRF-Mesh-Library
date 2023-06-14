@@ -108,7 +108,7 @@ internal class AccessLayer {
     private let mutex = DispatchQueue(label: "AccessLayerMutex")
     
     private var logger: LoggerDelegate? {
-        return networkManager.manager.logger
+        return networkManager.logger
     }
     
     /// A map of current transactions.
@@ -124,7 +124,7 @@ internal class AccessLayer {
     
     init(_ networkManager: NetworkManager) {
         self.networkManager = networkManager
-        self.meshNetwork = networkManager.meshNetwork!
+        self.meshNetwork = networkManager.meshNetwork
         self.transactions = [:]
         self.reliableMessageContexts = []
         self.publishers = [:]
@@ -146,7 +146,7 @@ internal class AccessLayer {
     
     /// Initialize periodic publishing from local Models.
     func reinitializePublishers() {
-        networkManager.manager.localElements
+        networkManager.meshNetwork.localElements
             .flatMap { element in element.models }
             .forEach { model in refreshPeriodicPublisher(for: model) }
     }
@@ -336,9 +336,9 @@ internal class AccessLayer {
                            }) {
                 let context = reliableMessageContexts.remove(at: index)
                 context.invalidate()
-                if let localNode = networkManager.meshNetwork?.localProvisioner?.node,
+                if let localNode = networkManager.meshNetwork.localProvisioner?.node,
                    let element = localNode.element(withAddress: handle.source) {
-                    networkManager.notifyAbout(AccessError.cancelled,
+                    networkManager.notifyAbout(error: AccessError.cancelled,
                                                duringSendingMessage: context.request,
                                                from: element, to: handle.destination)
                 }
@@ -432,7 +432,7 @@ private extension AccessLayer {
                                                      to: accessPdu.source, using: keySet)
                                 }
                                 if delegate is SceneClientHandler {
-                                    _ = networkManager.manager.save()
+                                    _ = networkManager.delegate?.networkDidChange()
                                 }
                             } else {
                                 let modelName = model.name ?? "model"
@@ -464,7 +464,7 @@ private extension AccessLayer {
                             // Some Config Messages require special handling.
                             handle(message)
                         }
-                        _ = networkManager.manager.save()
+                        _ = networkManager.delegate?.networkDidChange()
                     } else {
                         // If not, it was received by adding another Node's address to the Proxy Filter.
                         logger?.i(.foundationModel, "\(message) received from: \(accessPdu.source.hex), to: \(accessPdu.destination.hex)")
@@ -504,11 +504,7 @@ private extension AccessLayer {
         // Handle a case when a remote Node resets the local one.
         // The ConfigResetStatus has already been sent.
         if message is ConfigNodeReset {
-            let localElements = meshNetwork.localElements
-            let provisioner = networkManager.manager.meshNetwork!.localProvisioner!
-            provisioner.meshNetwork = nil
-            _ = networkManager.manager.createNewMeshNetwork(withName: meshNetwork.meshName, by: provisioner)
-            networkManager.manager.localElements = localElements
+            networkManager.delegate?.networkDidReset()
         }
     }
     
@@ -603,14 +599,14 @@ private extension AccessLayer {
         }
         
         /// The TTL with which the request will be sent.
-        let ttl = element.parentNode?.defaultTTL ?? networkManager.defaultTtl
+        let ttl = element.parentNode?.defaultTTL ?? networkManager.networkParameters.defaultTtl
         /// The delay after which the local Element will try to resend the
         /// request. When the response isn't received after the first retry,
         /// it will try again every time doubling the last delay until the
         /// time goes out.
-        let initialDelay = networkManager.acknowledgmentMessageInterval(ttl, pdu.segmentsCount)
+        let initialDelay = networkManager.networkParameters.acknowledgmentMessageInterval(forTtl: ttl, andSegmentCount: pdu.segmentsCount)
         /// The timeout before which the response should be received.
-        let timeout = networkManager.acknowledgmentMessageTimeout
+        let timeout = networkManager.networkParameters.acknowledgmentMessageTimeout
         
         let ack = AcknowledgmentContext(for: request,
             sentFrom: pdu.source, to: pdu.destination.address,
@@ -628,11 +624,11 @@ private extension AccessLayer {
                 self.logger?.w(category, "\(request) sent from: \(pdu.source.hex), to: \(pdu.destination.hex) timed out")
                 self.cancel(MessageHandle(for: request,
                                           sentFrom: pdu.source, to: pdu.destination.address,
-                                          using: self.networkManager.manager))
+                                          using: self.networkManager))
                 self.mutex.sync {
                     self.reliableMessageContexts.removeAll { $0.timeoutTimer == nil }
                 }
-                self.networkManager.notifyAbout(AccessError.timeout,
+                self.networkManager.notifyAbout(error: AccessError.timeout,
                                                 duringSendingMessage: request,
                                                 from: element, to: pdu.destination.address)
             }
@@ -658,7 +654,7 @@ private extension AccessLayer {
         // ... and start periodic publisher.
         let publisher = BackgroundTimer.scheduledTimer(withTimeInterval: publish.period.interval,
                                                        repeats: true) { [weak self] timer in
-            guard let manager = self?.networkManager.manager else {
+            guard let manager = self?.networkManager else {
                 timer.invalidate()
                 return
             }

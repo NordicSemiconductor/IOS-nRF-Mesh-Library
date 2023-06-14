@@ -75,7 +75,7 @@ class ModelBindAppKeyViewController: ProgressViewController {
         
         MeshNetworkManager.instance.delegate = self
         
-        keys = model.parentElement?.parentNode?.applicationKeysAvailableFor(model)
+        keys = model.parentElement?.parentNode?.applicationKeys(availableForModel: model)
         if keys.isEmpty {
             tableView.showEmptyView()
         }

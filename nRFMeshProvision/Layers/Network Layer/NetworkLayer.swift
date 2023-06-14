@@ -39,7 +39,7 @@ internal class NetworkLayer {
     private let mutex = DispatchQueue(label: "NetworkLayerMutex")
     
     private var logger: LoggerDelegate? {
-        return networkManager.manager.logger
+        return networkManager.logger
     }
     
     /// The Network Key from the received Secure Network Beacon that contained
@@ -68,7 +68,7 @@ internal class NetworkLayer {
     
     init(_ networkManager: NetworkManager) {
         self.networkManager = networkManager
-        self.meshNetwork = networkManager.meshNetwork!
+        self.meshNetwork = networkManager.meshNetwork
         self.defaults = UserDefaults(suiteName: meshNetwork.uuid.uuidString)!
         self.networkMessageCache = NSCache()
     }
@@ -80,10 +80,6 @@ internal class NetworkLayer {
     ///   - pdu:  The data received.
     ///   - type: The PDU type.
     func handle(incomingPdu pdu: Data, ofType type: PduType) {
-        guard let meshNetwork = networkManager.meshNetwork else {
-            return
-        }
-        
         if case .provisioningPdu = type {
             // Provisioning is handled using ProvisioningManager.
             return
@@ -208,7 +204,7 @@ internal class NetworkLayer {
     func send(proxyConfigurationMessage message: ProxyConfigurationMessage) {
         guard let networkKey = proxyNetworkKey else {
             // The Proxy Network Key is unknown.
-            networkManager.manager.proxyFilter
+            networkManager.proxy?
                 .managerFailedToDeliverMessage(message, error: BearerError.bearerClosed)
             return
         }
@@ -224,12 +220,12 @@ internal class NetworkLayer {
         logger?.i(.network, "Sending \(pdu)")
         do {
             try send(lowerTransportPdu: pdu, ofType: .proxyConfiguration, withTtl: pdu.ttl)
-            networkManager.manager.proxyFilter.managerDidDeliverMessage(message)
+            networkManager.proxy?.managerDidDeliverMessage(message)
         } catch {
             if case BearerError.bearerClosed = error {
                 proxyNetworkKey = nil
             }
-            networkManager.manager.proxyFilter.managerFailedToDeliverMessage(message, error: error)
+            networkManager.proxy?.managerFailedToDeliverMessage(message, error: error)
         }
     }
     
@@ -296,9 +292,9 @@ private extension NetworkLayer {
         /// The node shall not execute more than one IV Index Recovery within a period of 192 hours.
         let isIvRecoveryActive = defaults.bool(forKey: IvIndex.ivRecoveryKey)
         /// The test mode disables the 96h rule, leaving all other behavior unchanged.
-        let isIvTestModeActive = networkManager.manager.ivUpdateTestMode
+        let isIvTestModeActive = networkManager.networkParameters.ivUpdateTestMode
         // Ensure, that the received beacon can overwrite current IV Index.
-        let flag = networkManager.manager.allowIvIndexRecoveryOver42
+        let flag = networkManager.networkParameters.allowIvIndexRecoveryOver42
         if networkBeacon.canOverwrite(ivIndex: lastIVIndex,
                                             updatedAt: lastTransitionDate,
                                             withIvRecovery: isIvRecoveryActive,
@@ -356,7 +352,7 @@ private extension NetworkLayer {
             }
             logger?.w(.network, "Discarding beacon (\(networkBeacon.ivIndex), "
                               + "last \(lastIVIndex), changed: \(numberOfHoursSinceDate) ago, "
-                              + "test mode: \(networkManager.manager.ivUpdateTestMode))")
+                              + "test mode: \(networkManager.networkParameters.ivUpdateTestMode))")
             return
         } // else,
         // the beacon was sent by a Node with a previous IV Index,
@@ -384,7 +380,7 @@ private extension NetworkLayer {
         proxyNetworkKey = networkKey
         
         if justConnected {
-            networkManager.manager.proxyFilter.newProxyDidConnect()
+            networkManager.proxy?.newProxyDidConnect()
         }
     }
     
@@ -420,7 +416,7 @@ private extension NetworkLayer {
             logger?.i(.proxy, "\(message) received from: \(proxyPdu.source.hex) to: \(proxyPdu.destination.hex)")
             // Look for the proxy Node.
             let proxyNode = meshNetwork.node(withAddress: proxyPdu.source)
-            networkManager.manager.proxyFilter.handle(message, sentFrom: proxyNode)
+            networkManager.proxy?.handle(message, sentFrom: proxyNode)
         } else {
             logger?.w(.proxy, "Unsupported proxy configuration message (opcode: \(controlMessage.opCode))")
         }

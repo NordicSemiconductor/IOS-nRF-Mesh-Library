@@ -136,7 +136,7 @@ class NodeNetworkKeysViewController: ProgressViewController, Editable {
                             forRowAt indexPath: IndexPath) {
         let networkKey = node.networkKeys[indexPath.row]
         // Show confirmation dialog only when the key is bound to an Application Key.
-        if node.hasApplicationKeyBoundTo(networkKey) {
+        if node.contains(applicationKeyBoundToNetworkKey: networkKey) {
             confirm(title: "Remove Key", message: "The selected key is bound to one or more " +
                 "Application Keys in the Node. When removed, those keys will also be removed " +
                 "and all models bound to them will be unbound, which may cause them to stop working.") { _ in
