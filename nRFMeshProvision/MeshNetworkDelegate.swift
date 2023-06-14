@@ -96,7 +96,7 @@ public protocol MeshNetworkDelegate: AnyObject {
     /// Node is busy and not able to proceed the message at the moment.
     ///
     /// For acknowledged messages the callback will be called when the response
-    /// has not been received before the time set by ``MeshNetworkManager/acknowledgmentMessageTimeout``
+    /// has not been received before the time set by ``NetworkParameters/acknowledgmentMessageTimeout``
     /// run out. The message might have been retransmitted multiple times
     /// and might have been received by the target Node. For acknowledged messages
     /// sent to a Group or Virtual Address this will be called when the response
@@ -110,7 +110,7 @@ public protocol MeshNetworkDelegate: AnyObject {
     ///   accept the message.
     /// - ``LowerTransportError/timeout`` - when the segmented message targeting
     ///   a Unicast Address was not acknowledged before the
-    ///   ``MeshNetworkManager/retransmissionLimit`` was reached
+    ///   ``NetworkParameters/retransmissionLimit`` was reached
     ///   (for unacknowledged messages only).
     /// - ``AccessError/timeout`` - when the response for an acknowledged message
     ///   has not been received before the time run out (for acknowledged messages

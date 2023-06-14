@@ -66,6 +66,12 @@ public class MeshNetworkManager: NetworkParametersProvider {
     
     // MARK: - Network Manager properties
     
+    /// Network parameters define the mesh transmition and retransmition parameters,
+    /// the default Time To Live (TTL) value and other configuration.
+    ///
+    /// Initially it is set to ``NetworkParameters/default``.
+    ///
+    /// - since: 4.0.0
     public var networkParameters: NetworkParameters = .default
     
     // MARK: - Computed properties

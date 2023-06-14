@@ -30,7 +30,35 @@
 
 import Foundation
 
+/// A set of network parameters that can be applied to the ``MeshNetworkManager``.
+///
+/// Network parameters configure the transmition and retransmition intervals,
+/// acknowledge message timeout, the default Time To Live (TTL) and other.
+///
+/// Use ``NetworkParameters/default`` or ``NetworkParameters/custom(_:)`` to create
+/// an instance of this structure.
+///
+/// - since: 4.0.0
 public struct NetworkParameters {
+    /// A builder type for ``NetworkParameters``.
+    ///
+    /// Parameters can be set one-by-one, or using a builder:
+    /// ```swift
+    /// meshNetworkManager.networkParameters = .custom { builder in
+    ///     builder.defaultTtl = ...
+    ///     builder.incompleteMessageTimeout = ...
+    ///     builder.acknowledgmentTimerInterval = ...
+    ///     builder.transmissionTimerInterval = ...
+    ///     builder.retransmissionLimit = ...
+    ///     builder.acknowledgmentMessageTimeout = ...
+    ///     builder.acknowledgmentMessageInterval = ...
+    ///     // If you know what you're doing, customize the advanced parameters.
+    ///     builder.allowIvIndexRecoveryOver42 = ...
+    ///     builder.ivUpdateTestMode = ...
+    /// }
+    /// ```
+    ///
+    /// If not modified, ``NetworkParameters/default`` values are used.
     public typealias Builder = (inout NetworkParameters) -> ()
     
     private var _defaultTtl: UInt8 = 5
@@ -158,12 +186,17 @@ public struct NetworkParameters {
     
     // MARK: - Initializers
     
-    public static func custom(_ with: Builder) -> NetworkParameters {
+    /// A builder for custom configuration.
+    ///
+    /// - parameter with: The configuration builder.
+    /// - returns: The built network parameters object.
+    public static func custom(_ builder: Builder) -> NetworkParameters {
         var provider = NetworkParameters()
-        with(&provider)
+        builder(&provider)
         return provider
     }
     
+    /// A set of default network parameters.
     public static let `default` = NetworkParameters()
         
     private init() {
@@ -171,6 +204,7 @@ public struct NetworkParameters {
     }
 }
 
+/// The network parameters provider.
 public protocol NetworkParametersProvider: AnyObject {
     
     /// Network parameters.

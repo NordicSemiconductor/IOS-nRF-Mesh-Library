@@ -116,7 +116,7 @@ public protocol StaticMeshMessage: MeshMessage {
 /// with a message of type set as ``StaticAcknowledgedMeshMessage/responseType``.
 ///
 /// Access Layer timer will wait for
-/// ``MeshNetworkManager/acknowledgmentMessageTimeout`` seconds
+/// ``NetworkParameters/acknowledgmentMessageTimeout`` seconds
 /// before throwing a timeout.
 public protocol StaticAcknowledgedMeshMessage: AcknowledgedMeshMessage, StaticMeshMessage {
     /// The Type of the response message.
