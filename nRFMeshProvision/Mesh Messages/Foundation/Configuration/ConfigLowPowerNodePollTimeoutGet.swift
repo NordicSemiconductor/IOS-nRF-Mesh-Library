@@ -39,7 +39,7 @@ import Foundation
 /// feature supported and enabled.
 public struct ConfigLowPowerNodePollTimeoutGet: AcknowledgedConfigMessage {
     public static let opCode: UInt32 = 0x802D
-    public static let responseType: StaticMeshMessage.Type = ConfigLowPowerNodePollTimeoutStatus.self
+    public static let responseType: StaticMeshResponse.Type = ConfigLowPowerNodePollTimeoutStatus.self
     
     public var parameters: Data? {
         return Data() + lpnAddress

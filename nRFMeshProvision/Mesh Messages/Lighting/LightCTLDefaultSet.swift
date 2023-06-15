@@ -30,9 +30,9 @@
 
 import Foundation
 
-public struct LightCTLDefaultSet: AcknowledgedGenericMessage {
+public struct LightCTLDefaultSet: StaticAcknowledgedMeshMessage {
     public static let opCode: UInt32 = 0x8269
-    public static let responseType: StaticMeshMessage.Type = LightCTLDefaultStatus.self
+    public static let responseType: StaticMeshResponse.Type = LightCTLDefaultStatus.self
     
     public var parameters: Data? {
         return Data() + lightness + temperature + deltaUV

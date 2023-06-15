@@ -48,7 +48,7 @@ class GenericDefaultTransitionTimeServerDelegate: ModelDelegate {
     private let defaults: UserDefaults
     
     init(_ meshNetwork: MeshNetwork) {
-        let types: [GenericMessage.Type] = [
+        let types: [StaticMeshMessage.Type] = [
             GenericDefaultTransitionTimeGet.self,
             GenericDefaultTransitionTimeSet.self,
             GenericDefaultTransitionTimeSetUnacknowledged.self
@@ -63,7 +63,7 @@ class GenericDefaultTransitionTimeServerDelegate: ModelDelegate {
     // MARK: - Message handlers
     
     func model(_ model: Model, didReceiveAcknowledgedMessage request: AcknowledgedMeshMessage,
-               from source: Address, sentTo destination: MeshAddress) throws -> MeshMessage {
+               from source: Address, sentTo destination: MeshAddress) throws -> MeshResponse {
         switch request {
             
         case let request as GenericDefaultTransitionTimeSet:
@@ -85,7 +85,7 @@ class GenericDefaultTransitionTimeServerDelegate: ModelDelegate {
         return GenericDefaultTransitionTimeStatus(transitionTime: defaultTransitionTime)
     }
     
-    func model(_ model: Model, didReceiveUnacknowledgedMessage message: MeshMessage,
+    func model(_ model: Model, didReceiveUnacknowledgedMessage message: UnacknowledgedMeshMessage,
                from source: Address, sentTo destination: MeshAddress) {
         switch message {
             
@@ -103,7 +103,7 @@ class GenericDefaultTransitionTimeServerDelegate: ModelDelegate {
         }
     }
     
-    func model(_ model: Model, didReceiveResponse response: MeshMessage,
+    func model(_ model: Model, didReceiveResponse response: MeshResponse,
                toAcknowledgedMessage request: AcknowledgedMeshMessage,
                from source: Address) {
         // Not possible.

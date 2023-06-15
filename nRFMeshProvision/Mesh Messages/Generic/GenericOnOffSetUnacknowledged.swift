@@ -30,7 +30,7 @@
 
 import Foundation
 
-public struct GenericOnOffSetUnacknowledged: GenericMessage, TransactionMessage, TransitionMessage {
+public struct GenericOnOffSetUnacknowledged: StaticUnacknowledgedMeshMessage, TransactionMessage, TransitionMessage {
     public static let opCode: UInt32 = 0x8203
     
     public var tid: UInt8!

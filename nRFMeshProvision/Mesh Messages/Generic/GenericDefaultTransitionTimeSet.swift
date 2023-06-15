@@ -30,9 +30,9 @@
 
 import Foundation
 
-public struct GenericDefaultTransitionTimeSet: AcknowledgedGenericMessage {
+public struct GenericDefaultTransitionTimeSet: StaticAcknowledgedMeshMessage {
     public static let opCode: UInt32 = 0x820E
-    public static let responseType: StaticMeshMessage.Type = GenericDefaultTransitionTimeStatus.self
+    public static let responseType: StaticMeshResponse.Type = GenericDefaultTransitionTimeStatus.self
     
     public var parameters: Data? {
         return Data([transitionTime.rawValue])

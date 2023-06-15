@@ -31,23 +31,13 @@
 import Foundation
 
 /// A base protocol for location status messages.
-public protocol LocationStatusMessage: GenericMessage {
+public protocol LocationStatusMessage: MeshMessage {
     /// Latitude
     var latitude: Latitude { get }
     /// Longitude
     var longitude: Longitude { get }
     /// Altitude
     var altitude: Altitude { get }
-}
-
-/// A base protocol for location messafges.
-public protocol LocationMessage: StaticMeshMessage {
-    // No additional fields.
-}
-
-/// A base protocol for acknowledged location messafges.
-public protocol AcknowledgedLocationMessage: LocationMessage, StaticAcknowledgedMeshMessage {
-    // No additional fields.
 }
 
 /// The representation of latitide coordinate.

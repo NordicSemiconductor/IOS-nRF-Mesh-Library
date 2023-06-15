@@ -28,13 +28,9 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
- /*
-  * Created by codepgq.
-  */
-
 import Foundation
 
-public struct LightCTLSetUnacknowledged: GenericMessage, TransactionMessage, TransitionMessage {
+public struct LightCTLSetUnacknowledged: StaticUnacknowledgedMeshMessage, TransactionMessage, TransitionMessage {
     public static let opCode: UInt32 = 0x825F
     
     public var tid: UInt8!

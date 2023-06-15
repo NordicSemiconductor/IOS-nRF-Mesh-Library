@@ -30,7 +30,7 @@
 
 import Foundation
 
-public struct ConfigBeaconStatus: ConfigMessage {
+public struct ConfigBeaconStatus: ConfigResponse {
     public static let opCode: UInt32 = 0x800B
     
     public var parameters: Data? {

@@ -32,7 +32,7 @@ import Foundation
 
 public struct SchedulerGet: StaticAcknowledgedMeshMessage {
     public static let opCode: UInt32 = 0x8249
-    public static let responseType: StaticMeshMessage.Type = SchedulerStatus.self
+    public static let responseType: StaticMeshResponse.Type = SchedulerStatus.self
     
     public var parameters: Data? {
         return nil

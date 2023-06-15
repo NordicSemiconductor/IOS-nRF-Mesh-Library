@@ -33,9 +33,8 @@ import Foundation
 /// The Config Low Power Node PollTimeout Status is an unacknowledged message
 /// used to report the current value of the PollTimeout timer of the Low Power
 /// Node within a Friend Node.
-public struct ConfigLowPowerNodePollTimeoutStatus: ConfigMessage {
+public struct ConfigLowPowerNodePollTimeoutStatus: ConfigResponse {
     public static let opCode: UInt32 = 0x802E
-    public static let responseType: StaticMeshMessage.Type = ConfigLowPowerNodePollTimeoutStatus.self
     
     public var parameters: Data? {
         // PollTimeout value is 24-bit value.

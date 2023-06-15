@@ -28,13 +28,9 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
- /*
-  * Created by codepgq.
-  */
-
 import Foundation
 
-public struct LightLightnessSetUnacknowledged: GenericMessage, TransactionMessage, TransitionMessage {
+public struct LightLightnessSetUnacknowledged: StaticUnacknowledgedMeshMessage, TransactionMessage, TransitionMessage {
     public static var opCode: UInt32 = 0x824D
     
     public var tid: UInt8!

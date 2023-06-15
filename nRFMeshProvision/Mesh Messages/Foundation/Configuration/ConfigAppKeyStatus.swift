@@ -34,7 +34,7 @@ import Foundation
 /// the requesting message, based on the ``NetworkKey/index`` identifying the
 /// ``NetworkKey`` on the NetKey List and on the ``ApplicationKey/index`` identifying
 /// the ``ApplicationKey`` on the AppKey List.
-public struct ConfigAppKeyStatus: ConfigNetAndAppKeyMessage, ConfigStatusMessage {
+public struct ConfigAppKeyStatus: ConfigResponse, ConfigStatusMessage, ConfigNetAndAppKeyMessage {
     public static let opCode: UInt32 = 0x8003  
     
     public var parameters: Data? {

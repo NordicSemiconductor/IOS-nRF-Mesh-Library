@@ -30,7 +30,7 @@
 
 import Foundation
 
-public struct ConfigSIGModelAppList: ConfigModelAppList {
+public struct ConfigSIGModelAppList: ConfigResponse, ConfigStatusMessage, ConfigModelAppList {
     public static let opCode: UInt32 = 0x804C
     
     public var parameters: Data? {

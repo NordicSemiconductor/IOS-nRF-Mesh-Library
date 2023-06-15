@@ -30,7 +30,7 @@
 
 import Foundation
 
-public struct SceneStoreUnacknowledged: GenericMessage {
+public struct SceneStoreUnacknowledged: StaticUnacknowledgedMeshMessage {
     public static let opCode: UInt32 = 0x8247
     
     public var parameters: Data? {

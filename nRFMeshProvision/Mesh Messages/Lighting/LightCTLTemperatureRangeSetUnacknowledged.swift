@@ -30,7 +30,7 @@
 
 import Foundation
 
-public struct LightCTLTemperatureRangeSetUnacknowledged: GenericMessage {
+public struct LightCTLTemperatureRangeSetUnacknowledged: StaticUnacknowledgedMeshMessage {
     public static let opCode: UInt32 = 0x826C
     
     public var parameters: Data? {

@@ -30,14 +30,14 @@
 
 import Foundation
 
-public struct LightLightnessRangeStatus: GenericMessage, GenericStatusMessage {
+public struct LightLightnessRangeStatus: StaticMeshResponse, RangeStatusMessage {
     public static let opCode: UInt32 = 0x8258
     
     public var parameters: Data? {
         return Data([status.rawValue]) + min + max
     }
     
-    public let status: GenericMessageStatus
+    public let status: RangeMessageStatus
     /// The value of the Light Lightness Min field of the Light Lightness
     /// Range state.
     public let min: UInt16
@@ -63,7 +63,7 @@ public struct LightLightnessRangeStatus: GenericMessage, GenericStatusMessage {
     ///
     /// - parameter status: Status Code for the requesting message.
     /// - parameter request: The request received.
-    public init(_ status: GenericMessageStatus, for request: LightLightnessRangeSet) {
+    public init(_ status: RangeMessageStatus, for request: LightLightnessRangeSet) {
         self.status = status
         self.min = request.min
         self.max = request.max
@@ -73,7 +73,7 @@ public struct LightLightnessRangeStatus: GenericMessage, GenericStatusMessage {
     ///
     /// - parameter status: Status Code for the requesting message.
     /// - parameter request: The request received.
-    public init(_ status: GenericMessageStatus, for request: LightLightnessRangeSetUnacknowledged) {
+    public init(_ status: RangeMessageStatus, for request: LightLightnessRangeSetUnacknowledged) {
         self.status = status
         self.min = request.min
         self.max = request.max
@@ -83,7 +83,7 @@ public struct LightLightnessRangeStatus: GenericMessage, GenericStatusMessage {
         guard parameters.count == 5 else {
             return nil
         }
-        guard let status = GenericMessageStatus(rawValue: parameters[0]) else {
+        guard let status = RangeMessageStatus(rawValue: parameters[0]) else {
             return nil
         }
         self.status = status

@@ -35,7 +35,7 @@ import Foundation
 /// Remote Provisioning Server model.
 public struct RemoteProvisioningLinkGet: AcknowledgedRemoteProvisioningMessage {
     public static let opCode: UInt32 = 0x8058
-    public static let responseType: StaticMeshMessage.Type = RemoteProvisioningLinkStatus.self
+    public static let responseType: StaticMeshResponse.Type = RemoteProvisioningLinkStatus.self
     
     public var parameters: Data? {
         return nil

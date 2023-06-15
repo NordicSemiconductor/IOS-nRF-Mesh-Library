@@ -30,14 +30,14 @@
 
 import Foundation
 
-public struct GenericPowerRangeStatus: GenericStatusMessage {
+public struct GenericPowerRangeStatus: StaticMeshResponse, RangeStatusMessage {
     public static let opCode: UInt32 = 0x821E
     
     public var parameters: Data? {
         return Data([status.rawValue]) + range.lowerBound + range.upperBound
     }
     
-    public let status: GenericMessageStatus
+    public let status: RangeMessageStatus
     /// The value of the Generic Power Range state.
     public let range: ClosedRange<UInt16>
     
@@ -53,7 +53,7 @@ public struct GenericPowerRangeStatus: GenericStatusMessage {
     ///
     /// - parameter status: Status Code for the requesting message.
     /// - parameter request: The request received.
-    public init(_ status: GenericMessageStatus, for request: GenericPowerRangeSet) {
+    public init(_ status: RangeMessageStatus, for request: GenericPowerRangeSet) {
         self.status = status
         self.range = request.range
     }
@@ -62,7 +62,7 @@ public struct GenericPowerRangeStatus: GenericStatusMessage {
     ///
     /// - parameter status: Status Code for the requesting message.
     /// - parameter request: The request received.
-    public init(_ status: GenericMessageStatus, for request: GenericPowerRangeSetUnacknowledged) {
+    public init(_ status: RangeMessageStatus, for request: GenericPowerRangeSetUnacknowledged) {
         self.status = status
         self.range = request.range
     }
@@ -71,7 +71,7 @@ public struct GenericPowerRangeStatus: GenericStatusMessage {
         guard parameters.count == 5 else {
             return nil
         }
-        guard let status = GenericMessageStatus(rawValue: parameters[0]) else {
+        guard let status = RangeMessageStatus(rawValue: parameters[0]) else {
             return nil
         }
         self.status = status

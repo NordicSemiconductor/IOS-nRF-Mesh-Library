@@ -30,32 +30,10 @@
 
 import Foundation
 
-/// A base protocol for generic messages.
-public protocol GenericMessage: StaticMeshMessage {
-    // No additional fields.
-}
-
-/// A base protocol for acknowledged generic messages.
-public protocol AcknowledgedGenericMessage: GenericMessage, StaticAcknowledgedMeshMessage {
-    // No additional fields.
-}
-
-public extension Array where Element == GenericMessage.Type {
-    
-    /// A helper method that can create a map of message types required
-    /// by the ``ModelDelegate`` from a list of ``GenericMessage``s.
-    ///
-    /// - returns: A map of message types.
-    func toMap() -> [UInt32 : MeshMessage.Type] {
-        return (self as [StaticMeshMessage.Type]).toMap()
-    }
-    
-}
-
-// MARK: - GenericMessageStatus
+// MARK: - RangeMessageStatus
 
 /// Enumeration of available statuses of a generic message.
-public enum GenericMessageStatus: UInt8 {
+public enum RangeMessageStatus: UInt8 {
     /// The operation was successful.
     case success           = 0x00
     /// The operation failed. Min range cannot be set.
@@ -65,12 +43,12 @@ public enum GenericMessageStatus: UInt8 {
 }
 
 /// A base protocol for generic status messages.
-public protocol GenericStatusMessage: GenericMessage, StatusMessage {
+public protocol RangeStatusMessage: StatusMessage {
     /// Operation status.
-    var status: GenericMessageStatus { get }
+    var status: RangeMessageStatus { get }
 }
 
-public extension GenericStatusMessage {
+public extension RangeStatusMessage {
     
     /// Whether the operation was successful.
     var isSuccess: Bool {
@@ -84,7 +62,7 @@ public extension GenericStatusMessage {
     
 }
 
-extension GenericMessageStatus: CustomDebugStringConvertible {
+extension RangeMessageStatus: CustomDebugStringConvertible {
     
     public var debugDescription: String {
         switch self {
@@ -112,7 +90,7 @@ public enum SceneMessageStatus: UInt8 {
 }
 
 /// a base protocol for scene status messages.
-public protocol SceneStatusMessage: GenericMessage, StatusMessage {
+public protocol SceneStatusMessage: StatusMessage {
     /// Operation status.
     var status: SceneMessageStatus { get }
 }

@@ -42,7 +42,7 @@ import Foundation
 ///            effectively be excluded from the mesh network.
 public struct ConfigNetKeyDelete: AcknowledgedConfigMessage, ConfigNetKeyMessage {
     public static let opCode: UInt32 = 0x8041
-    public static let responseType: StaticMeshMessage.Type = ConfigNetKeyStatus.self
+    public static let responseType: StaticMeshResponse.Type = ConfigNetKeyStatus.self
     
     public var parameters: Data? {
         return encodeNetKeyIndex()

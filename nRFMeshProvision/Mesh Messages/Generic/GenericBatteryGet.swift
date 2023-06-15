@@ -30,9 +30,9 @@
 
 import Foundation
 
-public struct GenericBatteryGet: AcknowledgedGenericMessage {
+public struct GenericBatteryGet: StaticAcknowledgedMeshMessage {
     public static let opCode: UInt32 = 0x8223
-    public static let responseType: StaticMeshMessage.Type = GenericBatteryStatus.self
+    public static let responseType: StaticMeshResponse.Type = GenericBatteryStatus.self
     
     public var parameters: Data? {
         return nil

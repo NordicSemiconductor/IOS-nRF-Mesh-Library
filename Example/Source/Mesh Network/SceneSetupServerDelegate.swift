@@ -43,7 +43,7 @@ class SceneSetupServerDelegate: ModelDelegate {
     let publicationMessageComposer: MessageComposer? = nil
     
     init(server delegate: SceneServerDelegate) {
-        let types: [GenericMessage.Type] = [
+        let types: [StaticMeshMessage.Type] = [
             SceneStore.self,
             SceneStoreUnacknowledged.self,
             SceneDelete.self,
@@ -56,7 +56,7 @@ class SceneSetupServerDelegate: ModelDelegate {
     // MARK: - Message handlers
     
     func model(_ model: Model, didReceiveAcknowledgedMessage request: AcknowledgedMeshMessage,
-               from source: Address, sentTo destination: MeshAddress) throws -> MeshMessage {
+               from source: Address, sentTo destination: MeshAddress) throws -> MeshResponse {
         switch request {
         case let request as SceneStore:
             // Little validation.
@@ -103,7 +103,7 @@ class SceneSetupServerDelegate: ModelDelegate {
         return SceneRegisterStatus(report: currentScene, and: storedScenes)
     }
     
-    func model(_ model: Model, didReceiveUnacknowledgedMessage message: MeshMessage,
+    func model(_ model: Model, didReceiveUnacknowledgedMessage message: UnacknowledgedMeshMessage,
                from source: Address, sentTo destination: MeshAddress) {
         switch message {
         case let request as SceneStoreUnacknowledged:
@@ -144,7 +144,7 @@ class SceneSetupServerDelegate: ModelDelegate {
         }
     }
     
-    func model(_ model: Model, didReceiveResponse response: MeshMessage,
+    func model(_ model: Model, didReceiveResponse response: MeshResponse,
                toAcknowledgedMessage request: AcknowledgedMeshMessage,
                from source: Address) {
         // Not possible.

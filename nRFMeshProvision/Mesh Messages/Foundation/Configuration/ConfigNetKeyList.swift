@@ -32,7 +32,7 @@ import Foundation
 
 /// A `ConfigNetKeyList` is an unacknowledged message reporting all ``NetworkKey``s
 /// known to the Node.
-public struct ConfigNetKeyList: ConfigMessage {
+public struct ConfigNetKeyList: ConfigResponse {
     public static let opCode: UInt32 = 0x8043
     
     public var parameters: Data? {

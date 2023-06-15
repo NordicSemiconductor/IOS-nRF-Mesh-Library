@@ -30,9 +30,9 @@
 
 import Foundation
 
-public struct GenericOnPowerUpGet: AcknowledgedGenericMessage {
+public struct GenericOnPowerUpGet: StaticAcknowledgedMeshMessage {
     public static let opCode: UInt32 = 0x8211
-    public static let responseType: StaticMeshMessage.Type = GenericOnPowerUpStatus.self
+    public static let responseType: StaticMeshResponse.Type = GenericOnPowerUpStatus.self
     
     public var parameters: Data? {
         return nil

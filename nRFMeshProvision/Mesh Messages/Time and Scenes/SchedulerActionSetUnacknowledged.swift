@@ -30,7 +30,7 @@
 
 import Foundation
 
-public struct SchedulerActionSetUnacknowledged: StaticMeshMessage {
+public struct SchedulerActionSetUnacknowledged: StaticUnacknowledgedMeshMessage {
     public static let opCode: UInt32 = 0x60
 
     public var parameters: Data? {

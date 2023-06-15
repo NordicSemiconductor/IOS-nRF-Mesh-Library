@@ -30,7 +30,7 @@
 
 import Foundation
 
-public struct SensorSeriesStatus: SensorPropertyMessage {
+public struct SensorSeriesStatus: StaticMeshResponse, SensorPropertyMessage {
     public static let opCode: UInt32 = 0x54
     
     public let property: DeviceProperty

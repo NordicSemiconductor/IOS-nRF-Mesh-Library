@@ -58,7 +58,7 @@ public enum BatteryServiceability: UInt8 {
     case unknown            = 0b11
 }
 
-public struct GenericBatteryStatus: GenericMessage {
+public struct GenericBatteryStatus: StaticMeshResponse {
     public static let opCode: UInt32 = 0x8224
     
     public var parameters: Data? {

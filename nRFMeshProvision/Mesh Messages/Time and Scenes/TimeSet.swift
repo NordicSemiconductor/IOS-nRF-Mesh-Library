@@ -30,9 +30,9 @@
 
 import Foundation
 
-public struct TimeSet: TimeMessage {
+public struct TimeSet: StaticAcknowledgedMeshMessage, TimeMessage {
     public static let opCode: UInt32 = 0x5C
-    public static let responseType: StaticMeshMessage.Type = TimeStatus.self
+    public static let responseType: StaticMeshResponse.Type = TimeStatus.self
     
     public var parameters: Data? {
         return TaiTime.marshal(time)

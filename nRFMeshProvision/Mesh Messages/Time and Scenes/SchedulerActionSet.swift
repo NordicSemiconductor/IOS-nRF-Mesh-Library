@@ -32,7 +32,7 @@ import Foundation
 
 public struct SchedulerActionSet: StaticAcknowledgedMeshMessage {
     public static let opCode: UInt32 = 0x60
-    public static let responseType: StaticMeshMessage.Type = SchedulerActionStatus.self
+    public static let responseType: StaticMeshResponse.Type = SchedulerActionStatus.self
     
     public var parameters: Data? {
         return SchedulerRegistryEntry.marshal(index: index, entry: entry)

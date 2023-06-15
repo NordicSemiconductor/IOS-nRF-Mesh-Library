@@ -30,9 +30,9 @@
 
 import Foundation
 
-public struct TimeZoneSet: AcknowledgedGenericMessage {
+public struct TimeZoneSet: StaticAcknowledgedMeshMessage {
     public static let opCode: UInt32 = 0x823C
-    public static let responseType: StaticMeshMessage.Type = TimeZoneStatus.self
+    public static let responseType: StaticMeshResponse.Type = TimeZoneStatus.self
     
     public var parameters: Data? {
         var data = Data(count: 6)

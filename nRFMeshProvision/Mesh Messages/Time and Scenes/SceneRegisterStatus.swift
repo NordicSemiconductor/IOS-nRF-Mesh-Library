@@ -30,7 +30,7 @@
 
 import Foundation
 
-public struct SceneRegisterStatus: GenericMessage, SceneStatusMessage {
+public struct SceneRegisterStatus: StaticMeshResponse, SceneStatusMessage {
     public static let opCode: UInt32 = 0x8245
     
     public var parameters: Data? {

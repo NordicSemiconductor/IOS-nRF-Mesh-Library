@@ -30,7 +30,7 @@
 
 import Foundation
 
-public struct GenericOnPowerUpSetUnacknowledged: GenericMessage {
+public struct GenericOnPowerUpSetUnacknowledged: StaticUnacknowledgedMeshMessage {
     public static let opCode: UInt32 = 0x8214
     
     public var parameters: Data? {

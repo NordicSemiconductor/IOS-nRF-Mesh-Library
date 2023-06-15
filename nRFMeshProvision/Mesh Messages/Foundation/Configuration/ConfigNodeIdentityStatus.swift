@@ -30,7 +30,7 @@
 
 import Foundation
 
-public struct ConfigNodeIdentityStatus: ConfigNetKeyMessage, ConfigStatusMessage {
+public struct ConfigNodeIdentityStatus: ConfigResponse, ConfigStatusMessage, ConfigNetKeyMessage {
     public static let opCode: UInt32 = 0x8048
     
     public var parameters: Data? {

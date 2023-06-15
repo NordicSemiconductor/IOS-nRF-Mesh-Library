@@ -30,9 +30,9 @@
 
 import Foundation
 
-public struct TimeGet: AcknowledgedGenericMessage {
+public struct TimeGet: StaticAcknowledgedMeshMessage {
     public static let opCode: UInt32 = 0x8237
-    public static let responseType: StaticMeshMessage.Type = TimeStatus.self
+    public static let responseType: StaticMeshResponse.Type = TimeStatus.self
     
     public var parameters: Data? {
         return nil

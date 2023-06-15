@@ -28,13 +28,9 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
- /*
-  * Created by codepgq.
-  */
-
 import Foundation
 
-public struct LightLightnessStatus: GenericMessage, TransitionStatusMessage {
+public struct LightLightnessStatus: StaticMeshResponse, TransitionStatusMessage {
     public static let opCode: UInt32 = 0x824E
     
     public var parameters: Data? {

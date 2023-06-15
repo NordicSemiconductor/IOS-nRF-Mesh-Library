@@ -37,7 +37,7 @@ public protocol CompositionDataPage {
     var parameters: Data? { get }
 }
 
-public struct ConfigCompositionDataStatus: ConfigMessage {
+public struct ConfigCompositionDataStatus: ConfigResponse {
     public static let opCode: UInt32 = 0x02
     
     public var parameters: Data? {

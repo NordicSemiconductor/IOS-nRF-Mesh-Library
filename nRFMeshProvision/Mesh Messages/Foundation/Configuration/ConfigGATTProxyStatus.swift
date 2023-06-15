@@ -30,7 +30,7 @@
 
 import Foundation
 
-public struct ConfigGATTProxyStatus: ConfigMessage {
+public struct ConfigGATTProxyStatus: ConfigResponse {
     public static let opCode: UInt32 = 0x8014
     
     public var parameters: Data? {

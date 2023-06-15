@@ -69,7 +69,7 @@ internal class ConfigurationClientHandler: ModelDelegate {
     }
     
     func model(_ model: Model, didReceiveAcknowledgedMessage request: AcknowledgedMeshMessage,
-               from source: Address, sentTo destination: MeshAddress) -> MeshMessage {
+               from source: Address, sentTo destination: MeshAddress) -> MeshResponse {
         switch request {
             
         default:
@@ -77,7 +77,7 @@ internal class ConfigurationClientHandler: ModelDelegate {
         }
     }
     
-    func model(_ model: Model, didReceiveUnacknowledgedMessage message: MeshMessage,
+    func model(_ model: Model, didReceiveUnacknowledgedMessage message: UnacknowledgedMeshMessage,
                from source: Address, sentTo destination: MeshAddress) {
         switch message {
             
@@ -87,7 +87,7 @@ internal class ConfigurationClientHandler: ModelDelegate {
         }
     }
     
-    func model(_ model: Model, didReceiveResponse response: MeshMessage,
+    func model(_ model: Model, didReceiveResponse response: MeshResponse,
                toAcknowledgedMessage request: AcknowledgedMeshMessage,
                from source: Address) {
         switch response {
@@ -161,7 +161,7 @@ internal class ConfigurationClientHandler: ModelDelegate {
                 }
             }
                 
-        case let list as ConfigModelAppList:
+        case let list as ConfigModelAppList & StatusMessage:
             if list.isSuccess,
                let node = meshNetwork.node(withAddress: source),
                let element = node.element(withAddress: list.elementAddress),
@@ -249,7 +249,7 @@ internal class ConfigurationClientHandler: ModelDelegate {
                 }
             }
                 
-        case let list as ConfigModelSubscriptionList:
+        case let list as ConfigModelSubscriptionList & StatusMessage:
             if list.isSuccess,
                let node = meshNetwork.node(withAddress: source),
                let element = node.element(withAddress: list.elementAddress),

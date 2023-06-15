@@ -30,7 +30,7 @@
 
 import Foundation
 
-public struct ConfigHeartbeatSubscriptionStatus: ConfigMessage, ConfigStatusMessage {
+public struct ConfigHeartbeatSubscriptionStatus: ConfigResponse, ConfigStatusMessage {
     public static let opCode: UInt32 = 0x803C
     
     public var parameters: Data? {

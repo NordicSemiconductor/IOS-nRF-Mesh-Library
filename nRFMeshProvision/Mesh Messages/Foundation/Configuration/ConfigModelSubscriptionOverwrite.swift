@@ -32,7 +32,7 @@ import Foundation
 
 public struct ConfigModelSubscriptionOverwrite: AcknowledgedConfigMessage, ConfigAddressMessage, ConfigAnyModelMessage {
     public static let opCode: UInt32 = 0x801E
-    public static let responseType: StaticMeshMessage.Type = ConfigModelSubscriptionStatus.self
+    public static let responseType: StaticMeshResponse.Type = ConfigModelSubscriptionStatus.self
     
     public var parameters: Data? {
         let data = Data() + elementAddress + address

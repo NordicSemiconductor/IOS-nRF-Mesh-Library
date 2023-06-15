@@ -30,7 +30,7 @@
 
 import Foundation
 
-public struct SceneDeleteUnacknowledged: GenericMessage {
+public struct SceneDeleteUnacknowledged: StaticUnacknowledgedMeshMessage {
     public static let opCode: UInt32 = 0x829F
     
     public var parameters: Data? {

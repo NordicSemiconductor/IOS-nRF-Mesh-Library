@@ -28,13 +28,9 @@
 * POSSIBILITY OF SUCH DAMAGE.
 */
 
-/*
- * Created by codepgq.
- */
-
 import Foundation
 
-public struct LightHSLSetUnacknowledged: GenericMessage, TransactionMessage, TransitionMessage {
+public struct LightHSLSetUnacknowledged: StaticUnacknowledgedMeshMessage, TransactionMessage, TransitionMessage {
     public static var opCode: UInt32 = 0x8277
     
     public var tid: UInt8!

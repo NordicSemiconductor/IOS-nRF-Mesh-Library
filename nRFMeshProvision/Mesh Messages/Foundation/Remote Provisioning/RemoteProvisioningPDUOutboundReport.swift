@@ -36,7 +36,7 @@ import Foundation
 /// a device that is being provisioned or processes locally during the
 /// Device Key Refresh procedure, the Node Address Refresh procedure,
 /// or the Node Composition Refresh procedure.
-public struct RemoteProvisioningPDUOutboundReport: RemoteProvisioningMessage {
+public struct RemoteProvisioningPDUOutboundReport: UnacknowledgedRemoteProvisioningMessage {
     public static let opCode: UInt32 = 0x805E
     
     /// Remote Provisioning Outbound PDU Count state.

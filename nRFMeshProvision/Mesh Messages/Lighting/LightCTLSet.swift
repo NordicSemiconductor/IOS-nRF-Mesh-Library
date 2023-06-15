@@ -28,15 +28,11 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
- /*
-  * Created by codepgq.
-  */
-
 import Foundation
 
-public struct LightCTLSet: AcknowledgedGenericMessage, TransactionMessage, TransitionMessage {
+public struct LightCTLSet: StaticAcknowledgedMeshMessage, TransactionMessage, TransitionMessage {
     public static let opCode: UInt32 = 0x825E
-    public static let responseType: StaticMeshMessage.Type = LightCTLStatus.self
+    public static let responseType: StaticMeshResponse.Type = LightCTLStatus.self
     
     public var tid: UInt8!
     public var parameters: Data? {

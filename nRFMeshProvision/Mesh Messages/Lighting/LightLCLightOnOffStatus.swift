@@ -30,7 +30,7 @@
 
 import Foundation
 
-public struct LightLCLightOnOffStatus: GenericMessage, TransitionStatusMessage {
+public struct LightLCLightOnOffStatus: StaticMeshResponse, TransitionStatusMessage {
     public static var opCode: UInt32 = 0x829C
     
     public var parameters: Data? {

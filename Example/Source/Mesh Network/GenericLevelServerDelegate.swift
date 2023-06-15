@@ -102,7 +102,7 @@ class GenericLevelServerDelegate: StoredWithSceneModelDelegate {
     init(_ meshNetwork: MeshNetwork,
          defaultTransitionTimeServer delegate: GenericDefaultTransitionTimeServerDelegate,
          elementIndex: UInt8) {
-        let types: [GenericMessage.Type] = [
+        let types: [StaticMeshMessage.Type] = [
             GenericLevelGet.self,
             GenericLevelSet.self,
             GenericLevelSetUnacknowledged.self,
@@ -145,7 +145,7 @@ class GenericLevelServerDelegate: StoredWithSceneModelDelegate {
     // MARK: - Message handlers
     
     func model(_ model: Model, didReceiveAcknowledgedMessage request: AcknowledgedMeshMessage,
-               from source: Address, sentTo destination: MeshAddress) -> MeshMessage {
+               from source: Address, sentTo destination: MeshAddress) -> MeshResponse {
         switch request {
         case let request as GenericLevelSet:
             // Ignore a repeated request (with the same TID) from the same source
@@ -228,7 +228,7 @@ class GenericLevelServerDelegate: StoredWithSceneModelDelegate {
         }
     }
     
-    func model(_ model: Model, didReceiveUnacknowledgedMessage message: MeshMessage,
+    func model(_ model: Model, didReceiveUnacknowledgedMessage message: UnacknowledgedMeshMessage,
                from source: Address, sentTo destination: MeshAddress) {
         switch message {
         case let request as GenericLevelSetUnacknowledged:
@@ -301,7 +301,7 @@ class GenericLevelServerDelegate: StoredWithSceneModelDelegate {
         }
     }
     
-    func model(_ model: Model, didReceiveResponse response: MeshMessage,
+    func model(_ model: Model, didReceiveResponse response: MeshResponse,
                toAcknowledgedMessage request: AcknowledgedMeshMessage,
                from source: Address) {
         // Not possible.

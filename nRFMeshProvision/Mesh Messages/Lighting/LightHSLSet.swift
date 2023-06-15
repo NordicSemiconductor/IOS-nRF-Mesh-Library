@@ -28,15 +28,11 @@
 * POSSIBILITY OF SUCH DAMAGE.
 */
 
-/*
- * Created by codepgq.
- */
-
 import Foundation
 
-public struct LightHSLSet: AcknowledgedGenericMessage, TransactionMessage, TransitionMessage {
+public struct LightHSLSet: StaticAcknowledgedMeshMessage, TransactionMessage, TransitionMessage {
     public static var opCode: UInt32 = 0x8276
-    public static var responseType: StaticMeshMessage.Type = LightHSLStatus.self
+    public static var responseType: StaticMeshResponse.Type = LightHSLStatus.self
     
     public var tid: UInt8!
     public var parameters: Data? {

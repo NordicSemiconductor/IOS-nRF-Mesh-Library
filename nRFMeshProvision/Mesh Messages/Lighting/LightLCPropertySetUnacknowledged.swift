@@ -30,7 +30,7 @@
 
 import Foundation
 
-public struct LightLCPropertySetUnacknowledged: SensorPropertyMessage {
+public struct LightLCPropertySetUnacknowledged: StaticUnacknowledgedMeshMessage, SensorPropertyMessage {
     public static let opCode: UInt32 = 0x63
     
     public let property: DeviceProperty

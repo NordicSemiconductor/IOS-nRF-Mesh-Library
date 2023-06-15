@@ -33,7 +33,7 @@ import Foundation
 /// A Remote Provisioning PDU Send message is an unacknowledged message used by
 /// the Remote Provisioning Client to deliver the Provisioning PDU to an
 /// unprovisioned device or to the Node Provisioning Protocol Interface.
-public struct RemoteProvisioningPDUSend: RemoteProvisioningMessage {
+public struct RemoteProvisioningPDUSend: UnacknowledgedRemoteProvisioningMessage {
     public static let opCode: UInt32 = 0x805D
     
     /// The value of the Remote Provisioning Outbound PDU Count state of the

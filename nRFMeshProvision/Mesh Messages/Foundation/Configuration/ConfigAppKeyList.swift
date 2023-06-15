@@ -32,7 +32,7 @@ import Foundation
 
 /// A `ConfigAppKeyList` is an unacknowledged message reporting all ``ApplicationKey``s
 /// bound to requested ``NetworkKey`` that are known to the Node.
-public struct ConfigAppKeyList: ConfigStatusMessage, ConfigNetKeyMessage {
+public struct ConfigAppKeyList: ConfigResponse, ConfigStatusMessage, ConfigNetKeyMessage {
     public static let opCode: UInt32 = 0x8002
     
     public var parameters: Data? {

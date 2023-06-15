@@ -30,7 +30,7 @@
 
 import Foundation
 
-public struct LightHSLHueStatus: GenericMessage, TransitionStatusMessage {
+public struct LightHSLHueStatus: StaticMeshResponse, TransitionStatusMessage {
     public static var opCode: UInt32 = 0x8271
     
     public var parameters: Data? {

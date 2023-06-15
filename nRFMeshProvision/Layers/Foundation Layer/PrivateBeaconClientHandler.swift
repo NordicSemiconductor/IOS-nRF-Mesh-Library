@@ -55,7 +55,7 @@ internal class PrivateBeaconClientHandler: ModelDelegate {
     }
     
     func model(_ model: Model, didReceiveAcknowledgedMessage request: AcknowledgedMeshMessage,
-               from source: Address, sentTo destination: MeshAddress) -> MeshMessage {
+               from source: Address, sentTo destination: MeshAddress) -> MeshResponse {
         switch request {
             // No acknowledged message supported by this Model.
         default:
@@ -63,7 +63,7 @@ internal class PrivateBeaconClientHandler: ModelDelegate {
         }
     }
     
-    func model(_ model: Model, didReceiveUnacknowledgedMessage message: MeshMessage,
+    func model(_ model: Model, didReceiveUnacknowledgedMessage message: UnacknowledgedMeshMessage,
                from source: Address, sentTo destination: MeshAddress) {
         switch message {
             
@@ -73,7 +73,7 @@ internal class PrivateBeaconClientHandler: ModelDelegate {
         }
     }
     
-    func model(_ model: Model, didReceiveResponse response: MeshMessage,
+    func model(_ model: Model, didReceiveResponse response: MeshResponse,
                toAcknowledgedMessage request: AcknowledgedMeshMessage,
                from source: Address) {
         // Ignore. There are no CDB fields matching these parameters.

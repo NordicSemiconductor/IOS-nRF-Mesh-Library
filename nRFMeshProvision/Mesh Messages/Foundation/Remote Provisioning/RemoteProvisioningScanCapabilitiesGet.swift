@@ -35,7 +35,7 @@ import Foundation
 /// Scan Capabilities state.
 public struct RemoteProvisioningScanCapabilitiesGet: AcknowledgedRemoteProvisioningMessage {
     public static let opCode: UInt32 = 0x804F
-    public static let responseType: StaticMeshMessage.Type = RemoteProvisioningScanCapabilitiesStatus.self
+    public static let responseType: StaticMeshResponse.Type = RemoteProvisioningScanCapabilitiesStatus.self
     
     public var parameters: Data? {
         return nil

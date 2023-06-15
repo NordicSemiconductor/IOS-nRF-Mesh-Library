@@ -29,9 +29,10 @@
  */
 
 import Foundation
-public struct LightLightnessLinearSet: AcknowledgedGenericMessage, TransactionMessage, TransitionMessage {
+
+public struct LightLightnessLinearSet: StaticAcknowledgedMeshMessage, TransactionMessage, TransitionMessage {
     public static var opCode: UInt32 = 0x8250
-    public static var responseType: StaticMeshMessage.Type = LightLightnessLinearStatus.self
+    public static var responseType: StaticMeshResponse.Type = LightLightnessLinearStatus.self
     
     public var tid: UInt8!    
     public var parameters: Data? {

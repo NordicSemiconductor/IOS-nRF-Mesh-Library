@@ -110,7 +110,7 @@ internal class NetworkManager {
             localElement.parentNode?.defaultTTL ?? networkParameters.defaultTtl
         // Send the message.
         send(message, from: localElement, to: publish.publicationAddress,
-             withTtl: ttl, using: applicationKey)
+             withTtl: ttl, using: applicationKey, completion: nil)
         // If retransmission was configured, start the timer that will retransmit.
         // There is no need to retransmit acknowledged messages, as they have their
         // own retransmission mechanism.
@@ -125,7 +125,8 @@ internal class NetworkManager {
                         return
                     }
                     self.accessLayer.send(message, from: localElement, to: publish.publicationAddress,
-                                          withTtl: ttl, using: applicationKey, retransmit: true)
+                                          withTtl: ttl, using: applicationKey, retransmit: true,
+                                          completion: nil)
                     count -= 1
                     if count == 0 {
                         timer.invalidate()
@@ -151,13 +152,42 @@ internal class NetworkManager {
     ///   - initialTtl:     The initial TTL (Time To Live) value of the message.
     ///                     If `nil`, the default Node TTL will be used.
     ///   - applicationKey: The Application Key to sign the message.
+    ///   - completion:     The completion handler called when the message was sent.
     func send(_ message: MeshMessage,
               from element: Element, to destination: MeshAddress,
               withTtl initialTtl: UInt8?,
-              using applicationKey: ApplicationKey) {
+              using applicationKey: ApplicationKey,
+              completion: ((Result<Void, Error>) -> ())?) {
         accessLayer.send(message, from: element, to: destination,
                          withTtl: initialTtl, using: applicationKey,
-                         retransmit: false)
+                         retransmit: false, completion: completion)
+    }
+    
+    /// Encrypts the message with the Application Key and a Network Key
+    /// bound to it, and sends to the given destination address.
+    ///
+    /// This method does not send nor return PDUs to be sent. Instead,
+    /// for each created segment it calls transmitter's ``Transmitter/send(_:ofType:)``
+    /// method, which should send the PDU over the air. This is in order to support
+    /// retransmission in case a packet was lost and needs to be sent again
+    /// after block acknowledgment was received.
+    ///
+    /// - parameters:
+    ///   - message:        The message to be sent.
+    ///   - element:        The source Element.
+    ///   - destination:    The destination Unicast Address.
+    ///   - initialTtl:     The initial TTL (Time To Live) value of the message.
+    ///                     If `nil`, the default Node TTL will be used.
+    ///   - applicationKey: The Application Key to sign the message.
+    ///   - completion:     The completion handler with the response.
+    func send(_ message: AcknowledgedMeshMessage,
+              from element: Element, to destination: Address,
+              withTtl initialTtl: UInt8?,
+              using applicationKey: ApplicationKey,
+              completion: ((Result<MeshResponse, Error>) -> ())?) {
+        accessLayer.send(message, from: element, to: destination,
+                         withTtl: initialTtl, using: applicationKey,
+                         retransmit: false, completion: completion)
     }
     
     /// Encrypts the message with the Device Key and the first Network Key
@@ -177,9 +207,12 @@ internal class NetworkManager {
     ///   - destination:   The destination address.
     ///   - initialTtl:    The initial TTL (Time To Live) value of the message.
     ///                    If `nil`, the default Node TTL will be used.
-    func send(_ configMessage: ConfigMessage, to destination: Address,
-              withTtl initialTtl: UInt8?) {
-        accessLayer.send(configMessage, to: destination, withTtl: initialTtl)
+    ///   - completion:    The completion handler with the response.
+    func send(_ configMessage: AcknowledgedConfigMessage, to destination: Address,
+              withTtl initialTtl: UInt8?,
+              completion: ((Result<ConfigResponse, Error>) -> ())?) {
+        accessLayer.send(configMessage, to: destination,
+                         withTtl: initialTtl, completion: completion)
     }
     
     /// Replies to the received message, which was sent with the given key set,
@@ -191,14 +224,15 @@ internal class NetworkManager {
     ///   - message:     The response message to be sent.
     ///   - destination: The destination address. This must be a Unicast Address.
     ///   - keySet:      The keySet that should be used to encrypt the message.
-    func reply(toMessageSentTo origin: Address, with message: MeshMessage,
-               to destination: Address, using keySet: KeySet) {
-        guard let primaryElement = meshNetwork.localProvisioner?.node?.elements.first else {
-            return
-        }
-        accessLayer.reply(toMessageSentTo: origin, with: message,
-                          from: primaryElement, to: destination, using: keySet)
-    }
+    // TODO: Remove?
+//    func reply(toAcknowledgedMessageSentTo origin: Address, with message: MeshResponse,
+//               to destination: Address, using keySet: KeySet) {
+//        guard let primaryElement = meshNetwork.localProvisioner?.node?.elements.first else {
+//            return
+//        }
+//        accessLayer.reply(toAcknowledgedMessageSentTo: origin, with: message,
+//                          from: primaryElement, to: destination, using: keySet)
+//    }
     
     /// Replies to the received message, which was sent with the given key set,
     /// with the given message.
@@ -209,10 +243,10 @@ internal class NetworkManager {
     ///   - element:     The source Element.
     ///   - destination: The destination address. This must be a Unicast Address.
     ///   - keySet:      The keySet that should be used to encrypt the message.
-    func reply(toMessageSentTo origin: Address, with message: MeshMessage,
+    func reply(toAcknowledgedMessageSentTo origin: Address, with message: MeshResponse,
                from element: Element, to destination: Address,
                using keySet: KeySet) {
-        accessLayer.reply(toMessageSentTo: origin, with: message,
+        accessLayer.reply(toAcknowledgedMessageSentTo: origin, with: message,
                           from: element, to: destination, using: keySet)
     }
     

@@ -30,9 +30,9 @@
 
 import Foundation
 
-public struct LightHSLSaturationGet: AcknowledgedGenericMessage {
+public struct LightHSLSaturationGet: StaticAcknowledgedMeshMessage {
     public static let opCode: UInt32 = 0x8272
-    public static let responseType: StaticMeshMessage.Type = LightHSLSaturationStatus.self
+    public static let responseType: StaticMeshResponse.Type = LightHSLSaturationStatus.self
     
     public var parameters: Data? {
         return nil

@@ -186,7 +186,7 @@ internal class AccessLayer {
         handle(accessPdu: accessPdu, sentWith: keySet, asResponseTo: request)
     }
     
-    /// Sends the MeshMessage to the destination. The message is encrypted
+    /// Sends the ``MeshMessage`` to the given destination. The message is encrypted
     /// using given Application Key and a Network Key bound to it.
     ///
     /// Before sending, this method updates the transaction identifier (TID)
@@ -195,19 +195,19 @@ internal class AccessLayer {
     /// - parameters:
     ///   - message:        The Mesh Message to send.
     ///   - element:        The source Element.
-    ///   - destination:    The destination Address. This can be any
-    ///                     valid mesh Address.
+    ///   - destination:    The destination Address. This can be any valid mesh Address.
     ///   - initialTtl:     The initial TTL (Time To Live) value of the message.
     ///                     If `nil`, the default Node TTL will be used.
     ///   - applicationKey: The Application Key to sign the message with.
     ///   - retransmit:     Whether the message is a retransmission of the
     ///                     previously sent message.
+    ///   - completion:     The completion handler called when the message was sent.
     func send(_ message: MeshMessage,
               from element: Element, to destination: MeshAddress,
               withTtl initialTtl: UInt8?, using applicationKey: ApplicationKey,
-              retransmit: Bool) {
+              retransmit: Bool, completion: ((Result<Void, Error>) -> ())?) {
         // Should the TID be updated?
-        var m = message
+        var m: MeshMessage = message
         if var transactionMessage = message as? TransactionMessage, transactionMessage.tid == nil {
             // Ensure there is a transaction for our destination.
             let k = key(for: element, and: destination)
@@ -244,9 +244,73 @@ internal class AccessLayer {
         }
         
         networkManager.upperTransportLayer.send(pdu, withTtl: initialTtl, using: keySet)
+        
+        // TODO: completion
     }
     
-    /// Sends the ConfigMessage to the destination. The message is encrypted
+    /// Sends the ``MeshMessage`` to the given Unicast Address. The message is encrypted
+    /// using given Application Key and a Network Key bound to it.
+    ///
+    /// Before sending, this method updates the transaction identifier (TID)
+    /// for message extending ``TransactionMessage``.
+    ///
+    /// - parameters:
+    ///   - message:        The Mesh Message to send.
+    ///   - element:        The source Element.
+    ///   - unicastAddress: The destination Unicast Address.
+    ///   - initialTtl:     The initial TTL (Time To Live) value of the message.
+    ///                     If `nil`, the default Node TTL will be used.
+    ///   - applicationKey: The Application Key to sign the message with.
+    ///   - retransmit:     Whether the message is a retransmission of the
+    ///                     previously sent message.
+    ///   - completion:     The completion handler with the response.
+    func send(_ message: AcknowledgedMeshMessage,
+              from element: Element, to unicastAddress: Address,
+              withTtl initialTtl: UInt8?, using applicationKey: ApplicationKey,
+              retransmit: Bool, completion: ((Result<MeshResponse, Error>) -> ())?) {
+        guard unicastAddress.isUnicast else {
+            return
+        }
+        // Should the TID be updated?
+        var m: MeshMessage = message
+        if var transactionMessage = message as? TransactionMessage, transactionMessage.tid == nil {
+            // Ensure there is a transaction for our destination.
+            let k = key(for: element, and: MeshAddress(unicastAddress))
+            mutex.sync {
+                transactions[k] = transactions[k] ?? Transaction()
+                
+                // NOTE: The code below MUST use "transactions[k]!...." (instead of a temporary let
+                //       as Transaction is a struct and creating temporary variable would make a copy
+                //       of it instead of modifying the original object. The methods below are mutable.
+                
+                // Should the last transaction be continued?
+                if retransmit || transactionMessage.continueTransaction, transactions[k]!.isActive {
+                    transactionMessage.tid = transactions[k]!.currentTid()
+                } else {
+                    // If not, start a new transaction by setting a new TID value.
+                    transactionMessage.tid = transactions[k]!.nextTid()
+                }
+            }
+            m = transactionMessage
+        }
+        
+        logger?.i(.model, "Sending \(m) from: \(element), to: \(unicastAddress.hex)")
+        let pdu = AccessPdu(fromMeshMessage: m,
+                            sentFrom: element.unicastAddress, to: MeshAddress(unicastAddress),
+                            userInitiated: true)
+        let keySet = AccessKeySet(applicationKey: applicationKey)
+        logger?.i(.access, "Sending \(pdu)")
+        
+        // Set timers for the acknowledged messages.
+        // Acknowledged messages sent to a Group address won't await a Status.
+        createReliableContext(for: pdu, sentFrom: element, withTtl: initialTtl, using: keySet)
+        
+        networkManager.upperTransportLayer.send(pdu, withTtl: initialTtl, using: keySet)
+        
+        // TODO: completion
+    }
+    
+    /// Sends the ``ConfigMessage`` to the given destination. The message is encrypted
     /// using the Device Key which belongs to the target Node, and first
     /// Network Key known to this Node.
     ///
@@ -255,8 +319,10 @@ internal class AccessLayer {
     ///   - destination: The destination address. This must be a Unicast Address.
     ///   - initialTtl:  The initial TTL (Time To Live) value of the message.
     ///                  If `nil`, the default Node TTL will be used.
-    func send(_ message: ConfigMessage, to destination: Address,
-              withTtl initialTtl: UInt8?) {
+    ///   - completion:  The completion handler with the response.
+    func send(_ message: AcknowledgedConfigMessage, to destination: Address,
+              withTtl initialTtl: UInt8?,
+              completion: ((Result<ConfigResponse, Error>) -> ())?) {
         guard let element = meshNetwork.localProvisioner?.node?.elements.first,
               let node = meshNetwork.node(withAddress: destination),
               var networkKey = node.networkKeys.first else {
@@ -279,11 +345,11 @@ internal class AccessLayer {
         logger?.i(.access, "Sending \(pdu)")
         
         // Set timers for the acknowledged messages.
-        if message is AcknowledgedConfigMessage {
-            createReliableContext(for: pdu, sentFrom: element, withTtl: initialTtl, using: keySet)
-        }
+        createReliableContext(for: pdu, sentFrom: element, withTtl: initialTtl, using: keySet)
         
         networkManager.upperTransportLayer.send(pdu, withTtl: initialTtl, using: keySet)
+        
+        // TODO: completion
     }
     
     /// Replies to the received message, which was sent with the given key set,
@@ -295,7 +361,7 @@ internal class AccessLayer {
     ///   - element:     The source Element.
     ///   - destination: The destination address. This must be a Unicast Address.
     ///   - keySet:      The set of keys that the message was encrypted with.
-    func reply(toMessageSentTo origin: Address, with message: MeshMessage,
+    func reply(toAcknowledgedMessageSentTo origin: Address, with message: MeshMessage,
                from element: Element, to destination: Address,
                using keySet: KeySet) {
         let category: LogCategory = message is ConfigMessage ? .foundationModel : .model
@@ -427,7 +493,7 @@ private extension AccessLayer {
                                                                  sentFrom: accessPdu.source,
                                                                  to: accessPdu.destination,
                                                                  asResponseTo: request) {
-                                    networkManager.reply(toMessageSentTo: accessPdu.destination.address,
+                                    networkManager.reply(toAcknowledgedMessageSentTo: accessPdu.destination.address,
                                                      with: response, from: element,
                                                      to: accessPdu.source, using: keySet)
                                 }
@@ -458,8 +524,8 @@ private extension AccessLayer {
                         if let response = delegate.model(model, didReceiveMessage: message,
                                                          sentFrom: accessPdu.source, to: accessPdu.destination,
                                                          asResponseTo: request) {
-                            networkManager.reply(toMessageSentTo: accessPdu.destination.address,
-                                                 with: response, to: accessPdu.source, using: keySet)
+                            networkManager.reply(toAcknowledgedMessageSentTo: accessPdu.destination.address,
+                                                 with: response, from: model.parentElement!, to: accessPdu.source, using: keySet)
                             
                             // Some Config Messages require special handling.
                             handle(message)
@@ -543,24 +609,30 @@ private extension ModelDelegate {
     ///            Acknowledged Mesh Message that needs to be replied.
     func model(_ model: Model, didReceiveMessage message: MeshMessage,
                sentFrom source: Address, to destination: MeshAddress,
-               asResponseTo request: AcknowledgedMeshMessage?) -> MeshMessage? {
+               asResponseTo request: AcknowledgedMeshMessage?) -> MeshResponse? {
         if let request = request {
-            self.model(model, didReceiveResponse: message,
-                       toAcknowledgedMessage: request,
-                       from: source)
-            return nil
-        } else if let request = message as? AcknowledgedMeshMessage {
+            if let response = message as? MeshResponse {
+                self.model(model, didReceiveResponse: response,
+                           toAcknowledgedMessage: request,
+                           from: source)
+                return nil
+            }
+            fatalError("\(message) is not MeshResponse")
+        }
+        if let request = message as? AcknowledgedMeshMessage {
             do {
                 return try self.model(model, didReceiveAcknowledgedMessage: request,
                                       from: source, sentTo: destination)
             } catch {
                 return nil
             }
-        } else {
+        }
+        if let message = message as? UnacknowledgedMeshMessage {
             self.model(model, didReceiveUnacknowledgedMessage: message,
                        from: source, sentTo: destination)
             return nil
         }
+        fatalError("\(message) is neither Acknowledged nor Unacknowledged")
     }
 }
 

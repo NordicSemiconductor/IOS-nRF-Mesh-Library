@@ -30,7 +30,7 @@
 
 import Foundation
 
-public struct ConfigModelPublicationStatus: ConfigAnyModelMessage, ConfigStatusMessage {
+public struct ConfigModelPublicationStatus: ConfigResponse, ConfigStatusMessage, ConfigAnyModelMessage {
     public static let opCode: UInt32 = 0x8019
     
     public var parameters: Data? {

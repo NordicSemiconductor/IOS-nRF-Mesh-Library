@@ -30,9 +30,9 @@
 
 import Foundation
 
-public struct GenericMoveSet: AcknowledgedGenericMessage, TransactionMessage, TransitionMessage {
+public struct GenericMoveSet: StaticAcknowledgedMeshMessage, TransactionMessage, TransitionMessage {
     public static let opCode: UInt32 = 0x820B
-    public static let responseType: StaticMeshMessage.Type = GenericLevelStatus.self
+    public static let responseType: StaticMeshResponse.Type = GenericLevelStatus.self
     
     public var tid: UInt8!
     public var parameters: Data? {

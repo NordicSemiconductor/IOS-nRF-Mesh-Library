@@ -30,7 +30,7 @@
 
 import Foundation
 
-public struct LightLightnessLinearSetUnacknowledged: GenericMessage, TransactionMessage, TransitionMessage {
+public struct LightLightnessLinearSetUnacknowledged: StaticUnacknowledgedMeshMessage, TransactionMessage, TransitionMessage {
     public static var opCode: UInt32 = 0x8251
     
     public var tid: UInt8!

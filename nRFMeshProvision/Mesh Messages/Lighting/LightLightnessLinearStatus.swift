@@ -30,7 +30,7 @@
 
 import Foundation
 
-public struct LightLightnessLinearStatus: GenericMessage, TransitionStatusMessage {
+public struct LightLightnessLinearStatus: StaticMeshResponse, TransitionStatusMessage {
     public static let opCode: UInt32 = 0x8252
     
     public var parameters: Data? {

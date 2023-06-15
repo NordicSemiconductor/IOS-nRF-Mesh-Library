@@ -30,7 +30,7 @@
 
 import Foundation
 
-public struct GenericPowerDefaultSetUnacknowledged: GenericMessage {
+public struct GenericPowerDefaultSetUnacknowledged: StaticUnacknowledgedMeshMessage {
     public static let opCode: UInt32 = 0x8220
     
     public var parameters: Data? {

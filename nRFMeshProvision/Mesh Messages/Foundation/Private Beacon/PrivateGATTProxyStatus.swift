@@ -32,7 +32,7 @@ import Foundation
 
 /// A Private GATT Proxy Status message is an unacknowledged message used to report
 /// the current Private GATT Proxy state of a Node.
-public struct PrivateGATTProxyStatus: ConfigMessage {
+public struct PrivateGATTProxyStatus: ConfigResponse {
     public static let opCode: UInt32 = 0x8065
     
     /// Current Private GATT Proxy state.

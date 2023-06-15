@@ -40,6 +40,16 @@ public protocol VendorMessage: MeshMessage {
     // No additional fields.
 }
 
+/// A base protocol for unacknowledged vendor message.
+public protocol UnacknowledgedVendorMessage: VendorMessage, UnacknowledgedMeshMessage {
+    // No additional fields.
+}
+
+/// The base class for vendor response messages.
+public protocol VendorResponse: MeshResponse, UnacknowledgedVendorMessage {
+    // No additional fields.
+}
+
 /// A base protocol for acknowledged vendor message.
 public protocol AcknowledgedVendorMessage: VendorMessage, AcknowledgedMeshMessage {
     // No additional fields.
@@ -50,13 +60,23 @@ public protocol StaticVendorMessage: VendorMessage, StaticMeshMessage {
     // No additional fields.
 }
 
+/// A base protocol for static unacknowledged vendor message.
+public protocol UnacknowledgedStaticVendorMessage: StaticVendorMessage, UnacknowledgedMeshMessage {
+    // No additional fields.
+}
+
+/// The base class for vendor response messages.
+public protocol StaticVendorResponse: StaticMeshResponse, UnacknowledgedStaticVendorMessage {
+    // No additional fields.
+}
+
 /// A base protocol for static acknowledged vendor message.
 public protocol AcknowledgedStaticVendorMessage: StaticVendorMessage, StaticAcknowledgedMeshMessage {
     // No additional fields.
 }
 
 /// A base protocol for vendor status message.
-public protocol VendorStatusMessage: StatusMessage {
+public protocol VendorStatusMessage: UnacknowledgedVendorMessage, StatusMessage {
     // No additional fields.
 }
 

@@ -30,14 +30,14 @@
 
 import Foundation
 
-public struct LightCTLTemperatureRangeStatus: GenericMessage, GenericStatusMessage {
+public struct LightCTLTemperatureRangeStatus: StaticMeshResponse, RangeStatusMessage {
     public static let opCode: UInt32 = 0x8263
     
     public var parameters: Data? {
         return Data([status.rawValue]) + min + max
     }
     
-    public let status: GenericMessageStatus
+    public let status: RangeMessageStatus
     /// The value of the Temperature Range Min field of the Light CTL Temperature
     /// Range state.
     public let min: UInt16
@@ -63,7 +63,7 @@ public struct LightCTLTemperatureRangeStatus: GenericMessage, GenericStatusMessa
     ///
     /// - parameter status: Status Code for the requesting message.
     /// - parameter request: The request received.
-    public init(_ status: GenericMessageStatus,
+    public init(_ status: RangeMessageStatus,
                 for request: LightCTLTemperatureRangeSet) {
         self.status = status
         self.min = request.min
@@ -74,7 +74,7 @@ public struct LightCTLTemperatureRangeStatus: GenericMessage, GenericStatusMessa
     ///
     /// - parameter status: Status Code for the requesting message.
     /// - parameter request: The request received.
-    public init(_ status: GenericMessageStatus,
+    public init(_ status: RangeMessageStatus,
                 for request: LightCTLTemperatureRangeSetUnacknowledged) {
         self.status = status
         self.min = request.min
@@ -85,7 +85,7 @@ public struct LightCTLTemperatureRangeStatus: GenericMessage, GenericStatusMessa
         guard parameters.count == 5 else {
             return nil
         }
-        guard let status = GenericMessageStatus(rawValue: parameters[0]) else {
+        guard let status = RangeMessageStatus(rawValue: parameters[0]) else {
             return nil
         }
         self.status = status

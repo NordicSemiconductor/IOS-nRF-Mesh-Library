@@ -30,9 +30,9 @@
 
 import Foundation
 
-public struct GenericOnOffGet: AcknowledgedGenericMessage {
+public struct GenericOnOffGet: StaticAcknowledgedMeshMessage {
     public static let opCode: UInt32 = 0x8201
-    public static let responseType: StaticMeshMessage.Type = GenericOnOffStatus.self
+    public static let responseType: StaticMeshResponse.Type = GenericOnOffStatus.self
     
     public var parameters: Data? {
         return nil

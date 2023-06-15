@@ -92,6 +92,16 @@ public protocol MeshMessage: BaseMeshMessage {
     var isSegmented: Bool { get }
 }
 
+/// The base class for unacknowledged messages.
+public protocol UnacknowledgedMeshMessage: MeshMessage {
+    // No additional fields.
+}
+
+/// The base class for response messages.
+public protocol MeshResponse: UnacknowledgedMeshMessage {
+    // No additional fields.
+}
+
 /// The base class for acknowledged messages.
 ///
 /// An acknowledged message is transmitted and acknowledged by each
@@ -99,6 +109,13 @@ public protocol MeshMessage: BaseMeshMessage {
 /// typically a status message. If a response is not received within
 /// an arbitrary time period, the message will be retransmitted
 /// automatically until the timeout occurs.
+///
+/// Acknowledged messages are expected to be replied with a status message
+/// with a message of type set as ``AcknowledgedMeshMessage/responseOpCode``.
+///
+/// Access Layer timer will wait for
+/// ``NetworkParameters/acknowledgmentMessageTimeout`` seconds
+/// before throwing a timeout.
 public protocol AcknowledgedMeshMessage: MeshMessage {
     /// The Op Code of the response message.
     var responseOpCode: UInt32 { get }
@@ -110,17 +127,26 @@ public protocol StaticMeshMessage: MeshMessage {
     static var opCode: UInt32 { get }
 }
 
-/// A base class for acknowledged messages.
+/// The base class for unacknowledged messages with an opcode known at the
+/// compilation time.
+public protocol StaticUnacknowledgedMeshMessage: StaticMeshMessage, UnacknowledgedMeshMessage {
+    // No additional fields.
+}
+
+/// The base class for response messages with an opcode known at the
+/// compilation time.
+public protocol StaticMeshResponse: MeshResponse, StaticUnacknowledgedMeshMessage {
+    // No additional fields.
+}
+
+/// A base class for acknowledged messages which opcode and the type of the
+/// response message are known during compilation time.
 ///
-/// Acknowledged messages are expected to be replied with a status message
-/// with a message of type set as ``StaticAcknowledgedMeshMessage/responseType``.
-///
-/// Access Layer timer will wait for
-/// ``NetworkParameters/acknowledgmentMessageTimeout`` seconds
-/// before throwing a timeout.
-public protocol StaticAcknowledgedMeshMessage: AcknowledgedMeshMessage, StaticMeshMessage {
+/// The message must have the ``StaticAcknowledgedMeshMessage/responseType``
+/// specified.
+public protocol StaticAcknowledgedMeshMessage: StaticMeshMessage, AcknowledgedMeshMessage {
     /// The Type of the response message.
-    static var responseType: StaticMeshMessage.Type { get }
+    static var responseType: StaticMeshResponse.Type { get }
 }
 
 /// A mesh message containing the operation status.

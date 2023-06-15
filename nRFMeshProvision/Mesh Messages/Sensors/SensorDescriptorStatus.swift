@@ -30,7 +30,7 @@
 
 import Foundation
 
-public struct SensorDescriptorStatus: SensorMessage {
+public struct SensorDescriptorStatus: StaticMeshResponse {
     public static let opCode: UInt32 = 0x51
     
     /// The result returned in Sensor Descriptor Status message.

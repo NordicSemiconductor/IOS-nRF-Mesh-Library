@@ -41,7 +41,7 @@ import Foundation
 /// as well as authenticate and encrypt messages it sends.
 public struct ConfigAppKeyAdd: AcknowledgedConfigMessage, ConfigNetAndAppKeyMessage {
     public static let opCode: UInt32 = 0x00
-    public static let responseType: StaticMeshMessage.Type = ConfigAppKeyStatus.self
+    public static let responseType: StaticMeshResponse.Type = ConfigAppKeyStatus.self
     
     public var parameters: Data? {
         return encodeNetAndAppKeyIndex() + key

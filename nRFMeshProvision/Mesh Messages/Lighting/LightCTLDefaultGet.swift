@@ -30,9 +30,9 @@
 
 import Foundation
 
-public struct LightCTLTDefaultGet: AcknowledgedGenericMessage {
+public struct LightCTLTDefaultGet: StaticAcknowledgedMeshMessage {
     public static let opCode: UInt32 = 0x8267
-    public static let responseType: StaticMeshMessage.Type = LightCTLDefaultStatus.self
+    public static let responseType: StaticMeshResponse.Type = LightCTLDefaultStatus.self
     
     public var parameters: Data? {
         return nil

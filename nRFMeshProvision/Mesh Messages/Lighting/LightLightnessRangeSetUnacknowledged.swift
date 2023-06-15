@@ -30,7 +30,7 @@
 
 import Foundation
 
-public struct LightLightnessRangeSetUnacknowledged: GenericMessage {
+public struct LightLightnessRangeSetUnacknowledged: StaticUnacknowledgedMeshMessage {
     public static let opCode: UInt32 = 0x825C
     
     public var parameters: Data? {

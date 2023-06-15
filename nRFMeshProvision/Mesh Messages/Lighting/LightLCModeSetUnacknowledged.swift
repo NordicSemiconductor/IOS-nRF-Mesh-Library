@@ -30,7 +30,7 @@
 
 import Foundation
 
-public struct LightLCModeSetUnacknowledged: GenericMessage {
+public struct LightLCModeSetUnacknowledged: StaticUnacknowledgedMeshMessage {
     public static let opCode: UInt32 = 0x8293
     
     /// Whether the controller is turned on and the binding with the Light Lightness

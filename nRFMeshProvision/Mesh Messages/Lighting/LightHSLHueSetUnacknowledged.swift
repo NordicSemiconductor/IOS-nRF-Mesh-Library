@@ -30,7 +30,7 @@
 
 import Foundation
 
-public struct LightHSLHueSetUnacknowledged: GenericMessage, TransactionMessage, TransitionMessage {
+public struct LightHSLHueSetUnacknowledged: StaticUnacknowledgedMeshMessage, TransactionMessage, TransitionMessage {
     public static var opCode: UInt32 = 0x8270
     
     public var tid: UInt8!

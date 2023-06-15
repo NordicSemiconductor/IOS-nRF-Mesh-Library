@@ -30,9 +30,9 @@
 
 import Foundation
 
-public struct LightLCOccupancyModeGet: AcknowledgedGenericMessage {
+public struct LightLCOccupancyModeGet: StaticAcknowledgedMeshMessage {
     public static let opCode: UInt32 = 0x8295
-    public static let responseType: StaticMeshMessage.Type = LightLCOccupancyModeStatus.self
+    public static let responseType: StaticMeshResponse.Type = LightLCOccupancyModeStatus.self
     
     public var parameters: Data? {
         return nil

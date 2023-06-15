@@ -33,7 +33,7 @@ import Foundation
 /// A Remote Provisioning Scan Capabilities Status message is an unacknowledged
 /// message used by the Remote Provisioning Server to report the current value of
 /// the Remote Provisioning Scan Capabilities state of a Remote Provisioning Server.
-public struct RemoteProvisioningScanCapabilitiesStatus: RemoteProvisioningMessage {
+public struct RemoteProvisioningScanCapabilitiesStatus: RemoteProvisioningResponse {
     public static let opCode: UInt32 = 0x8050
     
     /// The maximum number of UUIDs that can be reported during scanning.

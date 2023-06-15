@@ -30,7 +30,7 @@
 
 import Foundation
 
-public struct GenericPowerDefaultStatus: GenericMessage {
+public struct GenericPowerDefaultStatus: StaticMeshResponse {
     public static let opCode: UInt32 = 0x821C
     
     public var parameters: Data? {

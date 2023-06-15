@@ -30,7 +30,7 @@
 
 import Foundation
 
-public struct LightCTLTemperatureStatus: GenericMessage, TransitionStatusMessage {
+public struct LightCTLTemperatureStatus: StaticMeshResponse, TransitionStatusMessage {
     public static var opCode: UInt32 = 0x8266
     
     public var parameters: Data? {

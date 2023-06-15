@@ -30,7 +30,7 @@
 
 import Foundation
 
-public struct SensorCadenceSetUnacknowledged: SensorPropertyMessage {
+public struct SensorCadenceSetUnacknowledged: StaticUnacknowledgedMeshMessage, SensorPropertyMessage {
     public static let opCode: UInt32 = 0x56
     
     public let property: DeviceProperty

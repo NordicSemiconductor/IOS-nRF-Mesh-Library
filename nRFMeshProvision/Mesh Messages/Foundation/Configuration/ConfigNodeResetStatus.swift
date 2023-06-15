@@ -29,7 +29,7 @@
 */
 import Foundation
 
-public struct ConfigNodeResetStatus: ConfigMessage {
+public struct ConfigNodeResetStatus: ConfigResponse {
     public static let opCode: UInt32 = 0x804A
     
     public var parameters: Data? {
