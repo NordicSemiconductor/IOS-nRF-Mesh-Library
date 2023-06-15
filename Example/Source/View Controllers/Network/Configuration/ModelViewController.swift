@@ -589,9 +589,11 @@ class ModelViewController: ProgressViewController {
 private extension ModelViewController {
     
     func reloadSections(_ sections: [Section], with animation: UITableView.RowAnimation) {
-        let indexes = sections.compactMap { self.sections.firstIndex(of: $0) }
-        let indexSet = IndexSet(indexes)
-        tableView.reloadSections(indexSet, with: animation)
+        DispatchQueue.main.async {
+            let indexes = sections.compactMap { self.sections.firstIndex(of: $0) }
+            let indexSet = IndexSet(indexes)
+            self.tableView.reloadSections(indexSet, with: animation)
+        }
     }
     
     func reloadSections(_ section: Section, with animation: UITableView.RowAnimation) {
@@ -631,7 +633,7 @@ extension ModelViewController: ModelViewCellDelegate {
     }
     
     var isRefreshing: Bool {
-        return refreshControl?.isRefreshing ?? false
+        return DispatchQueue.main.sync { refreshControl?.isRefreshing ?? false }
     }
     
 }
