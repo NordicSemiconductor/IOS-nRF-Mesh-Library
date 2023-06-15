@@ -201,11 +201,10 @@ internal class AccessLayer {
     ///   - applicationKey: The Application Key to sign the message with.
     ///   - retransmit:     Whether the message is a retransmission of the
     ///                     previously sent message.
-    ///   - completion:     The completion handler called when the message was sent.
     func send(_ message: MeshMessage,
               from element: Element, to destination: MeshAddress,
               withTtl initialTtl: UInt8?, using applicationKey: ApplicationKey,
-              retransmit: Bool, completion: ((Result<Void, Error>) -> ())?) {
+              retransmit: Bool) {
         // Should the TID be updated?
         var m: MeshMessage = message
         if var transactionMessage = message as? TransactionMessage, transactionMessage.tid == nil {
@@ -244,70 +243,6 @@ internal class AccessLayer {
         }
         
         networkManager.upperTransportLayer.send(pdu, withTtl: initialTtl, using: keySet)
-        
-        // TODO: completion
-    }
-    
-    /// Sends the ``MeshMessage`` to the given Unicast Address. The message is encrypted
-    /// using given Application Key and a Network Key bound to it.
-    ///
-    /// Before sending, this method updates the transaction identifier (TID)
-    /// for message extending ``TransactionMessage``.
-    ///
-    /// - parameters:
-    ///   - message:        The Mesh Message to send.
-    ///   - element:        The source Element.
-    ///   - unicastAddress: The destination Unicast Address.
-    ///   - initialTtl:     The initial TTL (Time To Live) value of the message.
-    ///                     If `nil`, the default Node TTL will be used.
-    ///   - applicationKey: The Application Key to sign the message with.
-    ///   - retransmit:     Whether the message is a retransmission of the
-    ///                     previously sent message.
-    ///   - completion:     The completion handler with the response.
-    func send(_ message: AcknowledgedMeshMessage,
-              from element: Element, to unicastAddress: Address,
-              withTtl initialTtl: UInt8?, using applicationKey: ApplicationKey,
-              retransmit: Bool, completion: ((Result<MeshResponse, Error>) -> ())?) {
-        guard unicastAddress.isUnicast else {
-            return
-        }
-        // Should the TID be updated?
-        var m: MeshMessage = message
-        if var transactionMessage = message as? TransactionMessage, transactionMessage.tid == nil {
-            // Ensure there is a transaction for our destination.
-            let k = key(for: element, and: MeshAddress(unicastAddress))
-            mutex.sync {
-                transactions[k] = transactions[k] ?? Transaction()
-                
-                // NOTE: The code below MUST use "transactions[k]!...." (instead of a temporary let
-                //       as Transaction is a struct and creating temporary variable would make a copy
-                //       of it instead of modifying the original object. The methods below are mutable.
-                
-                // Should the last transaction be continued?
-                if retransmit || transactionMessage.continueTransaction, transactions[k]!.isActive {
-                    transactionMessage.tid = transactions[k]!.currentTid()
-                } else {
-                    // If not, start a new transaction by setting a new TID value.
-                    transactionMessage.tid = transactions[k]!.nextTid()
-                }
-            }
-            m = transactionMessage
-        }
-        
-        logger?.i(.model, "Sending \(m) from: \(element), to: \(unicastAddress.hex)")
-        let pdu = AccessPdu(fromMeshMessage: m,
-                            sentFrom: element.unicastAddress, to: MeshAddress(unicastAddress),
-                            userInitiated: true)
-        let keySet = AccessKeySet(applicationKey: applicationKey)
-        logger?.i(.access, "Sending \(pdu)")
-        
-        // Set timers for the acknowledged messages.
-        // Acknowledged messages sent to a Group address won't await a Status.
-        createReliableContext(for: pdu, sentFrom: element, withTtl: initialTtl, using: keySet)
-        
-        networkManager.upperTransportLayer.send(pdu, withTtl: initialTtl, using: keySet)
-        
-        // TODO: completion
     }
     
     /// Sends the ``ConfigMessage`` to the given destination. The message is encrypted
@@ -321,8 +256,7 @@ internal class AccessLayer {
     ///                  If `nil`, the default Node TTL will be used.
     ///   - completion:  The completion handler with the response.
     func send(_ message: AcknowledgedConfigMessage, to destination: Address,
-              withTtl initialTtl: UInt8?,
-              completion: ((Result<ConfigResponse, Error>) -> ())?) {
+              withTtl initialTtl: UInt8?) {
         guard let element = meshNetwork.localProvisioner?.node?.elements.first,
               let node = meshNetwork.node(withAddress: destination),
               var networkKey = node.networkKeys.first else {
@@ -348,8 +282,6 @@ internal class AccessLayer {
         createReliableContext(for: pdu, sentFrom: element, withTtl: initialTtl, using: keySet)
         
         networkManager.upperTransportLayer.send(pdu, withTtl: initialTtl, using: keySet)
-        
-        // TODO: completion
     }
     
     /// Replies to the received message, which was sent with the given key set,

@@ -109,8 +109,8 @@ internal class NetworkManager {
             publish.ttl :
             localElement.parentNode?.defaultTTL ?? networkParameters.defaultTtl
         // Send the message.
-        send(message, from: localElement, to: publish.publicationAddress,
-             withTtl: ttl, using: applicationKey, completion: nil)
+        accessLayer.send(message, from: localElement, to: publish.publicationAddress,
+                         withTtl: ttl, using: applicationKey, retransmit: false)
         // If retransmission was configured, start the timer that will retransmit.
         // There is no need to retransmit acknowledged messages, as they have their
         // own retransmission mechanism.
@@ -125,8 +125,7 @@ internal class NetworkManager {
                         return
                     }
                     self.accessLayer.send(message, from: localElement, to: publish.publicationAddress,
-                                          withTtl: ttl, using: applicationKey, retransmit: true,
-                                          completion: nil)
+                                          withTtl: ttl, using: applicationKey, retransmit: true)
                     count -= 1
                     if count == 0 {
                         timer.invalidate()
@@ -160,7 +159,7 @@ internal class NetworkManager {
               completion: ((Result<Void, Error>) -> ())?) {
         accessLayer.send(message, from: element, to: destination,
                          withTtl: initialTtl, using: applicationKey,
-                         retransmit: false, completion: completion)
+                         retransmit: false)
     }
     
     /// Encrypts the message with the Application Key and a Network Key
@@ -185,9 +184,9 @@ internal class NetworkManager {
               withTtl initialTtl: UInt8?,
               using applicationKey: ApplicationKey,
               completion: ((Result<MeshResponse, Error>) -> ())?) {
-        accessLayer.send(message, from: element, to: destination,
+        accessLayer.send(message, from: element, to: MeshAddress(destination),
                          withTtl: initialTtl, using: applicationKey,
-                         retransmit: false, completion: completion)
+                         retransmit: false)
     }
     
     /// Encrypts the message with the Device Key and the first Network Key
@@ -212,7 +211,7 @@ internal class NetworkManager {
               withTtl initialTtl: UInt8?,
               completion: ((Result<ConfigResponse, Error>) -> ())?) {
         accessLayer.send(configMessage, to: destination,
-                         withTtl: initialTtl, completion: completion)
+                         withTtl: initialTtl)
     }
     
     /// Replies to the received message, which was sent with the given key set,
