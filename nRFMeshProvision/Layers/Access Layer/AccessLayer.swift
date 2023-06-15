@@ -509,9 +509,9 @@ private extension AccessLayer {
                     }
                 }
             }
-        } else if let primaryElement = localNode.primaryElement {
+        } else {
             // .. otherwise, the Device Key was used.
-            let models = primaryElement.models.filter { $0.supportsDeviceKey }
+            let models = localNode.elements.flatMap { $0.models.filter { $0.supportsDeviceKey } }
             for model in models {
                 // Check, if the delegate is set, and it supports the opcode
                 // specified in the received Access PDU.
@@ -519,7 +519,7 @@ private extension AccessLayer {
                    let message = delegate.decode(accessPdu) {
                     newMessage = message
                     // Is this message targeting the local Node?
-                    if accessPdu.destination.address == primaryElement.unicastAddress {
+                    if localNode.contains(elementWithAddress: accessPdu.destination.address) {
                         logger?.i(.foundationModel, "\(message) received from: \(accessPdu.source.hex)")
                         if let response = delegate.model(model, didReceiveMessage: message,
                                                          sentFrom: accessPdu.source, to: accessPdu.destination,
