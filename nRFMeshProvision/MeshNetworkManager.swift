@@ -613,7 +613,8 @@ public extension MeshNetworkManager {
     func send(_ message: AcknowledgedConfigMessage, to destination: Address,
               withTtl initialTtl: UInt8? = nil,
               completion: ((Result<ConfigResponse, Error>) -> ())? = nil) throws -> MessageHandle {
-        guard let networkManager = networkManager, let meshNetwork = meshNetwork else {
+        guard let networkManager = networkManager,
+              let meshNetwork = meshNetwork else {
             print("Error: Mesh Network not created")
             throw MeshNetworkError.noNetwork
         }
