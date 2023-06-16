@@ -32,7 +32,7 @@ import Foundation
 
 /// A set of network parameters that can be applied to the ``MeshNetworkManager``.
 ///
-/// Network parameters configure the transmition and retransmition intervals,
+/// Network parameters configure the transsmition and retranssmition intervals,
 /// acknowledge message timeout, the default Time To Live (TTL) and other.
 ///
 /// Use ``NetworkParameters/default`` or ``NetworkParameters/custom(_:)`` to create
