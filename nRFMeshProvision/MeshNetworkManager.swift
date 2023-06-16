@@ -769,24 +769,30 @@ extension MeshNetworkManager: NetworkManagerDelegate {
     func networkManager(_ manager: NetworkManager,
                         didReceiveMessage message: MeshMessage,
                         sentFrom source: Address, to destination: Address) {
-        delegate?.meshNetworkManager(self, didReceiveMessage: message,
-                                     sentFrom: source, to: destination)
+        delegateQueue.async {
+            self.delegate?.meshNetworkManager(self, didReceiveMessage: message,
+                                              sentFrom: source, to: destination)
+        }
     }
     
     func networkManager(_ manager: NetworkManager,
                         didSendMessage message: MeshMessage,
                         from localElement: Element, to destination: Address) {
-        delegate?.meshNetworkManager(self, didSendMessage: message,
-                                     from: localElement, to: destination)
+        delegateQueue.async {
+            self.delegate?.meshNetworkManager(self, didSendMessage: message,
+                                              from: localElement, to: destination)
+        }
     }
     
     func networkManager(_ manager: NetworkManager,
                         failedToSendMessage message: MeshMessage,
                         from localElement: Element, to destination: Address,
                         error: Error) {
-        delegate?.meshNetworkManager(self, failedToSendMessage: message,
-                                     from: localElement, to: destination,
-                                     error: error)
+        delegateQueue.async {
+            self.delegate?.meshNetworkManager(self, failedToSendMessage: message,
+                                              from: localElement, to: destination,
+                                              error: error)
+        }
     }
     
     func networkDidChange() {
