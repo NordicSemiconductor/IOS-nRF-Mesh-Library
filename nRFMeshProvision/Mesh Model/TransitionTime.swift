@@ -30,7 +30,7 @@
 
 import Foundation
 
-/// This stucture represents a time needed to transition from one state to another,
+/// This structure represents a time needed to transition from one state to another,
 /// for example dimming a light.
 ///
 /// Internally, it uses steps and step resolution. Thanks to that only some time
@@ -77,7 +77,7 @@ public struct TransitionTime {
     /// of the Transition Number of Steps field.
     ///
     /// - note: Use ``TransitionTime/init()`` to create a Transition Time
-    ///         representing an unknow time.
+    ///         representing an unknown time.
     /// - parameter steps: Transition Number of Steps, valid values are in
     ///                    range 0...62. Value 63 means that the value is
     ///                    unknown and the state cannot be set to this value.
@@ -99,7 +99,7 @@ public struct TransitionTime {
     ///         and step resolution using rounding. Check implementation
     ///         for details.
     ///
-    /// - parameter interval: The transiton time in seconds.
+    /// - parameter interval: The transition time in seconds.
     public init(_ interval: TimeInterval) {
         switch interval {
         case let interval where interval <= 0:
