@@ -135,7 +135,7 @@ public extension TransitionTime {
     static let immediate = TransitionTime(steps: 0, stepResolution: .hundredsOfMilliseconds)
     /// Unknown transition time.
     ///
-    /// This can not be used as default transition time.
+    /// This cannot be used as default transition time.
     static let unknown = TransitionTime()
     
     /// Returns whether the transition time is known.
