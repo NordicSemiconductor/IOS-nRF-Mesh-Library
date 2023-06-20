@@ -174,7 +174,7 @@ public protocol TransitionMessage: MeshMessage {
     /// The first message could be sent with longer ``TransitionMessage/delay``
     /// and each following with a shorter one, so when different Nodes
     /// receive different messages, the action they take seems more
-    /// syncchronized.
+    /// synchronized.
     ///
     /// This filed has to be set together with ``TransitionMessage/transitionTime``.
     var delay: UInt8? { get }
