@@ -32,7 +32,7 @@ import Foundation
 
 public struct GenericBatteryGet: StaticAcknowledgedMeshMessage {
     public static let opCode: UInt32 = 0x8223
-    public static let responseType: StaticMeshResponse.Type = GenericBatteryStatus.self
+    public typealias ResponseType = GenericBatteryStatus
     
     public var parameters: Data? {
         return nil

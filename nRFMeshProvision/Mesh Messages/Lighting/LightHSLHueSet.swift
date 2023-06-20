@@ -32,7 +32,7 @@ import Foundation
 
 public struct LightHSLHueSet: StaticAcknowledgedMeshMessage, TransactionMessage, TransitionMessage {
     public static var opCode: UInt32 = 0x826F
-    public static var responseType: StaticMeshResponse.Type = LightHSLHueStatus.self
+    public typealias ResponseType = LightHSLHueStatus
     
     public var tid: UInt8!
     public var parameters: Data? {

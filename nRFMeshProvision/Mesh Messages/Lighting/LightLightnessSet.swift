@@ -31,7 +31,7 @@
 import Foundation
 public struct LightLightnessSet: StaticAcknowledgedMeshMessage, TransactionMessage, TransitionMessage {
     public static var opCode: UInt32 = 0x824C
-    public static var responseType: StaticMeshResponse.Type = LightLightnessStatus.self
+    public typealias ResponseType = LightLightnessStatus
     
     public var tid: UInt8!    
     public var parameters: Data? {

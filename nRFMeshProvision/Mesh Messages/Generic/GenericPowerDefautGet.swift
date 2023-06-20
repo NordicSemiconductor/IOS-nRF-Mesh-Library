@@ -32,7 +32,7 @@ import Foundation
 
 public struct GenericPowerDefaultGet: StaticAcknowledgedMeshMessage {
     public static let opCode: UInt32 = 0x821B
-    public static let responseType: StaticMeshResponse.Type = GenericPowerDefaultStatus.self
+    public typealias ResponseType = GenericPowerDefaultStatus
     
     public var parameters: Data? {
         return nil

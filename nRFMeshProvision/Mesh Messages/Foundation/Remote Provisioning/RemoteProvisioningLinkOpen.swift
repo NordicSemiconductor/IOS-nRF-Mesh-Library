@@ -37,7 +37,7 @@ import CoreBluetooth
 /// or to open the Node Provisioning Protocol Interface.
 public struct RemoteProvisioningLinkOpen: AcknowledgedRemoteProvisioningMessage {
     public static let opCode: UInt32 = 0x8059
-    public static let responseType: StaticMeshResponse.Type = RemoteProvisioningLinkStatus.self
+    public typealias ResponseType = RemoteProvisioningLinkStatus
     
     /// Device UUID.
     public let uuid: CBUUID?

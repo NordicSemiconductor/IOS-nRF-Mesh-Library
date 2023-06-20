@@ -32,7 +32,7 @@ import Foundation
 
 public struct ConfigVendorModelSubscriptionGet: AcknowledgedConfigMessage, ConfigVendorModelMessage {
     public static let opCode: UInt32 = 0x802B
-    public static let responseType: StaticMeshResponse.Type = ConfigVendorModelSubscriptionList.self
+    public typealias ResponseType = ConfigVendorModelSubscriptionList
     
     public var parameters: Data? {
         return Data() + elementAddress + companyIdentifier + modelIdentifier

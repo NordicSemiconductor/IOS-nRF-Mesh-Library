@@ -32,7 +32,7 @@ import Foundation
 
 public struct GenericDefaultTransitionTimeGet: StaticAcknowledgedMeshMessage {
     public static let opCode: UInt32 = 0x820D
-    public static let responseType: StaticMeshResponse.Type = GenericDefaultTransitionTimeStatus.self
+    public typealias ResponseType = GenericDefaultTransitionTimeStatus
     
     public var parameters: Data? {
         return nil

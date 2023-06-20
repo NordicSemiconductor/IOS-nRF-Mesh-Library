@@ -9,7 +9,7 @@ let package = Package(
   name: "NordicMesh",
   platforms: [
     .macOS(.v10_15),
-    .iOS(.v10)
+    .iOS(.v12)
   ],
   products: [
     .library(name: "NordicMesh", targets: ["nRFMeshProvision"])

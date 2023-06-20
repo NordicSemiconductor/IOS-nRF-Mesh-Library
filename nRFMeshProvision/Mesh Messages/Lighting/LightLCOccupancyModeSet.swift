@@ -32,7 +32,7 @@ import Foundation
 
 public struct LightLCOccupancyModeSet: StaticAcknowledgedMeshMessage {
     public static let opCode: UInt32 = 0x8296
-    public static let responseType: StaticMeshResponse.Type = LightLCOccupancyModeStatus.self
+    public typealias ResponseType = LightLCOccupancyModeStatus
     
     /// Whether the controller may transition from a standby state when occupancy
     /// is reported.

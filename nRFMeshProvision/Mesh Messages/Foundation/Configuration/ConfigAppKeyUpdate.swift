@@ -41,7 +41,7 @@ import Foundation
 /// To transition to the next phases of the Key Refresh Procedure use ``ConfigKeyRefreshPhaseSet``.
 public struct ConfigAppKeyUpdate: AcknowledgedConfigMessage, ConfigNetAndAppKeyMessage {
     public static let opCode: UInt32 = 0x01
-    public static let responseType: StaticMeshResponse.Type = ConfigAppKeyStatus.self
+    public typealias ResponseType = ConfigAppKeyStatus
     
     public var parameters: Data? {
         return encodeNetAndAppKeyIndex() + key

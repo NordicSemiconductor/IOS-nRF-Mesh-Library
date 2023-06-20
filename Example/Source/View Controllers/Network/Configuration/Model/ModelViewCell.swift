@@ -44,7 +44,7 @@ protocol ModelViewCellDelegate: AnyObject {
     ///
     /// - parameter message: The message to be sent.
     /// - parameter description: The message to be displayed for the user.
-    func send(_ message: AcknowledgedConfigMessage, description: String)
+    func send(_ message: some AcknowledgedConfigMessage, description: String)
     
     /// Whether the view is being refreshed with Pull-to-Refresh or not.
     var isRefreshing: Bool { get }

@@ -32,7 +32,7 @@ import Foundation
 
 public struct LightHSLTargetGet: StaticAcknowledgedMeshMessage {
     public static let opCode: UInt32 = 0x8279
-    public static let responseType: StaticMeshResponse.Type = LightHSLTargetStatus.self
+    public typealias ResponseType = LightHSLTargetStatus
     
     public var parameters: Data? {
         return nil

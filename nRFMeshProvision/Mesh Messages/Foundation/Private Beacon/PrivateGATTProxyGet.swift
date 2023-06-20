@@ -34,7 +34,7 @@ import Foundation
 /// current Private GATT Proxy state of a Node.
 public struct PrivateGATTProxyGet: AcknowledgedConfigMessage {
     public static let opCode: UInt32 = 0x8063
-    public static let responseType: StaticMeshResponse.Type = PrivateGATTProxyStatus.self
+    public typealias ResponseType = PrivateGATTProxyStatus
     
     public var parameters: Data? {
         return nil

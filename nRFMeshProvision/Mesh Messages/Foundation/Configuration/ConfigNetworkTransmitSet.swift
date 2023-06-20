@@ -32,7 +32,7 @@ import Foundation
 
 public struct ConfigNetworkTransmitSet: AcknowledgedConfigMessage {
     public static let opCode: UInt32 = 0x8024
-    public static let responseType: StaticMeshResponse.Type = ConfigNetworkTransmitStatus.self
+    public typealias ResponseType = ConfigNetworkTransmitStatus
     
     public var parameters: Data? {
         return Data() + ((count & 0x07) | steps << 3)

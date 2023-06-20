@@ -496,20 +496,24 @@ private extension ConfigurationViewController {
         
         // Send the message.
         do {
-            let manager = MeshNetworkManager.instance
             switch task {
             // Publication Set message can be sent to a different node in some cases.
             case .setPublication(_, to: let model):
                 guard let address = model.parentElement?.parentNode?.primaryUnicastAddress else {
                     fallthrough
                 }
-                handler = try manager.send(task.message, to: address)
+                handler = try send(task.message, to: address)
             default:
-                handler = try manager.send(task.message, to: node.primaryUnicastAddress)
+                handler = try send(task.message, to: node.primaryUnicastAddress)
             }
         } catch {
             reload(taskAt: current, with: .failed(error))
         }
+    }
+    
+    func send(_ message: some AcknowledgedConfigMessage, to address: Address) throws -> MessageHandle {
+        let manager = MeshNetworkManager.instance
+        return try manager.send(message, to: address)
     }
     
     func reload(taskAt index: Int, with status: TaskStatus) {

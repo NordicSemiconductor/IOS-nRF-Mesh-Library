@@ -157,6 +157,7 @@
 		52069D025C55D850DC8CC61CB9AD0FA9 /* GenericPowerLevelStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46E865BA7B2152536B88F28180E79235 /* GenericPowerLevelStatus.swift */; };
 		5208862D2A330B9A00C9CE95 /* NetworkParameters.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5208862C2A330B9A00C9CE95 /* NetworkParameters.swift */; };
 		5208862F2A331BDB00C9CE95 /* NetworkManagerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5208862E2A331BDB00C9CE95 /* NetworkManagerDelegate.swift */; };
+		5223F7A52A41D8D60083257A /* MeshNetworkManager+Async.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5223F7A42A41D8D60083257A /* MeshNetworkManager+Async.swift */; };
 		526F24F05DAEE7F5230D97CA1C11C259 /* MeshNetwork+Scenes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CE9EBCC249319B11F4761DF3113408D /* MeshNetwork+Scenes.swift */; };
 		529EC8DC2A30B1AA0056BB48 /* Node+Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529EC8DB2A30B1AA0056BB48 /* Node+Models.swift */; };
 		52E7064F091D1CB785E5377B2234B59F /* BlockCipher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A57B68075D5163750469D071E976128 /* BlockCipher.swift */; };
@@ -736,6 +737,7 @@
 		51A5495D2067D83F1B7534B3B79861F3 /* LowerTransportLayer.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LowerTransportLayer.swift; sourceTree = "<group>"; };
 		5208862C2A330B9A00C9CE95 /* NetworkParameters.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkParameters.swift; sourceTree = "<group>"; };
 		5208862E2A331BDB00C9CE95 /* NetworkManagerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkManagerDelegate.swift; sourceTree = "<group>"; };
+		5223F7A42A41D8D60083257A /* MeshNetworkManager+Async.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MeshNetworkManager+Async.swift"; sourceTree = "<group>"; };
 		529EC8DB2A30B1AA0056BB48 /* Node+Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Node+Models.swift"; sourceTree = "<group>"; };
 		52F30C30F9FB2AF2D589FBCDA08C46A7 /* NetworkBeaconPdu.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = NetworkBeaconPdu.swift; sourceTree = "<group>"; };
 		532748DBB74703B56C6DCEECB478DB9A /* GenericPowerLastStatus.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = GenericPowerLastStatus.swift; sourceTree = "<group>"; };
@@ -1293,6 +1295,7 @@
 				8DF9B81EB31DA88D8A9EB79C842414D4 /* MeshNetworkDelegate.swift */,
 				DF728171A88629019323A225E5C03F10 /* MeshNetworkError.swift */,
 				F45322F2584F05712E312F160132BECF /* MeshNetworkManager.swift */,
+				5223F7A42A41D8D60083257A /* MeshNetworkManager+Async.swift */,
 				6DEDCB8F414F54D97F66C289ACA0F9D5 /* ModelDelegate.swift */,
 				E179EB743975E3C9A1B19BB154E8A3DF /* ProxyFilter.swift */,
 				78D918F5DFDAFC07F963DD2141E182AA /* Storage.swift */,
@@ -2520,6 +2523,7 @@
 				59A2D39FBB385F369A2BEE4DB8A0672D /* Node+Elements.swift in Sources */,
 				75A9DF8113B79021B6946FEE36C8524D /* Node+Keys.swift in Sources */,
 				CF94312DE189704A2C9855E83C00D54F /* Node+Provisioner.swift in Sources */,
+				5223F7A52A41D8D60083257A /* MeshNetworkManager+Async.swift in Sources */,
 				826DFE1BDE188AAC3E97DA4F98F37F74 /* Node+Scenes.swift in Sources */,
 				D135D36D533C09BF22367D488114D096 /* NodeFeatures.swift in Sources */,
 				67BBD341F037CE3662F9004226267132 /* NodeIdentity.swift in Sources */,

@@ -32,7 +32,7 @@ import Foundation
 
 public struct TimeSet: StaticAcknowledgedMeshMessage, TimeMessage {
     public static let opCode: UInt32 = 0x5C
-    public static let responseType: StaticMeshResponse.Type = TimeStatus.self
+    public typealias ResponseType = TimeStatus
     
     public var parameters: Data? {
         return TaiTime.marshal(time)

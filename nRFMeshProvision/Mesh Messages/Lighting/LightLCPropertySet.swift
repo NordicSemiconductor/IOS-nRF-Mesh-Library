@@ -32,7 +32,7 @@ import Foundation
 
 public struct LightLCPropertySet: StaticAcknowledgedMeshMessage, SensorPropertyMessage {
     public static let opCode: UInt32 = 0x62
-    public static let responseType: StaticMeshResponse.Type = LightLCPropertyStatus.self
+    public typealias ResponseType = LightLCPropertyStatus
     
     public let property: DeviceProperty
     /// Value of the Light LC Property.

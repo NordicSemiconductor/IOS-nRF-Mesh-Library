@@ -32,7 +32,7 @@ import Foundation
 
 public struct ConfigModelAppUnbind: AcknowledgedConfigMessage, ConfigAppKeyMessage, ConfigAnyModelMessage {
     public static let opCode: UInt32 = 0x803F
-    public static let responseType: StaticMeshResponse.Type = ConfigModelAppStatus.self
+    public typealias ResponseType = ConfigModelAppStatus
     
     public var parameters: Data? {
         let data = Data() + elementAddress + applicationKeyIndex

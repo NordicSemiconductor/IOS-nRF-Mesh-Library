@@ -32,7 +32,7 @@ import Foundation
 
 public struct LightLightnessRangeGet: StaticAcknowledgedMeshMessage {
     public static let opCode: UInt32 = 0x8257
-    public static let responseType: StaticMeshResponse.Type = LightLightnessRangeStatus.self
+    public typealias ResponseType = LightLightnessRangeStatus
     
     public var parameters: Data? {
         return nil

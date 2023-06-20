@@ -32,7 +32,7 @@ import Foundation
 
 public struct LightHSLDefaultSet: StaticAcknowledgedMeshMessage {
     public static var opCode: UInt32 = 0x827F
-    public static let responseType: StaticMeshResponse.Type = LightHSLDefaultStatus.self
+    public typealias ResponseType = LightHSLDefaultStatus
     
     public var parameters: Data? {
         return Data() + lightness + hue + saturation

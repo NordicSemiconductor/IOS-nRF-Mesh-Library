@@ -32,7 +32,7 @@ import Foundation
 
 public struct TimeGet: StaticAcknowledgedMeshMessage {
     public static let opCode: UInt32 = 0x8237
-    public static let responseType: StaticMeshResponse.Type = TimeStatus.self
+    public typealias ResponseType = TimeStatus
     
     public var parameters: Data? {
         return nil

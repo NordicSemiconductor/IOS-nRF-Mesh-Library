@@ -92,8 +92,8 @@ and [nRF Connect SDK](https://www.nordicsemi.com/Products/Development-software/n
 
 ## Requirements
 
-* Xcode 12 or newer.
-* An iOS 10.0 or newer device with BLE capabilities.
+* Xcode 13.3 or newer.
+* An iOS 12.0 or MacOS 10.15 or newer device with BLE capabilities.
 
 ### Optional
 

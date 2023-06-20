@@ -32,7 +32,7 @@ import Foundation
 
 public struct GenericLevelSet: StaticAcknowledgedMeshMessage, TransactionMessage, TransitionMessage {
     public static let opCode: UInt32 = 0x8206
-    public static let responseType: StaticMeshResponse.Type = GenericLevelStatus.self
+    public typealias ResponseType = GenericLevelStatus
     
     public var tid: UInt8!
     public var parameters: Data? {

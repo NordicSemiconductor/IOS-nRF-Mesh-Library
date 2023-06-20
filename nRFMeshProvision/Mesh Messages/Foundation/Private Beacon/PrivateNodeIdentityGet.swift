@@ -34,7 +34,7 @@ import Foundation
 /// current Private Node Identity state for a subnet.
 public struct PrivateNodeIdentityGet: AcknowledgedConfigMessage, ConfigNetKeyMessage {
     public static let opCode: UInt32 = 0x8066
-    public static let responseType: StaticMeshResponse.Type = PrivateNodeIdentityStatus.self
+    public typealias ResponseType = PrivateNodeIdentityStatus
     
     public let networkKeyIndex: KeyIndex
     

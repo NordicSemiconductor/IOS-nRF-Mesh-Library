@@ -32,7 +32,7 @@ import Foundation
 
 public struct ConfigHeartbeatSubscriptionSet: AcknowledgedConfigMessage {
     public static let opCode: UInt32 = 0x803B
-    public static let responseType: StaticMeshResponse.Type = ConfigHeartbeatSubscriptionStatus.self
+    public typealias ResponseType = ConfigHeartbeatSubscriptionStatus
     
     public var parameters: Data? {
         var data = Data() + source + destination

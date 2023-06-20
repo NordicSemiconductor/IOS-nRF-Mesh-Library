@@ -32,7 +32,7 @@ import Foundation
 
 public struct LightLCModeSet: StaticAcknowledgedMeshMessage {
     public static let opCode: UInt32 = 0x8292
-    public static let responseType: StaticMeshResponse.Type = LightLCModeStatus.self
+    public typealias ResponseType = LightLCModeStatus
     
     /// Whether the controller is turned on and the binding with the Light Lightness
     /// state is enabled.

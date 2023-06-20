@@ -32,7 +32,7 @@ import Foundation
 
 public struct GenericPowerRangeGet: StaticAcknowledgedMeshMessage {
     public static let opCode: UInt32 = 0x821D
-    public static let responseType: StaticMeshResponse.Type = GenericPowerRangeStatus.self
+    public typealias ResponseType = GenericPowerRangeStatus
     
     public var parameters: Data? {
         return nil

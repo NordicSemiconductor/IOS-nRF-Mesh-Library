@@ -171,10 +171,12 @@ private extension SubscribeViewController {
             return
         }
         start("Subscribing...") {
-            let message: AcknowledgedConfigMessage =
-                ConfigModelSubscriptionAdd(group: group, to: model) ??
-                ConfigModelSubscriptionVirtualAddressAdd(group: group, to: model)!
-            return try MeshNetworkManager.instance.send(message, to: node)
+            if let message = ConfigModelSubscriptionAdd(group: group, to: model) {
+                return try MeshNetworkManager.instance.send(message, to: node)
+            } else {
+                let message = ConfigModelSubscriptionVirtualAddressAdd(group: group, to: model)!
+                return try MeshNetworkManager.instance.send(message, to: node)
+            }
         }
     }
     

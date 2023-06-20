@@ -32,7 +32,7 @@ import Foundation
 
 public struct ConfigNodeIdentityGet: AcknowledgedConfigMessage, ConfigNetKeyMessage {
     public static let opCode: UInt32 = 0x8046
-    public static let responseType: StaticMeshResponse.Type = ConfigNodeIdentityStatus.self
+    public typealias ResponseType = ConfigNodeIdentityStatus
     
     public var parameters: Data? {
         return encodeNetKeyIndex()

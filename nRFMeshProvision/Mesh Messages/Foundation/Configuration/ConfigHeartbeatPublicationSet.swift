@@ -32,7 +32,7 @@ import Foundation
 
 public struct ConfigHeartbeatPublicationSet: AcknowledgedConfigMessage, ConfigNetKeyMessage {
     public static let opCode: UInt32 = 0x8039
-    public static let responseType: StaticMeshResponse.Type = ConfigHeartbeatPublicationStatus.self
+    public typealias ResponseType = ConfigHeartbeatPublicationStatus
     
     public var parameters: Data? {
         var data = Data() + destination

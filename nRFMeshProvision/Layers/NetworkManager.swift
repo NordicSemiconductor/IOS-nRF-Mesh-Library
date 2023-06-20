@@ -73,7 +73,7 @@ internal class NetworkManager {
     ///
     /// The key is the Unicast Address of the Element from which the response is expected.
     /// The value is the pair: expected Op Code and the callback to be called.
-    private var configResponseCallbacks: [Address : (expectedOpCode: UInt32, callback: (Result<ConfigResponse, Error>) -> ())] = [:]
+    private var staticResponseCallbacks: [Address : (expectedOpCode: UInt32, callback: (Result<StaticMeshResponse, Error>) -> ())] = [:]
     /// Mutex for thread synchronization.
     private let mutex = DispatchQueue(label: "NetworkManagerMutex")
     
@@ -169,12 +169,6 @@ internal class NetworkManager {
     /// Encrypts the message with the Application Key and a Network Key
     /// bound to it, and sends to the given destination address.
     ///
-    /// This method does not send nor return PDUs to be sent. Instead,
-    /// for each created segment it calls transmitter's ``Transmitter/send(_:ofType:)``
-    /// method, which should send the PDU over the air. This is in order to support
-    /// retransmission in case a packet was lost and needs to be sent again
-    /// after block acknowledgment was received.
-    ///
     /// - parameters:
     ///   - message:        The message to be sent.
     ///   - element:        The source Element.
@@ -206,12 +200,6 @@ internal class NetworkManager {
     /// Encrypts the message with the Application Key and a Network Key
     /// bound to it, and sends to the given destination address.
     ///
-    /// This method does not send nor return PDUs to be sent. Instead,
-    /// for each created segment it calls transmitter's ``Transmitter/send(_:ofType:)``
-    /// method, which should send the PDU over the air. This is in order to support
-    /// retransmission in case a packet was lost and needs to be sent again
-    /// after block acknowledgment was received.
-    ///
     /// - parameters:
     ///   - message:        The message to be sent.
     ///   - element:        The source Element.
@@ -233,6 +221,37 @@ internal class NetworkManager {
             outgoingMessages.insert(destination)
             if let completion = completion {
                 responseCallbacks[destination] = (message.responseOpCode, completion)
+            }
+        }
+        accessLayer.send(message, from: element, to: MeshAddress(destination),
+                         withTtl: initialTtl, using: applicationKey,
+                         retransmit: false)
+    }
+    
+    /// Encrypts the message with the Application Key and a Network Key
+    /// bound to it, and sends to the given destination address.
+    ///
+    /// - parameters:
+    ///   - message:        The message to be sent.
+    ///   - element:        The source Element.
+    ///   - destination:    The destination Unicast Address.
+    ///   - initialTtl:     The initial TTL (Time To Live) value of the message.
+    ///                     If `nil`, the default Node TTL will be used.
+    ///   - applicationKey: The Application Key to sign the message.
+    ///   - completion:     The completion handler with the response.
+    func send<T: StaticAcknowledgedMeshMessage>(_ message: T,
+              from element: Element, to destination: Address,
+              withTtl initialTtl: UInt8?,
+              using applicationKey: ApplicationKey,
+              completion: ((Result<T.ResponseType, Error>) -> ())?) {
+        mutex.sync {
+            guard !outgoingMessages.contains(destination) else {
+                completion?(.failure(AccessError.busy))
+                return
+            }
+            outgoingMessages.insert(destination)
+            if let completion = completion as? (Result<StaticMeshResponse, Error>) -> () {
+                staticResponseCallbacks[destination] = (message.responseOpCode, completion)
             }
         }
         accessLayer.send(message, from: element, to: MeshAddress(destination),
@@ -287,7 +306,10 @@ internal class NetworkManager {
     /// for each created segment it calls transmitter's ``Transmitter/send(_:ofType:)``
     /// method, which should send the PDU over the air. This is in order to support
     /// retransmission in case a packet was lost and needs to be sent again
-    /// after block acknowledgment was received. 
+    /// after block acknowledgment was received.
+    ///
+    /// - note: The ``ConfigNetKeyDelete`` will be signed with a different
+    ///         Network Key that is removing.
     ///
     /// - parameters:
     ///   - configMessage: The message to be sent.
@@ -296,18 +318,18 @@ internal class NetworkManager {
     ///   - initialTtl:    The initial TTL (Time To Live) value of the message.
     ///                    If `nil`, the default Node TTL will be used.
     ///   - completion:    The completion handler with the response.
-    func send(_ configMessage: AcknowledgedConfigMessage,
+    func send<T: AcknowledgedConfigMessage>(_ configMessage: T,
               from element: Element, to destination: Address,
               withTtl initialTtl: UInt8?,
-              completion: ((Result<ConfigResponse, Error>) -> ())?) {
+              completion: ((Result<T.ResponseType, Error>) -> ())?) {
          mutex.sync {
             guard !outgoingMessages.contains(destination) else {
                 completion?(.failure(AccessError.busy))
                 return
             }
             outgoingMessages.insert(destination)
-            if let completion = completion {
-                configResponseCallbacks[destination] = (configMessage.responseOpCode, completion)
+            if let completion = completion as? (Result<StaticMeshResponse, Error>) -> () {
+                staticResponseCallbacks[destination] = (configMessage.responseOpCode, completion)
             }
         }
         accessLayer.send(configMessage, from: element, to: destination,
@@ -356,13 +378,13 @@ internal class NetworkManager {
                      from source: Address, to destination: Address) {
         // Notify callback awaiting a response.
         switch message {
-        case let response as ConfigResponse:
-            let callback: ((Result<ConfigResponse, Error>) -> ())? = mutex.sync {
-                guard let (expectedOpCode, callback) = configResponseCallbacks[source],
+        case let response as StaticMeshResponse:
+            let callback: ((Result<StaticMeshResponse, Error>) -> ())? = mutex.sync {
+                guard let (expectedOpCode, callback) = staticResponseCallbacks[source],
                       expectedOpCode == response.opCode else {
                     return nil
                 }
-                configResponseCallbacks.removeValue(forKey: source)
+                staticResponseCallbacks.removeValue(forKey: source)
                 return callback
             }
             callback?(.success(response))
@@ -422,13 +444,13 @@ internal class NetworkManager {
         }
         // Notify callback awaiting a response, that sending the message has failed.0
         switch message {
-        case let request as AcknowledgedConfigMessage:
-            let callback: ((Result<ConfigResponse, Error>) -> ())? = mutex.sync {
-                guard let (expectedOpCode, callback) = configResponseCallbacks[destination],
+        case let request as any StaticAcknowledgedMeshMessage:
+            let callback: ((Result<StaticMeshResponse, Error>) -> ())? = mutex.sync {
+                guard let (expectedOpCode, callback) = staticResponseCallbacks[destination],
                       expectedOpCode == request.responseOpCode else {
                     return nil
                 }
-                configResponseCallbacks.removeValue(forKey: destination)
+                staticResponseCallbacks.removeValue(forKey: destination)
                 return callback
             }
             callback?(.failure(error))

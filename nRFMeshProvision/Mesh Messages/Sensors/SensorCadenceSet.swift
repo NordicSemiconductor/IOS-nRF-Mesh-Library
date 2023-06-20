@@ -32,7 +32,7 @@ import Foundation
 
 public struct SensorCadenceSet: StaticAcknowledgedMeshMessage, SensorPropertyMessage {
     public static let opCode: UInt32 = 0x55
-    public static let responseType: StaticMeshResponse.Type = SensorCadenceStatus.self
+    public typealias ResponseType = SensorCadenceStatus
     
     public let property: DeviceProperty
     

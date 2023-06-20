@@ -37,7 +37,7 @@ import CoreBluetooth
 /// the Remote Provisioning Server.
 public struct RemoteProvisioningScanStart: AcknowledgedRemoteProvisioningMessage {
     public static let opCode: UInt32 = 0x8052
-    public static let responseType: StaticMeshResponse.Type = RemoteProvisioningScanStatus.self
+    public typealias ResponseType = RemoteProvisioningScanStatus
     
     /// Maximum number of scanned items to be reported.
     ///

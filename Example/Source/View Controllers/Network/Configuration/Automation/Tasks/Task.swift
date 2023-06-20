@@ -151,7 +151,7 @@ enum Task {
         }
     }
     
-    var message: AcknowledgedConfigMessage {
+    var message: any AcknowledgedConfigMessage {
         switch self {
         case .getCompositionData(page: let page):
             return ConfigCompositionDataGet(page: page)

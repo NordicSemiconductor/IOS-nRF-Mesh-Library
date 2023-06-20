@@ -38,7 +38,7 @@ struct SimpleOnOffSet: AcknowledgedStaticVendorMessage {
     // 0x00-5900 - Nordic Semiconductor ASA company ID (in Little Endian) as defined here:
     //             https://www.bluetooth.com/specifications/assigned-numbers/company-identifiers/
     static let opCode: UInt32 = 0xC15900
-    static let responseType: StaticMeshResponse.Type = SimpleOnOffStatus.self
+    typealias ResponseType = SimpleOnOffStatus
     
     var parameters: Data? {
         return Data([isOn ? 0x01 : 0x00])

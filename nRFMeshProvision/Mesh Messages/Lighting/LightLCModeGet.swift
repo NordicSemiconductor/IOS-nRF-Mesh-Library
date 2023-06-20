@@ -32,7 +32,7 @@ import Foundation
 
 public struct LightLCModeGet: StaticAcknowledgedMeshMessage {
     public static let opCode: UInt32 = 0x8291
-    public static let responseType: StaticMeshResponse.Type = LightLCModeStatus.self
+    public typealias ResponseType = LightLCModeStatus
     
     public var parameters: Data? {
         return nil

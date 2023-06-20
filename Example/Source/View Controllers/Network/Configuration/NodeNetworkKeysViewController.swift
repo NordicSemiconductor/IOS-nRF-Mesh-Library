@@ -204,27 +204,28 @@ extension NodeNetworkKeysViewController: MeshNetworkDelegate {
 
         // Response to Config Net Key Delete.
         case let status as ConfigNetKeyStatus:
-            done()
-            
-            if status.isSuccess {
-                tableView.reloadData()
-                if node.networkKeys.isEmpty {
-                    showEmptyView()
+            done() {
+                if status.isSuccess {
+                    self.tableView.reloadData()
+                    if self.node.networkKeys.isEmpty {
+                        self.showEmptyView()
+                    }
+                } else {
+                    self.presentAlert(title: "Error", message: "\(status.status)")
                 }
-            } else {
-                presentAlert(title: "Error", message: "\(status.status)")
             }
 
         // Response to Config Net Key Get.
         case is ConfigNetKeyList:
-            done()
-            tableView.reloadData()            
-            if node.networkKeys.isEmpty {
-                showEmptyView()
-            } else {
-                hideEmptyView()
+            done() {
+                self.tableView.reloadData()
+                if self.node.networkKeys.isEmpty {
+                    self.showEmptyView()
+                } else {
+                    self.hideEmptyView()
+                }
+                self.refreshControl?.endRefreshing()
             }
-            refreshControl?.endRefreshing()
             
         default:
             break

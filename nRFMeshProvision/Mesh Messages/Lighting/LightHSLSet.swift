@@ -32,7 +32,7 @@ import Foundation
 
 public struct LightHSLSet: StaticAcknowledgedMeshMessage, TransactionMessage, TransitionMessage {
     public static var opCode: UInt32 = 0x8276
-    public static var responseType: StaticMeshResponse.Type = LightHSLStatus.self
+    public typealias ResponseType = LightHSLStatus
     
     public var tid: UInt8!
     public var parameters: Data? {

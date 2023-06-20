@@ -32,7 +32,7 @@ import Foundation
 
 public struct LightCTLTemperatureGet: StaticAcknowledgedMeshMessage {
     public static let opCode: UInt32 = 0x8261
-    public static let responseType: StaticMeshResponse.Type = LightCTLTemperatureStatus.self
+    public typealias ResponseType = LightCTLTemperatureStatus
     
     public var parameters: Data? {
         return nil

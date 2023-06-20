@@ -32,7 +32,7 @@ import Foundation
 
 public struct ConfigBeaconGet: AcknowledgedConfigMessage {
     public static let opCode: UInt32 = 0x8009
-    public static let responseType: StaticMeshResponse.Type = ConfigBeaconStatus.self
+    public typealias ResponseType = ConfigBeaconStatus
     
     public var parameters: Data? {
         return nil

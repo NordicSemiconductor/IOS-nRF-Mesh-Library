@@ -33,7 +33,7 @@ import CoreBluetooth
 
 public struct ConfigModelSubscriptionVirtualAddressDelete: AcknowledgedConfigMessage, ConfigVirtualLabelMessage, ConfigAnyModelMessage {
     public static let opCode: UInt32 = 0x8021
-    public static let responseType: StaticMeshResponse.Type = ConfigModelSubscriptionStatus.self
+    public typealias ResponseType = ConfigModelSubscriptionStatus
     
     public var parameters: Data? {
         let data = Data() + elementAddress + virtualLabel.data

@@ -32,7 +32,7 @@ import Foundation
 
 public struct GenericLevelGet: StaticAcknowledgedMeshMessage {
     public static let opCode: UInt32 = 0x8205
-    public static let responseType: StaticMeshResponse.Type = GenericLevelStatus.self
+    public typealias ResponseType = GenericLevelStatus
     
     public var parameters: Data? {
         return nil

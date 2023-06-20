@@ -32,7 +32,7 @@ import Foundation
 
 public struct GenericLocationGlobalGet: StaticAcknowledgedMeshMessage {
     public static let opCode: UInt32 = 0x8225
-    public static let responseType: StaticMeshResponse.Type = GenericLocationGlobalStatus.self
+    public typealias ResponseType = GenericLocationGlobalStatus
     
     public var parameters: Data? {
         return nil

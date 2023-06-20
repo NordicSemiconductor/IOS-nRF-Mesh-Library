@@ -32,7 +32,7 @@ import Foundation
 
 public struct ConfigRelaySet: AcknowledgedConfigMessage {
     public static let opCode: UInt32 = 0x8027
-    public static let responseType: StaticMeshResponse.Type = ConfigRelayStatus.self
+    public typealias ResponseType = ConfigRelayStatus
     
     public var parameters: Data? {
         return Data([state.rawValue]) + ((count & 0x07) | steps << 3)

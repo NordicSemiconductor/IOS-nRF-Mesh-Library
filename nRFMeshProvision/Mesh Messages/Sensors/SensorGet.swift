@@ -32,7 +32,7 @@ import Foundation
 
 public struct SensorGet: StaticAcknowledgedMeshMessage {
     public static let opCode: UInt32 = 0x8231
-    public static let responseType: StaticMeshResponse.Type = SensorStatus.self
+    public typealias ResponseType = SensorStatus
     
     /// The sensor property to get the value of.
     ///

@@ -32,7 +32,7 @@ import Foundation
 
 public struct SensorColumnGet: StaticAcknowledgedMeshMessage, SensorPropertyMessage {
     public static let opCode: UInt32 = 0x8232
-    public static let responseType: StaticMeshResponse.Type = SensorColumnStatus.self
+    public typealias ResponseType = SensorColumnStatus
     
     public let property: DeviceProperty
     /// Raw value identifying a column.

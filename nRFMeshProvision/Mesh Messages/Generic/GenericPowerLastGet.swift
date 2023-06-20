@@ -32,7 +32,7 @@ import Foundation
 
 public struct GenericPowerLastGet: StaticAcknowledgedMeshMessage {
     public static let opCode: UInt32 = 0x8219
-    public static let responseType: StaticMeshResponse.Type = GenericPowerLastStatus.self
+    public typealias ResponseType = GenericPowerLastStatus
     
     public var parameters: Data? {
         return nil

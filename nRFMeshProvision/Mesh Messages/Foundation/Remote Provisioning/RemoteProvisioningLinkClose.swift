@@ -35,7 +35,7 @@ import Foundation
 /// Remote Provisioning Server model.
 public struct RemoteProvisioningLinkClose: AcknowledgedRemoteProvisioningMessage {
     public static let opCode: UInt32 = 0x805A
-    public static let responseType: StaticMeshResponse.Type = RemoteProvisioningLinkStatus.self
+    public typealias ResponseType = RemoteProvisioningLinkStatus
     
     /// Provisioning bearer link close reason.
     public let reason: RemoteProvisioningLinkCloseReason

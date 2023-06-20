@@ -629,7 +629,7 @@ extension ModelViewController: ModelViewCellDelegate {
         }
     }
     
-    func send(_ message: AcknowledgedConfigMessage, description: String) {
+    func send(_ message: some AcknowledgedConfigMessage, description: String) {
         guard let node = model?.parentElement?.parentNode else {
             return
         }

@@ -248,12 +248,11 @@ private extension SetHeartbeatPublicationViewController {
         let ttl = self.ttl
         
         start("Setting Heartbeat Publication...") { [features] in
-            let message: AcknowledgedConfigMessage =
-                ConfigHeartbeatPublicationSet(startSending: countLog,
-                                              heartbeatMessagesEvery: periodLog,
-                                              secondsTo: destination,
-                                              usingTtl: ttl, andNetworkKey: networkKey,
-                                              andEnableHeartbeatMessagesTriggeredByChangeOf: features)!
+            let message = ConfigHeartbeatPublicationSet(startSending: countLog,
+                                                        heartbeatMessagesEvery: periodLog,
+                                                        secondsTo: destination,
+                                                        usingTtl: ttl, andNetworkKey: networkKey,
+                                                        andEnableHeartbeatMessagesTriggeredByChangeOf: features)!
             return try MeshNetworkManager.instance.send(message, to: node)
         }
     }

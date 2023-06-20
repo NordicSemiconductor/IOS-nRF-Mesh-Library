@@ -146,7 +146,7 @@ public protocol StaticMeshResponse: MeshResponse, StaticUnacknowledgedMeshMessag
 /// specified.
 public protocol StaticAcknowledgedMeshMessage: StaticMeshMessage, AcknowledgedMeshMessage {
     /// The Type of the response message.
-    static var responseType: StaticMeshResponse.Type { get }
+    associatedtype ResponseType: StaticMeshResponse
 }
 
 /// A mesh message containing the operation status.
@@ -257,7 +257,7 @@ public extension StaticMeshMessage {
 public extension StaticAcknowledgedMeshMessage {
     
     var responseOpCode: UInt32 {
-        return Self.responseType.opCode
+        return ResponseType.opCode
     }
     
 }

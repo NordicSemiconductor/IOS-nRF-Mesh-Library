@@ -32,7 +32,7 @@ import Foundation
 
 public struct ConfigSIGModelAppGet: AcknowledgedConfigMessage, ConfigModelMessage {
     public static let opCode: UInt32 = 0x804B
-    public static let responseType: StaticMeshResponse.Type = ConfigSIGModelAppList.self
+    public typealias ResponseType = ConfigSIGModelAppList
     
     public var parameters: Data? {
         return Data() + elementAddress + modelIdentifier

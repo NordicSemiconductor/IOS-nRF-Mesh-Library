@@ -32,7 +32,7 @@ import Foundation
 
 public struct ConfigDefaultTtlGet: AcknowledgedConfigMessage {
     public static let opCode: UInt32 = 0x800C
-    public static let responseType: StaticMeshResponse.Type = ConfigDefaultTtlStatus.self
+    public typealias ResponseType = ConfigDefaultTtlStatus
     
     public var parameters: Data? {
         return nil

@@ -32,7 +32,7 @@ import Foundation
 
 public struct SceneRecall: StaticAcknowledgedMeshMessage, TransactionMessage, TransitionMessage {
     public static let opCode: UInt32 = 0x8242
-    public static let responseType: StaticMeshResponse.Type = SceneStatus.self
+    public typealias ResponseType = SceneStatus
     
     public var tid: UInt8!
     public var parameters: Data? {

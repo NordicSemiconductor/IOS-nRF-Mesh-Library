@@ -32,7 +32,7 @@ import Foundation
 
 public struct SceneDelete: StaticAcknowledgedMeshMessage {
     public static let opCode: UInt32 = 0x829E
-    public static let responseType: StaticMeshResponse.Type = SceneRegisterStatus.self
+    public typealias ResponseType = SceneRegisterStatus
     
     public var parameters: Data? {
         return Data() + scene

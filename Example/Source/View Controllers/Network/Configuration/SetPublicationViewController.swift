@@ -338,10 +338,12 @@ private extension SetPublicationViewController {
                               retransmit: Publish.Retransmit(publishRetransmitCount: retransmissionCount,
                                                              intervalSteps: retransmissionIntervalSteps))
         start("Setting Model Publication...") {
-            let message: AcknowledgedConfigMessage =
-                ConfigModelPublicationSet(publish, to: model) ??
-                ConfigModelPublicationVirtualAddressSet(publish, to: model)!
-            return try MeshNetworkManager.instance.send(message, to: node)
+            if let message = ConfigModelPublicationSet(publish, to: model) {
+                return try MeshNetworkManager.instance.send(message, to: node)
+            } else {
+                let message = ConfigModelPublicationVirtualAddressSet(publish, to: model)!
+                return try MeshNetworkManager.instance.send(message, to: node)
+            }
         }
     }
     

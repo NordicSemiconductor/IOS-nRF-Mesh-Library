@@ -242,10 +242,9 @@ private extension SetHeartbeatSubscriptionViewController {
         let periodLog = self.periodLog
         
         start("Setting Heartbeat Subscription...") {
-            let message: AcknowledgedConfigMessage =
-                ConfigHeartbeatSubscriptionSet(startProcessingHeartbeatMessagesFor: periodLog,
-                                               secondsSentFrom: sourceAddress,
-                                               to: destinationAddress)!
+            let message = ConfigHeartbeatSubscriptionSet(startProcessingHeartbeatMessagesFor: periodLog,
+                                                         secondsSentFrom: sourceAddress,
+                                                         to: destinationAddress)!
             return try MeshNetworkManager.instance.send(message, to: node)
         }
     }

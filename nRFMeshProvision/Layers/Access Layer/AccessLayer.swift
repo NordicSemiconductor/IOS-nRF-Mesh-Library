@@ -625,7 +625,7 @@ private extension AccessLayer {
             timeout: timeout, timeoutBlock: { [weak self] in
                 guard let self = self else { return }
                 self.logger?.w(.access, "Response to \(pdu) not received (timeout)")
-                let category: LogCategory = request is AcknowledgedConfigMessage ? .foundationModel : .model
+                let category: LogCategory = request is any AcknowledgedConfigMessage ? .foundationModel : .model
                 self.logger?.w(category, "\(request) sent from: \(pdu.source.hex), to: \(pdu.destination.hex) timed out")
                 self.cancel(MessageHandle(for: request,
                                           sentFrom: pdu.source, to: pdu.destination.address,

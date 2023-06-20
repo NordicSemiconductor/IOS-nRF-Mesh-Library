@@ -36,7 +36,7 @@ import Foundation
 /// The response to this message is a ``ConfigNetKeyList`` message.
 public struct ConfigAppKeyGet: AcknowledgedConfigMessage, ConfigNetKeyMessage {
     public static let opCode: UInt32 = 0x8001
-    public static let responseType: StaticMeshResponse.Type = ConfigAppKeyList.self
+    public typealias ResponseType = ConfigAppKeyList
     
     public var parameters: Data? {
         return encodeNetKeyIndex()

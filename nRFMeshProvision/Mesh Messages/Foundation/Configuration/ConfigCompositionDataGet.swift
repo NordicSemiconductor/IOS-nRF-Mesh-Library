@@ -32,7 +32,7 @@ import Foundation
 
 public struct ConfigCompositionDataGet: AcknowledgedConfigMessage {
     public static let opCode: UInt32 = 0x8008
-    public static let responseType: StaticMeshResponse.Type = ConfigCompositionDataStatus.self
+    public typealias ResponseType = ConfigCompositionDataStatus
     
     public var parameters: Data? {
         return Data([page])

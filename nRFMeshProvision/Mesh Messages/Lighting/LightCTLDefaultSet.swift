@@ -32,7 +32,7 @@ import Foundation
 
 public struct LightCTLDefaultSet: StaticAcknowledgedMeshMessage {
     public static let opCode: UInt32 = 0x8269
-    public static let responseType: StaticMeshResponse.Type = LightCTLDefaultStatus.self
+    public typealias ResponseType = LightCTLDefaultStatus
     
     public var parameters: Data? {
         return Data() + lightness + temperature + deltaUV

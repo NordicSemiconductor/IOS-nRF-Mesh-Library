@@ -32,7 +32,7 @@ import Foundation
 
 public struct ConfigNodeReset: AcknowledgedConfigMessage {
     public static let opCode: UInt32 = 0x8049
-    public static let responseType: StaticMeshResponse.Type = ConfigNodeResetStatus.self
+    public typealias ResponseType = ConfigNodeResetStatus
     
     public var parameters: Data? {
         return nil

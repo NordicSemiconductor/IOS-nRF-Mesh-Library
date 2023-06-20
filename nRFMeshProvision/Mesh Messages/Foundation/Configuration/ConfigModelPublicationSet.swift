@@ -32,7 +32,7 @@ import Foundation
 
 public struct ConfigModelPublicationSet: AcknowledgedConfigMessage, ConfigAnyModelMessage {
     public static let opCode: UInt32 = 0x03
-    public static let responseType: StaticMeshResponse.Type = ConfigModelPublicationStatus.self
+    public typealias ResponseType = ConfigModelPublicationStatus
     
     public var parameters: Data? {
         var data = Data() + elementAddress + publish.publicationAddress.address
