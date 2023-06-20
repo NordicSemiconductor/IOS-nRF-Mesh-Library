@@ -176,7 +176,7 @@ public protocol TransitionMessage: MeshMessage {
     /// receive different messages, the action they take seems more
     /// synchronized.
     ///
-    /// This filed has to be set together with ``TransitionMessage/transitionTime``.
+    /// This file has to be set together with ``TransitionMessage/transitionTime``.
     var delay: UInt8? { get }
 }
 
