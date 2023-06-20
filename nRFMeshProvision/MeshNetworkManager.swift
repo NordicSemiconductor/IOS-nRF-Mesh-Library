@@ -282,7 +282,7 @@ public extension MeshNetworkManager {
     }
     
     /// This method tries to publish the given message using the
-    /// publication information set in the Model.
+    /// publication information set in the ``Model``.
     ///
     /// If the retransmission is set to a value greater than 0, and the message
     /// is unacknowledged, this method will retransmit it number of times
@@ -291,9 +291,17 @@ public extension MeshNetworkManager {
     /// If the publication is not configured for the given Model, this method
     /// does nothing.
     ///
+    /// - note: This method does not check whether the given Model does support
+    ///         the given message. It will publish whatever message is given using
+    ///         the publication configuration of the given Model.
+    ///
+    /// An appropriate callback of the ``MeshNetworkDelegate`` will be called when
+    /// the message has been sent successfully or a problem occured.
+    ///
     /// - parameters:
     ///   - message: The message to be sent.
     ///   - model:   The model from which to send the message.
+    /// - returns: Message handle that can be used to cancel sending.
     @discardableResult
     func publish(_ message: MeshMessage, from model: Model) -> MessageHandle? {
         guard let networkManager = networkManager,
@@ -309,14 +317,8 @@ public extension MeshNetworkManager {
                              to: publish.publicationAddress.address, using: networkManager)
     }
     
-    /// Encrypts the message with the Application Key and a Network Key
+    /// Encrypts the message with the Application Key and the Network Key
     /// bound to it, and sends to the given destination address.
-    ///
-    /// This method does not send nor return PDUs to be sent. Instead,
-    /// for each created segment it calls transmitter's ``Transmitter/send(_:ofType:)``
-    /// method, which should send the PDU over the air. This is in order to support
-    /// retransmitting in case a packet was lost and needs to be sent again
-    /// after block acknowledgment was received.
     ///
     /// An appropriate callback of the ``MeshNetworkDelegate`` will be called when
     /// the message has been sent successfully or a problem occured.
@@ -371,7 +373,7 @@ public extension MeshNetworkManager {
     }
     
     /// Encrypts the message with the Application Key and a Network Key
-    /// bound to it, and sends to the given Group.
+    /// bound to it, and sends to the given ``Group``.
     ///
     /// An appropriate callback of the ``MeshNetworkDelegate`` will be called when
     /// the message has been sent successfully or a problem occured.
@@ -404,7 +406,7 @@ public extension MeshNetworkManager {
     }
     
     /// Encrypts the message with the first Application Key bound to the given
-    /// Model and a Network Key bound to it, and sends it to the Node
+    /// ``Model`` and the Network Key bound to it, and sends it to the Node
     /// to which the Model belongs to.
     ///
     /// An appropriate callback of the ``MeshNetworkDelegate`` will be called when
@@ -418,7 +420,6 @@ public extension MeshNetworkManager {
     ///   - model:          The destination Model.
     ///   - initialTtl:     The initial TTL (Time To Live) value of the message.
     ///                     If `nil`, the default Node TTL will be used.
-    ///   - applicationKey: The Application Key to sign the message.
     ///   - completion:     The completion handler called when the message
     ///                     has been sent.
     /// - throws: This method throws when the mesh network has not been created,
@@ -448,7 +449,7 @@ public extension MeshNetworkManager {
     }
     
     /// Encrypts the message with the common Application Key bound to both given
-    /// Models and a Network Key bound to it, and sends it to the Node
+    /// ``Model``s and the Network Key bound to it, and sends it to the Node
     /// to which the target Model belongs to.
     ///
     /// An appropriate callback of the ``MeshNetworkDelegate`` will be called when
@@ -590,7 +591,7 @@ public extension MeshNetworkManager {
     /// Sends Configuration Message to the Node with given destination Address.
     ///
     /// The `destination` must be a Unicast Address, otherwise the method
-    /// throws an error.
+    /// throws an ``AccessError/invalidDestination`` error.
     ///
     /// An appropriate callback of the ``MeshNetworkDelegate`` will be called when
     /// the message has been sent successfully or a problem occured.
@@ -657,7 +658,7 @@ public extension MeshNetworkManager {
                              to: destination, using: networkManager)
     }
     
-    /// Sends Configuration Message to the given Node.
+    /// Sends a Configuration Message to the primary Element on the given ``Node``.
     ///
     /// An appropriate callback of the ``MeshNetworkDelegate`` will be called when
     /// the message has been sent successfully or a problem occured.
@@ -684,20 +685,15 @@ public extension MeshNetworkManager {
                         withTtl: initialTtl, completion: completion)
     }
     
-    /// Sends Configuration Message to the local Node.
+    /// Sends the Configuration Message to the primary Element of the local Node.
     ///
     /// An appropriate callback of the ``MeshNetworkDelegate`` will be called when
     /// the message has been sent successfully or a problem occured.
     ///
-    /// - parameters:
-    ///   - message: The message to be sent.
-    ///   - node:    The destination Node.
-    ///   - initialTtl: The initial TTL (Time To Live) value of the message.
-    ///                 If `nil`, the default Node TTL will be used.
+    /// - parameter message: The acknowledged configuration message to be sent.
     /// - throws: This method throws when the mesh network has not been created,
-    ///           the local Node does not have configuration capabilities
-    ///           (no Unicast Address assigned), or the destination address
-    ///           is not a Unicast Address or it belongs to an unknown Node.
+    ///           or the local Node does not have configuration capabilities
+    ///           (no Unicast Address assigned).
     ///           Error ``AccessError/cannotDelete`` is sent when trying to
     ///           delete the last Network Key on the device.
     /// - returns: Message handle that can be used to cancel sending.
@@ -737,9 +733,9 @@ public extension MeshNetworkManager {
         }
     }
     
-    /// Cancels sending the message with the given identifier.
+    /// Cancels sending the message with the given handle.
     ///
-    /// - parameter messageId: The message identifier.
+    /// - parameter messageId: The message handle.
     func cancel(_ messageId: MessageHandle) throws {
         guard let networkManager = networkManager else {
             print("Error: Mesh Network not created")
