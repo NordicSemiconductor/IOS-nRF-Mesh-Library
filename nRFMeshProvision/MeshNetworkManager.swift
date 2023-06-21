@@ -620,7 +620,7 @@ public extension MeshNetworkManager {
             throw MeshNetworkError.noNetwork
         }
         guard let localProvisioner = meshNetwork.localProvisioner,
-              let source = localProvisioner.primaryUnicastAddress else {
+              let element = localProvisioner.node?.primaryElement else {
             print("Error: Local Provisioner has no Unicast Address assigned")
             throw AccessError.invalidSource
         }
@@ -651,10 +651,10 @@ public extension MeshNetworkManager {
             throw AccessError.invalidTtl
         }
         queue.async {
-            networkManager.send(message, to: destination,
+            networkManager.send(message, from: element, to: destination,
                                 withTtl: initialTtl, completion: completion)
         }
-        return MessageHandle(for: message, sentFrom: source,
+        return MessageHandle(for: message, sentFrom: element.unicastAddress,
                              to: destination, using: networkManager)
     }
     

@@ -254,11 +254,13 @@ internal class NetworkManager {
     ///
     /// - parameters:
     ///   - configMessage: The message to be sent.
+    ///   - element:       The source Element.
     ///   - destination:   The destination address.
     ///   - initialTtl:    The initial TTL (Time To Live) value of the message.
     ///                    If `nil`, the default Node TTL will be used.
     ///   - completion:    The completion handler with the response.
-    func send(_ configMessage: AcknowledgedConfigMessage, to destination: Address,
+    func send(_ configMessage: AcknowledgedConfigMessage,
+              from element: Element, to destination: Address,
               withTtl initialTtl: UInt8?,
               completion: ((Result<ConfigResponse, Error>) -> ())?) {
          mutex.sync {
@@ -271,7 +273,7 @@ internal class NetworkManager {
                 configResponseCallbacks[destination] = (configMessage.responseOpCode, completion)
             }
         }
-        accessLayer.send(configMessage, to: destination,
+        accessLayer.send(configMessage, from: element, to: destination,
                          withTtl: initialTtl)
     }
     

@@ -251,14 +251,15 @@ internal class AccessLayer {
     ///
     /// - parameters:
     ///   - message:     The Mesh Config Message to send.
+    ///   - element:     The source Element.   
     ///   - destination: The destination address. This must be a Unicast Address.
     ///   - initialTtl:  The initial TTL (Time To Live) value of the message.
     ///                  If `nil`, the default Node TTL will be used.
     ///   - completion:  The completion handler with the response.
-    func send(_ message: AcknowledgedConfigMessage, to destination: Address,
+    func send(_ message: AcknowledgedConfigMessage,
+              from element: Element, to destination: Address,
               withTtl initialTtl: UInt8?) {
-        guard let element = meshNetwork.localProvisioner?.node?.elements.first,
-              let node = meshNetwork.node(withAddress: destination),
+        guard let node = meshNetwork.node(withAddress: destination),
               var networkKey = node.networkKeys.first else {
             return
         }
