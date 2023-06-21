@@ -39,8 +39,6 @@ public class MeshNetworkManager: NetworkParametersProvider {
     /// Storage to keep the app data.
     private let storage: Storage
     
-    /// A queue to handle incoming and outgoing messages.
-    internal let queue: DispatchQueue
     /// A queue to call delegate methods on.
     internal let delegateQueue: DispatchQueue
     
@@ -99,30 +97,25 @@ public class MeshNetworkManager: NetworkParametersProvider {
     ///
     /// - parameters:
     ///   - storage: The storage to use to save the network configuration.
-    ///   - queue:   The `DispatchQueue` to process requests on. By default, the a global
-    ///              background concurrent queue will be used.
-    ///              Note, that if multiple messages are sent shortly one after another,
-    ///              processing them in a concurrent queue may cause some of them to be
-    ///              discarded despite the fact that they were received in the ascending
-    ///              order of SeqAuth, as one with a greater SeqAuth value may be processed
-    ///              before the previous one, causing the replay protection validation fail
-    ///              for the latter. This library stores 2 last SeqAuth values, so if a
-    ///              message with a unique SeqAuth is processed after its successor, it
-    ///              will be processed correctly.
     ///   - delegateQueue: The `DispatchQueue` to call delegate methods on.
     ///                    By default the global main queue will be used.
     /// - seeAlso: ``LocalStorage``
     /// - seeAlso: ``LowerTransportLayer.checkAgainstReplayAttack(_:NetworkPdu)``
     public init(using storage: Storage = LocalStorage(),
-                queue: DispatchQueue = DispatchQueue.global(qos: .background),
                 delegateQueue: DispatchQueue = DispatchQueue.main) {
         self.storage = storage
         self.meshData = MeshData()
-        self.queue = queue
         self.delegateQueue = delegateQueue
         self.proxyFilter = ProxyFilter(delegateQueue)
         // Only now self can be used.
         self.proxyFilter.use(with: self)
+    }
+    
+    @available(*, deprecated, renamed: "init(using:delegateQueue:)")
+    public convenience init(using storage: Storage = LocalStorage(),
+                queue: DispatchQueue = DispatchQueue.global(qos: .background),
+                delegateQueue: DispatchQueue = DispatchQueue.main) {
+        self.init(using: storage, delegateQueue: delegateQueue)
     }
     
     /// Initializes the Mesh Network Manager. It will use the ``LocalStorage`` with the given
@@ -135,25 +128,21 @@ public class MeshNetworkManager: NetworkParametersProvider {
     ///
     /// - parameters:
     ///   - fileName: File name to keep the configuration.
-    ///   - queue:    The `DispatchQueue` to process requests on. By default, the a global
-    ///               background concurrent queue will be used.
-    ///               Note, that if multiple messages are sent shortly one after another,
-    ///               processing them in a concurrent queue may cause some of them to be
-    ///               discarded despite the fact that they were received in the ascending
-    ///               order of SeqAuth, as one with a greater SeqAuth value may be processed
-    ///               before the previous one, causing the replay protection validation fail
-    ///               for the latter. This library stores 2 last SeqAuth values, so if a
-    ///               message with a unique SeqAuth is processed after its successor, it
-    ///               will be processed correctly.
     ///   - delegateQueue: The `DispatchQueue` to call delegate methods on.
     ///                    By default the global main queue will be used.
     ///
     /// - seeAlso: ``LocalStorage``
     public convenience init(using fileName: String,
+                            delegateQueue: DispatchQueue = DispatchQueue.main) {
+        self.init(using: LocalStorage(fileName: fileName),
+                  delegateQueue: delegateQueue)
+    }
+    
+    @available(*, deprecated, renamed: "init(using:delegateQueue:)")
+    public convenience init(using fileName: String,
                             queue: DispatchQueue = DispatchQueue.global(qos: .background),
                             delegateQueue: DispatchQueue = DispatchQueue.main) {
         self.init(using: LocalStorage(fileName: fileName),
-                  queue: queue,
                   delegateQueue: delegateQueue)
     }
     
@@ -276,8 +265,8 @@ public extension MeshNetworkManager {
         guard let networkManager = networkManager else {
             return
         }
-        queue.async {
-            networkManager.handle(incomingPdu: data, ofType: type)
+        Task {
+            await networkManager.handle(incomingPdu: data, ofType: type)
         }
     }
     
@@ -310,7 +299,7 @@ public extension MeshNetworkManager {
               let _ = meshNetwork?.applicationKeys[publish.index] else {
             return nil
         }
-        queue.async {
+        Task {
             networkManager.publish(message, from: model)
         }
         return MessageHandle(for: message, sentFrom: localElement.unicastAddress,
@@ -363,10 +352,14 @@ public extension MeshNetworkManager {
             print("Error: TTL value \(initialTtl!) is invalid")
             throw AccessError.invalidTtl
         }
-        queue.async {
-            networkManager.send(message, from: source, to: destination,
-                                withTtl: initialTtl, using: applicationKey,
-                                completion: completion)
+        Task {
+            do {
+                try await networkManager.send(message, from: source, to: destination,
+                                              withTtl: initialTtl, using: applicationKey)
+                completion?(.success(()))
+            } catch {
+                completion?(.failure(error))
+            }
         }
         return MessageHandle(for: message, sentFrom: source.unicastAddress,
                              to: destination.address, using: networkManager)
@@ -542,10 +535,15 @@ public extension MeshNetworkManager {
             print("Error: TTL value \(initialTtl!) is invalid")
             throw AccessError.invalidTtl
         }
-        queue.async {
-            networkManager.send(message, from: source, to: element.unicastAddress,
-                                withTtl: initialTtl, using: applicationKey,
-                                completion: completion)
+        Task {
+            do {
+                let response = try await networkManager
+                    .send(message, from: source, to: element.unicastAddress,
+                          withTtl: initialTtl, using: applicationKey)
+                completion?(.success(response))
+            } catch {
+                completion?(.failure(error))
+            }
         }
         return MessageHandle(for: message, sentFrom: source.unicastAddress,
                              to: element.unicastAddress, using: networkManager)
@@ -741,9 +739,14 @@ public extension MeshNetworkManager {
             print("Error: TTL value \(initialTtl!) is invalid")
             throw AccessError.invalidTtl
         }
-        queue.async {
-            networkManager.send(message, from: element, to: destination,
-                                withTtl: initialTtl, completion: completion)
+        Task {
+            do {
+                let response = try await networkManager
+                    .send(message, from: element, to: destination, withTtl: initialTtl)
+                completion?(.success(response))
+            } catch {
+                completion?(.failure(error))
+            }
         }
         return MessageHandle(for: message, sentFrom: element.unicastAddress,
                              to: destination, using: networkManager)
@@ -819,8 +822,8 @@ public extension MeshNetworkManager {
             print("Error: Mesh Network not created")
             throw MeshNetworkError.noNetwork
         }
-        queue.async {
-            networkManager.send(message)
+        Task {
+            await networkManager.send(message)
         }
     }
     
@@ -832,7 +835,7 @@ public extension MeshNetworkManager {
             print("Error: Mesh Network not created")
             throw MeshNetworkError.noNetwork
         }
-        queue.async {
+        Task {
             networkManager.cancel(messageId)
         }
     }

@@ -113,7 +113,7 @@ internal class NetworkManager {
     /// - parameters:
     ///   - pdu:  The data received.
     ///   - type: The PDU type.
-    func handle(incomingPdu pdu: Data, ofType type: PduType) {
+    func handle(incomingPdu pdu: Data, ofType type: PduType) async {
         networkLayer.handle(incomingPdu: pdu, ofType: type)
     }
     
@@ -182,25 +182,29 @@ internal class NetworkManager {
     ///   - initialTtl:     The initial TTL (Time To Live) value of the message.
     ///                     If `nil`, the default Node TTL will be used.
     ///   - applicationKey: The Application Key to sign the message.
-    ///   - completion:     The completion handler called when the message was sent.
     func send(_ message: MeshMessage,
               from element: Element, to destination: MeshAddress,
               withTtl initialTtl: UInt8?,
-              using applicationKey: ApplicationKey,
-              completion: ((Result<Void, Error>) -> ())?) {
-        mutex.sync {
+              using applicationKey: ApplicationKey) async throws {
+        try mutex.sync {
             guard !outgoingMessages.contains(destination.address) else {
-                completion?(.failure(AccessError.busy))
-                return
+                throw AccessError.busy
             }
             outgoingMessages.insert(destination.address)
-            if let completion = completion {
-                deliveryCallbacks[destination.address] = completion
-            }
         }
-        accessLayer.send(message, from: element, to: destination,
-                         withTtl: initialTtl, using: applicationKey,
-                         retransmit: false)
+        try await withTaskCancellationHandler {
+            try await withCheckedThrowingContinuation { continuation in
+                setDeliveryCallback(for: destination.address) { result in
+                    continuation.resume(with: result)
+                }
+                accessLayer.send(message, from: element, to: destination,
+                                 withTtl: initialTtl, using: applicationKey,
+                                 retransmit: false)
+            }
+        } onCancel: {
+            cancel(MessageHandle(for: message, sentFrom: element.unicastAddress,
+                                 to: destination.address, using: self))
+        }
     }
     
     /// Encrypts the message with the Application Key and a Network Key
@@ -219,25 +223,29 @@ internal class NetworkManager {
     ///   - initialTtl:     The initial TTL (Time To Live) value of the message.
     ///                     If `nil`, the default Node TTL will be used.
     ///   - applicationKey: The Application Key to sign the message.
-    ///   - completion:     The completion handler with the response.
     func send(_ message: AcknowledgedMeshMessage,
               from element: Element, to destination: Address,
               withTtl initialTtl: UInt8?,
-              using applicationKey: ApplicationKey,
-              completion: ((Result<MeshResponse, Error>) -> ())?) {
-        mutex.sync {
+              using applicationKey: ApplicationKey) async throws -> MeshResponse {
+        try mutex.sync {
             guard !outgoingMessages.contains(destination) else {
-                completion?(.failure(AccessError.busy))
-                return
+                throw AccessError.busy
             }
             outgoingMessages.insert(destination)
-            if let completion = completion {
-                responseCallbacks[destination] = (message.responseOpCode, completion)
-            }
         }
-        accessLayer.send(message, from: element, to: MeshAddress(destination),
-                         withTtl: initialTtl, using: applicationKey,
-                         retransmit: false)
+        return try await withTaskCancellationHandler {
+            return try await withCheckedThrowingContinuation { continuation in
+                setResponseCallback(for: message, from: destination) { result in
+                    continuation.resume(with: result)
+                }
+                accessLayer.send(message, from: element, to: MeshAddress(destination),
+                                 withTtl: initialTtl, using: applicationKey,
+                                 retransmit: false)
+            }
+        } onCancel: {
+            cancel(MessageHandle(for: message, sentFrom: element.unicastAddress,
+                                 to: destination, using: self))
+        }
     }
     
     /// Encrypts the message with the Device Key and the first Network Key
@@ -295,23 +303,34 @@ internal class NetworkManager {
     ///   - destination:   The destination address.
     ///   - initialTtl:    The initial TTL (Time To Live) value of the message.
     ///                    If `nil`, the default Node TTL will be used.
-    ///   - completion:    The completion handler with the response.
     func send(_ configMessage: AcknowledgedConfigMessage,
               from element: Element, to destination: Address,
-              withTtl initialTtl: UInt8?,
-              completion: ((Result<ConfigResponse, Error>) -> ())?) {
-         mutex.sync {
+              withTtl initialTtl: UInt8?) async throws -> ConfigResponse {
+        try mutex.sync {
             guard !outgoingMessages.contains(destination) else {
-                completion?(.failure(AccessError.busy))
-                return
+                throw AccessError.busy
             }
             outgoingMessages.insert(destination)
-            if let completion = completion {
-                configResponseCallbacks[destination] = (configMessage.responseOpCode, completion)
-            }
         }
-        accessLayer.send(configMessage, from: element, to: destination,
-                         withTtl: initialTtl)
+        return try await withTaskCancellationHandler {
+            return try await withCheckedThrowingContinuation { continuation in
+                setResponseCallback(for: configMessage, from: destination) { result in
+                    continuation.resume(with: result)
+                }
+                accessLayer.send(configMessage, from: element, to: destination,
+                                 withTtl: initialTtl)
+            }
+        } onCancel: {
+            cancel(MessageHandle(for: configMessage, sentFrom: element.unicastAddress,
+                                 to: destination, using: self))
+        }
+    }
+    
+    /// Sends the Proxy Configuration message to the connected Proxy Node.
+    ///
+    /// - parameter message: The message to be sent.
+    func send(_ message: ProxyConfigurationMessage) async {
+        networkLayer.send(proxyConfigurationMessage: message)
     }
     
     /// Replies to the received message, which was sent with the given key set,
@@ -328,13 +347,6 @@ internal class NetworkManager {
                using keySet: KeySet) {
         accessLayer.reply(toAcknowledgedMessageSentTo: origin, with: message,
                           from: element, to: destination, using: keySet)
-    }
-    
-    /// Sends the Proxy Configuration message to the connected Proxy Node.
-    ///
-    /// - parameter message: The message to be sent.
-    func send(_ message: ProxyConfigurationMessage) {
-        networkLayer.send(proxyConfigurationMessage: message)
     }
     
     /// Cancels sending the message with the given handler.
@@ -449,6 +461,39 @@ internal class NetworkManager {
         // Notify the global delegate.
         delegate?.networkManager(self, failedToSendMessage: message,
                                  from: localElement, to: destination, error: error)
+    }
+    
+}
+
+private extension NetworkManager {
+    
+    func setDeliveryCallback(for destination: Address,
+                             do operation: @escaping (Result<Void, Error>) -> ()) {
+        mutex.sync {
+            deliveryCallbacks[destination] = operation
+        }
+    }
+    
+    func setResponseCallback(for request: AcknowledgedMeshMessage,
+                             from destination: Address,
+                             callback: @escaping (Result<MeshResponse, Error>) -> ()) {
+        mutex.sync {
+            responseCallbacks[destination] = (
+                expectedOpCode: request.responseOpCode,
+                callback: callback
+            )
+        }
+    }
+    
+    func setResponseCallback(for request: AcknowledgedConfigMessage,
+                             from destination: Address,
+                             callback: @escaping (Result<ConfigResponse, Error>) -> ()) {
+        mutex.sync {
+            configResponseCallbacks[destination] = (
+                expectedOpCode: request.responseOpCode,
+                callback: callback
+            )
+        }
     }
     
 }

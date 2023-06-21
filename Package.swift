@@ -1,4 +1,4 @@
-// swift-tools-version:5.6
+// swift-tools-version:5.8
 //
 // The `swift-tools-version` declares the minimum version of Swift required to
 // build this package. Do not remove it.
@@ -9,7 +9,7 @@ let package = Package(
   name: "NordicMesh",
   platforms: [
     .macOS(.v10_15),
-    .iOS(.v10)
+    .iOS(.v13)
   ],
   products: [
     .library(name: "NordicMesh", targets: ["nRFMeshProvision"])
