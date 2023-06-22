@@ -347,6 +347,75 @@ public extension MeshNetworkManager {
         }
     }
     
+    /// Sends a Configuration Message to the Node with given destination address.
+    ///
+    /// The `destination` must be a Unicast Address, otherwise the method
+    /// throws an ``AccessError/invalidDestination`` error.
+    ///
+    /// An appropriate callback of the ``MeshNetworkDelegate`` will be called when
+    /// the message has been sent successfully or a problem occured.
+    ///
+    /// - parameters:
+    ///   - message:     The message to be sent.
+    ///   - destination: The destination Unicast Address.
+    ///   - initialTtl:  The initial TTL (Time To Live) value of the message.
+    ///                  If `nil`, the default Node TTL will be used.
+    /// - throws: This method throws when the mesh network has not been created,
+    ///           the local Node does not have configuration capabilities
+    ///           (no Unicast Address assigned), or the destination address
+    ///           is not a Unicast Address or it belongs to an unknown Node.
+    ///           Error ``AccessError/cannotDelete`` is sent when trying to
+    ///           delete the last Network Key on the device.
+    /// - returns: Message handle that can be used to cancel sending.
+    func send(
+        _ message: UnacknowledgedConfigMessage,
+        to destination: Address,
+        withTtl initialTtl: UInt8? = nil
+    ) async throws {
+        try await withCheckedThrowingContinuation { continuation in
+            do {
+                try send(message, to: destination, withTtl: initialTtl) { result in
+                    continuation.resume(with: result)
+                }
+            } catch {
+                continuation.resume(throwing: error)
+            }
+        }
+    }
+    
+    /// Sends a Configuration Message to the primary Element on the given ``Node``.
+    ///
+    /// An appropriate callback of the ``MeshNetworkDelegate`` will be called when
+    /// the message has been sent successfully or a problem occured.
+    ///
+    /// - parameters:
+    ///   - message:    The message to be sent.
+    ///   - node:       The destination Node.
+    ///   - initialTtl: The initial TTL (Time To Live) value of the message.
+    ///                 If `nil`, the default Node TTL will be used.
+    /// - throws: This method throws when the mesh network has not been created,
+    ///           the local Node does not have configuration capabilities
+    ///           (no Unicast Address assigned), or the destination address
+    ///           is not a Unicast Address or it belongs to an unknown Node.
+    ///           Error ``AccessError/cannotDelete`` is sent when trying to
+    ///           delete the last Network Key on the device.
+    /// - returns: Message handle that can be used to cancel sending.
+    func send(
+        _ message: UnacknowledgedConfigMessage,
+        to node: Node,
+        withTtl initialTtl: UInt8? = nil
+    ) async throws {
+        try await withCheckedThrowingContinuation { continuation in
+            do {
+                try send(message, to: node, withTtl: initialTtl) { result in
+                    continuation.resume(with: result)
+                }
+            } catch {
+                continuation.resume(throwing: error)
+            }
+        }
+    }
+    
     /// Sends a Configuration Message to the Node with given destination address
     /// and returns the received response.
     ///
