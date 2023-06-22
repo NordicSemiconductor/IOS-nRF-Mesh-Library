@@ -728,9 +728,12 @@ public extension MeshNetworkManager {
     ///           delete the last Network Key on the device.
     /// - returns: Message handle that can be used to cancel sending.
     @discardableResult
-    func send(_ message: UnacknowledgedConfigMessage, to destination: Address,
-              withTtl initialTtl: UInt8? = nil,
-              completion: ((Result<Void, Error>) -> ())? = nil) throws -> MessageHandle {
+    func send(
+        _ message: UnacknowledgedConfigMessage,
+        to destination: Address,
+        withTtl initialTtl: UInt8? = nil,
+        completion: ((Result<Void, Error>) -> ())? = nil
+    ) throws -> MessageHandle {
         guard let networkManager = networkManager,
               let meshNetwork = meshNetwork else {
             print("Error: Mesh Network not created")
@@ -789,9 +792,12 @@ public extension MeshNetworkManager {
     ///           delete the last Network Key on the device.
     /// - returns: Message handle that can be used to cancel sending.
     @discardableResult
-    func send(_ message: UnacknowledgedConfigMessage, to node: Node,
-              withTtl initialTtl: UInt8? = nil,
-              completion: ((Result<Void, Error>) -> ())? = nil) throws -> MessageHandle {
+    func send(
+        _ message: UnacknowledgedConfigMessage,
+        to node: Node,
+        withTtl initialTtl: UInt8? = nil,
+        completion: ((Result<Void, Error>) -> ())? = nil
+    ) throws -> MessageHandle {
         return try send(message, to: node.primaryUnicastAddress,
                         withTtl: initialTtl, completion: completion)
     }
