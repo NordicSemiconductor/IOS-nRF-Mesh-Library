@@ -256,7 +256,7 @@ internal class AccessLayer {
     ///   - initialTtl:  The initial TTL (Time To Live) value of the message.
     ///                  If `nil`, the default Node TTL will be used.
     ///   - completion:  The completion handler with the response.
-    func send(_ message: AcknowledgedConfigMessage,
+    func send(_ message: ConfigMessage,
               from element: Element, to destination: Address,
               withTtl initialTtl: UInt8?) {
         guard let node = meshNetwork.node(withAddress: destination),

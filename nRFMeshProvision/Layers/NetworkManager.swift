@@ -250,6 +250,43 @@ internal class NetworkManager {
     /// for each created segment it calls transmitter's ``Transmitter/send(_:ofType:)``
     /// method, which should send the PDU over the air. This is in order to support
     /// retransmission in case a packet was lost and needs to be sent again
+    /// after block acknowledgment was received.
+    ///
+    /// - parameters:
+    ///   - configMessage: The message to be sent.
+    ///   - element:       The source Element.
+    ///   - destination:   The destination address.
+    ///   - initialTtl:    The initial TTL (Time To Live) value of the message.
+    ///                    If `nil`, the default Node TTL will be used.
+    ///   - completion:     The completion handler called when the message was sent.                    
+    func send(_ configMessage: UnacknowledgedConfigMessage,
+              from element: Element, to destination: Address,
+              withTtl initialTtl: UInt8?,
+              completion: ((Result<Void, Error>) -> ())?) {
+         mutex.sync {
+            guard !outgoingMessages.contains(destination) else {
+                completion?(.failure(AccessError.busy))
+                return
+            }
+            outgoingMessages.insert(destination)
+            if let completion = completion {
+                deliveryCallbacks[destination] = completion
+            }
+        }
+        accessLayer.send(configMessage, from: element, to: destination,
+                         withTtl: initialTtl)
+    }
+    
+    /// Encrypts the message with the Device Key and the first Network Key
+    /// known to the target device, and sends to the given destination address.
+    ///
+    /// The ``ConfigNetKeyDelete`` will be signed with a different Network Key
+    /// that is removing.
+    ///
+    /// This method does not send nor return PDUs to be sent. Instead,
+    /// for each created segment it calls transmitter's ``Transmitter/send(_:ofType:)``
+    /// method, which should send the PDU over the air. This is in order to support
+    /// retransmission in case a packet was lost and needs to be sent again
     /// after block acknowledgment was received. 
     ///
     /// - parameters:
