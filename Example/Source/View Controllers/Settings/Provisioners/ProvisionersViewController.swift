@@ -126,16 +126,22 @@ class ProvisionersViewController: UITableViewController, Editable {
         return true
     }
     
-    override func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
+    override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         // It is not possible to remove the last Provisioner. At least 1 is required.
         let count = MeshNetworkManager.instance.meshNetwork?.provisioners.count ?? 0
         guard count > 1 else {
-            return [UITableViewRowAction(style: .normal, title: "Last", handler: {_,_ in })]
+            return UISwipeActionsConfiguration(actions: [
+                UIContextualAction(style: .normal, title: "Last", handler: { _, _, completionHandler in
+                    completionHandler(false)
+                })
+            ])
         }
-        let removeRowAction = UITableViewRowAction(style: .destructive, title: "Delete", handler: { _, indexPath in
-            self.removeProvisioner(at: indexPath)
-        })
-        return [removeRowAction]
+        return UISwipeActionsConfiguration(actions: [
+            UIContextualAction(style: .destructive, title: "Delete", handler: { _, _, completionHandler in
+                self.removeProvisioner(at: indexPath)
+                completionHandler(true)
+            })
+        ])
     }
     
     override func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
