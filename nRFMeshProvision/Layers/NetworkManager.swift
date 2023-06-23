@@ -113,7 +113,7 @@ internal class NetworkManager {
     /// - parameters:
     ///   - pdu:  The data received.
     ///   - type: The PDU type.
-    func handle(incomingPdu pdu: Data, ofType type: PduType) async {
+    func handle(incomingPdu pdu: Data, ofType type: PduType) {
         networkLayer.handle(incomingPdu: pdu, ofType: type)
     }
     

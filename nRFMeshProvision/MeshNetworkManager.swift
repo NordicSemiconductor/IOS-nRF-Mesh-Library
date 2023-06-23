@@ -265,8 +265,8 @@ public extension MeshNetworkManager {
         guard let networkManager = networkManager else {
             return
         }
-        Task {
-            await networkManager.handle(incomingPdu: data, ofType: type)
+        Task.detached {
+            networkManager.handle(incomingPdu: data, ofType: type)
         }
     }
     
