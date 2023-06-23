@@ -510,63 +510,62 @@ class ModelViewController: ProgressViewController {
         let section = sections[indexPath.section]
         switch section {
         case .appKeyBinding:
-            return UISwipeActionsConfiguration(actions: [
-                UIContextualAction(style: .destructive, title: "Unbind") { action, view, completionHandler in
-                    guard indexPath.row < self.model.boundApplicationKeys.count else {
-                        completionHandler(false)
-                        return
-                    }
-                    let applicationKey = self.model.boundApplicationKeys[indexPath.row]
-                    
-                    // Let's check if the key that's being unbound is set for publication.
-                    let boundKeyUsedInPublication = self.model.publish?.index == applicationKey.index
-                    // Check also, if any other Node is set to publish to this Model
-                    // (using parent Element's Unicast Address) using this key.
-                    let network = MeshNetworkManager.instance.meshNetwork!
-                    let thisElement = self.model.parentElement!
-                    let thisNode = thisElement.parentNode!
-                    let otherNodes = network.nodes.filter { $0 != thisNode }
-                    let elementsWithCompatibleModels = otherNodes.flatMap {
-                        $0.elements.filter({ $0.contains(modelBoundTo: applicationKey)})
-                    }
-                    let compatibleModels = elementsWithCompatibleModels.flatMap {
-                        $0.models.filter({ $0.isBoundTo(applicationKey) })
-                    }
-                    let boundKeyUsedByOtherNodes = compatibleModels.contains {
-                        $0.publish?.publicationAddress.address == thisElement.unicastAddress &&
-                        $0.publish?.index == applicationKey.index
-                    }
-                    
-                    if boundKeyUsedInPublication || boundKeyUsedByOtherNodes {
-                        var message = "The key you want to unbind is set"
-                        if boundKeyUsedInPublication {
-                            message += " in the publication settings in this model"
-                            if boundKeyUsedByOtherNodes {
-                                message += " and"
-                            }
-                        }
+            let action = UIContextualAction(style: .destructive, title: "Unbind") { _, _, completionHandler in
+                guard indexPath.row < self.model.boundApplicationKeys.count else {
+                    completionHandler(false)
+                    return
+                }
+                let applicationKey = self.model.boundApplicationKeys[indexPath.row]
+                
+                // Let's check if the key that's being unbound is set for publication.
+                let boundKeyUsedInPublication = self.model.publish?.index == applicationKey.index
+                // Check also, if any other Node is set to publish to this Model
+                // (using parent Element's Unicast Address) using this key.
+                let network = MeshNetworkManager.instance.meshNetwork!
+                let thisElement = self.model.parentElement!
+                let thisNode = thisElement.parentNode!
+                let otherNodes = network.nodes.filter { $0 != thisNode }
+                let elementsWithCompatibleModels = otherNodes.flatMap {
+                    $0.elements.filter({ $0.contains(modelBoundTo: applicationKey)})
+                }
+                let compatibleModels = elementsWithCompatibleModels.flatMap {
+                    $0.models.filter({ $0.isBoundTo(applicationKey) })
+                }
+                let boundKeyUsedByOtherNodes = compatibleModels.contains {
+                    $0.publish?.publicationAddress.address == thisElement.unicastAddress &&
+                    $0.publish?.index == applicationKey.index
+                }
+                
+                if boundKeyUsedInPublication || boundKeyUsedByOtherNodes {
+                    var message = "The key you want to unbind is set"
+                    if boundKeyUsedInPublication {
+                        message += " in the publication settings in this model"
                         if boundKeyUsedByOtherNodes {
-                            message += " in at least one model on another node that publish directly to this element."
+                            message += " and"
                         }
-                        if boundKeyUsedInPublication {
-                            if boundKeyUsedByOtherNodes {
-                                message += " The local publication will be cancelled automatically, but other nodes will not be affected. This model will no longer be able to handle those publications."
-                            } else {
-                                message += "\nThe publication will be cancelled automatically."
-                            }
+                    }
+                    if boundKeyUsedByOtherNodes {
+                        message += " in at least one model on another node that publish directly to this element."
+                    }
+                    if boundKeyUsedInPublication {
+                        if boundKeyUsedByOtherNodes {
+                            message += " The local publication will be cancelled automatically, but other nodes will not be affected. This model will no longer be able to handle those publications."
+                        } else {
+                            message += "\nThe publication will be cancelled automatically."
                         }
-                        self.confirm(title: "Key in use", message: message) { _ in
-                            completionHandler(false)
-                        } handler:  { _ in
-                            self.unbindApplicationKey(applicationKey)
-                            completionHandler(true)
-                        }
-                    } else {
+                    }
+                    self.confirm(title: "Key in use", message: message) { _ in
+                        completionHandler(false)
+                    } handler: { _ in
                         self.unbindApplicationKey(applicationKey)
                         completionHandler(true)
                     }
+                } else {
+                    self.unbindApplicationKey(applicationKey)
+                    completionHandler(true)
                 }
-              ])
+            }
+            return UISwipeActionsConfiguration(actions: [action])
         default:
             return nil
         }
