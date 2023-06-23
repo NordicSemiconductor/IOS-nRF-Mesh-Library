@@ -227,14 +227,15 @@ internal class NetworkManager {
               from element: Element, to destination: Address,
               withTtl initialTtl: UInt8?,
               using applicationKey: ApplicationKey) async throws -> MeshResponse {
-        try mutex.sync {
-            guard !outgoingMessages.contains(destination) else {
-                throw AccessError.busy
-            }
-            outgoingMessages.insert(destination)
-        }
         return try await withTaskCancellationHandler {
             return try await withCheckedThrowingContinuation { continuation in
+                mutex.sync {
+                    guard !outgoingMessages.contains(destination) else {
+                        continuation.resume(throwing: AccessError.busy)
+                        return
+                    }
+                    outgoingMessages.insert(destination)
+                }
                 setResponseCallback(for: message, from: destination) { result in
                     continuation.resume(with: result)
                 }
@@ -266,14 +267,15 @@ internal class NetworkManager {
     func send(_ configMessage: UnacknowledgedConfigMessage,
               from element: Element, to destination: Address,
               withTtl initialTtl: UInt8?) async throws {
-        try mutex.sync {
-            guard !outgoingMessages.contains(destination) else {
-                throw AccessError.busy
-            }
-            outgoingMessages.insert(destination)
-        }
-        try await withTaskCancellationHandler {
-            try await withCheckedThrowingContinuation { continuation in
+        return try await withTaskCancellationHandler {
+            return try await withCheckedThrowingContinuation { continuation in
+                mutex.sync {
+                    guard !outgoingMessages.contains(destination) else {
+                        continuation.resume(throwing: AccessError.busy)
+                        return
+                    }
+                    outgoingMessages.insert(destination)
+                }
                 setDeliveryCallback(for: destination) { result in
                     continuation.resume(with: result)
                 }
@@ -307,14 +309,15 @@ internal class NetworkManager {
     func send(_ configMessage: AcknowledgedConfigMessage,
               from element: Element, to destination: Address,
               withTtl initialTtl: UInt8?) async throws -> ConfigResponse {
-        try mutex.sync {
-            guard !outgoingMessages.contains(destination) else {
-                throw AccessError.busy
-            }
-            outgoingMessages.insert(destination)
-        }
         return try await withTaskCancellationHandler {
             return try await withCheckedThrowingContinuation { continuation in
+                mutex.sync {
+                    guard !outgoingMessages.contains(destination) else {
+                        continuation.resume(throwing: AccessError.busy)
+                        return
+                    }
+                    outgoingMessages.insert(destination)
+                }
                 setResponseCallback(for: configMessage, from: destination) { result in
                     continuation.resume(with: result)
                 }
