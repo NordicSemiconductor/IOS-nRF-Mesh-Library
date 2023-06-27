@@ -98,7 +98,7 @@ class ModelViewCell: UITableViewCell {
     ///            the request has complete.
     func meshNetworkManager(_ manager: MeshNetworkManager,
                             didReceiveMessage message: MeshMessage,
-                            sentFrom source: Address, to destination: Address) -> Bool {
+                            sentFrom source: Address, to destination: MeshAddress) -> Bool {
         return false
     }
 

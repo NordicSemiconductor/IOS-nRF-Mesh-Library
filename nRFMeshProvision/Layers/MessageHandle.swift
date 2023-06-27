@@ -50,10 +50,10 @@ public struct MessageHandle {
     /// The destination Address.
     ///
     /// This can be any type of Address.
-    public let destination: Address
+    public let destination: MeshAddress
     
     init(for message: MeshMessage,
-         sentFrom source: Address, to destination: Address,
+         sentFrom source: Address, to destination: MeshAddress,
          using manager: NetworkManager) {
         self.opCode = message.opCode
         self.source = source

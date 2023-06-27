@@ -52,7 +52,7 @@ internal class NetworkManager {
     ///
     /// The lower transport layer shall not transmit segmented messages for more
     /// than one Upper Transport PDU to the same destination at the same time.
-    private var outgoingMessages: Set<Address> = Set()
+    private var outgoingMessages: Set<MeshAddress> = Set()
     /// Delivery callbacks.
     ///
     /// These callbacks are set when an Unacknowledged Mesh Message is sent any address
@@ -62,7 +62,7 @@ internal class NetworkManager {
     ///
     /// The key is the destination address and the value is the callback.
     /// If a message is sent without completion callback, nothing gets added to this map.
-    private var deliveryCallbacks: [Address : (Result<Void, Error>) -> ()] = [:]
+    private var deliveryCallbacks: [MeshAddress : (Result<Void, Error>) -> ()] = [:]
     /// Callbacks awaiting a mesh response for ``AcknowledgedMeshMessage`` which are not
     /// ``AcknowledgedConfigMessage``.
     ///
@@ -187,14 +187,14 @@ internal class NetworkManager {
               withTtl initialTtl: UInt8?,
               using applicationKey: ApplicationKey) async throws {
         try mutex.sync {
-            guard !outgoingMessages.contains(destination.address) else {
+            guard !outgoingMessages.contains(destination) else {
                 throw AccessError.busy
             }
-            outgoingMessages.insert(destination.address)
+            outgoingMessages.insert(destination)
         }
         try await withTaskCancellationHandler {
             try await withCheckedThrowingContinuation { continuation in
-                setDeliveryCallback(for: destination.address) { result in
+                setDeliveryCallback(for: destination) { result in
                     continuation.resume(with: result)
                 }
                 accessLayer.send(message, from: element, to: destination,
@@ -203,7 +203,7 @@ internal class NetworkManager {
             }
         } onCancel: {
             cancel(MessageHandle(for: message, sentFrom: element.unicastAddress,
-                                 to: destination.address, using: self))
+                                 to: destination, using: self))
         }
     }
     
@@ -227,25 +227,26 @@ internal class NetworkManager {
               from element: Element, to destination: Address,
               withTtl initialTtl: UInt8?,
               using applicationKey: ApplicationKey) async throws -> MeshResponse {
+        let meshAddress = MeshAddress(destination)
         return try await withTaskCancellationHandler {
             return try await withCheckedThrowingContinuation { continuation in
                 mutex.sync {
-                    guard !outgoingMessages.contains(destination) else {
+                    guard !outgoingMessages.contains(meshAddress) else {
                         continuation.resume(throwing: AccessError.busy)
                         return
                     }
-                    outgoingMessages.insert(destination)
+                    outgoingMessages.insert(meshAddress)
                 }
                 setResponseCallback(for: message, from: destination) { result in
                     continuation.resume(with: result)
                 }
-                accessLayer.send(message, from: element, to: MeshAddress(destination),
+                accessLayer.send(message, from: element, to: meshAddress,
                                  withTtl: initialTtl, using: applicationKey,
                                  retransmit: false)
             }
         } onCancel: {
             cancel(MessageHandle(for: message, sentFrom: element.unicastAddress,
-                                 to: destination, using: self))
+                                 to: meshAddress, using: self))
         }
     }
     
@@ -267,16 +268,17 @@ internal class NetworkManager {
     func send(_ configMessage: UnacknowledgedConfigMessage,
               from element: Element, to destination: Address,
               withTtl initialTtl: UInt8?) async throws {
+        let meshAddress = MeshAddress(destination)
         return try await withTaskCancellationHandler {
             return try await withCheckedThrowingContinuation { continuation in
                 mutex.sync {
-                    guard !outgoingMessages.contains(destination) else {
+                    guard !outgoingMessages.contains(meshAddress) else {
                         continuation.resume(throwing: AccessError.busy)
                         return
                     }
-                    outgoingMessages.insert(destination)
+                    outgoingMessages.insert(meshAddress)
                 }
-                setDeliveryCallback(for: destination) { result in
+                setDeliveryCallback(for: meshAddress) { result in
                     continuation.resume(with: result)
                 }
                 accessLayer.send(configMessage, from: element, to: destination,
@@ -284,7 +286,7 @@ internal class NetworkManager {
             }
         } onCancel: {
             cancel(MessageHandle(for: configMessage, sentFrom: element.unicastAddress,
-                                 to: destination, using: self))
+                                 to: meshAddress, using: self))
         }
     }
     
@@ -309,14 +311,15 @@ internal class NetworkManager {
     func send(_ configMessage: AcknowledgedConfigMessage,
               from element: Element, to destination: Address,
               withTtl initialTtl: UInt8?) async throws -> ConfigResponse {
+        let meshAddress = MeshAddress(destination)
         return try await withTaskCancellationHandler {
             return try await withCheckedThrowingContinuation { continuation in
                 mutex.sync {
-                    guard !outgoingMessages.contains(destination) else {
+                    guard !outgoingMessages.contains(meshAddress) else {
                         continuation.resume(throwing: AccessError.busy)
                         return
                     }
-                    outgoingMessages.insert(destination)
+                    outgoingMessages.insert(meshAddress)
                 }
                 setResponseCallback(for: configMessage, from: destination) { result in
                     continuation.resume(with: result)
@@ -326,7 +329,7 @@ internal class NetworkManager {
             }
         } onCancel: {
             cancel(MessageHandle(for: configMessage, sentFrom: element.unicastAddress,
-                                 to: destination, using: self))
+                                 to: meshAddress, using: self))
         }
     }
     
@@ -369,7 +372,7 @@ internal class NetworkManager {
     ///   - source:  The source Unicast Address.
     ///   - destination: The destination address of the message received.
     func notifyAbout(newMessage message: MeshMessage,
-                     from source: Address, to destination: Address) {
+                     from source: Address, to destination: MeshAddress) {
         // Notify callback awaiting a response.
         switch message {
         case let response as ConfigResponse:
@@ -408,7 +411,7 @@ internal class NetworkManager {
     ///   - localElement: The local element used to send the message.
     ///   - destination:  The destination address.
     func notifyAbout(deliveringMessage message: MeshMessage,
-                     from localElement: Element, to destination: Address) {
+                     from localElement: Element, to destination: MeshAddress) {
         // Notify the delivery callback.
         mutex.sync {
             _ = outgoingMessages.remove(destination)
@@ -431,7 +434,7 @@ internal class NetworkManager {
     ///   - localElement: The local element used to send the message.
     ///   - destination:  The destination address.
     func notifyAbout(error: Error, duringSendingMessage message: MeshMessage,
-                     from localElement: Element, to destination: Address) {
+                     from localElement: Element, to destination: MeshAddress) {
         // Notify the callback, that sending has failed.
         mutex.sync {
             _ = outgoingMessages.remove(destination)
@@ -440,21 +443,21 @@ internal class NetworkManager {
         switch message {
         case let request as AcknowledgedConfigMessage:
             let callback: ((Result<ConfigResponse, Error>) -> ())? = mutex.sync {
-                guard let (expectedOpCode, callback) = configResponseCallbacks[destination],
+                guard let (expectedOpCode, callback) = configResponseCallbacks[destination.address],
                       expectedOpCode == request.responseOpCode else {
                     return nil
                 }
-                configResponseCallbacks.removeValue(forKey: destination)
+                configResponseCallbacks.removeValue(forKey: destination.address)
                 return callback
             }
             callback?(.failure(error))
         case let request as AcknowledgedMeshMessage:
             let callback: ((Result<MeshResponse, Error>) -> ())? = mutex.sync {
-                guard let (expectedOpCode, callback) = responseCallbacks[destination],
+                guard let (expectedOpCode, callback) = responseCallbacks[destination.address],
                       expectedOpCode == request.responseOpCode else {
                     return nil
                 }
-                responseCallbacks.removeValue(forKey: destination)
+                responseCallbacks.removeValue(forKey: destination.address)
                 return callback
             }
             callback?(.failure(error))
@@ -471,7 +474,7 @@ internal class NetworkManager {
 
 private extension NetworkManager {
     
-    func setDeliveryCallback(for destination: Address,
+    func setDeliveryCallback(for destination: MeshAddress,
                              do operation: @escaping (Result<Void, Error>) -> ()) {
         mutex.sync {
             deliveryCallbacks[destination] = operation

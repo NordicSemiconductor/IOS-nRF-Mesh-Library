@@ -537,7 +537,7 @@ extension ConfigurationViewController: MeshNetworkDelegate {
     func meshNetworkManager(_ manager: MeshNetworkManager,
                             didReceiveMessage message: MeshMessage,
                             sentFrom source: Address,
-                            to destination: Address) {
+                            to destination: MeshAddress) {
         let current = current
         if current >= 0 && current < tasks.count &&
            message.opCode == tasks[current].message.responseOpCode {
@@ -564,7 +564,7 @@ extension ConfigurationViewController: MeshNetworkDelegate {
     func meshNetworkManager(_ manager: MeshNetworkManager,
                             failedToSendMessage message: MeshMessage,
                             from localElement: Element,
-                            to destination: Address,
+                            to destination: MeshAddress,
                             error: Error) {
         inProgress = false
         reload(taskAt: current, with: .failed(error))

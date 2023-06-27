@@ -125,7 +125,7 @@ class VendorModelViewCell: ModelViewCell, UITextFieldDelegate {
     
     override func meshNetworkManager(_ manager: MeshNetworkManager,
                                      didReceiveMessage message: MeshMessage,
-                                     sentFrom source: Address, to destination: Address) -> Bool {
+                                     sentFrom source: Address, to destination: MeshAddress) -> Bool {
         switch message {
         case let message as UnknownMessage where
             (message.opCode & 0xC0FFFF) == (0xC00000 | UInt32(model.companyIdentifier!.bigEndian)):

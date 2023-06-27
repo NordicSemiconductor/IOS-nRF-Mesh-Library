@@ -115,7 +115,7 @@ internal struct AccessMessage: LowerTransportPdu {
         self.upperTransportPdu = pdu.transportPdu
         self.transportMicSize = 4
         self.source = pdu.source
-        self.destination = pdu.destination
+        self.destination = pdu.destination.address
         self.sequence = pdu.sequence
         self.networkKey = networkKey
         self.ivIndex = pdu.ivIndex

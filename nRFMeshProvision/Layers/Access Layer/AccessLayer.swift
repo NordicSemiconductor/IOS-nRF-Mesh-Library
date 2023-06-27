@@ -166,10 +166,10 @@ internal class AccessLayer {
         
         // If a response to a sent request has been received, cancel the context.
         var request: AcknowledgedMeshMessage? = nil
-        if upperTransportPdu.destination.isUnicast,
+        if upperTransportPdu.destination.address.isUnicast,
            let index = mutex.sync(execute: {
                            reliableMessageContexts.firstIndex(where: {
-                               $0.source == upperTransportPdu.destination &&
+                               $0.source == upperTransportPdu.destination.address &&
                                $0.request.responseOpCode == accessPdu.opCode &&
                                $0.destination == upperTransportPdu.source
                            })
@@ -331,7 +331,7 @@ internal class AccessLayer {
             if let index = reliableMessageContexts.firstIndex(where: {
                                $0.request.opCode == handle.opCode &&
                                $0.source == handle.source &&
-                               $0.destination == handle.destination
+                               $0.destination == handle.destination.address
                            }) {
                 let context = reliableMessageContexts.remove(at: index)
                 context.invalidate()
@@ -482,7 +482,7 @@ private extension AccessLayer {
             newMessage = unknownMessage
         }
         networkManager.notifyAbout(newMessage: newMessage,
-                                   from: accessPdu.source, to: accessPdu.destination.address)
+                                   from: accessPdu.source, to: accessPdu.destination)
     }
     
     /// This method handles selected config messages in a special way.
@@ -628,14 +628,14 @@ private extension AccessLayer {
                 let category: LogCategory = request is AcknowledgedConfigMessage ? .foundationModel : .model
                 self.logger?.w(category, "\(request) sent from: \(pdu.source.hex), to: \(pdu.destination.hex) timed out")
                 self.cancel(MessageHandle(for: request,
-                                          sentFrom: pdu.source, to: pdu.destination.address,
+                                          sentFrom: pdu.source, to: pdu.destination,
                                           using: self.networkManager))
                 self.mutex.sync {
                     self.reliableMessageContexts.removeAll { $0.timeoutTimer == nil }
                 }
                 self.networkManager.notifyAbout(error: AccessError.timeout,
                                                 duringSendingMessage: request,
-                                                from: element, to: pdu.destination.address)
+                                                from: element, to: pdu.destination)
             }
         )
         mutex.sync {

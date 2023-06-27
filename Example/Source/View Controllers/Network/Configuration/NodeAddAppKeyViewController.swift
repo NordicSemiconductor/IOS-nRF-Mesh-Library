@@ -145,7 +145,7 @@ extension NodeAddAppKeyViewController: MeshNetworkDelegate {
     
     func meshNetworkManager(_ manager: MeshNetworkManager,
                             didReceiveMessage message: MeshMessage,
-                            sentFrom source: Address, to destination: Address) {
+                            sentFrom source: Address, to destination: MeshAddress) {
         // Has the Node been reset remotely.
         guard !(message is ConfigNodeReset) else {
             (UIApplication.shared.delegate as! AppDelegate).meshNetworkDidChange()
@@ -187,7 +187,7 @@ extension NodeAddAppKeyViewController: MeshNetworkDelegate {
     
     func meshNetworkManager(_ manager: MeshNetworkManager,
                             failedToSendMessage message: MeshMessage,
-                            from localElement: Element, to destination: Address,
+                            from localElement: Element, to destination: MeshAddress,
                             error: Error) {
         // Ignore messages sent using model publication.
         guard message is ConfigMessage else {

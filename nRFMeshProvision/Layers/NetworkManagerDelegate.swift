@@ -53,7 +53,7 @@ internal protocol NetworkManagerDelegate: AnyObject {
     ///   - destination: The address to which the message was sent.
     func networkManager(_ manager: NetworkManager,
                         didReceiveMessage message: MeshMessage,
-                        sentFrom source: Address, to destination: Address)
+                        sentFrom source: Address, to destination: MeshAddress)
     
     /// A callback called when an unsegmented message was sent to the
     /// ``Transmitter``, or when all segments of a segmented message targeting
@@ -66,7 +66,7 @@ internal protocol NetworkManagerDelegate: AnyObject {
     ///   - destination:  The address to which the message was sent.
     func networkManager(_ manager: NetworkManager,
                         didSendMessage message: MeshMessage,
-                        from localElement: Element, to destination: Address)
+                        from localElement: Element, to destination: MeshAddress)
     
     /// A callback called when a message failed to be sent to the target
     /// Node, or the response for an acknowledged message hasn't been received
@@ -111,7 +111,7 @@ internal protocol NetworkManagerDelegate: AnyObject {
     ///   - error:        The error that occurred.
     func networkManager(_ manager: NetworkManager,
                         failedToSendMessage message: MeshMessage,
-                        from localElement: Element, to destination: Address,
+                        from localElement: Element, to destination: MeshAddress,
                         error: Error)
     
     /// A callback called when the network configuration has changed.

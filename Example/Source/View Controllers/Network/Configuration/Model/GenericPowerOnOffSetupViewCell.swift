@@ -75,7 +75,7 @@ class GenericPowerOnOffSetupViewCell: ModelViewCell {
     
     override func meshNetworkManager(_ manager: MeshNetworkManager,
                                      didReceiveMessage message: MeshMessage,
-                                     sentFrom source: Address, to destination: Address) -> Bool {
+                                     sentFrom source: Address, to destination: MeshAddress) -> Bool {
         switch message {
         case let status as GenericOnPowerUpStatus:
             acknowledgedStateLabel.text = status.state.debugDescription
