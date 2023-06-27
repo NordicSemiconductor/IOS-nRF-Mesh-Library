@@ -145,7 +145,7 @@ class GenericLevelViewCell: ModelViewCell {
     
     override func meshNetworkManager(_ manager: MeshNetworkManager,
                                      didReceiveMessage message: MeshMessage,
-                                     sentFrom source: Address, to destination: Address) -> Bool {
+                                     sentFrom source: Address, to destination: MeshAddress) -> Bool {
         switch message {
         case let status as GenericLevelStatus:
             let level = floorf(0.1 + (Float(status.level) + 32768.0) / 655.35)

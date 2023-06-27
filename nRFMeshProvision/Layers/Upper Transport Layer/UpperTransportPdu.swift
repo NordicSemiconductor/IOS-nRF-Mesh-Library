@@ -39,7 +39,7 @@ internal struct UpperTransportPdu {
     /// Source Address.
     let source: Address
     /// Destination Address.
-    let destination: Address
+    let destination: MeshAddress
     /// 6-bit Application Key identifier. This field is set to `nil`
     /// if the message is signed with a Device Key instead.
     let aid: UInt8?
@@ -80,7 +80,7 @@ internal struct UpperTransportPdu {
              return nil
         }
         source = accessMessage.source
-        destination = accessMessage.destination
+        destination = virtualGroup?.address ?? MeshAddress(accessMessage.destination)
         aid = accessMessage.aid
         transportMicSize = accessMessage.transportMicSize
         transportPdu = accessMessage.upperTransportPdu
@@ -96,7 +96,7 @@ internal struct UpperTransportPdu {
         self.message = pdu.message
         self.userInitiated = pdu.userInitiated
         self.source = pdu.source
-        self.destination = pdu.destination.address
+        self.destination = pdu.destination
         self.sequence = sequence
         self.ivIndex = ivIndex.transmitIndex
         let accessPdu = pdu.accessPdu
@@ -115,7 +115,7 @@ internal struct UpperTransportPdu {
         
         let nonce = Data([type, aszmic << 7]) + seq
             + self.source.bigEndian
-            + self.destination.bigEndian
+            + self.destination.address.bigEndian
             + self.ivIndex.bigEndian
         
         self.transportMicSize = aszmic == 0 ? 4 : 8

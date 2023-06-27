@@ -97,7 +97,7 @@ internal class LowerTransportLayer {
     /// The map of outgoing segmented messages.
     ///
     /// The key is the `sequenceZero` of the message.
-    private var outgoingSegments: [UInt16: [SegmentedMessage?]]
+    private var outgoingSegments: [UInt16: (destination: MeshAddress, segments: [SegmentedMessage?])]
     /// The map of segment transmission timers. A segment transmission timer
     /// for a Segmented Message with `sequenceZero` is started whenever such
     /// message is sent to a Unicast Address. After the timer expires, the
@@ -252,11 +252,11 @@ internal class LowerTransportLayer {
         let count = (pdu.transportPdu.count + 11) / 12
         
         // Create all segments to be sent.
-        outgoingSegments[sequenceZero] = Array<SegmentedAccessMessage?>(repeating: nil, count: count)
+        outgoingSegments[sequenceZero] = (pdu.destination, Array<SegmentedAccessMessage?>(repeating: nil, count: count))
         for i in 0..<count {
-            outgoingSegments[sequenceZero]![i] = SegmentedAccessMessage(fromUpperTransportPdu: pdu,
-                                                                        usingNetworkKey: networkKey,
-                                                                        offset: UInt8(i))
+            outgoingSegments[sequenceZero]!.segments[i] = SegmentedAccessMessage(fromUpperTransportPdu: pdu,
+                                                                                 usingNetworkKey: networkKey,
+                                                                                 offset: UInt8(i))
         }
         segmentTtl[sequenceZero] = initialTtl ?? provisionerNode.defaultTTL ?? networkManager.networkParameters.defaultTtl
         sendSegments(for: sequenceZero, limit: networkManager.networkParameters.retransmissionLimit)
@@ -507,7 +507,8 @@ private extension LowerTransportLayer {
     /// - parameter ack: The Segment Acknowledgment Message received.
     func handle(ack: SegmentAcknowledgmentMessage) {
         // Ensure the ACK is for some message that has been sent.
-        guard let segment = outgoingSegments[ack.sequenceZero]?.firstNotAcknowledged else {
+        guard let (destination, segments) = outgoingSegments[ack.sequenceZero],
+              let segment = segments.firstNotAcknowledged else {
             return
         }
         
@@ -526,23 +527,23 @@ private extension LowerTransportLayer {
             if segment.userInitiated && !segment.message!.isAcknowledged {
                 networkManager.notifyAbout(error: LowerTransportError.busy,
                                            duringSendingMessage: segment.message!,
-                                           from: element, to: segment.destination)
+                                           from: element, to: destination)
             }
             return
         }
         
         // Clear all acknowledged segments.
-        for index in 0..<(outgoingSegments[ack.sequenceZero]?.count ?? 0) {
+        for index in 0..<segments.count {
             if ack.isSegmentReceived(index) {
-                outgoingSegments[ack.sequenceZero]?[index] = nil
+                outgoingSegments[ack.sequenceZero]?.segments[index] = nil
             }
         }
         
         // If all the segments were acknowledged, notify the manager.
-        if outgoingSegments[ack.sequenceZero]?.hasMore == false {
+        if outgoingSegments[ack.sequenceZero]?.segments.hasMore == false {
             outgoingSegments.removeValue(forKey: ack.sequenceZero)
             networkManager.notifyAbout(deliveringMessage: segment.message!,
-                                       from: element, to: segment.destination)
+                                       from: element, to: destination)
             networkManager.upperTransportLayer
                 .lowerTransportLayerDidSend(segmentedUpperTransportPduTo: segment.destination)
         } else {
@@ -593,7 +594,7 @@ private extension LowerTransportLayer {
     ///   - sequenceZero: The key to get segments from the map.
     ///   - limit:        Maximum number of retransmissions.
     func sendSegments(for sequenceZero: UInt16, limit: Int) {
-        guard let segments = outgoingSegments[sequenceZero], segments.count > 0,
+        guard let (destination, segments) = outgoingSegments[sequenceZero], segments.count > 0,
               let segment = segments.firstNotAcknowledged,
               let message = segment.message,
               let ttl = segmentTtl[sequenceZero] else {
@@ -627,7 +628,7 @@ private extension LowerTransportLayer {
                         outgoingSegments.removeValue(forKey: sequenceZero)
                         if segment.userInitiated && !message.isAcknowledged {
                             networkManager.notifyAbout(error: error, duringSendingMessage: message,
-                                                       from: element, to: segment.destination)
+                                                       from: element, to: destination)
                         }
                         networkManager.upperTransportLayer
                             .lowerTransportLayerDidSend(segmentedUpperTransportPduTo: segment.destination)
@@ -667,7 +668,7 @@ private extension LowerTransportLayer {
         }
         
         segmentTransmissionTimers.removeValue(forKey: sequenceZero)?.invalidate()
-        if ackExpected ?? false, let segments = outgoingSegments[sequenceZero], segments.hasMore {
+        if ackExpected ?? false, let (destination, segments) = outgoingSegments[sequenceZero], segments.hasMore {
             if limit > 0 {
                 let interval = networkManager.networkParameters.transmissionTimerInterval(forTtl: ttl)
                 segmentTransmissionTimers[sequenceZero] =
@@ -679,7 +680,7 @@ private extension LowerTransportLayer {
                 if segment.userInitiated && !message.isAcknowledged {
                     networkManager.notifyAbout(error: LowerTransportError.timeout,
                                                duringSendingMessage: message,
-                                               from: element, to: segment.destination)
+                                               from: element, to: destination)
                 }
                 networkManager.upperTransportLayer
                     .lowerTransportLayerDidSend(segmentedUpperTransportPduTo: segment.destination)
@@ -688,7 +689,7 @@ private extension LowerTransportLayer {
         } else {
             // All segments have been successfully sent to a Group Address.
             networkManager.notifyAbout(deliveringMessage: message,
-                                       from: element, to: segment.destination)
+                                       from: element, to: destination)
             outgoingSegments.removeValue(forKey: sequenceZero)
         }
     }

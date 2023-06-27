@@ -114,7 +114,7 @@ internal struct SegmentedAccessMessage: SegmentedMessage {
         self.message = pdu.message
         self.aid = pdu.aid
         self.source = pdu.source
-        self.destination = pdu.destination
+        self.destination = pdu.destination.address
         self.networkKey = networkKey
         self.ivIndex = pdu.ivIndex
         self.transportMicSize = pdu.transportMicSize

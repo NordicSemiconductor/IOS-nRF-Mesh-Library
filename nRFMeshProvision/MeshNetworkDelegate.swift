@@ -67,7 +67,7 @@ public protocol MeshNetworkDelegate: AnyObject {
     ///   - destination: The address to which the message was sent.
     func meshNetworkManager(_ manager: MeshNetworkManager,
                             didReceiveMessage message: MeshMessage,
-                            sentFrom source: Address, to destination: Address)
+                            sentFrom source: Address, to destination: MeshAddress)
     
     /// A callback called when an unsegmented message was sent to the
     /// ``Transmitter``, or when all segments of a segmented message targeting
@@ -80,7 +80,7 @@ public protocol MeshNetworkDelegate: AnyObject {
     ///   - destination:  The address to which the message was sent.
     func meshNetworkManager(_ manager: MeshNetworkManager,
                             didSendMessage message: MeshMessage,
-                            from localElement: Element, to destination: Address)
+                            from localElement: Element, to destination: MeshAddress)
     
     /// A callback called when a message failed to be sent to the target
     /// Node, or the response for an acknowledged message hasn't been received
@@ -124,7 +124,7 @@ public protocol MeshNetworkDelegate: AnyObject {
     ///   - error:        The error that occurred.
     func meshNetworkManager(_ manager: MeshNetworkManager,
                             failedToSendMessage message: MeshMessage,
-                            from localElement: Element, to destination: Address,
+                            from localElement: Element, to destination: MeshAddress,
                             error: Error)
     
 }
@@ -133,13 +133,13 @@ public extension MeshNetworkDelegate {
     
     func meshNetworkManager(_ manager: MeshNetworkManager,
                             didSendMessage message: MeshMessage,
-                            from localElement: Element, to destination: Address) {
+                            from localElement: Element, to destination: MeshAddress) {
         // Empty.
     }
     
     func meshNetworkManager(_ manager: MeshNetworkManager,
                             failedToSendMessage message: MeshMessage,
-                            from localElement: Element, to destination: Address,
+                            from localElement: Element, to destination: MeshAddress,
                             error: Error) {
         // Empty.
     }

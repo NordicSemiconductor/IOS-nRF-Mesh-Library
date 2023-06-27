@@ -87,7 +87,7 @@ internal struct AccessPdu {
         message = nil
         userInitiated = false
         source = pdu.source
-        destination = MeshAddress(pdu.destination)
+        destination = pdu.destination
         accessPdu = pdu.accessPdu
         
         // At least 1 octet is required.

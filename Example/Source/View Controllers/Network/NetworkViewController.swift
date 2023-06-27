@@ -256,7 +256,7 @@ extension NetworkViewController: MeshNetworkDelegate {
     
     func meshNetworkManager(_ manager: MeshNetworkManager,
                             didReceiveMessage message: MeshMessage,
-                            sentFrom source: Address, to destination: Address) {
+                            sentFrom source: Address, to destination: MeshAddress) {
         switch message {
             
         case is ConfigNodeReset:

@@ -131,7 +131,7 @@ internal class UpperTransportLayer {
         var shouldSendNext = false
         // Check if the message that is currently being sent matches the
         // handler data. If so, cancel it.
-        if let first = mutex.sync(execute: { queues[handle.destination]?.first }),
+        if let first = mutex.sync(execute: { queues[handle.destination.address]?.first }),
            first.pdu.message!.opCode == handle.opCode && first.pdu.source == handle.source {
                logger?.d(.upperTransport, "Cancelling sending \(first.pdu)")
                networkManager.lowerTransportLayer.cancelSending(segmentedUpperTransportPdu: first.pdu)
@@ -142,7 +142,7 @@ internal class UpperTransportLayer {
             // Notify user about the cancellation of the messages.
             if let localNode = networkManager.meshNetwork.localProvisioner?.node,
                let element = localNode.element(withAddress: handle.source) {
-                queues[handle.destination]?
+                queues[handle.destination.address]?
                     .filter {
                         $0.pdu.message!.opCode == handle.opCode &&
                         $0.pdu.source == handle.source &&
@@ -155,7 +155,7 @@ internal class UpperTransportLayer {
                     }
             }
             // Remove all enqueued messages that match the handler.
-            queues[handle.destination]?.removeAll {
+            queues[handle.destination.address]?.removeAll {
                 $0.pdu.message!.opCode == handle.opCode &&
                 $0.pdu.source == handle.source &&
                 $0.pdu.destination == handle.destination
@@ -163,7 +163,7 @@ internal class UpperTransportLayer {
         }
         // If sending a message was cancelled, try sending another one.
         if shouldSendNext {
-            lowerTransportLayerDidSend(segmentedUpperTransportPduTo: handle.destination)
+            lowerTransportLayerDidSend(segmentedUpperTransportPduTo: handle.destination.address)
         }
     }
     
@@ -209,14 +209,15 @@ private extension UpperTransportLayer {
     ///                 If `nil`, the default Node TTL will be used.
     ///   - networkKey: The Network Key to encrypt the PDU with.
     func enqueue(pdu: UpperTransportPdu, initialTtl: UInt8?, networkKey: NetworkKey) {
+        let destination = pdu.destination.address
         var count = 0
         mutex.sync {
-            queues[pdu.destination] = queues[pdu.destination] ?? []
-            queues[pdu.destination]!.append((pdu: pdu, ttl: initialTtl, networkKey: networkKey))
-            count = queues[pdu.destination]!.count
+            queues[destination] = queues[destination] ?? []
+            queues[destination]!.append((pdu: pdu, ttl: initialTtl, networkKey: networkKey))
+            count = queues[destination]!.count
         }
         if count == 1 {
-            sendNext(to: pdu.destination)
+            sendNext(to: destination)
         }
     }
     

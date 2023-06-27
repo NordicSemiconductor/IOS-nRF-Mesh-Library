@@ -646,7 +646,7 @@ extension ModelViewController: ModelViewCellDelegate {
     }
     
     var isRefreshing: Bool {
-        return DispatchQueue.main.sync { refreshControl?.isRefreshing ?? false }
+        return refreshControl?.isRefreshing ?? false
     }
     
 }
@@ -669,7 +669,7 @@ private extension ModelViewController {
     }
     
     func reloadBindings() {
-        let message: ConfigMessage =
+        let message: AcknowledgedConfigMessage =
             ConfigSIGModelAppGet(of: model) ??
             ConfigVendorModelAppGet(of: model)!
         send(message, description: "Reading Bound Application Keys...")
@@ -683,7 +683,7 @@ private extension ModelViewController {
     }
     
     func reloadSubscriptions() {
-        let message: ConfigMessage =
+        let message: AcknowledgedConfigMessage =
             ConfigSIGModelSubscriptionGet(of: model) ??
             ConfigVendorModelSubscriptionGet(of: model)!
         send(message, description: "Reading Subscriptions...")
@@ -722,7 +722,7 @@ private extension ModelViewController {
     ///
     /// - parameter group: The Group to be removed from subscriptions.
     func unsubscribe(from group: Group) {
-        let message: ConfigMessage =
+        let message: AcknowledgedConfigMessage =
             ConfigModelSubscriptionDelete(group: group, from: self.model) ??
             ConfigModelSubscriptionVirtualAddressDelete(group: group, from: self.model)!
         send(message, description: "Unsubscribing...")
@@ -762,7 +762,7 @@ extension ModelViewController: MeshNetworkDelegate {
     
     func meshNetworkManager(_ manager: MeshNetworkManager,
                             didReceiveMessage message: MeshMessage,
-                            sentFrom source: Address, to destination: Address) {
+                            sentFrom source: Address, to destination: MeshAddress) {
         // Has the Node been reset remotely.
         guard !(message is ConfigNodeReset) else {
             (UIApplication.shared.delegate as! AppDelegate).meshNetworkDidChange()
@@ -952,7 +952,7 @@ extension ModelViewController: MeshNetworkDelegate {
     
     func meshNetworkManager(_ manager: MeshNetworkManager,
                             didSendMessage message: MeshMessage,
-                            from localElement: Element, to destination: Address) {
+                            from localElement: Element, to destination: MeshAddress) {
         guard message.opCode == currentMessage?.opCode else {
             return
         }
@@ -966,7 +966,7 @@ extension ModelViewController: MeshNetworkDelegate {
     
     func meshNetworkManager(_ manager: MeshNetworkManager,
                             failedToSendMessage message: MeshMessage,
-                            from localElement: Element, to destination: Address,
+                            from localElement: Element, to destination: MeshAddress,
                             error: Error) {
         // Ignore messages sent from model publication.
         guard message.opCode == currentMessage?.opCode else {

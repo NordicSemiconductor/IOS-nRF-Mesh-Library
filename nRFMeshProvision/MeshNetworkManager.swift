@@ -303,7 +303,7 @@ public extension MeshNetworkManager {
             networkManager.publish(message, from: model)
         }
         return MessageHandle(for: message, sentFrom: localElement.unicastAddress,
-                             to: publish.publicationAddress.address, using: networkManager)
+                             to: publish.publicationAddress, using: networkManager)
     }
     
     /// Encrypts the message with the Application Key and the Network Key
@@ -799,7 +799,7 @@ extension MeshNetworkManager: NetworkManagerDelegate {
     
     func networkManager(_ manager: NetworkManager,
                         didReceiveMessage message: MeshMessage,
-                        sentFrom source: Address, to destination: Address) {
+                        sentFrom source: Address, to destination: MeshAddress) {
         delegateQueue.async {
             self.delegate?.meshNetworkManager(self, didReceiveMessage: message,
                                               sentFrom: source, to: destination)
@@ -808,7 +808,7 @@ extension MeshNetworkManager: NetworkManagerDelegate {
     
     func networkManager(_ manager: NetworkManager,
                         didSendMessage message: MeshMessage,
-                        from localElement: Element, to destination: Address) {
+                        from localElement: Element, to destination: MeshAddress) {
         delegateQueue.async {
             self.delegate?.meshNetworkManager(self, didSendMessage: message,
                                               from: localElement, to: destination)
@@ -817,7 +817,7 @@ extension MeshNetworkManager: NetworkManagerDelegate {
     
     func networkManager(_ manager: NetworkManager,
                         failedToSendMessage message: MeshMessage,
-                        from localElement: Element, to destination: Address,
+                        from localElement: Element, to destination: MeshAddress,
                         error: Error) {
         delegateQueue.async {
             self.delegate?.meshNetworkManager(self, failedToSendMessage: message,

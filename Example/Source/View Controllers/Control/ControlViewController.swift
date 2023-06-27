@@ -178,17 +178,17 @@ extension ControlViewController: MeshNetworkDelegate {
     
     func meshNetworkManager(_ manager: MeshNetworkManager,
                             didReceiveMessage message: MeshMessage,
-                            sentFrom source: Address, to destination: Address) {
+                            sentFrom source: Address, to destination: MeshAddress) {
         // Ignore.
     }
     
     func meshNetworkManager(_ manager: MeshNetworkManager, didSendMessage message: MeshMessage,
-                            from localElement: Element, to destination: Address) {
+                            from localElement: Element, to destination: MeshAddress) {
         // Ignore.
     }
     
     func meshNetworkManager(_ manager: MeshNetworkManager, failedToSendMessage message: MeshMessage,
-                            from localElement: Element, to destination: Address, error: Error) {
+                            from localElement: Element, to destination: MeshAddress, error: Error) {
         // Ignore.
     }
 }
