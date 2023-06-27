@@ -83,13 +83,21 @@ public extension MeshNetworkManager {
             do {
                 try await send(message, from: localElement, to: destination,
                                withTtl: initialTtl, using: applicationKey)
-                completion?(.success(()))
+                if let completion = completion {
+                    delegateQueue.async {
+                        completion(.success(()))
+                    }
+                }
             } catch {
-                completion?(.failure(error))
+                if let completion = completion {
+                    delegateQueue.async {
+                        completion(.failure(error))
+                    }
+                }
             }
         }
-        return MessageHandle(for: message, sentFrom: source.unicastAddress,
-                             to: destination.address, using: networkManager)
+        return MessageHandle(for: message, sentFrom: destination.address,
+                             to: destination, using: networkManager)
     }
     
     /// Encrypts the message with the Application Key and a Network Key
@@ -271,13 +279,21 @@ public extension MeshNetworkManager {
             do {
                 let response = try await send(message, from: source, to: model,
                                withTtl: initialTtl)
-                completion?(.success(response))
+                if let completion = completion {
+                    delegateQueue.async {
+                        completion(.success(response))
+                    }
+                }
             } catch {
-                completion?(.failure(error))
+                if let completion = completion {
+                    delegateQueue.async {
+                        completion(.failure(error))
+                    }
+                }
             }
         }
         return MessageHandle(for: message, sentFrom: source.unicastAddress,
-                             to: element.unicastAddress, using: networkManager)
+                             to: MeshAddress(element.unicastAddress), using: networkManager)
     }
     
     /// Encrypts the message with the common Application Key bound to both given
@@ -378,13 +394,21 @@ public extension MeshNetworkManager {
         Task {
             do {
                 try await send(message, to: destination, withTtl: initialTtl)
-                completion?(.success(()))
+                if let completion = completion {
+                    delegateQueue.async {
+                        completion(.success(()))
+                    }
+                }
             } catch {
-                completion?(.failure(error))
+                if let completion = completion {
+                    delegateQueue.async {
+                        completion(.failure(error))
+                    }
+                }
             }
         }
         return MessageHandle(for: message, sentFrom: element.unicastAddress,
-                             to: destination, using: networkManager)
+                             to: MeshAddress(destination), using: networkManager)
     }
     
     /// Sends a Configuration Message to the primary Element on the given ``Node``.
@@ -480,13 +504,21 @@ public extension MeshNetworkManager {
         Task {
             do {
                 let response = try await send(message, to: destination, withTtl: initialTtl)
-                completion?(.success(response))
+                if let completion = completion {
+                    delegateQueue.async {
+                        completion(.success(response))
+                    }
+                }
             } catch {
-                completion?(.failure(error))
+                if let completion = completion {
+                    delegateQueue.async {
+                        completion(.failure(error))
+                    }
+                }
             }
         }
         return MessageHandle(for: message, sentFrom: source.unicastAddress,
-                             to: destination, using: networkManager)
+                             to: MeshAddress(destination), using: networkManager)
     }
     
     /// Sends a Configuration Message to the primary Element on the given ``Node``.
