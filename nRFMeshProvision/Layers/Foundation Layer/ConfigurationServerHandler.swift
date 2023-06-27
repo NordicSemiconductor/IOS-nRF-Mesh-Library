@@ -92,7 +92,7 @@ internal class ConfigurationServerHandler: ModelDelegate {
     }
     
     func model(_ model: Model, didReceiveAcknowledgedMessage request: AcknowledgedMeshMessage,
-               from source: Address, sentTo destination: MeshAddress) -> MeshMessage {
+               from source: Address, sentTo destination: MeshAddress) -> MeshResponse {
         let localNode = model.parentElement!.parentNode!
         
         switch request {
@@ -684,7 +684,7 @@ internal class ConfigurationServerHandler: ModelDelegate {
         }
     }
     
-    func model(_ model: Model, didReceiveUnacknowledgedMessage message: MeshMessage,
+    func model(_ model: Model, didReceiveUnacknowledgedMessage message: UnacknowledgedMeshMessage,
                from source: Address, sentTo destination: MeshAddress) {
         switch message {
             
@@ -693,7 +693,7 @@ internal class ConfigurationServerHandler: ModelDelegate {
         }
     }
     
-    func model(_ model: Model, didReceiveResponse response: MeshMessage,
+    func model(_ model: Model, didReceiveResponse response: MeshResponse,
                toAcknowledgedMessage request: AcknowledgedMeshMessage,
                from source: Address) {
         switch response {

@@ -30,7 +30,7 @@
 
 import Foundation
 
-public struct GenericLocationGlobalStatus: GenericMessage, LocationStatusMessage {
+public struct GenericLocationGlobalStatus: StaticMeshResponse, LocationStatusMessage {
     public static var opCode: UInt32 = 0x40
     
     public var parameters: Data? {

@@ -30,14 +30,14 @@
 
 import Foundation
 
-public struct LightHSLRangeStatus: GenericMessage, GenericStatusMessage {
+public struct LightHSLRangeStatus: StaticMeshResponse, RangeStatusMessage {
     public static let opCode: UInt32 = 0x827E
     
     public var parameters: Data? {
         return Data([status.rawValue]) + minHue + maxHue + minSaturation + maxSaturation
     }
     
-    public let status: GenericMessageStatus
+    public let status: RangeMessageStatus
     /// The value of the Hue Range Min field of the Light HSL Range state.
     public let minHue: UInt16
     /// The value of the Hue Range Max field of the Light HSL Range state.
@@ -72,7 +72,7 @@ public struct LightHSLRangeStatus: GenericMessage, GenericStatusMessage {
     ///
     /// - parameter status: Status Code for the requesting message.
     /// - parameter request: The request received.
-    public init(_ status: GenericMessageStatus, for request: LightHSLRangeSet) {
+    public init(_ status: RangeMessageStatus, for request: LightHSLRangeSet) {
         self.status = status
         self.minHue = request.minHue
         self.maxHue = request.maxHue
@@ -84,7 +84,7 @@ public struct LightHSLRangeStatus: GenericMessage, GenericStatusMessage {
     ///
     /// - parameter status: Status Code for the requesting message.
     /// - parameter request: The request received.
-    public init(_ status: GenericMessageStatus, for request: LightHSLRangeSetUnacknowledged) {
+    public init(_ status: RangeMessageStatus, for request: LightHSLRangeSetUnacknowledged) {
         self.status = status
         self.minHue = request.minHue
         self.maxHue = request.maxHue
@@ -96,7 +96,7 @@ public struct LightHSLRangeStatus: GenericMessage, GenericStatusMessage {
         guard parameters.count == 9 else {
             return nil
         }
-        guard let status = GenericMessageStatus(rawValue: parameters[0]) else {
+        guard let status = RangeMessageStatus(rawValue: parameters[0]) else {
             return nil
         }
         self.status = status

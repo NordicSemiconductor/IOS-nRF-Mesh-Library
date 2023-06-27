@@ -30,7 +30,7 @@
 
 import Foundation
 
-public struct LightLCPropertyStatus: SensorPropertyMessage {
+public struct LightLCPropertyStatus: StaticMeshResponse, SensorPropertyMessage {
     public static let opCode: UInt32 = 0x64
     
     public let property: DeviceProperty

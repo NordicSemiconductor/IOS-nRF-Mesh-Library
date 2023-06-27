@@ -29,7 +29,7 @@
 */
 import Foundation
 
-public struct ConfigModelAppStatus: ConfigAppKeyMessage, ConfigAnyModelMessage, ConfigStatusMessage {
+public struct ConfigModelAppStatus: ConfigResponse, ConfigStatusMessage, ConfigAppKeyMessage, ConfigAnyModelMessage {
     public static let opCode: UInt32 = 0x803E
     
     public var parameters: Data? {

@@ -31,7 +31,8 @@
 import Foundation
 
 /// A base protocol for time messages.
-public protocol TimeMessage: StaticMeshMessage {
+public protocol TimeMessage: MeshMessage {
+    /// The time in TAI format.
     var time: TaiTime { get }
 }
 

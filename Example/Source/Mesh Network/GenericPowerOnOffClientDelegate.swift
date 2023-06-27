@@ -53,7 +53,7 @@ class GenericPowerOnOffClientDelegate: ModelDelegate {
     }
     
     init() {
-        let types: [GenericMessage.Type] = [
+        let types: [StaticMeshMessage.Type] = [
             GenericOnPowerUpStatus.self
         ]
         messageTypes = types.toMap()
@@ -62,17 +62,17 @@ class GenericPowerOnOffClientDelegate: ModelDelegate {
     // MARK: - Message handlers
     
     func model(_ model: Model, didReceiveAcknowledgedMessage request: AcknowledgedMeshMessage,
-               from source: Address, sentTo destination: MeshAddress) -> MeshMessage {
+               from source: Address, sentTo destination: MeshAddress) -> MeshResponse {
         fatalError("Message not supported: \(request)")
     }
     
-    func model(_ model: Model, didReceiveUnacknowledgedMessage message: MeshMessage,
+    func model(_ model: Model, didReceiveUnacknowledgedMessage message: UnacknowledgedMeshMessage,
                from source: Address, sentTo destination: MeshAddress) {
         // The status message may be received here if the Generic Power OnOff Server model
         // has been configured to publish. Ignore this message.
     }
     
-    func model(_ model: Model, didReceiveResponse response: MeshMessage,
+    func model(_ model: Model, didReceiveResponse response: MeshResponse,
                toAcknowledgedMessage request: AcknowledgedMeshMessage,
                from source: Address) {
         // Ignore.

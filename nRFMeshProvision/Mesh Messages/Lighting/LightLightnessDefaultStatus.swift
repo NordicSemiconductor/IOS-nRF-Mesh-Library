@@ -30,7 +30,7 @@
 
 import Foundation
 
-public struct LightLightnessDefaultStatus: GenericMessage {
+public struct LightLightnessDefaultStatus: StaticMeshResponse {
     public static let opCode: UInt32 = 0x8256
     
     public var parameters: Data? {

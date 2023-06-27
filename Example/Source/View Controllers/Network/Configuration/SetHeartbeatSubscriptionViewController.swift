@@ -242,7 +242,7 @@ private extension SetHeartbeatSubscriptionViewController {
         let periodLog = self.periodLog
         
         start("Setting Heartbeat Subscription...") {
-            let message: ConfigMessage =
+            let message: AcknowledgedConfigMessage =
                 ConfigHeartbeatSubscriptionSet(startProcessingHeartbeatMessagesFor: periodLog,
                                                secondsSentFrom: sourceAddress,
                                                to: destinationAddress)!

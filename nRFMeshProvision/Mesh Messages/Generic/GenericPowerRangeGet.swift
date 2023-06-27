@@ -30,9 +30,9 @@
 
 import Foundation
 
-public struct GenericPowerRangeGet: AcknowledgedGenericMessage {
+public struct GenericPowerRangeGet: StaticAcknowledgedMeshMessage {
     public static let opCode: UInt32 = 0x821D
-    public static let responseType: StaticMeshMessage.Type = GenericPowerRangeStatus.self
+    public static let responseType: StaticMeshResponse.Type = GenericPowerRangeStatus.self
     
     public var parameters: Data? {
         return nil

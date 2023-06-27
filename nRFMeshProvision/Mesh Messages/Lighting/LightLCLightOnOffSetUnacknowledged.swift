@@ -30,7 +30,7 @@
 
 import Foundation
 
-public struct LightLCLightOnOffSetUnacknowledged: GenericMessage, TransactionMessage, TransitionMessage {
+public struct LightLCLightOnOffSetUnacknowledged: StaticUnacknowledgedMeshMessage, TransactionMessage, TransitionMessage {
     public static let opCode: UInt32 = 0x829B
     
     public var tid: UInt8!

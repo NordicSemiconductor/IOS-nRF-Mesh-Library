@@ -30,7 +30,7 @@
 
 import Foundation
 
-public struct TimeZoneStatus: GenericMessage {
+public struct TimeZoneStatus: StaticMeshResponse {
     public static let opCode: UInt32 = 0x823D
     
     public var parameters: Data? {

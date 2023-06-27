@@ -30,9 +30,9 @@
 
 import Foundation
 
-public struct GenericPowerDefaultSet: AcknowledgedGenericMessage {
+public struct GenericPowerDefaultSet: StaticAcknowledgedMeshMessage {
     public static let opCode: UInt32 = 0x821F
-    public static let responseType: StaticMeshMessage.Type = GenericPowerDefaultStatus.self
+    public static let responseType: StaticMeshResponse.Type = GenericPowerDefaultStatus.self
     
     public var parameters: Data? {
         return Data() + power

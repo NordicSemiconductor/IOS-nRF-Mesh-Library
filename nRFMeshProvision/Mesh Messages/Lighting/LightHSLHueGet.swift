@@ -30,9 +30,9 @@
 
 import Foundation
 
-public struct LightHSLHueGet: AcknowledgedGenericMessage {
+public struct LightHSLHueGet: StaticAcknowledgedMeshMessage {
     public static let opCode: UInt32 = 0x826E
-    public static let responseType: StaticMeshMessage.Type = LightHSLHueStatus.self
+    public static let responseType: StaticMeshResponse.Type = LightHSLHueStatus.self
     
     public var parameters: Data? {
         return nil

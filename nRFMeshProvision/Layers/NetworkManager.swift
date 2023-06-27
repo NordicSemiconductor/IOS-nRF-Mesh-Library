@@ -48,8 +48,39 @@ internal class NetworkManager {
     
     let meshNetwork: MeshNetwork
     
+    /// A set of addresses to which the manager is sending messages at that moment.
+    ///
+    /// The lower transport layer shall not transmit segmented messages for more
+    /// than one Upper Transport PDU to the same destination at the same time.
+    private var outgoingMessages: Set<Address> = Set()
+    /// Delivery callbacks.
+    ///
+    /// These callbacks are set when an Unacknowledged Mesh Message is sent any address
+    /// or an Acknowledged Mesh Message is sent to a Group address, which could result in
+    /// 0 or more responses being received. Instead, only the delivery callback is set
+    /// in such case.
+    ///
+    /// The key is the destination address and the value is the callback.
+    /// If a message is sent without completion callback, nothing gets added to this map.
+    private var deliveryCallbacks: [Address : (Result<Void, Error>) -> ()] = [:]
+    /// Callbacks awaiting a mesh response for ``AcknowledgedMeshMessage`` which are not
+    /// ``AcknowledgedConfigMessage``.
+    ///
+    /// The key is the Unicast Address of the Element from which the response is expected.
+    /// The value is the pair: expected Op Code and the callback to be called.
+    private var responseCallbacks: [Address : (expectedOpCode: UInt32, callback: (Result<MeshResponse, Error>) -> ())] = [:]
+    /// Callbacks awaiting a mesh response for ``AcknowledgedConfigMessage``.
+    ///
+    /// The key is the Unicast Address of the Element from which the response is expected.
+    /// The value is the pair: expected Op Code and the callback to be called.
+    private var configResponseCallbacks: [Address : (expectedOpCode: UInt32, callback: (Result<ConfigResponse, Error>) -> ())] = [:]
+    /// Mutex for thread synchronization.
+    private let mutex = DispatchQueue(label: "NetworkManagerMutex")
+    
     // MARK: - Computed properties
     
+    /// Network parameters, as given by the `networkParametersProvider`,
+    /// or ``NetworkParameters/default`` if not set.
     var networkParameters: NetworkParameters {
         return networkParametersProvider?.networkParameters ?? .default
     }
@@ -109,8 +140,8 @@ internal class NetworkManager {
             publish.ttl :
             localElement.parentNode?.defaultTTL ?? networkParameters.defaultTtl
         // Send the message.
-        send(message, from: localElement, to: publish.publicationAddress,
-             withTtl: ttl, using: applicationKey)
+        accessLayer.send(message, from: localElement, to: publish.publicationAddress,
+                         withTtl: ttl, using: applicationKey, retransmit: false)
         // If retransmission was configured, start the timer that will retransmit.
         // There is no need to retransmit acknowledged messages, as they have their
         // own retransmission mechanism.
@@ -151,11 +182,60 @@ internal class NetworkManager {
     ///   - initialTtl:     The initial TTL (Time To Live) value of the message.
     ///                     If `nil`, the default Node TTL will be used.
     ///   - applicationKey: The Application Key to sign the message.
+    ///   - completion:     The completion handler called when the message was sent.
     func send(_ message: MeshMessage,
               from element: Element, to destination: MeshAddress,
               withTtl initialTtl: UInt8?,
-              using applicationKey: ApplicationKey) {
+              using applicationKey: ApplicationKey,
+              completion: ((Result<Void, Error>) -> ())?) {
+        mutex.sync {
+            guard !outgoingMessages.contains(destination.address) else {
+                completion?(.failure(AccessError.busy))
+                return
+            }
+            outgoingMessages.insert(destination.address)
+            if let completion = completion {
+                deliveryCallbacks[destination.address] = completion
+            }
+        }
         accessLayer.send(message, from: element, to: destination,
+                         withTtl: initialTtl, using: applicationKey,
+                         retransmit: false)
+    }
+    
+    /// Encrypts the message with the Application Key and a Network Key
+    /// bound to it, and sends to the given destination address.
+    ///
+    /// This method does not send nor return PDUs to be sent. Instead,
+    /// for each created segment it calls transmitter's ``Transmitter/send(_:ofType:)``
+    /// method, which should send the PDU over the air. This is in order to support
+    /// retransmission in case a packet was lost and needs to be sent again
+    /// after block acknowledgment was received.
+    ///
+    /// - parameters:
+    ///   - message:        The message to be sent.
+    ///   - element:        The source Element.
+    ///   - destination:    The destination Unicast Address.
+    ///   - initialTtl:     The initial TTL (Time To Live) value of the message.
+    ///                     If `nil`, the default Node TTL will be used.
+    ///   - applicationKey: The Application Key to sign the message.
+    ///   - completion:     The completion handler with the response.
+    func send(_ message: AcknowledgedMeshMessage,
+              from element: Element, to destination: Address,
+              withTtl initialTtl: UInt8?,
+              using applicationKey: ApplicationKey,
+              completion: ((Result<MeshResponse, Error>) -> ())?) {
+        mutex.sync {
+            guard !outgoingMessages.contains(destination) else {
+                completion?(.failure(AccessError.busy))
+                return
+            }
+            outgoingMessages.insert(destination)
+            if let completion = completion {
+                responseCallbacks[destination] = (message.responseOpCode, completion)
+            }
+        }
+        accessLayer.send(message, from: element, to: MeshAddress(destination),
                          withTtl: initialTtl, using: applicationKey,
                          retransmit: false)
     }
@@ -164,7 +244,44 @@ internal class NetworkManager {
     /// known to the target device, and sends to the given destination address.
     ///
     /// The ``ConfigNetKeyDelete`` will be signed with a different Network Key
-    /// that is being removed.
+    /// that is removing.
+    ///
+    /// This method does not send nor return PDUs to be sent. Instead,
+    /// for each created segment it calls transmitter's ``Transmitter/send(_:ofType:)``
+    /// method, which should send the PDU over the air. This is in order to support
+    /// retransmission in case a packet was lost and needs to be sent again
+    /// after block acknowledgment was received.
+    ///
+    /// - parameters:
+    ///   - configMessage: The message to be sent.
+    ///   - element:       The source Element.
+    ///   - destination:   The destination address.
+    ///   - initialTtl:    The initial TTL (Time To Live) value of the message.
+    ///                    If `nil`, the default Node TTL will be used.
+    ///   - completion:     The completion handler called when the message was sent.                    
+    func send(_ configMessage: UnacknowledgedConfigMessage,
+              from element: Element, to destination: Address,
+              withTtl initialTtl: UInt8?,
+              completion: ((Result<Void, Error>) -> ())?) {
+         mutex.sync {
+            guard !outgoingMessages.contains(destination) else {
+                completion?(.failure(AccessError.busy))
+                return
+            }
+            outgoingMessages.insert(destination)
+            if let completion = completion {
+                deliveryCallbacks[destination] = completion
+            }
+        }
+        accessLayer.send(configMessage, from: element, to: destination,
+                         withTtl: initialTtl)
+    }
+    
+    /// Encrypts the message with the Device Key and the first Network Key
+    /// known to the target device, and sends to the given destination address.
+    ///
+    /// The ``ConfigNetKeyDelete`` will be signed with a different Network Key
+    /// that is removing.
     ///
     /// This method does not send nor return PDUs to be sent. Instead,
     /// for each created segment it calls transmitter's ``Transmitter/send(_:ofType:)``
@@ -174,30 +291,27 @@ internal class NetworkManager {
     ///
     /// - parameters:
     ///   - configMessage: The message to be sent.
+    ///   - element:       The source Element.
     ///   - destination:   The destination address.
     ///   - initialTtl:    The initial TTL (Time To Live) value of the message.
     ///                    If `nil`, the default Node TTL will be used.
-    func send(_ configMessage: ConfigMessage, to destination: Address,
-              withTtl initialTtl: UInt8?) {
-        accessLayer.send(configMessage, to: destination, withTtl: initialTtl)
-    }
-    
-    /// Replies to the received message, which was sent with the given key set,
-    /// with the given message. The message will be sent from the local
-    /// Primary Element.
-    ///
-    /// - parameters:
-    ///   - origin:      The destination address of the message that the reply is for.
-    ///   - message:     The response message to be sent.
-    ///   - destination: The destination address. This must be a Unicast Address.
-    ///   - keySet:      The keySet that should be used to encrypt the message.
-    func reply(toMessageSentTo origin: Address, with message: MeshMessage,
-               to destination: Address, using keySet: KeySet) {
-        guard let primaryElement = meshNetwork.localProvisioner?.node?.elements.first else {
-            return
+    ///   - completion:    The completion handler with the response.
+    func send(_ configMessage: AcknowledgedConfigMessage,
+              from element: Element, to destination: Address,
+              withTtl initialTtl: UInt8?,
+              completion: ((Result<ConfigResponse, Error>) -> ())?) {
+         mutex.sync {
+            guard !outgoingMessages.contains(destination) else {
+                completion?(.failure(AccessError.busy))
+                return
+            }
+            outgoingMessages.insert(destination)
+            if let completion = completion {
+                configResponseCallbacks[destination] = (configMessage.responseOpCode, completion)
+            }
         }
-        accessLayer.reply(toMessageSentTo: origin, with: message,
-                          from: primaryElement, to: destination, using: keySet)
+        accessLayer.send(configMessage, from: element, to: destination,
+                         withTtl: initialTtl)
     }
     
     /// Replies to the received message, which was sent with the given key set,
@@ -209,10 +323,10 @@ internal class NetworkManager {
     ///   - element:     The source Element.
     ///   - destination: The destination address. This must be a Unicast Address.
     ///   - keySet:      The keySet that should be used to encrypt the message.
-    func reply(toMessageSentTo origin: Address, with message: MeshMessage,
+    func reply(toAcknowledgedMessageSentTo origin: Address, with message: MeshResponse,
                from element: Element, to destination: Address,
                using keySet: KeySet) {
-        accessLayer.reply(toMessageSentTo: origin, with: message,
+        accessLayer.reply(toAcknowledgedMessageSentTo: origin, with: message,
                           from: element, to: destination, using: keySet)
     }
     
@@ -240,6 +354,32 @@ internal class NetworkManager {
     ///   - destination: The destination address of the message received.
     func notifyAbout(newMessage message: MeshMessage,
                      from source: Address, to destination: Address) {
+        // Notify callback awaiting a response.
+        switch message {
+        case let response as ConfigResponse:
+            let callback: ((Result<ConfigResponse, Error>) -> ())? = mutex.sync {
+                guard let (expectedOpCode, callback) = configResponseCallbacks[source],
+                      expectedOpCode == response.opCode else {
+                    return nil
+                }
+                configResponseCallbacks.removeValue(forKey: source)
+                return callback
+            }
+            callback?(.success(response))
+        case let response as MeshResponse:
+            let callback: ((Result<MeshResponse, Error>) -> ())? = mutex.sync {
+                guard let (expectedOpCode, callback) = responseCallbacks[source],
+                      expectedOpCode == response.opCode else {
+                    return nil
+                }
+                responseCallbacks.removeValue(forKey: source)
+                return callback
+            }
+            callback?(.success(response))
+        default:
+            break
+        }
+        // Notify the global delegate.
         delegate?.networkManager(self, didReceiveMessage: message,
                                  sentFrom: source, to: destination)
     }
@@ -253,6 +393,15 @@ internal class NetworkManager {
     ///   - destination:  The destination address.
     func notifyAbout(deliveringMessage message: MeshMessage,
                      from localElement: Element, to destination: Address) {
+        // Notify the delivery callback.
+        mutex.sync {
+            _ = outgoingMessages.remove(destination)
+        }
+        let callback = mutex.sync {
+            deliveryCallbacks.removeValue(forKey: destination)
+        }
+        callback?(.success(()))
+        // Notify the global delegate.
         delegate?.networkManager(self, didSendMessage: message,
                                  from: localElement, to: destination)
     }
@@ -267,6 +416,37 @@ internal class NetworkManager {
     ///   - destination:  The destination address.
     func notifyAbout(error: Error, duringSendingMessage message: MeshMessage,
                      from localElement: Element, to destination: Address) {
+        // Notify the callback, that sending has failed.
+        mutex.sync {
+            _ = outgoingMessages.remove(destination)
+        }
+        // Notify callback awaiting a response, that sending the message has failed.0
+        switch message {
+        case let request as AcknowledgedConfigMessage:
+            let callback: ((Result<ConfigResponse, Error>) -> ())? = mutex.sync {
+                guard let (expectedOpCode, callback) = configResponseCallbacks[destination],
+                      expectedOpCode == request.responseOpCode else {
+                    return nil
+                }
+                configResponseCallbacks.removeValue(forKey: destination)
+                return callback
+            }
+            callback?(.failure(error))
+        case let request as AcknowledgedMeshMessage:
+            let callback: ((Result<MeshResponse, Error>) -> ())? = mutex.sync {
+                guard let (expectedOpCode, callback) = responseCallbacks[destination],
+                      expectedOpCode == request.responseOpCode else {
+                    return nil
+                }
+                responseCallbacks.removeValue(forKey: destination)
+                return callback
+            }
+            callback?(.failure(error))
+        default:
+            let callback = deliveryCallbacks.removeValue(forKey: destination)
+            callback?(.failure(error))
+        }
+        // Notify the global delegate.
         delegate?.networkManager(self, failedToSendMessage: message,
                                  from: localElement, to: destination, error: error)
     }

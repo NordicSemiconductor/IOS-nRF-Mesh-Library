@@ -30,9 +30,9 @@
 
 import Foundation
 
-public struct SensorSettingGet: AcknowledgedSensorPropertyMessage {
+public struct SensorSettingGet: StaticAcknowledgedMeshMessage, SensorPropertyMessage {
     public static let opCode: UInt32 = 0x8236
-    public static let responseType: StaticMeshMessage.Type = SensorSettingStatus.self
+    public static let responseType: StaticMeshResponse.Type = SensorSettingStatus.self
     
     public let property: DeviceProperty
     /// Setting Property identifying a setting within a sensor.

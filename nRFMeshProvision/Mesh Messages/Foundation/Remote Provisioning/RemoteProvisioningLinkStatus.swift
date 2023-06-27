@@ -34,7 +34,7 @@ import Foundation
 /// the Remote Provisioning Server to acknowledge a Remote Provisioning Link Get
 /// message, a Remote Provisioning Link Open message, or a Remote Provisioning
 /// Link Close message.
-public struct RemoteProvisioningLinkStatus: RemoteProvisioningMessage, RemoteProvisioningStatusMessage {
+public struct RemoteProvisioningLinkStatus: RemoteProvisioningResponse, RemoteProvisioningStatusMessage {
     public static let opCode: UInt32 = 0x805B
     
     public let status: RemoteProvisioningMessageStatus

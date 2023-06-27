@@ -34,7 +34,7 @@ import CoreBluetooth
 /// A Remote Provisioning Extended Scan Report message is an unacknowledged message
 /// used by the Remote Provisioning Server to report the advertising data requested
 /// by the client in a Remote Provisioning Extended Scan Start message.
-public struct RemoteProvisioningExtendedScanReport: RemoteProvisioningMessage, RemoteProvisioningStatusMessage {
+public struct RemoteProvisioningExtendedScanReport: RemoteProvisioningStatusMessage {
     public static let opCode: UInt32 = 0x8057
     
     public let status: RemoteProvisioningMessageStatus

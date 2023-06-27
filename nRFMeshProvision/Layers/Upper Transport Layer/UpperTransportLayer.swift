@@ -149,7 +149,9 @@ internal class UpperTransportLayer {
                         $0.pdu.destination == handle.destination
                     }
                     .forEach {
-                        networkManager.notifyAbout(error: LowerTransportError.cancelled, duringSendingMessage: $0.pdu.message!, from: element, to: handle.destination)
+                        networkManager.notifyAbout(error: LowerTransportError.cancelled,
+                                                   duringSendingMessage: $0.pdu.message!,
+                                                   from: element, to: handle.destination)
                     }
             }
             // Remove all enqueued messages that match the handler.

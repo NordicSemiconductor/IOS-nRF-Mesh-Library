@@ -30,7 +30,7 @@
 
 import Foundation
 
-public struct ConfigNetworkTransmitStatus: ConfigMessage {
+public struct ConfigNetworkTransmitStatus: ConfigResponse {
     public static let opCode: UInt32 = 0x8025
     
     public var parameters: Data? {

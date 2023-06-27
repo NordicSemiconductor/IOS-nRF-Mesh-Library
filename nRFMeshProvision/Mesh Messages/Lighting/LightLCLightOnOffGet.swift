@@ -30,9 +30,9 @@
 
 import Foundation
 
-public struct LightLCLightOnOffGet: AcknowledgedGenericMessage {
+public struct LightLCLightOnOffGet: StaticAcknowledgedMeshMessage {
     public static let opCode: UInt32 = 0x8299
-    public static let responseType: StaticMeshMessage.Type = LightLCLightOnOffStatus.self
+    public static let responseType: StaticMeshResponse.Type = LightLCLightOnOffStatus.self
     
     public var parameters: Data? {
         return nil

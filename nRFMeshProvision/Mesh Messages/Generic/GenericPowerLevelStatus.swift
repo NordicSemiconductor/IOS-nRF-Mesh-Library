@@ -30,7 +30,7 @@
 
 import Foundation
 
-public struct GenericPowerLevelStatus: GenericMessage, TransitionStatusMessage {
+public struct GenericPowerLevelStatus: StaticMeshResponse, TransitionStatusMessage {
     public static var opCode: UInt32 = 0x8218
     
     public var parameters: Data? {

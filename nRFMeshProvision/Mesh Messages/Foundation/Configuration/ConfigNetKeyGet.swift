@@ -36,7 +36,7 @@ import Foundation
 /// The response to this message is a ``ConfigNetKeyList`` message.
 public struct ConfigNetKeyGet: AcknowledgedConfigMessage {
     public static let opCode: UInt32 = 0x8042
-    public static let responseType: StaticMeshMessage.Type = ConfigNetKeyList.self
+    public static let responseType: StaticMeshResponse.Type = ConfigNetKeyList.self
     
     public var parameters: Data? {
         return nil

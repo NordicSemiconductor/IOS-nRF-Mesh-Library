@@ -32,7 +32,7 @@ import Foundation
 
 /// A Private Beacon Status message is an unacknowledged message used to report
 /// the current Private Beacon state and Random Update Interval Steps state of a Node.
-public struct PrivateBeaconStatus: ConfigMessage {
+public struct PrivateBeaconStatus: ConfigResponse {
     public static let opCode: UInt32 = 0x8062
     
     /// Current value of the Private Beacon state.

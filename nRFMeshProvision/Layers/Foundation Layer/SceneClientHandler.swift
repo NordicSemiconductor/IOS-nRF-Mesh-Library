@@ -39,7 +39,7 @@ internal class SceneClientHandler: ModelDelegate {
     let publicationMessageComposer: MessageComposer? = nil
     
     init(_ meshNetwork: MeshNetwork) {
-        let types: [GenericMessage.Type] = [
+        let types: [StaticMeshMessage.Type] = [
             // A Scene Server shall send the Scene Status message as a response to
             // a Scene Get and Scene Recall message, or as an unsolicited message.
             SceneStatus.self,
@@ -53,7 +53,7 @@ internal class SceneClientHandler: ModelDelegate {
     }
     
     func model(_ model: Model, didReceiveAcknowledgedMessage request: AcknowledgedMeshMessage,
-               from source: Address, sentTo destination: MeshAddress) -> MeshMessage {
+               from source: Address, sentTo destination: MeshAddress) -> MeshResponse {
         switch request {
             // No acknowledged message supported by this Model.
         default:
@@ -61,12 +61,12 @@ internal class SceneClientHandler: ModelDelegate {
         }
     }
     
-    func model(_ model: Model, didReceiveUnacknowledgedMessage message: MeshMessage,
+    func model(_ model: Model, didReceiveUnacknowledgedMessage message: UnacknowledgedMeshMessage,
                from source: Address, sentTo destination: MeshAddress) {
         handle(message, sentFrom: source)
     }
     
-    func model(_ model: Model, didReceiveResponse response: MeshMessage,
+    func model(_ model: Model, didReceiveResponse response: MeshResponse,
                toAcknowledgedMessage request: AcknowledgedMeshMessage,
                from source: Address) {
         handle(response, sentFrom: source)

@@ -34,7 +34,7 @@ import Foundation
 /// the Remote Provisioning Server to report the current value of the
 /// Remote Provisioning Scan Parameters state and the Remote Provisioning Scan state
 /// of a Remote Provisioning Server model.
-public struct RemoteProvisioningScanStatus: RemoteProvisioningMessage, RemoteProvisioningStatusMessage {
+public struct RemoteProvisioningScanStatus: RemoteProvisioningResponse, RemoteProvisioningStatusMessage {
     public static let opCode: UInt32 = 0x8054
     
     public let status: RemoteProvisioningMessageStatus

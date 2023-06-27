@@ -30,7 +30,7 @@
 
 import Foundation
 
-public struct SensorSettingStatus: SensorPropertyMessage {
+public struct SensorSettingStatus: StaticMeshResponse, SensorPropertyMessage {
     public static let opCode: UInt32 = 0x5B
     
     /// The Sensor Setting Access field is an enumeration indicating whether

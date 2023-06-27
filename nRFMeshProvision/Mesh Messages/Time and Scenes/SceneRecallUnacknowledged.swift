@@ -30,7 +30,7 @@
 
 import Foundation
 
-public struct SceneRecallUnacknowledged: GenericMessage, TransactionMessage, TransitionMessage {
+public struct SceneRecallUnacknowledged: StaticUnacknowledgedMeshMessage, TransactionMessage, TransitionMessage {
     public static let opCode: UInt32 = 0x8243
     
     public var tid: UInt8!

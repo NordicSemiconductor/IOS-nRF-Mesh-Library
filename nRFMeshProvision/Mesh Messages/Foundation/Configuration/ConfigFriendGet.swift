@@ -32,7 +32,7 @@ import Foundation
 
 public struct ConfigFriendGet: AcknowledgedConfigMessage {
     public static let opCode: UInt32 = 0x800F
-    public static let responseType: StaticMeshMessage.Type = ConfigFriendStatus.self
+    public static let responseType: StaticMeshResponse.Type = ConfigFriendStatus.self
     
     public var parameters: Data? {
         return nil

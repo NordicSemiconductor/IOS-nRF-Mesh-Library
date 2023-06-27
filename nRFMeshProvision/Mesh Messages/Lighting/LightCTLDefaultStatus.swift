@@ -30,7 +30,7 @@
 
 import Foundation
 
-public struct LightCTLDefaultStatus: GenericMessage {
+public struct LightCTLDefaultStatus: StaticMeshResponse {
     public static let opCode: UInt32 = 0x8268
     
     public var parameters: Data? {

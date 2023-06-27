@@ -34,7 +34,7 @@ import Foundation
 /// by the Remote Provisioning Client to terminate the Remote Provisioning Scan procedure.
 public struct RemoteProvisioningScanStop: AcknowledgedRemoteProvisioningMessage {
     public static let opCode: UInt32 = 0x8053
-    public static let responseType: StaticMeshMessage.Type = RemoteProvisioningScanStatus.self
+    public static let responseType: StaticMeshResponse.Type = RemoteProvisioningScanStatus.self
     
     public var parameters: Data? {
         return nil

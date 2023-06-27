@@ -34,7 +34,7 @@ import Foundation
 /// Private Beacon state and Random Update Interval Steps state of a Node.
 public struct PrivateBeaconGet: AcknowledgedConfigMessage {
     public static let opCode: UInt32 = 0x8060
-    public static let responseType: StaticMeshMessage.Type = PrivateBeaconStatus.self
+    public static let responseType: StaticMeshResponse.Type = PrivateBeaconStatus.self
     
     public var parameters: Data? {
         return nil

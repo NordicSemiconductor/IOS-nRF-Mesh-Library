@@ -28,13 +28,9 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
- /*
-  * Created by codepgq.
-  */
-
 import Foundation
 
-public struct LightCTLStatus: GenericMessage, TransitionStatusMessage {
+public struct LightCTLStatus: StaticMeshResponse, TransitionStatusMessage {
     public static var opCode: UInt32 = 0x8260
     
     public var parameters: Data? {

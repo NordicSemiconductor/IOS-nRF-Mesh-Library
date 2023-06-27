@@ -40,6 +40,18 @@ public protocol ConfigMessage: StaticMeshMessage {
     // No additional fields.
 }
 
+/// A base protocol for unacknowledged Configuration messages.
+///
+/// Unacknowledged configuration messages are sent as replies to acknowledged messages.
+public protocol UnacknowledgedConfigMessage: ConfigMessage, UnacknowledgedMeshMessage {
+    // No additional fields.
+}
+
+/// The base class for response messages.
+public protocol ConfigResponse: StaticMeshResponse, UnacknowledgedConfigMessage {
+    // No additional fields.
+}
+
 /// A base protocol for acknowledged Configuration messages.
 ///
 /// Acknowledged messages will be responded with a status message.
@@ -155,13 +167,13 @@ public protocol ConfigVirtualLabelMessage: ConfigMessage {
 }
 
 /// A base protocol for config messages with list of Application Keys.
-public protocol ConfigModelAppList: ConfigStatusMessage, ConfigModelMessage {
+public protocol ConfigModelAppList: ConfigModelMessage {
     /// Application Key Indexes bound to the Model.
     var applicationKeyIndexes: [KeyIndex] { get }
 }
 
 /// A base protocol for config messages with list of Model subscription addresses.
-public protocol ConfigModelSubscriptionList: ConfigStatusMessage, ConfigModelMessage {
+public protocol ConfigModelSubscriptionList: ConfigModelMessage {
     /// A list of Addresses.
     var addresses: [Address] { get }
 }

@@ -30,9 +30,9 @@
 
 import Foundation
 
-public struct LightHSLSaturationSet: AcknowledgedGenericMessage, TransactionMessage, TransitionMessage {
+public struct LightHSLSaturationSet: StaticAcknowledgedMeshMessage, TransactionMessage, TransitionMessage {
     public static var opCode: UInt32 = 0x8273
-    public static var responseType: StaticMeshMessage.Type = LightHSLSaturationStatus.self
+    public static var responseType: StaticMeshResponse.Type = LightHSLSaturationStatus.self
     
     public var tid: UInt8!
     public var parameters: Data? {

@@ -28,13 +28,9 @@
 * POSSIBILITY OF SUCH DAMAGE.
 */
 
-/*
- * Created by codepgq.
- */
-
 import Foundation
 
-public struct LightHSLTargetStatus: GenericMessage, TransitionStatusMessage {
+public struct LightHSLTargetStatus: StaticMeshResponse, TransitionStatusMessage {
     public static var opCode: UInt32 = 0x827A
     
     public var parameters: Data? {

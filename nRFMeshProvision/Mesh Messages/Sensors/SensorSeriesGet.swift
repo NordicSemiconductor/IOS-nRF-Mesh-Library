@@ -30,9 +30,9 @@
 
 import Foundation
 
-public struct SensorSeriesGet: AcknowledgedSensorPropertyMessage {
+public struct SensorSeriesGet: StaticAcknowledgedMeshMessage, SensorPropertyMessage {
     public static let opCode: UInt32 = 0x8233
-    public static let responseType: StaticMeshMessage.Type = SensorSeriesStatus.self
+    public static let responseType: StaticMeshResponse.Type = SensorSeriesStatus.self
     
     public let property: DeviceProperty
     /// Raw value identifying a starting column.

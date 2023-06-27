@@ -28,15 +28,11 @@
 * POSSIBILITY OF SUCH DAMAGE.
 */
 
-/*
- * Created by codepgq.
- */
-
 import Foundation
 
-public struct LightHSLDefaultSet: AcknowledgedGenericMessage {
+public struct LightHSLDefaultSet: StaticAcknowledgedMeshMessage {
     public static var opCode: UInt32 = 0x827F
-    public static let responseType: StaticMeshMessage.Type = LightHSLDefaultStatus.self
+    public static let responseType: StaticMeshResponse.Type = LightHSLDefaultStatus.self
     
     public var parameters: Data? {
         return Data() + lightness + hue + saturation

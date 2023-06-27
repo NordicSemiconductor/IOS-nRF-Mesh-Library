@@ -30,9 +30,9 @@
 
 import Foundation
 
-public struct SceneDelete: AcknowledgedGenericMessage {
+public struct SceneDelete: StaticAcknowledgedMeshMessage {
     public static let opCode: UInt32 = 0x829E
-    public static let responseType: StaticMeshMessage.Type = SceneRegisterStatus.self
+    public static let responseType: StaticMeshResponse.Type = SceneRegisterStatus.self
     
     public var parameters: Data? {
         return Data() + scene

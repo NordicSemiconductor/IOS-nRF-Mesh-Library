@@ -30,37 +30,10 @@
 
 import Foundation
 
-/// A base protocol for sensor messages.
-public protocol SensorMessage: StaticMeshMessage {
-    // No additional fields.
-}
-
-/// A base protocol for acknowledged sensor messages.
-public protocol AcknowledgedSensorMessage: SensorMessage, StaticAcknowledgedMeshMessage {
-    // No additional fields.
-}
-
-public extension Array where Element == SensorMessage.Type {
-    
-    /// A helper method that can create a map of message types required
-    /// by the ``ModelDelegate`` from a list of ``SensorMessage``s.
-    ///
-    /// - returns: A map of message types.
-    func toMap() -> [UInt32 : MeshMessage.Type] {
-        return (self as [StaticMeshMessage.Type]).toMap()
-    }
-    
-}
-
 /// A base protocol for sensor property messages.
-public protocol SensorPropertyMessage: SensorMessage {
+public protocol SensorPropertyMessage: MeshMessage {
     /// Property for the sensor.
     var property: DeviceProperty { get }
-}
-
-/// A base protocol for acknowledged sensor property messages.
-public protocol AcknowledgedSensorPropertyMessage: SensorPropertyMessage, StaticAcknowledgedMeshMessage {
-    // No additional fields.
 }
 
 /// The Sensor Descriptor state represents the attributes describing the

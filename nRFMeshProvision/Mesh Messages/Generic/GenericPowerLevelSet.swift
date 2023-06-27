@@ -30,9 +30,9 @@
 
 import Foundation
 
-public struct GenericPowerLevelSet: AcknowledgedGenericMessage, TransactionMessage, TransitionMessage {
+public struct GenericPowerLevelSet: StaticAcknowledgedMeshMessage, TransactionMessage, TransitionMessage {
     public static let opCode: UInt32 = 0x8216
-    public static let responseType: StaticMeshMessage.Type = GenericPowerLevelStatus.self
+    public static let responseType: StaticMeshResponse.Type = GenericPowerLevelStatus.self
     
     public var tid: UInt8!
     public var parameters: Data? {

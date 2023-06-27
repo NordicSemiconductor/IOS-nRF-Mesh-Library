@@ -30,9 +30,9 @@
 
 import Foundation
 
-public struct SensorGet: AcknowledgedSensorMessage {
+public struct SensorGet: StaticAcknowledgedMeshMessage {
     public static let opCode: UInt32 = 0x8231
-    public static let responseType: StaticMeshMessage.Type = SensorStatus.self
+    public static let responseType: StaticMeshResponse.Type = SensorStatus.self
     
     /// The sensor property to get the value of.
     ///

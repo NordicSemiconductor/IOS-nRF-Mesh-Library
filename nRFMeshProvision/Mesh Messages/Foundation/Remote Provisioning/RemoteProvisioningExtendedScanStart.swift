@@ -34,7 +34,7 @@ import CoreBluetooth
 /// A Remote Provisioning Extended Scan Start message is an unacknowledged message
 /// that is used by the Remote Provisioning Client to request additional information
 /// about a specific unprovisioned device or about the Remote Provisioning Server itself.
-public struct RemoteProvisioningExtendedScanStart: RemoteProvisioningMessage {
+public struct RemoteProvisioningExtendedScanStart: UnacknowledgedRemoteProvisioningMessage {
     public static let opCode: UInt32 = 0x8056
     
     /// Number of AD Types in the ADTypeFilter field.

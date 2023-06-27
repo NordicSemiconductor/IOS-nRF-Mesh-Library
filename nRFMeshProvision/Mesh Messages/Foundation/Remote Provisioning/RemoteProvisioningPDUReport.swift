@@ -35,7 +35,7 @@ import Foundation
 /// received from the device being provisioned or was generated locally during the
 /// Device Key Refresh procedure, the Node Address Refresh procedure, or the
 /// Node Composition Refresh procedure.
-public struct RemoteProvisioningPDUReport: RemoteProvisioningMessage {
+public struct RemoteProvisioningPDUReport: UnacknowledgedRemoteProvisioningMessage {
     public static let opCode: UInt32 = 0x805F
     
     /// Number of received Provisioning PDUs.

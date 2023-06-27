@@ -32,7 +32,7 @@ import Foundation
 
 public struct ConfigGATTProxySet: AcknowledgedConfigMessage {
     public static let opCode: UInt32 = 0x8013
-    public static let responseType: StaticMeshMessage.Type = ConfigGATTProxyStatus.self
+    public static let responseType: StaticMeshResponse.Type = ConfigGATTProxyStatus.self
     
     public var parameters: Data? {
         return Data([state.rawValue])

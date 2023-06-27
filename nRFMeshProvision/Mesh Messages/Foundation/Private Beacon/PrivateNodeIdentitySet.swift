@@ -34,7 +34,7 @@ import Foundation
 /// current Private Node Identity state for a subnet.
 public struct PrivateNodeIdentitySet: AcknowledgedConfigMessage, ConfigNetKeyMessage {
     public static let opCode: UInt32 = 0x8067
-    public static let responseType: StaticMeshMessage.Type = PrivateNodeIdentityStatus.self
+    public static let responseType: StaticMeshResponse.Type = PrivateNodeIdentityStatus.self
     
     public let networkKeyIndex: KeyIndex
     /// Should advertising with Private Node Identity for a subnet be enabled.

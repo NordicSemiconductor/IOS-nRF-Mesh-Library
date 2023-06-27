@@ -30,7 +30,7 @@
 
 import Foundation
 
-public struct GenericPowerLevelSetUnacknowledged: GenericMessage, TransactionMessage, TransitionMessage {
+public struct GenericPowerLevelSetUnacknowledged: StaticUnacknowledgedMeshMessage, TransactionMessage, TransitionMessage {
     public static let opCode: UInt32 = 0x8217
     
     public var tid: UInt8!

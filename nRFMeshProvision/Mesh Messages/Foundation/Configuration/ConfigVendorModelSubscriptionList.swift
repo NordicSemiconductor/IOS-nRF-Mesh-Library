@@ -30,7 +30,7 @@
 
 import Foundation
 
-public struct ConfigVendorModelSubscriptionList: ConfigModelSubscriptionList, ConfigVendorModelMessage {
+public struct ConfigVendorModelSubscriptionList: ConfigResponse, ConfigStatusMessage, ConfigModelSubscriptionList, ConfigVendorModelMessage {
     public static let opCode: UInt32 = 0x802C
     
     public var parameters: Data? {

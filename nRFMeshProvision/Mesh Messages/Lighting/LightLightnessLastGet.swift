@@ -30,9 +30,9 @@
 
 import Foundation
 
-public struct LightLightnessLastGet: AcknowledgedGenericMessage {
+public struct LightLightnessLastGet: StaticAcknowledgedMeshMessage {
     public static let opCode: UInt32 = 0x8253
-    public static let responseType: StaticMeshMessage.Type = LightLightnessLastStatus.self
+    public static let responseType: StaticMeshResponse.Type = LightLightnessLastStatus.self
     
     public var parameters: Data? {
         return nil

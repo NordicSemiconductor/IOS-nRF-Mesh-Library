@@ -88,7 +88,7 @@ class SceneServerDelegate: SceneServerModelDelegate {
     
     init(_ meshNetwork: MeshNetwork,
          defaultTransitionTimeServer delegate: GenericDefaultTransitionTimeServerDelegate) {
-        let types: [GenericMessage.Type] = [
+        let types: [StaticMeshMessage.Type] = [
             SceneGet.self,
             SceneRegisterGet.self,
             SceneRecall.self,
@@ -112,7 +112,7 @@ class SceneServerDelegate: SceneServerModelDelegate {
     // MARK: - Message handlers
     
     func model(_ model: Model, didReceiveAcknowledgedMessage request: AcknowledgedMeshMessage,
-               from source: Address, sentTo destination: MeshAddress) throws -> MeshMessage {
+               from source: Address, sentTo destination: MeshAddress) throws -> MeshResponse {
         switch request {
         case is SceneRegisterGet:
             // When a Scene Server receives a Scene Register Get message, it shall respond
@@ -190,7 +190,7 @@ class SceneServerDelegate: SceneServerModelDelegate {
         return SceneStatus(report: currentScene)
     }
     
-    func model(_ model: Model, didReceiveUnacknowledgedMessage message: MeshMessage,
+    func model(_ model: Model, didReceiveUnacknowledgedMessage message: UnacknowledgedMeshMessage,
                from source: Address, sentTo destination: MeshAddress) {
         switch message {
         case let request as SceneRecallUnacknowledged:
@@ -254,7 +254,7 @@ class SceneServerDelegate: SceneServerModelDelegate {
         }
     }
     
-    func model(_ model: Model, didReceiveResponse response: MeshMessage,
+    func model(_ model: Model, didReceiveResponse response: MeshResponse,
                toAcknowledgedMessage request: AcknowledgedMeshMessage, from source: Address) {
         // Not possible.
     }

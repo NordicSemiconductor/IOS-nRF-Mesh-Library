@@ -35,6 +35,16 @@ public protocol RemoteProvisioningMessage: StaticMeshMessage {
     // No additional fields.
 }
 
+/// A base protocol for unacknowledged Remote Provisioning messages.
+public protocol UnacknowledgedRemoteProvisioningMessage: RemoteProvisioningMessage, UnacknowledgedMeshMessage {
+    // No additional fields.
+}
+
+/// A base protocol for unacknowledged Remote Provisioning messages.
+public protocol RemoteProvisioningResponse: StaticMeshResponse, UnacknowledgedRemoteProvisioningMessage {
+    // No additional fields.
+}
+
 /// A base protocol for acknowledged Remote Provisioning messages.
 ///
 /// Acknowledged messages will be responded with a status message.
@@ -71,6 +81,9 @@ public enum RemoteProvisioningMessageStatus: UInt8 {
 }
 
 /// A base protocol for config status messages.
+///
+/// Remote Provisioning status message may come as a response to an acknowledged
+/// message, or sent as a Report message.
 public protocol RemoteProvisioningStatusMessage: RemoteProvisioningMessage, StatusMessage {
     /// Status for the requesting message.
     var status: RemoteProvisioningMessageStatus { get }

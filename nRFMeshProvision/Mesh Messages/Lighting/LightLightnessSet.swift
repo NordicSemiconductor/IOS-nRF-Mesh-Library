@@ -28,14 +28,10 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
- /*
-  * Created by codepgq.
-  */
-
 import Foundation
-public struct LightLightnessSet: AcknowledgedGenericMessage, TransactionMessage, TransitionMessage {
+public struct LightLightnessSet: StaticAcknowledgedMeshMessage, TransactionMessage, TransitionMessage {
     public static var opCode: UInt32 = 0x824C
-    public static var responseType: StaticMeshMessage.Type = LightLightnessStatus.self
+    public static var responseType: StaticMeshResponse.Type = LightLightnessStatus.self
     
     public var tid: UInt8!    
     public var parameters: Data? {

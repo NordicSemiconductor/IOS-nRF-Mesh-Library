@@ -30,7 +30,7 @@
 
 import Foundation
 
-public struct LightLCOccupancyModeSetUnacknowledged: GenericMessage {
+public struct LightLCOccupancyModeSetUnacknowledged: StaticUnacknowledgedMeshMessage {
     public static let opCode: UInt32 = 0x8297
     
     /// Whether the controller may transition from a standby state when occupancy

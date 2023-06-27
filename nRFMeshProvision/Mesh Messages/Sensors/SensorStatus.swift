@@ -33,7 +33,7 @@ import Foundation
 /// A Device Property with corresponding characteristic.
 public typealias SensorValue = (property: DeviceProperty, value: DevicePropertyCharacteristic)
 
-public struct SensorStatus: SensorMessage {
+public struct SensorStatus: StaticMeshResponse {
     public static let opCode: UInt32 = 0x52
     
     /// The sensor values.

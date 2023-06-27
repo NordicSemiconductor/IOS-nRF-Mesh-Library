@@ -30,7 +30,7 @@
 
 import Foundation
 
-public struct SchedulerStatus: GenericMessage {
+public struct SchedulerStatus: StaticMeshResponse {
     public static let opCode: UInt32 = 0x824A
     
     public var parameters: Data? {

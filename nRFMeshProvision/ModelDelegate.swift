@@ -95,7 +95,7 @@ public protocol ModelDelegate: AnyObject {
     ///           if the receive message is invalid and no response
     ///           should be replied.
     func model(_ model: Model, didReceiveAcknowledgedMessage request: AcknowledgedMeshMessage,
-               from source: Address, sentTo destination: MeshAddress) throws -> MeshMessage
+               from source: Address, sentTo destination: MeshAddress) throws -> MeshResponse
     
     /// This method should handle the received Unacknowledged Message.
     ///
@@ -104,7 +104,7 @@ public protocol ModelDelegate: AnyObject {
     ///   - message: The Unacknowledged Message received.
     ///   - source: The source Unicast Address.
     ///   - destination: The destination address of the request.
-    func model(_ model: Model, didReceiveUnacknowledgedMessage message: MeshMessage,
+    func model(_ model: Model, didReceiveUnacknowledgedMessage message: UnacknowledgedMeshMessage,
                from source: Address, sentTo destination: MeshAddress)
     
     /// This method should handle the received response to the
@@ -116,7 +116,7 @@ public protocol ModelDelegate: AnyObject {
     ///   - request: The Acknowledged Message sent.
     ///   - source: The Unicast Address of the Element that sent the
     ///             response.
-    func model(_ model: Model, didReceiveResponse response: MeshMessage,
+    func model(_ model: Model, didReceiveResponse response: MeshResponse,
                toAcknowledgedMessage request: AcknowledgedMeshMessage,
                from source: Address)
     

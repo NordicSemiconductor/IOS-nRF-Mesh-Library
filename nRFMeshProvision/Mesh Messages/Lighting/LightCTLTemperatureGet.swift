@@ -30,9 +30,9 @@
 
 import Foundation
 
-public struct LightCTLTemperatureGet: AcknowledgedGenericMessage {
+public struct LightCTLTemperatureGet: StaticAcknowledgedMeshMessage {
     public static let opCode: UInt32 = 0x8261
-    public static let responseType: StaticMeshMessage.Type = LightCTLTemperatureStatus.self
+    public static let responseType: StaticMeshResponse.Type = LightCTLTemperatureStatus.self
     
     public var parameters: Data? {
         return nil

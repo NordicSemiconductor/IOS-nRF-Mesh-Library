@@ -78,14 +78,14 @@ class SimpleOnOffClientDelegate: ModelDelegate {
     
     func model(_ model: Model,
                didReceiveAcknowledgedMessage request: AcknowledgedMeshMessage,
-               from source: Address, sentTo destination: MeshAddress) -> MeshMessage {
+               from source: Address, sentTo destination: MeshAddress) -> MeshResponse {
         // This method will never be called for this Model, as the single message
         // type it supports (defines in `messageTypes`) is unacknowledged.
         fatalError("What has just happened?")
     }
     
     func model(_ model: Model,
-               didReceiveUnacknowledgedMessage message: MeshMessage,
+               didReceiveUnacknowledgedMessage message: UnacknowledgedMeshMessage,
                from source: Address, sentTo destination: MeshAddress) {
         // A Simple OnOff Server may send status messages that do not reply
         // to any acknowledged messages, for example may publish the state
@@ -109,7 +109,7 @@ class SimpleOnOffClientDelegate: ModelDelegate {
     }
     
     func model(_ model: Model,
-               didReceiveResponse response: MeshMessage,
+               didReceiveResponse response: MeshResponse,
                toAcknowledgedMessage request: AcknowledgedMeshMessage, from source: Address) {
         // This message for sure did not change the state.
         let stateNotChanged = request is SimpleOnOffGet

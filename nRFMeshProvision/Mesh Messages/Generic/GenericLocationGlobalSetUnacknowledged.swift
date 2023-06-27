@@ -30,7 +30,7 @@
 
 import Foundation
 
-public struct GenericLocationGlobalSetUnacknowledged: GenericMessage {
+public struct GenericLocationGlobalSetUnacknowledged: StaticUnacknowledgedMeshMessage {
     public static let opCode: UInt32 = 0x42
     
     public var parameters: Data? {

@@ -33,7 +33,7 @@ import Foundation
 /// A Remote Provisioning Link Report message is an unacknowledged message used by
 /// the Remote Provisioning Server to report the state change of a provisioning
 /// bearer link or the Node Provisioning Protocol Interface.
-public struct RemoteProvisioningLinkReport: RemoteProvisioningMessage, RemoteProvisioningStatusMessage {
+public struct RemoteProvisioningLinkReport: RemoteProvisioningStatusMessage {
     public static let opCode: UInt32 = 0x805C
     
     public let status: RemoteProvisioningMessageStatus

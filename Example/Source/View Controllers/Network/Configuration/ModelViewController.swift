@@ -618,11 +618,18 @@ extension ModelViewController: ModelViewCellDelegate {
         }
         currentMessage = message
         start(description) {
-            return try MeshNetworkManager.instance.send(message, to: model)
+            switch message {
+            case let request as AcknowledgedMeshMessage:
+                return try MeshNetworkManager.instance.send(request, to: model)
+            case let command as UnacknowledgedMeshMessage:
+                return try MeshNetworkManager.instance.send(command, to: model)
+            default:
+                return nil
+            }
         }
     }
     
-    func send(_ message: ConfigMessage, description: String) {
+    func send(_ message: AcknowledgedConfigMessage, description: String) {
         guard let node = model?.parentElement?.parentNode else {
             return
         }
@@ -778,7 +785,7 @@ extension ModelViewController: MeshNetworkDelegate {
                 presentAlert(title: "Error", message: status.message)
             }
             
-        case let list as ConfigModelAppList:
+        case let list as ConfigModelAppList & StatusMessage:
             if list.isSuccess {
                 reloadSections([.appKeyBinding, .publication], with: .automatic)
                 if model.supportsModelSubscriptions ?? true {
@@ -814,7 +821,7 @@ extension ModelViewController: MeshNetworkDelegate {
                 presentAlert(title: "Error", message: status.message)
             }
             
-        case let list as ConfigModelSubscriptionList:
+        case let list as ConfigModelSubscriptionList & StatusMessage:
             if list.isSuccess {
                 reloadSections(.subscriptions, with: .automatic)
                 if model.supportsModelPublication ?? true {

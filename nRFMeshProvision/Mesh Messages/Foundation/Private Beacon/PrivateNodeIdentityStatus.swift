@@ -32,7 +32,7 @@ import Foundation
 
 /// A Private Node Identity Status message is an unacknowledged message used to
 /// report the current Private Node Identity state for a subnet.
-public struct PrivateNodeIdentityStatus: ConfigNetKeyMessage, ConfigStatusMessage {
+public struct PrivateNodeIdentityStatus: ConfigResponse, ConfigStatusMessage, ConfigNetKeyMessage {
     public static let opCode: UInt32 = 0x8068
     
     public let status: ConfigMessageStatus

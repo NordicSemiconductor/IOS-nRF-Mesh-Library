@@ -28,13 +28,9 @@
 * POSSIBILITY OF SUCH DAMAGE.
 */
 
-/*
- * Created by codepgq.
- */
-
 import Foundation
 
-public struct LightHSLDefaultStatus: GenericMessage {
+public struct LightHSLDefaultStatus: StaticMeshResponse {
     public static var opCode: UInt32 = 0x827C
     
     public var parameters: Data? {

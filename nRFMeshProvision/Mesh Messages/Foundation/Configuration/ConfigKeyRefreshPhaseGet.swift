@@ -32,7 +32,7 @@ import Foundation
 
 public struct ConfigKeyRefreshPhaseGet: AcknowledgedConfigMessage, ConfigNetKeyMessage {
     public static let opCode: UInt32 = 0x8015
-    public static let responseType: StaticMeshMessage.Type = ConfigKeyRefreshPhaseStatus.self
+    public static let responseType: StaticMeshResponse.Type = ConfigKeyRefreshPhaseStatus.self
     
     public var parameters: Data? {
         return encodeNetKeyIndex()

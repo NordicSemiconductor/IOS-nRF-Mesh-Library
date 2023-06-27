@@ -30,9 +30,9 @@
 
 import Foundation
 
-public struct GenericLocationGlobalSet: AcknowledgedGenericMessage {
+public struct GenericLocationGlobalSet: StaticAcknowledgedMeshMessage {
     public static let opCode: UInt32 = 0x41
-    public static let responseType: StaticMeshMessage.Type = GenericLocationGlobalStatus.self
+    public static let responseType: StaticMeshResponse.Type = GenericLocationGlobalStatus.self
     
     public var parameters: Data? {
         return Data() + latitude.encode() + longitude.encode() + altitude.encode()

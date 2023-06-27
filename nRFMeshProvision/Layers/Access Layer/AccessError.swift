@@ -54,6 +54,9 @@ public enum AccessError: Error {
     /// Error thrown when the Provisioner is trying to delete
     /// the last Network Key from the Node.
     case cannotDelete
+    /// Error thrown when trying to send a message to an address
+    /// for which another message is already being sent.
+    case busy
     /// Thrown, when the acknowledgment has not been received until
     /// the time run out.
     case timeout
@@ -72,6 +75,7 @@ extension AccessError: LocalizedError {
         case .modelNotBoundToAppKey: return NSLocalizedString("No Application Key bound to the given Model.", comment: "access")
         case .noDeviceKey:           return NSLocalizedString("Unknown Device Key", comment: "access")
         case .cannotDelete:          return NSLocalizedString("Cannot delete the last Network Key.", comment: "access")
+        case .busy:                  return NSLocalizedString("Unable to send a message to specified address. Another transfer in progress.", comment: "access")
         case .timeout:               return NSLocalizedString("Request timed out.", comment: "access")
         case .cancelled:             return NSLocalizedString("Message cancelled.", comment: "access")
         }

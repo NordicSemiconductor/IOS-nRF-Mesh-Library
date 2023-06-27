@@ -30,7 +30,7 @@
 
 import Foundation
 
-public struct LightCTLDefaultSetUnacknowledged: GenericMessage {
+public struct LightCTLDefaultSetUnacknowledged: StaticUnacknowledgedMeshMessage {
     public static let opCode: UInt32 = 0x826A
     
     public var parameters: Data? {

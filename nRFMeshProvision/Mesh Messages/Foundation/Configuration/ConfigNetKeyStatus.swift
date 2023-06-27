@@ -32,7 +32,7 @@ import Foundation
 
 /// A `ConfigNetKeyStatus` is an unacknowledged message used to report the status of
 /// the operation on the NetKey List.
-public struct ConfigNetKeyStatus: ConfigNetKeyMessage, ConfigStatusMessage {
+public struct ConfigNetKeyStatus: ConfigResponse, ConfigStatusMessage, ConfigNetKeyMessage {
     public static let opCode: UInt32 = 0x8044
     
     public var parameters: Data? {

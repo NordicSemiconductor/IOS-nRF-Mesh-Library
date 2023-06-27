@@ -39,7 +39,7 @@ import CoreBluetooth
 /// Remote Provisioning Servers, the Remote Provisioning Client can select the most
 /// suitable Remote Provisioning Server to execute the Extended Scan procedure
 /// and/or to provision the unprovisioned device.
-public struct RemoteProvisioningScanReport: RemoteProvisioningMessage {
+public struct RemoteProvisioningScanReport: UnacknowledgedRemoteProvisioningMessage {
     public static let opCode: UInt32 = 0x8055
     /// Signed integer that is interpreted as an indication of received signal strength
     /// measured in dBm.

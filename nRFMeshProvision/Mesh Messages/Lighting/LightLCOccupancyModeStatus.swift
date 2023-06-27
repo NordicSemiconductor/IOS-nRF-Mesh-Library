@@ -30,7 +30,7 @@
 
 import Foundation
 
-public struct LightLCOccupancyModeStatus: GenericMessage {
+public struct LightLCOccupancyModeStatus: StaticMeshResponse {
     public static let opCode: UInt32 = 0x8298
     
     /// Whether the controller may transition from a standby state when occupancy
