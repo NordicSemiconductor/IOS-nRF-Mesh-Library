@@ -233,7 +233,8 @@ private extension EditProvisionerViewController {
         let nodeAssigned = newAddress != nil || (node != nil && !disableConfigCapabilities)
         let action = !nodeAssigned ? nil : UIAlertAction(title: "Unassign", style: .destructive) { action in
             self.confirm(title: "Disable configuration capabilities",
-                         message: "A Provisioner without the unicast address assigned is not able to perform configuration operations.") { [weak self] _ in
+                         message: "A Provisioner without the unicast address assigned is not able to perform configuration operations.",
+                         handler: { [weak self] _ in
                             guard let self = self else { return }
                             self.disableConfigCapabilities = true
                             self.newAddress = nil
@@ -243,7 +244,7 @@ private extension EditProvisionerViewController {
                             self.newTtl = nil
                             self.deviceKeyCell.detailTextLabel?.text = "N/A"
                             self.deviceKeyCell.detailTextLabel?.font = .systemFont(ofSize: 17)
-            }
+            })
         }
         presentTextAlert(title: "Unicast address", message: "Hexadecimal value in range\n0001 - 7FFF.",
                          text: address, placeHolder: "Address", type: .unicastAddressRequired,
