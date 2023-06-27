@@ -123,10 +123,13 @@ class NodeNetworkKeysViewController: ProgressViewController, Editable {
         return node.networkKeys.count == 1 ? .none : .delete
     }
     
-    override func tableView(_ tableView: UITableView,
-                            editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
+    override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         if node.networkKeys.count == 1 {
-            return [UITableViewRowAction(style: .normal, title: "Last Key", handler: {_,_ in })]
+            return UISwipeActionsConfiguration(actions: [
+                UIContextualAction(style: .normal, title: "Last Key", handler: { _, _, completionHandler in
+                    completionHandler(false)
+                })
+            ])
         }
         return nil
     }
@@ -139,9 +142,9 @@ class NodeNetworkKeysViewController: ProgressViewController, Editable {
         if node.contains(applicationKeyBoundToNetworkKey: networkKey) {
             confirm(title: "Remove Key", message: "The selected key is bound to one or more " +
                 "Application Keys in the Node. When removed, those keys will also be removed " +
-                "and all models bound to them will be unbound, which may cause them to stop working.") { _ in
+                "and all models bound to them will be unbound, which may cause them to stop working.", handler: { _ in
                 self.deleteNetworkKey(networkKey)
-            }
+            })
         } else {
             // Otherwise, just try removing it.
             deleteNetworkKey(networkKey)

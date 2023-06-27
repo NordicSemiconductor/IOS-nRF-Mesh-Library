@@ -506,13 +506,14 @@ class ModelViewController: ProgressViewController {
         }
     }
     
-    override func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
+    override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         let section = sections[indexPath.section]
         switch section {
         case .appKeyBinding:
-            return [UITableViewRowAction(style: .destructive, title: "Unbind", handler: { _, indexPath in
+            let action = UIContextualAction(style: .destructive, title: "Unbind") { _, _, completionHandler in
                 guard indexPath.row < self.model.boundApplicationKeys.count else {
-                        return
+                    completionHandler(false)
+                    return
                 }
                 let applicationKey = self.model.boundApplicationKeys[indexPath.row]
                 
@@ -553,13 +554,18 @@ class ModelViewController: ProgressViewController {
                             message += "\nThe publication will be cancelled automatically."
                         }
                     }
-                    self.confirm(title: "Key in use", message: message, handler: { _ in
+                    self.confirm(title: "Key in use", message: message) { _ in
+                        completionHandler(false)
+                    } handler: { _ in
                         self.unbindApplicationKey(applicationKey)
-                    })
+                        completionHandler(true)
+                    }
                 } else {
                     self.unbindApplicationKey(applicationKey)
+                    completionHandler(true)
                 }
-            })]
+            }
+            return UISwipeActionsConfiguration(actions: [action])
         default:
             return nil
         }

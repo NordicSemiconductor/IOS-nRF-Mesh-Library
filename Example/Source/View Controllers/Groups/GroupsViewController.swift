@@ -103,10 +103,14 @@ class GroupsViewController: UITableViewController, Editable, UISearchBarDelegate
         return group.isUsed ? .none : .delete
     }
     
-    override func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
+    override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         let group = filteredGroups[indexPath.row]
         if group.isUsed {
-            return [UITableViewRowAction(style: .normal, title: "In Use", handler: { _,_ in })]
+            return UISwipeActionsConfiguration(actions: [
+                UIContextualAction(style: .normal, title: "In Use", handler: { _, _, completionHandler in
+                    completionHandler(false)
+                })
+            ])
         }
         return nil
     }

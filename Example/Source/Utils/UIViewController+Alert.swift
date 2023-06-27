@@ -59,8 +59,9 @@ extension UIViewController {
     /// - parameters:
     ///   - title:   The alert title.
     ///   - message: The message below the title.
+    ///   - onCancel:The Cancel button handler.   
     ///   - handler: The Confirm button handler.
-    func confirm(title: String?, message: String?, handler: ((UIAlertAction) -> Void)? = nil) {
+    func confirm(title: String?, message: String?, onCancel: ((UIAlertAction) -> Void)? = nil, handler: ((UIAlertAction) -> Void)? = nil) {
         // TODO: Should only iPad be handled differently? How about carPlay or Apple TV?
         let ipad = UIDevice.current.userInterfaceIdiom == .pad
         let style: UIAlertController.Style = ipad ? .alert : .actionSheet
@@ -68,7 +69,7 @@ extension UIViewController {
             guard let self = self else { return }
             let alert = UIAlertController(title: title, message: message, preferredStyle: style)
             alert.addAction(UIAlertAction(title: "Confirm", style: .destructive, handler: handler))
-            alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+            alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: onCancel))
             self.present(alert, animated: true)
         }
     }

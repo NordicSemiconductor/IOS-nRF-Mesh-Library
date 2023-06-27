@@ -121,12 +121,6 @@ class NodeAppKeysViewController: ProgressViewController, Editable {
     }
     
     override func tableView(_ tableView: UITableView,
-                            editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
-        // This is required to allow swipe to delete action.
-        return nil
-    }
-    
-    override func tableView(_ tableView: UITableView,
                             commit editingStyle: UITableViewCell.EditingStyle,
                             forRowAt indexPath: IndexPath) {
         let applicationKey = node.applicationKeys[indexPath.row]
@@ -134,9 +128,9 @@ class NodeAppKeysViewController: ProgressViewController, Editable {
         if node.contains(modelBoundToApplicationKey: applicationKey) {
             confirm(title: "Remove Key", message: "The selected key is bound to one or more " +
                 "models in the Node. When removed, it will be unbound automatically, and the " +
-                "models may stop working.") { _ in
+                "models may stop working.", handler:  { _ in
                 self.delete(applicationKey: applicationKey)
-            }
+            })
         } else {
             // Otherwise, just try removing it.
             delete(applicationKey: applicationKey)

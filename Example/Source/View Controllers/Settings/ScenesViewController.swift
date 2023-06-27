@@ -108,13 +108,17 @@ class ScenesViewController: UITableViewController, Editable {
         tableView.deselectRow(at: indexPath, animated: true)
     }
     
-    override func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
+    override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         let network = MeshNetworkManager.instance.meshNetwork!
         let scene = network.scenes[indexPath.sceneIndex]
         
         // It should not be possible to delete a scene that is in use.
         if scene.isUsed {
-            return [UITableViewRowAction(style: .normal, title: "Scene in use", handler: {_,_ in })]
+            return UISwipeActionsConfiguration(actions: [
+                UIContextualAction(style: .normal, title: "Scene in use", handler: { _, _, completionHandler in
+                    completionHandler(false)
+                })
+            ])
         }
         return nil
     }

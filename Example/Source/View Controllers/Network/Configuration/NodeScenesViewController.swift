@@ -149,13 +149,17 @@ class NodeScenesViewController: ProgressViewController, Editable {
         tableView.deselectRow(at: indexPath, animated: true)
     }
     
-    override func tableView(_ tableView: UITableView,
-                            editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
+    override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         if !isSceneClientReadyToSetup {
-            return [UITableViewRowAction(style: .normal, title: "Client not ready", handler: {
-                [unowned self] _,_ in
-                _ = self.ensureClientReadyToDelete()
-            })]
+            return UISwipeActionsConfiguration(actions: [
+                UIContextualAction(style: .normal, title: "Client not ready", handler: { [weak self] _, _, completionHandler  in
+                    guard let self = self else {
+                        completionHandler(false)
+                        return
+                    }
+                    completionHandler(self.ensureClientReadyToDelete())
+                })
+            ])
         }
         return nil
     }
