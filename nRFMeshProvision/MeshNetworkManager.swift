@@ -768,6 +768,119 @@ public extension MeshNetworkManager {
         }
     }
     
+    /// This is a blocking method awaiting a mesh message with given OpCode
+    /// sent from a specified source Unicast Address.
+    ///
+    /// The destination is optional. If not set, the destination of the received
+    /// message is not validated.
+    ///
+    /// Cancelling the task in which the message is called will cancel waiting with
+    /// ``AccessError/timeout`` error.
+    ///
+    /// - parameters:
+    ///   - opCode: The message OpCode. For vendor messages it must include the Company Id.
+    ///   - source: The Unicast Address of the Element from which the message is expected.
+    ///   - destination: The optional destination of the message.
+    ///   - timeout: The timeout in seconds. Use 0 for not timeout.
+    /// - throws: This method throws when the network is not created, the `source` address
+    ///           is not a Unicast Address, `timeout` is negative or the manager is already
+    ///           awaiting a message with the same parameters.
+    /// - returns: The message received.
+    func waitFor(messageWithOpCode opCode: UInt32,
+                 from source: Address, to destination: MeshAddress? = nil,
+                 timeout: TimeInterval) async throws -> MeshMessage {
+        guard let networkManager = networkManager,
+              let _ = meshNetwork else {
+            print("Error: Mesh Network not created")
+            throw MeshNetworkError.noNetwork
+        }
+        guard source.isUnicast else {
+            throw AccessError.invalidSource
+        }
+        guard timeout >= 0 else {
+            throw AccessError.timeout
+        }
+        return try await networkManager.waitFor(messageWithOpCode: opCode,
+                                                from: source, to: destination,
+                                                timeout: timeout)
+    }
+    
+    /// This is a blocking method awaiting a mesh message with given OpCode
+    /// sent from a specified source ``Element``.
+    ///
+    /// The destination is optional. If not set, the destination of the received
+    /// message is not validated.
+    ///
+    /// Cancelling the task in which the message is called will cancel waiting with
+    /// ``AccessError/timeout`` error.
+    ///
+    /// - parameters:
+    ///   - opCode: The message OpCode. For vendor messages it must inlcude the Company Id.
+    ///   - element: The Element from which the message is expected.
+    ///   - destination: The optional destination of the message.
+    ///   - timeout: The timeout in seconds. Use 0 for not timeout.
+    /// - throws: This method throws when the network is not created, `timeout` is negative
+    ///           or the manager is already awaiting a message with the same parameters.
+    /// - returns: The message received.
+    func waitFor(messageWithOpCode opCode: UInt32,
+                 from element: Element, to destination: MeshAddress? = nil,
+                 timeout: TimeInterval) async throws -> MeshMessage {
+        return try await waitFor(messageWithOpCode: opCode,
+                                 from: element.unicastAddress, to: destination,
+                                 timeout: timeout)
+    }
+    
+    /// This is a blocking method awaiting a mesh message with given OpCode
+    /// sent from a specified source Unicast Address.
+    ///
+    /// The destination is optional. If not set, the destination of the received
+    /// message is not validated.
+    ///
+    /// Cancelling the task in which the message is called will cancel waiting with
+    /// ``AccessError/timeout`` error.
+    ///
+    /// - parameters:
+    ///   - type: The message type.
+    ///   - source: The Unicast Address of the Element from which the message is expected.
+    ///   - destination: The optional destination of the message.
+    ///   - timeout: The timeout in seconds. Use 0 for not timeout.
+    /// - throws: This method throws when the network is not created, the `source` address
+    ///           is not a Unicast Address, `timeout` is negative or the manager is already
+    ///           awaiting a message with the same parameters.
+    /// - returns: The message received.
+    func waitFor<T: StaticMeshMessage>(messageWithType type: T.Type,
+                 from source: Address, to destination: MeshAddress? = nil,
+                 timeout: TimeInterval) async throws -> MeshMessage {
+        return try await waitFor(messageWithOpCode: type.opCode,
+                                 from: source, to: destination,
+                                 timeout: timeout)
+    }
+    
+    /// This is a blocking method awaiting a mesh message with given OpCode
+    /// sent from a specified source ``Element``.
+    ///
+    /// The destination is optional. If not set, the destination of the received
+    /// message is not validated.
+    ///
+    /// Cancelling the task in which the message is called will cancel waiting with
+    /// ``AccessError/timeout`` error.
+    ///
+    /// - parameters:
+    ///   - type: The message type.
+    ///   - element: The Element from which the message is expected.
+    ///   - destination: The optional destination of the message.
+    ///   - timeout: The timeout in seconds. Use 0 for not timeout.
+    /// - throws: This method throws when the network is not created, `timeout` is negative
+    ///           or the manager is already awaiting a message with the same parameters.
+    /// - returns: The message received.
+    func waitFor<T: StaticMeshMessage>(messageWithType type: T.Type,
+                 from element: Element, to destination: MeshAddress? = nil,
+                 timeout: TimeInterval) async throws -> MeshMessage {
+        return try await waitFor(messageWithOpCode: type.opCode,
+                                 from: element.unicastAddress, to: destination,
+                                 timeout: timeout)
+    }
+    
     /// Cancels sending the message with the given handle.
     ///
     /// - parameter messageId: The message handle.
