@@ -68,12 +68,25 @@ internal class NetworkManager {
     ///
     /// The key is the Unicast Address of the Element from which the response is expected.
     /// The value is the pair: expected Op Code and the callback to be called.
-    private var responseCallbacks: [Address : (expectedOpCode: UInt32, callback: (Result<MeshResponse, Error>) -> ())] = [:]
+    private var responseCallbacks: [Address : (expectedOpCode: UInt32,
+                                               callback: (Result<MeshResponse, Error>) -> ())] = [:]
     /// Callbacks awaiting a mesh response for ``AcknowledgedConfigMessage``.
     ///
     /// The key is the Unicast Address of the Element from which the response is expected.
     /// The value is the pair: expected Op Code and the callback to be called.
-    private var configResponseCallbacks: [Address : (expectedOpCode: UInt32, callback: (Result<ConfigResponse, Error>) -> ())] = [:]
+    private var configResponseCallbacks: [Address : (expectedOpCode: UInt32,
+                                                     callback: (Result<ConfigResponse, Error>) -> ())] = [:]
+    /// Callbacks awaiting a mesh message.
+    ///
+    /// The list cpmtains the following data:
+    /// - Unicast Address of the Element that is expected to send the message,
+    /// - Expected Op Code,
+    /// - Optional message destination (if `nil` any destination will be ,
+    /// - The callback to be called when such message is received.
+    private var messageCallbacks: [(source: Address,
+                                    expectedOpCode: UInt32,
+                                    expectedDestination: MeshAddress?,
+                                    callback: (Result<MeshMessage, Error>) -> ())] = []
     /// Mutex for thread synchronization.
     private let mutex = DispatchQueue(label: "NetworkManagerMutex")
     
@@ -333,6 +346,51 @@ internal class NetworkManager {
         }
     }
     
+    func waitFor(messageWithOpCode opCode: UInt32,
+                 from address: Address, to destination: MeshAddress?,
+                 timeout: TimeInterval) async throws -> MeshMessage {
+        let task: Task<MeshMessage, Error> = Task {
+            try await withTaskCancellationHandler {
+                return try await withCheckedThrowingContinuation { continuation in
+                    mutex.sync {
+                        // Check if there is no awaiting callback for given parameters.
+                        let existingCallback = messageCallbacks.first {
+                            $0.source == address &&
+                            $0.expectedOpCode == opCode &&
+                            ($0.expectedDestination == nil || $0.expectedDestination == destination)
+                        }
+                        guard existingCallback == nil else {
+                            continuation.resume(throwing: AccessError.busy)
+                            return
+                        }
+                        messageCallbacks.append((address, opCode, destination, { result in
+                            continuation.resume(with: result)
+                        }))
+                    }
+                }
+            } onCancel: {
+                let callback: ((Result<MeshMessage, Error>) -> ())? = mutex.sync {
+                    guard let index = messageCallbacks.firstIndex(where: {
+                        $0.source == address &&
+                        $0.expectedOpCode == opCode &&
+                        $0.expectedDestination == destination
+                    }) else {
+                        return nil
+                    }
+                    return messageCallbacks.remove(at: index).callback
+                }
+                callback?(.failure(AccessError.timeout))
+            }
+        }
+        if timeout > 0 {
+            let timeoutTask = Task {
+                try await Task.sleep(nanoseconds: UInt64(timeout * 1_000_000_000))
+                task.cancel()
+            }
+        }
+        return try await task.value
+    }
+    
     /// Sends the Proxy Configuration message to the connected Proxy Node.
     ///
     /// - parameter message: The message to be sent.
@@ -373,6 +431,18 @@ internal class NetworkManager {
     ///   - destination: The destination address of the message received.
     func notifyAbout(newMessage message: MeshMessage,
                      from source: Address, to destination: MeshAddress) {
+        // Notify the callback awaiting received message.
+        let messageCallback: ((Result<MeshMessage, Error>) -> ())? = mutex.sync {
+            guard let index = messageCallbacks.firstIndex(where: {
+                $0.source == source &&
+                $0.expectedOpCode == message.opCode &&
+               ($0.expectedDestination == nil || $0.expectedDestination == destination)
+            }) else {
+                return nil
+            }
+            return messageCallbacks.remove(at: index).callback
+        }
+        messageCallback?(.success(message))
         // Notify callback awaiting a response.
         switch message {
         case let response as ConfigResponse:
