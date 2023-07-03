@@ -43,7 +43,7 @@ public extension Array where Element == NetworkKey {
     /// The primary Network Key, that is the one with key index 0.
     /// If the primary Network Key is not known, it's set to `nil`.
     var primaryKey: NetworkKey? {
-        return first { $0.index == 0 }
+        return first { $0.isPrimary }
     }
     
     /// Returns a new list of Network Keys containing all the Network Keys
