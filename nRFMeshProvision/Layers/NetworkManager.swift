@@ -346,6 +346,18 @@ internal class NetworkManager {
         }
     }
     
+    /// Awaits a message with a given OpCode from the specified Unicast Address.
+    ///
+    /// If the destination is optional.
+    ///
+    /// - parameters:
+    ///   - opCode: The message OpCode.
+    ///   - address: The Unicast Address of the source Element.
+    ///   - destination: The optional destination.
+    ///   - timeout: The timeout in seconds.
+    /// - returns: The received mesh message.
+    /// - throws: This method may throw when the manager already awaits messages
+    ///           with the same OpCode and source address or when a timeout occurred.
     func waitFor(messageWithOpCode opCode: UInt32,
                  from address: Address, to destination: MeshAddress?,
                  timeout: TimeInterval) async throws -> MeshMessage {
