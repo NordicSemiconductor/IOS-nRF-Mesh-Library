@@ -383,7 +383,7 @@ internal class NetworkManager {
             }
         }
         if timeout > 0 {
-            let timeoutTask = Task {
+            Task {
                 try await Task.sleep(nanoseconds: UInt64(timeout * 1_000_000_000))
                 task.cancel()
             }
