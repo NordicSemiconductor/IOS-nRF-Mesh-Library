@@ -664,13 +664,20 @@ public extension MeshNetworkManager {
     ///           is not a Unicast Address, `timeout` is negative or the manager is already
     ///           awaiting a message with the same parameters.
     /// - returns: The message received.
-    func waitFor<T: StaticMeshMessage>(messageWithType type: T.Type,
-                 from source: Address, to destination: MeshAddress? = nil,
-                 timeout: TimeInterval,
-                 completion: @escaping (Result<MeshMessage, Error>) -> ()) throws {
-        try waitFor(messageWithOpCode: type.opCode,
+    func waitFor<T: StaticMeshMessage>(messageFrom source: Address,
+                                       to destination: MeshAddress? = nil,
+                                       timeout: TimeInterval,
+                                       completion: @escaping (Result<T, Error>) -> ()) throws {
+        try waitFor(messageWithOpCode: T.opCode,
                     from: source, to: destination,
-                    timeout: timeout, completion: completion)
+                    timeout: timeout) { result in
+            do {
+                let message = try result.get() as! T
+                completion(.success(message))
+            } catch {
+                completion(.failure(error))
+            }
+        }
     }
     
     /// Sets a callback awaiting a mesh message with given OpCode
@@ -688,13 +695,12 @@ public extension MeshNetworkManager {
     /// - throws: This method throws when the network is not created, `timeout` is negative
     ///           or the manager is already awaiting a message with the same parameters.
     /// - returns: The message received.
-    func waitFor<T: StaticMeshMessage>(messageWithType type: T.Type,
-                 from element: Element, to destination: MeshAddress? = nil,
-                 timeout: TimeInterval,
-                 completion: @escaping (Result<MeshMessage, Error>) -> ()) throws {
-        return try waitFor(messageWithOpCode: type.opCode,
-                           from: element.unicastAddress, to: destination,
-                           timeout: timeout, completion: completion)
+    func waitFor<T: StaticMeshMessage>(messageFrom element: Element,
+                                       to destination: MeshAddress? = nil,
+                                       timeout: TimeInterval,
+                                       completion: @escaping (Result<T, Error>) -> ()) throws {
+        try waitFor(messageFrom: element.unicastAddress, to: destination,
+                    timeout: timeout, completion: completion)
     }
     
 }

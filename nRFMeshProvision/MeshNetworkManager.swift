@@ -848,12 +848,12 @@ public extension MeshNetworkManager {
     ///           is not a Unicast Address, `timeout` is negative or the manager is already
     ///           awaiting a message with the same parameters.
     /// - returns: The message received.
-    func waitFor<T: StaticMeshMessage>(messageWithType type: T.Type,
-                 from source: Address, to destination: MeshAddress? = nil,
-                 timeout: TimeInterval) async throws -> MeshMessage {
-        return try await waitFor(messageWithOpCode: type.opCode,
+    func waitFor<T: StaticMeshMessage>(messageFrom source: Address,
+                                       to destination: MeshAddress? = nil,
+                                       timeout: TimeInterval) async throws -> T {
+        return try await waitFor(messageWithOpCode: T.opCode,
                                  from: source, to: destination,
-                                 timeout: timeout)
+                                 timeout: timeout) as! T
     }
     
     /// This is a blocking method awaiting a mesh message with given OpCode
@@ -873,12 +873,12 @@ public extension MeshNetworkManager {
     /// - throws: This method throws when the network is not created, `timeout` is negative
     ///           or the manager is already awaiting a message with the same parameters.
     /// - returns: The message received.
-    func waitFor<T: StaticMeshMessage>(messageWithType type: T.Type,
-                 from element: Element, to destination: MeshAddress? = nil,
-                 timeout: TimeInterval) async throws -> MeshMessage {
-        return try await waitFor(messageWithOpCode: type.opCode,
+    func waitFor<T: StaticMeshMessage>(messageFrom element: Element,
+                                       to destination: MeshAddress? = nil,
+                                       timeout: TimeInterval) async throws -> T {
+        return try await waitFor(messageWithOpCode: T.opCode,
                                  from: element.unicastAddress, to: destination,
-                                 timeout: timeout)
+                                 timeout: timeout) as! T
     }
     
     /// Cancels sending the message with the given handle.
