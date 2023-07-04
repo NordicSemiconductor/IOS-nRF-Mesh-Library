@@ -881,6 +881,53 @@ public extension MeshNetworkManager {
                                  timeout: timeout) as! T
     }
     
+    /// Returns an async stream of messages matching given criteria.
+    ///
+    /// When the task in which the stream is iterated gets cancelled the stream
+    /// will return `nil`. 
+    ///
+    /// - important: This method is using ``waitFor(messageWithOpCode:from:to:timeout:)-6673k`` under the hood.
+    ///              It is not possible to await both at the same time, as they share
+    ///              the same resources.
+    ///
+    /// - parameters:
+    ///   - opCode: The OpCode of the messages to await for.
+    ///   - address: The Unicast Address of the sender.
+    ///   - destination: The optional destination address of the messages.
+    /// - returns: The stream of messages with given OpCode.
+    func messages(withOpCode opCode: UInt32,
+                  from address: Address,
+                  to destination: MeshAddress? = nil) throws -> AsyncStream<MeshMessage> {
+        guard let networkManager = networkManager else {
+            print("Error: Mesh Network not created")
+            throw MeshNetworkError.noNetwork
+        }
+        return networkManager.messages(withOpCode: opCode, from: address, to: destination)
+    }
+    
+    /// Returns an async stream of messages matching given criteria.
+    ///
+    /// When the task in which the stream is iterated gets cancelled the stream
+    /// will return `nil`.
+    ///
+    /// - important: This method is using ``waitFor(messageFrom:to:timeout:)-24q2d`` under the hood.
+    ///              It is not possible to await both at the same time, as they share
+    ///              the same resources.
+    ///
+    /// - parameters:
+    ///   - opCode: The OpCode of the messages to await for.
+    ///   - address: The Unicast Address of the sender.
+    ///   - destination: The optional destination address of the messages.
+    /// - returns: The stream of messages with given type.
+    func messages<T: StaticMeshMessage>(from address: Address,
+                                        to destination: MeshAddress? = nil) throws -> AsyncStream<T> {
+        guard let networkManager = networkManager else {
+            print("Error: Mesh Network not created")
+            throw MeshNetworkError.noNetwork
+        }
+        return networkManager.messages(from: address, to: destination)
+    }
+    
     /// Cancels sending the message with the given handle.
     ///
     /// - parameter messageId: The message handle.

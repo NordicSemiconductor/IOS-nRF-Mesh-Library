@@ -381,26 +381,70 @@ internal class NetworkManager {
                     }
                 }
             } onCancel: {
-                let callback: ((Result<MeshMessage, Error>) -> ())? = mutex.sync {
-                    guard let index = messageCallbacks.firstIndex(where: {
-                        $0.source == address &&
-                        $0.expectedOpCode == opCode &&
-                        $0.expectedDestination == destination
-                    }) else {
-                        return nil
-                    }
-                    return messageCallbacks.remove(at: index).callback
-                }
-                callback?(.failure(AccessError.timeout))
+                notifyCallback(awaitingMessageWithOpCode: opCode,
+                               sentFrom: address, to: destination,
+                               with: .failure(AccessError.timeout))
             }
         }
-        if timeout > 0 {
-            Task {
-                try await Task.sleep(nanoseconds: UInt64(timeout * 1_000_000_000))
-                task.cancel()
-            }
+        let timeoutTask = timeout == 0 ? nil : Task {
+            try await Task.sleep(nanoseconds: UInt64(timeout * 1_000_000_000))
+            task.cancel()
         }
-        return try await task.value
+        let result = try await task.value
+        timeoutTask?.cancel()
+        return result
+    }
+    
+    /// Returns an async stream of messages matching given criteria.
+    ///
+    /// When the task in which the stream is iterated gets cancelled the cancellation
+    /// handler will automatically remove the awaiting message callback and the stream
+    /// will return `nil`.
+    ///
+    /// - important: This method is using `waitFor(...)` under the hood.
+    ///              It is not possible to await both at the same time, as they share
+    ///              the same instance of `messageCallbacks`.
+    ///
+    /// - parameters:
+    ///   - opCode: The OpCode of the messages to await for.
+    ///   - address: The Unicast Address of the sender.
+    ///   - destination: The optional destination address of the messages.
+    /// - returns: The stream of messages with given OpCode.
+    func messages(withOpCode opCode: UInt32,
+                  from address: Address,
+                  to destination: MeshAddress?) -> AsyncStream<MeshMessage> {
+        return AsyncStream {
+            return try? await self.waitFor(messageWithOpCode: opCode, from: address, to: destination, timeout: 0)
+        } onCancel: {
+            self.notifyCallback(awaitingMessageWithOpCode: opCode,
+                                sentFrom: address, to: destination,
+                                with: .failure(CancellationError()))
+        }
+    }
+    
+    /// Returns an async stream of messages matching given criteria.
+    ///
+    /// When the task in which the stream is iterated gets cancelled the cancellation
+    /// handler will automatically remove the awaiting message callback and the stream
+    /// will return `nil`.
+    ///
+    /// - important: This method is using `waitFor(...)` under the hood.
+    ///              It is not possible to await both at the same time, as they share
+    ///              the same instance of `messageCallbacks`.
+    ///
+    /// - parameters:
+    ///   - address: The Unicast Address of the sender.
+    ///   - destination: The optional destination address of the messages.
+    /// - returns: The stream of messages of given type.
+    func messages<T: StaticMeshMessage>(from address: Address,
+                                        to destination: MeshAddress?) -> AsyncStream<T> {
+        return AsyncStream {
+            return try? await self.waitFor(messageWithOpCode: T.opCode, from: address, to: destination, timeout: 0) as? T
+        } onCancel: {
+            self.notifyCallback(awaitingMessageWithOpCode: T.opCode,
+                                sentFrom: address, to: destination,
+                                with: .failure(CancellationError()))
+        }
     }
     
     /// Sends the Proxy Configuration message to the connected Proxy Node.
@@ -444,17 +488,9 @@ internal class NetworkManager {
     func notifyAbout(newMessage message: MeshMessage,
                      from source: Address, to destination: MeshAddress) {
         // Notify the callback awaiting received message.
-        let messageCallback: ((Result<MeshMessage, Error>) -> ())? = mutex.sync {
-            guard let index = messageCallbacks.firstIndex(where: {
-                $0.source == source &&
-                $0.expectedOpCode == message.opCode &&
-               ($0.expectedDestination == nil || $0.expectedDestination == destination)
-            }) else {
-                return nil
-            }
-            return messageCallbacks.remove(at: index).callback
-        }
-        messageCallback?(.success(message))
+        notifyCallback(awaitingMessageWithOpCode: message.opCode,
+                       sentFrom: source, to: destination,
+                       with: .success(message))
         // Notify callback awaiting a response.
         switch message {
         case let response as ConfigResponse:
@@ -583,6 +619,23 @@ private extension NetworkManager {
                 callback: callback
             )
         }
+    }
+    
+    func notifyCallback(awaitingMessageWithOpCode opCode: UInt32,
+                        sentFrom address: Address, to destination: MeshAddress?,
+                        with result: Result<MeshMessage, Error>) {
+        // Notify the callback awaiting received message.
+        let messageCallback: ((Result<MeshMessage, Error>) -> ())? = mutex.sync {
+            guard let index = messageCallbacks.firstIndex(where: {
+                $0.source == address &&
+                $0.expectedOpCode == opCode &&
+               ($0.expectedDestination == nil || $0.expectedDestination == destination)
+            }) else {
+                return nil
+            }
+            return messageCallbacks.remove(at: index).callback
+        }
+        messageCallback?(result)
     }
     
 }
