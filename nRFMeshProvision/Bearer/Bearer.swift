@@ -119,10 +119,10 @@ public protocol Bearer: Transmitter {
     var isOpen: Bool { get }
     
     /// This method opens the Bearer.
-    func open()
+    func open() throws
     
     /// This method closes the Bearer.
-    func close()
+    func close() throws
     
 }
 
@@ -143,7 +143,11 @@ public protocol MeshBearer: Bearer {
 /// A provisioning bearer is used to send provisioning PDUs to unprovisioned
 /// devices.
 public protocol ProvisioningBearer: Bearer {
-    // Empty.
+    /// The UUID associated with the bearer.
+    ///
+    /// This identifier is implementation specific and may but doesn't have to
+    /// be equal to ``UnprovisionedDevice/uuid``.
+    var identifier: UUID { get }
 }
 
 extension ProvisioningBearer {

@@ -34,7 +34,7 @@ import nRFMeshProvision
 
 typealias DiscoveredPeripheral = (
     device: UnprovisionedDevice,
-    peripheral: CBPeripheral,
+    bearer: ProvisioningBearer,
     rssi: Int
 )
 
@@ -72,9 +72,20 @@ class ScannerTableViewController: UITableViewController {
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+        
+        // Scanner can also receive messages sent from nodes with
+        // Remote Provisioning Server model.
+        print("AAAB Scanner appeared, setting delegate")
+        MeshNetworkManager.instance.delegate = self
+        
         if centralManager.state == .poweredOn {
             startScanning()
         }
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        stopScanning()
     }
     
     // MARK: - Segue and navigation
@@ -116,23 +127,17 @@ class ScannerTableViewController: UITableViewController {
         let unprovisionedDevice = selectedPeripheral.device
         selectedDevice = unprovisionedDevice
         
-        func start() {
-            let bearer = PBGattBearer(target: selectedPeripheral.peripheral)
-            bearer.logger = MeshNetworkManager.instance.logger
-            open(bearer: bearer)
-        }
-        
         // Check if there is no conflicting Node already in the network.
         let network = MeshNetworkManager.instance.meshNetwork!
         if let oldNode = network.node(withUuid: unprovisionedDevice.uuid) {
             let removeAction = UIAlertAction(title: "Just reprovision", style: .default) { _ in
                 network.remove(node: oldNode)
-                start()
+                self.open(bearer: selectedPeripheral.bearer)
             }
             let reconfigureAction = UIAlertAction(title: "Reprovision and reconfigure", style: .default) { _ in
                 self.previousNode = oldNode
                 network.remove(node: oldNode)
-                start()
+                self.open(bearer: selectedPeripheral.bearer)
             }
             let cancelAction = UIAlertAction(title: "Cancel", style: .cancel)
             presentAlert(title: "Warning",
@@ -140,7 +145,7 @@ class ScannerTableViewController: UITableViewController {
                          options: [removeAction, reconfigureAction, cancelAction])
         } else {
             // If not, just continue.
-            start()
+            open(bearer: selectedPeripheral.bearer)
         }
     }
 
@@ -152,28 +157,118 @@ private extension ScannerTableViewController {
     
     func startScanning() {
         activityIndicator.startAnimating()
+        
+        // Scan for devices with Mesh Provisioning Service to provision them over PB GATT Bearer.
         centralManager.delegate = self
         centralManager.scanForPeripherals(withServices: [MeshProvisioningService.uuid],
                                           options: [CBCentralManagerScanOptionAllowDuplicatesKey : true])
+        
+        // Scan for other devices using Remote Provisioning.
+        let bearer = MeshNetworkManager.bearer!
+        guard bearer.isOpen else {
+            return
+        }
+        
+        let manager = MeshNetworkManager.instance
+        let meshNetwork = manager.meshNetwork!
+        
+        let scanRequest = RemoteProvisioningScanStart(timeout: 10)!
+        
+        // Look for all Nodes with Remote Provisioning Server and send Scan Start request to all.
+        meshNetwork.nodes
+            .filter { $0.contains(modelWithSigModelId: .remoteProvisioningServerModelId) }
+            .forEach { node in
+                _ = try? manager.send(scanRequest, to: node)
+            }
     }
     
     func stopScanning() {
         activityIndicator.stopAnimating()
+        
+        // Stop scanning for devices with Mesh Provisioning Service.
         centralManager.stopScan()
+        
+        // Stop all Remote Provisioning Servers.
+        let bearer = MeshNetworkManager.bearer!
+        guard bearer.isOpen else {
+            return
+        }
+        
+        let manager = MeshNetworkManager.instance
+        let meshNetwork = manager.meshNetwork!
+        
+        // Look for all Nodes with Remote Provisioning Server.
+        let remoteProvisioners = meshNetwork.nodes
+            .filter { $0.contains(modelWithSigModelId: .remoteProvisioningServerModelId) }
+        // Sent Stop Scan message.
+        remoteProvisioners.forEach { node in
+            let stopScanRequest = RemoteProvisioningScanStop()
+            _ = try? manager.send(stopScanRequest, to: node)
+        }
     }
     
-    func open(bearer: PBGattBearer) {
+    func open(bearer: ProvisioningBearer) {
         bearer.delegate = self
         
         alert = UIAlertController(title: "Status", message: "Connecting...", preferredStyle: .alert)
         alert!.addAction(UIAlertAction(title: "Cancel", style: .cancel) { [weak self] action in
+            guard let self = self else { return }
             action.isEnabled = false
-            self?.alert?.title   = "Aborting"
-            self?.alert?.message = "Cancelling connection..."
-            bearer.close()
+            self.alert?.title   = "Aborting"
+            self.alert?.message = "Cancelling connection..."
+            do {
+                try bearer.close()
+            } catch {
+                self.alert?.dismiss(animated: true) {
+                    self.presentAlert(title: "Error", message: error.localizedDescription)
+                }
+                self.alert = nil
+            }
         })
         present(alert!, animated: true) {
-            bearer.open()
+            do {
+                try bearer.open()
+            } catch {
+                self.alert?.dismiss(animated: true) {
+                    self.presentAlert(title: "Error", message: error.localizedDescription)
+                }
+                self.alert = nil
+            }
+        }
+    }
+    
+}
+
+extension ScannerTableViewController: MeshNetworkDelegate {
+    
+    func meshNetworkManager(_ manager: MeshNetworkManager,
+                            didReceiveMessage message: MeshMessage,
+                            sentFrom source: Address, to destination: MeshAddress) {
+        switch message {
+        case let message as RemoteProvisioningScanReport:
+            if let index = discoveredPeripherals.firstIndex(where: { $0.bearer.identifier == message.uuid }) {
+                if let cell = tableView.cellForRow(at: IndexPath(row: index, section: 0)) as? DeviceCell {
+                    let device = discoveredPeripherals[index].device
+                    cell.deviceDidUpdate(device, andRSSI: message.rssi.intValue)
+                }
+            } else {
+                guard let meshNetwork = manager.meshNetwork,
+                      let server = meshNetwork.node(withAddress: source),
+                      let model = server.models(withSigModelId: .remoteProvisioningServerModelId).first,
+                      let bearer = try? PBRemoteBearer(target: message.uuid, using: model, over: manager) else {
+                    return
+                }
+                bearer.logger = MeshNetworkManager.instance.logger
+                
+                DispatchQueue.main.async {
+                    let unprovisionedDevice = UnprovisionedDevice(scanReport: message)
+                    self.discoveredPeripherals.append((unprovisionedDevice, bearer, message.rssi.intValue))
+                    self.tableView.insertRows(at: [IndexPath(row: self.discoveredPeripherals.count - 1, section: 0)], with: .fade)
+                    self.tableView.hideEmptyView()
+                }
+            }
+        default:
+            break
         }
     }
     
@@ -185,7 +280,7 @@ extension ScannerTableViewController: CBCentralManagerDelegate {
     
     func centralManager(_ central: CBCentralManager, didDiscover peripheral: CBPeripheral,
                         advertisementData: [String : Any], rssi RSSI: NSNumber) {
-        if let index = discoveredPeripherals.firstIndex(where: { $0.peripheral == peripheral }) {
+        if let index = discoveredPeripherals.firstIndex(where: { $0.bearer.identifier == peripheral.identifier }) {
             if let cell = tableView.cellForRow(at: IndexPath(row: index, section: 0)) as? DeviceCell {
                 let device = discoveredPeripherals[index].device
                 device.name = advertisementData.localName
@@ -193,7 +288,9 @@ extension ScannerTableViewController: CBCentralManagerDelegate {
             }
         } else {
             if let unprovisionedDevice = UnprovisionedDevice(advertisementData: advertisementData) {
-                discoveredPeripherals.append((unprovisionedDevice, peripheral, RSSI.intValue))
+                let bearer = PBGattBearer(target: peripheral)
+                bearer.logger = MeshNetworkManager.instance.logger
+                discoveredPeripherals.append((unprovisionedDevice, bearer, RSSI.intValue))
                 tableView.insertRows(at: [IndexPath(row: discoveredPeripherals.count - 1, section: 0)], with: .fade)
                 tableView.hideEmptyView()
             }

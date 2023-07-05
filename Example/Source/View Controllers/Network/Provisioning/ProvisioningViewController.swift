@@ -231,7 +231,13 @@ private extension ProvisioningViewController {
             guard let self = self else { return }
             self.alert?.title   = "Aborting"
             self.alert?.message = "Cancelling connection..."
-            self.bearer.close()
+            do {
+                try self.bearer.close()
+            } catch {
+                self.dismissStatusDialog() {
+                    self.presentAlert(title: "Error", message: error.localizedDescription)
+                }
+            }
         }
     }
     
@@ -241,8 +247,15 @@ private extension ProvisioningViewController {
     
     /// This method tries to open the bearer had it been closed when on this screen.
     func openBearer() {
-        presentStatusDialog(message: "Connecting...") {
-            self.bearer.open()
+        presentStatusDialog(message: "Connecting...") { [weak self] in
+            guard let self = self else { return }
+            do {
+                try self.bearer.open()
+            } catch {
+                self.dismissStatusDialog() {
+                    self.presentAlert(title: "Error", message: error.localizedDescription)
+                }
+            }
         }
     }
     
@@ -441,8 +454,15 @@ extension ProvisioningViewController: ProvisioningDelegate {
                 }
                 
             case .complete:
-                self.bearer.close()
-                self.presentStatusDialog(message: "Disconnecting...")
+                self.presentStatusDialog(message: "Disconnecting...") {
+                    do {
+                        try self.bearer.close()
+                    } catch {
+                        self.dismissStatusDialog() {
+                            self.presentAlert(title: "Error", message: error.localizedDescription)
+                        }
+                    }
+                }
                 
             case let .failed(error):
                 self.dismissStatusDialog {

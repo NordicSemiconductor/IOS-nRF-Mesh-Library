@@ -39,6 +39,8 @@ public enum BearerError: Error {
     case pduTypeNotSupported
     /// Thrown when the Bearer is not ready to send data.
     case bearerClosed
+    /// Thrown when the Bearer is busy and cannot send new message at that moment.
+    case busy
 }
 
 extension BearerError: LocalizedError {
@@ -48,6 +50,7 @@ extension BearerError: LocalizedError {
         case .centralManagerNotPoweredOn: return NSLocalizedString("Central Manager not powered on.", comment: "bearer")
         case .pduTypeNotSupported:        return NSLocalizedString("PDU type not supported.", comment: "bearer")
         case .bearerClosed:               return NSLocalizedString("The bearer is closed.", comment: "bearer")
+        case .busy:                       return NSLocalizedString("The bearer is busy", comment: "bearer")
         }
     }
     
