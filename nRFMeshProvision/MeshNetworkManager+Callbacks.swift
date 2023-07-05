@@ -864,7 +864,7 @@ public extension MeshNetworkManager {
     /// - parameters:
     ///   - type: The message type.
     ///   - address: The Unicast Address of the source Element.
-    func unregisterCallback<T: StaticMeshMessage>(forMessagesWithType type: T, from address: Address) {
+    func unregisterCallback<T: StaticMeshMessage>(forMessagesWithType type: T.Type, from address: Address) {
         unregisterCallback(forMessagesWithOpCode: T.opCode, from: address)
     }
     
@@ -878,7 +878,7 @@ public extension MeshNetworkManager {
     /// - parameters:
     ///   - type: The message type.
     ///   - element: The source Element.
-    func unregisterCallback<T: StaticMeshMessage>(forMessagesWithType type: T, from element: Element) {
+    func unregisterCallback<T: StaticMeshMessage>(forMessagesWithType type: T.Type, from element: Element) {
         unregisterCallback(forMessagesWithOpCode: T.opCode, from: element.unicastAddress)
     }
     
