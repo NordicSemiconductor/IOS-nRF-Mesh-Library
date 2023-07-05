@@ -416,9 +416,7 @@ internal class NetworkManager {
         return AsyncStream {
             return try? await self.waitFor(messageWithOpCode: opCode, from: address, to: destination, timeout: 0)
         } onCancel: {
-            self.notifyCallback(awaitingMessageWithOpCode: opCode,
-                                sentFrom: address, to: destination,
-                                with: .failure(CancellationError()))
+            self.cancel(messageStreamWithOpCode: opCode, from: address)
         }
     }
     
@@ -441,9 +439,7 @@ internal class NetworkManager {
         return AsyncStream {
             return try? await self.waitFor(messageWithOpCode: T.opCode, from: address, to: destination, timeout: 0) as? T
         } onCancel: {
-            self.notifyCallback(awaitingMessageWithOpCode: T.opCode,
-                                sentFrom: address, to: destination,
-                                with: .failure(CancellationError()))
+            self.cancel(messageStreamWithOpCode: T.opCode, from: address)
         }
     }
     
@@ -475,6 +471,22 @@ internal class NetworkManager {
     /// - parameter handler: The message identifier.
     func cancel(_ handler: MessageHandle) {
         accessLayer.cancel(handler)
+    }
+    
+    /// Ńotifies a callback awaiting messages with given OpCode sent from
+    /// the given Unicast Address about a cancellation.
+    ///
+    /// This method will send a cancellation error to the awaiting callback.
+    /// This error will be received by a stream causing it to return `nil`
+    /// which will finish the stream.
+    ///
+    /// - parameters:
+    ///   - opCode: The message OpCode.
+    ///   - address: The Unicast Address of the sender.
+    func cancel(messageStreamWithOpCode opCode: UInt32, from address: Address) {
+        notifyCallback(awaitingMessageWithOpCode: opCode,
+                       sentFrom: address, to: nil,
+                       with: .failure(CancellationError()))
     }
     
     // MARK: - Callbacks
@@ -621,20 +633,34 @@ private extension NetworkManager {
         }
     }
     
+    /// Notify the callback awaiting received message.
+    ///
+    /// - parameters:
+    ///   - opCode: The message OpCode.
+    ///   - address: The Unicast Address of the sender.
+    ///   - destination: The optional destination. This may be set to `nil` when cancelling callbacks.
+    ///   - result: The result to be returned.
     func notifyCallback(awaitingMessageWithOpCode opCode: UInt32,
                         sentFrom address: Address, to destination: MeshAddress?,
                         with result: Result<MeshMessage, Error>) {
-        // Notify the callback awaiting received message.
+        // Search for a callback matching given criteria.
         let messageCallback: ((Result<MeshMessage, Error>) -> ())? = mutex.sync {
             guard let index = messageCallbacks.firstIndex(where: {
+                // The source Unicast Address must match.
                 $0.source == address &&
+                // The OpCode must match.
                 $0.expectedOpCode == opCode &&
-               ($0.expectedDestination == nil || $0.expectedDestination == destination)
+                // If the destination is set, it must either match the expected one,
+                // or the expected should not be set (blind card).
+                // The destination is not set when cancelling the callback.
+               (destination == nil || $0.expectedDestination == nil || $0.expectedDestination == destination)
             }) else {
                 return nil
             }
+            // When found, remove it, as message callbacks are single use only.
             return messageCallbacks.remove(at: index).callback
         }
+        // Notify the callback. It has already been removed from `messageCallbacks`.
         messageCallback?(result)
     }
     

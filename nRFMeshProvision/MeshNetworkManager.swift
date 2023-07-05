@@ -884,11 +884,10 @@ public extension MeshNetworkManager {
     /// Returns an async stream of messages matching given criteria.
     ///
     /// When the task in which the stream is iterated gets cancelled the stream
-    /// will return `nil`. 
+    /// will return `nil`.
     ///
-    /// - important: This method is using ``waitFor(messageWithOpCode:from:to:timeout:)-6673k`` under the hood.
-    ///              It is not possible to await both at the same time, as they share
-    ///              the same resources.
+    /// - warning: This method is implemented using ``waitFor(messageWithOpCode:from:to:timeout:)-6673k``.
+    ///            It is not possible to await a message and message stream simultanosly.
     ///
     /// - parameters:
     ///   - opCode: The OpCode of the messages to await for.
@@ -910,9 +909,8 @@ public extension MeshNetworkManager {
     /// When the task in which the stream is iterated gets cancelled the stream
     /// will return `nil`.
     ///
-    /// - important: This method is using ``waitFor(messageFrom:to:timeout:)-24q2d`` under the hood.
-    ///              It is not possible to await both at the same time, as they share
-    ///              the same resources.
+    /// - warning: This method is implemented using ``waitFor(messageFrom:to:timeout:)-24q2d``.
+    ///            It is not possible to await a message and message stream simultanosly.
     ///
     /// - parameters:
     ///   - opCode: The OpCode of the messages to await for.
@@ -926,19 +924,6 @@ public extension MeshNetworkManager {
             throw MeshNetworkError.noNetwork
         }
         return networkManager.messages(from: address, to: destination)
-    }
-    
-    /// Cancels sending the message with the given handle.
-    ///
-    /// - parameter messageId: The message handle.
-    func cancel(_ messageId: MessageHandle) throws {
-        guard let networkManager = networkManager else {
-            print("Error: Mesh Network not created")
-            throw MeshNetworkError.noNetwork
-        }
-        Task {
-            networkManager.cancel(messageId)
-        }
     }
     
 }
