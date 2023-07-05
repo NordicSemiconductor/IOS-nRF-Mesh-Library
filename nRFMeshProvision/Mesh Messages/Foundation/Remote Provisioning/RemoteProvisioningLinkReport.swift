@@ -33,11 +33,12 @@ import Foundation
 /// A Remote Provisioning Link Report message is an unacknowledged message used by
 /// the Remote Provisioning Server to report the state change of a provisioning
 /// bearer link or the Node Provisioning Protocol Interface.
-public struct RemoteProvisioningLinkReport: RemoteProvisioningStatusMessage {
+public struct RemoteProvisioningLinkReport: UnacknowledgedRemoteProvisioningMessage,
+                                            RemoteProvisioningStatusMessage,
+                                            RemoteProvisioningLinkStateMessage {
     public static let opCode: UInt32 = 0x805C
     
     public let status: RemoteProvisioningMessageStatus
-    /// Remote Provisioning Link state.
     public let linkState: RemoteProvisioningLinkState
     /// Provisioning bearer link close reason.
     ///
@@ -54,6 +55,10 @@ public struct RemoteProvisioningLinkReport: RemoteProvisioningStatusMessage {
         }
         return data
     }
+    
+    /// To ensure delivery of the message it should be sent as a segmented message
+    /// even if the PDU contains less than 11 bytes.
+    public var isSegmented: Bool = true
     
     /// Creates Remote Provisioning Link Report message.
     ///

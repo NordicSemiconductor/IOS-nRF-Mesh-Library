@@ -36,19 +36,19 @@ public protocol RemoteProvisioningMessage: ConfigMessage {
 }
 
 /// A base protocol for unacknowledged Remote Provisioning messages.
-public protocol UnacknowledgedRemoteProvisioningMessage: RemoteProvisioningMessage, UnacknowledgedMeshMessage {
+public protocol UnacknowledgedRemoteProvisioningMessage: RemoteProvisioningMessage, UnacknowledgedConfigMessage {
     // No additional fields.
 }
 
 /// A base protocol for unacknowledged Remote Provisioning messages.
-public protocol RemoteProvisioningResponse: StaticMeshResponse, UnacknowledgedRemoteProvisioningMessage {
+public protocol RemoteProvisioningResponse: ConfigResponse, UnacknowledgedRemoteProvisioningMessage {
     // No additional fields.
 }
 
 /// A base protocol for acknowledged Remote Provisioning messages.
 ///
 /// Acknowledged messages will be responded with a status message.
-public protocol AcknowledgedRemoteProvisioningMessage: RemoteProvisioningMessage, StaticAcknowledgedMeshMessage {
+public protocol AcknowledgedRemoteProvisioningMessage: RemoteProvisioningMessage, AcknowledgedConfigMessage {
     // No additional fields.
 }
 
@@ -87,6 +87,12 @@ public enum RemoteProvisioningMessageStatus: UInt8 {
 public protocol RemoteProvisioningStatusMessage: RemoteProvisioningMessage, StatusMessage {
     /// Status for the requesting message.
     var status: RemoteProvisioningMessageStatus { get }
+}
+
+/// A base protocol for Remote Provisioning messages reporting link state.
+public protocol RemoteProvisioningLinkStateMessage: RemoteProvisioningMessage {
+    /// Remote Provisioning Link state.
+    var linkState: RemoteProvisioningLinkState { get }
 }
 
 public extension RemoteProvisioningStatusMessage {

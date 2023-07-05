@@ -59,6 +59,10 @@ public struct RemoteProvisioningExtendedScanReport: RemoteProvisioningStatusMess
         return data
     }
     
+    /// To ensure delivery of the message it should be sent as a segmented message
+    /// even if the PDU contains less than 11 bytes.
+    public var isSegmented: Bool = true
+    
     // TODO: initializers
     
     public init?(parameters: Data) {
