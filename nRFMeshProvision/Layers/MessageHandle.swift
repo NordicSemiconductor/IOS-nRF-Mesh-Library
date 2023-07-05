@@ -69,7 +69,7 @@ public struct MessageHandle {
     /// (depending on the connection interval and message size)
     /// and therefore cannot be cancelled.
     public func cancel() {
-        manager?.cancel(self)
+        manager?.cancel(messageWithHandler: self)
     }
     
 }

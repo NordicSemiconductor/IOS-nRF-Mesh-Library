@@ -400,7 +400,7 @@ class FastSending: XCTestCase, MeshNetworkDelegate {
         XCTAssertNotNil(meshNetwork.nodes[0].meshNetwork)
     }
 
-    func testFastSending() throws {
+    func testFastSending() async throws {
         XCTAssertNotNil(manager)
         XCTAssertNotNil(manager.meshNetwork)
         
@@ -436,18 +436,20 @@ class FastSending: XCTestCase, MeshNetworkDelegate {
         
         let bindFirstAppKey = ConfigModelAppBind(applicationKey: firstKey!, to: sceneClientModel!)
         XCTAssertNotNil(bindFirstAppKey)
-        XCTAssertNoThrow(try manager.sendToLocalNode(bindFirstAppKey!))
+        let response1 = try await manager.sendToLocalNode(bindFirstAppKey!)
+        XCTAssert(response1 is ConfigModelAppStatus)
         
         let bindLastAppKey = ConfigModelAppBind(applicationKey: lastKey!, to: sceneClientModel!)
         XCTAssertNotNil(bindLastAppKey)
-        XCTAssertNoThrow(try manager.sendToLocalNode(bindLastAppKey!))
+        let response2 = try await manager.sendToLocalNode(bindLastAppKey!)
+        XCTAssert(response2 is ConfigModelAppStatus)
         
-        wait(for: [messageSent, keyBound, statusSent, statusReceived], timeout: 2)
+        await fulfillment(of: [messageSent, keyBound, statusSent, statusReceived], timeout: 2)
     }
     
     func meshNetworkManager(_ manager: MeshNetworkManager,
                             didReceiveMessage message: MeshMessage,
-                            sentFrom source: Address, to destination: Address) {
+                            sentFrom source: Address, to destination: MeshAddress) {
         if message is ConfigModelAppBind {
             let sceneClientModel = manager.meshNetwork?.localProvisioner?.node?
                 .primaryElement?.model(withSigModelId: .sceneClientModelId)
@@ -464,9 +466,8 @@ class FastSending: XCTestCase, MeshNetworkDelegate {
     }
     
     func meshNetworkManager(_ manager: MeshNetworkManager, didSendMessage message: MeshMessage,
-                            from localElement: Element, to destination: Address) {
+                            from localElement: Element, to destination: MeshAddress) {
         if message is ConfigModelAppBind {
-            print("AAAA")
             messageSent.fulfill()
         }
         if message is ConfigModelAppStatus {
@@ -475,7 +476,7 @@ class FastSending: XCTestCase, MeshNetworkDelegate {
     }
     
     func meshNetworkManager(_ manager: MeshNetworkManager, failedToSendMessage message: MeshMessage,
-                            from localElement: Element, to destination: Address, error: Error) {
+                            from localElement: Element, to destination: MeshAddress, error: Error) {
         XCTFail(error.localizedDescription)
     }
 

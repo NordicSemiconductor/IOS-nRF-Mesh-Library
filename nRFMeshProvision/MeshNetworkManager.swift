@@ -848,12 +848,12 @@ public extension MeshNetworkManager {
     ///           is not a Unicast Address, `timeout` is negative or the manager is already
     ///           awaiting a message with the same parameters.
     /// - returns: The message received.
-    func waitFor<T: StaticMeshMessage>(messageWithType type: T.Type,
-                 from source: Address, to destination: MeshAddress? = nil,
-                 timeout: TimeInterval) async throws -> MeshMessage {
-        return try await waitFor(messageWithOpCode: type.opCode,
+    func waitFor<T: StaticMeshMessage>(messageFrom source: Address,
+                                       to destination: MeshAddress? = nil,
+                                       timeout: TimeInterval) async throws -> T {
+        return try await waitFor(messageWithOpCode: T.opCode,
                                  from: source, to: destination,
-                                 timeout: timeout)
+                                 timeout: timeout) as! T
     }
     
     /// This is a blocking method awaiting a mesh message with given OpCode
@@ -873,25 +873,94 @@ public extension MeshNetworkManager {
     /// - throws: This method throws when the network is not created, `timeout` is negative
     ///           or the manager is already awaiting a message with the same parameters.
     /// - returns: The message received.
-    func waitFor<T: StaticMeshMessage>(messageWithType type: T.Type,
-                 from element: Element, to destination: MeshAddress? = nil,
-                 timeout: TimeInterval) async throws -> MeshMessage {
-        return try await waitFor(messageWithOpCode: type.opCode,
+    func waitFor<T: StaticMeshMessage>(messageFrom element: Element,
+                                       to destination: MeshAddress? = nil,
+                                       timeout: TimeInterval) async throws -> T {
+        return try await waitFor(messageWithOpCode: T.opCode,
                                  from: element.unicastAddress, to: destination,
-                                 timeout: timeout)
+                                 timeout: timeout) as! T
     }
     
-    /// Cancels sending the message with the given handle.
+    /// Returns an async stream of messages matching given criteria.
     ///
-    /// - parameter messageId: The message handle.
-    func cancel(_ messageId: MessageHandle) throws {
+    /// When the task in which the stream is iterated gets cancelled the stream
+    /// will return `nil`.
+    ///
+    /// - warning: This method is implemented using ``waitFor(messageWithOpCode:from:to:timeout:)-6673k``.
+    ///            It is not possible to await a message and message stream simultanosly.
+    ///
+    /// - parameters:
+    ///   - opCode: The OpCode of the messages to await for.
+    ///   - address: The Unicast Address of the sender.
+    ///   - destination: The optional destination address of the messages.
+    /// - returns: The stream of messages with given OpCode.
+    func messages(withOpCode opCode: UInt32,
+                  from address: Address,
+                  to destination: MeshAddress? = nil) throws -> AsyncStream<MeshMessage> {
         guard let networkManager = networkManager else {
             print("Error: Mesh Network not created")
             throw MeshNetworkError.noNetwork
         }
-        Task {
-            networkManager.cancel(messageId)
+        return networkManager.messages(withOpCode: opCode, from: address, to: destination)
+    }
+    
+    /// Returns an async stream of messages matching given criteria.
+    ///
+    /// When the task in which the stream is iterated gets cancelled the stream
+    /// will return `nil`.
+    ///
+    /// - warning: This method is implemented using ``waitFor(messageWithOpCode:from:to:timeout:)-6673k``.
+    ///            It is not possible to await a message and message stream simultanosly.
+    ///
+    /// - parameters:
+    ///   - opCode: The OpCode of the messages to await for.
+    ///   - element: The sender Element.
+    ///   - destination: The optional destination address of the messages.
+    /// - returns: The stream of messages with given OpCode.
+    func messages(withOpCode opCode: UInt32,
+                  from element: Element,
+                  to destination: MeshAddress? = nil) throws -> AsyncStream<MeshMessage> {
+        return try messages(withOpCode: opCode, from: element.unicastAddress, to: destination)
+    }
+    
+    /// Returns an async stream of messages matching given criteria.
+    ///
+    /// When the task in which the stream is iterated gets cancelled the stream
+    /// will return `nil`.
+    ///
+    /// - warning: This method is implemented using ``waitFor(messageFrom:to:timeout:)-24q2d``.
+    ///            It is not possible to await a message and message stream simultanosly.
+    ///
+    /// - parameters:
+    ///   - opCode: The OpCode of the messages to await for.
+    ///   - address: The Unicast Address of the sender.
+    ///   - destination: The optional destination address of the messages.
+    /// - returns: The stream of messages with given type.
+    func messages<T: StaticMeshMessage>(from address: Address,
+                                        to destination: MeshAddress? = nil) throws -> AsyncStream<T> {
+        guard let networkManager = networkManager else {
+            print("Error: Mesh Network not created")
+            throw MeshNetworkError.noNetwork
         }
+        return networkManager.messages(from: address, to: destination)
+    }
+    
+    /// Returns an async stream of messages matching given criteria.
+    ///
+    /// When the task in which the stream is iterated gets cancelled the stream
+    /// will return `nil`.
+    ///
+    /// - warning: This method is implemented using ``waitFor(messageFrom:to:timeout:)-24q2d``.
+    ///            It is not possible to await a message and message stream simultanosly.
+    ///
+    /// - parameters:
+    ///   - opCode: The OpCode of the messages to await for.
+    ///   - element: The sender Element.
+    ///   - destination: The optional destination address of the messages.
+    /// - returns: The stream of messages with given type.
+    func messages<T: StaticMeshMessage>(from element: Element,
+                                        to destination: MeshAddress? = nil) throws -> AsyncStream<T> {
+        return try messages(from: element.unicastAddress, to: destination)
     }
     
 }

@@ -199,14 +199,17 @@ internal class NetworkManager {
               from element: Element, to destination: MeshAddress,
               withTtl initialTtl: UInt8?,
               using applicationKey: ApplicationKey) async throws {
-        try mutex.sync {
-            guard !outgoingMessages.contains(destination) else {
-                throw AccessError.busy
-            }
-            outgoingMessages.insert(destination)
-        }
-        try await withTaskCancellationHandler {
-            try await withCheckedThrowingContinuation { continuation in
+        return try await withTaskCancellationHandler {
+            return try await withCheckedThrowingContinuation { continuation in
+                let busy = mutex.sync {
+                    guard !outgoingMessages.contains(destination) else {
+                        continuation.resume(throwing: AccessError.busy)
+                        return true
+                    }
+                    outgoingMessages.insert(destination)
+                    return false
+                }
+                guard !busy else { return }
                 setDeliveryCallback(for: destination) { result in
                     continuation.resume(with: result)
                 }
@@ -215,8 +218,8 @@ internal class NetworkManager {
                                  retransmit: false)
             }
         } onCancel: {
-            cancel(MessageHandle(for: message, sentFrom: element.unicastAddress,
-                                 to: destination, using: self))
+            cancel(messageWithHandler: MessageHandle(for: message, sentFrom: element.unicastAddress,
+                                                     to: destination, using: self))
         }
     }
     
@@ -243,13 +246,15 @@ internal class NetworkManager {
         let meshAddress = MeshAddress(destination)
         return try await withTaskCancellationHandler {
             return try await withCheckedThrowingContinuation { continuation in
-                mutex.sync {
+                let busy = mutex.sync {
                     guard !outgoingMessages.contains(meshAddress) else {
                         continuation.resume(throwing: AccessError.busy)
-                        return
+                        return true
                     }
                     outgoingMessages.insert(meshAddress)
+                    return false
                 }
+                guard !busy else { return }
                 setResponseCallback(for: message, from: destination) { result in
                     continuation.resume(with: result)
                 }
@@ -258,8 +263,8 @@ internal class NetworkManager {
                                  retransmit: false)
             }
         } onCancel: {
-            cancel(MessageHandle(for: message, sentFrom: element.unicastAddress,
-                                 to: meshAddress, using: self))
+            cancel(messageWithHandler: MessageHandle(for: message, sentFrom: element.unicastAddress,
+                                                     to: meshAddress, using: self))
         }
     }
     
@@ -284,13 +289,15 @@ internal class NetworkManager {
         let meshAddress = MeshAddress(destination)
         return try await withTaskCancellationHandler {
             return try await withCheckedThrowingContinuation { continuation in
-                mutex.sync {
+                let busy = mutex.sync {
                     guard !outgoingMessages.contains(meshAddress) else {
                         continuation.resume(throwing: AccessError.busy)
-                        return
+                        return true
                     }
                     outgoingMessages.insert(meshAddress)
+                    return false
                 }
+                guard !busy else { return }
                 setDeliveryCallback(for: meshAddress) { result in
                     continuation.resume(with: result)
                 }
@@ -298,8 +305,8 @@ internal class NetworkManager {
                                  withTtl: initialTtl)
             }
         } onCancel: {
-            cancel(MessageHandle(for: configMessage, sentFrom: element.unicastAddress,
-                                 to: meshAddress, using: self))
+            cancel(messageWithHandler: MessageHandle(for: configMessage, sentFrom: element.unicastAddress,
+                                                     to: meshAddress, using: self))
         }
     }
     
@@ -327,13 +334,15 @@ internal class NetworkManager {
         let meshAddress = MeshAddress(destination)
         return try await withTaskCancellationHandler {
             return try await withCheckedThrowingContinuation { continuation in
-                mutex.sync {
+                let busy = mutex.sync {
                     guard !outgoingMessages.contains(meshAddress) else {
                         continuation.resume(throwing: AccessError.busy)
-                        return
+                        return true
                     }
                     outgoingMessages.insert(meshAddress)
+                    return false
                 }
+                guard !busy else { return }
                 setResponseCallback(for: configMessage, from: destination) { result in
                     continuation.resume(with: result)
                 }
@@ -341,11 +350,23 @@ internal class NetworkManager {
                                  withTtl: initialTtl)
             }
         } onCancel: {
-            cancel(MessageHandle(for: configMessage, sentFrom: element.unicastAddress,
-                                 to: meshAddress, using: self))
+            cancel(messageWithHandler: MessageHandle(for: configMessage, sentFrom: element.unicastAddress,
+                                                     to: meshAddress, using: self))
         }
     }
     
+    /// Awaits a message with a given OpCode from the specified Unicast Address.
+    ///
+    /// If the destination is optional.
+    ///
+    /// - parameters:
+    ///   - opCode: The message OpCode.
+    ///   - address: The Unicast Address of the source Element.
+    ///   - destination: The optional destination.
+    ///   - timeout: The timeout in seconds.
+    /// - returns: The received mesh message.
+    /// - throws: This method may throw when the manager already awaits messages
+    ///           with the same OpCode and source address or when a timeout occurred.
     func waitFor(messageWithOpCode opCode: UInt32,
                  from address: Address, to destination: MeshAddress?,
                  timeout: TimeInterval) async throws -> MeshMessage {
@@ -369,26 +390,66 @@ internal class NetworkManager {
                     }
                 }
             } onCancel: {
-                let callback: ((Result<MeshMessage, Error>) -> ())? = mutex.sync {
-                    guard let index = messageCallbacks.firstIndex(where: {
-                        $0.source == address &&
-                        $0.expectedOpCode == opCode &&
-                        $0.expectedDestination == destination
-                    }) else {
-                        return nil
-                    }
-                    return messageCallbacks.remove(at: index).callback
-                }
-                callback?(.failure(AccessError.timeout))
+                notifyCallback(awaitingMessageWithOpCode: opCode,
+                               sentFrom: address, to: destination,
+                               with: .failure(AccessError.timeout))
             }
         }
-        if timeout > 0 {
-            let timeoutTask = Task {
-                try await Task.sleep(nanoseconds: UInt64(timeout * 1_000_000_000))
-                task.cancel()
-            }
+        let timeoutTask = timeout == 0 ? nil : Task {
+            try await Task.sleep(nanoseconds: UInt64(timeout * 1_000_000_000))
+            task.cancel()
         }
-        return try await task.value
+        let result = try await task.value
+        timeoutTask?.cancel()
+        return result
+    }
+    
+    /// Returns an async stream of messages matching given criteria.
+    ///
+    /// When the task in which the stream is iterated gets cancelled the cancellation
+    /// handler will automatically remove the awaiting message callback and the stream
+    /// will return `nil`.
+    ///
+    /// - important: This method is using `waitFor(...)` under the hood.
+    ///              It is not possible to await both at the same time, as they share
+    ///              the same instance of `messageCallbacks`.
+    ///
+    /// - parameters:
+    ///   - opCode: The OpCode of the messages to await for.
+    ///   - address: The Unicast Address of the sender.
+    ///   - destination: The optional destination address of the messages.
+    /// - returns: The stream of messages with given OpCode.
+    func messages(withOpCode opCode: UInt32,
+                  from address: Address,
+                  to destination: MeshAddress?) -> AsyncStream<MeshMessage> {
+        return AsyncStream {
+            return try? await self.waitFor(messageWithOpCode: opCode, from: address, to: destination, timeout: 0)
+        } onCancel: {
+            self.cancel(awaitingMessageWithOpCode: opCode, from: address)
+        }
+    }
+    
+    /// Returns an async stream of messages matching given criteria.
+    ///
+    /// When the task in which the stream is iterated gets cancelled the cancellation
+    /// handler will automatically remove the awaiting message callback and the stream
+    /// will return `nil`.
+    ///
+    /// - important: This method is using `waitFor(...)` under the hood.
+    ///              It is not possible to await both at the same time, as they share
+    ///              the same instance of `messageCallbacks`.
+    ///
+    /// - parameters:
+    ///   - address: The Unicast Address of the sender.
+    ///   - destination: The optional destination address of the messages.
+    /// - returns: The stream of messages of given type.
+    func messages<T: StaticMeshMessage>(from address: Address,
+                                        to destination: MeshAddress?) -> AsyncStream<T> {
+        return AsyncStream {
+            return try? await self.waitFor(messageWithOpCode: T.opCode, from: address, to: destination, timeout: 0) as? T
+        } onCancel: {
+            self.cancel(awaitingMessageWithOpCode: T.opCode, from: address)
+        }
     }
     
     /// Sends the Proxy Configuration message to the connected Proxy Node.
@@ -417,8 +478,24 @@ internal class NetworkManager {
     /// Cancels sending the message with the given handler.
     ///
     /// - parameter handler: The message identifier.
-    func cancel(_ handler: MessageHandle) {
+    func cancel(messageWithHandler handler: MessageHandle) {
         accessLayer.cancel(handler)
+    }
+    
+    /// Ńotifies a callback awaiting messages with given OpCode sent from
+    /// the given Unicast Address about a cancellation.
+    ///
+    /// This method will send a cancellation error to the awaiting callback.
+    /// This error will be received by a stream causing it to return `nil`
+    /// which will finish the stream.
+    ///
+    /// - parameters:
+    ///   - opCode: The message OpCode.
+    ///   - address: The Unicast Address of the sender.
+    func cancel(awaitingMessageWithOpCode opCode: UInt32, from address: Address) {
+        notifyCallback(awaitingMessageWithOpCode: opCode,
+                       sentFrom: address, to: nil,
+                       with: .failure(CancellationError()))
     }
     
     // MARK: - Callbacks
@@ -432,17 +509,9 @@ internal class NetworkManager {
     func notifyAbout(newMessage message: MeshMessage,
                      from source: Address, to destination: MeshAddress) {
         // Notify the callback awaiting received message.
-        let messageCallback: ((Result<MeshMessage, Error>) -> ())? = mutex.sync {
-            guard let index = messageCallbacks.firstIndex(where: {
-                $0.source == source &&
-                $0.expectedOpCode == message.opCode &&
-               ($0.expectedDestination == nil || $0.expectedDestination == destination)
-            }) else {
-                return nil
-            }
-            return messageCallbacks.remove(at: index).callback
-        }
-        messageCallback?(.success(message))
+        notifyCallback(awaitingMessageWithOpCode: message.opCode,
+                       sentFrom: source, to: destination,
+                       with: .success(message))
         // Notify callback awaiting a response.
         switch message {
         case let response as ConfigResponse:
@@ -566,11 +635,43 @@ private extension NetworkManager {
                              from destination: Address,
                              callback: @escaping (Result<ConfigResponse, Error>) -> ()) {
         mutex.sync {
+            assert(configResponseCallbacks[destination] == nil)
             configResponseCallbacks[destination] = (
                 expectedOpCode: request.responseOpCode,
                 callback: callback
             )
         }
+    }
+    
+    /// Notify the callback awaiting received message.
+    ///
+    /// - parameters:
+    ///   - opCode: The message OpCode.
+    ///   - address: The Unicast Address of the sender.
+    ///   - destination: The optional destination. This may be set to `nil` when cancelling callbacks.
+    ///   - result: The result to be returned.
+    func notifyCallback(awaitingMessageWithOpCode opCode: UInt32,
+                        sentFrom address: Address, to destination: MeshAddress?,
+                        with result: Result<MeshMessage, Error>) {
+        // Search for a callback matching given criteria.
+        let messageCallback: ((Result<MeshMessage, Error>) -> ())? = mutex.sync {
+            guard let index = messageCallbacks.firstIndex(where: {
+                // The source Unicast Address must match.
+                $0.source == address &&
+                // The OpCode must match.
+                $0.expectedOpCode == opCode &&
+                // If the destination is set, it must either match the expected one,
+                // or the expected should not be set (blind card).
+                // The destination is not set when cancelling the callback.
+               (destination == nil || $0.expectedDestination == nil || $0.expectedDestination == destination)
+            }) else {
+                return nil
+            }
+            // When found, remove it, as message callbacks are single use only.
+            return messageCallbacks.remove(at: index).callback
+        }
+        // Notify the callback. It has already been removed from `messageCallbacks`.
+        messageCallback?(result)
     }
     
 }

@@ -574,10 +574,23 @@ public extension MeshNetworkManager {
             print("Error: Local Provisioner has no Unicast Address assigned")
             throw AccessError.invalidSource
         }
-        return try send(message, to: destination, withTtl: 1)
+        return try send(message, to: destination, withTtl: 1, completion: completion)
     }
     
-    /// Sets a callback awaiting a mesh message with given OpCode
+    /// Cancels sending the message with the given handle.
+    ///
+    /// - parameter messageId: The message handle.
+    func cancel(_ messageId: MessageHandle) throws {
+        guard let networkManager = networkManager else {
+            print("Error: Mesh Network not created")
+            throw MeshNetworkError.noNetwork
+        }
+        Task {
+            networkManager.cancel(messageWithHandler: messageId)
+        }
+    }
+    
+    /// Sets a callback awaiting a mesh message with the given OpCode
     /// sent from a specified source Unicast Address.
     ///
     /// The destination is optional. If not set, the destination of the received
@@ -624,7 +637,7 @@ public extension MeshNetworkManager {
         }
     }
     
-    /// Sets a callback awaiting a mesh message with given OpCode
+    /// Sets a callback awaiting a mesh message with the given OpCode
     /// sent from a specified source ``Element``.
     ///
     /// The destination is optional. If not set, the destination of the received
@@ -648,7 +661,7 @@ public extension MeshNetworkManager {
                     timeout: timeout, completion: completion)
     }
     
-    /// Sets a callback awaiting a mesh message with given OpCode
+    /// Sets a callback awaiting a mesh message with the given OpCode
     /// sent from a specified source Unicast Address.
     ///
     /// The destination is optional. If not set, the destination of the received
@@ -664,16 +677,23 @@ public extension MeshNetworkManager {
     ///           is not a Unicast Address, `timeout` is negative or the manager is already
     ///           awaiting a message with the same parameters.
     /// - returns: The message received.
-    func waitFor<T: StaticMeshMessage>(messageWithType type: T.Type,
-                 from source: Address, to destination: MeshAddress? = nil,
-                 timeout: TimeInterval,
-                 completion: @escaping (Result<MeshMessage, Error>) -> ()) throws {
-        try waitFor(messageWithOpCode: type.opCode,
+    func waitFor<T: StaticMeshMessage>(messageFrom source: Address,
+                                       to destination: MeshAddress? = nil,
+                                       timeout: TimeInterval,
+                                       completion: @escaping (Result<T, Error>) -> ()) throws {
+        try waitFor(messageWithOpCode: T.opCode,
                     from: source, to: destination,
-                    timeout: timeout, completion: completion)
+                    timeout: timeout) { result in
+            do {
+                let message = try result.get() as! T
+                completion(.success(message))
+            } catch {
+                completion(.failure(error))
+            }
+        }
     }
     
-    /// Sets a callback awaiting a mesh message with given OpCode
+    /// Sets a callback awaiting a mesh message with the given OpCode
     /// sent from a specified source ``Element``.
     ///
     /// The destination is optional. If not set, the destination of the received
@@ -688,13 +708,178 @@ public extension MeshNetworkManager {
     /// - throws: This method throws when the network is not created, `timeout` is negative
     ///           or the manager is already awaiting a message with the same parameters.
     /// - returns: The message received.
-    func waitFor<T: StaticMeshMessage>(messageWithType type: T.Type,
-                 from element: Element, to destination: MeshAddress? = nil,
-                 timeout: TimeInterval,
-                 completion: @escaping (Result<MeshMessage, Error>) -> ()) throws {
-        return try waitFor(messageWithOpCode: type.opCode,
-                           from: element.unicastAddress, to: destination,
-                           timeout: timeout, completion: completion)
+    func waitFor<T: StaticMeshMessage>(messageFrom element: Element,
+                                       to destination: MeshAddress? = nil,
+                                       timeout: TimeInterval,
+                                       completion: @escaping (Result<T, Error>) -> ()) throws {
+        try waitFor(messageFrom: element.unicastAddress, to: destination,
+                    timeout: timeout, completion: completion)
+    }
+    
+    /// Registers a callback that will be invoked each time a message with the given OpCode
+    /// is sent from an Element with given Unicast Address.
+    ///
+    /// The destination is optional. If not set it will not be checked.
+    ///
+    /// - important: To unregister the callback call ``unregisterCallback(forMessagesWithOpCode:from:)-2pj32``.
+    ///
+    /// - warning: This method is implemented using ``waitFor(messageWithOpCode:from:to:timeout:)-6673k``.
+    ///            It is not possible to await a message and message stream simultanosly.
+    ///
+    /// - parameters:
+    ///   - opCode: Expected message OpCode.
+    ///   - address: The Unicast Address of the Element from which the messages are expected.
+    ///   - destination: The optional destination.
+    ///   - callback: The callback.
+    func registerCallback(forMessagesWithOpCode opCode: UInt32,
+                          from address: Address, to destination: MeshAddress? = nil,
+                          callback: @escaping (MeshMessage) -> ()) throws {
+        guard let _ = networkManager else {
+            print("Error: Mesh Network not created")
+            throw MeshNetworkError.noNetwork
+        }
+        Task {
+            guard let stream = try? messages(withOpCode: opCode, from: address, to: destination) else {
+                return
+            }
+            for await message in stream {
+                callback(message)
+            }
+        }
+    }
+    
+    /// Registers a callback that will be invoked each time a message with the given OpCode
+    /// is sent from the specified ``Element``.
+    ///
+    /// The destination is optional. If not set it will not be checked.
+    ///
+    /// - important: To unregister the callback call ``unregisterCallback(forMessagesWithOpCode:from:)-9rbl0``.
+    ///
+    /// - warning: This method is implemented using ``waitFor(messageWithOpCode:from:to:timeout:)-6673k``.
+    ///            It is not possible to await a message and message stream simultanosly.
+    ///
+    /// - parameters:
+    ///   - opCode: Expected message OpCode.
+    ///   - element: The Element from which the messages are expected.
+    ///   - destination: The optional destination.
+    ///   - callback: The callback.
+    func registerCallback(forMessagesWithOpCode opCode: UInt32,
+                          from element: Element, to destination: MeshAddress? = nil,
+                          callback: @escaping (MeshMessage) -> ()) throws {
+        try registerCallback(forMessagesWithOpCode: opCode,
+                             from: element.unicastAddress, to: destination,
+                             callback: callback)
+    }
+    
+    /// Registers a callback that will be invoked each time a message with given OpCode
+    /// is sent from an Element with given Unicast Address.
+    ///
+    /// The destination is optional. If not set it will not be checked.
+    ///
+    /// - important: To unregister the callback call ``unregisterCallback(forMessagesWithType:from:)-2cij2``.
+    ///
+    /// - warning: This method is implemented using ``waitFor(messageFrom:to:timeout:)-24q2d``.
+    ///            It is not possible to await a message and message stream simultanosly.
+    ///
+    /// - parameters:
+    ///   - address: The Unicast Address of the Element from which the messages are expected.
+    ///   - destination: The optional destination.
+    ///   - callback: The callback.
+    func registerCallback<T: StaticMeshMessage>(forMessagesFrom address: Address,
+                                                to destination: MeshAddress? = nil,
+                                                callback: @escaping (T) -> ()) throws {
+        guard let _ = networkManager else {
+            print("Error: Mesh Network not created")
+            throw MeshNetworkError.noNetwork
+        }
+        Task {
+            guard let stream: AsyncStream<T> = try? messages(from: address, to: destination) else {
+                return
+            }
+            for await message in stream {
+                callback(message)
+            }
+        }
+    }
+    
+    /// Registers a callback that will be invoked each time a message with the given OpCode
+    /// is sent from the specified ``Element``.
+    ///
+    /// The destination is optional. If not set it will not be checked.
+    ///
+    /// - important: To unregister the callback call ``unregisterCallback(forMessagesWithType:from:)-7mdko``.
+    ///
+    /// - warning: This method is implemented using ``waitFor(messageFrom:to:timeout:)-24q2d``.
+    ///            It is not possible to await a message and message stream simultanosly.
+    ///
+    /// - parameters:
+    ///   - element: The Element from which the messages are expected.
+    ///   - destination: The optional destination.
+    ///   - callback: The callback.
+    func registerCallback<T: StaticMeshMessage>(forMessagesFrom element: Element,
+                                                to destination: MeshAddress? = nil,
+                                                callback: @escaping (T) -> ()) throws {
+        try registerCallback(forMessagesFrom: element.unicastAddress,
+                             to: destination, callback: callback)
+    }
+    
+    /// Unregisters and cancels previously registered callback.
+    ///
+    /// This method must be called to unregister previously registered callback.
+    ///
+    /// - note: Due to the implamentation, this method cancels awaiting for messages
+    ///         with given parameters even if no message callbacks were registered.
+    ///
+    /// - parameters:
+    ///   - opCode: The OpCode of messages.
+    ///   - address: The Unicast Address of the source Element.
+    func unregisterCallback(forMessagesWithOpCode opCode: UInt32, from address: Address) {
+        guard let networkManager = networkManager else {
+            return
+        }
+        networkManager.cancel(awaitingMessageWithOpCode: opCode, from: address)
+    }
+    
+    /// Unregisters and cancels previously registered callback.
+    ///
+    /// This method must be called to unregister previously registered callback.
+    ///
+    /// - note: Due to the implamentation, this method cancels awaiting for messages
+    ///         with given parameters even if no message callbacks were registered.
+    ///
+    /// - parameters:
+    ///   - opCode: The OpCode of messages.
+    ///   - element: The source Element.
+    func unregisterCallback(forMessagesWithOpCode opCode: UInt32, from element: Element) {
+        unregisterCallback(forMessagesWithOpCode: opCode, from: element.unicastAddress)
+    }
+    
+    /// Unregisters and cancels previously registered callback.
+    ///
+    /// This method must be called to unregister previously registered callback.
+    ///
+    /// - note: Due to the implamentation, this method cancels awaiting for messages
+    ///         with given parameters even if no message callbacks were registered.
+    ///
+    /// - parameters:
+    ///   - type: The message type.
+    ///   - address: The Unicast Address of the source Element.
+    func unregisterCallback<T: StaticMeshMessage>(forMessagesWithType type: T, from address: Address) {
+        unregisterCallback(forMessagesWithOpCode: T.opCode, from: address)
+    }
+    
+    /// Unregisters and cancels previously registered callback.
+    ///
+    /// This method must be called to unregister previously registered callback.
+    ///
+    /// - note: Due to the implamentation, this method cancels awaiting for messages
+    ///         with given parameters even if no message callbacks were registered.
+    ///
+    /// - parameters:
+    ///   - type: The message type.
+    ///   - element: The source Element.
+    func unregisterCallback<T: StaticMeshMessage>(forMessagesWithType type: T, from element: Element) {
+        unregisterCallback(forMessagesWithOpCode: T.opCode, from: element.unicastAddress)
     }
     
 }
