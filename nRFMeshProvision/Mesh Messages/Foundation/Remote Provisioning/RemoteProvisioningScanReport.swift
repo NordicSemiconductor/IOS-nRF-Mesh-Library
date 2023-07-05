@@ -61,6 +61,10 @@ public struct RemoteProvisioningScanReport: UnacknowledgedRemoteProvisioningMess
         return Data([UInt8(truncating: rssi)]) + uuid.data + oobInformation.rawValue.bigEndian + uriHash
     }
     
+    /// To ensure delivery of the message it should be sent as a segmented message
+    /// even if the PDU contains less than 11 bytes.
+    public var isSegmented: Bool = true
+    
     /// Creates a Remote Provisioning Scan Report message.
     ///
     /// - parameters:
