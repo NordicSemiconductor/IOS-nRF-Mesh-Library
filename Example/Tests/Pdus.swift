@@ -325,7 +325,7 @@ class Pdus: XCTestCase {
         let pdu = UpperTransportPdu(fromAccessPdu: accessPdu, usingKeySet: keySet,
                                     sequence: sequence, andIvIndex: ivIndex)
         XCTAssertEqual(pdu.source, source)
-        XCTAssertEqual(pdu.destination, destination.address)
+        XCTAssertEqual(pdu.destination, destination)
         XCTAssertEqual(pdu.sequence, sequence)
         XCTAssertNil(pdu.aid)
         XCTAssertEqual(pdu.transportMicSize, 4) // 32-bits
@@ -406,7 +406,7 @@ class Pdus: XCTestCase {
         let pdu = UpperTransportPdu(fromAccessPdu: accessPdu, usingKeySet: keySet,
                                     sequence: sequence, andIvIndex: ivIndex)
         XCTAssertEqual(pdu.source, source)
-        XCTAssertEqual(pdu.destination, destination.address)
+        XCTAssertEqual(pdu.destination, destination)
         XCTAssertEqual(pdu.sequence, sequence)
         XCTAssertNil(pdu.aid)
         XCTAssertEqual(pdu.transportMicSize, 4) // 32-bits
@@ -512,7 +512,7 @@ class Pdus: XCTestCase {
         let pdu = UpperTransportPdu(fromLowerTransportAccessMessage: accessMessage, usingKey: node.deviceKey!)
         XCTAssertNotNil(pdu)
         XCTAssertEqual(pdu?.source, source)
-        XCTAssertEqual(pdu?.destination, destination)
+        XCTAssertEqual(pdu?.destination, MeshAddress(destination))
         XCTAssertNil(pdu?.aid)
         XCTAssertEqual(pdu?.sequence, sequence)
         XCTAssertEqual(pdu?.transportMicSize, 4)
@@ -570,7 +570,7 @@ class Pdus: XCTestCase {
         let pdu = UpperTransportPdu(fromAccessPdu: accessPdu, usingKeySet: keySet,
                                     sequence: sequence, andIvIndex: ivIndex)
         XCTAssertEqual(pdu.source, source)
-        XCTAssertEqual(pdu.destination, virtualGroup!.address.address)
+        XCTAssertEqual(pdu.destination, virtualGroup!.address)
         XCTAssertEqual(pdu.sequence, sequence)
         XCTAssertEqual(pdu.aid, 0x26)
         XCTAssertEqual(pdu.transportMicSize, 4) // 32-bits
