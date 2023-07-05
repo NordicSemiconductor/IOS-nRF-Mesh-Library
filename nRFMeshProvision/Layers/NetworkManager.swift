@@ -199,14 +199,17 @@ internal class NetworkManager {
               from element: Element, to destination: MeshAddress,
               withTtl initialTtl: UInt8?,
               using applicationKey: ApplicationKey) async throws {
-        try mutex.sync {
-            guard !outgoingMessages.contains(destination) else {
-                throw AccessError.busy
-            }
-            outgoingMessages.insert(destination)
-        }
-        try await withTaskCancellationHandler {
-            try await withCheckedThrowingContinuation { continuation in
+        return try await withTaskCancellationHandler {
+            return try await withCheckedThrowingContinuation { continuation in
+                let busy = mutex.sync {
+                    guard !outgoingMessages.contains(destination) else {
+                        continuation.resume(throwing: AccessError.busy)
+                        return true
+                    }
+                    outgoingMessages.insert(destination)
+                    return false
+                }
+                guard !busy else { return }
                 setDeliveryCallback(for: destination) { result in
                     continuation.resume(with: result)
                 }
@@ -216,7 +219,7 @@ internal class NetworkManager {
             }
         } onCancel: {
             cancel(messageWithHandler: MessageHandle(for: message, sentFrom: element.unicastAddress,
-                                 to: destination, using: self))
+                                                     to: destination, using: self))
         }
     }
     
@@ -243,13 +246,15 @@ internal class NetworkManager {
         let meshAddress = MeshAddress(destination)
         return try await withTaskCancellationHandler {
             return try await withCheckedThrowingContinuation { continuation in
-                mutex.sync {
+                let busy = mutex.sync {
                     guard !outgoingMessages.contains(meshAddress) else {
                         continuation.resume(throwing: AccessError.busy)
-                        return
+                        return true
                     }
                     outgoingMessages.insert(meshAddress)
+                    return false
                 }
+                guard !busy else { return }
                 setResponseCallback(for: message, from: destination) { result in
                     continuation.resume(with: result)
                 }
@@ -259,7 +264,7 @@ internal class NetworkManager {
             }
         } onCancel: {
             cancel(messageWithHandler: MessageHandle(for: message, sentFrom: element.unicastAddress,
-                                 to: meshAddress, using: self))
+                                                     to: meshAddress, using: self))
         }
     }
     
@@ -284,13 +289,15 @@ internal class NetworkManager {
         let meshAddress = MeshAddress(destination)
         return try await withTaskCancellationHandler {
             return try await withCheckedThrowingContinuation { continuation in
-                mutex.sync {
+                let busy = mutex.sync {
                     guard !outgoingMessages.contains(meshAddress) else {
                         continuation.resume(throwing: AccessError.busy)
-                        return
+                        return true
                     }
                     outgoingMessages.insert(meshAddress)
+                    return false
                 }
+                guard !busy else { return }
                 setDeliveryCallback(for: meshAddress) { result in
                     continuation.resume(with: result)
                 }
@@ -299,7 +306,7 @@ internal class NetworkManager {
             }
         } onCancel: {
             cancel(messageWithHandler: MessageHandle(for: configMessage, sentFrom: element.unicastAddress,
-                                 to: meshAddress, using: self))
+                                                     to: meshAddress, using: self))
         }
     }
     
@@ -327,13 +334,15 @@ internal class NetworkManager {
         let meshAddress = MeshAddress(destination)
         return try await withTaskCancellationHandler {
             return try await withCheckedThrowingContinuation { continuation in
-                mutex.sync {
+                let busy = mutex.sync {
                     guard !outgoingMessages.contains(meshAddress) else {
                         continuation.resume(throwing: AccessError.busy)
-                        return
+                        return true
                     }
                     outgoingMessages.insert(meshAddress)
+                    return false
                 }
+                guard !busy else { return }
                 setResponseCallback(for: configMessage, from: destination) { result in
                     continuation.resume(with: result)
                 }
@@ -342,7 +351,7 @@ internal class NetworkManager {
             }
         } onCancel: {
             cancel(messageWithHandler: MessageHandle(for: configMessage, sentFrom: element.unicastAddress,
-                                 to: meshAddress, using: self))
+                                                     to: meshAddress, using: self))
         }
     }
     
@@ -626,6 +635,7 @@ private extension NetworkManager {
                              from destination: Address,
                              callback: @escaping (Result<ConfigResponse, Error>) -> ()) {
         mutex.sync {
+            assert(configResponseCallbacks[destination] == nil)
             configResponseCallbacks[destination] = (
                 expectedOpCode: request.responseOpCode,
                 callback: callback
