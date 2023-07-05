@@ -574,7 +574,7 @@ public extension MeshNetworkManager {
             print("Error: Local Provisioner has no Unicast Address assigned")
             throw AccessError.invalidSource
         }
-        return try send(message, to: destination, withTtl: 1)
+        return try send(message, to: destination, withTtl: 1, completion: completion)
     }
     
     /// Cancels sending the message with the given handle.
