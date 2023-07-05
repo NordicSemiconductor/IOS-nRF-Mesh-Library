@@ -586,7 +586,7 @@ public extension MeshNetworkManager {
             throw MeshNetworkError.noNetwork
         }
         Task {
-            networkManager.cancel(messageId)
+            networkManager.cancel(messageWithHandler: messageId)
         }
     }
     

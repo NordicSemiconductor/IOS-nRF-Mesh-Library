@@ -215,7 +215,7 @@ internal class NetworkManager {
                                  retransmit: false)
             }
         } onCancel: {
-            cancel(MessageHandle(for: message, sentFrom: element.unicastAddress,
+            cancel(messageWithHandler: MessageHandle(for: message, sentFrom: element.unicastAddress,
                                  to: destination, using: self))
         }
     }
@@ -258,7 +258,7 @@ internal class NetworkManager {
                                  retransmit: false)
             }
         } onCancel: {
-            cancel(MessageHandle(for: message, sentFrom: element.unicastAddress,
+            cancel(messageWithHandler: MessageHandle(for: message, sentFrom: element.unicastAddress,
                                  to: meshAddress, using: self))
         }
     }
@@ -298,7 +298,7 @@ internal class NetworkManager {
                                  withTtl: initialTtl)
             }
         } onCancel: {
-            cancel(MessageHandle(for: configMessage, sentFrom: element.unicastAddress,
+            cancel(messageWithHandler: MessageHandle(for: configMessage, sentFrom: element.unicastAddress,
                                  to: meshAddress, using: self))
         }
     }
@@ -341,7 +341,7 @@ internal class NetworkManager {
                                  withTtl: initialTtl)
             }
         } onCancel: {
-            cancel(MessageHandle(for: configMessage, sentFrom: element.unicastAddress,
+            cancel(messageWithHandler: MessageHandle(for: configMessage, sentFrom: element.unicastAddress,
                                  to: meshAddress, using: self))
         }
     }
@@ -469,7 +469,7 @@ internal class NetworkManager {
     /// Cancels sending the message with the given handler.
     ///
     /// - parameter handler: The message identifier.
-    func cancel(_ handler: MessageHandle) {
+    func cancel(messageWithHandler handler: MessageHandle) {
         accessLayer.cancel(handler)
     }
     
