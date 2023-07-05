@@ -72,7 +72,7 @@ public struct RemoteProvisioningPDUSend: UnacknowledgedRemoteProvisioningMessage
             return nil
         }
         self.outboundPduNumber = parameters[0]
-        let pdu = parameters.suffix(from: 1)
+        let pdu = parameters.subdata(in: 1..<parameters.count)
         guard let request = try? ProvisioningRequest(from: pdu) else {
             return nil
         }
