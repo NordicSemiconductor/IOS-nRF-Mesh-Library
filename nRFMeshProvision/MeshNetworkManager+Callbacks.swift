@@ -793,7 +793,7 @@ public extension MeshNetworkManager {
         guard let networkManager = networkManager else {
             return
         }
-        networkManager.cancel(messageStreamWithOpCode: opCode, from: address)
+        networkManager.cancel(awaitingMessageWithOpCode: opCode, from: address)
     }
     
     /// Unregisters and cancels previously registered callback.
@@ -807,7 +807,7 @@ public extension MeshNetworkManager {
         guard let networkManager = networkManager else {
             return
         }
-        networkManager.cancel(messageStreamWithOpCode: T.opCode, from: address)
+        networkManager.cancel(awaitingMessageWithOpCode: T.opCode, from: address)
     }
     
 }

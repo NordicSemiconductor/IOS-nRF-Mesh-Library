@@ -416,7 +416,7 @@ internal class NetworkManager {
         return AsyncStream {
             return try? await self.waitFor(messageWithOpCode: opCode, from: address, to: destination, timeout: 0)
         } onCancel: {
-            self.cancel(messageStreamWithOpCode: opCode, from: address)
+            self.cancel(awaitingMessageWithOpCode: opCode, from: address)
         }
     }
     
@@ -439,7 +439,7 @@ internal class NetworkManager {
         return AsyncStream {
             return try? await self.waitFor(messageWithOpCode: T.opCode, from: address, to: destination, timeout: 0) as? T
         } onCancel: {
-            self.cancel(messageStreamWithOpCode: T.opCode, from: address)
+            self.cancel(awaitingMessageWithOpCode: T.opCode, from: address)
         }
     }
     
@@ -483,7 +483,7 @@ internal class NetworkManager {
     /// - parameters:
     ///   - opCode: The message OpCode.
     ///   - address: The Unicast Address of the sender.
-    func cancel(messageStreamWithOpCode opCode: UInt32, from address: Address) {
+    func cancel(awaitingMessageWithOpCode opCode: UInt32, from address: Address) {
         notifyCallback(awaitingMessageWithOpCode: opCode,
                        sentFrom: address, to: nil,
                        with: .failure(CancellationError()))
