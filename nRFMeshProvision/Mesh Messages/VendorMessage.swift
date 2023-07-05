@@ -61,17 +61,17 @@ public protocol StaticVendorMessage: VendorMessage, StaticMeshMessage {
 }
 
 /// A base protocol for static unacknowledged vendor message.
-public protocol UnacknowledgedStaticVendorMessage: StaticVendorMessage, UnacknowledgedMeshMessage {
+public protocol StaticUnacknowledgedVendorMessage: StaticVendorMessage, UnacknowledgedMeshMessage {
     // No additional fields.
 }
 
 /// The base class for vendor response messages.
-public protocol StaticVendorResponse: StaticMeshResponse, UnacknowledgedStaticVendorMessage {
+public protocol StaticVendorResponse: StaticMeshResponse, StaticUnacknowledgedVendorMessage {
     // No additional fields.
 }
 
 /// A base protocol for static acknowledged vendor message.
-public protocol AcknowledgedStaticVendorMessage: StaticVendorMessage, StaticAcknowledgedMeshMessage {
+public protocol StaticAcknowledgedVendorMessage: StaticVendorMessage, StaticAcknowledgedMeshMessage {
     // No additional fields.
 }
 
