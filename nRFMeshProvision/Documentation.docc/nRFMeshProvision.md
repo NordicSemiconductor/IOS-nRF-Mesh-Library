@@ -272,8 +272,8 @@ Provisioning is the process of adding an unprovisioned device to a mesh network 
 - ``UnacknowledgedVendorMessage``
 - ``VendorResponse``
 - ``StaticVendorMessage``
-- ``AcknowledgedStaticVendorMessage``
-- ``UnacknowledgedStaticVendorMessage``
+- ``StaticAcknowledgedVendorMessage``
+- ``StaticUnacknowledgedVendorMessage``
 - ``StaticVendorResponse``
 - ``VendorStatusMessage``
 

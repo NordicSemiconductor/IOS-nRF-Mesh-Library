@@ -31,7 +31,7 @@
 import Foundation
 import nRFMeshProvision
 
-struct SimpleOnOffGet: AcknowledgedStaticVendorMessage {    
+struct SimpleOnOffGet: StaticAcknowledgedVendorMessage {    
     // The Op Code consists of:
     // 0xC0-0000 - Vendor Op Code bitmask
     // 0x02-0000 - The Op Code defined by...
