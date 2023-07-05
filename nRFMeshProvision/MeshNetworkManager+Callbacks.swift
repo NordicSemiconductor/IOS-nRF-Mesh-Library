@@ -734,7 +734,7 @@ public extension MeshNetworkManager {
     func registerCallback(forMessagesWithOpCode opCode: UInt32,
                           from address: Address, to destination: MeshAddress? = nil,
                           callback: @escaping (MeshMessage) -> ()) throws {
-        guard let networkManager = networkManager else {
+        guard let _ = networkManager else {
             print("Error: Mesh Network not created")
             throw MeshNetworkError.noNetwork
         }
@@ -765,7 +765,7 @@ public extension MeshNetworkManager {
     func registerCallback<T: StaticMeshMessage>(forMessagesFrom address: Address,
                                                 to destination: MeshAddress? = nil,
                                                 callback: @escaping (T) -> ()) throws {
-        guard let networkManager = networkManager else {
+        guard let _ = networkManager else {
             print("Error: Mesh Network not created")
             throw MeshNetworkError.noNetwork
         }
