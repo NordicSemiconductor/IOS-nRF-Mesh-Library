@@ -140,7 +140,7 @@ public struct NetworkParameters {
     /// as the acknowledged message timeout, then the Element may consider the
     /// message has not been delivered, without sending any additional messages.
     ///
-    /// The ``MeshNetworkDelegate/meshNetworkManager(_:failedToSendMessage:from:to:error:)-ogo4``
+    /// The ``MeshNetworkDelegate/meshNetworkManager(_:failedToSendMessage:from:to:error:)-7iylf``
     /// callback will be called on timeout.
     ///
     /// The acknowledged message timeout should be set to a minimum of 30 seconds.

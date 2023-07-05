@@ -18,7 +18,7 @@ from the model to a destination specified in the ``Publish`` object. Responses w
 to ``ModelDelegate/model(_:didReceiveResponse:toAcknowledgedMessage:from:)`` of the model delegate.
 
 The second method does not require setting up local models. 
-Use ``MeshNetworkManager/send(_:from:to:withTtl:using:)-2qajr`` or other variants of this method to send 
+Use ``MeshNetworkManager/send(_:from:to:withTtl:using:)-48vjl`` or other variants of this method to send 
 a message to the desired destination.
 
 > All methods used for sending messages in the ``MeshNetworkManager`` are asynchronous.

@@ -721,7 +721,7 @@ public extension MeshNetworkManager {
     ///
     /// The destination is optional. If not set it will not be checked.
     ///
-    /// - important: To unregister the callback call ``unregisterCallback(forMessagesWithOpCode:from:)``.
+    /// - important: To unregister the callback call ``unregisterCallback(forMessagesWithOpCode:from:)-2pj32``.
     ///
     /// - warning: This method is implemented using ``waitFor(messageWithOpCode:from:to:timeout:)-6673k``.
     ///            It is not possible to await a message and message stream simultanosly.
@@ -753,7 +753,7 @@ public extension MeshNetworkManager {
     ///
     /// The destination is optional. If not set it will not be checked.
     ///
-    /// - important: To unregister the callback call ``unregisterCallback(forMessagesWithOpCode:from:)``.
+    /// - important: To unregister the callback call ``unregisterCallback(forMessagesWithOpCode:from:)-9rbl0``.
     ///
     /// - warning: This method is implemented using ``waitFor(messageWithOpCode:from:to:timeout:)-6673k``.
     ///            It is not possible to await a message and message stream simultanosly.
@@ -776,7 +776,7 @@ public extension MeshNetworkManager {
     ///
     /// The destination is optional. If not set it will not be checked.
     ///
-    /// - important: To unregister the callback call ``unregisterCallback(forMessagesWithType:from:)``.
+    /// - important: To unregister the callback call ``unregisterCallback(forMessagesWithType:from:)-2cij2``.
     ///
     /// - warning: This method is implemented using ``waitFor(messageFrom:to:timeout:)-24q2d``.
     ///            It is not possible to await a message and message stream simultanosly.
@@ -807,7 +807,7 @@ public extension MeshNetworkManager {
     ///
     /// The destination is optional. If not set it will not be checked.
     ///
-    /// - important: To unregister the callback call ``unregisterCallback(forMessagesWithType:from:)``.
+    /// - important: To unregister the callback call ``unregisterCallback(forMessagesWithType:from:)-7mdko``.
     ///
     /// - warning: This method is implemented using ``waitFor(messageFrom:to:timeout:)-24q2d``.
     ///            It is not possible to await a message and message stream simultanosly.
