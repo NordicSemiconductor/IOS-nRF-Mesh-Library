@@ -64,7 +64,7 @@ public extension ApplicationKey {
     /// - returns: `True`, if the Application Key is bound to any of
     ///            the given Network Keys.
     func isBound(toAnyOf networkKeys: [NetworkKey]) -> Bool {
-        return networkKeys.contains { $0.index == boundNetworkKeyIndex }
+        return networkKeys.contains { isBound(to: $0) }
     }
 
     /// The Network Key bound to this Application Key.
