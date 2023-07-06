@@ -110,6 +110,8 @@ public enum ProvisioningRequest {
             self = .confirmation(pdu.suffix(from: 1))
         case .random:
             self = .random(pdu.suffix(from: 1))
+        case .data:
+            self = .data(pdu.suffix(from: 1))
         default:
             throw ProvisioningError.invalidPdu
         }
