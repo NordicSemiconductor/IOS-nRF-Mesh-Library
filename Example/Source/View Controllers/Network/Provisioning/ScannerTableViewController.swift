@@ -75,7 +75,6 @@ class ScannerTableViewController: UITableViewController {
         
         // Scanner can also receive messages sent from nodes with
         // Remote Provisioning Server model.
-        print("AAAB Scanner appeared, setting delegate")
         MeshNetworkManager.instance.delegate = self
         
         if centralManager.state == .poweredOn {
