@@ -48,8 +48,8 @@ final private class Send: AsyncOperation {
         
         // TODO: Return error when retry failed
         let callback: (Result<RemoteProvisioningPDUOutboundReport, Error>) -> () = { response in
-            guard !self.retry,
-                  let report = try? response.get(),
+            guard !self.retry else { return }
+            guard let report = try? response.get(),
                   report.outboundPduNumber == self.message.outboundPduNumber else {
                 self.retry = true
                 self.main()
@@ -112,18 +112,20 @@ open class PBRemoteBearer: ProvisioningBearer {
         self.address = parentElement.unicastAddress
         self.meshNetworkManager = manager
         
+        // We want to enqueue outgoing PDUs and send a new one only
+        // when it has been confirmed with PDU Outbiound Report.
         self.outboundPduQueue = OperationQueue()
         self.outboundPduQueue.maxConcurrentOperationCount = 1
     }
     
     public func open() throws {
-        guard !isOpened else {
-            return
-        }
+        guard !isOpened else { return }
         isOpened = true
         
+        // Register link status handler.
+        // The handler will observe status of the link between Remote Provisioning Server
+        // and the Provisionee.
         let linkStatusHandler: (RemoteProvisioningLinkReport) -> () = { report in
-            print("AAA Received Link Report: \(report)")
             switch report.linkState {
             case .linkActive:
                 self.bearerDidOpen()
@@ -135,11 +137,12 @@ open class PBRemoteBearer: ProvisioningBearer {
         }
         try! meshNetworkManager.registerCallback(forMessagesFrom: address, callback: linkStatusHandler)
         
-        print("AAA Opening link...")
+        // Send Link Open request.
         let linkOpen = RemoteProvisioningLinkOpen(uuid: identifier)
         try meshNetworkManager.send(linkOpen, to: address) { result in
-            print("AAA Received Open response: \(result)")
             if let status = try? result.get() as? RemoteProvisioningLinkStatus, status.isSuccess {
+                // Usually, the link state will be `.linkOpening` and we will
+                // get a link report moment later.
                 if status.linkState == .linkActive {
                     self.bearerDidOpen()
                 }
@@ -148,47 +151,53 @@ open class PBRemoteBearer: ProvisioningBearer {
     }
     
     public func close() throws {
-        guard isOpened else {
-            return
-        }
+        guard isOpened else { return }
         isOpened = false
         
-        print("AAA Closing link...")
         let linkClose = RemoteProvisioningLinkClose(reason: .success)
         try meshNetworkManager.send(linkClose, to: address) { result in
-            print("AAA Received Close response: \(result)")
-            self.isOpen = false
-            self.delegate?.bearer(self, didClose: nil)
+            self.bearerDidClose(with: nil)
         }
     }
     
     public func send(_ data: Data, ofType type: PduType) throws {
+        // We only support what we support, right?
         guard supports(type) else {
             throw BearerError.pduTypeNotSupported
         }
+        
+        // The data has to be converted again to Provisioning Request
+        // to be added to PDU Send request.
         let request = try ProvisioningRequest(from: data)
         outboundPduCount += 1
-        print("AAA Sending \(request) with outbound count: \(outboundPduCount)")
         let message = RemoteProvisioningPDUSend(outboundPduNumber: outboundPduCount, request: request)
         outboundPduQueue.addOperation(Send(message: message, to: address, over: meshNetworkManager))
     }
     
     private func bearerDidOpen() {
         guard !isOpen else { return }
+        
+        // When the bearer is open, set up a PDU handler to pass received PDUs to the data delegate.
         let pduHandler: (RemoteProvisioningPDUReport) -> () = { report in
-            print("AAA Received \(report) with inbound count: \(report.inboundPduNumber)")
             let data = report.response.pdu
             self.dataDelegate?.bearer(self, didDeliverData: data, ofType: .provisioningPdu)
         }
         try! meshNetworkManager.registerCallback(forMessagesFrom: address, callback: pduHandler)
+        
+        // Notify the delegate.
         isOpen = true
+        outboundPduCount = 0
         delegate?.bearerDidOpen(self)
     }
     
     private func bearerDidClose(with error: Error?) {
         guard isOpen else { return }
+        
+        // Unregister PDU handler and link status handler.
         meshNetworkManager.unregisterCallback(forMessagesWithType: RemoteProvisioningLinkStatus.self, from: address)
         meshNetworkManager.unregisterCallback(forMessagesWithType: RemoteProvisioningPDUReport.self, from: address)
+        
+        // Notify the delegate.
         isOpen = false
         delegate?.bearer(self, didClose: error)
     }
