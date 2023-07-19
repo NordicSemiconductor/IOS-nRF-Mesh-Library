@@ -159,6 +159,24 @@ public class NodeFeaturesState: Codable {
         // The Low Power feature if supported is enabled and cannot be disabled.
         self.lowPower = mask & 0x08 == 0 ? .notSupported : .enabled
     }
+    
+    internal func applyMissing(from other: NodeFeaturesState) {
+        if self.friend == nil {
+            self.friend = other.friend
+        }
+        
+        if self.lowPower == nil {
+            self.lowPower = other.lowPower
+        }
+        
+        if self.proxy == nil {
+            self.proxy = other.proxy
+        }
+        
+        if self.relay == nil {
+            self.relay = other.relay
+        }
+    }
 }
 
 extension NodeFeature: CustomDebugStringConvertible {
