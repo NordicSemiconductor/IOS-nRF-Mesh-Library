@@ -74,9 +74,10 @@ open class PBRemoteBearer: ProvisioningBearer {
     /// raw data of sent and received packets, as well as connection events.
     public weak var logger: LoggerDelegate?
     
-    /// The UUID of the Unprovisioned Device as returned with
-    /// ``RemoteProvisioningScanReport/uuid``.
-    public let identifier: UUID
+    /// The UUID of the Unprovisioned Device.
+    ///
+    /// This UUID will be used to identify and open the link between the Provisioner and Provisionee.
+    public let unprovisionedDeviceUUID: UUID
     
     /// The Network Manager is responsible for encoding and decoding messages.
     private let meshNetworkManager: MeshNetworkManager
@@ -103,12 +104,12 @@ open class PBRemoteBearer: ProvisioningBearer {
     
     // MARK: - Public API
     
-    public init(target identifier: UUID, using server: Model, over manager: MeshNetworkManager) throws {
+    public init(target uuid: UUID, using server: Model, over manager: MeshNetworkManager) throws {
         guard server.isRemoteProvisioningServer,
               let parentElement = server.parentElement else {
             throw BearerError.bearerClosed
         }
-        self.identifier = identifier
+        self.unprovisionedDeviceUUID = uuid
         self.address = parentElement.unicastAddress
         self.meshNetworkManager = manager
         
@@ -138,7 +139,7 @@ open class PBRemoteBearer: ProvisioningBearer {
         try! meshNetworkManager.registerCallback(forMessagesFrom: address, callback: linkStatusHandler)
         
         // Send Link Open request.
-        let linkOpen = RemoteProvisioningLinkOpen(uuid: identifier)
+        let linkOpen = RemoteProvisioningLinkOpen(uuid: unprovisionedDeviceUUID)
         try meshNetworkManager.send(linkOpen, to: address) { result in
             if let status = try? result.get() as? RemoteProvisioningLinkStatus, status.isSuccess {
                 // Usually, the link state will be `.linkOpening` and we will

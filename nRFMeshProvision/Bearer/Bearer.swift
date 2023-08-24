@@ -143,11 +143,7 @@ public protocol MeshBearer: Bearer {
 /// A provisioning bearer is used to send provisioning PDUs to unprovisioned
 /// devices.
 public protocol ProvisioningBearer: Bearer {
-    /// The UUID associated with the bearer.
-    ///
-    /// This identifier is implementation specific and may but doesn't have to
-    /// be equal to ``UnprovisionedDevice/uuid``.
-    var identifier: UUID { get }
+    // Empty.
 }
 
 extension ProvisioningBearer {
