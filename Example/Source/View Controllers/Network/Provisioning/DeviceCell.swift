@@ -46,13 +46,13 @@ class DeviceCell: UITableViewCell {
     
     // MARK: - Implementation
     
-    func setupView(withDevice device: UnprovisionedDevice, andRSSI rssi: Int) {
+    func setupView(withDevice device: UnprovisionedDevice, andRSSI rssi: NSNumber) {
         name.text = device.name ?? "Unknown Device"
         uuid.text = device.uuid.uuidString
         updateRssi(rssi)
     }
     
-    func deviceDidUpdate(_ device: UnprovisionedDevice, andRSSI rssi: Int) {
+    func deviceDidUpdate(_ device: UnprovisionedDevice, andRSSI rssi: NSNumber) {
         if Date().timeIntervalSince(lastUpdateTimestamp) > 1.0 {
             lastUpdateTimestamp = Date()
             setupView(withDevice: device, andRSSI: rssi)
@@ -68,8 +68,8 @@ class DeviceCell: UITableViewCell {
         }
     }
     
-    private func updateRssi(_ rssi: Int) {
-        switch rssi {
+    private func updateRssi(_ rssi: NSNumber) {
+        switch rssi.intValue {
         case -128:
             rssiIcon.image = nil
         case -127 ..< -80:

@@ -35,7 +35,7 @@ import nRFMeshProvision
 typealias DiscoveredPeripheral = (
     device: UnprovisionedDevice,
     bearer: ProvisioningBearer,
-    rssi: Int
+    rssi: NSNumber
 )
 
 class ScannerTableViewController: UITableViewController {
@@ -245,10 +245,24 @@ extension ScannerTableViewController: MeshNetworkDelegate {
                             sentFrom source: Address, to destination: MeshAddress) {
         switch message {
         case let message as RemoteProvisioningScanReport:
-            if let index = discoveredPeripherals.firstIndex(where: { $0.bearer.identifier == message.uuid }) {
-                if let cell = tableView.cellForRow(at: IndexPath(row: index, section: 0)) as? DeviceCell {
-                    let device = discoveredPeripherals[index].device
-                    cell.deviceDidUpdate(device, andRSSI: message.rssi.intValue)
+            // Check if a device with the same UUID was already scanned before.
+            if let index = discoveredPeripherals.firstIndex(where: { $0.device.uuid == message.uuid }) {
+                // Check if the device can only be provisioned remotely (the bearer is a PB Remote Bearer).
+                if let bearer = discoveredPeripherals[index].bearer as? PBRemoteBearer {
+                    // If there is more than one Remote Provisioners in the range of
+                    // the Unprovisioned Device, use the one with higher returned RSSI value.
+                    if bearer.address != source && message.rssi.compare(discoveredPeripherals[index].rssi) == .orderedDescending,
+                       let meshNetwork = manager.meshNetwork,
+                       let server = meshNetwork.node(withAddress: source),
+                       let model = server.models(withSigModelId: .remoteProvisioningServerModelId).first,
+                       let betterBearer = try? PBRemoteBearer(target: message.uuid, using: model, over: manager) {
+                        discoveredPeripherals[index].bearer = betterBearer
+                        discoveredPeripherals[index].rssi = message.rssi
+                    }
+                    if let cell = tableView.cellForRow(at: IndexPath(row: index, section: 0)) as? DeviceCell {
+                        let device = discoveredPeripherals[index].device
+                        cell.deviceDidUpdate(device, andRSSI: message.rssi)
+                    }
                 }
             } else {
                 guard let meshNetwork = manager.meshNetwork,
@@ -261,7 +275,7 @@ extension ScannerTableViewController: MeshNetworkDelegate {
                 
                 DispatchQueue.main.async {
                     let unprovisionedDevice = UnprovisionedDevice(scanReport: message)
-                    self.discoveredPeripherals.append((unprovisionedDevice, bearer, message.rssi.intValue))
+                    self.discoveredPeripherals.append((unprovisionedDevice, bearer, message.rssi))
                     self.tableView.insertRows(at: [IndexPath(row: self.discoveredPeripherals.count - 1, section: 0)], with: .fade)
                     self.tableView.hideEmptyView()
                 }
@@ -279,17 +293,32 @@ extension ScannerTableViewController: CBCentralManagerDelegate {
     
     func centralManager(_ central: CBCentralManager, didDiscover peripheral: CBPeripheral,
                         advertisementData: [String : Any], rssi RSSI: NSNumber) {
-        if let index = discoveredPeripherals.firstIndex(where: { $0.bearer.identifier == peripheral.identifier }) {
+        // Ignore all packets without Unprovisioned Device UUID.
+        guard let uuid = advertisementData.unprovisionedDeviceUUID else {
+            return
+        }
+        // Check if a device with the same UUID was already scanned before.
+        if let index = discoveredPeripherals.firstIndex(where: { $0.device.uuid == uuid }) {
+            // For devices supporting both ADV and GATT Bearer
+            // prefer PB GATT bearer over PB Remote Bearer (it's faster).
+            if !(discoveredPeripherals[index].bearer is PBGattBearer) {
+                let bearer = PBGattBearer(target: peripheral)
+                bearer.logger = MeshNetworkManager.instance.logger
+                discoveredPeripherals[index].bearer = bearer
+            }
+            // Update the name and RSSI value
+            let device = discoveredPeripherals[index].device
+            device.name = advertisementData.localName
+            discoveredPeripherals[index].rssi = RSSI
+            // If the cell is visible, refresh the UI.
             if let cell = tableView.cellForRow(at: IndexPath(row: index, section: 0)) as? DeviceCell {
-                let device = discoveredPeripherals[index].device
-                device.name = advertisementData.localName
-                cell.deviceDidUpdate(device, andRSSI: RSSI.intValue)
+                cell.deviceDidUpdate(device, andRSSI: RSSI)
             }
         } else {
             if let unprovisionedDevice = UnprovisionedDevice(advertisementData: advertisementData) {
                 let bearer = PBGattBearer(target: peripheral)
                 bearer.logger = MeshNetworkManager.instance.logger
-                discoveredPeripherals.append((unprovisionedDevice, bearer, RSSI.intValue))
+                discoveredPeripherals.append((unprovisionedDevice, bearer, RSSI))
                 tableView.insertRows(at: [IndexPath(row: discoveredPeripherals.count - 1, section: 0)], with: .fade)
                 tableView.hideEmptyView()
             }
