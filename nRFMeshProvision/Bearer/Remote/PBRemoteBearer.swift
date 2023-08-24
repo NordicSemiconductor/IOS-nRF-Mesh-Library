@@ -194,7 +194,7 @@ open class PBRemoteBearer: ProvisioningBearer {
         guard isOpen else { return }
         
         // Unregister PDU handler and link status handler.
-        meshNetworkManager.unregisterCallback(forMessagesWithType: RemoteProvisioningLinkStatus.self, from: address)
+        meshNetworkManager.unregisterCallback(forMessagesWithType: RemoteProvisioningLinkReport.self, from: address)
         meshNetworkManager.unregisterCallback(forMessagesWithType: RemoteProvisioningPDUReport.self, from: address)
         
         // Notify the delegate.
