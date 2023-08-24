@@ -451,6 +451,8 @@ internal class NetworkManager {
     /// - returns: The stream of messages of given type.
     func messages<T: StaticMeshMessage>(from address: Address,
                                         to destination: MeshAddress?) -> AsyncStream<T> {
+        // Note: This method cannot just call the one above with T.opCode, as the return
+        //       type is different. Hence, repeating the code with `as? T` added.
         return AsyncStream {
             return try? await self.waitFor(messageWithOpCode: T.opCode, from: address, to: destination, timeout: 0) as? T
         } onCancel: {
