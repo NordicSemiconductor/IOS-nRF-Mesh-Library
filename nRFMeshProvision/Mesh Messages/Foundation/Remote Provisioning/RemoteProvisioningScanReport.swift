@@ -90,7 +90,7 @@ public struct RemoteProvisioningScanReport: UnacknowledgedRemoteProvisioningMess
             return nil
         }
         self.rssi = rssi
-        self.uuid = uuid.uuid
+        self.uuid = uuid
         self.oobInformation = oobInformation
         self.uriHash = advertisementData.uriHash
     }

@@ -59,12 +59,12 @@ public class UnprovisionedDevice: NSObject {
     ///                                from the device during scanning.
     public init?(advertisementData: [String : Any]) {
         // An Unprovisioned Device must advertise with UUID and OOB Information.
-        guard let cbuuid  = advertisementData.unprovisionedDeviceUUID,
+        guard let uuid  = advertisementData.unprovisionedDeviceUUID,
               let oobInfo = advertisementData.oobInformation else {
                 return nil
         }
         self.name = advertisementData.localName
-        self.uuid = cbuuid.uuid
+        self.uuid = uuid
         self.oobInformation = oobInfo
     }
     
