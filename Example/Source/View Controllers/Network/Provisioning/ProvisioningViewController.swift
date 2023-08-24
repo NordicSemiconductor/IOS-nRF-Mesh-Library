@@ -125,6 +125,16 @@ class ProvisioningViewController: UITableViewController {
         }
     }
     
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        
+        // Make sure the bearer is closed when moving out from this screen.
+        if isMovingFromParent {
+            bearer.delegate = nil
+            try? bearer.close()
+        }
+    }
+    
     override func shouldPerformSegue(withIdentifier identifier: String, sender: Any?) -> Bool {
         if identifier == "networkKey" {
             return provisioningManager.networkKey != nil
