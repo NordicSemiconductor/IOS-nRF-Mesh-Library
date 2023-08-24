@@ -81,8 +81,8 @@ open class PBRemoteBearer: ProvisioningBearer {
     /// The Network Manager is responsible for encoding and decoding messages.
     private let meshNetworkManager: MeshNetworkManager
     /// The Unicast Address of an Element with Remote Provisioning Server model
-    /// on a remote device.
-    private let address: Address
+    /// on the Remote Provisioner used to rely provisioning messages.
+    public let address: Address
     
     /// A flag indicating whether ``PBRemoteBearer/open()`` method was called.
     private var isOpened: Bool = false
