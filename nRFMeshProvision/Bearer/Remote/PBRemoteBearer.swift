@@ -51,6 +51,7 @@ final private class Send: AsyncOperation {
             guard !self.retry else { return }
             guard let report = try? response.get(),
                   report.outboundPduNumber == self.message.outboundPduNumber else {
+                self.manager.logger?.log(message: "Retrying sending \(self.message)", ofCategory: .bearer, withLevel: .warning)
                 self.retry = true
                 self.main()
                 return
