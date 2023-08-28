@@ -265,6 +265,10 @@ public extension ProxyFilter {
         guard let node = provisioner.node else {
             return
         }
+        // Make sure the Filter Type is set to inclusion list.
+        if type == .exclusionList {
+            setType(.inclusionList)
+        }
         var addresses: Set<Address> = []
         // Add Unicast Addresses of all Elements of the Provisioner's Node.
         addresses.formUnion(node.elements.map({ $0.unicastAddress }))
