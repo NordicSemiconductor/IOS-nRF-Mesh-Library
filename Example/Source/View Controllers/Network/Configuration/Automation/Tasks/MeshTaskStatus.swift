@@ -30,7 +30,7 @@
 
 import nRFMeshProvision
 
-enum TaskStatus {
+enum MeshTaskStatus {
     case pending
     case inProgress
     case skipped
@@ -38,11 +38,11 @@ enum TaskStatus {
     case failed(String)
     case cancelled
     
-    static func failed(_ error: Error) -> TaskStatus {
+    static func failed(_ error: Error) -> MeshTaskStatus {
         return .failed(error.localizedDescription)
     }
     
-    static func resultOf(_ status: ConfigStatusMessage) -> TaskStatus {
+    static func resultOf(_ status: ConfigStatusMessage) -> MeshTaskStatus {
         if status.isSuccess {
             return .success
         }
@@ -50,7 +50,7 @@ enum TaskStatus {
     }
 }
 
-extension TaskStatus: CustomStringConvertible {
+extension MeshTaskStatus: CustomStringConvertible {
     
     var description: String {
         switch self {
