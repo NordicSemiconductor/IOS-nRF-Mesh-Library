@@ -29,7 +29,6 @@
 */
 
 import Foundation
-import CoreBluetooth
 
 /// A Remote Provisioning Scan Start message is an acknowledged message that is
 /// used by the Remote Provisioning Client to start the Remote Provisioning Scan
@@ -54,7 +53,7 @@ public struct RemoteProvisioningScanStart: AcknowledgedRemoteProvisioningMessage
     /// device identified by the value of the UUID field). If the UUID field is absent,
     /// the Remote Provisioning Client is requesting a scan for all unprovisioned
     /// devices within immediate radio range (a Multiple Devices Scanning).
-    public let uuid: CBUUID?
+    public let uuid: UUID?
     
     public var parameters: Data? {
         let data = Data([scannedItemsLimit, UInt8(timeout)])
@@ -68,11 +67,15 @@ public struct RemoteProvisioningScanStart: AcknowledgedRemoteProvisioningMessage
     ///
     /// - parameters:
     ///   - scannedItemsLimit: Maximum number of scanned items to be reported. Value 0
-    ///                        indicates no limit.
+    ///                        (default) indicates no limit.
     ///   - timeout: Time limit for a scan (in seconds). The value will be rounded down
-    ///              to whole seconds.
+    ///              to whole seconds. The value of the Timeout field shall not be 0,
+    ///              otherwise `nil` is returned.
     ///   - uuid: Optional UUID to start a Single Device Scanning procedure.
-    public init(scannedItemsLimit: UInt8 = 0, timeout: TimeInterval = 0, uuid: CBUUID? = nil) {
+    public init?(scannedItemsLimit: UInt8 = 0, timeout: TimeInterval, uuid: UUID? = nil) {
+        guard timeout > 0 else {
+            return nil
+        }
         self.scannedItemsLimit = scannedItemsLimit
         self.timeout = timeout
         self.uuid = uuid
@@ -85,7 +88,7 @@ public struct RemoteProvisioningScanStart: AcknowledgedRemoteProvisioningMessage
         scannedItemsLimit = parameters[0]
         timeout = TimeInterval(parameters[1])
         if parameters.count == 18 {
-            uuid = CBUUID(data: parameters.subdata(in: 2 ..< 18))
+            uuid = UUID(data: parameters.subdata(in: 2 ..< 18))!
         } else {
             uuid = nil
         }

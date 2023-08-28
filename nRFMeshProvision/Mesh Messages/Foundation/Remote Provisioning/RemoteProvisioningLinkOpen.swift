@@ -29,7 +29,6 @@
 */
 
 import Foundation
-import CoreBluetooth
 
 /// A Remote Provisioning Link Open message is an acknowledged message used by the
 /// Remote Provisioning Client to establish the provisioning bearer between a node
@@ -40,7 +39,7 @@ public struct RemoteProvisioningLinkOpen: AcknowledgedRemoteProvisioningMessage 
     public static let responseType: StaticMeshResponse.Type = RemoteProvisioningLinkStatus.self
     
     /// Device UUID.
-    public let uuid: CBUUID?
+    public let uuid: UUID?
     /// Link open timeout in seconds.
     ///
     /// This field is optional if `uuid` is present; otherwise should be set to `nil`.
@@ -72,7 +71,7 @@ public struct RemoteProvisioningLinkOpen: AcknowledgedRemoteProvisioningMessage 
     ///   - uuid: The UUID of the device to open link to.
     ///   - timeout: Optional timeout. Minimum value is 1 second and maximum 60 seconds.
     ///              The timeout will be rounded to nearest lower integer.
-    public init(uuid: CBUUID, timeout: TimeInterval? = nil) {
+    public init(uuid: UUID, timeout: TimeInterval? = nil) {
         self.uuid = uuid
         self.timeout = timeout.map { max(1.0, min(60.0, $0)) }
         self.nppiProcedure = nil
@@ -100,7 +99,10 @@ public struct RemoteProvisioningLinkOpen: AcknowledgedRemoteProvisioningMessage 
             self.timeout = nil
             self.nppiProcedure = nppiProcedure
         } else {
-            self.uuid = CBUUID(data: parameters.subdata(in: 0 ..< 16))
+            guard let uuid = UUID(data: parameters.subdata(in: 0 ..< 16)) else {
+                return nil
+            }
+            self.uuid = uuid
             self.nppiProcedure = nil
             if parameters.count == 17 {
                 let timeout = parameters[16]

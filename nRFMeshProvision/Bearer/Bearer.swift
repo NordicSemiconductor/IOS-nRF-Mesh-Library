@@ -119,10 +119,10 @@ public protocol Bearer: Transmitter {
     var isOpen: Bool { get }
     
     /// This method opens the Bearer.
-    func open()
+    func open() throws
     
     /// This method closes the Bearer.
-    func close()
+    func close() throws
     
 }
 

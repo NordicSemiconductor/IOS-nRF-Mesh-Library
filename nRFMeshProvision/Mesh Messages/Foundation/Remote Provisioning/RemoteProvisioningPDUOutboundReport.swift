@@ -46,6 +46,10 @@ public struct RemoteProvisioningPDUOutboundReport: UnacknowledgedRemoteProvision
         return Data([outboundPduNumber])
     }
     
+    /// To ensure delivery of the message it should be sent as a segmented message
+    /// even if the PDU contains less than 11 bytes.
+    public var isSegmented: Bool = true
+    
     /// Creates a Remote Provisioning PDU Outbound Report.
     ///
     /// - parameter outboundPduNumber: Remote Provisioning Outbound PDU Count state.

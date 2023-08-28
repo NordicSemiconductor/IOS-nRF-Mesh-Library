@@ -31,24 +31,24 @@
 import Foundation
 
 /// A base protocol for all Remote Provisioning messages.
-public protocol RemoteProvisioningMessage: StaticMeshMessage {
+public protocol RemoteProvisioningMessage: ConfigMessage {
     // No additional fields.
 }
 
 /// A base protocol for unacknowledged Remote Provisioning messages.
-public protocol UnacknowledgedRemoteProvisioningMessage: RemoteProvisioningMessage, UnacknowledgedMeshMessage {
+public protocol UnacknowledgedRemoteProvisioningMessage: RemoteProvisioningMessage, UnacknowledgedConfigMessage {
     // No additional fields.
 }
 
 /// A base protocol for unacknowledged Remote Provisioning messages.
-public protocol RemoteProvisioningResponse: StaticMeshResponse, UnacknowledgedRemoteProvisioningMessage {
+public protocol RemoteProvisioningResponse: ConfigResponse, UnacknowledgedRemoteProvisioningMessage {
     // No additional fields.
 }
 
 /// A base protocol for acknowledged Remote Provisioning messages.
 ///
 /// Acknowledged messages will be responded with a status message.
-public protocol AcknowledgedRemoteProvisioningMessage: RemoteProvisioningMessage, StaticAcknowledgedMeshMessage {
+public protocol AcknowledgedRemoteProvisioningMessage: RemoteProvisioningMessage, AcknowledgedConfigMessage {
     // No additional fields.
 }
 
@@ -87,6 +87,12 @@ public enum RemoteProvisioningMessageStatus: UInt8 {
 public protocol RemoteProvisioningStatusMessage: RemoteProvisioningMessage, StatusMessage {
     /// Status for the requesting message.
     var status: RemoteProvisioningMessageStatus { get }
+}
+
+/// A base protocol for Remote Provisioning messages reporting link state.
+public protocol RemoteProvisioningLinkStateMessage: RemoteProvisioningMessage {
+    /// Remote Provisioning Link state.
+    var linkState: RemoteProvisioningLinkState { get }
 }
 
 public extension RemoteProvisioningStatusMessage {
@@ -293,6 +299,56 @@ extension RemoteProvisioningMessageStatus: CustomDebugStringConvertible {
         case .linkClosedAsCannotReceivePDU:       return "Link Closed as Cannot Receive PDU"
         case .linkClosedAsCannotSendPDU:          return "Link Closed as Cannot Send PDU"
         case .linkClosedAsCannotDeliverPDUReport: return "Link Closed as Cannot Deliver PDU Report"
+        }
+    }
+    
+}
+
+extension RemoteProvisioningScanState: CustomDebugStringConvertible {
+    
+    public var debugDescription: String {
+        switch self {
+        case .idle:               return "Idle"
+        case .multipleDeviceScan: return "Multiple Device Scan"
+        case .singleDeviceScan:   return "Sindle Device Scan"
+        }
+    }
+    
+}
+
+extension RemoteProvisioningLinkCloseReason: CustomDebugStringConvertible {
+    
+    public var debugDescription: String {
+        switch self {
+        case .success:      return "Success"
+        case .fail:         return "Fail"
+        case .unrecognized: return "Unrecognized"
+        }
+    }
+    
+}
+
+extension RemoteProvisioningLinkState: CustomDebugStringConvertible {
+    
+    public var debugDescription: String {
+        switch self {
+        case .idle: return "Idle"
+        case .linkOpening: return "Link Opening"
+        case .linkActive: return "Link Active"
+        case .outboundPacketTransfer: return "Outbound Packet Transfer"
+        case .linkClosing: return "Link Closing"
+        }
+    }
+    
+}
+
+extension NodeProvisioningProtocolInterfaceProcedure: CustomDebugStringConvertible {
+    
+    public var debugDescription: String {
+        switch self {
+        case .deviceKeyRefresh: return "Device Key Refresh"
+        case .nodeAddressRefresh: return "Node Address Refresh"
+        case .nodeCompositionRefresh: return "Node Composition Refresh"
         }
     }
     

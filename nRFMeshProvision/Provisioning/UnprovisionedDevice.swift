@@ -59,13 +59,23 @@ public class UnprovisionedDevice: NSObject {
     ///                                from the device during scanning.
     public init?(advertisementData: [String : Any]) {
         // An Unprovisioned Device must advertise with UUID and OOB Information.
-        guard let cbuuid  = advertisementData.unprovisionedDeviceUUID,
+        guard let uuid  = advertisementData.unprovisionedDeviceUUID,
               let oobInfo = advertisementData.oobInformation else {
                 return nil
         }
         self.name = advertisementData.localName
-        self.uuid = cbuuid.uuid
+        self.uuid = uuid
         self.oobInformation = oobInfo
+    }
+    
+    /// Creates the Unprovisioned Device object based on the Remote
+    /// Provisioning Scan Report message.
+    ///
+    /// - parameter scanReport: The scan report received during Remote Scan
+    ///                         operation.
+    public init(scanReport: RemoteProvisioningScanReport) {
+        self.uuid = scanReport.uuid
+        self.oobInformation = scanReport.oobInformation
     }
     
 }

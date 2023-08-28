@@ -42,8 +42,8 @@ public extension Dictionary where Key == String, Value == Any {
     /// Returns the Unprovisioned Device's UUID or `nil` if such value not be parsed.
     ///
     /// This value is taken from the Service Data with Mesh Provisioning Service
-    /// UUID. The first 16 bytes are the converted to CBUUID.
-    var unprovisionedDeviceUUID: CBUUID? {
+    /// UUID. The first 16 bytes are the converted to UUID.
+    var unprovisionedDeviceUUID: UUID? {
         guard let serviceData = self[CBAdvertisementDataServiceDataKey] as? [CBUUID : Data],
               let data = serviceData[MeshProvisioningService.uuid] else {
                 return nil
@@ -52,7 +52,7 @@ public extension Dictionary where Key == String, Value == Any {
             return nil
         }
         
-        return CBUUID(data: data.subdata(in: 0 ..< 16))
+        return UUID(data: data.subdata(in: 0 ..< 16))
     }
     
     /// Hash of the associated URI advertised with the URI AD Type.
@@ -128,6 +128,27 @@ extension CBUUID {
     /// Converts the CBUUID to foundation UUID.
     var uuid: UUID {
         return data.withUnsafeBytes { UUID(uuid: $0.load(as: uuid_t.self)) }
+    }
+    
+}
+
+extension UUID {
+    
+    /// Converts the Data to foundation UUID.
+    init?(data: Data) {
+        guard data.count == 16 else {
+            return nil
+        }
+        self = data.withUnsafeBytes { UUID(uuid: $0.load(as: uuid_t.self)) }
+    }
+    
+    /// Converts the Data to foundation UUID using Little Endian notation.
+    init?(dataLittleEndian data: Data) {
+        guard data.count == 16 else {
+            return nil
+        }
+        let reversed = Data(data.reversed())
+        self = reversed.withUnsafeBytes { UUID(uuid: $0.load(as: uuid_t.self)) }
     }
     
 }

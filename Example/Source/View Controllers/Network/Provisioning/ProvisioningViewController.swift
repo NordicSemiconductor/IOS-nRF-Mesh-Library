@@ -125,6 +125,16 @@ class ProvisioningViewController: UITableViewController {
         }
     }
     
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        
+        // Make sure the bearer is closed when moving out from this screen.
+        if isMovingFromParent {
+            bearer.delegate = nil
+            try? bearer.close()
+        }
+    }
+    
     override func shouldPerformSegue(withIdentifier identifier: String, sender: Any?) -> Bool {
         if identifier == "networkKey" {
             return provisioningManager.networkKey != nil
@@ -231,7 +241,13 @@ private extension ProvisioningViewController {
             guard let self = self else { return }
             self.alert?.title   = "Aborting"
             self.alert?.message = "Cancelling connection..."
-            self.bearer.close()
+            do {
+                try self.bearer.close()
+            } catch {
+                self.dismissStatusDialog() {
+                    self.presentAlert(title: "Error", message: error.localizedDescription)
+                }
+            }
         }
     }
     
@@ -241,8 +257,15 @@ private extension ProvisioningViewController {
     
     /// This method tries to open the bearer had it been closed when on this screen.
     func openBearer() {
-        presentStatusDialog(message: "Connecting...") {
-            self.bearer.open()
+        presentStatusDialog(message: "Connecting...") { [weak self] in
+            guard let self = self else { return }
+            do {
+                try self.bearer.open()
+            } catch {
+                self.dismissStatusDialog() {
+                    self.presentAlert(title: "Error", message: error.localizedDescription)
+                }
+            }
         }
     }
     
@@ -367,7 +390,7 @@ extension ProvisioningViewController: GattBearerDelegate {
                 let continueAction = UIAlertAction(title: "No", style: .cancel) { _ in
                     done(reconnect: false)
                 }
-                if connection.isConnected {
+                if connection.isConnected && bearer is PBGattBearer {
                     self.presentAlert(title: "Success",
                                       message: "Provisioning complete.\n\nDo you want to connect to the new Node over GATT bearer?",
                                       options: [reconnectAction, continueAction])
@@ -441,8 +464,15 @@ extension ProvisioningViewController: ProvisioningDelegate {
                 }
                 
             case .complete:
-                self.bearer.close()
-                self.presentStatusDialog(message: "Disconnecting...")
+                self.presentStatusDialog(message: "Disconnecting...") {
+                    do {
+                        try self.bearer.close()
+                    } catch {
+                        self.dismissStatusDialog() {
+                            self.presentAlert(title: "Error", message: error.localizedDescription)
+                        }
+                    }
+                }
                 
             case let .failed(error):
                 self.dismissStatusDialog {

@@ -207,12 +207,12 @@ internal class NetworkManager {
                         return true
                     }
                     outgoingMessages.insert(destination)
+                    deliveryCallbacks[destination] = { result in
+                        continuation.resume(with: result)
+                    }
                     return false
                 }
                 guard !busy else { return }
-                setDeliveryCallback(for: destination) { result in
-                    continuation.resume(with: result)
-                }
                 accessLayer.send(message, from: element, to: destination,
                                  withTtl: initialTtl, using: applicationKey,
                                  retransmit: false)
@@ -252,12 +252,15 @@ internal class NetworkManager {
                         return true
                     }
                     outgoingMessages.insert(meshAddress)
+                    responseCallbacks[destination] = (
+                        expectedOpCode: message.responseOpCode,
+                        callback: { result in
+                            continuation.resume(with: result)
+                        }
+                    )
                     return false
                 }
                 guard !busy else { return }
-                setResponseCallback(for: message, from: destination) { result in
-                    continuation.resume(with: result)
-                }
                 accessLayer.send(message, from: element, to: meshAddress,
                                  withTtl: initialTtl, using: applicationKey,
                                  retransmit: false)
@@ -295,12 +298,12 @@ internal class NetworkManager {
                         return true
                     }
                     outgoingMessages.insert(meshAddress)
+                    deliveryCallbacks[meshAddress] = { result in
+                        continuation.resume(with: result)
+                    }
                     return false
                 }
                 guard !busy else { return }
-                setDeliveryCallback(for: meshAddress) { result in
-                    continuation.resume(with: result)
-                }
                 accessLayer.send(configMessage, from: element, to: destination,
                                  withTtl: initialTtl)
             }
@@ -340,12 +343,15 @@ internal class NetworkManager {
                         return true
                     }
                     outgoingMessages.insert(meshAddress)
+                    configResponseCallbacks[destination] = (
+                        expectedOpCode: configMessage.responseOpCode,
+                        callback: { result in
+                            continuation.resume(with: result)
+                        }
+                    )
                     return false
                 }
                 guard !busy else { return }
-                setResponseCallback(for: configMessage, from: destination) { result in
-                    continuation.resume(with: result)
-                }
                 accessLayer.send(configMessage, from: element, to: destination,
                                  withTtl: initialTtl)
             }
@@ -445,6 +451,8 @@ internal class NetworkManager {
     /// - returns: The stream of messages of given type.
     func messages<T: StaticMeshMessage>(from address: Address,
                                         to destination: MeshAddress?) -> AsyncStream<T> {
+        // Note: This method cannot just call the one above with T.opCode, as the return
+        //       type is different. Hence, repeating the code with `as? T` added.
         return AsyncStream {
             return try? await self.waitFor(messageWithOpCode: T.opCode, from: address, to: destination, timeout: 0) as? T
         } onCancel: {
@@ -612,36 +620,6 @@ internal class NetworkManager {
 }
 
 private extension NetworkManager {
-    
-    func setDeliveryCallback(for destination: MeshAddress,
-                             do operation: @escaping (Result<Void, Error>) -> ()) {
-        mutex.sync {
-            deliveryCallbacks[destination] = operation
-        }
-    }
-    
-    func setResponseCallback(for request: AcknowledgedMeshMessage,
-                             from destination: Address,
-                             callback: @escaping (Result<MeshResponse, Error>) -> ()) {
-        mutex.sync {
-            responseCallbacks[destination] = (
-                expectedOpCode: request.responseOpCode,
-                callback: callback
-            )
-        }
-    }
-    
-    func setResponseCallback(for request: AcknowledgedConfigMessage,
-                             from destination: Address,
-                             callback: @escaping (Result<ConfigResponse, Error>) -> ()) {
-        mutex.sync {
-            assert(configResponseCallbacks[destination] == nil)
-            configResponseCallbacks[destination] = (
-                expectedOpCode: request.responseOpCode,
-                callback: callback
-            )
-        }
-    }
     
     /// Notify the callback awaiting received message.
     ///

@@ -154,12 +154,16 @@
 		50DDE9D03D359DA1D9729DE165646F63 /* GenericLocationGlobalSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 629F48BCE382A3A9BA5FAAF851A28CE9 /* GenericLocationGlobalSet.swift */; };
 		519C000C7EE53FB5E0710E527AFADDB9 /* ProvisioningManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56B392DEA144B2228E5059762BFFDC37 /* ProvisioningManager.swift */; };
 		51D3C81D7C95AAAB1CA41C971B476813 /* ISO78164Padding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6793D5A483FC322067B570388A6B3706 /* ISO78164Padding.swift */; };
+		5204C7A82A52FE1A00EF864F /* AsyncOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5204C7A72A52FE1A00EF864F /* AsyncOperation.swift */; };
+		5204C7AA2A530A6B00EF864F /* AsyncResultOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5204C7A92A530A6B00EF864F /* AsyncResultOperation.swift */; };
 		52069D025C55D850DC8CC61CB9AD0FA9 /* GenericPowerLevelStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46E865BA7B2152536B88F28180E79235 /* GenericPowerLevelStatus.swift */; };
+		5208862B2A32062400C9CE95 /* PBRemoteBearer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 520886292A3205EA00C9CE95 /* PBRemoteBearer.swift */; };
 		5208862D2A330B9A00C9CE95 /* NetworkParameters.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5208862C2A330B9A00C9CE95 /* NetworkParameters.swift */; };
 		5208862F2A331BDB00C9CE95 /* NetworkManagerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5208862E2A331BDB00C9CE95 /* NetworkManagerDelegate.swift */; };
 		5223F7AD2A4340D00083257A /* MeshNetworkManager+Callbacks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5223F7AC2A4340D00083257A /* MeshNetworkManager+Callbacks.swift */; };
 		526F24F05DAEE7F5230D97CA1C11C259 /* MeshNetwork+Scenes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CE9EBCC249319B11F4761DF3113408D /* MeshNetwork+Scenes.swift */; };
 		529EC8DC2A30B1AA0056BB48 /* Node+Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529EC8DB2A30B1AA0056BB48 /* Node+Models.swift */; };
+		529EC8DE2A31C1E70056BB48 /* RemoteProvisioningClientHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529EC8DD2A31C1E70056BB48 /* RemoteProvisioningClientHandler.swift */; };
 		52E7064F091D1CB785E5377B2234B59F /* BlockCipher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A57B68075D5163750469D071E976128 /* BlockCipher.swift */; };
 		53E9BA2772FA42D76347BC4FFF9E56B0 /* TimeGet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 691F340608BECECEFC8011175343E0C0 /* TimeGet.swift */; };
 		5448E248B079A5152728A16DF657BD92 /* LightLightnessGet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84638DA95D164A52334C2435B9C0250E /* LightLightnessGet.swift */; };
@@ -735,10 +739,14 @@
 		509807D0716EE91C7FBA1267F44FC084 /* ConfigHeartbeatSubscriptionGet.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ConfigHeartbeatSubscriptionGet.swift; sourceTree = "<group>"; };
 		50CC36A2DD46E4E4141CD80DC0EB616E /* LightLightnessRangeSetUnacknowledged.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LightLightnessRangeSetUnacknowledged.swift; sourceTree = "<group>"; };
 		51A5495D2067D83F1B7534B3B79861F3 /* LowerTransportLayer.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LowerTransportLayer.swift; sourceTree = "<group>"; };
+		5204C7A72A52FE1A00EF864F /* AsyncOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AsyncOperation.swift; sourceTree = "<group>"; };
+		5204C7A92A530A6B00EF864F /* AsyncResultOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AsyncResultOperation.swift; sourceTree = "<group>"; };
+		520886292A3205EA00C9CE95 /* PBRemoteBearer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PBRemoteBearer.swift; sourceTree = "<group>"; };
 		5208862C2A330B9A00C9CE95 /* NetworkParameters.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkParameters.swift; sourceTree = "<group>"; };
 		5208862E2A331BDB00C9CE95 /* NetworkManagerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkManagerDelegate.swift; sourceTree = "<group>"; };
 		5223F7AC2A4340D00083257A /* MeshNetworkManager+Callbacks.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "MeshNetworkManager+Callbacks.swift"; path = "nRFMeshProvision/MeshNetworkManager+Callbacks.swift"; sourceTree = "<group>"; };
 		529EC8DB2A30B1AA0056BB48 /* Node+Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Node+Models.swift"; sourceTree = "<group>"; };
+		529EC8DD2A31C1E70056BB48 /* RemoteProvisioningClientHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteProvisioningClientHandler.swift; sourceTree = "<group>"; };
 		52F30C30F9FB2AF2D589FBCDA08C46A7 /* NetworkBeaconPdu.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = NetworkBeaconPdu.swift; sourceTree = "<group>"; };
 		532748DBB74703B56C6DCEECB478DB9A /* GenericPowerLastStatus.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = GenericPowerLastStatus.swift; sourceTree = "<group>"; };
 		534D99468407BC28DCE93FABFC3F774E /* NetworkLayer.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = NetworkLayer.swift; sourceTree = "<group>"; };
@@ -1423,6 +1431,7 @@
 				BC9E226DE144726FDB57B7ABA324C3DE /* Bearer.swift */,
 				449964AFF8C5C07B2A150601E528EE24 /* BearerDelegate.swift */,
 				80950D5E79CF7FC005D21A9364192DF5 /* BearerError.swift */,
+				520886282A32059300C9CE95 /* Remote */,
 				2CC33F77F03F20FE642FDEEEA45937C6 /* GATT */,
 			);
 			name = Bearer;
@@ -1479,6 +1488,14 @@
 				E6434221E62448A6D69C018B080EF9D8 /* AccessPdu.swift */,
 			);
 			path = "Access Layer";
+			sourceTree = "<group>";
+		};
+		520886282A32059300C9CE95 /* Remote */ = {
+			isa = PBXGroup;
+			children = (
+				520886292A3205EA00C9CE95 /* PBRemoteBearer.swift */,
+			);
+			path = Remote;
 			sourceTree = "<group>";
 		};
 		536889DED4EC3F3BCCBB998CE8AAED13 /* Sensors */ = {
@@ -1901,6 +1918,8 @@
 				1FA6C8234F93BFB0774C324FB05605E3 /* Beacon.swift */,
 				1E5028D8C8870229C60FAEE14CC526A4 /* MeshConstants.swift */,
 				ED3FD0E355116E51D6E48E8C7CFD44A9 /* MeshLoggerDelegate.swift */,
+				5204C7A72A52FE1A00EF864F /* AsyncOperation.swift */,
+				5204C7A92A530A6B00EF864F /* AsyncResultOperation.swift */,
 			);
 			name = Utils;
 			path = nRFMeshProvision/Utils;
@@ -1932,6 +1951,7 @@
 				66173E70FD75F578CD86F5F1464A6A1F /* ConfigurationClientHandler.swift */,
 				9D08634301E6D84D84955F53FA95C861 /* ConfigurationServerHandler.swift */,
 				8A5002A8F60EBA2BF2516B12275D85B3 /* PrivateBeaconClientHandler.swift */,
+				529EC8DD2A31C1E70056BB48 /* RemoteProvisioningClientHandler.swift */,
 				F7202C526200AAE3065CAE829C61211C /* SceneClientHandler.swift */,
 			);
 			path = "Foundation Layer";
@@ -2271,6 +2291,7 @@
 				56A2957ADEAE71EDC895C8AFD4A7EA0D /* ConfigCompositionDataStatus.swift in Sources */,
 				22371954646EF789581DF461ECB32077 /* ConfigDefaultTtlGet.swift in Sources */,
 				A7CDEA89C600E9FB9F80B4DEFC28112E /* ConfigDefaultTtlSet.swift in Sources */,
+				5204C7A82A52FE1A00EF864F /* AsyncOperation.swift in Sources */,
 				4B49D7601E32C94A631252E255996B9B /* ConfigDefaultTtlStatus.swift in Sources */,
 				5732B771EA97C3471105F8BF7A7330EA /* ConfigFriendGet.swift in Sources */,
 				42F8D954C5FB28BAF65544DC5AD31894 /* ConfigFriendSet.swift in Sources */,
@@ -2329,6 +2350,7 @@
 				F77AB465F5F7295814216DEFB525A0C4 /* ConfigurationClientHandler.swift in Sources */,
 				28111070315240F8F0C83DDD53E65DF9 /* ConfigurationServerHandler.swift in Sources */,
 				5A19C32C1B2E8D5E133306200ECAA6D6 /* ConfigVendorModelAppGet.swift in Sources */,
+				5208862B2A32062400C9CE95 /* PBRemoteBearer.swift in Sources */,
 				BBAFD042107BF3602DDDF33DB10209B8 /* ConfigVendorModelAppList.swift in Sources */,
 				EE71769E87D9A510FF2061829C545AF3 /* ConfigVendorModelSubscriptionGet.swift in Sources */,
 				B7F1D1968E58B6CA3F6520B7576DDB4B /* ConfigVendorModelSubscriptionList.swift in Sources */,
@@ -2386,6 +2408,7 @@
 				E1E59C23037B565110DB218037D27C31 /* GenericPowerLastGet.swift in Sources */,
 				F44E5E9927BC8712A7664E3FC03BEA1E /* GenericPowerLastStatus.swift in Sources */,
 				E40D8BDAC203DD5DC8EBF92DC5F1FD46 /* GenericPowerLevelGet.swift in Sources */,
+				5204C7AA2A530A6B00EF864F /* AsyncResultOperation.swift in Sources */,
 				15D98099A560D95A550F5565EFB30627 /* GenericPowerLevelSet.swift in Sources */,
 				E28E5E633624ACE4A8429724E1A1585B /* GenericPowerLevelSetUnacknowledged.swift in Sources */,
 				52069D025C55D850DC8CC61CB9AD0FA9 /* GenericPowerLevelStatus.swift in Sources */,
@@ -2532,6 +2555,7 @@
 				F71FF4343D1DB5C41A57A19E5EB9BD5F /* nRFMeshProvision-dummy.m in Sources */,
 				FD679EA7F8FDE0797704178842F9F63B /* OnPowerUp.swift in Sources */,
 				74856D4FFBF14D8EF439F562A4878640 /* Oob.swift in Sources */,
+				529EC8DE2A31C1E70056BB48 /* RemoteProvisioningClientHandler.swift in Sources */,
 				17D78F135D30A1EAE95E7B9F284DAD31 /* OptionSet+Data.swift in Sources */,
 				475A7EEE608AC49C122DEE79B78894C1 /* PBGattBearer.swift in Sources */,
 				0FD0E63ABA20355EF68164FEE55E31AF /* PrivateBeacon.swift in Sources */,
