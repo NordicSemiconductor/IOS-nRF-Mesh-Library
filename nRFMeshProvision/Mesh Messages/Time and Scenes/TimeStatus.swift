@@ -45,6 +45,17 @@ public struct TimeStatus: StaticMeshResponse {
     }
     
     public init?(parameters: Data) {
+        // If the TAI Seconds field is 0x0000000000 the Subsecond, Uncertainty,
+        // Time Authority, TAI-UTC Delta and Time Zone Offset fields shall be omitted;
+        // otherwise these fields shall be present.
+        if parameters.count == 5 {
+            let seconds = parameters.readBits(40, fromOffset: 0)
+            guard seconds == 0 else {
+                return nil
+            }
+            time = TaiTime()
+            return
+        }
         guard parameters.count == 10 else {
             return nil
         }
