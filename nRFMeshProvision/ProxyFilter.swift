@@ -31,19 +31,39 @@
 import Foundation
 
 /// A type of the Proxy Filter.
-public enum ProxyFilerType: UInt8 {
-    /// An inclusion list filter has an associated inclusion list containing
+public enum ProxyFilerType {
+    /// An accept list filter has an associated accept list containing
     /// destination addresses that are of interest for the Proxy Client.
     ///
-    /// The inclusion list filter blocks all messages except those targeting
+    /// The accept list filter blocks all messages except those targeting
     /// addresses added to the list.
-    case inclusionList = 0x00
-    /// An exclusion list filter has an associated exclusion listcontaining
+    case acceptList
+    /// An reject list filter has an associated reject list containing
     /// destination addresses that are NOT of the Proxy Client interest.
     ///
-    /// The exclusion list filter forwards all messages except those targeting
+    /// The reject list filter forwards all messages except those targeting
     /// addresses added to the list.
-    case exclusionList = 0x01
+    case rejectList
+    
+    @available(*, deprecated, renamed: "acceptList")
+    case inclusionList
+    @available(*, deprecated, renamed: "rejectList")
+    case exclusionList
+    
+    internal static func from(rawValue: UInt8) -> ProxyFilerType? {
+        switch rawValue {
+        case 0x00: return .acceptList
+        case 0x01: return .rejectList
+        default: return nil
+        }
+    }
+    
+    internal var rawValue: UInt8 {
+        switch self {
+        case .acceptList, .inclusionList: return 0x00
+        case .rejectList, .exclusionList: return 0x01
+        }
+    }
 }
 
 /// The delegate that will be notified about changes of the Proxy Filter.
@@ -84,7 +104,7 @@ public extension ProxyFilterDelegate {
 /// An enumeration for different initial configurations of the Proxy Filter.
 public enum ProxyFilterSetup {
     /// In automatic Proxy Filter setup the filter will be set to
-    /// ``ProxyFilerType/inclusionList`` with Unicast Addresses of all
+    /// ``ProxyFilerType/acceptList`` with Unicast Addresses of all
     /// local Elements, all Group Addresses with at least one local Model
     /// subscribed and the All Nodes (0xFFFF) address.
     ///
@@ -92,11 +112,21 @@ public enum ProxyFilterSetup {
     case automatic
     
     /// The Proxy Filter on each connected Proxy Node will be set to
-    /// ``ProxyFilerType/inclusionList`` with given set of addresses.
+    /// ``ProxyFilerType/acceptList`` with given set of addresses.
+    case acceptList(addresses: Set<Address>)
+    
+    /// The Proxy Filter on each connected Proxy Node will be set to
+    /// ``ProxyFilerType/rejectList`` with given set of addresses.
+    case rejectnList(addresses: Set<Address>)
+    
+    /// The Proxy Filter on each connected Proxy Node will be set to
+    /// ``ProxyFilerType/acceptList`` with given set of addresses.
+    @available(*, deprecated, renamed: "acceptList")
     case inclusionList(addresses: Set<Address>)
     
     /// The Proxy Filter on each connected Proxy Node will be set to
-    /// ``ProxyFilerType/exclusionList`` with given set of addresses.
+    /// ``ProxyFilerType/rejectList`` with given set of addresses.
+    @available(*, deprecated, renamed: "rejectList")
     case exclusionList(addresses: Set<Address>)
 }
 
@@ -152,8 +182,8 @@ public class ProxyFilter {
     
     /// The active Proxy Filter type.
     ///
-    /// By default the Proxy Filter is set to ``ProxyFilerType/inclusionList``.
-    public private(set) var type: ProxyFilerType = .inclusionList
+    /// By default the Proxy Filter is set to ``ProxyFilerType/acceptList``.
+    public private(set) var type: ProxyFilerType = .acceptList
     
     /// The connected Proxy Node. This may be `nil` if the connected Node is unknown
     /// to the provisioner, that is if a Node with the proxy Unicast Address was not found
@@ -183,9 +213,9 @@ public extension ProxyFilter {
         send(SetFilterType(type))
     }
     
-    /// Resets the filter to an empty inclusion list filter.
+    /// Resets the filter to an empty accept list filter.
     func reset() {
-        send(SetFilterType(.inclusionList))
+        send(SetFilterType(.acceptList))
     }
     
     /// Clears the current filter.
@@ -265,9 +295,9 @@ public extension ProxyFilter {
         guard let node = provisioner.node else {
             return
         }
-        // Make sure the Filter Type is set to inclusion list.
-        if type == .exclusionList {
-            setType(.inclusionList)
+        // Make sure the Filter Type is set to accept list.
+        if type == .rejectList {
+            setType(.acceptList)
         }
         var addresses: Set<Address> = []
         // Add Unicast Addresses of all Elements of the Provisioner's Node.
@@ -327,7 +357,7 @@ internal protocol ProxyFilterEventHandler: AnyObject {
     /// Callback called when the manager failed to send the Proxy
     /// Configuration Message.
     ///
-    /// This method clears the local filter and sets it back to ``ProxyFilerType/inclusionList``.
+    /// This method clears the local filter and sets it back to ``ProxyFilerType/acceptList``.
     /// All the messages waiting to be sent are cancelled.
     ///
     /// - parameters:
@@ -352,7 +382,7 @@ internal protocol ProxyFilterEventHandler: AnyObject {
 extension ProxyFilter: ProxyFilterEventHandler {
     
     func newNetworkCreated() {
-        type = .inclusionList
+        type = .acceptList
         addresses.removeAll()
         buffer.removeAll()
         busy = false
@@ -369,10 +399,12 @@ extension ProxyFilter: ProxyFilterEventHandler {
             switch initialState {
             case .automatic:
                 setup(for: localProvisioner)
-            case .exclusionList(addresses: let addresses):
-                setType(.exclusionList)
+            case .rejectnList(addresses: let addresses),
+                 .exclusionList(addresses: let addresses):
+                setType(.rejectList)
                 fallthrough
-            case .inclusionList(addresses: let addresses):
+            case .acceptList(addresses: let addresses),
+                 .inclusionList(addresses: let addresses):
                 add(addresses: addresses)
             }
         }
@@ -401,7 +433,7 @@ extension ProxyFilter: ProxyFilterEventHandler {
     
     func managerFailedToDeliverMessage(_ message: ProxyConfigurationMessage, error: Error) {
         mutex.sync {
-            type = .inclusionList
+            type = .acceptList
             addresses.removeAll()
             buffer.removeAll()
             busy = false
@@ -523,8 +555,8 @@ extension ProxyFilerType: CustomDebugStringConvertible {
     
     public var debugDescription: String {
         switch self {
-        case .inclusionList: return "Inclusion List"
-        case .exclusionList: return "Exclusion List"
+        case .acceptList, .inclusionList: return "Accept List"
+        case .rejectList, .exclusionList: return "Reject List"
         }
     }
     

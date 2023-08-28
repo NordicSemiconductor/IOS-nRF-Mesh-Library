@@ -47,7 +47,7 @@ class KeyRefreshProcedure: XCTestCase {
     override func setUpWithError() throws {
         networkKey = try NetworkKey(name: "Test Key", index: 0, key: key)
         
-        let filter = SetFilterType(.inclusionList)
+        let filter = SetFilterType(.acceptList)
         controlMessage = ControlMessage(fromProxyConfigurationMessage: filter, sentFrom: 0x0001,
                                         usingNetworkKey: networkKey, andIvIndex: ivIndex)
     }
