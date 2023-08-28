@@ -313,8 +313,8 @@ class ConfigurationViewController: UIViewController,
     // MARK: - Private properties
     
     private var node: Node!
-    private var tasks: [Task] = []
-    private var statuses: [TaskStatus]!
+    private var tasks: [MeshTask] = []
+    private var statuses: [MeshTaskStatus]!
     private var handler: MessageHandle?
     private var inProgress: Bool = true
     private var current: Int = -1
@@ -512,7 +512,7 @@ private extension ConfigurationViewController {
         }
     }
     
-    func reload(taskAt index: Int, with status: TaskStatus) {
+    func reload(taskAt index: Int, with status: MeshTaskStatus) {
         DispatchQueue.main.async {
             self.statusView.text = self.tasks[index].title
             self.statuses[index] = status

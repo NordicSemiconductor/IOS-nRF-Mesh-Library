@@ -30,7 +30,7 @@
 
 import nRFMeshProvision
 
-enum Task {
+enum MeshTask {
     case getCompositionData(page: UInt8)
     case getDefaultTtl
     case setDefaultTtl(_ ttl: UInt8)
