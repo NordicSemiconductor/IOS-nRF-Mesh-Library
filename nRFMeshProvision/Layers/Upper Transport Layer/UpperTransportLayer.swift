@@ -30,7 +30,7 @@
 import Foundation
 
 internal class UpperTransportLayer {
-    private weak var networkManager: NetworkManager!
+    private weak var networkManager: NetworkManager?
     private let meshNetwork: MeshNetwork
     private let mutex = DispatchQueue(label: "UpperTransportLayerMutex")
     
@@ -40,7 +40,7 @@ internal class UpperTransportLayer {
     private var heartbeatPublisher: BackgroundTimer?
     
     private var logger: LoggerDelegate? {
-        return networkManager.logger
+        return networkManager?.logger
     }
     
     /// The upper transport layer shall not transmit a new segmented
@@ -67,6 +67,7 @@ internal class UpperTransportLayer {
     ///
     /// - parameter lowerTransportPdu: The Lower Transport PDU received.
     func handle(lowerTransportPdu: LowerTransportPdu) {
+        guard let networkManager = networkManager else { return }
         switch lowerTransportPdu.type {
         case .accessMessage:
             let accessMessage = lowerTransportPdu as! AccessMessage
@@ -101,6 +102,7 @@ internal class UpperTransportLayer {
     ///                 If `nil`, the default Node TTL will be used.
     ///   - keySet: The set of keys to encrypt the message with.
     func send(_ accessPdu: AccessPdu, withTtl initialTtl: UInt8?, using keySet: KeySet) {
+        guard let networkManager = networkManager else { return }
         // Get the current sequence number for source Element's address.
         let sequence = networkManager.networkLayer.nextSequenceNumber(for: accessPdu.source)
         
@@ -128,6 +130,7 @@ internal class UpperTransportLayer {
     ///
     /// - parameter handle: The message handle.
     func cancel(_ handle: MessageHandle) {
+        guard let networkManager = networkManager else { return }
         var shouldSendNext = false
         // Check if the message that is currently being sent matches the
         // handler data. If so, cancel it.
@@ -176,7 +179,7 @@ internal class UpperTransportLayer {
     ///            `false` if no packets were received or the message
     ///            was complete before calling this method.
     func isReceivingResponse(from address: Address) -> Bool {
-        return networkManager.lowerTransportLayer.isReceivingMessage(from: address)
+        return networkManager?.lowerTransportLayer.isReceivingMessage(from: address) ?? false
     }
     
     /// A callback called by the lower transport layer when the segmented PDU
@@ -232,8 +235,8 @@ private extension UpperTransportLayer {
             return
         }
         // If another PDU has been enqueued, send it.
-        networkManager.lowerTransportLayer.send(segmentedUpperTransportPdu: pdu,
-                                                withTtl: ttl, usingNetworkKey: networkKey)
+        networkManager?.lowerTransportLayer.send(segmentedUpperTransportPdu: pdu,
+                                                 withTtl: ttl, usingNetworkKey: networkKey)
     }
     
 }
@@ -262,7 +265,7 @@ private extension UpperTransportLayer {
     func send(heartbeat: HeartbeatMessage, usingNetworkKey networkKey: NetworkKey) {
         logger?.i(.upperTransport, "Sending \(heartbeat) to \(heartbeat.destination.hex) " +
                                    "encrypted using key: \(networkKey)")
-        networkManager.lowerTransportLayer.send(heartbeat: heartbeat, usingNetworkKey: networkKey)
+        networkManager?.lowerTransportLayer.send(heartbeat: heartbeat, usingNetworkKey: networkKey)
     }
     
 }
