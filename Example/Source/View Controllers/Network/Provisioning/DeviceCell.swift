@@ -40,46 +40,29 @@ class DeviceCell: UITableViewCell {
     @IBOutlet weak var uuid: UILabel!
     @IBOutlet weak var rssiIcon: UIImageView!
     
-    // MARK: - Properties
-    
-    private var lastUpdateTimestamp = Date()
-    
     // MARK: - Implementation
     
-    func setupView(withDevice device: UnprovisionedDevice, andRSSI rssi: NSNumber) {
+    func setupView(withDevice device: UnprovisionedDevice, andRSSI rssi: [NSNumber]) {
         name.text = device.name ?? "Unknown Device"
         uuid.text = device.uuid.uuidString
         updateRssi(rssi)
     }
     
-    func deviceDidUpdate(_ device: UnprovisionedDevice, andRSSI rssi: NSNumber) {
-        if Date().timeIntervalSince(lastUpdateTimestamp) > 1.0 {
-            lastUpdateTimestamp = Date()
-            setupView(withDevice: device, andRSSI: rssi)
-            
-            // Hide the RSSI icon when the device is no longer advertising.
-            // Timeout is around 5 seconds.
-            DispatchQueue.main.asyncAfter(deadline: .now() + 5.0) { [weak self] in
-                guard let self = self else { return }
-                if Date().timeIntervalSince(self.lastUpdateTimestamp) > 4.5 {
-                    self.setupView(withDevice: device, andRSSI: -128)
-                }
+    private func updateRssi(_ rssi: [NSNumber]) {
+        switch rssi.count {
+        case 1:
+            switch rssi[0].intValue {
+            case -127 ..< -80:
+                rssiIcon.image = #imageLiteral(resourceName: "rssi_1")
+            case -80 ..< -60:
+                rssiIcon.image = #imageLiteral(resourceName: "rssi_2")
+            case -60 ..< -40:
+                rssiIcon.image = #imageLiteral(resourceName: "rssi_3")
+            default:
+                rssiIcon.image = #imageLiteral(resourceName: "rssi_4")
             }
-        }
-    }
-    
-    private func updateRssi(_ rssi: NSNumber) {
-        switch rssi.intValue {
-        case -128:
-            rssiIcon.image = nil
-        case -127 ..< -80:
-            rssiIcon.image = #imageLiteral(resourceName: "rssi_1")
-        case -80 ..< -60:
-            rssiIcon.image = #imageLiteral(resourceName: "rssi_2")
-        case -60 ..< -40:
-            rssiIcon.image = #imageLiteral(resourceName: "rssi_3")
         default:
-            rssiIcon.image = #imageLiteral(resourceName: "rssi_4")
+            rssiIcon.image = #imageLiteral(resourceName: "ic_more")
         }
     }
 
