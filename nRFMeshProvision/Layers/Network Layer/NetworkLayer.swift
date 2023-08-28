@@ -31,7 +31,7 @@
 import Foundation
 
 internal class NetworkLayer {
-    private weak var networkManager: NetworkManager!
+    private weak var networkManager: NetworkManager?
     private let meshNetwork: MeshNetwork
     private let networkMessageCache: NSCache<NSData, NSNull>
     private let defaults: UserDefaults
@@ -39,7 +39,7 @@ internal class NetworkLayer {
     private let mutex = DispatchQueue(label: "NetworkLayerMutex")
     
     private var logger: LoggerDelegate? {
-        return networkManager.logger
+        return networkManager?.logger
     }
     
     /// The Network Key from the received Secure Network Beacon that contained
@@ -80,6 +80,7 @@ internal class NetworkLayer {
     ///   - pdu:  The data received.
     ///   - type: The PDU type.
     func handle(incomingPdu pdu: Data, ofType type: PduType) {
+        guard let networkManager = networkManager else { return }
         if case .provisioningPdu = type {
             // Provisioning is handled using ProvisioningManager.
             return
@@ -144,7 +145,8 @@ internal class NetworkLayer {
     ///           is not set, or has failed to send the PDU.
     func send(lowerTransportPdu pdu: LowerTransportPdu, ofType type: PduType,
               withTtl ttl: UInt8) throws {
-        guard let transmitter = networkManager.transmitter else {
+        guard let networkManager = networkManager,
+              let transmitter = networkManager.transmitter else {
             throw BearerError.bearerClosed
         }
         
@@ -183,11 +185,12 @@ internal class NetworkLayer {
             var count = networkTransmit.count
             BackgroundTimer.scheduledTimer(withTimeInterval: networkTransmit.timeInterval,
                                            repeats: true) { [weak self] timer in
-                guard let self = self else {
+                guard let self = self,
+                      let networkManager = self.networkManager else {
                     timer.invalidate()
                     return
                 }
-                try? self.networkManager.transmitter?.send(networkPdu.pdu, ofType: type)
+                try? networkManager.transmitter?.send(networkPdu.pdu, ofType: type)
                 count -= 1
                 if count == 0 {
                     timer.invalidate()
@@ -202,6 +205,7 @@ internal class NetworkLayer {
     ///
     /// - parameter message: The Proxy Configuration message to be sent.
     func send(proxyConfigurationMessage message: ProxyConfigurationMessage) {
+        guard let networkManager = networkManager else { return }
         guard let networkKey = proxyNetworkKey else {
             // The Proxy Network Key is unknown.
             networkManager.proxy?
@@ -262,6 +266,7 @@ private extension NetworkLayer {
     ///
     /// - parameter networkBeacon: The Secure Network or Private beacon received.
     func handle(networkBeacon: NetworkBeaconPdu) {
+        guard let networkManager = networkManager else { return }
         /// The Network Key the beacon was authenticated with.
         let networkKey = networkBeacon.networkKey
         // As of now, the library does not retransmit beacons.
@@ -380,7 +385,7 @@ private extension NetworkLayer {
         proxyNetworkKey = networkKey
         
         if justConnected {
-            networkManager.proxy?.newProxyDidConnect()
+            networkManager?.proxy?.newProxyDidConnect()
         }
     }
     
@@ -391,6 +396,7 @@ private extension NetworkLayer {
     ///
     /// - parameter proxyPdu: The received Proxy Configuration PDU.
     func handle(proxyConfigurationPdu proxyPdu: NetworkPdu) {
+        guard let networkManager = networkManager else { return }
         let payload = proxyPdu.transportPdu
         guard payload.count > 1 else {
             return

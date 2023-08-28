@@ -44,12 +44,12 @@ private enum SecurityError: Error {
 }
 
 internal class LowerTransportLayer {
-    private weak var networkManager: NetworkManager!
+    private weak var networkManager: NetworkManager?
     private let meshNetwork: MeshNetwork
     private let mutex = DispatchQueue(label: "LowerTransportLayerMutex")
     
     private var logger: LoggerDelegate? {
-        return networkManager.logger
+        return networkManager?.logger
     }
     
     /// The storage for keeping sequence numbers. Each mesh network (with different UUID)
@@ -129,6 +129,7 @@ internal class LowerTransportLayer {
     ///
     /// - parameter networkPdu: The Network PDU received.
     func handle(networkPdu: NetworkPdu) {
+        guard let networkManager = networkManager else { return }
         // Some validation, just to be sure. This should pass for sure.
         guard networkPdu.transportPdu.count > 1 else {
             return
@@ -210,7 +211,8 @@ internal class LowerTransportLayer {
     func send(unsegmentedUpperTransportPdu pdu: UpperTransportPdu,
               withTtl initialTtl: UInt8?,
               usingNetworkKey networkKey: NetworkKey) {
-        guard let provisionerNode = meshNetwork.localProvisioner?.node,
+        guard let networkManager = networkManager,
+              let provisionerNode = meshNetwork.localProvisioner?.node,
               let localElement = provisionerNode.element(withAddress: pdu.source) else {
             return
         }
@@ -243,7 +245,8 @@ internal class LowerTransportLayer {
     func send(segmentedUpperTransportPdu pdu: UpperTransportPdu,
               withTtl initialTtl: UInt8?,
               usingNetworkKey networkKey: NetworkKey) {
-        guard let provisionerNode = meshNetwork.localProvisioner?.node else {
+        guard let networkManager = networkManager,
+              let provisionerNode = meshNetwork.localProvisioner?.node else {
             return
         }
         /// Last 13 bits of the sequence number are known as seqZero.
@@ -268,6 +271,7 @@ internal class LowerTransportLayer {
     ///   - heartbeat: The Heartbeat message to be sent.
     ///   - networkKey: The Network Key to be used to encrypt the message.
     func send(heartbeat: HeartbeatMessage, usingNetworkKey networkKey: NetworkKey) {
+        guard let networkManager = networkManager else { return }
         let message = ControlMessage(fromHeartbeatMessage: heartbeat, usingNetworkKey: networkKey)
         do {
             logger?.i(.lowerTransport, "Sending \(message)")
@@ -394,6 +398,7 @@ private extension LowerTransportLayer {
     /// - returns: The Lower Transport PDU had it been fully assembled,
     ///            `nil` otherwise.
     func assemble(segment: SegmentedMessage, createdFrom networkPdu: NetworkPdu) -> LowerTransportPdu? {
+        guard let networkManager = networkManager else { return nil }
         // If the received segment comes from an already completed and
         // acknowledged message, send the same ACK immediately.
         if let lastAck = acknowledgments[segment.source], lastAck.sequenceZero == segment.sequenceZero {
@@ -506,6 +511,7 @@ private extension LowerTransportLayer {
     ///
     /// - parameter ack: The Segment Acknowledgment Message received.
     func handle(ack: SegmentAcknowledgmentMessage) {
+        guard let networkManager = networkManager else { return }
         // Ensure the ACK is for some message that has been sent.
         guard let (destination, segments) = outgoingSegments[ack.sequenceZero],
               let segment = segments.firstNotAcknowledged else {
@@ -576,13 +582,14 @@ private extension LowerTransportLayer {
     ///   - ack: The Segment Acknowledgment Message to sent.
     ///   - ttl: Initial Time To Live (TTL) value.
     func sendAck(_ ack: SegmentAcknowledgmentMessage, withTtl ttl: UInt8) {
-        DispatchQueue.global(qos: .background).async {
-            self.logger?.d(.lowerTransport, "Sending \(ack)")
+        DispatchQueue.global(qos: .background).async { [weak self] in
+            guard let networkManager = self?.networkManager else { return }
+            self?.logger?.d(.lowerTransport, "Sending \(ack)")
             do {
-                try self.networkManager.networkLayer.send(lowerTransportPdu: ack,
-                                                          ofType: .networkPdu, withTtl: ttl)
+                try networkManager.networkLayer.send(lowerTransportPdu: ack,
+                                                     ofType: .networkPdu, withTtl: ttl)
             } catch {
-                self.logger?.w(.lowerTransport, error)
+                self?.logger?.w(.lowerTransport, error)
             }
         }
     }
@@ -594,6 +601,7 @@ private extension LowerTransportLayer {
     ///   - sequenceZero: The key to get segments from the map.
     ///   - limit:        Maximum number of retransmissions.
     func sendSegments(for sequenceZero: UInt16, limit: Int) {
+        guard let networkManager = networkManager else { return }
         guard let (destination, segments) = outgoingSegments[sequenceZero], segments.count > 0,
               let segment = segments.firstNotAcknowledged,
               let message = segment.message,
@@ -644,7 +652,8 @@ private extension LowerTransportLayer {
         if !ackExpected! {
             let interval = TimeInterval.random(in: 0.500...1.500)
             BackgroundTimer.scheduledTimer(withTimeInterval: interval, repeats: false) { [weak self] _ in
-                guard let self = self else { return }
+                guard let self = self,
+                      let networkManager = self.networkManager else { return }
                 var destination: Address?
                 for i in 0..<segments.count {
                     if let segment = segments[i] {
@@ -653,15 +662,15 @@ private extension LowerTransportLayer {
                         }
                         self.logger?.d(.lowerTransport, "Sending \(segment)")
                         do {
-                            try self.networkManager.networkLayer.send(lowerTransportPdu: segment,
-                                                                      ofType: .networkPdu, withTtl: ttl)
+                            try networkManager.networkLayer.send(lowerTransportPdu: segment,
+                                                                 ofType: .networkPdu, withTtl: ttl)
                         } catch {
                             self.logger?.w(.lowerTransport, error)
                         }
                     }
                 }
                 if let destination = destination {
-                    self.networkManager.upperTransportLayer
+                    networkManager.upperTransportLayer
                         .lowerTransportLayerDidSend(segmentedUpperTransportPduTo: destination)
                 }
             }

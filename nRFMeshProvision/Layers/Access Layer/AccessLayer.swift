@@ -103,12 +103,12 @@ private class AcknowledgmentContext {
 }
 
 internal class AccessLayer {
-    private weak var networkManager: NetworkManager!
+    private weak var networkManager: NetworkManager?
     private let meshNetwork: MeshNetwork
     private let mutex = DispatchQueue(label: "AccessLayerMutex")
     
     private var logger: LoggerDelegate? {
-        return networkManager.logger
+        return networkManager?.logger
     }
     
     /// A map of current transactions.
@@ -146,7 +146,7 @@ internal class AccessLayer {
     
     /// Initialize periodic publishing from local Models.
     func reinitializePublishers() {
-        networkManager.meshNetwork.localElements
+        networkManager?.meshNetwork.localElements
             .flatMap { element in element.models }
             .forEach { model in refreshPeriodicPublisher(for: model) }
     }
@@ -205,6 +205,7 @@ internal class AccessLayer {
               from element: Element, to destination: MeshAddress,
               withTtl initialTtl: UInt8?, using applicationKey: ApplicationKey,
               retransmit: Bool) {
+        guard let networkManager = networkManager else { return }
         // Should the TID be updated?
         var m: MeshMessage = message
         if var transactionMessage = message as? TransactionMessage, transactionMessage.tid == nil {
@@ -259,7 +260,8 @@ internal class AccessLayer {
     func send(_ message: ConfigMessage,
               from element: Element, to destination: Address,
               withTtl initialTtl: UInt8?) {
-        guard let node = meshNetwork.node(withAddress: destination),
+        guard let networkManager = networkManager,
+              let node = meshNetwork.node(withAddress: destination),
               var networkKey = node.networkKeys.first else {
             return
         }
@@ -316,9 +318,8 @@ internal class AccessLayer {
             TimeInterval.random(in: 0.020...0.500)
         
         BackgroundTimer.scheduledTimer(withTimeInterval: delay, repeats: false) { [weak self] _ in
-            guard let self = self else { return }
-            self.logger?.i(.access, "Sending \(pdu)")
-            self.networkManager.upperTransportLayer.send(pdu, withTtl: nil, using: keySet)
+            self?.logger?.i(.access, "Sending \(pdu)")
+            self?.networkManager?.upperTransportLayer.send(pdu, withTtl: nil, using: keySet)
         }
     }
     
@@ -326,6 +327,7 @@ internal class AccessLayer {
     ///
     /// - parameter handle: The message handle.
     func cancel(_ handle: MessageHandle) {
+        guard let networkManager = networkManager else { return }
         logger?.i(.access, "Cancelling messages with op code: \(handle.opCode), sent from: \(handle.source.hex) to: \(handle.destination.hex)")
         mutex.sync {
             if let index = reliableMessageContexts.firstIndex(where: {
@@ -379,7 +381,8 @@ private extension AccessLayer {
     ///                been sent.
     func handle(accessPdu: AccessPdu, sentWith keySet: KeySet,
                 asResponseTo request: AcknowledgedMeshMessage?) {
-        guard let localNode = meshNetwork.localProvisioner?.node else {
+        guard let networkManager = networkManager,
+              let localNode = meshNetwork.localProvisioner?.node else {
             return
         }
         
@@ -487,6 +490,7 @@ private extension AccessLayer {
     
     /// This method handles selected config messages in a special way.
     func handle(_ message: MeshMessage) {
+        guard let networkManager = networkManager else { return }
         // Reload Heartbeat publishing.
         if message is ConfigHeartbeatPublicationSet {
             networkManager.upperTransportLayer.refreshHeartbeatPublisher()
@@ -598,6 +602,7 @@ private extension AccessLayer {
     ///   - keySet: The Key Set used for sending the message.
     func createReliableContext(for pdu: AccessPdu, sentFrom element: Element,
                                withTtl initialTtl: UInt8?, using keySet: KeySet) {
+        guard let networkManager = networkManager else { return }
         guard let request = pdu.message as? AcknowledgedMeshMessage,
               pdu.destination.address.isUnicast else {
             return
@@ -616,26 +621,28 @@ private extension AccessLayer {
         let ack = AcknowledgmentContext(for: request,
             sentFrom: pdu.source, to: pdu.destination.address,
             repeatAfter: initialDelay, repeatBlock: { [weak self] in
-                guard let self = self else { return }
-                if !self.networkManager.upperTransportLayer.isReceivingResponse(from: pdu.destination.address) {
+                guard let self = self,
+                      let networkManager = self.networkManager else { return }
+                if !networkManager.upperTransportLayer.isReceivingResponse(from: pdu.destination.address) {
                     self.logger?.d(.access, "Resending \(pdu)")
-                    self.networkManager.upperTransportLayer.send(pdu, withTtl: initialTtl, using: keySet)
+                    networkManager.upperTransportLayer.send(pdu, withTtl: initialTtl, using: keySet)
                 }
             },
             timeout: timeout, timeoutBlock: { [weak self] in
-                guard let self = self else { return }
+                guard let self = self,
+                      let networkManager = self.networkManager else { return }
                 self.logger?.w(.access, "Response to \(pdu) not received (timeout)")
                 let category: LogCategory = request is AcknowledgedConfigMessage ? .foundationModel : .model
                 self.logger?.w(category, "\(request) sent from: \(pdu.source.hex), to: \(pdu.destination.hex) timed out")
                 self.cancel(MessageHandle(for: request,
                                           sentFrom: pdu.source, to: pdu.destination,
-                                          using: self.networkManager))
+                                          using: networkManager))
                 self.mutex.sync {
                     self.reliableMessageContexts.removeAll { $0.timeoutTimer == nil }
                 }
-                self.networkManager.notifyAbout(error: AccessError.timeout,
-                                                duringSendingMessage: request,
-                                                from: element, to: pdu.destination)
+                networkManager.notifyAbout(error: AccessError.timeout,
+                                           duringSendingMessage: request,
+                                           from: element, to: pdu.destination)
             }
         )
         mutex.sync {
