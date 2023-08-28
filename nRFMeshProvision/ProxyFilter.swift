@@ -359,7 +359,7 @@ extension ProxyFilter: ProxyFilterEventHandler {
     func newProxyDidConnect() {
         guard let manager = manager else { return }
         
-        proxyDidDisconnect()
+        newNetworkCreated()
         logger?.i(.proxy, "New Proxy connected")
         if let localProvisioner = manager.meshNetwork?.localProvisioner {
             switch initialState {
