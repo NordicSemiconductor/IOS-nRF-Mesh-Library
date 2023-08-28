@@ -390,7 +390,7 @@ extension ProvisioningViewController: GattBearerDelegate {
                 let continueAction = UIAlertAction(title: "No", style: .cancel) { _ in
                     done(reconnect: false)
                 }
-                if connection.isConnected {
+                if connection.isConnected && bearer is PBGattBearer {
                     self.presentAlert(title: "Success",
                                       message: "Provisioning complete.\n\nDo you want to connect to the new Node over GATT bearer?",
                                       options: [reconnectAction, continueAction])
