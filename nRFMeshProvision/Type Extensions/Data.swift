@@ -66,6 +66,7 @@ public extension Data {
 
     /// Read a specific number of bits from an offset in the Data object.
     /// Note that this method does no sanity checks. The Data object must be large enough to read the bits.
+    /// 
     /// - parameters:
     ///   - numBits: The number of bits to read.
     ///   - fromOffset: The offset in bits in the Data to read from.
