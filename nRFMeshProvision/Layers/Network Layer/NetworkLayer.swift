@@ -112,7 +112,7 @@ internal class NetworkLayer {
                 handle(networkBeacon: beaconPdu)
                 return
             }
-            if let beaconPdu = UnprovisionedDeviceBeaconDecoder.decode(pdu, for: meshNetwork) {
+            if let beaconPdu = UnprovisionedDeviceBeaconDecoder.decode(pdu) {
                 logger?.i(.network, "\(beaconPdu) received")
                 handle(unprovisionedDeviceBeacon: beaconPdu)
                 return

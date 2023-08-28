@@ -67,14 +67,12 @@ internal struct UnprovisionedDeviceBeacon: BeaconPdu {
 internal struct UnprovisionedDeviceBeaconDecoder {
     private init() {}
     
-    /// This method goes over all Network Keys in the mesh network and tries
-    /// to parse the beacon.
+    /// This method decodes the given pdu and creates an Unprovisioned Device Beacon.
     ///
     /// - parameters:
     ///   - pdu:         The received PDU.
-    ///   - meshNetwork: The mesh network for which the PDU should be decoded.
     /// - returns: The beacon object.
-    static func decode(_ pdu: Data, for meshNetwork: MeshNetwork) -> UnprovisionedDeviceBeacon? {
+    static func decode(_ pdu: Data) -> UnprovisionedDeviceBeacon? {
         guard pdu.count > 1, let beaconType = BeaconType(rawValue: pdu[0]) else {
             return nil
         }
