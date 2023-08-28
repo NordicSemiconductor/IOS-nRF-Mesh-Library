@@ -374,13 +374,12 @@ extension ProvisioningViewController: GattBearerDelegate {
                         let gattBearer = GattBearer(targetWithIdentifier: pbGattBearer.identifier)
                         connection.use(proxy: gattBearer)
                     }
-                    self.dismiss(animated: true) { [weak self] in
-                        guard let self = self,
-                              let network = manager.meshNetwork else {
+                    self.dismiss(animated: true) {
+                        guard let network = manager.meshNetwork else {
                             return
                         }
                         if let node = network.node(for: self.unprovisionedDevice) {
-                            self.delegate?.provisionerDidProvisionNewDevice(node, whichReplaced: previousNode)
+                            self.delegate?.provisionerDidProvisionNewDevice(node, whichReplaced: self.previousNode)
                         }
                     }
                 }
