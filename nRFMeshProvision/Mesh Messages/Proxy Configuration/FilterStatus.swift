@@ -58,7 +58,7 @@ public struct FilterStatus: StaticProxyConfigurationMessage {
         guard parameters.count == 3 else {
             return nil
         }
-        guard let type = ProxyFilerType(rawValue: parameters[0]) else {
+        guard let type = ProxyFilerType.from(rawValue: parameters[0]) else {
             return nil
         }
         filterType = type

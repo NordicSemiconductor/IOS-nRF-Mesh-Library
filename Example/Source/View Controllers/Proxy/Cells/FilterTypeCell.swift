@@ -42,7 +42,7 @@ class FilterTypeCell: UITableViewCell {
     @IBOutlet weak var filterTypeControl: UISegmentedControl!
     
     @IBAction func filterTypeDidChange(_ sender: UISegmentedControl) {
-        type = ProxyFilerType(rawValue: UInt8(sender.selectedSegmentIndex)) ?? .inclusionList
+        type = sender.selectedSegmentIndex == 0 ? .acceptList : .rejectList
         delegate?.filterTypeDidChange(type)
     }
     
@@ -50,9 +50,13 @@ class FilterTypeCell: UITableViewCell {
     
     weak var delegate: ProxyFilterTypeDelegate?
     
-    var type: ProxyFilerType = .inclusionList {
+    var type: ProxyFilerType = .acceptList {
         didSet {
-            filterTypeControl.selectedSegmentIndex = Int(type.rawValue)
+            if type == .acceptList {
+                filterTypeControl.selectedSegmentIndex = 0
+            } else {
+                filterTypeControl.selectedSegmentIndex = 1
+            }
         }
     }
     

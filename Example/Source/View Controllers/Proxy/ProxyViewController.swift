@@ -94,10 +94,10 @@ class ProxyViewController: ProgressViewController, Editable {
     
     override func tableView(_ tableView: UITableView, titleForFooterInSection section: Int) -> String? {
         if section == IndexPath.proxyTypeSection {
-            if MeshNetworkManager.instance.proxyFilter.type == .exclusionList {
-                return "The exclusion list filter accepts all destination addresses except those that have been added to the list."
+            if MeshNetworkManager.instance.proxyFilter.type == .rejectList {
+                return "The reject list filter accepts all destination addresses except those that have been added to the list."
             } else {
-                return "The inclusion list filter blocks all destination addresses except those that have been added to the list."
+                return "The accept list filter blocks all destination addresses except those that have been added to the list."
             }
         }
         return nil
@@ -207,9 +207,9 @@ extension ProxyViewController: ProxyFilterTypeDelegate {
         let footer = tableView.footerView(forSection: 0)?.textLabel
         switch type {
         case .exclusionList:
-            footer?.text = "The exclusion list filter accepts all destination addresses except those that have been added to the list."
+            footer?.text = "The reject list filter accepts all destination addresses except those that have been added to the list."
         default:
-            footer?.text = "The inclusion list filter blocks all destination addresses except those that have been added to the list."
+            footer?.text = "The accept list filter blocks all destination addresses except those that have been added to the list."
         }
         footer?.sizeToFit()
         start("Setting proxy filter...") {

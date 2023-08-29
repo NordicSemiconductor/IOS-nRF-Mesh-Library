@@ -161,7 +161,7 @@ class ProvisionersViewController: UITableViewController, Editable {
         if sourceIndexPath.isThisProvisioner || destinationIndexPath.isThisProvisioner,
            let previousLocalProvisioner = network.localProvisioner,
            previousLocalProvisioner.hasConfigurationCapabilities &&
-           manager.proxyFilter.type == .inclusionList {
+           manager.proxyFilter.type == .acceptList {
             manager.proxyFilter.reset()
         }
         // Make the required change in the data source.
@@ -192,7 +192,7 @@ class ProvisionersViewController: UITableViewController, Editable {
         // Update the Proxy Filter after the local Provisioner has changed.
         if sourceIndexPath.isThisProvisioner || destinationIndexPath.isThisProvisioner,
            let newLocalProvisioner = network.localProvisioner,
-           manager.proxyFilter.type == .inclusionList {
+           manager.proxyFilter.type == .acceptList {
             manager.proxyFilter.setup(for: newLocalProvisioner)
         }
     }
@@ -227,10 +227,10 @@ private extension ProvisionersViewController {
         let meshNetwork = manager.meshNetwork!
         
         // If this Provisioner has been removed and the Proxy Filter
-        // type was `.inclusionList`, clear the Proxy Filter.
+        // type was `.acceptList`, clear the Proxy Filter.
         // Exclusion filter must have been set up by the user, so don't
         // modify it.
-        if indexPath.isThisProvisioner && manager.proxyFilter.type == .inclusionList {
+        if indexPath.isThisProvisioner && manager.proxyFilter.type == .acceptList {
             manager.proxyFilter.reset()
         }
         
@@ -244,7 +244,7 @@ private extension ProvisionersViewController {
         // addresses the new Provisioner is subscribed to.
         if indexPath.isThisProvisioner,
            let newLocalProvisioner = meshNetwork.localProvisioner,
-           manager.proxyFilter.type == .inclusionList {
+           manager.proxyFilter.type == .acceptList {
             manager.proxyFilter.setup(for: newLocalProvisioner)
         }
         
