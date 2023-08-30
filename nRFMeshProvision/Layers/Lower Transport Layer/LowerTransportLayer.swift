@@ -38,8 +38,8 @@ private enum Message {
 
 private enum SecurityError: Error {
     /// Thrown internally when a possible replay attack was detected.
-    /// This error is not propagated to higher levels, the packet is
-    /// being discarded.
+    ///
+    /// This error is not propagated to higher levels. When it is caught, the received packet discarded.
     case replayAttack
 }
 
@@ -141,7 +141,7 @@ internal class LowerTransportLayer {
                 return .failure(SecurityError.replayAttack)
             }
 
-            // Lower Transport Messages can be Unsegmented or Segmented.
+            // Lower Transport layer can receive Unsegmented or Segmented messages.
             // This information is stored in the most significant bit of the first octet.
             let segmented = networkPdu.isSegmented
             
@@ -360,8 +360,7 @@ private extension LowerTransportLayer {
             //
             // Note: Only the single previous SeqAuth is stored, so if 3 or more messages are
             //       sent one after another, some of them still may be discarded despite being
-            //       received in the correct order. As a workaround, the queue may be set to
-            //       a serial one in MeshNetworkManager initializer.
+            //       received in the correct order.
             var missed = false
             if let previousSeqAuth = defaults.previousSeqAuthValue(for: networkPdu.source) {
                 missed = receivedSeqAuth < localSeqAuth &&

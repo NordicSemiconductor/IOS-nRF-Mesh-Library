@@ -37,12 +37,14 @@ internal struct SegmentAcknowledgmentMessage: LowerTransportPdu {
     let ivIndex: UInt32
     
     /// Message Op Code.
+    ///
+    /// This is always 0x00 for Segment Acknowledgment Message.
     let opCode: UInt8
     
     /// Flag set to `true` if the message was sent by a Friend
-    /// on behalf of a Low Power node.
+    /// on behalf of a Low Power node (OBO).
     let isOnBehalfOfLowPowerNode: Bool
-    /// 13 least significant bits of SeqAuth.
+    /// 13 least significant bits of SeqAuth (SeqZero).
     let sequenceZero: UInt16
     /// Acknowledgment for segments which indicate the segments received.
     ///
