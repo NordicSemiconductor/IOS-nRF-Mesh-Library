@@ -47,7 +47,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         meshNetworkManager.networkParameters = .custom { builder in
             builder.acknowledgmentTimerInterval = 0.150
             builder.transmissionTimerInterval = 0.600
-            builder.incompleteMessageTimeout = 10.0
+            builder.discardTimeout = 10.0
             builder.retransmissionLimit = 2
             builder.acknowledgmentMessageInterval = 4.2
             // As the interval has been increased, the timeout can be adjusted.

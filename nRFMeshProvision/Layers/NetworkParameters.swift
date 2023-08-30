@@ -46,7 +46,7 @@ public struct NetworkParameters {
     /// ```swift
     /// meshNetworkManager.networkParameters = .custom { builder in
     ///     builder.defaultTtl = ...
-    ///     builder.incompleteMessageTimeout = ...
+    ///     builder.discardTimeout = ...
     ///     builder.acknowledgmentTimerInterval = ...
     ///     builder.transmissionTimerInterval = ...
     ///     builder.retransmissionLimit = ...
@@ -62,7 +62,8 @@ public struct NetworkParameters {
     public typealias Builder = (inout NetworkParameters) -> ()
     
     private var _defaultTtl: UInt8 = 5
-    private var _incompleteMessageTimeout: TimeInterval = 10.0
+    private var _sarDiscardTimeout: UInt8 = 0b0001 // (n+1)*5 sec = 10 seconds
+    
     private var _acknowledgmentTimerInterval: TimeInterval = 0.150
     private var _transmissionTimerInterval: TimeInterval = 0.200
     private var _retransmissionLimit: Int = 5
@@ -82,9 +83,50 @@ public struct NetworkParameters {
     /// message is received.
     ///
     /// The incomplete timeout should be set to at least 10 seconds.
+    ///
+    /// Mesh Protocol 1.1 replaced the Incomplete Message Timeout with
+    /// a SAR Discard Timeout (``discardTimeout``).
+    @available(*, deprecated, renamed: "discardTimeout")
     public var incompleteMessageTimeout: TimeInterval {
-        get { return _incompleteMessageTimeout }
-        set { _incompleteMessageTimeout = max(10.0, newValue) }
+        get { return discardTimeout }
+        set { discardTimeout = newValue }
+    }
+    
+    /// The Discard Timeout is the time that the Lower Transport layer waits
+    /// after receiving unique segments of a segmented message before
+    /// discarding that segmented message.
+    ///
+    /// Valid range for this timeout is from 5 seconds to 1 minute and 20 seconds
+    /// (80 seconds) with 5 second step. The default value is 10 seconds.
+    ///
+    /// The Discard Timeout is reset every time a new segment of a message
+    /// is received.
+    ///
+    /// The value of this timeout is controlled by ``sarDiscardTimeout``
+    /// state and is calculated the following way:
+    /// ```
+    /// discard timeout = (SAR Discard Timeout + 1) × 5 ms
+    /// ```
+    public var discardTimeout: TimeInterval {
+        get { return TimeInterval(_sarDiscardTimeout + 1) * 5.0 }
+        set { _sarDiscardTimeout = UInt8(min(5.0, newValue) / 5.0) - 1 }
+    }
+    
+    /// The SAR Discard Timeout state is a 4-bit value that controls the time that the
+    /// Lower Transport layer waits after receiving unique segments of a segmented
+    /// message before discarding that segmented message.
+    ///
+    /// The default value of the SAR Discard Timeout state is `0b0001` (10 seconds).
+    ///
+    /// The Discard Timeout initial value is set using the following formula:
+    /// ```
+    /// discard timeout = (SAR Discard Timeout + 1) × 5 ms
+    /// ```
+    ///
+    /// - seeAlso:``discardTimeout``
+    public var sarDiscardTimeout: UInt8 {
+        get { return _sarDiscardTimeout }
+        set { _sarDiscardTimeout = min(newValue, 0b1111) } // Valid range: 0-15
     }
     
     /// The amount of time after which the lower transport layer sends a

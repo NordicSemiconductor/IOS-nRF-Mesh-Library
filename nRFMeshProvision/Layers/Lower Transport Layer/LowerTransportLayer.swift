@@ -75,14 +75,17 @@ internal class LowerTransportLayer {
     ///
     /// An item is removed when a next message has been received from the same Node.
     private var acknowledgments: [Address : SegmentAcknowledgmentMessage]
-    /// The map of active timers. Every message has `defaultIncompleteTimerInterval`
-    /// seconds to be completed (timer resets when next segment was received).
-    /// After that time the segments are discarded.
+    /// The map of active SAR Discard Timers.
+    ///
+    /// The time is initially set to ``NetworkParameters/discardTimeout`` seconds.
+    /// It resets every time a new segment of a segmented message is received and
+    /// is cancelled when the last segment is received. When the timer times out, the
+    /// message is cancelled and all received segments are deleted.
     ///
     /// The key consists of 16 bits of source address in 2 most significant bytes
     /// and `sequenceZero` field in 13 least significant bits.
     /// See `UInt32(keyFor:sequenceZero)` below.
-    private var incompleteTimers: [UInt32 : BackgroundTimer]
+    private var discardTimers: [UInt32 : BackgroundTimer]
     /// The map of acknowledgment timers. After receiving a segment targeting
     /// any of the Unicast Addresses of one of the Elements of the local Node, a
     /// timer is started that will send the Segment Acknowledgment Message for
@@ -115,7 +118,7 @@ internal class LowerTransportLayer {
         self.meshNetwork = networkManager.meshNetwork
         self.defaults = UserDefaults(suiteName: meshNetwork.uuid.uuidString)!
         self.incompleteSegments = [:]
-        self.incompleteTimers = [:]
+        self.discardTimers = [:]
         self.acknowledgmentTimers = [:]
         self.outgoingSegments = [:]
         self.segmentTransmissionTimers = [:]
@@ -135,7 +138,7 @@ internal class LowerTransportLayer {
             return
         }
                 
-        // Segmented messages must be validated and assembled in thread safe way.
+        // Segmented messages must be validated and assembled in a thread safe way.
         let result: Result<Message, Error> = mutex.sync {
             guard checkAgainstReplayAttack(networkPdu) else {
                 return .failure(SecurityError.replayAttack)
@@ -449,7 +452,7 @@ private extension LowerTransportLayer {
                 if let provisionerNode = meshNetwork.localProvisioner?.node,
                    provisionerNode.contains(elementWithAddress: networkPdu.destination) {
                     // ...invalidate timers...
-                    incompleteTimers.removeValue(forKey: key)?.invalidate()
+                    discardTimers.removeValue(forKey: key)?.invalidate()
                     acknowledgmentTimers.removeValue(forKey: key)?.invalidate()
                     
                     // ...and send the ACK that all segments were received.
@@ -464,11 +467,11 @@ private extension LowerTransportLayer {
                       provisionerNode.contains(elementWithAddress: networkPdu.destination) else {
                     return nil
                 }
-                // If the Lower Transport Layer receives any segment while the incomplete
-                // timer is active, the timer shall be restarted.
-                incompleteTimers[key]?.invalidate()
-                incompleteTimers[key] = BackgroundTimer.scheduledTimer(
-                    withTimeInterval: networkManager.networkParameters.incompleteMessageTimeout, repeats: false, queue: self.mutex
+                // If the Lower Transport Layer receives any segment while the SAR Discard Timer
+                // is active, the timer shall be restarted.
+                discardTimers[key]?.invalidate()
+                discardTimers[key] = BackgroundTimer.scheduledTimer(
+                    withTimeInterval: networkManager.networkParameters.discardTimeout, repeats: false, queue: self.mutex
                 ) { [weak self] _ in
                     guard let self = self else { return }
                     if let segments = self.incompleteSegments.removeValue(forKey: key) {
@@ -482,7 +485,7 @@ private extension LowerTransportLayer {
                                                         "(src: \(Address(key >> 16).hex), seqZero: \(key & 0x1FFF), " +
                                                         "received segments: 0x\(marks.hex))")
                     }
-                    self.incompleteTimers.removeValue(forKey: key)?.invalidate()
+                    self.discardTimers.removeValue(forKey: key)?.invalidate()
                     self.acknowledgmentTimers.removeValue(forKey: key)?.invalidate()
                 }
                 // If the Lower Transport Layer receives any segment while the acknowledgment
