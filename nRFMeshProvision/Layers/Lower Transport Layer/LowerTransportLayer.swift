@@ -492,7 +492,7 @@ private extension LowerTransportLayer {
                 // timer is inactive, it shall restart the timer. Active timer should not be restarted.
                 if acknowledgmentTimers[key] == nil {
                     let ttl = provisionerNode.defaultTTL ?? networkManager.networkParameters.defaultTtl
-                    let interval = networkManager.networkParameters.acknowledgmentTimerInterval(forTtl: ttl)
+                    let interval = networkManager.networkParameters.acknowledgmentTimerInterval(forLastSegmentNumber: segment.lastSegmentNumber)
                     acknowledgmentTimers[key] = BackgroundTimer.scheduledTimer(
                         withTimeInterval: interval, repeats: false, queue: self.mutex
                     ) { [weak self] _ in

@@ -62,9 +62,10 @@ public struct NetworkParameters {
     public typealias Builder = (inout NetworkParameters) -> ()
     
     private var _defaultTtl: UInt8 = 5
-    private var _sarDiscardTimeout: UInt8 = 0b0001 // (n+1)*5 sec = 10 seconds
+    private var _sarDiscardTimeout: UInt8 = 0b0001              // (n+1)*5 sec = 10 seconds
+    private var _sarAcknowledgmentDelayIncrement: UInt8 = 0b001 // n+1.5 = 2.5
+    private var _sarReceiverSegmentIntervalStep: UInt8 = 0b0101 // (n+1)*10 = 60 ms
     
-    private var _acknowledgmentTimerInterval: TimeInterval = 0.150
     private var _transmissionTimerInterval: TimeInterval = 0.200
     private var _retransmissionLimit: Int = 5
     private var _acknowledgmentMessageTimeout: TimeInterval = 30.0
@@ -129,21 +130,107 @@ public struct NetworkParameters {
         set { _sarDiscardTimeout = min(newValue, 0b1111) } // Valid range: 0-15
     }
     
-    /// The amount of time after which the lower transport layer sends a
-    /// Segment Acknowledgment message after receiving a segment of a
-    /// multi-segment message where the destination is a Unicast Address
-    /// of the Provisioner's Element.
+    /// This property used to control the time after which the lower transport
+    /// layer sends a/ Segment Acknowledgment message after receiving a
+    /// segment of a multi-segment message where the destination is the
+    /// Unicast Address of one of the Provisioner's Elements
     ///
-    /// The acknowledgment timer shall be set to a minimum of
-    /// 150 + 50 * TTL milliseconds. The TTL dependent part is added
-    /// automatically, and this value shall specify only the constant part.
+    /// In Bluetooth Mesh Profile 1.0.1 the inteval was dependent on Time To Live (TTL)
+    /// and this property was used to adjust the constant part of the interval
+    /// using the given formula:
+    /// ```
+    /// interval = acknowledgment timer interval + (50 ms * TTL)
+    /// ```
+    /// The TTL dependent part was added automatically.
+    ///
+    /// - warning: In Bluetooth Mesh Protocol 1.1 this property was replace by
+    ///            ``sarAcknowledgmentDelayIncrement`` and
+    ///            ``sarReceiverSegmentIntervalStep`` which control
+    ///            the interval using `segN` of a segmented message instead of `TTL`.
+    ///            Setting this property does nothing.
+    @available(*, deprecated, renamed: "setAcknowledgmentTimerInterval(_:andMinimumDelayIncrement:)")
     public var acknowledgmentTimerInterval: TimeInterval {
-        get { return _acknowledgmentTimerInterval }
-        set { _acknowledgmentTimerInterval = max(0.150, newValue) }
+        get { return acknowledgmentTimerInterval(forLastSegmentNumber: 2) }
+        set {
+            // It is not possible to translate the old interval, which
+            // depended on TTL value to the new one, which is using number
+            // of segments in a message.
+        }
     }
     
-    func acknowledgmentTimerInterval(forTtl ttl: UInt8) -> TimeInterval {
-        return _acknowledgmentTimerInterval + Double(ttl) * 0.050
+    /// Sets the parameters for calculating the initial value fo SAR Acknowledgement timer.
+    ///
+    /// The initial value of SAR Acknowledgment timer is calculated with the following formula:
+    /// ```
+    /// interval = min(SegN + 0.5, acknowledgment delay increment) * segment reception interval (ms)
+    /// ```
+    /// `SegN` field in a segmented message is the index of the last segment in a message,
+    /// equal to the number of segments minus 1, therefore the formula can be also written as:
+    /// ```
+    /// interval = min(number of segments - 0.5, acknowledgment delay increment) * segment reception interval (ms)
+    /// ```
+    ///
+    /// - parameters:
+    ///   - segmentReceptionInterval: The interval multipled by the number of segments in a
+    ///                               message minus 0.5.
+    ///                               Available values are in range 10 ms - 160 ms with 10 ms step.
+    ///   - acknowledgmentDelayIncrement: The minimum delay increment. The value must be from
+    ///                                   1.5 + n up to to 8.5, that is 1.5, 2.5, 3.5, ... until 8.5.
+    ///                                   Other values will be rounded down.
+    public mutating func setAcknowledgmentTimerInterval(_ segmentReceptionInterval: TimeInterval,
+                                                        andMinimumDelayIncrement acknowledgmentDelayIncrement: Double) {
+        // Valid range: 10-160 ms
+        _sarReceiverSegmentIntervalStep = UInt8((max(0.01, min(0.16, segmentReceptionInterval)) / 0.01) - 1)
+        // Valid range: 1.5-8.5 segment transmission interval steps
+        _sarAcknowledgmentDelayIncrement = UInt8(max(0, max(1.5, min(8.5, acknowledgmentDelayIncrement)) - 1.5))
+    }
+    
+    /// The SAR Acknowledgment Delay Increment state is a 3-bit value that controls
+    /// the interval between the reception of a new segment of a segmented message
+    /// for a destination that is a Unicast Address and the transmission of the
+    /// Segment Acknowledgment for that message.
+    ///
+    /// The default value of the SAR Acknowledgment Delay Increment state is `0b001`
+    /// (2.5 segment transmission interval steps).
+    ///
+    /// - seeAlso:``sarReceiverSegmentIntervalStep``
+    public var sarAcknowledgmentDelayIncrement: UInt8 {
+        get { return _sarAcknowledgmentDelayIncrement }
+        set { _sarAcknowledgmentDelayIncrement = min(newValue, 0b111) } // Valid range: 0-7
+    }
+    
+    /// The SAR Receiver Segment Interval Step state is a 4-bit value that indicates
+    /// the interval between received segments of a segmented message.
+    /// This is used to control rate of transmission of Segment Acknowledgment messages.
+    ///
+    /// The default value of the SAR Receiver Segment Interval Step state is `0b0101`
+    /// (60 milliseconds).
+    ///
+    /// - seeAlso:``sarAcknowledgmentDelayIncrement``
+    public var sarReceiverSegmentIntervalStep: UInt8 {
+        get { return _sarReceiverSegmentIntervalStep }
+        set { _sarReceiverSegmentIntervalStep = min(newValue, 0b1111) } // Valid range: 0-15
+    }
+    
+    /// The initial value of the SAR Acknowledgment timer for a given `segN`.
+    ///
+    /// The value depends on the number of segments in a segmented message.
+    ///
+    /// The initial value of the SAR Acknowledgment timer is calculated using the following
+    /// formula:
+    /// ```
+    /// [min(SegN + 0.5 , acknowledgment delay increment) * segment reception interval]
+    /// ```
+    /// where
+    /// ```
+    /// acknowledgment delay increment = SAR Acknowledgment Delay Increment + 1.5
+    ///
+    /// segment reception interval = (SAR Receiver Segment Interval Step + 1) × 10 ms
+    /// ```
+    func acknowledgmentTimerInterval(forLastSegmentNumber segN: UInt8) -> TimeInterval {
+        let acknowledgmentDelayIncrement = Double(_sarAcknowledgmentDelayIncrement) + 1.5 // n + 1.5
+        let segmentReceptionInterval = Double(_sarReceiverSegmentIntervalStep + 1) * 0.01 // (n + 1) * 10 ms
+        return min(Double(segN) + 0.5, acknowledgmentDelayIncrement) * segmentReceptionInterval
     }
     
     /// The time within which a Segment Acknowledgment message is
