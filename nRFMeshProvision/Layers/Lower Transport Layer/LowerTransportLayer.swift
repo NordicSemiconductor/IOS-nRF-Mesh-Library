@@ -86,11 +86,15 @@ internal class LowerTransportLayer {
     /// and `sequenceZero` field in 13 least significant bits.
     /// See `UInt32(keyFor:sequenceZero)` below.
     private var discardTimers: [UInt32 : BackgroundTimer]
-    /// The map of acknowledgment timers. After receiving a segment targeting
-    /// any of the Unicast Addresses of one of the Elements of the local Node, a
-    /// timer is started that will send the Segment Acknowledgment Message for
-    /// segments received until than. The timer is invalidated when the message
-    /// has been completed.
+    /// The map of active SAR Acknowledgment timers.
+    ///
+    /// After receiving a segment targeting the Unicast Addresses of any of the Elements
+    /// of the local Node, a timer is started that will send the Segment Acknowledgment Message
+    /// acknowledging segments received until that time. The timer is invalidated when the message
+    /// has been completed or cancelled.
+    ///
+    /// When a segment of an already received message is received this timer is started
+    /// to ensure the acknowledgments are not sent too often.
     ///
     /// The key consists of 16 bits of source address in 2 most significant bytes
     /// and `sequenceZero` field in 13 least significant bits.
@@ -401,10 +405,28 @@ private extension LowerTransportLayer {
     ///            `nil` otherwise.
     func assemble(segment: SegmentedMessage, createdFrom networkPdu: NetworkPdu) -> LowerTransportPdu? {
         guard let networkManager = networkManager else { return nil }
+        
+        let key = UInt32(keyFor: networkPdu.source, sequenceZero: segment.sequenceZero)
+        
         // If the received segment comes from an already completed and
         // acknowledged message, send the same ACK immediately.
         if let lastAck = acknowledgments[segment.source], lastAck.sequenceZero == segment.sequenceZero {
             if let provisionerNode = meshNetwork.localProvisioner?.node {
+                // The lower transport layer shall not send more than one
+                // Segment Acknowledgment message for the same SeqAuth in a
+                // period of `completeAcknowledgementTimerInterval`.
+                guard acknowledgmentTimers[key] == nil else {
+                    logger?.d(.lowerTransport, "Message already acknowledged, ACK sent recently")
+                    return nil
+                }
+                acknowledgmentTimers[key] = BackgroundTimer.scheduledTimer(
+                    withTimeInterval: networkManager.networkParameters.completeAcknowledgmentTimerInterval, repeats: false
+                ) { [weak self] _ in
+                    // Until this timer is not executed no Segment Acknowledgment Message
+                    // will be sent for the same completed message.
+                    self?.acknowledgmentTimers.removeValue(forKey: key)?.invalidate()
+                }
+                // Now we're sure that the ACK has not been sent in a while.
                 logger?.d(.lowerTransport, "Message already acknowledged, sending ACK again")
                 let ttl = networkPdu.ttl > 0 ? provisionerNode.defaultTTL ?? networkManager.networkParameters.defaultTtl : 0
                 sendAck(lastAck, withTtl: ttl)
@@ -431,7 +453,6 @@ private extension LowerTransportLayer {
         } else {
             // If a message is composed of multiple segments, they all need to
             // be received before it can be processed.
-            let key = UInt32(keyFor: networkPdu.source, sequenceZero: segment.sequenceZero)
             if incompleteSegments[key] == nil {
                 incompleteSegments[key] = Array<SegmentedMessage?>(repeating: nil, count: segment.count)
             }

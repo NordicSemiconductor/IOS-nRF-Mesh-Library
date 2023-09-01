@@ -212,6 +212,22 @@ public struct NetworkParameters {
         set { _sarReceiverSegmentIntervalStep = min(newValue, 0b1111) } // Valid range: 0-15
     }
     
+    /// A value indicated by the SAR Acknowledgment Delay Increment state.
+    ///
+    /// - seeAlso ``sarAcknowledgmentDelayIncrement``
+    /// - seeAlso ``setAcknowledgmentTimerInterval(_:andMinimumDelayIncrement:)``
+    public var acknowledgmentDelayIncrement: Double {
+        return Double(_sarAcknowledgmentDelayIncrement) + 1.5 // n + 1.5
+    }
+    
+    /// A value indicated by the SAR Receiver Segment Interval Step state.
+    ///
+    /// - seeAlso ``sarReceiverSegmentIntervalStep``
+    /// - seeAlso ``setAcknowledgmentTimerInterval(_:andMinimumDelayIncrement:)``
+    public var segmentReceptionInterval: TimeInterval {
+        return Double(_sarReceiverSegmentIntervalStep + 1) * 0.01 // (n + 1) * 10 ms
+    }
+    
     /// The initial value of the SAR Acknowledgment timer for a given `segN`.
     ///
     /// The value depends on the number of segments in a segmented message.
@@ -228,9 +244,16 @@ public struct NetworkParameters {
     /// segment reception interval = (SAR Receiver Segment Interval Step + 1) × 10 ms
     /// ```
     func acknowledgmentTimerInterval(forLastSegmentNumber segN: UInt8) -> TimeInterval {
-        let acknowledgmentDelayIncrement = Double(_sarAcknowledgmentDelayIncrement) + 1.5 // n + 1.5
-        let segmentReceptionInterval = Double(_sarReceiverSegmentIntervalStep + 1) * 0.01 // (n + 1) * 10 ms
         return min(Double(segN) + 0.5, acknowledgmentDelayIncrement) * segmentReceptionInterval
+    }
+    
+    /// The initial value of the timer ensuring that Segment Acknowledgment Messages
+    /// are sent for the same SeqAuth in a period of:
+    /// ```
+    /// [acknowledgment delay increment * segment reception interval] milliseconds
+    /// ```
+    var completeAcknowledgmentTimerInterval: TimeInterval {
+        return acknowledgmentDelayIncrement * segmentReceptionInterval
     }
     
     /// The time within which a Segment Acknowledgment message is
