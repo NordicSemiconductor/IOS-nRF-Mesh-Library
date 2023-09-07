@@ -68,7 +68,7 @@ public struct ConfigNetKeyStatus: ConfigResponse, ConfigStatusMessage, ConfigNet
             return nil
         }
         self.status = status
-        self.networkKeyIndex = ConfigNetKeyStatus.decodeNetKeyIndex(from: parameters, at: 1)
+        self.networkKeyIndex = Self.decodeNetKeyIndex(from: parameters, at: 1)
     }
     
 }
