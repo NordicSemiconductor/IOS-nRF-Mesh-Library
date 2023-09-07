@@ -73,7 +73,7 @@ public struct ConfigAppKeyStatus: ConfigResponse, ConfigStatusMessage, ConfigNet
             return nil
         }
         self.status = status
-        (networkKeyIndex, applicationKeyIndex) = ConfigAppKeyUpdate.decodeNetAndAppKeyIndex(from: parameters, at: 1)
+        (networkKeyIndex, applicationKeyIndex) = Self.decodeNetAndAppKeyIndex(from: parameters, at: 1)
     }
     
 }

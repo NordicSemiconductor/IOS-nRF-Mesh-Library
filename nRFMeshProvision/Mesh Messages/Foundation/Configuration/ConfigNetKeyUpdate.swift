@@ -69,7 +69,7 @@ public struct ConfigNetKeyUpdate: AcknowledgedConfigMessage, ConfigNetKeyMessage
         guard parameters.count == 18 else {
             return nil
         }
-        networkKeyIndex = ConfigNetKeyUpdate.decodeNetKeyIndex(from: parameters, at: 0)
+        networkKeyIndex = Self.decodeNetKeyIndex(from: parameters, at: 0)
         key = parameters.subdata(in: 2..<18)
     }
     

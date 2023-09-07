@@ -51,6 +51,6 @@ public struct ConfigNetKeyList: ConfigResponse {
     }
     
     public init?(parameters: Data) {
-        self.networkKeyIndexes = ConfigAppKeyList.decode(indexesFrom: parameters, at: 0)
+        self.networkKeyIndexes = Self.decode(indexesFrom: parameters, at: 0)
     }
 }
