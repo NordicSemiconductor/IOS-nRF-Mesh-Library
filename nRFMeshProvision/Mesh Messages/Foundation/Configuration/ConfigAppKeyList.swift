@@ -75,7 +75,7 @@ public struct ConfigAppKeyList: ConfigResponse, ConfigStatusMessage, ConfigNetKe
             return nil
         }
         self.status = status
-        self.networkKeyIndex = ConfigAppKeyList.decodeNetKeyIndex(from: parameters, at: 1)
-        self.applicationKeyIndexes = ConfigAppKeyList.decode(indexesFrom: parameters, at: 3)
+        self.networkKeyIndex = Self.decodeNetKeyIndex(from: parameters, at: 1)
+        self.applicationKeyIndexes = Self.decode(indexesFrom: parameters, at: 3)
     }
 }
