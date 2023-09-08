@@ -52,6 +52,8 @@ public struct NetworkParameters {
     ///     builder.discardTimeout = ...
     ///     // Adjusting the rate of sending Segment Acknowledgment messages.
     ///     builder.setAcknowledgmentTimerInterval(..., andMinimumDelayIncrement: ...)
+    ///     // Setting up Segment Acknowledgment retransmission.
+    ///     builder.retranssmitSegmentAcknowledgmentMessages(..., timesWhenNumberOfSegmentsIsGreaterThan: ...)
     ///     builder.transmissionTimerInterval = ...
     ///     builder.retransmissionLimit = ...
     ///     builder.acknowledgmentMessageTimeout = ...
@@ -69,6 +71,8 @@ public struct NetworkParameters {
     private var _sarDiscardTimeout: UInt8 = 0b0001              // (n+1)*5 sec = 10 seconds
     private var _sarAcknowledgmentDelayIncrement: UInt8 = 0b001 // n+1.5 = 2.5
     private var _sarReceiverSegmentIntervalStep: UInt8 = 0b0101 // (n+1)*10 = 60 ms
+    private var _sarSegmentsThreshold: UInt8 = 0b00011          // 3
+    private var _sarAcknowledgmentRetransmissionsCount: UInt8 = 0b00 // 0
     
     private var _transmissionTimerInterval: TimeInterval = 0.200
     private var _retransmissionLimit: Int = 5
@@ -264,6 +268,80 @@ public struct NetworkParameters {
     /// ```
     internal var completeAcknowledgmentTimerInterval: TimeInterval {
         return acknowledgmentDelayIncrement * segmentReceptionInterval
+    }
+    
+    /// Sets the parameters controlling retransmission of Segment Acknowledgment messages
+    /// for incomplete messages.
+    ///
+    /// When a Receiver receives a segment of asegmented message composed of 2 ro more
+    /// segments it starts the SAR Acknowledgment timer. The initial value of this timer
+    /// is controller by ``setAcknowledgmentTimerInterval(_:andMinimumDelayIncrement:)``
+    /// and depends on the number of segments. When this timer expires and no new segment
+    /// was received a Segment Acknowledgment message is sent to the Transmitter indicating
+    /// which segments were received until that point. When the number of segments of the message
+    /// is greater than the `threshold` and the `count` parameter is greater than 0 the
+    /// Segment Acknowledgment message is retransmitted `count` times.
+    ///
+    /// By default retransmissions of Segment Acknowledgment messages are disabled.
+    ///
+    /// - parameters:
+    ///   - count: Number of retransmissions of Segment Acknowledgment.
+    ///            Valid values are 0-3, where 0 disables retransmissions.
+    ///   - threshold: The number of segments above which the retransmissions of
+    ///                Segment Acknowledgment messages are enabled.
+    /// - seeAlso: ``sarSegmentsThreshold``
+    /// - seeAlso: ``sarAcknowledgmentRetransmissionsCount``
+    public mutating func retranssmitSegmentAcknowledgmentMessages(
+        _ count: UInt8,
+        timesWhenNumberOfSegmentsIsGreaterThan threshold: UInt8) {
+        sarSegmentsThreshold = threshold
+        sarAcknowledgmentRetransmissionsCount = count
+    }
+    
+    /// The **SAR Segments Threshold state** is a 5-bit value that represents
+    /// the size of a segmented message in number of segments above which the
+    /// retransmissions of Segment Acknowledgment messages are enabled.
+    ///
+    /// Example: When a message is composed of 4 segments retransmissions of
+    /// Segment Acknowledgment messages is enabled if the **SAR Segments
+    /// Threshold state** is set to 3 or less.
+    ///
+    /// - note: Retransmissions of Segment Acknowledgment messages is always
+    ///         disabled for single-segment segmented messages as they are complete
+    ///         after receiving just one segment. The value of 0 and 1 are then
+    ///         equivalent, as the shortest message for which Ack retransmissions
+    ///         are enabled is 2 segments.
+    ///
+    /// The default value for the **SAR Segments Threshold state** is `0b00011` (3 segments).
+    ///
+    /// - seeAlso: ``sarAcknowledgmentRetransmissionsCount``
+    public var sarSegmentsThreshold: UInt8 {
+        get { return _sarSegmentsThreshold }
+        set { _sarSegmentsThreshold = min(newValue, 0b11111) } // Valid range: 0-31
+    }
+    
+    /// The **SAR Acknowledgment Retransmissions Count** state is a 2-bit value
+    /// that controls the number of retransmissions of Segment Acknowledgment messages
+    /// sent by the lower transport layer.
+    ///
+    /// Retransmission of Segment Acknowledgment messages is only enabled for messages
+    /// composed of more segments then the value of ``sarSegmentsThreshold``.
+    ///
+    /// The maximum number of transmissions of a Segment Acknowledgment message is
+    /// ```
+    /// max number of transmissions = SAR Acknowledgment Retransmissions Count + 1
+    /// ```
+    /// For example, `0b00` represents a limit of 1 transmission, and `0b11` represents a limit of 4 transmissions.
+    ///
+    /// The default value of the **SAR Acknowledgment Retransmissions Count state** is 0b00 (1 transmission).
+    ///
+    /// - note: Retransmission of Segment Acknowledgent messages is controlled by
+    ///         ``sarSegmentsThreshold``.
+    ///
+    /// - seeAlso: ``sarSegmentsThreshold``
+    public var sarAcknowledgmentRetransmissionsCount: UInt8 {
+        get { return _sarAcknowledgmentRetransmissionsCount }
+        set { _sarAcknowledgmentRetransmissionsCount = min(newValue, 0b11) }
     }
     
     /// The time within which a Segment Acknowledgment message is

@@ -509,20 +509,50 @@ private extension LowerTransportLayer {
                     self.discardTimers.removeValue(forKey: key)?.invalidate()
                     self.acknowledgmentTimers.removeValue(forKey: key)?.invalidate()
                 }
-                // If the Lower Transport Layer receives any segment while the acknowledgment
-                // timer is inactive, it shall restart the timer. Active timer should not be restarted.
-                if acknowledgmentTimers[key] == nil {
-                    let ttl = provisionerNode.defaultTTL ?? networkManager.networkParameters.defaultTtl
-                    let interval = networkManager.networkParameters.acknowledgmentTimerInterval(forLastSegmentNumber: segment.lastSegmentNumber)
-                    acknowledgmentTimers[key] = BackgroundTimer.scheduledTimer(
-                        withTimeInterval: interval, repeats: false, queue: self.mutex
-                    ) { [weak self] _ in
-                        guard let self = self else { return }
-                        if let segments = self.incompleteSegments[key] {
-                            let ttl = networkPdu.ttl > 0 ? ttl : 0
-                            self.sendAck(for: segments, withTtl: ttl)
+                // When a segment is received the SAR Acknowledgment timer shall be (re)started.
+                acknowledgmentTimers[key]?.invalidate()
+                
+                let ttl = provisionerNode.defaultTTL ?? networkManager.networkParameters.defaultTtl
+                let interval = networkManager.networkParameters.acknowledgmentTimerInterval(forLastSegmentNumber: segment.lastSegmentNumber)
+                acknowledgmentTimers[key] = BackgroundTimer.scheduledTimer(
+                    withTimeInterval: interval, repeats: false, queue: self.mutex
+                ) { [weak self] _ in
+                    guard let s = self,
+                          let networkManager = s.networkManager else { return }
+                    guard let segments = s.incompleteSegments[key] else {
+                        s.acknowledgmentTimers.removeValue(forKey: key)
+                        return
+                    }
+                    // When the SAR Acknowledgment timer expires, the lower transport
+                    // layer shall send a Segment Acknowledgment message.
+                    let ttl = networkPdu.ttl > 0 ? ttl : 0
+                    s.logger?.d(.lowerTransport, "SAR Acknowledgment timer expired, sending ACK")
+                    s.sendAck(for: segments, withTtl: ttl)
+                    
+                    // If Segment Acknowledgment retransmission is enabled and the
+                    // number of segments of the segmented message is longer than the
+                    // SAR Segments Threshhold, the lower transport layer should retransmit
+                    // the acknowledgment specified number of times.
+                    let initialCount = networkManager.networkParameters.sarAcknowledgmentRetransmissionsCount
+                    var count = initialCount
+                    if count > 0 &&
+                        segment.lastSegmentNumber >= networkManager.networkParameters.sarSegmentsThreshold {
+                        let interval = networkManager.networkParameters.segmentReceptionInterval
+                        s.acknowledgmentTimers[key] = BackgroundTimer.scheduledTimer(
+                            withTimeInterval: interval, repeats: count > 1, queue: s.mutex
+                        ) { [weak self] retransmissionTimer in
+                            guard let s = self else { return }
+                            // The Segment Acknowledgment message shall be retransmitted with a new SEQ number.
+                            s.logger?.d(.lowerTransport, "Retransmitting ACK (\(1 + initialCount - count)/\(initialCount))")
+                            s.sendAck(for: segments, withTtl: ttl)
+                            // Decrement the counter.
+                            count = count - 1
+                            // Stop retransmissions when the counter has reached 0.
+                            if count == 0 {
+                                retransmissionTimer.invalidate()
+                                s.acknowledgmentTimers.removeValue(forKey: key)
+                            }
                         }
-                        self.acknowledgmentTimers.removeValue(forKey: key)?.invalidate()
                     }
                 }
                 return nil
