@@ -45,9 +45,13 @@ public struct NetworkParameters {
     /// Parameters can be set one-by-one, or using a builder:
     /// ```swift
     /// meshNetworkManager.networkParameters = .custom { builder in
+    ///     // Setting default Time To Live.
     ///     builder.defaultTtl = ...
+    ///     // Setting a timeout to discard a partially received segmented message
+    ///     // if no new segments were received.
     ///     builder.discardTimeout = ...
-    ///     builder.acknowledgmentTimerInterval = ...
+    ///     // Adjusting the rate of sending Segment Acknowledgment messages.
+    ///     builder.setAcknowledgmentTimerInterval(..., andMinimumDelayIncrement: ...)
     ///     builder.transmissionTimerInterval = ...
     ///     builder.retransmissionLimit = ...
     ///     builder.acknowledgmentMessageTimeout = ...
@@ -94,7 +98,7 @@ public struct NetworkParameters {
     }
     
     /// The Discard Timeout is the time that the Lower Transport layer waits
-    /// after receiving unique segments of a segmented message before
+    /// after receiving a new segment of a segmented message before
     /// discarding that segmented message.
     ///
     /// Valid range for this timeout is from 5 seconds to 1 minute and 20 seconds
@@ -113,11 +117,11 @@ public struct NetworkParameters {
         set { _sarDiscardTimeout = UInt8(min(5.0, newValue) / 5.0) - 1 }
     }
     
-    /// The SAR Discard Timeout state is a 4-bit value that controls the time that the
+    /// The **SAR Discard Timeout state** is a 4-bit value that controls the time that the
     /// Lower Transport layer waits after receiving unique segments of a segmented
     /// message before discarding that segmented message.
     ///
-    /// The default value of the SAR Discard Timeout state is `0b0001` (10 seconds).
+    /// The default value of the **SAR Discard Timeout state** is `0b0001` (10 seconds).
     ///
     /// The Discard Timeout initial value is set using the following formula:
     /// ```
@@ -153,7 +157,7 @@ public struct NetworkParameters {
         get { return acknowledgmentTimerInterval(forLastSegmentNumber: 2) }
         set {
             // It is not possible to translate the old interval, which
-            // depended on TTL value to the new one, which is using number
+            // depended on TTL value, to the new one, which is using number
             // of segments in a message.
         }
     }
@@ -185,12 +189,12 @@ public struct NetworkParameters {
         _sarAcknowledgmentDelayIncrement = UInt8(max(0, max(1.5, min(8.5, acknowledgmentDelayIncrement)) - 1.5))
     }
     
-    /// The SAR Acknowledgment Delay Increment state is a 3-bit value that controls
+    /// The **SAR Acknowledgment Delay Increment state** is a 3-bit value that controls
     /// the interval between the reception of a new segment of a segmented message
     /// for a destination that is a Unicast Address and the transmission of the
     /// Segment Acknowledgment for that message.
     ///
-    /// The default value of the SAR Acknowledgment Delay Increment state is `0b001`
+    /// The default value of the **SAR Acknowledgment Delay Increment state** is `0b001`
     /// (2.5 segment transmission interval steps).
     ///
     /// - seeAlso:``sarReceiverSegmentIntervalStep``
@@ -199,11 +203,11 @@ public struct NetworkParameters {
         set { _sarAcknowledgmentDelayIncrement = min(newValue, 0b111) } // Valid range: 0-7
     }
     
-    /// The SAR Receiver Segment Interval Step state is a 4-bit value that indicates
+    /// The **SAR Receiver Segment Interval Step state** is a 4-bit value that indicates
     /// the interval between received segments of a segmented message.
     /// This is used to control rate of transmission of Segment Acknowledgment messages.
     ///
-    /// The default value of the SAR Receiver Segment Interval Step state is `0b0101`
+    /// The default value of the **SAR Receiver Segment Interval Step state** is `0b0101`
     /// (60 milliseconds).
     ///
     /// - seeAlso:``sarAcknowledgmentDelayIncrement``
@@ -212,7 +216,7 @@ public struct NetworkParameters {
         set { _sarReceiverSegmentIntervalStep = min(newValue, 0b1111) } // Valid range: 0-15
     }
     
-    /// A value indicated by the SAR Acknowledgment Delay Increment state.
+    /// A value indicated by the **SAR Acknowledgment Delay Increment state**.
     ///
     /// - seeAlso ``sarAcknowledgmentDelayIncrement``
     /// - seeAlso ``setAcknowledgmentTimerInterval(_:andMinimumDelayIncrement:)``
@@ -220,7 +224,7 @@ public struct NetworkParameters {
         return Double(_sarAcknowledgmentDelayIncrement) + 1.5 // n + 1.5
     }
     
-    /// A value indicated by the SAR Receiver Segment Interval Step state.
+    /// A value indicated by the **SAR Receiver Segment Interval Step state**.
     ///
     /// - seeAlso ``sarReceiverSegmentIntervalStep``
     /// - seeAlso ``setAcknowledgmentTimerInterval(_:andMinimumDelayIncrement:)``
@@ -243,7 +247,7 @@ public struct NetworkParameters {
     ///
     /// segment reception interval = (SAR Receiver Segment Interval Step + 1) × 10 ms
     /// ```
-    func acknowledgmentTimerInterval(forLastSegmentNumber segN: UInt8) -> TimeInterval {
+    internal func acknowledgmentTimerInterval(forLastSegmentNumber segN: UInt8) -> TimeInterval {
         return min(Double(segN) + 0.5, acknowledgmentDelayIncrement) * segmentReceptionInterval
     }
     
@@ -252,7 +256,7 @@ public struct NetworkParameters {
     /// ```
     /// [acknowledgment delay increment * segment reception interval] milliseconds
     /// ```
-    var completeAcknowledgmentTimerInterval: TimeInterval {
+    internal var completeAcknowledgmentTimerInterval: TimeInterval {
         return acknowledgmentDelayIncrement * segmentReceptionInterval
     }
     
