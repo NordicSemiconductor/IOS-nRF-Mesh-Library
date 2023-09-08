@@ -76,8 +76,14 @@ public struct NetworkParameters {
     private var _acknowledgmentMessageInterval: TimeInterval = 2.0
     
     /// The Default TTL will be used for sending messages, if the value has
-    /// not been set in the Provisioner's Node. By default it is set to 5,
-    /// which is a reasonable value. The TTL shall be in range 2...127.
+    /// not been set in the Provisioner's Node.
+    ///
+    /// By default it is set to 5, which is a reasonable value. The TTL shall be in range 2...127.
+    ///
+    /// In Bluetooth Mesh each message is sent with a given TTL value. When a relay
+    /// Node receives such message it decrements the TTL value by 1, re-encrypts it
+    /// using the same Network Key and retransmits further. If the received TTL value is
+    /// 1 or 0 the message is no longer retransmitted.
     public var defaultTtl: UInt8 {
         get { return _defaultTtl }
         set { _defaultTtl = max(2, min(newValue, 127)) }
