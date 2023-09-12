@@ -52,10 +52,13 @@ internal class LowerTransportLayer {
         return networkManager?.logger
     }
     
-    /// The storage for keeping sequence numbers. Each mesh network (with different UUID)
-    /// has a unique storage, which can be reloaded when the network is imported after it
-    /// was used before.
+    /// The storage for keeping sequence numbers.
+    ///
+    /// Each mesh network (with different UUID) has a unique storage, which can be reloaded
+    /// when the network is imported after it was used before.
     private let defaults: UserDefaults
+    
+    // MARK: - SAR Receiver
     
     /// The map of incomplete received segments. Every time a Segmented Message is received
     /// it is added to the map to an ordered array. When all segments are received
@@ -100,6 +103,8 @@ internal class LowerTransportLayer {
     /// and `sequenceZero` field in 13 least significant bits.
     /// See `UInt32(keyFor:sequenceZero)` below.
     private var acknowledgmentTimers: [UInt32 : BackgroundTimer]
+    
+    // MARK: - SAR Transmitter
     
     /// The map of outgoing segmented messages.
     ///

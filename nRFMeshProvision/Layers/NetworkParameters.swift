@@ -67,10 +67,13 @@ public struct NetworkParameters {
     /// If not modified, ``NetworkParameters/default`` values are used.
     public typealias Builder = (inout NetworkParameters) -> ()
     
+    // MARK: - TTL states
     private var _defaultTtl: UInt8 = 5
+    
+    // MARK: - SAR Receiver states
     private var _sarDiscardTimeout: UInt8 = 0b0001              // (n+1)*5 sec = 10 seconds
     private var _sarAcknowledgmentDelayIncrement: UInt8 = 0b001 // n+1.5 = 2.5
-    private var _sarReceiverSegmentIntervalStep: UInt8 = 0b0101 // (n+1)*10 = 60 ms
+    private var _sarReceiverSegmentIntervalStep: UInt8 = 0b0101 // (n+1)*10 ms = 60 ms
     private var _sarSegmentsThreshold: UInt8 = 0b00011          // 3
     private var _sarAcknowledgmentRetransmissionsCount: UInt8 = 0b00 // 0
     
@@ -78,6 +81,8 @@ public struct NetworkParameters {
     private var _retransmissionLimit: Int = 5
     private var _acknowledgmentMessageTimeout: TimeInterval = 30.0
     private var _acknowledgmentMessageInterval: TimeInterval = 2.0
+    
+    // MARK: - TTL Configuration
     
     /// The Default TTL will be used for sending messages, if the value has
     /// not been set in the Provisioner's Node.
@@ -92,6 +97,8 @@ public struct NetworkParameters {
         get { return _defaultTtl }
         set { _defaultTtl = max(2, min(newValue, 127)) }
     }
+    
+    // MARK: - SAR Receiver state implementation
     
     /// The timeout after which an incomplete segmented message will be
     /// abandoned. The timer is restarted each time a segment of this
@@ -120,7 +127,7 @@ public struct NetworkParameters {
     /// The value of this timeout is controlled by ``sarDiscardTimeout``
     /// state and is calculated the following way:
     /// ```
-    /// discard timeout = (SAR Discard Timeout + 1) × 5 ms
+    /// (SAR Discard Timeout + 1) * 5 ms
     /// ```
     public var discardTimeout: TimeInterval {
         get { return TimeInterval(_sarDiscardTimeout + 1) * 5.0 }
@@ -135,7 +142,7 @@ public struct NetworkParameters {
     ///
     /// The Discard Timeout initial value is set using the following formula:
     /// ```
-    /// discard timeout = (SAR Discard Timeout + 1) × 5 ms
+    /// (SAR Discard Timeout + 1) * 5 ms
     /// ```
     ///
     /// - seeAlso:``discardTimeout``
@@ -153,7 +160,7 @@ public struct NetworkParameters {
     /// and this property was used to adjust the constant part of the interval
     /// using the given formula:
     /// ```
-    /// interval = acknowledgment timer interval + (50 ms * TTL)
+    /// acknowledgment timer interval + (50 ms * TTL)
     /// ```
     /// The TTL dependent part was added automatically.
     ///
@@ -176,12 +183,12 @@ public struct NetworkParameters {
     ///
     /// The initial value of SAR Acknowledgment timer is calculated with the following formula:
     /// ```
-    /// interval = min(SegN + 0.5, acknowledgment delay increment) * segment reception interval (ms)
+    /// min(SegN + 0.5, acknowledgment delay increment) * segment reception interval (ms)
     /// ```
     /// `SegN` field in a segmented message is the index of the last segment in a message,
     /// equal to the number of segments minus 1, therefore the formula can be also written as:
     /// ```
-    /// interval = min(number of segments - 0.5, acknowledgment delay increment) * segment reception interval (ms)
+    /// min(number of segments - 0.5, acknowledgment delay increment) * segment reception interval (ms)
     /// ```
     ///
     /// - parameters:
@@ -189,7 +196,7 @@ public struct NetworkParameters {
     ///                               message minus 0.5.
     ///                               Available values are in range 10 ms - 160 ms with 10 ms step.
     ///   - acknowledgmentDelayIncrement: The minimum delay increment. The value must be from
-    ///                                   1.5 + n up to to 8.5, that is 1.5, 2.5, 3.5, ... until 8.5.
+    ///                                   1.5 + n up to 8.5, that is 1.5, 2.5, 3.5, ... until 8.5.
     ///                                   Other values will be rounded down.
     public mutating func setAcknowledgmentTimerInterval(_ segmentReceptionInterval: TimeInterval,
                                                         andMinimumDelayIncrement acknowledgmentDelayIncrement: Double) {
@@ -249,7 +256,7 @@ public struct NetworkParameters {
     /// The initial value of the SAR Acknowledgment timer is calculated using the following
     /// formula:
     /// ```
-    /// [min(SegN + 0.5 , acknowledgment delay increment) * segment reception interval]
+    /// min(SegN + 0.5 , acknowledgment delay increment) * segment reception interval (ms)
     /// ```
     /// where
     /// ```
@@ -261,10 +268,10 @@ public struct NetworkParameters {
         return min(Double(segN) + 0.5, acknowledgmentDelayIncrement) * segmentReceptionInterval
     }
     
-    /// The initial value of the timer ensuring that Segment Acknowledgment Messages
-    /// are sent for the same SeqAuth in a period of:
+    /// The initial value of the timer ensuring that no more than one Segment Acknowledgment message
+    /// is sent for the same SeqAuth value in a period of:
     /// ```
-    /// [acknowledgment delay increment * segment reception interval] milliseconds
+    /// acknowledgment delay increment * segment reception interval (ms)
     /// ```
     internal var completeAcknowledgmentTimerInterval: TimeInterval {
         return acknowledgmentDelayIncrement * segmentReceptionInterval
@@ -315,6 +322,7 @@ public struct NetworkParameters {
     /// The default value for the **SAR Segments Threshold state** is `0b00011` (3 segments).
     ///
     /// - seeAlso: ``sarAcknowledgmentRetransmissionsCount``
+    /// - seeAlso: ``retranssmitSegmentAcknowledgmentMessages(_:timesWhenNumberOfSegmentsIsGreaterThan:)``
     public var sarSegmentsThreshold: UInt8 {
         get { return _sarSegmentsThreshold }
         set { _sarSegmentsThreshold = min(newValue, 0b11111) } // Valid range: 0-31
@@ -329,16 +337,18 @@ public struct NetworkParameters {
     ///
     /// The maximum number of transmissions of a Segment Acknowledgment message is
     /// ```
-    /// max number of transmissions = SAR Acknowledgment Retransmissions Count + 1
+    /// SAR Acknowledgment Retransmissions Count + 1
     /// ```
     /// For example, `0b00` represents a limit of 1 transmission, and `0b11` represents a limit of 4 transmissions.
     ///
-    /// The default value of the **SAR Acknowledgment Retransmissions Count state** is 0b00 (1 transmission).
+    /// The default value of the **SAR Acknowledgment Retransmissions Count state** is `0b00`
+    /// (1 transmission, retransmissions disabled).
     ///
     /// - note: Retransmission of Segment Acknowledgent messages is controlled by
     ///         ``sarSegmentsThreshold``.
     ///
     /// - seeAlso: ``sarSegmentsThreshold``
+    /// - seeAlso: ``retranssmitSegmentAcknowledgmentMessages(_:timesWhenNumberOfSegmentsIsGreaterThan:)``
     public var sarAcknowledgmentRetransmissionsCount: UInt8 {
         get { return _sarAcknowledgmentRetransmissionsCount }
         set { _sarAcknowledgmentRetransmissionsCount = min(newValue, 0b11) }
@@ -376,6 +386,8 @@ public struct NetworkParameters {
         set { _retransmissionLimit = max(2, newValue) }
     }
     
+    // MARK: - Acknowledged messages configuration implementation
+    
     /// If the Element does not receive a response within a period of time known
     /// as the acknowledged message timeout, then the Element may consider the
     /// message has not been delivered, without sending any additional messages.
@@ -391,8 +403,11 @@ public struct NetworkParameters {
     
     /// The base time after which the acknowledged message will be repeated.
     ///
-    /// The repeat timer will be set to the base time + 50 * TTL milliseconds +
-    /// 50 * segment count. The TTL and segment count dependent parts are added
+    /// The repeat timer will be set using the following formula:
+    /// ```
+    /// acknowledgment message interval + 50 ms * TTL + 50 ms * number of segments
+    /// ```
+    /// The TTL and segment count dependent parts are added
     /// automatically, and this value shall specify only the constant part.
     public var acknowledgmentMessageInterval: TimeInterval {
         get { return _acknowledgmentMessageInterval }
@@ -402,6 +417,8 @@ public struct NetworkParameters {
     func acknowledgmentMessageInterval(forTtl ttl: UInt8, andSegmentCount segmentCount: Int) -> TimeInterval {
         return _acknowledgmentMessageInterval + Double(ttl) * 0.050 + Double(segmentCount) * 0.050
     }
+    
+    // MARK: - Advanced configuration
     
     /// According to Bluetooth Mesh Profile 1.0.1, section 3.10.5, if the IV Index
     /// of the mesh network increased by more than 42 since the last connection

@@ -183,7 +183,7 @@ internal class UpperTransportLayer {
     }
     
     /// A callback called by the lower transport layer when the segmented PDU
-    /// has been sent to the given destination.
+    /// has been sent to the destination or has failed.
     ///
     /// This method removes the sent PDU from the queue and initiates sending
     /// a next one, had it been enqueued.
