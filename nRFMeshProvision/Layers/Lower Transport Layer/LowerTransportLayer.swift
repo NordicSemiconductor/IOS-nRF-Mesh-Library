@@ -502,7 +502,7 @@ private extension LowerTransportLayer {
                                 marks |= 1 << segment.segmentOffset
                             }
                         }
-                        self.logger?.w(.lowerTransport, "Incomplete message timeout: cancelling message " +
+                        self.logger?.w(.lowerTransport, "Discard timeout expired, cancelling message " +
                                                         "(src: \(Address(key >> 16).hex), seqZero: \(key & 0x1FFF), " +
                                                         "received segments: 0x\(marks.hex))")
                     }
