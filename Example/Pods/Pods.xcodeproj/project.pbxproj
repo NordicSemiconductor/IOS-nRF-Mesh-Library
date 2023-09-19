@@ -501,6 +501,7 @@
 		EF52F3EFDC0B5F340AB62C33380D1145 /* RemoteProvisioningScanStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8CCDCE11C58A2D4DD657F0DDB0FF829 /* RemoteProvisioningScanStatus.swift */; };
 		EF89E25E44020283743D1D18AE83BA57 /* SensorCadenceSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94C807184D46FB256859F6DA4A618898 /* SensorCadenceSet.swift */; };
 		EFB222F46E7B57B545B3C3F6ECD42CF5 /* Utils+Foundation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80CCC2677D931811101207B70F1D6228 /* Utils+Foundation.swift */; };
+		F07563B92AB4680A0075E7EF /* Task+TimeInterval.swift in Sources */ = {isa = PBXBuildFile; fileRef = F07563B82AB4680A0075E7EF /* Task+TimeInterval.swift */; };
 		F09F579DFFBD33466CB3C045FAD0981E /* TimeMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB7E6A86EE871B2E1499B43B0C4CE817 /* TimeMessage.swift */; };
 		F0D0145FEA718A4D20BA3CF003EE500B /* SHA3.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1471C25B3AEE59C2C0D70DD7E0431093 /* SHA3.swift */; };
 		F1B4D93E01167049E4B746F476E96CDE /* PrivateNodeIdentityGet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1782ABAF435EBD66B63075F4FB56F58C /* PrivateNodeIdentityGet.swift */; };
@@ -1107,6 +1108,7 @@
 		EF7AAC5288C40B29F7550F9C8C065815 /* MeshUUID.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MeshUUID.swift; sourceTree = "<group>"; };
 		EFF7D0D9D63091066805D424BE501AF6 /* CBC.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = CBC.swift; path = Sources/CryptoSwift/BlockMode/CBC.swift; sourceTree = "<group>"; };
 		F0248680CCF0682F459FD8E1271B6360 /* GenericPowerDefautGet.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = GenericPowerDefautGet.swift; sourceTree = "<group>"; };
+		F07563B82AB4680A0075E7EF /* Task+TimeInterval.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Task+TimeInterval.swift"; sourceTree = "<group>"; };
 		F0BF8091532C0A82E902EA5753549EE9 /* SceneGet.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SceneGet.swift; sourceTree = "<group>"; };
 		F147AFFBAF5C8233E7152D1F827C039C /* CryptoSwift-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "CryptoSwift-dummy.m"; sourceTree = "<group>"; };
 		F1FEE00E75546D7065D0853901D8DBE9 /* LightLCOccupancyModeSet.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LightLCOccupancyModeSet.swift; sourceTree = "<group>"; };
@@ -1368,6 +1370,7 @@
 				77BCE438F8F9C452E48ABA0675C7F4CA /* Unique.swift */,
 				0791C406D8A9352CB94045C9B4D18A5F /* UserDefaults+SeqAuth.swift */,
 				A092168F6CA28C604E5C01CD701DF061 /* UUID+Hex.swift */,
+				F07563B82AB4680A0075E7EF /* Task+TimeInterval.swift */,
 			);
 			name = "Type Extensions";
 			path = "nRFMeshProvision/Type Extensions";
@@ -2389,6 +2392,7 @@
 				50DDE9D03D359DA1D9729DE165646F63 /* GenericLocationGlobalSet.swift in Sources */,
 				D4BDFA3FAF71972AE28DD9C7A413CA69 /* GenericLocationGlobalSetUnacknowledged.swift in Sources */,
 				AF559AB15191ECB8A321ADDB0B507DC6 /* GenericLocationGlobalStatus.swift in Sources */,
+				F07563B92AB4680A0075E7EF /* Task+TimeInterval.swift in Sources */,
 				CE1FDCB8F49978A57BE46B67E824BD63 /* GenericMessage.swift in Sources */,
 				E066AFF31057FCD5124322E152881981 /* GenericMoveSet.swift in Sources */,
 				08B7E3CC60698ADAD263879427220384 /* GenericMoveSetUnacknowledged.swift in Sources */,
