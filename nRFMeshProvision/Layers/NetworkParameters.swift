@@ -201,7 +201,7 @@ public struct NetworkParameters {
     public mutating func setAcknowledgmentTimerInterval(_ segmentReceptionInterval: TimeInterval,
                                                         andMinimumDelayIncrement acknowledgmentDelayIncrement: Double) {
         // Valid range: 10-160 ms
-        _sarReceiverSegmentIntervalStep = UInt8((max(0.01, min(0.16, segmentReceptionInterval)) / 0.01) - 1)
+        _sarReceiverSegmentIntervalStep = UInt8((max(0.01, min(0.16, segmentReceptionInterval)) * 100) - 1)
         // Valid range: 1.5-8.5 segment transmission interval steps
         _sarAcknowledgmentDelayIncrement = UInt8(max(0, max(1.5, min(8.5, acknowledgmentDelayIncrement)) - 1.5))
     }
@@ -238,7 +238,8 @@ public struct NetworkParameters {
     /// - seeAlso ``sarAcknowledgmentDelayIncrement``
     /// - seeAlso ``setAcknowledgmentTimerInterval(_:andMinimumDelayIncrement:)``
     public var acknowledgmentDelayIncrement: Double {
-        return Double(_sarAcknowledgmentDelayIncrement) + 1.5 // n + 1.5
+        get { return Double(_sarAcknowledgmentDelayIncrement) + 1.5 }
+        set { _sarAcknowledgmentDelayIncrement = UInt8(max(0, max(1.5, min(8.5, newValue)) - 1.5)) }
     }
     
     /// A value indicated by the **SAR Receiver Segment Interval Step state**.
@@ -246,7 +247,8 @@ public struct NetworkParameters {
     /// - seeAlso ``sarReceiverSegmentIntervalStep``
     /// - seeAlso ``setAcknowledgmentTimerInterval(_:andMinimumDelayIncrement:)``
     public var segmentReceptionInterval: TimeInterval {
-        return Double(_sarReceiverSegmentIntervalStep + 1) * 0.01 // (n + 1) * 10 ms
+        get { return Double(_sarReceiverSegmentIntervalStep + 1) * 0.01 }
+        set { _sarReceiverSegmentIntervalStep = UInt8(min(0.16, max(newValue, 0.01)) * 100) - 1 }
     }
     
     /// The initial value of the SAR Acknowledgment timer for a given `segN`.
@@ -414,7 +416,7 @@ public struct NetworkParameters {
         set { _acknowledgmentMessageInterval = max(2.0, newValue) }
     }
     
-    func acknowledgmentMessageInterval(forTtl ttl: UInt8, andSegmentCount segmentCount: Int) -> TimeInterval {
+    internal func acknowledgmentMessageInterval(forTtl ttl: UInt8, andSegmentCount segmentCount: Int) -> TimeInterval {
         return _acknowledgmentMessageInterval + Double(ttl) * 0.050 + Double(segmentCount) * 0.050
     }
     
