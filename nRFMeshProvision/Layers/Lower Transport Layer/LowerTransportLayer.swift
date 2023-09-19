@@ -110,13 +110,30 @@ internal class LowerTransportLayer {
     ///
     /// The key is the `sequenceZero` of the message.
     private var outgoingSegments: [UInt16: (destination: MeshAddress, segments: [SegmentedMessage?])]
-    /// The map of segment transmission timers. A segment transmission timer
-    /// for a Segmented Message with `sequenceZero` is started whenever such
-    /// message is sent to a Unicast Address. After the timer expires, the
-    /// layer will resend all non-confirmed segments and reset the timer.
+    /// The map of SAR Unicast Retransmissions timers.
+    ///
+    /// The key of the map is the `sequenceZero` of a segmented message that is being sent
+    /// to a Unicast Address.
+    private var unicastRetransmissionsTimers: [UInt16 : BackgroundTimer]
+    /// The map contains the number of remaining retransmissions and the number
+    /// of remaininig retransmissions without progress of a segmented message
+    /// that is sent to a Unicast Address.
+    ///
+    /// The number of retransmissions without progress is reset to its initial value each time a
+    /// Segment Acknowledgment message indicating a progress in receiving segments is received.
+    ///
+    /// The transmission is cancelled with a timeout when any of the counters reaches zero.
+    private var remainingNumberOfUnicastRetransmissions: [UInt16 : (total: UInt8, withoutProgress: UInt8)]
+    
+    /// The map of SAR Multicast Retransmissions timers.
     ///
     /// The key is the `sequenceZero` of the message.
-    private var segmentTransmissionTimers: [UInt16 : BackgroundTimer]
+    private var multicastRetransmissionsTimers: [UInt16 : BackgroundTimer]
+    /// The map contains the number of remaining retransmissions of a segmented message
+    /// that is sent to a Group Address or a Virtual Address.
+    ///
+    /// The transmission is completed when the counter reaches zero.
+    private var remainingNumberOfMulticastRetransmissions: [UInt16 : UInt8]
     /// The initial TTL values.
     ///
     /// The key is the `sequenceZero` of the message.
@@ -130,7 +147,10 @@ internal class LowerTransportLayer {
         self.discardTimers = [:]
         self.acknowledgmentTimers = [:]
         self.outgoingSegments = [:]
-        self.segmentTransmissionTimers = [:]
+        self.unicastRetransmissionsTimers = [:]
+        self.multicastRetransmissionsTimers = [:]
+        self.remainingNumberOfUnicastRetransmissions = [:]
+        self.remainingNumberOfMulticastRetransmissions = [:]
         self.acknowledgments = [:]
         self.segmentTtl = [:]
     }
@@ -273,8 +293,20 @@ internal class LowerTransportLayer {
                                                                                  usingNetworkKey: networkKey,
                                                                                  offset: UInt8(i))
         }
+        // Store the TTL with which the segments are to be sent.
         segmentTtl[sequenceZero] = initialTtl ?? provisionerNode.defaultTTL ?? networkManager.networkParameters.defaultTtl
-        sendSegments(for: sequenceZero, limit: networkManager.networkParameters.retransmissionLimit)
+        // Initialize the retransmission counters.
+        if pdu.destination.address.isUnicast {
+            remainingNumberOfUnicastRetransmissions[sequenceZero] = (
+                networkManager.networkParameters.sarUnicastRetransmissionsCount,
+                networkManager.networkParameters.sarMulticastRetransmissionsCount
+            )
+        } else {
+            remainingNumberOfMulticastRetransmissions[sequenceZero] =
+                networkManager.networkParameters.sarMulticastRetransmissionsCount
+        }
+        // Finally, start sending segments.
+        sendSegments(for: sequenceZero)
     }
     
     /// This method tries to send the Heartbeat Message.
@@ -304,7 +336,10 @@ internal class LowerTransportLayer {
         logger?.d(.lowerTransport, "Cancelling sending segments with seqZero: \(sequenceZero)")
         outgoingSegments.removeValue(forKey: sequenceZero)
         segmentTtl.removeValue(forKey: sequenceZero)
-        segmentTransmissionTimers.removeValue(forKey: sequenceZero)?.invalidate()
+        unicastRetransmissionsTimers.removeValue(forKey: sequenceZero)?.invalidate()
+        remainingNumberOfUnicastRetransmissions.removeValue(forKey: sequenceZero)
+        multicastRetransmissionsTimers.removeValue(forKey: sequenceZero)?.invalidate()
+        remainingNumberOfMulticastRetransmissions.removeValue(forKey: sequenceZero)
     }
     
     /// Returns whether the Lower Transport Layer is in progress of
@@ -569,50 +604,61 @@ private extension LowerTransportLayer {
     ///
     /// - parameter ack: The Segment Acknowledgment Message received.
     func handle(ack: SegmentAcknowledgmentMessage) {
-        guard let networkManager = networkManager else { return }
         // Ensure the ACK is for some message that has been sent.
-        guard let (destination, segments) = outgoingSegments[ack.sequenceZero],
-              let segment = segments.firstNotAcknowledged else {
-            return
-        }
-        
-        // Invalidate transmission timer for this message.
-        segmentTransmissionTimers.removeValue(forKey: ack.sequenceZero)?.invalidate()
-        
-        // Find the source Element.
-        guard let provisionerNode = meshNetwork.localProvisioner?.node,
-              let element = provisionerNode.element(withAddress: segment.source) else {
+        guard let networkManager = networkManager,
+              let (destination, segments) = outgoingSegments[ack.sequenceZero],
+              let (total, withProgress) = remainingNumberOfUnicastRetransmissions[ack.sequenceZero],
+              ack.source == destination.address || ack.isOnBehalfOfLowPowerNode else {
             return
         }
         
         // Is the target Node busy?
         guard !ack.isBusy else {
-            outgoingSegments.removeValue(forKey: ack.sequenceZero)
-            if segment.userInitiated && !segment.message!.isAcknowledged {
-                networkManager.notifyAbout(error: LowerTransportError.busy,
-                                           duringSendingMessage: segment.message!,
-                                           from: element, to: destination)
-            }
+            cancelTransmissionOfSegments(with: ack.sequenceZero, error: LowerTransportError.busy)
             return
         }
+        
+        /// Whether a progress has been made since the previous ACK.
+        var progress = false
         
         // Clear all acknowledged segments.
         for index in 0..<segments.count {
             if ack.isSegmentReceived(index) {
-                outgoingSegments[ack.sequenceZero]?.segments[index] = nil
+                if outgoingSegments[ack.sequenceZero]?.segments[index] != nil {
+                    progress = true
+                    outgoingSegments[ack.sequenceZero]?.segments[index] = nil
+                }
             }
         }
         
         // If all the segments were acknowledged, notify the manager.
         if outgoingSegments[ack.sequenceZero]?.segments.hasMore == false {
-            outgoingSegments.removeValue(forKey: ack.sequenceZero)
-            networkManager.notifyAbout(deliveringMessage: segment.message!,
-                                       from: element, to: destination)
-            networkManager.upperTransportLayer
-                .lowerTransportLayerDidSend(segmentedUpperTransportPduTo: segment.destination)
+            cancelTransmissionOfSegments(with: ack.sequenceZero, error: nil)
         } else {
-            // Else, send again all packets that were not acknowledged.
-            sendSegments(for: ack.sequenceZero, limit: networkManager.networkParameters.retransmissionLimit)
+            // Check if the SAR Unicast Retransmission timer is running.
+            guard let _ = unicastRetransmissionsTimers[ack.sequenceZero] else {
+                // If not, that means that the segments are just being retransmitted
+                // and we're done here. We shall receive a new acknowledgment in a bit.
+                return
+            }
+            // Check if more retransmissions are possible.
+            guard total > 0 && withProgress > 0 else {
+                // If not, the running SAR Unicast Retransmissions timer will cancel
+                // the message when it expires. Perhaps another acknowledgment will
+                // be received before acknowledging all segments.
+                return
+            }
+            // Stop the SAR Unicast Retransmissions timer.
+            unicastRetransmissionsTimers.removeValue(forKey: ack.sequenceZero)?.invalidate()
+            // Decrement the counters.
+            // If a progress has been made, reset the remaining number of
+            // retransmissions with progress to its initial value.
+            remainingNumberOfUnicastRetransmissions[ack.sequenceZero] = (
+                total - 1,
+                progress ? networkManager.networkParameters.sarUnicastRetransmissionsWithoutProgressCount : withProgress - 1
+            )
+            // Lastly, send again all packets that were not acknowledged.
+            sendSegments(for: ack.sequenceZero)
         }
     }
     
@@ -652,113 +698,211 @@ private extension LowerTransportLayer {
         }
     }
     
-    /// Sends all non-`nil` segments from `outgoingSegments` map from the given
-    /// `sequenceZero` key.
+    /// Sends all unacknowledged segments with the given `sequenceZero` and starts
+    /// a retransmissions timer.
     ///
-    /// - parameters:
-    ///   - sequenceZero: The key to get segments from the map.
-    ///   - limit:        Maximum number of retransmissions.
-    func sendSegments(for sequenceZero: UInt16, limit: Int) {
-        guard let networkManager = networkManager else { return }
-        guard let (destination, segments) = outgoingSegments[sequenceZero], segments.count > 0,
-              let segment = segments.firstNotAcknowledged,
-              let message = segment.message,
+    /// - note: This is an asynchronous method, It will initiate sending the remaining segments
+    ///         and finish immediately.
+    ///
+    /// - parameter sequenceZero: The key to get segments from the map.
+    func sendSegments(for sequenceZero: UInt16) {
+        guard let (destination, segments) = outgoingSegments[sequenceZero], segments.count > 0 else {
+            return
+        }
+        
+        /// The list of segments to be sent.
+        ///
+        /// The list contains only unacknowledged segments. Acknowledge segments are
+        /// set to `nil` when the Segment Acknowledgment message is received.
+        ///
+        /// - note: When the destination is a Group or Virtual Address there are no
+        ///         acknowledgments, in which case all segments are unacknowledged.
+        let remainingSegments = segments.unacknowledged
+        
+        Task.detached { [weak self] in
+            await self?.sendSegments(remainingSegments)
+            
+            // When the last remaining segment has been sent, the lower transport
+            // layer should start the SAR Unicast Retransmissions timer or the
+            // SAR Multicast Retransmissions timer.
+            if destination.address.isUnicast {
+                self?.startUnicastRetransmissionsTimer(for: sequenceZero)
+            } else {
+                self?.startMulticastRetransmissionsTimer(for: sequenceZero)
+            }
+        }
+    }
+    
+    /// Sends the given segments one by one with an interval determined by the segment
+    /// transmission interval.
+    ///
+    /// - parameter segments: List of segments to be sent.
+    func sendSegments(_ segments: [SegmentedMessage]) async {
+        // The interval with which segments are sent by the lower transport layer.
+        guard let segmentTransmissionInterval = networkManager?.networkParameters.segmentTransmissionInterval else {
+            return
+        }
+        
+        // Start sending segments in the same order as they are in the list.
+        // Note: Each segment is sent with a delay, therefore each time we
+        //       check if the network manager still exists.
+        for segment in segments {
+            // Make sure the network manager is alive.
+            guard let networkManager = self.networkManager,
+                  let networkLayer = networkManager.networkLayer else {
+                return
+            }
+            // Make sure all the segments were not already acknowledged.
+            // The this will turn nil when all segments were acknowledged.
+            guard let ttl = segmentTtl[segment.sequenceZero] else {
+                return
+            }
+            // Send the segment and wait the segment transmission interval.
+            do {
+                self.logger?.d(.lowerTransport, "Sending \(segment)")
+                try networkLayer.send(lowerTransportPdu: segment,
+                                      ofType: .networkPdu, withTtl: ttl)
+                try await Task.sleep(seconds: segmentTransmissionInterval)
+            } catch {
+                self.logger?.w(.lowerTransport, error)
+                break
+            }
+        }
+    }
+    
+    /// Starts the SAR Unicast Retransmissions timer for the message with given
+    /// `sequenceZero`.
+    ///
+    /// If the remaining number of retransmissions and the remaining number of
+    /// retransmissions without progress must be set before the timer is started.
+    ///
+    /// - parameter sequenceZero: The key to get segments from the map.
+    func startUnicastRetransmissionsTimer(for sequenceZero: UInt16) {
+        guard let networkManager = networkManager,
+              let remainingNumberOfUnicastRetransmissions = remainingNumberOfUnicastRetransmissions[sequenceZero],
               let ttl = segmentTtl[sequenceZero] else {
             return
         }
+        /// Remaining number of retransmissions of segments of an segmented message
+        /// sent to a Unicast Address. When the number goes to 0 the retransmissions stop.
+        let remainingNumberOfRetransmissions = remainingNumberOfUnicastRetransmissions.total
+        /// Remaining number of retransmissions without progress of segments of an segmented
+        /// message sent to a Unicast Address. When the number goes to 0 the retransmissions stop.
+        let remainingNumberOfRetransmissionsWithoutProgress = remainingNumberOfUnicastRetransmissions.withoutProgress
         
-        // Find the source Element.
-        guard let provisionerNode = meshNetwork.localProvisioner?.node,
-              let element = provisionerNode.element(withAddress: segment.source) else {
+        /// The initial value of the SAR Unicast Retransmissions timer.
+        let interval = networkManager.networkParameters.unicastRetransmissionsInterval(for: ttl)
+        
+        // Start the SAR Unicast Retransmissions timer.
+        unicastRetransmissionsTimers[sequenceZero] = BackgroundTimer.scheduledTimer(
+            withTimeInterval: interval, repeats: false, queue: mutex
+        ) { [weak self] _ in
+            guard let self = self else { return }
+            // The timer has expired, remove it.
+            self.unicastRetransmissionsTimers.removeValue(forKey: sequenceZero)
+            
+            // When the SAR Unicast Retransmissions timer expires and either the remaining
+            // number of retransmissions or the remaining number of retransmissions without progress is 0,
+            // the lower transport layer shall cancel the transmission of the Upper Transport PDU,
+            // shall delete the number of retransmissions value and the number of retransmissions without progress value,
+            // shall remove the destination address and the SeqAuth stored for this segmented message,
+            // and shall notify the upper transport layer that the transmission of the Upper Transport PDU has timed out.
+            guard remainingNumberOfRetransmissions > 0 && remainingNumberOfRetransmissionsWithoutProgress > 0 else {
+                self.cancelTransmissionOfSegments(with: sequenceZero, error: LowerTransportError.timeout)
+                return
+            }
+            // Decrement both counters. As the SAR Unicast Retransmission timer
+            // has expired, no progress has been made.
+            self.remainingNumberOfUnicastRetransmissions[sequenceZero] = (
+                remainingNumberOfRetransmissions - 1,
+                remainingNumberOfRetransmissionsWithoutProgress - 1
+            )
+            // Send again unacknowledged segments and restart the timer.
+            self.sendSegments(for: sequenceZero)
+        }
+    }
+    
+    /// Starts the SAR Multicast Retransmissions timer for the message with given
+    /// `sequenceZero`.
+    ///
+    /// If the remaining number of retransmissions must be set before the timer is started.
+    ///
+    /// - parameter sequenceZero: The key to get segments from the map.
+    func startMulticastRetransmissionsTimer(for sequenceZero: UInt16) {
+        guard let networkManager = networkManager,
+              let remainingNumberOfRetransmissions = remainingNumberOfMulticastRetransmissions[sequenceZero] else {
             return
         }
-        /// Segment Acknowledgment Message is expected when the message is targeting
-        /// a Unicast Address.
-        var ackExpected: Bool?
         
-        // Send all the segments that have not been acknowledged yet.
-        for i in 0..<segments.count {
-            if let segment = segments[i] {
-                do {
-                    if ackExpected == nil {
-                        ackExpected = segment.destination.isUnicast
-                    }
-                    logger?.d(.lowerTransport, "Sending \(segment)")
-                    try networkManager.networkLayer.send(lowerTransportPdu: segment,
-                                                         ofType: .networkPdu, withTtl: ttl)
-                } catch {
-                    logger?.w(.lowerTransport, error)
-                    // Sending a segment failed.
-                    if !ackExpected! {
-                        segmentTransmissionTimers.removeValue(forKey: sequenceZero)?.invalidate()
-                        outgoingSegments.removeValue(forKey: sequenceZero)
-                        if segment.userInitiated && !message.isAcknowledged {
-                            networkManager.notifyAbout(error: error, duringSendingMessage: message,
-                                                       from: element, to: destination)
-                        }
-                        networkManager.upperTransportLayer
-                            .lowerTransportLayerDidSend(segmentedUpperTransportPduTo: segment.destination)
-                        return
-                    }
-                }
+        /// The initial value of the SAR Multicast Retransmissions timer.
+        let interval = networkManager.networkParameters.multicastRetransmissionsInterval
+        
+        // Start the SAR Multicast Retransmissions timer.
+        multicastRetransmissionsTimers[sequenceZero] = BackgroundTimer.scheduledTimer(
+            withTimeInterval: interval, repeats: false, queue: mutex
+        ) { [weak self] _ in
+            guard let self = self else { return }
+            // The timer has expired, remove it.
+            self.multicastRetransmissionsTimers.removeValue(forKey: sequenceZero)
+            
+            // When the SAR Multicast Retransmissions timer expires and the remaining
+            // number of retransmissions value is 0, the lower transport layer shall
+            // cancel the transmission of the Upper Transport PDU, shall delete the number
+            // of retransmissions value and the number of retransmissions without progress value,
+            // shall remove the destination address stored for this segmented message,
+            // and shall notify the higher layer that the transmission of the Upper Transport PDU
+            // has been completed.
+            guard remainingNumberOfRetransmissions > 0 else {
+                self.cancelTransmissionOfSegments(with: sequenceZero, error: nil)
+                return
             }
+            // Decrement the counter.
+            self.remainingNumberOfMulticastRetransmissions[sequenceZero] = remainingNumberOfRetransmissions - 1
+            // Send again unacknowledged segments and restart the timer.
+            self.sendSegments(for: sequenceZero)
         }
-        // It is recommended to send all Lower Transport PDUs that are being sent
-        // to a Group or Virtual Address multiple times, introducing small random
-        // delays between repetitions. The specification does not say what small
-        // random delay is, so assuming 0.5-1.5 second.
-        if !ackExpected! {
-            let interval = TimeInterval.random(in: 0.500...1.500)
-            BackgroundTimer.scheduledTimer(withTimeInterval: interval, repeats: false) { [weak self] _ in
-                guard let self = self,
-                      let networkManager = self.networkManager else { return }
-                var destination: Address?
-                for i in 0..<segments.count {
-                    if let segment = segments[i] {
-                        if destination == nil {
-                            destination = segment.destination
-                        }
-                        self.logger?.d(.lowerTransport, "Sending \(segment)")
-                        do {
-                            try networkManager.networkLayer.send(lowerTransportPdu: segment,
-                                                                 ofType: .networkPdu, withTtl: ttl)
-                        } catch {
-                            self.logger?.w(.lowerTransport, error)
-                        }
-                    }
-                }
-                if let destination = destination {
-                    networkManager.upperTransportLayer
-                        .lowerTransportLayerDidSend(segmentedUpperTransportPduTo: destination)
-                }
-            }
+    }
+    
+    /// Removes all timers and counters associated with the message with given `sequenceZero`
+    /// and notifies the network manager about a success or failure.
+    ///
+    /// - parameters:
+    ///   - sequenceZero: The key to get segments from the map.
+    ///   - error: Optional error it transmission failed.
+    func cancelTransmissionOfSegments(with sequenceZero: UInt16, error: Error?) {
+        guard let networkManager = networkManager,
+              let (destination, segments) = outgoingSegments[sequenceZero], segments.count > 0,
+              let segment = segments.firstNotAcknowledged,
+              let message = segment.message else {
+            return
         }
         
-        segmentTransmissionTimers.removeValue(forKey: sequenceZero)?.invalidate()
-        if ackExpected ?? false, let (destination, segments) = outgoingSegments[sequenceZero], segments.hasMore {
-            if limit > 0 {
-                let interval = networkManager.networkParameters.transmissionTimerInterval(forTtl: ttl)
-                segmentTransmissionTimers[sequenceZero] =
-                    BackgroundTimer.scheduledTimer(withTimeInterval: interval, repeats: false) { [weak self] _ in
-                        self?.sendSegments(for: sequenceZero, limit: limit - 1)
-                    }
+        remainingNumberOfUnicastRetransmissions.removeValue(forKey: sequenceZero)
+        remainingNumberOfMulticastRetransmissions.removeValue(forKey: sequenceZero)
+        outgoingSegments.removeValue(forKey: sequenceZero)
+        segmentTtl.removeValue(forKey: sequenceZero)
+        
+        // Notify user about a timeout only if sending the message was initiated
+        // by the user (that means it is not sent as an automatic response to a
+        // acknowledged request) and if the message is not acknowledged
+        // (in which case the Access Layer may retry).
+        if segment.userInitiated && !message.isAcknowledged {
+            // Find the source Element.
+            guard let provisionerNode = meshNetwork.localProvisioner?.node,
+                  let element = provisionerNode.element(withAddress: segment.source) else {
+                return
+            }
+            if let error = error {
+                networkManager.notifyAbout(error: error,
+                                           duringSendingMessage: message,
+                                           from: element, to: destination)
             } else {
-                // A limit has been reached and some segments were not ACK.
-                if segment.userInitiated && !message.isAcknowledged {
-                    networkManager.notifyAbout(error: LowerTransportError.timeout,
-                                               duringSendingMessage: message,
-                                               from: element, to: destination)
-                }
-                networkManager.upperTransportLayer
-                    .lowerTransportLayerDidSend(segmentedUpperTransportPduTo: segment.destination)
-                outgoingSegments.removeValue(forKey: sequenceZero)
+                networkManager.notifyAbout(deliveringMessage: segment.message!,
+                                           from: element, to: destination)
             }
-        } else {
-            // All segments have been successfully sent to a Group Address.
-            networkManager.notifyAbout(deliveringMessage: message,
-                                       from: element, to: destination)
-            outgoingSegments.removeValue(forKey: sequenceZero)
         }
+        networkManager.upperTransportLayer
+            .lowerTransportLayerDidSend(segmentedUpperTransportPduTo: segment.destination)
     }
 }
 
@@ -816,6 +960,11 @@ private extension Array where Element == SegmentedMessage? {
     /// Returns the first not yet acknowledged segment.
     var firstNotAcknowledged: SegmentedMessage? {
         return first { $0 != nil }!
+    }
+    
+    /// Returns a list of unacknowledged segments.
+    var unacknowledged: [SegmentedMessage] {
+        return compactMap { $0 }
     }
     
     /// Converts the list of segments into either an `AccessMessage`,

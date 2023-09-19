@@ -45,10 +45,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // configuration values.
         meshNetworkManager = MeshNetworkManager()
         meshNetworkManager.networkParameters = .custom { builder in
-            builder.setAcknowledgmentTimerInterval(0.06, andMinimumDelayIncrement: 2.5)
-            builder.transmissionTimerInterval = 0.600
+            // Configure SAR Receiver properties
             builder.discardTimeout = 10.0
-            builder.retransmissionLimit = 2
+            builder.setAcknowledgmentTimerInterval(0.06, andMinimumDelayIncrement: 2.5)
+            builder.retranssmitSegmentAcknowledgmentMessages(1, timesWhenNumberOfSegmentsIsGreaterThan: 3)
+            
+            // Configure message configuration
             builder.acknowledgmentMessageInterval = 4.2
             // As the interval has been increased, the timeout can be adjusted.
             // The acknowledged message will be repeated after 4.2 seconds,

@@ -77,8 +77,16 @@ public struct NetworkParameters {
     private var _sarSegmentsThreshold: UInt8 = 0b00011          // 3
     private var _sarAcknowledgmentRetransmissionsCount: UInt8 = 0b00 // 0
     
-    private var _transmissionTimerInterval: TimeInterval = 0.200
-    private var _retransmissionLimit: Int = 5
+    // MARK: - SAR Transmitter states
+    private var _sarSegmentIntervalStep: UInt8 = 0b0101         // (n+1)*10 ms = 60 ms
+    private var _sarUnicastRetransmissionsCount: UInt8 = 0b0010 // 3
+    private var _sarUnicastRetransmissionsWithoutProgressCount: UInt8 = 0b0010 // 3
+    private var _sarUnicastRetransmissionsIntervalStep: UInt8 = 0b0111 // (n+1)*25 ms = 200 ms
+    private var _sarUnicastRetransmissionsIntervalIncrement: UInt8 = 0b0001 // (n+1)*25 ms = 50 ms
+    private var _sarMulticastRetransmissionsCount: UInt8 = 0b0010 // 3
+    private var _sarMulticastRetransmissionsIntervalStep: UInt8 = 0b1001 // (n+1)*25 ms = 250 ms
+
+    // MARK: - Acknowledge messages configuration states
     private var _acknowledgmentMessageTimeout: TimeInterval = 30.0
     private var _acknowledgmentMessageInterval: TimeInterval = 2.0
     
@@ -353,39 +361,248 @@ public struct NetworkParameters {
     /// - seeAlso: ``retranssmitSegmentAcknowledgmentMessages(_:timesWhenNumberOfSegmentsIsGreaterThan:)``
     public var sarAcknowledgmentRetransmissionsCount: UInt8 {
         get { return _sarAcknowledgmentRetransmissionsCount }
-        set { _sarAcknowledgmentRetransmissionsCount = min(newValue, 0b11) }
+        set { _sarAcknowledgmentRetransmissionsCount = min(newValue, 0b11) } // Valid range: 0-3
     }
     
-    /// The time within which a Segment Acknowledgment message is
-    /// expected to be received after a segment of a segmented message has
-    /// been sent. When the timer is fired, the non-acknowledged segments
-    /// are repeated, at most ``retransmissionLimit`` times.
+    // MARK: - SAR Transmitter state implementation
+    
+    /// The **SAR Segment Interval Step state** is a 4-bit value that controls
+    /// the interval between transmissions of segments of a segmented message using
+    /// a ADV bearer.
     ///
-    /// The transmission timer shall be set to a minimum of
-    /// 200 + 50 * TTL milliseconds. The TTL dependent part is added
-    /// automatically, and this value shall specify only the constant part.
+    /// The segment transmission interval is the number of milliseconds calculated
+    /// using the following formula:
+    /// ```
+    /// (SAR Segment Interval Step + 1) * 10 ms
+    /// ```
+    /// The default value of the **SAR Segment Interval Step state** is `0b0101`
+    /// (60 milliseconds).
     ///
-    /// If the bearer is using GATT, it is recommended to set the transmission
-    /// interval longer than the connection interval, so that the acknowledgment
-    /// had a chance to be received.
+    /// - warning: This state is not used for the GATT bearer, which is using
+    ///            connection interval parameters set by the device instead.
+    ///            As the GATT bearer is the only bearer supported on iOS, this
+    ///            state is not used.
+    ///
+    /// - seeAlso: ``segmentTransmissionInterval``
+    public var sarSegmentIntervalStep: UInt8 {
+        get { return _sarSegmentIntervalStep }
+        set { _sarSegmentIntervalStep = min(newValue, 0b1111) } // Valid range: 0-15
+    }
+    
+    /// The interval between transmissions of segments of a segmented message.
+    ///
+    /// The value ot this interval is indicated by **SAR Segment Interval Step state**.
+    ///
+    /// - seeAlso: ``sarSegmentIntervalStep``
+    public var segmentTransmissionInterval: TimeInterval {
+        get { return Double(_sarSegmentIntervalStep + 1) * 0.01 }
+        set { _sarSegmentIntervalStep = UInt8(min(0.16, max(newValue, 0.01)) * 100) - 1 }
+    }
+    
+    /// The **SAR Unicast Retransmissions Count state** is a 4-bit value that
+    /// controls the maximum number of transmissions of segments of segmented
+    /// messages to a Unicast destination.
+    ///
+    /// The maximum number of transmissions of a segment is given with the formula:
+    /// ```
+    /// SAR Unicast Retransmissions Count + 1
+    /// ```
+    /// For example, `0b0000` represents a single transmission, and `0b0111`
+    /// represents 8 transmissions.
+    ///
+    /// The default value of the **SAR Unicast Retransmissions Count state** is
+    /// `0b0010` (3 transmissions).
+    public var sarUnicastRetransmissionsCount: UInt8 {
+        get { return _sarUnicastRetransmissionsCount }
+        set { _sarUnicastRetransmissionsCount = min(newValue, 0b1111) } // Valid range: 0-15
+    }
+    
+    /// The **SAR Unicast Retransmissions Without Progress Count state**
+    /// is a 4-bit value that controls the maximum number of transmissions of segments
+    /// of segmented messages to a Unicast destination without progress
+    /// (i.e., without newly marking any segment as acknowledged).
+    ///
+    /// The maximum number of transmissions of a segment without progress is
+    /// calculated using the formula:
+    /// ```
+    /// SAR Unicast Retransmissions Without Progress Count + 1
+    /// ```
+    /// For example, `0b0000` represents a single transmission, and `0b0111`
+    /// represents 8 transmissions.
+    ///
+    /// The default value of the **SAR Unicast Retransmissions Without Progress
+    /// Count state** is `0b0010` (3 transmissions).
+    ///
+    /// - note: The value of this state should be set to a value greater than the
+    ///         value of the **SAR Acknowledgement Retransmissions Count**
+    ///         on a peer node. This helps prevent the SAR transmitter from
+    ///         abandoning the SAR prematurely.
+    public var sarUnicastRetransmissionsWithoutProgressCount: UInt8 {
+        get { return _sarUnicastRetransmissionsWithoutProgressCount }
+        set { _sarUnicastRetransmissionsWithoutProgressCount = min(newValue, 0b1111) } // Valid range: 0-15
+    }
+    
+    /// The **SAR Unicast Retransmissions Interval Step state** is a 4-bit value
+    /// that controls the interval between retransmissions of segments of a segmented
+    /// message for a destination that is a Unicast Address.
+    ///
+    /// The unicast retransmissions interval step is the number of milliseconds calculated
+    /// using the following formula:
+    /// ```
+    /// (SAR Unicast Retransmissions Interval Step + 1) * 25 (ms)
+    /// ```
+    /// The default value of the **SAR Unicast Retransmissions Interval Step**
+    /// is `0b0111` (200 milliseconds).
+    ///
+    /// - seeAlso: ``unicastRetransmissionsIntervalStep``
+    public var sarUnicastRetransmissionsIntervalStep: UInt8 {
+        get { return _sarUnicastRetransmissionsIntervalStep }
+        set { _sarUnicastRetransmissionsIntervalStep = min(newValue, 0b1111) } // Valid range: 0-15
+    }
+    
+    /// The interval between retransmissions of segments of a segmented
+    /// message for a destination that is a Unicast Address.
+    ///
+    /// Valid range is from 25 ms to 400 ms with 25 ms interval.
+    /// - seeAlso: ``sarUnicastRetransmissionsIntervalStep``
+    public var unicastRetransmissionsIntervalStep: TimeInterval {
+        get { return Double(_sarUnicastRetransmissionsIntervalStep + 1) * 0.025 }
+        set { _sarUnicastRetransmissionsIntervalStep = UInt8(min(0.4, max(newValue, 0.025)) * 40) - 1 }
+    }
+    
+    /// The **SAR Unicast Retransmissions Interval Increment state** is a 4-bit
+    /// value that controls the incremental component of the interval between
+    /// retransmissions of segments of a segmented message for a destination
+    /// that is a Unicast Address.
+    ///
+    /// The unicast retransmissions interval increment is the number of milliseconds
+    /// calculated using the following formula:
+    /// ```
+    /// (SAR Unicast Retransmissions Interval Increment + 1) * 25 (ms)
+    /// ```
+    /// The default value of the **SAR Unicast Retransmissions Interval Increment state**
+    /// is `0b0001` (50 milliseconds).
+    public var sarUnicastRetransmissionsIntervalIncrement: UInt8 {
+        get { return _sarUnicastRetransmissionsIntervalIncrement }
+        set { _sarUnicastRetransmissionsIntervalIncrement = min(newValue, 0b1111) } // Valid range: 0-15
+    }
+
+    /// The incremental component of the interval between retransmissions of segments
+    /// of a segmented message for a destination that is a Unicast Address.
+    ///
+    /// The increment component is multiplied by `TTL - 1` when calculating the
+    /// initial value of the SAR Unicast Retransmissions timer.
+    ///
+    /// Valid range is from 25 ms to 400 ms with 25 ms interval.
+    /// - seeAlso: ``sarUnicastRetransmissionsIntervalIncrement``
+    public var unicastRetransmissionsIntervalIncrement: TimeInterval {
+        get { return Double(_sarUnicastRetransmissionsIntervalIncrement + 1) * 0.025 }
+        set { _sarUnicastRetransmissionsIntervalIncrement = UInt8(min(0.4, max(newValue, 0.025)) * 40) - 1 }
+    }
+    
+    /// The initial value of the SAR Unicast Retransmissions timer.
+    ///
+    /// - parameter ttl: The TTL value with the message is being sent.
+    /// - returns: The initial value of the SAR Unicast Retransmissions timer.
+    internal func unicastRetransmissionsInterval(for ttl: UInt8) -> TimeInterval {
+        // If the value of the TTL field of the message is 0, the initial value
+        // of the timer shall be set to the unicast retransmissions interval step.
+        if ttl == 0 {
+            return unicastRetransmissionsIntervalStep
+        }
+        return unicastRetransmissionsIntervalStep + unicastRetransmissionsIntervalIncrement * Double(ttl - 1)
+    }
+    
+    /// The **SAR Multicast Retransmissions Count state** is a 4-bit value that
+    /// controls the maximum number of transmissions of segments of segmented
+    /// messages to a group address or a virtual address.
+    ///
+    /// The maximum number of transmissions of a segment is calculated with the following formula:
+    /// ```
+    /// SAR Multicast Retransmissions Count + 1
+    /// ```
+    /// For example, `0b0000` represents a single transmission, and `0b0111`
+    /// represents 8 transmissions.
+    ///
+    /// The default value of the **SAR Multicast Retransmissions Count state** is
+    /// `0b0010` (3 transmissions).
+    public var sarMulticastRetransmissionsCount: UInt8 {
+        get { return _sarMulticastRetransmissionsCount }
+        set { _sarMulticastRetransmissionsCount = min(newValue, 0b1111) } // Valid range: 0-15
+    }
+    
+    /// **The SAR Multicast Retransmissions Interval Step state** is a 4-bit
+    /// value that controls the interval between retransmissions of segments of a
+    /// segmented message for a destination that is a group address or a virtual address.
+    ///
+    /// The multicast retransmissions interval is the number of milliseconds
+    /// calculated using the following formula:
+    /// ```
+    /// SAR Multicast Retransmissions Interval Step + 1
+    /// ```
+    /// The default value of the **SAR Multicast Retransmissions Interval Step state** is
+    /// `0b1001` (250 milliseconds).
+    ///
+    /// - seeAlso: ``multicastRetransmissionsInterval``
+    public var sarMulticastRetransmissionsIntervalStep: UInt8 {
+        get { return _sarMulticastRetransmissionsIntervalStep }
+        set { _sarMulticastRetransmissionsIntervalStep = min(newValue, 0b1111) } // Valid range: 0-15
+    }
+    
+    /// The interval between retransmissions of segments of a segmented message for
+    /// a destination that is a Group Address or a Virtual Address.
+    ///
+    /// Valid range is from 25 ms to 400 ms with 25 ms interval.
+    ///
+    /// - seeAlso: ``sarMulticastRetransmissionsIntervalStep``
+    public var multicastRetransmissionsInterval: TimeInterval {
+        get { return Double(_sarMulticastRetransmissionsIntervalStep + 1) * 0.025 }
+        set { _sarMulticastRetransmissionsIntervalStep = UInt8(min(0.4, max(newValue, 0.025)) * 40) - 1 }
+    }
+    
+    /// This property used to control the time within which a Segment Acknowledgment
+    /// message was expected to be received after a segment of a segmented message has
+    /// been sent.
+    ///
+    /// When the timer was fired, the non-acknowledged segments were repeated, at most
+    /// ``retransmissionLimit`` times.
+    ///
+    /// Bluetooth Mesh Protocol 1.1 replaces the property with two states:
+    /// * **SAR Unicast Retransmissions Interval Step**
+    /// * **SAR Unicast Retransmissions Interval Increment**
+    ///
+    /// which control both the fixed part, and the part depending on the TTL value.
+    ///
+    /// - note: For segmented messages targeting a Group or Virtual Address, the value
+    ///         used to be fixed to 2, and now can be controller with **SAR Multicast
+    ///         Retransmissions Interval Step**.
+    /// - seeAlso: ``sarUnicastRetransmissionsIntervalStep``
+    /// - seeAlso: ``sarUnicastRetransmissionsIntervalIncrement``
+    /// - seeAlso: ``sarMulticastRetransmissionsIntervalStep``
+    @available(*, deprecated, renamed: "unicastRetransmissionsIntervalStep")
     public var transmissionTimerInterval: TimeInterval {
-        get { return _transmissionTimerInterval }
-        set { _transmissionTimerInterval = max(0.200, newValue) }
+        get { return unicastRetransmissionsIntervalStep }
+        set { _sarUnicastRetransmissionsIntervalStep = UInt8(min(0.4, max(newValue, 0.025)) * 40) - 1 }
     }
     
-    func transmissionTimerInterval(forTtl ttl: UInt8) -> TimeInterval {
-        return _transmissionTimerInterval + Double(ttl) * 0.050
-    }
-    
-    /// Number of times a non-acknowledged segment of a segmented message
-    /// will be retransmitted before the message will be cancelled.
+    /// This property used to control the number of times a non-acknowledged segment
+    /// of a segmented message was retransmitted before the message has been cancelled.
     ///
-    /// The limit may be decreased with increasing of ``transmissionTimerInterval``
-    /// as the target Node has more time to reply with the Segment
-    /// Acknowledgment message.
+    /// In Bluetooth Mesh Protocol 1.1 it has been replaced with two states:
+    /// * **SAR Unicast Retransmissions Count**
+    /// * **SAR Unicast Retransmissions Without Progress Count**
+    ///
+    /// - note: For a multicast transfer (to a Group or Virtual Address) the retransmission
+    ///         limit was fixed to 2. Now it can be controlled with
+    ///         ``sarMulticastRetransmissionsCount``.
+    ///
+    /// - seeAlso: ``sarUnicastRetransmissionsCount``
+    /// - seeAlso: ``sarUnicastRetransmissionsWithoutProgressCount``
+    /// - seeAlso: ``sarMulticastRetransmissionsCount``
+    @available(*, deprecated, renamed: "sarUnicastRetransmissionsCount")
     public var retransmissionLimit: Int {
-        get { return _retransmissionLimit }
-        set { _retransmissionLimit = max(2, newValue) }
+        get { return Int(_sarUnicastRetransmissionsCount) }
+        set { _sarUnicastRetransmissionsCount = UInt8(max(0b1111, min(newValue - 1, 0))) }
     }
     
     // MARK: - Acknowledged messages configuration implementation
