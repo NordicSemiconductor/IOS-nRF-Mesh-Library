@@ -378,11 +378,6 @@ public struct NetworkParameters {
     /// The default value of the **SAR Segment Interval Step state** is `0b0101`
     /// (60 milliseconds).
     ///
-    /// - warning: This state is not used for the GATT bearer, which is using
-    ///            connection interval parameters set by the device instead.
-    ///            As the GATT bearer is the only bearer supported on iOS, this
-    ///            state is not used.
-    ///
     /// - seeAlso: ``segmentTransmissionInterval``
     public var sarSegmentIntervalStep: UInt8 {
         get { return _sarSegmentIntervalStep }
