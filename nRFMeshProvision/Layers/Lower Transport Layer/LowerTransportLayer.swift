@@ -607,14 +607,20 @@ private extension LowerTransportLayer {
         // Ensure the ACK is for some message that has been sent.
         guard let networkManager = networkManager,
               let (destination, segments) = outgoingSegments[ack.sequenceZero],
+              ack.source == destination.address || ack.isOnBehalfOfLowPowerNode,
               let (total, withProgress) = remainingNumberOfUnicastRetransmissions[ack.sequenceZero],
-              ack.source == destination.address || ack.isOnBehalfOfLowPowerNode else {
+              let segment = segments.firstNotAcknowledged,
+              let message = segment.message else {
             return
         }
         
         // Is the target Node busy?
         guard !ack.isBusy else {
-            cancelTransmissionOfSegments(with: ack.sequenceZero, error: LowerTransportError.busy)
+            cancelTransmission(of: message,
+                               sentFrom: segment.source, to: destination,
+                               withSeqZero: ack.sequenceZero,
+                               onUserRequest: segment.userInitiated,
+                               error: LowerTransportError.busy)
             return
         }
         
@@ -633,7 +639,11 @@ private extension LowerTransportLayer {
         
         // If all the segments were acknowledged, notify the manager.
         if outgoingSegments[ack.sequenceZero]?.segments.hasMore == false {
-            cancelTransmissionOfSegments(with: ack.sequenceZero, error: nil)
+            cancelTransmission(of: message,
+                               sentFrom: segment.source, to: destination,
+                               withSeqZero: ack.sequenceZero,
+                               onUserRequest: segment.userInitiated,
+                               error: nil)
         } else {
             // Check if the SAR Unicast Retransmission timer is running.
             guard let _ = unicastRetransmissionsTimers[ack.sequenceZero] else {
@@ -780,6 +790,9 @@ private extension LowerTransportLayer {
     func startUnicastRetransmissionsTimer(for sequenceZero: UInt16) {
         guard let networkManager = networkManager,
               let remainingNumberOfUnicastRetransmissions = remainingNumberOfUnicastRetransmissions[sequenceZero],
+              let (destination, segments) = outgoingSegments[sequenceZero],
+              let segment = segments.firstNotAcknowledged,
+              let message = segment.message,
               let ttl = segmentTtl[sequenceZero] else {
             return
         }
@@ -808,7 +821,11 @@ private extension LowerTransportLayer {
             // shall remove the destination address and the SeqAuth stored for this segmented message,
             // and shall notify the upper transport layer that the transmission of the Upper Transport PDU has timed out.
             guard remainingNumberOfRetransmissions > 0 && remainingNumberOfRetransmissionsWithoutProgress > 0 else {
-                self.cancelTransmissionOfSegments(with: sequenceZero, error: LowerTransportError.timeout)
+                self.cancelTransmission(of: message,
+                                        sentFrom: segment.source, to: destination,
+                                        withSeqZero: sequenceZero,
+                                        onUserRequest: segment.userInitiated,
+                                        error: LowerTransportError.timeout)
                 return
             }
             // Decrement both counters. As the SAR Unicast Retransmission timer
@@ -830,7 +847,10 @@ private extension LowerTransportLayer {
     /// - parameter sequenceZero: The key to get segments from the map.
     func startMulticastRetransmissionsTimer(for sequenceZero: UInt16) {
         guard let networkManager = networkManager,
-              let remainingNumberOfRetransmissions = remainingNumberOfMulticastRetransmissions[sequenceZero] else {
+              let remainingNumberOfRetransmissions = remainingNumberOfMulticastRetransmissions[sequenceZero],
+              let (destination, segments) = outgoingSegments[sequenceZero],
+              let segment = segments.firstNotAcknowledged,
+              let message = segment.message else {
             return
         }
         
@@ -853,7 +873,10 @@ private extension LowerTransportLayer {
             // and shall notify the higher layer that the transmission of the Upper Transport PDU
             // has been completed.
             guard remainingNumberOfRetransmissions > 0 else {
-                self.cancelTransmissionOfSegments(with: sequenceZero, error: nil)
+                self.cancelTransmission(of: message,
+                                        sentFrom: segment.source, to: destination,
+                                        withSeqZero: sequenceZero,
+                                        onUserRequest: segment.userInitiated, error: nil)
                 return
             }
             // Decrement the counter.
@@ -869,11 +892,11 @@ private extension LowerTransportLayer {
     /// - parameters:
     ///   - sequenceZero: The key to get segments from the map.
     ///   - error: Optional error it transmission failed.
-    func cancelTransmissionOfSegments(with sequenceZero: UInt16, error: Error?) {
-        guard let networkManager = networkManager,
-              let (destination, segments) = outgoingSegments[sequenceZero], segments.count > 0,
-              let segment = segments.firstNotAcknowledged,
-              let message = segment.message else {
+    func cancelTransmission(of message: MeshMessage,
+                            sentFrom source: Address, to destination: MeshAddress,
+                            withSeqZero sequenceZero: UInt16,
+                            onUserRequest userInitiated: Bool, error: Error?) {
+        guard let networkManager = networkManager else {
             return
         }
         
@@ -882,27 +905,27 @@ private extension LowerTransportLayer {
         outgoingSegments.removeValue(forKey: sequenceZero)
         segmentTtl.removeValue(forKey: sequenceZero)
         
-        // Notify user about a timeout only if sending the message was initiated
-        // by the user (that means it is not sent as an automatic response to a
-        // acknowledged request) and if the message is not acknowledged
-        // (in which case the Access Layer may retry).
-        if segment.userInitiated && !message.isAcknowledged {
-            // Find the source Element.
-            guard let provisionerNode = meshNetwork.localProvisioner?.node,
-                  let element = provisionerNode.element(withAddress: segment.source) else {
-                return
-            }
-            if let error = error {
+        // Find the source Element.
+        guard let provisionerNode = meshNetwork.localProvisioner?.node,
+              let element = provisionerNode.element(withAddress: source) else {
+            return
+        }
+        if let error = error {
+            // Notify user about an error only if sending the message was initiated
+            // by the user (that means it is not sent as an automatic response to a
+            // acknowledged request) and if the message is not acknowledged
+            // (in which case the Access Layer may retry).
+            if userInitiated && !message.isAcknowledged {
                 networkManager.notifyAbout(error: error,
                                            duringSendingMessage: message,
                                            from: element, to: destination)
-            } else {
-                networkManager.notifyAbout(deliveringMessage: segment.message!,
-                                           from: element, to: destination)
             }
+        } else {
+            networkManager.notifyAbout(deliveringMessage: message,
+                                       from: element, to: destination)
         }
         networkManager.upperTransportLayer
-            .lowerTransportLayerDidSend(segmentedUpperTransportPduTo: segment.destination)
+            .lowerTransportLayerDidSend(segmentedUpperTransportPduTo: destination.address)
     }
 }
 
@@ -959,7 +982,7 @@ private extension Array where Element == SegmentedMessage? {
     
     /// Returns the first not yet acknowledged segment.
     var firstNotAcknowledged: SegmentedMessage? {
-        return first { $0 != nil }!
+        return first { $0 != nil } ?? nil
     }
     
     /// Returns a list of unacknowledged segments.
