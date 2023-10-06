@@ -502,7 +502,13 @@
 		EF89E25E44020283743D1D18AE83BA57 /* SensorCadenceSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94C807184D46FB256859F6DA4A618898 /* SensorCadenceSet.swift */; };
 		EFB222F46E7B57B545B3C3F6ECD42CF5 /* Utils+Foundation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80CCC2677D931811101207B70F1D6228 /* Utils+Foundation.swift */; };
 		F07563B92AB4680A0075E7EF /* Task+TimeInterval.swift in Sources */ = {isa = PBXBuildFile; fileRef = F07563B82AB4680A0075E7EF /* Task+TimeInterval.swift */; };
+		F07563BC2AB9E52E0075E7EF /* SarTransmitterGet.swift in Sources */ = {isa = PBXBuildFile; fileRef = F07563BB2AB9E52E0075E7EF /* SarTransmitterGet.swift */; };
+		F07563BE2AB9EC120075E7EF /* SarReceiverGet.swift in Sources */ = {isa = PBXBuildFile; fileRef = F07563BD2AB9EC120075E7EF /* SarReceiverGet.swift */; };
+		F07563C02AB9EDB70075E7EF /* SarTransmitterStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = F07563BF2AB9EDB70075E7EF /* SarTransmitterStatus.swift */; };
 		F09F579DFFBD33466CB3C045FAD0981E /* TimeMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB7E6A86EE871B2E1499B43B0C4CE817 /* TimeMessage.swift */; };
+		F0AA20542AD0266200CF81FF /* SarTransmitterSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0AA20532AD0266200CF81FF /* SarTransmitterSet.swift */; };
+		F0AA20562AD0282A00CF81FF /* SarReceiverStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0AA20552AD0282A00CF81FF /* SarReceiverStatus.swift */; };
+		F0AA20582AD02FD400CF81FF /* SarReceiverSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0AA20572AD02FD400CF81FF /* SarReceiverSet.swift */; };
 		F0D0145FEA718A4D20BA3CF003EE500B /* SHA3.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1471C25B3AEE59C2C0D70DD7E0431093 /* SHA3.swift */; };
 		F1B4D93E01167049E4B746F476E96CDE /* PrivateNodeIdentityGet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1782ABAF435EBD66B63075F4FB56F58C /* PrivateNodeIdentityGet.swift */; };
 		F26162790FCDA053BE098BB626049F7C /* SceneStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A401551653E1223CB3286A932BE28ED /* SceneStatus.swift */; };
@@ -1109,6 +1115,12 @@
 		EFF7D0D9D63091066805D424BE501AF6 /* CBC.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = CBC.swift; path = Sources/CryptoSwift/BlockMode/CBC.swift; sourceTree = "<group>"; };
 		F0248680CCF0682F459FD8E1271B6360 /* GenericPowerDefautGet.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = GenericPowerDefautGet.swift; sourceTree = "<group>"; };
 		F07563B82AB4680A0075E7EF /* Task+TimeInterval.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Task+TimeInterval.swift"; sourceTree = "<group>"; };
+		F07563BB2AB9E52E0075E7EF /* SarTransmitterGet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SarTransmitterGet.swift; sourceTree = "<group>"; };
+		F07563BD2AB9EC120075E7EF /* SarReceiverGet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SarReceiverGet.swift; sourceTree = "<group>"; };
+		F07563BF2AB9EDB70075E7EF /* SarTransmitterStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SarTransmitterStatus.swift; sourceTree = "<group>"; };
+		F0AA20532AD0266200CF81FF /* SarTransmitterSet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SarTransmitterSet.swift; sourceTree = "<group>"; };
+		F0AA20552AD0282A00CF81FF /* SarReceiverStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SarReceiverStatus.swift; sourceTree = "<group>"; };
+		F0AA20572AD02FD400CF81FF /* SarReceiverSet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SarReceiverSet.swift; sourceTree = "<group>"; };
 		F0BF8091532C0A82E902EA5753549EE9 /* SceneGet.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SceneGet.swift; sourceTree = "<group>"; };
 		F147AFFBAF5C8233E7152D1F827C039C /* CryptoSwift-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "CryptoSwift-dummy.m"; sourceTree = "<group>"; };
 		F1FEE00E75546D7065D0853901D8DBE9 /* LightLCOccupancyModeSet.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LightLCOccupancyModeSet.swift; sourceTree = "<group>"; };
@@ -1199,6 +1211,7 @@
 				1B28B2BD0E1C4D49AC88097DB49D8B1B /* Configuration */,
 				7BBA9A3297FD38E604964D1DEB089F0A /* Private Beacon */,
 				FF1E22F1031DFEA1A10677AE20C81863 /* Remote Provisioning */,
+				F07563BA2AB9E1EB0075E7EF /* SAR Configuration */,
 			);
 			path = Foundation;
 			sourceTree = "<group>";
@@ -2038,6 +2051,19 @@
 			name = "Development Pods";
 			sourceTree = "<group>";
 		};
+		F07563BA2AB9E1EB0075E7EF /* SAR Configuration */ = {
+			isa = PBXGroup;
+			children = (
+				F07563BB2AB9E52E0075E7EF /* SarTransmitterGet.swift */,
+				F07563BF2AB9EDB70075E7EF /* SarTransmitterStatus.swift */,
+				F0AA20532AD0266200CF81FF /* SarTransmitterSet.swift */,
+				F07563BD2AB9EC120075E7EF /* SarReceiverGet.swift */,
+				F0AA20552AD0282A00CF81FF /* SarReceiverStatus.swift */,
+				F0AA20572AD02FD400CF81FF /* SarReceiverSet.swift */,
+			);
+			path = "SAR Configuration";
+			sourceTree = "<group>";
+		};
 		F67CEF7482C8CB30C589420932FD14B7 /* Provisioning */ = {
 			isa = PBXGroup;
 			children = (
@@ -2260,6 +2286,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F07563C02AB9EDB70075E7EF /* SarTransmitterStatus.swift in Sources */,
 				E96966B036CA716416CD306441E5C0EA /* AccessError.swift in Sources */,
 				B82D59EF565F08B1AB1C815EC1AA1964 /* AccessLayer.swift in Sources */,
 				1EB3552DD719BEC4D7FD77CC5829691C /* AccessMessage.swift in Sources */,
@@ -2419,6 +2446,7 @@
 				DE2AFCD4839DDE5D05C70F2E6E27F16E /* GenericPowerRangeGet.swift in Sources */,
 				A4466E6C5B8328C14C91206F97D3C09F /* GenericPowerRangeSet.swift in Sources */,
 				B6A151F33BF530D087D5A7C0FFB45BE3 /* GenericPowerRangeSetUnacknowledged.swift in Sources */,
+				F0AA20582AD02FD400CF81FF /* SarReceiverSet.swift in Sources */,
 				3B9740276711F25100EFBC4282F863A6 /* GenericPowerRangeStatus.swift in Sources */,
 				2F1C9EDAE7857FF7693CDB4C07636EA6 /* Group.swift in Sources */,
 				775DBF3D9ADD49153F9F96D995E4EA9A /* Group+MeshNetwork.swift in Sources */,
@@ -2429,6 +2457,7 @@
 				EA28D8F614BC9075177E4AFC203C293C /* Int+Hex.swift in Sources */,
 				EF4323C7BC9E3782E9842C730C784370 /* IvIndex.swift in Sources */,
 				C4CF9250AF3EF93EE78508B2E210E35C /* Key.swift in Sources */,
+				F07563BC2AB9E52E0075E7EF /* SarTransmitterGet.swift in Sources */,
 				8694C69DC092143C3F92A4A2585ED3D9 /* KeyedDecodingContainer+Legacy.swift in Sources */,
 				E8C5380D5A9FA410761939502322FF38 /* KeyIndex.swift in Sources */,
 				49EBC5C5D15905D9D8FCD63295E53817 /* KeyRefreshPhase.swift in Sources */,
@@ -2455,6 +2484,7 @@
 				0F7116C1EABE5EA23A82FBFCA150D23B /* LightHSLDefaultStatus.swift in Sources */,
 				33E6EB35E6B0E5EE6597DC98EEA3D012 /* LightHSLGet.swift in Sources */,
 				C33D3E9D24731D540A337A96F72B63C3 /* LightHSLHueGet.swift in Sources */,
+				F07563BE2AB9EC120075E7EF /* SarReceiverGet.swift in Sources */,
 				F8966CE217BE97B7DEA52637108CFC5C /* LightHSLHueSet.swift in Sources */,
 				436B9E0AC48AAF9F1A5D26314265C9F6 /* LightHSLHueSetUnacknowledged.swift in Sources */,
 				A42B8A6DC62E8EA5A3E6EAC23D0DDBA4 /* LightHSLHueStatus.swift in Sources */,
@@ -2559,6 +2589,7 @@
 				F71FF4343D1DB5C41A57A19E5EB9BD5F /* nRFMeshProvision-dummy.m in Sources */,
 				FD679EA7F8FDE0797704178842F9F63B /* OnPowerUp.swift in Sources */,
 				74856D4FFBF14D8EF439F562A4878640 /* Oob.swift in Sources */,
+				F0AA20562AD0282A00CF81FF /* SarReceiverStatus.swift in Sources */,
 				529EC8DE2A31C1E70056BB48 /* RemoteProvisioningClientHandler.swift in Sources */,
 				17D78F135D30A1EAE95E7B9F284DAD31 /* OptionSet+Data.swift in Sources */,
 				475A7EEE608AC49C122DEE79B78894C1 /* PBGattBearer.swift in Sources */,
@@ -2622,6 +2653,7 @@
 				A74584A7566674E3642D1E3DFF362A5D /* SceneRegisterStatus.swift in Sources */,
 				28FCF13AFE28869EF104806940978EE8 /* Scenes.swift in Sources */,
 				F26162790FCDA053BE098BB626049F7C /* SceneStatus.swift in Sources */,
+				F0AA20542AD0266200CF81FF /* SarTransmitterSet.swift in Sources */,
 				AEDA110B0A40BB769C58DFF28E257617 /* SceneStore.swift in Sources */,
 				A2A02480C5E00107F08CC36FFAE00910 /* SceneStoreUnacknowledged.swift in Sources */,
 				A6583681F3854250E9FE918DE327F4ED /* SchedulerActionGet.swift in Sources */,
