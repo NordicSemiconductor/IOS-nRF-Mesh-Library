@@ -509,6 +509,7 @@
 		F0AA20542AD0266200CF81FF /* SarTransmitterSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0AA20532AD0266200CF81FF /* SarTransmitterSet.swift */; };
 		F0AA20562AD0282A00CF81FF /* SarReceiverStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0AA20552AD0282A00CF81FF /* SarReceiverStatus.swift */; };
 		F0AA20582AD02FD400CF81FF /* SarReceiverSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0AA20572AD02FD400CF81FF /* SarReceiverSet.swift */; };
+		F0AA205A2AD0335A00CF81FF /* SarConfigurationClientHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0AA20592AD0335A00CF81FF /* SarConfigurationClientHandler.swift */; };
 		F0D0145FEA718A4D20BA3CF003EE500B /* SHA3.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1471C25B3AEE59C2C0D70DD7E0431093 /* SHA3.swift */; };
 		F1B4D93E01167049E4B746F476E96CDE /* PrivateNodeIdentityGet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1782ABAF435EBD66B63075F4FB56F58C /* PrivateNodeIdentityGet.swift */; };
 		F26162790FCDA053BE098BB626049F7C /* SceneStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A401551653E1223CB3286A932BE28ED /* SceneStatus.swift */; };
@@ -1121,6 +1122,7 @@
 		F0AA20532AD0266200CF81FF /* SarTransmitterSet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SarTransmitterSet.swift; sourceTree = "<group>"; };
 		F0AA20552AD0282A00CF81FF /* SarReceiverStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SarReceiverStatus.swift; sourceTree = "<group>"; };
 		F0AA20572AD02FD400CF81FF /* SarReceiverSet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SarReceiverSet.swift; sourceTree = "<group>"; };
+		F0AA20592AD0335A00CF81FF /* SarConfigurationClientHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SarConfigurationClientHandler.swift; sourceTree = "<group>"; };
 		F0BF8091532C0A82E902EA5753549EE9 /* SceneGet.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SceneGet.swift; sourceTree = "<group>"; };
 		F147AFFBAF5C8233E7152D1F827C039C /* CryptoSwift-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "CryptoSwift-dummy.m"; sourceTree = "<group>"; };
 		F1FEE00E75546D7065D0853901D8DBE9 /* LightLCOccupancyModeSet.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LightLCOccupancyModeSet.swift; sourceTree = "<group>"; };
@@ -1967,6 +1969,7 @@
 				66173E70FD75F578CD86F5F1464A6A1F /* ConfigurationClientHandler.swift */,
 				9D08634301E6D84D84955F53FA95C861 /* ConfigurationServerHandler.swift */,
 				8A5002A8F60EBA2BF2516B12275D85B3 /* PrivateBeaconClientHandler.swift */,
+				F0AA20592AD0335A00CF81FF /* SarConfigurationClientHandler.swift */,
 				529EC8DD2A31C1E70056BB48 /* RemoteProvisioningClientHandler.swift */,
 				F7202C526200AAE3065CAE829C61211C /* SceneClientHandler.swift */,
 			);
@@ -2406,6 +2409,7 @@
 				789EAC345BB61DDC015375B24DAD0CA9 /* GenericBatteryGet.swift in Sources */,
 				5C771A14C75D349EF0A6AA80111D0142 /* GenericBatteryStatus.swift in Sources */,
 				81520C95C9AAC155057B76F47172FA68 /* GenericDefaultTransitionTimeGet.swift in Sources */,
+				F0AA205A2AD0335A00CF81FF /* SarConfigurationClientHandler.swift in Sources */,
 				A2877E49C227E878C41958012257B24E /* GenericDefaultTransitionTimeSet.swift in Sources */,
 				C4D460097CBF1969C09D84111D40EA31 /* GenericDefaultTransitionTimeSetUnacknowledged.swift in Sources */,
 				09D7CC592BCF143A1B49780CE0449186 /* GenericDefaultTransitionTimeStatus.swift in Sources */,

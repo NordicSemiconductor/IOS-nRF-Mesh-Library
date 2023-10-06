@@ -239,10 +239,12 @@ internal extension Element {
         insert(model: Model(sigModelId: .healthClientModelId), at: 3)
         insert(model: Model(sigModelId: .privateBeaconClientModelId,
                             delegate: PrivateBeaconClientHandler(meshNetwork)), at: 4)
+        insert(model: Model(sigModelId: .sarConfigurationClientModelId,
+                            delegate: SarConfigurationClientHandler(meshNetwork)), at: 5)
         insert(model: Model(sigModelId: .remoteProvisioningClientModelId,
-                            delegate: RemoteProvisioningClientHandler(meshNetwork)), at: 5)
+                            delegate: RemoteProvisioningClientHandler(meshNetwork)), at: 6)
         insert(model: Model(sigModelId: .sceneClientModelId,
-                            delegate: SceneClientHandler(meshNetwork)), at: 6)
+                            delegate: SceneClientHandler(meshNetwork)), at: 7)
     }
     
     /// Removes the models that are or should be supported natively.
