@@ -100,7 +100,6 @@ public class MeshNetworkManager: NetworkParametersProvider {
     ///   - delegateQueue: The `DispatchQueue` to call delegate methods on.
     ///                    By default the global main queue will be used.
     /// - seeAlso: ``LocalStorage``
-    /// - seeAlso: ``LowerTransportLayer.checkAgainstReplayAttack(_:NetworkPdu)``
     public init(using storage: Storage = LocalStorage(),
                 delegateQueue: DispatchQueue = DispatchQueue.main) {
         self.storage = storage

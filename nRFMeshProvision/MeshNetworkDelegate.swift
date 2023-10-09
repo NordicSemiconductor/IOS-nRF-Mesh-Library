@@ -110,11 +110,12 @@ public protocol MeshNetworkDelegate: AnyObject {
     ///   accept the message.
     /// - ``LowerTransportError/timeout`` - when the segmented message targeting
     ///   a Unicast Address was not acknowledged before the
-    ///   ``NetworkParameters/retransmissionLimit`` was reached
+    ///   ``NetworkParameters/sarUnicastRetransmissionsCount`` or
+    ///   ``NetworkParameters/sarUnicastRetransmissionsWithoutProgressCount`` was reached
     ///   (for unacknowledged messages only).
     /// - ``AccessError/timeout`` - when the response for an acknowledged message
-    ///   has not been received before the time run out (for acknowledged messages
-    ///   only).
+    ///   has not been received before the ``NetworkParameters/acknowledgmentMessageTimeout``
+    ///   run out (for acknowledged messages only).
     ///
     /// - parameters:
     ///   - manager:      The manager used to send the message.

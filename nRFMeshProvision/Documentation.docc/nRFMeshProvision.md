@@ -8,8 +8,8 @@ The nRF Mesh library allows to provision Bluetooth mesh devices into a mesh netw
 them and send and receive messages.
 
 The library is compatible with the following [Bluetooth specifications](https://www.bluetooth.com/specifications/specs/?status=active&show_latest_version=0&show_latest_version=1&keyword=mesh&filter=):
-- **Mesh Profile 1.0.1** (with experimental support for **Mesh Protocol 1.1**)
-- **Mesh Model 1.0.1**
+- **Mesh Protocol 1.1** (backwards compatible with **Mesh Profile 1.0.1**)
+- **Mesh Model 1.1**
 - **Mesh Device Properties 2**
 - **Configuration Database Profile 1.0.1**
 
@@ -29,16 +29,47 @@ The snippet below demostrates how to start.
 // Create the Mesh Network Manager instance.
 meshNetworkManager = MeshNetworkManager()
 
-// Customize network parameters. 
-meshNetworkManager.networkParameters = .custom { builder in
-    builder.defaultTtl = ...
-    builder.discardTimeout = ...
-    builder.acknowledgmentTimerInterval = ...
-    builder.transmissionTimerInterval = ...
-    builder.retransmissionLimit = ...
-    builder.acknowledgmentMessageTimeout = ...
-    builder.acknowledgmentMessageInterval = ...
-    // If you know what you're doing, customize the advanced parameters.
+// Customize network parameters using basic:
+meshNetworkManager.networkParameters = .basic { parameters in
+    parameters.setDefaultTtl(...)
+    // Configure SAR Receiver properties
+    parameters.discardIncompleteSegmentedMessages(after: ...)
+    parameters.transmitSegmentAcknowledgmentMessage(
+        usingSegmentReceptionInterval: ...,
+        multipliedByMinimumDelayIncrement: ...)
+    parameters.retransmitSegmentAcknowledgmentMessages(
+        exactly: ..., timesWhenNumberOfSegmentsIsGreaterThan: ...)
+    // Configure SAR Transmitter properties
+    parameters.transmitSegments(withInterval: ...)
+    parameters.retransmitUnacknowledgedSegmentsToUnicastAddress(
+        atMost: ..., timesAndWithoutProgress: ...,
+        timesWithRetransmissionInterval: ..., andIncrement: ...)
+    parameters.retransmitAllSegmentsToGroupAddress(exactly: ..., timesWithInterval: ...)
+    // Configure message configuration
+    parameters.retransmitAcknowledgedMessage(after: ...)
+    parameters.discardAcknowledgedMessages(after: ...)
+}
+// ...or advanced configurator:
+meshNetworkManager.networkParameters = .advanced { parameters in
+    parameters.defaultTtl = ...
+    // Configure SAR Receiver properties
+    parameters.sarDiscardTimeout = ...
+    parameters.sarAcknowledgmentDelayIncrement = ...
+    parameters.sarReceiverSegmentIntervalStep = ...
+    parameters.sarSegmentsThreshold = ...
+    parameters.sarAcknowledgmentRetransmissionsCount = ...
+    // Configure SAR Transmitter properties
+    parameters.sarSegmentIntervalStep = ...
+    parameters.sarUnicastRetransmissionsCount = ...
+    parameters.sarUnicastRetransmissionsWithoutProgressCount = ...
+    parameters.sarUnicastRetransmissionsIntervalStep = ...
+    parameters.sarUnicastRetransmissionsIntervalIncrement = ...
+    parameters.sarMulticastRetransmissionsCount = ...
+    parameters.sarMulticastRetransmissionsIntervalStep = ...
+    // Configure acknowledged message timeouts
+    parameters.acknowledgmentMessageInterval = ...
+    parameters.acknowledgmentMessageTimeout = ...
+    // And if you really know what you're doing...
     builder.allowIvIndexRecoveryOver42 = ...
     builder.ivUpdateTestMode = ...
 }
@@ -130,7 +161,7 @@ provisioning procedure.
 - ``LogLevel``
 - ``LogCategory``
 
-### Bearers
+### Bearer
 
 Bearers are objects resopnsible for delivering PDUs to remote nodes. Bluetooth mesh, among others. defines 
 ADV Bearer and GATT Bearer. Due to API limitations on iOS the ADV Bearer is not available. An iPhone
@@ -146,7 +177,7 @@ can be connected to the mesh network using a GATT connection to a node with GATT
 - ``PduType``
 - ``PduTypes``
 
-### GATT Bearers
+### GATT Bearer
 
 GATT Bearer is used when connecting to a node with GATT Proxy feature. It uses a GATT connection 
 instead of Bluetooth advertising. Messages sent over that bearer need to be proxied to the network
@@ -163,6 +194,13 @@ using ADV Bearer by the GATT Proxy node.
 - ``MeshService``
 - ``MeshProvisioningService``
 - ``MeshProxyService``
+
+### Remote Bearer
+
+PB Remote Bearer allows to provision a device which does not support GATT Mesh Provisioning Service
+via a node with Remote Provisioning Server model.
+
+- ``PBRemoteBearer``
 
 ### Provisioning
 
@@ -424,6 +462,15 @@ Provisioning is the process of adding an unprovisioned device to a mesh network 
 - ``PrivateNodeIdentitySet``
 - ``PrivateNodeIdentityStatus``
 
+### Configuration - Segmentation and Reassembly
+
+- ``SarReceiverGet``
+- ``SarReceiverSet``
+- ``SarReceiverStatus``
+- ``SarTransmitterGet``
+- ``SarTransmitterSet``
+- ``SarTransmitterStatus``
+
 ### Remote Provisioning Message Types
 
 - ``RemoteProvisioningMessage``
@@ -436,6 +483,7 @@ Provisioning is the process of adding an unprovisioned device to a mesh network 
 - ``RemoteProvisioningScanState``
 - ``RemoteProvisioningLinkState``
 - ``RemoteProvisioningLinkCloseReason``
+- ``RemoteProvisioningLinkStateMessage``
 - ``AdTypes``
 - ``AdStructure``
 - ``NodeProvisioningProtocolInterfaceProcedure``

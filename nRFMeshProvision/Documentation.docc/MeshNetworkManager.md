@@ -90,8 +90,8 @@ Use it to create, load or import a Bluetooth mesh network and send messages.
 - ``registerCallback(forMessagesFrom:to:callback:)-7axud``
 - ``unregisterCallback(forMessagesWithOpCode:from:)-2pj32``
 - ``unregisterCallback(forMessagesWithOpCode:from:)-9rbl0``
-- ``unregisterCallback(forMessagesWithType:from:)-2cij2``
-- ``unregisterCallback(forMessagesWithType:from:)-7mdko``
+- ``unregisterCallback(forMessagesWithType:from:)-15wz4``
+- ``unregisterCallback(forMessagesWithType:from:)-1g3i0``
 
 ### Bearer Callbacks
 

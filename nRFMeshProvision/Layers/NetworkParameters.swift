@@ -35,8 +35,10 @@ import Foundation
 /// Network parameters configure the transsmition and retranssmition intervals,
 /// acknowledge message timeout, the default Time To Live (TTL) and other.
 ///
-/// Use ``NetworkParameters/default`` or ``NetworkParameters/custom(_:)`` to create
-/// an instance of this structure.
+/// Use one of the following buildersto create an instance of this structure:
+/// - ``NetworkParameters/default`` - the default configuration
+/// - ``NetworkParameters/basic(_:)`` - using verbose buuilder
+/// - ``NetworkParameters/advanced(_:)`` - for advanced users
 ///
 /// - since: 4.0.0
 public struct NetworkParameters {
@@ -90,7 +92,7 @@ public struct NetworkParameters {
         /// ```
         ///
         /// Number of retransmissions of the Segment Acknowledgment message can be set using
-        /// ``retranssmitSegmentAcknowledgmentMessages(_:timesWhenNumberOfSegmentsIsGreaterThan:)``.
+        /// ``retransmitSegmentAcknowledgmentMessages(exactly:timesWhenNumberOfSegmentsIsGreaterThan:)``.
         ///
         /// - parameters:
         ///   - segmentReceptionInterval: A value that indicates the interval between received segments
@@ -119,7 +121,7 @@ public struct NetworkParameters {
         ///
         /// When a receiver receives a segment of a segmented message composed of 2 or more
         /// segments it starts the SAR Acknowledgment timer. The initial value of this timer
-        /// is controller by ``setAcknowledgmentTimerInterval(_:andMinimumDelayIncrement:)``
+        /// is controller by ``transmitSegmentAcknowledgmentMessage(usingSegmentReceptionInterval:multipliedByMinimumDelayIncrement:)``
         /// and depends on the number of segments. Each time a new segment is received, the timer
         /// is restarted. When the timer expires, a Segment Acknowledgment message is sent to the
         /// transmitter indicating which segments were received until that point.

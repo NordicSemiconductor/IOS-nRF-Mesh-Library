@@ -8,10 +8,10 @@ The provisioner, in a secure way, assigns a Unicast Address and sends the Networ
 Knowing the key, the new device, now called a Node, can exchange mesh messages with other nodes.
 
 > To provision a new device, the provisioner does not need to have an address assigned. Having a
-  Unicast Address makes the provisioner a node.
+  Unicast Address makes the provisioner a configuration manager node.
 
-A provisioner with a Unicast Address assigned may also configure nodes after they have been
-provisioned. Configuration messages are sent between *Configuration Client* model on the provisioner 
+A configuration manager may configure nodes after they have been provisioned. 
+Configuration messages are sent between *Configuration Client* model on the manager 
 and *Configuration Server* model on the target device, and, on the Upper Transport layer, are encrypted 
 using the node's Device Key, generated during provisioning.
 
@@ -40,10 +40,12 @@ func centralManager(_ central: CBCentralManager,
 }
 ```
 
-> Important: Provisioning of new devices using the current version of the nRF Mesh library 
-  supports only with the use of GATT PB Bearer, i.e. remote provisioning is not supported. 
-  New devices must support GATT PB Bearer in order to be provisioned using a mobile device.
-  This also applies to the nRF Mesh library for Android.
+> Important: nRF Mesh library supports PB GATT Bearer and PB Remote Bearer. 
+  PB Adv Bearer is not supported. 
+
+To provision a device which does not support PB GATT Bearer a ``PBRemoteBearer`` must be used.
+A node supporting *Remote Provisioning Server* model must be provisioned and in range of the
+unprovisioned device. All provisioning messages will be sent via that node.
 
 Provisioning process is initiated by calling ``ProvisioningManager/identify(andAttractFor:)``
 ```swift
@@ -55,7 +57,7 @@ followed by ``ProvisioningManager/provision(usingAlgorithm:publicKey:authenticat
 provisioningManager.address = ...    // Defaults to the next available address.
 provisioningManager.networkKey = ... // Defaults to the Primary Network Key.
 // Start:
-try provisioningManager.provision(usingAlgorithm:       .fipsP256EllipticCurve,
+try provisioningManager.provision(usingAlgorithm:       .BTM_ECDH_P256_HMAC_SHA256_AES_CCM,
                                   publicKey:            ...,
                                   authenticationMethod: ...)
 ```
