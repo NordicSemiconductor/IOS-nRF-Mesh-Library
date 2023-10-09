@@ -616,10 +616,11 @@ private extension LowerTransportLayer {
         
         // Is the target Node busy?
         guard !ack.isBusy else {
-            cancel(sendingSegmentedMessage: message,
-                   from: segment.source, to: destination,
-                   withSeqZero: ack.sequenceZero,
-                   andNotify: true, error: LowerTransportError.busy)
+            finalize(transmissionOfSegmentedMessageTo: destination,
+                     withSeqZero: ack.sequenceZero)
+            notifyAbout(completingSending: message,
+                        from: segment.source, to: destination,
+                        error: LowerTransportError.busy)
             return
         }
         
@@ -638,10 +639,10 @@ private extension LowerTransportLayer {
         
         // If all the segments were acknowledged, notify the manager.
         if outgoingSegments[ack.sequenceZero]?.segments.hasMore == false {
-            cancel(sendingSegmentedMessage: message,
-                   from: segment.source, to: destination,
-                   withSeqZero: ack.sequenceZero,
-                   andNotify: true, error: nil)
+            self.finalize(transmissionOfSegmentedMessageTo: destination,
+                          withSeqZero: ack.sequenceZero)
+            self.notifyAbout(completingSending: message,
+                             from: segment.source, to: destination)
         } else {
             // Check if the SAR Unicast Retransmission timer is running.
             guard let _ = unicastRetransmissionsTimers[ack.sequenceZero] else {
@@ -819,15 +820,18 @@ private extension LowerTransportLayer {
             // shall remove the destination address and the SeqAuth stored for this segmented message,
             // and shall notify the upper transport layer that the transmission of the Upper Transport PDU has timed out.
             guard remainingNumberOfRetransmissions > 0 && remainingNumberOfRetransmissionsWithoutProgress > 0 else {
-                // Notify user about the timeout only if sending the message was initiated
+                self.finalize(transmissionOfSegmentedMessageTo: destination,
+                              withSeqZero: sequenceZero)
+                
+                // Notify the user about a timeout only if sending the message was initiated
                 // by the user (that means it is not sent as an automatic response to a
                 // acknowledged request) and if the message is not acknowledged
                 // (in which case the Access Layer may retry).
-                let notify = segment.userInitiated && !message.isAcknowledged
-                self.cancel(sendingSegmentedMessage: message,
-                            from: segment.source, to: destination,
-                            withSeqZero: sequenceZero,
-                            andNotify: notify, error: LowerTransportError.timeout)
+                if segment.userInitiated && !message.isAcknowledged {
+                    self.notifyAbout(completingSending: message,
+                                     from: segment.source, to: destination, 
+                                     error: LowerTransportError.timeout)
+                }
                 return
             }
             // Decrement both counters. As the SAR Unicast Retransmission timer
@@ -875,10 +879,10 @@ private extension LowerTransportLayer {
             // and shall notify the higher layer that the transmission of the Upper Transport PDU
             // has been completed.
             guard remainingNumberOfRetransmissions > 0 else {
-                self.cancel(sendingSegmentedMessage: message,
-                            from: segment.source, to: destination,
-                            withSeqZero: sequenceZero,
-                            andNotify: true, error: nil)
+                self.finalize(transmissionOfSegmentedMessageTo: destination,
+                              withSeqZero: sequenceZero)
+                self.notifyAbout(completingSending: message, 
+                                 from: segment.source, to: destination)
                 return
             }
             // Decrement the counter.
@@ -888,20 +892,14 @@ private extension LowerTransportLayer {
         }
     }
     
-    /// Removes all timers and counters associated with the message with given `sequenceZero`
-    /// and notifies the network manager about a success or a failure.
+    /// Removes remaining segments and counters associated with the message with the
+    /// given `sequenceZero`.
     ///
     /// - parameters:
-    ///   - message: The Access Layer message which was being sent.
-    ///   - source: The Unicast Address of the source Element on the local Node.
     ///   - destination: The target address of the message.
     ///   - sequenceZero: The key to get segments from the map.
-    ///   - notify: Should the manager be notified about successful delivery or a failure.
-    ///   - error: Optional error it transmission failed.
-    func cancel(sendingSegmentedMessage message: MeshMessage,
-                from source: Address, to destination: MeshAddress,
-                withSeqZero sequenceZero: UInt16,
-                andNotify notify: Bool, error: Error?) {
+    func finalize(transmissionOfSegmentedMessageTo destination: MeshAddress,
+                  withSeqZero sequenceZero: UInt16) {
         guard let networkManager = networkManager else {
             return
         }
@@ -911,23 +909,39 @@ private extension LowerTransportLayer {
         outgoingSegments.removeValue(forKey: sequenceZero)
         segmentTtl.removeValue(forKey: sequenceZero)
         
-        if notify {
-            // Find the source Element.
-            guard let provisionerNode = meshNetwork.localProvisioner?.node,
-                  let element = provisionerNode.element(withAddress: source) else {
-                return
-            }
-            if let error = error {
-                networkManager.notifyAbout(error: error,
-                                           duringSendingMessage: message,
-                                           from: element, to: destination)
-            } else {
-                networkManager.notifyAbout(deliveringMessage: message,
-                                           from: element, to: destination)
-            }
-        }
         networkManager.upperTransportLayer
             .lowerTransportLayerDidSend(segmentedUpperTransportPduTo: destination.address)
+    }
+    
+    /// Notifies the `networkManager` about completing transfer of segmented
+    /// message.
+    ///
+    /// The transfer could succeed or fail with an error.
+    ///
+    /// - parameters:
+    ///   - message: The Access Layer message which was being sent.
+    ///   - source: The Unicast Address of the source Element on the local Node.
+    ///   - destination: The target address of the message.
+    ///   - error: Optional error it transmission failed.
+    func notifyAbout(completingSending message: MeshMessage,
+                     from source: Address, to destination: MeshAddress,
+                     error: Error? = nil) {
+        guard let networkManager = networkManager else {
+            return
+        }
+        // Find the source Element.
+        guard let provisionerNode = meshNetwork.localProvisioner?.node,
+              let element = provisionerNode.element(withAddress: source) else {
+            return
+        }
+        if let error = error {
+            networkManager.notifyAbout(error: error,
+                                       duringSendingMessage: message,
+                                       from: element, to: destination)
+        } else {
+            networkManager.notifyAbout(deliveringMessage: message,
+                                       from: element, to: destination)
+        }
     }
 }
 
