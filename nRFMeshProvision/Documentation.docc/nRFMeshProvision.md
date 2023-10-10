@@ -23,13 +23,13 @@ The ``MeshNetworkManager`` is the main entry point for interacting with the mesh
 It can be used to create, load or import a Bluetooth mesh network configuration and send 
 and receive messages. 
 
-The snippet below demostrates how to start.
+The snippet below demonstrates how to start.
 
 ```swift
 // Create the Mesh Network Manager instance.
 meshNetworkManager = MeshNetworkManager()
 
-// Customize network parameters using basic:
+// If needed, customize network parameters using basic:
 meshNetworkManager.networkParameters = .basic { parameters in
     parameters.setDefaultTtl(...)
     // Configure SAR Receiver properties
@@ -80,7 +80,7 @@ meshNetworkManager.networkParameters.defaultTtl = ...
 meshNetworkManager.logger = ...
 ```
 
-The next step is to define the behavior of the manager. The behavoir is determined by set of
+The next step is to define the behavior of the manager. The behavior is determined by set of
 ``Model``s existing on the Node. For more information, read <doc:LocalNode>.
 
 ### Loading mesh configuration
@@ -163,7 +163,7 @@ provisioning procedure.
 
 ### Bearer
 
-Bearers are objects resopnsible for delivering PDUs to remote nodes. Bluetooth mesh, among others. defines 
+Bearers are objects responsible for delivering PDUs to remote nodes. Bluetooth mesh, among others. defines 
 ADV Bearer and GATT Bearer. Due to API limitations on iOS the ADV Bearer is not available. An iPhone
 can be connected to the mesh network using a GATT connection to a node with GATT Proxy feature. 
 
@@ -434,7 +434,7 @@ Provisioning is the process of adding an unprovisioned device to a mesh network 
 - ``ConfigModelSubscriptionDeleteAll``
 - ``ConfigModelSubscriptionStatus``
 
-### Configuration - Heartbearts
+### Configuration - Heartbeats
 
 - ``HeartbeatPublication``
 - ``HeartbeatSubscription``
