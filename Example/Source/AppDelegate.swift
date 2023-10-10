@@ -44,18 +44,68 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Create the main MeshNetworkManager instance and customize
         // configuration values.
         meshNetworkManager = MeshNetworkManager()
-        meshNetworkManager.networkParameters = .custom { builder in
-            builder.acknowledgmentTimerInterval = 0.150
-            builder.transmissionTimerInterval = 0.600
-            builder.incompleteMessageTimeout = 10.0
-            builder.retransmissionLimit = 2
-            builder.acknowledgmentMessageInterval = 4.2
+        
+        // Configure network parameters using one of the following examples:
+        /*
+        // Default configuration.
+        meshNetworkManager.networkParameters = .default
+        */
+        
+        // Verbose configuration.
+        meshNetworkManager.networkParameters = .basic { parameters in
+            parameters.setDefaultTtl(5)
+            // Configure SAR Receiver properties
+            parameters.discardIncompleteSegmentedMessages(after: 10.0)
+            parameters.transmitSegmentAcknowledgmentMessage(
+                usingSegmentReceptionInterval: 0.06,
+                multipliedByMinimumDelayIncrement: 2.5)
+            parameters.retransmitSegmentAcknowledgmentMessages(
+                exactly: 1, timesWhenNumberOfSegmentsIsGreaterThan: 3)
+            // Configure SAR Transmitter properties
+            parameters.transmitSegments(withInterval: 0.06)
+            parameters.retransmitUnacknowledgedSegmentsToUnicastAddress(
+                atMost: 2, timesAndWithoutProgress: 2,
+                timesWithRetransmissionInterval: 0.200, andIncrement: 2.5)
+            parameters.retransmitAllSegmentsToGroupAddress(exactly: 3, timesWithInterval: 0.250)
+            
+            // Note: The values below are different from the default ones.
+            
+            // Configure message configuration
+            parameters.retransmitAcknowledgedMessage(after: 4.2)
             // As the interval has been increased, the timeout can be adjusted.
             // The acknowledged message will be repeated after 4.2 seconds,
             // 12.6 seconds (4.2 + 4.2 * 2), and 29.4 seconds (4.2 + 4.2 * 2 + 4.2 * 4).
             // Then, leave 10 seconds for until the incomplete message times out.
-            builder.acknowledgmentMessageTimeout = 40.0
+            parameters.discardAcknowledgedMessages(after: 40.0)
         }
+        
+        /*
+        // Advanced configuration.
+        meshNetworkManager.networkParameters = .advanced { parameters in
+            parameters.defaultTtl = 5
+            // Configure SAR Receiver properties
+            parameters.sarDiscardTimeout = 0b0001
+            parameters.sarAcknowledgmentDelayIncrement = 0b001
+            parameters.sarReceiverSegmentIntervalStep = 0b101
+            parameters.sarSegmentsThreshold = 0b00011
+            parameters.sarAcknowledgmentRetransmissionsCount = 0b00
+            // Configure SAR Transmitter properties
+            parameters.sarSegmentIntervalStep = 0b0101
+            parameters.sarUnicastRetransmissionsCount = 0b0111
+            parameters.sarUnicastRetransmissionsWithoutProgressCount = 0b0010
+            parameters.sarUnicastRetransmissionsIntervalStep = 0b0111
+            parameters.sarUnicastRetransmissionsIntervalIncrement = 0b0001
+            parameters.sarMulticastRetransmissionsCount = 0b0010
+            parameters.sarMulticastRetransmissionsIntervalStep = 0b1001
+            // Configure acknowledged message timeouts
+            parameters.acknowledgmentMessageInterval = 4.2
+            // As the interval has been increased, the timeout can be adjusted.
+            // The acknowledged message will be repeated after 4.2 seconds,
+            // 12.6 seconds (4.2 + 4.2 * 2), and 29.4 seconds (4.2 + 4.2 * 2 + 4.2 * 4).
+            // Then, leave 10 seconds for until the incomplete message times out.
+            parameters.acknowledgmentMessageTimeout = 40.0
+        }
+        */
         meshNetworkManager.logger = self
         
         // Try loading the saved configuration.

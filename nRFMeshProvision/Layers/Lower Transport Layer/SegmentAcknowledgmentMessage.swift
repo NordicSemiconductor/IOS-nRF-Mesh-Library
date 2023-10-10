@@ -37,16 +37,25 @@ internal struct SegmentAcknowledgmentMessage: LowerTransportPdu {
     let ivIndex: UInt32
     
     /// Message Op Code.
+    ///
+    /// This is always 0x00 for Segment Acknowledgment Message.
     let opCode: UInt8
     
     /// Flag set to `true` if the message was sent by a Friend
-    /// on behalf of a Low Power node.
+    /// on behalf of a Low Power node (OBO).
     let isOnBehalfOfLowPowerNode: Bool
-    /// 13 least significant bits of SeqAuth.
+    /// 13 least significant bits of SeqAuth (SeqZero).
     let sequenceZero: UInt16
-    /// Block acknowledgment for segments, bit field.
-    let blockAck: UInt32
-    /// This PDU contains the `blockAck` as `Data`.
+    /// Acknowledgment for segments which indicate the segments received.
+    ///
+    /// The least significant bit, bit 0, shall represent segment 0; and the most
+    /// significant bit, bit 31, shall represent segment 31. If bit n is set to 1, then
+    /// segment n is being acknowledged. If bit n is set to 0, then segment n is
+    /// not being acknowledged. Any bits for segments larger than the SegN field
+    /// value of the upper transport layer message being acknowledged shall be
+    /// set to 0 and ignored upon receipt.
+    let ackedSegments: UInt32
+    /// This PDU contains the `ackedSegments` as `Data`.
     let upperTransportPdu: Data
     
     var transportPdu: Data {
@@ -73,8 +82,8 @@ internal struct SegmentAcknowledgmentMessage: LowerTransportPdu {
         }
         isOnBehalfOfLowPowerNode = (data[1] & 0x80) != 0
         sequenceZero = (UInt16(data[1] & 0x7F) << 6) | UInt16(data[2] >> 2)
-        blockAck = data.readBigEndian(fromOffset: 3)
-        upperTransportPdu = Data() + blockAck.bigEndian
+        ackedSegments = data.readBigEndian(fromOffset: 3)
+        upperTransportPdu = Data() + ackedSegments.bigEndian
         
         source = networkPdu.source
         destination = networkPdu.destination
@@ -98,8 +107,8 @@ internal struct SegmentAcknowledgmentMessage: LowerTransportPdu {
                 ack |= 1 << segment.segmentOffset
             }
         }
-        blockAck = ack
-        upperTransportPdu = Data() + blockAck.bigEndian
+        ackedSegments = ack
+        upperTransportPdu = Data() + ackedSegments.bigEndian
         
         // Assuming all segments have the same source and destination addresses and network key.
         // Swapping source with destination. Destination here is guaranteed to be a Unicast Address.
@@ -115,7 +124,7 @@ internal struct SegmentAcknowledgmentMessage: LowerTransportPdu {
     /// - returns: `True`, if the segment of the given number has been
     ///            acknowledged, `false` otherwise.
     func isSegmentReceived(_ m: Int) -> Bool {
-        return blockAck & (1 << m) != 0
+        return ackedSegments & (1 << m) != 0
     }
     
     /// Returns whether all segments have been received.
@@ -132,19 +141,19 @@ internal struct SegmentAcknowledgmentMessage: LowerTransportPdu {
     ///             segments (segN).
     /// - returns: `True` if all segments were received, `false` otherwise.
     func areAllSegmentsReceived(lastSegmentNumber: UInt8) -> Bool {
-        return blockAck == (1 << (lastSegmentNumber + 1)) - 1
+        return ackedSegments == (1 << (lastSegmentNumber + 1)) - 1
     }
     
     /// Whether the source Node is busy and the message should be cancelled, or not.
     var isBusy: Bool {
-        return blockAck == 0
+        return ackedSegments == 0
     }
 }
 
 extension SegmentAcknowledgmentMessage: CustomDebugStringConvertible {
     
     var debugDescription: String {
-        return "ACK (seqZero: \(sequenceZero), blockAck: 0x\(blockAck.hex))" 
+        return "ACK (seqZero: \(sequenceZero), ackedSegments: 0x\(ackedSegments.hex))"
     }
     
 }

@@ -1,5 +1,5 @@
 /*
-* Copyright (c) 2019, Nordic Semiconductor
+* Copyright (c) 2023, Nordic Semiconductor
 * All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification,
@@ -30,40 +30,26 @@
 
 import Foundation
 
-internal protocol SegmentedMessage: LowerTransportPdu {
-    /// The Mesh Message that is being sent, or `nil`, when the message
-    /// was received.
-    var message: MeshMessage? { get }
-    /// Whether sending this message has been initiated by the user.
-    var userInitiated: Bool { get }
-    /// 13 least significant bits of SeqAuth (SeqZero).
-    var sequenceZero: UInt16 { get }
-    /// This field is set to the segment number (zero-based)
-    /// of the segment m of this Upper Transport PDU (SegO).
-    var segmentOffset: UInt8 { get }
-    /// This field is set to the last segment number (zero-based)
-    /// of this Upper Transport PDU (SegN).
-    var lastSegmentNumber: UInt8 { get }
-}
-
-internal extension SegmentedMessage {
+/// A `SarReceiverGet` message is an acknowledged message used to get
+/// the current SAR Receiver state of a Node.
+///
+/// The response to this message is a ``SarReceiverStatus`` message.
+public struct SarReceiverGet: AcknowledgedConfigMessage {
+    public static let opCode: UInt32 = 0x806F
+    public static let responseType: StaticMeshResponse.Type = SarReceiverStatus.self
     
-    /// Returns whether the message is composed of only a single
-    /// segment. Single segment messages are used to send short,
-    /// acknowledged messages. The maximum size of payload of upper
-    /// transport control PDU is 8 bytes.
-    var isSingleSegment: Bool {
-        return lastSegmentNumber == 0
+    public var parameters: Data? {
+        return nil
     }
     
-    /// Returns the `segmentOffset` as `Int`.
-    var index: Int {
-        return Int(segmentOffset)
+    /// Creates a ``SarReceiverGet`` message.
+    public init() {
+        // Empty
     }
     
-    /// Returns the expected number of segments for this message.
-    var count: Int {
-        return Int(lastSegmentNumber + 1)
+    public init?(parameters: Data) {
+        guard parameters.isEmpty else {
+            return nil
+        }
     }
-    
 }
