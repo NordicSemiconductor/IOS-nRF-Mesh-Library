@@ -1252,7 +1252,19 @@ public extension MeshNetworkManager {
     ///           the local Provisioner failed.
     func `import`(from data: Data) throws -> MeshNetwork {
         let decoder = JSONDecoder()
-        decoder.dateDecodingStrategy = .iso8601
+        
+        // The .iso8601 decoding strategy does not support fractional seconds.
+        // decoder.dateDecodingStrategy = .iso8601
+        
+        // Instead, use ISO8601DateFormatter.
+        decoder.dateDecodingStrategy = .custom { decoder in
+            let formatter = ISO8601DateFormatter()
+            formatter.formatOptions.insert(.withFractionalSeconds)
+            
+            let container = try decoder.singleValueContainer()
+            let value = try container.decode(String.self)
+            return formatter.date(from: value) ?? Date.distantPast
+        }
         
         let meshNetwork = try decoder.decode(MeshNetwork.self, from: data)
         
