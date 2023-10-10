@@ -3,7 +3,7 @@ This application makes use of the following third party libraries:
 
 ## CryptoSwift
 
-Copyright (C) 2014-2017 Marcin Krzyżanowski <marcin.krzyzanowski@gmail.com>
+Copyright (C) 2014-3099 Marcin Krzyżanowski <marcin.krzyzanowski@gmail.com>
 This software is provided 'as-is', without any express or implied warranty.
 
 In no event will the authors be held liable for any damages arising from the use of this software.
@@ -18,7 +18,7 @@ Permission is granted to anyone to use this software for any purpose,including c
 
 ## nRFMeshProvision
 
-Copyright (c) 2019, Nordic Semiconductor ASA
+Copyright (c) 2019-2023, Nordic Semiconductor ASA
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without

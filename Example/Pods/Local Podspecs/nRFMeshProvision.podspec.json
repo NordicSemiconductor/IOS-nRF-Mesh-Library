@@ -30,7 +30,7 @@
   "source_files": "nRFMeshProvision/**/*",
   "dependencies": {
     "CryptoSwift": [
-      "= 1.7.0"
+      "= 1.8.0"
     ]
   },
   "frameworks": "CoreBluetooth",
