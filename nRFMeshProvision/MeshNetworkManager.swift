@@ -1171,6 +1171,7 @@ public extension MeshNetworkManager {
     func save() -> Bool {
         let encoder = JSONEncoder()
         encoder.dateEncodingStrategy = .iso8601
+        encoder.outputFormatting = .withoutEscapingSlashes
         
         let data = try! encoder.encode(meshData)
         return storage.save(data)
@@ -1203,8 +1204,9 @@ public extension MeshNetworkManager {
     func export() -> Data {
         let encoder = JSONEncoder()
         encoder.dateEncodingStrategy = .iso8601
+        encoder.outputFormatting = .withoutEscapingSlashes
         if #available(iOS 11.0, *) {
-            encoder.outputFormatting = .sortedKeys
+            encoder.outputFormatting = [.sortedKeys, .withoutEscapingSlashes]
         }
         
         return try! encoder.encode(meshData.meshNetwork)
@@ -1232,8 +1234,9 @@ public extension MeshNetworkManager {
     func export(_ configuration: ExportConfiguration) -> Data {
         let encoder = JSONEncoder()
         encoder.dateEncodingStrategy = .iso8601
+        encoder.outputFormatting = .withoutEscapingSlashes
         if #available(iOS 11.0, *) {
-            encoder.outputFormatting = .sortedKeys
+            encoder.outputFormatting = [.sortedKeys, .withoutEscapingSlashes]
         }
         
         let meshNetwork = meshData.meshNetwork?.copy(using: configuration)

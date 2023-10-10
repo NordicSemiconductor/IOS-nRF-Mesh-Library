@@ -419,6 +419,7 @@ class Exporting: XCTestCase {
         // Compare the generated JSON outputs.
         let encoder = JSONEncoder()
         encoder.dateEncodingStrategy = .iso8601
+        encoder.outputFormatting = .withoutEscapingSlashes
         
         var originalData, copyData: Data?
         XCTAssertNoThrow(originalData = try encoder.encode(meshNetwork))
