@@ -387,6 +387,7 @@
 		F09DE4D029E5A2180073969A /* MeshTaskStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeshTaskStatus.swift; sourceTree = "<group>"; };
 		F09DE4D229E99A360073969A /* SelectGroupsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectGroupsViewController.swift; sourceTree = "<group>"; };
 		F09DE4D629EEBEAD0073969A /* SelectModelsForSubscriptionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectModelsForSubscriptionViewController.swift; sourceTree = "<group>"; };
+		F0AA205E2AD5E3C100CF81FF /* Podfile */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; path = Podfile; sourceTree = SOURCE_ROOT; };
 		F0E6D64B29F2A4A9004B1C26 /* SchedulerMessages.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SchedulerMessages.swift; sourceTree = "<group>"; };
 		F38714BAA5ADC3062AB8A482 /* Pods-nRF Mesh Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-nRF Mesh Tests.debug.xcconfig"; path = "Target Support Files/Pods-nRF Mesh Tests/Pods-nRF Mesh Tests.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -780,6 +781,7 @@
 			isa = PBXGroup;
 			children = (
 				529B757E22426D70008F1CE7 /* nRF Mesh.entitlements */,
+				F0AA205E2AD5E3C100CF81FF /* Podfile */,
 				607FACF51AFB993E008FA782 /* Podspec Metadata */,
 				607FACD21AFB9204008FA782 /* Source */,
 				607FACE81AFB9204008FA782 /* Tests */,
