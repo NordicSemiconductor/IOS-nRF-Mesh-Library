@@ -593,7 +593,7 @@ private extension AccessLayer {
     /// status is received, and allows the message to be cancelled.
     ///
     /// - important: The message must be of an Acknowledged type and must be
-    ///              targetting a Unicast Address; otherwise this method does nothing.
+    ///              targeting a Unicast Address; otherwise this method does nothing.
     ///
     /// - parameters:
     ///   - pdu: The PDU of the Acknowledged message.

@@ -93,7 +93,7 @@ open class PBRemoteBearer: ProvisioningBearer {
     private var outboundPduQueue: OperationQueue
     /// Outbound PDU Count.
     ///
-    /// The first PDU shall be sent with count set to 1 and the cound should
+    /// The first PDU shall be sent with count set to 1 and the count should
     /// be incremented by 1 for each PDU.
     private var outboundPduCount: UInt8 = 0
     
@@ -115,7 +115,7 @@ open class PBRemoteBearer: ProvisioningBearer {
         self.meshNetworkManager = manager
         
         // We want to enqueue outgoing PDUs and send a new one only
-        // when it has been confirmed with PDU Outbiound Report.
+        // when it has been confirmed with PDU Outbound Report.
         self.outboundPduQueue = OperationQueue()
         self.outboundPduQueue.maxConcurrentOperationCount = 1
     }

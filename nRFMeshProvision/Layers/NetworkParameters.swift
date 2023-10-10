@@ -32,18 +32,18 @@ import Foundation
 
 /// A set of network parameters that can be applied to the ``MeshNetworkManager``.
 ///
-/// Network parameters configure the transsmition and retranssmition intervals,
+/// Network parameters configure the transmission and retransmission intervals,
 /// acknowledge message timeout, the default Time To Live (TTL) and other.
 ///
-/// Use one of the following buildersto create an instance of this structure:
+/// Use one of the following builders to create an instance of this structure:
 /// - ``NetworkParameters/default`` - the default configuration
-/// - ``NetworkParameters/basic(_:)`` - using verbose buuilder
+/// - ``NetworkParameters/basic(_:)`` - using verbose builder
 /// - ``NetworkParameters/advanced(_:)`` - for advanced users
 ///
 /// - since: 4.0.0
 public struct NetworkParameters {
     
-    /// The builder allows easy confituration of ``NetworkParameters``.
+    /// The builder allows easy configuration of ``NetworkParameters``.
     public class Config {
         private var networkParameters: NetworkParameters = .default
         
@@ -85,7 +85,7 @@ public struct NetworkParameters {
         /// received until the moment of sending the message. Upon receiving, the transmitter should retransmit
         /// all missing segments.
         ///
-        /// The initial value of the timer for a given message depends on number of segments and is calculater
+        /// The initial value of the timer for a given message depends on number of segments and is calculated
         /// using the following formula:
         /// ```
         /// min(number of segment - 0.5, acknowledgment delay increment) * segment reception interval (ms)
@@ -373,7 +373,7 @@ public struct NetworkParameters {
     /// The default value of the **SAR Acknowledgment Retransmissions Count state** is `0b00`
     /// (1 transmission, retransmissions disabled).
     ///
-    /// - note: Retransmission of Segment Acknowledgent messages is controlled by
+    /// - note: Retransmission of Segment Acknowledgment messages is controlled by
     ///         ``sarSegmentsThreshold``.
     ///
     /// - seeAlso: ``sarSegmentsThreshold``
@@ -734,7 +734,7 @@ internal extension NetworkParameters {
     
     /// The interval between transmissions of segments of a segmented message.
     ///
-    /// The value ot this interval is indicated by **SAR Segment Interval Step state**.
+    /// The value of this interval is indicated by **SAR Segment Interval Step state**.
     ///
     /// - seeAlso: ``sarSegmentIntervalStep``
     var segmentTransmissionInterval: TimeInterval {

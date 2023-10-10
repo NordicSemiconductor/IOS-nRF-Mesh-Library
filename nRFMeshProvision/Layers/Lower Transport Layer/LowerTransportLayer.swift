@@ -571,7 +571,7 @@ private extension LowerTransportLayer {
                     
                     // If Segment Acknowledgment retransmission is enabled and the
                     // number of segments of the segmented message is longer than the
-                    // SAR Segments Threshhold, the lower transport layer should retransmit
+                    // SAR Segments Threshold, the lower transport layer should retransmit
                     // the acknowledgment specified number of times.
                     let initialCount = networkManager.networkParameters.sarAcknowledgmentRetransmissionsCount
                     var count = initialCount
@@ -965,7 +965,7 @@ private extension NetworkPdu {
     
     /// The 24-bit message sequence number used to transmit the first segment
     /// of a segmented message, or the 24-bit sequence number of an unsegmented
-    /// message. This should be prefixed with 32-bit IV Index to get Seeq Auth.
+    /// message. This should be prefixed with 32-bit IV Index to get SeqAuth.
     ///
     /// If the Seq is 0x647262 and SeqZero is 0x1849, the message sequence
     /// should be 0x6451849. See Bluetooth Mesh Profile 1.0.1 chapter 3.5.3.1.

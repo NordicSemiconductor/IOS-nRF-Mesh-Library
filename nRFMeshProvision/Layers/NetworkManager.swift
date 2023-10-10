@@ -78,10 +78,10 @@ internal class NetworkManager {
                                                      callback: (Result<ConfigResponse, Error>) -> ())] = [:]
     /// Callbacks awaiting a mesh message.
     ///
-    /// The list cpmtains the following data:
+    /// The list contains the following data:
     /// - Unicast Address of the Element that is expected to send the message,
     /// - Expected Op Code,
-    /// - Optional message destination (if `nil` any destination will be ,
+    /// - Optional message destination (if `nil` any destination will be accepted),
     /// - The callback to be called when such message is received.
     private var messageCallbacks: [(source: Address,
                                     expectedOpCode: UInt32,
@@ -490,7 +490,7 @@ internal class NetworkManager {
         accessLayer.cancel(handler)
     }
     
-    /// Ńotifies a callback awaiting messages with given OpCode sent from
+    /// Notifies a callback awaiting messages with given OpCode sent from
     /// the given Unicast Address about a cancellation.
     ///
     /// This method will send a cancellation error to the awaiting callback.

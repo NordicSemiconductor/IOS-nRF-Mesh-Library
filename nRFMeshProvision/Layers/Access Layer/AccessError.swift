@@ -60,7 +60,7 @@ public enum AccessError: Error {
     /// Thrown, when the acknowledgment has not been received until
     /// the time run out.
     case timeout
-    /// Thrown when senting the message was cancelled.
+    /// Thrown when sending the message was cancelled.
     case cancelled
 }
 

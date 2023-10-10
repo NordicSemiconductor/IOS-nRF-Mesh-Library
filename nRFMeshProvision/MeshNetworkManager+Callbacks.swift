@@ -37,7 +37,7 @@ public extension MeshNetworkManager {
     ///
     /// Apart from the `completion` callback, an appropriate callback of the
     /// ``MeshNetworkDelegate`` will be called when the message has been sent
-    /// successfully or a problem occured.
+    /// successfully or a problem occurred.
     ///
     /// - parameters:
     ///   - message:        The message to be sent.
@@ -105,7 +105,7 @@ public extension MeshNetworkManager {
     ///
     /// Apart from the `completion` callback, an appropriate callback of the
     /// ``MeshNetworkDelegate`` will be called when the message has been sent
-    /// successfully or a problem occured.
+    /// successfully or a problem occurred.
     ///
     /// - parameters:
     ///   - message:        The message to be sent.
@@ -140,7 +140,7 @@ public extension MeshNetworkManager {
     ///
     /// Apart from the `completion` callback, an appropriate callback of the
     /// ``MeshNetworkDelegate`` will be called when the message has been sent
-    /// successfully or a problem occured.
+    /// successfully or a problem occurred.
     ///
     /// - parameters:
     ///   - message:        The message to be sent.
@@ -185,7 +185,7 @@ public extension MeshNetworkManager {
     ///
     /// Apart from the `completion` callback, an appropriate callback of the
     /// ``MeshNetworkDelegate`` will be called when the message has been sent
-    /// successfully or a problem occured.
+    /// successfully or a problem occurred.
     ///
     /// - parameters:
     ///   - message:      The message to be sent.
@@ -223,7 +223,7 @@ public extension MeshNetworkManager {
     ///
     /// Apart from the `completion` callback, an appropriate callback of the
     /// ``MeshNetworkDelegate`` will be called when the message has been sent
-    /// successfully or a problem occured.
+    /// successfully or a problem occurred.
     ///
     /// - parameters:
     ///   - message:        The message to be sent.
@@ -302,7 +302,7 @@ public extension MeshNetworkManager {
     ///
     /// Apart from the `completion` callback, an appropriate callback of the
     /// ``MeshNetworkDelegate`` will be called when the message has been sent
-    /// successfully or a problem occured.
+    /// successfully or a problem occurred.
     ///
     /// - parameters:
     ///   - message:      The message to be sent.
@@ -342,7 +342,7 @@ public extension MeshNetworkManager {
     ///
     /// Apart from the `completion` callback, an appropriate callback of the
     /// ``MeshNetworkDelegate`` will be called when the message has been sent
-    /// successfully or a problem occured.
+    /// successfully or a problem occurred.
     ///
     /// - parameters:
     ///   - message:     The message to be sent.
@@ -415,7 +415,7 @@ public extension MeshNetworkManager {
     ///
     /// Apart from the `completion` callback, an appropriate callback of the
     /// ``MeshNetworkDelegate`` will be called when the message has been sent
-    /// successfully or a problem occured.
+    /// successfully or a problem occurred.
     ///
     /// - parameters:
     ///   - message:    The message to be sent.
@@ -445,7 +445,7 @@ public extension MeshNetworkManager {
     ///
     /// Apart from the `completion` callback, an appropriate callback of the
     /// ``MeshNetworkDelegate`` will be called when the message has been sent
-    /// successfully or a problem occured.
+    /// successfully or a problem occurred.
     ///
     /// - parameters:
     ///   - message:     The message to be sent.
@@ -525,7 +525,7 @@ public extension MeshNetworkManager {
     ///
     /// Apart from the `completion` callback, an appropriate callback of the
     /// ``MeshNetworkDelegate`` will be called when the message has been sent
-    /// successfully or a problem occured.
+    /// successfully or a problem occurred.
     ///
     /// - parameters:
     ///   - message:    The message to be sent.
@@ -553,7 +553,7 @@ public extension MeshNetworkManager {
     ///
     /// Apart from the `completion` callback, an appropriate callback of the
     /// ``MeshNetworkDelegate`` will be called when the message has been sent
-    /// successfully or a problem occured. 
+    /// successfully or a problem occurred. 
     ///
     /// - parameter message: The acknowledged configuration message to be sent.
     /// - throws: This method throws when the mesh network has not been created,
@@ -644,7 +644,7 @@ public extension MeshNetworkManager {
     /// message is not validated.
     ///
     /// - parameters:
-    ///   - opCode: The message OpCode. For vendor messages it must incude the Company Id.
+    ///   - opCode: The message OpCode. For vendor messages it must include the Company Id.
     ///   - element: The Element from which the message is expected.
     ///   - destination: The optional destination of the message.
     ///   - timeout: The timeout in seconds. Use 0 for not timeout.
@@ -724,7 +724,7 @@ public extension MeshNetworkManager {
     /// - important: To unregister the callback call ``unregisterCallback(forMessagesWithOpCode:from:)-2pj32``.
     ///
     /// - warning: This method is implemented using ``waitFor(messageWithOpCode:from:to:timeout:)-6673k``.
-    ///            It is not possible to await a message and message stream simultanosly.
+    ///            It is not possible to await a message and message stream simultaneously.
     ///
     /// - parameters:
     ///   - opCode: Expected message OpCode.
@@ -756,7 +756,7 @@ public extension MeshNetworkManager {
     /// - important: To unregister the callback call ``unregisterCallback(forMessagesWithOpCode:from:)-9rbl0``.
     ///
     /// - warning: This method is implemented using ``waitFor(messageWithOpCode:from:to:timeout:)-6673k``.
-    ///            It is not possible to await a message and message stream simultanosly.
+    ///            It is not possible to await a message and message stream simultaneously.
     ///
     /// - parameters:
     ///   - opCode: Expected message OpCode.
@@ -779,7 +779,7 @@ public extension MeshNetworkManager {
     /// - important: To unregister the callback call ``unregisterCallback(forMessagesWithType:from:)-15wz4``.
     ///
     /// - warning: This method is implemented using ``waitFor(messageFrom:to:timeout:)-24q2d``.
-    ///            It is not possible to await a message and message stream simultanosly.
+    ///            It is not possible to await a message and message stream simultaneously.
     ///
     /// - parameters:
     ///   - address: The Unicast Address of the Element from which the messages are expected.
@@ -810,7 +810,7 @@ public extension MeshNetworkManager {
     /// - important: To unregister the callback call ``unregisterCallback(forMessagesWithType:from:)-1g3i0``.
     ///
     /// - warning: This method is implemented using ``waitFor(messageFrom:to:timeout:)-24q2d``.
-    ///            It is not possible to await a message and message stream simultanosly.
+    ///            It is not possible to await a message and message stream simultaneously.
     ///
     /// - parameters:
     ///   - element: The Element from which the messages are expected.
@@ -827,7 +827,7 @@ public extension MeshNetworkManager {
     ///
     /// This method must be called to unregister previously registered callback.
     ///
-    /// - note: Due to the implamentation, this method cancels awaiting for messages
+    /// - note: Due to the implementation, this method cancels awaiting for messages
     ///         with given parameters even if no message callbacks were registered.
     ///
     /// - parameters:
@@ -844,7 +844,7 @@ public extension MeshNetworkManager {
     ///
     /// This method must be called to unregister previously registered callback.
     ///
-    /// - note: Due to the implamentation, this method cancels awaiting for messages
+    /// - note: Due to the implementation, this method cancels awaiting for messages
     ///         with given parameters even if no message callbacks were registered.
     ///
     /// - parameters:
@@ -858,7 +858,7 @@ public extension MeshNetworkManager {
     ///
     /// This method must be called to unregister previously registered callback.
     ///
-    /// - note: Due to the implamentation, this method cancels awaiting for messages
+    /// - note: Due to the implementation, this method cancels awaiting for messages
     ///         with given parameters even if no message callbacks were registered.
     ///
     /// - parameters:
@@ -872,7 +872,7 @@ public extension MeshNetworkManager {
     ///
     /// This method must be called to unregister previously registered callback.
     ///
-    /// - note: Due to the implamentation, this method cancels awaiting for messages
+    /// - note: Due to the implementation, this method cancels awaiting for messages
     ///         with given parameters even if no message callbacks were registered.
     ///
     /// - parameters:

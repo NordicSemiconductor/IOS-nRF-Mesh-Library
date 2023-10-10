@@ -50,7 +50,7 @@ internal struct PrivateBeacon: NetworkBeaconPdu {
             return nil
         }
         
-        // Try to decode and authentice the Private beacon using current Private Beacon Key.
+        // Try to decode and authenticate the Private beacon using current Private Beacon Key.
         var privateBeaconData = Crypto.decodeAndAuthenticate(
             privateBeacon: pdu,
             usingPrivateBeaconKey: networkKey.keys.privateBeaconKey

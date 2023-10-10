@@ -31,7 +31,7 @@
 import Foundation
 
 /// Set of errors that may be thrown for a ``ModelDelegate`` during
-/// handing a reveived acknowledged message.
+/// handing a received acknowledged message.
 public enum ModelError: Error {
     /// This error can be returned if the received acknowledged message
     /// should be discarded due to being invalid.
@@ -53,7 +53,7 @@ public enum ModelError: Error {
 /// * ``ModelDelegate/model(_:didReceiveAcknowledgedMessage:from:sentTo:)``
 /// * ``ModelDelegate/model(_:didReceiveResponse:toAcknowledgedMessage:from:)``
 ///
-/// The Model Dlegate also specifies should the Model support subscription
+/// The Model Delegate also specifies should the Model support subscription
 /// and defines publication composer for automatic publications.
 public protocol ModelDelegate: AnyObject {
     typealias MessageComposer = () -> MeshMessage

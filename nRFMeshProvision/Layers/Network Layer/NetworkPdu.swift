@@ -64,7 +64,7 @@ internal struct NetworkPdu {
     ///   - pduType:    The type of the PDU: ``PduType/networkPdu`` or ``PduType/proxyConfiguration``.
     ///   - networkKey: The Network Key to decrypt the PDU.
     ///   - ivIndex:    The current IV Index.
-    /// - returns: The deobfuscated and decided Network PDU object, or `nil`,
+    /// - returns: The deobfuscated and decoded Network PDU object, or `nil`,
     ///            if the key or IV Index don't match.
     init?(decode pdu: Data, ofType pduType: PduType,
           usingNetworkKey networkKey: NetworkKey, andIvIndex ivIndex: IvIndex) {

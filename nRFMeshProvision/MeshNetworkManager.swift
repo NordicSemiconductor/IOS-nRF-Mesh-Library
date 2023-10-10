@@ -64,7 +64,7 @@ public class MeshNetworkManager: NetworkParametersProvider {
     
     // MARK: - Network Manager properties
     
-    /// Network parameters define the mesh transmition and retransmition parameters,
+    /// Network parameters define the mesh transmission and retransmission parameters,
     /// the default Time To Live (TTL) value and other configuration.
     ///
     /// Initially it is set to ``NetworkParameters/default``.
@@ -284,7 +284,7 @@ public extension MeshNetworkManager {
     ///         the publication configuration of the given Model.
     ///
     /// An appropriate callback of the ``MeshNetworkDelegate`` will be called when
-    /// the message has been sent successfully or a problem occured.
+    /// the message has been sent successfully or a problem occurred.
     ///
     /// - parameters:
     ///   - message: The message to be sent.
@@ -311,7 +311,7 @@ public extension MeshNetworkManager {
     /// The method completes when the message has been sent or an error occurred.
     ///
     /// An appropriate callback of the ``MeshNetworkDelegate`` will be called when
-    /// the message has been sent successfully or a problem occured.
+    /// the message has been sent successfully or a problem occurred.
     ///
     /// - parameters:
     ///   - message:        The message to be sent.
@@ -359,7 +359,7 @@ public extension MeshNetworkManager {
     /// The method completes when the message has been sent or an error occurred.
     ///
     /// An appropriate callback of the ``MeshNetworkDelegate`` will be called when
-    /// the message has been sent successfully or a problem occured.
+    /// the message has been sent successfully or a problem occurred.
     ///
     /// - parameters:
     ///   - message:        The message to be sent.
@@ -390,7 +390,7 @@ public extension MeshNetworkManager {
     /// The method completes when the message has been sent or an error occurred.
     ///
     /// An appropriate callback of the ``MeshNetworkDelegate`` will be called when
-    /// the message has been sent successfully or a problem occured.
+    /// the message has been sent successfully or a problem occurred.
     ///
     /// - parameters:
     ///   - message:        The message to be sent.
@@ -431,7 +431,7 @@ public extension MeshNetworkManager {
     /// The method completes when the message has been sent or an error occurred.
     ///
     /// An appropriate callback of the ``MeshNetworkDelegate`` will be called when
-    /// the message has been sent successfully or a problem occured.
+    /// the message has been sent successfully or a problem occurred.
     ///
     /// - parameters:
     ///   - message:      The message to be sent.
@@ -464,7 +464,7 @@ public extension MeshNetworkManager {
     /// to which the Model belongs to and returns the response.
     ///
     /// An appropriate callback of the ``MeshNetworkDelegate`` will be called when
-    /// the message has been sent successfully or a problem occured.
+    /// the message has been sent successfully or a problem occurred.
     ///
     /// - parameters:
     ///   - message:        The message to be sent.
@@ -522,7 +522,7 @@ public extension MeshNetworkManager {
     /// to which the target Model belongs to.
     ///
     /// An appropriate callback of the ``MeshNetworkDelegate`` will be called when
-    /// the message has been sent successfully or a problem occured.
+    /// the message has been sent successfully or a problem occurred.
     ///
     /// - parameters:
     ///   - message:      The message to be sent.
@@ -558,7 +558,7 @@ public extension MeshNetworkManager {
     /// throws an ``AccessError/invalidDestination`` error.
     ///
     /// An appropriate callback of the ``MeshNetworkDelegate`` will be called when
-    /// the message has been sent successfully or a problem occured.
+    /// the message has been sent successfully or a problem occurred.
     ///
     /// - parameters:
     ///   - message:     The message to be sent.
@@ -611,7 +611,7 @@ public extension MeshNetworkManager {
     /// Sends a Configuration Message to the primary Element on the given ``Node``.
     ///
     /// An appropriate callback of the ``MeshNetworkDelegate`` will be called when
-    /// the message has been sent successfully or a problem occured.
+    /// the message has been sent successfully or a problem occurred.
     ///
     /// - parameters:
     ///   - message:    The message to be sent.
@@ -637,7 +637,7 @@ public extension MeshNetworkManager {
     /// throws an ``AccessError/invalidDestination`` error.
     ///
     /// An appropriate callback of the ``MeshNetworkDelegate`` will be called when
-    /// the message has been sent successfully or a problem occured.
+    /// the message has been sent successfully or a problem occurred.
     ///
     /// - parameters:
     ///   - message:     The message to be sent.
@@ -698,7 +698,7 @@ public extension MeshNetworkManager {
     /// and returns the received response.
     ///
     /// An appropriate callback of the ``MeshNetworkDelegate`` will be called when
-    /// the message has been sent successfully or a problem occured.
+    /// the message has been sent successfully or a problem occurred.
     ///
     /// - parameters:
     ///   - message:    The message to be sent.
@@ -723,7 +723,7 @@ public extension MeshNetworkManager {
     /// and returns the received response.
     ///
     /// An appropriate callback of the ``MeshNetworkDelegate`` will also be called when
-    /// the message has been sent successfully or a problem occured.
+    /// the message has been sent successfully or a problem occurred.
     ///
     /// - parameters:
     /// - parameter message: The acknowledged configuration message to be sent.
@@ -814,7 +814,7 @@ public extension MeshNetworkManager {
     /// ``AccessError/timeout`` error.
     ///
     /// - parameters:
-    ///   - opCode: The message OpCode. For vendor messages it must inlcude the Company Id.
+    ///   - opCode: The message OpCode. For vendor messages it must include the Company Id.
     ///   - element: The Element from which the message is expected.
     ///   - destination: The optional destination of the message.
     ///   - timeout: The timeout in seconds. Use 0 for not timeout.
@@ -886,7 +886,7 @@ public extension MeshNetworkManager {
     /// will return `nil`.
     ///
     /// - warning: This method is implemented using ``waitFor(messageWithOpCode:from:to:timeout:)-6673k``.
-    ///            It is not possible to await a message and message stream simultanosly.
+    ///            It is not possible to await a message and message stream simultaneously.
     ///
     /// - parameters:
     ///   - opCode: The OpCode of the messages to await for.
@@ -909,7 +909,7 @@ public extension MeshNetworkManager {
     /// will return `nil`.
     ///
     /// - warning: This method is implemented using ``waitFor(messageWithOpCode:from:to:timeout:)-6673k``.
-    ///            It is not possible to await a message and message stream simultanosly.
+    ///            It is not possible to await a message and message stream simultaneously.
     ///
     /// - parameters:
     ///   - opCode: The OpCode of the messages to await for.
@@ -928,7 +928,7 @@ public extension MeshNetworkManager {
     /// will return `nil`.
     ///
     /// - warning: This method is implemented using ``waitFor(messageFrom:to:timeout:)-24q2d``.
-    ///            It is not possible to await a message and message stream simultanosly.
+    ///            It is not possible to await a message and message stream simultaneously.
     ///
     /// - parameters:
     ///   - opCode: The OpCode of the messages to await for.
@@ -950,7 +950,7 @@ public extension MeshNetworkManager {
     /// will return `nil`.
     ///
     /// - warning: This method is implemented using ``waitFor(messageFrom:to:timeout:)-24q2d``.
-    ///            It is not possible to await a message and message stream simultanosly.
+    ///            It is not possible to await a message and message stream simultaneously.
     ///
     /// - parameters:
     ///   - opCode: The OpCode of the messages to await for.

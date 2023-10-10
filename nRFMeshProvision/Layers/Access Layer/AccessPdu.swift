@@ -58,7 +58,7 @@ internal struct AccessPdu {
         return accessPdu.count > 11 || message.isSegmented
     }
     /// Number of packets for this PDU.
-    ///
+    /// ```
     /// Number of Packets | Maximum useful access payload size (octets)
     ///                   | 32 bit TransMIC  | 64 bit TransMIC
     /// ------------------+------------------+-------------------------
@@ -68,6 +68,7 @@ internal struct AccessPdu {
     /// 3                 | 32               | 28
     /// n                 | (n×12)-4         | (n×12)-8
     /// 32                | 380              | 376
+    /// ```
     var segmentsCount: Int {
         guard let message = message else {
             return 0
@@ -129,7 +130,7 @@ internal struct AccessPdu {
         parameters = pdu.accessPdu.subdata(in: 3..<pdu.accessPdu.count)
     }
     
-    /// Creates teh Access PDU that will encapsulate the given Mesh Message.
+    /// Creates the Access PDU that will encapsulate the given Mesh Message.
     ///
     /// - parameters:
     ///   - message: The message to be encapsulated.

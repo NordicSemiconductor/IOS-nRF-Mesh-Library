@@ -7,7 +7,7 @@ devices.
 
 The mesh network configuration schema is defined in 
 [Bluetooth Mesh Configuration Database specification](https://www.bluetooth.com/specifications/specs/mesh-configuration-database-profile-1-0-1/).
-As the schema is standarized by Bluetooth SIG it should be possible to import it on different devices
+As the schema is standardized by Bluetooth SIG it should be possible to import it on different devices
 from different manufacturers.
 
 Exporting network is done by calling ``MeshNetworkManager/export(_:)``.

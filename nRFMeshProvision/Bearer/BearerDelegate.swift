@@ -30,7 +30,7 @@
 
 import Foundation
 
-/// A beared data delegate processes mesh messages received by the bearer.
+/// A bearer data delegate processes mesh messages received by the bearer.
 public protocol BearerDataDelegate: AnyObject {
     
     /// Callback called when a packet has been received using the Bearer.
