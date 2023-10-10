@@ -13,12 +13,11 @@ SPEC REPOS:
 EXTERNAL SOURCES:
   nRFMeshProvision:
     :path: "../"
-    :skip_developer_files: true
 
 SPEC CHECKSUMS:
   CryptoSwift: 52aaf3fce7337552863b1d952e408085f0e65030
   nRFMeshProvision: 69767fa24aede3ca206ed17e9172be564bd7bfc0
 
-PODFILE CHECKSUM: e94ca40dddc60e776656fa43eaf36f906ebfb2f6
+PODFILE CHECKSUM: 798fe4d826703f91673f9c99ff182b2dfa6655f4
 
 COCOAPODS: 1.13.0
