@@ -61,7 +61,7 @@ public struct ConfigNetKeyDelete: AcknowledgedConfigMessage, ConfigNetKeyMessage
         guard parameters.count == 2 else {
             return nil
         }
-        networkKeyIndex = ConfigAppKeyDelete.decodeNetKeyIndex(from: parameters, at: 0)
+        networkKeyIndex = Self.decodeNetKeyIndex(from: parameters, at: 0)
     }
     
 }

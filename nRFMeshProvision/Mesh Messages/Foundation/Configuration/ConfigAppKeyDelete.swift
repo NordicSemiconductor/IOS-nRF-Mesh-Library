@@ -63,7 +63,7 @@ public struct ConfigAppKeyDelete: AcknowledgedConfigMessage, ConfigNetAndAppKeyM
         guard parameters.count == 3 else {
             return nil
         }
-        (networkKeyIndex, applicationKeyIndex) = ConfigAppKeyAdd.decodeNetAndAppKeyIndex(from: parameters, at: 0)
+        (networkKeyIndex, applicationKeyIndex) = Self.decodeNetAndAppKeyIndex(from: parameters, at: 0)
     }
     
 }

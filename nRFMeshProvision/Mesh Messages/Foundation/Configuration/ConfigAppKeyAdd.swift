@@ -69,7 +69,7 @@ public struct ConfigAppKeyAdd: AcknowledgedConfigMessage, ConfigNetAndAppKeyMess
         guard parameters.count == 19 else {
             return nil
         }
-        (networkKeyIndex, applicationKeyIndex) = ConfigAppKeyAdd.decodeNetAndAppKeyIndex(from: parameters, at: 0)
+        (networkKeyIndex, applicationKeyIndex) = Self.decodeNetAndAppKeyIndex(from: parameters, at: 0)
         key = parameters.subdata(in: 3..<19)
     }
     

@@ -256,7 +256,6 @@ internal class AccessLayer {
     ///   - destination: The destination address. This must be a Unicast Address.
     ///   - initialTtl:  The initial TTL (Time To Live) value of the message.
     ///                  If `nil`, the default Node TTL will be used.
-    ///   - completion:  The completion handler with the response.
     func send(_ message: ConfigMessage,
               from element: Element, to destination: Address,
               withTtl initialTtl: UInt8?) {
