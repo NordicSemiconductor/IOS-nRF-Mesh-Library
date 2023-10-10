@@ -7,9 +7,9 @@
 
 The nRF Mesh library allows to provision Bluetooth mesh devices into a mesh network, configure them and send and receive messages.
 
-The library is compatible with the following [Bluetooth specifications](https://www.bluetooth.com/specifications/specs/?status=active&show_latest_version=1&keyword=mesh):
-- Mesh Profile 1.0.1 (with experimental support for Mesh Protocol 1.1)
-- Mesh Model 1.0.1
+The library is compatible with the following [Bluetooth specifications](https://www.bluetooth.com/specifications/specs/?types=adopted&keyword=mesh):
+- Mesh Protocol 1.1 (backwards compatible with **Mesh Profile 1.0.1**)
+- Mesh Model 1.1
 - Mesh Device Properties 2
 - Configuration Database Profile 1.0.1
 
@@ -18,7 +18,7 @@ See [documentation](https://nordicsemiconductor.github.io/IOS-nRF-Mesh-Library/d
 > **Note**
 >
 > Implementing ADV Bearer on iOS is not possible due to API limitations. The library is using *GATT Proxy protocol*, 
-  specified in the Bluetooth Mesh Profile 1.0.1, and requires a Node with Proxy functionality to relay messages to the mesh network.
+  specified in the Bluetooth Mesh Protocol 1.1, and requires a Node with Proxy feature to relay messages to the mesh network.
 
 ## Supported features
 
@@ -26,7 +26,8 @@ See [documentation](https://nordicsemiconductor.github.io/IOS-nRF-Mesh-Library/d
    - OOB[^1] Public Key (most secure)
    - Input and Output OOB
    - No OOB (insecure)
-   - Experimental support for enhanced security added in Mesh Protocol 1.1.
+   - Enhanced security, added in Mesh Protocol 1.1.
+   - Remote Provisioning (requires a node with Remote Provisioning Server model to proxy provisioning messages)
 2. Configuration, including managing keys, publications, subscription, and heartbeats (both as client and server).
 3. Support for client and server models.
 4. Groups, including those with virtual labels.
@@ -50,8 +51,7 @@ The following features are not (yet) supported:
 1. The rest of models defined by Bluetooth SIG - *PRs are welcome!**
 2. IV Index update (initiation) - *not a top priority, as other nodes may initiate the update.*
 3. Health server messages - *in our TODO list.*
-4. Remote provisioning - *in our TODO list.*
-5. Device Firmware Update (DFU) - *in our TODO list.*
+4. Device Firmware Update (DFU) - *coming next!*
 
 ## How to start
 

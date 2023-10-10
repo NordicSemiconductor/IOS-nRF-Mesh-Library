@@ -7,15 +7,15 @@ Provision, configure and control Bluetooth mesh devices with nRF Mesh library.
 The nRF Mesh library allows to provision Bluetooth mesh devices into a mesh network, configure 
 them and send and receive messages.
 
-The library is compatible with the following [Bluetooth specifications](https://www.bluetooth.com/specifications/specs/?status=active&show_latest_version=0&show_latest_version=1&keyword=mesh&filter=):
+The library is compatible with the following [Bluetooth specifications](https://www.bluetooth.com/specifications/specs/?types=adopted&keyword=mesh):
 - **Mesh Protocol 1.1** (backwards compatible with **Mesh Profile 1.0.1**)
 - **Mesh Model 1.1**
 - **Mesh Device Properties 2**
 - **Configuration Database Profile 1.0.1**
 
 > Important: Implementing ADV Bearer on iOS is not possible due to API limitations. 
-  The library is using GATT Proxy protocol, specified in the Bluetooth Mesh Profile 1.0.1,
-  and requires a Node with GATT Proxy functionality to relay messages to the mesh network.
+  The library is using GATT Proxy protocol, specified in the Bluetooth Mesh Protocol 1.1,
+  and requires a Node with GATT Proxy feature to relay messages to the mesh network.
 
 ## Usage
 
