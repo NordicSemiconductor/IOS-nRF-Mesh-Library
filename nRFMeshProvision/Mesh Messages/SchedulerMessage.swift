@@ -278,7 +278,7 @@ extension SchedulerRegistryEntry {
     /// Unmarshals the Entry from 10-byte long data.
     ///
     /// - parameter parameters: The raw data. Has to be at least 10-bytes long.
-    /// - returns: A tupple of an index and scheduler registry entry.
+    /// - returns: A tuple of an index and scheduler registry entry.
     public static func unmarshal(_ parameters: Data) -> (index: UInt8, entry: SchedulerRegistryEntry) {
         let index = UInt8(parameters.readBits(4, fromOffset: 0))
         let year = UInt8(parameters.readBits(7, fromOffset: 4))
