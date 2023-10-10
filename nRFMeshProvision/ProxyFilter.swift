@@ -117,7 +117,7 @@ public enum ProxyFilterSetup {
     
     /// The Proxy Filter on each connected Proxy Node will be set to
     /// ``ProxyFilerType/rejectList`` with given set of addresses.
-    case rejectnList(addresses: Set<Address>)
+    case rejectList(addresses: Set<Address>)
     
     /// The Proxy Filter on each connected Proxy Node will be set to
     /// ``ProxyFilerType/acceptList`` with given set of addresses.
@@ -399,7 +399,7 @@ extension ProxyFilter: ProxyFilterEventHandler {
             switch initialState {
             case .automatic:
                 setup(for: localProvisioner)
-            case .rejectnList(addresses: let addresses),
+            case .rejectList(addresses: let addresses),
                  .exclusionList(addresses: let addresses):
                 setType(.rejectList)
                 fallthrough
