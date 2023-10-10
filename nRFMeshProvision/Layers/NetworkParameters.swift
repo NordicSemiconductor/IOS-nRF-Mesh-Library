@@ -182,7 +182,7 @@ public struct NetworkParameters {
         ///            Default value is 2 retransmissions (3 transmissions, including the initial one).
         ///   - interval: The constant component of the interval between retransmissions.
         ///               Default interval is 200 ms. Valid range is from 25 ms to 400 ms with 25 ms interval.
-        ///   - increment: The increment component the the interval, which is mullitpled by `TTL - 1`.
+        ///   - increment: The increment component the the interval, which is multiplied by `TTL - 1`.
         ///                Default increment is 50 ms. Valid range is from 25 ms to 400 ms with 25 ms interval.
         /// - seeAlso: ``NetworkParameters/sarUnicastRetransmissionsCount``
         /// - seeAlso: ``NetworkParameters/sarUnicastRetransmissionsWithoutProgressCount``
