@@ -30,7 +30,7 @@
 
 import Foundation
 
-/// The key index is a 12-bit unsigend integer identifyind a Network
+/// The key index is a 12-bit unsigned integer identifying a Network
 /// or an Application Key.
 ///
 /// The key indexes within Network Keys and Application Keys must

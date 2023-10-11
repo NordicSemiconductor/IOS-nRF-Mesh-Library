@@ -121,7 +121,7 @@ public extension Group {
     
     /// Sets the parent-child relationship between this and the given Group.
     ///
-    /// Neigher the Group, or the parent Group can be a Special Group.
+    /// Neither the Group, or the parent Group can be a Special Group.
     ///
     /// - parameter parent: The parent Group.
     func setAsChildOf(_ parent: Group) {
@@ -138,7 +138,7 @@ public extension Group {
     
     /// Sets the parent-child relationship between this and the given Group.
     ///
-    /// Neigher the Group, or the child Group can be a Special Group.
+    /// Neither the Group, or the child Group can be a Special Group.
     ///
     /// - parameter child: The child Group.
     func setAsParentOf(_ child: Group) {

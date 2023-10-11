@@ -223,7 +223,7 @@ public extension MeshNetwork {
     /// - important: Sending Config Node Reset message does not guarantee that the
     ///              Node won't be able to communicate with the network. To make sure
     ///              that the Node will not be able to send and receive messages from
-    ///              the network all the Network Keys (and optionaly Application Keys)
+    ///              the network all the Network Keys (and optionally Application Keys)
     ///              known by the Node must to be updated using Key Refresh Procedure,
     ///              or removed from other Nodes.
     ///              See Bluetooth Mesh Profile 1.0.1, chapter: 3.10.7 Node Removal
