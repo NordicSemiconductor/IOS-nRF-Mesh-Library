@@ -163,10 +163,8 @@ extension Group: Equatable, Hashable {
     
     public static func == (lhs: Group, rhs: Group) -> Bool {
         return lhs.groupAddress == rhs.groupAddress
-    }
-    
-    public static func != (lhs: Group, rhs: Group) -> Bool {
-        return lhs.groupAddress != rhs.groupAddress
+            && lhs.parentAddress == rhs.parentAddress
+            && lhs.name == rhs.name
     }
     
     public func hash(into hasher: inout Hasher) {

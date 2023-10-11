@@ -153,7 +153,11 @@ public class ApplicationKey: Key, Codable {
 extension ApplicationKey: Equatable {
     
     public static func == (lhs: ApplicationKey, rhs: ApplicationKey) -> Bool {
-        return lhs.index == rhs.index && lhs.key == rhs.key
+        return lhs.index == rhs.index 
+            && lhs.key == rhs.key
+            && lhs.oldKey == rhs.oldKey
+            && lhs.name == rhs.name
+            && lhs.boundNetworkKeyIndex == rhs.boundNetworkKeyIndex
     }
     
     public static func != (lhs: ApplicationKey, rhs: ApplicationKey) -> Bool {

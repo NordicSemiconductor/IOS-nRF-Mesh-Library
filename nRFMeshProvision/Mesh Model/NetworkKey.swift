@@ -253,10 +253,10 @@ extension NetworkKey: Equatable {
     
     public static func == (lhs: NetworkKey, rhs: NetworkKey) -> Bool {
         return lhs.index == rhs.index
-    }
-    
-    public static func != (lhs: NetworkKey, rhs: NetworkKey) -> Bool {
-        return lhs.index != rhs.index
+            && lhs.phase == rhs.phase
+            && lhs.key == rhs.key
+            && lhs.oldKey == rhs.oldKey
+            && lhs.name == rhs.name
     }
     
 }

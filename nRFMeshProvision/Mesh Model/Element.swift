@@ -191,11 +191,9 @@ public class Element: Codable {
 extension Element: Equatable, Hashable {
     
     public static func == (lhs: Element, rhs: Element) -> Bool {
-        return lhs.parentNode === rhs.parentNode && lhs.index == rhs.index
-    }
-    
-    public static func != (lhs: Element, rhs: Element) -> Bool {
-        return lhs.parentNode !== rhs.parentNode || lhs.index != rhs.index
+        return lhs.parentNode === rhs.parentNode 
+            && lhs.index == rhs.index
+            && lhs.name == rhs.name
     }
     
     public func hash(into hasher: inout Hasher) {
