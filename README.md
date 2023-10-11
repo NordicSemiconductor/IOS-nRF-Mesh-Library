@@ -3,15 +3,16 @@
 [![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
 [![SwiftPM Compatible](https://img.shields.io/badge/SwiftPM-compatible-brightgreen)](https://swift.org/package-manager/)
 
-# Bluetooth mesh library for iOS
+# Bluetooth® Mesh library for iOS
 
-The nRF Mesh library allows to provision Bluetooth mesh devices into a mesh network, configure them and send and receive messages.
+The nRF Mesh library allows to provision [Bluetooth® Mesh](https://www.bluetooth.com/learn-about-bluetooth/feature-enhancements/mesh/)
+devices into a mesh network, configure them and send and receive messages.
 
 The library is compatible with the following [Bluetooth specifications](https://www.bluetooth.com/specifications/specs/?types=adopted&keyword=mesh):
 - Mesh Protocol 1.1 (backwards compatible with **Mesh Profile 1.0.1**)
 - Mesh Model 1.1
 - Mesh Device Properties 2
-- Configuration Database Profile 1.0.1
+- Mesh Configuration Database Profile 1.0.1
 
 See [documentation](https://nordicsemiconductor.github.io/IOS-nRF-Mesh-Library/documentation/nrfmeshprovision) for more information.
 
@@ -26,7 +27,7 @@ See [documentation](https://nordicsemiconductor.github.io/IOS-nRF-Mesh-Library/d
    - OOB[^1] Public Key (most secure)
    - Input and Output OOB
    - No OOB (insecure)
-   - Enhanced security, added in Mesh Protocol 1.1.
+   - Enhanced security, added in Mesh Protocol 1.1
    - Remote Provisioning (requires a node with Remote Provisioning Server model to proxy provisioning messages)
 2. Configuration, including managing keys, publications, subscription, and heartbeats (both as client and server).
 3. Support for client and server models.
@@ -87,8 +88,8 @@ The app is available on [App Store](https://apps.apple.com/us/app/nrf-mesh/id138
 
 ## Testing
 
-All features are tested against [nRF5 SDK for Mesh](https://www.nordicsemi.com/Products/Development-software/nRF5-SDK-for-Mesh) 
-and [nRF Connect SDK](https://www.nordicsemi.com/Products/Development-software/nRF-Connect-SDK) based mesh devices.
+All features are tested against nRF5 devices running [nRF5 SDK for Mesh](https://www.nordicsemi.com/Products/Development-software/nRF5-SDK-for-Mesh) 
+and [nRF Connect SDK](https://www.nordicsemi.com/Products/Development-software/nRF-Connect-SDK) firmware.
 
 ## Requirements
 

@@ -1,8 +1,4 @@
-// swift-tools-version:5.8
-//
-// The `swift-tools-version` declares the minimum version of Swift required to
-// build this package. Do not remove it.
-
+// swift-tools-version:5.9
 import PackageDescription
 
 let package = Package(
@@ -25,7 +21,10 @@ let package = Package(
     .target(
       name: "nRFMeshProvision",
       dependencies: ["CryptoSwift"],
-      path: "nRFMeshProvision/"
+      path: "nRFMeshProvision/",
+      resources: [
+          .copy("Resources/PrivacyInfo.xcprivacy")
+      ]
     ),
     .testTarget(
       name: "NordicMeshTests",
