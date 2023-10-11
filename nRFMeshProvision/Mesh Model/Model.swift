@@ -378,11 +378,11 @@ internal extension Model {
 extension Model: Equatable, Hashable {
     
     public static func == (lhs: Model, rhs: Model) -> Bool {
-        return lhs.modelId == rhs.modelId && lhs.parentElement == rhs.parentElement
-    }
-    
-    public static func != (lhs: Model, rhs: Model) -> Bool {
-        return lhs.modelId != rhs.modelId || lhs.parentElement != rhs.parentElement
+        return lhs.modelId == rhs.modelId 
+            && lhs.parentElement == rhs.parentElement
+            && lhs.bind == rhs.bind
+            && lhs.subscribe == rhs.subscribe
+            && lhs.publish == rhs.publish
     }
     
     public func hash(into hasher: inout Hasher) {

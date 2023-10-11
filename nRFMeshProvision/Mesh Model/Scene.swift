@@ -33,7 +33,7 @@ import Foundation
 /// A Scene represents a set of states stored with a Scene Number.
 ///
 /// A Scene is identified by a ``SceneNumber`` and may have a
-/// human-reaadable name associated.
+/// human-readable name associated.
 ///
 /// A Node having a Scene Server model can store the states of other
 /// models and restore them on demand.
@@ -159,6 +159,7 @@ extension Scene: Equatable, Hashable {
     
     public static func == (lhs: Scene, rhs: Scene) -> Bool {
         return lhs.number == rhs.number
+            && lhs.name == rhs.name
     }
     
     public func hash(into hasher: inout Hasher) {

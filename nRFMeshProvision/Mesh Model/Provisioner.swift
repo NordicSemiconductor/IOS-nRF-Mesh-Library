@@ -132,10 +132,10 @@ extension Provisioner: Equatable {
     
     public static func == (lhs: Provisioner, rhs: Provisioner) -> Bool {
         return lhs.uuid == rhs.uuid
-    }
-    
-    public static func != (lhs: Provisioner, rhs: Provisioner) -> Bool {
-        return lhs.uuid != rhs.uuid
+            && lhs.name == rhs.name
+            && lhs.allocatedUnicastRange == rhs.allocatedUnicastRange
+            && lhs.allocatedGroupRange == rhs.allocatedGroupRange
+            && lhs.allocatedSceneRange == rhs.allocatedSceneRange
     }
     
 }
