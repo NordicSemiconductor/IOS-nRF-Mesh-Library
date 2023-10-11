@@ -93,10 +93,10 @@ class CreatingMeshNetwork: XCTestCase {
         XCTAssertEqual(network.nodes.first?.elements.count, 2)
         XCTAssertEqual(network.nodes.first?.elementsCount, 2)
         // Verify the Primary Element.
-        XCTAssertEqual(network.nodes.first?.elements[0].models.count, 8)
+        XCTAssertEqual(network.nodes.first?.elements[0].models.count, 10)
         XCTAssert(network.nodes.first?.elements[0].contains(modelWithSigModelId: 0x1001) ?? false)
         XCTAssert(network.nodes.first?.elements[0].contains(modelWithSigModelId: 0x1003) ?? false)
-        // Verify element 1 and 2.
+        // Verify the Secondary Element.
         XCTAssertEqual(network.nodes.first?.elements[1].models.count, 3)
         XCTAssertFalse(network.nodes.first?.elements[1].contains(modelWithSigModelId: 0x1001) ?? true)
         XCTAssertFalse(network.nodes.first?.elements[1].contains(modelWithSigModelId: 0x1003) ?? true)
@@ -164,15 +164,15 @@ class CreatingMeshNetwork: XCTestCase {
         let cutElements = network.localProvisioner?.node?.elements
         XCTAssertNotNil(cutElements)
         XCTAssertEqual(cutElements!.count, 2) // There were only 2 addresses available.
-        XCTAssertEqual(cutElements![0].models.count, 8)
-        XCTAssert(cutElements![0].contains(modelWithSigModelId:  .configurationServerModelId))
+        XCTAssertEqual(cutElements![0].models.count, 10)
+        XCTAssert(cutElements![0].contains(modelWithSigModelId: .configurationServerModelId))
         XCTAssert(cutElements![0].contains(modelWithSigModelId: .configurationClientModelId))
         XCTAssert(cutElements![0].contains(modelWithSigModelId: .healthServerModelId))
         XCTAssert(cutElements![0].contains(modelWithSigModelId: .healthClientModelId))
-        XCTAssert(cutElements![0].contains(modelWithSigModelId: . privateBeaconClientModelId))
+        XCTAssert(cutElements![0].contains(modelWithSigModelId: .privateBeaconClientModelId))
         XCTAssert(cutElements![0].contains(modelWithSigModelId: .sceneClientModelId))
-        XCTAssertEqual(cutElements![0].models[6].modelIdentifier, 0x1001)
-        XCTAssertEqual(cutElements![0].models[7].modelIdentifier, 0x1003)
+        XCTAssertEqual(cutElements![0].models[8].modelIdentifier, 0x1001)
+        XCTAssertEqual(cutElements![0].models[9].modelIdentifier, 0x1003)
         XCTAssertEqual(cutElements![1].models.count, 3)
         XCTAssertEqual(cutElements![1].models[0].modelIdentifier, 0x1005)
         XCTAssertEqual(cutElements![1].models[1].modelIdentifier, 0x1007)
