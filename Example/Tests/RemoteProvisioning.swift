@@ -34,7 +34,7 @@ import CoreBluetooth
 
 class RemoteProvisioning: XCTestCase {
     let rssi: NSNumber = -50 // dBm
-    let uuid = CBUUID(string: "68753A44-4D6F-1226-9C60-0050E4C00067")
+    let uuid = UUID(uuidString: "68753A44-4D6F-1226-9C60-0050E4C00067")!
     let oobInformation = OobInformation(rawValue: 0xA040)
     let uriHash = Data(hex: "01020304")
     
@@ -61,7 +61,7 @@ class RemoteProvisioning: XCTestCase {
         let report = RemoteProvisioningScanReport(rssi: rssi, advertisementData: ad)
         XCTAssertNotNil(report)
         XCTAssertEqual(report?.rssi, rssi)
-        XCTAssertEqual(report?.uuid, CBUUID(string: "70cf7c97-32a3-45b6-9149-4810d2e9cbf4"))
+        XCTAssertEqual(report?.uuid, UUID(uuidString: "70cf7c97-32a3-45b6-9149-4810d2e9cbf4"))
         XCTAssertEqual(report?.oobInformation, [.number, .insideManual])
         XCTAssertNil(report?.uriHash)
     }
@@ -101,7 +101,7 @@ class RemoteProvisioning: XCTestCase {
         XCTAssertEqual(report?.uriHash, uriHash)
     }
     
-    func testScanReport_deserialization_withputHash() throws {
+    func testScanReport_deserialization_withoutHash() throws {
         let receivedData = Data(hex: "CE68753A444D6F12269C600050E4C00067A040")
         let report = RemoteProvisioningScanReport(parameters: receivedData)
         
@@ -184,7 +184,7 @@ class RemoteProvisioning: XCTestCase {
         XCTAssertEqual(response?.oobInformation, oobInformation)
         XCTAssertEqual(response?.serviceUUIDs?.count, 2)
         XCTAssert(response?.serviceUUIDs?.contains(CBUUID(string: "1809")) ?? false)
-        XCTAssert(response?.serviceUUIDs?.contains(uuid) ?? false)
+        XCTAssert(response?.serviceUUIDs?.contains(CBUUID(string: "68753A44-4D6F-1226-9C60-0050E4C00067")) ?? false)
         XCTAssertNil(response?.localName)
         XCTAssertNil(response?.uri)
         XCTAssertNil(response?.serviceData)
@@ -212,7 +212,7 @@ class RemoteProvisioning: XCTestCase {
         XCTAssertEqual(response?.uuid, uuid)
         XCTAssertEqual(response?.oobInformation, [])
         XCTAssertNotNil(response?.serviceData)
-        XCTAssertEqual(response?.serviceData?[uuid], Data(hex: "0102030405"))
+        XCTAssertEqual(response?.serviceData?[CBUUID(string: "68753A44-4D6F-1226-9C60-0050E4C00067")], Data(hex: "0102030405"))
         XCTAssertNil(response?.localName)
         XCTAssertNil(response?.uri)
         XCTAssertNil(response?.serviceUUIDs)
@@ -221,12 +221,13 @@ class RemoteProvisioning: XCTestCase {
     
     func testScanStart() throws {
         let request = RemoteProvisioningScanStart(scannedItemsLimit: 2, timeout: 11.0)
-        XCTAssertEqual(request.scannedItemsLimit, 2)
-        XCTAssertEqual(request.timeout, 11.0)
-        XCTAssertNil(request.uuid)
+        XCTAssertNotNil(request)
+        XCTAssertEqual(request?.scannedItemsLimit, 2)
+        XCTAssertEqual(request?.timeout, 11.0)
+        XCTAssertNil(request?.uuid)
         
         let expectedData = Data(hex: "020B")
-        XCTAssertEqual(request.parameters, expectedData)
+        XCTAssertEqual(request?.parameters, expectedData)
     }
     
     func testScanStart_deserialization() throws {
@@ -240,12 +241,13 @@ class RemoteProvisioning: XCTestCase {
     
     func testScanStart_withUUID() throws {
         let request = RemoteProvisioningScanStart(scannedItemsLimit: 5, timeout: 10.0, uuid: uuid)
-        XCTAssertEqual(request.scannedItemsLimit, 5)
-        XCTAssertEqual(request.timeout, 10.0)
-        XCTAssertEqual(request.uuid, uuid)
+        XCTAssertNotNil(request)
+        XCTAssertEqual(request?.scannedItemsLimit, 5)
+        XCTAssertEqual(request?.timeout, 10.0)
+        XCTAssertEqual(request?.uuid, uuid)
         
         let expectedData = Data(hex: "050A68753A444D6F12269C600050E4C00067")
-        XCTAssertEqual(request.parameters, expectedData)
+        XCTAssertEqual(request?.parameters, expectedData)
     }
     
     func testScanStart_withUUID_deserialization() throws {

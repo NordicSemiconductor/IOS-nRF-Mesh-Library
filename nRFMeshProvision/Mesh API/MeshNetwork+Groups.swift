@@ -32,6 +32,33 @@ import Foundation
 
 public extension MeshNetwork {
     
+    /// Checks if a Group with the same address as the given one exists in the network.
+    ///
+    /// - parameter group: A Group to look for.
+    /// - returns: `True` if the Group was found, `false` otherwise.
+    /// - since: 4.0.0
+    func contains(group: Group) -> Bool {
+        return groups.contains { $0.groupAddress == group.groupAddress }
+    }
+    
+    /// Checks if a Group with the given address exists in the network.
+    ///
+    /// - parameter address: The Group Address to look for.
+    /// - returns: `True` if the Group was found, `false` otherwise.
+    /// - since: 4.0.0
+    func contains(groupWithAddress address: MeshAddress) -> Bool {
+        return groups.contains { $0.address == address }
+    }
+    
+    /// Checks if a Group with the given address exists in the network.
+    ///
+    /// - parameter address: The Group Address to look for.
+    /// - returns: `True` if the Group was found, `false` otherwise.
+    /// - since: 4.0.0
+    func contains(groupWithAddress address: Address) -> Bool {
+        return groups.contains { $0.address.address == address }
+    }
+    
     /// Returns the Group with the given Address, or `nil` if no such was found.
     ///
     /// - parameter address: The Group Address.
@@ -63,7 +90,7 @@ public extension MeshNetwork {
         guard !group.address.address.isSpecialGroup else {
             throw MeshNetworkError.invalidAddress
         }
-        guard !groups.contains(group) else {
+        guard !contains(group: group) else {
             throw MeshNetworkError.groupAlreadyExists
         }
         group.meshNetwork = self
@@ -83,7 +110,7 @@ public extension MeshNetwork {
         if group.isUsed {
             throw MeshNetworkError.groupInUse
         }
-        if let index = groups.firstIndex(of: group) {
+        if let index = groups.firstIndex(where: { $0.groupAddress == group.groupAddress }) {
             groups.remove(at: index).meshNetwork = nil
             timestamp = Date()
         }
