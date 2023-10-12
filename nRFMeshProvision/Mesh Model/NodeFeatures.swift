@@ -30,7 +30,14 @@
 
 import Foundation
 
-/// Node feature.
+/// A feature of a Node.
+///
+/// Bluetooth Mesh Protocol 1.1 defines 4 features:
+/// - If the Relay feature is set, the Relay feature of a Node is in use.
+/// - If the Proxy feature is set, the GATT Proxy feature of a Node is in use.
+/// - If the Friend feature is set, the Friend feature of a Node is in use.
+/// - If the Low Power feature is set, the Node has active relationship with a Friend
+///   Node.
 public enum NodeFeature: String, Codable {
     /// The Relay feature is used to relay/forward Network PDUs received by a node
     /// over the advertising bearer.
@@ -90,6 +97,8 @@ public struct NodeFeatures: OptionSet {
 }
 
 /// The state of a feature.
+///
+/// A Node can have features enabled, disabled, or may not support one.
 public enum NodeFeatureState: UInt8, Codable {
     /// The feature is disabled.
     case notEnabled   = 0
@@ -149,7 +158,7 @@ public class NodeFeaturesState: Codable {
     /// This method creates the Node Features State object based on the
     /// feature bit-field from the Page 0 of the Composition Data.
     ///
-    /// - parameter mask: Features field from the Page 0 of the Compositon Page.
+    /// - parameter mask: Features field from the Page 0 of the Composition Page.
     internal init(mask: UInt16) {
         // The state of the following features is unknown until the corresponding
         // Config ... Get message is sent.

@@ -122,7 +122,7 @@ public extension MeshNetwork {
     ///   - hash:   The Hash value.
     ///   - random: The Random value.
     /// - returns: A Node that matches the given Hash and Random; or `nil` otherwise.
-    @available(*, deprecated, message: "Use node(matchingNodeIdentity:) instead.")
+    @available(*, deprecated, renamed: "node(matchingNodeIdentity:)")
     func node(matchingHash hash: Data, random: Data) -> Node? {
         let nodeIdentity = PublicNodeIdentity(hash: hash, random: random)
         return node(matchingNodeIdentity: nodeIdentity)
@@ -148,7 +148,7 @@ public extension MeshNetwork {
     ///   - random: The Random value.
     /// - returns: `True` if the given parameters match any Node of this
     ///            mesh network; `false` otherwise.
-    @available(*, deprecated, message: "Use matches(nodeIdentity:) instead.")
+    @available(*, deprecated, renamed: "matches(nodeIdentity:)")
     func matches(hash: Data, random: Data) -> Bool {
         return node(matchingHash: hash, random: random) != nil
     }

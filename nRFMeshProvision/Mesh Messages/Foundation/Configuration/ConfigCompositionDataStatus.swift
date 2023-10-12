@@ -30,6 +30,12 @@
 
 import Foundation
 
+/// A base protocol of a single Page of Composition Data.
+///
+/// The Composition Data state contains information about a Node,
+/// the Elements it includes, and the supported models.
+///
+/// The Composition Data is composed of a number of pages of information.
 public protocol CompositionDataPage {
     /// Page number of the Composition Data to get.
     var page: UInt8 { get }
@@ -68,8 +74,11 @@ public struct ConfigCompositionDataStatus: ConfigResponse {
     }
 }
 
+/// Composition Data Page 0 shall be present on a Node.
+///
+/// Composition Data Page 0 shall not change during a term of a Node
+/// on the network.
 public struct Page0: CompositionDataPage {
-    /// Page number of the Composition Data to get.
     public let page: UInt8
     
     /// The 16-bit Company Identifier (CID) assigned by the Bluetooth SIG.
@@ -87,7 +96,7 @@ public struct Page0: CompositionDataPage {
     /// Node's features.
     ///
     /// The Page 0 of the Composition Data does not provide information
-    /// whether a feture is enabled or disabled, just whether it is supported
+    /// whether a feature is enabled or disabled, just whether it is supported
     /// or not. Read the state of each feature using corresponding Config
     /// message.
     public let features: NodeFeaturesState
