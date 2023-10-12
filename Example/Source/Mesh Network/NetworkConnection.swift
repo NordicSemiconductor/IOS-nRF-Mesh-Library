@@ -150,7 +150,7 @@ class NetworkConnection: NSObject, Bearer {
     /// Switches connection to the given GATT Bearer.
     ///
     /// If the limit of ``NetworkConnection/maxConnections`` connections is reached,
-    /// the olders one will be closed.
+    /// the older one will be closed.
     ///
     /// - parameter bearer: The GATT Bearer proxy to use.
     func use(proxy bearer: GattBearer) {
