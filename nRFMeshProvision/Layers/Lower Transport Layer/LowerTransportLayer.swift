@@ -415,8 +415,7 @@ private extension LowerTransportLayer {
             }
             
             // Validate.
-            guard receivedSeqAuth > localSeqAuth || missed ||
-                  (reassemblyInProgress && receivedSeqAuth == localSeqAuth) else {
+            guard receivedSeqAuth > localSeqAuth || missed || reassemblyInProgress else {
                 // Ignore that message.
                 logger?.w(.lowerTransport, "Discarding packet (seqAuth: \(receivedSeqAuth), expected > \(localSeqAuth))")
                 return false
