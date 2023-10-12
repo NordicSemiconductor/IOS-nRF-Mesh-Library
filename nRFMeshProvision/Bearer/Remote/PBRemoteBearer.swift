@@ -44,7 +44,13 @@ final private class Send: AsyncOperation {
     }
 
     override func main() {
-        _ = try? manager.send(message, to: destination)
+        _ = try? manager.send(message, to: destination) { result in
+            do {
+                try result.get()
+            } catch {
+                self.manager.logger?.e(.bearer, "Sending \(self.message) to \(self.destination.hex) failed with error: \(error)")
+            }
+        }
         
         // TODO: Return error when retry failed
         let callback: (Result<RemoteProvisioningPDUOutboundReport, Error>) -> () = { response in
