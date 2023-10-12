@@ -45,7 +45,7 @@ class ProxyViewController: ProgressViewController, Editable {
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
+        super.viewWillAppear(animated)
         tableView.reloadData()
         
         MeshNetworkManager.instance.proxyFilter.delegate = self
