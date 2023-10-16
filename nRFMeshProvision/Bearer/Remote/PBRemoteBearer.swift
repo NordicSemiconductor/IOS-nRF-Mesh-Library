@@ -35,7 +35,7 @@ final private class Send: AsyncOperation {
     private let destination: Address
     private let manager: MeshNetworkManager
     
-    private var retry = false
+    private var shouldRetry = true
 
     init(message: RemoteProvisioningPDUSend, to destination: Address, over manager: MeshNetworkManager) {
         self.message = message
@@ -49,22 +49,28 @@ final private class Send: AsyncOperation {
                 try result.get()
             } catch {
                 self.manager.logger?.e(.bearer, "Sending \(self.message) to \(self.destination.hex) failed with error: \(error)")
+                if case LowerTransportError.timeout = error {
+                    self.shouldRetry = false
+                }
             }
         }
         
         // TODO: Return error when retry failed
         let callback: (Result<RemoteProvisioningPDUOutboundReport, Error>) -> () = { response in
-            guard !self.retry else { return }
+            guard self.shouldRetry else {
+                self.finish()
+                return
+            }
             guard let report = try? response.get(),
                   report.outboundPduNumber == self.message.outboundPduNumber else {
                 self.manager.logger?.log(message: "Retrying sending \(self.message)", ofCategory: .bearer, withLevel: .warning)
-                self.retry = true
+                self.shouldRetry = false
                 self.main()
                 return
             }
-            self.finish()            
+            self.finish()
         }
-        try? manager.waitFor(messageFrom: destination, timeout: 5, completion: callback)
+        try? manager.waitFor(messageFrom: destination, timeout: 15, completion: callback)
     }
 }
 
@@ -148,19 +154,22 @@ open class PBRemoteBearer: ProvisioningBearer {
         // Send Link Open request.
         let linkOpen = RemoteProvisioningLinkOpen(uuid: unprovisionedDeviceUUID)
         try meshNetworkManager.send(linkOpen, to: address) { result in
-            if let status = try? result.get() as? RemoteProvisioningLinkStatus, status.isSuccess {
-                // Usually, the link state will be `.linkOpening` and we will
-                // get a link report moment later.
-                if status.linkState == .linkActive {
-                    self.bearerDidOpen()
+            do {
+                if let status = try result.get() as? RemoteProvisioningLinkStatus, status.isSuccess {
+                    // Usually, the link state will be `.linkOpening` and we will
+                    // get a link report moment later.
+                    if status.linkState == .linkActive {
+                        self.bearerDidOpen()
+                    }
                 }
+            } catch {
+                self.bearerDidClose(with: error)
             }
         }
     }
     
     public func close() throws {
-        guard isOpened else { return }
-        isOpened = false
+        guard isOpen else { return }
         
         let linkClose = RemoteProvisioningLinkClose(reason: .success)
         try meshNetworkManager.send(linkClose, to: address) { result in
@@ -172,6 +181,9 @@ open class PBRemoteBearer: ProvisioningBearer {
         // We only support what we support, right?
         guard supports(type) else {
             throw BearerError.pduTypeNotSupported
+        }
+        guard isOpen else {
+            throw BearerError.bearerClosed
         }
         
         // The data has to be converted again to Provisioning Request
@@ -199,14 +211,17 @@ open class PBRemoteBearer: ProvisioningBearer {
     }
     
     private func bearerDidClose(with error: Error?) {
-        guard isOpen else { return }
-        
         // Unregister PDU handler and link status handler.
-        meshNetworkManager.unregisterCallback(forMessagesWithType: RemoteProvisioningLinkReport.self, from: address)
-        meshNetworkManager.unregisterCallback(forMessagesWithType: RemoteProvisioningPDUReport.self, from: address)
+        if isOpened {
+            meshNetworkManager.unregisterCallback(forMessagesWithType: RemoteProvisioningLinkReport.self, from: address)
+        }
+        if isOpen {
+            meshNetworkManager.unregisterCallback(forMessagesWithType: RemoteProvisioningPDUReport.self, from: address)
+        }
         
         // Notify the delegate.
         isOpen = false
+        isOpened = false
         delegate?.bearer(self, didClose: error)
     }
     
