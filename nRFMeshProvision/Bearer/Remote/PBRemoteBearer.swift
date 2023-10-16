@@ -30,17 +30,20 @@
 
 import Foundation
 
-final private class Send: AsyncOperation {
+final private class Send: AsyncResultOperation<Void, Error> {
     private let message: RemoteProvisioningPDUSend
     private let destination: Address
     private let manager: MeshNetworkManager
     
     private var shouldRetry = true
 
-    init(message: RemoteProvisioningPDUSend, to destination: Address, over manager: MeshNetworkManager) {
+    init(message: RemoteProvisioningPDUSend, to destination: Address, over manager: MeshNetworkManager,
+         completion: ((_ result: Result<Void, Error>) -> Void)?) {
         self.message = message
         self.destination = destination
         self.manager = manager
+        super.init()
+        self.onResult = completion
     }
 
     override func main() {
@@ -50,25 +53,26 @@ final private class Send: AsyncOperation {
             } catch {
                 self.manager.logger?.e(.bearer, "Sending \(self.message) to \(self.destination.hex) failed with error: \(error)")
                 if case LowerTransportError.timeout = error {
-                    self.shouldRetry = false
+                    self.cancel(with: error)
+                    self.finish()
                 }
             }
         }
         
-        // TODO: Return error when retry failed
         let callback: (Result<RemoteProvisioningPDUOutboundReport, Error>) -> () = { response in
-            guard self.shouldRetry else {
-                self.finish()
-                return
+            guard !self.isCancelled else { return }
+            do {
+                let _ = try response.get()
+                self.finish(with: .success(()))
+            } catch {
+                if self.shouldRetry {
+                    self.manager.logger?.log(message: "Retrying sending \(self.message)", ofCategory: .bearer, withLevel: .warning)
+                    self.shouldRetry = false
+                    self.main()
+                } else {
+                    self.finish(with: .failure(error))
+                }
             }
-            guard let report = try? response.get(),
-                  report.outboundPduNumber == self.message.outboundPduNumber else {
-                self.manager.logger?.log(message: "Retrying sending \(self.message)", ofCategory: .bearer, withLevel: .warning)
-                self.shouldRetry = false
-                self.main()
-                return
-            }
-            self.finish()
         }
         try? manager.waitFor(messageFrom: destination, timeout: 15, completion: callback)
     }
@@ -173,6 +177,7 @@ open class PBRemoteBearer: ProvisioningBearer {
         
         let linkClose = RemoteProvisioningLinkClose(reason: .success)
         try meshNetworkManager.send(linkClose, to: address) { result in
+            // No matter what result we get, the link is considered closed.
             self.bearerDidClose(with: nil)
         }
     }
@@ -191,7 +196,16 @@ open class PBRemoteBearer: ProvisioningBearer {
         let request = try ProvisioningRequest(from: data)
         outboundPduCount += 1
         let message = RemoteProvisioningPDUSend(outboundPduNumber: outboundPduCount, request: request)
-        outboundPduQueue.addOperation(Send(message: message, to: address, over: meshNetworkManager))
+        let operation = Send(message: message, to: address, over: meshNetworkManager) { result in
+            guard let _ = try? result.get() else {
+                // Sending RemoteProvisioningPDUSend failed.
+                // There's no other way to notify the sender.
+                self.outboundPduQueue.cancelAllOperations()
+                try? self.close()
+                return
+            }
+        }
+        outboundPduQueue.addOperation(operation)
     }
     
     private func bearerDidOpen() {
