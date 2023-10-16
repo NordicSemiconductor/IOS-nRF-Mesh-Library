@@ -464,7 +464,8 @@ private extension LowerTransportLayer {
                     return nil
                 }
                 acknowledgmentTimers[key] = BackgroundTimer.scheduledTimer(
-                    withTimeInterval: networkManager.networkParameters.completeAcknowledgmentTimerInterval, repeats: false
+                    withTimeInterval: networkManager.networkParameters.completeAcknowledgmentTimerInterval, 
+                    repeats: false, queue: mutex
                 ) { [weak self] _ in
                     // Until this timer is not executed no Segment Acknowledgment Message
                     // will be sent for the same completed message.
