@@ -31,7 +31,7 @@
 import UIKit
 import nRFMeshProvision
 
-struct RuntimeVendorMessage: VendorMessage {
+struct RuntimeVendorMessage: UnacknowledgedVendorMessage {
     let opCode: UInt32
     let parameters: Data?
     
