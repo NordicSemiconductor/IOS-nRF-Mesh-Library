@@ -379,10 +379,16 @@ private extension LowerTransportLayer {
               meshNetwork.localProvisioner?.node?.contains(elementWithAddress: networkPdu.destination) ?? false else {
             return true
         }
-        let sequence = networkPdu.messageSequence
-        let receivedSeqAuth = (UInt64(networkPdu.ivIndex) << 24) | UInt64(sequence)
+        /// The SeqAuth value of the message.
+        ///
+        /// SeqAuth is 56-bit long and contains the IV Index (32-bit) and SEQ (24-bit).
+        let receivedSeqAuth = (UInt64(networkPdu.ivIndex) << 24) | UInt64(networkPdu.sequence)
+        /// Last SeqAuth value received from the source Element.
+        ///
+        /// This is `nil` if no message was ever received from the source Element.
+        let lastSeqAuth = defaults.lastSeqAuthValue(for: networkPdu.source)
         
-        if let localSeqAuth = defaults.lastSeqAuthValue(for: networkPdu.source) {
+        if let lastSeqAuth = lastSeqAuth {
             // In general, the SeqAuth of the received message must be greater
             // than SeqAuth of any previously received message from the same source.
             // However, for SAR (Segmentation and Reassembly) sessions, it is
@@ -391,8 +397,7 @@ private extension LowerTransportLayer {
             // been previously received), the segments may be processed in any order.
             // The SeqAuth of this message must be greater or equal to the last one.
             var reassemblyInProgress = false
-            if networkPdu.isSegmented {
-                let sequenceZero = UInt16(sequence & 0x1FFF)
+            if networkPdu.isSegmented, let sequenceZero = networkPdu.sequenceZero {
                 let key = UInt32(keyFor: networkPdu.source, sequenceZero: sequenceZero)
                 reassemblyInProgress = incompleteSegments[key] != nil ||
                                        acknowledgments[networkPdu.source]?.sequenceZero == sequenceZero
@@ -410,20 +415,19 @@ private extension LowerTransportLayer {
             //       received in the correct order.
             var missed = false
             if let previousSeqAuth = defaults.previousSeqAuthValue(for: networkPdu.source) {
-                missed = receivedSeqAuth < localSeqAuth &&
+                missed = receivedSeqAuth < lastSeqAuth &&
                          receivedSeqAuth > previousSeqAuth
             }
             
             // Validate.
-            guard receivedSeqAuth > localSeqAuth || missed ||
-                  (reassemblyInProgress && receivedSeqAuth == localSeqAuth) else {
+            guard receivedSeqAuth > lastSeqAuth || missed || reassemblyInProgress else {
                 // Ignore that message.
-                logger?.w(.lowerTransport, "Discarding packet (seqAuth: \(receivedSeqAuth), expected > \(localSeqAuth))")
+                logger?.w(.lowerTransport, "Discarding packet (seqAuth: \(receivedSeqAuth), expected > \(lastSeqAuth))")
                 return false
             }
             
             // The message is valid. Remember the previous SeqAuth.
-            let newPreviousSeqAuth = min(receivedSeqAuth, localSeqAuth)
+            let newPreviousSeqAuth = min(receivedSeqAuth, lastSeqAuth)
             defaults.storePreviousSeqAuthValue(newPreviousSeqAuth, for: networkPdu.source)
             
             // If the message was processed after its successor, don't overwrite the last SeqAuth.
@@ -957,10 +961,25 @@ private extension UInt32 {
 
 private extension NetworkPdu {
     
-    /// Whether the Network PDU contains a segmented Lower Transport PDU,
-    /// or not.
+    /// Whether the Network PDU contains a segmented Lower Transport PDU.
     var isSegmented: Bool {
-        return transportPdu[0] & 0x80 > 1
+        return transportPdu[0] & 0x80 != 0x00 && transportPdu.count > 4
+    }
+    
+    /// Whether the Network PDU contains a Segment Acknowledgment message.
+    var isSegmentAcknowledgmentMessage: Bool {
+        return transportPdu[0] == 0x00 && transportPdu.count == 7
+    }
+    
+    /// The SeqZero field of the message.
+    ///
+    /// The message must be either a Segment Access message, Segmented Control message
+    /// or Segment Acknowledgment message, otherwise this is `nil`.
+    var sequenceZero: UInt16? {
+        guard isSegmented || isSegmentAcknowledgmentMessage else {
+            return nil
+        }
+        return (UInt16(transportPdu[1] & 0x7F) << 6) | UInt16(transportPdu[2] >> 2)
     }
     
     /// The 24-bit message sequence number used to transmit the first segment
