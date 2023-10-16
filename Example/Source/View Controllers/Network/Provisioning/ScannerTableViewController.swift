@@ -400,9 +400,9 @@ extension ScannerTableViewController: GattBearerDelegate {
     
     func bearer(_ bearer: Bearer, didClose error: Error?) {
         DispatchQueue.main.async {
-            self.alert?.message = "Device disconnected"
-            self.alert?.dismiss(animated: true)
-            self.alert = nil
+            self.alert?.dismiss(animated: true) {
+                self.presentAlert(title: "Status", message: error?.localizedDescription ?? "Device disconnected", cancelable: false)
+            }
             self.selectedDevice = nil
             self.startScanning()
         }

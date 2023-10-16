@@ -46,10 +46,6 @@ internal class AsyncResultOperation<Success, Failure>: AsyncOperation where Fail
         super.finish()
     }
 
-    override open func cancel() {
-        fatalError("Make use of cancel(with:) instead to ensure a result")
-    }
-
     public func cancel(with error: Failure) {
         self.result = .failure(error)
         super.cancel()
