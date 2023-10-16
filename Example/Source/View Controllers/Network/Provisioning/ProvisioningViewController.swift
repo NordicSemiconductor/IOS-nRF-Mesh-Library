@@ -95,7 +95,7 @@ class ProvisioningViewController: UITableViewController {
                     self.dismiss(animated: true)
                 }
             default:
-                presentAlert(title: "Error", message: "A error occured: \(error.localizedDescription)") { _ in
+                presentAlert(title: "Error", message: "A error occurred: \(error.localizedDescription)") { _ in
                     self.dismiss(animated: true)
                 }
             }

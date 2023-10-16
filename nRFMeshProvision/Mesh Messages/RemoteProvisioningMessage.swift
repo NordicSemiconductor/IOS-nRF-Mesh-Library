@@ -165,7 +165,7 @@ public enum NodeProvisioningProtocolInterfaceProcedure: UInt8 {
     /// unprovisioned device. The Unicast Address, Network Key, Network Key Index,
     /// and IV Index are not affected by this procedure.
     case deviceKeyRefresh       = 0x00
-    /// The Node Address efresh procedure is used to change the Node’s Device Key
+    /// The Node Address refresh procedure is used to change the Node’s Device Key
     /// and Unicast Address without reprovisioning.
     ///
     /// This procedure will terminate all friendships, if applicable, and will
@@ -310,7 +310,7 @@ extension RemoteProvisioningScanState: CustomDebugStringConvertible {
         switch self {
         case .idle:               return "Idle"
         case .multipleDeviceScan: return "Multiple Device Scan"
-        case .singleDeviceScan:   return "Sindle Device Scan"
+        case .singleDeviceScan:   return "Single Device Scan"
         }
     }
     

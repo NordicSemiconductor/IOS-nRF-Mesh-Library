@@ -344,7 +344,7 @@ extension ScannerTableViewController: CBCentralManagerDelegate {
                 // If so, just update the RSSI value.
                 discoveredPeripherals[index].rssi[bearerIndex] = RSSI
             } else {
-                // If the PB GATT Bearer doesn't exist, add it and corrsponding RSSI value.
+                // If the PB GATT Bearer doesn't exist, add it and corresponding RSSI value.
                 let bearer = PBGattBearer(target: peripheral)
                 bearer.logger = MeshNetworkManager.instance.logger
                 discoveredPeripherals[index].bearer.append(bearer)

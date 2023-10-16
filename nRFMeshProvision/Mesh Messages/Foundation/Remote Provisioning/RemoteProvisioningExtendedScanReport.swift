@@ -173,7 +173,7 @@ public extension RemoteProvisioningExtendedScanReport {
             .reduce([CBUUID : Data]()) { result, next in
                 let uuid = next.value.uuid(ofType: next.adType!)
                 let value = next.value.suffix(from: next.adType!.length)
-                // Only the first Serice Data for a UUID is chosen.
+                // Only the first Service Data for a UUID is chosen.
                 return result.merging([uuid : value], uniquingKeysWith: { current, _ in current })
             }
     }

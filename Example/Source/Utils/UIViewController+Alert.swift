@@ -104,7 +104,7 @@ extension UIViewController {
     ///   - title:      The alert title.
     ///   - message:    The message below the title.
     ///   - actions:    Alert actions.
-    ///   - preferredStype: The style to use when presenting the alert controller.
+    ///   - preferredStyle: The style to use when presenting the alert controller.
     func presentAlert(title: String?, message: String?,
                       options actions: [UIAlertAction],
                       preferredStyle: UIAlertController.Style = .alert) {

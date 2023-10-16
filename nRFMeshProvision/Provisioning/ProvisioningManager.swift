@@ -157,7 +157,7 @@ public class ProvisioningManager {
     /// Capabilities are not known, this property returns `nil`.
     /// 
     /// - returns: Whether the device can be provisioned by this manager, that is
-    ///            whether the manager supports at least one of the provisioniong
+    ///            whether the manager supports at least one of the provisioning
     ///            algorithms supported by the device.
     public var isDeviceSupported: Bool? {
         guard let capabilities = provisioningCapabilities else {
@@ -252,7 +252,7 @@ public class ProvisioningManager {
     /// the Provisionee's Public Key is provided Out-of-Band using ``PublicKey/oobPublicKey(key:)``.
     /// The Public Key information should be available in the Unprovisioned Device beacon.
     /// If the device does not provide OOB Public Key, ``PublicKey/noOobPublicKey`` shall
-    /// be used and the provisioned Node and the Netwok Key will be considered ``Security/insecure``.
+    /// be used and the provisioned Node and the Network Key will be considered ``Security/insecure``.
     ///
     /// If a different authentication method than ``AuthenticationMethod/noOob`` is
     /// chosen a ``ProvisioningDelegate/authenticationActionRequired(_:)`` callback
@@ -311,8 +311,8 @@ public class ProvisioningManager {
         // If the device's Public Key was obtained OOB, we are now ready to
         // calculate the device's Shared Secret.
         if case let .oobPublicKey(key: key) = publicKey {
-            // The OOB Public Key is for sure different than the one randomy generated
-            // moment ago. Even if not, it trully has been randomly generated, so it's not
+            // The OOB Public Key is for sure different than the one randomly generated
+            // moment ago. Even if not, it truly has been randomly generated, so it's not
             // an attack.
             do {
                 try provisioningData.provisionerDidObtain(devicePublicKey: key, usingOob: true)
