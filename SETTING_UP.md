@@ -7,7 +7,7 @@ Using CocoaPods:
 You can use [Swift Package Manager](https://swift.org/package-manager/) and specify dependency in `Package.swift` by adding this:
 
 ```swift
-.package(url: "https://github.com/NordicSemiconductor/IOS-nRF-Mesh-Library", .upToNextMinor(from: "4.0.0"))
+.package(url: "https://github.com/NordicSemiconductor/IOS-nRF-Mesh-Library", .upToNextMinor(from: "4.0.1"))
 ```
 
 Also, have a look at [Swift Package Manager @ CryptoSwift](https://github.com/krzyzanowskim/CryptoSwift/blob/master/README.md#swift-package-manager).
