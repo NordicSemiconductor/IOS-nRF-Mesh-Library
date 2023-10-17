@@ -31,14 +31,19 @@
 import UIKit
 import nRFMeshProvision
 
-struct RuntimeVendorMessage: UnacknowledgedVendorMessage {
+protocol RuntimeVendorMessage: VendorMessage {
+    var isSegmented: Bool { get set }
+    var security: MeshMessageSecurity { get set }
+}
+
+struct RuntimeUnacknowledgedVendorMessage: RuntimeVendorMessage, UnacknowledgedVendorMessage {
     let opCode: UInt32
     let parameters: Data?
     
     var isSegmented: Bool = false
     var security: MeshMessageSecurity = .low
     
-    init(opCode: UInt8, for model: Model, parameters: Data?) {
+    init(opCode: UInt8, for model: Model, parameters: Data) {
         self.opCode = (UInt32(0xC0 | opCode) << 16) | UInt32(model.companyIdentifier!.bigEndian)
         self.parameters = parameters
     }
@@ -49,11 +54,41 @@ struct RuntimeVendorMessage: UnacknowledgedVendorMessage {
     }
 }
 
-extension RuntimeVendorMessage: CustomDebugStringConvertible {
+struct RuntimeAcknowledgedVendorMessage: RuntimeVendorMessage, AcknowledgedVendorMessage {
+    let opCode: UInt32
+    var responseOpCode: UInt32
+    let parameters: Data?
+    
+    var isSegmented: Bool = false
+    var security: MeshMessageSecurity = .low
+    
+    init(opCode: UInt8, responseOpCode: UInt8, for model: Model, parameters: Data) {
+        self.opCode = (UInt32(0xC0 | opCode) << 16) | UInt32(model.companyIdentifier!.bigEndian)
+        self.responseOpCode = (UInt32(0xC0 | responseOpCode) << 16) | UInt32(model.companyIdentifier!.bigEndian)
+        self.parameters = parameters
+    }
+    
+    init?(parameters: Data) {
+        // This init will never be used, as it's used for incoming messages.
+        return nil
+    }
+}
+
+extension RuntimeUnacknowledgedVendorMessage: CustomDebugStringConvertible {
 
     var debugDescription: String {
         let hexOpCode = String(format: "%2X", opCode)
         return "RuntimeVendorMessage(opCode: \(hexOpCode), parameters: \(parameters!.hex), isSegmented: \(isSegmented), security: \(security))"
+    }
+    
+}
+
+extension RuntimeAcknowledgedVendorMessage: CustomDebugStringConvertible {
+
+    var debugDescription: String {
+        let hexOpCode = String(format: "%2X", opCode)
+        let hexResponseOpCode = String(format: "%2X", responseOpCode)
+        return "RuntimeVendorMessage(opCode: \(hexOpCode), responseOpCode: \(hexResponseOpCode) parameters: \(parameters!.hex), isSegmented: \(isSegmented), security: \(security))"
     }
     
 }
@@ -66,15 +101,25 @@ class VendorModelViewCell: ModelViewCell, UITextFieldDelegate {
     @IBOutlet weak var responseParametersLabel: UILabel!
     
     @IBAction func valueDidChange(_ sender: UITextField) {
-        if let opCode = UInt8(opCodeField.text!, radix: 16), opCode <= 0x3F,
-           !Data(hex: parametersField.text!).isEmpty {
-            sendButton.isEnabled = true
-        } else {
-            sendButton.isEnabled = false
+        if acknowledgmentSwitch.isOn {
+            guard let responseOpCode = UInt8(responseOpCodeField.text!, radix: 16), responseOpCode <= 0x3F else {
+                sendButton.isEnabled = false
+                return
+            }
         }
+        guard let opCode = UInt8(opCodeField.text!, radix: 16), opCode <= 0x3F,
+              !Data(hex: parametersField.text!).isEmpty else {
+            sendButton.isEnabled = false
+            return
+        }
+        sendButton.isEnabled = true
     }
     
     @IBOutlet weak var acknowledgmentSwitch: UISwitch!
+    @IBAction func acknowledgedDidChange(_ sender: UISwitch) {
+        responseOpCodeField.isEnabled = sender.isOn
+    }
+    @IBOutlet weak var responseOpCodeField: UITextField!
     @IBOutlet weak var transMicSwitch: UISwitch!
     @IBAction func transMicDidChange(_ sender: UISwitch) {
         if sender.isOn {
@@ -92,6 +137,10 @@ class VendorModelViewCell: ModelViewCell, UITextFieldDelegate {
         send()
     }
     
+    // MARK: - Private members
+    
+    private var expectedResponseOpCode: UInt8? = nil
+    
     // MARK: - Implementation
     
     override func reload(using model: Model) {
@@ -99,6 +148,7 @@ class VendorModelViewCell: ModelViewCell, UITextFieldDelegate {
         let isEnabled = localProvisioner?.hasConfigurationCapabilities ?? false
         
         acknowledgmentSwitch.isEnabled = isEnabled
+        responseOpCodeField.isEnabled = isEnabled && acknowledgmentSwitch.isOn
         transMicSwitch.isEnabled = isEnabled
         forceSegmentationSwitch.isEnabled = isEnabled
         opCodeField.isEnabled = isEnabled
@@ -108,12 +158,17 @@ class VendorModelViewCell: ModelViewCell, UITextFieldDelegate {
     
     override func awakeFromNib() {
         opCodeField.delegate = self
+        responseOpCodeField.delegate = self
         parametersField.delegate = self
     }
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         if textField == opCodeField {
             parametersField.becomeFirstResponder()
+            return false
+        }
+        if textField == parametersField && acknowledgmentSwitch.isOn {
+            responseOpCodeField.becomeFirstResponder()
             return false
         }
         return true
@@ -129,6 +184,11 @@ class VendorModelViewCell: ModelViewCell, UITextFieldDelegate {
         switch message {
         case let message as UnknownMessage where
             (message.opCode & 0xC0FFFF) == (0xC00000 | UInt32(model.companyIdentifier!.bigEndian)):
+            let responseOpCode = (message.opCode >> 16) & 0x3F
+            guard expectedResponseOpCode == nil || responseOpCode == expectedResponseOpCode! else {
+                return true
+            }
+            expectedResponseOpCode = nil
             responseOpCodeLabel.text = String(format: "0x%02X", (message.opCode >> 16) & 0x3F)
             responseParametersLabel.text = message.parameters != nil && !message.parameters!.isEmpty ?
                 "0x\(message.parameters!.hex)" : "Empty"
@@ -147,6 +207,7 @@ private extension VendorModelViewCell {
     func send() {
         opCodeField.resignFirstResponder()
         parametersField.resignFirstResponder()
+        responseOpCodeField.resignFirstResponder()
         
         guard !model.boundApplicationKeys.isEmpty else {
             parentViewController?.presentAlert(
@@ -156,16 +217,44 @@ private extension VendorModelViewCell {
         }
         
         // Clear the response fields.
+        expectedResponseOpCode = nil
         responseOpCodeLabel.text = nil
         responseParametersLabel.text = nil
         
-        if let opCode = UInt8(opCodeField.text!, radix: 16) {
-            let parameters = Data(hex: parametersField.text!)
-            var message = RuntimeVendorMessage(opCode: opCode, for: model, parameters: parameters)
-            message.isSegmented = forceSegmentationSwitch.isOn
-            message.security = transMicSwitch.isOn ? .high : .low
-            delegate?.send(message, description: "Sending message...")
+        var opCode: UInt8 = 0
+        guard let value = UInt8(opCodeField.text!, radix: 16) else {
+            parentViewController?.presentAlert(
+                title: "Error",
+                message: "Op Code is not valid.\n\nValid values are in range 0x00 - 0x3F.")
+            return
         }
+        opCode = value
+        
+        var responseOpCode: UInt8 = 0
+        if acknowledgmentSwitch.isOn {
+            guard let value = UInt8(responseOpCodeField.text!, radix: 16) else {
+                parentViewController?.presentAlert(
+                    title: "Error",
+                    message: "Response Op Code is not valid.\n\nValid values are in range 0x00 - 0x3F.")
+                return
+            }
+            responseOpCode = value
+        }
+        
+        let parameters = Data(hex: parametersField.text!)
+        
+        var message: RuntimeVendorMessage
+        if acknowledgmentSwitch.isOn {
+            expectedResponseOpCode = responseOpCode
+            message = RuntimeAcknowledgedVendorMessage(opCode: opCode, responseOpCode: responseOpCode,
+                                                       for: model, parameters: parameters)
+        } else {
+            message = RuntimeUnacknowledgedVendorMessage(opCode: opCode,
+                                                         for: model, parameters: parameters)
+        }
+        message.isSegmented = forceSegmentationSwitch.isOn
+        message.security = transMicSwitch.isOn ? .high : .low
+        delegate?.send(message, description: "Sending message...")
     }
     
 }
