@@ -15,8 +15,6 @@ The library is compatible with the following [Bluetooth specifications](https://
 
 and [**Mesh Device Properties**](https://www.bluetooth.com/specifications/device-properties/).
 
-See [documentation](https://nordicsemiconductor.github.io/IOS-nRF-Mesh-Library/documentation/nrfmeshprovision) for more information.
-
 > **Note**
 >
 > Implementing ADV Bearer on iOS is not possible due to API limitations. The library is using *GATT Proxy protocol*, 
@@ -58,6 +56,8 @@ The following features are not (yet) supported:
 ## How to start
 
 The library is available using CocoaPods, SPM and Carthage. For details, check out [Setting up the library](SETTING_UP.md).
+
+Product documentation is available here: [Documentation](https://nordicsemiconductor.github.io/IOS-nRF-Mesh-Library/documentation/nrfmeshprovision).
 
 ## nRF Mesh sample app
 
