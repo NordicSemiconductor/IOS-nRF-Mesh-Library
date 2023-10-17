@@ -154,6 +154,8 @@ class VendorModelViewCell: ModelViewCell, UITextFieldDelegate {
         opCodeField.isEnabled = isEnabled
         parametersField.isEnabled = isEnabled
         sendButton.isEnabled = isEnabled
+        
+        load()
     }
     
     override func awakeFromNib() {
@@ -242,6 +244,7 @@ private extension VendorModelViewCell {
         }
         
         let parameters = Data(hex: parametersField.text!)
+        store()
         
         var message: RuntimeVendorMessage
         if acknowledgmentSwitch.isOn {
@@ -255,6 +258,24 @@ private extension VendorModelViewCell {
         message.isSegmented = forceSegmentationSwitch.isOn
         message.security = transMicSwitch.isOn ? .high : .low
         delegate?.send(message, description: "Sending message...")
+    }
+    
+    private func store() {
+        UserDefaults.standard.set(opCodeField.text!, forKey: "vendor-op-code")
+        UserDefaults.standard.set(parametersField.text!, forKey: "vendor-params")
+        UserDefaults.standard.set(responseOpCodeField.text!, forKey: "vendor-response-op-code")
+        UserDefaults.standard.set(acknowledgmentSwitch.isOn, forKey: "vendor-ack")
+        UserDefaults.standard.set(forceSegmentationSwitch.isOn, forKey: "vendor-seg")
+        UserDefaults.standard.set(transMicSwitch.isOn, forKey: "vendor-trans-mic")
+    }
+    
+    private func load() {
+        opCodeField.text = UserDefaults.standard.string(forKey: "vendor-op-code")
+        parametersField.text = UserDefaults.standard.string(forKey: "vendor-params")
+        responseOpCodeField.text = UserDefaults.standard.string(forKey: "vendor-response-op-code")
+        acknowledgmentSwitch.isOn = UserDefaults.standard.bool(forKey: "vendor-ack")
+        forceSegmentationSwitch.isOn = UserDefaults.standard.bool(forKey: "vendor-seg")
+        transMicSwitch.isOn = UserDefaults.standard.bool(forKey: "vendor-trans-mic")
     }
     
 }
