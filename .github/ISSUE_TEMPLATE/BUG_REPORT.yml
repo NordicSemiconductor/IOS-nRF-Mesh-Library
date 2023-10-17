@@ -7,10 +7,23 @@ body:
       value: |
         Thanks for taking the time to fill out this bug report!
   - type: dropdown
+    id: type
+    attributes:
+      label: Where do you suspect the issue?
+      description: Is it a UI bug in nRF Mesh or an issue in the mesh library?
+      options:
+        - Issue in mesh library, e.g. packets being dropped
+        - Mesh related issue in nRF Mesh, e.g. sending vendor messages doesn't work
+        - UI issue in nRF Mesh app, e.g. button is not clickable
+        - Other
+      default: 0
+    validations:
+      required: true
+  - type: dropdown
     id: version
     attributes:
       label: Version
-      description: What version of our software are you running?
+      description: What version of our product are you running?
       options:
         - 4.0.1 (Latest)
         - 4.0.0
@@ -35,4 +48,8 @@ body:
     attributes:
       label: Relevant log output
       description: Please copy and paste any relevant log output. This will be automatically formatted into code, so no need for backticks.
-      render: shell
+      render: text
+  - type: markdown
+    attributes:
+      value: |
+        If you need to attach a file, create the issue and add it as a comment.
