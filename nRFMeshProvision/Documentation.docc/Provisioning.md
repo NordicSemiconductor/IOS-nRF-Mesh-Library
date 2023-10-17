@@ -15,6 +15,8 @@ Configuration messages are sent between *Configuration Client* model on the mana
 and *Configuration Server* model on the target device, and, on the Upper Transport layer, are encrypted 
 using the node's Device Key, generated during provisioning.
 
+More on that in <doc:Configuration>.
+
 To provision a new device, use ``MeshNetworkManager/provision(unprovisionedDevice:over:)``.
 ```swift
 let provisioningManager = try meshNetworkManager.provision(
@@ -43,7 +45,7 @@ func centralManager(_ central: CBCentralManager,
 > Important: nRF Mesh library supports PB GATT Bearer and PB Remote Bearer. 
   PB Adv Bearer is not supported. 
 
-To provision a device which does not support PB GATT Bearer a ``PBRemoteBearer`` must be used.
+A ``PBRemoteBearer`` can be used to provision a device which does not support PB GATT Bearer.
 A node supporting *Remote Provisioning Server* model must be provisioned and in range of the
 unprovisioned device. All provisioning messages will be sent via that node.
 
@@ -62,3 +64,7 @@ try provisioningManager.provision(usingAlgorithm:       .BTM_ECDH_P256_HMAC_SHA2
                                   authenticationMethod: ...)
 ```
 The ``ProvisioningDelegate`` should be used to provide OOB (Out Of Band) information.
+
+## What's next
+
+Having a node provisioned we can connect to it using GATT Proxy feature: <doc:Connecting>.

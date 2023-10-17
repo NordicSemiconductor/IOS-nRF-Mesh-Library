@@ -10,131 +10,30 @@ them and send and receive messages.
 The library is compatible with the following [Bluetooth specifications](https://www.bluetooth.com/specifications/specs/?types=adopted&keyword=mesh):
 - **Mesh Protocol 1.1** (backwards compatible with **Mesh Profile 1.0.1**)
 - **Mesh Model 1.1**
-- **Mesh Device Properties 2**
 - **Configuration Database Profile 1.0.1**
+
+and [**Mesh Device Properties**](https://www.bluetooth.com/specifications/device-properties/).
 
 > Important: Implementing ADV Bearer on iOS is not possible due to API limitations. 
   The library is using GATT Proxy protocol, specified in the Bluetooth Mesh Protocol 1.1,
   and requires a Node with GATT Proxy feature to relay messages to the mesh network.
 
-## Usage
+## First steps
 
-The ``MeshNetworkManager`` is the main entry point for interacting with the mesh network.
-It can be used to create, load or import a Bluetooth mesh network configuration and send 
-and receive messages. 
-
-The snippet below demonstrates how to start.
-
-```swift
-// Create the Mesh Network Manager instance.
-meshNetworkManager = MeshNetworkManager()
-
-// If needed, customize network parameters using basic:
-meshNetworkManager.networkParameters = .basic { parameters in
-    parameters.setDefaultTtl(...)
-    // Configure SAR Receiver properties
-    parameters.discardIncompleteSegmentedMessages(after: ...)
-    parameters.transmitSegmentAcknowledgmentMessage(
-        usingSegmentReceptionInterval: ...,
-        multipliedByMinimumDelayIncrement: ...)
-    parameters.retransmitSegmentAcknowledgmentMessages(
-        exactly: ..., timesWhenNumberOfSegmentsIsGreaterThan: ...)
-    // Configure SAR Transmitter properties
-    parameters.transmitSegments(withInterval: ...)
-    parameters.retransmitUnacknowledgedSegmentsToUnicastAddress(
-        atMost: ..., timesAndWithoutProgress: ...,
-        timesWithRetransmissionInterval: ..., andIncrement: ...)
-    parameters.retransmitAllSegmentsToGroupAddress(exactly: ..., timesWithInterval: ...)
-    // Configure message configuration
-    parameters.retransmitAcknowledgedMessage(after: ...)
-    parameters.discardAcknowledgedMessages(after: ...)
-}
-// ...or advanced configurator:
-meshNetworkManager.networkParameters = .advanced { parameters in
-    parameters.defaultTtl = ...
-    // Configure SAR Receiver properties
-    parameters.sarDiscardTimeout = ...
-    parameters.sarAcknowledgmentDelayIncrement = ...
-    parameters.sarReceiverSegmentIntervalStep = ...
-    parameters.sarSegmentsThreshold = ...
-    parameters.sarAcknowledgmentRetransmissionsCount = ...
-    // Configure SAR Transmitter properties
-    parameters.sarSegmentIntervalStep = ...
-    parameters.sarUnicastRetransmissionsCount = ...
-    parameters.sarUnicastRetransmissionsWithoutProgressCount = ...
-    parameters.sarUnicastRetransmissionsIntervalStep = ...
-    parameters.sarUnicastRetransmissionsIntervalIncrement = ...
-    parameters.sarMulticastRetransmissionsCount = ...
-    parameters.sarMulticastRetransmissionsIntervalStep = ...
-    // Configure acknowledged message timeouts
-    parameters.acknowledgmentMessageInterval = ...
-    parameters.acknowledgmentMessageTimeout = ...
-    // And if you really know what you're doing...
-    builder.allowIvIndexRecoveryOver42 = ...
-    builder.ivUpdateTestMode = ...
-}
-// You may also modify a parameter using this syntax:
-meshNetworkManager.networkParameters.defaultTtl = ...
-
-// For debugging, set the logger delegate.
-meshNetworkManager.logger = ...
-```
-
-The next step is to define the behavior of the manager. The behavior is determined by set of
-``Model``s existing on the Node. For more information, read <doc:LocalNode>.
-
-### Loading mesh configuration
-
-The mesh configuration may be loaded from the ``Storage``, provided in the manager's initializer.
-```swift
-let loaded = try meshNetworkManager.load()
-```
-If no configuration exists, this method will return `false`. In that case either create 
-a new configuration, as shown below, or import an existing one from a file.
-```swift
-_ = meshNetworkManager.createNewMeshNetwork(
-       withName: "My Network", 
-       by: "My Provisioner"
-)
-// Make sure to save the network in the Storage.
-_ = meshNetworkManager.save()
-```
-
-### Connecting to mesh network using GATT Proxy
-
-The manager is transport agnostic. In order to send messages, the ``MeshNetworkManager/transmitter`` 
-property needs to be set to a ``Bearer`` instance. The bearer is responsible for sending the messages
-to the mesh network. Messages received from the bearer must be delivered to the manager using 
-``MeshNetworkManager/bearerDidDeliverData(_:ofType:)``. 
-
-> Tip: To make the integration with ``Bearer`` easier, the manager instance can be set as Bearer's 
-       ``Bearer/dataDelegate``. The nRF Mesh library includes ``GattBearer`` class, which implements 
-       the ``Bearer`` protocol.
-
-```swift
-let bearer = GattBearer(target: peripheral)
-bearer.delegate = ...
-
-// Cross set the delegates.
-bearer.dataDelegate = meshNetworkManager
-meshNetworkManager.transmitter = bearer
-
-// To get the logs from the bearer, set the logger delegate to the bearer as well.
-bearer.logger = ...
-
-// Open the bearer. The GATT Bearer will initiate Bluetooth LE connection.
-bearer.open()
-```
+To learn how to use the library, start here: <doc:Usage>.
 
 ## Topics
 
 ### Articles
 
+- <doc:Usage>
 - <doc:LocalNode>
-- <doc:Exporting>
+- <doc:CreatingNetwork>
 - <doc:Provisioning>
-- <doc:Configuration>
+- <doc:Connecting>
 - <doc:SendingMessages>
+- <doc:Configuration>
+- <doc:Exporting>
 
 ### Mesh Network Manager
 

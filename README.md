@@ -11,8 +11,9 @@ devices into a mesh network, configure them and send and receive messages.
 The library is compatible with the following [Bluetooth specifications](https://www.bluetooth.com/specifications/specs/?types=adopted&keyword=mesh):
 - Mesh Protocol 1.1 (backwards compatible with **Mesh Profile 1.0.1**)
 - Mesh Model 1.1
-- Mesh Device Properties 2
 - Mesh Configuration Database Profile 1.0.1
+
+and [**Mesh Device Properties**](https://www.bluetooth.com/specifications/device-properties/).
 
 See [documentation](https://nordicsemiconductor.github.io/IOS-nRF-Mesh-Library/documentation/nrfmeshprovision) for more information.
 
@@ -49,7 +50,7 @@ See [documentation](https://nordicsemiconductor.github.io/IOS-nRF-Mesh-Library/d
 
 The following features are not (yet) supported:
 
-1. The rest of models defined by Bluetooth SIG - *PRs are welcome!**
+1. The rest of models defined by Bluetooth SIG - *PRs are welcome!*
 2. IV Index update (initiation) - *not a top priority, as other nodes may initiate the update.*
 3. Health server messages - *in our TODO list.*
 4. Device Firmware Update (DFU) - *coming next!*
