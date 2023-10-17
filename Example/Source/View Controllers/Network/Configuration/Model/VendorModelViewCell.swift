@@ -155,7 +155,7 @@ class VendorModelViewCell: ModelViewCell, UITextFieldDelegate {
         parametersField.isEnabled = isEnabled
         sendButton.isEnabled = isEnabled
         
-        load()
+        load(for: model)
     }
     
     override func awakeFromNib() {
@@ -244,7 +244,7 @@ private extension VendorModelViewCell {
         }
         
         let parameters = Data(hex: parametersField.text!)
-        store()
+        store(for: model)
         
         var message: RuntimeVendorMessage
         if acknowledgmentSwitch.isOn {
@@ -260,22 +260,31 @@ private extension VendorModelViewCell {
         delegate?.send(message, description: "Sending message...")
     }
     
-    private func store() {
-        UserDefaults.standard.set(opCodeField.text!, forKey: "vendor-op-code")
-        UserDefaults.standard.set(parametersField.text!, forKey: "vendor-params")
-        UserDefaults.standard.set(responseOpCodeField.text!, forKey: "vendor-response-op-code")
-        UserDefaults.standard.set(acknowledgmentSwitch.isOn, forKey: "vendor-ack")
-        UserDefaults.standard.set(forceSegmentationSwitch.isOn, forKey: "vendor-seg")
-        UserDefaults.standard.set(transMicSwitch.isOn, forKey: "vendor-trans-mic")
+    /// Stores the values of all fields in User Default.
+    ///
+    /// This only stores the most recent value. If a model supports multiple messages
+    /// those need to be entered manually anyway.
+    ///
+    /// - parameter model: The current Model.
+    private func store(for model: Model) {
+        UserDefaults.standard.set(opCodeField.text!, forKey: "vendor-op-code-\(model.modelIdentifier)")
+        UserDefaults.standard.set(parametersField.text!, forKey: "vendor-params-\(model.modelIdentifier)")
+        UserDefaults.standard.set(responseOpCodeField.text!, forKey: "vendor-response-op-code-\(model.modelIdentifier)")
+        UserDefaults.standard.set(acknowledgmentSwitch.isOn, forKey: "vendor-ack-\(model.modelIdentifier)")
+        UserDefaults.standard.set(forceSegmentationSwitch.isOn, forKey: "vendor-seg-\(model.modelIdentifier)")
+        UserDefaults.standard.set(transMicSwitch.isOn, forKey: "vendor-trans-mic-\(model.modelIdentifier)")
     }
     
-    private func load() {
-        opCodeField.text = UserDefaults.standard.string(forKey: "vendor-op-code")
-        parametersField.text = UserDefaults.standard.string(forKey: "vendor-params")
-        responseOpCodeField.text = UserDefaults.standard.string(forKey: "vendor-response-op-code")
-        acknowledgmentSwitch.isOn = UserDefaults.standard.bool(forKey: "vendor-ack")
-        forceSegmentationSwitch.isOn = UserDefaults.standard.bool(forKey: "vendor-seg")
-        transMicSwitch.isOn = UserDefaults.standard.bool(forKey: "vendor-trans-mic")
+    /// Loads the values user recently for the given model.
+    ///
+    /// - parameter model: The Model to load values for.
+    private func load(for model: Model) {
+        opCodeField.text = UserDefaults.standard.string(forKey: "vendor-op-code-\(model.modelIdentifier)")
+        parametersField.text = UserDefaults.standard.string(forKey: "vendor-params-\(model.modelIdentifier)")
+        responseOpCodeField.text = UserDefaults.standard.string(forKey: "vendor-response-op-code-\(model.modelIdentifier)")
+        acknowledgmentSwitch.isOn = UserDefaults.standard.bool(forKey: "vendor-ack-\(model.modelIdentifier)")
+        forceSegmentationSwitch.isOn = UserDefaults.standard.bool(forKey: "vendor-seg-\(model.modelIdentifier)")
+        transMicSwitch.isOn = UserDefaults.standard.bool(forKey: "vendor-trans-mic-\(model.modelIdentifier)")
     }
     
 }
