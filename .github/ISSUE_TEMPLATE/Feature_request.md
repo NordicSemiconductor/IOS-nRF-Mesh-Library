@@ -1,17 +1,27 @@
----
 name: Feature request
-about: Suggest an idea for nRF Mesh
-
----
-
-**Is your feature request related to a problem? Please describe.**
-A clear and concise description of what the problem is. Ex. I'm always frustrated when [...]
-
-**Describe the solution you'd like**
-A clear and concise description of what you want to happen.
-
-**Describe alternatives you've considered**
-A clear and concise description of any alternative solutions or features you've considered.
-
-**Additional context**
-Add any other context or screenshots about the feature request here.
+description: Propose a new feature.
+labels: ["improvement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out this form!
+  - type: dropdown
+    id: type
+    attributes:
+      label: Target
+      description: Are you proposing it a feature in nRF Mesh app or the library?
+      options:
+        - Library
+        - App
+      default: 0
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Describe the feature
+      description: What do you need? You may include screenshots if needed.
+      placeholder: Please add...
+    validations:
+      required: true
