@@ -41,12 +41,12 @@ import Foundation
 /// A Model may extend another Model. Models in Extend relationship may share states.
 /// A Model which does not extend any other Model is called a *base* Model.
 ///
-/// Models in Extend relationship located on the same Element share the Subsctiption List.
+/// Models in Extend relationship located on the same Element share the Subscription List.
 public class Model: Codable {
     /// Bluetooth SIG or vendor-assigned model identifier.
     ///
     /// In case of vendor models the 2 most significant bytes of this property are
-    /// the Company Identifier, as registersd in Bluetooth SIG Assigned Numbers database.
+    /// the Company Identifier, as registered in Bluetooth SIG Assigned Numbers database.
     ///
     /// For Bluetooth SIG defined models these 2 bytes are `0x0000`.
     ///

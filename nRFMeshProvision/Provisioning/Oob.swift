@@ -70,7 +70,7 @@ public struct OobInformation: OptionSet {
             return nil
         }
         
-        // OOB Information is using Little Endian in the Advertsing Data.
+        // OOB Information is using Little Endian in the Advertising Data.
         rawValue = data.read(fromOffset: 16)
     }
     
@@ -145,7 +145,7 @@ public enum InputAction: UInt8 {
 ///
 /// The value generator is used in Provisioning with an Input Action used as OOB.
 ///
-/// The default implementation provides random values. It should only be overriden
+/// The default implementation provides random values. It should only be overridden
 /// if you need to know the values in advance, for example for testing.
 open class InputActionValueGenerator {
     /// This method should generate a random alphanumeric capitalize string of given size.

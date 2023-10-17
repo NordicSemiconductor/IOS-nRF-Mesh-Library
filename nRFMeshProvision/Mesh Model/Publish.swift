@@ -234,7 +234,7 @@ public struct Publish: Codable, Equatable {
     ///   - friendshipCredentialsFlag: `True`, to use Friendship Security Material,
     ///                                `false` to use Master Security Material (default).
     ///   - ttl: Time To Live. The TTL is decremented every time the message is relayed,
-    ///          until it reaches 1, after which the message is not relayed furhter.
+    ///          until it reaches 1, after which the message is not relayed further.
     ///          Messages with TTL set to 0 are not relayed, and only sent to Nodes in
     ///          direct proximity. Use 0xFF to use Node's default TTL.
     ///   - period: Periodical publication interval. See ``Publish/Period-swift.struct``
@@ -261,7 +261,7 @@ public struct Publish: Codable, Equatable {
     ///   - friendshipCredentialsFlag: `True`, to use Friendship Security Material,
     ///                                `false` to use Master Security Material (default).
     ///   - ttl: Time To Live. The TTL is decremented every time the message is relayed,
-    ///          until it reaches 1, after which the message is not relayed furhter.
+    ///          until it reaches 1, after which the message is not relayed further.
     ///          Messages with TTL set to 0 are not relayed, and only sent to Nodes in
     ///          direct proximity. Use 0xFF to use Node's default TTL.
     ///   - periodSteps: Period steps, together with the period resolution are used to
@@ -463,7 +463,7 @@ extension Publish.Period: CustomDebugStringConvertible {
 private extension Publish.Period {
     
     /// This method implements a workaround for importing publish resolution
-    /// exported from nRF Mesh in version 3.0.1 or older, where it was multipled
+    /// exported from nRF Mesh in version 3.0.1 or older, where it was multiplied
     /// by the number of steps.
     ///
     /// E.g. 40 seconds would be exported as:

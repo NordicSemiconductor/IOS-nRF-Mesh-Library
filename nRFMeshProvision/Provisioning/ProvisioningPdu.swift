@@ -30,7 +30,7 @@
 
 import Foundation
 
-/// The Provisioniong Pdu.
+/// The Provisioning Pdu.
 internal typealias ProvisioningPdu = Data
 
 /// Provisioning PDU Type.
@@ -136,7 +136,7 @@ public enum ProvisioningRequest {
     
 }
 
-/// Provisioning respones are sent by the Provisionee to the Provisioner
+/// Provisioning responses are sent by the Provisionee to the Provisioner
 /// as a response to ``ProvisioningRequest``.
 public enum ProvisioningResponse {
     /// The Provisionee sends a Provisioning Capabilities PDU to indicate its
@@ -212,7 +212,7 @@ public enum ProvisioningResponse {
     }
 }
 
-// MARK: - String convertion
+// MARK: - String conversion
 
 extension ProvisioningPduType: CustomDebugStringConvertible {
     

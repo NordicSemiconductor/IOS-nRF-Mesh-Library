@@ -37,7 +37,7 @@ import Foundation
 /// The configuration does not contain any sequence numbers, IV Index, or other
 /// network properties that change without the action from the Provisioner.
 ///
-/// The structire of this class is compatible with Mesh Configuration Database 1.0.1.
+/// The structure of this class is compatible with Mesh Configuration Database 1.0.1.
 public class MeshNetwork: Codable {
     /// Random 128-bit UUID allows differentiation among multiple mesh networks.
     public let uuid: UUID

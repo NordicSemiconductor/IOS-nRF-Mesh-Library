@@ -297,7 +297,7 @@ public class Node: Codable {
                                      friend: .notSupported,
                                      lowPower: .notSupported)
         
-        // Keys will ba added later.
+        // Keys will be added later.
         self.netKeys  = []
         self.appKeys  = []
         // Initialize elements.

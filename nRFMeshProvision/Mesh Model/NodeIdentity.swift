@@ -156,7 +156,7 @@ public struct PrivateNodeIdentity: NodeIdentity {
 extension PublicNodeIdentity: CustomDebugStringConvertible {
     
     public var debugDescription: String {
-        return "Node Identity (hash: 0x\(hash.hex), 0xrandom: \(random.hex))"
+        return "Node Identity (hash: 0x\(hash.hex), random: 0x\(random.hex))"
     }
     
 }

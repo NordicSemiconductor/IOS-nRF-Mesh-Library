@@ -151,7 +151,7 @@ public class NetworkKey: Key, Codable {
         self.name        = name
         self.index       = index
         self.key         = key
-        // Initially, a Network Key is consideded secure, as there are no Nodes
+        // Initially, a Network Key is considered secure, as there are no Nodes
         // that know it other than the Provisioner's one.
         self.minSecurity = .secure
         self.timestamp   = Date()

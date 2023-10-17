@@ -116,7 +116,7 @@ internal class LowerTransportLayer {
     /// to a Unicast Address.
     private var unicastRetransmissionsTimers: [UInt16 : BackgroundTimer]
     /// The map contains the number of remaining retransmissions and the number
-    /// of remaininig retransmissions without progress of a segmented message
+    /// of remaining retransmissions without progress of a segmented message
     /// that is sent to a Unicast Address.
     ///
     /// The number of retransmissions without progress is reset to its initial value each time a

@@ -44,7 +44,7 @@ public enum Algorithm {
     /// BTM ECDH P256 HMAC SHA256 AES CCM algorithm will be used to calculate the
     /// shared secret.
     ///
-    /// This algorithm must be supported by devices claming support with Mesh Protocol 1.1.
+    /// This algorithm must be supported by devices claiming support with Mesh Protocol 1.1.
     ///
     /// - since: Mesh Protocol 1.1.
     case BTM_ECDH_P256_HMAC_SHA256_AES_CCM

@@ -95,7 +95,7 @@ public extension Dictionary where Key == String, Value == Any {
     /// - note: Before version 4.0.0 this property returned Data object.
     ///         The API changed was made due to introduction of Private Network Identity
     ///         advertising packets, which don't contain the Network ID directly,
-    ///         but still can identify a network cryptographicaly.
+    ///         but still can identify a network cryptographically.
     /// - seeAlso: ``NetworkIdentity/matches(networkKey:)``
     /// - seeAlso: ``MeshNetwork/matches(networkIdentity:)``
     /// - since: 4.0.0

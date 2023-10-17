@@ -32,7 +32,7 @@ import Foundation
 
 /// Bluetooth Mesh address type. Type alias for `UInt16`.
 ///
-/// In Bluetooth mesh addresses are devided into several categories:
+/// In Bluetooth mesh addresses are divided into several categories:
 /// - Unassigned Address - address 0x0000.
 /// - Unicast Addresses - a unique address of an ``Element``.
 /// - Group Address - a group address allows sending messages to multiple receivers.
@@ -83,7 +83,7 @@ public extension Address {
     /// Primary Element of all nodes.
     ///
     /// That means, that all Models on the Primary Element of all the Nodes
-    /// are automatically subscibed to all-nodes address. It is not possible
+    /// are automatically subscribed to all-nodes address. It is not possible
     /// for Models on other Elements to receive messages sent to All Nodes address,
     /// as they cannot subscribe to this address.
     static let allNodes:          Address = 0xFFFF

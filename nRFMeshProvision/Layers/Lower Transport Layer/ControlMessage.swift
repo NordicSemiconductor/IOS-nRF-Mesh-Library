@@ -96,7 +96,7 @@ internal struct ControlMessage: LowerTransportPdu {
     /// - parameters:
     ///   - message:    The message to be sent.
     ///   - source:     The address of the local Node.
-    ///   - networkKey: The Network Key to signe the message with.
+    ///   - networkKey: The Network Key to sign the message with.
     ///                 The key should be known to the connected
     ///                 Proxy Node.
     ///   - ivIndex:    The current IV Index of the mesh network.

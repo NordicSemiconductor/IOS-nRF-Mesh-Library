@@ -103,7 +103,7 @@ public enum RemoteProvisioningError: UInt8 {
     case invalidData           = 9
 }
 
-/// A set of authentication actions aiming to strengthen device provisioniong
+/// A set of authentication actions aiming to strengthen device provisioning
 /// security.
 public enum AuthAction {
     /// The user shall provide 16 byte OOB Static Key.

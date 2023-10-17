@@ -60,7 +60,7 @@ internal class Crypto {
     }
     
     /// Obfuscates or deobfuscates given data by XORing it with PECB, which is
-    /// caluclated by encrypting Privacy Plaintext (encrypted data (used as Privacy
+    /// calculated by encrypting Privacy Plaintext (encrypted data (used as Privacy
     /// Random) and IV Index) using the given key.
     ///
     /// - parameters:
@@ -207,7 +207,7 @@ internal class Crypto {
     }
     
     /// Encrypts given data using the Encryption Key, Nonce and adds MIC
-    /// (Message Integrity Check) of given size to the end of the returned ciphertext.
+    /// (Message Integrity Check) of given size to the end of the returned cipher text.
     ///
     /// - parameters:
     ///   - data:  The data to be encrypted and authenticated, also known as plaintext.
@@ -221,7 +221,7 @@ internal class Crypto {
         return calculateCCM(data, withKey: key, nonce: nonce, andMICSize: size, withAdditionalData: aad)
     }
     
-    /// Decrypts given ciphertext using the Encryption Key, Nonce and valudates its
+    /// Decrypts given cipher text using the Encryption Key, Nonce and validates its
     /// integrity using the MIC (Message Integrity Check).
     ///
     /// - parameters:
