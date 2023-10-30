@@ -231,12 +231,7 @@ public extension MeshNetworkManager {
     func provision(unprovisionedDevice: UnprovisionedDevice,
                    over bearer: ProvisioningBearer) throws -> ProvisioningManager {
         guard let meshNetwork = meshNetwork else {
-            print("Error: Mesh Network not created")
             throw MeshNetworkError.noNetwork
-        }
-        guard !meshNetwork.contains(nodeWithUuid: unprovisionedDevice.uuid) &&
-              !meshNetwork.contains(provisionerWithUuid: unprovisionedDevice.uuid) else {
-            throw MeshNetworkError.nodeAlreadyExist
         }
         return ProvisioningManager(for: unprovisionedDevice, over: bearer, in: meshNetwork)
     }

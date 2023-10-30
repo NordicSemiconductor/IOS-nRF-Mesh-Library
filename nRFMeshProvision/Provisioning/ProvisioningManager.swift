@@ -492,6 +492,15 @@ extension ProvisioningManager: BearerDelegate, BearerDataDelegate {
                             andAssignedNetworkKey: provisioningData.networkKey,
                             andAddress: provisioningData.unicastAddress)
             do {
+                // If the node was reprovisioned, remove the old instance.
+                // Note: Before version 4.0.2 the provisioning would instead end with an error.
+                //       This could cause 2 issues:
+                //       - The device was successfully provisioned and is not being added to the
+                //         network. Instead the library forgets the new Node instance.
+                //       - Removing the Node before provisioning could lead to forgetting the
+                //         old Node if provisioning would fail.
+                meshNetwork.remove(nodeWithUuid: node.uuid)
+                // Now it's safe to add the new Node.
                 try meshNetwork.add(node: node)
                 state = .complete
             } catch {
