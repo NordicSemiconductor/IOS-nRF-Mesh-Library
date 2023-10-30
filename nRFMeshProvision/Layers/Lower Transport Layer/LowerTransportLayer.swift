@@ -694,21 +694,24 @@ private extension LowerTransportLayer {
         sendAck(ack, withTtl: ttl)
     }
     
-    /// Sends the given ACK on the global background queue.
+    /// Sends the given ACK.
+    ///
+    /// - note: The ACK used to be sent on a background queue, however this was causing
+    ///         issues. Effectively, this was delaying sending the ACK and another packet
+    ///         could have been sent before. The ACK would then be dropped due to too low
+    ///         sequence number.
     ///
     /// - parameters:
     ///   - ack: The Segment Acknowledgment Message to sent.
     ///   - ttl: Initial Time To Live (TTL) value.
     func sendAck(_ ack: SegmentAcknowledgmentMessage, withTtl ttl: UInt8) {
-        DispatchQueue.global(qos: .background).async { [weak self] in
-            guard let networkManager = self?.networkManager else { return }
-            self?.logger?.d(.lowerTransport, "Sending \(ack)")
-            do {
-                try networkManager.networkLayer.send(lowerTransportPdu: ack,
-                                                     ofType: .networkPdu, withTtl: ttl)
-            } catch {
-                self?.logger?.w(.lowerTransport, error)
-            }
+        guard let networkManager = networkManager else { return }
+        logger?.d(.lowerTransport, "Sending \(ack)")
+        do {
+            try networkManager.networkLayer.send(lowerTransportPdu: ack,
+                                                 ofType: .networkPdu, withTtl: ttl)
+        } catch {
+            logger?.w(.lowerTransport, error)
         }
     }
     
