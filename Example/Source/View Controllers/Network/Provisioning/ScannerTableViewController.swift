@@ -130,12 +130,11 @@ class ScannerTableViewController: UITableViewController {
         let network = MeshNetworkManager.instance.meshNetwork!
         if let oldNode = network.node(withUuid: unprovisionedDevice.uuid) {
             let removeAction = UIAlertAction(title: "Just reprovision", style: .default) { _ in
-                network.remove(node: oldNode)
+                self.previousNode = nil
                 self.provision(selectedPeripheral)
             }
             let reconfigureAction = UIAlertAction(title: "Reprovision and reconfigure", style: .default) { _ in
                 self.previousNode = oldNode
-                network.remove(node: oldNode)
                 self.provision(selectedPeripheral)
             }
             let cancelAction = UIAlertAction(title: "Cancel", style: .cancel)
