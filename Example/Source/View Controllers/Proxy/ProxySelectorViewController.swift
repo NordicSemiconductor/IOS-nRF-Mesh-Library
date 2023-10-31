@@ -188,6 +188,9 @@ extension ProxySelectorViewController: GattBearerDelegate {
         
     func bearerDidOpen(_ bearer: Bearer) {
         MeshNetworkManager.bearer.use(proxy: bearer as! GattBearer)
+        if let provisioner = meshNetwork?.localProvisioner {
+            MeshNetworkManager.instance.proxyFilter.setup(for: provisioner)
+        }
         DispatchQueue.main.async { [weak self] in
             self?.alert?.dismiss(animated: true) { [weak self] in
                 self?.dismiss(animated: true)
