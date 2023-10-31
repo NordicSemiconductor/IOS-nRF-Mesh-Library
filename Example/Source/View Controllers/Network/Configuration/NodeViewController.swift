@@ -204,6 +204,7 @@ class NodeViewController: ProgressViewController {
         }
         if indexPath.isDetailsSection {
             cell.textLabel?.text = indexPath.title
+            cell.accessoryType = .none
             switch indexPath.row {
             case 0:
                 if let id = node.companyIdentifier {
