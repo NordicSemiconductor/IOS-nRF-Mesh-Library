@@ -73,7 +73,7 @@ enum MeshTask {
         case .setRelay:
             return "Set Relay"
         case .disableRelayFeature:
-            return "Disabling Relay Retransmition"
+            return "Disabling Relay Retransmission"
         case .readNetworkTransitStatus:
             return "Read Network Transit Status"
         case .setNetworkTransit:
@@ -187,12 +187,12 @@ enum MeshTask {
             return ConfigHeartbeatPublicationGet()
         case .setHeartbeatPublication(countLog: let countLog,
                                       periodLog: let periodLog,
-                                      destination: let destinatination,
+                                      destination: let destination,
                                       ttl: let ttl,
                                       networkKey: let networkKey,
                                       triggerFeatures: let features):
             return ConfigHeartbeatPublicationSet(startSending: countLog, heartbeatMessagesEvery: periodLog,
-                                                 secondsTo: destinatination,
+                                                 secondsTo: destination,
                                                  usingTtl: ttl, andNetworkKey: networkKey,
                                                  andEnableHeartbeatMessagesTriggeredByChangeOf: features)
                 ?? ConfigHeartbeatPublicationSet()
