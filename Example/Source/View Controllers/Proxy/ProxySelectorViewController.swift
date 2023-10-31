@@ -45,7 +45,6 @@ class ProxySelectorViewController: UITableViewController {
     
     // MARK: - Properties
     
-    weak var delegate: ProvisioningViewDelegate?
     var meshNetwork: MeshNetwork?
     
     private var centralManager: CBCentralManager!
