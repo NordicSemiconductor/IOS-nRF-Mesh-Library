@@ -403,11 +403,11 @@ private extension AccessLayer {
                         if newMessage == nil {
                             logger?.i(.model, "\(message) received from: \(accessPdu.source.hex), to: \(accessPdu.destination.hex)")
                             newMessage = message
-                        } else if type(of: message) != type(of: newMessage) {
+                        } else if let newMessage = newMessage, type(of: message) != type(of: newMessage) {
                             // If another model's delegate decoded the same message to a different
                             // type, log this with a warning. This other type will be delivered
                             // to the delegate, but not to the global network delegate.
-                            logger?.w(.model, "\(message) already decoded as \(newMessage!)")
+                            logger?.w(.model, "\(message) already decoded as \(newMessage)")
                         }
                         // Deliver the message to the Model if it was signed with an
                         // Application Key bound to this Model and the message is
