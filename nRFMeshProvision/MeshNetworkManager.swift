@@ -41,6 +41,7 @@ public class MeshNetworkManager: NetworkParametersProvider {
     
     /// A queue to call delegate methods on.
     internal let delegateQueue: DispatchQueue
+    internal let meshNetworkManagerQueue = DispatchQueue(label: Bundle.main.bundleIdentifier! + ".MeshNetworkManager")
     
     /// The Proxy Filter state.
     public internal(set) var proxyFilter: ProxyFilter
@@ -259,7 +260,7 @@ public extension MeshNetworkManager {
         guard let networkManager = networkManager else {
             return
         }
-        Task.detached {
+        meshNetworkManagerQueue.async {
             networkManager.handle(incomingPdu: data, ofType: type)
         }
     }
@@ -293,7 +294,7 @@ public extension MeshNetworkManager {
               let _ = meshNetwork?.applicationKeys[publish.index] else {
             return nil
         }
-        Task {
+        meshNetworkManagerQueue.async {
             networkManager.publish(message, from: model)
         }
         return MessageHandle(for: message, sentFrom: localElement.unicastAddress,
