@@ -295,17 +295,15 @@ public extension ProxyFilter {
         guard let node = provisioner.node else {
             return
         }
-        // Make sure the Filter Type is set to accept list.
-        if type == .rejectList {
-            setType(.acceptList)
-        }
+        // Reset the proxy filter to an empty accept list.
+        setType(.acceptList)
         var addresses: Set<Address> = []
         // Add Unicast Addresses of all Elements of the Provisioner's Node.
-        addresses.formUnion(node.elements.map({ $0.unicastAddress }))
+        addresses.formUnion(node.elements.map { $0.unicastAddress } )
         // Add all addresses that the Node's Models are subscribed to.
         let models = node.elements.flatMap { $0.models }
         let subscriptions = models.flatMap { $0.subscriptions }
-        addresses.formUnion(subscriptions.map({ $0.address.address }))
+        addresses.formUnion(subscriptions.map { $0.address.address } )
         // Add All Nodes group address.
         addresses.insert(.allNodes)
         // Submit.
@@ -316,10 +314,7 @@ public extension ProxyFilter {
     ///
     /// This method will unset the `busy` flag.
     func proxyDidDisconnect() {
-        mutex.sync {
-            busy = false
-            proxy = nil
-        }
+        newNetworkCreated()
     }
     
 }
@@ -382,12 +377,14 @@ internal protocol ProxyFilterEventHandler: AnyObject {
 extension ProxyFilter: ProxyFilterEventHandler {
     
     func newNetworkCreated() {
-        type = .acceptList
-        addresses.removeAll()
-        buffer.removeAll()
-        busy = false
-        counter = 0
-        proxy = nil
+        mutex.sync {
+            type = .acceptList
+            addresses.removeAll()
+            buffer.removeAll()
+            busy = false
+            counter = 0
+            proxy = nil
+        }
     }
     
     func newProxyDidConnect() {
