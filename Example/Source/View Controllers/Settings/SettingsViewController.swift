@@ -161,6 +161,7 @@ extension SettingsViewController: WizardDelegate {
             index += 1
             _ = try? network.add(networkKey: key, name: "Network Key \(i + 1)")
         }
+        index = 1
         for i in 0..<applicationKeys {
             guard index < UInt8.max else { break }
             let key = fixed ? Data(repeating: 0, count: 15) + index : Data.random128BitKey()
