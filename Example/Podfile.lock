@@ -1,6 +1,6 @@
 PODS:
   - CryptoSwift (1.8.0)
-  - nRFMeshProvision (4.0.1):
+  - nRFMeshProvision (4.1.0):
     - CryptoSwift (= 1.8.0)
 
 DEPENDENCIES:
@@ -16,7 +16,7 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   CryptoSwift: 52aaf3fce7337552863b1d952e408085f0e65030
-  nRFMeshProvision: 5c8db99cd9d95cc5051cc1344d75fd3fefed8659
+  nRFMeshProvision: 8594edb22fa5ed7abfe275105acd870ee58da1dc
 
 PODFILE CHECKSUM: 798fe4d826703f91673f9c99ff182b2dfa6655f4
 
