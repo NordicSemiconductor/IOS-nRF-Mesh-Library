@@ -83,7 +83,7 @@ public protocol ProxyFilterDelegate: AnyObject {
     /// and the reported list size is equal to the requested one.
     ///
     /// In case the reported list size is lower than expected
-    /// ``proxyFilterLimitReached(type:maxSize:)-7hg0l`` is called
+    /// ``proxyFilterLimitReached(type:maxSize:)-30217`` is called
     /// instead.
     ///
     /// - parameters:
