@@ -195,13 +195,33 @@ private extension AddAddressViewController {
 extension AddAddressViewController: ProxyFilterDelegate {
     
     func proxyFilterUpdated(type: ProxyFilerType, addresses: Set<Address>) {
-        done {
-            self.dismiss(animated: true)
-        }
+        // As we want different behavior when the list was acknowledged
+        // or the list limit was reached, to nothing here.
     }
     
     func proxyFilterUpdateAcknowledged(type: ProxyFilerType, listSize: UInt16) {
-        // TODO: dismiss here?
+        // This method is also called when the Proxy Node gets disconnected.
+        // In that case, the list size is equal to 0.
+        if listSize > 0 {
+            done {
+                self.dismiss(animated: true)
+            }
+        }
+    }
+    
+    func proxyFilterLimitReached(type: ProxyFilerType, maxSize: UInt16) {
+        done {
+            self.presentAlert(
+                title: "Maximum filter size reached",
+                message: """
+                The connected proxy node supports only \(maxSize) addresses on its Proxy Filter list.
+
+                Some addresses were not added.
+                """
+            ) { _ in
+                self.dismiss(animated: true)
+            }
+        }
     }
     
 }

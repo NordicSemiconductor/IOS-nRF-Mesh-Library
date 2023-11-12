@@ -45,7 +45,6 @@ class ProxySelectorViewController: UITableViewController {
     
     // MARK: - Properties
     
-    weak var delegate: ProvisioningViewDelegate?
     var meshNetwork: MeshNetwork?
     
     private var centralManager: CBCentralManager!
@@ -189,9 +188,20 @@ extension ProxySelectorViewController: GattBearerDelegate {
         
     func bearerDidOpen(_ bearer: Bearer) {
         MeshNetworkManager.bearer.use(proxy: bearer as! GattBearer)
+        MeshNetworkManager.instance.proxyFilter.proxyDidDisconnect()
+        
         DispatchQueue.main.async { [weak self] in
             self?.alert?.dismiss(animated: true) { [weak self] in
-                self?.dismiss(animated: true)
+                self?.dismiss(animated: true) {
+                    // Set up the Proxy Filter when the view controller is no
+                    // longer visible. This action may end up reaching the Proxy
+                    // Filter list limit, which will result in showing an alert
+                    // from the ProxyViewController. Having 2 child view controllers
+                    // won't work.
+                    if let provisioner = self?.meshNetwork?.localProvisioner {
+                        MeshNetworkManager.instance.proxyFilter.setup(for: provisioner)
+                    }
+                }
             }
             self?.alert = nil
         }

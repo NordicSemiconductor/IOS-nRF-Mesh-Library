@@ -70,32 +70,62 @@ public enum ProxyFilerType {
 public protocol ProxyFilterDelegate: AnyObject {
     /// Method called when the Proxy Filter has been sent to proxy.
     ///
+    /// This method is followed by ``proxyFilterUpdateAcknowledged(type:listSize:)-7hg0l``
+    /// or ``proxyFilterLimitReached(type:maxSize:)-30217``, depending on the
+    /// acknowledged list size.
+    ///
     /// - parameters:
     ///   - type: The current Proxy Filter type.
     ///   - addresses: The addresses in the filter.
     func proxyFilterUpdated(type: ProxyFilerType, addresses: Set<Address>)
 
-    /// Method called when the Proxy Filter has been acknowledged by proxy.
+    /// Method called when the Proxy Filter has been acknowledged by proxy
+    /// and the reported list size is equal to the requested one.
+    ///
+    /// In case the reported list size is lower than expected
+    /// ``proxyFilterLimitReached(type:maxSize:)-7hg0l`` is called
+    /// instead.
     ///
     /// - parameters:
     ///   - type: The current Proxy Filter type.
     ///   - listSize: The addresses list's size in the filter
     func proxyFilterUpdateAcknowledged(type: ProxyFilerType, listSize: UInt16)
     
-    /// This method is called when the connected Proxy device supports
-    /// only a single address in the Proxy Filter list.
+    /// This method is called when the max size of Proxy Filter list has been reached
+    /// and no more addresses can be added.
     ///
-    /// The delegate can switch to `.exclusionList` filter type at that point
-    /// to receive messages sent to addresses other than those that were
-    /// added successfully.
+    /// The delegate can switch to ``ProxyFilerType/rejectList``
+    /// filter type using ``ProxyFilter/setType(_:)``. This will allow receiving
+    /// messages sent to more addresses than supported by the ``ProxyFilerType/acceptList``.
+    ///
+    /// - parameters:
+    ///   - type: The current Proxy Filter type.
+    ///   - maxSize: The maximum Proxy Filter list size.
+    func proxyFilterLimitReached(type: ProxyFilerType, maxSize: UInt16)
+    
+    /// This method is called when the max size of Proxy Filter list has been reached
+    /// and no more addresses can be added.
+    ///
+    /// The delegate can switch to ``ProxyFilerType/rejectList`` 
+    /// filter type at that point to receive messages sent to addresses other
+    /// than those that were added successfully.
     ///
     /// - parameter maxSize: The maximum Proxy Filter list size.
+    @available(*, deprecated, message: "Use proxyFilterLimitReached(type:maxSize) instead")
     func limitedProxyFilterDetected(maxSize: Int)
 }
 
 public extension ProxyFilterDelegate {
     
     func limitedProxyFilterDetected(maxSize: Int) {
+        // Do nothing.
+    }
+    
+    func proxyFilterLimitReached(type: ProxyFilerType, maxSize: UInt16) {
+        // Do nothing.
+    }
+    
+    func proxyFilterUpdateAcknowledged(type: ProxyFilerType, listSize: UInt16) {
         // Do nothing.
     }
     
@@ -155,14 +185,13 @@ public class ProxyFilter {
     ///
     /// The value is set in the ``MeshNetworkManager`` initializer.
     private let delegateQueue: DispatchQueue
-    /// The counter is used to prevent from refreshing the filter in a loop when the Proxy Server
-    /// responds with an unexpected list size.
-    private var counter = 0
-    /// The flag is set to `true` when a request hsa been sent to the connected proxy.
+    /// The flag is set to `true` when a request has been sent to the connected proxy.
     /// It is cleared when a response was received, or in case of an error.
     private var busy = false
     /// A queue of proxy configuration messages enqueued to be sent.
     private var buffer: [ProxyConfigurationMessage] = []
+    /// The last Proxy Configuration message sent.
+    private var request: ProxyConfigurationMessage?
     /// A shortcut to the manager's logger.
     private var logger: LoggerDelegate? {
         return manager?.logger
@@ -295,17 +324,15 @@ public extension ProxyFilter {
         guard let node = provisioner.node else {
             return
         }
-        // Make sure the Filter Type is set to accept list.
-        if type == .rejectList {
-            setType(.acceptList)
-        }
+        // Reset the proxy filter to an empty accept list.
+        setType(.acceptList)
         var addresses: Set<Address> = []
         // Add Unicast Addresses of all Elements of the Provisioner's Node.
-        addresses.formUnion(node.elements.map({ $0.unicastAddress }))
+        addresses.formUnion(node.elements.map { $0.unicastAddress } )
         // Add all addresses that the Node's Models are subscribed to.
         let models = node.elements.flatMap { $0.models }
         let subscriptions = models.flatMap { $0.subscriptions }
-        addresses.formUnion(subscriptions.map({ $0.address.address }))
+        addresses.formUnion(subscriptions.map { $0.address.address } )
         // Add All Nodes group address.
         addresses.insert(.allNodes)
         // Submit.
@@ -316,9 +343,13 @@ public extension ProxyFilter {
     ///
     /// This method will unset the `busy` flag.
     func proxyDidDisconnect() {
-        mutex.sync {
-            busy = false
-            proxy = nil
+        newNetworkCreated()
+        
+        // Notify the delegate.
+        delegateQueue.async { [delegate] in
+            delegate?.proxyFilterUpdated(type: .acceptList, addresses: [])
+            // For backwards compatibility, call the deprecated method.
+            delegate?.proxyFilterUpdateAcknowledged(type: .acceptList, listSize: 0)
         }
     }
     
@@ -382,12 +413,14 @@ internal protocol ProxyFilterEventHandler: AnyObject {
 extension ProxyFilter: ProxyFilterEventHandler {
     
     func newNetworkCreated() {
-        type = .acceptList
-        addresses.removeAll()
-        buffer.removeAll()
-        busy = false
-        counter = 0
-        proxy = nil
+        mutex.sync {
+            type = .acceptList
+            addresses.removeAll()
+            buffer.removeAll()
+            busy = false
+            proxy = nil
+            request = nil
+        }
     }
     
     func newProxyDidConnect() {
@@ -412,38 +445,16 @@ extension ProxyFilter: ProxyFilterEventHandler {
     
     func managerDidDeliverMessage(_ message: ProxyConfigurationMessage) {
         mutex.sync {
-            switch message {
-            case let request as AddAddressesToFilter:
-                addresses.formUnion(request.addresses)
-            case let request as RemoveAddressesFromFilter:
-                addresses.subtract(request.addresses)
-            case let request as SetFilterType:
-                type = request.filterType
-                addresses.removeAll()
-            default:
-                // Ignore.
-                break
-            }
-        }
-        // And notify the app.
-        delegateQueue.async {
-            self.delegate?.proxyFilterUpdated(type: self.type, addresses: self.addresses)
+            request = message
         }
     }
     
     func managerFailedToDeliverMessage(_ message: ProxyConfigurationMessage, error: Error) {
         mutex.sync {
-            type = .acceptList
-            addresses.removeAll()
-            buffer.removeAll()
             busy = false
         }
         if case BearerError.bearerClosed = error {
-            proxy = nil
-        }
-        // And notify the app.
-        delegateQueue.async {
-            self.delegate?.proxyFilterUpdated(type: self.type, addresses: self.addresses)
+            proxyDidDisconnect()
         }
     }
     
@@ -452,60 +463,75 @@ extension ProxyFilter: ProxyFilterEventHandler {
         
         switch message {
         case let status as FilterStatus:
-            self.proxy = proxy
+            var expectedListSize: Int = addresses.count
+            mutex.sync {
+                self.proxy = proxy
+                
+                // Based on the request for which status was received, and the status
+                // itself, calculate the final list of addresses.
+                if let request = request {
+                    switch request {
+                    // Addresses were sent in ascending order (primary unicast address first).
+                    // On every device there's an upper limit of the size of Proxy Filter List.
+                    // Assuming that devices are added in the order they were sent (as they should),
+                    // we must cut above the limit.
+                    case let request as AddAddressesToFilter:
+                        expectedListSize = addresses.count + request.addresses.count
+                        let addedAddresses = request.addresses.sorted().prefix(Int(status.listSize) - addresses.count)
+                        addresses.formUnion(addedAddresses)
+                        
+                    // Removing is easy. We always remove all requested.
+                    case let request as RemoveAddressesFromFilter:
+                        addresses.subtract(request.addresses)
+                        expectedListSize = addresses.count
+                        
+                    // Setting the filter always resets the list.
+                    case let request as SetFilterType:
+                        type = request.filterType
+                        addresses.removeAll()
+                        expectedListSize = 0
+                        
+                    // Other values are not possible.
+                    default: break
+                    }
+                    self.request = nil
+                }
+            }
+            
             // Handle buffered messages.
             if let nextMessage = mutex.sync(execute: {
                                      buffer.isEmpty ? nil : buffer.removeFirst()
                                  }) {
-                try? manager.send(nextMessage)
-                return
+                // Add more addresses only when we're below the limit.
+                if expectedListSize == addresses.count {
+                    try? manager.send(nextMessage)
+                    return
+                } else {
+                    mutex.sync {
+                        buffer.removeAll()
+                    }
+                }
             }
             mutex.sync {
                 busy = false
             }
+            // Notify the delegate.
+            delegateQueue.async { [delegate] in
+                delegate?.proxyFilterUpdated(type: self.type, addresses: self.addresses)
+            }
             
             // Ensure the current information about the filter is up to date.
-            guard type == status.filterType && addresses.count == status.listSize else {
-                // The counter is used to prevent from refreshing the
-                // filter in a loop when the Proxy Server responds with
-                // an unexpected list size.
-                guard counter == 0 else {
-                    logger?.e(.proxy, "Proxy Filter lost track of devices")
-                    counter = 0
-                    return
-                }
-                counter += 1
-                
-                // Some devices support just a single address in Proxy Filter.
-                // After adding 2+ devices they will reply with list size = 1.
-                // In that case we could either switch to exclusion list type of filter
-                // to get all the traffic, or add only 1 address. By default, this
-                // library will add the 0th Element's Unicast Address to allow
-                // configuration, as this is the most common use case. If you need
-                // to receive messages sent to group addresses or other Elements,
-                // switch to exclusion list filter.
-                if status.listSize == 1 {
-                    logger?.w(.proxy, "Limited Proxy Filter detected.")
-                    reset()
-                    if let address = manager.meshNetwork?.localProvisioner?.primaryUnicastAddress {
-                        mutex.sync {
-                            addresses = [address]
-                        }
-                        add(addresses: addresses)
-                    }
-                    delegateQueue.async {
-                        self.delegate?.limitedProxyFilterDetected(maxSize: 1)
-                    }
-                } else {
-                    logger?.w(.proxy, "Refreshing Proxy Filter...")
-                    let addresses = self.addresses // reset() will erase addresses, store it.
-                    reset()
-                    add(addresses: addresses)
+            guard type == status.filterType && expectedListSize == status.listSize else {
+                logger?.w(.proxy, "Proxy Filter limit reached: \(status.listSize) (expected: \(expectedListSize))")
+                delegateQueue.async { [delegate] in
+                    delegate?.proxyFilterLimitReached(type: self.type, maxSize: status.listSize)
+                    // For backwards compatibility, call the old method.
+                    delegate?.limitedProxyFilterDetected(maxSize: Int(status.listSize))
                 }
                 return
             }
-            counter = 0
             delegateQueue.async { [delegate] in
+                // For backwards compatibility, call the deprecated method.
                 delegate?.proxyFilterUpdateAcknowledged(type: status.filterType, listSize: status.listSize)
             }
         default:
